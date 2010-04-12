@@ -1,5 +1,6 @@
 #include "Group.h"
 
+#include "i18n.h"
 #include <set>
 #include "igroupnode.h"
 #include "imainframe.h"
@@ -207,9 +208,9 @@ void parentSelection(const cmd::ArgumentList& args) {
 		visitor.reparent();
 	}
 	else {
-		gtkutil::errorDialog("Cannot reparent primitives to entity. "
+		gtkutil::errorDialog(_("Cannot reparent primitives to entity. "
 							 "Please select at least one brush/patch and exactly one entity."
-							 "(The entity has to be selected last.)", 
+							 "(The entity has to be selected last.)"), 
 							 GlobalMainFrame().getTopLevelWindow());
 	}
 }
@@ -347,9 +348,9 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::errorDialog("Cannot merge entities, "
+		gtkutil::errorDialog(_("Cannot merge entities, "
 							 "the selection must consist of func_* entities only.\n"
-							 "(The first selected entity will be preserved.)", 
+							 "(The first selected entity will be preserved.)"), 
 							 GlobalMainFrame().getTopLevelWindow());
 	}
 }

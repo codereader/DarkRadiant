@@ -1,5 +1,6 @@
 #include "Curves.h"
 
+#include "i18n.h"
 #include "icurve.h"
 #include "iundo.h"
 #include "imainframe.h"
@@ -104,7 +105,7 @@ void appendCurveControlPoint(const cmd::ArgumentList& args) {
 	}
 	else {
 		gtkutil::errorDialog(
-			"Can't append curve point - no entities with curve selected.", 
+			_("Can't append curve point - no entities with curve selected."), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -115,7 +116,7 @@ void removeCurveControlPoints(const cmd::ArgumentList& args) {
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
 		gtkutil::errorDialog(
-			"Can't remove curve points - must be in vertex editing mode.", 
+			_("Can't remove curve points - must be in vertex editing mode."), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 		return;
@@ -136,7 +137,7 @@ void removeCurveControlPoints(const cmd::ArgumentList& args) {
 	}
 	else {
 		gtkutil::errorDialog(
-			"Can't remove curve points - no entities with curves selected.", 
+			_("Can't remove curve points - no entities with curves selected."), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -147,7 +148,7 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
 		gtkutil::errorDialog(
-			"Can't insert curve points - must be in vertex editing mode.", 
+			_("Can't insert curve points - must be in vertex editing mode."), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 		return;
@@ -168,7 +169,7 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 	}
 	else {
 		gtkutil::errorDialog(
-			"Can't insert curve points - no entities with curves selected.", 
+			_("Can't insert curve points - no entities with curves selected."), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -190,7 +191,7 @@ void convertCurveTypes(const cmd::ArgumentList& args) {
 	}
 	else {
 		gtkutil::errorDialog(
-			"Can't convert curves - no entities with curves selected.", 
+			_("Can't convert curves - no entities with curves selected."), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}

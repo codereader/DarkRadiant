@@ -1,5 +1,6 @@
 #include "ShaderClipboard.h"
 
+#include "i18n.h"
 #include "iselectable.h"
 #include "iscenegraph.h"
 #include "iuimanager.h"
@@ -8,6 +9,7 @@
 
 #include "patch/PatchNode.h"
 #include "brush/BrushNode.h"
+#include <boost/format.hpp>
 
 namespace selection {
 
@@ -81,20 +83,20 @@ void ShaderClipboard::updateStatusText() {
 	std::string statusText;
 
 	if (!_source.empty()) {
-		statusText = "ShaderClipboard: " + _source.getShader();
+		statusText = (boost::format(_("ShaderClipboard: %s")) % _source.getShader()).str();
 	
 		if (_source.isFace()) {
-			statusText += " (Face)";
+			statusText += std::string(" (") + _("Face") + ")";
 		}
 		else if (_source.isPatch()) {
-			statusText += " (Patch)";
+			statusText += std::string(" (") + _("Patch") + ")";
 		}
 		else if (_source.isShader()) {
-			statusText += " (Shader)";
+			statusText += std::string(" (") + _("Shader") + ")";
 		}
 	}
 	else {
-		statusText = "ShaderClipboard is empty.";
+		statusText = _("ShaderClipboard is empty.");
 	}
 
 	GlobalUIManager().getStatusBarManager().setText("ShaderClipBoard", statusText);

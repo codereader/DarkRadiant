@@ -1,6 +1,7 @@
 #ifndef PATCHCREATOR_H_
 #define PATCHCREATOR_H_
 
+#include "i18n.h"
 #include "ipatch.h"
 #include "ifilter.h"
 #include "ipreferencesystem.h"
@@ -47,8 +48,8 @@ public:
 		globalOutputStream() << "Doom3PatchDef3Creator::initialiseModule called." << std::endl;
 		
 		// Construct and Register the patch-related preferences
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Patch");
-		page->appendEntry("Patch Subdivide Threshold", RKEY_PATCH_SUBDIVIDE_THRESHOLD);
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Patch"));
+		page->appendEntry(_("Patch Subdivide Threshold"), RKEY_PATCH_SUBDIVIDE_THRESHOLD);
 
 		// Initialise the static member variables of the Patch and PatchNode classes
 		Patch::constructStatic();

@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+#include "i18n.h"
 #include "igroupnode.h"
 #include "ientity.h"
 #include "itextstream.h"
@@ -22,6 +23,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/exception.hpp>
+#include <boost/format.hpp>
 
 // greebo: Nasty global that contains all the selected face instances
 extern FaceInstanceSet g_SelectedFaceInstances;
@@ -162,11 +164,11 @@ Patch& getLastSelectedPatch() {
 			return *patch;
 		}
 		else {
-			throw selection::InvalidSelectionException("No patches selected.");
+			throw selection::InvalidSelectionException(_("No patches selected."));
 		}
 	}
 	else {
-		throw selection::InvalidSelectionException("No patches selected.");
+		throw selection::InvalidSelectionException(_("No patches selected."));
 	}
 }
 
@@ -318,15 +320,16 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 					// Close the file
 					outfile.close();
 					
-					globalOutputStream() << "CollisionModel saved to " << cmPath.string() << "\n";
+					globalOutputStream() << "CollisionModel saved to " << cmPath.string() << std::endl;
 				}
 				else {
-					gtkutil::errorDialog("Couldn't save to file: " + cmPath.string(),
+					gtkutil::errorDialog(
+						(boost::format("Couldn't save to file: %s") % cmPath.string()).str(),
 						 GlobalMainFrame().getTopLevelWindow());
 				}
 			}
 			catch (boost::filesystem::filesystem_error f) {
-				globalErrorStream() << "CollisionModel: " << f.what() << "\n";
+				globalErrorStream() << "CollisionModel: " << f.what() << std::endl;
 			}
 			
 			// De-select the child brushes
@@ -340,7 +343,9 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 		}
 	}
 	else {
-		gtkutil::errorDialog(ERRSTR_WRONG_SELECTION, GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(
+			_(ERRSTR_WRONG_SELECTION.c_str()), 
+			GlobalMainFrame().getTopLevelWindow());
 	}
 }
 
@@ -471,7 +476,7 @@ public:
 			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
 			
 			if (patchNode == NULL) {
-				gtkutil::errorDialog("Could not create patch.", GlobalMainFrame().getTopLevelWindow());
+				gtkutil::errorDialog(_("Could not create patch."), GlobalMainFrame().getTopLevelWindow());
 				return;
 			}
 			
@@ -546,7 +551,7 @@ public:
 void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	// Sanity check	
 	if (g_SelectedFaceInstances.empty()) {
-		gtkutil::errorDialog("No faces selected.", GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(_("No faces selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 	
@@ -565,7 +570,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 
 	if (unsuitableWindings > 0) {
 		gtkutil::errorDialog(
-			intToStr(unsuitableWindings) + " faces were not suitable (had more than 4 vertices).", 
+			(boost::format(_("%d faces were not suitable (had more than 4 vertices).")) % unsuitableWindings).str(), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -613,7 +618,7 @@ void makeVisportal(const cmd::ArgumentList& args) {
 	BrushPtrVector brushes = getSelectedBrushes();
 
 	if (brushes.size() <= 0) {
-		gtkutil::errorDialog("No brushes selected.", GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 	
