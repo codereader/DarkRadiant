@@ -1,11 +1,13 @@
 #include "ModuleRegistry.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include <stdexcept>
 #include <iostream>
 #include "ApplicationContextImpl.h"
 #include "ModuleLoader.h"
 
+#include <boost/format.hpp>
 #include "ui/splash/Splash.h"
 
 namespace module {
@@ -108,7 +110,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 	
 	// Initialise the dependencies first
 	for (StringSet::const_iterator i = dependencies.begin(); 
-		 i != dependencies.end(); i++)
+		 i != dependencies.end(); ++i)
 	{
         globalOutputStream() << "   " << name << " needs dependency " 
                              << *i << std::endl;
@@ -117,7 +119,9 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.65f;
 	
-	ui::Splash::Instance().setProgressAndText("Initialising Module: " + name, _progress);
+	ui::Splash::Instance().setProgressAndText(
+		(boost::format(_("Initialising Module: %s")) % name).str(), 
+		_progress);
 
     globalOutputStream() << "ModuleRegistry: dependencies satisfied, "
                          << "invoking initialiser for " << name << std::endl;
@@ -135,10 +139,10 @@ void ModuleRegistry::initialiseModules() {
 	}
 
 	_progress = 0.1f;
-	ui::Splash::Instance().setProgressAndText("Initialising Modules", _progress);
+	ui::Splash::Instance().setProgressAndText(_("Initialising Modules"), _progress);
 
 	for (ModulesMap::iterator i = _uninitialisedModules.begin();
-		 i != _uninitialisedModules.end(); i++)
+		 i != _uninitialisedModules.end(); ++i)
 	{
 		// greebo: Dive into the recursion
 		// (this will return immediately if the module is already initialised).
