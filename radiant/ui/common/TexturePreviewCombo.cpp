@@ -1,5 +1,6 @@
 #include "TexturePreviewCombo.h"
 
+#include "i18n.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/StockIconMenuItem.h"
@@ -39,10 +40,10 @@ TexturePreviewCombo::TexturePreviewCombo()
 	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_infoView), FALSE);
 	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView),
-								gtkutil::TextColumn("Attribute", 0));
+								gtkutil::TextColumn(_("Attribute"), 0));
 	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView),
-								gtkutil::TextColumn("Value", 1));
+								gtkutil::TextColumn(_("Value"), 1));
 
 	// Pack into main widget
 	gtk_box_pack_start(
@@ -51,7 +52,7 @@ TexturePreviewCombo::TexturePreviewCombo()
 	
 	// Construct the context menu
 	_contextMenu.addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy shader name"),
+		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, _("Copy shader name")),
 		boost::bind(&TexturePreviewCombo::_onCopyTexName, this)
 	);	
 }
@@ -83,7 +84,7 @@ void TexturePreviewCombo::refreshInfoTable() {
 void TexturePreviewCombo::_onCopyTexName() {
 	// Store texture on the clipboard
 	GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-	gtk_clipboard_set_text(clipboard, _texName.c_str(), static_cast<int>(_texName.size()));
+	gtk_clipboard_set_text(clipboard, _texName.c_str(), static_cast<gint>(_texName.size()));
 }
 
 // GTK CALLBACKS

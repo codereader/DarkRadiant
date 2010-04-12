@@ -7,6 +7,7 @@
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/IconTextColumn.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
@@ -59,7 +60,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
 	
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), ADDPROPERTY_TITLE);
+	gtk_window_set_title(GTK_WINDOW(_widget), _(ADDPROPERTY_TITLE));
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
     
     // Set size of dialog
