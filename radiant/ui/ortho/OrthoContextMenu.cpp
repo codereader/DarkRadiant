@@ -1,5 +1,6 @@
 #include "OrthoContextMenu.h"
 
+#include "i18n.h"
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "ibrush.h"
@@ -50,37 +51,37 @@ namespace {
     const char* RKEY_SPEAKERMINRADIUS = "game/defaults/speakerMinRadius";
     const char* RKEY_SPEAKERMAXRADIUS = "game/defaults/speakerMaxRadius";
 
-    const char* ADD_ENTITY_TEXT = "Create entity...";
+    const char* ADD_ENTITY_TEXT = N_("Create entity...");
     const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
-    const char* ADD_PLAYERSTART_TEXT = "Create player start here";
+    const char* ADD_PLAYERSTART_TEXT = N_("Create player start here");
     const char* ADD_PLAYERSTART_ICON = "player_start16.png";
-    const char* MOVE_PLAYERSTART_TEXT = "Move player start here";
+    const char* MOVE_PLAYERSTART_TEXT = N_("Move player start here");
     const char* MOVE_PLAYERSTART_ICON = "player_start16.png";
-    const char* ADD_MODEL_TEXT = "Create model...";
+    const char* ADD_MODEL_TEXT = N_("Create model...");
     const char* ADD_MODEL_ICON = "cmenu_add_model.png";
-    const char* ADD_MONSTERCLIP_TEXT = "Surround with monsterclip";
+    const char* ADD_MONSTERCLIP_TEXT = N_("Surround with monsterclip");
     const char* ADD_MONSTERCLIP_ICON = "monsterclip16.png";
-    const char* ADD_LIGHT_TEXT = "Create light...";
+    const char* ADD_LIGHT_TEXT = N_("Create light...");
     const char* ADD_LIGHT_ICON = "cmenu_add_light.png";
-    const char* ADD_PREFAB_TEXT = "Insert prefab...";
+    const char* ADD_PREFAB_TEXT = N_("Insert prefab...");
     const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
-    const char* ADD_SPEAKER_TEXT = "Create speaker...";
+    const char* ADD_SPEAKER_TEXT = N_("Create speaker...");
     const char* ADD_SPEAKER_ICON = "icon_sound.png";
-    const char* CONVERT_TO_STATIC_TEXT = "Convert to func_static";
+    const char* CONVERT_TO_STATIC_TEXT = N_("Convert to func_static");
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
-    const char* REVERT_TO_WORLDSPAWN_TEXT = "Revert to worldspawn";
-	const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = "Revert part to worldspawn";
+    const char* REVERT_TO_WORLDSPAWN_TEXT = N_("Revert to worldspawn");
+	const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = N_("Revert part to worldspawn");
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
 	const char* MERGE_ENTITIES_ICON = "cmenu_merge_entities.png";
-	const char* MERGE_ENTITIES_TEXT = "Merge Entities";
-	const char* MAKE_VISPORTAL = "Make Visportal";
+	const char* MERGE_ENTITIES_TEXT = N_("Merge Entities");
+	const char* MAKE_VISPORTAL = N_("Make Visportal");
 	const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
 
 	const char* LAYER_ICON = "layers.png";
-	const char* ADD_TO_LAYER_TEXT = "Add to Layer...";
-	const char* MOVE_TO_LAYER_TEXT = "Move to Layer...";
-	const char* REMOVE_FROM_LAYER_TEXT = "Remove from Layer...";
-	const char* CREATE_LAYER_TEXT = "Create Layer...";
+	const char* ADD_TO_LAYER_TEXT = N_("Add to Layer...");
+	const char* MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
+	const char* REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
+	const char* CREATE_LAYER_TEXT = N_("Create Layer...");
 
 	enum {
 		WIDGET_ADD_ENTITY,
@@ -117,40 +118,40 @@ OrthoContextMenu::OrthoContextMenu()
 : _widget(gtk_menu_new())
 {
 	_widgets[WIDGET_ADD_ENTITY] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), ADD_ENTITY_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT)
     );
 	_widgets[WIDGET_ADD_PLAYERSTART] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), ADD_PLAYERSTART_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT)
     );
 	_widgets[WIDGET_MOVE_PLAYERSTART] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), MOVE_PLAYERSTART_TEXT
+        GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT)
     );
 	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), ADD_MODEL_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT)
     );
 	_widgets[WIDGET_ADD_MONSTERCLIP] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), ADD_MONSTERCLIP_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT)
     );
 	_widgets[WIDGET_ADD_LIGHT] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), ADD_LIGHT_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT)
     );
 	_widgets[WIDGET_ADD_PREFAB] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), ADD_PREFAB_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT)
     );
 	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), ADD_SPEAKER_TEXT
+        GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT)
     );
 	_widgets[WIDGET_CONVERT_STATIC] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), CONVERT_TO_STATIC_TEXT
+        GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT)
     );
 	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_TEXT
+        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT)
     );
 	_widgets[WIDGET_MERGE_ENTITIES] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), MERGE_ENTITIES_TEXT
+        GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT)
     );
 	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), REVERT_TO_WORLDSPAWN_PARTIAL_TEXT
+        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT)
     );
 
 	IEventPtr ev = GlobalEventManager().findEvent("ParentSelectionToWorldspawn");
@@ -159,19 +160,19 @@ OrthoContextMenu::OrthoContextMenu()
 	}
 
 	// "Add to layer" submenu
-	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), ADD_TO_LAYER_TEXT);
-	_widgets[WIDGET_MOVE_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), MOVE_TO_LAYER_TEXT);
-	_widgets[WIDGET_DELETE_FROM_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), REMOVE_FROM_LAYER_TEXT);
+	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(ADD_TO_LAYER_TEXT));
+	_widgets[WIDGET_MOVE_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(MOVE_TO_LAYER_TEXT));
+	_widgets[WIDGET_DELETE_FROM_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(REMOVE_FROM_LAYER_TEXT));
 
 	// Add a "Create New Layer" item and connect it to the corresponding event
-	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), CREATE_LAYER_TEXT);
+	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(CREATE_LAYER_TEXT));
 	ev = GlobalEventManager().findEvent("CreateNewLayer");
 	if (ev != NULL) {
 		ev->connectWidget(_widgets[WIDGET_CREATE_LAYER]);
 	}
 
 	// Add a "Make Visportal" item and connect it to the corresponding event
-	_widgets[WIDGET_MAKE_VISPORTAL] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), MAKE_VISPORTAL);
+	_widgets[WIDGET_MAKE_VISPORTAL] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL));
 	ev = GlobalEventManager().findEvent("MakeVisportal");
 	if (ev != NULL) {
 		ev->connectWidget(_widgets[WIDGET_MAKE_VISPORTAL]);
@@ -494,7 +495,7 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
     	entity::createEntityFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
     }
     catch (EntityCreationException&) {
-        gtkutil::errorDialog("Unable to create light, classname not found.",
+        gtkutil::errorDialog(_("Unable to create light, classname not found."),
                              GlobalMainFrame().getTopLevelWindow());
     }
 }
@@ -541,7 +542,7 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
 		}
     }
     catch (EntityCreationException&) {
-        gtkutil::errorDialog("Unable to create speaker, classname not found.",
+        gtkutil::errorDialog(_("Unable to create speaker, classname not found."),
                              GlobalMainFrame().getTopLevelWindow());
         return;
     }
@@ -584,7 +585,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 				}
             }
             catch (EntityCreationException&) {
-                gtkutil::errorDialog("Unable to create model, classname not found.",
+                gtkutil::errorDialog(_("Unable to create model, classname not found."),
                                      GlobalMainFrame().getTopLevelWindow());
             }
 		}
@@ -592,7 +593,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 	}
 	else {
 		gtkutil::errorDialog(
-            "Either nothing or exactly one brush must be selected for model creation",
+            _("Either nothing or exactly one brush must be selected for model creation"),
 			GlobalMainFrame().getTopLevelWindow()
         );
 	}

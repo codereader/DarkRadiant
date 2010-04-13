@@ -1,14 +1,15 @@
 #include "BulgePatchDialog.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "imainframe.h"
 #include "string/string.h"
 
 namespace {
-	const char* WINDOW_TITLE = "Bulge Patch";
-	const char* LABEL_TITLE = "Bulge Patch";
-	const char* LABEL_NOISE = "Noise:";
+	const char* WINDOW_TITLE = N_("Bulge Patch");
+	const char* LABEL_TITLE = N_("Bulge Patch");
+	const char* LABEL_NOISE = N_("Noise:");
 	
 	const int NOISE = 16;
 }
@@ -21,7 +22,7 @@ BulgePatchDialog::BulgePatchDialog() :
 	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create the new dialog window with OK and CANCEL button    
-  	_dialog = gtk_dialog_new_with_buttons(WINDOW_TITLE, parent,
+  	_dialog = gtk_dialog_new_with_buttons(_(WINDOW_TITLE), parent,
                                          GTK_DIALOG_DESTROY_WITH_PARENT, 
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                          GTK_STOCK_OK, GTK_RESPONSE_OK,
@@ -34,7 +35,7 @@ BulgePatchDialog::BulgePatchDialog() :
     
     // Create the title label (bold font)
     GtkWidget* topLabel = gtk_label_new(NULL);
-    std::string markup = std::string("<span weight=\"bold\">") + LABEL_TITLE + "</span>";
+    std::string markup = std::string("<span weight=\"bold\">") + _(LABEL_TITLE) + "</span>";
     gtk_label_set_markup(GTK_LABEL(topLabel), markup.c_str());
     gtk_misc_set_alignment(GTK_MISC(topLabel), 0.0f, 0.5f);
     gtk_misc_set_padding(GTK_MISC(topLabel), 6, 2);
@@ -42,7 +43,7 @@ BulgePatchDialog::BulgePatchDialog() :
     gtk_box_pack_start(GTK_BOX(GTK_DIALOG(_dialog)->vbox), topLabel, TRUE, TRUE, 0);
     
     // Create the labels for the combo boxes
-	GtkWidget* labelNoise = gtk_label_new(LABEL_NOISE);
+	GtkWidget* labelNoise = gtk_label_new(_(LABEL_NOISE));
 	gtk_misc_set_alignment(GTK_MISC(labelNoise), 0.0f, 0.5f);
 	
 	// Create the text box

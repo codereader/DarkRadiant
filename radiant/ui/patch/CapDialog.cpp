@@ -1,5 +1,6 @@
 #include "CapDialog.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 
 #include <gtk/gtk.h>
@@ -10,20 +11,20 @@ namespace ui
 
 namespace
 {
-	const char* WINDOW_TITLE = "Create Cap Patch";
+	const char* WINDOW_TITLE = N_("Create Cap Patch");
 
-	const std::string CAPTYPE_NAMES[eNumCapTypes] =
+	const char* const CAPTYPE_NAMES[eNumCapTypes] =
 	{
-		"Bevel",
-		"End Cap",
-		"Inverted Bevel",
-		"Inverted Endcap",
-		"Cylinder",
+		N_("Bevel"),
+		N_("End Cap"),
+		N_("Inverted Bevel"),
+		N_("Inverted Endcap"),
+		N_("Cylinder"),
 	};
 }
 
 PatchCapDialog::PatchCapDialog() :
-	gtkutil::Dialog(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_radioButtonGroup(NULL)
 {
 	// Add a homogeneous hbox 
@@ -58,7 +59,7 @@ void PatchCapDialog::addItemToTable(GtkTable* table, const std::string& image, g
 					 GtkAttachOptions(GTK_FILL), (GtkAttachOptions)0, 0, 0);
 
 	// Create a new radio button for this cap type
-	GtkWidget* radioButton = gtk_radio_button_new_with_label(_radioButtonGroup, CAPTYPE_NAMES[type].c_str());
+	GtkWidget* radioButton = gtk_radio_button_new_with_label(_radioButtonGroup, _(CAPTYPE_NAMES[type]));
 	_radioButtonGroup = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radioButton));
 	gtk_table_attach(table, radioButton, 1, 2, row, row+1, 
 					 GtkAttachOptions(GTK_FILL|GTK_EXPAND), (GtkAttachOptions)0, 0, 0);
