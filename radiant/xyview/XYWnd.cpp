@@ -1,5 +1,6 @@
 #include "XYWnd.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "iscenegraph.h"
 #include "iundo.h"
@@ -225,13 +226,13 @@ void XYWnd::releaseStates() {
 
 const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {
 	if (viewtype == XY) {
-		return "XY Top";
+		return _("XY Top");
 	}
 	if (viewtype == XZ) {
-		return "XZ Front";
+		return _("XZ Front");
 	}
 	if (viewtype == YZ) {
-		return "YZ Side";
+		return _("YZ Side");
 	}
 	return "";
 }
@@ -693,7 +694,7 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 
 	GlobalUIManager().getStatusBarManager().setText(
 		"XYZPos", 
-		(boost::format("x: %6.1lf y: %6.1lf z: %6.1lf") 
+		(boost::format(_("x: %6.1lf y: %6.1lf z: %6.1lf")) 
 			% m_mousePosition[0] 
 			% m_mousePosition[1] 
 			% m_mousePosition[2]).str()
