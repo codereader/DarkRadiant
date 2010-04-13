@@ -98,7 +98,7 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 			try {
 				command->type = ConversationCommandLibrary::Instance().findCommandInfo(value).id;
 			}
-			catch (std::runtime_error e) {
+			catch (std::runtime_error& e) {
 				globalErrorStream() << "Unknown conversation command " << value << std::endl;
 				return;
 			}

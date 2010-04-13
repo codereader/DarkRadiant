@@ -1,5 +1,6 @@
 #include "ConversationDialog.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "iundo.h"
 #include "ieclass.h"
@@ -22,12 +23,13 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+#include <boost/format.hpp>
 #include <iostream>
 
 namespace ui {
 
 namespace {
-	const std::string WINDOW_TITLE = "Conversation Editor";
+	const char* const WINDOW_TITLE = N_("Conversation Editor");
 	
 	const std::string RKEY_ROOT = "user/ui/conversationDialog/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
@@ -46,7 +48,7 @@ namespace {
 }
 
 ConversationDialog::ConversationDialog() :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_convEntityList(gtk_list_store_new(2, 
   									  G_TYPE_STRING, 		// display text
   									  G_TYPE_STRING)),		// entity name
@@ -93,13 +95,13 @@ void ConversationDialog::populateWindow() {
 	gtk_container_add(GTK_CONTAINER(getWindow()), _dialogVBox);
 	
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), 
-					   gtkutil::LeftAlignedLabel("<b>Conversation entities</b>"),
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Conversation entities") + "</b>"),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_dialogVBox),
 					   gtkutil::LeftAlignment(createEntitiesPanel(), 18, 1.0),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), 
-					   gtkutil::LeftAlignedLabel("<b>Conversations</b>"),
+					   gtkutil::LeftAlignedLabel(std::string("<b>") + _("Conversations") + "</b>"),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_dialogVBox),
 					   gtkutil::LeftAlignment(createConversationsPanel(), 18, 1.0),
@@ -160,7 +162,7 @@ GtkWidget* ConversationDialog::createConversationsPanel() {
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Name", 1, false));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Name"), 1, false));
 	
 	// Beside the list is an vbox containing add, edit, delete and clear buttons
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
@@ -358,8 +360,8 @@ void ConversationDialog::onAddEntity(GtkWidget* w, ConversationDialog* self) {
     {
         // conversation entityclass was not found
         gtkutil::errorDialog(
-            std::string("Unable to create conversation Entity: class '")
-                + CONVERSATION_ENTITY_CLASS + "' not found.",
+			(boost::format(_("Unable to create conversation Entity: class '%s' not found.")) 
+				% CONVERSATION_ENTITY_CLASS).str(),
             GlobalMainFrame().getTopLevelWindow()
         );
     }

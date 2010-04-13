@@ -1,6 +1,7 @@
 #ifndef CONVERSATIONENTITYFINDER_H_
 #define CONVERSATIONENTITYFINDER_H_
 
+#include "i18n.h"
 #include "scenelib.h"
 #include <gtk/gtkliststore.h>
 #include <string>
@@ -73,8 +74,8 @@ public:
 		{
 			// Construct the display string
 			std::string name = entity->getKeyValue("name");
-			std::string sDisplay = "<b>" + name + "</b> at [ "	
-								   + entity->getKeyValue("origin") + " ]";
+			std::string sDisplay = 
+				(boost::format(_("<b>%s</b> at [ %s ]")) % name % entity->getKeyValue("origin")).str();
 			
 			// Add the entity to the list
 			GtkTreeIter iter;
