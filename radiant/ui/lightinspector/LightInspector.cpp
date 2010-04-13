@@ -1,5 +1,6 @@
 #include "LightInspector.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"
@@ -28,12 +29,12 @@ namespace ui
 
 namespace {
 	
-	const char* LIGHTINSPECTOR_TITLE = "Light properties";
+	const char* LIGHTINSPECTOR_TITLE = N_("Light properties");
 	
-	const char* PARALLEL_TEXT = "Parallel";
-	const char* NOSHADOW_TEXT = "Do not cast shadows (fast)";
-	const char* NOSPECULAR_TEXT = "Skip specular lighting";
-	const char* NODIFFUSE_TEXT = "Skip diffuse lighting";
+	const char* PARALLEL_TEXT = N_("Parallel");
+	const char* NOSHADOW_TEXT = N_("Do not cast shadows (fast)");
+	const char* NOSPECULAR_TEXT = N_("Skip specular lighting");
+	const char* NODIFFUSE_TEXT = N_("Skip diffuse lighting");
 	
 	const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
 	const std::string RKEY_INSTANT_APPLY = "user/ui/lightInspector/instantApply";
@@ -64,7 +65,7 @@ namespace {
 
 // Private constructor creates GTK widgets
 LightInspector::LightInspector() 
-: gtkutil::PersistentTransientWindow(LIGHTINSPECTOR_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
+: gtkutil::PersistentTransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _isProjected(false),
   _texSelector(this, getPrefixList(), true),
   _updateActive(false)
@@ -81,8 +82,8 @@ LightInspector::LightInspector()
 	GtkWidget* panels = gtk_vbox_new(FALSE, 12);
 
 	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::LeftAlignedLabel("<b>Light volume</b>"),
-					   FALSE, FALSE, 0);
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light volume") + "</b>"),
+		FALSE, FALSE, 0);
 
 	// Volume type hbox
 	GtkWidget* typeBox = gtk_hbox_new(FALSE, 12);
@@ -100,7 +101,7 @@ LightInspector::LightInspector()
 	_colour = gtk_color_button_new();
 	g_signal_connect(G_OBJECT(_colour), "color-set", G_CALLBACK(_onColourChange), this);
 	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::LeftAlignedLabel("<b>Colour</b>"), 
+					   gtkutil::LeftAlignedLabel(std::string("<b>") + _("Colour") + "</b>"), 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels), 
 					   gtkutil::LeftAlignment(_colour, 12, 0.0),
@@ -108,7 +109,7 @@ LightInspector::LightInspector()
 
 	// Options panel
 	gtk_box_pack_start(GTK_BOX(panels),
-					   gtkutil::LeftAlignedLabel("<b>Options</b>"),
+					   gtkutil::LeftAlignedLabel(std::string("<b>") + _("Options") + "</b>"),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(panels),
 					   gtkutil::LeftAlignment(createOptionsPanel(), 12),
@@ -199,7 +200,7 @@ void LightInspector::shaderSelectionChanged(
 GtkWidget* LightInspector::createPointLightPanel() 
 {
 	// Create the point light togglebutton
-	_pointLightToggle = gtkutil::IconTextButton("Omni", 
+	_pointLightToggle = gtkutil::IconTextButton(_("Omni"), 
 		GlobalUIManager().getLocalPixbuf("pointLight32.png"),
 		true
 	);
@@ -218,7 +219,7 @@ GtkWidget* LightInspector::createPointLightPanel()
 // Create the projected light panel
 GtkWidget* LightInspector::createProjectedPanel() {
 	// Create the projected light togglebutton
-	_projLightToggle = gtkutil::IconTextButton("Projected", 
+	_projLightToggle = gtkutil::IconTextButton(_("Projected"), 
 		GlobalUIManager().getLocalPixbuf("projLight32.png"),
 		true
 	);
@@ -228,7 +229,7 @@ GtkWidget* LightInspector::createProjectedPanel() {
 					 this);
 
 	// Start/end checkbox
-	_useStartEnd = gtk_check_button_new_with_label("Use start/end");
+	_useStartEnd = gtk_check_button_new_with_label(_("Use start/end"));
 	g_signal_connect(G_OBJECT(_useStartEnd), "toggled", G_CALLBACK(_onOptionsToggle), this);		
 		
 	// VBox for panel
@@ -244,10 +245,10 @@ GtkWidget* LightInspector::createProjectedPanel() {
 GtkWidget* LightInspector::createOptionsPanel() {
 
 	// Add options boxes to map
-	_options["parallel"] = gtk_check_button_new_with_label(PARALLEL_TEXT);
-	_options["noshadows"] = gtk_check_button_new_with_label(NOSHADOW_TEXT);
-	_options["nospecular"] = gtk_check_button_new_with_label(NOSPECULAR_TEXT);
-	_options["nodiffuse"] = gtk_check_button_new_with_label(NODIFFUSE_TEXT);
+	_options["parallel"] = gtk_check_button_new_with_label(_(PARALLEL_TEXT));
+	_options["noshadows"] = gtk_check_button_new_with_label(_(NOSHADOW_TEXT));
+	_options["nospecular"] = gtk_check_button_new_with_label(_(NOSPECULAR_TEXT));
+	_options["nodiffuse"] = gtk_check_button_new_with_label(_(NODIFFUSE_TEXT));
 
 	g_signal_connect(G_OBJECT(_options["parallel"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
 	g_signal_connect(G_OBJECT(_options["noshadows"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
@@ -270,7 +271,7 @@ GtkWidget* LightInspector::createTextureWidgets() {
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	
 	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::LeftAlignedLabel("<b>Texture</b>"), 
+					   gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light Texture") + "</b>"), 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), 
 					   gtkutil::LeftAlignment(_texSelector, 12, 1.0),

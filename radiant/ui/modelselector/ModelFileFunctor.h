@@ -8,6 +8,7 @@
 #include "iregistry.h"
 #include "EventRateLimiter.h"
 
+#include "i18n.h"
 #include "string/string.h"
 #include "os/path.h"
 
@@ -15,6 +16,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/format.hpp>
 
 namespace ui
 {
@@ -45,11 +47,11 @@ public:
 	ModelFileFunctor(gtkutil::VFSTreePopulator& pop, gtkutil::VFSTreePopulator& pop2) : 
 		_populator(pop),
 		_populator2(pop2),
-		_progress(GlobalMainFrame().getTopLevelWindow(), "Loading models"),
+		_progress(GlobalMainFrame().getTopLevelWindow(), _("Loading models")),
 		_count(0),
 		_evLimiter(50)
 	{
-		_progress.setText("Searching");
+		_progress.setText(_("Searching"));
 
 		// Load the allowed extensions
 		std::string extensions = GlobalRegistry().getAttribute("game", "modeltypes");
@@ -73,7 +75,9 @@ public:
 			
 			if (_evLimiter.readyForEvent()) 
             {
-				_progress.setText(sizetToStr(_count) + " models loaded");
+				_progress.setText(
+					(boost::format(_("%ud models loaded")) % _count).str()
+				);
 			}
 		}
 	}

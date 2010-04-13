@@ -11,6 +11,18 @@ namespace {
 	const char* MODEL_ICON = "model16green.png";
 	const char* SKIN_ICON = "skin16.png";
 	const char* FOLDER_ICON = "folder16.png";
+
+	const char* MODELS_FOLDER = "models/";
+
+	// Treestore enum
+	enum {
+		NAME_COLUMN,		// e.g. "chair1.lwo"
+		FULLNAME_COLUMN,	// e.g. "models/darkmod/props/chair1.lwo"
+		SKIN_COLUMN,		// e.e. "chair1_brown_wood", or "" for no skin
+		IMAGE_COLUMN,		// icon to display
+		IS_FOLDER_COLUMN,	// whether this is a folder
+		N_COLUMNS
+	};
 }
 
 /**

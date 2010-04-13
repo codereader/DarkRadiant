@@ -1,5 +1,6 @@
 #include "SplitPaneLayout.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
@@ -99,7 +100,7 @@ void SplitPaneLayout::activate() {
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
 	    	GTK_WIDGET(textureBrowser), // page widget
-	    	"Texture Browser"
+	    	_("Texture Browser")
 	    );
     }
 

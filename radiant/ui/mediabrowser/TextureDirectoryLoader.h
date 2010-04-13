@@ -7,6 +7,7 @@
 #include "gtkutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 
+#include "i18n.h"
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -32,7 +33,7 @@ public:
 	// Constructor sets the directory to search
 	TextureDirectoryLoader(const std::string& directory)
 	: _searchDir(directory + "/"),
-	  _dialog(GlobalMainFrame().getTopLevelWindow(), "Loading textures"),
+	  _dialog(GlobalMainFrame().getTopLevelWindow(), _("Loading textures")),
      _evLimiter(100)
 	{}
 	

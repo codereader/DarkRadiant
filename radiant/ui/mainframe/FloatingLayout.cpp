@@ -1,5 +1,6 @@
 #include "FloatingLayout.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
@@ -62,7 +63,7 @@ void FloatingLayout::activate() {
     	"Textures", // tab title
     	"icon_texture.png", // tab icon 
     	GTK_WIDGET(page), // page widget
-    	"Texture Browser"
+    	_("Texture Browser")
     );
 
 	if (GlobalRegistry().get(RKEY_GROUPDIALOG_VISIBLE) == "1")
