@@ -1,5 +1,6 @@
 #include "PrefPage.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "stream/textfilestream.h"
 #include <gtk/gtk.h>
@@ -13,6 +14,7 @@
 #include <iostream>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/format.hpp>
 #include "modulesystem/ApplicationContextImpl.h"
 
 namespace ui {
@@ -40,7 +42,9 @@ PrefPage::PrefPage(
 	gtk_container_set_border_width(GTK_CONTAINER(_pageWidget), 12);
 	
 	// Create the label
-	_titleLabel = gtkutil::LeftAlignedLabel(std::string("<b>") + _name + " Settings</b>");
+	_titleLabel = gtkutil::LeftAlignedLabel(
+		(boost::format("<b>%s Settings</b>") % _name).str()
+	);
 	gtk_box_pack_start(GTK_BOX(_pageWidget), _titleLabel, FALSE, FALSE, 0);
 	
 	// Create the VBOX for all the client widgets
@@ -292,7 +296,8 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	PrefPagePtr child;
 	
 	// Try to lookup the page in the child list
-	for (unsigned int i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); ++i)
+	{
 		if (_children[i]->getName() == parts[0]) {
 			child = _children[i];
 			break;
@@ -309,7 +314,8 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 	if (parts.size() > 1) {
 		// We have still more parts, split off the first part
 		std::string subPath("");
-		for (unsigned int i = 1; i < parts.size(); i++) {
+		for (std::size_t i = 1; i < parts.size(); ++i)
+		{
 			subPath += (subPath.empty()) ? "" : "/";
 			subPath += parts[i];
 		}

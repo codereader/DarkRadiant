@@ -1,5 +1,6 @@
 #include "PatchInspector.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "itextstream.h"
@@ -23,16 +24,16 @@
 namespace ui {
 
 	namespace {
-		const std::string WINDOW_TITLE = "Patch Inspector";
-		const std::string LABEL_CONTROL_VERTICES = "Patch Control Vertices";
-		const std::string LABEL_COORDS = "Coordinates";
-		const std::string LABEL_ROW = "Row:";
-		const std::string LABEL_COL = "Column:";
-		const std::string LABEL_TESSELATION = "Patch Tesselation";
-		const std::string LABEL_FIXED = "Fixed Subdivisions";
-		const std::string LABEL_SUBDIVISION_X = "Horizontal:";
-		const std::string LABEL_SUBDIVISION_Y = "Vertical:";
-		const char* LABEL_STEP = "Step:";
+		const char* const WINDOW_TITLE = N_("Patch Inspector");
+		const char* const LABEL_CONTROL_VERTICES = N_("Patch Control Vertices");
+		const char* const LABEL_COORDS = N_("Coordinates");
+		const char* const LABEL_ROW = N_("Row:");
+		const char* const LABEL_COL = N_("Column:");
+		const char* const LABEL_TESSELATION = N_("Patch Tesselation");
+		const char* const LABEL_FIXED = N_("Fixed Subdivisions");
+		const char* const LABEL_SUBDIVISION_X = N_("Horizontal:");
+		const char* const LABEL_SUBDIVISION_Y = N_("Vertical:");
+		const char* const LABEL_STEP = N_("Step:");
 		
 		const float TESS_MIN = 1.0f;
 		const float TESS_MAX = 32.0f;
@@ -47,7 +48,7 @@ namespace ui {
 	}
 
 PatchInspector::PatchInspector() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
+: gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _patchRows(0),
   _patchCols(0),
@@ -129,7 +130,7 @@ void PatchInspector::populateWindow() {
 	
 	// Create the title label (bold font)
 	_vertexChooser.title = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_CONTROL_VERTICES + "</span>"
+    	std::string("<span weight=\"bold\">") + _(LABEL_CONTROL_VERTICES) + "</span>"
     );
     gtk_box_pack_start(GTK_BOX(dialogVBox), _vertexChooser.title, false, false, 0);
     
@@ -143,7 +144,7 @@ void PatchInspector::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment), false, false, 0);
 	
 	// The vertex col and row chooser	
-	_vertexChooser.rowLabel = gtkutil::LeftAlignedLabel(LABEL_ROW);
+	_vertexChooser.rowLabel = gtkutil::LeftAlignedLabel(_(LABEL_ROW));
 	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.rowLabel, 0, 1, 0, 1);
 		
 	_vertexChooser.rowCombo = gtk_combo_box_new_text();
@@ -151,7 +152,7 @@ void PatchInspector::populateWindow() {
 	g_signal_connect(G_OBJECT(_vertexChooser.rowCombo), "changed", G_CALLBACK(onComboBoxChange), this);
 	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.rowCombo, 1, 2, 0, 1);
 		
-	_vertexChooser.colLabel = gtkutil::LeftAlignedLabel(LABEL_COL);
+	_vertexChooser.colLabel = gtkutil::LeftAlignedLabel(_(LABEL_COL));
 	gtk_table_attach_defaults(_vertexChooser.table, _vertexChooser.colLabel, 0, 1, 1, 2);
 	
 	_vertexChooser.colCombo = gtk_combo_box_new_text();
@@ -161,7 +162,7 @@ void PatchInspector::populateWindow() {
 	
 	// Create the title label (bold font)
 	_coordsLabel = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_COORDS + "</span>"
+    	std::string("<span weight=\"bold\">") + _(LABEL_COORDS) + "</span>"
     );
     gtk_misc_set_padding(GTK_MISC(_coordsLabel), 0, 2);
     gtk_box_pack_start(GTK_BOX(dialogVBox), _coordsLabel, false, false, 0);
@@ -229,7 +230,7 @@ void PatchInspector::populateWindow() {
     
     // Create the title label (bold font)
 	_tesselation.title = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_TESSELATION + "</span>"
+    	std::string("<span weight=\"bold\">") + _(LABEL_TESSELATION) + "</span>"
     );
     gtk_misc_set_padding(GTK_MISC(_tesselation.title), 0, 2);
     gtk_box_pack_start(GTK_BOX(dialogVBox), _tesselation.title, false, false, 0);
@@ -244,7 +245,7 @@ void PatchInspector::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(tessAlignment), false, false, 0);
 	
 	// Tesselation checkbox
-	_tesselation.fixed = gtk_check_button_new_with_label(LABEL_FIXED.c_str());
+	_tesselation.fixed = gtk_check_button_new_with_label(_(LABEL_FIXED));
 	g_signal_connect(G_OBJECT(_tesselation.fixed), "toggled", G_CALLBACK(onFixedTessChange), this);
 	gtk_table_attach_defaults(_tesselation.table, _tesselation.fixed, 0, 2, 0, 1);
 	
@@ -261,8 +262,8 @@ void PatchInspector::populateWindow() {
 	gtk_widget_set_size_request(_tesselation.horiz, 100, -1);
 	gtk_widget_set_size_request(_tesselation.vert, 100, -1);
 	
-	_tesselation.horizLabel = gtkutil::LeftAlignedLabel(LABEL_SUBDIVISION_X);
-	_tesselation.vertLabel = gtkutil::LeftAlignedLabel(LABEL_SUBDIVISION_Y);
+	_tesselation.horizLabel = gtkutil::LeftAlignedLabel(_(LABEL_SUBDIVISION_X));
+	_tesselation.vertLabel = gtkutil::LeftAlignedLabel(_(LABEL_SUBDIVISION_Y));
 	
 	gtk_table_attach_defaults(_tesselation.table, _tesselation.horizLabel, 0, 1, 1, 2);
 	gtk_table_attach_defaults(_tesselation.table, _tesselation.horiz, 1, 2, 1, 2);
@@ -310,7 +311,7 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	}
 	
 	// Create the label
-	coordRow.steplabel = gtkutil::LeftAlignedLabel(LABEL_STEP); 
+	coordRow.steplabel = gtkutil::LeftAlignedLabel(_(LABEL_STEP)); 
 	gtk_box_pack_start(GTK_BOX(coordRow.hbox), coordRow.steplabel, false, false, 0);
 	
 	// Create the entry field

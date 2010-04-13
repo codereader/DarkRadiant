@@ -1,5 +1,6 @@
 #include "PatchCreateDialog.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -7,13 +8,13 @@
 #include "string/string.h"
 
 namespace {
-	const char* WINDOW_TITLE = "Create Flat Patch Mesh";
-	const char* LABEL_TITLE = "Create Simple Patch Mesh";
-	const char* LABEL_WIDTH_COMBO = "Width: ";
-	const char* LABEL_HEIGHT_COMBO = "Height: ";
-	const char* LABEL_REMOVE_BRUSHES = "Remove selected Brush";
+	const char* WINDOW_TITLE = _("Create Flat Patch Mesh");
+	const char* LABEL_TITLE = _("Create Simple Patch Mesh");
+	const char* LABEL_WIDTH_COMBO = _("Width: ");
+	const char* LABEL_HEIGHT_COMBO = _("Height: ");
+	const char* LABEL_REMOVE_BRUSHES = _("Remove selected Brush");
 	
-	const bool DEFAULT_REMOVE_BRUSHES = false;
+	const gboolean DEFAULT_REMOVE_BRUSHES = FALSE;
 	
 	const int MIN_PATCH_DIM = 3;
 	const int MAX_PATCH_DIM = 15;
@@ -27,7 +28,7 @@ PatchCreateDialog::PatchCreateDialog() :
 	_dialog(NULL)
 {
 	// Create the new dialog window with OK and CANCEL button    
-  	_dialog = gtk_dialog_new_with_buttons(WINDOW_TITLE, _parent,
+  	_dialog = gtk_dialog_new_with_buttons(_(WINDOW_TITLE), _parent,
                                          GTK_DIALOG_DESTROY_WITH_PARENT, 
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                          GTK_STOCK_OK, GTK_RESPONSE_OK,
@@ -40,7 +41,7 @@ PatchCreateDialog::PatchCreateDialog() :
     
     // Create the title label (bold font)
     GtkWidget* topLabel = gtk_label_new(NULL);
-    std::string markup = std::string("<span weight=\"bold\">") + LABEL_TITLE + "</span>";
+    std::string markup = std::string("<span weight=\"bold\">") + _(LABEL_TITLE) + "</span>";
     gtk_label_set_markup(GTK_LABEL(topLabel), markup.c_str());
     gtk_misc_set_alignment(GTK_MISC(topLabel), 0.0f, 0.5f);
     gtk_misc_set_padding(GTK_MISC(topLabel), 6, 2);
@@ -48,8 +49,8 @@ PatchCreateDialog::PatchCreateDialog() :
     gtk_box_pack_start(GTK_BOX(GTK_DIALOG(_dialog)->vbox), topLabel, TRUE, TRUE, 0);
     
     // Create the labels for the combo boxes
-	GtkWidget* labelWidth = gtk_label_new(LABEL_WIDTH_COMBO);
-	GtkWidget* labelHeight = gtk_label_new(LABEL_HEIGHT_COMBO);
+	GtkWidget* labelWidth = gtk_label_new(_(LABEL_WIDTH_COMBO));
+	GtkWidget* labelHeight = gtk_label_new(_(LABEL_HEIGHT_COMBO));
 	gtk_misc_set_alignment(GTK_MISC(labelWidth), 0.0f, 0.5f);
 	gtk_misc_set_alignment(GTK_MISC(labelHeight), 0.0f, 0.5f);
 	
@@ -86,7 +87,7 @@ PatchCreateDialog::PatchCreateDialog() :
 	gtk_table_attach_defaults(table, _comboHeight, 1, 2, 1, 2);
 	
 	// Create the "create seams" label
-	_removeBrushCheckbox = gtk_check_button_new_with_mnemonic(LABEL_REMOVE_BRUSHES);
+	_removeBrushCheckbox = gtk_check_button_new_with_mnemonic(_(LABEL_REMOVE_BRUSHES));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox), DEFAULT_REMOVE_BRUSHES);
 	gtk_table_attach_defaults(table, _removeBrushCheckbox, 0, 2, 2, 3);
 	
