@@ -1,6 +1,8 @@
 #include "SpecifierType.h"
 #include "util/ObjectivesException.h"
 
+#include "i18n.h"
+
 namespace objectives
 {
 
@@ -10,44 +12,44 @@ int SpecifierType::enumCount = 0;
 // SpecifierType types
 
 const SpecifierType& SpecifierType::SPEC_NONE() { 
-	static SpecifierType _instance("none", "No specifier");
+	static SpecifierType _instance("none", _("No specifier"));
 	return _instance;
 }
 const SpecifierType& SpecifierType::SPEC_NAME() {
-	static SpecifierType _instance("name", "Name of single entity");
+	static SpecifierType _instance("name", _("Name of single entity"));
 	return _instance;
 }
 const SpecifierType& SpecifierType::SPEC_OVERALL() {
-	static SpecifierType _instance("overall", "Overall (component-specific)");
+	static SpecifierType _instance("overall", _("Overall (component-specific)"));
 	return _instance;
 }
 const SpecifierType& SpecifierType::SPEC_GROUP() {
 	static SpecifierType _instance(
-		"group", "Group identifier (component-specific)"
+		"group", _("Group identifier (component-specific)")
 	);
 	return _instance;
 }
 const SpecifierType& SpecifierType::SPEC_CLASSNAME() {
-	static SpecifierType _instance("classname", "Any entity of specified class");
+	static SpecifierType _instance("classname", _("Any entity of specified class"));
 	return _instance;
 }
 const SpecifierType& SpecifierType::SPEC_SPAWNCLASS() {
 	static SpecifierType _instance(
-		"spawnclass", "Any entity with SDK-level spawnclass"
+		"spawnclass", _("Any entity with SDK-level spawnclass")
 	);
 	return _instance;
 }
 const SpecifierType& SpecifierType::SPEC_AI_TYPE() {
-	static SpecifierType _instance("ai_type", "Any AI of specified type");
+	static SpecifierType _instance("ai_type", _("Any AI of specified type"));
 	return _instance;
 }
 const SpecifierType& SpecifierType::SPEC_AI_TEAM() {
-	static SpecifierType _instance("ai_team", "Any AI on specified team");
+	static SpecifierType _instance("ai_team", _("Any AI on specified team"));
 	return _instance;
 }
 const SpecifierType& SpecifierType::SPEC_AI_INNOCENCE() {
 	static SpecifierType _instance(
-		"ai_innocence", "Any AI with specified combat status"
+		"ai_innocence", _("Any AI with specified combat status")
 	);
 	return _instance;
 }
