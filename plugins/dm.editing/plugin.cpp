@@ -1,5 +1,6 @@
 #include "imodule.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "ientityinspector.h"
@@ -50,7 +51,7 @@ public:
 
 		GlobalUIManager().getMenuManager().add("main/map",
 			"FixupMapDialog", ui::menuItem, 
-			"Fixup Map...", // caption
+			_("Fixup Map..."), // caption
 			"", // icon
 			"FixupMapDialog"
 		);

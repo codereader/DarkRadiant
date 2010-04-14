@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include "i18n.h"
 #include "iscenegraph.h"
 #include "iundo.h"
 #include "imainframe.h"
@@ -22,7 +23,7 @@
 
 FixupMap::FixupMap(const std::string& filename) :
 	_filename(filename),
-	_progress(GlobalMainFrame().getTopLevelWindow(), "Fixup in progress")
+	_progress(GlobalMainFrame().getTopLevelWindow(), _("Fixup in progress"))
 {}
 
 FixupMap::Result FixupMap::perform()
@@ -55,17 +56,19 @@ FixupMap::Result FixupMap::perform()
 		try
 		{
 			double fraction = static_cast<double>(parsedSize) / _contents.size();
-			_progress.setTextAndFraction("Processing " + sizetToStr(_curLineNumber) + "...", fraction);
+			_progress.setTextAndFraction(
+				(boost::format(_("Processing line %d...")) % _curLineNumber).str(),
+				fraction);
 		}
 		catch (gtkutil::ModalProgressDialog::OperationAbortedException& ex)
 		{
-			gtkutil::MessageBox box("Fixup cancelled", ex.what(), ui::IDialog::MESSAGE_ERROR);
+			gtkutil::MessageBox box(_("Fixup cancelled"), ex.what(), ui::IDialog::MESSAGE_ERROR);
 			box.run();
 			return _result;
 		}
 	}
 
-	_progress.setTextAndFraction("Completed", 1.0);
+	_progress.setTextAndFraction(_("Completed"), 1.0);
 
 	return _result;
 }
@@ -149,8 +152,8 @@ void FixupMap::loadFixupFile()
 	// Sanity-check the file
 	if (!file_exists(_filename.c_str()) || !file_readable(_filename.c_str()))
 	{
-		gtkutil::MessageBox box("File not readable", 
-			"The specified file doesn't exist.", ui::IDialog::MESSAGE_ERROR);
+		gtkutil::MessageBox box(_("File not readable"), 
+			_("The specified file doesn't exist."), ui::IDialog::MESSAGE_ERROR);
 		box.run();
 		return;
 	}
@@ -161,8 +164,8 @@ void FixupMap::loadFixupFile()
 
 	if (!input)
 	{
-		gtkutil::MessageBox box("File not readable", 
-			"The specified file can't be opened.", ui::IDialog::MESSAGE_ERROR);
+		gtkutil::MessageBox box(_("File not readable"), 
+			_("The specified file can't be opened."), ui::IDialog::MESSAGE_ERROR);
 		box.run();
 		return;
 	}

@@ -5,6 +5,7 @@
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
+#include "i18n.h"
 
 namespace ui
 {
@@ -32,7 +33,7 @@ public:
 					  gtkutil::VFSTreePopulator& popTwo, GtkWindow* parent) :
 		_popOne(popOne),
 		_popTwo(popTwo),
-		_progress(parent, "Analysing GUIs"),
+		_progress(parent, _("Analysing Guis")),
 		_count(0),
 		_numGuis(gui::GuiManager::Instance().getNumGuis()),
 		_evLimiter(50)

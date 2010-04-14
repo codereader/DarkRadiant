@@ -1,5 +1,6 @@
 #include "AIHeadChooserDialog.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "ieclass.h"
@@ -17,7 +18,7 @@ namespace ui
 
 	namespace
 	{
-		const std::string WINDOW_TITLE("Choose AI Head");
+		const char* const WINDOW_TITLE = N_("Choose AI Head");
 
 		// ListStore columns
 		enum
@@ -36,7 +37,7 @@ namespace ui
 	}
 
 AIHeadChooserDialog::AIHeadChooserDialog() :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_headStore(gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING)),
 	_result(RESULT_CANCEL)
 {

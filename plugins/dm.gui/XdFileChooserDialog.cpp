@@ -4,6 +4,7 @@
 #include <gtk/gtk.h>
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
+#include "i18n.h"
 #include "imainframe.h"
 #include "gtkutil/ScrolledFrame.h"
 
@@ -12,7 +13,7 @@ namespace ui
 
 namespace
 {
-	const std::string WINDOW_TITLE("Choose a file...");
+	const char* const WINDOW_TITLE = N_("Choose a file...");
 }
 
 XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defName, XData::XDataPtr& newXData, std::string& filename, XData::XDataLoaderPtr& loader, ReadableEditorDialog* editorDialog)
@@ -47,7 +48,7 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 }
 
 XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog* editorDialog) : 
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GTK_WINDOW(editorDialog->getWindow())),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GTK_WINDOW(editorDialog->getWindow())),
 	_editorDialog(editorDialog),
 	_defName(defName),
 	_result(RESULT_CANCEL)
@@ -60,13 +61,14 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
 	// Create topLabel
-	GtkWidget* topLabel = gtkutil::LeftAlignedLabel("The requested definition has been found in multiple Files. Choose the file:");
+	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
+		_("The requested definition has been found in multiple Files. Choose the file:"));
 
 	// Create the list of files:
 	GtkListStore* listStore = gtk_list_store_new(1, G_TYPE_STRING);
 	_treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(listStore));
 
-	GtkTreeViewColumn* fileCol = gtkutil::TextColumn("Files", 0);
+	GtkTreeViewColumn* fileCol = gtkutil::TextColumn(_("File"), 0);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeview), fileCol);
 
 	// Append all xdMap-entries to the list.
