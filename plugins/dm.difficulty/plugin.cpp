@@ -1,5 +1,6 @@
 #include "imodule.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "ieclass.h"
@@ -49,7 +50,7 @@ public:
 		mm.add("main/map", 	// menu location path
 				"DifficultyEditor", // name
 				ui::menuItem,	// type
-				"Difficulty...",	// caption
+				_("Difficulty..."),	// caption
 				"stimresponse.png",	// icon
 				"DifficultyEditor"); // event name
 	}

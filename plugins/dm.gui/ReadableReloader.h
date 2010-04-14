@@ -6,6 +6,7 @@
 #include "gtkutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 #include "imainframe.h"
+#include "i18n.h"
 
 namespace ui
 {
@@ -27,7 +28,7 @@ private:
 
 public:
 	ReadableReloader() :
-		_progress(GlobalMainFrame().getTopLevelWindow(), "Reloading GUIs"),
+		_progress(GlobalMainFrame().getTopLevelWindow(), _("Reloading Guis")),
 		_count(0),
 		_evLimiter(50)
 	{

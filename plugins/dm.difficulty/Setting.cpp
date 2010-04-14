@@ -1,5 +1,6 @@
 #include "Setting.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include <gtk/gtkliststore.h>
 
@@ -120,16 +121,16 @@ GtkListStore* Setting::getAppTypeStore() {
 
 	GtkTreeIter iter;
 	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, "Assign", 1, EAssign, -1);
+	gtk_list_store_set(store, &iter, 0, _("Assign"), 1, EAssign, -1);
 
 	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, "Add", 1, EAdd, -1);
+	gtk_list_store_set(store, &iter, 0, _("Add"), 1, EAdd, -1);
 
 	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, "Multiply", 1, EMultiply, -1);
+	gtk_list_store_set(store, &iter, 0, _("Multiply"), 1, EMultiply, -1);
 
 	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, "Ignore", 1, EIgnore, -1);
+	gtk_list_store_set(store, &iter, 0, _("Ignore"), 1, EIgnore, -1);
 
 	return store;
 }

@@ -1,5 +1,6 @@
 #include "XDataSelector.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 
 #include "gtkutil/ScrolledFrame.h"
@@ -16,13 +17,13 @@ namespace ui
 
 namespace
 {
-	const std::string WINDOW_TITLE("Choose an XData Definition...");
+	const char* const WINDOW_TITLE = N_("Choose an XData Definition...");
 	const gint WINDOW_WIDTH = 400;
 	const gint WINDOW_HEIGHT = 500;
 }
 
 XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditorDialog* editorDialog) :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GTK_WINDOW(editorDialog->getWindow())),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GTK_WINDOW(editorDialog->getWindow())),
 	_store(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING,	G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
 	_editorDialog(editorDialog),
 	_files(files),
@@ -84,7 +85,7 @@ GtkWidget* XDataSelector::createTreeView()
 	g_signal_connect(select, "changed", G_CALLBACK(onSelectionChanged), this);
 
 	// Single visible column, containing the directory/model name and the icon
-	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn("Model Path", NAME_COLUMN, IMAGE_COLUMN);
+	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(_("Model Path"), NAME_COLUMN, IMAGE_COLUMN);
 	gtk_tree_view_append_column(_treeView, nameCol);				
 
 	// Set the tree store's sort behaviour

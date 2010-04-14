@@ -1,5 +1,6 @@
 #include "DifficultyDialog.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "iundo.h"
 #include "imainframe.h"
@@ -14,14 +15,14 @@
 namespace ui {
 
 namespace {
-	const std::string WINDOW_TITLE = "Difficulty Editor";
+	const char* const WINDOW_TITLE = N_("Difficulty Editor");
 	
 	const std::string RKEY_ROOT = "user/ui/difficultyDialog/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
 DifficultyDialog::DifficultyDialog() :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Load the settings
 	_settingsManager.loadSettings();

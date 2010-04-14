@@ -3,6 +3,8 @@
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkvbox.h>
 #include <gtk/gtkbutton.h>
+
+#include "i18n.h"
 #include "ieclass.h"
 #include "iuimanager.h"
 #include "ientity.h"
@@ -28,7 +30,7 @@ AIHeadPropertyEditor::AIHeadPropertyEditor(Entity* entity, const std::string& ke
 	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
 
 	// Browse button for models
-	GtkWidget* browseButton = gtk_button_new_with_label("Choose AI head...");
+	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose AI head..."));
 	gtk_button_set_image(
 		GTK_BUTTON(browseButton),
 		gtk_image_new_from_pixbuf(

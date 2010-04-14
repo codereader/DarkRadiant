@@ -1,5 +1,6 @@
 #include "DifficultyEditor.h"
 
+#include "i18n.h"
 #include "iuimanager.h"
 #include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
@@ -84,7 +85,7 @@ GtkWidget* DifficultyEditor::createTreeView() {
 	GtkTreeViewColumn* settingCol = gtk_tree_view_column_new();
 	gtk_tree_view_column_pack_start(settingCol, textRenderer, FALSE);
 
-    gtk_tree_view_column_set_title(settingCol, "Setting");
+    gtk_tree_view_column_set_title(settingCol, _("Setting"));
 	gtk_tree_view_column_set_sizing(settingCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_spacing(settingCol, 3);
 
@@ -131,7 +132,7 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 12);
 
 	// The "Settings" label
-	GtkWidget* settingsLabel = gtkutil::LeftAlignedLabel("<b>Setting</b>");
+	GtkWidget* settingsLabel = gtkutil::LeftAlignedLabel(std::string("<b>") + _("Setting") + "</b>");
 	gtk_box_pack_start(GTK_BOX(vbox), settingsLabel, FALSE, FALSE, 0);
 
 	// The table aligning the editing widgets
@@ -145,7 +146,7 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 
 	// ===== CLASSNAME ======
 
-	GtkWidget* classNameLabel = gtkutil::LeftAlignedLabel("Classname:");
+	GtkWidget* classNameLabel = gtkutil::LeftAlignedLabel(_("Classname:"));
 
 	// Add classname widget
 	_classCombo = gtk_combo_box_entry_new_with_model(
@@ -171,14 +172,14 @@ GtkWidget* DifficultyEditor::createEditingWidgets() {
 
 	// ===== SPAWNARG ======
 	_spawnArgEntry = gtk_entry_new();
-	GtkWidget* spawnArgLabel = gtkutil::LeftAlignedLabel("Spawnarg:");
+	GtkWidget* spawnArgLabel = gtkutil::LeftAlignedLabel(_("Spawnarg:"));
 
 	gtk_table_attach(table, spawnArgLabel, 0, 1, 1, 2, GTK_FILL, (GtkAttachOptions)0, 0, 0);
 	gtk_table_attach_defaults(table, _spawnArgEntry, 1, 2, 1, 2);
 
 	// ===== ARGUMENT ======
 	_argumentEntry = gtk_entry_new();
-	GtkWidget* argumentLabel = gtkutil::LeftAlignedLabel("Argument:");
+	GtkWidget* argumentLabel = gtkutil::LeftAlignedLabel(_("Argument:"));
 
 	// The appType chooser
 	GtkTreeModel* model = GTK_TREE_MODEL(difficulty::Setting::getAppTypeStore());
@@ -248,7 +249,7 @@ void DifficultyEditor::updateEditorWidgets() {
 
 			if (_settings->isOverridden(setting)) {
 				editWidgetsSensitive = FALSE;
-				noteText += "This default setting is overridden, cannot edit.";
+				noteText += _("This default setting is overridden, cannot edit.");
 			}
 
 			gtk_entry_set_text(GTK_ENTRY(_spawnArgEntry), setting->spawnArg.c_str());

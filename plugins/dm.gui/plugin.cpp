@@ -6,6 +6,7 @@
 // General
 #include "debugging/debugging.h"
 #include <boost/enable_shared_from_this.hpp>
+#include "i18n.h"
 
 // Modules
 #include "icommandsystem.h"
@@ -89,14 +90,14 @@ public:
 
 		mm.add("main/entity",
 			"ReadableEditorDialog", ui::menuItem, 
-			"Readable Editor", // caption
+			_("Readable Editor"), // caption
 			"book.png", // icon
 			"ReadableEditorDialog"
 		);
 
 		mm.insert("main/file/refreshShaders",
 			"ReloadReadables", ui::menuItem, 
-			"Reload Readable Guis", // caption
+			_("Reload Readable Guis"), // caption
 			"book.png", // icon
 			"ReloadReadables"
 		);
@@ -106,17 +107,17 @@ public:
 	void constructPreferences()
 	{
 		// Add a page to the given group
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Readable Editor");
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Readable Editor"));
 
 		ComboBoxValueList options;
 
-		options.push_back("Mod/xdata");
-		options.push_back("Mod Base/xdata");
-		options.push_back("Custom Folder");
+		options.push_back(_("Mod/xdata"));
+		options.push_back(_("Mod Base/xdata"));
+		options.push_back(_("Custom Folder"));
 
-		page->appendCombo("XData Storage Folder", ui::RKEY_READABLES_STORAGE_FOLDER, options);
+		page->appendCombo(_("XData Storage Folder"), ui::RKEY_READABLES_STORAGE_FOLDER, options);
 
-		page->appendPathEntry("Custom Folder", ui::RKEY_READABLES_CUSTOM_FOLDER, true);
+		page->appendPathEntry(_("Custom Folder"), ui::RKEY_READABLES_CUSTOM_FOLDER, true);
 	}
 
 	void shutdownModule()
