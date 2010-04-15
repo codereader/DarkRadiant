@@ -220,6 +220,9 @@ GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const
 	// Get the description of this colour item from the registry
 	std::string descriptionPath = std::string("user/ui/colourschemes/descriptions/") + name;
 	std::string description = GlobalRegistry().get(descriptionPath);
+
+	// Give gettext a chance to translate the colour description
+	description = _(description.c_str());
 	
 	// Create a new horizontal divider
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 10);
