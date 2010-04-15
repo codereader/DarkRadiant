@@ -18,7 +18,7 @@ void ToolbarManager::initialise() {
 		// Query the registry
 		loadToolbars();
 	}
-	catch (std::runtime_error e) {
+	catch (std::runtime_error& e) {
 		std::cout << "ToolbarManager: Warning: " << e.what() << std::endl;
 	}
 }

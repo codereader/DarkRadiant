@@ -4,6 +4,7 @@
 #include "igroupdialog.h"
 #include "iuimanager.h"
 #include "iundo.h"
+#include "i18n.h"
 
 #include <gtk/gtk.h>
 #include "gtkutil/Paned.h"
@@ -30,14 +31,14 @@ ScriptWindow::ScriptWindow() :
 
 	gtk_container_set_focus_chain(GTK_CONTAINER(_inScrolled), NULL);
 
-	GtkWidget* runButton = gtkutil::TextButton("Run Script");
+	GtkWidget* runButton = gtkutil::TextButton(_("Run Script"));
 	g_signal_connect(G_OBJECT(runButton), "clicked", G_CALLBACK(onRunScript), this);
 
 	GtkWidget* buttonBar = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(buttonBar), runButton, FALSE, FALSE, 0);
 
 	GtkWidget* inputVBox = gtk_vbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(inputVBox), gtkutil::LeftAlignedLabel("Python Script Input"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputVBox), gtkutil::LeftAlignedLabel(_("Python Script Input")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputVBox), _inScrolled, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(inputVBox), buttonBar, FALSE, FALSE, 0);
 
@@ -84,7 +85,7 @@ void ScriptWindow::onRunScript(GtkWidget* button, ScriptWindow* self)
 	if (!result->errorOccurred && output.empty())
 	{
 		// If no output and no error, print at least _something_
-		self->_outView.appendText("OK", gtkutil::ConsoleView::STANDARD);
+		self->_outView.appendText(_("OK"), gtkutil::ConsoleView::STANDARD);
 	}
 	else
 	{
