@@ -18,6 +18,11 @@
 namespace ui
 {
 
+	namespace
+	{
+		const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
+	}
+
 // Display the singleton instance
 std::string EntityClassChooser::chooseEntityClass() {
 	return InstancePtr()->showAndBlock();
