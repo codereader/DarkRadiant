@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 
+#include "i18n.h"
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkbutton.h>
 #include <gtk/gtkimage.h>
@@ -76,7 +77,7 @@ GtkWidget* PathEntry::getEntryWidget() const
 
 void PathEntry::onBrowseFiles(GtkWidget* button, PathEntry* self)
 {
-	FileChooser fileChooser(gtk_widget_get_toplevel(button), "Choose File", true, false);
+	FileChooser fileChooser(gtk_widget_get_toplevel(button), _("Choose File"), true, false);
 
 	fileChooser.setCurrentPath(self->getValue());
 
@@ -95,7 +96,7 @@ void PathEntry::onBrowseFiles(GtkWidget* button, PathEntry* self)
 
 void PathEntry::onBrowseFolders(GtkWidget* button, PathEntry* self)
 {
-	FileChooser fileChooser(gtk_widget_get_toplevel(button), "Choose Directory", true, true);
+	FileChooser fileChooser(gtk_widget_get_toplevel(button), _("Choose Directory"), true, true);
 
 	std::string curEntry = self->getValue();
 

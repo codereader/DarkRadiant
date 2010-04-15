@@ -1,6 +1,7 @@
 #include "ModalProgressDialog.h"
 #include "RightAlignment.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 
 namespace gtkutil {
@@ -50,7 +51,7 @@ void ModalProgressDialog::setText(const std::string& text) {
 
 	// If the aborted flag is set, throw an exception here
 	if (_aborted) {
-		throw OperationAbortedException("Operation cancelled by user");
+		throw OperationAbortedException(_("Operation cancelled by user"));
 	}
 
 	// Set the text
@@ -68,7 +69,7 @@ void ModalProgressDialog::setTextAndFraction(const std::string& text, double fra
 {
 	// If the aborted flag is set, throw an exception here
 	if (_aborted) {
-		throw OperationAbortedException("Operation cancelled by user");
+		throw OperationAbortedException(_("Operation cancelled by user"));
 	}
 
 	// Set the text

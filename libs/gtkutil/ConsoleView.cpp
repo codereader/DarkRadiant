@@ -3,6 +3,7 @@
 #include <gtk/gtk.h>
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/IConv.h"
+#include "i18n.h"
 #include <boost/algorithm/string/replace.hpp>
 
 namespace gtkutil
@@ -91,7 +92,7 @@ void ConsoleView::onPopulatePopup(GtkTextView* textview, GtkMenu* menu, ConsoleV
 {
 	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
 
-	GtkWidget* item = gtk_menu_item_new_with_label("Clear");
+	GtkWidget* item = gtk_menu_item_new_with_label(_("Clear"));
 	g_signal_connect(G_OBJECT (item), "activate", G_CALLBACK(onClearConsole), self);
 
 	gtk_widget_show(item);
