@@ -1,5 +1,6 @@
 #include "Modifiers.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "iregistry.h"
 
@@ -24,7 +25,8 @@ void Modifiers::loadModifierDefinitions() {
 		if (modifierList.size() > 0) {
 			globalOutputStream() << "EventManager: Modifiers found: " 
 								 << modifierList.size() << "\n";
-			for (unsigned int i = 0; i < modifierList.size(); i++) {
+			for (std::size_t i = 0; i < modifierList.size(); ++i)
+			{
 				const std::string name = modifierList[i].getAttributeValue("name");
 				
 				int bitIndex;
@@ -136,9 +138,9 @@ unsigned int Modifiers::getKeyboardFlags(const unsigned int state) {
 std::string Modifiers::getModifierStr(const unsigned int modifierFlags, bool forMenu) {
 	std::string returnValue = "";
 	
-	const std::string controlStr = (forMenu) ? "Ctrl" : "CONTROL";
-	const std::string shiftStr = (forMenu) ? "Shift" : "SHIFT";
-	const std::string altStr = (forMenu) ? "Alt" : "ALT";
+	const std::string controlStr = (forMenu) ? _("Ctrl") : "CONTROL";
+	const std::string shiftStr = (forMenu) ? _("Shift") : "SHIFT";
+	const std::string altStr = (forMenu) ? _("Alt") : "ALT";
 	const std::string connector = (forMenu) ? "-" : "+";
 	
 	if ((modifierFlags & (1 << getModifierBitIndex("CONTROL"))) != 0) {

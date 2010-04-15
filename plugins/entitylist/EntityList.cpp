@@ -12,11 +12,12 @@
 #include "entitylib.h"
 #include "scenelib.h"
 #include "icamera.h"
+#include "i18n.h"
 
 namespace ui {
 
 	namespace {
-		const std::string WINDOW_TITLE = "Entity List";
+		const char* const WINDOW_TITLE = N_("Entity List");
 		const std::string RKEY_ROOT = "user/ui/entityList/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 
@@ -24,7 +25,7 @@ namespace ui {
 	}
 
 EntityList::EntityList() : 
-	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
+	gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
 	_callbackActive(false)
 {
 	// Set the default border width in accordance to the HIG
@@ -60,7 +61,7 @@ void EntityList::populateWindow() {
 	
 	gtk_tree_view_set_model(_treeView, _treeModel);
 	
-	GtkTreeViewColumn* column = gtkutil::TextColumn("Name", GraphTreeModel::COL_NAME);
+	GtkTreeViewColumn* column = gtkutil::TextColumn(_("Name"), GraphTreeModel::COL_NAME);
 	gtk_tree_view_column_pack_start(column, gtk_cell_renderer_text_new(), TRUE);
 	
 	_selection = gtk_tree_view_get_selection(_treeView);
@@ -74,7 +75,7 @@ void EntityList::populateWindow() {
 	gtk_tree_view_column_clicked(column);
 
 	// Create the toggle item
-	_focusOnSelectedEntityToggle = gtk_check_button_new_with_label("Focus on the selected entity in the camera.");
+	_focusOnSelectedEntityToggle = gtk_check_button_new_with_label(_("Focus camera on selected entity."));
 
 	// Update the toggle item status according to the registry
 	bool isActive = GlobalRegistry().get(RKEY_ENTITYLIST_FOCUS_SELECTION) == "1";
