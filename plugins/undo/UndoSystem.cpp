@@ -7,6 +7,7 @@
  * On undo, the Undoables are called to re-import the states stored in the UndoMementos.  
  */
 #include "imodule.h"
+#include "i18n.h"
 
 #include "icommandsystem.h"
 #include "itextstream.h"
@@ -264,8 +265,8 @@ public:
 	
 	// Gets called by the PreferenceSystem as request to create the according settings page
 	void constructPreferences() {
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Undo System");
-		page->appendSpinner("Undo Queue Size", RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
+		page->appendSpinner(_("Undo Queue Size"), RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
 	}
 
 	// RegisterableModule implementation

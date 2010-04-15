@@ -9,6 +9,7 @@
 #include "iregistry.h"
 #include "selectionlib.h"
 #include <boost/bind.hpp>
+#include "i18n.h"
 
 #include "WaveFrontExporter.h"
 
@@ -27,7 +28,7 @@ void WaveFrontModule::exportSelectionAsOBJ(const cmd::ArgumentList& args)
 	
 	// Query the filename from the user
 	ui::IFileChooserPtr chooser = GlobalDialogManager().createFileChooser(
-		"Save as Obj", false, false, "*.obj", ".obj"
+		_("Save as Obj"), false, false, "*.obj", ".obj"
 	);
 
 	chooser->setCurrentPath(GlobalRegistry().get(RKEY_MAP_PATH));
@@ -85,7 +86,7 @@ void WaveFrontModule::initialiseModule(const ApplicationContext& ctx)
 	mm.insert("main/file/createCM", 	// menu location path
 			"ExportSelectedAsOBJ", // name
 			ui::menuItem,	// type
-			"Export Selection as OBJ...",	// caption
+			_("Export Selection as OBJ..."),	// caption
 			"",	// icon
 			"ExportSelectedAsOBJ"); // event name
 }
