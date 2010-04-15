@@ -2,6 +2,7 @@
 
 #include "Objective.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include <algorithm>
 
@@ -28,7 +29,7 @@ DifficultyPanel::DifficultyPanel() :
 {
 	// Create the main widget
 	_widgets[WIDGET_MAIN] = gtk_hbox_new(FALSE, 6);
-	_widgets[WIDGET_TOGGLE_ALL_DIFF] = gtk_check_button_new_with_label("All Levels");
+	_widgets[WIDGET_TOGGLE_ALL_DIFF] = gtk_check_button_new_with_label(_("All Levels"));
 
 	// First pack the "All difficulty levels" toggle
 	gtk_box_pack_start(GTK_BOX(_widgets[WIDGET_MAIN]), 
@@ -39,9 +40,9 @@ DifficultyPanel::DifficultyPanel() :
 
 	// Create the various toggles
 	// TODO: Connect to optional Difficulty plugin
-	_toggles.push_back(gtk_check_button_new_with_label("Level 1: Easy"));
-	_toggles.push_back(gtk_check_button_new_with_label("Level 2: Hard"));
-	_toggles.push_back(gtk_check_button_new_with_label("Level 3: Expert"));
+	_toggles.push_back(gtk_check_button_new_with_label(_("Level 1: Easy")));
+	_toggles.push_back(gtk_check_button_new_with_label(_("Level 2: Hard")));
+	_toggles.push_back(gtk_check_button_new_with_label(_("Level 3: Expert")));
 
 	// The hbox for the difficulty levels 1..N
 	_widgets[WIDGET_TOGGLE_HBOX] = gtk_hbox_new(TRUE, 6);

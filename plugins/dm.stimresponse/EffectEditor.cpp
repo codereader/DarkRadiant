@@ -9,13 +9,14 @@
 #include "gtkutil/TreeModel.h"
 #include "ResponseEditor.h"
 #include <iostream>
+#include "i18n.h"
 
 namespace ui {
 
 	namespace {
-		const std::string WINDOW_TITLE = "Edit Response Effect";
-		const unsigned int WINDOW_MIN_WIDTH = 300;
-		const unsigned int WINDOW_MIN_HEIGHT = 50;
+		const char* const WINDOW_TITLE = N_("Edit Response Effect");
+		const gint WINDOW_MIN_WIDTH = 300;
+		const gint WINDOW_MIN_HEIGHT = 50;
 		
 		// The name of the _SELF entity as parsed by the response scripts
 		const std::string RKEY_ENTITY_SELF = "game/stimResponseSystem/selfEntity";
@@ -33,7 +34,7 @@ EffectEditor::EffectEditor(GtkWindow* parent,
 						   const unsigned int effectIndex,
 						   StimTypes& stimTypes,
 						   ui::ResponseEditor& editor) :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, parent),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), parent),
 	_argTable(NULL),
 	_tooltips(NULL),
 	_entityStore(gtk_list_store_new(1, G_TYPE_STRING)),
@@ -124,7 +125,7 @@ void EffectEditor::populateWindow() {
 	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_effectTypeCombo), 
 								  captionRenderer, "text", EFFECT_TYPE_CAPTION_COL);
 								  
-	GtkWidget* effectLabel = gtkutil::LeftAlignedLabel("Effect:");
+	GtkWidget* effectLabel = gtkutil::LeftAlignedLabel(_("Effect:"));
 	
 	gtk_box_pack_start(GTK_BOX(effectHBox), effectLabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(effectHBox), 
@@ -134,11 +135,11 @@ void EffectEditor::populateWindow() {
 	
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), effectHBox, FALSE, FALSE, 3);
 	
-	_stateToggle = gtk_check_button_new_with_label("Active");
+	_stateToggle = gtk_check_button_new_with_label(_("Active"));
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), _stateToggle, FALSE, FALSE, 3);
 	g_signal_connect(G_OBJECT(_stateToggle), "toggled", G_CALLBACK(onStateToggle), this);
 	
-	GtkWidget* argLabel = gtkutil::LeftAlignedLabel("<b>Arguments</b>");
+	GtkWidget* argLabel = gtkutil::LeftAlignedLabel(std::string("<b>") + _("Arguments") + "</b>");
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), argLabel, FALSE, FALSE, 0);
 	
 	GtkWidget* saveButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
@@ -277,7 +278,8 @@ void EffectEditor::createArgumentWidgets(ResponseEffect& effect) {
 
 void EffectEditor::save() {
 	// Request each argument item to save the content into the argument
-	for (unsigned int i = 0; i < _argumentItems.size(); i++) {
+	for (std::size_t i = 0; i < _argumentItems.size(); ++i)
+	{
 		_argumentItems[i]->save();
 	}
 	// Call the update routine of the parent editor

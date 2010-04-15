@@ -11,10 +11,14 @@
 #include "gtkutil/TreeModel.h"
 
 #include "EClassTreeBuilder.h"
+#include "i18n.h"
 
 namespace ui {
 
-	namespace {
+	namespace
+	{
+		const char* const ECLASSTREE_TITLE = N_("Entity Class Tree");
+
 		// TreeView column numbers
 	    enum {
 	        PROPERTY_NAME_COLUMN,
@@ -26,7 +30,7 @@ namespace ui {
 	}
 
 EClassTree::EClassTree() :
-	gtkutil::BlockingTransientWindow(ECLASSTREE_TITLE, GlobalMainFrame().getTopLevelWindow())
+	gtkutil::BlockingTransientWindow(_(ECLASSTREE_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -93,7 +97,7 @@ GtkWidget* EClassTree::createEClassTreeView() {
 	// Pack the columns
 	// Single column with icon and name
 	GtkTreeViewColumn* col = 
-		gtkutil::IconTextColumn("Classname", NAME_COLUMN, ICON_COLUMN);
+		gtkutil::IconTextColumn(_("Classname"), NAME_COLUMN, ICON_COLUMN);
 	gtk_tree_view_column_set_sort_column_id(col, NAME_COLUMN);
 	
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_eclassView), col);
@@ -116,7 +120,7 @@ GtkWidget* EClassTree::createPropertyTreeView() {
 
     // Create the Property column
     GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(nameCol, "Property");
+    gtk_tree_view_column_set_title(nameCol, _("Property"));
 	gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_spacing(nameCol, 3);
 
@@ -133,7 +137,7 @@ GtkWidget* EClassTree::createPropertyTreeView() {
 
 	// Create the value column
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(valCol, "Value");
+    gtk_tree_view_column_set_title(valCol, _("Value"));
 	gtk_tree_view_column_set_sizing(valCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 
     GtkCellRenderer* valRenderer = gtk_cell_renderer_text_new();
