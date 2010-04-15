@@ -6,6 +6,7 @@
 #include "Doom3MapFormat.h"
 #include "Tokens.h"
 
+#include "i18n.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/lexical_cast.hpp>
@@ -58,20 +59,20 @@ void InfoFile::parse() {
 
 		if (version != MAP_INFO_VERSION) {
 			_isValid = false;
-			throw parser::ParseException("Map Info File Version invalid");
+			throw parser::ParseException(_("Map Info File Version invalid"));
 		}
 	}
-	catch (parser::ParseException e) {
+	catch (parser::ParseException& e) {
         globalErrorStream() 
             << "[mapdoom3] Unable to parse info file header: " 
-            << e.what() << "\n";
+			<< e.what() << std::endl;
 		_isValid = false;
         return;
     }
-    catch (boost::bad_lexical_cast e) {
+    catch (boost::bad_lexical_cast& e) {
         globalErrorStream() 
             << "[mapdoom3] Unable to parse info file version: " 
-            << e.what() << "\n";
+			<< e.what() << std::endl;
 		_isValid = false;
         return;
     }
@@ -129,7 +130,7 @@ void InfoFile::parseLayerNames() {
 			}
 
 			globalOutputStream() << "[InfoFile]: Parsed layer #" 
-				<< layerID << " with name " << name.c_str() << "\n";
+				<< layerID << " with name " << name << std::endl;
 
 			_layerNames.insert(LayerNameMap::value_type(layerID, name));
 

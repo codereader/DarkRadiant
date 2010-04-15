@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "iuimanager.h"
 #include "iselection.h"
+#include "i18n.h"
 
 #include "gdk/gdkkeys.h"
 
@@ -19,6 +20,11 @@
 		
 		const float DEFAULT_STRAFE_SPEED = 0.65f;
 		const int DEFAULT_MIN_SELECTION_COUNT = -1;
+
+		inline std::string makeBold(const std::string& input)
+		{
+			return "<b>" + input + "</b>";
+		}
 	}
 
 MouseEventManager::MouseEventManager(Modifiers& modifiers) : 
@@ -503,34 +509,34 @@ ui::ObserverEvent MouseEventManager::getObserverEvent(const unsigned int state) 
 std::string MouseEventManager::printXYViewEvent(const ui::XYViewEvent& xyViewEvent) {
 	
 	switch (xyViewEvent) {
-		case ui::xyNothing: return "<b>Nothing</b>";
-		case ui::xyMoveView: return "<b>Move View</b>";
-		case ui::xySelect: return "<b>Select</b>";
-		case ui::xyZoom: return "<b>Zoom View</b>";
-		case ui::xyCameraMove: return "<b>Drag Camera</b>";
-		case ui::xyCameraAngle: return "<b>Point Camera</b>";
-		case ui::xyNewBrushDrag: return "<b>Create New Brush</b>";
-		default: return "<b>Unknown event</b>";
+		case ui::xyNothing: return makeBold(_("Nothing"));
+		case ui::xyMoveView: return makeBold(_("Move View"));
+		case ui::xySelect: return makeBold(_("Select"));
+		case ui::xyZoom: return makeBold(_("Zoom View"));
+		case ui::xyCameraMove: return makeBold(_("Drag Camera"));
+		case ui::xyCameraAngle: return makeBold(_("Point Camera"));
+		case ui::xyNewBrushDrag: return makeBold(_("Create New Brush"));
+		default: return makeBold(_("Unknown event"));
 	}
 }
 
 std::string MouseEventManager::printObserverEvent(const ui::ObserverEvent& observerEvent) {
 	
 	switch (observerEvent) {
-		case ui::obsNothing: return "<b>Nothing</b>";
-		case ui::obsManipulate: return "<b>Manipulate</b>";
-		case ui::obsSelect: return "<b>Select</b>"; 
-		case ui::obsToggle: return "<b>Toggle Selection</b>";
-		case ui::obsToggleFace: return "<b>Toggle Face Selection</b>";
-		case ui::obsReplace: return "<b>Cycle Selection</b>";
-		case ui::obsReplaceFace: return "<b>Cycle Face Selection</b>";
-		case ui::obsCopyTexture: return "<b>Copy Texture</b>";
-		case ui::obsPasteTextureProjected: return "<b>PasteTexture Projected</b>";		
-		case ui::obsPasteTextureNatural: return "<b>PasteTexture Natural</b>";
-		case ui::obsPasteTextureCoordinates: return "<b>PasteTexture Coordinates</b>";
-		case ui::obsPasteTextureToBrush: return "<b>Paste Texture to all Brush Faces</b>";
-		case ui::obsJumpToObject: return "<b>Jump to Object</b>";
-		default: return "<b>Unknown event</b>";
+		case ui::obsNothing: return makeBold(_("Nothing"));
+		case ui::obsManipulate: return makeBold(_("Manipulate"));
+		case ui::obsSelect: return makeBold(_("Select")); 
+		case ui::obsToggle: return makeBold(_("Toggle Selection"));
+		case ui::obsToggleFace: return makeBold(_("Toggle Face Selection"));
+		case ui::obsReplace: return makeBold(_("Cycle Selection"));
+		case ui::obsReplaceFace: return makeBold(_("Cycle Face Selection"));
+		case ui::obsCopyTexture: return makeBold(_("Copy Texture"));
+		case ui::obsPasteTextureProjected: return makeBold(_("PasteTexture Projected"));		
+		case ui::obsPasteTextureNatural: return makeBold(_("PasteTexture Natural"));
+		case ui::obsPasteTextureCoordinates: return makeBold(_("PasteTexture Coordinates"));
+		case ui::obsPasteTextureToBrush: return makeBold(_("Paste Texture to all Brush Faces"));
+		case ui::obsJumpToObject: return makeBold(_("Jump to Object"));
+		default: return makeBold(_("Unknown event"));
 	}
 }
 
