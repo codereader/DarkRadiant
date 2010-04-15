@@ -12,7 +12,6 @@ namespace {
 
     /* CONSTANTS */
     
-    const char* ECLASS_CHOOSER_TITLE = "Create entity";
     const char* FOLDER_ICON = "folder16.png";
     const char* ENTITY_ICON = "cmenu_add_entity.png";
     
