@@ -314,7 +314,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 	
 	if (brushes.empty()) {
-		globalOutputStream() << _("CSG Subtract: No brushes selected.)") << std::endl;
+		globalOutputStream() << _("CSG Subtract: No brushes selected.") << std::endl;
 		gtkutil::errorDialog(_("CSG Subtract: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}

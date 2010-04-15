@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-04-15 18:21+0200\n"
-"PO-Revision-Date: 2010-04-15 18:24+0100\n"
+"POT-Creation-Date: 2010-04-15 19:45+0200\n"
+"PO-Revision-Date: 2010-04-15 19:45+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -40,9 +40,6 @@ msgid ""
 msgstr ""
 
 #: ..\..\radiant\brush\csg\CSG.cpp:317
-msgid "CSG Subtract: No brushes selected.)"
-msgstr ""
-
 #: ..\..\radiant\brush\csg\CSG.cpp:318
 msgid "CSG Subtract: No brushes selected."
 msgstr ""
