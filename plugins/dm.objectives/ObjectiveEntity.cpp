@@ -2,6 +2,7 @@
 #include "ObjectiveKeyExtractor.h"
 #include "TargetList.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "scenelib.h"
 #include "ientity.h"
@@ -10,6 +11,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
+#include <boost/format.hpp>
 
 namespace objectives {
 
@@ -129,7 +131,7 @@ void ObjectiveEntity::addObjective() {
 		
 	// Insert a new Objective at this ID.
 	Objective o;
-	o.description = "New objective " + boost::lexical_cast<std::string>(index);
+	o.description = (boost::format(_("New objective %d")) % index).str();
 	_objectives.insert(ObjectiveMap::value_type(index, o));
 }
 

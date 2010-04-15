@@ -7,6 +7,7 @@
 #include "gtkutil/TreeModel.h"
 #include "entitylib.h"
 #include "SREntity.h"
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -247,7 +248,7 @@ void StimTypes::visit(const std::string& key, const std::string& value) {
 		add(id,
 			idStr,	// The name is the id in string format: e.g. "1002"
 			stimCaption,	// The caption
-			"Custom Stim",
+			_("Custom Stim"),
 			ICON_CUSTOM_STIM,
 			true	// custom stim
 		);

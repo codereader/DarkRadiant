@@ -5,6 +5,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "string/string.h"
 
@@ -26,9 +27,9 @@ ItemComponentEditor::ItemComponentEditor(Component& component) :
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);
 
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel("<b>Item:</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_widget), _itemSpec.getWidget(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel("Amount:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(_("Amount:")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignment(_amount), FALSE, FALSE, 0);
 
     // Populate the SpecifierEditCombo with the first specifier

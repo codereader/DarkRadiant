@@ -33,7 +33,7 @@ namespace objectives
 // CONSTANTS 
 namespace {
 
-	const char* DIALOG_TITLE = N_("Mission objectives");
+	const char* DIALOG_TITLE = N_("Mission Objectives");
 	
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";

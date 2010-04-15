@@ -1,5 +1,6 @@
 #include "LogicEditor.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 
@@ -20,8 +21,8 @@ LogicEditor::LogicEditor()
 	_widgets[WIDGET_FAILURE_LOGIC_ENTRY] = gtk_entry_new();
 
 	// Create the labels for each text entry field
-	GtkWidget* successLogicLabel = gtkutil::LeftAlignedLabel("Success Logic:");
-	GtkWidget* failureLogicLabel = gtkutil::LeftAlignedLabel("Failure Logic:");
+	GtkWidget* successLogicLabel = gtkutil::LeftAlignedLabel(_("Success Logic:"));
+	GtkWidget* failureLogicLabel = gtkutil::LeftAlignedLabel(_("Failure Logic:"));
 
 	// Pack the label and the widget into a GtkTable
 	GtkWidget* table = gtk_table_new(2, 2, FALSE);

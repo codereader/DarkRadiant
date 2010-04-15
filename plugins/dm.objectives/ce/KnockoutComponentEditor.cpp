@@ -6,6 +6,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "string/string.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 
 namespace objectives
@@ -30,12 +31,12 @@ KnockoutComponentEditor::KnockoutComponentEditor(Component& component) :
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>Knockout target:</b>"),
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Knockout target:") + "</b>"),
         FALSE, FALSE, 0
     );
 
 	gtk_box_pack_start(GTK_BOX(_widget), _targetCombo.getWidget(), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel("Amount:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(_("Amount:")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignment(_amount), FALSE, FALSE, 0);
 
     // Populate the SpecifierEditCombo with the first specifier

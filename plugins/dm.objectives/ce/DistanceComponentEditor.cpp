@@ -6,6 +6,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "string/string.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 
 namespace objectives {
@@ -33,27 +34,27 @@ DistanceComponentEditor::DistanceComponentEditor(Component& component) :
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(_widget), hbox, FALSE, FALSE, 0);
 
-    gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel("Entity:"), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel(_("Entity:")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), _entity, TRUE, TRUE, 0);
 
 	GtkWidget* hbox2 = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(_widget), hbox2, FALSE, FALSE, 0);
 
-    gtk_box_pack_start(GTK_BOX(hbox2), gtkutil::LeftAlignedLabel("Location Entity:"), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox2), gtkutil::LeftAlignedLabel(_("Location Entity:")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox2), _location, TRUE, TRUE, 0);
 
 	GtkWidget* hbox3 = gtk_hbox_new(FALSE, 6);
 	gtk_box_pack_start(GTK_BOX(_widget), hbox3, FALSE, FALSE, 0);
 
-    gtk_box_pack_start(GTK_BOX(hbox3), gtkutil::LeftAlignedLabel("Distance:"), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox3), gtkutil::LeftAlignedLabel(_("Distance:")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox3), _distance, TRUE, TRUE, 0);
 
 	// The second row contains the clock interval
 	GtkWidget* hbox4 = gtk_hbox_new(FALSE, 6);
 
-	gtk_box_pack_start(GTK_BOX(hbox4), gtkutil::LeftAlignedLabel("Clock interval:"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox4), gtkutil::LeftAlignedLabel(_("Clock interval:")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox4), _interval, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox4), gtkutil::LeftAlignedLabel("seconds"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox4), gtkutil::LeftAlignedLabel(_("seconds")), FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(_widget), hbox4, FALSE, FALSE, 0);
 
