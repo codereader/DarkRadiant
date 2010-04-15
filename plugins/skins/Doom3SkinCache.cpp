@@ -47,7 +47,7 @@ public:
 			// Pass the contents back to the SkinCache module for parsing
 			_cache.parseFile(is, fileName);
 		}
-		catch (parser::ParseException e) {
+		catch (parser::ParseException& e) {
 			std::cout << "[skins]: in " << fileName << ": " << e.what() << std::endl;
 		}
 	}
@@ -111,7 +111,7 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 				_allSkins.push_back(skinName);
 			}
 		}
-		catch (parser::ParseException e) {
+		catch (parser::ParseException& e) {
 			std::cout << "[skins]: in " << filename << ": " << e.what() << "\n";
 		}
 	}

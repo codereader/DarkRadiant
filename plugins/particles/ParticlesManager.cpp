@@ -86,7 +86,7 @@ ParticleStage ParticlesManager::parseParticleStage(parser::DefTokeniser& tok) {
 			try {
 				stage.setCount(boost::lexical_cast<int>(tok.nextToken()));
 			}
-			catch (boost::bad_lexical_cast e) {
+			catch (boost::bad_lexical_cast& e) {
 				std::cerr << "[particles] Bad count value '" << token 
 						  << "'" << std::endl;
 			}

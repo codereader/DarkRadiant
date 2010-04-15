@@ -2,6 +2,7 @@
 
 #include "iuimanager.h"
 #include "string/string.h"
+#include "i18n.h"
 
 namespace ui
 {
@@ -11,7 +12,7 @@ namespace
 	// These are used for the general-purpose Filter Menu:
 	const std::string FILTERS_MENU_BAR = "filters";
 	const std::string FILTERS_MENU_FOLDER = "allfilters";
-	const std::string FILTERS_MENU_CAPTION = "_Filters";
+	const char* const FILTERS_MENU_CAPTION = N_("_Filters");
 
 	const std::string MENU_ICON = "iconFilter16.png";
 }
@@ -27,11 +28,11 @@ FilterMenu::FilterMenu()
 
 	// Menu not yet constructed, do it now
 	// Create the menu bar first
-	_menu = menuManager.add("", _path, menuBar, "Filters", "", "");
+	_menu = menuManager.add("", _path, menuBar, _("Filters"), "", "");
 	
 	// Create the folder as child of the bar
 	menuManager.add(_path, FILTERS_MENU_FOLDER, 
-					menuFolder, FILTERS_MENU_CAPTION, "", "");
+					menuFolder, _(FILTERS_MENU_CAPTION), "", "");
 
 	_targetPath = _path + "/" + FILTERS_MENU_FOLDER;
 	

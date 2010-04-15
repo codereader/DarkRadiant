@@ -20,8 +20,6 @@ namespace {
     const int EDITOR_DEFAULT_SIZE_Y = 450;
     
     const int COLOURS_PER_COLUMN = 10;
-    
-    const std::string EDITOR_WINDOW_TITLE = "Edit Colour Schemes";
 }
 	
 class ColourSchemeEditor :

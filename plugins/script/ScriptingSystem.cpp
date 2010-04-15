@@ -1,5 +1,6 @@
 #include "ScriptingSystem.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
@@ -174,9 +175,9 @@ void ScriptingSystem::initialise()
 
 	// Add the scripting widget to the groupdialog
 	GlobalGroupDialog().addPage(
-		"ScriptWindow", "Script", "icon_script.png", 
+		"ScriptWindow", _("Script"), "icon_script.png", 
 		ScriptWindow::Instance().getWidget(), 
-		"Script", "console"
+		_("Script"), "console"
 	);
 }
 
@@ -430,7 +431,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	mm.insert("main/file/refreshShaders", 	// menu location path
 			"ReloadScripts", // name
 			ui::menuItem,	// type
-			"Reload Scripts",	// caption
+			_("Reload Scripts"),	// caption
 			"",	// icon
 			"ReloadScripts"); // event name
 
