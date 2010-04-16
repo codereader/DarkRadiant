@@ -120,7 +120,7 @@ int main (int argc, char* argv[]) {
    		// Update all accelerators, at this point all commands should be setup
    		GlobalUIManager().getMenuManager().updateAccelerators();
 	  
-		ui::Splash::Instance().setProgressAndText(_("Startup Complete"), 1.0f);  
+		ui::Splash::Instance().setProgressAndText(_("DarkRadiant Startup Complete"), 1.0f);  
 
 		ui::Splash::Instance().hide();
 

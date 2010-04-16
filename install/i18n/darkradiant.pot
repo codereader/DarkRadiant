@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-04-15 19:45+0200\n"
+"POT-Creation-Date: 2010-04-16 17:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -157,7 +157,7 @@ msgid "Starting MainFrame"
 msgstr ""
 
 #: ..\..\radiant\main.cpp:123
-msgid "Startup Complete"
+msgid "DarkRadiant Startup Complete"
 msgstr ""
 
 #: ..\..\radiant\mainframe_old.cpp:141
