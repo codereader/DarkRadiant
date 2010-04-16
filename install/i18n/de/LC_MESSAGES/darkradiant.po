@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-04-15 19:45+0200\n"
-"PO-Revision-Date: 2010-04-15 19:45+0100\n"
+"POT-Creation-Date: 2010-04-16 17:47+0200\n"
+"PO-Revision-Date: 2010-04-16 17:54+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -407,7 +407,7 @@ msgstr ""
 #: ..\..\radiant\selection\algorithm\Entity.cpp:105
 #: ..\..\radiant\selection\algorithm\Entity.cpp:122
 msgid "Exactly two entities must be selected for this operation."
-msgstr "Für diese Operation muss genau eine Brush ausgewählt sein."
+msgstr "Für diese Operation müssen genau zwei Entities ausgewählt sein."
 
 #: ..\..\radiant\selection\algorithm\Group.cpp:211
 msgid "Cannot reparent primitives to entity. Please select at least one brush/patch and exactly one entity.(The entity has to be selected last.)"
@@ -2629,7 +2629,7 @@ msgstr ""
 
 #: ..\..\plugins\dm.conversation\ConversationEditor.cpp:18
 msgid "Edit Conversation"
-msgstr ""
+msgstr "Konversation bearbeiten"
 
 #: ..\..\plugins\dm.conversation\ConversationEditor.cpp:79
 msgid "Properties"
@@ -4955,5 +4955,9 @@ msgstr ""
 
 #: xml_file_content.cpp:30
 msgid "Drag-Selection Box"
+msgstr ""
+
+#: ..\..\radiant\main.cpp:123
+msgid "DarkRadiant Startup Complete"
 msgstr ""
 
