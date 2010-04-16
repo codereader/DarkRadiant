@@ -169,7 +169,7 @@ void RadiantWindowObserver::onMouseMotion(const WindowVector& position, const un
 	
 	/* If the mouse button is currently held, this can be considered a drag, so
 	 * notify the according mouse move callback */
-	if( _mouseDown)
+	if( _mouseDown && _mouseMotionCallback)
 	{
 		_mouseMotionCallback(window_to_normalised_device(position, _width, _height));
 	}
@@ -198,7 +198,10 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
   		_manipulateObserver.setEvent(event);
   		
   		// Get the callback and call it with the arguments
-		_mouseUpCallback(window_to_normalised_device(position, _width, _height));
+		if (_mouseUpCallback)
+		{
+			_mouseUpCallback(window_to_normalised_device(position, _width, _height));
+		}
 	}
 	
 	// Stop listening for cancel events
