@@ -165,10 +165,14 @@ struct ShaderNameFunctor {
 	
 	// TreeStore to populate
 	GtkTreeStore* _store;
+
+	std::string _otherMaterialsPath;
 	
 	// Constructor
-	ShaderNameFunctor(GtkTreeStore* store)
-	: _store(store) {}
+	ShaderNameFunctor(GtkTreeStore* store) : 
+		_store(store),
+		_otherMaterialsPath(std::string(_(OTHER_MATERIALS_FOLDER)) + "/")
+	{}
 	
 	// Destructor. Free all the heap-allocated GtkTreeIters in the
 	// map
@@ -235,8 +239,8 @@ struct ShaderNameFunctor {
 		// If the name starts with "textures/", add it to the treestore.
 		if (!boost::algorithm::istarts_with(rawName, "textures/"))
 		{
-			rawName = _(OTHER_MATERIALS_FOLDER);
-			rawName += "/" + rawName;
+			// prepend the "other materials" folder
+			rawName.insert(rawName.begin(), _otherMaterialsPath.begin(), _otherMaterialsPath.end());
 		}
 		
 		{
