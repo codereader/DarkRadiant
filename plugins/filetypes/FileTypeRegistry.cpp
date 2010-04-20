@@ -1,5 +1,6 @@
 #include "FileTypeRegistry.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "os/path.h"
 #include "debugging/debugging.h"
@@ -8,7 +9,7 @@
 #include <boost/algorithm/string/case_conv.hpp>
 
 RadiantFileTypeRegistry::RadiantFileTypeRegistry() {
-	addType("*", "*", FileTypePattern("All Files", "*.*"));
+	addType("*", "*", FileTypePattern(_("All Files"), "*.*"));
 }
 	
 void RadiantFileTypeRegistry::addType(const std::string& moduleType, 

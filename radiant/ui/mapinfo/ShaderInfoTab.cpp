@@ -1,6 +1,7 @@
 #include "ShaderInfoTab.h"
 
 #include <gtk/gtk.h>
+#include "i18n.h"
 
 #include "string/string.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -10,7 +11,7 @@
 namespace ui {
 
 	namespace {
-		const std::string TAB_NAME("Shaders");
+		const char* const TAB_NAME = N_("Shaders");
 		const std::string TAB_ICON("icon_texture.png");
 	   	
 	   	enum {
@@ -33,7 +34,7 @@ GtkWidget* ShaderInfoTab::getWidget() {
 }
 
 std::string ShaderInfoTab::getLabel() {
-	return TAB_NAME;
+	return _(TAB_NAME);
 }
 
 std::string ShaderInfoTab::getIconName() {
@@ -51,13 +52,13 @@ void ShaderInfoTab::populateTab() {
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
 	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(_treeView), TRUE);
 
-	GtkTreeViewColumn* shaderCol = gtkutil::TextColumn("Shader", SHADER_COL);
+	GtkTreeViewColumn* shaderCol = gtkutil::TextColumn(_("Shader"), SHADER_COL);
 	gtk_tree_view_column_set_sort_column_id(shaderCol, SHADER_COL);
 	
-	GtkTreeViewColumn* faceCountCol = gtkutil::TextColumn("Faces", FACE_COUNT_COL);
+	GtkTreeViewColumn* faceCountCol = gtkutil::TextColumn(_("Faces"), FACE_COUNT_COL);
 	gtk_tree_view_column_set_sort_column_id(faceCountCol, FACE_COUNT_COL);
 
-	GtkTreeViewColumn* patchCountCol = gtkutil::TextColumn("Patches", PATCH_COUNT_COL);
+	GtkTreeViewColumn* patchCountCol = gtkutil::TextColumn(_("Patches"), PATCH_COUNT_COL);
 	gtk_tree_view_column_set_sort_column_id(patchCountCol, PATCH_COUNT_COL);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), shaderCol);
@@ -86,7 +87,7 @@ void ShaderInfoTab::populateTab() {
 	
 	_shaderCount = gtkutil::LeftAlignedLabel("");
 	
-	GtkWidget* shaderLabel = gtkutil::LeftAlignedLabel("Shaders used:");
+	GtkWidget* shaderLabel = gtkutil::LeftAlignedLabel(_("Shaders used:"));
 	
 	gtk_widget_set_size_request(shaderLabel, 100, -1);
 		

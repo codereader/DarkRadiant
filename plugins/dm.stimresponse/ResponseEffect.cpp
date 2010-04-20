@@ -1,5 +1,6 @@
 #include "ResponseEffect.h"
 
+#include "i18n.h"
 #include "string/string.h"
 #include <boost/algorithm/string/replace.hpp>
 
@@ -183,7 +184,7 @@ void ResponseEffect::clearArgumentList() {
 }
 
 std::string ResponseEffect::getArgumentStr() {
-	if (_eclass == NULL) return "Error: eclass pointer invalid.";
+	if (_eclass == NULL) return _("Error: eclass pointer invalid.");
 	
 	std::string returnValue = _eclass->getAttribute("editor_argString").value;
 	
@@ -193,7 +194,7 @@ std::string ResponseEffect::getArgumentStr() {
 		
 		// Check for a bool
 		if (i->second.type == "b") {
-			replacement = (i->second.value.empty()) ? "no" : "yes";
+			replacement = (i->second.value.empty()) ? _("no") : _("yes");
 		}
 		
 		boost::algorithm::replace_all(returnValue, needle, replacement); 

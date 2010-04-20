@@ -1,9 +1,11 @@
 #ifndef OBJECTIVEENTITYFINDER_H_
 #define OBJECTIVEENTITYFINDER_H_
 
+#include "i18n.h"
 #include "scenelib.h"
 
 #include <string>
+#include <boost/format.hpp>
 
 namespace objectives
 {
@@ -102,8 +104,8 @@ public:
 			{
 				// Construct the display string
 				std::string name = ePtr->getKeyValue("name");
-				std::string sDisplay = "<b>" + name + "</b> at [ "	
-									   + ePtr->getKeyValue("origin") + " ]";
+				std::string sDisplay = 
+					(boost::format(_("<b>%s</b> at [ %s ]")) % name % ePtr->getKeyValue("origin")).str();
 				
 				// Add the entity to the list
 				GtkTreeIter iter;

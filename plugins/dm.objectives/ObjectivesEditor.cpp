@@ -6,6 +6,7 @@
 #include "MissionLogicDialog.h"
 #include "util/ObjectivesException.h"
 
+#include "i18n.h"
 #include "iscenegraph.h"
 #include "imainframe.h"
 #include "iregistry.h"
@@ -24,6 +25,7 @@
 
 #include <gtk/gtk.h>
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 namespace objectives
 {
@@ -31,7 +33,7 @@ namespace objectives
 // CONSTANTS 
 namespace {
 
-	const char* DIALOG_TITLE = "Mission objectives"; 	
+	const char* DIALOG_TITLE = N_("Mission Objectives");
 	
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
@@ -51,11 +53,16 @@ namespace {
 		WIDGET_MISSION_SUCCESS_LOGIC,
 		WIDGET_MISSION_FAILURE_LOGIC,
 	};
+
+	inline std::string makeBold(const std::string& input)
+	{
+		return "<b>" + input + "</b>";
+	}
 }
 
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor() :
-	gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_objectiveEntityList(gtk_list_store_new(3, 
   										  G_TYPE_STRING, 		// display text
   										  G_TYPE_BOOLEAN,		// start active
@@ -78,26 +85,26 @@ ObjectivesEditor::ObjectivesEditor() :
     // Main dialog vbox
 	GtkWidget* mainVbx = gtk_vbox_new(FALSE, 12);
 	gtk_box_pack_start(GTK_BOX(mainVbx), 
-					   gtkutil::LeftAlignedLabel("<b>Objectives entities</b>"),
+					   gtkutil::LeftAlignedLabel(makeBold(_("Objectives entities"))),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx),
 					   gtkutil::LeftAlignment(createEntitiesPanel(), 18, 1.0),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx), 
-					   gtkutil::LeftAlignedLabel("<b>Objectives</b>"),
+					   gtkutil::LeftAlignedLabel(makeBold(_("Objectives"))),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx),
 					   gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0),
 					   TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx), 
-					   gtkutil::LeftAlignedLabel("<b>Success/Failure Logic</b>"),
+					   gtkutil::LeftAlignedLabel(makeBold(_("Success/Failure Logic"))),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx),
 					   gtkutil::LeftAlignment(createLogicPanel(), 18, 1.0),
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(mainVbx), gtk_hseparator_new(), FALSE, FALSE, 0);
 	gtk_box_pack_end(GTK_BOX(mainVbx), createButtons(), FALSE, FALSE, 0);
-					   
+
 	// Add vbox to dialog
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_container_add(GTK_CONTAINER(getWindow()), mainVbx);
@@ -137,7 +144,7 @@ GtkWidget* ObjectivesEditor::createEntitiesPanel() {
 	GtkCellRenderer* startToggle = gtk_cell_renderer_toggle_new();
 	GtkTreeViewColumn* startCol = 
 		gtk_tree_view_column_new_with_attributes(
-			"Start", startToggle, "active", 1, NULL);
+			_("Start"), startToggle, "active", 1, NULL);
 	g_signal_connect(G_OBJECT(startToggle), "toggled", 
 					 G_CALLBACK(_onStartActiveCellToggled), this);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), startCol);
@@ -181,9 +188,9 @@ GtkWidget* ObjectivesEditor::createObjectivesPanel() {
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Description", 1, false));
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Description"), 1, false));
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Diff.", 2, false));
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Diff."), 2, false));
 	
 	// Beside the list is an vbox containing add, edit, delete and clear buttons
 	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
@@ -247,7 +254,7 @@ GtkWidget* ObjectivesEditor::createLogicPanel() {
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
 	gtk_widget_set_sensitive(hbox, FALSE);
 
-	GtkWidget* editLogicButton = gtk_button_new_with_label("Edit mission success/failure logic..."); 
+	GtkWidget* editLogicButton = gtk_button_new_with_label(_("Edit mission success/failure logic...")); 
 	gtk_button_set_image(GTK_BUTTON(editLogicButton), 
 						 gtk_image_new_from_stock(GTK_STOCK_EDIT, 
 						 						  GTK_ICON_SIZE_BUTTON));
@@ -367,7 +374,7 @@ void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args) {
 	}
 	catch (ObjectivesException e) {
 		gtkutil::errorDialog(
-			std::string("Exception occurred: ") + e.what(), 
+			std::string(_("Exception occurred: ")) + e.what(), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 
@@ -525,7 +532,7 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 	{
 		// Objective entityclass(es) not defined
         gtkutil::errorDialog(
-            "Unable to create Objective Entity: classes not defined in registry.",
+            _("Unable to create Objective Entity: classes not defined in registry."),
             GlobalMainFrame().getTopLevelWindow()
         );
 		return;
@@ -556,7 +563,7 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
     {
         // Objective entityclass was not found
         gtkutil::errorDialog(
-            "Unable to create Objective Entity: class '" + objEClass + "' not found.",
+			(boost::format(_("Unable to create Objective Entity: class '%s' not found.")) % objEClass).str(),
             GlobalMainFrame().getTopLevelWindow()
         );
     }

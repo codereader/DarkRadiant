@@ -8,6 +8,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include "string/string.h"
+#include "i18n.h"
 
 namespace ui {
 
@@ -49,9 +50,9 @@ void CustomStimEditor::createContextMenu() {
 		
 	// Each menu gets a delete item
 	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
-														   "Delete");
+														   _("Delete"));
 	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
-														   "Add");
+														   _("Add"));
 	
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu),
 						  _contextMenu.add);
@@ -99,7 +100,7 @@ void CustomStimEditor::populatePage() {
 	// Add the columns to the treeview
 	// ID number
 	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(numCol, "ID");
+	gtk_tree_view_column_set_title(numCol, _("ID"));
 	GtkCellRenderer* numRenderer = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start(numCol, numRenderer, FALSE);
 	gtk_tree_view_column_set_attributes(numCol, numRenderer, 
@@ -109,7 +110,7 @@ void CustomStimEditor::populatePage() {
 	
 	// The Type
 	GtkTreeViewColumn* typeCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(typeCol, "Type");
+	gtk_tree_view_column_set_title(typeCol, _("Type"));
 	
 	GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(typeCol, typeIconRenderer, FALSE);
@@ -137,7 +138,7 @@ void CustomStimEditor::populatePage() {
 	
 	// The name widgets
 	GtkWidget* nameHBox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.nameLabel = gtk_label_new("Name:");
+	_propertyWidgets.nameLabel = gtk_label_new(_("Name:"));
 	_propertyWidgets.nameEntry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(nameHBox), _propertyWidgets.nameLabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(nameHBox), _propertyWidgets.nameEntry, TRUE, TRUE, 0);
@@ -148,8 +149,8 @@ void CustomStimEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), nameHBox, FALSE, FALSE, 0);
 	
 	GtkWidget* infoText = gtkutil::LeftAlignedLabel(
-		"<b>Note:</b> Please beware that deleting custom stims may\n"
-		"affect other entities as well. So check before you delete." 
+		_("<b>Note:</b> Please beware that deleting custom stims may\n"
+		"affect other entities as well. So check before you delete.")
 	);
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), infoText, FALSE, FALSE, 0);
 }
@@ -157,13 +158,13 @@ void CustomStimEditor::populatePage() {
 GtkWidget* CustomStimEditor::createListButtons() {
 	GtkWidget* hbox = gtk_hbox_new(TRUE, 6);
 	
-	_listButtons.add = gtk_button_new_with_label("Add Stim Type");
+	_listButtons.add = gtk_button_new_with_label(_("Add Stim Type"));
 	gtk_button_set_image(
 		GTK_BUTTON(_listButtons.add), 
 		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
 	);
 	
-	_listButtons.remove = gtk_button_new_with_label("Remove Stim Type");
+	_listButtons.remove = gtk_button_new_with_label(_("Remove Stim Type"));
 	gtk_button_set_image(
 		GTK_BUTTON(_listButtons.remove), 
 		gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON)
@@ -239,7 +240,7 @@ void CustomStimEditor::addStimType() {
 	_stimTypes.add(id,
 				   intToStr(id),
 				   "CustomStimType",
-				   "Custom Stim",
+				   _("Custom Stim"),
 				   ICON_CUSTOM_STIM,
 				   true);
 	
@@ -256,9 +257,9 @@ int CustomStimEditor::getIdFromSelection() {
 
 void CustomStimEditor::removeStimType()
 {
-	IDialogPtr dialog = GlobalDialogManager().createMessageBox("Delete Custom Stim",
-		"Beware that other entities <i>might</i> still be using this stim type.\n"
-		"Do you really want to delete this custom stim?", ui::IDialog::MESSAGE_ASK);
+	IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Delete Custom Stim"),
+		_("Beware that other entities <i>might</i> still be using this stim type.\n"
+		"Do you really want to delete this custom stim?"), ui::IDialog::MESSAGE_ASK);
 
 	if (dialog->run() == IDialog::RESULT_YES)
 	{

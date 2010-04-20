@@ -7,12 +7,13 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "string/string.h"
 #include <iostream>
+#include "i18n.h"
 
 namespace ui {
 	
 	namespace {
-		const unsigned int TREE_VIEW_WIDTH = 320;
-		const unsigned int TREE_VIEW_HEIGHT = 160;
+		const gint TREE_VIEW_WIDTH = 320;
+		const gint TREE_VIEW_HEIGHT = 160;
 	}
 
 ClassEditor::ClassEditor(StimTypes& stimTypes) :
@@ -49,7 +50,7 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 	
 	// The S/R icon
 	GtkTreeViewColumn* classCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(classCol, "S/R");
+	gtk_tree_view_column_set_title(classCol, _("S/R"));
 	GtkCellRenderer* pixbufRenderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(classCol, pixbufRenderer, FALSE);
 	gtk_tree_view_column_set_attributes(classCol, pixbufRenderer, 
@@ -59,7 +60,7 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 	
 	// The Type
 	GtkTreeViewColumn* typeCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(typeCol, "Type");
+	gtk_tree_view_column_set_title(typeCol, _("Type"));
 	
 	GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
 	gtk_tree_view_column_pack_start(typeCol, typeIconRenderer, FALSE);
@@ -147,7 +148,7 @@ ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector() {
 	// Type Selector
 	widgets.hbox = gtk_hbox_new(FALSE, 0);
 	
-	widgets.label = gtkutil::LeftAlignedLabel("Type:");
+	widgets.label = gtkutil::LeftAlignedLabel(_("Type:"));
 	// Cast the helper class onto a ListStore and create a new treeview
 	GtkListStore* stimListStore = _stimTypes;
 	widgets.list = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
@@ -184,13 +185,13 @@ GtkWidget* ClassEditor::createListButtons() {
 	gtk_combo_box_set_active(GTK_COMBO_BOX(_addType.list), 0);
 	gtk_box_pack_start(GTK_BOX(hbox), _addType.hbox, TRUE, TRUE, 0);
 	
-	_listButtons.add = gtk_button_new_with_label("Add");
+	_listButtons.add = gtk_button_new_with_label(_("Add"));
 	gtk_button_set_image(
 		GTK_BUTTON(_listButtons.add), 
 		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
 	);
 	
-	_listButtons.remove = gtk_button_new_with_label("Remove");
+	_listButtons.remove = gtk_button_new_with_label(_("Remove"));
 	gtk_button_set_image(
 		GTK_BUTTON(_listButtons.remove), 
 		gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON)

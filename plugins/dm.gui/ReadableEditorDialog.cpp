@@ -22,6 +22,7 @@
 #include <gdk/gdkkeysyms.h>
 #include "boost/filesystem/fstream.hpp"
 #include "string/string.h"
+#include "i18n.h"
 
 // Modules
 #include "imainframe.h"
@@ -31,24 +32,21 @@
 #include "igame.h"
 #include "idialogmanager.h"
 
-
-
 namespace ui
 {
 
 // consts:
 namespace 
 {
-	const std::string WINDOW_TITLE("Readable Editor");
+	const char* const WINDOW_TITLE = N_("Readable Editor");
 
 	const std::string RKEY_READABLE_BASECLASS("game/readables/readableBaseClass");
 
-	const char* const NO_ENTITY_ERROR = "Cannot run Readable Editor on this selection.\n"
-		"Please select a single XData entity."; 
+	const char* const NO_ENTITY_ERROR = N_("Cannot run Readable Editor on this selection.\n"
+		"Please select a single XData entity."); 
 
-	const std::string LABEL_PAGE_RELATED("Page Editing:");
-
-	const std::string LABEL_GENERAL_PROPERTIES("General Properties:");
+	const char* const LABEL_PAGE_RELATED = N_("Page Editing:");
+	const char* const LABEL_GENERAL_PROPERTIES = N_("General Properties:");
 
 	const int MIN_ENTRY_WIDTH = 35;
 
@@ -87,7 +85,7 @@ namespace
 //////////////////////////////////////////////////////////////////////////////
 // Public and protected methods:
 ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_guiView(new gui::ReadableGuiView),
 	_result(RESULT_CANCEL),
 	_entity(entity),
@@ -168,7 +166,7 @@ void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
 	}
 
 	// Exactly one redable entity must be selected.
-	gtkutil::errorDialog(NO_ENTITY_ERROR, GlobalMainFrame().getTopLevelWindow());
+	gtkutil::errorDialog(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -180,7 +178,7 @@ GtkWidget* ReadableEditorDialog::createGeneralPropertiesInterface()
 
 	// Add a Headline-label
 	GtkWidget* generalPropertiesLabel = gtkutil::LeftAlignedLabel(
-		std::string("<span weight=\"bold\">") + LABEL_GENERAL_PROPERTIES + "</span>"
+		std::string("<span weight=\"bold\">") + _(LABEL_GENERAL_PROPERTIES) + "</span>"
 	);
 	gtk_box_pack_start(GTK_BOX(vbox), generalPropertiesLabel, FALSE, FALSE, 0);
 
@@ -199,7 +197,7 @@ GtkWidget* ReadableEditorDialog::createGeneralPropertiesInterface()
 	gtk_entry_set_width_chars(GTK_ENTRY(nameEntry), MIN_ENTRY_WIDTH);
 	g_signal_connect(G_OBJECT(nameEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
 
-	GtkWidget* nameLabel = gtkutil::LeftAlignedLabel("Inventory Name:");
+	GtkWidget* nameLabel = gtkutil::LeftAlignedLabel(_("Inventory Name:"));
 
 	gtk_table_attach(table, nameLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, nameEntry, 1, 2, curRow, curRow+1);
@@ -212,7 +210,7 @@ GtkWidget* ReadableEditorDialog::createGeneralPropertiesInterface()
 	g_signal_connect(G_OBJECT(xdataNameEntry), "key-press-event", G_CALLBACK(onKeyPress), this);
 	g_signal_connect_after(G_OBJECT(xdataNameEntry), "focus-out-event", G_CALLBACK(onFocusOut), this);
 
-	GtkWidget* xDataNameLabel = gtkutil::LeftAlignedLabel("XData Name:");
+	GtkWidget* xDataNameLabel = gtkutil::LeftAlignedLabel(_("XData Name:"));
 
 	// Add a browse-button.
 	GtkWidget* browseXdButton = gtk_button_new_with_label("");
@@ -236,17 +234,17 @@ GtkWidget* ReadableEditorDialog::createGeneralPropertiesInterface()
 	g_signal_connect(G_OBJECT(numPagesSpin), "value-changed", G_CALLBACK(onValueChanged), this);
 	g_signal_connect(G_OBJECT(numPagesSpin), "key-press-event", G_CALLBACK(onKeyPress), this);
 
-	GtkWidget* numPagesLabel = gtkutil::LeftAlignedLabel("Number of Pages:");
+	GtkWidget* numPagesLabel = gtkutil::LeftAlignedLabel(_("Number of Pages:"));
 
 	// Page Layout:
-	GtkWidget* pageLayoutLabel = gtkutil::LeftAlignedLabel("Layout:");
-	GtkWidget* oneSidedRadio = gtk_radio_button_new_with_label(NULL, "One-sided");
+	GtkWidget* pageLayoutLabel = gtkutil::LeftAlignedLabel(_("Layout:"));
+	GtkWidget* oneSidedRadio = gtk_radio_button_new_with_label(NULL, _("One-sided"));
 	gtk_widget_add_events(oneSidedRadio, GDK_BUTTON_PRESS_MASK );
 	g_signal_connect(G_OBJECT(oneSidedRadio), "button-press-event", G_CALLBACK(onOneSided), this);
 	_widgets[WIDGET_RADIO_ONESIDED] = oneSidedRadio;
 
 	GSList* pageLayoutGroup = gtk_radio_button_get_group(GTK_RADIO_BUTTON(oneSidedRadio));
-	GtkWidget* twoSidedRadio = gtk_radio_button_new_with_label(pageLayoutGroup, "Two-sided");
+	GtkWidget* twoSidedRadio = gtk_radio_button_new_with_label(pageLayoutGroup, _("Two-sided"));
 	gtk_widget_add_events(twoSidedRadio, GDK_BUTTON_PRESS_MASK );
 	g_signal_connect(G_OBJECT(twoSidedRadio), "button-press-event", G_CALLBACK(onTwoSided), this);
 	_widgets[WIDGET_RADIO_TWOSIDED] = twoSidedRadio;
@@ -267,7 +265,7 @@ GtkWidget* ReadableEditorDialog::createGeneralPropertiesInterface()
 	// Pageturn Sound
 	GtkWidget* pageTurnEntry = gtk_entry_new();
 	_widgets[WIDGET_PAGETURN_SND] = pageTurnEntry;
-	GtkWidget* pageTurnLabel = gtkutil::LeftAlignedLabel("Pageturn Sound:");
+	GtkWidget* pageTurnLabel = gtkutil::LeftAlignedLabel(_("Pageturn Sound:"));
 
 	gtk_table_attach(table, pageTurnLabel, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, pageTurnEntry, 1, 2, curRow, curRow+1);
@@ -281,17 +279,17 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 
 	// Add a label for page related edits and add it to the vbox
 	GtkWidget* pageRelatedLabel = gtkutil::LeftAlignedLabel(
-		std::string("<span weight=\"bold\">") + LABEL_PAGE_RELATED + "</span>"
+		std::string("<span weight=\"bold\">") + _(LABEL_PAGE_RELATED) + "</span>"
 	);
 	gtk_box_pack_start(GTK_BOX(vbox), pageRelatedLabel, FALSE, FALSE, 0);
 
 	// Insert Button
-	GtkWidget* insertButton = gtk_button_new_with_label("Insert");
+	GtkWidget* insertButton = gtk_button_new_with_label(_("Insert"));
 	gtk_button_set_image(GTK_BUTTON(insertButton), gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_SMALL_TOOLBAR));
 	g_signal_connect(G_OBJECT(insertButton), "clicked", G_CALLBACK(onInsert), this);
 
 	// Delete Button
-	GtkWidget* deleteButton = gtk_button_new_with_label("Delete");
+	GtkWidget* deleteButton = gtk_button_new_with_label(_("Delete"));
 	gtk_button_set_image(GTK_BUTTON(deleteButton), gtk_image_new_from_stock(GTK_STOCK_REMOVE, GTK_ICON_SIZE_SMALL_TOOLBAR));
 	g_signal_connect(G_OBJECT(deleteButton), "clicked", G_CALLBACK(onDelete), this);
 
@@ -312,7 +310,7 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 	gtk_button_set_image(GTK_BUTTON(lastPage), gtk_image_new_from_stock(GTK_STOCK_GOTO_LAST, GTK_ICON_SIZE_SMALL_TOOLBAR));
 	g_signal_connect(G_OBJECT(lastPage), "clicked", G_CALLBACK(onLastPage), this);
 
-	GtkWidget* currPageLabel = gtkutil::LeftAlignedLabel("Current Page:");
+	GtkWidget* currPageLabel = gtkutil::LeftAlignedLabel(_("Current Page:"));
 	GtkWidget* currPageDisplay = gtkutil::LeftAlignedLabel("1");
 	_widgets[WIDGET_CURRENT_PAGE] = currPageDisplay;
 
@@ -330,7 +328,7 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(GTK_WIDGET(hboxPS), 18, 1.0), FALSE, FALSE, 0);
 
 	// Add a gui chooser with a browse-button
-	GtkWidget* guiLabel = gtkutil::LeftAlignedLabel("Gui Definition:");
+	GtkWidget* guiLabel = gtkutil::LeftAlignedLabel(_("Gui Definition:"));
 
 	GtkWidget* guiEntry = gtk_entry_new();
 	_widgets[WIDGET_GUI_ENTRY] = guiEntry;
@@ -366,11 +364,11 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 	gint curRow = 0;
 
 	// Create "left" and "right" labels and add them to the first row of the table
-	GtkWidget* pageLeftLabel = gtk_label_new("Left");
+	GtkWidget* pageLeftLabel = gtk_label_new(_("Left"));
 	gtk_label_set_justify(GTK_LABEL(pageLeftLabel), GTK_JUSTIFY_CENTER);
 	_widgets[WIDGET_PAGE_LEFT] = pageLeftLabel;
 
-	GtkWidget* pageRightLabel = gtk_label_new("Right");
+	GtkWidget* pageRightLabel = gtk_label_new(_("Right"));
 	gtk_label_set_justify(GTK_LABEL(pageRightLabel), GTK_JUSTIFY_CENTER);
 	_widgets[WIDGET_PAGE_RIGHT] = pageRightLabel;
 
@@ -380,7 +378,7 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 	curRow++;
 
 	// Create "title" label and title-textViews and add them to the second row of the table. Add the key-press-event.
-	GtkWidget* titleLabel = gtkutil::LeftAlignedLabel("Title:");
+	GtkWidget* titleLabel = gtkutil::LeftAlignedLabel(_("Title:"));
 
 	GtkWidget* textViewTitle = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewTitle), GTK_WRAP_WORD);
@@ -404,7 +402,7 @@ GtkWidget* ReadableEditorDialog::createPageRelatedInterface()
 	curRow++;
 
 	// Create "body" label and body-textViews and add them to the third row of the table. Add the key-press-event.
-	GtkWidget* bodyLabel = gtkutil::LeftAlignedLabel("Body:");
+	GtkWidget* bodyLabel = gtkutil::LeftAlignedLabel(_("Body:"));
 
 	GtkWidget* textViewBody = gtk_text_view_new();
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textViewBody), GTK_WRAP_WORD);
@@ -431,15 +429,15 @@ void ReadableEditorDialog::createMenus()
 	// Insert menu
 	GtkWidget* mIns = gtk_menu_new();
 
-	GtkWidget* insWhole = gtk_menu_item_new_with_label("Insert whole Page");
+	GtkWidget* insWhole = gtk_menu_item_new_with_label(_("Insert whole Page"));
 	g_signal_connect(G_OBJECT(insWhole), "activate", G_CALLBACK(onInsertWhole), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mIns), insWhole);
 
-	GtkWidget* insLeft = gtk_menu_item_new_with_label("Insert on left Side");
+	GtkWidget* insLeft = gtk_menu_item_new_with_label(_("Insert on left Side"));
 	g_signal_connect(G_OBJECT(insLeft), "activate", G_CALLBACK(onInsertLeft), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mIns), insLeft);
 
-	GtkWidget* insRight = gtk_menu_item_new_with_label("Insert on right Side");
+	GtkWidget* insRight = gtk_menu_item_new_with_label(_("Insert on right Side"));
 	g_signal_connect(G_OBJECT(insRight), "activate", G_CALLBACK(onInsertRight), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mIns), insRight);
 
@@ -449,15 +447,15 @@ void ReadableEditorDialog::createMenus()
 	// Delete Menu
 	GtkWidget* mDel = gtk_menu_new();
 
-	GtkWidget* delWhole = gtk_menu_item_new_with_label("Delete whole Page");
+	GtkWidget* delWhole = gtk_menu_item_new_with_label(_("Delete whole Page"));
 	g_signal_connect(G_OBJECT(delWhole), "activate", G_CALLBACK(onDeleteWhole), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mDel), delWhole);
 
-	GtkWidget* delLeft = gtk_menu_item_new_with_label("Delete on left Side");
+	GtkWidget* delLeft = gtk_menu_item_new_with_label(_("Delete on left Side"));
 	g_signal_connect(G_OBJECT(delLeft), "activate", G_CALLBACK(onDeleteLeft), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mDel), delLeft);
 
-	GtkWidget* delRight = gtk_menu_item_new_with_label("Delete on right Side");
+	GtkWidget* delRight = gtk_menu_item_new_with_label(_("Delete on right Side"));
 	g_signal_connect(G_OBJECT(delRight), "activate", G_CALLBACK(onDeleteRight), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mDel), delRight);
 
@@ -467,7 +465,7 @@ void ReadableEditorDialog::createMenus()
 	// Append Menu
 	GtkWidget* mApp = gtk_menu_new();
 
-	GtkWidget* append = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Append Page");
+	GtkWidget* append = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, _("Append Page"));
 	g_signal_connect(G_OBJECT(append), "activate", G_CALLBACK(onMenuAppend), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mApp), append);
 
@@ -477,7 +475,7 @@ void ReadableEditorDialog::createMenus()
 	// Prepend Menu
 	GtkWidget* mPre = gtk_menu_new();
 
-	GtkWidget* prepend = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Prepend Page");
+	GtkWidget* prepend = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, _("Prepend Page"));
 	g_signal_connect(G_OBJECT(prepend), "activate", G_CALLBACK(onMenuPrepend), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mPre), prepend);
 
@@ -487,15 +485,15 @@ void ReadableEditorDialog::createMenus()
 	// Tools Menu
 	GtkWidget* mTools = gtk_menu_new();
 
-	GtkWidget* impSum = gtkutil::StockIconMenuItem(GTK_STOCK_DND, "Show last XData import summary");
+	GtkWidget* impSum = gtkutil::StockIconMenuItem(GTK_STOCK_DND, _("Show last XData import summary"));
 	g_signal_connect(G_OBJECT(impSum), "activate", G_CALLBACK(onXdImpSum), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mTools), impSum);
 
-	GtkWidget* dupDef = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Show duplicated definitions");
+	GtkWidget* dupDef = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, _("Show duplicated definitions"));
 	g_signal_connect(G_OBJECT(dupDef), "activate", G_CALLBACK(onDupDef), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mTools), dupDef);
 
-	GtkWidget* guiImp = gtkutil::StockIconMenuItem(GTK_STOCK_DND, "Show Gui import summary");
+	GtkWidget* guiImp = gtkutil::StockIconMenuItem(GTK_STOCK_DND, _("Show Gui import summary"));
 	g_signal_connect(G_OBJECT(guiImp), "activate", G_CALLBACK(onGuiImpSum), this);
 	gtk_menu_shell_append(GTK_MENU_SHELL(mTools), guiImp);
 
@@ -513,11 +511,11 @@ GtkWidget* ReadableEditorDialog::createButtonPanel()
 	_widgets[WIDGET_SAVEBUTTON] = gtk_button_new_from_stock(GTK_STOCK_SAVE);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_SAVEBUTTON]), "clicked", G_CALLBACK(onSave), this);
 	
-	GtkWidget* saveCloseButton = gtk_button_new_with_label("Save & Close");
+	GtkWidget* saveCloseButton = gtk_button_new_with_label(_("Save & Close"));
 	gtk_button_set_image(GTK_BUTTON(saveCloseButton), gtk_image_new_from_stock(GTK_STOCK_APPLY, GTK_ICON_SIZE_LARGE_TOOLBAR));
 	g_signal_connect(G_OBJECT(saveCloseButton), "clicked", G_CALLBACK(onSaveClose), this);
 
-	GtkWidget* toolsButton = gtk_button_new_with_label("Tools");
+	GtkWidget* toolsButton = gtk_button_new_with_label(_("Tools"));
 	gtk_button_set_image(GTK_BUTTON(toolsButton), gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_SMALL_TOOLBAR) );
 	g_signal_connect(G_OBJECT(toolsButton), "clicked", G_CALLBACK(onToolsClicked), this);
 
@@ -547,7 +545,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	{
 		_mapBasedFilename = _mapBasedFilename.substr(nameStartPos, _mapBasedFilename.rfind(".") - nameStartPos);
 	}
-	std::string defaultXdName = "readables/" + _mapBasedFilename + "/<Name_Here>";
+	std::string defaultXdName = "readables/" + _mapBasedFilename + "/" + _("<Name_Here>");
 	_mapBasedFilename += ".xd";
 
 	// Load xdata
@@ -563,9 +561,16 @@ bool ReadableEditorDialog::initControlsFromEntity()
 				return false;
 			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
 			{
-				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
-					"Failed to import " + _entity->getKeyValue("xdata_contents") + ".\nCreating a new XData definition...\n\nDo you want to open the import summary?",
-					ui::IDialog::MESSAGE_ASK, GTK_WINDOW(this->getWindow()));
+				std::string msg = (boost::format(_("Failed to import %s.")) % _entity->getKeyValue("xdata_contents")).str();
+				msg += "\n";
+				msg += _("Creating a new XData definition...");
+				msg += "\n\n";
+				msg += _("Do you want to open the import summary?");
+
+				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+					msg,
+					ui::IDialog::MESSAGE_ASK, GTK_WINDOW(getWindow()));
+
 				if (dialog->run() == ui::IDialog::RESULT_YES)
 				{
 					showXdImportSummary();
@@ -615,9 +620,13 @@ bool ReadableEditorDialog::save()
 	if (!_useDefaultFilename && !boost::filesystem::exists(storagePath))
 	{
 		// The file does not exist, so we have imported a definition contained inside a PK4.
-		gtkutil::errorDialog("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.\n\n"
-			"Please rename your XData definition, so that it is stored under a different filename.", GTK_WINDOW(this->getWindow())
-			);
+		gtkutil::errorDialog(
+			_("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.") + 
+			std::string("\n\n") + 
+			_("Please rename your XData definition, so that it is stored under a different filename."), 
+			GTK_WINDOW(getWindow())
+		);
+
 		_saveInProgress = false;
 		return false;
 	}
@@ -631,15 +640,15 @@ bool ReadableEditorDialog::save()
 		{
 		case XData::OpenFailed: 
 			gtkutil::errorDialog(
-				"Failed to open " + _xdFilename + " for saving.",
-				GTK_WINDOW(this->getWindow())
+				(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
+				GTK_WINDOW(getWindow())
 			);
 			_saveInProgress = false;
 			return false;
 		case XData::MergeFailed: 
 			gtkutil::errorDialog(
-				"Merging failed, because the length of the definition to be overwritten could not be retrieved.",
-				GTK_WINDOW(this->getWindow())
+				_("Merging failed, because the length of the definition to be overwritten could not be retrieved."),
+				GTK_WINDOW(getWindow())
 			);
 			_saveInProgress = false;
 			return false;
@@ -652,7 +661,7 @@ bool ReadableEditorDialog::save()
 	else if (fst == XData::OpenFailed)
 	{
 		gtkutil::errorDialog(
-			"Failed to open " + _xdFilename + " for saving.",
+			(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
 			GTK_WINDOW(this->getWindow())
 		);
 	}
@@ -675,7 +684,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 				{
 					// Mod path not defined. Use base Path
 					storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-					gtkutil::errorDialog("Mod path not defined. Using Base path...", GTK_WINDOW(this->getWindow()));
+					gtkutil::errorDialog(_("Mod path not defined. Using Base path..."), GTK_WINDOW(getWindow()));
 				}
 				storagePath += XData::XDATA_DIR + _mapBasedFilename;
 				break;
@@ -688,11 +697,13 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::errorDialog("Mod Base path not defined, neither is Mod path. Using Engine path...", GTK_WINDOW(this->getWindow()));
+						gtkutil::errorDialog(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), 
+							GTK_WINDOW(getWindow()));
 						storagePath += XData::XDATA_DIR + _mapBasedFilename;
 						break;
 					}
-					gtkutil::errorDialog("Mod Base path not defined. Using Mod path...", GTK_WINDOW(this->getWindow()));
+
+					gtkutil::errorDialog(_("Mod Base path not defined. Using Mod path..."), GTK_WINDOW(getWindow()));
 				}
 				storagePath += XData::XDATA_DIR + _mapBasedFilename;
 				break;
@@ -705,12 +716,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::errorDialog("Mod Base path not defined, neither is Mod path. Using Engine path...", GTK_WINDOW(this->getWindow()));
+						gtkutil::errorDialog(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), GTK_WINDOW(getWindow()));
 						storagePath += XData::XDATA_DIR + _mapBasedFilename;
 						break;
 					}
 					storagePath += XData::XDATA_DIR + _mapBasedFilename;
-					gtkutil::errorDialog("Mod Base path not defined. Using Mod path...", GTK_WINDOW(this->getWindow()));
+					gtkutil::errorDialog(_("Mod Base path not defined. Using Mod path..."), GTK_WINDOW(getWindow()));
 					break;
 				}
 				storagePath += "/" + _mapBasedFilename;
@@ -730,9 +741,9 @@ void ReadableEditorDialog::refreshWindowTitle()
 {
 	std::string title = constructStoragePath();
 	title = title.substr( title.find_first_not_of( GlobalRegistry().get(RKEY_ENGINE_PATH) ) );
-	title = "Readable Editor  -  " + title;
+	title = std::string(_("Readable Editor")) +  "  -  " + title;
 
-	gtk_window_set_title(GTK_WINDOW(this->getWindow()), title.c_str());
+	gtk_window_set_title(GTK_WINDOW(getWindow()), title.c_str());
 }
 
 void ReadableEditorDialog::storeXData()
@@ -827,10 +838,14 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 		}
 		else
 		{
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
-				"Failed to import " + xDataName + ".\n\nDo you want to open the import summary?",
+			std::string msg = (boost::format(_("Failed to import %s.")) % xDataName).str();
+			msg += "\n\n";
+			msg += _("Do you want to open the import summary?");
+
+			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+				msg,
 				ui::IDialog::MESSAGE_ASK,
-				parent != NULL ? parent : GTK_WINDOW(this->getWindow())
+				parent != NULL ? parent : GTK_WINDOW(getWindow())
 			);
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
@@ -843,10 +858,14 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 
 		if (gui == NULL)
 		{
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
-				"Failed to load gui definition " + xd->getGuiPage(0) + ".\n\nDo you want to open the import summary?",
+			std::string msg = (boost::format(_("Failed to load gui definition %s.")) % xd->getGuiPage(0)).str();
+			msg += "\n\n";
+			msg += _("Do you want to open the import summary?");
+
+			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+				msg,
 				ui::IDialog::MESSAGE_ASK,
-				parent != NULL ? parent : GTK_WINDOW(this->getWindow())
+				parent != NULL ? parent : GTK_WINDOW(getWindow())
 			);
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
@@ -894,8 +913,13 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 		if (gui == NULL)
 		{
 			std::string nameGui = guiPath.empty() ? gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY])) : guiPath;
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
-				"Failed to load gui definition " + nameGui + ".\n\nDo you want to open the import summary?",
+
+			std::string msg = (boost::format(_("Failed to load gui definition %s.")) % nameGui).str();
+			msg += "\n\n";
+			msg += _("Do you want to open the import summary?");
+
+			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+				msg,
 				ui::IDialog::MESSAGE_ASK,
 				parent != NULL ? parent : GTK_WINDOW(this->getWindow())
 			);
@@ -994,8 +1018,9 @@ void ReadableEditorDialog::checkXDataUniqueness()
 	{
 		// The definition already exists. Ask the user whether it should be imported. If not make a different name suggestion.
 		IDialogPtr popup = GlobalDialogManager().createMessageBox(
-			"Import definition?", "The definition " + xdn + " already exists. Should it be imported?",
-			ui::IDialog::MESSAGE_ASK, GTK_WINDOW(this->getWindow())
+			_("Import definition?"), 
+			(boost::format(_("The definition %s already exists. Should it be imported?")) % xdn).str(),
+			ui::IDialog::MESSAGE_ASK, GTK_WINDOW(getWindow())
 		);
 		
 		std::string message = "";
@@ -1007,8 +1032,11 @@ void ReadableEditorDialog::checkXDataUniqueness()
 			case XdFileChooserDialog::RESULT_CANCEL:
 				break;
 			case XdFileChooserDialog::RESULT_IMPORT_FAILED:
-				message = "Import failed:\n\t" + _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1]
-				+ "\n\nConsult the import summary for further information.\n\n";
+				message = _("Import failed:");
+				message += "\n\t" + _xdLoader->getImportSummary()[_xdLoader->getImportSummary().size() - 1];
+				message += "\n\n";
+				message += _("Consult the import summary for further information.");
+				message += "\n\n";
 				break;
 			default:	//Import success
 				_xdNameSpecified = true;
@@ -1038,10 +1066,13 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_XDATA_NAME]), suggestion.c_str());
 		_xData->setName(suggestion);
 
+		message += (boost::format(_("To avoid duplicated XData definitions "
+			"the current definition has been renamed to %s.")) % suggestion).str();
+
 		popup = GlobalDialogManager().createMessageBox(
-			"XData has been renamed.", 
-			message + "To avoid duplicated XData definitions, the current definition has been renamed to " + suggestion + ".",
-			IDialog::MESSAGE_CONFIRM, GTK_WINDOW(this->getWindow())
+			_("XData has been renamed."), 
+			message,
+			IDialog::MESSAGE_CONFIRM, GTK_WINDOW(getWindow())
 		);
 		popup->run();
 	}
@@ -1302,12 +1333,12 @@ void ReadableEditorDialog::checkGuiLayout()
 	switch ( gui::GuiManager::Instance().getGuiType(guiName) )
 	{
 		case gui::NO_READABLE:
-			msg = "The specified gui definition is not a readable.";
+			msg = _("The specified gui definition is not a readable.");
 			break;
 		case gui::ONE_SIDED_READABLE:
 			if (_xData->getPageLayout() != XData::OneSided)
 			{
-				msg = "The specified gui definition is not suitable for the currently chosen page-layout.";
+				msg = _("The specified gui definition is not suitable for the currently chosen page-layout.");
 			}
 			else
 			{
@@ -1319,7 +1350,7 @@ void ReadableEditorDialog::checkGuiLayout()
 		case gui::TWO_SIDED_READABLE:
 			if (_xData->getPageLayout() != XData::TwoSided)
 			{
-				msg = "The specified gui definition is not suitable for the currently chosen page-layout.";
+				msg = _("The specified gui definition is not suitable for the currently chosen page-layout.");
 			}
 			else
 			{
@@ -1329,15 +1360,17 @@ void ReadableEditorDialog::checkGuiLayout()
 			}
 			break;
 		case gui::IMPORT_FAILURE:
-			msg = "Failure during import.";
+			msg = _("Failure during import.");
 			break;
 		case gui::FILE_NOT_FOUND:
-			msg = "The specified Definition does not exist.";
+			msg = _("The specified Definition does not exist.");
 			break;
 	}
 
-	IDialogPtr dialog = GlobalDialogManager().createMessageBox("Not a suitable Gui Definition!", msg + "\n\nStart the Gui Browser?",
-		IDialog::MESSAGE_ASK, GTK_WINDOW(this->getWindow()));
+	IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+		_("Not a suitable Gui Definition!"), 
+		msg + "\n\n" + std::string(_("Start the Gui Browser?")),
+		IDialog::MESSAGE_ASK, GTK_WINDOW(getWindow()));
 
 	if (dialog->run() == ui::IDialog::RESULT_YES)
 	{
@@ -1370,8 +1403,9 @@ void ReadableEditorDialog::checkGuiLayout()
 
 			updateGuiView();
 
-			dialog = GlobalDialogManager().createMessageBox("Switching to default Gui...",
-				"You didn't choose a Gui. Using the default Gui now.", IDialog::MESSAGE_CONFIRM, GTK_WINDOW(this->getWindow()));
+			dialog = GlobalDialogManager().createMessageBox(_("Switching to default Gui..."),
+				_("You didn't choose a Gui. Using the default Gui now."), 
+				IDialog::MESSAGE_CONFIRM, GTK_WINDOW(getWindow()));
 			dialog->run();
 			_runningGuiLayoutCheck = false;
 			return;
@@ -1388,7 +1422,8 @@ void ReadableEditorDialog::showXdImportSummary()
 
 	if (summary.empty())
 	{
-		gtkutil::errorDialog("No import summary available. An XData definition has to be imported first...", GTK_WINDOW(this->getWindow()) );
+		gtkutil::errorDialog(_("No import summary available. An XData definition has to be imported first..."), 
+			GTK_WINDOW(getWindow()) );
 		return;
 	}
 
@@ -1399,7 +1434,7 @@ void ReadableEditorDialog::showXdImportSummary()
 		sum += summary[n];
 	}
 
-	TextViewInfoDialog dialog("XData import summary", sum, GTK_WINDOW(this->getWindow()));
+	TextViewInfoDialog dialog(_("XData import summary"), sum, GTK_WINDOW(getWindow()));
 	dialog.show();
 }
 
@@ -1408,7 +1443,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
 	if (errors.empty())
 	{
-		gtkutil::errorDialog("No import summary available. Browse Gui Definitions first.", GTK_WINDOW(this->getWindow()) );
+		gtkutil::errorDialog(_("No import summary available. Browse Gui Definitions first."), GTK_WINDOW(getWindow()) );
 		return;
 	}
 
@@ -1419,7 +1454,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 		summary += errors[n];
 	}
 
-	TextViewInfoDialog dialog("Gui import summary", summary, GTK_WINDOW(this->getWindow()));
+	TextViewInfoDialog dialog(_("Gui import summary"), summary, GTK_WINDOW(getWindow()));
 	dialog.show();
 }
 
@@ -1471,7 +1506,7 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 	}
 	else
 	{
-		gtkutil::errorDialog("Please specify an XData name first!", GTK_WINDOW(self->getWindow()) );
+		gtkutil::errorDialog(_("Please specify an XData name first!"), GTK_WINDOW(self->getWindow()) );
 	}
 }
 
@@ -1491,7 +1526,7 @@ void ReadableEditorDialog::onSaveClose(GtkWidget* widget, ReadableEditorDialog* 
 		}
 		else
 		{
-			gtkutil::errorDialog("Please specify an XData name first!", GTK_WINDOW(self->getWindow()) );
+			gtkutil::errorDialog(_("Please specify an XData name first!"), GTK_WINDOW(self->getWindow()) );
 		}
 	}
 }
@@ -1514,9 +1549,14 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 	{
 		case XdFileChooserDialog::RESULT_IMPORT_FAILED:
 		{
-			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox("Import failed",
-				"Failed to import " + res + ".\n\nDo you want to open the import summary?",
+			std::string msg = (boost::format(_("Failed to import %s.")) % res).str();
+			msg += "\n\n";
+			msg += _("Do you want to open the import summary?");
+
+			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
+				msg,
 				ui::IDialog::MESSAGE_ASK, GTK_WINDOW(self->getWindow()));
+
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
 				self->showXdImportSummary();
@@ -1686,8 +1726,8 @@ void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* sel
 	catch (std::runtime_error&)
 	{
 		IDialogPtr dialog = GlobalDialogManager().createMessageBox(
-			"Duplicated XData definitions", 
-			"There are no duplicated definitions!", 
+			_("Duplicated XData definitions"), 
+			_("There are no duplicated definitions!"), 
 			ui::IDialog::MESSAGE_CONFIRM, GTK_WINDOW(self->getWindow())
 		);
 
@@ -1699,16 +1739,21 @@ void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* sel
 
 	for (XData::StringVectorMap::iterator it = dupDefs.begin(); it != dupDefs.end(); ++it)
 	{
-		out += it->first + " has been defined in:\n\t";
+		std::string occ;
 
 		for (std::size_t n = 0; n < it->second.size()-1; n++)
 		{
-			out += it->second[n] + ", ";
+			occ += it->second[n] + ", ";
 		}
 
-		out += it->second[it->second.size() - 1] + ".\n\n";
+		occ += it->second[it->second.size() - 1];
+
+		out += (boost::format(_("%s has been defined in:")) % it->first).str();
+		out +="\n\t";
+		out += occ;
+		out += ".\n\n";
 	}
-	TextViewInfoDialog dialog("Duplicated XData definitions", out, GTK_WINDOW(self->getWindow()));
+	TextViewInfoDialog dialog(_("Duplicated XData definitions"), out, GTK_WINDOW(self->getWindow()));
 	dialog.show();
 }
 

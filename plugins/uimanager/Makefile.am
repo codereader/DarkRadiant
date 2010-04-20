@@ -6,10 +6,12 @@ modules_LTLIBRARIES = uimanager.la
 uimanager_la_LDFLAGS = -module -avoid-version \
 						$(GTK_LIBS) \
 						$(XML_LIBS) \
+						$(GTKGLEXT_LIBS) \
 						$(GLEW_LIBS) \
 						$(GL_LIBS)
 uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-					  $(top_builddir)/libs/xmlutil/libxmlutil.la
+			$(top_builddir)/libs/math/libmath.la \
+			$(top_builddir)/libs/xmlutil/libxmlutil.la
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
                        colourscheme/ColourScheme.cpp \

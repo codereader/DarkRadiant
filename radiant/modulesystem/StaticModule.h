@@ -37,7 +37,7 @@ public:
 	
 	inline ModuleTypePtr getModule() {
 		return boost::static_pointer_cast<ModuleType>(
-			GlobalModuleRegistry().getModule(_moduleName)
+			getRegistry().getModule(_moduleName)
 		);
 	}
 };

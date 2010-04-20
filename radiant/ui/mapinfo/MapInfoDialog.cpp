@@ -1,6 +1,7 @@
 #include "MapInfoDialog.h"
 
 #include <gtk/gtk.h>
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "iuimanager.h"
@@ -10,11 +11,11 @@ namespace ui {
 	namespace {
 		const int MAPINFO_DEFAULT_SIZE_X = 600;
 	    const int MAPINFO_DEFAULT_SIZE_Y = 550;
-	   	const std::string MAPINFO_WINDOW_TITLE = "Map Info";
+	   	const char* const MAPINFO_WINDOW_TITLE = N_("Map Info");
 	}
 
 MapInfoDialog::MapInfoDialog() :
-	BlockingTransientWindow(MAPINFO_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
+	BlockingTransientWindow(_(MAPINFO_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), MAPINFO_DEFAULT_SIZE_X, MAPINFO_DEFAULT_SIZE_Y);
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);

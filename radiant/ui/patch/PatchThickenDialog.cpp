@@ -1,21 +1,22 @@
 #include "PatchThickenDialog.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include <gtk/gtk.h>
 #include "string/string.h"
 
 namespace {
-	const char* WINDOW_TITLE = "Patch Thicken";
-	const char* LABEL_TITLE = "Thicken selected Patches";
-	const char* LABEL_THICKNESS_ENTRY = "Thickness (units):";
-	const char* LABEL_CREATE_SEAMS = "Create _Seams (\"side walls\")";
-	const char* LABEL_EXTRUDE_NORMALS = "Extrude along Vertex Normals";
-	const char* LABEL_EXTRUDE_X = "Extrude along X-Axis";
-	const char* LABEL_EXTRUDE_Y = "Extrude along Y-Axis";
-	const char* LABEL_EXTRUDE_Z = "Extrude along Z-Axis";
+	const char* WINDOW_TITLE = N_("Patch Thicken");
+	const char* LABEL_TITLE = N_("Thicken selected Patches");
+	const char* LABEL_THICKNESS_ENTRY = N_("Thickness (units):");
+	const char* LABEL_CREATE_SEAMS = N_("Create _Seams (\"side walls\")");
+	const char* LABEL_EXTRUDE_NORMALS = N_("Extrude along Vertex Normals");
+	const char* LABEL_EXTRUDE_X = N_("Extrude along X-Axis");
+	const char* LABEL_EXTRUDE_Y = N_("Extrude along Y-Axis");
+	const char* LABEL_EXTRUDE_Z = N_("Extrude along Z-Axis");
 	
 	const float DEFAULT_THICKNESS = 16.0f;
-	const bool DEFAULT_CREATE_SEAMS = true;
+	const gboolean DEFAULT_CREATE_SEAMS = TRUE;
 }
 
 namespace ui {
@@ -25,7 +26,7 @@ PatchThickenDialog::PatchThickenDialog() :
 	_dialog(NULL)
 {
 	// Create the new dialog window with OK and CANCEL button    
-  	_dialog = gtk_dialog_new_with_buttons(WINDOW_TITLE, _parent,
+  	_dialog = gtk_dialog_new_with_buttons(_(WINDOW_TITLE), _parent,
                                          GTK_DIALOG_DESTROY_WITH_PARENT, 
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                          GTK_STOCK_OK, GTK_RESPONSE_OK,
@@ -38,7 +39,7 @@ PatchThickenDialog::PatchThickenDialog() :
     
     // Create the title label (bold font)
     GtkWidget* topLabel = gtk_label_new(NULL);
-    std::string markup = std::string("<span weight=\"bold\">") + LABEL_TITLE + "</span>";
+    std::string markup = std::string("<span weight=\"bold\">") + _(LABEL_TITLE) + "</span>";
     gtk_label_set_markup(GTK_LABEL(topLabel), markup.c_str());
     gtk_misc_set_alignment(GTK_MISC(topLabel), 0.0f, 0.5f);
     gtk_misc_set_padding(GTK_MISC(topLabel), 6, 2);
@@ -46,7 +47,7 @@ PatchThickenDialog::PatchThickenDialog() :
     gtk_box_pack_start(GTK_BOX(GTK_DIALOG(_dialog)->vbox), topLabel, true, true, 0);
     
     // Create the entry field
-	GtkWidget* thicknessLabel = gtk_label_new(LABEL_THICKNESS_ENTRY);
+	GtkWidget* thicknessLabel = gtk_label_new(_(LABEL_THICKNESS_ENTRY));
 	gtk_misc_set_alignment(GTK_MISC(thicknessLabel), 0.0f, 0.5f);
 	
 	_thicknessEntry = gtk_entry_new();
@@ -65,13 +66,13 @@ PatchThickenDialog::PatchThickenDialog() :
     gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(table));
     
     // Create the radio button group for choosing the extrude axis
-    _radNormals = gtk_radio_button_new_with_mnemonic(NULL, LABEL_EXTRUDE_NORMALS);
+    _radNormals = gtk_radio_button_new_with_mnemonic(NULL, _(LABEL_EXTRUDE_NORMALS));
     _radX = gtk_radio_button_new_with_mnemonic_from_widget(
-    	GTK_RADIO_BUTTON(_radNormals), LABEL_EXTRUDE_X);
+    	GTK_RADIO_BUTTON(_radNormals), _(LABEL_EXTRUDE_X));
     _radY = gtk_radio_button_new_with_mnemonic_from_widget(
-    	GTK_RADIO_BUTTON(_radNormals), LABEL_EXTRUDE_Y);
+    	GTK_RADIO_BUTTON(_radNormals), _(LABEL_EXTRUDE_Y));
     _radZ = gtk_radio_button_new_with_mnemonic_from_widget(
-    	GTK_RADIO_BUTTON(_radNormals), LABEL_EXTRUDE_Z);
+    	GTK_RADIO_BUTTON(_radNormals), _(LABEL_EXTRUDE_Z));
     
     // Pack the buttons into the table
 	gtk_table_attach_defaults(table, _radNormals, 0, 2, 0, 1);
@@ -84,7 +85,7 @@ PatchThickenDialog::PatchThickenDialog() :
     gtk_table_attach_defaults(table, _thicknessEntry, 1, 2, 4, 5);
 	
 	// Create the "create seams" label
-	_seamsCheckBox = gtk_check_button_new_with_mnemonic(LABEL_CREATE_SEAMS);
+	_seamsCheckBox = gtk_check_button_new_with_mnemonic(_(LABEL_CREATE_SEAMS));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_seamsCheckBox), DEFAULT_CREATE_SEAMS);
 	gtk_table_attach_defaults(table, _seamsCheckBox, 0, 2, 5, 6);
 	

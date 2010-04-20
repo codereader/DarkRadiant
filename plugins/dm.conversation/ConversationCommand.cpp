@@ -46,7 +46,7 @@ std::string ConversationCommand::getSentence() const {
 
 		return sentence;
 	}
-	catch (std::runtime_error e) {
+	catch (std::runtime_error&) {
 		return "Unrecognised command.";
 	}
 }

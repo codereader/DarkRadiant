@@ -1,5 +1,6 @@
 #include "ShaderChooser.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "ishaders.h"
 #include "texturelib.h"
@@ -11,7 +12,7 @@
 namespace ui {
 	
 	namespace {
-		const std::string LABEL_TITLE = "Choose Shader";
+		const char* const LABEL_TITLE = N_("Choose Shader");
 		const std::string SHADER_PREFIXES = "textures";
 		const int DEFAULT_SIZE_X = 550;
 		const int DEFAULT_SIZE_Y = 500;
@@ -20,7 +21,7 @@ namespace ui {
 
 // Construct the dialog
 ShaderChooser::ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget* targetEntry) : 
-	gtkutil::BlockingTransientWindow(LABEL_TITLE, parent),
+	gtkutil::BlockingTransientWindow(_(LABEL_TITLE), parent),
 	_client(client),
 	_parent(parent), 
 	_targetEntry(targetEntry),

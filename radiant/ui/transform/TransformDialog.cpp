@@ -1,5 +1,6 @@
 #include "TransformDialog.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
@@ -20,19 +21,19 @@
 namespace ui {
 
 	namespace {
-		const std::string WINDOW_TITLE = "Arbitrary Transformation";
-		const std::string LABEL_ROTATION = "Rotation";
-		const std::string LABEL_SCALE = "Scale";
+		const char* const WINDOW_TITLE = N_("Arbitrary Transformation");
+		const char* const LABEL_ROTATION = N_("Rotation");
+		const char* const LABEL_SCALE = N_("Scale");
 		
-		const std::string LABEL_ROTX = "X-Axis Rotate:";
-		const std::string LABEL_ROTY = "Y-Axis Rotate:";
-		const std::string LABEL_ROTZ = "Z-Axis Rotate:";
+		const char* const LABEL_ROTX = N_("X-Axis Rotate:");
+		const char* const LABEL_ROTY = N_("Y-Axis Rotate:");
+		const char* const LABEL_ROTZ = N_("Z-Axis Rotate:");
 		
-		const std::string LABEL_SCALEX = "X-Axis Scale:";
-		const std::string LABEL_SCALEY = "Y-Axis Scale:";
-		const std::string LABEL_SCALEZ = "Z-Axis Scale:";
+		const char* const LABEL_SCALEX = N_("X-Axis Scale:");
+		const char* const LABEL_SCALEY = N_("Y-Axis Scale:");
+		const char* const LABEL_SCALEZ = N_("Z-Axis Scale:");
 		
-		const char* LABEL_STEP = "Step:";
+		const char* const LABEL_STEP = N_("Step:");
 		
 		const std::string RKEY_ROOT = "user/ui/transformDialog/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
@@ -46,7 +47,7 @@ namespace ui {
 	}
 
 TransformDialog::TransformDialog() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
+: gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Set the default border width in accordance to the HIG
@@ -114,7 +115,7 @@ void TransformDialog::populateWindow() {
 	
 	// Create the rotation label (bold font)
 	_rotateLabel = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_ROTATION + "</span>"
+    	std::string("<span weight=\"bold\">") + _(LABEL_ROTATION) + "</span>"
     );
     gtk_box_pack_start(GTK_BOX(_dialogVBox), _rotateLabel, false, false, 0);
     
@@ -127,13 +128,13 @@ void TransformDialog::populateWindow() {
 	GtkWidget* rotAlignment = gtkutil::LeftAlignment(GTK_WIDGET(_rotateTable), 18, 1.0); 
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(rotAlignment), false, false, 0);
     
-    _entries["rotateX"] = createEntryRow(LABEL_ROTX, _rotateTable, 0, true, 0);
-    _entries["rotateY"] = createEntryRow(LABEL_ROTY, _rotateTable, 1, true, 1);
-    _entries["rotateZ"] = createEntryRow(LABEL_ROTZ, _rotateTable, 2, true, 2);
+    _entries["rotateX"] = createEntryRow(_(LABEL_ROTX), _rotateTable, 0, true, 0);
+    _entries["rotateY"] = createEntryRow(_(LABEL_ROTY), _rotateTable, 1, true, 1);
+    _entries["rotateZ"] = createEntryRow(_(LABEL_ROTZ), _rotateTable, 2, true, 2);
     
     // Create the rotation label (bold font)
 	_scaleLabel = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_SCALE + "</span>"
+    	std::string("<span weight=\"bold\">") + _(LABEL_SCALE) + "</span>"
     );
     gtk_box_pack_start(GTK_BOX(_dialogVBox), _scaleLabel, false, false, 0);
     
@@ -146,9 +147,9 @@ void TransformDialog::populateWindow() {
 	GtkWidget* scaleAlignment = gtkutil::LeftAlignment(GTK_WIDGET(_scaleTable), 18, 1.0); 
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(scaleAlignment), false, false, 0);
     
-    _entries["scaleX"] = createEntryRow(LABEL_SCALEX, _scaleTable, 0, false, 0);
-    _entries["scaleY"] = createEntryRow(LABEL_SCALEY, _scaleTable, 1, false, 1);
-    _entries["scaleZ"] = createEntryRow(LABEL_SCALEZ, _scaleTable, 2, false, 2);
+    _entries["scaleX"] = createEntryRow(_(LABEL_SCALEX), _scaleTable, 0, false, 0);
+    _entries["scaleY"] = createEntryRow(_(LABEL_SCALEY), _scaleTable, 1, false, 1);
+    _entries["scaleZ"] = createEntryRow(_(LABEL_SCALEZ), _scaleTable, 2, false, 2);
     
     // Connect the step values to the according registry values
    using namespace gtkutil;
@@ -241,7 +242,7 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 	}
 	
 	// Create the label
-	entryRow.stepLabel = gtkutil::LeftAlignedLabel(LABEL_STEP); 
+	entryRow.stepLabel = gtkutil::LeftAlignedLabel(_(LABEL_STEP)); 
 	gtk_box_pack_start(GTK_BOX(entryRow.hbox), entryRow.stepLabel, false, false, 0);
 	
 	// Create the entry field

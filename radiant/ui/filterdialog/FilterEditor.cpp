@@ -1,5 +1,6 @@
 #include "FilterEditor.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/LeftAlignment.h"
@@ -13,13 +14,13 @@ namespace ui {
 	namespace {
 		const int DEFAULT_SIZE_X = 550;
 	    const int DEFAULT_SIZE_Y = 350;
-		const std::string WINDOW_TITLE_EDIT = "Edit Filter";
-		const std::string WINDOW_TITLE_VIEW = "View Filter";
+		const char* const WINDOW_TITLE_EDIT = N_("Edit Filter");
+		const char* const WINDOW_TITLE_VIEW = N_("View Filter");
 
-		const std::string RULE_HELP_TEXT = 
-			"Filter rules are applied in the shown order.\n" \
+		const char* const RULE_HELP_TEXT = 
+			N_("Filter rules are applied in the shown order.\n" \
 			"<b>Match</b> is accepting regular expressions.\n" \
-			"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.";
+			"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.");
 
 		enum {
 			COL_INDEX,
@@ -41,7 +42,7 @@ namespace ui {
 	}
 
 FilterEditor::FilterEditor(Filter& filter, GtkWindow* parent, bool viewOnly) :
-	BlockingTransientWindow(viewOnly ? WINDOW_TITLE_VIEW : WINDOW_TITLE_EDIT, parent),
+	BlockingTransientWindow(viewOnly ? _(WINDOW_TITLE_VIEW) : _(WINDOW_TITLE_EDIT), parent),
 	_originalFilter(filter),
 	_filter(_originalFilter), // copy-construct
 	_ruleStore(gtk_list_store_new(NUM_COLS, G_TYPE_INT,	// index
@@ -77,7 +78,8 @@ void FilterEditor::populateWindow() {
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
 	// Create the name entry box
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Name</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Name") + "</b>"), FALSE, FALSE, 0);
 
 	_widgets[WIDGET_NAME_ENTRY] = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_widgets[WIDGET_NAME_ENTRY], 18, 1), FALSE, FALSE, 0);
@@ -85,12 +87,13 @@ void FilterEditor::populateWindow() {
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_NAME_ENTRY]), "changed", G_CALLBACK(onNameEdited), this);
 	
 	// And the rule treeview
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Rules</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Rules") + "</b>"), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), createCriteriaPanel(), TRUE, TRUE, 0);
 
 	// Add the help text
 	if (!_viewOnly) {
-		_widgets[WIDGET_HELP_TEXT] = gtkutil::LeftAlignedLabel(RULE_HELP_TEXT);
+		_widgets[WIDGET_HELP_TEXT] = gtkutil::LeftAlignedLabel(_(RULE_HELP_TEXT));
 		gtk_box_pack_start(GTK_BOX(vbox), _widgets[WIDGET_HELP_TEXT], FALSE, FALSE, 0);
 	}
 
@@ -124,7 +127,7 @@ void FilterEditor::update() {
 			COL_TYPE, typeIndex,
 			COL_TYPE_STR, rule.type.c_str(),
 			COL_REGEX, rule.match.c_str(),
-			COL_ACTION, rule.show ? "show" : "hide",
+			COL_ACTION, rule.show ? _("show") : _("hide"),
 			-1
 		);
 	}
@@ -143,8 +146,8 @@ GtkWidget* FilterEditor::createCriteriaPanel() {
 	// Create a new treeview
 	_ruleView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_ruleStore)));
 		
-	gtkutil::TextColumn indexCol("Index", COL_INDEX);
-	gtkutil::TextColumn regexCol("Match", COL_REGEX);
+	gtkutil::TextColumn indexCol(_("Index"), COL_INDEX);
+	gtkutil::TextColumn regexCol(_("Match"), COL_REGEX);
 
 	// Create the cell renderer for the action choice
 	GtkCellRenderer* actionComboRenderer = gtk_cell_renderer_combo_new();
@@ -158,7 +161,7 @@ GtkWidget* FilterEditor::createCriteriaPanel() {
 
 	// Construct the column itself
 	GtkTreeViewColumn* actionCol = gtk_tree_view_column_new_with_attributes(
-		"Action", 
+		_("Action"), 
 		actionComboRenderer, 
 		"markup", COL_ACTION,
 		NULL
@@ -182,7 +185,7 @@ GtkWidget* FilterEditor::createCriteriaPanel() {
 
 	// Construct the column itself
 	GtkTreeViewColumn* typeCol = gtk_tree_view_column_new_with_attributes(
-		"Type", 
+		_("Type"), 
 		typeComboRenderer, 
 		"markup", COL_TYPE_STR,
 		NULL
@@ -247,10 +250,10 @@ GtkListStore* FilterEditor::createActionStore() {
 	GtkListStore* actionStore = gtk_list_store_new(2, G_TYPE_BOOLEAN, G_TYPE_STRING);
 	
 	gtk_list_store_append(actionStore, &iter);
-	gtk_list_store_set(actionStore, &iter, 0, TRUE, 1, "show", -1);
+	gtk_list_store_set(actionStore, &iter, 0, TRUE, 1, _("show"), -1);
 
 	gtk_list_store_append(actionStore, &iter);
-	gtk_list_store_set(actionStore, &iter, 0, FALSE, 1, "hide", -1);
+	gtk_list_store_set(actionStore, &iter, 0, FALSE, 1, _("hide"), -1);
 
 	return actionStore;
 }
@@ -395,7 +398,7 @@ void FilterEditor::onActionEdited(GtkCellRendererText* renderer, gchar* path, gc
 		assert(index >= 0 && index < static_cast<int>(self->_filter.rules.size()));
 
 		// Update the bool flag
-		self->_filter.rules[index].show = (std::string(new_text) == "show");
+		self->_filter.rules[index].show = (std::string(new_text) == _("show"));
 		
 		// Update the liststore item
 		gtk_list_store_set(self->_ruleStore, &iter, 

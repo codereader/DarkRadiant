@@ -33,7 +33,7 @@ void Loader::operator() (const std::string& fileName) const {
 	// Check for the correct extension of the visited file
 	if (boost::algorithm::iends_with(fileName, _ext)) {
 		std::string fullName = _path + fileName;
-		globalOutputStream() << "ModuleLoader: Loading module '" << fullName << "'\n";
+		globalOutputStream() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
 		
 		// Create the encapsulator class
 		DynamicLibraryPtr library(new DynamicLibrary(fullName));

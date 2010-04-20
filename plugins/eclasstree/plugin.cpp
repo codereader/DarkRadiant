@@ -9,6 +9,7 @@
 #include "ieclass.h"
 #include "debugging/debugging.h"
 
+#include "i18n.h"
 #include "EClassTree.h"
 
 /**
@@ -47,7 +48,7 @@ public:
 		mm.add("main/entity", 	// menu location path
 				"EntityClassTree", // name
 				ui::menuItem,	// type
-				"Entity Class Tree...",	// caption
+				_("Entity Class Tree..."),	// caption
 				"icon_classname.png",	// icon
 				"EntityClassTree"); // event name
 	}

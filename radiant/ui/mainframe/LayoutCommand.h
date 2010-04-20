@@ -1,6 +1,7 @@
 #ifndef _LAYOUT_COMMAND_H_
 #define _LAYOUT_COMMAND_H_
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "icommandsystem.h"
@@ -48,7 +49,7 @@ public:
 			menuManager.insert(
 				MENU_LAYOUTS_INSERT_BEFORE, 
 				MENU_LAYOUTS, 
-				menuFolder, "Window Layout", 
+				menuFolder, _("Window Layout"), 
 				"", "" // no icon, no event
 			);	
 		}

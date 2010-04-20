@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "i18n.h"
 #include <boost/shared_ptr.hpp>
 #include "boost/filesystem/fstream.hpp"
 
@@ -116,14 +117,14 @@ public:
 	const std::string& getGuiPage(std::size_t index) const
 	{
 		if (index >= _numPages)
-			throw std::runtime_error("GUI Page Index out of bounds.");
+			throw std::runtime_error(_("GUI Page Index out of bounds."));
 		return _guiPage[index];
 	}
 	void setGuiPage(const StringList& guiPage) { _guiPage = guiPage; }
 	void setGuiPage(const std::string& guiPage, std::size_t index) 
 	{ 
 		if (index >= _numPages)
-			throw std::runtime_error("GUI Page Index out of bounds.");
+			throw std::runtime_error(_("GUI Page Index out of bounds."));
 		_guiPage[index] = guiPage;
 	}
 

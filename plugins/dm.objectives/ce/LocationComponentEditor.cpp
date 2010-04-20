@@ -5,6 +5,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 
 namespace objectives {
@@ -24,7 +25,7 @@ LocationComponentEditor::LocationComponentEditor(Component& component) :
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>Entity:</b>"),
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Entity:") + "</b>"),
         FALSE, FALSE, 0
     );
 	gtk_box_pack_start(
@@ -32,7 +33,7 @@ LocationComponentEditor::LocationComponentEditor(Component& component) :
 	);
 	gtk_box_pack_start(
         GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>Location:</b>"),
+        gtkutil::LeftAlignedLabel(std::string("<b>") + _("Location:") + "</b>"),
         FALSE, FALSE, 0
     );
 	gtk_box_pack_start(

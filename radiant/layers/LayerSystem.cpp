@@ -1,5 +1,6 @@
 #include "LayerSystem.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "icommandsystem.h"
@@ -16,7 +17,7 @@
 namespace scene {
 
 	namespace {
-		const std::string DEFAULT_LAYER_NAME("Default");
+		const char* const DEFAULT_LAYER_NAME = N_("Default");
 	} 
 
 int LayerSystem::createLayer(const std::string& name, int layerID) {
@@ -32,7 +33,7 @@ int LayerSystem::createLayer(const std::string& name, int layerID) {
 	);
 
 	if (result.second == false) {
-		globalErrorStream() << "LayerSystem: Could not create layer!\n";
+		globalErrorStream() << "LayerSystem: Could not create layer!" << std::endl;
 		return -1;
 	}
 
@@ -55,7 +56,7 @@ int LayerSystem::createLayer(const std::string& name) {
 
 	if (existingID != -1) {
 		globalErrorStream() << "Could not create layer, name already exists: " 
-			<< name.c_str() << "\n";
+			<< name << std::endl;
 		return -1;
 	}
 
@@ -72,7 +73,7 @@ void LayerSystem::deleteLayer(const std::string& name) {
 
 	if (layerID == -1) {
 		globalErrorStream() << "Could not delete layer, name doesn't exist: " 
-			<< name.c_str() << "\n";
+			<< name << std::endl;
 		return;
 	}
 
@@ -99,7 +100,7 @@ void LayerSystem::foreachLayer(Visitor& visitor) {
 
 void LayerSystem::reset() {
 	_layers.clear();
-	_layers.insert(LayerMap::value_type(0, DEFAULT_LAYER_NAME));
+	_layers.insert(LayerMap::value_type(0, _(DEFAULT_LAYER_NAME)));
 
 	_layerVisibility.resize(1);
 	_layerVisibility[0] = true;
@@ -110,7 +111,7 @@ void LayerSystem::reset() {
 
 bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName) {
 	// Check sanity
-	if (newLayerName.empty() || newLayerName == DEFAULT_LAYER_NAME) {
+	if (newLayerName.empty() || newLayerName == _(DEFAULT_LAYER_NAME)) {
 		return false; // empty name or default name used
 	}
 
@@ -144,7 +145,7 @@ bool LayerSystem::layerIsVisible(const std::string& layerName) {
 
 	if (layerID == -1) {
 		globalErrorStream() << "Could not query layer visibility, name doesn't exist: " 
-			<< layerName.c_str() << "\n";
+			<< layerName << std::endl;
 		return false;
 	}
 
@@ -154,7 +155,7 @@ bool LayerSystem::layerIsVisible(const std::string& layerName) {
 bool LayerSystem::layerIsVisible(int layerID) {
 	// Sanity check
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
-		globalOutputStream() << "LayerSystem: Querying invalid layer ID: " << layerID << "\n";
+		globalOutputStream() << "LayerSystem: Querying invalid layer ID: " << layerID << std::endl;
 		return false;
 	}
 
@@ -166,7 +167,7 @@ void LayerSystem::setLayerVisibility(int layerID, bool visible) {
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
 		globalOutputStream() << 
 			"LayerSystem: Setting visibility of invalid layer ID: " <<
-			layerID << "\n";
+			layerID << std::endl;
 		return;
 	}
 
@@ -183,7 +184,7 @@ void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible)
 
 	if (layerID == -1) {
 		globalErrorStream() << "Could not set layer visibility, name doesn't exist: " 
-			<< layerName.c_str() << "\n";
+			<< layerName.c_str() << std::endl;
 		return;
 	}
 
@@ -226,7 +227,7 @@ void LayerSystem::addSelectionToLayer(const std::string& layerName) {
 
 	if (layerID == -1) {
 		globalErrorStream() << "Cannot add to layer, name doesn't exist: " 
-			<< layerName.c_str() << "\n";
+			<< layerName << std::endl;
 		return;
 	}
 
@@ -240,7 +241,7 @@ void LayerSystem::moveSelectionToLayer(const std::string& layerName) {
 
 	if (layerID == -1) {
 		globalErrorStream() << "Cannot move to layer, name doesn't exist: " 
-			<< layerName.c_str() << "\n";
+			<< layerName << std::endl;
 		return;
 	}
 
@@ -267,7 +268,7 @@ void LayerSystem::removeSelectionFromLayer(const std::string& layerName) {
 
 	if (layerID == -1) {
 		globalErrorStream() << "Cannot remove from layer, name doesn't exist: " 
-			<< layerName.c_str() << "\n";
+			<< layerName << std::endl;
 		return;
 	}
 
@@ -379,7 +380,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
 	
 	// Create the "master" layer with ID 0
-	createLayer(DEFAULT_LAYER_NAME);
+	createLayer(_(DEFAULT_LAYER_NAME));
 
 	// Add command targets for the first 10 layer IDs here
 	for (int i = 0; i < 10; i++) {

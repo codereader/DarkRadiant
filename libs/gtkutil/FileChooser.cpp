@@ -9,12 +9,14 @@
 #include <gtk/gtkstock.h>
 #include <gtk/gtkimage.h>
 
+#include "i18n.h"
 #include "os/path.h"
 #include "os/file.h"
 
 #include "MultiMonitor.h"
 #include "dialog/MessageBox.h"
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/format.hpp>
 
 namespace gtkutil
 {
@@ -34,7 +36,7 @@ FileChooser::FileChooser(GtkWidget* parent, const std::string& title,
 	}
 
 	if (_title.empty()) {
-		_title = _open ? "Open File" : "Save File";
+		_title = _open ? _("Open File") : _("Save File");
 	}
 
 	if (_open) {
@@ -87,7 +89,7 @@ FileChooser::FileChooser(GtkWidget* parent, const std::string& title,
 	// Add a final mask for All Files (*.*)
 	GtkFileFilter* allFilter = gtk_file_filter_new();
 	gtk_file_filter_add_pattern(allFilter, "*.*");
-	gtk_file_filter_set_name(allFilter, "All Files (*.*)");
+	gtk_file_filter_set_name(allFilter, _("All Files (*.*)"));
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(_dialog), allFilter);
 }
 
@@ -170,8 +172,11 @@ std::string FileChooser::display() {
 		std::string askTitle = _title;
 		askTitle += (!fileName.empty()) ? ": " + os::getFilename(fileName) : "";
 
-		gtkutil::MessageBox box(askTitle, 
-			"The file " + os::getFilename(fileName) + " already exists.\nDo you want to replace it?",
+		std::string askMsg = (boost::format("The file %s already exists.") % os::getFilename(fileName)).str();
+		askMsg += "\n";
+		askMsg += _("Do you want to replace it?");
+
+		gtkutil::MessageBox box(askTitle, askMsg,
 			ui::IDialog::MESSAGE_ASK, GTK_WINDOW(_dialog));
 
 		if (box.run() == ui::IDialog::RESULT_YES)

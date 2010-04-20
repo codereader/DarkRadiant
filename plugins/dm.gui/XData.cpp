@@ -1,5 +1,6 @@
 #include "XData.h"
 
+#include "i18n.h"
 #include "boost/lexical_cast.hpp"
 
 namespace XData
@@ -243,7 +244,7 @@ void TwoSidedXData::resizeVectors(std::size_t targetSize)
 void TwoSidedXData::setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content)
 {
 	if (pageIndex >= _numPages)
-		throw std::runtime_error("Page Index out of bounds.");
+		throw std::runtime_error(_("Page Index out of bounds."));
 	switch (cc)
 	{
 	case Title:
@@ -271,7 +272,7 @@ void TwoSidedXData::setPageContent(ContentType cc, std::size_t pageIndex, Side s
 const std::string& TwoSidedXData::getPageContent(ContentType cc, std::size_t pageIndex, Side side) const
 {
 	if (pageIndex >= _numPages)
-		throw std::runtime_error("Page Index out of bounds.");
+		throw std::runtime_error(_("Page Index out of bounds."));
 	switch (cc)
 	{
 	case Title:
@@ -353,7 +354,7 @@ void OneSidedXData::resizeVectors(std::size_t targetSize)
 void OneSidedXData::setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content)
 {
 	if (pageIndex >= _numPages)
-		throw std::runtime_error("Page Index out of bounds.");
+		throw std::runtime_error(_("Page Index out of bounds."));
 	switch (cc)
 	{
 	case Title:
@@ -368,7 +369,7 @@ void OneSidedXData::setPageContent(ContentType cc, std::size_t pageIndex, Side s
 const std::string& OneSidedXData::getPageContent(ContentType cc, std::size_t pageIndex, Side side) const
 {
 	if (pageIndex >= _numPages)
-		throw std::runtime_error("Page Index out of bounds.");
+		throw std::runtime_error(_("Page Index out of bounds."));
 	switch (cc)
 	{
 	case Title:

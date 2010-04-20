@@ -1,5 +1,6 @@
 #include "FindShader.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "iuimanager.h"
@@ -20,19 +21,18 @@ namespace ui {
 		const int FINDDLG_DEFAULT_SIZE_X = 550;
 	    const int FINDDLG_DEFAULT_SIZE_Y = 100;
 	   	
-	   	const char* LABEL_FINDSHADER = "Find and Replace Shader";
-	   	const char* LABEL_FIND = "Find:";
-	   	const char* LABEL_REPLACE = "Replace:";
-	   	const char* LABEL_SELECTED_ONLY = "Search current selection only";
+	   	const char* const LABEL_FIND = N_("Find:");
+	   	const char* const LABEL_REPLACE = N_("Replace:");
+	   	const char* const LABEL_SELECTED_ONLY = N_("Search current selection only");
 	   	
 		const std::string FOLDER_ICON = "folder16.png";
 	   	
-	    const std::string FINDDLG_WINDOW_TITLE = "Find & Replace Shader";
-	    const std::string COUNT_TEXT = " shader(s) replaced.";
+	    const char* const FINDDLG_WINDOW_TITLE = N_("Find & Replace Shader");
+	    const char* const COUNT_TEXT = N_("<b>%d</b> shader(s) replaced.");
 	}
 
 FindAndReplaceShader::FindAndReplaceShader() :
-	gtkutil::BlockingTransientWindow(FINDDLG_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
+	gtkutil::BlockingTransientWindow(_(FINDDLG_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	gtk_window_set_default_size(GTK_WINDOW(getWindow()), FINDDLG_DEFAULT_SIZE_X, FINDDLG_DEFAULT_SIZE_Y);
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -68,8 +68,8 @@ void FindAndReplaceShader::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment2), TRUE, TRUE, 0);
 	
 	// Create the labels and pack them in the hbox
-	GtkWidget* findLabel = gtkutil::LeftAlignedLabel(LABEL_FIND);
-	GtkWidget* replaceLabel = gtkutil::LeftAlignedLabel(LABEL_REPLACE);
+	GtkWidget* findLabel = gtkutil::LeftAlignedLabel(_(LABEL_FIND));
+	GtkWidget* replaceLabel = gtkutil::LeftAlignedLabel(_(LABEL_REPLACE));
 	gtk_widget_set_size_request(findLabel, 60, -1);
 	gtk_widget_set_size_request(replaceLabel, 60, -1);
 	
@@ -101,7 +101,7 @@ void FindAndReplaceShader::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(dialogVBox), spacer, FALSE, FALSE, 0);
 	
 	// The checkbox for "search selected only"
-	_selectedOnly = gtk_check_button_new_with_mnemonic(LABEL_SELECTED_ONLY);
+	_selectedOnly = gtk_check_button_new_with_mnemonic(_(LABEL_SELECTED_ONLY));
 	GtkWidget* alignment3 = gtkutil::LeftAlignment(GTK_WIDGET(_selectedOnly), 18, 1.0); 
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment3), FALSE, FALSE, 0); 
 	
@@ -137,8 +137,7 @@ void FindAndReplaceShader::performReplace() {
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_selectedOnly)) ? true : false // selected only
 	);
 	
-	const std::string replacedStr = 
-		std::string("<b>") + intToStr(replaced) + "</b>" + COUNT_TEXT;
+	const std::string replacedStr = (boost::format(_(COUNT_TEXT)) % replaced).str();
 	gtk_label_set_markup(GTK_LABEL(_counterLabel), replacedStr.c_str());
 }
 

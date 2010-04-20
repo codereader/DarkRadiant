@@ -1,5 +1,6 @@
 #include "Vector3PropertyEditor.h"
 
+#include "i18n.h"
 #include "ientity.h"
 #include "gtkutil/RightAlignment.h"
 
@@ -36,13 +37,13 @@ Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity,
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(_zValue), 0);
 	
     // Add the spin buttons to the HBox with labels
-	gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new("X: "), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(_("X: ")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(editBox), _xValue, TRUE, TRUE, 0);
 	
-    gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(" Y: "), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(_(" Y: ")), FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(editBox), _yValue, TRUE, TRUE, 0);
 
-    gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(" Z: "), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(_(" Z: ")), FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(editBox), _zValue, TRUE, TRUE, 0);
 
 	// Pack edit box into the main widget

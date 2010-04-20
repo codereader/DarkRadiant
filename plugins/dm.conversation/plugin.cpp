@@ -1,5 +1,6 @@
 #include "imodule.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "icommandsystem.h"
@@ -46,7 +47,7 @@ public:
 		mm.add("main/map", 	// menu location path
 				"ConversationEditor", // name
 				ui::menuItem,	// type
-				"Conversations...",	// caption
+				_("Conversations..."),	// caption
 				"stimresponse.png",	// icon
 				"ConversationEditor"); // event name
 	}

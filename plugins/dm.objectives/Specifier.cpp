@@ -1,8 +1,10 @@
 #include "Specifier.h"
 #include "Component.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "string/string.h"
+#include <boost/format.hpp>
 
 namespace objectives {
 
@@ -15,7 +17,7 @@ inline std::string getPlural(int count,
 }
 
 inline std::string printEntity(int count) {
-	return getPlural(count, "entity", "entities");
+	return getPlural(count, _("entity"), _("entities"));
 }
 
 inline std::string printEntityAmount(const std::string& amountStr) {
@@ -38,10 +40,10 @@ std::string Specifier::getSentence(Component& component) {
 	int amount = strToInt(amountStr);
 	
 	if (id == SpecifierType::SPEC_NONE().getId()) {
-		result += "<not specified>";
+		result += _("<not specified>");
 	}
 	else if (id == SpecifierType::SPEC_NAME().getId()) {
-		result += "entity " + _value;
+		result += _("entity ") + _value;
 	}
 	else if (id == SpecifierType::SPEC_OVERALL().getId()) {
 		result += printEntityAmount(amountStr);
@@ -49,35 +51,35 @@ std::string Specifier::getSentence(Component& component) {
 	else if (id == SpecifierType::SPEC_GROUP().getId()) {
 
 		if (_value == "loot_gold") {
-			result += amountStr + " loot in gold";
+			result += (boost::format(_("%d loot in gold")) % amount).str();
 		}
 		else if (_value == "loot_goods") {
-			result += amountStr + " loot in goods";
+			result += (boost::format(_("%d loot in goods")) % amount).str();
 		}
 		else if (_value == "loot_jewels") {
-			result += amountStr + " loot in jewels";
+			result += (boost::format(_("%d loot in jewels")) % amount).str();
 		}
 		else if (_value == "loot_total") {
-			result += amountStr + " loot";
+			result += (boost::format(_("%d loot")) % amount).str();
 		}
 		else {
-			result += amountStr + " of \"" + _value + "\"";
+			result += (boost::format(_("%d of \"%s\"")) % amount % _value).str();
 		}
 	}
 	else if (id == SpecifierType::SPEC_CLASSNAME().getId()) {
-		result += printEntityAmount(amountStr) + " of type " + _value;
+		result += (boost::format(_("%s of type %s")) % printEntityAmount(amountStr) % _value).str();
 	}
 	else if (id == SpecifierType::SPEC_SPAWNCLASS().getId()) {
-		result += printEntityAmount(amountStr) + " of spawnclass " + _value;
+		result += (boost::format(_("%s of spawnclass %s")) % printEntityAmount(amountStr) % _value).str();
 	}
 	else if (id == SpecifierType::SPEC_AI_TYPE().getId()) {
-		result += amountStr + " AI of type " + _value;
+		result += (boost::format(_("%s AI of type %s")) % amountStr % _value).str();
 	}
 	else if (id == SpecifierType::SPEC_AI_TEAM().getId()) {
-		result += amountStr + " AI of team " + _value;
+		result += (boost::format(_("%s AI of team %s")) % amountStr % _value).str();
 	}
 	else if (id == SpecifierType::SPEC_AI_INNOCENCE().getId()) {
-		result += amountStr + " AI of " + _value;
+		result += (boost::format(_("%s AI of %s")) % amountStr % _value).str();
 	}
 	else {
 		globalErrorStream() << "Unknown specifier ID " << id << "found!" << std::endl;

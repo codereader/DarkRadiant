@@ -9,12 +9,14 @@
 #include "gtkutil/TreeModel.h"
 #include "string/string.h"
 
+#include "i18n.h"
 #include "EffectEditor.h"
 
 namespace ui {
 	
-	namespace {
-		const std::string LABEL_RESPONSE_EFFECTS = "<b>Response Effects</b>";
+	namespace
+	{
+		const char* const LABEL_RESPONSE_EFFECTS = N_("Response Effects");
 	}
 
 ResponseEditor::ResponseEditor(GtkWidget* parent, StimTypes& stimTypes) :
@@ -158,18 +160,18 @@ void ResponseEditor::populatePage() {
 	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), GTK_WIDGET(table), FALSE, FALSE, 0);	
 	
 	// Active
-	_propertyWidgets.active = gtk_check_button_new_with_label("Active");
+	_propertyWidgets.active = gtk_check_button_new_with_label(_("Active"));
 	gtk_table_attach_defaults(table, _propertyWidgets.active, 0, 2, 0, 1);
 		
 	// Random Effects Toggle
-	_propertyWidgets.randomEffectsToggle = gtk_check_button_new_with_label("Random Effects:");
+	_propertyWidgets.randomEffectsToggle = gtk_check_button_new_with_label(_("Random Effects:"));
 	_propertyWidgets.randomEffectsEntry = gtk_entry_new();
 	
 	gtk_table_attach(table, _propertyWidgets.randomEffectsToggle, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(table, _propertyWidgets.randomEffectsEntry, 1, 2, 2, 3);
 	
 	// Chance variable
-	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label("Chance:");
+	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label(_("Chance:"));
 	_propertyWidgets.chanceEntry = gtk_spin_button_new_with_range(0.0f, 1.0f, 0.1f);
 	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry), 2);
 	
@@ -190,7 +192,7 @@ void ResponseEditor::populatePage() {
 	
 	gtk_box_pack_start(
 		GTK_BOX(_propertyWidgets.vbox), 
-		gtkutil::LeftAlignedLabel(LABEL_RESPONSE_EFFECTS),
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _(LABEL_RESPONSE_EFFECTS) + "</b>"),
 		FALSE, FALSE, 0
 	);
 	gtk_box_pack_start(
@@ -225,12 +227,12 @@ GtkWidget* ResponseEditor::createEffectWidgets() {
 	
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_effectWidgets.view), 
-		gtkutil::TextColumn("Effect", EFFECT_CAPTION_COL)
+		gtkutil::TextColumn(_("Effect"), EFFECT_CAPTION_COL)
 	);
 	
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_effectWidgets.view), 
-		gtkutil::TextColumn("Details (double-click to edit)", EFFECT_ARGS_COL)
+		gtkutil::TextColumn(_("Details (double-click to edit)"), EFFECT_ARGS_COL)
 	);
 	
 	// Return the tree view in a frame
@@ -373,11 +375,11 @@ void ResponseEditor::createContextMenu() {
 	_effectWidgets.contextMenu = gtk_menu_new();
 	
 	// Each menu gets a delete item
-	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete");
+	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, _("Delete"));
 	//_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add");
-	_contextMenu.enable = gtkutil::StockIconMenuItem(GTK_STOCK_YES, "Activate");
-	_contextMenu.disable = gtkutil::StockIconMenuItem(GTK_STOCK_NO, "Deactivate");
-	_contextMenu.duplicate = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Duplicate");
+	_contextMenu.enable = gtkutil::StockIconMenuItem(GTK_STOCK_YES, _("Activate"));
+	_contextMenu.disable = gtkutil::StockIconMenuItem(GTK_STOCK_NO, _("Deactivate"));
+	_contextMenu.duplicate = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, _("Duplicate"));
 	
 	//gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.add);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.enable);
@@ -386,15 +388,15 @@ void ResponseEditor::createContextMenu() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.remove);
 	
 	_effectWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
-															   "Add new Effect");
+															   _("Add new Effect"));
 	_effectWidgets.editMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_EDIT,
-															   "Edit");
+															   _("Edit"));
 	_effectWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
-															   "Delete");
+															   _("Delete"));
 	_effectWidgets.upMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_GO_UP,
-															   "Move Up");
+															   _("Move Up"));
 	_effectWidgets.downMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_GO_DOWN,
-															   "Move Down");
+															   _("Move Down"));
 	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
 						  _effectWidgets.addMenuItem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 

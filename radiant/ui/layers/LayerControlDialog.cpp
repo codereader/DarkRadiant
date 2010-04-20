@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "ilayer.h"
@@ -22,7 +23,7 @@ namespace ui {
 	}
 
 LayerControlDialog::LayerControlDialog() :
-	PersistentTransientWindow("Layers", GlobalMainFrame().getTopLevelWindow(), true),
+	PersistentTransientWindow(_("Layers"), GlobalMainFrame().getTopLevelWindow(), true),
 	_controlContainer(gtk_table_new(1, 3, FALSE))
 {
 	gtk_table_set_row_spacings(GTK_TABLE(_controlContainer), 3);
@@ -64,8 +65,8 @@ GtkWidget* LayerControlDialog::createButtons() {
 	// Show all / hide all buttons
 	GtkWidget* hideShowBox = gtk_hbox_new(TRUE, 6);
 
-	_showAllLayers = gtk_button_new_with_label("Show all");
-	_hideAllLayers = gtk_button_new_with_label("Hide all");
+	_showAllLayers = gtk_button_new_with_label(_("Show all"));
+	_hideAllLayers = gtk_button_new_with_label(_("Hide all"));
 
 	g_signal_connect(G_OBJECT(_showAllLayers), "clicked", G_CALLBACK(onShowAllLayers), this);
 	g_signal_connect(G_OBJECT(_hideAllLayers), "clicked", G_CALLBACK(onHideAllLayers), this);
@@ -222,8 +223,8 @@ void LayerControlDialog::createLayer(const cmd::ArgumentList& args) {
 		if (layerName.empty()) {
 			try {
 				layerName = gtkutil::textEntryDialog(
-					"Enter Name", 
-					"Enter Layer Name", 
+					_("Enter Name"), 
+					_("Enter Layer Name"), 
 					"",
 					GlobalMainFrame().getTopLevelWindow()
 				);
@@ -235,7 +236,7 @@ void LayerControlDialog::createLayer(const cmd::ArgumentList& args) {
 
 		if (layerName.empty()) {
 			// Wrong name, let the user try again
-			gtkutil::errorDialog("Cannot create layer with empty name.", GlobalMainFrame().getTopLevelWindow());
+			gtkutil::errorDialog(_("Cannot create layer with empty name."), GlobalMainFrame().getTopLevelWindow());
 			continue;
 		}
 
@@ -249,7 +250,7 @@ void LayerControlDialog::createLayer(const cmd::ArgumentList& args) {
 		}
 		else {
 			// Wrong name, let the user try again
-			gtkutil::errorDialog("This name already exists.", GlobalMainFrame().getTopLevelWindow());
+			gtkutil::errorDialog(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
 			continue; 
 		}
 	}

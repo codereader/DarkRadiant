@@ -7,6 +7,7 @@
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/IconTextColumn.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
@@ -34,12 +35,12 @@ namespace {
 	};
 	
 	// CONSTANTS
-	const char* ADDPROPERTY_TITLE = "Add property";
+	const char* ADDPROPERTY_TITLE = N_("Add property");
 	const char* PROPERTIES_XPATH = "/entityInspector//property";
 	const char* FOLDER_ICON = "folder16.png";
 	
-	const char* CUSTOM_PROPERTY_TEXT = "Custom properties defined for this "
-	"entity class, if any";
+	const char* CUSTOM_PROPERTY_TEXT = N_("Custom properties defined for this "
+	"entity class, if any");
 	
 }
 
@@ -59,7 +60,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
 	
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), ADDPROPERTY_TITLE);
+	gtk_window_set_title(GTK_WINDOW(_widget), _(ADDPROPERTY_TITLE));
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
     
     // Set size of dialog
@@ -228,7 +229,7 @@ void AddPropertyDialog::populateTreeView()
 					   DISPLAY_NAME_COLUMN, cName.c_str(),
 					   PROPERTY_NAME_COLUMN, "",
 					   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(FOLDER_ICON),
-					   DESCRIPTION_COLUMN, CUSTOM_PROPERTY_TEXT,
+					   DESCRIPTION_COLUMN, _(CUSTOM_PROPERTY_TEXT),
 					   -1);
 					   
 	// Use a CustomPropertyAdder class to visit the entityclass and add all

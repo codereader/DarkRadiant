@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 
+#include "i18n.h"
 #include "string/string.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
@@ -10,7 +11,7 @@
 namespace ui {
 
 	namespace {
-		const std::string TAB_NAME("Models");
+		const char* const TAB_NAME = N_("Models");
 		const std::string TAB_ICON("model16green.png");
 	   	
 	   	enum {
@@ -34,7 +35,7 @@ GtkWidget* ModelInfoTab::getWidget() {
 }
 
 std::string ModelInfoTab::getLabel() {
-	return TAB_NAME;
+	return _(TAB_NAME);
 }
 
 std::string ModelInfoTab::getIconName() {
@@ -52,16 +53,16 @@ void ModelInfoTab::populateTab() {
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
 	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(_treeView), TRUE);
 
-	GtkTreeViewColumn* modelCol = gtkutil::TextColumn("Model", MODEL_COL);
+	GtkTreeViewColumn* modelCol = gtkutil::TextColumn(_("Model"), MODEL_COL);
 	gtk_tree_view_column_set_sort_column_id(modelCol, MODEL_COL);
 	
-	GtkTreeViewColumn* polyCountCol = gtkutil::TextColumn("Polys", POLYCOUNT_COL);
+	GtkTreeViewColumn* polyCountCol = gtkutil::TextColumn(_("Polys"), POLYCOUNT_COL);
 	gtk_tree_view_column_set_sort_column_id(polyCountCol, POLYCOUNT_COL);
 
-	GtkTreeViewColumn* modelCountCol = gtkutil::TextColumn("Count", MODELCOUNT_COL);
+	GtkTreeViewColumn* modelCountCol = gtkutil::TextColumn(_("Count"), MODELCOUNT_COL);
 	gtk_tree_view_column_set_sort_column_id(modelCountCol, MODELCOUNT_COL);
 
-	GtkTreeViewColumn* skinCountCol = gtkutil::TextColumn("Skins", SKINCOUNT_COL);
+	GtkTreeViewColumn* skinCountCol = gtkutil::TextColumn(_("Skins"), SKINCOUNT_COL);
 	gtk_tree_view_column_set_sort_column_id(skinCountCol, SKINCOUNT_COL);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), modelCol);
@@ -93,8 +94,8 @@ void ModelInfoTab::populateTab() {
 	_modelCount = gtkutil::LeftAlignedLabel("");
 	_skinCount = gtkutil::LeftAlignedLabel("");
 	
-	GtkWidget* modelsLabel = gtkutil::LeftAlignedLabel("Models used:");
-	GtkWidget* skinsLabel = gtkutil::LeftAlignedLabel("Named Skins used:");
+	GtkWidget* modelsLabel = gtkutil::LeftAlignedLabel(_("Models used:"));
+	GtkWidget* skinsLabel = gtkutil::LeftAlignedLabel(_("Named Skins used:"));
 	
 	gtk_widget_set_size_request(modelsLabel, 120, -1);
 	gtk_widget_set_size_request(skinsLabel, 120, -1);

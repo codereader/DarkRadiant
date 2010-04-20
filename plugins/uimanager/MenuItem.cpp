@@ -1,5 +1,6 @@
 #include "MenuItem.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
@@ -211,7 +212,9 @@ void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 	std::string nodeName = node.getName();
 	
 	setName(node.getAttributeValue("name"));
-	setCaption(node.getAttributeValue("caption"));
+
+	// Put the caption through gettext before passing it to setCaption
+	setCaption(_(node.getAttributeValue("caption").c_str()));
 	
 	if (nodeName == "menuItem") {
 		_type = menuItem;

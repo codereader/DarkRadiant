@@ -5,6 +5,7 @@
 #include "ibrush.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
+#include "i18n.h"
 
 #include <gtk/gtk.h>
 
@@ -16,11 +17,13 @@
 namespace ui {
 
 	namespace {
+		const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
+
 		const unsigned int GDK_FULL_INTENSITY = 65535;
 	}
 
 ColourSchemeEditor::ColourSchemeEditor() :
-	BlockingTransientWindow(EDITOR_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
+	BlockingTransientWindow(_(EDITOR_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {	
     gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_default_size(GTK_WINDOW(getWindow()), EDITOR_DEFAULT_SIZE_X, EDITOR_DEFAULT_SIZE_Y);
@@ -217,6 +220,9 @@ GtkWidget* ColourSchemeEditor::constructColourSelector(ColourItem& colour, const
 	// Get the description of this colour item from the registry
 	std::string descriptionPath = std::string("user/ui/colourschemes/descriptions/") + name;
 	std::string description = GlobalRegistry().get(descriptionPath);
+
+	// Give gettext a chance to translate the colour description
+	description = _(description.c_str());
 	
 	// Create a new horizontal divider
 	GtkWidget* hbox = gtk_hbox_new(FALSE, 10);
@@ -359,7 +365,7 @@ std::string ColourSchemeEditor::inputDialog(const std::string& title, const std:
 void ColourSchemeEditor::copyScheme() {
 	GtkTreeIter iter;
 	std::string name = getSelectedScheme();
-	std::string newName = inputDialog("Copy Colour Scheme", "Enter a name for the new scheme:");
+	std::string newName = inputDialog(_("Copy Colour Scheme"), _("Enter a name for the new scheme:"));
 	
 	if (newName.empty()) {
 		return; // empty name
@@ -367,7 +373,7 @@ void ColourSchemeEditor::copyScheme() {
 
 	// greebo: Check if the new name is already existing
 	if (ColourSchemeManager::Instance().schemeExists(newName)) {
-		gtkutil::errorDialog("A Scheme with that name already exists.", GTK_WINDOW(getWindow()));
+		gtkutil::errorDialog(_("A Scheme with that name already exists."), GTK_WINDOW(getWindow()));
 		return;
 	}
 

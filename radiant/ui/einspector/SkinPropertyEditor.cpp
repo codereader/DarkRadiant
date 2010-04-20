@@ -2,6 +2,7 @@
 #include "SkinChooser.h"
 #include "PropertyEditorFactory.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "ientity.h"
 
@@ -22,7 +23,7 @@ SkinPropertyEditor::SkinPropertyEditor(Entity* entity,
 	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
 	
 	// Create the browse button
-	GtkWidget* browseButton = gtk_button_new_with_label("Choose skin...");
+	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose skin..."));
 	gtk_button_set_image(
 		GTK_BUTTON(browseButton),
 		gtk_image_new_from_pixbuf(

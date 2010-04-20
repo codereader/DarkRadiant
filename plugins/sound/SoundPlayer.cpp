@@ -237,7 +237,7 @@ void SoundPlayer::play(ArchiveFile& file) {
 			// Create an AL sound buffer directly from the buffer in memory
 			_buffer = WavFileLoader::LoadFromStream(file.getInputStream());
 		}
-		catch (std::runtime_error e) {
+		catch (std::runtime_error& e) {
 			globalErrorStream() << "SoundPlayer: Error opening WAV file: " << e.what() << std::endl;
 			_buffer = 0;
 		}

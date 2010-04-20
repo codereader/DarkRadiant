@@ -7,6 +7,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "gui/GuiManager.h"
 #include "gtkutil/dialog.h"
@@ -18,15 +19,14 @@ namespace ui
 	
 namespace
 {
-	const std::string WINDOW_TITLE("Choose a Gui Definition...");
+	const char* const WINDOW_TITLE = N_("Choose a Gui Definition...");
 
 	const gint WINDOW_WIDTH = 400;
 	const gint WINDOW_HEIGHT = 500;
 }
 
-
 GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GTK_WINDOW(editorDialog.getWindow())),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GTK_WINDOW(editorDialog.getWindow())),
 	_editorDialog(editorDialog),
 	_oneSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
 	_twoSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
@@ -94,7 +94,7 @@ GtkWidget* GuiSelector::createInterface()
 	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
 
 	// One-Sided Readables Tab
-	GtkWidget* labelOne = gtk_label_new("One-Sided Readable Guis");
+	GtkWidget* labelOne = gtk_label_new(_("One-Sided Readable Guis"));
 	gtk_widget_show_all(labelOne);
 	gtk_notebook_append_page(
 		_notebook,
@@ -103,7 +103,7 @@ GtkWidget* GuiSelector::createInterface()
 	);
 
 	// Two-Sided Readables Tab
-	GtkWidget* labelTwo = gtk_label_new("Two-Sided Readable Guis");
+	GtkWidget* labelTwo = gtk_label_new(_("Two-Sided Readable Guis"));
 	gtk_widget_show_all(labelTwo);
 	gtk_notebook_append_page(
 		_notebook,
@@ -154,7 +154,7 @@ GtkWidget* GuiSelector::createOneSidedTreeView()
 
 	// Single visible column, containing the directory/model name and the icon
 	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
-		"Gui Path", NAME_COLUMN, IMAGE_COLUMN
+		_("Gui Path"), NAME_COLUMN, IMAGE_COLUMN
 	);
 	gtk_tree_view_append_column(treeViewOne, nameCol);
 
@@ -194,8 +194,8 @@ GtkWidget* GuiSelector::createTwoSidedTreeView()
 
 	// Single visible column, containing the directory/model name and the icon
 	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
-		"Gui Path", NAME_COLUMN, IMAGE_COLUMN
-		);
+		_("Gui Path"), NAME_COLUMN, IMAGE_COLUMN
+	);
 	gtk_tree_view_append_column(treeViewTwo, nameCol);
 
 	// Set the tree store's sort behaviour

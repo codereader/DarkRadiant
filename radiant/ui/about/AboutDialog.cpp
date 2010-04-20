@@ -1,5 +1,6 @@
 #include "AboutDialog.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "igl.h"
 #include "iregistry.h"
@@ -11,16 +12,17 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "modulesystem/ModuleRegistry.h"
+#include <boost/format.hpp>
 
 namespace ui {
 
 	namespace {
 		const std::string RKEY_SHOW_BUILD_TIME = "user/showBuildTime";
-		const std::string CMDLISTDLG_WINDOW_TITLE = "About DarkRadiant";
+		const char* const WINDOW_TITLE = N_("About DarkRadiant");
 	}
 
 AboutDialog::AboutDialog() :
-	BlockingTransientWindow(CMDLISTDLG_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
+	BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
@@ -47,16 +49,21 @@ void AboutDialog::populateWindow() {
 
 	std::string appName(RADIANT_APPNAME_FULL);
 
-	GtkWidget* title = gtkutil::LeftAlignedLabel(
-		std::string("<b><span size=\"large\">") + appName + "</span></b>\n" +
-		 "Build date: " + buildDate + "\n\n"
-		"<b>The Dark Mod</b> (www.thedarkmod.com)\n\n"
+	std::string appNameStr = 
+		(boost::format(_("<b><span size=\"large\">%s</span></b>")) % appName).str() + "\n";
+
+	std::string buildDateStr = 
+		(boost::format(_("Build date: %s")) % buildDate).str() + "\n\n";
+	
+	std::string descStr = _("<b>The Dark Mod</b> (www.thedarkmod.com)\n\n"
 		"This product contains software technology\n"
 		"from id Software, Inc. ('id Technology').\n"
 		"id Technology 2000 id Software,Inc.\n\n"
 		"DarkRadiant is based on the GPL version\n"
-		"of GtkRadiant (www.qeradiant.com)\n"
-	);
+		"of GtkRadiant (www.qeradiant.com)\n");
+
+	GtkWidget* title = gtkutil::LeftAlignedLabel(appNameStr + buildDateStr + descStr);
+
 	GtkWidget* alignment = gtk_alignment_new(0.0f, 0.0f, 1.0f, 0.0f);
 	gtk_container_add(GTK_CONTAINER(alignment), title);
 	gtk_box_pack_start(GTK_BOX(topHBox), alignment, TRUE, TRUE, 0);
@@ -64,27 +71,27 @@ void AboutDialog::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(dialogVBox), topHBox, FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignedLabel(
-		"<b>GTK+ Properties</b>"), FALSE, FALSE, 0);
+		_("<b>GTK+ Properties</b>")), FALSE, FALSE, 0);
 	
 	GtkWidget* gtkVersion = gtkutil::LeftAlignedLabel(
-		"Version: " +
-		intToStr(gtk_major_version) + "." + 
-		intToStr(gtk_minor_version) + "." + 
-		intToStr(gtk_micro_version)  
+		(boost::format(_("Version: %d.%d.%d")) % 
+		gtk_major_version % 
+		gtk_minor_version % 
+		gtk_micro_version).str()
 	);
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignment(gtkVersion, 18), FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignedLabel(
-		"<b>OpenGL Properties</b>"), FALSE, FALSE, 0);
+		_("<b>OpenGL Properties</b>")), FALSE, FALSE, 0);
 	
 	// If anybody knows a better method to convert glubyte* to char*, please tell me...
 	std::string vendorStr = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
 	std::string versionStr = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 	std::string rendererStr = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
 	
-	GtkWidget* glVendor = gtkutil::LeftAlignedLabel("Vendor: " + vendorStr);
-	GtkWidget* glVersion = gtkutil::LeftAlignedLabel("Version: " + versionStr);
-	GtkWidget* glRenderer = gtkutil::LeftAlignedLabel("Renderer: " + rendererStr);
+	GtkWidget* glVendor = gtkutil::LeftAlignedLabel((boost::format(_("Vendor: %s")) % vendorStr).str());
+	GtkWidget* glVersion = gtkutil::LeftAlignedLabel((boost::format(_("Version: %s")) % versionStr).str());
+	GtkWidget* glRenderer = gtkutil::LeftAlignedLabel((boost::format(_("Renderer: %s")) % rendererStr).str());
 	
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignment(glVendor, 18), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignment(glVersion, 18), FALSE, FALSE, 0);
@@ -92,7 +99,7 @@ void AboutDialog::populateWindow() {
 	
 	// OpenGL extensions
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignedLabel(
-		"<b>OpenGL Extensions</b>"), FALSE, FALSE, 0);
+		_("<b>OpenGL Extensions</b>")), FALSE, FALSE, 0);
 	
 	GtkWidget* textView = gtk_text_view_new();
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(textView), FALSE);
@@ -111,7 +118,7 @@ void AboutDialog::populateWindow() {
 	// DarkRadiant modules
 	// OpenGL extensions
 	gtk_box_pack_start(GTK_BOX(dialogVBox), gtkutil::LeftAlignedLabel(
-		"<b>DarkRadiant Modules</b>"), FALSE, FALSE, 0);
+		_("<b>DarkRadiant Modules</b>")), FALSE, FALSE, 0);
 		
 	GtkWidget* moduleTextView = gtk_text_view_new();
 	gtk_text_view_set_editable(GTK_TEXT_VIEW(moduleTextView), FALSE);

@@ -2,6 +2,7 @@
 
 #include "imainframe.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -42,7 +43,7 @@ void PrefDialog::populateWindow() {
 	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(onPrefPageSelect), this);
 	
 	gtk_tree_view_set_headers_visible(_treeView, FALSE);
-	gtk_tree_view_append_column(_treeView, gtkutil::TextColumn("Category", 0)); 
+	gtk_tree_view_append_column(_treeView, gtkutil::TextColumn(_("Category"), 0)); 
 	
 	gtk_widget_set_size_request(GTK_WIDGET(_treeView), 170, -1);
 	GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(_treeView));
@@ -95,7 +96,7 @@ PrefPagePtr PrefDialog::createOrFindPage(const std::string& path) {
 void PrefDialog::initDialog() {
 	
 	_dialog = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(_dialog), "DarkRadiant Preferences");
+	gtk_window_set_title(GTK_WINDOW(_dialog), _("DarkRadiant Preferences"));
 	gtk_window_set_modal(GTK_WINDOW(_dialog), TRUE);
 	gtk_window_set_position(GTK_WINDOW(_dialog), GTK_WIN_POS_CENTER);
 		
@@ -251,7 +252,7 @@ void PrefDialog::showModal(const std::string& path) {
 }
 
 void PrefDialog::showProjectSettings(const cmd::ArgumentList& args) {
-	showModal("Game");
+	showModal(_("Game"));
 }
 
 bool PrefDialog::isVisible() const {

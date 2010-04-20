@@ -1,6 +1,7 @@
 #include "MapFileChooserPreview.h"
 
 #include "imap.h"
+#include "i18n.h"
 #include "itextstream.h"
 #include <gtk/gtkvbox.h>
 #include "scenelib.h"
@@ -77,7 +78,7 @@ void MapFileChooserPreview::updateUsageInfo() {
 		usage = finder.getFoundValue();
 
 		if (usage.empty()) {
-			usage = "<no description>";
+			usage = _("<no description>");
 		}
 	}
 

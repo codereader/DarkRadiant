@@ -19,15 +19,6 @@ typedef struct _GtkWidget GtkWidget;
  */
 namespace ui { 
 
-	namespace {
-		const std::string RKEY_MAP_ROOT = "user/ui/map";
-		const std::string RKEY_MAP_MRUS = RKEY_MAP_ROOT + "/MRU";
-		const std::string RKEY_MRU_LENGTH = RKEY_MAP_ROOT + "/numMRU";
-		const std::string RKEY_LOAD_LAST_MAP = RKEY_MAP_ROOT + "/loadLastMap";
-		
-		const std::string RECENT_FILES_CAPTION = "Recently used Maps";
-	}
-
 class MRU :
 	public RegistryKeyObserver
 {

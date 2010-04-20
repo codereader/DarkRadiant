@@ -1,6 +1,7 @@
 #include "EntityInfoTab.h"
 
 #include <gtk/gtk.h>
+#include "i18n.h"
 #include "iradiant.h"
 #include "icounter.h"
 
@@ -12,7 +13,7 @@
 namespace ui {
 
 	namespace {
-		const std::string TAB_NAME("Entities");
+		const char* const TAB_NAME = N_("Entities");
 		const std::string TAB_ICON("cmenu_add_entity.png");
 
 	   	enum {
@@ -34,7 +35,7 @@ GtkWidget* EntityInfoTab::getWidget() {
 }
 
 std::string EntityInfoTab::getLabel() {
-	return TAB_NAME;
+	return _(TAB_NAME);
 }
 
 std::string EntityInfoTab::getIconName() {
@@ -52,10 +53,10 @@ void EntityInfoTab::populateTab() {
 	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
 	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(_treeView), TRUE);
 
-	GtkTreeViewColumn* eclassCol = gtkutil::TextColumn("Entity Class", ECLASS_COL);
+	GtkTreeViewColumn* eclassCol = gtkutil::TextColumn(_("Entity Class"), ECLASS_COL);
 	gtk_tree_view_column_set_sort_column_id(eclassCol, ECLASS_COL);
 	
-	GtkTreeViewColumn* countCol = gtkutil::TextColumn("Count", COUNT_COL);
+	GtkTreeViewColumn* countCol = gtkutil::TextColumn(_("Count"), COUNT_COL);
 	gtk_tree_view_column_set_sort_column_id(countCol, COUNT_COL);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), eclassCol);
@@ -84,9 +85,9 @@ void EntityInfoTab::populateTab() {
 	_patchCount = gtkutil::LeftAlignedLabel("");
 	_entityCount = gtkutil::LeftAlignedLabel("");
 	
-	GtkWidget* brushLabel = gtkutil::LeftAlignedLabel("Brushes:");
-	GtkWidget* patchLabel = gtkutil::LeftAlignedLabel("Patches:");
-	GtkWidget* entityLabel = gtkutil::LeftAlignedLabel("Entities:");
+	GtkWidget* brushLabel = gtkutil::LeftAlignedLabel(_("Brushes:"));
+	GtkWidget* patchLabel = gtkutil::LeftAlignedLabel(_("Patches:"));
+	GtkWidget* entityLabel = gtkutil::LeftAlignedLabel(_("Entities:"));
 	
 	gtk_widget_set_size_request(brushLabel, 75, -1);
 	gtk_widget_set_size_request(patchLabel, 75, -1);

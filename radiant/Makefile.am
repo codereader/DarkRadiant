@@ -169,6 +169,7 @@ darkradiant_SOURCES = main.cpp \
 					  settings/GameFileLoader.cpp \
 					  settings/Game.cpp \
 					  settings/GameManager.cpp \
+					  settings/LanguageManager.cpp \
 					  settings/PreferenceSystem.cpp \
 					  settings/Win32Registry.cpp \
 					  patch/Patch.cpp \
@@ -201,6 +202,7 @@ darkradiant_SOURCES = main.cpp \
 					  log/LogStream.cpp \
 					  log/LogWriter.cpp \
 					  log/COutRedirector.cpp \
+					  log/GtkLogRedirector.cpp \
 					  log/StringLogDevice.cpp \
 					  log/LogStreamBuf.cpp \
 					  log/LogFile.cpp \

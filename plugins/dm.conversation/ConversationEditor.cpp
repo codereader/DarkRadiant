@@ -1,5 +1,6 @@
 #include "ConversationEditor.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
@@ -14,7 +15,7 @@
 namespace ui {
 
 namespace {
-	const std::string WINDOW_TITLE = "Edit Conversation";
+	const char* const WINDOW_TITLE = N_("Edit Conversation");
 	const int MIN_HEIGHT_ACTORS_TREEVIEW = 160;
 	const int MIN_HEIGHT_COMMAND_TREEVIEW = 200;
 
@@ -34,10 +35,15 @@ namespace {
 		WIDGET_MOVE_DOWN_CMD_BUTTON,
 		WIDGET_DELETE_CMD_BUTTON,
 	};
+
+	inline std::string makeBold(const std::string& input)
+	{
+		return "<b>" + input + "</b>";
+	}
 }
 
 ConversationEditor::ConversationEditor(GtkWindow* parent, conversation::Conversation& conversation) :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, parent),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), parent),
 	_actorStore(gtk_list_store_new(2, 
 								   G_TYPE_INT,		// actor number
 								   G_TYPE_STRING)),	// display name
@@ -70,15 +76,15 @@ void ConversationEditor::populateWindow() {
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
 	// Create the conversation properties pane
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Conversation Properties</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel(makeBold(_("Properties"))), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(createPropertyPane(), 18, 1), FALSE, FALSE, 0);
 
 	// Actors
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Actors</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel(makeBold(_("Actors"))), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(createActorPanel(), 18, 1), FALSE, FALSE, 0);
 	
 	// Commands
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Commands</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel(makeBold(_("Commands"))), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(createCommandPanel(), 18, 1), TRUE, TRUE, 0);
 
 	// Buttons
@@ -101,7 +107,7 @@ GtkWidget* ConversationEditor::createPropertyPane() {
 	
 	// Conversation name
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("Name"),
+					 gtkutil::LeftAlignedLabel(_("Name")),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	_widgets[WIDGET_CONV_NAME_ENTRY] = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), 
@@ -116,7 +122,7 @@ GtkWidget* ConversationEditor::createPropertyPane() {
 			gtkutil::RightAlignment(_widgets[WIDGET_CONV_ACTOR_WITHIN_TALKDIST]),
 			0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  gtkutil::LeftAlignedLabel("Actors must be within talk distance"), 
+							  gtkutil::LeftAlignedLabel(_("Actors must be within talk distance")), 
 							  1, 2, row, row+1);
 	
 	row++;
@@ -127,7 +133,7 @@ GtkWidget* ConversationEditor::createPropertyPane() {
 			gtkutil::RightAlignment(_widgets[WIDGET_CONV_ACTORS_ALWAYS_FACE]),
 			0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  gtkutil::LeftAlignedLabel("Actors always face each other while talking"), 
+							  gtkutil::LeftAlignedLabel(_("Actors always face each other while talking")), 
 							  1, 2, row, row+1);
 	
 	row++;
@@ -148,9 +154,9 @@ GtkWidget* ConversationEditor::createPropertyPane() {
 	_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY] = gtk_spin_button_new_with_range(-1, 9999, 1);
 	gtk_widget_set_size_request(_widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY], 60, -1);
 
-	gtk_box_pack_start(hbox, gtkutil::LeftAlignedLabel("Let this conversation play"), FALSE, FALSE, 0);
+	gtk_box_pack_start(hbox, gtkutil::LeftAlignedLabel(_("Let this conversation play")), FALSE, FALSE, 0);
 	gtk_box_pack_start(hbox, _widgets[WIDGET_CONV_MAX_PLAY_COUNT_ENTRY], FALSE, FALSE, 0);
-	gtk_box_pack_start(hbox, gtkutil::LeftAlignedLabel("times at maximum"), FALSE, FALSE, 0);
+	gtk_box_pack_start(hbox, gtkutil::LeftAlignedLabel(_("times at maximum")), FALSE, FALSE, 0);
 
 	gtk_table_attach_defaults(GTK_TABLE(table), 
 							  _widgets[WIDGET_CONV_MAX_PLAY_COUNT_HBOX], 
@@ -177,7 +183,7 @@ GtkWidget* ConversationEditor::createActorPanel() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
 
 	// Construct a new editable text column
-	gtkutil::TextColumn actorColumn("Actor (click to edit)", 1, false);
+	gtkutil::TextColumn actorColumn(_("Actor (click to edit)"), 1, false);
 	
 	GtkCellRendererText* rend = actorColumn.getCellRenderer();
 	g_object_set(G_OBJECT(rend), "editable", TRUE, NULL);
@@ -220,9 +226,9 @@ GtkWidget* ConversationEditor::createCommandPanel() {
 	
 	// Key and value text columns
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Actor", 1));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Command", 2));
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("Wait", 3));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Actor"), 1));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Command"), 2));
+	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Wait"), 3));
 	
 	// Action buttons
 	_widgets[WIDGET_ADD_CMD_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
@@ -332,13 +338,15 @@ void ConversationEditor::updateWidgets() {
 	{
 		const conversation::ConversationCommand& cmd = *(i->second);
 
+		std::string actorStr = (boost::format(_("Actor %d")) % cmd.actor).str();
+
 		GtkTreeIter iter;
 		gtk_list_store_append(_commandStore, &iter);
 		gtk_list_store_set(_commandStore, &iter, 
 						   0, i->first, 
-						   1, (std::string("Actor ") + intToStr(cmd.actor)).c_str(),
+						   1, actorStr.c_str(),
 						   2, cmd.getSentence().c_str(),
-						   3, cmd.waitUntilFinished ? "yes" : "no",
+						   3, cmd.waitUntilFinished ? _("yes") : _("no"),
 						   -1);
 	}
 
@@ -498,7 +506,7 @@ void ConversationEditor::onAddActor(GtkWidget* w, ConversationEditor* self) {
 	}
 
 	// Add the new actor to the map
-	self->_conversation.actors[idx] = "New Actor";
+	self->_conversation.actors[idx] = _("New Actor");
 
 	// Update the widgets
 	self->updateWidgets();

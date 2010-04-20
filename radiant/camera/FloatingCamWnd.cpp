@@ -1,11 +1,12 @@
 #include "FloatingCamWnd.h"
 
+#include "i18n.h"
 #include "gtkutil/FramedWidget.h"
 
 #include "GlobalCamera.h"
 
 FloatingCamWnd::FloatingCamWnd(GtkWindow* parent) :
-	PersistentTransientWindow("Camera", parent, true)
+	PersistentTransientWindow(_("Camera"), parent, true)
 {
 	CamWnd::setContainer(GTK_WINDOW(getWindow()));
 

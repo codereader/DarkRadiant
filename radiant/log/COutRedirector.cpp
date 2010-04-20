@@ -27,7 +27,7 @@ void COutRedirector::init() {
 
 // A call to destroy() will stop redirecting std::cout
 void COutRedirector::destroy() {
-	// Clear the shared_ptr, this will 
+	// Clear the shared_ptr, this will disable all redirects
 	InstancePtr() = COutRedirectorPtr();
 }
 

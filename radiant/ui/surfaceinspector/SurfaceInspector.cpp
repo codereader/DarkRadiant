@@ -1,5 +1,6 @@
 #include "SurfaceInspector.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "ieventmanager.h"
@@ -27,10 +28,11 @@
 
 namespace ui {
 
-	namespace {
-		const std::string WINDOW_TITLE = "Surface Inspector";
-		const std::string LABEL_PROPERTIES = "Texture Properties";
-		const std::string LABEL_OPERATIONS = "Texture Operations";
+	namespace
+	{
+		const char* const WINDOW_TITLE = N_("Surface Inspector");
+		const char* const LABEL_PROPERTIES = N_("Texture Properties");
+		const char* const LABEL_OPERATIONS = N_("Texture Operations");
 		
 		const std::string HSHIFT = "horizshift";
 		const std::string VSHIFT = "vertshift";
@@ -38,34 +40,34 @@ namespace ui {
 		const std::string VSCALE = "vertscale";
 		const std::string ROTATION = "rotation";
 	
-		const std::string LABEL_HSHIFT = "Horiz. Shift:";
-		const std::string LABEL_VSHIFT = "Vert. Shift:";
-		const std::string LABEL_HSCALE = "Horiz. Scale:";
-		const std::string LABEL_VSCALE = "Vert. Scale:";
-		const std::string LABEL_ROTATION = "Rotation:";
-		const char* LABEL_SHADER = "Shader:";
-		const char* FOLDER_ICON = "folder16.png";
-		const char* LABEL_STEP = "Step:";
+		const char* const LABEL_HSHIFT = N_("Horiz. Shift:");
+		const char* const LABEL_VSHIFT = N_("Vert. Shift:");
+		const char* const LABEL_HSCALE = N_("Horiz. Scale:");
+		const char* const LABEL_VSCALE = N_("Vert. Scale:");
+		const char* const LABEL_ROTATION = N_("Rotation:");
+		const char* const LABEL_SHADER = N_("Shader:");
+		const char* const FOLDER_ICON = "folder16.png";
+		const char* const LABEL_STEP = N_("Step:");
 		
-		const char* LABEL_FIT_TEXTURE = "Fit Texture:";
-		const char* LABEL_FIT = "Fit";
+		const char* LABEL_FIT_TEXTURE = N_("Fit Texture:");
+		const char* LABEL_FIT = N_("Fit");
 
-		const char* LABEL_ALIGN_TEXTURE = "Align Texture:";
-		const char* LABEL_ALIGN_TOP = "Top";
-		const char* LABEL_ALIGN_BOTTOM = "Bottom";
-		const char* LABEL_ALIGN_RIGHT = "Right";
-		const char* LABEL_ALIGN_LEFT = "Left";
+		const char* LABEL_ALIGN_TEXTURE = N_("Align Texture:");
+		const char* LABEL_ALIGN_TOP = N_("Top");
+		const char* LABEL_ALIGN_BOTTOM = N_("Bottom");
+		const char* LABEL_ALIGN_RIGHT = N_("Right");
+		const char* LABEL_ALIGN_LEFT = N_("Left");
 		
-		const char* LABEL_FLIP_TEXTURE = "Flip Texture:";
-		const char* LABEL_FLIPX = "Flip Horizontal";
-		const char* LABEL_FLIPY = "Flip Vertical";
+		const char* LABEL_FLIP_TEXTURE = N_("Flip Texture:");
+		const char* LABEL_FLIPX = N_("Flip Horizontal");
+		const char* LABEL_FLIPY = N_("Flip Vertical");
 				
-		const char* LABEL_APPLY_TEXTURE = "Modify Texture:";
-		const char* LABEL_NATURAL = "Natural";
-		const char* LABEL_NORMALISE = "Normalise";
+		const char* LABEL_APPLY_TEXTURE = N_("Modify Texture:");
+		const char* LABEL_NATURAL = N_("Natural");
+		const char* LABEL_NORMALISE = N_("Normalise");
 		
-		const char* LABEL_DEFAULT_SCALE = "Default Scale:";
-		const char* LABEL_TEXTURE_LOCK = "Texture Lock";
+		const char* LABEL_DEFAULT_SCALE = N_("Default Scale:");
+		const char* LABEL_TEXTURE_LOCK = N_("Texture Lock");
 		
 		const std::string RKEY_ENABLE_TEXTURE_LOCK = "user/ui/brush/textureLock";
 		const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
@@ -83,7 +85,7 @@ namespace ui {
 	}
 
 SurfaceInspector::SurfaceInspector() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
+: gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _callbackActive(false),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
@@ -284,7 +286,7 @@ void SurfaceInspector::populateWindow()
 	
 	// Create the title label (bold font)
 	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_PROPERTIES + "</span>"
+    	std::string("<span weight=\"bold\">") + _(LABEL_PROPERTIES) + "</span>"
     );
     gtk_box_pack_start(GTK_BOX(dialogVBox), topLabel, TRUE, TRUE, 0);
     
@@ -298,7 +300,7 @@ void SurfaceInspector::populateWindow()
 	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment), TRUE, TRUE, 0);
 	
 	// Create the entry field and pack it into the first table row
-	GtkWidget* shaderLabel = gtkutil::LeftAlignedLabel(LABEL_SHADER);
+	GtkWidget* shaderLabel = gtkutil::LeftAlignedLabel(_(LABEL_SHADER));
 	gtk_table_attach_defaults(table, shaderLabel, 0, 1, 0, 1);
 	
 	_shaderEntry = gtk_entry_new();
@@ -317,17 +319,17 @@ void SurfaceInspector::populateWindow()
 	gtk_table_attach_defaults(table, hbox, 1, 2, 0, 1);
 	
 	// Populate the table with the according widgets
-	_manipulators[HSHIFT] = createManipulatorRow(LABEL_HSHIFT, table, 1, false);
-	_manipulators[VSHIFT] = createManipulatorRow(LABEL_VSHIFT, table, 2, true);
-	_manipulators[HSCALE] = createManipulatorRow(LABEL_HSCALE, table, 3, false);
-	_manipulators[VSCALE] = createManipulatorRow(LABEL_VSCALE, table, 4, true);
-	_manipulators[ROTATION] = createManipulatorRow(LABEL_ROTATION, table, 5, false);
+	_manipulators[HSHIFT] = createManipulatorRow(_(LABEL_HSHIFT), table, 1, false);
+	_manipulators[VSHIFT] = createManipulatorRow(_(LABEL_VSHIFT), table, 2, true);
+	_manipulators[HSCALE] = createManipulatorRow(_(LABEL_HSCALE), table, 3, false);
+	_manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), table, 4, true);
+	_manipulators[ROTATION] = createManipulatorRow(_(LABEL_ROTATION), table, 5, false);
 	
 	// ======================== Texture Operations ====================================
 	
 	// Create the texture operations label (bold font)
     GtkWidget* operLabel = gtkutil::LeftAlignedLabel(
-    	std::string("<span weight=\"bold\">") + LABEL_OPERATIONS + "</span>"
+    	std::string("<span weight=\"bold\">") + _(LABEL_OPERATIONS) + "</span>"
     );
     gtk_misc_set_padding(GTK_MISC(operLabel), 0, 2); // Small spacing to the top/bottom
     gtk_box_pack_start(GTK_BOX(dialogVBox), operLabel, TRUE, TRUE, 0);
@@ -350,7 +352,7 @@ void SurfaceInspector::populateWindow()
 	_fitTexture.hbox = gtk_hbox_new(false, 6);
 	
 	// Create the "Fit Texture" label
-	_fitTexture.label = gtkutil::LeftAlignedLabel(LABEL_FIT_TEXTURE);
+	_fitTexture.label = gtkutil::LeftAlignedLabel(_(LABEL_FIT_TEXTURE));
 	gtk_table_attach_defaults(operTable, _fitTexture.label, 0, 1, curLine, curLine+1);
 	
 	_fitTexture.widthAdj = gtk_adjustment_new(1.0f, 0.0f, 1000.0f, 1.0f, 1.0f, 0);
@@ -382,15 +384,15 @@ void SurfaceInspector::populateWindow()
 	curLine++;
 
 	// Create the "Align Texture" label
-	_alignTexture.label = gtkutil::LeftAlignedLabel(LABEL_ALIGN_TEXTURE);
+	_alignTexture.label = gtkutil::LeftAlignedLabel(_(LABEL_ALIGN_TEXTURE));
 	gtk_table_attach_defaults(operTable, _alignTexture.label, 0, 1, curLine, curLine+1);
 	
 	_alignTexture.hbox = gtk_hbox_new(TRUE, 6); 
 
-	_alignTexture.top = gtk_button_new_with_label(LABEL_ALIGN_TOP);
-	_alignTexture.bottom = gtk_button_new_with_label(LABEL_ALIGN_BOTTOM);
-	_alignTexture.left = gtk_button_new_with_label(LABEL_ALIGN_LEFT);
-	_alignTexture.right = gtk_button_new_with_label(LABEL_ALIGN_RIGHT);
+	_alignTexture.top = gtk_button_new_with_label(_(LABEL_ALIGN_TOP));
+	_alignTexture.bottom = gtk_button_new_with_label(_(LABEL_ALIGN_BOTTOM));
+	_alignTexture.left = gtk_button_new_with_label(_(LABEL_ALIGN_LEFT));
+	_alignTexture.right = gtk_button_new_with_label(_(LABEL_ALIGN_RIGHT));
 
 	gtk_box_pack_start(GTK_BOX(_alignTexture.hbox), _alignTexture.top, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(_alignTexture.hbox), _alignTexture.bottom, TRUE, TRUE, 0);
@@ -402,12 +404,12 @@ void SurfaceInspector::populateWindow()
 	curLine++;
 	
 	// Create the "Flip Texture" label
-	_flipTexture.label = gtkutil::LeftAlignedLabel(LABEL_FLIP_TEXTURE);
+	_flipTexture.label = gtkutil::LeftAlignedLabel(_(LABEL_FLIP_TEXTURE));
 	gtk_table_attach_defaults(operTable, _flipTexture.label, 0, 1, curLine, curLine+1);
 	
 	_flipTexture.hbox = gtk_hbox_new(TRUE, 6); 
-	_flipTexture.flipX = gtk_button_new_with_label(LABEL_FLIPX);
-	_flipTexture.flipY = gtk_button_new_with_label(LABEL_FLIPY);
+	_flipTexture.flipX = gtk_button_new_with_label(_(LABEL_FLIPX));
+	_flipTexture.flipY = gtk_button_new_with_label(_(LABEL_FLIPY));
 	gtk_box_pack_start(GTK_BOX(_flipTexture.hbox), _flipTexture.flipX, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(_flipTexture.hbox), _flipTexture.flipY, TRUE, TRUE, 0);
 	
@@ -416,12 +418,12 @@ void SurfaceInspector::populateWindow()
 	curLine++;
 
 	// Create the "Apply Texture" label
-	_applyTex.label = gtkutil::LeftAlignedLabel(LABEL_APPLY_TEXTURE);
+	_applyTex.label = gtkutil::LeftAlignedLabel(_(LABEL_APPLY_TEXTURE));
 	gtk_table_attach_defaults(operTable, _applyTex.label, 0, 1, curLine, curLine+1);
 	
 	_applyTex.hbox = gtk_hbox_new(TRUE, 6); 
-	_applyTex.natural = gtk_button_new_with_label(LABEL_NATURAL);
-	_applyTex.normalise = gtk_button_new_with_label(LABEL_NORMALISE);
+	_applyTex.natural = gtk_button_new_with_label(_(LABEL_NATURAL));
+	_applyTex.normalise = gtk_button_new_with_label(_(LABEL_NORMALISE));
 	gtk_box_pack_start(GTK_BOX(_applyTex.hbox), _applyTex.natural, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(_applyTex.hbox), _applyTex.normalise, TRUE, TRUE, 0);
 	
@@ -430,7 +432,7 @@ void SurfaceInspector::populateWindow()
 	curLine++;
 
 	// Default Scale
-	GtkWidget* defaultScaleLabel = gtkutil::LeftAlignedLabel(LABEL_DEFAULT_SCALE);
+	GtkWidget* defaultScaleLabel = gtkutil::LeftAlignedLabel(_(LABEL_DEFAULT_SCALE));
 	gtk_table_attach_defaults(operTable, defaultScaleLabel, 0, 1, curLine, curLine+1);
 	
 	GtkWidget* hbox2 = gtk_hbox_new(true, 6);
@@ -445,7 +447,7 @@ void SurfaceInspector::populateWindow()
 	gtk_box_pack_start(GTK_BOX(hbox2), _defaultTexScale, TRUE, TRUE, 0);
 	
 	// Texture Lock Toggle
-	_texLockButton = gtk_toggle_button_new_with_label(LABEL_TEXTURE_LOCK); 
+	_texLockButton = gtk_toggle_button_new_with_label(_(LABEL_TEXTURE_LOCK)); 
 	gtk_box_pack_start(GTK_BOX(hbox2), _texLockButton, TRUE, TRUE, 0);
 	
 	gtk_table_attach_defaults(operTable, hbox2, 1, 2, curLine, curLine+1);
@@ -507,7 +509,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	}
 	
 	// Create the label
-	manipRow.steplabel = gtkutil::LeftAlignedLabel(LABEL_STEP); 
+	manipRow.steplabel = gtkutil::LeftAlignedLabel(_(LABEL_STEP)); 
 	gtk_box_pack_start(GTK_BOX(manipRow.hbox), manipRow.steplabel, FALSE, FALSE, 0);
 	
 	// Create the entry field

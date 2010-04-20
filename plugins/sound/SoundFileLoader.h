@@ -50,7 +50,7 @@ public:
 				// Pass the contents back to the SoundModule for parsing
 				_manager.parseShadersFrom(is, file->getModName());
 			}
-			catch (parser::ParseException ex) {
+			catch (parser::ParseException& ex) {
 				globalErrorStream() << "[sound]: Error while parsing " << filename <<
 					": " << ex.what() << std::endl;
 			}

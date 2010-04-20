@@ -17,9 +17,7 @@ typedef struct _GtkTreeIter GtkTreeIter;
 namespace ui {
 
 	namespace {
-		const std::string ECLASSTREE_TITLE = "Entity Class Tree";
-	    
-	    // Tree column enum
+		// Tree column enum
 	    enum {
 	        NAME_COLUMN,
 	        ICON_COLUMN,

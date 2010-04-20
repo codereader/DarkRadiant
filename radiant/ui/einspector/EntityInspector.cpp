@@ -2,6 +2,7 @@
 #include "PropertyEditorFactory.h"
 #include "AddPropertyDialog.h"
 
+#include "i18n.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "iregistry.h"
@@ -94,7 +95,7 @@ void EntityInspector::construct()
 
     // Show inherited properties checkbutton
     _showInheritedCheckbox = gtk_check_button_new_with_label(
-        "Show inherited properties"
+        _("Show inherited properties")
     );
 	g_signal_connect(
         G_OBJECT(_showInheritedCheckbox), "toggled",
@@ -104,7 +105,7 @@ void EntityInspector::construct()
         GTK_BOX(topHBox), _showInheritedCheckbox, FALSE, FALSE, 0
     );
 
-	_showHelpColumnCheckbox = gtk_check_button_new_with_label("Show help icons");
+	_showHelpColumnCheckbox = gtk_check_button_new_with_label(_("Show help icons"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_showHelpColumnCheckbox), FALSE);
 	g_signal_connect(G_OBJECT(_showHelpColumnCheckbox), "toggled", G_CALLBACK(_onToggleShowHelpIcons), this);
 
@@ -256,11 +257,11 @@ void EntityInspector::onKeyErase(const std::string& key,
 void EntityInspector::createContextMenu() 
 {
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add property..."),
+		gtkutil::StockIconMenuItem(GTK_STOCK_ADD, _("Add property...")),
 		boost::bind(&EntityInspector::_onAddKey, this)
 	);
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, "Delete property"),
+		gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, _("Delete property")),
 		boost::bind(&EntityInspector::_onDeleteKey, this),
 		boost::bind(&EntityInspector::_testDeleteKey, this)
 	);
@@ -268,17 +269,17 @@ void EntityInspector::createContextMenu()
 	_contextMenu->addItem(gtkutil::SeparatorMenuItem(), gtkutil::PopupMenu::Callback());
 
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, "Copy Spawnarg"),
+		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, _("Copy Spawnarg")),
 		boost::bind(&EntityInspector::_onCopyKey, this),
 		boost::bind(&EntityInspector::_testCopyKey, this)
 	);
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_CUT, "Cut Spawnarg"),
+		gtkutil::StockIconMenuItem(GTK_STOCK_CUT, _("Cut Spawnarg")),
 		boost::bind(&EntityInspector::_onCutKey, this),
 		boost::bind(&EntityInspector::_testCutKey, this)
 	);
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_PASTE, "Paste Spawnarg"),
+		gtkutil::StockIconMenuItem(GTK_STOCK_PASTE, _("Paste Spawnarg")),
 		boost::bind(&EntityInspector::_onPasteKey, this),
 		boost::bind(&EntityInspector::_testPasteKey, this)
 	);
@@ -369,7 +370,7 @@ GtkWidget* EntityInspector::createTreeViewPane()
 
     // Create the Property column
     GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(nameCol, "Property");
+    gtk_tree_view_column_set_title(nameCol, _("Property"));
 	gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
     gtk_tree_view_column_set_spacing(nameCol, 3);
 
@@ -389,7 +390,7 @@ GtkWidget* EntityInspector::createTreeViewPane()
 
 	// Create the value column
     GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(valCol, "Value");
+    gtk_tree_view_column_set_title(valCol, _("Value"));
 	gtk_tree_view_column_set_sizing(valCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 
     GtkCellRenderer* valRenderer = gtk_cell_renderer_text_new();
@@ -404,7 +405,7 @@ GtkWidget* EntityInspector::createTreeViewPane()
 
 	// Help column
 	_helpColumn = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(_helpColumn, "?");
+	gtk_tree_view_column_set_title(_helpColumn, _("?"));
 	gtk_tree_view_column_set_spacing(_helpColumn, 3);
 	gtk_tree_view_column_set_visible(_helpColumn, FALSE);
 
@@ -626,7 +627,8 @@ void EntityInspector::applyKeyValueToSelection(const std::string& key, const std
 			if (nspace != NULL && nspace->nameExists(val))
             {
 				// name exists, cancel the change
-				gtkutil::errorDialog("The name " + val + " already exists in this map!",
+				gtkutil::errorDialog(
+					(boost::format(_("The name %s already exists in this map!")) % val).str(),
 					GlobalMainFrame().getTopLevelWindow());
 				return;
 			}

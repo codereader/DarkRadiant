@@ -5,6 +5,8 @@
 #include "parser/DefTokeniser.h"
 #include "math/matrix.h"
 #include "shaderlib.h"
+#include "i18n.h"
+#include <boost/format.hpp>
 
 namespace map
 {
@@ -92,9 +94,8 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			IFace& face = brush.addFace(plane, texdef, shader);
 		}
 		else {
-			throw parser::ParseException(
-				"BrushDef3Parser: invalid token '" + token + "'"
-			);
+			std::string text = (boost::format(_("BrushDef3Parser: invalid token '%s'")) % token).str();
+			throw parser::ParseException(text);
 		}
 	}
 

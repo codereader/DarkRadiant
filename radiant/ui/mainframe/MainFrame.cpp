@@ -2,6 +2,7 @@
 
 #include <gtk/gtk.h>
 
+#include "i18n.h"
 #include "RadiantModule.h"
 #include "iuimanager.h"
 #include "idialogmanager.h"
@@ -36,6 +37,7 @@
 
 #include "modulesystem/StaticModule.h"
 #include <boost/bind.hpp>
+#include <boost/format.hpp>
 
 #ifdef WIN32
 #include <windows.h>
@@ -84,7 +86,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	globalOutputStream() << "MainFrame::initialiseModule called." << std::endl;
 
 	// Add another page for Multi-Monitor stuff
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Multi Monitor");
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
 
 	// Initialise the registry, if no key is set
 	if (GlobalRegistry().get(RKEY_MULTIMON_START_MONITOR).empty())
@@ -98,10 +100,12 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	{
 		GdkRectangle rect = gtkutil::MultiMonitor::getMonitor(i);
 
-		list.push_back("Monitor " + intToStr(i) + " (" + intToStr(rect.width) + "x" + intToStr(rect.height) + ")");
+		list.push_back(
+			(boost::format("Monitor %d (%dx%d)") % i % rect.width % rect.height).str()
+		);
 	}
 
-	page->appendCombo("Start DarkRadiant on monitor", RKEY_MULTIMON_START_MONITOR, list);
+	page->appendCombo(_("Start DarkRadiant on monitor"), RKEY_MULTIMON_START_MONITOR, list);
 
 	// Add the toggle max/min command for floating windows
 	GlobalCommandSystem().addCommand("ToggleFullScreenCamera", 
@@ -120,9 +124,9 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 		if (dwmEnableComposition)
 		{
 			// Add a page for Desktop Composition stuff
-			PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Compatibility");
+			PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Compatibility"));
 
-			page->appendCheckBox("", "Disable Windows Desktop Composition", 
+			page->appendCheckBox("", _("Disable Windows Desktop Composition"), 
 				RKEY_DISABLE_WIN_DESKTOP_COMP);
 
 			GlobalRegistry().addKeyObserver(this, RKEY_DISABLE_WIN_DESKTOP_COMP);
@@ -386,7 +390,7 @@ void MainFrame::create() {
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
     	GlobalEntityInspector().getWidget(), // page widget
-    	"Entity"
+    	_("Entity")
     );
 
 	// Add the Media Browser page
@@ -395,7 +399,7 @@ void MainFrame::create() {
     	"Media", // tab title
     	"folder16.png", // tab icon 
     	MediaBrowser::getInstance().getWidget(), // page widget
-    	"Media"
+    	_("Media")
     );
 	
     // Add the console widget if using floating window mode, otherwise the
@@ -405,7 +409,7 @@ void MainFrame::create() {
     	"Console", // tab title
     	"iconConsole16.png", // tab icon 
 		Console::Instance().getWidget(), // page widget
-    	"Console"
+    	_("Console")
     );
 
 	// Load the previous window settings from the registry
@@ -514,8 +518,9 @@ std::string MainFrame::getCurrentLayout() {
 }
 
 // GTK callbacks
-gboolean MainFrame::onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self) {
-	if (GlobalMap().askForSave("Exit Radiant")) {
+gboolean MainFrame::onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self)
+{
+	if (GlobalMap().askForSave(_("Exit Radiant"))) {
 		gtk_main_quit();
 	}
 

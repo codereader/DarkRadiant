@@ -2,11 +2,12 @@
 
 #include <gtk/gtkwidget.h>
 #include "iuimanager.h"
+#include "i18n.h"
 
 namespace ui
 {
 
-const std::string SCRIPT_MENU_CAPTION = "_Scripts";
+const char* const SCRIPT_MENU_CAPTION = "_Scripts";
 const std::string SCRIPT_MENU_NAME = "scripts";
 const std::string SCRIPT_MENU_INSERT_POINT = "main/help";
 const std::string SCRIPT_MENU_PATH = "main/scripts";
@@ -20,7 +21,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 		SCRIPT_MENU_INSERT_POINT,
 		SCRIPT_MENU_NAME,
 		menuFolder,
-		SCRIPT_MENU_CAPTION,
+		_(SCRIPT_MENU_CAPTION),
 		"",
 		""
 	);
@@ -48,7 +49,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 			SCRIPT_MENU_PATH, 
 			"noscriptsavailable",
 			menuItem,
-			"No scripts available",
+			_("No scripts available"),
 			"",
 			""
 		);
