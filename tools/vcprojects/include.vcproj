@@ -388,10 +388,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\stream_version.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\StringSerialisable.h"
 			>
 		</File>
