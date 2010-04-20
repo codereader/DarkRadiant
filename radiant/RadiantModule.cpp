@@ -143,7 +143,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
   	
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
-    GlobalCamera().construct();
     GlobalXYWnd().construct();
 	ui::MediaBrowser::registerPreferences();
     GlobalTextureBrowser().construct();

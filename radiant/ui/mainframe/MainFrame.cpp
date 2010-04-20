@@ -439,10 +439,8 @@ void MainFrame::saveWindowPosition() {
 	);
 }
 
-void MainFrame::shutdown() {
-	// Destroy the camera manager
-	GlobalCamera().destroy();
-
+void MainFrame::shutdown()
+{
 	// Shutdown the console
 	Console::Instance().shutdown();
 
