@@ -22,7 +22,8 @@ GlobalCameraManager::GlobalCameraManager() :
 	_parent(NULL)
 {}
 
-void GlobalCameraManager::construct() {
+void GlobalCameraManager::registerCommands()
+{
 	GlobalCommandSystem().addCommand("CenterView", boost::bind(&GlobalCameraManager::resetCameraAngles, this, _1));
 	GlobalCommandSystem().addCommand("CubicClipZoomIn", boost::bind(&GlobalCameraManager::cubicScaleIn, this, _1));
 	GlobalCommandSystem().addCommand("CubicClipZoomOut", boost::bind(&GlobalCameraManager::cubicScaleOut, this, _1));
@@ -52,8 +53,7 @@ void GlobalCameraManager::construct() {
 	// Bind the events to the commands
 	GlobalEventManager().addCommand("CenterView", "CenterView");
 
-	GlobalEventManager().addToggle("ToggleCubicClip", 
-		boost::bind(&CameraSettings::toggleFarClip, getCameraSettings(), _1));
+	GlobalEventManager().addToggle("ToggleCubicClip", boost::bind(&CameraSettings::toggleFarClip, getCameraSettings(), _1));
 	// Set the default status of the cubic clip
 	GlobalEventManager().setToggled("ToggleCubicClip", getCameraSettings()->farClipEnabled());
 
@@ -91,16 +91,6 @@ void GlobalCameraManager::construct() {
 	GlobalEventManager().addKeyEvent("CameraFreeMoveRight", boost::bind(&GlobalCameraManager::onFreelookMoveRightKey, this, _1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveUp", boost::bind(&GlobalCameraManager::onFreelookMoveUpKey, this, _1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveDown", boost::bind(&GlobalCameraManager::onFreelookMoveDownKey, this, _1));
-	
-	CamWnd::captureStates();
-}
-
-void GlobalCameraManager::destroy() {
-	// Remove all weak references
-	_cameras.clear();
-
-	// Release shaders
-	CamWnd::releaseStates();
 }
 
 CamWndPtr GlobalCameraManager::getActiveCamWnd() {
@@ -481,20 +471,35 @@ const std::string& GlobalCameraManager::getName() const {
 	return _name;
 }
 
-const StringSet& GlobalCameraManager::getDependencies() const {
+const StringSet& GlobalCameraManager::getDependencies() const
+{
 	static StringSet _dependencies;
 	
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 	
 	return _dependencies;
 }
 
-void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "GlobalCameraManager::initialiseModule called.\n";
+void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+
+	registerCommands();
+
+	CamWnd::captureStates();
+}
+
+void GlobalCameraManager::shutdownModule()
+{
+	CamWnd::releaseStates();
+
+	_cameras.clear();
 }
 
 // Define the static SelectionSystem module
