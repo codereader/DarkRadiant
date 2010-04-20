@@ -1,5 +1,6 @@
 #include "TextureBrowser.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
@@ -31,7 +32,7 @@ namespace {
 	const std::string RKEY_TEXTURE_CONTEXTMENU_EPSILON = "user/ui/textures/browser/contextMenuMouseEpsilon";
 	const std::string RKEY_TEXTURE_MAX_NAME_LENGTH = "user/ui/textures/browser/maxShadernameLength";
 	
-	const std::string SEEK_IN_MEDIA_BROWSER_TEXT = "Seek in Media Browser";
+	const char* const SEEK_IN_MEDIA_BROWSER_TEXT = "Seek in Media Browser";
 	const char* TEXTURE_ICON = "icon_texture.png";
 }
 
@@ -69,11 +70,11 @@ TextureBrowser::TextureBrowser() :
 	// Construct the popup context menu
 	_seekInMediaBrowser = gtkutil::IconTextMenuItem(
 		GlobalUIManager().getLocalPixbuf(TEXTURE_ICON), 
-		SEEK_IN_MEDIA_BROWSER_TEXT
+		_(SEEK_IN_MEDIA_BROWSER_TEXT)
 	);
 	g_signal_connect(G_OBJECT(_seekInMediaBrowser), "activate", G_CALLBACK(onSeekInMediaBrowser), this);
 	
-	_shaderLabel = gtk_menu_item_new_with_label("No shader");
+	_shaderLabel = gtk_menu_item_new_with_label(_("No shader"));
 	gtk_widget_set_sensitive(_shaderLabel, FALSE);
 	
 	gtk_menu_shell_append(GTK_MENU_SHELL(_popupMenu), _shaderLabel);
@@ -590,7 +591,7 @@ void TextureBrowser::doMouseWheel(bool wheelUp) {
 
 void TextureBrowser::openContextMenu() {
 	
-	std::string shaderText = "No shader";
+	std::string shaderText = _("No shader");
 	
 	if (_popupX > 0 && _popupY > 0) {
 		MaterialPtr shader = getShaderAtCoords(_popupX, _popupY);
@@ -790,9 +791,9 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 	    	GtkWidget* toggle_image = GTK_WIDGET(gtk_image_new_from_pixbuf(pixBuf));
 	    	
 	    	GtkTooltips* barTips = gtk_tooltips_new();
-	    	gtk_tool_item_set_tooltip(sizeToggle, barTips, "Clamp texture thumbnails to constant size", "");
+	    	gtk_tool_item_set_tooltip(sizeToggle, barTips, _("Clamp texture thumbnails to constant size"), "");
 	    
-	    	gtk_tool_button_set_label(GTK_TOOL_BUTTON(sizeToggle), "Constant size");
+	    	gtk_tool_button_set_label(GTK_TOOL_BUTTON(sizeToggle), _("Constant size"));
 	    	gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(sizeToggle), toggle_image);
 	    	gtk_toggle_tool_button_set_active(GTK_TOGGLE_TOOL_BUTTON(sizeToggle), TRUE);
 	    	
@@ -849,7 +850,7 @@ void TextureBrowser::destroyWindow()
 
 void TextureBrowser::registerPreferencesPage() {
 	// Add a page to the given group
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Texture Browser");
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
 	
 	// Create the string list containing the texture scalings
 	std::list<std::string> textureScaleList;
@@ -860,14 +861,14 @@ void TextureBrowser::registerPreferencesPage() {
 	textureScaleList.push_back("100%");
 	textureScaleList.push_back("200%");
 	
-	page->appendCombo("Texture Thumbnail Scale", RKEY_TEXTURE_SCALE, textureScaleList);
+	page->appendCombo(_("Texture Thumbnail Scale"), RKEY_TEXTURE_SCALE, textureScaleList);
 	
-	page->appendEntry("Uniform texture thumbnail size (pixels)", RKEY_TEXTURE_UNIFORM_SIZE);
-	page->appendCheckBox("", "Texture scrollbar", RKEY_TEXTURE_SHOW_SCROLLBAR);
-	page->appendEntry("Mousewheel Increment", RKEY_TEXTURE_MOUSE_WHEEL_INCR);
-	page->appendSpinner("Max shadername length", RKEY_TEXTURE_MAX_NAME_LENGTH, 4, 100, 1);
+	page->appendEntry(_("Uniform texture thumbnail size (pixels)"), RKEY_TEXTURE_UNIFORM_SIZE);
+	page->appendCheckBox("", _("Texture scrollbar"), RKEY_TEXTURE_SHOW_SCROLLBAR);
+	page->appendEntry(_("Mousewheel Increment"), RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+	page->appendSpinner(_("Max shadername length"), RKEY_TEXTURE_MAX_NAME_LENGTH, 4, 100, 1);
 	
-	page->appendCheckBox("", "Show Texture Filter", RKEY_TEXTURE_SHOW_FILTER);
+	page->appendCheckBox("", _("Show Texture Filter"), RKEY_TEXTURE_SHOW_FILTER);
 }
 
 void TextureBrowser::construct() {

@@ -1,6 +1,7 @@
 #include "MediaBrowser.h"
 #include "TextureDirectoryLoader.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
@@ -40,13 +41,13 @@ namespace {
 	const char* FOLDER_ICON = "folder16.png";
 	const char* TEXTURE_ICON = "icon_texture.png";
 	
-	const char* LOAD_TEXTURE_TEXT = "Load in Textures view";
+	const char* LOAD_TEXTURE_TEXT = N_("Load in Textures view");
 	const char* LOAD_TEXTURE_ICON = "textureLoadInTexWindow16.png";
 
-	const char* APPLY_TEXTURE_TEXT = "Apply to selection";
+	const char* APPLY_TEXTURE_TEXT = N_("Apply to selection");
 	const char* APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 
-	const char* SHOW_SHADER_DEF_TEXT = "Show Shader Definition";
+	const char* SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
 	const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
 
 	// TreeStore columns
@@ -60,7 +61,7 @@ namespace {
 	};
 	
 	const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
-	const std::string OTHER_MATERIALS_FOLDER = "Other Materials";
+	const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
 }
 
 // Constructor
@@ -83,7 +84,7 @@ MediaBrowser::MediaBrowser()
 	
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(_treeView), 
-		gtkutil::IconTextColumn("Shader", DISPLAYNAME_COLUMN, ICON_COLUMN)
+		gtkutil::IconTextColumn(_("Shader"), DISPLAYNAME_COLUMN, ICON_COLUMN)
 	);
 
 	// Set the tree store to sort on this column
@@ -123,7 +124,7 @@ MediaBrowser::MediaBrowser()
 	_popupMenu.addItem(
 		gtkutil::IconTextMenuItem(
 			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON), 
-			LOAD_TEXTURE_TEXT
+			_(LOAD_TEXTURE_TEXT)
 		), 
 		boost::bind(&MediaBrowser::_onLoadInTexView, this), 
 		boost::bind(&MediaBrowser::_testLoadInTexView, this)
@@ -131,7 +132,7 @@ MediaBrowser::MediaBrowser()
 	_popupMenu.addItem(
 		gtkutil::IconTextMenuItem(
 			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON), 
-			APPLY_TEXTURE_TEXT
+			_(APPLY_TEXTURE_TEXT)
 		), 
 		boost::bind(&MediaBrowser::_onApplyToSel, this), 
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
@@ -139,7 +140,7 @@ MediaBrowser::MediaBrowser()
 	_popupMenu.addItem(
 		gtkutil::IconTextMenuItem(
 			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON), 
-			SHOW_SHADER_DEF_TEXT
+			_(SHOW_SHADER_DEF_TEXT)
 		), 
 		boost::bind(&MediaBrowser::_onShowShaderDefinition, this), 
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
@@ -164,10 +165,14 @@ struct ShaderNameFunctor {
 	
 	// TreeStore to populate
 	GtkTreeStore* _store;
+
+	std::string _otherMaterialsPath;
 	
 	// Constructor
-	ShaderNameFunctor(GtkTreeStore* store)
-	: _store(store) {}
+	ShaderNameFunctor(GtkTreeStore* store) : 
+		_store(store),
+		_otherMaterialsPath(std::string(_(OTHER_MATERIALS_FOLDER)) + "/")
+	{}
 	
 	// Destructor. Free all the heap-allocated GtkTreeIters in the
 	// map
@@ -232,8 +237,10 @@ struct ShaderNameFunctor {
 		std::string rawName(name);
 		
 		// If the name starts with "textures/", add it to the treestore.
-		if (!boost::algorithm::istarts_with(rawName, "textures/")) {
-			rawName = OTHER_MATERIALS_FOLDER + "/" + rawName;
+		if (!boost::algorithm::istarts_with(rawName, "textures/"))
+		{
+			// prepend the "other materials" folder
+			rawName.insert(rawName.begin(), _otherMaterialsPath.begin(), _otherMaterialsPath.end());
 		}
 		
 		{
@@ -347,7 +354,7 @@ void MediaBrowser::populate() {
 	ShaderNameFunctor functor(_treeStore);
 	
 	// greebo: Add the Other Materials folder and pass TRUE to indicate this is a special one
-	functor.addFolder(OTHER_MATERIALS_FOLDER, true);
+	functor.addFolder(_(OTHER_MATERIALS_FOLDER), true);
 	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 }
 
@@ -395,10 +402,11 @@ void MediaBrowser::_onShowShaderDefinition()
 	ShaderDefinitionView view;
 	view.setShader(shaderName);
 
-	GtkWidget* dialog = gtk_dialog_new_with_buttons("View Shader Definition", GlobalMainFrame().getTopLevelWindow(),
-                                         GTK_DIALOG_DESTROY_WITH_PARENT, 
-                                         GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
-                                         NULL);
+	GtkWidget* dialog = gtk_dialog_new_with_buttons(_("View Shader Definition"), 
+		GlobalMainFrame().getTopLevelWindow(),
+        GTK_DIALOG_DESTROY_WITH_PARENT, 
+        GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
+        NULL);
 
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
 
@@ -495,9 +503,9 @@ void MediaBrowser::toggle(const cmd::ArgumentList& args) {
 
 void MediaBrowser::registerPreferences() {
 	// Add a page to the given group
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Media Browser");
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
 	
-	page->appendCheckBox("", "Load media tree at startup", RKEY_MEDIA_BROWSER_PRELOAD);
+	page->appendCheckBox("", _("Load media tree at startup"), RKEY_MEDIA_BROWSER_PRELOAD);
 }
 
 } // namespace ui

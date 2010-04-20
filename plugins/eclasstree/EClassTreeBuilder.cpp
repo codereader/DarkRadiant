@@ -85,13 +85,13 @@ std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr
 			}
 			else {
 				globalErrorStream() << "EClassTreeBuilder: Cannot resolve inheritance path for " 
-									<< eclass->getName().c_str() << "\n";
+					<< eclass->getName() << std::endl;
 			}
 			
 			returnValue += attribute.value + "/";
 		}
 	}
-	catch (std::runtime_error) {
+	catch (std::runtime_error&) {
 		// no inherit key
 	}
 	

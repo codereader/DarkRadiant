@@ -42,7 +42,7 @@ public:
 				std::istream is(&(file->getInputStream()));
 				_manager.parseStream(is);
 			}
-			catch (parser::ParseException e) {
+			catch (parser::ParseException& e) {
 				std::cerr << "[particles] Failed to parse " << filename
 						  << ": " << e.what() << std::endl;
 			}

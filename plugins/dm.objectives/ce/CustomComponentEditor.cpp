@@ -5,6 +5,7 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 
 namespace objectives {
@@ -12,11 +13,10 @@ namespace objectives {
 namespace ce {
 
 namespace {
-	const std::string DESCRIPTION(
-		"A custom component requires no specifiers,\n" \
-		"the state of this component is manually controlled \n" \
-		"(i.e. by scripts or triggers)."
-	);
+	const char* const DESCRIPTION = N_(
+		"A custom component requires no specifiers,\n" 
+		"the state of this component is manually controlled \n" 
+		"(i.e. by scripts or triggers).");
 }
 
 // Registration helper, will register this editor in the factory
@@ -29,7 +29,7 @@ CustomComponentEditor::CustomComponentEditor(Component& component) :
 	// Main vbox
 	_widget = gtk_vbox_new(FALSE, 6);
 
-    gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(DESCRIPTION), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(_(DESCRIPTION)), FALSE, FALSE, 0);
 }
 
 // Destructor

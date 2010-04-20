@@ -14,6 +14,7 @@
 #include "string/string.h"
 #include "signal/signal.h"
 
+#include "i18n.h"
 #include "GridItem.h"
 #include <boost/bind.hpp>
 
@@ -146,9 +147,9 @@ public:
 	}
 	
 	void constructPreferences() {
-		PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Grid");
+		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Grid"));
 		
-		page->appendCombo("Default Grid Size", RKEY_DEFAULT_GRID_SIZE, getGridList());
+		page->appendCombo(_("Default Grid Size"), RKEY_DEFAULT_GRID_SIZE, getGridList());
 	}
 	
 	std::size_t addGridChangeCallback(const GridChangedFunc& callback)

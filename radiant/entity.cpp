@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entity.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "icommandsystem.h"
 #include "ientity.h"
@@ -48,6 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/Entity.h"
 #include "ui/modelselector/ModelSelector.h"
+#include <boost/format.hpp>
 
 #include <iostream>
 
@@ -88,7 +90,7 @@ void ReloadSkins(const cmd::ArgumentList& args) {
 void ReloadDefs(const cmd::ArgumentList& args)
 {
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker("Processing...", "Reloading Defs");
+	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Defs"));
 
 	GlobalEntityClassManager().reloadDefs();
 }
@@ -130,9 +132,9 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
     bool primitivesSelected = info.brushCount > 0 || info.patchCount > 0;
 
     if (!(entityClass->isFixedSize() || isModel) && !primitivesSelected) {
-		throw EntityCreationException(std::string("Unable to create entity \"") 
-									  + name 
-									  + "\", no brushes selected");
+		throw EntityCreationException(
+			(boost::format(_("Unable to create entity %s, no brushes selected.")) % name).str()
+		);
     }
 
 	// Get the selection workzone bounds

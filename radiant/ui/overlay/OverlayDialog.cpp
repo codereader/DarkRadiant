@@ -1,5 +1,6 @@
 #include "OverlayDialog.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "iscenegraph.h"
 #include "iregistry.h"
@@ -17,7 +18,7 @@ namespace ui
 
 /* CONSTANTS */
 namespace {
-	const char* DIALOG_TITLE = "Background image";
+	const char* DIALOG_TITLE = N_("Background image");
 }
 
 // Create GTK stuff in c-tor
@@ -28,7 +29,7 @@ OverlayDialog::OverlayDialog() :
 	// Set up the window
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
-    gtk_window_set_title(GTK_WINDOW(_widget), DIALOG_TITLE);
+    gtk_window_set_title(GTK_WINDOW(_widget), _(DIALOG_TITLE));
     g_signal_connect(G_OBJECT(_widget), "delete-event",
     				 G_CALLBACK(gtk_widget_hide_on_delete), NULL);
 
@@ -56,7 +57,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// "Use image" checkbox
 	GtkWidget* useImage = gtk_check_button_new_with_label(
-							"Use background image"); 
+							_("Use background image")); 
 	_subWidgets["useImage"] = useImage;
 	g_signal_connect(G_OBJECT(useImage), "toggled",
 					 G_CALLBACK(_onChange), this);
@@ -72,12 +73,12 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Image file
 	gtk_table_attach(GTK_TABLE(tbl), 
-					 gtkutil::LeftAlignedLabel("<b>Image file</b>"),
+					 gtkutil::LeftAlignedLabel(std::string("<b>") + _("Image file") + "</b>"),
 					 0, 1, 0, 1, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 	
 	GtkWidget* fileButton = gtk_file_chooser_button_new(
-							  	"Choose image", GTK_FILE_CHOOSER_ACTION_OPEN);
+							  	_("Choose image"), GTK_FILE_CHOOSER_ACTION_OPEN);
 	g_signal_connect(G_OBJECT(fileButton), "selection-changed",
 					 G_CALLBACK(_onFileSelection), this);
 	_subWidgets["fileChooser"] = fileButton;
@@ -86,7 +87,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Transparency slider
 	gtk_table_attach(GTK_TABLE(tbl), 
-					 gtkutil::LeftAlignedLabel("<b>Transparency</b>"),
+					 gtkutil::LeftAlignedLabel(std::string("<b>") + _("Transparency") + "</b>"),
 					 0, 1, 1, 2, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 				
@@ -99,7 +100,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Image size slider
 	gtk_table_attach(GTK_TABLE(tbl), 
-					 gtkutil::LeftAlignedLabel("<b>Image scale</b>"),
+					 gtkutil::LeftAlignedLabel(std::string("<b>") + _("Image scale") + "</b>"),
 					 0, 1, 2, 3, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 
@@ -112,7 +113,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Translation X slider
 	gtk_table_attach(GTK_TABLE(tbl), 
-					 gtkutil::LeftAlignedLabel("<b>Horizontal offset</b>"),
+					 gtkutil::LeftAlignedLabel(std::string("<b>") + _("Horizontal offset") + "</b>"),
 					 0, 1, 3, 4, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 
@@ -125,7 +126,7 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Translation Y slider
 	gtk_table_attach(GTK_TABLE(tbl), 
-					 gtkutil::LeftAlignedLabel("<b>Vertical offset</b>"),
+					 gtkutil::LeftAlignedLabel(std::string("<b>") + _("Vertical offset") + "</b>"),
 					 0, 1, 4, 5, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 
@@ -138,26 +139,26 @@ GtkWidget* OverlayDialog::createWidgets() {
 	
 	// Options list
 	gtk_table_attach(GTK_TABLE(tbl), 
-					 gtkutil::LeftAlignedLabel("<b>Options</b>"),
+					 gtkutil::LeftAlignedLabel(std::string("<b>") + _("Options") + "</b>"),
 					 0, 1, 5, 6, 
 					 GTK_FILL, GTK_FILL, 0, 0);
 	
 	GtkWidget* keepAspect = 
-		gtk_check_button_new_with_label("Keep aspect ratio"); 
+		gtk_check_button_new_with_label(_("Keep aspect ratio")); 
 	g_signal_connect(G_OBJECT(keepAspect), "toggled",
 					 G_CALLBACK(_onChange), this);
 	_subWidgets["keepAspect"] = keepAspect;
 	gtk_table_attach_defaults(GTK_TABLE(tbl), keepAspect, 1, 2, 5, 6);
 	
 	GtkWidget* scaleWithViewport =
-		gtk_check_button_new_with_label("Zoom image with viewport");
+		gtk_check_button_new_with_label(_("Zoom image with viewport"));
 	g_signal_connect(G_OBJECT(scaleWithViewport), "toggled",
 					 G_CALLBACK(_onChange), this);
 	_subWidgets["scaleImage"] = scaleWithViewport;	
 	gtk_table_attach_defaults(GTK_TABLE(tbl), scaleWithViewport, 1, 2, 6, 7);
 	
 	GtkWidget* panWithViewport =
-		gtk_check_button_new_with_label("Pan image with viewport");
+		gtk_check_button_new_with_label(_("Pan image with viewport"));
 	g_signal_connect(G_OBJECT(panWithViewport), "toggled",
 					 G_CALLBACK(_onChange), this);
 	_subWidgets["panImage"] = panWithViewport;	

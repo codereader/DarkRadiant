@@ -196,11 +196,11 @@ void ApplicationContextImpl::initArgs(int argc, char* argv[]) {
 	}
 }
 
-void ApplicationContextImpl::initPaths() {
+void ApplicationContextImpl::initPaths()
+{
 	// Ensure that the homepath ends with a slash
-	if (!boost::algorithm::ends_with(_homePath, "/")) {
-		_homePath += "/";
-	}
+	_homePath = os::standardPathWithSlash(_homePath);
+	_appPath = os::standardPathWithSlash(_appPath);
 	
 	// Make sure the home folder exists (attempt to create it)
 	os::makeDirectory(_homePath);

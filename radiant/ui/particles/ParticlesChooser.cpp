@@ -1,6 +1,7 @@
 #include "ParticlesChooser.h"
 #include "ParticlesVisitor.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "iparticles.h"
 
@@ -23,7 +24,7 @@ ParticlesChooser::ParticlesChooser()
 	// Set up main window
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), "Choose particles");
+	gtk_window_set_title(GTK_WINDOW(_widget), _("Choose particles"));
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	g_signal_connect(G_OBJECT(_widget), "delete-event", 
 					 G_CALLBACK(_onDestroy), this);
@@ -53,7 +54,7 @@ GtkWidget* ParticlesChooser::createTreeView() {
 	
 	// Single text column
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tv),
-								gtkutil::TextColumn("Particle", 0));
+								gtkutil::TextColumn(_("Particle"), 0));
 	
 	// Populate with particle names
 	populateParticleList();

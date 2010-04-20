@@ -1,5 +1,6 @@
 #include "SkinChooser.h"
 
+#include "i18n.h"
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "modelskin.h"
@@ -22,7 +23,7 @@ namespace {
 	const char* FOLDER_ICON = "folder16.png";
 	const char* SKIN_ICON = "skin16.png";
 
-	const std::string WINDOW_TITLE("Choose Skin");
+	const char* const WINDOW_TITLE = N_("Choose Skin");
 	
 	// Tree column enum
 	enum {
@@ -44,7 +45,7 @@ SkinChooser::SkinChooser()
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_title(GTK_WINDOW(_widget), WINDOW_TITLE.c_str());
+	gtk_window_set_title(GTK_WINDOW(_widget), _(WINDOW_TITLE));
 	g_signal_connect(G_OBJECT(_widget), 
 					 "delete-event", 
 					 G_CALLBACK(_onCloseButton),
@@ -103,7 +104,7 @@ GtkWidget* SkinChooser::createTreeView(int width) {
 	
 	// Single column to display the skin name
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
-								gtkutil::IconTextColumn("Skin", 
+								gtkutil::IconTextColumn(_("Skin"), 
 														DISPLAYNAME_COL, 
 														ICON_COL));
 	
@@ -153,7 +154,7 @@ std::string SkinChooser::showAndBlock(const std::string& model,
 	populateSkins();
 
 	// Display the model in the window title
-	gtk_window_set_title(GTK_WINDOW(_widget), (WINDOW_TITLE + ": " + _model).c_str());
+	gtk_window_set_title(GTK_WINDOW(_widget), (std::string(_(WINDOW_TITLE)) + ": " + _model).c_str());
 	
 	// Show the dialog
 	gtk_widget_show_all(_widget);
@@ -213,7 +214,7 @@ void SkinChooser::populateSkins() {
 	GtkTreeIter matchingSkins;
 	gtk_tree_store_append(_treeStore, &matchingSkins, NULL);
 	gtk_tree_store_set(_treeStore, &matchingSkins, 
-					   DISPLAYNAME_COL, "Matching skins", 
+					   DISPLAYNAME_COL, _("Matching skins"), 
 					   FULLNAME_COL, "",
 					   ICON_COL, GlobalUIManager().getLocalPixbuf(FOLDER_ICON),
 					   -1); 		
@@ -238,7 +239,7 @@ void SkinChooser::populateSkins() {
 	GtkTreeIter allSkins;
 	gtk_tree_store_append(_treeStore, &allSkins, NULL);
 	gtk_tree_store_set(_treeStore, &allSkins, 
-					   DISPLAYNAME_COL, "All skins", 
+					   DISPLAYNAME_COL, _("All skins"), 
 					   FULLNAME_COL, "",
 					   ICON_COL, GlobalUIManager().getLocalPixbuf(FOLDER_ICON),
 					   -1); 		

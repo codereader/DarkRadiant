@@ -1,5 +1,6 @@
 #include "CommandList.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 
@@ -19,11 +20,11 @@ namespace ui {
 		const int CMDLISTDLG_DEFAULT_SIZE_X = 550;
 	    const int CMDLISTDLG_DEFAULT_SIZE_Y = 400;
 	    	    
-	    const std::string CMDLISTDLG_WINDOW_TITLE = "Shortcut List";
+	    const char* const CMDLISTDLG_WINDOW_TITLE = N_("Shortcut List");
 	}
 
 CommandList::CommandList() :
-	gtkutil::BlockingTransientWindow(CMDLISTDLG_WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
+	gtkutil::BlockingTransientWindow(_(CMDLISTDLG_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -59,9 +60,9 @@ void CommandList::populateWindow() {
 
 		_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
 		
-		GtkTreeViewColumn* cmdCol = gtkutil::TextColumn("Command", 0);
+		GtkTreeViewColumn* cmdCol = gtkutil::TextColumn(_("Command"), 0);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), cmdCol);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), gtkutil::TextColumn("Key", 1));
+		gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), gtkutil::TextColumn(_("Key"), 1));
 		
 		// Connect the mouseclick event to catch the double clicks
 		g_signal_connect(G_OBJECT(_treeView), "button-press-event", G_CALLBACK(callbackViewButtonPress), this);

@@ -1,5 +1,6 @@
 #include "CommandEditor.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
@@ -7,6 +8,7 @@
 #include "gtkutil/TreeModel.h"
 #include "string/string.h"
 
+#include <boost/format.hpp>
 #include "itextstream.h"
 
 #include "ConversationCommandLibrary.h"
@@ -14,11 +16,11 @@
 namespace ui {
 
 	namespace {
-		const std::string WINDOW_TITLE = "Edit Command";
+		const char* const WINDOW_TITLE = N_("Edit Command");
 	}
 
 CommandEditor::CommandEditor(GtkWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv) :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, parent),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), parent),
 	_conversation(conv),
 	_command(command), // copy the conversation command to a local object
 	_targetCommand(command),
@@ -34,11 +36,13 @@ CommandEditor::CommandEditor(GtkWindow* parent, conversation::ConversationComman
 	for (conversation::Conversation::ActorMap::const_iterator i = _conversation.actors.begin();
 		 i != _conversation.actors.end(); ++i)
 	{
+		std::string actorStr = (boost::format(_("Actor %d (%s)")) % i->first % i->second).str();
+
 		GtkTreeIter iter;
 		gtk_list_store_append(_actorStore, &iter);
 		gtk_list_store_set(_actorStore, &iter, 
 						   0, i->first, 
-						   1, (std::string("Actor ") + intToStr(i->first) + " (" + i->second + ")").c_str(),
+						   1, actorStr.c_str(),
 						   -1);
 	}
 
@@ -177,7 +181,9 @@ void CommandEditor::populateWindow() {
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
 	// Actor
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Actor</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Actor") + "</b>"), 
+		FALSE, FALSE, 0);
 
 	// Create the actor dropdown box
 	_actorDropDown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(_actorStore));
@@ -190,7 +196,9 @@ void CommandEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_actorDropDown, 18, 1), FALSE, FALSE, 0);
 
 	// Command Type
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Command</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command") + "</b>"), 
+		FALSE, FALSE, 0);
 	_commandDropDown = gtk_combo_box_new_with_model(GTK_TREE_MODEL(_commandStore));
 
 	// Connect the signal to get notified of further changes
@@ -204,7 +212,9 @@ void CommandEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_commandDropDown, 18, 1), FALSE, FALSE, 0);
 	
 	// Command Arguments
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Command Arguments</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Arguments") + "</b>"), 
+		FALSE, FALSE, 0);
 	
 	// Create the alignment container that hold the (exchangable) widget table
 	_argAlignment = gtk_alignment_new(0.0, 0.5, 1.0, 1.0);
@@ -213,9 +223,11 @@ void CommandEditor::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(vbox), _argAlignment, FALSE, FALSE, 3);
 
 	// Wait until finished
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Command Properties</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), 
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Properties") + "</b>"), 
+		FALSE, FALSE, 0);
 
-	_waitUntilFinished = gtk_check_button_new_with_label("Wait until finished");
+	_waitUntilFinished = gtk_check_button_new_with_label(_("Wait until finished"));
 	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignment(_waitUntilFinished, 18, 1), FALSE, FALSE, 0);
 
 	// Buttons
@@ -252,7 +264,7 @@ void CommandEditor::upateWaitUntilFinished(int commandTypeID) {
 
 		gtk_widget_set_sensitive(_waitUntilFinished, cmdInfo.waitUntilFinishedAllowed ? TRUE : FALSE);
 	}
-	catch (std::runtime_error e) {
+	catch (std::runtime_error& e) {
 		globalErrorStream() << "Cannot find conversation command info for index " << commandTypeID << std::endl;
 	}
 }
@@ -277,7 +289,8 @@ void CommandEditor::createArgumentWidgets(int commandTypeID) {
 
 		if (cmdInfo.arguments.empty()) {
 			// No arguments, just push an empty label into the alignment
-			GtkWidget* label = gtkutil::LeftAlignedLabel("<i>None</i>");
+			GtkWidget* label = gtkutil::LeftAlignedLabel(
+				std::string("<i>") + _("None") + "</i>");
 			gtk_container_add(GTK_CONTAINER(_argAlignment), label);
 
 			gtk_widget_show_all(label);

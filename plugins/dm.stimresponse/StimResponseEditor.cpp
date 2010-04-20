@@ -25,22 +25,23 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "i18n.h"
 #include <iostream>
 
 namespace ui {
 
 namespace {
-	const std::string WINDOW_TITLE = "Stim/Response Editor";
+	const char* const WINDOW_TITLE = N_("Stim/Response Editor");
 	
 	const std::string RKEY_ROOT = "user/ui/stimResponseEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	
-	const char* NO_ENTITY_ERROR = "A single entity must be selected to edit "
-								  "Stim/Response properties."; 
+	const char* NO_ENTITY_ERROR = N_("A single entity must be selected to edit "
+								  "Stim/Response properties."); 
 }
 
 StimResponseEditor::StimResponseEditor() :
-	gtkutil::BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_entity(NULL),
 	_stimEditor(_stimTypes),
 	_responseEditor(getWindow(), _stimTypes),
@@ -107,7 +108,7 @@ void StimResponseEditor::populateWindow() {
     	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(ICON_STIM + SUFFIX_EXTENSION)), 
     	FALSE, FALSE, 3
     );
-	gtk_box_pack_start(GTK_BOX(stimLabelHBox), gtk_label_new("Stims"), FALSE, FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(stimLabelHBox), gtk_label_new(_("Stims")), FALSE, FALSE, 3);
 	
 	GtkWidget* responseLabelHBox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(
@@ -115,7 +116,7 @@ void StimResponseEditor::populateWindow() {
     	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(ICON_RESPONSE + SUFFIX_EXTENSION)), 
     	FALSE, FALSE, 0
     );
-	gtk_box_pack_start(GTK_BOX(responseLabelHBox), gtk_label_new("Responses"), FALSE, FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(responseLabelHBox), gtk_label_new(_("Responses")), FALSE, FALSE, 3);
 	
 	GtkWidget* customLabelHBox = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(
@@ -123,7 +124,7 @@ void StimResponseEditor::populateWindow() {
     	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(ICON_CUSTOM_STIM)), 
     	FALSE, FALSE, 0
     );
-	gtk_box_pack_start(GTK_BOX(customLabelHBox), gtk_label_new("Custom Stims"), FALSE, FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(customLabelHBox), gtk_label_new(_("Custom Stims")), FALSE, FALSE, 3);
 	
 	// Show the widgets before using them as label, they won't appear otherwise
 	gtk_widget_show_all(stimLabelHBox);
@@ -184,11 +185,12 @@ void StimResponseEditor::rescanSelection() {
 	}
 	
 	if (_entity != NULL) {
-		std::string title = WINDOW_TITLE + " (" + _entity->getKeyValue("name") + ")";
+		std::string title = _(WINDOW_TITLE);
+		title += " (" + _entity->getKeyValue("name") + ")";
 		gtk_window_set_title(GTK_WINDOW(getWindow()), title.c_str()); 
 	}
 	else {
-		gtk_window_set_title(GTK_WINDOW(getWindow()), WINDOW_TITLE.c_str());
+		gtk_window_set_title(GTK_WINDOW(getWindow()), _(WINDOW_TITLE));
 	}
 	
 	gtk_widget_set_sensitive(_dialogVBox, _entity != NULL);
@@ -240,7 +242,7 @@ void StimResponseEditor::showDialog(const cmd::ArgumentList& args) {
 	}
 	else {
 		// Exactly one entity must be selected.
-		gtkutil::errorDialog(NO_ENTITY_ERROR, GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

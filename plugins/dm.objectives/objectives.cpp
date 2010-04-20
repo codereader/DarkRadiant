@@ -1,5 +1,6 @@
 #include "ObjectivesEditor.h"
 
+#include "i18n.h"
 #include "imodule.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
@@ -64,7 +65,7 @@ public:
 		mm.add("main/map", 
 				"ObjectivesEditor", 
 				ui::menuItem,
-				"Objectives...",
+				_("Objectives..."),
 				"objectives16.png",
 				"ObjectivesEditor");
 	}

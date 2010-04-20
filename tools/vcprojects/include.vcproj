@@ -112,6 +112,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\i18n.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\iarchive.h"
 			>
 		</File>

@@ -1,5 +1,6 @@
 #include "Shader.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "iselection.h"
 #include "iscenegraph.h"
@@ -101,7 +102,7 @@ std::string getShaderFromSelection() {
 					UniqueShaderFinder(patchShader)
 				);
 			}
-			catch (AmbiguousShaderException a) {
+			catch (AmbiguousShaderException& a) {
 				patchShader = "";
 			}
 		}
@@ -117,7 +118,7 @@ std::string getShaderFromSelection() {
 					UniqueShaderFinder(faceShader)
 				);
 			}
-			catch (AmbiguousShaderException a) {
+			catch (AmbiguousShaderException& a) {
 				faceShader = "";
 			}
 		}
@@ -127,7 +128,7 @@ std::string getShaderFromSelection() {
 				UniqueShaderFinder finder(faceShader);
 				g_SelectedFaceInstances.foreach(finder);
 			}
-			catch (AmbiguousShaderException a) {
+			catch (AmbiguousShaderException& a) {
 				faceShader = "";
 			}
 		}
@@ -302,7 +303,8 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	GlobalSceneGraph().root()->traverse(finder);
 	
 	if (target.isPatch() && entireBrush) {
-		gtkutil::errorDialog("Can't paste shader to entire brush.\nTarget is not a brush.",
+		gtkutil::errorDialog(
+			_("Can't paste shader to entire brush.\nTarget is not a brush."),
 			GlobalMainFrame().getTopLevelWindow());
 	}
 	else {
@@ -337,20 +339,23 @@ void pasteTextureCoords(SelectionTest& test) {
 	 		target.patch->pasteTextureCoordinates(source.patch);
 		}
 		else {
-			gtkutil::errorDialog("Can't paste Texture Coordinates.\nTarget patch dimensions must match.",
-					GlobalMainFrame().getTopLevelWindow());
+			gtkutil::errorDialog(
+				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."),
+				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
 		if (source.isPatch()) {
 		 	// Nothing to do, this works for patches only
-		 	gtkutil::errorDialog("Can't paste Texture Coordinates from patches to faces.",
-							 GlobalMainFrame().getTopLevelWindow());
+		 	gtkutil::errorDialog(
+				_("Can't paste Texture Coordinates from patches to faces."),
+				GlobalMainFrame().getTopLevelWindow());
 		}
 		else {
 			// Nothing to do, this works for patches only
-		 	gtkutil::errorDialog("Can't paste Texture Coordinates from faces.",
-							 GlobalMainFrame().getTopLevelWindow());
+		 	gtkutil::errorDialog(
+				_("Can't paste Texture Coordinates from faces."),
+				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	
@@ -371,7 +376,8 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			GlobalShaderClipboard().setSource(sourcePatch);
 		}
 		catch (InvalidSelectionException e) {
-			gtkutil::errorDialog("Can't copy Shader. Couldn't retrieve patch.",
+			gtkutil::errorDialog(
+				_("Can't copy Shader. Couldn't retrieve patch."),
 		 		GlobalMainFrame().getTopLevelWindow());
 		}
 	}
@@ -381,13 +387,15 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			GlobalShaderClipboard().setSource(sourceFace);
 		}
 		catch (InvalidSelectionException e) {
-			gtkutil::errorDialog("Can't copy Shader. Couldn't retrieve face.",
+			gtkutil::errorDialog(
+				_("Can't copy Shader. Couldn't retrieve face."),
 		 		GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
 		// Nothing to do, this works for patches only
-		gtkutil::errorDialog("Can't copy Shader. Please select a single face or patch.",
+		gtkutil::errorDialog(
+			_("Can't copy Shader. Please select a single face or patch."),
 			 GlobalMainFrame().getTopLevelWindow());
 	}
 }

@@ -4,6 +4,7 @@
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/particles/ParticlesChooser.h"
 
+#include "i18n.h"
 #include "ientity.h"
 #include "iuimanager.h"
 
@@ -28,7 +29,7 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
 	
 	// Browse button for models
-	GtkWidget* browseButton = gtk_button_new_with_label("Choose model...");
+	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose model..."));
 	gtk_button_set_image(
 		GTK_BUTTON(browseButton),
 		gtk_image_new_from_pixbuf(
@@ -43,7 +44,7 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 	
 			
 	// Browse button for particles
-	GtkWidget* particleButton = gtk_button_new_with_label("Choose particle...");
+	GtkWidget* particleButton = gtk_button_new_with_label(_("Choose particle..."));
 	gtk_button_set_image(
 		GTK_BUTTON(particleButton),
 		gtk_image_new_from_pixbuf(

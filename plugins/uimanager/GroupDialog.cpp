@@ -5,6 +5,7 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
+#include "i18n.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include <iostream>
 #include <vector>
@@ -15,11 +16,11 @@ namespace ui {
 		const std::string RKEY_ROOT = "user/ui/groupDialog/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 		
-		const std::string WINDOW_TITLE = "Entity";
+		const char* const WINDOW_TITLE = N_("Entity");
 	}
 
 GroupDialog::GroupDialog() : 
-	gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
+	gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
 	_currentPage(0)
 {
 	// Create all the widgets and pack them into the window

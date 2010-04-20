@@ -1,5 +1,6 @@
 #include "CounterManager.h"
 
+#include "i18n.h"
 #include "iuimanager.h"
 #include "string/string.h"
 #include "modulesystem/StaticModule.h"
@@ -25,9 +26,11 @@ ICounter& CounterManager::getCounter(CounterType counter)
 
 void CounterManager::countChanged()
 {
-	std::string text = "Brushes: " + sizetToStr(_counters[counterBrushes]->get());
-	text += " Patches: " + sizetToStr(_counters[counterPatches]->get());
-	text += " Entities: " + sizetToStr(_counters[counterEntities]->get());
+	std::string text = 
+		(boost::format(_("Brushes: %lu Patches: %lu Entities: %lu")) %
+		_counters[counterBrushes]->get() % 
+		_counters[counterPatches]->get() %
+		_counters[counterEntities]->get()).str();
 	
 	GlobalUIManager().getStatusBarManager().setText("MapCounters", text);
 }

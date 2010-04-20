@@ -1,5 +1,6 @@
 #include "QuerySidesDialog.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 
 #include <gtk/gtkvbox.h>
@@ -14,11 +15,11 @@ namespace ui
 {
 	namespace
 	{
-		const std::string WINDOW_TITLE = "Enter Number of Sides";
+		const char* const WINDOW_TITLE = N_("Enter Number of Sides");
 	}
 
 QuerySidesDialog::QuerySidesDialog(int numSidesMin, int numSidesMax) :
-	BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_entry(NULL),
 	_result(NUM_RESULTS),
 	_numSides(-1),
@@ -49,7 +50,7 @@ void QuerySidesDialog::populateWindow()
 	_entry = gtk_spin_button_new_with_range(_numSidesMin, _numSidesMax, 1);
 
 	GtkWidget* entryRow = gtk_hbox_new(FALSE, 6);
-	GtkWidget* label = gtkutil::LeftAlignedLabel("Number of sides: ");
+	GtkWidget* label = gtkutil::LeftAlignedLabel(_("Number of sides: "));
 
 	gtk_box_pack_start(GTK_BOX(entryRow), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(entryRow), _entry, TRUE, TRUE, 0);

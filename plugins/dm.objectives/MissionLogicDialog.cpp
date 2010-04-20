@@ -1,30 +1,37 @@
 #include "MissionLogicDialog.h"
 #include "ObjectiveEntity.h"
 
+#include "i18n.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
 #include "string/string.h"
 
+#include <boost/format.hpp>
 #include <gtk/gtk.h>
 
 namespace objectives {
 
 namespace {
 
-	const char* const DIALOG_TITLE = "Edit Mission Logic";
+	const char* const DIALOG_TITLE = N_("Edit Mission Logic");
 
-	const std::string STANDARD_LOGIC_DESCR = 
-		"This is the standard logic for all difficulty levels";
+	const char* const STANDARD_LOGIC_DESCR = 
+		N_("This is the standard logic for all difficulty levels");
 
-	const std::string DIFFICULTY_LOGIC_DESCR =
-		"These logics override the standard logic for the given difficulty level\n" \
-		"if the logic string is non-empty.";
+	const char* const DIFFICULTY_LOGIC_DESCR =
+		N_("These logics override the standard logic for the given difficulty level\n" 
+		   "if the logic string is non-empty.");
+
+	inline std::string makeBold(const std::string& input)
+	{
+		return "<b>" + input + "</b>";
+	}
 }
 
 // Main constructor
 MissionLogicDialog::MissionLogicDialog(GtkWindow* parent, ObjectiveEntity& objectiveEnt) :
-	gtkutil::BlockingTransientWindow(DIALOG_TITLE, parent),
+	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), parent),
 	_objectiveEnt(objectiveEnt)
 {
 	// Create one logic editor for each difficulty level plus the default one
@@ -33,26 +40,28 @@ MissionLogicDialog::MissionLogicDialog(GtkWindow* parent, ObjectiveEntity& objec
 	// Overall VBox for labels and alignments
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
 	
-	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("<b>Default Logic</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel(makeBold(_("Default Logic"))), FALSE, FALSE, 0);
 
 	// Default Logic
 	GtkWidget* defaultVBox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(defaultVBox), gtkutil::LeftAlignedLabel(STANDARD_LOGIC_DESCR), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(defaultVBox), gtkutil::LeftAlignedLabel(_(STANDARD_LOGIC_DESCR)), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(defaultVBox), _logicEditors[-1]->getWidget(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignment(defaultVBox, 12, 1.0f) , TRUE, TRUE, 0);
 	
 	// Now add all difficulty-specific editors
-	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel("<b>Difficulty-specific Logic</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel(_("Difficulty-specific Logic")), FALSE, FALSE, 0);
 
 	GtkWidget* diffVBox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(diffVBox), gtkutil::LeftAlignedLabel(DIFFICULTY_LOGIC_DESCR), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(diffVBox), gtkutil::LeftAlignedLabel(_(DIFFICULTY_LOGIC_DESCR)), FALSE, FALSE, 0);
 
 	// Iterate over all editors for levels that are greater or equal 0
 	for (LogicEditorMap::iterator i = _logicEditors.lower_bound(0);
 		 i != _logicEditors.end(); i++)
 	{
+		std::string logicStr = (boost::format(_("Logic for Difficulty Level %d")) % i->first).str();
+
 		gtk_box_pack_start(GTK_BOX(diffVBox), 
-			gtkutil::LeftAlignedLabel("<b>Logic for Difficulty Level " + intToStr(i->first) + "</b>"), 
+			gtkutil::LeftAlignedLabel(makeBold(logicStr)), 
 			FALSE, FALSE, 0
 		);
 		gtk_box_pack_start(GTK_BOX(diffVBox), i->second->getWidget(), TRUE, TRUE, 0);

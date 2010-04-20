@@ -1,5 +1,6 @@
 #include "FixupMapDialog.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/dialog/MessageBox.h"
@@ -18,12 +19,12 @@ namespace ui
 
 namespace 
 {
-	const std::string WINDOW_TITLE("Fixup Map");
-	const std::string FIXUP_FILE_LABEL("Fixup File");
+	const char* const WINDOW_TITLE = N_("Fixup Map");
+	const char* const FIXUP_FILE_LABEL = N_("Fixup File");
 }
 
 FixupMapDialog::FixupMapDialog() :
-	gtkutil::Dialog(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow())
+	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Set size of the window, default size is too narrow for path entries
 	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
@@ -57,23 +58,26 @@ void FixupMapDialog::RunDialog(const cmd::ArgumentList& args)
 		// Show popup with results
 		std::string msg;
 
-		msg += "<b>" + sizetToStr(result.replacedShaders) + "</b> shaders replaced.\n";
-		msg += "<b>" + sizetToStr(result.replacedEntities) + "</b> entities replaced.\n";
-		msg += "<b>" + sizetToStr(result.replacedModels) + "</b> models replaced.\n";
-		msg += "<b>" + sizetToStr(result.replacedMisc) + "</b> spawnargs replaced.\n";
+		msg += (boost::format(_("<b>%d</b> shaders replaced.")) % result.replacedShaders).str() + "\n";
+		msg += (boost::format(_("<b>%d</b> entities replaced.")) % result.replacedEntities).str() + "\n";
+		msg += (boost::format(_("<b>%d</b> models replaced.")) % result.replacedModels).str() + "\n";
+		msg += (boost::format(_("<b>%d</b> spawnargs replaced.")) % result.replacedMisc).str() + "\n";
 		
 		if (!result.errors.empty())
 		{
-			msg += "\n\nErrors occurred:\n";
+			msg += "\n\n";
+			msg += _("Errors occurred:");
+			msg += "\n";
 
 			for (FixupMap::Result::ErrorMap::const_iterator i = result.errors.begin();
 				 i != result.errors.end(); ++i)
 			{
-				msg += "(Line " + sizetToStr(i->first) + "): " + i->second + "\n";
+				msg += (boost::format(_("(Line %d): %s")) % i->first % i->second).str();
+				msg += "\n";
 			}
 		}
 
-		gtkutil::MessageBox resultBox("Fixup Results", msg, IDialog::MESSAGE_CONFIRM);
+		gtkutil::MessageBox resultBox(_("Fixup Results"), msg, IDialog::MESSAGE_CONFIRM);
 		resultBox.run();
 	}
 }

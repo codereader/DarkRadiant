@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "ieventmanager.h"
 #include "iselection.h"
@@ -150,7 +151,7 @@ void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
 	{
-		gtkutil::errorDialog("Cannot create caps, no patches selected.", 
+		gtkutil::errorDialog(_("Cannot create caps, no patches selected."), 
 			GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
@@ -624,7 +625,7 @@ void thickenSelectedPatches(const cmd::ArgumentList& args) {
 		}
 	}
 	else {
-		gtkutil::errorDialog("Cannot thicken patch. Nothing selected.",
+		gtkutil::errorDialog(_("Cannot thicken patch. Nothing selected."),
 							 GlobalMainFrame().getTopLevelWindow());
 	}
 }
@@ -683,7 +684,7 @@ void stitchPatchTextures(const cmd::ArgumentList& args) {
 			target->stitchTextureFrom(*source);
 		}
 		else {
-			gtkutil::errorDialog("Cannot stitch textures. \nCould not cast nodes to patches.",
+			gtkutil::errorDialog(_("Cannot stitch textures. \nCould not cast nodes to patches."),
 							 GlobalMainFrame().getTopLevelWindow());
 		}
 		
@@ -692,7 +693,7 @@ void stitchPatchTextures(const cmd::ArgumentList& args) {
 		ui::SurfaceInspector::Instance().queueUpdate();
 	}
 	else {
-		gtkutil::errorDialog("Cannot stitch patch textures. \nExactly 2 patches must be selected.",
+		gtkutil::errorDialog(_("Cannot stitch patch textures. \nExactly 2 patches must be selected."),
 							 GlobalMainFrame().getTopLevelWindow());
 	}
 }
@@ -726,7 +727,7 @@ void bulgePatch(const cmd::ArgumentList& args) {
 		}
 	}
 	else {
-		gtkutil::errorDialog("Cannot bulge patch. No patches selected.",
+		gtkutil::errorDialog(_("Cannot bulge patch. No patches selected."),
 			GlobalMainFrame().getTopLevelWindow());
 	}
 }

@@ -69,11 +69,12 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 uimanager_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/gtkutil/libgtkutil.la \
+	$(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_uimanager_la_OBJECTS = MenuItem.lo GroupDialog.lo ColourScheme.lo \
 	ColourSchemeEditor.lo ColourSchemeManager.lo \
 	StatusBarManager.lo DialogManager.lo ToolbarManager.lo \
-	UIManager.lo MenuManager.lo
+	UIManager.lo FilterMenu.lo ModelPreview.lo MenuManager.lo
 uimanager_la_OBJECTS = $(am_uimanager_la_OBJECTS)
 uimanager_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -248,9 +249,16 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS) $(GTK_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = uimanager.la
-uimanager_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
+uimanager_la_LDFLAGS = -module -avoid-version \
+						$(GTK_LIBS) \
+						$(XML_LIBS) \
+						$(GTKGLEXT_LIBS) \
+						$(GLEW_LIBS) \
+						$(GL_LIBS)
+
 uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-					  $(top_builddir)/libs/xmlutil/libxmlutil.la
+			$(top_builddir)/libs/math/libmath.la \
+			$(top_builddir)/libs/xmlutil/libxmlutil.la
 
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
@@ -261,6 +269,8 @@ uimanager_la_SOURCES = MenuItem.cpp \
 					   DialogManager.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
+					   FilterMenu.cpp \
+					   ModelPreview.cpp \
                        MenuManager.cpp
 
 all: all-am
@@ -341,9 +351,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColourSchemeEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColourSchemeManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DialogManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FilterMenu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelPreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StatusBarManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ToolbarManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UIManager.Plo@am__quote@

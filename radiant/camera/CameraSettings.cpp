@@ -1,5 +1,6 @@
 #include "CameraSettings.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
 
@@ -42,32 +43,32 @@ CameraSettings::CameraSettings() :
 }
 
 void CameraSettings::constructPreferencePage() {
-	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Camera");
+	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Camera"));
 	
 	// Add the sliders for the movement and angle speed and connect them to the observer   
-    page->appendSlider("Movement Speed (game units)", RKEY_MOVEMENT_SPEED, TRUE, 100, 1, MAX_CAMERA_SPEED, 1, 1, 1);
-    page->appendSlider("Rotation Speed", RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
+    page->appendSlider(_("Movement Speed (game units)"), RKEY_MOVEMENT_SPEED, TRUE, 100, 1, MAX_CAMERA_SPEED, 1, 1, 1);
+    page->appendSlider(_("Rotation Speed"), RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
     
 	// Add the checkboxes and connect them with the registry key and the according observer 
-	page->appendCheckBox("", "Freelook mode can be toggled", RKEY_TOGGLE_FREE_MOVE);
-	page->appendCheckBox("", "Discrete movement (non-freelook mode)", RKEY_DISCRETE_MOVEMENT);
-	page->appendCheckBox("", "Enable far-clip plane (hides distant objects)", RKEY_ENABLE_FARCLIP);
+	page->appendCheckBox("", _("Freelook mode can be toggled"), RKEY_TOGGLE_FREE_MOVE);
+	page->appendCheckBox("", _("Discrete movement (non-freelook mode)"), RKEY_DISCRETE_MOVEMENT);
+	page->appendCheckBox("", _("Enable far-clip plane (hides distant objects)"), RKEY_ENABLE_FARCLIP);
 	
 	// Add the "inverse mouse vertical axis in free-look mode" preference
-	page->appendCheckBox("", "Invert mouse vertical axis (freelook mode)", RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	page->appendCheckBox("", _("Invert mouse vertical axis (freelook mode)"), RKEY_INVERT_MOUSE_VERTICAL_AXIS);
 	
 	// States whether the selection boxes are stippled or not
-	page->appendCheckBox("", "Solid selection boxes", RKEY_SOLID_SELECTION_BOXES);
+	page->appendCheckBox("", _("Solid selection boxes"), RKEY_SOLID_SELECTION_BOXES);
 
 	// Create the string list containing the render mode captions
 	std::list<std::string> renderModeDescriptions;
 	
-	renderModeDescriptions.push_back("WireFrame");
-	renderModeDescriptions.push_back("Flatshade");
-	renderModeDescriptions.push_back("Textured");
-	renderModeDescriptions.push_back("Lighting");
+	renderModeDescriptions.push_back(_("WireFrame"));
+	renderModeDescriptions.push_back(_("Flatshade"));
+	renderModeDescriptions.push_back(_("Textured"));
+	renderModeDescriptions.push_back(_("Lighting"));
 	
-	page->appendCombo("Render Mode", RKEY_DRAWMODE, renderModeDescriptions);
+	page->appendCombo(_("Render Mode"), RKEY_DRAWMODE, renderModeDescriptions);
 }
 
 void CameraSettings::importDrawMode(const int mode) {

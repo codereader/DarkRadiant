@@ -10,8 +10,8 @@
 		<menuItem name="saveas" caption="Save _as..." command="SaveMapAs" />
 		<menuItem name="saveCopyAs" caption="Save _copy as..." command="SaveMapCopyAs" />
 		<menuSeparator />
-		<menuItem name="saveSelected" caption="_Save selected as MAP..." command="SaveSelected" />
-		<menuItem name="saveSelected" caption="_Save selected as prefab..." command="SaveSelectedAsPrefab" />
+		<menuItem name="saveSelected" caption="_Save selected as Map..." command="SaveSelected" />
+		<menuItem name="saveSelectedPrefab" caption="_Save selected as prefab..." command="SaveSelectedAsPrefab" />
 		<menuItem name="createCM" caption="Save selected as Collision Model..." command="BrushExportCM" />
 		<menuItem name="saveRegion" caption="Save _region..." command="SaveRegion" />
 		<menuSeparator />

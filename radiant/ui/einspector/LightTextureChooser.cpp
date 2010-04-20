@@ -1,5 +1,6 @@
 #include "LightTextureChooser.h"
 
+#include "i18n.h"
 #include "ishaders.h"
 #include "iuimanager.h"
 #include "igroupdialog.h"
@@ -46,7 +47,7 @@ LightTextureChooser::LightTextureChooser()
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GTK_WINDOW(gd));
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_title(GTK_WINDOW(_widget), "Choose texture");
+	gtk_window_set_title(GTK_WINDOW(_widget), _("Choose texture"));
 
 	// Set the default size of the window
 	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(_widget));

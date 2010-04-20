@@ -1,5 +1,6 @@
 #include "SoundChooser.h"
 
+#include "i18n.h"
 #include "iuimanager.h"
 #include "isound.h"
 #include "imainframe.h"
@@ -38,7 +39,7 @@ SoundChooser::SoundChooser()
 	// Set up the window
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), "Choose sound");
+	gtk_window_set_title(GTK_WINDOW(_widget), _("Choose sound"));
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
     gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
     
@@ -118,7 +119,7 @@ GtkWidget* SoundChooser::createTreeView() {
 	GtkWidget* tv = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv),
-		gtkutil::IconTextColumn("Shader", DISPLAYNAME_COLUMN, ICON_COLUMN, false)
+		gtkutil::IconTextColumn(_("Soundshader"), DISPLAYNAME_COLUMN, ICON_COLUMN, false)
 	);
 
 	_treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));

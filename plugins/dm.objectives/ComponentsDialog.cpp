@@ -12,6 +12,7 @@
 #include "gtkutil/TreeModel.h"
 #include "string/string.h"
 
+#include "i18n.h"
 #include <vector>
 #include <gtk/gtk.h>
 #include <boost/lexical_cast.hpp>
@@ -24,7 +25,7 @@ namespace objectives
 
 namespace {
 
-	const char* DIALOG_TITLE = "Edit Objective";
+	const char* const DIALOG_TITLE = N_("Edit Objective");
 
 	// Widget enum
 	enum {
@@ -49,12 +50,17 @@ namespace {
 		WIDGET_PLAYER_RESPONSIBLE_FLAG,
 		WIDGET_COMPEDITOR_PANEL,
 	};
+
+	inline std::string makeBold(const std::string& input)
+	{
+		return "<b>" + input + "</b>";
+	}
 	
 } // namespace
 
 // Main constructor
 ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
-	gtkutil::BlockingTransientWindow(DIALOG_TITLE, parent),
+	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), parent),
 	_objective(objective),
 	_componentList(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)),
 	_components(objective.components), // copy the components to our local working set
@@ -66,7 +72,7 @@ ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
 	gtk_box_pack_start(GTK_BOX(vbx), createObjectiveEditPanel(), FALSE, FALSE, 0);
 
 	gtk_box_pack_start(
-		GTK_BOX(vbx), gtkutil::LeftAlignedLabel("<b>Components</b>"), FALSE, FALSE, 0
+		GTK_BOX(vbx), gtkutil::LeftAlignedLabel(makeBold(_("Components"))), FALSE, FALSE, 0
 	);
 
 	GtkWidget* compvbox = gtk_vbox_new(FALSE, 6);
@@ -104,7 +110,7 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	
 	// Objective description
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Description</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Description"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	_widgets[WIDGET_OBJ_DESCRIPTION_ENTRY] = gtk_entry_new();
 	gtk_table_attach_defaults(GTK_TABLE(table), 
@@ -115,7 +121,7 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 
 	// Difficulty Selection
 	gtk_table_attach(GTK_TABLE(table),
-					 gtkutil::LeftAlignedLabel("<b>Difficulty</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Difficulty"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table),
 							  _diffPanel.getWidget(),
@@ -125,7 +131,7 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 
 	// State selection
 	gtk_table_attach(GTK_TABLE(table),
-					 gtkutil::LeftAlignedLabel("<b>Initial state</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Initial state"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	_widgets[WIDGET_OBJ_STATE_COMBO] = gtk_combo_box_new_text();
 	gtk_table_attach_defaults(GTK_TABLE(table),
@@ -144,7 +150,7 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 
 	// Options checkboxes.
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Flags</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Flags>"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), createObjectiveFlagsTable(), 1, 2, row, row+1);
 	
@@ -155,7 +161,7 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	_widgets[WIDGET_OBJ_ENABLING_OBJS] = enablingObjs;
 
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Enabling Objectives</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Enabling Objectives"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), enablingObjs, 1, 2, row, row+1);
 	
@@ -173,11 +179,11 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	_widgets[WIDGET_OBJ_FAILURE_LOGIC] = failureLogic;
 
 	gtk_box_pack_start(GTK_BOX(logicHBox), successLogic, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(logicHBox), gtkutil::LeftAlignedLabel("<b>Failure Logic</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(logicHBox), gtkutil::LeftAlignedLabel(makeBold(_("Failure Logic"))), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(logicHBox), failureLogic, TRUE, TRUE, 0);
 
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Sucess Logic</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Sucess Logic"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), logicHBox, 1, 2, row, row+1);
 
@@ -196,11 +202,11 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	_widgets[WIDGET_OBJ_FAILURE_SCRIPT] = failureScript;
 
 	gtk_box_pack_start(GTK_BOX(scriptHBox), completionScript, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(scriptHBox), gtkutil::LeftAlignedLabel("<b>Failure Script</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(scriptHBox), gtkutil::LeftAlignedLabel(makeBold(_("Failure Script"))), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(scriptHBox), failureScript, TRUE, TRUE, 0);
 
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Completion Script</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Completion Script"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), scriptHBox, 1, 2, row, row+1);
 	
@@ -219,11 +225,11 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 	_widgets[WIDGET_OBJ_FAILURE_TARGET] = failureTarget;
 
 	gtk_box_pack_start(GTK_BOX(targetHBox), completionTarget, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(targetHBox), gtkutil::LeftAlignedLabel("<b>Failure Target</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(targetHBox), gtkutil::LeftAlignedLabel(makeBold(_("Failure Target"))), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(targetHBox), failureTarget, TRUE, TRUE, 0);
 
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Completion Target</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Completion Target"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), targetHBox, 1, 2, row, row+1);
 
@@ -240,13 +246,13 @@ GtkWidget* ComponentsDialog::createObjectiveFlagsTable() {
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 12);
 
 	_widgets[WIDGET_OBJ_MANDATORY_FLAG] =
-		gtk_check_button_new_with_label("Mandatory"); 
+		gtk_check_button_new_with_label(_("Mandatory")); 
 	_widgets[WIDGET_OBJ_IRREVERSIBLE_FLAG] =
-		gtk_check_button_new_with_label("Irreversible"); 
+		gtk_check_button_new_with_label(_("Irreversible")); 
 	_widgets[WIDGET_OBJ_ONGOING_FLAG] =
-		gtk_check_button_new_with_label("Ongoing"); 
+		gtk_check_button_new_with_label(_("Ongoing")); 
 	_widgets[WIDGET_OBJ_VISIBLE_FLAG] =
-		gtk_check_button_new_with_label("Visible"); 
+		gtk_check_button_new_with_label(_("Visible")); 
 
 	gtk_box_pack_start(GTK_BOX(hbx), _widgets[WIDGET_OBJ_MANDATORY_FLAG], 
 					   FALSE, FALSE, 0);
@@ -274,7 +280,7 @@ GtkWidget* ComponentsDialog::createListView() {
 	gtk_tree_view_append_column(
 		GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn("Type", 1, false));
+		GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Type"), 1, false));
 
 	// Create Add and Delete buttons for components
 	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
@@ -311,7 +317,7 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 
 	// Pack dropdown into table
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Type</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Type"))),
 					 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_TYPE_COMBO]), "changed",
 					 G_CALLBACK(_onTypeChanged), this);
@@ -339,13 +345,13 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 	
 	// Flags hbox
 	_widgets[WIDGET_STATE_FLAG] = 
-		gtk_check_button_new_with_label("Satisfied at start");
+		gtk_check_button_new_with_label(_("Satisfied at start"));
 	_widgets[WIDGET_IRREVERSIBLE_FLAG] = 
-		gtk_check_button_new_with_label("Irreversible");  
+		gtk_check_button_new_with_label(_("Irreversible"));  
 	_widgets[WIDGET_INVERTED_FLAG] =
-		gtk_check_button_new_with_label("Boolean NOT");  
+		gtk_check_button_new_with_label(_("Boolean NOT"));  
 	_widgets[WIDGET_PLAYER_RESPONSIBLE_FLAG] =
-		gtk_check_button_new_with_label("Player responsible");
+		gtk_check_button_new_with_label(_("Player responsible"));
 
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_STATE_FLAG]), "toggled", 
 		G_CALLBACK(_onCompToggleChanged), this);
@@ -367,7 +373,7 @@ GtkWidget* ComponentsDialog::createEditPanel() {
 					   FALSE, FALSE, 0);
 	
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel("<b>Flags</b>"),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Flags"))),
 					 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach(GTK_TABLE(table), flagsBox, 1, 2, 1, 2, 
 					 GTK_FILL, GTK_FILL, 0, 0);

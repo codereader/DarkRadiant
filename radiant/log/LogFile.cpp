@@ -32,7 +32,7 @@ LogFile::~LogFile() {
 	time_t localtime;
 	time(&localtime);
 
-	globalOutputStream() << "Closing log file at " << ctime(&localtime) << "\n";
+	globalOutputStream() << "Closing log file at " << ctime(&localtime) << std::endl;
 	
 	_logStream.flush();
 	_logStream.close();

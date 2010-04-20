@@ -1,5 +1,6 @@
 #include "RegionManager.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "brush/TexDef.h"
 #include "ibrush.h"
@@ -194,7 +195,7 @@ void RegionManager::addRegionBrushes() {
 		}
 		else {
 			gtkutil::errorDialog(
-				"Warning: Camera not within region, can't set info_player_start.", 
+				_("Warning: Camera not within region, can't set info_player_start."), 
 				GlobalMainFrame().getTopLevelWindow()
 			);
 		}
@@ -244,7 +245,9 @@ void RegionManager::setRegionXY(const cmd::ArgumentList& args) {
 		GlobalRegion().setRegionFromXY(topLeft, lowerRight);
 	}
 	else {
-		gtkutil::errorDialog("Could not set Region: XY Top View not found.", GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(
+			_("Could not set Region: XY Top View not found."),
+			GlobalMainFrame().getTopLevelWindow());
 		GlobalRegion().disable();
 	}
 	SceneChangeNotify();
@@ -270,7 +273,9 @@ void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args) {
 		SceneChangeNotify();
 	}
 	else {
-		gtkutil::errorDialog("Could not set Region: please select a single Brush.", GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(
+			_("Could not set Region: please select a single Brush."), 
+			GlobalMainFrame().getTopLevelWindow());
 		GlobalRegion().disable();
 	}
 }
@@ -295,13 +300,15 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
 			SceneChangeNotify();
 		}
 		else {
-			gtkutil::errorDialog("This command is not available in component mode.", 
+			gtkutil::errorDialog(_("This command is not available in component mode."), 
 								 GlobalMainFrame().getTopLevelWindow());
 			GlobalRegion().disable();
 		}
 	}
 	else {
-		gtkutil::errorDialog("Could not set Region: nothing selected.", GlobalMainFrame().getTopLevelWindow());
+		gtkutil::errorDialog(
+			_("Could not set Region: nothing selected."),
+			GlobalMainFrame().getTopLevelWindow());
 		GlobalRegion().disable();
 	}
 }
@@ -315,7 +322,7 @@ void RegionManager::traverseRegion(scene::INodePtr root, scene::NodeVisitor& nod
 
 void RegionManager::saveRegion(const cmd::ArgumentList& args) {
 	// Query the desired filename from the user
-	std::string filename = map::MapFileManager::getMapFilename(false, "Export region");
+	std::string filename = map::MapFileManager::getMapFilename(false, _("Export region"));
 	
 	if (!filename.empty()) {
 		// Filename is ok, start preparation

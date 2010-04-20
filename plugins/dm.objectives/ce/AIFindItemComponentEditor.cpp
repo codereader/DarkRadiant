@@ -2,6 +2,7 @@
 #include "../SpecifierType.h"
 #include "../Component.h"
 
+#include "i18n.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
@@ -23,7 +24,7 @@ AIFindItemComponentEditor::AIFindItemComponentEditor(Component& component) :
 
     gtk_box_pack_start(
         GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel("<b>Item:</b>"),
+		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>"),
         FALSE, FALSE, 0
     );
 	

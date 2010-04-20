@@ -14,6 +14,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <iostream>
 
+#include "i18n.h"
 #include "light/LightNode.h"
 #include "doom3group/Doom3GroupNode.h"
 #include "speaker/SpeakerNode.h"
@@ -35,8 +36,8 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& ec
 	// Null entityclass check
 	if (!eclass) {
 		throw std::runtime_error(
-			"Doom3EntityCreator::getEntityForEClass(): "
-			"cannot create entity for NULL entityclass."
+			_("Doom3EntityCreator::getEntityForEClass(): "
+			"cannot create entity for NULL entityclass.")
 		); 
 	}
 	

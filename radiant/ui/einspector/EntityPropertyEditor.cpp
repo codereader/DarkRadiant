@@ -1,5 +1,6 @@
 #include "EntityPropertyEditor.h"
 
+#include "i18n.h"
 #include "iscenegraph.h"
 #include "ientity.h"
 #include "scenelib.h"
@@ -30,7 +31,7 @@ EntityPropertyEditor::EntityPropertyEditor(Entity* entity, const std::string& na
 	
 	// Browse button
 	GtkWidget* browseButton = gtk_button_new_with_label(
-		"Choose target entity..."
+		_("Choose target entity...")
 	);
 	gtk_button_set_image(
 		GTK_BUTTON(browseButton),

@@ -1,5 +1,6 @@
 #include "ComponentType.h"
 #include "util/ObjectivesException.h"
+#include "i18n.h"
 
 namespace objectives
 {
@@ -16,70 +17,70 @@ ComponentType::ComponentTypeMap& ComponentType::getMap() {
 // Static instances
 
 const ComponentType& ComponentType::COMP_KILL() {
-	static ComponentType _instance("kill", "AI is killed");
+	static ComponentType _instance("kill", _("AI is killed"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_KO() {
-	static ComponentType _instance("ko", "AI is knocked out");
+	static ComponentType _instance("ko", _("AI is knocked out"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_AI_FIND_ITEM() {
-	static ComponentType _instance("ai_find_item", "AI finds an item");
+	static ComponentType _instance("ai_find_item", _("AI finds an item"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_AI_FIND_BODY() {
-	static ComponentType _instance("ai_find_body", "AI finds a body");
+	static ComponentType _instance("ai_find_body", _("AI finds a body"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_ALERT() {
-	static ComponentType _instance("alert", "AI is alerted"); // sic
+	static ComponentType _instance("alert", _("AI is alerted")); // sic
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_DESTROY() {
-	static ComponentType _instance("destroy", "Object is destroyed");
+	static ComponentType _instance("destroy", _("Object is destroyed"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_ITEM() {
-	static ComponentType _instance("item", "Player possesses item");
+	static ComponentType _instance("item", _("Player possesses item"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_PICKPOCKET() {
-	static ComponentType _instance("pickpocket", "Player pickpockets AI");
+	static ComponentType _instance("pickpocket", _("Player pickpockets AI"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_LOCATION() {
-	static ComponentType _instance("location", "Item is in location");
+	static ComponentType _instance("location", _("Item is in location"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_INFO_LOCATION() {
-	static ComponentType _instance("info_location", "Item is in info_location");
+	static ComponentType _instance("info_location", _("Item is in info_location"));
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_CUSTOM_ASYNC() {
-	static ComponentType _instance("custom", "Custom script"); // sic
+	static ComponentType _instance("custom", _("Custom script")); // sic
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_CUSTOM_CLOCKED() {
 	static ComponentType _instance(
-		"custom_clocked", "Custom script queried on a regular basis"
+		"custom_clocked", _("Custom script queried periodically")
 	);
 	return _instance;
 }
 
 const ComponentType& ComponentType::COMP_DISTANCE() {
 	static ComponentType _instance(
-		"distance", "Two entities are within a radius of each other"
+		"distance", _("Two entities are within a radius of each other")
 	);
 	return _instance;
 }

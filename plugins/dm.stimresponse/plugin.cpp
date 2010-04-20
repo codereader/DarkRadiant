@@ -10,6 +10,7 @@
 #include "iselection.h"
 #include "iradiant.h"
 #include "iundo.h"
+#include "i18n.h"
 
 #include "scenelib.h"
 #include "StimResponseEditor.h" 
@@ -51,7 +52,7 @@ public:
 		mm.add("main/entity", 	// menu location path
 				"StimResponse", // name
 				ui::menuItem,	// type
-				"Stim/Response...",	// caption
+				_("Stim/Response..."),	// caption
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name
 	}

@@ -13,6 +13,7 @@
 #include "imainframe.h"
 #include "imodelpreview.h"
 #include "imodel.h"
+#include "i18n.h"
 
 #include <gtk/gtk.h>
 #include <cstdlib>
@@ -27,6 +28,12 @@
 
 namespace ui
 {
+
+// CONSTANTS
+namespace
+{	
+	const char* MODELSELECTOR_TITLE = N_("Choose Model");
+}
 
 // Constructor.
 
@@ -63,7 +70,7 @@ ModelSelector::ModelSelector()
 	// Window properties
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), MODELSELECTOR_TITLE);
+	gtk_window_set_title(GTK_WINDOW(_widget), _(MODELSELECTOR_TITLE));
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
@@ -86,7 +93,7 @@ ModelSelector::ModelSelector()
 
 	// Signals
 	g_signal_connect(G_OBJECT(_widget), 
-					 "delete_event", 
+					 "delete-event", 
 					 G_CALLBACK(callbackHide), 
 					 this);
 	
@@ -239,7 +246,7 @@ GtkWidget* ModelSelector::createTreeView()
 
 	// Single visible column, containing the directory/model name and the icon
 	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
-		"Model Path", NAME_COLUMN, IMAGE_COLUMN
+		_("Model Path"), NAME_COLUMN, IMAGE_COLUMN
 	);
 	gtk_tree_view_append_column(_treeView, nameCol);
 
@@ -306,8 +313,8 @@ GtkWidget* ModelSelector::createButtons() {
 
 // Create the advanced buttons panel
 GtkWidget* ModelSelector::createAdvancedButtons() {
-	_advancedOptions = GTK_EXPANDER(gtk_expander_new("advanced"));
-	_clipCheckButton = GTK_CHECK_BUTTON(gtk_check_button_new_with_label("create MonsterClip brush"));
+	_advancedOptions = GTK_EXPANDER(gtk_expander_new(_("Advanced")));
+	_clipCheckButton = GTK_CHECK_BUTTON(gtk_check_button_new_with_label(_("Create MonsterClip Brush")));
 	gtk_container_add(GTK_CONTAINER(_advancedOptions), GTK_WIDGET(_clipCheckButton));
 	return GTK_WIDGET(_advancedOptions);
 }
@@ -324,7 +331,7 @@ GtkWidget* ModelSelector::createInfoPanel() {
 	GtkTreeViewColumn* col;
 	
 	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("Attribute",
+	col = gtk_tree_view_column_new_with_attributes(_("Attribute"),
 												   rend,
 												   "text", 0,
 												   NULL);
@@ -332,7 +339,7 @@ GtkWidget* ModelSelector::createInfoPanel() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(infTreeView), col);
 	
 	rend = gtk_cell_renderer_text_new();
-	col = gtk_tree_view_column_new_with_attributes("Value",
+	col = gtk_tree_view_column_new_with_attributes(_("Value"),
 												   rend,
 												   "text", 1,
 												   NULL);
@@ -388,31 +395,31 @@ void ModelSelector::updateSelected() {
 	// Update the text in the info table
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Model name",
+					   0, _("Model name"),
 					   1, mName.c_str(),
 					   -1);
 					   
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter, 
-					   0, "Skin name",
+					   0, _("Skin name"),
 					   1, skinName.c_str(),
 					   -1);
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
-					   0, "Total vertices",
+					   0, _("Total vertices"),
 					   1, boost::lexical_cast<std::string>(mdl->getVertexCount()).c_str(),
 					   -1);
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
-					   0, "Total polys",
+					   0, _("Total polys"),
 					   1, boost::lexical_cast<std::string>(mdl->getPolyCount()).c_str(),
 					   -1);
 
 	gtk_list_store_append(_infoStore, &iter);
 	gtk_list_store_set(_infoStore, &iter,
-					   0, "Material surfaces",
+					   0, _("Material surfaces"),
 					   1, boost::lexical_cast<std::string>(mdl->getSurfaceCount()).c_str(),
 					   -1);
 
@@ -424,7 +431,7 @@ void ModelSelector::updateSelected() {
 		// First line		
 		gtk_list_store_append(_infoStore, &iter);
 		gtk_list_store_set(_infoStore, &iter,
-						   0, "Active materials",
+						   0, _("Active materials"),
 						   1, i->c_str(),
 						   -1);
 		// Subsequent lines (if any)

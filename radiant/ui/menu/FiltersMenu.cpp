@@ -2,6 +2,7 @@
 
 #include <gtk/gtkwidget.h>
 
+#include "i18n.h"
 #include "ifilter.h"
 #include "iuimanager.h"
 
@@ -61,7 +62,7 @@ void FiltersMenu::addItemsToMainMenu()
 	GlobalFilterSystem().forEachFilter(visitor);
 
 	menuManager.add(MENU_PATH, "_FiltersSep", menuSeparator, "", "", "");
-	menuManager.add(MENU_PATH, "EditFilters", menuItem, "Edit Filters...", MENU_ICON, "EditFiltersDialog");
+	menuManager.add(MENU_PATH, "EditFilters", menuItem, _("Edit Filters..."), MENU_ICON, "EditFiltersDialog");
 }
 
 void FiltersMenu::removeItemsFromMainMenu()

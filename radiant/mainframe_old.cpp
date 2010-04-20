@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "mainframe_old.h"
 
+#include "i18n.h"
 #include "imainframe.h"
 #include "debugging/debugging.h"
 #include "version.h"
@@ -137,11 +138,11 @@ extern FaceInstanceSet g_SelectedFaceInstances;
 void Radiant_Initialise() 
 {
 	// Create the empty Settings node and set the title to empty.
-	ui::PrefDialog::Instance().createOrFindPage("Game");
-	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage("Settings");
+	ui::PrefDialog::Instance().createOrFindPage(_("Game"));
+	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage(_("Settings"));
 	settingsPage->setTitle("");
 	
-	ui::Splash::Instance().setProgressAndText("Constructing Menu", 0.89f);
+	ui::Splash::Instance().setProgressAndText(_("Constructing Menu"), 0.89f);
 	
 	// Construct the MRU commands and menu structure
 	GlobalMRU().constructMenu();
@@ -153,7 +154,7 @@ void Radiant_Initialise()
 }
 
 void Exit(const cmd::ArgumentList& args) {
-	if (GlobalMap().askForSave("Exit Radiant")) {
+	if (GlobalMap().askForSave(_("Exit Radiant"))) {
 		gtk_main_quit();
 	}
 }
@@ -549,7 +550,7 @@ void ClipperChangeNotify() {
 // The "Flush & Reload Shaders" command target 
 void RefreshShaders(const cmd::ArgumentList& args) {
 	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker("Processing...", "Loading Shaders");
+	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading Shaders"));
 	
 	// Destroy all the OpenGLShader objects
 	GlobalRenderSystem().unrealise();

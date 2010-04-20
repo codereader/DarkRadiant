@@ -26,7 +26,7 @@ DynamicLibrary::DynamicLibrary(const std::string& filename) :
 	_library(LoadLibrary(_name.c_str()))
 {
 	if (_library == 0) {
-		std::cerr << "LoadLibrary failed: '" << filename.c_str() << "'\n";
+		std::cerr << "LoadLibrary failed: '" << filename << "'" << std::endl;
 		std::cerr << "GetLastError: " << FormatGetLastError();
 	}
 }
@@ -47,7 +47,7 @@ DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& sy
 	
 	// Emit a warning if the lookup failed
 	if (address == 0) {
-		std::cerr << "GetProcAddress failed: '" << symbol << "'\n";
+		std::cerr << "GetProcAddress failed: '" << symbol << "'" << std::endl;
 		std::cerr << "GetLastError: " << FormatGetLastError();
 	}
 	

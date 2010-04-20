@@ -1,5 +1,6 @@
 #include "TexTool.h"
 
+#include "i18n.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "imainframe.h"
@@ -33,7 +34,7 @@
 namespace ui {
 	
 	namespace {
-		const std::string WINDOW_TITLE = "Texture Tool";
+		const char* const WINDOW_TITLE = N_("Texture Tool");
 		
 		const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
 		const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
@@ -48,7 +49,7 @@ namespace ui {
 	}
 
 TexTool::TexTool() 
-: gtkutil::PersistentTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow(), true),
+: gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _glWidget(true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _zoomFactor(DEFAULT_ZOOM_FACTOR),

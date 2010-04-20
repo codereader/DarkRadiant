@@ -1,5 +1,6 @@
 #include "FilterDialog.h"
 
+#include "i18n.h"
 #include "ifilter.h"
 #include "imainframe.h"
 #include "idialogmanager.h"
@@ -19,7 +20,7 @@ namespace ui {
 	namespace {
 		const int DEFAULT_SIZE_X = 600;
 	    const int DEFAULT_SIZE_Y = 550;
-	   	const std::string WINDOW_TITLE = "Filter Settings";
+	   	const char* const WINDOW_TITLE = N_("Filter Settings");
 
 		enum {
 			WIDGET_ADD_FILTER_BUTTON,
@@ -38,7 +39,7 @@ namespace ui {
 	}
 
 FilterDialog::FilterDialog() :
-	BlockingTransientWindow(WINDOW_TITLE, GlobalMainFrame().getTopLevelWindow()),
+	BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_filterStore(gtk_list_store_new(NUM_COLUMNS, 
 									G_TYPE_STRING,		// name
 									G_TYPE_STRING,		// state
@@ -139,7 +140,7 @@ void FilterDialog::update() {
 		const Filter& filter = *(i->second);
 				
 		gtk_list_store_set(_filterStore, &iter, COL_NAME, i->first.c_str(), 
-										  COL_STATE, filter.state ? "enabled" : "disabled", 
+										  COL_STATE, filter.state ? _("enabled") : _("disabled"), 
 										  COL_COLOUR, filter.readOnly ? "#707070" : "black",
 										  COL_READONLY, filter.readOnly ? TRUE : FALSE,
 										  -1);
@@ -154,7 +155,8 @@ void FilterDialog::populateWindow() {
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
 	// Create the "Filters" label	
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel("<b>Filters</b>"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel(
+		std::string("<b>") + _("Filters") + "</b>"), FALSE, FALSE, 0);
 
 	// Pack the treeview into the main window's vbox
 	gtk_box_pack_start(GTK_BOX(vbox), createFiltersPanel(), TRUE, TRUE, 0);
@@ -172,8 +174,8 @@ GtkWidget* FilterDialog::createFiltersPanel() {
 	// Create a new treeview
 	_filterView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_filterStore)));
 		
-	gtkutil::TextColumn filterCol("Name", COL_NAME);
-	gtkutil::TextColumn stateCol("State", COL_STATE);
+	gtkutil::TextColumn filterCol(_("Name"), COL_NAME);
+	gtkutil::TextColumn stateCol(_("State"), COL_STATE);
 
 	gtk_tree_view_column_set_attributes(filterCol, GTK_CELL_RENDERER(filterCol.getCellRenderer()),
 										"markup", COL_NAME,
@@ -194,7 +196,7 @@ GtkWidget* FilterDialog::createFiltersPanel() {
 	// Action buttons
 	_widgets[WIDGET_ADD_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	_widgets[WIDGET_EDIT_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	_widgets[WIDGET_VIEW_FILTER_BUTTON] = gtk_button_new_with_label("View");
+	_widgets[WIDGET_VIEW_FILTER_BUTTON] = gtk_button_new_with_label(_("View"));
 		
 	_widgets[WIDGET_DELETE_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
 
@@ -285,7 +287,7 @@ void FilterDialog::onSave(GtkWidget* widget, FilterDialog* self) {
 void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 	// Construct a new filter with an empty name (this indicates it has not been there before when saving)
 	FilterPtr workingCopy(new Filter("", false, false));
-	workingCopy->name = "NewFilter";
+	workingCopy->name = _("NewFilter");
 
 	// Instantiate a new editor, will block
 	FilterEditor editor(*workingCopy, GTK_WINDOW(self->getWindow()), false);
@@ -298,8 +300,8 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 	if (workingCopy->rules.empty())
 	{
 		// Empty ruleset, notify user
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Empty Filter",
-			"No rules defined for this filter, cannot insert.", ui::IDialog::MESSAGE_ERROR);
+		IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Empty Filter"),
+			_("No rules defined for this filter, cannot insert."), ui::IDialog::MESSAGE_ERROR);
 
 		dialog->run();
 		return;
@@ -312,8 +314,8 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 	if (!result.second)
 	{
 		// Empty ruleset, notify user
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Name Conflict",
-			"Cannot add, filter with same name already exists.", ui::IDialog::MESSAGE_ERROR);
+		IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Name Conflict"),
+			_("Cannot add, filter with same name already exists."), ui::IDialog::MESSAGE_ERROR);
 
 		dialog->run();
 		return;
@@ -359,8 +361,8 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 	if (workingCopy.rules.empty())
 	{
 		// Empty ruleset, ask user for deletion
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox("Empty Filter",
-			"No rules defined for this filter. Delete it?", ui::IDialog::MESSAGE_ASK);
+		IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Empty Filter"),
+			_("No rules defined for this filter. Delete it?"), ui::IDialog::MESSAGE_ASK);
 
 		if (dialog->run() == IDialog::RESULT_YES)
 		{

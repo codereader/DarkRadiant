@@ -1,5 +1,6 @@
 #include "ShaderDefinitionView.h"
 
+#include "i18n.h"
 #include "ishaders.h"
 #include <gtk/gtkvbox.h>
 #include <gtk/gtktable.h>
@@ -15,8 +16,8 @@ ShaderDefinitionView::ShaderDefinitionView() :
 	GtkTable* table = GTK_TABLE(gtk_table_new(2, 2, FALSE));
 	gtk_box_pack_start(GTK_BOX(_vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
 
-	GtkWidget* nameLabel = gtkutil::LeftAlignedLabel("Material:");
-	GtkWidget* materialFileLabel = gtkutil::LeftAlignedLabel("Defined in:");
+	GtkWidget* nameLabel = gtkutil::LeftAlignedLabel(_("Material:"));
+	GtkWidget* materialFileLabel = gtkutil::LeftAlignedLabel(_("Defined in:"));
 
 	_materialName = gtkutil::LeftAlignedLabel("");
 	_filename = gtkutil::LeftAlignedLabel("");
@@ -34,7 +35,7 @@ ShaderDefinitionView::ShaderDefinitionView() :
 	gtk_table_attach_defaults(table, _materialName, 1, 2, 0, 1);
 	gtk_table_attach_defaults(table, _filename, 1, 2, 1, 2);
 
-	gtk_box_pack_start(GTK_BOX(_vbox), gtkutil::LeftAlignedLabel("Definition"), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(_vbox), gtkutil::LeftAlignedLabel(_("Definition")), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(_vbox), _view.getWidget(), TRUE, TRUE, 0);
 }
 

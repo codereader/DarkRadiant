@@ -1,11 +1,13 @@
 #include "ModuleRegistry.h"
 
+#include "i18n.h"
 #include "itextstream.h"
 #include <stdexcept>
 #include <iostream>
 #include "ApplicationContextImpl.h"
 #include "ModuleLoader.h"
 
+#include <boost/format.hpp>
 #include "ui/splash/Splash.h"
 
 namespace module {
@@ -35,7 +37,7 @@ ModuleRegistry::ModuleRegistry() :
 	_modulesInitialised(false),
 	_modulesShutdown(false)
 {
-	globalOutputStream() << "ModuleRegistry instantiated.\n";
+	globalOutputStream() << "ModuleRegistry instantiated." << std::endl;
 }
 
 void ModuleRegistry::unloadModules() {
@@ -70,7 +72,7 @@ void ModuleRegistry::registerModule(RegisterableModulePtr module) {
 		);
 	}
 	
-	globalOutputStream() << "Module registered: " << module->getName().c_str() << "\n";
+	globalOutputStream() << "Module registered: " << module->getName() << std::endl;
 }
 
 // Initialise the module (including dependencies, if necessary)
@@ -108,7 +110,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 	
 	// Initialise the dependencies first
 	for (StringSet::const_iterator i = dependencies.begin(); 
-		 i != dependencies.end(); i++)
+		 i != dependencies.end(); ++i)
 	{
         globalOutputStream() << "   " << name << " needs dependency " 
                              << *i << std::endl;
@@ -117,7 +119,9 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.65f;
 	
-	ui::Splash::Instance().setProgressAndText("Initialising Module: " + name, _progress);
+	ui::Splash::Instance().setProgressAndText(
+		(boost::format(_("Initialising Module: %s")) % name).str(), 
+		_progress);
 
     globalOutputStream() << "ModuleRegistry: dependencies satisfied, "
                          << "invoking initialiser for " << name << std::endl;
@@ -125,7 +129,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 	// Initialise the module itself, now that the dependencies are ready
 	module->initialiseModule(_context);
 	
-	globalOutputStream() << "=> Module " << name << " initialised.\n";
+	globalOutputStream() << "=> Module " << name << " initialised." << std::endl;
 }
 
 // Initialise all registered modules
@@ -135,10 +139,10 @@ void ModuleRegistry::initialiseModules() {
 	}
 
 	_progress = 0.1f;
-	ui::Splash::Instance().setProgressAndText("Initialising Modules", _progress);
+	ui::Splash::Instance().setProgressAndText(_("Initialising Modules"), _progress);
 
 	for (ModulesMap::iterator i = _uninitialisedModules.begin();
-		 i != _uninitialisedModules.end(); i++)
+		 i != _uninitialisedModules.end(); ++i)
 	{
 		// greebo: Dive into the recursion
 		// (this will return immediately if the module is already initialised).
@@ -187,7 +191,7 @@ RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
 	
 	if (returnValue == NULL) {
 		std::cerr << "ModuleRegistry: Warning! Module with name " 
-		          << name << " requested but not found!\n";
+		          << name << " requested but not found!" << std::endl;
 	}
 	
 	return returnValue;

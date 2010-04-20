@@ -1,6 +1,7 @@
 #include "EntityClassChooser.h"
 #include "EntityClassTreePopulator.h"
 
+#include "i18n.h"
 #include "iregistry.h"
 #include "imainframe.h"
 #include "iuimanager.h"
@@ -16,6 +17,11 @@
 
 namespace ui
 {
+
+	namespace
+	{
+		const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
+	}
 
 // Display the singleton instance
 std::string EntityClassChooser::chooseEntityClass() {
@@ -87,7 +93,7 @@ EntityClassChooser::EntityClassChooser()
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), mainWindow);
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_title(GTK_WINDOW(_widget), ECLASS_CHOOSER_TITLE);
+	gtk_window_set_title(GTK_WINDOW(_widget), _(ECLASS_CHOOSER_TITLE));
 
 	// Set the default size of the window
 	
@@ -162,7 +168,7 @@ GtkWidget* EntityClassChooser::createTreeView() {
 
 	// Single column with icon and name
 	GtkTreeViewColumn* col = 
-		gtkutil::IconTextColumn("Classname", NAME_COLUMN, ICON_COLUMN);
+		gtkutil::IconTextColumn(_("Classname"), NAME_COLUMN, ICON_COLUMN);
 	gtk_tree_view_column_set_sort_column_id(col, NAME_COLUMN);
 
 	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), col);				

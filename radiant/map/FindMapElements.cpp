@@ -1,5 +1,6 @@
 #include "FindMapElements.h"
 
+#include "i18n.h"
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "idialogmanager.h"
@@ -174,10 +175,10 @@ void GetSelectionIndex(std::size_t& ent, std::size_t& brush)
 
 void DoFind(const cmd::ArgumentList& args)
 {
-	ui::IDialogPtr dialog = GlobalDialogManager().createDialog("Find Brush");
+	ui::IDialogPtr dialog = GlobalDialogManager().createDialog(_("Find Brush"));
 
-	ui::IDialog::Handle entityEntry = dialog->addEntryBox("Entity:");
-	ui::IDialog::Handle brushEntry = dialog->addEntryBox("Brush:");
+	ui::IDialog::Handle entityEntry = dialog->addEntryBox(_("Entity Number:"));
+	ui::IDialog::Handle brushEntry = dialog->addEntryBox(_("Brush Number:"));
 
 	std::size_t ent(0), br(0);
 	GetSelectionIndex(ent, br);

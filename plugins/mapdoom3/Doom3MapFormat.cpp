@@ -13,6 +13,7 @@
 #include "NodeExporter.h"
 #include "scenelib.h"
 
+#include "i18n.h"
 #include "Tokens.h"
 #include "MapImportInfo.h"
 #include "MapExportInfo.h"
@@ -66,19 +67,19 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 	GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
 	
 	GlobalFiletypes().addType(
-		"map", getName(), FileTypePattern("Doom 3 map", "*.map"));
+		"map", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
 	GlobalFiletypes().addType(
-		"map", getName(), FileTypePattern("Doom 3 region", "*.reg"));
+		"map", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
 	GlobalFiletypes().addType(
-		"map", getName(), FileTypePattern("Doom 3 prefab", "*.pfb"));
+		"map", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));
 	
 	// Add the filepatterns for the prefab (different order)
 	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern("Doom 3 prefab", "*.pfb"));
+		"prefab", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));
 	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern("Doom 3 map", "*.map"));
+		"prefab", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
 	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern("Doom 3 region", "*.reg"));
+		"prefab", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
 }
 
 bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {

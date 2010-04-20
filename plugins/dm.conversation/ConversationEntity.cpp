@@ -1,5 +1,6 @@
 #include "ConversationEntity.h"
 
+#include "i18n.h"
 #include "scenelib.h"
 #include "itextstream.h"
 #include "ientity.h"
@@ -45,7 +46,7 @@ void ConversationEntity::addConversation() {
 		
 	// Insert a new conversation at this ID.
 	Conversation o;
-	o.name = "New Conversation";
+	o.name = _("New Conversation");
 	_conversations.insert(ConversationMap::value_type(index, o));
 }
 
