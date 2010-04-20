@@ -13,6 +13,27 @@
 #include "camera/GlobalCamera.h"
 #include <boost/bind.hpp>
 
+namespace
+{
+	const std::string RKEY_XYVIEW_ROOT = "user/ui/xyview";
+	
+	const std::string RKEY_CHASE_MOUSE = RKEY_XYVIEW_ROOT + "/chaseMouse";
+	const std::string RKEY_CAMERA_XY_UPDATE = RKEY_XYVIEW_ROOT + "/camXYUpdate";
+	const std::string RKEY_SHOW_CROSSHAIRS = RKEY_XYVIEW_ROOT + "/showCrossHairs";
+	const std::string RKEY_SHOW_GRID = RKEY_XYVIEW_ROOT + "/showGrid";
+	const std::string RKEY_SHOW_SIZE_INFO = RKEY_XYVIEW_ROOT + "/showSizeInfo";
+	const std::string RKEY_SHOW_ENTITY_ANGLES = RKEY_XYVIEW_ROOT + "/showEntityAngles";
+	const std::string RKEY_SHOW_ENTITY_NAMES = RKEY_XYVIEW_ROOT + "/showEntityNames";
+	const std::string RKEY_SHOW_BLOCKS = RKEY_XYVIEW_ROOT + "/showBlocks";
+	const std::string RKEY_SHOW_COORDINATES = RKEY_XYVIEW_ROOT + "/showCoordinates";
+	const std::string RKEY_SHOW_OUTLINE = RKEY_XYVIEW_ROOT + "/showOutline";
+	const std::string RKEY_SHOW_AXES = RKEY_XYVIEW_ROOT + "/showAxes";
+	const std::string RKEY_SHOW_WORKZONE = RKEY_XYVIEW_ROOT + "/showWorkzone";
+	const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
+	const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
+	const std::string RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
+}
+
 // Constructor
 XYWndManager::XYWndManager() :
 	_globalParentWindow(NULL)
@@ -182,6 +203,7 @@ void XYWndManager::registerCommands() {
 	GlobalEventManager().addRegistryToggle("ShowWindowOutline", RKEY_SHOW_OUTLINE);
 	GlobalEventManager().addRegistryToggle("ShowAxes", RKEY_SHOW_AXES);
 	GlobalEventManager().addRegistryToggle("ShowWorkzone", RKEY_SHOW_WORKZONE);
+	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);
 }
 
 void XYWndManager::constructPreferences() {

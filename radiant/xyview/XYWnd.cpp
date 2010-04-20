@@ -51,6 +51,11 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 	return world_origin + normalised * normalised2world_scale;
 }
 
+namespace
+{
+	const std::string RKEY_XYVIEW_ROOT = "user/ui/xyview";
+}
+
 // Constructors
 XYWnd::XYWnd(int id) :
 	_id(id),

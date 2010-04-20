@@ -766,8 +766,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("MapInfo", "MapInfo");
 	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
 	
-	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);
-
 	GlobalEventManager().addToggle("ToggleClipper", ClipperMode);
 	
 	GlobalEventManager().addToggle("MouseTranslate", TranslateMode);
