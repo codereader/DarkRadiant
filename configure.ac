@@ -1,6 +1,8 @@
 AC_INIT([darkradiant], [1.2.0])
 AM_INIT_AUTOMAKE
 
+AC_CONFIG_MACRO_DIR([m4])
+
 # Save user flags
 USER_CFLAGS=$CFLAGS
 USER_CXXFLAGS=$CXXFLAGS
