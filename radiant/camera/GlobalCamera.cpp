@@ -502,7 +502,7 @@ void GlobalCameraManager::shutdownModule()
 	_cameras.clear();
 }
 
-// Define the static SelectionSystem module
+// Define the static Camera module
 module::StaticModule<GlobalCameraManager> cameraModule;
 
 // ------------------------------------------------------------------------------------

@@ -272,6 +272,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\iorthoview.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\iparticles.h"
 			>
 		</File>
