@@ -86,7 +86,7 @@ void FloatingLayout::deactivate()
 	GlobalXYWnd().saveState();
 
 	// Delete all active views
-	GlobalXYWnd().destroyViews();
+	GlobalXYWndManager().destroyViews();
 
 	// Save groupdialog state
 	GlobalRegistry().set(RKEY_GROUPDIALOG_VISIBLE, 

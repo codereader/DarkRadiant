@@ -9,6 +9,9 @@ class IXWndManager :
 public:
 	// Passes a queueDraw() call to each allocated view
 	virtual void updateAllViews() = 0;
+
+	// Free all allocated views
+	virtual void destroyViews() = 0;
 };
 
 const char* const MODULE_ORTHOVIEWMANAGER = "OrthoviewManager";

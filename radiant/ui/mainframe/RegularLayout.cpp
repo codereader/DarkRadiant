@@ -121,7 +121,7 @@ void RegularLayout::deactivate() {
 	saveStateToPath(RKEY_REGULAR_ROOT);
 
 	// Delete all active views
-	GlobalXYWnd().destroyViews();
+	GlobalXYWndManager().destroyViews();
 
 	// Delete the CamWnd
 	_camWnd = CamWndPtr();

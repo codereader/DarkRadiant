@@ -1384,8 +1384,10 @@ void XYWnd::draw()
 	glDisable(GL_COLOR_MATERIAL);
 	glDisable(GL_DEPTH_TEST);
 
+	XYWndManager& xyWndManager = GlobalXYWnd();
+
 	drawGrid();
-	if (GlobalXYWnd().showBlocks())
+	if (xyWndManager.showBlocks())
 		drawBlockGrid();
 
 	glLoadMatrixd(m_modelview);
@@ -1437,7 +1439,7 @@ void XYWnd::draw()
 	GlobalOpenGL_debugAssertNoErrors();
 
 	// greebo: Check, if the size info should be displayed (if there are any items selected)
-	if (GlobalXYWnd().showSizeInfo() && GlobalSelectionSystem().countSelected() != 0)
+	if (xyWndManager.showSizeInfo() && GlobalSelectionSystem().countSelected() != 0)
 	{
 		const selection::WorkZone& wz = GlobalSelectionSystem().getWorkZone();
 
@@ -1447,7 +1449,7 @@ void XYWnd::draw()
 		}
 	}
 
-	if (GlobalXYWnd().showCrossHairs()) {
+	if (xyWndManager.showCrossHairs()) {
 		Vector3 colour = ColourSchemes().getColour("xyview_crosshairs");
 		glColor4d(colour[0], colour[1], colour[2], 0.8f);
 		glBegin (GL_LINES);
@@ -1536,7 +1538,7 @@ void XYWnd::draw()
 		glDisable(GL_BLEND);
 	}
 
-	if (GlobalXYWnd().showOutline()) {
+	if (xyWndManager.showOutline()) {
 		if (isActive()) {
 			glMatrixMode (GL_PROJECTION);
 			glLoadIdentity();

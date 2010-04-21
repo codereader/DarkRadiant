@@ -132,7 +132,7 @@ void EmbeddedLayout::deactivate() {
 	saveStateToPath(RKEY_EMBEDDED_ROOT);
 
 	// Delete all active views
-	GlobalXYWnd().destroyViews();
+	GlobalXYWndManager().destroyViews();
 
 	// Delete the CamWnd
 	_camWnd = CamWndPtr();
