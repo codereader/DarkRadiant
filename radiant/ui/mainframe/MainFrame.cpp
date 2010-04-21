@@ -11,6 +11,7 @@
 #include "ipreferencesystem.h"
 #include "igrid.h"
 #include "ientityinspector.h"
+#include "iorthoview.h"
 
 #include "ui/splash/Splash.h"
 #include "ui/menu/FiltersMenu.h"
@@ -76,6 +77,7 @@ const StringSet& MainFrame::getDependencies() const {
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
 	}
 	
 	return _dependencies;
@@ -455,8 +457,6 @@ void MainFrame::shutdown()
 	
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
-
-	GlobalXYWnd().destroy();
 }
 
 bool MainFrame::screenUpdatesEnabled() {
@@ -471,9 +471,10 @@ void MainFrame::disableScreenUpdates() {
 	_screenUpdatesEnabled = false;
 }
 
-void MainFrame::updateAllWindows() {
+void MainFrame::updateAllWindows()
+{
 	GlobalCamera().update();
-	GlobalXYWnd().updateAllViews();
+	GlobalXYWndManager().updateAllViews();
 }
 
 void MainFrame::applyLayout(const std::string& name)

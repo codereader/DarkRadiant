@@ -9,6 +9,7 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 
+#include "modulesystem/StaticModule.h"
 #include "selection/algorithm/General.h"
 #include "camera/GlobalCamera.h"
 #include <boost/bind.hpp>
@@ -37,49 +38,7 @@ namespace
 // Constructor
 XYWndManager::XYWndManager() :
 	_globalParentWindow(NULL)
-{
-	// Connect self to the according registry keys
-	GlobalRegistry().addKeyObserver(this, RKEY_CHASE_MOUSE);
-	GlobalRegistry().addKeyObserver(this, RKEY_CAMERA_XY_UPDATE);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_CROSSHAIRS);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_GRID);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_SIZE_INFO);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_ANGLES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_BLOCKS);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_COORDINATES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_OUTLINE);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_AXES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_WORKZONE);
-	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_BLOCKSIZE);
-	
-	// Trigger loading the values of the observed registry keys
-	keyChanged("", "");
-	
-	// Construct the preference settings widgets
-	constructPreferences();
-	
-	// Add the commands to the EventManager
-	registerCommands();
-
-	GlobalUIManager().getStatusBarManager().addTextElement(
-		"XYZPos", 
-		"",  // no icon
-		IStatusBarManager::POS_POSITION
-	);
-}
-
-void XYWndManager::construct() {
-	XYWnd::captureStates();
-}
-
-// Release resources
-void XYWndManager::destroy() {
-	// Release all owned XYWndPtrs
-	destroyViews();
-
-	XYWnd::releaseStates();
-}
+{}
 
 /* greebo: This method restores all xy views from the information stored in the registry.
  * 
@@ -168,6 +127,7 @@ void XYWndManager::destroyViews()
 		// double-deletions are prevented.
 		candidate = XYWndPtr();
 	}
+
 	_activeXY = XYWndPtr();
 }
 
@@ -206,7 +166,8 @@ void XYWndManager::registerCommands() {
 	GlobalEventManager().addRegistryToggle("ToggleShowSizeInfo", RKEY_SHOW_SIZE_INFO);
 }
 
-void XYWndManager::constructPreferences() {
+void XYWndManager::constructPreferences()
+{
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
 	
 	page->appendCheckBox("", _("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
@@ -538,8 +499,81 @@ Vector3 XYWndManager::getFocusPosition() {
 	return position;
 }
 
-// Accessor function returning a reference to the static instance
-XYWndManager& GlobalXYWnd() {
-	static XYWndManager _xyWndManager;
-	return _xyWndManager;
+const std::string& XYWndManager::getName() const
+{
+	static std::string _name(MODULE_ORTHOVIEWMANAGER);
+	return _name;
+}
+
+const StringSet& XYWndManager::getDependencies() const
+{
+	static StringSet _dependencies;
+	
+	if (_dependencies.empty())
+	{
+		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_RENDERSYSTEM);
+		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_UIMANAGER);
+	}
+	
+	return _dependencies;
+}
+
+void XYWndManager::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+
+	// Connect self to the according registry keys
+	GlobalRegistry().addKeyObserver(this, RKEY_CHASE_MOUSE);
+	GlobalRegistry().addKeyObserver(this, RKEY_CAMERA_XY_UPDATE);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_CROSSHAIRS);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_GRID);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_SIZE_INFO);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_ANGLES);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_BLOCKS);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_COORDINATES);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_OUTLINE);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_AXES);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_WORKZONE);
+	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_BLOCKSIZE);
+	
+	// Trigger loading the values of the observed registry keys
+	keyChanged("", "");
+	
+	// Construct the preference settings widgets
+	constructPreferences();
+	
+	// Add the commands to the EventManager
+	registerCommands();
+
+	GlobalUIManager().getStatusBarManager().addTextElement(
+		"XYZPos", 
+		"",  // no icon
+		IStatusBarManager::POS_POSITION
+	);
+
+	XYWnd::captureStates();
+}
+
+void XYWndManager::shutdownModule()
+{
+	GlobalRegistry().removeKeyObserver(this);
+
+	// Release all owned XYWndPtrs
+	destroyViews();
+
+	XYWnd::releaseStates();
+}
+
+// Define the static GlobalXYWnd module
+module::StaticModule<XYWndManager> xyWndModule;
+
+// Accessor function returning the reference
+XYWndManager& GlobalXYWnd()
+{
+	return *xyWndModule.getModule();
 }

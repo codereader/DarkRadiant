@@ -3,6 +3,7 @@
 
 #include <list>
 
+#include "iorthoview.h"
 #include "iclipper.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
@@ -10,6 +11,7 @@
 #include "XYWnd.h"
 
 class XYWndManager : 
+	public IXWndManager,
 	public RegistryKeyObserver
 {
 	// Store an indexed map of XYWnds. When one is deleted, it will notify
@@ -69,12 +71,6 @@ public:
 	
 	// Passes a queueDraw() call to each allocated view
 	void updateAllViews();
-	
-	// Register the commands and capture the renderer states
-	void construct();
-	
-	// Release the shader states
-	void destroy();
 	
 	// Free all the allocated views from the heap
 	void destroyViews();
@@ -164,6 +160,12 @@ public:
 	
 	// Registers all the XY commands in the EventManager 
 	void registerCommands();
+
+	// RegisterableModule implementation
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
+	void shutdownModule();
 	
 }; // class XYWndManager
 

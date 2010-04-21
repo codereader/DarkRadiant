@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ifiletypes.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
+#include "itextstream.h"
 #include "ifilesystem.h"
 #include "iuimanager.h"
 #include "ieclass.h"
@@ -33,11 +34,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ieventmanager.h"
 #include "iclipper.h"
 
+#include "scene/Node.h"
+
 #include "entity.h"
 #include "map/AutoSaver.h"
 #include "map/PointFile.h"
-#include "camera/GlobalCamera.h"
-#include "xyview/GlobalXYWnd.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
 #include "gtkutil/FileChooser.h"
@@ -143,7 +144,6 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
   	
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
-    GlobalXYWnd().construct();
 	ui::MediaBrowser::registerPreferences();
     GlobalTextureBrowser().construct();
 	entity::registerCommands();
