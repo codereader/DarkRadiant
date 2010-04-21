@@ -1,9 +1,9 @@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS) $(GLIB_CFLAGS)
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entity.la
 
-entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS)
+entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(GTK_LIBS)
 entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
 				   $(top_builddir)/libs/scene/libscenegraph.la
 entity_la_SOURCES = origin.cpp \
