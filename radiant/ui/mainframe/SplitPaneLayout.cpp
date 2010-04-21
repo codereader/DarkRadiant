@@ -136,7 +136,7 @@ void SplitPaneLayout::deactivate()
 	saveStateToPath(RKEY_SPLITPANE_ROOT);
 
 	// Delete all active views
-	GlobalXYWnd().destroyViews();
+	GlobalXYWndManager().destroyViews();
 
 	// Delete the CamWnd
 	_camWnd = CamWndPtr();
