@@ -19,7 +19,7 @@ namespace filters
 namespace {
 	
 	// Registry key for .game-defined filters
-	const std::string RKEY_GAME_FILTERS = "game/filtersystem//filter";
+	const std::string RKEY_GAME_FILTERS = "/filtersystem//filter";
 
 	const std::string RKEY_USER_FILTER_BASE = "user/ui/filtersystem";
 
@@ -31,9 +31,13 @@ namespace {
 }
 
 // Initialise the filter system
-void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx) {
-	// Ask the XML Registry for filter nodes
-	xml::NodeList filters = GlobalRegistry().findXPath(RKEY_GAME_FILTERS);
+void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
+{
+	game::IGamePtr game = GlobalGameManager().currentGame();
+	assert(game != NULL);
+
+	// Ask the XML Registry for filter nodes (from .game file and from user's filters.xml)
+	xml::NodeList filters = game->getLocalXPath(RKEY_GAME_FILTERS);
 	xml::NodeList userFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
 
 	std::cout << "[filters] Loaded " << (filters.size() + userFilters.size())
