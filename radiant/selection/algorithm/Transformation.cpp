@@ -247,7 +247,7 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 
 void nudgeSelected(ENudgeDirection direction)
 {
-	nudgeSelected(direction, GlobalGrid().getGridSize(), GlobalXYWnd().getActiveViewType());
+	nudgeSelected(direction, GlobalGrid().getGridSize(), GlobalXYWndManager().getActiveViewType());
 }
 
 void nudgeSelectedCmd(const cmd::ArgumentList& args)

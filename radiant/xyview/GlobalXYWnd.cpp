@@ -304,7 +304,7 @@ void XYWndManager::positionAllViews(const Vector3& origin) {
 	}
 }
 
-void XYWndManager::positionView(const Vector3& origin) {
+void XYWndManager::positionActiveView(const Vector3& origin) {
 	if (_activeXY != NULL) {
 		return _activeXY->positionView(origin);
 	}
@@ -336,23 +336,23 @@ void XYWndManager::toggleActiveView(const cmd::ArgumentList& args) {
 			_activeXY->setViewType(XY);
 		}
 		
-		positionView(getFocusPosition());
+		positionActiveView(getFocusPosition());
 	}
 }
 
 void XYWndManager::setActiveViewXY(const cmd::ArgumentList& args) {
 	setActiveViewType(XY);
-	positionView(getFocusPosition());
+	positionActiveView(getFocusPosition());
 }
 
 void XYWndManager::setActiveViewXZ(const cmd::ArgumentList& args) {
 	setActiveViewType(XZ);
-	positionView(getFocusPosition());
+	positionActiveView(getFocusPosition());
 }
 
 void XYWndManager::setActiveViewYZ(const cmd::ArgumentList& args) {
 	setActiveViewType(YZ);
-	positionView(getFocusPosition());
+	positionActiveView(getFocusPosition());
 }
 
 void XYWndManager::splitViewFocus(const cmd::ArgumentList& args) {
@@ -364,7 +364,7 @@ void XYWndManager::zoom100(const cmd::ArgumentList& args) {
 }
 
 void XYWndManager::focusActiveView(const cmd::ArgumentList& args) {
-	positionView(getFocusPosition());
+	positionActiveView(getFocusPosition());
 }
 
 XYWndPtr XYWndManager::getView(EViewType viewType) {

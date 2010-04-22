@@ -110,7 +110,7 @@ public:
 	
 	// Positions the view of all available views / the active view
 	void positionAllViews(const Vector3& origin);
-	void positionView(const Vector3& origin);
+	void positionActiveView(const Vector3& origin);
 	
 	// Returns the view type of the currently active view
 	EViewType getActiveViewType() const;
@@ -150,22 +150,23 @@ public:
 	// Determines the global parent the xyviews are children of
 	void setGlobalParentWindow(GtkWindow* globalParentWindow);
 	
-	/* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
-	 * If something is selected the center of the selection is taken as new origin, otherwise the camera
-	 * position is considered to be the new origin of the toggled orthoview. */
-	Vector3 getFocusPosition();
-	
-	// Construct the orthoview preference page and add it to the given group
-	void constructPreferences();
-	
-	// Registers all the XY commands in the EventManager 
-	void registerCommands();
-
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
+
+private:
+	/* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
+	 * If something is selected the center of the selection is taken as new origin, otherwise the camera
+	 * position is considered to be the new origin of the toggled orthoview. */
+	Vector3 getFocusPosition();
+
+	// Construct the orthoview preference page and add it to the given group
+	void constructPreferences();
+	
+	// Registers all the XY commands in the EventManager 
+	void registerCommands();
 	
 }; // class XYWndManager
 
