@@ -21,8 +21,7 @@ namespace entity {
  */
 class TargetableNode :
 	public Entity::Observer,
-	public KeyObserver,
-	public boost::enable_shared_from_this<TargetableNode>
+	public KeyObserver
 {
 	mutable Vertex3f m_position;
 	Doom3Entity& _d3entity;
