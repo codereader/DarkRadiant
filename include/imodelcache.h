@@ -47,7 +47,13 @@ public:
 
 } // namespace model
 
-inline model::IModelCache& GlobalModelCache() {
+#if defined(__GNUC__) && __GNUC__ >= 4
+#define INLINE_VISIBILITY __attribute__ ((visibility ("hidden")))
+#else
+#define INLINE_VISIBILITY
+#endif
+
+inline INLINE_VISIBILITY model::IModelCache& GlobalModelCache() {
 	static model::IModelCache& _modelCache(
 		*boost::static_pointer_cast<model::IModelCache>(
 			module::GlobalModuleRegistry().getModule(MODULE_MODELCACHE) 
