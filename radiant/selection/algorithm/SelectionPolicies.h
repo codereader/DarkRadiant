@@ -24,7 +24,7 @@ public:
 		}
 		
 		// Determine the viewtype
-		EViewType viewType = GlobalXYWnd().getActiveViewType();
+		EViewType viewType = GlobalXYWndManager().getActiveViewType();
 		
 		unsigned int axis1 = 0;
 		unsigned int axis2 = 1;

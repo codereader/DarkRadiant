@@ -2,6 +2,7 @@
 #define ICLIPPER_H_
 
 #include "imodule.h"
+#include "iorthoview.h"
 #include "math/Vector3.h"
 
 /** Abstract base class for the clipper module
@@ -37,13 +38,6 @@ struct BrushSplitType {
 };
 
 class ClipPoint;
-
-// Possible types of the orthogonal view window
-enum EViewType {
-    YZ = 0,
-    XZ = 1,
-    XY = 2
-};
 
 const std::string MODULE_CLIPPER("Clipper");
 

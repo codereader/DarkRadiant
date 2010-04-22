@@ -48,7 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "selection/algorithm/General.h"
 #include "ui/patch/CapDialog.h"
 
-void Scene_PatchConstructPrefab(scene::Graph& graph, const AABB& aabb, const std::string& shader, EPatchPrefab eType, EViewType viewType, std::size_t width = 3, std::size_t height = 3)
+void Scene_PatchConstructPrefab(const AABB& aabb, const std::string& shader, EPatchPrefab eType, EViewType viewType, std::size_t width = 3, std::size_t height = 3)
 {
   GlobalSelectionSystem().setSelectedAll(false);
 
@@ -328,49 +328,49 @@ void Patch_Cylinder(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateCylinder");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCylinder, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCylinder, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_DenseCylinder(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateDenseCylinder");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eDenseCylinder, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eDenseCylinder, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_VeryDenseCylinder(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateVeryDenseCylinder");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eVeryDenseCylinder, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eVeryDenseCylinder, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_SquareCylinder(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateSquareCylinder");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eSqCylinder, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eSqCylinder, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_Endcap(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateCaps");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eEndCap, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eEndCap, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_Bevel(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateBevel");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eBevel, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eBevel, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_Cone(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateCone");
 
-  Scene_PatchConstructPrefab(GlobalSceneGraph(), PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCone, GlobalXYWnd().getActiveViewType());
+  Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eCone, GlobalXYWnd().getActiveViewType());
 }
 
 void Patch_Invert(const cmd::ArgumentList& args)
@@ -654,7 +654,7 @@ void createSimplePatch(const cmd::ArgumentList& args) {
 		}
 		
 		// Call the PatchConstruct routine (GtkRadiant legacy)
-		Scene_PatchConstructPrefab(GlobalSceneGraph(), bounds, 
+		Scene_PatchConstructPrefab(bounds, 
 								   GlobalTextureBrowser().getSelectedShader(), 
 								   ePlane, GlobalXYWnd().getActiveViewType(), 
 								   width, height);
