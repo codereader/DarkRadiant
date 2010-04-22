@@ -10,7 +10,7 @@ ScriptCommand::ScriptCommand(const std::string& name, const std::string& scriptF
 	_scriptFilename(scriptFilename)
 {
 	// Register this with the command system
-	GlobalCommandSystem().addStatement(_name, "RunScriptCommand " + _name);
+	GlobalCommandSystem().addStatement(_name, "RunScriptCommand " + _name, false);
 
 	// Add an event as well (for keyboard shortcuts)
 	GlobalEventManager().addCommand(_name, _name);

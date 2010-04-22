@@ -200,11 +200,15 @@ void CommandSystem::removeCommand(const std::string& name) {
 	}
 }
 
-void CommandSystem::addStatement(const std::string& statementName, const std::string& str) {
+void CommandSystem::addStatement(const std::string& statementName, 
+								 const std::string& str,
+								 bool saveStatementToRegistry)
+{
 	// Remove all whitespace at the front and the tail
 	StatementPtr st(new Statement(
-		boost::algorithm::trim_copy(str))
-	);
+		boost::algorithm::trim_copy(str),
+		!saveStatementToRegistry // read-only if we should not save this statement
+	));
 	
 	std::pair<CommandMap::iterator, bool> result = _commands.insert(
 		CommandMap::value_type(statementName, st)
