@@ -283,12 +283,19 @@ public:
 
 	/**
 	 * greebo: Define a new statement, which consists of a name and a
-	 * string to exeute.
+	 * string to execute.
 	 *
 	 * Consider this as some sort of macro.
+	 *
+	 * @statementName: The name of the statement, e.g. "exportASE"
+	 * @string: The string to execute.
+	 * @saveStatementToRegistry: when TRUE (default) this statement/bind
+	 * is saved to the registry at program shutdown. Pass FALSE if you
+	 * don't want to let this statement persist between sessions.
 	 */
 	virtual void addStatement(const std::string& statementName, 
-							   const std::string& string) = 0;
+							  const std::string& string,
+							  bool saveStatementToRegistry = true) = 0;
 
 	/**
 	 * Returns the signature for the named command or bind. Statements

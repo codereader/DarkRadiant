@@ -24,7 +24,7 @@ public:
 	void addCommand(const std::string& name, Function func, const Signature& signature = Signature());
 	void removeCommand(const std::string& name);
 
-	void addStatement(const std::string& statementName, const std::string& string);
+	void addStatement(const std::string& statementName, const std::string& string, bool saveStatementToRegistry = true);
 
 	// Retrieve the signature for the given command
 	Signature getSignature(const std::string& name);
