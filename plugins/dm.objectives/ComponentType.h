@@ -25,6 +25,7 @@ typedef std::set<ComponentType> ComponentTypeSet;
  */
 class ComponentType
 {
+private:
 	// Static enum count
 	static int enumCount;
 	
@@ -108,6 +109,9 @@ public:
 	static const ComponentType& COMP_CUSTOM_CLOCKED();	// Custom component which periodically checks a user script.
 	static const ComponentType& COMP_INFO_LOCATION();	// Item is in a particular <b>info_location</b> area.
 	static const ComponentType& COMP_DISTANCE();		// Two entities are within a radius of each other.
+	static const ComponentType& COMP_READABLE_OPENED();		// Readable is opened
+	static const ComponentType& COMP_READABLE_CLOSED();		// Readable is closed
+	static const ComponentType& COMP_READABLE_PAGE_REACHED();	// A page of a readable is viewed
 	
 	//@}
 	
