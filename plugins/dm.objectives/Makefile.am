@@ -27,6 +27,7 @@ dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   ce/DestroyComponentEditor.cpp \
 						   ce/AIFindItemComponentEditor.cpp \
 						   ce/ReadableOpenedComponentEditor.cpp \
+						   ce/ReadableClosedComponentEditor.cpp \
 						   ce/specpanel/AIInnocenceSpecifierPanel.cpp \
 						   ce/specpanel/AITypeSpecifierPanel.cpp \
 						   ce/specpanel/SpawnClassSpecifierPanel.cpp \
