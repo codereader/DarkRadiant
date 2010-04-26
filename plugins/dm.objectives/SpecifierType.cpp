@@ -85,6 +85,18 @@ const SpecifierTypeSet& SpecifierType::SET_ITEM() {
 	return _instance;
 }
 
+const SpecifierTypeSet& SpecifierType::SET_READABLE()
+{
+	static SpecifierTypeSet _instance;
+
+	if (_instance.empty())
+	{
+		_instance.insert(SPEC_NAME());
+	}
+
+	return _instance;
+}
+
 const SpecifierTypeSet& SpecifierType::SET_LOCATION() {
 	static SpecifierTypeSet _instance;
 
