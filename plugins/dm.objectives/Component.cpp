@@ -105,6 +105,11 @@ std::string Component::getString() {
 		sentence += " and " + getArgument(1) + " get closer than ";
 		sentence += getArgument(2) + " units";
 	}
+	else if (componentId == ComponentType::COMP_READABLE_OPENED().getId())
+	{
+		sentence += "open the readable ";
+		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
+	}
 
 	if (getClockInterval() > 0) {
 		sentence += " (check interval: " + floatToStr(getClockInterval()) + " seconds)";
