@@ -110,6 +110,11 @@ std::string Component::getString() {
 		sentence += "open the readable ";
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
 	}
+	else if (componentId == ComponentType::COMP_READABLE_CLOSED().getId())
+	{
+		sentence += "close the readable ";
+		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
+	}
 
 	if (getClockInterval() > 0) {
 		sentence += " (check interval: " + floatToStr(getClockInterval()) + " seconds)";

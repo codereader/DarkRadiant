@@ -645,6 +645,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ReadableClosedComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ReadableClosedComponentEditor.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ReadableOpenedComponentEditor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ReadableOpenedComponentEditor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.objectives\ce\SpecifierEditCombo.cpp"
 					>
 				</File>

@@ -1,5 +1,5 @@
-#ifndef _READABLE_OPENED_COMPONENT_EDITOR_H_
-#define _READABLE_OPENED_COMPONENT_EDITOR_H_
+#ifndef _READABLE_CLOSED_COMPONENT_EDITOR_H_
+#define _READABLE_CLOSED_COMPONENT_EDITOR_H_
 
 #include "ComponentEditor.h"
 #include "ComponentEditorFactory.h"
@@ -11,11 +11,12 @@ namespace objectives {
 namespace ce {
 
 /**
- * ComponentEditor subclass for COMP_READABLE_OPENED component type.
+ * ComponentEditor subclass for COMP_READABLE_CLOSED component type.
  * 
- * This component requires that the player opens a certain readable.
+ * This component requires that the player closes a certain readable
+ * (after having it opened before).
  */
-class ReadableOpenedComponentEditor : 
+class ReadableClosedComponentEditor : 
 	public ComponentEditor
 {
 	// Registration class
@@ -23,8 +24,8 @@ class ReadableOpenedComponentEditor :
 	{
 		RegHelper() {
 			ComponentEditorFactory::registerType(
-				objectives::ComponentType::COMP_READABLE_OPENED().getName(), 
-				ComponentEditorPtr(new ReadableOpenedComponentEditor())
+				objectives::ComponentType::COMP_READABLE_CLOSED().getName(), 
+				ComponentEditorPtr(new ReadableClosedComponentEditor())
 			);
 		}
 	} regHelper;
@@ -41,31 +42,31 @@ class ReadableOpenedComponentEditor :
 public:
 
 	/**
-	 * Construct a default ReadableOpenedComponentEditor.
+	 * Construct a default ReadableClosedComponentEditor.
 	 */
-	ReadableOpenedComponentEditor() : 
+	ReadableClosedComponentEditor() : 
 		_widget(NULL),
 		_component(NULL)
 	{}
 	
 	/**
-	 * Construct an ReadableOpenedComponentEditor with a Component object to display and
+	 * Construct an ReadableClosedComponentEditor with a Component object to display and
 	 * edit.
 	 * 
 	 * @param component
 	 * The Component to edit.
 	 */
-	ReadableOpenedComponentEditor(Component& component);
+	ReadableClosedComponentEditor(Component& component);
 	
 	/**
 	 * Destructor
 	 */
-	~ReadableOpenedComponentEditor();
+	~ReadableClosedComponentEditor();
 	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
-		return ComponentEditorPtr(new ReadableOpenedComponentEditor(component));
+		return ComponentEditorPtr(new ReadableClosedComponentEditor(component));
 	}
 	
 	GtkWidget* getWidget() const; 
@@ -77,4 +78,4 @@ public:
 
 } // namespace objectives
 
-#endif /* _READABLE_OPENED_COMPONENT_EDITOR_H_ */
+#endif /* _READABLE_CLOSED_COMPONENT_EDITOR_H_ */
