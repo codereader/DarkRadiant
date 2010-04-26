@@ -85,6 +85,30 @@ const ComponentType& ComponentType::COMP_DISTANCE() {
 	return _instance;
 }
 
+const ComponentType& ComponentType::COMP_READABLE_OPENED()
+{
+	static ComponentType _instance(
+		"readable_opened", _("Readable is opened.")
+	);
+	return _instance;
+}
+
+const ComponentType& ComponentType::COMP_READABLE_CLOSED()
+{
+	static ComponentType _instance(
+		"readable_closed", _("Readable is closed.")
+	);
+	return _instance;
+}
+
+const ComponentType& ComponentType::COMP_READABLE_PAGE_REACHED()
+{
+	static ComponentType _instance(
+		"readable_page_reached", _("A certain page of a readable is reached.")
+	);
+	return _instance;
+}
+
 // Static sets
 const ComponentTypeSet& ComponentType::SET_ALL() {
 	static ComponentTypeSet _instance;
@@ -102,6 +126,9 @@ const ComponentTypeSet& ComponentType::SET_ALL() {
 		_instance.insert(COMP_CUSTOM_ASYNC());
 		_instance.insert(COMP_CUSTOM_CLOCKED());
 		_instance.insert(COMP_DISTANCE());
+		_instance.insert(COMP_READABLE_OPENED());
+		_instance.insert(COMP_READABLE_CLOSED());
+		_instance.insert(COMP_READABLE_PAGE_REACHED());
 	}
 	return _instance;
 }
