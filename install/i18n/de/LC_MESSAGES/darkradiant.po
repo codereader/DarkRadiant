@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
 "POT-Creation-Date: 2010-04-16 17:47+0200\n"
-"PO-Revision-Date: 2010-04-27 10:05+0100\n"
+"PO-Revision-Date: 2010-04-27 10:11+0100\n"
 "Last-Translator: MB <mb>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -252,7 +252,7 @@ msgstr ""
 
 #: ..\..\radiant\map\Map.cpp:642
 msgid "Save Map"
-msgstr "Speichere Karte"
+msgstr "Map speichern"
 
 #: ..\..\radiant\map\Map.cpp:676
 msgid "Save Copy As..."
@@ -264,20 +264,20 @@ msgstr "Prefab laden"
 
 #: ..\..\radiant\map\Map.cpp:742
 msgid "New Map"
-msgstr "Neue Karte"
+msgstr "Neue Map"
 
 #: ..\..\radiant\map\Map.cpp:752
 #: ..\..\radiant\ui\mru\MRU.cpp:90
 msgid "Open Map"
-msgstr "Öffne Karte"
+msgstr "Map öffnen"
 
 #: ..\..\radiant\map\Map.cpp:757
 msgid "Open map"
-msgstr "Öffne Karte"
+msgstr "Map öffnen"
 
 #: ..\..\radiant\map\Map.cpp:769
 msgid "Import map"
-msgstr "Importiere Karte"
+msgstr "Map importieren"
 
 #: ..\..\radiant\map\Map.cpp:793
 msgid "Export selection"
@@ -1408,7 +1408,8 @@ msgid ""
 "Overwrite the current setting and assign this shortcut to <b>%s</b> instead?"
 msgstr ""
 "Diese Tastenkombination ist bereits  <b>%s</b> zugeordnet.\n"
-"Soll diese Assoziation aufgehoben werden und die Tastenkombination stattdessen <b>%s</b> zugeordnet werden?"
+"Soll diese Assoziation aufgehoben werden und die Tastenkombination\n"
+"stattdessen <b>%s</b> zugeordnet werden?"
 
 #: ..\..\radiant\ui\commandlist\ShortcutChooser.cpp:121
 msgid "Overwrite existing shortcut?"
@@ -1689,8 +1690,8 @@ msgid ""
 "<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>."
 msgstr ""
 "Filterregeln werden in der angegebenen Reihenfolge angewandt.\n"
-" Das <b>Ausdruck</b>-Feld akzeptiert reguläre Ausdrücke (RegEx).\n"
-" Für Filter vom Typ <b>Objekt</b> können die Schlüsselwörter <b>patch</b> oder <b>brush</b> verwendet werden."
+"Das <b>Ausdruck</b>-Feld akzeptiert reguläre Ausdrücke (RegEx).\n"
+"Für Filter vom Typ <b>Objekt</b> können die Schlüsselwörter <b>patch</b> oder <b>brush</b> verwendet werden."
 
 #: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:91
 msgid "Rules"
@@ -1929,7 +1930,7 @@ msgstr "Entities:"
 
 #: ..\..\radiant\ui\mapinfo\MapInfoDialog.cpp:14
 msgid "Map Info"
-msgstr "Karteninformation"
+msgstr "Map-Information"
 
 #: ..\..\radiant\ui\mapinfo\ModelInfoTab.cpp:14
 msgid "Models"
@@ -4054,7 +4055,7 @@ msgstr "Skript"
 
 #: ..\..\plugins\script\ScriptingSystem.cpp:434
 msgid "Reload Scripts"
-msgstr "Skrips neu laden"
+msgstr "Skripts neu laden"
 
 #: ..\..\plugins\script\ScriptMenu.cpp:52
 msgid "No scripts available"
@@ -4627,7 +4628,7 @@ msgstr "Brush suchen..."
 
 #: xml_file_content.cpp:131
 msgid "Map info..."
-msgstr "Karten-Information"
+msgstr "Map-Information"
 
 #: xml_file_content.cpp:132
 msgid "E_ntity"
