@@ -73,6 +73,8 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 #else
+	if (m_tess.vertices.empty() || m_tess.indices.empty()) return;
+
 	if (info.checkFlag(RENDER_BUMP))
 	{
 		glVertexAttribPointerARB(11, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().normal);

@@ -93,11 +93,13 @@ void BrushModuleClass::toggleTextureLock() {
 
 // ------------ BrushCreator implementation --------------------------------------------
 
-scene::INodePtr BrushModuleClass::createBrush() {
+scene::INodePtr BrushModuleClass::createBrush()
+{
 	// Determine the first visible layer
 	int layer = GlobalLayerSystem().getFirstVisibleLayer();
 
-	if (layer != -1) {
+	if (layer != -1)
+	{
 		scene::INodePtr node(new BrushNode);
 		
 		// Move it to the first visible layer
