@@ -762,9 +762,19 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const Vector2& devic
 }
 
 /// \todo Support view-dependent nudge.
-void RadiantSelectionSystem::NudgeManipulator(const Vector3& nudge, const Vector3& view) {
-	if(ManipulatorMode() == eTranslate || ManipulatorMode() == eDrag) {
+void RadiantSelectionSystem::NudgeManipulator(const Vector3& nudge, const Vector3& view)
+{
+	if (ManipulatorMode() == eTranslate || 
+		ManipulatorMode() == eDrag || 
+		ManipulatorMode() == eClip)
+	{
 		translateSelected(nudge);
+
+		// In clip mode, update the clipping plane
+		if (ManipulatorMode() == eClip)
+		{
+			GlobalClipper().update();
+		}
 	}
 }
 
