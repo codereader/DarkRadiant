@@ -4,17 +4,18 @@
 #include "i18n.h"
 #include "ipatch.h"
 #include "ifilter.h"
+#include "ilayer.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 
-namespace {
-	const std::string RKEY_PATCH_SUBDIVIDE_THRESHOLD = "user/ui/patch/subdivideThreshold";
+namespace
+{
+	const char* const RKEY_PATCH_SUBDIVIDE_THRESHOLD = "user/ui/patch/subdivideThreshold";
 }
 
-/* greebo: The Doom3PatchCreator implements the method createPatch(),
+/**
+ * greebo: The Doom3PatchCreator implements the method createPatch(),
  * as required by the abstract base class PatchCreator (see ipatch.h). 
- * The nodes are allocated on the heap and can be released by calling 
- * the PatchNode::release() method (deletes itself).
  */
 class Doom3PatchCreator : 
 	public PatchCreator
@@ -23,8 +24,20 @@ public:
 	// PatchCreator implementation
 	scene::INodePtr createPatch()
 	{
-		// Note the true as function argument: this means that patchDef3 = true in the PatchNode constructor.  
-		return scene::INodePtr(new PatchNode(true));
+		// Note the true as function argument: 
+		// this means that patchDef3 = true in the PatchNode constructor.  
+		scene::INodePtr node(new PatchNode(true));
+
+		// Determine the first visible layer
+		int layer = GlobalLayerSystem().getFirstVisibleLayer();
+
+		if (layer != -1)
+		{	
+			// Move it to the first visible layer
+			node->moveToLayer(layer);
+		}
+		
+		return node;
 	}
 	
 	// RegisterableModule implementation
@@ -72,9 +85,19 @@ public:
 	// PatchCreator implementation
 	scene::INodePtr createPatch()
 	{
-		// The PatchNodeDoom3 constructor normally expects a bool, which defaults to false.
-		// this means that the patch is node def3, but def2
-		return scene::INodePtr(new PatchNode());
+		// The PatchNodeDoom3 constructor takes false == patchDef2
+		scene::INodePtr node(new PatchNode(false));
+
+		// Determine the first visible layer
+		int layer = GlobalLayerSystem().getFirstVisibleLayer();
+
+		if (layer != -1)
+		{	
+			// Move it to the first visible layer
+			node->moveToLayer(layer);
+		}
+		
+		return node;
 	}
 	
 	// RegisterableModule implementation

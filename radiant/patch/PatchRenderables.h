@@ -72,6 +72,8 @@ public:
   }
   void render(const RenderInfo& info) const
   {
+	  if (m_tess.vertices.empty() || m_tess.indices.empty()) return;
+
     glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().vertex);
     const RenderIndex* strip_indices = &m_tess.indices.front();
     for(std::size_t i = 0; i<m_tess.m_numStrips; i++, strip_indices += m_tess.m_lenStrips)
