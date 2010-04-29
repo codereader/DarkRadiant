@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-04-16 17:47+0200\n"
-"PO-Revision-Date: 2010-04-27 10:11+0100\n"
-"Last-Translator: MB <mb>\n"
+"POT-Creation-Date: 2010-04-29 20:22+0200\n"
+"PO-Revision-Date: 2010-04-29 20:23+0100\n"
+"Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -162,8 +162,8 @@ msgid "Starting MainFrame"
 msgstr "Starte Mainframe"
 
 #: ..\..\radiant\main.cpp:123
-msgid "Startup Complete"
-msgstr "Startup komplett"
+msgid "DarkRadiant Startup Complete"
+msgstr "DarkRadiant Startphase abgeschlossen"
 
 #: ..\..\radiant\mainframe_old.cpp:141
 #: ..\..\radiant\settings\GameManager.cpp:97
@@ -182,7 +182,7 @@ msgid "Constructing Menu"
 msgstr "Erzeuge Menü"
 
 #: ..\..\radiant\mainframe_old.cpp:157
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:523
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:522
 msgid "Exit Radiant"
 msgstr "Verlasse Radiant"
 
@@ -1874,32 +1874,32 @@ msgstr "Texturbrowser"
 msgid "Window Layout"
 msgstr "Fensterlayout"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:89
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:91
 msgid "Settings/Multi Monitor"
 msgstr "Einstellungen/Multimonitor"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:108
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:110
 msgid "Start DarkRadiant on monitor"
 msgstr "Starte DarkRadiant auf Monitor"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:127
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:129
 msgid "Settings/Compatibility"
 msgstr "Einstellungen/Kompatibilität"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:129
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:131
 msgid "Disable Windows Desktop Composition"
 msgstr "Desktopgestaltung deaktivieren"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:393
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:395
 #: ..\..\plugins\uimanager\GroupDialog.cpp:19
 msgid "Entity"
 msgstr "Entity"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:402
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:404
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:412
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:414
 msgid "Console"
 msgstr "Konsole"
 
@@ -1988,15 +1988,15 @@ msgstr "Zeige Shaderdefinition"
 msgid "Other Materials"
 msgstr "Andere Shader"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:401
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:405
 msgid "View Shader Definition"
 msgstr "Shaderdefinition ansehen"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:502
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:506
 msgid "Settings/Media Browser"
 msgstr "Einstellungen/Mediabrowser"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:504
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:508
 msgid "Load media tree at startup"
 msgstr "Lade Medienbaum während des Startvorgangs"
 
@@ -2526,83 +2526,83 @@ msgstr "Skalierung Y-Achse"
 msgid "Z-Axis Scale:"
 msgstr "Skalierung Z-Achse"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:188
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:171
 msgid "Settings/Orthoview"
 msgstr "Einstellungen/2D-Ansicht"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:190
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:173
 msgid "View chases Mouse Cursor during Drags"
 msgstr "Ansicht folgt Mauszeiger bei Verschiebe-Operationen"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:191
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:174
 msgid "Update Views on Camera Movement"
 msgstr "Aktualisiere 2D-Ansichten bei Kamerabewegungen"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:192
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:175
 msgid "Show Crosshairs"
 msgstr "Zeige Fadenkreuz"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:193
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:176
 msgid "Show Grid"
 msgstr "Zeige Raster"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:194
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:177
 msgid "Show Size Info"
 msgstr "Zeige Größeninformation"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:195
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:178
 msgid "Show Entity Angle Arrow"
 msgstr "Zeige Richtungspfeile der Entities"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:196
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:179
 msgid "Show Entity Names"
 msgstr "Zeige Namen der Entities"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:197
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:180
 #: xml_file_content.cpp:77
 msgid "Show Blocks"
 msgstr "Zeige Blöcke"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:198
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:181
 msgid "Show Coordinates"
 msgstr "Zeige Koordinaten"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:199
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:182
 #: xml_file_content.cpp:80
 msgid "Show Axes"
 msgstr "Zeige Achsen"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:200
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:183
 #: xml_file_content.cpp:79
 msgid "Show Window Outline"
 msgstr "Zeige Fensterumrandung"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:201
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:184
 #: xml_file_content.cpp:81
 msgid "Show Workzone"
 msgstr "Zeige Arbeitsbereich"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:202
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:185
 msgid "Translate Manipulator always constrained to Axis"
 msgstr "Translationen sind immer achsengebunden"
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:203
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:186
 msgid "Higher Selection Priority for Entities"
 msgstr "Höhere Auswahlpriorität für Entities"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:229
+#: ..\..\radiant\xyview\XYWnd.cpp:234
 msgid "XY Top"
 msgstr "XY Oben"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:232
+#: ..\..\radiant\xyview\XYWnd.cpp:237
 msgid "XZ Front"
 msgstr "XZ Vorne"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:235
+#: ..\..\radiant\xyview\XYWnd.cpp:240
 msgid "YZ Side"
 msgstr "YZ Seite"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:697
+#: ..\..\radiant\xyview\XYWnd.cpp:702
 #, c-format
 msgid "x: %6.1lf y: %6.1lf z: %6.1lf"
 msgstr "x: %6.1lf y: %6.1lf z: %6.1lf"
@@ -3303,6 +3303,16 @@ msgstr "Tötungs-Ziel:"
 msgid "Knockout target:"
 msgstr "KO-Ziel:"
 
+#: ..\..\plugins\dm.objectives\ce\ReadableClosedComponentEditor.cpp:27
+#: ..\..\plugins\dm.objectives\ce\ReadableOpenedComponentEditor.cpp:27
+#: ..\..\plugins\dm.objectives\ce\ReadablePageReachedComponentEditor.cpp:30
+msgid "Readable:"
+msgstr "Schriftstück:"
+
+#: ..\..\plugins\dm.objectives\ce\ReadablePageReachedComponentEditor.cpp:32
+msgid "Page Number:"
+msgstr "Seite:"
+
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:28
 msgid "Edit Objective"
 msgstr "Ziel editieren:"
@@ -3321,7 +3331,8 @@ msgid "Initial state"
 msgstr "Anfangszustand"
 
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:153
-msgid "Flags>"
+#: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:376
+msgid "Flags"
 msgstr "Flags"
 
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:164
@@ -3381,10 +3392,6 @@ msgstr "Negieren"
 msgid "Player responsible"
 msgstr "Spieler ist verantwortlich"
 
-#: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:376
-msgid "Flags"
-msgstr "Flags"
-
 #: ..\..\plugins\dm.objectives\ComponentType.cpp:20
 msgid "AI is killed"
 msgstr "AI wird getötet"
@@ -3436,6 +3443,18 @@ msgstr "Benutzerdefiniertes Skript wird periodisch abgefragt"
 #: ..\..\plugins\dm.objectives\ComponentType.cpp:83
 msgid "Two entities are within a radius of each other"
 msgstr "Zwei Entities befinden sich innerhalb eines bestimmten Radius"
+
+#: ..\..\plugins\dm.objectives\ComponentType.cpp:91
+msgid "Readable is opened."
+msgstr "Ein Schriftstück wird geöffnet"
+
+#: ..\..\plugins\dm.objectives\ComponentType.cpp:99
+msgid "Readable is closed."
+msgstr "Ein Schriftstück wird geschlossen"
+
+#: ..\..\plugins\dm.objectives\ComponentType.cpp:107
+msgid "A certain page of a readable is reached."
+msgstr "Eine bestimmte Seite eines Schriftstücks wird angezeigt."
 
 #: ..\..\plugins\dm.objectives\DifficultyPanel.cpp:32
 msgid "All Levels"
@@ -4991,7 +5010,8 @@ msgstr "Fadenkreuz (XY-Ansicht)"
 msgid "Drag-Selection Box"
 msgstr "Auswahl-Rechteck"
 
-#: ..\..\radiant\main.cpp:123
-msgid "DarkRadiant Startup Complete"
-msgstr "DarkRadiant Startphase abgeschlossen"
+#~ msgid "Startup Complete"
+#~ msgstr "Startup komplett"
 
+#~ msgid "Flags>"
+#~ msgstr "Flags"

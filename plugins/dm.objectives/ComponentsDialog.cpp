@@ -150,7 +150,7 @@ GtkWidget* ComponentsDialog::createObjectiveEditPanel() {
 
 	// Options checkboxes.
 	gtk_table_attach(GTK_TABLE(table), 
-					 gtkutil::LeftAlignedLabel(makeBold(_("Flags>"))),
+					 gtkutil::LeftAlignedLabel(makeBold(_("Flags"))),
 					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
 	gtk_table_attach_defaults(GTK_TABLE(table), createObjectiveFlagsTable(), 1, 2, row, row+1);
 	
