@@ -92,5 +92,9 @@ processXmlFile(os.path.join(build_root, xml_directory, "menu.xml"), "//*", ["cap
 # Add colour scheme names
 processXmlFile(os.path.join(build_root, xml_directory, "colours.xml"), "//descriptions/*", ["value"])
 
+# Add toolbar tooltips
+processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), "//toolbutton", ["tooltip"])
+processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), "//toggletoolbutton", ["tooltip"])
+
 # Copy the POT file to the install folder
 shutil.copy(pot_file, os.path.join(build_root, "install", "i18n"))

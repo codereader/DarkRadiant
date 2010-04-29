@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-04-16 17:47+0200\n"
+"POT-Creation-Date: 2010-04-29 20:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -177,7 +177,7 @@ msgid "Constructing Menu"
 msgstr ""
 
 #: ..\..\radiant\mainframe_old.cpp:157
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:523
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:522
 msgid "Exit Radiant"
 msgstr ""
 
@@ -1848,32 +1848,32 @@ msgstr ""
 msgid "Window Layout"
 msgstr ""
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:89
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:91
 msgid "Settings/Multi Monitor"
 msgstr ""
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:108
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:110
 msgid "Start DarkRadiant on monitor"
 msgstr ""
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:127
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:129
 msgid "Settings/Compatibility"
 msgstr ""
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:129
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:131
 msgid "Disable Windows Desktop Composition"
 msgstr ""
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:393
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:395
 #: ..\..\plugins\uimanager\GroupDialog.cpp:19
 msgid "Entity"
 msgstr ""
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:402
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:404
 msgid "Media"
 msgstr ""
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:412
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:414
 msgid "Console"
 msgstr ""
 
@@ -1962,15 +1962,15 @@ msgstr ""
 msgid "Other Materials"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:401
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:405
 msgid "View Shader Definition"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:502
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:506
 msgid "Settings/Media Browser"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:504
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:508
 msgid "Load media tree at startup"
 msgstr ""
 
@@ -2418,6 +2418,7 @@ msgid "Default Scale:"
 msgstr ""
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:70
+#: xml_file_content.cpp:8
 msgid "Texture Lock"
 msgstr ""
 
@@ -2498,79 +2499,79 @@ msgstr ""
 msgid "Z-Axis Scale:"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:188
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:171
 msgid "Settings/Orthoview"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:190
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:173
 msgid "View chases Mouse Cursor during Drags"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:191
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:174
 msgid "Update Views on Camera Movement"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:192
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:175
 msgid "Show Crosshairs"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:193
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:176
 msgid "Show Grid"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:194
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:177
 msgid "Show Size Info"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:195
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:178
 msgid "Show Entity Angle Arrow"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:196
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:179
 msgid "Show Entity Names"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:197 xml_file_content.cpp:77
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:180 xml_file_content.cpp:77
 msgid "Show Blocks"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:198
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:181
 msgid "Show Coordinates"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:199 xml_file_content.cpp:80
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:182 xml_file_content.cpp:80
 msgid "Show Axes"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:200 xml_file_content.cpp:79
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:183 xml_file_content.cpp:79
 msgid "Show Window Outline"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:201 xml_file_content.cpp:81
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:184 xml_file_content.cpp:81
 msgid "Show Workzone"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:202
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:185
 msgid "Translate Manipulator always constrained to Axis"
 msgstr ""
 
-#: ..\..\radiant\xyview\GlobalXYWnd.cpp:203
+#: ..\..\radiant\xyview\GlobalXYWnd.cpp:186
 msgid "Higher Selection Priority for Entities"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:229
+#: ..\..\radiant\xyview\XYWnd.cpp:234
 msgid "XY Top"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:232
+#: ..\..\radiant\xyview\XYWnd.cpp:237
 msgid "XZ Front"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:235
+#: ..\..\radiant\xyview\XYWnd.cpp:240
 msgid "YZ Side"
 msgstr ""
 
-#: ..\..\radiant\xyview\XYWnd.cpp:697
+#: ..\..\radiant\xyview\XYWnd.cpp:702
 #, c-format
 msgid "x: %6.1lf y: %6.1lf z: %6.1lf"
 msgstr ""
@@ -3272,6 +3273,16 @@ msgstr ""
 msgid "Knockout target:"
 msgstr ""
 
+#: ..\..\plugins\dm.objectives\ce\ReadableClosedComponentEditor.cpp:27
+#: ..\..\plugins\dm.objectives\ce\ReadableOpenedComponentEditor.cpp:27
+#: ..\..\plugins\dm.objectives\ce\ReadablePageReachedComponentEditor.cpp:30
+msgid "Readable:"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ce\ReadablePageReachedComponentEditor.cpp:32
+msgid "Page Number:"
+msgstr ""
+
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:28
 msgid "Edit Objective"
 msgstr ""
@@ -3289,7 +3300,8 @@ msgid "Initial state"
 msgstr ""
 
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:153
-msgid "Flags>"
+#: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:376
+msgid "Flags"
 msgstr ""
 
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:164
@@ -3349,10 +3361,6 @@ msgstr ""
 msgid "Player responsible"
 msgstr ""
 
-#: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:376
-msgid "Flags"
-msgstr ""
-
 #: ..\..\plugins\dm.objectives\ComponentType.cpp:20
 msgid "AI is killed"
 msgstr ""
@@ -3403,6 +3411,18 @@ msgstr ""
 
 #: ..\..\plugins\dm.objectives\ComponentType.cpp:83
 msgid "Two entities are within a radius of each other"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ComponentType.cpp:91
+msgid "Readable is opened."
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ComponentType.cpp:99
+msgid "Readable is closed."
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ComponentType.cpp:107
+msgid "A certain page of a readable is reached."
 msgstr ""
 
 #: ..\..\plugins\dm.objectives\DifficultyPanel.cpp:32
@@ -4485,7 +4505,7 @@ msgstr ""
 msgid "Nudge Down"
 msgstr ""
 
-#: xml_file_content.cpp:105
+#: xml_file_content.cpp:105 xml_file_content.cpp:14
 msgid "Rotate"
 msgstr ""
 
@@ -4645,7 +4665,7 @@ msgstr ""
 msgid "CSG _Merge"
 msgstr ""
 
-#: xml_file_content.cpp:145 xml_file_content.cpp:12
+#: xml_file_content.cpp:145 xml_file_content.cpp:12 xml_file_content.cpp:16
 msgid "Clipper"
 msgstr ""
 
@@ -4951,4 +4971,200 @@ msgstr ""
 
 #: xml_file_content.cpp:30
 msgid "Drag-Selection Box"
+msgstr ""
+
+#: xml_file_content.cpp:1
+msgid "Open a map file"
+msgstr ""
+
+#: xml_file_content.cpp:2
+msgid "Save the current map"
+msgstr ""
+
+#: xml_file_content.cpp:3
+msgid "Change views"
+msgstr ""
+
+#: xml_file_content.cpp:4
+msgid "Select complete tall"
+msgstr ""
+
+#: xml_file_content.cpp:5
+msgid "Select touching"
+msgstr ""
+
+#: xml_file_content.cpp:6
+msgid "Select inside"
+msgstr ""
+
+#: xml_file_content.cpp:7
+msgid "Create Decals for selected Faces"
+msgstr ""
+
+#: xml_file_content.cpp:8
+msgid "x-axis Mirror"
+msgstr ""
+
+#: xml_file_content.cpp:9
+msgid "x-axis Rotate"
+msgstr ""
+
+#: xml_file_content.cpp:10
+msgid "y-axis Mirror"
+msgstr ""
+
+#: xml_file_content.cpp:11
+msgid "y-axis Rotate"
+msgstr ""
+
+#: xml_file_content.cpp:12
+msgid "z-axis Mirror"
+msgstr ""
+
+#: xml_file_content.cpp:13
+msgid "z-axis Rotate"
+msgstr ""
+
+#: xml_file_content.cpp:14
+msgid "Snap selection to grid"
+msgstr ""
+
+#: xml_file_content.cpp:15
+msgid "CSG Subtract"
+msgstr ""
+
+#: xml_file_content.cpp:16
+msgid "CSG Merge"
+msgstr ""
+
+#: xml_file_content.cpp:17
+msgid "Hollow"
+msgstr ""
+
+#: xml_file_content.cpp:18
+msgid "Make Room"
+msgstr ""
+
+#: xml_file_content.cpp:19
+msgid "Put caps on the current patch"
+msgstr ""
+
+#: xml_file_content.cpp:20
+msgid "Creates a NURBS curve"
+msgstr ""
+
+#: xml_file_content.cpp:21
+msgid "Convert the selected curve (NURBS <-> CatmullRom)"
+msgstr ""
+
+#: xml_file_content.cpp:22
+msgid "Appends a control point to the selected curves"
+msgstr ""
+
+#: xml_file_content.cpp:23
+msgid "Inserts a curve control point before the selected ones"
+msgstr ""
+
+#: xml_file_content.cpp:24
+msgid "Removes the selected curve control points"
+msgstr ""
+
+#: xml_file_content.cpp:25
+msgid "Flush & Reload Shaders"
+msgstr ""
+
+#: xml_file_content.cpp:26
+msgid "Find & Replace"
+msgstr ""
+
+#: xml_file_content.cpp:27
+msgid "Decrease Grid Size"
+msgstr ""
+
+#: xml_file_content.cpp:28
+msgid "Increase Grid Size"
+msgstr ""
+
+#: xml_file_content.cpp:29
+msgid "Snap to Grid"
+msgstr ""
+
+#: xml_file_content.cpp:30
+msgid "Merge Selection"
+msgstr ""
+
+#: xml_file_content.cpp:31
+msgid "Flip Selection Horiz (S-Axis)"
+msgstr ""
+
+#: xml_file_content.cpp:32
+msgid "Flip Selection Vertical (T-Axis)"
+msgstr ""
+
+#: xml_file_content.cpp:33
+msgid "Select Related Items"
+msgstr ""
+
+#: xml_file_content.cpp:1
+msgid "Cubic clip the camera view"
+msgstr ""
+
+#: xml_file_content.cpp:2
+msgid "Select Vertices"
+msgstr ""
+
+#: xml_file_content.cpp:3
+msgid "Select Edges"
+msgstr ""
+
+#: xml_file_content.cpp:4
+msgid "Select Faces"
+msgstr ""
+
+#: xml_file_content.cpp:5
+msgid "Select Entities"
+msgstr ""
+
+#: xml_file_content.cpp:6
+msgid "Show/hide all light volumes"
+msgstr ""
+
+#: xml_file_content.cpp:7
+msgid "Show/hide all speaker volumes"
+msgstr ""
+
+#: xml_file_content.cpp:9
+msgid "Rotate Models independently"
+msgstr ""
+
+#: xml_file_content.cpp:10
+msgid "Rotate func_* Entities around origin"
+msgstr ""
+
+#: xml_file_content.cpp:11
+msgid "Drag-resize entities symmetrically (leave origin unchanged)"
+msgstr ""
+
+#: xml_file_content.cpp:12
+msgid "Offset cloned objects by one grid unit to the right and downwards."
+msgstr ""
+
+#: xml_file_content.cpp:13
+msgid "Translate"
+msgstr ""
+
+#: xml_file_content.cpp:15
+msgid "Resize"
+msgstr ""
+
+#: xml_file_content.cpp:17
+msgid "Hide Unused"
+msgstr ""
+
+#: xml_file_content.cpp:18
+msgid "Toggle Grid"
+msgstr ""
+
+#: xml_file_content.cpp:19
+msgid "Center Pivot when scaling faces"
 msgstr ""
