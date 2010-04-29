@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-04-29 20:22+0200\n"
-"PO-Revision-Date: 2010-04-29 20:23+0100\n"
+"POT-Creation-Date: 2010-04-29 20:27+0200\n"
+"PO-Revision-Date: 2010-04-29 20:39+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -2446,6 +2446,7 @@ msgid "Default Scale:"
 msgstr "Standardskalierung:"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:70
+#: xml_file_content.cpp:8
 msgid "Texture Lock"
 msgstr "Textur-Lock"
 
@@ -4542,6 +4543,7 @@ msgid "Nudge Down"
 msgstr "Verschiebe nach unten"
 
 #: xml_file_content.cpp:105
+#: xml_file_content.cpp:14
 msgid "Rotate"
 msgstr "Drehen"
 
@@ -4703,6 +4705,7 @@ msgstr "CSG _Zusammenfügen"
 
 #: xml_file_content.cpp:145
 #: xml_file_content.cpp:12
+#: xml_file_content.cpp:16
 msgid "Clipper"
 msgstr "Clipper"
 
@@ -5009,6 +5012,202 @@ msgstr "Fadenkreuz (XY-Ansicht)"
 #: xml_file_content.cpp:30
 msgid "Drag-Selection Box"
 msgstr "Auswahl-Rechteck"
+
+#: xml_file_content.cpp:1
+msgid "Open a map file"
+msgstr "Map öffnen"
+
+#: xml_file_content.cpp:2
+msgid "Save the current map"
+msgstr "Die aktuelle Map speichern"
+
+#: xml_file_content.cpp:3
+msgid "Change views"
+msgstr "Ansicht wechseln"
+
+#: xml_file_content.cpp:4
+msgid "Select complete tall"
+msgstr "Inneres auswählen (Projektion)"
+
+#: xml_file_content.cpp:5
+msgid "Select touching"
+msgstr "Berührtes auswählen"
+
+#: xml_file_content.cpp:6
+msgid "Select inside"
+msgstr "Inneres auswählen"
+
+#: xml_file_content.cpp:7
+msgid "Create Decals for selected Faces"
+msgstr "Decal-Patches für ausgewählte Faces erstellen"
+
+#: xml_file_content.cpp:8
+msgid "x-axis Mirror"
+msgstr "An X-Achse Spiegeln"
+
+#: xml_file_content.cpp:9
+msgid "x-axis Rotate"
+msgstr "Um X-Achse rotieren"
+
+#: xml_file_content.cpp:10
+msgid "y-axis Mirror"
+msgstr "An Y-Achse Spiegeln"
+
+#: xml_file_content.cpp:11
+msgid "y-axis Rotate"
+msgstr "Um Y-Achse rotieren"
+
+#: xml_file_content.cpp:12
+msgid "z-axis Mirror"
+msgstr "An Z-Achse Spiegeln"
+
+#: xml_file_content.cpp:13
+msgid "z-axis Rotate"
+msgstr "Um Z-Achse rotieren"
+
+#: xml_file_content.cpp:14
+msgid "Snap selection to grid"
+msgstr "Auswahl am Raster ausrichten"
+
+#: xml_file_content.cpp:15
+msgid "CSG Subtract"
+msgstr "CSG Subtraktion"
+
+#: xml_file_content.cpp:16
+msgid "CSG Merge"
+msgstr "CSG Zusammenfügen"
+
+#: xml_file_content.cpp:17
+msgid "Hollow"
+msgstr "Aushöhlen"
+
+#: xml_file_content.cpp:18
+msgid "Make Room"
+msgstr "Raum erstellen"
+
+#: xml_file_content.cpp:19
+msgid "Put caps on the current patch"
+msgstr "Cap-Patches für Auswahl erstellen"
+
+#: xml_file_content.cpp:20
+msgid "Creates a NURBS curve"
+msgstr "NURBS-Kurve erstellen"
+
+#: xml_file_content.cpp:21
+msgid "Convert the selected curve (NURBS <-> CatmullRom)"
+msgstr "Konvertiert die ausgewählte Kurve NURBS <-> CatmullRom"
+
+#: xml_file_content.cpp:22
+msgid "Appends a control point to the selected curves"
+msgstr "Einen Kurvenkontrollpunkt zur ausgewählten Kurve hinzufügen"
+
+#: xml_file_content.cpp:23
+msgid "Inserts a curve control point before the selected ones"
+msgstr "Fügt einen Kurvenkontrollpunkt vor dem ausgewählten Punkt ein"
+
+#: xml_file_content.cpp:24
+msgid "Removes the selected curve control points"
+msgstr "Ausgewählte Kurvenkontrollpunkte entfernen"
+
+#: xml_file_content.cpp:25
+msgid "Flush & Reload Shaders"
+msgstr "Shader neu laden"
+
+#: xml_file_content.cpp:26
+msgid "Find & Replace"
+msgstr "Suchen & Ersetzen"
+
+#: xml_file_content.cpp:27
+msgid "Decrease Grid Size"
+msgstr "Rastergröße verkleinern"
+
+#: xml_file_content.cpp:28
+msgid "Increase Grid Size"
+msgstr "Rastergröße vergrößern"
+
+#: xml_file_content.cpp:29
+msgid "Snap to Grid"
+msgstr "Am Raster ausrichten"
+
+#: xml_file_content.cpp:30
+msgid "Merge Selection"
+msgstr "Auswahl zusammenführen"
+
+#: xml_file_content.cpp:31
+msgid "Flip Selection Horiz (S-Axis)"
+msgstr "Auswahl Horizontal kippen (S-Achse)"
+
+#: xml_file_content.cpp:32
+msgid "Flip Selection Vertical (T-Axis)"
+msgstr "Auswahl vertikal kippen (T-Achse)"
+
+#: xml_file_content.cpp:33
+msgid "Select Related Items"
+msgstr "Verbundene Objekte auswählen"
+
+#: xml_file_content.cpp:1
+msgid "Cubic clip the camera view"
+msgstr "Far-Clip-Ebene verwenden"
+
+#: xml_file_content.cpp:2
+msgid "Select Vertices"
+msgstr "Vertices auswählen"
+
+#: xml_file_content.cpp:3
+msgid "Select Edges"
+msgstr "Kanten auswählen"
+
+#: xml_file_content.cpp:4
+msgid "Select Faces"
+msgstr "Faces auswählen"
+
+#: xml_file_content.cpp:5
+msgid "Select Entities"
+msgstr "Entities auswählen"
+
+#: xml_file_content.cpp:6
+msgid "Show/hide all light volumes"
+msgstr "Zeige/verberge alle Lichtvolumina"
+
+#: xml_file_content.cpp:7
+msgid "Show/hide all speaker volumes"
+msgstr "Zeige/verberge alle Speaker-Volumina"
+
+#: xml_file_content.cpp:9
+msgid "Rotate Models independently"
+msgstr "Modelle unabhängig voneinander drehen"
+
+#: xml_file_content.cpp:10
+msgid "Rotate func_* Entities around origin"
+msgstr "Drehe func_*-Entities um deren Ursprung"
+
+#: xml_file_content.cpp:11
+msgid "Drag-resize entities symmetrically (leave origin unchanged)"
+msgstr "Symmetrisches Verändern von Entities beim Ziehen (Ursprung bleibt unverändert)"
+
+#: xml_file_content.cpp:12
+msgid "Offset cloned objects by one grid unit to the right and downwards."
+msgstr "Duplizierte Objekte um eine Rastereinheit nach rechts unten verschieben"
+
+#: xml_file_content.cpp:13
+msgid "Translate"
+msgstr "Translahieren"
+
+#: xml_file_content.cpp:15
+msgid "Resize"
+msgstr "Größe ändern"
+
+#: xml_file_content.cpp:17
+msgid "Hide Unused"
+msgstr "Nicht Benutztes verbergen"
+
+#: xml_file_content.cpp:18
+msgid "Toggle Grid"
+msgstr "Grid anzeigen/verbergen"
+
+#: xml_file_content.cpp:19
+msgid "Center Pivot when scaling faces"
+msgstr "Pivotpunkt beim Skalieren von Faces zentrieren"
 
 #~ msgid "Startup Complete"
 #~ msgstr "Startup komplett"
