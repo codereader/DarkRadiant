@@ -6,6 +6,7 @@
 #include "ieventmanager.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "i18n.h"
 
 #include <iostream>
 
@@ -63,7 +64,7 @@ GtkWidget* ToolbarManager::createToolItem(xml::Node& node) {
 		// Found a button, load the values that are shared by both types
 		const std::string name 		= node.getAttributeValue("name");
 		const std::string icon 		= node.getAttributeValue("icon");
-		const std::string tooltip 	= node.getAttributeValue("tooltip");
+		const std::string tooltip 	= _(node.getAttributeValue("tooltip").c_str());
 		const std::string action 	= node.getAttributeValue("action");
 		
 		if (nodeName == "toolbutton") {

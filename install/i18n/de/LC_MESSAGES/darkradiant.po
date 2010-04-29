@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
 "POT-Creation-Date: 2010-04-29 20:27+0200\n"
-"PO-Revision-Date: 2010-04-29 20:39+0100\n"
+"PO-Revision-Date: 2010-04-29 20:42+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -5203,7 +5203,7 @@ msgstr "Nicht Benutztes verbergen"
 
 #: xml_file_content.cpp:18
 msgid "Toggle Grid"
-msgstr "Grid anzeigen/verbergen"
+msgstr "Raster anzeigen/verbergen"
 
 #: xml_file_content.cpp:19
 msgid "Center Pivot when scaling faces"
