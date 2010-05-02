@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-04-29 20:27+0200\n"
+"POT-Creation-Date: 2010-05-02 08:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1992,7 +1992,7 @@ msgstr ""
 
 #: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:79
 #, c-format
-msgid "%ud models loaded"
+msgid "%d models loaded"
 msgstr ""
 
 #: ..\..\radiant\ui\modelselector\ModelSelector.cpp:35
