@@ -76,7 +76,7 @@ public:
 			if (_evLimiter.readyForEvent()) 
             {
 				_progress.setText(
-					(boost::format(_("%ud models loaded")) % _count).str()
+					(boost::format(_("%d models loaded")) % _count).str()
 				);
 			}
 		}

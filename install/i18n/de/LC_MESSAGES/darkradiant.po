@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-04-29 20:27+0200\n"
-"PO-Revision-Date: 2010-04-29 20:42+0100\n"
+"POT-Creation-Date: 2010-05-02 08:25+0200\n"
+"PO-Revision-Date: 2010-05-02 08:25+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -2018,8 +2018,8 @@ msgstr "Durchsuchen"
 
 #: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:79
 #, c-format
-msgid "%ud models loaded"
-msgstr "%ud Modelle geladen"
+msgid "%d models loaded"
+msgstr "%d Modelle geladen"
 
 #: ..\..\radiant\ui\modelselector\ModelSelector.cpp:35
 msgid "Choose Model"
