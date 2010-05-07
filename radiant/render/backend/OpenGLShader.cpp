@@ -301,8 +301,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
                               | RENDER_DEPTHTEST
                               | RENDER_COLOURWRITE
                               | RENDER_LIGHTING
-                              | RENDER_SMOOTH
-                              | RENDER_BLEND;
+                              | RENDER_SMOOTH;
 
     // Handle certain shader flags
     if ((_material->getFlags() & QER_CULL) == 0
@@ -314,7 +313,21 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     // Set the GL color to white
     previewPass.m_colour = Vector4(1, 1, 1, 1);
 
-    // Opaque blending, write to depth buffer
+    // Determine alphatest from first diffuse layer
+    const ShaderLayerVector& allLayers = _material->getAllLayers();
+    for (ShaderLayerVector::const_iterator i = allLayers.begin();
+         i != allLayers.end();
+         ++i)
+    {
+        ShaderLayerPtr layer = *i;
+        if (layer->getType() == ShaderLayer::DIFFUSE
+            && layer->getAlphaTest() > 0)
+        {
+            applyAlphaTestToPass(previewPass, layer->getAlphaTest());
+            break;
+        }
+    }
+
     previewPass.renderFlags |= RENDER_DEPTHWRITE;
 
     // Sort position
