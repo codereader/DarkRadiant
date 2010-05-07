@@ -68,6 +68,9 @@ private:
     void appendInteractionLayer(const DBSTriplet& triplet);
     void constructLightingPassesFromMaterial();
     void constructEditorPreviewPassFromMaterial();
+    void applyAlphaTestToPass(OpenGLState& pass, float alphaTest);
+
+    void setGLTexturesFromTriplet(OpenGLState&, const DBSTriplet&);
 
     // Destroy internal data
 	void destroy();
