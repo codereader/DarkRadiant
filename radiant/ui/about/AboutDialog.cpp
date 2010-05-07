@@ -47,7 +47,7 @@ void AboutDialog::populateWindow() {
 	bool showBuildTime = GlobalRegistry().get(RKEY_SHOW_BUILD_TIME) == "1";
 	std::string buildDate = (showBuildTime) ? date + " " + time : date;
 
-	std::string appName(RADIANT_APPNAME_FULL);
+	std::string appName(RADIANT_APPNAME_FULL());
 
 	std::string appNameStr = 
 		(boost::format(_("<b><span size=\"large\">%s</span></b>")) % appName).str() + "\n";

@@ -14,4 +14,11 @@
 	#define RADIANT_PLATFORM "x86"
 #endif
 
-#define RADIANT_APPNAME_FULL (RADIANT_APPNAME RADIANT_BLANK RADIANT_VERSION RADIANT_BLANK RADIANT_PLATFORM RADIANT_BLANK)
+#include <string>
+
+inline std::string RADIANT_APPNAME_FULL()
+{
+   return std::string(RADIANT_APPNAME) + " "  
+          + std::string(RADIANT_VERSION) + " " 
+          + std::string(RADIANT_PLATFORM) + " ";
+}

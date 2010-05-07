@@ -79,6 +79,9 @@ am_dm_objectives_la_OBJECTS = ObjectivesEditor.lo objectives.lo \
 	CustomComponentEditor.lo DistanceComponentEditor.lo \
 	CustomClockedComponentEditor.lo PickpocketComponentEditor.lo \
 	DestroyComponentEditor.lo AIFindItemComponentEditor.lo \
+	ReadableOpenedComponentEditor.lo \
+	ReadableClosedComponentEditor.lo \
+	ReadablePageReachedComponentEditor.lo \
 	AIInnocenceSpecifierPanel.lo AITypeSpecifierPanel.lo \
 	SpawnClassSpecifierPanel.lo ClassnameSpecifierPanel.lo \
 	AITeamSpecifierPanel.lo GroupSpecifierPanel.lo \
@@ -287,6 +290,9 @@ dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
 						   ce/PickpocketComponentEditor.cpp \
 						   ce/DestroyComponentEditor.cpp \
 						   ce/AIFindItemComponentEditor.cpp \
+						   ce/ReadableOpenedComponentEditor.cpp \
+						   ce/ReadableClosedComponentEditor.cpp \
+						   ce/ReadablePageReachedComponentEditor.cpp \
 						   ce/specpanel/AIInnocenceSpecifierPanel.cpp \
 						   ce/specpanel/AITypeSpecifierPanel.cpp \
 						   ce/specpanel/SpawnClassSpecifierPanel.cpp \
@@ -409,6 +415,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveKeyExtractor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectivesEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PickpocketComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadableClosedComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadableOpenedComponentEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ReadablePageReachedComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpawnClassSpecifierPanel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Specifier.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecifierEditCombo.Plo@am__quote@
@@ -542,6 +551,27 @@ AIFindItemComponentEditor.lo: ce/AIFindItemComponentEditor.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ce/AIFindItemComponentEditor.cpp' object='AIFindItemComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o AIFindItemComponentEditor.lo `test -f 'ce/AIFindItemComponentEditor.cpp' || echo '$(srcdir)/'`ce/AIFindItemComponentEditor.cpp
+
+ReadableOpenedComponentEditor.lo: ce/ReadableOpenedComponentEditor.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ReadableOpenedComponentEditor.lo -MD -MP -MF $(DEPDIR)/ReadableOpenedComponentEditor.Tpo -c -o ReadableOpenedComponentEditor.lo `test -f 'ce/ReadableOpenedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadableOpenedComponentEditor.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/ReadableOpenedComponentEditor.Tpo $(DEPDIR)/ReadableOpenedComponentEditor.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ce/ReadableOpenedComponentEditor.cpp' object='ReadableOpenedComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ReadableOpenedComponentEditor.lo `test -f 'ce/ReadableOpenedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadableOpenedComponentEditor.cpp
+
+ReadableClosedComponentEditor.lo: ce/ReadableClosedComponentEditor.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ReadableClosedComponentEditor.lo -MD -MP -MF $(DEPDIR)/ReadableClosedComponentEditor.Tpo -c -o ReadableClosedComponentEditor.lo `test -f 'ce/ReadableClosedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadableClosedComponentEditor.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/ReadableClosedComponentEditor.Tpo $(DEPDIR)/ReadableClosedComponentEditor.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ce/ReadableClosedComponentEditor.cpp' object='ReadableClosedComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ReadableClosedComponentEditor.lo `test -f 'ce/ReadableClosedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadableClosedComponentEditor.cpp
+
+ReadablePageReachedComponentEditor.lo: ce/ReadablePageReachedComponentEditor.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ReadablePageReachedComponentEditor.lo -MD -MP -MF $(DEPDIR)/ReadablePageReachedComponentEditor.Tpo -c -o ReadablePageReachedComponentEditor.lo `test -f 'ce/ReadablePageReachedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadablePageReachedComponentEditor.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/ReadablePageReachedComponentEditor.Tpo $(DEPDIR)/ReadablePageReachedComponentEditor.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ce/ReadablePageReachedComponentEditor.cpp' object='ReadablePageReachedComponentEditor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ReadablePageReachedComponentEditor.lo `test -f 'ce/ReadablePageReachedComponentEditor.cpp' || echo '$(srcdir)/'`ce/ReadablePageReachedComponentEditor.cpp
 
 AIInnocenceSpecifierPanel.lo: ce/specpanel/AIInnocenceSpecifierPanel.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT AIInnocenceSpecifierPanel.lo -MD -MP -MF $(DEPDIR)/AIInnocenceSpecifierPanel.Tpo -c -o AIInnocenceSpecifierPanel.lo `test -f 'ce/specpanel/AIInnocenceSpecifierPanel.cpp' || echo '$(srcdir)/'`ce/specpanel/AIInnocenceSpecifierPanel.cpp
