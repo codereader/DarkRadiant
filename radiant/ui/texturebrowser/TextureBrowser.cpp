@@ -246,27 +246,29 @@ void TextureBrowser::heightChanged() {
 	queueDraw();
 }
 
-void TextureBrowser::evaluateHeight() {
+void TextureBrowser::evaluateHeight() 
+{
 	// greebo: Let the texture browser re-evaluate the scrollbar each frame
-	//if (m_heightChanged) {
-		m_heightChanged = false;
+   m_heightChanged = false;
 
-		m_nTotalHeight = 0;
+   m_nTotalHeight = 0;
 
-		TextureLayout layout;
-		
-	    for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
-	    {
-	      MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
-	
-	      if (!shaderIsVisible(shader))
-	        continue;
-	
-	      int   x, y;
-	      nextTexturePos(layout, shader->getEditorImage(), &x, &y);
-	      m_nTotalHeight = std::max(m_nTotalHeight, abs(layout.current_y) + getFontHeight() + getTextureHeight(shader->getEditorImage()) + 4);
-	    }
-	//}
+   TextureLayout layout;
+   
+   if (GlobalMaterialManager().isRealised())
+   {
+    for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
+    {
+      MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+
+      if (!shaderIsVisible(shader))
+        continue;
+
+      int   x, y;
+      nextTexturePos(layout, shader->getEditorImage(), &x, &y);
+      m_nTotalHeight = std::max(m_nTotalHeight, abs(layout.current_y) + getFontHeight() + getTextureHeight(shader->getEditorImage()) + 4);
+    }
+   }
 }
 
 int TextureBrowser::getTotalHeight() {
