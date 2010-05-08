@@ -67,6 +67,7 @@ private:
     void appendBlendLayer(ShaderLayerPtr layer);
     void appendInteractionLayer(const DBSTriplet& triplet);
     void constructLightingPassesFromMaterial();
+    void determineBlendModeForEditorPass(OpenGLState& pass);
     void constructEditorPreviewPassFromMaterial();
     void applyAlphaTestToPass(OpenGLState& pass, float alphaTest);
 

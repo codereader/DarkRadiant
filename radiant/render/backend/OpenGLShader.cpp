@@ -289,6 +289,24 @@ void OpenGLShader::constructLightingPassesFromMaterial()
     appendInteractionLayer(triplet);
 }
 
+void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
+{
+    // Determine alphatest from first diffuse layer
+    const ShaderLayerVector& allLayers = _material->getAllLayers();
+    for (ShaderLayerVector::const_iterator i = allLayers.begin();
+         i != allLayers.end();
+         ++i)
+    {
+        ShaderLayerPtr layer = *i;
+        if (layer->getType() == ShaderLayer::DIFFUSE
+            && layer->getAlphaTest() > 0)
+        {
+            applyAlphaTestToPass(pass, layer->getAlphaTest());
+            break;
+        }
+    }
+}
+
 // Construct editor-image-only render passes
 void OpenGLShader::constructEditorPreviewPassFromMaterial()
 {
@@ -310,23 +328,11 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
         previewPass.renderFlags |= RENDER_CULLFACE;
     }
 
+    // Set up blend properties
+    determineBlendModeForEditorPass(previewPass);
+
     // Set the GL color to white
     previewPass.m_colour = Vector4(1, 1, 1, 1);
-
-    // Determine alphatest from first diffuse layer
-    const ShaderLayerVector& allLayers = _material->getAllLayers();
-    for (ShaderLayerVector::const_iterator i = allLayers.begin();
-         i != allLayers.end();
-         ++i)
-    {
-        ShaderLayerPtr layer = *i;
-        if (layer->getType() == ShaderLayer::DIFFUSE
-            && layer->getAlphaTest() > 0)
-        {
-            applyAlphaTestToPass(previewPass, layer->getAlphaTest());
-            break;
-        }
-    }
 
     previewPass.renderFlags |= RENDER_DEPTHWRITE;
 
