@@ -291,20 +291,44 @@ void OpenGLShader::constructLightingPassesFromMaterial()
 
 void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
 {
+    bool hasDiffuseLayer = false;
+    int numLayers = 0;
+
     // Determine alphatest from first diffuse layer
     const ShaderLayerVector& allLayers = _material->getAllLayers();
     for (ShaderLayerVector::const_iterator i = allLayers.begin();
          i != allLayers.end();
          ++i)
     {
+        ++numLayers;
+
         ShaderLayerPtr layer = *i;
-        if (layer->getType() == ShaderLayer::DIFFUSE
-            && layer->getAlphaTest() > 0)
+        if (layer->getType() == ShaderLayer::DIFFUSE)
         {
-            applyAlphaTestToPass(pass, layer->getAlphaTest());
-            break;
+            hasDiffuseLayer = true;
+            if (layer->getAlphaTest() > 0)
+            {
+                applyAlphaTestToPass(pass, layer->getAlphaTest());
+                break;
+            }
         }
     }
+
+    // If this is a purely blend material (no DBS layers), set the editor blend
+    // mode from the first blend layer.
+    if (!hasDiffuseLayer && numLayers > 0)
+    {
+        pass.renderFlags |= RENDER_BLEND;
+
+        BlendFunc bf = allLayers[0]->getBlendFunc();
+        pass.m_blend_src = bf.src;
+        pass.m_blend_dst = bf.dest;
+    }
+    else
+    {
+        pass.renderFlags |= RENDER_DEPTHWRITE;
+    }
+
 }
 
 // Construct editor-image-only render passes
@@ -333,8 +357,6 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 
     // Set the GL color to white
     previewPass.m_colour = Vector4(1, 1, 1, 1);
-
-    previewPass.renderFlags |= RENDER_DEPTHWRITE;
 
     // Sort position
     if (_material->getSortRequest() == Material::SORT_DECAL)

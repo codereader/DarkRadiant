@@ -164,8 +164,20 @@ public:
      * \}
      */
 
-  Vector4 m_colour;
-  GLenum m_blend_src, m_blend_dst;
+    Vector4 m_colour;
+
+    /**
+     * \brief
+     * Source blend mode.
+     */
+    GLenum m_blend_src;
+    
+    /**
+     * \brief 
+     * Destination blend mode
+     */
+    GLenum m_blend_dst;
+
   GLenum m_depthfunc;
 
     // Alpha test function
