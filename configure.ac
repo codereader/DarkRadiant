@@ -126,8 +126,8 @@ then
     AC_CHECK_HEADER([boost/python.hpp],
                     [script_module='script'],
                     [script_module=''])
-    AC_CHECK_LIB([boost_python-mt], [main],
-                 [BOOST_PYTHON_LIBS='-lboost_python-mt'],
+    AC_CHECK_LIB([boost_python], [main],
+                 [BOOST_PYTHON_LIBS='-lboost_python'],
                  [script_module=''])
 
     # GTKSourceView used for syntax highlighting
