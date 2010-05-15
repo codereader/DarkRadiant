@@ -9,9 +9,6 @@
 class OpenGLModule :
 	public OpenGLBinding
 {
-	typedef std::map<GLenum, std::string> GLErrorList;
-	GLErrorList _errorList;
-	
 	const std::string _unknownError;
 		
 	GLFont _font;
@@ -41,7 +38,6 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 
 private:
-	const std::string& getGLErrorString(GLenum errorCode) const;
 
 	void sharedContextCreated();
 	void sharedContextDestroyed();

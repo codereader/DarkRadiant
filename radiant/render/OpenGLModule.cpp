@@ -9,38 +9,40 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkglwidget.h>
 
+#include <boost/lexical_cast.hpp>
+#include <stdexcept>
+
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
 	_font(0, 0),
 	_sharedContext(NULL),
 	_realisedGLWidgets(0)
-{
-	// Populate the error list
-	_errorList[GL_NO_ERROR] = "GL_NO_ERROR - no error";
-	_errorList[GL_INVALID_ENUM] = "GL_INVALID_ENUM - An unacceptable value is specified for an enumerated argument.";
-	_errorList[GL_INVALID_VALUE] = "GL_INVALID_VALUE - A numeric argument is out of range.";
-	_errorList[GL_INVALID_OPERATION] = "GL_INVALID_OPERATION - The specified operation is not allowed in the current state.";
-	_errorList[GL_STACK_OVERFLOW] = "GL_STACK_OVERFLOW - Function would cause a stack overflow.";
-	_errorList[GL_STACK_UNDERFLOW] = "GL_STACK_UNDERFLOW - Function would cause a stack underflow.";
-	_errorList[GL_OUT_OF_MEMORY] = "GL_OUT_OF_MEMORY - There is not enough memory left to execute the function.";
-}
+{ }
 
 void OpenGLModule::assertNoErrors()
 {
 #ifdef _DEBUG
-	GLenum error = glGetError();
-	while (error != GL_NO_ERROR) {
-		const std::string& errorString = getGLErrorString(error);
-		
-		if (error == GL_OUT_OF_MEMORY) {
-			ERROR_MESSAGE("OpenGL out of memory error: " + errorString);
-		}
-		else {
-			ERROR_MESSAGE("OpenGL error: " + errorString);
-		}
 
-		error = glGetError();
+    // Return if no error
+    GLenum error = glGetError();
+    if (error == GL_NO_ERROR)
+    {
+        return;
+    }
+
+    // Build list of all GL errors
+    std::string allErrString = "GL errors encountered: ";
+
+    for ( ; error != GL_NO_ERROR; error = glGetError())
+    {
+        const char* strErr = reinterpret_cast<const char*>(
+            gluErrorString(error)
+        );
+        allErrString += boost::lexical_cast<std::string>(error);
+        allErrString += "(" + std::string(strErr) + ") ";
 	}
+
+    throw std::runtime_error(allErrString);
 #endif
 }
 
@@ -153,17 +155,6 @@ const StringSet& OpenGLModule::getDependencies() const {
 
 void OpenGLModule::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "OpenGL::initialiseModule called.\n";
-}
-
-const std::string& OpenGLModule::getGLErrorString(GLenum errorCode) const {
-	GLErrorList::const_iterator found = _errorList.find(errorCode);
-	
-	if (found != _errorList.end()) {
-		return found->second;
-	}
-	
-	// Not found
-	return _unknownError;
 }
 
 // Define the static OpenGLModule module
