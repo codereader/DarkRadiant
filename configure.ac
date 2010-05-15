@@ -31,11 +31,6 @@ AC_ARG_ENABLE([python],
                               [disable Python scripting functionality])],
               [python_scripting=$enableval],
               [python_scripting='yes'])
-AC_ARG_ENABLE([glsl],
-              [AS_HELP_STRING([--disable-glsl],
-                              [use ARB programs instead of GLSL shaders])],
-              [use_glsl=$enableval],
-              [use_glsl='yes'])
 
 if [[ "$darkmod_plugins" != 'no' ]]
 then
@@ -183,12 +178,6 @@ else
     CXXFLAGS="-g -O2 $CXXFLAGS"
 fi
 
-# GLSL
-if test "$use_glsl" != "no"
-then
-    CPPFLAGS="-DRADIANT_USE_GLSL $CPPFLAGS"
-fi
-
 AC_SUBST([CPPFLAGS])
 AC_SUBST([CFLAGS])
 AC_SUBST([CXXFLAGS])
@@ -265,12 +254,5 @@ then
     echo " Python scripting:    no"
 else
     echo " Python scripting:    yes"
-fi
-
-if test "$use_glsl" != "no" 
-then
-    echo " Shader type:         GLSL"
-else
-    echo " Shader type:         ARB program"
 fi
 
