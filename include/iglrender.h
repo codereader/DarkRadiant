@@ -190,7 +190,12 @@ public:
   GLfloat m_pointsize;
   GLint m_linestipple_factor;
   GLushort m_linestipple_pattern;
-  GLProgram* m_program;
+
+    /**
+     * \brief
+     * GL program or shader object.
+     */
+    GLProgram* glProgram;
 
     /**
      * \brief 
@@ -217,7 +222,7 @@ public:
 	  m_pointsize(1),
 	  m_linestipple_factor(1),
 	  m_linestipple_pattern(0xAAAA),
-	  m_program(0),
+	  glProgram(NULL),
       cubeMapMode(ShaderLayer::CUBE_MAP_NONE)
 	{ }
 };
