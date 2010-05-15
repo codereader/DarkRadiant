@@ -220,22 +220,22 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
     // Set the GLProgram if required
 	GLProgram* program = (requiredState & RENDER_PROGRAM) != 0 
-						  ? _state.m_program 
+						  ? _state.glProgram 
 						  : 0;
 						  
-    if(program != current.m_program)
+    if(program != current.glProgram)
     {
-        if(current.m_program != 0)
+        if(current.glProgram != 0)
         {
-          current.m_program->disable();
+          current.glProgram->disable();
           glColor4dv(current.m_colour);
         }
 
-        current.m_program = program;
+        current.glProgram = program;
 
-        if(current.m_program != 0)
+        if(current.glProgram != 0)
         {
-          current.m_program->enable();
+          current.glProgram->enable();
         }
     }
 
@@ -579,7 +579,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
             ambient = 1.0;
 
         // Bind the GL program parameters
-        current.m_program->applyRenderParams(
+        current.glProgram->applyRenderParams(
             osViewer,
             objTransform,
             light->getLightOrigin(),
@@ -630,7 +630,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 		// If we are using a lighting program and this renderable is lit, set
 		// up the lighting calculation
 		const RendererLight* light = i->light;
-		if (current.m_program != 0 && light != NULL) 
+		if (current.glProgram != 0 && light != NULL) 
         {
             setUpLightingCalculation(current, light, viewer, *transform);
         }

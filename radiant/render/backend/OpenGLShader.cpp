@@ -172,7 +172,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
         state.m_colour[3] = 1;
         state.m_sort = OpenGLState::eSortOpaque;
         
-        state.m_program = render::GLProgramFactory::getProgram("depthFill").get();
+        state.glProgram = render::GLProgramFactory::getProgram("depthFill").get();
     }
     
     // Add the DBS pass
@@ -192,7 +192,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
                         | RENDER_BUMP
                         | RENDER_PROGRAM;
     
-    dbsPass.m_program = render::GLProgramFactory::getProgram("bumpMap").get();
+    dbsPass.glProgram = render::GLProgramFactory::getProgram("bumpMap").get();
 
     // Set layer vertex colour mode and alphatest parameters
     ShaderLayer::VertexColourMode vcolMode = ShaderLayer::VERTEX_COLOUR_NONE;
