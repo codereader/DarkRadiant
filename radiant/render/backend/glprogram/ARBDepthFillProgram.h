@@ -1,5 +1,4 @@
-#ifndef ARBDEPTHFILLPROGRAM_H_
-#define ARBDEPTHFILLPROGRAM_H_
+#pragma once
 
 #include "iglrender.h"
 
@@ -8,17 +7,8 @@ namespace render {
 class ARBDepthFillProgram : 
 	public GLProgram
 {
-#ifdef RADIANT_USE_GLSL
-
-    // Program object
-    GLuint _programObj;
-
-#else
-
     GLuint m_vertex_program;
     GLuint m_fragment_program;
-
-#endif
 
 public:
 
@@ -40,4 +30,3 @@ public:
 
 } // namespace render
 
-#endif /*ARBDEPTHFILLPROGRAM_H_*/
