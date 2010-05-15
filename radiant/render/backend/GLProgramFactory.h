@@ -43,8 +43,6 @@ private:
     static CharBufPtr getFileAsBuffer(const std::string& filename,
                                       bool nullTerminated);
 
-#ifdef RADIANT_USE_GLSL
-
     // Get the program info log as a string
     static std::string getProgramInfoLog(GLuint program);
 
@@ -54,8 +52,6 @@ private:
 
     // Check the program has linked, throwing exception if failed
     static void assertProgramLinked(GLuint program);
-
-#endif
 
 public:
 
@@ -76,8 +72,6 @@ public:
 	 */
 	static void unrealise();
 	
-#ifdef RADIANT_USE_GLSL
-
     /**
      * \brief
      * Create a GLSL shader object using the given source files.
@@ -97,8 +91,6 @@ public:
     static GLuint createGLSLProgram(const std::string& vFile,
                                     const std::string& fFile);
 
-#else
-
 	/**
      * Create a GL Program from the contents of a file.
      *
@@ -114,8 +106,6 @@ public:
      * The GL program ID to be used for subsequent binding.
      */
     static GLuint createARBProgram(const std::string& filename, GLenum type);
-
-#endif
 
 };
 
