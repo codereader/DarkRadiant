@@ -240,17 +240,33 @@ void OpenGLRenderSystem::setLighting(bool supported, bool enabled)
 void OpenGLRenderSystem::extensionsInitialised() 
 {
     // Determine if lighting is available based on GL extensions
+    bool glslLightingAvailable = GLEW_VERSION_2_0;
+    bool arbLightingAvailable  = GLEW_VERSION_1_3
+                                 && GLEW_ARB_vertex_program
+                                 && GLEW_ARB_fragment_program;
 
-#ifdef RADIANT_USE_GLSL
-    bool lightingExtensionsAvailable = GLEW_VERSION_2_0;
-#else
-    bool lightingExtensionsAvailable = GLEW_VERSION_1_3
-                                       && GLEW_ARB_vertex_program
-                                       && GLEW_ARB_fragment_program;
-#endif
+    std::cout << "[OpenGLRenderSystem] GLSL lighting "
+              << (glslLightingAvailable ? "IS" : "IS NOT" ) << " available."
+              << std::endl;
+    std::cout << "[OpenGLRenderSystem] ARB lighting "
+              << (arbLightingAvailable ? "IS" : "IS NOT" ) << " available."
+              << std::endl;
+
+    // Tell the GLProgramFactory which to use
+    if (glslLightingAvailable)
+    {
+        GLProgramFactory::getInstance().setUsingGLSL(true);
+    }
+    else
+    {
+        GLProgramFactory::getInstance().setUsingGLSL(false);
+    }
 
     // Set internal flags
-	setLighting(lightingExtensionsAvailable, m_lightingEnabled);
+	setLighting(
+        glslLightingAvailable || arbLightingAvailable,
+         m_lightingEnabled
+    );
 
     // Inform the user of missing extensions
     if (!lightingSupported()) 
@@ -262,8 +278,6 @@ void OpenGLRenderSystem::extensionsInitialised()
 			globalOutputStream() << "  GL version 2.0 or better\n";
 		}
 		
-#ifdef RADIANT_USE_GLSL
-
 		if (!GLEW_ARB_shader_objects) {
 			globalOutputStream() << "  GL_ARB_shader_objects\n";
 		}
@@ -280,8 +294,6 @@ void OpenGLRenderSystem::extensionsInitialised()
 			globalOutputStream() << "  GL_ARB_shading_language_100\n";
 		}
 
-#else
-
 		if (!GLEW_ARB_vertex_program) {
 			globalOutputStream() << "  GL_ARB_vertex_program\n";
 		}
@@ -290,8 +302,6 @@ void OpenGLRenderSystem::extensionsInitialised()
 			globalOutputStream() << "  GL_ARB_fragment_program\n";
 		}
 
-#endif
-		
 	}
 }
 

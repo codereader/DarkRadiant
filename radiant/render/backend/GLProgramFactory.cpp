@@ -1,6 +1,8 @@
 #include "GLProgramFactory.h"
 #include "glprogram/ARBBumpProgram.h"
 #include "glprogram/ARBDepthFillProgram.h"
+#include "glprogram/GLSLDepthFillProgram.h"
+#include "glprogram/GLSLBumpProgram.h"
 
 #include "iregistry.h"
 #include "os/file.h"
@@ -15,13 +17,7 @@ namespace render
 // Constructor, populates map with GLProgram instances
 GLProgramFactory::GLProgramFactory()
 {
-#ifdef RADIANT_USE_GLSL
-	_map.insert(std::make_pair("depthFill", new ARBDepthFillProgram())); 
-	_map.insert(std::make_pair("bumpMap", new ARBBumpProgram()));
-#else
-	_map.insert(std::make_pair("depthFill", new GLSLDepthFillProgram())); 
-	_map.insert(std::make_pair("bumpMap", new GLSLBumpProgram()));
-#endif
+    setUsingGLSL(false);
 }
 
 // Return static GLProgramFactory instance
@@ -45,8 +41,23 @@ GLProgramPtr GLProgramFactory::getProgram(const std::string& name)
 								 + name);
 }
 
+void GLProgramFactory::setUsingGLSL(bool useGLSL)
+{
+    if (useGLSL)
+    {
+        _map.insert(std::make_pair("depthFill", new GLSLDepthFillProgram())); 
+        _map.insert(std::make_pair("bumpMap", new GLSLBumpProgram()));
+    }
+    else
+    {
+        _map.insert(std::make_pair("depthFill", new ARBDepthFillProgram())); 
+        _map.insert(std::make_pair("bumpMap", new ARBBumpProgram()));
+    }
+}
+
 // Realise the program factory.
-void GLProgramFactory::realise() {
+void GLProgramFactory::realise() 
+{
 	
 	// Get static map
 	ProgramMap& map = getInstance()._map;
