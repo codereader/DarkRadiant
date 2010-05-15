@@ -4,13 +4,13 @@
 #include "iglrender.h"
 #include "math/matrix.h"
 
-namespace render {
+namespace render 
+{
 
-class ARBBumpProgram 
+class GLSLBumpProgram 
 : public GLProgram
 {
-    // The value all lights should be scaled by, obtained from the game
-    // description
+	// The value all lights should be scaled by, obtained from the game description
 	double _lightScale;
 
     // Uniform/program-local parameter IDs.
@@ -20,9 +20,8 @@ class ARBBumpProgram
     int _locLightScale;
     int _locAmbientFactor;
 
-    // Vertex and fragment program identifiers
-    GLuint m_vertex_program;
-    GLuint m_fragment_program;
+    // Program object identifier
+    GLuint _programObj;
 
 public:
 

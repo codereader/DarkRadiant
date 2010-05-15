@@ -15,8 +15,13 @@ namespace render
 // Constructor, populates map with GLProgram instances
 GLProgramFactory::GLProgramFactory()
 {
+#ifdef RADIANT_USE_GLSL
 	_map.insert(std::make_pair("depthFill", new ARBDepthFillProgram())); 
 	_map.insert(std::make_pair("bumpMap", new ARBBumpProgram()));
+#else
+	_map.insert(std::make_pair("depthFill", new GLSLDepthFillProgram())); 
+	_map.insert(std::make_pair("bumpMap", new GLSLBumpProgram()));
+#endif
 }
 
 // Return static GLProgramFactory instance
@@ -26,8 +31,8 @@ GLProgramFactory& GLProgramFactory::getInstance() {
 }
 
 // Lookup a named program in the singleton instance
-GLProgramPtr GLProgramFactory::getProgram(const std::string& name) {
-	
+GLProgramPtr GLProgramFactory::getProgram(const std::string& name) 
+{
 	// Reference to static instance's map
 	ProgramMap& map = getInstance()._map;
 	
@@ -100,8 +105,6 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename,
     file.close();
     return buffer;
 }
-
-#ifdef RADIANT_USE_GLSL
 
 void GLProgramFactory::assertShaderCompiled(GLuint shader)
 {
@@ -220,8 +223,6 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
     return program;
 }
 
-#else
-
 GLuint GLProgramFactory::createARBProgram(const std::string& filename,
                                           GLenum type) 
 {
@@ -262,8 +263,6 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
     // Return the new program
     return programID;
 }
-
-#endif // RADIANT_USE_GLSL
 
 // Get the path of a GL program file
 std::string GLProgramFactory::getGLProgramPath(const std::string& progName)
