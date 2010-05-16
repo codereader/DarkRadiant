@@ -45,7 +45,7 @@ void CameraCubeMapDecl::bindDirection(const std::string& dir,
         GL_UNSIGNED_BYTE,     //type
         img->getMipMapPixels(0)
     );
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 }
 
 /* NamedBindable implementation */

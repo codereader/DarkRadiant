@@ -25,28 +25,28 @@ void RenderablePatchSolid::update()
 	// Allocate space for vertices
 	glBufferData(GL_ARRAY_BUFFER, dataSize, NULL, GL_STATIC_DRAW);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	// Upload the data
 	glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, &m_tess.vertices[0]);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	// Initialise the index buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vboIdx);
 
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexSize, NULL, GL_STATIC_DRAW);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, indexSize, &m_tess.indices[0]);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 #endif
 }
 
@@ -68,7 +68,7 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 		glDrawElements(GL_QUAD_STRIP, GLsizei(m_tess.m_lenStrips), RenderIndexTypeID, strip_indices);
 	}
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

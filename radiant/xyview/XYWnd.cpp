@@ -1410,33 +1410,33 @@ void XYWnd::draw()
 
 	glDepthMask(GL_FALSE);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	glLoadMatrixd(m_modelview);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 	glDisable(GL_LINE_STIPPLE);
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 	glLineWidth(1);
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 	if (GLEW_VERSION_1_3) {
 		glActiveTexture(GL_TEXTURE0);
 		glClientActiveTexture(GL_TEXTURE0);
 	}
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 	glDisableClientState(GL_NORMAL_ARRAY);
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 	glDisableClientState(GL_COLOR_ARRAY);
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 	glDisable(GL_TEXTURE_2D);
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 	glDisable(GL_LIGHTING);
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 	glDisable(GL_COLOR_MATERIAL);
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	// greebo: Check, if the size info should be displayed (if there are any items selected)
 	if (xyWndManager.showSizeInfo() && GlobalSelectionSystem().countSelected() != 0)
@@ -1486,7 +1486,7 @@ void XYWnd::draw()
 		glPointSize(1);
 	}
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	// reset modelview
 	glLoadIdentity();
@@ -1568,7 +1568,7 @@ void XYWnd::draw()
 		}
 	}
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	glFinish();
 }
@@ -1731,13 +1731,13 @@ gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* 
 {
 	gtkutil::GLWidgetSentry sentry(self->getWidget());
 	
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 
 	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
 		self->draw();
 	}
 
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 
 	return FALSE;
 }

@@ -12,7 +12,7 @@ RenderableCharacterBatch::RenderableCharacterBatch()
 	// Allocate a vertex buffer object
 	glGenBuffersARB(1, &_vboData);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 }
 
 RenderableCharacterBatch::~RenderableCharacterBatch()
@@ -39,16 +39,16 @@ void RenderableCharacterBatch::compile()
 	// Allocate space for vertices
 	glBufferData(GL_ARRAY_BUFFER, dataSize, NULL, GL_STATIC_DRAW);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	// Upload the data
 	glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, &_verts.front());
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 }
 
 void RenderableCharacterBatch::render() const
@@ -60,7 +60,7 @@ void RenderableCharacterBatch::render() const
 		
 	glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_verts.size()));
 
-	GlobalOpenGL_debugAssertNoErrors();
+	GlobalOpenGL().assertNoErrors();
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
