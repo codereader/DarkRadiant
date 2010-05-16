@@ -55,7 +55,7 @@ public:
     {
         ImagePtr img = getImage();
         if (img)
-            return getImage()->bindTexture(name);
+            return img->bindTexture(name);
         else
             return TexturePtr();
     }

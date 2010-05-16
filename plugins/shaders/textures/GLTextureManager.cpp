@@ -60,13 +60,14 @@ TexturePtr GLTextureManager::getBinding(NamedBindablePtr bindable)
         if (texture)
         {
             _textures.insert(TextureMap::value_type(identifier, texture));
-            globalOutputStream() << "[shaders] Loaded texture: " << identifier << "\n";
+            std::cout << "[shaders] Loaded texture: " 
+                      << identifier << std::endl;
             return texture;
         }
         else
         {
-            globalOutputStream() << "[shaders] Unable to load texture: "
-                                 << identifier << "\n";
+            std::cout << "[shaders] Unable to load texture: "
+                      << identifier << std::endl;
             return getShaderNotFound();
         }
     }

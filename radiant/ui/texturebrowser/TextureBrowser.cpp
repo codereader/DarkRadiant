@@ -423,16 +423,11 @@ void TextureBrowser::trackingDelta(int x, int y, unsigned int state, void* data)
 	}
 }
 
-/*
-============
-Texture_Draw
-TTimo: relying on the shaders list to display the textures
-we must query all Texture* to manage and display through the Materials interface
-this allows a plugin to completely override the texture system
-============
-*/
-void TextureBrowser::draw() {
+void TextureBrowser::draw() 
+{
   int originy = getOriginY();
+
+  GlobalOpenGL_debugAssertNoErrors();
 
   Vector3 colorBackground = ColourSchemes().getColour("texture_background");
   glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
@@ -575,7 +570,8 @@ void TextureBrowser::draw() {
 
   // reset the current texture
   glBindTexture(GL_TEXTURE_2D, 0);
-  //qglFinish();
+
+    GlobalOpenGL_debugAssertNoErrors();
 }
 
 void TextureBrowser::doMouseWheel(bool wheelUp) {
