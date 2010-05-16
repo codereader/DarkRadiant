@@ -68,8 +68,8 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 image_la_DEPENDENCIES = $(top_builddir)/libs/ddslib/libdds.la
-am_image_la_OBJECTS = dds.lo image.lo bmp.lo jpeg.lo ImageGDK.lo \
-	pcx.lo tga.lo
+am_image_la_OBJECTS = dds.lo image.lo bmp.lo jpeg.lo DDSImage.lo \
+	ImageGDK.lo pcx.lo tga.lo
 image_la_OBJECTS = $(am_image_la_OBJECTS)
 image_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -252,6 +252,7 @@ image_la_SOURCES = dds.cpp \
                    image.cpp \
                    bmp.cpp \
                    jpeg.cpp \
+                   DDSImage.cpp \
                    ImageGDK.cpp \
                    pcx.cpp \
                    tga.cpp
@@ -330,6 +331,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DDSImage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ImageGDK.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bmp.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dds.Plo@am__quote@
