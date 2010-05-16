@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 Copyright (C) 2001-2006, William Joseph.
 All Rights Reserved.
@@ -18,9 +20,6 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_IGL_H)
-#define INCLUDED_IGL_H
 
 #include <string>
 #include <GL/glew.h>
@@ -82,9 +81,3 @@ inline OpenGLBinding& GlobalOpenGL() {
 	return _openGL;
 }
 
-inline void GlobalOpenGL_debugAssertNoErrors()
-{
-    GlobalOpenGL().assertNoErrors();
-}
-
-#endif

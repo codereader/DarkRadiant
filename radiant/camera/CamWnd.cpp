@@ -697,9 +697,9 @@ void CamWnd::draw() {
 	gtkutil::GLWidgetSentry sentry(m_gl_widget);
 
 	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
-		GlobalOpenGL_debugAssertNoErrors();
+		GlobalOpenGL().assertNoErrors();
 		Cam_Draw();
-		GlobalOpenGL_debugAssertNoErrors();
+		GlobalOpenGL().assertNoErrors();
 	}
 
 	m_drawing = false;

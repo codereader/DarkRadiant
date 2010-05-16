@@ -30,7 +30,7 @@ void ARBDepthFillProgram::create()
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 }
 
 void ARBDepthFillProgram::destroy()
@@ -38,19 +38,19 @@ void ARBDepthFillProgram::destroy()
     glDeleteProgramsARB(1, &m_vertex_program);
     glDeleteProgramsARB(1, &m_fragment_program);
 
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 }
 
 void ARBDepthFillProgram::enable()
 {
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 
     glEnable(GL_VERTEX_PROGRAM_ARB);
     glEnable(GL_FRAGMENT_PROGRAM_ARB);
     glBindProgramARB(GL_VERTEX_PROGRAM_ARB, m_vertex_program);
     glBindProgramARB(GL_FRAGMENT_PROGRAM_ARB, m_fragment_program);
 
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 }
 
 void ARBDepthFillProgram::disable()
@@ -58,7 +58,7 @@ void ARBDepthFillProgram::disable()
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
 
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 }
 
 }

@@ -427,7 +427,7 @@ void TextureBrowser::draw()
 {
   int originy = getOriginY();
 
-  GlobalOpenGL_debugAssertNoErrors();
+  GlobalOpenGL().assertNoErrors();
 
   Vector3 colorBackground = ColourSchemes().getColour("texture_background");
   glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
@@ -531,7 +531,7 @@ void TextureBrowser::draw()
 
       // Draw the texture
       glBindTexture (GL_TEXTURE_2D, q->getGLTexNum());
-      GlobalOpenGL_debugAssertNoErrors();
+      GlobalOpenGL().assertNoErrors();
       glColor3f (1,1,1);
       glBegin (GL_QUADS);
       glTexCoord2i (0,0);
@@ -571,7 +571,7 @@ void TextureBrowser::draw()
   // reset the current texture
   glBindTexture(GL_TEXTURE_2D, 0);
 
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 }
 
 void TextureBrowser::doMouseWheel(bool wheelUp) {
@@ -736,11 +736,11 @@ gboolean TextureBrowser::onExpose(GtkWidget* widget, GdkEventExpose* event, Text
 	// This calls glwidget_make_current() for us and swap_buffers at the end of scope
 	gtkutil::GLWidgetSentry sentry(*self->_glWidget);
 	
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
     self->evaluateHeight();
 	self->updateScroll();
     self->draw();
-    GlobalOpenGL_debugAssertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 
 	return FALSE;
 }
