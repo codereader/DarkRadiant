@@ -59,7 +59,8 @@ public:
 		releaseMemory();
 	}
 
-	void setFormat(GLuint format) {
+	void setFormat(GLuint format) 
+    {
 		_format = format;
 	}
 
@@ -82,7 +83,8 @@ public:
 	 * Allocates the memory as declared in the constructor.
 	 * This will release any previously allocated memory.
 	 */
-	void allocateMemory() {
+	void allocateMemory() 
+    {
 		// Release memory first
 		releaseMemory();
 
@@ -126,6 +128,8 @@ public:
     {
 		GLuint textureNum;
 
+        GlobalOpenGL().assertNoErrors();
+
 		// Allocate a new texture number and store it into the Texture structure
 		glGenTextures(1, &textureNum);
 		glBindTexture(GL_TEXTURE_2D, textureNum);
@@ -139,13 +143,28 @@ public:
 		{
 			const MipMapInfo& mipMap = _mipMapInfo[i];
 
-			glCompressedTexImage2D(GL_TEXTURE_2D, static_cast<GLint>(i), _format, 
+			glCompressedTexImage2D(
+                GL_TEXTURE_2D,
+                static_cast<GLint>(i),
+                _format, 
 				static_cast<GLsizei>(mipMap.width), 
 				static_cast<GLsizei>(mipMap.height), 
 				0, 
 				static_cast<GLsizei>(mipMap.size), 
 				_pixelData + mipMap.offset
 			);
+
+            // Handle unsupported format error
+            if (glGetError() == GL_INVALID_ENUM)
+            {
+                std::cerr << "[DDSImage] Unable to bind texture '"
+                          << name << "'; unsupported texture format"
+                          << std::endl;
+
+                return TexturePtr();
+            }
+
+            GlobalOpenGL().assertNoErrors();
 		}
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, static_cast<GLint>(_mipMapInfo.size() - 1));
@@ -157,6 +176,8 @@ public:
         BasicTexture2DPtr texObj(new BasicTexture2D(textureNum, name));
         texObj->setWidth(getWidth(0));
         texObj->setHeight(getHeight(0));
+
+        GlobalOpenGL().assertNoErrors();
 
 		return texObj;
 	}
