@@ -82,15 +82,9 @@ inline OpenGLBinding& GlobalOpenGL() {
 	return _openGL;
 }
 
-#if defined(_DEBUG)
 inline void GlobalOpenGL_debugAssertNoErrors()
 {
-  GlobalOpenGL().assertNoErrors();
+    GlobalOpenGL().assertNoErrors();
 }
-#else
-inline void GlobalOpenGL_debugAssertNoErrors()
-{
-}
-#endif
 
 #endif

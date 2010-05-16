@@ -42,7 +42,8 @@ void OpenGLModule::assertNoErrors()
         allErrString += "(" + std::string(strErr) + ") ";
 	}
 
-    throw std::runtime_error(allErrString);
+    // This is a logic_error because we should handle GL errors correctly.
+    throw std::logic_error(allErrString);
 #endif
 }
 
@@ -92,6 +93,7 @@ GtkWidget* OpenGLModule::registerGLWidget(GtkWidget* widget)
 
 		// Create a context
 		gtkutil::GLWidget::makeCurrent(_sharedContext);
+        assertNoErrors();
 
 #ifdef DEBUG_GL_WIDGETS
         std::cout << "GLWidget: created shared context using ";

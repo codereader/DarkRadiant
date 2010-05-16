@@ -1717,7 +1717,8 @@ gboolean XYWnd::callbackMouseWheelScroll(GtkWidget* widget, GdkEventScroll* even
 	return FALSE;
 }
 
-gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* self) {
+gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* self) 
+{
 	self->_width = allocation->width;
 	self->_height = allocation->height;
 	self->updateProjection();
@@ -1726,14 +1727,17 @@ gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocatio
 	return FALSE;
 }
 
-gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) {
+gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) 
+{
 	gtkutil::GLWidgetSentry sentry(self->getWidget());
 	
+    GlobalOpenGL_debugAssertNoErrors();
+
 	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
-		GlobalOpenGL_debugAssertNoErrors();
 		self->draw();
-		GlobalOpenGL_debugAssertNoErrors();
 	}
+
+    GlobalOpenGL_debugAssertNoErrors();
 
 	return FALSE;
 }
