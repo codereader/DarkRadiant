@@ -432,6 +432,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\image\DDSImage.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\image\DDSImage.h"
 				>
 			</File>
