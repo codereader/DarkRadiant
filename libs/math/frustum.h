@@ -115,10 +115,10 @@ public:
 
         double scale = ClipPlane::scale(*i, *out);
 
-        (*out)[0] = static_cast<float>((*i)[0] + scale*((*out)[0]));
-        (*out)[1] = static_cast<float>((*i)[1] + scale*((*out)[1]));
-        (*out)[2] = static_cast<float>((*i)[2] + scale*((*out)[2]));
-        (*out)[3] = static_cast<float>((*i)[3] + scale*((*out)[3]));
+        (*out)[0] = (*i)[0] + scale*((*out)[0]);
+        (*out)[1] = (*i)[1] + scale*((*out)[1]);
+        (*out)[2] = (*i)[2] + scale*((*out)[2]);
+        (*out)[3] = (*i)[3] + scale*((*out)[3]);
 
         ++out;
       }
