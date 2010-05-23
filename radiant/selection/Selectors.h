@@ -5,7 +5,7 @@
 #include <set>
 #include "iselectable.h"
 
-typedef std::map<SelectionIntersection, Selectable*> SelectableSortedSet;
+typedef std::multimap<SelectionIntersection, Selectable*> SelectableSortedSet;
 
 // A simple set that gets filled after the SelectableSortedSet is populated.
 // greebo: I used this to merge two SelectionPools (entities and primitives)
@@ -97,12 +97,12 @@ public:
 
 		// At this point, the selectable is ready for insertion into the pool
 		// Either it's a completely new Selectable, or it is replacing an existing one
-		std::pair<SelectableSortedSet::iterator, bool> result = _pool.insert(
+		SelectableSortedSet::iterator result = _pool.insert(
 			SelectableSortedSet::value_type(intersection, selectable)
 		);
 
 		// Memorise the Selectable for fast lookups
-		_currentSelectables.insert(SelectablesMap::value_type(selectable, result.first));
+		_currentSelectables.insert(SelectablesMap::value_type(selectable, result));
 	}
 
 	typedef SelectableSortedSet::iterator iterator;
