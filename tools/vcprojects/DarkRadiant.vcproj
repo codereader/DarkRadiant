@@ -466,6 +466,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\radiant\Profile.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\radiant\RadiantModule.cpp"
 				>
 			</File>
