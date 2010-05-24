@@ -407,12 +407,12 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     // Apply polygon offset
     if (_state.polygonOffset != current.polygonOffset)
     {
-        glPolygonOffset(1, -_state.polygonOffset * 128);
         current.polygonOffset = _state.polygonOffset;
 
         if (current.polygonOffset > 0.0f)
         {
             glEnable(GL_POLYGON_OFFSET_FILL);
+            glPolygonOffset(-1, -1 *_state.polygonOffset);
         }
         else
         {
