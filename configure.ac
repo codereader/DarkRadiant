@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [1.2.3])
+AC_INIT([darkradiant], [1.3.0])
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_MACRO_DIR([m4])
