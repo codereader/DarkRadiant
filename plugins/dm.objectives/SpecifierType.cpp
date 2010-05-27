@@ -91,6 +91,7 @@ const SpecifierTypeSet& SpecifierType::SET_READABLE()
 
 	if (_instance.empty())
 	{
+		_instance.insert(SPEC_NONE());
 		_instance.insert(SPEC_NAME());
 	}
 
