@@ -1,3 +1,9 @@
+darkradiant (1.3.0-svn5579) lucid; urgency=low
+
+  * New feature release 1.3.0.
+
+ -- orbweaver <orbweaver3d@gmail.com>  Wed, 26 May 2010 20:06:33 +0100
+
 darkradiant (1.2.3-svn5573) lucid; urgency=low
 
   * New build from SVN, a few Linux OpenGL fixes.
