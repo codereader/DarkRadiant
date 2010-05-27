@@ -1,3 +1,9 @@
+darkradiant (1.2.3-svn5573) lucid; urgency=low
+
+  * New build from SVN, a few Linux OpenGL fixes.
+
+ -- orbweaver <orbweaver3d@gmail.com>  Fri, 21 May 2010 19:54:39 +0100
+
 darkradiant (1.2.2-1) unstable; urgency=low
 
   * New upstream release
