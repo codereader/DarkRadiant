@@ -131,6 +131,14 @@ public:
 	void render(OpenGLState& current, 
 				unsigned int flagsMask, 
 				const Vector3& viewer);
+
+	/**
+	 * Returns true if this shaderpass doesn't have anything to render.
+	 */
+	bool empty() const
+	{
+		return _renderables.empty();
+	}
 };
 
 
