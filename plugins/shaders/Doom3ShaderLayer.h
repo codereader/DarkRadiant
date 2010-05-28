@@ -28,7 +28,7 @@ private:
     // Layer type (diffuse, bump, specular or nothing)
     ShaderLayer::Type _type;
 
-    // Blend function as strings (e.g. "GL_ONE", "GL_ZERO")
+    // Blend function as strings (e.g. "gl_one", "gl_zero")
     StringPair _blendFuncStrings;
 
     // Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
@@ -50,7 +50,7 @@ public:
                      NamedBindablePtr btex = NamedBindablePtr()) 
 	: _bindableTex(btex),
 	  _type(type), 
-	  _blendFuncStrings("GL_ONE", "GL_ZERO"), 
+	  _blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
       _colour(1, 1, 1),
       _vertexColourMode(VERTEX_COLOUR_NONE),
       _cubeMapMode(CUBE_MAP_NONE),
