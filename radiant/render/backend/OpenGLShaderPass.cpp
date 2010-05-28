@@ -501,7 +501,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
 	
     // If RENDER_SCREEN is set, just render a quad, otherwise render all
     // objects.
-    if((flagsMask & _state.renderFlags & RENDER_SCREEN) != 0)
+    if ((flagsMask & _state.renderFlags & RENDER_SCREEN) != 0)
     {
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();

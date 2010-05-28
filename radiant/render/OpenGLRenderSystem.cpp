@@ -160,8 +160,14 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 		i != _state_sorted.end(); 
 		++i)
 	{
-		// Render the OpenGLShaderPass
-        i->second->render(current, globalstate, viewer);
+		// Check if the render pass is applicable before calling the render() method
+		if (i->second->empty() && (globalstate & i->second->state().renderFlags & RENDER_SCREEN) == 0)
+		{
+			continue;
+		}
+
+        // Render the OpenGLShaderPass
+		i->second->render(current, globalstate, viewer);
 	}
 }
 	
@@ -240,7 +246,7 @@ void OpenGLRenderSystem::setLighting(bool supported, bool enabled)
 void OpenGLRenderSystem::extensionsInitialised() 
 {
     // Determine if lighting is available based on GL extensions
-    bool glslLightingAvailable = GLEW_VERSION_2_0;
+	bool glslLightingAvailable = GLEW_VERSION_2_0 ? true : false;
     bool arbLightingAvailable  = GLEW_VERSION_1_3
                                  && GLEW_ARB_vertex_program
                                  && GLEW_ARB_fragment_program;
