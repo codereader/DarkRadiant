@@ -203,6 +203,7 @@ datarootdir = @datarootdir@
 difficulty_plugin = @difficulty_plugin@
 docdir = @docdir@
 dvidir = @dvidir@
+editing_plugin = @editing_plugin@
 exec_prefix = @exec_prefix@
 gui_plugin = @gui_plugin@
 host = @host@
@@ -247,7 +248,7 @@ SUBDIRS = eventmanager archivezip commandsystem eclassmgr eclasstree \
 	md5model model particles scenegraph shaders skins uimanager \
 	undo vfspk3 xmlregistry @sound_module@ @script_module@ \
 	@sr_plugin@ @obj_plugin@ @difficulty_plugin@ @conv_plugin@ \
-	@gui_plugin@ $(am__empty)
+	@gui_plugin@ @editing_plugin@ $(am__empty)
 all: all-recursive
 
 .SUFFIXES:

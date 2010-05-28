@@ -203,6 +203,7 @@ datarootdir = @datarootdir@
 difficulty_plugin = @difficulty_plugin@
 docdir = @docdir@
 dvidir = @dvidir@
+editing_plugin = @editing_plugin@
 exec_prefix = @exec_prefix@
 gui_plugin = @gui_plugin@
 host = @host@

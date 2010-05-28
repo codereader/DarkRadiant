@@ -40,12 +40,14 @@ then
     difficulty_plugin="dm.difficulty"
     conv_plugin="dm.conversation"
     gui_plugin="dm.gui"
+    editing_plugin="dm.editing"
 fi
 AC_SUBST([sr_plugin])
 AC_SUBST([obj_plugin])
 AC_SUBST([difficulty_plugin])
 AC_SUBST([conv_plugin])
 AC_SUBST([gui_plugin])
+AC_SUBST([editing_plugin])
 
 # Check for required libraries
 
@@ -225,7 +227,8 @@ AC_CONFIG_FILES([install/darkradiant.desktop
                  plugins/dm.stimresponse/Makefile
                  plugins/dm.objectives/Makefile
                  plugins/dm.difficulty/Makefile
-		 plugins/dm.gui/Makefile
+                 plugins/dm.gui/Makefile
+                 plugins/dm.editing/Makefile
                  plugins/dm.conversation/Makefile])
 
 AC_OUTPUT
