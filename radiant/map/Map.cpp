@@ -535,6 +535,15 @@ bool Map::import(const std::string& filename) {
 				resource->getNode()->traverse(cloner);
 			}
 
+			// Discard all layer information found in the imported file
+			{
+				scene::LayerList layers;
+				layers.insert(0);
+
+				scene::AssignNodeToLayersWalker walker(layers);
+				Node_traverseSubgraph(cloneRoot, walker);
+			}
+
 			// Adjust all new names to fit into the existing map namespace, 
 			// this routine will be changing a lot of names in the importNamespace
 			INamespacePtr nspace = getRoot()->getNamespace();

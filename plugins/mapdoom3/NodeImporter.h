@@ -10,8 +10,6 @@
 
 namespace map {
 
-class InfoFile;
-
 class NodeImporter {
 
 	// The map type for one entity's keyvalues (spawnargs)
@@ -27,9 +25,6 @@ class NodeImporter {
 
 	// The tokeniser used to split the stream into pieces
 	parser::BasicDefTokeniser<std::istream> _tok;
-
-	// The helper class containing the meta-information for this map file
-	InfoFile& _infoFile;
 
 	// The number of entities found in this map file so far
 	std::size_t _entityCount;
@@ -53,8 +48,7 @@ class NodeImporter {
 	bool _debug;
 
 public:
-	NodeImporter(const MapImportInfo& importInfo, 
-		         InfoFile& infoFile);
+	NodeImporter(const MapImportInfo& importInfo);
 
 	// Start parsing, this should not "leak" any exceptions
 	// Returns TRUE if the parsing succeeded without errors or exceptions.

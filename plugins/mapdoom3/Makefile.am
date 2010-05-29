@@ -8,6 +8,7 @@ mapdoom3_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
 					 $(top_builddir)/libs/xmlutil/libxmlutil.la
 mapdoom3_la_LDFLAGS = -module -avoid-version $(GTK_LIBS) $(XML_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
+					  Doom3PrefabFormat.cpp \
                       NodeImporter.cpp \
                       InfoFile.cpp \
                       mapdoom3.cpp \

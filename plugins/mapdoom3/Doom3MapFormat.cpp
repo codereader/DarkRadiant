@@ -70,56 +70,24 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 		"map", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
 	GlobalFiletypes().addType(
 		"map", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
-	GlobalFiletypes().addType(
-		"map", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));
-	
-	// Add the filepatterns for the prefab (different order)
-	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));
-	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
-	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
 }
 
-bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const {
+bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const
+{
 	assert(importInfo.root != NULL);
 
-	// Read the infofile
-	InfoFile infoFile(importInfo.infoStream);
-
-	try {
-		// Start parsing, this will throw if any errors occur
-		infoFile.parse();
-	}
-	catch (parser::ParseException& e) {
-		globalErrorStream() << "[mapdoom3] Unable to parse info file: " << e.what() << std::endl;
-    }
-
 	// Construct a MapImporter that will do the map parsing
-	NodeImporter importer(importInfo, infoFile);
+	NodeImporter importer(importInfo);
 
-	if (importer.parse()) {
-		// Create the layers according to the data found in the map information file
-		const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
-
-		for (InfoFile::LayerNameMap::const_iterator i = layers.begin(); 
-			 i != layers.end(); i++)
-		{
-			// Create the named layer with the saved ID
-			GlobalLayerSystem().createLayer(i->second, i->first);
-		}
-		
-		// Now that the graph is in place, assign the layers
-		AssignLayerMappingWalker walker(infoFile);
-		importInfo.root->traverse(walker);
-
-		// Also process the func_static child primitives
-		addOriginToChildPrimitives(importInfo.root);
+	if (importer.parse())
+	{
+		// Run the post-process (layers and/or child primitive origins)
+		onMapParsed(importInfo);
 		
 		return true;
 	}
-	else {
+	else
+	{
 		// Importer return FALSE, propagate this failure
 		return false;
 	}
@@ -212,6 +180,40 @@ void Doom3MapFormat::removeOriginFromChildPrimitives(const scene::INodePtr& root
 	Node_traverseSubgraph(root, remover);
 
 	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
+}
+
+
+void Doom3MapFormat::onMapParsed(const MapImportInfo& importInfo) const
+{
+	// Read the infofile
+	InfoFile infoFile(importInfo.infoStream);
+
+	try
+	{
+		// Start parsing, this will throw if any errors occur
+		infoFile.parse();
+
+		// Create the layers according to the data found in the map information file
+		const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
+
+		for (InfoFile::LayerNameMap::const_iterator i = layers.begin(); 
+			 i != layers.end(); i++)
+		{
+			// Create the named layer with the saved ID
+			GlobalLayerSystem().createLayer(i->second, i->first);
+		}
+		
+		// Now that the graph is in place, assign the layers
+		AssignLayerMappingWalker walker(infoFile);
+		importInfo.root->traverse(walker);
+	}
+	catch (parser::ParseException& e)
+	{
+		globalErrorStream() << "[mapdoom3] Unable to parse info file: " << e.what() << std::endl;
+    }
+
+	// Also process the func_static child primitives
+	addOriginToChildPrimitives(importInfo.root);
 }
 
 } // namespace map
