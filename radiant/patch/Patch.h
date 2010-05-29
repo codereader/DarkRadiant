@@ -302,7 +302,7 @@ public:
 	 * 
 	 * @axis: 0 = x-axis, 1 = y-axis, 2 = z-axis, 3 = vertex normals
 	 */
-	void createThickenedOpposite(const Patch& sourcePatch, const float& thickness, const int& axis);
+	void createThickenedOpposite(const Patch& sourcePatch, const float thickness, const int axis);
 
 	/** greebo: This creates on of the "wall" patches when thickening patches.
 	 * 
@@ -311,7 +311,7 @@ public:
 	 *  
 	 * @wallIndex: 0..3 (cycle through them to create all four walls).
 	 */
-	void createThickenedWall(const Patch& sourcePatch, const Patch& targetPatch, const int& wallIndex);
+	void createThickenedWall(const Patch& sourcePatch, const Patch& targetPatch, const int wallIndex);
 
 	// called just before an action to save the undo state
 	void undoSave();
