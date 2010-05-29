@@ -155,6 +155,10 @@ void Light::construct()
 	_lightEndObserver.setCallback(boost::bind(&Light::lightEndChanged, this, _1));
 	_lightTextureObserver.setCallback(boost::bind(&LightShader::valueChanged, &m_shader, _1));
 
+	// Set the flags to their default values, before attaching the key observers, 
+	// which might set them to true again.
+	m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
+
 	_owner.addKeyObserver("_color", m_colour);
 	_owner.addKeyObserver("origin", m_originKey);
 
@@ -170,7 +174,6 @@ void Light::construct()
 	_owner.addKeyObserver("light_end", _lightEndObserver);
 	_owner.addKeyObserver("texture", _lightTextureObserver);
 
-	m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
 	m_doom3ProjectionChanged = true;
 
 	// set the colours to their default values
@@ -179,7 +182,7 @@ void Light::construct()
 	_entity.setIsContainer(true);
 
 	// Load the light colour (might be inherited)
-	m_colour.onKeyValueChanged(_entity.getKeyValue("_color"));
+	m_colour.onKeyValueChanged(_entity.getKeyValue("_color")); // redundant?
 	m_shader.valueChanged(_entity.getKeyValue("texture"));
 
 	// Hook the "model" spawnarg to the ModelKey class
