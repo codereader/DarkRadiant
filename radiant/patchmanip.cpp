@@ -567,7 +567,8 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 	// Select the newly created patch
 	Node_setSelected(node, true);
 	
-	if (createSeams && thickness > 0.0f) {
+	if (createSeams && thickness > 0.0f)
+	{
 		// Allocate four new patches
 		scene::INodePtr nodes[4] = {
 			patchCreator.createPatch(),
@@ -577,18 +578,26 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 		};
 		
 		// Now create the four walls
-		for (int i = 0; i < 4; i++) {
-			// Insert each node into the same parent as the existing patch
-			parent->addChildNode(nodes[i]);
-			
+		for (int i = 0; i < 4; i++)
+		{
 			// Retrieve the contained patch from the node
 			Patch* wallPatch = Node_getPatch(nodes[i]);
 			
 			// Create the wall patch by passing i as wallIndex
 			wallPatch->createThickenedWall(sourcePatch->getPatchInternal(), *targetPatch, i);
-			
-			// Now select the newly created patch
-			Node_setSelected(nodes[i], true);
+
+			if (!wallPatch->isDegenerate())
+			{
+				// Insert each node into the same parent as the existing patch
+				parent->addChildNode(nodes[i]);
+
+				// Now select the newly created patch
+				Node_setSelected(nodes[i], true);
+			}
+			else
+			{
+				globalOutputStream() << "Thicken: Discarding degenerate patch." << std::endl;
+			}
 		}
 	}
 	

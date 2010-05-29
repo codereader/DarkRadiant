@@ -3656,8 +3656,8 @@ void Patch::BuildVertexArray()
 }
 
 void Patch::createThickenedOpposite(const Patch& sourcePatch, 
-									const float& thickness, 
-									const int& axis) 
+									const float thickness, 
+									const int axis) 
 {
 	// Clone the dimensions from the other patch
 	setDims(sourcePatch.getWidth(), sourcePatch.getHeight());
@@ -3744,13 +3744,24 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			if (extrudeAxis == Vector3(0,0,0)) {
 				// Calculate the normal vector with the first tangent
 				// this gives us the first direction of the thickening
-				normal = rowTangent.crossProduct(colTangent[0]).getNormalised();
+				normal = rowTangent.crossProduct(colTangent[0]);
+				
+				// Beware of normals with 0 length
+				if (normal.getLengthSquared() > 0)
+				{
+					normal.normalise();
+				}
 				
 				// Check if we have another normal available
 				if (colTangent[1] != Vector3(0,0,0)) {
 					
 					// Calculate the other normal
-					Vector3 normal2 = rowTangent.crossProduct(colTangent[1]).getNormalised();
+					Vector3 normal2 = rowTangent.crossProduct(colTangent[1]);
+					
+					if (normal2.getLengthSquared() > 0)
+					{
+						normal2.getNormalised();
+					}
 					
 					// Now calculate the length correction out of the angle 
 					// of the two normals
@@ -3759,14 +3770,20 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 					// Calculate the mean value and normalise it
 					normal += normal2;
 					normal /= 2;
-					normal = normal.getNormalised();
+
+					if (normal.getLengthSquared() > 0)
+					{
+						normal = normal.getNormalised();
+					}
 					
 					// Check for div by zero (if the normals are antiparallel)
 					// and stretch the resulting normal, if necessary
-					if (factor != 0) {
+					if (factor != 0)
+					{
 						normal /= factor;
 					}
-					else {
+					else
+					{
 						normal = Vector3(0,0,0);
 					}
 				}
@@ -3790,7 +3807,7 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 
 void Patch::createThickenedWall(const Patch& sourcePatch, 
 								const Patch& targetPatch, 
-								const int& wallIndex) 
+								const int wallIndex) 
 {
 	// Copy the shader from the source patch
 	setShader(sourcePatch.getShader());
