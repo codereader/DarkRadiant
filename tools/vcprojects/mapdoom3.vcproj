@@ -426,6 +426,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\mapdoom3\Doom3PrefabFormat.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\mapdoom3\InfoFile.cpp"
 				>
 			</File>

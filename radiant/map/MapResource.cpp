@@ -336,7 +336,8 @@ scene::INodePtr MapResource::loadMapNode() {
 	return model::NullModelNode::InstancePtr();
 }
 
-bool MapResource::loadFile(const MapFormat& format, scene::INodePtr root, const std::string& filename) {
+bool MapResource::loadFile(const MapFormat& format, const scene::INodePtr& root, const std::string& filename)
+{
 	globalOutputStream() << "Open file " << filename << " for read...";
 
 	TextFileInputStream file(filename);

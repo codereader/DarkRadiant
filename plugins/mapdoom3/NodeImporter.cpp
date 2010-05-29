@@ -26,13 +26,11 @@ namespace map {
 	}
 
 // Constructor
-NodeImporter::NodeImporter(const MapImportInfo& importInfo, 
-						   InfoFile& infoFile) 
+NodeImporter::NodeImporter(const MapImportInfo& importInfo) 
 : _root(importInfo.root),
   _inputStream(importInfo.inputStream),
   _fileSize(importInfo.inputStreamSize),
   _tok(_inputStream),
-  _infoFile(infoFile),
   _entityCount(0),
   _primitiveCount(0),
   _layerInfoCount(0),
