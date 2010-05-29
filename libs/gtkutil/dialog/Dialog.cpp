@@ -203,14 +203,12 @@ GtkWidget* Dialog::createButtons()
 	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onOK), this);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, FALSE, FALSE, 0);
 
-	mapKeyToButton(GDK_O, okButton);
 	mapKeyToButton(GDK_Return, okButton);
 
 	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
 	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
 	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 0);
 
-	mapKeyToButton(GDK_C, cancelButton);
 	mapKeyToButton(GDK_Escape, cancelButton);
 
 	return buttonHBox;
