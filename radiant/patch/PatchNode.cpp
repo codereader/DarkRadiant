@@ -283,11 +283,8 @@ void PatchNode::destroyStatic() {
 	m_state_selpoint = ShaderPtr();
 }
 
-void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
-	// If not visible, there's nothing to do for us
-	if (!isVisible())
-		return;
-
+void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
 	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	collector.setLights(*m_lightList);
@@ -299,11 +296,8 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	renderComponentsSelected(collector, volume);
 }
 
-void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
-	// If not visible, there's nothing to do for us
-	if (!isVisible())
-		return;
-	
+void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+{
 	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	
@@ -315,10 +309,8 @@ void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 }
 
 // Renders the components of this patch instance, makes use of the Patch::render_component() method 
-void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const {
-	if (!isVisible())
-		return;
-
+void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+{
 	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
 		
@@ -347,11 +339,8 @@ void PatchNode::update_selected() const {
 	}
 }
 
-void PatchNode::renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const {
-	// If not visible, there's nothing to do for us
-	if (!isVisible())
-		return;
-
+void PatchNode::renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const
+{
 	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	
