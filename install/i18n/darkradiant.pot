@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-05-02 08:25+0200\n"
+"POT-Creation-Date: 2010-05-30 16:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,8 +120,8 @@ msgid "Caulk shader name"
 msgstr ""
 
 #: ..\..\radiant\entity.cpp:93 ..\..\radiant\mainframe_old.cpp:553
-#: ..\..\radiant\map\Map.cpp:476 ..\..\radiant\map\Map.cpp:563
-#: ..\..\radiant\map\Map.cpp:583
+#: ..\..\radiant\map\Map.cpp:476 ..\..\radiant\map\Map.cpp:572
+#: ..\..\radiant\map\Map.cpp:592
 #: ..\..\radiant\referencecache\ModelCache.cpp:204
 #: ..\..\radiant\referencecache\ModelCache.cpp:220
 msgid "Processing..."
@@ -234,45 +234,45 @@ msgstr ""
 msgid "Saving Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:609
+#: ..\..\radiant\map\Map.cpp:618
 msgid ""
 "The current map has changed since it was last saved.\n"
 "Do you want to save the current map before continuing?"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:642
+#: ..\..\radiant\map\Map.cpp:651
 msgid "Save Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:676
+#: ..\..\radiant\map\Map.cpp:685
 msgid "Save Copy As..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:691
+#: ..\..\radiant\map\Map.cpp:700
 msgid "Load Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:742
+#: ..\..\radiant\map\Map.cpp:751
 msgid "New Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:752 ..\..\radiant\ui\mru\MRU.cpp:90
+#: ..\..\radiant\map\Map.cpp:761 ..\..\radiant\ui\mru\MRU.cpp:90
 msgid "Open Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:757
+#: ..\..\radiant\map\Map.cpp:766
 msgid "Open map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:769
+#: ..\..\radiant\map\Map.cpp:778
 msgid "Import map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:793
+#: ..\..\radiant\map\Map.cpp:802
 msgid "Export selection"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:806
+#: ..\..\radiant\map\Map.cpp:815
 msgid "Save selected as Prefab"
 msgstr ""
 
@@ -280,8 +280,8 @@ msgstr ""
 msgid "<no description>"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:157 ..\..\radiant\map\MapResource.cpp:391
-#: ..\..\radiant\map\MapResource.cpp:410
+#: ..\..\radiant\map\MapResource.cpp:157 ..\..\radiant\map\MapResource.cpp:392
+#: ..\..\radiant\map\MapResource.cpp:411
 #, c-format
 msgid "File is write-protected: %s"
 msgstr ""
@@ -328,11 +328,11 @@ msgstr ""
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr ""
 
-#: ..\..\radiant\patch\PatchCreators.h:51
+#: ..\..\radiant\patch\PatchCreators.h:64
 msgid "Settings/Patch"
 msgstr ""
 
-#: ..\..\radiant\patch\PatchCreators.h:52
+#: ..\..\radiant\patch\PatchCreators.h:65
 msgid "Patch Subdivide Threshold"
 msgstr ""
 
@@ -340,23 +340,23 @@ msgstr ""
 msgid "Cannot create caps, no patches selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:628
+#: ..\..\radiant\patchmanip.cpp:637
 msgid "Cannot thicken patch. Nothing selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:687
+#: ..\..\radiant\patchmanip.cpp:696
 msgid ""
 "Cannot stitch textures. \n"
 "Could not cast nodes to patches."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:696
+#: ..\..\radiant\patchmanip.cpp:705
 msgid ""
 "Cannot stitch patch textures. \n"
 "Exactly 2 patches must be selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:730
+#: ..\..\radiant\patchmanip.cpp:739
 msgid "Cannot bulge patch. No patches selected."
 msgstr ""
 
@@ -1840,7 +1840,7 @@ msgstr ""
 
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:109
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:66
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:103 xml_file_content.cpp:50
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:98 xml_file_content.cpp:50
 msgid "Texture Browser"
 msgstr ""
 
@@ -1875,6 +1875,26 @@ msgstr ""
 
 #: ..\..\radiant\ui\mainframe\MainFrame.cpp:414
 msgid "Console"
+msgstr ""
+
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:127
+msgid "Camera Position"
+msgstr ""
+
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:130
+msgid "Top Left"
+msgstr ""
+
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:132
+msgid "Top Right"
+msgstr ""
+
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:134
+msgid "Bottom Left"
+msgstr ""
+
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:136
+msgid "Bottom Right"
 msgstr ""
 
 #: ..\..\radiant\ui\mapinfo\EntityInfoTab.cpp:16
@@ -2423,43 +2443,43 @@ msgid "Texture Lock"
 msgstr ""
 
 #: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:77
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:594
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:592
 msgid "No shader"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:794
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:792
 msgid "Clamp texture thumbnails to constant size"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:796
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:794
 msgid "Constant size"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:853
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:851
 msgid "Settings/Texture Browser"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:864
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:862
 msgid "Texture Thumbnail Scale"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:866
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:864
 msgid "Uniform texture thumbnail size (pixels)"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:867
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:865
 msgid "Texture scrollbar"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:868
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:866
 msgid "Mousewheel Increment"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:869
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:867
 msgid "Max shadername length"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:871
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:869
 msgid "Show Texture Filter"
 msgstr ""
 
@@ -3974,17 +3994,17 @@ msgid "Default Grid Size"
 msgstr ""
 
 #: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:70
-#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:80
+#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:31
 msgid "Doom 3 map"
 msgstr ""
 
 #: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:72
-#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:82
+#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:33
 msgid "Doom 3 region"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:74
-#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:78
+#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:25
+#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:29
 msgid "Doom 3 prefab"
 msgstr ""
 
@@ -3992,31 +4012,31 @@ msgstr ""
 msgid "Map Info File Version invalid"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:48
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:46
 msgid "Loading map"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:70
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:227
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:68
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:225
 #, c-format
 msgid "Loading entity %d"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:76
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:74
 msgid "Map loading cancelled"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:95
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:93
 #, c-format
 msgid "Failed on entity %d"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:178
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:176
 #, c-format
 msgid "Primitive #%d: parse error"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:270
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:268
 #, c-format
 msgid "Parsed invalid value '%s' for key '%s'"
 msgstr ""
