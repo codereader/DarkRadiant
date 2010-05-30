@@ -96,17 +96,23 @@ public:
 	
 	/* Sets a registry key value to the given float. The floating point variable
 	 * is converted via boost libraries first. */
-	void setFloat(const std::string& key, const double& value);
+	void setFloat(const std::string& key, const double value);
 	
 	/* Gets a key containing an integer from the registry, basically loads the string and
 	 * converts it into an int via boost libraries */
 	int getInt(const std::string& key);
 	
 	// Sets a registry key value to the given integer. The value is converted via boost libraries first.
-	void setInt(const std::string& key, const int& value);
+	void setInt(const std::string& key, const int value);
 	
 	// Sets the value of a key from the registry, 
 	void set(const std::string& key, const std::string& value);
+
+	// Get the boolean interpretation of the given keyvalue
+	bool getBool(const std::string& key);
+
+	// Set the value as boolean (true will be "1")
+	void setBool(const std::string& key, const bool value);
 	
 	/* Appends a whole (external) XML file to the XMLRegistry. The toplevel nodes of this file
 	 * are appended to _topLevelNode (e.g. <darkradiant>) if parentKey is set to the empty string "", 

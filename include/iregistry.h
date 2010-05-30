@@ -68,11 +68,15 @@ public:
 	
 	// Loads/saves a floating point value from/to the specified <key>, getFloat returns 0.0f if conversion failed
 	virtual float getFloat(const std::string& key) = 0;
-	virtual void setFloat(const std::string& key, const double& value) = 0;
-	
+	virtual void setFloat(const std::string& key, const double value) = 0;
+		
 	// Loads/saves an integer value from/to the specified <key>, getInt returns 0 if conversion failed
 	virtual int getInt(const std::string& key) = 0;
-	virtual void setInt(const std::string& key, const int& value) = 0;
+	virtual void setInt(const std::string& key, const int value) = 0;
+
+	// Loads/saves a boolean value from/to the specified <key>, getBool returns false if the string value is empty or "0"
+	virtual bool getBool(const std::string& key) = 0;
+	virtual void setBool(const std::string& key, const bool value) = 0;
 	
 	// Checks whether a key exists in the registry
 	virtual bool keyExists(const std::string& key) = 0;
