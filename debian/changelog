@@ -1,3 +1,37 @@
+darkradiant (1.3.1svn5594~lucid1) lucid; urgency=low
+
+  * OpenGLShaderPasses are checked if they are applicable before calling
+  their render() method. Calling render() usually invokes a series of openGL
+  state change calls, even if the whole pass has zero renderables attached.
+
+  * Fixed issue #2230: Portal Sky texture rendering black in rendered
+  view. Blend mode conversion from string was failing due to wrong case of
+  default values.
+
+  * Fixed issue #2221: Thicken algorithm has problems with patch cones.
+
+  * Removed additional isVisible() checks from PatchNode render methods, these
+  nodes are culled by the ForeachVisibleNodeInVolume routine in the scenegraph
+  before. This fixes issue #2204: noninstantiated patchnodes are invisible in
+  the map preview window.
+
+  * Removed "o" and "c" key mappings to OK and Cancel buttons in gtkutil::Dialog.
+  This solves issue #2232.
+
+  * Fixed issue #2216: Cloned projected light does not show projection until map
+  reloaded.
+
+  * Some reorganisation in mapdoom3 format to allow for more distinct behaviour
+  when loading maps and prefabs. 
+
+  * Resolved issue #2207: Reversed or customizable splitpane.
+
+  * Updated German translation package.
+
+  * Enabled dm.editing plugin in Linux
+
+ -- OrbWeaver <orbweaver3d@gmail.com>  Sun, 30 May 2010 19:08:02 +0100
+
 darkradiant (1.3.0-svn5579) lucid; urgency=low
 
   * New feature release 1.3.0.
