@@ -56,12 +56,65 @@ public:
 		gtk_paned_pack1(GTK_PANED(_paned), child, TRUE, allowShrinkBelowRequisition ? TRUE : FALSE);
 	}
 
+	void setOrReplaceFirstChild(GtkWidget* child, bool allowShrinkBelowRequisition = false)
+	{
+		GtkWidget* previousChild = gtk_paned_get_child1(GTK_PANED(_paned));
+
+		if (previousChild != NULL)
+		{
+			gtk_container_remove(GTK_CONTAINER(_paned), previousChild);
+		}
+
+		setFirstChild(child, allowShrinkBelowRequisition);
+	}
+
 	// Sets the second child to this paned view
 	void setSecondChild(GtkWidget* child, bool allowShrinkBelowRequisition = false)
 	{
 		assert(gtk_paned_get_child2(GTK_PANED(_paned)) == NULL);
 
 		gtk_paned_pack2(GTK_PANED(_paned), child, TRUE, allowShrinkBelowRequisition ? TRUE : FALSE);
+	}
+
+	void setOrReplaceSecondChild(GtkWidget* child, bool allowShrinkBelowRequisition = false)
+	{
+		GtkWidget* previousChild = gtk_paned_get_child2(GTK_PANED(_paned));
+
+		if (previousChild != NULL)
+		{
+			gtk_container_remove(GTK_CONTAINER(_paned), previousChild);
+		}
+
+		setSecondChild(child, allowShrinkBelowRequisition);
+	}
+
+	GtkWidget* getFirstChild()
+	{
+		return gtk_paned_get_child1(GTK_PANED(_paned));
+	}
+
+	GtkWidget* getSecondChild()
+	{
+		return gtk_paned_get_child2(GTK_PANED(_paned));
+	}
+
+	// Removes the given child from the paned container
+	void removeChild(GtkWidget* child)
+	{
+		 gtk_container_remove(GTK_CONTAINER(_paned), child);
+	}
+
+	void removeAllChildren()
+	{
+		if (getFirstChild() != NULL)
+		{
+			gtk_container_remove(GTK_CONTAINER(_paned), getFirstChild());
+		}
+
+		if (getSecondChild() != NULL)
+		{
+			gtk_container_remove(GTK_CONTAINER(_paned), getSecondChild());
+		}
 	}
 	
 protected:
