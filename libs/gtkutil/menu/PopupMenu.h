@@ -28,9 +28,15 @@ public:
 	
 	/**
 	 * Sensitivity callback. This function object returns a true or false value,
-	 * indicating whether the associated menu item should be visible or not.
+	 * indicating whether the associated menu item should be clickable or not.
 	 */
 	typedef boost::function<bool (void)> SensitivityTest;
+
+	/**
+	 * Visibility callback. This function object returns a true or false value,
+	 * indicating whether the associated menu item should be visible or not.
+	 */
+	typedef boost::function<bool (void)> VisibilityTest;
 
 private:
 	
@@ -38,13 +44,21 @@ private:
 	GtkWidget* _menu;
 
 	// Data class containing the elements of a menu item
-	struct MenuItem {
+	struct MenuItem
+	{
 		GtkWidget* widget;
 		Callback callback;
-		SensitivityTest test;
+		SensitivityTest sensitivityTest;
+		VisibilityTest visibilityTest;
 		
-		MenuItem(GtkWidget* w, Callback c, SensitivityTest t)
-		: widget(w), callback(c), test(t)
+		MenuItem(GtkWidget* w, 
+				 const Callback& c, 
+				 const SensitivityTest& s,
+				 const VisibilityTest& v)
+		: widget(w), 
+		  callback(c), 
+		  sensitivityTest(s),
+		  visibilityTest(v)
 		{ }
 	};
 	
@@ -55,11 +69,11 @@ private:
 private:
 	
 	/*
-	 * Default sensitivity test. Return true in all cases. If a menu item does
-	 * not specify its own sensitivity test, this will be used to ensure the
-	 * item is always visible.
+	 * Default test. Returns true in all cases. If a menu item does
+	 * not specify its own test, this will be used to ensure the
+	 * item is always visible or sensitive.
 	 */
-	static bool _alwaysVisible() { return true; }
+	static bool _alwaysTrue() { return true; }
 	
 	/* GTK CALLBACKS */
 	
@@ -101,13 +115,18 @@ public:
 	 * @param callback
 	 * A callback function to be invoked when this menu item is activated.
 	 * 
-	 * @param test
+	 * @param sensTest
 	 * SensitivityTest function object to determine whether this menu item is
-	 * currently visible.
+	 * currently clickable (optional).
+	 *
+	 * @param visTest
+	 * VisibilityTest function object to determine whether this menu item is
+	 * currently visible (optional).	 
 	 */
 	void addItem(GtkWidget* widget,
-				 Callback callback,
-				 SensitivityTest test = SensitivityTest(_alwaysVisible));
+				 const Callback& callback,
+				 const SensitivityTest& sensTest = SensitivityTest(_alwaysTrue),
+				 const VisibilityTest& visTest = VisibilityTest(_alwaysTrue));
 	
 	/**
 	 * Show this menu. Each menu item's SensitivityTest will be invoked to 
