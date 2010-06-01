@@ -1,7 +1,8 @@
 #include "PopupMenu.h"
 #include "../IconTextMenuItem.h"
 
-namespace gtkutil {
+namespace gtkutil
+{
 
 // Default constructor
 PopupMenu::PopupMenu(GtkWidget* widget)
@@ -20,11 +21,12 @@ PopupMenu::PopupMenu(GtkWidget* widget)
 
 // Add a named menu item
 void PopupMenu::addItem(GtkWidget* widget,
-			 			Callback callback,
-			 			SensitivityTest test)
+			 			const Callback& callback,
+			 			const SensitivityTest& sensTest,
+						const VisibilityTest& visTest)
 {
 	// Create a MenuItem and add it to the list
-	MenuItem item(widget, callback, test);
+	MenuItem item(widget, callback, sensTest, visTest);
 	_menuItems.push_back(item);
 	
 	// Connect up the activation callback to GTK.
@@ -42,31 +44,46 @@ void PopupMenu::addItem(GtkWidget* widget,
 // Show the menu
 void PopupMenu::show() 
 {
+	// Show all elements as first measure
+	gtk_widget_show_all(_menu);
+
 	// Iterate through the list of MenuItems, enabling or disabling each widget
 	// based on its SensitivityTest
 	for (MenuItemList::iterator i = _menuItems.begin();
 		 i != _menuItems.end();
 		 ++i)
 	{
-		if (i->test())
-			gtk_widget_set_sensitive(i->widget, TRUE);
+		bool visible = i->visibilityTest();
+
+		if (visible)
+		{
+			// Visibility check passed
+			gtk_widget_show(i->widget);
+
+			bool sensitive = i->sensitivityTest();
+			gtk_widget_set_sensitive(i->widget, sensitive ? TRUE : FALSE);
+		}
 		else
-			gtk_widget_set_sensitive(i->widget, FALSE);
+		{
+			// Visibility check failed, skip sensitivity check
+			gtk_widget_hide(i->widget);
+		}
 	}
 	
-	// Show all elements and display the menu
-	gtk_widget_show_all(_menu);
 	gtk_menu_popup(
 		GTK_MENU(_menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME
 	);
 }
 
 // Mouse click callback
-gboolean PopupMenu::_onClick(GtkWidget* w, GdkEventButton* e, PopupMenu* self) {
-	if (e->button == 3) { // right-click only
+gboolean PopupMenu::_onClick(GtkWidget* w, GdkEventButton* e, PopupMenu* self)
+{
+	if (e->button == 3) // right-click only
+	{ 
 		self->show();
 	}
+
 	return FALSE;
 }
 
-}
+} // namespace
