@@ -7,9 +7,11 @@
 #include "gtkutil/pointer.h"
 #include "layers/LayerSystem.h"
 
-namespace ui {
+namespace ui
+{
 
-	namespace {
+	namespace
+	{
 		const std::string LAYER_ICON("layer.png");
 	}
 
@@ -52,11 +54,6 @@ void LayerContextMenu::createMenuItems()
 		// Add it to the parent menu
 		gtk_menu_shell_append(GTK_MENU_SHELL(_menu), menuItem);
 	}
-}
-
-LayerContextMenu::operator GtkWidget*()
-{
-	return _menu;
 }
 
 void LayerContextMenu::onClick(GtkMenuItem* menuitem, LayerContextMenu* self)

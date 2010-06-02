@@ -3,6 +3,7 @@
 
 #include <boost/function.hpp>
 
+#include "gtkutil/ifc/Widget.h"
 #include "layers/LayerSystem.h"
 
 typedef struct _GtkWidget GtkWidget;
@@ -11,7 +12,8 @@ typedef struct _GtkMenuItem GtkMenuItem;
 namespace ui {
 
 class LayerContextMenu :
-	public scene::LayerSystem::Visitor
+	public scene::LayerSystem::Visitor,
+	public gtkutil::Widget
 {
 public:
 	// The function to be called on menu selection, the ID of the
@@ -29,11 +31,15 @@ private:
 public:
 	LayerContextMenu(OnSelectionFunc& onSelection);
 
-	// Operator cast to a GtkWidget*
-	operator GtkWidget*();
-
 	// scene::LayerSystem::Visitor implementation
 	void visit(int layerID, std::string layerName);
+
+protected:
+   // Widget implementation
+   GtkWidget* _getWidget() const 
+   {
+		return _menu;
+   }
 
 private:
 	// Creates the menu items
