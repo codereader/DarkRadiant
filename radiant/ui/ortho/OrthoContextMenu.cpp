@@ -237,7 +237,8 @@ void OrthoContextMenu::show(const Vector3& point) {
 	gtk_menu_popup(GTK_MENU(_widget), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
-void OrthoContextMenu::repopulateLayerMenus() {
+void OrthoContextMenu::repopulateLayerMenus()
+{
 	// Create a new submenu and connect it to the according function
 	LayerContextMenu::OnSelectionFunc addToLayerCallback(callbackAddToLayer);
 	LayerContextMenu::OnSelectionFunc moveToLayerCallback(callbackMoveToLayer);
@@ -249,9 +250,9 @@ void OrthoContextMenu::repopulateLayerMenus() {
 	_removeFromLayerSubmenu = LayerContextMenuPtr(new LayerContextMenu(removeFromLayerCallback));
 
 	// Cast the LayerContextMenu onto GtkWidget* and pack it
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_ADD_TO_LAYER]), *_addToLayerSubmenu);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_MOVE_TO_LAYER]), *_moveToLayerSubmenu);
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_DELETE_FROM_LAYER]), *_removeFromLayerSubmenu);
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_ADD_TO_LAYER]), _addToLayerSubmenu->getWidget());
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_MOVE_TO_LAYER]), _moveToLayerSubmenu->getWidget());
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_DELETE_FROM_LAYER]), _removeFromLayerSubmenu->getWidget());
 
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
