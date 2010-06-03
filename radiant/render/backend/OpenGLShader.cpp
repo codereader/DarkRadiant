@@ -242,6 +242,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
 
     DBSTriplet triplet;
     const ShaderLayerVector& allLayers = _material->getAllLayers();
+
     for (ShaderLayerVector::const_iterator i = allLayers.begin();
          i != allLayers.end();
          ++i)
@@ -281,13 +282,16 @@ void OpenGLShader::constructLightingPassesFromMaterial()
                 appendInteractionLayer(triplet);
                 triplet.reset();
             }
+
             appendBlendLayer(*i);
         }
     }
 
     // Submit final pass if we reach the end
     if (triplet.specular || triplet.bump || triplet.diffuse)
-    appendInteractionLayer(triplet);
+	{
+		appendInteractionLayer(triplet);
+	}
 }
 
 void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
@@ -391,9 +395,12 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
     BlendFunc blendFunc = layer->getBlendFunc();
     state.m_blend_src = blendFunc.src;
     state.m_blend_dst = blendFunc.dest;
-    if(state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA)
+
+	// Alpha-tested stages or one-over-zero blends should use the depth buffer
+    if (state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA || 
+		(state.m_blend_src == GL_ONE && state.m_blend_dst == GL_ZERO))
     {
-      state.renderFlags |= RENDER_DEPTHWRITE;
+		state.renderFlags |= RENDER_DEPTHWRITE;
     }
 
     // Set texture dimensionality (cube map or 2D)
@@ -412,6 +419,18 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
 
     state.m_sort = OpenGLState::eSortFullbright;
 
+	// Sort position
+    if (_material->getSortRequest() == Material::SORT_DECAL)
+    {
+        state.m_sort = OpenGLState::eSortOverlayFirst;
+    }
+    else
+    {
+        state.m_sort = OpenGLState::eSortFullbright;
+	}
+
+    // Polygon offset
+    state.polygonOffset = _material->getPolygonOffset();
 }
 
 // Construct a normal shader
