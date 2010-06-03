@@ -187,6 +187,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
                         | RENDER_TEXTURE_2D
                         | RENDER_CULLFACE
                         | RENDER_DEPTHTEST
+						| RENDER_DEPTHWRITE
                         | RENDER_COLOURWRITE
                         | RENDER_SMOOTH
                         | RENDER_BUMP
