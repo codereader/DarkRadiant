@@ -226,19 +226,12 @@ bool ShaderTemplate::saveLayer()
     // Append layer to list of all layers
     if (_currentLayer->getBindableTexture()) 
     {
-        m_layers.push_back(_currentLayer);
+		addLayer(_currentLayer);
     }
 
-    // If the layer we just saved was a diffusemap layer, and there is no
-    // editorimage, use the diffusemap as editor image
-    if (_currentLayer->getType() == ShaderLayer::DIFFUSE
-        && !_editorTex)
-    {
-        _editorTex = _currentLayer->getBindableTexture();
-    }
-    
     // Clear the currentLayer structure for possible future layers
     _currentLayer = Doom3ShaderLayerPtr(new Doom3ShaderLayer);
+
     return true;
 }
 
@@ -296,19 +289,23 @@ void ShaderTemplate::parseDefinition()
     }
 }
 
-void ShaderTemplate::addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr)
+void ShaderTemplate::addLayer(const Doom3ShaderLayerPtr& layer)
 {
 	// Add the layer
-	m_layers.push_back(
-		Doom3ShaderLayerPtr(new Doom3ShaderLayer(type, mapExpr))
-	);
+	m_layers.push_back(layer);
 
-	// If there is no editor texture set, use the diffusemap texture instead
-	if (type == ShaderLayer::DIFFUSE && !_editorTex)
+	// If there is no editor texture yet, use the bindable texture regardless of its type
+	if (!_editorTex && layer->getBindableTexture() != NULL)
 	{
-		_editorTex = mapExpr;
+		_editorTex = layer->getBindableTexture();
 	}
 }
 
+void ShaderTemplate::addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr)
+{
+	// Construct a layer out of this mapexpression and pass the call
+	addLayer(Doom3ShaderLayerPtr(new Doom3ShaderLayer(type, mapExpr)));
 }
+
+} // namespace
 
