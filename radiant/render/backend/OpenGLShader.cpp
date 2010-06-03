@@ -318,7 +318,7 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
     // mode from the first blend layer.
     if (!hasDiffuseLayer && numLayers > 0)
     {
-        pass.renderFlags |= RENDER_BLEND;
+        pass.renderFlags |= RENDER_BLEND|RENDER_DEPTHWRITE;
 
         BlendFunc bf = allLayers[0]->getBlendFunc();
         pass.m_blend_src = bf.src;
