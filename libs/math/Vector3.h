@@ -99,7 +99,7 @@ public:
 	 * components are NaN.
 	 */
 	bool isValid() const {
-		return !isnan(_v[0]) && !isnan(_v[0]) && !isnan(_v[0]);		
+		return !isnan(_v[0]) && !isnan(_v[1]) && !isnan(_v[2]);
 	}
 
 	// Return NON-CONSTANT references to the vector components
