@@ -653,6 +653,7 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("RotateSelectionZ", Selection_Rotatez);
 
 	GlobalCommandSystem().addCommand("FindBrush", DoFind);
+	GlobalCommandSystem().addCommand("ConvertSelectedToFuncStatic", selection::algorithm::convertSelectedToFuncStatic);
 	GlobalCommandSystem().addCommand("RevertToWorldspawn", selection::algorithm::revertGroupToWorldSpawn);
 	GlobalCommandSystem().addCommand("MapInfo", ui::MapInfoDialog::showDialog);
 	GlobalCommandSystem().addCommand("EditFiltersDialog", ui::FilterDialog::showDialog);
@@ -762,6 +763,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("RotateSelectionZ", "RotateSelectionZ");
 	
 	GlobalEventManager().addCommand("FindBrush", "FindBrush");
+	GlobalEventManager().addCommand("ConvertSelectedToFuncStatic", "ConvertSelectedToFuncStatic");
 	GlobalEventManager().addCommand("RevertToWorldspawn", "RevertToWorldspawn");
 	GlobalEventManager().addCommand("MapInfo", "MapInfo");
 	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");

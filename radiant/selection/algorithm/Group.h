@@ -83,6 +83,11 @@ namespace selection {
 		scene::INodePtr getFirstSelectedGroupNode() const;
 	};
 
+	/** 
+	 * greebo: Takes the selected primitives and converts them to func_static.
+	 */
+	void convertSelectedToFuncStatic(const cmd::ArgumentList& args);
+
 	/** greebo: This reparents the child primitives of an entity container like func_static
 	 * back to worldspawn and deletes the entity thereafter.  
 	 */

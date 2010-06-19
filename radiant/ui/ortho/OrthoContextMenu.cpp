@@ -184,6 +184,12 @@ OrthoContextMenu::OrthoContextMenu()
 		ev->connectWidget(_widgets[WIDGET_REVERT_WORLDSPAWN]);
 	}
 
+	// Connect the "Convert to func_static" menu item to the corresponding event
+	ev = GlobalEventManager().findEvent("ConvertSelectedToFuncStatic");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_CONVERT_STATIC]);
+	}
+
 	// Connect the "Revert to Worldspawn" menu item to the corresponding event
 	ev = GlobalEventManager().findEvent("MergeSelectedEntities");
 	if (ev != NULL) {
@@ -198,7 +204,6 @@ OrthoContextMenu::OrthoContextMenu()
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_LIGHT]), "activate", G_CALLBACK(callbackAddLight), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PREFAB]), "activate", G_CALLBACK(callbackAddPrefab), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_SPEAKER]), "activate", G_CALLBACK(callbackAddSpeaker), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_CONVERT_STATIC]), "activate", G_CALLBACK(callbackConvertToStatic), this);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_ENTITY]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MODEL]);
@@ -599,14 +604,6 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
         );
 	}
 
-}
-
-void OrthoContextMenu::callbackConvertToStatic(GtkMenuItem* item, OrthoContextMenu* self) {
-	UndoableCommand command("convertToStatic");	
-
-	// Create a func_static entity. Only brushes can be selected if this menu item is
-	// enabled.
-	entity::createEntityFromSelection(MODEL_CLASSNAME, self->_lastPoint);	
 }
 
 void OrthoContextMenu::callbackAddToLayer(int layerID) {

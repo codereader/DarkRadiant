@@ -10,10 +10,26 @@
 #include "entitylib.h"
 #include "map/Map.h"
 #include "gtkutil/dialog.h"
+#include "../../entity.h"
 
 namespace selection {
 
 namespace algorithm {
+
+void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
+{
+	UndoableCommand command("convertSelectedToFuncStatic");	
+
+	// Attempt to create a func_static entity
+	try
+	{
+		entity::createEntityFromSelection("func_static", Vector3(0,0,0));	
+	}
+	catch (EntityCreationException& e)
+	{
+		gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
+	}
+}
 
 void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 {
