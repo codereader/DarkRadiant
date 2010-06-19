@@ -294,8 +294,9 @@ void ShaderTemplate::addLayer(const Doom3ShaderLayerPtr& layer)
 	// Add the layer
 	m_layers.push_back(layer);
 
-	// If there is no editor texture yet, use the bindable texture regardless of its type
-	if (!_editorTex && layer->getBindableTexture() != NULL)
+	// If there is no editor texture yet, use the bindable texture, but no Bump or speculars
+	if (!_editorTex && layer->getBindableTexture() != NULL &&
+		layer->getType() != ShaderLayer::BUMP && layer->getType() != ShaderLayer::SPECULAR)
 	{
 		_editorTex = layer->getBindableTexture();
 	}
