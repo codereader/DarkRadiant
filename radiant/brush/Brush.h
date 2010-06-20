@@ -199,6 +199,9 @@ public:
 	// Returns TRUE if any of the faces has the given shader
 	bool hasShader(const std::string& name);
 
+	// Returns TRUE if any face materials are visible
+	bool hasVisibleMaterial() const;
+
 	void evaluateBRep() const;
 	
 	void transformChanged();

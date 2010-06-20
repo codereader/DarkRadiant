@@ -203,8 +203,14 @@ const AABB& PatchNode::getSelectedComponentsBounds() const {
 	return m_aabb_component;
 }
 
-bool PatchNode::isVisible() const {
-	return visible() && m_patch.getState()->getMaterial()->isVisible();
+bool PatchNode::isVisible() const
+{
+	return visible() && hasVisibleMaterial();
+}
+
+bool PatchNode::hasVisibleMaterial() const
+{
+	return m_patch.getState()->getMaterial()->isVisible();
 }
 
 void PatchNode::setSelected(bool select) {
@@ -285,7 +291,9 @@ void PatchNode::destroyStatic() {
 
 void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	// greebo: Don't know yet, what evaluateTransform() is really doing
+	// Don't render invisible shaders
+	if (!m_patch.getState()->getMaterial()->isVisible()) return;
+
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	collector.setLights(*m_lightList);
 	
@@ -298,7 +306,9 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 
 void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	// greebo: Don't know yet, what evaluateTransform() is really doing
+	// Don't render invisible shaders
+	if (!m_patch.getState()->getMaterial()->isVisible()) return;
+
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	
 	// Pass the call to the patch instance, it adds the renderable
@@ -311,6 +321,9 @@ void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 // Renders the components of this patch instance, makes use of the Patch::render_component() method 
 void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
+	// Don't render invisible shaders
+	if (!m_patch.getState()->getMaterial()->isVisible()) return;
+
 	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
 		

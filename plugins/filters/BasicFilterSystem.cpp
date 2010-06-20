@@ -162,9 +162,13 @@ void BasicFilterSystem::removeObserver(const ObserverPtr& observer) {
 	_observers.erase(observer);
 }
 
-void BasicFilterSystem::update() {
-	updateScene();
+void BasicFilterSystem::update()
+{
+	// Update shaders first, so that nodes can judge whether they're hidden on basis of their texture
 	updateShaders();
+
+	// Now update the scene
+	updateScene();
 }
 
 void BasicFilterSystem::forEachFilter(IFilterVisitor& visitor) {

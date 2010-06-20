@@ -133,6 +133,9 @@ public:
 	virtual const std::string& getShader() const = 0;
 	virtual void setShader(const std::string& name) = 0;
 
+	// greebo: returns true if the patch's shader is visible, false otherwise
+	virtual bool hasVisibleMaterial() const = 0;
+
 	/** 
 	 * greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
 	 */

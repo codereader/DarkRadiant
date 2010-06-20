@@ -184,6 +184,21 @@ bool Brush::hasShader(const std::string& name) {
 	return false;
 }
 
+bool Brush::hasVisibleMaterial() const
+{
+	// Traverse the faces
+	for (Faces::const_iterator i = m_faces.begin(); i != m_faces.end(); ++i)
+	{
+		if ((*i)->getFaceShader().getGLShader()->getMaterial()->isVisible())
+		{
+			return true; // return true on first visible material
+		}
+	}
+
+	// no visible material
+	return false;
+}
+
 void Brush::evaluateBRep() const {
 	if(m_planeChanged) {
 		m_planeChanged = false;

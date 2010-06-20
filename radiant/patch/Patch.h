@@ -170,6 +170,9 @@ public:
 	// Gets the shader name or sets the shader to <name>
 	const std::string& getShader() const;
 	void setShader(const std::string& name);
+
+	// greebo: returns true if the patch's shader is visible, false otherwise
+	bool hasVisibleMaterial() const;
 	
 	// As the name states: get the shader flags of the m_state shader
 	int getShaderFlags() const;
