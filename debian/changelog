@@ -1,3 +1,40 @@
+darkradiant (1.3.2svn5614~lucid1) lucid; urgency=low
+
+  * Extended PopupMenu interface and functionality a bit, with the goal to let the
+  OrthoContext menu derive from gtkutil::PopupMenu.
+
+  * Add RENDER_DEPTHWRITE to blend materials, this should really fix issue #2230
+  now.
+
+  * If pure "map" stages without blend type are encountered, this is still taken
+  as editor preview pass, it's better than "shader not found".
+
+  * Fixed default diffusemap shader pass not writing to depth buffer, looked wrong
+  in lighting mode.
+
+  * Fixed decals rendered invisible in lighting mode.     
+  
+  * Fixed default map stages not writing to the depth buffer.
+
+  * Fixed a copy&paste error in Vector3::isValid(). Thanks to razor85 for spotting
+  it.
+
+  * Don't use bumpmaps as editor image.
+
+  * Made "Convert to func_static" a proper event/command, so that it's accessible
+  via the console.
+
+  * Fixed issue #2248: Ortho views always aligned to Z_Y on startup (splitpane
+  layout).
+
+  * Fixed issue #2253: Curve control points need to be interpreted as world
+  coordinates at all times. Removed code from previous fix attempts.
+
+  * Fixed issue #2274: If a patch shader is filtered, the patch itself can still
+  be selected/affected.
+
+ -- OrbWeaver <orbweaver3d@gmail.com>  Sun, 20 Jun 2010 17:28:05 +0100
+
 darkradiant (1.3.1svn5594~lucid1) lucid; urgency=low
 
   * OpenGLShaderPasses are checked if they are applicable before calling
