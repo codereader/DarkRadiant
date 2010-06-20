@@ -17,14 +17,18 @@ CurveEditInstance::CurveEditInstance(Curve& curve, const SelectionChangeCallback
     m_selectedRender(GL_POINTS)
 {}
 
-void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test) {
+void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test)
+{
     ASSERT_MESSAGE(_controlPointsTransformed.size() == _selectables.size(), "curve instance mismatch");
+
     ControlPoints::const_iterator p = _controlPointsTransformed.begin();
+
     for(Selectables::iterator i = _selectables.begin(); i != _selectables.end(); ++i, ++p)
     {
     	SelectionIntersection best;
 		test.TestPoint(*p, best);
-		if (best.valid()) {
+		if (best.valid())
+		{
 			Selector_add(selector, *i, best);
 		}
     }

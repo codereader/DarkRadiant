@@ -56,9 +56,6 @@ class Doom3Group
 	// brushes).
 	bool m_isModel;
 
-	// A matrix transforming local entity coordinates to world coordinates
-	Matrix4 _originToWorld;
-
 	KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
 	KeyObserverDelegate _modelObserver;
@@ -87,8 +84,6 @@ public:
 	
 	Vector3& getOrigin();
 
-	const Matrix4& getOriginToWorld() const;
-	
 	// Curve-related methods
 	void appendControlPoints(unsigned int numPoints);
 	void convertCurveType();
