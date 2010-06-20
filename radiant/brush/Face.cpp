@@ -189,7 +189,7 @@ void Face::submitRenderables(RenderableCollector& collector,
                              const Matrix4& localToWorld) const 
 {
 	// We assume that the shader is visible when this method is called
-	assert(_faceShader.getGLShader()->isVisible());
+	assert(_faceShader.getGLShader()->getMaterial()->isVisible());
 
 	collector.SetState(_faceShader.getGLShader(), RenderableCollector::eFullMaterials);
 	collector.addRenderable(*this, localToWorld);
