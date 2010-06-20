@@ -143,14 +143,18 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
                                      const VolumeTest& volume,
                                      const Matrix4& localToWorld) const 
 {
-	if (m_face->contributes() && intersectVolume(volume, localToWorld)) {
-			collector.PushState();
-			if (selectedComponents()) {
-					collector.Highlight(RenderableCollector::eFace);
-				}
-			m_face->submitRenderables(collector, localToWorld);
-			collector.PopState();
+	if (m_face->contributes() && intersectVolume(volume, localToWorld))
+	{
+		collector.PushState();
+
+		if (selectedComponents())
+		{
+			collector.Highlight(RenderableCollector::eFace);
 		}
+
+		m_face->submitRenderables(collector, localToWorld);
+		collector.PopState();
+	}
 }
 
 void FaceInstance::testSelect(SelectionTest& test, SelectionIntersection& best) {

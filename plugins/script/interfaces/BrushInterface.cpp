@@ -161,6 +161,14 @@ public:
 		return brushNode->getIBrush().hasShader(name);
 	}
 
+	bool hasVisibleMaterial()
+	{
+		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
+		if (brushNode == NULL) return false;
+
+		return brushNode->getIBrush().hasVisibleMaterial();
+	}
+
 	// Saves the current state to the undo stack.
 	// Call this before manipulating the brush to make your action undo-able.
 	void undoSave() 
@@ -244,6 +252,7 @@ void BrushInterface::registerInterface(boost::python::object& nspace)
 		.def("removeEmptyFaces", &ScriptBrushNode::getNumFaces)
 		.def("setShader", &ScriptBrushNode::setShader)
 		.def("hasShader", &ScriptBrushNode::hasShader)
+		.def("hasVisibleMaterial", &ScriptBrushNode::hasVisibleMaterial)
 		.def("undoSave", &ScriptBrushNode::undoSave)
 		.def("getFace", &ScriptBrushNode::getFace)
 	;

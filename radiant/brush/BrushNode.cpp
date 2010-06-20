@@ -430,6 +430,9 @@ void BrushNode::renderSolid(RenderableCollector& collector,
          i != m_faceInstances.end();
          ++i) 
     {
+		// Skip invisible faces before traversing further
+		if (!i->getFace().getFaceShader().getGLShader()->getMaterial()->isVisible()) continue;
+
         collector.setLights(i->m_lights);
         i->submitRenderables(collector, volume, localToWorld);
     }

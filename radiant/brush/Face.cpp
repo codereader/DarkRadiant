@@ -188,19 +188,11 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
 void Face::submitRenderables(RenderableCollector& collector,
                              const Matrix4& localToWorld) const 
 {
-    // Get the shader for rendering
-    const ShaderPtr& glShader = _faceShader.getGLShader();
-    assert(glShader != NULL);
+	// We assume that the shader is visible when this method is called
+	assert(_faceShader.getGLShader()->isVisible());
 
-    // Submit this face to the RenderableCollector only if its shader is not
-    // filtered
-    assert(glShader->getMaterial());
-
-    if (glShader->getMaterial()->isVisible()) 
-    {
-        collector.SetState(glShader, RenderableCollector::eFullMaterials);
-		collector.addRenderable(*this, localToWorld);
-	}
+	collector.SetState(_faceShader.getGLShader(), RenderableCollector::eFullMaterials);
+	collector.addRenderable(*this, localToWorld);
 }
 
 void Face::transform(const Matrix4& matrix, bool mirror) {

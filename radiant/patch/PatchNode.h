@@ -102,6 +102,9 @@ public:
 	// Returns true if this patch can be rendered
 	bool isVisible() const;
 
+	// Returns true if the material itself is visible
+	bool hasVisibleMaterial() const;
+
 	// greebo: snaps all the _selected_ components to the grid (should be called "snapSelectedComponents")
 	void snapComponents(float snap);
 

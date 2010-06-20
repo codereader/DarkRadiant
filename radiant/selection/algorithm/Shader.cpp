@@ -102,7 +102,7 @@ std::string getShaderFromSelection() {
 					UniqueShaderFinder(patchShader)
 				);
 			}
-			catch (AmbiguousShaderException& a) {
+			catch (AmbiguousShaderException&) {
 				patchShader = "";
 			}
 		}
@@ -118,7 +118,7 @@ std::string getShaderFromSelection() {
 					UniqueShaderFinder(faceShader)
 				);
 			}
-			catch (AmbiguousShaderException& a) {
+			catch (AmbiguousShaderException&) {
 				faceShader = "";
 			}
 		}
@@ -128,7 +128,7 @@ std::string getShaderFromSelection() {
 				UniqueShaderFinder finder(faceShader);
 				g_SelectedFaceInstances.foreach(finder);
 			}
-			catch (AmbiguousShaderException& a) {
+			catch (AmbiguousShaderException&) {
 				faceShader = "";
 			}
 		}

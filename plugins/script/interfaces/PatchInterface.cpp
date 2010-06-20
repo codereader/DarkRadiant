@@ -160,6 +160,14 @@ public:
 		patchNode->getPatch().setShader(name);
 	}
 
+	bool hasVisibleMaterial()
+	{
+		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
+		if (patchNode == NULL) return false;
+
+		return patchNode->getPatch().hasVisibleMaterial();
+	}
+
 	bool subdivionsFixed() const 
 	{
 		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
@@ -265,6 +273,7 @@ void PatchInterface::registerInterface(boost::python::object& nspace) {
 		.def("getShader", &ScriptPatchNode::getShader, 
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
 		.def("setShader", &ScriptPatchNode::setShader)
+		.def("hasVisibleMaterial", &ScriptPatchNode::hasVisibleMaterial)
 		.def("subdivionsFixed", &ScriptPatchNode::subdivionsFixed)
 		.def("getSubdivisions", &ScriptPatchNode::getSubdivisions)
 		.def("setFixedSubdivisions", &ScriptPatchNode::setFixedSubdivisions)

@@ -389,6 +389,11 @@ void Patch::setShader(const std::string& name)
 	textureChanged();
 }
 
+bool Patch::hasVisibleMaterial() const
+{
+	return m_state->getMaterial()->isVisible();
+}
+
 int Patch::getShaderFlags() const {
 	if(m_state != 0) {
 		return m_state->getFlags();

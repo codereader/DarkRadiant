@@ -51,11 +51,20 @@ private:
 	// Helper visitors to update subgraphs
 	NodeVisibilityUpdater _hideWalker;
 	NodeVisibilityUpdater _showWalker;
+
+	// Cached boolean to avoid GlobalFilterSystem() queries for each node
+	bool _patchesAreVisible;
+	bool _brushesAreVisible;
+
 public:
 	InstanceUpdateWalker() :
 		_hideWalker(true),
-		_showWalker(false)
-	{}
+		_showWalker(false),
+		_patchesAreVisible(GlobalFilterSystem().isVisible("object", "patch")),
+		_brushesAreVisible(GlobalFilterSystem().isVisible("object", "brush"))
+	{
+
+	}
 
 	// Pre-descent walker function
 	bool pre(const scene::INodePtr& node)
@@ -76,22 +85,24 @@ public:
 			return entityClassVisible;
 		}
 		
-		// greebo: Update visibility of PatchInstances
-		if (Node_isPatch(node))
+		// greebo: Update visibility of Patches
+		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
+
+		if (patchNode != NULL)
 		{
-			Node_traverseSubgraph(
-				node, 
-				GlobalFilterSystem().isVisible("object", "patch") ? _showWalker : _hideWalker
-			);
+			bool isVisible = _patchesAreVisible && patchNode->getPatch().hasVisibleMaterial();
+
+			Node_traverseSubgraph(node, isVisible ? _showWalker : _hideWalker);
 		}
-		
-		// greebo: Update visibility of BrushInstances
-		if (Node_isBrush(node))
+
+		// greebo: Update visibility of Brushes
+		IBrush* brush = Node_getIBrush(node);
+
+		if (brush != NULL)
 		{
-			Node_traverseSubgraph(
-				node, 
-				GlobalFilterSystem().isVisible("object", "brush") ? _showWalker : _hideWalker
-			);
+			bool isVisible = _brushesAreVisible && brush->hasVisibleMaterial();
+
+			Node_traverseSubgraph(node, isVisible ? _showWalker : _hideWalker);
 		}
 
 		if (!node->visible())

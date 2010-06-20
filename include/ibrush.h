@@ -130,6 +130,9 @@ public:
 	// Returns TRUE if any of the faces has the given shader
 	virtual bool hasShader(const std::string& name) = 0;
 
+	// Returns TRUE if any of the brush's faces has a visible material, FALSE if all faces are effectively hidden
+	virtual bool hasVisibleMaterial() const = 0;
+
 	// Saves the current state to the undo stack.
 	// Call this before manipulating the brush to make your action undo-able.
 	virtual void undoSave() = 0;
