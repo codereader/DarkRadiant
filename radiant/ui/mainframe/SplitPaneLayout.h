@@ -54,13 +54,26 @@ private:
 	Position _cameraPosition;
 
 	// Widget distribution
-	typedef std::map<Position, GtkWidget*> WidgetMap;
+	struct QuadrantInfo
+	{
+		GtkWidget* widget;	// the widget to pack (framed widget)
+		
+		bool isCamera;		// true => is camera view
+		XYWndPtr xyWnd;		// the xywnd (NULL if isCamera == true)
+
+		QuadrantInfo() :
+			widget(NULL),
+			isCamera(false)
+		{}
+	};
+
+	typedef std::map<Position, QuadrantInfo> WidgetMap;
 	WidgetMap _quadrants;
 
-	typedef std::map<EViewType, GtkWidget*> OrthoViewMap;
-	OrthoViewMap _orthoViews;
-
 	GtkWidget* _camera;
+
+	// Private constructor
+	SplitPaneLayout();
 
 public:
 	// IMainFrameLayout implementation
@@ -75,6 +88,8 @@ public:
 private:
 	void maximiseCameraSize();
 	void restorePanePositions();
+
+	void clearQuadrantInfo();
 
 	Position getCameraPositionFromRegistry();
 	void saveCameraPositionToRegistry();
