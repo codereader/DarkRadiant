@@ -62,6 +62,7 @@ Node::Node() :
 
 Node::Node(const Node& other) :
 	INode(other),
+	boost::enable_shared_from_this<Node>(other),
 	_state(other._state),
 	_isRoot(other._isRoot),
 	_id(getNewId()),	// ID is incremented on copy

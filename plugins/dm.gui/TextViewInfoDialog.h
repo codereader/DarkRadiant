@@ -65,4 +65,4 @@ public:
 
 } // namespace
 
-#endif TEXT_VIEW_INFO_DIALOG_H
+#endif /* TEXT_VIEW_INFO_DIALOG_H */

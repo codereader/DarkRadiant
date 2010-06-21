@@ -89,11 +89,11 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	_guiView(new gui::ReadableGuiView),
 	_result(RESULT_CANCEL),
 	_entity(entity),
-	_currentPageIndex(0),
 	_xdLoader(new XData::XDataLoader()),
+	_currentPageIndex(0),
+	_xdNameSpecified(false),
 	_runningGuiLayoutCheck(false),
 	_runningXDataUniquenessCheck(false),
-	_xdNameSpecified(false),
 	_useDefaultFilename(true),
 	_saveInProgress(false)
 {
@@ -1330,7 +1330,10 @@ void ReadableEditorDialog::checkGuiLayout()
 	std::string guiName = gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_GUI_ENTRY]));
 
 	std::string msg;
-	switch ( gui::GuiManager::Instance().getGuiType(guiName) )
+
+	gui::GuiType type = gui::GuiManager::Instance().getGuiType(guiName);
+	
+	switch (type)
 	{
 		case gui::NO_READABLE:
 			msg = _("The specified gui definition is not a readable.");
@@ -1364,6 +1367,9 @@ void ReadableEditorDialog::checkGuiLayout()
 			break;
 		case gui::FILE_NOT_FOUND:
 			msg = _("The specified Definition does not exist.");
+			break;
+		default:
+			globalWarningStream() << "Invalid GUI type encountered in switch: " << type << std::endl;
 			break;
 	}
 

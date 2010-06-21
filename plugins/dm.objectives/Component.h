@@ -216,7 +216,7 @@ public:
 
 	// returns "" if the argument with the given index doesn't exist
 	std::string getArgument(std::size_t index) {
-		return (index >= 0 && index < _arguments.size()) ? _arguments[index] : "";
+		return index < _arguments.size() ? _arguments[index] : "";
 	}
 
 	// Sets the argument with the given index

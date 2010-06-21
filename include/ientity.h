@@ -35,6 +35,8 @@ typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 class KeyObserver
 {
 public:
+	virtual ~KeyObserver() {}
+
 	/**
 	 * This event gets called when the observed keyvalue changes.
 	 * The new value is passed as argument, which can be an empty string.
