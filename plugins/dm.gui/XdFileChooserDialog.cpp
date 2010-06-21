@@ -49,9 +49,10 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 
 XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog* editorDialog) : 
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GTK_WINDOW(editorDialog->getWindow())),
+	_treeview(NULL),
+	_result(RESULT_CANCEL),
 	_editorDialog(editorDialog),
-	_defName(defName),
-	_result(RESULT_CANCEL)
+	_defName(defName)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);

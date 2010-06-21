@@ -65,9 +65,9 @@ Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback&
 	m_render_ctrl(GL_POINTS, m_ctrl_vertices),
 	m_render_lattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
+	_tesselationChanged(true),
 	m_evaluateTransform(evaluateTransform),
-	m_boundsChanged(boundsChanged),
-	_tesselationChanged(true)
+	m_boundsChanged(boundsChanged)
 {
 	construct();
 }
@@ -88,9 +88,9 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	m_render_ctrl(GL_POINTS, m_ctrl_vertices),
 	m_render_lattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
+	_tesselationChanged(true),
 	m_evaluateTransform(evaluateTransform),
-	m_boundsChanged(boundsChanged),
-	_tesselationChanged(true)
+	m_boundsChanged(boundsChanged)
 {
 	// Initalise the default values
 	construct();

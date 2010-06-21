@@ -13,7 +13,7 @@ namespace fonts
 namespace q3font
 {
 	// Default values of Quake 3 sourcecode. Don't change!
-	const int GLYPH_COUNT_PER_FONT = 256;
+	const std::size_t GLYPH_COUNT_PER_FONT = 256;
 
 } // namespace
 
@@ -53,6 +53,8 @@ enum Resolution
 class IGlyphSet
 {
 public:
+	virtual ~IGlyphSet() {}
+
 	// 12, 24, 48
 	virtual Resolution getResolution() const = 0;
 
@@ -80,6 +82,8 @@ typedef boost::shared_ptr<IGlyphSet> IGlyphSetPtr;
 class IFontInfo
 {
 public:
+	virtual ~IFontInfo() {}
+
 	// The name of the font, e.g. "carleton"
 	virtual const std::string& getName() const = 0;
 	

@@ -239,4 +239,4 @@ typedef boost::shared_ptr<TwoSidedXData> TwoSidedXDataPtr;
 
 } //namespace XData
 
-#endif XDATA_H
+#endif /* XDATA_H */

@@ -266,6 +266,8 @@ public:
 	class ActiveShadersObserver
 	{
 	public:
+		virtual ~ActiveShadersObserver() {}
+
 		virtual void onActiveShadersChanged() = 0;
 	};
 	typedef boost::shared_ptr<ActiveShadersObserver> ActiveShadersObserverPtr;

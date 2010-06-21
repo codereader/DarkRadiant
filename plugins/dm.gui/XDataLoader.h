@@ -161,4 +161,4 @@ typedef boost::shared_ptr<XDataLoader> XDataLoaderPtr;
 
 } // namespace XData
 
-#endif XDATALOADER_H
+#endif /* XDATALOADER_H */
