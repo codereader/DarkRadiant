@@ -195,7 +195,12 @@ static int _ms3d_canload( PM_PARAMS_CANLOAD )
 
 static unsigned char *GetWord( unsigned char *bufptr, int *out )
 {
-	if (bufptr == NULL) return NULL;
+	if (bufptr == NULL)
+	{
+		*out = 0; 
+		return NULL;
+	}
+
 	*out = _pico_little_short( *(unsigned short *)bufptr );
 	return( bufptr + 2 );
 }
