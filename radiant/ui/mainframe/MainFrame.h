@@ -1,6 +1,7 @@
 #ifndef _MAINFRAME_H_
 #define _MAINFRAME_H_
 
+#include <map>
 #include "icommandsystem.h"
 #include "imainframe.h"
 #include "iregistry.h"
@@ -25,6 +26,9 @@ class MainFrame :
 	// The current layout object (NULL if no layout active)
 	IMainFrameLayoutPtr _currentLayout;
 
+	typedef std::map<Toolbar, GtkToolbar*> ToolbarMap;
+	ToolbarMap _toolbars;
+
 public:
 	MainFrame();
 
@@ -38,6 +42,7 @@ public:
 
 	GtkWindow* getTopLevelWindow();
 	GtkWidget* getMainContainer();
+	GtkToolbar* getToolbar(Toolbar type);
 
 	void updateAllWindows();
 
