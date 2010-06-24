@@ -51,8 +51,8 @@ void SelectionSetManager::onRadiantStartup()
 	// Get the horizontal toolbar and add a custom widget
 	GtkToolbar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
 
-	//GtkToolItem* item = GTK_TOOL_ITEM(gtk_separator_tool_item_new());
-	//gtk_toolbar_insert(toolbar, item, -1);
+	GtkToolItem* item = GTK_TOOL_ITEM(gtk_separator_tool_item_new());
+	gtk_toolbar_insert(toolbar, item, -1);
 
 	gtk_widget_show(GTK_WIDGET(item));
 }
