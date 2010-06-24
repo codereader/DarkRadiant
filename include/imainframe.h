@@ -8,6 +8,7 @@ const std::string MODULE_MAINFRAME("MainFrame");
 // Forward declaration
 typedef struct _GtkWindow GtkWindow;
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkToolbar GtkToolbar;
 
 class IMainFrame :
 	public RegisterableModule
@@ -41,6 +42,18 @@ public:
 	 * May return NULL if mainframe is not constructed yet.
 	 */
 	virtual GtkWidget* getMainContainer() = 0;
+
+	enum Toolbar
+	{
+		TOOLBAR_HORIZONTAL,	// the "view" toolbar (on the top)
+		TOOLBAR_VERTICAL,	// the "edit" toolbar (on the left)
+	};
+
+	/** 
+	 * greebo: Returns a toolbar widget, as specified by the 
+	 * passed enum value.
+	 */
+	virtual GtkToolbar* getToolbar(Toolbar type) = 0;
 
 	/**
 	 * Updates all viewports which are child of the toplevel window.
