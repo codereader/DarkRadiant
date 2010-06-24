@@ -1508,6 +1508,18 @@
 						>
 					</File>
 				</Filter>
+				<Filter
+					Name="selectionset"
+					>
+					<File
+						RelativePath="..\..\radiant\selection\selectionset\SelectionSetManager.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\selection\selectionset\SelectionSetManager.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="settings"
