@@ -101,6 +101,9 @@ void SelectionSetToolmenu::onEntryActivated(GtkEntry* entry,
 	assert(set != NULL);
 
 	set->assignFromCurrentScene();
+
+	// Clear the entry again
+	gtk_entry_set_text(GTK_ENTRY(entry), "");
 }
 
 void SelectionSetToolmenu::onSelectionChanged(GtkComboBox* comboBox, 
@@ -120,6 +123,9 @@ void SelectionSetToolmenu::onSelectionChanged(GtkComboBox* comboBox,
 
 		// Select the given set
 		set->select();
+
+		GtkWidget* childEntry = gtk_bin_get_child(GTK_BIN(self->_entry));
+		gtk_entry_set_text(GTK_ENTRY(childEntry), "");
 	}
 }
 
