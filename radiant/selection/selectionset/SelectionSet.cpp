@@ -5,6 +5,15 @@
 namespace selection
 {
 
+SelectionSet::SelectionSet(const std::string& name) :
+	_name(name)
+{}
+
+const std::string& SelectionSet::getName() 
+{
+	return _name;
+}
+
 bool SelectionSet::empty()
 {
 	return _nodes.empty();
@@ -51,6 +60,8 @@ void SelectionSet::addNode(const scene::INodePtr& node)
 
 void SelectionSet::assignFromCurrentScene()
 {
+	clear();
+
 	class Walker :
 		public SelectionSystem::Visitor
 	{
