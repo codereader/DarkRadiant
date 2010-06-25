@@ -19,6 +19,9 @@ class SelectionSetManager :
 	public boost::enable_shared_from_this<SelectionSetManager>
 {
 private:
+	typedef std::set<ISelectionSetManager::Observer*> Observers;
+	Observers _observers;
+
 	SelectionSetToolmenuPtr _toolmenu;
 
 	typedef std::map<std::string, SelectionSetPtr> SelectionSets;
@@ -34,9 +37,17 @@ public:
 	void onRadiantStartup();
 
 	// ISelectionManager implementation
+	void addObserver(Observer& observer);
+	void removeObserver(Observer& observer);
+
+	void foreachSelectionSet(Visitor& visitor);
 	ISelectionSetPtr createSelectionSet(const std::string& name);
 	void deleteSelectionSet(const std::string& name);
+	void deleteAllSelectionSets();
 	ISelectionSetPtr findSelectionSet(const std::string& name);
+
+private:
+	void notifyObservers();
 };
 
 } // namespace

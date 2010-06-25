@@ -63,6 +63,32 @@ void SelectionSetManager::onRadiantStartup()
 	gtk_toolbar_insert(toolbar, _toolmenu->getToolItem(), -1);	
 }
 
+void SelectionSetManager::addObserver(Observer& observer)
+{
+	_observers.insert(&observer);
+}
+
+void SelectionSetManager::removeObserver(Observer& observer)
+{
+	_observers.erase(&observer);
+}
+
+void SelectionSetManager::notifyObservers()
+{
+	for (Observers::iterator i = _observers.begin(); i != _observers.end(); )
+	{
+		(*i++)->onSelectionSetsChanged();
+	}
+}
+
+void SelectionSetManager::foreachSelectionSet(Visitor& visitor)
+{
+	for (SelectionSets::const_iterator i = _selectionSets.begin(); i != _selectionSets.end(); )
+	{
+		visitor.visit((i++)->second);
+	}
+}
+
 ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name)
 {
 	SelectionSets::iterator i = _selectionSets.find(name);
@@ -71,9 +97,11 @@ ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name
 	{
 		// Create new set
 		std::pair<SelectionSets::iterator, bool> result = _selectionSets.insert(
-			SelectionSets::value_type(name, SelectionSetPtr(new SelectionSet)));
+			SelectionSets::value_type(name, SelectionSetPtr(new SelectionSet(name))));
 
 		i = result.first;
+
+		notifyObservers();
 	}
 
 	return i->second;
@@ -86,7 +114,15 @@ void SelectionSetManager::deleteSelectionSet(const std::string& name)
 	if (i != _selectionSets.end())
 	{
 		_selectionSets.erase(i);
+
+		notifyObservers();
 	}
+}
+
+void SelectionSetManager::deleteAllSelectionSets()
+{
+	_selectionSets.clear();
+	notifyObservers();
 }
 
 ISelectionSetPtr SelectionSetManager::findSelectionSet(const std::string& name)

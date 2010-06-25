@@ -15,7 +15,13 @@ private:
 	typedef std::set<scene::INodeWeakPtr> NodeSet;
 	NodeSet _nodes;
 
+	std::string _name;
+
 public:
+	SelectionSet(const std::string& name);
+
+	const std::string& getName();
+
 	// Checks whether this set is empty
 	bool empty();
 

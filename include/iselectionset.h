@@ -9,6 +9,9 @@ namespace selection
 class ISelectionSet
 {
 public:
+	// The name of this set
+	virtual const std::string& getName() = 0;
+
 	// Checks whether this set is empty
 	virtual bool empty() = 0;
 
@@ -31,6 +34,29 @@ class ISelectionSetManager :
 	public RegisterableModule
 {
 public:
+	class Observer
+	{
+	public:
+		// Called when the list of selection sets has been changed,
+		// by deletion or addition
+		virtual void onSelectionSetsChanged() = 0;
+	};
+
+	virtual void addObserver(Observer& observer) = 0;
+	virtual void removeObserver(Observer& observer) = 0;
+
+	class Visitor
+	{
+	public:
+		virtual void visit(const ISelectionSetPtr& set) = 0;
+	};
+
+	/**
+	 * greebo: Traverses the list of selection sets using 
+	 * the given visitor class.
+	 */
+	virtual void foreachSelectionSet(Visitor& visitor) = 0;
+
 	/**
 	 * greebo: Creates a new selection set with the given name.
 	 * If a selection with that name is already registered, the existing
@@ -43,6 +69,11 @@ public:
 	 * not existing, nothing happens.
 	 */
 	virtual void deleteSelectionSet(const std::string& name) = 0;
+
+	/** 
+	 * Deletes all sets.
+	 */
+	virtual void deleteAllSelectionSets() = 0;
 
 	/**
 	 * Finds the named selection set.
