@@ -4,6 +4,8 @@
 #include "imodule.h"
 #include "iradiant.h"
 
+#include "SelectionSetToolmenu.h"
+
 #include <boost/enable_shared_from_this.hpp>
 
 namespace selection
@@ -14,6 +16,9 @@ class SelectionSetManager :
 	public RadiantEventListener,
 	public boost::enable_shared_from_this<SelectionSetManager>
 {
+private:
+	SelectionSetToolmenuPtr _toolmenu;
+
 public:
 	// RegisterableModule implementation
 	const std::string& getName() const;
