@@ -1512,6 +1512,14 @@
 					Name="selectionset"
 					>
 					<File
+						RelativePath="..\..\radiant\selection\selectionset\SelectionSet.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\selection\selectionset\SelectionSet.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\selection\selectionset\SelectionSetManager.cpp"
 						>
 					</File>

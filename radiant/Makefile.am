@@ -149,6 +149,8 @@ darkradiant_SOURCES = main.cpp \
 					  selection/shaderclipboard/ShaderClipboard.cpp \
 					  selection/shaderclipboard/Texturable.cpp \
 					  selection/selectionset/SelectionSetManager.cpp \
+					  selection/selectionset/SelectionSetToolmenu.cpp \
+					  selection/selectionset/SelectionSet.cpp \
 					  selection/SelectionTest.cpp \
 					  selection/ManipulateObserver.cpp \
 					  selection/TransformationVisitors.cpp \

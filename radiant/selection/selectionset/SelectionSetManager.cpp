@@ -43,7 +43,7 @@ void SelectionSetManager::initialiseModule(const ApplicationContext& ctx)
 
 void SelectionSetManager::shutdownModule()
 {
-	// nothing yet
+	_selectionSets.clear();
 }
 
 void SelectionSetManager::onRadiantStartup()
@@ -61,6 +61,39 @@ void SelectionSetManager::onRadiantStartup()
 	_toolmenu = SelectionSetToolmenuPtr(new SelectionSetToolmenu);
 
 	gtk_toolbar_insert(toolbar, _toolmenu->getToolItem(), -1);	
+}
+
+ISelectionSetPtr SelectionSetManager::createSelectionSet(const std::string& name)
+{
+	SelectionSets::iterator i = _selectionSets.find(name);
+
+	if (i == _selectionSets.end())
+	{
+		// Create new set
+		std::pair<SelectionSets::iterator, bool> result = _selectionSets.insert(
+			SelectionSets::value_type(name, SelectionSetPtr(new SelectionSet)));
+
+		i = result.first;
+	}
+
+	return i->second;
+}
+
+void SelectionSetManager::deleteSelectionSet(const std::string& name)
+{
+	SelectionSets::iterator i = _selectionSets.find(name);
+
+	if (i != _selectionSets.end())
+	{
+		_selectionSets.erase(i);
+	}
+}
+
+ISelectionSetPtr SelectionSetManager::findSelectionSet(const std::string& name)
+{
+	SelectionSets::iterator i = _selectionSets.find(name);
+
+	return (i != _selectionSets.end()) ? i->second : ISelectionSetPtr();
 }
 
 // Define the static SelectionSetManager module

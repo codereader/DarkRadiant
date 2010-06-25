@@ -5,6 +5,7 @@
 
 typedef struct _GtkToolItem GtkToolItem;
 typedef struct _GtkWidget GtkWidget;
+typedef struct _GtkCellEditable GtkCellEditable;
 
 namespace selection
 {
@@ -21,6 +22,9 @@ public:
 
 	// Get the tool item widget for packing this control into a GtkToolbar
 	GtkToolItem* getToolItem();
+
+private:
+	static void onSelectionSetEdited(GtkCellEditable* cellEditable, SelectionSetToolmenu* self);
 };
 typedef boost::shared_ptr<SelectionSetToolmenu> SelectionSetToolmenuPtr;
 
