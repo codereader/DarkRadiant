@@ -1519,6 +1519,14 @@
 						RelativePath="..\..\radiant\selection\selectionset\SelectionSetManager.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\selection\selectionset\SelectionSetToolmenu.h"
+						>
+					</File>
 				</Filter>
 			</Filter>
 			<Filter
