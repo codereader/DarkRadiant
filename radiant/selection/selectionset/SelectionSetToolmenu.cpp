@@ -1,6 +1,7 @@
 #include "SelectionSetToolmenu.h"
 
 #include "i18n.h"
+#include "ieventmanager.h"
 
 #include <gtk/gtktoolitem.h>
 #include <gtk/gtkhbox.h>
@@ -121,8 +122,15 @@ void SelectionSetToolmenu::onSelectionChanged(GtkComboBox* comboBox,
 
 		if (set == NULL) return;
 
-		// Select the given set
-		set->select();
+		// The user can choose to DESELECT the set nodes when holding down shift
+		if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0)
+		{
+			set->deselect();
+		}
+		else
+		{
+			set->select();
+		}
 
 		GtkWidget* childEntry = gtk_bin_get_child(GTK_BIN(self->_entry));
 		gtk_entry_set_text(GTK_ENTRY(childEntry), "");
