@@ -324,6 +324,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\iselectionset.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\ishaders.h"
 			>
 		</File>
