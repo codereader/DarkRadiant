@@ -14,6 +14,7 @@
 #include "iradiant.h"
 #include "imainframe.h"
 #include "imapresource.h"
+#include "iselectionset.h"
 
 #include "stream/textfilestream.h"
 #include "entitylib.h"
@@ -179,6 +180,7 @@ void Map::onResourceUnrealise() {
       setWorldspawn(scene::INodePtr());
 
       GlobalUndoSystem().clear();
+	  GlobalSelectionSetManager().deleteAllSelectionSets();
 
 	  GlobalSceneGraph().setRoot(scene::INodePtr());
     }
