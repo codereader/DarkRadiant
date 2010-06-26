@@ -31,6 +31,8 @@
 #include "math/aabb.h"
 #include "brushmanip.h"
 
+#include "modulesystem/StaticModule.h"
+
 namespace ui
 {
 	
@@ -105,132 +107,25 @@ namespace {
 
 }
 
-// Static class function to display the singleton instance.
+// Define the static OrthoContextMenu module
+module::StaticModule<OrthoContextMenu> orthoContextMenuModule;
 
-void OrthoContextMenu::displayInstance(const Vector3& point) {
-	static OrthoContextMenu _instance;
-	_instance.show(point);
+// Static class function to display the singleton instance.
+void OrthoContextMenu::displayInstance(const Vector3& point)
+{
+	orthoContextMenuModule.getModule()->show(point);
 }
 
 // Constructor. Create GTK widgets here.
 
-OrthoContextMenu::OrthoContextMenu()
-: _widget(gtk_menu_new())
-{
-	_widgets[WIDGET_ADD_ENTITY] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT)
-    );
-	_widgets[WIDGET_ADD_PLAYERSTART] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT)
-    );
-	_widgets[WIDGET_MOVE_PLAYERSTART] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT)
-    );
-	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT)
-    );
-	_widgets[WIDGET_ADD_MONSTERCLIP] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT)
-    );
-	_widgets[WIDGET_ADD_LIGHT] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT)
-    );
-	_widgets[WIDGET_ADD_PREFAB] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT)
-    );
-	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT)
-    );
-	_widgets[WIDGET_CONVERT_STATIC] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT)
-    );
-	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT)
-    );
-	_widgets[WIDGET_MERGE_ENTITIES] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT)
-    );
-	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT)
-    );
-
-	IEventPtr ev = GlobalEventManager().findEvent("ParentSelectionToWorldspawn");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_REVERT_PARTIAL]);
-	}
-
-	// "Add to layer" submenu
-	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(ADD_TO_LAYER_TEXT));
-	_widgets[WIDGET_MOVE_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(MOVE_TO_LAYER_TEXT));
-	_widgets[WIDGET_DELETE_FROM_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(REMOVE_FROM_LAYER_TEXT));
-
-	// Add a "Create New Layer" item and connect it to the corresponding event
-	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(CREATE_LAYER_TEXT));
-	ev = GlobalEventManager().findEvent("CreateNewLayer");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_CREATE_LAYER]);
-	}
-
-	// Add a "Make Visportal" item and connect it to the corresponding event
-	_widgets[WIDGET_MAKE_VISPORTAL] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL));
-	ev = GlobalEventManager().findEvent("MakeVisportal");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_MAKE_VISPORTAL]);
-	}
-
-	// Connect the "Revert to Worldspawn" menu item to the corresponding event
-	ev = GlobalEventManager().findEvent("RevertToWorldspawn");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_REVERT_WORLDSPAWN]);
-	}
-
-	// Connect the "Convert to func_static" menu item to the corresponding event
-	ev = GlobalEventManager().findEvent("ConvertSelectedToFuncStatic");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_CONVERT_STATIC]);
-	}
-
-	// Connect the "Revert to Worldspawn" menu item to the corresponding event
-	ev = GlobalEventManager().findEvent("MergeSelectedEntities");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_MERGE_ENTITIES]);
-	}
-
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_ENTITY]), "activate", G_CALLBACK(callbackAddEntity), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PLAYERSTART]), "activate", G_CALLBACK(callbackAddPlayerStart), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_PLAYERSTART]), "activate", G_CALLBACK(callbackMovePlayerStart), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MODEL]), "activate", G_CALLBACK(callbackAddModel), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MONSTERCLIP]), "activate", G_CALLBACK(callbackAddMonsterClip), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_LIGHT]), "activate", G_CALLBACK(callbackAddLight), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PREFAB]), "activate", G_CALLBACK(callbackAddPrefab), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_SPEAKER]), "activate", G_CALLBACK(callbackAddSpeaker), this);
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_ENTITY]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MODEL]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_LIGHT]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_SPEAKER]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PREFAB]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
-    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MONSTERCLIP]);
-    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PLAYERSTART]);
-    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_PLAYERSTART]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CONVERT_STATIC]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_WORLDSPAWN]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_PARTIAL]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MERGE_ENTITIES]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MAKE_VISPORTAL]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CREATE_LAYER]);
-    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_TO_LAYER]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_TO_LAYER]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_DELETE_FROM_LAYER]);
-
-	gtk_widget_show_all(_widget);
-}
+OrthoContextMenu::OrthoContextMenu() : 
+	_widget(NULL)
+{}
 
 // Show the menu
 
-void OrthoContextMenu::show(const Vector3& point) {
+void OrthoContextMenu::show(const Vector3& point)
+{
 	_lastPoint = point;
 	checkConvertStatic(); // enable or disable the convert-to-static command
 	checkRevertToWorldspawn();
@@ -630,6 +525,145 @@ void OrthoContextMenu::callbackMoveToLayer(int layerID) {
 void OrthoContextMenu::callbackRemoveFromLayer(int layerID) {
 	scene::getLayerSystem().removeSelectionFromLayer(layerID);
 	GlobalMap().setModified(true);
+}
+
+void OrthoContextMenu::constructMenu()
+{
+	_widget = gtk_menu_new();
+
+	_widgets[WIDGET_ADD_ENTITY] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT)
+    );
+	_widgets[WIDGET_ADD_PLAYERSTART] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT)
+    );
+	_widgets[WIDGET_MOVE_PLAYERSTART] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT)
+    );
+	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT)
+    );
+	_widgets[WIDGET_ADD_MONSTERCLIP] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT)
+    );
+	_widgets[WIDGET_ADD_LIGHT] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT)
+    );
+	_widgets[WIDGET_ADD_PREFAB] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT)
+    );
+	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT)
+    );
+	_widgets[WIDGET_CONVERT_STATIC] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT)
+    );
+	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT)
+    );
+	_widgets[WIDGET_MERGE_ENTITIES] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT)
+    );
+	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(
+        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT)
+    );
+
+	IEventPtr ev = GlobalEventManager().findEvent("ParentSelectionToWorldspawn");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_REVERT_PARTIAL]);
+	}
+
+	// "Add to layer" submenu
+	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(ADD_TO_LAYER_TEXT));
+	_widgets[WIDGET_MOVE_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(MOVE_TO_LAYER_TEXT));
+	_widgets[WIDGET_DELETE_FROM_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(REMOVE_FROM_LAYER_TEXT));
+
+	// Add a "Create New Layer" item and connect it to the corresponding event
+	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(CREATE_LAYER_TEXT));
+	ev = GlobalEventManager().findEvent("CreateNewLayer");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_CREATE_LAYER]);
+	}
+
+	// Add a "Make Visportal" item and connect it to the corresponding event
+	_widgets[WIDGET_MAKE_VISPORTAL] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL));
+	ev = GlobalEventManager().findEvent("MakeVisportal");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_MAKE_VISPORTAL]);
+	}
+
+	// Connect the "Revert to Worldspawn" menu item to the corresponding event
+	ev = GlobalEventManager().findEvent("RevertToWorldspawn");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_REVERT_WORLDSPAWN]);
+	}
+
+	// Connect the "Convert to func_static" menu item to the corresponding event
+	ev = GlobalEventManager().findEvent("ConvertSelectedToFuncStatic");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_CONVERT_STATIC]);
+	}
+
+	// Connect the "Revert to Worldspawn" menu item to the corresponding event
+	ev = GlobalEventManager().findEvent("MergeSelectedEntities");
+	if (ev != NULL) {
+		ev->connectWidget(_widgets[WIDGET_MERGE_ENTITIES]);
+	}
+
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_ENTITY]), "activate", G_CALLBACK(callbackAddEntity), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PLAYERSTART]), "activate", G_CALLBACK(callbackAddPlayerStart), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_PLAYERSTART]), "activate", G_CALLBACK(callbackMovePlayerStart), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MODEL]), "activate", G_CALLBACK(callbackAddModel), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MONSTERCLIP]), "activate", G_CALLBACK(callbackAddMonsterClip), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_LIGHT]), "activate", G_CALLBACK(callbackAddLight), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PREFAB]), "activate", G_CALLBACK(callbackAddPrefab), this);
+	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_SPEAKER]), "activate", G_CALLBACK(callbackAddSpeaker), this);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_ENTITY]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MODEL]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_LIGHT]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_SPEAKER]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PREFAB]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
+    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MONSTERCLIP]);
+    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PLAYERSTART]);
+    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_PLAYERSTART]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CONVERT_STATIC]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_WORLDSPAWN]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_PARTIAL]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MERGE_ENTITIES]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MAKE_VISPORTAL]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CREATE_LAYER]);
+    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_TO_LAYER]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_TO_LAYER]);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_DELETE_FROM_LAYER]);
+
+	gtk_widget_show_all(_widget);
+}
+
+const std::string& OrthoContextMenu::getName() const
+{
+	static std::string _name("OrthoContextMenu");
+	return _name;
+}
+
+const StringSet& OrthoContextMenu::getDependencies() const
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
+	}
+
+	return _dependencies;
+}
+
+void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
+{
+	constructMenu();
 }
 
 } // namespace ui
