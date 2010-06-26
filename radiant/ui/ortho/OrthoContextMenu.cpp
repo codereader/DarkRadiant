@@ -110,21 +110,19 @@ namespace {
 // Define the static OrthoContextMenu module
 module::StaticModule<OrthoContextMenu> orthoContextMenuModule;
 
-// Static class function to display the singleton instance.
-void OrthoContextMenu::displayInstance(const Vector3& point)
+OrthoContextMenu& OrthoContextMenu::Instance()
 {
-	orthoContextMenuModule.getModule()->show(point);
+	return *orthoContextMenuModule.getModule();
 }
 
-// Constructor. Create GTK widgets here.
-
+// Constructor
 OrthoContextMenu::OrthoContextMenu() : 
 	_widget(NULL)
 {}
 
 // Show the menu
 
-void OrthoContextMenu::show(const Vector3& point)
+void OrthoContextMenu::showAt(const Vector3& point)
 {
 	_lastPoint = point;
 	checkConvertStatic(); // enable or disable the convert-to-static command

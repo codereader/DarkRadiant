@@ -90,16 +90,10 @@ public:
 	 * The point in 3D space at which the chosen operation should take
 	 * place.
 	 */
-	void show(const Vector3& point);
+	void showAt(const Vector3& point);
 	
-	/** Static instance display function. Obtain the singleton instance and
-	 * call its show() function.
-	 * 
-	 * @param point
-	 * The point in 3D space at which the chosen operation should take
-	 * place.
-	 */
-	static void displayInstance(const Vector3& point);
+	// Retrieve the singleton instance
+	static OrthoContextMenu& Instance();
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
