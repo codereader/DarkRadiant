@@ -551,7 +551,7 @@ void XYWnd::onContextMenu() {
 	Vector3 point;
 	mouseToPoint(m_entityCreate_x, m_entityCreate_y, point);
 	// Display the menu, passing the coordinates for creation
-	ui::OrthoContextMenu::displayInstance(point);
+	ui::OrthoContextMenu::Instance().showAt(point);
 }
 
 void XYWnd::beginMove() {
