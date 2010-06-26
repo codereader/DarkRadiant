@@ -41,7 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /* FORWARD DECLS */
 
 class Shader;
-class ListAttributeType;
+typedef boost::shared_ptr<Shader> ShaderPtr;
 class AABB;
 
 /** 
@@ -125,6 +125,8 @@ typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
  * Entity class interface. An entity class represents a single type
  * of entity that can be created by the EntityCreator. Entity classes are parsed
  * from .DEF files during startup.
+ *
+ * Entity class attribute names are compared case-insensitively, as in the Entity class.
  * 
  * \ingroup eclass
  */
@@ -211,13 +213,13 @@ public:
 	 * Get the Shader used for rendering this entity class in
 	 * wireframe mode.
 	 */
-	virtual boost::shared_ptr<Shader> getWireShader() const = 0;
+	virtual const ShaderPtr& getWireShader() const = 0;
 	
 	/** 
 	 * Get the Shader used for rendering this entity class in
 	 * filled mode.
 	 */
-	virtual boost::shared_ptr<Shader> getFillShader() const = 0;
+	virtual const ShaderPtr& getFillShader() const = 0;
 
 
 	/* ENTITY CLASS ATTRIBUTES */		
@@ -232,7 +234,7 @@ public:
 	 * Return a single named EntityClassAttribute from this EntityClass. 
 	 * 
 	 * @param name
-	 * The name of the EntityClassAttribute to find.
+	 * The name of the EntityClassAttribute to find, interpreted case-insensitively.
 	 * 
 	 * @return
 	 * A reference to the named EntityClassAttribute. If the named attribute is 
@@ -242,7 +244,7 @@ public:
 	virtual const EntityClassAttribute& getAttribute(const std::string& name) const = 0;
 	
 	/**
-	 * Return the list of EntityClassAttributes matching the given prefix.
+	 * Return the list of EntityClassAttributes matching the given prefix, case ignored.
 	 * 
 	 * This method performs a search for all EntityClassAttributes whose name
 	 * matches the given prefix, with a suffix consisting of zero or more 
@@ -254,7 +256,7 @@ public:
 	 * code.
 	 * 
 	 * @param name
-	 * The prefix to search for.
+	 * The prefix to search for, interpreted case-insensitively.
 	 * 
 	 * @return
 	 * A list of EntityClassAttribute objects matching the provided prefix. This

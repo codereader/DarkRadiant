@@ -123,13 +123,13 @@ const Vector3& Doom3EntityClass::getColour() const {
 
 /** Return this entity's wireframe shader.
  */
-ShaderPtr Doom3EntityClass::getWireShader() const {
+const ShaderPtr& Doom3EntityClass::getWireShader() const {
 	return _wireShader;
 }
 
 /** Return this entity's fill shader.
  */
-ShaderPtr Doom3EntityClass::getFillShader() const {
+const ShaderPtr& Doom3EntityClass::getFillShader() const {
 	return _fillShader;
 }
 
@@ -138,7 +138,8 @@ ShaderPtr Doom3EntityClass::getFillShader() const {
 /** 
  * Insert an EntityClassAttribute, without overwriting previous values.
  */
-void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute) {
+void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
+{
 	// Try to insert the class attribute
 	std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
 		EntityAttributeMap::value_type(attribute.name, attribute)
@@ -271,42 +272,36 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 }
 
 // Find a single attribute
-EntityClassAttribute& 
-Doom3EntityClass::getAttribute(const std::string& name) {
+EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
+{
 	EntityAttributeMap::iterator f = _attributes.find(name);
-	if (f != _attributes.end()) {
-		return f->second;
-	}
-	else {
-		return _emptyAttribute;
-	}
+
+	return (f != _attributes.end()) ? f->second : _emptyAttribute;
 }
 
 // Find a single attribute
-const EntityClassAttribute& 
-Doom3EntityClass::getAttribute(const std::string& name) const {
+const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name) const
+{
 	EntityAttributeMap::const_iterator f = _attributes.find(name);
-	if (f != _attributes.end()) {
-		return f->second;
-	}
-	else {
-		return _emptyAttribute;
-	}
+
+	return (f != _attributes.end()) ? f->second : _emptyAttribute;
 }
 
 // Find all matching attributes
-EntityClassAttributeList 
-Doom3EntityClass::getAttributeList(const std::string& name) const {
-	
+EntityClassAttributeList Doom3EntityClass::getAttributeList(const std::string& name) const
+{
 	// Build the list of matching attributes
 	EntityClassAttributeList matches;
+
 	for (EntityAttributeMap::const_iterator i = _attributes.begin();
 		 i != _attributes.end();
 		 ++i)
 	{
 		// Prefix matches, add to list
 		if (boost::algorithm::istarts_with(i->first, name))
+		{
 			matches.push_back(i->second);
+		}
 	}
 	
 	// Sort the list based on the numerical order of suffices
@@ -376,7 +371,8 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
                 setIsLight(true);
             }
         }
-		else if (boost::algorithm::istarts_with(key, "editor_")) {
+		else if (boost::algorithm::istarts_with(key, "editor_"))
+		{
 			// "editor_yyy" represents an attribute that may be set on this
         	// entity. Construct a value-less EntityClassAttribute to add to
         	// the class, so that it will show in the entity inspector.
