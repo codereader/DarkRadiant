@@ -58,7 +58,11 @@ void FaceInstance::selectedChanged(const Selectable& selectable) {
 	else {
 		g_SelectedFaceInstances.erase(*this);
 	}
-	m_selectionChanged(selectable);
+
+	if (m_selectionChanged)
+	{
+		m_selectionChanged(selectable);
+	}
 }
 
 bool FaceInstance::selectedVertices() const {
