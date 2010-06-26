@@ -142,6 +142,18 @@ void SelectionSetToolmenu::onEntryActivated(GtkEntry* entry,
 
 	if (name.empty()) return;
 
+	// don't create empty sets
+	if (GlobalSelectionSystem().countSelected() == 0) 
+	{
+		ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(
+			_("Cannot create selection set"), 
+			_("Cannot create a selection set, there is nothing selected in the current scene."), 
+			ui::IDialog::MESSAGE_CONFIRM);
+
+		dialog->run();
+		return; 
+	}
+
 	ISelectionSetPtr set = GlobalSelectionSetManager().createSelectionSet(name);
 
 	assert(set != NULL);
