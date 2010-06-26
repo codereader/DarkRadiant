@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-05-30 16:41+0200\n"
-"PO-Revision-Date: 2010-05-30 16:44+0100\n"
+"POT-Creation-Date: 2010-06-26 11:44+0200\n"
+"PO-Revision-Date: 2010-06-26 16:10+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -124,9 +124,9 @@ msgstr "Name des Caulk Shaders"
 
 #: ..\..\radiant\entity.cpp:93
 #: ..\..\radiant\mainframe_old.cpp:553
-#: ..\..\radiant\map\Map.cpp:476
-#: ..\..\radiant\map\Map.cpp:572
-#: ..\..\radiant\map\Map.cpp:592
+#: ..\..\radiant\map\Map.cpp:478
+#: ..\..\radiant\map\Map.cpp:574
+#: ..\..\radiant\map\Map.cpp:594
 #: ..\..\radiant\referencecache\ModelCache.cpp:204
 #: ..\..\radiant\referencecache\ModelCache.cpp:220
 msgid "Processing..."
@@ -182,7 +182,7 @@ msgid "Constructing Menu"
 msgstr "Erzeuge Menü"
 
 #: ..\..\radiant\mainframe_old.cpp:157
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:522
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:545
 msgid "Exit Radiant"
 msgstr "Verlasse Radiant"
 
@@ -233,16 +233,16 @@ msgstr "Entitynummer:"
 msgid "Brush Number:"
 msgstr "Brushnummer:"
 
-#: ..\..\radiant\map\Map.cpp:50
+#: ..\..\radiant\map\Map.cpp:51
 msgid "unnamed.map"
 msgstr "unbenannt.map"
 
-#: ..\..\radiant\map\Map.cpp:476
+#: ..\..\radiant\map\Map.cpp:478
 msgid "Saving Map"
 msgstr "Speichere Map"
 
 #  Map oder Karte?
-#: ..\..\radiant\map\Map.cpp:618
+#: ..\..\radiant\map\Map.cpp:620
 msgid ""
 "The current map has changed since it was last saved.\n"
 "Do you want to save the current map before continuing?"
@@ -250,40 +250,40 @@ msgstr ""
 "Die aktuelle Map wurde seit dem letzten Speichern geändert.\n"
 "Möchten Sie sie abspeichern bevor Sie fortfahren? "
 
-#: ..\..\radiant\map\Map.cpp:651
+#: ..\..\radiant\map\Map.cpp:653
 msgid "Save Map"
 msgstr "Map speichern"
 
-#: ..\..\radiant\map\Map.cpp:685
+#: ..\..\radiant\map\Map.cpp:687
 msgid "Save Copy As..."
 msgstr "Speichere Kopie als..."
 
-#: ..\..\radiant\map\Map.cpp:700
+#: ..\..\radiant\map\Map.cpp:702
 msgid "Load Prefab"
 msgstr "Prefab laden"
 
-#: ..\..\radiant\map\Map.cpp:751
+#: ..\..\radiant\map\Map.cpp:753
 msgid "New Map"
 msgstr "Neue Map"
 
-#: ..\..\radiant\map\Map.cpp:761
+#: ..\..\radiant\map\Map.cpp:763
 #: ..\..\radiant\ui\mru\MRU.cpp:90
 msgid "Open Map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:766
+#: ..\..\radiant\map\Map.cpp:768
 msgid "Open map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:778
+#: ..\..\radiant\map\Map.cpp:780
 msgid "Import map"
 msgstr "Map importieren"
 
-#: ..\..\radiant\map\Map.cpp:802
+#: ..\..\radiant\map\Map.cpp:804
 msgid "Export selection"
 msgstr "Auswahl exportieren"
 
-#: ..\..\radiant\map\Map.cpp:815
+#: ..\..\radiant\map\Map.cpp:817
 msgid "Save selected as Prefab"
 msgstr "Auswahl als Prefab speichern"
 
@@ -336,7 +336,7 @@ msgstr "Initialisiere Modul: %s"
 msgid "Initialising Modules"
 msgstr "Initialisiere Module"
 
-#: ..\..\radiant\patch\Patch.cpp:1667
+#: ..\..\radiant\patch\Patch.cpp:1672
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr "Patch ist nicht geeignet für diese Operation."
 
@@ -416,11 +416,11 @@ msgstr "Kritischer Fehler: kann ausgewählte Entities nicht finden."
 msgid "Exactly two entities must be selected for this operation."
 msgstr "Für diese Operation müssen genau zwei Entities ausgewählt sein."
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:211
+#: ..\..\radiant\selection\algorithm\Group.cpp:227
 msgid "Cannot reparent primitives to entity. Please select at least one brush/patch and exactly one entity.(The entity has to be selected last.)"
 msgstr "Kann die ausgewählten Primitive nicht neu zuordnen. Bitte zumindest einen Brush/Patch sowie eine Entity auswählen. (Die Entity muss als letztes ausgewählt worden sein.)"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:351
+#: ..\..\radiant\selection\algorithm\Group.cpp:367
 msgid ""
 "Cannot merge entities, the selection must consist of func_* entities only.\n"
 "(The first selected entity will be preserved.)"
@@ -485,6 +485,51 @@ msgstr "Shader nicht kopiert: bitte ein einzelnes Face oder einen Patch auswähl
 #: ..\..\radiant\selection\algorithm\Transformation.cpp:47
 msgid "Cannot scale by zero value."
 msgstr "Kann nicht mit 0 skalieren."
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:24
+msgid ""
+"Enter a name and hit ENTER to save a set.\n"
+"\n"
+"Select an item from the dropdown list to restore the selection.\n"
+"\n"
+"Hold SHIFT when opening the dropdown list and selecting the item to de-select the set."
+msgstr ""
+"Namen eingaben und mit der EINGABETASTE bestätigen um einen neuen Satz anzulegen.\n"
+"\n"
+"Ein Element in der Liste auswählen um die entsprechende Auswahl wiederherzustellen.\n"
+"\n"
+"UMSCHALTTASTE gedrückt halten um die Auswahl der entsprechenden Elemente aufzuheben."
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:41
+msgid "Selection Set: "
+msgstr "Auswahlsatz: "
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:54
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:57
+msgid "Clear Selection Sets"
+msgstr "Auswahlsätze löschen"
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:149
+msgid "Cannot create selection set"
+msgstr "Kann Auswahlsatz nicht erstellen"
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:150
+msgid "Cannot create a selection set, there is nothing selected in the current scene."
+msgstr "Kann Auswahlsatz nicht anlegen, keine Auswahl vorhanden."
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:201
+msgid "Delete all selection sets?"
+msgstr "Alle Auswahlsätze löschen?"
+
+#: ..\..\radiant\selection\selectionset\SelectionSetToolmenu.cpp:202
+msgid ""
+"This will delete all set definitions. The actual map objects will not be affected by this step.\n"
+"\n"
+"Continue with that operation?"
+msgstr ""
+"Dies entfernt alle vorhandenen Auswahlsätze. Die Objekte in der aktuellen Map werden dadurch nicht beeinflusst.\n"
+"\n"
+"Fortfahren?"
 
 #: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:86
 #, c-format
@@ -1865,7 +1910,7 @@ msgstr "Lichttextur"
 
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:109
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:66
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:98
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:99
 #: xml_file_content.cpp:50
 msgid "Texture Browser"
 msgstr "Texturbrowser"
@@ -1890,36 +1935,36 @@ msgstr "Einstellungen/Kompatibilität"
 msgid "Disable Windows Desktop Composition"
 msgstr "Desktopgestaltung deaktivieren"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:395
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:418
 #: ..\..\plugins\uimanager\GroupDialog.cpp:19
 msgid "Entity"
 msgstr "Entity"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:404
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:427
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:414
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:437
 msgid "Console"
 msgstr "Konsole"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:127
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:128
 msgid "Camera Position"
 msgstr "Kamera-Position"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:130
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:131
 msgid "Top Left"
 msgstr "Oben links"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:132
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:133
 msgid "Top Right"
 msgstr "Oben rechts"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:134
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:135
 msgid "Bottom Left"
 msgstr "Unten links"
 
-#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:136
+#: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:137
 msgid "Bottom Right"
 msgstr "Unten rechts"
 
@@ -2046,7 +2091,7 @@ msgid "Choose Model"
 msgstr "Modell auswählen"
 
 #: ..\..\radiant\ui\modelselector\ModelSelector.cpp:249
-#: ..\..\plugins\dm.gui\XDataSelector.cpp:88
+#: ..\..\plugins\dm.gui\XDataSelector.cpp:89
 msgid "Model Path"
 msgstr "Modell-Pfad"
 
@@ -2167,19 +2212,19 @@ msgstr "Von Layer entfernen..."
 msgid "Create Layer..."
 msgstr "Neuer Layer..."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:498
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:504
 msgid "Unable to create light, classname not found."
 msgstr "Kann Licht nicht erzeugen, Klassenname nicht gefunden."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:545
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:551
 msgid "Unable to create speaker, classname not found."
 msgstr "Kann Speaker nicht erzeugen, Klassenname nicht gefunden."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:588
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:594
 msgid "Unable to create model, classname not found."
 msgstr "Kann Modell nicht erzeugen, Klassenname nicht gefunden."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:596
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:602
 msgid "Either nothing or exactly one brush must be selected for model creation"
 msgstr "Für diese Operation muss genau eine oder gar keine Brush ausgewählt sein."
 
@@ -3055,7 +3100,7 @@ msgstr "<Hier_Namen_Eingeben>"
 
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:564
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:841
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1552
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1558
 #, c-format
 msgid "Failed to import %s."
 msgstr "Import von %s fehlgeschlagen."
@@ -3068,7 +3113,7 @@ msgstr "Erzeuge eine neue XData-Definition..."
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:843
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:863
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:919
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1554
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1560
 msgid "Do you want to open the import summary?"
 msgstr "Willst Du die Import-Zusammenfassung anzeigen?"
 
@@ -3076,7 +3121,7 @@ msgstr "Willst Du die Import-Zusammenfassung anzeigen?"
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:845
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:865
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:921
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1556
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1562
 msgid "Import failed"
 msgstr "Import fehlgeschlagen"
 
@@ -3144,70 +3189,70 @@ msgstr "Die aktuelle Definition wurde in %s umbenannt, um doppelte XData-Definit
 msgid "XData has been renamed."
 msgstr "XData wurde umbenannt."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1336
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1339
 msgid "The specified gui definition is not a readable."
 msgstr "Die angegebene GUI-Definition ist kein Schriftstück."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1341
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1353
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1344
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1356
 msgid "The specified gui definition is not suitable for the currently chosen page-layout."
 msgstr "Die angegebene GUI-Definition ist für das momentan gewählte Seitenlayout nicht geeignet."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1363
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1366
 msgid "Failure during import."
 msgstr "Fehler beim Import."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1366
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1369
 msgid "The specified Definition does not exist."
 msgstr "Die angegebene Definition existiert nicht."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1371
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1377
 msgid "Not a suitable Gui Definition!"
 msgstr "Keine geeignete GUI-Definition!"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1372
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1378
 msgid "Start the Gui Browser?"
 msgstr "GUI-Browser öffnen?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1406
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1412
 msgid "Switching to default Gui..."
 msgstr "Schalte zu Standard-GUI um..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1407
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1413
 msgid "You didn't choose a Gui. Using the default Gui now."
 msgstr "Du hast keine GUI ausgewählt. Es wird die Standard-GUI verwendet."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1425
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1431
 msgid "No import summary available. An XData definition has to be imported first..."
 msgstr "Die Importzusammenfassung ist erst nach dem Import einer XData-Definition verfügbar."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1437
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1443
 msgid "XData import summary"
 msgstr "XData Importzusammenfassung"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1446
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1452
 msgid "No import summary available. Browse Gui Definitions first."
 msgstr "Die Importzusammenfassung ist erst nach dem Öffnen des GUI-Browsers verfügbar."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1457
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1463
 msgid "Gui import summary"
 msgstr "GUI Importzusammenfassung"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1509
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1529
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1515
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1535
 msgid "Please specify an XData name first!"
 msgstr "Bitte zuerst einen XData-Namen angeben!"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1729
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1756
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1735
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1762
 msgid "Duplicated XData definitions"
 msgstr "Mehrfach vorkommende XData-Definitionen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1730
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1736
 msgid "There are no duplicated definitions!"
 msgstr "Es gibt keine mehrfachen XData-Definitionen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1751
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1757
 #, c-format
 msgid "%s has been defined in:"
 msgstr "%s ist definiert in:"
@@ -3240,11 +3285,11 @@ msgstr "XData-Definition auswählen..."
 msgid "Choose a file..."
 msgstr "Datei auswählen..."
 
-#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:65
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:66
 msgid "The requested definition has been found in multiple Files. Choose the file:"
 msgstr "Die angeforderte Definition wurde in mehreren Dateien gefunden, bitte die genaue Datei auswählen:"
 
-#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:71
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:72
 msgid "File"
 msgstr "Datei"
 
@@ -4088,12 +4133,12 @@ msgstr "BrushDefParser: Ungültiges Token '%s'"
 msgid "BrushDef3Parser: invalid token '%s'"
 msgstr "BrushDef3Parser: ungültiges Token '%s'"
 
-#: ..\..\plugins\script\ScriptingSystem.cpp:178
-#: ..\..\plugins\script\ScriptingSystem.cpp:180
+#: ..\..\plugins\script\ScriptingSystem.cpp:179
+#: ..\..\plugins\script\ScriptingSystem.cpp:181
 msgid "Script"
 msgstr "Skript"
 
-#: ..\..\plugins\script\ScriptingSystem.cpp:434
+#: ..\..\plugins\script\ScriptingSystem.cpp:436
 msgid "Reload Scripts"
 msgstr "Skripts neu laden"
 
