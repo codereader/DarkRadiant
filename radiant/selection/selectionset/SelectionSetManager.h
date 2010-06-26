@@ -3,6 +3,7 @@
 
 #include "iselectionset.h"
 #include "iradiant.h"
+#include "icommandsystem.h"
 
 #include <map>
 #include "SelectionSet.h"
@@ -45,6 +46,9 @@ public:
 	void deleteSelectionSet(const std::string& name);
 	void deleteAllSelectionSets();
 	ISelectionSetPtr findSelectionSet(const std::string& name);
+
+	// Command target
+	void deleteAllSelectionSets(const cmd::ArgumentList& args);
 
 private:
 	void notifyObservers();

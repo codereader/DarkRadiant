@@ -9,6 +9,7 @@ typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkComboBox GtkComboBox;
 typedef struct _GtkEntry GtkEntry;
 typedef struct _GtkListStore GtkListStore;
+typedef struct _GtkToolButton GtkToolButton;
 
 namespace selection
 {
@@ -20,6 +21,7 @@ private:
 	GtkToolItem* _toolItem;
 
 	GtkListStore* _listStore;
+	GtkToolItem* _clearSetsButton;
 
 	GtkWidget* _entry;
 
@@ -35,12 +37,12 @@ public:
 	void onSelectionSetsChanged();
 
 private:
-	// Updates the available list items
-	void updateItems();
+	// Updates the available list items and widget sensitivity
+	void update();
 
 	static void onSelectionChanged(GtkComboBox* comboBox, SelectionSetToolmenu* self);
-
 	static void onEntryActivated(GtkEntry* entry, SelectionSetToolmenu* self);
+	static void onDeleteAllSetsClicked(GtkToolButton* toolbutton, SelectionSetToolmenu* self);
 };
 typedef boost::shared_ptr<SelectionSetToolmenu> SelectionSetToolmenuPtr;
 

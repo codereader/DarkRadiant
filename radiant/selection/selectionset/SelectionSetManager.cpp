@@ -10,6 +10,8 @@
 #include <gtk/gtktoolbar.h>
 #include <gtk/gtkseparatortoolitem.h>
 
+#include <boost/bind.hpp>
+
 namespace selection
 {
 
@@ -27,6 +29,7 @@ const StringSet& SelectionSetManager::getDependencies() const
 	{
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_RADIANT);
 	}
 	
@@ -39,6 +42,11 @@ void SelectionSetManager::initialiseModule(const ApplicationContext& ctx)
 	
 	// Register for the startup event
 	GlobalRadiant().addEventListener(shared_from_this());
+
+	GlobalCommandSystem().addCommand("DeleteAllSelectionSets", 
+		boost::bind(&SelectionSetManager::deleteAllSelectionSets, this, _1));
+
+	GlobalEventManager().addCommand("DeleteAllSelectionSets", "DeleteAllSelectionSets");
 }
 
 void SelectionSetManager::shutdownModule()
@@ -123,6 +131,11 @@ void SelectionSetManager::deleteAllSelectionSets()
 {
 	_selectionSets.clear();
 	notifyObservers();
+}
+
+void SelectionSetManager::deleteAllSelectionSets(const cmd::ArgumentList& args)
+{
+	deleteAllSelectionSets();
 }
 
 ISelectionSetPtr SelectionSetManager::findSelectionSet(const std::string& name)
