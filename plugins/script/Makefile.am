@@ -19,7 +19,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptMenu.cpp \
 					ScriptWindow.cpp \
 					SceneNodeBuffer.cpp \
-               interfaces/DialogInterface.cpp \
+					interfaces/DialogInterface.cpp \
 					interfaces/EClassInterface.cpp \
 					interfaces/BrushInterface.cpp \
 					interfaces/RadiantInterface.cpp \
@@ -34,5 +34,6 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					interfaces/GridInterface.cpp \
 					interfaces/ShaderSystemInterface.cpp \
 					interfaces/SkinInterface.cpp \
+					interfaces/SelectionSetInterface.cpp \
 					interfaces/SoundInterface.cpp \
 					interfaces/GameInterface.cpp
