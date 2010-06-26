@@ -225,5 +225,24 @@ class PatchManipulator(SceneNodeVisitor) :
 walker = PatchManipulator()
 GlobalSceneGraph.root().traverse(walker)
 
+# Test the SelectionSetManager interface
+class SelectionSetWalker(SelectionSetVisitor) :
+	def visit(self, selectionset):
+		print(selectionset.getName())
+
+walker = SelectionSetWalker()
+GlobalSelectionSetManager.foreachSelectionSet(walker)
+
+selSet = GlobalSelectionSetManager.createSelectionSet("TestSelectionSet")
+selSet.assignFromCurrentScene()
+
+selSet.deselect()
+selSet.select()
+
+selSet.clear()
+
+if selSet.empty():
+	GlobalSelectionSetManager.deleteSelectionSet("TestSelectionSet")
+
 print('')
 

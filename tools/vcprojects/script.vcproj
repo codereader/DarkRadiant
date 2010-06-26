@@ -589,6 +589,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\script\interfaces\SelectionSetInterface.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\plugins\script\interfaces\SelectionSetInterface.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\script\interfaces\ShaderSystemInterface.cpp"
 					>
 				</File>
