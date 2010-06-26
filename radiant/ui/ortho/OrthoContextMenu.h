@@ -1,6 +1,7 @@
 #ifndef ORTHOCONTEXTMENU_H_
 #define ORTHOCONTEXTMENU_H_
 
+#include "imodule.h"
 #include <map>
 #include "math/Vector3.h"
 
@@ -15,11 +16,11 @@ class LayerContextMenu;
 typedef boost::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
 
 /** Displays a menu when the mouse is right-clicked in the ortho window.
- * This is a singleton class which remains in existence once constructed,
+ * This is a singleton module which remains in existence once initialised,
  * and is hidden and displayed as appropriate.
  */
-
-class OrthoContextMenu
+class OrthoContextMenu :
+	public RegisterableModule
 {
 	// The GtkWidget representing the menu
 	GtkWidget* _widget;
@@ -80,10 +81,6 @@ private:
 	static void callbackRemoveFromLayer(int layerID);
 	
 public:
-
-	/** Constructor. Create the GTK content here.
-	 */
-
 	OrthoContextMenu();
 
 	/** Display the menu at the current mouse position, and act on the
@@ -93,7 +90,6 @@ public:
 	 * The point in 3D space at which the chosen operation should take
 	 * place.
 	 */
-	 
 	void show(const Vector3& point);
 	
 	/** Static instance display function. Obtain the singleton instance and
@@ -103,9 +99,16 @@ public:
 	 * The point in 3D space at which the chosen operation should take
 	 * place.
 	 */
-	 
 	static void displayInstance(const Vector3& point);
 
+	// RegisterableModule implementation
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
+
+private:
+	// Create, pack and connect widgets
+	void constructMenu();
 };
 
 }
