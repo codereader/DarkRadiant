@@ -171,6 +171,9 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-SelectedNodeList.$(OBJEXT) \
 	darkradiant-ShaderClipboard.$(OBJEXT) \
 	darkradiant-Texturable.$(OBJEXT) \
+	darkradiant-SelectionSetManager.$(OBJEXT) \
+	darkradiant-SelectionSetToolmenu.$(OBJEXT) \
+	darkradiant-SelectionSet.$(OBJEXT) \
 	darkradiant-SelectionTest.$(OBJEXT) \
 	darkradiant-ManipulateObserver.$(OBJEXT) \
 	darkradiant-TransformationVisitors.$(OBJEXT) \
@@ -551,6 +554,9 @@ darkradiant_SOURCES = main.cpp \
 					  selection/SelectedNodeList.cpp \
 					  selection/shaderclipboard/ShaderClipboard.cpp \
 					  selection/shaderclipboard/Texturable.cpp \
+					  selection/selectionset/SelectionSetManager.cpp \
+					  selection/selectionset/SelectionSetToolmenu.cpp \
+					  selection/selectionset/SelectionSet.cpp \
 					  selection/SelectionTest.cpp \
 					  selection/ManipulateObserver.cpp \
 					  selection/TransformationVisitors.cpp \
@@ -852,6 +858,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ScreenUpdateBlocker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectedNodeList.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectionSet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectionSetManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectionSetToolmenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectionTest.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Shader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ShaderChooser.Po@am__quote@
@@ -2736,6 +2745,48 @@ darkradiant-Texturable.obj: selection/shaderclipboard/Texturable.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/shaderclipboard/Texturable.cpp' object='darkradiant-Texturable.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Texturable.obj `if test -f 'selection/shaderclipboard/Texturable.cpp'; then $(CYGPATH_W) 'selection/shaderclipboard/Texturable.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/shaderclipboard/Texturable.cpp'; fi`
+
+darkradiant-SelectionSetManager.o: selection/selectionset/SelectionSetManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SelectionSetManager.o -MD -MP -MF $(DEPDIR)/darkradiant-SelectionSetManager.Tpo -c -o darkradiant-SelectionSetManager.o `test -f 'selection/selectionset/SelectionSetManager.cpp' || echo '$(srcdir)/'`selection/selectionset/SelectionSetManager.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-SelectionSetManager.Tpo $(DEPDIR)/darkradiant-SelectionSetManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/selectionset/SelectionSetManager.cpp' object='darkradiant-SelectionSetManager.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SelectionSetManager.o `test -f 'selection/selectionset/SelectionSetManager.cpp' || echo '$(srcdir)/'`selection/selectionset/SelectionSetManager.cpp
+
+darkradiant-SelectionSetManager.obj: selection/selectionset/SelectionSetManager.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SelectionSetManager.obj -MD -MP -MF $(DEPDIR)/darkradiant-SelectionSetManager.Tpo -c -o darkradiant-SelectionSetManager.obj `if test -f 'selection/selectionset/SelectionSetManager.cpp'; then $(CYGPATH_W) 'selection/selectionset/SelectionSetManager.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/selectionset/SelectionSetManager.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-SelectionSetManager.Tpo $(DEPDIR)/darkradiant-SelectionSetManager.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/selectionset/SelectionSetManager.cpp' object='darkradiant-SelectionSetManager.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SelectionSetManager.obj `if test -f 'selection/selectionset/SelectionSetManager.cpp'; then $(CYGPATH_W) 'selection/selectionset/SelectionSetManager.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/selectionset/SelectionSetManager.cpp'; fi`
+
+darkradiant-SelectionSetToolmenu.o: selection/selectionset/SelectionSetToolmenu.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SelectionSetToolmenu.o -MD -MP -MF $(DEPDIR)/darkradiant-SelectionSetToolmenu.Tpo -c -o darkradiant-SelectionSetToolmenu.o `test -f 'selection/selectionset/SelectionSetToolmenu.cpp' || echo '$(srcdir)/'`selection/selectionset/SelectionSetToolmenu.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-SelectionSetToolmenu.Tpo $(DEPDIR)/darkradiant-SelectionSetToolmenu.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/selectionset/SelectionSetToolmenu.cpp' object='darkradiant-SelectionSetToolmenu.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SelectionSetToolmenu.o `test -f 'selection/selectionset/SelectionSetToolmenu.cpp' || echo '$(srcdir)/'`selection/selectionset/SelectionSetToolmenu.cpp
+
+darkradiant-SelectionSetToolmenu.obj: selection/selectionset/SelectionSetToolmenu.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SelectionSetToolmenu.obj -MD -MP -MF $(DEPDIR)/darkradiant-SelectionSetToolmenu.Tpo -c -o darkradiant-SelectionSetToolmenu.obj `if test -f 'selection/selectionset/SelectionSetToolmenu.cpp'; then $(CYGPATH_W) 'selection/selectionset/SelectionSetToolmenu.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/selectionset/SelectionSetToolmenu.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-SelectionSetToolmenu.Tpo $(DEPDIR)/darkradiant-SelectionSetToolmenu.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/selectionset/SelectionSetToolmenu.cpp' object='darkradiant-SelectionSetToolmenu.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SelectionSetToolmenu.obj `if test -f 'selection/selectionset/SelectionSetToolmenu.cpp'; then $(CYGPATH_W) 'selection/selectionset/SelectionSetToolmenu.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/selectionset/SelectionSetToolmenu.cpp'; fi`
+
+darkradiant-SelectionSet.o: selection/selectionset/SelectionSet.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SelectionSet.o -MD -MP -MF $(DEPDIR)/darkradiant-SelectionSet.Tpo -c -o darkradiant-SelectionSet.o `test -f 'selection/selectionset/SelectionSet.cpp' || echo '$(srcdir)/'`selection/selectionset/SelectionSet.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-SelectionSet.Tpo $(DEPDIR)/darkradiant-SelectionSet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/selectionset/SelectionSet.cpp' object='darkradiant-SelectionSet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SelectionSet.o `test -f 'selection/selectionset/SelectionSet.cpp' || echo '$(srcdir)/'`selection/selectionset/SelectionSet.cpp
+
+darkradiant-SelectionSet.obj: selection/selectionset/SelectionSet.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SelectionSet.obj -MD -MP -MF $(DEPDIR)/darkradiant-SelectionSet.Tpo -c -o darkradiant-SelectionSet.obj `if test -f 'selection/selectionset/SelectionSet.cpp'; then $(CYGPATH_W) 'selection/selectionset/SelectionSet.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/selectionset/SelectionSet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-SelectionSet.Tpo $(DEPDIR)/darkradiant-SelectionSet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/selectionset/SelectionSet.cpp' object='darkradiant-SelectionSet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SelectionSet.obj `if test -f 'selection/selectionset/SelectionSet.cpp'; then $(CYGPATH_W) 'selection/selectionset/SelectionSet.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/selectionset/SelectionSet.cpp'; fi`
 
 darkradiant-SelectionTest.o: selection/SelectionTest.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SelectionTest.o -MD -MP -MF $(DEPDIR)/darkradiant-SelectionTest.Tpo -c -o darkradiant-SelectionTest.o `test -f 'selection/SelectionTest.cpp' || echo '$(srcdir)/'`selection/SelectionTest.cpp

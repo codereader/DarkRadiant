@@ -79,8 +79,8 @@ am_script_la_OBJECTS = ScriptingSystem.lo ScriptCommand.lo \
 	SelectionInterface.lo MapInterface.lo EntityInterface.lo \
 	MathInterface.lo ModelInterface.lo CommandSystemInterface.lo \
 	FileSystemInterface.lo GridInterface.lo \
-	ShaderSystemInterface.lo SkinInterface.lo SoundInterface.lo \
-	GameInterface.lo
+	ShaderSystemInterface.lo SkinInterface.lo \
+	SelectionSetInterface.lo SoundInterface.lo GameInterface.lo
 script_la_OBJECTS = $(am_script_la_OBJECTS)
 script_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -275,7 +275,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					ScriptMenu.cpp \
 					ScriptWindow.cpp \
 					SceneNodeBuffer.cpp \
-               interfaces/DialogInterface.cpp \
+					interfaces/DialogInterface.cpp \
 					interfaces/EClassInterface.cpp \
 					interfaces/BrushInterface.cpp \
 					interfaces/RadiantInterface.cpp \
@@ -290,6 +290,7 @@ script_la_SOURCES = ScriptingSystem.cpp \
 					interfaces/GridInterface.cpp \
 					interfaces/ShaderSystemInterface.cpp \
 					interfaces/SkinInterface.cpp \
+					interfaces/SelectionSetInterface.cpp \
 					interfaces/SoundInterface.cpp \
 					interfaces/GameInterface.cpp
 
@@ -387,6 +388,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ScriptingSystem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SelectionInterface.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SelectionSetInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderSystemInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SkinInterface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SoundInterface.Plo@am__quote@
@@ -516,6 +518,13 @@ SkinInterface.lo: interfaces/SkinInterface.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/SkinInterface.cpp' object='SkinInterface.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SkinInterface.lo `test -f 'interfaces/SkinInterface.cpp' || echo '$(srcdir)/'`interfaces/SkinInterface.cpp
+
+SelectionSetInterface.lo: interfaces/SelectionSetInterface.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SelectionSetInterface.lo -MD -MP -MF $(DEPDIR)/SelectionSetInterface.Tpo -c -o SelectionSetInterface.lo `test -f 'interfaces/SelectionSetInterface.cpp' || echo '$(srcdir)/'`interfaces/SelectionSetInterface.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/SelectionSetInterface.Tpo $(DEPDIR)/SelectionSetInterface.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='interfaces/SelectionSetInterface.cpp' object='SelectionSetInterface.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SelectionSetInterface.lo `test -f 'interfaces/SelectionSetInterface.cpp' || echo '$(srcdir)/'`interfaces/SelectionSetInterface.cpp
 
 SoundInterface.lo: interfaces/SoundInterface.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SoundInterface.lo -MD -MP -MF $(DEPDIR)/SoundInterface.Tpo -c -o SoundInterface.lo `test -f 'interfaces/SoundInterface.cpp' || echo '$(srcdir)/'`interfaces/SoundInterface.cpp
