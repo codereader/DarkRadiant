@@ -514,38 +514,22 @@ void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* se
 void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, 
                                           OrthoContextMenu* self) 
 {
+    using boost::lexical_cast;
+
 	UndoableCommand command("addSpeaker");	
 
     // Cancel all selection
     GlobalSelectionSystem().setSelectedAll(false);
 
+    // Create the speaker entity
+    scene::INodePtr spkNode;
+
     try 
     {
-        scene::INodePtr spkNode = entity::createEntityFromSelection(
+        spkNode = entity::createEntityFromSelection(
             SPEAKER_CLASSNAME, self->_lastPoint
         );	
 
-		if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
-		{
-			// Display the Sound Chooser to get a sound shader from the user
-			SoundChooser sChooser;
-			std::string soundShader = sChooser.chooseSound();
-
-			// Set the keyvalue
-			Entity* entity = Node_getEntity(spkNode);
-			assert(entity);
-			entity->setKeyValue("s_shader", soundShader);
-
-			// Set a default min and max radius
-			entity->setKeyValue(
-				"s_mindistance",
-				getRegistryKeyWithDefault(RKEY_SPEAKERMINRADIUS, "16")
-			);
-			entity->setKeyValue(
-				"s_maxdistance",
-				getRegistryKeyWithDefault(RKEY_SPEAKERMAXRADIUS, "32")
-			);
-		}
     }
     catch (EntityCreationException&) {
         gtkutil::errorDialog(_("Unable to create speaker, classname not found."),
@@ -553,6 +537,33 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
         return;
     }
 
+    // Initialise the speaker with suitable values
+    if (module::ModuleRegistry::Instance().moduleExists(MODULE_SOUNDMANAGER))
+    {
+        // Display the Sound Chooser to get a sound shader from the user
+        SoundChooser sChooser;
+        std::string soundShader = sChooser.chooseSound();
+
+        // Set the keyvalue
+        Entity* entity = Node_getEntity(spkNode);
+        assert(entity);
+        entity->setKeyValue("s_shader", soundShader);
+
+        // Set initial radii according to values in sound shader
+        ISoundShaderPtr snd = GlobalSoundManager().getSoundShader(soundShader);
+        assert(snd);
+        
+        SoundRadii radii = snd->getRadii();
+        entity->setKeyValue(
+            "s_mindistance", lexical_cast<std::string>(radii.getMin(true))
+        );
+        entity->setKeyValue(
+            "s_maxdistance", 
+            (radii.getMax() > 0 
+             ? lexical_cast<std
+             ::string>(radii.getMax(true)) : "10")
+        );
+    }
 }
 
 void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
