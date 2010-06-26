@@ -80,6 +80,9 @@ typedef boost::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
  * 
  * A valid <b>Id Tech 4</b> map must contain at least one entity: the
  * "worldspawn" which is the parent of all map geometry primitives. 
+ *
+ * greebo: Note that keys are treated case-insensitively in Doom 3, so 
+ * the Entity class will return the same result for "MYKeY" as for "mykey".
  */
 class Entity
 {
@@ -211,7 +214,7 @@ public:
 	virtual bool isInherited(const std::string& key) const = 0;
 
 	/**
-	 * Return the list of Key/Value pairs matching the given prefix.
+	 * Return the list of Key/Value pairs matching the given prefix, case ignored.
 	 * 
 	 * This method performs a search for all spawnargs whose key
 	 * matches the given prefix, with a suffix consisting of zero or more 
@@ -223,7 +226,7 @@ public:
 	 * code.
 	 * 
 	 * @param prefix
-	 * The prefix to search for.
+	 * The prefix to search for, interpreted case-insensitively.
 	 * 
 	 * @return
 	 * A list of KeyValue pairs matching the provided prefix. This

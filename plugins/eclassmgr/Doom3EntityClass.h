@@ -11,6 +11,7 @@
 
 #include <vector>
 #include <map>
+#include <boost/algorithm/string.hpp>
 
 /* FORWARD DECLS */
 
@@ -29,6 +30,17 @@ typedef boost::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
 class Doom3EntityClass
 : public IEntityClass
 {
+private:
+	class StringCompareFunctor : 
+		public std::binary_function<std::string, std::string, bool>
+	{
+	public:
+		bool operator()(const std::string& lhs, const std::string& rhs) const
+		{
+			return boost::algorithm::ilexicographical_compare(lhs, rhs);
+		}
+	};
+
 	// The name of this entity class
 	std::string _name;
 
@@ -47,8 +59,8 @@ class Doom3EntityClass
 	bool _fixedSize;
 	
 	// Map of named EntityAttribute structures. EntityAttributes are picked
-	// up from the DEF file during parsing.
-	typedef std::map<std::string, EntityClassAttribute> EntityAttributeMap;
+	// up from the DEF file during parsing. Ignores key case.
+	typedef std::map<std::string, EntityClassAttribute, StringCompareFunctor> EntityAttributeMap;
 	EntityAttributeMap _attributes;
 	
 	// The model and skin for this entity class (if it has one)
@@ -163,11 +175,11 @@ public:
 
 	/** Return this entity's wireframe shader.
 	 */
-	ShaderPtr getWireShader() const;
+	const ShaderPtr& getWireShader() const;
 
 	/** Return this entity's fill shader.
 	 */
-	ShaderPtr getFillShader() const;
+	const ShaderPtr& getFillShader() const;
 	
 	/* ATTRIBUTES */
 	

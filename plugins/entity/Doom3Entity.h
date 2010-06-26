@@ -100,11 +100,9 @@ private:
 	void notifyErase(const std::string& key, KeyValue& value);
 
 	void insert(const std::string& key, const KeyValuePtr& keyValue);
-
 	void insert(const std::string& key, const std::string& value);
 
-	void erase(KeyValues::iterator i);
-
+	void erase(const KeyValues::iterator& i);
 	void erase(const std::string& key);
 	
 	KeyValues::iterator find(const std::string& key);

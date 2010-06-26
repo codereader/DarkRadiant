@@ -21,6 +21,7 @@
 #include <gtk/gtktreeviewcolumn.h>
 #include <map>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 /* FORWARD DECLS */
 
@@ -44,6 +45,17 @@ class EntityInspector :
 	public UndoSystem::Observer,
 	public boost::enable_shared_from_this<EntityInspector>
 {
+private:
+	class StringCompareFunctor : 
+		public std::binary_function<std::string, std::string, bool>
+	{
+	public:
+		bool operator()(const std::string& lhs, const std::string& rhs) const
+		{
+			return boost::algorithm::ilexicographical_compare(lhs, rhs);
+		}
+	};
+
 	// Currently selected entity, this pointer is only non-NULL if the
 	// current entity selection includes exactly 1 entity.
 	Entity* _selectedEntity;
@@ -66,7 +78,7 @@ class EntityInspector :
 
     // Cache of GtkTreeIters pointing to keyvalue rows, so we can quickly find
     // existing keys to change their values
-    typedef std::map<std::string, GtkTreeIter> TreeIterMap;
+    typedef std::map<std::string, GtkTreeIter, StringCompareFunctor> TreeIterMap;
     TreeIterMap _keyValueIterMap;
 
 	// Key and value edit boxes. These remain available even for multiple entity
