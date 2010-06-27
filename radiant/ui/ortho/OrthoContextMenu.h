@@ -1,8 +1,9 @@
 #ifndef ORTHOCONTEXTMENU_H_
 #define ORTHOCONTEXTMENU_H_
 
-#include "imodule.h"
+#include "iorthocontextmenu.h"
 #include <map>
+#include <list>
 #include "math/Vector3.h"
 
 typedef struct _GtkMenuItem GtkMenuItem;
@@ -20,7 +21,7 @@ typedef boost::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
  * and is hidden and displayed as appropriate.
  */
 class OrthoContextMenu :
-	public RegisterableModule
+	public IOrthoContextMenu
 {
 	// The GtkWidget representing the menu
 	GtkWidget* _widget;
@@ -34,6 +35,13 @@ class OrthoContextMenu :
 	LayerContextMenuPtr _addToLayerSubmenu;
 	LayerContextMenuPtr _moveToLayerSubmenu;
 	LayerContextMenuPtr _removeFromLayerSubmenu;
+
+	// A list of menu items
+	typedef std::list<IOrthoContextMenuItemPtr> MenuItems;
+
+	// The menu sections, distinguished by section number
+	typedef std::map<int, MenuItems> MenuSections;
+	MenuSections _sections;
 
 private:
 
@@ -100,9 +108,15 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 
+	// IOrthoContextMenu implementation
+	void addItem(const IOrthoContextMenuItemPtr& item, int section);
+	void removeItem(const IOrthoContextMenuItemPtr& item);
+
 private:
 	// Create, pack and connect widgets
 	void constructMenu();
+
+	void addSectionItems(int section);
 };
 
 }
