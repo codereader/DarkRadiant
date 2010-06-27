@@ -25,20 +25,24 @@ void PopupMenu::addItem(GtkWidget* widget,
 			 			const SensitivityTest& sensTest,
 						const VisibilityTest& visTest)
 {
-	// Create a MenuItem and add it to the list
-	MenuItem item(widget, callback, sensTest, visTest);
+	// Construct a wrapper and pass to specialised method
+	addItem(ui::IMenuItemPtr(new MenuItem(widget, callback, sensTest, visTest)));
+}
+
+void PopupMenu::addItem(const ui::IMenuItemPtr& item)
+{
 	_menuItems.push_back(item);
 	
 	// Connect up the activation callback to GTK.
 	g_signal_connect(
-		G_OBJECT(widget), // the actual GtkWidget* 
+		G_OBJECT(item->getWidget()), // the actual GtkWidget* 
 		"activate", 
 		G_CALLBACK(_onActivate),
-		&_menuItems.back() // pointer to our stored MenuItem struct
+		item.get() // pointer to our stored IMenuItem
 	);
 	
 	// Add the GtkWidget to the GtkMenu
-	gtk_menu_shell_append(GTK_MENU_SHELL(_menu), widget);
+	gtk_menu_shell_append(GTK_MENU_SHELL(_menu), item->getWidget());
 }
 
 // Show the menu
@@ -53,20 +57,22 @@ void PopupMenu::show()
 		 i != _menuItems.end();
 		 ++i)
 	{
-		bool visible = i->visibilityTest();
+		ui::IMenuItem& item = *(*i);
+
+		bool visible = item.isVisible();
 
 		if (visible)
 		{
 			// Visibility check passed
-			gtk_widget_show(i->widget);
+			gtk_widget_show(item.getWidget());
 
-			bool sensitive = i->sensitivityTest();
-			gtk_widget_set_sensitive(i->widget, sensitive ? TRUE : FALSE);
+			bool sensitive = item.isSensitive();
+			gtk_widget_set_sensitive(item.getWidget(), sensitive ? TRUE : FALSE);
 		}
 		else
 		{
 			// Visibility check failed, skip sensitivity check
-			gtk_widget_hide(i->widget);
+			gtk_widget_hide(item.getWidget());
 		}
 	}
 	
