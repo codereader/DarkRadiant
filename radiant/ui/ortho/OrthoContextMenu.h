@@ -37,7 +37,7 @@ class OrthoContextMenu :
 	LayerContextMenuPtr _removeFromLayerSubmenu;
 
 	// A list of menu items
-	typedef std::list<IOrthoContextMenuItemPtr> MenuItems;
+	typedef std::list<IMenuItemPtr> MenuItems;
 
 	// The menu sections, distinguished by section number
 	typedef std::map<int, MenuItems> MenuSections;
@@ -109,8 +109,8 @@ public:
 	void initialiseModule(const ApplicationContext& ctx);
 
 	// IOrthoContextMenu implementation
-	void addItem(const IOrthoContextMenuItemPtr& item, int section);
-	void removeItem(const IOrthoContextMenuItemPtr& item);
+	void addItem(const IMenuItemPtr& item, int section);
+	void removeItem(const IMenuItemPtr& item);
 
 private:
 	// Create, pack and connect widgets

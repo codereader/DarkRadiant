@@ -696,7 +696,7 @@ void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
 	constructMenu();
 }
 
-void OrthoContextMenu::addItem(const IOrthoContextMenuItemPtr& item, int section)
+void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section)
 {
 	// Create section if not existing
 	if (_sections.find(section) == _sections.end())
@@ -707,7 +707,7 @@ void OrthoContextMenu::addItem(const IOrthoContextMenuItemPtr& item, int section
 	_sections[section].push_back(item);
 }
 
-void OrthoContextMenu::removeItem(const IOrthoContextMenuItemPtr& item)
+void OrthoContextMenu::removeItem(const IMenuItemPtr& item)
 {
 	for (MenuSections::iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
 	{
