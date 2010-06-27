@@ -43,6 +43,7 @@ public:
   virtual void onMouseDown(const WindowVector& position, GdkEventButton* event) = 0;
   virtual void onMouseUp(const WindowVector& position, GdkEventButton* event) = 0;
   virtual void onMouseMotion(const WindowVector& position, const unsigned int& state) = 0;
+  virtual void cancelOperation() = 0;
 };
 
 #endif

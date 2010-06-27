@@ -98,7 +98,7 @@ public:
   	void onMouseUp(const WindowVector& position, GdkEventButton* event);
   	
 	// Cancels the current operation and disconnects the mouse handlers
-	void onCancel();
+	void cancelOperation();
 
 private:
 	// The callback for catching the cancel-event (ESC-key) 

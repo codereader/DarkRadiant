@@ -212,7 +212,7 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
 	_mouseUpCallback.clear();
 }
 
-void RadiantWindowObserver::onCancel()
+void RadiantWindowObserver::cancelOperation()
 {
 	// Disconnect the mouseMoved and mouseUp callbacks
 	_mouseMotionCallback.clear();
@@ -235,10 +235,10 @@ gboolean RadiantWindowObserver::onKeyPress(GtkWindow* window,
 		return FALSE;
 	}
 
-	// Check for ESC and call the onCancel method, if found
+	// Check for ESC and call the cancelOperation method, if found
 	if (event->keyval == GDK_Escape)
 	{
-		self->onCancel();
+		self->cancelOperation();
 		
 		// Don't pass the key event to the event chain 
 		return TRUE;
