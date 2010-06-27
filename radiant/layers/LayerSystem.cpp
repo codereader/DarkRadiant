@@ -1,5 +1,6 @@
 #include "LayerSystem.h"
 
+#include "iorthocontextmenu.h"
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "itextstream.h"
@@ -13,11 +14,17 @@
 #include "SetLayerSelectedWalker.h"
 
 #include "ui/layers/LayerControlDialog.h"
+#include "ui/layers/LayerOrthoContextMenuItem.h"
 
-namespace scene {
+namespace scene
+{
 
 	namespace {
 		const char* const DEFAULT_LAYER_NAME = N_("Default");
+
+		const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
+		const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
+		const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
 	} 
 
 int LayerSystem::createLayer(const std::string& name, int layerID) {
@@ -365,12 +372,15 @@ const std::string& LayerSystem::getName() const {
 	return _name;
 }
 
-const StringSet& LayerSystem::getDependencies() const {
+const StringSet& LayerSystem::getDependencies() const
+{
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
 	}
 
 	return _dependencies;
@@ -394,6 +404,20 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 		ui::LayerControlDialog::toggle
 	);
 	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
+
+	// Add the ortho context menu items
+	ui::LayerOrthoContextMenuItemPtr addMenu(new ui::LayerOrthoContextMenuItem(
+		_(ADD_TO_LAYER_TEXT), ui::LayerOrthoContextMenuItem::AddToLayer));
+
+	ui::LayerOrthoContextMenuItemPtr moveMenu(new ui::LayerOrthoContextMenuItem(
+		_(MOVE_TO_LAYER_TEXT), ui::LayerOrthoContextMenuItem::MoveToLayer));
+
+	ui::LayerOrthoContextMenuItemPtr removeMenu(new ui::LayerOrthoContextMenuItem(
+		_(REMOVE_FROM_LAYER_TEXT), ui::LayerOrthoContextMenuItem::RemoveFromLayer));
+
+	GlobalOrthoContextMenu().addItem(addMenu, ui::IOrthoContextMenu::SECTION_LAYER);
+	GlobalOrthoContextMenu().addItem(moveMenu, ui::IOrthoContextMenu::SECTION_LAYER);
+	GlobalOrthoContextMenu().addItem(removeMenu, ui::IOrthoContextMenu::SECTION_LAYER);
 }
 
 // Define the static LayerSystem module
