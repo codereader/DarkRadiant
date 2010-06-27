@@ -762,6 +762,10 @@ void XYWnd::EntityCreate_MouseUp(int x, int y) {
 	if (m_entityCreate) {
 		m_entityCreate = false;
 		onContextMenu();
+
+		// Tell the other window observers to cancel their operation, 
+		// the context menu will be stealing focus.
+		m_window_observer->cancelOperation();
 	}
 }
 
