@@ -2295,6 +2295,14 @@
 						RelativePath="..\..\radiant\ui\layers\LayerControlDialog.h"
 						>
 					</File>
+					<File
+						RelativePath="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h"
+						>
+					</File>
 				</Filter>
 				<Filter
 					Name="filterdialog"

@@ -48,6 +48,12 @@ public:
 	{
 		return true;
 	}
+
+	/**
+	 * Called to let the item prepare its visual appearance. Empty default impl.
+	 */
+	virtual void preShow()
+	{}
 };
 typedef boost::shared_ptr<IMenuItem> IMenuItemPtr;
 

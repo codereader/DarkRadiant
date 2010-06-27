@@ -80,9 +80,6 @@ namespace {
 	const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
 
 	const char* LAYER_ICON = "layers.png";
-	const char* ADD_TO_LAYER_TEXT = N_("Add to Layer...");
-	const char* MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
-	const char* REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
 	const char* CREATE_LAYER_TEXT = N_("Create Layer...");
 
 	enum {
@@ -131,32 +128,36 @@ void OrthoContextMenu::showAt(const Vector3& point)
 	checkPlayerStart(); // change the "Add PlayerStart" entry if an info_player_start is already existant 
 	checkAddOptions(); // disable the "Add *" command if an entity is already selected
 	checkMakeVisportal(); // enable or disable the make visportal command
-	repopulateLayerMenus(); // refresh the layer menus
+
+	// Perform the visibility/sensitivity tests
+	for (MenuSections::const_iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
+	{
+		for (MenuItems::const_iterator i = sec->second.begin(); i != sec->second.end(); ++i)
+		{
+			ui::IMenuItem& item = *(*i);
+
+			bool visible = item.isVisible();
+
+			if (visible)
+			{
+				// Visibility check passed
+				gtk_widget_show(item.getWidget());
+
+				// Run the preshow command
+				item.preShow();
+
+				bool sensitive = item.isSensitive();
+				gtk_widget_set_sensitive(item.getWidget(), sensitive ? TRUE : FALSE);
+			}
+			else
+			{
+				// Visibility check failed, skip sensitivity check
+				gtk_widget_hide(item.getWidget());
+			}
+		}	
+	}
+
 	gtk_menu_popup(GTK_MENU(_widget), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
-}
-
-void OrthoContextMenu::repopulateLayerMenus()
-{
-	// Create a new submenu and connect it to the according function
-	LayerContextMenu::OnSelectionFunc addToLayerCallback(callbackAddToLayer);
-	LayerContextMenu::OnSelectionFunc moveToLayerCallback(callbackMoveToLayer);
-	LayerContextMenu::OnSelectionFunc removeFromLayerCallback(callbackRemoveFromLayer);
-
-	// Create a new LayerContextMenu
-	_addToLayerSubmenu = LayerContextMenuPtr(new LayerContextMenu(addToLayerCallback));
-	_moveToLayerSubmenu = LayerContextMenuPtr(new LayerContextMenu(moveToLayerCallback));
-	_removeFromLayerSubmenu = LayerContextMenuPtr(new LayerContextMenu(removeFromLayerCallback));
-
-	// Cast the LayerContextMenu onto GtkWidget* and pack it
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_ADD_TO_LAYER]), _addToLayerSubmenu->getWidget());
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_MOVE_TO_LAYER]), _moveToLayerSubmenu->getWidget());
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widgets[WIDGET_DELETE_FROM_LAYER]), _removeFromLayerSubmenu->getWidget());
-
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-
-	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_TO_LAYER], info.totalCount > 0);
-	gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_TO_LAYER], info.totalCount > 0);
-	gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FROM_LAYER], info.totalCount > 0);
 }
 
 void OrthoContextMenu::checkMakeVisportal() {
@@ -510,21 +511,6 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 
 }
 
-void OrthoContextMenu::callbackAddToLayer(int layerID) {
-	scene::getLayerSystem().addSelectionToLayer(layerID);
-	GlobalMap().setModified(true);
-}
-
-void OrthoContextMenu::callbackMoveToLayer(int layerID) {
-	scene::getLayerSystem().moveSelectionToLayer(layerID);
-	GlobalMap().setModified(true);
-}
-
-void OrthoContextMenu::callbackRemoveFromLayer(int layerID) {
-	scene::getLayerSystem().removeSelectionFromLayer(layerID);
-	GlobalMap().setModified(true);
-}
-
 void OrthoContextMenu::constructMenu()
 {
 	_widget = gtk_menu_new();
@@ -570,11 +556,6 @@ void OrthoContextMenu::constructMenu()
 	if (ev != NULL) {
 		ev->connectWidget(_widgets[WIDGET_REVERT_PARTIAL]);
 	}
-
-	// "Add to layer" submenu
-	_widgets[WIDGET_ADD_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(ADD_TO_LAYER_TEXT));
-	_widgets[WIDGET_MOVE_TO_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(MOVE_TO_LAYER_TEXT));
-	_widgets[WIDGET_DELETE_FROM_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(REMOVE_FROM_LAYER_TEXT));
 
 	// Add a "Create New Layer" item and connect it to the corresponding event
 	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(CREATE_LAYER_TEXT));
@@ -642,9 +623,6 @@ void OrthoContextMenu::constructMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CREATE_LAYER]);
-    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_TO_LAYER]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_TO_LAYER]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_DELETE_FROM_LAYER]);
 
 	addSectionItems(SECTION_LAYER);
 
@@ -686,12 +664,20 @@ const StringSet& OrthoContextMenu::getDependencies() const
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_RADIANT);
 	}
 
 	return _dependencies;
 }
 
 void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
+{
+	GlobalRadiant().addEventListener(shared_from_this());
+
+	// TODO: Register default items
+}
+
+void OrthoContextMenu::onRadiantStartup()
 {
 	constructMenu();
 }

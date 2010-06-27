@@ -2,9 +2,11 @@
 #define ORTHOCONTEXTMENU_H_
 
 #include "iorthocontextmenu.h"
+#include "iradiant.h"
 #include <map>
 #include <list>
 #include "math/Vector3.h"
+#include <boost/enable_shared_from_this.hpp>
 
 typedef struct _GtkMenuItem GtkMenuItem;
 typedef struct _GtkWidget GtkWidget;
@@ -21,7 +23,9 @@ typedef boost::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
  * and is hidden and displayed as appropriate.
  */
 class OrthoContextMenu :
-	public IOrthoContextMenu
+	public IOrthoContextMenu,
+	public RadiantEventListener,
+	public boost::enable_shared_from_this<OrthoContextMenu>
 {
 	// The GtkWidget representing the menu
 	GtkWidget* _widget;
@@ -69,9 +73,6 @@ private:
 
 	void checkMakeVisportal();
 
-	// Refreshes the layer submenus
-	void repopulateLayerMenus();
-
 	/* Gtk Callbacks */
 	
 	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
@@ -82,11 +83,6 @@ private:
 	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddSpeaker(GtkMenuItem*, OrthoContextMenu* self);
-
-	// Gets called by the items in the "Add to Layer" submenu
-	static void callbackAddToLayer(int layerID);
-	static void callbackMoveToLayer(int layerID);
-	static void callbackRemoveFromLayer(int layerID);
 	
 public:
 	OrthoContextMenu();
@@ -111,6 +107,8 @@ public:
 	// IOrthoContextMenu implementation
 	void addItem(const IMenuItemPtr& item, int section);
 	void removeItem(const IMenuItemPtr& item);
+
+	void onRadiantStartup();
 
 private:
 	// Create, pack and connect widgets

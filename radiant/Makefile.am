@@ -73,6 +73,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/layers/LayerControl.cpp \
 					  ui/layers/LayerContextMenu.cpp \
 					  ui/layers/LayerControlDialog.cpp \
+					  ui/layers/LayerOrthoContextMenuItem.cpp \
 					  ui/ortho/OrthoContextMenu.cpp \
 					  ui/about/AboutDialog.cpp \
 					  ui/einspector/AnglePropertyEditor.cpp \
