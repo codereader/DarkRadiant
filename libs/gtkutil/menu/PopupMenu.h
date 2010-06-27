@@ -3,11 +3,15 @@
 
 #include "imenu.h"
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkmenuitem.h>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
+#include <glib/gtypes.h>
+
+#include "MenuItem.h"
+
+typedef struct _GdkEventButton GdkEventButton;
+typedef struct _GtkMenuItem GtkMenuItem;
 
 namespace gtkutil
 {
@@ -24,47 +28,6 @@ private:
 	// Main menu widget
 	GtkWidget* _menu;
 
-	// Data class containing the elements of a menu item
-	struct MenuItem :
-		public ui::IMenuItem
-	{
-		GtkWidget* widget;
-		Callback callback;
-		SensitivityTest sensitivityTest;
-		VisibilityTest visibilityTest;
-		
-		MenuItem(GtkWidget* w, 
-				 const Callback& c, 
-				 const SensitivityTest& s,
-				 const VisibilityTest& v)
-		: widget(w), 
-		  callback(c), 
-		  sensitivityTest(s),
-		  visibilityTest(v)
-		{}
-
-		GtkWidget* getWidget()
-		{
-			return widget;
-		}
-
-		void execute()
-		{
-			callback(); 
-		}
-
-		bool isVisible()
-		{
-			return visibilityTest();
-		}
-
-		bool isSensitive()
-		{
-			return sensitivityTest();
-		}
-	};
-	typedef boost::shared_ptr<MenuItem> MenuItemPtr;
-	
 	// List of menu items
 	typedef std::list<ui::IMenuItemPtr> MenuItemList;
 	MenuItemList _menuItems;	
@@ -74,10 +37,7 @@ private:
 	/* GTK CALLBACKS */
 	
 	// Main activation callback from GTK
-	static void _onActivate(GtkMenuItem* item, ui::IMenuItem* menuItem)
-	{
-		menuItem->execute();
-	}
+	static void _onActivate(GtkMenuItem* item, ui::IMenuItem* menuItem);
 	
 	// Mouse click callback (if required)
 	static gboolean _onClick(GtkWidget* w, GdkEventButton* e, PopupMenu* self);
@@ -98,10 +58,7 @@ public:
 	/**
 	 * Destructor.
 	 */
-	~PopupMenu()
-	{
-		g_object_unref(_menu);
-	}
+	virtual ~PopupMenu();
 	
 	/**
 	 * Add an item to this menu using a widget and callback function.
@@ -133,7 +90,7 @@ public:
 	 * determine whether it should be enabled or not, then the menu will be
 	 * displayed.
 	 */
-	void show();
+	virtual void show();
 };
 typedef boost::shared_ptr<PopupMenu> PopupMenuPtr;
 
