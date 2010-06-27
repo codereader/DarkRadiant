@@ -622,7 +622,12 @@ void OrthoContextMenu::constructMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_LIGHT]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_SPEAKER]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PREFAB]);
+
+	// Add section 
+	addSectionItems(SECTION_CREATE);
+
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
+
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MONSTERCLIP]);
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PLAYERSTART]);
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_PLAYERSTART]);
@@ -631,13 +636,39 @@ void OrthoContextMenu::constructMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_PARTIAL]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MERGE_ENTITIES]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MAKE_VISPORTAL]);
+
+	addSectionItems(SECTION_ACTION);
+
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
+
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CREATE_LAYER]);
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_TO_LAYER]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_TO_LAYER]);
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_DELETE_FROM_LAYER]);
 
+	addSectionItems(SECTION_LAYER);
+
+	// Add the rest of the sections
+	for (MenuSections::const_iterator sec = _sections.lower_bound(SECTION_LAYER+1);
+		 sec != _sections.end(); ++sec)
+	{
+		gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
+		addSectionItems(sec->first);
+	}
+
 	gtk_widget_show_all(_widget);
+}
+
+void OrthoContextMenu::addSectionItems(int section)
+{
+	if (_sections.find(section) == _sections.end()) return;
+
+	const MenuItems& items = _sections[section];
+
+	for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
+	{
+		gtk_menu_shell_append(GTK_MENU_SHELL(_widget), (*i)->getWidget());
+	}
 }
 
 const std::string& OrthoContextMenu::getName() const
@@ -650,7 +681,8 @@ const StringSet& OrthoContextMenu::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
@@ -662,6 +694,38 @@ const StringSet& OrthoContextMenu::getDependencies() const
 void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
 {
 	constructMenu();
+}
+
+void OrthoContextMenu::addItem(const IOrthoContextMenuItemPtr& item, int section)
+{
+	// Create section if not existing
+	if (_sections.find(section) == _sections.end())
+	{
+		_sections.insert(MenuSections::value_type(section, MenuSections::mapped_type()));
+	}
+
+	_sections[section].push_back(item);
+}
+
+void OrthoContextMenu::removeItem(const IOrthoContextMenuItemPtr& item)
+{
+	for (MenuSections::iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
+	{
+		MenuItems::iterator found = std::find(sec->second.begin(), sec->second.end(), item);
+
+		if (found != sec->second.end())
+		{
+			sec->second.erase(found);
+
+			// Remove empty sections
+			if (sec->second.empty())
+			{
+				_sections.erase(sec);
+			}
+
+			break;
+		}
+	}
 }
 
 } // namespace ui
