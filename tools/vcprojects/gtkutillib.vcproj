@@ -294,6 +294,10 @@
 			Name="menu"
 			>
 			<File
+				RelativePath="..\..\libs\gtkutil\menu\MenuItem.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libs\gtkutil\menu\PopupMenu.cpp"
 				>
 			</File>

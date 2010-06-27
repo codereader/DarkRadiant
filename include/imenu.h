@@ -14,6 +14,10 @@ namespace ui
  * which will be packed into a parent GTK container, plus
  * various callbacks for determining the visibility/sensitivity of 
  * this item (these are invoked before the menu is showing itself).
+ *
+ * An utility implementation of this class can be found in
+ * gtkutil::MenuItem which can be constructed from strings
+ * and boost::function objects.
  */
 class IMenuItem
 {

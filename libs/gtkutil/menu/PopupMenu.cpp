@@ -1,6 +1,9 @@
 #include "PopupMenu.h"
 #include "../IconTextMenuItem.h"
 
+#include <gtk/gtkwidget.h>
+#include <gtk/gtkmenuitem.h>
+
 namespace gtkutil
 {
 
@@ -17,6 +20,11 @@ PopupMenu::PopupMenu(GtkWidget* widget)
 			G_OBJECT(widget), "button-release-event", G_CALLBACK(_onClick), this
 		);
 	}
+}
+
+PopupMenu::~PopupMenu()
+{
+	g_object_unref(_menu);
 }
 
 // Add a named menu item
@@ -90,6 +98,11 @@ gboolean PopupMenu::_onClick(GtkWidget* w, GdkEventButton* e, PopupMenu* self)
 	}
 
 	return FALSE;
+}
+
+void PopupMenu::_onActivate(GtkMenuItem* item, ui::IMenuItem* menuItem)
+{
+	menuItem->execute();
 }
 
 } // namespace
