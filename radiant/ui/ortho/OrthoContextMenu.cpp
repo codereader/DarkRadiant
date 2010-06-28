@@ -79,9 +79,6 @@ namespace {
 	const char* MAKE_VISPORTAL = N_("Make Visportal");
 	const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
 
-	const char* LAYER_ICON = "layers.png";
-	const char* CREATE_LAYER_TEXT = N_("Create Layer...");
-
 	enum {
 		WIDGET_ADD_ENTITY,
 		WIDGET_ADD_PLAYERSTART,
@@ -96,10 +93,6 @@ namespace {
 		WIDGET_REVERT_PARTIAL,
 		WIDGET_MERGE_ENTITIES,
 		WIDGET_MAKE_VISPORTAL,
-		WIDGET_ADD_TO_LAYER,
-		WIDGET_MOVE_TO_LAYER,
-		WIDGET_DELETE_FROM_LAYER,
-		WIDGET_CREATE_LAYER,
 	};
 
 }
@@ -557,13 +550,6 @@ void OrthoContextMenu::constructMenu()
 		ev->connectWidget(_widgets[WIDGET_REVERT_PARTIAL]);
 	}
 
-	// Add a "Create New Layer" item and connect it to the corresponding event
-	_widgets[WIDGET_CREATE_LAYER] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(CREATE_LAYER_TEXT));
-	ev = GlobalEventManager().findEvent("CreateNewLayer");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_CREATE_LAYER]);
-	}
-
 	// Add a "Make Visportal" item and connect it to the corresponding event
 	_widgets[WIDGET_MAKE_VISPORTAL] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL));
 	ev = GlobalEventManager().findEvent("MakeVisportal");
@@ -621,8 +607,6 @@ void OrthoContextMenu::constructMenu()
 	addSectionItems(SECTION_ACTION);
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CREATE_LAYER]);
 
 	addSectionItems(SECTION_LAYER);
 

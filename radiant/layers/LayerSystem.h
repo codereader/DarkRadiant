@@ -112,6 +112,9 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 
+	// Command target
+	void createLayerCmd(const cmd::ArgumentList& args);
+
 private:
 	// Internal event, updates the scenegraph
 	void onLayerVisibilityChanged();

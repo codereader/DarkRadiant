@@ -41,14 +41,6 @@ void PopupMenu::addItem(const ui::IMenuItemPtr& item)
 {
 	_menuItems.push_back(item);
 	
-	// Connect up the activation callback to GTK.
-	g_signal_connect(
-		G_OBJECT(item->getWidget()), // the actual GtkWidget* 
-		"activate", 
-		G_CALLBACK(_onActivate),
-		item.get() // pointer to our stored IMenuItem
-	);
-	
 	// Add the GtkWidget to the GtkMenu
 	gtk_menu_shell_append(GTK_MENU_SHELL(_menu), item->getWidget());
 }

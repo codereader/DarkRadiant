@@ -49,12 +49,6 @@ public:
 	// Called during mainframe construction
 	static void init();
 
-	// Called to register events
-	static void registerCommands();
-
-	// Static command target for "CreateNewLayer"
-	static void createLayer(const cmd::ArgumentList& args);
-
 	static LayerControlDialog& Instance();
 	static LayerControlDialogPtr& InstancePtr();
 
@@ -68,7 +62,6 @@ private:
 	// Creates the option buttons
 	GtkWidget* createButtons();
 
-	static void onCreateLayer(GtkWidget* button, LayerControlDialog* self);
 	static void onShowAllLayers(GtkWidget* button, LayerControlDialog* self);
 	static void onHideAllLayers(GtkWidget* button, LayerControlDialog* self);
 };

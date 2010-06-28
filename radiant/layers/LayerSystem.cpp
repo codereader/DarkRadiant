@@ -3,7 +3,9 @@
 #include "iorthocontextmenu.h"
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "iuimanager.h"
 #include "itextstream.h"
+#include "imainframe.h"
 #include "icommandsystem.h"
 #include "scene/Node.h"
 #include "modulesystem/StaticModule.h"
@@ -13,14 +15,24 @@
 #include "RemoveFromLayerWalker.h"
 #include "SetLayerSelectedWalker.h"
 
+#include "gtkutil/dialog.h"
+#include "gtkutil/IconTextMenuItem.h"
+#include "gtkutil/EntryAbortedException.h"
+#include "gtkutil/menu/CommandMenuItem.h"
+
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
+
+#include <boost/bind.hpp>
 
 namespace scene
 {
 
 	namespace {
 		const char* const DEFAULT_LAYER_NAME = N_("Default");
+
+		const char* const LAYER_ICON = "layers.png";
+		const char* const CREATE_LAYER_TEXT = N_("Create Layer...");
 
 		const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
 		const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
@@ -380,13 +392,15 @@ const StringSet& LayerSystem::getDependencies() const
 	{
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
 	}
 
 	return _dependencies;
 }
 
-void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
+void LayerSystem::initialiseModule(const ApplicationContext& ctx)
+{
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
 	
 	// Create the "master" layer with ID 0
@@ -399,11 +413,22 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 		);
 	}
 
-	GlobalCommandSystem().addCommand(
-		"ToggleLayerControlDialog", 
-		ui::LayerControlDialog::toggle
-	);
+	// Register the "create layer" command
+	GlobalCommandSystem().addCommand("CreateNewLayer", 
+		boost::bind(&LayerSystem::createLayerCmd, this, _1), cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
+	IEventPtr ev = GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
+	
+	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", ui::LayerControlDialog::toggle);
 	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
+
+
+	// Create a new menu item connected to the CreateNewLayer command
+	gtkutil::CommandMenuItemPtr menuItem(new gtkutil::CommandMenuItem(
+		gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(CREATE_LAYER_TEXT)),
+		"CreateNewLayer")
+	);
+
+	GlobalOrthoContextMenu().addItem(menuItem, ui::IOrthoContextMenu::SECTION_LAYER);
 
 	// Add the ortho context menu items
 	ui::LayerOrthoContextMenuItemPtr addMenu(new ui::LayerOrthoContextMenuItem(
@@ -418,6 +443,58 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx) {
 	GlobalOrthoContextMenu().addItem(addMenu, ui::IOrthoContextMenu::SECTION_LAYER);
 	GlobalOrthoContextMenu().addItem(moveMenu, ui::IOrthoContextMenu::SECTION_LAYER);
 	GlobalOrthoContextMenu().addItem(removeMenu, ui::IOrthoContextMenu::SECTION_LAYER);
+}
+
+void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
+{
+	std::string initialName = !args.empty() ? args[0].getString() : "";
+
+	while (true)
+	{
+		// Query the name of the new layer from the user
+		std::string layerName;
+
+		if (!initialName.empty()) {
+			// If we got a layer name passed through the arguments,
+			// we use this one, but only the first time
+			layerName = initialName;
+			initialName.clear();
+		}
+
+		if (layerName.empty()) {
+			try {
+				layerName = gtkutil::textEntryDialog(
+					_("Enter Name"), 
+					_("Enter Layer Name"), 
+					"",
+					GlobalMainFrame().getTopLevelWindow()
+				);
+			}
+			catch (gtkutil::EntryAbortedException&) {
+				break;
+			}
+		}
+
+		if (layerName.empty()) {
+			// Wrong name, let the user try again
+			gtkutil::errorDialog(_("Cannot create layer with empty name."), GlobalMainFrame().getTopLevelWindow());
+			continue;
+		}
+
+		// Attempt to create the layer, this will return -1 if the operation fails
+		int layerID = createLayer(layerName);
+
+		if (layerID != -1) {
+			// Success, break the loop
+			ui::LayerControlDialog::Instance().refresh();
+			break;
+		}
+		else {
+			// Wrong name, let the user try again
+			gtkutil::errorDialog(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
+			continue; 
+		}
+	}
 }
 
 // Define the static LayerSystem module
