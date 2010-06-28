@@ -836,8 +836,6 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
 	GlobalEventManager().addCommand("About", "About");
 
-	ui::LayerControlDialog::registerCommands();
-
 	ui::TexTool::registerCommands();
 
   Patch_registerCommands();

@@ -9,9 +9,7 @@
 #include "iregistry.h"
 #include "imainframe.h"
 
-#include "gtkutil/dialog.h"
 #include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/EntryAbortedException.h"
 
 #include "layers/LayerSystem.h"
 
@@ -78,7 +76,14 @@ GtkWidget* LayerControlDialog::createButtons() {
 
 	// Create layer button
 	GtkWidget* createButton = gtk_button_new_from_stock(GTK_STOCK_NEW);
-	g_signal_connect(G_OBJECT(createButton), "clicked", G_CALLBACK(onCreateLayer), this);
+
+	IEventPtr event = GlobalEventManager().findEvent("CreateNewLayer");
+
+	if (event != NULL)
+	{
+		event->connectWidget(createButton);
+	}
+	
 	gtk_widget_set_size_request(createButton, 100, -1);
 	gtk_box_pack_start(GTK_BOX(buttonVBox), createButton, FALSE, FALSE, 0);
 
@@ -205,63 +210,6 @@ void LayerControlDialog::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleDialog();
 }
 
-void LayerControlDialog::createLayer(const cmd::ArgumentList& args) {
-
-	std::string initialName = !args.empty() ? args[0].getString() : "";
-
-	while (true) {
-		// Query the name of the new layer from the user
-		std::string layerName;
-
-		if (!initialName.empty()) {
-			// If we got a layer name passed through the arguments,
-			// we use this one, but only the first time
-			layerName = initialName;
-			initialName.clear();
-		}
-
-		if (layerName.empty()) {
-			try {
-				layerName = gtkutil::textEntryDialog(
-					_("Enter Name"), 
-					_("Enter Layer Name"), 
-					"",
-					GlobalMainFrame().getTopLevelWindow()
-				);
-			}
-			catch (gtkutil::EntryAbortedException e) {
-				break;
-			}
-		}
-
-		if (layerName.empty()) {
-			// Wrong name, let the user try again
-			gtkutil::errorDialog(_("Cannot create layer with empty name."), GlobalMainFrame().getTopLevelWindow());
-			continue;
-		}
-
-		// Attempt to create the layer, this will return -1 if the operation fails
-		int layerID = scene::getLayerSystem().createLayer(layerName);
-
-		if (layerID != -1) {
-			// Success, break the loop
-			Instance().refresh();
-			break;
-		}
-		else {
-			// Wrong name, let the user try again
-			gtkutil::errorDialog(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
-			continue; 
-		}
-	}
-}
-
-void LayerControlDialog::registerCommands() {
-	// Register the "create layer" command
-	GlobalCommandSystem().addCommand("CreateNewLayer", createLayer, cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
-	GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
-}
-
 void LayerControlDialog::init() {
 	// Lookup the stored window information in the registry
 	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
@@ -315,12 +263,6 @@ void LayerControlDialog::_preShow() {
 void LayerControlDialog::_preHide() {
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
-}
-
-// Static GTK callbacks
-void LayerControlDialog::onCreateLayer(GtkWidget* button, LayerControlDialog* self) {
-	// Pass the call to the command
-	createLayer(cmd::ArgumentList());
 }
 
 void LayerControlDialog::onShowAllLayers(GtkWidget* button, LayerControlDialog* self) {

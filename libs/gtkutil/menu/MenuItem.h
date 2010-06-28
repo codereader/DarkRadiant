@@ -1,9 +1,11 @@
-#ifndef _GTKUTIL_POPUP_MENU_ITEM_H_
-#define _GTKUTIL_POPUP_MENU_ITEM_H_
+#ifndef _GTKUTIL_MENU_ITEM_H_
+#define _GTKUTIL_MENU_ITEM_H_
 
 #include "imenu.h"
 
-typedef struct _GtkWidget GtkWidget;
+#include <gtk/gtkwidget.h>
+
+typedef struct _GtkMenuItem GtkMenuItem;
 
 namespace gtkutil
 {
@@ -12,45 +14,56 @@ namespace gtkutil
 class MenuItem :
 	public ui::IMenuItem
 {
-private:
+protected:
 	GtkWidget* _widget;
 	ui::IMenu::Callback _callback;
 	ui::IMenu::SensitivityTest _sensitivityTest;
 	ui::IMenu::VisibilityTest _visibilityTest;
-	
+
 public:
 	MenuItem(GtkWidget* w, 
 			 const ui::IMenu::Callback& c, 
-			 const ui::IMenu::SensitivityTest& s,
-			 const ui::IMenu::VisibilityTest& v)
+			 const ui::IMenu::SensitivityTest& s = AlwaysSensitive,
+			 const ui::IMenu::VisibilityTest& v = AlwaysVisible)
 	: _widget(w), 
 	  _callback(c), 
 	  _sensitivityTest(s),
 	  _visibilityTest(v)
-	{}
+	{
+		// Connect up the activation callback to GTK.
+		g_signal_connect(G_OBJECT(_widget), "activate", G_CALLBACK(onActivate),	this);
+	}
 
-	GtkWidget* getWidget()
+	virtual GtkWidget* getWidget()
 	{
 		return _widget;
 	}
 
-	void execute()
+	virtual void execute()
 	{
 		_callback(); 
 	}
 
-	bool isVisible()
+	virtual bool isVisible()
 	{
 		return _visibilityTest();
 	}
 
-	bool isSensitive()
+	virtual bool isSensitive()
 	{
 		return _sensitivityTest();
+	}
+
+	static bool AlwaysVisible() { return true; }
+	static bool AlwaysSensitive() { return true; }
+
+	static void onActivate(GtkMenuItem* item, MenuItem* self)
+	{
+		self->execute();
 	}
 };
 typedef boost::shared_ptr<MenuItem> MenuItemPtr;
 
 } // namespace
 
-#endif /* _GTKUTIL_POPUP_MENU_ITEM_H_ */
+#endif /* _GTKUTIL_MENU_ITEM_H_ */

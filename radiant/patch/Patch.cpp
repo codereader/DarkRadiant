@@ -3660,6 +3660,36 @@ void Patch::BuildVertexArray()
   }
 }
 
+Vector3 getAverageNormal(const Vector3& normal1, const Vector3& normal2)
+{
+	// Beware of normals with 0 length
+	if (normal1.getLengthSquared() == 0) return normal2;
+	if (normal2.getLengthSquared() == 0) return normal1;
+
+	// Both normals have length > 0
+	Vector3 n1 = normal1.getNormalised();
+	Vector3 n2 = normal2.getNormalised();
+
+	Vector3 normal = (n1 + n2).getNormalised();
+
+	// Now calculate the length correction out of the angle 
+	// of the two normals
+	float factor = cos(n1.angle(n2) * 0.5);
+
+	// Check for div by zero (if the normals are antiparallel)
+	// and stretch the resulting normal, if necessary
+	if (factor != 0)
+	{
+		normal /= factor;
+	}
+	else
+	{
+		normal = Vector3(0,0,0);
+	}
+
+	return normal;
+}
+
 void Patch::createThickenedOpposite(const Patch& sourcePatch, 
 									const float thickness, 
 									const int axis) 
@@ -3691,109 +3721,131 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			break;
 	}
 	
-	for (std::size_t col = 0; col < m_width; col++) {
-		for (std::size_t row = 0; row < m_height; row++) {
-			
+	for (std::size_t col = 0; col < m_width; col++)
+	{
+		for (std::size_t row = 0; row < m_height; row++)
+		{			
 			// The current control vertex on the other patch
 			const PatchControl& curCtrl = sourcePatch.ctrlAt(row, col);
-			
-			// The col vertices that are averaged (or ignored if 0,0,0)
-			Vector3 colTangent[2] = {
-				Vector3(0,0,0),
-				Vector3(0,0,0)
-			};
-			
-			// Are we at the end of the column?
-			if (col == m_width-1) {
-				// Take the one neighbour vertex
-				const PatchControl& neighbour = sourcePatch.ctrlAt(row, col-1);
-				// Only fill one of the rowTangents
-				colTangent[0] = neighbour.vertex - curCtrl.vertex;
-				// Reverse it, as it faces the other direction
-				colTangent[0] *= -1;
-			}
-			// Are we at the beginning of the column?
-			else if (col == 0) {
-				// Take the one neighbour vertex
-				const PatchControl& neighbour = sourcePatch.ctrlAt(row, col+1);
-				// Only fill one of the rowTangents
-				colTangent[0] = neighbour.vertex - curCtrl.vertex;
-			}
-			// We are in between, two normals tangents can be calculated
-			else {
-				// Take two neighbouring vertices that should form a line segment
-				const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, col+1);
-				const PatchControl& neighbour2 = sourcePatch.ctrlAt(row, col-1);
-				
-				// Calculate both available tangents
-				colTangent[0] = neighbour1.vertex - curCtrl.vertex;
-				colTangent[1] = neighbour2.vertex - curCtrl.vertex;
-				
-				// Reverse the second one
-				colTangent[1] *= -1;
-			}
-			
-			// Get the next row index
-			std::size_t nextRow = (row == m_height-1) ? (row - 1) : (row + 1);
-			
-			const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
-			
-			// Calculate the tangent vector to the next row
-			Vector3 rowTangent = rowNeighbour.vertex - curCtrl.vertex;
-			// Reverse it accordingly
-			rowTangent *= (row == m_height-1) ? -1 : +1;
 			
 			Vector3 normal;
 			
 			// Are we extruding along vertex normals (i.e. extrudeAxis == 0,0,0)?
-			if (extrudeAxis == Vector3(0,0,0)) {
-				// Calculate the normal vector with the first tangent
-				// this gives us the first direction of the thickening
-				normal = rowTangent.crossProduct(colTangent[0]);
+			if (extrudeAxis == Vector3(0,0,0))
+			{
+				// The col tangents (empty if 0,0,0)
+				Vector3 colTangent[2] = { Vector3(0,0,0), Vector3(0,0,0) };
 				
-				// Beware of normals with 0 length
-				if (normal.getLengthSquared() > 0)
-				{
-					normal.normalise();
+				// Are we at the end of the column?
+				if (col == m_width-1) {
+					// Take the one neighbour vertex
+					const PatchControl& neighbour = sourcePatch.ctrlAt(row, col-1);
+					// Only fill one of the rowTangents
+					colTangent[0] = neighbour.vertex - curCtrl.vertex;
+					// Reverse it, as it faces the other direction
+					colTangent[0] *= -1;
 				}
-				
-				// Check if we have another normal available
-				if (colTangent[1] != Vector3(0,0,0)) {
+				// Are we at the beginning of the column?
+				else if (col == 0) {
+					// Take the one neighbour vertex
+					const PatchControl& neighbour = sourcePatch.ctrlAt(row, col+1);
+					// Only fill one of the rowTangents
+					colTangent[0] = neighbour.vertex - curCtrl.vertex;
+				}
+				// We are in between, two normals tangents can be calculated
+				else {
+					// Take two neighbouring vertices that should form a line segment
+					const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, col+1);
+					const PatchControl& neighbour2 = sourcePatch.ctrlAt(row, col-1);
 					
-					// Calculate the other normal
-					Vector3 normal2 = rowTangent.crossProduct(colTangent[1]);
+					// Calculate both available tangents
+					colTangent[0] = neighbour1.vertex - curCtrl.vertex;
+					colTangent[1] = neighbour2.vertex - curCtrl.vertex;
 					
-					if (normal2.getLengthSquared() > 0)
-					{
-						normal2.getNormalised();
-					}
-					
-					// Now calculate the length correction out of the angle 
-					// of the two normals
-					float factor = cos(normal.angle(normal2)/2);
-			
-					// Calculate the mean value and normalise it
-					normal += normal2;
-					normal /= 2;
+					// Reverse the second one
+					colTangent[1] *= -1;
+				}
 
-					if (normal.getLengthSquared() > 0)
-					{
-						normal = normal.getNormalised();
-					}
+				// Calculate the tangent vectors to the next row
+				Vector3 rowTangent[2] = { Vector3(0,0,0), Vector3(0,0,0) };
+				
+				// Are we at the beginning or the end? 
+				if (row == 0 || row == m_height - 1)
+				{
+					// Yes, only calculate one row tangent
+					// Get the next row index
+					std::size_t nextRow = (row == m_height - 1) ? (row - 1) : (row + 1);
 					
-					// Check for div by zero (if the normals are antiparallel)
-					// and stretch the resulting normal, if necessary
-					if (factor != 0)
+					const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
+					
+					// First tangent
+					rowTangent[0] = rowNeighbour.vertex - curCtrl.vertex;
+					// Reverse it accordingly
+					rowTangent[0] *= (row == m_height - 1) ? -1 : +1;
+				}
+				else
+				{
+					// Two tangents to calculate
+					const PatchControl& rowNeighbour1 = sourcePatch.ctrlAt(row + 1, col);
+					const PatchControl& rowNeighbour2 = sourcePatch.ctrlAt(row - 1, col);
+
+					// First tangent
+					rowTangent[0] = rowNeighbour1.vertex - curCtrl.vertex;
+					rowTangent[1] = rowNeighbour2.vertex - curCtrl.vertex;
+
+					// Reverse the second one
+					rowTangent[1] *= -1;
+				}
+
+				// If two column tangents are available, take the length-corrected average
+				if (colTangent[1].getLengthSquared() > 0)
+				{
+					// Two column normals to find
+					Vector3 normal1 = rowTangent[0].crossProduct(colTangent[0]).getNormalised();
+					Vector3 normal2 = rowTangent[0].crossProduct(colTangent[1]).getNormalised();
+
+					normal = getAverageNormal(normal1, normal2);
+				}
+				else
+				{
+					normal = rowTangent[0].crossProduct(colTangent[0]).getNormalised();
+				}
+
+				// Do we have a second rowtangent?
+				if (rowTangent[1].getLengthSquared() > 0)
+				{
+					Vector3 secondNormal;
+
+					if (colTangent[1].getLengthSquared() > 0)
 					{
-						normal /= factor;
+						// Two column normals to find
+						Vector3 normal1 = rowTangent[1].crossProduct(colTangent[0]).getNormalised();
+						Vector3 normal2 = rowTangent[1].crossProduct(colTangent[1]).getNormalised();
+
+						secondNormal = getAverageNormal(normal1, normal2);
+
+						float factor = cos(normal.angle(secondNormal) * 0.5);
+
+						// Combine the two normals
+						normal = (normal + secondNormal) * 0.5;
+
+						// Stretch the resulting normal one final time, if necessary
+						if (factor != 0)
+						{
+							normal /= factor;
+						}
 					}
 					else
 					{
-						normal = Vector3(0,0,0);
+						secondNormal = rowTangent[1].crossProduct(colTangent[0]).getNormalised();
+
+						// Average the normals, length-weighted
+						normal = getAverageNormal(normal, secondNormal);
 					}
 				}
 			}
-			else {
+			else
+			{
 				// Take the predefined extrude direction instead
 				normal = extrudeAxis;
 			}
