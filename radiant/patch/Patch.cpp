@@ -265,6 +265,9 @@ void Patch::testSelect(Selector& selector, SelectionTest& test)
 	// ensure the tesselation is up to date
 	updateTesselation();
 
+	// The updateTesselation routine might have produced a degenerate patch, catch this
+	if (m_tess.vertices.empty()) return;
+
 	SelectionIntersection best;
 	IndexPointer::index_type* pIndex = &m_tess.indices.front();
 	
