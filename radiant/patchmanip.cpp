@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/patch/PatchThickenDialog.h"
 #include "ui/patch/PatchCreateDialog.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"
+#include "ui/patch/PatchInspector.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/General.h"
 #include "ui/patch/CapDialog.h"
@@ -399,6 +400,8 @@ void Patch_Transpose(const cmd::ArgumentList& args)
   UndoableCommand undo("patchTranspose");
 
   Scene_PatchTranspose_Selected(GlobalSceneGraph());
+
+  ui::PatchInspector::Instance().queueUpdate();
 }
 
 void Patch_Cap(const cmd::ArgumentList& args)

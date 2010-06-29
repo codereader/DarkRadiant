@@ -626,30 +626,25 @@ void Patch::InvertMatrix()
 
 void Patch::TransposeMatrix()
 {
-  undoSave();
+	undoSave();
 
-  {
-    PatchControlArray tmp(m_width * m_height);
-    copy_ctrl(tmp.begin(), m_ctrl.begin(), m_ctrl.begin() + m_width * m_height);
+	// greebo: create a new temporary control array to hold the "old" matrix
+	PatchControlArray tmp = m_ctrl;
 
-    PatchControlIter from = tmp.begin();
-    for(std::size_t h = 0; h != m_height; ++h)
-    {
-      PatchControlIter to = m_ctrl.begin() + h;
-      for(std::size_t w = 0; w != m_width; ++w, ++from, to += m_height)
-      {
-        *to = *from;
-      }
-    }
-  }
+	std::size_t i = 0;
 
-  {
-    std::size_t tmp = m_width;
-    m_width = m_height;
-    m_height = tmp;
-  }
-   
-  controlPointsChanged();
+	for (std::size_t w = 0; w < m_width; ++w)
+	{
+		for (std::size_t h = 0; h < m_height; ++h)
+		{
+			// Copy elements such that the columns end up as rows
+			m_ctrl[i++] = tmp[h*m_width + w];
+		}
+	}
+
+	std::swap(m_width, m_height);
+
+	controlPointsChanged();
 }
 
 void Patch::Redisperse(EMatrixMajor mt)
