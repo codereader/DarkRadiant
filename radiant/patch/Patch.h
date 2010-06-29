@@ -240,6 +240,13 @@ public:
 	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width = 3, std::size_t height = 3);
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
 	void InvertMatrix();
+
+	/**
+	 * greebo: This algorithm will transpose the patch matrix 
+	 * such that the actual control vertex contents remain the same
+	 * but their indices in the patch matrix change.
+	 * Rows become columns and vice versa.
+	 */
 	void TransposeMatrix();
 	void Redisperse(EMatrixMajor mt);
 	void InsertRemove(bool bInsert, bool bColumn, bool bFirst);
