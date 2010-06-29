@@ -4,6 +4,11 @@
 #include "i18n.h"
 #include "ientity.h"
 #include "iundo.h"
+
+#include <gtk/gtkvbox.h>
+#include <gtk/gtkhbox.h>
+#include <gtk/gtkbutton.h>
+
 #include "selection/algorithm/Entity.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
