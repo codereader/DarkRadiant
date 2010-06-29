@@ -564,6 +564,8 @@ void PatchInspector::emitCoords()
 	ctrl.texcoord[1] = strToFloat(gtk_entry_get_text(GTK_ENTRY(_coords["t"].value)));
 	
 	patch->getPatchInternal().controlPointsChanged();
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 void PatchInspector::emitTesselation() {
@@ -584,6 +586,8 @@ void PatchInspector::emitTesselation() {
 	gtk_widget_set_sensitive(_tesselation.vert, fixed);
 	gtk_widget_set_sensitive(_tesselation.vertLabel, fixed);
 	gtk_widget_set_sensitive(_tesselation.horizLabel, fixed);
+
+	GlobalMainFrame().updateAllWindows();
 }
 
 void PatchInspector::saveToRegistry() {
