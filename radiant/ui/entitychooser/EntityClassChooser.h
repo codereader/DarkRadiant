@@ -1,12 +1,16 @@
 #ifndef ENTITYCLASSCHOOSER_H_
 #define ENTITYCLASSCHOOSER_H_
 
-#include <gtk/gtk.h>
 #include "iradiant.h"
 #include "ieclass.h"
 #include "imodelpreview.h"
 
 #include "math/Vector3.h"
+
+#include <gtk/gtkwidget.h>
+
+typedef struct _GtkTreeStore GtkTreeStore;
+typedef struct _GtkTreeSelection GtkTreeSelection;
 
 namespace {
 

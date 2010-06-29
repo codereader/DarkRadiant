@@ -5,6 +5,14 @@
 #include "iregistry.h"
 #include "imainframe.h"
 #include "iuimanager.h"
+
+#include <gtk/gtkmain.h>
+#include <gtk/gtkhbox.h>
+#include <gtk/gtkvbox.h>
+#include <gtk/gtktextview.h>
+#include <gtk/gtkbutton.h>
+#include <gtk/gtkstock.h>
+
 #include "gtkutil/dialog.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
