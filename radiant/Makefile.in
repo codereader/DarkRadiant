@@ -99,6 +99,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-LayerControl.$(OBJEXT) \
 	darkradiant-LayerContextMenu.$(OBJEXT) \
 	darkradiant-LayerControlDialog.$(OBJEXT) \
+	darkradiant-LayerOrthoContextMenuItem.$(OBJEXT) \
 	darkradiant-OrthoContextMenu.$(OBJEXT) \
 	darkradiant-AboutDialog.$(OBJEXT) \
 	darkradiant-AnglePropertyEditor.$(OBJEXT) \
@@ -479,6 +480,7 @@ darkradiant_SOURCES = main.cpp \
 					  ui/layers/LayerControl.cpp \
 					  ui/layers/LayerContextMenu.cpp \
 					  ui/layers/LayerControlDialog.cpp \
+					  ui/layers/LayerOrthoContextMenuItem.cpp \
 					  ui/ortho/OrthoContextMenu.cpp \
 					  ui/about/AboutDialog.cpp \
 					  ui/einspector/AnglePropertyEditor.cpp \
@@ -785,6 +787,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerContextMenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerControl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerControlDialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerOrthoContextMenuItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LightInspector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LightTextureChooser.Po@am__quote@
@@ -1695,6 +1698,20 @@ darkradiant-LayerControlDialog.obj: ui/layers/LayerControlDialog.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/layers/LayerControlDialog.cpp' object='darkradiant-LayerControlDialog.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LayerControlDialog.obj `if test -f 'ui/layers/LayerControlDialog.cpp'; then $(CYGPATH_W) 'ui/layers/LayerControlDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/layers/LayerControlDialog.cpp'; fi`
+
+darkradiant-LayerOrthoContextMenuItem.o: ui/layers/LayerOrthoContextMenuItem.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-LayerOrthoContextMenuItem.o -MD -MP -MF $(DEPDIR)/darkradiant-LayerOrthoContextMenuItem.Tpo -c -o darkradiant-LayerOrthoContextMenuItem.o `test -f 'ui/layers/LayerOrthoContextMenuItem.cpp' || echo '$(srcdir)/'`ui/layers/LayerOrthoContextMenuItem.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-LayerOrthoContextMenuItem.Tpo $(DEPDIR)/darkradiant-LayerOrthoContextMenuItem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/layers/LayerOrthoContextMenuItem.cpp' object='darkradiant-LayerOrthoContextMenuItem.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LayerOrthoContextMenuItem.o `test -f 'ui/layers/LayerOrthoContextMenuItem.cpp' || echo '$(srcdir)/'`ui/layers/LayerOrthoContextMenuItem.cpp
+
+darkradiant-LayerOrthoContextMenuItem.obj: ui/layers/LayerOrthoContextMenuItem.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-LayerOrthoContextMenuItem.obj -MD -MP -MF $(DEPDIR)/darkradiant-LayerOrthoContextMenuItem.Tpo -c -o darkradiant-LayerOrthoContextMenuItem.obj `if test -f 'ui/layers/LayerOrthoContextMenuItem.cpp'; then $(CYGPATH_W) 'ui/layers/LayerOrthoContextMenuItem.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/layers/LayerOrthoContextMenuItem.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-LayerOrthoContextMenuItem.Tpo $(DEPDIR)/darkradiant-LayerOrthoContextMenuItem.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/layers/LayerOrthoContextMenuItem.cpp' object='darkradiant-LayerOrthoContextMenuItem.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LayerOrthoContextMenuItem.obj `if test -f 'ui/layers/LayerOrthoContextMenuItem.cpp'; then $(CYGPATH_W) 'ui/layers/LayerOrthoContextMenuItem.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/layers/LayerOrthoContextMenuItem.cpp'; fi`
 
 darkradiant-OrthoContextMenu.o: ui/ortho/OrthoContextMenu.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OrthoContextMenu.o -MD -MP -MF $(DEPDIR)/darkradiant-OrthoContextMenu.Tpo -c -o darkradiant-OrthoContextMenu.o `test -f 'ui/ortho/OrthoContextMenu.cpp' || echo '$(srcdir)/'`ui/ortho/OrthoContextMenu.cpp
