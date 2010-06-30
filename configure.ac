@@ -125,7 +125,16 @@ then
                     [script_module=''])
     AC_CHECK_LIB([boost_python], [main],
                  [BOOST_PYTHON_LIBS='-lboost_python'],
-                 [script_module=''])
+                 [])
+
+    # Also check boost_python-mt since apparently it seems to randomly change on
+    # different Ubuntu distributions.
+    if test -z "$BOOST_PYTHON_LIBS"
+    then
+        AC_CHECK_LIB([boost_python-mt], [main],
+                     [BOOST_PYTHON_LIBS='-lboost_python-mt'],
+                     [script_module=''])
+    fi
 
     # GTKSourceView used for syntax highlighting
     PKG_CHECK_MODULES([GTKSOURCEVIEW], [gtksourceview-2.0], [],
