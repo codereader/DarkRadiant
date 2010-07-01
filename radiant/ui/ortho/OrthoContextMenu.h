@@ -3,9 +3,11 @@
 
 #include "iorthocontextmenu.h"
 #include "iradiant.h"
+
 #include <map>
 #include <list>
 #include "math/Vector3.h"
+
 #include <boost/enable_shared_from_this.hpp>
 
 typedef struct _GtkMenuItem GtkMenuItem;
@@ -13,10 +15,6 @@ typedef struct _GtkWidget GtkWidget;
 
 namespace ui
 {
-
-// Forward declaration
-class LayerContextMenu;
-typedef boost::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
 
 /** Displays a menu when the mouse is right-clicked in the ortho window.
  * This is a singleton module which remains in existence once initialised,
@@ -32,13 +30,6 @@ class OrthoContextMenu :
 	
 	// Last provided 3D point for action
 	Vector3 _lastPoint;
-
-	// The widgets, indexed by an enum
-	std::map<int, GtkWidget*> _widgets;
-	
-	LayerContextMenuPtr _addToLayerSubmenu;
-	LayerContextMenuPtr _moveToLayerSubmenu;
-	LayerContextMenuPtr _removeFromLayerSubmenu;
 
 	// A list of menu items
 	typedef std::list<IMenuItemPtr> MenuItems;
@@ -68,33 +59,6 @@ class OrthoContextMenu :
 
 	ExtendedSelectionInfo _selectionInfo;
 
-private:
-
-    static std::string getRegistryKeyWithDefault(const std::string&,
-                                                 const std::string&);
-
-	void analyseSelection();
-
-	// Enable or disable the "convert to static" option based on the number of selected brushes.
-	bool checkConvertStatic();
-	bool checkRevertToWorldspawn();
-	bool checkMergeEntities();
-	bool checkRevertToWorldspawnPartial();
-	bool checkAddPlayerStart();
-	bool checkMovePlayerStart();
-	bool checkMakeVisportal();
-	bool checkAddMonsterclip();
-	bool checkAddEntity();
-	bool checkAddModel();
-	
-	void callbackAddEntity();
-	void callbackAddPlayerStart();
-	void callbackMovePlayerStart();
-	void callbackAddModel();
-	void callbackAddLight();
-	void callbackAddPrefab();
-	void callbackAddSpeaker();
-	
 public:
 	OrthoContextMenu();
 
@@ -122,14 +86,38 @@ public:
 	void onRadiantStartup();
 
 private:
-	// Create, pack and connect widgets
+
+    static std::string getRegistryKeyWithDefault(const std::string&,
+                                                 const std::string&);
+
+	void analyseSelection();
+
+	// Visibility/Sensitivity checks
+	bool checkConvertStatic();
+	bool checkRevertToWorldspawn();
+	bool checkMergeEntities();
+	bool checkRevertToWorldspawnPartial();
+	bool checkAddPlayerStart();
+	bool checkMovePlayerStart();
+	bool checkMakeVisportal();
+	bool checkAddMonsterclip();
+	bool checkAddEntity();
+	bool checkAddModel();
+	
+	void callbackAddEntity();
+	void callbackAddPlayerStart();
+	void callbackMovePlayerStart();
+	void callbackAddModel();
+	void callbackAddLight();
+	void callbackAddPrefab();
+	void callbackAddSpeaker();
+
+	void registerDefaultItems();
+
+	// Pack widgets
 	void constructMenu();
 
-	void addSectionItems(int section);
-
-	// Private add method, to ensure that items are added at the front
-	void addItemFront(const IMenuItemPtr& item, int section);
-	void addItem(const IMenuItemPtr& item, int section, bool atFront);
+	void addSectionItems(int section, bool noSpacer = false);
 };
 
 }
