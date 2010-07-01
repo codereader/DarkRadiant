@@ -150,6 +150,11 @@ namespace selection {
 	 */
 	void makeVisportal(const cmd::ArgumentList& args);
 
+	/** 
+	 * greebo: Surrounds the current model selection with a monsterclip brush.
+	 */
+	void surroundWithMonsterclip(const cmd::ArgumentList& args);
+
 	} // namespace algorithm
 } // namespace selection
 

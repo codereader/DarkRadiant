@@ -50,8 +50,7 @@ namespace {
     const char* ANGLE_KEY_NAME = "angle";
     const char* DEFAULT_ANGLE = "90"; // north
 
-	const char* RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
-    const char* RKEY_SPEAKERMINRADIUS = "game/defaults/speakerMinRadius";
+	const char* RKEY_SPEAKERMINRADIUS = "game/defaults/speakerMinRadius";
     const char* RKEY_SPEAKERMAXRADIUS = "game/defaults/speakerMaxRadius";
 
     const char* ADD_ENTITY_TEXT = N_("Create entity...");
@@ -83,7 +82,6 @@ namespace {
 	enum {
 		WIDGET_ADD_ENTITY,
 		WIDGET_ADD_MODEL,
-		WIDGET_ADD_MONSTERCLIP,
 		WIDGET_ADD_LIGHT,
 		WIDGET_ADD_PREFAB,
 		WIDGET_ADD_SPEAKER,
@@ -202,7 +200,7 @@ bool OrthoContextMenu::checkConvertStatic()
 	return _selectionInfo.onlyPrimitivesSelected;
 }
 
-bool OrthoContextMenu::checkMonsterClip()
+bool OrthoContextMenu::checkAddMonsterclip()
 {
 	return _selectionInfo.onlyModelsSelected;
 }
@@ -327,39 +325,6 @@ void OrthoContextMenu::callbackMovePlayerStart()
 	}
 }
 
-void OrthoContextMenu::callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMenu* self) {
-	UndoableCommand command("addMonsterclip");	
-
-	// create a ModelFinder and retrieve the modelList
-	selection::algorithm::ModelFinder visitor;
-	GlobalSelectionSystem().foreachSelected(visitor);
-
-	// Retrieve the list with all the found models from the visitor
-	selection::algorithm::ModelFinder::ModelList list = visitor.getList();
-	
-	selection::algorithm::ModelFinder::ModelList::iterator iter;
-	for (iter = list.begin(); iter != list.end(); ++iter) {
-		// one of the models in the SelectionStack
-		const scene::INodePtr& node = *iter;
-
-		// retrieve the AABB
-		AABB brushAABB(node->worldAABB()); // TODO: Check if worldAABB() is appropriate
-
-		// create the brush
-		scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
-
-		if (brushNode != NULL) {
-			scene::addNodeToContainer(brushNode, GlobalMap().findOrInsertWorldspawn());
-			
-			Brush* theBrush = Node_getBrush(brushNode);
-
-			std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
-
-			Scene_BrushResize(*theBrush, brushAABB, clipShader);
-		}
-	}
-}
-
 void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {
 	UndoableCommand command("addLight");	
 
@@ -455,16 +420,9 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 				Node_getEntity(modelNode)->setKeyValue("skin", ms.skin);
 
 				// If 'createClip' is ticked, create a clip brush
-				if (ms.createClip) {
-					// retrieve the AABB
-					AABB brushAABB(modelNode->worldAABB()); // TODO: Check if worldAABB() is ok
-	
-					// create the brush
-					scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
-					scene::addNodeToContainer(brushNode, GlobalMap().findOrInsertWorldspawn());
-					Brush* theBrush = Node_getBrush(brushNode);
-					std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
-					Scene_BrushResize(*theBrush, brushAABB, clipShader);
+				if (ms.createClip)
+				{
+					GlobalCommandSystem().execute("SurroundWithMonsterclip");
 				}
             }
             catch (EntityCreationException&) {
@@ -493,9 +451,6 @@ void OrthoContextMenu::constructMenu()
 	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(
         GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT)
     );
-	_widgets[WIDGET_ADD_MONSTERCLIP] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT)
-    );
 	_widgets[WIDGET_ADD_LIGHT] = gtkutil::IconTextMenuItem(
         GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT)
     );
@@ -505,6 +460,14 @@ void OrthoContextMenu::constructMenu()
 	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(
         GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT)
     );
+
+	gtkutil::CommandMenuItemPtr surroundWithMonsterClip(
+		new gtkutil::CommandMenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT)),
+			"SurroundWithMonsterclip",
+			boost::bind(&OrthoContextMenu::checkAddMonsterclip, this),
+			boost::bind(&OrthoContextMenu::checkAddMonsterclip, this))
+	);
 
 	gtkutil::MenuItemPtr addPlayerStart(
 		new gtkutil::MenuItem(
@@ -563,10 +526,10 @@ void OrthoContextMenu::constructMenu()
 	addItem(revertToWorldspawnPartial, SECTION_ACTION);
 	addItem(mergeEntities, SECTION_ACTION);
 	addItem(makeVisportal, SECTION_ACTION);
+	addItem(surroundWithMonsterClip, SECTION_ACTION);
 
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_ENTITY]), "activate", G_CALLBACK(callbackAddEntity), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MODEL]), "activate", G_CALLBACK(callbackAddModel), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MONSTERCLIP]), "activate", G_CALLBACK(callbackAddMonsterClip), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_LIGHT]), "activate", G_CALLBACK(callbackAddLight), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PREFAB]), "activate", G_CALLBACK(callbackAddPrefab), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_SPEAKER]), "activate", G_CALLBACK(callbackAddSpeaker), this);
@@ -582,12 +545,7 @@ void OrthoContextMenu::constructMenu()
 
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
 
-    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MONSTERCLIP]);
-
 	addSectionItems(SECTION_ACTION);
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
-
 	addSectionItems(SECTION_LAYER);
 
 	// Add the rest of the sections

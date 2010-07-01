@@ -781,6 +781,8 @@ void Brush_registerCommands()
 
 	GlobalCommandSystem().addCommand("TextureNatural", selection::algorithm::naturalTexture);
 	GlobalCommandSystem().addCommand("MakeVisportal", selection::algorithm::makeVisportal);
+	GlobalCommandSystem().addCommand("SurroundWithMonsterclip", selection::algorithm::surroundWithMonsterclip);
 	GlobalEventManager().addCommand("TextureNatural", "TextureNatural");
 	GlobalEventManager().addCommand("MakeVisportal", "MakeVisportal");
+	GlobalEventManager().addCommand("SurroundWithMonsterclip", "SurroundWithMonsterclip");
 }
