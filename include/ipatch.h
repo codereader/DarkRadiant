@@ -81,6 +81,32 @@ typedef BasicVector2<unsigned int> Subdivisions;
 class IPatch
 {
 public:
+	// An observer can attach itself to a specific patch instance.
+	// to get notified about changes.
+	class Observer
+	{
+	public:
+		/**
+		 * Is called when the dimensions and/or the
+		 * values of one or more control points get altered.
+		 */
+		virtual void onPatchControlPointsChanged() = 0;
+
+		/**
+		 * Is called when the patch shader is changed.
+		 */
+		virtual void onPatchTextureChanged() = 0;
+
+		/**
+		 * Is called by the Patch destructor. After this call
+		 * the observer is automatically detached.
+		 */
+		virtual void onPatchDestruction() = 0;
+	};
+
+	virtual void attachObserver(Observer* observer) = 0;
+	virtual void detachObserver(Observer* observer) = 0;
+
 	virtual ~IPatch() {}
 
 	// Resizes the patch to the given dimensions

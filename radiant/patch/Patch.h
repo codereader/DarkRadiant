@@ -36,6 +36,9 @@ class Patch :
 private:
 	PatchNode& _node;
 
+	typedef std::set<IPatch::Observer*> Observers;
+	Observers _observers;
+
 	AABB m_aabb_local; // local bbox
 
 	// greebo: The name of the shader
@@ -112,6 +115,9 @@ public:
 	PatchNode& getPatchNode();
 	
 	InstanceCounter m_instanceCounter;
+
+	void attachObserver(Observer* observer);
+	void detachObserver(Observer* observer);
 
 	void instanceAttach(MapFile* map);
 	// Remove the attached instance and decrease the counters
@@ -362,7 +368,7 @@ public:
 
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change
-	static void textureChanged();
+	void textureChanged();
 
 	void updateTesselation();
 

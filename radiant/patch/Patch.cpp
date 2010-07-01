@@ -148,7 +148,7 @@ std::size_t Patch::getHeight() const {
 	return m_height;
 }
 
-void Patch::setDims (std::size_t w, std::size_t h)
+void Patch::setDims(std::size_t w, std::size_t h)
 {
   if((w%2)==0)
     w -= 1;
@@ -332,10 +332,11 @@ void Patch::revertTransform()
 void Patch::freezeTransform()
 {
 	undoSave();
-	evaluateTransform();
 
 	// Save the transformed working set array over m_ctrl
 	m_ctrl = m_ctrlTransformed;
+
+	controlPointsChanged();
 }
 
 // callback for changed control points
@@ -344,6 +345,11 @@ void Patch::controlPointsChanged()
 	transformChanged();
 	evaluateTransform();
 	updateTesselation();
+
+	for (Observers::iterator i = _observers.begin(); i != _observers.end();)
+	{
+		(*i++)->onPatchControlPointsChanged();
+	}
 }
 
 // Snaps the control points to the grid
@@ -474,7 +480,13 @@ void Patch::check_shader() {
 }
 
 // Patch Destructor
-Patch::~Patch() {
+Patch::~Patch()
+{
+	for (Observers::iterator i = _observers.begin(); i != _observers.end();)
+	{
+		(*i++)->onPatchDestruction();
+	}
+
 	BezierCurveTreeArray_deleteAll(m_tess.curveTreeU);
 	BezierCurveTreeArray_deleteAll(m_tess.curveTreeV);
 
@@ -4082,5 +4094,20 @@ bool Patch::subdivionsFixed() const {
 
 void Patch::textureChanged()
 {
+	for (Observers::iterator i = _observers.begin(); i != _observers.end();)
+	{
+		(*i++)->onPatchTextureChanged();
+	}
+
 	ui::SurfaceInspector::Instance().queueUpdate(); // Triggers TexTool and PatchInspector update
+}
+
+void Patch::attachObserver(Observer* observer)
+{
+	_observers.insert(observer);
+}
+
+void Patch::detachObserver(Observer* observer)
+{
+	_observers.erase(observer);
 }
