@@ -83,14 +83,12 @@ private:
 	bool checkAddPlayerStart();
 	bool checkMovePlayerStart();
 	bool checkMakeVisportal();
+	bool checkAddMonsterclip();
 	
 	/** greebo: Disables the "entity/light/speaker/playerStart" options according to the selection,
 	 *			and change "playerStart" if another playerStart is found.
 	 */
 	void checkAddOptions();
-
-	// Disables the "add MonsterClip" option according to the selection,
-	bool checkMonsterClip();
 
 	/* Gtk Callbacks */
 	
@@ -98,7 +96,6 @@ private:
 	void callbackAddPlayerStart();
 	void callbackMovePlayerStart();
 	static void callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddSpeaker(GtkMenuItem*, OrthoContextMenu* self);

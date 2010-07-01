@@ -828,6 +828,7 @@ void RadiantSelectionSystem::cancelMove() {
 	if (_undoBegun) {
 		// Cancel the undo operation, if one has been begun 
 		GlobalUndoSystem().cancel();
+		_undoBegun = false;
 	}
 	
 	// Update the views

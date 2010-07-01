@@ -25,6 +25,9 @@
 #include <boost/filesystem/exception.hpp>
 #include <boost/format.hpp>
 
+#include "brushmanip.h"
+#include "ModelFinder.h"
+
 // greebo: Nasty global that contains all the selected face instances
 extern FaceInstanceSet g_SelectedFaceInstances;
 
@@ -35,6 +38,7 @@ namespace selection {
 		const std::string RKEY_CM_EXT = "game/defaults/collisionModelExt";
 		const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
 		const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
+		const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
 		
 		const std::string ERRSTR_WRONG_SELECTION = 
 				"Can't export, create and select a func_* entity\
@@ -640,6 +644,41 @@ void makeVisportal(const cmd::ArgumentList& args) {
 		brush.forEachFace(finder);
 		
 		finder.getLargestFace().setShader(GlobalRegistry().get(RKEY_VISPORTAL_SHADER));
+	}
+}
+
+void surroundWithMonsterclip(const cmd::ArgumentList& args)
+{
+	UndoableCommand command("addMonsterclip");	
+
+	// create a ModelFinder and retrieve the modelList
+	selection::algorithm::ModelFinder visitor;
+	GlobalSelectionSystem().foreachSelected(visitor);
+
+	// Retrieve the list with all the found models from the visitor
+	selection::algorithm::ModelFinder::ModelList list = visitor.getList();
+	
+	selection::algorithm::ModelFinder::ModelList::iterator iter;
+	for (iter = list.begin(); iter != list.end(); ++iter)
+	{
+		// one of the models in the SelectionStack
+		const scene::INodePtr& node = *iter;
+
+		// retrieve the AABB
+		AABB brushAABB(node->worldAABB());
+
+		// create the brush
+		scene::INodePtr brushNode(GlobalBrushCreator().createBrush());
+
+		if (brushNode != NULL) {
+			scene::addNodeToContainer(brushNode, GlobalMap().findOrInsertWorldspawn());
+			
+			Brush* theBrush = Node_getBrush(brushNode);
+
+			std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);
+
+			Scene_BrushResize(*theBrush, brushAABB, clipShader);
+		}
 	}
 }
 
