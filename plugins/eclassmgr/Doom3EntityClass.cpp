@@ -22,6 +22,7 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _isLight(false),
   _colour(colour),
   _colourSpecified(false),
+  _colourTransparent(false),
   _fixedSize(fixedSize),
   _model(""),
   _skin(""),
@@ -184,7 +185,10 @@ void Doom3EntityClass::captureColour()
 	}
 
 	// Capture fill and wire versions of the entity colour
-	std::string fillCol = (boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
+	std::string fillCol = _colourTransparent ? 
+		(boost::format("[%g %g %g]") % _colour[0] % _colour[1] % _colour[2]).str() : 
+		(boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
+
 	std::string wireCol = (boost::format("<%g %g %g>") % _colour[0] % _colour[1] % _colour[2]).str();
 
 	_fillShader = GlobalRenderSystem().capture(fillCol);
@@ -259,6 +263,11 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 		setIsLight(true);
 	}
 
+	if (getAttribute("editor_transparent").value == "1")
+	{
+		_colourTransparent = true;
+	}
+
 	// (Re)set the colour
 	const EntityClassAttribute& colourAttr = getAttribute("editor_color");
 
@@ -319,6 +328,7 @@ void Doom3EntityClass::clear()
 
     _colour = Vector3(-1,-1,-1);
 	_colourSpecified = false;
+	_colourTransparent = false;
 	releaseColour();
 
 	_fixedSize = false;

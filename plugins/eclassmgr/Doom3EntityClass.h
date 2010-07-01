@@ -6,6 +6,7 @@
 
 #include "math/Vector3.h"
 #include "math/aabb.h"
+#include "string/string.h"
 
 #include "parser/DefTokeniser.h"
 
@@ -37,7 +38,8 @@ private:
 	public:
 		bool operator()(const std::string& lhs, const std::string& rhs) const
 		{
-			return boost::algorithm::ilexicographical_compare(lhs, rhs);
+			//return boost::algorithm::ilexicographical_compare(lhs, rhs); // this is slow!
+			return string_compare_nocase(lhs.c_str(), rhs.c_str()) < 0;
 		}
 	};
 
@@ -50,6 +52,7 @@ private:
 	// Colour of this entity and flag to indicate it has been specified
 	Vector3	_colour;
 	bool _colourSpecified;
+	bool _colourTransparent;
 
 	// Shader versions of the colour
 	ShaderPtr _fillShader;
