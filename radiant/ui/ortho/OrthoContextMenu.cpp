@@ -20,6 +20,7 @@
 #include "gtkutil/dialog.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/TextMenuItem.h"
+#include "gtkutil/menu/CommandMenuItem.h"
 
 #include "selection/algorithm/Group.h"
 #include "selection/algorithm/ModelFinder.h"
@@ -81,18 +82,11 @@ namespace {
 
 	enum {
 		WIDGET_ADD_ENTITY,
-		WIDGET_ADD_PLAYERSTART,
-		WIDGET_MOVE_PLAYERSTART,
 		WIDGET_ADD_MODEL,
 		WIDGET_ADD_MONSTERCLIP,
 		WIDGET_ADD_LIGHT,
 		WIDGET_ADD_PREFAB,
 		WIDGET_ADD_SPEAKER,
-		WIDGET_CONVERT_STATIC,
-		WIDGET_REVERT_WORLDSPAWN,
-		WIDGET_REVERT_PARTIAL,
-		WIDGET_MERGE_ENTITIES,
-		WIDGET_MAKE_VISPORTAL,
 	};
 
 }
@@ -115,12 +109,8 @@ OrthoContextMenu::OrthoContextMenu() :
 void OrthoContextMenu::showAt(const Vector3& point)
 {
 	_lastPoint = point;
-	checkConvertStatic(); // enable or disable the convert-to-static command
-	checkRevertToWorldspawn();
-	checkMonsterClip(); // enable the "Add MonsterClip" entry only if one or more model is selected
-	checkPlayerStart(); // change the "Add PlayerStart" entry if an info_player_start is already existant 
-	checkAddOptions(); // disable the "Add *" command if an entity is already selected
-	checkMakeVisportal(); // enable or disable the make visportal command
+
+	analyseSelection();
 
 	// Perform the visibility/sensitivity tests
 	for (MenuSections::const_iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
@@ -153,37 +143,68 @@ void OrthoContextMenu::showAt(const Vector3& point)
 	gtk_menu_popup(GTK_MENU(_widget), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
 }
 
-void OrthoContextMenu::checkMakeVisportal() {
+void OrthoContextMenu::analyseSelection()
+{
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	gtk_widget_set_sensitive(
-		_widgets[WIDGET_MAKE_VISPORTAL], 
-		(info.totalCount > 0 && info.totalCount == info.brushCount) ? TRUE : FALSE
-	);
+	bool anythingSelected = info.totalCount > 0;
+	bool noEntities = info.entityCount == 0;
+	bool noComponents = info.componentCount == 0;
+
+	_selectionInfo.anythingSelected = anythingSelected;
+	_selectionInfo.onlyPrimitivesSelected = anythingSelected && noEntities && noComponents;
+	_selectionInfo.onlyBrushesSelected = anythingSelected && info.totalCount == info.brushCount;
+	_selectionInfo.onlyPatchesSelected = anythingSelected && info.totalCount == info.patchCount;
+	_selectionInfo.singlePrimitiveSelected = info.totalCount == 1 && (info.brushCount + info.patchCount == 1);
+
+	_selectionInfo.onlyEntitiesSelected = anythingSelected && info.totalCount == info.entityCount;
+
+	if (_selectionInfo.onlyEntitiesSelected)
+	{
+		// Check for group nodes
+		selection::algorithm::GroupNodeChecker walker;
+		GlobalSelectionSystem().foreachSelected(walker);
+
+		_selectionInfo.onlyGroupsSelected = walker.onlyGroupsAreSelected();
+		_selectionInfo.singleGroupSelected = walker.selectedGroupCount() == 1 && !node_is_worldspawn(walker.getFirstSelectedGroupNode());
+
+		// Create a ModelFinder and check whether only models were selected
+		selection::algorithm::ModelFinder visitor;
+		GlobalSelectionSystem().foreachSelected(visitor);
+
+		// enable the "Add MonsterClip" entry only if at least one model is selected
+		_selectionInfo.onlyModelsSelected = !visitor.empty() && visitor.onlyModels();
+	}
+	else
+	{
+		_selectionInfo.onlyGroupsSelected = false;
+		_selectionInfo.singleGroupSelected = false;
+		_selectionInfo.onlyModelsSelected = false;
+	}
+
+	// Check if a playerStart already exists
+	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
+	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+	
+	_selectionInfo.playerStartExists = walker.getEntity() != NULL;
+}
+
+bool OrthoContextMenu::checkMakeVisportal()
+{
+	return _selectionInfo.onlyBrushesSelected;
 }
 
 // Check if the convert to static command should be enabled
-void OrthoContextMenu::checkConvertStatic() {
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
+bool OrthoContextMenu::checkConvertStatic()
+{
 	// Command should be enabled if there is at least one selected
 	// primitive and no non-primitive selections.
-	gtk_widget_set_sensitive(
-		_widgets[WIDGET_CONVERT_STATIC], 
-		(info.entityCount == 0 && info.componentCount == 0 && info.totalCount > 0) 
-	);
+	return _selectionInfo.onlyPrimitivesSelected;
 }
 
-void OrthoContextMenu::checkMonsterClip() {
-	// create a ModelFinder and check whether only models were selected
-	selection::algorithm::ModelFinder visitor;
-	GlobalSelectionSystem().foreachSelected(visitor);
-
-	// enable the "Add MonsterClip" entry only if one or more model is selected
-	gtk_widget_set_sensitive(
-		_widgets[WIDGET_ADD_MONSTERCLIP], 
-		!visitor.empty() && visitor.onlyModels()
-	);
+bool OrthoContextMenu::checkMonsterClip()
+{
+	return _selectionInfo.onlyModelsSelected;
 }
 
 void OrthoContextMenu::checkAddOptions() {
@@ -191,8 +212,6 @@ void OrthoContextMenu::checkAddOptions() {
 	
 	// Add entity, playerStart and light commands are disabled if an entity is selected
 	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_ENTITY], info.entityCount == 0 ? TRUE : FALSE);
-	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_PLAYERSTART], info.entityCount == 0 ? TRUE : FALSE);
-	gtk_widget_set_sensitive(_widgets[WIDGET_MOVE_PLAYERSTART], info.entityCount == 0 ? TRUE : FALSE);
 	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_LIGHT], info.entityCount == 0 ? TRUE : FALSE);
 		
 	// Add speaker/model is disabled if anything is selected
@@ -200,85 +219,43 @@ void OrthoContextMenu::checkAddOptions() {
 	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_MODEL], info.totalCount == 0 ? TRUE : FALSE);
 }
 
-void OrthoContextMenu::checkPlayerStart() 
+bool OrthoContextMenu::checkAddPlayerStart() 
 {
-	// Check if a playerStart already exists
-	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-	
-	if (walker.getEntity() == NULL) {
-		gtk_widget_hide(_widgets[WIDGET_MOVE_PLAYERSTART]);
-		gtk_widget_show(_widgets[WIDGET_ADD_PLAYERSTART]);
-	}
-	else {
-		gtk_widget_hide(_widgets[WIDGET_ADD_PLAYERSTART]);
-		gtk_widget_show(_widgets[WIDGET_MOVE_PLAYERSTART]);
-	}
+	return !_selectionInfo.anythingSelected && !_selectionInfo.playerStartExists;
 }
 
-void OrthoContextMenu::checkRevertToWorldspawn() {
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
-	bool sensitive = false;
-	bool mergeVisible = false;
-	
-	// Only entities are allowed to be selected, but they have to be groupnodes
-	if (info.totalCount > 0 && info.totalCount == info.entityCount) {
+bool OrthoContextMenu::checkMovePlayerStart() 
+{
+	return !_selectionInfo.anythingSelected && _selectionInfo.playerStartExists;
+}
 
-		selection::algorithm::GroupNodeChecker walker;
-		GlobalSelectionSystem().foreachSelected(walker);
+bool OrthoContextMenu::checkRevertToWorldspawn()
+{
+	return _selectionInfo.onlyGroupsSelected;
+}
 
-		sensitive = walker.onlyGroupsAreSelected();
-		mergeVisible = walker.onlyGroupsAreSelected() && walker.selectedGroupCount() > 1;
-	}
+bool OrthoContextMenu::checkMergeEntities()
+{
+	return _selectionInfo.onlyGroupsSelected && !_selectionInfo.singleGroupSelected;
+}
 
-	if (mergeVisible)
+bool OrthoContextMenu::checkRevertToWorldspawnPartial()
+{
+	if (_selectionInfo.singlePrimitiveSelected)
 	{
-		gtk_widget_show_all(_widgets[WIDGET_MERGE_ENTITIES]);
-	}
-	else
-	{
-		gtk_widget_hide_all(_widgets[WIDGET_MERGE_ENTITIES]);
-	}
-	
-	if (sensitive) {
-		gtk_widget_set_sensitive(_widgets[WIDGET_REVERT_WORLDSPAWN], TRUE);
-		gtk_widget_show_all(_widgets[WIDGET_REVERT_WORLDSPAWN]);
-		gtk_widget_hide_all(_widgets[WIDGET_CONVERT_STATIC]);
-	}
-	else {
-		gtk_widget_set_sensitive(_widgets[WIDGET_REVERT_WORLDSPAWN], FALSE);
-		gtk_widget_hide_all(_widgets[WIDGET_REVERT_WORLDSPAWN]);
-		gtk_widget_show_all(_widgets[WIDGET_CONVERT_STATIC]);
-	}
-
-	bool partialSensitive = false;
-
-	// Also, check the revert part to worldspawn option
-	if (info.totalCount == 1 && (info.brushCount + info.patchCount == 1)) {
 		// Check the selected node
 		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
 
 		// Only allow revert partial if the parent node is a groupnode
-		if (node != NULL && Node_isPrimitive(node) && 
-			node->getParent() != NULL && node_is_group(node->getParent()))
+		if (node != NULL && Node_isPrimitive(node))
 		{
-			Entity* parent = Node_getEntity(node->getParent());
-			if (parent != NULL && parent->getKeyValue("classname") != "worldspawn") {
-				partialSensitive = true;
-			}
+			scene::INodePtr parent = node->getParent();
+
+			return parent != NULL && node_is_group(parent) && !node_is_worldspawn(parent);
 		}
 	}
-	
-	if (partialSensitive) {
-		gtk_widget_show_all(_widgets[WIDGET_REVERT_PARTIAL]);
 
-		// Disable "convert to func_static" if revert partial is active
-		gtk_widget_set_sensitive(_widgets[WIDGET_CONVERT_STATIC], FALSE);
-	}
-	else {
-		gtk_widget_hide_all(_widgets[WIDGET_REVERT_PARTIAL]);
-	}
+	return false;
 }
 
 // Get a registry key with a default value
@@ -315,7 +292,7 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item,
 	}
 }
 
-void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self) 
+void OrthoContextMenu::callbackAddPlayerStart() 
 {
 	UndoableCommand command("addPlayerStart");	
 
@@ -323,7 +300,7 @@ void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMen
     {
         // Create the player start entity
 		scene::INodePtr playerStartNode = entity::createEntityFromSelection(
-            PLAYERSTART_CLASSNAME, self->_lastPoint
+            PLAYERSTART_CLASSNAME, _lastPoint
         );
         Entity* playerStart = Node_getEntity(playerStartNode);
 
@@ -335,7 +312,8 @@ void OrthoContextMenu::callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMen
 	}
 }
 
-void OrthoContextMenu::callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMenu* self) {
+void OrthoContextMenu::callbackMovePlayerStart()
+{
 	UndoableCommand _cmd("movePlayerStart");
 	
 	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
@@ -343,8 +321,9 @@ void OrthoContextMenu::callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMe
 	
 	Entity* playerStart = walker.getEntity();
 	
-	if (playerStart != NULL) {
-		playerStart->setKeyValue("origin", self->_lastPoint);
+	if (playerStart != NULL)
+	{
+		playerStart->setKeyValue("origin", _lastPoint);
 	}
 }
 
@@ -511,12 +490,6 @@ void OrthoContextMenu::constructMenu()
 	_widgets[WIDGET_ADD_ENTITY] = gtkutil::IconTextMenuItem(
         GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT)
     );
-	_widgets[WIDGET_ADD_PLAYERSTART] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT)
-    );
-	_widgets[WIDGET_MOVE_PLAYERSTART] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT)
-    );
 	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(
         GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT)
     );
@@ -532,52 +505,66 @@ void OrthoContextMenu::constructMenu()
 	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(
         GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT)
     );
-	_widgets[WIDGET_CONVERT_STATIC] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT)
-    );
-	_widgets[WIDGET_REVERT_WORLDSPAWN] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT)
-    );
-	_widgets[WIDGET_MERGE_ENTITIES] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT)
-    );
-	_widgets[WIDGET_REVERT_PARTIAL] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT)
-    );
 
-	IEventPtr ev = GlobalEventManager().findEvent("ParentSelectionToWorldspawn");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_REVERT_PARTIAL]);
-	}
+	gtkutil::MenuItemPtr addPlayerStart(
+		new gtkutil::MenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT)),
+			boost::bind(&OrthoContextMenu::callbackAddPlayerStart, this),
+			boost::bind(&OrthoContextMenu::checkAddPlayerStart, this),
+			boost::bind(&OrthoContextMenu::checkAddPlayerStart, this))
+	);
 
-	// Add a "Make Visportal" item and connect it to the corresponding event
-	_widgets[WIDGET_MAKE_VISPORTAL] = gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL));
-	ev = GlobalEventManager().findEvent("MakeVisportal");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_MAKE_VISPORTAL]);
-	}
+	gtkutil::MenuItemPtr movePlayerStart(
+		new gtkutil::MenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT)),
+			boost::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
+			boost::bind(&OrthoContextMenu::checkMovePlayerStart, this))
+	);
 
-	// Connect the "Revert to Worldspawn" menu item to the corresponding event
-	ev = GlobalEventManager().findEvent("RevertToWorldspawn");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_REVERT_WORLDSPAWN]);
-	}
+	gtkutil::CommandMenuItemPtr convertStatic(
+		new gtkutil::CommandMenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT)),
+			"ConvertSelectedToFuncStatic",
+			boost::bind(&OrthoContextMenu::checkConvertStatic, this))
+	);
 
-	// Connect the "Convert to func_static" menu item to the corresponding event
-	ev = GlobalEventManager().findEvent("ConvertSelectedToFuncStatic");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_CONVERT_STATIC]);
-	}
+	gtkutil::CommandMenuItemPtr revertWorldspawn(
+		new gtkutil::CommandMenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT)),
+			"RevertToWorldspawn",
+			boost::bind(&OrthoContextMenu::checkRevertToWorldspawn, this))
+	);
 
-	// Connect the "Revert to Worldspawn" menu item to the corresponding event
-	ev = GlobalEventManager().findEvent("MergeSelectedEntities");
-	if (ev != NULL) {
-		ev->connectWidget(_widgets[WIDGET_MERGE_ENTITIES]);
-	}
+	gtkutil::CommandMenuItemPtr mergeEntities(
+		new gtkutil::CommandMenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT)),
+			"MergeSelectedEntities",
+			boost::bind(&OrthoContextMenu::checkMergeEntities, this))
+	);
+
+	gtkutil::CommandMenuItemPtr revertToWorldspawnPartial(
+		new gtkutil::CommandMenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT)),
+			"ParentSelectionToWorldspawn",
+			boost::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
+	);
+
+	gtkutil::CommandMenuItemPtr makeVisportal(
+		new gtkutil::CommandMenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL)),
+			"MakeVisportal",
+			boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
+	);
+	
+	addItem(addPlayerStart, SECTION_ACTION);
+	addItem(movePlayerStart, SECTION_ACTION);
+	addItem(convertStatic, SECTION_ACTION);
+	addItem(revertWorldspawn, SECTION_ACTION);
+	addItem(revertToWorldspawnPartial, SECTION_ACTION);
+	addItem(mergeEntities, SECTION_ACTION);
+	addItem(makeVisportal, SECTION_ACTION);
 
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_ENTITY]), "activate", G_CALLBACK(callbackAddEntity), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PLAYERSTART]), "activate", G_CALLBACK(callbackAddPlayerStart), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_MOVE_PLAYERSTART]), "activate", G_CALLBACK(callbackMovePlayerStart), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MODEL]), "activate", G_CALLBACK(callbackAddModel), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MONSTERCLIP]), "activate", G_CALLBACK(callbackAddMonsterClip), this);
 	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_LIGHT]), "activate", G_CALLBACK(callbackAddLight), this);
@@ -596,13 +583,6 @@ void OrthoContextMenu::constructMenu()
 	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
 
     gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MONSTERCLIP]);
-    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PLAYERSTART]);
-    gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MOVE_PLAYERSTART]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_CONVERT_STATIC]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_WORLDSPAWN]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_REVERT_PARTIAL]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MERGE_ENTITIES]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_MAKE_VISPORTAL]);
 
 	addSectionItems(SECTION_ACTION);
 
@@ -614,7 +594,6 @@ void OrthoContextMenu::constructMenu()
 	for (MenuSections::const_iterator sec = _sections.lower_bound(SECTION_LAYER+1);
 		 sec != _sections.end(); ++sec)
 	{
-		gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
 		addSectionItems(sec->first);
 	}
 
@@ -630,6 +609,11 @@ void OrthoContextMenu::addSectionItems(int section)
 	for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		gtk_menu_shell_append(GTK_MENU_SHELL(_widget), (*i)->getWidget());
+	}
+
+	if (!items.empty())
+	{
+		gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
 	}
 }
 
