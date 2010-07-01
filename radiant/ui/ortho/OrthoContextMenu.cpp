@@ -27,7 +27,6 @@
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/common/SoundChooser.h"
 #include "ui/entitychooser/EntityClassChooser.h"
-#include "ui/layers/LayerContextMenu.h"
 
 #include "math/aabb.h"
 #include "brushmanip.h"
@@ -431,10 +430,8 @@ void OrthoContextMenu::callbackAddModel()
 	}
 }
 
-void OrthoContextMenu::constructMenu()
+void OrthoContextMenu::registerDefaultItems()
 {
-	_widget = gtk_menu_new();
-
 	gtkutil::MenuItemPtr addEntity(
 		new gtkutil::MenuItem(
 			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT)),
@@ -528,14 +525,12 @@ void OrthoContextMenu::constructMenu()
 			boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
 	);
 
-	// Register all items
-	// The order of addition are "revese" to the order seen in the menu, 
-	// as the items are pushed at the front of the list
-	addItem(addPrefab, SECTION_CREATE, true);
-	addItem(addSpeaker, SECTION_CREATE, true);
-	addItem(addLight, SECTION_CREATE, true);
-	addItem(addModel, SECTION_CREATE, true);
-	addItem(addEntity, SECTION_CREATE, true);
+	// Register all constructed items
+	addItem(addEntity, SECTION_CREATE);
+	addItem(addModel, SECTION_CREATE);
+	addItem(addLight, SECTION_CREATE);
+	addItem(addSpeaker, SECTION_CREATE);
+	addItem(addPrefab, SECTION_CREATE);
 	
 	addItem(addPlayerStart, SECTION_ACTION);
 	addItem(movePlayerStart, SECTION_ACTION);
@@ -545,16 +540,21 @@ void OrthoContextMenu::constructMenu()
 	addItem(mergeEntities, SECTION_ACTION);
 	addItem(makeVisportal, SECTION_ACTION);
 	addItem(surroundWithMonsterClip, SECTION_ACTION);
+}
 
-	// Add sections to menu
+void OrthoContextMenu::constructMenu()
+{
+	_widget = gtk_menu_new();
 
-	addSectionItems(SECTION_CREATE);
+	// Add all sections to menu
+
+	addSectionItems(SECTION_CREATE, true); // no spacer for first category
 	addSectionItems(SECTION_ACTION);
 	addSectionItems(SECTION_LAYER);
 
 	// Add the rest of the sections
 	for (MenuSections::const_iterator sec = _sections.lower_bound(SECTION_LAYER+1);
-		 sec != _sections.end(); ++sec)
+		 sec != _sections.end(); )
 	{
 		addSectionItems(sec->first);
 	}
@@ -562,21 +562,21 @@ void OrthoContextMenu::constructMenu()
 	gtk_widget_show_all(_widget);
 }
 
-void OrthoContextMenu::addSectionItems(int section)
+void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
 {
 	if (_sections.find(section) == _sections.end()) return;
 
 	const MenuItems& items = _sections[section];
 
-	for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
-	{
-		gtk_menu_shell_append(GTK_MENU_SHELL(_widget), (*i)->getWidget());
-	}
-
-	if (!items.empty())
+	if (!noSpacer && !items.empty())
 	{
 		gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new());
 	}
+
+	for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
+	{
+		gtk_menu_shell_append(GTK_MENU_SHELL(_widget), (*i)->getWidget());
+	}	
 }
 
 const std::string& OrthoContextMenu::getName() const
@@ -604,7 +604,7 @@ void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
 {
 	GlobalRadiant().addEventListener(shared_from_this());
 
-	// TODO: Register default items
+	registerDefaultItems();
 }
 
 void OrthoContextMenu::onRadiantStartup()
@@ -612,7 +612,7 @@ void OrthoContextMenu::onRadiantStartup()
 	constructMenu();
 }
 
-void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section, bool atFront)
+void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section)
 {
 	// Create section if not existing
 	if (_sections.find(section) == _sections.end())
@@ -620,19 +620,7 @@ void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section, bool atFro
 		_sections.insert(MenuSections::value_type(section, MenuSections::mapped_type()));
 	}
 
-	if (atFront)
-	{
-		_sections[section].push_front(item);
-	}
-	else
-	{
-		_sections[section].push_back(item);
-	}
-}
-
-void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section)
-{
-	addItem(item, section, false);
+	_sections[section].push_back(item);
 }
 
 void OrthoContextMenu::removeItem(const IMenuItemPtr& item)
