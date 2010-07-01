@@ -348,7 +348,16 @@ void PatchInspector::update()
 
 	if (patch != NULL)
 	{
-		// Load the data from the vertex
+		// Check if the matrix size has changed
+		if (patch->getPatch().getWidth() != _patchCols ||
+			patch->getPatch().getHeight() != _patchRows)
+		{
+			// Patch matrix got changed
+			clearVertexChooser();
+			repopulateVertexChooser();
+		}
+
+		// Load the data from the currently selected vertex
 		loadControlVertex();
 	}
 	
@@ -365,7 +374,7 @@ void PatchInspector::loadControlVertex()
 		int col = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_vertexChooser.colCombo)));
 		
 		// Retrieve the controlvertex
-		const PatchControl& ctrl = patch->getPatchInternal().ctrlAt(row, col);
+		const PatchControl& ctrl = patch->getPatch().ctrlAt(row, col);
 		
 		_updateActive = true;
 		
@@ -389,6 +398,9 @@ void PatchInspector::toggleWindow() {
 // Pre-hide callback
 void PatchInspector::_preHide()
 {
+	// Clear the patch, we don't need to observe it while hidden
+	setPatch(PatchNodePtr());
+
 	// A hidden PatchInspector doesn't need to listen for events
 	GlobalUndoSystem().removeObserver(this);
 	GlobalSelectionSystem().removeObserver(this);
@@ -411,8 +423,62 @@ void PatchInspector::_preShow()
 	rescanSelection();
 }
 
-void PatchInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) {
-	rescanSelection();
+void PatchInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
+{
+	if (!isComponent)
+	{
+		rescanSelection();
+	}
+}
+
+void PatchInspector::clearVertexChooser()
+{
+	_updateActive = true;
+	
+	// Remove all the items from the combo boxes
+	for (std::size_t i = 0; i < _patchRows; ++i)
+	{
+		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.rowCombo), 0);
+	}
+	
+	for (std::size_t i = 0; i < _patchCols; ++i)
+	{
+		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.colCombo), 0);
+	}
+	
+	_updateActive = false;
+}
+
+void PatchInspector::setPatch(const PatchNodePtr& newPatch)
+{
+	// Detach if we had a previous patch
+	PatchNodePtr patch = _patch.lock();
+
+	if (patch != NULL) 
+	{
+		patch->getPatch().detachObserver(this);
+	}
+
+	// Clear vertex chooser while _patchRows/_patchCols are still set
+	clearVertexChooser();
+
+	_patch = newPatch;
+
+	if (newPatch != NULL)
+	{
+		newPatch->getPatch().attachObserver(this);
+
+		_patchRows = newPatch->getPatch().getHeight();
+		_patchCols = newPatch->getPatch().getWidth();
+
+		// Now that rows/cols are known, build lists
+		repopulateVertexChooser();
+	}
+	else
+	{
+		_patchRows = 0;
+		_patchCols = 0;
+	}
 }
 
 void PatchInspector::rescanSelection()
@@ -430,24 +496,11 @@ void PatchInspector::rescanSelection()
 	gtk_widget_set_sensitive(_coordsLabel, sensitive);
 	gtk_widget_set_sensitive(GTK_WIDGET(_coordsTable), sensitive);
 
-	_updateActive = true;
-	
-	// Remove all the items from the combo boxes
-	for (std::size_t i = 0; i < _patchRows; i++) {
-		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.rowCombo), 0);
-	}
-	
-	for (std::size_t i = 0; i < _patchCols; i++) {
-		gtk_combo_box_remove_text(GTK_COMBO_BOX(_vertexChooser.colCombo), 0);
-	}
-	
-	_updateActive = false;
-	
-	_patch.reset();
-	_patchRows = 0;
-	_patchCols = 0;
-	
-	if (_selectionInfo.patchCount > 0) {
+	// Clear the patch reference
+	setPatch(PatchNodePtr());
+
+	if (_selectionInfo.patchCount > 0)
+	{
 		// Get the list of selected patches
 		PatchPtrVector list = selection::algorithm::getSelectedPatches();
 
@@ -458,7 +511,7 @@ void PatchInspector::rescanSelection()
 		// Try to find a pair of same tesselation values
 		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i) 
         {
-			Patch& p = (*i)->getPatchInternal();
+			IPatch& p = (*i)->getPatch();
 
 			if (tess.x() == UINT_MAX) 
             {
@@ -467,11 +520,13 @@ void PatchInspector::rescanSelection()
 				tessIsFixed = p.subdivionsFixed();
 				tess = p.getSubdivisions();
 			}
-			else {
+			else
+			{
 				// We already have a pair of divisions, compare
 				Subdivisions otherTess = p.getSubdivisions();
 
-				if (tessIsFixed != p.subdivionsFixed() || otherTess != tess) {
+				if (tessIsFixed != p.subdivionsFixed() || otherTess != tess)
+				{
 					// Our journey ends here, we cannot find a pair of tesselations 
 					// for all selected patches or the same fixed/variable status
 					tessIsSame = false;
@@ -505,38 +560,40 @@ void PatchInspector::rescanSelection()
 		
 		if (_selectionInfo.patchCount == 1)
 		{
-			_patch = list[0];
-			_patchRows = list[0]->getPatchInternal().getHeight();
-			_patchCols = list[0]->getPatchInternal().getWidth();
-			
-			for (std::size_t i = 0; i < _patchRows; i++) {
-				gtk_combo_box_append_text(
-					GTK_COMBO_BOX(_vertexChooser.rowCombo), 
-					sizetToStr(i).c_str()
-				);
-			}
-
-			gtk_combo_box_set_active(
-				GTK_COMBO_BOX(_vertexChooser.rowCombo), 
-				0
-			);
-
-			for (std::size_t i = 0; i < _patchCols; i++) {
-				gtk_combo_box_append_text(
-					GTK_COMBO_BOX(_vertexChooser.colCombo), 
-					sizetToStr(i).c_str()
-				);
-			}
-			gtk_combo_box_set_active(
-				GTK_COMBO_BOX(_vertexChooser.colCombo), 
-				0
-			);
+			setPatch(list[0]);
 		}
 
 		_updateActive = false;
 	}
 	
 	update();
+}
+
+void PatchInspector::repopulateVertexChooser()
+{
+	_updateActive = true;
+
+	for (std::size_t i = 0; i < _patchRows; ++i)
+	{
+		gtk_combo_box_append_text(
+			GTK_COMBO_BOX(_vertexChooser.rowCombo), 
+			sizetToStr(i).c_str()
+		);
+	}
+
+	gtk_combo_box_set_active(GTK_COMBO_BOX(_vertexChooser.rowCombo), 0);
+
+	for (std::size_t i = 0; i < _patchCols; ++i)
+	{
+		gtk_combo_box_append_text(
+			GTK_COMBO_BOX(_vertexChooser.colCombo), 
+			sizetToStr(i).c_str()
+		);
+	}
+
+	gtk_combo_box_set_active(GTK_COMBO_BOX(_vertexChooser.colCombo), 0);
+
+	_updateActive = false;
 }
 
 void PatchInspector::emitCoords()
@@ -568,7 +625,8 @@ void PatchInspector::emitCoords()
 	GlobalMainFrame().updateAllWindows();
 }
 
-void PatchInspector::emitTesselation() {
+void PatchInspector::emitTesselation()
+{
 	UndoableCommand setFixedTessCmd("patchSetFixedTesselation");
 
 	Subdivisions tess(
@@ -650,6 +708,21 @@ void PatchInspector::onClickSmaller(GtkWidget* button, CoordRow* row) {
 // static command target
 void PatchInspector::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleWindow();
+}
+
+void PatchInspector::onPatchControlPointsChanged()
+{
+	update();
+}
+
+void PatchInspector::onPatchTextureChanged()
+{
+	update();
+}
+
+void PatchInspector::onPatchDestruction()
+{
+	rescanSelection();
 }
 
 } // namespace ui

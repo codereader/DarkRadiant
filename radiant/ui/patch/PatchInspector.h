@@ -6,6 +6,7 @@
 #include "iselection.h"
 #include "iradiant.h"
 #include "iundo.h"
+#include "ipatch.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
@@ -18,6 +19,7 @@ typedef struct _GtkEditable GtkEditable;
 namespace gtkutil { class ControlButton; }
 class Patch;
 class PatchNode;
+typedef boost::shared_ptr<PatchNode> PatchNodePtr;
 typedef boost::weak_ptr<PatchNode> PatchNodeWeakPtr;
 
 namespace ui {
@@ -31,7 +33,8 @@ class PatchInspector
   public SelectionSystem::Observer,
   public RadiantEventListener,
   public UndoSystem::Observer,
-  public gtkutil::SingleIdleCallback
+  public gtkutil::SingleIdleCallback,
+  public IPatch::Observer
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -178,9 +181,22 @@ public:
 	// Idle callback, used for deferred updates
 	void onGtkIdle();
 
+	// Patch::Observer
+	void onPatchControlPointsChanged();
+	void onPatchTextureChanged();
+	void onPatchDestruction();
+
 private:
+	void setPatch(const PatchNodePtr& patch);
+
 	// Updates the widgets (this is private, use queueUpdate() instead)
 	void update();
+
+	// Relies on _patchRows/_patchCols being set correctly
+	void clearVertexChooser();
+
+	// Populates the combo boxes
+	void repopulateVertexChooser();
 
 	// This is where the static shared_ptr of the singleton instance is held.
 	static PatchInspectorPtr& InstancePtr();
