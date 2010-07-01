@@ -84,21 +84,16 @@ private:
 	bool checkMovePlayerStart();
 	bool checkMakeVisportal();
 	bool checkAddMonsterclip();
+	bool checkAddEntity();
+	bool checkAddModel();
 	
-	/** greebo: Disables the "entity/light/speaker/playerStart" options according to the selection,
-	 *			and change "playerStart" if another playerStart is found.
-	 */
-	void checkAddOptions();
-
-	/* Gtk Callbacks */
-	
-	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
+	void callbackAddEntity();
 	void callbackAddPlayerStart();
 	void callbackMovePlayerStart();
-	static void callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackAddSpeaker(GtkMenuItem*, OrthoContextMenu* self);
+	void callbackAddModel();
+	void callbackAddLight();
+	void callbackAddPrefab();
+	void callbackAddSpeaker();
 	
 public:
 	OrthoContextMenu();
@@ -110,7 +105,7 @@ public:
 	 * The point in 3D space at which the chosen operation should take
 	 * place.
 	 */
-	void showAt(const Vector3& point);
+	void show(const Vector3& point);
 	
 	// Retrieve the singleton instance
 	static OrthoContextMenu& Instance();
@@ -131,6 +126,10 @@ private:
 	void constructMenu();
 
 	void addSectionItems(int section);
+
+	// Private add method, to ensure that items are added at the front
+	void addItemFront(const IMenuItemPtr& item, int section);
+	void addItem(const IMenuItemPtr& item, int section, bool atFront);
 };
 
 }

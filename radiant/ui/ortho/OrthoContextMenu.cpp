@@ -78,15 +78,6 @@ namespace {
 	const char* MERGE_ENTITIES_TEXT = N_("Merge Entities");
 	const char* MAKE_VISPORTAL = N_("Make Visportal");
 	const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
-
-	enum {
-		WIDGET_ADD_ENTITY,
-		WIDGET_ADD_MODEL,
-		WIDGET_ADD_LIGHT,
-		WIDGET_ADD_PREFAB,
-		WIDGET_ADD_SPEAKER,
-	};
-
 }
 
 // Define the static OrthoContextMenu module
@@ -104,7 +95,7 @@ OrthoContextMenu::OrthoContextMenu() :
 
 // Show the menu
 
-void OrthoContextMenu::showAt(const Vector3& point)
+void OrthoContextMenu::show(const Vector3& point)
 {
 	_lastPoint = point;
 
@@ -205,16 +196,15 @@ bool OrthoContextMenu::checkAddMonsterclip()
 	return _selectionInfo.onlyModelsSelected;
 }
 
-void OrthoContextMenu::checkAddOptions() {
+bool OrthoContextMenu::checkAddEntity()
+{
+	return !_selectionInfo.anythingSelected;
+}
+
+bool OrthoContextMenu::checkAddModel()
+{
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
-	// Add entity, playerStart and light commands are disabled if an entity is selected
-	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_ENTITY], info.entityCount == 0 ? TRUE : FALSE);
-	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_LIGHT], info.entityCount == 0 ? TRUE : FALSE);
-		
-	// Add speaker/model is disabled if anything is selected
-	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_SPEAKER], info.totalCount == 0 ? TRUE : FALSE);
-	gtk_widget_set_sensitive(_widgets[WIDGET_ADD_MODEL], info.totalCount == 0 ? TRUE : FALSE);
+	return info.totalCount == 0 || info.brushCount == 1;
 }
 
 bool OrthoContextMenu::checkAddPlayerStart() 
@@ -268,10 +258,7 @@ std::string OrthoContextMenu::getRegistryKeyWithDefault(
         return value;
 }
 
-/* GTK CALLBACKS */
-
-void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item, 
-										 OrthoContextMenu* self) 
+void OrthoContextMenu::callbackAddEntity() 
 {
 	UndoableCommand command("createEntity");
 
@@ -282,7 +269,7 @@ void OrthoContextMenu::callbackAddEntity(GtkMenuItem* item,
 		// Create the entity. We might get an EntityCreationException if the 
 		// wrong number of brushes is selected.
 		try {
-			entity::createEntityFromSelection(cName, self->_lastPoint);
+			entity::createEntityFromSelection(cName, _lastPoint);
 		}
 		catch (EntityCreationException& e) {
 			gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
@@ -325,11 +312,12 @@ void OrthoContextMenu::callbackMovePlayerStart()
 	}
 }
 
-void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self) {
+void OrthoContextMenu::callbackAddLight()
+{
 	UndoableCommand command("addLight");	
 
     try {
-    	entity::createEntityFromSelection(LIGHT_CLASSNAME, self->_lastPoint);
+    	entity::createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
     }
     catch (EntityCreationException&) {
         gtkutil::errorDialog(_("Unable to create light, classname not found."),
@@ -337,13 +325,13 @@ void OrthoContextMenu::callbackAddLight(GtkMenuItem* item, OrthoContextMenu* sel
     }
 }
 
-void OrthoContextMenu::callbackAddPrefab(GtkMenuItem* item, OrthoContextMenu* self) {
+void OrthoContextMenu::callbackAddPrefab()
+{
 	// Pass the call to the map algorithm and give the lastPoint coordinate as argument
-	GlobalMap().loadPrefabAt(self->_lastPoint);
+	GlobalMap().loadPrefabAt(_lastPoint);
 }
 
-void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item, 
-                                          OrthoContextMenu* self) 
+void OrthoContextMenu::callbackAddSpeaker() 
 {
     using boost::lexical_cast;
 
@@ -358,9 +346,8 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
     try 
     {
         spkNode = entity::createEntityFromSelection(
-            SPEAKER_CLASSNAME, self->_lastPoint
+            SPEAKER_CLASSNAME, _lastPoint
         );	
-
     }
     catch (EntityCreationException&) {
         gtkutil::errorDialog(_("Unable to create speaker, classname not found."),
@@ -397,13 +384,15 @@ void OrthoContextMenu::callbackAddSpeaker(GtkMenuItem* item,
     }
 }
 
-void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self) {
+void OrthoContextMenu::callbackAddModel()
+{
 	UndoableCommand command("addModel");	
 
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 	
 	// To create a model we need EITHER nothing selected OR exactly one brush selected.
-	if (info.totalCount == 0 || info.brushCount == 1) {
+	if (info.totalCount == 0 || info.brushCount == 1)
+	{
 		// Display the model selector and block waiting for a selection (may be empty)
 		ModelSelectorResult ms = ui::ModelSelector::chooseModel("", true, true);
 		
@@ -412,7 +401,7 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 			try {
 				scene::INodePtr modelNode = entity::createEntityFromSelection(
 					MODEL_CLASSNAME, 
-					self->_lastPoint
+					_lastPoint
 				);
 			
 				//Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
@@ -425,41 +414,61 @@ void OrthoContextMenu::callbackAddModel(GtkMenuItem* item, OrthoContextMenu* sel
 					GlobalCommandSystem().execute("SurroundWithMonsterclip");
 				}
             }
-            catch (EntityCreationException&) {
+            catch (EntityCreationException&)
+			{
                 gtkutil::errorDialog(_("Unable to create model, classname not found."),
                                      GlobalMainFrame().getTopLevelWindow());
             }
 		}
 		
 	}
-	else {
+	else
+	{
 		gtkutil::errorDialog(
             _("Either nothing or exactly one brush must be selected for model creation"),
 			GlobalMainFrame().getTopLevelWindow()
         );
 	}
-
 }
 
 void OrthoContextMenu::constructMenu()
 {
 	_widget = gtk_menu_new();
 
-	_widgets[WIDGET_ADD_ENTITY] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT)
-    );
-	_widgets[WIDGET_ADD_MODEL] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT)
-    );
-	_widgets[WIDGET_ADD_LIGHT] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT)
-    );
-	_widgets[WIDGET_ADD_PREFAB] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT)
-    );
-	_widgets[WIDGET_ADD_SPEAKER] = gtkutil::IconTextMenuItem(
-        GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT)
-    );
+	gtkutil::MenuItemPtr addEntity(
+		new gtkutil::MenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT)),
+			boost::bind(&OrthoContextMenu::callbackAddEntity, this),
+			boost::bind(&OrthoContextMenu::checkAddEntity, this))
+	);
+
+	gtkutil::MenuItemPtr addLight(
+		new gtkutil::MenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT)),
+			boost::bind(&OrthoContextMenu::callbackAddLight, this),
+			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+	);
+
+	gtkutil::MenuItemPtr addPrefab(
+		new gtkutil::MenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT)),
+			boost::bind(&OrthoContextMenu::callbackAddPrefab, this),
+			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+	);
+
+	gtkutil::MenuItemPtr addSpeaker(
+		new gtkutil::MenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT)),
+			boost::bind(&OrthoContextMenu::callbackAddSpeaker, this),
+			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+	);
+
+	gtkutil::MenuItemPtr addModel(
+		new gtkutil::MenuItem(
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT)),
+			boost::bind(&OrthoContextMenu::callbackAddModel, this),
+			boost::bind(&OrthoContextMenu::checkAddModel, this))
+	);
 
 	gtkutil::CommandMenuItemPtr surroundWithMonsterClip(
 		new gtkutil::CommandMenuItem(
@@ -518,6 +527,15 @@ void OrthoContextMenu::constructMenu()
 			"MakeVisportal",
 			boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
 	);
+
+	// Register all items
+	// The order of addition are "revese" to the order seen in the menu, 
+	// as the items are pushed at the front of the list
+	addItem(addPrefab, SECTION_CREATE, true);
+	addItem(addSpeaker, SECTION_CREATE, true);
+	addItem(addLight, SECTION_CREATE, true);
+	addItem(addModel, SECTION_CREATE, true);
+	addItem(addEntity, SECTION_CREATE, true);
 	
 	addItem(addPlayerStart, SECTION_ACTION);
 	addItem(movePlayerStart, SECTION_ACTION);
@@ -528,23 +546,9 @@ void OrthoContextMenu::constructMenu()
 	addItem(makeVisportal, SECTION_ACTION);
 	addItem(surroundWithMonsterClip, SECTION_ACTION);
 
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_ENTITY]), "activate", G_CALLBACK(callbackAddEntity), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_MODEL]), "activate", G_CALLBACK(callbackAddModel), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_LIGHT]), "activate", G_CALLBACK(callbackAddLight), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_PREFAB]), "activate", G_CALLBACK(callbackAddPrefab), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_SPEAKER]), "activate", G_CALLBACK(callbackAddSpeaker), this);
+	// Add sections to menu
 
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_ENTITY]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_MODEL]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_LIGHT]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_SPEAKER]);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), _widgets[WIDGET_ADD_PREFAB]);
-
-	// Add section 
 	addSectionItems(SECTION_CREATE);
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(_widget), gtk_separator_menu_item_new()); // -----------------
-
 	addSectionItems(SECTION_ACTION);
 	addSectionItems(SECTION_LAYER);
 
@@ -608,7 +612,7 @@ void OrthoContextMenu::onRadiantStartup()
 	constructMenu();
 }
 
-void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section)
+void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section, bool atFront)
 {
 	// Create section if not existing
 	if (_sections.find(section) == _sections.end())
@@ -616,7 +620,19 @@ void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section)
 		_sections.insert(MenuSections::value_type(section, MenuSections::mapped_type()));
 	}
 
-	_sections[section].push_back(item);
+	if (atFront)
+	{
+		_sections[section].push_front(item);
+	}
+	else
+	{
+		_sections[section].push_back(item);
+	}
+}
+
+void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section)
+{
+	addItem(item, section, false);
 }
 
 void OrthoContextMenu::removeItem(const IMenuItemPtr& item)
