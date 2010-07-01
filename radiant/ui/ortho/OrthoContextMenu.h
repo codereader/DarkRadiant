@@ -47,18 +47,42 @@ class OrthoContextMenu :
 	typedef std::map<int, MenuItems> MenuSections;
 	MenuSections _sections;
 
+	struct ExtendedSelectionInfo
+	{
+		bool anythingSelected;
+
+		bool onlyPrimitivesSelected;
+		bool onlyBrushesSelected;
+		bool onlyPatchesSelected;
+		bool singlePrimitiveSelected;
+
+		bool onlyEntitiesSelected;
+
+		bool onlyGroupsSelected;
+		bool singleGroupSelected;
+
+		bool onlyModelsSelected;
+
+		bool playerStartExists;
+	};
+
+	ExtendedSelectionInfo _selectionInfo;
+
 private:
 
     static std::string getRegistryKeyWithDefault(const std::string&,
                                                  const std::string&);
 
-	// Enable or disable the "convert to static" option based on the number
-	// of selected brushes.
-	void checkConvertStatic();
-	
-	/** greebo: Enable or disables the "revert to worldspawn" option 
-	 */
-	void checkRevertToWorldspawn();
+	void analyseSelection();
+
+	// Enable or disable the "convert to static" option based on the number of selected brushes.
+	bool checkConvertStatic();
+	bool checkRevertToWorldspawn();
+	bool checkMergeEntities();
+	bool checkRevertToWorldspawnPartial();
+	bool checkAddPlayerStart();
+	bool checkMovePlayerStart();
+	bool checkMakeVisportal();
 	
 	/** greebo: Disables the "entity/light/speaker/playerStart" options according to the selection,
 	 *			and change "playerStart" if another playerStart is found.
@@ -66,18 +90,13 @@ private:
 	void checkAddOptions();
 
 	// Disables the "add MonsterClip" option according to the selection,
-	void checkMonsterClip();
-
-	// mohij: changes the "Add PlayerStart" entry if an info_player_start already exists
-	void checkPlayerStart();
-
-	void checkMakeVisportal();
+	bool checkMonsterClip();
 
 	/* Gtk Callbacks */
 	
 	static void callbackAddEntity(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackAddPlayerStart(GtkMenuItem* item, OrthoContextMenu* self);
-	static void callbackMovePlayerStart(GtkMenuItem* item, OrthoContextMenu* self);
+	void callbackAddPlayerStart();
+	void callbackMovePlayerStart();
 	static void callbackAddModel(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddMonsterClip(GtkMenuItem* item, OrthoContextMenu* self);
 	static void callbackAddLight(GtkMenuItem* item, OrthoContextMenu* self);
