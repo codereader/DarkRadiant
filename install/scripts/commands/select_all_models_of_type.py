@@ -1,5 +1,6 @@
 # Set the command name so that DarkRadiant recognises this file
 __commandName__ = 'SelectAllModelsOfType'
+__commandDisplayName__ = 'Select all Models of same type'
 
 # The actual algorithm called by DarkRadiant is contained in the execute() function
 def execute():

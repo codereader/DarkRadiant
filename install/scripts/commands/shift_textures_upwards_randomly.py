@@ -1,5 +1,6 @@
 # Set the command name so that DarkRadiant recognises this file
 __commandName__ = 'ShiftTexturesUpwardsRandomly'
+__commandDisplayName__ = 'Shift Textures randomly upwards'
 
 # The actual algorithm called by DarkRadiant 
 # is contained in the execute() function
