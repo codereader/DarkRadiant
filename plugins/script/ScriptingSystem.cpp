@@ -239,12 +239,29 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 			_mainNamespace,
 			locals	// pass the new dictionary for the locals
 		);
-		
-		std::string cmdName = boost::python::extract<std::string>(locals["__commandName__"]);
-		
-		if (!cmdName.empty()) {
+
+		std::string cmdName; 
+		std::string cmdDisplayName;
+
+		if (locals.contains("__commandName__")) 
+		{ 
+			cmdName = boost::python::extract<std::string>(locals["__commandName__"]);
+		}
+
+		if (locals.contains("__commandDisplayName__")) 
+		{ 
+			cmdDisplayName = boost::python::extract<std::string>(locals["__commandDisplayName__"]);
+		}
+
+		if (!cmdName.empty())
+		{
+			if (cmdDisplayName.empty())
+			{
+				cmdDisplayName = cmdName;
+			}
+
 			// Successfully retrieved the command
-			ScriptCommandPtr cmd(new ScriptCommand(cmdName, scriptFilename));
+			ScriptCommandPtr cmd(new ScriptCommand(cmdName, cmdDisplayName, scriptFilename));
 
 			// Try to register this named command
 			std::pair<ScriptCommandMap::iterator, bool> result = _commands.insert(
