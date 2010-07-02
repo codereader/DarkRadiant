@@ -37,7 +37,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 				SCRIPT_MENU_PATH, 
 				"script" + i->first,
 				menuItem,
-				i->first,
+				i->second->getDisplayName(),
 				"",
 				i->first
 			);
