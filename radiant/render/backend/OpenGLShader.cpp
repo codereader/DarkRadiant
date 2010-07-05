@@ -98,7 +98,8 @@ unsigned int OpenGLShader::getFlags() const {
 }
 
 // Append a default shader pass onto the back of the state list
-OpenGLState& OpenGLShader::appendDefaultPass() {
+OpenGLState& OpenGLShader::appendDefaultPass() 
+{
     _shaderPasses.push_back(new OpenGLShaderPass);
     OpenGLState& state = _shaderPasses.back()->state();
     return state;
@@ -323,17 +324,13 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
     // mode from the first blend layer.
     if (!hasDiffuseLayer && numLayers > 0)
     {
-        pass.renderFlags |= RENDER_BLEND|RENDER_DEPTHWRITE;
+        pass.renderFlags |= RENDER_BLEND;
+        pass.m_sort = OpenGLState::eSortTranslucent;
 
         BlendFunc bf = allLayers[0]->getBlendFunc();
         pass.m_blend_src = bf.src;
         pass.m_blend_dst = bf.dest;
     }
-    else
-    {
-        pass.renderFlags |= RENDER_DEPTHWRITE;
-    }
-
 }
 
 // Construct editor-image-only render passes
@@ -346,6 +343,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     previewPass.renderFlags = RENDER_FILL
                               | RENDER_TEXTURE_2D
                               | RENDER_DEPTHTEST
+                              | RENDER_DEPTHWRITE
                               | RENDER_COLOURWRITE
                               | RENDER_LIGHTING
                               | RENDER_SMOOTH;
@@ -368,7 +366,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     {
         previewPass.m_sort = OpenGLState::eSortOverlayFirst;
     }
-    else
+    else if (previewPass.m_sort != OpenGLState::eSortTranslucent)
     {
         previewPass.m_sort = OpenGLState::eSortFullbright;
     }
