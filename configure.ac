@@ -136,15 +136,15 @@ then
                      [script_module=''])
     fi
 
-    # GTKSourceView used for syntax highlighting
-    PKG_CHECK_MODULES([GTKSOURCEVIEW], [gtksourceview-2.0], [],
-                      [script_module=''])
-
     AC_SUBST([script_module])
     AC_SUBST([PYTHON_CFLAGS])
     AC_SUBST([PYTHON_LIBS])
     AC_SUBST([BOOST_PYTHON_LIBS])
 fi
+
+# GTKSourceView 
+PKG_CHECK_MODULES([GTKSOURCEVIEW], [gtksourceview-2.0], [],
+                  [script_module=''])
 
 # Dependent Boost headers
 AC_CHECK_HEADER([boost/serialization/access.hpp], [],

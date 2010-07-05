@@ -747,12 +747,12 @@ AL_LIBS
 VORBIS_LIBS
 ALUT_LIBS
 sound_module
+GTKSOURCEVIEW_LIBS
+GTKSOURCEVIEW_CFLAGS
 BOOST_PYTHON_LIBS
 PYTHON_LIBS
 PYTHON_CFLAGS
 script_module
-GTKSOURCEVIEW_LIBS
-GTKSOURCEVIEW_CFLAGS
 PYTHON_CONFIG
 BOOST_SYSTEM_LIBS
 BOOST_FILESYSTEM_LIBS
@@ -15356,7 +15356,13 @@ fi
 
     fi
 
-    # GTKSourceView used for syntax highlighting
+
+
+
+
+fi
+
+# GTKSourceView
 
 pkg_failed=no
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for GTKSOURCEVIEW" >&5
@@ -15427,12 +15433,6 @@ else
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 	:
-fi
-
-
-
-
-
 fi
 
 # Dependent Boost headers
