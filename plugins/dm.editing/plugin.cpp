@@ -10,6 +10,7 @@
 #include "debugging/debugging.h"
 
 #include "AIHeadPropertyEditor.h"
+#include "AIVocalSetPropertyEditor.h"
 #include "FixupMapDialog.h"
 
 class EditingModule : 
@@ -46,6 +47,10 @@ public:
 			ui::DEF_HEAD_KEY, ui::IPropertyEditorPtr(new ui::AIHeadPropertyEditor())
 		);
 
+		GlobalEntityInspector().registerPropertyEditor(
+			ui::DEF_VOCAL_SET_KEY, ui::IPropertyEditorPtr(new ui::AIVocalSetPropertyEditor())
+		);
+
 		GlobalCommandSystem().addCommand("FixupMapDialog", ui::FixupMapDialog::RunDialog);
 		GlobalEventManager().addCommand("FixupMapDialog", "FixupMapDialog");
 
@@ -59,7 +64,8 @@ public:
 
 	void shutdownModule()
 	{
-		// Remove associated "def_head"
+		// Remove associated property keys
+		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_VOCAL_SET_KEY);
 		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_HEAD_KEY);
 	}
 };

@@ -12,4 +12,6 @@ dm_editing_la_SOURCES = plugin.cpp \
 						AIHeadPropertyEditor.cpp \
 						FixupMap.cpp \
 						FixupMapDialog.cpp \
+						AIVocalSetChooserDialog.cpp \
+						AIVocalSetPropertyEditor.cpp \
 						AIHeadChooserDialog.cpp
