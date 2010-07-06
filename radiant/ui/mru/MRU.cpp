@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "imainframe.h"
 #include "icommandsystem.h"
 #include "ipreferencesystem.h"
 #include "iuimanager.h"
@@ -9,6 +10,8 @@
 #include "gtk/gtkcontainer.h"
 #include "string/string.h"
 #include "os/file.h"
+
+#include "gtkutil/dialog.h"
 
 #include "map/Map.h"
 
@@ -99,6 +102,12 @@ void MRU::loadMap(const std::string& fileName)
 			
 			// Update the MRU list with this file
 			insert(fileName);
+		}
+		else
+		{
+			gtkutil::errorDialog(
+				(boost::format(_("Could not read map file: %s")) % fileName).str(),
+				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 }
