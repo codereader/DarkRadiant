@@ -430,6 +430,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\AIVocalSetChooserDialog.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\AIVocalSetPropertyEditor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\dm.editing\AIVocalSetPropertyEditor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.editing\DeprecatedEclassCollector.h"
 				>
 			</File>

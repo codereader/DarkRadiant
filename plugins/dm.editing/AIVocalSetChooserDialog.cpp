@@ -1,4 +1,4 @@
-#include "AIHeadChooserDialog.h"
+#include "AIVocalSetChooserDialog.h"
 
 #include "i18n.h"
 #include "imainframe.h"
@@ -18,7 +18,7 @@ namespace ui
 
 	namespace
 	{
-		const char* const WINDOW_TITLE = N_("Choose AI Head");
+		const char* const WINDOW_TITLE = N_("Choose AI Vocal Set");
 
 		// ListStore columns
 		enum
@@ -30,18 +30,18 @@ namespace ui
 		// Widgets
 		enum
 		{
-			WIDGET_HEADVIEW,
+			WIDGET_VOCALSETVIEW,
 			WIDGET_OKBUTTON,
 			WIDGET_DESCRIPTION,
 		};
 	}
 
-AIHeadChooserDialog::AIHeadChooserDialog() :
+AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
-	_headStore(gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING)),
+	_setStore(gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING)),
 	_result(RESULT_CANCEL)
 {
-	_widgets[WIDGET_HEADVIEW] = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_headStore));
+	_widgets[WIDGET_VOCALSETVIEW] = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_setStore));
 
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
 
@@ -52,37 +52,34 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 
 	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
 	gtk_window_set_default_size(
-		GTK_WINDOW(getWindow()), gint(rect.width * 0.7f), gint(rect.height * 0.6f)
+		GTK_WINDOW(getWindow()), gint(rect.width * 0.5f), gint(rect.height * 0.6f)
 	);
 
-	// Allocate and setup the preview
-	_preview = GlobalUIManager().createModelPreview();
-	assert(_preview != NULL);
-
-	_preview->setSize(gint(rect.width * 0.3f));
-
-	GtkTreeView* headsView = GTK_TREE_VIEW(_widgets[WIDGET_HEADVIEW]);
+	GtkTreeView* setsView = GTK_TREE_VIEW(_widgets[WIDGET_VOCALSETVIEW]);
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
 
-	gtk_tree_view_set_headers_visible(headsView, FALSE);
+	gtk_tree_view_set_headers_visible(setsView, FALSE);
 
-	_headSelection = gtk_tree_view_get_selection(headsView);
-	g_signal_connect(G_OBJECT(_headSelection), "changed",
-					 G_CALLBACK(onHeadSelectionChanged), this);
+	_setSelection = gtk_tree_view_get_selection(setsView);
+	g_signal_connect(G_OBJECT(_setSelection), "changed",
+					 G_CALLBACK(onSetSelectionChanged), this);
 	
 	// Head Name column
-	gtk_tree_view_append_column(headsView, gtkutil::TextColumn("", 0));
+	gtk_tree_view_append_column(setsView, gtkutil::TextColumn("", 0));
 
 	// Left: the treeview
-	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(GTK_WIDGET(headsView)), TRUE, TRUE, 0);
-	// Right: the preview and the description
+	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(GTK_WIDGET(setsView)), TRUE, TRUE, 0);
+
+	// Right: the description
 	GtkWidget* vbox2 = gtk_vbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox2), _preview->getWidget(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox2), createDescriptionPanel(), FALSE, FALSE, 0);
+	GtkWidget* descPanel = createDescriptionPanel();
+
+	gtk_box_pack_start(GTK_BOX(vbox2), descPanel, TRUE, TRUE, 0);
+	gtk_widget_set_size_request(descPanel, static_cast<gint>(rect.width*0.2f), -1);
 
 	gtk_box_pack_start(GTK_BOX(hbx), vbox2, FALSE, FALSE, 0);
 
-	// Topmost: the tree plus preview
+	// Topmost: the tree plus description
 	gtk_box_pack_start(GTK_BOX(vbox), hbx, TRUE, TRUE, 0);
 	// Bottom: the button panel
 	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
@@ -90,33 +87,33 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
 
 	// Check if the liststore is populated
-	findAvailableHeads();
+	findAvailableSets();
 
-	// Load the found heads into the GtkListStore
-	populateHeadStore();
+	// Load the found sets into the GtkListStore
+	populateSetStore();
 }
 
-AIHeadChooserDialog::Result AIHeadChooserDialog::getResult()
+AIVocalSetChooserDialog::Result AIVocalSetChooserDialog::getResult()
 {
 	return _result;
 }
 
-void AIHeadChooserDialog::setSelectedHead(const std::string& headDef)
+void AIVocalSetChooserDialog::setSelectedVocalSet(const std::string& setName)
 {
-	_selectedHead = headDef;
+	_selectedSet = setName;
 
-	if (_selectedHead.empty())
+	if (_selectedSet.empty())
 	{
-		gtk_tree_selection_unselect_all(_headSelection);
+		gtk_tree_selection_unselect_all(_setSelection);
 		return;
 	}
 
 	// Lookup the model path in the treemodel
-	gtkutil::TreeModel::SelectionFinder finder(_selectedHead, NAME_COLUMN);
+	gtkutil::TreeModel::SelectionFinder finder(_selectedSet, NAME_COLUMN);
 	
-	GtkTreeView* headsView = GTK_TREE_VIEW(_widgets[WIDGET_HEADVIEW]);
+	GtkTreeView* setView = GTK_TREE_VIEW(_widgets[WIDGET_VOCALSETVIEW]);
 
-	GtkTreeModel* model = gtk_tree_view_get_model(headsView);
+	GtkTreeModel* model = gtk_tree_view_get_model(setView);
 	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
 	
 	// Get the found TreePath (may be NULL)
@@ -125,24 +122,24 @@ void AIHeadChooserDialog::setSelectedHead(const std::string& headDef)
 	if (path != NULL)
 	{
 		// Expand the treeview to display the target row
-		gtk_tree_view_expand_to_path(headsView, path);
+		gtk_tree_view_expand_to_path(setView, path);
 		// Highlight the target row
-		gtk_tree_view_set_cursor(headsView, path, NULL, false);
+		gtk_tree_view_set_cursor(setView, path, NULL, false);
 		// Make the selected row visible 
-		gtk_tree_view_scroll_to_cell(headsView, path, NULL, true, 0.3f, 0.0f);
+		gtk_tree_view_scroll_to_cell(setView, path, NULL, true, 0.3f, 0.0f);
 	}
 	else
 	{
-		gtk_tree_selection_unselect_all(_headSelection);
+		gtk_tree_selection_unselect_all(_setSelection);
 	}
 }
 
-std::string AIHeadChooserDialog::getSelectedHead()
+std::string AIVocalSetChooserDialog::getSelectedVocalSet()
 {
-	return _selectedHead;
+	return _selectedSet;
 }
 
-GtkWidget* AIHeadChooserDialog::createButtonPanel()
+GtkWidget* AIVocalSetChooserDialog::createButtonPanel()
 {
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 
@@ -162,7 +159,7 @@ GtkWidget* AIHeadChooserDialog::createButtonPanel()
 	return gtkutil::RightAlignment(hbx);
 }
 
-GtkWidget* AIHeadChooserDialog::createDescriptionPanel()
+GtkWidget* AIVocalSetChooserDialog::createDescriptionPanel()
 {
 	// Create a GtkTextView
 	GtkWidget* textView = gtk_text_view_new();
@@ -174,16 +171,16 @@ GtkWidget* AIHeadChooserDialog::createDescriptionPanel()
 	return gtkutil::ScrolledFrame(textView);	
 }
 
-void AIHeadChooserDialog::onCancel(GtkWidget* widget, 
-									AIHeadChooserDialog* self) 
+void AIVocalSetChooserDialog::onCancel(GtkWidget* widget, 
+									AIVocalSetChooserDialog* self) 
 {
-	self->_selectedHead = "";
+	self->_selectedSet = "";
 	self->_result = RESULT_CANCEL;
 
 	self->destroy();
 }
 
-void AIHeadChooserDialog::onOK(GtkWidget* widget, AIHeadChooserDialog* self) 
+void AIVocalSetChooserDialog::onOK(GtkWidget* widget, AIVocalSetChooserDialog* self) 
 {
 	self->_result = RESULT_OK;
 
@@ -191,24 +188,8 @@ void AIHeadChooserDialog::onOK(GtkWidget* widget, AIHeadChooserDialog* self)
 	self->destroy();
 }
 
-void AIHeadChooserDialog::_preDestroy()
-{
-	// Clear the model preview cache
-	_preview->clear();
-
-	BlockingTransientWindow::_preDestroy();
-}
-
-void AIHeadChooserDialog::_postShow()
-{
-	// Initialise the GL widget after the widgets have been shown
-	_preview->initialisePreview();
-
-	BlockingTransientWindow::_postShow();
-}
-
-void AIHeadChooserDialog::onHeadSelectionChanged(GtkTreeSelection* sel,
-												   AIHeadChooserDialog* self)
+void AIVocalSetChooserDialog::onSetSelectionChanged(GtkTreeSelection* sel,
+												   AIVocalSetChooserDialog* self)
 {
 	// Prepare to check for a selection
 	GtkTreeIter iter;
@@ -222,21 +203,19 @@ void AIHeadChooserDialog::onHeadSelectionChanged(GtkTreeSelection* sel,
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DESCRIPTION], TRUE);
 
 		// Set the panel text with the usage information
-		self->_selectedHead = gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN); 
+		self->_selectedSet = gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN); 
 
 		// Lookup the IEntityClass instance
-		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(self->_selectedHead);	
+		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(self->_selectedSet);	
 
 		if (eclass != NULL)
 		{
-			self->_preview->setModel(eclass->getAttribute("model").value);
-			self->_preview->setSkin(eclass->getAttribute("skin").value);
-
 			// Update the usage panel
 			GtkTextView* textView = GTK_TEXT_VIEW(self->_widgets[WIDGET_DESCRIPTION]);
 			GtkTextBuffer* buf = gtk_text_view_get_buffer(textView);
 			
 			// Create the concatenated usage string
+			// TODO: move this algorithm to IEntityClass?
 			std::string usage = "";
 			EntityClassAttributeList usageAttrs = eclass->getAttributeList("editor_usage");
 			for (EntityClassAttributeList::const_iterator i = usageAttrs.begin();
@@ -257,25 +236,24 @@ void AIHeadChooserDialog::onHeadSelectionChanged(GtkTreeSelection* sel,
 	}
 	else
 	{
-		self->_selectedHead = "";
-		self->_preview->setModel("");
+		self->_selectedSet = "";
 
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_OKBUTTON], FALSE);
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DESCRIPTION], FALSE);
 	}
 }
 
-void AIHeadChooserDialog::populateHeadStore()
+void AIVocalSetChooserDialog::populateSetStore()
 {
 	// Clear the head list to be safe
-	gtk_list_store_clear(_headStore);
+	gtk_list_store_clear(_setStore);
 
-	for (HeadList::const_iterator i = _availableHeads.begin(); i != _availableHeads.end(); ++i)
+	for (SetList::const_iterator i = _availableSets.begin(); i != _availableSets.end(); ++i)
 	{
 		// Add the entity to the list
 		GtkTreeIter iter;
-		gtk_list_store_append(_headStore, &iter);
-		gtk_list_store_set(_headStore, &iter, 
+		gtk_list_store_append(_setStore, &iter);
+		gtk_list_store_set(_setStore, &iter, 
 						   NAME_COLUMN, i->c_str(),
 						   -1);
 	}
@@ -284,19 +262,19 @@ void AIHeadChooserDialog::populateHeadStore()
 namespace
 {
 
-class HeadEClassFinder :
+class VocalSetEClassFinder :
 	public EntityClassVisitor
 {
-	AIHeadChooserDialog::HeadList& _list;
+	AIVocalSetChooserDialog::SetList& _list;
 
 public:
-	HeadEClassFinder(AIHeadChooserDialog::HeadList& list) :
+	VocalSetEClassFinder(AIVocalSetChooserDialog::SetList& list) :
 		_list(list)
 	{}
 
 	void visit(IEntityClassPtr eclass)
 	{
-		if (eclass->getAttribute("editor_head").value == "1")
+		if (eclass->getAttribute("editor_vocal_set").value == "1")
 		{
 			_list.insert(eclass->getName());
 		}
@@ -305,19 +283,19 @@ public:
 
 } // namespace
 
-void AIHeadChooserDialog::findAvailableHeads()
+void AIVocalSetChooserDialog::findAvailableSets()
 {
-	if (!_availableHeads.empty())
+	if (!_availableSets.empty())
 	{
 		return;
 	}
 
 	// Instantiate a finder class and traverse all eclasses
-	HeadEClassFinder visitor(_availableHeads);
+	VocalSetEClassFinder visitor(_availableSets);
 	GlobalEntityClassManager().forEach(visitor);
 }
 
 // Init static class member
-AIHeadChooserDialog::HeadList AIHeadChooserDialog::_availableHeads;
+AIVocalSetChooserDialog::SetList AIVocalSetChooserDialog::_availableSets;
 
 } // namespace ui
