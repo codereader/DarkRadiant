@@ -324,8 +324,15 @@ scene::INodePtr MapResource::loadMapNode() {
 
 	if (path_is_absolute(fullpath.c_str())) {
 
-		if (loadFile(*format, root, fullpath)) {
+		if (loadFile(*format, root, fullpath))
+		{
 			return root;
+		}
+		else
+		{
+			gtkutil::errorDialog(
+				(boost::format(_("Failure reading read map file:\n%s")) % fullpath).str(),
+				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
