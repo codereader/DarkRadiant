@@ -5,6 +5,10 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include <gtk/gtk.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
 namespace ui {
 
 AIVocalSetPreview::AIVocalSetPreview()
@@ -15,6 +19,8 @@ AIVocalSetPreview::AIVocalSetPreview()
 	
 	// Trigger the initial update of the widgets
 	update();
+
+	srand(static_cast<unsigned int>(time(NULL)));
 }
 
 GtkWidget* AIVocalSetPreview::createControlPanel()
@@ -43,20 +49,45 @@ GtkWidget* AIVocalSetPreview::createControlPanel()
 void AIVocalSetPreview::setVocalSetEclass(const IEntityClassPtr& vocalSetDef)
 {
 	_vocalSetDef = vocalSetDef;
+
 	update();
 }
 
 void AIVocalSetPreview::update()
 {
+	_setShaders.clear();
+
+	if (_vocalSetDef != NULL)
+	{
+		EntityClassAttributeList sndAttrs = _vocalSetDef->getAttributeList("snd_");
+
+		for (EntityClassAttributeList::const_iterator i = sndAttrs.begin();
+			i != sndAttrs.end(); ++i)
+		{
+			_setShaders.push_back(i->value);
+		}
+	}
+
 	// If the soundshader string is empty, desensitise the widgets
-	gtk_widget_set_sensitive(_widget, _vocalSetDef != NULL ? TRUE : FALSE);
+	gtk_widget_set_sensitive(_widget, (_vocalSetDef != NULL && !_setShaders.empty()) ? TRUE : FALSE);
 }
 
 std::string AIVocalSetPreview::getRandomSoundFile()
 {
-	// TODO
+	// get a random sound shader
+	std::size_t idx = static_cast<std::size_t>(rand()) % _setShaders.size();
 
-	return "";
+	ISoundShaderPtr soundShader = GlobalSoundManager().getSoundShader(_setShaders[idx]);
+
+	if (soundShader == NULL) return "";
+
+	SoundFileList files = soundShader->getSoundFileList();
+
+	if (files.empty()) return "";
+
+	std::size_t fileIdx = static_cast<std::size_t>(rand()) % files.size();
+
+	return files[fileIdx];
 }
 
 void AIVocalSetPreview::onPlay(GtkWidget*, AIVocalSetPreview* self)
