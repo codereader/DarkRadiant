@@ -345,6 +345,11 @@ void EntityInspector::registerPropertyEditor(const std::string& key, const IProp
 	PropertyEditorFactory::registerPropertyEditor(key, editor);
 }
 
+void EntityInspector::unregisterPropertyEditor(const std::string& key)
+{
+	PropertyEditorFactory::unregisterPropertyEditor(key);
+}
+
 // Return the Gtk widget for the EntityInspector dialog.
 
 GtkWidget* EntityInspector::_getWidget() const

@@ -202,6 +202,7 @@ public:
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
 	void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor);
+	void unregisterPropertyEditor(const std::string& key);
 
 	// RadiantEventListener implementation, gets called right before shutdown
 	void onRadiantShutdown();

@@ -55,6 +55,11 @@ public:
 	 */
 	virtual void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor) = 0;
 
+	/** 
+	 * Removes the property editor for the given key.
+	 */
+	virtual void unregisterPropertyEditor(const std::string& key) = 0;
+
 	// Lets the EntityInspector restore its settings from the Registry
 	virtual void restoreSettings() = 0;
 };
