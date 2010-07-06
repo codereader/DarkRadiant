@@ -13,6 +13,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/RightAlignment.h"
+#include "gtkutil/LeftAlignedLabel.h"
 
 namespace ui
 {
@@ -74,10 +75,17 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 	gtk_tree_view_append_column(setsView, gtkutil::TextColumn("", 0));
 
 	// Left: the treeview
-	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(GTK_WIDGET(setsView)), TRUE, TRUE, 0);
+	GtkWidget* vbox1 = gtk_vbox_new(FALSE, 3);
+	gtk_box_pack_start(GTK_BOX(hbx), vbox1, TRUE, TRUE, 0);
+
+	gtk_box_pack_start(GTK_BOX(vbox1), gtkutil::LeftAlignedLabel(_("<b>Available Sets:</b>")), FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox1), gtkutil::ScrolledFrame(GTK_WIDGET(setsView)), TRUE, TRUE, 0);
 
 	// Right: the description
 	GtkWidget* vbox2 = gtk_vbox_new(FALSE, 3);
+
+	gtk_box_pack_start(GTK_BOX(vbox2), gtkutil::LeftAlignedLabel(_("<b>Description:</b>")), FALSE, FALSE, 0);
+
 	GtkWidget* descPanel = createDescriptionPanel();
 	gtk_box_pack_start(GTK_BOX(vbox2), descPanel, TRUE, TRUE, 0);
 	gtk_widget_set_size_request(descPanel, static_cast<gint>(rect.width*0.2f), -1);
