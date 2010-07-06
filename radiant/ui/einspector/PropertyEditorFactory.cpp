@@ -59,6 +59,20 @@ void PropertyEditorFactory::registerPropertyEditor(const std::string& key, const
 	}
 }
 
+void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
+{
+	PropertyEditorMap::iterator found = _customEditors.find(key);
+
+	if (found != _customEditors.end())
+	{
+		_customEditors.erase(found);
+	}
+	else
+	{
+		globalWarningStream() << "Cannot unregister property editor for key " << key << std::endl;
+	}
+}
+
 // Create a PropertyEditor from the given name.
 IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 											  	Entity* entity,

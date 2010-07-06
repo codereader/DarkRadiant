@@ -56,6 +56,12 @@ public:
 			"FixupMapDialog"
 		);
 	}
+
+	void shutdownModule()
+	{
+		// Remove associated "def_head"
+		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_HEAD_KEY);
+	}
 };
 typedef boost::shared_ptr<EditingModule> EditingModulePtr;
 

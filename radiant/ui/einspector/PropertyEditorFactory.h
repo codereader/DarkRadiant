@@ -44,6 +44,7 @@ public:
 
 	// Associate a specific property editor for the given key (regex)
 	static void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor);
+	static void unregisterPropertyEditor(const std::string& key);
     
     // Return the GdkPixbuf that corresponds to the provided PropertyEditor
     // type.
