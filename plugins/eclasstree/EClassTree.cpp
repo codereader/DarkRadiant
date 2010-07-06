@@ -9,6 +9,7 @@
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/MultiMonitor.h"
 
 #include "EClassTreeBuilder.h"
 #include "i18n.h"
@@ -71,12 +72,13 @@ void EClassTree::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
 	
 	// Set the default size of the window
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(getWindow()));
-	gint w = gdk_screen_get_width(scr);
-	gint h = gdk_screen_get_height(scr);
+	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+	gtk_window_set_default_size(
+		GTK_WINDOW(getWindow()), gint(rect.width * 0.8f), gint(rect.height * 0.8f)
+	);
 
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), 2*w/3, 2*h/3);
-	gtk_paned_set_position(GTK_PANED(paned), w/4);
+	gtk_paned_set_position(GTK_PANED(paned), static_cast<gint>(rect.width * 0.25f));
 }
 
 GtkWidget* EClassTree::createEClassTreeView() {
