@@ -11,6 +11,8 @@ typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkListStore GtkListStore;
 typedef struct _GtkTreeSelection GtkTreeSelection;
 
+#include "AIVocalSetPreview.h"
+
 namespace ui
 {
 
@@ -40,6 +42,8 @@ private:
 	static SetList _availableSets;
 
 	Result _result;
+
+	AIVocalSetPreviewPtr _preview;
 
 public:
 	AIVocalSetChooserDialog();

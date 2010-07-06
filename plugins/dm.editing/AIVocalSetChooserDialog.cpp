@@ -4,6 +4,7 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "ieclass.h"
+#include "isound.h"
 
 #include <gtk/gtk.h>
 
@@ -41,6 +42,11 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 	_setStore(gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING)),
 	_result(RESULT_CANCEL)
 {
+	if (module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
+	{
+		_preview = AIVocalSetPreviewPtr(new AIVocalSetPreview);
+	}
+
 	_widgets[WIDGET_VOCALSETVIEW] = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_setStore));
 
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
@@ -73,9 +79,14 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 	// Right: the description
 	GtkWidget* vbox2 = gtk_vbox_new(FALSE, 3);
 	GtkWidget* descPanel = createDescriptionPanel();
-
 	gtk_box_pack_start(GTK_BOX(vbox2), descPanel, TRUE, TRUE, 0);
 	gtk_widget_set_size_request(descPanel, static_cast<gint>(rect.width*0.2f), -1);
+
+	// Right: the preview control panel
+	if (_preview != NULL)
+	{
+		gtk_box_pack_start(GTK_BOX(vbox2), _preview->getWidget(), FALSE, FALSE, 0);
+	}
 
 	gtk_box_pack_start(GTK_BOX(hbx), vbox2, FALSE, FALSE, 0);
 
@@ -210,10 +221,16 @@ void AIVocalSetChooserDialog::onSetSelectionChanged(GtkTreeSelection* sel,
 
 		if (eclass != NULL)
 		{
+			// Update the preview pane
+			if (self->_preview != NULL)
+			{
+				self->_preview->setVocalSetEclass(eclass);
+			}
+
 			// Update the usage panel
 			GtkTextView* textView = GTK_TEXT_VIEW(self->_widgets[WIDGET_DESCRIPTION]);
 			GtkTextBuffer* buf = gtk_text_view_get_buffer(textView);
-			
+
 			// Create the concatenated usage string
 			// TODO: move this algorithm to IEntityClass?
 			std::string usage = "";
@@ -237,6 +254,11 @@ void AIVocalSetChooserDialog::onSetSelectionChanged(GtkTreeSelection* sel,
 	else
 	{
 		self->_selectedSet = "";
+
+		if (self->_preview != NULL)
+		{
+			self->_preview->setVocalSetEclass(IEntityClassPtr());
+		}
 
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_OKBUTTON], FALSE);
 		gtk_widget_set_sensitive(self->_widgets[WIDGET_DESCRIPTION], FALSE);
