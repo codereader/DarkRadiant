@@ -28,6 +28,9 @@ private:
 	// The currently "previewed" vocal set
 	IEntityClassPtr _vocalSetDef;
 
+	typedef std::vector<std::string> SoundShaderList;
+	SoundShaderList _setShaders;
+
 protected:
    
 	GtkWidget* _getWidget() const
