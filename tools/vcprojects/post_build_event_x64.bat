@@ -3,8 +3,6 @@ if exist ..\..\install\etc rd ..\..\install\etc /S /Q
 
 del ..\..\install\*.dll
 
-@rem copy ..\..\w32deps\libxml2\lib\libxml2.dll ..\..\install /Y
-
 copy ..\..\w64deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w64deps\openal\bin\wrap_oal.dll ..\..\install /Y
 
@@ -44,3 +42,6 @@ copy ..\..\w64deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install /Y
 @rem Copy the compiled GTKGlext x64 DLLs to install
 copy ..\..\build\libs\x64\libgdkglext.dll ..\..\install /Y
 copy ..\..\build\libs\x64\libgtkglext.dll ..\..\install /Y
+
+@rem Copy the compiled libxml2 DLL to install
+copy ..\..\build\libs\x64\libxml2.dll ..\..\install /Y

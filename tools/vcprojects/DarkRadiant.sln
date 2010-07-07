@@ -14,6 +14,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DarkRadiant", "DarkRadiant.
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "archivezip", "archivezip.vcproj", "{A7E0FE03-E9BB-4478-9752-250BBD406C2D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BEC4EE48-0806-4E16-A16C-3E43D39763D6} = {BEC4EE48-0806-4E16-A16C-3E43D39763D6}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "eclassmgr", "eclassmgr.vcproj", "{4CF3ED90-BE1A-45D1-9DC7-7CC6884A9754}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -163,6 +166,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "script", "script.vcproj", "
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "commandsystem", "commandsystem.vcproj", "{3E374D7E-B371-4373-9700-AA896E530C85}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgtksourceview", "libgtksourceview\libgtksourceview.vcproj", "{48F648E3-F761-4647-B9A7-63122A0B1F12}"
 	ProjectSection(ProjectDependencies) = postProject

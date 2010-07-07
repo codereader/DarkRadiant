@@ -47,3 +47,6 @@ copy ..\..\w32deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install /Y
 @rem Copy the compiled GTKGlext x86 DLLs to install
 copy ..\..\build\libs\Win32\libgdkglext.dll ..\..\install /Y
 copy ..\..\build\libs\Win32\libgtkglext.dll ..\..\install /Y
+
+@rem Copy the compiled libxml2 x86 DLL to install
+copy ..\..\build\libs\Win32\libxml2.dll ..\..\install /Y
