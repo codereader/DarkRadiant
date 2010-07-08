@@ -20,7 +20,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
@@ -89,7 +89,7 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
@@ -161,7 +161,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
@@ -231,7 +231,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"

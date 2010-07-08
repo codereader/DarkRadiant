@@ -61,7 +61,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="libgtkglext.lib libgdkglext.lib libgtksourceview.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtksourceview-2.0\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -123,7 +123,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="libgtkglext.lib libgdkglext.lib libgtksourceview.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtksourceview-2.0\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -185,7 +185,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="libgtkglext.lib libgdkglext.lib libgtksourceview.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtksourceview-2.0\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -248,7 +248,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="libgtkglext.lib libgdkglext.lib libgtksourceview.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtksourceview-2.0\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
