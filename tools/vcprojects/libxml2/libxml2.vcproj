@@ -87,7 +87,7 @@
 			Name="Debug|x64"
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
@@ -125,12 +125,13 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				AdditionalDependencies="libiconv.lib kernel32.lib"
-				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+				Name="VCLinkerTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -140,6 +141,9 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -216,7 +220,7 @@
 			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)\..\..\build\libs\$(PlatformName)"
 			IntermediateDirectory="$(SolutionDir)\..\..\build\$(ProjectName)\$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="4"
+			ConfigurationType="2"
 			BuildLogFile="$(SolutionDir)\..\..\build\$(ProjectName)\BuildLog.htm"
 			>
 			<Tool
@@ -254,12 +258,13 @@
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				Name="VCLibrarianTool"
-				AdditionalDependencies="libiconv.lib kernel32.lib"
-				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)"
+				Name="VCLinkerTool"
 			/>
 			<Tool
 				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -269,6 +274,9 @@
 			/>
 			<Tool
 				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
