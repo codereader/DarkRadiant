@@ -37,7 +37,8 @@ copy ..\..\w64deps\glew\lib\glew32.dll ..\..\install /Y
 
 copy ..\..\w64deps\python\bin\python26.dll ..\..\install /Y
 
-copy ..\..\w64deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install /Y
+@rem Copy the compiled GtkSourceView x64 DLLs to install
+copy ..\..\build\libs\x64\libgtksourceview.dll ..\..\install /Y
 
 @rem Copy the compiled GTKGlext x64 DLLs to install
 copy ..\..\build\libs\x64\libgdkglext.dll ..\..\install /Y

@@ -42,7 +42,8 @@ copy ..\..\w32deps\gtk2\bin\zlib1.dll ..\..\install /Y
 
 copy ..\..\w32deps\python\bin\python26.dll ..\..\install /Y
 
-copy ..\..\w32deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install /Y
+@rem Copy the compiled GtkSourceView x86 DLLs to install
+copy ..\..\build\libs\Win32\libgtksourceview.dll ..\..\install /Y
 
 @rem Copy the compiled GTKGlext x86 DLLs to install
 copy ..\..\build\libs\Win32\libgdkglext.dll ..\..\install /Y
