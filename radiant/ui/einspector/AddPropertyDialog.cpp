@@ -65,7 +65,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
     
     // Set size of dialog
 	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(parent);
-    gtk_window_set_default_size(GTK_WINDOW(_widget), rect.width/3, rect.height/3);
+    gtk_window_set_default_size(GTK_WINDOW(_widget), static_cast<gint>(rect.width/2), static_cast<gint>(rect.height*2/3));
     
     // Signals
     g_signal_connect(G_OBJECT(_widget), "delete-event", 
@@ -115,19 +115,13 @@ GtkWidget* AddPropertyDialog::createTreeView() {
 
 	// Model owned by view
 	g_object_unref(G_OBJECT(_treeStore));
+
+	// Use the TreeModel's full string search function
+	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(_treeView), 
+		gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
 	
 	// Pack into scrolled window and frame, and return
-	
-	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scroll), _treeView);
-	
-	GtkWidget* frame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(frame), scroll);
-	
-	return frame;
+	return gtkutil::ScrolledFrame(_treeView);
 }
 
 // Construct the usage panel
