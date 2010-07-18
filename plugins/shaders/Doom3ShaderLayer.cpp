@@ -54,8 +54,16 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
     }
     else if (blendFunc.first == "modulate" || blendFunc.first == "filter")
     {
-        return BlendFunc(GL_ZERO, GL_SRC_COLOR);
+        return BlendFunc(GL_DST_COLOR, GL_ZERO);
     }
+	else if (blendFunc.first == "blend")
+	{
+		return BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	else if (blendFunc.first == "none")
+	{
+		return BlendFunc(GL_ZERO, GL_ONE);
+	}
     else
     {
         // Not predefined, just use the specified blend function directly
