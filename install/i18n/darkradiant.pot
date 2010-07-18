@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-06-26 11:44+0200\n"
+"POT-Creation-Date: 2010-07-18 09:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Caulk shader name"
 msgstr ""
 
-#: ..\..\radiant\entity.cpp:93 ..\..\radiant\mainframe_old.cpp:553
+#: ..\..\radiant\entity.cpp:93 ..\..\radiant\mainframe_old.cpp:585
 #: ..\..\radiant\map\Map.cpp:478 ..\..\radiant\map\Map.cpp:574
 #: ..\..\radiant\map\Map.cpp:594
 #: ..\..\radiant\referencecache\ModelCache.cpp:204
@@ -136,8 +136,40 @@ msgstr ""
 msgid "Unable to create entity %s, no brushes selected."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:20
+#: ..\..\radiant\layers\LayerSystem.cpp:32
 msgid "Default"
+msgstr ""
+
+#: ..\..\radiant\layers\LayerSystem.cpp:35
+msgid "Create Layer..."
+msgstr ""
+
+#: ..\..\radiant\layers\LayerSystem.cpp:37
+msgid "Add to Layer..."
+msgstr ""
+
+#: ..\..\radiant\layers\LayerSystem.cpp:38
+msgid "Move to Layer..."
+msgstr ""
+
+#: ..\..\radiant\layers\LayerSystem.cpp:39
+msgid "Remove from Layer..."
+msgstr ""
+
+#: ..\..\radiant\layers\LayerSystem.cpp:467
+msgid "Enter Name"
+msgstr ""
+
+#: ..\..\radiant\layers\LayerSystem.cpp:468
+msgid "Enter Layer Name"
+msgstr ""
+
+#: ..\..\radiant\layers\LayerSystem.cpp:480
+msgid "Cannot create layer with empty name."
+msgstr ""
+
+#: ..\..\radiant\layers\LayerSystem.cpp:494
+msgid "This name already exists."
 msgstr ""
 
 #: ..\..\radiant\main.cpp:91
@@ -181,7 +213,7 @@ msgstr ""
 msgid "Exit Radiant"
 msgstr ""
 
-#: ..\..\radiant\mainframe_old.cpp:553
+#: ..\..\radiant\mainframe_old.cpp:585
 msgid "Loading Shaders"
 msgstr ""
 
@@ -256,7 +288,7 @@ msgstr ""
 msgid "New Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:763 ..\..\radiant\ui\mru\MRU.cpp:90
+#: ..\..\radiant\map\Map.cpp:763 ..\..\radiant\ui\mru\MRU.cpp:93
 msgid "Open Map"
 msgstr ""
 
@@ -280,10 +312,17 @@ msgstr ""
 msgid "<no description>"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:157 ..\..\radiant\map\MapResource.cpp:392
-#: ..\..\radiant\map\MapResource.cpp:411
+#: ..\..\radiant\map\MapResource.cpp:157 ..\..\radiant\map\MapResource.cpp:399
+#: ..\..\radiant\map\MapResource.cpp:418
 #, c-format
 msgid "File is write-protected: %s"
+msgstr ""
+
+#: ..\..\radiant\map\MapResource.cpp:334
+#, c-format
+msgid ""
+"Failure reading read map file:\n"
+"%s"
 msgstr ""
 
 #: ..\..\radiant\map\PointFile.cpp:111
@@ -315,16 +354,16 @@ msgstr ""
 msgid "Export region"
 msgstr ""
 
-#: ..\..\radiant\modulesystem\ModuleRegistry.cpp:123
+#: ..\..\radiant\modulesystem\ModuleRegistry.cpp:121
 #, c-format
 msgid "Initialising Module: %s"
 msgstr ""
 
-#: ..\..\radiant\modulesystem\ModuleRegistry.cpp:142
+#: ..\..\radiant\modulesystem\ModuleRegistry.cpp:140
 msgid "Initialising Modules"
 msgstr ""
 
-#: ..\..\radiant\patch\Patch.cpp:1672
+#: ..\..\radiant\patch\Patch.cpp:1682
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr ""
 
@@ -336,27 +375,27 @@ msgstr ""
 msgid "Patch Subdivide Threshold"
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:154
+#: ..\..\radiant\patchmanip.cpp:155
 msgid "Cannot create caps, no patches selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:637
+#: ..\..\radiant\patchmanip.cpp:640
 msgid "Cannot thicken patch. Nothing selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:696
+#: ..\..\radiant\patchmanip.cpp:699
 msgid ""
 "Cannot stitch textures. \n"
 "Could not cast nodes to patches."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:705
+#: ..\..\radiant\patchmanip.cpp:708
 msgid ""
 "Cannot stitch patch textures. \n"
 "Exactly 2 patches must be selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:739
+#: ..\..\radiant\patchmanip.cpp:742
 msgid "Cannot bulge patch. No patches selected."
 msgstr ""
 
@@ -414,25 +453,25 @@ msgid ""
 "(The first selected entity will be preserved.)"
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:167
 #: ..\..\radiant\selection\algorithm\Primitives.cpp:171
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:175
 msgid "No patches selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:479
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:483
 msgid "Could not create patch."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:554
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:558
 msgid "No faces selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:573
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:577
 #, c-format
 msgid "%d faces were not suitable (had more than 4 vertices)."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:621
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:625
 msgid "No brushes selected."
 msgstr ""
 
@@ -1462,9 +1501,9 @@ msgstr ""
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:212
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:264
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:46
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:393
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:398
 #: ..\..\radiant\ui\modelselector\ModelSelector.cpp:342
-#: ..\..\plugins\eclasstree\EClassTree.cpp:140
+#: ..\..\plugins\eclasstree\EClassTree.cpp:142
 msgid "Value"
 msgstr ""
 
@@ -1511,6 +1550,7 @@ msgid "Sound Files"
 msgstr ""
 
 #: ..\..\radiant\ui\common\SoundShaderPreview.cpp:151
+#: ..\..\plugins\dm.editing\AIVocalSetPreview.cpp:106
 msgid "<b>Error:</b> File not found."
 msgstr ""
 
@@ -1526,7 +1566,7 @@ msgstr ""
 msgid "Custom properties defined for this entity class, if any"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\ClassnamePropertyEditor.cpp:28
+#: ..\..\radiant\ui\einspector\ClassnamePropertyEditor.cpp:33
 msgid "Choose entity class..."
 msgstr ""
 
@@ -1558,16 +1598,16 @@ msgstr ""
 msgid "Paste Spawnarg"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:373
-#: ..\..\plugins\eclasstree\EClassTree.cpp:123
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:378
+#: ..\..\plugins\eclasstree\EClassTree.cpp:125
 msgid "Property"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:408
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:413
 msgid "?"
 msgstr ""
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:631
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:636
 #, c-format
 msgid "The name %s already exists in this map!"
 msgstr ""
@@ -1628,12 +1668,12 @@ msgstr ""
 msgid " Z: "
 msgstr ""
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:23
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:31
 msgid "Create entity"
 msgstr ""
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:171
-#: ..\..\plugins\eclasstree\EClassTree.cpp:100
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:179
+#: ..\..\plugins\eclasstree\EClassTree.cpp:102
 msgid "Classname"
 msgstr ""
 
@@ -1802,32 +1842,16 @@ msgstr ""
 msgid "Could not rename layer, please try again."
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:26 xml_file_content.cpp:48
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:24 xml_file_content.cpp:48
 msgid "Layers"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:68
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:66
 msgid "Show all"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:69
+#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:67
 msgid "Hide all"
-msgstr ""
-
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:226
-msgid "Enter Name"
-msgstr ""
-
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:227
-msgid "Enter Layer Name"
-msgstr ""
-
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:239
-msgid "Cannot create layer with empty name."
-msgstr ""
-
-#: ..\..\radiant\ui\layers\LayerControlDialog.cpp:253
-msgid "This name already exists."
 msgstr ""
 
 #: ..\..\radiant\ui\lightinspector\LightInspector.cpp:32
@@ -2097,103 +2121,92 @@ msgstr ""
 msgid "Active materials"
 msgstr ""
 
-#: ..\..\radiant\ui\mru\MRU.cpp:23
+#: ..\..\radiant\ui\mru\MRU.cpp:26
 msgid "Recently used Maps"
 msgstr ""
 
-#: ..\..\radiant\ui\mru\MRU.cpp:116
+#: ..\..\radiant\ui\mru\MRU.cpp:109
+#, c-format
+msgid "Could not read map file: %s"
+msgstr ""
+
+#: ..\..\radiant\ui\mru\MRU.cpp:125
 msgid "Settings/Map Files"
 msgstr ""
 
-#: ..\..\radiant\ui\mru\MRU.cpp:118
+#: ..\..\radiant\ui\mru\MRU.cpp:127
 msgid "Number of most recently used files"
 msgstr ""
 
-#: ..\..\radiant\ui\mru\MRU.cpp:119
+#: ..\..\radiant\ui\mru\MRU.cpp:128
 msgid "Open last map on startup"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:54
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:55
 msgid "Create entity..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:56
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:57
 msgid "Create player start here"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:58
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:59
 msgid "Move player start here"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:60
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:61
 msgid "Create model..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:62
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:63
 msgid "Surround with monsterclip"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:64
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:65
 msgid "Create light..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:66
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:67
 msgid "Insert prefab..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:68
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:69
 msgid "Create speaker..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:70
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:71
 msgid "Convert to func_static"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:72
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:73
 msgid "Revert to worldspawn"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:73
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:74
 msgid "Revert part to worldspawn"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:77
 msgid "Merge Entities"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:77 xml_file_content.cpp:151
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:78 xml_file_content.cpp:151
 msgid "Make Visportal"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:81
-msgid "Add to Layer..."
-msgstr ""
-
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:82
-msgid "Move to Layer..."
-msgstr ""
-
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:83
-msgid "Remove from Layer..."
-msgstr ""
-
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:84
-msgid "Create Layer..."
-msgstr ""
-
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:504
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:322
 msgid "Unable to create light, classname not found."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:551
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:352
 msgid "Unable to create speaker, classname not found."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:594
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:418
 msgid "Unable to create model, classname not found."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:602
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:427
 msgid "Either nothing or exactly one brush must be selected for model creation"
 msgstr ""
 
@@ -2479,7 +2492,7 @@ msgid "Default Scale:"
 msgstr ""
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:70
-#: xml_file_content.cpp:8
+#: xml_file_content.cpp:9
 msgid "Texture Lock"
 msgstr ""
 
@@ -2808,6 +2821,22 @@ msgstr ""
 msgid "Choose AI head..."
 msgstr ""
 
+#: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:23
+msgid "Choose AI Vocal Set"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:81
+msgid "<b>Available Sets:</b>"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\AIVocalSetChooserDialog.cpp:87
+msgid "<b>Description:</b>"
+msgstr ""
+
+#: ..\..\plugins\dm.editing\AIVocalSetPropertyEditor.cpp:33
+msgid "Select Vocal Set..."
+msgstr ""
+
 #: ..\..\plugins\dm.editing\FixupMap.cpp:26
 msgid "Fixup in progress"
 msgstr ""
@@ -2879,7 +2908,7 @@ msgstr ""
 msgid "Fixup Results"
 msgstr ""
 
-#: ..\..\plugins\dm.editing\plugin.cpp:54
+#: ..\..\plugins\dm.editing\plugin.cpp:59
 msgid "Fixup Map..."
 msgstr ""
 
@@ -3909,7 +3938,7 @@ msgstr ""
 msgid "Custom Stims"
 msgstr ""
 
-#: ..\..\plugins\eclasstree\EClassTree.cpp:20
+#: ..\..\plugins\eclasstree\EClassTree.cpp:21
 msgid "Entity Class Tree"
 msgstr ""
 
@@ -3943,82 +3972,82 @@ msgstr ""
 msgid "Alt"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:512
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:526
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:515
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:529
 msgid "Nothing"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:513
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:516
 msgid "Move View"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:514
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:528
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:517
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:531
 msgid "Select"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:515
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:518
 msgid "Zoom View"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:516
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:519
 msgid "Drag Camera"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:517
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:520
 msgid "Point Camera"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:518
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:521
 msgid "Create New Brush"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:519
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:539
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:522
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:542
 msgid "Unknown event"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:527
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:530
 msgid "Manipulate"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:529
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:532
 msgid "Toggle Selection"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:530
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:533
 msgid "Toggle Face Selection"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:531
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:534
 msgid "Cycle Selection"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:532
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:535
 msgid "Cycle Face Selection"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:533
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:536
 msgid "Copy Texture"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:534
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:537
 msgid "PasteTexture Projected"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:535
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:538
 msgid "PasteTexture Natural"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:536
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:539
 msgid "PasteTexture Coordinates"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:537
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:540
 msgid "Paste Texture to all Brush Faces"
 msgstr ""
 
-#: ..\..\plugins\eventmanager\MouseEvents.cpp:538
+#: ..\..\plugins\eventmanager\MouseEvents.cpp:541
 msgid "Jump to Object"
 msgstr ""
 
@@ -4097,7 +4126,7 @@ msgstr ""
 msgid "Script"
 msgstr ""
 
-#: ..\..\plugins\script\ScriptingSystem.cpp:436
+#: ..\..\plugins\script\ScriptingSystem.cpp:453
 msgid "Reload Scripts"
 msgstr ""
 
@@ -4566,7 +4595,7 @@ msgstr ""
 msgid "Nudge Down"
 msgstr ""
 
-#: xml_file_content.cpp:105 xml_file_content.cpp:14
+#: xml_file_content.cpp:105 xml_file_content.cpp:15
 msgid "Rotate"
 msgstr ""
 
@@ -4726,7 +4755,7 @@ msgstr ""
 msgid "CSG _Merge"
 msgstr ""
 
-#: xml_file_content.cpp:145 xml_file_content.cpp:12 xml_file_content.cpp:16
+#: xml_file_content.cpp:145 xml_file_content.cpp:12 xml_file_content.cpp:17
 msgid "Clipper"
 msgstr ""
 
@@ -5187,45 +5216,49 @@ msgid "Select Entities"
 msgstr ""
 
 #: xml_file_content.cpp:6
-msgid "Show/hide all light volumes"
+msgid "Select Group Parts"
 msgstr ""
 
 #: xml_file_content.cpp:7
+msgid "Show/hide all light volumes"
+msgstr ""
+
+#: xml_file_content.cpp:8
 msgid "Show/hide all speaker volumes"
 msgstr ""
 
-#: xml_file_content.cpp:9
+#: xml_file_content.cpp:10
 msgid "Rotate Models independently"
 msgstr ""
 
-#: xml_file_content.cpp:10
+#: xml_file_content.cpp:11
 msgid "Rotate func_* Entities around origin"
 msgstr ""
 
-#: xml_file_content.cpp:11
+#: xml_file_content.cpp:12
 msgid "Drag-resize entities symmetrically (leave origin unchanged)"
 msgstr ""
 
-#: xml_file_content.cpp:12
+#: xml_file_content.cpp:13
 msgid "Offset cloned objects by one grid unit to the right and downwards."
 msgstr ""
 
-#: xml_file_content.cpp:13
+#: xml_file_content.cpp:14
 msgid "Translate"
 msgstr ""
 
-#: xml_file_content.cpp:15
+#: xml_file_content.cpp:16
 msgid "Resize"
 msgstr ""
 
-#: xml_file_content.cpp:17
+#: xml_file_content.cpp:18
 msgid "Hide Unused"
 msgstr ""
 
-#: xml_file_content.cpp:18
+#: xml_file_content.cpp:19
 msgid "Toggle Grid"
 msgstr ""
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:20
 msgid "Center Pivot when scaling faces"
 msgstr ""
