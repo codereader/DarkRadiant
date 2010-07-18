@@ -197,7 +197,7 @@ bool OrthoContextMenu::checkAddMonsterclip()
 
 bool OrthoContextMenu::checkAddEntity()
 {
-	return !_selectionInfo.anythingSelected;
+	return !_selectionInfo.anythingSelected || _selectionInfo.onlyPrimitivesSelected;
 }
 
 bool OrthoContextMenu::checkAddModel()
