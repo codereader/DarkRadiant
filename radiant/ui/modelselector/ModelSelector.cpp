@@ -186,23 +186,10 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 	// If an empty string was passed for the current model, use the last selected one
 	std::string previouslySelected = (!curModel.empty()) ? curModel : _lastModel;
 
-	if (!previouslySelected.empty()) {
+	if (!previouslySelected.empty())
+	{
 		// Lookup the model path in the treemodel
-		gtkutil::TreeModel::SelectionFinder finder(previouslySelected, FULLNAME_COLUMN);
-		
-		GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_treeView));
-		gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
-		
-		// Get the found TreePath (may be NULL)
-		GtkTreePath* path = finder.getPath();
-		if (path != NULL) {
-			// Expand the treeview to display the target row
-			gtk_tree_view_expand_to_path(_treeView, path);
-			// Highlight the target row
-			gtk_tree_view_set_cursor(_treeView, path, NULL, false);
-			// Make the selected row visible 
-			gtk_tree_view_scroll_to_cell(_treeView, path, NULL, true, 0.3f, 0.0f);
-		}
+		gtkutil::TreeModel::findAndSelectString(GTK_TREE_VIEW(_treeView), previouslySelected, FULLNAME_COLUMN);
 	}
 
 	// Update the model preview widget, forcing an update of the selected model

@@ -170,25 +170,7 @@ const std::string& SoundChooser::getSelectedShader() const
 // Set the selected sound shader, and focuses the treeview to the new selection
 void SoundChooser::setSelectedShader(const std::string& shader)
 {
-	// Find the selection string in the treeview
-	gtkutil::TreeModel::SelectionFinder finder(shader, SHADERNAME_COLUMN);
-	
-	GtkTreeModel* model = gtk_tree_view_get_model(_treeView);
-	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
-	
-	// Get the found TreePath (may be NULL)
-	GtkTreePath* path = finder.getPath();
-
-	if (path != NULL)
-	{
-		// Expand the treeview to display the target row
-		gtk_tree_view_expand_to_path(_treeView, path);
-		// Highlight the target row
-		gtk_tree_view_set_cursor(_treeView, path, NULL, false);
-		// Make the selected row visible 
-		gtk_tree_view_scroll_to_cell(_treeView, path, NULL, true, 0.3f, 0.0f);
-	}
-	else
+	if (!gtkutil::TreeModel::findAndSelectString(_treeView, shader, SHADERNAME_COLUMN))
 	{
 		gtk_tree_selection_unselect_all(_treeSelection);
 	}

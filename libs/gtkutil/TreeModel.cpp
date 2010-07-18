@@ -126,6 +126,15 @@ TreeModel::SelectionFinder::SelectionFinder(int needle, int column) :
 	_searchForInt(true)
 {}
 
+TreeModel::SelectionFinder::~SelectionFinder()
+{
+	if (_path != NULL)
+	{
+		gtk_tree_path_free(_path);
+		_path = NULL;
+	}
+}
+
 GtkTreePath* TreeModel::SelectionFinder::getPath() {
 	return _path;
 }
@@ -232,6 +241,58 @@ gint TreeModel::sortFuncFoldersFirst(GtkTreeModel* model,
 			return (aName < bName) ? -1 : 1;
 		}
 	}
+}
+
+bool TreeModel::findAndSelectString(GtkTreeView* view, const std::string& needle, int column)
+{
+	// Find the selection string in the model
+	SelectionFinder finder(needle, column);
+	
+	GtkTreeModel* model = gtk_tree_view_get_model(view);
+	gtk_tree_model_foreach(model, SelectionFinder::forEach, &finder);
+	
+	// Get the found TreePath (may be NULL)
+	GtkTreePath* path = finder.getPath();
+
+	if (path != NULL)
+	{
+		// Expand the treeview to display the target row
+		gtk_tree_view_expand_to_path(view, path);
+		// Highlight the target row
+		gtk_tree_view_set_cursor(view, path, NULL, false);
+		// Make the selected row visible 
+		gtk_tree_view_scroll_to_cell(view, path, NULL, true, 0.3f, 0.0f);
+
+		return true;
+	}
+
+	return false; // not found
+}
+
+bool TreeModel::findAndSelectInteger(GtkTreeView* view, int needle, int column)
+{
+	// Find the selection string in the model
+	SelectionFinder finder(needle, column);
+	
+	GtkTreeModel* model = gtk_tree_view_get_model(view);
+	gtk_tree_model_foreach(model, SelectionFinder::forEach, &finder);
+	
+	// Get the found TreePath (may be NULL)
+	GtkTreePath* path = finder.getPath();
+
+	if (path != NULL)
+	{
+		// Expand the treeview to display the target row
+		gtk_tree_view_expand_to_path(view, path);
+		// Highlight the target row
+		gtk_tree_view_set_cursor(view, path, NULL, false);
+		// Make the selected row visible 
+		gtk_tree_view_scroll_to_cell(view, path, NULL, true, 0.3f, 0.0f);
+
+		return true;
+	}
+
+	return false; // not found
 }
 
 void TreeModel::applyFoldersFirstSortFunc(GtkTreeModel* model, 
