@@ -83,6 +83,7 @@ public:
   {
     eEntity,
     ePrimitive,
+	eGroupPart,
     eComponent,
   };
 

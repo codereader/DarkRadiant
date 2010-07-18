@@ -167,6 +167,20 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 		}
 		break;
 
+		case eGroupPart:
+		{
+			// Retrieve all the selectable primitives of group nodes
+			GroupChildPrimitiveSelector primitiveTester(selector, test);
+			GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
+			
+			// Add the selection crop to the target vector
+			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
+			{
+				targetList.push_back(i->second);
+			}
+		}
+		break;
+
 		case eComponent:
 		{
 			ComponentSelector selectionTester(selector, test, componentMode);
@@ -183,9 +197,11 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 
 /* greebo: This is true if nothing is selected (either in component mode or in primitive mode)  
  */
-bool RadiantSelectionSystem::nothingSelected() const {
-    return (Mode() == eComponent && _countComponent == 0)
-		|| (Mode() == ePrimitive && _countPrimitive == 0);
+bool RadiantSelectionSystem::nothingSelected() const
+{
+    return (Mode() == eComponent && _countComponent == 0) || 
+		   (Mode() == ePrimitive && _countPrimitive == 0) ||
+		   (Mode() == eGroupPart && _countPrimitive == 0);
 }
 
 void RadiantSelectionSystem::pivotChanged() const  {

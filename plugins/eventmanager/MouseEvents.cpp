@@ -170,6 +170,9 @@ void MouseEventManager::loadObserverEventDefinitions() {
 				else if (eventName == "ToggleSelection") {
 					_observerConditions[ui::obsToggle] = getCondition(eventList[i]);
 				}
+				else if (eventName == "ToggleGroupPartSelection") {
+					_observerConditions[ui::obsToggleGroupPart] = getCondition(eventList[i]);
+				}
 				else if (eventName == "ToggleFaceSelection") {
 					_observerConditions[ui::obsToggleFace] = getCondition(eventList[i]);
 				}

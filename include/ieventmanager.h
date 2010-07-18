@@ -47,6 +47,7 @@ namespace ui {
 		obsManipulate,	// manipulate an object by drag or click
 		obsSelect,		// selection toggle 
 		obsToggle,		// selection toggle
+		obsToggleGroupPart,	// selection toggle (part of group)
 		obsToggleFace,	// selection toggle (face)
 		obsReplace,		// replace/cycle selection through possible candidates
 		obsReplaceFace,	// replace/cycle selection through possible face candidates

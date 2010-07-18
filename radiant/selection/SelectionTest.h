@@ -95,6 +95,23 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
+// A Selector looking for child primitives of group nodes only, non-worldspawn parent 
+class GroupChildPrimitiveSelector :
+	public SelectionTestWalker
+{
+private:
+	Selector& _selector;
+	SelectionTest& _test;
+
+public:
+	GroupChildPrimitiveSelector(Selector& selector, SelectionTest& test) :
+		_selector(selector),
+		_test(test)
+	{}
+
+	bool visit(const scene::INodePtr& node);
+};
+
 // A selector testing for all kinds of selectable items, entities and primitives.
 // Worldspawn primitives are selected directly, for child primitives of func_* ents
 // the selection will be "relayed" to the parent entity.

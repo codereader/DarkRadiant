@@ -611,7 +611,8 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
 
     SelectionVolume test(view);
 
-    if(GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive)
+    if (GlobalSelectionSystem().Mode() == SelectionSystem::ePrimitive ||
+		GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
     {
     	// Find all entities
 		BooleanSelector entitySelector;

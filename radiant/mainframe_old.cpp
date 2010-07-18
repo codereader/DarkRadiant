@@ -254,7 +254,8 @@ bool FaceMode() {
 	       && GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace;
 }
 
-void ComponentModeChanged() {
+void ComponentModeChanged()
+{
 	GlobalEventManager().setToggled("DragVertices", VertexMode());
 	GlobalEventManager().setToggled("DragEdges", EdgeMode());
 	GlobalEventManager().setToggled("DragFaces", FaceMode());
@@ -268,8 +269,38 @@ void ComponentMode_SelectionChanged(const Selectable& selectable) {
 	}
 }
 
-void ToggleEntityMode(bool newState) {
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eEntity) {
+void ModeChanged()
+{
+	GlobalEventManager().setToggled("DragEntities", GlobalSelectionSystem().Mode() == SelectionSystem::eEntity);
+	GlobalEventManager().setToggled("SelectionModeGroupPart", GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart);
+}
+
+void ToggleGroupPartMode(bool newState)
+{
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eGroupPart)
+	{
+		SelectionSystem_DefaultMode();
+	}
+	else
+	{
+		// De-select everything when switching to group part mode
+		GlobalSelectionSystem().setSelectedAll(false);
+		GlobalSelectionSystem().setSelectedAllComponents(false);
+
+		GlobalSelectionSystem().SetMode(SelectionSystem::eGroupPart);
+		GlobalSelectionSystem().SetComponentMode(SelectionSystem::eDefault);
+	}
+
+	ModeChanged();
+	ComponentModeChanged();
+
+	ModeChangeNotify();
+}
+
+void ToggleEntityMode(bool newState)
+{
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eEntity)
+	{
 		SelectionSystem_DefaultMode();
 	}
 	else {
@@ -277,6 +308,7 @@ void ToggleEntityMode(bool newState) {
 		GlobalSelectionSystem().SetComponentMode(SelectionSystem::eDefault);
 	}
 
+	ModeChanged();
 	ComponentModeChanged();
 
 	ModeChangeNotify();
@@ -540,7 +572,7 @@ void Selection_SnapToGrid(const cmd::ArgumentList& args)
 
 void ModeChangeNotify()
 {
-  SceneChangeNotify();
+	SceneChangeNotify();
 }
 
 void ClipperChangeNotify() {
@@ -750,10 +782,12 @@ void MainFrame_Construct()
 	GlobalEventManager().addToggle("DragEdges", ToggleEdgeMode);
 	GlobalEventManager().addToggle("DragFaces", ToggleFaceMode);
 	GlobalEventManager().addToggle("DragEntities", ToggleEntityMode);
+	GlobalEventManager().addToggle("SelectionModeGroupPart", ToggleGroupPartMode);
 	GlobalEventManager().setToggled("DragVertices", false);
 	GlobalEventManager().setToggled("DragEdges", false);
 	GlobalEventManager().setToggled("DragFaces", false); 
 	GlobalEventManager().setToggled("DragEntities", false);
+	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
 	
 	GlobalEventManager().addCommand("MirrorSelectionX", "MirrorSelectionX");
 	GlobalEventManager().addCommand("RotateSelectionX", "RotateSelectionX");
