@@ -51,8 +51,15 @@ void SoundPropertyEditor::_onBrowseButton(GtkWidget* w,
 {
 	// Use a SoundChooser dialog to get a selection from the user
 	SoundChooser chooser;
-	std::string selection = chooser.chooseSound(); 
-	if (!selection.empty()) {
+	chooser.setSelectedShader(self->getKeyValue(self->_key));
+
+	chooser.show(); // blocks
+	
+	const std::string& selection = chooser.getSelectedShader();
+
+	// Selection will be empy if user clicked cancel or X
+	if (!selection.empty())
+	{
 		// Apply the change to the entity
 		self->setKeyValue(self->_key, selection);
 	}

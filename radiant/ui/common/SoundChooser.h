@@ -1,9 +1,10 @@
 #ifndef SOUNDCHOOSER_H_
 #define SOUNDCHOOSER_H_
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktreestore.h>
-#include <gtk/gtktreeselection.h>
+typedef struct _GtkTreeStore GtkTreeStore;
+typedef struct _GtkTreeView GtkTreeView;
+typedef struct _GtkTreeSelection GtkTreeSelection;
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 #include "ui/common/SoundShaderPreview.h"
 #include <string>
@@ -14,13 +15,13 @@ namespace ui
 /**
  * Dialog for listing and selection of sound shaders.
  */
-class SoundChooser
+class SoundChooser :
+	public gtkutil::BlockingTransientWindow
 {
-	// Main dialog widget
-	GtkWidget* _widget;
-
+private:
 	// Tree store for shaders, and the tree selection
 	GtkTreeStore* _treeStore;
+	GtkTreeView* _treeView;
 	GtkTreeSelection* _treeSelection;
 	
 	// The preview widget group
@@ -36,26 +37,25 @@ private:
 	GtkWidget* createButtons();
 
 	/* GTK CALLBACKS */
-	static gboolean _onDelete(GtkWidget* w, GdkEvent* e, SoundChooser* self);
 	static void _onOK(GtkWidget*, SoundChooser*);
 	static void _onCancel(GtkWidget*, SoundChooser*);
 	static void _onSelectionChange(GtkTreeSelection*, SoundChooser*);
 	
+	// Implement custom action on window delete
+	void _onDeleteEvent();
+
 public:
 	
 	/**
 	 * Constructor creates widgets.
-	 * 
-	 * @parent
-	 * The parent window.
 	 */
 	SoundChooser();
 
-	/**
-	 * Display the dialog and return the selection.
-	 */
-	std::string chooseSound();	
-	
+	// Retrieve the selected sound shader
+	const std::string& getSelectedShader() const;
+
+	// Set the selected sound shader, and focuses the treeview to the new selection
+	void setSelectedShader(const std::string& shader);
 };
 
 }

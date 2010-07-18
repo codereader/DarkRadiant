@@ -45,6 +45,11 @@ protected:
 	 * as well as managing the UndoSystem.
 	 */
 	virtual void setKeyValue(const std::string& key, const std::string& value);
+
+	/**
+	 * greebo: Convenience method to retrieve a keyvalue from the edited entity.
+	 */
+	virtual std::string PropertyEditor::getKeyValue(const std::string& key);
 };
 
 }
