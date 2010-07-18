@@ -306,6 +306,39 @@ bool PrimitiveSelector::visit(const scene::INodePtr& node)
 	return true;
 }
 
+bool GroupChildPrimitiveSelector::visit(const scene::INodePtr& node)
+{
+	// Skip all entities
+	if (Node_isEntity(node)) return true;
+
+	// Node is not an entity, check parent
+	scene::INodePtr parent = getParentGroupEntity(node);
+
+	if (parent != NULL && !entityIsWorldspawn(parent))
+	{
+		// We have a candidate
+		SelectablePtr selectable = Node_getSelectable(node);
+
+		if (selectable == NULL) return true; // skip non-selectables
+
+		_selector.pushSelectable(*selectable);
+
+		// Test the entity for selection, this will add an intersection to the selector
+		SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
+
+		if (selectionTestable)
+		{
+			selectionTestable->testSelect(_selector, _test);
+		}
+
+		_selector.popSelectable();
+
+		return true;
+	}
+
+	return true;
+}
+
 bool AnySelector::visit(const scene::INodePtr& node)
 {
 	scene::INodePtr entity = getEntityNode(node);

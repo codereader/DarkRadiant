@@ -130,6 +130,7 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 	// but perhaps there will be more events in the future that aren't selection events.
 	if (observerEvent == ui::obsManipulate || observerEvent == ui::obsSelect ||
 		observerEvent == ui::obsToggle || observerEvent == ui::obsToggleFace || 
+		observerEvent == ui::obsToggleGroupPart ||
 		observerEvent == ui::obsReplace || observerEvent == ui::obsReplaceFace) 
 	{
 		_mouseDown = true;
@@ -186,6 +187,7 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
 	// Only react, if the "select" or "manipulate" is held, ignore this otherwise
 	bool reactToEvent = (observerEvent == ui::obsManipulate || observerEvent == ui::obsSelect ||
 						 observerEvent == ui::obsToggle || observerEvent == ui::obsToggleFace || 
+						 observerEvent == ui::obsToggleGroupPart ||
 						 observerEvent == ui::obsReplace || observerEvent == ui::obsReplaceFace); 
 	
 	if (reactToEvent)

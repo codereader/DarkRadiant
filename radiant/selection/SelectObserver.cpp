@@ -16,12 +16,14 @@ SelectionSystem::EModifier SelectObserver::getModifier() {
 	// Retrieve the according ObserverEvent for the GdkEventButton
 	ui::ObserverEvent observerEvent = mouseEvents.getObserverEvent(_event);
 
-	if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle
-	        || observerEvent == ui::obsToggleFace) {
+	if (observerEvent == ui::obsSelect || observerEvent == ui::obsToggle ||
+		observerEvent == ui::obsToggleFace || observerEvent == ui::obsToggleGroupPart)
+	{
 		return SelectionSystem::eToggle;
 	}
 
-	if (observerEvent == ui::obsReplace || observerEvent == ui::obsReplaceFace) {
+	if (observerEvent == ui::obsReplace || observerEvent == ui::obsReplaceFace)
+	{
 		return SelectionSystem::eReplace;
 	}
 

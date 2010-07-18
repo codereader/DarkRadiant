@@ -29,6 +29,7 @@
 		<!--<event name="Select" button="MOUSE_FIVE" modifiers="" />-->
 		<event name="ToggleSelection" button="MOUSE_LEFT" modifiers="SHIFT" />
 		<event name="ToggleFaceSelection" button="MOUSE_LEFT" modifiers="SHIFT+CONTROL" />
+		<event name="ToggleGroupPartSelection" button="MOUSE_LEFT" modifiers="CTRL+ALT" />
 		<event name="CycleSelection" button="MOUSE_LEFT" modifiers="ALT+SHIFT" />
 		<event name="CycleFaceSelection" button="MOUSE_LEFT" modifiers="SHIFT+CONTROL+ALT" />
 		<event name="CopyTexture" button="MOUSE_MIDDLE" modifiers="" />
