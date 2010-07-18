@@ -40,11 +40,11 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 		min = boost::lexical_cast<float>(values[0]);
 		max = boost::lexical_cast<float>(values[1]);
 	}
-	catch (boost::bad_lexical_cast& e) {
+	catch (boost::bad_lexical_cast&) {
 		std::cerr 
 			<< "[radiant] FloatPropertyEditor failed to parse options string "
 			<< "\"" << options << "\"" << std::endl;
-		return;		
+		return;	
 	}
 	
 	// Create the HScale and pack into widget

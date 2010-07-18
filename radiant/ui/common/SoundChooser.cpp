@@ -11,7 +11,12 @@
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/VFSTreePopulator.h"
 
-#include <gtk/gtk.h>
+#include <gtk/gtkbutton.h>
+#include <gtk/gtktreestore.h>
+#include <gtk/gtktreeview.h>
+#include <gtk/gtkhbox.h>
+#include <gtk/gtkvbox.h>
+#include <gtk/gtkstock.h>
 
 namespace ui
 {
@@ -32,34 +37,26 @@ namespace {
 }
 
 // Constructor
-SoundChooser::SoundChooser()
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _treeStore(gtk_tree_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, GDK_TYPE_PIXBUF))
+SoundChooser::SoundChooser() :
+	BlockingTransientWindow(_("Choose sound"), GlobalMainFrame().getTopLevelWindow()),
+	_treeStore(gtk_tree_store_new(4, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_BOOLEAN, GDK_TYPE_PIXBUF)),
+	_treeView(NULL),
+	_treeSelection(NULL)
 {
-	// Set up the window
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
-	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), _("Choose sound"));
-    gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-    gtk_window_set_type_hint(GTK_WINDOW(_widget), GDK_WINDOW_TYPE_HINT_DIALOG);
+	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
+	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
     
 	// Set the default size of the window
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(_widget));
-	gtk_window_set_default_size(GTK_WINDOW(_widget), rect.width / 2, rect.height / 2);
+	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(getWindow()));
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), rect.width / 2, rect.height / 2);
 
-    // Delete event
-    g_signal_connect(
-    	G_OBJECT(_widget), "delete-event", G_CALLBACK(_onDelete), this
-    );
-    
-    // Main vbox
+	// Main vbox
     GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
     gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbx), _preview, FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
     
-    gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-    gtk_container_add(GTK_CONTAINER(_widget), vbx);
+    gtk_container_add(GTK_CONTAINER(getWindow()), vbx);
 }
 
 namespace {
@@ -113,16 +110,16 @@ public:
 } // namespace
 
 // Create the tree view
-GtkWidget* SoundChooser::createTreeView() {
-	
+GtkWidget* SoundChooser::createTreeView()
+{
 	// Tree view with single text icon column
-	GtkWidget* tv = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
+	_treeView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore)));
 	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv),
+		_treeView,
 		gtkutil::IconTextColumn(_("Soundshader"), DISPLAYNAME_COLUMN, ICON_COLUMN, false)
 	);
 
-	_treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
+	_treeSelection = gtk_tree_view_get_selection(_treeView);
 	g_signal_connect(G_OBJECT(_treeSelection), "changed", 
 					 G_CALLBACK(_onSelectionChange), this);
 
@@ -136,11 +133,12 @@ GtkWidget* SoundChooser::createTreeView() {
 	// and insert them in the treestore
 	pop.forEachNode(pop);
 
-	return gtkutil::ScrolledFrame(tv);	
+	return gtkutil::ScrolledFrame(GTK_WIDGET(_treeView));	
 }
 
 // Create buttons panel
-GtkWidget* SoundChooser::createButtons() {
+GtkWidget* SoundChooser::createButtons()
+{
 	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
 	
 	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
@@ -157,39 +155,58 @@ GtkWidget* SoundChooser::createButtons() {
 	return gtkutil::RightAlignment(hbx);	
 }
 
-// Show and block
-std::string SoundChooser::chooseSound() {
-	gtk_widget_show_all(_widget);
-	gtk_main();
-	return _selectedShader;	
+void SoundChooser::_onDeleteEvent()
+{
+	_selectedShader.clear();
+
+	BlockingTransientWindow::_onDeleteEvent();
+}
+
+const std::string& SoundChooser::getSelectedShader() const
+{
+	return _selectedShader;
+}
+
+// Set the selected sound shader, and focuses the treeview to the new selection
+void SoundChooser::setSelectedShader(const std::string& shader)
+{
+	// Find the selection string in the treeview
+	gtkutil::TreeModel::SelectionFinder finder(shader, SHADERNAME_COLUMN);
+	
+	GtkTreeModel* model = gtk_tree_view_get_model(_treeView);
+	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
+	
+	// Get the found TreePath (may be NULL)
+	GtkTreePath* path = finder.getPath();
+
+	if (path != NULL)
+	{
+		// Expand the treeview to display the target row
+		gtk_tree_view_expand_to_path(_treeView, path);
+		// Highlight the target row
+		gtk_tree_view_set_cursor(_treeView, path, NULL, false);
+		// Make the selected row visible 
+		gtk_tree_view_scroll_to_cell(_treeView, path, NULL, true, 0.3f, 0.0f);
+	}
+	else
+	{
+		gtk_tree_selection_unselect_all(_treeSelection);
+	}
 }
 
 /* GTK CALLBACKS */
 
-// Delete dialog
-gboolean SoundChooser::_onDelete(GtkWidget* w, GdkEvent* e, SoundChooser* self) {
-	self->_selectedShader = "";
-	gtk_main_quit();
-	return false; // propagate event
-}
-
 // OK button
-void SoundChooser::_onOK(GtkWidget* w, SoundChooser* self) {
-	
-	// Get the selection if valid, otherwise ""
-	self->_selectedShader = 
-		gtkutil::TreeModel::getSelectedString(self->_treeSelection,
-											  SHADERNAME_COLUMN);
-	
-	gtk_widget_destroy(self->_widget);
-	gtk_main_quit();	
+void SoundChooser::_onOK(GtkWidget* w, SoundChooser* self)
+{
+	self->destroy();
 }
 
 // Cancel button
-void SoundChooser::_onCancel(GtkWidget* w, SoundChooser* self) {
-	self->_selectedShader = "";
-	gtk_widget_destroy(self->_widget);
-	gtk_main_quit();	
+void SoundChooser::_onCancel(GtkWidget* w, SoundChooser* self)
+{
+	self->_selectedShader.clear();
+	self->destroy();
 }
 
 // Tree Selection Change
@@ -199,17 +216,18 @@ void SoundChooser::_onSelectionChange(GtkTreeSelection* selection, SoundChooser*
 
 	if (isFolder) 
 	{
-		self->_preview.setSoundShader("");
-		return;
+		self->_selectedShader.clear();
 	}
-
-	std::string selectedShader = gtkutil::TreeModel::getSelectedString(
-		self->_treeSelection,
-		SHADERNAME_COLUMN
-	);
+	else
+	{
+		self->_selectedShader = gtkutil::TreeModel::getSelectedString(
+			self->_treeSelection,
+			SHADERNAME_COLUMN
+		);
+	}
 	
 	// Notify the preview widget about the change 
-	self->_preview.setSoundShader(selectedShader);
+	self->_preview.setSoundShader(self->_selectedShader);
 }
 
-}
+} // namespace
