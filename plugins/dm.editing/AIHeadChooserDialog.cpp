@@ -112,26 +112,9 @@ void AIHeadChooserDialog::setSelectedHead(const std::string& headDef)
 	}
 
 	// Lookup the model path in the treemodel
-	gtkutil::TreeModel::SelectionFinder finder(_selectedHead, NAME_COLUMN);
-	
 	GtkTreeView* headsView = GTK_TREE_VIEW(_widgets[WIDGET_HEADVIEW]);
 
-	GtkTreeModel* model = gtk_tree_view_get_model(headsView);
-	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
-	
-	// Get the found TreePath (may be NULL)
-	GtkTreePath* path = finder.getPath();
-
-	if (path != NULL)
-	{
-		// Expand the treeview to display the target row
-		gtk_tree_view_expand_to_path(headsView, path);
-		// Highlight the target row
-		gtk_tree_view_set_cursor(headsView, path, NULL, false);
-		// Make the selected row visible 
-		gtk_tree_view_scroll_to_cell(headsView, path, NULL, true, 0.3f, 0.0f);
-	}
-	else
+	if (!gtkutil::TreeModel::findAndSelectString(headsView, _selectedHead, NAME_COLUMN))
 	{
 		gtk_tree_selection_unselect_all(_headSelection);
 	}

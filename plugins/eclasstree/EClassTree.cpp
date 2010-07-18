@@ -219,24 +219,8 @@ void EClassTree::_preShow() {
 		// There is an entity selected, extract the classname
 		std::string classname = entity->getKeyValue("classname");
 
-		// Construct a finder
-		gtkutil::TreeModel::SelectionFinder finder(classname, NAME_COLUMN);
-
-		// Traverse the model and find the name
-		gtk_tree_model_foreach(
-			GTK_TREE_MODEL(_eclassStore), 
-			gtkutil::TreeModel::SelectionFinder::forEach, &finder);
-		
-		// Select the element, if something was found
-		GtkTreePath* path = finder.getPath();
-		if (path) {
-			// Expand the treeview to display the target row
-			gtk_tree_view_expand_to_path(_eclassView, path);
-			// Highlight the target row
-			gtk_tree_view_set_cursor(_eclassView, path, NULL, false);
-			// Make the selected row visible 
-			gtk_tree_view_scroll_to_cell(_eclassView, path, NULL, true, 0.3f, 0.0f);
-		}
+		// Find the classname
+		gtkutil::TreeModel::findAndSelectString(_eclassView, classname, NAME_COLUMN);
 	}
 }
 

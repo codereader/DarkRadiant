@@ -313,22 +313,10 @@ void MediaBrowser::setSelection(const std::string& selection) {
 		gtk_tree_view_collapse_all(GTK_TREE_VIEW(_treeView));
 		return;
 	}
-	// Use the local SelectionFinder class to walk the TreeModel
-	gtkutil::TreeModel::SelectionFinder finder(selection, FULLNAME_COLUMN);
-	
-	GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_treeView));
-	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
-		
-	// Get the found TreePath (may be NULL)
-	GtkTreePath* path = finder.getPath();
-	if (path) {
-		// Expand the treeview to display the target row
-		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(_treeView), path);
-		// Highlight the target row
-		gtk_tree_view_set_cursor(GTK_TREE_VIEW(_treeView), path, NULL, false);
-		// Make the selected row visible 
-		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(_treeView), path, NULL, true, 0.3f, 0.0f);
-	}
+
+	// Use the gtkutil finder routines to walk the TreeModel
+	GtkTreeView* view = GTK_TREE_VIEW(_treeView);
+	gtkutil::TreeModel::findAndSelectString(view, selection, FULLNAME_COLUMN);
 }
 
 void MediaBrowser::reloadMedia() {

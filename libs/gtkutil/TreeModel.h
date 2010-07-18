@@ -149,6 +149,8 @@ public:
 		
 		// Constructor to search for integers
 		SelectionFinder(int needle, int column);
+
+		~SelectionFinder();
 		
 		// Retrieve the found TreePath, which may be NULL if the texture was not
 		// found
@@ -167,6 +169,18 @@ public:
 	
 	}; // class SelectionFinder
 
+	/**
+	 * greebo: Tries to lookup the given string in the given column of the given view.
+	 * Returns TRUE if the lookup and the selection was successful, FALSE otherwise.
+	 */
+	static bool findAndSelectString(GtkTreeView* view, const std::string& needle, int column);
+
+	/**
+	 * greebo: Tries to lookup the given integer in the given column of the given view.
+	 * Returns TRUE if the lookup and the selection was successful, FALSE otherwise
+	 */
+	static bool findAndSelectInteger(GtkTreeView* view, int needle, int column);
+	
 	/**
 	 * greebo: Takes care that the given tree model is sorted such that
 	 * folders are listed before "regular" items. 

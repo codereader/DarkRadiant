@@ -128,26 +128,9 @@ void AIVocalSetChooserDialog::setSelectedVocalSet(const std::string& setName)
 	}
 
 	// Lookup the model path in the treemodel
-	gtkutil::TreeModel::SelectionFinder finder(_selectedSet, NAME_COLUMN);
-	
 	GtkTreeView* setView = GTK_TREE_VIEW(_widgets[WIDGET_VOCALSETVIEW]);
 
-	GtkTreeModel* model = gtk_tree_view_get_model(setView);
-	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
-	
-	// Get the found TreePath (may be NULL)
-	GtkTreePath* path = finder.getPath();
-
-	if (path != NULL)
-	{
-		// Expand the treeview to display the target row
-		gtk_tree_view_expand_to_path(setView, path);
-		// Highlight the target row
-		gtk_tree_view_set_cursor(setView, path, NULL, false);
-		// Make the selected row visible 
-		gtk_tree_view_scroll_to_cell(setView, path, NULL, true, 0.3f, 0.0f);
-	}
-	else
+	if (!gtkutil::TreeModel::findAndSelectString(setView, _selectedSet, NAME_COLUMN))
 	{
 		gtk_tree_selection_unselect_all(_setSelection);
 	}

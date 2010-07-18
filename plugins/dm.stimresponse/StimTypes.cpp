@@ -166,8 +166,10 @@ GtkTreeIter StimTypes::getIterForId(int id) {
 	);
 	
 	GtkTreeIter iter;
+	memset(&iter, 0, sizeof(GtkTreeIter));
 	
-	if (finder.getPath() != NULL) {
+	if (finder.getPath() != NULL)
+	{
 		iter = finder.getIter();
 	}
 	

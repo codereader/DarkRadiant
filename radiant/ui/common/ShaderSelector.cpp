@@ -84,21 +84,9 @@ void ShaderSelector::setSelection(const std::string& sel) {
 		return;
 	}
 
-	// Use the local SelectionFinder class to walk the TreeModel
-	gtkutil::TreeModel::SelectionFinder finder(boost::algorithm::to_lower_copy(sel), FULLNAME_COL);
-	GtkTreeModel* model = gtk_tree_view_get_model(GTK_TREE_VIEW(_treeView));
-	gtk_tree_model_foreach(model, gtkutil::TreeModel::SelectionFinder::forEach, &finder);
-	
-	// Get the found TreePath (may be NULL)
-	GtkTreePath* path = finder.getPath();
-	if (path) {
-		// Expand the treeview to display the target row
-		gtk_tree_view_expand_to_path(GTK_TREE_VIEW(_treeView), path);
-		// Highlight the target row
-		gtk_tree_view_set_cursor(GTK_TREE_VIEW(_treeView), path, NULL, false);
-		// Make the selected row visible 
-		gtk_tree_view_scroll_to_cell(GTK_TREE_VIEW(_treeView), path, NULL, true, 0.3f, 0.0f);
-	}
+	// Use the gtkutil TreeModel algorithms to select the shader
+	gtkutil::TreeModel::findAndSelectString(
+		GTK_TREE_VIEW(_treeView), boost::algorithm::to_lower_copy(sel), FULLNAME_COL);
 }
 
 // Local functor to populate the tree view with shader names
