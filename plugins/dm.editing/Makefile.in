@@ -74,7 +74,9 @@ dm_editing_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/gtkutil/libgtkutil.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_dm_editing_la_OBJECTS = plugin.lo AIHeadPropertyEditor.lo \
-	FixupMap.lo FixupMapDialog.lo AIHeadChooserDialog.lo
+	FixupMap.lo FixupMapDialog.lo AIVocalSetChooserDialog.lo \
+	AIVocalSetPropertyEditor.lo AIVocalSetPreview.lo \
+	AIHeadChooserDialog.lo
 dm_editing_la_OBJECTS = $(am_dm_editing_la_OBJECTS)
 dm_editing_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -262,6 +264,9 @@ dm_editing_la_SOURCES = plugin.cpp \
 						AIHeadPropertyEditor.cpp \
 						FixupMap.cpp \
 						FixupMapDialog.cpp \
+						AIVocalSetChooserDialog.cpp \
+						AIVocalSetPropertyEditor.cpp \
+						AIVocalSetPreview.cpp \
 						AIHeadChooserDialog.cpp
 
 all: all-am
@@ -340,6 +345,9 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AIHeadChooserDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AIHeadPropertyEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AIVocalSetChooserDialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AIVocalSetPreview.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AIVocalSetPropertyEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FixupMap.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FixupMapDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
