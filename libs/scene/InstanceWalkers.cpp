@@ -6,8 +6,11 @@ namespace scene {
 
 bool InstanceSubgraphWalker::pre(const scene::INodePtr& node)
 {
-	// greebo: Register this new node with the scenegraph 
-	GlobalSceneGraph().insert(node);
+	// greebo: Register this new node with the scenegraph
+	if (!node->inScene())
+	{
+		GlobalSceneGraph().insert(node);
+	}
 
 	_nodeStack.push(node);
 
@@ -38,7 +41,10 @@ bool UninstanceSubgraphWalker::pre(const scene::INodePtr& node)
 void UninstanceSubgraphWalker::post(const scene::INodePtr& node)
 {
 	// Notify the Scenegraph about the upcoming deletion
-	GlobalSceneGraph().erase(node);
+	if (node->inScene())
+	{
+		GlobalSceneGraph().erase(node);
+	}
 }
 
 } // namespace scene
