@@ -250,26 +250,6 @@ void Scene_PatchTranspose_Selected(scene::Graph& graph)
   Scene_forEachSelectedPatch(PatchTransposeMatrix());
 }
 
-class PatchSetShader
-{
-  const std::string& m_name;
-public:
-  PatchSetShader(const std::string& name)
-    : m_name(name)
-  {
-  }
-  void operator()(Patch& patch) const
-  {
-    patch.setShader(m_name);
-  }
-};
-
-void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name)
-{
-  Scene_forEachSelectedPatch(PatchSetShader(name));
-  SceneChangeNotify();
-}
-
 class PatchSelectByShader :
 	public scene::NodeVisitor
 {

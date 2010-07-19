@@ -31,7 +31,6 @@ namespace scene
   class Graph;
 }
 
-void Scene_PatchSetShader_Selected(scene::Graph& graph, const std::string& name);
 void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name);
 
 void Scene_PatchCapTexture_Selected(scene::Graph& graph);
