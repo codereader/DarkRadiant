@@ -49,7 +49,7 @@ protected:
 	/**
 	 * greebo: Convenience method to retrieve a keyvalue from the edited entity.
 	 */
-	virtual std::string PropertyEditor::getKeyValue(const std::string& key);
+	virtual std::string getKeyValue(const std::string& key);
 };
 
 }
