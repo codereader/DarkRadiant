@@ -138,6 +138,11 @@ public:
 	 */
 	virtual void onRemoveFromScene() = 0;
 
+	/**
+	 * Returns true if this node is in the scene
+	 */
+	virtual bool inScene() const = 0;
+
 	// Call this if the node gets changed in any way or gets inserted somewhere.
 	virtual void boundsChanged() = 0;
 	// Call this on transform change
