@@ -243,12 +243,12 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 		std::string cmdName; 
 		std::string cmdDisplayName;
 
-		if (locals.contains("__commandName__")) 
+		if (locals.has_key("__commandName__")) 
 		{ 
 			cmdName = boost::python::extract<std::string>(locals["__commandName__"]);
 		}
 
-		if (locals.contains("__commandDisplayName__")) 
+		if (locals.has_key("__commandDisplayName__")) 
 		{ 
 			cmdDisplayName = boost::python::extract<std::string>(locals["__commandDisplayName__"]);
 		}
