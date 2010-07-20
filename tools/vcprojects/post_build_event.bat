@@ -42,6 +42,9 @@ copy ..\..\w32deps\gtk2\bin\zlib1.dll ..\..\install /Y
 
 copy ..\..\w32deps\python\bin\python26.dll ..\..\install /Y
 
+@rem Copy gtkmm libraries (32 bit)
+copy ..\..\w32deps\gtkmm\bin\*.dll ..\..\install /Y
+
 @rem Copy the compiled GtkSourceView x86 DLLs to install
 copy ..\..\build\libs\Win32\libgtksourceview.dll ..\..\install /Y
 
