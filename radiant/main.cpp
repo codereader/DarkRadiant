@@ -24,6 +24,8 @@
 #include "modulesystem/ModuleRegistry.h"
 #include "settings/LanguageManager.h"
 
+#include <gtkmm/main.h>
+
 #ifdef _PROFILE
 #include "Profile.h"
 #endif
@@ -66,6 +68,9 @@ int main (int argc, char* argv[]) {
 	// Initialise GTK
 	gtk_disable_setlocale();
 	gtk_init(&argc, &argv);
+
+	// Initialise gtkmm
+	Gtk::Main gtkmm_main(argc, argv);
 
     // Initialise GTKGLExt
     gtk_gl_init(&argc, &argv);
