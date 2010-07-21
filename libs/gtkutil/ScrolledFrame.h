@@ -4,6 +4,9 @@
 #include <gtk/gtkscrolledwindow.h>
 #include <gtk/gtkframe.h>
 
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/frame.h>
+
 namespace gtkutil
 {
 
@@ -46,6 +49,38 @@ public:
 	/** Operator cast to GtkWidget*.
 	 */
 	operator GtkWidget* () {
+		return _widget;	
+	}
+};
+
+// gtkmm pendant
+class ScrolledFramemm
+{
+	// Main widget
+	Gtk::ScrolledWindow* _widget;
+	
+public:
+
+	/** 
+	 * Construct a ScrolledFrame around the provided child widget.
+	 * @useViewPort: use this to add "non-scrollable" widgets to this container.
+	 */
+	ScrolledFramemm(Gtk::Widget& child, bool useViewPort = false)
+	{
+		// Create the GtkScrolledWindow
+		_widget = Gtk::manage(new Gtk::ScrolledWindow);
+
+		_widget->set_policy(Gtk::POLICY_AUTOMATIC, 
+							Gtk::POLICY_AUTOMATIC);
+		_widget->set_shadow_type(Gtk::SHADOW_ETCHED_IN);
+
+		_widget->add(child);
+	}
+	
+	/** Operator cast to retrieve the widget
+	 */
+	operator Gtk::ScrolledWindow*()
+	{
 		return _widget;	
 	}
 };

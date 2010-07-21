@@ -4,6 +4,9 @@
 #include <gtk/gtktreeviewcolumn.h>
 #include <gtk/gtkcellrenderertext.h>
 
+#include <gtkmm/cellrenderertext.h>
+#include <gtkmm/treeviewcolumn.h>
+
 namespace gtkutil
 {
 
@@ -53,6 +56,50 @@ public:
 	 */
 	operator GtkTreeViewColumn* () {
 		return _column;	
+	}
+};
+
+// gtkmm variant of the above
+class TextColumnmm
+{
+private:
+	// Column widget
+	Gtk::TreeViewColumn* _column;
+	Gtk::CellRendererText* _renderer;
+	
+public:
+
+	/** Create a TextColumn which displays the text in the given column.
+	 * 
+	 * @param title
+	 * The title of the column.
+	 * 
+	 * @param colno
+	 * The integer column id to display text from.
+	 * 
+	 * @param useMarkup
+	 * Whether to use Pango markup to format text in the column (default true).
+	 */
+	TextColumnmm(const std::string& title, int colno, bool useMarkup = true)
+	{
+		// Create the cell renderer
+		_renderer = Gtk::manage(new Gtk::CellRendererText);
+		
+		// Construct the column itself
+		_column = Gtk::manage(new Gtk::TreeViewColumn(title, *_renderer));
+		_column->add_attribute(*_renderer, (useMarkup) ? "markup" : "text", colno);
+	}
+
+	Gtk::CellRendererText& getCellRenderer()
+	{
+		return *_renderer;
+	}
+	
+	/** Operator cast to GtkTreeViewColumn*.
+	 */
+	operator Gtk::TreeViewColumn&()
+	{
+		return *_column;
 	}
 };
 
