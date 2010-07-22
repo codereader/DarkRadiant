@@ -37,6 +37,35 @@ copy ..\..\w64deps\glew\lib\glew32.dll ..\..\install /Y
 
 copy ..\..\w64deps\python\bin\python26.dll ..\..\install /Y
 
+@rem Copy gtkmm libraries (64 bit)
+IF "%1" == "Debug" GOTO GTKMM_DEBUG
+
+:GTKMM_RELEASE
+	@echo Copying GTKmm release binaries
+	copy ..\..\w64deps\gtkmm\bin\atkmm-vc90-1_6.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\cairomm-vc90-1_0.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\gdkmm-vc90-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\giomm-vc90-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\glibmm-vc90-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\gtkmm-vc90-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\pangomm-vc90-1_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\sigc-vc90-2_0.dll ..\..\install /Y
+
+GOTO GTKMM_END
+
+:GTKMM_DEBUG
+	@echo Copying GTKmm debug binaries
+	copy ..\..\w64deps\gtkmm\bin\atkmm-vc90-d-1_6.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\cairomm-vc90-d-1_0.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\gdkmm-vc90-d-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\giomm-vc90-d-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\glibmm-vc90-d-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\gtkmm-vc90-d-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\pangomm-vc90-d-1_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\sigc-vc90-d-2_0.dll ..\..\install /Y
+
+:GTKMM_END
+
 @rem Copy the compiled GtkSourceView x64 DLLs to install
 copy ..\..\build\libs\x64\libgtksourceview.dll ..\..\install /Y
 

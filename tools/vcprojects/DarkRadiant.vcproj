@@ -146,7 +146,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHsc /MP"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../radiant&quot;;&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../radiant&quot;;&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkmm/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -160,7 +160,7 @@
 				WarningLevel="4"
 				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996;4244;4355"
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996;4244;4355;4250"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -176,11 +176,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib libgtkglext.lib libgdkglext.lib intl.lib"
+				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib libgtkglext.lib libgdkglext.lib intl.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps/gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/boost\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/glew\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps/gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/boost\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/glew\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtkmm\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
@@ -214,7 +214,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="$(SolutionDir)/post_build_event_x64.bat"
+				CommandLine="$(SolutionDir)/post_build_event_x64.bat $(ConfigurationName)"
 			/>
 		</Configuration>
 		<Configuration
@@ -347,7 +347,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../radiant&quot;;&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../radiant&quot;;&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkmm/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -358,7 +358,7 @@
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="4"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996;4244;4355"
+				DisableSpecificWarnings="4610;4510;4512;4505;4100;4127;4996;4244;4355;4250"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -373,11 +373,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib libgtkglext.lib libgdkglext.lib intl.lib"
+				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib libgtkglext.lib libgdkglext.lib intl.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps/gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/boost\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/glew\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps/gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/boost\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps/glew\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtkmm\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
@@ -413,7 +413,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="$(SolutionDir)/post_build_event_x64.bat"
+				CommandLine="$(SolutionDir)/post_build_event_x64.bat $(ConfigurationName)"
 			/>
 		</Configuration>
 	</Configurations>
