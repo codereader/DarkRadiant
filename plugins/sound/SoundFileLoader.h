@@ -7,6 +7,9 @@
 #include "parser/DefTokeniser.h"
 #include "ifilesystem.h"
 #include "iarchive.h"
+#include "imainframe.h"
+
+#include <gtkutil/ModalProgressDialog.h>
 
 #include <iostream>
 
@@ -26,6 +29,9 @@ class SoundFileLoader :
 {
     // Shader map to populate
 	SoundManager::ShaderMap& _shaders;
+
+    // Progress dialog
+    gtkutil::ModalProgressDialog _progressDlg;
 	
 private:
 
@@ -40,6 +46,8 @@ private:
         while (tok.hasMoreBlocks()) {
             // Retrieve a named definition block from the parser
             parser::BlockTokeniser::Block block = tok.nextBlock();
+
+            _progressDlg.setText(block.name);
 
             // Create a new shader with this name
             std::pair<SoundManager::ShaderMap::iterator, bool> result;
@@ -63,7 +71,8 @@ public:
 	 * Constructor. Set the sound manager reference.
 	 */
 	SoundFileLoader(SoundManager::ShaderMap& shaderMap)
-	: _shaders(shaderMap)
+	: _shaders(shaderMap),
+      _progressDlg(GlobalMainFrame().getTopLevelWindow(), "Loading sounds")
 	{ }	
 
 	/**

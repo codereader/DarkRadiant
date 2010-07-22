@@ -20,7 +20,8 @@ SoundManager::SoundManager() :
 // Enumerate shaders
 void SoundManager::forEachShader(SoundShaderVisitor& visitor) const 
 {
-    ensureShadersLoaded();
+    if (!ensureShadersLoaded())
+        return;
 
 	for (ShaderMap::const_iterator i = _shaders.begin();
 		 i != _shaders.end();
@@ -80,7 +81,8 @@ void SoundManager::stopSound() {
 
 ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName) 
 {
-    ensureShadersLoaded();
+    if (!ensureShadersLoaded())
+        return ISoundShaderPtr();
 
 	ShaderMap::const_iterator found = _shaders.find(shaderName);
 	
@@ -103,30 +105,36 @@ const StringSet& SoundManager::getDependencies() const {
 	return _dependencies;
 }
 
-void SoundManager::loadShadersFromFilesystem() const
+bool SoundManager::loadShadersFromFilesystem() const
 {
 	// Pass a SoundFileLoader to the filesystem
 	SoundFileLoader loader(_shaders);
 
-    GlobalFileSystem().forEachFile(
-        SOUND_FOLDER,			// directory 
-        "sndshd", 				// required extension
-        loader,	// loader callback
-        99						// max depth
-    );
+    try
+    {
+        GlobalFileSystem().forEachFile(
+            SOUND_FOLDER,			// directory 
+            "sndshd", 				// required extension
+            loader,	// loader callback
+            99						// max depth
+        );
 
-	globalOutputStream() << _shaders.size() 
-                         << " sound shaders found." << std::endl;
+        globalOutputStream() << _shaders.size() 
+                             << " sound shaders found." << std::endl;
 
-    _shadersLoaded = true;
+        _shadersLoaded = true;
+
+        return true;
+    }
+    catch (const gtkutil::ModalProgressDialog::OperationAbortedException& e)
+    {
+        return false;
+    }
 }
 
-void SoundManager::ensureShadersLoaded() const
+bool SoundManager::ensureShadersLoaded() const
 {
-    if (!_shadersLoaded)
-    {
-        loadShadersFromFilesystem();
-    }
+    return (_shadersLoaded || loadShadersFromFilesystem());
 }
 
 void SoundManager::initialiseModule(const ApplicationContext& ctx) 
