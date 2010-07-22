@@ -36,8 +36,8 @@ private: /* FIELDS */
 	
 private: /* METHODS */
 
-    void loadShadersFromFilesystem() const;
-    void ensureShadersLoaded() const;
+    bool loadShadersFromFilesystem() const;
+    bool ensureShadersLoaded() const;
 
 public:
 	/**
