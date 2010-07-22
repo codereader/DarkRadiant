@@ -3,6 +3,8 @@
 
 #include "SoundManager.h"
 
+#include "parser/DefBlockTokeniser.h"
+#include "parser/DefTokeniser.h"
 #include "ifilesystem.h"
 #include "iarchive.h"
 
@@ -22,15 +24,46 @@ const char* SOUND_FOLDER = "sound/";
 class SoundFileLoader :
 	public VirtualFileSystem::Visitor
 {
-	// SoundManager to populate
-	SoundManager& _manager;
+    // Shader map to populate
+	SoundManager::ShaderMap& _shaders;
 	
+private:
+
+    // Accept a stream of shaders to parse
+    void parseShadersFromStream(std::istream& contents,
+                                const std::string& modName)
+    {
+        // Construct a DefTokeniser to tokenise the string into sound shader
+        // decls
+        parser::BasicDefBlockTokeniser<std::istream> tok(contents);
+
+        while (tok.hasMoreBlocks()) {
+            // Retrieve a named definition block from the parser
+            parser::BlockTokeniser::Block block = tok.nextBlock();
+
+            // Create a new shader with this name
+            std::pair<SoundManager::ShaderMap::iterator, bool> result;
+            result = _shaders.insert(
+                SoundManager::ShaderMap::value_type(
+                    block.name, 
+                    SoundShaderPtr(new SoundShader(block.name, block.contents, modName))
+                )
+            );
+
+            if (!result.second) {
+                globalErrorStream() << "[SoundManager]: SoundShader with name " 
+                    << block.name << " already exists." << std::endl;
+            }
+        }
+    }
+
 public:
+
 	/**
 	 * Constructor. Set the sound manager reference.
 	 */
-	SoundFileLoader(SoundManager& manager)
-	: _manager(manager)
+	SoundFileLoader(SoundManager::ShaderMap& shaderMap)
+	: _shaders(shaderMap)
 	{ }	
 
 	/**
@@ -43,12 +76,13 @@ public:
 			GlobalFileSystem().openTextFile(SOUND_FOLDER + filename);
 		
 		// Parse contents of file if it was opened successfully
-		if (file) {
+		if (file) 
+        {
 			std::istream is(&(file->getInputStream()));
 	
-			try {
-				// Pass the contents back to the SoundModule for parsing
-				_manager.parseShadersFrom(is, file->getModName());
+			try 
+            {
+				parseShadersFromStream(is, file->getModName());
 			}
 			catch (parser::ParseException& ex) {
 				globalErrorStream() << "[sound]: Error while parsing " << filename <<

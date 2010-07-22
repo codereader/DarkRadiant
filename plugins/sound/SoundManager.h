@@ -5,7 +5,6 @@
 #include "SoundPlayer.h"
 
 #include "isound.h"
-#include "parser/DefTokeniser.h"
 
 #include <map>
 
@@ -17,18 +16,28 @@ namespace sound {
 class SoundManager : 
 	public ISoundManager
 {
+public: /* TYPES */
+
 	// Map of named sound shaders
 	typedef std::map<std::string, SoundShaderPtr> ShaderMap;
-	ShaderMap _shaders;
+
+private: /* FIELDS */
+
+    // Master map of shaders
+	mutable ShaderMap _shaders;
 	
 	SoundShaderPtr _emptyShader;
 	
 	// The helper class for playing the sounds
 	boost::shared_ptr<SoundPlayer> _soundPlayer;
-	
-private:
 
-    void loadShadersFromFilesystem();
+    // Did we populate from the filesystem yet?
+    mutable bool _shadersLoaded;
+	
+private: /* METHODS */
+
+    void loadShadersFromFilesystem() const;
+    void ensureShadersLoaded() const;
 
 public:
 	/**
@@ -53,12 +62,6 @@ public:
 	/** greebo: Stops the playback immediately.
 	 */
 	virtual void stopSound();
-	
-	/**
-	 * Parse the contents of the given string as a .sndshd file, adding all
-	 * contained shaders to the shader map.
-	 */
-	void parseShadersFrom(std::istream& contents, const std::string& modName);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
