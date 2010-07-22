@@ -26,6 +26,10 @@ class SoundManager :
 	// The helper class for playing the sounds
 	boost::shared_ptr<SoundPlayer> _soundPlayer;
 	
+private:
+
+    void loadShadersFromFilesystem();
+
 public:
 	/**
 	 * Main constructor.

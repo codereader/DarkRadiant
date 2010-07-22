@@ -122,23 +122,25 @@ const StringSet& SoundManager::getDependencies() const {
 	return _dependencies;
 }
 
-void SoundManager::initialiseModule(const ApplicationContext& ctx) 
+void SoundManager::loadShadersFromFilesystem()
 {
-	globalOutputStream() << "SoundManager::initialiseModule called" << std::endl;
 	// Pass a SoundFileLoader to the filesystem
 	SoundFileLoader loader(*this);
 
-	{
-		ScopedDebugTimer timer("Sound definitions parsed: ");
-		GlobalFileSystem().forEachFile(
-			SOUND_FOLDER,			// directory 
-			"sndshd", 				// required extension
-			loader,	// loader callback
-			99						// max depth
-		);
-	}
+    GlobalFileSystem().forEachFile(
+        SOUND_FOLDER,			// directory 
+        "sndshd", 				// required extension
+        loader,	// loader callback
+        99						// max depth
+    );
 
-	globalOutputStream() << _shaders.size() << " sound shaders found." << std::endl;
+	globalOutputStream() << _shaders.size() 
+                         << " sound shaders found." << std::endl;
+}
+
+void SoundManager::initialiseModule(const ApplicationContext& ctx) 
+{
+    loadShadersFromFilesystem();
 
     // Create the SoundPlayer if sound is not disabled
     const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
