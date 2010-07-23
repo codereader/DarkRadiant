@@ -24,6 +24,9 @@ public:
 	
 	// Returns the widget, used to set other windows transient for the splash
 	GtkWindow* getWindow();
+
+	// Called by the mainframe to set the splash screen transient for the main window
+	void setTopLevelWindow(GtkWindow* window);
 	
 	/** greebo: Sets the text and/or progress of the progress bar. 
 	 */
