@@ -66,7 +66,7 @@ public:
 	/**
 	 * Construct a BlockingTransientDialog with the given title and parent.
 	 */
-	BlockingTransientWindow(const std::string& title, Gtk::Window& parent)
+	BlockingTransientWindow(const std::string& title, Gtk::Window* parent)
 	: TransientWindow(title, parent),
 	  _isShown(false)
 	{
