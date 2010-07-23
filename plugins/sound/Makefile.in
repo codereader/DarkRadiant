@@ -135,6 +135,8 @@ GL_LIBS = @GL_LIBS@
 GREP = @GREP@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
+GTKMM_CFLAGS = @GTKMM_CFLAGS@
+GTKMM_LIBS = @GTKMM_LIBS@
 GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
 GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
@@ -245,12 +247,12 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(GTK_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(GTKMM_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = sound.la
 sound_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la
 sound_la_LDFLAGS = -module -avoid-version \
-				   $(ALUT_LIBS) $(GTK_LIBS) $(VORBIS_LIBS) $(AL_LIBS)
+				       $(ALUT_LIBS) $(GTKMM_LIBS) $(VORBIS_LIBS) $(AL_LIBS)
 
 sound_la_SOURCES = SoundManager.cpp sound.cpp SoundPlayer.cpp SoundShader.cpp
 all: all-am

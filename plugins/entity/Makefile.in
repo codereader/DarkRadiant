@@ -145,6 +145,8 @@ GL_LIBS = @GL_LIBS@
 GREP = @GREP@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
+GTKMM_CFLAGS = @GTKMM_CFLAGS@
+GTKMM_LIBS = @GTKMM_LIBS@
 GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
 GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
@@ -255,12 +257,14 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS) $(GLIB_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
+               $(XML_CFLAGS) $(GLIB_CFLAGS)
+
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = entity.la
-entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(GTK_LIBS)
+entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(GTKMM_LIBS)
 entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
-				   $(top_builddir)/libs/scene/libscenegraph.la
+                   $(top_builddir)/libs/scene/libscenegraph.la
 
 entity_la_SOURCES = origin.cpp \
                     angle.cpp \
@@ -272,7 +276,7 @@ entity_la_SOURCES = origin.cpp \
                     eclassmodel/EclassModel.cpp \
                     eclassmodel/EclassModelNode.cpp \
                     EntityCreator.cpp \
-					EntitySettings.cpp \
+               EntitySettings.cpp \
                     speaker/Speaker.cpp \
                     speaker/SpeakerRenderables.cpp \
                     speaker/SpeakerNode.cpp \

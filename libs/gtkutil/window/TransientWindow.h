@@ -237,7 +237,7 @@ public:
 
 	bool isFullscreen()
 	{
-		int val = reinterpret_cast<int>(get_data("dr-fullscreen"));
+		int val = reinterpret_cast<intptr_t>(get_data("dr-fullscreen"));
 		
 		return val != 0;
 	}
