@@ -5,12 +5,23 @@ namespace gtkutil {
 PersistentTransientWindow::PersistentTransientWindow(const std::string& title, 
 								 					 GtkWindow* parent,
 								 					 bool hideOnDelete) 
-: TransientWindow(title, parent, hideOnDelete)
+: TransientWindow(title, parent, hideOnDelete),
+	_parent(*static_cast<Gtk::Window*>(Glib::wrap(parent)))
 {
-	_parent = static_cast<Gtk::Window*>(Glib::wrap(parent));
-
 	// Connect to the window-state-event signal of the parent window
-	_windowStateConn = _parent->signal_window_state_event().connect(
+	_windowStateConn = _parent.signal_window_state_event().connect(
+		sigc::mem_fun(*this, &PersistentTransientWindow::onParentWindowStateEvent)
+	);
+}
+
+PersistentTransientWindow::PersistentTransientWindow(const std::string& title, 
+													 Gtk::Window& parent,
+								 					 bool hideOnDelete) 
+: TransientWindow(title, parent, hideOnDelete),
+	_parent(parent)
+{
+	// Connect to the window-state-event signal of the parent window
+	_windowStateConn = _parent.signal_window_state_event().connect(
 		sigc::mem_fun(*this, &PersistentTransientWindow::onParentWindowStateEvent)
 	);
 }
@@ -33,7 +44,7 @@ bool PersistentTransientWindow::onParentWindowStateEvent(GdkEventWindowState* ev
 		}
 	}
 
-	return Gtk::Window::on_window_state_event(ev);
+	return false;
 }
 
 // Activate parent if necessary

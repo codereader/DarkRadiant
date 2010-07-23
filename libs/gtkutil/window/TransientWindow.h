@@ -79,6 +79,23 @@ private:
 
 		return false;
 	}
+
+	void construct(const std::string& title, Gtk::Window& parent)
+	{
+		// Set up the window
+		set_title(title);
+		set_transient_for(parent);
+		set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
+
+#ifdef POSIX
+		set_skip_taskbar_hint(true);
+#endif
+	    set_skip_pager_hint(true);
+	    
+	    // Connect up the destroy signal (close box)
+		signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
+		signal_expose_event().connect(sigc::mem_fun(*this, &TransientWindow::_onExpose));	
+	}
 	
 public:
 	
@@ -96,6 +113,8 @@ public:
 	 * only hide the window, rather than deleting it. In this case the
 	 * _preHide() and _postHide() methods will be triggered, rather than the
 	 * _preDestroy() and _postDestroy() equivalents. The default value is false.
+	 *
+	 * DEPRECATED: Use the gtkmm-compliant constructor instead.
 	 */
 	TransientWindow(const std::string& title, 
 					GtkWindow* parent, 
@@ -103,19 +122,31 @@ public:
 	: Gtk::Window(Gtk::WINDOW_TOPLEVEL),
 	  _hideOnDelete(hideOnDelete)
 	{
-		// Set up the window
-		set_title(title);
-		set_transient_for(*static_cast<Gtk::Window*>(Glib::wrap(parent)));
-		set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
+		construct(title, *static_cast<Gtk::Window*>(Glib::wrap(parent)));
+	}
 
-#ifdef POSIX
-		set_skip_taskbar_hint(true);
-#endif
-	    set_skip_pager_hint(true);
-	    
-	    // Connect up the destroy signal (close box)
-		signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
-		signal_expose_event().connect(sigc::mem_fun(*this, &TransientWindow::_onExpose));
+	/**
+	 * Construct a TransientWindow with the specified title and parent window.
+	 * 
+	 * @param title
+	 * The displayed title for the window.
+	 * 
+	 * @param parent
+	 * The parent window for which this window should be a transient.
+	 * 
+	 * @param hideOnDelete
+	 * Set to true if the delete-event triggered by the close button should
+	 * only hide the window, rather than deleting it. In this case the
+	 * _preHide() and _postHide() methods will be triggered, rather than the
+	 * _preDestroy() and _postDestroy() equivalents. The default value is false.
+	 */
+	TransientWindow(const std::string& title, 
+					Gtk::Window& parent, 
+					bool hideOnDelete = false)
+	: Gtk::Window(Gtk::WINDOW_TOPLEVEL),
+	  _hideOnDelete(hideOnDelete)
+	{
+		construct(title, parent);
 	}
 	
 	virtual ~TransientWindow()
