@@ -39,6 +39,11 @@ GtkWindow* Splash::getWindow() {
 	return _window;
 }
 
+void Splash::setTopLevelWindow(GtkWindow* window)
+{
+	gtk_window_set_transient_for(getWindow(), window);
+}
+
 void Splash::createProgressBar() {
 	_progressBar = gtk_progress_bar_new();
 	gtk_box_pack_start(GTK_BOX(_vbox), _progressBar, FALSE, FALSE, 0);

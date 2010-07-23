@@ -7,6 +7,9 @@
 #include "iregistry.h"
 #include "imainframelayout.h"
 #include "gtkutil/WindowPosition.h"
+#include <gtkmm/window.h>
+#include <gtkmm/box.h>
+#include <gtkmm/toolbar.h>
 
 namespace ui {
 
@@ -14,10 +17,11 @@ class MainFrame :
 	public IMainFrame,
 	public RegistryKeyObserver
 {
-	GtkWindow* _window;
+	// The top-level window
+	Glib::RefPtr<Gtk::Window> _window;
 
 	// The main container (where layouts can start packing stuff into)
-	GtkWidget* _mainContainer;
+	Gtk::VBox* _mainContainer;
 
 	bool _screenUpdatesEnabled;
 
@@ -26,7 +30,7 @@ class MainFrame :
 	// The current layout object (NULL if no layout active)
 	IMainFrameLayoutPtr _currentLayout;
 
-	typedef std::map<Toolbar, GtkToolbar*> ToolbarMap;
+	typedef std::map<Toolbar, Gtk::Toolbar*> ToolbarMap;
 	ToolbarMap _toolbars;
 
 public:
@@ -62,6 +66,10 @@ public:
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
 
+protected:
+	// override Gtk::Widget::on_delete_event
+	virtual bool onDeleteEvent(GdkEventAny* ev);
+
 private:
 	void create();
 
@@ -73,12 +81,10 @@ private:
 
 	void shutdown();
 	
-	// Creates and returns the topmost application window
-	GtkWindow* createTopLevelWindow();
-	GtkWidget* createMenuBar();
+	// Creates the topmost application window
+	void createTopLevelWindow();
+	Gtk::Widget* createMenuBar();
 	
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self);
-
 #ifdef WIN32
 	// Enables or disabled desktop composition, Windows-specific
 	void setDesktopCompositionEnabled(bool enabled);

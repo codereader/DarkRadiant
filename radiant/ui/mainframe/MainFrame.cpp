@@ -62,15 +62,18 @@ MainFrame::MainFrame() :
 {}
 
 // RegisterableModule implementation
-const std::string& MainFrame::getName() const {
+const std::string& MainFrame::getName() const
+{
 	static std::string _name(MODULE_MAINFRAME);
 	return _name;
 }
 
-const StringSet& MainFrame::getDependencies() const {
+const StringSet& MainFrame::getDependencies() const
+{
 	static StringSet _dependencies;
 	
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_MAINFRAME_LAYOUT_MANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
@@ -192,7 +195,8 @@ void MainFrame::construct()
 
 	std::string activeLayout = GlobalRegistry().get(RKEY_ACTIVE_LAYOUT);
 
-	if (activeLayout.empty()) {
+	if (activeLayout.empty())
+	{
 		activeLayout = EMBEDDED_LAYOUT_NAME; // fall back to hardcoded layout
 	}
 
@@ -204,7 +208,8 @@ void MainFrame::construct()
 		// Layout is still empty, this is not good
 		globalErrorStream() << "Could not restore layout " << activeLayout << std::endl;
 
-		if (activeLayout != EMBEDDED_LAYOUT_NAME) {
+		if (activeLayout != EMBEDDED_LAYOUT_NAME)
+		{
 			// Try to fallback to floating layout
 			applyLayout(EMBEDDED_LAYOUT_NAME);
 		}
@@ -226,80 +231,76 @@ void MainFrame::removeLayout()
 	_currentLayout = IMainFrameLayoutPtr();	
 }
 
-void MainFrame::destroy() {
-
+void MainFrame::destroy()
+{
 	saveWindowPosition();
 
 	// Free the layout
-	if (_currentLayout != NULL) {
+	if (_currentLayout != NULL)
+	{
 		// Save the layout to the registry
 		GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, _currentLayout->getName());
 
 		removeLayout();
 	}
 	
-	gtk_widget_hide(GTK_WIDGET(_window));
+	_window->hide(); // hide the Gtk::Window
 	
 	shutdown();
-
-	gtk_widget_destroy(GTK_WIDGET(_window));
 }
 
-GtkWindow* MainFrame::getTopLevelWindow() {
-	return _window;
+GtkWindow* MainFrame::getTopLevelWindow()
+{
+	return _window->gobj();
 }
 
-GtkWidget* MainFrame::getMainContainer() {
-	return _mainContainer;
+GtkWidget* MainFrame::getMainContainer()
+{
+	return GTK_WIDGET(_mainContainer->gobj());
 }
 
-GtkWindow* MainFrame::createTopLevelWindow()
+void MainFrame::createTopLevelWindow()
 {
 	// Destroy any previous toplevel window
 	if (_window != NULL)
 	{
-		GlobalEventManager().disconnect(GTK_OBJECT(_window));
+		GlobalEventManager().disconnect(GTK_OBJECT(_window->gobj()));
 
-		gtk_widget_hide(GTK_WIDGET(_window));
-		gtk_widget_destroy(GTK_WIDGET(_window));
-
-		_window = NULL;
+		_window->hide();
 	}
 
 	// Create a new window
-	_window = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
-	
+	_window = Glib::RefPtr<Gtk::Window>(new Gtk::Window(Gtk::WINDOW_TOPLEVEL));
+
 	// Tell the XYManager which window the xyviews should be transient for
-	GlobalXYWnd().setGlobalParentWindow(_window);
+	GlobalXYWnd().setGlobalParentWindow(getTopLevelWindow());
 
 	// Set the splash window transient to this toplevel
-	gtk_window_set_transient_for(Splash::Instance().getWindow(), _window);
+	Splash::Instance().setTopLevelWindow(getTopLevelWindow());
 
-#if !defined(WIN32)
+#ifndef WIN32
 	{
 		// Set the default icon for non-Win32-systems 
 		// (Win32 builds use the one embedded in the exe)
 		std::string icon = GlobalRegistry().get(RKEY_BITMAPS_PATH) + 
   						   "darkradiant_icon_64x64.png";
-		gtk_window_set_default_icon_from_file(icon.c_str(),	NULL);
+
+		Gtk::Window::set_default_icon_from_file(icon);
 	}
 #endif
 
 	// Signal setup
-	gtk_widget_add_events(GTK_WIDGET(_window), GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK | GDK_FOCUS_CHANGE_MASK);
-	g_signal_connect(G_OBJECT(_window), "delete-event", G_CALLBACK(onDelete), this);
+	_window->add_events(Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK | Gdk::FOCUS_CHANGE_MASK);
 
 	// Notify the event manager
-	GlobalEventManager().connect(GTK_OBJECT(_window));
-    GlobalEventManager().connectAccelGroup(_window);
-
-	return _window;
+	GlobalEventManager().connect(GTK_OBJECT(getTopLevelWindow()));
+    GlobalEventManager().connectAccelGroup(getTopLevelWindow());
 }
 
 void MainFrame::restoreWindowPosition()
 {
 	// We start out maximised by default
-	int windowState = GDK_WINDOW_STATE_MAXIMIZED;
+	int windowState = Gdk::WINDOW_STATE_MAXIMIZED;
 
 	// Connect the window position tracker
 	if (!GlobalRegistry().findXPath(RKEY_WINDOW_STATE).empty())
@@ -313,49 +314,52 @@ void MainFrame::restoreWindowPosition()
 	if (startMonitor < gtkutil::MultiMonitor::getNumMonitors())
 	{
 		// Yes, connect the position tracker, this overrides the existing setting.
-  		_windowPosition.connect(_window);
+  		_windowPosition.connect(_window->gobj());
   		// Load the correct coordinates into the position tracker
 		_windowPosition.fitToScreen(gtkutil::MultiMonitor::getMonitor(startMonitor), 0.8f, 0.8f);
 		// Apply the position
 		_windowPosition.applyPosition();
 	}
 	
-	if (windowState & GDK_WINDOW_STATE_MAXIMIZED) {
-		gtk_window_maximize(_window);
+	if (windowState & Gdk::WINDOW_STATE_MAXIMIZED)
+	{
+		_window->maximize();
 	}
-	else {
-		_windowPosition.connect(_window);
+	else
+	{
+		_windowPosition.connect(_window->gobj());
 		_windowPosition.applyPosition();
 	}
 }
 
-GtkWidget* MainFrame::createMenuBar()
+Gtk::Widget* MainFrame::createMenuBar()
 {
 	// Create the Filter menu entries before adding the menu bar
     FiltersMenu::addItemsToMainMenu();
     
     // Return the "main" menubar from the UIManager
-    return GlobalUIManager().getMenuManager().get("main");
+	return Glib::wrap(GlobalUIManager().getMenuManager().get("main"));
 }
 
 GtkToolbar* MainFrame::getToolbar(IMainFrame::Toolbar type)
 {
 	ToolbarMap::const_iterator found = _toolbars.find(type);
 
-	return (found != _toolbars.end()) ? found->second : NULL;
+	return (found != _toolbars.end()) ? found->second->gobj() : NULL;
 }
 
-void MainFrame::create() {
+void MainFrame::create()
+{
 	// Create the topmost window first
 	createTopLevelWindow();
 
-    GtkWidget *vbox = gtk_vbox_new(FALSE, 0);
-    
-    gtk_container_add(GTK_CONTAINER(_window), vbox);
-    gtk_widget_show(vbox);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
+	_window->add(*vbox);
+
+    vbox->show();
     
     // Retrieve the "main" menubar from the UIManager
-    gtk_box_pack_start(GTK_BOX(vbox), createMenuBar(), FALSE, FALSE, 0);
+	vbox->pack_start(*createMenuBar(), false, false, 0);
     
     // Instantiate the ToolbarManager and retrieve the view toolbar widget 
 	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
@@ -364,11 +368,12 @@ void MainFrame::create() {
 
 	if (viewToolbar != NULL)
 	{
-		_toolbars[TOOLBAR_HORIZONTAL] = viewToolbar;
+		_toolbars[TOOLBAR_HORIZONTAL] = Glib::wrap(viewToolbar);
 
 		// Pack it into the main window
-		gtk_widget_show(GTK_WIDGET(viewToolbar));
-		gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(viewToolbar), FALSE, FALSE, 0);
+		_toolbars[TOOLBAR_HORIZONTAL]->show();
+
+		vbox->pack_start(*_toolbars[TOOLBAR_HORIZONTAL], false, false, 0);
 	}
 	else
 	{
@@ -376,21 +381,22 @@ void MainFrame::create() {
 	}
 	
 	// Create the main container (this is a hbox)
-    GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
 	
-    gtk_widget_show(hbox);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
+	hbox->show();
+	vbox->pack_start(*hbox, true, true, 0);
     
     // Get the edit toolbar widget 
 	GtkToolbar* editToolbar = tbCreator.getToolbar("edit");
 
 	if (editToolbar != NULL)
 	{
-		_toolbars[TOOLBAR_VERTICAL] = editToolbar;
+		_toolbars[TOOLBAR_VERTICAL] = Glib::wrap(editToolbar);
 
 		// Pack it into the main window
-		gtk_widget_show(GTK_WIDGET(editToolbar));
-		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(editToolbar), FALSE, FALSE, 0);
+		_toolbars[TOOLBAR_VERTICAL]->show();
+
+		hbox->pack_start(*_toolbars[TOOLBAR_VERTICAL], false, false, 0);
 	}
 	else
 	{
@@ -398,13 +404,14 @@ void MainFrame::create() {
 	}
 
 	// Create the main container for layouts
-	_mainContainer = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _mainContainer, TRUE, TRUE, 0);
+	_mainContainer = Gtk::manage(new Gtk::VBox(false, 0));
+	hbox->pack_start(*_mainContainer, true, true, 0);
     
     // Create and pack main statusbar 
-    GtkWidget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
-    gtk_box_pack_end(GTK_BOX(vbox), statusBar, FALSE, TRUE, 2);
-	gtk_widget_show_all(statusBar);
+	Gtk::Widget* statusBar = Glib::wrap(GlobalUIManager().getStatusBarManager().getStatusBar());
+
+	vbox->pack_end(*statusBar, false, false, 2);
+	statusBar->show_all();
 
 	/* Construct the Group Dialog. This is the tabbed window that contains
      * a number of pages - usually Entities, Textures and possibly Console.
@@ -440,10 +447,10 @@ void MainFrame::create() {
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
 
-	gtk_widget_show(GTK_WIDGET(_window));
+	_window->show();
 
 	// Create the camera instance
-	GlobalCamera().setParent(_window);
+	GlobalCamera().setParent(getTopLevelWindow());
 
 	// Start the autosave timer so that it can periodically check the map for changes 
 	map::AutoSaver().startTimer();
@@ -457,11 +464,17 @@ void MainFrame::create() {
 void MainFrame::saveWindowPosition() {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-	GlobalRegistry().setAttribute(
-		RKEY_WINDOW_STATE,
-		"state",
-		intToStr(gdk_window_get_state(GTK_WIDGET(_window)->window))
-	);
+
+	Glib::RefPtr<Gdk::Window> window = _window->get_window();
+
+	if (window != NULL)
+	{
+		GlobalRegistry().setAttribute(
+			RKEY_WINDOW_STATE,
+			"state",
+			intToStr(window->get_state())
+		);
+	}
 }
 
 void MainFrame::shutdown()
@@ -535,18 +548,20 @@ void MainFrame::applyLayout(const std::string& name)
 	}
 }
 
-std::string MainFrame::getCurrentLayout() {
+std::string MainFrame::getCurrentLayout()
+{
 	return (_currentLayout != NULL) ? _currentLayout->getName() : "";
 }
 
-// GTK callbacks
-gboolean MainFrame::onDelete(GtkWidget* widget, GdkEvent* ev, MainFrame* self)
+// GTKmm callbacks
+bool MainFrame::onDeleteEvent(GdkEventAny* ev)
 {
-	if (GlobalMap().askForSave(_("Exit Radiant"))) {
-		gtk_main_quit();
+	if (GlobalMap().askForSave(_("Exit Radiant")))
+	{
+		Gtk::Main::quit();
 	}
 
-	return TRUE;
+	return true; // don't propagate
 }
 
 // Define the static MainFrame module
