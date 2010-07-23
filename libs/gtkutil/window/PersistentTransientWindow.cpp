@@ -81,10 +81,10 @@ void PersistentTransientWindow::_preDestroy()
 
 void PersistentTransientWindow::restore()
 {
-	if (reinterpret_cast<int>(get_data("was_mapped")) != 0)
+	if (reinterpret_cast<intptr_t>(get_data("was_mapped")) != 0)
 	{
-		int x = reinterpret_cast<int>(get_data("old_x_position"));
-		int y = reinterpret_cast<int>(get_data("old_y_position"));
+		intptr_t x = reinterpret_cast<intptr_t>(get_data("old_x_position"));
+		intptr_t y = reinterpret_cast<intptr_t>(get_data("old_y_position"));
 
 		// Be sure to un-flag the window as "mapped", otherwise it will be restored again
 		set_data("was_mapped", NULL);

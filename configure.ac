@@ -70,6 +70,8 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
                   [AC_MSG_ERROR([GLIB not found])])
 PKG_CHECK_MODULES([GTK], [gtk+-2.0], [], 
                   [AC_MSG_FAILURE([GTK libraries not found.])])
+PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
+                  [AC_MSG_FAILURE([GTKMM libraries not found])])
 PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 

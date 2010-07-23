@@ -3,17 +3,17 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
               -I$(top_srcdir)/include \
               -I$(libsdir) \
-              $(GTK_CFLAGS) $(GTKGLEXT_CFLAGS) $(XML_CFLAGS)
+              $(GTKMM_CFLAGS) $(GTKGLEXT_CFLAGS) $(XML_CFLAGS)
 
 bin_PROGRAMS = darkradiant
 darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
-darkradiant_LDFLAGS = $(GTK_LIBS) \
-			          $(GTKGLEXT_LIBS) \
+darkradiant_LDFLAGS = $(GTKMM_LIBS) \
+			             $(GTKGLEXT_LIBS) \
                       $(XML_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
-					  $(REGEX_LIBS)
+					       $(REGEX_LIBS)
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
 					$(top_builddir)/libs/gtkutil/libgtkutil.la \
 					$(top_builddir)/libs/xmlutil/libxmlutil.la \

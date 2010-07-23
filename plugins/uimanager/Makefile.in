@@ -140,6 +140,8 @@ GL_LIBS = @GL_LIBS@
 GREP = @GREP@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
+GTKMM_CFLAGS = @GTKMM_CFLAGS@
+GTKMM_LIBS = @GTKMM_LIBS@
 GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
 GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
@@ -250,19 +252,21 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS) $(GTK_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
+               $(XML_CFLAGS) $(GTKMM_CFLAGS)
+
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = uimanager.la
 uimanager_la_LDFLAGS = -module -avoid-version \
-						$(GTK_LIBS) \
-						$(XML_LIBS) \
-						$(GTKGLEXT_LIBS) \
-						$(GLEW_LIBS) \
-						$(GL_LIBS)
+                       $(GTKMM_LIBS) \
+                       $(XML_LIBS) \
+                       $(GTKGLEXT_LIBS) \
+                       $(GLEW_LIBS) \
+                       $(GL_LIBS)
 
 uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-			$(top_builddir)/libs/math/libmath.la \
-			$(top_builddir)/libs/xmlutil/libxmlutil.la
+         $(top_builddir)/libs/math/libmath.la \
+         $(top_builddir)/libs/xmlutil/libxmlutil.la
 
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
@@ -270,11 +274,11 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
                        StatusBarManager.cpp \
-					   DialogManager.cpp \
+                  DialogManager.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
-					   FilterMenu.cpp \
-					   ModelPreview.cpp \
+                  FilterMenu.cpp \
+                  ModelPreview.cpp \
                        MenuManager.cpp
 
 all: all-am

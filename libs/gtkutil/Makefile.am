@@ -2,7 +2,7 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 			  -I$(top_srcdir)/libs \
 			  -DPKGLIBDIR='"$(pkglibdir)"' \
 			  -DPKGDATADIR='"$(pkgdatadir)"' \
-			  $(GTK_CFLAGS) \
+			  $(GTKMM_CFLAGS) \
 			  $(GTKGLEXT_CFLAGS) \
 			  $(XML_CFLAGS) \
 			  $(GTKSOURCEVIEW_CFLAGS)
@@ -10,7 +10,7 @@ AM_CXXFLAGS = -fPIC
 
 pkglib_LTLIBRARIES = libgtkutil.la
 libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
-						$(GTKGLEXT_LIBS) $(GTK_LIBS) $(XML_LIBS) \
+						$(GTKGLEXT_LIBS) $(GTKMM_LIBS) $(XML_LIBS) \
 						$(GTKSOURCEVIEW_LIBS)
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
