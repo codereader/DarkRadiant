@@ -3,29 +3,31 @@
 
 #include "TransientWindow.h"
 
-#include <gtk/gtkmain.h>
+#include <gtkmm/main.h>
 
 namespace gtkutil
 {
 
 /**
  * A blocking version of TransientWindow. This window will enter a recursive
- * gtk_main() loop when shown, which will be terminated once it is destroyed.
+ * main loop when shown, which will be terminated once it is destroyed.
  * A function which creates and displays a BlockingTransientWindow will not
  * continue executing until the user has closed the dialog.
  */
 class BlockingTransientWindow 
 : public TransientWindow
 {
+private:
 	// Is window shown? If so, we need to exit the main loop when destroyed
 	bool _isShown;
 	
 protected:
 	
 	// Called after the dialog is shown. Enter the recursive main loop.
-	virtual void _postShow() {
+	virtual void _postShow()
+	{
 		_isShown = true;
-		gtk_main();
+		Gtk::Main::run();
 	}
 
 	// Called after the dialog is destroyed. Exit the main loop if required.
@@ -33,7 +35,7 @@ protected:
 	{
 		if (_isShown)
 		{
-			gtk_main_quit();
+			Gtk::Main::quit();
 			_isShown = false;
 		}
 	}
@@ -43,7 +45,7 @@ protected:
 	{
 		if (_isShown)
 		{
-			gtk_main_quit();
+			Gtk::Main::quit();
 			_isShown = false;
 		}
 	}
@@ -52,6 +54,7 @@ public:
 	
 	/**
 	 * Construct a BlockingTransientDialog with the given title and parent.
+	 * DEPRECATED: Use the gtkmm-compliant constructor instead.
 	 */
 	BlockingTransientWindow(const std::string& title, GtkWindow* parent)
 	: TransientWindow(title, parent),
@@ -59,15 +62,18 @@ public:
 	{ 
 		gtk_window_set_modal(GTK_WINDOW(getWindow()), TRUE);
 	}
-	
-	~BlockingTransientWindow() {
-		// greebo: Call the destroy method of the subclass, before
-		// this class gets destructed, otherwise the virtual overridden
-		// methods won't get called anymore.
-		if (GTK_IS_WIDGET(getWindow())) {
-			destroy();
-		}
+
+	/**
+	 * Construct a BlockingTransientDialog with the given title and parent.
+	 */
+	BlockingTransientWindow(const std::string& title, Gtk::Window& parent)
+	: TransientWindow(title, parent),
+	  _isShown(false)
+	{
+		set_modal(true);
 	}
+	
+	virtual ~BlockingTransientWindow() {}
 	
 };
 
