@@ -247,6 +247,8 @@ void MainFrame::destroy()
 	_window->hide(); // hide the Gtk::Window
 	
 	shutdown();
+
+	_window.reset(); // destroy the window
 }
 
 GtkWindow* MainFrame::getTopLevelWindow()
@@ -291,6 +293,8 @@ void MainFrame::createTopLevelWindow()
 
 	// Signal setup
 	_window->add_events(Gdk::KEY_PRESS_MASK | Gdk::KEY_RELEASE_MASK | Gdk::FOCUS_CHANGE_MASK);
+
+	_window->signal_delete_event().connect(sigc::mem_fun(*this, &MainFrame::onDeleteEvent));
 
 	// Notify the event manager
 	GlobalEventManager().connect(GTK_OBJECT(getTopLevelWindow()));

@@ -162,10 +162,20 @@ GLWidget::GLWidget(bool zBuffer, const std::string& debugName)
 	g_signal_connect(G_OBJECT(_widget), "realize", G_CALLBACK(onRealise), this);
 	g_signal_connect(G_OBJECT(_widget), "unrealize", G_CALLBACK(onUnRealise), this);
 }
+
+GLWidget::~GLWidget()
+{
+	gtk_widget_destroy(_widget);
+}
 	
 // Operator cast to GtkWidget*, for packing into parent containers
 GLWidget::operator GtkWidget*() const {
 	return _widget;
+}
+
+void GLWidget::queueDraw()
+{
+	gtk_widget_queue_draw(_widget);
 }
 
 GdkGLConfig* GLWidget::createGLConfigWithDepth() {

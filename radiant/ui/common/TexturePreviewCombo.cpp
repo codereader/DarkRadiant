@@ -22,14 +22,14 @@ namespace ui
 
 TexturePreviewCombo::TexturePreviewCombo()
 : _widget(gtk_hbox_new(FALSE, 0)),
-  _glWidget(false, "TexturePreviewCombo"),
+  _glWidget(new gtkutil::GLWidget(false, "TexturePreviewCombo")),
   _texName(""),
   _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
   _infoView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore))),
   _contextMenu(_infoView)
 {
 	// Set up the GL preview widget
-	GtkWidget* glWidget = _glWidget; // cast to GtkWidget
+	GtkWidget* glWidget = *_glWidget; // cast to GtkWidget
 	gtk_widget_set_size_request(glWidget, 128, 128);
 	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(_onExpose), this);
 	GtkWidget* glFrame = gtk_frame_new(NULL);
@@ -57,12 +57,17 @@ TexturePreviewCombo::TexturePreviewCombo()
 	);	
 }
 
+TexturePreviewCombo::~TexturePreviewCombo()
+{
+	_glWidget.reset();	
+}
+
 // Update the selected texture
 
 void TexturePreviewCombo::setTexture(const std::string& tex) {
 	_texName = tex;
 	refreshInfoTable();
-	gtk_widget_queue_draw(_glWidget);
+	gtk_widget_queue_draw(*_glWidget);
 }
 
 // Refresh the info table

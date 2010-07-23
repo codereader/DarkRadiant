@@ -155,7 +155,7 @@ void Radiant_Initialise()
 
 void Exit(const cmd::ArgumentList& args) {
 	if (GlobalMap().askForSave(_("Exit Radiant"))) {
-		gtk_main_quit();
+		Gtk::Main::quit();
 	}
 }
 

@@ -7,7 +7,6 @@
 
 #include "gdk/gdkkeysyms.h"
 
-#include "gtkutil/widget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include <time.h>
 #include <boost/format.hpp>
@@ -251,7 +250,7 @@ CamWnd::CamWnd() :
 	m_gl_widget(true, "CamWnd"),
 	_parentWidget(NULL),
 	m_window_observer(NewWindowObserver()),
-	m_deferredDraw(boost::bind(widget_queue_draw, m_gl_widget)),
+	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, &m_gl_widget)),
 	m_deferred_motion(selection_motion, m_window_observer),
 	m_selection_button_press_handler(0),
 	m_selection_button_release_handler(0),
