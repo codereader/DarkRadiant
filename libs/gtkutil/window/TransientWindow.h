@@ -124,7 +124,8 @@ public:
 	}
 	
 	/**
-	 * Return the underlying GtkWindow.
+	 * Return the underlying GtkWindow. 
+	 * DEPRECATED, use *this to retrieve the Gtk::Window& reference
 	 */
 	GtkWidget* getWindow()
 	{ 
