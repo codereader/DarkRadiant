@@ -80,11 +80,16 @@ private:
 		return false;
 	}
 
-	void construct(const std::string& title, Gtk::Window& parent)
+	void construct(const std::string& title, Gtk::Window* parent)
 	{
 		// Set up the window
 		set_title(title);
-		set_transient_for(parent);
+
+		if (parent != NULL)
+		{
+			set_transient_for(*parent);
+		}
+
 		set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
 
 #ifdef POSIX
@@ -122,7 +127,7 @@ public:
 	: Gtk::Window(Gtk::WINDOW_TOPLEVEL),
 	  _hideOnDelete(hideOnDelete)
 	{
-		construct(title, *static_cast<Gtk::Window*>(Glib::wrap(parent)));
+		construct(title, parent != NULL ? static_cast<Gtk::Window*>(Glib::wrap(parent)) : NULL);
 	}
 
 	/**
@@ -141,7 +146,7 @@ public:
 	 * _preDestroy() and _postDestroy() equivalents. The default value is false.
 	 */
 	TransientWindow(const std::string& title, 
-					Gtk::Window& parent, 
+					Gtk::Window* parent, 
 					bool hideOnDelete = false)
 	: Gtk::Window(Gtk::WINDOW_TOPLEVEL),
 	  _hideOnDelete(hideOnDelete)
