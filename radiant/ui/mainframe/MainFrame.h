@@ -66,10 +66,6 @@ public:
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
 
-protected:
-	// override Gtk::Widget::on_delete_event
-	virtual bool onDeleteEvent(GdkEventAny* ev);
-
 private:
 	void create();
 
@@ -84,6 +80,9 @@ private:
 	// Creates the topmost application window
 	void createTopLevelWindow();
 	Gtk::Widget* createMenuBar();
+
+	// Signal callback
+	bool onDeleteEvent(GdkEventAny* ev);
 	
 #ifdef WIN32
 	// Enables or disabled desktop composition, Windows-specific

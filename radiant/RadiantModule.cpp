@@ -157,6 +157,7 @@ void RadiantModule::shutdownModule()
 	GlobalFileSystem().shutdown();
 
 	map::PointFile::Instance().destroy();
+	ui::MediaBrowser::getInstance().shutdown();
     
     // Remove all the event listeners, otherwise the shared_ptrs 
     // lock the instances. This is just for safety, usually all

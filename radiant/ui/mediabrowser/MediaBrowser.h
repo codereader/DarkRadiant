@@ -33,7 +33,7 @@ class MediaBrowser
 	gtkutil::PopupMenu _popupMenu;
 	
 	// Texture preview combo (GL widget and info table)
-	TexturePreviewCombo _preview;
+	TexturePreviewComboPtr _preview;
 	
 	// false, if the tree is not yet initialised.
 	bool _isPopulated;
@@ -77,7 +77,9 @@ public:
 	/** Return the main widget for packing into
 	 * the groupdialog or other parent container.
 	 */
-	GtkWidget* getWidget() {
+	GtkWidget* getWidget()
+	{
+		assert(_widget != NULL);
 		gtk_widget_show_all(_widget);
 		return _widget;
 	}
@@ -104,6 +106,11 @@ public:
 	 * Called during startup, checks for preloading texture tree.
 	 */
 	static void init();
+
+	/** 
+	 * Called during shutdown, to destroy widgets and free memory.
+	 */
+	void shutdown();
 
 	/** 
 	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.

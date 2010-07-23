@@ -142,7 +142,7 @@ int main (int argc, char* argv[]) {
 #else 
 	// Start the GTK main loop. This will run until a quit command is given by
 	// the user
-	gtk_main();
+	Gtk::Main::run();
 #endif
 	
 	GlobalMap().freeMap();

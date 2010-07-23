@@ -76,6 +76,7 @@ MediaBrowser::MediaBrowser()
   _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))),
   _selection(gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView))),
   _popupMenu(gtkutil::PopupMenu(_treeView)),
+  _preview(new TexturePreviewCombo),
   _isPopulated(false)
 {
 	// Create the treeview
@@ -147,7 +148,7 @@ MediaBrowser::MediaBrowser()
 	);
 
 	// Pack in the TexturePreviewCombo widgets
-	gtk_box_pack_end(GTK_BOX(_widget), _preview, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(_widget), *_preview, FALSE, FALSE, 0);
 }
 
 /* Callback functor for processing shader names */
@@ -335,6 +336,15 @@ void MediaBrowser::init() {
 	}
 }
 
+void MediaBrowser::shutdown()
+{
+	// Free the TexturePreviewCombo (first, before destroying the parent widget)
+	_preview.reset();
+
+	// Destroy our main widget
+	gtk_widget_destroy(_widget);
+}
+
 void MediaBrowser::populate() {
 	// Set the flag to true to avoid double-entering this function
 	_isPopulated = true;
@@ -426,7 +436,7 @@ gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBro
 void MediaBrowser::_onSelectionChanged(GtkWidget* widget, MediaBrowser* self) {
 	// Update the preview if a texture is selected
 	if (!self->isDirectorySelected()) {
-		self->_preview.setTexture(self->getSelectedName());
+		self->_preview->setTexture(self->getSelectedName());
 		GlobalShaderClipboard().setSource(self->getSelectedName());
 	}
 	else {

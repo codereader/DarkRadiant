@@ -9,6 +9,8 @@
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkliststore.h>
 
+#include <boost/shared_ptr.hpp>
+
 namespace ui
 {
 	
@@ -22,7 +24,7 @@ class TexturePreviewCombo
 	GtkWidget* _widget;
 	
 	// The OpenGL preview widget
-	gtkutil::GLWidget _glWidget;
+	gtkutil::GLWidgetPtr _glWidget;
 	
 	// The texture to preview
 	std::string _texName;
@@ -50,6 +52,8 @@ public:
 	/** Constructor creates GTK widgets.
 	 */
 	TexturePreviewCombo();
+
+	~TexturePreviewCombo();
 	
 	/** Set the texture to preview.
 	 * 
@@ -64,6 +68,7 @@ public:
 		return _widget;
 	}
 };
+typedef boost::shared_ptr<TexturePreviewCombo> TexturePreviewComboPtr;
 
 }
 

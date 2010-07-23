@@ -48,6 +48,8 @@ public:
 
 	// Constructor, pass TRUE to enable depth-buffering
     GLWidget(bool zBuffer, const std::string& debugName = std::string());
+
+	~GLWidget();
 	
 	// Operator cast to GtkWidget*, for packing into parent containers
 	operator GtkWidget*() const;
@@ -55,6 +57,8 @@ public:
 	// Switches the GL context to the given widget
 	static bool makeCurrent(GtkWidget* widget);
 	static void swapBuffers(GtkWidget* widget);
+
+	void queueDraw();
 	
 private:
 	// As soon as the widget is packed into a parent, this callback is invoked
