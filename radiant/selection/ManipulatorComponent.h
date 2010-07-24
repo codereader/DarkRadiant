@@ -1,5 +1,7 @@
 #pragma once
 
+#include "math/matrix.h"
+
 /**
  * Part of a Manipulator which can be operated upon by the user.
  *

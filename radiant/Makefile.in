@@ -177,6 +177,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-SelectionSet.$(OBJEXT) \
 	darkradiant-SelectionTest.$(OBJEXT) \
 	darkradiant-ManipulateObserver.$(OBJEXT) \
+	darkradiant-Manipulator.$(OBJEXT) \
 	darkradiant-TransformationVisitors.$(OBJEXT) \
 	darkradiant-Transformation.$(OBJEXT) \
 	darkradiant-GroupCycle.$(OBJEXT) darkradiant-Curves.$(OBJEXT) \
@@ -184,13 +185,16 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-Primitives.$(OBJEXT) darkradiant-Group.$(OBJEXT) \
 	darkradiant-ModelFinder.$(OBJEXT) \
 	darkradiant-General.$(OBJEXT) darkradiant-BestPoint.$(OBJEXT) \
+	darkradiant-DragManipulator.$(OBJEXT) \
 	darkradiant-Planes.$(OBJEXT) \
 	darkradiant-RadiantWindowObserver.$(OBJEXT) \
 	darkradiant-RadiantSelectionSystem.$(OBJEXT) \
+	darkradiant-RotateManipulator.$(OBJEXT) \
 	darkradiant-Manipulatables.$(OBJEXT) \
 	darkradiant-SelectObserver.$(OBJEXT) \
+	darkradiant-ScaleManipulator.$(OBJEXT) \
+	darkradiant-TranslateManipulator.$(OBJEXT) \
 	darkradiant-Intersection.$(OBJEXT) \
-	darkradiant-Manipulators.$(OBJEXT) \
 	darkradiant-GameFileLoader.$(OBJEXT) \
 	darkradiant-Game.$(OBJEXT) darkradiant-GameManager.$(OBJEXT) \
 	darkradiant-LanguageManager.$(OBJEXT) \
@@ -561,6 +565,7 @@ darkradiant_SOURCES = main.cpp \
 					  selection/selectionset/SelectionSet.cpp \
 					  selection/SelectionTest.cpp \
 					  selection/ManipulateObserver.cpp \
+                      selection/Manipulator.cpp \
 					  selection/TransformationVisitors.cpp \
 					  selection/algorithm/Transformation.cpp \
 					  selection/algorithm/GroupCycle.cpp \
@@ -572,13 +577,16 @@ darkradiant_SOURCES = main.cpp \
 					  selection/algorithm/ModelFinder.cpp \
 					  selection/algorithm/General.cpp \
 					  selection/BestPoint.cpp \
+                      selection/DragManipulator.cpp \
 					  selection/Planes.cpp \
 					  selection/RadiantWindowObserver.cpp \
 					  selection/RadiantSelectionSystem.cpp \
+                      selection/RotateManipulator.cpp \
 					  selection/Manipulatables.cpp \
 					  selection/SelectObserver.cpp \
+                      selection/ScaleManipulator.cpp \
+                      selection/TranslateManipulator.cpp \
 					  selection/Intersection.cpp \
-					  selection/Manipulators.cpp \
 					  settings/GameFileLoader.cpp \
 					  settings/Game.cpp \
 					  settings/GameManager.cpp \
@@ -743,6 +751,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Console.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CounterManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Curves.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-DragManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-DynamicLibrary.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-DynamicLibraryLoader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-EmbeddedLayout.Po@am__quote@
@@ -801,7 +810,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MainFrameLayoutManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Manipulatables.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ManipulateObserver.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Manipulators.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Manipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFileChooserPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFileManager.Po@am__quote@
@@ -858,6 +867,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RegularLayout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RenderableAABB.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RootNode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RotateManipulator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ScaleManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ScreenUpdateBlocker.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-SelectedNodeList.Po@am__quote@
@@ -894,6 +905,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-TransformDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Transformation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-TransformationVisitors.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-TranslateManipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Traverse.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Vector3PropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Win32Registry.Po@am__quote@
@@ -2833,6 +2845,20 @@ darkradiant-ManipulateObserver.obj: selection/ManipulateObserver.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ManipulateObserver.obj `if test -f 'selection/ManipulateObserver.cpp'; then $(CYGPATH_W) 'selection/ManipulateObserver.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/ManipulateObserver.cpp'; fi`
 
+darkradiant-Manipulator.o: selection/Manipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Manipulator.o -MD -MP -MF $(DEPDIR)/darkradiant-Manipulator.Tpo -c -o darkradiant-Manipulator.o `test -f 'selection/Manipulator.cpp' || echo '$(srcdir)/'`selection/Manipulator.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-Manipulator.Tpo $(DEPDIR)/darkradiant-Manipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/Manipulator.cpp' object='darkradiant-Manipulator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Manipulator.o `test -f 'selection/Manipulator.cpp' || echo '$(srcdir)/'`selection/Manipulator.cpp
+
+darkradiant-Manipulator.obj: selection/Manipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Manipulator.obj -MD -MP -MF $(DEPDIR)/darkradiant-Manipulator.Tpo -c -o darkradiant-Manipulator.obj `if test -f 'selection/Manipulator.cpp'; then $(CYGPATH_W) 'selection/Manipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Manipulator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-Manipulator.Tpo $(DEPDIR)/darkradiant-Manipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/Manipulator.cpp' object='darkradiant-Manipulator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Manipulator.obj `if test -f 'selection/Manipulator.cpp'; then $(CYGPATH_W) 'selection/Manipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Manipulator.cpp'; fi`
+
 darkradiant-TransformationVisitors.o: selection/TransformationVisitors.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-TransformationVisitors.o -MD -MP -MF $(DEPDIR)/darkradiant-TransformationVisitors.Tpo -c -o darkradiant-TransformationVisitors.o `test -f 'selection/TransformationVisitors.cpp' || echo '$(srcdir)/'`selection/TransformationVisitors.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-TransformationVisitors.Tpo $(DEPDIR)/darkradiant-TransformationVisitors.Po
@@ -2987,6 +3013,20 @@ darkradiant-BestPoint.obj: selection/BestPoint.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-BestPoint.obj `if test -f 'selection/BestPoint.cpp'; then $(CYGPATH_W) 'selection/BestPoint.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/BestPoint.cpp'; fi`
 
+darkradiant-DragManipulator.o: selection/DragManipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-DragManipulator.o -MD -MP -MF $(DEPDIR)/darkradiant-DragManipulator.Tpo -c -o darkradiant-DragManipulator.o `test -f 'selection/DragManipulator.cpp' || echo '$(srcdir)/'`selection/DragManipulator.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-DragManipulator.Tpo $(DEPDIR)/darkradiant-DragManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/DragManipulator.cpp' object='darkradiant-DragManipulator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-DragManipulator.o `test -f 'selection/DragManipulator.cpp' || echo '$(srcdir)/'`selection/DragManipulator.cpp
+
+darkradiant-DragManipulator.obj: selection/DragManipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-DragManipulator.obj -MD -MP -MF $(DEPDIR)/darkradiant-DragManipulator.Tpo -c -o darkradiant-DragManipulator.obj `if test -f 'selection/DragManipulator.cpp'; then $(CYGPATH_W) 'selection/DragManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/DragManipulator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-DragManipulator.Tpo $(DEPDIR)/darkradiant-DragManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/DragManipulator.cpp' object='darkradiant-DragManipulator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-DragManipulator.obj `if test -f 'selection/DragManipulator.cpp'; then $(CYGPATH_W) 'selection/DragManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/DragManipulator.cpp'; fi`
+
 darkradiant-Planes.o: selection/Planes.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Planes.o -MD -MP -MF $(DEPDIR)/darkradiant-Planes.Tpo -c -o darkradiant-Planes.o `test -f 'selection/Planes.cpp' || echo '$(srcdir)/'`selection/Planes.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-Planes.Tpo $(DEPDIR)/darkradiant-Planes.Po
@@ -3029,6 +3069,20 @@ darkradiant-RadiantSelectionSystem.obj: selection/RadiantSelectionSystem.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RadiantSelectionSystem.obj `if test -f 'selection/RadiantSelectionSystem.cpp'; then $(CYGPATH_W) 'selection/RadiantSelectionSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/RadiantSelectionSystem.cpp'; fi`
 
+darkradiant-RotateManipulator.o: selection/RotateManipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RotateManipulator.o -MD -MP -MF $(DEPDIR)/darkradiant-RotateManipulator.Tpo -c -o darkradiant-RotateManipulator.o `test -f 'selection/RotateManipulator.cpp' || echo '$(srcdir)/'`selection/RotateManipulator.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-RotateManipulator.Tpo $(DEPDIR)/darkradiant-RotateManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/RotateManipulator.cpp' object='darkradiant-RotateManipulator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RotateManipulator.o `test -f 'selection/RotateManipulator.cpp' || echo '$(srcdir)/'`selection/RotateManipulator.cpp
+
+darkradiant-RotateManipulator.obj: selection/RotateManipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RotateManipulator.obj -MD -MP -MF $(DEPDIR)/darkradiant-RotateManipulator.Tpo -c -o darkradiant-RotateManipulator.obj `if test -f 'selection/RotateManipulator.cpp'; then $(CYGPATH_W) 'selection/RotateManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/RotateManipulator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-RotateManipulator.Tpo $(DEPDIR)/darkradiant-RotateManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/RotateManipulator.cpp' object='darkradiant-RotateManipulator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RotateManipulator.obj `if test -f 'selection/RotateManipulator.cpp'; then $(CYGPATH_W) 'selection/RotateManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/RotateManipulator.cpp'; fi`
+
 darkradiant-Manipulatables.o: selection/Manipulatables.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Manipulatables.o -MD -MP -MF $(DEPDIR)/darkradiant-Manipulatables.Tpo -c -o darkradiant-Manipulatables.o `test -f 'selection/Manipulatables.cpp' || echo '$(srcdir)/'`selection/Manipulatables.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-Manipulatables.Tpo $(DEPDIR)/darkradiant-Manipulatables.Po
@@ -3057,6 +3111,34 @@ darkradiant-SelectObserver.obj: selection/SelectObserver.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-SelectObserver.obj `if test -f 'selection/SelectObserver.cpp'; then $(CYGPATH_W) 'selection/SelectObserver.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/SelectObserver.cpp'; fi`
 
+darkradiant-ScaleManipulator.o: selection/ScaleManipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ScaleManipulator.o -MD -MP -MF $(DEPDIR)/darkradiant-ScaleManipulator.Tpo -c -o darkradiant-ScaleManipulator.o `test -f 'selection/ScaleManipulator.cpp' || echo '$(srcdir)/'`selection/ScaleManipulator.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-ScaleManipulator.Tpo $(DEPDIR)/darkradiant-ScaleManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/ScaleManipulator.cpp' object='darkradiant-ScaleManipulator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ScaleManipulator.o `test -f 'selection/ScaleManipulator.cpp' || echo '$(srcdir)/'`selection/ScaleManipulator.cpp
+
+darkradiant-ScaleManipulator.obj: selection/ScaleManipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ScaleManipulator.obj -MD -MP -MF $(DEPDIR)/darkradiant-ScaleManipulator.Tpo -c -o darkradiant-ScaleManipulator.obj `if test -f 'selection/ScaleManipulator.cpp'; then $(CYGPATH_W) 'selection/ScaleManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/ScaleManipulator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-ScaleManipulator.Tpo $(DEPDIR)/darkradiant-ScaleManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/ScaleManipulator.cpp' object='darkradiant-ScaleManipulator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ScaleManipulator.obj `if test -f 'selection/ScaleManipulator.cpp'; then $(CYGPATH_W) 'selection/ScaleManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/ScaleManipulator.cpp'; fi`
+
+darkradiant-TranslateManipulator.o: selection/TranslateManipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-TranslateManipulator.o -MD -MP -MF $(DEPDIR)/darkradiant-TranslateManipulator.Tpo -c -o darkradiant-TranslateManipulator.o `test -f 'selection/TranslateManipulator.cpp' || echo '$(srcdir)/'`selection/TranslateManipulator.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-TranslateManipulator.Tpo $(DEPDIR)/darkradiant-TranslateManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/TranslateManipulator.cpp' object='darkradiant-TranslateManipulator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-TranslateManipulator.o `test -f 'selection/TranslateManipulator.cpp' || echo '$(srcdir)/'`selection/TranslateManipulator.cpp
+
+darkradiant-TranslateManipulator.obj: selection/TranslateManipulator.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-TranslateManipulator.obj -MD -MP -MF $(DEPDIR)/darkradiant-TranslateManipulator.Tpo -c -o darkradiant-TranslateManipulator.obj `if test -f 'selection/TranslateManipulator.cpp'; then $(CYGPATH_W) 'selection/TranslateManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/TranslateManipulator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-TranslateManipulator.Tpo $(DEPDIR)/darkradiant-TranslateManipulator.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/TranslateManipulator.cpp' object='darkradiant-TranslateManipulator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-TranslateManipulator.obj `if test -f 'selection/TranslateManipulator.cpp'; then $(CYGPATH_W) 'selection/TranslateManipulator.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/TranslateManipulator.cpp'; fi`
+
 darkradiant-Intersection.o: selection/Intersection.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Intersection.o -MD -MP -MF $(DEPDIR)/darkradiant-Intersection.Tpo -c -o darkradiant-Intersection.o `test -f 'selection/Intersection.cpp' || echo '$(srcdir)/'`selection/Intersection.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-Intersection.Tpo $(DEPDIR)/darkradiant-Intersection.Po
@@ -3070,20 +3152,6 @@ darkradiant-Intersection.obj: selection/Intersection.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/Intersection.cpp' object='darkradiant-Intersection.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Intersection.obj `if test -f 'selection/Intersection.cpp'; then $(CYGPATH_W) 'selection/Intersection.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Intersection.cpp'; fi`
-
-darkradiant-Manipulators.o: selection/Manipulators.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Manipulators.o -MD -MP -MF $(DEPDIR)/darkradiant-Manipulators.Tpo -c -o darkradiant-Manipulators.o `test -f 'selection/Manipulators.cpp' || echo '$(srcdir)/'`selection/Manipulators.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-Manipulators.Tpo $(DEPDIR)/darkradiant-Manipulators.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/Manipulators.cpp' object='darkradiant-Manipulators.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Manipulators.o `test -f 'selection/Manipulators.cpp' || echo '$(srcdir)/'`selection/Manipulators.cpp
-
-darkradiant-Manipulators.obj: selection/Manipulators.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Manipulators.obj -MD -MP -MF $(DEPDIR)/darkradiant-Manipulators.Tpo -c -o darkradiant-Manipulators.obj `if test -f 'selection/Manipulators.cpp'; then $(CYGPATH_W) 'selection/Manipulators.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Manipulators.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-Manipulators.Tpo $(DEPDIR)/darkradiant-Manipulators.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='selection/Manipulators.cpp' object='darkradiant-Manipulators.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Manipulators.obj `if test -f 'selection/Manipulators.cpp'; then $(CYGPATH_W) 'selection/Manipulators.cpp'; else $(CYGPATH_W) '$(srcdir)/selection/Manipulators.cpp'; fi`
 
 darkradiant-GameFileLoader.o: settings/GameFileLoader.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-GameFileLoader.o -MD -MP -MF $(DEPDIR)/darkradiant-GameFileLoader.Tpo -c -o darkradiant-GameFileLoader.o `test -f 'settings/GameFileLoader.cpp' || echo '$(srcdir)/'`settings/GameFileLoader.cpp

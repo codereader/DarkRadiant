@@ -1,6 +1,8 @@
 #ifndef REMAP_H_
 #define REMAP_H_
 
+#include "render.h"
+
 template<typename Triple>
 class TripleRemapXYZ {
 public:

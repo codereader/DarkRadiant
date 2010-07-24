@@ -2,8 +2,11 @@
 
 #include "ManipulatorComponent.h"
 
+#include "irenderable.h"
+
 #include "view.h"
 #include "math/matrix.h"
+#include "render.h"
 
 /**
  * A Manipulator is a renderable object which contains one or more
@@ -33,5 +36,18 @@ public:
 
     virtual void setSelected(bool select) = 0;
     virtual bool isSelected() const = 0;
+
+public:
+
+    /* Static colours */
+    static const Colour4b& COLOUR_SCREEN();
+    static const Colour4b& COLOUR_SPHERE();
+    static const Colour4b& COLOUR_SELECTED();
 };
+
+// ------------ Helper functions ---------------------------
+
+const Colour4b& colourSelected(const Colour4b& colour, bool selected);
+
+
 
