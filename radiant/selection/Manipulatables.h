@@ -8,6 +8,7 @@
 #include "render.h"
 
 #include "TransformationVisitors.h"
+#include "ManipulatorComponent.h"
 
 // greebo: These three are needed within a manipulatable. For example, a TranslateAxis manipulatable
 // has a member variable that is Translatable. Upon Transform() the member is translated.
@@ -34,17 +35,6 @@ class Scalable {
 
 // ==========================================================================
 
-// A manipulatable object, as the name states.
-class Manipulatable {
-  public:
-    virtual ~Manipulatable() {}
-  	virtual void Construct(const Matrix4& device2manip, const float x, const float y) = 0;
-  	
-  	// greebo: An abstract Transform() method, the implementation has to decide which operations 
-  	// are actually called. This may be a translation, rotation, or anything else.
-  	virtual void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) = 0;
-};
-
 // ==========================================================================
 
 /* greebo: The following are specialised manipulatables that provide the methods as described in the ABC.
@@ -54,7 +44,7 @@ class Manipulatable {
  * The necessary device pointer >> translation vector calculations are performed within Transform()  
  */
 
-class RotateFree : public Manipulatable {
+class RotateFree : public ManipulatorComponent {
   Vector3 _start;
   Rotatable& _rotatable;
 public:
@@ -63,7 +53,7 @@ public:
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
 };
 
-class RotateAxis : public Manipulatable {
+class RotateAxis : public ManipulatorComponent {
   Vector3 _axis;
   Vector3 _start;
   Rotatable& _rotatable;
@@ -79,7 +69,7 @@ public:
   }
 };
 
-class TranslateAxis : public Manipulatable {
+class TranslateAxis : public ManipulatorComponent {
   Vector3 _start;
   Vector3 _axis;
   Translatable& _translatable;
@@ -93,7 +83,7 @@ public:
   }
 };
 
-class TranslateFree : public Manipulatable {
+class TranslateFree : public ManipulatorComponent {
 private:
   Vector3 _start;
   Translatable& _translatable;
@@ -104,7 +94,7 @@ public:
 };
 
 
-class ScaleAxis : public Manipulatable {
+class ScaleAxis : public ManipulatorComponent {
 private:
   Vector3 _start;
   Vector3 _axis;
@@ -119,7 +109,7 @@ public:
   }
 };
 
-class ScaleFree : public Manipulatable {
+class ScaleFree : public ManipulatorComponent {
 private:
   Vector3 _start;
   Scalable& _scalable;

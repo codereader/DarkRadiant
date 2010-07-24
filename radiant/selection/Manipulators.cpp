@@ -222,7 +222,7 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
     }
 }
 
-Manipulatable* RotateManipulator::GetManipulatable() {
+ManipulatorComponent* RotateManipulator::getActiveComponent() {
     if(_selectableX.isSelected()) {
       _rotateAxis.SetAxis(g_vector3_axis_x);
       return &_rotateAxis;
@@ -448,7 +448,7 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
     }
 }
 
-Manipulatable* TranslateManipulator::GetManipulatable() {
+ManipulatorComponent* TranslateManipulator::getActiveComponent() {
     if(_selectableX.isSelected())
     {
       _translateAxis.SetAxis(g_vector3_axis_x);
@@ -566,7 +566,7 @@ void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) 
     }
 }
 
-Manipulatable* ScaleManipulator::GetManipulatable() {
+ManipulatorComponent* ScaleManipulator::getActiveComponent() {
     if(_selectableX.isSelected())
     {
       _scaleAxis.SetAxis(g_vector3_axis_x);
@@ -602,7 +602,7 @@ bool ScaleManipulator::isSelected() const {
 
 // ------------ DragManipulator methods ------------------
 
-Manipulatable* DragManipulator::GetManipulatable() {
+ManipulatorComponent* DragManipulator::getActiveComponent() {
     return _dragSelectable.isSelected() ? &_freeDrag : &_freeResize;
 }
 
