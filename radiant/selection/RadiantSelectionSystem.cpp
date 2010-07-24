@@ -447,7 +447,7 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const Vector2& 
 
 			Matrix4 device2manip;
 			ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
-			_manipulator->GetManipulatable()->Construct(device2manip, device_point[0], device_point[1]);
+			_manipulator->getActiveComponent()->Construct(device2manip, device_point[0], device_point[1]);
 			
 			_deviceStart = Vector2(device_point[0], device_point[1]);
 			
@@ -671,7 +671,7 @@ void RadiantSelectionSystem::rotate(const Quaternion& rotation) {
 	}
 }
 
-// Applies the scaling vector <scaling> to the current selection, this is called by the according Manipulatables
+// Applies the scaling vector <scaling> to the current selection, this is called by the according ManipulatorComponents
 void RadiantSelectionSystem::scale(const Vector3& scaling) {
 	// Check if anything is selected
 	if (!nothingSelected()) {
@@ -768,7 +768,7 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const Vector2& devic
 		
 		// Get the manipulatable from the currently active manipulator (done by selection test)
 		// and call the Transform method (can be anything) 
-		_manipulator->GetManipulatable()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
+		_manipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
 
 		_requestWorkZoneRecalculation = true;
 		_requestSceneGraphChange = true;

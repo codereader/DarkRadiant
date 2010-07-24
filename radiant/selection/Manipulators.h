@@ -11,8 +11,8 @@
  * 
  * that derive from the abstract base class Manipulator
  * 
- * A Manipulator consists of several Manipulatables (e.g. a circle for the rotation manipulators) that
- * themselves derive from the Abstract Base Class <Manipulatable>
+ * A Manipulator consists of several ManipulatorComponents (e.g. a circle for the rotation manipulators) that
+ * themselves derive from the Abstract Base Class <ManipulatorComponent>
  */
 
 #include "pivot.h"
@@ -20,6 +20,7 @@
 #include "math/matrix.h"
 #include "selectionlib.h"
 #include "Manipulatables.h"
+#include "Manipulator.h"
 #include "Renderables.h"
 
 struct Pivot2World {
@@ -34,23 +35,6 @@ struct Pivot2World {
     Pivot2World_viewpointSpace(_viewpointSpace, _axisScreen, pivot2world, modelview, projection, viewport);
     Pivot2World_viewplaneSpace(_viewplaneSpace, pivot2world, modelview, projection, viewport);
   }
-};
-
-// The (not purely) abstract base class for a manipulator
-class Manipulator
-{
-public:
-    virtual ~Manipulator() {}
-	// This returns a pointer to a manipulatable of this manipulator (this may point to the RadiantSelectionSystem itself) 
-  	virtual Manipulatable* GetManipulatable() = 0;
-  	virtual void testSelect(const View& view, const Matrix4& pivot2world) {}
-  	
-  	// This function is responsible for bringing the visual representation
-  	// of this manipulator onto the screen
-  	virtual void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world) {}
-  	
-  	virtual void setSelected(bool select) = 0;
-  	virtual bool isSelected() const = 0;
 };
 
 // =======================================================================================
@@ -93,7 +77,7 @@ public:
   
   void testSelect(const View& view, const Matrix4& pivot2world);
   
-  Manipulatable* GetManipulatable();
+  ManipulatorComponent* getActiveComponent();
   
   void setSelected(bool select);  
   bool isSelected() const;  
@@ -131,7 +115,7 @@ public:
   
   void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
   void testSelect(const View& view, const Matrix4& pivot2world);
-  Manipulatable* GetManipulatable();
+  ManipulatorComponent* getActiveComponent();
   
   void setSelected(bool select);
   bool isSelected() const;  
@@ -167,7 +151,7 @@ public:
   
   void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
   void testSelect(const View& view, const Matrix4& pivot2world);
-  Manipulatable* GetManipulatable();
+  ManipulatorComponent* getActiveComponent();
   
   void setSelected(bool select);
   bool isSelected() const;
@@ -188,7 +172,7 @@ public:
 
   DragManipulator() : _freeResize(_resizeTranslatable), _freeDrag(_dragTranslatable), _selected(false) {}
 
-  Manipulatable* GetManipulatable();
+  ManipulatorComponent* getActiveComponent();
   void testSelect(const View& view, const Matrix4& pivot2world);
   
   void setSelected(bool select);
@@ -199,7 +183,7 @@ public:
 
 class ClipManipulator : public Manipulator {
 public:
-  Manipulatable* GetManipulatable() {
+  ManipulatorComponent* getActiveComponent() {
     ERROR_MESSAGE("clipper is not manipulatable");
     return 0;
   }

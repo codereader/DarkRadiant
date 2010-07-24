@@ -1,0 +1,37 @@
+#pragma once
+
+#include "ManipulatorComponent.h"
+
+#include "view.h"
+#include "math/matrix.h"
+
+/**
+ * A Manipulator is a renderable object which contains one or more
+ * ManipulatorComponents, each of which can be manipulated by the user. For
+ * example, the rotation Manipulator draws several circles which cause rotations
+ * around specific axes.
+ */
+class Manipulator
+{
+public:
+
+    virtual ~Manipulator() {}
+
+    /**
+     * Get the currently-active ManipulatorComponent. This is determined by the
+     * most recent selection test.
+     */
+    virtual ManipulatorComponent* getActiveComponent() = 0;
+
+    virtual void testSelect(const View& view, const Matrix4& pivot2world) {}
+
+    // This function is responsible for bringing the visual representation
+    // of this manipulator onto the screen
+    virtual void render(RenderableCollector& collector,
+                        const VolumeTest& volume,
+                        const Matrix4& pivot2world) {}
+
+    virtual void setSelected(bool select) = 0;
+    virtual bool isSelected() const = 0;
+};
+
