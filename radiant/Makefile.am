@@ -154,6 +154,7 @@ darkradiant_SOURCES = main.cpp \
 					  selection/selectionset/SelectionSet.cpp \
 					  selection/SelectionTest.cpp \
 					  selection/ManipulateObserver.cpp \
+                      selection/Manipulator.cpp \
 					  selection/TransformationVisitors.cpp \
 					  selection/algorithm/Transformation.cpp \
 					  selection/algorithm/GroupCycle.cpp \
@@ -165,13 +166,16 @@ darkradiant_SOURCES = main.cpp \
 					  selection/algorithm/ModelFinder.cpp \
 					  selection/algorithm/General.cpp \
 					  selection/BestPoint.cpp \
+                      selection/DragManipulator.cpp \
 					  selection/Planes.cpp \
 					  selection/RadiantWindowObserver.cpp \
 					  selection/RadiantSelectionSystem.cpp \
+                      selection/RotateManipulator.cpp \
 					  selection/Manipulatables.cpp \
 					  selection/SelectObserver.cpp \
+                      selection/ScaleManipulator.cpp \
+                      selection/TranslateManipulator.cpp \
 					  selection/Intersection.cpp \
-					  selection/Manipulators.cpp \
 					  settings/GameFileLoader.cpp \
 					  settings/Game.cpp \
 					  settings/GameManager.cpp \

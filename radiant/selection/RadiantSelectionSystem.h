@@ -2,41 +2,55 @@
 #define RADIANTSELECTIONSYSTEM_H_
 
 #include "iregistry.h"
+#include "irenderable.h"
 #include "iselection.h"
 #include "selectionlib.h"
 #include "math/matrix.h"
 #include "gtkutil/event/SingleIdleCallback.h"
 #include "signal/signal.h"
-#include "Manipulators.h"
+#include "Manipulator.h"
+#include "Manipulatables.h"
+#include "TranslateManipulator.h"
+#include "RotateManipulator.h"
+#include "ScaleManipulator.h"
+#include "DragManipulator.h"
+#include "ClipManipulator.h"
 #include "Selectors.h"
 #include "SelectedNodeList.h"
 
-/* greebo: This can be tricky to understand (and I don't know if I do :D), but I'll try: 
+/* greebo: This can be tricky to understand (and I don't know if I do :D), but
+ * I'll try: 
  * 
- * This is the implementation of the Abstract Base Class SelectionSystem, so this is the point where
- * the selected instances are kept track of. It provides functions to select points and areas, and makes 
- * sure that the according instances are being selected on mouse release. The mouse calls are handled by
- * the RadiantWindowObserver (or its helper classes SelectObserver and ManipulateObserver). The observers
- * call the routines here like SelectPoint() and SelectArea().
+ * This is the implementation of the Abstract Base Class SelectionSystem, so
+ * this is the point where the selected instances are kept track of. It provides
+ * functions to select points and areas, and makes sure that the according
+ * instances are being selected on mouse release. The mouse calls are handled by
+ * the RadiantWindowObserver (or its helper classes SelectObserver and
+ * ManipulateObserver). The observers call the routines here like SelectPoint()
+ * and SelectArea().
  * 
- * Basically, this class responds to the calls that come from RadiantWindowObserver. If the user clicks
- * anything, the mouse callback function of the WindowObserverSystem is invoked. These observer routines 
- * call the methods of the selectionsystem.
+ * Basically, this class responds to the calls that come from
+ * RadiantWindowObserver. If the user clicks anything, the mouse callback
+ * function of the WindowObserverSystem is invoked. These observer routines call
+ * the methods of the selectionsystem.
  * 
- * For example, if the left mouse button is pressed, the Observer onMouseDown calls the SelectManipulator
- * method of this system, which itself makes use of the Manipulator classes and their testSelect routines.
+ * For example, if the left mouse button is pressed, the Observer onMouseDown
+ * calls the SelectManipulator method of this system, which itself makes use of
+ * the Manipulator classes and their testSelect routines.
  * 
- * On mouse release, the according manipulator methods are invoked and these in turn call back here. The
- * actual transformations are performed using TransformationVisitors like TranslateSelected or such.  
+ * On mouse release, the according manipulator methods are invoked and these in
+ * turn call back here. The actual transformations are performed using
+ * TransformationVisitors like TranslateSelected or such.  
  * 
- * Note that the RadiantSelectionSystem class derives from all the possible Manipulatables (Translatable,
- * Rotatable, Scalable). This way the system can pass _itself_ to the Manipulator constructors, which call
- * their Manipulatable's Transform() method, which in turn calls the RadiantSelectionSystem's 
- * method translate() (in the example of translation). So basically the dog seems to be hunting 
- * its own tail here, but then again, it doesn't.
+ * Note that the RadiantSelectionSystem class derives from all the possible
+ * Manipulatables (Translatable, Rotatable, Scalable). This way the system can
+ * pass _itself_ to the Manipulator constructors, which call their
+ * Manipulatable's Transform() method, which in turn calls the
+ * RadiantSelectionSystem's method translate() (in the example of translation).
+ * So basically the dog seems to be hunting its own tail here, but then again,
+ * it doesn't.
  * 
  */
-
 // RadiantSelectionSystem
 class RadiantSelectionSystem :
 	public SelectionSystem,
