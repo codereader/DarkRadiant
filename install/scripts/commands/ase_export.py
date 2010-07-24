@@ -211,6 +211,9 @@ def execute():
 			normals += '''\t\t\t\t*MESH_VERTEXNORMAL {0}\t{1: 10.4f}\t{2: 10.4f}\t{3: 10.4f}\n'''.format(data[1], x[0][data[1]][5], x[0][data[1]][6], x[0][data[1]][7])
 			normals += '''\t\t\t\t*MESH_VERTEXNORMAL {0}\t{1: 10.4f}\t{2: 10.4f}\t{3: 10.4f}\n'''.format(data[2], x[0][data[2]][5], x[0][data[2]][6], x[0][data[2]][7])
 
+		if len(x[1]) == 0:
+			continue
+
 		geomobjects = geomobjects + '''*GEOMOBJECT {{
 \t*NODE_NAME "{0}"
 \t*NODE_TM {{

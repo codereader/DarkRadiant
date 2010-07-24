@@ -3,7 +3,6 @@
 
 #include "ifilesystem.h"
 #include "archivelib.h"
-#include "parser/DefBlockTokeniser.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -14,11 +13,16 @@ namespace sound
 
 // Constructor
 SoundManager::SoundManager() :
-	_emptyShader(new SoundShader("", ""))
+	_emptyShader(new SoundShader("", "")),
+    _shadersLoaded(false)
 {}
 
 // Enumerate shaders
-void SoundManager::forEachShader(SoundShaderVisitor& visitor) const {
+void SoundManager::forEachShader(SoundShaderVisitor& visitor) const 
+{
+    if (!ensureShadersLoaded())
+        return;
+
 	for (ShaderMap::const_iterator i = _shaders.begin();
 		 i != _shaders.end();
 		 ++i)
@@ -75,35 +79,14 @@ void SoundManager::stopSound() {
 	if (_soundPlayer) _soundPlayer->stop();
 }
 
-// Accept a string of shaders to parse
-void SoundManager::parseShadersFrom(std::istream& contents, const std::string& modName)
+ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName) 
 {
-	// Construct a DefTokeniser to tokenise the string into sound shader decls
-	parser::BasicDefBlockTokeniser<std::istream> tok(contents);
+    if (!ensureShadersLoaded())
+        return ISoundShaderPtr();
 
-	while (tok.hasMoreBlocks()) {
-		// Retrieve a named definition block from the parser
-		parser::BlockTokeniser::Block block = tok.nextBlock();
-
-		// Create a new shader with this name
-		std::pair<ShaderMap::iterator, bool> result = _shaders.insert(
-			ShaderMap::value_type(
-				block.name, 
-				SoundShaderPtr(new SoundShader(block.name, block.contents, modName))
-			)
-		);
-
-		if (!result.second) {
-			globalErrorStream() << "[SoundManager]: SoundShader with name " 
-				<< block.name << " already exists." << std::endl;
-		}
-	}
-}
-
-ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName) {
 	ShaderMap::const_iterator found = _shaders.find(shaderName);
 	
-	// If the name was found, return it, otherwise return an empty shader object
+    // If the name was found, return it, otherwise return an empty shader object
 	return (found != _shaders.end()) ? found->second : _emptyShader;    
 }
 
@@ -122,24 +105,40 @@ const StringSet& SoundManager::getDependencies() const {
 	return _dependencies;
 }
 
+bool SoundManager::loadShadersFromFilesystem() const
+{
+	// Pass a SoundFileLoader to the filesystem
+	SoundFileLoader loader(_shaders);
+
+    try
+    {
+        GlobalFileSystem().forEachFile(
+            SOUND_FOLDER,			// directory 
+            "sndshd", 				// required extension
+            loader,	// loader callback
+            99						// max depth
+        );
+
+        globalOutputStream() << _shaders.size() 
+                             << " sound shaders found." << std::endl;
+
+        _shadersLoaded = true;
+
+        return true;
+    }
+    catch (const gtkutil::ModalProgressDialog::OperationAbortedException& e)
+    {
+        return false;
+    }
+}
+
+bool SoundManager::ensureShadersLoaded() const
+{
+    return (_shadersLoaded || loadShadersFromFilesystem());
+}
+
 void SoundManager::initialiseModule(const ApplicationContext& ctx) 
 {
-	globalOutputStream() << "SoundManager::initialiseModule called" << std::endl;
-	// Pass a SoundFileLoader to the filesystem
-	SoundFileLoader loader(*this);
-
-	{
-		ScopedDebugTimer timer("Sound definitions parsed: ");
-		GlobalFileSystem().forEachFile(
-			SOUND_FOLDER,			// directory 
-			"sndshd", 				// required extension
-			loader,	// loader callback
-			99						// max depth
-		);
-	}
-
-	globalOutputStream() << _shaders.size() << " sound shaders found." << std::endl;
-
     // Create the SoundPlayer if sound is not disabled
     const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
     ApplicationContext::ArgumentList::const_iterator found(

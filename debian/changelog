@@ -1,3 +1,10 @@
+darkradiant (1.4.0svn5702~lucid1) lucid; urgency=low
+
+  * New upstream release, changes at:
+  http://darkradiant.sourceforge.net/changes.1.4.0.php 
+
+ -- OrbWeaver <orbweaver3d@gmail.com>  Wed, 21 Jul 2010 21:09:11 +0100
+
 darkradiant (1.3.2svn5614~lucid1) lucid; urgency=low
 
   * Extended PopupMenu interface and functionality a bit, with the goal to let the

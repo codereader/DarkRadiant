@@ -362,6 +362,10 @@ void OrthoContextMenu::callbackAddSpeaker()
 		sChooser.show();
 
 		const std::string& soundShader = sChooser.getSelectedShader();
+        if (soundShader.empty())
+        {
+            return;
+        }
 
         // Set the keyvalue
         Entity* entity = Node_getEntity(spkNode);
