@@ -2,15 +2,15 @@
 #define _GTKUTIL_DIALOG_H_
 
 #include <string>
-typedef struct _GtkWindow GtkWindow;
+#include <gtkmm/window.h>
 
 namespace gtkutil
 {
 	// Display a modal error dialog	
-	void errorDialog(const std::string&, GtkWindow* mainFrame);
+	void errorDialog(const std::string&, const Glib::RefPtr<Gtk::Window>& mainFrame);
 	
 	// Display a modal error dialog and quit immediately
-	void fatalErrorDialog(const std::string&, GtkWindow* mainFrame);
+	void fatalErrorDialog(const std::string&, const Glib::RefPtr<Gtk::Window>& mainFrame);
 
 	/**
 	 * Display a text entry dialog with the given title and prompt text. Returns a
@@ -21,7 +21,7 @@ namespace gtkutil
     const std::string textEntryDialog(const std::string& title, 
     								  const std::string& prompt,
 									  const std::string& defaultText,
-    								  GtkWindow* mainFrame);
+									  const Glib::RefPtr<Gtk::Window>& mainFrame);
 }
 
 #endif /* _GTKUTIL_DIALOG_H_ */

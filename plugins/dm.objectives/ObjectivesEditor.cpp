@@ -112,7 +112,7 @@ ObjectivesEditor::ObjectivesEditor() :
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 	
-	_windowPosition.connect(GTK_WINDOW(getWindow()));
+	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 
 	_objectiveEClasses.clear();
@@ -605,8 +605,7 @@ void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
 // Edit an existing objective
 void ObjectivesEditor::_onEditObjective(GtkWidget* w, ObjectivesEditor* self) {
 	// Display the ComponentsDialog
-	ComponentsDialog compDialog(GTK_WINDOW(self->getWindow()),
-								self->getCurrentObjective());
+	ComponentsDialog compDialog(self->getRefPtr(), self->getCurrentObjective());
 	compDialog.show(); // show and block
 
 	// Repopulate the objective list
@@ -658,8 +657,9 @@ void ObjectivesEditor::_onClearObjectives(GtkWidget* w,
 	self->refreshObjectivesList();
 }
 
-void ObjectivesEditor::_onEditLogic(GtkWidget* w, ObjectivesEditor* self) {
-	MissionLogicDialog _dialog(GTK_WINDOW(self->getWindow()), *self->_curEntity->second);
+void ObjectivesEditor::_onEditLogic(GtkWidget* w, ObjectivesEditor* self)
+{
+	MissionLogicDialog _dialog(self->getRefPtr(), *self->_curEntity->second);
 	_dialog.show();
 
 	self->refreshObjectivesList();

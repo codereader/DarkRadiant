@@ -49,7 +49,7 @@ public:
 	 * The parent window for which this should be a transient (normally the
 	 * mainframe).
 	 */
-	FloatingOrthoView(int id, const std::string& title, GtkWindow* parent)
+	FloatingOrthoView(int id, const std::string& title, const Glib::RefPtr<Gtk::Window>& parent)
 	: gtkutil::PersistentTransientWindow(title, parent, false),
 	  XYWnd(id),
 	  _id(id) 
@@ -60,7 +60,7 @@ public:
 		gtk_container_add(GTK_CONTAINER(getWindow()), framedWidget);
 		
 		// Set the parent window for XYWnd
-		XYWnd::setParent(GTK_WINDOW(getWindow()));
+		XYWnd::setParent(getRefPtr());
 		
 		gtk_window_set_type_hint(
 	    	GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL

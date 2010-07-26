@@ -75,7 +75,7 @@ public:
 	 * 
 	 * @editor: The ResponseEditor for calling update() on exit. 
 	 */
-	EffectEditor(GtkWindow* parent, 
+	EffectEditor(const Glib::RefPtr<Gtk::Window>& parent, 
 				 StimResponse& response, 
 				 const unsigned int effectIndex,
 				 StimTypes& stimTypes,

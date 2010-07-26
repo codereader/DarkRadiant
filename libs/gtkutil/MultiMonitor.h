@@ -1,12 +1,14 @@
 #ifndef _GTKUTIL_MULTIMON_H_
 #define _GTKUTIL_MULTIMON_H_
 
-#include <gtk/gtkwindow.h>
-#include <gdk/gdkscreen.h>
-#include <gdk/gdkdisplay.h>
+#include <gdkmm/display.h>
+#include <gdkmm/screen.h>
+#include <gtkmm/window.h>
+
 #include "itextstream.h"
 
-namespace gtkutil {
+namespace gtkutil
+{
 
 /** 
  * greebo: This class acts as container for several
@@ -19,23 +21,25 @@ public:
 	/**
 	 * Returns the number of monitors of the default screen.
 	 */
-	static int getNumMonitors() {
+	static int getNumMonitors()
+	{
 		// Acquire the default screen reference
-		GdkScreen* screen = gdk_display_get_default_screen(gdk_display_get_default());
+		Glib::RefPtr<Gdk::Screen> screen = Gdk::Display::get_default()->get_default_screen();
 		
 		// Get and return the number of monitors
-		return gdk_screen_get_n_monitors(screen);
+		return screen->get_n_monitors();;
 	}
 
 	/** 
 	 * Returns the screen rectangle of the screen with the given index.
 	 * The first screen is always present and has the index 0.
 	 */
-	static GdkRectangle getMonitor(int monitorNum) {
-		GdkScreen* screen = gdk_display_get_default_screen(gdk_display_get_default());
+	static Gdk::Rectangle getMonitor(int monitorNum)
+	{
+		Glib::RefPtr<Gdk::Screen> screen = Gdk::Display::get_default()->get_default_screen();
 
-		GdkRectangle geom;
-		gdk_screen_get_monitor_geometry(screen, monitorNum, &geom);
+		Gdk::Rectangle geom;
+		screen->get_monitor_geometry(monitorNum, geom);
 
 		return geom;
 	}
@@ -44,26 +48,44 @@ public:
 	 * greebo: Returns the rectangle (width/height) for the monitor 
 	 * which the given window is displayed on.
 	 */
-	static GdkRectangle getMonitorForWindow(GtkWindow* window) {
+	static Gdk::Rectangle getMonitorForWindow(const Glib::RefPtr<Gtk::Window>& window)
+	{
 		// Retrieve the screen
-		GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(window));
+		Glib::RefPtr<Gdk::Screen> scr = window->get_screen();
 
 		// Get the monitor which the GtkWindow is displayed on
-		gint monitorNum = gdk_screen_get_monitor_at_window(scr, GTK_WIDGET(window)->window);
+		int monitorNum = scr->get_monitor_at_window(window->get_window());
 
 		return getMonitor(monitorNum);
 	}
 
-	static void printMonitorInfo() {
-		globalOutputStream() << "Default screen has " << getNumMonitors() << " monitors.\n";
+	/** 
+	 * greebo: Returns the rectangle (width/height) for the monitor 
+	 * which the given window is displayed on.
+	 */
+	static Gdk::Rectangle getMonitorForWindow(Gtk::Window& window)
+	{
+		// Retrieve the screen
+		Glib::RefPtr<Gdk::Screen> scr = window.get_screen();
+
+		// Get the monitor which the GtkWindow is displayed on
+		int monitorNum = scr->get_monitor_at_window(window.get_window());
+
+		return getMonitor(monitorNum);
+	}
+
+	static void printMonitorInfo()
+	{
+		globalOutputStream() << "Default screen has " << getNumMonitors() << " monitors." << std::endl;
 
 		// detect multiple monitors
-		for (int j = 0; j < getNumMonitors(); j++) {
-			GdkRectangle geom = getMonitor(j);
+		for (int j = 0; j < getNumMonitors(); j++)
+		{
+			Gdk::Rectangle geom = getMonitor(j);
 
 			globalOutputStream() << "Monitor " << j << " geometry: " 
-								 << geom.width << "x" << geom.height << " at "
-								 << geom.x << ", " << geom.y << "\n";
+				<< geom.get_width() << "x" << geom.get_height() << " at "
+				<< geom.get_x() << ", " << geom.get_y() << std::endl;
 		}
 	}
 };

@@ -7,7 +7,7 @@
 #include "imainframe.h"
 #include "modulesystem/StaticModule.h"
 
-#include <gtk/gtktoolbar.h>
+#include <gtkmm/toolbar.h>
 #include <gtk/gtkseparatortoolitem.h>
 
 #include <boost/bind.hpp>
@@ -57,18 +57,18 @@ void SelectionSetManager::shutdownModule()
 void SelectionSetManager::onRadiantStartup()
 {
 	// Get the horizontal toolbar and add a custom widget
-	GtkToolbar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
+	Gtk::Toolbar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
 
 	// Insert a separator at the end of the toolbar
 	GtkToolItem* item = GTK_TOOL_ITEM(gtk_separator_tool_item_new());
-	gtk_toolbar_insert(toolbar, item, -1);
+	gtk_toolbar_insert(toolbar->gobj(), item, -1);
 
 	gtk_widget_show(GTK_WIDGET(item));
 
 	// Construct a new tool menu object
 	_toolmenu = SelectionSetToolmenuPtr(new SelectionSetToolmenu);
 
-	gtk_toolbar_insert(toolbar, _toolmenu->getToolItem(), -1);	
+	gtk_toolbar_insert(toolbar->gobj(), _toolmenu->getToolItem(), -1);	
 }
 
 void SelectionSetManager::addObserver(Observer& observer)

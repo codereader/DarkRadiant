@@ -19,7 +19,7 @@ namespace ui {
 		const char* const LABEL_RESPONSE_EFFECTS = N_("Response Effects");
 	}
 
-ResponseEditor::ResponseEditor(GtkWidget* parent, StimTypes& stimTypes) :
+ResponseEditor::ResponseEditor(const Glib::RefPtr<Gtk::Window>& parent, StimTypes& stimTypes) :
 	ClassEditor(stimTypes),
 	_parent(parent)
 {
@@ -316,8 +316,7 @@ void ResponseEditor::editEffect() {
 		// Make sure we have a response and anything selected
 		if (sr.get("class") == "R" && effectIndex > 0) {
 			// Create a new effect editor (self-destructs)
-			new EffectEditor(GTK_WINDOW(_parent), sr, 
-							 effectIndex, _stimTypes, *this);
+			new EffectEditor(_parent, sr, effectIndex, _stimTypes, *this);
 			
 			// The editor is modal and will destroy itself, our work is done
 		}

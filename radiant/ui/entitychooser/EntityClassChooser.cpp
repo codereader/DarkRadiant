@@ -97,20 +97,20 @@ EntityClassChooser::EntityClassChooser()
   _selectedName(""),
   _modelPreview(GlobalUIManager().createModelPreview())
 {
-	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), mainWindow);
+	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), mainWindow->gobj());
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(_widget), _(ECLASS_CHOOSER_TITLE));
 
 	// Set the default size of the window
 	
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
 	gtk_window_set_default_size(
-		GTK_WINDOW(_widget), gint(rect.width * 0.7f), gint(rect.height * 0.6f)
+		GTK_WINDOW(_widget), static_cast<int>(rect.get_width() * 0.7f), static_cast<int>(rect.get_height() * 0.6f)
 	);
 
-	_modelPreview->setSize(gint(rect.width * 0.3f));
+	_modelPreview->setSize(static_cast<int>(rect.get_width() * 0.3f));
 
 	// Create GUI elements and pack into main VBox
 	

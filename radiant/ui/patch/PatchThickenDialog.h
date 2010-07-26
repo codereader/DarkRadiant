@@ -12,8 +12,7 @@ namespace ui {
 
 class PatchThickenDialog
 {
-	GtkWindow* _parent;
-	
+private:
 	GtkWidget* _thicknessEntry;
 	GtkWidget* _seamsCheckBox;
 	

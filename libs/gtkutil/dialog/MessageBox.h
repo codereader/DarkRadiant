@@ -27,7 +27,7 @@ public:
 	MessageBox(const std::string& title, 
 			   const std::string& text, 
 			   ui::IDialog::MessageType type,
-			   GtkWindow* parent = NULL);
+			   const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
 
 protected:
 	// Constructs the dialog (adds buttons, text and icons)

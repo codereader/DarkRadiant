@@ -2,6 +2,7 @@
 #define UIMANAGER_H_
 
 #include "imodule.h"
+#include "iradiant.h"
 #include "iuimanager.h"
 #include "idialogmanager.h"
 
@@ -12,14 +13,14 @@
 #include "colourscheme/ColourSchemeManager.h"
 #include <iostream>
 #include <map>
+#include <boost/enable_shared_from_this.hpp>
 
 namespace ui {
 
-class UIManagerShutdownListener;
-typedef boost::shared_ptr<UIManagerShutdownListener> UIManagerShutdownListenerPtr;
-
 class UIManager :
-	public IUIManager
+	public IUIManager,
+	public RadiantEventListener,
+	public boost::enable_shared_from_this<UIManager>
 {
 private:
 	// Local helper class taking care of the menu
@@ -28,8 +29,6 @@ private:
 	ToolbarManager _toolbarManager;
 
 	StatusBarManager _statusBarManager;
-
-	UIManagerShutdownListenerPtr _shutdownListener;
 
 	DialogManagerPtr _dialogManager;
 
@@ -61,6 +60,9 @@ public:
 
 	// Called on radiant shutdown
 	void clear();
+
+	// RadiantEventListener
+	void onRadiantShutdown();
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

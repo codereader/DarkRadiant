@@ -41,7 +41,7 @@ namespace ui {
 		};
 	}
 
-FilterEditor::FilterEditor(Filter& filter, GtkWindow* parent, bool viewOnly) :
+FilterEditor::FilterEditor(Filter& filter, const Glib::RefPtr<Gtk::Window>& parent, bool viewOnly) :
 	BlockingTransientWindow(viewOnly ? _(WINDOW_TITLE_VIEW) : _(WINDOW_TITLE_EDIT), parent),
 	_originalFilter(filter),
 	_filter(_originalFilter), // copy-construct

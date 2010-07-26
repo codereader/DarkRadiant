@@ -69,8 +69,7 @@ XYWnd::XYWnd(int id) :
 	_zoomStarted(false),
 	_chaseMouseHandler(0),
 	m_window_observer(NewWindowObserver()),
-	_isActive(false),
-	_parent(NULL)
+	_isActive(false)
 {
 	m_buttonstate = 0;
 
@@ -200,24 +199,26 @@ int XYWnd::getHeight() const {
 	return _height;
 }
 
-void XYWnd::setParent(GtkWindow* parent)
+void XYWnd::setParent(const Glib::RefPtr<Gtk::Window>& parent)
 {
-	if (_parent != NULL && parent != _parent)
+	if (_parent && parent != _parent)
 	{
 		// Parent change, disconnect first
-		m_window_observer->removeObservedWidget(GTK_WIDGET(_parent));
+		m_window_observer->removeObservedWidget(GTK_WIDGET(_parent->gobj()));
 	}
 
 	_parent = parent;
 	
 	// Connect the position observer to the new parent
-	_windowPosition.connect(_parent);
+	assert(dynamic_cast<Gtk::Window*>(_parent->get_toplevel()) != NULL);
+	_windowPosition.connect(static_cast<Gtk::Window*>(_parent->get_toplevel()));
 	_windowPosition.applyPosition();
 	
-	m_window_observer->addObservedWidget(GTK_WIDGET(_parent));
+	m_window_observer->addObservedWidget(GTK_WIDGET(_parent->gobj()));
 }
 
-GtkWindow* XYWnd::getParent() const {
+const Glib::RefPtr<Gtk::Window>& XYWnd::getParent() const
+{
 	return _parent;
 }
 
@@ -559,14 +560,14 @@ void XYWnd::beginMove() {
 		endMove();
 	}
 	_moveStarted = true;
-	_freezePointer.freeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow(), callbackMoveDelta, this);
+	_freezePointer.freeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj(), callbackMoveDelta, this);
 	m_move_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackMoveFocusOut), this);
 }
 
 
 void XYWnd::endMove() {
 	_moveStarted = false;
-	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow());
+	_freezePointer.unfreeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj());
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
 }
 
@@ -576,13 +577,13 @@ void XYWnd::beginZoom() {
 	}
 	_zoomStarted = true;
 	_dragZoom = 0;
-	_freezePointer.freeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow(), callbackZoomDelta, this);
+	_freezePointer.freeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj(), callbackZoomDelta, this);
 	m_zoom_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackZoomFocusOut), this);
 }
 
 void XYWnd::endZoom() {
 	_zoomStarted = false;
-	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow());
+	_freezePointer.unfreeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj());
 	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_zoom_focusOut);
 }
 
@@ -1636,7 +1637,7 @@ int& XYWnd::dragZoom() {
 
 void XYWnd::saveStateToPath(const std::string& rootPath)
 {
-	if (_parent == NULL || !GTK_WIDGET_VISIBLE(GTK_WIDGET(_parent))) return;
+	if (!_parent || !_parent->is_visible()) return;
 
 	// Create a new child under the given root path
 	std::string viewNodePath = rootPath + "/view[@name='" + intToStr(_id) + "']";

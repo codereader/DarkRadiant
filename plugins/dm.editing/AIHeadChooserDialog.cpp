@@ -48,18 +48,18 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 
-	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
+	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
 
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
 	gtk_window_set_default_size(
-		GTK_WINDOW(getWindow()), gint(rect.width * 0.7f), gint(rect.height * 0.6f)
+		GTK_WINDOW(getWindow()), static_cast<int>(rect.get_width() * 0.7f), static_cast<int>(rect.get_height() * 0.6f)
 	);
 
 	// Allocate and setup the preview
 	_preview = GlobalUIManager().createModelPreview();
 	assert(_preview != NULL);
 
-	_preview->setSize(gint(rect.width * 0.3f));
+	_preview->setSize(static_cast<int>(rect.get_width() * 0.3f));
 
 	GtkTreeView* headsView = GTK_TREE_VIEW(_widgets[WIDGET_HEADVIEW]);
 	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);

@@ -57,7 +57,7 @@ private:
 
 public:
 	// Pass the parent window, the command and the conversation to edit
-	CommandEditor(GtkWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv);
+	CommandEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::ConversationCommand& command, conversation::Conversation conv);
 
 	// Determine which action the user did take to close the dialog
 	Result getResult();

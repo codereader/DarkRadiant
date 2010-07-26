@@ -236,7 +236,7 @@ GtkWidget* PrefPage::appendPathEntry(const std::string& name, const std::string&
 	_connector.addObject(
 		registryKey,
 		SerialisableWidgetWrapperPtr(
-			new SerialisableTextEntry(GTK_WIDGET(entry->getEntryWidget()))
+			new SerialisableTextEntry(GTK_WIDGET(entry->getEntryWidget().gobj()))
 		)
 	);
 

@@ -73,8 +73,16 @@ void Loader::loadModules(const std::string& root) {
     }
 }
 
-void Loader::unloadModules() {
-	_dynamicLibraryList.clear();
+void Loader::unloadModules()
+{
+	while (!_dynamicLibraryList.empty())
+	{
+		DynamicLibraryPtr lib = *_dynamicLibraryList.begin();
+
+		_dynamicLibraryList.erase(_dynamicLibraryList.begin());
+
+		lib.reset();
+	}
 }
 
 // Initialise the static DLL list 

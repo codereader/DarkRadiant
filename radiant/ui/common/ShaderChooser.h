@@ -38,9 +38,6 @@ private:
 	// The "parent" class that gets notified upon shaderchange
 	ChooserClient* _client;
 
-	// The widget this dialog is transient for.
-	GtkWindow* _parent;
-	
 	// The text entry the chosen texture is written into (can be NULL)
 	GtkWidget* _targetEntry;
 	
@@ -62,7 +59,7 @@ public:
 	 *               Also, the initially selected shader will be read from 
 	 *               this field at startup.
 	 */
-	ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget* targetEntry = NULL);
+	ShaderChooser(ChooserClient* client, const Glib::RefPtr<Gtk::Window>& parent, GtkWidget* targetEntry = NULL);
 	
 	/** greebo: Gets called upon shader selection change
 	 */

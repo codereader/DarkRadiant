@@ -76,7 +76,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib mathlib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib glu32.lib glew32.lib opengl32.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib"
+				AdditionalDependencies="gtkutillib.lib mathlib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib glu32.lib glew32.lib opengl32.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -171,7 +171,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib mathlib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib glu32.lib glew32.lib opengl32.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib"
+				AdditionalDependencies="gtkutillib.lib mathlib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib glu32.lib glew32.lib opengl32.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -265,7 +265,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib mathlib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib glu32.lib glew32.lib opengl32.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib"
+				AdditionalDependencies="gtkutillib.lib mathlib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib glu32.lib glew32.lib opengl32.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -363,7 +363,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib mathlib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib glu32.lib glew32.lib opengl32.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib"
+				AdditionalDependencies="gtkutillib.lib mathlib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib glu32.lib glew32.lib opengl32.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -459,10 +459,6 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\uimanager\ModelPreview.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\uimanager\ShutdownListener.h"
 				>
 			</File>
 			<File

@@ -165,7 +165,7 @@ SurfaceInspector::SurfaceInspector()
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 	
-	_windowPosition.connect(GTK_WINDOW(getWindow()));
+	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 }
 
@@ -690,9 +690,7 @@ void SurfaceInspector::fitTexture() {
 	}
 	else {
 		// Invalid repeatX && repeatY values
-		gtkutil::errorDialog(
-			"Both fit values must be > 0.0.", GTK_WINDOW(getWindow())
-		);
+		gtkutil::errorDialog(_("Both fit values must be > 0."), getRefPtr());
 	}
 }
 
@@ -756,7 +754,7 @@ void SurfaceInspector::onShaderSelect(GtkWidget* button, SurfaceInspector* self)
 	ShaderChooser::ChooserClient* client = self;
 
 	// Instantiate the modal dialog, will block execution
-	ShaderChooser chooser(client, GTK_WINDOW(self->getWindow()), self->_shaderEntry);
+	ShaderChooser chooser(client, self->getRefPtr(), self->_shaderEntry);
 }
 
 // Static command target to toggle the window

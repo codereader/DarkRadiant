@@ -36,9 +36,7 @@ void FloatingLayout::activate() {
 	if (!GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE).empty())
 	{
 		_camWndPosition.loadFromPath(RKEY_CAMERA_WINDOW_STATE);
-		_camWndPosition.connect(
-			GTK_WINDOW(_floatingCamWnd->getWindow())
-		);
+		_camWndPosition.connect(Glib::wrap(GTK_WINDOW(_floatingCamWnd->getWindow()), true));
 	}
 	  
 	_floatingCamWnd->show();

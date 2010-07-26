@@ -39,9 +39,9 @@ GtkWindow* Splash::getWindow() {
 	return _window;
 }
 
-void Splash::setTopLevelWindow(GtkWindow* window)
+void Splash::setTopLevelWindow(const Glib::RefPtr<Gtk::Window>& window)
 {
-	gtk_window_set_transient_for(getWindow(), window);
+	gtk_window_set_transient_for(getWindow(), window->gobj());
 }
 
 void Splash::createProgressBar() {

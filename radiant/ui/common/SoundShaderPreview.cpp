@@ -22,7 +22,7 @@ namespace ui {
 SoundShaderPreview::SoundShaderPreview() :
 	_soundShader("")
 {
-	_widget.reset(new Gtk::HBox(false, 12));
+	_widget = Glib::RefPtr<Gtk::HBox>(new Gtk::HBox(false, 12));
 	
 	_treeView = Gtk::manage(new Gtk::TreeView);
 	_treeView->set_size_request(-1, 130);

@@ -41,7 +41,7 @@ public:
 	 * @param objectiveEnt
 	 * The Objective Entity object for which the logic should be edited.
 	 */
-	MissionLogicDialog(GtkWindow* parent, ObjectiveEntity& objectiveEnt);
+	MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, ObjectiveEntity& objectiveEnt);
 
 private:
 

@@ -72,13 +72,14 @@ void EClassTree::populateWindow() {
 	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
 	
 	// Set the default size of the window
-	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+
 	gtk_window_set_default_size(
-		GTK_WINDOW(getWindow()), gint(rect.width * 0.8f), gint(rect.height * 0.8f)
+		GTK_WINDOW(getWindow()), static_cast<int>(rect.get_width() * 0.8f), static_cast<int>(rect.get_height() * 0.8f)
 	);
 
-	gtk_paned_set_position(GTK_PANED(paned), static_cast<gint>(rect.width * 0.25f));
+	gtk_paned_set_position(GTK_PANED(paned), static_cast<int>(rect.get_width() * 0.25f));
 }
 
 GtkWidget* EClassTree::createEClassTreeView() {

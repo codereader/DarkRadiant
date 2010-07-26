@@ -15,7 +15,7 @@ namespace gtkutil
 {
 
 MessageBox::MessageBox(const std::string& title, const std::string& text,
-					   IDialog::MessageType type, GtkWindow* parent) :
+					   IDialog::MessageType type, const Glib::RefPtr<Gtk::Window>& parent) :
 	Dialog(title, parent),
 	_text(text),
 	_type(type)

@@ -24,11 +24,10 @@ namespace {
 namespace ui {
 
 PatchCreateDialog::PatchCreateDialog() :
-	_parent(GlobalMainFrame().getTopLevelWindow()),
 	_dialog(NULL)
 {
 	// Create the new dialog window with OK and CANCEL button    
-  	_dialog = gtk_dialog_new_with_buttons(_(WINDOW_TITLE), _parent,
+  	_dialog = gtk_dialog_new_with_buttons(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()->gobj(),
                                          GTK_DIALOG_DESTROY_WITH_PARENT, 
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                          GTK_STOCK_OK, GTK_RESPONSE_OK,

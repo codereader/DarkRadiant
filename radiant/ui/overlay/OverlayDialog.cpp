@@ -28,7 +28,7 @@ OverlayDialog::OverlayDialog() :
 {
 	// Set up the window
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-    gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
+    gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow()->gobj());
     gtk_window_set_title(GTK_WINDOW(_widget), _(DIALOG_TITLE));
     g_signal_connect(G_OBJECT(_widget), "delete-event",
     				 G_CALLBACK(gtk_widget_hide_on_delete), NULL);

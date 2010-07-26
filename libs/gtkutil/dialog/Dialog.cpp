@@ -14,7 +14,7 @@
 namespace gtkutil
 {
 
-Dialog::Dialog(const std::string& title, GtkWindow* parent) :
+Dialog::Dialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent) :
 	BlockingTransientWindow(title, parent),
 	_result(RESULT_CANCELLED),
 	_vbox(gtk_vbox_new(FALSE, 6)),
@@ -27,7 +27,7 @@ Dialog::Dialog(const std::string& title, GtkWindow* parent) :
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
 
 	// Center the popup when no parent window is specified
-	if (parent == NULL)
+	if (!parent)
 	{
 		gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER);
 	}

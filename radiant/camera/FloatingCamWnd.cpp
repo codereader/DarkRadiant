@@ -5,10 +5,10 @@
 
 #include "GlobalCamera.h"
 
-FloatingCamWnd::FloatingCamWnd(GtkWindow* parent) :
+FloatingCamWnd::FloatingCamWnd(const Glib::RefPtr<Gtk::Window>& parent) :
 	PersistentTransientWindow(_("Camera"), parent, true)
 {
-	CamWnd::setContainer(GTK_WINDOW(getWindow()));
+	CamWnd::setContainer(getRefPtr());
 
 	gtk_container_add(
 		GTK_CONTAINER(getWindow()),
@@ -18,9 +18,10 @@ FloatingCamWnd::FloatingCamWnd(GtkWindow* parent) :
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_NORMAL);
 }
 
-FloatingCamWnd::~FloatingCamWnd() {
+FloatingCamWnd::~FloatingCamWnd()
+{
 	// Disconnect the camera from its parent container
-	CamWnd::setContainer(NULL);
+	CamWnd::setContainer(Glib::RefPtr<Gtk::Window>());
 
 	// GtkWindow destruction is handled by the base class destructor
 }

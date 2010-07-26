@@ -12,8 +12,7 @@ namespace ui {
 
 class PatchCreateDialog
 {
-	GtkWindow* _parent;
-	
+private:	
 	GtkWidget* _comboWidth;
 	GtkWidget* _comboHeight;
 	GtkWidget* _removeBrushCheckbox;

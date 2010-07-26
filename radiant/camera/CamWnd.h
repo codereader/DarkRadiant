@@ -50,7 +50,7 @@ class CamWnd :
 	bool m_bFreeMove;
 
 	gtkutil::GLWidget m_gl_widget;
-	GtkWindow* _parentWidget;
+	Glib::RefPtr<Gtk::Window> _parentWindow;
 
 	std::size_t _mapValidHandle;
 
@@ -105,12 +105,12 @@ public:
 	void changeFloor(const bool up);
 
 	GtkWidget* getWidget() const;
-	GtkWindow* getParent() const;
+	const Glib::RefPtr<Gtk::Window>& getParent() const;
 	
 	/**
-	 * Set the immediate GTK container of this CamWnd.
+	 * Set the immediate parent window of this CamWnd.
 	 */
-	void setContainer(GtkWindow* newParent);
+	void setContainer(const Glib::RefPtr<Gtk::Window>& newParent);
 
 	void enableFreeMove();
 	void disableFreeMove();

@@ -54,19 +54,8 @@ public:
 	
 	/**
 	 * Construct a BlockingTransientDialog with the given title and parent.
-	 * DEPRECATED: Use the gtkmm-compliant constructor instead.
 	 */
-	BlockingTransientWindow(const std::string& title, GtkWindow* parent)
-	: TransientWindow(title, parent),
-	  _isShown(false)
-	{ 
-		gtk_window_set_modal(GTK_WINDOW(getWindow()), TRUE);
-	}
-
-	/**
-	 * Construct a BlockingTransientDialog with the given title and parent.
-	 */
-	BlockingTransientWindow(const std::string& title, Gtk::Window* parent)
+	BlockingTransientWindow(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent)
 	: TransientWindow(title, parent),
 	  _isShown(false)
 	{

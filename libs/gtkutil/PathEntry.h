@@ -3,6 +3,9 @@
 
 #include "ifc/EditorWidget.h"
 
+#include "FramedWidget.h"
+#include <gtkmm/entry.h>
+
 namespace gtkutil
 {
 
@@ -17,10 +20,12 @@ class PathEntry :
 protected:
 
 	// The toplevel widget
-	GtkWidget* _topLevel;
+	Glib::RefPtr<FramedWidgetmm> _topLevel;
+
+	Gtk::Button* _button;
 
 	// The text entry box
-	GtkWidget* _entry;
+	Gtk::Entry* _entry;
 
 public:
 	/** 
@@ -35,7 +40,7 @@ public:
     virtual std::string getValue() const;
 
 	// Returns the text entry widget
-	GtkWidget* getEntryWidget() const;
+	Gtk::Entry& getEntryWidget();
 
 protected:
    
@@ -43,9 +48,9 @@ protected:
 	virtual GtkWidget* _getWidget() const;
 
 private:
-	// GTK callbacks
-	static void onBrowseFiles(GtkWidget* button, PathEntry* self);
-	static void onBrowseFolders(GtkWidget* button, PathEntry* self);
+	// gtkmm callbacks
+	void onBrowseFiles();
+	void onBrowseFolders();
 };
 typedef boost::shared_ptr<PathEntry> PathEntryPtr;
 

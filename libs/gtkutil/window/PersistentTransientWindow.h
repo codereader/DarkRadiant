@@ -27,7 +27,7 @@ class PersistentTransientWindow
 : public TransientWindow
 {
 private:
-	Gtk::Window* _parent;
+	Glib::RefPtr<Gtk::Window> _parent;
 	sigc::connection _windowStateConn;
 
 private:
@@ -70,7 +70,7 @@ public:
 	 * Construct a PersistentTransientWindow with the given title and parent.
 	 */
 	PersistentTransientWindow(const std::string& title, 
-							  Gtk::Window* parent,
+							  const Glib::RefPtr<Gtk::Window>& parent,
 							  bool hideOnDelete = false);
 
 }; // class PersistentTransientWindow

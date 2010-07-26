@@ -20,10 +20,9 @@ namespace ui {
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget* targetEntry) : 
+ShaderChooser::ShaderChooser(ChooserClient* client, const Glib::RefPtr<Gtk::Window>& parent, GtkWidget* targetEntry) : 
 	gtkutil::BlockingTransientWindow(_(LABEL_TITLE), parent),
 	_client(client),
-	_parent(parent), 
 	_targetEntry(targetEntry),
 	_selector(this, SHADER_PREFIXES)
 {
@@ -49,7 +48,7 @@ ShaderChooser::ShaderChooser(ChooserClient* client, GtkWindow* parent, GtkWidget
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 	
-	_windowPosition.connect(GTK_WINDOW(getWindow()));
+	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 
 	// Show all widgets, this will enter a main loop

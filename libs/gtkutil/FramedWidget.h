@@ -4,6 +4,8 @@
 #include "gtk/gtkframe.h"
 #include "gtk/gtkwidget.h"
 
+#include <gtkmm/frame.h>
+
 namespace gtkutil
 {
 
@@ -46,6 +48,31 @@ public:
 		
 		// Return the readily fabricated widget
 		return GTK_WIDGET(frame);
+	}
+};
+
+// gtkmm variant
+class FramedWidgetmm :
+	public Gtk::Frame
+{
+protected:
+	// The contained widget
+	Gtk::Widget& _containedWidget;
+	
+public:
+	// Constructor
+	FramedWidgetmm(Gtk::Widget& containedWidget) : 
+		_containedWidget(containedWidget)
+	{
+		show();
+		set_shadow_type(Gtk::SHADOW_IN);
+		
+		// Add the contained widget as children to the frame
+		add(_containedWidget);
+		_containedWidget.show();
+	
+		// Now show the whole widget tree
+		show_all();
 	}
 };
 

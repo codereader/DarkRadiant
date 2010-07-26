@@ -5,11 +5,11 @@
 #include <boost/shared_ptr.hpp>
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeselection.h>
+#include <gtkmm/box.h>
 
 namespace Gtk
 { 
 	class Widget;
-	class HBox;
 	class TreeView;
 	class Button;
 	class Label;
@@ -28,7 +28,7 @@ class SoundShaderPreview
 {
 private:
 	// The main container widget of this preview
-	boost::shared_ptr<Gtk::HBox> _widget;
+	Glib::RefPtr<Gtk::HBox> _widget;
 	
 	// Tree store and view for available sound files, and the tree selection
 	Glib::RefPtr<Gtk::ListStore> _listStore;

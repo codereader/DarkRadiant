@@ -7,7 +7,6 @@
 #include "ieventmanager.h"
 #include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"
-#include "ShutdownListener.h"
 #include "debugging/debugging.h"
 #include "FilterMenu.h"
 #include "ModelPreview.h"
@@ -116,6 +115,12 @@ void UIManager::clear()
 	_dialogManager = DialogManagerPtr();
 }
 
+void UIManager::onRadiantShutdown()
+{
+	// Clear the menu manager on shutdown
+	clear();
+}
+
 const std::string& UIManager::getName() const {
 	static std::string _name(MODULE_UIMANAGER);
 	return _name;
@@ -148,8 +153,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::editColourSchemes);
 	GlobalEventManager().addCommand("EditColourScheme", "EditColourScheme");
 
-	_shutdownListener = UIManagerShutdownListenerPtr(new UIManagerShutdownListener(*this));
-	GlobalRadiant().addEventListener(_shutdownListener);
+	GlobalRadiant().addEventListener(shared_from_this());
 
 	// Add the statusbar command text item
 	_statusBarManager.addTextElement(
