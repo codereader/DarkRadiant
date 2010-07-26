@@ -3,6 +3,7 @@
 
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkwindow.h>
+#include <gtkmm/window.h>
 
 #include <string>
 #include <stdexcept>
@@ -50,7 +51,7 @@ public:
 	/** Constructor accepts window to be modal for and the dialog
 	 *  title.
 	 */
-	ModalProgressDialog(GtkWindow* parent, const std::string& title);
+	ModalProgressDialog(const Glib::RefPtr<Gtk::Window>& parent, const std::string& title);
 
 	/** Destructor. Destroys window and contained widgets.
 	 */

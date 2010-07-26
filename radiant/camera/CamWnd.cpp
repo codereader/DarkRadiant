@@ -248,7 +248,6 @@ CamWnd::CamWnd() :
 	m_drawing(false),
 	m_bFreeMove(false),
 	m_gl_widget(true, "CamWnd"),
-	_parentWidget(NULL),
 	m_window_observer(NewWindowObserver()),
 	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, &m_gl_widget)),
 	m_deferred_motion(selection_motion, m_window_observer),
@@ -403,11 +402,11 @@ void CamWnd::enableFreeMove() {
 	enableFreeMoveEvents();
 
 	// greebo: For entering free move, we need a valid parent window
-	assert(_parentWidget != NULL);
+	assert(_parentWindow);
 	
-	gtk_window_set_focus(_parentWidget, glWidget);
+	gtk_window_set_focus(_parentWindow->gobj(), glWidget);
 	m_freemove_handle_focusout = g_signal_connect(G_OBJECT(glWidget), "focus_out_event", G_CALLBACK(camwindow_freemove_focusout), this);
-	m_freezePointer.freeze_pointer(_parentWidget, Camera_motionDelta, &m_Camera);
+	m_freezePointer.freeze_pointer(_parentWindow->gobj(), Camera_motionDelta, &m_Camera);
 
 	update();
 }
@@ -434,8 +433,8 @@ void CamWnd::disableFreeMove() {
 
 	addHandlersMove();
 
-	assert(_parentWidget != NULL);
-	m_freezePointer.unfreeze_pointer(_parentWidget);
+	assert(_parentWindow);
+	m_freezePointer.unfreeze_pointer(_parentWindow->gobj());
 	g_signal_handler_disconnect(G_OBJECT(glWidget), m_freemove_handle_focusout);
 
 	update();
@@ -839,35 +838,39 @@ GtkWidget* CamWnd::getWidget() const {
 	return m_gl_widget;
 }
 
-GtkWindow* CamWnd::getParent() const {
-	return _parentWidget;
+const Glib::RefPtr<Gtk::Window>& CamWnd::getParent() const
+{
+	return _parentWindow;
 }
 
-void CamWnd::setContainer(GtkWindow* newParent) {
-	if (newParent == _parentWidget) {
+void CamWnd::setContainer(const Glib::RefPtr<Gtk::Window>& newParent)
+{
+	if (newParent == _parentWindow)
+	{
 		// Do nothing if no change required
 		return;
 	}
 
-	if (_parentWidget != NULL)
+	if (_parentWindow != NULL)
 	{
 		// Parent change, disconnect first
-		m_window_observer->removeObservedWidget(GTK_WIDGET(_parentWidget));
-		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
+		m_window_observer->removeObservedWidget(GTK_WIDGET(_parentWindow->gobj()));
+		GlobalEventManager().disconnect(GTK_OBJECT(_parentWindow->gobj()));
 
 		if (m_bFreeMove)
 		{
 			disableFreeMove();
 		}
 
-		_parentWidget = NULL;
+		_parentWindow.reset();
 	}
 
 	if (newParent != NULL)
 	{
-		_parentWidget = newParent;
-		m_window_observer->addObservedWidget(GTK_WIDGET(_parentWidget));
-		GlobalEventManager().connect(GTK_OBJECT(_parentWidget));
+		_parentWindow = newParent;
+
+		m_window_observer->addObservedWidget(GTK_WIDGET(_parentWindow->gobj()));
+		GlobalEventManager().connect(GTK_OBJECT(_parentWindow->gobj()));
 	}
 }
 

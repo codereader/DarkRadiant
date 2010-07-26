@@ -32,7 +32,7 @@ std::string RegularLayout::getName() {
 
 void RegularLayout::activate() {
 
-	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
+	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd();
@@ -49,7 +49,7 @@ void RegularLayout::activate() {
 
 	// Create the texture window
 	GtkWidget* texWindow = gtkutil::FramedWidget(
-		GlobalTextureBrowser().constructWindow(parent)
+		GlobalTextureBrowser().constructWindow(GTK_WINDOW(parent->gobj()))
 	);
 
 	// Now pack those widgets into the paned widgets
@@ -79,8 +79,8 @@ void RegularLayout::activate() {
 	_regular.horizPane = horizPane.getWidget();
     
 	// Retrieve the main container of the main window
-	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
-	gtk_container_add(GTK_CONTAINER(mainContainer), GTK_WIDGET(_regular.horizPane));
+	Gtk::Widget* mainContainer = GlobalMainFrame().getMainContainer();
+	gtk_container_add(GTK_CONTAINER(mainContainer->gobj()), GTK_WIDGET(_regular.horizPane));
 
 	// Set some default values for the width and height
 	gtk_paned_set_position(GTK_PANED(_regular.horizPane), 500);
@@ -101,7 +101,7 @@ void RegularLayout::activate() {
 
 	GlobalGroupDialog().hideDialogWindow();
 
-	gtk_widget_show_all(mainContainer);
+	gtk_widget_show_all(mainContainer->gobj());
 
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);

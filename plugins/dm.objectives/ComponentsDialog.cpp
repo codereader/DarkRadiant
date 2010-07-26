@@ -59,7 +59,7 @@ namespace {
 } // namespace
 
 // Main constructor
-ComponentsDialog::ComponentsDialog(GtkWindow* parent, Objective& objective) :
+ComponentsDialog::ComponentsDialog(const Glib::RefPtr<Gtk::Window>& parent, Objective& objective) :
 	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), parent),
 	_objective(objective),
 	_componentList(gtk_list_store_new(2, G_TYPE_INT, G_TYPE_STRING)),

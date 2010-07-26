@@ -106,10 +106,10 @@ std::string EntityChooser::ChooseEntity(const std::string& preSelectedEntity)
 {
 	gtkutil::Dialog dlg(_("Select Entity"), GlobalMainFrame().getTopLevelWindow());
 
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 
 	gtk_window_set_default_size(
-		GTK_WINDOW(dlg.getWindow()), gint(rect.width/2), gint(2*rect.height/3)
+		GTK_WINDOW(dlg.getWindow()), static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3)
 	);
 	
 	// Instantiate a new chooser class

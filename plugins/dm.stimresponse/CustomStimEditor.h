@@ -50,13 +50,11 @@ class CustomStimEditor
 	
 	// The entity we're working on
 	SREntityPtr _entity;
-	
-	GtkWidget* _parentWindow;
 
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	CustomStimEditor(GtkWidget* parentWindow, StimTypes& stimTypes);
+	CustomStimEditor(StimTypes& stimTypes);
 
 	operator GtkWidget*();
 	

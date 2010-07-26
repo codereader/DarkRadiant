@@ -19,10 +19,9 @@ namespace ui {
 
 /** greebo: Constructor creates all the widgets
  */
-CustomStimEditor::CustomStimEditor(GtkWidget* parentWindow, StimTypes& stimTypes) :
+CustomStimEditor::CustomStimEditor(StimTypes& stimTypes) :
 	_stimTypes(stimTypes),
-	_updatesDisabled(false),
-	_parentWindow(parentWindow)
+	_updatesDisabled(false)
 {
 	populatePage();
 	

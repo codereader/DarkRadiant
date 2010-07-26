@@ -569,7 +569,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 
 				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
 					msg,
-					ui::IDialog::MESSAGE_ASK, GTK_WINDOW(getWindow()));
+					ui::IDialog::MESSAGE_ASK, getRefPtr());
 
 				if (dialog->run() == ui::IDialog::RESULT_YES)
 				{
@@ -624,7 +624,7 @@ bool ReadableEditorDialog::save()
 			_("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.") + 
 			std::string("\n\n") + 
 			_("Please rename your XData definition, so that it is stored under a different filename."), 
-			GTK_WINDOW(getWindow())
+			getRefPtr()
 		);
 
 		_saveInProgress = false;
@@ -641,14 +641,14 @@ bool ReadableEditorDialog::save()
 		case XData::OpenFailed: 
 			gtkutil::errorDialog(
 				(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
-				GTK_WINDOW(getWindow())
+				getRefPtr()
 			);
 			_saveInProgress = false;
 			return false;
 		case XData::MergeFailed: 
 			gtkutil::errorDialog(
 				_("Merging failed, because the length of the definition to be overwritten could not be retrieved."),
-				GTK_WINDOW(getWindow())
+				getRefPtr()
 			);
 			_saveInProgress = false;
 			return false;
@@ -662,7 +662,7 @@ bool ReadableEditorDialog::save()
 	{
 		gtkutil::errorDialog(
 			(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
-			GTK_WINDOW(this->getWindow())
+			getRefPtr()
 		);
 	}
 
@@ -684,7 +684,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 				{
 					// Mod path not defined. Use base Path
 					storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-					gtkutil::errorDialog(_("Mod path not defined. Using Base path..."), GTK_WINDOW(getWindow()));
+					gtkutil::errorDialog(_("Mod path not defined. Using Base path..."), getRefPtr());
 				}
 				storagePath += XData::XDATA_DIR + _mapBasedFilename;
 				break;
@@ -698,12 +698,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
 						gtkutil::errorDialog(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), 
-							GTK_WINDOW(getWindow()));
+							getRefPtr());
 						storagePath += XData::XDATA_DIR + _mapBasedFilename;
 						break;
 					}
 
-					gtkutil::errorDialog(_("Mod Base path not defined. Using Mod path..."), GTK_WINDOW(getWindow()));
+					gtkutil::errorDialog(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
 				}
 				storagePath += XData::XDATA_DIR + _mapBasedFilename;
 				break;
@@ -716,12 +716,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::errorDialog(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), GTK_WINDOW(getWindow()));
+						gtkutil::errorDialog(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), getRefPtr());
 						storagePath += XData::XDATA_DIR + _mapBasedFilename;
 						break;
 					}
 					storagePath += XData::XDATA_DIR + _mapBasedFilename;
-					gtkutil::errorDialog(_("Mod Base path not defined. Using Mod path..."), GTK_WINDOW(getWindow()));
+					gtkutil::errorDialog(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
 					break;
 				}
 				storagePath += "/" + _mapBasedFilename;
@@ -822,7 +822,10 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 		updateGuiView();
 }
 
-void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& guiPath, const std::string& xDataName, const std::string& xDataPath)
+void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent, 
+										 const std::string& guiPath, 
+										 const std::string& xDataName, 
+										 const std::string& xDataPath)
 {
 	// If the name of an xData object is passed it will be rendered instead of the current
 	// xData object, to enable previewing of XData definitions induced by the XDataSelector.
@@ -845,7 +848,7 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
 				msg,
 				ui::IDialog::MESSAGE_ASK,
-				parent != NULL ? parent : GTK_WINDOW(getWindow())
+				parent ? parent : getRefPtr()
 			);
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
@@ -865,7 +868,7 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
 				msg,
 				ui::IDialog::MESSAGE_ASK,
-				parent != NULL ? parent : GTK_WINDOW(getWindow())
+				parent ? parent : getRefPtr()
 			);
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
@@ -921,7 +924,7 @@ void ReadableEditorDialog::updateGuiView(GtkWindow* parent, const std::string& g
 			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
 				msg,
 				ui::IDialog::MESSAGE_ASK,
-				parent != NULL ? parent : GTK_WINDOW(this->getWindow())
+				parent ? parent : getRefPtr()
 			);
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
@@ -1020,7 +1023,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		IDialogPtr popup = GlobalDialogManager().createMessageBox(
 			_("Import definition?"), 
 			(boost::format(_("The definition %s already exists. Should it be imported?")) % xdn).str(),
-			ui::IDialog::MESSAGE_ASK, GTK_WINDOW(getWindow())
+			ui::IDialog::MESSAGE_ASK, getRefPtr()
 		);
 		
 		std::string message = "";
@@ -1072,7 +1075,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 		popup = GlobalDialogManager().createMessageBox(
 			_("XData has been renamed."), 
 			message,
-			IDialog::MESSAGE_CONFIRM, GTK_WINDOW(getWindow())
+			IDialog::MESSAGE_CONFIRM, getRefPtr()
 		);
 		popup->run();
 	}
@@ -1376,7 +1379,7 @@ void ReadableEditorDialog::checkGuiLayout()
 	IDialogPtr dialog = GlobalDialogManager().createMessageBox(
 		_("Not a suitable Gui Definition!"), 
 		msg + "\n\n" + std::string(_("Start the Gui Browser?")),
-		IDialog::MESSAGE_ASK, GTK_WINDOW(getWindow()));
+		IDialog::MESSAGE_ASK, getRefPtr());
 
 	if (dialog->run() == ui::IDialog::RESULT_YES)
 	{
@@ -1411,7 +1414,7 @@ void ReadableEditorDialog::checkGuiLayout()
 
 			dialog = GlobalDialogManager().createMessageBox(_("Switching to default Gui..."),
 				_("You didn't choose a Gui. Using the default Gui now."), 
-				IDialog::MESSAGE_CONFIRM, GTK_WINDOW(getWindow()));
+				IDialog::MESSAGE_CONFIRM, getRefPtr());
 			dialog->run();
 			_runningGuiLayoutCheck = false;
 			return;
@@ -1429,7 +1432,7 @@ void ReadableEditorDialog::showXdImportSummary()
 	if (summary.empty())
 	{
 		gtkutil::errorDialog(_("No import summary available. An XData definition has to be imported first..."), 
-			GTK_WINDOW(getWindow()) );
+			getRefPtr() );
 		return;
 	}
 
@@ -1440,7 +1443,7 @@ void ReadableEditorDialog::showXdImportSummary()
 		sum += summary[n];
 	}
 
-	TextViewInfoDialog dialog(_("XData import summary"), sum, GTK_WINDOW(getWindow()));
+	TextViewInfoDialog dialog(_("XData import summary"), sum, getRefPtr());
 	dialog.show();
 }
 
@@ -1449,7 +1452,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
 	if (errors.empty())
 	{
-		gtkutil::errorDialog(_("No import summary available. Browse Gui Definitions first."), GTK_WINDOW(getWindow()) );
+		gtkutil::errorDialog(_("No import summary available. Browse Gui Definitions first."), getRefPtr() );
 		return;
 	}
 
@@ -1460,7 +1463,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 		summary += errors[n];
 	}
 
-	TextViewInfoDialog dialog(_("Gui import summary"), summary, GTK_WINDOW(getWindow()));
+	TextViewInfoDialog dialog(_("Gui import summary"), summary, getRefPtr());
 	dialog.show();
 }
 
@@ -1512,7 +1515,7 @@ void ReadableEditorDialog::onSave(GtkWidget* widget, ReadableEditorDialog* self)
 	}
 	else
 	{
-		gtkutil::errorDialog(_("Please specify an XData name first!"), GTK_WINDOW(self->getWindow()) );
+		gtkutil::errorDialog(_("Please specify an XData name first!"), self->getRefPtr());
 	}
 }
 
@@ -1532,7 +1535,7 @@ void ReadableEditorDialog::onSaveClose(GtkWidget* widget, ReadableEditorDialog* 
 		}
 		else
 		{
-			gtkutil::errorDialog(_("Please specify an XData name first!"), GTK_WINDOW(self->getWindow()) );
+			gtkutil::errorDialog(_("Please specify an XData name first!"), self->getRefPtr());
 		}
 	}
 }
@@ -1561,7 +1564,7 @@ void ReadableEditorDialog::onBrowseXd(GtkWidget* widget, ReadableEditorDialog* s
 
 			ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Import failed"),
 				msg,
-				ui::IDialog::MESSAGE_ASK, GTK_WINDOW(self->getWindow()));
+				ui::IDialog::MESSAGE_ASK, self->getRefPtr());
 
 			if (dialog->run() == ui::IDialog::RESULT_YES)
 			{
@@ -1734,7 +1737,7 @@ void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* sel
 		IDialogPtr dialog = GlobalDialogManager().createMessageBox(
 			_("Duplicated XData definitions"), 
 			_("There are no duplicated definitions!"), 
-			ui::IDialog::MESSAGE_CONFIRM, GTK_WINDOW(self->getWindow())
+			ui::IDialog::MESSAGE_CONFIRM, self->getRefPtr()
 		);
 
 		dialog->run();
@@ -1759,7 +1762,8 @@ void ReadableEditorDialog::onDupDef(GtkWidget* widget, ReadableEditorDialog* sel
 		out += occ;
 		out += ".\n\n";
 	}
-	TextViewInfoDialog dialog(_("Duplicated XData definitions"), out, GTK_WINDOW(self->getWindow()));
+
+	TextViewInfoDialog dialog(_("Duplicated XData definitions"), out, self->getRefPtr());
 	dialog.show();
 }
 

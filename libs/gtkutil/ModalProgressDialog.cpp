@@ -7,14 +7,14 @@
 namespace gtkutil {
 
 // Main constructor
-ModalProgressDialog::ModalProgressDialog(GtkWindow* parent, const std::string& title)
+ModalProgressDialog::ModalProgressDialog(const Glib::RefPtr<Gtk::Window>& parent, const std::string& title)
 : _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
   _label(gtk_label_new("")),
   _progressBar(gtk_progress_bar_new()),
   _aborted(false)
 {
   	// Window properties
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent->gobj());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), title.c_str());
 	gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);

@@ -42,7 +42,7 @@ SkinChooser::SkinChooser()
   _preview(GlobalUIManager().createModelPreview())
 {
 	// Set up window
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow()->gobj());
     gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_window_set_title(GTK_WINDOW(_widget), _(WINDOW_TITLE));
@@ -52,8 +52,8 @@ SkinChooser::SkinChooser()
 					 this);
 
 	// Set the default size of the window
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(_widget));
-	gint w = rect.width;
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
+	int w = rect.get_width();
 
 	// Main vbox
 	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);

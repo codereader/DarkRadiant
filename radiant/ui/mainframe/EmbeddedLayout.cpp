@@ -32,7 +32,7 @@ std::string EmbeddedLayout::getName() {
 void EmbeddedLayout::activate()
 {
 	// Get the toplevel window
-	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
+	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd();
@@ -66,8 +66,8 @@ void EmbeddedLayout::activate()
 	_horizPane = horizPane.getWidget();
     
 	// Retrieve the main container of the main window
-	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
-	gtk_container_add(GTK_CONTAINER(mainContainer), GTK_WIDGET(_horizPane));
+	Gtk::Widget* mainContainer = GlobalMainFrame().getMainContainer();
+	gtk_container_add(GTK_CONTAINER(mainContainer->gobj()), GTK_WIDGET(_horizPane));
 
 	// Set some default values for the width and height
 	gtk_paned_set_position(GTK_PANED(_horizPane), 500);
@@ -80,7 +80,7 @@ void EmbeddedLayout::activate()
 	// Attempt to restore this layout's state
 	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
 	
-	gtk_widget_show_all(mainContainer);
+	gtk_widget_show_all(mainContainer->gobj());
 
 	// This is needed to fix a weirdness when re-parenting the entity inspector
 	GlobalGroupDialog().showDialogWindow();
@@ -97,7 +97,7 @@ void EmbeddedLayout::activate()
 
 	// Create the texture window
 	GtkWidget* texWindow = gtkutil::FramedWidget(
-		GlobalTextureBrowser().constructWindow(GlobalMainFrame().getTopLevelWindow())
+		GlobalTextureBrowser().constructWindow(GTK_WINDOW(GlobalMainFrame().getTopLevelWindow()->gobj()))
 	);
 
 	// Add the Texture Browser page to the group dialog

@@ -27,11 +27,11 @@ FixupMapDialog::FixupMapDialog() :
 	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Set size of the window, default size is too narrow for path entries
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
 		GlobalMainFrame().getTopLevelWindow()
 	);
 
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), static_cast<gint>(rect.width*0.4f), -1);
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), static_cast<int>(rect.get_width()*0.4f), -1);
 
 	// Add the path entry
 	_pathEntry = addPathEntry(FIXUP_FILE_LABEL, false);

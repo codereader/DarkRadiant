@@ -42,7 +42,7 @@ namespace {
 	}
 }
 
-ConversationEditor::ConversationEditor(GtkWindow* parent, conversation::Conversation& conversation) :
+ConversationEditor::ConversationEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::Conversation& conversation) :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), parent),
 	_actorStore(gtk_list_store_new(2, 
 								   G_TYPE_INT,		// actor number
@@ -566,7 +566,7 @@ void ConversationEditor::onAddCommand(GtkWidget* w, ConversationEditor* self) {
 	conversation::ConversationCommandPtr command(new conversation::ConversationCommand);
 
 	// Construct a command editor (blocks on construction)
-	CommandEditor editor(GTK_WINDOW(self->getWindow()), *command, conv);
+	CommandEditor editor(self->getRefPtr(), *command, conv);
 
 	if (editor.getResult() == CommandEditor::RESULT_OK) {
 		// The user hit ok, insert the command, find the first free index
@@ -594,7 +594,7 @@ void ConversationEditor::onEditCommand(GtkWidget* w, ConversationEditor* self) {
 		conversation::ConversationCommandPtr command = i->second;
 
 		// Construct a command editor (blocks on construction)
-		CommandEditor editor(GTK_WINDOW(self->getWindow()), *command, self->_conversation);
+		CommandEditor editor(self->getRefPtr(), *command, self->_conversation);
 
 		if (editor.getResult() == CommandEditor::RESULT_OK) {
 			self->updateWidgets();

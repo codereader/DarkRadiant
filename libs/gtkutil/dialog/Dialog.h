@@ -15,6 +15,19 @@ class DialogManager;
 class DialogElement;
 typedef boost::shared_ptr<DialogElement> DialogElementPtr;
 
+/**
+ * greebo: A customisable Dialog window featuring Ok and Cancel buttons.
+ *
+ * Dialog elements can be added to the window using the addLabel(), 
+ * addButton(), add*() methods etc., which are returning a unique Handle.
+ * 
+ * Use the getElementValue() and setElementValue() methods to 
+ * get and set the values of these dialog elements.
+ *
+ * Once the run() method is invoked, the Dialog enters a gtk main loop, 
+ * showing the dialog and blocking the application. Use the result
+ * returned by run() to see which action the user has taken.
+ */
 class Dialog :
 	public ui::IDialog,
 	public BlockingTransientWindow
@@ -41,7 +54,7 @@ protected:
 	Handle _highestUsedHandle;
 
 public:
-	Dialog(const std::string& title, GtkWindow* parent = NULL);
+	Dialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
 
 	virtual void setTitle(const std::string& title);
 

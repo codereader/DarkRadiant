@@ -23,7 +23,7 @@ namespace
 }
 
 XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditorDialog* editorDialog) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GTK_WINDOW(editorDialog->getWindow())),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), editorDialog->getRefPtr()),
 	_store(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING,	G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
 	_okButton(NULL),
 	_files(files),
@@ -138,7 +138,7 @@ void XDataSelector::onSelectionChanged(GtkTreeSelection* treeselection, XDataSel
 	if (anythingSelected && !gtkutil::TreeModel::getSelectedBoolean(treeselection, IS_FOLDER_COLUMN))
 	{
 		self->_selection = gtkutil::TreeModel::getSelectedString(treeselection, FULLNAME_COLUMN);
-		self->_editorDialog->updateGuiView(GTK_WINDOW(self->getWindow()), "", self->_selection);
+		self->_editorDialog->updateGuiView(self->getRefPtr(), "", self->_selection);
 
 		gtk_widget_set_sensitive(self->_okButton, TRUE);
 	}

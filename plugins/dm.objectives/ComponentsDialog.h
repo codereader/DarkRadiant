@@ -114,7 +114,7 @@ public:
 	 * @param objective
 	 * The Objective object for which conditions should be displayed and edited.
 	 */
-	ComponentsDialog(GtkWindow* parent, Objective& objective);
+	ComponentsDialog(const Glib::RefPtr<Gtk::Window>& parent, Objective& objective);
 
 	// Destructor performs cleanup
 	~ComponentsDialog();

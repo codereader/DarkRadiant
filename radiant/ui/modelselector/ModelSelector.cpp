@@ -68,13 +68,14 @@ ModelSelector::ModelSelector()
 	);
 
 	// Window properties
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
+	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow()->gobj());
 	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
 	gtk_window_set_title(GTK_WINDOW(_widget), _(MODELSELECTOR_TITLE));
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
 	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
 
-	_position.connect(GTK_WINDOW(_widget));
+	Gtk::Window* window = Glib::wrap(GTK_WINDOW(_widget), true);
+	_position.connect(window);
 
 	// Size the model preview widget
 	float previewHeightFactor = GlobalRegistry().getFloat(

@@ -19,10 +19,10 @@ private:
 	GtkTextBuffer* _bfr;
 
 public:
-	TextViewInfoDialog(const std::string& title, const std::string& text, GtkWindow* parent = NULL, guint win_width = 650, guint win_height = 500) :
-		gtkutil::BlockingTransientWindow( title,
-			(parent == 0) ? GlobalMainFrame().getTopLevelWindow() : parent
-		)
+	TextViewInfoDialog(const std::string& title, const std::string& text, 
+					   const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(), 
+					   guint win_width = 650, guint win_height = 500) :
+		gtkutil::BlockingTransientWindow(title, parent ? parent : GlobalMainFrame().getTopLevelWindow())
 	{
 		// Set the default border width in accordance to the HIG
 		gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);

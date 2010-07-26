@@ -170,21 +170,23 @@ void AutoMapSaver::checkSave() {
 	}
 
 	// greebo: Check if we have a valid main window to grab the pointer
-	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
-	if (mainWindow == NULL) {
+	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
+	if (!mainWindow) {
 		return;
 	}
 
 	// Get the GdkWindow from the widget
-	GdkWindow* mainGDKWindow = GTK_WIDGET(mainWindow)->window;
-	if (!GDK_IS_WINDOW(mainGDKWindow)) {
+	Glib::RefPtr<Gdk::Window> mainGDKWindow = mainWindow->get_window();
+	if (!GDK_IS_WINDOW(mainGDKWindow->gobj())) {
 		// Window might not be "shown" yet
 		return;
 	}
 
 	// Check if the user is currently pressing a mouse button
-	GdkModifierType mask;
-	gdk_window_get_pointer(mainGDKWindow, 0, 0, &mask);
+	Gdk::ModifierType mask;
+	int x = 0;
+	int y = 0;
+	mainGDKWindow->get_pointer(x, y, mask);
 	
 	const unsigned int anyButton = (
 		GDK_BUTTON1_MASK | GDK_BUTTON2_MASK |

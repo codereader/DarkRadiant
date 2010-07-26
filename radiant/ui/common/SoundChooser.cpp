@@ -47,8 +47,8 @@ SoundChooser::SoundChooser() :
 	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
     
 	// Set the default size of the window
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(getWindow()));
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), rect.width / 2, rect.height / 2);
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(getRefPtr());
+	gtk_window_set_default_size(GTK_WINDOW(getWindow()), rect.get_width() / 2, rect.get_height() / 2);
 
 	// Main vbox
     GtkWidget* vbx = gtk_vbox_new(FALSE, 12);

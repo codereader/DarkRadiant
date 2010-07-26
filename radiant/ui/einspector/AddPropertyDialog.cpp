@@ -55,7 +55,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
 
 	if (!GTK_IS_WINDOW(parent) || !GTK_WIDGET_VISIBLE(parent))
 	{
-		parent = GlobalMainFrame().getTopLevelWindow();
+		parent = GlobalMainFrame().getTopLevelWindow()->gobj();
 	}
 	
 	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);
@@ -64,8 +64,9 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
     gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
     
     // Set size of dialog
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(parent);
-    gtk_window_set_default_size(GTK_WINDOW(_widget), static_cast<gint>(rect.width/2), static_cast<gint>(rect.height*2/3));
+	Gtk::Window* parentWin = Glib::wrap(parent, true);
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(*parentWin);
+	gtk_window_set_default_size(GTK_WINDOW(_widget), static_cast<gint>(rect.get_width()/2), static_cast<gint>(rect.get_height()*2/3));
     
     // Signals
     g_signal_connect(G_OBJECT(_widget), "delete-event", 

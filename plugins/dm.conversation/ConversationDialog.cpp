@@ -70,7 +70,7 @@ ConversationDialog::ConversationDialog() :
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 	
-	_windowPosition.connect(GTK_WINDOW(getWindow()));
+	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 
 	// Show the dialog, this enters the gtk main loop
@@ -426,7 +426,7 @@ void ConversationDialog::onEditConversation(GtkWidget*, ConversationDialog* self
 	conversation::Conversation& conv = self->_curEntity->second->getConversation(index);
 
 	// Display the edit dialog, blocks on construction
-	ConversationEditor editor(GTK_WINDOW(self->getWindow()), conv);
+	ConversationEditor editor(self->getRefPtr(), conv);
 
 	// Repopulate the conversation list
 	self->refreshConversationList();

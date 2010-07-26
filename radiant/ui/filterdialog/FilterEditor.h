@@ -47,7 +47,7 @@ private:
 
 public:
 	// Constructor, pass the Filter object to be edited
-	FilterEditor(Filter& filter, GtkWindow* parent, bool viewOnly);
+	FilterEditor(Filter& filter, const Glib::RefPtr<Gtk::Window>& parent, bool viewOnly);
 
 	// Returns the dialog result (OK, CANCEL)
 	Result getResult();

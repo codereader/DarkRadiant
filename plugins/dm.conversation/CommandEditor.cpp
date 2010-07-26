@@ -19,7 +19,7 @@ namespace ui {
 		const char* const WINDOW_TITLE = N_("Edit Command");
 	}
 
-CommandEditor::CommandEditor(GtkWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv) :
+CommandEditor::CommandEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::ConversationCommand& command, conversation::Conversation conv) :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), parent),
 	_conversation(conv),
 	_command(command), // copy the conversation command to a local object

@@ -103,10 +103,10 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 
 	for (int i = 0; i < gtkutil::MultiMonitor::getNumMonitors(); ++i)
 	{
-		GdkRectangle rect = gtkutil::MultiMonitor::getMonitor(i);
+		Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitor(i);
 
 		list.push_back(
-			(boost::format("Monitor %d (%dx%d)") % i % rect.width % rect.height).str()
+			(boost::format("Monitor %d (%dx%d)") % i % rect.get_width() % rect.get_height()).str()
 		);
 	}
 
@@ -251,14 +251,14 @@ void MainFrame::destroy()
 	_window.reset(); // destroy the window
 }
 
-GtkWindow* MainFrame::getTopLevelWindow()
+const Glib::RefPtr<Gtk::Window>& MainFrame::getTopLevelWindow()
 {
-	return _window->gobj();
+	return _window;
 }
 
-GtkWidget* MainFrame::getMainContainer()
+Gtk::Widget* MainFrame::getMainContainer()
 {
-	return GTK_WIDGET(_mainContainer->gobj());
+	return _mainContainer;
 }
 
 void MainFrame::createTopLevelWindow()
@@ -297,8 +297,8 @@ void MainFrame::createTopLevelWindow()
 	_window->signal_delete_event().connect(sigc::mem_fun(*this, &MainFrame::onDeleteEvent));
 
 	// Notify the event manager
-	GlobalEventManager().connect(GTK_OBJECT(getTopLevelWindow()));
-    GlobalEventManager().connectAccelGroup(getTopLevelWindow());
+	GlobalEventManager().connect(GTK_OBJECT(getTopLevelWindow()->gobj()));
+	GlobalEventManager().connectAccelGroup(getTopLevelWindow()->gobj());
 }
 
 void MainFrame::restoreWindowPosition()
@@ -318,7 +318,7 @@ void MainFrame::restoreWindowPosition()
 	if (startMonitor < gtkutil::MultiMonitor::getNumMonitors())
 	{
 		// Yes, connect the position tracker, this overrides the existing setting.
-  		_windowPosition.connect(_window->gobj());
+		_windowPosition.connect(static_cast<Gtk::Window*>(_window->get_toplevel()));
   		// Load the correct coordinates into the position tracker
 		_windowPosition.fitToScreen(gtkutil::MultiMonitor::getMonitor(startMonitor), 0.8f, 0.8f);
 		// Apply the position
@@ -331,7 +331,7 @@ void MainFrame::restoreWindowPosition()
 	}
 	else
 	{
-		_windowPosition.connect(_window->gobj());
+		_windowPosition.connect(static_cast<Gtk::Window*>(_window->get_toplevel()));
 		_windowPosition.applyPosition();
 	}
 }
@@ -345,11 +345,11 @@ Gtk::Widget* MainFrame::createMenuBar()
 	return Glib::wrap(GlobalUIManager().getMenuManager().get("main"));
 }
 
-GtkToolbar* MainFrame::getToolbar(IMainFrame::Toolbar type)
+Gtk::Toolbar* MainFrame::getToolbar(IMainFrame::Toolbar type)
 {
 	ToolbarMap::const_iterator found = _toolbars.find(type);
 
-	return (found != _toolbars.end()) ? found->second->gobj() : NULL;
+	return (found != _toolbars.end()) ? found->second : NULL;
 }
 
 void MainFrame::create()

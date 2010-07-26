@@ -80,28 +80,6 @@ private:
 		return false;
 	}
 
-	void construct(const std::string& title, Gtk::Window* parent)
-	{
-		// Set up the window
-		set_title(title);
-
-		if (parent != NULL)
-		{
-			set_transient_for(*parent);
-		}
-
-		set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-
-#ifdef POSIX
-		set_skip_taskbar_hint(true);
-#endif
-	    set_skip_pager_hint(true);
-	    
-	    // Connect up the destroy signal (close box)
-		signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
-		signal_expose_event().connect(sigc::mem_fun(*this, &TransientWindow::_onExpose));	
-	}
-	
 public:
 	
 	/**
@@ -118,40 +96,37 @@ public:
 	 * only hide the window, rather than deleting it. In this case the
 	 * _preHide() and _postHide() methods will be triggered, rather than the
 	 * _preDestroy() and _postDestroy() equivalents. The default value is false.
-	 *
-	 * DEPRECATED: Use the gtkmm-compliant constructor instead.
 	 */
 	TransientWindow(const std::string& title, 
-					GtkWindow* parent, 
+					const Glib::RefPtr<Gtk::Window>& parent, 
 					bool hideOnDelete = false)
 	: Gtk::Window(Gtk::WINDOW_TOPLEVEL),
 	  _hideOnDelete(hideOnDelete)
 	{
-		construct(title, parent != NULL ? static_cast<Gtk::Window*>(Glib::wrap(parent)) : NULL);
-	}
+		// Set up the window
+		set_title(title);
 
-	/**
-	 * Construct a TransientWindow with the specified title and parent window.
-	 * 
-	 * @param title
-	 * The displayed title for the window.
-	 * 
-	 * @param parent
-	 * The parent window for which this window should be a transient.
-	 * 
-	 * @param hideOnDelete
-	 * Set to true if the delete-event triggered by the close button should
-	 * only hide the window, rather than deleting it. In this case the
-	 * _preHide() and _postHide() methods will be triggered, rather than the
-	 * _preDestroy() and _postDestroy() equivalents. The default value is false.
-	 */
-	TransientWindow(const std::string& title, 
-					Gtk::Window* parent, 
-					bool hideOnDelete = false)
-	: Gtk::Window(Gtk::WINDOW_TOPLEVEL),
-	  _hideOnDelete(hideOnDelete)
-	{
-		construct(title, parent);
+		if (parent)
+		{
+			Gtk::Container* toplevel = parent->get_toplevel();
+
+			if (toplevel != NULL && toplevel->is_toplevel() &&
+				dynamic_cast<Gtk::Window*>(toplevel) != NULL)
+			{
+				set_transient_for(*static_cast<Gtk::Window*>(toplevel));
+			}
+		}
+
+		set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
+
+#ifdef POSIX
+		set_skip_taskbar_hint(true);
+#endif
+	    set_skip_pager_hint(true);
+	    
+	    // Connect up the destroy signal (close box)
+		signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
+		signal_expose_event().connect(sigc::mem_fun(*this, &TransientWindow::_onExpose));
 	}
 	
 	virtual ~TransientWindow()
@@ -166,6 +141,16 @@ public:
 	GtkWidget* getWindow()
 	{ 
 		return GTK_WIDGET(gobj()); 
+	}
+
+	/**
+	 * Create a new Glib::RefPtr<> from this class. There is no shared_from_this() equivalent,
+	 * but I had to use this hack several times to get a smart pointer from an instance to
+	 * pass it as parent window.
+	 */
+	Glib::RefPtr<Gtk::Window> getRefPtr()
+	{
+		return Glib::RefPtr<Gtk::Window>(Glib::wrap(gobj(), true)); // copy reference
 	}
 	
 	/**
@@ -237,7 +222,7 @@ public:
 
 	bool isFullscreen()
 	{
-		int val = reinterpret_cast<intptr_t>(get_data("dr-fullscreen"));
+		intptr_t val = reinterpret_cast<intptr_t>(get_data("dr-fullscreen"));
 		
 		return val != 0;
 	}

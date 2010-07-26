@@ -290,7 +290,7 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 	workingCopy->name = _("NewFilter");
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(*workingCopy, GTK_WINDOW(self->getWindow()), false);
+	FilterEditor editor(*workingCopy, self->getRefPtr(), false);
 
 	if (editor.getResult() != FilterEditor::RESULT_OK) {
 		// User hit cancel, we're done
@@ -336,7 +336,7 @@ void FilterDialog::onViewFilter(GtkWidget* w, FilterDialog* self) {
 	Filter workingCopy(*(f->second));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()), true);
+	FilterEditor editor(workingCopy, self->getRefPtr(), true);
 }
 
 void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
@@ -351,7 +351,7 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 	Filter workingCopy(*(f->second));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()), false);
+	FilterEditor editor(workingCopy, self->getRefPtr(), false);
 
 	if (editor.getResult() != FilterEditor::RESULT_OK) {
 		// User hit cancel, we're done

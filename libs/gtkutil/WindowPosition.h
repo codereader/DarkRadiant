@@ -1,7 +1,7 @@
 #ifndef WINDOWPOSITION_H_
 #define WINDOWPOSITION_H_
 
-#include "gtk/gtkwindow.h"
+#include "gtkmm/window.h"
 #include "math/Vector2.h"
 #include <string>
 
@@ -14,29 +14,31 @@
  * 
  * This is used by the XYWnd classes to save/restore the window state upon restart.
  */
-namespace gtkutil {
+namespace gtkutil
+{
 
-	namespace {
-		typedef BasicVector2<int> PositionVector;
-		typedef BasicVector2<int> SizeVector;
-	}
+class WindowPosition
+{
+public:
+	typedef BasicVector2<int> Position;
+	typedef BasicVector2<int> Size;
 
-class WindowPosition {
+private:
 	// The size and position of this object
-	PositionVector _position;
-	SizeVector _size;
+	Position _position;
+	Size _size;
 	
 	// The connected window
-	GtkWindow* _window;
+	Gtk::Window* _window;
 
 public:
 	WindowPosition();
 
 	// Connect the passed window to this object
-	void connect(GtkWindow* window);
+	void connect(Gtk::Window* window);
 
-	const PositionVector& getPosition() const;
-	const SizeVector& getSize() const;
+	const Position& getPosition() const;
+	const Size& getSize() const;
 
 	void setPosition(int x, int y);
 	void setSize(int width, int height);
@@ -65,13 +67,12 @@ public:
 	 */
 	void fitToScreen(float xfraction = 1, float yfraction = 1);
 
-	// Adjusts the position/dimensions to fit on the given screen (GdkRectangle)
-	void fitToScreen(GdkRectangle screen, float xfraction = 1, float yfraction = 1);
+	// Adjusts the position/dimensions to fit on the given screen (Gdk::Rectangle)
+	void fitToScreen(Gdk::Rectangle screen, float xfraction = 1, float yfraction = 1);
 	
 private:
-
-	// The static GTK callback that gets invoked on window size/position changes
-	static gboolean onConfigure(GtkWidget* widget, GdkEventConfigure *event, WindowPosition* self);
+	// The GTKmm callback that gets invoked on window size/position changes
+	bool onConfigure(GdkEventConfigure* ev);
 
 }; // class WindowPosition
 

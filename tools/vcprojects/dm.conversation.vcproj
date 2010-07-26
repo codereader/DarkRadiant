@@ -76,11 +76,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib"
+				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)&quot;;&quot;$(SolutionDir)\..\..\w32deps/gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps/boost\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)&quot;;&quot;$(SolutionDir)\..\..\w32deps/gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps/boost\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtkmm\lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -171,7 +171,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib"
+				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib"
 				ShowProgress="0"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
@@ -266,11 +266,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib"
+				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)&quot;;&quot;$(SolutionDir)\..\..\w32deps/gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps/boost\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)&quot;;&quot;$(SolutionDir)\..\..\w32deps/gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps/boost\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtkmm\lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -364,7 +364,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib"
+				AdditionalDependencies="gtkutillib.lib xmlutillib.lib libxml2.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"

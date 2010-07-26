@@ -30,7 +30,7 @@ namespace {
 }
 
 // Main constructor
-MissionLogicDialog::MissionLogicDialog(GtkWindow* parent, ObjectiveEntity& objectiveEnt) :
+MissionLogicDialog::MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, ObjectiveEntity& objectiveEnt) :
 	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), parent),
 	_objectiveEnt(objectiveEnt)
 {

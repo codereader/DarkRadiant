@@ -39,7 +39,7 @@ class XYWndManager :
 	
 	unsigned int _defaultBlockSize;
 	
-	GtkWindow* _globalParentWindow;
+	Glib::RefPtr<Gtk::Window> _globalParentWindow;
 	
 private:
 	
@@ -148,7 +148,7 @@ public:
 	void notifyXYWndDestroy(int index);
 	
 	// Determines the global parent the xyviews are children of
-	void setGlobalParentWindow(GtkWindow* globalParentWindow);
+	void setGlobalParentWindow(const Glib::RefPtr<Gtk::Window>& globalParentWindow);
 	
 	// RegisterableModule implementation
 	const std::string& getName() const;

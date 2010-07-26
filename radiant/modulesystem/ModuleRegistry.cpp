@@ -1,5 +1,7 @@
 #include "ModuleRegistry.h"
 
+#include "ui/splash/Splash.h"
+
 #include "i18n.h"
 #include "itextstream.h"
 #include <stdexcept>
@@ -8,7 +10,6 @@
 #include "ModuleLoader.h"
 
 #include <boost/format.hpp>
-#include "ui/splash/Splash.h"
 
 namespace module {
 

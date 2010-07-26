@@ -103,7 +103,7 @@ class XYWnd :
 	
 	int _dragZoom;
 	
-	GtkWindow* _parent;
+	Glib::RefPtr<Gtk::Window> _parent;
 
 	// The handle returned from the Map valid callback signal
 	std::size_t _validCallbackHandle;
@@ -118,8 +118,8 @@ public:
 	void queueDraw();	
 	GtkWidget* getWidget();
 	
-	void setParent(GtkWindow* parent);
-	GtkWindow* getParent() const;
+	void setParent(const Glib::RefPtr<Gtk::Window>& parent);
+	const Glib::RefPtr<Gtk::Window>& getParent() const;
 
 	// Capture and release the selected shader
 	static void captureStates();

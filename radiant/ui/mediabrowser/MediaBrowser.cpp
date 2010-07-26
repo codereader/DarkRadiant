@@ -401,7 +401,7 @@ void MediaBrowser::_onShowShaderDefinition()
 	view.setShader(shaderName);
 
 	GtkWidget* dialog = gtk_dialog_new_with_buttons(_("View Shader Definition"), 
-		GlobalMainFrame().getTopLevelWindow(),
+		GlobalMainFrame().getTopLevelWindow()->gobj(),
         GTK_DIALOG_DESTROY_WITH_PARENT, 
         GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
         NULL);
@@ -410,9 +410,9 @@ void MediaBrowser::_onShowShaderDefinition()
 
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), view.getWidget());
 
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 	gtk_window_set_default_size(
-		GTK_WINDOW(dialog), gint(rect.width/2), gint(2*rect.height/3)
+		GTK_WINDOW(dialog), static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3)
 	);
 
 	gtk_widget_show_all(dialog);

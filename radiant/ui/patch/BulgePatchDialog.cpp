@@ -19,10 +19,10 @@ namespace ui {
 BulgePatchDialog::BulgePatchDialog() :
 	_dialog(NULL)
 {
-	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
+	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create the new dialog window with OK and CANCEL button    
-  	_dialog = gtk_dialog_new_with_buttons(_(WINDOW_TITLE), parent,
+  	_dialog = gtk_dialog_new_with_buttons(_(WINDOW_TITLE), parent->gobj(),
                                          GTK_DIALOG_DESTROY_WITH_PARENT, 
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
                                          GTK_STOCK_OK, GTK_RESPONSE_OK,

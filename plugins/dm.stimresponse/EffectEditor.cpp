@@ -29,7 +29,7 @@ namespace ui {
 		};
 	}
 
-EffectEditor::EffectEditor(GtkWindow* parent, 
+EffectEditor::EffectEditor(const Glib::RefPtr<Gtk::Window>& parent, 
 						   StimResponse& response, 
 						   const unsigned int effectIndex,
 						   StimTypes& stimTypes,

@@ -122,10 +122,10 @@ void LayerControl::onDelete(GtkWidget* button, LayerControl* self)
 	std::string msg = _("Do you really want to delete this layer?");
 	msg += "\n<b>" + scene::getLayerSystem().getLayerName(self->_layerID) + "</b>";
 
-	GtkWindow* topLevel = GTK_WINDOW(gtk_widget_get_toplevel(button));
-
+	Gtk::Window* topLevel = Glib::wrap(GTK_WINDOW(gtk_widget_get_toplevel(button)), true);
+	
 	IDialogPtr box = GlobalDialogManager().createMessageBox(
-		_("Confirm Layer Deletion"), msg, IDialog::MESSAGE_ASK, topLevel
+		_("Confirm Layer Deletion"), msg, IDialog::MESSAGE_ASK, Glib::RefPtr<Gtk::Window>(topLevel)
 	);
 
 	if (box->run() == IDialog::RESULT_YES)
@@ -139,7 +139,7 @@ void LayerControl::onDelete(GtkWidget* button, LayerControl* self)
 
 void LayerControl::onRename(GtkWidget* button, LayerControl* self) {
 
-	GtkWidget* topLevel = gtk_widget_get_toplevel(self->_widgets[WIDGET_TOGGLE]);
+	Gtk::Window* topLevel = Glib::wrap(GTK_WINDOW(gtk_widget_get_toplevel(self->_widgets[WIDGET_TOGGLE])), true);
 
 	while (true) {
 		// Query the name of the new layer from the user
@@ -150,7 +150,7 @@ void LayerControl::onRename(GtkWidget* button, LayerControl* self) {
 				_("Rename Layer"), 
 				_("Enter new Layer Name"), 
 				scene::getLayerSystem().getLayerName(self->_layerID),
-				GTK_WINDOW(topLevel)
+				Glib::RefPtr<Gtk::Window>(topLevel)
 			);
 		}
 		catch (gtkutil::EntryAbortedException e) {
@@ -167,7 +167,7 @@ void LayerControl::onRename(GtkWidget* button, LayerControl* self) {
 		}
 		else {
 			// Wrong name, let the user try again
-			gtkutil::errorDialog(_("Could not rename layer, please try again."), GTK_WINDOW(topLevel));
+			gtkutil::errorDialog(_("Could not rename layer, please try again."), Glib::RefPtr<Gtk::Window>(topLevel));
 			continue; 
 		}
 	}

@@ -3,11 +3,10 @@
 #include "iregistry.h"
 
 #include "i18n.h"
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkbutton.h>
-#include <gtk/gtkimage.h>
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkentry.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/image.h>
+#include <gtkmm/window.h>
 
 #include "FramedWidget.h"
 #include "IConv.h"
@@ -21,35 +20,35 @@ namespace gtkutil
 PathEntry::PathEntry(bool foldersOnly)
 {
 	// path entry
-	_entry = gtk_entry_new();
-	gtk_entry_set_has_frame(GTK_ENTRY(_entry), FALSE);
+	_entry = Gtk::manage(new Gtk::Entry);
+	_entry->set_has_frame(false);
 	
 	// browse button
-	GtkButton* button = GTK_BUTTON(gtk_button_new());
+	_button = Gtk::manage(new Gtk::Button);
 
 	std::string fullFileName = GlobalRegistry().get(RKEY_BITMAPS_PATH) + "ellipsis.png";
 
-	GtkWidget* image = gtk_image_new_from_pixbuf(
-		gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
-	);
+	Gtk::Widget* image = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_file(fullFileName)));
 
-	gtk_container_add(GTK_CONTAINER(button), image);
-
-	// Pack entry + button into an hbox
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 0);
-
-	gtk_box_pack_start(GTK_BOX(hbox), _entry, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), GTK_WIDGET(button), FALSE, FALSE, 0);
-
-	_topLevel = FramedWidget(hbox);
+	_button->add(*image);
 
 	// Connect the button
-	g_signal_connect(
-		G_OBJECT(button), 
-		"clicked", 
-		G_CALLBACK(foldersOnly ? onBrowseFolders : onBrowseFiles), 
-		this
-	);
+	if (foldersOnly)
+	{
+		_button->signal_clicked().connect(sigc::mem_fun(*this, &PathEntry::onBrowseFolders));
+	}
+	else
+	{
+		_button->signal_clicked().connect(sigc::mem_fun(*this, &PathEntry::onBrowseFiles));
+	}
+
+	// Pack entry + button into an hbox
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
+
+	hbox->pack_start(*_entry, true, true, 0);
+	hbox->pack_end(*_button, false, false, 0);
+
+	_topLevel = Glib::RefPtr<FramedWidgetmm>(new FramedWidgetmm(*hbox));
 }
 
 void PathEntry::setValue(const std::string& val)
@@ -57,48 +56,59 @@ void PathEntry::setValue(const std::string& val)
 	// Convert the value to UTF8 before writing it to the entry box
 	std::string utf8Val = gtkutil::IConv::filenameToUTF8(val);
 
-	gtk_entry_set_text(GTK_ENTRY(_entry), utf8Val.c_str());
+	_entry->set_text(utf8Val);
 }
 
 std::string PathEntry::getValue() const
 {
-	return gtk_entry_get_text(GTK_ENTRY(_entry));
+	return _entry->get_text();
 }
 
 GtkWidget* PathEntry::_getWidget() const
 {
-	return _topLevel;
+	return GTK_WIDGET(_topLevel->gobj());
 }
 
-GtkWidget* PathEntry::getEntryWidget() const
+Gtk::Entry& PathEntry::getEntryWidget()
 {
-	return _entry;
+	return *_entry;
 }
 
-void PathEntry::onBrowseFiles(GtkWidget* button, PathEntry* self)
+void PathEntry::onBrowseFiles()
 {
-	FileChooser fileChooser(gtk_widget_get_toplevel(button), _("Choose File"), true, false);
+	Gtk::Container* toplevel = _button->get_toplevel();
 
-	fileChooser.setCurrentPath(self->getValue());
+	if (!toplevel->is_toplevel()) return; // Warning?
+
+	// Get a new reference and create a shared pointer from the toplevel
+	Glib::RefPtr<Gtk::Window> window(Glib::wrap(GTK_WINDOW(toplevel->gobj()), true));
+
+	FileChooser fileChooser(window, _("Choose File"), true, false);
+
+	fileChooser.setCurrentPath(getValue());
 
 	std::string filename = fileChooser.display();
 
-	if (GTK_IS_WINDOW(gtk_widget_get_toplevel(button)))
-	{
-		gtk_window_present(GTK_WINDOW(gtk_widget_get_toplevel(button)));
-	}
+	window->present();
 
 	if (!filename.empty())
 	{
-		self->setValue(gtkutil::IConv::filenameToUTF8(filename));
+		setValue(gtkutil::IConv::filenameToUTF8(filename));
 	}
 }
 
-void PathEntry::onBrowseFolders(GtkWidget* button, PathEntry* self)
+void PathEntry::onBrowseFolders()
 {
-	FileChooser fileChooser(gtk_widget_get_toplevel(button), _("Choose Directory"), true, true);
+	Gtk::Container* toplevel = _button->get_toplevel();
 
-	std::string curEntry = self->getValue();
+	if (!toplevel->is_toplevel()) return; // Warning?
+
+	// Get a new reference and create a shared pointer from the toplevel
+	Glib::RefPtr<Gtk::Window> window(Glib::wrap(GTK_WINDOW(toplevel->gobj()), true));
+
+	FileChooser fileChooser(window, _("Choose Directory"), true, true);
+
+	std::string curEntry = getValue();
 
 	if (!path_is_absolute(curEntry.c_str())) 
 	{
@@ -109,14 +119,11 @@ void PathEntry::onBrowseFolders(GtkWidget* button, PathEntry* self)
 
 	std::string filename = fileChooser.display();
 
-	if (GTK_IS_WINDOW(gtk_widget_get_toplevel(button)))
-	{
-		gtk_window_present(GTK_WINDOW(gtk_widget_get_toplevel(button)));
-	}
+	window->present();
 
 	if (!filename.empty())
 	{
-		self->setValue(gtkutil::IConv::filenameToUTF8(filename));
+		setValue(gtkutil::IConv::filenameToUTF8(filename));
 	}
 }
 

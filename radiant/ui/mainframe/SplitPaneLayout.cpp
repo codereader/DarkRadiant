@@ -54,7 +54,7 @@ void SplitPaneLayout::constructLayout()
 
 	_cameraPosition = getCameraPositionFromRegistry();
 
-	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
+	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd();
@@ -68,8 +68,8 @@ void SplitPaneLayout::constructLayout()
 	_splitPane.horizPane.setSecondChild(_splitPane.vertPane2.getWidget(), true);
 
 	// Retrieve the main container of the main window
-	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
-	gtk_container_add(GTK_CONTAINER(mainContainer), _splitPane.horizPane.getWidget());
+	Gtk::Widget* mainContainer = GlobalMainFrame().getMainContainer();
+	gtk_container_add(GTK_CONTAINER(mainContainer->gobj()), _splitPane.horizPane.getWidget());
 
 	gtk_paned_set_position(GTK_PANED(_splitPane.horizPane.getWidget()), 200);
 	gtk_paned_set_position(GTK_PANED(_splitPane.vertPane1.getWidget()), 200);
@@ -87,7 +87,7 @@ void SplitPaneLayout::constructLayout()
 	
     {      
 		GtkWidget* textureBrowser = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(parent)
+			GlobalTextureBrowser().constructWindow(parent->gobj())
 		);
 
 		// Add the Media Browser page
@@ -108,7 +108,7 @@ void SplitPaneLayout::constructLayout()
 
 	GlobalGroupDialog().hideDialogWindow();
 
-	gtk_widget_show_all(mainContainer);
+	gtk_widget_show_all(mainContainer->gobj());
 }
 
 void SplitPaneLayout::constructMenus()

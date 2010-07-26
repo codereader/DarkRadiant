@@ -1,6 +1,7 @@
 #ifndef RESPONSEEDITOR_H_
 #define RESPONSEEDITOR_H_
 
+#include <gtkmm/window.h>
 #include "ClassEditor.h"
 
 namespace ui {
@@ -37,12 +38,12 @@ class ResponseEditor :
 		GtkWidget* randomEffectsEntry;
 	} _propertyWidgets;
 	
-	GtkWidget* _parent;
+	Glib::RefPtr<Gtk::Window> _parent;
 	
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	ResponseEditor(GtkWidget* parent, StimTypes& stimTypes);
+	ResponseEditor(const Glib::RefPtr<Gtk::Window>& parent, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (updates the treeviews)
 	 */

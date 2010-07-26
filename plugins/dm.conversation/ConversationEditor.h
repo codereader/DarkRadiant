@@ -35,7 +35,7 @@ class ConversationEditor :
 	bool _updateInProgress;
 
 public:
-	ConversationEditor(GtkWindow* parent, conversation::Conversation& conversation);
+	ConversationEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::Conversation& conversation);
 
 private:
 	void save();

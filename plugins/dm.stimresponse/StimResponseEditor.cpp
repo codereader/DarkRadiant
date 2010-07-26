@@ -44,8 +44,8 @@ StimResponseEditor::StimResponseEditor() :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_entity(NULL),
 	_stimEditor(_stimTypes),
-	_responseEditor(getWindow(), _stimTypes),
-	_customStimEditor(getWindow(), _stimTypes)
+	_responseEditor(getRefPtr(), _stimTypes),
+	_customStimEditor(_stimTypes)
 {
 	// Set the default border width in accordance to the HIG
 	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
@@ -61,7 +61,7 @@ StimResponseEditor::StimResponseEditor() :
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 	
-	_windowPosition.connect(GTK_WINDOW(getWindow()));
+	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 
 	// Show the dialog, this enters the gtk main loop

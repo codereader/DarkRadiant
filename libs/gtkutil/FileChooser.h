@@ -1,14 +1,13 @@
 #ifndef _GTKUTIL_FILECHOOSER_H_
 #define _GTKUTIL_FILECHOOSER_H_
 
-// GTK+ file-chooser dialogs.
+// gtkmm file-chooser dialogs.
 
 #include "ifilechooser.h"
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkFileChooser GtkFileChooser;
+#include <gtkmm/filechooserdialog.h>
 
 namespace gtkutil
 {
@@ -18,9 +17,10 @@ class FileChooser :
 {
 private:
 	// Parent widget
-	GtkWidget* _parent;
+	Glib::RefPtr<Gtk::Window> _parent;
 
-	GtkWidget* _dialog;
+	// The filechooser dialog widget
+	Glib::RefPtr<Gtk::FileChooserDialog> _dialog;
 
 	// Window title
 	std::string _title;
@@ -35,6 +35,9 @@ private:
 	// Open or save dialog
 	bool _open;
 
+	// Browser for folders?
+	bool _browseFolders;
+
 	// The optional preview object
 	PreviewPtr _preview;
 
@@ -42,7 +45,6 @@ public:
 	/**
 	 * Construct a new filechooser with the given parameters.
 	 *
-	 * @parent: The parent GtkWidget
 	 * @title: The dialog title.
 	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
 	 * @browseFolders: if TRUE the dialog is asking the user for directories only.
@@ -50,14 +52,29 @@ public:
 	 * @defaultExt: The default extension appended when the user enters 
 	 *              filenames without extension.
  	 */
-	FileChooser(GtkWidget* parent, 
-				const std::string& title, 
+	FileChooser(const std::string& title, 
 				bool open, 
 				bool browseFolders,
 				const std::string& pattern = "",
 				const std::string& defaultExt = "");
 
-	virtual ~FileChooser();
+	/**
+	 * Construct a new filechooser with the given parameters.
+	 *
+	 * @parentWindow: The parent window, must not be NULL.
+	 * @title: The dialog title.
+	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
+	 * @browseFolders: if TRUE the dialog is asking the user for directories only.
+	 * @pattern: the type "map", "prefab", this determines the file extensions.
+	 * @defaultExt: The default extension appended when the user enters 
+	 *              filenames without extension.
+ 	 */
+	FileChooser(const Glib::RefPtr<Gtk::Window>& parentWindow, 
+				const std::string& title, 
+				bool open, 
+				bool browseFolders,
+				const std::string& pattern = "",
+				const std::string& defaultExt = "");
 
 	// Lets the dialog start at a certain path
 	void setCurrentPath(const std::string& path);
@@ -91,8 +108,10 @@ public:
 	void setPreviewActive(bool active);
 
 private:
-	// GTK callback for updating the preview widget
-	static void onUpdatePreview(GtkFileChooser* chooser, FileChooser* self);
+	void construct(); // shared constructor stuff
+
+	// gtkmm callback for updating the preview widget
+	void onUpdatePreview();
 };
 
 } // namespace gtkutil
