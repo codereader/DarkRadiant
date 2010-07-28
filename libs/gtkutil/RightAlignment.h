@@ -2,6 +2,7 @@
 #define RIGHTALIGNMENT_H_
 
 #include <gtk/gtkalignment.h>
+#include <gtkmm/alignment.h>
 
 namespace gtkutil
 {
@@ -28,6 +29,19 @@ public:
 	 */
 	operator GtkWidget* () {
 		return _widget;
+	}
+};
+
+class RightAlignmentmm :
+	public Gtk::Alignment
+{
+public:
+	/** Constructor. Accepts the child widget to align.
+	 */
+	RightAlignmentmm(Gtk::Widget& child) :
+		Gtk::Alignment(1.0f, 0.0f, 0, 0)
+	{
+		add(child);
 	}
 };
 

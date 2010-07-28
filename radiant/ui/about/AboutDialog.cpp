@@ -37,7 +37,7 @@ void AboutDialog::populateWindow() {
 	GtkWidget* topHBox = gtk_hbox_new(FALSE, 12);
 	
 	GtkWidget* image = gtk_image_new_from_pixbuf(
-		GlobalUIManager().getLocalPixbuf("logo.png")
+		GlobalUIManager().getLocalPixbuf("logo.png")->gobj()
 	);
 	gtk_box_pack_start(GTK_BOX(topHBox), image, FALSE, FALSE, 0);
 	

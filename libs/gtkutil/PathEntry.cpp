@@ -19,17 +19,18 @@ namespace gtkutil
 
 PathEntry::PathEntry(bool foldersOnly)
 {
+	set_shadow_type(Gtk::SHADOW_IN);
+		
 	// path entry
 	_entry = Gtk::manage(new Gtk::Entry);
 	_entry->set_has_frame(false);
 	
-	// browse button
-	_button = Gtk::manage(new Gtk::Button);
-
+	// generate browse button image
 	std::string fullFileName = GlobalRegistry().get(RKEY_BITMAPS_PATH) + "ellipsis.png";
-
 	Gtk::Widget* image = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_file(fullFileName)));
 
+	// browse button
+	_button = Gtk::manage(new Gtk::Button);
 	_button->add(*image);
 
 	// Connect the button
@@ -48,7 +49,8 @@ PathEntry::PathEntry(bool foldersOnly)
 	hbox->pack_start(*_entry, true, true, 0);
 	hbox->pack_end(*_button, false, false, 0);
 
-	_topLevel = Glib::RefPtr<FramedWidgetmm>(new FramedWidgetmm(*hbox));
+	// Add the contained widget as children to the frame
+	add(*hbox);
 }
 
 void PathEntry::setValue(const std::string& val)
@@ -62,11 +64,6 @@ void PathEntry::setValue(const std::string& val)
 std::string PathEntry::getValue() const
 {
 	return _entry->get_text();
-}
-
-GtkWidget* PathEntry::_getWidget() const
-{
-	return GTK_WIDGET(_topLevel->gobj());
 }
 
 Gtk::Entry& PathEntry::getEntryWidget()

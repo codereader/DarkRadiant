@@ -34,7 +34,7 @@ AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(Entity* entity, const std::st
 	gtk_button_set_image(
 		GTK_BUTTON(browseButton),
 		gtk_image_new_from_pixbuf(
-			GlobalUIManager().getLocalPixbuf("icon_sound.png")
+			GlobalUIManager().getLocalPixbuf("icon_sound.png")->gobj()
 		)
 	);
 	g_signal_connect(G_OBJECT(browseButton), "clicked", G_CALLBACK(onChooseButton), this);

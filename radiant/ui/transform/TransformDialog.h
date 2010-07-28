@@ -10,11 +10,16 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
 namespace gtkutil { class ControlButton; }
+typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
 
-// Forward Declarations
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkEditable GtkEditable;
-typedef struct _GtkTable GtkTable;
+namespace Gtk
+{
+	class VBox;
+	class HBox;
+	class Label;
+	class Table;
+	class Entry;
+}
 
 /* greebo: The dialog providing the Free Transform functionality.
  * 	
@@ -37,29 +42,30 @@ class TransformDialog
   public RadiantEventListener
 {
 	// The overall vbox (for global sensitivity toggle)
-	GtkWidget* _dialogVBox;
-	
-	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
+	Gtk::VBox* _dialogVBox;
 	
 	// The entry fields
-	struct EntryRow {
+	struct EntryRow
+	{
 		bool isRotator;
 		int axis; 
 		int direction; // Direction (rotation only), is 1 by default
-		GtkWidget* hbox;
-		GtkWidget* label;
-		GtkWidget* step;
-		GtkWidget* stepLabel;
+		Gtk::HBox* hbox;
+		Gtk::Label* label;
+		Gtk::Entry* step;
+		Gtk::Label* stepLabel;
 		ControlButtonPtr smaller;
 		ControlButtonPtr larger;
 	};
+
 	typedef std::map<std::string, EntryRow> EntryRowMap;
 	EntryRowMap _entries;
 	
-	GtkWidget* _rotateLabel;
-	GtkTable* _rotateTable;
-	GtkWidget* _scaleLabel;
-	GtkTable* _scaleTable;
+	Gtk::Label* _rotateLabel;
+	Gtk::Label* _scaleLabel;
+
+	Gtk::Table* _rotateTable;
+	Gtk::Table* _scaleTable;
 	
 	// The reference to the SelectionInfo (number of patches, etc.)
 	const SelectionInfo& _selectionInfo;
@@ -94,15 +100,15 @@ private:
 	 * @isRotator: set to true if a rotator row is to be created.
 	 * @axis: the axis this transformation is referring to.
 	 */
-	EntryRow createEntryRow(const std::string& label, GtkTable* table, 
+	EntryRow createEntryRow(const std::string& label, Gtk::Table& table, 
 							int row, bool isRotator, int axis);
 	
 	// Callbacks to catch the scale/rotation button clicks
-	static void onClickSmaller(GtkWidget* button, EntryRow* row);
-	static void onClickLarger(GtkWidget* button, EntryRow* row);
+	void onClickSmaller(EntryRow& row);
+	void onClickLarger(EntryRow& row);
 	
 	// The callback ensuring that the step changes are written to the registry
-	static void onStepChanged(GtkEditable* editable, TransformDialog* self);
+	void onStepChanged();
 	
 public:
 	// Constructor

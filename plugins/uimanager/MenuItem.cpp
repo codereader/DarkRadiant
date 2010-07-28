@@ -302,7 +302,7 @@ void MenuItem::construct() {
 					new gtkutil::TextMenuItemAccelerator(
 						_caption,
 						accelText,
-						!_icon.empty() ? GlobalUIManager().getLocalPixbuf(_icon) : NULL,
+						!_icon.empty() ? GlobalUIManager().getLocalPixbuf(_icon)->gobj() : NULL,
 						event->isToggle()
 					)
 				);

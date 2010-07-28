@@ -16,11 +16,19 @@
 #include <boost/shared_ptr.hpp>
 
 // Forward declarations to decrease compile times
-typedef struct _GtkSpinButton GtkSpinButton;
-typedef struct _GtkEditable GtkEditable;
-typedef struct _GtkTable GtkTable;
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk
+{
+	class SpinButton;
+	class Label;
+	class Entry;
+	class HBox;
+	class Button;
+	class ToggleButton;
+	class Table;
+}
+
 namespace gtkutil { class ControlButton; }
+typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
 
 namespace ui {
 
@@ -36,17 +44,15 @@ class SurfaceInspector
   public UndoSystem::Observer,
   public gtkutil::SingleIdleCallback
 {
-	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
-
-	struct ManipulatorRow {
-		GtkWidget* hbox;
-		GtkWidget* label;
-		GtkWidget* value;
-		gulong valueChangedHandler;
+	struct ManipulatorRow
+	{
+		Gtk::HBox* hbox;
+		Gtk::Label* label;
+		Gtk::Entry* value;
 		ControlButtonPtr smaller; 
 		ControlButtonPtr larger;
-		GtkWidget* step;
-		GtkWidget* steplabel;
+		Gtk::Entry* step;
+		Gtk::Label* steplabel;
 	};
 
 	// This are the named manipulator rows (shift, scale, rotation, etc) 
@@ -54,44 +60,45 @@ class SurfaceInspector
 	ManipulatorMap _manipulators;
 
 	// The "shader" entry field
-	GtkWidget* _shaderEntry;
-	GtkWidget* _selectShaderButton;
+	Gtk::Entry* _shaderEntry;
+	Gtk::Button* _selectShaderButton;
 		
-	struct FitTextureWidgets {
-		GtkWidget* hbox;
-		GtkObject* widthAdj;
-		GtkObject* heightAdj;
-		GtkWidget* width;
-		GtkWidget* height;
-		GtkWidget* button;
-		GtkWidget* label;
+	struct FitTextureWidgets
+	{
+		Gtk::HBox* hbox;
+		Gtk::Adjustment* widthAdj;
+		Gtk::Adjustment* heightAdj;
+		Gtk::SpinButton* width;
+		Gtk::SpinButton* height;
+		Gtk::Button* button;
+		Gtk::Label* label;
 	} _fitTexture;
 
 	struct FlipTextureWidgets {
-		GtkWidget* hbox;
-		GtkWidget* flipX;
-		GtkWidget* flipY;
-		GtkWidget* label;
+		Gtk::HBox* hbox;
+		Gtk::Button* flipX;
+		Gtk::Button* flipY;
+		Gtk::Label* label;
 	} _flipTexture;
 
 	struct AlignTextureWidgets {
-		GtkWidget* hbox;
-		GtkWidget* top;
-		GtkWidget* bottom;
-		GtkWidget* left;
-		GtkWidget* right;
-		GtkWidget* label;
+		Gtk::HBox* hbox;
+		Gtk::Button* top;
+		Gtk::Button* bottom;
+		Gtk::Button* left;
+		Gtk::Button* right;
+		Gtk::Label* label;
 	} _alignTexture;
 	
 	struct ApplyTextureWidgets {
-		GtkWidget* hbox;
-		GtkWidget* label;
-		GtkWidget* natural;
-		GtkWidget* normalise;
+		Gtk::HBox* hbox;
+		Gtk::Label* label;
+		Gtk::Button* natural;
+		Gtk::Button* normalise;
 	} _applyTex;
 	
-	GtkWidget* _defaultTexScale;
-	GtkWidget* _texLockButton;
+	Gtk::SpinButton* _defaultTexScale;
+	Gtk::ToggleButton* _texLockButton;
 	
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -176,7 +183,7 @@ private:
 	 * @returns: the structure containing the widget pointers. 
 	 */
 	ManipulatorRow createManipulatorRow(const std::string& label, 
-										GtkTable* table, 
+										Gtk::Table& table, 
 										int row,
 										bool vertical);
 
@@ -202,10 +209,10 @@ private:
 	void fitTexture();
 	
 	// The callback when the "select shader" button is pressed, opens the ShaderChooser dialog
-	static void onShaderSelect(GtkWidget* button, SurfaceInspector* self);
+	void onShaderSelect();
 	
 	// Gets called when the step entry fields get changed
-	static void onStepChanged(GtkEditable* editable, SurfaceInspector* self);
+	void onStepChanged();
 	
 	// Gets called when the value entry field is changed (shift/scale/rotation) - emits the texcoords
 	static gboolean onDefaultScaleChanged(GtkSpinButton* spinbutton, SurfaceInspector* self);
@@ -215,10 +222,10 @@ private:
 	static gboolean doUpdate(GtkWidget* widget, SurfaceInspector* self);
 	
 	// The keypress handler for catching the Enter key when in the shader entry field
-	static gboolean onKeyPress(GtkWidget* entry, GdkEventKey* event, SurfaceInspector* self);
+	bool onKeyPress(GdkEventKey* ev);
 	
 	// The keypress handler for catching the Enter key when in the value entry fields
-	static gboolean onValueKeyPress(GtkWidget* entry, GdkEventKey* event, SurfaceInspector* self);
+	bool onValueKeyPress(GdkEventKey* ev);
 
 }; // class SurfaceInspector
 

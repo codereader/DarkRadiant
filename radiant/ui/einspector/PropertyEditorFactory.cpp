@@ -119,7 +119,7 @@ GdkPixbuf* PropertyEditorFactory::getPixbufFor(const std::string& type) {
 	if (type.empty()) return NULL;
 
 	std::string iconName = "icon_" + type + ".png";
-	return GlobalUIManager().getLocalPixbuf(iconName);	
+	return GlobalUIManager().getLocalPixbuf(iconName)->gobj();	
 }
 
 }

@@ -20,44 +20,48 @@ namespace ui {
  */
 class PrefTreePopulator :
 	public PrefPage::Visitor,
-	public gtkutil::VFSTreePopulator::Visitor 
+	public gtkutil::VFSTreePopulatormm::Visitor 
 {
+private:
 	// The helper class creating the GtkTreeIter
-	gtkutil::VFSTreePopulator& _vfsPopulator;
+	gtkutil::VFSTreePopulatormm& _vfsPopulator;
 	
 	PrefDialog& _dialog;
 	
 public:
-	PrefTreePopulator(gtkutil::VFSTreePopulator& vfsPopulator, PrefDialog& dialog) :
+	PrefTreePopulator(gtkutil::VFSTreePopulatormm& vfsPopulator, PrefDialog& dialog) :
 		_vfsPopulator(vfsPopulator),
 		_dialog(dialog)
 	{}
 
-	void visit(PrefPagePtr prefPage) {
+	void visit(PrefPagePtr prefPage)
+	{
 		// Check for an empty path (this would be the root item)
-		if (!prefPage->getPath().empty()) {
+		if (!prefPage->getPath().empty())
+		{
 			// Tell the VFSTreePopulator to add the item with this path
 			_vfsPopulator.addPath(prefPage->getPath());
 		}
 	}
 	
-	void visit(GtkTreeStore* store, GtkTreeIter* iter, 
+	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+			   const Gtk::TreeModel::iterator& iter,
 			   const std::string& path, bool isExplicit)
 	{
 		// Do not process add the root item
-		if (!path.empty()) {
+		if (!path.empty())
+		{
 			// Get the leaf name (truncate the path)
 			std::string leafName = path.substr(path.rfind("/")+1);
 			
 			// Get a reference to the page defined by this path
 			PrefPagePtr page = _dialog.createOrFindPage(path);
 			
-			if (page != NULL) {
+			if (page != NULL)
+			{
 				// Add the caption to the liststore
-				gtk_tree_store_set(store, iter, 
-								   NAME_COL, leafName.c_str(),
-								   PREFPAGE_COL, page->getWidget(), 
-								   -1);
+				iter->set_value(0, leafName);
+				iter->set_value(1, &page->getWidget());
 			}
 		}
 	}

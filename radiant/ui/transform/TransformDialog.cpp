@@ -8,7 +8,8 @@
 #include "selectionlib.h"
 #include "string/string.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/table.h>
 
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -51,8 +52,8 @@ TransformDialog::TransformDialog()
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets and pack them into the window
 	populateWindow();
@@ -108,104 +109,102 @@ void TransformDialog::toggle(const cmd::ArgumentList& args) {
 	Instance().toggleDialog();
 }
 
-void TransformDialog::populateWindow() {
-	// Create the overall vbox
-	_dialogVBox = gtk_vbox_new(false, 6);
-	gtk_container_add(GTK_CONTAINER(getWindow()), _dialogVBox);
+void TransformDialog::populateWindow()
+{
+	// Create the overall vbox and add it to the window container
+	_dialogVBox = Gtk::manage(new Gtk::VBox(false, 6));
+	add(*_dialogVBox);
 	
 	// Create the rotation label (bold font)
-	_rotateLabel = gtkutil::LeftAlignedLabel(
+	_rotateLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
     	std::string("<span weight=\"bold\">") + _(LABEL_ROTATION) + "</span>"
-    );
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), _rotateLabel, false, false, 0);
+    ));
+	_dialogVBox->pack_start(*_rotateLabel, false, false, 0);
     
     // Setup the table with default spacings
-	_rotateTable = GTK_TABLE(gtk_table_new(3, 2, false));
-    gtk_table_set_col_spacings(_rotateTable, 12);
-    gtk_table_set_row_spacings(_rotateTable, 6);
+	_rotateTable = Gtk::manage(new Gtk::Table(3, 2, false));
+	_rotateTable->set_col_spacings(12);
+	_rotateTable->set_row_spacings(6);
     
     // Pack it into an alignment so that it is indented
-	GtkWidget* rotAlignment = gtkutil::LeftAlignment(GTK_WIDGET(_rotateTable), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(rotAlignment), false, false, 0);
+	Gtk::Widget* rotAlignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*_rotateTable, 18, 1.0));
+	_dialogVBox->pack_start(*rotAlignment, false, false, 0);
     
-    _entries["rotateX"] = createEntryRow(_(LABEL_ROTX), _rotateTable, 0, true, 0);
-    _entries["rotateY"] = createEntryRow(_(LABEL_ROTY), _rotateTable, 1, true, 1);
-    _entries["rotateZ"] = createEntryRow(_(LABEL_ROTZ), _rotateTable, 2, true, 2);
+    _entries["rotateX"] = createEntryRow(_(LABEL_ROTX), *_rotateTable, 0, true, 0);
+    _entries["rotateY"] = createEntryRow(_(LABEL_ROTY), *_rotateTable, 1, true, 1);
+    _entries["rotateZ"] = createEntryRow(_(LABEL_ROTZ), *_rotateTable, 2, true, 2);
     
-    // Create the rotation label (bold font)
-	_scaleLabel = gtkutil::LeftAlignedLabel(
+    // Create the scale label (bold font)
+	_scaleLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
     	std::string("<span weight=\"bold\">") + _(LABEL_SCALE) + "</span>"
-    );
-    gtk_box_pack_start(GTK_BOX(_dialogVBox), _scaleLabel, false, false, 0);
+    ));
+	_dialogVBox->pack_start(*_scaleLabel, false, false, 0);
     
     // Setup the table with default spacings
-	_scaleTable = GTK_TABLE(gtk_table_new(3, 2, false));
-    gtk_table_set_col_spacings(_scaleTable, 12);
-    gtk_table_set_row_spacings(_scaleTable, 6);
+	_scaleTable = Gtk::manage(new Gtk::Table(3, 2, false));
+	_scaleTable->set_col_spacings(12);
+	_scaleTable->set_row_spacings(6);
     
     // Pack it into an alignment so that it is indented
-	GtkWidget* scaleAlignment = gtkutil::LeftAlignment(GTK_WIDGET(_scaleTable), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(scaleAlignment), false, false, 0);
-    
-    _entries["scaleX"] = createEntryRow(_(LABEL_SCALEX), _scaleTable, 0, false, 0);
-    _entries["scaleY"] = createEntryRow(_(LABEL_SCALEY), _scaleTable, 1, false, 1);
-    _entries["scaleZ"] = createEntryRow(_(LABEL_SCALEZ), _scaleTable, 2, false, 2);
+	Gtk::Widget* scaleAlignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*_scaleTable, 18, 1.0));
+	_dialogVBox->pack_start(*scaleAlignment, false, false, 0);
+
+	_entries["scaleX"] = createEntryRow(_(LABEL_SCALEX), *_scaleTable, 0, false, 0);
+    _entries["scaleY"] = createEntryRow(_(LABEL_SCALEY), *_scaleTable, 1, false, 1);
+    _entries["scaleZ"] = createEntryRow(_(LABEL_SCALEZ), *_scaleTable, 2, false, 2);
     
     // Connect the step values to the according registry values
    using namespace gtkutil;
 	_connector.addObject(
       RKEY_ROTX_STEP,
-      SerialisableWidgetWrapperPtr(
-         new SerialisableTextEntry(_entries["rotateX"].step)
+      StringSerialisablePtr(
+         new SerialisableTextEntryWrapper(_entries["rotateX"].step)
       )
    );
 	_connector.addObject(
       RKEY_ROTY_STEP,
-      SerialisableWidgetWrapperPtr(
-         new SerialisableTextEntry(_entries["rotateY"].step)
+      StringSerialisablePtr(
+         new SerialisableTextEntryWrapper(_entries["rotateY"].step)
       )
    );
 	_connector.addObject(
       RKEY_ROTZ_STEP,
-      SerialisableWidgetWrapperPtr(
-         new SerialisableTextEntry(_entries["rotateZ"].step)
+      StringSerialisablePtr(
+         new SerialisableTextEntryWrapper(_entries["rotateZ"].step)
       )
    );
 	_connector.addObject(
       RKEY_SCALEX_STEP,
-      SerialisableWidgetWrapperPtr(
-         new SerialisableTextEntry(_entries["scaleX"].step)
+      StringSerialisablePtr(
+         new SerialisableTextEntryWrapper(_entries["scaleX"].step)
       )
    );
 	_connector.addObject(
       RKEY_SCALEY_STEP,
-      SerialisableWidgetWrapperPtr(
-         new SerialisableTextEntry(_entries["scaleY"].step)
+      StringSerialisablePtr(
+         new SerialisableTextEntryWrapper(_entries["scaleY"].step)
       )
    );
 	_connector.addObject(
       RKEY_SCALEZ_STEP,
-      SerialisableWidgetWrapperPtr(
-         new SerialisableTextEntry(_entries["scaleZ"].step)
+      StringSerialisablePtr(
+         new SerialisableTextEntryWrapper(_entries["scaleZ"].step)
       )
    );
     
     // Connect all the arrow buttons
-    for (EntryRowMap::iterator i = _entries.begin(); i != _entries.end(); i++) {
+    for (EntryRowMap::iterator i = _entries.begin(); i != _entries.end(); ++i)
+	{
     	EntryRow& row = i->second;
-    	
-    	// Cast the ControlButtons onto GtkWidgets
-    	GtkWidget* smallerButton = *row.smaller; 
-    	GtkWidget* largerButton = *row.larger;
-    	
-    	// Pass a CoordRow pointer to the callback, that's all it will need to update
-    	g_signal_connect(G_OBJECT(smallerButton), "clicked", G_CALLBACK(onClickSmaller), &row);
-    	g_signal_connect(G_OBJECT(largerButton), "clicked", G_CALLBACK(onClickLarger), &row);
+
+		// Pass a EntryRow pointer to the callback, that's all it will need to update
+		row.smaller->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &TransformDialog::onClickSmaller), row));
+		row.larger->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &TransformDialog::onClickLarger), row));
     }
 }
 
 TransformDialog::EntryRow TransformDialog::createEntryRow(
-	const std::string& label, GtkTable* table, int row, bool isRotator, int axis) 
+	const std::string& label, Gtk::Table& table, int row, bool isRotator, int axis) 
 {
 	EntryRow entryRow;
 	
@@ -217,49 +216,52 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 	entryRow.direction = (isRotator && axis != 1) ? -1 : 1;
 	
 	// Create the label
-	entryRow.label = gtkutil::LeftAlignedLabel(label);
-	gtk_table_attach_defaults(table, entryRow.label, 0, 1, row, row+1);
+	entryRow.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(label));
+	table.attach(*entryRow.label, 0, 1, row, row + 1);
 	
-	entryRow.hbox = gtk_hbox_new(false, 6);
+	entryRow.hbox = Gtk::manage(new Gtk::HBox(false, 6));
 	
 	// Create the control buttons (zero spacing hbox)
 	{
-		GtkWidget* hbox = gtk_hbox_new(true, 0);
+		Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 0));
 		
 		entryRow.smaller = ControlButtonPtr(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_left.png"))
 		);
-		gtk_widget_set_size_request(*entryRow.smaller, 15, 24);
-		gtk_box_pack_start(GTK_BOX(hbox), *entryRow.smaller, false, false, 0);
+		entryRow.smaller->set_size_request(15, 24);
+		
+		hbox->pack_start(*entryRow.smaller, false, false, 0);
 		
 		entryRow.larger = ControlButtonPtr(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_right.png"))
 		);
-		gtk_widget_set_size_request(*entryRow.larger, 15, 24);
-		gtk_box_pack_start(GTK_BOX(hbox), *entryRow.larger, false, false, 0); 
+		entryRow.larger->set_size_request(15, 24);
+		hbox->pack_start(*entryRow.larger, false, false, 0);
 		
-		gtk_box_pack_start(GTK_BOX(entryRow.hbox), hbox, false, false, 0);
+		entryRow.hbox->pack_start(*hbox, false, false, 0);
 	}
 	
 	// Create the label
-	entryRow.stepLabel = gtkutil::LeftAlignedLabel(_(LABEL_STEP)); 
-	gtk_box_pack_start(GTK_BOX(entryRow.hbox), entryRow.stepLabel, false, false, 0);
+	entryRow.stepLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_STEP))); 
+
+	entryRow.hbox->pack_start(*entryRow.stepLabel, false, false, 0);
 	
 	// Create the entry field
-	entryRow.step = gtk_entry_new();
-	gtk_entry_set_width_chars(GTK_ENTRY(entryRow.step), 5);
-	g_signal_connect(G_OBJECT(entryRow.step), "changed", G_CALLBACK(onStepChanged), this);
+	entryRow.step = Gtk::manage(new Gtk::Entry);
+	entryRow.step->set_width_chars(5);
+	entryRow.step->signal_changed().connect(sigc::mem_fun(*this, &TransformDialog::onStepChanged));
+
+	entryRow.hbox->pack_start(*entryRow.step, false, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(entryRow.hbox), entryRow.step, false, false, 0);
-		
 	// Pack the hbox into the table
-	gtk_table_attach_defaults(table, entryRow.hbox, 1, 2, row, row+1);
+	table.attach(*entryRow.hbox, 1, 2, row, row + 1);
 	
 	// Return the filled structure
 	return entryRow;
 }
 
-void TransformDialog::toggleDialog() {
+void TransformDialog::toggleDialog()
+{
 	if (isVisible())
 		hide();
 	else
@@ -267,34 +269,39 @@ void TransformDialog::toggleDialog() {
 }
 
 // Pre-hide callback
-void TransformDialog::_preHide() {
+void TransformDialog::_preHide()
+{
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
 }
 
 // Pre-show callback
-void TransformDialog::_preShow() {
+void TransformDialog::_preShow()
+{
 	// Restore the position
 	_windowPosition.applyPosition();
 	// Update the widget values
 	update();
 }
 
-void TransformDialog::update() {
+void TransformDialog::update()
+{
 	// Check if there is anything selected
 	bool rotSensitive = (_selectionInfo.totalCount > 0);
 	bool scaleSensitive = (_selectionInfo.totalCount > 0 && _selectionInfo.entityCount == 0);
 
-	gtk_widget_set_sensitive(GTK_WIDGET(_dialogVBox), rotSensitive || scaleSensitive);
+	_dialogVBox->set_sensitive(rotSensitive || scaleSensitive);
 
 	// set the sensitivity of the scale/rotation widgets
-	gtk_widget_set_sensitive(GTK_WIDGET(_rotateLabel), rotSensitive);
-	gtk_widget_set_sensitive(GTK_WIDGET(_rotateTable), rotSensitive);
-	gtk_widget_set_sensitive(GTK_WIDGET(_scaleLabel), scaleSensitive);
-	gtk_widget_set_sensitive(GTK_WIDGET(_scaleTable), scaleSensitive);
+	_rotateLabel->set_sensitive(rotSensitive);
+	_rotateTable->set_sensitive(rotSensitive);
+
+	_scaleLabel->set_sensitive(scaleSensitive);
+	_scaleTable->set_sensitive(scaleSensitive);
 }
 
-void TransformDialog::selectionChanged(const scene::INodePtr& node, bool isComponent) {
+void TransformDialog::selectionChanged(const scene::INodePtr& node, bool isComponent)
+{
 	update();
 }
 
@@ -303,59 +310,66 @@ void TransformDialog::saveToRegistry() {
 	_connector.exportValues();
 }
 
-void TransformDialog::onStepChanged(GtkEditable* editable, TransformDialog* self) {
-	// Tell the class instance to save its contents into the registry
-	self->saveToRegistry();
+void TransformDialog::onStepChanged()
+{
+	// Save the contents into the registry
+	saveToRegistry();
 } 
 
-void TransformDialog::onClickLarger(GtkWidget* button, EntryRow* row) {
+void TransformDialog::onClickLarger(EntryRow& row)
+{
 	// Get the current step increment
-	float step = strToFloat(gtk_entry_get_text(GTK_ENTRY(row->step)));
+	float step = strToFloat(row.step->get_text());
 	
 	// Determine the action
-	if (row->isRotator) {
+	if (row.isRotator)
+	{
 		// Do a rotation
 		Vector3 eulerXYZ;
 		
 		// Store the value into the right axis
-		eulerXYZ[row->axis] = step * row->direction;
+		eulerXYZ[row.axis] = step * row.direction;
 		
 		// Pass the call to the algorithm functions
 		selection::algorithm::rotateSelected(eulerXYZ);
 	}
-	else {
+	else
+	{
 		// Do a scale
 		Vector3 scaleXYZ(1,1,1);
 		
 		// Store the value into the right axis
-		scaleXYZ[row->axis] = step;
+		scaleXYZ[row.axis] = step;
 		
 		// Pass the call to the algorithm functions
 		selection::algorithm::scaleSelected(scaleXYZ);
 	}
 }
 
-void TransformDialog::onClickSmaller(GtkWidget* button, EntryRow* row) {
+void TransformDialog::onClickSmaller(EntryRow& row)
+{
 	// Get the current value and the step increment
-	float step = strToFloat(gtk_entry_get_text(GTK_ENTRY(row->step)));
+	float step = strToFloat(row.step->get_text());
 	
 	// Determine the action
-	if (row->isRotator) {
+	if (row.isRotator)
+	{
 		// Do a rotation
 		Vector3 eulerXYZ;
 		
 		// Store the value into the right axis
-		eulerXYZ[row->axis] = -step * row->direction;
+		eulerXYZ[row.axis] = -step * row.direction;
 		
 		// Pass the call to the algorithm functions
 		selection::algorithm::rotateSelected(eulerXYZ);
 	}
-	else {
+	else
+	{
 		// Do a scale
 		Vector3 scaleXYZ(1,1,1);
 		
 		// Store the value into the right axis
-		scaleXYZ[row->axis] = 1/step;
+		scaleXYZ[row.axis] = 1/step;
 		
 		// Pass the call to the algorithm functions
 		selection::algorithm::scaleSelected(scaleXYZ);

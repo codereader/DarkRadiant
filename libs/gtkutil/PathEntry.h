@@ -4,6 +4,10 @@
 #include "ifc/EditorWidget.h"
 
 #include "FramedWidget.h"
+
+#include <gtkmm/frame.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
 #include <gtkmm/entry.h>
 
 namespace gtkutil
@@ -15,13 +19,10 @@ namespace gtkutil
  * which opens a FileChooser dialog when clicked.
  */
 class PathEntry : 
-	public EditorWidget
+	public Gtk::Frame
 {
 protected:
-
-	// The toplevel widget
-	Glib::RefPtr<FramedWidgetmm> _topLevel;
-
+	// Browse button
 	Gtk::Button* _button;
 
 	// The text entry box
@@ -35,17 +36,12 @@ public:
 	 */
 	PathEntry(bool foldersOnly = false);
 
-	// Editor widget implementation
-	virtual void setValue(const std::string& val);
-    virtual std::string getValue() const;
+	// get/set selected path
+	void setValue(const std::string& val);
+    std::string getValue() const;
 
 	// Returns the text entry widget
 	Gtk::Entry& getEntryWidget();
-
-protected:
-   
-	// gtkutil::Widget implementation
-	virtual GtkWidget* _getWidget() const;
 
 private:
 	// gtkmm callbacks

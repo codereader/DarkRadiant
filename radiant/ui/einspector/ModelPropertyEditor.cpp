@@ -48,7 +48,7 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 	gtk_button_set_image(
 		GTK_BUTTON(particleButton),
 		gtk_image_new_from_pixbuf(
-			GlobalUIManager().getLocalPixbuf("particle16.png")
+			GlobalUIManager().getLocalPixbuf("particle16.png")->gobj()
 		)
 	);
 	g_signal_connect(G_OBJECT(particleButton), 

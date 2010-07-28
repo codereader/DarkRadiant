@@ -14,156 +14,243 @@ namespace gtkutil
 
 // Adjustment
 
-SerialisableAdjustment::SerialisableAdjustment(GtkObject* adj)
-: _adjustment(adj)
-{ }
+SerialisableAdjustment::SerialisableAdjustment(double value, double lower, double upper) :
+	Gtk::Adjustment(value, lower, upper)
+{}
 
 void SerialisableAdjustment::importFromString(const std::string& str)
 {
-    gtk_adjustment_set_value(GTK_ADJUSTMENT(_adjustment), strToFloat(str));
+	set_value(strToDouble(str));
 }
 
 std::string SerialisableAdjustment::exportToString() const
 {
-   return doubleToStr(gtk_adjustment_get_value(GTK_ADJUSTMENT(_adjustment)));
+	return doubleToStr(get_value());
+}
+
+SerialisableAdjustmentWrapper::SerialisableAdjustmentWrapper(Gtk::Adjustment* adjustment) :
+	_adjustment(adjustment)
+{}
+
+void SerialisableAdjustmentWrapper::importFromString(const std::string& str)
+{
+	_adjustment->set_value(strToDouble(str));
+}
+
+std::string SerialisableAdjustmentWrapper::exportToString() const
+{
+	return doubleToStr(_adjustment->get_value());
 }
 
 // Text entry
 
-SerialisableTextEntry::SerialisableTextEntry(GtkWidget* w)
-: SerialisableWidgetWrapper(w)
-{ }
+SerialisableTextEntry::SerialisableTextEntry() : 
+	Gtk::Entry()
+{}
 
 void SerialisableTextEntry::importFromString(const std::string& str)
 {
-   gtk_entry_set_text(GTK_ENTRY(_getWidget()), str.c_str());
+	set_text(str);
 }
 
 std::string SerialisableTextEntry::exportToString() const
 {
-   return std::string(gtk_entry_get_text(GTK_ENTRY(_getWidget())));
+	return std::string(get_text());
+}
+
+SerialisableTextEntryWrapper::SerialisableTextEntryWrapper(Gtk::Entry* entry) :
+	_entry(entry)
+{}
+
+void SerialisableTextEntryWrapper::importFromString(const std::string& str)
+{
+	_entry->set_text(str);	
+}
+
+std::string SerialisableTextEntryWrapper::exportToString() const
+{
+	return _entry->get_text();
 }
 
 // Spin button
 
-SerialisableSpinButton::SerialisableSpinButton(GtkWidget* w)
-: SerialisableWidgetWrapper(w)
-{ }
+SerialisableSpinButton::SerialisableSpinButton(double value,
+											   double min, 
+											   double max, 
+											   double step,
+											   guint digits)
+											   : Gtk::SpinButton()
+{
+	Gtk::Adjustment* adj = Gtk::manage(new Gtk::Adjustment(value, min, max, step));
+	configure(*adj, 0.0, digits);
+}
 
 void SerialisableSpinButton::importFromString(const std::string& str)
 {
-   gtk_spin_button_set_value(GTK_SPIN_BUTTON(_getWidget()), strToFloat(str));
+	set_value(strToDouble(str));
 }
 
 std::string SerialisableSpinButton::exportToString() const
 {
-   return doubleToStr(gtk_spin_button_get_value(GTK_SPIN_BUTTON(_getWidget())));
+	return doubleToStr(get_value());
+}
+
+SerialisableSpinButtonWrapper::SerialisableSpinButtonWrapper(Gtk::SpinButton* spin) :
+	_spin(spin)
+{}
+
+void SerialisableSpinButtonWrapper::importFromString(const std::string& str)
+{
+	_spin->set_value(strToDouble(str));
+}
+
+std::string SerialisableSpinButtonWrapper::exportToString() const
+{
+	return doubleToStr(_spin->get_value());
 }
 
 // Scale widget
 
-SerialisableScaleWidget::SerialisableScaleWidget(GtkWidget* w)
-: SerialisableWidgetWrapper(w)
-{ }
+SerialisableScaleWidget::SerialisableScaleWidget() : 
+	Gtk::Range()
+{}
 
 void SerialisableScaleWidget::importFromString(const std::string& str)
 {
-   gtk_range_set_value(GTK_RANGE(_getWidget()), strToFloat(str));
+	set_value(strToDouble(str));
 }
 
 std::string SerialisableScaleWidget::exportToString() const
 {
-   return doubleToStr(gtk_range_get_value(GTK_RANGE(_getWidget())));
+	return doubleToStr(get_value());
+}
+
+SerialisableScaleWidgetWrapper::SerialisableScaleWidgetWrapper(Gtk::Range* range) :
+	_range(range)
+{}
+
+void SerialisableScaleWidgetWrapper::importFromString(const std::string& str)
+{
+	_range->set_value(strToDouble(str));
+}
+
+std::string SerialisableScaleWidgetWrapper::exportToString() const
+{
+	return doubleToStr(_range->get_value());
 }
 
 // Toggle button
 
-SerialisableToggleButton::SerialisableToggleButton(GtkWidget* w)
-: SerialisableWidgetWrapper(w)
-{ }
+SerialisableToggleButton::SerialisableToggleButton() :
+	Gtk::ToggleButton()
+{}
+
+SerialisableToggleButton::SerialisableToggleButton(const std::string& label) :
+	Gtk::ToggleButton(label)
+{}
 
 void SerialisableToggleButton::importFromString(const std::string& str)
 {
-   gtk_toggle_button_set_active(
-      GTK_TOGGLE_BUTTON(_getWidget()), 
-      str == "1" ? TRUE : FALSE
-   );
+	set_active(str == "1");
 }
 
 std::string SerialisableToggleButton::exportToString() const
 {
-	return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_getWidget())) ? "1" : "0";
+	return get_active() ? "1" : "0";
+}
+
+SerialisableToggleButtonWrapper::SerialisableToggleButtonWrapper(Gtk::ToggleButton* button) :
+	_button(button)
+{}
+
+void SerialisableToggleButtonWrapper::importFromString(const std::string& str)
+{
+	_button->set_active(str == "1");
+}
+
+std::string SerialisableToggleButtonWrapper::exportToString() const
+{
+	return _button->get_active() ? "1" : "0";
 }
 
 // SerialisableComboBox_Index
 
-SerialisableComboBox_Index::SerialisableComboBox_Index()
-: SerialisableWidgetWrapper(gtk_combo_box_new_text())
-{ }
+SerialisableComboBox_Index::SerialisableComboBox_Index() :
+	SerialisableComboBox()
+{}
 
 void SerialisableComboBox_Index::importFromString(const std::string& str)
 {
-   int activeId = strToInt(str);
-   gtk_combo_box_set_active(GTK_COMBO_BOX(_getWidget()), activeId);
+	int activeId = strToInt(str);
+	set_active(activeId);
 
-   int newId = gtk_combo_box_get_active(GTK_COMBO_BOX(_getWidget()));
-   if (activeId != newId)
-   {
-      std::cerr << "SerialisableComboBox_Index::importFromString(): "
-                << "warning: requested index " << activeId 
-                << " was not set, current index is " << newId << std::endl;
-   }
+	int newId = get_active();
+
+	if (activeId != newId)
+	{
+		std::cerr << "SerialisableComboBox_Index::importFromString(): "
+				<< "warning: requested index " << activeId 
+				<< " was not set, current index is " << newId << std::endl;
+	}
 }
 
 std::string SerialisableComboBox_Index::exportToString() const
 {
-	return intToStr(gtk_combo_box_get_active(GTK_COMBO_BOX(_getWidget())));
+	return intToStr(get_active());
+}
+
+SerialisableComboBox_IndexWrapper::SerialisableComboBox_IndexWrapper(Gtk::ComboBoxText* combo) :
+	_combo(combo)
+{}
+
+void SerialisableComboBox_IndexWrapper::importFromString(const std::string& str)
+{
+	int activeId = strToInt(str);
+	_combo->set_active(activeId);
+
+	int newId = _combo->get_active();
+
+	if (activeId != newId)
+	{
+		std::cerr << "SerialisableComboBox_Index::importFromString(): "
+				<< "warning: requested index " << activeId 
+				<< " was not set, current index is " << newId << std::endl;
+	}
+}
+
+std::string SerialisableComboBox_IndexWrapper::exportToString() const
+{
+	return intToStr(_combo->get_active());
 }
 
 // SerialisableComboBox_Text
 
-SerialisableComboBox_Text::SerialisableComboBox_Text()
-: SerialisableWidgetWrapper(gtk_combo_box_new_text())
-{ }
+SerialisableComboBox_Text::SerialisableComboBox_Text() : 
+	SerialisableComboBox()
+{}
 
 void SerialisableComboBox_Text::importFromString(const std::string& str)
 {
-   int index = -1;
-
-   // Find the index of the given text
-   GtkTreeIter iter;
-   GtkTreeModel* model = gtk_combo_box_get_model(GTK_COMBO_BOX(_getWidget()));
-   for (gboolean validIter = gtk_tree_model_get_iter_first(model, &iter);
-        validIter;
-        validIter = gtk_tree_model_iter_next(model, &iter))
-   {
-	   // Get the string value
-	   std::string treeVal = TreeModel::getString(model, &iter, 0);
-      
-	   // Check if this is the right string
-	   index++;
-	   
-	   if (treeVal == str)
-	   {
-		   break;
-	   }
-   };
-
-   if (index == -1)
-   {
-      std::cerr << "SerialisableComboBox_Text::importFromString(): "
-                << "unable to find string '" << str << "' in combo box"
-                << std::endl;
-   }
-   else
-   {
-      gtk_combo_box_set_active(GTK_COMBO_BOX(_getWidget()), index);
-   }
+	set_active_text(str);
 }
 
 std::string SerialisableComboBox_Text::exportToString() const
 {
-	return gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_getWidget()));
+	return get_active_text();
+}
+
+SerialisableComboBox_TextWrapper::SerialisableComboBox_TextWrapper(Gtk::ComboBoxText* combo) :
+	_combo(combo)
+{}
+
+void SerialisableComboBox_TextWrapper::importFromString(const std::string& str)
+{
+	_combo->set_active_text(str);
+}
+
+std::string SerialisableComboBox_TextWrapper::exportToString() const
+{
+	return _combo->get_active_text();
 }
 
 }

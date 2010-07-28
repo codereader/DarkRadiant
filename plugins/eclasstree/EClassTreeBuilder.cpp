@@ -28,7 +28,7 @@ namespace ui {
 				std::string displayPath = path.substr(path.rfind("/") + 1);
 				
 				// Get the icon, either folder or skin
-				GdkPixbuf* pixBuf = GlobalUIManager().getLocalPixbuf(ENTITY_ICON);
+				GdkPixbuf* pixBuf = GlobalUIManager().getLocalPixbuf(ENTITY_ICON)->gobj();
 				
 				gtk_tree_store_set(store, it, 
 								   NAME_COLUMN, displayPath.c_str(),

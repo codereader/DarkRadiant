@@ -98,7 +98,7 @@ gboolean TreeModel::equalFuncStringContains(GtkTreeModel* model,
 										GtkTreeIter* iter,
 										gpointer search_data)
 {
-	// Retrieve the eclass string from the model
+	// Retrieve the string from the model
 	std::string str = getString(model, iter, column);
 
 	// Use a case-insensitive search
@@ -106,6 +106,22 @@ gboolean TreeModel::equalFuncStringContains(GtkTreeModel* model,
 
 	// Returning FALSE means "match".
 	return (!range.empty()) ? FALSE: TRUE;
+}
+
+bool TreeModel::equalFuncStringContainsmm(const Glib::RefPtr<Gtk::TreeModel>& model, 
+										int column, 
+										const Glib::ustring& key, 
+										const Gtk::TreeModel::iterator& iter)
+{
+	// Retrieve the string from the model
+	std::string str;
+	iter->get_value(column, str);
+
+	// Use a case-insensitive search
+	boost::iterator_range<std::string::iterator> range = boost::algorithm::ifind_first(str, key);
+
+	// Returning FALSE means "match".
+	return (!range.empty()) ? false : true;
 }
 
 TreeModel::SelectionFinder::SelectionFinder(const std::string& selection, int column) : 

@@ -54,13 +54,10 @@ public:
 };
 
 // gtkmm pendant
-class ScrolledFramemm
+class ScrolledFramemm :
+	public Gtk::ScrolledWindow
 {
-	// Main widget
-	Gtk::ScrolledWindow* _widget;
-	
 public:
-
 	/** 
 	 * Construct a ScrolledFrame around the provided child widget.
 	 * @useViewPort: use this to add "non-scrollable" widgets to this container.
@@ -68,20 +65,10 @@ public:
 	ScrolledFramemm(Gtk::Widget& child, bool useViewPort = false)
 	{
 		// Create the GtkScrolledWindow
-		_widget = Gtk::manage(new Gtk::ScrolledWindow);
+		set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+		set_shadow_type(Gtk::SHADOW_ETCHED_IN);
 
-		_widget->set_policy(Gtk::POLICY_AUTOMATIC, 
-							Gtk::POLICY_AUTOMATIC);
-		_widget->set_shadow_type(Gtk::SHADOW_ETCHED_IN);
-
-		_widget->add(child);
-	}
-	
-	/** Operator cast to retrieve the widget
-	 */
-	operator Gtk::ScrolledWindow*()
-	{
-		return _widget;	
+		add(child);
 	}
 };
 

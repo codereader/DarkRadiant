@@ -38,11 +38,13 @@ IStatusBarManager& UIManager::getStatusBarManager() {
 	return _statusBarManager;
 }
 
-GdkPixbuf* UIManager::getLocalPixbuf(const std::string& fileName) {
+Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
+{
 	// Try to use a cached pixbuf first
 	PixBufMap::iterator i = _localPixBufs.find(fileName);
 	
-	if (i != _localPixBufs.end()) {
+	if (i != _localPixBufs.end())
+	{
 		return i->second;
 	}
 
@@ -51,27 +53,27 @@ GdkPixbuf* UIManager::getLocalPixbuf(const std::string& fileName) {
 	// Construct the full filename using the Bitmaps path
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
 
-	GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+	Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create_from_file(fullFileName);
 
-	if (pixbuf != NULL) {
+	if (pixbuf != NULL)
+	{
 		_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
-		
-		// Avoid destruction of this pixbuf
-		g_object_ref(pixbuf);
 	}
-	else {
+	else
+	{
 		globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
 	}
 
 	return pixbuf;
 }
 
-GdkPixbuf* UIManager::getLocalPixbufWithMask(const std::string& fileName) {
+Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& fileName) {
 
 	// Try to find a cached pixbuf before loading from disk
 	PixBufMap::iterator i = _localPixBufsWithMask.find(fileName);
 	
-	if (i != _localPixBufsWithMask.end()) {
+	if (i != _localPixBufsWithMask.end())
+	{
 		return i->second;
 	}
 
@@ -79,23 +81,22 @@ GdkPixbuf* UIManager::getLocalPixbufWithMask(const std::string& fileName) {
 
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
 	
-	GdkPixbuf* rgb = gdk_pixbuf_new_from_file(fullFileName.c_str(), 0);
-	if (rgb != NULL) {
+	Glib::RefPtr<Gdk::Pixbuf> rgb = Gdk::Pixbuf::create_from_file(fullFileName);
+
+	if (rgb != NULL)
+	{
 		// File load successful, add alpha channel
-		GdkPixbuf* rgba = gdk_pixbuf_add_alpha(rgb, TRUE, 255, 0, 255);
-		gdk_pixbuf_unref(rgb);
+		Glib::RefPtr<Gdk::Pixbuf> rgba = rgb->add_alpha(true, 255, 0, 255);
 
 		_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
 
-		// Avoid destruction of this pixbuf
-		g_object_ref(rgba);
-
 		return rgba;
 	}
-	else {
+	else
+	{
 		// File load failed
 		globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
-		return NULL;
+		return Glib::RefPtr<Gdk::Pixbuf>();
 	}
 }
 
@@ -165,22 +166,8 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 void UIManager::shutdownModule()
 {
-	// Remove all remaining pixbufs
-	for (PixBufMap::iterator i = _localPixBufs.begin(); i != _localPixBufs.end(); ++i)
-	{
-		if (GDK_IS_PIXBUF(i->second))
-		{
-			g_object_unref(i->second);
-		}
-	}
-
-	for (PixBufMap::iterator i = _localPixBufsWithMask.begin(); i != _localPixBufsWithMask.end(); ++i)
-	{
-		if (GDK_IS_PIXBUF(i->second))
-		{
-			g_object_unref(i->second);
-		}
-	}
+	_localPixBufs.clear();
+	_localPixBufsWithMask.clear();
 }
 
 } // namespace ui

@@ -8,7 +8,6 @@
 
 #include <boost/shared_ptr.hpp>
 
-typedef struct _GtkWindow GtkWindow;
 typedef struct _GdkEventWindowState GdkEventWindowState;
 
 namespace gtkutil
@@ -57,15 +56,6 @@ private:
 	void minimise();
 
 public:
-	
-	/**
-	 * Construct a PersistentTransientWindow with the given title and parent.
-	 * DEPRECATED: Use the gtkmm-compliant constructor instead.
-	 */
-	PersistentTransientWindow(const std::string& title, 
-							  GtkWindow* parent,
-							  bool hideOnDelete = false);
-
 	/**
 	 * Construct a PersistentTransientWindow with the given title and parent.
 	 */

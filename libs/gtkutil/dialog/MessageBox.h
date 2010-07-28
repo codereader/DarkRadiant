@@ -34,14 +34,14 @@ protected:
 	virtual void construct();
 
 	// Override Dialog::createButtons() to add the custom ones
-	virtual GtkWidget* createButtons();
+	virtual Gtk::Widget& createButtons();
 
 	// Creates an icon from stock (notification, warning, error)
-	GtkWidget* createIcon();
+	Gtk::Widget* createIcon();
 
-	// GTK Callbacks, additional to the ones defined in the base class
-	static void onYes(GtkWidget* widget, MessageBox* self);
-	static void onNo(GtkWidget* widget, MessageBox* self);
+	// gtkmm Callbacks, additional to the ones defined in the base class
+	void onYes();
+	void onNo();
 };
 typedef boost::shared_ptr<MessageBox> MessageBoxPtr;
 

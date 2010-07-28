@@ -4,6 +4,8 @@
 #include "math/Vector3.h"
 #include "imodule.h"
 
+#include <gdkmm/pixbuf.h>
+
 // Forward declarations
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkToolbar GtkToolbar;
@@ -172,8 +174,6 @@ public:
 };
 
 // Forward declarations
-typedef struct _GdkPixbuf GdkPixbuf;
-
 class IGroupDialog;		// see igroupdialog.h for definition
 
 namespace ui
@@ -207,9 +207,9 @@ public:
 	virtual ui::IDialogManager& getDialogManager() = 0;
 
 	// Convenience functions to load a local image (from the bitmaps directory)
-	// and return a GdkPixBuf for use by certain GTK widgets (e.g. TreeView).
-	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName) = 0;
-	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) = 0;
+	// and return a Gdk::PixBuf reference for use by certain widgets (e.g. TreeView).
+	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName) = 0;
+	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName) = 0;
 
 	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
 	virtual ui::IFilterMenuPtr createFilterMenu() = 0;

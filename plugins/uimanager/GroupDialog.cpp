@@ -212,7 +212,7 @@ GtkWidget* GroupDialog::addPage(const std::string& name,
 	gtk_widget_show(_notebook);
 	
 	// Create the icon GtkImage and tab label
-	GtkWidget* icon = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbuf(tabIcon));
+	GtkWidget* icon = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbuf(tabIcon)->gobj());
 	GtkWidget* label = gtk_label_new(tabLabel.c_str());
 
 	// Pack into an hbox to create the title widget	
