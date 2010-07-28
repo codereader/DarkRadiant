@@ -66,7 +66,11 @@ private:
 	bool _isModal;
 	
 	std::string _requestedPage;
-	
+
+protected:
+	// Virtual pre-destroy callback
+	virtual void _preShow();
+
 public:
 	PrefDialog();
 

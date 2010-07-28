@@ -63,6 +63,9 @@ public:
 							  const Glib::RefPtr<Gtk::Window>& parent,
 							  bool hideOnDelete = false);
 
+	// Override TransientWindow::setParentWindow()
+	virtual void setParentWindow(const Glib::RefPtr<Gtk::Window>& parent);
+
 }; // class PersistentTransientWindow
 
 /**

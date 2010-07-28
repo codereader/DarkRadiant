@@ -106,16 +106,8 @@ public:
 		// Set up the window
 		set_title(title);
 
-		if (parent)
-		{
-			Gtk::Container* toplevel = parent->get_toplevel();
-
-			if (toplevel != NULL && toplevel->is_toplevel() &&
-				dynamic_cast<Gtk::Window*>(toplevel) != NULL)
-			{
-				set_transient_for(*static_cast<Gtk::Window*>(toplevel));
-			}
-		}
+		// Set transient
+		setParentWindow(parent);
 
 		set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
 
@@ -127,6 +119,20 @@ public:
 	    // Connect up the destroy signal (close box)
 		signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
 		signal_expose_event().connect(sigc::mem_fun(*this, &TransientWindow::_onExpose));
+	}
+
+	virtual void setParentWindow(const Glib::RefPtr<Gtk::Window>& parent)
+	{
+		if (parent)
+		{
+			Gtk::Container* toplevel = parent->get_toplevel();
+
+			if (toplevel != NULL && toplevel->is_toplevel() &&
+				dynamic_cast<Gtk::Window*>(toplevel) != NULL)
+			{
+				set_transient_for(*static_cast<Gtk::Window*>(toplevel));
+			}
+		}
 	}
 	
 	virtual ~TransientWindow()

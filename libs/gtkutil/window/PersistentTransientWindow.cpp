@@ -5,9 +5,25 @@ namespace gtkutil {
 PersistentTransientWindow::PersistentTransientWindow(const std::string& title, 
 													 const Glib::RefPtr<Gtk::Window>& parent,
 													 bool hideOnDelete)
-: TransientWindow(title, parent, hideOnDelete),
-  _parent(parent)
+: TransientWindow(title, parent, hideOnDelete)
 {
+	setParentWindow(parent);
+}
+
+void PersistentTransientWindow::setParentWindow(const Glib::RefPtr<Gtk::Window>& parent)
+{
+	// Call the base class
+	TransientWindow::setParentWindow(parent);
+
+	// Disconnect any pre-existing parent
+	if (_parent)
+	{
+		_windowStateConn.disconnect();
+	}
+
+	_parent = parent;
+
+	// Connect new parent
 	if (_parent)
 	{
 		// Connect to the window-state-event signal of the parent window
