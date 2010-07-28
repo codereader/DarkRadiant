@@ -174,7 +174,7 @@ ui::IDialog::Result Dialog::run()
 void Dialog::construct()
 {
 	// Pack the buttons
-	_vbox->pack_start(createButtons(), false, false, 0);
+	_vbox->pack_end(createButtons(), false, false, 0);
 }
 
 Gtk::Widget& Dialog::createButtons()
