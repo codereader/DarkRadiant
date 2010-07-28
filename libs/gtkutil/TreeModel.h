@@ -6,6 +6,8 @@
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreeselection.h>
 
+#include <gtkmm/treemodel.h>
+
 namespace gtkutil
 {
 
@@ -116,6 +118,20 @@ public:
 											const gchar* key,
 											GtkTreeIter* iter,
 											gpointer search_data);
+
+	/**
+	 * greebo: Utility callback for use in Gtk::TreeView::set_search_equal_func, which 
+	 * enables some sort of "full string" search in treeviews. 
+	 *
+	 * The equalFuncStringContains returns "match" as soon as the given key occurs
+	 * somewhere in the string in question, not only at the beginning (GTK default).
+	 *
+	 * Prerequisites: The search column must contain a string.
+	 */
+	static bool equalFuncStringContainsmm(const Glib::RefPtr<Gtk::TreeModel>& model, 
+										int column, 
+										const Glib::ustring& key, 
+										const Gtk::TreeModel::iterator& iter);
 						 
 	/* Local object that walks the GtkTreeModel and obtains a GtkTreePath locating
 	 * the given name. The gtk_tree_model_foreach function requires a pointer to

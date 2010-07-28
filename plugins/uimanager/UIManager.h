@@ -32,7 +32,7 @@ private:
 
 	DialogManagerPtr _dialogManager;
 
-	typedef std::map<std::string, GdkPixbuf*> PixBufMap;
+	typedef std::map<std::string, Glib::RefPtr<Gdk::Pixbuf>> PixBufMap;
 	PixBufMap _localPixBufs;
 	PixBufMap _localPixBufsWithMask;
 
@@ -52,8 +52,8 @@ public:
 
 	IDialogManager& getDialogManager();
 
-	GdkPixbuf* getLocalPixbuf(const std::string& fileName);
-	GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName);
+	Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName);
+	Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName);
 
 	IFilterMenuPtr createFilterMenu();
 	IModelPreviewPtr createModelPreview();

@@ -34,7 +34,7 @@ AIHeadPropertyEditor::AIHeadPropertyEditor(Entity* entity, const std::string& ke
 	gtk_button_set_image(
 		GTK_BUTTON(browseButton),
 		gtk_image_new_from_pixbuf(
-			GlobalUIManager().getLocalPixbuf("icon_model.png")
+			GlobalUIManager().getLocalPixbuf("icon_model.png")->gobj()
 		)
 	);
 	g_signal_connect(G_OBJECT(browseButton), "clicked", G_CALLBACK(onChooseButton), this);

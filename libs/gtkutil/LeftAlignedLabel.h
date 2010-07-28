@@ -37,28 +37,16 @@ public:
 };
 
 // gtkmm pendant
-class LeftAlignedLabelmm
+class LeftAlignedLabelmm :
+	public Gtk::Label
 {
-private:
-	// The label
-	Gtk::Label* _label;
-	
 public:
-
 	/** Construct a left-aligned label with the given text.
 	 */
-	LeftAlignedLabelmm(const std::string& text) : 
-		_label(Gtk::manage(new Gtk::Label))
+	LeftAlignedLabelmm(const std::string& text) :
+		Gtk::Label(text)
 	{ 
-		_label->set_text(text);
-	}
-	
-	/** Operator cast to Gtk::Widget&. Left-aligns then returns the label.
-	 */
-	operator Gtk::Label*()
-	{
-		_label->set_alignment(0.0f, 0.5f);
-		return _label;
+		set_alignment(0.0f, 0.5f);
 	}
 };
 

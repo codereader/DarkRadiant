@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
+#include "ui/overlay/OverlayDialog.h"
 #include "gtkutil/FileChooser.h"
 
 #include "modulesystem/StaticModule.h"
@@ -158,6 +159,7 @@ void RadiantModule::shutdownModule()
 
 	map::PointFile::Instance().destroy();
 	ui::MediaBrowser::getInstance().shutdown();
+	ui::OverlayDialog::destroy();
     
     // Remove all the event listeners, otherwise the shared_ptrs 
     // lock the instances. This is just for safety, usually all

@@ -414,7 +414,7 @@ GtkWidget* EntityInspector::createTreeViewPane()
 	gtk_tree_view_column_set_spacing(_helpColumn, 3);
 	gtk_tree_view_column_set_visible(_helpColumn, FALSE);
 
-	GdkPixbuf* helpIcon = GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME);
+	GdkPixbuf* helpIcon = GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)->gobj();
 	if (helpIcon != NULL) {
 		gtk_tree_view_column_set_fixed_width(_helpColumn, gdk_pixbuf_get_width(helpIcon));
 	}

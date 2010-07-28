@@ -48,7 +48,7 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 
 	// Add clear button
 	{
-		GtkWidget* image = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask("delete.png"));
+		GtkWidget* image = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask("delete.png")->gobj());
 		gtk_widget_show(image);
 
 		_clearSetsButton = gtk_tool_button_new(image, _("Clear Selection Sets"));

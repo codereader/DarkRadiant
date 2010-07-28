@@ -54,7 +54,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
 	if (!icon.empty()) {
 		GtkWidget* img = gtk_image_new_from_pixbuf(
-			GlobalUIManager().getLocalPixbuf(icon)
+			GlobalUIManager().getLocalPixbuf(icon)->gobj()
 		);
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	}

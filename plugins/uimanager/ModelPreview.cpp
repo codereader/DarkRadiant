@@ -63,7 +63,7 @@ ModelPreview::ModelPreview() :
     gtk_tool_button_set_icon_widget(
     	GTK_TOOL_BUTTON(_drawBBox), 
 		gtk_image_new_from_pixbuf(
-			GlobalUIManager().getLocalPixbuf("iconDrawBBox.png")));
+			GlobalUIManager().getLocalPixbuf("iconDrawBBox.png")->gobj()));
 	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), _drawBBox, 0);
 	
 	// Create the menu

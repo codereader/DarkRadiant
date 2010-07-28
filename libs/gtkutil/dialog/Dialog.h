@@ -4,8 +4,13 @@
 #include "idialogmanager.h"
 #include "../window/BlockingTransientWindow.h"
 #include <map>
+#include <gtkmm/accelgroup.h>
 
-typedef struct _GtkAccelGroup GtkAccelGroup;
+namespace Gtk
+{
+	class VBox;
+	class Table;
+}
 
 namespace gtkutil
 {
@@ -36,13 +41,13 @@ protected:
 	ui::IDialog::Result _result;
 
 	// Packing container, direct child of the GtkWindow
-	GtkWidget* _vbox;
+	Gtk::VBox* _vbox;
 
 	// The table carrying the elements
-	GtkWidget* _elementsTable;
+	Gtk::Table* _elementsTable;
 
 	// Keyboard accel group used to map ENTER and ESC to buttons
-	GtkAccelGroup* _accelGroup;
+	Glib::RefPtr<Gtk::AccelGroup> _accelGroup;
 
 	// Whether all widgets have been created
 	bool _constructed;
@@ -62,7 +67,7 @@ public:
 	virtual Handle addComboBox(const std::string& label, const ComboBoxOptions& options);
 	virtual Handle addEntryBox(const std::string& label);
 	virtual Handle addPathEntry(const std::string& label, bool foldersOnly = false);
-	virtual Handle addSpinButton(const std::string& label, double min, double max, double step);
+	virtual Handle addSpinButton(const std::string& label, double min, double max, double step, unsigned int digits);
 	virtual Handle addCheckbox(const std::string& label);
 
 	virtual void setElementValue(const Handle& handle, const std::string& value);
@@ -78,16 +83,16 @@ protected:
 	// Constructs the dialog (is invoked right before entering the main loop)
 	virtual void construct();
 
-	virtual GtkWidget* createButtons();
+	virtual Gtk::Widget& createButtons();
 
-	void mapKeyToButton(guint key, GtkWidget* button);
+	void mapKeyToButton(guint key, Gtk::Widget& button);
 
 	// Override TransientWindow behaviour to hide this dialog instead of destroying it
 	virtual void _onDeleteEvent();
 
-	// GTK Callbacks
-	static void onOK(GtkWidget* widget, Dialog* self);
-	static void onCancel(GtkWidget* widget, Dialog* self);
+	// gtkmm button Callbacks
+	void onOK();
+	void onCancel();
 };
 typedef boost::shared_ptr<Dialog> DialogPtr;
 

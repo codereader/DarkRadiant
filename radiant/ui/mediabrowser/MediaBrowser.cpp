@@ -124,7 +124,7 @@ MediaBrowser::MediaBrowser()
 	// Construct the popup context menu
 	_popupMenu.addItem(
 		gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON), 
+			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON)->gobj(), 
 			_(LOAD_TEXTURE_TEXT)
 		), 
 		boost::bind(&MediaBrowser::_onLoadInTexView, this), 
@@ -132,7 +132,7 @@ MediaBrowser::MediaBrowser()
 	);
 	_popupMenu.addItem(
 		gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON), 
+			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON)->gobj(), 
 			_(APPLY_TEXTURE_TEXT)
 		), 
 		boost::bind(&MediaBrowser::_onApplyToSel, this), 
@@ -140,7 +140,7 @@ MediaBrowser::MediaBrowser()
 	);
 	_popupMenu.addItem(
 		gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON), 
+			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON)->gobj(), 
 			_(SHOW_SHADER_DEF_TEXT)
 		), 
 		boost::bind(&MediaBrowser::_onShowShaderDefinition, this), 

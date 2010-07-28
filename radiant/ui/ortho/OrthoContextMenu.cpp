@@ -440,42 +440,42 @@ void OrthoContextMenu::registerDefaultItems()
 {
 	gtkutil::MenuItemPtr addEntity(
 		new gtkutil::MenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON)->gobj(), _(ADD_ENTITY_TEXT)),
 			boost::bind(&OrthoContextMenu::callbackAddEntity, this),
 			boost::bind(&OrthoContextMenu::checkAddEntity, this))
 	);
 
 	gtkutil::MenuItemPtr addLight(
 		new gtkutil::MenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON)->gobj(), _(ADD_LIGHT_TEXT)),
 			boost::bind(&OrthoContextMenu::callbackAddLight, this),
 			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
 	);
 
 	gtkutil::MenuItemPtr addPrefab(
 		new gtkutil::MenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON)->gobj(), _(ADD_PREFAB_TEXT)),
 			boost::bind(&OrthoContextMenu::callbackAddPrefab, this),
 			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
 	);
 
 	gtkutil::MenuItemPtr addSpeaker(
 		new gtkutil::MenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON)->gobj(), _(ADD_SPEAKER_TEXT)),
 			boost::bind(&OrthoContextMenu::callbackAddSpeaker, this),
 			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
 	);
 
 	gtkutil::MenuItemPtr addModel(
 		new gtkutil::MenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON)->gobj(), _(ADD_MODEL_TEXT)),
 			boost::bind(&OrthoContextMenu::callbackAddModel, this),
 			boost::bind(&OrthoContextMenu::checkAddModel, this))
 	);
 
 	gtkutil::CommandMenuItemPtr surroundWithMonsterClip(
 		new gtkutil::CommandMenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON)->gobj(), _(ADD_MONSTERCLIP_TEXT)),
 			"SurroundWithMonsterclip",
 			boost::bind(&OrthoContextMenu::checkAddMonsterclip, this),
 			boost::bind(&OrthoContextMenu::checkAddMonsterclip, this))
@@ -483,7 +483,7 @@ void OrthoContextMenu::registerDefaultItems()
 
 	gtkutil::MenuItemPtr addPlayerStart(
 		new gtkutil::MenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON)->gobj(), _(ADD_PLAYERSTART_TEXT)),
 			boost::bind(&OrthoContextMenu::callbackAddPlayerStart, this),
 			boost::bind(&OrthoContextMenu::checkAddPlayerStart, this),
 			boost::bind(&OrthoContextMenu::checkAddPlayerStart, this))
@@ -491,42 +491,42 @@ void OrthoContextMenu::registerDefaultItems()
 
 	gtkutil::MenuItemPtr movePlayerStart(
 		new gtkutil::MenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON)->gobj(), _(MOVE_PLAYERSTART_TEXT)),
 			boost::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
 			boost::bind(&OrthoContextMenu::checkMovePlayerStart, this))
 	);
 
 	gtkutil::CommandMenuItemPtr convertStatic(
 		new gtkutil::CommandMenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON)->gobj(), _(CONVERT_TO_STATIC_TEXT)),
 			"ConvertSelectedToFuncStatic",
 			boost::bind(&OrthoContextMenu::checkConvertStatic, this))
 	);
 
 	gtkutil::CommandMenuItemPtr revertWorldspawn(
 		new gtkutil::CommandMenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON)->gobj(), _(REVERT_TO_WORLDSPAWN_TEXT)),
 			"RevertToWorldspawn",
 			boost::bind(&OrthoContextMenu::checkRevertToWorldspawn, this))
 	);
 
 	gtkutil::CommandMenuItemPtr mergeEntities(
 		new gtkutil::CommandMenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON)->gobj(), _(MERGE_ENTITIES_TEXT)),
 			"MergeSelectedEntities",
 			boost::bind(&OrthoContextMenu::checkMergeEntities, this))
 	);
 
 	gtkutil::CommandMenuItemPtr revertToWorldspawnPartial(
 		new gtkutil::CommandMenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON)->gobj(), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT)),
 			"ParentSelectionToWorldspawn",
 			boost::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
 	);
 
 	gtkutil::CommandMenuItemPtr makeVisportal(
 		new gtkutil::CommandMenuItem(
-			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL)),
+			gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON)->gobj(), _(MAKE_VISPORTAL)),
 			"MakeVisportal",
 			boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
 	);

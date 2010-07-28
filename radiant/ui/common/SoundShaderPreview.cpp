@@ -32,7 +32,7 @@ SoundShaderPreview::SoundShaderPreview() :
 	_selection = _treeView->get_selection();
 	_selection->signal_changed().connect(sigc::mem_fun(*this,&SoundShaderPreview::onSelectionChanged));
 	
-	_widget->pack_start(*gtkutil::ScrolledFramemm(*_treeView), true, true);
+	_widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true);
 	_widget->pack_start(*createControlPanel(), false, false);
 	
 	// Trigger the initial update of the widgets
@@ -58,7 +58,7 @@ Gtk::Widget* SoundShaderPreview::createControlPanel()
 
 	vbox->pack_end(*btnHBox, false, false);
 	
-	_statusLabel = gtkutil::LeftAlignedLabelmm("");
+	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
 	vbox->pack_end(*_statusLabel, false, false);
 	
 	return vbox;

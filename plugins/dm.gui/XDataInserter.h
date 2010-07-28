@@ -41,8 +41,8 @@ public:
 
 		// Pixbuf depends on model type
 		GdkPixbuf* pixBuf = isExplicit 
-			? GlobalUIManager().getLocalPixbuf(XDATA_ICON)
-			: GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+			? GlobalUIManager().getLocalPixbuf(XDATA_ICON)->gobj()
+			: GlobalUIManager().getLocalPixbuf(FOLDER_ICON)->gobj();
 
 		// Fill in the column values
 		gtk_tree_store_set(store, iter, 

@@ -424,7 +424,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 
 	// Create a new menu item connected to the CreateNewLayer command
 	gtkutil::CommandMenuItemPtr menuItem(new gtkutil::CommandMenuItem(
-		gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), _(CREATE_LAYER_TEXT)),
+		gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON)->gobj(), _(CREATE_LAYER_TEXT)),
 		"CreateNewLayer")
 	);
 

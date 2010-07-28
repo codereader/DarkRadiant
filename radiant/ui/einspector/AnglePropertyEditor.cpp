@@ -50,7 +50,7 @@ GtkWidget* AnglePropertyEditor::constructAngleButton(
 	const std::string& icon, int angleValue)
 {
 	GtkWidget* w = gtkutil::IconTextButton(
-        "", GlobalUIManager().getLocalPixbuf(icon), false
+        "", GlobalUIManager().getLocalPixbuf(icon)->gobj(), false
     );
 
     g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(_onButtonClick), this);

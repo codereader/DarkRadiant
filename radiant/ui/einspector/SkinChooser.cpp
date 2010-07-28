@@ -191,8 +191,8 @@ public:
 		
 		// Get the icon, either folder or skin
 		GdkPixbuf* pixBuf = isExplicit
-							? GlobalUIManager().getLocalPixbuf(SKIN_ICON)
-							: GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+							? GlobalUIManager().getLocalPixbuf(SKIN_ICON)->gobj()
+							: GlobalUIManager().getLocalPixbuf(FOLDER_ICON)->gobj();
 		
 		gtk_tree_store_set(store, it, 
 						   DISPLAYNAME_COL, displayPath.c_str(),

@@ -69,7 +69,7 @@ TextureBrowser::TextureBrowser() :
 	
 	// Construct the popup context menu
 	_seekInMediaBrowser = gtkutil::IconTextMenuItem(
-		GlobalUIManager().getLocalPixbuf(TEXTURE_ICON), 
+		GlobalUIManager().getLocalPixbuf(TEXTURE_ICON)->gobj(), 
 		_(SEEK_IN_MEDIA_BROWSER_TEXT)
 	);
 	g_signal_connect(G_OBJECT(_seekInMediaBrowser), "activate", G_CALLBACK(onSeekInMediaBrowser), this);
@@ -785,7 +785,7 @@ GtkWidget* TextureBrowser::constructWindow(GtkWindow* parent) {
 			
 			GtkToolItem* sizeToggle = gtk_toggle_tool_button_new();
 			
-	    	GdkPixbuf* pixBuf = GlobalUIManager().getLocalPixbuf("texwindow_uniformsize.png");    	
+	    	GdkPixbuf* pixBuf = GlobalUIManager().getLocalPixbuf("texwindow_uniformsize.png")->gobj();    	
 	    	GtkWidget* toggle_image = GTK_WIDGET(gtk_image_new_from_pixbuf(pixBuf));
 	    	
 	    	GtkTooltips* barTips = gtk_tooltips_new();

@@ -43,7 +43,7 @@ void LayerContextMenu::createMenuItems()
 	{
 		// Create a new menuitem
 		GtkWidget* menuItem = gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(LAYER_ICON), i->first);
+			GlobalUIManager().getLocalPixbuf(LAYER_ICON)->gobj(), i->first);
 
 		// Connect the "onclick" signal
 		g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(onClick), this);
