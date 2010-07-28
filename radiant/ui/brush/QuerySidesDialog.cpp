@@ -3,11 +3,10 @@
 #include "i18n.h"
 #include "imainframe.h"
 
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkspinbutton.h>
-#include <gtk/gtkbutton.h>
-#include <gtk/gtkstock.h>
+#include <gtkmm/box.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
 #include "gtkutil/LeftAlignedLabel.h"
 
@@ -26,8 +25,8 @@ QuerySidesDialog::QuerySidesDialog(int numSidesMin, int numSidesMax) :
 	_numSidesMin(numSidesMin),
 	_numSidesMax(numSidesMax)
 {
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets
 	populateWindow();
@@ -44,51 +43,52 @@ int QuerySidesDialog::queryNumberOfSides()
 void QuerySidesDialog::populateWindow()
 {
 	// Create the vbox containing the notebook and the buttons
-	GtkWidget* dialogVBox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create the spin button
-	_entry = gtk_spin_button_new_with_range(_numSidesMin, _numSidesMax, 1);
+	Gtk::Adjustment* adjustment = Gtk::manage(new Gtk::Adjustment(_numSidesMin, _numSidesMin, _numSidesMax));
+	_entry = Gtk::manage(new Gtk::SpinButton(*adjustment));
 
-	GtkWidget* entryRow = gtk_hbox_new(FALSE, 6);
-	GtkWidget* label = gtkutil::LeftAlignedLabel(_("Number of sides: "));
+	Gtk::HBox* entryRow = Gtk::manage(new Gtk::HBox(false, 6));
+	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Number of sides: ")));
 
-	gtk_box_pack_start(GTK_BOX(entryRow), label, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(entryRow), _entry, TRUE, TRUE, 0);
+	entryRow->pack_start(*label, false, false, 0);
+	entryRow->pack_start(*_entry, true, true, 0);
 
-	gtk_box_pack_start(GTK_BOX(dialogVBox), entryRow, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(dialogVBox), createButtons(), FALSE, FALSE, 0);
+	dialogVBox->pack_start(*entryRow, false, false, 0);
+	dialogVBox->pack_start(createButtons(), false, false, 0);
 
 	// Add vbox to dialog window
-	gtk_container_add(GTK_CONTAINER(getWindow()), dialogVBox);
+	add(*dialogVBox);
 }
 
-GtkWidget* QuerySidesDialog::createButtons()
+Gtk::Widget& QuerySidesDialog::createButtons()
 {
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onOK), this);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &QuerySidesDialog::onOK));
 
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &QuerySidesDialog::onCancel));
+	
+	hbox->pack_end(*okButton, false, false, 0);
+	hbox->pack_end(*cancelButton, false, false, 0);
 
-	gtk_box_pack_end(GTK_BOX(hbox), okButton, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), cancelButton, FALSE, FALSE, 0);
-
-	return hbox;
+	return *hbox;
 }
 
-void QuerySidesDialog::onCancel(GtkWidget* widget, QuerySidesDialog* self)
+void QuerySidesDialog::onCancel()
 {
-	self->_result = RESULT_CANCEL;
-	self->destroy();
+	_result = RESULT_CANCEL;
+	destroy();
 }
 
-void QuerySidesDialog::onOK(GtkWidget* widget, QuerySidesDialog* self)
+void QuerySidesDialog::onOK()
 {
-	self->_result = RESULT_OK;
-	self->_numSides = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(self->_entry));
-	self->destroy();
+	_result = RESULT_OK;
+	_numSides = _entry->get_value_as_int();
+	destroy();
 }
 
 } // namespace ui
