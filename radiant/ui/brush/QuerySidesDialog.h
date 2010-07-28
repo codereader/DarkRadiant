@@ -3,7 +3,11 @@
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk
+{
+	class SpinButton;
+	class Widget;
+}
 
 namespace ui
 {
@@ -21,7 +25,7 @@ public:
 
 private:
 	// The spinner entry box
-	GtkWidget* _entry;
+	Gtk::SpinButton* _entry;
 
 	Result _result;
 
@@ -45,11 +49,11 @@ public:
 private:
 	// This is called to initialise the dialog window / create the widgets
 	void populateWindow();
-	GtkWidget* createButtons();
+	Gtk::Widget& createButtons();
 
 	// The callback for the buttons
-	static void onOK(GtkWidget* widget, QuerySidesDialog* self);
-	static void onCancel(GtkWidget* widget, QuerySidesDialog* self);
+	void onOK();
+	void onCancel();
 };
 
 } // namespace ui
