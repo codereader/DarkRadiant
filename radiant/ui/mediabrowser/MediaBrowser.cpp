@@ -220,7 +220,7 @@ struct ShaderNameFunctor {
 		gtk_tree_store_set(_store, &iter, 
 						   DISPLAYNAME_COLUMN, thisDir.c_str(), 
 						   FULLNAME_COLUMN, pathName.c_str(),
-						   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(FOLDER_ICON),
+						   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(FOLDER_ICON)->gobj(),
 						   DIR_FLAG_COLUMN, TRUE,
 						   IS_OTHER_MATERIALS_FOLDER_COLUMN, isOtherMaterials ? TRUE : FALSE,
 						   -1);
@@ -258,7 +258,7 @@ struct ShaderNameFunctor {
 			gtk_tree_store_set(_store, &iter, 
 							   DISPLAYNAME_COLUMN, texName.c_str(), 
 							   FULLNAME_COLUMN, name.c_str(),
-							   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(TEXTURE_ICON),
+							   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(TEXTURE_ICON)->gobj(),
 							   DIR_FLAG_COLUMN, FALSE,
 							   IS_OTHER_MATERIALS_FOLDER_COLUMN, FALSE,
 							   -1);
