@@ -22,11 +22,13 @@
 #include <gtkmm/stock.h>
 #include <gtkmm/main.h>
 
+#include "ui/splash/Splash.h"
+
 namespace ui
 {
 
 PrefDialog::PrefDialog() :
-	PersistentTransientWindow(_("DarkRadiant Preferences"), GlobalMainFrame().getTopLevelWindow(), true),
+	PersistentTransientWindow(_("DarkRadiant Preferences"), Glib::RefPtr<Gtk::Window>(), true),
 	_isModal(false)
 {
 	set_modal(true);
@@ -120,12 +122,29 @@ void PrefDialog::onRadiantShutdown()
 	hide();
 }
 
+void PrefDialog::_preShow()
+{
+	// Call base class
+	PersistentTransientWindow::_preShow();
+
+	// Update window parent on show
+	if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
+	{
+		setParentWindow(GlobalMainFrame().getTopLevelWindow());
+	}
+	// We're still in module initialisation phase, get the splash instance
+	else if (Splash::isVisible())
+	{
+		set_transient_for(Splash::Instance());
+	}
+}
+
 void PrefDialog::toggleWindow(bool isModal)
 {
 	// Pass the call to the utility methods that save/restore the window position
 	if (is_visible())
 	{
-		hide();
+		PersistentTransientWindow::hide();
 	}
 	else
 	{
@@ -136,7 +155,7 @@ void PrefDialog::toggleWindow(bool isModal)
 		updateTreeStore();
 		_treeView->expand_all();
 		
-		// Now show the dialog window again
+		// Now show the dialog window again (triggers _preShow())
 		PersistentTransientWindow::show();
 		
 		// Is there a specific page display request?

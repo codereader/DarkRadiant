@@ -88,7 +88,7 @@ int main (int argc, char* argv[]) {
 		// (emits a warning if the file already exists (due to a previous startup failure)) 
 		applog::PIDFile pidFile(PID_FILENAME);
 
-		ui::Splash::Instance().show();
+		ui::Splash::Instance().show_all();
 	
 		// Initialise the Reference in the GlobalModuleRegistry() accessor. 
 		module::RegistryReference::Instance().setRegistry(module::getRegistry());
@@ -127,7 +127,8 @@ int main (int argc, char* argv[]) {
 	  
 		ui::Splash::Instance().setProgressAndText(_("DarkRadiant Startup Complete"), 1.0f);  
 
-		ui::Splash::Instance().hide();
+		// Delete the splash screen here
+		ui::Splash::Instance().destroy();
 
 		// Scope ends here, PIDFile is deleted by its destructor
 	}
