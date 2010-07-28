@@ -44,8 +44,9 @@ public:
 	/** Construct a left-aligned label with the given text.
 	 */
 	LeftAlignedLabelmm(const std::string& text) :
-		Gtk::Label(text)
+		Gtk::Label()
 	{ 
+		set_markup(text);
 		set_alignment(0.0f, 0.5f);
 	}
 };
