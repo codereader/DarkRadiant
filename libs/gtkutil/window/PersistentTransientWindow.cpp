@@ -8,10 +8,13 @@ PersistentTransientWindow::PersistentTransientWindow(const std::string& title,
 : TransientWindow(title, parent, hideOnDelete),
   _parent(parent)
 {
-	// Connect to the window-state-event signal of the parent window
-	_windowStateConn = _parent->signal_window_state_event().connect(
-		sigc::mem_fun(*this, &PersistentTransientWindow::onParentWindowStateEvent)
-	);
+	if (_parent)
+	{
+		// Connect to the window-state-event signal of the parent window
+		_windowStateConn = _parent->signal_window_state_event().connect(
+			sigc::mem_fun(*this, &PersistentTransientWindow::onParentWindowStateEvent)
+		);
+	}
 }
 
 bool PersistentTransientWindow::onParentWindowStateEvent(GdkEventWindowState* ev)
