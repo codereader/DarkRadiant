@@ -39,7 +39,7 @@ PrefDialog::PrefDialog() :
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create a treestore with a name and a pointer
-	Glib::RefPtr<Gtk::TreeStore> _prefTree = Gtk::TreeStore::create(_treeColumns);
+	_prefTree = Gtk::TreeStore::create(_treeColumns);
 	
 	// Create all the widgets
 	populateWindow();
