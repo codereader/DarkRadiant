@@ -3,9 +3,13 @@
 
 #include <string>
 #include "icommandsystem.h"
-#include "gtk/gtkwidget.h"
-#include "gtk/gtkliststore.h"
+#include <gtkmm/liststore.h>
 #include "gtkutil/window/BlockingTransientWindow.h"
+
+namespace Gtk
+{
+	class TreeView;
+}
 
 /* greebo: The CommandListDialog class displays a list of all available
  * DarkRadiant commands and provides methods to clear and assign the shortcuts.
@@ -15,29 +19,43 @@
  * Note: Show the dialog by instantiating this class. It blocks the GUI and
  * destroys itself upon dialog closure and returns control to the calling function.  
  */
-namespace ui {
+namespace ui
+{
 
 class CommandList :
 	public gtkutil::BlockingTransientWindow
 {
+public:
+	struct Columns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		Columns() { add(command); add(key); }
+
+		Gtk::TreeModelColumn<Glib::ustring> command;
+		Gtk::TreeModelColumn<Glib::ustring> key;
+	};
+
+private:
+	Columns _columns;
+
 	// The list store containing the list of ColourSchemes		
-	GtkListStore* _listStore;
+	Glib::RefPtr<Gtk::ListStore> _listStore;
 	
 	// The treeview containing the above liststore
-	GtkWidget* _treeView;
+	Gtk::TreeView* _treeView;
 
 public:
 	// Constructor
 	CommandList();
-	
-	// This is called to initialise the dialog window / create the widgets
-	virtual void populateWindow();
 	
 	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
 	static void showDialog(const cmd::ArgumentList& args);
 	
 private:
+	// This is called to initialise the dialog window / create the widgets
+	void populateWindow();
+
 	// Handles the assignment of a new shortcut to the selected row
 	void assignShortcut();
 	
@@ -47,13 +65,13 @@ private:
 	// Gets the currently selected event name
 	std::string getSelectedCommand(); 
 	
-	// The callback for the buttons
-	static void callbackClose(GtkWidget* widget, CommandList* self);
-	static void callbackClear(GtkWidget* widget, CommandList* self);
-	static void callbackAssign(GtkWidget* widget, CommandList* self);
+	// The gtkmm callback for the buttons
+	void callbackClose();
+	void callbackClear();
+	void callbackAssign();
 	
 	// The callback to catch the double click on a treeview row
-	static gboolean callbackViewButtonPress(GtkWidget* widget, GdkEventButton* event, CommandList* self);
+	void callbackViewButtonPress(GdkEventButton* ev);
 	
 }; // class CommandListDialog
 
