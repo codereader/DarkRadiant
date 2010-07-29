@@ -4,7 +4,10 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 
-#include "gtk/gtk.h"
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/stock.h>
 
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextButton.h"
@@ -14,9 +17,10 @@
 #include "CommandListPopulator.h"
 #include "ShortcutChooser.h"
 
-namespace ui {
-	
-	namespace {
+namespace ui
+{
+	namespace
+	{
 		const int CMDLISTDLG_DEFAULT_SIZE_X = 550;
 	    const int CMDLISTDLG_DEFAULT_SIZE_Y = 400;
 	    	    
@@ -27,99 +31,88 @@ CommandList::CommandList() :
 	gtkutil::BlockingTransientWindow(_(CMDLISTDLG_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), 
-		CMDLISTDLG_DEFAULT_SIZE_X, CMDLISTDLG_DEFAULT_SIZE_Y);
+	set_border_width(12);
+	set_default_size(CMDLISTDLG_DEFAULT_SIZE_X, CMDLISTDLG_DEFAULT_SIZE_Y);
 	
 	// Create all the widgets
 	populateWindow();
-	
-	// Show the window and its children
-	show();
 }
 
-void CommandList::reloadList() {
-	gtk_list_store_clear(_listStore);
+void CommandList::reloadList()
+{
+	_listStore->clear();
 	
 	// Instantiate the visitor class with the target list store
-	CommandListPopulator populator(_listStore);
+	CommandListPopulator populator(_listStore, _columns);
 
 	// Cycle through all the events and create the according list items
 	GlobalEventManager().foreachEvent(populator);
 }
 
-void CommandList::populateWindow() {
-	GtkHBox* hbox = GTK_HBOX(gtk_hbox_new(FALSE, 12));
-	gtk_widget_show(GTK_WIDGET(hbox));
-	gtk_container_add(GTK_CONTAINER(getWindow()), GTK_WIDGET(hbox));
+void CommandList::populateWindow()
+{
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 12));
+	add(*hbox);
 
 	{
 		// Create a new liststore item and define its columns
-		_listStore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
+		_listStore = Gtk::ListStore::create(_columns);
 
-		_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
-		
-		GtkTreeViewColumn* cmdCol = gtkutil::TextColumn(_("Command"), 0);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), cmdCol);
-		gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), gtkutil::TextColumn(_("Key"), 1));
+		_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
+		_treeView->append_column(_("Command"), _columns.command);
+		_treeView->append_column(_("Key"), _columns.key);
 		
 		// Connect the mouseclick event to catch the double clicks
-		g_signal_connect(G_OBJECT(_treeView), "button-press-event", G_CALLBACK(callbackViewButtonPress), this);
-		
-		gtk_widget_show(_treeView);
-
+		_treeView->add_events(Gdk::BUTTON_PRESS_MASK); 
+		_treeView->signal_button_press_event().connect_notify(sigc::mem_fun(*this, &CommandList::callbackViewButtonPress));
+				
 		// Load the list items into the treeview
 		reloadList();
 
-		g_object_unref(G_OBJECT(_listStore));
-		
 		// Pack this treeview into a scrolled window and show it
-		GtkWidget* scrolled = gtkutil::ScrolledFrame(_treeView);
-		gtk_widget_show_all(scrolled);
+		Gtk::ScrolledWindow* scrolled = Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
 		
 		// Set the sorting column
-		gtk_tree_view_column_set_sort_column_id(cmdCol, 0);
+		Gtk::TreeViewColumn* cmdColumn = _treeView->get_column(0);
+		cmdColumn->set_sort_column(_columns.command);
 		
 		// Pack the scrolled window into the hbox
-		gtk_box_pack_start(GTK_BOX(hbox), scrolled, TRUE, TRUE, 0);
+		hbox->pack_start(*scrolled, true, true, 0);
 	}
 
-	GtkVBox* vbox = GTK_VBOX(gtk_vbox_new(FALSE, 6));
-	gtk_widget_show(GTK_WIDGET(vbox));
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox), FALSE, FALSE, 0);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	hbox->pack_start(*vbox, false, false, 0);
 	
 	// Create the close button 
-	GtkWidget* closeButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	gtk_box_pack_end(GTK_BOX(vbox), closeButton, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(closeButton), "clicked", G_CALLBACK(callbackClose), this);
-	
-	gtk_widget_set_size_request(closeButton, 80, -1);
+	Gtk::Button* closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	vbox->pack_end(*closeButton, false, false, 0);
+	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandList::callbackClose));
+	closeButton->set_size_request(80, -1);
 	
 	// Create the assign shortcut button 
-	GtkWidget* assignButton = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	gtk_box_pack_end(GTK_BOX(vbox), assignButton, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(assignButton), "clicked", G_CALLBACK(callbackAssign), this);
-	
+	Gtk::Button* assignButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT));
+	vbox->pack_end(*assignButton, false, false, 0);
+	assignButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandList::callbackAssign));
+		
 	// Create the clear shortcut button 
-	GtkWidget* clearButton = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-	gtk_box_pack_end(GTK_BOX(vbox), clearButton, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(clearButton), "clicked", G_CALLBACK(callbackClear), this);
+	Gtk::Button* clearButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLEAR));
+	vbox->pack_end(*clearButton, false, false, 0);
+	clearButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandList::callbackClear));
 }
 
-std::string CommandList::getSelectedCommand() {
-	GtkTreeIter iter;
-	GtkTreeModel* model;
+std::string CommandList::getSelectedCommand()
+{
+	Gtk::TreeModel::iterator iter = _treeView->get_selection()->get_selected();
 	
-	GtkTreeSelection* selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
+	if (iter)
+	{
+		const std::string commandName = iter->get_value(_columns.command);
 	
-	if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
-		const std::string commandName = gtkutil::TreeModel::getString(model, &iter, 0);
-	
-		IEventPtr event = GlobalEventManager().findEvent(commandName);
+		IEventPtr ev = GlobalEventManager().findEvent(commandName);
 		
 		// Double check, if the command exists
-		if (event != NULL) {
+		if (ev != NULL)
+		{
 			return commandName;
 		}
 	}
@@ -127,47 +120,63 @@ std::string CommandList::getSelectedCommand() {
 	return "";
 }
 
-void CommandList::assignShortcut() {
-	// Instantiate the helper class
-	ShortcutChooser chooser(getWindow());
+void CommandList::assignShortcut()
+{
+	std::string command = getSelectedCommand();
+
+	if (command.empty()) return;
+
+	IEventPtr ev = GlobalEventManager().findEvent(command);
+
+	// Instantiate the helper dialog
+	ShortcutChooser chooser(_("Enter new Shortcut"), getRefPtr(), command);
+
+	ShortcutChooser::Result result = chooser.run();
 	
-	if (chooser.retrieveShortcut(getSelectedCommand())) {
-		// The chooser returned TRUE, update the list
+	if (result = ShortcutChooser::RESULT_OK)
+	{
+		// The chooser returned OK, update the list
 		reloadList();
 	}
 }
 
-void CommandList::callbackAssign(GtkWidget* widget, CommandList* self) {
-	self->assignShortcut();
+void CommandList::callbackAssign()
+{
+	assignShortcut();
 }
 
-gboolean CommandList::callbackViewButtonPress(GtkWidget* widget, GdkEventButton* event, CommandList* self) {
-	if (event->type == GDK_2BUTTON_PRESS) {
-		self->assignShortcut();
+void CommandList::callbackViewButtonPress(GdkEventButton* ev)
+{
+	if (ev->type == GDK_2BUTTON_PRESS)
+	{
+		assignShortcut();
 	}
-	
-	return false;
 }  
 
-void CommandList::callbackClear(GtkWidget* widget, CommandList* self) {
-	const std::string commandName = self->getSelectedCommand();
+void CommandList::callbackClear()
+{
+	const std::string commandName = getSelectedCommand();
 	
-	if (commandName != "") {
+	if (!commandName.empty())
+	{
 		// Disconnect the event and update the list
 		GlobalEventManager().disconnectAccelerator(commandName);
-		self->reloadList();
+		reloadList();
 	}
 }
 
-void CommandList::callbackClose(GtkWidget* widget, CommandList* self) {
-	// Call the DialogWindow::destroy method and remove self from heap
-	self->destroy();
+void CommandList::callbackClose()
+{
+	destroy();
+
 	// Reload all the accelerators
 	GlobalUIManager().getMenuManager().updateAccelerators();
 }
 
-void CommandList::showDialog(const cmd::ArgumentList& args) {
-	new CommandList(); // self-destructs in GTK callback
+void CommandList::showDialog(const cmd::ArgumentList& args)
+{
+	CommandList dialog;
+	dialog.show();
 }
 
 } // namespace ui
