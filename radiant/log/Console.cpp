@@ -3,7 +3,6 @@
 #include "iuimanager.h"
 #include "igroupdialog.h"
 
-#include <gtk/gtk.h>
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/IConv.h"
 
@@ -17,18 +16,21 @@
 namespace ui {
 
 Console::Console() :
-	_vbox(gtk_vbox_new(FALSE, 6))
+	Gtk::VBox(false, 6),
+	_view(Gtk::manage(new gtkutil::ConsoleView)),
+	_commandEntry(Gtk::manage(new CommandEntry))
 {
 	// Pack the scrolled textview and the entry box to the vbox
-	gtk_box_pack_start(GTK_BOX(_vbox), _view.getWidget(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(_vbox), _commandEntry, FALSE, FALSE, 0);
-	gtk_widget_show_all(_vbox);
+	pack_start(*_view, true, true, 0);
+	pack_start(*_commandEntry, false, false, 0);
+	show_all();
 
 	// We're ready to catch log output, register ourselves
 	applog::LogWriter::Instance().attach(this);
 
 	// Copy the temporary buffers over
-	if (applog::StringLogDevice::InstancePtr() != NULL) {
+	if (applog::StringLogDevice::InstancePtr() != NULL)
+	{
 		applog::StringLogDevice& logger = *applog::StringLogDevice::InstancePtr();
 
 		for (int level = applog::SYS_VERBOSE; 
@@ -48,10 +50,11 @@ Console::Console() :
 
 void Console::clearCmd(const cmd::ArgumentList& args)
 {
-	_view.clear();
+	_view->clear();
 }
 
-void Console::toggle(const cmd::ArgumentList& args) {
+void Console::toggle(const cmd::ArgumentList& args)
+{
 	GlobalGroupDialog().togglePage("console");  
 }
 
@@ -61,32 +64,51 @@ void Console::writeLog(const std::string& outputStr, applog::ELogLevel level)
 	{
 		case applog::SYS_VERBOSE:
 		case applog::SYS_STANDARD:
-			_view.appendText(outputStr, gtkutil::ConsoleView::STANDARD);
+			_view->appendText(outputStr, gtkutil::ConsoleView::STANDARD);
 			break;
 		case applog::SYS_WARNING:
-			_view.appendText(outputStr, gtkutil::ConsoleView::WARNING);
+			_view->appendText(outputStr, gtkutil::ConsoleView::WARNING);
 			break;
 		case applog::SYS_ERROR:
-			_view.appendText(outputStr, gtkutil::ConsoleView::ERROR);
+			_view->appendText(outputStr, gtkutil::ConsoleView::ERROR);
 			break;
 		default:
-			_view.appendText(outputStr, gtkutil::ConsoleView::STANDARD);
+			_view->appendText(outputStr, gtkutil::ConsoleView::STANDARD);
 	};
 }
 
-GtkWidget* Console::getWidget() {
-	return _vbox;
-}
-
-void Console::shutdown() {
+void Console::shutdown()
+{
 	applog::LogWriter::Instance().detach(this);
 
 	GlobalCommandSystem().removeCommand("clear");
 }
 
-Console& Console::Instance() {
-	static Console _console;
-	return _console;
+void Console::destroy()
+{
+	if (InstancePtr() != NULL)
+	{
+		Instance().shutdown();
+		InstancePtr().reset();
+	}
+}
+
+Console& Console::Instance()
+{
+	ConsolePtr& instance = InstancePtr();
+
+	if (instance == NULL)
+	{
+		instance.reset(new Console);
+	}
+
+	return *instance;
+}
+
+ConsolePtr& Console::InstancePtr()
+{
+	static ConsolePtr _consolePtr;
+	return _consolePtr;
 }
 
 } // namespace ui

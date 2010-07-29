@@ -76,11 +76,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib mathlib.lib cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib "
+				AdditionalDependencies="gtkutillib.lib mathlib.lib cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps\boost\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib\&quot;;&quot;$(SolutionDir)\..\..\w32deps\python\lib\&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps\boost\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib\&quot;;&quot;$(SolutionDir)\..\..\w32deps\python\lib\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtkmm\lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -171,11 +171,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib mathlib.lib cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib "
+				AdditionalDependencies="gtkutillib.lib mathlib.lib cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\boost\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\python\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\boost\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\python\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtkmm\lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -265,11 +265,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib mathlib.lib cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib "
+				AdditionalDependencies="gtkutillib.lib mathlib.lib cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps\boost\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib\&quot;;&quot;$(SolutionDir)\..\..\w32deps\python\lib\&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w32deps\boost\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib\&quot;;&quot;$(SolutionDir)\..\..\w32deps\python\lib\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtkmm\lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
@@ -363,11 +363,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtkutillib.lib mathlib.lib cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib"
+				AdditionalDependencies="gtkutillib.lib mathlib.lib cairo.lib glib-2.0.lib gtk-win32-2.0.lib gdk-win32-2.0.lib gobject-2.0.lib gdk_pixbuf-2.0.lib pango-1.0.lib gio-2.0.lib intl.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\boost\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\python\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\boost\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\python\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtkmm\lib&quot;"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile="$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def"
 				GenerateDebugInformation="true"
