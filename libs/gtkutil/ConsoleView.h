@@ -2,13 +2,12 @@
 #define _CONSOLE_VIEW_H_
 
 #include <string>
-#include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/ifc/Widget.h"
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktextbuffer.h>
-#include <gtk/gtktextview.h>
-#include <gtk/gtkmenu.h>
-#include <gtk/gtkmenuitem.h>
+
+#include <gtkmm/scrolledwindow.h>
+#include <gtkmm/textbuffer.h>
+#include <gtkmm/textview.h>
+#include <gtkmm/texttag.h>
+#include <gtkmm/textmark.h>
 
 namespace gtkutil
 {
@@ -22,22 +21,24 @@ namespace gtkutil
  * There are three "modes" available for writing text: STD, WARNING, ERROR
  */
 class ConsoleView :
-	public gtkutil::Widget
+	public Gtk::ScrolledWindow
 {
+private:
 	GtkWidget* _scrolledFrame;
 
-	GtkWidget* _textView;
-	GtkTextBuffer* _buffer;
+	Gtk::TextView* _textView;
+	Glib::RefPtr<Gtk::TextBuffer> _buffer;
 
 	// The tags for colouring the output text
-	GtkTextTag* _errorTag;
-	GtkTextTag* _warningTag;
-	GtkTextTag* _standardTag;
+	Glib::RefPtr<Gtk::TextBuffer::Tag> _errorTag;
+	Glib::RefPtr<Gtk::TextBuffer::Tag> _warningTag;
+	Glib::RefPtr<Gtk::TextBuffer::Tag> _standardTag;
 
-	GtkTextMark* _end;
+	Glib::RefPtr<Gtk::TextMark> _end;
 
 public:
 	ConsoleView();
+
 	virtual ~ConsoleView() {}
 
 	// The text modes determining the colour
@@ -54,17 +55,10 @@ public:
 	// Clears the text buffer
 	void clear();
 
-protected:
-	// gtkutil::Widget implementation
-	GtkWidget* _getWidget() const
-	{
-		return _scrolledFrame;
-	}
-
 private:
 	// Static GTK callbacks
-	static void onClearConsole(GtkMenuItem* menuitem, ConsoleView* self);
-	static void onPopulatePopup(GtkTextView* textview, GtkMenu* menu, ConsoleView* self);
+	void onClearConsole();
+	void onPopulatePopup(Gtk::Menu* menu);
 };
 
 } // namespace gtkutil

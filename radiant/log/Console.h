@@ -3,16 +3,17 @@
 
 #include "icommandsystem.h"
 
-#include <gtk/gtktextview.h>
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkentry.h>
+#include <gtkmm/box.h>
 #include "gtkutil/ConsoleView.h"
 
 #include "ui/common/CommandEntry.h"
 #include "LogDevice.h"
 
-namespace ui {
+namespace ui
+{
+
+class Console;
+typedef boost::shared_ptr<Console> ConsolePtr;
 
 /** 
  * greebo: The Console class encapsulates a GtkTextView and represents 
@@ -22,15 +23,14 @@ namespace ui {
  *         during mainframe construction.
  */
 class Console :
+	public Gtk::VBox,
 	public applog::LogDevice
 {
-	// The widget for packing into a parent window
-	GtkWidget* _vbox;
-
-	gtkutil::ConsoleView _view;
+private:
+	gtkutil::ConsoleView* _view;
 
 	// The entry box for console commands
-	CommandEntry _commandEntry;
+	CommandEntry* _commandEntry;
 
 	// Private constructor, creates the Gtk structures
 	Console();
@@ -44,11 +44,6 @@ public:
 	// Command target to clear the console
 	void clearCmd(const cmd::ArgumentList& args);
 
-	/** 
-	 * greebo: Returns the widget pointer for packing into a parent container.
-	 */
-	GtkWidget* getWidget();
-
 	/**
 	 * greebo: Writes the given output string to the Console.
 	 * The log level indicates which tag is used for colouring the output.
@@ -59,14 +54,16 @@ public:
 	/**
 	 * greebo: Detaches itself from the LogWriter
 	 */ 
-	void shutdown();
+	static void destroy();
 
 	// Accessor to the static singleton instance.
 	static Console& Instance();
 
 private:
-	// Static GTK callbacks
-	static void onCmdEntryActivate(GtkEntry* entry, Console* self);
+	void shutdown();
+
+	// Static shared pointer
+	static ConsolePtr& InstancePtr();
 };
 
 } // namespace ui

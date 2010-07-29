@@ -444,7 +444,7 @@ void MainFrame::create()
     	"console",	// name
     	"Console", // tab title
     	"iconConsole16.png", // tab icon 
-		Console::Instance().getWidget(), // page widget
+		GTK_WIDGET(Console::Instance().gobj()), // page widget
     	_("Console")
     );
 
@@ -483,8 +483,8 @@ void MainFrame::saveWindowPosition() {
 
 void MainFrame::shutdown()
 {
-	// Shutdown the console
-	Console::Instance().shutdown();
+	// Shutdown and destroy the console
+	Console::Instance().destroy();
 
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
