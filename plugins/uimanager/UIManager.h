@@ -32,7 +32,7 @@ private:
 
 	DialogManagerPtr _dialogManager;
 
-	typedef std::map<std::string, Glib::RefPtr<Gdk::Pixbuf>> PixBufMap;
+	typedef std::map<std::string, Glib::RefPtr<Gdk::Pixbuf> > PixBufMap;
 	PixBufMap _localPixBufs;
 	PixBufMap _localPixBufsWithMask;
 
