@@ -32,6 +32,8 @@ ShaderChooser::ShaderChooser(ChooserClient* client,
 	_targetEntry(targetEntry),
 	_selector(Gtk::manage(new ShaderSelector(this, SHADER_PREFIXES)))
 {
+	set_border_width(12);
+
 	if (_targetEntry != NULL)
 	{
 		_initialShader = targetEntry->get_text();
@@ -81,8 +83,8 @@ Gtk::Widget& ShaderChooser::createButtons()
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ShaderChooser::callbackOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ShaderChooser::callbackCancel));
 	
-	hbx->pack_end(*okButton, true, true, 0);
-	hbx->pack_end(*cancelButton, true, true, 0);
+	hbx->pack_end(*okButton, false, false, 0);
+	hbx->pack_end(*cancelButton, false, false, 0);
 
 	return *hbx;
 }
