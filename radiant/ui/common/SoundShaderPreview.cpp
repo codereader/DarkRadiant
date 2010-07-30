@@ -20,10 +20,9 @@
 namespace ui {
 
 SoundShaderPreview::SoundShaderPreview() :
+	Gtk::HBox(false, 12),
 	_soundShader("")
 {
-	_widget = Glib::RefPtr<Gtk::HBox>(new Gtk::HBox(false, 12));
-	
 	_treeView = Gtk::manage(new Gtk::TreeView);
 	_treeView->set_size_request(-1, 130);
 	_treeView->append_column(_("Sound Files"), _columns.shader);
@@ -32,14 +31,14 @@ SoundShaderPreview::SoundShaderPreview() :
 	_selection = _treeView->get_selection();
 	_selection->signal_changed().connect(sigc::mem_fun(*this,&SoundShaderPreview::onSelectionChanged));
 	
-	_widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true);
-	_widget->pack_start(*createControlPanel(), false, false);
+	pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true);
+	pack_start(createControlPanel(), false, false);
 	
 	// Trigger the initial update of the widgets
 	update();
 }
 
-Gtk::Widget* SoundShaderPreview::createControlPanel()
+Gtk::Widget& SoundShaderPreview::createControlPanel()
 {
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 	vbox->set_size_request(200, -1);
@@ -61,7 +60,7 @@ Gtk::Widget* SoundShaderPreview::createControlPanel()
 	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
 	vbox->pack_end(*_statusLabel, false, false);
 	
-	return vbox;
+	return *vbox;
 }
 
 void SoundShaderPreview::setSoundShader(const std::string& soundShader)
@@ -76,7 +75,7 @@ void SoundShaderPreview::update()
 	_treeView->unset_model();
 		
 	// If the soundshader string is empty, desensitise the widgets
-	_widget->set_sensitive(!_soundShader.empty());
+	set_sensitive(!_soundShader.empty());
 	
 	if (!_soundShader.empty())
 	{
@@ -111,14 +110,9 @@ void SoundShaderPreview::update()
 		else
 		{
 			// Not a valid soundshader, switch to inactive
-			_widget->set_sensitive(false);
+			set_sensitive(false);
 		}
 	}
-}
-
-SoundShaderPreview::operator GtkWidget*()
-{
-	return GTK_WIDGET(_widget->gobj());
 }
 
 std::string SoundShaderPreview::getSelectedSoundFile()
