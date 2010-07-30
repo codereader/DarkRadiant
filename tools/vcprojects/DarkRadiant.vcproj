@@ -1740,10 +1740,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\radiant\ui\common\ModelPreviewRenderer.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\radiant\ui\common\RenderableAABB.cpp"
 						>
 					</File>
