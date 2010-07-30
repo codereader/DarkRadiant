@@ -210,7 +210,7 @@ void EntityInspector::onKeyChange(const std::string& key,
         PROPERTY_ICON_COLUMN, PropertyEditorFactory::getPixbufFor(parms.type),
         INHERITED_FLAG_COLUMN, "", // not inherited
         HELP_ICON_COLUMN, hasDescription 
-                          ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME) 
+                          ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)->gobj() 
                           : NULL,
         HAS_HELP_FLAG_COLUMN, hasDescription ? TRUE : FALSE,
         -1
