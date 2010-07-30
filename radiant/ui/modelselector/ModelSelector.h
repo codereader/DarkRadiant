@@ -4,18 +4,21 @@
 #include "modelskin.h"
 #include "iradiant.h"
 #include "iuimanager.h"
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTreeStore GtkTreeStore;
-typedef struct _GtkTreeView GtkTreeView;
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkExpander GtkExpander;
-typedef struct _GtkCheckButton GtkCheckButton;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-
+#include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 
 #include <string>
+#include <gtkmm/treestore.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/treeselection.h>
+
+namespace Gtk
+{
+	class TreeView;
+	class Expander;
+	class CheckButton;
+	class VBox;
+}
 
 namespace ui
 {
@@ -24,7 +27,8 @@ namespace ui
  * Data structure containing the model, the skin name and the options to be returned from
  * the Model Selector.
  */
-struct ModelSelectorResult {
+struct ModelSelectorResult
+{
 	// Model and skin strings
 	std::string model;
 	std::string skin;
@@ -45,30 +49,63 @@ typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
  */
 
 class ModelSelector :
+	public gtkutil::BlockingTransientWindow,
 	public RadiantEventListener
 {
+public:
+	// Treemodel definition
+	struct TreeColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TreeColumns()
+		{ 
+			add(filename);
+			add(vfspath);
+			add(skin);
+			add(icon);
+			add(isFolder);
+		}
+
+		Gtk::TreeModelColumn<Glib::ustring> filename;		// e.g. "chair1.lwo"
+		Gtk::TreeModelColumn<Glib::ustring> vfspath;		// e.g. "models/darkmod/props/chair1.lwo"
+		Gtk::TreeModelColumn<Glib::ustring> skin;			// e.g. "chair1_brown_wood", or "" for no skin
+		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon; // icon to display
+		Gtk::TreeModelColumn<bool> isFolder;				// whether this is a folder
+	};
+
+	struct InfoStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		InfoStoreColumns() { add(attribute); add(value); }
+
+		Gtk::TreeModelColumn<Glib::ustring> attribute;
+		Gtk::TreeModelColumn<Glib::ustring> value;
+	};
+
 private:
-	// Main dialog widget
-	GtkWidget* _widget;
+	Gtk::VBox* _vbox; // main vbox
+
+	TreeColumns _columns;
 
 	// Model preview widget
 	IModelPreviewPtr _modelPreview;
 	
 	// Tree store containing model names (one with and one without skins)
-	GtkTreeStore* _treeStore;
-	GtkTreeStore* _treeStoreWithSkins;
+	Glib::RefPtr<Gtk::TreeStore> _treeStore;
+	Glib::RefPtr<Gtk::TreeStore> _treeStoreWithSkins;
 
-	GtkTreeView* _treeView;
+	Gtk::TreeView* _treeView;
 	
 	// Currently-selected row in the tree store
-	GtkTreeSelection* _selection;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	
 	// List store to contain attributes and values for the selected model
-	GtkListStore* _infoStore;
+	InfoStoreColumns _infoStoreColumns;
+	Glib::RefPtr<Gtk::ListStore> _infoStore;
 
 	// options widgets
-	GtkExpander* _advancedOptions;
-	GtkCheckButton* _clipCheckButton;
+	Gtk::Expander* _advancedOptions;
+	Gtk::CheckButton* _clipCheckButton;
 
 	// The window position tracker
 	gtkutil::WindowPosition _position;
@@ -80,10 +117,11 @@ private:
 	
 	// TRUE if the treeview has been populated
 	bool _populated;
+
+	bool _showOptions;
 	
 private:
-	
-	// Private constructor, creates GTK widgets
+	// Private constructor, creates widgets
 	ModelSelector();
 	
 	// Home of the static instance
@@ -96,10 +134,10 @@ private:
 	ModelSelectorResult showAndBlock(const std::string& curModel, bool showOptions, bool showSkins);
 	
 	// Helper functions to create GUI components
-	GtkWidget* createTreeView();
-	GtkWidget* createButtons();
-	GtkWidget* createAdvancedButtons();
-	GtkWidget* createInfoPanel();
+	Gtk::Widget& createTreeView();
+	Gtk::Widget& createButtons();
+	Gtk::Widget& createAdvancedButtons();
+	Gtk::Widget& createInfoPanel();
 	
 	// Populate the tree view with models
 	void populateModels();
@@ -112,14 +150,19 @@ private:
 	void updateSelected();
 	
 	// Return the value from the selected column, or an empty string if nothing selected
-	std::string getSelectedValue(gint col);
+	std::string getSelectedValue(int col);
 	
-	/* GTK CALLBACKS */
-	
-	static void callbackHide(GtkWidget*, GdkEvent*, ModelSelector*);
-	static void callbackSelChanged(GtkWidget*, ModelSelector*);
-	static void callbackOK(GtkWidget*, ModelSelector*);
-	static void callbackCancel(GtkWidget*, ModelSelector*);
+	// gtkmm callbacks	
+	void callbackSelChanged();
+	void callbackOK();
+	void callbackCancel();
+
+protected:
+	// Override TransientWindow::_onDeleteEvent
+	void _onDeleteEvent();
+
+	// Override BlockingTransientWindow::_postShow()
+	void _postShow();
 
 public:
 	/** 

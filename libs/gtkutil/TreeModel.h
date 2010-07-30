@@ -6,6 +6,7 @@
 #include <gtk/gtktreemodel.h>
 #include <gtk/gtktreeselection.h>
 
+#include <gtkmm/treesortable.h>
 #include <gtkmm/treemodel.h>
 
 namespace Gtk { class TreeView; }
@@ -225,7 +226,24 @@ public:
 	 */
 	static void applyFoldersFirstSortFunc(GtkTreeModel* model, gint nameCol, gint isFolderColumn);
 
+	/**
+	 * greebo: Takes care that the given tree model is sorted such that
+	 * folders are listed before "regular" items. 
+	 * 
+	 * @model: The tree model to sort, must implement GtkTreeSortable.
+	 * @nameCol: the column number containing the name
+	 * @isFolderColumn: the column number containing a boolean flag: "is folder"
+	 */
+	static void applyFoldersFirstSortFunc(const Glib::RefPtr<Gtk::TreeSortable>& model, 
+										  const Gtk::TreeModelColumn<Glib::ustring>& nameColumn,
+										  const Gtk::TreeModelColumn<bool>& isFolderColumn);
+
 private:
+	static int sortFuncFoldersFirstmm(const Gtk::TreeModel::iterator& a, 
+									  const Gtk::TreeModel::iterator& b, 
+									  const Gtk::TreeModelColumn<Glib::ustring>& nameColumn, // columns are bound 
+									  const Gtk::TreeModelColumn<bool>& isFolderColumn);	 // by applyFoldersFirstSortFunc
+
 	// Custom sort function, used by applyFoldersFirstSortFunc
 	static gint sortFuncFoldersFirst(GtkTreeModel *model, 
 									 GtkTreeIter *a, 
