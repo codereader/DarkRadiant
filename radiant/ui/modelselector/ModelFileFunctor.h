@@ -29,8 +29,8 @@ class ModelFileFunctor :
 	public VirtualFileSystem::Visitor
 {
 	// VFSTreePopulators to populate
-	gtkutil::VFSTreePopulator& _populator;
-	gtkutil::VFSTreePopulator& _populator2;
+	gtkutil::VFSTreePopulatormm& _populator;
+	gtkutil::VFSTreePopulatormm& _populator2;
 
 	// Progress dialog and model count
 	gtkutil::ModalProgressDialog _progress;
@@ -44,7 +44,7 @@ class ModelFileFunctor :
 public:
 	
 	// Constructor sets the populator
-	ModelFileFunctor(gtkutil::VFSTreePopulator& pop, gtkutil::VFSTreePopulator& pop2) : 
+	ModelFileFunctor(gtkutil::VFSTreePopulatormm& pop, gtkutil::VFSTreePopulatormm& pop2) : 
 		_populator(pop),
 		_populator2(pop2),
 		_progress(GlobalMainFrame().getTopLevelWindow(), _("Loading models")),

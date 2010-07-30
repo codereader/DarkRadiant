@@ -384,4 +384,65 @@ void TreeModel::applyFoldersFirstSortFunc(GtkTreeModel* model,
 	);
 }
 
+int TreeModel::sortFuncFoldersFirstmm(const Gtk::TreeModel::iterator& a, 
+									  const Gtk::TreeModel::iterator& b, 
+									  const Gtk::TreeModelColumn<Glib::ustring>& nameColumn,
+									  const Gtk::TreeModelColumn<bool>& isFolderColumn)
+{
+	Gtk::TreeModel::Row rowA = *a;
+	Gtk::TreeModel::Row rowB = *b;
+
+	// Check if A or B are folders
+	bool aIsFolder = rowA[isFolderColumn];
+	bool bIsFolder = rowB[isFolderColumn];
+
+	if (aIsFolder)
+	{
+		// A is a folder, check if B is as well
+		if (bIsFolder)
+		{
+			// A and B are both folders, compare names
+			std::string aName = Glib::ustring(rowA[nameColumn]);
+			std::string bName = Glib::ustring(rowB[nameColumn]);
+
+			// greebo: We're not checking for equality here, names should be unique
+			return (aName < bName) ? -1 : 1;
+		}
+		else
+		{
+			// A is a folder, B is not, A sorts before
+			return -1;
+		}
+	}
+	else
+	{
+		// A is not a folder, check if B is one
+		if (bIsFolder)
+		{
+			// A is not a folder, B is, so B sorts before A
+			return 1;
+		}
+		else
+		{
+			// Neither A nor B are folders, compare names
+			std::string aName = Glib::ustring(rowA[nameColumn]);
+			std::string bName = Glib::ustring(rowB[nameColumn]);
+
+			// greebo: We're not checking for equality here, names should be unique
+			return (aName < bName) ? -1 : 1;
+		}
+	}
+}
+
+void TreeModel::applyFoldersFirstSortFunc(const Glib::RefPtr<Gtk::TreeSortable>& model, 
+										  const Gtk::TreeModelColumn<Glib::ustring>& nameColumn,
+										  const Gtk::TreeModelColumn<bool>& isFolderColumn)
+{
+	// Set the sort column ID to nameCol
+	model->set_sort_column(nameColumn, Gtk::SORT_ASCENDING);
+
+	// Then apply the custom sort function, bind the folder column to the functor
+	model->set_sort_func(nameColumn, sigc::bind(sigc::ptr_fun(sortFuncFoldersFirstmm), nameColumn, isFolderColumn));
+}
+
 } // namespace gtkutil
