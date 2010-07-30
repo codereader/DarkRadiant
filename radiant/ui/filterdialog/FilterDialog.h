@@ -5,21 +5,47 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <map>
 #include "Filter.h"
+#include <gtkmm/liststore.h>
 
-typedef struct _GtkTreeView GtkTreeView;
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
+namespace Gtk
+{
+	class TreeView;
+	class Widget;
+}
 
-namespace ui {
+namespace ui
+{
 
 class FilterDialog :
 	public gtkutil::BlockingTransientWindow
 {
-	// The treeview listing all the filters
-	GtkTreeView* _filterView;
-	GtkListStore* _filterStore;
+private:
+	// Treemodel definition
+	struct TreeColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TreeColumns()
+		{ 
+			add(name); 
+			add(state); 
+			add(colour);
+			add(readonly);
+		}
 
-	std::map<int, GtkWidget*> _widgets;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<Glib::ustring> state;
+		Gtk::TreeModelColumn<Glib::ustring> colour;
+		Gtk::TreeModelColumn<bool> readonly;
+	};
+
+	TreeColumns _columns;
+
+	Glib::RefPtr<Gtk::ListStore> _filterStore;
+
+	// The treeview listing all the filters
+	Gtk::TreeView* _filterView;
+	
+	std::map<int, Gtk::Widget*> _widgets;
 
 	// Holds the name of the currently selected filter (or "" if none selected)
 	std::string _selectedFilter;
@@ -53,21 +79,22 @@ private:
 	// This is called to create the widgets
 	void populateWindow();
 
-	GtkWidget* createButtonPanel();
-	GtkWidget* createFiltersPanel();
+	Gtk::Widget& createButtonPanel();
+	Gtk::Widget& createFiltersPanel();
 
 	// Update buttons
 	void updateWidgetSensitivity();
 
-	static void onSave(GtkWidget* widget, FilterDialog* self);
-	static void onCancel(GtkWidget* widget, FilterDialog* self);
+	// gtkmm callbacks
+	void onSave();
+	void onCancel();
 
-	static void onAddFilter(GtkWidget* w, FilterDialog* self);
-	static void onEditFilter(GtkWidget* w, FilterDialog* self);
-	static void onViewFilter(GtkWidget* w, FilterDialog* self);
-	static void onDeleteFilter(GtkWidget* w, FilterDialog* self);
+	void onAddFilter();
+	void onEditFilter();
+	void onViewFilter();
+	void onDeleteFilter();
 
-	static void onFilterSelectionChanged(GtkTreeSelection* sel, FilterDialog* self);
+	void onFilterSelectionChanged();
 };
 
 } // namespace ui
