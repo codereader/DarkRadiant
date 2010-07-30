@@ -345,7 +345,7 @@ void ShaderSelector::displayShaderInfo(const MaterialPtr& shader,
 	// Containing MTR File
 	iter = listStore->append();
 	iter->set_value(attrCol, std::string("<b>") + _("Defined in") + "</b>");
-	iter->set_value(valueCol, shader->getShaderFileName());
+	iter->set_value(valueCol, Glib::ustring(shader->getShaderFileName()));
 	
 	// Description
 	iter = listStore->append();
@@ -372,7 +372,7 @@ void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 	// Name of file containing the shader
 	iter = listStore->append();
 	iter->set_value(attrCol, std::string("<b>") + _("Defined in") + "</b>");
-	iter->set_value(valueCol, shader->getShaderFileName());
+	iter->set_value(valueCol, Glib::ustring(shader->getShaderFileName()));
 
 	// Light types, from the Material
 	std::string lightType;
