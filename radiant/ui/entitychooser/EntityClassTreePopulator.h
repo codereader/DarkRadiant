@@ -3,48 +3,46 @@
 
 #include "ieclass.h"
 
-#include <gtk/gtktreestore.h>
-
 #include <map>
 #include <string>
-
-#include <boost/functional/hash/hash.hpp>
+#include "gtkutil/VFSTreePopulator.h"
+#include "EntityClassChooser.h"
 
 namespace ui
 {
 
 /**
- * EntityClassVisitor which populates a GtkTreeStore with entity classnames
+ * EntityClassVisitor which populates a Gtk::TreeStore with entity classnames
  * taking account of display folders and mod names.
  */
-class EntityClassTreePopulator
-: public EntityClassVisitor 
+class EntityClassTreePopulator : 
+	public gtkutil::VFSTreePopulatormm,
+	public gtkutil::VFSTreePopulatormm::Visitor,
+	public EntityClassVisitor 
 {
-    // Map between string directory names and their corresponding Iters
-	typedef std::map<std::string, GtkTreeIter*> DirIterMap;
-    DirIterMap _dirIterMap;
-
+private:
     // TreeStore to populate
-    GtkTreeStore* _store;
+    Glib::RefPtr<Gtk::TreeStore> _store;
+
+	// Column definition
+	const EntityClassChooser::TreeColumns& _columns;
     
     // Key that specifies the display folder
     std::string _folderKey;
 
-private:
-    
-    // Recursive folder add function
-    GtkTreeIter* addRecursive(const std::string& pathName);
-
-    // Add parent folder
-    GtkTreeIter* addDisplayFolder(IEntityClassPtr e);
-    
 public:
-
     // Constructor
-    EntityClassTreePopulator(GtkTreeStore* store);
+	EntityClassTreePopulator(const Glib::RefPtr<Gtk::TreeStore>& store,
+							 const EntityClassChooser::TreeColumns& columns);
 
     // Required visit function
-    virtual void visit(IEntityClassPtr e);
+	void visit(IEntityClassPtr eclass);
+
+	// VFSTreePopulator::Visitor implementation
+	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+			   const Gtk::TreeModel::iterator& iter, 
+			   const std::string& path,
+			   bool isExplicit);
 };
 
 }
