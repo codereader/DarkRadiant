@@ -69,13 +69,15 @@ public:
 	 * @param title
 	 * The title of the column.
 	 * 
-	 * @param column
+	 * @param textColumn
 	 * The column reference to display text from.
 	 * 
 	 * @param useMarkup
 	 * Whether to use Pango markup to format text in the column (default true).
 	 */
-	TextColumnmm(const std::string& title, const Gtk::TreeModelColumnBase& column, bool useMarkup = true) :
+	TextColumnmm(const std::string& title, 
+				 const Gtk::TreeModelColumn<Glib::ustring>& textColumn, 
+				 bool useMarkup = true) :
 		Gtk::TreeViewColumn(title, *Gtk::manage(new Gtk::CellRendererText))
 	{
 		// Get the cell renderer from the column (as created in the constructor)
@@ -84,12 +86,45 @@ public:
 		// Associate the cell renderer with the given model column
 		if (useMarkup)
 		{
-			add_attribute(renderer->property_markup(), column);
+			add_attribute(renderer->property_markup(), textColumn);
 		}
 		else
 		{
-			add_attribute(renderer->property_text(), column);
+			add_attribute(renderer->property_text(), textColumn);
 		}
+	}
+};
+
+class ColouredTextColumn :
+	public TextColumnmm
+{
+public:
+	/** Create a TextColumn which displays the text in the given column.
+	 * 
+	 * @param title
+	 * The title of the column.
+	 * 
+	 * @param textColumn
+	 * The column reference to display text from.
+	 *
+	 * @param colourColumn
+	 * The column reference to retrieve the colour from 
+	 * This is a string column, containing "#707070", "black", etc.
+	 * 
+	 * @param useMarkup
+	 * Whether to use Pango markup to format text in the column (default true).
+	 */
+	ColouredTextColumn(const std::string& title, 
+					   const Gtk::TreeModelColumn<Glib::ustring>& textColumn, 
+					   const Gtk::TreeModelColumn<Glib::ustring>& colourColumn,
+					   bool useMarkup = true) :
+		TextColumnmm(title, textColumn, useMarkup)
+	{
+		// Get the cell renderer from the column (as created in the constructor)
+		Gtk::CellRendererText* renderer = static_cast<Gtk::CellRendererText*>(get_first_cell_renderer());
+		
+		// Associate foreground colour
+		add_attribute(renderer->property_foreground(), colourColumn);
 	}
 };
 
