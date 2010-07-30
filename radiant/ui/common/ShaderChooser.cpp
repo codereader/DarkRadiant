@@ -6,12 +6,16 @@
 #include "texturelib.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "string/string.h"
-#include "gtk/gtk.h"
-#include "gdk/gdkkeysyms.h"
 
-namespace ui {
-	
-	namespace {
+#include <gtkmm/entry.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gdk/gdkkeysyms.h>
+
+namespace ui
+{
+	namespace
+	{
 		const char* const LABEL_TITLE = N_("Choose Shader");
 		const std::string SHADER_PREFIXES = "textures";
 		const int DEFAULT_SIZE_X = 550;
@@ -20,30 +24,34 @@ namespace ui {
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(ChooserClient* client, const Glib::RefPtr<Gtk::Window>& parent, GtkWidget* targetEntry) : 
+ShaderChooser::ShaderChooser(ChooserClient* client, 
+							 const Glib::RefPtr<Gtk::Window>& parent, 
+							 Gtk::Entry* targetEntry) : 
 	gtkutil::BlockingTransientWindow(_(LABEL_TITLE), parent),
 	_client(client),
 	_targetEntry(targetEntry),
-	_selector(this, SHADER_PREFIXES)
+	_selector(Gtk::manage(new ShaderSelector(this, SHADER_PREFIXES)))
 {
-	if (_targetEntry != NULL) {
-		_initialShader = gtk_entry_get_text(GTK_ENTRY(_targetEntry));
+	if (_targetEntry != NULL)
+	{
+		_initialShader = targetEntry->get_text();
+
 		// Set the cursor of the tree view to the currently selected shader
-		_selector.setSelection(_initialShader);
+		_selector->setSelection(_initialShader);
 	}
 	
 	// Set the default size and position of the window
-	gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
+	set_default_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 	
 	// Connect the key handler to catch the ESC event
-	g_signal_connect(G_OBJECT(getWindow()), "key-press-event", G_CALLBACK(onKeyPress), this);
+	signal_key_press_event().connect(sigc::mem_fun(*this, &ShaderChooser::onKeyPress));
 	
 	// Construct main VBox, and pack in the ShaderSelector and buttons panel
-	GtkWidget* vbx = gtk_vbox_new(false, 3);
-	gtk_box_pack_start(GTK_BOX(vbx), _selector, true, true, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), createButtons(), false, false, 0);
-	gtk_container_add(GTK_CONTAINER(getWindow()), vbx);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 3));
+	vbx->pack_start(*_selector, true, true, 0);
+	vbx->pack_start(createButtons(), false, false, 0);
+
+	add(*vbx);
 
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -55,100 +63,99 @@ ShaderChooser::ShaderChooser(ChooserClient* client, const Glib::RefPtr<Gtk::Wind
 	show();
 }
 
-void ShaderChooser::shutdown() {
+void ShaderChooser::shutdown()
+{
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 }
 
 // Construct the buttons
-GtkWidget* ShaderChooser::createButtons() {
-	GtkWidget* hbx = gtk_hbox_new(false, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
+Gtk::Widget& ShaderChooser::createButtons()
+{
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
+	hbx->set_border_width(3);
 
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(callbackOK), this);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(callbackCancel), this);
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ShaderChooser::callbackOK));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ShaderChooser::callbackCancel));
+	
+	hbx->pack_end(*okButton, true, true, 0);
+	hbx->pack_end(*cancelButton, true, true, 0);
 
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, false, false, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, false, false, 0);
-	return hbx;
+	return *hbx;
 }
 
-void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, GtkListStore* listStore) {
-	if (_targetEntry != NULL) {
-		gtk_entry_set_text(GTK_ENTRY(_targetEntry), 
-					   	   _selector.getSelection().c_str());
+void ShaderChooser::shaderSelectionChanged(const std::string& shaderName, 
+										   const Glib::RefPtr<Gtk::ListStore>& listStore)
+{
+	if (_targetEntry != NULL)
+	{
+		_targetEntry->set_text(_selector->getSelection());
 	}
 	
 	// Propagate the call up to the client (e.g. SurfaceInspector)
-	if (_client != NULL) {
+	if (_client != NULL)
+	{
 		_client->shaderSelectionChanged(shaderName);
 	}
 	
 	// Get the shader, and its image map if possible
-	MaterialPtr shader = _selector.getSelectedShader();
+	MaterialPtr shader = _selector->getSelectedShader();
 	// Pass the call to the static member
 	ShaderSelector::displayShaderInfo(shader, listStore);
 }
 
-void ShaderChooser::revertShader() {
+void ShaderChooser::revertShader()
+{
 	// Revert the shadername to the value it had at dialog startup
-	if (_targetEntry != NULL) {
-		gtk_entry_set_text(GTK_ENTRY(_targetEntry), _initialShader.c_str());
+	if (_targetEntry != NULL)
+	{
+		_targetEntry->set_text(_initialShader);
 		
 		// Propagate the call up to the client (e.g. SurfaceInspector)
-		if (_client != NULL) {
-			_client->shaderSelectionChanged(
-				gtk_entry_get_text(GTK_ENTRY(_targetEntry))
-			);
+		if (_client != NULL)
+		{
+			_client->shaderSelectionChanged(_targetEntry->get_text());
 		}
 	}
 }
 
-// Static GTK CALLBACKS
-void ShaderChooser::callbackCancel(GtkWidget* w, ShaderChooser* self) {
+void ShaderChooser::callbackCancel()
+{
 	// Revert the shadername to the value it had at dialog startup
-	self->revertShader();
+	revertShader();
 	
-	self->destroy();
+	destroy();
 }
 
-void ShaderChooser::callbackOK(GtkWidget* w, ShaderChooser* self) {
-	if (self->_targetEntry != NULL) {
-		gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
-					   	   self->_selector.getSelection().c_str());
+void ShaderChooser::callbackOK()
+{
+	if (_targetEntry != NULL)
+	{
+		_targetEntry->set_text(_selector->getSelection());
 	}
 
-	self->destroy();
+	destroy();
 }
 
-gboolean ShaderChooser::onKeyPress(GtkWidget* widget, GdkEventKey* event, ShaderChooser* self) {
+bool ShaderChooser::onKeyPress(GdkEventKey* ev)
+{
 	// Check for ESC or ENTER to close the dialog
-	switch (event->keyval) {
+	switch (ev->keyval)
+	{
 		case GDK_Escape:
-			// Revert the shadername to the value it had at dialog startup
-			self->revertShader();
-
-			// Remove this dialog
-			self->destroy();
+			callbackCancel();
 			// Don't propagate the keypress if ESC could be processed
-			return TRUE;
+			return true;
 			
 		case GDK_Return:
-			if (self->_targetEntry != NULL) {
-				gtk_entry_set_text(GTK_ENTRY(self->_targetEntry), 
-					   		   self->_selector.getSelection().c_str());
-			}
-
-			// Remove this dialog
-			self->destroy();
-
-			return TRUE;
+			callbackOK();
+			return true;
 	};
 
-	return FALSE;
+	return false;
 }
 
 } // namespace ui

@@ -148,7 +148,7 @@ MediaBrowser::MediaBrowser()
 	);
 
 	// Pack in the TexturePreviewCombo widgets
-	gtk_box_pack_end(GTK_BOX(_widget), *_preview, FALSE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(_widget), GTK_WIDGET(_preview->gobj()), FALSE, FALSE, 0);
 }
 
 /* Callback functor for processing shader names */

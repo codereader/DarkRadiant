@@ -2,7 +2,8 @@
 #define LIGHTTEXTURECHOOSER_H_
 
 #include "ui/common/ShaderSelector.h"
-#include <gtk/gtk.h>
+#include "gtkutil/window/BlockingTransientWindow.h"
+
 #include <string>
 
 // Forward decls
@@ -10,33 +11,31 @@ class Material;
 
 namespace ui {
 
-/* A GTK dialog containing a ShaderSelector widget combo and OK/Cancel
+/**
+ * A GTK dialog containing a ShaderSelector widget combo and OK/Cancel
  * buttons.
  */
 class LightTextureChooser :
+	public gtkutil::BlockingTransientWindow,
 	public ShaderSelector::Client
 {
-	// Main dialog widget
-	GtkWidget* _widget;	
-	
+private:	
 	// The ShaderSelector widget group, that contains the actual selection
 	// tools (treeview etc.)
-	ShaderSelector _selector;
+	ShaderSelector* _selector;
 	
 	// The user's texture selection
 	std::string _selectedTexture;
 	
 private:
-
 	// Widget construction helpers
-	GtkWidget* createButtons();
+	Gtk::Widget& createButtons();
 	
-	/* GTK CALLBACKS */
-	static void callbackCancel(GtkWidget*, LightTextureChooser*);
-	static void callbackOK(GtkWidget*, LightTextureChooser*);
+	// gtkmm callbacks
+	void callbackCancel();
+	void callbackOK();
 
 public:
-	
 	/**
 	 * Construct the dialog window and its contents.
 	 */
@@ -55,7 +54,7 @@ public:
 	 * 			of the contained ShaderSelector helper class accordingly.
 	 */
 	void shaderSelectionChanged(const std::string& shaderName, 
-								GtkListStore* listStore);
+								const Glib::RefPtr<Gtk::ListStore>& listStore);
 
 };
 
