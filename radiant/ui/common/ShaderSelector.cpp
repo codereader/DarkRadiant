@@ -222,8 +222,8 @@ Gtk::Widget& ShaderSelector::createPreview()
 	Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView(_infoStore));
 	tree->set_headers_visible(false);
 	
-	tree->append_column(_("Attribute"), _infoStoreColumns.attribute);
-	tree->append_column(_("Value"), _infoStoreColumns.value);
+	tree->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Attribute"), _infoStoreColumns.attribute)));
+	tree->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Value"), _infoStoreColumns.value)));
 
 	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*tree)), true, true, 0);
 

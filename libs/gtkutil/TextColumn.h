@@ -60,46 +60,36 @@ public:
 };
 
 // gtkmm variant of the above
-class TextColumnmm
+class TextColumnmm :
+	public Gtk::TreeViewColumn
 {
-private:
-	// Column widget
-	Gtk::TreeViewColumn* _column;
-	Gtk::CellRendererText* _renderer;
-	
 public:
-
 	/** Create a TextColumn which displays the text in the given column.
 	 * 
 	 * @param title
 	 * The title of the column.
 	 * 
-	 * @param colno
-	 * The integer column id to display text from.
+	 * @param column
+	 * The column reference to display text from.
 	 * 
 	 * @param useMarkup
 	 * Whether to use Pango markup to format text in the column (default true).
 	 */
-	TextColumnmm(const std::string& title, int colno, bool useMarkup = true)
+	TextColumnmm(const std::string& title, const Gtk::TreeModelColumnBase& column, bool useMarkup = true) :
+		Gtk::TreeViewColumn(title, *Gtk::manage(new Gtk::CellRendererText))
 	{
-		// Create the cell renderer
-		_renderer = Gtk::manage(new Gtk::CellRendererText);
+		// Get the cell renderer from the column (as created in the constructor)
+		Gtk::CellRendererText* renderer = static_cast<Gtk::CellRendererText*>(get_first_cell_renderer());
 		
-		// Construct the column itself
-		_column = Gtk::manage(new Gtk::TreeViewColumn(title, *_renderer));
-		_column->add_attribute(*_renderer, (useMarkup) ? "markup" : "text", colno);
-	}
-
-	Gtk::CellRendererText& getCellRenderer()
-	{
-		return *_renderer;
-	}
-	
-	/** Operator cast to GtkTreeViewColumn*.
-	 */
-	operator Gtk::TreeViewColumn&()
-	{
-		return *_column;
+		// Associate the cell renderer with the given model column
+		if (useMarkup)
+		{
+			add_attribute(renderer->property_markup(), column);
+		}
+		else
+		{
+			add_attribute(renderer->property_text(), column);
+		}
 	}
 };
 
