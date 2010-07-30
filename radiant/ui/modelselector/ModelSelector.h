@@ -122,7 +122,6 @@ private:
 	static void callbackCancel(GtkWidget*, ModelSelector*);
 
 public:
-
 	/** 
 	 * Display the Model Selector instance, constructing it on first use, and 
 	 * return the VFS path of the model selected by the user. When the 

@@ -127,29 +127,36 @@ ModelSelector::ModelSelector()
 	gtk_container_add(GTK_CONTAINER(_widget), vbx);
 }
 
-ModelSelector& ModelSelector::Instance() {
-	// Static instance pointer
-	return *InstancePtr();
-}
+ModelSelector& ModelSelector::Instance()
+{
+	ModelSelectorPtr& instancePtr = InstancePtr();
 
-ModelSelectorPtr& ModelSelector::InstancePtr() {
-	static ModelSelectorPtr _instancePtr;
-
-	if (_instancePtr == NULL) {
+	if (instancePtr == NULL)
+	{
 		// Not yet instantiated, do it now
-		_instancePtr = ModelSelectorPtr(new ModelSelector);
+		instancePtr.reset(new ModelSelector);
 		
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
+		GlobalRadiant().addEventListener(instancePtr);
 	}
 
+	return *instancePtr;
+}
+
+ModelSelectorPtr& ModelSelector::InstancePtr()
+{
+	static ModelSelectorPtr _instancePtr;
 	return _instancePtr;
 }
 
-void ModelSelector::onRadiantShutdown() {
+void ModelSelector::onRadiantShutdown()
+{
 	globalOutputStream() << "ModelSelector shutting down.\n";
 
 	_modelPreview.reset();
+
+	// Last step: reset the shared_ptr, triggers destruction of this instance
+	InstancePtr().reset();
 }
 
 // Show the dialog and enter recursive main loop
