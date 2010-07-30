@@ -24,12 +24,10 @@ namespace ui
  * 
  * Use the GtkWidget* cast operator to pack this into a parent container. 
  */
-class SoundShaderPreview
+class SoundShaderPreview :
+	public Gtk::HBox
 {
 private:
-	// The main container widget of this preview
-	Glib::RefPtr<Gtk::HBox> _widget;
-	
 	// Tree store and view for available sound files, and the tree selection
 	Glib::RefPtr<Gtk::ListStore> _listStore;
 
@@ -62,11 +60,6 @@ public:
 	 */
 	void setSoundShader(const std::string& soundShader);
 
-	/** greebo: Operator cast to GtkWidget to pack this into a 
-	 * 			parent container widget.
-	 */
-	operator GtkWidget*();
-
 private:
 	/** greebo: Returns the currently selected sound file (file list)
 	 * 
@@ -76,7 +69,7 @@ private:
 
 	/** greebo: Creates the control widgets (play button) and such.
 	 */
-	Gtk::Widget* createControlPanel();
+	Gtk::Widget& createControlPanel();
 
 	/** greebo: Updates the list according to the active soundshader
 	 */
