@@ -1,6 +1,7 @@
 #include "TreeModel.h"
 
 #include "pointer.h"
+#include <gtkmm/treeview.h>
 #include <boost/algorithm/string/find.hpp>
 
 namespace gtkutil
@@ -280,6 +281,58 @@ bool TreeModel::findAndSelectString(GtkTreeView* view, const std::string& needle
 		gtk_tree_view_scroll_to_cell(view, path, NULL, true, 0.3f, 0.0f);
 
 		return true;
+	}
+
+	return false; // not found
+}
+
+bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle, int column)
+{
+	Gtk::TreeModel::Children children = view->get_model()->children();
+
+	for (Gtk::TreeModel::iterator i = children.begin(); i != children.end(); ++i)
+	{
+		std::string value;
+		i->get_value(column, value);
+
+		if (value == needle)
+		{
+			Gtk::TreeModel::Path path(i);
+
+			// Expand the treeview to display the target row
+			view->expand_to_path(path);
+			// Highlight the target row
+			view->set_cursor(path);
+			// Make the selected row visible 
+			view->scroll_to_row(path, 0.3f);
+
+			return true; // found
+		}
+	}
+
+	return false; // not found
+}
+
+bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle, 
+									const Gtk::TreeModelColumn<Glib::ustring>& column)
+{
+	Gtk::TreeModel::Children children = view->get_model()->children();
+
+	for (Gtk::TreeModel::iterator i = children.begin(); i != children.end(); ++i)
+	{
+		if (i->get_value(column) == needle)
+		{
+			Gtk::TreeModel::Path path(i);
+
+			// Expand the treeview to display the target row
+			view->expand_to_path(path);
+			// Highlight the target row
+			view->set_cursor(path);
+			// Make the selected row visible 
+			view->scroll_to_row(path, 0.3f);
+
+			return true; // found
+		}
 	}
 
 	return false; // not found

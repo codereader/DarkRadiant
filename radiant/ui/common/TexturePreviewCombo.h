@@ -4,12 +4,17 @@
 #include <string>
 
 #include "gtkutil/menu/PopupMenu.h"
-
 #include "gtkutil/GLWidget.h"
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkliststore.h>
+
+#include <gtkmm/box.h>
+#include <gtkmm/liststore.h>
 
 #include <boost/shared_ptr.hpp>
+
+namespace Gtk
+{
+	class TreeView;
+}
 
 namespace ui
 {
@@ -18,11 +23,21 @@ namespace ui
  * a List View showing information about that texture.
  */
 
-class TexturePreviewCombo
+class TexturePreviewCombo :
+	public Gtk::HBox
 {
-	// Main container widget
-	GtkWidget* _widget;
-	
+private:
+	struct InfoStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		InfoStoreColumns() { add(attribute); add(value); }
+
+		Gtk::TreeModelColumn<Glib::ustring> attribute;
+		Gtk::TreeModelColumn<Glib::ustring> value;
+	};
+
+	InfoStoreColumns _infoStoreColumns;
+
 	// The OpenGL preview widget
 	gtkutil::GLWidgetPtr _glWidget;
 	
@@ -30,22 +45,11 @@ class TexturePreviewCombo
 	std::string _texName;
 	
 	// Info table list store and view
-	GtkListStore* _infoStore;
-	GtkWidget* _infoView;
+	Glib::RefPtr<Gtk::ListStore> _infoStore;
+	Gtk::TreeView* _infoView;
 	
 	// Context menu
 	gtkutil::PopupMenu _contextMenu;
-	
-private:
-
-	/* gtkutil::PopupMenu callbacks */
-	void _onCopyTexName();
-	
-	/* GTK CALLBACKS */
-	static void  _onExpose(GtkWidget*, GdkEventExpose*, TexturePreviewCombo*);
-	
-	// Refresh info table utility function
-	void refreshInfoTable();
 	
 public:
 
@@ -61,15 +65,19 @@ public:
 	 * String name of the texture to preview (e.g. "textures/common/caulk")
 	 */
 	void setTexture(const std::string& tex);
+
+private:
+	/* gtkutil::PopupMenu callbacks */
+	void _onCopyTexName();
 	
-	/** Operator cast to GtkWidget* for packing into parent container.
-	 */
-	operator GtkWidget* () {
-		return _widget;
-	}
+	// gtkmm callback
+	bool _onExpose(GdkEventExpose*);
+	
+	// Refresh info table utility function
+	void refreshInfoTable();
 };
 typedef boost::shared_ptr<TexturePreviewCombo> TexturePreviewComboPtr;
 
-}
+} // namespace
 
 #endif /*TEXTUREPREVIEWCOMBO_H_*/

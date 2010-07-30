@@ -11,50 +11,50 @@
 
 #include "ShaderSelector.h"
 
-#include <gtk/gtk.h>
 #include <GL/glew.h>
 #include <boost/bind.hpp>
+
+#include <gtkmm/treeview.h>
+#include <gtkmm/frame.h>
+#include <gtkmm/clipboard.h>
 
 namespace ui
 {
 
 // Constructor. Create GTK widgets.
 
-TexturePreviewCombo::TexturePreviewCombo()
-: _widget(gtk_hbox_new(FALSE, 0)),
-  _glWidget(new gtkutil::GLWidget(false, "TexturePreviewCombo")),
-  _texName(""),
-  _infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
-  _infoView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore))),
-  _contextMenu(_infoView)
+TexturePreviewCombo::TexturePreviewCombo() :
+	Gtk::HBox(false, 0),
+	_glWidget(new gtkutil::GLWidget(false, "TexturePreviewCombo")),
+	_texName(""),
+	_infoStore(Gtk::ListStore::create(_infoStoreColumns)),
+	_infoView(Gtk::manage(new Gtk::TreeView(_infoStore))),
+	_contextMenu(GTK_WIDGET(_infoView->gobj()))
 {
 	// Set up the GL preview widget
-	GtkWidget* glWidget = *_glWidget; // cast to GtkWidget
-	gtk_widget_set_size_request(glWidget, 128, 128);
-	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(_onExpose), this);
-	GtkWidget* glFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(glFrame), glWidget);
-	gtk_box_pack_start(GTK_BOX(_widget), glFrame, FALSE, FALSE, 0);
+	GtkWidget* glWidgetLegacy = *_glWidget; // cast to GtkWidget
+
+	Gtk::Widget* glWidget = Glib::wrap(glWidgetLegacy, true);
+	glWidget->set_size_request(128, 128);
+	glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TexturePreviewCombo::_onExpose));
+	
+	Gtk::Frame* glFrame = Gtk::manage(new Gtk::Frame);
+	glFrame->add(*glWidget);
+	pack_start(*glFrame, false, false, 0);
 	
 	// Set up the info table
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_infoView), FALSE);
+	_infoView->set_headers_visible(false);
+	_infoView->append_column(_("Attribute"), _infoStoreColumns.attribute);
+	_infoView->append_column(_("Value"), _infoStoreColumns.value);
 	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView),
-								gtkutil::TextColumn(_("Attribute"), 0));
-	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_infoView),
-								gtkutil::TextColumn(_("Value"), 1));
-
 	// Pack into main widget
-	gtk_box_pack_start(
-		GTK_BOX(_widget), gtkutil::ScrolledFrame(_infoView), TRUE, TRUE, 0
-	);
+	pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_infoView)), true, true, 0);
 	
 	// Construct the context menu
 	_contextMenu.addItem(
 		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, _("Copy shader name")),
 		boost::bind(&TexturePreviewCombo::_onCopyTexName, this)
-	);	
+	);
 }
 
 TexturePreviewCombo::~TexturePreviewCombo()
@@ -64,21 +64,25 @@ TexturePreviewCombo::~TexturePreviewCombo()
 
 // Update the selected texture
 
-void TexturePreviewCombo::setTexture(const std::string& tex) {
+void TexturePreviewCombo::setTexture(const std::string& tex)
+{
 	_texName = tex;
 	refreshInfoTable();
-	gtk_widget_queue_draw(*_glWidget);
+	_glWidget->queueDraw();
 }
 
 // Refresh the info table
 
-void TexturePreviewCombo::refreshInfoTable() {
+void TexturePreviewCombo::refreshInfoTable()
+{
 	// Prepare the list
-	gtk_list_store_clear(_infoStore);
+	_infoStore->clear();
 
 	// Other properties require a valid shader name	
 	if (_texName.empty())
+	{
 		return;
+	}
 
 	MaterialPtr shader = GlobalMaterialManager().getMaterialForName(_texName);
 	ShaderSelector::displayShaderInfo(shader, _infoStore);
@@ -86,21 +90,25 @@ void TexturePreviewCombo::refreshInfoTable() {
 
 // Popup menu callbacks
 
-void TexturePreviewCombo::_onCopyTexName() {
+void TexturePreviewCombo::_onCopyTexName()
+{
 	// Store texture on the clipboard
-	GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-	gtk_clipboard_set_text(clipboard, _texName.c_str(), static_cast<gint>(_texName.size()));
+	Glib::RefPtr<Gtk::Clipboard> clipBoard = Gtk::Clipboard::get();
+	clipBoard->set_text(_texName);
 }
 
 // GTK CALLBACKS
 
-void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, TexturePreviewCombo* self) {
+bool TexturePreviewCombo::_onExpose(GdkEventExpose* ev)
+{
+	GtkWidget* glWidgetLegacy = *_glWidget;
+
 	// Grab the GLWidget with sentry
-	gtkutil::GLWidgetSentry sentry(widget);
+	gtkutil::GLWidgetSentry sentry(glWidgetLegacy);
 	
 	// Get the viewport size from the GL widget
 	GtkRequisition req;
-	gtk_widget_size_request(widget, &req);
+	gtk_widget_size_request(glWidgetLegacy, &req);
 	glViewport(0, 0, req.width, req.height);
 
 	// Initialise
@@ -113,11 +121,11 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 	glEnable (GL_TEXTURE_2D);
 
 	// If no texture is loaded, leave window blank
-	if (self->_texName == "")
-		return;
+	if (_texName.empty())
+		return false;
 
 	// Get a reference to the selected shader
-	MaterialPtr shader = GlobalMaterialManager().getMaterialForName(self->_texName);
+	MaterialPtr shader = GlobalMaterialManager().getMaterialForName(_texName);
 
 	// This is an "ordinary" texture, take the editor image
 	TexturePtr tex = shader->getEditorImage();
@@ -150,6 +158,8 @@ void TexturePreviewCombo::_onExpose(GtkWidget* widget, GdkEventExpose* ev, Textu
 		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height + hfHeight);
 		glEnd();
 	}
+
+	return false;
 }
 
 }

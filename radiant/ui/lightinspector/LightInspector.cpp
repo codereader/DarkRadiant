@@ -175,7 +175,7 @@ void LightInspector::onRadiantShutdown()
 
 void LightInspector::shaderSelectionChanged(
 	const std::string& shader, 
-	GtkListStore* listStore) 
+	const Glib::RefPtr<Gtk::ListStore>& listStore) 
 {
 	// Get the shader, and its image map if possible
 	MaterialPtr ishader = _texSelector.getSelectedShader();
@@ -274,7 +274,7 @@ GtkWidget* LightInspector::createTextureWidgets() {
 					   gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light Texture") + "</b>"), 
 					   FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::LeftAlignment(_texSelector, 12, 1.0),
+					   gtkutil::LeftAlignment(GTK_WIDGET(_texSelector.gobj()), 12, 1.0),
 					   TRUE, TRUE, 0);
 	
 	return vbx;

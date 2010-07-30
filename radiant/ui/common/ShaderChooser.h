@@ -5,10 +5,14 @@
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <string>
-#include <gtk/gtkwidget.h>
 
 // Forward decls
 class Material;
+
+namespace Gtk
+{
+	class Entry;
+}
 
 namespace ui {
 
@@ -30,6 +34,7 @@ public:
 	public:
 	    // destructor
 		virtual ~ChooserClient() {}
+
 		// greebo: This gets invoked upon selection changed to allow the client to react.
 		virtual void shaderSelectionChanged(const std::string& shader) = 0;
 	};
@@ -39,11 +44,11 @@ private:
 	ChooserClient* _client;
 
 	// The text entry the chosen texture is written into (can be NULL)
-	GtkWidget* _targetEntry;
+	Gtk::Entry* _targetEntry;
 	
 	// The ShaderSelector widget, that contains the actual selection
 	// tools (treeview etc.)
-	ShaderSelector _selector;
+	ShaderSelector* _selector;
 	
 	// The shader name at dialog startup (to allow proper behaviour on cancelling)
 	std::string _initialShader;
@@ -59,11 +64,13 @@ public:
 	 *               Also, the initially selected shader will be read from 
 	 *               this field at startup.
 	 */
-	ShaderChooser(ChooserClient* client, const Glib::RefPtr<Gtk::Window>& parent, GtkWidget* targetEntry = NULL);
+	ShaderChooser(ChooserClient* client, const Glib::RefPtr<Gtk::Window>& parent, Gtk::Entry* targetEntry = NULL);
 	
-	/** greebo: Gets called upon shader selection change
+	/** 
+	 * greebo: ShaderSelector::Client implementation
+	 * Gets called upon shader selection change.
 	 */
-	void shaderSelectionChanged(const std::string& shaderName, GtkListStore* listStore);
+	void shaderSelectionChanged(const std::string& shaderName, const Glib::RefPtr<Gtk::ListStore>& listStore);
 	
 private:
 	// Saves the window position
@@ -73,14 +80,14 @@ private:
 	void revertShader();
 
 	// Widget construction helpers
-	GtkWidget* createButtons();
+	Gtk::Widget& createButtons();
 	
-	/* GTK CALLBACKS */
-	static void callbackCancel(GtkWidget*, ShaderChooser*);
-	static void callbackOK(GtkWidget*, ShaderChooser*);
+	// gtkmm callbacks
+	void callbackCancel();
+	void callbackOK();
 	
 	// The keypress handler for catching the Enter key when in the shader entry field
-	static gboolean onKeyPress(GtkWidget* widget, GdkEventKey* event, ShaderChooser* self);
+	bool onKeyPress(GdkEventKey* ev);
 };
 
 } // namespace ui

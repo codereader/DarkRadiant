@@ -116,7 +116,7 @@ private:
 	/** greebo: Gets called when the shader selection gets changed, so that
 	 * 			the displayed texture info can be updated.
 	 */
-	void shaderSelectionChanged(const std::string& shader, GtkListStore* listStore);
+	void shaderSelectionChanged(const std::string& shader, const Glib::RefPtr<Gtk::ListStore>& listStore);
 	
 public:
 

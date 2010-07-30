@@ -772,7 +772,7 @@ bool SurfaceInspector::onKeyPress(GdkEventKey* ev)
 void SurfaceInspector::onShaderSelect()
 {
 	// Instantiate the modal dialog, will block execution
-	ShaderChooser chooser(this, getRefPtr(), GTK_WIDGET(_shaderEntry->gobj()));
+	ShaderChooser chooser(this, getRefPtr(), _shaderEntry);
 }
 
 // Static command target to toggle the window
