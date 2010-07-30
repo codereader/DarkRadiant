@@ -73,7 +73,7 @@ public:
 };
 
 class IconTextColumnmm :
-	public Gtk::TreeView::Column
+	public Gtk::TreeViewColumn
 {
 public:
 
@@ -96,9 +96,9 @@ public:
 	IconTextColumnmm(const std::string& title, 
 				     int textCol, 
 				     int iconCol, 
-				     bool useMarkup = false) 
+					 bool useMarkup = false) :
+		Gtk::TreeViewColumn(title)
 	{
-		set_title(title);
 		set_spacing(3);
 		
 		// Add the renderers for icon and text
@@ -130,13 +130,13 @@ public:
 	 */
 	IconTextColumnmm(const std::string& title, 
 				     const Gtk::TreeModelColumn<Glib::ustring>& textCol, 
-				     Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> >& iconCol) 
+					 Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> >& iconCol) :
+		Gtk::TreeViewColumn(title)
 	{
-		set_title(title);
 		set_spacing(3);
 		
-		pack_start(textCol, false);
 		pack_start(iconCol, false);
+		pack_start(textCol, false);
 	}
 };
 
