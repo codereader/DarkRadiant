@@ -431,7 +431,7 @@ void SplitPaneLayout::distributeWidgets()
 			}
 
 			// Frame the widget to make it ready for packing
-			i->second.widget = gtkutil::FramedWidget(i->second.xyWnd->getWidget());
+			i->second.widget = gtkutil::FramedWidget(i->second.xyWnd->getWidget()->gobj());
 		}
 	}
 

@@ -45,7 +45,7 @@ void RegularLayout::activate() {
 	XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
     xyWnd->setViewType(XY);
     // Create a framed window out of the view's internal widget
-    GtkWidget* xyView = gtkutil::FramedWidget(xyWnd->getWidget());
+    GtkWidget* xyView = gtkutil::FramedWidget(xyWnd->getWidget()->gobj());
 
 	// Create the texture window
 	GtkWidget* texWindow = gtkutil::FramedWidget(

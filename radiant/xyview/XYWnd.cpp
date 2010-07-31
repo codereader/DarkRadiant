@@ -265,8 +265,9 @@ void XYWnd::onSceneGraphChange() {
 	queueDraw();
 }
 
-GtkWidget* XYWnd::getWidget() {
-	return m_gl_widget;
+Gtk::Widget* XYWnd::getWidget()
+{
+	return Glib::wrap(m_gl_widget, true);
 }
 
 void XYWnd::setActive(bool b) {
@@ -1734,7 +1735,7 @@ gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocatio
 
 gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) 
 {
-	gtkutil::GLWidgetSentry sentry(self->getWidget());
+	gtkutil::GLWidgetSentry sentry(self->m_gl_widget);
 	
     GlobalOpenGL().assertNoErrors();
 
