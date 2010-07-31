@@ -834,8 +834,9 @@ CameraView* CamWnd::getCameraView() {
 	return &m_cameraview;
 }
 
-GtkWidget* CamWnd::getWidget() const {
-	return m_gl_widget;
+Gtk::Widget* CamWnd::getWidget() const
+{
+	return Glib::wrap(m_gl_widget, true);
 }
 
 const Glib::RefPtr<Gtk::Window>& CamWnd::getParent() const

@@ -104,7 +104,7 @@ public:
 	// This tries to find brushes above/below the current camera position and moves the view upwards/downwards
 	void changeFloor(const bool up);
 
-	GtkWidget* getWidget() const;
+	Gtk::Widget* getWidget() const;
 	const Glib::RefPtr<Gtk::Window>& getParent() const;
 	
 	/**

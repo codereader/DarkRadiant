@@ -61,7 +61,7 @@ void SplitPaneLayout::constructLayout()
 	 // greebo: The mainframe window acts as parent for the camwindow
 	_camWnd->setContainer(parent);
 
-	_camera = gtkutil::FramedWidget(_camWnd->getWidget());
+	_camera = gtkutil::FramedWidget(_camWnd->getWidget()->gobj());
 
 	// Arrange the widgets into the paned views
 	_splitPane.horizPane.setFirstChild(_splitPane.vertPane1.getWidget(), true);
