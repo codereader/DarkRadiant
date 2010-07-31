@@ -14,11 +14,13 @@
 #include <string>
 
 /* FORWARD DECLS */
-typedef struct _GtkColorButton GtkColorButton;
-typedef struct _GtkToggleButton GtkToggleButton;
 class Entity;
-namespace gtkutil {
-	class Vector3Entry;
+namespace Gtk
+{
+	class VBox;
+	class ColorButton;
+	class CheckButton;
+	class ToggleButton;
 }
 
 namespace ui
@@ -38,26 +40,26 @@ class LightInspector
   public UndoSystem::Observer
 {
 	// The overall vbox
-	GtkWidget* _mainVBox;
+	Gtk::VBox* _mainVBox;
 	
 	// Projected light flag
 	bool _isProjected;
 
 	// Light type toggle buttons
-	GtkWidget* _pointLightToggle;
-	GtkWidget* _projLightToggle;
+	Gtk::ToggleButton* _pointLightToggle;
+	Gtk::ToggleButton* _projLightToggle;
 	
 	// Colour selection widget
-	GtkWidget* _colour;
+	Gtk::ColorButton* _colour;
 	
 	// Texture selection combo
-	ShaderSelector _texSelector;
+	ShaderSelector* _texSelector;
 
 	// Checkbox to enable start/end for projected lights
-	GtkWidget* _useStartEnd;
+	Gtk::CheckButton* _useStartEnd;
 
 	// Options checkboxes
-	typedef std::map<std::string, GtkWidget*> WidgetMap;
+	typedef std::map<std::string, Gtk::ToggleButton*> WidgetMap;
 	WidgetMap _options;
 	
 	// The light entity to edit
@@ -88,18 +90,18 @@ private:
 	virtual void _preHide();
 	
 	// Widget construction functions
-	GtkWidget* createPointLightPanel();
-	GtkWidget* createProjectedPanel();
-	GtkWidget* createOptionsPanel();
-	GtkWidget* createTextureWidgets();
-	GtkWidget* createButtons();
+	Gtk::Widget& createPointLightPanel();
+	Gtk::Widget& createProjectedPanel();
+	Gtk::Widget& createOptionsPanel();
+	Gtk::Widget& createTextureWidgets();
+	Gtk::Widget& createButtons();
 
-	// GTK CALLBACKS
-	static void _onProjToggle(GtkWidget*, LightInspector*);	
-	static void _onPointToggle(GtkWidget*, LightInspector*);	
-	static void _onOK(GtkWidget*, LightInspector*);
-	static void _onColourChange(GtkColorButton* widget, LightInspector* self); 
-	static void _onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self);
+	// gtkmm CALLBACKS
+	void _onProjToggle();	
+	void _onPointToggle();	
+	void _onOK();
+	void _onColourChange(); 
+	void _onOptionsToggle();
 
 	// Update the dialog widgets from keyvals on the first selected entity
 	void getValuesFromEntity();
