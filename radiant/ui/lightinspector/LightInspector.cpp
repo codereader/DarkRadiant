@@ -16,10 +16,15 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/MultiMonitor.h"
 
 #include "ui/common/ShaderChooser.h" // for static displayLightInfo() function
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/colorbutton.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/separator.h>
+#include <gtkmm/stock.h>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
@@ -27,8 +32,8 @@ namespace ui
 
 /* CONSTANTS */
 
-namespace {
-	
+namespace
+{
 	const char* LIGHTINSPECTOR_TITLE = N_("Light properties");
 	
 	const char* PARALLEL_TEXT = N_("Parallel");
@@ -67,69 +72,62 @@ namespace {
 LightInspector::LightInspector() 
 : gtkutil::PersistentTransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _isProjected(false),
-  _texSelector(this, getPrefixList(), true),
+  _texSelector(Gtk::manage(new ShaderSelector(this, getPrefixList(), true))),
   _updateActive(false)
 {
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	
     // Window size
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(getWindow()));
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), 
-								gint(gdk_screen_get_width(scr) * 0.5), 
-								-1);
-    
-	// Left-hand panels (volume, colour, options)
-	GtkWidget* panels = gtk_vbox_new(FALSE, 12);
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
+	set_default_size(static_cast<int>(rect.get_width()/2), -1);
 
-	gtk_box_pack_start(GTK_BOX(panels), 
-		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light volume") + "</b>"),
-		FALSE, FALSE, 0);
+	// Left-hand panels (volume, colour, options)
+	Gtk::VBox* panels = Gtk::manage(new Gtk::VBox(false, 12));
+
+	panels->pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Light volume") + "</b>")),
+		false, false, 0);
 
 	// Volume type hbox
-	GtkWidget* typeBox = gtk_hbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(typeBox), createPointLightPanel(),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(typeBox), gtk_vseparator_new(),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(typeBox), createProjectedPanel(),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::LeftAlignment(typeBox, 12),
-					   FALSE, FALSE, 0);
+	Gtk::HBox* typeBox = Gtk::manage(new Gtk::HBox(false, 12));
+
+	typeBox->pack_start(createPointLightPanel(), false, false, 0);
+	typeBox->pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 0);
+	typeBox->pack_start(createProjectedPanel(), false, false, 0);
+
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*typeBox, 12)), false, false, 0);
 
 	// Light colour
-	_colour = gtk_color_button_new();
-	g_signal_connect(G_OBJECT(_colour), "color-set", G_CALLBACK(_onColourChange), this);
-	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::LeftAlignedLabel(std::string("<b>") + _("Colour") + "</b>"), 
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels), 
-					   gtkutil::LeftAlignment(_colour, 12, 0.0),
-					   FALSE, FALSE, 0);
+	_colour = Gtk::manage(new Gtk::ColorButton);
+	_colour->signal_color_set().connect(sigc::mem_fun(*this, &LightInspector::_onColourChange));
+
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Colour") + "</b>")), 
+					   false, false, 0);
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_colour, 12, 0.0)),
+					   false, false, 0);
 
 	// Options panel
-	gtk_box_pack_start(GTK_BOX(panels),
-					   gtkutil::LeftAlignedLabel(std::string("<b>") + _("Options") + "</b>"),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(panels),
-					   gtkutil::LeftAlignment(createOptionsPanel(), 12),
-					   FALSE, FALSE, 0);
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Options") + "</b>")),
+					   false, false, 0);
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(createOptionsPanel(), 12)),
+					   false, false, 0);
 
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 18);
-	gtk_box_pack_start(GTK_BOX(hbx), panels, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), createTextureWidgets(), TRUE, TRUE, 0);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 18));
+	hbx->pack_start(*panels, false, false, 0);
+	hbx->pack_start(createTextureWidgets(), true, true, 0);
 
-	_mainVBox = gtk_vbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(_mainVBox), hbx, TRUE, TRUE, 0);
+	_mainVBox = Gtk::manage(new Gtk::VBox(false, 12));
+	_mainVBox->pack_start(*hbx, true, true, 0);
 	
 	// Create an apply button, if instant-apply is disabled
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "0") {
-		gtk_box_pack_start(GTK_BOX(_mainVBox), gtk_hseparator_new(), FALSE, FALSE, 0);
-		gtk_box_pack_end(GTK_BOX(_mainVBox), createButtons(), FALSE, FALSE, 0);
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "0")
+	{
+		_mainVBox->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
+		_mainVBox->pack_end(createButtons(), false, false, 0);
 	}
 
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_container_add(GTK_CONTAINER(getWindow()), _mainVBox);
+	set_border_width(12);
+	add(*_mainVBox);
 	
 	// Propagate shortcuts that are not processed by this window
 	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
@@ -141,17 +139,9 @@ LightInspector::LightInspector()
 	_windowPosition.applyPosition();
 }
 
-LightInspectorPtr& LightInspector::InstancePtr() {
+LightInspectorPtr& LightInspector::InstancePtr()
+{
 	static LightInspectorPtr _instancePtr;
-	
-	if (_instancePtr == NULL) {
-		// Not yet instantiated, do it now
-		_instancePtr = LightInspectorPtr(new LightInspector);
-		
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
-	}
-	
 	return _instancePtr;
 }
 
@@ -171,6 +161,9 @@ void LightInspector::onRadiantShutdown()
 	
 	// Destroy the window
 	destroy();
+
+	// Free the shared ptr
+	InstancePtr().reset();
 }
 
 void LightInspector::shaderSelectionChanged(
@@ -178,7 +171,7 @@ void LightInspector::shaderSelectionChanged(
 	const Glib::RefPtr<Gtk::ListStore>& listStore) 
 {
 	// Get the shader, and its image map if possible
-	MaterialPtr ishader = _texSelector.getSelectedShader();
+	MaterialPtr ishader = _texSelector->getSelectedShader();
 	// Pass the call to the static member of ShaderSelector
 	ShaderSelector::displayLightShaderInfo(ishader, listStore);
 	
@@ -188,110 +181,105 @@ void LightInspector::shaderSelectionChanged(
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") 
     {
 		std::string commandStr("setLightTexture: ");
-		commandStr += _texSelector.getSelection();
+		commandStr += _texSelector->getSelection();
 		UndoableCommand command(commandStr.c_str());
 	
 		// Write the texture key
-		setKeyValueAllLights("texture", _texSelector.getSelection());
+		setKeyValueAllLights("texture", _texSelector->getSelection());
 	}
 }
 
 // Create the point light panel
-GtkWidget* LightInspector::createPointLightPanel() 
+Gtk::Widget& LightInspector::createPointLightPanel()
 {
 	// Create the point light togglebutton
-	_pointLightToggle = gtkutil::IconTextButton(_("Omni"), 
-		GlobalUIManager().getLocalPixbuf("pointLight32.png")->gobj(),
-		true
-	);
-	g_signal_connect(G_OBJECT(_pointLightToggle), 
-					 "toggled",
-					 G_CALLBACK(_onPointToggle),
-					 this);
+	_pointLightToggle = Gtk::manage(new gtkutil::IconTextToggleButtonmm(
+		_("Omni"), GlobalUIManager().getLocalPixbuf("pointLight32.png")
+	));
+	_pointLightToggle->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onPointToggle));
 
 	// Pack button into box to stop it expanding vertically
-	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), _pointLightToggle, FALSE, FALSE, 0);
+	Gtk::VBox* buttonBox = Gtk::manage(new Gtk::VBox(false, 0));
+
+	buttonBox->pack_start(*_pointLightToggle, false, false, 0);
 	
-	return buttonBox;
+	return *buttonBox;
 }
 
 // Create the projected light panel
-GtkWidget* LightInspector::createProjectedPanel() {
+Gtk::Widget& LightInspector::createProjectedPanel()
+{
 	// Create the projected light togglebutton
-	_projLightToggle = gtkutil::IconTextButton(_("Projected"), 
-		GlobalUIManager().getLocalPixbuf("projLight32.png")->gobj(),
-		true
-	);
-	g_signal_connect(G_OBJECT(_projLightToggle), 
-					 "toggled",
-					 G_CALLBACK(_onProjToggle),
-					 this);
+	_projLightToggle = Gtk::manage(new gtkutil::IconTextToggleButtonmm(
+		_("Projected"), GlobalUIManager().getLocalPixbuf("projLight32.png")
+	));
+	_projLightToggle->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onProjToggle));
 
 	// Start/end checkbox
-	_useStartEnd = gtk_check_button_new_with_label(_("Use start/end"));
-	g_signal_connect(G_OBJECT(_useStartEnd), "toggled", G_CALLBACK(_onOptionsToggle), this);		
-		
+	_useStartEnd = Gtk::manage(new Gtk::CheckButton(_("Use start/end")));
+	_useStartEnd->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
+			
 	// VBox for panel
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::LeftAlignment(_projLightToggle), 
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), _useStartEnd, FALSE, FALSE, 0);
-	return vbx;
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
+
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_projLightToggle)), false, false, 0);
+	vbx->pack_start(*_useStartEnd, false, false, 0);
+
+	return *vbx;
 }
 
 // Create the options checkboxes
-GtkWidget* LightInspector::createOptionsPanel() {
-
+Gtk::Widget& LightInspector::createOptionsPanel()
+{
 	// Add options boxes to map
-	_options["parallel"] = gtk_check_button_new_with_label(_(PARALLEL_TEXT));
-	_options["noshadows"] = gtk_check_button_new_with_label(_(NOSHADOW_TEXT));
-	_options["nospecular"] = gtk_check_button_new_with_label(_(NOSPECULAR_TEXT));
-	_options["nodiffuse"] = gtk_check_button_new_with_label(_(NODIFFUSE_TEXT));
+	_options["parallel"] = Gtk::manage(new Gtk::CheckButton(_(PARALLEL_TEXT)));
+	_options["noshadows"] = Gtk::manage(new Gtk::CheckButton(_(NOSHADOW_TEXT)));
+	_options["nospecular"] = Gtk::manage(new Gtk::CheckButton(_(NOSPECULAR_TEXT)));
+	_options["nodiffuse"] = Gtk::manage(new Gtk::CheckButton(_(NODIFFUSE_TEXT)));
 
-	g_signal_connect(G_OBJECT(_options["parallel"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
-	g_signal_connect(G_OBJECT(_options["noshadows"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
-	g_signal_connect(G_OBJECT(_options["nospecular"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
-	g_signal_connect(G_OBJECT(_options["nodiffuse"]), "toggled", G_CALLBACK(_onOptionsToggle), this);
+	_options["parallel"]->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
+	_options["noshadows"]->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
+	_options["nospecular"]->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
+	_options["nodiffuse"]->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
 
 	// Pack checkboxes into a VBox
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbx), _options["parallel"], FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), _options["noshadows"], FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), _options["nospecular"], FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), _options["nodiffuse"], FALSE, FALSE, 0);
-	return vbx;
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
+
+	vbx->pack_start(*_options["parallel"], false, false, 0);
+	vbx->pack_start(*_options["noshadows"], false, false, 0);
+	vbx->pack_start(*_options["nospecular"], false, false, 0);
+	vbx->pack_start(*_options["nodiffuse"], false, false, 0);
+
+	return *vbx;
 }
 
 // Create the texture widgets
-GtkWidget* LightInspector::createTextureWidgets() {
-	
+Gtk::Widget& LightInspector::createTextureWidgets()
+{
 	// VBox contains texture selection widgets
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
 	
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light Texture") + "</b>"), 
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), 
-					   gtkutil::LeftAlignment(GTK_WIDGET(_texSelector.gobj()), 12, 1.0),
-					   TRUE, TRUE, 0);
+	vbx->pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Light Texture") + "</b>")), 
+		false, false, 0);
+
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_texSelector, 12, 1.0)), true, true, 0);
 	
-	return vbx;
+	return *vbx;
 }
 
 // Create the buttons
-GtkWidget* LightInspector::createButtons() {
-	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+Gtk::Widget& LightInspector::createButtons()
+{
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
 
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
-		
-	g_signal_connect(G_OBJECT(okButton), "clicked", 
-					 G_CALLBACK(_onOK), this);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
+
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &LightInspector::_onOK));
 	
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
+	hbx->pack_end(*okButton, true, true, 0);
 	
-	return gtkutil::RightAlignment(hbx);
+	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
 }
 
 // Update dialog from map
@@ -338,12 +326,12 @@ void LightInspector::update()
         getValuesFromEntity();
 
         // Enable the dialog
-        gtk_widget_set_sensitive(_mainVBox, TRUE);
+        _mainVBox->set_sensitive(true);
 	}
     else
     {
         // Nothing found, disable the dialog
-        gtk_widget_set_sensitive(_mainVBox, FALSE);
+		_mainVBox->set_sensitive(false);
     }
 }
 
@@ -403,64 +391,67 @@ void LightInspector::selectionChanged(const scene::INodePtr& node, bool isCompon
 }
 
 // Static method to toggle the dialog
-void LightInspector::toggleInspector(const cmd::ArgumentList& args) {
+void LightInspector::toggleInspector(const cmd::ArgumentList& args)
+{
 	// Toggle the instance
 	Instance().toggle();
 }
 
-LightInspector& LightInspector::Instance() {
-	return *InstancePtr();
+LightInspector& LightInspector::Instance()
+{
+	LightInspectorPtr& instancePtr = InstancePtr();
+
+	if (instancePtr == NULL)
+	{
+		// Not yet instantiated, do it now
+		instancePtr.reset(new LightInspector);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(instancePtr);
+	}
+
+	return *instancePtr;
 }
 
 /* GTK CALLBACKS */
 
-void LightInspector::_onProjToggle(GtkWidget* b, LightInspector* self) 
+void LightInspector::_onProjToggle() 
 {
-	if (self->_updateActive) return; // avoid callback loops
+	if (_updateActive) return; // avoid callback loops
 	
 	// Set the projected flag
-	self->_isProjected = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b)) ? true : false;
+	_isProjected = _projLightToggle->get_active();
 	
 	// Set button state based on the value of the flag
-	if (self->_isProjected) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_pointLightToggle),
-									 FALSE);	
-		gtk_widget_set_sensitive(self->_useStartEnd, TRUE);
-	}
-	else {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_pointLightToggle),
-									 TRUE);	
-		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
-	}
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
-		self->writeToAllEntities();
+	_pointLightToggle->set_active(!_isProjected);
+	_useStartEnd->set_sensitive(_isProjected);
+
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	{
+		writeToAllEntities();
 	}
 }
 
-void LightInspector::_onPointToggle(GtkWidget* b, LightInspector* self) {
-	if (self->_updateActive) return; // avoid callback loops
+void LightInspector::_onPointToggle()
+{
+	if (_updateActive) return; // avoid callback loops
 	
 	// Set the projected flag
-	self->_isProjected = !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(b));
+	_isProjected = !_pointLightToggle->get_active();
 	
 	// Set button state based on the value of the flag
-	if (self->_isProjected) {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_projLightToggle),
-									 TRUE);	
-		gtk_widget_set_sensitive(self->_useStartEnd, TRUE);
-	}
-	else {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->_projLightToggle),
-									 FALSE);
-		gtk_widget_set_sensitive(self->_useStartEnd, FALSE);
-	}
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
-		self->writeToAllEntities();
+	_projLightToggle->set_active(_isProjected);
+	_useStartEnd->set_sensitive(_isProjected);
+
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	{
+		writeToAllEntities();
 	}
 }
 
-void LightInspector::_onOK(GtkWidget* w, LightInspector* self) {
-	self->writeToAllEntities();
+void LightInspector::_onOK()
+{
+	writeToAllEntities();
 }
 
 // Get keyvals from entity and insert into text entries
@@ -503,39 +494,37 @@ void LightInspector::getValuesFromEntity()
 		colString = "1.0 1.0 1.0";
 		 
 	Vector3 colour(colString);
-	GdkColor col = { 0,
-					 static_cast<guint>(colour.x() * 65535),
-					 static_cast<guint>(colour.y() * 65535),
-					 static_cast<guint>(colour.z() * 65535) };
-	gtk_color_button_set_color(GTK_COLOR_BUTTON(_colour), &col);
-	
+	Gdk::Color col;
+	col.set_rgb_p(colour.x(), colour.y(), colour.z());
+	_colour->set_color(col);
+
 	// Set the texture selection from the "texture" key
-	_texSelector.setSelection(entity->getKeyValue("texture"));
+	_texSelector->setSelection(entity->getKeyValue("texture"));
 	
 	// Determine whether this is a projected light, and set the toggles
 	// appropriately
 	_isProjected = (!entity->getKeyValue("light_target").empty() && 
 					!entity->getKeyValue("light_right").empty() && 
 					!entity->getKeyValue("light_up").empty());
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_projLightToggle), _isProjected);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_pointLightToggle), !_isProjected);
+
+	_projLightToggle->set_active(_isProjected);
+	_pointLightToggle->set_active(!_isProjected);
 	
 	// If this entity has light_start and light_end keys, set the checkbox
 	if (!entity->getKeyValue("light_start").empty()
 		&& !entity->getKeyValue("light_end").empty())
 	{
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_useStartEnd), TRUE);
+		_useStartEnd->set_active(true);
 	}
-	else {
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_useStartEnd), FALSE);
+	else
+	{
+		_useStartEnd->set_active(false);
 	}
 	
 	// Set the options checkboxes
-	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i) {
-		if (entity->getKeyValue(i->first) == "1")
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->second), TRUE);
-		else
-			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(i->second), FALSE);
+	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i)
+	{
+		i->second->set_active(entity->getKeyValue(i->first) == "1");
 	}
 	
 	_updateActive = false;
@@ -570,12 +559,12 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	UndoableCommand command("setLightProperties");
 	
 	// Set the "_color" keyvalue
-	GdkColor col;
-	gtk_color_button_get_color(GTK_COLOR_BUTTON(_colour), &col);
+	Gdk::Color col = _colour->get_color();
+	
 	entity->setKeyValue("_color", (boost::format("%.2f %.2f %.2f") 
-						  	  		% (col.red/65535.0)
-						  	  		% (col.green/65535.0)
-						  	  		% (col.blue/65535.0)).str());
+						  	  		% (col.get_red_p()/65535.0)
+						  	  		% (col.get_green_p()/65535.0)
+						  	  		% (col.get_blue_p()/65535.0)).str());
 	
 	// Write out all vectors to the entity
 	for (StringMap::iterator i = _valueMap.begin();
@@ -587,10 +576,11 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 		 	
 	// Remove vector keys that should not exist, depending on the lightvolume
 	// options
-	if (_isProjected) {
-
+	if (_isProjected)
+	{
 		// Clear start/end vectors if checkbox is disabled
-		if (!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_useStartEnd))) {
+		if (!_useStartEnd->get_active())
+		{
 			entity->setKeyValue("light_start", "");
 			entity->setKeyValue("light_end", "");	
 		}
@@ -599,8 +589,8 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 		entity->setKeyValue("light_radius", "");
 		entity->setKeyValue("light_center", "");
 	}
-	else {
-
+	else
+	{
 		// Blank out projected light values
 		entity->setKeyValue("light_target", "");
 		entity->setKeyValue("light_right", "");
@@ -610,31 +600,32 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	}
 
 	// Write the texture key
-	entity->setKeyValue("texture", _texSelector.getSelection());
+	entity->setKeyValue("texture", _texSelector->getSelection());
 
 	// Write the options
-	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i) {
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(i->second)))
-			entity->setKeyValue(i->first, "1");
-		else
-			entity->setKeyValue(i->first, "0");
+	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i)
+	{
+		entity->setKeyValue(i->first, i->second->get_active() ? "1" : "0");
 	}
 }
 
-void LightInspector::_onOptionsToggle(GtkToggleButton* togglebutton, LightInspector *self) 
+void LightInspector::_onOptionsToggle() 
 {
-	if (self->_updateActive) return; // avoid callback loops
+	if (_updateActive) return; // avoid callback loops
 	
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
-		self->writeToAllEntities();
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	{
+		writeToAllEntities();
 	}
 }
 
-void LightInspector::_onColourChange(GtkColorButton* widget, LightInspector* self) {
-	if (self->_updateActive) return; // avoid callback loops
+void LightInspector::_onColourChange()
+{
+	if (_updateActive) return; // avoid callback loops
 	
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") {
-		self->writeToAllEntities();
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	{
+		writeToAllEntities();
 	}
 }
 
