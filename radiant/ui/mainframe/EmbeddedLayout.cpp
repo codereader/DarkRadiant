@@ -41,7 +41,7 @@ void EmbeddedLayout::activate()
 	 // greebo: The mainframe window acts as parent for the camwindow
 	_camWnd->setContainer(parent);
 	// Pack in the camera window
-	Gtk::Frame* camWindow = Gtk::manage(new gtkutil::FramedWidgetmm(*Glib::wrap(_camWnd->getWidget(), true)));
+	Gtk::Frame* camWindow = Gtk::manage(new gtkutil::FramedWidgetmm(*_camWnd->getWidget()));
 
 	// Allocate a new OrthoView and set its ViewType to XY
 	XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
