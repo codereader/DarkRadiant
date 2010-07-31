@@ -75,7 +75,7 @@ MediaBrowser::MediaBrowser()
 								G_TYPE_BOOLEAN)),
   _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))),
   _selection(gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView))),
-  _popupMenu(gtkutil::PopupMenu(_treeView)),
+  _popupMenu(gtkutil::PopupMenu(Glib::wrap(_treeView, true))),
   _preview(new TexturePreviewCombo),
   _isPopulated(false)
 {
@@ -123,26 +123,26 @@ MediaBrowser::MediaBrowser()
 	
 	// Construct the popup context menu
 	_popupMenu.addItem(
-		gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON)->gobj(), 
+		Gtk::manage(new gtkutil::IconTextMenuItemmm(
+			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON), 
 			_(LOAD_TEXTURE_TEXT)
-		), 
+		)), 
 		boost::bind(&MediaBrowser::_onLoadInTexView, this), 
 		boost::bind(&MediaBrowser::_testLoadInTexView, this)
 	);
 	_popupMenu.addItem(
-		gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON)->gobj(), 
+		Gtk::manage(new gtkutil::IconTextMenuItemmm(
+			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON), 
 			_(APPLY_TEXTURE_TEXT)
-		), 
+		)), 
 		boost::bind(&MediaBrowser::_onApplyToSel, this), 
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
 	_popupMenu.addItem(
-		gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON)->gobj(), 
+		Gtk::manage(new gtkutil::IconTextMenuItemmm(
+			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON), 
 			_(SHOW_SHADER_DEF_TEXT)
-		), 
+		)), 
 		boost::bind(&MediaBrowser::_onShowShaderDefinition, this), 
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);

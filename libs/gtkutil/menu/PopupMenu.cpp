@@ -8,27 +8,24 @@ namespace gtkutil
 {
 
 // Default constructor
-PopupMenu::PopupMenu(GtkWidget* widget)
-: _menu(gtk_menu_new())
+PopupMenu::PopupMenu(Gtk::Widget* widget) :
+	Gtk::Menu()
 {
-	// Take ownership of the menu
-	g_object_ref_sink(_menu);
-	
 	// If widget is non-NULL, connect to button-release-event
-	if (widget != NULL) {
-		g_signal_connect(
-			G_OBJECT(widget), "button-release-event", G_CALLBACK(_onClick), this
-		);
+	if (widget != NULL)
+	{
+		_buttonReleaseHandler = widget->signal_button_release_event().connect(
+			sigc::mem_fun(*this, &PopupMenu::_onClick));
 	}
 }
 
 PopupMenu::~PopupMenu()
 {
-	g_object_unref(_menu);
+	_buttonReleaseHandler.disconnect();
 }
 
 // Add a named menu item
-void PopupMenu::addItem(GtkWidget* widget,
+void PopupMenu::addItem(Gtk::MenuItem* widget,
 			 			const Callback& callback,
 			 			const SensitivityTest& sensTest,
 						const VisibilityTest& visTest)
@@ -42,14 +39,14 @@ void PopupMenu::addItem(const ui::IMenuItemPtr& item)
 	_menuItems.push_back(item);
 	
 	// Add the GtkWidget to the GtkMenu
-	gtk_menu_shell_append(GTK_MENU_SHELL(_menu), item->getWidget());
+	append(*item->getWidget());
 }
 
 // Show the menu
 void PopupMenu::show() 
 {
 	// Show all elements as first measure
-	gtk_widget_show_all(_menu);
+	show_all();
 
 	// Iterate through the list of MenuItems, enabling or disabling each widget
 	// based on its SensitivityTest
@@ -64,37 +61,28 @@ void PopupMenu::show()
 		if (visible)
 		{
 			// Visibility check passed
-			gtk_widget_show(item.getWidget());
-
-			bool sensitive = item.isSensitive();
-			gtk_widget_set_sensitive(item.getWidget(), sensitive ? TRUE : FALSE);
+			item.getWidget()->show();
+			item.getWidget()->set_sensitive(item.isSensitive());
 		}
 		else
 		{
 			// Visibility check failed, skip sensitivity check
-			gtk_widget_hide(item.getWidget());
+			item.getWidget()->hide();
 		}
 	}
 	
-	gtk_menu_popup(
-		GTK_MENU(_menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME
-	);
+	popup(1, gtk_get_current_event_time());
 }
 
 // Mouse click callback
-gboolean PopupMenu::_onClick(GtkWidget* w, GdkEventButton* e, PopupMenu* self)
+bool PopupMenu::_onClick(GdkEventButton* e)
 {
 	if (e->button == 3) // right-click only
 	{ 
-		self->show();
+		show();
 	}
 
-	return FALSE;
-}
-
-void PopupMenu::_onActivate(GtkMenuItem* item, ui::IMenuItem* menuItem)
-{
-	menuItem->execute();
+	return false;
 }
 
 } // namespace

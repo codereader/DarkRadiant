@@ -7,6 +7,11 @@
 #include <gtk/gtkimage.h>
 #include <string>
 
+#include <gtkmm/label.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/box.h>
+#include <gtkmm/image.h>
+
 namespace gtkutil
 {
 
@@ -44,6 +49,23 @@ public:
 		return menuItem;
 	}
 	
+};
+
+class StockIconMenuItemmm :
+	public Gtk::MenuItem
+{
+public:
+	// Constructor takes the icon name and the label text.
+	StockIconMenuItemmm(const Gtk::StockID& stockId, const std::string& text) :
+		Gtk::MenuItem()
+	{
+		Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 4));
+
+		hbox->pack_start(*Gtk::manage(new Gtk::Image(stockId, Gtk::ICON_SIZE_MENU)), false, false, 0);
+		hbox->pack_start(*Gtk::manage(new Gtk::Label(text)), false, false, 0);
+
+		add(*hbox);
+	}
 };
 
 } // namespace gtkutil

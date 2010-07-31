@@ -3,18 +3,17 @@
 
 #include "imenu.h"
 #include "LayerContextMenu.h"
+#include "gtkutil/IconTextMenuItem.h"
 
 namespace ui
 {
 
 // A menu item which can be packed into the OrthoContextMenu
 class LayerOrthoContextMenuItem :
-	public IMenuItem
+	public IMenuItem,
+	public gtkutil::IconTextMenuItemmm
 {
 private:
-	// The menu item, carrying the submenu
-	GtkWidget* _widget;
-
 	// Function object for the submenus
 	LayerContextMenu::OnSelectionFunc _func;
 
@@ -26,7 +25,7 @@ public:
 							  LayerContextMenu::OnSelectionFunc callback);
 
 	// IMenuItem implementation
-	GtkWidget* getWidget();
+	Gtk::MenuItem* getWidget();
 	void execute();
 	bool isSensitive();
 	void preShow();

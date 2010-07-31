@@ -17,6 +17,7 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/clipboard.h>
+#include <gtkmm/stock.h>
 
 namespace ui
 {
@@ -29,7 +30,7 @@ TexturePreviewCombo::TexturePreviewCombo() :
 	_texName(""),
 	_infoStore(Gtk::ListStore::create(_infoStoreColumns)),
 	_infoView(Gtk::manage(new Gtk::TreeView(_infoStore))),
-	_contextMenu(GTK_WIDGET(_infoView->gobj()))
+	_contextMenu(_infoView)
 {
 	// Set up the GL preview widget
 	GtkWidget* glWidgetLegacy = *_glWidget; // cast to GtkWidget
@@ -53,7 +54,7 @@ TexturePreviewCombo::TexturePreviewCombo() :
 	
 	// Construct the context menu
 	_contextMenu.addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, _("Copy shader name")),
+		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::COPY, _("Copy shader name"))),
 		boost::bind(&TexturePreviewCombo::_onCopyTexName, this)
 	);
 }
