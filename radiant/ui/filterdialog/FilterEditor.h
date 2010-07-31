@@ -5,13 +5,16 @@
 #include <map>
 #include "Filter.h"
 
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeView GtkTreeView;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GtkCellRendererText GtkCellRendererText;
-typedef struct _GtkEditable GtkEditable;
+#include <gtkmm/liststore.h>
 
-namespace ui {
+namespace Gtk
+{
+	class TreeView;
+	class Widget;
+}
+
+namespace ui
+{
 
 /**
  * greebo: UI for editing a single filter (name and criteria)
@@ -20,7 +23,8 @@ class FilterEditor :
 	public gtkutil::BlockingTransientWindow
 {
 public:
-	enum Result {
+	enum Result
+	{
 		RESULT_CANCEL,
 		RESULT_OK,
 		NUM_RESULTS
@@ -33,10 +37,58 @@ private:
 	// The working copy of the Filter
 	Filter _filter;
 
-	std::map<int, GtkWidget*> _widgets;
+	std::map<int, Gtk::Widget*> _widgets;
 
-	GtkTreeView* _ruleView;
-	GtkListStore* _ruleStore;
+	// Treemodel definition
+	struct ListColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListColumns()
+		{
+			add(index); 
+			add(type); 
+			add(typeString);
+			add(regexMatch);
+			add(showHide);
+		}
+
+		Gtk::TreeModelColumn<int> index;
+		Gtk::TreeModelColumn<int> type;
+		Gtk::TreeModelColumn<Glib::ustring> typeString;
+		Gtk::TreeModelColumn<Glib::ustring> regexMatch;
+		Gtk::TreeModelColumn<Glib::ustring> showHide;
+	};
+
+	ListColumns _columns; 
+
+	Glib::RefPtr<Gtk::ListStore> _ruleStore;
+	Gtk::TreeView* _ruleView;
+
+	// Treemodel definition
+	struct TypeStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TypeStoreColumns() { add(type); add(typeString); }
+
+		Gtk::TreeModelColumn<int> type;
+		Gtk::TreeModelColumn<Glib::ustring> typeString;
+	};
+
+	TypeStoreColumns _typeStoreColumns;
+	Glib::RefPtr<Gtk::ListStore> _typeStore;
+
+	// Treemodel definition
+	struct ActionStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ActionStoreColumns() { add(boolean); add(action); }
+
+		Gtk::TreeModelColumn<bool> boolean;
+		Gtk::TreeModelColumn<Glib::ustring> action;
+	};
+
+	ActionStoreColumns _actionStoreColumns;
+	Glib::RefPtr<Gtk::ListStore> _actionStore;
 
 	int _selectedRule;
 
@@ -60,29 +112,29 @@ private:
 	void update();
 	void updateWidgetSensitivity();
 
-	GtkWidget* createButtonPanel();
-	GtkWidget* createCriteriaPanel();
+	Gtk::Widget& createButtonPanel();
+	Gtk::Widget& createCriteriaPanel();
 
-	GtkListStore* createTypeStore();
-	GtkListStore* createActionStore();
+	const Glib::RefPtr<Gtk::ListStore>& createTypeStore();
+	const Glib::RefPtr<Gtk::ListStore>& createActionStore();
 
 	// Converts the given string "entityclass", "object", etc. into an index in the typestore
 	int getTypeIndexForString(const std::string& type);
 
-	static void onSave(GtkWidget* widget, FilterEditor* self);
-	static void onCancel(GtkWidget* widget, FilterEditor* self);
+	void onSave();
+	void onCancel();
 
-	static void onAddRule(GtkWidget* widget, FilterEditor* self);
-	static void onMoveRuleUp(GtkWidget* widget, FilterEditor* self);
-	static void onMoveRuleDown(GtkWidget* widget, FilterEditor* self);
-	static void onDeleteRule(GtkWidget* widget, FilterEditor* self);
+	void onAddRule();
+	void onMoveRuleUp();
+	void onMoveRuleDown();
+	void onDeleteRule();
 
-	static void onRegexEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
-	static void onTypeEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
-	static void onActionEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, FilterEditor* self);
-	static void onNameEdited(GtkEditable* editable, FilterEditor* self);
+	void onRegexEdited(const Glib::ustring& path, const Glib::ustring& new_text);
+	void onTypeEdited(const Glib::ustring& path, const Glib::ustring& new_text);
+	void onActionEdited(const Glib::ustring& path, const Glib::ustring& new_text);
+	void onNameEdited();
 
-	static void onRuleSelectionChanged(GtkTreeSelection* sel, FilterEditor* self);
+	void onRuleSelectionChanged();
 };
 
 } // namespace

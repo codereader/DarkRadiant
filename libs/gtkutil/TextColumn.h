@@ -76,7 +76,7 @@ public:
 	 * Whether to use Pango markup to format text in the column (default true).
 	 */
 	TextColumnmm(const std::string& title, 
-				 const Gtk::TreeModelColumn<Glib::ustring>& textColumn, 
+				 const Gtk::TreeModelColumnBase& textColumn, 
 				 bool useMarkup = true) :
 		Gtk::TreeViewColumn(title, *Gtk::manage(new Gtk::CellRendererText))
 	{
@@ -92,6 +92,11 @@ public:
 		{
 			add_attribute(renderer->property_text(), textColumn);
 		}
+	}
+
+	Gtk::CellRendererText* getCellRenderer()
+	{
+		return static_cast<Gtk::CellRendererText*>(get_first_cell_renderer());
 	}
 };
 
@@ -115,7 +120,7 @@ public:
 	 * Whether to use Pango markup to format text in the column (default true).
 	 */
 	ColouredTextColumn(const std::string& title, 
-					   const Gtk::TreeModelColumn<Glib::ustring>& textColumn, 
+					   const Gtk::TreeModelColumnBase& textColumn, 
 					   const Gtk::TreeModelColumn<Glib::ustring>& colourColumn,
 					   bool useMarkup = true) :
 		TextColumnmm(title, textColumn, useMarkup)
