@@ -8,7 +8,14 @@
 #include "LayerControl.h"
 #include <boost/shared_ptr.hpp>
 
-namespace ui { 
+namespace Gtk
+{
+	class Table;
+	class Button;
+}
+
+namespace ui
+{
 
 class LayerControlDialog;
 typedef boost::shared_ptr<LayerControlDialog> LayerControlDialogPtr;
@@ -23,10 +30,10 @@ class LayerControlDialog :
 	typedef std::vector<LayerControlPtr> LayerControls;
 	LayerControls _layerControls;
 
-	GtkWidget* _controlContainer;
+	Gtk::Table* _controlContainer;
 
-	GtkWidget* _showAllLayers;
-	GtkWidget* _hideAllLayers;
+	Gtk::Button* _showAllLayers;
+	Gtk::Button* _hideAllLayers;
 
 public:
 	LayerControlDialog();
@@ -50,20 +57,21 @@ public:
 	static void init();
 
 	static LayerControlDialog& Instance();
-	static LayerControlDialogPtr& InstancePtr();
 
 private:
+	static LayerControlDialogPtr& InstancePtr();
+
 	// TransientWindow events
-	virtual void _preShow();
-	virtual void _preHide();
+	void _preShow();
+	void _preHide();
 
 	void populateWindow();
 
 	// Creates the option buttons
-	GtkWidget* createButtons();
+	Gtk::Widget& createButtons();
 
-	static void onShowAllLayers(GtkWidget* button, LayerControlDialog* self);
-	static void onHideAllLayers(GtkWidget* button, LayerControlDialog* self);
+	void onShowAllLayers();
+	void onHideAllLayers();
 };
 
 } // namespace ui
