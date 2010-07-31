@@ -8,10 +8,11 @@
 #include <list>
 #include <glib/gtypes.h>
 
+#include <gtkmm/menu.h>
+
 #include "MenuItem.h"
 
 typedef struct _GdkEventButton GdkEventButton;
-typedef struct _GtkMenuItem GtkMenuItem;
 
 namespace gtkutil
 {
@@ -21,26 +22,20 @@ namespace gtkutil
  * right-click context menus.
  */
 class PopupMenu :
+	public Gtk::Menu,
 	public ui::IMenu
 {
 private:
-	
-	// Main menu widget
-	GtkWidget* _menu;
-
 	// List of menu items
 	typedef std::list<ui::IMenuItemPtr> MenuItemList;
 	MenuItemList _menuItems;	
+
+	sigc::connection _buttonReleaseHandler;
 	
 private:
 	
-	/* GTK CALLBACKS */
-	
-	// Main activation callback from GTK
-	static void _onActivate(GtkMenuItem* item, ui::IMenuItem* menuItem);
-	
 	// Mouse click callback (if required)
-	static gboolean _onClick(GtkWidget* w, GdkEventButton* e, PopupMenu* self);
+	bool _onClick(GdkEventButton* e);
 	
 public:
 	
@@ -53,7 +48,7 @@ public:
 	 * button-release-event on this widget and automatically display itself
 	 * when a right-click is detected.
 	 */
-	PopupMenu(GtkWidget* widget = NULL);
+	PopupMenu(Gtk::Widget* widget = NULL);
 	
 	/**
 	 * Destructor.
@@ -78,7 +73,7 @@ public:
 	 * VisibilityTest function object to determine whether this menu item is
 	 * currently visible (optional).	 
 	 */
-	virtual void addItem(GtkWidget* widget,
+	virtual void addItem(Gtk::MenuItem* widget,
 						 const Callback& callback,
 						 const SensitivityTest& sensTest = SensitivityTest(_alwaysTrue),
 						 const VisibilityTest& visTest = VisibilityTest(_alwaysTrue));

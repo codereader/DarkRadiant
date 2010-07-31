@@ -5,8 +5,6 @@
 #include "selectionlib.h"
 #include "map/Map.h"
 
-#include "gtkutil/IconTextMenuItem.h"
-
 namespace ui
 {
 
@@ -17,13 +15,13 @@ namespace ui
 
 LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 											 LayerContextMenu::OnSelectionFunc callback) :
-	_widget(gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON)->gobj(), caption)),
+	gtkutil::IconTextMenuItemmm(GlobalUIManager().getLocalPixbuf(LAYER_ICON), caption),
 	_func(callback)
 {}
 
-GtkWidget* LayerOrthoContextMenuItem::getWidget()
+Gtk::MenuItem* LayerOrthoContextMenuItem::getWidget()
 {
-	return _widget;
+	return this;
 }
 
 void LayerOrthoContextMenuItem::execute()
@@ -40,9 +38,9 @@ void LayerOrthoContextMenuItem::preShow()
 	_submenu = LayerContextMenuPtr(new LayerContextMenu(_func));
 
 	// Cast the LayerContextMenu onto GtkWidget* and pack it
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widget), _submenu->getWidget());
+	set_submenu(*_submenu);
 
-	gtk_widget_show_all(_widget);
+	show_all();
 }
 
 void LayerOrthoContextMenuItem::AddToLayer(int layerID)

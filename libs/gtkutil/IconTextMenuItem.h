@@ -7,6 +7,11 @@
 #include <gtk/gtkimage.h>
 #include <string>
 
+#include <gtkmm/label.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/box.h>
+#include <gtkmm/image.h>
+
 namespace gtkutil
 {
 
@@ -49,6 +54,22 @@ public:
 		return menuItem;
 	}
 	
+};
+
+class IconTextMenuItemmm :
+	public Gtk::MenuItem
+{
+public:
+	// Constructor takes the icon name and the label text.
+	IconTextMenuItemmm(const Glib::RefPtr<Gdk::Pixbuf>& icon, const std::string& text)
+	{
+		Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 4));
+
+		hbox->pack_start(*Gtk::manage(new Gtk::Image(icon)), false, false, 0);
+		hbox->pack_start(*Gtk::manage(new Gtk::Label(text)), false, false, 0);
+
+		add(*hbox);
+	}
 };
 
 } // namespace gtkutil

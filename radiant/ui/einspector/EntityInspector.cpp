@@ -29,6 +29,7 @@
 #include <string>
 
 #include <gtk/gtk.h>
+#include <gtkmm/stock.h>
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/replace.hpp>
@@ -85,7 +86,7 @@ void EntityInspector::construct()
 	_keyValueTreeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_kvStore));
 
 	_paned = gtkutil::PanedPtr(new gtkutil::Paned(gtkutil::Paned::Vertical)); // vertical pane
-	_contextMenu = gtkutil::PopupMenuPtr(new gtkutil::PopupMenu(_keyValueTreeView));
+	_contextMenu = gtkutil::PopupMenuPtr(new gtkutil::PopupMenu(Glib::wrap(_keyValueTreeView, true)));
 
     _widget = gtk_vbox_new(FALSE, 0);
 
@@ -257,29 +258,29 @@ void EntityInspector::onKeyErase(const std::string& key,
 void EntityInspector::createContextMenu() 
 {
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_ADD, _("Add property...")),
+		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::ADD, _("Add property..."))),
 		boost::bind(&EntityInspector::_onAddKey, this)
 	);
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, _("Delete property")),
+		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::DELETE, _("Delete property"))),
 		boost::bind(&EntityInspector::_onDeleteKey, this),
 		boost::bind(&EntityInspector::_testDeleteKey, this)
 	);
 
-	_contextMenu->addItem(gtkutil::SeparatorMenuItem(), gtkutil::PopupMenu::Callback());
+	_contextMenu->addItem(Gtk::manage(new Gtk::SeparatorMenuItem), gtkutil::PopupMenu::Callback());
 
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_COPY, _("Copy Spawnarg")),
+		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::COPY, _("Copy Spawnarg"))),
 		boost::bind(&EntityInspector::_onCopyKey, this),
 		boost::bind(&EntityInspector::_testCopyKey, this)
 	);
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_CUT, _("Cut Spawnarg")),
+		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::CUT, _("Cut Spawnarg"))),
 		boost::bind(&EntityInspector::_onCutKey, this),
 		boost::bind(&EntityInspector::_testCutKey, this)
 	);
 	_contextMenu->addItem(
-		gtkutil::StockIconMenuItem(GTK_STOCK_PASTE, _("Paste Spawnarg")),
+		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::PASTE, _("Paste Spawnarg"))),
 		boost::bind(&EntityInspector::_onPasteKey, this),
 		boost::bind(&EntityInspector::_testPasteKey, this)
 	);

@@ -10,8 +10,10 @@
 
 #include <boost/enable_shared_from_this.hpp>
 
-typedef struct _GtkMenuItem GtkMenuItem;
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk
+{
+	class Menu;
+}
 
 namespace ui
 {
@@ -26,7 +28,7 @@ class OrthoContextMenu :
 	public boost::enable_shared_from_this<OrthoContextMenu>
 {
 	// The GtkWidget representing the menu
-	GtkWidget* _widget;
+	boost::shared_ptr<Gtk::Menu> _widget;
 	
 	// Last provided 3D point for action
 	Vector3 _lastPoint;
@@ -78,6 +80,7 @@ public:
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
+	void shutdownModule();
 
 	// IOrthoContextMenu implementation
 	void addItem(const IMenuItemPtr& item, int section);

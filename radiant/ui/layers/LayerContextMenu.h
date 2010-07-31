@@ -3,17 +3,14 @@
 
 #include <boost/function.hpp>
 
-#include "gtkutil/ifc/Widget.h"
+#include <gtkmm/menu.h>
 #include "layers/LayerSystem.h"
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkMenuItem GtkMenuItem;
 
 namespace ui {
 
 class LayerContextMenu :
 	public scene::LayerSystem::Visitor,
-	public gtkutil::Widget
+	public Gtk::Menu
 {
 public:
 	// The function to be called on menu selection, the ID of the
@@ -23,8 +20,6 @@ public:
 private:
 	OnSelectionFunc _onSelection;
 	
-	GtkWidget* _menu;
-
 	typedef std::map<std::string, int> SortedLayerMap;
 	SortedLayerMap _sortedLayers;
 
@@ -34,19 +29,12 @@ public:
 	// scene::LayerSystem::Visitor implementation
 	void visit(int layerID, std::string layerName);
 
-protected:
-   // Widget implementation
-   GtkWidget* _getWidget() const 
-   {
-		return _menu;
-   }
-
 private:
 	// Creates the menu items
 	void createMenuItems();
 
-	// GTK Callback for menu selections
-	static void onClick(GtkMenuItem* menuitem, LayerContextMenu* self);
+	// gtkmm Callback for menu selections, layerId is bound on connection
+	void onActivate(int layerId);
 };
 typedef boost::shared_ptr<LayerContextMenu> LayerContextMenuPtr;
 

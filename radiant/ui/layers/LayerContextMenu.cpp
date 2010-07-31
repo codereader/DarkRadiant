@@ -1,7 +1,5 @@
 #include "LayerContextMenu.h"
 
-#include <gtk/gtk.h>
-
 #include "iuimanager.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/pointer.h"
@@ -16,8 +14,8 @@ namespace ui
 	}
 
 LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
-	_onSelection(onSelection),
-	_menu(gtk_menu_new())
+	Gtk::Menu(),
+	_onSelection(onSelection)
 {
 	// Populate the map with all layer names and IDs
 	scene::getLayerSystem().foreachLayer(*this);
@@ -26,7 +24,7 @@ LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
 	createMenuItems();
 	
 	// Show all the items
-	gtk_widget_show_all(_menu);
+	show_all();
 }
 
 void LayerContextMenu::visit(int layerID, std::string layerName)
@@ -42,27 +40,21 @@ void LayerContextMenu::createMenuItems()
 		i != _sortedLayers.end(); ++i)
 	{
 		// Create a new menuitem
-		GtkWidget* menuItem = gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(LAYER_ICON)->gobj(), i->first);
+		Gtk::MenuItem* menuItem = Gtk::manage(new gtkutil::IconTextMenuItemmm(
+			GlobalUIManager().getLocalPixbuf(LAYER_ICON), i->first));
 
-		// Connect the "onclick" signal
-		g_signal_connect(G_OBJECT(menuItem), "activate", G_CALLBACK(onClick), this);
-
-		// And store the layer id in the GTK object
-		g_object_set_data(G_OBJECT(menuItem), "layerID", gint_to_pointer(i->second));
-
+		// Connect the "onclick" signal, bind the layer ID
+		menuItem->signal_activate().connect(sigc::bind(sigc::mem_fun(*this, &LayerContextMenu::onActivate), i->second));
+		
 		// Add it to the parent menu
-		gtk_menu_shell_append(GTK_MENU_SHELL(_menu), menuItem);
+		append(*menuItem);
 	}
 }
 
-void LayerContextMenu::onClick(GtkMenuItem* menuitem, LayerContextMenu* self)
+void LayerContextMenu::onActivate(int layerId)
 {
-	// Retrieve the layer id from the object
-	int layerID = gpointer_to_int(g_object_get_data(G_OBJECT(menuitem), "layerID")); 
-
-	// Now call the function
-	self->_onSelection(layerID);
+	// Pass the call to the function
+	_onSelection(layerId);
 }
 
 } // namespace ui

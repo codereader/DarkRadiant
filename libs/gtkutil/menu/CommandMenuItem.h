@@ -6,8 +6,6 @@
 
 #include <boost/bind.hpp>
 
-typedef struct _GtkWidget GtkWidget;
-
 namespace gtkutil
 {
 
@@ -21,11 +19,11 @@ protected:
 	std::string _statementName;
 	
 public:
-	CommandMenuItem(GtkWidget* widget, 
+	CommandMenuItem(Gtk::MenuItem* menuItem, 
 					const std::string& statementName, 
 					const ui::IMenu::SensitivityTest& sensTest = AlwaysSensitive,
 					const ui::IMenu::VisibilityTest& visTest = AlwaysVisible)
-	: MenuItem(widget, 
+	: MenuItem(menuItem, 
 			   boost::bind(&CommandMenuItem::executeCommand, this), 
 			   sensTest, 
 			   visTest),
