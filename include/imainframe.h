@@ -45,7 +45,7 @@ public:
 	 * in the main window.
 	 * May return NULL if mainframe is not constructed yet.
 	 */
-	virtual Gtk::Widget* getMainContainer() = 0;
+	virtual Gtk::Container* getMainContainer() = 0;
 
 	enum Toolbar
 	{

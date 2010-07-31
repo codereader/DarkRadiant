@@ -45,7 +45,7 @@ public:
 	void disableScreenUpdates();
 
 	const Glib::RefPtr<Gtk::Window>& getTopLevelWindow();
-	Gtk::Widget* getMainContainer();
+	Gtk::Container* getMainContainer();
 	Gtk::Toolbar* getToolbar(Toolbar type);
 
 	void updateAllWindows();
