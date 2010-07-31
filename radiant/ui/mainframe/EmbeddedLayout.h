@@ -6,7 +6,14 @@
 
 #include "camera/CamWnd.h"
 
-namespace ui {
+namespace Gtk
+{
+	class HPaned;
+	class VPaned;
+}
+
+namespace ui
+{
 
 #define EMBEDDED_LAYOUT_NAME "Embedded"
 
@@ -20,8 +27,8 @@ private:
 	// The camera view
 	CamWndPtr _camWnd;
 
-	GtkWidget* _horizPane;
-	GtkWidget* _groupCamPane;
+	boost::shared_ptr<Gtk::HPaned> _horizPane;
+	Gtk::VPaned* _groupCamPane;
 		
 	gtkutil::PanedPosition _posHPane;
 	gtkutil::PanedPosition _posGroupCamPane;
@@ -37,9 +44,6 @@ public:
 	static EmbeddedLayoutPtr CreateInstance();
 
 private:
-	// Return the group pane
-	GtkWidget* createGroupPane();
-
 	void maximiseCameraSize();
 	void restorePanePositions();
 

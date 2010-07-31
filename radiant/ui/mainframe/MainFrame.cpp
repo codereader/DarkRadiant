@@ -256,7 +256,7 @@ const Glib::RefPtr<Gtk::Window>& MainFrame::getTopLevelWindow()
 	return _window;
 }
 
-Gtk::Widget* MainFrame::getMainContainer()
+Gtk::Container* MainFrame::getMainContainer()
 {
 	return _mainContainer;
 }
