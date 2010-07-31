@@ -116,7 +116,7 @@ public:
 	virtual ~XYWnd();
 	
 	void queueDraw();	
-	GtkWidget* getWidget();
+	Gtk::Widget* getWidget();
 	
 	void setParent(const Glib::RefPtr<Gtk::Window>& parent);
 	const Glib::RefPtr<Gtk::Window>& getParent() const;

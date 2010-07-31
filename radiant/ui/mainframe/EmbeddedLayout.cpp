@@ -48,7 +48,7 @@ void EmbeddedLayout::activate()
     xyWnd->setViewType(XY);
 
     // Create a framed window out of the view's internal widget
-	Gtk::Frame* xyView = Gtk::manage(new gtkutil::FramedWidgetmm(*Glib::wrap(xyWnd->getWidget(), true)));
+	Gtk::Frame* xyView = Gtk::manage(new gtkutil::FramedWidgetmm(*xyWnd->getWidget()));
 
 	// Detach the notebook from the groupdialog to fit it into our pane
 	Gtk::VBox* groupPane = Gtk::manage(new Gtk::VBox(false, 0));
