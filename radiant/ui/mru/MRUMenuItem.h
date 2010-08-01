@@ -5,7 +5,11 @@
 #include "icommandsystem.h"
 
 // Forward declaration
-typedef struct _GtkWidget GtkWidget; 
+namespace Gtk
+{
+	class Label;
+	class Widget;
+}
 
 namespace ui {
 
@@ -19,6 +23,7 @@ class MRU;
  */
 class MRUMenuItem 
 {
+private:
 	// The label of this widget
 	std::string _label;
 	
@@ -29,7 +34,7 @@ class MRUMenuItem
 	unsigned int _index;
 	
 	// The internally stored name and reference to the GtkWidget
-	GtkWidget* _widget;
+	Gtk::Widget* _widget;
 	
 public:
 	// Constructor
@@ -38,8 +43,8 @@ public:
 	// Copy Constructor
 	MRUMenuItem(const ui::MRUMenuItem& other);
 	
-	void setWidget(GtkWidget* widget);
-	operator GtkWidget* ();
+	void setWidget(Gtk::Widget* widget);
+	Gtk::Widget* getWidget();
 	
 	// Triggers loading the map represented by this widget 
 	void activate(const cmd::ArgumentList& args);
@@ -53,6 +58,9 @@ public:
 	std::string getLabel() const;
 	
 	int getIndex() const;
+
+private:
+	Gtk::Label* findLabel(Gtk::Widget* widget);
 	
 }; // class MRUMenuItem
 	

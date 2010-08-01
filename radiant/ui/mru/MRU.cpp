@@ -190,7 +190,8 @@ void MRU::constructMenu() {
 		"", // empty icon
 		"" // empty event
 	);
-	_emptyMenuItem.setWidget(empty);
+
+	_emptyMenuItem.setWidget(Glib::wrap(empty));
 	gtk_widget_hide(empty);
 
 	// Add all the created widgets to the menu
@@ -209,7 +210,7 @@ void MRU::constructMenu() {
 			commandName
 		);
 		
-		item.setWidget(menuItem);
+		item.setWidget(Glib::wrap(menuItem));
 	}
 	
 	// Insert the last separator to split the MRU file list from the "Exit" command. 
