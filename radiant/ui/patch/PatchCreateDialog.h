@@ -1,48 +1,41 @@
 #ifndef PATCHCREATEDIALOG_H_
 #define PATCHCREATEDIALOG_H_
 
-#include "gtk/gtkwidget.h"
-#include "gtk/gtkwindow.h"
+#include "gtkutil/dialog/Dialog.h"
 
-/** greebo: Dialog to query the user for the desired patch dimensions and
- *  whether the selected brushs are to be removed after creation.
- *  
- */
-namespace ui {
-
-class PatchCreateDialog
+namespace Gtk
 {
-private:	
-	GtkWidget* _comboWidth;
-	GtkWidget* _comboHeight;
-	GtkWidget* _removeBrushCheckbox;
+	class ComboBoxText;
+	class CheckButton;
+}
+
+/** 
+ * greebo: Dialog to query the user for the desired patch dimensions and
+ * whether the selected brushes are to be removed after creation.
+ */
+namespace ui
+{
+
+class PatchCreateDialog :
+	public gtkutil::Dialog
+{
+private:
+	Gtk::ComboBoxText* _comboWidth;
+	Gtk::ComboBoxText* _comboHeight;
+	Gtk::CheckButton* _removeBrushCheckbox;
+
+protected:
+	void _postShow();
 
 public:
-	// The dialog widget (is public so that onKeyPress can access it)
-	GtkWidget* _dialog;
-
 	// Constructor 
 	PatchCreateDialog();
-	
-	/** greebo: Launches the dialog to query the user for the 
-	 * desired patch thickness and "addSeams" bool
-	 * 
-	 * @selBrushCount: The number of selected brushes (used to grey out the
-	 * 				   "Remove selected Brushes" checkbox if this is not 1).
-	 * 
-	 * @returns: TRUE, if the user pressed ok, FALSE if cancelled 
-	 * 
-	 * @width, height: these contain the selected patch dimensions after return.
-	 * @removeBrushes: contains TRUE if the user wishes to remove the selected brush
-	 * 				   after the patch is created.
-	 */
-	bool queryPatchDimensions(int& width, int& height, 
-							  const int& selBrushCount, bool& removeBrush);
 
-private:
-	static gboolean onKeyPress(GtkWidget* widget, GdkEventKey* event, PatchCreateDialog* self);
-
-}; // class PatchThickenDialog
+	// Get the selected values, use these after calling run()
+	int getSelectedWidth();
+	int getSelectedHeight();
+	bool getRemoveSelectedBrush();
+};
 
 } // namespace ui
 

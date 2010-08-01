@@ -622,25 +622,19 @@ void thickenSelectedPatches(const cmd::ArgumentList& args) {
 	}
 }
 
-void createSimplePatch(const cmd::ArgumentList& args) {
+void createSimplePatch(const cmd::ArgumentList& args)
+{
 	ui::PatchCreateDialog dialog;
 	
-	int width = 3;
-	int height = 3;
-	bool removeSelectedBrush = false;
-	
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
-	if (dialog.queryPatchDimensions(width, height, 
-									info.brushCount, 
-									removeSelectedBrush)) 
+	if (dialog.run() == ui::IDialog::RESULT_OK)
 	{
 		UndoableCommand undo("patchCreatePlane");
 		
 		// Retrieve the boundaries 
 		AABB bounds = PatchCreator_getBounds();
 		
-		if (removeSelectedBrush) {
+		if (dialog.getRemoveSelectedBrush())
+		{
 			// Delete the selection, the should be only one brush selected
 			selection::algorithm::deleteSelection();
 		}
@@ -649,7 +643,7 @@ void createSimplePatch(const cmd::ArgumentList& args) {
 		Scene_PatchConstructPrefab(bounds, 
 								   GlobalTextureBrowser().getSelectedShader(), 
 								   ePlane, GlobalXYWnd().getActiveViewType(), 
-								   width, height);
+								   dialog.getSelectedWidth(), dialog.getSelectedHeight());
 	}
 }
 
