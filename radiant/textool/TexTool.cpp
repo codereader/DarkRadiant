@@ -31,6 +31,8 @@
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Shader.h"
 
+#include <gtkmm/toolbar.h>
+
 namespace ui {
 	
 	namespace {
@@ -106,8 +108,8 @@ void TexTool::populateWindow() {
 	
 	// Load the texture toolbar from the registry
     IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-    GtkToolbar* textoolbar = tbCreator.getToolbar("textool");
-    GTK_WIDGET_UNSET_FLAGS(GTK_WIDGET(textoolbar), GTK_CAN_FOCUS);
+	Gtk::Toolbar* textoolbar = tbCreator.getToolbar("textool");
+	textoolbar->unset_flags(Gtk::CAN_FOCUS);
     
 	// Create the GL widget
 	GtkWidget* glWidget = _glWidget; // cast to GtkWidget*
@@ -134,7 +136,7 @@ void TexTool::populateWindow() {
 	GtkWidget* vbox = gtk_vbox_new(false, 0);
 	
 	if (textoolbar != NULL) {
-    	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(textoolbar), false, false, 0);
+    	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(textoolbar->gobj()), false, false, 0);
     }
 	
 	gtk_box_pack_start(GTK_BOX(vbox), frame, true, true, 0);

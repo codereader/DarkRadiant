@@ -368,11 +368,11 @@ void MainFrame::create()
     // Instantiate the ToolbarManager and retrieve the view toolbar widget 
 	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
 	
-	GtkToolbar* viewToolbar = tbCreator.getToolbar("view");
+	Gtk::Toolbar* viewToolbar = tbCreator.getToolbar("view");
 
 	if (viewToolbar != NULL)
 	{
-		_toolbars[TOOLBAR_HORIZONTAL] = Glib::wrap(viewToolbar);
+		_toolbars[TOOLBAR_HORIZONTAL] = viewToolbar;
 
 		// Pack it into the main window
 		_toolbars[TOOLBAR_HORIZONTAL]->show();
@@ -391,11 +391,11 @@ void MainFrame::create()
 	vbox->pack_start(*hbox, true, true, 0);
     
     // Get the edit toolbar widget 
-	GtkToolbar* editToolbar = tbCreator.getToolbar("edit");
+	Gtk::Toolbar* editToolbar = tbCreator.getToolbar("edit");
 
 	if (editToolbar != NULL)
 	{
-		_toolbars[TOOLBAR_VERTICAL] = Glib::wrap(editToolbar);
+		_toolbars[TOOLBAR_VERTICAL] = editToolbar;
 
 		// Pack it into the main window
 		_toolbars[TOOLBAR_VERTICAL]->show();

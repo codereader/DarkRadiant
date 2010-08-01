@@ -50,16 +50,16 @@ void RegularLayout::activate() {
 	Gtk::Widget* xyView = Gtk::manage(new gtkutil::FramedWidgetmm(*xyWnd->getWidget()));
 
 	// Create the texture window
-	GtkWidget* texWindow = gtkutil::FramedWidget(
-		GlobalTextureBrowser().constructWindow(GTK_WINDOW(parent->gobj()))
-	);
+	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidgetmm(
+		*GlobalTextureBrowser().constructWindow(parent)
+	));
 
 	// Now pack those widgets into the paned widgets
 	_regular.texCamPane = Gtk::manage(new Gtk::VPaned);
 
 	// First, pack the texwindow and the camera
 	_regular.texCamPane->pack1(*camWindow, true, true); // allow shrinking
-	_regular.texCamPane->pack2(*Glib::wrap(texWindow, true), true, true); // allow shrinking
+	_regular.texCamPane->pack2(*texWindow, true, true); // allow shrinking
 
     // Depending on the viewstyle, pack the xy left or right
 	_regular.horizPane.reset(new Gtk::HPaned);

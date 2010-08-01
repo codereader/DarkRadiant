@@ -97,9 +97,9 @@ void EmbeddedLayout::activate()
 	GlobalGroupDialog().hideDialogWindow();
 
 	// Create the texture window
-	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidgetmm(*Glib::wrap(
-		GlobalTextureBrowser().constructWindow(GTK_WINDOW(GlobalMainFrame().getTopLevelWindow()->gobj())), true
-	)));
+	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidgetmm(
+		*GlobalTextureBrowser().constructWindow(GlobalMainFrame().getTopLevelWindow())
+	));
 
 	// Add the Texture Browser page to the group dialog
 	GlobalGroupDialog().addPage(

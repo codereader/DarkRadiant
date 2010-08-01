@@ -93,16 +93,16 @@ void SplitPaneLayout::constructLayout()
 	distributeWidgets();
 	
     {      
-		GtkWidget* textureBrowser = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(parent->gobj())
-		);
+		Gtk::Frame* textureBrowser = Gtk::manage(new gtkutil::FramedWidgetmm(
+			*GlobalTextureBrowser().constructWindow(parent)
+		));
 
 		// Add the Media Browser page
 		GlobalGroupDialog().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
-	    	GTK_WIDGET(textureBrowser), // page widget
+	    	GTK_WIDGET(textureBrowser->gobj()), // page widget
 	    	_("Texture Browser")
 	    );
     }

@@ -8,7 +8,11 @@
 
 // Forward declarations
 typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkToolbar GtkToolbar;
+
+namespace Gtk
+{
+	class Toolbar;
+}
 
 class IColourSchemeManager {
 public:
@@ -103,7 +107,7 @@ class IToolbarManager
 {
 public:
     virtual ~IToolbarManager() {}
-	virtual GtkToolbar* getToolbar(const std::string& toolbarName) = 0;
+	virtual Gtk::Toolbar* getToolbar(const std::string& toolbarName) = 0;
 };
 
 // The name of the command status bar item
