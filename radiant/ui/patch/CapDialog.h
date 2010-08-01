@@ -5,8 +5,13 @@
 #include <map>
 #include "patch/PatchConstants.h"
 
-typedef struct _GtkTable GtkTable;
-typedef struct _GSList GSList;
+#include <gtkmm/radiobuttongroup.h>
+
+namespace Gtk
+{
+	class Table;
+	class RadioButton;
+}
 
 /** 
  * Query the user which type of cap should be created
@@ -20,11 +25,10 @@ class PatchCapDialog :
 private:
 	EPatchCap _selectedCapType;
 
-	// Linked list of radio buttons
-	GSList* _radioButtonGroup;
-
-	typedef std::map<EPatchCap, GtkWidget*> RadioButtons;
+	typedef std::map<EPatchCap, Gtk::RadioButton*> RadioButtons;
 	RadioButtons _radioButtons;
+
+	Gtk::RadioButtonGroup _group;
 
 public:
 	// Constructor 
@@ -34,7 +38,7 @@ public:
 	EPatchCap getSelectedCapType();
 
 private:
-	void addItemToTable(GtkTable* table, const std::string& image, guint row, EPatchCap type);
+	void addItemToTable(Gtk::Table& table, const std::string& image, int row, EPatchCap type);
 };
 
 } // namespace ui
