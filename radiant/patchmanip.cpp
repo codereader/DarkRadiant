@@ -595,24 +595,23 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
  * class would get stuck in a loop (as the newly created patches get selected,
  * and they are thickened as well, and again and again).  
  */
-void thickenSelectedPatches(const cmd::ArgumentList& args) {
+void thickenSelectedPatches(const cmd::ArgumentList& args)
+{
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 	
-	if (patchList.size() > 0) {
+	if (patchList.size() > 0)
+	{
 		UndoableCommand undo("patchThicken");
 		
 		ui::PatchThickenDialog dialog;
-		
-		bool createSeams = false;
-		float thickness = 0.0f;
-		// Extrude along normals is the default (axis=3)
-		int axis = 3;
-		
-		if (dialog.queryPatchThickness(thickness, createSeams, axis)) {
+
+		if (dialog.run() == ui::IDialog::RESULT_OK)
+		{
 			// Go through the list and thicken all the found ones
-			for (std::size_t i = 0; i < patchList.size(); i++) {
-				thickenPatch(patchList[i], thickness, createSeams, axis);
+			for (std::size_t i = 0; i < patchList.size(); i++)
+			{
+				thickenPatch(patchList[i], dialog.getThickness(), dialog.getCeateSeams(), dialog.getAxis());
 			}
 		}
 	}
