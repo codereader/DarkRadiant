@@ -1,35 +1,38 @@
 #include "ToolbarManager.h"
 
-#include <gtk/gtk.h>
 #include <stdexcept>
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "iregistry.h"
-#include "iradiant.h"
 #include "i18n.h"
 
-#include <iostream>
+#include <gtkmm/separatortoolitem.h>
+#include <gtkmm/toolbar.h>
+#include <gtkmm/toolbutton.h>
+#include <gtkmm/toggletoolbutton.h>
+#include <gtkmm/image.h>
 
-namespace ui {
+namespace ui
+{
 
-/* Load the definitions from the XMLRegistry
- */
-void ToolbarManager::initialise() {
-	try {
+void ToolbarManager::initialise()
+{
+	try
+	{
 		// Query the registry
 		loadToolbars();
 	}
-	catch (std::runtime_error& e) {
+	catch (std::runtime_error& e)
+	{
 		std::cout << "ToolbarManager: Warning: " << e.what() << std::endl;
 	}
 }
 
-/*	Returns the toolbar that is named toolbarName
- */
-GtkToolbar* ToolbarManager::getToolbar(const std::string& toolbarName) {
+Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
+{
 	// Check if the toolbarName exists
-	if (toolbarExists(toolbarName)) {
-		
+	if (toolbarExists(toolbarName))
+	{
 		// Instantiate the toolbar with buttons
 		globalOutputStream() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
 						
@@ -37,132 +40,146 @@ GtkToolbar* ToolbarManager::getToolbar(const std::string& toolbarName) {
 		std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
 		xml::NodeList toolbarList = GlobalRegistry().findXPath(toolbarPath);
 			
-		if (toolbarList.size() > 0) {
+		if (!toolbarList.empty())
+		{
 			return createToolbar(toolbarList[0]);
 		}
 		else {
-			globalErrorStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << "!\n";
+			globalErrorStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
 			return NULL;
-		}		
+		}
 	} 
-	else {
+	else
+	{
+		globalErrorStream() << "ToolbarManager: Critical: Named toolbar doesn't exist: " << toolbarName << std::endl;
 		return NULL;
 	}
 }
 
-/* Checks the passed xmlNode for a recognized item (ToolButton, ToggleToolButton, Separator)
- * Returns the widget or NULL if nothing useful is found   
- */
-GtkWidget* ToolbarManager::createToolItem(xml::Node& node) {
+Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
+{
 	const std::string nodeName = node.getName();
-	GtkWidget* toolItem;
+
+	Gtk::ToolItem* toolItem = NULL;
 	
-	if (nodeName == "separator") {
-		toolItem = GTK_WIDGET(gtk_separator_tool_item_new());			
+	if (nodeName == "separator")
+	{
+		toolItem = Gtk::manage(new Gtk::SeparatorToolItem);
 	}
-	else if (nodeName == "toolbutton" || nodeName == "toggletoolbutton") {
+	else if (nodeName == "toolbutton" || nodeName == "toggletoolbutton")
+	{
 		// Found a button, load the values that are shared by both types
 		const std::string name 		= node.getAttributeValue("name");
 		const std::string icon 		= node.getAttributeValue("icon");
 		const std::string tooltip 	= _(node.getAttributeValue("tooltip").c_str());
 		const std::string action 	= node.getAttributeValue("action");
+
+		Gtk::ToolButton* toolButton = NULL;
 		
-		if (nodeName == "toolbutton") {
+		if (nodeName == "toolbutton")
+		{
 			// Create a new GtkToolButton and assign the right callback
-			toolItem = GTK_WIDGET(gtk_tool_button_new(NULL, name.c_str()));
+			toolButton = Gtk::manage(new Gtk::ToolButton(name));
 		}
-		else {
+		else
+		{
 			// Create a new GtkToggleToolButton and assign the right callback
-			toolItem = GTK_WIDGET(gtk_toggle_tool_button_new());
+			toolButton = Gtk::manage(new Gtk::ToggleToolButton);
 		}
-		
-		IEventPtr event = GlobalEventManager().findEvent(action);
+
+		IEventPtr ev = GlobalEventManager().findEvent(action);
 			
-		if (!event->empty()) {
-			event->connectWidget(GTK_WIDGET(toolItem));
+		if (!ev->empty())
+		{
+			ev->connectWidget(GTK_WIDGET(toolButton->gobj()));
 
 			// Tell the event to update the state of this button
-			event->updateWidgets();
+			ev->updateWidgets();
 		}
-		else {
-			globalErrorStream() << "ToolbarManager: Failed to lookup command " << action << std::endl; 
+		else
+		{
+			globalErrorStream() << "ToolbarManager: Failed to lookup command " << action << std::endl;
 		}
 		
 		// Set the tooltip, if not empty
-		if (tooltip != "") {
-			gtk_tool_item_set_tooltip(GTK_TOOL_ITEM(toolItem), _tooltips, tooltip.c_str(), "");
+		if (!tooltip.empty())
+		{
+			toolButton->set_tooltip_text(tooltip);
 		}
 		
 		// Load and assign the icon, if specified
-		if (icon != "") {
-			GtkWidget* image = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(icon)->gobj());
-			gtk_widget_show(image);
-			gtk_tool_button_set_icon_widget(GTK_TOOL_BUTTON(toolItem), image);
+		if (!icon.empty())
+		{
+			Gtk::Image* image = Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask(icon)));
+			image->show();
+			toolButton->set_icon_widget(*image);
 		}
+
+		toolItem = toolButton;
 	}
-	else {
+	else
+	{
 		return NULL;
 	}
-			
-	gtk_widget_show(toolItem);
+	
+	toolItem->show();
 	return toolItem;
 }
 
-/*	Creates a toolbar based on the data found in the passed xmlNode
- * 	Returns the fully populated GtkToolbar 	
- */
-GtkToolbar* ToolbarManager::createToolbar(xml::Node& node) {
+Gtk::Toolbar* ToolbarManager::createToolbar(xml::Node& node)
+{
 	// Get all action children elements 
 	xml::NodeList toolItemList = node.getChildren();
-	GtkWidget* toolbar;
+	Gtk::Toolbar* toolbar = NULL;
 		
-	if (!toolItemList.empty()) {
+	if (!toolItemList.empty())
+	{
 		// Create a new toolbar
-		toolbar = gtk_toolbar_new();
-		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
+		toolbar = Gtk::manage(new Gtk::Toolbar);
+		toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
 		
 		// Try to set the alignment, if the attribute is properly set
 		std::string align = node.getAttributeValue("align");
-		GtkOrientation orientation = (align == "vertical") ? GTK_ORIENTATION_VERTICAL : GTK_ORIENTATION_HORIZONTAL;
-		gtk_toolbar_set_orientation(GTK_TOOLBAR(toolbar), orientation);
+
+		toolbar->set_orientation(align == "vertical" ? Gtk::ORIENTATION_VERTICAL : Gtk::ORIENTATION_HORIZONTAL);
 		
-		for (std::size_t i = 0; i < toolItemList.size(); i++) {
-			// Create and get the toolItem with the parsing 
-			GtkWidget* toolItem = createToolItem(toolItemList[i]);
+		for (std::size_t i = 0; i < toolItemList.size(); ++i)
+		{
+			// Create and get the toolItem with the parsing
+			Gtk::ToolItem* toolItem = createToolItem(toolItemList[i]);
 			
 			// It is possible that no toolItem is returned, only add it if it's safe to do so
-			if (toolItem != NULL) {    				
-				gtk_toolbar_insert(GTK_TOOLBAR(toolbar), GTK_TOOL_ITEM(toolItem), -1);    				
+			if (toolItem != NULL)
+			{
+				toolbar->insert(*toolItem, -1);
 			}
 		}
 	}
-	else {
+	else
+	{
 		throw std::runtime_error("No elements in toolbar.");
 	}
 	
-	return GTK_TOOLBAR(toolbar);
+	return toolbar;
 }
 
-bool ToolbarManager::toolbarExists(const std::string& toolbarName) {
-	ToolbarList::iterator it = _toolbars.find(toolbarName);
-   	return (it != _toolbars.end());
+bool ToolbarManager::toolbarExists(const std::string& toolbarName)
+{
+	return (_toolbars.find(toolbarName) != _toolbars.end());
 }
 
-/* Parses the XML Document for toolbars and instantiates them
- * Returns nothing, toolbars can be obtained via GetToolbar()
- */
-void ToolbarManager::loadToolbars() {
+void ToolbarManager::loadToolbars()
+{
 	xml::NodeList toolbarList = GlobalRegistry().findXPath("//ui//toolbar");
 	
-	if (!toolbarList.empty()) {
-		// Create a new tooltips element
-		_tooltips = gtk_tooltips_new();
-		gtk_tooltips_enable(_tooltips);
-		
-		for (std::size_t i = 0; i < toolbarList.size(); i++) {
+	if (!toolbarList.empty())
+	{
+		for (std::size_t i = 0; i < toolbarList.size(); ++i)
+		{
 			std::string toolbarName = toolbarList[i].getAttributeValue("name");
 			
-			if (toolbarExists(toolbarName)) {
+			if (toolbarExists(toolbarName))
+			{
 				//globalOutputStream() << "This toolbar already exists: ";
 				continue;
 			}
@@ -172,7 +189,8 @@ void ToolbarManager::loadToolbars() {
 			_toolbars.insert(toolbarName);
 		}
 	}
-	else {
+	else
+	{
 		throw std::runtime_error("No toolbars found.");
 	}
 }

@@ -29,9 +29,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/cursor.h"
 #include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"
+#include "gtkutil/menu/PopupMenu.h"
 #include <boost/enable_shared_from_this.hpp>
 
-typedef struct _GtkMenuItem GtkMenuItem;
+#include <gtkmm/window.h>
+
+namespace Gtk
+{
+	class MenuItem;
+	class Entry;
+	class VScrollbar;
+	class ToggleToolButton;
+}
 
 namespace ui {
 
@@ -53,11 +62,12 @@ class TextureBrowser :
 	public MaterialManager::ActiveShadersObserver,
 	public boost::enable_shared_from_this<TextureBrowser>
 {
+private:
 	int width, height;
 	int originy;
 	int m_nTotalHeight;
 
-	std::string shader;
+	std::string _shader;
 	
 	// The coordinates of the point where the mouse button was pressed
 	// this is used to check whether the mouse button release is a mouse-drag 
@@ -70,17 +80,20 @@ class TextureBrowser :
 	// pop up on mouse button release
 	double _epsilon;
 	
-	GtkWidget* _popupMenu;
-	GtkWidget* _seekInMediaBrowser;
-	GtkWidget* _shaderLabel;
+	gtkutil::PopupMenuPtr _popupMenu;
+	Gtk::MenuItem* _seekInMediaBrowser;
+	Gtk::MenuItem* _shaderLabel;
 
-  GtkEntry* m_filter;
-  NonModalEntry m_filterEntry;
+	Gtk::Entry* _filter;
+	NonModalEntry _filterEntry;
 
-  GtkWindow* m_parent;
+	Glib::RefPtr<Gtk::Window> _parent;
 	gtkutil::GLWidgetPtr _glWidget;
 
-  GtkWidget* m_texture_scroll;
+	Gtk::VScrollbar* _textureScrollbar;
+	Gtk::Adjustment* _vadjustment;
+
+	Gtk::ToggleToolButton* _sizeToggle;
 
   bool m_heightChanged;
   bool m_originInvalid;
@@ -122,14 +135,15 @@ public:
 	void keyChanged(const std::string& key, const std::string& val);
 
 	// Return the display width of a texture in the texture browser
-	int getTextureWidth(TexturePtr tex);
+	int getTextureWidth(const TexturePtr& tex);
 	// Return the display height of a texture in the texture browser
-	int getTextureHeight(TexturePtr tex);
+	int getTextureHeight(const TexturePtr& tex);
 
-	/** greebo: Constructs the TextureBrowser window and retrieves the 
-	 * 			widget for packing into the GroupDialog for instance.
+	/** 
+	 * greebo: Constructs the TextureBrowser window and retrieves the 
+	 * widget for packing into the GroupDialog for instance.
 	 */
-	GtkWidget* constructWindow(GtkWindow* parent);
+	Gtk::Widget* constructWindow(const Glib::RefPtr<Gtk::Window>& parent);
 	void destroyWindow();
   
 	void queueDraw();
@@ -142,7 +156,7 @@ public:
 
 	/** greebo: Returns the currently selected shader
 	 */
-	std::string getSelectedShader();
+	const std::string& getSelectedShader() const;
 	
 	/** greebo: Sets the currently selected shader to <newShader> and
 	 * 			refocuses the texturebrowser to that shader.
@@ -162,6 +176,9 @@ public:
 	static void registerPreferencesPage();
 
 private:
+	bool checkSeekInMediaBrowser(); // sensitivity check
+	void onSeekInMediaBrowser();
+
 	// Displays the context menu
 	void openContextMenu();
 
@@ -176,7 +193,7 @@ private:
 	
 	/** greebo: Adjusts the values in <layout> to point at the next position.
 	 */
-	void nextTexturePos(TextureLayout& layout, TexturePtr current_texture, int *x, int *y);
+	void nextTexturePos(TextureLayout& layout, const TexturePtr& current_texture, int *x, int *y);
 	
 	/** greebo: Performs the actual window movement after a mouse scroll.
 	 */
@@ -230,23 +247,21 @@ private:
 	/** greebo: Returns true if the given <shader> is visible,
 	 * 			taking filter and showUnused into account. 
 	 */ 
-	bool shaderIsVisible(MaterialPtr shader);
+	bool shaderIsVisible(const MaterialPtr& shader);
 	
-	// Static GTK Callbacks
-	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TextureBrowser* self);
-	static gboolean onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TextureBrowser* self);
-	static void onResizeToggle(GtkWidget* button, TextureBrowser* self);
+	// gtkmm Callbacks
+	bool onExpose(GdkEventExpose* ev);
+	void onSizeAllocate(Gtk::Allocation& allocation);
+	void onResizeToggle();
 	
 	// Called on scrollbar change
-	static void onVerticalScroll(GtkAdjustment *adjustment, TextureBrowser* self);
+	void onVerticalScroll();
 	
-	// Static GTK Mouse Event Callbacks
-	static gboolean onButtonPress(GtkWidget* widget, GdkEventButton* event, TextureBrowser* self);
-	static gboolean onButtonRelease(GtkWidget* widget, GdkEventButton* event, TextureBrowser* self);
-	static gboolean onMouseMotion(GtkWidget *widget, GdkEventMotion *event, TextureBrowser* self);
-	static gboolean onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TextureBrowser* self);
-	
-	static void onSeekInMediaBrowser(GtkMenuItem* item, TextureBrowser* self);
+	// gtkmm Mouse Event Callbacks
+	bool onButtonPress(GdkEventButton* ev);
+	bool onButtonRelease(GdkEventButton* ev);
+	bool onMouseMotion(GdkEventMotion* ev);
+	bool onMouseScroll(GdkEventScroll* ev);
 };
 
 } // namespace ui
