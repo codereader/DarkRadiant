@@ -1,6 +1,5 @@
 #include "EntityInfoTab.h"
 
-#include <gtk/gtk.h>
 #include "i18n.h"
 #include "iradiant.h"
 #include "icounter.h"
@@ -10,110 +9,112 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
-namespace ui {
+#include <gtkmm/treeview.h>
+#include <gtkmm/box.h>
+#include <gtkmm/table.h>
 
-	namespace {
+namespace ui
+{
+	namespace
+	{
 		const char* const TAB_NAME = N_("Entities");
 		const std::string TAB_ICON("cmenu_add_entity.png");
-
-	   	enum {
-	   		ECLASS_COL,
-	   		COUNT_COL,
-	   		NUM_COLS
-	   	};
 	}
 
 EntityInfoTab::EntityInfoTab() :
-	_widget(gtk_vbox_new(FALSE, 6))
+	_widget(NULL)
 {
 	// Create all the widgets
 	populateTab();
 }
 
-GtkWidget* EntityInfoTab::getWidget() {
-	return _widget;
+Gtk::Widget& EntityInfoTab::getWidget()
+{
+	return *_widget;
 }
 
-std::string EntityInfoTab::getLabel() {
+std::string EntityInfoTab::getLabel()
+{
 	return _(TAB_NAME);
 }
 
-std::string EntityInfoTab::getIconName() {
+std::string EntityInfoTab::getIconName()
+{
 	return TAB_ICON;
 }
 
-void EntityInfoTab::populateTab() {
+void EntityInfoTab::populateTab()
+{
+	_widget = Gtk::manage(new Gtk::VBox(false, 6));
+
 	// Set the outer space of the vbox
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
+	_widget->set_border_width(12);
 
 	// Create the list store that contains the eclass => count map 
-	_listStore = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
+	_listStore = Gtk::ListStore::create(_columns);
 
 	// Create the treeview and pack two columns into it
-	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
-	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(_treeView), TRUE);
+	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
+	_treeView->set_headers_clickable(true);
 
-	GtkTreeViewColumn* eclassCol = gtkutil::TextColumn(_("Entity Class"), ECLASS_COL);
-	gtk_tree_view_column_set_sort_column_id(eclassCol, ECLASS_COL);
-	
-	GtkTreeViewColumn* countCol = gtkutil::TextColumn(_("Count"), COUNT_COL);
-	gtk_tree_view_column_set_sort_column_id(countCol, COUNT_COL);
+	Gtk::TreeViewColumn* eclassCol = Gtk::manage(new gtkutil::TextColumnmm(_("Entity Class"), _columns.eclass));
+	eclassCol->set_sort_column(_columns.eclass);
 
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), eclassCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), countCol);
+	Gtk::TreeViewColumn* countCol = Gtk::manage(new gtkutil::TextColumnmm(_("Count"), _columns.count));
+	countCol->set_sort_column(_columns.count);
 	
-    gtk_box_pack_start(GTK_BOX(_widget), gtkutil::ScrolledFrame(_treeView), TRUE, TRUE, 0);
+	_treeView->append_column(*eclassCol);
+	_treeView->append_column(*countCol);
+		
+	_widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true, 0);
     
     // Populate the liststore with the entity count information
     for (map::EntityBreakdown::Map::const_iterator i = _entityBreakdown.begin(); 
 		 i != _entityBreakdown.end(); 
 		 i++)
 	{
-		GtkTreeIter iter;
-		gtk_list_store_append(_listStore, &iter);
-		gtk_list_store_set(_listStore, &iter, 
-						   ECLASS_COL, i->first.c_str(),
-						   COUNT_COL, i->second, 
-						   -1);
+		Gtk::TreeModel::Row row = *_listStore->append();
+		
+		row[_columns.eclass] = i->first;
+		row[_columns.count] = static_cast<int>(i->second);
 	}
 	
 	// The table containing the primitive statistics
-	GtkTable* table = GTK_TABLE(gtk_table_new(3, 2, FALSE));
-	gtk_box_pack_start(GTK_BOX(_widget), GTK_WIDGET(table), FALSE, FALSE, 0);
+	Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 2, false));
+	_widget->pack_start(*table, false, false, 0);
 	
-	_brushCount = gtkutil::LeftAlignedLabel("");
-	_patchCount = gtkutil::LeftAlignedLabel("");
-	_entityCount = gtkutil::LeftAlignedLabel("");
+	_brushCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_patchCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_entityCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
 	
-	GtkWidget* brushLabel = gtkutil::LeftAlignedLabel(_("Brushes:"));
-	GtkWidget* patchLabel = gtkutil::LeftAlignedLabel(_("Patches:"));
-	GtkWidget* entityLabel = gtkutil::LeftAlignedLabel(_("Entities:"));
+	Gtk::Label* brushLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Brushes:")));
+	Gtk::Label* patchLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Patches:")));
+	Gtk::Label* entityLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Entities:")));
 	
-	gtk_widget_set_size_request(brushLabel, 75, -1);
-	gtk_widget_set_size_request(patchLabel, 75, -1);
-	gtk_widget_set_size_request(entityLabel, 75, -1);
+	brushLabel->set_size_request(75, -1);
+	patchLabel->set_size_request(75, -1);
+	entityLabel->set_size_request(75, -1);
 	
-	gtk_table_attach(table, brushLabel, 0, 1, 0, 1,
-					(GtkAttachOptions) (0),
-					(GtkAttachOptions) (0), 0, 0);
-	gtk_table_attach(table, patchLabel, 0, 1, 1, 2,
-					(GtkAttachOptions) (0),
-					(GtkAttachOptions) (0), 0, 0);
-	gtk_table_attach(table, entityLabel, 0, 1, 2, 3,
-					(GtkAttachOptions) (0),
-					(GtkAttachOptions) (0), 0, 0);
-	
+	table->attach(*brushLabel, 0, 1, 0, 1,
+				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+
+	table->attach(*patchLabel, 0, 1, 1, 2,
+				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+
+	table->attach(*entityLabel, 0, 1, 2, 3,
+				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+
 	std::string bc = "<b>" + sizetToStr(GlobalCounters().getCounter(counterBrushes).get()) + "</b>";
 	std::string pc = "<b>" + sizetToStr(GlobalCounters().getCounter(counterPatches).get()) + "</b>";
 	std::string ec = "<b>" + sizetToStr(GlobalCounters().getCounter(counterEntities).get()) + "</b>";
 	
-	gtk_label_set_markup(GTK_LABEL(_brushCount), bc.c_str());
-	gtk_label_set_markup(GTK_LABEL(_patchCount), pc.c_str());
-	gtk_label_set_markup(GTK_LABEL(_entityCount), ec.c_str());
+	_brushCount->set_markup(bc);
+	_patchCount->set_markup(pc);
+	_entityCount->set_markup(ec);
 	
-	gtk_table_attach_defaults(table, _brushCount, 1, 2, 0, 1);
-	gtk_table_attach_defaults(table, _patchCount, 1, 2, 1, 2);
-	gtk_table_attach_defaults(table, _entityCount, 1, 2, 2, 3);
+	table->attach(*_brushCount, 1, 2, 0, 1);
+	table->attach(*_patchCount, 1, 2, 1, 2);
+	table->attach(*_entityCount, 1, 2, 2, 3);
 }
 
 } // namespace ui
