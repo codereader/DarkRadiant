@@ -1,31 +1,29 @@
 #ifndef BULGEPATCHDIALOG_H_
 #define BULGEPATCHDIALOG_H_
 
-#include <gtk/gtkwidget.h>
+#include "gtkutil/dialog/Dialog.h"
 
 /** 
  * Jesps: Dialog to query the user for the maxValue  
  */
-namespace ui {
+namespace ui
+{
 
-class BulgePatchDialog {
-	// The parent window plus entry box
-	GtkWidget* _noiseEntry;
+class BulgePatchDialog :
+	public gtkutil::Dialog
+{
+private:
+	// The handle for the noise entry field
+	Handle _noiseHandle;
 
-	// The dialog widget
-	GtkWidget* _dialog;
 public:
 	// Constructor 
 	BulgePatchDialog();
 	
-	// Shows the dialog
+	// Shows the dialog, returns TRUE if the user selected OK.
+	// the given integer reference is then filled with the chosen value
 	static bool queryPatchNoise(int& noise);
-
-private:
-	// GTK callback to allow ESC/Enter reactions
-	static gboolean onKeyPress(GtkWidget* widget, GdkEventKey* event, BulgePatchDialog* self);
-
-}; // class BulgePatchDialog
+};
 
 } // namespace ui
 
