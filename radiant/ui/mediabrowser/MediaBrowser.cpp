@@ -11,12 +11,15 @@
 #include "select.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/IconTextMenuItem.h"
-#include "gtkutil/StockIconMenuItem.h"
+#include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/MultiMonitor.h"
+#include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/frame.h>
 
 #include <iostream>
 #include <map>
@@ -50,83 +53,53 @@ namespace {
 	const char* SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
 	const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
 
-	// TreeStore columns
-	enum {
-		DISPLAYNAME_COLUMN,
-		FULLNAME_COLUMN,
-		ICON_COLUMN,
-		DIR_FLAG_COLUMN,
-		IS_OTHER_MATERIALS_FOLDER_COLUMN,
-		N_COLUMNS
-	};
-	
 	const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
 	const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
 }
 
 // Constructor
 MediaBrowser::MediaBrowser()
-: _widget(gtk_vbox_new(FALSE, 0)),
-  _treeStore(gtk_tree_store_new(N_COLUMNS, 
-  								G_TYPE_STRING, 
-  								G_TYPE_STRING,
-  								GDK_TYPE_PIXBUF,
-  								G_TYPE_BOOLEAN,
-								G_TYPE_BOOLEAN)),
-  _treeView(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore))),
-  _selection(gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView))),
-  _popupMenu(gtkutil::PopupMenu(Glib::wrap(_treeView, true))),
-  _preview(new TexturePreviewCombo),
+: _treeStore(Gtk::TreeStore::create(_columns)),
+  _treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
+  _selection(_treeView->get_selection()),
+  _popupMenu(gtkutil::PopupMenu(_treeView)),
+  _preview(Gtk::manage(new TexturePreviewCombo)),
   _isPopulated(false)
 {
+	// Allocate a new top-level widget
+	_widget.reset(new Gtk::VBox(false, 0));
+
 	// Create the treeview
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
-	g_signal_connect(G_OBJECT(_treeView), "expose-event", G_CALLBACK(_onExpose), this);
-	
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_treeView), 
-		gtkutil::IconTextColumn(_("Shader"), DISPLAYNAME_COLUMN, ICON_COLUMN)
-	);
+	_treeView->set_headers_visible(false);
+	_widget->signal_expose_event().connect(sigc::mem_fun(*this, &MediaBrowser::_onExpose));
+
+	_treeView->append_column(*Gtk::manage(new gtkutil::IconTextColumnmm(
+		_("Shader"), _columns.displayName, _columns.icon)));
 
 	// Set the tree store to sort on this column
-    gtk_tree_sortable_set_sort_column_id(
-        GTK_TREE_SORTABLE(_treeStore),
-        DISPLAYNAME_COLUMN,
-        GTK_SORT_ASCENDING
-    );
-
-	// Set the custom sort function
-	gtk_tree_sortable_set_sort_func(
-		GTK_TREE_SORTABLE(_treeStore),
-		DISPLAYNAME_COLUMN,	// sort column
-		treeViewSortFunc,	// function
-		this,				// userdata
-		NULL				// no destroy notify
-	);
+	_treeStore->set_sort_column(_columns.displayName, Gtk::SORT_ASCENDING);
+	_treeStore->set_sort_func(_columns.displayName, sigc::mem_fun(*this, &MediaBrowser::treeViewSortFunc));
 
 	// Use the TreeModel's full string search function
-	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(_treeView), gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
 	
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
-	GtkWidget* scroll = gtk_scrolled_window_new(NULL, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
-								   GTK_POLICY_AUTOMATIC,
-								   GTK_POLICY_AUTOMATIC);
-	gtk_container_add(GTK_CONTAINER(scroll), _treeView);
+	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
 
-	GtkWidget* frame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(frame), scroll);
-	gtk_box_pack_start(GTK_BOX(_widget), frame, TRUE, TRUE, 0);
+	Gtk::Frame* frame = Gtk::manage(new Gtk::Frame);
+	frame->add(*scroll);
+
+	_widget->pack_start(*frame, true, true, 0);
 	
 	// Connect up the selection changed callback
-	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(_onSelectionChanged), this);
+	_selection->signal_changed().connect(sigc::mem_fun(*this, &MediaBrowser::_onSelectionChanged));
 	
 	// Construct the popup context menu
 	_popupMenu.addItem(
 		Gtk::manage(new gtkutil::IconTextMenuItemmm(
 			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON), 
 			_(LOAD_TEXTURE_TEXT)
-		)), 
+		)),
 		boost::bind(&MediaBrowser::_onLoadInTexView, this), 
 		boost::bind(&MediaBrowser::_testLoadInTexView, this)
 	);
@@ -134,7 +107,7 @@ MediaBrowser::MediaBrowser()
 		Gtk::manage(new gtkutil::IconTextMenuItemmm(
 			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON), 
 			_(APPLY_TEXTURE_TEXT)
-		)), 
+		)),
 		boost::bind(&MediaBrowser::_onApplyToSel, this), 
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
@@ -142,235 +115,238 @@ MediaBrowser::MediaBrowser()
 		Gtk::manage(new gtkutil::IconTextMenuItemmm(
 			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON), 
 			_(SHOW_SHADER_DEF_TEXT)
-		)), 
+		)),
 		boost::bind(&MediaBrowser::_onShowShaderDefinition, this), 
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
 
 	// Pack in the TexturePreviewCombo widgets
-	gtk_box_pack_end(GTK_BOX(_widget), GTK_WIDGET(_preview->gobj()), FALSE, FALSE, 0);
+	_widget->pack_end(*_preview, false, false, 0);
 }
 
 /* Callback functor for processing shader names */
 
 namespace {
 
-struct ShaderNameCompareFunctor : public std::binary_function<std::string, std::string, bool>
+struct ShaderNameFunctor
 {
-	bool operator()(const std::string &s1, const std::string &s2) const {
-		return boost::algorithm::ilexicographical_compare(s1, s2);
-	}
-};
-
-struct ShaderNameFunctor {
-	
 	// TreeStore to populate
-	GtkTreeStore* _store;
-
-	std::string _otherMaterialsPath;
+	const MediaBrowser::TreeColumns& _columns;
+	Glib::RefPtr<Gtk::TreeStore> _store;
 	
-	// Constructor
-	ShaderNameFunctor(GtkTreeStore* store) : 
+	std::string _otherMaterialsPath;
+
+	// Toplevel node to add children under
+	Gtk::TreeModel::iterator _topLevel;
+	
+	// Maps of names to corresponding treemodel iterators, for both intermediate
+	// paths and explicitly presented paths // TODO: Make comparison case-insensitive
+	typedef std::map<std::string, Gtk::TreeModel::iterator> NamedIterMap;
+	NamedIterMap _iters;
+
+	ShaderNameFunctor(const Glib::RefPtr<Gtk::TreeStore>& store,
+					 const MediaBrowser::TreeColumns& columns) :
 		_store(store),
-		_otherMaterialsPath(std::string(_(OTHER_MATERIALS_FOLDER)) + "/")
+		_columns(columns),
+		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER))
 	{}
 	
-	// Destructor. Free all the heap-allocated GtkTreeIters in the
-	// map
-	~ShaderNameFunctor() {
-		for (DirIterMap::iterator i = _dirIterMap.begin();
-				i != _dirIterMap.end();
-					++i) 
+	// Recursive add function
+	const Gtk::TreeModel::iterator& addRecursive(const std::string& path)
+	{
+		// Look up candidate in the map and return it if found	
+		NamedIterMap::iterator it = _iters.find(path);
+
+		if (it != _iters.end())
 		{
-			gtk_tree_iter_free(i->second);
-		}
-	}
-	
-	// Map between string directory names and their corresponding Iters
-	typedef std::map<std::string, GtkTreeIter*, ShaderNameCompareFunctor> DirIterMap;
-	DirIterMap _dirIterMap;
-
-	// Recursive function to add a folder (e.g. "textures/common/something") to the
-	// tree, returning the GtkTreeIter* pointing to the newly-added folder. All 
-	// parent folders ("textures/common", "textures/") will be added automatically
-	// and their iters cached for fast lookup.
-	GtkTreeIter* addFolder(const std::string& pathName, bool isOtherMaterials = false) {
-
-		// Lookup pathname in map, and return the GtkTreeIter* if it is
-		// found
-		DirIterMap::iterator iTemp = _dirIterMap.find(pathName);
-		if (iTemp != _dirIterMap.end()) { // found in map
-			return iTemp->second;
+			return it->second;
 		}
 		
-		// Split the path into "this directory" and the parent path
-		std::size_t slashPos = pathName.rfind("/");
-		const std::string parentPath = pathName.substr(0, slashPos);
-		const std::string thisDir = pathName.substr(slashPos + 1);
-
-		// Recursively add parent path
-		GtkTreeIter* parIter = NULL;
-		if (slashPos != std::string::npos)
-			parIter = addFolder(parentPath);
-
-		// Now add "this directory" as a child, saving the iter in the map
-		// and returning it.
-		GtkTreeIter iter;
-		gtk_tree_store_append(_store, &iter, parIter);
-		gtk_tree_store_set(_store, &iter, 
-						   DISPLAYNAME_COLUMN, thisDir.c_str(), 
-						   FULLNAME_COLUMN, pathName.c_str(),
-						   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(FOLDER_ICON)->gobj(),
-						   DIR_FLAG_COLUMN, TRUE,
-						   IS_OTHER_MATERIALS_FOLDER_COLUMN, isOtherMaterials ? TRUE : FALSE,
-						   -1);
-		GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter); // get a heap-allocated iter
+		/* Otherwise, split the path on its rightmost slash, call recursively on the
+		 * first half in order to add the parent node, then add the second half as
+		 * a child. Recursive bottom-out is when there is no slash (top-level node).
+		 */
+		 
+		// Find rightmost slash
+		std::size_t slashPos = path.rfind("/");
 		
-		// Cache the dynamic iter and return it
-		_dirIterMap[pathName] = dynIter;
-		return dynIter;
+		// Call recursively to get parent iter, leaving it at the toplevel if
+		// there is no slash
+		const Gtk::TreeModel::iterator& parIter = 
+			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos)) : _topLevel;
+
+		// Append a node to the tree view for this child
+		Gtk::TreeModel::iterator iter = parIter ? _store->append(parIter->children()) : _store->append();
+
+		Gtk::TreeModel::Row row = *iter;
+
+		row[_columns.displayName] = path.substr(slashPos + 1);
+		row[_columns.fullName] = path;
+		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+		row[_columns.isFolder] = true;
+		row[_columns.isOtherMaterialsFolder] = path.length() == _otherMaterialsPath.length() && path == _otherMaterialsPath;
+		
+		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
+		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
+			NamedIterMap::value_type(path, iter));
+		
+		return result.first->second;
 	}
-	
-	// Functor operator
 	
 	void visit(const std::string& name)
 	{
-		std::string rawName(name);
-		
 		// If the name starts with "textures/", add it to the treestore.
-		if (!boost::algorithm::istarts_with(rawName, "textures/"))
-		{
-			// prepend the "other materials" folder
-			rawName.insert(rawName.begin(), _otherMaterialsPath.begin(), _otherMaterialsPath.end());
-		}
+		const Gtk::TreeModel::iterator& iter = 
+			boost::algorithm::istarts_with(name, "textures/") ? addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
 		
-		{
-			// Separate path into the directory path and texture name
-			std::size_t slashPos = rawName.rfind("/");
-			const std::string dirPath = rawName.substr(0, slashPos);
-			const std::string texName = rawName.substr(slashPos + 1);
+		// Check the position of the last slash
+		std::size_t slashPos = name.rfind("/");
 
-			// Recursively add the directory path
-			GtkTreeIter* parentIter = addFolder(dirPath);
-			
-			GtkTreeIter iter;
-			gtk_tree_store_append(_store, &iter, parentIter);
-			gtk_tree_store_set(_store, &iter, 
-							   DISPLAYNAME_COLUMN, texName.c_str(), 
-							   FULLNAME_COLUMN, name.c_str(),
-							   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(TEXTURE_ICON)->gobj(),
-							   DIR_FLAG_COLUMN, FALSE,
-							   IS_OTHER_MATERIALS_FOLDER_COLUMN, FALSE,
-							   -1);
-		}
+		Gtk::TreeModel::Row row = *iter;
+
+		row[_columns.displayName] = name.substr(slashPos + 1);
+		row[_columns.fullName] = name;
+		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(TEXTURE_ICON);
+		row[_columns.isFolder] = false;
+		row[_columns.isOtherMaterialsFolder] = false;
 	}
-	
 };
 	
 } // namespace
 
 /* Tree query functions */
 
-bool MediaBrowser::isDirectorySelected() {
+bool MediaBrowser::isDirectorySelected()
+{
 	// Get the selected value
-	GtkTreeIter iter;
-	if (gtk_tree_selection_get_selected(_selection, NULL, &iter)) {
-		return gtkutil::TreeModel::getBoolean(GTK_TREE_MODEL(_treeStore), &iter, DIR_FLAG_COLUMN);
-	}
-	else {
-		// Error condition if there is no selection
-		return false;
-	}
+	Gtk::TreeModel::iterator iter = _selection->get_selected();
+
+	if (!iter) return false; // nothing selected
+
+	// Cast to TreeModel::Row and return the full name
+	return (*iter)[_columns.isFolder];
 }
 
-std::string MediaBrowser::getSelectedName() {
+std::string MediaBrowser::getSelectedName()
+{
 	// Get the selected value
-	GtkTreeIter iter;
-	if (gtk_tree_selection_get_selected(_selection, NULL, &iter)) {
-		return gtkutil::TreeModel::getString(GTK_TREE_MODEL(_treeStore), &iter, FULLNAME_COLUMN);
+	Gtk::TreeModel::iterator iter = _selection->get_selected();
+
+	if (!iter) return ""; // nothing selected
+
+	// Cast to TreeModel::Row and get the full name
+	std::string rv = Glib::ustring((*iter)[_columns.fullName]);
+
+	// Strip off "Other Materials" if we need to
+	std::string otherMaterialsFolder = std::string(_(OTHER_MATERIALS_FOLDER)) + "/";
+
+	if (boost::algorithm::starts_with(rv, otherMaterialsFolder))
+	{
+		rv = rv.substr(otherMaterialsFolder.length());
 	}
-	else {
-		// Error condition if there is no selection
-		return "";
-	}
+
+	return rv;
+}
+
+void MediaBrowser::onRadiantShutdown()
+{
+	// Destroy our main widget
+	_widget.reset();
+
+	// Delete the singleton instance on shutdown
+	getInstancePtr().reset();
 }
 
 /** Return the singleton instance.
  */
-MediaBrowser& MediaBrowser::getInstance() {
-	static MediaBrowser _instance;
-	return _instance;
+MediaBrowser& MediaBrowser::getInstance()
+{
+	MediaBrowserPtr& instancePtr = getInstancePtr();
+
+	if (instancePtr == NULL)
+	{
+		instancePtr.reset(new MediaBrowser);
+
+		GlobalRadiant().addEventListener(instancePtr);
+	}
+
+	return *instancePtr;
+}
+
+MediaBrowserPtr& MediaBrowser::getInstancePtr()
+{
+	static MediaBrowserPtr _instancePtr;
+	return _instancePtr;
 }
 
 // Set the selection in the treeview
-void MediaBrowser::setSelection(const std::string& selection) {
+void MediaBrowser::setSelection(const std::string& selection)
+{
 	if (!_isPopulated) {
 		populate();
 	}
 	
 	// If the selection string is empty, collapse the treeview and return with
 	// no selection
-	if (selection.empty()) {
-		gtk_tree_view_collapse_all(GTK_TREE_VIEW(_treeView));
+	if (selection.empty())
+	{
+		_treeView->collapse_all();
 		return;
 	}
 
-	// Use the gtkutil finder routines to walk the TreeModel
-	GtkTreeView* view = GTK_TREE_VIEW(_treeView);
-	gtkutil::TreeModel::findAndSelectString(view, selection, FULLNAME_COLUMN);
+	// Use the gtkutil routines to walk the TreeModel
+	gtkutil::TreeModel::findAndSelectString(_treeView, selection, _columns.fullName);
 }
 
-void MediaBrowser::reloadMedia() {
+void MediaBrowser::reloadMedia()
+{
 	// Remove all items and clear the "isPopulated" flag
-	gtk_tree_store_clear(_treeStore);
+	_treeStore->clear();
 	_isPopulated = false;
 	
 	// Trigger an "expose" event
-	gtk_widget_queue_draw(_widget);
+	_widget->queue_draw();
 } 
 
-void MediaBrowser::init() {
+void MediaBrowser::init()
+{
 	// Check for pre-loading the textures
-	if (GlobalRegistry().get(RKEY_MEDIA_BROWSER_PRELOAD) == "1") {
+	if (GlobalRegistry().get(RKEY_MEDIA_BROWSER_PRELOAD) == "1")
+	{
 		getInstance().populate();
 	}
 }
 
-void MediaBrowser::shutdown()
+void MediaBrowser::populate()
 {
-	// Free the TexturePreviewCombo (first, before destroying the parent widget)
-	_preview.reset();
-
-	// Destroy our main widget
-	gtk_widget_destroy(_widget);
-}
-
-void MediaBrowser::populate() {
 	// Set the flag to true to avoid double-entering this function
 	_isPopulated = true;
 
-	ShaderNameFunctor functor(_treeStore);
+	ShaderNameFunctor functor(_treeStore, _columns);
 	
-	// greebo: Add the Other Materials folder and pass TRUE to indicate this is a special one
-	functor.addFolder(_(OTHER_MATERIALS_FOLDER), true);
 	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 }
 
 /* gtkutil::PopupMenu callbacks */
 
-void MediaBrowser::_onLoadInTexView() {
+void MediaBrowser::_onLoadInTexView()
+{
 	// Use a TextureDirectoryLoader functor to search the directory. This 
 	// may throw an exception if cancelled by user.
 	TextureDirectoryLoader loader(getSelectedName());
-	try {
+
+	try
+	{
 		GlobalMaterialManager().foreachShaderName(boost::bind(&TextureDirectoryLoader::visit, &loader, _1));
 	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException&) {
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+	{
 		// Ignore the error and return from the function normally	
 	}
 }
 
-bool MediaBrowser::_testLoadInTexView() {
+bool MediaBrowser::_testLoadInTexView()
+{
 	// "Load in textures view" requires a directory selection
 	if (isDirectorySelected())
 		return true;
@@ -378,15 +354,17 @@ bool MediaBrowser::_testLoadInTexView() {
 		return false;
 }
 
-void MediaBrowser::_onApplyToSel() {
+void MediaBrowser::_onApplyToSel()
+{
 	// Pass shader name to the selection system
 	selection::algorithm::applyShaderToSelection(getSelectedName());
 }
 
 // Check if a single non-directory texture is selected (used by multiple menu
 // options).
-bool MediaBrowser::_testSingleTexSel() {
-	if (!isDirectorySelected() && getSelectedName() != "")
+bool MediaBrowser::_testSingleTexSel()
+{
+	if (!isDirectorySelected() && !getSelectedName().empty())
 		return true;
 	else
 		return false;
@@ -423,87 +401,96 @@ void MediaBrowser::_onShowShaderDefinition()
 	gtk_widget_destroy(dialog);
 }
 
-/* GTK CALLBACKS */
 
-gboolean MediaBrowser::_onExpose(GtkWidget* widget, GdkEventExpose* ev, MediaBrowser* self) {
+bool MediaBrowser::_onExpose(GdkEventExpose* ev)
+{
 	// Populate the tree view if it is not already populated
-	if (!self->_isPopulated) {
-		self->populate();
+	if (!_isPopulated)
+	{
+		populate();
 	}
-	return FALSE; // progapagate event
+
+	return false; // progapagate event
 }
 
-void MediaBrowser::_onSelectionChanged(GtkWidget* widget, MediaBrowser* self) {
+void MediaBrowser::_onSelectionChanged()
+{
 	// Update the preview if a texture is selected
-	if (!self->isDirectorySelected()) {
-		self->_preview->setTexture(self->getSelectedName());
-		GlobalShaderClipboard().setSource(self->getSelectedName());
+	if (!isDirectorySelected())
+	{
+		_preview->setTexture(getSelectedName());
+		GlobalShaderClipboard().setSource(getSelectedName());
 	}
-	else {
+	else
+	{
 		// Nothing selected, clear the clipboard
 		GlobalShaderClipboard().clear();
 	}
 }
 
-gint MediaBrowser::treeViewSortFunc(GtkTreeModel *model, 
-									GtkTreeIter *a, 
-									GtkTreeIter *b, 
-									gpointer user_data)
+int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b)
 {
+	Gtk::TreeModel::Row rowA = *a;
+	Gtk::TreeModel::Row rowB = *b;
+
 	// Special treatment for "Other Materials" folder, which always comes last
-	if (gtkutil::TreeModel::getBoolean(model, a, IS_OTHER_MATERIALS_FOLDER_COLUMN)) {
+	if (rowA[_columns.isOtherMaterialsFolder])
+	{
 		return 1;
 	}
 
-	if (gtkutil::TreeModel::getBoolean(model, b, IS_OTHER_MATERIALS_FOLDER_COLUMN)) {
+	if (rowB[_columns.isOtherMaterialsFolder])
+	{
 		return -1;
 	}
 
 	// Check if A or B are folders
-	bool aIsFolder = gtkutil::TreeModel::getBoolean(model, a, DIR_FLAG_COLUMN);
-	bool bIsFolder = gtkutil::TreeModel::getBoolean(model, b, DIR_FLAG_COLUMN);
+	bool aIsFolder = rowA[_columns.isFolder];
+	bool bIsFolder = rowB[_columns.isFolder];;
 
-	if (aIsFolder) {
+	if (aIsFolder)
+	{
 		// A is a folder, check if B is as well
-		if (bIsFolder) {
+		if (bIsFolder)
+		{
 			// A and B are both folders, compare names
-			std::string aName = gtkutil::TreeModel::getString(model, a, DISPLAYNAME_COLUMN);
-			std::string bName = gtkutil::TreeModel::getString(model, b, DISPLAYNAME_COLUMN);
-
 			// greebo: We're not checking for equality here, shader names are unique
-			return (aName < bName) ? -1 : 1;
+			return (Glib::ustring(rowA[_columns.displayName]) < Glib::ustring(rowB[_columns.displayName])) ? -1 : 1;
 		}
-		else {
+		else
+		{
 			// A is a folder, B is not, A sorts before
 			return -1;
 		}
 	}
-	else {
+	else
+	{
 		// A is not a folder, check if B is one
-		if (bIsFolder) {
+		if (bIsFolder)
+		{
 			// A is not a folder, B is, so B sorts before A
 			return 1;
 		}
-		else {
+		else
+		{
 			// Neither A nor B are folders, compare names
-			std::string aName = gtkutil::TreeModel::getString(model, a, DISPLAYNAME_COLUMN);
-			std::string bName = gtkutil::TreeModel::getString(model, b, DISPLAYNAME_COLUMN);
-
 			// greebo: We're not checking for equality here, shader names are unique
-			return (aName < bName) ? -1 : 1;
+			return (Glib::ustring(rowA[_columns.displayName]) < Glib::ustring(rowB[_columns.displayName])) ? -1 : 1;
 		}
 	}
 }
 
-void MediaBrowser::toggle(const cmd::ArgumentList& args) {
+void MediaBrowser::toggle(const cmd::ArgumentList& args)
+{
 	GlobalGroupDialog().togglePage("mediabrowser");
 }
 
-void MediaBrowser::registerPreferences() {
+void MediaBrowser::registerPreferences()
+{
 	// Add a page to the given group
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
 	
 	page->appendCheckBox("", _("Load media tree at startup"), RKEY_MEDIA_BROWSER_PRELOAD);
 }
 
-} // namespace ui
+} // namespace

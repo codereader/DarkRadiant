@@ -434,7 +434,7 @@ void MainFrame::create()
     	"mediabrowser",	// name
     	"Media", // tab title
     	"folder16.png", // tab icon 
-    	MediaBrowser::getInstance().getWidget(), // page widget
+    	MediaBrowser::getInstance().getWidget()->gobj(), // page widget
     	_("Media")
     );
 	
