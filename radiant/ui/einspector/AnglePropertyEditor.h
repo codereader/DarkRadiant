@@ -2,7 +2,7 @@
 
 #include "PropertyEditor.h"
 
-#include <gtk/gtk.h>
+namespace Gtk { class Button; }
 
 namespace ui
 {
@@ -18,37 +18,19 @@ namespace ui
 class AnglePropertyEditor
 : public PropertyEditor
 {
-    // Main widget
-    GtkWidget* _widget;
-
+private:
     // Eight directional buttons
-    GtkWidget* _nButton;
-    GtkWidget* _neButton;
-    GtkWidget* _eButton;
-    GtkWidget* _seButton;
-    GtkWidget* _sButton;
-    GtkWidget* _swButton;
-    GtkWidget* _wButton;
-    GtkWidget* _nwButton;
+	Gtk::Button* _nButton;
+    Gtk::Button* _neButton;
+    Gtk::Button* _eButton;
+    Gtk::Button* _seButton;
+    Gtk::Button* _sButton;
+    Gtk::Button* _swButton;
+    Gtk::Button* _wButton;
+    Gtk::Button* _nwButton;
 
     // Key to edit
     std::string _key;
-
-private:
-
-    // Construct the buttons
-    void constructButtons();
-
-    /* GTK Callbacks */
-    static void _onButtonClick(GtkButton* button, AnglePropertyEditor* self);
-
-protected:
-
-    /* gtkutil::Widget implementation */
-    GtkWidget* _getWidget() const
-    {
-        return _widget;
-    }
 
 public:
 
@@ -57,7 +39,6 @@ public:
      * Default constructor for the factory map.
      */
     AnglePropertyEditor()
-    : _widget(NULL)
     { }
 
     /**
@@ -75,8 +56,14 @@ public:
     }
 
 private:
+	// Construct the buttons
+    void constructButtons();
+
+    // callback
+    void _onButtonClick(int angleValue);
+
 	// Helper method to construct an angle button
-	GtkWidget* constructAngleButton(const std::string& icon, int angleValue);
+	Gtk::Button* constructAngleButton(const std::string& icon, int angleValue);
 };
 
 }

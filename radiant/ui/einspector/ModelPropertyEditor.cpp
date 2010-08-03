@@ -8,7 +8,9 @@
 #include "ientity.h"
 #include "iuimanager.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/image.h>
 
 namespace ui
 {
@@ -23,70 +25,62 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 : PropertyEditor(entity),
   _key(name)
 {
-	_widget = gtk_vbox_new(FALSE, 6);
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
+	
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
+
 	// Horizontal box contains the browse button
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
+	hbx->set_border_width(3);
 	
 	// Browse button for models
-	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose model..."));
-	gtk_button_set_image(
-		GTK_BUTTON(browseButton),
-		gtk_image_new_from_pixbuf(
-			PropertyEditorFactory::getPixbufFor("model")
-		)
-	);
-	g_signal_connect(G_OBJECT(browseButton), 
-					 "clicked", 
-					 G_CALLBACK(_onModelButton), 
-					 this);
-	gtk_box_pack_start(GTK_BOX(hbx), browseButton, TRUE, FALSE, 0);
+	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose model...")));
+	browseButton->set_image(*Gtk::manage(new Gtk::Image(
+		PropertyEditorFactory::getPixbufFor("model"))));
 	
-			
+	browseButton->signal_clicked().connect(sigc::mem_fun(*this, &ModelPropertyEditor::_onModelButton));
+	
 	// Browse button for particles
-	GtkWidget* particleButton = gtk_button_new_with_label(_("Choose particle..."));
-	gtk_button_set_image(
-		GTK_BUTTON(particleButton),
-		gtk_image_new_from_pixbuf(
-			GlobalUIManager().getLocalPixbuf("particle16.png")->gobj()
-		)
-	);
-	g_signal_connect(G_OBJECT(particleButton), 
-					 "clicked", 
-					 G_CALLBACK(_onParticleButton), 
-					 this);
-	gtk_box_pack_start(GTK_BOX(hbx), particleButton, TRUE, FALSE, 0);
+	Gtk::Button* particleButton = Gtk::manage(new Gtk::Button(_("Choose particle...")));
+	particleButton->set_image(*Gtk::manage(new Gtk::Image(
+		GlobalUIManager().getLocalPixbuf("particle16.png"))));
+	
+	browseButton->signal_clicked().connect(sigc::mem_fun(*this, &ModelPropertyEditor::_onParticleButton));
+
+	hbx->pack_start(*browseButton, true, false, 0);
+	hbx->pack_start(*particleButton, true, false, 0);
 	
 	// Pack hbox into vbox (to limit vertical size), then edit frame
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), vbx, TRUE, TRUE, 0);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
+	vbx->pack_start(*hbx, true, false, 0);
+
+	mainVBox->pack_start(*vbx, true, true, 0);
 }
 
-/* GTK CALLBACKS */
-
-void ModelPropertyEditor::_onModelButton(GtkWidget* w, 
-										  ModelPropertyEditor* self)
+void ModelPropertyEditor::_onModelButton()
 {
 	// Use the ModelSelector to choose a model
 	ModelSelectorResult result = ModelSelector::chooseModel(
-		self->_entity->getKeyValue(self->_key), false, false // pass the current model, don't show options or skins
+		_entity->getKeyValue(_key), false, false // pass the current model, don't show options or skins
 	);
 
-	if (!result.model.empty()) {
-		self->setKeyValue(self->_key, result.model);
+	if (!result.model.empty())
+	{
+		setKeyValue(_key, result.model);
 	}
 }
 
-void ModelPropertyEditor::_onParticleButton(GtkWidget* w,
-											ModelPropertyEditor* self)
+void ModelPropertyEditor::_onParticleButton()
 {
 	// Invoke ParticlesChooser
-    std::string currentSelection = self->_entity->getKeyValue(self->_key);
+    std::string currentSelection = _entity->getKeyValue(_key);
 	std::string particle = ParticlesChooser::chooseParticle(currentSelection);
 	
-	if (!particle.empty()) {
-		self->setKeyValue(self->_key, particle);
+	if (!particle.empty())
+	{
+		setKeyValue(_key, particle);
 	}
 }
 

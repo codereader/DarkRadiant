@@ -2,7 +2,8 @@
 
 #include "ientity.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/colorbutton.h>
+#include <gtkmm/box.h>
 #include <boost/format.hpp>
 #include <sstream>
 
@@ -10,7 +11,8 @@ namespace ui
 {
 
 // Blank ctor
-ColourPropertyEditor::ColourPropertyEditor()
+ColourPropertyEditor::ColourPropertyEditor() :
+	_colorButton(NULL)
 {}
 
 // Main ctor
@@ -19,21 +21,25 @@ ColourPropertyEditor::ColourPropertyEditor(Entity* entity,
 : PropertyEditor(entity),
   _key(name)
 {
-	_widget = gtk_vbox_new(FALSE, 6);
-	
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
+
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
+
 	// Create the colour button
-	_colorButton = gtk_color_button_new();
-	gtk_box_pack_start(GTK_BOX(_widget), _colorButton, TRUE, TRUE, 0);
-	g_signal_connect(
-		G_OBJECT(_colorButton), "color-set", G_CALLBACK(_onColorSet), this
-	);
+	_colorButton = Gtk::manage(new Gtk::ColorButton);
+	_colorButton->signal_color_set().connect(sigc::mem_fun(*this, &ColourPropertyEditor::_onColorSet));
+
+	mainVBox->pack_start(*_colorButton, true, true, 0);
 	
 	// Set colour button's colour
 	setColourButton(_entity->getKeyValue(name)); 
 }
 
 // Set displayed colour from the keyvalue
-void ColourPropertyEditor::setColourButton(const std::string& val) {
+void ColourPropertyEditor::setColourButton(const std::string& val)
+{
 	float r = 0.0, g = 0.0, b = 0.0;
 	std::stringstream str(val);
 	
@@ -43,30 +49,29 @@ void ColourPropertyEditor::setColourButton(const std::string& val) {
 	str >> b;
 
 	// Construct the GdkColor and set the GtkColorButton from it
-	GdkColor col = { 0, guint16(r*65535), guint16(g*65535), guint32(b*65535) };
-	gtk_color_button_set_color(GTK_COLOR_BUTTON(_colorButton), &col);	
+	Gdk::Color col;
+	col.set_rgb_p(r, g, b);
+	
+	_colorButton->set_color(col);
 }
 
 // Get selected colour
-std::string ColourPropertyEditor::getSelectedColour() {
-
+std::string ColourPropertyEditor::getSelectedColour()
+{
 	// Get colour from the button
-	GdkColor col;
-	gtk_color_button_get_color(GTK_COLOR_BUTTON(_colorButton), &col);
-
+	Gdk::Color col = _colorButton->get_color();
+	
 	// Format the string value appropriately.
 	return (boost::format("%.2f %.2f %.2f") 
-			% (col.red/65535.0)
-			% (col.green/65535.0)
-			% (col.blue/65535.0)).str();
+			% (col.get_red()/65535.0)
+			% (col.get_green()/65535.0)
+			% (col.get_blue()/65535.0)).str();
 }
 
-/* GTK CALLBACKS */
-
-void ColourPropertyEditor::_onColorSet(GtkWidget* w, ColourPropertyEditor* self)
+void ColourPropertyEditor::_onColorSet()
 {
 	// Set the new keyvalue on the entity
-	self->setKeyValue(self->_key, self->getSelectedColour());	
+	setKeyValue(_key, getSelectedColour());
 }
 
 	

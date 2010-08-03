@@ -2,7 +2,8 @@
 #define AI_HEADPROPERTYEDITOR_H_
 
 #include "ientityinspector.h"
-#include <set>
+
+namespace Gtk { class HBox; }
 
 namespace ui
 {
@@ -15,21 +16,17 @@ namespace ui
 class AIHeadPropertyEditor :
 	public IPropertyEditor
 {
+private:
 	// The top-level widget
-	GtkWidget* _widget;
+	Gtk::HBox* _widget;
 
 	Entity* _entity;
-
-protected:
-	// gtkutil::Widget impl.
-	virtual GtkWidget* _getWidget() const
-	{
-		return _widget;
-	}
 
 public:
 	// Default constructor
 	AIHeadPropertyEditor();
+
+	Gtk::Widget& getWidget();
 
 	AIHeadPropertyEditor(Entity* entity, 
 		const std::string& key, const std::string& options);
@@ -39,7 +36,7 @@ public:
 								const std::string& options);
 
 private:
-	static void onChooseButton(GtkWidget* button, AIHeadPropertyEditor* self);
+	void onChooseButton();
 };
 
 } // namespace ui

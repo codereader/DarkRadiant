@@ -14,6 +14,23 @@ PropertyEditor::PropertyEditor(Entity* entity) :
 	_entity(entity)
 {}
 
+PropertyEditor::~PropertyEditor()
+{
+	// Destroy the widget
+	delete _mainWidget;
+}
+
+void PropertyEditor::setMainWidget(Gtk::Widget* widget)
+{
+	_mainWidget = widget;
+}
+
+Gtk::Widget& PropertyEditor::getWidget()
+{
+	assert(_mainWidget); // should be set by the subclass at this point
+	return *_mainWidget;
+}
+
 std::string PropertyEditor::getKeyValue(const std::string& key)
 {
 	return (_entity != NULL) ? _entity->getKeyValue(key) : "";

@@ -15,24 +15,13 @@ namespace ui
 class SkinPropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-	
+private:
 	// Keyvalue to set
 	std::string _key;
 	
 private:
 
-	/* GTK CALLBACKS */
-	static void _onBrowseButton(GtkWidget* w, SkinPropertyEditor* self);
-	
-protected:
-	
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const 
-    {
-		return _widget;
-	}
+	void _onBrowseButton();
 	
 public:
 
@@ -43,7 +32,7 @@ public:
 	SkinPropertyEditor(Entity* entity, 
 					   const std::string& name,
 					   const std::string& options);
-					   
+
 	// Clone method for virtual construction
 	IPropertyEditorPtr createNew(Entity* entity,
 								const std::string& name,

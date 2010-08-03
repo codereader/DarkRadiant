@@ -425,7 +425,7 @@ void MainFrame::create()
     	"entity",	// name
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
-    	GlobalEntityInspector().getWidget(), // page widget
+    	GlobalEntityInspector().getWidget().gobj(), // page widget
     	_("Entity")
     );
 

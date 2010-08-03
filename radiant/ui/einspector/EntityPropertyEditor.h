@@ -1,7 +1,7 @@
 #ifndef ENTITYPROPERTYEDITOR_H_
 #define ENTITYPROPERTYEDITOR_H_
 
-#include "ComboBoxPropertyEditor.h"
+#include "PropertyEditor.h"
 
 namespace ui {
 
@@ -14,9 +14,6 @@ class EntityPropertyEditor:
     public PropertyEditor
 {    	
 protected:
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Keyvalue to set
 	std::string _key;
 
@@ -36,15 +33,8 @@ public:
         return PropertyEditorPtr(new EntityPropertyEditor(entity, name));
     }
 
-protected:
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const 
-    {
-		return _widget;
-	}
-
 private:
-    static void _onBrowseButton(GtkWidget* w, EntityPropertyEditor* self);
+    void _onBrowseButton();
 };
 
 }

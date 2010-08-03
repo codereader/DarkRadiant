@@ -3,7 +3,7 @@
 
 #include "PropertyEditor.h"
 
-#include <gtk/gtkwidget.h>
+namespace Gtk { class Scale; }
 
 namespace ui
 {
@@ -16,27 +16,16 @@ namespace ui
 class FloatPropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-	
+private:
 	// Slider widget
-	GtkWidget* _scale;
+	Gtk::Scale* _scale;
 	
 	// Name of key
 	std::string _key;
 	
 private:
 
-	/* GTK CALLBACKS */
-	static void _onApply(GtkWidget*, FloatPropertyEditor*);
-	
-protected:
-	
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const 
-    {
-		return _widget;
-	}
+	void _onApply();
 	
 public:
 
@@ -49,7 +38,7 @@ public:
 	 * Construct with Entity, key name and options.
 	 */
 	FloatPropertyEditor(Entity*, const std::string&, const std::string&);
-	
+
 	/**
 	 * Virtual PropertyEditor clone method.
 	 */

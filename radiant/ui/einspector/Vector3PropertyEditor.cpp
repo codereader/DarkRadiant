@@ -4,7 +4,12 @@
 #include "ientity.h"
 #include "gtkutil/RightAlignment.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/label.h>
+
 #include <sstream>
 #include <vector>
 #include <boost/lexical_cast.hpp>
@@ -22,47 +27,51 @@ Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity,
 : PropertyEditor(entity),
   _key(name)
 {
-	_widget = gtk_vbox_new(FALSE, 6);
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
-	GtkWidget* editBox = gtk_hbox_new(FALSE, 6);
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
+	mainVBox->set_border_width(6);
+
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
+
+	Gtk::HBox* editBox = Gtk::manage(new Gtk::HBox(false, 6));
 
     // Create the spin buttons and set them to 0
-	_xValue = gtk_spin_button_new_with_range(-32767, 32767, 1);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(_xValue), 0);
+	Gtk::Adjustment* xAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
+	Gtk::Adjustment* yAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
+	Gtk::Adjustment* zAdj = Gtk::manage(new Gtk::Adjustment(0, -32767, 32767, 1));
 
-    _yValue = gtk_spin_button_new_with_range(-32767, 32767, 1);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(_yValue), 0);
+	_xValue = Gtk::manage(new Gtk::SpinButton(*xAdj));
+    _yValue = Gtk::manage(new Gtk::SpinButton(*yAdj));
+	_zValue = Gtk::manage(new Gtk::SpinButton(*zAdj));
 
-    _zValue = gtk_spin_button_new_with_range(-32767, 32767, 1);
-    gtk_spin_button_set_value(GTK_SPIN_BUTTON(_zValue), 0);
-	
     // Add the spin buttons to the HBox with labels
-	gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(_("X: ")), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(editBox), _xValue, TRUE, TRUE, 0);
+	editBox->pack_start(*Gtk::manage(new Gtk::Label(_("X: "))), false, false, 0);
+	editBox->pack_start(*_xValue, true, true, 0);
 	
-    gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(_(" Y: ")), FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(editBox), _yValue, TRUE, TRUE, 0);
+    editBox->pack_start(*Gtk::manage(new Gtk::Label(_(" Y: "))), false, false, 0);
+    editBox->pack_start(*_yValue, true, true, 0);
 
-    gtk_box_pack_start(GTK_BOX(editBox), gtk_label_new(_(" Z: ")), FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(editBox), _zValue, TRUE, TRUE, 0);
+    editBox->pack_start(*Gtk::manage(new Gtk::Label(_(" Z: "))), false, false, 0);
+    editBox->pack_start(*_zValue, true, true, 0);
 
 	// Pack edit box into the main widget
-	gtk_box_pack_start(GTK_BOX(_widget), editBox, TRUE, TRUE, 0);
+	mainVBox->pack_start(*editBox, true, true, 0);
 
 	// Create the apply button and add to the VBox
-	GtkWidget* applyButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
-	g_signal_connect(
-		G_OBJECT(applyButton), "clicked", G_CALLBACK(_onApply), this
-	);
-	gtk_box_pack_end(GTK_BOX(_widget), gtkutil::RightAlignment(applyButton),
-					   FALSE, FALSE, 0);
+	Gtk::Button* applyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
+	applyButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &Vector3PropertyEditor::_onApply));
+	
+	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignmentmm(*applyButton)),
+					   false, false, 0);
 					   
 	// Populate the spin boxes from the keyvalue
 	setWidgetsFromKey(_entity->getKeyValue(name));
 }
 
-void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val) {
-    
+void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)
+{
     // Stream the given string into a temporary buffer to compile a vector
     // of 3 components (separated by spaces in the input).
     std::stringstream stream(val);
@@ -73,35 +82,29 @@ void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val) {
         values.push_back(buf);
     
     // Set the Gtk widgets
-    if (values.size() == 3) {
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(_xValue), values[0]);
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(_yValue), values[1]);
-        gtk_spin_button_set_value(GTK_SPIN_BUTTON(_zValue), values[2]);
+    if (values.size() == 3)
+	{
+		_xValue->set_value(values[0]);
+		_yValue->set_value(values[1]);
+		_zValue->set_value(values[2]);
     }        
-            
 }
 
-/* GTK CALLBACKS */
-
-void Vector3PropertyEditor::_onApply(GtkWidget* w, 
-									 Vector3PropertyEditor* self)
+void Vector3PropertyEditor::_onApply()
 {
 	using boost::lexical_cast;
 	using std::string;
 	
 	// Construct a text value out of the vector components
 	std::string value =
-		lexical_cast<string>(
-			gtk_spin_button_get_value(GTK_SPIN_BUTTON(self->_xValue))) 
+		lexical_cast<string>(_xValue->get_value()) 
 		+ " "
-		+ lexical_cast<string>(
-			gtk_spin_button_get_value(GTK_SPIN_BUTTON(self->_yValue))) 
+		+ lexical_cast<string>(_yValue->get_value())  
 		+ " "
-		+ lexical_cast<string>(
-			gtk_spin_button_get_value(GTK_SPIN_BUTTON(self->_zValue)));
+		+ lexical_cast<string>(_zValue->get_value());
 	
 	// Set the key on the entity
-	self->setKeyValue(self->_key, value);
+	setKeyValue(_key, value);
 }
 
 }

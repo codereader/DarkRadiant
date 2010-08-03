@@ -1840,14 +1840,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.cpp"
-						>
-					</File>
-					<File
-						RelativePath="..\..\radiant\ui\einspector\ComboBoxPropertyEditor.h"
-						>
-					</File>
-					<File
 						RelativePath="..\..\radiant\ui\einspector\EntityInspector.cpp"
 						>
 					</File>

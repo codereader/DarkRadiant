@@ -1,8 +1,8 @@
 #include "AIHeadPropertyEditor.h"
 
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkbutton.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/image.h>
 
 #include "i18n.h"
 #include "ieclass.h"
@@ -22,29 +22,32 @@ AIHeadPropertyEditor::AIHeadPropertyEditor() :
 AIHeadPropertyEditor::AIHeadPropertyEditor(Entity* entity, const std::string& key, const std::string& options) :
 	_entity(entity)
 {
-	_widget = gtk_hbox_new(FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
-
+	_widget = Gtk::manage(new Gtk::HBox(false, 0));
+	_widget->set_border_width(6);
+	
 	// Horizontal box contains the browse button
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
-
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
+	hbx->set_border_width(3);
+	
 	// Browse button for models
-	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose AI head..."));
-	gtk_button_set_image(
-		GTK_BUTTON(browseButton),
-		gtk_image_new_from_pixbuf(
-			GlobalUIManager().getLocalPixbuf("icon_model.png")->gobj()
-		)
-	);
-	g_signal_connect(G_OBJECT(browseButton), "clicked", G_CALLBACK(onChooseButton), this);
+	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose AI head...")));
 
-	gtk_box_pack_start(GTK_BOX(hbx), browseButton, TRUE, FALSE, 0);
+	browseButton->set_image(
+		*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_model.png")))
+	);
+	browseButton->signal_clicked().connect(sigc::mem_fun(*this, &AIHeadPropertyEditor::onChooseButton));
+	
+	hbx->pack_start(*browseButton, true, false, 0);
 
 	// Pack hbox into vbox (to limit vertical size), then edit frame
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), vbx, TRUE, TRUE, 0);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
+	vbx->pack_start(*hbx, true, false, 0);
+	_widget->pack_start(*vbx, true, true, 0);
+}
+
+Gtk::Widget& AIHeadPropertyEditor::getWidget()
+{
+	return *_widget;
 }
 
 IPropertyEditorPtr AIHeadPropertyEditor::createNew(Entity* entity, 
@@ -53,19 +56,19 @@ IPropertyEditorPtr AIHeadPropertyEditor::createNew(Entity* entity,
 	return IPropertyEditorPtr(new AIHeadPropertyEditor(entity, key, options));
 }
 
-void AIHeadPropertyEditor::onChooseButton(GtkWidget* button, AIHeadPropertyEditor* self)
+void AIHeadPropertyEditor::onChooseButton()
 {
 	// Construct a new head chooser dialog
 	AIHeadChooserDialog dialog;
 
-	dialog.setSelectedHead(self->_entity->getKeyValue(DEF_HEAD_KEY));
+	dialog.setSelectedHead(_entity->getKeyValue(DEF_HEAD_KEY));
 
 	// Show and block
 	dialog.show();
 
 	if (dialog.getResult() == AIHeadChooserDialog::RESULT_OK)
 	{
-		self->_entity->setKeyValue(DEF_HEAD_KEY, dialog.getSelectedHead());
+		_entity->setKeyValue(DEF_HEAD_KEY, dialog.getSelectedHead());
 	}
 }
 

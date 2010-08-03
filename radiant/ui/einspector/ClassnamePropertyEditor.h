@@ -3,7 +3,6 @@
 
 #include "PropertyEditor.h"
 
-#include <gtk/gtkwidget.h>
 #include <string>
 
 namespace ui
@@ -16,35 +15,25 @@ namespace ui
 class ClassnamePropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-	
+private:
 	// Keyvalue to set
 	std::string _key;
 	
 private:
 
-	/* GTK CALLBACKS */
-	static void _onBrowseButton(GtkWidget*, ClassnamePropertyEditor*);
-	
-protected:
-	
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const 
-    {
-		return _widget;
-	}
+	void _onBrowseButton();
 	
 public:
 
 	// Default constructor for the map
-	ClassnamePropertyEditor() { }
+	ClassnamePropertyEditor()
+	{}
 	
 	// Main constructor
 	ClassnamePropertyEditor(Entity* entity, 
 					    	const std::string& name,
 					    	const std::string& options);
-					   
+
 	// Clone method for virtual construction
 	IPropertyEditorPtr createNew(Entity* entity,
 								const std::string& name,
