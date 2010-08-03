@@ -2,7 +2,6 @@
 #define TEXTOOL_H_
 
 #include "icommandsystem.h"
-#include "gtk/gtkwidget.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/event/SingleIdleCallback.h"
@@ -185,22 +184,18 @@ private:
 	 */
 	Vector2 getTextureCoords(const double& x, const double& y);
 
-	// The callback for the delete event (toggles the visibility)
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, TexTool* self);
-	static gboolean onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self);
-	static gboolean triggerRedraw(GtkWidget* widget, GdkEventFocus* event, TexTool* self);
-	static void onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TexTool* self);
+	bool onExpose(GdkEventExpose* ev);
+	bool triggerRedraw(GdkEventFocus* ev);
+	void onSizeAllocate(Gtk::Allocation& allocation);
 	
 	// The callbacks for capturing the mouse events
-	static gboolean onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self);
-	static gboolean onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self);
-	static gboolean onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexTool* self);
+	bool onMouseUp(GdkEventButton* ev);
+	bool onMouseDown(GdkEventButton* ev);
+	bool onMouseMotion(GdkEventMotion* ev);
+	bool onMouseScroll(GdkEventScroll* ev);
 	
-	// The callback for mouse scroll events
-	static gboolean onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TexTool* self);
-	
-	// The static keyboard callback to catch the ESC key
-	static gboolean onKeyPress(GtkWindow* window, GdkEventKey* event, TexTool* self);
+	// The keyboard callback to catch the ESC key
+	bool onKeyPress(GdkEventKey* ev);
 
 public:
 	TexTool();
