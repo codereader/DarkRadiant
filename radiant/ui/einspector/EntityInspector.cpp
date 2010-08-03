@@ -877,6 +877,7 @@ void EntityInspector::treeSelectionChanged()
     if (_currentPropertyEditor)
 	{
 		_editorFrame->add(_currentPropertyEditor->getWidget());
+		_editorFrame->show_all();
     }
 
     // Update key and value entry boxes, but only if there is a key value. If
@@ -1055,11 +1056,7 @@ void EntityInspector::changeSelectedEntity(Entity* newEntity)
             _selectedEntity->attachObserver(this);
 
             // Add inherited properties if the checkbox is set
-            gboolean showInherited = gtk_toggle_button_get_active(
-                GTK_TOGGLE_BUTTON(_showInheritedCheckbox)
-            );
-
-            if (showInherited)
+            if (_showInheritedCheckbox->get_active())
             {
                 addClassProperties();
             }
