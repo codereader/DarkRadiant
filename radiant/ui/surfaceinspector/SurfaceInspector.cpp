@@ -176,16 +176,6 @@ SurfaceInspector::SurfaceInspector()
 SurfaceInspectorPtr& SurfaceInspector::InstancePtr()
 {
 	static SurfaceInspectorPtr _instancePtr;
-	
-	if (_instancePtr == NULL)
-	{
-		// Not yet instantiated, do it now
-		_instancePtr = SurfaceInspectorPtr(new SurfaceInspector);
-		
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
-	}
-	
 	return _instancePtr;
 }
 
@@ -206,6 +196,8 @@ void SurfaceInspector::onRadiantShutdown()
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	destroy();
+
+	InstancePtr().reset();
 }
 
 void SurfaceInspector::connectEvents()
@@ -536,7 +528,18 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 
 SurfaceInspector& SurfaceInspector::Instance()
 {
-	return *InstancePtr();
+	SurfaceInspectorPtr& instancePtr = InstancePtr();
+
+	if (instancePtr == NULL)
+	{
+		// Not yet instantiated, do it now
+		instancePtr.reset(new SurfaceInspector);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(instancePtr);
+	}
+
+	return *instancePtr;
 }
 
 void SurfaceInspector::emitShader()
