@@ -14,9 +14,6 @@ class EntityChooser :
 	public gtkutil::DialogElement
 {
 private:
-	Glib::RefPtr<Gtk::ListStore> _entityStore;
-	Glib::RefPtr<Gtk::TreeSelection> _selection;
-
 	struct EntityChooserColumns : 
 		public Gtk::TreeModel::ColumnRecord
 	{
@@ -26,6 +23,8 @@ private:
 	};
 
 	EntityChooserColumns _listColumns;
+	Glib::RefPtr<Gtk::ListStore> _entityStore;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
 	std::map<int, Gtk::Widget*> _widgets;
 
