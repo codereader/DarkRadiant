@@ -3,7 +3,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk { class Widget; }
 
 namespace ui
 {
@@ -29,7 +29,8 @@ public:
 		virtual ~Preview() {}
 
 		// Retrieve the preview widget for packing into the dialog
-		virtual GtkWidget* getPreviewWidget() = 0;
+		// Ownership of the widget will remain in the Preview class.
+		virtual Gtk::Widget& getPreviewWidget() = 0;
 
 		/**
 		 * Gets called whenever the user changes the file selection.
