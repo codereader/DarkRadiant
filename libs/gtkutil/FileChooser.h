@@ -13,14 +13,12 @@ namespace gtkutil
 {
 
 class FileChooser :
+	public Gtk::FileChooserDialog,
 	public ui::IFileChooser
 {
 private:
 	// Parent widget
 	Glib::RefPtr<Gtk::Window> _parent;
-
-	// The filechooser dialog widget
-	Glib::RefPtr<Gtk::FileChooserDialog> _dialog;
 
 	// Window title
 	std::string _title;
@@ -76,6 +74,8 @@ public:
 				const std::string& pattern = "",
 				const std::string& defaultExt = "");
 
+	virtual ~FileChooser();
+
 	// Lets the dialog start at a certain path
 	void setCurrentPath(const std::string& path);
 
@@ -108,6 +108,8 @@ public:
 	void setPreviewActive(bool active);
 
 private:
+	Gtk::FileChooserAction getActionType(bool browseFolders, bool open);
+
 	void construct(); // shared constructor stuff
 
 	// gtkmm callback for updating the preview widget

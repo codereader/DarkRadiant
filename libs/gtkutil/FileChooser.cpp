@@ -21,6 +21,7 @@ FileChooser::FileChooser(const std::string& title,
 						 bool browseFolders, 
 						 const std::string& pattern,
 						 const std::string& defaultExt) :
+	Gtk::FileChooserDialog(title, getActionType(browseFolders, open)),
 	_title(title),
 	_pattern(pattern),
 	_defaultExt(defaultExt),
@@ -36,6 +37,7 @@ FileChooser::FileChooser(const Glib::RefPtr<Gtk::Window>& parentWindow,
 						 bool browseFolders, 
 						 const std::string& pattern,
 						 const std::string& defaultExt) :
+	Gtk::FileChooserDialog(title, getActionType(browseFolders, open)),
 	_parent(parentWindow),
 	_title(title),
 	_pattern(pattern),
@@ -44,6 +46,11 @@ FileChooser::FileChooser(const Glib::RefPtr<Gtk::Window>& parentWindow,
 	_browseFolders(browseFolders)
 {
 	construct();
+}
+
+FileChooser::~FileChooser()
+{
+	hide();
 }
 
 void FileChooser::construct()
@@ -60,53 +67,35 @@ void FileChooser::construct()
 		_title = _open ? _("Open File") : _("Save File");
 	}
 
-	// Determine action
-	Gtk::FileChooserAction action;
-
-	if (_browseFolders)
-	{
-		action = Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER;
-	}
-	else if (_open)
-	{
-		action = Gtk::FILE_CHOOSER_ACTION_OPEN;
-	}
-	else // !open
-	{
-		action = Gtk::FILE_CHOOSER_ACTION_SAVE;
-	}
-
-	_dialog = Glib::RefPtr<Gtk::FileChooserDialog>(new Gtk::FileChooserDialog(_title, action));
-
 	if (_parent)
 	{
-		_dialog->set_parent_window(_parent->get_window());
+		set_parent_window(_parent->get_window());
 	}
 
 	// Add cancel button
-	_dialog->add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+	add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
 
 	// Add OK button
 	if (_open)
 	{
-		_dialog->add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT);
+		add_button(Gtk::Stock::OPEN, Gtk::RESPONSE_ACCEPT);
 	}
 	else
 	{
-		_dialog->add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT);
+		add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_ACCEPT);
 	}
 
 	// Set the Enter key to activate the default response
-	_dialog->set_default_response(Gtk::RESPONSE_ACCEPT);
+	set_default_response(Gtk::RESPONSE_ACCEPT);
 	
 	// Set position and modality of the dialog
-	_dialog->set_modal(true);
-	_dialog->set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
+	set_modal(true);
+	set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
 
 	// Set the default size of the window
 	Gdk::Rectangle rect = _parent != NULL ? MultiMonitor::getMonitorForWindow(_parent) : MultiMonitor::getMonitor(0);
 
-	_dialog->set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
+	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
 	
 	// Add the filetype masks
 	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(_pattern);
@@ -120,7 +109,7 @@ void FileChooser::construct()
 		filter->add_pattern(i->filePattern.pattern);
 		filter->set_name(i->filePattern.name + " (" + i->filePattern.pattern + ")");
 
-		_dialog->add_filter(*filter);
+		add_filter(*filter);
 	}
 
 	// Add a final mask for All Files (*.*)
@@ -129,7 +118,23 @@ void FileChooser::construct()
 	allFilter->add_pattern("*.*");
 	allFilter->set_name(_("All Files (*.*)"));
 
-	_dialog->add_filter(*allFilter);
+	add_filter(*allFilter);
+}
+
+Gtk::FileChooserAction FileChooser::getActionType(bool browseFolders, bool open)
+{
+	if (browseFolders)
+	{
+		return Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER;
+	}
+	else if (open)
+	{
+		return Gtk::FILE_CHOOSER_ACTION_OPEN;
+	}
+	else // !open
+	{
+		return Gtk::FILE_CHOOSER_ACTION_SAVE;
+	}
 }
 
 void FileChooser::setCurrentPath(const std::string& path)
@@ -137,7 +142,7 @@ void FileChooser::setCurrentPath(const std::string& path)
 	_path = os::standardPath(path);
 
 	// Convert path to standard and set the folder in the dialog
-	_dialog->set_current_folder(_path);
+	set_current_folder(_path);
 }
 
 void FileChooser::setCurrentFile(const std::string& file)
@@ -146,14 +151,14 @@ void FileChooser::setCurrentFile(const std::string& file)
 
 	if (!_open)
 	{
-		_dialog->set_current_name(_file);
+		set_current_name(_file);
 	}
 }
 
 std::string FileChooser::getSelectedFileName()
 {
 	// Load the filename from the dialog
-	std::string fileName = os::standardPath(_dialog->get_filename());
+	std::string fileName = os::standardPath(get_filename());
 
 	// Append the default extension for save operations before checking overwrites
 	if (!_open											// save operation
@@ -177,9 +182,9 @@ void FileChooser::attachPreview(const PreviewPtr& preview)
 
 	_preview = preview;
 
-	_dialog->set_preview_widget(_preview->getPreviewWidget());
+	set_preview_widget(_preview->getPreviewWidget());
 
-	_dialog->signal_update_preview().connect(sigc::mem_fun(*this, &FileChooser::onUpdatePreview));
+	signal_update_preview().connect(sigc::mem_fun(*this, &FileChooser::onUpdatePreview));
 }
 
 std::string FileChooser::display()
@@ -190,7 +195,7 @@ std::string FileChooser::display()
 		// Display the dialog and return the selected filename, or ""
 		std::string fileName("");
 
-		if (_dialog->run() == GTK_RESPONSE_ACCEPT)
+		if (run() == Gtk::RESPONSE_ACCEPT)
 		{
 			// "OK" pressed, retrieve the filename
 			fileName = getSelectedFileName();
@@ -215,7 +220,7 @@ std::string FileChooser::display()
 		askMsg += "\n";
 		askMsg += _("Do you want to replace it?");
 
-		MessageBox box(askTitle, askMsg, ui::IDialog::MESSAGE_ASK, _dialog);
+		MessageBox box(askTitle, askMsg, ui::IDialog::MESSAGE_ASK);
 
 		if (box.run() == ui::IDialog::RESULT_YES)
 		{
@@ -227,7 +232,7 @@ std::string FileChooser::display()
 void FileChooser::setPreviewActive(bool active)
 {
 	// Pass the call to the dialog
-	_dialog->set_preview_widget_active(active);
+	set_preview_widget_active(active);
 }
 
 void FileChooser::onUpdatePreview()
@@ -235,7 +240,7 @@ void FileChooser::onUpdatePreview()
 	// Check if we have a valid preview object attached
 	if (_preview == NULL) return;
 
-	std::string previewFilename = _dialog->get_preview_filename();
+	std::string previewFilename = get_preview_filename();
 
 	previewFilename = os::standardPath(previewFilename);
 
