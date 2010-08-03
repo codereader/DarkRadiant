@@ -8,9 +8,6 @@
 #include "iundo.h"
 #include "iuimanager.h"
 
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
-
 #include "patch/PatchNode.h"
 #include "texturelib.h"
 #include "selectionlib.h"
@@ -32,6 +29,8 @@
 #include "selection/algorithm/Shader.h"
 
 #include <gtkmm/toolbar.h>
+#include <gtkmm/box.h>
+#include <gdk/gdkkeysyms.h>
 
 namespace ui {
 	
@@ -61,10 +60,10 @@ TexTool::TexTool()
   _grid(GRID_DEFAULT),
   _gridActive(GlobalRegistry().get(RKEY_GRID_STATE) == "1")
 {
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	
-	g_signal_connect(G_OBJECT(getWindow()), "focus-in-event", G_CALLBACK(triggerRedraw), this);
-	g_signal_connect(G_OBJECT(getWindow()), "key-press-event", G_CALLBACK(onKeyPress), this);
+	signal_focus_in_event().connect(sigc::mem_fun(*this, &TexTool::triggerRedraw));
+	signal_key_press_event().connect(sigc::mem_fun(*this, &TexTool::onKeyPress), false);
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connect(GTK_OBJECT(getWindow()));
@@ -96,47 +95,50 @@ void TexTool::keyChanged(const std::string& key, const std::string& val)
 	draw();
 }
 
-void TexTool::populateWindow() {
-	
+void TexTool::populateWindow()
+{
 	// Load the texture toolbar from the registry
     IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
 	Gtk::Toolbar* textoolbar = tbCreator.getToolbar("textool");
 	textoolbar->unset_flags(Gtk::CAN_FOCUS);
     
 	// Create the GL widget
-	GtkWidget* glWidget = _glWidget; // cast to GtkWidget*
-	GtkWidget* frame = gtkutil::FramedWidget(glWidget);
+	Gtk::Widget* glWidget = Glib::wrap(_glWidget, true); // cast to GtkWidget*
+	Gtk::Frame* frame = Gtk::manage(new gtkutil::FramedWidgetmm(*glWidget));
 	
 	// Connect the events
-	gtk_widget_set_events(glWidget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onExpose), this);
-	g_signal_connect(G_OBJECT(glWidget), "focus-in-event", G_CALLBACK(triggerRedraw), this);
-	g_signal_connect(G_OBJECT(glWidget), "button-press-event", G_CALLBACK(onMouseDown), this);
-	g_signal_connect(G_OBJECT(glWidget), "button-release-event", G_CALLBACK(onMouseUp), this);
-	g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(onMouseMotion), this);
-	g_signal_connect(G_OBJECT(glWidget), "key_press_event", G_CALLBACK(onKeyPress), this);
-	g_signal_connect(G_OBJECT(glWidget), "scroll_event", G_CALLBACK(onMouseScroll), this);
+	glWidget->set_events(Gdk::KEY_PRESS_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+	
+	glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TexTool::onExpose));
+	glWidget->signal_focus_in_event().connect(sigc::mem_fun(*this, &TexTool::triggerRedraw));
+	glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TexTool::onMouseDown));
+	glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TexTool::onMouseUp));
+	glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &TexTool::onMouseMotion));
+	glWidget->signal_key_press_event().connect(sigc::mem_fun(*this, &TexTool::onKeyPress), false);
+	glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TexTool::onMouseScroll));
 
 	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is 
 	// often called for subsets of the widget and the size info in there is therefore not reliable.
-	g_signal_connect(G_OBJECT(glWidget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
+	glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &TexTool::onSizeAllocate));
 	
 	// Make the GL widget accept the global shortcuts
 	GlobalEventManager().connect(GTK_OBJECT(glWidget));
 	
 	// Create a top-level vbox, pack it and add it to the window 
-	GtkWidget* vbox = gtk_vbox_new(false, 0);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
 	
-	if (textoolbar != NULL) {
-    	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(textoolbar->gobj()), false, false, 0);
+	if (textoolbar != NULL)
+	{
+    	vbox->pack_start(*textoolbar, false, false, 0);
     }
 	
-	gtk_box_pack_start(GTK_BOX(vbox), frame, true, true, 0);
+	vbox->pack_start(*frame, true, true, 0);
 	
-	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
+	add(*vbox);
 }
 
-void TexTool::toggleWindow() {
+void TexTool::toggleWindow()
+{
 	if (isVisible())
 		hide();
 	else
@@ -724,16 +726,16 @@ void TexTool::drawGrid() {
 	}
 }
 
-gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* self)
+bool TexTool::onExpose(GdkEventExpose* ev)
 {
 	// Perform any pending updates
-	self->flushIdleCallback();
+	flushIdleCallback();
 
 	// Activate the GL widget
-	gtkutil::GLWidgetSentry sentry(self->_glWidget);
+	gtkutil::GLWidgetSentry sentry(_glWidget);
 	
 	// Initialise the viewport
-	glViewport(0, 0, self->_windowDims[0], self->_windowDims[1]);
+	glViewport(0, 0, _windowDims[0], _windowDims[1]);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	
@@ -745,23 +747,23 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glDisable(GL_BLEND);
 	
 	// Do nothing, if the shader name is empty
-	if (self->_shader == NULL || self->_shader->getName().empty())
+	if (_shader == NULL || _shader->getName().empty())
 	{
 		return false;
 	}
 	
-	AABB& selAABB = self->getExtents(); 
+	AABB& selAABB = getExtents(); 
 	
 	// Is there a valid selection?
 	if (!selAABB.isValid()) {
 		return false;
 	}
 	
-	AABB& texSpaceAABB = self->getVisibleTexSpace();
+	AABB& texSpaceAABB = getVisibleTexSpace();
 	
 	// Get the upper left and lower right corner coordinates
-	Vector3 orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents * self->_zoomFactor;
-	Vector3 orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents * self->_zoomFactor;
+	Vector3 orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents * _zoomFactor;
+	Vector3 orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents * _zoomFactor;
 	
 	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
 	glOrtho(orthoTopLeft[0], 	// left 
@@ -775,7 +777,7 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 	// Acquire the texture number of the active texture
-	TexturePtr tex = self->_shader->getEditorImage();
+	TexturePtr tex = _shader->getEditorImage();
 	glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 	
 	// Draw the background texture
@@ -798,14 +800,14 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	glDisable(GL_TEXTURE_2D);
 	
 	// Draw the grid
-	self->drawGrid();
+	drawGrid();
 	
 	// Draw the u/v coordinates
-	self->drawUVCoords();
+	drawUVCoords();
 	
-	if (self->_dragRectangle) {
+	if (_dragRectangle) {
 		// Create a working reference to save typing
-		textool::Rectangle& rectangle = self->_selectionRectangle;
+		textool::Rectangle& rectangle = _selectionRectangle;
 		
 		// Define the blend function for transparency
 		glEnable(GL_BLEND);
@@ -835,114 +837,118 @@ gboolean TexTool::onExpose(GtkWidget* widget, GdkEventExpose* event, TexTool* se
 	return false;
 }
 
-void TexTool::onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, TexTool* self)
+void TexTool::onSizeAllocate(Gtk::Allocation& allocation)
 {
 	// Store the window dimensions for later calculations
-	self->_windowDims = Vector2(allocation->width, allocation->height);
+	_windowDims = Vector2(allocation.get_width(), allocation.get_height());
 
 	// Queue an expose event
-	gtk_widget_queue_draw(widget);
+	gtk_widget_queue_draw(_glWidget);
 }
 
-gboolean TexTool::triggerRedraw(GtkWidget* widget, GdkEventFocus* event, TexTool* self) {
+bool TexTool::triggerRedraw(GdkEventFocus* ev)
+{
 	// Trigger a redraw
-	gtk_widget_queue_draw(self->_glWidget);
+	gtk_widget_queue_draw(_glWidget);
 	return false;
 }
 
-gboolean TexTool::onMouseUp(GtkWidget* widget, GdkEventButton* event, TexTool* self) {
+bool TexTool::onMouseUp(GdkEventButton* ev)
+{
 	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
+	Vector2 texCoords = getTextureCoords(ev->x, ev->y);
 	
 	// Pass the call to the member method
-	self->doMouseUp(texCoords, event);
+	doMouseUp(texCoords, ev);
 	
 	// Check for view origin movements
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event)) {
-		self->_viewOriginMove = false;
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev)) {
+		_viewOriginMove = false;
 	}
 	
 	return false;
 }
 
-gboolean TexTool::onMouseDown(GtkWidget* widget, GdkEventButton* event, TexTool* self) {
+bool TexTool::onMouseDown(GdkEventButton* ev)
+{
 	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
+	Vector2 texCoords = getTextureCoords(ev->x, ev->y);
 	
 	// Pass the call to the member method
-	self->doMouseDown(texCoords, event);
+	doMouseDown(texCoords, ev);
 	
 	// Check for view origin movements
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event)) {
-		self->_moveOriginRectangle.topLeft = Vector2(event->x, event->y);
-		self->_viewOriginMove = true;
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev)) {
+		_moveOriginRectangle.topLeft = Vector2(ev->x, ev->y);
+		_viewOriginMove = true;
 	}
 	
 	return false;
 }
 
-gboolean TexTool::onMouseMotion(GtkWidget* widget, GdkEventMotion* event, TexTool* self) {
+bool TexTool::onMouseMotion(GdkEventMotion* ev)
+{
 	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = self->getTextureCoords(event->x, event->y);
+	Vector2 texCoords = getTextureCoords(ev->x, ev->y);
 	
 	// Pass the call to the member routine
-	self->doMouseMove(texCoords, event);
+	doMouseMove(texCoords, ev);
 	
 	// Check for view origin movements
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
 
-	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, event->state)) {
+	if (mouseEvents.stateMatchesXYViewEvent(ui::xyMoveView, ev->state)) {
 		
 		// Calculate the movement delta relative to the old window x,y coords
-		Vector2 delta = Vector2(event->x, event->y) - self->_moveOriginRectangle.topLeft;
+		Vector2 delta = Vector2(ev->x, ev->y) - _moveOriginRectangle.topLeft;
 		
-		AABB& texSpaceAABB = self->getVisibleTexSpace();
+		AABB& texSpaceAABB = getVisibleTexSpace();
 		
-		float speedFactor = self->_zoomFactor * MOVE_FACTOR;
+		float speedFactor = _zoomFactor * MOVE_FACTOR;
 		
-		float factorX = texSpaceAABB.extents[0] / self->_windowDims[0] * speedFactor;
-		float factorY = texSpaceAABB.extents[1] / self->_windowDims[1] * speedFactor;
+		float factorX = texSpaceAABB.extents[0] / _windowDims[0] * speedFactor;
+		float factorY = texSpaceAABB.extents[1] / _windowDims[1] * speedFactor;
 		
 		texSpaceAABB.origin[0] -= delta[0] * factorX;
 		texSpaceAABB.origin[1] -= delta[1] * factorY; 
 		
 		// Store the new coordinates
-		self->_moveOriginRectangle.topLeft = Vector2(event->x, event->y);
+		_moveOriginRectangle.topLeft = Vector2(ev->x, ev->y);
 		
 		// Redraw to visualise the changes
-		self->draw();
+		draw();
 	}
 
 	return false;
 }
 
-// The GTK keypress callback
-gboolean TexTool::onKeyPress(GtkWindow* window, GdkEventKey* event, TexTool* self) {
-	
+bool TexTool::onKeyPress(GdkEventKey* ev)
+{
 	// Check for ESC to deselect all items
-	if (event->keyval == GDK_Escape) {
+	if (ev->keyval == GDK_Escape)
+	{
 		// Don't propage the keypress if the ESC could be processed
 		// setAllSelected returns TRUE in that case
-		return self->setAllSelected(false);
+		return setAllSelected(false);
 	}
 	
 	return false;
 }
 
-gboolean TexTool::onMouseScroll(GtkWidget* widget, GdkEventScroll* event, TexTool* self) {
-	
-	if (event->direction == GDK_SCROLL_UP) {
-		self->_zoomFactor /= ZOOM_MODIFIER;
+bool TexTool::onMouseScroll(GdkEventScroll* ev)
+{
+	if (ev->direction == GDK_SCROLL_UP) {
+		_zoomFactor /= ZOOM_MODIFIER;
 		
-		self->draw();
+		draw();
 	}
-	else if (event->direction == GDK_SCROLL_DOWN) {
-		self->_zoomFactor *= ZOOM_MODIFIER;
-		self->draw();
+	else if (ev->direction == GDK_SCROLL_DOWN) {
+		_zoomFactor *= ZOOM_MODIFIER;
+		draw();
 	}
 	
 	return false;
