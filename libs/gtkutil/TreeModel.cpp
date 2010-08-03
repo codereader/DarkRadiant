@@ -207,6 +207,61 @@ gboolean TreeModel::SelectionFinder::forEach(
 	}
 }
 
+TreeModel::SelectionFindermm::SelectionFindermm(const std::string& selection, int column) : 
+	_selection(selection),
+	_needle(0),
+	_column(column),
+	_searchForInt(false)
+{}
+
+TreeModel::SelectionFindermm::SelectionFindermm(int needle, int column) : 
+	_selection(""),
+	_needle(needle),
+	_column(column),
+	_searchForInt(true)
+{}
+
+const Gtk::TreeModel::iterator TreeModel::SelectionFindermm::getIter() const
+{
+	return _foundIter;
+}
+
+bool TreeModel::SelectionFindermm::forEach(const Gtk::TreeModel::iterator& iter)
+{
+	// If the visited row matches the string/int to find
+	if (_searchForInt)
+	{
+		int value;
+		iter->get_value(_column, value);
+		
+		if (value == _needle)
+		{
+			_foundIter = iter;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		// Search for string
+		Glib::ustring value;
+		iter->get_value(_column, value);
+
+		if (value == _selection)
+		{
+			_foundIter = iter;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+}
+
 gint TreeModel::sortFuncFoldersFirst(GtkTreeModel* model, 
 									 GtkTreeIter *a, 
 									 GtkTreeIter *b, 
@@ -288,26 +343,22 @@ bool TreeModel::findAndSelectString(GtkTreeView* view, const std::string& needle
 
 bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle, int column)
 {
-	Gtk::TreeModel::Children children = view->get_model()->children();
+	SelectionFindermm finder(needle, column);
 
-	for (Gtk::TreeModel::iterator i = children.begin(); i != children.end(); ++i)
+	view->get_model()->foreach_iter(sigc::mem_fun(finder, &SelectionFindermm::forEach));
+
+	if (finder.getIter())
 	{
-		std::string value;
-		i->get_value(column, value);
+		Gtk::TreeModel::Path path(finder.getIter());
 
-		if (value == needle)
-		{
-			Gtk::TreeModel::Path path(i);
+		// Expand the treeview to display the target row
+		view->expand_to_path(path);
+		// Highlight the target row
+		view->set_cursor(path);
+		// Make the selected row visible 
+		view->scroll_to_row(path, 0.3f);
 
-			// Expand the treeview to display the target row
-			view->expand_to_path(path);
-			// Highlight the target row
-			view->set_cursor(path);
-			// Make the selected row visible 
-			view->scroll_to_row(path, 0.3f);
-
-			return true; // found
-		}
+		return true; // found
 	}
 
 	return false; // not found
@@ -316,26 +367,7 @@ bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& need
 bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle, 
 									const Gtk::TreeModelColumn<Glib::ustring>& column)
 {
-	Gtk::TreeModel::Children children = view->get_model()->children();
-
-	for (Gtk::TreeModel::iterator i = children.begin(); i != children.end(); ++i)
-	{
-		if (i->get_value(column) == needle)
-		{
-			Gtk::TreeModel::Path path(i);
-
-			// Expand the treeview to display the target row
-			view->expand_to_path(path);
-			// Highlight the target row
-			view->set_cursor(path);
-			// Make the selected row visible 
-			view->scroll_to_row(path, 0.3f);
-
-			return true; // found
-		}
-	}
-
-	return false; // not found
+	return findAndSelectString(view, needle, column.index());
 }
 
 bool TreeModel::findAndSelectInteger(GtkTreeView* view, int needle, int column)

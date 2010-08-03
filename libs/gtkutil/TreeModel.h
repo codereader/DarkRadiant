@@ -188,6 +188,41 @@ public:
 	
 	}; // class SelectionFinder
 
+	class SelectionFindermm
+	{
+	private:
+		// String containing the name to highlight
+		std::string _selection;
+		
+		// An integer to search for (alternative to the string above) 
+		int _needle;
+		
+		// The found iterator
+		Gtk::TreeModel::iterator _foundIter;
+		
+		// The column index to be searched
+		int _column;
+		
+		// TRUE, if this should search for an integer instead of a string
+		bool _searchForInt;
+		
+	public:
+	
+		// Constructor to search for strings
+		SelectionFindermm(const std::string& selection, int column);
+		
+		// Constructor to search for integers
+		SelectionFindermm(int needle, int column);
+
+		/** greebo: Get the GtkTreeIter corresponding to the found path.
+		 * 			The returnvalue can be invalid if the internal found path is NULL.
+		 */
+		const Gtk::TreeModel::iterator getIter() const;
+		
+		// Callback for gtkmm
+		bool forEach(const Gtk::TreeModel::iterator& iter);
+	};
+
 	/**
 	 * greebo: Tries to lookup the given string in the given column of the given view.
 	 * Returns TRUE if the lookup and the selection was successful, FALSE otherwise.
