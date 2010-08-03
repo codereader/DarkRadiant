@@ -8,10 +8,12 @@ namespace ui
 {
 
 PropertyEditor::PropertyEditor() :
+	_mainWidget(NULL),
 	_entity(NULL)
 {}
 
 PropertyEditor::PropertyEditor(Entity* entity) :
+	_mainWidget(NULL),
 	_entity(entity)
 {}
 
