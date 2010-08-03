@@ -82,16 +82,6 @@ PatchInspector::PatchInspector()
 PatchInspectorPtr& PatchInspector::InstancePtr()
 {
 	static PatchInspectorPtr _instancePtr;
-	
-	if (_instancePtr == NULL)
-	{
-		// Not yet instantiated, do it now
-		_instancePtr = PatchInspectorPtr(new PatchInspector);
-		
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
-	}
-	
 	return _instancePtr;
 }
 
@@ -112,6 +102,9 @@ void PatchInspector::onRadiantShutdown()
 	
 	// Destroy the transient window
 	destroy();
+
+	// Finally, reset our shared_ptr to destroy the instance
+	InstancePtr().reset();
 }
 
 void PatchInspector::postUndo()
@@ -128,7 +121,18 @@ void PatchInspector::postRedo()
 
 PatchInspector& PatchInspector::Instance()
 {
-	return *InstancePtr();
+	PatchInspectorPtr& instancePtr = InstancePtr();
+
+	if (instancePtr == NULL)
+	{
+		// Not yet instantiated, do it now
+		instancePtr.reset(new PatchInspector);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(instancePtr);
+	}
+
+	return *instancePtr;
 }
 
 void PatchInspector::populateWindow()
