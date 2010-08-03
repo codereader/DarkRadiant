@@ -177,7 +177,7 @@ void FileChooser::attachPreview(const PreviewPtr& preview)
 
 	_preview = preview;
 
-	_dialog->set_preview_widget(*Glib::wrap(_preview->getPreviewWidget()));
+	_dialog->set_preview_widget(_preview->getPreviewWidget());
 
 	_dialog->signal_update_preview().connect(sigc::mem_fun(*this, &FileChooser::onUpdatePreview));
 }
