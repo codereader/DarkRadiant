@@ -71,6 +71,8 @@ void FileChooser::construct()
 	{
 		set_parent_window(_parent->get_window());
 	}
+	
+	set_position(Gtk::WIN_POS_CENTER);
 
 	// Add cancel button
 	add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
@@ -90,7 +92,6 @@ void FileChooser::construct()
 	
 	// Set position and modality of the dialog
 	set_modal(true);
-	set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
 
 	// Set the default size of the window
 	Gdk::Rectangle rect = _parent != NULL ? MultiMonitor::getMonitorForWindow(_parent) : MultiMonitor::getMonitor(0);
