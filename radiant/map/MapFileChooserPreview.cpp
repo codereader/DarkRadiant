@@ -20,7 +20,7 @@ MapFileChooserPreview::MapFileChooserPreview() :
 
 	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
 	
-	gtk_box_pack_start(GTK_BOX(vbox), _preview, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(_preview.gobj()), FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), createUsagePanel(), TRUE, TRUE, 0);
 
 	gtk_box_pack_start(GTK_BOX(_previewContainer), vbox, TRUE, TRUE, 0);
@@ -53,7 +53,7 @@ void MapFileChooserPreview::onFileSelectionChanged(
 	/*bool success = */setMapName(newFileName);
 
 	_preview.initialisePreview();
-	gtk_widget_queue_draw(_preview);
+	gtk_widget_queue_draw(GTK_WIDGET(_preview.gobj()));
 	
 	// Always have the preview active
 	fileChooser.setPreviewActive(true);
