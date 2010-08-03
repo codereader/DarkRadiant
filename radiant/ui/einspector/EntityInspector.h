@@ -77,6 +77,7 @@ public:
 		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > helpIcon;
 		Gtk::TreeModelColumn<bool> hasHelpText;
 	};
+	typedef boost::shared_ptr<ListStoreColumns> ListStoreColumnsPtr;
 
 private:
 	struct StringCompareFunctorNoCase : 
@@ -104,7 +105,7 @@ private:
 	Gtk::CheckButton* _showHelpColumnCheckbox;
 
     // View and model for the keyvalue list
-	ListStoreColumns _columns;
+	ListStoreColumnsPtr _columns;
 	Glib::RefPtr<Gtk::ListStore> _kvStore;
 	Gtk::TreeView* _keyValueTreeView;
 
