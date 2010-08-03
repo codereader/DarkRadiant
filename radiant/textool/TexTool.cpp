@@ -83,17 +83,9 @@ TexTool::TexTool()
 	GlobalRegistry().addKeyObserver(this, RKEY_GRID_STATE);
 }
 
-TexToolPtr& TexTool::InstancePtr() {
+TexToolPtr& TexTool::InstancePtr()
+{
 	static TexToolPtr _instancePtr;
-	
-	if (_instancePtr == NULL) {
-		// Not yet instantiated, do it now
-		_instancePtr = TexToolPtr(new TexTool);
-		
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
-	}
-	
 	return _instancePtr;
 }
 
@@ -179,7 +171,8 @@ void TexTool::gridDown() {
 	}
 }
 
-void TexTool::onRadiantShutdown() {
+void TexTool::onRadiantShutdown()
+{
 	// Release the shader
 	_shader = MaterialPtr();
 
@@ -194,10 +187,24 @@ void TexTool::onRadiantShutdown() {
 
 	// Destroy the window
 	destroy();
+
+	InstancePtr().reset();
 }
 
-TexTool& TexTool::Instance() {
-	return *InstancePtr();
+TexTool& TexTool::Instance()
+{
+	TexToolPtr& instancePtr = InstancePtr();
+
+	if (instancePtr == NULL)
+	{
+		// Not yet instantiated, do it now
+		instancePtr.reset(new TexTool);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(instancePtr);
+	}
+
+	return *instancePtr;
 }
 
 void TexTool::update()
