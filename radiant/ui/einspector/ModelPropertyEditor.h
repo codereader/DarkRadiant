@@ -13,25 +13,14 @@ namespace ui
 class ModelPropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-	
+private:
 	// Keyvalue to set
 	std::string _key;
 	
 private:
 
-	/* GTK CALLBACKS */
-	static void _onModelButton(GtkWidget*, ModelPropertyEditor*);
-	static void _onParticleButton(GtkWidget*, ModelPropertyEditor*);
-	
-protected:
-	
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const 
-    {
-		return _widget;
-	}
+	void _onModelButton();
+	void _onParticleButton();
 	
 public:
 
@@ -42,7 +31,7 @@ public:
 	ModelPropertyEditor(Entity* entity, 
 					    const std::string& name,
 					    const std::string& options);
-					   
+
 	// Clone method for virtual construction
 	IPropertyEditorPtr createNew(Entity* entity,
 								const std::string& name,
@@ -52,9 +41,8 @@ public:
 			new ModelPropertyEditor(entity, name, options)
 		);
 	}
-	
 };
 
-} // namespace ui
+} // namespace
 
 #endif /*MODELPROPERTYEDITOR_H_*/

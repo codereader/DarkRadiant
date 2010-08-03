@@ -14,26 +14,35 @@
 #include "gtkutil/Paned.h"
 #include "gtkutil/PanedPosition.h"
 
-#include <gtk/gtkliststore.h>
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtktogglebutton.h>
-#include <gtk/gtktreeviewcolumn.h>
+#include <gtkmm/liststore.h>
+
 #include <map>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 /* FORWARD DECLS */
+namespace Gtk
+{
+	class VBox;
+	class Frame;
+	class CheckButton;
+	class TreeView;
+	class Entry;
+	class TreeViewColumn;
+	class Paned;
+}
 
 class Entity;
 class Selectable;
 
-namespace ui {
+namespace ui
+{
 
 class EntityInspector;
 typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
 
-/* The EntityInspector class represents the GTK dialog for editing properties
+/**
+ * The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
  * contains a method to return the current instance.
  */
@@ -45,14 +54,38 @@ class EntityInspector :
 	public UndoSystem::Observer,
 	public boost::enable_shared_from_this<EntityInspector>
 {
+public:
+	struct ListStoreColumns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListStoreColumns()
+		{ 
+			add(name);
+			add(value);
+			add(colour);
+			add(icon);
+			add(isInherited);
+			add(helpIcon);
+			add(hasHelpText);
+		}
+
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<Glib::ustring> value;
+		Gtk::TreeModelColumn<Glib::ustring> colour;
+		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
+		Gtk::TreeModelColumn<bool> isInherited;
+		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > helpIcon;
+		Gtk::TreeModelColumn<bool> hasHelpText;
+	};
+
 private:
-	class StringCompareFunctor : 
+	struct StringCompareFunctorNoCase : 
 		public std::binary_function<std::string, std::string, bool>
 	{
-	public:
-		bool operator()(const std::string& lhs, const std::string& rhs) const
+		bool operator()(const std::string& s1, const std::string& s2) const
 		{
-			return boost::algorithm::ilexicographical_compare(lhs, rhs);
+			// return boost::algorithm::ilexicographical_compare(s1, s2); // slow!
+			return string_compare_nocase(s1.c_str(), s2.c_str()) < 0;
 		}
 	};
 
@@ -61,33 +94,34 @@ private:
 	Entity* _selectedEntity;
 
 	// Main EntityInspector widget
-    GtkWidget* _widget;
+	Gtk::VBox* _mainWidget;
 
 	// Frame to contain the Property Editor
-    GtkWidget* _editorFrame;
+	Gtk::Frame* _editorFrame;
 
 	// The checkbox for showing the eclass properties
-	GtkWidget* _showInheritedCheckbox;
-	GtkWidget* _showHelpColumnCheckbox;
+	Gtk::CheckButton* _showInheritedCheckbox;
+	Gtk::CheckButton* _showHelpColumnCheckbox;
 
     // View and model for the keyvalue list
-    GtkListStore* _kvStore;
-    GtkWidget* _keyValueTreeView;
+	ListStoreColumns _columns;
+	Glib::RefPtr<Gtk::ListStore> _kvStore;
+	Gtk::TreeView* _keyValueTreeView;
 
-	GtkTreeViewColumn* _helpColumn;
+	Gtk::TreeViewColumn* _helpColumn;
 
-    // Cache of GtkTreeIters pointing to keyvalue rows, so we can quickly find
-    // existing keys to change their values
-    typedef std::map<std::string, GtkTreeIter, StringCompareFunctor> TreeIterMap;
+    // Cache of Gtk::TreeModel::iterators pointing to keyvalue rows, 
+	// so we can quickly find existing keys to change their values
+	typedef std::map<std::string, Gtk::TreeModel::iterator, StringCompareFunctorNoCase> TreeIterMap;
     TreeIterMap _keyValueIterMap;
 
 	// Key and value edit boxes. These remain available even for multiple entity
     // selections.
-	GtkWidget* _keyEntry;
-	GtkWidget* _valEntry;
+	Gtk::Entry* _keyEntry;
+	Gtk::Entry* _valEntry;
 
 	// The pane dividing the treeview and the property editors
-	gtkutil::PanedPtr _paned;
+	Gtk::Paned* _paned;
 
 	// An object tracking the divider position of the paned view
 	gtkutil::PanedPosition _panedPosition;
@@ -126,13 +160,14 @@ private:
     // Utility functions to construct the Gtk components
 	void construct();
 
-    GtkWidget* createPropertyEditorPane(); // bottom widget pane
-    GtkWidget* createTreeViewPane(); // tree view for selecting attributes
+	Gtk::Widget& createPropertyEditorPane(); // bottom widget pane
+    Gtk::Widget& createTreeViewPane(); // tree view for selecting attributes
     void createContextMenu();
 
 	// Utility function to retrieve the string selection from the given column in the
 	// list store
-	std::string getListSelection(int col);
+	std::string getListSelection(const Gtk::TreeModelColumn<Glib::ustring>& col);
+	bool getListSelection(const Gtk::TreeModelColumn<bool>& col);
 
 	/* gtkutil::PopupMenu callbacks */
 	void _onAddKey();
@@ -146,17 +181,13 @@ private:
 	bool _testCutKey();
 	bool _testPasteKey();
 
-    /* GTK CALLBACKS */
-    static void callbackTreeSelectionChanged(GtkWidget* widget, EntityInspector* self);
-	static void _onEntryActivate(GtkWidget*, EntityInspector*);
-	static void _onSetProperty(GtkWidget*, EntityInspector*);
-	static void _onToggleShowInherited(GtkToggleButton*, EntityInspector*);
-	static void _onToggleShowHelpIcons(GtkToggleButton*, EntityInspector*);
-
-	static gboolean _onQueryTooltip(GtkWidget* widget,
-									 gint x, gint y, gboolean keyboard_mode,
-									 GtkTooltip* tooltip, EntityInspector* self);
-
+    // gtkmm callbacks
+	void _onEntryActivate();
+	void _onSetProperty();
+	void _onToggleShowInherited();
+	void _onToggleShowHelpIcons();
+	bool _onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
+	
     static std::string  cleanInputString( const std::string& );
 
     // Add and remove inherited properties from the entity class
@@ -189,13 +220,12 @@ private:
     // Update tree view contents and property editor
     void updateGUIElements();
 
-protected:
-	// Get the Gtk Widget for display in the main application
-    GtkWidget* _getWidget() const;
-
 public:
 	// Constructor
     EntityInspector();
+
+	// Get the main widget for packing
+	Gtk::Widget& getWidget();
 
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */

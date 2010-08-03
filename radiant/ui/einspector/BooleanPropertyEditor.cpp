@@ -2,54 +2,47 @@
 
 #include "ientity.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/checkbutton.h>
 
 namespace ui
 {
 
 // Blank ctor
-BooleanPropertyEditor::BooleanPropertyEditor()
+BooleanPropertyEditor::BooleanPropertyEditor() :
+	_checkBox(NULL)
 {}
 
 // Constructor. Create the GTK widgets here
 BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity, 
 											 const std::string& name)
 : PropertyEditor(entity),
+  _checkBox(NULL),
   _key(name)
 {
-	_widget = gtk_vbox_new(FALSE, 6);
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
+
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
 	
-	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(editBox), 3);
+	Gtk::HBox* editBox = Gtk::manage(new Gtk::HBox(false, 3));
+	editBox->set_border_width(3);
 
 	// Create the checkbox with correct initial state, and connect up the
 	// toggle callback
-	_checkBox = gtk_check_button_new_with_label(name.c_str());
-	gtk_toggle_button_set_active(
-		GTK_TOGGLE_BUTTON(_checkBox), 
-		_entity->getKeyValue(_key) == "1" ? TRUE : FALSE
-	);
-	g_signal_connect(
-		G_OBJECT(_checkBox), "toggled", G_CALLBACK(_onToggle), this
-	);
+	_checkBox = Gtk::manage(new Gtk::CheckButton(name));
+	_checkBox->set_active(_entity->getKeyValue(_key) == "1");
+	_checkBox->signal_toggled().connect(sigc::mem_fun(*this, &BooleanPropertyEditor::_onToggle));
 	
-	gtk_box_pack_start(GTK_BOX(editBox), _checkBox, TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), editBox, TRUE, TRUE, 0);
+	editBox->pack_start(*_checkBox, true, false, 0);
+	mainVBox->pack_start(*editBox, true, true, 0);
 }
 
-/* GTK callbacks */
-
-void BooleanPropertyEditor::_onToggle(GtkWidget* w, BooleanPropertyEditor* self)
+void BooleanPropertyEditor::_onToggle()
 {
 	// Set the key based on the checkbutton state
-	gboolean state = 
-		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(self->_checkBox));
-	if (state)
-		self->setKeyValue(self->_key, "1");
-	else
-		self->setKeyValue(self->_key, "0");
-	
+	setKeyValue(_key, _checkBox->get_active() ? "1" : "0");
 }
 
-
-}
+} // namespace

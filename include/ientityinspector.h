@@ -2,10 +2,11 @@
 #define _IENTITY_INSPECTOR_H_
 
 #include "imodule.h"
-#include "gtkutil/ifc/Widget.h"
 
-// Forward decl.
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk
+{
+	class Widget;
+}
 
 class Entity;
 
@@ -19,11 +20,16 @@ typedef boost::shared_ptr<IPropertyEditor> IPropertyEditorPtr;
  * Abstract base for a PropertyEditor which provides
  * a user interface for editing spawnargs (entity keyvalues).
  */
-class IPropertyEditor :
-	public gtkutil::Widget
+class IPropertyEditor
 {
 public:
     virtual ~IPropertyEditor() {}
+
+	/** 
+	 * greebo: Retrieve the widget for packing this into a parent container.
+	 */
+	virtual Gtk::Widget& getWidget() = 0;
+
 	/**
 	 * Clone method for virtual construction. This method must create a new
 	 * PropertyEditor of the same type as the derive class which is implementing
@@ -45,10 +51,14 @@ public:
 };
 
 class IEntityInspector :
-	public RegisterableModule,
-	public gtkutil::Widget
+	public RegisterableModule
 {
 public:
+	/** 
+	 * greebo: Retrieve the widget for packing this into a parent container.
+	 */
+	virtual Gtk::Widget& getWidget() = 0;
+
 	/**
 	 * Registers the given property editor and associates it with the given entity key.
 	 * (The string key is interpreted as regular expression.)

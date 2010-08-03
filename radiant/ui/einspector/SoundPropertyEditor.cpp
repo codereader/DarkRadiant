@@ -5,7 +5,9 @@
 #include "i18n.h"
 #include "ientity.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/image.h>
 
 namespace ui
 {
@@ -17,41 +19,38 @@ SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
 : PropertyEditor(entity),
   _key(name)
 {
-	_widget = gtk_vbox_new(FALSE, 0);
-
-	// Horizontal box contains the browse button
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 0);
 	
-	// Browse button
-	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose sound..."));
-	gtk_button_set_image(
-		GTK_BUTTON(browseButton),
-		gtk_image_new_from_pixbuf(
-			PropertyEditorFactory::getPixbufFor("sound")
-		)
-	);
-			
-	g_signal_connect(G_OBJECT(browseButton), 
-					 "clicked", 
-					 G_CALLBACK(_onBrowseButton), 
-					 this);
-	gtk_box_pack_start(GTK_BOX(hbx), browseButton, TRUE, FALSE, 0);
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
+	
+	// Horizontal box contains browse button
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
+	hbx->set_border_width(3);
+	
+	// Create the browse button
+	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose sound...")));
+	browseButton->set_image(*Gtk::manage(new Gtk::Image(
+		PropertyEditorFactory::getPixbufFor("sound"))));
+
+	browseButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &SoundPropertyEditor::_onBrowseButton));
+	
+	hbx->pack_start(*browseButton, true, false, 0);
 	
 	// Pack hbox into vbox (to limit vertical size), then edit frame
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), vbx, TRUE, TRUE, 0);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
+	vbx->pack_start(*hbx, true, false, 0);
+	
+	mainVBox->pack_start(*vbx, true, true, 0);
 }
 
-/* GTK CALLBACKS */
-
-void SoundPropertyEditor::_onBrowseButton(GtkWidget* w, 
-										  SoundPropertyEditor* self)
+void SoundPropertyEditor::_onBrowseButton()
 {
 	// Use a SoundChooser dialog to get a selection from the user
 	SoundChooser chooser;
-	chooser.setSelectedShader(self->getKeyValue(self->_key));
+	chooser.setSelectedShader(getKeyValue(_key));
 
 	chooser.show(); // blocks
 	
@@ -61,7 +60,7 @@ void SoundPropertyEditor::_onBrowseButton(GtkWidget* w,
 	if (!selection.empty())
 	{
 		// Apply the change to the entity
-		self->setKeyValue(self->_key, selection);
+		setKeyValue(_key, selection);
 	}
 }
 

@@ -114,12 +114,13 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 
 // Return a GdkPixbuf containing the icon for the given property type
 
-GdkPixbuf* PropertyEditorFactory::getPixbufFor(const std::string& type) {
+Glib::RefPtr<Gdk::Pixbuf> PropertyEditorFactory::getPixbufFor(const std::string& type)
+{
 	// Sanity check
-	if (type.empty()) return NULL;
+	if (type.empty()) return Glib::RefPtr<Gdk::Pixbuf>();
 
 	std::string iconName = "icon_" + type + ".png";
-	return GlobalUIManager().getLocalPixbuf(iconName)->gobj();	
+	return GlobalUIManager().getLocalPixbuf(iconName);
 }
 
 }
