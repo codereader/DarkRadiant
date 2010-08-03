@@ -47,7 +47,7 @@ ModelPropertyEditor::ModelPropertyEditor(Entity* entity,
 	particleButton->set_image(*Gtk::manage(new Gtk::Image(
 		GlobalUIManager().getLocalPixbuf("particle16.png"))));
 	
-	browseButton->signal_clicked().connect(sigc::mem_fun(*this, &ModelPropertyEditor::_onParticleButton));
+	particleButton->signal_clicked().connect(sigc::mem_fun(*this, &ModelPropertyEditor::_onParticleButton));
 
 	hbx->pack_start(*browseButton, true, false, 0);
 	hbx->pack_start(*particleButton, true, false, 0);
