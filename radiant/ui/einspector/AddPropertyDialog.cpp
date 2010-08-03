@@ -15,7 +15,12 @@
 #include "igame.h"
 #include "ientity.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/textview.h>
+
 #include <boost/algorithm/string/predicate.hpp>
 
 #include <map>
@@ -23,64 +28,41 @@
 namespace ui
 {
 	
-namespace {
-	
-	// Tree columns
-	enum {
-		DISPLAY_NAME_COLUMN,
-		PROPERTY_NAME_COLUMN,
-		ICON_COLUMN,
-		DESCRIPTION_COLUMN,
-		N_COLUMNS
-	};
-	
+namespace
+{
 	// CONSTANTS
-	const char* ADDPROPERTY_TITLE = N_("Add property");
-	const char* PROPERTIES_XPATH = "/entityInspector//property";
-	const char* FOLDER_ICON = "folder16.png";
+	const char* const ADDPROPERTY_TITLE = N_("Add property");
+	const char* const PROPERTIES_XPATH = "/entityInspector//property";
+	const char* const FOLDER_ICON = "folder16.png";
 	
-	const char* CUSTOM_PROPERTY_TEXT = N_("Custom properties defined for this "
-	"entity class, if any");
+	const char* const CUSTOM_PROPERTY_TEXT = N_("Custom properties defined for this "
+												"entity class, if any");
 	
 }
 
 // Constructor creates GTK widgets
 
-AddPropertyDialog::AddPropertyDialog(Entity* entity)
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _entity(entity)
+AddPropertyDialog::AddPropertyDialog(Entity* entity) :
+	gtkutil::BlockingTransientWindow(_(ADDPROPERTY_TITLE), GlobalMainFrame().getTopLevelWindow()),
+	_entity(entity)
 {
 	// Window properties
-	GtkWindow* parent = GTK_WINDOW(GlobalGroupDialog().getDialogWindow());
-
-	if (!GTK_IS_WINDOW(parent) || !GTK_WIDGET_VISIBLE(parent))
-	{
-		parent = GlobalMainFrame().getTopLevelWindow()->gobj();
-	}
+	set_border_width(6);
 	
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);
-	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), _(ADDPROPERTY_TITLE));
-    gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-    
     // Set size of dialog
-	Gtk::Window* parentWin = Glib::wrap(parent, true);
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(*parentWin);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), static_cast<gint>(rect.get_width()/2), static_cast<gint>(rect.get_height()*2/3));
-    
-    // Signals
-    g_signal_connect(G_OBJECT(_widget), "delete-event", 
-    				 G_CALLBACK(_onDelete), this);
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
+		GlobalMainFrame().getTopLevelWindow()
+	);
+	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(rect.get_height()*2/3));
     
     // Create components
-    GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
-    gtk_box_pack_start(GTK_BOX(vbx), createTreeView(), TRUE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(vbx), createUsagePanel(), FALSE, FALSE, 0);
-    gtk_box_pack_end(GTK_BOX(vbx), createButtonsPanel(), FALSE, FALSE, 0);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
+
+    vbx->pack_start(createTreeView(), true, true, 0);
+    vbx->pack_start(createUsagePanel(), false, false, 0);
+    vbx->pack_end(createButtonsPanel(), false, false, 0);
     
-    // Pack into window
-    gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
-    gtk_container_add(GTK_CONTAINER(_widget), vbx);
+    add(*vbx);
     
     // Populate the tree view with properties
     populateTreeView();
@@ -90,67 +72,63 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity)
 
 // Construct the tree view
 
-GtkWidget* AddPropertyDialog::createTreeView() {
+Gtk::Widget& AddPropertyDialog::createTreeView()
+{
 	// Set up the tree store
-	_treeStore = gtk_tree_store_new(N_COLUMNS,
-									G_TYPE_STRING, // display name
-									G_TYPE_STRING, // property name
-									GDK_TYPE_PIXBUF, // icon
-									G_TYPE_STRING); // description
+	_treeStore = Gtk::TreeStore::create(_columns);
+
 	// Create tree view
-	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
+	_treeView = Gtk::manage(new Gtk::TreeView(_treeStore));
+	_treeView->set_headers_visible(false);
 
 	// Connect up selection changed callback
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
-	g_signal_connect(G_OBJECT(_selection), "changed", 
-					 G_CALLBACK(_onSelectionChanged), this);
-
+	_selection = _treeView->get_selection();
+	_selection->signal_changed().connect(
+		sigc::mem_fun(*this, &AddPropertyDialog::_onSelectionChanged));
+	
 	// Allow multiple selections
-	gtk_tree_selection_set_mode(_selection, GTK_SELECTION_MULTIPLE);
+	_selection->set_mode(Gtk::SELECTION_MULTIPLE);
 	
 	// Display name column with icon
-    gtk_tree_view_append_column(
-    	GTK_TREE_VIEW(_treeView), 
-    	gtkutil::IconTextColumn("", DISPLAY_NAME_COLUMN, ICON_COLUMN, true));                                                                        
-
-	// Model owned by view
-	g_object_unref(G_OBJECT(_treeStore));
+	_treeView->append_column(*Gtk::manage(
+		new gtkutil::IconTextColumnmm("", _columns.displayName, _columns.icon)));
 
 	// Use the TreeModel's full string search function
-	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(_treeView), 
-		gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
 	
 	// Pack into scrolled window and frame, and return
-	return gtkutil::ScrolledFrame(_treeView);
+	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
 }
 
 // Construct the usage panel
-GtkWidget* AddPropertyDialog::createUsagePanel() {
+Gtk::Widget& AddPropertyDialog::createUsagePanel()
+{
 	// Create a GtkTextView
-	_usageTextView = gtk_text_view_new();
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_usageTextView), GTK_WRAP_WORD);
+	_usageTextView = Gtk::manage(new Gtk::TextView);
+	_usageTextView->set_wrap_mode(Gtk::WRAP_WORD);
 
-	return gtkutil::ScrolledFrame(_usageTextView);	
+	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_usageTextView));
 }
 
 // Construct the buttons panel
-GtkWidget* AddPropertyDialog::createButtonsPanel() {
-	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+Gtk::Widget& AddPropertyDialog::createButtonsPanel()
+{
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
 	
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
-	
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
-	
-	return gtkutil::RightAlignment(hbx);	
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &AddPropertyDialog::_onOK));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &AddPropertyDialog::_onCancel));
+
+	hbx->pack_end(*okButton, true, true, 0);
+	hbx->pack_end(*cancelButton, true, true, 0);
+
+	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
 }
 
-namespace {
+namespace
+{
 
 /* EntityClassAttributeVisitor instance to obtain custom properties from an 
  * entityclass and add them into the provided GtkTreeStore under the provided 
@@ -159,11 +137,14 @@ namespace {
 class CustomPropertyAdder
 : public EntityClassAttributeVisitor
 {
+private:
 	// Treestore to add to
-	GtkTreeStore* _store;
+	Glib::RefPtr<Gtk::TreeStore> _store;
+
+	const AddPropertyDialog::TreeColumns& _columns;
 	
 	// Parent iter
-	GtkTreeIter* _parent;
+	Gtk::TreeModel::iterator _parent;
 
 	// The entity we're adding the properties to
 	Entity* _entity;
@@ -171,40 +152,41 @@ class CustomPropertyAdder
 public:
 
 	// Constructor sets tree stuff
-	CustomPropertyAdder(Entity* entity, GtkTreeStore* store, GtkTreeIter* par) : 
-		_store(store), 
-		_parent(par), 
+	CustomPropertyAdder(Entity* entity, 
+						const Glib::RefPtr<Gtk::TreeStore>& store, 
+						const AddPropertyDialog::TreeColumns& columns,
+						Gtk::TreeModel::iterator parent) : 
+		_store(store),
+		_columns(columns),
+		_parent(parent), 
 		_entity(entity)
 	{ }
 
 	// Required visit function
-	void visit(const EntityClassAttribute& attr) {
+	void visit(const EntityClassAttribute& attr)
+	{
 		// greebo: Only add the property if it hasn't been set directly on the entity itself.
-		if (!_entity->getKeyValue(attr.name).empty() && !_entity->isInherited(attr.name)) {
+		if (!_entity->getKeyValue(attr.name).empty() && !_entity->isInherited(attr.name))
+		{
 			return;
 		}
 
 		// Also ignore all attributes with empty descriptions
-		if (attr.description.empty()) {
+		if (attr.description.empty())
+		{
 			return;
 		}
 
 		// Escape any Pango markup in the attribute name (e.g. "<" or ">")
-		gchar* escName = g_markup_escape_text(attr.name.c_str(), -1);
+		Glib::ustring escName = Glib::Markup::escape_text(attr.name);
 		
-		GtkTreeIter tmp;
-		gtk_tree_store_append(_store, &tmp, _parent);
-		gtk_tree_store_set(_store, &tmp,
-			DISPLAY_NAME_COLUMN, escName,
-			PROPERTY_NAME_COLUMN, attr.name.c_str(),
-			ICON_COLUMN, PropertyEditorFactory::getPixbufFor(attr.type),
-			DESCRIPTION_COLUMN, attr.description.c_str(),
-			-1);
-			
-		// Free the escaped string
-		g_free(escName);
+		Gtk::TreeModel::Row row = *_store->append(_parent->children());
+
+		row[_columns.displayName] = escName;
+		row[_columns.propertyName] = attr.name;
+		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(attr.type);
+		row[_columns.description] = attr.description;
 	}
-	
 };	
 	
 } // namespace
@@ -213,24 +195,25 @@ public:
 void AddPropertyDialog::populateTreeView() 
 {
 	/* DEF-DEFINED PROPERTIES */
-
-	// First add a top-level category named after the entity class, and populate
-	// it with custom keyvals defined in the DEF for that class
-	std::string cName = "<b><span foreground=\"blue\">" 
-						+ _entity->getEntityClass()->getName() + "</span></b>";
-	GtkTreeIter cnIter;
-	gtk_tree_store_append(_treeStore, &cnIter, NULL);
-	gtk_tree_store_set(_treeStore, &cnIter, 
-					   DISPLAY_NAME_COLUMN, cName.c_str(),
-					   PROPERTY_NAME_COLUMN, "",
-					   ICON_COLUMN, GlobalUIManager().getLocalPixbuf(FOLDER_ICON),
-					   DESCRIPTION_COLUMN, _(CUSTOM_PROPERTY_TEXT),
-					   -1);
-					   
-	// Use a CustomPropertyAdder class to visit the entityclass and add all
-	// custom properties from it
-	CustomPropertyAdder adder(_entity, _treeStore, &cnIter);
-	_entity->getEntityClass()->forEachClassAttribute(adder);
+	{
+		// First add a top-level category named after the entity class, and populate
+		// it with custom keyvals defined in the DEF for that class
+		std::string cName = "<b><span foreground=\"blue\">" 
+							+ _entity->getEntityClass()->getName() + "</span></b>";
+		
+		Gtk::TreeModel::iterator cn = _treeStore->append();
+		Gtk::TreeModel::Row row = *cn;
+		
+		row[_columns.displayName] = cName;
+		row[_columns.propertyName] = "";
+		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+		row[_columns.description] = _(CUSTOM_PROPERTY_TEXT);
+		
+		// Use a CustomPropertyAdder class to visit the entityclass and add all
+		// custom properties from it
+		CustomPropertyAdder adder(_entity, _treeStore, _columns, cn);
+		_entity->getEntityClass()->forEachClassAttribute(adder);
+	}
 
 	/* REGISTRY (GAME FILE) DEFINED PROPERTIES */
 
@@ -240,7 +223,7 @@ void AddPropertyDialog::populateTreeView()
 	
 	// Cache of property categories to GtkTreeIters, to allow properties
 	// to be parented to top-level categories
-	typedef std::map<std::string, GtkTreeIter*> CategoryMap;
+	typedef std::map<std::string, Gtk::TreeModel::iterator> CategoryMap;
 	CategoryMap categories;
 	
 	// Add each .game-specified property to the tree view
@@ -254,61 +237,71 @@ void AddPropertyDialog::populateTreeView()
 			continue;
 		}
 
-		GtkTreeIter t;
+		Gtk::TreeModel::iterator t;
 
 		// If this property has a category, look up the top-level parent iter
 		// or add it if necessary.
 		std::string category = iter->getAttributeValue("category");
-		if (!category.empty()) {
+
+		if (!category.empty())
+		{
 			CategoryMap::iterator mIter = categories.find(category);
 			
-			if (mIter == categories.end()) {
+			if (mIter == categories.end())
+			{
 				// Not found, add to treestore
-				GtkTreeIter tIter;
-				gtk_tree_store_append(_treeStore, &tIter, NULL);
-				gtk_tree_store_set(_treeStore, &tIter,
-					DISPLAY_NAME_COLUMN, category.c_str(),
-					PROPERTY_NAME_COLUMN, "",
-					ICON_COLUMN, GlobalUIManager().getLocalPixbuf(FOLDER_ICON),
-					DESCRIPTION_COLUMN, "",
-					-1);
-					
+				Gtk::TreeModel::iterator catIter = _treeStore->append();
+
+				Gtk::TreeModel::Row row = *catIter;
+
+				row[_columns.displayName] = category;
+				row[_columns.propertyName] = "";
+				row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+				row[_columns.description] = "";
+				
 				// Add to map
-				mIter = categories.insert(CategoryMap::value_type(category, gtk_tree_iter_copy(&tIter))).first;
+				mIter = categories.insert(CategoryMap::value_type(category, catIter)).first;
 			}
 			
 			// Category sorted, add this property below it
-			gtk_tree_store_append(_treeStore, &t, mIter->second);
+			t = _treeStore->append(mIter->second->children());
 		}
-		else {
+		else
+		{
 			// No category, add at toplevel
-			gtk_tree_store_append(_treeStore, &t, NULL);
+			t = _treeStore->append();
 		}
 		
 		// Obtain information from the XML node and add it to the treeview
 		std::string name = iter->getAttributeValue("match");
 		std::string type = iter->getAttributeValue("type");
 		std::string description = iter->getContent();
+
+		Gtk::TreeModel::Row row = *t;
 		
-		gtk_tree_store_set(_treeStore, &t,
-			DISPLAY_NAME_COLUMN, name.c_str(),
-			PROPERTY_NAME_COLUMN, name.c_str(),
-			ICON_COLUMN, PropertyEditorFactory::getPixbufFor(type),
-			DESCRIPTION_COLUMN, description.c_str(),
-			-1);
+		row[_columns.displayName] = name;
+		row[_columns.propertyName] = name;
+		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(type);
+		row[_columns.description] = description;
 	}
+}
+
+void AddPropertyDialog::_onDeleteEvent()
+{
+	// Reset the selection before closing the window
+	_selectedProperties.clear();
+
+	BlockingTransientWindow::_onDeleteEvent();
 }
 
 // Static method to create and show an instance, and return the chosen
 // property to calling function.
-AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity) {
-	
+AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity)
+{
 	// Construct a dialog and show the main widget
 	AddPropertyDialog dialog(entity);
-	gtk_widget_show_all(dialog._widget);
-	
-	// Block for a selection
-	gtk_main();
+
+	dialog.show(); // and block
 	
 	// Return the last selection to calling process
 	return dialog._selectedProperties;
@@ -316,89 +309,57 @@ AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity
 
 void AddPropertyDialog::updateUsagePanel()
 {
-	GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_usageTextView));
+	Glib::RefPtr<Gtk::TextBuffer> buf = _usageTextView->get_buffer();
 
 	if (_selectedProperties.size() != 1)
 	{
-		gtk_text_buffer_set_text(buf, "", -1);
-		gtk_widget_set_sensitive(GTK_WIDGET(_usageTextView), FALSE);
+		buf->set_text("");
+		_usageTextView->set_sensitive(false);
 	}
 	else
 	{
 		// Load the description
-		GList* list = gtk_tree_selection_get_selected_rows(_selection, NULL);
+		Gtk::TreeSelection::ListHandle_Path handle = _selection->get_selected_rows();
 
-		if (list != NULL)
+		for (Gtk::TreeSelection::ListHandle_Path::iterator i = handle.begin();
+			 i != handle.end(); ++i)
 		{
-			GtkTreePath* path = static_cast<GtkTreePath*>(list->data);
+			Gtk::TreeModel::Row row = *(_treeStore->get_iter(*i));
 
-			GtkTreeIter iter;
-			if (gtk_tree_model_get_iter(GTK_TREE_MODEL(_treeStore), &iter, path))
-			{
-				std::string desc = gtkutil::TreeModel::getString(GTK_TREE_MODEL(_treeStore), &iter, DESCRIPTION_COLUMN);
-				gtk_text_buffer_set_text(buf, desc.c_str() , -1);
-			}
-
-			// Free the path during traversal, not needed anymore
-			gtk_tree_path_free(path);
+			std::string desc = Glib::ustring(row[_columns.description]);
+			buf->set_text(desc);
 		}
 
-		g_list_free(list);
-
-		gtk_widget_set_sensitive(GTK_WIDGET(_usageTextView), TRUE);
+		_usageTextView->set_sensitive(true);
 	}
 }
 
-/* GTK CALLBACKS */
-
-void AddPropertyDialog::_onDelete(GtkWidget* w, GdkEvent* e, AddPropertyDialog* self)
+void AddPropertyDialog::_onOK()
 {
-	self->_selectedProperties.clear();
-	gtk_widget_destroy(self->_widget);
-	gtk_main_quit(); // exit recursive main loop	
+	destroy();
 }
 
-void AddPropertyDialog::_onOK(GtkWidget* w, AddPropertyDialog* self)
+void AddPropertyDialog::_onCancel()
 {
-	gtk_widget_destroy(self->_widget);
-	gtk_main_quit(); // exit recursive main loop	
+	_selectedProperties.clear();
+	destroy();
 }
 
-void AddPropertyDialog::_onCancel(GtkWidget* w, AddPropertyDialog* self)
+void AddPropertyDialog::_onSelectionChanged() 
 {
-	self->_selectedProperties.clear();
-	gtk_widget_destroy(self->_widget);
-	gtk_main_quit(); // exit recursive main loop	
-}
+	_selectedProperties.clear();
 
-void AddPropertyDialog::_onSelectionChanged(GtkWidget* w, 
-											AddPropertyDialog* self) 
-{
-	self->_selectedProperties.clear();
-	
-	GList* list = gtk_tree_selection_get_selected_rows(self->_selection, NULL);
+	Gtk::TreeSelection::ListHandle_Path handle = _selection->get_selected_rows();
 
-	while (list != NULL)
+	for (Gtk::TreeSelection::ListHandle_Path::iterator i = handle.begin();
+		 i != handle.end(); ++i)
 	{
-		GtkTreePath* path = static_cast<GtkTreePath*>(list->data);
+		Gtk::TreeModel::Row row = *(_treeStore->get_iter(*i));
 
-		GtkTreeIter iter;
-		if (gtk_tree_model_get_iter(GTK_TREE_MODEL(self->_treeStore), &iter, path))
-		{
-			self->_selectedProperties.push_back(
-				gtkutil::TreeModel::getString(GTK_TREE_MODEL(self->_treeStore), &iter, PROPERTY_NAME_COLUMN)
-			);
-		}
-
-		// Free the path during traversal, not needed anymore
-		gtk_tree_path_free(path);
-
-		list = list->next;
+		_selectedProperties.push_back(Glib::ustring(row[_columns.propertyName]));
 	}
 
-	g_list_free(list);
-
-	self->updateUsagePanel();
+	updateUsagePanel();
 }
 
 } // namespace ui

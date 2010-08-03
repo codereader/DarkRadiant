@@ -53,16 +53,24 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
 	// Construct the full filename using the Bitmaps path
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
 
-	Glib::RefPtr<Gdk::Pixbuf> pixbuf = Gdk::Pixbuf::create_from_file(fullFileName);
+	Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 
-	if (pixbuf != NULL)
+	try
 	{
-		_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
+		pixbuf = Gdk::Pixbuf::create_from_file(fullFileName);
+		
+		if (pixbuf == NULL)
+		{
+			globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
+		}
 	}
-	else
+	catch (Glib::FileError& err)
 	{
-		globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
+		globalWarningStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
+		globalWarningStream() << err.what() << std::endl; 
 	}
+
+	_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
 
 	return pixbuf;
 }
@@ -80,24 +88,32 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& f
 	// Not cached yet, load afresh
 
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
-	
-	Glib::RefPtr<Gdk::Pixbuf> rgb = Gdk::Pixbuf::create_from_file(fullFileName);
 
-	if (rgb != NULL)
+	Glib::RefPtr<Gdk::Pixbuf> rgba;
+
+	try
 	{
-		// File load successful, add alpha channel
-		Glib::RefPtr<Gdk::Pixbuf> rgba = rgb->add_alpha(true, 255, 0, 255);
-
-		_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
-
-		return rgba;
+		Glib::RefPtr<Gdk::Pixbuf> rgb = Gdk::Pixbuf::create_from_file(fullFileName);
+		
+		if (rgb != NULL)
+		{
+			// File load successful, add alpha channel
+			rgba = rgb->add_alpha(true, 255, 0, 255);
+		}
+		else
+		{
+			globalErrorStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl; 
+		}
 	}
-	else
+	catch (Glib::FileError& err)
 	{
-		// File load failed
-		globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
-		return Glib::RefPtr<Gdk::Pixbuf>();
+		globalWarningStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl; 
+		globalWarningStream() << err.what() << std::endl; 
 	}
+
+	_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
+
+	return rgba;
 }
 
 IFilterMenuPtr UIManager::createFilterMenu()
