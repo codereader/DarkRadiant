@@ -2,6 +2,7 @@
 
 #include "ientity.h"
 #include "iundo.h"
+#include <gtkmm/widget.h>
 
 namespace ui
 {
