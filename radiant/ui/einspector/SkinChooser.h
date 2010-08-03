@@ -6,11 +6,16 @@
 #include "iradiant.h"
 #include "imodelpreview.h"
 
-#include <gtk/gtkwidget.h>
-typedef struct _GtkTreeStore GtkTreeStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-
+#include "gtkutil/window/BlockingTransientWindow.h"
 #include <string>
+
+#include <gtkmm/treestore.h>
+#include <gtkmm/treeselection.h>
+
+namespace Gtk
+{
+	class TreeView;
+}
 
 namespace ui
 {
@@ -23,15 +28,35 @@ typedef boost::shared_ptr<SkinChooser> SkinChooserPtr;
  * model, and all skins available.
  */
 class SkinChooser :
+	public gtkutil::BlockingTransientWindow,
 	public RadiantEventListener
 {
-	// Main dialog widget
-	GtkWidget* _widget;
-	
+public:
+	// Treemodel definition
+	struct TreeColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TreeColumns()
+		{ 
+			add(displayName); 
+			add(fullName); 
+			add(icon);
+			add(isFolder);
+		}
+
+		Gtk::TreeModelColumn<Glib::ustring> displayName;
+		Gtk::TreeModelColumn<Glib::ustring> fullName;
+		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
+		Gtk::TreeModelColumn<bool> isFolder;
+	};
+
+private:
+	TreeColumns _columns;
+
 	// Tree store, view and selection
-	GtkWidget* _treeView;
-	GtkTreeStore* _treeStore;
-	GtkTreeSelection* _selection;
+	Glib::RefPtr<Gtk::TreeStore> _treeStore;
+	Gtk::TreeView* _treeView;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	
 	// The model name to use for skin matching
 	std::string _model;
@@ -44,14 +69,13 @@ class SkinChooser :
 	IModelPreviewPtr _preview;
 
 private:
-
 	// Constructor creates GTK widgets
 	SkinChooser();
 	
 	// Widget creation functions
-	GtkWidget* createTreeView(int width);
-	GtkWidget* createPreview(int size);
-	GtkWidget* createButtons();
+	Gtk::Widget& createTreeView(int width);
+	Gtk::Widget& createPreview(int size);
+	Gtk::Widget& createButtons();
 	
 	// Show the dialog and block until selection is made
 	std::string showAndBlock(const std::string& model, const std::string& prev);
@@ -60,16 +84,25 @@ private:
 	void populateSkins();
 	
 	// GTK callbacks
-	static void _onOK(GtkWidget*, SkinChooser*);
-	static void _onCancel(GtkWidget*, SkinChooser*);
-	static void _onSelChanged(GtkWidget*, SkinChooser*);
-	static gboolean _onCloseButton(GtkWidget *widget, GdkEvent* ev, SkinChooser*);
+	void _onOK();
+	void _onCancel();
+	void _onSelChanged();
 	
 	// Contains the static instance
 	static SkinChooser& Instance();
 
 	// This is where the static shared_ptr of the singleton instance is held.
 	static SkinChooserPtr& InstancePtr();
+
+	// Retrieve the currently selected skin
+	std::string getSelectedSkin();
+
+protected:
+	// Override TransientWindow::_onDeleteEvent
+	void _onDeleteEvent();
+
+	// Override BlockingTransientWindow::_postShow()
+	void _postShow();
 
 public:
 
@@ -89,7 +122,6 @@ public:
 	 */
 	static std::string chooseSkin(const std::string& model,
 								  const std::string& prevSkin);
-
 };
 
 }
