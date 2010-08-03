@@ -130,7 +130,7 @@ public:
 	 */
 	IconTextColumnmm(const std::string& title, 
 				     const Gtk::TreeModelColumn<Glib::ustring>& textCol, 
-					 Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> >& iconCol) :
+					 const Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> >& iconCol) :
 		Gtk::TreeViewColumn(title)
 	{
 		set_spacing(3);
