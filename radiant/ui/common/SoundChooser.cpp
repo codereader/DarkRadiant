@@ -87,11 +87,13 @@ public:
 
 		// Get the display name by stripping off everything before the last
 		// slash
-		std::string displayName = path.substr(path.rfind("/") + 1);
+		std::string displayName = path.substr(path.rfind('/') + 1);
+
+		std::size_t slashPos = path.find('/');
 
 		// Fill in the column values
 		row[_columns.displayName] = displayName;
-		row[_columns.shaderName] = path;
+		row[_columns.shaderName] = slashPos != std::string::npos ? path.substr(slashPos+1) : path; // cut off the mod name
 		row[_columns.isFolder] = !isExplicit;
 		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? SHADER_ICON : FOLDER_ICON);
 	}
