@@ -60,7 +60,7 @@ TexTool::TexTool()
   _grid(GRID_DEFAULT),
   _gridActive(GlobalRegistry().get(RKEY_GRID_STATE) == "1")
 {
-	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_NORMAL);
 	
 	signal_focus_in_event().connect(sigc::mem_fun(*this, &TexTool::triggerRedraw));
 	signal_key_press_event().connect(sigc::mem_fun(*this, &TexTool::onKeyPress), false);

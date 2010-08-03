@@ -57,29 +57,6 @@ private:
 		return true;
 	}
 	
-	/** 
-	 * greebo: This (hopefully) is to prevent the parent window from staying hidden 
-	 * (rarely) when Alt-TABbing from other applications. Often only one 
-	 * of the many top-level windows gets shown which is very annoying.
-	 * If this doesn't help, this callback can be removed, of course, the 
-	 * bug is hard to reproduce.  
-	 */ 
-	bool _onExpose(GdkEventExpose* ev)
-	{
-		Gtk::Container* toplevel = get_toplevel(); 
-		
-		if (toplevel != NULL && toplevel->is_toplevel() && 
-			toplevel->is_visible() && dynamic_cast<Gtk::Window*>(toplevel) != NULL)
-		{ 
-			static_cast<Gtk::Window*>(toplevel)->present();
-			
-			// Refocus on the self window
-			TransientWindow::show();
-		}
-
-		return false;
-	}
-
 public:
 	
 	/**
@@ -118,7 +95,6 @@ public:
 	    
 	    // Connect up the destroy signal (close box)
 		signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
-		signal_expose_event().connect(sigc::mem_fun(*this, &TransientWindow::_onExpose));
 	}
 
 	virtual void setParentWindow(const Glib::RefPtr<Gtk::Window>& parent)
