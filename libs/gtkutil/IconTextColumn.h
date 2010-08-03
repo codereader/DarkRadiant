@@ -130,13 +130,33 @@ public:
 	 */
 	IconTextColumnmm(const std::string& title, 
 				     const Gtk::TreeModelColumn<Glib::ustring>& textCol, 
-					 const Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> >& iconCol) :
+					 const Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> >& iconCol,
+					 bool useMarkup = false) :
 		Gtk::TreeViewColumn(title)
 	{
 		set_spacing(3);
 		
 		pack_start(iconCol, false);
 		pack_start(textCol, false);
+
+		if (useMarkup)
+		{
+			Glib::ListHandle<Gtk::CellRenderer*> renderers = get_cell_renderers();
+
+			for (Glib::ListHandle<Gtk::CellRenderer*>::iterator i = renderers.begin();
+				 i != renderers.end(); ++i)
+			{
+				// Find the text renderer and set the markup property
+				Gtk::CellRendererText* renderer = dynamic_cast<Gtk::CellRendererText*>(*i);
+
+				if (renderer != NULL)
+				{
+					clear_attributes(*renderer);
+					add_attribute(renderer->property_markup(), textCol);
+					break;
+				}
+			}
+		}
 	}
 };
 
