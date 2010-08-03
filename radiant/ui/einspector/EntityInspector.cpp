@@ -70,7 +70,8 @@ EntityInspector::EntityInspector() :
 
 void EntityInspector::construct()
 {
-	_kvStore = Gtk::ListStore::create(_columns);
+	_columns.reset(new ListStoreColumns);
+	_kvStore = Gtk::ListStore::create(*_columns);
   
 	_keyValueTreeView = Gtk::manage(new Gtk::TreeView(_kvStore));
 
@@ -190,20 +191,20 @@ void EntityInspector::onKeyChange(const std::string& key,
     // Set the values for the row
 	Gtk::TreeModel::Row row = *keyValueIter;
 
-	row[_columns.name] = key;
-	row[_columns.value] = value;
-	row[_columns.colour] = "black";
-	row[_columns.icon] = PropertyEditorFactory::getPixbufFor(parms.type);
-	row[_columns.isInherited] = false;
-	row[_columns.hasHelpText] = hasDescription;
-	row[_columns.helpIcon] = hasDescription 
+	row[_columns->name] = key;
+	row[_columns->value] = value;
+	row[_columns->colour] = "black";
+	row[_columns->icon] = PropertyEditorFactory::getPixbufFor(parms.type);
+	row[_columns->isInherited] = false;
+	row[_columns->hasHelpText] = hasDescription;
+	row[_columns->helpIcon] = hasDescription 
                           ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME) 
 						  : Glib::RefPtr<Gdk::Pixbuf>();
 
 	// Check if we should update the key/value entry boxes
 	std::string curKey = _keyEntry->get_text();
 
-	std::string selectedKey = getListSelection(_columns.name);
+	std::string selectedKey = getListSelection(_columns->name);
 
 	// If the key in the entry box matches the key which got changed,
 	// update the value accordingly, otherwise leave it alone. This is to fix
@@ -366,13 +367,13 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 
 	Gtk::CellRendererPixbuf* pixRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
 	nameCol->pack_start(*pixRenderer, false);
-	nameCol->add_attribute(pixRenderer->property_pixbuf(), _columns.icon);
+	nameCol->add_attribute(pixRenderer->property_pixbuf(), _columns->icon);
 	
 	Gtk::CellRendererText* textRenderer = Gtk::manage(new Gtk::CellRendererText);
 	nameCol->pack_start(*textRenderer, false);
-	nameCol->add_attribute(textRenderer->property_text(), _columns.name);
-	nameCol->add_attribute(textRenderer->property_foreground(), _columns.colour);
-    nameCol->set_sort_column(_columns.name);
+	nameCol->add_attribute(textRenderer->property_text(), _columns->name);
+	nameCol->add_attribute(textRenderer->property_foreground(), _columns->colour);
+    nameCol->set_sort_column(_columns->name);
 	
 	_keyValueTreeView->append_column(*nameCol);
 
@@ -382,9 +383,9 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 	
 	Gtk::CellRendererText* valRenderer = Gtk::manage(new Gtk::CellRendererText);
 	valCol->pack_start(*valRenderer, true);
-	valCol->add_attribute(valRenderer->property_text(), _columns.value);
-	valCol->add_attribute(valRenderer->property_foreground(), _columns.colour);
-	valCol->set_sort_column(_columns.value);
+	valCol->add_attribute(valRenderer->property_text(), _columns->value);
+	valCol->add_attribute(valRenderer->property_foreground(), _columns->colour);
+	valCol->set_sort_column(_columns->value);
 
     _keyValueTreeView->append_column(*valCol);
     
@@ -403,7 +404,7 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 	// Add the help icon
 	Gtk::CellRendererPixbuf* pixRend = Gtk::manage(new Gtk::CellRendererPixbuf);
 	_helpColumn->pack_start(*pixRend, false);
-	_helpColumn->add_attribute(pixRend->property_pixbuf(), _columns.helpIcon);
+	_helpColumn->add_attribute(pixRend->property_pixbuf(), _columns->helpIcon);
 
 	_keyValueTreeView->append_column(*_helpColumn);
 	
@@ -668,7 +669,7 @@ void EntityInspector::_onAddKey()
 
 void EntityInspector::_onDeleteKey()
 {
-	std::string prop = getListSelection(_columns.name);
+	std::string prop = getListSelection(_columns->name);
 
 	if (!prop.empty())
 	{
@@ -682,7 +683,7 @@ bool EntityInspector::_testDeleteKey()
 {
 	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
-	if (getListSelection(_columns.isInherited) == false)
+	if (getListSelection(_columns->isInherited) == false)
 		return true;
 	else
 		return false;
@@ -690,8 +691,8 @@ bool EntityInspector::_testDeleteKey()
 
 void EntityInspector::_onCopyKey()
 {
-	std::string key = getListSelection(_columns.name);
-    std::string value = getListSelection(_columns.value);
+	std::string key = getListSelection(_columns->name);
+    std::string value = getListSelection(_columns->value);
 
 	if (!key.empty()) {
 		_clipBoard.key = key;
@@ -701,13 +702,13 @@ void EntityInspector::_onCopyKey()
 
 bool EntityInspector::_testCopyKey()
 {
-	return !getListSelection(_columns.name).empty();
+	return !getListSelection(_columns->name).empty();
 }
 
 void EntityInspector::_onCutKey()
 {
-	std::string key = getListSelection(_columns.name);
-    std::string value = getListSelection(_columns.value);
+	std::string key = getListSelection(_columns->name);
+    std::string value = getListSelection(_columns->value);
 
 	if (!key.empty() && _selectedEntity != NULL)
 	{
@@ -725,10 +726,10 @@ bool EntityInspector::_testCutKey()
 {
 	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
-	if (getListSelection(_columns.isInherited) == false)
+	if (getListSelection(_columns->isInherited) == false)
 	{
 		// return true only if selection is not empty
-		return !getListSelection(_columns.name).empty();
+		return !getListSelection(_columns->name).empty();
 	}
 	else
 	{
@@ -812,11 +813,11 @@ bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const
 			Gtk::TreeModel::Row row = *iter;
 
 			// Get the key pointed at
-			bool hasHelp = row[_columns.hasHelpText];
+			bool hasHelp = row[_columns->hasHelpText];
 
 			if (hasHelp)
 			{
-				std::string key = Glib::ustring(row[_columns.name]);
+				std::string key = Glib::ustring(row[_columns->name]);
 
 				IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
 				assert(eclass != NULL);
@@ -849,8 +850,8 @@ void EntityInspector::treeSelectionChanged()
 		return;
 
     // Get the selected key and value in the tree view
-    std::string key = getListSelection(_columns.name);
-    std::string value = getListSelection(_columns.value);
+    std::string key = getListSelection(_columns->name);
+    std::string value = getListSelection(_columns->value);
 
     // Get the type for this key if it exists, and the options
 	PropertyParms parms = getPropertyParmsForKey(key);
@@ -967,7 +968,7 @@ void EntityInspector::addClassProperties()
 	};
 
 	// Visit the entity class
-	ClassPropertyVisitor visitor(_kvStore, _columns);
+	ClassPropertyVisitor visitor(_kvStore, *_columns);
 	eclass->forEachClassAttribute(visitor);
 }
 
@@ -980,7 +981,7 @@ void EntityInspector::removeClassProperties()
 	for (Gtk::TreeModel::iterator iter = children.begin(); iter; /* in-loop increment */)
 	{
 		// If this is an inherited row, remove it, otherwise move to the next row
-		bool inherited = (*iter)[_columns.isInherited];
+		bool inherited = (*iter)[_columns->isInherited];
 
         if (inherited)
         {
