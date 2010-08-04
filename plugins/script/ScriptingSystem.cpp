@@ -177,7 +177,7 @@ void ScriptingSystem::initialise()
 	// Add the scripting widget to the groupdialog
 	GlobalGroupDialog().addPage(
 		"ScriptWindow", _("Script"), "icon_script.png", 
-		ScriptWindow::Instance().getWidget(), 
+		*Glib::wrap(ScriptWindow::Instance().getWidget(), true), 
 		_("Script"), "console"
 	);
 }

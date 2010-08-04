@@ -91,7 +91,7 @@ void EmbeddedLayout::activate()
 	GlobalEntityInspector().restoreSettings();
 
 	// Reparent the notebook to our local pane (after the other widgets have been realised)
-	GlobalGroupDialog().reparentNotebook(GTK_WIDGET(groupPane->gobj()));
+	GlobalGroupDialog().reparentNotebook(groupPane);
 
 	// Hide the floating window again
 	GlobalGroupDialog().hideDialogWindow();
@@ -106,7 +106,7 @@ void EmbeddedLayout::activate()
     	"textures",	// name
     	"Textures", // tab title
     	"icon_texture.png", // tab icon 
-    	GTK_WIDGET(texWindow->gobj()), // page widget
+    	*texWindow, // page widget
     	_("Texture Browser")
     );
 
@@ -135,7 +135,7 @@ void EmbeddedLayout::deactivate()
 	_camWnd = CamWndPtr();
 
 	// Give the notebook back to the GroupDialog
-	GlobalGroupDialog().reparentNotebook(GlobalGroupDialog().getDialogWindow());
+	GlobalGroupDialog().reparentNotebookToSelf();
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();

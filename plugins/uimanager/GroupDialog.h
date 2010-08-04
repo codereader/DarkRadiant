@@ -6,23 +6,24 @@
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
-/** greebo: The GroupDialog class creates the Window and the Notebook widget
- * 			as soon as construct() is called. 
+namespace Gtk { class Notebook; class Widget; }
+typedef struct _GtkNotebookPage GtkNotebookPage;
+
+/** 
+ * greebo: The GroupDialog class creates the Window and the Notebook widget
+ * as soon as construct() is called. 
  * 
- * 			Use the Instance() method to access the static instance of this dialog and 
- * 			the addPage method to add new notebook tabs. 
+ * Use the Instance() method to access the static instance of this dialog and 
+ * the addPage method to add new notebook tabs. 
  * 
- * 			ui::GroupDialog::Instance().addPage()
+ * ui::GroupDialog::Instance().addPage()
  * 
- * 			The name passed to the addPage() method can be used to directly toggle 
- * 			the notebook widgets via setPage(<name>).
+ * The name passed to the addPage() method can be used to directly toggle 
+ * the notebook widgets via setPage(<name>).
  */
  
-// Forward Declarations
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkWindow GtkWindow;
-
-namespace ui {
+namespace ui
+{
 
 class GroupDialog;
 typedef boost::shared_ptr<GroupDialog> GroupDialogPtr;
@@ -36,9 +37,10 @@ class GroupDialog
 	gtkutil::WindowPosition _windowPosition;
 
 	// The structure for each notebook page
-	struct Page {
+	struct Page
+	{
 		std::string name;
-		GtkWidget* page;
+		Gtk::Widget* page;
 		std::string title;
 	};
 	typedef std::vector<Page> Pages;
@@ -47,7 +49,7 @@ class GroupDialog
 	Pages _pages;
 
 	// The tab widget
-	GtkWidget* _notebook;
+	Gtk::Notebook* _notebook;
 	
 	// The page number of the currently active page widget
 	int _currentPage;
@@ -68,9 +70,9 @@ public:
 	static void construct();
 
 	// Documentation: see igroupdialog.h
-	GtkWidget* addPage(const std::string& name, 
+	Gtk::Widget* addPage(const std::string& name, 
 					   const std::string& tabLabel, const std::string& tabIcon, 
-					   GtkWidget* page, const std::string& windowLabel,
+					   Gtk::Widget& page, const std::string& windowLabel,
 					   const std::string& insertBefore);
 
 	// Removes a given page
@@ -81,7 +83,7 @@ public:
 	 * @page: The widget that should be displayed, must have been added
 	 * 		  using addPage() beforehand.
 	 */
-	void setPage(GtkWidget* page);
+	void setPage(Gtk::Widget* page);
 	
 	/** greebo: Activated the named page. The <name> parameter
 	 * 			refers to the name string passed to the addPage() method.
@@ -93,7 +95,7 @@ public:
 	
 	/** greebo: Returns the widget of the currently visible page.
 	 */
-	GtkWidget* getPage();
+	Gtk::Widget* getPage();
 
 	/**
 	 * greebo: Returns the name of the current groupdialog page or "" if none is set.
@@ -101,12 +103,13 @@ public:
 	std::string getPageName();
 
 	// Returns the window widget containing the GroupDialog.
-	GtkWidget* getDialogWindow();
+	Glib::RefPtr<Gtk::Window> getDialogWindow();
 	void showDialogWindow();
 	void hideDialogWindow();
 
 	// Detaches the notebook and relocates it to another parent container
-	void reparentNotebook(GtkWidget* newParent);
+	void reparentNotebook(Gtk::Widget* newParent);
+	void reparentNotebookToSelf();
 	
 	/** greebo: Safely disconnects this window from
 	 * 			the eventmanager and saves the window position.
@@ -134,12 +137,8 @@ private:
 	 */
 	void updatePageTitle(unsigned int pageNumber);
 	
-	// The callback to catch the "delete-event"
-	static gboolean onDelete(GtkWidget* widget, GdkEvent* event, GroupDialog* self);
-	
 	// Gets called when the user selects a new tab (updates the title)
-	static gboolean onPageSwitch(GtkWidget* notebook, GtkWidget* page, 
-								 guint pageNumber, GroupDialog* self);
+	void onPageSwitch(GtkNotebookPage* notebookPage, guint pageNumber);
 };
 
 } // namespace ui

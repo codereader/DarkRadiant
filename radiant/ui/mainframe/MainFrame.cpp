@@ -425,7 +425,7 @@ void MainFrame::create()
     	"entity",	// name
     	"Entity", // tab title
     	"cmenu_add_entity.png", // tab icon 
-    	GlobalEntityInspector().getWidget().gobj(), // page widget
+    	GlobalEntityInspector().getWidget(), // page widget
     	_("Entity")
     );
 
@@ -434,7 +434,7 @@ void MainFrame::create()
     	"mediabrowser",	// name
     	"Media", // tab title
     	"folder16.png", // tab icon 
-    	MediaBrowser::getInstance().getWidget()->gobj(), // page widget
+    	*MediaBrowser::getInstance().getWidget(), // page widget
     	_("Media")
     );
 	
@@ -444,7 +444,7 @@ void MainFrame::create()
     	"console",	// name
     	"Console", // tab title
     	"iconConsole16.png", // tab icon 
-		GTK_WIDGET(Console::Instance().gobj()), // page widget
+		Console::Instance(), // page widget
     	_("Console")
     );
 

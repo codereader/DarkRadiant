@@ -102,7 +102,7 @@ void SplitPaneLayout::constructLayout()
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
-	    	GTK_WIDGET(textureBrowser->gobj()), // page widget
+	    	*textureBrowser, // page widget
 	    	_("Texture Browser")
 	    );
     }

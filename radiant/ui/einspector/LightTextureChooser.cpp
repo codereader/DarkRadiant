@@ -51,9 +51,7 @@ LightTextureChooser::LightTextureChooser()
 	_selector(Gtk::manage(new ShaderSelector(this, getPrefixList(), true))) // true >> render a light texture
 {
 	// Set the default size of the window
-	GtkWidget* gd = GlobalGroupDialog().getDialogWindow();
-	Gtk::Window* gdWin = Glib::wrap(GTK_WINDOW(gd), true);
-	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(*gdWin);
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalGroupDialog().getDialogWindow());
 	set_default_size(static_cast<int>(rect.get_width()*0.6f), static_cast<int>(rect.get_height()*0.6f));
 	
 	// Construct main VBox, and pack in ShaderSelector and buttons panel
