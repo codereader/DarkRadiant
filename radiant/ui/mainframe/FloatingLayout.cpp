@@ -51,18 +51,18 @@ void FloatingLayout::activate() {
 		globalErrorStream() << "Could not connect ToggleCamera event\n";
 	}
 
-	Glib::RefPtr<Gtk::Window> groupDialog(Glib::wrap(GTK_WINDOW(GlobalGroupDialog().getDialogWindow()), true));
+	Glib::RefPtr<Gtk::Window> groupDialog(GlobalGroupDialog().getDialogWindow());
 
-	GtkWidget* page = gtkutil::FramedWidget(
-		GlobalTextureBrowser().constructWindow(groupDialog)->gobj()
-	);
+	Gtk::Widget* page = Gtk::manage(new gtkutil::FramedWidgetmm(
+		*GlobalTextureBrowser().constructWindow(groupDialog)
+	));
 
 	// Add the Texture Browser page to the group dialog
 	GlobalGroupDialog().addPage(
     	"textures",	// name
     	"Textures", // tab title
     	"icon_texture.png", // tab icon 
-    	GTK_WIDGET(page), // page widget
+    	*page, // page widget
     	_("Texture Browser")
     );
 
@@ -90,7 +90,7 @@ void FloatingLayout::deactivate()
 
 	// Save groupdialog state
 	GlobalRegistry().set(RKEY_GROUPDIALOG_VISIBLE, 
-		GTK_WIDGET_VISIBLE(GlobalGroupDialog().getDialogWindow()) ? "1" : "0");
+		GlobalGroupDialog().getDialogWindow()->is_visible() ? "1" : "0");
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
