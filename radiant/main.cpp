@@ -25,6 +25,7 @@
 #include "settings/LanguageManager.h"
 
 #include <gtkmm/main.h>
+#include <gtksourceviewmm/init.h>
 
 #ifdef _PROFILE
 #include "Profile.h"
@@ -71,6 +72,9 @@ int main (int argc, char* argv[]) {
 
 	// Initialise gtkmm
 	Gtk::Main gtkmm_main(argc, argv);
+
+	// Initialise gtksourceviewmm
+	gtksourceview::init();
 
     // Initialise GTKGLExt
     gtk_gl_init(&argc, &argv);
