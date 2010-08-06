@@ -68,8 +68,8 @@ GOTO GTKMM_END
 
 :GTKMM_END
 
-@rem Copy the compiled GtkSourceView x64 DLLs to install
-copy ..\..\build\libs\x64\libgtksourceview.dll ..\..\install /Y
+@rem Copy the GtkSourceView x64 DLL to install
+copy ..\..\w64deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install /Y
 
 @rem Copy the compiled GTKGlext x64 DLLs to install
 copy ..\..\build\libs\x64\libgdkglext.dll ..\..\install /Y

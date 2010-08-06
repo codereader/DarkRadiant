@@ -74,7 +74,7 @@ GOTO GTKMM_END
 :GTKMM_END
 
 @rem Copy the compiled GtkSourceView x86 DLLs to install
-copy ..\..\build\libs\Win32\libgtksourceview.dll ..\..\install /Y
+copy ..\..\w32deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install /Y
 
 @rem Copy the compiled GTKGlext x86 DLLs to install
 copy ..\..\build\libs\Win32\libgdkglext.dll ..\..\install /Y
