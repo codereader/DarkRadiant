@@ -50,6 +50,7 @@ IF "%1" == "Debug" GOTO GTKMM_DEBUG
 	copy ..\..\w64deps\gtkmm\bin\gtkmm-vc90-2_4.dll ..\..\install /Y
 	copy ..\..\w64deps\gtkmm\bin\pangomm-vc90-1_4.dll ..\..\install /Y
 	copy ..\..\w64deps\gtkmm\bin\sigc-vc90-2_0.dll ..\..\install /Y
+	copy ..\..\w64deps\gtksourceviewmm\bin\gtksourceviewmm-vc90-2_2.dll ..\..\install /Y
 
 GOTO GTKMM_END
 
@@ -63,6 +64,7 @@ GOTO GTKMM_END
 	copy ..\..\w64deps\gtkmm\bin\gtkmm-vc90-d-2_4.dll ..\..\install /Y
 	copy ..\..\w64deps\gtkmm\bin\pangomm-vc90-d-1_4.dll ..\..\install /Y
 	copy ..\..\w64deps\gtkmm\bin\sigc-vc90-d-2_0.dll ..\..\install /Y
+	copy ..\..\w64deps\gtksourceviewmm\bin\gtksourceviewmm-vc90-d-2_2.dll ..\..\install /Y
 
 :GTKMM_END
 
