@@ -20,6 +20,8 @@
 #include <gtkmm/box.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/frame.h>
+#include <gtkmm/dialog.h>
+#include <gtkmm/stock.h>
 
 #include <iostream>
 #include <map>
@@ -386,30 +388,23 @@ void MediaBrowser::_onShowShaderDefinition()
 	std::string shaderName = getSelectedName();
 
 	// Construct a shader view and pass the shader name
-	ShaderDefinitionView view;
-	view.setShader(shaderName);
+	ShaderDefinitionView* view = Gtk::manage(new ShaderDefinitionView);
+	view->setShader(shaderName);
 
-	GtkWidget* dialog = gtk_dialog_new_with_buttons(_("View Shader Definition"), 
-		GlobalMainFrame().getTopLevelWindow()->gobj(),
-        GTK_DIALOG_DESTROY_WITH_PARENT, 
-        GTK_STOCK_CLOSE, GTK_RESPONSE_OK,
-        NULL);
+	Gtk::Dialog dialog(_("View Shader Definition"), GlobalMainFrame().getTopLevelWindow(), true);
 
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), 12);
-
-	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), view.getWidget());
+	dialog.add_button(Gtk::Stock::CLOSE, Gtk::RESPONSE_OK);
+	dialog.set_border_width(12);
+	
+	dialog.get_vbox()->add(*view);
 
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
-	gtk_window_set_default_size(
-		GTK_WINDOW(dialog), static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3)
-	);
+	dialog.set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
 
-	gtk_widget_show_all(dialog);
+	dialog.show_all();
 
 	// Show and block
-	gtk_dialog_run(GTK_DIALOG(dialog));
-
-	gtk_widget_destroy(dialog);
+	dialog.run();
 }
 
 

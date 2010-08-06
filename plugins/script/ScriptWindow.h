@@ -19,8 +19,7 @@ class ScriptWindow
 	// Use a standard console window for the script output
 	gtkutil::ConsoleView _outView;
 
-	GtkWidget* _inScrolled;
-	gtkutil::SourceView _view;
+	gtkutil::SourceView* _view;
 		
 	// Private Constructor
 	ScriptWindow();

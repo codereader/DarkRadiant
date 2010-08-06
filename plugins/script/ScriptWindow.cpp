@@ -24,10 +24,10 @@ namespace script
 
 ScriptWindow::ScriptWindow() :
 	_vbox(gtk_vbox_new(FALSE, 6)),
-	_view(SCRIPT_LANGUAGE_ID, false) // allow editing
+	_view(Gtk::manage(new gtkutil::SourceView(SCRIPT_LANGUAGE_ID, false))) // allow editing
 {
 	// The Sourceview is already contained in a scrolled frame
-	_inScrolled = _view.getWidget();
+	GtkWidget* _inScrolled = GTK_WIDGET(_view->gobj());
 
 	gtk_container_set_focus_chain(GTK_CONTAINER(_inScrolled), NULL);
 
@@ -68,7 +68,7 @@ void ScriptWindow::onRunScript(GtkWidget* button, ScriptWindow* self)
 	self->_outView.clear();
 
 	// Extract the script from the input window
-	std::string scriptString = self->_view.getContents();
+	std::string scriptString = self->_view->getContents();
 
 	if (scriptString.empty()) return;
 	
