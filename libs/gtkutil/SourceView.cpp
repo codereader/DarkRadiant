@@ -17,16 +17,11 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	set_shadow_type(Gtk::SHADOW_ETCHED_IN);
 
 	// Set the search path to the language and style files
-	//gchar* directories[2];
-
 #if defined(POSIX) && defined(PKGDATADIR)
 	std::string langFilesDir = std::string(PKGDATADIR) + "/sourceviewer/";
 #else
 	std::string langFilesDir = GlobalRegistry().get(RKEY_APP_PATH) + "sourceviewer/";
 #endif
-
-	//directories[0] = const_cast<gchar*>(langFilesDir.c_str()); // stupid GtkSourceLanguageManager is expecting non-const gchar* pointer...
-	//directories[1] = NULL;
 
 	std::vector<Glib::ustring> path;
 	path.push_back(langFilesDir);
