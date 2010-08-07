@@ -53,10 +53,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mapdoom3", "mapdoom3.vcproj
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gtkutillib", "gtkutillib.vcproj", "{B6D4B38A-0C39-42CD-8193-75979E1F4D68}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E0851752-875E-411F-B667-C47AD8930165} = {E0851752-875E-411F-B667-C47AD8930165}
-		{C001FB56-998C-414A-A87D-BD48043CFD48} = {C001FB56-998C-414A-A87D-BD48043CFD48}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "md5model", "md5model.vcproj", "{D39D8067-7DE5-4BC2-8471-CFE99B00B042}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -138,13 +134,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.conversation", "dm.conve
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libzlib", "libzlib\libzlib.vcproj", "{BEC4EE48-0806-4E16-A16C-3E43D39763D6}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgtkglext", "libgtkglext\libgtkglext.vcproj", "{E0851752-875E-411F-B667-C47AD8930165}"
-	ProjectSection(ProjectDependencies) = postProject
-		{C001FB56-998C-414A-A87D-BD48043CFD48} = {C001FB56-998C-414A-A87D-BD48043CFD48}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libgdkglext", "libgdkglext\libgdkglext.vcproj", "{C001FB56-998C-414A-A87D-BD48043CFD48}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "script", "script.vcproj", "{979A38FE-BE30-4121-845C-B705461BB1B0}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -474,22 +463,6 @@ Global
 		{BEC4EE48-0806-4E16-A16C-3E43D39763D6}.Release|Win32.Build.0 = Release|Win32
 		{BEC4EE48-0806-4E16-A16C-3E43D39763D6}.Release|x64.ActiveCfg = Release|x64
 		{BEC4EE48-0806-4E16-A16C-3E43D39763D6}.Release|x64.Build.0 = Release|x64
-		{E0851752-875E-411F-B667-C47AD8930165}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E0851752-875E-411F-B667-C47AD8930165}.Debug|Win32.Build.0 = Debug|Win32
-		{E0851752-875E-411F-B667-C47AD8930165}.Debug|x64.ActiveCfg = Debug|x64
-		{E0851752-875E-411F-B667-C47AD8930165}.Debug|x64.Build.0 = Debug|x64
-		{E0851752-875E-411F-B667-C47AD8930165}.Release|Win32.ActiveCfg = Release|Win32
-		{E0851752-875E-411F-B667-C47AD8930165}.Release|Win32.Build.0 = Release|Win32
-		{E0851752-875E-411F-B667-C47AD8930165}.Release|x64.ActiveCfg = Release|x64
-		{E0851752-875E-411F-B667-C47AD8930165}.Release|x64.Build.0 = Release|x64
-		{C001FB56-998C-414A-A87D-BD48043CFD48}.Debug|Win32.ActiveCfg = Debug|Win32
-		{C001FB56-998C-414A-A87D-BD48043CFD48}.Debug|Win32.Build.0 = Debug|Win32
-		{C001FB56-998C-414A-A87D-BD48043CFD48}.Debug|x64.ActiveCfg = Debug|x64
-		{C001FB56-998C-414A-A87D-BD48043CFD48}.Debug|x64.Build.0 = Debug|x64
-		{C001FB56-998C-414A-A87D-BD48043CFD48}.Release|Win32.ActiveCfg = Release|Win32
-		{C001FB56-998C-414A-A87D-BD48043CFD48}.Release|Win32.Build.0 = Release|Win32
-		{C001FB56-998C-414A-A87D-BD48043CFD48}.Release|x64.ActiveCfg = Release|x64
-		{C001FB56-998C-414A-A87D-BD48043CFD48}.Release|x64.Build.0 = Release|x64
 		{979A38FE-BE30-4121-845C-B705461BB1B0}.Debug|Win32.ActiveCfg = Debug|Win32
 		{979A38FE-BE30-4121-845C-B705461BB1B0}.Debug|Win32.Build.0 = Debug|Win32
 		{979A38FE-BE30-4121-845C-B705461BB1B0}.Debug|x64.ActiveCfg = Debug|x64
