@@ -39,7 +39,7 @@ private:
 	InfoStoreColumns _infoStoreColumns;
 
 	// The OpenGL preview widget
-	gtkutil::GLWidgetPtr _glWidget;
+	gtkutil::GLWidget* _glWidget;
 	
 	// The texture to preview
 	std::string _texName;

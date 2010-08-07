@@ -9,12 +9,13 @@
 class OpenGLModule :
 	public OpenGLBinding
 {
+private:
 	const std::string _unknownError;
 		
 	GLFont _font;
 
 	// The (singleton) widget holding the context
-	GtkWidget* _sharedContext;
+	Gtk::Widget* _sharedContext;
 	
 	// Holds the number of realised GL widgets
 	std::size_t _realisedGLWidgets;
@@ -28,9 +29,9 @@ public:
 	virtual void drawChar(char character) const;
 
 	// GtkGLext context management
-	virtual GtkWidget* getGLContextWidget();
-	virtual GtkWidget* registerGLWidget(GtkWidget* widget);
-	virtual void unregisterGLWidget(GtkWidget* widget);
+	virtual Gtk::Widget* getGLContextWidget();
+	virtual Gtk::Widget* registerGLWidget(Gtk::Widget* widget);
+	virtual void unregisterGLWidget(Gtk::Widget* widget);
 	
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

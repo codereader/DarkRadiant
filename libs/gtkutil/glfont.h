@@ -26,23 +26,33 @@ typedef unsigned int GLuint;
 
 class GLFont
 {
-  GLuint m_displayList;
-  int m_pixelHeight;
+private:
+	GLuint m_displayList;
+	int m_pixelHeight;
 public:
-  GLFont(GLuint displayList, int pixelHeight) : m_displayList(displayList), m_pixelHeight(pixelHeight)
-  {
-  }
-  GLuint getDisplayList() const
-  {
-    return m_displayList;
-  }
-  int getPixelHeight() const
-  {
-    return m_pixelHeight;
-  }
-};
+	GLFont(GLuint displayList, int pixelHeight) : 
+		m_displayList(displayList), 
+		m_pixelHeight(pixelHeight)
+	{}
 
-GLFont glfont_create(const char* font_string);
-void glfont_release(GLFont& font);
+	GLuint getDisplayList() const
+	{
+		return m_displayList;
+	}
+
+	int getPixelHeight() const
+	{
+		return m_pixelHeight;
+	}
+
+	void clear()
+	{
+		m_displayList = 0;
+		m_pixelHeight = 0;
+	}
+
+	static GLFont create(const char* fontString);
+	static void release(GLFont& font);
+};
 
 #endif

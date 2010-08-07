@@ -79,7 +79,7 @@ private:
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	
 	// GL preview widget
-	gtkutil::GLWidget _glWidget;
+	gtkutil::GLWidget* _glWidget;
 	
 	// The client of this class.
 	Client* _client;

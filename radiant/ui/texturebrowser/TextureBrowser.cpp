@@ -923,22 +923,19 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 		}
 
 		{
-			// Cast gtkutil::GLWidget to GtkWidget*
-			Gtk::Widget* glWidget = Glib::wrap(*_glWidget, true);
-
-			glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | 
+			_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | 
 								 Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
-			glWidget->set_flags(Gtk::CAN_FOCUS);
+			_glWidget->set_flags(Gtk::CAN_FOCUS);
 
-			texbox->pack_start(*glWidget, true, true, 0);
-			glWidget->show();
+			texbox->pack_start(*_glWidget, true, true, 0);
+			_glWidget->show();
 
-			glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &TextureBrowser::onSizeAllocate));
-			glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TextureBrowser::onExpose));
-			glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonPress));
-			glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonRelease));
-			glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &TextureBrowser::onMouseMotion));
-			glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TextureBrowser::onMouseScroll));
+			_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &TextureBrowser::onSizeAllocate));
+			_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TextureBrowser::onExpose));
+			_glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonPress));
+			_glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonRelease));
+			_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &TextureBrowser::onMouseMotion));
+			_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TextureBrowser::onMouseScroll));
 		}
 	}
 	

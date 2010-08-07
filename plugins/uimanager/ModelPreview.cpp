@@ -9,8 +9,12 @@
 #include "modelskin.h"
 #include "entitylib.h"
 
-#include <gtk/gtk.h>
 #include "iuimanager.h"
+
+#include <gtkmm/box.h>
+#include <gtkmm/toolbar.h>
+#include <gtkmm/image.h>
+#include <gtkmm/toggletoolbutton.h>
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -28,68 +32,68 @@ namespace {
 // Construct the widgets
 
 ModelPreview::ModelPreview() :
-	_widget(gtk_frame_new(NULL)),
-	_glWidget(true),
+	Gtk::Frame(),
+	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ModelPreview"))),
 	_lastModel(""),
 	_filtersMenu(GlobalUIManager().createFilterMenu())
 {
 	// Main vbox - above is the GL widget, below is the toolbar
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
 	
 	// Cast the GLWidget object to GtkWidget for further use
-	GtkWidget* glWidget = _glWidget;
-	gtk_box_pack_start(GTK_BOX(vbx), glWidget, TRUE, TRUE, 0);
+	vbx->pack_start(*_glWidget, true, true, 0);
 	
 	// Connect up the signals
-	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | 
-									GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | 
-									GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(callbackGLDraw), this);
-	g_signal_connect(G_OBJECT(glWidget), "motion-notify-event", G_CALLBACK(callbackGLMotion), this);
-	g_signal_connect(G_OBJECT(glWidget), "scroll-event", G_CALLBACK(callbackGLScroll), this);
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | 
+						 Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+	
+	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLDraw));
+	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLMotion));
+	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLScroll));
 	
 	// The HBox containing the toolbar and the menubar
-	GtkWidget* toolHBox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(vbx), toolHBox, FALSE, FALSE, 0);
+	Gtk::HBox* toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
+	vbx->pack_end(*toolHBox, false, false, 0);
 
 	// Create the toolbar
-	GtkWidget* toolbar = gtk_toolbar_new();
-	gtk_toolbar_set_style(GTK_TOOLBAR(toolbar), GTK_TOOLBAR_ICONS);
-	gtk_box_pack_end(GTK_BOX(toolHBox), toolbar, TRUE, TRUE, 0);
+	Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
+	toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
+	toolHBox->pack_end(*toolbar, true, true, 0);
 		
 	// Draw bounding box toolbar button
-	_drawBBox = gtk_toggle_tool_button_new();
-	g_signal_connect(G_OBJECT(_drawBBox), "toggled", G_CALLBACK(callbackToggleBBox), this);
-    gtk_tool_button_set_icon_widget(
-    	GTK_TOOL_BUTTON(_drawBBox), 
-		gtk_image_new_from_pixbuf(
-			GlobalUIManager().getLocalPixbuf("iconDrawBBox.png")->gobj()));
-	gtk_toolbar_insert(GTK_TOOLBAR(toolbar), _drawBBox, 0);
+	_drawBBox = Gtk::manage(new Gtk::ToggleToolButton);
+	_drawBBox->signal_toggled().connect(sigc::mem_fun(*this, &ModelPreview::callbackToggleBBox));
+	
+	_drawBBox->set_icon_widget(*Gtk::manage(new Gtk::Image(
+		GlobalUIManager().getLocalPixbuf("iconDrawBBox.png"))));
+	toolbar->insert(*_drawBBox, 0);
 	
 	// Create the menu
-	gtk_box_pack_end(GTK_BOX(toolHBox), _filtersMenu->getMenuBarWidget(), FALSE, FALSE, 0);
+	toolHBox->pack_end(*Glib::wrap(_filtersMenu->getMenuBarWidget(), true), false, false, 0);
 
 	// Pack into a frame and return
-	gtk_container_add(GTK_CONTAINER(_widget), vbx);
+	add(*vbx);
 }
 
 // Set the size request for the widget
 
-void ModelPreview::setSize(int size) {
-	gtk_widget_set_size_request(_glWidget, size, size);	
+void ModelPreview::setSize(int size)
+{
+	_glWidget->set_size_request(size, size);
 }
 
-void ModelPreview::clear() {
+void ModelPreview::clear()
+{
 	_modelCache.clear();
 	_model = model::IModelPtr();
 }
 
 // Initialise the preview GL stuff
 
-void ModelPreview::initialisePreview() {
-
+void ModelPreview::initialisePreview()
+{
 	// Grab the GL widget with sentry object
-	gtkutil::GLWidgetSentry sentry(_glWidget);
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
 	// Clear the window
 	glEnable(GL_DEPTH_TEST);
@@ -127,8 +131,8 @@ void ModelPreview::initialisePreview() {
 
 // Set the model, this also resets the camera
 
-void ModelPreview::setModel(const std::string& model) {
-
+void ModelPreview::setModel(const std::string& model)
+{
 	// If the model name is empty, release the model
 	if (model == "") {
 		_model = model::IModelPtr();
@@ -190,7 +194,7 @@ void ModelPreview::setModel(const std::string& model) {
 	}
 
 	// Redraw
-	gtk_widget_queue_draw(_glWidget);
+	_glWidget->queueDraw();
 }
 
 // Set the skin, this does NOT reset the camera
@@ -205,17 +209,18 @@ void ModelPreview::setSkin(const std::string& skin) {
 	}
 	
 	// Redraw
-	gtk_widget_queue_draw(_glWidget);
+	_glWidget->queueDraw();
 }
 
-/* GTK CALLBACKS */
+Gtk::Widget* ModelPreview::getWidget()
+{
+	return this;
+}
 
-void ModelPreview::callbackGLDraw(GtkWidget* widget, 
-								  GdkEventExpose* ev, 
-								  ModelPreview* self) 
+bool ModelPreview::callbackGLDraw(GdkEventExpose* ev) 
 {
 	// Create scoped sentry object to swap the GLWidget's buffers
-	gtkutil::GLWidgetSentry sentry(self->_glWidget);
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
 	// Set up the render
 	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
@@ -223,20 +228,20 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget,
 
 	// Get the current model if it exists, and if so get its AABB and proceed
 	// with rendering, otherwise exit.
-	model::IModelPtr model = self->_model;
+	model::IModelPtr model = _model;
 	if (!model)
-		return;
+		return false;
 		
 	AABB aabb(model->localAABB());
 
 	// Premultiply with the translations
 	glLoadIdentity();
-	glTranslatef(0, 0, self->_camDist); // camera translation
-	glMultMatrixd(self->_rotation); // post multiply with rotations
+	glTranslatef(0, 0, _camDist); // camera translation
+	glMultMatrixd(_rotation); // post multiply with rotations
 	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
 
 	// Render the bounding box if the toggle is active
-	if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(self->_drawBBox))) 
+	if (_drawBBox->get_active())
 	{
 		// Render as fullbright wireframe
 		glDisable(GL_LIGHTING);
@@ -250,10 +255,14 @@ void ModelPreview::callbackGLDraw(GtkWidget* widget,
 	glEnable(GL_LIGHTING);
 	glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
 	model->render(RENDER_TEXTURE_2D);
+
+	return false;
 }
 
-void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, ModelPreview* self) {
-	if (ev->state & GDK_BUTTON1_MASK) { // dragging with mouse button
+bool ModelPreview::callbackGLMotion(GdkEventMotion* ev)
+{
+	if (ev->state & GDK_BUTTON1_MASK) // dragging with mouse button
+	{
 		static gdouble _lastX = ev->x;
 		static gdouble _lastY = ev->y;
 
@@ -272,38 +281,44 @@ void ModelPreview::callbackGLMotion(GtkWidget* widget, GdkEventMotion* ev, Model
 		
 		// Grab the GL widget, and update the modelview matrix with the 
 		// additional rotation
-		if (gtkutil::GLWidget::makeCurrent(widget)) {
-
+		if (gtkutil::GLWidget::makeCurrent(*_glWidget))
+		{
 			// Premultiply the current modelview matrix with the rotation,
 			// in order to achieve rotations in eye space rather than object
 			// space. At this stage we are only calculating and storing the
 			// matrix for the GLDraw callback to use.
 			glLoadIdentity();
 			glRotated(-2, axisRot.x(), axisRot.y(), axisRot.z());
-			glMultMatrixd(self->_rotation);
+			glMultMatrixd(_rotation);
 
 			// Save the new GL matrix for GL draw
-			glGetDoublev(GL_MODELVIEW_MATRIX, self->_rotation);
+			glGetDoublev(GL_MODELVIEW_MATRIX, _rotation);
 
-			gtk_widget_queue_draw(widget); // trigger the GLDraw method to draw the actual model
+			_glWidget->queueDraw(); // trigger the GLDraw method to draw the actual model
 		}
-		
 	}
+
+	return false;
 }
 
-void ModelPreview::callbackGLScroll(GtkWidget* widget, GdkEventScroll* ev, ModelPreview* self) {
-	if (self->_model == NULL) return;
+bool ModelPreview::callbackGLScroll(GdkEventScroll* ev)
+{
+	if (_model == NULL) return false;
 
-	float inc = self->_model->localAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
+	float inc = _model->localAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
 	if (ev->direction == GDK_SCROLL_UP)
-		self->_camDist += inc;
+		_camDist += inc;
 	else if (ev->direction == GDK_SCROLL_DOWN)
-		self->_camDist -= inc;
-	gtk_widget_queue_draw(widget);
+		_camDist -= inc;
+
+	_glWidget->queueDraw();
+
+	return false;
 }
 
-void ModelPreview::callbackToggleBBox(GtkToggleToolButton* b, ModelPreview* self) {
-	gtk_widget_queue_draw(self->_glWidget);
+void ModelPreview::callbackToggleBBox()
+{
+	_glWidget->queueDraw();
 }
 
 } // namespace ui

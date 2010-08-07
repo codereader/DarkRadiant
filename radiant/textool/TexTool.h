@@ -41,7 +41,7 @@ class TexTool
 	gtkutil::WindowPosition _windowPosition;
 
 	// GL widget
-	gtkutil::GLWidget _glWidget;
+	gtkutil::GLWidget* _glWidget;
 	
 	// The shader we're working with (shared ptr)
 	MaterialPtr _shader;
