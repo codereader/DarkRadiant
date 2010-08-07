@@ -56,6 +56,8 @@ IF "%1" == "Debug" GOTO GTKMM_DEBUG
 	copy ..\..\w32deps\gtkmm\bin\pangomm-vc90-1_4.dll ..\..\install /Y
 	copy ..\..\w32deps\gtkmm\bin\sigc-vc90-2_0.dll ..\..\install /Y
 	copy ..\..\w32deps\gtksourceviewmm\bin\gtksourceviewmm-vc90-2_2.dll ..\..\install /Y
+	copy ..\..\w32deps\gtkglextmm\bin\gdkglextmm-vc90-1_2.dll ..\..\install /Y
+	copy ..\..\w32deps\gtkglextmm\bin\gtkglextmm-vc90-1_2.dll ..\..\install /Y
 
 GOTO GTKMM_END
 
@@ -70,15 +72,17 @@ GOTO GTKMM_END
 	copy ..\..\w32deps\gtkmm\bin\pangomm-vc90-d-1_4.dll ..\..\install /Y
 	copy ..\..\w32deps\gtkmm\bin\sigc-vc90-d-2_0.dll ..\..\install /Y
 	copy ..\..\w32deps\gtksourceviewmm\bin\gtksourceviewmm-vc90-d-2_2.dll ..\..\install /Y
+	copy ..\..\w32deps\gtkglextmm\bin\gdkglextmm-vc90-d-1_2.dll ..\..\install /Y
+	copy ..\..\w32deps\gtkglextmm\bin\gtkglextmm-vc90-d-1_2.dll ..\..\install /Y
 
 :GTKMM_END
 
 @rem Copy the compiled GtkSourceView x86 DLLs to install
 copy ..\..\w32deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install /Y
 
-@rem Copy the compiled GTKGlext x86 DLLs to install
-copy ..\..\build\libs\Win32\libgdkglext.dll ..\..\install /Y
-copy ..\..\build\libs\Win32\libgtkglext.dll ..\..\install /Y
+@rem Copy the GTKGlext x86 DLLs to install
+copy ..\..\w32deps\gtkglext\bin\libgdkglext.dll ..\..\install /Y
+copy ..\..\w32deps\gtkglext\bin\libgtkglext.dll ..\..\install /Y
 
 @rem Copy the libxml2 x86 DLL to install
 copy ..\..\w32deps\libxml2\bin\libxml2.dll ..\..\install /Y

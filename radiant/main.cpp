@@ -6,9 +6,6 @@
 #include "iuimanager.h"
 #include "imainframe.h"
 
-#include <gtk/gtkmain.h>
-#include <gtk/gtkgl.h>
-
 #include "os/file.h"
 #include "os/path.h"
 
@@ -25,6 +22,7 @@
 #include "settings/LanguageManager.h"
 
 #include <gtkmm/main.h>
+#include <gtkmm/gl/init.h>
 #include <gtksourceviewmm/init.h>
 
 #ifdef _PROFILE
@@ -76,8 +74,8 @@ int main (int argc, char* argv[]) {
 	// Initialise gtksourceviewmm
 	gtksourceview::init();
 
-    // Initialise GTKGLExt
-    gtk_gl_init(&argc, &argv);
+    // Initialise GTKGLExtmm
+	Gtk::GL::init(argc, argv);
 
 	// reset some locale settings back to standard c
     // this is e.g. needed for parsing float values from textfiles 
