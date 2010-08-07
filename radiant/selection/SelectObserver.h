@@ -1,14 +1,14 @@
 #ifndef SELECTOBSERVER_H_
 #define SELECTOBSERVER_H_
 
-#include "gdk/gdkevents.h"
-
 #include "iselection.h"
 #include "windowobserver.h"
 #include "Device.h"
 #include "SelectionBox.h"
 #include "view.h"
 #include <boost/function.hpp>
+
+typedef struct _GdkEventButton GdkEventButton;
 
 /* greebo: This is the class that handles the selection-related mouse operations, like Alt-Shift-Click,
  * Selection toggles and drag selections. All the other modifier combinations that might occur are ignored,

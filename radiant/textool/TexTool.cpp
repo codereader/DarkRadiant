@@ -51,7 +51,7 @@ namespace ui {
 
 TexTool::TexTool() 
 : gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
-  _glWidget(true),
+  _glWidget(Gtk::manage(new gtkutil::GLWidget(true, "TexTool"))),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _zoomFactor(DEFAULT_ZOOM_FACTOR),
   _dragRectangle(false),
@@ -103,26 +103,25 @@ void TexTool::populateWindow()
 	textoolbar->unset_flags(Gtk::CAN_FOCUS);
     
 	// Create the GL widget
-	Gtk::Widget* glWidget = Glib::wrap(_glWidget, true); // cast to GtkWidget*
-	Gtk::Frame* frame = Gtk::manage(new gtkutil::FramedWidgetmm(*glWidget));
+	Gtk::Frame* frame = Gtk::manage(new gtkutil::FramedWidgetmm(*_glWidget));
 	
 	// Connect the events
-	glWidget->set_events(Gdk::KEY_PRESS_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+	_glWidget->set_events(Gdk::KEY_PRESS_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
 	
-	glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TexTool::onExpose));
-	glWidget->signal_focus_in_event().connect(sigc::mem_fun(*this, &TexTool::triggerRedraw));
-	glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TexTool::onMouseDown));
-	glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TexTool::onMouseUp));
-	glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &TexTool::onMouseMotion));
-	glWidget->signal_key_press_event().connect(sigc::mem_fun(*this, &TexTool::onKeyPress), false);
-	glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TexTool::onMouseScroll));
+	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TexTool::onExpose));
+	_glWidget->signal_focus_in_event().connect(sigc::mem_fun(*this, &TexTool::triggerRedraw));
+	_glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TexTool::onMouseDown));
+	_glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TexTool::onMouseUp));
+	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &TexTool::onMouseMotion));
+	_glWidget->signal_key_press_event().connect(sigc::mem_fun(*this, &TexTool::onKeyPress), false);
+	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TexTool::onMouseScroll));
 
 	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is 
 	// often called for subsets of the widget and the size info in there is therefore not reliable.
-	glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &TexTool::onSizeAllocate));
+	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &TexTool::onSizeAllocate));
 	
 	// Make the GL widget accept the global shortcuts
-	GlobalEventManager().connect(GTK_OBJECT(glWidget));
+	GlobalEventManager().connect(GTK_OBJECT(_glWidget->gobj()));
 	
 	// Create a top-level vbox, pack it and add it to the window 
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
@@ -184,7 +183,7 @@ void TexTool::onRadiantShutdown()
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 	
-	GlobalEventManager().disconnect(GTK_OBJECT(static_cast<GtkWidget*>(_glWidget)));
+	GlobalEventManager().disconnect(GTK_OBJECT(_glWidget->gobj()));
 	GlobalEventManager().disconnect(GTK_OBJECT(getWindow()));
 
 	// Destroy the window
@@ -269,7 +268,7 @@ void TexTool::update()
 void TexTool::draw()
 {
 	// Redraw
-	gtk_widget_queue_draw(_glWidget);
+	_glWidget->queueDraw();
 }
 
 void TexTool::onGtkIdle()
@@ -732,7 +731,7 @@ bool TexTool::onExpose(GdkEventExpose* ev)
 	flushIdleCallback();
 
 	// Activate the GL widget
-	gtkutil::GLWidgetSentry sentry(_glWidget);
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 	
 	// Initialise the viewport
 	glViewport(0, 0, _windowDims[0], _windowDims[1]);
@@ -843,13 +842,13 @@ void TexTool::onSizeAllocate(Gtk::Allocation& allocation)
 	_windowDims = Vector2(allocation.get_width(), allocation.get_height());
 
 	// Queue an expose event
-	gtk_widget_queue_draw(_glWidget);
+	_glWidget->queueDraw();
 }
 
 bool TexTool::triggerRedraw(GdkEventFocus* ev)
 {
 	// Trigger a redraw
-	gtk_widget_queue_draw(_glWidget);
+	_glWidget->queueDraw();
 	return false;
 }
 

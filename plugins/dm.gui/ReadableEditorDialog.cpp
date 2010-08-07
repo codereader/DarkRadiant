@@ -113,7 +113,7 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	// The paned contains the controls and the preview
 	GtkPaned* paned = GTK_PANED(gtk_hpaned_new());
 	gtk_paned_pack1(paned, vboxEP, TRUE, FALSE);
-	gtk_paned_pack2(paned, gtkutil::FramedWidget(_guiView->getWidget()), TRUE, FALSE);
+	gtk_paned_pack2(paned, gtkutil::FramedWidget(GTK_WIDGET(_guiView->gobj())), TRUE, FALSE);
 
 	_widgets[WIDGET_PANED] = GTK_WIDGET(paned);
 

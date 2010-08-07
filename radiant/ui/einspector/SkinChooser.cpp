@@ -108,7 +108,7 @@ Gtk::Widget& SkinChooser::createPreview(int size)
 {
 	_preview->setSize(size);
 
-	return *Glib::wrap(_preview->getWidget(), true);
+	return *_preview->getWidget();
 }
 
 // Create the buttons panel

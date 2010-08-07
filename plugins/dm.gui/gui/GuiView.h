@@ -1,13 +1,14 @@
 #ifndef GuiView_h__
 #define GuiView_h__
 
-#include "gtkutil/ifc/Widget.h"
 #include "gtkutil/GLWidget.h"
 #include "math/Vector2.h"
 #include "GuiRenderer.h"
 #include "Gui.h"
 
 #include "GuiManager.h"
+
+#include <gtkmm/box.h>
 
 namespace gui
 {
@@ -18,14 +19,11 @@ namespace gui
  * is taking care of rendering the GUI elements to GL.
  */
 class GuiView :
-	public gtkutil::Widget
+	public Gtk::HBox
 {
 protected:
-	// The top-level widget for packing this into a parent container
-	GtkWidget* _widget;
-
 	// The GL widget
-	gtkutil::GLWidgetPtr _glWidget;
+	gtkutil::GLWidget* _glWidget;
 
 	// The GUI renderer is submitting stuff to GL
 	GuiRenderer _renderer;
@@ -63,12 +61,6 @@ public:
 	void redraw();
 
 protected:
-	// Widget implementation
-	virtual GtkWidget* _getWidget() const
-	{
-		return _widget;
-	}
-
 	// Performs the actual GL setup and drawing
 	virtual void draw();
 
@@ -76,8 +68,8 @@ protected:
 	virtual void setGLViewPort();
 
 private:
-	static void onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, GuiView* self);
-	static void onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self);
+	void onSizeAllocate(Gtk::Allocation& allocation);
+	bool onGLDraw(GdkEventExpose*);
 };
 typedef boost::shared_ptr<GuiView> GuiViewPtr;
 

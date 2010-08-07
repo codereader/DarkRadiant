@@ -117,7 +117,7 @@ EntityClassChooser::EntityClassChooser()
 	vbx->pack_start(createButtonPanel(), false, false, 0);
 	
 	hbox->pack_start(*vbx, true, true, 0);
-	hbox->pack_start(*Glib::wrap(_modelPreview->getWidget(), true), false, false, 0);
+	hbox->pack_start(*_modelPreview->getWidget(), false, false, 0);
 
 	add(*hbox);
 

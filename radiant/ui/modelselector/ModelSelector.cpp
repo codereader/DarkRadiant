@@ -92,7 +92,7 @@ ModelSelector::ModelSelector()
 	hbx->pack_start(*leftVbx, true, true, 0);
 	
 	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
-	previewBox->pack_start(*Glib::wrap(_modelPreview->getWidget(), true), false, false, 0);
+	previewBox->pack_start(*_modelPreview->getWidget(), false, false, 0);
 	
 	hbx->pack_start(*previewBox, false, false, 0);
 	

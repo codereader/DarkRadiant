@@ -40,7 +40,7 @@ namespace
 // Constructor creates GTK elements
 ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture) :
 	Gtk::VBox(false, 3),
-	_glWidget(true),
+	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ShaderSelector"))),
 	_infoStore(Gtk::ListStore::create(_infoStoreColumns)),
 	_client(client),
 	_isLightTexture(isLightTexture)
@@ -208,13 +208,11 @@ Gtk::Widget& ShaderSelector::createPreview()
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
 
 	// Cast the GLWidget object to GtkWidget
-	GtkWidget* glWidgetLegacy = _glWidget;
-	Gtk::Widget* glWidget = Glib::wrap(glWidgetLegacy, true);
-	glWidget->set_size_request(128, 128);
-	glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ShaderSelector::_onExpose));
+	_glWidget->set_size_request(128, 128);
+	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ShaderSelector::_onExpose));
 
 	Gtk::Frame* glFrame = Gtk::manage(new Gtk::Frame);
-	glFrame->add(*glWidget);
+	glFrame->add(*_glWidget);
 
 	hbx->pack_start(*glFrame, false, false, 0);
 	
@@ -254,14 +252,11 @@ void ShaderSelector::updateInfoTable()
 // Callback to redraw the GL widget
 bool ShaderSelector::_onExpose(GdkEventExpose* ev) 
 {
-	GtkWidget* glWidgetLegacy = _glWidget;
-
 	// The scoped object making the GL widget the current one
-	gtkutil::GLWidgetSentry sentry(glWidgetLegacy);
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 	
 	// Get the viewport size from the GL widget
-	GtkRequisition req;
-	gtk_widget_size_request(glWidgetLegacy, &req);
+	Gtk::Requisition req = _glWidget->size_request();
 	glViewport(0, 0, req.width, req.height);
 
 	// Initialise
@@ -394,7 +389,7 @@ void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 void ShaderSelector::_onSelChange()
 {
 	updateInfoTable();
-	_glWidget.queueDraw();
+	_glWidget->queueDraw();
 }
 
 } // namespace ui

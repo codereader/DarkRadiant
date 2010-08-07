@@ -4,7 +4,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk { class Widget; }
 
 namespace model {
 
@@ -64,7 +64,7 @@ public:
 	virtual void setSkin(const std::string& skin) = 0;
 
 	// Retrieve the widget to pack this element into a parent container
-	virtual GtkWidget* getWidget() = 0;
+	virtual Gtk::Widget* getWidget() = 0;
 
 	/** 
 	 * Get the model from the widget, in order to display properties about it.

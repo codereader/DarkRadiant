@@ -36,23 +36,21 @@ namespace {
 
 MapPreview::MapPreview() :
 	Gtk::Frame(),
-	_glWidget(true),
+	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "MapPreview"))),
 	_filtersMenu(GlobalUIManager().createFilterMenu())
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
 	
-	// Cast the GLWidget object to GtkWidget for further use
-	Gtk::Widget* glWidget = Glib::wrap(_glWidget, true);
-	vbx->pack_start(*glWidget, true, true, 0);
+	vbx->pack_start(*_glWidget, true, true, 0);
 	
 	// Connect up the signals
-	glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | 
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | 
 						 Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
 
-	glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &MapPreview::onExpose));
-	glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &MapPreview::onMouseMotion));
-	glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &MapPreview::onMouseScroll));
+	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &MapPreview::onExpose));
+	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &MapPreview::onMouseMotion));
+	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &MapPreview::onMouseScroll));
 	
 	// The HBox containing the toolbar and the menubar
 	Gtk::HBox* toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
@@ -79,7 +77,7 @@ MapPreview::~MapPreview()
 
 void MapPreview::setSize(int size)
 {
-	gtk_widget_set_size_request(_glWidget, size, size);	
+	_glWidget->set_size_request(size, size);
 }
 
 void MapPreview::setRootNode(const scene::INodePtr& root)
@@ -113,7 +111,7 @@ void MapPreview::onFiltersChanged()
 void MapPreview::initialisePreview()
 {
 	// Grab the GL widget with sentry object
-	gtkutil::GLWidgetSentry sentry(_glWidget);
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
 	// Clear the window
 	glEnable(GL_DEPTH_TEST);
@@ -162,7 +160,7 @@ void MapPreview::draw()
 	if (_root == NULL) return;
 
 	// Create scoped sentry object to swap the GLWidget's buffers
-	gtkutil::GLWidgetSentry sentry(_glWidget);
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
 	// Set up the render
 	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
@@ -257,7 +255,7 @@ bool MapPreview::onMouseMotion(GdkEventMotion* ev)
 		
 		// Grab the GL widget, and update the modelview matrix with the 
 		// additional rotation
-		if (gtkutil::GLWidget::makeCurrent(_glWidget))
+		if (gtkutil::GLWidget::makeCurrent(*_glWidget))
 		{
 			// Premultiply the current modelview matrix with the rotation,
 			// in order to achieve rotations in eye space rather than object
@@ -270,7 +268,7 @@ bool MapPreview::onMouseMotion(GdkEventMotion* ev)
 			// Save the new GL matrix for GL draw
 			glGetDoublev(GL_MODELVIEW_MATRIX, _rotation);
 
-			gtk_widget_queue_draw(_glWidget); // trigger the GLDraw method to draw the actual model
+			_glWidget->queueDraw(); // trigger the GLDraw method to draw the actual model
 		}
 	}
 
@@ -289,7 +287,7 @@ bool MapPreview::onMouseScroll(GdkEventScroll* ev)
 	else if (ev->direction == GDK_SCROLL_DOWN)
 		_camDist -= inc;
 
-	gtk_widget_queue_draw(_glWidget);
+	_glWidget->queueDraw();
 	return false;
 }
 

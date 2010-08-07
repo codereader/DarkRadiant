@@ -26,21 +26,17 @@ namespace ui
 
 TexturePreviewCombo::TexturePreviewCombo() :
 	Gtk::HBox(false, 0),
-	_glWidget(new gtkutil::GLWidget(false, "TexturePreviewCombo")),
+	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "TexturePreviewCombo"))),
 	_texName(""),
 	_infoStore(Gtk::ListStore::create(_infoStoreColumns)),
 	_infoView(Gtk::manage(new Gtk::TreeView(_infoStore))),
 	_contextMenu(_infoView)
 {
-	// Set up the GL preview widget
-	GtkWidget* glWidgetLegacy = *_glWidget; // cast to GtkWidget
-
-	Gtk::Widget* glWidget = Glib::wrap(glWidgetLegacy, true);
-	glWidget->set_size_request(128, 128);
-	glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TexturePreviewCombo::_onExpose));
+	_glWidget->set_size_request(128, 128);
+	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TexturePreviewCombo::_onExpose));
 	
 	Gtk::Frame* glFrame = Gtk::manage(new Gtk::Frame);
-	glFrame->add(*glWidget);
+	glFrame->add(*_glWidget);
 	pack_start(*glFrame, false, false, 0);
 	
 	// Set up the info table
@@ -60,9 +56,7 @@ TexturePreviewCombo::TexturePreviewCombo() :
 }
 
 TexturePreviewCombo::~TexturePreviewCombo()
-{
-	_glWidget.reset();	
-}
+{}
 
 // Update the selected texture
 
@@ -103,14 +97,11 @@ void TexturePreviewCombo::_onCopyTexName()
 
 bool TexturePreviewCombo::_onExpose(GdkEventExpose* ev)
 {
-	GtkWidget* glWidgetLegacy = *_glWidget;
-
 	// Grab the GLWidget with sentry
-	gtkutil::GLWidgetSentry sentry(glWidgetLegacy);
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 	
 	// Get the viewport size from the GL widget
-	GtkRequisition req;
-	gtk_widget_size_request(glWidgetLegacy, &req);
+	Gtk::Requisition req = _glWidget->size_request();
 	glViewport(0, 0, req.width, req.height);
 
 	// Initialise

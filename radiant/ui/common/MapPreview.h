@@ -33,7 +33,7 @@ class MapPreview :
 {
 private:	
 	// GL widget
-	gtkutil::GLWidget _glWidget;
+	gtkutil::GLWidget* _glWidget;
 	
 	// Current distance between camera and preview
 	GLfloat _camDist;

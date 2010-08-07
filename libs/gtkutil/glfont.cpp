@@ -22,35 +22,31 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "glfont.h"
 
 #include "igl.h"
-#include <gtk/gtkglwidget.h>
+#include <gtkmm/gl/widget.h>
+#include <gdkmm/gl/font.h>
 
-GLFont glfont_create(const char* font_string)
+GLFont GLFont::create(const char* fontString)
 {
-  GLuint font_list_base = glGenLists (256);
-  gint font_height = 0;
+	GLuint font_list_base = glGenLists(256);
+	int font_height = 0;
 
-  PangoFontDescription* font_desc = pango_font_description_from_string (font_string);
+	Pango::FontDescription fontDesc(fontString);
+	
+	Glib::RefPtr<Pango::Font> font = Gdk::GL::Font::use_pango_font(fontDesc, 0, 256, font_list_base);
 
-  PangoFont* font = gdk_gl_font_use_pango_font (font_desc, 0, 256, font_list_base);
+	if (font)
+	{
+		Pango::FontMetrics fontMetrics = font->get_metrics();
+		
+		font_height = fontMetrics.get_ascent() + fontMetrics.get_descent();
+		font_height = PANGO_PIXELS(font_height);
+	}
 
-  if(font != 0)
-  {
-    PangoFontMetrics* font_metrics = pango_font_get_metrics (font, 0);
-
-    font_height = pango_font_metrics_get_ascent (font_metrics) +
-                  pango_font_metrics_get_descent (font_metrics);
-    font_height = PANGO_PIXELS (font_height);
-
-    pango_font_metrics_unref (font_metrics);
-  }
-
-  pango_font_description_free (font_desc);
-
-  return GLFont(font_list_base, font_height);
+	return GLFont(font_list_base, font_height);
 }
 
-void glfont_release(GLFont& font)
+void GLFont::release(GLFont& font)
 {
-  glDeleteLists(font.getDisplayList(), 256);
-  font = GLFont(0, 0);
+	glDeleteLists(font.getDisplayList(), 256);
+	font.clear();
 }

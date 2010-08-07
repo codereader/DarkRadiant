@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imodule.h"
 
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk { class Widget; }
 
 const std::string MODULE_OPENGL("OpenGL");
 
@@ -48,7 +48,7 @@ public:
 	virtual void assertNoErrors() = 0;
 	
 	// Returns the shared context widget holding the GL context
-	virtual GtkWidget* getGLContextWidget() = 0;
+	virtual Gtk::Widget* getGLContextWidget() = 0;
 
 	/**
 	 * Registers a GL widget, which triggers GL context creation if necessary.
@@ -56,10 +56,10 @@ public:
 	 * @returns: the widget holding the GL context. This might be the same widget
 	 * as the one passed in the arguments.
 	 */
-	virtual GtkWidget* registerGLWidget(GtkWidget* widget) = 0;
+	virtual Gtk::Widget* registerGLWidget(Gtk::Widget* widget) = 0;
 
 	// Notifies the GL module that a GLWidget has been destroyed
-	virtual void unregisterGLWidget(GtkWidget* widget) = 0;
+	virtual void unregisterGLWidget(Gtk::Widget* widget) = 0;
 
 	GLuint m_font;
 	int m_fontHeight;

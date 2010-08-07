@@ -6,11 +6,13 @@
 #include "imodelpreview.h"
 #include "math/matrix.h"
 
-#include <gtk/gtk.h>
 #include <GL/glew.h>
 #include <string>
 #include <map>
 #include "gtkutil/GLWidget.h"
+#include <gtkmm/frame.h>
+
+namespace Gtk { class ToggleToolButton; }
 
 namespace ui
 {
@@ -23,17 +25,15 @@ namespace ui
  */
 
 class ModelPreview :
-	public IModelPreview
+	public IModelPreview,
+	public Gtk::Frame
 {
 private:
-	// Top-level widget
-	GtkWidget* _widget;
-	
 	// GL widget
-	gtkutil::GLWidget _glWidget;
+	gtkutil::GLWidget* _glWidget;
 	
 	// Toolbar buttons
-	GtkToolItem* _drawBBox;
+	Gtk::ToggleToolButton* _drawBBox;
 	
 	// A small cache mapping model names to IModel objects to avoid
 	// reloading the models on each selection or skin change.
@@ -60,13 +60,11 @@ private:
 	
 private:
 
-	/* GTK CALLBACKS */
-	
-	static void callbackGLDraw(GtkWidget*, GdkEventExpose*, ModelPreview*);
-	static void callbackGLMotion(GtkWidget*, GdkEventMotion*, ModelPreview*);
-	static void callbackGLScroll(GtkWidget*, GdkEventScroll*, ModelPreview*);
-	
-	static void callbackToggleBBox(GtkToggleToolButton*, ModelPreview*);
+	// gtkmm callbacks
+	bool callbackGLDraw(GdkEventExpose*);
+	bool callbackGLMotion(GdkEventMotion*);
+	bool callbackGLScroll(GdkEventScroll*);
+	void callbackToggleBBox();
 	
 public:
 	
@@ -105,12 +103,8 @@ public:
 	 * Name of the skin to apply.
 	 */
 	void setSkin(const std::string& skin);
-	
-	/** Operator cast to GtkWidget*, for packing into the parent window.
-	 */
-	GtkWidget* getWidget() {
-		return _widget;
-	}
+
+	Gtk::Widget* getWidget();
 	
 	/** 
 	 * Get the model from the widget, in order to display properties about it.

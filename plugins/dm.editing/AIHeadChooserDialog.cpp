@@ -77,7 +77,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(GTK_WIDGET(headsView)), TRUE, TRUE, 0);
 	// Right: the preview and the description
 	GtkWidget* vbox2 = gtk_vbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(vbox2), _preview->getWidget(), TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox2), _preview->getWidget()->gobj(), TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox2), createDescriptionPanel(), FALSE, FALSE, 0);
 
 	gtk_box_pack_start(GTK_BOX(hbx), vbox2, FALSE, FALSE, 0);
