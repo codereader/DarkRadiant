@@ -77,7 +77,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib intl.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib gtksourceviewmm-vc90-d-2_2.lib gtkglextmm-vc90-d-1_2.lib"
+				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib intl.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib gtksourceviewmm-vc90-d-2_2.lib gdkglextmm-vc90-d-1_2.lib gtkglextmm-vc90-d-1_2.lib pangomm-vc90-d-1_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -176,7 +176,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib intl.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib gtksourceviewmm-vc90-d-2_2.lib gtkglextmm-vc90-d-1_2.lib"
+				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib intl.lib gtkmm-vc90-d-2_4.lib sigc-vc90-d-2_0.lib glibmm-vc90-d-2_4.lib atkmm-vc90-d-1_6.lib gdkmm-vc90-d-2_4.lib gtksourceviewmm-vc90-d-2_2.lib gdkglextmm-vc90-d-1_2.lib gtkglextmm-vc90-d-1_2.lib pangomm-vc90-d-1_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -273,7 +273,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib intl.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib gtksourceviewmm-vc90-2_2.lib gtkglextmm-vc90-1_2.lib"
+				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib intl.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib gtksourceviewmm-vc90-2_2.lib gdkglextmm-vc90-1_2.lib gtkglextmm-vc90-1_2.lib pangomm-vc90-1_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -373,7 +373,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:LIBCMT"
-				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib intl.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib gtksourceviewmm-vc90-2_2.lib gtkglextmm-vc90-1_2.lib"
+				AdditionalDependencies="advapi32.lib Dbghelp.lib glu32.lib glew32.lib mathlib.lib xmlutillib.lib gtkutillib.lib winmm.lib kernel32.lib user32.lib gdi32.lib wsock32.lib glib-2.0.lib gobject-2.0.lib gdk-win32-2.0.lib gdk_pixbuf-2.0.lib gtk-win32-2.0.lib pango-1.0.lib opengl32.lib libxml2.lib scenelib.lib intl.lib gtkmm-vc90-2_4.lib sigc-vc90-2_0.lib glibmm-vc90-2_4.lib atkmm-vc90-1_6.lib gdkmm-vc90-2_4.lib gtksourceviewmm-vc90-2_2.lib gdkglextmm-vc90-1_2.lib gtkglextmm-vc90-1_2.lib pangomm-vc90-1_4.lib"
 				OutputFile="$(OutDir)/$(ProjectName).exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
