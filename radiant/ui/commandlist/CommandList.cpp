@@ -133,7 +133,7 @@ void CommandList::assignShortcut()
 
 	ShortcutChooser::Result result = chooser.run();
 	
-	if (result = ShortcutChooser::RESULT_OK)
+	if (result == ShortcutChooser::RESULT_OK)
 	{
 		// The chooser returned OK, update the list
 		reloadList();
