@@ -7,7 +7,6 @@
 
 #include "gtkutil/GLWidget.h"
 #include <gtk/gtkwidget.h>
-#include <gtk/gtkglwidget.h>
 
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
