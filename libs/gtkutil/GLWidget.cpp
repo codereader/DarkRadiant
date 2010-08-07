@@ -223,9 +223,9 @@ void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
 		Gtk::Widget* context = GlobalOpenGL().getGLContextWidget();
 
 		Gtk::GL::widget_set_gl_capability(
-			*context,
+			*toplevel,
 			glconfig,
-			Gtk::GL::widget_get_gl_context(*context),
+			context ? Gtk::GL::widget_get_gl_context(*context) : Glib::RefPtr<Gdk::GL::Context>(),
 			true,
 			Gdk::GL::RGBA_TYPE
 		);
