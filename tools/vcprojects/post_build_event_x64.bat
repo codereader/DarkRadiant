@@ -76,4 +76,4 @@ copy ..\..\build\libs\x64\libgdkglext.dll ..\..\install /Y
 copy ..\..\build\libs\x64\libgtkglext.dll ..\..\install /Y
 
 @rem Copy the compiled libxml2 DLL to install
-copy ..\..\build\libs\x64\libxml2.dll ..\..\install /Y
+copy ..\..\w64deps\libxml2\bin\libxml2.dll ..\..\install /Y
