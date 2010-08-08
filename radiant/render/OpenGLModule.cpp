@@ -14,9 +14,8 @@
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
 	_font(0, 0),
-	_sharedContext(NULL),
-	_realisedGLWidgets(0)
-{ }
+	_sharedContext(NULL)
+{}
 
 void OpenGLModule::assertNoErrors()
 {
@@ -85,8 +84,11 @@ Gtk::Widget* OpenGLModule::getGLContextWidget()
 
 Gtk::Widget* OpenGLModule::registerGLWidget(Gtk::Widget* widget)
 {
-	if (++_realisedGLWidgets == 1)
+	std::pair<GLWidgets::iterator, bool> result = _glWidgets.insert(widget);
+
+	if (result.second && _glWidgets.size() == 1)
 	{
+		// First non-duplicated widget registered, take this as context
 		_sharedContext = widget;
 		_sharedContext->reference();
 		
@@ -117,17 +119,24 @@ Gtk::Widget* OpenGLModule::registerGLWidget(Gtk::Widget* widget)
 
 void OpenGLModule::unregisterGLWidget(Gtk::Widget* widget)
 {
-	assert(_realisedGLWidgets > 0);
+	GLWidgets::iterator found = _glWidgets.find(widget);
 
-	if (--_realisedGLWidgets == 0)
+	assert(found != _glWidgets.end());
+
+	if (found != _glWidgets.end())
 	{
-		// This was the last active GL widget
-		contextValid = false;
+		if (_glWidgets.size() == 1)
+		{
+			// This was the last active GL widget
+			contextValid = false;
 
-		sharedContextDestroyed();
+			sharedContextDestroyed();
 
-		_sharedContext->unreference();
-		_sharedContext = NULL;
+			_sharedContext->unreference();
+			_sharedContext = NULL;
+		}
+
+		_glWidgets.erase(found);
 	}
 }
 

@@ -40,9 +40,6 @@ class GLWidget :
 private:
 	// TRUE, if this GL widget has depth-buffering enabled 
 	bool _zBuffer;
-
-	// (Shared) widget holding the context, managed in the OpenGLModule
-	Gtk::Widget* _context;
 	
 public:
 
