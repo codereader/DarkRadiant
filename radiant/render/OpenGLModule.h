@@ -16,10 +16,10 @@ private:
 
 	// The (singleton) widget holding the context
 	Gtk::Widget* _sharedContext;
-	
-	// Holds the number of realised GL widgets
-	std::size_t _realisedGLWidgets;
-	
+
+	typedef std::set<Gtk::Widget*> GLWidgets;
+	GLWidgets _glWidgets;
+
 public:
 	OpenGLModule();
 	

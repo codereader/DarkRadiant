@@ -212,9 +212,7 @@ void GLWidget::swapBuffers(Gtk::Widget& widget)
 
 void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
 {
-	Gtk::Widget* toplevel = get_toplevel();
-
-	if (previous_toplevel == NULL && !Gtk::GL::widget_is_gl_capable(*toplevel))
+	if (previous_toplevel == NULL && !Gtk::GL::widget_is_gl_capable(*this))
     {
 		// Create a new GL config structure
 		Glib::RefPtr<Gdk::GL::Config> glconfig = _zBuffer ? createGLConfigWithDepth() : createGLConfig();
@@ -223,18 +221,20 @@ void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
 		Gtk::Widget* context = GlobalOpenGL().getGLContextWidget();
 
 		Gtk::GL::widget_set_gl_capability(
-			*toplevel,
+			*this,
 			glconfig,
 			context ? Gtk::GL::widget_get_gl_context(*context) : Glib::RefPtr<Gdk::GL::Context>(),
 			true,
 			Gdk::GL::RGBA_TYPE
 		);
+
+		realize();
 	}
 }
 
 void GLWidget::onRealise() 
 {
-	_context = GlobalOpenGL().registerGLWidget(this);
+	GlobalOpenGL().registerGLWidget(this);
 }
 
 void GLWidget::onUnRealise()
