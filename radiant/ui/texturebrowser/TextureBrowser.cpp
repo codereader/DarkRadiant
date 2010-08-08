@@ -790,25 +790,26 @@ void TextureBrowser::onVerticalScroll()
 
 void TextureBrowser::updateScroll()
 {
-  if (m_showTextureScrollbar)
-  {
-    int totalHeight = getTotalHeight();
+	if (m_showTextureScrollbar)
+	{
+		int totalHeight = getTotalHeight();
 
-    totalHeight = std::max(totalHeight, height);
+		totalHeight = std::max(totalHeight, height);
 
-    GtkAdjustment *vadjustment = gtk_range_get_adjustment(GTK_RANGE(_textureScrollbar));
+		Gtk::Adjustment* vadjustment = _textureScrollbar->get_adjustment();
 
-    if (vadjustment != NULL) {
-	    vadjustment->value = -getOriginY();
-	    vadjustment->page_size = height;
-	    vadjustment->page_increment = height/2;
-	    vadjustment->step_increment = 20;
-	    vadjustment->lower = 0;
-	    vadjustment->upper = totalHeight;
-	
-	    g_signal_emit_by_name(G_OBJECT(vadjustment), "changed");
-    }
-  }
+		if (vadjustment != NULL)
+		{
+			vadjustment->set_value(-getOriginY());
+			vadjustment->set_page_size(height);
+			vadjustment->set_page_increment(height/2);
+			vadjustment->set_step_increment(20);
+			vadjustment->set_lower(0);
+			vadjustment->set_upper(totalHeight);
+
+			onVerticalScroll();
+		}
+	}
 }
 
 void TextureBrowser::onSizeAllocate(Gtk::Allocation& allocation)
