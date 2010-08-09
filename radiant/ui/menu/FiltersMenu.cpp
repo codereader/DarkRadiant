@@ -1,7 +1,5 @@
 #include "FiltersMenu.h"
 
-#include <gtk/gtkwidget.h>
-
 #include "i18n.h"
 #include "ifilter.h"
 #include "iuimanager.h"

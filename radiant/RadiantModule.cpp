@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "RadiantModule.h"
 
 #include <iostream>
-#include <gtk/gtkimage.h>
 
 #include "ifiletypes.h"
 #include "iregistry.h"

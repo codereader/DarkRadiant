@@ -1,7 +1,6 @@
 #include "LogFile.h"
 
-#include <gtk/gtkmain.h>
-
+#include <gtkmm.h>
 #include "imodule.h"
 #include "itextstream.h"
 #include "version.h"
@@ -60,12 +59,12 @@ void LogFile::create(const std::string& filename) {
 		globalOutputStream() << "Today is: " << ctime(&localtime) 
 			                 << "This is " << RADIANT_APPNAME_FULL() << std::endl;
         
-		// Output the GTK+ version to the logfile
-        std::string gtkVersion = intToStr(gtk_major_version) + "."; 
-		gtkVersion += intToStr(gtk_minor_version) + "."; 
-		gtkVersion += intToStr(gtk_micro_version);
+		// Output the gtkmm version to the logfile
+        std::string gtkVersion = intToStr(GTKMM_MAJOR_VERSION) + "."; 
+		gtkVersion += intToStr(GTKMM_MINOR_VERSION) + "."; 
+		gtkVersion += intToStr(GTKMM_MICRO_VERSION);
 
-        globalOutputStream() << "GTK+ Version: " << gtkVersion << std::endl;
+        globalOutputStream() << "gtkmm Version: " << gtkVersion << std::endl;
 	}
 }
 

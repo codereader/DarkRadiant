@@ -3,35 +3,43 @@
 
 #include "iselectionset.h"
 #include <boost/shared_ptr.hpp>
+#include <gtkmm/toolitem.h>
+#include <gtkmm/liststore.h>
 
-typedef struct _GtkToolItem GtkToolItem;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkComboBox GtkComboBox;
-typedef struct _GtkEntry GtkEntry;
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkToolButton GtkToolButton;
+namespace Gtk
+{
+	class ComboBoxEntry;
+	class ToolButton;
+}
 
 namespace selection
 {
 
 class SelectionSetToolmenu :
-	public ISelectionSetManager::Observer
+	public ISelectionSetManager::Observer,
+	public Gtk::ToolItem
 {
+public:
+	struct ListStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListStoreColumns() { add(name); }
+
+		Gtk::TreeModelColumn<Glib::ustring> name;
+	};
+
 private:
-	GtkToolItem* _toolItem;
+	ListStoreColumns _columns;
 
-	GtkListStore* _listStore;
-	GtkToolItem* _clearSetsButton;
+	Glib::RefPtr<Gtk::ListStore> _listStore;
+	Gtk::ToolButton* _clearSetsButton;
 
-	GtkWidget* _entry;
+	Gtk::ComboBoxEntry* _entry;
 
 public:
 	SelectionSetToolmenu();
 
 	~SelectionSetToolmenu();
-
-	// Get the tool item widget for packing this control into a GtkToolbar
-	GtkToolItem* getToolItem();
 
 	// Observer implementation
 	void onSelectionSetsChanged();
@@ -40,11 +48,10 @@ private:
 	// Updates the available list items and widget sensitivity
 	void update();
 
-	static void onSelectionChanged(GtkComboBox* comboBox, SelectionSetToolmenu* self);
-	static void onEntryActivated(GtkEntry* entry, SelectionSetToolmenu* self);
-	static void onDeleteAllSetsClicked(GtkToolButton* toolbutton, SelectionSetToolmenu* self);
+	void onSelectionChanged();
+	void onEntryActivated();
+	void onDeleteAllSetsClicked();
 };
-typedef boost::shared_ptr<SelectionSetToolmenu> SelectionSetToolmenuPtr;
 
 } // namespace selection
 
