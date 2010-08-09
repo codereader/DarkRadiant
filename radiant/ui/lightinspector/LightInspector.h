@@ -9,7 +9,6 @@
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 
-#include <gtk/gtkwidget.h>
 #include <map>
 #include <string>
 

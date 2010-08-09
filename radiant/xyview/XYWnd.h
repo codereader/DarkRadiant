@@ -4,9 +4,6 @@
 #include "iclipper.h"
 #include "iscenegraph.h"
 
-#include "gdk/gdkevents.h"
-#include "gtk/gtkwidget.h"
-
 #include "math/Vector3.h"
 #include "math/matrix.h"
 #include "math/Vector4.h"

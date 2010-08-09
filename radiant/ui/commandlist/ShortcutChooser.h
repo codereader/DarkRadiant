@@ -5,8 +5,6 @@
 #include "ieventmanager.h"
 #include "gtkutil/dialog/Dialog.h"
 
-#include "gtk/gtkwidget.h"
-
 typedef struct _GdkEventKey GdkEventKey;
 
 namespace Gtk

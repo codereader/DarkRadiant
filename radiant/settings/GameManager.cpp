@@ -16,7 +16,6 @@
 #include "Win32Registry.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
-#include <gtk/gtkmain.h>
 #include <iostream>
 
 namespace game {

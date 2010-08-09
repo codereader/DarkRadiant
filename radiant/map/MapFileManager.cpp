@@ -8,7 +8,6 @@
 #include "gtkutil/IConv.h"
 #include "os/path.h"
 #include "MapFileChooserPreview.h"
-#include <gtk/gtkwidget.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>

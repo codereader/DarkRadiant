@@ -6,9 +6,10 @@
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "modulesystem/StaticModule.h"
+#include "SelectionSetToolmenu.h"
 
 #include <gtkmm/toolbar.h>
-#include <gtk/gtkseparatortoolitem.h>
+#include <gtkmm/separatortoolitem.h>
 
 #include <boost/bind.hpp>
 
@@ -60,15 +61,15 @@ void SelectionSetManager::onRadiantStartup()
 	Gtk::Toolbar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
 
 	// Insert a separator at the end of the toolbar
-	GtkToolItem* item = GTK_TOOL_ITEM(gtk_separator_tool_item_new());
-	gtk_toolbar_insert(toolbar->gobj(), item, -1);
+	Gtk::ToolItem* item = Gtk::manage(new Gtk::SeparatorToolItem);
+	toolbar->insert(*item, -1);
 
-	gtk_widget_show(GTK_WIDGET(item));
+	item->show();
 
 	// Construct a new tool menu object
-	_toolmenu = SelectionSetToolmenuPtr(new SelectionSetToolmenu);
+	SelectionSetToolmenu* toolmenu = Gtk::manage(new SelectionSetToolmenu);
 
-	gtk_toolbar_insert(toolbar->gobj(), _toolmenu->getToolItem(), -1);	
+	toolbar->insert(*toolmenu, -1);
 }
 
 void SelectionSetManager::addObserver(Observer& observer)

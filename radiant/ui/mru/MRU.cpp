@@ -6,8 +6,6 @@
 #include "icommandsystem.h"
 #include "ipreferencesystem.h"
 #include "iuimanager.h"
-#include "gtk/gtkmenu.h"
-#include "gtk/gtkcontainer.h"
 #include "string/string.h"
 #include "os/file.h"
 

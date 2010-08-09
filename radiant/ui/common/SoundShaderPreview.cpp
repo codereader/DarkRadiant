@@ -6,7 +6,6 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/TreeModel.h"
-#include <gtk/gtk.h>
 #include <iostream>
 
 #include <gtkmm/box.h>

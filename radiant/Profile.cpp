@@ -6,7 +6,7 @@
 #include "map/Map.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "string/string.h"
-#include <gtk/gtkmain.h>
+#include <gtkmm/main.h>
 
 namespace profile {
 
@@ -57,8 +57,9 @@ bool CheckAutomatedTestRun() {
 			}
 			
 			// Process the GUI events
-			while (gtk_events_pending()) {
-				gtk_main_iteration();
+			while (Gtk::Main::events_pending())
+			{
+				Gtk::Main::iteration();
 			}
 		}
 	}

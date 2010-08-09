@@ -1,7 +1,5 @@
 #include "MainFrame.h"
 
-#include <gtk/gtk.h>
-
 #include "i18n.h"
 #include "RadiantModule.h"
 #include "iuimanager.h"
