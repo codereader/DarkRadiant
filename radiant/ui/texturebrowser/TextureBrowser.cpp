@@ -806,8 +806,6 @@ void TextureBrowser::updateScroll()
 			vadjustment->set_step_increment(20);
 			vadjustment->set_lower(0);
 			vadjustment->set_upper(totalHeight);
-
-			onVerticalScroll();
 		}
 	}
 }
