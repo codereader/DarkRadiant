@@ -88,7 +88,7 @@ private:
 	NonModalEntry _filterEntry;
 
 	Glib::RefPtr<Gtk::Window> _parent;
-	gtkutil::GLWidgetPtr _glWidget;
+	gtkutil::GLWidget* _glWidget;
 
 	Gtk::VScrollbar* _textureScrollbar;
 	Gtk::Adjustment* _vadjustment;

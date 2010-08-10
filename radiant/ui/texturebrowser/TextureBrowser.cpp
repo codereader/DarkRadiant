@@ -57,7 +57,8 @@ TextureBrowser::TextureBrowser() :
 	_popupMenu(new gtkutil::PopupMenu),
 	_filter(0),
 	_filterEntry(Callback(boost::bind(&TextureBrowser::queueDraw, this)), Callback(boost::bind(&TextureBrowser::clearFilter, this))),
-	_textureScrollbar(0),
+	_glWidget(NULL),
+	_textureScrollbar(NULL),
 	m_heightChanged(true),
 	m_originInvalid(true),
 	m_scrollAdjustment(scrollChanged, this),
@@ -841,9 +842,7 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 	_parent = parent;
 
 	// Instantiate a new GLwidget without z-buffering
-	_glWidget = gtkutil::GLWidgetPtr(
-        new gtkutil::GLWidget(false, "TextureBrowser")
-    );
+	_glWidget = Gtk::manage(new gtkutil::GLWidget(false, "TextureBrowser"));
 	
 	GlobalMaterialManager().addActiveShadersObserver(shared_from_this());
 
@@ -947,8 +946,6 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 void TextureBrowser::destroyWindow()
 {
 	GlobalMaterialManager().removeActiveShadersObserver(shared_from_this());
-
-	_glWidget.reset();
 }
 
 void TextureBrowser::registerPreferencesPage()
