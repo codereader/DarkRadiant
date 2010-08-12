@@ -25,7 +25,7 @@ void WindowPosition::connect(Gtk::Window* window)
 	_window = window;
 	applyPosition();
 
-	_window->signal_configure_event().connect(sigc::mem_fun(*this, &WindowPosition::onConfigure));
+	_window->signal_configure_event().connect(sigc::mem_fun(*this, &WindowPosition::onConfigure), false);
 }
 
 const WindowPosition::Position& WindowPosition::getPosition() const
