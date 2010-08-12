@@ -1,6 +1,5 @@
 #include "ConversationCommandLibrary.h"
 
-#include <gtk/gtkliststore.h>
 #include "ieclass.h"
 #include "iregistry.h"
 #include "string/string.h"
@@ -71,29 +70,31 @@ const ConversationCommandInfo& ConversationCommandLibrary::findCommandInfo(int i
 	throw std::runtime_error(std::string("Could not find command info with the given ID: ") + intToStr(id));
 }
 
-void ConversationCommandLibrary::loadConversationCommands() {
+void ConversationCommandLibrary::loadConversationCommands()
+{
 	// Load the possible command types
 	ConversationCommandInfoLoader loader(_commandInfo);
 	GlobalEntityClassManager().forEach(loader);
 }
 
-void ConversationCommandLibrary::populateListStore(GtkListStore* store) {
+void ConversationCommandLibrary::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store, 
+												   const CommandColumns& columns)
+{
 	// Iterate over everything and push the data into the liststore
 	for (ConversationCommandInfoMap::const_iterator i = _commandInfo.begin(); 
 		 i != _commandInfo.end(); 
 		 ++i)
 	{
-		GtkTreeIter iter;
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 
-						   0, i->second->id, 
-						   1, i->second->name.c_str(),
-						   -1);
+		Gtk::TreeModel::Row row = *store->append();
+		
+		row[columns.cmdNumber] = i->second->id;
+		row[columns.caption] = i->second->name;
 	}
 }
 
 // Static accessor
-ConversationCommandLibrary& ConversationCommandLibrary::Instance() {
+ConversationCommandLibrary& ConversationCommandLibrary::Instance()
+{
 	static ConversationCommandLibrary _instance;
 	return _instance;
 }

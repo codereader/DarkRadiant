@@ -11,13 +11,17 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 
 #include "ConversationEntity.h"
+#include <gtkmm/liststore.h>
 
-// Forward decl.
-typedef struct _GtkNotebook GtkNotebook;
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
+namespace Gtk
+{
+	class VBox;
+	class Button;
+	class TreeView;
+}
 
-namespace ui {
+namespace ui
+{
 
 class ConversationDialog;
 typedef boost::shared_ptr<ConversationDialog> ConversationDialogPtr;
@@ -29,27 +33,34 @@ typedef boost::shared_ptr<ConversationDialog> ConversationDialogPtr;
 class ConversationDialog :
 	public gtkutil::BlockingTransientWindow
 {
+private:
 	// The overall dialog vbox (used to quickly disable the whole dialog)
-	GtkWidget* _dialogVBox;
+	Gtk::VBox* _dialogVBox;
 
 	// List of conversation_info entities
-	GtkListStore* _convEntityList;
+	conversation::ConvEntityColumns _convEntityColumns;
+	Glib::RefPtr<Gtk::ListStore> _convEntityList;
+	Gtk::TreeView* _entityView;
 
 	// List of conversations on the selected entity
-	GtkListStore* _convList;
+	conversation::ConversationColumns _convColumns;
+	Glib::RefPtr<Gtk::ListStore> _convList;
+	Gtk::TreeView* _convView;
 
 	// Map of ConversationEntity objects, indexed by the name of the world entity
 	conversation::ConversationEntityMap _entities;
 
 	// Iterators for current entity and current objective
 	conversation::ConversationEntityMap::iterator _curEntity;
-	GtkTreeIter _currentConversation;
-
-	// Table of dialog subwidgets
-	std::map<int, GtkWidget*> _widgets;
+	Gtk::TreeModel::iterator _currentConversation;
 
 	// The close button to toggle the view
-	GtkWidget* _closeButton;
+	Gtk::Button* _closeButton;
+	Gtk::Button* _deleteEntityButton;
+	Gtk::VBox* _convButtonPanel;
+	Gtk::Button* _editConvButton;
+	Gtk::Button* _delConvButton;
+	Gtk::Button* _clearConvButton;
 	
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
@@ -77,25 +88,25 @@ private:
 
 	// WIDGET POPULATION
 	void populateWindow(); 			// Main window
-	GtkWidget* createEntitiesPanel();
-	GtkWidget* createConversationsPanel();
-	GtkWidget* createButtons(); 	// Dialog buttons
+	Gtk::Widget& createEntitiesPanel();
+	Gtk::Widget& createConversationsPanel();
+	Gtk::Widget& createButtons(); 	// Dialog buttons
 	
 	// Button callbacks
-	static void onSave(GtkWidget* button, ConversationDialog* self);
-	static void onClose(GtkWidget* button, ConversationDialog* self);
-	static void onEntitySelectionChanged(GtkTreeSelection*, ConversationDialog*);
-	static void onAddEntity(GtkWidget*, ConversationDialog*);
-	static void onDeleteEntity(GtkWidget*, ConversationDialog*);
+	void onSave();
+	void onClose();
+	void onEntitySelectionChanged();
+	void onAddEntity();
+	void onDeleteEntity();
 
-	static void onConversationSelectionChanged(GtkTreeSelection*, ConversationDialog*);
-	static void onAddConversation(GtkWidget*, ConversationDialog*);
-	static void onEditConversation(GtkWidget*, ConversationDialog*);
-	static void onDeleteConversation(GtkWidget*, ConversationDialog*);
-	static void onClearConversations(GtkWidget*, ConversationDialog*);
+	void onConversationSelectionChanged();
+	void onAddConversation();
+	void onEditConversation();
+	void onDeleteConversation();
+	void onClearConversations();
 
 	// The keypress handler for catching the keys in the treeview
-	static gboolean onWindowKeyPress(GtkWidget* dialog, GdkEventKey* event, ConversationDialog* self);
+	bool onWindowKeyPress(GdkEventKey* ev);
 
 }; // class ConversationDialog
 

@@ -80,18 +80,18 @@ void ConversationEntity::deleteConversation(int index) {
 }
 
 // Populate a list store with conversations
-void ConversationEntity::populateListStore(GtkListStore* store) const {
+void ConversationEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store, 
+										   const ConversationColumns& columns) const
+{
 	for (ConversationMap::const_iterator i = _conversations.begin();
 		 i != _conversations.end();
 		 ++i)
 	{
-		GtkTreeIter iter;
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 
-						   0, i->first, 
-						   1, i->second.name.c_str(),
-						   -1);	
-	}	
+		Gtk::TreeModel::Row row = *store->append();
+		
+		row[columns.index] = i->first;
+		row[columns.name] = i->second.name;
+	}
 }
 
 void ConversationEntity::clearEntity(Entity* entity) {
