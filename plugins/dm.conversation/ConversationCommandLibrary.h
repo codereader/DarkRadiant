@@ -2,10 +2,20 @@
 #define CONVERSATION_COMMAND_LIBRARY_H_
 
 #include "ConversationCommandInfo.h"
+#include <gtkmm/liststore.h>
 
-typedef struct _GtkListStore GtkListStore;
+namespace conversation
+{
 
-namespace conversation {
+	// Treemodel definitions
+	struct CommandColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		CommandColumns() { add(cmdNumber); add(caption); }
+
+		Gtk::TreeModelColumn<int> cmdNumber;
+		Gtk::TreeModelColumn<Glib::ustring> caption;
+	};
 
 	namespace {
 		const std::string RKEY_CONVERSATION_COMMAND_INFO_PREFIX = 
@@ -42,10 +52,8 @@ public:
 
 	/**
 	 * greebo: This populates the given liststore with all available commands.
-	 * The liststore must provide two columns (one INT for the ID, one STRING
-	 * for the display name).
 	 */
-	void populateListStore(GtkListStore* store);
+	void populateListStore(const Glib::RefPtr<Gtk::ListStore>& store, const CommandColumns& columns);
 
 private:
 	// Loads all entityDefs matching the given prefix
