@@ -253,6 +253,12 @@ void ConversationEditor::updateWidgets()
 	_actorStore->clear();
 	_commandStore->clear();
 
+	_currentActor = Gtk::TreeModel::iterator();
+	_currentCommand = Gtk::TreeModel::iterator();
+
+	updateCmdActionSensitivity(false);
+	_delActorButton->set_sensitive(false);
+
 	// Name
 	_convNameEntry->set_text(_conversation.name);
 
@@ -377,10 +383,10 @@ void ConversationEditor::onActorSelectionChanged()
 	if (_updateInProgress) return;
 
 	// Get the selection
-	Gtk::TreeModel::iterator iter = _actorView->get_selection()->get_selected();
+	_currentActor = _actorView->get_selection()->get_selected();
 
 	// Enable the delete buttons if we have a selection
-	_delActorButton->set_sensitive(iter ? true : false);
+	_delActorButton->set_sensitive(_currentActor ? true : false);
 }
 
 void ConversationEditor::updateCmdActionSensitivity(bool hasSelection)
@@ -412,9 +418,9 @@ void ConversationEditor::onCommandSelectionChanged()
 	if (_updateInProgress) return;
 
 	// Get the selection
-	Gtk::TreeModel::iterator iter = _commandView->get_selection()->get_selected();
+	_currentCommand = _commandView->get_selection()->get_selected();
 
-	updateCmdActionSensitivity(iter ? true : false);
+	updateCmdActionSensitivity(_currentCommand ? true : false);
 }
 
 void ConversationEditor::onMaxPlayCountEnabled()

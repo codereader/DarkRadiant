@@ -386,7 +386,7 @@ void ConversationDialog::onDeleteEntity()
 void ConversationDialog::onConversationSelectionChanged()
 {
 	// Get the selection
-	_currentConversation = _entityView->get_selection()->get_selected();
+	_currentConversation = _convView->get_selection()->get_selected();
 
 	if (_currentConversation)
 	{
