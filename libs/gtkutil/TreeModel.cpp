@@ -364,10 +364,39 @@ bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& need
 	return false; // not found
 }
 
+bool TreeModel::findAndSelectInteger(Gtk::TreeView* view, int needle, int column)
+{
+	SelectionFindermm finder(needle, column);
+
+	view->get_model()->foreach_iter(sigc::mem_fun(finder, &SelectionFindermm::forEach));
+
+	if (finder.getIter())
+	{
+		Gtk::TreeModel::Path path(finder.getIter());
+
+		// Expand the treeview to display the target row
+		view->expand_to_path(path);
+		// Highlight the target row
+		view->set_cursor(path);
+		// Make the selected row visible 
+		view->scroll_to_row(path, 0.3f);
+
+		return true; // found
+	}
+
+	return false; // not found
+}
+
 bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle, 
 									const Gtk::TreeModelColumn<Glib::ustring>& column)
 {
 	return findAndSelectString(view, needle, column.index());
+}
+
+bool TreeModel::findAndSelectInteger(Gtk::TreeView* view, int needle, 
+									const Gtk::TreeModelColumn<int>& column)
+{
+	return findAndSelectInteger(view, needle, column.index());
 }
 
 bool TreeModel::findAndSelectInteger(GtkTreeView* view, int needle, int column)
