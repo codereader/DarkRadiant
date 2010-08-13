@@ -1,30 +1,82 @@
 #ifndef CONVERSATION_EDITOR_H_
 #define CONVERSATION_EDITOR_H_
 
-#include <gtk/gtktreemodel.h>
+#include <gtkmm/liststore.h>
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <map>
 
 #include "Conversation.h"
 
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GtkCellRendererText GtkCellRendererText;
-typedef struct _GtkToggleButton GtkToggleButton;
+namespace Gtk
+{
+	class Entry;
+	class CheckButton;
+	class SpinButton;
+	class Button;
+	class TreeView;
+	class HBox;
+}
 
-namespace ui {
+namespace ui
+{
 
 class ConversationEditor :
 	public gtkutil::BlockingTransientWindow
 {
-	GtkListStore* _actorStore;
-	GtkListStore* _commandStore;
+private:
+	struct ActorListColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ActorListColumns() { add(actorNumber); add(displayName); }
 
-	GtkTreeIter _currentActor;
-	GtkTreeIter _currentCommand;
+		Gtk::TreeModelColumn<int> actorNumber;				// actor number
+		Gtk::TreeModelColumn<Glib::ustring> displayName;	// display name
+	};
 
-	std::map<int, GtkWidget*> _widgets;
-	
+	ActorListColumns _actorColumns;
+	Glib::RefPtr<Gtk::ListStore> _actorStore;
+	Gtk::TreeView* _actorView;
+
+	struct CommandListColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		CommandListColumns()
+		{ 
+			add(cmdNumber);
+			add(actorName);
+			add(sentence);
+			add(wait);
+		}
+
+		Gtk::TreeModelColumn<int> cmdNumber;			// cmd number
+		Gtk::TreeModelColumn<Glib::ustring> actorName;	// actor name
+		Gtk::TreeModelColumn<Glib::ustring> sentence;	// sentence
+		Gtk::TreeModelColumn<Glib::ustring> wait;		// wait yes/no
+	};
+
+	CommandListColumns _commandColumns;
+	Glib::RefPtr<Gtk::ListStore> _commandStore;
+	Gtk::TreeView* _commandView;
+
+	Gtk::TreeModel::iterator _currentActor;
+	Gtk::TreeModel::iterator _currentCommand;
+
+	Gtk::Entry* _convNameEntry;
+	Gtk::CheckButton* _convActorsWithinTalkDistance;
+	Gtk::CheckButton* _convActorsAlwaysFace;
+	Gtk::CheckButton* _convMaxPlayCountEnable;
+	Gtk::HBox* _maxPlayCountHBox;
+	Gtk::SpinButton* _maxPlayCount;
+
+	Gtk::Button* _addActorButton;
+	Gtk::Button* _delActorButton;
+
+	Gtk::Button* _addCmdButton;
+	Gtk::Button* _delCmdButton;
+	Gtk::Button* _editCmdButton;
+	Gtk::Button* _moveUpCmdButton;
+	Gtk::Button* _moveDownCmdButton;
+
 	// The conversation we're editing (the working copy)
 	conversation::Conversation _conversation;
 
@@ -47,10 +99,10 @@ private:
 
 	void updateCmdActionSensitivity(bool hasSelection);
 
-	GtkWidget* createPropertyPane();
-	GtkWidget* createButtonPanel();
-	GtkWidget* createActorPanel();
-	GtkWidget* createCommandPanel();
+	Gtk::Widget& createPropertyPane();
+	Gtk::Widget& createButtonPanel();
+	Gtk::Widget& createActorPanel();
+	Gtk::Widget& createCommandPanel();
 
 	// Move the currently selected command about the given delta 
 	// (-1 is one upwards, +1 is one position downards)
@@ -59,23 +111,23 @@ private:
 	// Highlight the command with the given index
 	void selectCommand(int index);
 
-	static void onSave(GtkWidget* button, ConversationEditor* self);
-	static void onCancel(GtkWidget* button, ConversationEditor* self);
+	void onSave();
+	void onCancel();
 
-	static void onMaxPlayCountEnabled(GtkToggleButton* togglebutton, ConversationEditor* self);
+	void onMaxPlayCountEnabled();
 
-	static void onActorSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
-	static void onCommandSelectionChanged(GtkTreeSelection* sel, ConversationEditor* self);
+	void onActorSelectionChanged();
+	void onCommandSelectionChanged();
 
-	static void onAddActor(GtkWidget* w, ConversationEditor* self);
-	static void onDeleteActor(GtkWidget* w, ConversationEditor* self);
-	static void onActorEdited(GtkCellRendererText* renderer, gchar* path, gchar* new_text, ConversationEditor* self);
+	void onAddActor();
+	void onDeleteActor();
+	void onActorEdited(const Glib::ustring& path, const Glib::ustring& new_text);
 
-	static void onAddCommand(GtkWidget* w, ConversationEditor* self);
-	static void onEditCommand(GtkWidget* w, ConversationEditor* self);
-	static void onMoveUpCommand(GtkWidget* w, ConversationEditor* self);
-	static void onMoveDownCommand(GtkWidget* w, ConversationEditor* self);
-	static void onDeleteCommand(GtkWidget* w, ConversationEditor* self);
+	void onAddCommand();
+	void onEditCommand();
+	void onMoveUpCommand();
+	void onMoveDownCommand();
+	void onDeleteCommand();
 
 }; // class ConversationEditor
 

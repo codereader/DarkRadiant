@@ -3,7 +3,7 @@
 
 #include "i18n.h"
 #include "scenelib.h"
-#include <gtk/gtkliststore.h>
+#include <gtkmm/liststore.h>
 #include <string>
 
 #include "ConversationEntity.h"
