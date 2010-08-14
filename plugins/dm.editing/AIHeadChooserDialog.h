@@ -6,10 +6,14 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <set>
 #include <map>
+#include <gtkmm/liststore.h>
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
+namespace Gtk
+{
+	class TreeView;
+	class Button;
+	class TextView;
+}
 
 namespace ui
 {
@@ -28,14 +32,23 @@ public:
 	};
 
 private:
-	GtkListStore* _headStore;
-	GtkTreeSelection* _headSelection;
+	struct ListStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListStoreColumns() { add(name); }
 
+		Gtk::TreeModelColumn<Glib::ustring> name;
+	};
+
+	ListStoreColumns _columns;
+	Glib::RefPtr<Gtk::ListStore> _headStore;
+	Gtk::TreeView* _headsView;
+
+	Gtk::Button* _okButton;
+	Gtk::TextView* _description;
+	
 	// The model preview
 	IModelPreviewPtr _preview;
-
-	// Widgets, access via enum values
-	std::map<int, GtkWidget*> _widgets;
 
 	// The name of the currently selected head
 	std::string _selectedHead;
@@ -63,15 +76,15 @@ private:
 	
 	void populateHeadStore();
 
-	GtkWidget* createButtonPanel();
-	GtkWidget* createDescriptionPanel();
+	Gtk::Widget& createButtonPanel();
+	Gtk::Widget& createDescriptionPanel();
 
 	// Searches all entity classes for available heads
 	static void findAvailableHeads();
 
-	static void onHeadSelectionChanged(GtkTreeSelection* sel, AIHeadChooserDialog* self);
-	static void onOK(GtkWidget* widget, AIHeadChooserDialog* self);
-	static void onCancel(GtkWidget* widget, AIHeadChooserDialog* self);
+	void onHeadSelectionChanged();
+	void onOK();
+	void onCancel();
 };
 
 } // namespace ui
