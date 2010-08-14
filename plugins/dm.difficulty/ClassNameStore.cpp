@@ -5,34 +5,56 @@
 namespace ui {
 
 ClassNameStore::ClassNameStore() :
-	_store(gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING))
+	_store(Gtk::ListStore::create(_columns))
 {
 	populateListStore();
-	g_object_ref(G_OBJECT(_store));
+
+	// Sort the list alphabetically
+	_store->set_sort_column(_columns.classname, Gtk::SORT_ASCENDING);
 }
 
-ClassNameStore::~ClassNameStore() {
-	g_object_unref(G_OBJECT(_store));
+void ClassNameStore::destroy()
+{
+	InstancePtr().reset();
 }
 
-// Returns the GtkTreeModel* data storage containing all the classnames
-// Contains a singleton instance of this class
-GtkTreeModel* ClassNameStore::getModel() {
-	static ClassNameStore _classNameStore;
-	return GTK_TREE_MODEL(_classNameStore._store);
+ClassNameStore& ClassNameStore::Instance()
+{
+	if (InstancePtr() == NULL)
+	{
+		InstancePtr().reset(new ClassNameStore);
+	}
+
+	return *InstancePtr();
+}
+
+ClassNameStorePtr& ClassNameStore::InstancePtr()
+{
+	static ClassNameStorePtr _instancePtr;
+	return _instancePtr;
+}
+
+const ClassNameStore::ListStoreColumns& ClassNameStore::getColumns() const
+{
+	return _columns;
+}
+
+const Glib::RefPtr<Gtk::ListStore>& ClassNameStore::getModel() const
+{
+	return _store;
 }
 
 // EntityClassVisitor implementation
-void ClassNameStore::visit(IEntityClassPtr eclass) {
-	GtkTreeIter iter;
+void ClassNameStore::visit(IEntityClassPtr eclass)
+{
+	Gtk::TreeModel::Row row = *_store->append();
 
-	// Add a new row and append the data
-	gtk_list_store_append(_store, &iter);
-	gtk_list_store_set(_store, &iter, CLASSNAME_COL, eclass->getName().c_str(), -1);
+	row[_columns.classname] = eclass->getName();
 }
 
-void ClassNameStore::populateListStore() {
-	gtk_list_store_clear(_store);
+void ClassNameStore::populateListStore()
+{
+	_store->clear();
 
 	// Visit each entity class using <this> as visitor
 	GlobalEntityClassManager().forEach(*this);
