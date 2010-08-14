@@ -6,12 +6,16 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <set>
 #include <map>
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
+#include <gtkmm/liststore.h>
 
 #include "AIVocalSetPreview.h"
+
+namespace Gtk
+{
+	class TreeView;
+	class Button;
+	class TextView;
+}
 
 namespace ui
 {
@@ -30,11 +34,21 @@ public:
 	};
 
 private:
-	GtkListStore* _setStore;
-	GtkTreeSelection* _setSelection;
+	struct ListStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListStoreColumns() { add(name); }
 
-	// Widgets, access via enum values
-	std::map<int, GtkWidget*> _widgets;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+	};
+
+	ListStoreColumns _columns;
+
+	Glib::RefPtr<Gtk::ListStore> _setStore;
+	Gtk::TreeView* _setView;
+
+	Gtk::Button* _okButton;
+	Gtk::TextView* _description;
 
 	// The name of the currently selected set
 	std::string _selectedSet;
@@ -43,7 +57,7 @@ private:
 
 	Result _result;
 
-	AIVocalSetPreviewPtr _preview;
+	AIVocalSetPreview* _preview;
 
 public:
 	AIVocalSetChooserDialog();
@@ -60,15 +74,15 @@ public:
 private:
 	void populateSetStore();
 
-	GtkWidget* createButtonPanel();
-	GtkWidget* createDescriptionPanel();
+	Gtk::Widget& createButtonPanel();
+	Gtk::Widget& createDescriptionPanel();
 
 	// Searches all entity classes for available sets
 	static void findAvailableSets();
 
-	static void onSetSelectionChanged(GtkTreeSelection* sel, AIVocalSetChooserDialog* self);
-	static void onOK(GtkWidget* widget, AIVocalSetChooserDialog* self);
-	static void onCancel(GtkWidget* widget, AIVocalSetChooserDialog* self);
+	void onSetSelectionChanged();
+	void onOK();
+	void onCancel();
 };
 
 } // namespace ui

@@ -2,9 +2,16 @@
 #define AI_VOCAL_SET_PREVIEW_H_
 
 #include "ieclass.h"
-#include "gtkutil/ifc/Widget.h"
+#include <gtkmm/box.h>
 
-namespace ui {
+namespace Gtk
+{
+	class Button;
+	class Label;
+}
+
+namespace ui
+{
 
 /** 
  * greebo: This class provides the UI elements to listen
@@ -15,28 +22,18 @@ namespace ui {
  * parent container. 
  */
 class AIVocalSetPreview :
-	public gtkutil::Widget
+	public Gtk::HBox
 {
 private:
-	// The main container widget of this preview
-	GtkWidget* _widget;
-	
-	GtkWidget* _playButton;
-	GtkWidget* _stopButton;
-	GtkWidget* _statusLabel;
+	Gtk::Button* _playButton;
+	Gtk::Button* _stopButton;
+	Gtk::Label* _statusLabel;
 	
 	// The currently "previewed" vocal set
 	IEntityClassPtr _vocalSetDef;
 
 	typedef std::vector<std::string> SoundShaderList;
 	SoundShaderList _setShaders;
-
-protected:
-   
-	GtkWidget* _getWidget() const
-	{
-		return _widget;
-	}
 
 public:
 	AIVocalSetPreview();
@@ -55,17 +52,16 @@ private:
 
 	/** greebo: Creates the control widgets (play button) and such.
 	 */
-	GtkWidget* createControlPanel();
+	Gtk::Widget& createControlPanel();
 
 	/** greebo: Updates the list according to the active soundshader
 	 */
 	void update();
 	
-	// GTK Callbacks
-	static void onPlay(GtkWidget* button, AIVocalSetPreview* self);
-	static void onStop(GtkWidget* button, AIVocalSetPreview* self);
+	// gtkmm Callbacks
+	void onPlay();
+	void onStop();
 };
-typedef boost::shared_ptr<AIVocalSetPreview> AIVocalSetPreviewPtr;
 
 } // namespace ui
 
