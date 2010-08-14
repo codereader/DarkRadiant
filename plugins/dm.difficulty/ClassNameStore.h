@@ -3,33 +3,49 @@
 
 #include "ieclass.h"
 
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeModel GtkTreeModel;
+#include <boost/shared_ptr.hpp>
+#include <gtkmm/liststore.h>
 
-namespace ui {
+namespace ui
+{
+
+class ClassNameStore;
+typedef boost::shared_ptr<ClassNameStore> ClassNameStorePtr;
 
 class ClassNameStore :
 	private EntityClassVisitor
 {
-	// The liststore containing the eclass info
-	GtkListStore* _store;
-
 public:
-	enum {
-		CLASSNAME_COL, // classname
-		NUM_COLUMNS,
+	struct ListStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListStoreColumns() { add(classname); }
+
+		Gtk::TreeModelColumn<Glib::ustring> classname;
 	};
 
+private:
+	// The liststore containing the eclass info
+	ListStoreColumns _columns;
+	Glib::RefPtr<Gtk::ListStore> _store;
+
+public:
 	// Constructor, traverses the eclasses and fills the GtkListStore
 	ClassNameStore();
 
-	~ClassNameStore();
+	const ListStoreColumns& getColumns() const;
 
 	// Returns the GtkTreeModel* data storage containing all the classnames
 	// Contains a singleton instance of this class
-	static GtkTreeModel* getModel();
+	const Glib::RefPtr<Gtk::ListStore>& getModel() const;
+
+	static ClassNameStore& Instance();
+
+	static void destroy();
 
 private:
+	static ClassNameStorePtr& InstancePtr();
+
 	// EntityClassVisitor implementation
 	virtual void visit(IEntityClassPtr eclass);
 

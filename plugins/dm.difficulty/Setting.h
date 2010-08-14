@@ -3,11 +3,10 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include <gtk/gtktreestore.h>
+#include <gtkmm/liststore.h>
 
-typedef struct _GtkListStore GtkListStore;
-
-namespace difficulty {
+namespace difficulty
+{
 
 /**
  * greebo: A Setting represents a spawnarg change.
@@ -16,6 +15,15 @@ namespace difficulty {
 class Setting
 {
 public:
+	struct ListStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListStoreColumns() { add(name); add(type); }
+
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<int> type;
+	};
+
 	enum EApplicationType {
 		EAssign,
 		EAdd,
@@ -43,7 +51,7 @@ public:
 	bool isDefault;
 
 	// The tree iter this setting is stored at
-	GtkTreeIter iter;
+	Gtk::TreeModel::iterator iter;
 
 	// Constructor (assigns a unique ID automatically)
 	Setting();
@@ -64,8 +72,10 @@ public:
 	// Assemble a description string for the contained spawnArg/argument combo.
 	std::string getDescString() const;
 
+	static const ListStoreColumns& getTreeModelColumns();
+
 	// Creates a new GtkListStore instance for packing into a treeview
-	static GtkListStore* getAppTypeStore();
+	static Glib::RefPtr<Gtk::ListStore> getAppTypeStore();
 
 private:
 	static int _highestId;

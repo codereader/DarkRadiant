@@ -6,18 +6,26 @@
 
 #include "DifficultySettings.h"
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTreeStore GtkTreeStore;
-typedef struct _GtkTreeView GtkTreeView;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GtkComboBox GtkComboBox;
+namespace Gtk
+{
+	class Widget;
+	class TreeView;
+	class HBox;
+	class VBox;
+	class Label;
+	class Entry;
+	class Button;
+	class ComboBoxEntry;
+	class ComboBox;
+}
 
-namespace ui {
+namespace ui
+{
 
 /**
  * greebo: A Difficulty Editor provides the front-end for editing a 
- *         set of Difficulty Settings (e.g. "Easy" setting). The actual
- *         data is stored in a DifficultySettings instance.
+ * set of Difficulty Settings (e.g. "Easy" setting). The actual
+ * data is stored in a DifficultySettings instance.
  */
 class DifficultyEditor
 {
@@ -25,27 +33,26 @@ class DifficultyEditor
 	difficulty::DifficultySettingsPtr _settings;
 
 	// GtkNotebook-related widgets
-	GtkWidget* _editor;
-	GtkWidget* _labelHBox;
-	GtkWidget* _label; // the actual label
+	Gtk::VBox* _editor;
+	Gtk::HBox* _labelHBox;
+	Gtk::Label* _label; // the actual label
 
 	// The classname dropdown entry field
-	GtkWidget* _editorPane;
-	GtkWidget* _classCombo;
-	GtkWidget* _spawnArgEntry;
-	GtkWidget* _argumentEntry;
-	GtkWidget* _appTypeCombo;
+	Gtk::VBox* _editorPane;
+	Gtk::ComboBoxEntry* _classCombo;
+	Gtk::Entry* _spawnArgEntry;
+	Gtk::Entry* _argumentEntry;
+	Gtk::ComboBox* _appTypeCombo;
 
-	GtkWidget* _saveSettingButton;
-	GtkWidget* _deleteSettingButton;
-	GtkWidget* _createSettingButton;
-	GtkWidget* _refreshButton;
+	Gtk::Button* _saveSettingButton;
+	Gtk::Button* _deleteSettingButton;
+	Gtk::Button* _createSettingButton;
+	Gtk::Button* _refreshButton;
 
 	// A label containing notes to the user
-	GtkWidget* _noteText;
+	Gtk::Label* _noteText;
 
-	GtkTreeView* _settingsView;
-	GtkTreeSelection* _selection;
+	Gtk::TreeView* _settingsView;
 
 	// Mutex for avoiding loopbacks
 	bool _updateActive;
@@ -58,10 +65,10 @@ public:
 	DifficultyEditor(const std::string& label, const difficulty::DifficultySettingsPtr& settings);
 
 	// Returns the actual editor widget (contains all controls and views)
-	GtkWidget* getEditor();
+	Gtk::Widget& getEditor();
 
 	// Returns the label for packing into a GtkNotebook tab.
-	GtkWidget* getNotebookLabel();
+	Gtk::Widget& getNotebookLabel();
 
 	// Set the title label of this editor pane
 	void setLabel(const std::string& label);
@@ -69,8 +76,9 @@ public:
 private:
 	// Creates the widgets
 	void populateWindow();
-	GtkWidget* createTreeView();
-	GtkWidget* createEditingWidgets();
+
+	Gtk::Widget& createTreeView();
+	Gtk::Widget& createEditingWidgets();
 
 	// Returns the ID of the selected setting (or -1) if no valid setting is selected
 	int getSelectedSettingId();
@@ -90,15 +98,15 @@ private:
 	// Highlights the setting (according to the given <id>) in the treeview
 	void selectSettingById(int id);
 
-	// GTK Callback for treeview selection changes
-	static void onSettingSelectionChange(GtkTreeSelection* treeView, DifficultyEditor* self);
+	// gtkmm Callback for treeview selection changes
+	void onSettingSelectionChange();
 
-	static void onSettingCreate(GtkWidget* button, DifficultyEditor* self);
-	static void onSettingSave(GtkWidget* button, DifficultyEditor* self);
-	static void onSettingDelete(GtkWidget* button, DifficultyEditor* self);
-	static void onRefresh(GtkWidget* button, DifficultyEditor* self);
+	void onSettingCreate();
+	void onSettingSave();
+	void onSettingDelete();
+	void onRefresh();
 
-	static void onAppTypeChange(GtkComboBox* appTypeCombo, DifficultyEditor* self);
+	void onAppTypeChange();
 };
 typedef boost::shared_ptr<DifficultyEditor> DifficultyEditorPtr;
 

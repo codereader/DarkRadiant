@@ -76,11 +76,11 @@ void DifficultyDialog::createDifficultyEditors() {
 	for (std::size_t i = 0; i < _editors.size(); i++) {
 		DifficultyEditor& editor = *_editors[i];
 
-		GtkWidget* label = editor.getNotebookLabel();
+		Gtk::Widget& label = editor.getNotebookLabel();
 		// Show the widgets before using them as label, they won't appear otherwise	
-		gtk_widget_show_all(label);
+		label.show_all();
 
-		gtk_notebook_append_page(_notebook, editor.getEditor(), label);
+		gtk_notebook_append_page(_notebook, editor.getEditor().gobj(), label.gobj());
 	}
 }
 
