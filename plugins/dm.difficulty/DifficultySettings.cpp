@@ -265,6 +265,8 @@ Gtk::TreeModel::iterator DifficultySettings::insertClassName(const std::string& 
 
 std::string DifficultySettings::getInheritanceKey(const std::string& className)
 {
+	if (className.empty()) return "";
+
 	// Get the eclass
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(className);
 	// Get the inheritance chain of this class
