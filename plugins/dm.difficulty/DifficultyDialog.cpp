@@ -7,14 +7,21 @@
 #include "iscenegraph.h"
 #include "string/string.h"
 #include "gtkutil/RightAlignment.h"
-#include <gtk/gtk.h>
+
+#include <gtkmm/button.h>
+#include <gtkmm/box.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/notebook.h>
+
 #include <gdk/gdkkeysyms.h>
 
 #include <iostream>
 
-namespace ui {
+namespace ui
+{
 
-namespace {
+namespace
+{
 	const char* const WINDOW_TITLE = N_("Difficulty Editor");
 	
 	const std::string RKEY_ROOT = "user/ui/difficultyDialog/";
@@ -28,12 +35,11 @@ DifficultyDialog::DifficultyDialog() :
 	_settingsManager.loadSettings();
 
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_window_set_modal(GTK_WINDOW(getWindow()), TRUE);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	set_modal(true);
 	
-	g_signal_connect(G_OBJECT(getWindow()), "key-press-event", 
-					 G_CALLBACK(onWindowKeyPress), this);
+	signal_key_press_event().connect(sigc::mem_fun(*this, &DifficultyDialog::onWindowKeyPress));
 	
 	// Create the widgets
 	populateWindow();
@@ -43,28 +49,31 @@ DifficultyDialog::DifficultyDialog() :
 	
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
-
-	// Show the dialog, this enters the gtk main loop
-	show();
 }
 
-void DifficultyDialog::_preHide() {
+void DifficultyDialog::_preHide()
+{
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 }
 
-void DifficultyDialog::_preShow() {
+void DifficultyDialog::_preShow()
+{
 	// Restore the position
 	_windowPosition.applyPosition();
 }
 
-void DifficultyDialog::createDifficultyEditors() {
+void DifficultyDialog::createDifficultyEditors()
+{
 	int numLevels = GlobalRegistry().getInt(RKEY_DIFFICULTY_LEVELS);
-	for (int i = 0; i < numLevels; i++) {
+
+	for (int i = 0; i < numLevels; i++)
+	{
 		// Acquire the settings object
 		difficulty::DifficultySettingsPtr settings = _settingsManager.getSettings(i);
 
-		if (settings != NULL) {
+		if (settings != NULL)
+		{
 			_editors.push_back(
 				DifficultyEditorPtr(new DifficultyEditor(
 					_settingsManager.getDifficultyName(i), settings)
@@ -73,53 +82,55 @@ void DifficultyDialog::createDifficultyEditors() {
 		}
 	}
 
-	for (std::size_t i = 0; i < _editors.size(); i++) {
+	for (std::size_t i = 0; i < _editors.size(); i++)
+	{
 		DifficultyEditor& editor = *_editors[i];
 
 		Gtk::Widget& label = editor.getNotebookLabel();
 		// Show the widgets before using them as label, they won't appear otherwise	
 		label.show_all();
 
-		gtk_notebook_append_page(_notebook, editor.getEditor().gobj(), label.gobj());
+		_notebook->append_page(editor.getEditor(), label);
 	}
 }
 
-void DifficultyDialog::populateWindow() {
+void DifficultyDialog::populateWindow()
+{
 	// Create the overall vbox
-	_dialogVBox = gtk_vbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(getWindow()), _dialogVBox);
+	_dialogVBox = Gtk::manage(new Gtk::VBox(false, 12));
+	add(*_dialogVBox);
 	
 	// Create the notebook and add it to the vbox
-	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), GTK_WIDGET(_notebook), TRUE, TRUE, 0);
+	_notebook = Gtk::manage(new Gtk::Notebook);
+	_dialogVBox->pack_start(*_notebook, true, true, 0);
 	
 	// Create and pack the editors
 	createDifficultyEditors();
 
 	// Pack in dialog buttons
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
+	_dialogVBox->pack_start(createButtons(), false, false, 0);
 }
 
 // Lower dialog buttons
-GtkWidget* DifficultyDialog::createButtons() {
-
-	GtkWidget* buttonHBox = gtk_hbox_new(TRUE, 12);
+Gtk::Widget& DifficultyDialog::createButtons()
+{
+	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
 	
 	// Save button
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onSave), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, TRUE, TRUE, 0);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyDialog::onSave));
+	buttonHBox->pack_end(*okButton, true, true, 0);
 	
 	// Close Button
-	_closeButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	g_signal_connect(
-		G_OBJECT(_closeButton), "clicked", G_CALLBACK(onClose), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), _closeButton, TRUE, TRUE, 0);
+	_closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	_closeButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyDialog::onClose));
+	buttonHBox->pack_end(*_closeButton, true, true, 0);
 	
-	return gtkutil::RightAlignment(buttonHBox);	
+	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHBox));
 }
 
-void DifficultyDialog::save() {
+void DifficultyDialog::save()
+{
 	// Consistency check can go here
 	
 	// Scoped undo object
@@ -129,32 +140,38 @@ void DifficultyDialog::save() {
 	_settingsManager.saveSettings();
 }
 
-void DifficultyDialog::onSave(GtkWidget* button, DifficultyDialog* self) {
-	self->save();
-	self->destroy();
-}
-
-void DifficultyDialog::onClose(GtkWidget* button, DifficultyDialog* self) {
-	self->destroy();
-}
-
-gboolean DifficultyDialog::onWindowKeyPress(
-	GtkWidget* dialog, GdkEventKey* event, DifficultyDialog* self)
+void DifficultyDialog::onSave()
 {
-	if (event->keyval == GDK_Escape) {
-		self->destroy();
+	save();
+	destroy();
+}
+
+void DifficultyDialog::onClose()
+{
+	destroy();
+}
+
+bool DifficultyDialog::onWindowKeyPress(GdkEventKey* ev)
+{
+	if (ev->keyval == GDK_Escape)
+	{
+		destroy();
 		// Catch this keyevent, don't propagate
-		return TRUE;
+		return true;
 	}
 	
 	// Propagate further
-	return FALSE;
+	return false;
 }
 
 // Static command target
-void DifficultyDialog::showDialog(const cmd::ArgumentList& args) {
+void DifficultyDialog::showDialog(const cmd::ArgumentList& args)
+{
 	// Construct a new instance, this enters the main loop
 	DifficultyDialog _editor;
+
+	// Show the dialog, this enters the gtk main loop
+	_editor.show();
 }
 
 } // namespace ui

@@ -1,7 +1,5 @@
 #include "ClassNameStore.h"
 
-#include <gtk/gtkliststore.h>
-
 namespace ui {
 
 ClassNameStore::ClassNameStore() :
