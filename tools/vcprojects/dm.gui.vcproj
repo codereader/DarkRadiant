@@ -462,10 +462,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\dm.gui\XDataInserter.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\dm.gui\XDataLoader.cpp"
 				>
 			</File>

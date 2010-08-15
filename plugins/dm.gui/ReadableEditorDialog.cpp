@@ -1518,7 +1518,7 @@ void ReadableEditorDialog::onBrowseXd()
 	// FileChooser for xd-files
 	_xdLoader->retrieveXdInfo();
 
-	std::string res = XDataSelector::run(_xdLoader->getDefinitionList(), this);
+	std::string res = XDataSelector::run(_xdLoader->getDefinitionList(), *this);
 
 	if (res.empty())
 	{

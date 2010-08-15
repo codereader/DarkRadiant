@@ -3,9 +3,15 @@
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/ScrolledFrame.h"
-#include <gtk/gtk.h>
+
 #include <string.h>
 #include "imainframe.h"
+
+#include <gtkmm/textview.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/alignment.h>
+#include <gtkmm/box.h>
 
 namespace ui
 {
@@ -16,50 +22,44 @@ class TextViewInfoDialog :
 	public gtkutil::BlockingTransientWindow
 {
 private:
-	GtkTextBuffer* _bfr;
+	Glib::RefPtr<Gtk::TextBuffer> _bfr;
 
 public:
 	TextViewInfoDialog(const std::string& title, const std::string& text, 
 					   const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(), 
-					   guint win_width = 650, guint win_height = 500) :
+					   int win_width = 650, int win_height = 500) :
 		gtkutil::BlockingTransientWindow(title, parent ? parent : GlobalMainFrame().getTopLevelWindow())
 	{
 		// Set the default border width in accordance to the HIG
-		gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-		gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
-		gtk_window_set_default_size(GTK_WINDOW(getWindow()), win_width, win_height);
+		set_border_width(12);
+		set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+		set_default_size(win_width, win_height);
 
 		// Create the textview and add the text.
-		GtkWidget* textView = gtk_text_view_new();
-		gtk_text_view_set_editable(GTK_TEXT_VIEW(textView), FALSE);
-		_bfr = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textView));
+		Gtk::TextView* textView = Gtk::manage(new Gtk::TextView);
+		textView->set_editable(false);
+		_bfr = textView->get_buffer();
 
-		gtk_text_buffer_set_text(_bfr, text.c_str(), static_cast<gint>(text.size()));
+		_bfr->set_text(text);
 
 		// Create the button and connect the signal
-		GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-		g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onOk), this);
+		Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+		okButton->signal_clicked().connect(sigc::mem_fun(*this, &TextViewInfoDialog::onOk));
 
-		GtkWidget* alignment = gtk_alignment_new(0.5,1,0,0);
-		gtk_container_add(GTK_CONTAINER(alignment), okButton);
+		Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.5, 1, 0, 0));
+		alignment->add(*okButton);
 
 		// Create a vbox and add the elements.
-		GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
-		gtk_box_pack_start(GTK_BOX(vbox), gtkutil::ScrolledFrame(textView), TRUE, TRUE, 0);
-		gtk_box_pack_start(GTK_BOX(vbox), alignment, FALSE, FALSE, 0);
+		Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+		vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*textView)), true, true, 0);
+		vbox->pack_start(*alignment, false, false, 0);
 
-		gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
+		add(*vbox);
 	}
 
-	// Appends the given text to the textview.
-	void add(const std::string& text)
+	void onOk()
 	{
-		gtk_text_buffer_insert_at_cursor(_bfr, text.c_str(), static_cast<gint>(text.size()));
-	}
-
-	static void onOk(GtkWidget* widget, XDataSelector* self)
-	{
-		self->destroy();
+		destroy();
 	}
 };
 
