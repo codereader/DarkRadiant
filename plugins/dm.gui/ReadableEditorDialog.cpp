@@ -524,7 +524,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	if (!_entity->getKeyValue("xdata_contents").empty())
 	{
 		XdFileChooserDialog::Result result = XdFileChooserDialog::import( 
-			_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader, this
+			_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader, *this
 		);
 
 		switch (result)
@@ -1003,7 +1003,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 
 		if (popup->run() == ui::IDialog::RESULT_YES)
 		{
-			switch (XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader, this))
+			switch (XdFileChooserDialog::import( xdn, _xData, _xdFilename, _xdLoader, *this))
 			{
 			case XdFileChooserDialog::RESULT_CANCEL:
 				break;
@@ -1527,7 +1527,7 @@ void ReadableEditorDialog::onBrowseXd()
 	}
 	
 	// Import the file:
-	switch (XdFileChooserDialog::import(res, _xData, _xdFilename, _xdLoader, this))
+	switch (XdFileChooserDialog::import(res, _xData, _xdFilename, _xdLoader, *this))
 	{
 		case XdFileChooserDialog::RESULT_IMPORT_FAILED:
 		{
