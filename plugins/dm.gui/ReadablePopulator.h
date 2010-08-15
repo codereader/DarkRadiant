@@ -17,8 +17,8 @@ class ReadablePopulator :
 	public gui::GuiManager::Visitor
 {
 private:
-	gtkutil::VFSTreePopulator& _popOne;
-	gtkutil::VFSTreePopulator& _popTwo;
+	gtkutil::VFSTreePopulatormm& _popOne;
+	gtkutil::VFSTreePopulatormm& _popTwo;
 
 	// Progress dialog and model count
 	gtkutil::ModalProgressDialog _progress;
@@ -29,8 +29,8 @@ private:
 	EventRateLimiter _evLimiter;
 
 public:
-	ReadablePopulator(gtkutil::VFSTreePopulator& popOne,
-					  gtkutil::VFSTreePopulator& popTwo, const Glib::RefPtr<Gtk::Window>& parent) :
+	ReadablePopulator(gtkutil::VFSTreePopulatormm& popOne,
+					  gtkutil::VFSTreePopulatormm& popTwo, const Glib::RefPtr<Gtk::Window>& parent) :
 		_popOne(popOne),
 		_popTwo(popTwo),
 		_progress(parent, _("Analysing Guis")),
