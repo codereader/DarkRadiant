@@ -6,9 +6,25 @@
 
 #include <string>
 #include <boost/format.hpp>
+#include <gtkmm/liststore.h>
 
 namespace objectives
 {
+
+struct ObjectiveEntityListColumns :
+	public Gtk::TreeModel::ColumnRecord
+{
+	ObjectiveEntityListColumns()
+	{ 
+		add(displayName);
+		add(startActive);
+		add(entityName);
+	}
+
+	Gtk::TreeModelColumn<Glib::ustring> displayName;
+	Gtk::TreeModelColumn<bool> startActive;
+	Gtk::TreeModelColumn<Glib::ustring> entityName;
+};
 
 /**
  * Visitor class to locate and list any <b>atdm:target_addobjectives</b> entities in 
@@ -32,7 +48,8 @@ class ObjectiveEntityFinder
 	std::vector<std::string> _classNames;
 	
 	// GtkListStore to populate with results
-	GtkListStore* _store;
+	const ObjectiveEntityListColumns& _columns;
+	Glib::RefPtr<Gtk::ListStore> _store;
 	
 	// ObjectiveEntityMap which we also populate
 	ObjectiveEntityMap& _map;
@@ -62,10 +79,12 @@ public:
 	 * @param classname
 	 * The text classname used to identify an Objectives entity.
 	 */
-	ObjectiveEntityFinder(GtkListStore* st, 
+	ObjectiveEntityFinder(const Glib::RefPtr<Gtk::ListStore>& st, 
+						  const ObjectiveEntityListColumns& columns,
 						  ObjectiveEntityMap& map,
 						  const std::vector<std::string>& classnames)
 	: _classNames(classnames),
+	  _columns(columns),
 	  _store(st),
 	  _map(map),
 	  _worldSpawn(NULL)
@@ -75,14 +94,16 @@ public:
 	 * Return a pointer to the worldspawn entity. This could potentially be
 	 * NULL if a worldspawn entity was not found during visitation.
 	 */
-	Entity* getWorldSpawn() {
+	Entity* getWorldSpawn()
+	{
 		return _worldSpawn;
 	}
 	
 	/**
 	 * @see scene::NodeVisitor::pre()
 	 */
-	bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& node)
+	{
 		
 		// Get the entity and check the classname
 		Entity* ePtr = Node_getEntity(node);
@@ -104,18 +125,14 @@ public:
 			{
 				// Construct the display string
 				std::string name = ePtr->getKeyValue("name");
-				std::string sDisplay = 
-					(boost::format(_("<b>%s</b> at [ %s ]")) % name % ePtr->getKeyValue("origin")).str();
 				
 				// Add the entity to the list
-				GtkTreeIter iter;
-				gtk_list_store_append(_store, &iter);
-				gtk_list_store_set(_store, &iter, 
-								   0, sDisplay.c_str(),
-								   1, FALSE,				// active at start
-								   2, name.c_str(), 		// raw name
-								   -1);
-								   
+				Gtk::TreeModel::Row row = *_store->append();
+
+				row[_columns.displayName] = (boost::format(_("<b>%s</b> at [ %s ]")) % name % ePtr->getKeyValue("origin")).str();
+				row[_columns.entityName] = name;
+				row[_columns.startActive] = false;
+
 				// Construct an ObjectiveEntity with the node, and add to the map
 				ObjectiveEntityPtr oe(new ObjectiveEntity(node));
 				_map.insert(ObjectiveEntityMap::value_type(name, oe));
