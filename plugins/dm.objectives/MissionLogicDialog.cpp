@@ -8,7 +8,11 @@
 #include "string/string.h"
 
 #include <boost/format.hpp>
-#include <gtk/gtk.h>
+
+#include <gtkmm/box.h>
+#include <gtkmm/separator.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
 namespace objectives {
 
@@ -38,80 +42,86 @@ MissionLogicDialog::MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 	createLogicEditors();
 
 	// Overall VBox for labels and alignments
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
 	
-	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel(makeBold(_("Default Logic"))), FALSE, FALSE, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Default Logic")))), false, false, 0);
 
 	// Default Logic
-	GtkWidget* defaultVBox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(defaultVBox), gtkutil::LeftAlignedLabel(_(STANDARD_LOGIC_DESCR)), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(defaultVBox), _logicEditors[-1]->getWidget(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignment(defaultVBox, 12, 1.0f) , TRUE, TRUE, 0);
+	Gtk::VBox* defaultVBox = Gtk::manage(new Gtk::VBox(false, 6));
+	defaultVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(STANDARD_LOGIC_DESCR))), false, false, 0);
+	defaultVBox->pack_start(*_logicEditors[-1], true, true, 0);
+
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*defaultVBox, 12, 1.0f)), true, true, 0);
 	
 	// Now add all difficulty-specific editors
-	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignedLabel(_("Difficulty-specific Logic")), FALSE, FALSE, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Difficulty-specific Logic"))), false, false, 0);
 
-	GtkWidget* diffVBox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(diffVBox), gtkutil::LeftAlignedLabel(_(DIFFICULTY_LOGIC_DESCR)), FALSE, FALSE, 0);
+	Gtk::VBox* diffVBox = Gtk::manage(new Gtk::VBox(false, 6));
+	diffVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(DIFFICULTY_LOGIC_DESCR))), false, false, 0);
 
 	// Iterate over all editors for levels that are greater or equal 0
 	for (LogicEditorMap::iterator i = _logicEditors.lower_bound(0);
-		 i != _logicEditors.end(); i++)
+		 i != _logicEditors.end(); ++i)
 	{
 		std::string logicStr = (boost::format(_("Logic for Difficulty Level %d")) % i->first).str();
 
-		gtk_box_pack_start(GTK_BOX(diffVBox), 
-			gtkutil::LeftAlignedLabel(makeBold(logicStr)), 
-			FALSE, FALSE, 0
+		diffVBox->pack_start(
+			*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(logicStr))), 
+			false, false, 0
 		);
-		gtk_box_pack_start(GTK_BOX(diffVBox), i->second->getWidget(), TRUE, TRUE, 0);
+
+		diffVBox->pack_start(*i->second, true, true, 0);
 	}
 
-	gtk_box_pack_start(GTK_BOX(vbx), gtkutil::LeftAlignment(diffVBox, 12, 1.0f) , TRUE, TRUE, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*diffVBox, 12, 1.0f)), true, true, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbx), gtk_hseparator_new(), FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
+	vbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
+	vbx->pack_end(createButtons(), false, false, 0);
 	
 	// Populate the logic strings
 	populateLogicEditors();
 
 	// Add contents to main window
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_container_add(GTK_CONTAINER(getWindow()), vbx);
+	set_border_width(12);
+	add(*vbx);
 }
 
-void MissionLogicDialog::createLogicEditors() {
+void MissionLogicDialog::createLogicEditors()
+{
 	// Create the default logic editor
-	_logicEditors[-1] = LogicEditorPtr(new LogicEditor);
+	_logicEditors[-1] = Gtk::manage(new LogicEditor);
 	
 	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
 	// to find out how many difficulty levels there are (and what their names are)
-	_logicEditors[0] = LogicEditorPtr(new LogicEditor);
-	_logicEditors[1] = LogicEditorPtr(new LogicEditor);
-	_logicEditors[2] = LogicEditorPtr(new LogicEditor);
+	_logicEditors[0] = Gtk::manage(new LogicEditor);
+	_logicEditors[1] = Gtk::manage(new LogicEditor);
+	_logicEditors[2] = Gtk::manage(new LogicEditor);
 }
 
 // Create buttons
-GtkWidget* MissionLogicDialog::createButtons() {
+Gtk::Widget& MissionLogicDialog::createButtons()
+{
 	// Create a new homogeneous hbox
-	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
 
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &MissionLogicDialog::_onOK));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &MissionLogicDialog::_onCancel));
 	
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+	hbx->pack_end(*okButton, true, true, 0);
+	hbx->pack_end(*cancelButton, true, true, 0);
 
-	return gtkutil::RightAlignment(hbx);
+	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
 }
 
-void MissionLogicDialog::populateLogicEditors() {
+void MissionLogicDialog::populateLogicEditors()
+{
 	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
 	// to find out how many difficulty levels there are
-	for (int i = -1; i < 2; i++) {
+	for (int i = -1; i < 2; i++)
+	{
 		LogicPtr logic = _objectiveEnt.getMissionLogic(i);
 
 		// FIXME: Hm, maybe it would be better to pass the Logic object itself to the editor?
@@ -120,10 +130,12 @@ void MissionLogicDialog::populateLogicEditors() {
 	}
 }
 
-void MissionLogicDialog::save() {
+void MissionLogicDialog::save()
+{
 	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
 	// to find out how many difficulty levels there are
-	for (int i = -1; i < 2; i++) {
+	for (int i = -1; i < 2; i++)
+	{
 		LogicPtr logic = _objectiveEnt.getMissionLogic(i);
 
 		// FIXME: Hm, maybe it would be better to pass the Logic object itself to the editor?
@@ -132,17 +144,17 @@ void MissionLogicDialog::save() {
 	}
 }
 
-// GTK CALLBACKS
-
 // Save button
-void MissionLogicDialog::_onOK(GtkWidget* w, MissionLogicDialog* self) {
-    self->save();
-	self->destroy();
+void MissionLogicDialog::_onOK()
+{
+    save();
+	destroy();
 }
 
 // Cancel button
-void MissionLogicDialog::_onCancel(GtkWidget* w, MissionLogicDialog* self) {
-    self->destroy();
+void MissionLogicDialog::_onCancel()
+{
+    destroy();
 }
 
 } // namespace objectives
