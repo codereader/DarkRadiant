@@ -1,3 +1,6 @@
+#ifndef _XDATA_SELECTOR_H_
+#define _XDATA_SELECTOR_H_
+
 #include "XDataLoader.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <gtk/gtk.h>
@@ -55,3 +58,5 @@ private:
 };
 
 } //namespace ui
+
+#endif

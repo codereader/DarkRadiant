@@ -1,3 +1,6 @@
+#ifndef _XDATA_INSERTER_H_
+#define _XDATA_INSERTER_H_
+
 #include "iuimanager.h"
 
 namespace ui
@@ -55,3 +58,5 @@ public:
 };
 
 } // namespace ui
+
+#endif
