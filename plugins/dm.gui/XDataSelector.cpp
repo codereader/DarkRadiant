@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "imainframe.h"
+#include "iuimanager.h"
 
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
@@ -10,7 +11,11 @@
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/dialog.h"
 
-#include "XDataInserter.h"
+#include <gtkmm/button.h>
+#include <gtkmm/box.h>
+#include <gtkmm/stock.h>
+
+#include "ReadableEditorDialog.h"
 
 namespace ui
 {
@@ -18,38 +23,41 @@ namespace ui
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Choose an XData Definition...");
-	const gint WINDOW_WIDTH = 400;
-	const gint WINDOW_HEIGHT = 500;
+	const int WINDOW_WIDTH = 400;
+	const int WINDOW_HEIGHT = 500;
+
+	const char* const XDATA_ICON = "sr_icon_readable.png";
+	const char* const FOLDER_ICON = "folder16.png";
 }
 
-XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditorDialog* editorDialog) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), editorDialog->getRefPtr()),
-	_store(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING,	G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
+XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditorDialog& editorDialog) :
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), editorDialog.getRefPtr()),
+	_store(Gtk::TreeStore::create(_columns)),
 	_okButton(NULL),
 	_files(files),
 	_editorDialog(editorDialog),
 	_result(RESULT_CANCELLED)
 {
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), WINDOW_WIDTH, WINDOW_HEIGHT);
+	set_default_size(WINDOW_WIDTH, WINDOW_HEIGHT);
 
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	// Add a vbox for the dialog elements
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
-	gtk_box_pack_start(GTK_BOX(vbox), createTreeView(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), createButtons(), FALSE, FALSE, 0);
+	vbox->pack_start(createTreeView(), true, true, 0);
+	vbox->pack_start(createButtons(), false, false, 0);
 
-	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
+	add(*vbox);
 
 	fillTree();
 
-	gtk_widget_set_sensitive(_okButton, FALSE);
+	_okButton->set_sensitive(false);
 }
 
-std::string XDataSelector::run(const XData::StringVectorMap& files, ReadableEditorDialog* editorDialog)
+std::string XDataSelector::run(const XData::StringVectorMap& files, ReadableEditorDialog& editorDialog)
 {
 	XDataSelector dialog(files, editorDialog);
 	dialog.show();
@@ -57,94 +65,105 @@ std::string XDataSelector::run(const XData::StringVectorMap& files, ReadableEdit
 	return (dialog._result == RESULT_OK) ? dialog._selection : "";
 }
 
+void XDataSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+						  const Gtk::TreeModel::iterator& iter, 
+						  const std::string& path,
+						  bool isExplicit)
+{
+	// Fill in the column values
+	Gtk::TreeModel::Row row = *iter;
+
+	row[_columns.name] = path.substr(path.rfind("/") + 1);
+	row[_columns.fullName] = path;
+	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? XDATA_ICON : FOLDER_ICON);
+	row[_columns.isFolder] = !isExplicit;
+} 
+
 void XDataSelector::fillTree()
 {
 	// Start adding to tree.
-	gtkutil::VFSTreePopulator populator(_store);
+	gtkutil::VFSTreePopulatormm populator(_store);
 
 	for (XData::StringVectorMap::const_iterator it = _files.begin(); it != _files.end(); ++it)
 	{
 		populator.addPath(it->first);
 	}
 
-	XDataInserter inserter;
-	populator.forEachNode(inserter);
+	populator.forEachNode(*this);
 }
 
-GtkWidget* XDataSelector::createTreeView()
+Gtk::Widget& XDataSelector::createTreeView()
 {
 	// Create the treeview
-	GtkTreeView* _treeView = GTK_TREE_VIEW(
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_store))
-	);
-	g_object_unref(_store);
-	gtk_tree_view_set_headers_visible(_treeView, FALSE);
+	Gtk::TreeView* treeView = Gtk::manage(new Gtk::TreeView(_store));
+
+	treeView->set_headers_visible(false);
 
 	// Add the selection and connect the signal
-	GtkTreeSelection* select = gtk_tree_view_get_selection ( _treeView );
-	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
-	g_signal_connect(select, "changed", G_CALLBACK(onSelectionChanged), this);
-
+	Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
+	selection->set_mode(Gtk::SELECTION_SINGLE);
+	selection->signal_changed().connect(sigc::bind(sigc::mem_fun(*this, &XDataSelector::onSelectionChanged), treeView));
+	
 	// Single visible column, containing the directory/model name and the icon
-	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(_("Model Path"), NAME_COLUMN, IMAGE_COLUMN);
-	gtk_tree_view_append_column(_treeView, nameCol);				
+	Gtk::TreeViewColumn* nameCol = Gtk::manage(new gtkutil::IconTextColumnmm(
+		_("Xdata Path"), _columns.name, _columns.icon
+	));
+
+	treeView->append_column(*nameCol);
 
 	// Set the tree store's sort behaviour
-	gtkutil::TreeModel::applyFoldersFirstSortFunc(
-		GTK_TREE_MODEL(_store), NAME_COLUMN, IS_FOLDER_COLUMN
-	);
+	gtkutil::TreeModel::applyFoldersFirstSortFunc(_store, _columns.name, _columns.isFolder);
 
 	// Use the TreeModel's full string search function
-	gtk_tree_view_set_search_equal_func(_treeView, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+	treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
 
 	// Pack treeview into a scrolled window and frame, and return
-	return gtkutil::ScrolledFrame(GTK_WIDGET(_treeView));
+	return *Gtk::manage(new gtkutil::ScrolledFramemm(*treeView));
 }
 
-GtkWidget* XDataSelector::createButtons()
+Gtk::Widget& XDataSelector::createButtons()
 {
-	_okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	g_signal_connect(G_OBJECT(_okButton), "clicked", G_CALLBACK(onOk), this);
+	_okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	_okButton->signal_clicked().connect(sigc::mem_fun(*this, &XDataSelector::onOk));
+	
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &XDataSelector::onCancel));
 
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	hbox->pack_start(*_okButton, false, false, 0);
+	hbox->pack_start(*cancelButton, false, false, 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), _okButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), cancelButton, FALSE, FALSE, 0);
-
-	return gtkutil::RightAlignment(hbox);
+	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbox));
 }
 
-void XDataSelector::onCancel(GtkWidget* widget, XDataSelector* self)
+void XDataSelector::onCancel()
 {
-	self->destroy();
+	destroy();
 }
 
-void XDataSelector::onOk(GtkWidget* widget, XDataSelector* self)
+void XDataSelector::onOk()
 {
-	self->_result = RESULT_OK;
+	_result = RESULT_OK;
 
 	// Everything done. Destroy the window!
-	self->destroy();
+	destroy();
 }
 
-void XDataSelector::onSelectionChanged(GtkTreeSelection* treeselection, XDataSelector* self)
+void XDataSelector::onSelectionChanged(Gtk::TreeView* view)
 {
-	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(treeselection, &model, NULL) ? true : false;
-
-	if (anythingSelected && !gtkutil::TreeModel::getSelectedBoolean(treeselection, IS_FOLDER_COLUMN))
+	Gtk::TreeModel::iterator iter = view->get_selection()->get_selected();
+	
+	if (iter && !(*iter)[_columns.isFolder])
 	{
-		self->_selection = gtkutil::TreeModel::getSelectedString(treeselection, FULLNAME_COLUMN);
-		self->_editorDialog->updateGuiView(self->getRefPtr(), "", self->_selection);
+		_selection = Glib::ustring((*iter)[_columns.fullName]);
+		_editorDialog.updateGuiView(getRefPtr(), "", _selection);
 
-		gtk_widget_set_sensitive(self->_okButton, TRUE);
+		_okButton->set_sensitive(true);
 	}
 	else
 	{
-		gtk_widget_set_sensitive(self->_okButton, FALSE);
+		_okButton->set_sensitive(false);
 	}
 }
 
