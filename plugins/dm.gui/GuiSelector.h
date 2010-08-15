@@ -2,21 +2,50 @@
 #define _GUI_SELECTOR_H_
 
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/VFSTreePopulator.h"
 
-#include "gui/GuiManager.h"
+#include <gtkmm/treestore.h>
 
-#include "ReadableEditorDialog.h"
+namespace Gtk
+{
+	class Notebook;
+	class Button;
+	class TreeView;
+}
 
 namespace ui
 {
+
+// Forward decl.
+class ReadableEditorDialog;
 
 ///////////////////////////// XDataSelector:
 // Selector-Dialog for TwoSided and OneSided readable guis. Switching the pages of the notebook
 // also toggles the according editing mode on the ReadableEditorDialog (TwoSided or OneSided).
 // Selecting a gui definition updates the guiView for previewing.
 class GuiSelector :
-	public gtkutil::BlockingTransientWindow
+	public gtkutil::BlockingTransientWindow,
+	public gtkutil::VFSTreePopulatormm::Visitor
 {
+public:
+	// Treestore enum
+	struct GuiTreeModelColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		GuiTreeModelColumns()
+		{ 
+			add(name);
+			add(fullName);
+			add(icon);
+			add(isFolder);
+		}
+
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<Glib::ustring> fullName;
+		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
+		Gtk::TreeModelColumn<bool> isFolder;
+	};
+
 private:
 	// Reference to the calling ReadableEditorDialog
 	ReadableEditorDialog& _editorDialog;
@@ -25,12 +54,13 @@ private:
 	std::string _name;
 
 	// The notebook holding the tabs for one-sided and two-sided readables.
-	GtkNotebook* _notebook;
+	Gtk::Notebook* _notebook;
 
-	GtkTreeStore* _oneSidedStore;
-	GtkTreeStore* _twoSidedStore;
+	GuiTreeModelColumns _columns;
+	Glib::RefPtr<Gtk::TreeStore> _oneSidedStore;
+	Glib::RefPtr<Gtk::TreeStore> _twoSidedStore;
 
-	GtkWidget* _okButton;
+	Gtk::Button* _okButton;
 
 	enum Result
 	{
@@ -45,6 +75,11 @@ public:
 	// The dialog shows the twoSided treeview if twoSided is true.
 	static std::string run(bool twoSided, ReadableEditorDialog& editorDialog);
 
+	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+			   const Gtk::TreeModel::iterator& iter, 
+			   const std::string& path,
+			   bool isExplicit);
+
 protected:
 	void _preShow();
 
@@ -53,15 +88,18 @@ private:
 
 	void fillTrees();
 
-	GtkWidget* createInterface();
-	GtkWidget* createButtons();
-	GtkWidget* createOneSidedTreeView();
-	GtkWidget* createTwoSidedTreeView();
+	Gtk::Widget& createInterface();
+	Gtk::Widget& createButtons();
 
-	static void onCancel(GtkWidget* widget, GuiSelector* self);
-	static void onOk(GtkWidget* widget, GuiSelector* self);
-	static void onSelectionChanged(GtkTreeSelection *treeselection, GuiSelector* self);
-	static void onPageSwitch(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, GuiSelector* self);
+	Gtk::TreeView* createTreeView(const Glib::RefPtr<Gtk::TreeStore>& store);
+
+	Gtk::Widget& createOneSidedTreeView();
+	Gtk::Widget& createTwoSidedTreeView();
+
+	void onCancel();
+	void onOk();
+	void onSelectionChanged(Gtk::TreeView* view); // view is manually bound
+	void onPageSwitch(GtkNotebookPage* page, guint page_num);
 };
 
 } // namespace
