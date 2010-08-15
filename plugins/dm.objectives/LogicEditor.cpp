@@ -1,76 +1,58 @@
 #include "LogicEditor.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
+
+#include <gtkmm/entry.h>
 
 namespace objectives {
 
-namespace {
-	// Widget enum
-	enum {
-		WIDGET_SUCCESS_LOGIC_ENTRY,
-		WIDGET_FAILURE_LOGIC_ENTRY,
-	};
-}
-
-LogicEditor::LogicEditor()
+LogicEditor::LogicEditor() :
+	Gtk::Table(2, 2, false)
 {
 	// Create the text entry fields
-	_widgets[WIDGET_SUCCESS_LOGIC_ENTRY] = gtk_entry_new();
-	_widgets[WIDGET_FAILURE_LOGIC_ENTRY] = gtk_entry_new();
+	_successLogic = Gtk::manage(new Gtk::Entry);
+	_failureLogic = Gtk::manage(new Gtk::Entry);
 
 	// Create the labels for each text entry field
-	GtkWidget* successLogicLabel = gtkutil::LeftAlignedLabel(_("Success Logic:"));
-	GtkWidget* failureLogicLabel = gtkutil::LeftAlignedLabel(_("Failure Logic:"));
+	Gtk::Label* successLogicLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Success Logic:")));
+	Gtk::Label* failureLogicLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Failure Logic:")));
 
-	// Pack the label and the widget into a GtkTable
-	GtkWidget* table = gtk_table_new(2, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 12);
+	// Pack the label and the widget into the table
+	set_row_spacings(6);
+	set_col_spacings(12);
 
 	int row = 0;
 	
 	// pack the success logic
-	gtk_table_attach(GTK_TABLE(table), 
-					 successLogicLabel,
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  _widgets[WIDGET_SUCCESS_LOGIC_ENTRY], 
-							  1, 2, row, row+1);
+	attach(*successLogicLabel, 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	attach(*_successLogic, 1, 2, row, row+1);
 	
 	row++;
 
 	// pack the failure logic
-	gtk_table_attach(GTK_TABLE(table), 
-					 failureLogicLabel,
-					 0, 1, row, row+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(GTK_TABLE(table), 
-							  _widgets[WIDGET_FAILURE_LOGIC_ENTRY], 
-							  1, 2, row, row+1);
-
-	// Take the table as primary widget for our clients
-	_widget = table;
+	attach(*failureLogicLabel, 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	attach(*_failureLogic, 1, 2, row, row+1);
 }
 
-GtkWidget* LogicEditor::getWidget() {
-	return _widget;
+std::string LogicEditor::getSuccessLogicStr()
+{
+	return _successLogic->get_text();
 }
 
-std::string LogicEditor::getSuccessLogicStr() {
-	return gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_SUCCESS_LOGIC_ENTRY]));
+std::string LogicEditor::getFailureLogicStr()
+{
+	return _failureLogic->get_text();
 }
 
-std::string LogicEditor::getFailureLogicStr() {
-	return gtk_entry_get_text(GTK_ENTRY(_widgets[WIDGET_FAILURE_LOGIC_ENTRY]));
+void LogicEditor::setSuccessLogicStr(const std::string& logicStr)
+{
+	_successLogic->set_text(logicStr);
 }
 
-void LogicEditor::setSuccessLogicStr(const std::string& logicStr) {
-	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_SUCCESS_LOGIC_ENTRY]), logicStr.c_str());
-}
-
-void LogicEditor::setFailureLogicStr(const std::string& logicStr) {
-	gtk_entry_set_text(GTK_ENTRY(_widgets[WIDGET_FAILURE_LOGIC_ENTRY]), logicStr.c_str());
+void LogicEditor::setFailureLogicStr(const std::string& logicStr)
+{
+	_failureLogic->set_text(logicStr);
 }
 
 } // namespace objectives
