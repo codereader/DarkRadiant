@@ -1,3 +1,6 @@
+#ifndef _GUI_INSERTER_H_
+#define _GUI_INSERTER_H_
+
 #include "iuimanager.h"
 #include "gtkutil/VFSTreePopulator.h"
 
@@ -57,3 +60,5 @@ public:
 };
 
 } // namespace ui
+
+#endif

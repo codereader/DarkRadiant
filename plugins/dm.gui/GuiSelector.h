@@ -1,6 +1,10 @@
+#ifndef _GUI_SELECTOR_H_
+#define _GUI_SELECTOR_H_
+
 #include "gtkutil/window/BlockingTransientWindow.h"
+
 #include "gui/GuiManager.h"
-#include <gtk/gtk.h>
+
 #include "ReadableEditorDialog.h"
 
 namespace ui
@@ -61,3 +65,5 @@ private:
 };
 
 } // namespace
+
+#endif
