@@ -232,7 +232,9 @@ LogicPtr ObjectiveEntity::getMissionLogic(int difficultyLevel) {
 }
 
 // Populate a list store with objectives
-void ObjectiveEntity::populateListStore(GtkListStore* store) const {
+void ObjectiveEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
+										const ObjectivesListColumns& columns) const
+{
 	for (ObjectiveMap::const_iterator i = _objectives.begin();
 		 i != _objectives.end();
 		 ++i)
@@ -253,13 +255,11 @@ void ObjectiveEntity::populateListStore(GtkListStore* store) const {
 			}
 		}
 		
-		GtkTreeIter iter;
-		gtk_list_store_append(store, &iter);
-		gtk_list_store_set(store, &iter, 
-						   0, i->first, 
-						   1, i->second.description.c_str(),
-						   2, diffStr.c_str(),
-						   -1);	
+		Gtk::TreeModel::Row row = *store->append();
+		
+		row[columns.objNumber] = i->first;
+		row[columns.description] = i->second.description;
+		row[columns.difficultyLevel] = diffStr;
 	}	
 }
 
