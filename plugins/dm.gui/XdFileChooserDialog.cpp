@@ -79,7 +79,7 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData
 		_("The requested definition has been found in multiple Files. Choose the file:")));
 
 	// Create the list of files:
-	Glib::RefPtr<Gtk::ListStore> listStore = Gtk::ListStore::create(_columns);
+	_listStore = Gtk::ListStore::create(_columns);
 	
 	_treeview = Gtk::manage(new Gtk::TreeView(_listStore));
 	_treeview->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("File"), _columns.name, false)));
@@ -140,11 +140,6 @@ void XdFileChooserDialog::onSelectionChanged()
 		_chosenFile = Glib::ustring((*iter)[_columns.name]);
 		_editorDialog.updateGuiView(getRefPtr(), "", _defName, _chosenFile.substr(_chosenFile.find("/")+1));
 	}
-	else
-	{
-		_chosenFile.clear();
-		_editorDialog.updateGuiView(getRefPtr(), "", _defName, "");
-	}	
 }
 
 } // namespace ui

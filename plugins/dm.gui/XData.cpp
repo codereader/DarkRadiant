@@ -1,7 +1,8 @@
 #include "XData.h"
 
 #include "i18n.h"
-#include "boost/lexical_cast.hpp"
+#include <boost/lexical_cast.hpp>
+#include <boost/filesystem/convenience.hpp>
 
 namespace XData
 {
@@ -10,7 +11,13 @@ namespace XData
 //->export:	
 FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 {
-	boost::filesystem::path Path(filename);		
+	boost::filesystem::path Path(filename);
+
+	boost::filesystem::path parent = Path.parent_path();
+
+	// Ensure the parent path exists
+	boost::filesystem::create_directories(parent);
+
 	if (boost::filesystem::exists(Path))
 	{
 		switch (cmd)
