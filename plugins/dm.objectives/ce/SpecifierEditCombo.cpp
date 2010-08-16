@@ -107,7 +107,7 @@ void SpecifierEditCombo::createSpecifierPanel(const std::string& type)
 	// If the panel is valid, get its widget and pack into the hbox
 	if (_specPanel)
 	{
-		pack_end(*Glib::wrap(_specPanel->getWidget()), true, true, 0);
+		pack_end(*_specPanel->getWidget(), true, true, 0);
 	}
 }
 
