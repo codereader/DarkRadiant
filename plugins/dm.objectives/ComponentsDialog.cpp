@@ -612,6 +612,7 @@ void ComponentsDialog::_onSelectionChanged()
 
 		// Enable the edit panel
 		_compEditorPanel->set_sensitive(true);
+		_editPanel->set_sensitive(true);
 
 		// Turn on the periodic update
 		_timer.enable();
