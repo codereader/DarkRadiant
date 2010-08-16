@@ -1,10 +1,12 @@
 #ifndef _ITEM_COMPONENT_EDITOR_H_
 #define _ITEM_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
+
+namespace Gtk { class SpinButton; }
 
 namespace objectives {
 
@@ -16,7 +18,7 @@ namespace ce {
  * An ITEM component requires that the player acquires or loses an item.
  */
 class ItemComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -29,17 +31,14 @@ class ItemComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// SpecifierEditCombo for the item
-	SpecifierEditCombo _itemSpec;
+	SpecifierEditCombo* _itemSpec;
 
 	// The spin button for the amount of items
-	GtkWidget* _amount;
+	Gtk::SpinButton* _amount;
 	
 public:
 
@@ -47,7 +46,6 @@ public:
 	 * Construct a default ItemComponentEditor.
 	 */
 	ItemComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_amount(NULL)
 	{}
@@ -61,19 +59,12 @@ public:
 	 */
 	ItemComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~ItemComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new ItemComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 

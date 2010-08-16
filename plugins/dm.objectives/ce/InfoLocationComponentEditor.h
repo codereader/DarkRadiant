@@ -1,7 +1,7 @@
 #ifndef INFO_LOCATION_COMPONENT_EDITOR_H_
 #define INFO_LOCATION_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
@@ -16,7 +16,7 @@ namespace ce {
  * An COMP_INFO_LOCATION component usually uses a two specifiers.
  */
 class InfoLocationComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -29,17 +29,14 @@ class InfoLocationComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// SpecifierEditCombo for the entity in question
-	SpecifierEditCombo _entSpec;
+	SpecifierEditCombo* _entSpec;
 
 	// SpecifierEditCombo for the location the entity should be in (or not)
-	SpecifierEditCombo _locationSpec;
+	SpecifierEditCombo* _locationSpec;
 	
 public:
 
@@ -47,7 +44,6 @@ public:
 	 * Construct a default InfoLocationComponentEditor.
 	 */
 	InfoLocationComponentEditor() : 
-		_widget(NULL),
 		_component(NULL)
 	{}
 	
@@ -60,19 +56,12 @@ public:
 	 */
 	InfoLocationComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~InfoLocationComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new InfoLocationComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 

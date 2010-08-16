@@ -1,6 +1,7 @@
 #ifndef AI_FIND_ITEM_COMPONENT_EDITOR_H_
 #define AI_FIND_ITEM_COMPONENT_EDITOR_H_
-#include "ComponentEditor.h"
+
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
@@ -15,7 +16,7 @@ namespace ce {
  * An COMP_AI_FIND_ITEM component doesn't use specifiers.
  */
 class AIFindItemComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -28,9 +29,6 @@ class AIFindItemComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
@@ -40,7 +38,6 @@ public:
 	 * Construct a default AIFindItemComponentEditor.
 	 */
 	AIFindItemComponentEditor() : 
-		_widget(NULL),
 		_component(NULL)
 	{}
 	
@@ -53,19 +50,12 @@ public:
 	 */
 	AIFindItemComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~AIFindItemComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new AIFindItemComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 

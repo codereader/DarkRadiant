@@ -1,10 +1,8 @@
 #ifndef TWOCOLUMNTEXTCOMBO_H_
 #define TWOCOLUMNTEXTCOMBO_H_
 
-#include <gtk/gtkliststore.h>
-#include <gtk/gtkcombobox.h>
-#include <gtk/gtkcellrenderertext.h>
-#include <gtk/gtkcelllayout.h>
+#include <gtkmm/combobox.h>
+#include <gtkmm/liststore.h>
 
 namespace objectives
 {
@@ -20,45 +18,46 @@ namespace util
  */
 
 /**
- * Helper class to create a GtkComboBox containing two text columns.
+ * Helper class to create a Gtk::ComboBox containing two text columns.
  * 
- * This class provides a convenient mechanism to create a GtkComboBox backed
- * by a GtkTreeModel containing two text columns. The first text column (column
- * 0) contains a text string which will be displayed in the GtkComboBox itself,
+ * This class provides a convenient mechanism to create a Gtk::ComboBox backed
+ * by a Gtk::ListStore containing two text columns. The first text column (column
+ * 0) contains a text string which will be displayed in the Gtk::ComboBox itself,
  * whereas the second (column 1) contains a string which will not be displayed
  * and is intended for use as a code-level identifier which is not visible to
  * the user.
  */
-class TwoColumnTextCombo
+class TwoColumnTextCombo :
+	public Gtk::ComboBox
 {
-	// Combo widget
-	GtkWidget* _combo;
-	
+private:
+	struct ListColumns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListColumns() { add(first); add(second); }
+
+		Gtk::TreeModelColumn<Glib::ustring> first;
+		Gtk::TreeModelColumn<Glib::ustring> second;
+	};
+
 public:
-	
 	/**
 	 * Construct a TwoColumnTextCombo.
 	 */
-	TwoColumnTextCombo()
-	: _combo()
+	TwoColumnTextCombo() :
+		Gtk::ComboBox()
 	{
 		// List store and combo box
-		GtkListStore* ls = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING); 
-		_combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(ls));
+		ListColumns columns;
+		Glib::RefPtr<Gtk::ListStore> ls = Gtk::ListStore::create(columns);
+
+		set_model(ls);
 		
 		// Add a text cell renderer for column 0
-		GtkCellRenderer* rend = gtk_cell_renderer_text_new();
-		gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_combo), rend, FALSE);
-		gtk_cell_layout_set_attributes(
-			GTK_CELL_LAYOUT(_combo), rend, "text", 0, NULL 
-		);
-	}
-	
-	/**
-	 * Operator cast to GtkWidget*.
-	 */
-	operator GtkWidget* () {
-		return _combo;
+		Gtk::CellRendererText* rend = Gtk::manage(new Gtk::CellRendererText);
+		
+		pack_start(*rend, false);
+		add_attribute(rend->property_text(), columns.first);
 	}
 };
 

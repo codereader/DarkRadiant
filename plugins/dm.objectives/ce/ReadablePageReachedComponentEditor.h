@@ -1,14 +1,18 @@
 #ifndef _READABLE_PAGE_REACHED_COMPONENT_EDITOR_H_
 #define _READABLE_PAGE_REACHED_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace objectives {
+namespace Gtk { class SpinButton; }
 
-namespace ce {
+namespace objectives 
+{
+
+namespace ce
+{
 
 /**
  * ComponentEditor subclass for COMP_READABLE_PAGE_REACHED component type.
@@ -16,8 +20,9 @@ namespace ce {
  * This component requires that the player views a certain page of a readable.
  */
 class ReadablePageReachedComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
+private:
 	// Registration class
 	static struct RegHelper 
 	{
@@ -30,25 +35,20 @@ class ReadablePageReachedComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// SpecifierEditCombo for the item
-	SpecifierEditCombo _readableSpec;
+	SpecifierEditCombo* _readableSpec;
 
 	// The spin button for the page number
-	GtkWidget* _pageNum;
+	Gtk::SpinButton* _pageNum;
 	
 public:
-
 	/**
 	 * Construct a default ReadablePageReachedComponentEditor.
 	 */
 	ReadablePageReachedComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_pageNum(NULL)
 	{}
@@ -62,18 +62,11 @@ public:
 	 */
 	ReadablePageReachedComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~ReadablePageReachedComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new ReadablePageReachedComponentEditor(component));
 	}
-	
-	GtkWidget* getWidget() const; 
 
     void writeToComponent() const;
 };
