@@ -557,6 +557,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\plugins\dm.objectives\ce\ComponentEditorBase.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\plugins\dm.objectives\ce\ComponentEditorFactory.cpp"
 					>
 				</File>

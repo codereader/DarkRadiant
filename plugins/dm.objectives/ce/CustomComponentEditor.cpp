@@ -6,11 +6,12 @@
 #include "gtkutil/LeftAlignedLabel.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
 
-namespace objectives {
+namespace objectives
+{
 
-namespace ce {
+namespace ce
+{
 
 namespace {
 	const char* const DESCRIPTION = N_(
@@ -26,28 +27,12 @@ CustomComponentEditor::RegHelper CustomComponentEditor::regHelper;
 CustomComponentEditor::CustomComponentEditor(Component& component) :
 	_component(&component)
 {
-	// Main vbox
-	_widget = gtk_vbox_new(FALSE, 6);
-
-    gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(_(DESCRIPTION)), FALSE, FALSE, 0);
-}
-
-// Destructor
-CustomComponentEditor::~CustomComponentEditor() {
-	if (GTK_IS_WIDGET(_widget)) {
-		gtk_widget_destroy(_widget);
-	}
-}
-
-// Get the main widget
-GtkWidget* CustomComponentEditor::getWidget() const {
-	return _widget;
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(DESCRIPTION))), false, false, 0);
 }
 
 // Write to component
-void CustomComponentEditor::writeToComponent() const {
-    assert(_component);
-
+void CustomComponentEditor::writeToComponent() const
+{
 	// nothing to save here
 }
 

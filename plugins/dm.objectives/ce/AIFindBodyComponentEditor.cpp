@@ -7,7 +7,7 @@
 #include "string/string.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
+#include <gtkmm/spinbutton.h>
 
 namespace objectives {
 
@@ -19,57 +19,37 @@ AIFindBodyComponentEditor::RegHelper AIFindBodyComponentEditor::regHelper;
 // Constructor
 AIFindBodyComponentEditor::AIFindBodyComponentEditor(Component& component) :
 	_component(&component),
-	_bodyCombo(SpecifierType::SET_STANDARD_AI()),
-	_amount(gtk_spin_button_new_with_range(0, 65535, 1))
+	_bodyCombo(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_STANDARD_AI())))
 {
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_amount), 0);
+	_amount = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 0, 65535, 1)), 0, 0));
 
 	// Main vbox
-	_widget = gtk_vbox_new(FALSE, 6);
-
-    gtk_box_pack_start(
-        GTK_BOX(_widget), 
-		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Body:") + "</b>"),
-        FALSE, FALSE, 0
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Body:") + "</b>")),
+        false, false, 0
     );
 
-	gtk_box_pack_start(GTK_BOX(_widget), _bodyCombo.getWidget(), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(_("Amount:")), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignment(_amount), FALSE, FALSE, 0);
+	pack_start(*_bodyCombo, false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Amount:"))), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_amount)), false, false, 0);
 
     // Populate the SpecifierEditCombo with the first specifier
-    _bodyCombo.setSpecifier(
+    _bodyCombo->setSpecifier(
         component.getSpecifier(Specifier::FIRST_SPECIFIER)
     );
 
 	// Initialise the spin button with the value from the first component argument
-	gtk_spin_button_set_value(
-		GTK_SPIN_BUTTON(_amount), 
-		strToDouble(component.getArgument(0), 1.0)
-	);
-}
-
-// Destructor
-AIFindBodyComponentEditor::~AIFindBodyComponentEditor() {
-	if (GTK_IS_WIDGET(_widget)) {
-		gtk_widget_destroy(_widget);
-	}
-}
-
-// Get the main widget
-GtkWidget* AIFindBodyComponentEditor::getWidget() const {
-	return _widget;
+	_amount->set_value(strToDouble(component.getArgument(0), 1.0));
 }
 
 // Write to component
-void AIFindBodyComponentEditor::writeToComponent() const {
+void AIFindBodyComponentEditor::writeToComponent() const
+{
     assert(_component);
 	_component->setSpecifier(
-        Specifier::FIRST_SPECIFIER, _bodyCombo.getSpecifier()
+        Specifier::FIRST_SPECIFIER, _bodyCombo->getSpecifier()
     );
 
-	_component->setArgument(0, 
-		doubleToStr(gtk_spin_button_get_value(GTK_SPIN_BUTTON(_amount))));
+	_component->setArgument(0, doubleToStr(_amount->get_value()));
 }
 
 } // namespace ce

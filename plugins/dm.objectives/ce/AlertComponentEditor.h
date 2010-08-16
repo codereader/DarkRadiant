@@ -1,10 +1,12 @@
 #ifndef ALERT_COMPONENT_EDITOR_H_
 #define ALERT_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
+
+namespace Gtk { class SpinButton; }
 
 namespace objectives {
 
@@ -16,7 +18,7 @@ namespace ce {
  * A COMP_ALERT component requires that an AI must be alerted or not alerted.
  */
 class AlertComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -29,18 +31,15 @@ class AlertComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// SpecifierEditCombo for the kill target
-	SpecifierEditCombo _targetCombo;
+	SpecifierEditCombo* _targetCombo;
 
 	// An entry box for the amount and the alert level
-	GtkWidget* _amount;
-	GtkWidget* _alertLevel;
+	Gtk::SpinButton* _amount;
+	Gtk::SpinButton* _alertLevel;
 	
 public:
 
@@ -48,7 +47,6 @@ public:
 	 * Construct a default AlertComponentEditor.
 	 */
 	AlertComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_amount(NULL),
 		_alertLevel(NULL)
@@ -63,21 +61,13 @@ public:
 	 */
 	AlertComponentEditor(Component& component);
 	
-	/**
-	 * Destructor.
-	 */
-	~AlertComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new AlertComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
-
 };
 
 } // namespace ce

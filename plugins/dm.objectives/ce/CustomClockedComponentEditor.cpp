@@ -6,7 +6,9 @@
 #include "gtkutil/LeftAlignedLabel.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/box.h>
 
 namespace objectives {
 
@@ -18,60 +20,44 @@ CustomClockedComponentEditor::RegHelper CustomClockedComponentEditor::regHelper;
 // Constructor
 CustomClockedComponentEditor::CustomClockedComponentEditor(Component& component) :
 	_component(&component),
-	_scriptFunction(gtk_entry_new()),
-	_interval(gtk_spin_button_new_with_range(0, 65535, 0.1))
+	_scriptFunction(Gtk::manage(new Gtk::Entry))
 {
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_interval), 2);
-
-	// Main vbox
-	_widget = gtk_vbox_new(FALSE, 6);
-
-    gtk_box_pack_start(
-        GTK_BOX(_widget), 
-		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Script Function:") + "</b>"),
-        FALSE, FALSE, 0
+	_interval = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(1, 0, 65535, 0.1)), 0, 2)
+	);
+	
+	pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Script Function:") + "</b>")),
+        false, false, 0
     );
-	gtk_box_pack_start(GTK_BOX(_widget), _scriptFunction, FALSE, FALSE, 0);
+	pack_start(*_scriptFunction, false, false, 0);
 
-	gtk_box_pack_start(
-        GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel(std::string("<b>") + _("Clock interval:") + "</b>"),
-        FALSE, FALSE, 0
+	pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Clock interval:") + "</b>")),
+        false, false, 0
     );
 
-	GtkWidget* hbox2 = gtk_hbox_new(FALSE, 6);
+	Gtk::HBox* hbox2 = Gtk::manage(new Gtk::HBox(false, 6));
 
-	gtk_box_pack_start(GTK_BOX(hbox2), _interval, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox2), gtkutil::LeftAlignedLabel(_("seconds")), FALSE, FALSE, 0);
+	hbox2->pack_start(*_interval, false, false, 0);
+	hbox2->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("seconds"))), false, false, 0);
 
-	gtk_box_pack_start(GTK_BOX(_widget), hbox2, FALSE, FALSE, 0);
+	pack_start(*hbox2, false, false, 0);
 
 	// Load the initial values into the boxes
-	gtk_entry_set_text(GTK_ENTRY(_scriptFunction), component.getArgument(0).c_str());
+	_scriptFunction->set_text(component.getArgument(0));
 
 	float interval = component.getClockInterval();
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(_interval), interval >= 0 ? interval : 1.0);
-}
-
-// Destructor
-CustomClockedComponentEditor::~CustomClockedComponentEditor() {
-	if (GTK_IS_WIDGET(_widget)) {
-		gtk_widget_destroy(_widget);
-	}
-}
-
-// Get the main widget
-GtkWidget* CustomClockedComponentEditor::getWidget() const {
-	return _widget;
+	_interval->set_value(interval >= 0 ? interval : 1.0);
 }
 
 // Write to component
-void CustomClockedComponentEditor::writeToComponent() const {
+void CustomClockedComponentEditor::writeToComponent() const
+{
     assert(_component);
 	
-	_component->setArgument(0, gtk_entry_get_text(GTK_ENTRY(_scriptFunction)));
-	_component->setClockInterval(
-		static_cast<float>(gtk_spin_button_get_value(GTK_SPIN_BUTTON(_interval))));
+	_component->setArgument(0, _scriptFunction->get_text());
+	_component->setClockInterval(static_cast<float>(_interval->get_value()));
 }
 
 } // namespace ce

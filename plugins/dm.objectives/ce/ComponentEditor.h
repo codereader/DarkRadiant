@@ -2,7 +2,8 @@
 #define COMPONENTEDITOR_H_
 
 #include <boost/shared_ptr.hpp>
-#include <gtk/gtkwidget.h>
+
+namespace Gtk { class Widget; }
 
 namespace objectives
 {
@@ -45,15 +46,15 @@ public:
 	virtual ~ComponentEditor() {}
 	
 	/**
-	 * Return a GtkWidget* for packing into the parent dialog.
+	 * Return a Gtk::Widget* for packing into the parent dialog.
 	 * 
 	 * The top-level widget returned by getWidget() is owned by the
 	 * ComponentEditor, and will be destroyed via gtk_widget_destroy() when the
 	 * the ComponentEditor's destructor is invoked. The widget is <b>not</b>
 	 * guaranteed to be visible when it is returned, and should be shown by
-	 * the parent dialog using gtk_widget_show_all().
+	 * the parent dialog using show_all().
 	 */
-	virtual GtkWidget* getWidget() const = 0;
+	virtual Gtk::Widget* getWidget() = 0;
 	
 	/**
 	 * Create another ComponentEditor of the same subclass type as this one.

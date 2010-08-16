@@ -1,14 +1,18 @@
 #ifndef PICKPOCKET_COMPONENT_EDITOR_H_
 #define PICKPOCKET_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
 
-namespace objectives {
+namespace Gtk { class SpinButton; }
 
-namespace ce {
+namespace objectives
+{
+
+namespace ce
+{
 
 /**
  * ComponentEditor subclass for COMP_PICKPOCKET component type.
@@ -16,7 +20,7 @@ namespace ce {
  * An COMP_PICKPOCKET component uses a single specifier and one argument.
  */
 class PickpocketComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -29,17 +33,14 @@ class PickpocketComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// SpecifierEditCombo for the item
-	SpecifierEditCombo _itemSpec;
+	SpecifierEditCombo* _itemSpec;
 
 	// The spin button with the amount of pickpockets
-	GtkWidget* _amount;
+	Gtk::SpinButton* _amount;
 	
 public:
 
@@ -47,7 +48,6 @@ public:
 	 * Construct a default PickpocketComponentEditor.
 	 */
 	PickpocketComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_amount(NULL)
 	{}
@@ -61,19 +61,12 @@ public:
 	 */
 	PickpocketComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~PickpocketComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new PickpocketComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 

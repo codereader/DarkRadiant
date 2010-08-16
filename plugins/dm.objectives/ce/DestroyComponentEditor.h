@@ -1,10 +1,12 @@
 #ifndef DESTROY_COMPONENT_EDITOR_H_
 #define DESTROY_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
+
+namespace Gtk { class SpinButton; }
 
 namespace objectives {
 
@@ -16,7 +18,7 @@ namespace ce {
  * An COMP_DESTROY component requires that the player destructs an inanimate item.
  */
 class DestroyComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -29,17 +31,14 @@ class DestroyComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// SpecifierEditCombo for the item
-	SpecifierEditCombo _itemSpec;
+	SpecifierEditCombo* _itemSpec;
 
 	// The spin button to specify the amount of AI to be killed
-	GtkWidget* _amount;
+	Gtk::SpinButton* _amount;
 	
 public:
 
@@ -47,7 +46,6 @@ public:
 	 * Construct a default DestroyComponentEditor.
 	 */
 	DestroyComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_amount(NULL)
 	{}
@@ -61,19 +59,12 @@ public:
 	 */
 	DestroyComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~DestroyComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new DestroyComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 
