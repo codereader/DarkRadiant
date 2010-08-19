@@ -5,24 +5,16 @@
 #include <list>
 #include <string>
 #include "ResponseEffect.h"
+#include <gtkmm/liststore.h>
 
-	namespace {
-		const std::string RKEY_STIM_RESPONSE_PREFIX = 
-				"game/stimResponseSystem/stimResponsePrefix";
-				
-		enum {
-			EFFECT_INDEX_COL,
-			EFFECT_CAPTION_COL,
-			EFFECT_ARGS_COL,
-			EFFECT_NUM_COLS,
-		};
-	}
+namespace
+{
+	const std::string RKEY_STIM_RESPONSE_PREFIX = 
+			"game/stimResponseSystem/stimResponsePrefix";
+}
 
-// Forward declaration
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeIter GtkTreeIter;
-
-struct SRKey {
+struct SRKey
+{
 	// The key name
 	std::string key;
 	
@@ -40,8 +32,25 @@ public:
 	// The effect map
 	typedef std::map<unsigned int, ResponseEffect> EffectMap;
 
+	// Tree model definition for a Stim/Response list
+	struct Columns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		Columns()
+		{ 
+			add(index);
+			add(caption);
+			add(arguments);
+		}
+
+		Gtk::TreeModelColumn<int> index;					// ID
+		Gtk::TreeModelColumn<Glib::ustring> caption;		// Caption String
+		Gtk::TreeModelColumn<Glib::ustring> arguments;		// Argument
+	};
+
 private:
-	struct Property {
+	struct Property
+	{
 		// The actual value (this is used for write-accesses)
 		std::string value;
 		
@@ -69,6 +78,9 @@ private:
 	
 	// The list of ResponseEffects for this response (does not apply for stims)
 	EffectMap _effects;
+
+	// The treemodel for packing this info into a treeview
+	Glib::RefPtr<Gtk::ListStore> _effectStore;
 	
 public:
 	StimResponse();
@@ -141,18 +153,9 @@ public:
 	/** greebo: Constructs the GtkListStore using the effects stored in this
 	 * 			response.
 	 */
-	GtkListStore* getEffectStore();
-	
-private:
-	/** greebo: Write the values of the passed ResponseEffect to the 
-	 * 			GtkListStore using the passed GtkTreeIter.
-	 * 			The ID stays untouched. 
-	 * 
-	 * @store: The ListStore
-	 * @iter: The TreeIter pointing at the row where the data should be inserted
-	 * @sr: the ResponseEffect object containing the source data
-	 */
-	void writeToListStore(GtkListStore* store, GtkTreeIter* iter, ResponseEffect& effect);
+	const Glib::RefPtr<Gtk::ListStore>& updateAndGetEffectStore();
+
+	static const Columns& getColumns();
 };
 
 #endif /*STIMRESPONSE_H_*/

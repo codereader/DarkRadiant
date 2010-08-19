@@ -10,14 +10,20 @@
 
 #include "StimTypes.h"
 #include "SREntity.h"
-#include "StimEditor.h"
-#include "ResponseEditor.h"
 #include "CustomStimEditor.h"
 
-// Forward declarations
-typedef struct _GtkNotebook GtkNotebook;
+namespace Gtk
+{
+	class VBox;
+	class Notebook;
+	class Button;
+}
 
-namespace ui {
+namespace ui
+{
+
+class StimEditor;
+class ResponseEditor;
 
 class StimResponseEditor;
 typedef boost::shared_ptr<StimResponseEditor> StimResponseEditorPtr;
@@ -25,17 +31,19 @@ typedef boost::shared_ptr<StimResponseEditor> StimResponseEditorPtr;
 class StimResponseEditor :
 	public gtkutil::BlockingTransientWindow
 {
+private:
 	// The overall dialog vbox (used to quickly disable the whole dialog)
-	GtkWidget* _dialogVBox;
+	Gtk::VBox* _dialogVBox;
 	
-	GtkNotebook* _notebook;
+	Gtk::Notebook* _notebook;
+
 	int _stimPageNum;
 	int _responsePageNum;
 	int _customStimPageNum;
 	static int _lastShownPage;
 	
 	// The close button to toggle the view
-	GtkWidget* _closeButton;
+	Gtk::Button* _closeButton;
 	
 	// The "extended" entity object managing the stims
 	SREntityPtr _srEntity;
@@ -50,9 +58,9 @@ class StimResponseEditor :
 	StimTypes _stimTypes;
 	
 	// The helper classes for editing the stims/responses
-	StimEditor _stimEditor;
-	ResponseEditor _responseEditor;
-	CustomStimEditor _customStimEditor;
+	StimEditor* _stimEditor;
+	ResponseEditor* _responseEditor;
+	CustomStimEditor* _customStimEditor;
 
 public:
 	StimResponseEditor();
@@ -70,19 +78,18 @@ private:
 
 	/* WIDGET POPULATION */
 	void populateWindow(); 			// Main window
-	GtkWidget* createButtons(); 	// Dialog buttons
+	Gtk::Widget& createButtons(); 	// Dialog buttons
 	
 	/** greebo: Checks the selection for a single entity.
 	 */
 	void rescanSelection();
 
 	// Button callbacks
-	static void onSave(GtkWidget* button, StimResponseEditor* self);
-	static void onClose(GtkWidget* button, StimResponseEditor* self);
+	void onSave();
+	void onClose();
 
 	// The keypress handler for catching the keys in the treeview
-	static gboolean onWindowKeyPress(
-		GtkWidget* dialog, GdkEventKey* event, StimResponseEditor* self);
+	bool onWindowKeyPress(GdkEventKey* ev);
 
 }; // class StimResponseEditor
 

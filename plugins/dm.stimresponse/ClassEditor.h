@@ -3,32 +3,33 @@
 
 #include "SREntity.h"
 #include "StimTypes.h"
+#include <gtkmm/box.h>
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTreeView GtkTreeView;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GdkEventKey GdkEventKey;
-typedef struct _GdkEventButton GdkEventButton;
-typedef struct _GtkEditable GtkEditable;
-typedef struct _GtkToggleButton GtkToggleButton;
-typedef struct _GtkComboBox GtkComboBox;
-typedef struct _GtkSpinButton GtkSpinButton;
+namespace Gtk
+{
+	class SpinButton;
+	class TreeView;
+	class Entry;
+	class Button;
+	class ComboBox;
+	class Label;
+	class CheckButton;
+}
 
-namespace ui {
+namespace ui
+{
 
-class ClassEditor
+class ClassEditor :
+	public Gtk::VBox
 {
 protected:
-	typedef std::map<GtkEditable*, std::string> EntryMap;
+	typedef std::map<Gtk::Entry*, std::string> EntryMap;
 	EntryMap _entryWidgets; 
 	
-	typedef std::map<GtkSpinButton*, std::string> SpinButtonMap;
+	typedef std::map<Gtk::SpinButton*, std::string> SpinButtonMap;
 	SpinButtonMap _spinWidgets;
 
-	GtkWidget* _pageVBox;
-	
-	GtkWidget* _list;
-	GtkTreeSelection* _selection;
+	Gtk::TreeView* _list;
 	
 	// The entity object we're editing
 	SREntityPtr _entity;
@@ -39,17 +40,25 @@ protected:
 	// TRUE if the GTK callbacks should be disabled
 	bool _updatesDisabled;
 	
-	struct ListButtons {
-		GtkWidget* add;
-		GtkWidget* remove;
+	struct ListButtons
+	{
+		Gtk::Button* add;
+		Gtk::Button* remove;
 	} _listButtons;
 	
 	// The combo box to select the stim/response type
-	typedef struct TypeSelectorWidgets {
-		GtkWidget* hbox;	// The
-		GtkWidget* list;	// the combo box
-		GtkWidget* label;	// The "Type:" label
-	} TypeSelectorWidgets;
+	struct TypeSelectorWidgets
+	{
+		Gtk::HBox* hbox;	// The box
+		Gtk::ComboBox* list;	// the combo box
+		Gtk::Label* label;	// The "Type:" label
+
+		TypeSelectorWidgets() :
+			hbox(NULL),
+			list(NULL),
+			label(NULL)
+		{}
+	};
 	
 	TypeSelectorWidgets _type;
 	TypeSelectorWidgets _addType;
@@ -63,14 +72,9 @@ public:
 	 */
 	virtual ~ClassEditor() {}
 	
-	/** greebo: Operator cast to widget to pack this page into
-	 * 			a notebook tab or other parent widget.
-	 */
-	virtual operator GtkWidget*();
-	
 	/** greebo: Sets the new entity (is called by the subclasses)
 	 */
-	virtual void setEntity(SREntityPtr entity);
+	virtual void setEntity(const SREntityPtr& entity);
 
 	/** greebo: Sets the given <key> of the current entity to <value>
 	 */
@@ -83,18 +87,18 @@ public:
 protected:
 	/** greebo: Creates the StimType Selector and buttons below the main list.
 	 */
-	virtual GtkWidget* createListButtons();
+	virtual Gtk::Widget& createListButtons();
 
 	/** greebo: Returns the name of the selected stim in the given combo box.
 	 * 			The model behind that combo box has to be according to the
 	 * 			one created by the StimTypes helper class.
 	 */
-	virtual std::string getStimTypeIdFromSelector(GtkComboBox* widget);
+	virtual std::string getStimTypeIdFromSelector(Gtk::ComboBox* widget);
 
 	/** greebo: Adds/removes a S/R from the main list
 	 */
 	virtual void addSR() = 0; 
-	virtual void removeSR(GtkTreeView* view);
+	virtual void removeSR();
 
 	/** greebo: Duplicates the currently selected S/R object
 	 */
@@ -107,18 +111,17 @@ protected:
 	/** greebo: Gets called when a check box is toggled, this should
 	 * 			update the contents of possible associated entry fields. 
 	 */
-	virtual void checkBoxToggled(GtkToggleButton* toggleButton) {
-	}
+	virtual void checkBoxToggled(Gtk::CheckButton* toggleButton) = 0;
 
 	/** greebo: Gets called when an entry box changes, this can be
 	 * 			overriden by the subclasses, if this is needed
 	 */
-	virtual void entryChanged(GtkEditable* editable);
+	virtual void entryChanged(Gtk::Entry* entry);
 
 	/** greebo: Gets called when a spin button changes, this can be
 	 * 			overriden by the subclasses, if this is needed
 	 */
-	virtual void spinButtonChanged(GtkSpinButton* spinButton);
+	virtual void spinButtonChanged(Gtk::SpinButton* spinButton);
 
 	/** greebo: Returns the ID of the currently selected stim/response
 	 * 		
@@ -138,32 +141,44 @@ protected:
 	 * 			has been happening on gets passed so that the correct
 	 * 			menu can be displayed (in the case of multiple possible treeviews).
 	 */
-	virtual void openContextMenu(GtkTreeView* view) = 0;
+	virtual void openContextMenu(Gtk::TreeView* view) = 0;
 
-	// GTK Callback for Stim/Response selection changes
-	static void onSRSelectionChange(GtkTreeSelection* treeView, ClassEditor* self);
+	// gtkmm Callback for Stim/Response selection changes
+	void onSRSelectionChange();
+
 	// The keypress handler for catching the keys in the treeview
-	static gboolean onTreeViewKeyPress(GtkTreeView* view,GdkEventKey* event, ClassEditor* self);
+	bool onTreeViewKeyPress(GdkEventKey* ev);
+
 	// Release-event opens the context menu for right clicks
-	static gboolean onTreeViewButtonRelease(GtkTreeView* view, GdkEventButton* ev, ClassEditor* self);
+	bool onTreeViewButtonRelease(GdkEventButton* ev, Gtk::TreeView* view);
 	
 	// Gets called if any of the entry widget contents get changed
-	static void onEntryChanged(GtkEditable* editable, ClassEditor* self);
-	static void onSpinButtonChanged(GtkSpinButton* spinButton, ClassEditor* self);
-	// Gets called on check box toggles
-	static void onCheckboxToggle(GtkToggleButton* toggleButton, ClassEditor* self);
+	void onEntryChanged(Gtk::Entry* entry);
+	void onSpinButtonChanged(Gtk::SpinButton* spinButton);
+	void onCheckboxToggle(Gtk::CheckButton* toggleButton);
+
+	// Utility function to connect a checkbutton's "toggled" signal to "onCheckBoxToggle"
+	void connectCheckButton(Gtk::CheckButton* checkButton);
+	
+	// Utility function to connect a spinbutton's "value-changed" signal to "onSpinButtonChanged"
+	// It also associates the given spin button in the SpinButton map
+	void connectSpinButton(Gtk::SpinButton* spinButton, const std::string& key);
+
+	// Utility function to connect a entry's "changed" signal to "onEntryChanged"
+	// It also associates the given entry in the EntryMap
+	void connectEntry(Gtk::Entry* entry, const std::string& key);
 	
 	// Gets called on stim type selection change
-	static void onStimTypeSelect(GtkComboBox* widget, ClassEditor* self);
-	static void onAddTypeSelect(GtkComboBox* widget, ClassEditor* self);
+	void onStimTypeSelect();
+	void onAddTypeSelect();
 	
-	static void onAddSR(GtkWidget* button, ClassEditor* self);
-	static void onRemoveSR(GtkWidget* button, ClassEditor* self);
+	void onAddSR();
+	void onRemoveSR();
 	
 	// Override/disable override menu items
-	static void onContextMenuEnable(GtkWidget* w, ClassEditor* self);
-	static void onContextMenuDisable(GtkWidget* w, ClassEditor* self);
-	static void onContextMenuDuplicate(GtkWidget* w, ClassEditor* self);
+	void onContextMenuEnable();
+	void onContextMenuDisable();
+	void onContextMenuDuplicate();
 };
 
 } // namespace ui
