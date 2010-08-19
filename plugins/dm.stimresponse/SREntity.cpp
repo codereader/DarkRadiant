@@ -6,7 +6,6 @@
 #include "ieclass.h"
 #include "entitylib.h"
 #include "gtkutil/TreeModel.h"
-#include <gtk/gtk.h>
 
 #include "SRPropertyLoader.h"
 #include "SRPropertyRemover.h"
@@ -20,32 +19,20 @@
 	}
 
 SREntity::SREntity(Entity* source, StimTypes& stimTypes) :
-	_stimStore(gtk_list_store_new(NUM_COLS, 
-								  G_TYPE_INT,		// S/R index
-								  GDK_TYPE_PIXBUF, 	// Type String
-								  G_TYPE_STRING, 	// Caption String
-								  GDK_TYPE_PIXBUF,	// Icon
-								  G_TYPE_BOOLEAN,	// Inheritance flag
-								  G_TYPE_INT,		// ID (unique)
-								  G_TYPE_STRING)),	// Text colour
-	_responseStore(gtk_list_store_new(NUM_COLS, 
-								  G_TYPE_INT,		// S/R index
-								  GDK_TYPE_PIXBUF, 	// Type String
-								  G_TYPE_STRING, 	// Caption String
-								  GDK_TYPE_PIXBUF,	// Icon
-								  G_TYPE_BOOLEAN,	// Inheritance flag
-								  G_TYPE_INT,		// ID (unique)
-								  G_TYPE_STRING)),	// Text colour
+	_stimStore(Gtk::ListStore::create(getColumns())),
+	_responseStore(Gtk::ListStore::create(getColumns())),
 	_stimTypes(stimTypes)
 {
 	loadKeys();
 	load(source);
 }
 
-int SREntity::getHighestId() {
+int SREntity::getHighestId()
+{
 	int id = 0;
 	
-	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); i++) {
+	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); ++i)
+	{
 		if (i->first > id) {
 			id = i->first;
 		}
@@ -53,10 +40,12 @@ int SREntity::getHighestId() {
 	return id;
 }
 
-int SREntity::getHighestIndex() {
+int SREntity::getHighestIndex()
+{
 	int index = 0;
 	
-	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); i++) {
+	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); ++i)
+	{
 		if (i->second.getIndex() > index) {
 			index = i->second.getIndex();
 		}
@@ -66,8 +55,8 @@ int SREntity::getHighestIndex() {
 
 void SREntity::load(Entity* source) {
 	// Clear all the items from the liststore
-	gtk_list_store_clear(_stimStore);
-	gtk_list_store_clear(_responseStore);
+	_stimStore->clear();
+	_responseStore->clear();
 	
 	if (source == NULL) {
 		return;
@@ -91,7 +80,8 @@ void SREntity::load(Entity* source) {
 	updateListStores();
 }
 
-void SREntity::remove(int id) {
+void SREntity::remove(int id)
+{
 	StimResponseMap::iterator found = _list.find(id);
 	
 	if (found != _list.end() && !found->second.inherited()) {
@@ -122,30 +112,25 @@ int SREntity::duplicate(int fromId) {
 	return -1;
 }
 
-void SREntity::updateListStores() {
+void SREntity::updateListStores()
+{
 	// Clear all the items from the liststore
-	gtk_list_store_clear(_stimStore);
-	gtk_list_store_clear(_responseStore);
+	_stimStore->clear();
+	_responseStore->clear();
 	
 	// Now populate the liststore
-	GtkTreeIter iter;
-	
-	for (StimResponseMap::iterator i = _list.begin(); i!= _list.end(); i++) {
+	for (StimResponseMap::iterator i = _list.begin(); i!= _list.end(); ++i)
+	{
 		int id = i->first;
-		
-		GtkListStore* targetListStore;
-		
-		// And write the rest of the data to the row
 		StimResponse& sr = i->second;
-		targetListStore = (sr.get("class") == "S") ? _stimStore : _responseStore;
-		
-		gtk_list_store_append(targetListStore, &iter);
+
+		Gtk::TreeModel::Row row = (sr.get("class") == "S") ? 
+			*_stimStore->append() : *_responseStore->append();
+
 		// Store the ID into the liststore
-		gtk_list_store_set(targetListStore, &iter, 
-						   ID_COL, id,
-						   -1);
+		row[getColumns().id] = id;
 		
-		writeToListStore(targetListStore, &iter, sr);
+		writeToListRow(row, sr);
 	}
 }
 
@@ -182,25 +167,24 @@ void SREntity::save(Entity* target) {
 	
 	// Setup the saver object
 	SRPropertySaver saver(target, _keys);
-	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); i++) {
+	for (StimResponseMap::iterator i = _list.begin(); i != _list.end(); ++i)
+	{
 		saver.visit(i->second);
 	}
 }
 
-GtkTreeIter SREntity::getIterForId(GtkListStore* targetStore, int id) {
+Gtk::TreeModel::iterator SREntity::getIterForId(const Glib::RefPtr<Gtk::ListStore>& targetStore, int id)
+{
 	// Setup the selectionfinder to search for the id string
-	gtkutil::TreeModel::SelectionFinder finder(id, ID_COL);
+	gtkutil::TreeModel::SelectionFindermm finder(id, getColumns().id.index());
 	
-	gtk_tree_model_foreach(
-		GTK_TREE_MODEL(targetStore), 
-		gtkutil::TreeModel::SelectionFinder::forEach, 
-		&finder
-	);
+	targetStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
 	
 	return finder.getIter();
 }
 
-void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter, StimResponse& sr) {
+void SREntity::writeToListRow(const Gtk::TreeModel::Row& row, StimResponse& sr)
+{
 	StimType stimType = _stimTypes.get(sr.get("type"));
 		
 	std::string stimTypeStr = stimType.caption;
@@ -210,29 +194,39 @@ void SREntity::writeToListStore(GtkListStore* targetListStore, GtkTreeIter* iter
 	classIcon += (sr.inherited()) ? SUFFIX_INHERITED : "";
 	classIcon += (sr.get("state") != "1") ? SUFFIX_INACTIVE : "";
 	classIcon += SUFFIX_EXTENSION;
-	
-	gtk_list_store_set(targetListStore, iter, 
-						INDEX_COL, sr.getIndex(),
-						CLASS_COL, GlobalUIManager().getLocalPixbufWithMask(classIcon),
-						CAPTION_COL, stimTypeStr.c_str(),
-						ICON_COL, GlobalUIManager().getLocalPixbufWithMask(stimType.icon),
-						INHERIT_COL, sr.inherited(),
-						COLOUR_COLUMN, (sr.inherited() ? "#707070" : "#000000"),
-						-1);
+
+	const SRListColumns& cols = getColumns();
+
+	row[cols.index] = sr.getIndex();
+	row[cols.srClass] = GlobalUIManager().getLocalPixbufWithMask(classIcon);
+	row[cols.caption] = stimTypeStr;
+	row[cols.icon] = GlobalUIManager().getLocalPixbufWithMask(stimType.icon);
+	row[cols.inherited] = sr.inherited();
+	row[cols.colour] = sr.inherited() ? "#707070" : "#000000";
 }
 
-void SREntity::setProperty(int id, const std::string& key, const std::string& value) {
+void SREntity::setProperty(int id, const std::string& key, const std::string& value)
+{
 	// First, propagate the SR set() call
 	StimResponse& sr = get(id);
 	sr.set(key, value);
 	
-	GtkListStore* targetStore = (sr.get("class") == "S") ? _stimStore : _responseStore;
+	const Glib::RefPtr<Gtk::ListStore>& targetStore = 
+		(sr.get("class") == "S") ? _stimStore : _responseStore;
 	
-	GtkTreeIter iter = getIterForId(targetStore, id);
-	writeToListStore(targetStore, &iter, sr);
+	Gtk::TreeModel::iterator iter = getIterForId(targetStore, id);
+
+	if (!iter)
+	{
+		globalErrorStream() << "Cannot find S/R ID in liststore: " << id << std::endl;
+		return;
+	}
+
+	writeToListRow(*iter, sr);
 }
 
-StimResponse& SREntity::get(int id) {
+StimResponse& SREntity::get(int id)
+{
 	StimResponseMap::iterator i = _list.find(id);
 	
 	if (i != _list.end()) {
@@ -243,19 +237,29 @@ StimResponse& SREntity::get(int id) {
 	} 
 }
 
-GtkListStore* SREntity::getStimStore() {
+const SRListColumns& SREntity::getColumns()
+{
+	static SRListColumns _columns;
+	return _columns;
+}
+
+const Glib::RefPtr<Gtk::ListStore>& SREntity::getStimStore()
+{
 	return _stimStore;
 }
 
-GtkListStore* SREntity::getResponseStore() {
+const Glib::RefPtr<Gtk::ListStore>& SREntity::getResponseStore()
+{
 	return _responseStore;
 }
 
 // static key loader
-void SREntity::loadKeys() {
+void SREntity::loadKeys()
+{
 	xml::NodeList propList = GlobalRegistry().findXPath(RKEY_STIM_PROPERTIES);
 	
-	for (unsigned int i = 0; i < propList.size(); i++) {
+	for (std::size_t i = 0; i < propList.size(); ++i)
+	{
 		// Create a new key and set the key name / class string
 		SRKey newKey;
 		newKey.key = propList[i].getAttributeValue("name");

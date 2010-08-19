@@ -2,6 +2,7 @@
 #define RIGHTALIGNEDLABEL_H_
 
 #include <gtk/gtklabel.h>
+#include <gtkmm/label.h>
 #include "RightAlignment.h"
 
 namespace gtkutil
@@ -31,6 +32,21 @@ public:
 	operator GtkWidget* () {
 		GtkWidget* rightAlignedLabel = RightAlignment(_label);
 		return rightAlignedLabel;
+	}
+};
+
+// gtkmm pendant
+class RightAlignedLabelmm :
+	public Gtk::Label
+{
+public:
+	/** Construct a right-aligned label with the given text.
+	 */
+	RightAlignedLabelmm(const std::string& text) :
+		Gtk::Label()
+	{ 
+		set_markup(text);
+		set_alignment(1.0f, 0.5f);
 	}
 };
 

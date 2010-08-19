@@ -1,176 +1,186 @@
 #include "EffectArgumentItem.h"
 
-#include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ComboBox.h"
 #include "string/string.h"
 
+#include <gtkmm/eventbox.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/entrycompletion.h>
+#include <gtkmm/label.h>
+#include <gtkmm/combobox.h>
+#include <gtkmm/comboboxentry.h>
+
+#include "StimTypes.h"
+
 EffectArgumentItem::EffectArgumentItem(
-		ResponseEffect::Argument& arg, 
-		GtkTooltips* tooltips) :
-	_arg(arg),
-	_tooltips(tooltips)
+		ResponseEffect::Argument& arg) :
+	_arg(arg)
 {
 	// Pack the label into a eventbox
-	_labelBox = gtk_event_box_new();
-	GtkWidget* label = gtkutil::LeftAlignedLabel(_arg.title + ":");
-	gtk_container_add(GTK_CONTAINER(_labelBox), label);
-	
-	gtk_tooltips_set_tip(_tooltips, _labelBox, arg.desc.c_str(), "");
+	_labelBox = Gtk::manage(new Gtk::EventBox);
+	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_arg.title + ":"));
+
+	_labelBox->add(*label);
+	_labelBox->set_tooltip_text(arg.desc);
 	
 	// Pack the description widget into a eventbox
-	_descBox = gtk_event_box_new();
-	GtkWidget* descLabel = gtk_label_new("");
-	gtk_label_set_markup(GTK_LABEL(descLabel), "<b>?</b>");
-	gtk_container_add(GTK_CONTAINER(_descBox), descLabel);
+	_descBox = Gtk::manage(new Gtk::EventBox);
+	Gtk::Label* descLabel = Gtk::manage(new Gtk::Label);
+	descLabel->set_markup("<b>?</b>");
+	_descBox->add(*descLabel);
 	
-	gtk_tooltips_set_tip(_tooltips, _descBox, arg.desc.c_str(), "");
+	_descBox->set_tooltip_text(arg.desc);
 }
 
 // Retrieve the label widget
-GtkWidget* EffectArgumentItem::getLabelWidget() {
-	return _labelBox;
+Gtk::Widget& EffectArgumentItem::getLabelWidget()
+{
+	return *_labelBox;
 }
 
-GtkWidget* EffectArgumentItem::getHelpWidget() {
-	return _descBox;
+Gtk::Widget& EffectArgumentItem::getHelpWidget()
+{
+	return *_descBox;
 }
 
-void EffectArgumentItem::save() {
+void EffectArgumentItem::save()
+{
 	// Save the value to the effect 
 	_arg.value = getValue();
 }
 
 // StringArgument
-StringArgument::StringArgument(
-		ResponseEffect::Argument& arg, 
-		GtkTooltips* tooltips) :
-	EffectArgumentItem(arg, tooltips)
+StringArgument::StringArgument(ResponseEffect::Argument& arg) :
+	EffectArgumentItem(arg)
 {
-	_entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(_entry), arg.value.c_str()); 
+	_entry = Gtk::manage(new Gtk::Entry);
+	_entry->set_text(arg.value);
 }
 
-GtkWidget* StringArgument::getEditWidget() {
-	return _entry;
+Gtk::Widget& StringArgument::getEditWidget()
+{
+	return *_entry;
 }
 
-std::string StringArgument::getValue() {
-	return gtk_entry_get_text(GTK_ENTRY(_entry));
+std::string StringArgument::getValue()
+{
+	return _entry->get_text();
 }
 
 // Boolean argument
-BooleanArgument::BooleanArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
-	 EffectArgumentItem(arg, tooltips)
+BooleanArgument::BooleanArgument(ResponseEffect::Argument& arg) :
+	 EffectArgumentItem(arg)
 {
-	_checkButton = gtk_check_button_new_with_label(arg.title.c_str());
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_checkButton), !arg.value.empty());
+	_checkButton = Gtk::manage(new Gtk::CheckButton(arg.title));
+	_checkButton->set_active(!arg.value.empty());
 }
 
-GtkWidget* BooleanArgument::getEditWidget() {
-	return _checkButton;
+Gtk::Widget& BooleanArgument::getEditWidget()
+{
+	return *_checkButton;
 }
 
-std::string BooleanArgument::getValue() {
-	return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_checkButton)) ? "1" : "";
+std::string BooleanArgument::getValue()
+{
+	return _checkButton->get_active() ? "1" : "";
 }
 
 // Entity Argument
 EntityArgument::EntityArgument(
 		ResponseEffect::Argument& arg, 
-		GtkTooltips* tooltips,
-		GtkListStore* entityStore) :
-	EffectArgumentItem(arg, tooltips),
+		const Glib::RefPtr<Gtk::ListStore>& entityStore) :
+	EffectArgumentItem(arg),
 	_entityStore(entityStore)
 {
 	// Create a combo box entry with the given entity list
-	_comboBox = gtk_combo_box_entry_new_with_model(
-    				GTK_TREE_MODEL(_entityStore),
-    				0); // number of the "text" column
+	_comboBox = Gtk::manage(new Gtk::ComboBoxEntry(_entityStore));
 
 	// Add completion functionality to the combobox entry
-	GtkEntryCompletion* completion = gtk_entry_completion_new();
-	gtk_entry_completion_set_model(completion, GTK_TREE_MODEL(_entityStore));
-	gtk_entry_completion_set_text_column(completion, 0);
-	gtk_entry_set_completion(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(_comboBox))), 
-							 completion);
+	Glib::RefPtr<Gtk::EntryCompletion> completion = Gtk::EntryCompletion::create();
+
+	completion->set_model(_entityStore);
+	completion->set_text_column(0);
+
+	_comboBox->get_entry()->set_completion(completion);
 
 	// Sort the list alphabetically
-	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(_entityStore), 0, GTK_SORT_ASCENDING);
+	_entityStore->set_sort_column(0, Gtk::SORT_ASCENDING);
 
 	// Now select the entity passed in the argument
 	// Find the entity using a TreeModel traversor (search the column #0)
-	gtkutil::TreeModel::SelectionFinder finder(arg.value, 0);
-	gtk_tree_model_foreach(
-		GTK_TREE_MODEL(_entityStore), 
-		gtkutil::TreeModel::SelectionFinder::forEach, 
-		&finder
-	);
+	gtkutil::TreeModel::SelectionFindermm finder(arg.value, 0);
+	
+	_entityStore->foreach_iter(
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
 	
 	// Select the found treeiter, if the name was found in the liststore
-	if (finder.getPath() != NULL) {
-		GtkTreeIter iter = finder.getIter();
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_comboBox), &iter);
+	if (finder.getIter())
+	{
+		_comboBox->set_active(finder.getIter());
 	}
 }
 
-std::string EntityArgument::getValue() {
-	return gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_comboBox));
+std::string EntityArgument::getValue()
+{
+	return _comboBox->get_active_text();
 }
 
-GtkWidget* EntityArgument::getEditWidget() {
-	return _comboBox;
+Gtk::Widget& EntityArgument::getEditWidget()
+{
+	return *_comboBox;
 }
 
 // StimType Argument
-StimTypeArgument::StimTypeArgument(
-		ResponseEffect::Argument& arg, 
-		GtkTooltips* tooltips,
-		GtkListStore* stimTypeStore) :
-	EffectArgumentItem(arg, tooltips),
-	_stimTypeStore(stimTypeStore)
+StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimTypes& stimTypes) :
+	EffectArgumentItem(arg),
+	_stimTypes(stimTypes)
 {
 	// Cast the helper class onto a ListStore and create a new treeview
-	_comboBox = gtk_combo_box_new_with_model(GTK_TREE_MODEL(_stimTypeStore));
-	g_object_unref(_stimTypeStore); // tree view owns the reference now
+	_comboBox = Gtk::manage(new Gtk::ComboBox(_stimTypes.getListStore()));
 	
 	// Add the cellrenderer for the name
-	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
-	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_comboBox), iconRenderer, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(_comboBox), nameRenderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_comboBox), iconRenderer, "pixbuf", ST_ICON_COL);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(_comboBox), nameRenderer, "text", ST_CAPTION_PLUS_ID_COL);
-	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
+	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
+	Gtk::CellRendererPixbuf* iconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
+
+	_comboBox->pack_start(*iconRenderer, false);
+	_comboBox->pack_start(*nameRenderer, true);
+
+	_comboBox->add_attribute(iconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
+	_comboBox->add_attribute(nameRenderer->property_text(), _stimTypes.getColumns().captionPlusID);
+	
+	iconRenderer->set_fixed_size(26, -1);
 
 	// Now select the stimtype passed in the argument
 	// Find the entity using a TreeModel traversor (search the column #0)
-	gtkutil::TreeModel::SelectionFinder finder(strToInt(arg.value), ST_ID_COL);
-	gtk_tree_model_foreach(
-		GTK_TREE_MODEL(_stimTypeStore), 
-		gtkutil::TreeModel::SelectionFinder::forEach, 
-		&finder
-	);
+	gtkutil::TreeModel::SelectionFindermm finder(strToInt(arg.value), _stimTypes.getColumns().id.index());
+
+	_stimTypes.getListStore()->foreach_iter(
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
 	
 	// Select the found treeiter, if the name was found in the liststore
-	if (finder.getPath() != NULL) {
-		GtkTreeIter iter = finder.getIter();
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_comboBox), &iter);
+	if (finder.getIter())
+	{
+		_comboBox->set_active(finder.getIter());
 	}
 }
 
-std::string StimTypeArgument::getValue() {
-	GtkTreeIter iter;
-	if (gtk_combo_box_get_active_iter(GTK_COMBO_BOX(_comboBox), &iter)) {
-		GtkTreeModel* model = gtk_combo_box_get_model(GTK_COMBO_BOX(_comboBox));
-		std::string id = intToStr(gtkutil::TreeModel::getInt(model, &iter, ST_ID_COL));
-		return id;
+std::string StimTypeArgument::getValue()
+{
+	Gtk::TreeModel::iterator iter = _comboBox->get_active();
+
+	if (iter)
+	{
+		return intToStr((*iter)[_stimTypes.getColumns().id]);
 	}
+
 	return "";
 }
 
-GtkWidget* StimTypeArgument::getEditWidget() {
-	return _comboBox;
+Gtk::Widget& StimTypeArgument::getEditWidget()
+{
+	return *_comboBox;
 }
