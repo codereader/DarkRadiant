@@ -195,7 +195,7 @@ Gtk::Widget& ResponseEditor::createEffectWidgets()
 		sigc::mem_fun(*this, &ResponseEditor::onEffectSelectionChange));
 	
 	_effectWidgets.view->signal_button_press_event().connect(
-		sigc::mem_fun(*this, &ResponseEditor::onEffectsViewButtonPress));
+		sigc::mem_fun(*this, &ResponseEditor::onEffectsViewButtonPress), false);
 
 	_effectWidgets.view->signal_button_release_event().connect(
 		sigc::bind(sigc::mem_fun(*this, &ResponseEditor::onTreeViewButtonRelease), _effectWidgets.view));
@@ -490,6 +490,7 @@ bool ResponseEditor::onEffectsViewButtonPress(GdkEventButton* ev)
 	{
 		// Call the effect editor upon double click
 		editEffect();
+		return true;
 	}
 	
 	return false;
