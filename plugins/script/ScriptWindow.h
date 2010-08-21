@@ -3,43 +3,42 @@
 
 #include "icommandsystem.h"
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktextbuffer.h>
+#include <gtkmm/box.h>
 #include "gtkutil/ConsoleView.h"
 #include "gtkutil/SourceView.h"
 
 namespace script
 {
 
-class ScriptWindow
-{
-	// The widget for packing into a parent window
-	GtkWidget* _vbox;
+class ScriptWindow;
+typedef boost::shared_ptr<ScriptWindow> ScriptWindowPtr;
 
+class ScriptWindow :
+	public Gtk::VBox
+{
+private:
 	// Use a standard console window for the script output
-	gtkutil::ConsoleView _outView;
+	gtkutil::ConsoleView* _outView;
 
 	gtkutil::SourceView* _view;
-		
+
 	// Private Constructor
 	ScriptWindow();
-
 public:
+	// Creates/destroys the singleton instance
+	static void create();
+	static void destroy();
+
 	/** 
 	 * greebo: Static command target for toggling the script window.
 	 */
 	static void toggle(const cmd::ArgumentList& args);
 
-	/** 
-	 * greebo: Returns the widget pointer for packing into a parent container.
-	 */
-	GtkWidget* getWidget();
-
 	// Accessor to the static singleton instance.
-	static ScriptWindow& Instance();
+	static ScriptWindowPtr& InstancePtr();
 
 private:
-	static void onRunScript(GtkWidget* button, ScriptWindow* self);
+	void onRunScript();
 };
 
 } // namespace script
