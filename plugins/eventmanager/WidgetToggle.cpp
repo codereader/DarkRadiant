@@ -1,25 +1,33 @@
 #include "WidgetToggle.h"
 #include <boost/bind.hpp>
+#include <gtkmm/widget.h>
+#include <gtkmm/checkmenuitem.h>
+#include <gtkmm/togglebutton.h>
+#include <gtkmm/toggletoolbutton.h>
 
 WidgetToggle::WidgetToggle() :
 	Toggle(boost::bind(&WidgetToggle::doNothing, this, _1))
 {}
-	
+
 /* This method only adds the widget to the show/hide list if the widget
  * is NOT of type GtkCheckMenuItem/GtkToggleToolButtons. Any other
  * widgets are added to the show/hide list */
-void WidgetToggle::connectWidget(GtkWidget* widget) {
+void WidgetToggle::connectWidget(Gtk::Widget* widget)
+{
 	// Call the base class method to connect GtkCheckMenuItems and GtkToggleButtons
 	Toggle::connectWidget(widget);
 	
 	// Any other widgets are added to the list
-	if (!GTK_IS_CHECK_MENU_ITEM(widget) && !GTK_IS_TOGGLE_TOOL_BUTTON(widget) && widget != NULL)
+	if (widget != NULL &&
+		dynamic_cast<Gtk::CheckMenuItem*>(widget) == NULL && 
+		dynamic_cast<Gtk::ToggleToolButton*>(widget) == NULL && 
+		dynamic_cast<Gtk::ToggleButton*>(widget))
 	{
 		// No special widget, add it to the list
-		_widgets.push_back(widget);
-
-		// Register to be updated when the visibility of this object changes
-		g_signal_connect(widget, "notify::visible", G_CALLBACK(onVisibilityChange), this);
+		_widgets[widget] = widget->connect_property_changed_with_return(
+			"visible", 
+			sigc::bind(sigc::mem_fun(*this, &WidgetToggle::onVisibilityChange), widget)
+		);
 	}
 
 	// Read the toggled state from the connected widget
@@ -29,41 +37,40 @@ void WidgetToggle::connectWidget(GtkWidget* widget) {
 	Toggle::updateWidgets();
 }
 
-void WidgetToggle::disconnectWidget(GtkWidget* widget) { 
+void WidgetToggle::disconnectWidget(Gtk::Widget* widget)
+{
 	// Call the base class method to handle GtkCheckMenuItems and GtkToggleButtons
 	Toggle::disconnectWidget(widget);
 
-	WidgetList::iterator i = std::find(_widgets.begin(), _widgets.end(), widget);
+	WidgetMap::iterator i = _widgets.find(widget);
 
-	if (i != _widgets.end()) {
+	if (i != _widgets.end())
+	{
+		i->second.disconnect();
+
 		_widgets.erase(i);
 	}
 }
 
 void WidgetToggle::readToggleStateFromWidgets()
 {
-	for (WidgetList::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */)
+	for (WidgetMap::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */)
 	{
-		if (GTK_IS_WIDGET(*i))
-		{
-			_toggled = (GTK_WIDGET_VISIBLE(*i)) ? true : false;
+		_toggled = i->first->is_visible();
 
-			++i;
-		}
-		else
-		{
-			// Not a valid widget anymore, remove from the list
-			_widgets.erase(i++);
-		}
+		++i;
 	}
 }
 
-void WidgetToggle::updateWidgets() {
+void WidgetToggle::updateWidgets()
+{
 	// Show/hide the widgets according to the _toggled state
-	if (_toggled) {
+	if (_toggled)
+	{
 		showWidgets();
 	}
-	else {
+	else
+	{
 		hideWidgets();
 	}
 	
@@ -72,28 +79,20 @@ void WidgetToggle::updateWidgets() {
 }
 	
 // Show all the connected widgets
-void WidgetToggle::showWidgets() {
-	for (WidgetList::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */) {
-		if (GTK_IS_WIDGET(*i)) {
-			gtk_widget_show(*i++);
-		}
-		else {
-			// Not a valid widget anymore, remove from the list
-			_widgets.erase(i++);
-		}
+void WidgetToggle::showWidgets()
+{
+	for (WidgetMap::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+	{
+		i->first->show();
 	}
 }
 
 // Hide all the connected widgets
-void WidgetToggle::hideWidgets() {
-	for (WidgetList::iterator i = _widgets.begin(); i != _widgets.end(); /* in-loop */) {
-		if (GTK_IS_WIDGET(*i)) {
-			gtk_widget_hide(*i++);
-		}
-		else {
-			// Not a valid widget anymore, remove from the list
-			_widgets.erase(i++);
-		}
+void WidgetToggle::hideWidgets() 
+{
+	for (WidgetMap::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
+	{
+		i->first->hide();
 	}
 }
 
@@ -106,14 +105,14 @@ void WidgetToggle::visibilityChanged()
 	Toggle::updateWidgets();
 }
 
-void WidgetToggle::onVisibilityChange(GtkWidget* widget, void* dummy, WidgetToggle* self)
+void WidgetToggle::onVisibilityChange(Gtk::Widget* widget)
 {
-	if (self->_callbackActive) return;
+	if (_callbackActive) return;
 
 	// Confirm that the widget's visibility has actually changed
-	if (GTK_IS_WIDGET(widget) && GTK_WIDGET_VISIBLE(widget) != self->_toggled)
+	if (widget->is_visible() != _toggled)
 	{
 		// Update self
-		self->visibilityChanged();
+		visibilityChanged();
 	}
 }

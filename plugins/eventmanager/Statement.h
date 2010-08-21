@@ -3,11 +3,7 @@
 
 #include "ieventmanager.h"
 
-#include "gtk/gtkmenuitem.h"
-#include "gtk/gtktoolbutton.h"
-#include "gtk/gtkbutton.h"
-#include "gdk/gdk.h"
-
+#include <sigc++/connection.h>
 #include "Event.h"
 
 /* greebo: A Statement is an object that executes a command string when invoked.
@@ -26,7 +22,7 @@ private:
 	// Whether this Statement reacts on keyup or keydown
 	bool _reactOnKeyUp;
 
-	typedef std::map<GtkWidget*, gulong> WidgetList;
+	typedef std::map<Gtk::Widget*, sigc::connection> WidgetList;
 	WidgetList _connectedWidgets;
 	
 public:
@@ -42,15 +38,15 @@ public:
 	virtual void keyDown();
 	
 	// Connect the given menuitem/toolbutton to this Statement
-	virtual void connectWidget(GtkWidget* widget);
+	virtual void connectWidget(Gtk::Widget* widget);
 	
 	virtual bool empty() const;
 	
 private:
-	// The static GTK callback methods that can be connected to a ToolButton or a MenuItem
-	static gboolean onButtonPress(GtkButton* button, Statement* self);
-	static gboolean onToolButtonPress(GtkToolButton* toolButton, Statement* self);
-	static gboolean onMenuItemClicked(GtkMenuItem* menuitem, Statement* self);
+	// The gtkmm callback methods that can be connected to a ToolButton or a MenuItem
+	void onButtonPress();
+	void onToolButtonPress();
+	void onMenuItemClicked();
 
 }; // class Statement
 

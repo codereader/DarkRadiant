@@ -4,8 +4,9 @@
 #include "ieventmanager.h"
 #include "Toggle.h"
 
-#include <vector>
-#include "gtk/gtkwidget.h"
+#include <sigc++/connection.h>
+#include <map>
+namespace Gtk { class Widget; }
 
 /* greebo: A WidgetToggle can be connected to one or more widgets and shows/hides them 
  * upon toggle (e.g. like the Camera Window).
@@ -20,10 +21,10 @@
 class WidgetToggle :
 	public Toggle
 {
-	typedef std::list<GtkWidget*> WidgetList;
+	typedef std::map<Gtk::Widget*, sigc::connection> WidgetMap;
 
 	// The list of all the connected widgets
-	WidgetList _widgets;
+	WidgetMap _widgets;
 
 public:
 	// Constructor
@@ -32,8 +33,8 @@ public:
 	/* This method only adds the widget to the show/hide list if the widget
 	 * is NOT of type GtkCheckMenuItem/GtkToggleToolButtons. Any other
 	 * widgets are added to the show/hide list */
-	virtual void connectWidget(GtkWidget* widget);
-	virtual void disconnectWidget(GtkWidget* widget);
+	virtual void connectWidget(Gtk::Widget* widget);
+	virtual void disconnectWidget(Gtk::Widget* widget);
 	
 	virtual void updateWidgets();
 	
@@ -47,7 +48,7 @@ private:
 	void readToggleStateFromWidgets();
 
 	void visibilityChanged();
-	static void onVisibilityChange(GtkWidget* widget, void* dummy, WidgetToggle* self);
+	void onVisibilityChange(Gtk::Widget* widget);
 
 
 }; // class WidgetToggle

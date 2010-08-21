@@ -4,16 +4,13 @@
 #include "ieventmanager.h"
 #include <boost/function.hpp>
 
-#include "gtk/gtktoggletoolbutton.h"
-#include "gtk/gtktogglebutton.h"
-#include "gtk/gtkcheckmenuitem.h"
-
+#include <sigc++/connection.h>
 #include "Event.h"
 
 /* greebo: A Toggle object has a state (toggled = TRUE/FALSE) and a callback that
  * is invoked on toggle.
  * 
- * A Toggle can be connected to a GtkToggleToolButton/GtkCheckMenuItem via the according method.
+ * A Toggle can be connected to a Gtk::ToggleToolButton/Gtk::CheckMenuItem via the according method.
  * 
  * Use the updateWidget() method to export the current state of the Toggle object to
  * the connected widgets. 
@@ -26,8 +23,8 @@ private:
 	ToggleCallback _callback;
 	
 protected:
-	// The list of connected widgets (associates handler IDs)
-	typedef std::map<GtkWidget*, gulong> ToggleWidgetList;
+	// The list of connected widgets
+	typedef std::map<Gtk::Widget*, sigc::connection> ToggleWidgetList;
 	ToggleWidgetList _toggleWidgets;
 	
 	bool _callbackActive;
@@ -60,16 +57,16 @@ public:
 	virtual bool isToggle() const;
 	
 	// Connect a Widget (e.g. GtkToggleToolButton or GtkCheckMenuItem to this Toggle)
-	virtual void connectWidget(GtkWidget* widget);
-	virtual void disconnectWidget(GtkWidget* widget);
+	virtual void connectWidget(Gtk::Widget* widget);
+	virtual void disconnectWidget(Gtk::Widget* widget);
 	
 	// Invoke the registered callback and update/notify
 	virtual void toggle();
 
-	// The static GTK callback methods that can be connected to a ToolButton or a MenuItem
-	static gboolean onToggleToolButtonClicked(GtkToggleToolButton* toolButton, Toggle* self);
-	static gboolean onToggleButtonClicked(GtkToggleButton* toggleButton, Toggle* self);
-	static gboolean onCheckMenuItemClicked(GtkMenuItem* menuitem, Toggle* self);
+	// The callback methods that can be connected to a ToolButton or a MenuItem
+	void onToggleToolButtonClicked();
+	void onToggleButtonClicked();
+	void onCheckMenuItemClicked();
 
 }; // class Toggle
 
