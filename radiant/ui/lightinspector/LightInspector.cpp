@@ -130,7 +130,7 @@ LightInspector::LightInspector()
 	add(*_mainVBox);
 	
 	// Propagate shortcuts that are not processed by this window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 	
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -157,7 +157,7 @@ void LightInspector::onRadiantShutdown()
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 	
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 	
 	// Destroy the window
 	destroy();

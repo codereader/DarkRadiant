@@ -15,6 +15,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+namespace gtkutil { class ControlButton; }
+
 // Forward declarations to decrease compile times
 namespace Gtk
 {
@@ -27,10 +29,8 @@ namespace Gtk
 	class Table;
 }
 
-namespace gtkutil { class ControlButton; }
-typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
-
-namespace ui {
+namespace ui
+{
 
 class SurfaceInspector;
 typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
@@ -49,8 +49,8 @@ class SurfaceInspector
 		Gtk::HBox* hbox;
 		Gtk::Label* label;
 		Gtk::Entry* value;
-		ControlButtonPtr smaller; 
-		ControlButtonPtr larger;
+		gtkutil::ControlButton* smaller; 
+		gtkutil::ControlButton* larger;
 		Gtk::Entry* step;
 		Gtk::Label* steplabel;
 	};
@@ -215,11 +215,11 @@ private:
 	void onStepChanged();
 	
 	// Gets called when the value entry field is changed (shift/scale/rotation) - emits the texcoords
-	static gboolean onDefaultScaleChanged(GtkSpinButton* spinbutton, SurfaceInspector* self);
+	void onDefaultScaleChanged();
 	
 	// The callback for the Fit Texture button
-	static gboolean onFit(GtkWidget* widget, SurfaceInspector* self);
-	static gboolean doUpdate(GtkWidget* widget, SurfaceInspector* self);
+	void onFit();
+	void doUpdate();
 	
 	// The keypress handler for catching the Enter key when in the shader entry field
 	bool onKeyPress(GdkEventKey* ev);

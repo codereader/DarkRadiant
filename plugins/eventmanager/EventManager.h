@@ -3,9 +3,6 @@
 
 #include "ieventmanager.h"
 
-#include "gtk/gtkobject.h"
-#include "gtk/gtkaccelgroup.h"
-
 #include <map>
 #include <vector>
 #include <list>
@@ -14,11 +11,16 @@
 #include "Modifiers.h"
 #include "MouseEvents.h"
 
+#include <gtkmm/widget.h>
+#include <gtkmm/accelgroup.h>
+
 class EventManager : 
 	public IEventManager
 {
-	// The handler ID of the connected keyboard handler
-	typedef std::map<gulong, GtkObject*> HandlerMap;
+private:
+	// The connected keyboard handlers (one for keypress, one for keyrelease)
+	typedef std::pair<sigc::connection, sigc::connection> ConnectionPair;
+	typedef std::map<Gtk::Widget*, ConnectionPair> HandlerMap;
 	
 	// Needed for boost::algorithm::split
 	typedef std::vector<std::string> StringParts;
@@ -43,7 +45,7 @@ class EventManager :
 	EventMap _events;
 	
 	// The GTK accelerator group for the main window
-	GtkAccelGroup* _accelGroup;
+	Glib::RefPtr<Gtk::AccelGroup> _accelGroup;
 	
 	IEventPtr _emptyEvent;
 	Accelerator _emptyAccelerator;
@@ -107,8 +109,8 @@ public:
 	void removeEvent(const std::string& eventName);
 
 	// Catches the key/mouse press/release events from the given GtkObject
-	void connect(GtkObject* object);	
-	void disconnect(GtkObject* object);
+	void connect(Gtk::Widget* widget);	
+	void disconnect(Gtk::Widget* widget);
 	
 	/* greebo: This connects an dialog window to the event handler. This means the following:
 	 * 
@@ -122,11 +124,12 @@ public:
 	 * This way it is ensured that the dialog window can handle, say, text entries without
 	 * firing global shortcuts all the time.   
 	 */
-	void connectDialogWindow(GtkWindow* window);
+	void connectDialogWindow(Gtk::Window* window);
 	
-	void disconnectDialogWindow(GtkWindow* window);
+	void disconnectDialogWindow(Gtk::Window* window);
 	
-	void connectAccelGroup(GtkWindow* window);
+	void connectAccelGroup(Gtk::Window* window);
+	void connectAccelGroup(const Glib::RefPtr<Gtk::Window>& window);
 	
 	// Loads the default shortcuts from the registry
 	void loadAccelerators();
@@ -155,14 +158,14 @@ private:
 	AcceleratorList findAccelerator(GdkEventKey* event);
 
 	// The GTK keypress callbacks for dialogs
-	static gboolean onDialogKeyPress(GtkWindow* window, GdkEventKey* event, EventManager* self);
-	static gboolean onDialogKeyRelease(GtkWindow* window, GdkEventKey* event, EventManager* self);
+	bool onDialogKeyPress(GdkEventKey* ev, Gtk::Window* window);
+	bool onDialogKeyRelease(GdkEventKey* ev, Gtk::Window* window);
 	
 	void updateStatusText(GdkEventKey* event, bool keyPress);
 	
 	// The GTK keypress callbacks
-	static gboolean onKeyPress(GtkWidget* widget, GdkEventKey* event, gpointer data);	
-	static gboolean onKeyRelease(GtkWidget* widget, GdkEventKey* event, gpointer data);
+	bool onKeyPress(GdkEventKey* ev, Gtk::Widget* widget);
+	bool onKeyRelease(GdkEventKey* ev, Gtk::Widget* widget);
 	
 	guint getGDKCode(const std::string& keyStr);
 	

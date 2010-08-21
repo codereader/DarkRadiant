@@ -40,7 +40,7 @@ EntityList::EntityList() :
 	populateWindow();
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 	
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -172,7 +172,7 @@ void EntityList::onRadiantShutdown()
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
 	// De-register self from the SelectionSystem
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 
 	// Destroy the transient window
 	destroy();

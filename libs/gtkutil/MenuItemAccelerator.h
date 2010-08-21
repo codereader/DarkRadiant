@@ -2,64 +2,82 @@
 #define MENUITEMACCELERATOR_H_
 
 #include <string>
-#include "gtk/gtkwidget.h"
+#include <gtkmm/menuitem.h>
+#include <gtkmm/checkmenuitem.h>
 
-namespace gtkutil {
-
-/* greebo: Encapsulation for a menu item with a right-aligned accelerator label 
- */
-class TextMenuItemAccelerator
+namespace Gtk
 {
-	// Label to display
-	std::string _labelText;
+	class Label;
+	class Image;
+	class HBox;
+}
+
+namespace gtkutil
+{
+
+class TextMenuItemBase 
+{
+protected:
+	Gtk::HBox* _hbox;
+
 	// The corresponding widget
-	GtkWidget* _label;
+	Gtk::Label* _label;
 	
-	// Label of the accelerator
-	std::string _accelLabelText;
 	// The corresponding widget
-	GtkWidget* _accel;
+	Gtk::Label* _accel;
 	
-	// The icon pixbuf
-	GdkPixbuf* _icon;
 	// The corresponding image widget
-	GtkWidget* _iconImage;
-	
-	// Flag to indicate this is a toggle menu item
-	bool _isToggle;
+	Gtk::Image* _iconImage;
 
+	TextMenuItemBase(const std::string& label, 
+					 const std::string& accelLabel,
+					 const Glib::RefPtr<Gdk::Pixbuf>& icon);
 public:
+	// destructor
+	virtual ~TextMenuItemBase() {}
 
+	// Changes the label text of the given menu item 
+	void setLabel(const std::string& newLabel);
+	
+	// Changes the accelerator text of this menutem
+	void setAccelerator(const std::string& newAccel);
+	
+	// Change the icon
+	void setIcon(const Glib::RefPtr<Gdk::Pixbuf>& icon);
+};
+
+class TextMenuItemAccelerator :
+	public TextMenuItemBase,
+	public Gtk::MenuItem
+{
+public:
 	/**
 	 * Construct a menu item with the given label, accelerator and icon. The
 	 * icon may be the empty string if no icon is required.
 	 */
 	TextMenuItemAccelerator(const std::string& label, 
 							const std::string& accelLabel,
-							GdkPixbuf* icon,
-							bool isToggle);
+							const Glib::RefPtr<Gdk::Pixbuf>& icon);
 
 	// destructor
 	virtual ~TextMenuItemAccelerator() {}
-	
-	// Operator cast to GtkWidget* for packing into a menu
-	virtual operator GtkWidget* ();
-	
-	// Changes teh label text of the given menu item 
-	// (This works AFTER the class has been cast onto a GtkWidget*)
-	void setLabel(const std::string& newLabel);
-	
-	// Changes the accelerator text of this menutem
-	// (This works AFTER the class has been cast onto a GtkWidget*)
-	void setAccelerator(const std::string& newAccel);
-	
-	// Change the icon
-	// (This works AFTER the class has been cast onto a GtkWidget*)
-	void setIcon(GdkPixbuf* icon);
-	
-	// Change the icon
-	// (This works BEFORE the class has been cast onto a GtkWidget*)
-	void setIsToggle(bool isToggle);
+};
+
+class TextToggleMenuItemAccelerator :
+	public TextMenuItemBase,
+	public Gtk::CheckMenuItem
+{
+public:
+	/**
+	 * Construct a menu item with the given label, accelerator and icon. The
+	 * icon may be the empty string if no icon is required.
+	 */
+	TextToggleMenuItemAccelerator(const std::string& label, 
+								  const std::string& accelLabel,
+								  const Glib::RefPtr<Gdk::Pixbuf>& icon);
+
+	// destructor
+	virtual ~TextToggleMenuItemAccelerator() {}
 };
 
 }

@@ -7,11 +7,10 @@
 #include <gdkmm/pixbuf.h>
 
 // Forward declarations
-typedef struct _GtkWidget GtkWidget;
-
 namespace Gtk
 {
 	class Toolbar;
+	class Widget;
 }
 
 class IColourSchemeManager {
@@ -50,7 +49,7 @@ public:
 	 * 
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
-	virtual GtkWidget* get(const std::string& path) = 0;
+	virtual Gtk::Widget* get(const std::string& path) = 0;
 	
 	/** greebo: Shows/hides the menuitem under the given path. 
 	 * 
@@ -68,7 +67,7 @@ public:
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
 	 */
-	virtual GtkWidget* add(const std::string& insertPath,
+	virtual Gtk::Widget* add(const std::string& insertPath,
 						   const std::string& name,
 						   ui::eMenuItemType type, 
 						   const std::string& caption, 
@@ -83,9 +82,9 @@ public:
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
 	 * 
-	 * @returns: the GtkWidget* 
+	 * @returns: the Gtk::Widget* 
 	 */
-	virtual GtkWidget* insert(const std::string& insertPath,
+	virtual Gtk::Widget* insert(const std::string& insertPath,
 							  const std::string& name,
 							  ui::eMenuItemType type,
 							  const std::string& caption,
@@ -138,7 +137,7 @@ public:
 	/**
 	 * Get the status bar widget, for packing into the main window.
 	 */
-	virtual GtkWidget* getStatusBar() = 0;
+	virtual Gtk::Widget* getStatusBar() = 0;
 
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
@@ -149,7 +148,7 @@ public:
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
 	 */
-	virtual void addElement(const std::string& name, GtkWidget* widget, int pos) = 0;
+	virtual void addElement(const std::string& name, Gtk::Widget* widget, int pos) = 0;
 
 	/**
 	 * greebo: A specialised method, adding a named text element.
@@ -174,7 +173,7 @@ public:
 	 * 
 	 * @returns: NULL if the named widget does not exist.
 	 */
-	virtual GtkWidget* getElement(const std::string& name) = 0;
+	virtual Gtk::Widget* getElement(const std::string& name) = 0;
 };
 
 // Forward declarations

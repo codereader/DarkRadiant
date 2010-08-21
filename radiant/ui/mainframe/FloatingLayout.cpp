@@ -30,13 +30,13 @@ std::string FloatingLayout::getName() {
 void FloatingLayout::activate() {
  	// Get the floating window with the CamWnd packed into it
 	_floatingCamWnd = GlobalCamera().createFloatingWindow();
-	GlobalEventManager().connectAccelGroup(GTK_WINDOW(_floatingCamWnd->getWindow()));
+	GlobalEventManager().connectAccelGroup(_floatingCamWnd.get());
 
 	// Restore the window position from the registry if possible
 	if (!GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE).empty())
 	{
 		_camWndPosition.loadFromPath(RKEY_CAMERA_WINDOW_STATE);
-		_camWndPosition.connect(Glib::wrap(GTK_WINDOW(_floatingCamWnd->getWindow()), true));
+		_camWndPosition.connect(_floatingCamWnd.get());
 	}
 	  
 	_floatingCamWnd->show();
@@ -44,7 +44,7 @@ void FloatingLayout::activate() {
 	// Connect up the toggle camera event
 	IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
 	if (!ev->empty()) {
-		ev->connectWidget(_floatingCamWnd->getWindow());
+		ev->connectWidget(_floatingCamWnd.get());
 		ev->updateWidgets();
 	}
 	else {
@@ -112,7 +112,7 @@ void FloatingLayout::deactivate()
 
 		IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
 		if (!ev->empty()) {
-			ev->disconnectWidget(_floatingCamWnd->getWindow());
+			ev->disconnectWidget(_floatingCamWnd.get());
 		}
 		else {
 			globalErrorStream() << "Could not disconnect ToggleCamera event\n";
