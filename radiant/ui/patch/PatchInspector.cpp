@@ -226,7 +226,7 @@ void PatchInspector::populateWindow()
     	
     	// Pass a CoordRow ref to the callback, that's all it will need to update
 		row.smaller->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickSmaller), row));
-		row.smaller->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickLarger), row));
+		row.larger->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickLarger), row));
     }
     
     // Create the title label (bold font)
