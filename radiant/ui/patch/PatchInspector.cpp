@@ -67,7 +67,7 @@ PatchInspector::PatchInspector()
 	populateWindow();
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 	
 	// Update the widget status
 	rescanSelection();
@@ -98,7 +98,7 @@ void PatchInspector::onRadiantShutdown()
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 	
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 	
 	// Destroy the transient window
 	destroy();
@@ -300,13 +300,13 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	{
 		Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 0));
 		
-		coordRow.smaller = ControlButtonPtr(
+		coordRow.smaller = Gtk::manage(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_left.png"))
 		);
 		coordRow.smaller->set_size_request(15, 24);
 		hbox->pack_start(*coordRow.smaller, false, false, 0);
 		
-		coordRow.larger = ControlButtonPtr(
+		coordRow.larger = Gtk::manage(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_right.png"))
 		);
 		coordRow.larger->set_size_request(15, 24);

@@ -158,7 +158,7 @@ SurfaceInspector::SurfaceInspector()
 	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_TEXTURE_SCALE);
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 	
 	// Update the widget status
 	update();
@@ -192,7 +192,7 @@ void SurfaceInspector::onRadiantShutdown()
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 	
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	destroy();
@@ -203,45 +203,47 @@ void SurfaceInspector::onRadiantShutdown()
 void SurfaceInspector::connectEvents()
 {
 	// Connect the ToggleTexLock item to the according command
-	GlobalEventManager().findEvent("TogTexLock")->connectWidget(GTK_WIDGET(_texLockButton->gobj()));
-	GlobalEventManager().findEvent("FlipTextureX")->connectWidget(GTK_WIDGET(_flipTexture.flipX->gobj()));
-	GlobalEventManager().findEvent("FlipTextureY")->connectWidget(GTK_WIDGET(_flipTexture.flipY->gobj()));
-	GlobalEventManager().findEvent("TextureNatural")->connectWidget(GTK_WIDGET(_applyTex.natural->gobj()));
-	GlobalEventManager().findEvent("NormaliseTexture")->connectWidget(GTK_WIDGET(_applyTex.normalise->gobj()));
+	GlobalEventManager().findEvent("TogTexLock")->connectWidget(_texLockButton);
+	GlobalEventManager().findEvent("FlipTextureX")->connectWidget(_flipTexture.flipX);
+	GlobalEventManager().findEvent("FlipTextureY")->connectWidget(_flipTexture.flipY);
+	GlobalEventManager().findEvent("TextureNatural")->connectWidget(_applyTex.natural);
+	GlobalEventManager().findEvent("NormaliseTexture")->connectWidget(_applyTex.normalise);
 
-	GlobalEventManager().findEvent("TexAlignTop")->connectWidget(GTK_WIDGET(_alignTexture.top->gobj()));
-	GlobalEventManager().findEvent("TexAlignBottom")->connectWidget(GTK_WIDGET(_alignTexture.bottom->gobj()));
-	GlobalEventManager().findEvent("TexAlignRight")->connectWidget(GTK_WIDGET(_alignTexture.right->gobj()));
-	GlobalEventManager().findEvent("TexAlignLeft")->connectWidget(GTK_WIDGET(_alignTexture.left->gobj()));
+	GlobalEventManager().findEvent("TexAlignTop")->connectWidget(_alignTexture.top);
+	GlobalEventManager().findEvent("TexAlignBottom")->connectWidget(_alignTexture.bottom);
+	GlobalEventManager().findEvent("TexAlignRight")->connectWidget(_alignTexture.right);
+	GlobalEventManager().findEvent("TexAlignLeft")->connectWidget(_alignTexture.left);
 	
-	GlobalEventManager().findEvent("TexShiftLeft")->connectWidget(GTK_WIDGET(_manipulators[HSHIFT].smaller->gobj()));
-	GlobalEventManager().findEvent("TexShiftRight")->connectWidget(GTK_WIDGET(_manipulators[HSHIFT].larger->gobj()));
-	GlobalEventManager().findEvent("TexShiftUp")->connectWidget(GTK_WIDGET(_manipulators[VSHIFT].larger->gobj()));
-	GlobalEventManager().findEvent("TexShiftDown")->connectWidget(GTK_WIDGET(_manipulators[VSHIFT].smaller->gobj()));
-	GlobalEventManager().findEvent("TexScaleLeft")->connectWidget(GTK_WIDGET(_manipulators[HSCALE].smaller->gobj()));
-	GlobalEventManager().findEvent("TexScaleRight")->connectWidget(GTK_WIDGET(_manipulators[HSCALE].larger->gobj()));
-	GlobalEventManager().findEvent("TexScaleUp")->connectWidget(GTK_WIDGET(_manipulators[VSCALE].larger->gobj()));
-	GlobalEventManager().findEvent("TexScaleDown")->connectWidget(GTK_WIDGET(_manipulators[VSCALE].smaller->gobj()));
-	GlobalEventManager().findEvent("TexRotateClock")->connectWidget(GTK_WIDGET(_manipulators[ROTATION].larger->gobj()));
-	GlobalEventManager().findEvent("TexRotateCounter")->connectWidget(GTK_WIDGET(_manipulators[ROTATION].smaller->gobj()));
+	GlobalEventManager().findEvent("TexShiftLeft")->connectWidget(_manipulators[HSHIFT].smaller);
+	GlobalEventManager().findEvent("TexShiftRight")->connectWidget(_manipulators[HSHIFT].larger);
+	GlobalEventManager().findEvent("TexShiftUp")->connectWidget(_manipulators[VSHIFT].larger);
+	GlobalEventManager().findEvent("TexShiftDown")->connectWidget(_manipulators[VSHIFT].smaller);
+	GlobalEventManager().findEvent("TexScaleLeft")->connectWidget(_manipulators[HSCALE].smaller);
+	GlobalEventManager().findEvent("TexScaleRight")->connectWidget(_manipulators[HSCALE].larger);
+	GlobalEventManager().findEvent("TexScaleUp")->connectWidget(_manipulators[VSCALE].larger);
+	GlobalEventManager().findEvent("TexScaleDown")->connectWidget(_manipulators[VSCALE].smaller);
+	GlobalEventManager().findEvent("TexRotateClock")->connectWidget(_manipulators[ROTATION].larger);
+	GlobalEventManager().findEvent("TexRotateCounter")->connectWidget(_manipulators[ROTATION].smaller);
 	
 	// Be sure to connect these signals after the buttons are connected 
 	// to the events, so that the update() call gets invoked after the actual event has been fired.
-	g_signal_connect(G_OBJECT(_fitTexture.button->gobj()), "clicked", G_CALLBACK(onFit), this);
-	g_signal_connect(G_OBJECT(_flipTexture.flipX->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(_flipTexture.flipY->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(_alignTexture.top->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(_alignTexture.bottom->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(_alignTexture.right->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(_alignTexture.left->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(_applyTex.natural->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(_applyTex.normalise->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-	g_signal_connect(G_OBJECT(_defaultTexScale->gobj()), "value-changed", G_CALLBACK(onDefaultScaleChanged), this);
-	
+	_fitTexture.button->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::onFit));
+
+	_flipTexture.flipX->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+	_flipTexture.flipY->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+	_alignTexture.top->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+	_alignTexture.bottom->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+	_alignTexture.right->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+	_alignTexture.left->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+	_applyTex.natural->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+	_applyTex.normalise->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+
+	_defaultTexScale->signal_value_changed().connect(sigc::mem_fun(*this, &SurfaceInspector::onDefaultScaleChanged));
+
 	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
-		g_signal_connect(G_OBJECT(i->second.smaller->gobj()), "clicked", G_CALLBACK(doUpdate), this);
-		g_signal_connect(G_OBJECT(i->second.larger->gobj()), "clicked", G_CALLBACK(doUpdate), this);
+		i->second.smaller->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
+		i->second.larger->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
 	}
 }
 
@@ -300,7 +302,7 @@ void SurfaceInspector::populateWindow()
 	table->attach(*shaderLabel, 0, 1, 0, 1);
 	
 	_shaderEntry = Gtk::manage(new Gtk::Entry);
-	_shaderEntry->signal_key_press_event().connect(sigc::mem_fun(*this, &SurfaceInspector::onKeyPress));
+	_shaderEntry->signal_key_press_event().connect(sigc::mem_fun(*this, &SurfaceInspector::onKeyPress), false);
 	
 	// Create the icon button to open the ShaderChooser
 	_selectShaderButton = Gtk::manage(
@@ -467,7 +469,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	// Create the entry field
 	manipRow.value = Gtk::manage(new Gtk::Entry);
 	manipRow.value->set_width_chars(7);
-	manipRow.value->signal_key_press_event().connect(sigc::mem_fun(*this, &SurfaceInspector::onValueKeyPress));
+	manipRow.value->signal_key_press_event().connect(sigc::mem_fun(*this, &SurfaceInspector::onValueKeyPress), false);
 	
 	manipRow.hbox->pack_start(*manipRow.value, true, true, 0);
 	
@@ -475,13 +477,13 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	{
 		Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(true, 0));
 		
-		manipRow.larger = ControlButtonPtr(
+		manipRow.larger = Gtk::manage( 
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_up.png"))
 		);
 		manipRow.larger->set_size_request(30, 12);
 		vbox->pack_start(*manipRow.larger, false, false, 0);
 		
-		manipRow.smaller = ControlButtonPtr(
+		manipRow.smaller = Gtk::manage(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_down.png"))
 		);
 		manipRow.smaller->set_size_request(30, 12);
@@ -493,13 +495,13 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	{
 		Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 0));
 		
-		manipRow.smaller = ControlButtonPtr(
+		manipRow.smaller = Gtk::manage(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_left.png"))
 		);
 		manipRow.smaller->set_size_request(15, 24);
 		hbox->pack_start(*manipRow.smaller, false, false, 0);
 		
-		manipRow.larger = ControlButtonPtr(
+		manipRow.larger = Gtk::manage(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_right.png"))
 		);
 		manipRow.larger->set_size_request(15, 24);
@@ -716,11 +718,10 @@ void SurfaceInspector::shaderSelectionChanged(const std::string& shader)
 	emitShader();
 }
 
-gboolean SurfaceInspector::onDefaultScaleChanged(GtkSpinButton* spinbutton, SurfaceInspector* self)
+void SurfaceInspector::onDefaultScaleChanged()
 {
 	// Tell the class instance to save its contents into the registry
-	self->saveToRegistry();
-	return false;
+	saveToRegistry();
 }
 
 void SurfaceInspector::onStepChanged()
@@ -729,18 +730,16 @@ void SurfaceInspector::onStepChanged()
 	saveToRegistry();
 } 
 
-gboolean SurfaceInspector::onFit(GtkWidget* widget, SurfaceInspector* self) {
+void SurfaceInspector::onFit() {
 	// Call the according member method
-	self->fitTexture();
-	self->update();
-
-	return false;
+	fitTexture();
+	update();
 }
 
-gboolean SurfaceInspector::doUpdate(GtkWidget* widget, SurfaceInspector* self) {
+void SurfaceInspector::doUpdate()
+{
 	// Update the widgets, everything else is done by the called Event
-	self->update();
-	return false;
+	update();
 }
 
 // The GTK keypress callback for the shift/scale/rotation entry fields
@@ -799,10 +798,11 @@ void SurfaceInspector::_preShow()
 	update();
 }
 
-void SurfaceInspector::_postShow() {
+void SurfaceInspector::_postShow()
+{
 	// Unset the focus widget for this window to avoid the cursor 
 	// from jumping into the shader entry field 
-	gtk_window_set_focus(GTK_WINDOW(getWindow()), NULL);
+	unset_focus();
 }
 
 void SurfaceInspector::_preHide()

@@ -29,13 +29,13 @@ MapInfoDialog::MapInfoDialog() :
 	populateWindow();
 	
 	// Propagate shortcuts to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 }
 
 void MapInfoDialog::shutdown()
 {
 	// Stop propagating shortcuts to the main window
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 }
 
 void MapInfoDialog::populateWindow()

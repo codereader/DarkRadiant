@@ -59,7 +59,7 @@ TransformDialog::TransformDialog()
 	populateWindow();
 	
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 	
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
@@ -80,7 +80,7 @@ void TransformDialog::onRadiantShutdown() {
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 	
 	GlobalSelectionSystem().removeObserver(this);
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 
 	// Destroy the dialog
 	destroy();

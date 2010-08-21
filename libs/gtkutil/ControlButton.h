@@ -46,8 +46,8 @@ public:
 		add(*vbox);
 
 		// Connect the pressed/released signals
-		signal_pressed().connect(sigc::mem_fun(*this, &ControlButton::onPress));
-		signal_released().connect(sigc::mem_fun(*this, &ControlButton::onRelease));
+		signal_pressed().connect(sigc::mem_fun(*this, &ControlButton::onPress), false);
+		signal_released().connect(sigc::mem_fun(*this, &ControlButton::onRelease), false);
 	}
 	
 	static gboolean onTimeOut(gpointer data)

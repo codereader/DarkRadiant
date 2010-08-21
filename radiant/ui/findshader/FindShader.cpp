@@ -48,13 +48,13 @@ FindAndReplaceShader::FindAndReplaceShader() :
 	populateWindow();
 	
 	// Propagate shortcuts to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 }
 
 FindAndReplaceShader::~FindAndReplaceShader()
 {
 	// Propagate shortcuts to the main window
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 }
 
 void FindAndReplaceShader::populateWindow()

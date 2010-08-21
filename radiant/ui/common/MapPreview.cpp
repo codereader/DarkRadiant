@@ -57,7 +57,7 @@ MapPreview::MapPreview() :
 	vbx->pack_end(*toolHBox, false, false, 0);
 
 	// Create the menu
-	toolHBox->pack_start(*Glib::wrap(_filtersMenu->getMenuBarWidget(), true), true, true, 0);
+	toolHBox->pack_start(*_filtersMenu->getMenuBarWidget(), true, true, 0);
 
 	// Pack into a frame and return
 	add(*vbx);

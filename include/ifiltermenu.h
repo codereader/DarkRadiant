@@ -4,7 +4,7 @@
 #include <string>
 #include <boost/shared_ptr.hpp>
 
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk { class Widget; }
 
 namespace ui
 {
@@ -29,7 +29,7 @@ public:
 	// Constructs and returns the widget of a full filters menu bar
 	// including submenu and the items. This can be packed into a 
 	// parent hbox or other GTK containers right away.
-	virtual GtkWidget* getMenuBarWidget() = 0;
+	virtual Gtk::Widget* getMenuBarWidget() = 0;
 };
 typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
 

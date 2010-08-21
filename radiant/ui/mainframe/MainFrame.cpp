@@ -264,7 +264,7 @@ void MainFrame::createTopLevelWindow()
 	// Destroy any previous toplevel window
 	if (_window != NULL)
 	{
-		GlobalEventManager().disconnect(GTK_OBJECT(_window->gobj()));
+		GlobalEventManager().disconnect(_window->get_toplevel());
 
 		_window->hide();
 	}
@@ -295,8 +295,8 @@ void MainFrame::createTopLevelWindow()
 	_window->signal_delete_event().connect(sigc::mem_fun(*this, &MainFrame::onDeleteEvent));
 
 	// Notify the event manager
-	GlobalEventManager().connect(GTK_OBJECT(getTopLevelWindow()->gobj()));
-	GlobalEventManager().connectAccelGroup(getTopLevelWindow()->gobj());
+	GlobalEventManager().connect(getTopLevelWindow()->get_toplevel());
+	GlobalEventManager().connectAccelGroup(getTopLevelWindow());
 }
 
 void MainFrame::restoreWindowPosition()
@@ -340,7 +340,7 @@ Gtk::Widget* MainFrame::createMenuBar()
     FiltersMenu::addItemsToMainMenu();
     
     // Return the "main" menubar from the UIManager
-	return Glib::wrap(GlobalUIManager().getMenuManager().get("main"));
+	return GlobalUIManager().getMenuManager().get("main");
 }
 
 Gtk::Toolbar* MainFrame::getToolbar(IMainFrame::Toolbar type)
@@ -410,7 +410,7 @@ void MainFrame::create()
 	hbox->pack_start(*_mainContainer, true, true, 0);
     
     // Create and pack main statusbar 
-	Gtk::Widget* statusBar = Glib::wrap(GlobalUIManager().getStatusBarManager().getStatusBar());
+	Gtk::Widget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
 
 	vbox->pack_end(*statusBar, false, false, 2);
 	statusBar->show_all();

@@ -36,7 +36,7 @@ GroupDialog::GroupDialog() :
 	// greebo: Disabled this, because the EntityInspector was propagating keystrokes back to the main
 	//         main window, even when the cursor was focused on entry fields.
 	// greebo: Enabled this again, it seems to annoy users (issue #458)
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 	
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -226,7 +226,7 @@ void GroupDialog::onRadiantShutdown()
 {
 	hide();
 	
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 
 	// Call the PersistentTransientWindow::destroy chain
 	destroy();

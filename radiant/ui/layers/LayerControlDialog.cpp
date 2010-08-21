@@ -34,7 +34,7 @@ LayerControlDialog::LayerControlDialog() :
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().connectDialogWindow(this);
 
 	populateWindow();
 
@@ -85,7 +85,7 @@ Gtk::Widget& LayerControlDialog::createButtons()
 
 	if (event != NULL)
 	{
-		event->connectWidget(GTK_WIDGET(createButton->gobj()));
+		event->connectWidget(createButton);
 	}
 	
 	createButton->set_size_request(100, -1);
@@ -240,7 +240,7 @@ void LayerControlDialog::onRadiantShutdown()
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 
 	// Write the visibility status to the registry
 	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", isVisible() ? "1" : "0");

@@ -69,7 +69,7 @@ ModelPreview::ModelPreview() :
 	toolbar->insert(*_drawBBox, 0);
 	
 	// Create the menu
-	toolHBox->pack_end(*Glib::wrap(_filtersMenu->getMenuBarWidget(), true), false, false, 0);
+	toolHBox->pack_end(*_filtersMenu->getMenuBarWidget(), false, false, 0);
 
 	// Pack into a frame and return
 	add(*vbx);

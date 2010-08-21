@@ -125,7 +125,7 @@ XYWnd::XYWnd(int id) :
 	// Let the window observer connect its handlers to the GL widget first (before the event manager)
 	m_window_observer->addObservedWidget(GTK_WIDGET(_glWidget->gobj()));
 
-	GlobalEventManager().connect(GTK_OBJECT(_glWidget->gobj()));
+	GlobalEventManager().connect(_glWidget);
 }
 
 // Destructor
@@ -156,7 +156,7 @@ void XYWnd::destroyXYView() {
 	{
 		m_window_observer->removeObservedWidget(GTK_WIDGET(_glWidget->gobj()));
 
-		GlobalEventManager().disconnect(GTK_OBJECT(_glWidget->gobj()));
+		GlobalEventManager().disconnect(_glWidget);
 		
 		/*g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
 		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);

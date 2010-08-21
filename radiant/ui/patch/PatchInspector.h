@@ -12,9 +12,6 @@
 #include "gtkutil/RegistryConnector.h"
 #include "gtkutil/event/SingleIdleCallback.h"
 
-namespace gtkutil { class ControlButton; }
-typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
-
 class Patch;
 class PatchNode;
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
@@ -31,6 +28,8 @@ namespace Gtk
 	class SpinButton;
 	class CheckButton;
 }
+
+namespace gtkutil { class ControlButton; }
 
 namespace ui
 {
@@ -65,8 +64,8 @@ class PatchInspector
 		Gtk::HBox* hbox;
 		Gtk::Label* label;
 		Gtk::Entry* value;
-		ControlButtonPtr smaller;
-		ControlButtonPtr larger;
+		gtkutil::ControlButton* smaller;
+		gtkutil::ControlButton* larger;
 		Gtk::Entry* step;
 		Gtk::Label* steplabel;
 	};
