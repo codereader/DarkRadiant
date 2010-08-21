@@ -154,7 +154,10 @@ void XYWnd::destroyXYView() {
 	
 	if (_glWidget != NULL)
 	{
-		m_window_observer->removeObservedWidget(GTK_WIDGET(_glWidget->gobj()));
+		if (m_window_observer != NULL)
+		{
+			m_window_observer->removeObservedWidget(GTK_WIDGET(_glWidget->gobj()));
+		}
 
 		GlobalEventManager().disconnect(_glWidget);
 		

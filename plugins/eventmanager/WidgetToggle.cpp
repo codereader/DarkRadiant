@@ -21,7 +21,7 @@ void WidgetToggle::connectWidget(Gtk::Widget* widget)
 	if (widget != NULL &&
 		dynamic_cast<Gtk::CheckMenuItem*>(widget) == NULL && 
 		dynamic_cast<Gtk::ToggleToolButton*>(widget) == NULL && 
-		dynamic_cast<Gtk::ToggleButton*>(widget))
+		dynamic_cast<Gtk::ToggleButton*>(widget) == NULL)
 	{
 		// No special widget, add it to the list
 		_widgets[widget] = widget->connect_property_changed_with_return(
