@@ -1599,7 +1599,7 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 
 void XYWnd::updateSelectionBox(const Rectangle& area)
 {
-	if(GTK_WIDGET_VISIBLE(getWidget()))
+	if (getWidget()->is_visible())
 	{
 		// Take the rectangle and convert it to screen coordinates
 		_dragRectangle = area;
