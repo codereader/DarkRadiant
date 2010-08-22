@@ -16,7 +16,6 @@
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
 #include "gtkutil/StockIconMenuItem.h"
-#include "gtkutil/SeparatorMenuItem.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "xmlutil/Document.h"
@@ -239,11 +238,11 @@ void EntityInspector::onKeyErase(const std::string& key,
 void EntityInspector::createContextMenu() 
 {
 	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::ADD, _("Add property..."))),
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Add property..."))),
 		boost::bind(&EntityInspector::_onAddKey, this)
 	);
 	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::DELETE, _("Delete property"))),
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete property"))),
 		boost::bind(&EntityInspector::_onDeleteKey, this),
 		boost::bind(&EntityInspector::_testDeleteKey, this)
 	);
@@ -251,17 +250,17 @@ void EntityInspector::createContextMenu()
 	_contextMenu->addItem(Gtk::manage(new Gtk::SeparatorMenuItem), gtkutil::PopupMenu::Callback());
 
 	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::COPY, _("Copy Spawnarg"))),
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Copy Spawnarg"))),
 		boost::bind(&EntityInspector::_onCopyKey, this),
 		boost::bind(&EntityInspector::_testCopyKey, this)
 	);
 	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::CUT, _("Cut Spawnarg"))),
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::CUT, _("Cut Spawnarg"))),
 		boost::bind(&EntityInspector::_onCutKey, this),
 		boost::bind(&EntityInspector::_testCutKey, this)
 	);
 	_contextMenu->addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::PASTE, _("Paste Spawnarg"))),
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::PASTE, _("Paste Spawnarg"))),
 		boost::bind(&EntityInspector::_onPasteKey, this),
 		boost::bind(&EntityInspector::_testPasteKey, this)
 	);

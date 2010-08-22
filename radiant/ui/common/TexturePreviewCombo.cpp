@@ -50,7 +50,7 @@ TexturePreviewCombo::TexturePreviewCombo() :
 	
 	// Construct the context menu
 	_contextMenu.addItem(
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::COPY, _("Copy shader name"))),
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Copy shader name"))),
 		boost::bind(&TexturePreviewCombo::_onCopyTexName, this)
 	);
 }

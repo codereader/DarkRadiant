@@ -508,14 +508,14 @@ void StimEditor::createContextMenu()
 		
 	// Each menu gets a delete item
 	_contextMenu.remove = 
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::DELETE, _("Delete")));
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete")));
 	//_contextMenu.add = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, "Add Stim"));
 	_contextMenu.disable = 
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::NO, _("Deactivate")));
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::NO, _("Deactivate")));
 	_contextMenu.enable = 
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::YES, _("Activate")));
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::YES, _("Activate")));
 	_contextMenu.duplicate = 
-		Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::COPY, _("Duplicate")));
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Duplicate")));
 
 	//_contextMenu.menu->append(*_contextMenu.add);
 	_contextMenu.menu->append(*_contextMenu.enable);
