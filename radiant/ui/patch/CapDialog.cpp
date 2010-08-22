@@ -63,7 +63,6 @@ void PatchCapDialog::addItemToTable(Gtk::Table& table, const std::string& image,
 	Gtk::RadioButton* radioButton = Gtk::manage(new Gtk::RadioButton(_group, _(CAPTYPE_NAMES[type])));
 	_group = radioButton->get_group();
 
-	//_radioButtonGroup = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radioButton));
 	table.attach(*radioButton, 1, 2, row, row+1, Gtk::FILL|Gtk::EXPAND, Gtk::AttachOptions(0), 0, 0);
 
 	// Store the widget in the local map

@@ -32,9 +32,6 @@ class XYWnd :
 	
 	gtkutil::GLWidget* _glWidget;
 	
-	guint m_sizeHandler;
-	guint m_exposeHandler;
-
 	DeferredDraw m_deferredDraw;
 	DeferredMotion m_deferred_motion;
 

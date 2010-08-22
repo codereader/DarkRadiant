@@ -27,7 +27,7 @@ Dialog::Dialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent
 	// Center the popup when no parent window is specified
 	if (!parent)
 	{
-		gtk_window_set_position(GTK_WINDOW(getWindow()), GTK_WIN_POS_CENTER);
+		set_position(Gtk::WIN_POS_CENTER);
 	}
 
 	add(*_vbox);
