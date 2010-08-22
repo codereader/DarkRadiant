@@ -55,7 +55,7 @@ EntityChooser::EntityChooser() :
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &EntityChooser::onSelectionChanged));
 	
 	// Scrolled Frame
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*treeView)), true, true, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*treeView)), true, true, 0);
 
 	populateEntityList();
 }

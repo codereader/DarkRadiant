@@ -51,7 +51,7 @@ public:
 
 		// Create a vbox and add the elements.
 		Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-		vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*textView)), true, true, 0);
+		vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*textView)), true, true, 0);
 		vbox->pack_start(*alignment, false, false, 0);
 
 		add(*vbox);

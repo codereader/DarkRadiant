@@ -42,7 +42,7 @@ Gtk::Widget& MapFileChooserPreview::createUsagePanel()
 	_usageInfo->set_wrap_mode(Gtk::WRAP_WORD);
 	_usageInfo->set_editable(false);
 
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_usageInfo));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_usageInfo));
 }
 
 /**

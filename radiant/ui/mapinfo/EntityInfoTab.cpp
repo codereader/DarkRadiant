@@ -66,7 +66,7 @@ void EntityInfoTab::populateTab()
 	_treeView->append_column(*eclassCol);
 	_treeView->append_column(*countCol);
 		
-	_widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true, 0);
+	_widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
     
     // Populate the liststore with the entity count information
     for (map::EntityBreakdown::Map::const_iterator i = _entityBreakdown.begin(); 

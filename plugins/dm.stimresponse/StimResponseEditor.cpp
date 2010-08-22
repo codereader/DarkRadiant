@@ -174,7 +174,7 @@ Gtk::Widget& StimResponseEditor::createButtons()
 	buttonHBox->pack_end(*okButton, true, true, 0);
 	buttonHBox->pack_end(*_closeButton, true, true, 0);
 	
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHBox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 void StimResponseEditor::rescanSelection()

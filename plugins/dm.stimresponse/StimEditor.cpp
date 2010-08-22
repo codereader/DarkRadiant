@@ -43,7 +43,7 @@ void StimEditor::populatePage()
 	pack_start(*srHBox, true, true, 0);
 	
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_list)), true, true, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_list)), true, true, 0);
 	
 	// Create the type selector plus buttons and pack them
 	vbox->pack_start(createListButtons(), false, false, 0);
@@ -155,7 +155,7 @@ Gtk::Widget& StimEditor::createPropertyWidgets()
 	_propertyWidgets.timeIntToggle = Gtk::manage(new Gtk::CheckButton(_("Time interval:")));
 	_propertyWidgets.timeIntEntry = Gtk::manage(new Gtk::SpinButton(
 		*Gtk::manage(new Gtk::Adjustment(0, 0, 9999999, 10)), 0, 0));
-	_propertyWidgets.timeUnitLabel = Gtk::manage(new gtkutil::RightAlignedLabelmm(_("ms")));
+	_propertyWidgets.timeUnitLabel = Gtk::manage(new gtkutil::RightAlignedLabel(_("ms")));
 		
 	timeHBox->pack_start(*_propertyWidgets.timeIntEntry, true, true, 0);
 	timeHBox->pack_start(*_propertyWidgets.timeUnitLabel, false, false, 0);
@@ -170,7 +170,7 @@ Gtk::Widget& StimEditor::createPropertyWidgets()
 	_propertyWidgets.durationToggle = Gtk::manage(new Gtk::CheckButton(_("Duration:")));
 	_propertyWidgets.durationEntry = Gtk::manage(new Gtk::SpinButton(
 		*Gtk::manage(new Gtk::Adjustment(0, 0, 9999999, 10)), 0, 0));
-	_propertyWidgets.durationUnitLabel = Gtk::manage(new gtkutil::RightAlignedLabelmm(_("ms")));
+	_propertyWidgets.durationUnitLabel = Gtk::manage(new gtkutil::RightAlignedLabel(_("ms")));
 	
 	durationHBox->pack_start(*_propertyWidgets.durationEntry, true, true, 0);
 	durationHBox->pack_start(*_propertyWidgets.durationUnitLabel, false, false, 0);

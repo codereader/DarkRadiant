@@ -126,7 +126,7 @@ void AboutDialog::populateWindow()
 	textView->set_wrap_mode(Gtk::WRAP_WORD);
 	
 	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(
-		*Gtk::manage(new gtkutil::ScrolledFramemm(*textView)), 18, 1.0f)), 
+		*Gtk::manage(new gtkutil::ScrolledFrame(*textView)), 18, 1.0f)), 
 		true, true, 0);
 	
 	// DarkRadiant modules
@@ -140,7 +140,7 @@ void AboutDialog::populateWindow()
 	moduleTextView->set_wrap_mode(Gtk::WRAP_WORD);
 	
 	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(
-		*Gtk::manage(new gtkutil::ScrolledFramemm(*moduleTextView)), 18, 1.0f)), 
+		*Gtk::manage(new gtkutil::ScrolledFrame(*moduleTextView)), 18, 1.0f)), 
 		true, true, 0
 	);
 	

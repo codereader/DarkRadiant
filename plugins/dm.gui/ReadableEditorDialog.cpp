@@ -362,10 +362,10 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	_textViewRightTitle->set_wrap_mode(Gtk::WRAP_WORD);
 	_textViewRightTitle->get_buffer()->signal_changed().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTextChanged));
 
-	_textViewRightTitleScrolled = Gtk::manage(new gtkutil::ScrolledFramemm(*_textViewRightTitle));
+	_textViewRightTitleScrolled = Gtk::manage(new gtkutil::ScrolledFrame(*_textViewRightTitle));
 
 	_textViewTable->attach(*titleLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	_textViewTable->attach(*Gtk::manage(new gtkutil::ScrolledFramemm(*_textViewTitle)), 1, 2, curRow, curRow+1, Gtk::FILL|Gtk::EXPAND, Gtk::FILL, 0, 0);
+	_textViewTable->attach(*Gtk::manage(new gtkutil::ScrolledFrame(*_textViewTitle)), 1, 2, curRow, curRow+1, Gtk::FILL|Gtk::EXPAND, Gtk::FILL, 0, 0);
 	_textViewTable->attach(*_textViewRightTitleScrolled, 2, 3, curRow, curRow+1, Gtk::FILL|Gtk::EXPAND, Gtk::FILL, 0, 0);
 
 	curRow++;
@@ -381,10 +381,10 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	_textViewRightBody->set_wrap_mode(Gtk::WRAP_WORD);
 	_textViewRightBody->get_buffer()->signal_changed().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTextChanged));
 	
-	_textViewRightBodyScrolled = Gtk::manage(new gtkutil::ScrolledFramemm(*_textViewRightBody));
+	_textViewRightBodyScrolled = Gtk::manage(new gtkutil::ScrolledFrame(*_textViewRightBody));
 	
 	_textViewTable->attach(*bodyLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	_textViewTable->attach(*Gtk::manage(new gtkutil::ScrolledFramemm(*_textViewBody)), 1, 2, curRow, curRow+1);
+	_textViewTable->attach(*Gtk::manage(new gtkutil::ScrolledFrame(*_textViewBody)), 1, 2, curRow, curRow+1);
 	_textViewTable->attach(*_textViewRightBodyScrolled, 2, 3, curRow, curRow+1);
 
 	return *vbox;
@@ -494,7 +494,7 @@ Gtk::Widget& ReadableEditorDialog::createButtonPanel()
 	hbx->pack_end(*cancelButton, true, true, 0);
 	hbx->pack_end(*toolsButton, true, true, 18);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 //////////////////////////////////////////////////////////////////////////////

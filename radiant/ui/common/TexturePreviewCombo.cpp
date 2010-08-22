@@ -46,7 +46,7 @@ TexturePreviewCombo::TexturePreviewCombo() :
 	_infoView->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Value"), _infoStoreColumns.value)));
 
 	// Pack into main widget
-	pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_infoView)), true, true, 0);
+	pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_infoView)), true, true, 0);
 	
 	// Construct the context menu
 	_contextMenu.addItem(

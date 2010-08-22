@@ -67,7 +67,7 @@ void PrefDialog::populateWindow()
 	
 	_treeView->set_size_request(170, -1);
 
-	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
+	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 	hbox->pack_start(*scrolledFrame, false, false, 0);
 	
 	_notebook = Gtk::manage(new Gtk::Notebook);

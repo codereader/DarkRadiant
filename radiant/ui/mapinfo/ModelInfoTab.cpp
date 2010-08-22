@@ -69,7 +69,7 @@ void ModelInfoTab::populateTab()
 	_treeView->append_column(*modelCountCol);
 	_treeView->append_column(*skinCountCol);
 	
-    _widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true, 0);
+    _widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
     
     // Populate the liststore with the entity count information
     for (map::ModelBreakdown::Map::const_iterator i = _modelBreakdown.begin(); 

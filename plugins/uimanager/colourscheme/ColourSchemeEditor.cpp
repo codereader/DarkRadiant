@@ -105,7 +105,7 @@ Gtk::Widget& ColourSchemeEditor::constructButtons()
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackCancel));
 	
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonBox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonBox));
 }
 
 // Construct buttons underneath the list box
@@ -139,7 +139,7 @@ Gtk::Widget& ColourSchemeEditor::constructWindow()
 	// Create the treeview and pack it into the treeViewFrame
 	createTreeView();
 
-	treeAndButtons->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true, 0);
+	treeAndButtons->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
 	treeAndButtons->pack_end(constructTreeviewButtons(), false, false, 0);
 
 	// The Box containing the Colour, pack it into the right half of the hbox

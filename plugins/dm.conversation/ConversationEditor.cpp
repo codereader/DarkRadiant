@@ -103,7 +103,7 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 
 	// Actors within talk distance
 	_convActorsWithinTalkDistance = Gtk::manage(new Gtk::CheckButton);
-	table->attach(*Gtk::manage(new gtkutil::RightAlignmentmm(*_convActorsWithinTalkDistance)),
+	table->attach(*Gtk::manage(new gtkutil::RightAlignment(*_convActorsWithinTalkDistance)),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors must be within talk distance"))), 
 				  1, 2, row, row+1);
@@ -112,7 +112,7 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 
 	// Actors always face each other while talking
 	_convActorsAlwaysFace = Gtk::manage(new Gtk::CheckButton);
-	table->attach(*Gtk::manage(new gtkutil::RightAlignmentmm(*_convActorsAlwaysFace)),
+	table->attach(*Gtk::manage(new gtkutil::RightAlignment(*_convActorsAlwaysFace)),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors always face each other while talking"))), 
 				  1, 2, row, row+1);
@@ -123,7 +123,7 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 	_convMaxPlayCountEnable = Gtk::manage(new Gtk::CheckButton);
 	_convMaxPlayCountEnable->signal_toggled().connect(sigc::mem_fun(*this, &ConversationEditor::onMaxPlayCountEnabled));
 
-	table->attach(*Gtk::manage(new gtkutil::RightAlignmentmm(*_convMaxPlayCountEnable)),
+	table->attach(*Gtk::manage(new gtkutil::RightAlignment(*_convMaxPlayCountEnable)),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	_maxPlayCountHBox = Gtk::manage(new Gtk::HBox(false, 6));
@@ -178,7 +178,7 @@ Gtk::Widget& ConversationEditor::createActorPanel()
 	actionVBox->pack_start(*_delActorButton, false, false, 0);
 
 	// Actors treeview goes left, actionbuttons go right
-	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_actorView)), true, true, 0);
+	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_actorView)), true, true, 0);
 	hbox->pack_start(*actionVBox, false, false, 0);
 		
 	return *hbox;
@@ -222,7 +222,7 @@ Gtk::Widget& ConversationEditor::createCommandPanel()
 	actionVBox->pack_start(*_delCmdButton, false, false, 0);
 
 	// Command treeview goes left, action buttons go right
-	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_commandView)), true, true, 0);
+	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_commandView)), true, true, 0);
 	hbox->pack_start(*actionVBox, false, false, 0);
 		
 	return *hbox;
@@ -242,7 +242,7 @@ Gtk::Widget& ConversationEditor::createButtonPanel()
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onCancel));
 	buttonHBox->pack_end(*cancelButton, true, true, 0);
 	
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHBox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 void ConversationEditor::updateWidgets() 

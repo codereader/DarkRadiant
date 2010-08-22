@@ -154,7 +154,7 @@ Gtk::Widget& GuiSelector::createButtons()
 	hbox->pack_start(*_okButton, false, false, 0);
 	hbox->pack_start(*cancelButton, false, false, 0);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbox));
 }
 
 Gtk::TreeView* GuiSelector::createTreeView(const Glib::RefPtr<Gtk::TreeStore>& store)
@@ -190,7 +190,7 @@ Gtk::Widget& GuiSelector::createOneSidedTreeView()
 	// Create the treeview
 	Gtk::TreeView* treeViewOne = createTreeView(_oneSidedStore);
 
-	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFramemm(*treeViewOne));
+	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*treeViewOne));
 	scrolledFrame->set_border_width(12);
 
 	return *scrolledFrame;
@@ -201,7 +201,7 @@ Gtk::Widget& GuiSelector::createTwoSidedTreeView()
 	// Create the treeview
 	Gtk::TreeView* treeViewTwo = createTreeView(_twoSidedStore);
 
-	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFramemm(*treeViewTwo));
+	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*treeViewTwo));
 	scrolledFrame->set_border_width(12);
 
 	return *scrolledFrame;

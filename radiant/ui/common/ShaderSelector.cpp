@@ -197,7 +197,7 @@ Gtk::Widget& ShaderSelector::createTreeView()
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &ShaderSelector::_onSelChange));
 
 	// Pack into scrolled window and frame
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Create the preview panel (GL widget and info table)
@@ -223,7 +223,7 @@ Gtk::Widget& ShaderSelector::createPreview()
 	tree->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Attribute"), _infoStoreColumns.attribute)));
 	tree->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Value"), _infoStoreColumns.value)));
 
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*tree)), true, true, 0);
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*tree)), true, true, 0);
 
 	return *hbx;
 }

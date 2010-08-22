@@ -109,7 +109,7 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData
 
 	//Add everything to the vbox and to the window.
 	vbox->pack_start(*topLabel, false, false, 0);
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeview)), true, true, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeview)), true, true, 0);
 	vbox->pack_start(*hbox, false, false, 0);
 
 	add(*vbox);

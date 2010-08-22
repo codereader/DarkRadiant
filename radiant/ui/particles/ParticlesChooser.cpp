@@ -62,7 +62,7 @@ Gtk::Widget& ParticlesChooser::createTreeView()
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &ParticlesChooser::_onSelChanged));
 	
 	// Pack into scrolled window and return
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*tv));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*tv));
 }
 
 // Create the buttons panel
@@ -79,7 +79,7 @@ Gtk::Widget& ParticlesChooser::createButtons()
 	hbx->pack_end(*okButton, true, true, 0);	
 	hbx->pack_end(*cancelButton, true, true, 0);
 					   
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 // Populate the particles list

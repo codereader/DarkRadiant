@@ -107,7 +107,7 @@ Gtk::Widget& DifficultyEditor::createTreeView()
 	settingCol->add_attribute(textRenderer->property_foreground(), _settings->getColumns().colour);
 	settingCol->add_attribute(textRenderer->property_strikethrough(), _settings->getColumns().isOverridden);
 
-	Gtk::ScrolledWindow* frame = Gtk::manage(new gtkutil::ScrolledFramemm(*_settingsView));
+	Gtk::ScrolledWindow* frame = Gtk::manage(new gtkutil::ScrolledFrame(*_settingsView));
 	
 	// Create the action buttons
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(false, 6));
@@ -208,7 +208,7 @@ Gtk::Widget& DifficultyEditor::createEditingWidgets()
 	_saveSettingButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onSettingSave));
 	
 	buttonHbox->pack_start(*_saveSettingButton, false, false, 0);
-	_editorPane->pack_start(*Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHbox)), false, false, 0);
+	_editorPane->pack_start(*Gtk::manage(new gtkutil::RightAlignment(*buttonHbox)), false, false, 0);
 
 	// The "note" text
 	_noteText = Gtk::manage(new Gtk::Label);

@@ -30,7 +30,7 @@ SoundShaderPreview::SoundShaderPreview() :
 	_selection = _treeView->get_selection();
 	_selection->signal_changed().connect(sigc::mem_fun(*this,&SoundShaderPreview::onSelectionChanged));
 	
-	pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true);
+	pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true);
 	pack_start(createControlPanel(), false, false);
 	
 	// Trigger the initial update of the widgets

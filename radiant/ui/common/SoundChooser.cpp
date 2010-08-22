@@ -125,7 +125,7 @@ Gtk::Widget& SoundChooser::createTreeView()
 	// and insert them in the treestore
 	pop.forEachNode(pop);
 
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));	
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));	
 }
 
 // Create buttons panel
@@ -142,7 +142,7 @@ Gtk::Widget& SoundChooser::createButtons()
 	hbx->pack_end(*okButton, false, false, 0);	
 	hbx->pack_end(*cancelButton, false, false, 0);
 					   
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 void SoundChooser::_onDeleteEvent()

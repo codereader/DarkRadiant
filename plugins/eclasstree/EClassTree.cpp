@@ -97,7 +97,7 @@ Gtk::Widget& EClassTree::createEClassTreeView()
 	
 	_eclassView->append_column(*col);
 	
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_eclassView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_eclassView));
 }
 
 Gtk::Widget& EClassTree::createPropertyTreeView()
@@ -135,7 +135,7 @@ Gtk::Widget& EClassTree::createPropertyTreeView()
 	valCol->set_sort_column(_propertyColumns.value);
     _propertyView->append_column(*valCol);
     
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_propertyView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_propertyView));
 }
 
 // Lower dialog buttons
@@ -148,7 +148,7 @@ Gtk::Widget& EClassTree::createButtons()
 	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &EClassTree::onClose));
 	buttonHBox->pack_end(*closeButton, true, true, 0);
 	
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHBox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 void EClassTree::updatePropertyView(const std::string& eclassName)

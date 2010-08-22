@@ -246,7 +246,7 @@ Gtk::Widget& ModelSelector::createTreeView()
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &ModelSelector::callbackSelChanged));
 
 	// Pack treeview into a scrolled window and frame, and return
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Populate the tree view with models
@@ -293,7 +293,7 @@ Gtk::Widget& ModelSelector::createButtons()
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 					   
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 // Create the advanced buttons panel
@@ -324,7 +324,7 @@ Gtk::Widget& ModelSelector::createInfoPanel()
 	));
 
 	// Pack into scrolled frame and return
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*infTreeView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*infTreeView));
 }
 
 // Get the value from the selected column

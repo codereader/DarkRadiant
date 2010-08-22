@@ -279,7 +279,7 @@ Gtk::Widget& LightInspector::createButtons()
 	
 	hbx->pack_end(*okButton, true, true, 0);
 	
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 // Update dialog from map

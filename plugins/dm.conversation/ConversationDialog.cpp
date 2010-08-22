@@ -124,7 +124,7 @@ Gtk::Widget& ConversationDialog::createEntitiesPanel()
 	// Entity Name column
 	_entityView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("", _convEntityColumns.displayName)));
 	
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_entityView)), true, true, 0);
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_entityView)), true, true, 0);
 					   
 	// Vbox for the buttons
 	Gtk::VBox* buttonBox = Gtk::manage(new Gtk::VBox(false, 6));
@@ -187,7 +187,7 @@ Gtk::Widget& ConversationDialog::createConversationsPanel()
 	// Pack the list and the buttons into an hbox
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
 
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_convView)), true, true, 0); 
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_convView)), true, true, 0); 
 	hbx->pack_start(*_convButtonPanel, false, false, 0);
 					   
 	return *hbx;
@@ -208,7 +208,7 @@ Gtk::Widget& ConversationDialog::createButtons()
 	_closeButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationDialog::onClose));
 	buttonHBox->pack_end(*_closeButton, true, true, 0);
 	
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHBox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 void ConversationDialog::save()
