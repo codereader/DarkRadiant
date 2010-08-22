@@ -1,7 +1,6 @@
 #ifndef TRANSIENTDIALOG_H_
 #define TRANSIENTDIALOG_H_
 
-#include <gtk/gtkwindow.h>
 #include <gtkmm/window.h>
 #include "gtkutil/pointer.h"
 
@@ -116,15 +115,6 @@ public:
 		// Destruction is handled by the Gtk::Window destructor
 	}
 	
-	/**
-	 * Return the underlying GtkWindow. 
-	 * DEPRECATED, use *this to retrieve the Gtk::Window& reference
-	 */
-	GtkWidget* getWindow()
-	{ 
-		return GTK_WIDGET(gobj()); 
-	}
-
 	/**
 	 * Create a new Glib::RefPtr<> from this class. There is no shared_from_this() equivalent,
 	 * but I had to use this hack several times to get a smart pointer from an instance to
