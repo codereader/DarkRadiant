@@ -87,7 +87,7 @@ TextureBrowser::TextureBrowser() :
 	_popupMenu->addItem(_shaderLabel, doNothing, alwaysFalse); // always insensitive
 	
 	// Construct the popup context menu
-	_seekInMediaBrowser = Gtk::manage(new gtkutil::IconTextMenuItemmm(
+	_seekInMediaBrowser = Gtk::manage(new gtkutil::IconTextMenuItem(
 		GlobalUIManager().getLocalPixbuf(TEXTURE_ICON), 
 		_(SEEK_IN_MEDIA_BROWSER_TEXT)
 	));

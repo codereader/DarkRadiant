@@ -306,7 +306,7 @@ void SurfaceInspector::populateWindow()
 	
 	// Create the icon button to open the ShaderChooser
 	_selectShaderButton = Gtk::manage(
-		new gtkutil::IconTextButtonmm("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
+		new gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
 	);
 
 	// Override the size request

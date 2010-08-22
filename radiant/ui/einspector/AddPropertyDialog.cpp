@@ -91,7 +91,7 @@ Gtk::Widget& AddPropertyDialog::createTreeView()
 	
 	// Display name column with icon
 	_treeView->append_column(*Gtk::manage(
-		new gtkutil::IconTextColumnmm("", _columns.displayName, _columns.icon, true)));
+		new gtkutil::IconTextColumn("", _columns.displayName, _columns.icon, true)));
 
 	// Use the TreeModel's full string search function
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));

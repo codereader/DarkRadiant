@@ -15,7 +15,7 @@ namespace ui
 
 LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,
 											 LayerContextMenu::OnSelectionFunc callback) :
-	gtkutil::IconTextMenuItemmm(GlobalUIManager().getLocalPixbuf(LAYER_ICON), caption),
+	gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(LAYER_ICON), caption),
 	_func(callback)
 {}
 

@@ -90,7 +90,7 @@ Gtk::Widget& SkinChooser::createTreeView(int width)
 	
 	// Single column to display the skin name
 	_treeView->append_column(*Gtk::manage(
-		new gtkutil::IconTextColumnmm(_("Skin"), _columns.displayName, _columns.icon))
+		new gtkutil::IconTextColumn(_("Skin"), _columns.displayName, _columns.icon))
 	); 
 
 	// Connect up selection changed callback

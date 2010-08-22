@@ -105,7 +105,7 @@ Gtk::Widget& XDataSelector::createTreeView()
 	selection->signal_changed().connect(sigc::bind(sigc::mem_fun(*this, &XDataSelector::onSelectionChanged), treeView));
 	
 	// Single visible column, containing the directory/model name and the icon
-	Gtk::TreeViewColumn* nameCol = Gtk::manage(new gtkutil::IconTextColumnmm(
+	Gtk::TreeViewColumn* nameCol = Gtk::manage(new gtkutil::IconTextColumn(
 		_("Xdata Path"), _columns.name, _columns.icon
 	));
 
