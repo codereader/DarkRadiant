@@ -160,14 +160,6 @@ void XYWnd::destroyXYView() {
 		}
 
 		GlobalEventManager().disconnect(_glWidget);
-		
-		/*g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
-		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
-	
-		if (GTK_IS_WIDGET(m_gl_widget)) {
-			gtk_widget_destroy(m_gl_widget);
-			m_gl_widget = NULL;
-		}*/
 	}
 
 	// This deletes the RadiantWindowObserver from the heap
