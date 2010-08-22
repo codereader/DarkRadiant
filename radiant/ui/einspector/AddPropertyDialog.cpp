@@ -94,7 +94,7 @@ Gtk::Widget& AddPropertyDialog::createTreeView()
 		new gtkutil::IconTextColumn("", _columns.displayName, _columns.icon, true)));
 
 	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 	
 	// Pack into scrolled window and frame, and return
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));

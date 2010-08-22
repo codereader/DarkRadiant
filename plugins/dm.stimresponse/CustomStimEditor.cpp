@@ -205,10 +205,10 @@ void CustomStimEditor::update()
 void CustomStimEditor::selectId(int id)
 {
 	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFindermm finder(id, _stimTypes.getColumns().id.index());
+	gtkutil::TreeModel::SelectionFinder finder(id, _stimTypes.getColumns().id.index());
 
 	_customStimStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
 	if (finder.getIter())
 	{

@@ -8,7 +8,6 @@
 #include "math/matrix.h"
 #include "math/Vector4.h"
 #include "gtkutil/cursor.h"
-#include "gtkutil/window.h"
 #include "gtkutil/WindowPosition.h"
 #include "xmlutil/Node.h"
 #include "timer.h"

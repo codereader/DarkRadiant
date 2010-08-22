@@ -86,7 +86,7 @@ void ColourSchemeEditor::createTreeView()
 	_treeView->set_size_request(200, -1);
 	
 	// Create a new column and set its parameters  
-	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("Colour", _columns.name, false)));
+	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumn("Colour", _columns.name, false)));
 
    	_treeView->set_headers_visible(false);
 }

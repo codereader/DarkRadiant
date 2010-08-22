@@ -60,10 +60,10 @@ void SpecifierEditCombo::setSpecifier(SpecifierPtr spec)
 
 	// I copied and pasted this from the StimResponseEditor, the SelectionFinder
 	// could be cleaned up a bit.
-	gtkutil::TreeModel::SelectionFindermm finder(spec->getType().getName(), 1);
+	gtkutil::TreeModel::SelectionFinder finder(spec->getType().getName(), 1);
 
 	_specifierCombo->get_model()->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
     // SpecifierType name should be found in list
     // Get an iter and set the selected item

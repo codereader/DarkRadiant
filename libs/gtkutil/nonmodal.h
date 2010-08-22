@@ -29,8 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "generic/callback.h"
 
-#include "pointer.h"
-
 typedef struct _GtkEntry GtkEntry;
 
 
@@ -113,52 +111,6 @@ public:
     g_signal_connect(G_OBJECT(entry), "key_press_event", G_CALLBACK(enter), this);
     g_signal_connect(G_OBJECT(entry), "key_press_event", G_CALLBACK(escape), this);
     g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(changed), this);
-  }
-};
-
-
-class NonModalSpinner
-{
-  Callback m_apply;
-  Callback m_cancel;
-
-  static gboolean changed(GtkSpinButton* spin, NonModalSpinner* self)
-  {
-    self->m_apply();
-    return FALSE;
-  }
-
-  static gboolean enter(GtkSpinButton* spin, GdkEventKey* event, NonModalSpinner* self)
-  {
-    if(event->keyval == GDK_Return)
-    {
-      gtk_window_set_focus(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(spin))), NULL);
-      return TRUE;
-    }
-    return FALSE;
-  }
-
-  static gboolean escape(GtkSpinButton* spin, GdkEventKey* event, NonModalSpinner* self)
-  {
-    if(event->keyval == GDK_Escape)
-    {
-      self->m_cancel();
-      gtk_window_set_focus(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(spin))), NULL);
-      return TRUE;
-    }
-    return FALSE;
-  }
-
-public:
-  NonModalSpinner(const Callback& apply, const Callback& cancel) : m_apply(apply), m_cancel(cancel)
-  {
-  }
-  void connect(GtkSpinButton* spin)
-  {
-    guint handler = g_signal_connect(G_OBJECT(gtk_spin_button_get_adjustment(spin)), "value_changed", G_CALLBACK(changed), this);
-    g_object_set_data(G_OBJECT(spin), "handler", gint_to_pointer(handler));
-    g_signal_connect(G_OBJECT(spin), "key_press_event", G_CALLBACK(enter), this);
-    g_signal_connect(G_OBJECT(spin), "key_press_event", G_CALLBACK(escape), this);
   }
 };
 

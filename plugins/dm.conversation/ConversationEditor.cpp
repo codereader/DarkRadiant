@@ -154,10 +154,10 @@ Gtk::Widget& ConversationEditor::createActorPanel()
 	_actorView->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ConversationEditor::onActorSelectionChanged));
 	
 	// Key and value text columns
-	_actorView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("#", _actorColumns.actorNumber, false)));
+	_actorView->append_column(*Gtk::manage(new gtkutil::TextColumn("#", _actorColumns.actorNumber, false)));
 
 	// Construct a new editable text column
-	gtkutil::TextColumnmm* actorColumn = Gtk::manage(new gtkutil::TextColumnmm(_("Actor (click to edit)"), _actorColumns.displayName, false));
+	gtkutil::TextColumn* actorColumn = Gtk::manage(new gtkutil::TextColumn(_("Actor (click to edit)"), _actorColumns.displayName, false));
 	
 	Gtk::CellRendererText* rend = actorColumn->getCellRenderer();
 	rend->property_editable() = true;
@@ -195,10 +195,10 @@ Gtk::Widget& ConversationEditor::createCommandPanel()
 	_commandView->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ConversationEditor::onCommandSelectionChanged));
 
 	// Key and value text columns
-	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("#", _commandColumns.cmdNumber, false)));
-	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Actor"), _commandColumns.actorName)));
-	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Command"), _commandColumns.sentence)));
-	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Wait"), _commandColumns.wait)));
+	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn("#", _commandColumns.cmdNumber, false)));
+	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Actor"), _commandColumns.actorName)));
+	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Command"), _commandColumns.sentence)));
+	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Wait"), _commandColumns.wait)));
 	
 	// Action buttons
 	_addCmdButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));

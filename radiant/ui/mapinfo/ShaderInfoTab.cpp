@@ -55,13 +55,13 @@ void ShaderInfoTab::populateTab()
 	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
 	_treeView->set_headers_clickable(true);
 
-	Gtk::TreeViewColumn* shaderCol = Gtk::manage(new gtkutil::TextColumnmm(_("Shader"), _columns.shader));
+	Gtk::TreeViewColumn* shaderCol = Gtk::manage(new gtkutil::TextColumn(_("Shader"), _columns.shader));
 	shaderCol->set_sort_column(_columns.shader);
 
-	Gtk::TreeViewColumn* faceCountCol = Gtk::manage(new gtkutil::TextColumnmm(_("Faces"), _columns.faceCount));
+	Gtk::TreeViewColumn* faceCountCol = Gtk::manage(new gtkutil::TextColumn(_("Faces"), _columns.faceCount));
 	faceCountCol->set_sort_column(_columns.faceCount);
 
-	Gtk::TreeViewColumn* patchCountCol = Gtk::manage(new gtkutil::TextColumnmm(_("Patches"), _columns.patchCount));
+	Gtk::TreeViewColumn* patchCountCol = Gtk::manage(new gtkutil::TextColumn(_("Patches"), _columns.patchCount));
 	patchCountCol->set_sort_column(_columns.patchCount);
 
 	_treeView->append_column(*shaderCol);

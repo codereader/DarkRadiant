@@ -60,7 +60,7 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 		sigc::mem_fun(*this, &AIVocalSetChooserDialog::onSetSelectionChanged));
 	
 	// Head Name column
-	_setView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("", _columns.name)));
+	_setView->append_column(*Gtk::manage(new gtkutil::TextColumn("", _columns.name)));
 
 	// Left: the treeview
 	Gtk::VBox* vbox1 = Gtk::manage(new Gtk::VBox(false, 3));

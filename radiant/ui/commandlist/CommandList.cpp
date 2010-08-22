@@ -10,7 +10,6 @@
 #include <gtkmm/stock.h>
 
 #include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/TextButton.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
 

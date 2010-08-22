@@ -55,7 +55,7 @@ void EntityList::populateWindow()
 	_treeView = Gtk::manage(new Gtk::TreeView(_treeModel.getModel()));
 	_treeView->set_headers_visible(false);
 	
-	Gtk::TreeViewColumn* column = Gtk::manage(new gtkutil::TextColumnmm(_("Name"), _treeModel.getColumns().name));
+	Gtk::TreeViewColumn* column = Gtk::manage(new gtkutil::TextColumn(_("Name"), _treeModel.getColumns().name));
 	column->pack_start(*Gtk::manage(new Gtk::CellRendererText), true);
 	
 	Glib::RefPtr<Gtk::TreeSelection> sel = _treeView->get_selection();

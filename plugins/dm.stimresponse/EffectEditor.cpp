@@ -72,10 +72,10 @@ EffectEditor::EffectEditor(const Glib::RefPtr<Gtk::Window>& parent,
 	ResponseEffect& effect = _response.getResponseEffect(_effectIndex);
 
 	// Setup the selectionfinder to search for the name string
-	gtkutil::TreeModel::SelectionFindermm finder(effect.getName(), _effectColumns.name.index());
+	gtkutil::TreeModel::SelectionFinder finder(effect.getName(), _effectColumns.name.index());
 
 	_effectStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
 	// Set the active row of the combo box to the current response effect type
 	_effectTypeCombo->set_active(finder.getIter());

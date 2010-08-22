@@ -43,7 +43,7 @@ EntityChooser::EntityChooser() :
 	treeView->set_headers_visible(false);
 
 	// Use the TreeModel's full string search function
-	treeView->set_search_equal_func(sigc::ptr_fun(&gtkutil::TreeModel::equalFuncStringContainsmm));
+	treeView->set_search_equal_func(sigc::ptr_fun(&gtkutil::TreeModel::equalFuncStringContains));
 
 	// Head Name column
 	treeView->append_column("", _listColumns.name);

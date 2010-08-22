@@ -42,8 +42,8 @@ TexturePreviewCombo::TexturePreviewCombo() :
 	// Set up the info table
 	_infoView->set_headers_visible(false);
 
-	_infoView->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Attribute"), _infoStoreColumns.attribute)));
-	_infoView->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Value"), _infoStoreColumns.value)));
+	_infoView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)));
+	_infoView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Value"), _infoStoreColumns.value)));
 
 	// Pack into main widget
 	pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_infoView)), true, true, 0);

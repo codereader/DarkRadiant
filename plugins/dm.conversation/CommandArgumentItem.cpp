@@ -129,9 +129,9 @@ void ActorArgument::setValueFromString(const std::string& value)
 	if (actorId == -1) return; // invalid actor id
 
 	// Find the actor id in the liststore
-	gtkutil::TreeModel::SelectionFindermm finder(actorId, _actorColumns.actorNumber.index());
+	gtkutil::TreeModel::SelectionFinder finder(actorId, _actorColumns.actorNumber.index());
 
-	_actorStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+	_actorStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 
 	const Gtk::TreeModel::iterator iter = finder.getIter();
 

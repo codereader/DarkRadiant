@@ -176,9 +176,9 @@ void SREntity::save(Entity* target) {
 Gtk::TreeModel::iterator SREntity::getIterForId(const Glib::RefPtr<Gtk::ListStore>& targetStore, int id)
 {
 	// Setup the selectionfinder to search for the id string
-	gtkutil::TreeModel::SelectionFindermm finder(id, getColumns().id.index());
+	gtkutil::TreeModel::SelectionFinder finder(id, getColumns().id.index());
 	
-	targetStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+	targetStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
 	return finder.getIter();
 }

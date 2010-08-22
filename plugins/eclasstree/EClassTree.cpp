@@ -79,7 +79,7 @@ Gtk::Widget& EClassTree::createEClassTreeView()
 	_eclassView = Gtk::manage(new Gtk::TreeView(_eclassStore));
 
 	// Use the TreeModel's full string search function
-	_eclassView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	_eclassView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 	
 	// Tree selection
 	_eclassSelection = _eclassView->get_selection();

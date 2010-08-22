@@ -58,7 +58,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 		sigc::mem_fun(*this, &AIHeadChooserDialog::onHeadSelectionChanged));
 	
 	// Head Name column
-	_headsView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("", _columns.name)));
+	_headsView->append_column(*Gtk::manage(new gtkutil::TextColumn("", _columns.name)));
 
 	// Left: the treeview
 	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_headsView)), true, true, 0);

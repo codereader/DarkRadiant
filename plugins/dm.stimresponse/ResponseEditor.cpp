@@ -201,13 +201,13 @@ Gtk::Widget& ResponseEditor::createEffectWidgets()
 		sigc::bind(sigc::mem_fun(*this, &ResponseEditor::onTreeViewButtonRelease), _effectWidgets.view));
 
 	_effectWidgets.view->append_column(
-		*Gtk::manage(new gtkutil::TextColumnmm("#", StimResponse::getColumns().index)));
+		*Gtk::manage(new gtkutil::TextColumn("#", StimResponse::getColumns().index)));
 	
 	_effectWidgets.view->append_column(
-		*Gtk::manage(new gtkutil::TextColumnmm(_("Effect"), StimResponse::getColumns().caption)));
+		*Gtk::manage(new gtkutil::TextColumn(_("Effect"), StimResponse::getColumns().caption)));
 	
 	_effectWidgets.view->append_column(
-		*Gtk::manage(new gtkutil::TextColumnmm(_("Details (double-click to edit)"), StimResponse::getColumns().arguments)));
+		*Gtk::manage(new gtkutil::TextColumn(_("Details (double-click to edit)"), StimResponse::getColumns().arguments)));
 	
 	// Return the tree view in a frame
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*_effectWidgets.view));
@@ -415,10 +415,10 @@ void ResponseEditor::createContextMenu()
 void ResponseEditor::selectEffectIndex(const unsigned int index)
 {
 	// Setup the selectionfinder to search for the index string
-	gtkutil::TreeModel::SelectionFindermm finder(index, StimResponse::getColumns().index.index());
+	gtkutil::TreeModel::SelectionFinder finder(index, StimResponse::getColumns().index.index());
 
 	_effectWidgets.view->get_model()->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
 	if (finder.getIter())
 	{

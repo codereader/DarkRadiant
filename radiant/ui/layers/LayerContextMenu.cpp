@@ -2,7 +2,6 @@
 
 #include "iuimanager.h"
 #include "gtkutil/IconTextMenuItem.h"
-#include "gtkutil/pointer.h"
 #include "layers/LayerSystem.h"
 
 namespace ui
