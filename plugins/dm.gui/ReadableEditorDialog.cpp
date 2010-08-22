@@ -96,7 +96,7 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	// The paned contains the controls and the preview
 	_paned = Gtk::manage(new Gtk::HPaned);
 	_paned->pack1(*_editPane, true, false);
-	_paned->pack2(*Gtk::manage(new gtkutil::FramedWidgetmm(*_guiView)), true, false);
+	_paned->pack2(*Gtk::manage(new gtkutil::FramedWidget(*_guiView)), true, false);
 
 	// Pack it all into vbox
 	vbox->pack_start(*_paned, true, true, 0);

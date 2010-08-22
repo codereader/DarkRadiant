@@ -20,8 +20,6 @@ public:
 	void flush();
 	void value_changed(gdouble value);
 
-	static void adjustment_value_changed(GtkAdjustment *adjustment, DeferredAdjustment* self);
-
 private:
 	static gboolean deferred_value_changed(gpointer data);
 };

@@ -59,7 +59,7 @@ public:
 	{ 
 		// Get the GL widget from XYWnd parent, and embed it in a frame in the
 		// floating window
-		Gtk::Frame* framedWidget = Gtk::manage(new gtkutil::FramedWidgetmm(*XYWnd::getWidget()));
+		Gtk::Frame* framedWidget = Gtk::manage(new gtkutil::FramedWidget(*XYWnd::getWidget()));
 		add(*framedWidget);
 		
 		// Set the parent window for XYWnd

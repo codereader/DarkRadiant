@@ -67,7 +67,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	Gtk::Label* label = Gtk::manage(new Gtk::Label);
 	hbox->pack_start(*label, false, false, 0);
 
-	StatusBarElementPtr element(new StatusBarElement(Gtk::manage(new gtkutil::FramedWidgetmm(*hbox)), label));
+	StatusBarElementPtr element(new StatusBarElement(Gtk::manage(new gtkutil::FramedWidget(*hbox)), label));
 
 	// Store this element
 	_elements.insert(ElementMap::value_type(name, element));
