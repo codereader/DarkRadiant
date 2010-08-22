@@ -66,15 +66,15 @@ void FindAndReplaceShader::populateWindow()
     Gtk::HBox* replaceHBox = Gtk::manage(new Gtk::HBox(false, 0));
     
     // Pack these hboxes into an alignment so that they are indented
-	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*findHBox, 18, 1.0f)); 
-	Gtk::Alignment* alignment2 = Gtk::manage(new gtkutil::LeftAlignmentmm(*replaceHBox, 18, 1.0f));
+	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*findHBox, 18, 1.0f)); 
+	Gtk::Alignment* alignment2 = Gtk::manage(new gtkutil::LeftAlignment(*replaceHBox, 18, 1.0f));
 	
 	dialogVBox->pack_start(*alignment, true, true, 0);
 	dialogVBox->pack_start(*alignment2, true, true, 0);
 	
 	// Create the labels and pack them in the hbox
-	Gtk::Label* findLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_FIND)));
-	Gtk::Label* replaceLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_REPLACE)));
+	Gtk::Label* findLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_FIND)));
+	Gtk::Label* replaceLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_REPLACE)));
 
 	findLabel->set_size_request(60, -1);
 	replaceLabel->set_size_request(60, -1);
@@ -114,7 +114,7 @@ void FindAndReplaceShader::populateWindow()
 	// The checkbox for "search selected only"
 	_selectedOnly = Gtk::manage(new Gtk::CheckButton(_(LABEL_SELECTED_ONLY), true));
 
-	Gtk::Alignment* alignment3 = Gtk::manage(new gtkutil::LeftAlignmentmm(*_selectedOnly, 18, 1.0f)); 
+	Gtk::Alignment* alignment3 = Gtk::manage(new gtkutil::LeftAlignment(*_selectedOnly, 18, 1.0f)); 
 	dialogVBox->pack_start(*alignment3, false, false, 0); 
 	
 	// Finally, add the buttons
@@ -134,7 +134,7 @@ Gtk::Widget& FindAndReplaceShader::createButtons()
 	hbox->pack_end(*closeButton, false, false, 0);
 	hbox->pack_end(*replaceButton, false, false, 0);
 	
-	_counterLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_counterLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	_counterLabel->set_padding(18, 0);
 	hbox->pack_start(*_counterLabel, false, false, 0);
 	

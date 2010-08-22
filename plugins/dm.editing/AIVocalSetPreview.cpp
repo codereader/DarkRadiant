@@ -43,7 +43,7 @@ Gtk::Widget& AIVocalSetPreview::createControlPanel()
 	
 	vbox->pack_end(*btnHBox, false, false, 0);
 	
-	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	vbox->pack_end(*_statusLabel, false, false, 0);
 	
 	return *vbox; 

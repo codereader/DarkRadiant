@@ -50,7 +50,7 @@ void QuerySidesDialog::populateWindow()
 	_entry = Gtk::manage(new Gtk::SpinButton(*adjustment));
 
 	Gtk::HBox* entryRow = Gtk::manage(new Gtk::HBox(false, 6));
-	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Number of sides: ")));
+	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Number of sides: ")));
 
 	entryRow->pack_start(*label, false, false, 0);
 	entryRow->pack_start(*_entry, true, true, 0);

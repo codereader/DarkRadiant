@@ -83,13 +83,13 @@ void EntityInfoTab::populateTab()
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 2, false));
 	_widget->pack_start(*table, false, false, 0);
 	
-	_brushCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
-	_patchCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
-	_entityCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_brushCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	_patchCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	_entityCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	
-	Gtk::Label* brushLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Brushes:")));
-	Gtk::Label* patchLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Patches:")));
-	Gtk::Label* entityLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Entities:")));
+	Gtk::Label* brushLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Brushes:")));
+	Gtk::Label* patchLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Patches:")));
+	Gtk::Label* entityLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Entities:")));
 	
 	brushLabel->set_size_request(75, -1);
 	patchLabel->set_size_request(75, -1);

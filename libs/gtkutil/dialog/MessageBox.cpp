@@ -39,7 +39,7 @@ void MessageBox::construct()
 	}
 
 	// Add the text
-	hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_text)), true, true, 0);
+	hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_text)), true, true, 0);
 }
 
 Gtk::Widget* MessageBox::createIcon()

@@ -37,7 +37,7 @@ ScriptWindow::ScriptWindow() :
 	buttonBar->pack_start(*runButton, false, false, 0);
 
 	Gtk::VBox* inputVBox = Gtk::manage(new Gtk::VBox(false, 3));
-	inputVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Python Script Input"))), false, false, 0);
+	inputVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Python Script Input"))), false, false, 0);
 	inputVBox->pack_start(*_view, true, true, 0);
 	inputVBox->pack_start(*buttonBar, false, false, 0);
 

@@ -141,7 +141,7 @@ void PatchInspector::populateWindow()
 	add(*dialogVBox);
 	
 	// Create the title label (bold font)
-	_vertexChooser.title = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	_vertexChooser.title = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_CONTROL_VERTICES) + "</span>"
     ));
 	dialogVBox->pack_start(*_vertexChooser.title, false, false, 0);
@@ -152,11 +152,11 @@ void PatchInspector::populateWindow()
     _vertexChooser.table->set_row_spacings(6);
     
     // Pack it into an alignment so that it is indented
-	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*_vertexChooser.table, 18, 1.0)); 
+	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*_vertexChooser.table, 18, 1.0)); 
 	dialogVBox->pack_start(*alignment, false, false, 0);
 	
 	// The vertex col and row chooser
-	_vertexChooser.rowLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_ROW)));
+	_vertexChooser.rowLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_ROW)));
 	_vertexChooser.table->attach(*_vertexChooser.rowLabel, 0, 1, 0, 1);
 		
 	_vertexChooser.rowCombo = Gtk::manage(new Gtk::ComboBoxText);
@@ -164,7 +164,7 @@ void PatchInspector::populateWindow()
 	_vertexChooser.rowCombo->signal_changed().connect(sigc::mem_fun(*this, &PatchInspector::onComboBoxChange));
 	_vertexChooser.table->attach(*_vertexChooser.rowCombo, 1, 2, 0, 1);
 		
-	_vertexChooser.colLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_COL)));
+	_vertexChooser.colLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_COL)));
 	_vertexChooser.table->attach(*_vertexChooser.colLabel, 0, 1, 1, 2);
 	
 	_vertexChooser.colCombo = Gtk::manage(new Gtk::ComboBoxText);
@@ -173,7 +173,7 @@ void PatchInspector::populateWindow()
 	_vertexChooser.table->attach(*_vertexChooser.colCombo, 1, 2, 1, 2);
 	
 	// Create the title label (bold font)
-	_coordsLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	_coordsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_COORDS) + "</span>"
     ));
     _coordsLabel->set_padding(0, 2);
@@ -185,7 +185,7 @@ void PatchInspector::populateWindow()
     _coordsTable->set_row_spacings(6);
     
     // Pack it into an alignment so that it is indented
-	Gtk::Alignment* coordAlignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*_coordsTable, 18, 1.0));
+	Gtk::Alignment* coordAlignment = Gtk::manage(new gtkutil::LeftAlignment(*_coordsTable, 18, 1.0));
 	dialogVBox->pack_start(*coordAlignment, false, false, 0);
     
     _coords["x"] = createCoordRow("X:", *_coordsTable, 0);
@@ -229,7 +229,7 @@ void PatchInspector::populateWindow()
     }
     
     // Create the title label (bold font)
-	_tesselation.title = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	_tesselation.title = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_TESSELATION) + "</span>"
     ));
     _tesselation.title->set_padding(0, 2);
@@ -241,7 +241,7 @@ void PatchInspector::populateWindow()
     _tesselation.table->set_row_spacings(6);
     
     // Pack it into an alignment so that it is indented
-	Gtk::Alignment* tessAlignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*_tesselation.table, 18, 1.0));
+	Gtk::Alignment* tessAlignment = Gtk::manage(new gtkutil::LeftAlignment(*_tesselation.table, 18, 1.0));
 	dialogVBox->pack_start(*tessAlignment, false, false, 0);
 	
 	// Tesselation checkbox
@@ -268,8 +268,8 @@ void PatchInspector::populateWindow()
 	_tesselation.horiz->set_size_request(100, -1);
 	_tesselation.vert->set_size_request(100, -1);
 	
-	_tesselation.horizLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_SUBDIVISION_X)));
-	_tesselation.vertLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_SUBDIVISION_Y)));
+	_tesselation.horizLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_SUBDIVISION_X)));
+	_tesselation.vertLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_SUBDIVISION_Y)));
 	
 	_tesselation.table->attach(*_tesselation.horizLabel, 0, 1, 1, 2);
 	_tesselation.table->attach(*_tesselation.horiz, 1, 2, 1, 2);
@@ -286,7 +286,7 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	coordRow.hbox = Gtk::manage(new Gtk::HBox(false, 6));
 		
 	// Create the label
-	coordRow.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(label));
+	coordRow.label = Gtk::manage(new gtkutil::LeftAlignedLabel(label));
 	table.attach(*coordRow.label, 0, 1, row, row + 1);
 		
 	// Create the entry field
@@ -315,7 +315,7 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	}
 	
 	// Create the label
-	coordRow.steplabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_STEP)));
+	coordRow.steplabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_STEP)));
 	coordRow.hbox->pack_start(*coordRow.steplabel, false, false, 0);
 	
 	// Create the entry field

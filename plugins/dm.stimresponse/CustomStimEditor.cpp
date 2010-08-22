@@ -135,7 +135,7 @@ void CustomStimEditor::populatePage()
 	
 	_propertyWidgets.vbox->pack_start(*nameHBox, false, false, 0);
 	
-	Gtk::Label* infoText = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* infoText = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		_("<b>Note:</b> Please beware that deleting custom stims may\n"
 		"affect other entities as well. So check before you delete.")
 	));

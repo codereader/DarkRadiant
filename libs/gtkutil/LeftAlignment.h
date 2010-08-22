@@ -1,7 +1,6 @@
 #ifndef LEFTALIGNMENT_H_
 #define LEFTALIGNMENT_H_
 
-#include <gtk/gtkalignment.h>
 #include <gtkmm/alignment.h>
 
 namespace gtkutil
@@ -22,45 +21,7 @@ namespace gtkutil
  *
  * \ingroup gtkutil
  */
-class LeftAlignment
-{
-	// The alignment widget
-	GtkWidget* _widget;
-	
-public:
-
-	/** 
-	 * Construct a LeftAlignment displaying the given widget with the given
-	 * indentation parameters.
-	 * 
-	 * @param w
-	 * The child widget.
-	 * 
-	 * @param indent
-	 * Number of pixels to left-indent by (default 0).
-	 * 
-	 * @param expand
-	 * Amount by which the child should expand, from 0.0 (no expansion, widget
-	 * remains at default size) to 1.0 (widget expands to fill all available
-	 * space).
-	 */
-	LeftAlignment(GtkWidget* w, int indent = 0, float expand = 0.0)
-	: _widget(gtk_alignment_new(0.0, 0.5, expand, 1.0))
-	{
-		gtk_alignment_set_padding(GTK_ALIGNMENT(_widget), 0, 0, indent, 0);
-		gtk_container_add(GTK_CONTAINER(_widget), w);
-	}
-	
-	/** 
-	 * Operator cast to GtkWidget*. 
-	 */
-	operator GtkWidget* () {
-		return _widget;
-	}
-};
-
-// gtkmm pendant
-class LeftAlignmentmm :
+class LeftAlignment :
 	public Gtk::Alignment
 {
 public:
@@ -79,7 +40,7 @@ public:
 	 * remains at default size) to 1.0 (widget expands to fill all available
 	 * space).
 	 */
-	LeftAlignmentmm(Gtk::Widget& child, int indent = 0, float expand = 0.0) : 
+	LeftAlignment(Gtk::Widget& child, int indent = 0, float expand = 0.0) : 
 		Gtk::Alignment(0.0, 0.5, expand, 1.0)
 	{
 		set_padding(0, 0, indent, 0);

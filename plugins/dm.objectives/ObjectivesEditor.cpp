@@ -69,17 +69,17 @@ ObjectivesEditor::ObjectivesEditor() :
 
     // Main dialog vbox
 	Gtk::VBox* mainVbx = Gtk::manage(new Gtk::VBox(false, 12));
-	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Objectives entities")))),
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Objectives entities")))),
 					   false, false, 0);
-	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(createEntitiesPanel(), 18, 1.0)),
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createEntitiesPanel(), 18, 1.0)),
 					   false, false, 0);
-	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Objectives")))),
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Objectives")))),
 					   false, false, 0);
-	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(createObjectivesPanel(), 18, 1.0)),
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0)),
 					   true, true, 0);
-	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Success/Failure Logic")))),
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Success/Failure Logic")))),
 					   false, false, 0);
-	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(createLogicPanel(), 18, 1.0)),
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createLogicPanel(), 18, 1.0)),
 					   false, false, 0);
 	mainVbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
 	mainVbx->pack_end(createButtons(), false, false, 0);

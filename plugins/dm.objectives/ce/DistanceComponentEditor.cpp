@@ -36,27 +36,27 @@ DistanceComponentEditor::DistanceComponentEditor(Component& component) :
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 	pack_start(*hbox, false, false, 0);
 
-	hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Entity:"))), false, false, 0);
+	hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Entity:"))), false, false, 0);
 	hbox->pack_start(*_entity, true, true, 0);
 
 	Gtk::HBox* hbox2 = Gtk::manage(new Gtk::HBox(false, 6));
 	pack_start(*hbox2, false, false, 0);
 
-	hbox2->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Location Entity:"))), false, false, 0);
+	hbox2->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Location Entity:"))), false, false, 0);
 	hbox2->pack_start(*_location, true, true, 0);
 
 	Gtk::HBox* hbox3 = Gtk::manage(new Gtk::HBox(false, 6));
 	pack_start(*hbox3, false, false, 0);
 
-	hbox3->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Distance:"))), false, false, 0);
+	hbox3->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Distance:"))), false, false, 0);
 	hbox3->pack_start(*_distance, true, true, 0);
 
 	// The second row contains the clock interval
 	Gtk::HBox* hbox4 = Gtk::manage(new Gtk::HBox(false, 6));
 
-	hbox4->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Clock interval:"))), false, false, 0);
+	hbox4->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Clock interval:"))), false, false, 0);
 	hbox4->pack_start(*_interval, false, false, 0);
-	hbox4->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("seconds"))), false, false, 0);
+	hbox4->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("seconds"))), false, false, 0);
 
 	pack_start(*hbox4, false, false, 0);
 

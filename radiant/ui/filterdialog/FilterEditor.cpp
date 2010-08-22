@@ -79,17 +79,17 @@ void FilterEditor::populateWindow()
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create the name entry box
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Name") + "</b>")), false, false, 0);
 
 	Gtk::Entry* entry = Gtk::manage(new Gtk::Entry);
 	_widgets[WIDGET_NAME_ENTRY] = entry;
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*entry, 18, 1)), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*entry, 18, 1)), false, false, 0);
 
 	entry->signal_changed().connect(sigc::mem_fun(*this, &FilterEditor::onNameEdited));
 	
 	// And the rule treeview
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Rules") + "</b>")), false, false, 0);
 
 	vbox->pack_start(createCriteriaPanel(), true, true, 0);
@@ -97,7 +97,7 @@ void FilterEditor::populateWindow()
 	// Add the help text
 	if (!_viewOnly)
 	{
-		_widgets[WIDGET_HELP_TEXT] = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(RULE_HELP_TEXT)));
+		_widgets[WIDGET_HELP_TEXT] = Gtk::manage(new gtkutil::LeftAlignedLabel(_(RULE_HELP_TEXT)));
 		vbox->pack_start(*_widgets[WIDGET_HELP_TEXT], false, false, 0);
 	}
 
@@ -217,7 +217,7 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_ruleView)), true, true, 0);
 	hbox->pack_start(*actionVBox, false, false, 0);
 
-	return *Gtk::manage(new gtkutil::LeftAlignmentmm(*hbox, 18, 1));
+	return *Gtk::manage(new gtkutil::LeftAlignment(*hbox, 18, 1));
 }
 
 const Glib::RefPtr<Gtk::ListStore>& FilterEditor::createTypeStore()

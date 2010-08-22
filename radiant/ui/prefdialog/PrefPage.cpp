@@ -51,7 +51,7 @@ PrefPage::PrefPage(
 	_pageWidget->set_border_width(12);
 	
 	// Create the label
-	_titleLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	_titleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		(boost::format("<b>%s Settings</b>") % _name).str()
 	));
 	_pageWidget->pack_start(*_titleLabel, false, false, 0);
@@ -60,7 +60,7 @@ PrefPage::PrefPage(
 	_vbox = Gtk::manage(new Gtk::VBox(false, 6));
 	
 	// Create the alignment for the client vbox and pack it
-	Gtk::Widget* alignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*_vbox, 18, 1.0));
+	Gtk::Widget* alignment = Gtk::manage(new gtkutil::LeftAlignment(*_vbox, 18, 1.0));
 	_pageWidget->pack_start(*alignment, false, false, 0);
 	
 	// Append the whole vbox as new page to the notebook
@@ -335,7 +335,7 @@ void PrefPage::appendNamedWidget(const std::string& name, Gtk::Widget& widget)
 	table->set_col_spacings(4);
 	table->set_row_spacings(0);
 
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(name)), 
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(name)), 
 				  0, 1, 0, 1,
 				  Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
 

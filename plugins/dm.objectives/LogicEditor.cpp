@@ -15,8 +15,8 @@ LogicEditor::LogicEditor() :
 	_failureLogic = Gtk::manage(new Gtk::Entry);
 
 	// Create the labels for each text entry field
-	Gtk::Label* successLogicLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Success Logic:")));
-	Gtk::Label* failureLogicLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Failure Logic:")));
+	Gtk::Label* successLogicLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Success Logic:")));
+	Gtk::Label* failureLogicLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Failure Logic:")));
 
 	// Pack the label and the widget into the table
 	set_row_spacings(6);

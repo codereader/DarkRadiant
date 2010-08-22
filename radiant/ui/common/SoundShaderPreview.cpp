@@ -56,7 +56,7 @@ Gtk::Widget& SoundShaderPreview::createControlPanel()
 
 	vbox->pack_end(*btnHBox, false, false);
 	
-	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	vbox->pack_end(*_statusLabel, false, false);
 	
 	return *vbox;

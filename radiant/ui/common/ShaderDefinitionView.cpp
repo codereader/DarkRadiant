@@ -16,11 +16,11 @@ ShaderDefinitionView::ShaderDefinitionView() :
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 2, false));
 	pack_start(*table, false, false,  0);
 	
-	Gtk::Label* nameLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Material:")));
-	Gtk::Label* materialFileLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Defined in:")));
+	Gtk::Label* nameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Material:")));
+	Gtk::Label* materialFileLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Defined in:")));
 
-	_materialName = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
-	_filename = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_materialName = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	_filename = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 
 	nameLabel->set_size_request(90, -1);
 	materialFileLabel->set_size_request(90, -1);
@@ -31,7 +31,7 @@ ShaderDefinitionView::ShaderDefinitionView() :
 	table->attach(*_materialName, 1, 2, 0, 1);
 	table->attach(*_filename, 1, 2, 1, 2);
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Definition"))), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Definition"))), false, false, 0);
 	pack_start(*_view, true, true, 0);
 }
 

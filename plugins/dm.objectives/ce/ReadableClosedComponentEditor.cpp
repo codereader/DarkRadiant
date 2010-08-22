@@ -21,7 +21,7 @@ ReadableClosedComponentEditor::ReadableClosedComponentEditor(Component& componen
 	_readableSpec(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_READABLE())))
 {
 	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Readable:") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Readable:") + "</b>")), 
 		false, false, 0
 	);
 	pack_start(*_readableSpec, true, true, 0);

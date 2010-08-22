@@ -75,7 +75,7 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create topLabel
-	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		_("The requested definition has been found in multiple Files. Choose the file:")));
 
 	// Create the list of files:

@@ -85,7 +85,7 @@ LightInspector::LightInspector()
 	Gtk::VBox* panels = Gtk::manage(new Gtk::VBox(false, 12));
 
 	panels->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Light volume") + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light volume") + "</b>")),
 		false, false, 0);
 
 	// Volume type hbox
@@ -95,21 +95,21 @@ LightInspector::LightInspector()
 	typeBox->pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 0);
 	typeBox->pack_start(createProjectedPanel(), false, false, 0);
 
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*typeBox, 12)), false, false, 0);
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*typeBox, 12)), false, false, 0);
 
 	// Light colour
 	_colour = Gtk::manage(new Gtk::ColorButton);
 	_colour->signal_color_set().connect(sigc::mem_fun(*this, &LightInspector::_onColourChange));
 
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Colour") + "</b>")), 
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Colour") + "</b>")), 
 					   false, false, 0);
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_colour, 12, 0.0)),
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_colour, 12, 0.0)),
 					   false, false, 0);
 
 	// Options panel
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Options") + "</b>")),
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Options") + "</b>")),
 					   false, false, 0);
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(createOptionsPanel(), 12)),
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createOptionsPanel(), 12)),
 					   false, false, 0);
 
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 18));
@@ -222,7 +222,7 @@ Gtk::Widget& LightInspector::createProjectedPanel()
 	// VBox for panel
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
 
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_projLightToggle)), false, false, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_projLightToggle)), false, false, 0);
 	vbx->pack_start(*_useStartEnd, false, false, 0);
 
 	return *vbx;
@@ -260,10 +260,10 @@ Gtk::Widget& LightInspector::createTextureWidgets()
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
 	
 	vbx->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Light Texture") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light Texture") + "</b>")), 
 		false, false, 0);
 
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_texSelector, 12, 1.0)), true, true, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_texSelector, 12, 1.0)), true, true, 0);
 	
 	return *vbx;
 }

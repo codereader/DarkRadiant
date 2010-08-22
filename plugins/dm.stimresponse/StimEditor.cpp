@@ -113,7 +113,7 @@ Gtk::Widget& StimEditor::createPropertyWidgets()
 	entryHBox->pack_start(*_propertyWidgets.timer.second, false, false, 0);
 	entryHBox->pack_start(*Gtk::manage(new Gtk::Label("s")), false, false, 0);
 	entryHBox->pack_start(*_propertyWidgets.timer.millisecond, false, false, 0);
-	entryHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm("ms")), false, false, 0);
+	entryHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel("ms")), false, false, 0);
 		
 	table->attach(*_propertyWidgets.timer.toggle, 0, 1, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*_propertyWidgets.timer.entryHBox, 1, 2, curRow, curRow+1);
@@ -131,7 +131,7 @@ Gtk::Widget& StimEditor::createPropertyWidgets()
 	_propertyWidgets.timer.reloadEntry->set_size_request(50, -1);
 
 	_propertyWidgets.timer.reloadToggle = Gtk::manage(new Gtk::CheckButton(_("Timer reloads")));
-	_propertyWidgets.timer.reloadLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("times")));
+	_propertyWidgets.timer.reloadLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("times")));
 
 	_propertyWidgets.timer.reloadHBox->pack_start(*_propertyWidgets.timer.reloadEntry, false, false, 0);
 	_propertyWidgets.timer.reloadHBox->pack_start(*_propertyWidgets.timer.reloadLabel, true, true, 0);

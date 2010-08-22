@@ -35,7 +35,7 @@ PatchThickenDialog::PatchThickenDialog() :
 	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Create the title label (bold font)
-	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<span weight=\"bold\">") + _(LABEL_TITLE) + "</span>"
 	));
     topLabel->set_padding(6, 2);
@@ -43,7 +43,7 @@ PatchThickenDialog::PatchThickenDialog() :
 	_vbox->pack_start(*topLabel, false, false, 0);
 
 	// Create the entry field
-	Gtk::Label* thicknessLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_THICKNESS_ENTRY)));
+	Gtk::Label* thicknessLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_THICKNESS_ENTRY)));
 	
 	_thicknessEntry = Gtk::manage(new Gtk::Entry);
 	_thicknessEntry->set_text(floatToStr(DEFAULT_THICKNESS));
@@ -54,7 +54,7 @@ PatchThickenDialog::PatchThickenDialog() :
     table->set_row_spacings(6);
     
     // Indent the table by adding a left-padding to the alignment
-    Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*table, 18, 1));
+    Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1));
     
     // Create the radio button group for choosing the extrude axis
 	_radNormals = Gtk::manage(new Gtk::RadioButton(_group, _(LABEL_EXTRUDE_NORMALS)));

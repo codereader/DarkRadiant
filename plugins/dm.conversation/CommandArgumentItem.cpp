@@ -19,7 +19,7 @@ CommandArgumentItem::CommandArgumentItem(
 	_labelBox = Gtk::manage(new Gtk::EventBox);
 	_labelBox->set_tooltip_markup(argInfo.description);
 	
-	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_argInfo.title + ":"));
+	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(_argInfo.title + ":"));
 	_labelBox->add(*label);
 	
 	// Pack the description widget into an eventbox

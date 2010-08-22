@@ -142,7 +142,7 @@ Gtk::Widget& DifficultyEditor::createEditingWidgets()
 	_editorPane->set_border_width(12);
 
 	// The "Settings" label
-	Gtk::Label* settingsLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Setting") + "</b>"));
+	Gtk::Label* settingsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Setting") + "</b>"));
 	_editorPane->pack_start(*settingsLabel, false, false, 0);
 
 	// The table aligning the editing widgets
@@ -150,11 +150,11 @@ Gtk::Widget& DifficultyEditor::createEditingWidgets()
     table->set_col_spacings(12);
     table->set_row_spacings(6);
 
-	_editorPane->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*table, 18, 1.0)), false, false, 0);
+	_editorPane->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0)), false, false, 0);
 
 	// ===== CLASSNAME ======
 
-	Gtk::Label* classNameLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Classname:")));
+	Gtk::Label* classNameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Classname:")));
 
 	// Add classname widget
 	_classCombo = Gtk::manage(new Gtk::ComboBoxEntry(
@@ -174,14 +174,14 @@ Gtk::Widget& DifficultyEditor::createEditingWidgets()
 
 	// ===== SPAWNARG ======
 	_spawnArgEntry = Gtk::manage(new Gtk::Entry);
-	Gtk::Label* spawnArgLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Spawnarg:")));
+	Gtk::Label* spawnArgLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Spawnarg:")));
 
 	table->attach(*spawnArgLabel, 0, 1, 1, 2, Gtk::FILL, Gtk::AttachOptions(0), 0, 0);
 	table->attach(*_spawnArgEntry, 1, 2, 1, 2);
 
 	// ===== ARGUMENT ======
 	_argumentEntry = Gtk::manage(new Gtk::Entry);
-	Gtk::Label* argumentLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Argument:")));
+	Gtk::Label* argumentLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Argument:")));
 
 	// The appType chooser
 	_appTypeCombo = Gtk::manage(new Gtk::ComboBox(difficulty::Setting::getAppTypeStore()));
@@ -213,7 +213,7 @@ Gtk::Widget& DifficultyEditor::createEditingWidgets()
 	// The "note" text
 	_noteText = Gtk::manage(new Gtk::Label);
 	_noteText->set_line_wrap(true);
-	_editorPane->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_noteText)), false, false, 6);
+	_editorPane->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_noteText)), false, false, 6);
 
 	return *_editorPane;
 }

@@ -57,14 +57,14 @@ ComponentsDialog::ComponentsDialog(const Glib::RefPtr<Gtk::Window>& parent, Obje
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
 	vbx->pack_start(createObjectiveEditPanel(), false, false, 0);
 
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Components")))), false, false, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Components")))), false, false, 0);
 
 	Gtk::VBox* compvbox = Gtk::manage(new Gtk::VBox(false, 6));
 	compvbox->pack_start(createListView(), true, true, 0);
 	compvbox->pack_start(createEditPanel(), false, false, 0);
 	compvbox->pack_start(createComponentEditorPanel(), true, true, 0);
 
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*compvbox, 12, 1.0f)), true, true, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*compvbox, 12, 1.0f)), true, true, 0);
 
 	vbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
 	vbx->pack_end(createButtons(), false, false, 0);
@@ -94,7 +94,7 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	int row = 0;
 	
 	// Objective description
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Description")))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Description")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	_objDescriptionEntry = Gtk::manage(new Gtk::Entry);
@@ -103,14 +103,14 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	row++;
 
 	// Difficulty Selection
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Difficulty")))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Difficulty")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*_diffPanel, 1, 2, row, row+1);
 
 	row++;
 
 	// State selection
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Initial state")))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Initial state")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	_objStateCombo = Gtk::manage(new Gtk::ComboBoxText);
@@ -126,7 +126,7 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	row++;
 
 	// Options checkboxes.
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Flags")))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Flags")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(createObjectiveFlagsTable(), 1, 2, row, row+1);
 	
@@ -135,7 +135,7 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	// Enabling objectives
 	_enablingObjs = Gtk::manage(new Gtk::Entry);
 	
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Enabling Objectives")))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Enabling Objectives")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*_enablingObjs, 1, 2, row, row+1);
 	
@@ -151,10 +151,10 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	_failureLogic = Gtk::manage(new Gtk::Entry);
 	
 	logicHBox->pack_start(*_successLogic, true, true, 0);
-	logicHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Failure Logic")))), false, false, 0);
+	logicHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Failure Logic")))), false, false, 0);
 	logicHBox->pack_start(*_failureLogic, true, true, 0);
 
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Sucess Logic")))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Sucess Logic")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*logicHBox, 1, 2, row, row+1);
 
@@ -170,10 +170,10 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	_failureScript = Gtk::manage(new Gtk::Entry);
 
 	scriptHBox->pack_start(*_completionScript, true, true, 0);
-	scriptHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Failure Script")))), false, false, 0);
+	scriptHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Failure Script")))), false, false, 0);
 	scriptHBox->pack_start(*_failureScript, true, true, 0);
 
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Completion Script")))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Completion Script")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*scriptHBox, 1, 2, row, row+1);
 	
@@ -189,10 +189,10 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	_failureTarget = Gtk::manage(new Gtk::Entry);
 
 	targetHBox->pack_start(*_completionTarget, true, true, 0);
-	targetHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Failure Target")))), false, false, 0);
+	targetHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Failure Target")))), false, false, 0);
 	targetHBox->pack_start(*_failureTarget, true, true, 0);
 
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Completion Target")))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Completion Target")))),
 					 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*targetHBox, 1, 2, row, row+1);
 
@@ -266,7 +266,7 @@ Gtk::Widget& ComponentsDialog::createEditPanel()
 	_typeCombo->signal_changed().connect(sigc::mem_fun(*this, &ComponentsDialog::_onTypeChanged));
 
 	// Pack dropdown into table
-	_editPanel->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Type")))),
+	_editPanel->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Type")))),
 					   0, 1, 0, 1, Gtk::FILL, Gtk::FILL, 0, 0);
 	
 	_editPanel->attach(*_typeCombo, 1, 2, 0, 1);
@@ -306,7 +306,7 @@ Gtk::Widget& ComponentsDialog::createEditPanel()
 	flagsBox->pack_start(*_invertedFlag, false, false, 0);
 	flagsBox->pack_start(*_playerResponsibleFlag, false, false, 0);
 	
-	_editPanel->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Flags")))),
+	_editPanel->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Flags")))),
 					 0, 1, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
 	_editPanel->attach(*flagsBox, 1, 2, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
 	

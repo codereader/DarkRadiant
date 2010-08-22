@@ -15,7 +15,7 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	set_deletable(false);
 	set_border_width(6);
 
-	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(message));
+	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(message));
 	label->set_size_request(200, -1);
 
 	add(*label);

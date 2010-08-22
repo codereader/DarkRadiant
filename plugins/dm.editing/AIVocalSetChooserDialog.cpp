@@ -66,13 +66,13 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 	Gtk::VBox* vbox1 = Gtk::manage(new Gtk::VBox(false, 3));
 	hbx->pack_start(*vbox1, true, true, 0);
 
-	vbox1->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("<b>Available Sets:</b>"))), false, false, 0);
+	vbox1->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("<b>Available Sets:</b>"))), false, false, 0);
 	vbox1->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_setView)), true, true, 0);
 
 	// Right: the description
 	Gtk::VBox* vbox2 = Gtk::manage(new Gtk::VBox(false, 3));
 
-	vbox2->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("<b>Description:</b>"))), false, false, 0);
+	vbox2->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("<b>Description:</b>"))), false, false, 0);
 
 	Gtk::Widget& descPanel = createDescriptionPanel();
 	vbox2->pack_start(descPanel, true, true, 0);
