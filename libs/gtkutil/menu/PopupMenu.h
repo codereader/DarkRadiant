@@ -6,7 +6,6 @@
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <list>
-#include <glib/gtypes.h>
 
 #include <gtkmm/menu.h>
 

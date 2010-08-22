@@ -3,7 +3,6 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
-#include "gtkutil/ComboBox.h"
 #include "string/string.h"
 
 #include <gtkmm/eventbox.h>

@@ -20,7 +20,6 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
 #include "gtkutil/SerialisableWidgets.h"
-#include "gtkutil/ComboBox.h"
 
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"

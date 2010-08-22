@@ -1,9 +1,6 @@
 #include "PopupMenu.h"
 #include "../IconTextMenuItem.h"
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkmenuitem.h>
-
 namespace gtkutil
 {
 
