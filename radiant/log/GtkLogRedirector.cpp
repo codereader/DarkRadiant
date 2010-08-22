@@ -16,6 +16,11 @@ GtkLogRedirector::GtkLogRedirector()
 	_handles["GTK"] = g_log_set_handler("Gtk", flags,	handleLogMessage, this);
 	_handles["GtkGLExt"] = g_log_set_handler("GtkGLExt", flags, handleLogMessage, this);
 	_handles["GLib"] = g_log_set_handler("GLib", flags, handleLogMessage, this);
+	_handles["glibmm"] = g_log_set_handler("glibmm", flags, handleLogMessage, this);
+	_handles["atkmm"] = g_log_set_handler("atkmm", flags, handleLogMessage, this);
+	_handles["pangomm"] = g_log_set_handler("pangomm", flags, handleLogMessage, this);
+	_handles["gdkmm"] = g_log_set_handler("gdkmm", flags, handleLogMessage, this);
+	_handles["gtkmm"] = g_log_set_handler("gtkmm", flags, handleLogMessage, this);
 	_handles[""] = g_log_set_handler(0, flags,	handleLogMessage, this);
 }
 
