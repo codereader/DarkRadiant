@@ -317,18 +317,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="ifc"
-			>
-			<File
-				RelativePath="..\..\libs\gtkutil\ifc\EditorWidget.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libs\gtkutil\ifc\Widget.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="dialog"
 			>
 			<File
@@ -490,10 +478,6 @@
 		</File>
 		<File
 			RelativePath="..\..\libs\gtkutil\nonmodal.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\Paned.h"
 			>
 		</File>
 		<File

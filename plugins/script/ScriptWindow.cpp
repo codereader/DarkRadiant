@@ -6,7 +6,6 @@
 #include "iundo.h"
 #include "i18n.h"
 
-#include "gtkutil/Paned.h"
 #include "gtkutil/TextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/nonmodal.h"

@@ -8,7 +8,6 @@
 #include "ientityinspector.h"
 
 #include "gtkutil/FramedWidget.h"
-#include "gtkutil/Paned.h"
 
 #include "camera/GlobalCamera.h"
 #include "ui/texturebrowser/TextureBrowser.h"

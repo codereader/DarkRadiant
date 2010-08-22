@@ -15,7 +15,6 @@
 #include "selectionlib.h"
 #include "scenelib.h"
 #include "gtkutil/dialog.h"
-#include "gtkutil/Paned.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/SeparatorMenuItem.h"
 #include "gtkutil/TreeModel.h"
