@@ -29,7 +29,7 @@ CommandEntry::CommandEntry() :
 
 	// Connect the signal
 	_entry->signal_activate().connect(sigc::mem_fun(*this, &CommandEntry::onCmdEntryActivate));
-	_entry->signal_key_press_event().connect(sigc::mem_fun(*this, &CommandEntry::onCmdEntryKeyPress));
+	_entry->signal_key_press_event().connect(sigc::mem_fun(*this, &CommandEntry::onCmdEntryKeyPress), false);
 
 	show_all();
 }

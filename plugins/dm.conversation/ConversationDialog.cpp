@@ -53,7 +53,7 @@ ConversationDialog::ConversationDialog() :
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	
-	signal_key_press_event().connect(sigc::mem_fun(*this, &ConversationDialog::onWindowKeyPress));
+	signal_key_press_event().connect(sigc::mem_fun(*this, &ConversationDialog::onWindowKeyPress), false);
 	
 	// Create the widgets
 	populateWindow();
