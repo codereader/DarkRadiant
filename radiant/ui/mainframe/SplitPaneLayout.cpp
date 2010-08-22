@@ -82,9 +82,9 @@ void SplitPaneLayout::constructLayout()
 	_splitPane.vertPane1->set_position(200);
 	_splitPane.vertPane2->set_position(400);
 
-	_splitPane.posHPane.connect(GTK_WIDGET(_splitPane.horizPane->gobj()));
-	_splitPane.posVPane1.connect(GTK_WIDGET(_splitPane.vertPane1->gobj()));
-	_splitPane.posVPane2.connect(GTK_WIDGET(_splitPane.vertPane2->gobj()));
+	_splitPane.posHPane.connect(_splitPane.horizPane.get());
+	_splitPane.posVPane1.connect(_splitPane.vertPane1);
+	_splitPane.posVPane2.connect(_splitPane.vertPane2);
 	
 	// Attempt to restore this layout's state, this will also construct the orthoviews
 	restoreStateFromPath(RKEY_SPLITPANE_ROOT);

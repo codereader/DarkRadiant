@@ -1,13 +1,13 @@
 #ifndef PANEDPOSITION_H_
 #define PANEDPOSITION_H_
 
-#include "gtk/gtkwidget.h"
-#include "gtk/gtkpaned.h"
+#include <gtkmm/paned.h>
+#include <sigc++/connection.h>
 #include <string>
 
 /* greebo: A PanedPosition object keeps track of the divider position.  
  * 
- * Use the connect() method to connect a GtkPaned to this object.
+ * Use the connect() method to connect a Gtk::Paned to this object.
  * 
  * Use the loadFromNode() and saveToNode() methods to save the internal
  * size info into the given xml::Node
@@ -15,20 +15,27 @@
  * This is used by the Splitpane view (mainframe) to store the size/position of the
  * paned views on shutdown.
  */
-namespace gtkutil {
+namespace gtkutil
+{
 
-class PanedPosition {
+class PanedPosition
+{
+private:
 	// The position of this object
 	int _position;
 	
 	// The connected paned container
-	GtkPaned* _paned;
+	Gtk::Paned* _paned;
+
+	sigc::connection _connection;
 
 public:
 	PanedPosition();
 
+	~PanedPosition();
+
 	// Connect the passed GtkPaned to this object
-	void connect(GtkWidget* paned);
+	void connect(Gtk::Paned* paned);
 
 	const int getPosition() const;
 	void setPosition(int position);
@@ -50,11 +57,9 @@ public:
 	void readPosition();
 	
 private:
-
-	// The static GTK callback that gets invoked on position change 
-	static gboolean onPositionChange(GtkWidget* widget, gpointer none, PanedPosition* self);
-
-}; // class PanedPosition
+	// The callback that gets invoked on position change 
+	void onPositionChange();
+};
 
 } // namespace gtkutil
 
