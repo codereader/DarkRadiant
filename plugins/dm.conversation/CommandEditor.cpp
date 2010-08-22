@@ -422,7 +422,7 @@ Gtk::Widget& CommandEditor::createButtonPanel()
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandEditor::onCancel));
 	buttonHBox->pack_end(*cancelButton, true, true, 0);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHBox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 void CommandEditor::onSave()

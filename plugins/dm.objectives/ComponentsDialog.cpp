@@ -246,7 +246,7 @@ Gtk::Widget& ComponentsDialog::createListView()
 	
 	// Put the buttons box next to the list view
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_componentView)), true, true, 0);
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_componentView)), true, true, 0);
 	hbx->pack_start(*buttonsBox, false, false, 0);
 
 	return *hbx;
@@ -343,7 +343,7 @@ Gtk::Widget& ComponentsDialog::createButtons()
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 // Populate the component list

@@ -100,7 +100,7 @@ Gtk::Widget& SkinChooser::createTreeView(int width)
 	// Pack treeview into a ScrolledFrame and return
 	_treeView->set_size_request(width, -1);
 
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Create the model preview
@@ -125,7 +125,7 @@ Gtk::Widget& SkinChooser::createButtons()
 	hbx->pack_end(*okButton, true, true, 0);	
 	hbx->pack_end(*cancelButton, true, true, 0);	
 					   
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 void SkinChooser::_postShow()

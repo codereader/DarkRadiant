@@ -75,7 +75,7 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 	Gtk::Button* applyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
 	applyButton->signal_clicked().connect(sigc::mem_fun(*this, &FloatPropertyEditor::_onApply));
 	
-	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignmentmm(*applyButton)), false, false, 0);
+	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*applyButton)), false, false, 0);
 }
 
 void FloatPropertyEditor::_onApply()

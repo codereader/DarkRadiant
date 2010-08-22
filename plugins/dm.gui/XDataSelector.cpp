@@ -118,7 +118,7 @@ Gtk::Widget& XDataSelector::createTreeView()
 	treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
 
 	// Pack treeview into a scrolled window and frame, and return
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*treeView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*treeView));
 }
 
 Gtk::Widget& XDataSelector::createButtons()
@@ -134,7 +134,7 @@ Gtk::Widget& XDataSelector::createButtons()
 	hbox->pack_start(*_okButton, false, false, 0);
 	hbox->pack_start(*cancelButton, false, false, 0);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbox));
 }
 
 void XDataSelector::onCancel()

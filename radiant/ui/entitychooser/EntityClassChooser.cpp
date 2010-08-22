@@ -192,7 +192,7 @@ Gtk::Widget& EntityClassChooser::createTreeView()
 	_treeStore->set_sort_column_id(_columns.name, Gtk::SORT_ASCENDING);
 
 	// Pack treeview into a scrolled frame and return
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Create the entity usage information panel
@@ -203,7 +203,7 @@ Gtk::Widget& EntityClassChooser::createUsagePanel()
 	_usageTextView->set_wrap_mode(Gtk::WRAP_WORD);
 	_usageTextView->set_editable(false);
 
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_usageTextView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_usageTextView));
 }
 
 // Create the button panel
@@ -220,7 +220,7 @@ Gtk::Widget& EntityClassChooser::createButtonPanel()
 	hbx->pack_end(*_okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 					   
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 // Update the usage information

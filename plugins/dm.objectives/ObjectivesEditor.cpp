@@ -129,7 +129,7 @@ Gtk::Widget& ObjectivesEditor::createEntitiesPanel()
 	// Name column
 	_entityList->append_column(*Gtk::manage(new gtkutil::TextColumnmm("", _objEntityColumns.displayName)));
 	
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_entityList)), true, true, 0);
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_entityList)), true, true, 0);
 					   
 	// Vbox for the buttons
 	Gtk::VBox* buttonBox = Gtk::manage(new Gtk::VBox(false, 6));
@@ -206,7 +206,7 @@ Gtk::Widget& ObjectivesEditor::createObjectivesPanel()
 
 	// Pack the list and the buttons into an hbox
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_objList)), true, true, 0); 
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_objList)), true, true, 0); 
 	hbx->pack_start(*_objButtonPanel, false, false, 0);
 
 	return *hbx; 
@@ -240,7 +240,7 @@ Gtk::Widget& ObjectivesEditor::createButtons()
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 void ObjectivesEditor::clear()

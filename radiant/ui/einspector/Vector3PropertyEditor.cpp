@@ -63,7 +63,7 @@ Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity,
 	applyButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &Vector3PropertyEditor::_onApply));
 	
-	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignmentmm(*applyButton)),
+	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*applyButton)),
 					   false, false, 0);
 					   
 	// Populate the spin boxes from the keyvalue

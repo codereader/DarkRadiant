@@ -97,7 +97,7 @@ Gtk::Widget& AddPropertyDialog::createTreeView()
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
 	
 	// Pack into scrolled window and frame, and return
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Construct the usage panel
@@ -107,7 +107,7 @@ Gtk::Widget& AddPropertyDialog::createUsagePanel()
 	_usageTextView = Gtk::manage(new Gtk::TextView);
 	_usageTextView->set_wrap_mode(Gtk::WRAP_WORD);
 
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_usageTextView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_usageTextView));
 }
 
 // Construct the buttons panel
@@ -124,7 +124,7 @@ Gtk::Widget& AddPropertyDialog::createButtonsPanel()
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 namespace

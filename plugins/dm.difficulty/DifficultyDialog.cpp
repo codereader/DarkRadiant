@@ -126,7 +126,7 @@ Gtk::Widget& DifficultyDialog::createButtons()
 	_closeButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyDialog::onClose));
 	buttonHBox->pack_end(*_closeButton, true, true, 0);
 	
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHBox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 void DifficultyDialog::save()

@@ -61,7 +61,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	_headsView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("", _columns.name)));
 
 	// Left: the treeview
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_headsView)), true, true, 0);
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_headsView)), true, true, 0);
 
 	// Right: the preview and the description
 	Gtk::VBox* vbox2 = Gtk::manage(new Gtk::VBox(false, 3));
@@ -125,7 +125,7 @@ Gtk::Widget& AIHeadChooserDialog::createButtonPanel()
 	hbx->pack_end(*_okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 Gtk::Widget& AIHeadChooserDialog::createDescriptionPanel()
@@ -136,7 +136,7 @@ Gtk::Widget& AIHeadChooserDialog::createDescriptionPanel()
 	_description->set_wrap_mode(Gtk::WRAP_WORD);
 	_description->set_editable(false);
 
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_description));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_description));
 }
 
 void AIHeadChooserDialog::onCancel() 

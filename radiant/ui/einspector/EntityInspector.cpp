@@ -416,7 +416,7 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 	selection->signal_changed().connect(sigc::mem_fun(*this, &EntityInspector::treeSelectionChanged));
     
     // Embed the TreeView in a scrolled viewport
-	Gtk::ScrolledWindow* scrollWin = Gtk::manage(new gtkutil::ScrolledFramemm(*_keyValueTreeView));
+	Gtk::ScrolledWindow* scrollWin = Gtk::manage(new gtkutil::ScrolledFrame(*_keyValueTreeView));
 	
 	_keyValueTreeView->set_size_request(TREEVIEW_MIN_WIDTH, TREEVIEW_MIN_HEIGHT);
     

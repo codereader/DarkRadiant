@@ -67,7 +67,7 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 	hbx->pack_start(*vbox1, true, true, 0);
 
 	vbox1->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("<b>Available Sets:</b>"))), false, false, 0);
-	vbox1->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_setView)), true, true, 0);
+	vbox1->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_setView)), true, true, 0);
 
 	// Right: the description
 	Gtk::VBox* vbox2 = Gtk::manage(new Gtk::VBox(false, 3));
@@ -140,7 +140,7 @@ Gtk::Widget& AIVocalSetChooserDialog::createButtonPanel()
 	hbx->pack_end(*_okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 Gtk::Widget& AIVocalSetChooserDialog::createDescriptionPanel()
@@ -151,7 +151,7 @@ Gtk::Widget& AIVocalSetChooserDialog::createDescriptionPanel()
 	_description->set_wrap_mode(Gtk::WRAP_WORD);
 	_description->set_editable(false);
 
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_description));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_description));
 }
 
 void AIVocalSetChooserDialog::onCancel() 

@@ -86,7 +86,7 @@ MediaBrowser::MediaBrowser()
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
 	
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
-	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
+	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 
 	Gtk::Frame* frame = Gtk::manage(new Gtk::Frame);
 	frame->add(*scroll);

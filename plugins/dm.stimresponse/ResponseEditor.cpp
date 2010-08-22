@@ -127,7 +127,7 @@ void ResponseEditor::populatePage()
 	
 	// List and buttons below
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_list)), true, true, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_list)), true, true, 0);
 	
 	// Create the type selector plus buttons and pack them
 	vbox->pack_start(createListButtons(), false, false, 0);
@@ -210,7 +210,7 @@ Gtk::Widget& ResponseEditor::createEffectWidgets()
 		*Gtk::manage(new gtkutil::TextColumnmm(_("Details (double-click to edit)"), StimResponse::getColumns().arguments)));
 	
 	// Return the tree view in a frame
-	return *Gtk::manage(new gtkutil::ScrolledFramemm(*_effectWidgets.view));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_effectWidgets.view));
 }
 
 void ResponseEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)

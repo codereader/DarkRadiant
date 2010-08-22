@@ -51,7 +51,7 @@ void LayerControlDialog::populateWindow()
 	Gtk::VBox* overallVBox = Gtk::manage(new Gtk::VBox(false, 6));
 	overallVBox->set_border_width(12);
 
-	add(*Gtk::manage(new gtkutil::ScrolledFramemm(*overallVBox)));
+	add(*Gtk::manage(new gtkutil::ScrolledFrame(*overallVBox)));
 
 	// Add the LayerControl vbox to the window
 	overallVBox->pack_start(*_controlContainer, false, false, 0);

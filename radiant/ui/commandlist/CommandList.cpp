@@ -70,7 +70,7 @@ void CommandList::populateWindow()
 		reloadList();
 
 		// Pack this treeview into a scrolled window and show it
-		Gtk::ScrolledWindow* scrolled = Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView));
+		Gtk::ScrolledWindow* scrolled = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 		
 		// Set the sorting column
 		Gtk::TreeViewColumn* cmdColumn = _treeView->get_column(0);

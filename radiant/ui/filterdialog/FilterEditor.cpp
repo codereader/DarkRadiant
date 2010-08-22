@@ -214,7 +214,7 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 	actionVBox->pack_start(*_widgets[WIDGET_MOVE_RULE_DOWN_BUTTON], false, false, 0);
 	actionVBox->pack_start(*_widgets[WIDGET_DELETE_RULE_BUTTON], false, false, 0);
 
-	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_ruleView)), true, true, 0);
+	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_ruleView)), true, true, 0);
 	hbox->pack_start(*actionVBox, false, false, 0);
 
 	return *Gtk::manage(new gtkutil::LeftAlignment(*hbox, 18, 1));
@@ -285,7 +285,7 @@ Gtk::Widget& FilterEditor::createButtonPanel()
 		buttonHBox->pack_end(*cancelButton, true, true, 0);
 	}
 	
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*buttonHBox));
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 int FilterEditor::getTypeIndexForString(const std::string& type)

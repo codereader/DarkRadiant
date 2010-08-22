@@ -213,7 +213,7 @@ Gtk::Widget& FilterDialog::createFiltersPanel()
 	actionVBox->pack_start(*_widgets[WIDGET_VIEW_FILTER_BUTTON], false, false, 0);
 	actionVBox->pack_start(*_widgets[WIDGET_DELETE_FILTER_BUTTON], false, false, 0);
 
-	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_filterView)), true, true, 0);
+	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_filterView)), true, true, 0);
 	hbox->pack_start(*actionVBox, false, false, 0);
 
 	return *Gtk::manage(new gtkutil::LeftAlignment(*hbox, 18, 1));
@@ -232,7 +232,7 @@ Gtk::Widget& FilterDialog::createButtonPanel()
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 		   
-	return *Gtk::manage(new gtkutil::RightAlignmentmm(*hbx));
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 void FilterDialog::updateWidgetSensitivity()

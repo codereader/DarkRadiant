@@ -113,7 +113,7 @@ void CustomStimEditor::populatePage()
 	_list->append_column(*typeCol);
 	
 	Gtk::VBox* listVBox = Gtk::manage(new Gtk::VBox(false, 6));
-	listVBox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_list)), true, true, 0);
+	listVBox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_list)), true, true, 0);
 	listVBox->pack_start(createListButtons(), false, false, 0);
 	
 	pack_start(*listVBox, false, false, 0);

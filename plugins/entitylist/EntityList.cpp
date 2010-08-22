@@ -80,7 +80,7 @@ void EntityList::populateWindow()
 	
 	// Create a VBOX
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
 	vbox->pack_start(*_focusOnSelectedEntityToggle, false, false, 0);
 
 	// Pack the VBOX into the window

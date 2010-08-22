@@ -40,7 +40,7 @@ ModalProgressDialog::ModalProgressDialog(const Glib::RefPtr<Gtk::Window>& parent
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ModalProgressDialog::_onCancel));
 
-	vbx->pack_end(*Gtk::manage(new gtkutil::RightAlignmentmm(*cancelButton)), false, false, 0);
+	vbx->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*cancelButton)), false, false, 0);
 	
 	// Connect the realize signal to remove the window decorations
 	signal_realize().connect(sigc::mem_fun(*this, &ModalProgressDialog::_onRealize));
