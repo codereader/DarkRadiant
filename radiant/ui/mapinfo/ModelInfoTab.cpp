@@ -52,16 +52,16 @@ void ModelInfoTab::populateTab()
 	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
 	_treeView->set_headers_clickable(true);
 
-	Gtk::TreeViewColumn* modelCol = Gtk::manage(new gtkutil::TextColumnmm(_("Model"), _columns.model));
+	Gtk::TreeViewColumn* modelCol = Gtk::manage(new gtkutil::TextColumn(_("Model"), _columns.model));
 	modelCol->set_sort_column(_columns.model);
 
-	Gtk::TreeViewColumn* polyCountCol = Gtk::manage(new gtkutil::TextColumnmm(_("Polys"), _columns.polycount));
+	Gtk::TreeViewColumn* polyCountCol = Gtk::manage(new gtkutil::TextColumn(_("Polys"), _columns.polycount));
 	polyCountCol->set_sort_column(_columns.polycount);
 
-	Gtk::TreeViewColumn* modelCountCol = Gtk::manage(new gtkutil::TextColumnmm(_("Count"), _columns.modelcount));
+	Gtk::TreeViewColumn* modelCountCol = Gtk::manage(new gtkutil::TextColumn(_("Count"), _columns.modelcount));
 	modelCountCol->set_sort_column(_columns.modelcount);
 
-	Gtk::TreeViewColumn* skinCountCol = Gtk::manage(new gtkutil::TextColumnmm(_("Skins"), _columns.skincount));
+	Gtk::TreeViewColumn* skinCountCol = Gtk::manage(new gtkutil::TextColumn(_("Skins"), _columns.skincount));
 	skinCountCol->set_sort_column(_columns.skincount);
 	
 	_treeView->append_column(*modelCol);

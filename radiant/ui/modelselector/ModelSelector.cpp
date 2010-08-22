@@ -239,7 +239,7 @@ Gtk::Widget& ModelSelector::createTreeView()
 		new gtkutil::IconTextColumn(_("Model Path"), _columns.filename, _columns.icon))); 
 	
 	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
 	// Get the selection object and connect to its changed signal
 	_selection = _treeView->get_selection();
@@ -316,11 +316,11 @@ Gtk::Widget& ModelSelector::createInfoPanel()
 	infTreeView->set_headers_visible(false);
 	
 	infTreeView->append_column(*Gtk::manage(
-		new gtkutil::TextColumnmm(_("Attribute"), _infoStoreColumns.attribute)
+		new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)
 	));
 
 	infTreeView->append_column(*Gtk::manage(
-		new gtkutil::TextColumnmm(_("Value"), _infoStoreColumns.value)
+		new gtkutil::TextColumn(_("Value"), _infoStoreColumns.value)
 	));
 
 	// Pack into scrolled frame and return

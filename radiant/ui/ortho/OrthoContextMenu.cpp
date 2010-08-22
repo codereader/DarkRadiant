@@ -17,7 +17,6 @@
 
 #include "gtkutil/dialog.h"
 #include "gtkutil/IconTextMenuItem.h"
-#include "gtkutil/TextMenuItem.h"
 #include "gtkutil/menu/CommandMenuItem.h"
 
 #include "selection/algorithm/Group.h"

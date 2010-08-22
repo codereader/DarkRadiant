@@ -160,10 +160,10 @@ void StimTypes::remove(int id)
 Gtk::TreeModel::iterator StimTypes::getIterForId(int id)
 {
 	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFindermm finder(id, _columns.id.index());
+	gtkutil::TreeModel::SelectionFinder finder(id, _columns.id.index());
 
 	_listStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
 	return finder.getIter();
 }
@@ -283,10 +283,10 @@ int StimTypes::getFreeCustomStimId()
 Gtk::TreeModel::iterator StimTypes::getIterForName(const std::string& name)
 {
 	// Setup the selectionfinder to search for the name string
-	gtkutil::TreeModel::SelectionFindermm finder(name, _columns.name.index());
+	gtkutil::TreeModel::SelectionFinder finder(name, _columns.name.index());
 	
 	_listStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 
 	return finder.getIter();
 }

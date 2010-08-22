@@ -82,7 +82,7 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData
 	_listStore = Gtk::ListStore::create(_columns);
 	
 	_treeview = Gtk::manage(new Gtk::TreeView(_listStore));
-	_treeview->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("File"), _columns.name, false)));
+	_treeview->append_column(*Gtk::manage(new gtkutil::TextColumn(_("File"), _columns.name, false)));
 
 	// Append all xdMap-entries to the list.
 	for (XData::XDataMap::const_iterator it = xdMap.begin(); it != xdMap.end(); ++it)

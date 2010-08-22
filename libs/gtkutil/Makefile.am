@@ -35,6 +35,5 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						ModalProgressDialog.cpp \
 						SerialisableWidgets.cpp \
 						SourceView.cpp \
-						window.cpp \
 						clipboard.cpp \
 						FileChooser.cpp

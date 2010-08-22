@@ -190,7 +190,7 @@ Gtk::Widget& ShaderSelector::createTreeView()
 	_treeView->append_column(*col);
 
 	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
 	// Get selection and connect the changed callback
 	_selection = _treeView->get_selection();
@@ -220,8 +220,8 @@ Gtk::Widget& ShaderSelector::createPreview()
 	Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView(_infoStore));
 	tree->set_headers_visible(false);
 	
-	tree->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Attribute"), _infoStoreColumns.attribute)));
-	tree->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Value"), _infoStoreColumns.value)));
+	tree->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)));
+	tree->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Value"), _infoStoreColumns.value)));
 
 	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*tree)), true, true, 0);
 

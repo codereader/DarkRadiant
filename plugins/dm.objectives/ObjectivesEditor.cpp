@@ -127,7 +127,7 @@ Gtk::Widget& ObjectivesEditor::createEntitiesPanel()
 	_entityList->append_column(*startCol);
 	
 	// Name column
-	_entityList->append_column(*Gtk::manage(new gtkutil::TextColumnmm("", _objEntityColumns.displayName)));
+	_entityList->append_column(*Gtk::manage(new gtkutil::TextColumn("", _objEntityColumns.displayName)));
 	
 	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_entityList)), true, true, 0);
 					   
@@ -161,11 +161,11 @@ Gtk::Widget& ObjectivesEditor::createObjectivesPanel()
 	
 	// Key and value text columns
 	_objList->append_column(*Gtk::manage(
-		new gtkutil::TextColumnmm("#", _objectiveColumns.objNumber, false)));
+		new gtkutil::TextColumn("#", _objectiveColumns.objNumber, false)));
 	_objList->append_column(*Gtk::manage(
-		new gtkutil::TextColumnmm(_("Description"), _objectiveColumns.description, false)));
+		new gtkutil::TextColumn(_("Description"), _objectiveColumns.description, false)));
 	_objList->append_column(*Gtk::manage(
-		new gtkutil::TextColumnmm(_("Diff."), _objectiveColumns.difficultyLevel, false)));
+		new gtkutil::TextColumn(_("Diff."), _objectiveColumns.difficultyLevel, false)));
 	
 	// Beside the list is an vbox containing add, edit, delete and clear buttons
 	_objButtonPanel = Gtk::manage(new Gtk::VBox(false, 6));

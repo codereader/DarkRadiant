@@ -175,7 +175,7 @@ Gtk::Widget& EntityClassChooser::createTreeView()
 	_treeView->set_headers_visible(true);
 
 	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
 	_selection = _treeView->get_selection();
 	_selection->set_mode(Gtk::SELECTION_BROWSE);

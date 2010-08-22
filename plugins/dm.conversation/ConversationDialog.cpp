@@ -122,7 +122,7 @@ Gtk::Widget& ConversationDialog::createEntitiesPanel()
 	sel->signal_changed().connect(sigc::mem_fun(*this, &ConversationDialog::onEntitySelectionChanged));
 	
 	// Entity Name column
-	_entityView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("", _convEntityColumns.displayName)));
+	_entityView->append_column(*Gtk::manage(new gtkutil::TextColumn("", _convEntityColumns.displayName)));
 	
 	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_entityView)), true, true, 0);
 					   
@@ -155,8 +155,8 @@ Gtk::Widget& ConversationDialog::createConversationsPanel()
 	sel->signal_changed().connect(sigc::mem_fun(*this, &ConversationDialog::onConversationSelectionChanged));
 
 	// Key and value text columns
-	_convView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("#", _convColumns.index, false)));
-	_convView->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Name"), _convColumns.name, false)));
+	_convView->append_column(*Gtk::manage(new gtkutil::TextColumn("#", _convColumns.index, false)));
+	_convView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Name"), _convColumns.name, false)));
 
 	// Beside the list is an vbox containing add, edit, delete and clear buttons
 	_convButtonPanel = Gtk::manage(new Gtk::VBox(false, 6));

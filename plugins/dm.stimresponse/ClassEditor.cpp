@@ -217,10 +217,10 @@ void ClassEditor::removeSR()
 void ClassEditor::selectId(int id)
 {
 	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFindermm finder(id, SREntity::getColumns().id.index());
+	gtkutil::TreeModel::SelectionFinder finder(id, SREntity::getColumns().id.index());
 
 	_list->get_model()->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
 	if (finder.getIter())
 	{

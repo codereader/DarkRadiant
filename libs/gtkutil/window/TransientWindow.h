@@ -2,7 +2,6 @@
 #define TRANSIENTDIALOG_H_
 
 #include <gtkmm/window.h>
-#include "gtkutil/pointer.h"
 
 #include <string>
 #include <iostream>

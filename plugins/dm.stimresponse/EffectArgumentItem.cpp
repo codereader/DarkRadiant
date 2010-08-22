@@ -111,10 +111,10 @@ EntityArgument::EntityArgument(
 
 	// Now select the entity passed in the argument
 	// Find the entity using a TreeModel traversor (search the column #0)
-	gtkutil::TreeModel::SelectionFindermm finder(arg.value, 0);
+	gtkutil::TreeModel::SelectionFinder finder(arg.value, 0);
 	
 	_entityStore->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
 	// Select the found treeiter, if the name was found in the liststore
 	if (finder.getIter())
@@ -155,10 +155,10 @@ StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimType
 
 	// Now select the stimtype passed in the argument
 	// Find the entity using a TreeModel traversor (search the column #0)
-	gtkutil::TreeModel::SelectionFindermm finder(strToInt(arg.value), _stimTypes.getColumns().id.index());
+	gtkutil::TreeModel::SelectionFinder finder(strToInt(arg.value), _stimTypes.getColumns().id.index());
 
 	_stimTypes.getListStore()->foreach_iter(
-		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
 	// Select the found treeiter, if the name was found in the liststore
 	if (finder.getIter())

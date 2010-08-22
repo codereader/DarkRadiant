@@ -49,10 +49,10 @@ Gtk::Widget& ParticlesChooser::createTreeView()
 	Gtk::TreeView* tv = Gtk::manage(new Gtk::TreeView(_particlesList));
 
 	// Single text column
-	tv->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Particle"), _columns.name, false)));
+	tv->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), _columns.name, false)));
 
 	// Apply full-text search to the column
-	tv->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	tv->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 	
 	// Populate with particle names
 	populateParticleList();

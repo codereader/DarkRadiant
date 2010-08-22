@@ -5,7 +5,6 @@
 #include "string/string.h"
 
 #include "gtkutil/IconTextButton.h"
-#include "gtkutil/pointer.h"
 
 #include <gtkmm/button.h>
 #include <gtkmm/box.h>

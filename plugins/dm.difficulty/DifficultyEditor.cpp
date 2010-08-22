@@ -256,12 +256,12 @@ void DifficultyEditor::updateEditorWidgets()
 
 			// Now select the eclass passed in the argument
 			// Find the entity using a TreeModel traversor
-			gtkutil::TreeModel::SelectionFindermm finder(
+			gtkutil::TreeModel::SelectionFinder finder(
 				setting->className, ClassNameStore::Instance().getColumns().classname.index()
 			);
 
 			ClassNameStore::Instance().getModel()->foreach_iter(
-				sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach)
+				sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach)
 			);
 			
 			// Select the found treeiter, if the name was found in the liststore
@@ -271,13 +271,13 @@ void DifficultyEditor::updateEditorWidgets()
 			}
 
 			// Select the appType in the dropdown combo box (search the second column)
-			gtkutil::TreeModel::SelectionFindermm appTypeFinder(
+			gtkutil::TreeModel::SelectionFinder appTypeFinder(
 				setting->appType, 
 				difficulty::Setting::getTreeModelColumns().type.index()
 			);
 
 			_appTypeCombo->get_model()->foreach_iter(
-				sigc::mem_fun(appTypeFinder, &gtkutil::TreeModel::SelectionFindermm::forEach)
+				sigc::mem_fun(appTypeFinder, &gtkutil::TreeModel::SelectionFinder::forEach)
 			);
 
 			// Select the found treeiter, if the name was found in the liststore

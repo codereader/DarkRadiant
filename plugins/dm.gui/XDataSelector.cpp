@@ -115,7 +115,7 @@ Gtk::Widget& XDataSelector::createTreeView()
 	gtkutil::TreeModel::applyFoldersFirstSortFunc(_store, _columns.name, _columns.isFolder);
 
 	// Use the TreeModel's full string search function
-	treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
 	// Pack treeview into a scrolled window and frame, and return
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*treeView));

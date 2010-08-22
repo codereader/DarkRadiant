@@ -57,10 +57,10 @@ void EntityInfoTab::populateTab()
 	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
 	_treeView->set_headers_clickable(true);
 
-	Gtk::TreeViewColumn* eclassCol = Gtk::manage(new gtkutil::TextColumnmm(_("Entity Class"), _columns.eclass));
+	Gtk::TreeViewColumn* eclassCol = Gtk::manage(new gtkutil::TextColumn(_("Entity Class"), _columns.eclass));
 	eclassCol->set_sort_column(_columns.eclass);
 
-	Gtk::TreeViewColumn* countCol = Gtk::manage(new gtkutil::TextColumnmm(_("Count"), _columns.count));
+	Gtk::TreeViewColumn* countCol = Gtk::manage(new gtkutil::TextColumn(_("Count"), _columns.count));
 	countCol->set_sort_column(_columns.count);
 	
 	_treeView->append_column(*eclassCol);

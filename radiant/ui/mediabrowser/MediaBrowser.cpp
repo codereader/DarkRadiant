@@ -83,7 +83,7 @@ MediaBrowser::MediaBrowser()
 	_treeStore->set_sort_func(_columns.displayName, sigc::mem_fun(*this, &MediaBrowser::treeViewSortFunc));
 
 	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 	
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
 	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));

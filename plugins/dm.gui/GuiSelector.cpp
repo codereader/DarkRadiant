@@ -180,7 +180,7 @@ Gtk::TreeView* GuiSelector::createTreeView(const Glib::RefPtr<Gtk::TreeStore>& s
 	gtkutil::TreeModel::applyFoldersFirstSortFunc(store, _columns.name, _columns.isFolder);
 
 	// Use the TreeModel's full string search function
-	treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));
+	treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
 	return treeView;
 }

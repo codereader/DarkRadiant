@@ -489,10 +489,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\pointer.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\RegistryConnector.cpp"
 			>
 		</File>
@@ -533,19 +529,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\TextButton.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\TextColumn.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\TextMenuItem.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\TextMenuItemToggle.h"
 			>
 		</File>
 		<File
@@ -578,14 +562,6 @@
 		</File>
 		<File
 			RelativePath="..\..\libs\gtkutil\widget.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\window.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\window.h"
 			>
 		</File>
 		<File

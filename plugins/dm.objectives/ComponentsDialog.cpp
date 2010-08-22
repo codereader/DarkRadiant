@@ -230,8 +230,8 @@ Gtk::Widget& ComponentsDialog::createListView()
 		sigc::mem_fun(*this, &ComponentsDialog::_onSelectionChanged));
 
 	// Number column
-	_componentView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("#", _columns.index, false)));
-	_componentView->append_column(*Gtk::manage(new gtkutil::TextColumnmm(_("Type"), _columns.description, false)));
+	_componentView->append_column(*Gtk::manage(new gtkutil::TextColumn("#", _columns.index, false)));
+	_componentView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Type"), _columns.description, false)));
 
 	// Create Add and Delete buttons for components
 	Gtk::Button* addButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
@@ -372,10 +372,10 @@ void ComponentsDialog::updateComponents()
 		 ++i)
 	{
 		// Find the item in the list store (0th column carries the ID)
-		gtkutil::TreeModel::SelectionFindermm finder(i->first, _columns.index.index());
+		gtkutil::TreeModel::SelectionFinder finder(i->first, _columns.index.index());
 
 		// Traverse the model
-		_componentList->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFindermm::forEach));
+		_componentList->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 
 		// Check if we found the item
 		if (finder.getIter())

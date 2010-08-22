@@ -147,8 +147,8 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 	// Create a new treeview
 	_ruleView = Gtk::manage(new Gtk::TreeView(_ruleStore));
 	
-	gtkutil::TextColumnmm* indexCol = Gtk::manage(new gtkutil::TextColumnmm(_("Index"), _columns.index));
-	gtkutil::TextColumnmm* regexCol = Gtk::manage(new gtkutil::TextColumnmm(_("Match"), _columns.regexMatch));
+	gtkutil::TextColumn* indexCol = Gtk::manage(new gtkutil::TextColumn(_("Index"), _columns.index));
+	gtkutil::TextColumn* regexCol = Gtk::manage(new gtkutil::TextColumn(_("Match"), _columns.regexMatch));
 
 	// Create the cell renderer for the action choice
 	Gtk::CellRendererCombo* actionComboRenderer = Gtk::manage(new Gtk::CellRendererCombo);

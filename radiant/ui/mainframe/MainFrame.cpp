@@ -25,7 +25,6 @@
 
 #include "map/AutoSaver.h"
 #include "brush/BrushModule.h"
-#include "gtkutil/window.h"
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
