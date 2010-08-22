@@ -39,7 +39,7 @@ DifficultyDialog::DifficultyDialog() :
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	set_modal(true);
 	
-	signal_key_press_event().connect(sigc::mem_fun(*this, &DifficultyDialog::onWindowKeyPress));
+	signal_key_press_event().connect(sigc::mem_fun(*this, &DifficultyDialog::onWindowKeyPress), false);
 	
 	// Create the widgets
 	populateWindow();

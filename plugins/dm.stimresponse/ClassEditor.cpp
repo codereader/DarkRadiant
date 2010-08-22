@@ -36,7 +36,7 @@ ClassEditor::ClassEditor(StimTypes& stimTypes) :
 	
 	// Connect the signals to the callbacks
 	_list->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ClassEditor::onSRSelectionChange));
-	_list->signal_key_press_event().connect(sigc::mem_fun(*this, &ClassEditor::onTreeViewKeyPress));
+	_list->signal_key_press_event().connect(sigc::mem_fun(*this, &ClassEditor::onTreeViewKeyPress), false);
 	_list->signal_button_release_event().connect(
 		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onTreeViewButtonRelease), _list));
 					 

@@ -46,7 +46,7 @@ ShaderChooser::ShaderChooser(ChooserClient* client,
 	set_default_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
 	
 	// Connect the key handler to catch the ESC event
-	signal_key_press_event().connect(sigc::mem_fun(*this, &ShaderChooser::onKeyPress));
+	signal_key_press_event().connect(sigc::mem_fun(*this, &ShaderChooser::onKeyPress), false);
 	
 	// Construct main VBox, and pack in the ShaderSelector and buttons panel
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 3));
