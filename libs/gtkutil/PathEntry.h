@@ -1,8 +1,6 @@
 #ifndef _GTKUTIL_PATHENTRY_H_
 #define _GTKUTIL_PATHENTRY_H_
 
-#include "ifc/EditorWidget.h"
-
 #include "FramedWidget.h"
 
 #include <gtkmm/frame.h>
@@ -48,7 +46,6 @@ private:
 	void onBrowseFiles();
 	void onBrowseFolders();
 };
-typedef boost::shared_ptr<PathEntry> PathEntryPtr;
 
 } // namespace gtkutil
 

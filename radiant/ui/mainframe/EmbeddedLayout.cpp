@@ -9,7 +9,6 @@
 #include "ientityinspector.h"
 
 #include "gtkutil/FramedWidget.h"
-#include "gtkutil/Paned.h"
 
 #include <gtkmm/paned.h>
 #include <gtkmm/box.h>

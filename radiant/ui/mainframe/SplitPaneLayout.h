@@ -2,7 +2,6 @@
 #define _SPLITPANE_LAYOUT_H_
 
 #include <map>
-#include "gtkutil/Paned.h"
 #include "gtkutil/PanedPosition.h"
 #include "imainframelayout.h"
 

@@ -2,7 +2,6 @@
 #define _DIALOG_ELEMENTS_H_
 
 #include "idialogmanager.h"
-#include "../ifc/Widget.h"
 #include "../SerialisableWidgets.h"
 #include "../LeftAlignedLabel.h"
 #include "../PathEntry.h"

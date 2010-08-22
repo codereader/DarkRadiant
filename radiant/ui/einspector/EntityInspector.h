@@ -11,7 +11,6 @@
 #include "iundo.h"
 
 #include "gtkutil/menu/PopupMenu.h"
-#include "gtkutil/Paned.h"
 #include "gtkutil/PanedPosition.h"
 
 #include <gtkmm/liststore.h>

@@ -86,7 +86,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/clipboard.h"
 #include "gtkutil/glfont.h"
 #include "gtkutil/GLWidget.h"
-#include "gtkutil/Paned.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/FramedWidget.h"
