@@ -513,10 +513,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\SeparatorMenuItem.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\SerialisableWidgets.cpp"
 			>
 		</File>

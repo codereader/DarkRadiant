@@ -362,11 +362,11 @@ void ResponseEditor::createContextMenu()
 	_contextMenu.menu = Gtk::manage(new Gtk::Menu);
 	
 	// Each menu gets a delete item
-	_contextMenu.remove = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::DELETE, _("Delete")));
-	//_contextMenu.add = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::ADD, "Add"));
-	_contextMenu.enable = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::YES, _("Activate")));
-	_contextMenu.disable = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::NO, _("Deactivate")));
-	_contextMenu.duplicate = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::COPY, _("Duplicate")));
+	_contextMenu.remove = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete")));
+	//_contextMenu.add = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, "Add"));
+	_contextMenu.enable = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::YES, _("Activate")));
+	_contextMenu.disable = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::NO, _("Deactivate")));
+	_contextMenu.duplicate = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Duplicate")));
 	
 	//_contextMenu.menu->append(*_contextMenu.add);
 	_contextMenu.menu->append(*_contextMenu.enable);
@@ -376,15 +376,15 @@ void ResponseEditor::createContextMenu()
 
 	_effectWidgets.contextMenu = Gtk::manage(new Gtk::Menu);
 	
-	_effectWidgets.addMenuItem = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::ADD,
+	_effectWidgets.addMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD,
 															   _("Add new Effect")));
-	_effectWidgets.editMenuItem = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::EDIT,
+	_effectWidgets.editMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::EDIT,
 															   _("Edit")));
-	_effectWidgets.deleteMenuItem = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::DELETE,
+	_effectWidgets.deleteMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE,
 															   _("Delete")));
-	_effectWidgets.upMenuItem = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::GO_UP,
+	_effectWidgets.upMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::GO_UP,
 															   _("Move Up")));
-	_effectWidgets.downMenuItem = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::GO_DOWN,
+	_effectWidgets.downMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::GO_DOWN,
 															   _("Move Down")));
 
 	_effectWidgets.contextMenu->append(*_effectWidgets.addMenuItem);

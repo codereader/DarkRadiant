@@ -435,7 +435,7 @@ void ReadableEditorDialog::createMenus()
 	// Append Menu
 	_appendMenu = Gtk::manage(new Gtk::Menu);
 
-	Gtk::MenuItem* append = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::ADD, _("Append Page")));
+	Gtk::MenuItem* append = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Append Page")));
 	append->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onMenuAppend));
 
 	_appendMenu->append(*append);
@@ -444,7 +444,7 @@ void ReadableEditorDialog::createMenus()
 	// Prepend Menu
 	_prependMenu = Gtk::manage(new Gtk::Menu);
 
-	Gtk::MenuItem* prepend = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::ADD, _("Prepend Page")));
+	Gtk::MenuItem* prepend = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Prepend Page")));
 	prepend->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onMenuPrepend));
 
 	_prependMenu->append(*prepend);
@@ -453,17 +453,17 @@ void ReadableEditorDialog::createMenus()
 	// Tools Menu
 	_toolsMenu = Gtk::manage(new Gtk::Menu);
 
-	Gtk::MenuItem* impSum = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::DND, _("Show last XData import summary")));
+	Gtk::MenuItem* impSum = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DND, _("Show last XData import summary")));
 	impSum->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onXdImpSum));
 	
 	_toolsMenu->append(*impSum);
 
-	Gtk::MenuItem* dupDef = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::COPY, _("Show duplicated definitions")));
+	Gtk::MenuItem* dupDef = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Show duplicated definitions")));
 	dupDef->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onDupDef));
 	
 	_toolsMenu->append(*dupDef);
 
-	Gtk::MenuItem* guiImp = Gtk::manage(new gtkutil::StockIconMenuItemmm(Gtk::Stock::DND, _("Show Gui import summary")));
+	Gtk::MenuItem* guiImp = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DND, _("Show Gui import summary")));
 	guiImp->signal_activate().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onGuiImpSum));
 
 	_toolsMenu->append(*guiImp);
