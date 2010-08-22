@@ -51,7 +51,7 @@ AnglePropertyEditor::AnglePropertyEditor(Entity* entity, const std::string& key)
 Gtk::Button* AnglePropertyEditor::constructAngleButton(
 	const std::string& icon, int angleValue)
 {
-	Gtk::Button* w = Gtk::manage(new gtkutil::IconTextButtonmm(
+	Gtk::Button* w = Gtk::manage(new gtkutil::IconTextButton(
         "", GlobalUIManager().getLocalPixbuf(icon)
     ));
 

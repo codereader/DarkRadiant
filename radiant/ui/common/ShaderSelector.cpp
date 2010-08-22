@@ -181,7 +181,7 @@ Gtk::Widget& ShaderSelector::createTreeView()
 	_treeView->set_headers_visible(false);
 
 	// Single visible column, containing the directory/shader name and the icon
-	Gtk::TreeView::Column* col = Gtk::manage(new gtkutil::IconTextColumnmm(
+	Gtk::TreeView::Column* col = Gtk::manage(new gtkutil::IconTextColumn(
 		_("Value"), _shaderTreeColumns.displayName, _shaderTreeColumns.icon)
 	);
 	// The name column should

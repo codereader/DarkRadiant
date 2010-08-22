@@ -11,7 +11,7 @@ namespace ui
 // A menu item which can be packed into the OrthoContextMenu
 class LayerOrthoContextMenuItem :
 	public IMenuItem,
-	public gtkutil::IconTextMenuItemmm
+	public gtkutil::IconTextMenuItem
 {
 private:
 	// Function object for the submenus

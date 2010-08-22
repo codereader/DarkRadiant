@@ -40,7 +40,7 @@ void LayerContextMenu::createMenuItems()
 		i != _sortedLayers.end(); ++i)
 	{
 		// Create a new menuitem
-		Gtk::MenuItem* menuItem = Gtk::manage(new gtkutil::IconTextMenuItemmm(
+		Gtk::MenuItem* menuItem = Gtk::manage(new gtkutil::IconTextMenuItem(
 			GlobalUIManager().getLocalPixbuf(LAYER_ICON), i->first));
 
 		// Connect the "onclick" signal, bind the layer ID

@@ -193,7 +193,7 @@ void LightInspector::shaderSelectionChanged(
 Gtk::Widget& LightInspector::createPointLightPanel()
 {
 	// Create the point light togglebutton
-	_pointLightToggle = Gtk::manage(new gtkutil::IconTextToggleButtonmm(
+	_pointLightToggle = Gtk::manage(new gtkutil::IconTextToggleButton(
 		_("Omni"), GlobalUIManager().getLocalPixbuf("pointLight32.png")
 	));
 	_pointLightToggle->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onPointToggle));
@@ -210,7 +210,7 @@ Gtk::Widget& LightInspector::createPointLightPanel()
 Gtk::Widget& LightInspector::createProjectedPanel()
 {
 	// Create the projected light togglebutton
-	_projLightToggle = Gtk::manage(new gtkutil::IconTextToggleButtonmm(
+	_projLightToggle = Gtk::manage(new gtkutil::IconTextToggleButton(
 		_("Projected"), GlobalUIManager().getLocalPixbuf("projLight32.png")
 	));
 	_projLightToggle->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onProjToggle));

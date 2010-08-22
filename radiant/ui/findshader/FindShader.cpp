@@ -93,13 +93,13 @@ void FindAndReplaceShader::populateWindow()
 		
 	// Create the icon buttons to open the ShaderChooser and override the size request
 	_findSelectButton = Gtk::manage(
-		new gtkutil::IconTextButtonmm("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
+		new gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
 	);
 	_findSelectButton->set_size_request(-1, -1); 
 	_findSelectButton->signal_clicked().connect(sigc::mem_fun(*this, &FindAndReplaceShader::onChooseFind));
 	
 	_replaceSelectButton = Gtk::manage(
-		new gtkutil::IconTextButtonmm("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
+		new gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
 	);
 	_replaceSelectButton->set_size_request(-1, -1); 
 	_replaceSelectButton->signal_clicked().connect(sigc::mem_fun(*this, &FindAndReplaceShader::onChooseReplace));

@@ -91,7 +91,7 @@ Gtk::Widget& EClassTree::createEClassTreeView()
 	// Pack the columns
 	// Single column with icon and name
 	Gtk::TreeViewColumn* col = Gtk::manage(
-		new gtkutil::IconTextColumnmm(_("Classname"), _eclassColumns.name, _eclassColumns.icon
+		new gtkutil::IconTextColumn(_("Classname"), _eclassColumns.name, _eclassColumns.icon
 	));
 	col->set_sort_column(_eclassColumns.name);
 	

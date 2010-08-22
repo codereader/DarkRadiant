@@ -75,7 +75,7 @@ MediaBrowser::MediaBrowser()
 	_treeView->set_headers_visible(false);
 	_widget->signal_expose_event().connect(sigc::mem_fun(*this, &MediaBrowser::_onExpose));
 
-	_treeView->append_column(*Gtk::manage(new gtkutil::IconTextColumnmm(
+	_treeView->append_column(*Gtk::manage(new gtkutil::IconTextColumn(
 		_("Shader"), _columns.displayName, _columns.icon)));
 
 	// Set the tree store to sort on this column
@@ -98,7 +98,7 @@ MediaBrowser::MediaBrowser()
 	
 	// Construct the popup context menu
 	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItemmm(
+		Gtk::manage(new gtkutil::IconTextMenuItem(
 			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON), 
 			_(LOAD_TEXTURE_TEXT)
 		)),
@@ -106,7 +106,7 @@ MediaBrowser::MediaBrowser()
 		boost::bind(&MediaBrowser::_testLoadInTexView, this)
 	);
 	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItemmm(
+		Gtk::manage(new gtkutil::IconTextMenuItem(
 			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON), 
 			_(APPLY_TEXTURE_TEXT)
 		)),
@@ -114,7 +114,7 @@ MediaBrowser::MediaBrowser()
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
 	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItemmm(
+		Gtk::manage(new gtkutil::IconTextMenuItem(
 			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON), 
 			_(SHOW_SHADER_DEF_TEXT)
 		)),

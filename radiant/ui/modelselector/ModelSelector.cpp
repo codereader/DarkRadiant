@@ -236,7 +236,7 @@ Gtk::Widget& ModelSelector::createTreeView()
 
 	// Single visible column, containing the directory/model name and the icon
 	_treeView->append_column(*Gtk::manage(
-		new gtkutil::IconTextColumnmm(_("Model Path"), _columns.filename, _columns.icon))); 
+		new gtkutil::IconTextColumn(_("Model Path"), _columns.filename, _columns.icon))); 
 	
 	// Use the TreeModel's full string search function
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContainsmm));

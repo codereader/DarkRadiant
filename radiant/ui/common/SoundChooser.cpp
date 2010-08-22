@@ -109,7 +109,7 @@ Gtk::Widget& SoundChooser::createTreeView()
 	_treeView = Gtk::manage(new Gtk::TreeView(_treeStore));
 
 	_treeView->append_column(
-		*Gtk::manage(new gtkutil::IconTextColumnmm(_("Soundshader"), _columns.displayName, _columns.icon))
+		*Gtk::manage(new gtkutil::IconTextColumn(_("Soundshader"), _columns.displayName, _columns.icon))
 	);
 	
 	_treeSelection = _treeView->get_selection();

@@ -433,10 +433,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\IconTextMenuToggle.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\IConv.h"
 			>
 		</File>
