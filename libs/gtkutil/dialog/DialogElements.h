@@ -43,7 +43,7 @@ protected:
 	 * @label: the name of this element, to be displayed next to it.
 	 */
 	DialogElement(const std::string& label) :
-		_label(Gtk::manage(new LeftAlignedLabelmm(label))),
+		_label(Gtk::manage(new LeftAlignedLabel(label))),
 		_widget(NULL)
 	{}
 

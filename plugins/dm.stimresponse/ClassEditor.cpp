@@ -150,7 +150,7 @@ ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector()
 	// Type Selector
 	widgets.hbox = Gtk::manage(new Gtk::HBox(false, 0));
 	
-	widgets.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Type:")));
+	widgets.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Type:")));
 	
 	// Cast the helper class onto a ListStore and create a new treeview
 	widgets.list = Gtk::manage(new Gtk::ComboBox(_stimTypes.getListStore()));
@@ -168,7 +168,7 @@ ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector()
 	iconRenderer->set_fixed_size(26, -1);
 	
 	widgets.hbox->pack_start(*widgets.label, false, false, 0);
-	widgets.hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*widgets.list, 12, 1.0f)), 
+	widgets.hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*widgets.list, 12, 1.0f)), 
 		true, true,	0
 	);
 	

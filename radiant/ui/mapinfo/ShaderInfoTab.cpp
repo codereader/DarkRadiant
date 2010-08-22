@@ -86,9 +86,9 @@ void ShaderInfoTab::populateTab()
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(1, 2, false));
 	_widget->pack_start(*table, false, false, 0);
 	
-	_shaderCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_shaderCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 
-	Gtk::Label* shaderLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Shaders used:")));
+	Gtk::Label* shaderLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Shaders used:")));
 		
 	shaderLabel->set_size_request(100, -1);
 	

@@ -89,19 +89,19 @@ void ConversationDialog::populateWindow()
 	add(*_dialogVBox);
 	
 	_dialogVBox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Conversation entities") + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Conversation entities") + "</b>")),
 		false, false, 0);
 
 	_dialogVBox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignmentmm(createEntitiesPanel(), 18, 1.0)),
+		*Gtk::manage(new gtkutil::LeftAlignment(createEntitiesPanel(), 18, 1.0)),
 		false, false, 0);
 
 	_dialogVBox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Conversations") + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Conversations") + "</b>")),
 		false, false, 0);
 
 	_dialogVBox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignmentmm(createConversationsPanel(), 18, 1.0)),
+		*Gtk::manage(new gtkutil::LeftAlignment(createConversationsPanel(), 18, 1.0)),
 		true, true, 0);
 	
 	// Pack in dialog buttons

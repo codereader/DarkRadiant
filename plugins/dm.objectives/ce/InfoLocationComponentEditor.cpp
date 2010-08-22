@@ -21,13 +21,13 @@ InfoLocationComponentEditor::InfoLocationComponentEditor(Component& component) :
 	_locationSpec(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_LOCATION())))
 {
 	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Entity:") + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Entity:") + "</b>")),
         false, false, 0
     );
 	pack_start(*_entSpec, false, false, 0);
 
 	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Location:") + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Location:") + "</b>")),
         false, false, 0
     );
 

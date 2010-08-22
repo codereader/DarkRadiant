@@ -27,7 +27,7 @@ CustomComponentEditor::RegHelper CustomComponentEditor::regHelper;
 CustomComponentEditor::CustomComponentEditor(Component& component) :
 	_component(&component)
 {
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(DESCRIPTION))), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_(DESCRIPTION))), false, false, 0);
 }
 
 // Write to component

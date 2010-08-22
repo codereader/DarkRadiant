@@ -44,20 +44,20 @@ MissionLogicDialog::MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 	// Overall VBox for labels and alignments
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
 	
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Default Logic")))), false, false, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Default Logic")))), false, false, 0);
 
 	// Default Logic
 	Gtk::VBox* defaultVBox = Gtk::manage(new Gtk::VBox(false, 6));
-	defaultVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(STANDARD_LOGIC_DESCR))), false, false, 0);
+	defaultVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_(STANDARD_LOGIC_DESCR))), false, false, 0);
 	defaultVBox->pack_start(*_logicEditors[-1], true, true, 0);
 
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*defaultVBox, 12, 1.0f)), true, true, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*defaultVBox, 12, 1.0f)), true, true, 0);
 	
 	// Now add all difficulty-specific editors
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Difficulty-specific Logic"))), false, false, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Difficulty-specific Logic"))), false, false, 0);
 
 	Gtk::VBox* diffVBox = Gtk::manage(new Gtk::VBox(false, 6));
-	diffVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(DIFFICULTY_LOGIC_DESCR))), false, false, 0);
+	diffVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_(DIFFICULTY_LOGIC_DESCR))), false, false, 0);
 
 	// Iterate over all editors for levels that are greater or equal 0
 	for (LogicEditorMap::iterator i = _logicEditors.lower_bound(0);
@@ -66,14 +66,14 @@ MissionLogicDialog::MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 		std::string logicStr = (boost::format(_("Logic for Difficulty Level %d")) % i->first).str();
 
 		diffVBox->pack_start(
-			*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(logicStr))), 
+			*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(logicStr))), 
 			false, false, 0
 		);
 
 		diffVBox->pack_start(*i->second, true, true, 0);
 	}
 
-	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*diffVBox, 12, 1.0f)), true, true, 0);
+	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*diffVBox, 12, 1.0f)), true, true, 0);
 
 	vbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
 	vbx->pack_end(createButtons(), false, false, 0);

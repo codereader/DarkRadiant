@@ -283,7 +283,7 @@ void SurfaceInspector::populateWindow()
 	add(*dialogVBox);
 	
 	// Create the title label (bold font)
-	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_PROPERTIES) + "</span>"
     ));
 	dialogVBox->pack_start(*topLabel, true, true, 0);
@@ -294,11 +294,11 @@ void SurfaceInspector::populateWindow()
     table->set_row_spacings(6);
     
     // Pack it into an alignment so that it is indented
-	Gtk::Widget* alignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*table, 18, 1.0));
+	Gtk::Widget* alignment = Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0));
 	dialogVBox->pack_start(*alignment, true, true, 0);
 	
 	// Create the entry field and pack it into the first table row
-	Gtk::Label* shaderLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_SHADER)));
+	Gtk::Label* shaderLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_SHADER)));
 	table->attach(*shaderLabel, 0, 1, 0, 1);
 	
 	_shaderEntry = Gtk::manage(new Gtk::Entry);
@@ -329,7 +329,7 @@ void SurfaceInspector::populateWindow()
 	// ======================== Texture Operations ====================================
 	
 	// Create the texture operations label (bold font)
-	Gtk::Label* operLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* operLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_OPERATIONS) + "</span>"
     ));
     operLabel->set_padding(0, 2); // Small spacing to the top/bottom
@@ -341,7 +341,7 @@ void SurfaceInspector::populateWindow()
     operTable->set_row_spacings(6);
     
     // Pack this into another alignment
-	Gtk::Widget* operAlignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*operTable, 18, 1.0));
+	Gtk::Widget* operAlignment = Gtk::manage(new gtkutil::LeftAlignment(*operTable, 18, 1.0));
     
     // Pack the table into the dialog
 	dialogVBox->pack_start(*operAlignment, true, true, 0);
@@ -353,7 +353,7 @@ void SurfaceInspector::populateWindow()
 	_fitTexture.hbox = Gtk::manage(new Gtk::HBox(false, 6));
 	
 	// Create the "Fit Texture" label
-	_fitTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_FIT_TEXTURE)));
+	_fitTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_FIT_TEXTURE)));
 	operTable->attach(*_fitTexture.label, 0, 1, curLine, curLine + 1);
 	
 	_fitTexture.widthAdj = Gtk::manage(new Gtk::Adjustment(1.0, 0.0, 1000.0, 1.0, 1.0, 0));
@@ -385,7 +385,7 @@ void SurfaceInspector::populateWindow()
 	curLine++;
 
 	// Create the "Align Texture" label
-	_alignTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_ALIGN_TEXTURE)));
+	_alignTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_ALIGN_TEXTURE)));
 	operTable->attach(*_alignTexture.label, 0, 1, curLine, curLine + 1);
 	
 	_alignTexture.hbox = Gtk::manage(new Gtk::HBox(true, 6));
@@ -405,7 +405,7 @@ void SurfaceInspector::populateWindow()
 	curLine++;
 	
 	// Create the "Flip Texture" label
-	_flipTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_FLIP_TEXTURE)));
+	_flipTexture.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_FLIP_TEXTURE)));
 	operTable->attach(*_flipTexture.label, 0, 1, curLine, curLine + 1);
 	
 	_flipTexture.hbox = Gtk::manage(new Gtk::HBox(true, 6));
@@ -419,7 +419,7 @@ void SurfaceInspector::populateWindow()
 	curLine++;
 
 	// Create the "Apply Texture" label
-	_applyTex.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_APPLY_TEXTURE)));
+	_applyTex.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_APPLY_TEXTURE)));
 	operTable->attach(*_applyTex.label, 0, 1, curLine, curLine + 1);
 	
 	_applyTex.hbox = Gtk::manage(new Gtk::HBox(true, 6));
@@ -433,7 +433,7 @@ void SurfaceInspector::populateWindow()
 	curLine++;
 
 	// Default Scale
-	Gtk::Label* defaultScaleLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_DEFAULT_SCALE)));
+	Gtk::Label* defaultScaleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_DEFAULT_SCALE)));
 	operTable->attach(*defaultScaleLabel, 0, 1, curLine, curLine + 1);
 	
 	Gtk::HBox* hbox2 = Gtk::manage(new Gtk::HBox(true, 6));
@@ -463,7 +463,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	manipRow.hbox = Gtk::manage(new Gtk::HBox(false, 6));
 		
 	// Create the label
-	manipRow.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(label));
+	manipRow.label = Gtk::manage(new gtkutil::LeftAlignedLabel(label));
 	table.attach(*manipRow.label, 0, 1, row, row + 1);
 		
 	// Create the entry field
@@ -511,7 +511,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	}
 	
 	// Create the label
-	manipRow.steplabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_STEP)));
+	manipRow.steplabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_STEP)));
 	manipRow.hbox->pack_start(*manipRow.steplabel, false, false, 0);
 	
 	// Create the entry field

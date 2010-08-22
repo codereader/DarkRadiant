@@ -116,7 +116,7 @@ void TransformDialog::populateWindow()
 	add(*_dialogVBox);
 	
 	// Create the rotation label (bold font)
-	_rotateLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	_rotateLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_ROTATION) + "</span>"
     ));
 	_dialogVBox->pack_start(*_rotateLabel, false, false, 0);
@@ -127,7 +127,7 @@ void TransformDialog::populateWindow()
 	_rotateTable->set_row_spacings(6);
     
     // Pack it into an alignment so that it is indented
-	Gtk::Widget* rotAlignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*_rotateTable, 18, 1.0));
+	Gtk::Widget* rotAlignment = Gtk::manage(new gtkutil::LeftAlignment(*_rotateTable, 18, 1.0));
 	_dialogVBox->pack_start(*rotAlignment, false, false, 0);
     
     _entries["rotateX"] = createEntryRow(_(LABEL_ROTX), *_rotateTable, 0, true, 0);
@@ -135,7 +135,7 @@ void TransformDialog::populateWindow()
     _entries["rotateZ"] = createEntryRow(_(LABEL_ROTZ), *_rotateTable, 2, true, 2);
     
     // Create the scale label (bold font)
-	_scaleLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	_scaleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_SCALE) + "</span>"
     ));
 	_dialogVBox->pack_start(*_scaleLabel, false, false, 0);
@@ -146,7 +146,7 @@ void TransformDialog::populateWindow()
 	_scaleTable->set_row_spacings(6);
     
     // Pack it into an alignment so that it is indented
-	Gtk::Widget* scaleAlignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*_scaleTable, 18, 1.0));
+	Gtk::Widget* scaleAlignment = Gtk::manage(new gtkutil::LeftAlignment(*_scaleTable, 18, 1.0));
 	_dialogVBox->pack_start(*scaleAlignment, false, false, 0);
 
 	_entries["scaleX"] = createEntryRow(_(LABEL_SCALEX), *_scaleTable, 0, false, 0);
@@ -216,7 +216,7 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 	entryRow.direction = (isRotator && axis != 1) ? -1 : 1;
 	
 	// Create the label
-	entryRow.label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(label));
+	entryRow.label = Gtk::manage(new gtkutil::LeftAlignedLabel(label));
 	table.attach(*entryRow.label, 0, 1, row, row + 1);
 	
 	entryRow.hbox = Gtk::manage(new Gtk::HBox(false, 6));
@@ -242,7 +242,7 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 	}
 	
 	// Create the label
-	entryRow.stepLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_STEP))); 
+	entryRow.stepLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_STEP))); 
 
 	entryRow.hbox->pack_start(*entryRow.stepLabel, false, false, 0);
 	

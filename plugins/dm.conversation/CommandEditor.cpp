@@ -184,7 +184,7 @@ void CommandEditor::populateWindow()
 
 	// Actor
 	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Actor") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Actor") + "</b>")), 
 		false, false, 0);
 
 	// Create the actor dropdown box
@@ -196,11 +196,11 @@ void CommandEditor::populateWindow()
 	_actorDropDown->pack_start(*nameRenderer, true);
 	_actorDropDown->add_attribute(nameRenderer->property_text(), _actorColumns.caption);
 
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_actorDropDown, 18, 1)), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_actorDropDown, 18, 1)), false, false, 0);
 
 	// Command Type
 	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Command") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command") + "</b>")), 
 		false, false, 0);
 
 	_commandDropDown = Gtk::manage(new Gtk::ComboBox(_commandStore));
@@ -214,11 +214,11 @@ void CommandEditor::populateWindow()
 	_commandDropDown->pack_start(*cmdNameRenderer, true);
 	_commandDropDown->add_attribute(cmdNameRenderer->property_text(), _commandColumns.caption);
 
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_commandDropDown, 18, 1)), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_commandDropDown, 18, 1)), false, false, 0);
 
 	// Command Arguments
 	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Command Arguments") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Arguments") + "</b>")), 
 		false, false, 0);
 
 	// Create the alignment container that hold the (exchangable) widget table
@@ -229,11 +229,11 @@ void CommandEditor::populateWindow()
 
 	// Wait until finished
 	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Command Properties") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Properties") + "</b>")), 
 		false, false, 0);
 
 	_waitUntilFinished = Gtk::manage(new Gtk::CheckButton(_("Wait until finished")));
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_waitUntilFinished, 18, 1)), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_waitUntilFinished, 18, 1)), false, false, 0);
 
 	// Buttons
 	vbox->pack_start(createButtonPanel(), false, false, 0);
@@ -299,7 +299,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 		if (cmdInfo.arguments.empty())
 		{
 			// No arguments, just push an empty label into the alignment
-			Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+			Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(
 				std::string("<i>") + _("None") + "</i>"));
 
 			_argAlignment->add(*label);

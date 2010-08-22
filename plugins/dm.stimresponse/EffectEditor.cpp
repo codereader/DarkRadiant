@@ -112,10 +112,10 @@ void EffectEditor::populateWindow()
 	_effectTypeCombo->pack_start(*captionRenderer, false);
 	_effectTypeCombo->add_attribute(captionRenderer->property_text(), _effectColumns.caption);
 								  
-	Gtk::Label* effectLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Effect:")));
+	Gtk::Label* effectLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Effect:")));
 	
 	effectHBox->pack_start(*effectLabel, false, false, 0);
-	effectHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_effectTypeCombo, 12, 1.0f)), 
+	effectHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_effectTypeCombo, 12, 1.0f)), 
 		true, true, 0
 	);
 	
@@ -127,7 +127,7 @@ void EffectEditor::populateWindow()
 	_dialogVBox->pack_start(*_stateToggle, false, false, 3);
 
 	Gtk::Label* argLabel = 
-		Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Arguments") + "</b>"));
+		Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Arguments") + "</b>"));
 	_dialogVBox->pack_start(*argLabel, false, false, 0);
 	
 	Gtk::Button* saveButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));

@@ -72,7 +72,7 @@ void AboutDialog::populateWindow()
 		"DarkRadiant is based on the GPL version\n"
 		"of GtkRadiant (www.qeradiant.com)\n");
 
-	Gtk::Label* title = Gtk::manage(new gtkutil::LeftAlignedLabelmm(appNameStr + buildDateStr + descStr));
+	Gtk::Label* title = Gtk::manage(new gtkutil::LeftAlignedLabel(appNameStr + buildDateStr + descStr));
 
 	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.0, 1.0, 0.0));
 	alignment->add(*title);
@@ -81,26 +81,26 @@ void AboutDialog::populateWindow()
 	
 	dialogVBox->pack_start(*topHBox, false, false, 0);
 
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		_("<b>GTK+ Properties</b>"))), false, false, 0);
 	
-	Gtk::Label* gtkVersion = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* gtkVersion = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		(boost::format(_("GTK+ Version: %d.%d.%d")) % 
 		gtk_major_version % 
 		gtk_minor_version % 
 		gtk_micro_version).str()
 	));
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*gtkVersion, 18)), false, false, 0);
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*gtkVersion, 18)), false, false, 0);
 
-	Gtk::Label* gtkmmVersion = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* gtkmmVersion = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		(boost::format(_("gtkmm Version: %d.%d.%d")) % 
 		GTKMM_MAJOR_VERSION % 
 		GTKMM_MINOR_VERSION % 
 		GTKMM_MICRO_VERSION).str()
 	));
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*gtkmmVersion, 18)), false, false, 0);
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*gtkmmVersion, 18)), false, false, 0);
 
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		_("<b>OpenGL Properties</b>"))), false, false, 0);
 	
 	// If anybody knows a better method to convert glubyte* to char*, please tell me...
@@ -108,16 +108,16 @@ void AboutDialog::populateWindow()
 	std::string versionStr = reinterpret_cast<const char*>(glGetString(GL_VERSION));
 	std::string rendererStr = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
 	
-	Gtk::Label* glVendor = Gtk::manage(new gtkutil::LeftAlignedLabelmm((boost::format(_("Vendor: %s")) % vendorStr).str()));
-	Gtk::Label* glVersion = Gtk::manage(new gtkutil::LeftAlignedLabelmm((boost::format(_("Version: %s")) % versionStr).str()));
-	Gtk::Label* glRenderer = Gtk::manage(new gtkutil::LeftAlignedLabelmm((boost::format(_("Renderer: %s")) % rendererStr).str()));
+	Gtk::Label* glVendor = Gtk::manage(new gtkutil::LeftAlignedLabel((boost::format(_("Vendor: %s")) % vendorStr).str()));
+	Gtk::Label* glVersion = Gtk::manage(new gtkutil::LeftAlignedLabel((boost::format(_("Version: %s")) % versionStr).str()));
+	Gtk::Label* glRenderer = Gtk::manage(new gtkutil::LeftAlignedLabel((boost::format(_("Renderer: %s")) % rendererStr).str()));
 	
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*glVendor, 18)), false, false, 0);
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*glVersion, 18)), false, false, 0);
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*glRenderer, 18)), false, false, 0);
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*glVendor, 18)), false, false, 0);
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*glVersion, 18)), false, false, 0);
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*glRenderer, 18)), false, false, 0);
 	
 	// OpenGL extensions
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		_("<b>OpenGL Extensions</b>"))), false, false, 0);
 	
 	Gtk::TextView* textView = Gtk::manage(new Gtk::TextView);
@@ -125,13 +125,13 @@ void AboutDialog::populateWindow()
 	textView->get_buffer()->set_text(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
 	textView->set_wrap_mode(Gtk::WRAP_WORD);
 	
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(
 		*Gtk::manage(new gtkutil::ScrolledFramemm(*textView)), 18, 1.0f)), 
 		true, true, 0);
 	
 	// DarkRadiant modules
 	// OpenGL extensions
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		_("<b>DarkRadiant Modules</b>"))), false, false, 0);
 		
 	Gtk::TextView* moduleTextView = Gtk::manage(new Gtk::TextView);
@@ -139,7 +139,7 @@ void AboutDialog::populateWindow()
 	moduleTextView->get_buffer()->set_text(module::ModuleRegistry::Instance().getModuleList(", "));
 	moduleTextView->set_wrap_mode(Gtk::WRAP_WORD);
 	
-	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(
+	dialogVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(
 		*Gtk::manage(new gtkutil::ScrolledFramemm(*moduleTextView)), 18, 1.0f)), 
 		true, true, 0
 	);

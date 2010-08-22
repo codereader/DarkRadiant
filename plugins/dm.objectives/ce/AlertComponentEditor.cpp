@@ -24,14 +24,14 @@ AlertComponentEditor::AlertComponentEditor(Component& component) :
 	_amount = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 0, 65535, 1)), 0, 0));
 	_alertLevel = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 1, 5, 1)), 0, 0));
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("AI:") + "</b>")), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("AI:") + "</b>")), false, false, 0);
 	pack_start(*_targetCombo, true, true, 0);
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Amount:") + "</b>")), false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_amount)), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Amount:") + "</b>")), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_amount)), false, false, 0);
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Minimum Alert Level:") + "</b>")), false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_alertLevel)), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Minimum Alert Level:") + "</b>")), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_alertLevel)), false, false, 0);
 
 	// Populate the SpecifierEditCombo with the first specifier
     _targetCombo->setSpecifier(

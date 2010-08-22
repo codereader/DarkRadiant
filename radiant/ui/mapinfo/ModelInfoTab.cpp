@@ -88,11 +88,11 @@ void ModelInfoTab::populateTab()
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 2, false));
 	_widget->pack_start(*table, false, false, 0);
 	
-	_modelCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
-	_skinCount = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_modelCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	_skinCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	
-	Gtk::Label* modelsLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Models used:")));
-	Gtk::Label* skinsLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Named Skins used:")));
+	Gtk::Label* modelsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Models used:")));
+	Gtk::Label* skinsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Named Skins used:")));
 		
 	modelsLabel->set_size_request(120, -1);
 	skinsLabel->set_size_request(120, -1);

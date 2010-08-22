@@ -177,7 +177,7 @@ void ResponseEditor::populatePage()
 	connectSpinButton(_propertyWidgets.chanceEntry, "chance");
 	
 	_propertyWidgets.vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _(LABEL_RESPONSE_EFFECTS) + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _(LABEL_RESPONSE_EFFECTS) + "</b>")),
 		false, false, 0
 	);
 

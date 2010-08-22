@@ -23,10 +23,10 @@ DestroyComponentEditor::DestroyComponentEditor(Component& component) :
 {
 	_amount = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 0, 65535, 1)), 0, 0));
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Item:") + "</b>")), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>")), false, false, 0);
 	pack_start(*_itemSpec, true, true, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Amount:"))), false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_amount)), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Amount:"))), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_amount)), false, false, 0);
 
     // Populate the SpecifierEditCombo with the first specifier
     _itemSpec->setSpecifier(

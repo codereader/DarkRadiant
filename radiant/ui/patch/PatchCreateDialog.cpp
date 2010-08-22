@@ -34,7 +34,7 @@ PatchCreateDialog::PatchCreateDialog() :
 	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
     // Create the title label (bold font)
-	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<span weight=\"bold\">") + _(LABEL_TITLE) + "</span>"
 	));
     topLabel->set_padding(6, 2);
@@ -42,8 +42,8 @@ PatchCreateDialog::PatchCreateDialog() :
 	_vbox->pack_start(*topLabel, false, false, 0);
     
     // Create the labels for the combo boxes
-	Gtk::Label* labelWidth = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_WIDTH_COMBO)));
-	Gtk::Label* labelHeight = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_(LABEL_HEIGHT_COMBO)));
+	Gtk::Label* labelWidth = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_WIDTH_COMBO)));
+	Gtk::Label* labelHeight = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_HEIGHT_COMBO)));
 
 	// Create the two combo boxes for width and height
 	_comboWidth = Gtk::manage(new Gtk::ComboBoxText);
@@ -66,7 +66,7 @@ PatchCreateDialog::PatchCreateDialog() :
     table->set_row_spacings(6);
 
 	// Indent the table by adding a left-padding to the alignment
-	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*table, 18, 1.0f));
+	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0f));
     
     // Pack the widgets into the table
 	table->attach(*labelWidth, 0, 1, 0, 1);

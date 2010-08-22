@@ -27,20 +27,20 @@ CustomClockedComponentEditor::CustomClockedComponentEditor(Component& component)
 	);
 	
 	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Script Function:") + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Script Function:") + "</b>")),
         false, false, 0
     );
 	pack_start(*_scriptFunction, false, false, 0);
 
 	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Clock interval:") + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Clock interval:") + "</b>")),
         false, false, 0
     );
 
 	Gtk::HBox* hbox2 = Gtk::manage(new Gtk::HBox(false, 6));
 
 	hbox2->pack_start(*_interval, false, false, 0);
-	hbox2->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("seconds"))), false, false, 0);
+	hbox2->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("seconds"))), false, false, 0);
 
 	pack_start(*hbox2, false, false, 0);
 

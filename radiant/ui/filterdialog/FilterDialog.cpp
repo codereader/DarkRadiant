@@ -155,7 +155,7 @@ void FilterDialog::populateWindow()
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create the "Filters" label	
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Filters") + "</b>")), false, false, 0);
 
 	// Pack the treeview into the main window's vbox
@@ -216,7 +216,7 @@ Gtk::Widget& FilterDialog::createFiltersPanel()
 	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_filterView)), true, true, 0);
 	hbox->pack_start(*actionVBox, false, false, 0);
 
-	return *Gtk::manage(new gtkutil::LeftAlignmentmm(*hbox, 18, 1));
+	return *Gtk::manage(new gtkutil::LeftAlignment(*hbox, 18, 1));
 }
 
 Gtk::Widget& FilterDialog::createButtonPanel()

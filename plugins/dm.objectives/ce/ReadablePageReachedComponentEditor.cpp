@@ -25,10 +25,10 @@ ReadablePageReachedComponentEditor::ReadablePageReachedComponentEditor(Component
 {
 	_pageNum = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 1, 65535, 1)), 0, 0));
 
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Readable:") + "</b>")), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Readable:") + "</b>")), false, false, 0);
 	pack_start(*_readableSpec, true, true, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Page Number:"))), false, false, 0);
-	pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*_pageNum)), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Page Number:"))), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_pageNum)), false, false, 0);
 
     // Populate the SpecifierEditCombo with the first specifier
     _readableSpec->setSpecifier(

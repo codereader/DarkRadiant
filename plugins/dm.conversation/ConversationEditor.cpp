@@ -62,16 +62,16 @@ void ConversationEditor::populateWindow()
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create the conversation properties pane
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Properties")))), false, false, 0);
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(createPropertyPane(), 18, 1)), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Properties")))), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createPropertyPane(), 18, 1)), false, false, 0);
 
 	// Actors
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Actors")))), false, false, 0);
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(createActorPanel(), 18, 1)), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Actors")))), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createActorPanel(), 18, 1)), false, false, 0);
 	
 	// Commands
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(makeBold(_("Commands")))), false, false, 0);
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(createCommandPanel(), 18, 1)), true, true, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Commands")))), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createCommandPanel(), 18, 1)), true, true, 0);
 
 	// Buttons
 	vbox->pack_start(createButtonPanel(), false, false, 0);
@@ -93,7 +93,7 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 	int row = 0;
 	
 	// Conversation name
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Name"))),
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Name"))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	_convNameEntry = Gtk::manage(new Gtk::Entry);
@@ -105,7 +105,7 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 	_convActorsWithinTalkDistance = Gtk::manage(new Gtk::CheckButton);
 	table->attach(*Gtk::manage(new gtkutil::RightAlignmentmm(*_convActorsWithinTalkDistance)),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Actors must be within talk distance"))), 
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors must be within talk distance"))), 
 				  1, 2, row, row+1);
 	
 	row++;
@@ -114,7 +114,7 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 	_convActorsAlwaysFace = Gtk::manage(new Gtk::CheckButton);
 	table->attach(*Gtk::manage(new gtkutil::RightAlignmentmm(*_convActorsAlwaysFace)),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Actors always face each other while talking"))), 
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors always face each other while talking"))), 
 				  1, 2, row, row+1);
 	
 	row++;
@@ -132,9 +132,9 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 	_maxPlayCount = Gtk::manage(new Gtk::SpinButton(*adj, 1, 0));
 	_maxPlayCount->set_size_request(60, -1);
 
-	_maxPlayCountHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Let this conversation play"))), false, false, 0);
+	_maxPlayCountHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Let this conversation play"))), false, false, 0);
 	_maxPlayCountHBox->pack_start(*_maxPlayCount, false, false, 0);
-	_maxPlayCountHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("times at maximum"))), false, false, 0);
+	_maxPlayCountHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("times at maximum"))), false, false, 0);
 
 	table->attach(*_maxPlayCountHBox, 1, 2, row, row+1);
 	

@@ -33,7 +33,7 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 
 	// Pack Label
 	hbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Selection Set: "))), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Selection Set: "))), 
 		false, false, 0);
 
 	// Pack Combo Box

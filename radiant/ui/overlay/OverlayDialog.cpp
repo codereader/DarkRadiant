@@ -74,7 +74,7 @@ Gtk::Widget& OverlayDialog::createWidgets()
 	_subWidgets["subTable"] = table;
 	
 	// Image file
-	Gtk::Label* imageLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* imageLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Image file") + "</b>"));
 	table->attach(*imageLabel, 0, 1, 0, 1, Gtk::FILL, Gtk::FILL);
 	
@@ -87,7 +87,7 @@ Gtk::Widget& OverlayDialog::createWidgets()
 	table->attach(*fileButton, 1, 2, 0, 1);
 	
 	// Transparency slider
-	Gtk::Label* transpLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* transpLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Transparency") + "</b>"));
 	table->attach(*transpLabel, 0, 1, 1, 2, Gtk::FILL, Gtk::FILL);
 	
@@ -98,7 +98,7 @@ Gtk::Widget& OverlayDialog::createWidgets()
 	table->attach(*transSlider, 1, 2, 1, 2);
 	
 	// Image size slider
-	Gtk::Label* sizeLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* sizeLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Image scale") + "</b>"));
 	table->attach(*sizeLabel, 0, 1, 2, 3, Gtk::FILL, Gtk::FILL);
 
@@ -109,7 +109,7 @@ Gtk::Widget& OverlayDialog::createWidgets()
 	table->attach(*scale, 1, 2, 2, 3);
 	
 	// Translation X slider
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 					std::string("<b>") + _("Horizontal offset") + "</b>")),
 				  0, 1, 3, 4, Gtk::FILL, Gtk::FILL);
 
@@ -120,7 +120,7 @@ Gtk::Widget& OverlayDialog::createWidgets()
 	table->attach(*transx, 1, 2, 3, 4);
 	
 	// Translation Y slider
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 					std::string("<b>") + _("Vertical offset") + "</b>")),
 				  0, 1, 4, 5, Gtk::FILL, Gtk::FILL);
 
@@ -131,7 +131,7 @@ Gtk::Widget& OverlayDialog::createWidgets()
 	table->attach(*transy, 1, 2, 4, 5);
 	
 	// Options list
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 					std::string("<b>") + _("Options") + "</b>")),
 				  0, 1, 5, 6, Gtk::FILL, Gtk::FILL);
 	
@@ -154,7 +154,7 @@ Gtk::Widget& OverlayDialog::createWidgets()
 	table->attach(*panWithViewport, 1, 2, 7, 8);
 	
 	// Pack table into vbox and return
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*table, 18, 1.0)), true, true, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0)), true, true, 0);
 	
 	return *vbox;
 }

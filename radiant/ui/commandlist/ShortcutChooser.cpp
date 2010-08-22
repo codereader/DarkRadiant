@@ -35,7 +35,7 @@ ShortcutChooser::ShortcutChooser(const std::string& title,
 	_vbox->pack_start(*_entry, false, false, 0);
 
 	// The widget to display the status text
-	_statusWidget = Gtk::manage(new gtkutil::LeftAlignedLabelmm(""));
+	_statusWidget = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	_vbox->pack_start(*_statusWidget, false, false, 0);
 }
 

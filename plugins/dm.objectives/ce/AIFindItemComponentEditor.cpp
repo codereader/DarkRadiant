@@ -20,7 +20,7 @@ AIFindItemComponentEditor::AIFindItemComponentEditor(Component& component) :
 	_component(&component)
 {
 	pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabelmm(std::string("<b>") + _("Item:") + "</b>")),
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>")),
         false, false, 0
     );
 	

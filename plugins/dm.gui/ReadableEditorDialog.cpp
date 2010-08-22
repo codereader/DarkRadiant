@@ -158,7 +158,7 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Add a Headline-label
-	Gtk::Label* generalPropertiesLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* generalPropertiesLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<span weight=\"bold\">") + _(LABEL_GENERAL_PROPERTIES) + "</span>"
 	));
 	vbox->pack_start(*generalPropertiesLabel, false, false, 0);
@@ -168,7 +168,7 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 	table->set_row_spacings(6);
 	table->set_col_spacings(6);
 
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*table, 18, 1.0)), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0)), false, false, 0);
 
 	int curRow = 0;
 
@@ -177,7 +177,7 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 	_nameEntry->set_width_chars(MIN_ENTRY_WIDTH);
 	_nameEntry->signal_key_press_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _nameEntry), false);
 	
-	Gtk::Label* nameLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Inventory Name:")));
+	Gtk::Label* nameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Inventory Name:")));
 
 	table->attach(*nameLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*_nameEntry, 1, 2, curRow, curRow+1);
@@ -189,7 +189,7 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 	_xDataNameEntry->signal_key_press_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _xDataNameEntry), false);
 	_xDataNameEntry->signal_focus_out_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onFocusOut), _xDataNameEntry), true);
 
-	Gtk::Label* xDataNameLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("XData Name:")));
+	Gtk::Label* xDataNameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("XData Name:")));
 
 	// Add a browse-button.
 	Gtk::Button* browseXdButton = Gtk::manage(new Gtk::Button);
@@ -215,10 +215,10 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 	_numPages->signal_value_changed().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onValueChanged));
 	_numPages->signal_key_press_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _numPages), false);
 
-	Gtk::Label* numPagesLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Number of Pages:")));
+	Gtk::Label* numPagesLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Number of Pages:")));
 
 	// Page Layout:
-	Gtk::Label* pageLayoutLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Layout:")));
+	Gtk::Label* pageLayoutLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Layout:")));
 
 	_oneSidedButton = Gtk::manage(new Gtk::RadioButton(_("One-sided")));
 	_oneSidedButton->add_events(Gdk::BUTTON_PRESS_MASK);
@@ -243,7 +243,7 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 
 	// Pageturn Sound
 	_pageTurnEntry = Gtk::manage(new Gtk::Entry);
-	Gtk::Label* pageTurnLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Pageturn Sound:")));
+	Gtk::Label* pageTurnLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Pageturn Sound:")));
 
 	table->attach(*pageTurnLabel, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*_pageTurnEntry, 1, 2, curRow, curRow+1);
@@ -256,7 +256,7 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Add a label for page related edits and add it to the vbox
-	Gtk::Label* pageRelatedLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(
+	Gtk::Label* pageRelatedLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<span weight=\"bold\">") + _(LABEL_PAGE_RELATED) + "</span>"
 	));
 	vbox->pack_start(*pageRelatedLabel, false, false, 0);
@@ -288,9 +288,9 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	lastPage->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::GOTO_LAST, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
 	lastPage->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onLastPage));
 	
-	Gtk::Label* currPageLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Current Page:")));
+	Gtk::Label* currPageLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Current Page:")));
 	
-	_curPageDisplay = Gtk::manage(new gtkutil::LeftAlignedLabelmm("1"));
+	_curPageDisplay = Gtk::manage(new gtkutil::LeftAlignedLabel("1"));
 
 	// Add the elements to an hbox
 	Gtk::HBox* hboxPS = Gtk::manage(new Gtk::HBox(false, 6));
@@ -303,10 +303,10 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	hboxPS->pack_start(*lastPage, false, false, 0);
 	hboxPS->pack_start(*deleteButton, true, true, 0);
 
-	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignmentmm(*hboxPS, 18, 1.0)), false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*hboxPS, 18, 1.0)), false, false, 0);
 
 	// Add a gui chooser with a browse-button
-	Gtk::Label* guiLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Gui Definition:")));
+	Gtk::Label* guiLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Gui Definition:")));
 
 	_guiEntry = Gtk::manage(new Gtk::Entry);
 	_guiEntry->signal_key_press_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _guiEntry), false);
@@ -323,7 +323,7 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	hboxGui->pack_start(*browseGuiButton, false, false, 0);
 
 	// Pack it into an alignment so that it's indented.
-	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignmentmm(*hboxGui, 18, 1.0));
+	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*hboxGui, 18, 1.0));
 	vbox->pack_start(*alignment, false, false, 0);
 
 	// Page title and body edit fields: Create a 3x3 table
@@ -334,7 +334,7 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	_textViewTable->set_col_spacing(2, 0);
 
 	// Pack it into an alignment and add it to vbox
-	Gtk::Alignment* alignmentTable = Gtk::manage(new gtkutil::LeftAlignmentmm(*_textViewTable, 18, 1.0));
+	Gtk::Alignment* alignmentTable = Gtk::manage(new gtkutil::LeftAlignment(*_textViewTable, 18, 1.0));
 	vbox->pack_start(*alignmentTable, true, true, 0);
 
 	int curRow = 0;
@@ -352,7 +352,7 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	curRow++;
 
 	// Create "title" label and title-textViews and add them to the second row of the table. Add the key-press-event.
-	Gtk::Label* titleLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Title:")));
+	Gtk::Label* titleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Title:")));
 
 	_textViewTitle = Gtk::manage(new Gtk::TextView);
 	_textViewTitle->set_wrap_mode(Gtk::WRAP_WORD);
@@ -371,7 +371,7 @@ Gtk::Widget& ReadableEditorDialog::createPageRelatedInterface()
 	curRow++;
 
 	// Create "body" label and body-textViews and add them to the third row of the table. Add the key-press-event.
-	Gtk::Label* bodyLabel = Gtk::manage(new gtkutil::LeftAlignedLabelmm(_("Body:")));
+	Gtk::Label* bodyLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Body:")));
 
 	_textViewBody = Gtk::manage(new Gtk::TextView);
 	_textViewBody->set_wrap_mode(Gtk::WRAP_WORD);
