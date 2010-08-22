@@ -349,10 +349,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\ComboBox.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\ConsoleView.cpp"
 			>
 		</File>
