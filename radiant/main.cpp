@@ -64,12 +64,8 @@ int main (int argc, char* argv[]) {
 	// This needs to happen before gtk_init() to set up the environment for GTK
 	language::LanguageManager().init(ctx);
 
-	// Initialise GTK
-	gtk_disable_setlocale();
-	gtk_init(&argc, &argv);
-
-	// Initialise gtkmm
-	Gtk::Main gtkmm_main(argc, argv);
+	// Initialise gtkmm (don't set locale)
+	Gtk::Main gtkmm_main(argc, argv, false);
 
 	// Initialise gtksourceviewmm
 	gtksourceview::init();
