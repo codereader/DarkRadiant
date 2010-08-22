@@ -53,7 +53,7 @@ void FloatingLayout::activate() {
 
 	Glib::RefPtr<Gtk::Window> groupDialog(GlobalGroupDialog().getDialogWindow());
 
-	Gtk::Widget* page = Gtk::manage(new gtkutil::FramedWidgetmm(
+	Gtk::Widget* page = Gtk::manage(new gtkutil::FramedWidget(
 		*GlobalTextureBrowser().constructWindow(groupDialog)
 	));
 

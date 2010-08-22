@@ -40,16 +40,16 @@ void RegularLayout::activate() {
 	 // greebo: The mainframe window acts as parent for the camwindow
 	_camWnd->setContainer(parent);
 	// Pack in the camera window
-	Gtk::Widget* camWindow = Gtk::manage(new gtkutil::FramedWidgetmm(*_camWnd->getWidget()));
+	Gtk::Widget* camWindow = Gtk::manage(new gtkutil::FramedWidget(*_camWnd->getWidget()));
 
 	// Allocate a new OrthoView and set its ViewType to XY
 	XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
     xyWnd->setViewType(XY);
     // Create a framed window out of the view's internal widget
-	Gtk::Widget* xyView = Gtk::manage(new gtkutil::FramedWidgetmm(*xyWnd->getWidget()));
+	Gtk::Widget* xyView = Gtk::manage(new gtkutil::FramedWidget(*xyWnd->getWidget()));
 
 	// Create the texture window
-	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidgetmm(
+	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidget(
 		*GlobalTextureBrowser().constructWindow(parent)
 	));
 

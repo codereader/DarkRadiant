@@ -63,7 +63,7 @@ void SplitPaneLayout::constructLayout()
 	 // greebo: The mainframe window acts as parent for the camwindow
 	_camWnd->setContainer(parent);
 
-	_camera = Gtk::manage(new gtkutil::FramedWidgetmm(*_camWnd->getWidget()));
+	_camera = Gtk::manage(new gtkutil::FramedWidget(*_camWnd->getWidget()));
 
 	// Allocate paned widgets
 	_splitPane.horizPane.reset(new Gtk::HPaned);
@@ -93,7 +93,7 @@ void SplitPaneLayout::constructLayout()
 	distributeWidgets();
 	
     {      
-		Gtk::Frame* textureBrowser = Gtk::manage(new gtkutil::FramedWidgetmm(
+		Gtk::Frame* textureBrowser = Gtk::manage(new gtkutil::FramedWidget(
 			*GlobalTextureBrowser().constructWindow(parent)
 		));
 
@@ -438,7 +438,7 @@ void SplitPaneLayout::distributeWidgets()
 			}
 
 			// Frame the widget to make it ready for packing
-			i->second.widget = Gtk::manage(new gtkutil::FramedWidgetmm(*i->second.xyWnd->getWidget()));
+			i->second.widget = Gtk::manage(new gtkutil::FramedWidget(*i->second.xyWnd->getWidget()));
 		}
 	}
 

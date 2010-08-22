@@ -103,7 +103,7 @@ void TexTool::populateWindow()
 	textoolbar->unset_flags(Gtk::CAN_FOCUS);
     
 	// Create the GL widget
-	Gtk::Frame* frame = Gtk::manage(new gtkutil::FramedWidgetmm(*_glWidget));
+	Gtk::Frame* frame = Gtk::manage(new gtkutil::FramedWidget(*_glWidget));
 	
 	// Connect the events
 	_glWidget->set_events(Gdk::KEY_PRESS_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);

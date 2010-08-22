@@ -40,14 +40,14 @@ void EmbeddedLayout::activate()
 	 // greebo: The mainframe window acts as parent for the camwindow
 	_camWnd->setContainer(parent);
 	// Pack in the camera window
-	Gtk::Frame* camWindow = Gtk::manage(new gtkutil::FramedWidgetmm(*_camWnd->getWidget()));
+	Gtk::Frame* camWindow = Gtk::manage(new gtkutil::FramedWidget(*_camWnd->getWidget()));
 
 	// Allocate a new OrthoView and set its ViewType to XY
 	XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
     xyWnd->setViewType(XY);
 
     // Create a framed window out of the view's internal widget
-	Gtk::Frame* xyView = Gtk::manage(new gtkutil::FramedWidgetmm(*xyWnd->getWidget()));
+	Gtk::Frame* xyView = Gtk::manage(new gtkutil::FramedWidget(*xyWnd->getWidget()));
 
 	// Detach the notebook from the groupdialog to fit it into our pane
 	Gtk::VBox* groupPane = Gtk::manage(new Gtk::VBox(false, 0));
@@ -96,7 +96,7 @@ void EmbeddedLayout::activate()
 	GlobalGroupDialog().hideDialogWindow();
 
 	// Create the texture window
-	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidgetmm(
+	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidget(
 		*GlobalTextureBrowser().constructWindow(GlobalMainFrame().getTopLevelWindow())
 	));
 
