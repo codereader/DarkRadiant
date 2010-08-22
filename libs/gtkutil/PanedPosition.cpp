@@ -1,11 +1,10 @@
 #include "PanedPosition.h"
 
-#include "gtk/gtkvpaned.h"
-#include "gtk/gtkhpaned.h"
 #include "string/string.h"
 #include "iregistry.h"
 
-namespace {
+namespace
+{
 	const int DEFAULT_POSITION = 200;
 }
 
@@ -13,20 +12,33 @@ namespace gtkutil
 {
 
 PanedPosition::PanedPosition() : 
-	_position(DEFAULT_POSITION)
+	_position(DEFAULT_POSITION),
+	_paned(NULL)
 {}
 
-// Connect the passed GtkPaned to this object
-void PanedPosition::connect(GtkWidget* paned) {
-	_paned = GTK_PANED(paned);
-	g_signal_connect(G_OBJECT(_paned), "notify::position", G_CALLBACK(onPositionChange), this);
+PanedPosition::~PanedPosition()
+{
+	if (_paned != NULL)
+	{
+		_connection.disconnect();
+	}
 }
 
-const int PanedPosition::getPosition() const {
+void PanedPosition::connect(Gtk::Paned* paned)
+{
+	_paned = paned;
+
+	_connection = _paned->connect_property_changed_with_return("position", 
+		sigc::mem_fun(*this, &PanedPosition::onPositionChange));
+}
+
+const int PanedPosition::getPosition() const
+{
 	return _position;
 }
 
-void PanedPosition::setPosition(int position) {
+void PanedPosition::setPosition(int position)
+{
 	_position = position;
 }
 
@@ -40,11 +52,11 @@ void PanedPosition::loadFromPath(const std::string& path)
 	_position = strToInt(GlobalRegistry().getAttribute(path, "position"));
 }
 
-// Applies the internally stored size/position info to the GtkWindow
-// The algorithm was adapted from original GtkRadiant code (window.h) 
-void PanedPosition::applyPosition() {
-	if (_paned != NULL) {
-		gtk_paned_set_position(_paned, _position);
+void PanedPosition::applyPosition()
+{
+	if (_paned != NULL)
+	{
+		_paned->set_position(_position);
 	}
 }
 
@@ -52,10 +64,7 @@ void PanedPosition::applyMinPosition()
 {
 	if (_paned == NULL) return;
 
-	int pos;
-	g_object_get(_paned, "min-position", &pos, NULL);
-
-	setPosition(pos);
+	setPosition(_paned->property_min_position());
 	applyPosition();
 }
 
@@ -63,27 +72,23 @@ void PanedPosition::applyMaxPosition()
 {
 	if (_paned == NULL) return;
 
-	int pos;
-	g_object_get(_paned, "max-position", &pos, NULL);
-
-	setPosition(pos);
+	setPosition(_paned->property_max_position());
 	applyPosition();
 }
 
 // Reads the position from the GtkPaned and normalises it to the paned size
-void PanedPosition::readPosition() {
-	if (_paned != NULL) {
-		_position = gtk_paned_get_position(_paned);
+void PanedPosition::readPosition()
+{
+	if (_paned != NULL)
+	{
+		_position = _paned->get_position();
 	}
 }
 
-// The static GTK callback that gets invoked on position change 
-gboolean PanedPosition::onPositionChange(GtkWidget* widget, gpointer none, PanedPosition* self) {
-
+void PanedPosition::onPositionChange()
+{
 	// Tell the object to read the new position from GTK	
-	self->readPosition();
-
-	return FALSE;
+	readPosition();
 }
 	
 } // namespace gtkutil

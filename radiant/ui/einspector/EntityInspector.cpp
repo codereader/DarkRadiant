@@ -107,7 +107,7 @@ void EntityInspector::construct()
 
 	_mainWidget->pack_start(*_paned, true, true, 0);
 
-	_panedPosition.connect(GTK_WIDGET(_paned->gobj()));
+	_panedPosition.connect(_paned);
 
 	// Reload the information from the registry
 	restoreSettings();

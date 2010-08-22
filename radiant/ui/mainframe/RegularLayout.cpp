@@ -85,8 +85,8 @@ void RegularLayout::activate() {
 	_regular.texCamPane->set_position(350);
 
 	// Connect the pane position trackers
-	_regular.posHPane.connect(GTK_WIDGET(_regular.horizPane->gobj()));
-	_regular.posTexCamPane.connect(GTK_WIDGET(_regular.texCamPane->gobj()));
+	_regular.posHPane.connect(_regular.horizPane.get());
+	_regular.posTexCamPane.connect(_regular.texCamPane);
 	
 	// Now attempt to load the paned positions from the registry
 	restoreStateFromPath(RKEY_REGULAR_ROOT);

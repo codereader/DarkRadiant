@@ -75,8 +75,8 @@ void EmbeddedLayout::activate()
 	_groupCamPane->set_position(350);
 	
 	// Connect the pane position trackers
-	_posHPane.connect(GTK_WIDGET(_horizPane->gobj())); // TODO
-	_posGroupCamPane.connect(GTK_WIDGET(_groupCamPane->gobj()));
+	_posHPane.connect(_horizPane.get());
+	_posGroupCamPane.connect(_groupCamPane);
 
 	// Attempt to restore this layout's state
 	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
