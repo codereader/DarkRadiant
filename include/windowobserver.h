@@ -37,13 +37,14 @@ typedef struct _GdkEventButton GdkEventButton;
 class WindowObserver
 {
 public:
-  virtual ~WindowObserver() {}
-  virtual void release() = 0;
-  virtual void onSizeChanged(int width, int height) = 0;
-  virtual void onMouseDown(const WindowVector& position, GdkEventButton* event) = 0;
-  virtual void onMouseUp(const WindowVector& position, GdkEventButton* event) = 0;
-  virtual void onMouseMotion(const WindowVector& position, const unsigned int& state) = 0;
-  virtual void cancelOperation() = 0;
+	virtual ~WindowObserver() {}
+
+	virtual void release() = 0;
+	virtual void onSizeChanged(int width, int height) = 0;
+	virtual void onMouseDown(const WindowVector& position, GdkEventButton* ev) = 0;
+	virtual void onMouseUp(const WindowVector& position, GdkEventButton* ev) = 0;
+	virtual void onMouseMotion(const WindowVector& position, unsigned int state) = 0;
+	virtual void cancelOperation() = 0;
 };
 
 #endif

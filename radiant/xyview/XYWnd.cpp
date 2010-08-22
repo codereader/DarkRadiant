@@ -123,7 +123,7 @@ XYWnd::XYWnd(int id) :
 	GlobalCamera().addCameraObserver(this);
 
 	// Let the window observer connect its handlers to the GL widget first (before the event manager)
-	m_window_observer->addObservedWidget(GTK_WIDGET(_glWidget->gobj()));
+	m_window_observer->addObservedWidget(_glWidget);
 
 	GlobalEventManager().connect(_glWidget);
 }
@@ -156,7 +156,7 @@ void XYWnd::destroyXYView() {
 	{
 		if (m_window_observer != NULL)
 		{
-			m_window_observer->removeObservedWidget(GTK_WIDGET(_glWidget->gobj()));
+			m_window_observer->removeObservedWidget(_glWidget);
 		}
 
 		GlobalEventManager().disconnect(_glWidget);
@@ -202,7 +202,7 @@ void XYWnd::setParent(const Glib::RefPtr<Gtk::Window>& parent)
 	if (_parent && parent != _parent)
 	{
 		// Parent change, disconnect first
-		m_window_observer->removeObservedWidget(GTK_WIDGET(_parent->gobj()));
+		m_window_observer->removeObservedWidget(_parent);
 	}
 
 	_parent = parent;
@@ -212,7 +212,7 @@ void XYWnd::setParent(const Glib::RefPtr<Gtk::Window>& parent)
 	_windowPosition.connect(static_cast<Gtk::Window*>(_parent->get_toplevel()));
 	_windowPosition.applyPosition();
 	
-	m_window_observer->addObservedWidget(GTK_WIDGET(_parent->gobj()));
+	m_window_observer->addObservedWidget(_parent);
 }
 
 const Glib::RefPtr<Gtk::Window>& XYWnd::getParent() const
