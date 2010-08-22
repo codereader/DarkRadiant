@@ -5,53 +5,67 @@
 #include <string>
 #include "icommandsystem.h"
 #include "ColourScheme.h"
+
+#include <gtkmm/liststore.h>
 #include <gdk/gdkevents.h>
 
-typedef struct _GtkWidget GtkWidget; 
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GtkListStore GtkListStore;
-
-namespace ui {
-
-// Constants
-namespace {
-
-    const int EDITOR_DEFAULT_SIZE_X = 650;
-    const int EDITOR_DEFAULT_SIZE_Y = 450;
-    
-    const int COLOURS_PER_COLUMN = 10;
+namespace Gtk
+{
+	class TreeView;
+	class HBox;
+	class Button;
+	class Frame;
+	class ColorButton;
 }
-	
+
+namespace ui
+{
+
 class ColourSchemeEditor :
 	public gtkutil::BlockingTransientWindow
 {
 private:
 	// The treeview and its selection pointer
-	GtkWidget* _treeView;
-	GtkTreeSelection* _selection;
-	
+	Gtk::TreeView* _treeView;
+		
+	struct Columns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		Columns() { add(name); }
+
+		Gtk::TreeModelColumn<Glib::ustring> name;
+	};
+
 	// The list store containing the list of ColourSchemes		
-	GtkListStore* _listStore;
+	Columns _columns;
+	Glib::RefPtr<Gtk::ListStore> _listStore;
 	
 	// The vbox containing the colour buttons and its frame
-	GtkWidget* _colourBox;
-	GtkWidget* _colourFrame;
+	Gtk::HBox* _colourBox;
+	Gtk::Frame* _colourFrame;
 	
 	// The "delete scheme" button
-	GtkWidget* _deleteButton;
+	Gtk::Button* _deleteButton;
 
 public:
 	// Constructor
 	ColourSchemeEditor();
+
+	// Command target
+	static void editColourSchemes(const cmd::ArgumentList& args);
 	
+protected:
+	// Override TransientWindow's delete event
+	virtual void _onDeleteEvent();
+
 private:
 	// private helper functions
 	void 		populateTree();
     void 		createTreeView();
-	GtkWidget* 	constructWindow();
-	GtkWidget* 	constructButtons();
-	GtkWidget* 	constructTreeviewButtons();
-	GtkWidget* 	constructColourSelector(ColourItem& colour, const std::string& name);
+	Gtk::Widget& constructWindow();
+	Gtk::Widget& constructButtons();
+	Gtk::Widget& constructTreeviewButtons();
+	Gtk::Widget& constructColourSelector(ColourItem& colour, const std::string& name);
 	void 		updateColourSelectors();
 	
 	// Queries the user for a string and returns it
@@ -74,14 +88,13 @@ private:
 	// Deletes a scheme from the list store (called from deleteScheme())
 	void 		deleteSchemeFromList();
 	
-	// GTK Callbacks
-	static void callbackSelChanged(GtkWidget* widget, ColourSchemeEditor* self);
-	static void callbackOK(GtkWidget* widget, ColourSchemeEditor* self);
-	static void callbackCancel(GtkWidget* widget, ColourSchemeEditor* self);
-	static void callbackColorChanged(GtkWidget* widget, ColourItem* colour);
-	static void callbackDelete(GtkWidget* widget, ColourSchemeEditor* self);
-	static void callbackCopy(GtkWidget* widget, ColourSchemeEditor* self);
-	static void _onDeleteEvent(GtkWidget*, GdkEvent*, ColourSchemeEditor*);
+	// gtkmm Callbacks
+	void callbackSelChanged();
+	void callbackOK();
+	void callbackCancel();
+	void callbackColorChanged(Gtk::ColorButton* widget, ColourItem* colour);
+	void callbackDelete();
+	void callbackCopy();
 	
 	// Destroy window and delete self, called by both Cancel and window
 	// delete callbacks
@@ -89,11 +102,7 @@ private:
 	
 	// Updates the windows after a colour change
 	static void updateWindows();
-	
-public:
-	// Command target
-	static void editColourSchemes(const cmd::ArgumentList& args);
-}; // class ColourSchemeEditor
+};
 
 } // namespace ui
 
