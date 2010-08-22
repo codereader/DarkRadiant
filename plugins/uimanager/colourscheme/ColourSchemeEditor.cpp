@@ -12,6 +12,7 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/frame.h>
 #include <gtkmm/box.h>
+#include <gtkmm/paned.h>
 #include <gtkmm/colorbutton.h>
 
 #include "gtkutil/TreeModel.h"
@@ -26,8 +27,6 @@ namespace ui {
 	namespace
 	{
 		// Constants
-		const int EDITOR_DEFAULT_SIZE_X = 650;
-		const int EDITOR_DEFAULT_SIZE_Y = 450;
     	const int COLOURS_PER_COLUMN = 10;
 
 		const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
@@ -40,9 +39,6 @@ ColourSchemeEditor::ColourSchemeEditor() :
 	_listStore(Gtk::ListStore::create(_columns))
 {	
 	set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-    set_default_size(EDITOR_DEFAULT_SIZE_X, EDITOR_DEFAULT_SIZE_Y);
-	
-	// Get the constructed windowframe and pack it into the editor widget
 	set_border_width(12);
 
 	add(constructWindow());
@@ -87,6 +83,7 @@ void ColourSchemeEditor::createTreeView()
 {
 	// Create the treeView
 	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
+	_treeView->set_size_request(200, -1);
 	
 	// Create a new column and set its parameters  
 	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumnmm("Colour", _columns.name, false)));
@@ -136,9 +133,6 @@ Gtk::Widget& ColourSchemeEditor::constructWindow()
 	// Place the buttons at the bottom of the window
 	vbox->pack_end(constructButtons(), false, false, 0);
 
-	// This is the box for the treeview and the whole rest
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 12));
-
 	// VBox containing the tree view and copy/delete buttons underneath
 	Gtk::VBox* treeAndButtons = Gtk::manage(new Gtk::VBox(false, 6));
 
@@ -148,18 +142,20 @@ Gtk::Widget& ColourSchemeEditor::constructWindow()
 	treeAndButtons->pack_start(*Gtk::manage(new gtkutil::ScrolledFramemm(*_treeView)), true, true, 0);
 	treeAndButtons->pack_end(constructTreeviewButtons(), false, false, 0);
 
-	// Pack the treeViewFrame into the hbox
-	hbox->pack_start(*treeAndButtons, false, false, 0);
-
 	// The Box containing the Colour, pack it into the right half of the hbox
 	_colourFrame = Gtk::manage(new Gtk::Frame);
 	_colourBox = Gtk::manage(new Gtk::HBox(false, 5));
 	
 	_colourFrame->add(*_colourBox);
 
-	hbox->pack_start(*_colourFrame, true, true, 0);
+	// This is the divider for the treeview and the whole rest
+	Gtk::HPaned* paned = Gtk::manage(new Gtk::HPaned);
 
-	vbox->pack_start(*hbox, true, true, 0);
+	// Pack the treeViewFrame into the hbox
+	paned->add1(*treeAndButtons);
+	paned->add2(*_colourFrame);
+
+	vbox->pack_start(*paned, true, true, 0);
 	
 	return *vbox;
 }
