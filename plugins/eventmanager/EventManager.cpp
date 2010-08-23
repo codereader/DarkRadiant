@@ -359,7 +359,8 @@ void EventManager::connect(Gtk::Widget* widget)
 
 	if (result.second == false)
 	{
-		globalErrorStream() << "EventManager::connect: Widget is already connected." << std::endl;
+		// Widget already connected
+		return;
 	}
 
 	// Key press
@@ -384,7 +385,8 @@ void EventManager::disconnect(Gtk::Widget* widget)
 	}
 	else
 	{
-		globalWarningStream()  << "EventManager::disconnect: Widget is not connected." << std::endl;
+		// Widget not connected
+		return;
 	}
 }
 
