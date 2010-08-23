@@ -145,7 +145,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
 	ui::MediaBrowser::registerPreferences();
-    GlobalTextureBrowser().construct();
+	ui::TextureBrowser::construct();
 	entity::registerCommands();
     map::AutoSaver().init();
 }
@@ -158,6 +158,7 @@ void RadiantModule::shutdownModule()
 
 	map::PointFile::Instance().destroy();
 	ui::OverlayDialog::destroy();
+	ui::TextureBrowser::destroy();
     
     // Remove all the event listeners, otherwise the shared_ptrs 
     // lock the instances. This is just for safety, usually all

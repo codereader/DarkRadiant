@@ -57,6 +57,9 @@ public:
 	int current_row;
 };
 
+class TextureBrowser;
+typedef boost::shared_ptr<TextureBrowser> TextureBrowserPtr;
+
 class TextureBrowser :
 	public RegistryKeyObserver,
 	public MaterialManager::ActiveShadersObserver,
@@ -121,11 +124,6 @@ public:
   	// Constructor
 	TextureBrowser();
 	
-	/** greebo: This registeres the commands to the EventManager and
-	 * 			adds the options to the preferences dialog (called by plugin.cpp).
-	 */
-	void construct();
-
 	// Triggers a refresh
 	void update();
   
@@ -175,7 +173,15 @@ public:
 	 */
 	static void registerPreferencesPage();
 
+	static void construct();
+	static void destroy();
+
+	// Accessor to the singleton
+	static TextureBrowser& Instance();
+
 private:
+	static TextureBrowserPtr& InstancePtr();
+
 	bool checkSeekInMediaBrowser(); // sensitivity check
 	void onSeekInMediaBrowser();
 
