@@ -182,7 +182,7 @@ void SerialisableComboBox_Index::importFromString(const std::string& str)
 	int activeId = strToInt(str);
 	set_active(activeId);
 
-	int newId = get_active();
+	int newId = get_active_row_number();
 
 	if (activeId != newId)
 	{
@@ -194,7 +194,7 @@ void SerialisableComboBox_Index::importFromString(const std::string& str)
 
 std::string SerialisableComboBox_Index::exportToString() const
 {
-	return intToStr(get_active());
+	return intToStr(get_active_row_number());
 }
 
 SerialisableComboBox_IndexWrapper::SerialisableComboBox_IndexWrapper(Gtk::ComboBoxText* combo) :
@@ -206,7 +206,7 @@ void SerialisableComboBox_IndexWrapper::importFromString(const std::string& str)
 	int activeId = strToInt(str);
 	_combo->set_active(activeId);
 
-	int newId = _combo->get_active();
+	int newId = _combo->get_active_row_number();
 
 	if (activeId != newId)
 	{
@@ -218,7 +218,7 @@ void SerialisableComboBox_IndexWrapper::importFromString(const std::string& str)
 
 std::string SerialisableComboBox_IndexWrapper::exportToString() const
 {
-	return intToStr(_combo->get_active());
+	return intToStr(_combo->get_active_row_number());
 }
 
 // SerialisableComboBox_Text
