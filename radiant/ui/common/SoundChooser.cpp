@@ -57,8 +57,8 @@ namespace
  */
 class SoundShaderPopulator :
 	public SoundShaderVisitor,
-	public gtkutil::VFSTreePopulatormm,
-	public gtkutil::VFSTreePopulatormm::Visitor
+	public gtkutil::VFSTreePopulator,
+	public gtkutil::VFSTreePopulator::Visitor
 {
 private:
 	const SoundChooser::TreeColumns& _columns;
@@ -66,7 +66,7 @@ public:
 	// Constructor
 	SoundShaderPopulator(const Glib::RefPtr<Gtk::TreeStore>& treeStore,
 						 const SoundChooser::TreeColumns& columns) :
-		gtkutil::VFSTreePopulatormm(treeStore),
+		gtkutil::VFSTreePopulator(treeStore),
 		_columns(columns)
 	{}
 	

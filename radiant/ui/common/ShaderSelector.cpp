@@ -92,7 +92,7 @@ namespace {
 
 	// VFSPopulatorVisitor to fill in column data for the populator tree nodes
 	class DataInserter : 
-		public gtkutil::VFSTreePopulatormm::Visitor
+		public gtkutil::VFSTreePopulator::Visitor
 	{
 	private:
 		const ShaderSelector::ShaderTreeColumns& _columns;
@@ -134,10 +134,10 @@ namespace {
 		ShaderSelector::PrefixList& _prefixes;
 
 		// The populator that gets called to add the parsed elements
-		gtkutil::VFSTreePopulatormm& _populator;
+		gtkutil::VFSTreePopulator& _populator;
 
 		// Constructor
-		ShaderNameFunctor(gtkutil::VFSTreePopulatormm& populator, ShaderSelector::PrefixList& prefixes) :
+		ShaderNameFunctor(gtkutil::VFSTreePopulator& populator, ShaderSelector::PrefixList& prefixes) :
 			_prefixes(prefixes), 
 			_populator(populator)
 		{}
@@ -167,7 +167,7 @@ Gtk::Widget& ShaderSelector::createTreeView()
 	treeStore->set_sort_column(_shaderTreeColumns.displayName, Gtk::SORT_ASCENDING);
 
 	// Instantiate the helper class that populates the tree according to the paths
-	gtkutil::VFSTreePopulatormm populator(treeStore);
+	gtkutil::VFSTreePopulator populator(treeStore);
 	
 	ShaderNameFunctor func(populator, _prefixes);
 	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &func, _1));

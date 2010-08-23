@@ -105,8 +105,8 @@ void GuiSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
 
 void GuiSelector::fillTrees()
 {
-	gtkutil::VFSTreePopulatormm popOne(_oneSidedStore);
-	gtkutil::VFSTreePopulatormm popTwo(_twoSidedStore);
+	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
+	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
 
 	ReadablePopulator walker(popOne, popTwo, _editorDialog.getRefPtr());
 	gui::GuiManager::Instance().foreachGui(walker);

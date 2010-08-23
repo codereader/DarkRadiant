@@ -165,7 +165,7 @@ namespace
  * Visitor class to fill in column data for the skins tree.
  */
 class SkinTreeVisitor
-: public gtkutil::VFSTreePopulatormm::Visitor
+: public gtkutil::VFSTreePopulator::Visitor
 {
 private:
 	const SkinChooser::TreeColumns& _columns;
@@ -240,7 +240,7 @@ void SkinChooser::populateSkins()
 	
 	// Create a TreePopulator for the tree store and pass in each of the
 	// skin names.
-	gtkutil::VFSTreePopulatormm pop(_treeStore, allSkins);
+	gtkutil::VFSTreePopulator pop(_treeStore, allSkins);
 
 	for (StringList::const_iterator i = skins.begin();
 		 i != skins.end();

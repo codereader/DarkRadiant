@@ -16,8 +16,8 @@ namespace ui
  * taking account of display folders and mod names.
  */
 class EntityClassTreePopulator : 
-	public gtkutil::VFSTreePopulatormm,
-	public gtkutil::VFSTreePopulatormm::Visitor,
+	public gtkutil::VFSTreePopulator,
+	public gtkutil::VFSTreePopulator::Visitor,
 	public EntityClassVisitor 
 {
 private:

@@ -25,7 +25,7 @@ class ReadableEditorDialog;
 // Selecting a gui definition updates the guiView for previewing.
 class GuiSelector :
 	public gtkutil::BlockingTransientWindow,
-	public gtkutil::VFSTreePopulatormm::Visitor
+	public gtkutil::VFSTreePopulator::Visitor
 {
 public:
 	// Treestore enum

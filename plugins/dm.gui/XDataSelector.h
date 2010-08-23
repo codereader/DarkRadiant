@@ -22,7 +22,7 @@ class ReadableEditorDialog;
 // ReadableEditorDialog for previewing.
 class XDataSelector :
 	public gtkutil::BlockingTransientWindow,
-	public gtkutil::VFSTreePopulatormm::Visitor
+	public gtkutil::VFSTreePopulator::Visitor
 {
 private:
 	// Treestore enum
