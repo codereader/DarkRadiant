@@ -230,6 +230,8 @@ void GroupDialog::onRadiantShutdown()
 
 	// Call the PersistentTransientWindow::destroy chain
 	destroy();
+
+	InstancePtr().reset();
 }
 
 Gtk::Widget* GroupDialog::addPage(const std::string& name,

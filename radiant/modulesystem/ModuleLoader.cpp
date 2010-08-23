@@ -77,9 +77,9 @@ void Loader::unloadModules()
 {
 	while (!_dynamicLibraryList.empty())
 	{
-		DynamicLibraryPtr lib = *_dynamicLibraryList.begin();
+		DynamicLibraryPtr lib = _dynamicLibraryList.back();
 
-		_dynamicLibraryList.erase(_dynamicLibraryList.begin());
+		_dynamicLibraryList.pop_back();
 
 		lib.reset();
 	}

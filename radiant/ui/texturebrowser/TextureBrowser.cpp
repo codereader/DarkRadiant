@@ -981,6 +981,29 @@ void TextureBrowser::construct()
 	TextureBrowser::registerPreferencesPage();
 }
 
+void TextureBrowser::destroy()
+{
+	InstancePtr().reset();
+}
+
+TextureBrowser& TextureBrowser::Instance()
+{
+	TextureBrowserPtr& instancePtr = InstancePtr();
+
+	if (instancePtr == NULL)
+	{
+		instancePtr.reset(new TextureBrowser);
+	}
+
+	return *instancePtr;
+}
+
+TextureBrowserPtr& TextureBrowser::InstancePtr()
+{
+	static TextureBrowserPtr _instance;
+	return _instance;
+}
+
 void TextureBrowser::update()
 {
 	heightChanged();
@@ -992,6 +1015,5 @@ void TextureBrowser::update()
  */
 ui::TextureBrowser& GlobalTextureBrowser()
 {
-	static boost::shared_ptr<ui::TextureBrowser> _instance(new ui::TextureBrowser);
-	return *_instance;
+	return ui::TextureBrowser::Instance();
 }
