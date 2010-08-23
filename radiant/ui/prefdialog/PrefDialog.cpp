@@ -120,6 +120,9 @@ PrefPagePtr PrefDialog::createOrFindPage(const std::string& path)
 void PrefDialog::onRadiantShutdown()
 {
 	hide();
+
+	// Destroy the singleton
+	InstancePtr().reset();
 }
 
 void PrefDialog::_preShow()
@@ -188,22 +191,23 @@ void PrefDialog::toggle(const cmd::ArgumentList& args)
 PrefDialogPtr& PrefDialog::InstancePtr()
 {
 	static PrefDialogPtr _instancePtr;
-	
-	if (_instancePtr == NULL)
-	{
-		// Not yet instantiated, do it now
-		_instancePtr = PrefDialogPtr(new PrefDialog);
-		
-		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
-	}
-	
 	return _instancePtr;
 }
 
 PrefDialog& PrefDialog::Instance()
 {
-	return *InstancePtr();
+	PrefDialogPtr& instancePtr = InstancePtr();
+
+	if (instancePtr == NULL)
+	{
+		// Not yet instantiated, do it now
+		instancePtr.reset(new PrefDialog);
+		
+		// Register this instance with GlobalRadiant() at once
+		GlobalRadiant().addEventListener(instancePtr);
+	}
+
+	return *instancePtr;
 }
 
 void PrefDialog::selectPage()
