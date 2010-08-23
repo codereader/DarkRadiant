@@ -339,10 +339,6 @@ void PrefPage::appendNamedWidget(const std::string& name, Gtk::Widget& widget)
 				  0, 1, 0, 1,
 				  Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
 
-	table->attach(widget, 
-				  0, 1, 0, 1,
-				  Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
-
 	table->attach(widget, 1, 3, 0, 1, Gtk::EXPAND|Gtk::FILL, Gtk::AttachOptions(0));
 
 	_vbox->pack_start(*table, false, false, 0);
