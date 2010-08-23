@@ -15,11 +15,11 @@ struct EClassTreeColumns;
  */
 class EClassTreeBuilder :
 	public EntityClassVisitor,
-	public gtkutil::VFSTreePopulatormm::Visitor
+	public gtkutil::VFSTreePopulator::Visitor
 {
 private:
 	// The helper class, doing the tedious treeview insertion for us.
-	gtkutil::VFSTreePopulatormm _treePopulator;
+	gtkutil::VFSTreePopulator _treePopulator;
 
 	const EClassTreeColumns& _columns;
 

@@ -20,16 +20,16 @@ namespace ui {
  */
 class PrefTreePopulator :
 	public PrefPage::Visitor,
-	public gtkutil::VFSTreePopulatormm::Visitor 
+	public gtkutil::VFSTreePopulator::Visitor 
 {
 private:
 	// The helper class creating the GtkTreeIter
-	gtkutil::VFSTreePopulatormm& _vfsPopulator;
+	gtkutil::VFSTreePopulator& _vfsPopulator;
 	
 	PrefDialog& _dialog;
 	
 public:
-	PrefTreePopulator(gtkutil::VFSTreePopulatormm& vfsPopulator, PrefDialog& dialog) :
+	PrefTreePopulator(gtkutil::VFSTreePopulator& vfsPopulator, PrefDialog& dialog) :
 		_vfsPopulator(vfsPopulator),
 		_dialog(dialog)
 	{}

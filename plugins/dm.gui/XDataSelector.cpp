@@ -82,7 +82,7 @@ void XDataSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
 void XDataSelector::fillTree()
 {
 	// Start adding to tree.
-	gtkutil::VFSTreePopulatormm populator(_store);
+	gtkutil::VFSTreePopulator populator(_store);
 
 	for (XData::StringVectorMap::const_iterator it = _files.begin(); it != _files.end(); ++it)
 	{

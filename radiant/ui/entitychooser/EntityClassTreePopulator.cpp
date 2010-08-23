@@ -20,7 +20,7 @@ namespace
 // Constructor
 EntityClassTreePopulator::EntityClassTreePopulator(const Glib::RefPtr<Gtk::TreeStore>& store,
 												   const EntityClassChooser::TreeColumns& columns)
-: gtkutil::VFSTreePopulatormm(store),
+: gtkutil::VFSTreePopulator(store),
   _store(store),
   _columns(columns),
   _folderKey(GlobalRegistry().get(FOLDER_KEY_PATH))

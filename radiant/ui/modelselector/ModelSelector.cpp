@@ -257,8 +257,8 @@ void ModelSelector::populateModels()
 	_treeStoreWithSkins->clear();
 
 	// Create a VFSTreePopulator for the treestore
-	gtkutil::VFSTreePopulatormm pop(_treeStore);
-	gtkutil::VFSTreePopulatormm popSkins(_treeStoreWithSkins);
+	gtkutil::VFSTreePopulator pop(_treeStore);
+	gtkutil::VFSTreePopulator popSkins(_treeStoreWithSkins);
 	
 	// Use a ModelFileFunctor to add paths to the populator
 	ModelFileFunctor functor(pop, popSkins);

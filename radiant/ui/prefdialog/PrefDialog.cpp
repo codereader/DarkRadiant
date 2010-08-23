@@ -98,7 +98,7 @@ void PrefDialog::updateTreeStore()
 	_prefTree->clear();
 	
 	// Instantiate a new populator class
-	gtkutil::VFSTreePopulatormm vfsTreePopulator(_prefTree);
+	gtkutil::VFSTreePopulator vfsTreePopulator(_prefTree);
 	
 	PrefTreePopulator visitor(vfsTreePopulator, *this);
 	

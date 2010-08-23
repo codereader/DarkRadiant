@@ -21,7 +21,7 @@ namespace
  * created by the VFS tree populator.
  */
 class ModelDataInserter : 
-	public gtkutil::VFSTreePopulatormm::Visitor
+	public gtkutil::VFSTreePopulator::Visitor
 {
 private:
 	const ModelSelector::TreeColumns& _columns;
