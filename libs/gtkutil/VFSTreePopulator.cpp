@@ -1,28 +1,23 @@
 #include "VFSTreePopulator.h"
 
-#include <gtk/gtk.h>
-
 namespace gtkutil
 {
 
-// Constructor
-VFSTreePopulator::VFSTreePopulator(GtkTreeStore* store, GtkTreeIter* toplevel)
-: _store(store),
-  _topLevel(toplevel)
-{
-}
+VFSTreePopulator::VFSTreePopulator(const Glib::RefPtr<Gtk::TreeStore>& store, 
+									Gtk::TreeModel::iterator toplevel) : 
+	_store(store),
+	_topLevel(toplevel)
+{}
 
 // Destructor frees the DirIterMap
 VFSTreePopulator::~VFSTreePopulator()
 {
-	for (NamedIterMap::iterator i = _iters.begin(); i != _iters.end(); ++i) {
-		gtk_tree_iter_free(i->second);
-	}
+	_iters.clear();
 }
 
 // Interface add function
-void VFSTreePopulator::addPath(const std::string& path) {
-	
+void VFSTreePopulator::addPath(const std::string& path)
+{
 	// Call the addRecursive method to create all necessary nodes
 	addRecursive(path);
 	
@@ -31,11 +26,13 @@ void VFSTreePopulator::addPath(const std::string& path) {
 }
 
 // Recursive add function
-GtkTreeIter* VFSTreePopulator::addRecursive(const std::string& path) {
-
+const Gtk::TreeModel::iterator& VFSTreePopulator::addRecursive(const std::string& path)
+{
 	// Look up candidate in the map and return it if found	
 	NamedIterMap::iterator it = _iters.find(path);
-	if (it != _iters.end()) { 
+
+	if (it != _iters.end())
+	{ 
 		return it->second;
 	}
 	
@@ -49,32 +46,28 @@ GtkTreeIter* VFSTreePopulator::addRecursive(const std::string& path) {
 	
 	// Call recursively to get parent iter, leaving it at the toplevel if
 	// there is no slash
-	GtkTreeIter* parIter = _topLevel;
-	if (slashPos != std::string::npos) {
-		parIter = addRecursive(path.substr(0, slashPos));
-	}
+	const Gtk::TreeModel::iterator& parIter = 
+		slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos)) : _topLevel;
 
-	// Append a node to the tree view for this child, 
-	GtkTreeIter iter;
-	gtk_tree_store_append(_store, &iter, parIter);
+	// Append a node to the tree view for this child
+	Gtk::TreeModel::iterator iter = parIter ? _store->append(parIter->children()) : _store->append();
 	
-	// Add a copy of the GtkTreeIter* to our hashmap and return it
-	GtkTreeIter* dynIter = gtk_tree_iter_copy(&iter);
-	_iters[path] = dynIter;
-	return dynIter;
+	// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
+	std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
+		NamedIterMap::value_type(path, iter));
+	
+	return result.first->second;
 }
 
 // Traversal function
-void VFSTreePopulator::forEachNode(Visitor& visitor) {
-	
+void VFSTreePopulator::forEachNode(Visitor& visitor)
+{
 	// Visit every entry in the iter map
-	for (NamedIterMap::iterator i = _iters.begin(); i != _iters.end(); ++i) {
-		visitor.visit(_store, 
-					  i->second, 
-					  i->first,
+	for (NamedIterMap::iterator i = _iters.begin(); i != _iters.end(); ++i)
+	{
+		visitor.visit(_store, i->second, i->first,
 					  _explicitPaths.find(i->first) != _explicitPaths.end());
 	}
-		
 }
 
-}
+} // namespace

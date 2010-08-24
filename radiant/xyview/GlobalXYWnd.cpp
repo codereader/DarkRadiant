@@ -36,8 +36,7 @@ namespace
 }
 
 // Constructor
-XYWndManager::XYWndManager() :
-	_globalParentWindow(NULL)
+XYWndManager::XYWndManager()
 {}
 
 /* greebo: This method restores all xy views from the information stored in the registry.
@@ -406,7 +405,8 @@ void XYWndManager::setActiveXY(int index) {
 	}
 }
 
-void XYWndManager::setGlobalParentWindow(GtkWindow* globalParentWindow) {
+void XYWndManager::setGlobalParentWindow(const Glib::RefPtr<Gtk::Window>& globalParentWindow)
+{
 	_globalParentWindow = globalParentWindow;
 }
 

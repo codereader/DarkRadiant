@@ -6,8 +6,6 @@
 #include "icommandsystem.h"
 #include "ipreferencesystem.h"
 #include "iuimanager.h"
-#include "gtk/gtkmenu.h"
-#include "gtk/gtkcontainer.h"
 #include "string/string.h"
 #include "os/file.h"
 
@@ -182,7 +180,7 @@ void MRU::constructMenu() {
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 	
 	// Create the "empty" MRU menu item (the desensitised one)
-	GtkWidget* empty = menuManager.insert(
+	Gtk::Widget* empty = menuManager.insert(
 		"main/file/exit", 
 		"mruempty", 
 		ui::menuItem, 
@@ -190,17 +188,19 @@ void MRU::constructMenu() {
 		"", // empty icon
 		"" // empty event
 	);
+
 	_emptyMenuItem.setWidget(empty);
-	gtk_widget_hide(empty);
+	empty->hide();
 
 	// Add all the created widgets to the menu
-	for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); m++) {
+	for (MenuItems::iterator m = _menuItems.begin(); m != _menuItems.end(); ++m)
+	{
 		MRUMenuItem& item = (*m);
 		
 		const std::string commandName = std::string("MRUOpen") + intToStr(item.getIndex());
 		
 		// Create the toplevel menu item
-		GtkWidget* menuItem = menuManager.insert(
+		Gtk::Widget* menuItem = menuManager.insert(
 			"main/file/exit", 
 			"MRU" + intToStr(item.getIndex()), 
 			ui::menuItem, 

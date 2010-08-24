@@ -1,39 +1,71 @@
 #ifndef MEDIABROWSER_H_
 #define MEDIABROWSER_H_
 
+#include "iradiant.h"
 #include "icommandsystem.h"
 #include "ui/common/TexturePreviewCombo.h"
 
 #include "gtkutil/menu/PopupMenu.h"
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktreestore.h>
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtktreeselection.h>
+#include <gtkmm/treestore.h>
+#include <gtkmm/treeselection.h>
+
+namespace Gtk
+{
+	class TreeView;
+	class Widget;
+	class VBox;
+}
 
 namespace ui
 {
+
+class MediaBrowser;
+typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
 
 /** Media Browser page of the group dialog, which allows browsing of
  * individual textures by name and loading them into the texture window
  * or applying directly to map geometry.
  */
-
-class MediaBrowser
+class MediaBrowser :
+	public RadiantEventListener
 {
+public:
+	// Treemodel definition
+	struct TreeColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TreeColumns()
+		{ 
+			add(displayName);
+			add(fullName);
+			add(icon);
+			add(isFolder);
+			add(isOtherMaterialsFolder);
+		}
+
+		Gtk::TreeModelColumn<std::string> displayName; // std::string is sorting faster
+		Gtk::TreeModelColumn<std::string> fullName;
+		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
+		Gtk::TreeModelColumn<bool> isFolder;
+		Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;
+	};
+
+private:
 	// Main widget
-	GtkWidget* _widget;
-	
+	boost::shared_ptr<Gtk::VBox> _widget;
+
 	// Main tree store, view and selection
-	GtkTreeStore* _treeStore;
-	GtkWidget* _treeView;
-	GtkTreeSelection* _selection;
+	TreeColumns _columns;
+	Glib::RefPtr<Gtk::TreeStore> _treeStore;
+	Gtk::TreeView* _treeView;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	
 	// Context menu
 	gtkutil::PopupMenu _popupMenu;
 	
 	// Texture preview combo (GL widget and info table)
-	TexturePreviewCombo _preview;
+	TexturePreviewCombo* _preview;
 	
 	// false, if the tree is not yet initialised.
 	bool _isPopulated;
@@ -49,16 +81,13 @@ private:
 	
 	/* GTK CALLBACKS */
 	
-	static gboolean _onExpose(GtkWidget*, GdkEventExpose*, MediaBrowser*);
-	static void _onSelectionChanged(GtkWidget*, MediaBrowser*);
+	bool _onExpose(GdkEventExpose*);
+	void _onSelectionChanged();
 
 	/**
 	 * greebo: Custom tree sort function to list folders before textures
 	 */
-	static gint treeViewSortFunc(GtkTreeModel *model, 
-								  GtkTreeIter *a, 
-								  GtkTreeIter *b, 
-								  gpointer user_data);
+	int treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b);
 	
 	/* Tree selection query functions */
 	
@@ -67,6 +96,10 @@ private:
 	
 	// Populates the treeview
 	void populate();
+
+	/** Return the singleton instance.
+	 */
+	static MediaBrowserPtr& getInstancePtr();
 	
 public:
 	
@@ -77,9 +110,11 @@ public:
 	/** Return the main widget for packing into
 	 * the groupdialog or other parent container.
 	 */
-	GtkWidget* getWidget() {
-		gtk_widget_show_all(_widget);
-		return _widget;
+	Gtk::Widget* getWidget()
+	{
+		assert(_widget != NULL);
+		_widget->show_all();
+		return _widget.get();
 	}
 	
 	/** Constructor creates GTK widgets.
@@ -104,6 +139,9 @@ public:
 	 * Called during startup, checks for preloading texture tree.
 	 */
 	static void init();
+
+	// Radiant Event Listener
+	void onRadiantShutdown();
 
 	/** 
 	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.

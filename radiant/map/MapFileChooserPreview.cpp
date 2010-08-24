@@ -3,42 +3,46 @@
 #include "imap.h"
 #include "i18n.h"
 #include "itextstream.h"
-#include <gtk/gtkvbox.h>
 #include "scenelib.h"
-#include <gtk/gtktextview.h>
 #include "brush/BrushModule.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "selection/algorithm/Primitives.h"
 #include "map/algorithm/WorldspawnArgFinder.h"
 
+#include <gtkmm/textview.h>
+
 namespace map {
 
 MapFileChooserPreview::MapFileChooserPreview() :
-	_previewContainer(gtk_vbox_new(FALSE, 0))
+	Gtk::VBox(false, 0),
+	_preview(Gtk::manage(new ui::MapPreview))
 {
-	_preview.setSize(400);
+	_preview->setSize(400);
 
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 0);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
 	
-	gtk_box_pack_start(GTK_BOX(vbox), _preview, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), createUsagePanel(), TRUE, TRUE, 0);
+	vbox->pack_start(*_preview, false, false, 0);
+	vbox->pack_start(createUsagePanel(), true, true, 0);
 
-	gtk_box_pack_start(GTK_BOX(_previewContainer), vbox, TRUE, TRUE, 0);
+	pack_start(*vbox, true, true, 0);
+
+	show_all();
+}
+
+Gtk::Widget& MapFileChooserPreview::getPreviewWidget()
+{
+	return *this;
 }
 
 // Create the entity usage information panel
-GtkWidget* MapFileChooserPreview::createUsagePanel() {
+Gtk::Widget& MapFileChooserPreview::createUsagePanel()
+{
 	// Create a GtkTextView
-	_usageInfo = gtk_text_view_new();
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_usageInfo), GTK_WRAP_WORD);
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(_usageInfo), FALSE);
+	_usageInfo = Gtk::manage(new Gtk::TextView);
+	_usageInfo->set_wrap_mode(Gtk::WRAP_WORD);
+	_usageInfo->set_editable(false);
 
-	return gtkutil::ScrolledFrame(_usageInfo);	
-}
-
-GtkWidget* MapFileChooserPreview::getPreviewWidget() {
-	gtk_widget_show_all(_previewContainer);
-	return _previewContainer;
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_usageInfo));
 }
 
 /**
@@ -52,8 +56,8 @@ void MapFileChooserPreview::onFileSelectionChanged(
 	// Attempt to load file
 	/*bool success = */setMapName(newFileName);
 
-	_preview.initialisePreview();
-	gtk_widget_queue_draw(_preview);
+	_preview->initialisePreview();
+	_preview->queue_draw();
 	
 	// Always have the preview active
 	fileChooser.setPreviewActive(true);
@@ -61,13 +65,15 @@ void MapFileChooserPreview::onFileSelectionChanged(
 	updateUsageInfo();
 }
 
-void MapFileChooserPreview::updateUsageInfo() {
+void MapFileChooserPreview::updateUsageInfo()
+{
 	// Get the underlying buffer object	
-	GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_usageInfo));
+	Glib::RefPtr<Gtk::TextBuffer> buf = _usageInfo->get_buffer();
 
 	std::string usage("");
 
-	if (_mapResource != NULL && _mapResource->getNode() != NULL) {
+	if (_mapResource != NULL && _mapResource->getNode() != NULL)
+	{
 		// Retrieve the root node
 		scene::INodePtr root = _mapResource->getNode();
 
@@ -77,23 +83,26 @@ void MapFileChooserPreview::updateUsageInfo() {
 
 		usage = finder.getFoundValue();
 
-		if (usage.empty()) {
+		if (usage.empty())
+		{
 			usage = _("<no description>");
 		}
 	}
 
-	gtk_text_buffer_set_text(buf, usage.c_str(), -1);
+	buf->set_text(usage);
 }
 
-bool MapFileChooserPreview::setMapName(const std::string& name) {
+bool MapFileChooserPreview::setMapName(const std::string& name)
+{
 	_mapName = name;
 	_mapResource = GlobalMapResourceManager().capture(_mapName);
 
 	bool success = false;
 
-	if (_mapResource == NULL) {
+	if (_mapResource == NULL)
+	{
 		// NULLify the preview map root on failure
-		_preview.setRootNode(scene::INodePtr());
+		_preview->setRootNode(scene::INodePtr());
 		return success;
 	}
 
@@ -102,18 +111,20 @@ bool MapFileChooserPreview::setMapName(const std::string& name) {
 	std::string prevValue = GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG);
 	GlobalRegistry().set(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, "1");
 
-	if (_mapResource->load()) {
+	if (_mapResource->load())
+	{
 		// Get the node from the reosource
 		scene::INodePtr root = _mapResource->getNode();
 
 		assert(root != NULL);
 
 		// Set the new rootnode
-		_preview.setRootNode(root);
+		_preview->setRootNode(root);
 
 		success = true;
 	}
-	else {
+	else
+	{
 		// Map load failed
 		globalWarningStream() << "Could not load map: " << _mapName << std::endl;
 	}

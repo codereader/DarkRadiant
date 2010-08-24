@@ -10,8 +10,13 @@
 #include "DifficultyEditor.h"
 #include "DifficultySettingsManager.h"
 
-// Forward decl.
-typedef struct _GtkNotebook GtkNotebook;
+namespace Gtk
+{
+	class Widget;
+	class VBox;
+	class Notebook;
+	class Button;
+}
 
 namespace ui {
 
@@ -29,9 +34,9 @@ class DifficultyDialog :
 	public gtkutil::BlockingTransientWindow
 {
 	// The overall dialog vbox (used to quickly disable the whole dialog)
-	GtkWidget* _dialogVBox;
+	Gtk::VBox* _dialogVBox;
 
-	GtkNotebook* _notebook;
+	Gtk::Notebook* _notebook;
 
 	// The difficulty settings manager
 	difficulty::DifficultySettingsManager _settingsManager;
@@ -39,7 +44,7 @@ class DifficultyDialog :
 	std::vector<DifficultyEditorPtr> _editors;
 	
 	// The close button to toggle the view
-	GtkWidget* _closeButton;
+	Gtk::Button* _closeButton;
 	
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
@@ -60,15 +65,14 @@ private:
 	/* WIDGET POPULATION */
 	void populateWindow(); 			// Main window
 	void createDifficultyEditors();
-	GtkWidget* createButtons(); 	// Dialog buttons
+	Gtk::Widget& createButtons(); 	// Dialog buttons
 	
 	// Button callbacks
-	static void onSave(GtkWidget* button, DifficultyDialog* self);
-	static void onClose(GtkWidget* button, DifficultyDialog* self);
+	void onSave();
+	void onClose();
 
 	// The keypress handler for catching the keys in the treeview
-	static gboolean onWindowKeyPress(
-		GtkWidget* dialog, GdkEventKey* event, DifficultyDialog* self);
+	bool onWindowKeyPress(GdkEventKey* ev);
 
 }; // class DifficultyDialog
 

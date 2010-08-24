@@ -6,9 +6,6 @@
 #include "iuimanager.h"
 #include "imainframe.h"
 
-#include <gtk/gtkmain.h>
-#include <gtk/gtkgl.h>
-
 #include "os/file.h"
 #include "os/path.h"
 
@@ -23,6 +20,10 @@
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "settings/LanguageManager.h"
+
+#include <gtkmm/main.h>
+#include <gtkmm/gl/init.h>
+#include <gtksourceviewmm/init.h>
 
 #ifdef _PROFILE
 #include "Profile.h"
@@ -63,12 +64,14 @@ int main (int argc, char* argv[]) {
 	// This needs to happen before gtk_init() to set up the environment for GTK
 	language::LanguageManager().init(ctx);
 
-	// Initialise GTK
-	gtk_disable_setlocale();
-	gtk_init(&argc, &argv);
+	// Initialise gtkmm (don't set locale)
+	Gtk::Main gtkmm_main(argc, argv, false);
 
-    // Initialise GTKGLExt
-    gtk_gl_init(&argc, &argv);
+	// Initialise gtksourceviewmm
+	gtksourceview::init();
+
+    // Initialise GTKGLExtmm
+	Gtk::GL::init(argc, argv);
 
 	// reset some locale settings back to standard c
     // this is e.g. needed for parsing float values from textfiles 
@@ -83,7 +86,7 @@ int main (int argc, char* argv[]) {
 		// (emits a warning if the file already exists (due to a previous startup failure)) 
 		applog::PIDFile pidFile(PID_FILENAME);
 
-		ui::Splash::Instance().show();
+		ui::Splash::Instance().show_all();
 	
 		// Initialise the Reference in the GlobalModuleRegistry() accessor. 
 		module::RegistryReference::Instance().setRegistry(module::getRegistry());
@@ -122,7 +125,8 @@ int main (int argc, char* argv[]) {
 	  
 		ui::Splash::Instance().setProgressAndText(_("DarkRadiant Startup Complete"), 1.0f);  
 
-		ui::Splash::Instance().hide();
+		// Delete the splash screen here
+		ui::Splash::Instance().destroy();
 
 		// Scope ends here, PIDFile is deleted by its destructor
 	}
@@ -132,12 +136,12 @@ int main (int argc, char* argv[]) {
 	if (!profile::CheckAutomatedTestRun()) {
 		// Start the GTK main loop. This will run until a quit command is given by
 		// the user
-		gtk_main();
+		Gtk::Main::run();
 	}
 #else 
 	// Start the GTK main loop. This will run until a quit command is given by
 	// the user
-	gtk_main();
+	Gtk::Main::run();
 #endif
 	
 	GlobalMap().freeMap();

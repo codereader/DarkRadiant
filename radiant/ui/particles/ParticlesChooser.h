@@ -1,58 +1,81 @@
 #ifndef PARTICLESCHOOSER_H_
 #define PARTICLESCHOOSER_H_
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkliststore.h>
-#include <gtk/gtktreeselection.h>
+#include "gtkutil/window/BlockingTransientWindow.h"
 
+#include "iradiant.h"
 #include <string>
 #include <map>
+
+#include <gtkmm/liststore.h>
+#include <gtkmm/treeselection.h>
 
 namespace ui
 {
 
+class ParticlesChooser;
+typedef boost::shared_ptr<ParticlesChooser> ParticlesChooserPtr;
+
 /**
  * Chooser dialog for selection (and possibly preview) of particle systems.
  */
-class ParticlesChooser
+class ParticlesChooser :
+	public gtkutil::BlockingTransientWindow,
+	public RadiantEventListener
 {
-	// Main dialog
-	GtkWidget* _widget;
+public:
+	// Treemodel definition
+	struct ListColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListColumns() { add(name); }
+
+		Gtk::TreeModelColumn<Glib::ustring> name;
+	};
+
+	typedef std::map<std::string, Gtk::TreeModel::iterator> IterMap;
+
+private:
+	ListColumns _columns;
 
 	// Liststore for the main particles list, and its selection object
-	GtkListStore* _particlesList;
-	GtkTreeSelection* _selection;
+	Glib::RefPtr<Gtk::ListStore> _particlesList;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	
 	// Last selected particle
 	std::string _selectedParticle;
 	
 	// Map of particle names -> GtkTreeIter* for quick selection
-	typedef std::map<std::string, GtkTreeIter*> IterMap;
 	IterMap _iterMap;
 	
 private:
 	
-	/* GTK CALLBACKS */
-	static gboolean _onDestroy(GtkWidget*, GdkEvent*, ParticlesChooser*);
-	static void _onOK(GtkWidget*, ParticlesChooser*);
-	static void _onCancel(GtkWidget*, ParticlesChooser*);
-	static void _onSelChanged(GtkWidget*, ParticlesChooser*);
+	// gtkmm callbacks
+	void _onOK();
+	void _onCancel();
+	void _onSelChanged();
 	
 	// Constructor creates GTK elements
 	ParticlesChooser();
 	
 	/* WIDGET CONSTRUCTION */
-	GtkWidget* createTreeView();
-	GtkWidget* createButtons();
+	Gtk::Widget& createTreeView();
+	Gtk::Widget& createButtons();
 	
 	// Static instance owner
 	static ParticlesChooser& getInstance();
+
+	static ParticlesChooserPtr& getInstancePtr();
 	
 	// Show the widgets and enter recursive main loop
 	void showAndBlock(const std::string& current);
 	
 	// Populate the list of particles
 	void populateParticleList();
+
+protected:
+	// Override TransientWindow::_onDeleteEvent
+	void _onDeleteEvent();
 
 public:
 	
@@ -70,7 +93,9 @@ public:
 	 * choice was cancelled or invalid.
 	 */
 	static std::string chooseParticle(const std::string& currentParticle = "");
-	
+
+	// RadiantEventListener
+	void onRadiantShutdown();
 };
 
 }

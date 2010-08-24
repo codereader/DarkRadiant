@@ -6,13 +6,19 @@
 #include <boost/shared_ptr.hpp>
 #include "gtkutil/GLWidget.h"
 
+#include <gtkmm/box.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/treeselection.h>
+
 /* FORWARD DECLS */
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GdkEventExpose GdkEventExpose;
 class Material;
 typedef boost::shared_ptr<Material> MaterialPtr;
+
+namespace Gtk
+{
+	class Widget;
+	class TreeView;
+}
 
 namespace ui
 {
@@ -37,7 +43,8 @@ namespace ui
  * allow populating the infostore widget with common lightshader/shader information.
  * 
  */
-class ShaderSelector
+class ShaderSelector :
+	public Gtk::VBox
 {
 public:
 	
@@ -50,28 +57,49 @@ public:
 		/** greebo: This gets invoked upon selection changed to allow the client
 		 * 			class to display custom information in the selector's liststore.  
 		 */
-		virtual void shaderSelectionChanged(const std::string& shader, GtkListStore* listStore) = 0;
+		virtual void shaderSelectionChanged(const std::string& shader, 
+											const Glib::RefPtr<Gtk::ListStore>& listStore) = 0;
+	};
+
+	struct ShaderTreeColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ShaderTreeColumns() { add(displayName); add(shaderName); add(icon); }
+
+		Gtk::TreeModelColumn<std::string> displayName;
+		Gtk::TreeModelColumn<std::string> shaderName;
+		Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > icon;
 	};
 	
 private:
-	// Main widget container
-	GtkWidget* _widget;
+	ShaderTreeColumns _shaderTreeColumns;
 	
 	// Tree view and selection object
-	GtkWidget* _treeView;
-	GtkTreeSelection* _selection;
+	Gtk::TreeView* _treeView;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	
 	// GL preview widget
-	gtkutil::GLWidget _glWidget;
-	
-	// List store for info table
-	GtkListStore* _infoStore;
+	gtkutil::GLWidget* _glWidget;
 	
 	// The client of this class.
 	Client* _client;
 	
 	// TRUE, if the first light layers are to be rendered instead of the editorimages
 	bool _isLightTexture;
+
+	struct InfoStoreColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		InfoStoreColumns() { add(attribute); add(value); }
+
+		Gtk::TreeModelColumn<Glib::ustring> attribute;
+		Gtk::TreeModelColumn<Glib::ustring> value;
+	};
+
+	InfoStoreColumns _infoStoreColumns;
+
+	// List store for info table
+	Glib::RefPtr<Gtk::ListStore> _infoStore;
 	
 public:
 	// This is where the prefixes are stored (needed to filter the possible shaders)
@@ -85,12 +113,6 @@ public:
 	 * @isLightTexture: set this to TRUE to render the light textures instead of the editor images
 	 */
 	ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture = false);
-	
-	/** Operator cast to GtkWidget*, for packing into parent widget.
-	 */
-	operator GtkWidget* () {
-		return _widget;
-	}
 	
 	/** Return the shader selected by the user, or an empty string if there
 	 * was no selection.
@@ -112,24 +134,30 @@ public:
 	/** greebo: Static info display function (can be used by other UI classes as well
 	 * 			to allow code reuse).
 	 */
-	static void displayShaderInfo(MaterialPtr shader, GtkListStore* listStore);
+	static void displayShaderInfo(const MaterialPtr& shader, 
+								  const Glib::RefPtr<Gtk::ListStore>& listStore,
+								  int attrCol = 0,   // attribute column number 
+								  int valueCol = 1); // value column number
 	
 	/** greebo: Populates the given listStore with the light shader information.
 	 */
-	static void displayLightShaderInfo(MaterialPtr shader, GtkListStore* listStore);
+	static void displayLightShaderInfo(const MaterialPtr& shader, 
+									   const Glib::RefPtr<Gtk::ListStore>& listStore,
+									   int attrCol = 0,   // attribute column number 
+									   int valueCol = 1); // value column number
 	
 private:
 
 	// Create GUI elements
-	GtkWidget* createTreeView();
-	GtkWidget* createPreview();
+	Gtk::Widget& createTreeView();
+	Gtk::Widget& createPreview();
 	
 	// Update the info in the table (passes the call to the client class)
 	void updateInfoTable();
 	
-	/* GTK CALLBACKS */
-	static void _onExpose(GtkWidget*, GdkEventExpose*, ShaderSelector*);
-	static void _onSelChange(GtkWidget*, ShaderSelector*);
+	// gtkmm callbacks
+	bool _onExpose(GdkEventExpose*);
+	void _onSelChange();
 };
 
 } // namespace ui

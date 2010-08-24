@@ -4,28 +4,30 @@
 #include "itextstream.h"
 #include "gtkutil/FramedWidget.h"
 
-#include <gtk/gtkhbox.h>
-#include <gtk/gtktable.h>
-#include <gtk/gtkimage.h>
-#include <gtk/gtklabel.h>
+#include <gtkmm/box.h>
+#include <gtkmm/table.h>
+#include <gtkmm/image.h>
+#include <gtkmm/label.h>
 
 namespace ui {
 
 StatusBarManager::StatusBarManager() :
-	_statusBar(gtk_table_new(1, 1, FALSE))
+	_statusBar(Gtk::manage(new Gtk::Table(1, 1, false)))
 {
-	gtk_widget_show_all(_statusBar);
+	_statusBar->show_all();
 
 	// greebo: Set the size request of the table to prevent it from "breaking" the window width
     // which can cause lockup problems on GTK+ 2.12
-	gtk_widget_set_size_request(_statusBar, 100, -1);
+	_statusBar->set_size_request(100, -1);
 }
 
-GtkWidget* StatusBarManager::getStatusBar() {
+Gtk::Widget* StatusBarManager::getStatusBar()
+{
 	return _statusBar;
 }
 
-void StatusBarManager::addElement(const std::string& name, GtkWidget* widget, int pos) {
+void StatusBarManager::addElement(const std::string& name, Gtk::Widget* widget, int pos)
+{
 	// Get a free position
 	int freePos = getFreePosition(pos);
 
@@ -38,7 +40,8 @@ void StatusBarManager::addElement(const std::string& name, GtkWidget* widget, in
 	rebuildStatusBar();
 }
 
-GtkWidget* StatusBarManager::getElement(const std::string& name) {
+Gtk::Widget* StatusBarManager::getElement(const std::string& name)
+{
 	// Look up the key
 	ElementMap::const_iterator found = _elements.find(name);
 	
@@ -46,23 +49,25 @@ GtkWidget* StatusBarManager::getElement(const std::string& name) {
 	return (found != _elements.end()) ? found->second->toplevel : NULL;
 }
 
-void StatusBarManager::addTextElement(const std::string& name, const std::string& icon, int pos) {
+void StatusBarManager::addTextElement(const std::string& name, const std::string& icon, int pos)
+{
 	// Get a free position
 	int freePos = getFreePosition(pos);
 
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 
-	if (!icon.empty()) {
-		GtkWidget* img = gtk_image_new_from_pixbuf(
+	if (!icon.empty())
+	{
+		Gtk::Image* img = Gtk::manage(new Gtk::Image(
 			GlobalUIManager().getLocalPixbuf(icon)
-		);
-		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
+		));
+		hbox->pack_start(*img, false, false, 0);
 	}
 
-	GtkWidget* label = gtk_label_new("");
-	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	Gtk::Label* label = Gtk::manage(new Gtk::Label);
+	hbox->pack_start(*label, false, false, 0);
 
-	StatusBarElementPtr element(new StatusBarElement(gtkutil::FramedWidget(hbox), label));
+	StatusBarElementPtr element(new StatusBarElement(Gtk::manage(new gtkutil::FramedWidget(*hbox)), label));
 
 	// Store this element
 	_elements.insert(ElementMap::value_type(name, element));
@@ -71,40 +76,47 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	rebuildStatusBar();
 }
 
-void StatusBarManager::setText(const std::string& name, const std::string& text) {
+void StatusBarManager::setText(const std::string& name, const std::string& text)
+{
 	// Look up the key
 	ElementMap::const_iterator found = _elements.find(name);
 	
 	// return NULL if not found
-	if (found != _elements.end() && found->second->label != NULL) {
+	if (found != _elements.end() && found->second->label != NULL)
+	{
 		// Set the text
 		found->second->text = text;
 
 		// Request an idle callback
 		requestIdleCallback();
 	}
-	else {
+	else
+	{
 		globalErrorStream() << "Could not find text status bar element with the name " 
 			<< name << std::endl;
 	}
 }
 
-void StatusBarManager::onGtkIdle() {
+void StatusBarManager::onGtkIdle()
+{
 	// Fill in all buffered texts
-	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i) {
+	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
+	{
 		// Shortcut
 		const StatusBarElement& element = *(i->second);
 
 		// Skip non-labels
 		if (element.label == NULL) continue;
 		
-		gtk_label_set_markup(GTK_LABEL(element.label), element.text.c_str());
+		element.label->set_markup(element.text);
 	}
 }
 
-int StatusBarManager::getFreePosition(int desiredPosition) {
+int StatusBarManager::getFreePosition(int desiredPosition)
+{
 	// Do we have an easy job?
-	if (_positions.empty()) {
+	if (_positions.empty()) 
+	{
 		// nothing to calculate
 		return desiredPosition;
 	}
@@ -132,37 +144,42 @@ int StatusBarManager::getFreePosition(int desiredPosition) {
 	}
 }
 
-void StatusBarManager::rebuildStatusBar() {
+void StatusBarManager::rebuildStatusBar()
+{
 	// Prevent child widgets from destruction before clearing the container
-	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i) {
+	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i) 
+	{
 		// Grab a reference of the widgets (a new widget will be "floating")
-		g_object_ref_sink(i->second->toplevel);
+		i->second->toplevel->reference();
 	}
 
-	gtk_container_foreach(GTK_CONTAINER(_statusBar), _removeChildWidgets, _statusBar);
+	_statusBar->foreach(sigc::mem_fun(*this, &StatusBarManager::_removeChildWidgets));
 
 	if (_elements.empty()) return; // done here if empty
 
 	// Resize the table to fit the widgets
-	gtk_table_resize(GTK_TABLE(_statusBar), 1, static_cast<int>(_elements.size()));
+	_statusBar->resize(1, static_cast<guint>(_elements.size()));
 
 	int col = 0;
-	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i) {
+
+	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
+	{
 		// Add the widget at the appropriate position
-		gtk_table_attach_defaults(GTK_TABLE(_statusBar), i->second->toplevel, col, col+1, 0, 1);
+		_statusBar->attach(*i->second->toplevel, col, col+1, 0, 1);
 
 		// Release the reference again, it's owned by the status bar (again)
-		g_object_unref(i->second->toplevel);
+		i->second->toplevel->unreference();
 
 		col++;
 	}
 
-	gtk_widget_show_all(_statusBar);
+	_statusBar->show_all();
 }
 
-void StatusBarManager::_removeChildWidgets(GtkWidget* child, gpointer statusBar) {
+void StatusBarManager::_removeChildWidgets(Gtk::Widget& child) 
+{
 	// Remove the visited child
-	gtk_container_remove(GTK_CONTAINER(statusBar), child);
+	_statusBar->remove(child);
 }
 
 } // namespace ui

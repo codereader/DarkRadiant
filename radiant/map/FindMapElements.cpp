@@ -1,8 +1,6 @@
 #include "FindMapElements.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
 #include "idialogmanager.h"
 #include "iscenegraph.h"
 #include "iradiant.h"

@@ -1,12 +1,11 @@
 #ifndef _ENTITY_CHOOSER_H_
 #define _ENTITY_CHOOSER_H_
 
-#include "gtkutil/ifc/Widget.h"
 #include "gtkutil/dialog/DialogElements.h"
 #include <map>
 
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
+#include <gtkmm/liststore.h>
+#include <gtkmm/treeselection.h>
 
 namespace ui
 {
@@ -15,10 +14,19 @@ class EntityChooser :
 	public gtkutil::DialogElement
 {
 private:
-	GtkListStore* _entityStore;
-	GtkTreeSelection* _selection;
+	struct EntityChooserColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		EntityChooserColumns() { add(name); }
 
-	std::map<int, GtkWidget*> _widgets;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+	};
+
+	EntityChooserColumns _listColumns;
+	Glib::RefPtr<Gtk::ListStore> _entityStore;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
+
+	std::map<int, Gtk::Widget*> _widgets;
 
 	std::string _selectedEntityName;
 
@@ -44,7 +52,8 @@ public:
 protected:
 	void populateEntityList();
 
-	static void onSelectionChanged(GtkTreeSelection* sel, EntityChooser* self);
+	// gtkmm callback
+	void onSelectionChanged();
 };
 typedef boost::shared_ptr<EntityChooser> EntityChooserPtr;
 

@@ -83,9 +83,10 @@ public:
 	}
 	
 	// greebo: This is the actual callback method that gets connected via to the "motion_notify_event"
-	static gboolean gtk_motion(GtkWidget *widget, GdkEventMotion *event, DeferredMotion* self) {
-		self->motion(event->x, event->y, event->state);
-		return FALSE;
+	bool gtk_motion(GdkEventMotion* ev)
+	{
+		motion(ev->x, ev->y, ev->state);
+		return false;
 	}
 };
 

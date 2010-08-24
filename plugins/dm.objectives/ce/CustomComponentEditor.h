@@ -1,7 +1,7 @@
 #ifndef CUSTOM_COMPONENT_EDITOR_H_
 #define CUSTOM_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
@@ -17,7 +17,7 @@ namespace ce {
  * components are controlled manually (by script or trigger).
  */
 class CustomComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -30,9 +30,6 @@ class CustomComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;
 	
@@ -42,7 +39,6 @@ public:
 	 * Construct a default CustomComponentEditor.
 	 */
 	CustomComponentEditor() : 
-		_widget(NULL),
 		_component(NULL)
 	{}
 	
@@ -55,19 +51,12 @@ public:
 	 */
 	CustomComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~CustomComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new CustomComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 

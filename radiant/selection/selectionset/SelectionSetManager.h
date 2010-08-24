@@ -7,7 +7,6 @@
 
 #include <map>
 #include "SelectionSet.h"
-#include "SelectionSetToolmenu.h"
 
 #include <boost/enable_shared_from_this.hpp>
 
@@ -22,8 +21,6 @@ class SelectionSetManager :
 private:
 	typedef std::set<ISelectionSetManager::Observer*> Observers;
 	Observers _observers;
-
-	SelectionSetToolmenuPtr _toolmenu;
 
 	typedef std::map<std::string, SelectionSetPtr> SelectionSets;
 	SelectionSets _selectionSets;

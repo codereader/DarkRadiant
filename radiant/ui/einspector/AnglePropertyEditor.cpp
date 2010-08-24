@@ -5,57 +5,59 @@
 #include "string/string.h"
 
 #include "gtkutil/IconTextButton.h"
-#include "gtkutil/pointer.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/button.h>
+#include <gtkmm/box.h>
+#include <gtkmm/table.h>
 
 namespace ui
 {
-
-	namespace
-	{
-		const char* const GLIB_ANGLE_KEY = "dr_angle_value";
-	}
 
 // Constructor
 AnglePropertyEditor::AnglePropertyEditor(Entity* entity, const std::string& key)
 : PropertyEditor(entity),
   _key(key)
 {
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 0);
+
     // Construct a 3x3 table to contain the directional buttons
-    GtkWidget* table = gtk_table_new(3, 3, TRUE);
+	Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 3, true));
 
     // Create the buttons
     constructButtons();
 
     // Add buttons
-    gtk_table_attach_defaults(GTK_TABLE(table), _nButton, 1, 2, 0, 1);
-    gtk_table_attach_defaults(GTK_TABLE(table), _sButton, 1, 2, 2, 3);
-    gtk_table_attach_defaults(GTK_TABLE(table), _eButton, 2, 3, 1, 2);
-    gtk_table_attach_defaults(GTK_TABLE(table), _wButton, 0, 1, 1, 2);
-    gtk_table_attach_defaults(GTK_TABLE(table), _neButton, 2, 3, 0, 1);
-    gtk_table_attach_defaults(GTK_TABLE(table), _seButton, 2, 3, 2, 3);
-    gtk_table_attach_defaults(GTK_TABLE(table), _swButton, 0, 1, 2, 3);
-    gtk_table_attach_defaults(GTK_TABLE(table), _nwButton, 0, 1, 0, 1);
+    table->attach(*_nButton, 1, 2, 0, 1);
+    table->attach(*_sButton, 1, 2, 2, 3);
+    table->attach(*_eButton, 2, 3, 1, 2);
+    table->attach(*_wButton, 0, 1, 1, 2);
+    table->attach(*_neButton, 2, 3, 0, 1);
+    table->attach(*_seButton, 2, 3, 2, 3);
+    table->attach(*_swButton, 0, 1, 2, 3);
+    table->attach(*_nwButton, 0, 1, 0, 1);
 
     // Pack table into an hbox/vbox and set as the widget
-    GtkWidget* hbx = gtk_hbox_new(FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(hbx), table, TRUE, FALSE, 0);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 0));
+	hbx->pack_start(*table, true, false, 0);
 
-    _widget = gtk_vbox_new(FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(_widget), hbx, FALSE, FALSE, 0);
+    mainVBox->pack_start(*hbx, false, false, 0);
+
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
 }
 
-GtkWidget* AnglePropertyEditor::constructAngleButton(
+Gtk::Button* AnglePropertyEditor::constructAngleButton(
 	const std::string& icon, int angleValue)
 {
-	GtkWidget* w = gtkutil::IconTextButton(
-        "", GlobalUIManager().getLocalPixbuf(icon), false
-    );
+	Gtk::Button* w = Gtk::manage(new gtkutil::IconTextButton(
+        "", GlobalUIManager().getLocalPixbuf(icon)
+    ));
 
-    g_signal_connect(G_OBJECT(w), "clicked", G_CALLBACK(_onButtonClick), this);
-	g_object_set_data(G_OBJECT(w), GLIB_ANGLE_KEY, gpointer(angleValue));
-
+	w->signal_clicked().connect(
+		sigc::bind(sigc::mem_fun(*this, &AnglePropertyEditor::_onButtonClick), angleValue)
+	);
+	
 	return w;
 }
 
@@ -72,14 +74,9 @@ void AnglePropertyEditor::constructButtons()
 	_nwButton = constructAngleButton("arrow_nw24.png", 135);
 }
 
-// GTK button callback
-void AnglePropertyEditor::_onButtonClick(GtkButton* button,
-                                         AnglePropertyEditor* self)
+void AnglePropertyEditor::_onButtonClick(int angleValue)
 {
-    // Get the numerical value off the button
-	gint angle = gpointer_to_int(g_object_get_data(G_OBJECT(button), GLIB_ANGLE_KEY));
-
-	self->setKeyValue(self->_key, intToStr(angle));
+    setKeyValue(_key, intToStr(angleValue));
 }
 
 } // namespace ui

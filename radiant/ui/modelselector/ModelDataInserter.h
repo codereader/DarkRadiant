@@ -7,22 +7,13 @@ namespace ui
 {
 
 /* CONSTANTS */
-namespace {
+namespace
+{
 	const char* MODEL_ICON = "model16green.png";
 	const char* SKIN_ICON = "skin16.png";
 	const char* FOLDER_ICON = "folder16.png";
 
 	const char* MODELS_FOLDER = "models/";
-
-	// Treestore enum
-	enum {
-		NAME_COLUMN,		// e.g. "chair1.lwo"
-		FULLNAME_COLUMN,	// e.g. "models/darkmod/props/chair1.lwo"
-		SKIN_COLUMN,		// e.e. "chair1_brown_wood", or "" for no skin
-		IMAGE_COLUMN,		// icon to display
-		IS_FOLDER_COLUMN,	// whether this is a folder
-		N_COLUMNS
-	};
 }
 
 /**
@@ -32,21 +23,25 @@ namespace {
 class ModelDataInserter : 
 	public gtkutil::VFSTreePopulator::Visitor
 {
+private:
+	const ModelSelector::TreeColumns& _columns;
+
 	bool _includeSkins;
 
 public:
 	/**
 	 * greebo: Pass TRUE to the constructor to add skins to the store.
 	 */
-	ModelDataInserter(const bool includeSkins) :
+	ModelDataInserter(const ModelSelector::TreeColumns& columns, bool includeSkins) :
+		_columns(columns),
 		_includeSkins(includeSkins)
 	{}
 
 	virtual ~ModelDataInserter() {}
 
 	// Required visit function
-	void visit(GtkTreeStore* store, 
-			   GtkTreeIter* iter, 
+	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+			   const Gtk::TreeModel::iterator& iter, 
 			   const std::string& path,
 			   bool isExplicit)
 	{
@@ -58,41 +53,31 @@ public:
 		std::string fullPath = isExplicit ? (MODELS_FOLDER + path) : "";
 					   
 		// Pixbuf depends on model type
-		GdkPixbuf* pixBuf = isExplicit 
-							? GlobalUIManager().getLocalPixbuf(MODEL_ICON)
-							: GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
-
-		// Fill in the column values
-		gtk_tree_store_set(store, iter, 
-						   NAME_COLUMN, displayName.c_str(),
-						   FULLNAME_COLUMN, fullPath.c_str(),
-						   SKIN_COLUMN, "",
-						   IMAGE_COLUMN, pixBuf,
-						   IS_FOLDER_COLUMN, isExplicit ? FALSE : TRUE,
-						   -1);
+		Gtk::TreeModel::Row row = *iter;
 		
-		if (!_includeSkins) {
-			return; // done
-		}
+		row[_columns.filename] = displayName;
+		row[_columns.vfspath] = fullPath;
+		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? MODEL_ICON : FOLDER_ICON);
+		row[_columns.skin] = std::string();
+		row[_columns.isFolder] = !isExplicit;
+
+		if (!_includeSkins) return; // done
 
 		// Now check if there are any skins for this model, and add them as
 		// children if so
-		const StringList& skinList = 
-			GlobalModelSkinCache().getSkinsForModel(fullPath);
+		const StringList& skinList = GlobalModelSkinCache().getSkinsForModel(fullPath);
 			
 		for (StringList::const_iterator i = skinList.begin();
 			 i != skinList.end();
 			 ++i)
 		{
-			GtkTreeIter tmpIter;
-			gtk_tree_store_append(store, &tmpIter, iter);
-			gtk_tree_store_set(store, &tmpIter,
-							   NAME_COLUMN, i->c_str(),
-							   FULLNAME_COLUMN, fullPath.c_str(),
-							   SKIN_COLUMN, i->c_str(),
-							   IMAGE_COLUMN, GlobalUIManager().getLocalPixbuf(SKIN_ICON),
-							   IS_FOLDER_COLUMN, isExplicit ? FALSE : TRUE,
-							   -1);
+			Gtk::TreeModel::Row skinRow = *store->append(iter->children());
+			
+			skinRow[_columns.filename] = *i;
+			skinRow[_columns.vfspath] = fullPath;
+			skinRow[_columns.icon] = GlobalUIManager().getLocalPixbuf(SKIN_ICON);
+			skinRow[_columns.skin] = *i;
+			skinRow[_columns.isFolder] = !isExplicit;
 		}
 	} 	
 };

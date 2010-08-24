@@ -1,10 +1,9 @@
 #ifndef SPECIFIERPANEL_H_
 #define SPECIFIERPANEL_H_
 
-#include "gtkutil/ifc/EditorWidget.h"
-
 #include <boost/shared_ptr.hpp>
-#include <gtk/gtkwidget.h>
+
+namespace Gtk { class Widget; }
 
 namespace objectives
 {
@@ -36,11 +35,27 @@ typedef boost::shared_ptr<SpecifierPanel> SpecifierPanelPtr;
  * widgets in their own destructors.
  */
 class SpecifierPanel
-: public gtkutil::EditorWidget
 {
 public:
     virtual ~SpecifierPanel() {}
+
+	/**
+	 * Retrieve the widget which can be packed into a parent container.
+	 */
+	virtual Gtk::Widget* getWidget() = 0;
 	
+	/**
+     * Set the value of the string which should be edited by this widget. The
+     * child editing widgets will be immediately updated to reflect the new
+     * value.
+     */
+	virtual void setValue(const std::string& val) = 0;
+
+    /**
+     * Get the current value of the string which is being edited by this widget.
+     */
+    virtual std::string getValue() const = 0;
+
 	/**
 	 * Create a SpecifierPanel subclass of the same type as this one.
 	 * 

@@ -1,7 +1,7 @@
 #ifndef _READABLE_OPENED_COMPONENT_EDITOR_H_
 #define _READABLE_OPENED_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
@@ -16,8 +16,9 @@ namespace ce {
  * This component requires that the player opens a certain readable.
  */
 class ReadableOpenedComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
+private:
 	// Registration class
 	static struct RegHelper 
 	{
@@ -29,14 +30,11 @@ class ReadableOpenedComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// SpecifierEditCombo for the readable
-	SpecifierEditCombo _readableSpec;
+	SpecifierEditCombo* _readableSpec;
 	
 public:
 
@@ -44,7 +42,6 @@ public:
 	 * Construct a default ReadableOpenedComponentEditor.
 	 */
 	ReadableOpenedComponentEditor() : 
-		_widget(NULL),
 		_component(NULL)
 	{}
 	
@@ -57,19 +54,12 @@ public:
 	 */
 	ReadableOpenedComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~ReadableOpenedComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new ReadableOpenedComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 

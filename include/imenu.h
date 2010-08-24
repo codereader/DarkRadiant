@@ -4,7 +4,10 @@
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk
+{
+	class MenuItem;
+}
 
 namespace ui
 {
@@ -26,7 +29,7 @@ public:
 	 * Each menu item must return a distinct widget which is packed
 	 * into the parent GTK container.
 	 */
-	virtual GtkWidget* getWidget() = 0;
+	virtual Gtk::MenuItem* getWidget() = 0;
 
 	// Callback to run when this item is selected in the menus
 	virtual void execute() = 0;
@@ -95,7 +98,7 @@ protected:
 public:
 	// Convenience method, directly taking text and icon strings plus
 	// callback function objects as argument.
-	virtual void addItem(GtkWidget* widget,
+	virtual void addItem(Gtk::MenuItem* widget,
 						 const Callback& callback,
 						 const SensitivityTest& sensTest = SensitivityTest(_alwaysTrue),
 						 const VisibilityTest& visTest = VisibilityTest(_alwaysTrue)) = 0;

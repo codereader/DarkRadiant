@@ -3,6 +3,7 @@
 
 #include "SpecifierPanel.h"
 #include "SpecifierPanelFactory.h"
+#include <gtkmm/entry.h>
 
 namespace objectives
 {
@@ -18,38 +19,18 @@ namespace ce
  * but should be used as a parent class for individual type-based
  * SpecifierPanels which register themselves correctly for a given SPEC_* type.
  */
-class TextSpecifierPanel
-: public SpecifierPanel
+class TextSpecifierPanel : 
+	public SpecifierPanel,
+	protected Gtk::Entry
 {
-	// Main widget
-	GtkWidget* _widget;
-	
-protected:
-
-    /* gtkutil::Widget implementation */
-
-    virtual GtkWidget* _getWidget() const;
-
 public:
-	
-	/**
-	 * Construct a TextSpecifierPanel.
-	 */
-	TextSpecifierPanel();
-	
-	/**
-	 * Destroy this TextSpecifierPanel including all widgets.
-	 */
-	~TextSpecifierPanel();
-	
 	/* SpecifierPanel implementation */
-	
-	SpecifierPanelPtr clone() const {
+	SpecifierPanelPtr clone() const
+	{
 		return SpecifierPanelPtr(new TextSpecifierPanel());
 	}
 
-    /* gtkutil::EditorWidget implementation */
-
+	virtual Gtk::Widget* getWidget();
     void setValue(const std::string& value);
     std::string getValue() const; 
 };

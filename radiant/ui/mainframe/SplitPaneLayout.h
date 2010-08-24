@@ -2,14 +2,20 @@
 #define _SPLITPANE_LAYOUT_H_
 
 #include <map>
-#include "gtkutil/Paned.h"
 #include "gtkutil/PanedPosition.h"
 #include "imainframelayout.h"
 
 #include "camera/CamWnd.h"
 #include "xyview/GlobalXYWnd.h"
 
-namespace ui {
+namespace Gtk
+{
+	class HPaned;
+	class VPaned;
+}
+
+namespace ui
+{
 
 #define SPLITPANE_LAYOUT_NAME "SplitPane"
 
@@ -25,19 +31,18 @@ private:
 
 	struct SplitPaneView
 	{
-		gtkutil::Paned horizPane;
+		boost::shared_ptr<Gtk::HPaned> horizPane;
 
-		gtkutil::Paned vertPane1;
-		gtkutil::Paned vertPane2;
+		Gtk::VPaned* vertPane1;
+		Gtk::VPaned* vertPane2;
 		
 		gtkutil::PanedPosition posHPane;
 		gtkutil::PanedPosition posVPane1;
 		gtkutil::PanedPosition posVPane2;
 
 		SplitPaneView() :
-			horizPane(gtkutil::Paned::Horizontal),
-			vertPane1(gtkutil::Paned::Vertical),
-			vertPane2(gtkutil::Paned::Vertical)
+			vertPane1(NULL),
+			vertPane2(NULL)
 		{}
 
 	} _splitPane;
@@ -56,7 +61,7 @@ private:
 	// Widget distribution
 	struct QuadrantInfo
 	{
-		GtkWidget* widget;	// the widget to pack (framed widget)
+		Gtk::Widget* widget;	// the widget to pack (framed widget)
 		
 		bool isCamera;		// true => is camera view
 		XYWndPtr xyWnd;		// the xywnd (NULL if isCamera == true)
@@ -70,7 +75,7 @@ private:
 	typedef std::map<Position, QuadrantInfo> WidgetMap;
 	WidgetMap _quadrants;
 
-	GtkWidget* _camera;
+	Gtk::Widget* _camera;
 
 	// Private constructor
 	SplitPaneLayout();

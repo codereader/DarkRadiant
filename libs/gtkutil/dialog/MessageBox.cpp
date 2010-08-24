@@ -2,10 +2,9 @@
 
 #include "itextstream.h"
 
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkbutton.h>
-#include <gtk/gtkstock.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "gtkutil/LeftAlignedLabel.h"
@@ -15,7 +14,7 @@ namespace gtkutil
 {
 
 MessageBox::MessageBox(const std::string& title, const std::string& text,
-					   IDialog::MessageType type, GtkWindow* parent) :
+					   IDialog::MessageType type, const Glib::RefPtr<Gtk::Window>& parent) :
 	Dialog(title, parent),
 	_text(text),
 	_type(type)
@@ -28,122 +27,123 @@ void MessageBox::construct()
 	Dialog::construct();
 
 	// Add an hbox for the icon and the content
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(_vbox), hbox, TRUE, TRUE, 0);
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
+	_vbox->pack_start(*hbox, true, true, 0);
 
 	// Add the icon
-	GtkWidget* icon = createIcon();
+	Gtk::Widget* icon = createIcon();
 
 	if (icon != NULL)
 	{
-		gtk_box_pack_start(GTK_BOX(hbox), icon, FALSE, FALSE, 0);
+		hbox->pack_start(*icon, false, false, 0);
 	}
 
 	// Add the text
-	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::LeftAlignedLabel(_text), TRUE, TRUE, 0);
+	hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_text)), true, true, 0);
 }
 
-GtkWidget* MessageBox::createIcon()
+Gtk::Widget* MessageBox::createIcon()
 {
-	const gchar* stockId = NULL;
+	Gtk::BuiltinStockID stockId;
 
 	switch (_type)
 	{
 	case MESSAGE_CONFIRM:
-		stockId = GTK_STOCK_DIALOG_INFO;
+		stockId = Gtk::Stock::DIALOG_INFO;
 		break;
 	case MESSAGE_ASK:
-		stockId = GTK_STOCK_DIALOG_QUESTION;
+		stockId = Gtk::Stock::DIALOG_QUESTION;
 		break;
 	case MESSAGE_WARNING:
-		stockId = GTK_STOCK_DIALOG_WARNING;
+		stockId = Gtk::Stock::DIALOG_WARNING;
 		break;
 	case MESSAGE_ERROR:
-		stockId = GTK_STOCK_DIALOG_ERROR;
+		stockId = Gtk::Stock::DIALOG_ERROR;
 		break;
 	default:
-		stockId = GTK_STOCK_DIALOG_INFO;
+		stockId = Gtk::Stock::DIALOG_INFO;
 	};
 
-	return (stockId != NULL) ? gtk_image_new_from_stock(stockId, GTK_ICON_SIZE_DIALOG) : NULL;
+	return Gtk::manage(new Gtk::Image(stockId, Gtk::ICON_SIZE_DIALOG));
 }
 
 // Override Dialog::createButtons() to add the custom ones
-GtkWidget* MessageBox::createButtons()
+Gtk::Widget& MessageBox::createButtons()
 {
-	GtkWidget* buttonHBox = gtk_hbox_new(FALSE, 6);
+	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(false, 6));
 
 	if (_type == MESSAGE_CONFIRM || _type == MESSAGE_WARNING || _type == MESSAGE_ERROR)
 	{
 		// Add an OK button
-		GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-		g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onOK), this);
-		gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, FALSE, FALSE, 0);
+		Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+		okButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onOK));
+		buttonHBox->pack_end(*okButton, false, false, 0);
 
-		mapKeyToButton(GDK_O, okButton);
-		mapKeyToButton(GDK_Return, okButton);
-		mapKeyToButton(GDK_Escape, okButton);
+		mapKeyToButton(GDK_O, *okButton);
+		mapKeyToButton(GDK_Return, *okButton);
+		mapKeyToButton(GDK_Escape, *okButton);
 	}
 	else if (_type == MESSAGE_ASK)
 	{
 		// YES button
-		GtkWidget* yesButton = gtk_button_new_from_stock(GTK_STOCK_YES);
-		g_signal_connect(G_OBJECT(yesButton), "clicked", G_CALLBACK(onYes), this);
-		gtk_box_pack_end(GTK_BOX(buttonHBox), yesButton, FALSE, FALSE, 0);
+		Gtk::Button* yesButton = Gtk::manage(new Gtk::Button(Gtk::Stock::YES));
+		yesButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onYes));
+		buttonHBox->pack_end(*yesButton, false, false, 0);
 
-		mapKeyToButton(GDK_Y, yesButton);
-		mapKeyToButton(GDK_Return, yesButton);
+		mapKeyToButton(GDK_Y, *yesButton);
+		mapKeyToButton(GDK_Return, *yesButton);
 		
 		// NO button
-		GtkWidget* noButton = gtk_button_new_from_stock(GTK_STOCK_NO);
-		g_signal_connect(G_OBJECT(noButton), "clicked", G_CALLBACK(onNo), this);
-		gtk_box_pack_end(GTK_BOX(buttonHBox), noButton, FALSE, FALSE, 0);
+		Gtk::Button* noButton = Gtk::manage(new Gtk::Button(Gtk::Stock::NO));
+		noButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onNo));
+		buttonHBox->pack_end(*noButton, false, false, 0);
 
-		mapKeyToButton(GDK_N, noButton);
-		mapKeyToButton(GDK_Escape, noButton);
+		mapKeyToButton(GDK_N, *noButton);
+		mapKeyToButton(GDK_Escape, *noButton);
 	}
 	else if (_type == MESSAGE_YESNOCANCEL)
 	{
 		// YES button
-		GtkWidget* yesButton = gtk_button_new_from_stock(GTK_STOCK_YES);
-		g_signal_connect(G_OBJECT(yesButton), "clicked", G_CALLBACK(onYes), this);
-		gtk_box_pack_start(GTK_BOX(buttonHBox), yesButton, FALSE, FALSE, 0);
+		Gtk::Button* yesButton = Gtk::manage(new Gtk::Button(Gtk::Stock::YES));
+		yesButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onYes));
+		buttonHBox->pack_start(*yesButton, false, false, 0);
 
-		mapKeyToButton(GDK_Y, yesButton);
-		mapKeyToButton(GDK_Return, yesButton);
+		mapKeyToButton(GDK_Y, *yesButton);
+		mapKeyToButton(GDK_Return, *yesButton);
 		
 		// NO button
-		GtkWidget* noButton = gtk_button_new_from_stock(GTK_STOCK_NO);
-		g_signal_connect(G_OBJECT(noButton), "clicked", G_CALLBACK(onNo), this);
-		gtk_box_pack_start(GTK_BOX(buttonHBox), noButton, FALSE, FALSE, 0);
-		mapKeyToButton(GDK_N, noButton);
+		Gtk::Button* noButton = Gtk::manage(new Gtk::Button(Gtk::Stock::NO));
+		noButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onNo));
+		buttonHBox->pack_start(*noButton, false, false, 0);
+
+		mapKeyToButton(GDK_N, *noButton);
 
 		// Cancel button
-		GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-		g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
-		gtk_box_pack_start(GTK_BOX(buttonHBox), cancelButton, FALSE, FALSE, 0);
+		Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+		cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onCancel));
+		buttonHBox->pack_start(*cancelButton, false, false, 0);
 
-		mapKeyToButton(GDK_Escape, cancelButton);
-		mapKeyToButton(GDK_C, cancelButton);
+		mapKeyToButton(GDK_Escape, *cancelButton);
+		mapKeyToButton(GDK_C, *cancelButton);
 	}
 	else
 	{
 		globalErrorStream() << "Invalid message type encountered: " << _type << std::endl;
 	}
 	
-	return gtkutil::RightAlignment(buttonHBox);
+	return *Gtk::manage(new RightAlignment(*buttonHBox));
 }
 
-void MessageBox::onYes(GtkWidget* widget, MessageBox* self)
+void MessageBox::onYes()
 {
-	self->_result = ui::IDialog::RESULT_YES;
-	self->hide(); // breaks gtk_main()
+	_result = ui::IDialog::RESULT_YES;
+	hide(); // breaks gtk_main()
 }
 
-void MessageBox::onNo(GtkWidget* widget, MessageBox* self)
+void MessageBox::onNo()
 {
-	self->_result = ui::IDialog::RESULT_NO;
-	self->hide(); // breaks gtk_main()
+	_result = ui::IDialog::RESULT_NO;
+	hide(); // breaks gtk_main()
 }
 
 } // namespace gtkutil

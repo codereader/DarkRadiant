@@ -11,10 +11,18 @@
 #include "iselection.h"
 #include <boost/function/function_fwd.hpp>
 
+namespace Glib
+{
+template <class T>class RefPtr;
+}
+
 // GTK forward declaration
-typedef struct _GtkObject GtkObject;
-typedef struct _GtkWindow GtkWindow;
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk
+{
+	class Widget;
+	class Window;
+}
+
 typedef struct _GdkEventButton GdkEventButton;
 typedef struct _GdkEventKey GdkEventKey;
 
@@ -83,8 +91,8 @@ public:
 	virtual void setEnabled(const bool enabled) = 0;
 	
 	// Connect a GtkWidget to this event (the event must support the according widget). 
-	virtual void connectWidget(GtkWidget* widget) = 0; 
-	virtual void disconnectWidget(GtkWidget* widget) = 0; 
+	virtual void connectWidget(Gtk::Widget* widget) = 0; 
+	virtual void disconnectWidget(Gtk::Widget* widget) = 0; 
 	
 	// Exports the current state to the widgets
 	virtual void updateWidgets() = 0;
@@ -224,17 +232,18 @@ public:
 	// Disconnects the given command from any accelerators
 	virtual void disconnectAccelerator(const std::string& command) = 0;
 	
-	// Connects/disconnects the keyboard handlers of the keyeventmanager to the specified window, so that key events are catched
-	virtual void connect(GtkObject* object) = 0;
-	virtual void disconnect(GtkObject* object) = 0;
+	// Connects/disconnects the keyboard handlers of the keyeventmanager to the specified window, so that key events are caught
+	virtual void connect(Gtk::Widget* widget) = 0;
+	virtual void disconnect(Gtk::Widget* widget) = 0;
 	
 	// Connects/Disconnects a Dialog Window to the eventmanager. Dialog windows get the chance
 	// to process an incoming keypress event, BEFORE the global shortcuts are searched and launched.
-	virtual void connectDialogWindow(GtkWindow* window) = 0;
-	virtual void disconnectDialogWindow(GtkWindow* window) = 0;
+	virtual void connectDialogWindow(Gtk::Window* window) = 0;
+	virtual void disconnectDialogWindow(Gtk::Window* window) = 0;
 	
 	// Tells the key event manager about the main window so that the accelgroup can be connected correctly
-	virtual void connectAccelGroup(GtkWindow* window) = 0;
+	virtual void connectAccelGroup(Gtk::Window* window) = 0;
+	virtual void connectAccelGroup(const Glib::RefPtr<Gtk::Window>& window) = 0;
 	
 	// Loads the shortcut->command associations from the XMLRegistry
 	virtual void loadAccelerators() = 0;

@@ -5,17 +5,25 @@
 #include "DifficultyPanel.h"
 #include "Objective.h"
 
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkliststore.h>
-#include <gtk/gtktreeselection.h>
-#include <gtk/gtktogglebutton.h>
-
 #include <map>
 #include <vector>
 #include <string>
 
 #include "gtkutil/Timer.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
+
+#include <gtkmm/liststore.h>
+
+namespace Gtk
+{
+	class Entry;
+	class CheckButton;
+	class ComboBox;
+	class ComboBoxText;
+	class Table;
+	class Frame;
+	class TreeView;
+}
 
 namespace objectives
 {
@@ -27,21 +35,28 @@ namespace objectives
 class ComponentsDialog : 
 	public gtkutil::BlockingTransientWindow
 {
-	// Widgets map
-	std::map<int, GtkWidget*> _widgets;
-
+private:
 	// The objective we are editing
 	Objective& _objective;
 	
+	struct ComponentListColumns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ComponentListColumns() { add(index); add(description); }
+
+		Gtk::TreeModelColumn<int> index;
+		Gtk::TreeModelColumn<Glib::ustring> description;
+	};
+
 	// List store for the components
-	GtkListStore* _componentList;
-	GtkTreeSelection* _componentSel;
+	ComponentListColumns _columns;
+	Glib::RefPtr<Gtk::ListStore> _componentList;
 	
 	// Currently-active ComponentEditor (if any)
 	ce::ComponentEditorPtr _componentEditor;
 	
 	// The widgets needed for editing the difficulty levels
-	DifficultyPanel _diffPanel;
+	DifficultyPanel* _diffPanel;
 
 	// Working set of components we're editing (get written to the objective
 	// as soon as the "Save" button is pressed.
@@ -52,16 +67,42 @@ class ComponentsDialog :
 
 	// A timer to periodically update the component list
 	gtkutil::Timer _timer;
+
+	Gtk::Entry* _objDescriptionEntry;
+	Gtk::ComboBoxText* _objStateCombo;
+	Gtk::Entry* _enablingObjs;
+	Gtk::Entry* _successLogic;
+	Gtk::Entry* _failureLogic;
+
+	Gtk::Entry* _completionScript;
+	Gtk::Entry* _failureScript;
+	Gtk::Entry* _completionTarget;
+	Gtk::Entry* _failureTarget;
+
+	Gtk::CheckButton* _objMandatoryFlag;
+	Gtk::CheckButton* _objIrreversibleFlag;
+	Gtk::CheckButton* _objOngoingFlag;
+	Gtk::CheckButton* _objVisibleFlag;
+
+	Gtk::Table* _editPanel;
+	Gtk::TreeView* _componentView;
+	Gtk::ComboBox* _typeCombo;
+
+	Gtk::CheckButton* _stateFlag;
+	Gtk::CheckButton* _irreversibleFlag;
+	Gtk::CheckButton* _invertedFlag;
+	Gtk::CheckButton* _playerResponsibleFlag;
+
+	Gtk::Frame* _compEditorPanel;
 	
 private:
-
 	// Construction helpers
-	GtkWidget* createObjectiveEditPanel();
-	GtkWidget* createObjectiveFlagsTable();
-	GtkWidget* createListView();
-	GtkWidget* createEditPanel();
-	GtkWidget* createComponentEditorPanel();
-	GtkWidget* createButtons();
+	Gtk::Widget& createObjectiveEditPanel();
+	Gtk::Widget& createObjectiveFlagsTable();
+	Gtk::Widget& createListView();
+	Gtk::Widget& createEditPanel();
+	Gtk::Widget& createComponentEditorPanel();
+	Gtk::Widget& createButtons();
 
 	// Populate the list of components from the Objective's component map
 	void populateComponents();
@@ -87,19 +128,19 @@ private:
 	// Writes the data from the widgets to the data structures
 	void save();
 	
-	/* GTK CALLBACKS */
-	static void _onOK(GtkWidget*, ComponentsDialog*);
-	static void _onCancel(GtkWidget*, ComponentsDialog*);
-	static void _onDelete(GtkWidget*, ComponentsDialog*);
-	static void _onSelectionChanged(GtkTreeSelection*, ComponentsDialog*);
+	// gtkmm callbacks
+	void _onOK();
+	void _onCancel();
+	void _onDelete();
+	void _onSelectionChanged();
 
-	static void _onCompToggleChanged(GtkToggleButton*, ComponentsDialog*);
+	void _onCompToggleChanged(Gtk::CheckButton* button); // button is manually bound
 
-	static void _onAddComponent(GtkWidget*, ComponentsDialog*);
-	static void _onDeleteComponent(GtkWidget*, ComponentsDialog*);
+	void _onAddComponent();
+	void _onDeleteComponent();
 	
-	static void _onTypeChanged(GtkWidget*, ComponentsDialog*);
-    static void _onApplyComponentChanges(GtkWidget*, ComponentsDialog*);
+	void _onTypeChanged();
+    void _onApplyComponentChanges();
 
 	static gboolean _onIntervalReached(gpointer data);
 	
@@ -114,13 +155,12 @@ public:
 	 * @param objective
 	 * The Objective object for which conditions should be displayed and edited.
 	 */
-	ComponentsDialog(GtkWindow* parent, Objective& objective);
+	ComponentsDialog(const Glib::RefPtr<Gtk::Window>& parent, Objective& objective);
 
 	// Destructor performs cleanup
 	~ComponentsDialog();
-	
 };
 
-}
+} // namespace
 
 #endif /*COMPONENTSDIALOG_H_*/

@@ -2,7 +2,6 @@
 #define GuiRenderer_h__
 
 #include "math/Vector2.h"
-#include "gtkutil/GLWidget.h"
 #include <boost/noncopyable.hpp>
 
 #include "Gui.h"

@@ -3,13 +3,12 @@
 
 #include "TransientWindow.h"
 
-#include "gtk/gtkwindow.h"
-#include "gtk/gtkwidget.h"
-
 #include <string>
 #include <stdexcept>
 
 #include <boost/shared_ptr.hpp>
+
+typedef struct _GdkEventWindowState GdkEventWindowState;
 
 namespace gtkutil
 {
@@ -26,18 +25,13 @@ namespace gtkutil
 class PersistentTransientWindow
 : public TransientWindow
 {
-	// Parent window and its resize signal handler
-	GtkWindow* _parent;
-	gulong _parentResizeHandler;
-	
 private:
+	Glib::RefPtr<Gtk::Window> _parent;
+	sigc::connection _windowStateConn;
 
-	/* GTK CALLBACKS */
-	
-	// Parent window has been resized (minimised or maximised)
-	static gboolean _onParentResize(GtkWidget* w, 
-									GdkEventWindowState* e, 
-									PersistentTransientWindow* self);
+private:
+	// Signal callback
+	bool onParentWindowStateEvent(GdkEventWindowState* ev);
 
 protected:
 	/* TransientWindow events */
@@ -55,30 +49,23 @@ private:
 	// Re-show a child window when the main window is restored. It is necessary to
 	// call gtk_window_move() after showing the window, since with some Linux
 	// window managers, the window position is lost after gtk_window_show().
-	static void restore(GtkWidget* window);
+	void restore();
 	
 	// Minimise a child window, storing its position as GObject associated data in
 	// order to allow it to be restored correctly.
-	static void minimise(GtkWidget* window);
+	void minimise();
 
 public:
-	
 	/**
 	 * Construct a PersistentTransientWindow with the given title and parent.
 	 */
 	PersistentTransientWindow(const std::string& title, 
-							  GtkWindow* parent,
+							  const Glib::RefPtr<Gtk::Window>& parent,
 							  bool hideOnDelete = false);
-	
-	virtual ~PersistentTransientWindow();
-	
-	/**
-	 * Operator cast to GtkWindow*.
-	 */
-	operator GtkWidget* () {
-		return getWindow();
-	}
-	
+
+	// Override TransientWindow::setParentWindow()
+	virtual void setParentWindow(const Glib::RefPtr<Gtk::Window>& parent);
+
 }; // class PersistentTransientWindow
 
 /**

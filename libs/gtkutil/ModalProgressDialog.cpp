@@ -2,63 +2,79 @@
 #include "RightAlignment.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
+#include "imainframe.h"
+
+#include <gtkmm/box.h>
+#include <gtkmm/label.h>
+#include <gtkmm/button.h>
+#include <gtkmm/main.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/progressbar.h>
 
 namespace gtkutil {
 
 // Main constructor
-ModalProgressDialog::ModalProgressDialog(GtkWindow* parent, const std::string& title)
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _label(gtk_label_new("")),
-  _progressBar(gtk_progress_bar_new()),
+ModalProgressDialog::ModalProgressDialog(const Glib::RefPtr<Gtk::Window>& parent, const std::string& title) 
+: gtkutil::TransientWindow(title, GlobalMainFrame().getTopLevelWindow()),
+  _label(Gtk::manage(new Gtk::Label)),
+  _progressBar(Gtk::manage(new Gtk::ProgressBar)),
   _aborted(false)
 {
   	// Window properties
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), parent);
-	gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-	gtk_window_set_title(GTK_WINDOW(_widget), title.c_str());
-	gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_default_size(GTK_WINDOW(_widget), 360, 80);
-
-	g_signal_connect(G_OBJECT(_widget), "delete-event", G_CALLBACK(_onDelete), NULL);
+	set_modal(true);
+	set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
+	set_default_size(360, 80);
+	set_border_width(12);
 
 	// Create a vbox
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 12);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
 
 	// Pack a progress bar into the window
-	gtk_box_pack_start(GTK_BOX(vbx), _progressBar, FALSE, FALSE, 0);
+	vbx->pack_start(*_progressBar, false, false, 0);
 
 	// Pack the label into the window
-	gtk_box_pack_start(GTK_BOX(vbx), _label, TRUE, FALSE, 0);
-	gtk_container_add(GTK_CONTAINER(_widget), vbx);
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-	
+	vbx->pack_start(*_label, true, false, 0);
+	add(*vbx);
+
 	// Pack a right-aligned cancel button at the bottom
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked",
-					 G_CALLBACK(_onCancel), this);
-	gtk_box_pack_end(GTK_BOX(vbx), 
-					 gtkutil::RightAlignment(cancelButton), 
-					 FALSE, FALSE, 0);
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ModalProgressDialog::_onCancel));
+
+	vbx->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*cancelButton)), false, false, 0);
 	
+	// Connect the realize signal to remove the window decorations
+	signal_realize().connect(sigc::mem_fun(*this, &ModalProgressDialog::_onRealize));
+
 	// Show the window
-	gtk_widget_show_all(_widget);
+	show_all();
 	handleEvents();
 }
 
-// Set the label text
-void ModalProgressDialog::setText(const std::string& text) {
+void ModalProgressDialog::_onDeleteEvent()
+{
+	// Do nothing, don't call base class either
+}
 
+void ModalProgressDialog::_onRealize()
+{
+	// Disable some decorations
+	get_window()->set_decorations(Gdk::DECOR_ALL|Gdk::DECOR_MENU|Gdk::DECOR_MINIMIZE|Gdk::DECOR_MAXIMIZE);
+}
+
+// Set the label text
+void ModalProgressDialog::setText(const std::string& text)
+{
 	// If the aborted flag is set, throw an exception here
-	if (_aborted) {
+	if (_aborted)
+	{
 		throw OperationAbortedException(_("Operation cancelled by user"));
 	}
 
 	// Set the text
-	gtk_label_set_markup(GTK_LABEL(_label), text.c_str());
+	_label->set_markup(text);
 	
 	// Pulse the progress bar
-	gtk_progress_bar_pulse(GTK_PROGRESS_BAR(_progressBar));
+	_progressBar->pulse();
 	
 	// Handle GTK events to make changes visible
 	handleEvents();
@@ -68,29 +84,34 @@ void ModalProgressDialog::setText(const std::string& text) {
 void ModalProgressDialog::setTextAndFraction(const std::string& text, double fraction)
 {
 	// If the aborted flag is set, throw an exception here
-	if (_aborted) {
+	if (_aborted)
+	{
 		throw OperationAbortedException(_("Operation cancelled by user"));
 	}
 
 	// Set the text
-	gtk_label_set_markup(GTK_LABEL(_label), text.c_str());
+	_label->set_markup(text);
 	
 	// Pulse the progress bar
-	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(_progressBar), fraction);
+	_progressBar->set_fraction(fraction);
 	
 	// Handle GTK events to make changes visible
 	handleEvents();
 }
 
 // Handle GTK events
-void ModalProgressDialog::handleEvents() {
-	while (gtk_events_pending())
-		gtk_main_iteration();
+void ModalProgressDialog::handleEvents()
+{
+	while (Gtk::Main::events_pending())
+	{
+		Gtk::Main::iteration();
+	}
 }
 
 // Cancel button callback
-void ModalProgressDialog::_onCancel(GtkWidget* w, ModalProgressDialog* self) {
-	self->_aborted = true;
+void ModalProgressDialog::_onCancel()
+{
+	_aborted = true;
 }
 
 } // namespace gtkutil

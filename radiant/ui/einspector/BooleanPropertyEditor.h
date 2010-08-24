@@ -3,6 +3,8 @@
 
 #include "PropertyEditor.h"
 
+namespace Gtk { class CheckButton; }
+
 namespace ui
 {
 
@@ -10,31 +12,19 @@ namespace ui
  * 
  * PropertyEditor that displays and edits a boolean (toggle) value
  */
-
 class BooleanPropertyEditor:
     public PropertyEditor
 {
-    // Containing widget
-    GtkWidget* _widget;
-    
+private:    
 	// The checkbox
-	GtkWidget* _checkBox;
+	Gtk::CheckButton* _checkBox;
 	
 	// Key to edit
 	std::string _key;
 	
 private:
 	
-	/* GTK CALLBACKS */
-	static void _onToggle(GtkWidget*, BooleanPropertyEditor*);
-
-protected:
-	
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const 
-    {
-		return _widget;
-	}
+	void _onToggle();
 	
 public:
 

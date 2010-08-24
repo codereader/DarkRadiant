@@ -3,8 +3,10 @@
 #include "i18n.h"
 #include "imainframe.h"
 
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
+#include <gtkmm/box.h>
+#include <gtkmm/table.h>
+#include <gtkmm/image.h>
+#include <gtkmm/radiobutton.h>
 
 namespace ui
 {
@@ -24,45 +26,44 @@ namespace
 }
 
 PatchCapDialog::PatchCapDialog() :
-	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
-	_radioButtonGroup(NULL)
+	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
-	// Add a homogeneous hbox 
-	GtkWidget* hbox = gtk_hbox_new(TRUE, 12);
-	gtk_box_pack_start(GTK_BOX(_vbox), hbox, TRUE, TRUE, 0);
+	// Add a homogeneous hbox to the protected _vbox member
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 12));
+	_vbox->pack_start(*hbox, true, true, 0);
 
 	// Add a table to the left
-	GtkTable* leftTable = GTK_TABLE(gtk_table_new(3, 2, FALSE));
-	gtk_table_set_row_spacings(leftTable, 12);
-	gtk_table_set_col_spacings(leftTable, 6);
+	Gtk::Table* leftTable = Gtk::manage(new Gtk::Table(3, 2, false));
+	leftTable->set_row_spacings(12);
+	leftTable->set_col_spacings(6);
 
-	addItemToTable(leftTable, "cap_bevel.png", 0, eCapBevel);
-	addItemToTable(leftTable, "cap_endcap.png", 1, eCapEndCap);
-	addItemToTable(leftTable, "cap_cylinder.png", 2, eCapCylinder);
+	addItemToTable(*leftTable, "cap_bevel.png", 0, eCapBevel);
+	addItemToTable(*leftTable, "cap_endcap.png", 1, eCapEndCap);
+	addItemToTable(*leftTable, "cap_cylinder.png", 2, eCapCylinder);
 
 	// Add a table to the right
-	GtkTable* rightTable = GTK_TABLE(gtk_table_new(2, 2, FALSE));
-	gtk_table_set_row_spacings(rightTable, 12);
-	gtk_table_set_col_spacings(rightTable, 6);
+	Gtk::Table* rightTable = Gtk::manage(new Gtk::Table(2, 2, false));
+	rightTable->set_row_spacings(12);
+	rightTable->set_col_spacings(6);
 
-	addItemToTable(rightTable, "cap_ibevel.png", 0, eCapIBevel);
-	addItemToTable(rightTable, "cap_iendcap.png", 1, eCapIEndCap);
+	addItemToTable(*rightTable, "cap_ibevel.png", 0, eCapIBevel);
+	addItemToTable(*rightTable, "cap_iendcap.png", 1, eCapIEndCap);
 
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(leftTable), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(rightTable), TRUE, TRUE, 0);
+	hbox->pack_start(*leftTable, true, true, 0);
+	hbox->pack_start(*rightTable, true, true, 0);
 }
 
-void PatchCapDialog::addItemToTable(GtkTable* table, const std::string& image, guint row, EPatchCap type)
+void PatchCapDialog::addItemToTable(Gtk::Table& table, const std::string& image, int row, EPatchCap type)
 {
-	GtkWidget* img = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbuf(image));
-	gtk_table_attach(table, img, 0, 1, row, row+1, 
-					 GtkAttachOptions(GTK_FILL), (GtkAttachOptions)0, 0, 0);
+	Gtk::Image* img = Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf(image)));
+	
+	table.attach(*img, 0, 1, row, row+1, Gtk::FILL, Gtk::AttachOptions(0), 0, 0);
 
 	// Create a new radio button for this cap type
-	GtkWidget* radioButton = gtk_radio_button_new_with_label(_radioButtonGroup, _(CAPTYPE_NAMES[type]));
-	_radioButtonGroup = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radioButton));
-	gtk_table_attach(table, radioButton, 1, 2, row, row+1, 
-					 GtkAttachOptions(GTK_FILL|GTK_EXPAND), (GtkAttachOptions)0, 0, 0);
+	Gtk::RadioButton* radioButton = Gtk::manage(new Gtk::RadioButton(_group, _(CAPTYPE_NAMES[type])));
+	_group = radioButton->get_group();
+
+	table.attach(*radioButton, 1, 2, row, row+1, Gtk::FILL|Gtk::EXPAND, Gtk::AttachOptions(0), 0, 0);
 
 	// Store the widget in the local map
 	_radioButtons[type] = radioButton;
@@ -75,7 +76,7 @@ EPatchCap PatchCapDialog::getSelectedCapType()
 	for (RadioButtons::const_iterator i = _radioButtons.begin(); 
 		 i != _radioButtons.end(); ++i)
 	{
-		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(i->second)))
+		if (i->second->get_active())
 		{
 			return i->first;
 		}

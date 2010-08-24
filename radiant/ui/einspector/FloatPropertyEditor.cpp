@@ -6,7 +6,10 @@
 #include <iostream>
 #include <vector>
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/scale.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -15,7 +18,8 @@
 namespace ui
 {
 
-FloatPropertyEditor::FloatPropertyEditor()
+FloatPropertyEditor::FloatPropertyEditor() :
+	_scale(NULL)
 {}
 
 // Main constructor
@@ -23,11 +27,16 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 										 const std::string& key,
 										 const std::string& options)
 : PropertyEditor(entity),
+  _scale(NULL),
   _key(key)
 {
-	_widget = gtk_vbox_new(FALSE, 6);
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
+	mainVBox->set_border_width(6);
 
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
+	
 	// Split the options string to get min and max values
 	std::vector<std::string> values;
 	boost::algorithm::split(values, options, boost::algorithm::is_any_of(","));
@@ -48,35 +57,32 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 	}
 	
 	// Create the HScale and pack into widget
-	_scale = gtk_hscale_new_with_range(min, max, 1.0);
-	gtk_box_pack_start(GTK_BOX(_widget), _scale, FALSE, FALSE, 0);
+	_scale = Gtk::manage(new Gtk::HScale(min, max, 1.0));
+
+	mainVBox->pack_start(*_scale, false, false, 0);
 	
 	// Set the initial value if the entity has one
 	float value = 0;
-	try {
+	try
+	{
 		value = boost::lexical_cast<float>(_entity->getKeyValue(_key));
 	}
-	catch (boost::bad_lexical_cast e) { }
+	catch (boost::bad_lexical_cast&) { }
 	
-	gtk_range_set_value(GTK_RANGE(_scale), value);
+	_scale->set_value(value);
 	
 	// Create and pack in the Apply button
-	GtkWidget* applyButton = gtk_button_new_from_stock(GTK_STOCK_APPLY);
-	g_signal_connect(
-		G_OBJECT(applyButton), "clicked", G_CALLBACK(_onApply), this
-	);
-	gtk_box_pack_end(GTK_BOX(_widget), gtkutil::RightAlignment(applyButton),
-					   FALSE, FALSE, 0);
+	Gtk::Button* applyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
+	applyButton->signal_clicked().connect(sigc::mem_fun(*this, &FloatPropertyEditor::_onApply));
+	
+	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*applyButton)), false, false, 0);
 }
 
-/* GTK CALLBACKS */
+void FloatPropertyEditor::_onApply()
+{
+	float value = static_cast<float>(_scale->get_value());
 
-void FloatPropertyEditor::_onApply(GtkWidget* w, FloatPropertyEditor* self) {
-	float value = gtk_range_get_value(GTK_RANGE(self->_scale));
-	self->setKeyValue(
-		self->_key, 
-		boost::lexical_cast<std::string>(value)
-	);
+	setKeyValue(_key, boost::lexical_cast<std::string>(value));
 }
 
 }

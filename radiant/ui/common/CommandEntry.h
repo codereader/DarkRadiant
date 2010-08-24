@@ -3,8 +3,14 @@
 
 #include <list>
 #include <string>
+#include <gtkmm/box.h>
 
-#include <gtk/gtkentry.h>
+typedef struct _GdkEventKey GdkEventKey;
+
+namespace Gtk
+{
+	class Entry;
+}
 
 namespace ui {
 
@@ -14,16 +20,13 @@ namespace ui {
  *
  * The entry field supports a basic "command history" functionality to retrieve 
  * previously typed commands. The buffer is of variable size, default is 100 commands.
- *
- * Use the GtkWidget* cast operator to pack this element into a parent container.
  */
-class CommandEntry
+class CommandEntry :
+	public Gtk::HBox
 {
+private:
 	// The default history size
 	static const std::size_t DEFAULT_HISTORY_SIZE;
-
-	// The main widget to pack this into parent containers
-	GtkWidget* _mainWidget;
 
 	// The list of previously typed commands
 	typedef std::list<std::string> History;
@@ -33,7 +36,7 @@ class CommandEntry
 	std::size_t _historySize;
 
 	// The actual entry box
-	GtkWidget* _entry;
+	Gtk::Entry* _entry;
 
 	// The current history cursor, 
 	// 0 is the currently edited command,
@@ -55,9 +58,6 @@ public:
 
 	void setHistorySize(std::size_t size);
 
-	// Retrieve the widget to pack this into a parent container
-	operator GtkWidget*();
-
 private:
 	// Truncates the history if the number of items exceeds _historySize
 	void ensureMaxHistorySize();
@@ -73,9 +73,9 @@ private:
 	void moveAutoCompletion(int direction);
 
 	// GTK callbacks
-	static void onCmdEntryActivate(GtkEntry* entry, CommandEntry* self);
-	static gboolean onCmdEntryKeyPress(GtkWidget* widget, GdkEventKey* event, CommandEntry* self);
-	static void onGoButtonClicked(GtkWidget* button, CommandEntry* self);
+	void onCmdEntryActivate();
+	bool onCmdEntryKeyPress(GdkEventKey* ev);
+	void onGoButtonClicked();
 };
 
 } // namespace ui

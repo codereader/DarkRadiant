@@ -4,6 +4,7 @@
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "modelskin.h"
+
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/IconTextColumn.h"
@@ -11,137 +12,129 @@
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/MultiMonitor.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
 namespace ui
 {
 
 /* CONSTANTS */
 
-namespace {
-	
+namespace
+{
 	const char* FOLDER_ICON = "folder16.png";
 	const char* SKIN_ICON = "skin16.png";
 
 	const char* const WINDOW_TITLE = N_("Choose Skin");
-	
-	// Tree column enum
-	enum {
-		DISPLAYNAME_COL,
-		FULLNAME_COL,
-		ICON_COL,
-		N_COLUMNS
-	};
-	
 }
 
 // Constructor
-SkinChooser::SkinChooser()
-: _widget(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
-  _lastSkin(""),
-  _preview(GlobalUIManager().createModelPreview())
+SkinChooser::SkinChooser() :
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
+	_lastSkin(""),
+	_preview(GlobalUIManager().createModelPreview())
 {
-	// Set up window
-	gtk_window_set_transient_for(GTK_WINDOW(_widget), GlobalMainFrame().getTopLevelWindow());
-    gtk_window_set_modal(GTK_WINDOW(_widget), TRUE);
-    gtk_window_set_position(GTK_WINDOW(_widget), GTK_WIN_POS_CENTER_ON_PARENT);
-	gtk_window_set_title(GTK_WINDOW(_widget), _(WINDOW_TITLE));
-	g_signal_connect(G_OBJECT(_widget), 
-					 "delete-event", 
-					 G_CALLBACK(_onCloseButton),
-					 this);
+	set_border_width(6);
 
 	// Set the default size of the window
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GTK_WINDOW(_widget));
-	gint w = rect.width;
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
+	int w = rect.get_width();
 
 	// Main vbox
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// HBox containing tree view and preview
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(hbx), createTreeView(w / 5), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbx), createPreview(w / 3), FALSE, FALSE, 0);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 12));
+
+	hbx->pack_start(createTreeView(w / 5), true, true, 0);
+	hbx->pack_start(createPreview(w / 3), false, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(vbx), createButtons(), FALSE, FALSE, 0);
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 6);
-	gtk_container_add(GTK_CONTAINER(_widget), vbx);
-	
+	vbx->pack_start(*hbx, true, true, 0);
+	vbx->pack_end(createButtons(), false, false, 0);
+
+	add(*vbx);
 }
 
-SkinChooser& SkinChooser::Instance() {
-	// Static instance pointer
-	return *InstancePtr();
-}
+SkinChooser& SkinChooser::Instance()
+{
+	SkinChooserPtr& instancePtr = InstancePtr();
 
-SkinChooserPtr& SkinChooser::InstancePtr() {
-	static SkinChooserPtr _instancePtr;
-
-	if (_instancePtr == NULL) {
+	if (instancePtr == NULL)
+	{
 		// Not yet instantiated, do it now
-		_instancePtr = SkinChooserPtr(new SkinChooser);
+		instancePtr.reset(new SkinChooser);
 		
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
+		GlobalRadiant().addEventListener(instancePtr);
 	}
 
+	return *instancePtr;
+}
+
+SkinChooserPtr& SkinChooser::InstancePtr()
+{
+	static SkinChooserPtr _instancePtr;
 	return _instancePtr;
 }
 
-// Create the TreeView
-GtkWidget* SkinChooser::createTreeView(int width) {
-	
+Gtk::Widget& SkinChooser::createTreeView(int width)
+{
 	// Create the treestore
-	_treeStore = gtk_tree_store_new(N_COLUMNS, 
-  									G_TYPE_STRING, 
-  									G_TYPE_STRING,
-  									GDK_TYPE_PIXBUF);
+	_treeStore = Gtk::TreeStore::create(_columns);
   									
 	// Create the tree view
-	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_treeStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
+	_treeView = Gtk::manage(new Gtk::TreeView(_treeStore));
+	_treeView->set_headers_visible(false);
 	
 	// Single column to display the skin name
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), 
-								gtkutil::IconTextColumn(_("Skin"), 
-														DISPLAYNAME_COL, 
-														ICON_COL));
-	
+	_treeView->append_column(*Gtk::manage(
+		new gtkutil::IconTextColumn(_("Skin"), _columns.displayName, _columns.icon))
+	); 
+
 	// Connect up selection changed callback
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
-	g_signal_connect(G_OBJECT(_selection), 
-					 "changed", 
-					 G_CALLBACK(_onSelChanged), 
-					 this);
+	_selection = _treeView->get_selection();
+	_selection->signal_changed().connect(sigc::mem_fun(*this, &SkinChooser::_onSelChanged));
 	
 	// Pack treeview into a ScrolledFrame and return
-	gtk_widget_set_size_request(_treeView, static_cast<gint>(width), -1);
-	return gtkutil::ScrolledFrame(_treeView);
+	_treeView->set_size_request(width, -1);
+
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Create the model preview
-GtkWidget* SkinChooser::createPreview(int size) {
+Gtk::Widget& SkinChooser::createPreview(int size)
+{
 	_preview->setSize(size);
-	return _preview->getWidget();
+
+	return *_preview->getWidget();
 }
 
 // Create the buttons panel
-GtkWidget* SkinChooser::createButtons() {
-	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+Gtk::Widget& SkinChooser::createButtons()
+{
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
 	
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 
-	g_signal_connect(G_OBJECT(okButton), "clicked", 
-					 G_CALLBACK(_onOK), this);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", 
-					 G_CALLBACK(_onCancel), this);
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinChooser::_onOK));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &SkinChooser::_onCancel));
 	
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);	
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+	hbx->pack_end(*okButton, true, true, 0);	
+	hbx->pack_end(*cancelButton, true, true, 0);	
 					   
-	return gtkutil::RightAlignment(hbx);	
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
+}
+
+void SkinChooser::_postShow()
+{
+	// Initialise the GL widget after the widgets have been shown
+	_preview->initialisePreview();
+
+	// Call the base class, will enter main loop
+	BlockingTransientWindow::_postShow();
 }
 
 // Show the dialog and block for a selection
@@ -154,22 +147,19 @@ std::string SkinChooser::showAndBlock(const std::string& model,
 	populateSkins();
 
 	// Display the model in the window title
-	gtk_window_set_title(GTK_WINDOW(_widget), (std::string(_(WINDOW_TITLE)) + ": " + _model).c_str());
+	set_title(std::string(_(WINDOW_TITLE)) + ": " + _model);
 	
-	// Show the dialog
-	gtk_widget_show_all(_widget);
-	_preview->initialisePreview();
-	
-	// Enter main loop and block
-	gtk_main();
+	// Show the dialog and block
+	show();
 	
 	// Hide the dialog and return the selection
 	_preview->setModel(""); // release model
-	gtk_widget_hide(_widget);
+	
 	return _lastSkin;
 }
 
-namespace {
+namespace
+{
 	
 /*
  * Visitor class to fill in column data for the skins tree.
@@ -177,79 +167,80 @@ namespace {
 class SkinTreeVisitor
 : public gtkutil::VFSTreePopulator::Visitor
 {
+private:
+	const SkinChooser::TreeColumns& _columns;
+
 public:
+	SkinTreeVisitor(const SkinChooser::TreeColumns& columns) :
+		_columns(columns)
+	{}
+
     virtual ~SkinTreeVisitor() {}
 
 	// Required visit function
-	void visit(GtkTreeStore* store, 
-			   GtkTreeIter* it, 
+	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+			   const Gtk::TreeModel::iterator& iter, 
 			   const std::string& path,
-			   bool isExplicit) 
+			   bool isExplicit)
 	{
 		// Get the display path, everything after rightmost slash
 		std::string displayPath = path.substr(path.rfind("/") + 1);
 		
+		Gtk::TreeModel::Row row = *iter;
+
+		row[_columns.displayName] = displayPath;
+		row[_columns.fullName] = path;
+
 		// Get the icon, either folder or skin
-		GdkPixbuf* pixBuf = isExplicit
-							? GlobalUIManager().getLocalPixbuf(SKIN_ICON)
-							: GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
-		
-		gtk_tree_store_set(store, it, 
-						   DISPLAYNAME_COL, displayPath.c_str(),
-						   FULLNAME_COL, path.c_str(),
-						   ICON_COL, pixBuf,
-						   -1);
+		row[_columns.icon] = 
+			GlobalUIManager().getLocalPixbuf(isExplicit ? SKIN_ICON : FOLDER_ICON);
 	}
 };
 
 } // namespace
 
 // Populate the list of skins
-void SkinChooser::populateSkins() {
-	
+void SkinChooser::populateSkins()
+{
 	// Clear the treestore
-	gtk_tree_store_clear(_treeStore);
+	_treeStore->clear();
 	
 	// Add the "Matching skins" toplevel node
-	GtkTreeIter matchingSkins;
-	gtk_tree_store_append(_treeStore, &matchingSkins, NULL);
-	gtk_tree_store_set(_treeStore, &matchingSkins, 
-					   DISPLAYNAME_COL, _("Matching skins"), 
-					   FULLNAME_COL, "",
-					   ICON_COL, GlobalUIManager().getLocalPixbuf(FOLDER_ICON),
-					   -1); 		
+	Gtk::TreeModel::iterator matchingSkins = _treeStore->append();
+	Gtk::TreeModel::Row row = *matchingSkins;
+
+	row[_columns.displayName] = _("Matching skins");
+	row[_columns.fullName] = "";
+	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
 
 	// Get the skins for the associated model, and add them as matching skins
-	const StringList& matchList = 
-		GlobalModelSkinCache().getSkinsForModel(_model);
+	const StringList& matchList = GlobalModelSkinCache().getSkinsForModel(_model);
+
 	for (StringList::const_iterator i = matchList.begin();
 		 i != matchList.end();
 		 ++i)
 	{
-		GtkTreeIter temp;
-		gtk_tree_store_append(_treeStore, &temp, &matchingSkins);
-		gtk_tree_store_set(_treeStore, &temp, 
-						   DISPLAYNAME_COL, i->c_str(), 
-						   FULLNAME_COL, i->c_str(),
-						   ICON_COL, GlobalUIManager().getLocalPixbuf(SKIN_ICON),
-						   -1); 		
+		Gtk::TreeModel::Row skinRow = *_treeStore->append(matchingSkins->children());
+
+		skinRow[_columns.displayName] = *i;
+		skinRow[_columns.fullName] = *i;
+		skinRow[_columns.icon] = GlobalUIManager().getLocalPixbuf(SKIN_ICON);
 	}
 	
 	// Add "All skins" toplevel node
-	GtkTreeIter allSkins;
-	gtk_tree_store_append(_treeStore, &allSkins, NULL);
-	gtk_tree_store_set(_treeStore, &allSkins, 
-					   DISPLAYNAME_COL, _("All skins"), 
-					   FULLNAME_COL, "",
-					   ICON_COL, GlobalUIManager().getLocalPixbuf(FOLDER_ICON),
-					   -1); 		
-	
+	Gtk::TreeModel::iterator allSkins = _treeStore->append();
+	row = *allSkins;
+
+	row[_columns.displayName] = _("All skins");
+	row[_columns.fullName] = "";
+	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+
 	// Get the list of skins for the model
 	const StringList& skins = GlobalModelSkinCache().getAllSkins();
 	
 	// Create a TreePopulator for the tree store and pass in each of the
 	// skin names.
-	gtkutil::VFSTreePopulator pop(_treeStore, &allSkins);
+	gtkutil::VFSTreePopulator pop(_treeStore, allSkins);
 
 	for (StringList::const_iterator i = skins.begin();
 		 i != skins.end();
@@ -259,8 +250,23 @@ void SkinChooser::populateSkins() {
 	}
 	
 	// Visit the tree populator in order to fill in the column data
-	SkinTreeVisitor visitor;
+	SkinTreeVisitor visitor(_columns);
 	pop.forEachNode(visitor);
+}
+
+std::string SkinChooser::getSelectedSkin()
+{
+	// Get the selected skin
+	Gtk::TreeModel::iterator iter = _selection->get_selected();
+
+	if (iter)
+	{
+		return Glib::ustring((*iter)[_columns.fullName]);
+	}
+	else
+	{
+		return "";
+	}
 }
 
 // Static method to display singleton instance and choose a skin
@@ -273,45 +279,41 @@ std::string SkinChooser::chooseSkin(const std::string& model,
 
 void SkinChooser::onRadiantShutdown()
 {
-	globalOutputStream() << "SkinChooser shutting down.\n";
+	globalOutputStream() << "SkinChooser shutting down." << std::endl;
 
 	_preview.reset();
+
+	InstancePtr().reset();
 }
 
-/* GTK CALLBACKS */
+void SkinChooser::_onDeleteEvent()
+{
+	_lastSkin = _prevSkin;
 
-void SkinChooser::_onOK(GtkWidget* widget, SkinChooser* self) {
+	hide(); // just hide, don't call base class which might delete this dialog
+}
+
+void SkinChooser::_onOK() {
 
 	// Get the selected skin
-	self->_lastSkin = gtkutil::TreeModel::getSelectedString(self->_selection, 
-															FULLNAME_COL);
-	// Exit main loop
-	gtk_main_quit();
+	_lastSkin = getSelectedSkin();
+
+	hide(); // break main loop
 }
 
-void SkinChooser::_onCancel(GtkWidget* widget, SkinChooser* self) {
-	// Clear the last skin and quit the main loop
-	self->_lastSkin = self->_prevSkin;
-	gtk_main_quit();	
-}
-
-void SkinChooser::_onSelChanged(GtkWidget*, SkinChooser* self) {
-
-	// Get the selected skin
-	std::string skin = gtkutil::TreeModel::getSelectedString(self->_selection, 
-															 FULLNAME_COL);
-
-	// Set the model preview to show the model with the selected skin
-	self->_preview->setModel(self->_model);
-	self->_preview->setSkin(skin);
-}
-
-gboolean SkinChooser::_onCloseButton(GtkWidget *widget, GdkEvent* ev, SkinChooser* self)
+void SkinChooser::_onCancel()
 {
 	// Clear the last skin and quit the main loop
-	self->_lastSkin = self->_prevSkin;
-	gtk_main_quit();
-	return true;
+	_lastSkin = _prevSkin;
+
+	hide();
 }
 
-} // namespace ui
+void SkinChooser::_onSelChanged()
+{
+	// Set the model preview to show the model with the selected skin
+	_preview->setModel(_model);
+	_preview->setSkin(getSelectedSkin());
+}
+
+} // namespace

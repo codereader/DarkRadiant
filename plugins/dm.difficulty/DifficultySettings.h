@@ -5,31 +5,44 @@
 #include "entitylib.h"
 #include <map>
 #include <boost/shared_ptr.hpp>
-#include <gtk/gtktreestore.h>
+#include <gtkmm/treestore.h>
 
 #include "DifficultyEntity.h"
 #include "Setting.h"
 
-namespace {
+namespace
+{
 	const std::string RKEY_DIFFICULTY_LEVELS("game/difficulty/numLevels");
 	const std::string RKEY_DIFFICULTY_ENTITYDEF_DEFAULT("game/difficulty/defaultSettingsEclass");
 	const std::string RKEY_DIFFICULTY_ENTITYDEF_MAP("game/difficulty/mapSettingsEclass");
 	const std::string RKEY_DIFFICULTY_ENTITYDEF_MENU("game/difficulty/difficultyMenuEclass");
-
-	enum {
-		COL_DESCRIPTION,
-		COL_TEXTCOLOUR,
-		COL_CLASSNAME,
-		COL_SETTING_ID,
-		COL_IS_OVERRIDDEN,
-		NUM_SETTINGS_COLS,
-	};
 }
 
 namespace difficulty {
 
 class DifficultySettings
 {
+public:
+	struct TreeModelColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TreeModelColumns()
+		{ 
+			add(description); 
+			add(colour);
+			add(classname);
+			add(settingId);
+			add(isOverridden);
+		}
+
+		Gtk::TreeModelColumn<Glib::ustring> description;
+		Gtk::TreeModelColumn<Glib::ustring> colour;
+		Gtk::TreeModelColumn<Glib::ustring> classname;
+		Gtk::TreeModelColumn<int> settingId;
+		Gtk::TreeModelColumn<bool> isOverridden;
+	};
+
+private:
 	// the difficulty level, these settings are referring to
 	int _level;
 
@@ -43,18 +56,21 @@ class DifficultySettings
 	SettingIdMap _settingIds;
 
 	// This maps classnames to GtkTreeIters, for faster lookup
-	typedef std::map<std::string, GtkTreeIter> TreeIterMap;
+	typedef std::map<std::string, Gtk::TreeModel::iterator> TreeIterMap;
 	TreeIterMap _iterMap;
 
 	// The treemodel
-	GtkTreeStore* _store;
+	TreeModelColumns _columns;
+	Glib::RefPtr<Gtk::TreeStore> _store;
 
 public:
 	// Define the difficulty level in the constructor
 	DifficultySettings(int level);
 
+	const TreeModelColumns& getColumns() const;
+
 	// Get the treestore pointer for packing into a treeview
-	GtkTreeStore* getTreeStore() const;
+	const Glib::RefPtr<Gtk::TreeStore>& getTreeStore() const;
 
 	// Returns the Setting associated with the given className 
 	// and carrying the given ID (returned pointer might be NULL)
@@ -116,15 +132,15 @@ private:
 	 * If the item is not yet existing, it gets inserted into the tree, according
 	 * to its inheritance tree.
 	 */
-	GtkTreeIter findOrInsertClassname(const std::string& className);
+	Gtk::TreeModel::iterator findOrInsertClassname(const std::string& className);
 
 	/**
 	 * greebo: Inserts the given classname into the treestore, using the
-	 *         given <parent> iter as insertion point. If <parent> is NULL,
-	 *         the entry is inserted at root level.
+	 * given <parent> iter as insertion point. If <parent> is invalid,
+	 * the entry is inserted at root level.
 	 */
-	GtkTreeIter insertClassName(const std::string& className, 
-							 GtkTreeIter* parent = NULL);
+	Gtk::TreeModel::iterator insertClassName(const std::string& className, 
+											 Gtk::TreeModel::iterator parent = Gtk::TreeModel::iterator());
 
 	// returns the parent eclass name for the given <className> or "" if no parent
 	std::string getParentClass(const std::string& className);

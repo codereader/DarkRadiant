@@ -8,46 +8,68 @@
 #include "EffectArgumentItem.h"
 #include <boost/shared_ptr.hpp>
 
-// Forward Declarations
-typedef struct _GtkWindow GtkWindow;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTooltips GtkTooltips;
-typedef struct _GtkToggleButton GtkToggleButton;
+#include <gtkmm/liststore.h>
 
-namespace ui {
+namespace Gtk
+{
+	class VBox;
+	class Alignment;
+	class CheckButton;
+	class Table;
+}
+
+namespace ui
+{
 
 class ResponseEditor;
 
 class EffectEditor :
 	public gtkutil::BlockingTransientWindow
 {
+private:
 	// The overall vbox
-	GtkWidget* _dialogVBox;
+	Gtk::VBox* _dialogVBox;
 	
 	// The container holding the argument widget table
-	GtkWidget* _argAlignment;
+	Gtk::Alignment* _argAlignment;
 	
-	GtkWidget* _argTable;
-	
-	// The tooltips group to display the help text
-	GtkTooltips* _tooltips;
+	Gtk::Table* _argTable;
 	
 	// The list containing the possible effect types
 	ResponseEffectTypeMap _effectTypes;
 	
-	GtkWidget* _effectTypeCombo;
-	GtkListStore* _effectStore;
+	Gtk::ComboBox* _effectTypeCombo;
+
+	struct EffectColumns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		EffectColumns() { add(name); add(caption); }
+
+		Gtk::TreeModelColumn<Glib::ustring> name;			// Name
+		Gtk::TreeModelColumn<Glib::ustring> caption;		// Caption String
+	};
+
+	EffectColumns _effectColumns;
+	Glib::RefPtr<Gtk::ListStore> _effectStore;
 	
 	// The entity list store
-	GtkListStore* _entityStore;
+	struct EntityColumns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		EntityColumns() { add(name); }
+
+		Gtk::TreeModelColumn<Glib::ustring> name;			// Name
+	};
+
+	EntityColumns _entityColumns;
+	Glib::RefPtr<Gtk::ListStore> _entityStore;
 	
 	// The list of argument items
 	typedef boost::shared_ptr<EffectArgumentItem> ArgumentItemPtr;
 	typedef std::vector<ArgumentItemPtr> ArgumentItemList;
 	ArgumentItemList _argumentItems;
 	
-	GtkWidget* _stateToggle;
+	Gtk::CheckButton* _stateToggle;
 	
 	// The references to the object we're editing here 
 	StimResponse& _response;
@@ -75,7 +97,7 @@ public:
 	 * 
 	 * @editor: The ResponseEditor for calling update() on exit. 
 	 */
-	EffectEditor(GtkWindow* parent, 
+	EffectEditor(const Glib::RefPtr<Gtk::Window>& parent, 
 				 StimResponse& response, 
 				 const unsigned int effectIndex,
 				 StimTypes& stimTypes,
@@ -111,10 +133,10 @@ private:
 	 */
 	void createArgumentWidgets(ResponseEffect& effect);
 	
-	static void onEffectTypeChange(GtkWidget* combobox, EffectEditor* self);
-	static void onStateToggle(GtkToggleButton* toggleButton, EffectEditor* self);
-	static void onSave(GtkWidget* button, EffectEditor* self);
-	static void onCancel(GtkWidget* button, EffectEditor* self);
+	void onEffectTypeChange();
+	void onStateToggle();
+	void onSave();
+	void onCancel();
 
 }; // class EffectEditor
 

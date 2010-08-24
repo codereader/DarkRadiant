@@ -13,11 +13,17 @@
 #include "ui/common/ShaderChooser.h"
 #include "selection/algorithm/Shader.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/box.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
-namespace ui {
+namespace ui
+{
 
-	namespace {
+	namespace
+	{
 		const int FINDDLG_DEFAULT_SIZE_X = 550;
 	    const int FINDDLG_DEFAULT_SIZE_Y = 100;
 	   	
@@ -34,143 +40,157 @@ namespace ui {
 FindAndReplaceShader::FindAndReplaceShader() :
 	gtkutil::BlockingTransientWindow(_(FINDDLG_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), FINDDLG_DEFAULT_SIZE_X, FINDDLG_DEFAULT_SIZE_Y);
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_default_size(FINDDLG_DEFAULT_SIZE_X, FINDDLG_DEFAULT_SIZE_Y);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets
 	populateWindow();
 	
 	// Propagate shortcuts to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
-	
-	// Show the window and its children
-	show();
+	GlobalEventManager().connectDialogWindow(this);
 }
 
-FindAndReplaceShader::~FindAndReplaceShader() {
+FindAndReplaceShader::~FindAndReplaceShader()
+{
 	// Propagate shortcuts to the main window
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 }
 
-void FindAndReplaceShader::populateWindow() {
-	GtkWidget* dialogVBox = gtk_vbox_new(FALSE, 6);
-	gtk_container_add(GTK_CONTAINER(getWindow()), dialogVBox);
+void FindAndReplaceShader::populateWindow()
+{
+	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 6));
+	add(*dialogVBox);
 	
-	GtkWidget* findHBox = gtk_hbox_new(FALSE, 0);
-    GtkWidget* replaceHBox = gtk_hbox_new(FALSE, 0);
+	Gtk::HBox* findHBox = Gtk::manage(new Gtk::HBox(false, 0));
+    Gtk::HBox* replaceHBox = Gtk::manage(new Gtk::HBox(false, 0));
     
     // Pack these hboxes into an alignment so that they are indented
-	GtkWidget* alignment = gtkutil::LeftAlignment(GTK_WIDGET(findHBox), 18, 1.0); 
-	GtkWidget* alignment2 = gtkutil::LeftAlignment(GTK_WIDGET(replaceHBox), 18, 1.0);
+	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*findHBox, 18, 1.0f)); 
+	Gtk::Alignment* alignment2 = Gtk::manage(new gtkutil::LeftAlignment(*replaceHBox, 18, 1.0f));
 	
-	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment), TRUE, TRUE, 0); 
-	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment2), TRUE, TRUE, 0);
+	dialogVBox->pack_start(*alignment, true, true, 0);
+	dialogVBox->pack_start(*alignment2, true, true, 0);
 	
 	// Create the labels and pack them in the hbox
-	GtkWidget* findLabel = gtkutil::LeftAlignedLabel(_(LABEL_FIND));
-	GtkWidget* replaceLabel = gtkutil::LeftAlignedLabel(_(LABEL_REPLACE));
-	gtk_widget_set_size_request(findLabel, 60, -1);
-	gtk_widget_set_size_request(replaceLabel, 60, -1);
+	Gtk::Label* findLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_FIND)));
+	Gtk::Label* replaceLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_REPLACE)));
+
+	findLabel->set_size_request(60, -1);
+	replaceLabel->set_size_request(60, -1);
 	
-	gtk_box_pack_start(GTK_BOX(findHBox), findLabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(replaceHBox), replaceLabel, FALSE, FALSE, 0);
+	findHBox->pack_start(*findLabel, false, false, 0);
+	replaceHBox->pack_start(*replaceLabel, false, false, 0);
 	
-	_findEntry = gtk_entry_new();
-	_replaceEntry = gtk_entry_new();
-	g_signal_connect(G_OBJECT(_findEntry), "changed", G_CALLBACK(onFindChanged), this);
-	g_signal_connect(G_OBJECT(_findEntry), "changed", G_CALLBACK(onReplaceChanged), this);
+	_findEntry = Gtk::manage(new Gtk::Entry);
+	_replaceEntry = Gtk::manage(new Gtk::Entry);
+
+	_findEntry->signal_changed().connect(sigc::mem_fun(*this, &FindAndReplaceShader::onFindChanged));
+	_replaceEntry->signal_changed().connect(sigc::mem_fun(*this, &FindAndReplaceShader::onReplaceChanged));
 	
-	gtk_box_pack_start(GTK_BOX(findHBox), _findEntry, TRUE, TRUE, 6);
-	gtk_box_pack_start(GTK_BOX(replaceHBox), _replaceEntry, TRUE, TRUE, 6);
+	findHBox->pack_start(*_findEntry, true, true, 6);
+	replaceHBox->pack_start(*_replaceEntry, true, true, 6);
 		
 	// Create the icon buttons to open the ShaderChooser and override the size request
-	_findSelectButton = gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON), false);
-	gtk_widget_set_size_request(_findSelectButton, -1, -1); 
-	g_signal_connect(G_OBJECT(_findSelectButton), "clicked", G_CALLBACK(onChooseFind), this);
+	_findSelectButton = Gtk::manage(
+		new gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
+	);
+	_findSelectButton->set_size_request(-1, -1); 
+	_findSelectButton->signal_clicked().connect(sigc::mem_fun(*this, &FindAndReplaceShader::onChooseFind));
 	
-	_replaceSelectButton = gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON), false);
-	gtk_widget_set_size_request(_replaceSelectButton, -1, -1); 
-	g_signal_connect(G_OBJECT(_replaceSelectButton), "clicked", G_CALLBACK(onChooseReplace), this);
+	_replaceSelectButton = Gtk::manage(
+		new gtkutil::IconTextButton("", GlobalUIManager().getLocalPixbuf(FOLDER_ICON))
+	);
+	_replaceSelectButton->set_size_request(-1, -1); 
+	_replaceSelectButton->signal_clicked().connect(sigc::mem_fun(*this, &FindAndReplaceShader::onChooseReplace));
+		
+	findHBox->pack_start(*_findSelectButton, false, false, 0);
+	replaceHBox->pack_start(*_replaceSelectButton, false, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(findHBox), _findSelectButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(replaceHBox), _replaceSelectButton, FALSE, FALSE, 0);
-	
-	GtkWidget* spacer = gtk_alignment_new(0,0,0,0);
-	gtk_widget_set_usize(spacer, 10, 2);
-	gtk_box_pack_start(GTK_BOX(dialogVBox), spacer, FALSE, FALSE, 0);
+	Gtk::Alignment* spacer = Gtk::manage(new Gtk::Alignment(0,0,0,0));
+	spacer->set_size_request(10, 2);
+	dialogVBox->pack_start(*spacer, false, false, 0);
 	
 	// The checkbox for "search selected only"
-	_selectedOnly = gtk_check_button_new_with_mnemonic(_(LABEL_SELECTED_ONLY));
-	GtkWidget* alignment3 = gtkutil::LeftAlignment(GTK_WIDGET(_selectedOnly), 18, 1.0); 
-	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(alignment3), FALSE, FALSE, 0); 
+	_selectedOnly = Gtk::manage(new Gtk::CheckButton(_(LABEL_SELECTED_ONLY), true));
+
+	Gtk::Alignment* alignment3 = Gtk::manage(new gtkutil::LeftAlignment(*_selectedOnly, 18, 1.0f)); 
+	dialogVBox->pack_start(*alignment3, false, false, 0); 
 	
 	// Finally, add the buttons
-	gtk_box_pack_start(GTK_BOX(dialogVBox), createButtons(), FALSE, FALSE, 0);
+	dialogVBox->pack_start(createButtons(), false, false, 0);
 }
 
-GtkWidget* FindAndReplaceShader::createButtons() {
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+Gtk::Widget& FindAndReplaceShader::createButtons()
+{
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 
-	GtkWidget* replaceButton = gtk_button_new_from_stock(GTK_STOCK_FIND_AND_REPLACE);
-	GtkWidget* closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
+	Gtk::Button* replaceButton = Gtk::manage(new Gtk::Button(Gtk::Stock::FIND_AND_REPLACE));
+	Gtk::Button* closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLOSE));
 	
-	g_signal_connect(G_OBJECT(replaceButton), "clicked", G_CALLBACK(onReplace), this);
-	g_signal_connect(G_OBJECT(closeButton), "clicked", G_CALLBACK(onClose), this);
+	replaceButton->signal_clicked().connect(sigc::mem_fun(*this, &FindAndReplaceShader::onReplace));
+	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &FindAndReplaceShader::onClose));
 
-	gtk_box_pack_end(GTK_BOX(hbox), closeButton, FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(hbox), replaceButton, FALSE, FALSE, 0);
+	hbox->pack_end(*closeButton, false, false, 0);
+	hbox->pack_end(*replaceButton, false, false, 0);
 	
-	_counterLabel = gtkutil::LeftAlignedLabel("");
-	gtk_misc_set_padding(GTK_MISC(_counterLabel), 18, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _counterLabel, FALSE, FALSE, 0);
+	_counterLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	_counterLabel->set_padding(18, 0);
+	hbox->pack_start(*_counterLabel, false, false, 0);
 	
-	return hbox;
+	return *hbox;
 }
 
-void FindAndReplaceShader::performReplace() {
-	const std::string find(gtk_entry_get_text(GTK_ENTRY(_findEntry)));
-	const std::string replace(gtk_entry_get_text(GTK_ENTRY(_replaceEntry)));
+void FindAndReplaceShader::performReplace()
+{
+	const std::string find(_findEntry->get_text());
+	const std::string replace(_replaceEntry->get_text());
 
 	int replaced = selection::algorithm::findAndReplaceShader(
 		find, replace,
-		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_selectedOnly)) ? true : false // selected only
+		_selectedOnly->get_active() // selected only
 	);
 	
-	const std::string replacedStr = (boost::format(_(COUNT_TEXT)) % replaced).str();
-	gtk_label_set_markup(GTK_LABEL(_counterLabel), replacedStr.c_str());
+	_counterLabel->set_markup((boost::format(_(COUNT_TEXT)) % replaced).str());
 }
 
-void FindAndReplaceShader::onChooseFind(GtkWidget* widget, FindAndReplaceShader* self) {
+void FindAndReplaceShader::onChooseFind()
+{
 	// Construct the modal dialog, enters a main loop
-	ShaderChooser chooser(NULL, GTK_WINDOW(self->getWindow()), self->_findEntry);
+	ShaderChooser chooser(NULL, getRefPtr(), _findEntry);
 }
 
-void FindAndReplaceShader::onChooseReplace(GtkWidget* widget, FindAndReplaceShader* self) {
+void FindAndReplaceShader::onChooseReplace()
+{
 	// Construct the modal dialog, enters a main loop
-	ShaderChooser chooser(NULL, GTK_WINDOW(self->getWindow()), self->_replaceEntry);
+	ShaderChooser chooser(NULL, getRefPtr(), _replaceEntry);
 }
 
-void FindAndReplaceShader::onReplace(GtkWidget* widget, FindAndReplaceShader* self) {
-	self->performReplace();
+void FindAndReplaceShader::onReplace()
+{
+	performReplace();
 }
 
-void FindAndReplaceShader::onClose(GtkWidget* widget, FindAndReplaceShader* self) {
-	// Call the DialogWindow::destroy method and remove self from heap
-	self->destroy();
+void FindAndReplaceShader::onClose()
+{
+	destroy();
 }
 
-void FindAndReplaceShader::onFindChanged(GtkEditable* editable, FindAndReplaceShader* self) {
-	gtk_label_set_markup(GTK_LABEL(self->_counterLabel), "");
+void FindAndReplaceShader::onFindChanged()
+{
+	_counterLabel->set_text("");
 }
 
-void FindAndReplaceShader::onReplaceChanged(GtkEditable* editable, FindAndReplaceShader* self) {
-	gtk_label_set_markup(GTK_LABEL(self->_counterLabel), "");
+void FindAndReplaceShader::onReplaceChanged()
+{
+	_counterLabel->set_text("");
 }
 
-void FindAndReplaceShader::showDialog(const cmd::ArgumentList& args) {
+void FindAndReplaceShader::showDialog(const cmd::ArgumentList& args)
+{
 	// Just instantiate a new dialog, this enters a main loop
-	FindAndReplaceShader dialog; 
+	FindAndReplaceShader dialog;
+	dialog.show();
 }
 
 } // namespace ui

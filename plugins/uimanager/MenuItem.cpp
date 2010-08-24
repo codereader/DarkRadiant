@@ -8,16 +8,17 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#include <gtk/gtkmenushell.h>
-#include <gtk/gtkmenuitem.h>
-#include <gtk/gtkmenubar.h>
-#include <gtk/gtkmenu.h>
-#include <gtk/gtkseparatormenuitem.h>
-#include <gtk/gtkwidget.h>
+#include <gtkmm/menushell.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/menubar.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/separatormenuitem.h>
+#include <gtkmm/widget.h>
 
 #include <iostream>
 
-namespace ui {
+namespace ui
+{
 	
 	namespace {
 		typedef std::vector<std::string> StringVector;
@@ -101,74 +102,78 @@ void MenuItem::addChild(const MenuItemPtr& newChild) {
 	_children.push_back(newChild);
 }
 
-void MenuItem::removeChild(const MenuItemPtr& child) {
-	for (MenuItemList::iterator i = _children.begin(); i != _children.end(); ++i) {
-		if (*i == child) {
+void MenuItem::removeChild(const MenuItemPtr& child)
+{
+	for (MenuItemList::iterator i = _children.begin(); i != _children.end(); ++i)
+	{
+		if (*i == child)
+		{
 			_children.erase(i);
 			return;
 		}
 	}
 }
 
-std::string MenuItem::getEvent() const {
+std::string MenuItem::getEvent() const
+{
 	return _event;
 }
 
-void MenuItem::setEvent(const std::string& eventName) {
+void MenuItem::setEvent(const std::string& eventName)
+{
 	_event = eventName;
 }
 
-int MenuItem::getMenuPosition(const MenuItemPtr& child) {
-	if (!_constructed) {
+int MenuItem::getMenuPosition(const MenuItemPtr& child)
+{
+	if (!_constructed)
+	{
 		construct();
 	}
 	
 	// Check if this is the right item type for this operation
-	if (_type == menuFolder || _type == menuBar) {
-		GtkWidget* container = _widget;
+	if (_type == menuFolder || _type == menuBar)
+	{
+		Gtk::Container* container = dynamic_cast<Gtk::Container*>(_widget);
 		
 		// A menufolder is a menuitem with a contained submenu, retrieve it
-		if (_type == menuFolder) {
-			container = gtk_menu_item_get_submenu(GTK_MENU_ITEM(_widget));
+		if (_type == menuFolder)
+		{
+			container = static_cast<Gtk::MenuItem*>(_widget)->get_submenu();
 		}
 		
 		// Get the list of child widgets
-		GList* gtkChildren = gtk_container_get_children(GTK_CONTAINER(container));
+		std::vector<Gtk::Widget*> children = container->get_children();
+
+		// The child Widget for comparison
+		Gtk::Widget* childWidget = child->getWidget();
 		
-		// Cast the child onto a GtkWidget for comparison
-		GtkWidget* childWidget = *child;
-		
-		int index = 0;
-		while (gtkChildren != NULL) {
+		for (std::size_t i = 0; i < children.size(); ++i)
+		{
 			// Get the widget pointer from the current list item
-			GtkWidget* candidate = reinterpret_cast<GtkWidget*>(gtkChildren->data);
-			
-			// Have we found the widget?
-			if (candidate == childWidget) {
-				return index;
+			if (children[i] == childWidget)
+			{
+				return i;
 			}
-			
-			index++;
-			gtkChildren = gtkChildren->next;
 		}
-		
-		return index;
 	}
-	else {
-		return -1;
-	}
+
+	return -1; // not found or wrong type
 }
 
-MenuItem::operator GtkWidget* () {
-	// Check for toggle, allocate the GtkWidget*
-	if (!_constructed) {
+Gtk::Widget* MenuItem::getWidget()
+{
+	// Check for toggle, allocate the Gtk::Widget*
+	if (!_constructed)
+	{
 		construct();
 	}
 	
 	return _widget;
 }
 
-MenuItemPtr MenuItem::find(const std::string& menuPath) {
+MenuItemPtr MenuItem::find(const std::string& menuPath)
+{
 	// Split the path and analyse it
 	StringVector parts;
 	boost::algorithm::split(parts, menuPath, boost::algorithm::is_any_of("/"));
@@ -259,36 +264,68 @@ void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 	} 
 	else {
 		_type = menuNothing;
-		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName << "\n"; 
+		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName << std::endl; 
 	}
 }
 
-void MenuItem::construct() {
-	if (_type == menuBar) {
-		_widget = gtk_menu_bar_new();
-		for (std::size_t i = 0; i < _children.size(); i++) {
+void MenuItem::construct()
+{
+	if (_type == menuBar)
+	{
+		Gtk::MenuBar* menuBar = Gtk::manage(new Gtk::MenuBar);
+		_widget = menuBar;
+
+		for (std::size_t i = 0; i < _children.size(); i++)
+		{
 			// Cast each children onto GtkWidget and append it to the menu
-			gtk_menu_shell_append(GTK_MENU_SHELL(_widget), *_children[i]);
+			Gtk::MenuItem* menuItem = dynamic_cast<Gtk::MenuItem*>(_children[i]->getWidget());
+
+			if (menuItem != NULL)
+			{
+				menuBar->append(*menuItem);
+			}
+			else
+			{
+				globalErrorStream() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl; 
+			}
 		}
 	}
-	else if (_type == menuSeparator) {
-		_widget = gtk_separator_menu_item_new();
+	else if (_type == menuSeparator)
+	{
+		_widget = Gtk::manage(new Gtk::SeparatorMenuItem);
 	}
-	else if (_type == menuFolder) {
+	else if (_type == menuFolder)
+	{
 		// Create the menuitem
-		_widget = gtk_menu_item_new_with_mnemonic(_caption.c_str());
+		Gtk::MenuItem* menuItem = Gtk::manage(new Gtk::MenuItem(_caption, true));
+		_widget = menuItem;
+
 		// Create the submenu
-		GtkWidget* subMenu = gtk_menu_new();
-		gtk_widget_show(subMenu);
+		Gtk::Menu* subMenu = Gtk::manage(new Gtk::Menu);
+		subMenu->show();
+
 		// Attach the submenu to the menuitem
-		gtk_menu_item_set_submenu(GTK_MENU_ITEM(_widget), subMenu);
-		for (std::size_t i = 0; i < _children.size(); i++) {
+		menuItem->set_submenu(*subMenu);
+
+		for (std::size_t i = 0; i < _children.size(); i++)
+		{
 			// Cast each children onto GtkWidget and append it to the menu
-			gtk_menu_shell_append(GTK_MENU_SHELL(subMenu), *_children[i]);
+			Gtk::MenuItem* menuItem = dynamic_cast<Gtk::MenuItem*>(_children[i]->getWidget());
+
+			if (menuItem != NULL)
+			{
+				subMenu->append(*menuItem);
+			}
+			else
+			{
+				globalErrorStream() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl; 
+			}
 		}
 	}
-	else if (_type == menuItem) {
-		if (!_event.empty()) {
+	else if (_type == menuItem)
+	{
+		if (!_event.empty())
+		{
 			// Try to lookup the event name
 			IEventPtr event = GlobalEventManager().findEvent(_event);
 		
@@ -298,48 +335,67 @@ void MenuItem::construct() {
 					GlobalEventManager().getAcceleratorStr(event, true);
 			 
 				// Create a new menuitem
-				_menuItem = gtkutil::MenuItemAcceleratorPtr(
-					new gtkutil::TextMenuItemAccelerator(
+				if (event->isToggle())
+				{
+					gtkutil::TextToggleMenuItemAccelerator* menuItem = Gtk::manage(new gtkutil::TextToggleMenuItemAccelerator(
 						_caption,
 						accelText,
-						!_icon.empty() ? GlobalUIManager().getLocalPixbuf(_icon) : NULL,
-						event->isToggle()
-					)
-				);
-				// Cast this item onto a widget
-				_widget = *_menuItem;
+						!_icon.empty() ? GlobalUIManager().getLocalPixbuf(_icon) : Glib::RefPtr<Gdk::Pixbuf>()
+					));
+
+					_menuItem = menuItem;
+					_widget = menuItem;
+				}
+				else
+				{
+					gtkutil::TextMenuItemAccelerator* menuItem = Gtk::manage(new gtkutil::TextMenuItemAccelerator(
+						_caption,
+						accelText,
+						!_icon.empty() ? GlobalUIManager().getLocalPixbuf(_icon) : Glib::RefPtr<Gdk::Pixbuf>()
+					));
+
+					_menuItem = menuItem;
+					_widget = menuItem;
+				}
 				
-				gtk_widget_show_all(_widget);
+				_widget->show_all();
+
 				// Connect the widget to the event
 				event->connectWidget(_widget);
 			}
-			else {
+			else
+			{
 				std::cout << "MenuItem: Cannot find associated event: " << _event << std::endl; 
 			}
 		}
-		else {
+		else
+		{
 			// Create an empty, desensitised menuitem
-			_widget = gtkutil::TextMenuItemAccelerator(_caption, "", NULL, false);
-			gtk_widget_set_sensitive(_widget, false);
+			_widget = Gtk::manage(new gtkutil::TextMenuItemAccelerator(_caption, "", Glib::RefPtr<Gdk::Pixbuf>()));
+			_widget->set_sensitive(false);
 		}
 	}
-	else if (_type == menuRoot) {
+	else if (_type == menuRoot)
+	{
 		// Cannot instantiate root MenuItem, ignore
 	}
 	
-	if (_widget != NULL) {
-		gtk_widget_show_all(_widget);
+	if (_widget != NULL)
+	{
+		_widget->show_all();
 	}
 	
 	_constructed = true;
 }
 
-void MenuItem::updateAcceleratorRecursive() {
+void MenuItem::updateAcceleratorRecursive()
+{
 	if (!_constructed) {
 		construct();
 	}
 	
-	if (_type == menuItem && _menuItem != NULL) {
+	if (_type == menuItem && _menuItem != NULL)
+	{
 		// Try to lookup the event name
 		IEventPtr event = GlobalEventManager().findEvent(_event);
 					
@@ -354,7 +410,8 @@ void MenuItem::updateAcceleratorRecursive() {
 	}
 	
 	// Iterate over all the children and pass the call
-	for (std::size_t i = 0; i < _children.size(); i++) {
+	for (std::size_t i = 0; i < _children.size(); ++i)
+	{
 		_children[i]->updateAcceleratorRecursive();
 	}
 }

@@ -5,6 +5,8 @@
 
 #include <string>
 
+namespace Gtk { class ColorButton; }
+
 namespace ui
 {
 
@@ -16,33 +18,22 @@ namespace ui
 class ColourPropertyEditor
 : public PropertyEditor
 {
-	// Containing widget
-	GtkWidget* _widget;
-	
+private:	
 	// The GtkColorButton
-	GtkWidget* _colorButton;
+	Gtk::ColorButton* _colorButton;
 	
 	// Name of keyval
 	std::string _key;
 	
 private:
-
 	// Set the colour button from the given string
 	void setColourButton(const std::string& value);
 	
 	// Return the string representation of the selected colour
 	std::string getSelectedColour();
 	
-	/* GTK CALLBACKS */
-	static void _onColorSet(GtkWidget*, ColourPropertyEditor* self);
-	
-protected:
-	
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const
-    {
-		return _widget;
-	}
+	// gtkmm callback
+	void _onColorSet();
 	
 public:
 
@@ -51,7 +42,7 @@ public:
 
 	/// Blank constructor for the PropertyEditorFactory
 	ColourPropertyEditor();
-	
+
 	/// Create a new ColourPropertyEditor
     virtual IPropertyEditorPtr createNew(Entity* entity, 
     									const std::string& name, 

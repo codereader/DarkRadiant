@@ -3,31 +3,33 @@
 
 #include "icommandsystem.h"
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktogglebutton.h>
-#include <gtk/gtkfilechooser.h>
-#include <gtk/gtkrange.h>
-
+#include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/RegistryConnector.h"
 
 #include <map>
 #include <string>
 
+namespace Gtk
+{
+	class Widget;
+}
+
 namespace ui
 {
+
+class OverlayDialog;
+typedef boost::shared_ptr<OverlayDialog> OverlayDialogPtr;
 
 /**
  * Dialog to configure the background image overlay options for the ortho
  * window.
  */
-class OverlayDialog
+class OverlayDialog :
+	public gtkutil::PersistentTransientWindow
 {
-	// Main widget
-	GtkWidget* _widget;
-
 	// Subwidgets, held in a map. This is just a named list of widgets, to 
 	// avoid adding new member variables for each widget.
-	typedef std::map<std::string, GtkWidget*> WidgetMap;
+	typedef std::map<std::string, Gtk::Widget*> WidgetMap;
 	WidgetMap _subWidgets;
 
 	// The helper class that syncs the widgets with the Registry on demand
@@ -37,13 +39,12 @@ class OverlayDialog
 	bool _callbackActive;
 
 private:
-
 	// Constructor creates GTK widgets	
 	OverlayDialog();
 	
 	// Widget construction helpers
-	GtkWidget* createWidgets();
-	GtkWidget* createButtons();
+	Gtk::Widget& createWidgets();
+	Gtk::Widget& createButtons();
 	
 	/** greebo: Connects the widgets to the Registry
 	 */
@@ -56,21 +57,23 @@ private:
 	// Updates the sensitivity of the objects according to the registry state
 	void updateSensitivity();
 	
-	// GTK callbacks
-	static void _onClose(GtkWidget*, OverlayDialog*);
-	static void _onUseImage(GtkToggleButton*, OverlayDialog*);
-	static void _onFileSelection(GtkFileChooser*, OverlayDialog*);
-	
-	static void _onChange(GtkWidget*, OverlayDialog*);
-	static void _onScrollChange(GtkWidget* range, OverlayDialog* self);
+	// gtkmm callbacks
+	void _onClose();
+	void _onFileSelection();
+	void _onChange();
+	void _onScrollChange();
+
+	// Contains the pointer to the singleton instance
+	static OverlayDialogPtr& InstancePtr();
 
 public:
-
 	/**
 	 * Static method to display the overlay dialog.
 	 */
 	static void display(const cmd::ArgumentList& args);
 
+	// Called at shutdown to free the instance
+	static void destroy();
 };
 
 }

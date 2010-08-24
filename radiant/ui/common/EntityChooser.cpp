@@ -5,25 +5,21 @@
 #include "ientity.h"
 #include "imainframe.h"
 #include "iscenegraph.h"
-#include <gtk/gtk.h>
+
 #include "gtkutil/dialog/Dialog.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
 
+#include <gtkmm/box.h>
+#include <gtkmm/treeview.h>
+
 namespace ui
 {
 
 namespace
 {
-	// ListStore columns
-	enum
-	{
-		NAME_COLUMN,
-		NUM_COLUMNS,
-	};
-
 	enum
 	{
 		WIDGET_TOPLEVEL,
@@ -33,42 +29,33 @@ namespace
 
 EntityChooser::EntityChooser() :
 	gtkutil::DialogElement(), // create an Element without label
-	_entityStore(gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING))
+	_entityStore(Gtk::ListStore::create(_listColumns))
 {
-	_widgets[WIDGET_TOPLEVEL] = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	_widgets[WIDGET_TOPLEVEL] = vbox;
 
 	// Initialise the base class
-	DialogElement::setWidget(_widgets[WIDGET_TOPLEVEL]);
+	DialogElement::setValueWidget(_widgets[WIDGET_TOPLEVEL]);
 
-	_widgets[WIDGET_TREEVIEW] = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_entityStore));
+	Gtk::TreeView* treeView = Gtk::manage(new Gtk::TreeView(_entityStore));
+	_widgets[WIDGET_TREEVIEW] = treeView;
 
-	GtkTreeView* treeView = GTK_TREE_VIEW(_widgets[WIDGET_TREEVIEW]);
-	gtk_tree_view_set_headers_visible(treeView, FALSE);
+	treeView->set_headers_visible(false);
 
 	// Use the TreeModel's full string search function
-	gtk_tree_view_set_search_equal_func(
-		GTK_TREE_VIEW(treeView), 
-		gtkutil::TreeModel::equalFuncStringContains, 
-		NULL, 
-		NULL
-	);
+	treeView->set_search_equal_func(sigc::ptr_fun(&gtkutil::TreeModel::equalFuncStringContains));
 
 	// Head Name column
-	gtk_tree_view_append_column(treeView, gtkutil::TextColumn("", NAME_COLUMN));
-	
-	// Set the tree store to sort on this column
-    gtk_tree_sortable_set_sort_column_id(
-        GTK_TREE_SORTABLE(_entityStore),
-        NAME_COLUMN,
-        GTK_SORT_ASCENDING
-    );
+	treeView->append_column("", _listColumns.name);
 
-	_selection = gtk_tree_view_get_selection(treeView);
-	g_signal_connect(G_OBJECT(_selection), "changed", G_CALLBACK(onSelectionChanged), this);
+	// Set the tree store to sort on this column
+	_entityStore->set_sort_column_id(_listColumns.name, Gtk::SORT_ASCENDING);
+
+	_selection = treeView->get_selection();
+	_selection->signal_changed().connect(sigc::mem_fun(*this, &EntityChooser::onSelectionChanged));
 	
 	// Scrolled Frame
-	gtk_box_pack_start(GTK_BOX(_widgets[WIDGET_TOPLEVEL]),
-		gtkutil::ScrolledFrame(GTK_WIDGET(treeView)), TRUE, TRUE, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*treeView)), true, true, 0);
 
 	populateEntityList();
 }
@@ -90,15 +77,17 @@ std::string EntityChooser::exportToString() const
 
 void EntityChooser::importFromString(const std::string& str)
 {
-	// Instantiate a finder
-	gtkutil::TreeModel::SelectionFinder finder(str, NAME_COLUMN);
+	Gtk::TreeModel::Children children = _entityStore->children();
 
-	gtk_tree_model_foreach(GTK_TREE_MODEL(_entityStore), 
-		gtkutil::TreeModel::SelectionFinder::forEach, &finder);
-
-	if (finder.getPath() != NULL)
+	for (Gtk::TreeModel::Children::iterator i = children.begin(); i != children.end(); ++i)
 	{
-		gtk_tree_selection_select_path(_selection, finder.getPath());
+		Gtk::TreeModel::Row row = *i;
+
+		if (row[_listColumns.name] == str)
+		{
+			_selection->select(i);
+			break;
+		}
 	}
 }
 
@@ -106,11 +95,9 @@ std::string EntityChooser::ChooseEntity(const std::string& preSelectedEntity)
 {
 	gtkutil::Dialog dlg(_("Select Entity"), GlobalMainFrame().getTopLevelWindow());
 
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 
-	gtk_window_set_default_size(
-		GTK_WINDOW(dlg.getWindow()), gint(rect.width/2), gint(2*rect.height/3)
-	);
+	dlg.set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
 	
 	// Instantiate a new chooser class
 	EntityChooserPtr chooser(new EntityChooser);
@@ -136,11 +123,15 @@ void EntityChooser::populateEntityList()
 		public scene::NodeVisitor
 	{
         // List store to add to
-        GtkListStore* _store;
+        Glib::RefPtr<Gtk::ListStore> _store;
+
+		EntityChooserColumns& _columns;
         
         // Constructor
-		EntityFinder(GtkListStore* store) :
-			_store(store)
+		EntityFinder(const Glib::RefPtr<Gtk::ListStore>& store,
+					 EntityChooserColumns& columns) :
+			_store(store),
+			_columns(columns)
 		{}
             
         // Visit function
@@ -155,35 +146,30 @@ void EntityChooser::populateEntityList()
                 std::string entName = entity->getKeyValue("name");
 
 				// Append the name to the list store
-                GtkTreeIter iter;
-                gtk_list_store_append(_store, &iter);
-                gtk_list_store_set(_store, &iter, 
-                				   0, entName.c_str(), 
-                				   -1);
+				Gtk::TreeModel::Row row = *_store->append();
+                
+				row[_columns.name] = entName;
             }
             
             return false; // don't traverse deeper, we're traversing root children
         }
-    } finder(_entityStore);
+    } finder(_entityStore, _listColumns);
 
 	GlobalSceneGraph().root()->traverse(finder);
 }
 
-void EntityChooser::onSelectionChanged(GtkTreeSelection* sel, EntityChooser* self)
+void EntityChooser::onSelectionChanged()
 {
 	// Prepare to check for a selection
-	GtkTreeIter iter;
-	GtkTreeModel* model;
+	Gtk::TreeModel::iterator iter = _selection->get_selected();
 
-	// Add button is enabled if there is a selection and it is not a folder.
-	if (gtk_tree_selection_get_selected(sel, &model, &iter)) 
+	if (iter)
 	{
-		// Set the selected name
-		self->_selectedEntityName = gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN); 
+		_selectedEntityName = iter->get_value(_listColumns.name);
 	}
 	else
 	{
-		self->_selectedEntityName.clear();
+		_selectedEntityName.clear();
 	}
 }
 

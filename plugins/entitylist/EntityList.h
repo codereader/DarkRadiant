@@ -10,14 +10,14 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "GraphTreeModel.h"
 
-typedef struct _GtkTreeView GtkTreeView;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GtkTreeIter GtkTreeIter;
-typedef struct _GtkTreePath GtkTreePath;
-typedef struct _GtkTreeModel GtkTreeModel;
-typedef struct _GtkToggleButton GtkToggleButton;
+namespace Gtk
+{
+	class TreeView;
+	class CheckButton;
+}
 
-namespace ui {
+namespace ui
+{
 
 class EntityList;
 typedef boost::shared_ptr<EntityList> EntityListPtr;
@@ -28,14 +28,13 @@ class EntityList :
 	public RadiantEventListener
 {
 	// The main tree view
-	GtkTreeView* _treeView;
-	GtkTreeSelection* _selection;
+	Gtk::TreeView* _treeView;
 	
 	// The GraphTreeModel instance
 	GraphTreeModel _treeModel; 
 
 	// The small checkbox in the lower half
-	GtkWidget* _focusOnSelectedEntityToggle;
+	Gtk::CheckButton* _focusOnSelectedEntityToggle;
 
 	gtkutil::WindowPosition _windowPosition;
 
@@ -66,12 +65,9 @@ private:
 	 */
 	void toggleWindow();
 
-	static void onRowExpand(GtkTreeView* view, GtkTreeIter* iter, GtkTreePath* path, EntityList* self);
-	
-	static gboolean onSelection(GtkTreeSelection *selection, GtkTreeModel *model, 
-								GtkTreePath *path, gboolean path_currently_selected, gpointer data);
-
-	static void onFocusSelectionToggle(GtkToggleButton* togglebutton, EntityList* self);
+	void onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
+	bool onSelection(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::Path& path, bool path_currently_selected);
+	void onFocusSelectionToggle();
 
 	// (private) Constructor, creates all the widgets
 	EntityList();
@@ -91,9 +87,6 @@ public:
 	 * 			to access the other members
 	 */
 	static EntityList& Instance();
-	
-	// Destroys the singleton instance
-	static void destroyInstance();
 };
 
 } // namespace ui

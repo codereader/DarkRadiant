@@ -1,12 +1,19 @@
 #include "XdFileChooserDialog.h"
 
 #include "gtkutil/LeftAlignedLabel.h"
-#include <gtk/gtk.h>
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/ScrolledFrame.h"
+
 #include "i18n.h"
 #include "imainframe.h"
-#include "gtkutil/ScrolledFrame.h"
+
+#include "ReadableEditorDialog.h"
+
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/treeview.h>
 
 namespace ui
 {
@@ -16,10 +23,15 @@ namespace
 	const char* const WINDOW_TITLE = N_("Choose a file...");
 }
 
-XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defName, XData::XDataPtr& newXData, std::string& filename, XData::XDataLoaderPtr& loader, ReadableEditorDialog* editorDialog)
+XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defName, 
+														XData::XDataPtr& newXData, 
+														std::string& filename, 
+														XData::XDataLoaderPtr& loader,
+														ReadableEditorDialog& editorDialog)
 {
 	// Import the file:
 	XData::XDataMap xdMap;
+
 	if ( loader->importDef(defName,xdMap) )
 	{
 		if (xdMap.size() > 1)
@@ -43,90 +55,91 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 		}
 		return RESULT_OK;
 	}
+
 	//Import failed.
 	return RESULT_IMPORT_FAILED;
 }
 
-XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog* editorDialog) : 
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GTK_WINDOW(editorDialog->getWindow())),
+XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog& editorDialog) : 
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), editorDialog.getRefPtr()),
 	_treeview(NULL),
 	_result(RESULT_CANCEL),
 	_editorDialog(editorDialog),
 	_defName(defName)
 {
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	// Add a vbox for the dialog elements
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create topLabel
-	GtkWidget* topLabel = gtkutil::LeftAlignedLabel(
-		_("The requested definition has been found in multiple Files. Choose the file:"));
+	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
+		_("The requested definition has been found in multiple Files. Choose the file:")));
 
 	// Create the list of files:
-	GtkListStore* listStore = gtk_list_store_new(1, G_TYPE_STRING);
-	_treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(listStore));
-
-	GtkTreeViewColumn* fileCol = gtkutil::TextColumn(_("File"), 0);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeview), fileCol);
+	_listStore = Gtk::ListStore::create(_columns);
+	
+	_treeview = Gtk::manage(new Gtk::TreeView(_listStore));
+	_treeview->append_column(*Gtk::manage(new gtkutil::TextColumn(_("File"), _columns.name, false)));
 
 	// Append all xdMap-entries to the list.
-	for (XData::XDataMap::const_iterator it = xdMap.begin(); it != xdMap.end(); it++)
+	for (XData::XDataMap::const_iterator it = xdMap.begin(); it != xdMap.end(); ++it)
 	{
-		GtkTreeIter iter;
-		gtk_list_store_append(listStore, &iter);
-		gtk_list_store_set(listStore, &iter, 0, it->first.c_str(), -1);
+		Gtk::TreeModel::Row row = *_listStore->append();
+		
+		row[_columns.name] = it->first;
 	}
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeview), false);
-	gtk_widget_show(_treeview);
 
-	g_object_unref(G_OBJECT(listStore));
-
+	_treeview->set_headers_visible(false);
+	
 	// Connect the selection change signal
-	GtkTreeSelection* select = gtk_tree_view_get_selection ( GTK_TREE_VIEW(_treeview) );
-	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
-	g_signal_connect(select, "changed", G_CALLBACK(onSelectionChanged), this);
+	Glib::RefPtr<Gtk::TreeSelection> select = _treeview->get_selection();
+	select->set_mode(Gtk::SELECTION_SINGLE);
+	select->signal_changed().connect(sigc::mem_fun(*this, &XdFileChooserDialog::onSelectionChanged));
 
 	// Create buttons and add them to an hbox:
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	GtkWidget* hbox = gtk_hbox_new(TRUE, 6);
-	gtk_box_pack_start(GTK_BOX(hbox), okButton, TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), cancelButton, TRUE, FALSE, 0);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 6));
+	hbox->pack_start(*okButton, true, false, 0);
+	hbox->pack_start(*cancelButton, true, false, 0);
 
 	//Add everything to the vbox and to the window.
-	gtk_box_pack_start(GTK_BOX(vbox), topLabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::ScrolledFrame(GTK_WIDGET(_treeview)), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);	
-	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
+	vbox->pack_start(*topLabel, false, false, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeview)), true, true, 0);
+	vbox->pack_start(*hbox, false, false, 0);
+
+	add(*vbox);
 
 	//Connect the Signals.
-	g_signal_connect(
-		G_OBJECT(okButton), "clicked", G_CALLBACK(onOk), this
-		);
-	g_signal_connect(
-		G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this
-		);
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &XdFileChooserDialog::onOk));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &XdFileChooserDialog::onCancel));
 }
 
-void XdFileChooserDialog::onOk(GtkWidget* widget, XdFileChooserDialog* self)
+void XdFileChooserDialog::onOk()
 {
-	self->_result = RESULT_OK;
+	_result = RESULT_OK;
 
-	self->destroy();
+	destroy();
 }
 
-void XdFileChooserDialog::onCancel(GtkWidget* widget, XdFileChooserDialog* self)
+void XdFileChooserDialog::onCancel()
 {
-	self->destroy();
+	destroy();
 }
 
-void XdFileChooserDialog::onSelectionChanged(GtkTreeSelection *treeselection, XdFileChooserDialog* self)
+void XdFileChooserDialog::onSelectionChanged()
 {
-	self->_chosenFile = gtkutil::TreeModel::getSelectedString(treeselection, 0);
-	self->_editorDialog->updateGuiView(GTK_WINDOW(self->getWindow()), "", self->_defName, self->_chosenFile.substr(self->_chosenFile.find("/")+1));
+	Gtk::TreeModel::iterator iter = _treeview->get_selection()->get_selected();
+
+	if (iter)
+	{
+		_chosenFile = Glib::ustring((*iter)[_columns.name]);
+		_editorDialog.updateGuiView(getRefPtr(), "", _defName, _chosenFile.substr(_chosenFile.find("/")+1));
+	}
 }
 
 } // namespace ui

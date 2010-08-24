@@ -4,9 +4,14 @@
 #include "math/Vector3.h"
 #include "imodule.h"
 
+#include <gdkmm/pixbuf.h>
+
 // Forward declarations
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkToolbar GtkToolbar;
+namespace Gtk
+{
+	class Toolbar;
+	class Widget;
+}
 
 class IColourSchemeManager {
 public:
@@ -44,7 +49,7 @@ public:
 	 * 
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
-	virtual GtkWidget* get(const std::string& path) = 0;
+	virtual Gtk::Widget* get(const std::string& path) = 0;
 	
 	/** greebo: Shows/hides the menuitem under the given path. 
 	 * 
@@ -62,7 +67,7 @@ public:
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
 	 */
-	virtual GtkWidget* add(const std::string& insertPath,
+	virtual Gtk::Widget* add(const std::string& insertPath,
 						   const std::string& name,
 						   ui::eMenuItemType type, 
 						   const std::string& caption, 
@@ -77,9 +82,9 @@ public:
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
 	 * 
-	 * @returns: the GtkWidget* 
+	 * @returns: the Gtk::Widget* 
 	 */
-	virtual GtkWidget* insert(const std::string& insertPath,
+	virtual Gtk::Widget* insert(const std::string& insertPath,
 							  const std::string& name,
 							  ui::eMenuItemType type,
 							  const std::string& caption,
@@ -101,7 +106,7 @@ class IToolbarManager
 {
 public:
     virtual ~IToolbarManager() {}
-	virtual GtkToolbar* getToolbar(const std::string& toolbarName) = 0;
+	virtual Gtk::Toolbar* getToolbar(const std::string& toolbarName) = 0;
 };
 
 // The name of the command status bar item
@@ -132,7 +137,7 @@ public:
 	/**
 	 * Get the status bar widget, for packing into the main window.
 	 */
-	virtual GtkWidget* getStatusBar() = 0;
+	virtual Gtk::Widget* getStatusBar() = 0;
 
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
@@ -143,7 +148,7 @@ public:
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
 	 */
-	virtual void addElement(const std::string& name, GtkWidget* widget, int pos) = 0;
+	virtual void addElement(const std::string& name, Gtk::Widget* widget, int pos) = 0;
 
 	/**
 	 * greebo: A specialised method, adding a named text element.
@@ -168,12 +173,10 @@ public:
 	 * 
 	 * @returns: NULL if the named widget does not exist.
 	 */
-	virtual GtkWidget* getElement(const std::string& name) = 0;
+	virtual Gtk::Widget* getElement(const std::string& name) = 0;
 };
 
 // Forward declarations
-typedef struct _GdkPixbuf GdkPixbuf;
-
 class IGroupDialog;		// see igroupdialog.h for definition
 
 namespace ui
@@ -207,9 +210,9 @@ public:
 	virtual ui::IDialogManager& getDialogManager() = 0;
 
 	// Convenience functions to load a local image (from the bitmaps directory)
-	// and return a GdkPixBuf for use by certain GTK widgets (e.g. TreeView).
-	virtual GdkPixbuf* getLocalPixbuf(const std::string& fileName) = 0;
-	virtual GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName) = 0;
+	// and return a Gdk::PixBuf reference for use by certain widgets (e.g. TreeView).
+	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName) = 0;
+	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName) = 0;
 
 	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
 	virtual ui::IFilterMenuPtr createFilterMenu() = 0;

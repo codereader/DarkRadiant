@@ -2,7 +2,6 @@
 #define _DIALOG_ELEMENTS_H_
 
 #include "idialogmanager.h"
-#include "../ifc/Widget.h"
 #include "../SerialisableWidgets.h"
 #include "../LeftAlignedLabel.h"
 #include "../PathEntry.h"
@@ -16,18 +15,18 @@ namespace gtkutil
 
 /**
  * greebo: Each dialog element has a label and a string-serialisable value
- * The getWidget() method retrieves the widget carrying the actual value,
+ * The getValueWidget() method retrieves the widget carrying the actual value,
  * use the getLabel() method to retrieve the descriptive label carrying the title.
  */
 class DialogElement :
-	public StringSerialisable,
-	public Widget
+	public StringSerialisable
 {
 protected:
-	GtkWidget* _label;
+	// The label
+	Gtk::Label* _label;
 
 	// The widget carrying the value
-	GtkWidget* _widget;
+	Gtk::Widget* _widget;
 
 protected:
 	/**
@@ -44,26 +43,25 @@ protected:
 	 * @label: the name of this element, to be displayed next to it.
 	 */
 	DialogElement(const std::string& label) :
-		_label(LeftAlignedLabel(label)),
+		_label(Gtk::manage(new LeftAlignedLabel(label))),
 		_widget(NULL)
 	{}
 
 public:
 	// Retrieve the label
-	virtual GtkWidget* getLabel() const
+	virtual Gtk::Label* getLabel() const
 	{
 		return _label;
 	}
 
-protected:
-	// Widget implementation
-	virtual GtkWidget* _getWidget() const
+	// Retrieve the widget carrying the value
+	virtual Gtk::Widget* getValueWidget() const
 	{
 		return _widget;
 	}
 
-	// Subclasses needed to call this to allow _getWidget() to work
-	void setWidget(GtkWidget* widget)
+protected:
+	void setValueWidget(Gtk::Widget* widget)
 	{
 		_widget = widget;
 	}
@@ -78,12 +76,11 @@ class DialogEntryBox :
 public:
 	DialogEntryBox(const std::string& label) :
 		DialogElement(label),
-		SerialisableTextEntry(gtk_entry_new())
+		SerialisableTextEntry()
 	{
-		DialogElement::setWidget(SerialisableTextEntry::getWidget());
+		setValueWidget(this); // this as SerialisableTextEntry
 	}
 
-	// Implementation of StringSerialisable, wrapping to base class 
 	virtual std::string exportToString() const 
 	{
 		return SerialisableTextEntry::exportToString();
@@ -102,14 +99,13 @@ class DialogSpinButton :
 	public SerialisableSpinButton
 {
 public:
-	DialogSpinButton(const std::string& label, double min, double max, double step) :
+	DialogSpinButton(const std::string& label, double min, double max, double step, unsigned int digits) :
 		DialogElement(label),
-		SerialisableSpinButton(gtk_spin_button_new_with_range(min, max, step))
+		SerialisableSpinButton(min, min, max, step, static_cast<guint>(digits))
 	{
-		DialogElement::setWidget(SerialisableSpinButton::getWidget());
+		DialogElement::setValueWidget(this);
 	}
 
-	// Implementation of StringSerialisable, wrapping to base class 
 	virtual std::string exportToString() const 
 	{
 		return SerialisableSpinButton::exportToString();
@@ -132,7 +128,7 @@ public:
 		PathEntry(foldersOnly),
 		DialogElement(label)
 	{
-		DialogElement::setWidget(PathEntry::getWidget());
+		DialogElement::setValueWidget(this); // this as *PathEntry
 	}
 
 	// Implementation of StringSerialisable, wrapping to base class 
@@ -156,12 +152,11 @@ class DialogCheckBox :
 public:
 	DialogCheckBox(const std::string& label) :
 		DialogElement(""), // empty label, the description is included in the toggle button
-		SerialisableToggleButton(gtk_check_button_new_with_label(label.c_str()))
+		SerialisableToggleButton(label)
 	{
-		DialogElement::setWidget(SerialisableToggleButton::getWidget());
+		DialogElement::setValueWidget(this); // this as SerialisableToggleButton
 	}
 
-	// Implementation of StringSerialisable, wrapping to base class 
 	virtual std::string exportToString() const 
 	{
 		return SerialisableToggleButton::exportToString();
@@ -176,27 +171,27 @@ public:
 // -----------------------------------------------------------------------
 
 class DialogLabel :
-	public DialogElement
+	public DialogElement,
+	public Gtk::Label
 {
-protected:
-	GtkWidget* _label;
 public:
 	DialogLabel(const std::string& label) :
 		DialogElement(), // no standard label
-		_label(gtkutil::LeftAlignedLabel(label))
+		Gtk::Label(label)
 	{
-		DialogElement::setWidget(_label);
+		set_alignment(0.0f, 0.5f);
+		DialogElement::setValueWidget(this);
 	}
 
-	// Implementation of StringSerialisable, wrapping to base class 
+	// Implementation of StringSerialisable
 	virtual std::string exportToString() const 
 	{
-		return gtk_label_get_text(GTK_LABEL(_label));
+		return get_text();
 	}
 
 	virtual void importFromString(const std::string& str)
 	{
-		gtk_label_set_markup(GTK_LABEL(_label), str.c_str());
+		set_markup(str);
 	}
 };
 
@@ -205,32 +200,26 @@ public:
 /**
  * Creates a new GTK ComboBox carrying the values passed to the constructor
  * Complies with the DialogElement interface.
- * To avoid _getWidget() conflicts in the public interface, the SerialisableComboBox_Text
- * is inherited in a private fashion.
  */
 class DialogComboBox :
 	public DialogElement,
-	private SerialisableComboBox_Text
+	public SerialisableComboBox_Text
 {
 public:
 	DialogComboBox(const std::string& label, const ui::IDialog::ComboBoxOptions& options) :
 		DialogElement(label)
 	{
-		// Retrieve the widget from the private base class
-		GtkWidget* comboBox = SerialisableComboBox_Text::_getWidget();
-
-		// Pass the widget to the DialogElement base class
-		DialogElement::setWidget(comboBox);
+		// Pass ourselves as widget to the DialogElement base class
+		DialogElement::setValueWidget(this);
 
 		// Add the options to the combo box
 		for (ui::IDialog::ComboBoxOptions::const_iterator i = options.begin();
 			 i != options.end(); ++i)
 		{
-			gtk_combo_box_append_text(GTK_COMBO_BOX(comboBox), i->c_str());
+			append_text(*i);
 		}
 	}
 
-	// Implementation of StringSerialisable, wrapping to private 
 	virtual std::string exportToString() const 
 	{
 		return SerialisableComboBox_Text::exportToString();

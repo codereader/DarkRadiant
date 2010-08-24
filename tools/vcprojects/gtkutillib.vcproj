@@ -42,12 +42,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /MP"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceviewmm/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkmm/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglextmm/include&quot;"
 				PreprocessorDefinitions="WIN32;"
 				RuntimeLibrary="3"
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4244;4250"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -60,8 +61,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="libgtkglext.lib libgdkglext.lib libgtksourceview.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtkmm\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtkglextmm\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -104,12 +104,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceviewmm/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkmm/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglextmm/include&quot;"
 				PreprocessorDefinitions="WIN32"
 				RuntimeLibrary="3"
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4244;4250"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -122,8 +123,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="libgtkglext.lib libgdkglext.lib libgtksourceview.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtkmm\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtkglextmm\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -165,13 +165,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions=" /MP"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceviewmm/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkmm/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglextmm/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG"
 				RuntimeLibrary="2"
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4244"
+				DisableSpecificWarnings="4244;4250"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -184,8 +184,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="libgtkglext.lib libgdkglext.lib libgtksourceview.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtkmm\lib&quot;;&quot;$(SolutionDir)\..\..\w32deps\gtkglextmm\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -228,13 +227,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/MP"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglext&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtkglext-1.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)/../../include&quot;;&quot;$(SolutionDir)/../../libs&quot;;&quot;$(SolutionDir)/../../w32deps/boost/include&quot;;&quot;$(SolutionDir)/../../w32deps/libxml2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/cairo&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/glew/include&quot;;&quot;$(SolutionDir)/../../w32deps/win_iconv/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceviewmm/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtksourceview-2.0/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkmm/include&quot;;&quot;$(SolutionDir)/../../w32deps/gtkglextmm/include&quot;"
 				PreprocessorDefinitions="_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG"
 				RuntimeLibrary="2"
 				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4244"
+				DisableSpecificWarnings="4244;4250"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -247,8 +246,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				AdditionalDependencies="libgtkglext.lib libgdkglext.lib libgtksourceview.lib"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\&quot;;&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtk2\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtkmm\lib&quot;;&quot;$(SolutionDir)\..\..\w64deps\gtkglextmm\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -319,18 +317,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="ifc"
-			>
-			<File
-				RelativePath="..\..\libs\gtkutil\ifc\EditorWidget.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\libs\gtkutil\ifc\Widget.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="dialog"
 			>
 			<File
@@ -360,10 +346,6 @@
 		</File>
 		<File
 			RelativePath="..\..\libs\gtkutil\clipboard.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\ComboBox.h"
 			>
 		</File>
 		<File
@@ -451,10 +433,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\IconTextMenuToggle.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\IConv.h"
 			>
 		</File>
@@ -495,10 +473,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\Paned.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\PanedPosition.cpp"
 			>
 		</File>
@@ -512,10 +486,6 @@
 		</File>
 		<File
 			RelativePath="..\..\libs\gtkutil\PathEntry.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\pointer.h"
 			>
 		</File>
 		<File
@@ -539,10 +509,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\SeparatorMenuItem.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\SerialisableWidgets.cpp"
 			>
 		</File>
@@ -563,19 +529,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\libs\gtkutil\TextButton.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\libs\gtkutil\TextColumn.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\TextMenuItem.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\TextMenuItemToggle.h"
 			>
 		</File>
 		<File
@@ -608,14 +562,6 @@
 		</File>
 		<File
 			RelativePath="..\..\libs\gtkutil\widget.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\window.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\libs\gtkutil\window.h"
 			>
 		</File>
 		<File

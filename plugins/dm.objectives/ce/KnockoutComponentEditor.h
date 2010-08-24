@@ -1,10 +1,12 @@
 #ifndef KNOCKOUTCOMPONENTEDITOR_H_
 #define KNOCKOUTCOMPONENTEDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
+
+namespace Gtk { class SpinButton; }
 
 namespace objectives
 {
@@ -19,7 +21,7 @@ namespace ce
  * specifiers except SPEC_GROUP.
  */
 class KnockoutComponentEditor 
-: public ComponentEditor
+: public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -32,17 +34,14 @@ class KnockoutComponentEditor
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// SpecifierEditCombo for the knockout target
-	SpecifierEditCombo _targetCombo;
+	SpecifierEditCombo* _targetCombo;
 
 	// The spin button to specify the amount of AI to be knocked out
-	GtkWidget* _amount;
+	Gtk::SpinButton* _amount;
 	
 public:
 
@@ -50,7 +49,6 @@ public:
 	 * Construct a default KnockoutComponentEditor.
 	 */
 	KnockoutComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_amount(NULL)
 	{ }
@@ -64,21 +62,13 @@ public:
 	 */
 	KnockoutComponentEditor(Component& component);
 	
-	/**
-	 * Destructor.
-	 */
-	~KnockoutComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new KnockoutComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
-
 };
 
 }

@@ -6,11 +6,11 @@
 #include "iundo.h"
 #include "i18n.h"
 
-#include <gtk/gtk.h>
-#include "gtkutil/Paned.h"
-#include "gtkutil/TextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/nonmodal.h"
+
+#include <gtkmm/button.h>
+#include <gtkmm/paned.h>
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -23,52 +23,62 @@ namespace script
 	}
 
 ScriptWindow::ScriptWindow() :
-	_vbox(gtk_vbox_new(FALSE, 6)),
-	_view(SCRIPT_LANGUAGE_ID, false) // allow editing
+	Gtk::VBox(false, 6),
+	_outView(Gtk::manage(new gtkutil::ConsoleView)),
+	_view(Gtk::manage(new gtkutil::SourceView(SCRIPT_LANGUAGE_ID, false))) // allow editing
 {
-	// The Sourceview is already contained in a scrolled frame
-	_inScrolled = _view.getWidget();
+	_view->unset_focus_chain();
 
-	gtk_container_set_focus_chain(GTK_CONTAINER(_inScrolled), NULL);
+	Gtk::Button* runButton = Gtk::manage(new Gtk::Button(_("Run Script")));
+	runButton->signal_clicked().connect(sigc::mem_fun(*this, &ScriptWindow::onRunScript));
 
-	GtkWidget* runButton = gtkutil::TextButton(_("Run Script"));
-	g_signal_connect(G_OBJECT(runButton), "clicked", G_CALLBACK(onRunScript), this);
+	Gtk::HBox* buttonBar = Gtk::manage(new Gtk::HBox(false, 6));
+	buttonBar->pack_start(*runButton, false, false, 0);
 
-	GtkWidget* buttonBar = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(buttonBar), runButton, FALSE, FALSE, 0);
-
-	GtkWidget* inputVBox = gtk_vbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(inputVBox), gtkutil::LeftAlignedLabel(_("Python Script Input")), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputVBox), _inScrolled, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(inputVBox), buttonBar, FALSE, FALSE, 0);
+	Gtk::VBox* inputVBox = Gtk::manage(new Gtk::VBox(false, 3));
+	inputVBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Python Script Input"))), false, false, 0);
+	inputVBox->pack_start(*_view, true, true, 0);
+	inputVBox->pack_start(*buttonBar, false, false, 0);
 
 	// Pack the scrolled textview and the entry box to the vbox
-	gtkutil::Paned paned(gtkutil::Paned::Vertical, inputVBox, _outView.getWidget());
+	Gtk::VPaned* paned = Gtk::manage(new Gtk::VPaned);
+	paned->add1(*inputVBox);
+	paned->add2(*_outView);
 
-	gtk_box_pack_start(GTK_BOX(_vbox), paned.getWidget(), TRUE, TRUE, 0);
-	gtk_widget_show_all(_vbox);
+	pack_start(*paned, true, true, 0);
+	show_all();
 }
 
-void ScriptWindow::toggle(const cmd::ArgumentList& args) {
+void ScriptWindow::toggle(const cmd::ArgumentList& args)
+{
 	GlobalGroupDialog().togglePage("Script");
 }
 
-GtkWidget* ScriptWindow::getWidget() {
-	return _vbox;
+ScriptWindowPtr& ScriptWindow::InstancePtr()
+{
+	static ScriptWindowPtr _scriptWindowPtr;
+	return _scriptWindowPtr;
 }
 
-ScriptWindow& ScriptWindow::Instance() {
-	static ScriptWindow _scriptWindow;
-	return _scriptWindow;
+void ScriptWindow::create()
+{
+	assert(InstancePtr() == NULL); // prevent double-creations
+
+	InstancePtr().reset(new ScriptWindow);
 }
 
-void ScriptWindow::onRunScript(GtkWidget* button, ScriptWindow* self)
+void ScriptWindow::destroy()
+{
+	InstancePtr().reset();
+}
+
+void ScriptWindow::onRunScript()
 {
 	// Clear the output window before running
-	self->_outView.clear();
+	_outView->clear();
 
 	// Extract the script from the input window
-	std::string scriptString = self->_view.getContents();
+	std::string scriptString = _view->getContents();
 
 	if (scriptString.empty()) return;
 	
@@ -85,11 +95,11 @@ void ScriptWindow::onRunScript(GtkWidget* button, ScriptWindow* self)
 	if (!result->errorOccurred && output.empty())
 	{
 		// If no output and no error, print at least _something_
-		self->_outView.appendText(_("OK"), gtkutil::ConsoleView::STANDARD);
+		_outView->appendText(_("OK"), gtkutil::ConsoleView::STANDARD);
 	}
 	else
 	{
-		self->_outView.appendText(result->output, (result->errorOccurred) ? gtkutil::ConsoleView::ERROR : gtkutil::ConsoleView::STANDARD);
+		_outView->appendText(result->output, (result->errorOccurred) ? gtkutil::ConsoleView::ERROR : gtkutil::ConsoleView::STANDARD);
 	}
 }
 

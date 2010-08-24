@@ -2,28 +2,37 @@
 #define SPLASH_H_
 
 #include <string>
+#include <gtkmm/window.h>
+#include <boost/shared_ptr.hpp>
 
-typedef struct _GtkWindow GtkWindow;
-typedef struct _GtkWidget GtkWidget;
-
-namespace ui {
-
-class Splash
+namespace Gtk
 {
-	// The top-level widget
-	GtkWindow* _window;
-	GtkWidget* _progressBar;
-	GtkWidget* _vbox;
-public:
-	// Constructor, creates all the widgets
+	class ProgressBar;
+	class VBox;
+}
+
+namespace ui
+{
+
+class Splash;
+typedef boost::shared_ptr<Splash> SplashPtr;
+
+class Splash :
+	public Gtk::Window
+{
+private:
+	Gtk::ProgressBar* _progressBar;
+	Gtk::VBox* _vbox;
+
+	// Private constructor, creates all the widgets
 	Splash();
-	
-	// Shows/hides the splash window
-	void show();
-	void hide();
-	
-	// Returns the widget, used to set other windows transient for the splash
-	GtkWindow* getWindow();
+
+public:
+	// Shows the splash window
+	void show_all();
+
+	// Called by the mainframe to set the splash screen transient for the main window
+	void setTopLevelWindow(const Glib::RefPtr<Gtk::Window>& window);
 	
 	/** greebo: Sets the text and/or progress of the progress bar. 
 	 */
@@ -31,10 +40,16 @@ public:
 	void setProgress(float fraction);
 	void setProgressAndText(const std::string& text, float fraction);
 	
-	// Accessor method
+	// Use this static method to avoid instantiating the class just for this check
+	static bool isVisible();
+	static void destroy();
+
 	static Splash& Instance();
 
 private:
+	// Accessor method
+	static SplashPtr& InstancePtr();
+
 	void createProgressBar();
 	
 	/** greebo: Triggers a redraw of the splash screen

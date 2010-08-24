@@ -1,14 +1,25 @@
 #ifndef CONVERSATION_COMMAND_EDITOR_H_
 #define CONVERSATION_COMMAND_EDITOR_H_
 
-#include <gtk/gtkliststore.h>
+#include <gtkmm/liststore.h>
 #include "gtkutil/window/BlockingTransientWindow.h"
 
 #include "Conversation.h"
 #include "ConversationCommand.h"
+#include "ConversationCommandLibrary.h"
 #include "CommandArgumentItem.h"
 
-namespace ui {
+namespace Gtk
+{
+	class ComboBox;
+	class CheckButton;
+	class Alignment;
+	class Table;
+	class Widget;
+}
+
+namespace ui
+{
 
 class CommandEditor :
 	public gtkutil::BlockingTransientWindow
@@ -34,30 +45,29 @@ private:
 	Result _result;
 
 	// All available actors
-	GtkListStore* _actorStore;
-	GtkWidget* _actorDropDown;
+	ActorColumns _actorColumns;
+	Glib::RefPtr<Gtk::ListStore> _actorStore;
+	Gtk::ComboBox* _actorDropDown;
 	
 	// All available commands
-	GtkListStore* _commandStore;
-	GtkWidget* _commandDropDown;
+	conversation::CommandColumns _commandColumns;
+	Glib::RefPtr<Gtk::ListStore> _commandStore;
+	Gtk::ComboBox* _commandDropDown;
 
-	GtkWidget* _waitUntilFinished;
+	Gtk::CheckButton* _waitUntilFinished;
 
-	GtkWidget* _argAlignment;
-	GtkWidget* _argTable;
+	Gtk::Alignment* _argAlignment;
+	Gtk::Table* _argTable;
 
 	// Widget pointer to keep track of the widget in the _argAlignment;
-	GtkWidget* _argumentWidget;
-
-	// The tooltips group to display the help text
-	GtkTooltips* _tooltips;
+	Gtk::Widget* _argumentWidget;
 
 	typedef std::vector<CommandArgumentItemPtr> ArgumentItemList;
 	ArgumentItemList _argumentItems;
 
 public:
 	// Pass the parent window, the command and the conversation to edit
-	CommandEditor(GtkWindow* parent, conversation::ConversationCommand& command, conversation::Conversation conv);
+	CommandEditor(const Glib::RefPtr<Gtk::Window>& parent, conversation::ConversationCommand& command, conversation::Conversation conv);
 
 	// Determine which action the user did take to close the dialog
 	Result getResult();
@@ -74,12 +84,12 @@ private:
 
 	void upateWaitUntilFinished(int commandTypeID);
 
-	GtkWidget* createButtonPanel();
+	Gtk::Widget& createButtonPanel();
 
-	static void onSave(GtkWidget* button, CommandEditor* self);
-	static void onCancel(GtkWidget* button, CommandEditor* self);
+	void onSave();
+	void onCancel();
 
-	static void onCommandTypeChange(GtkWidget* combobox, CommandEditor* self);
+	void onCommandTypeChange();
 };
 
 } // namespace ui

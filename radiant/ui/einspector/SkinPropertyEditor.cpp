@@ -3,7 +3,9 @@
 #include "PropertyEditorFactory.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/image.h>
 #include "ientity.h"
 
 namespace ui
@@ -16,46 +18,42 @@ SkinPropertyEditor::SkinPropertyEditor(Entity* entity,
 : PropertyEditor(entity),
   _key(name)
 {
-	_widget = gtk_vbox_new(FALSE, 6);
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
 	
-	// Horizontal box contains keyname, text entry and browse button
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
+	
+	// Horizontal box contains browse button
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
+	hbx->set_border_width(3);
 	
 	// Create the browse button
-	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose skin..."));
-	gtk_button_set_image(
-		GTK_BUTTON(browseButton),
-		gtk_image_new_from_pixbuf(
-			PropertyEditorFactory::getPixbufFor("skin")
-		)
-	);
-	g_signal_connect(
-		G_OBJECT(browseButton), "clicked", G_CALLBACK(_onBrowseButton), this
-	);
+	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose skin...")));
+	browseButton->set_image(*Gtk::manage(new Gtk::Image(
+		PropertyEditorFactory::getPixbufFor("skin"))));
+
+	browseButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &SkinPropertyEditor::_onBrowseButton));
 	
-	gtk_box_pack_start(GTK_BOX(hbx), browseButton, TRUE, FALSE, 0);
+	hbx->pack_start(*browseButton, true, false, 0);
 	
 	// Pack hbox into vbox (to limit vertical size), then edit frame
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, FALSE, 0);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
+	vbx->pack_start(*hbx, true, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_widget), vbx, TRUE, TRUE, 0);
-	
+	mainVBox->pack_start(*vbx, true, true, 0);
 }
 
-/* GTK CALLBACKS */
-
-void SkinPropertyEditor::_onBrowseButton(GtkWidget* w, 
-										 SkinPropertyEditor* self)
+void SkinPropertyEditor::_onBrowseButton()
 {
 	// Display the SkinChooser to get a skin from the user
-	std::string modelName = self->_entity->getKeyValue("model");
-	std::string prevSkin = self->_entity->getKeyValue(self->_key);
+	std::string modelName = _entity->getKeyValue("model");
+	std::string prevSkin = _entity->getKeyValue(_key);
 	std::string skin = SkinChooser::chooseSkin(modelName, prevSkin);
 	
 	// Apply the key to the entity
-	self->setKeyValue(self->_key, skin);
+	setKeyValue(_key, skin);
 }
 
 }

@@ -2,35 +2,37 @@
 #define COMMANDLISTPOPULATOR_H_
 
 #include "ieventmanager.h"
+#include "CommandList.h"
 
 /* greebo: The CommandListPopulator is an Event visitor class that cycles
  * through all the registered events and stores the name and the associated
  * shortcut representation into the given GtkListStore widget.
  */
-
-namespace ui {
+namespace ui
+{
 
 class CommandListPopulator :
 	public IEventVisitor 
 {
 	// The list store the items should be added to
-	GtkListStore* _listStore;
+	Glib::RefPtr<Gtk::ListStore> _listStore;
+
+	const CommandList::Columns& _columns;
 	
 public:
-	CommandListPopulator(GtkListStore* listStore) : 
-		_listStore(listStore)
+	CommandListPopulator(const Glib::RefPtr<Gtk::ListStore>& listStore,
+						 const CommandList::Columns& columns) : 
+		_listStore(listStore),
+		_columns(columns)
 	{}
 
-	void visit(const std::string& eventName, const IEventPtr& event) {
-		GtkTreeIter iter;
+	void visit(const std::string& eventName, const IEventPtr& ev)
+	{
+		// Allocate a new list store element
+		Gtk::TreeModel::Row row = *_listStore->append();
 		
-		// Allocate a new list store element and store its pointer into <iter>
-		gtk_list_store_append(_listStore, &iter);
-		
-		const std::string accelerator = GlobalEventManager().getAcceleratorStr(event, true);
-		
-		gtk_list_store_set(_listStore, &iter, 0, eventName.c_str(), 
-											  1, accelerator.c_str(), -1);
+		row[_columns.command] = eventName;
+		row[_columns.key] = GlobalEventManager().getAcceleratorStr(ev, true);
 	}
 	
 }; // class CommandListPopulator

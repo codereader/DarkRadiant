@@ -14,9 +14,7 @@ namespace ui
 class TexturePropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-	
+private:
 	// Texture prefixes we are interested in
 	const std::string _prefixes;
 	
@@ -25,17 +23,8 @@ class TexturePropertyEditor
 	
 private:
 	
-	/* GTK CALLBACKS */
-	static void callbackBrowse(GtkWidget*, TexturePropertyEditor*);
+	void _onBrowse();
 
-protected:
-	
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const 
-    {
-		return _widget;
-	}
-	
 public:
 
 	// Construct a TexturePropertyEditor with an entity and key to edit
@@ -56,7 +45,6 @@ public:
     		new TexturePropertyEditor(entity, name, options)
     	);
     }
-    
 };
 
 }

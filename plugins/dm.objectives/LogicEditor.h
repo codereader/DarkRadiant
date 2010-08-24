@@ -1,36 +1,33 @@
 #ifndef LOGIC_EDITOR_H_
 #define LOGIC_EDITOR_H_
 
-#include <map>
-#include <boost/shared_ptr.hpp>
+#include <string>
+#include <gtkmm/table.h>
 
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk
+{
+	class Entry;
+}
 
-namespace objectives {
+namespace objectives
+{
 
 /**
- * greebo: This class represents the UI elements needed to edit
+ * greebo: This complex widget represents the UI elements needed to edit
  * a set of success- and failure logic strings.
- *
- * Use the getWidget() method to retrieve the GtkWidget for packing
- * the class into a parent container.
  */
-class LogicEditor
+class LogicEditor :
+	public Gtk::Table
 {
-	// The widget for packing the editor
-	GtkWidget* _widget;
-
-	// The indexed widget container
-	std::map<int, GtkWidget*> _widgets;
+private:
+	Gtk::Entry* _successLogic;
+	Gtk::Entry* _failureLogic;
 
 public:
 	/**
 	 * The constructor will create the widgets.
 	 */
 	LogicEditor();
-
-	// Returns the widget for packing into a parent container
-	GtkWidget* getWidget();
 
 	// Read accessors for the logic strings
 	std::string getSuccessLogicStr();
@@ -40,7 +37,6 @@ public:
 	void setSuccessLogicStr(const std::string& logicStr);
 	void setFailureLogicStr(const std::string& logicStr);
 };
-typedef boost::shared_ptr<LogicEditor> LogicEditorPtr;
 
 } // namespace objectives
 

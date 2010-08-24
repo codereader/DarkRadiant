@@ -10,8 +10,13 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
-#include <gtk/gtk.h>
+
 #include "ui/menu/FiltersMenu.h"
+
+#include <gtkmm/treeview.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
 #include "FilterEditor.h"
 
@@ -28,27 +33,15 @@ namespace ui {
 			WIDGET_VIEW_FILTER_BUTTON,
 			WIDGET_DELETE_FILTER_BUTTON,
 		};
-
-		enum {
-			COL_NAME,
-			COL_STATE,
-			COL_COLOUR,
-			COL_READONLY,
-			NUM_COLUMNS
-		};
 	}
 
 FilterDialog::FilterDialog() :
 	BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
-	_filterStore(gtk_list_store_new(NUM_COLUMNS, 
-									G_TYPE_STRING,		// name
-									G_TYPE_STRING,		// state
-									G_TYPE_STRING,		// colour
-									G_TYPE_BOOLEAN))	// read-only
+	_filterStore(Gtk::ListStore::create(_columns))
 {
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_default_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	// Create the child widgets
 	populateWindow();
@@ -63,22 +56,28 @@ FilterDialog::FilterDialog() :
 	show();
 }
 
-void FilterDialog::save() {
+void FilterDialog::save()
+{
 	// Delete filters marked for removal
-	for (FilterMap::const_iterator i = _deletedFilters.begin(); i != _deletedFilters.end(); ++i) {
+	for (FilterMap::const_iterator i = _deletedFilters.begin(); i != _deletedFilters.end(); ++i)
+	{
 		GlobalFilterSystem().removeFilter(i->first);
 	}
 
 	// Save all remaining filters
-	for (FilterMap::const_iterator i = _filters.begin(); i != _filters.end(); ++i) {
+	for (FilterMap::const_iterator i = _filters.begin(); i != _filters.end(); ++i)
+	{
 		// Check if the name has changed (or a new filters has been defined)
-		if (i->second->nameHasChanged()) {
+		if (i->second->nameHasChanged())
+		{
 			// New filters have their original name set to the empty string
-			if (i->second->getOriginalName().empty()) {
+			if (i->second->getOriginalName().empty())
+			{
 				// Insert a new filter
 				GlobalFilterSystem().addFilter(i->second->name, i->second->rules);
 			}
-			else {
+			else
+			{
 				// Existing filer, issue the rename command
 				GlobalFilterSystem().renameFilter(i->second->getOriginalName(), i->second->name);
 			}
@@ -95,7 +94,8 @@ void FilterDialog::save() {
 	ui::FiltersMenu::addItemsToMainMenu();
 }
 
-void FilterDialog::loadFilters() {
+void FilterDialog::loadFilters()
+{
 	// Clear first, before population
 	_filters.clear();
 
@@ -109,7 +109,8 @@ void FilterDialog::loadFilters() {
 			_target(target)
 		{}
 
-		void visit(const std::string& filterName) {
+		void visit(const std::string& filterName)
+		{
 			// Get the properties
 			bool state = GlobalFilterSystem().getFilterState(filterName);
 			bool readOnly = GlobalFilterSystem().filterIsReadOnly(filterName);
@@ -127,172 +128,179 @@ void FilterDialog::loadFilters() {
 	GlobalFilterSystem().forEachFilter(populator);
 }
 
-void FilterDialog::update() {
+void FilterDialog::update()
+{
 	// Clear the store first
-	gtk_list_store_clear(_filterStore);
+	_filterStore->clear();
 
-	for (FilterMap::const_iterator i = _filters.begin(); i != _filters.end(); ++i) {
-		GtkTreeIter iter;
-		
-		// Allocate a new list store element and store its pointer into <iter>
-		gtk_list_store_append(_filterStore, &iter);
-
+	for (FilterMap::const_iterator i = _filters.begin(); i != _filters.end(); ++i)
+	{
 		const Filter& filter = *(i->second);
-				
-		gtk_list_store_set(_filterStore, &iter, COL_NAME, i->first.c_str(), 
-										  COL_STATE, filter.state ? _("enabled") : _("disabled"), 
-										  COL_COLOUR, filter.readOnly ? "#707070" : "black",
-										  COL_READONLY, filter.readOnly ? TRUE : FALSE,
-										  -1);
+
+		Gtk::TreeModel::Row row = *_filterStore->append();
+		
+		row[_columns.name] = i->first;
+		row[_columns.state] = filter.state ? std::string(_("enabled")) : std::string(_("disabled"));
+		row[_columns.colour] = filter.readOnly ? std::string("#707070") : std::string("black");
+		row[_columns.readonly] = filter.readOnly;
 	}
 
 	// Update the button sensitivity
 	updateWidgetSensitivity();
 }
 
-void FilterDialog::populateWindow() {
+void FilterDialog::populateWindow()
+{
 	// Create the dialog vbox
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create the "Filters" label	
-	gtk_box_pack_start(GTK_BOX(vbox), gtkutil::LeftAlignedLabel(
-		std::string("<b>") + _("Filters") + "</b>"), FALSE, FALSE, 0);
+	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
+		std::string("<b>") + _("Filters") + "</b>")), false, false, 0);
 
 	// Pack the treeview into the main window's vbox
-	gtk_box_pack_start(GTK_BOX(vbox), createFiltersPanel(), TRUE, TRUE, 0);
+	vbox->pack_start(createFiltersPanel(), true, true, 0);
 
 	// Buttons
-	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
+	vbox->pack_start(createButtonPanel(), false, false, 0);
 
-	gtk_container_add(GTK_CONTAINER(getWindow()), GTK_WIDGET(vbox));
+	add(*vbox);
 }
 
-GtkWidget* FilterDialog::createFiltersPanel() {
+Gtk::Widget& FilterDialog::createFiltersPanel()
+{
 	// Create an hbox for the treeview and the action buttons
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 
 	// Create a new treeview
-	_filterView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(GTK_TREE_MODEL(_filterStore)));
-		
-	gtkutil::TextColumn filterCol(_("Name"), COL_NAME);
-	gtkutil::TextColumn stateCol(_("State"), COL_STATE);
+	_filterView = Gtk::manage(new Gtk::TreeView(_filterStore));
+	
+	Gtk::TreeViewColumn* filterCol = Gtk::manage(
+		new gtkutil::ColouredTextColumn(_("Name"), _columns.name, _columns.colour)
+	);
 
-	gtk_tree_view_column_set_attributes(filterCol, GTK_CELL_RENDERER(filterCol.getCellRenderer()),
-										"markup", COL_NAME,
-										"foreground", COL_COLOUR,
-                                        NULL);
+	Gtk::TreeViewColumn* stateCol = Gtk::manage(
+		new gtkutil::ColouredTextColumn(_("State"), _columns.state, _columns.colour)
+	);
 
-	gtk_tree_view_column_set_attributes(stateCol, GTK_CELL_RENDERER(stateCol.getCellRenderer()),
-										"markup", COL_STATE,
-										"foreground", COL_COLOUR,
-                                        NULL);
+	_filterView->append_column(*filterCol);
+	_filterView->append_column(*stateCol);
 
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_filterView), filterCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_filterView), stateCol);
-
-	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(_filterView));
-	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(onFilterSelectionChanged), this);
+	Glib::RefPtr<Gtk::TreeSelection> sel = _filterView->get_selection();
+	sel->signal_changed().connect(sigc::mem_fun(*this, &FilterDialog::onFilterSelectionChanged));
 
 	// Action buttons
-	_widgets[WIDGET_ADD_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	_widgets[WIDGET_EDIT_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_EDIT);
-	_widgets[WIDGET_VIEW_FILTER_BUTTON] = gtk_button_new_with_label(_("View"));
+	Gtk::Button* addFilterButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
+	Gtk::Button* editFilterButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT));
+	Gtk::Button* viewFilterButton = Gtk::manage(new Gtk::Button(_("View")));
+	Gtk::Button* deleteFilterButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
+
+	_widgets[WIDGET_ADD_FILTER_BUTTON] = addFilterButton;
+	_widgets[WIDGET_EDIT_FILTER_BUTTON] = editFilterButton;
+	_widgets[WIDGET_VIEW_FILTER_BUTTON] = viewFilterButton;
 		
-	_widgets[WIDGET_DELETE_FILTER_BUTTON] = gtk_button_new_from_stock(GTK_STOCK_DELETE);
+	_widgets[WIDGET_DELETE_FILTER_BUTTON] = deleteFilterButton;
 
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_ADD_FILTER_BUTTON]), "clicked", G_CALLBACK(onAddFilter), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_EDIT_FILTER_BUTTON]), "clicked", G_CALLBACK(onEditFilter), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_VIEW_FILTER_BUTTON]), "clicked", G_CALLBACK(onViewFilter), this);
-	g_signal_connect(G_OBJECT(_widgets[WIDGET_DELETE_FILTER_BUTTON]), "clicked", G_CALLBACK(onDeleteFilter), this);
+	addFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onAddFilter));
+	editFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onEditFilter));
+	viewFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onViewFilter));
+	deleteFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onDeleteFilter));
 
-	GtkWidget* actionVBox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* actionVBox = Gtk::manage(new Gtk::VBox(false, 6));
 
-	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_ADD_FILTER_BUTTON], FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_VIEW_FILTER_BUTTON], FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(actionVBox), _widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE, FALSE, 0);
+	actionVBox->pack_start(*_widgets[WIDGET_ADD_FILTER_BUTTON], false, false, 0);
+	actionVBox->pack_start(*_widgets[WIDGET_EDIT_FILTER_BUTTON], false, false, 0);
+	actionVBox->pack_start(*_widgets[WIDGET_VIEW_FILTER_BUTTON], false, false, 0);
+	actionVBox->pack_start(*_widgets[WIDGET_DELETE_FILTER_BUTTON], false, false, 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), gtkutil::ScrolledFrame(GTK_WIDGET(_filterView)), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), actionVBox, FALSE, FALSE, 0);
+	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_filterView)), true, true, 0);
+	hbox->pack_start(*actionVBox, false, false, 0);
 
-	return gtkutil::LeftAlignment(hbox, 18, 1);
+	return *Gtk::manage(new gtkutil::LeftAlignment(*hbox, 18, 1));
 }
 
-GtkWidget* FilterDialog::createButtonPanel() {
-	GtkWidget* buttonHBox = gtk_hbox_new(TRUE, 12);
+Gtk::Widget& FilterDialog::createButtonPanel()
+{
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
 	
-	// Save button
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(onSave), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), okButton, TRUE, TRUE, 0);
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onSave));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onCancel));
 	
-	// Cancel Button
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), cancelButton, TRUE, TRUE, 0);
-	
-	return gtkutil::RightAlignment(buttonHBox);	
+	hbx->pack_end(*okButton, true, true, 0);
+	hbx->pack_end(*cancelButton, true, true, 0);
+		   
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
-void FilterDialog::updateWidgetSensitivity() {
-	if (!_selectedFilter.empty()) {
+void FilterDialog::updateWidgetSensitivity()
+{
+	if (!_selectedFilter.empty())
+	{
 		// We have a filter, is it read-only?
 		FilterMap::const_iterator i = _filters.find(_selectedFilter);
 
 		if (i != _filters.end()) {
 
 			if (i->second->readOnly) {
-				gtk_widget_hide(_widgets[WIDGET_EDIT_FILTER_BUTTON]);
-				gtk_widget_show(_widgets[WIDGET_VIEW_FILTER_BUTTON]);
+				_widgets[WIDGET_EDIT_FILTER_BUTTON]->hide();
+				_widgets[WIDGET_VIEW_FILTER_BUTTON]->show();
 			}
 			else {
-				gtk_widget_show(_widgets[WIDGET_EDIT_FILTER_BUTTON]);
-				gtk_widget_hide(_widgets[WIDGET_VIEW_FILTER_BUTTON]);
+				_widgets[WIDGET_EDIT_FILTER_BUTTON]->show();
+				_widgets[WIDGET_VIEW_FILTER_BUTTON]->hide();
 			}
 
-			gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], i->second->readOnly ? FALSE : TRUE);
-			gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], i->second->readOnly ? FALSE : TRUE);
-			gtk_widget_set_sensitive(_widgets[WIDGET_VIEW_FILTER_BUTTON], i->second->readOnly ? TRUE : FALSE);
-
+			_widgets[WIDGET_DELETE_FILTER_BUTTON]->set_sensitive(!i->second->readOnly);
+			_widgets[WIDGET_EDIT_FILTER_BUTTON]->set_sensitive(!i->second->readOnly);
+			_widgets[WIDGET_VIEW_FILTER_BUTTON]->set_sensitive(i->second->readOnly);
 			return;
 		}
 	}
 
 	// no valid filter selected
-	gtk_widget_set_sensitive(_widgets[WIDGET_DELETE_FILTER_BUTTON], FALSE);
-	gtk_widget_set_sensitive(_widgets[WIDGET_EDIT_FILTER_BUTTON], FALSE);
-	gtk_widget_set_sensitive(_widgets[WIDGET_VIEW_FILTER_BUTTON], FALSE);
-	gtk_widget_hide(_widgets[WIDGET_EDIT_FILTER_BUTTON]);
-	gtk_widget_show(_widgets[WIDGET_VIEW_FILTER_BUTTON]);
+	_widgets[WIDGET_DELETE_FILTER_BUTTON]->set_sensitive(false);
+	_widgets[WIDGET_EDIT_FILTER_BUTTON]->set_sensitive(false);
+	_widgets[WIDGET_VIEW_FILTER_BUTTON]->set_sensitive(false);
+
+	_widgets[WIDGET_EDIT_FILTER_BUTTON]->hide();
+	_widgets[WIDGET_VIEW_FILTER_BUTTON]->show();
 }
 
-void FilterDialog::showDialog(const cmd::ArgumentList& args) {
+void FilterDialog::showDialog(const cmd::ArgumentList& args)
+{
 	// Instantiate a new instance, blocks GTK
 	FilterDialog instance;
 }
 
-void FilterDialog::onCancel(GtkWidget* widget, FilterDialog* self) {
+void FilterDialog::onCancel()
+{
 	// destroy dialog without saving
-	self->destroy();
+	destroy();
 }
 
-void FilterDialog::onSave(GtkWidget* widget, FilterDialog* self) {
+void FilterDialog::onSave()
+{
 	// Save changes
-	self->save();
+	save();
 	
 	// Close the dialog
-	self->destroy();
+	destroy();
 }
 
-void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
+void FilterDialog::onAddFilter()
+{
 	// Construct a new filter with an empty name (this indicates it has not been there before when saving)
 	FilterPtr workingCopy(new Filter("", false, false));
 	workingCopy->name = _("NewFilter");
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(*workingCopy, GTK_WINDOW(self->getWindow()), false);
+	FilterEditor editor(*workingCopy, getRefPtr(), false);
 
-	if (editor.getResult() != FilterEditor::RESULT_OK) {
+	if (editor.getResult() != FilterEditor::RESULT_OK)
+	{
 		// User hit cancel, we're done
 		return;
 	}
@@ -307,7 +315,7 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 		return;
 	}
 
-	std::pair<FilterMap::iterator, bool> result = self->_filters.insert(
+	std::pair<FilterMap::iterator, bool> result = _filters.insert(
 		FilterMap::value_type(workingCopy->name, workingCopy)
 	);
 
@@ -321,14 +329,15 @@ void FilterDialog::onAddFilter(GtkWidget* w, FilterDialog* self) {
 		return;
 	}
 
-	self->update();
+	update();
 }
 
-void FilterDialog::onViewFilter(GtkWidget* w, FilterDialog* self) {
+void FilterDialog::onViewFilter()
+{
 	// Lookup the Filter object
-	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
+	FilterMap::iterator f = _filters.find(_selectedFilter);
 
-	if (f == self->_filters.end()) {
+	if (f == _filters.end()) {
 		return; // not found 
 	}
 
@@ -336,14 +345,15 @@ void FilterDialog::onViewFilter(GtkWidget* w, FilterDialog* self) {
 	Filter workingCopy(*(f->second));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()), true);
+	FilterEditor editor(workingCopy, getRefPtr(), true);
 }
 
-void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
+void FilterDialog::onEditFilter()
+{
 	// Lookup the Filter object
-	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
+	FilterMap::iterator f = _filters.find(_selectedFilter);
 
-	if (f == self->_filters.end() || f->second->readOnly) {
+	if (f == _filters.end() || f->second->readOnly) {
 		return; // not found or read-only
 	}
 
@@ -351,7 +361,7 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 	Filter workingCopy(*(f->second));
 
 	// Instantiate a new editor, will block
-	FilterEditor editor(workingCopy, GTK_WINDOW(self->getWindow()), false);
+	FilterEditor editor(workingCopy, getRefPtr(), false);
 
 	if (editor.getResult() != FilterEditor::RESULT_OK) {
 		// User hit cancel, we're done
@@ -367,8 +377,8 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 		if (dialog->run() == IDialog::RESULT_YES)
 		{
 			// Move the object from _filters to _deletedfilters
-			self->_deletedFilters.insert(*f);
-			self->_filters.erase(f);
+			_deletedFilters.insert(*f);
+			_filters.erase(f);
 		}
 		else {
 			// Don't delete the empty filter, leave the old one alone
@@ -379,8 +389,8 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 
 		if (workingCopy.name != f->first) {
 			// Name has changed, relocate the filter object
-			self->_filters.erase(f->first);
-			self->_filters[workingCopy.name] = FilterPtr(new Filter(workingCopy));
+			_filters.erase(f->first);
+			_filters[workingCopy.name] = FilterPtr(new Filter(workingCopy));
 		}
 		else {
 			// No name change, just overwrite the filter object
@@ -389,40 +399,41 @@ void FilterDialog::onEditFilter(GtkWidget* w, FilterDialog* self) {
 	}
 
 	// Update all widgets
-	self->update();
+	update();
 }
 
-void FilterDialog::onDeleteFilter(GtkWidget* w, FilterDialog* self) {
+void FilterDialog::onDeleteFilter()
+{
 	// Lookup the Filter object
-	FilterMap::iterator f = self->_filters.find(self->_selectedFilter);
+	FilterMap::iterator f = _filters.find(_selectedFilter);
 
-	if (f == self->_filters.end() || f->second->readOnly) {
+	if (f == _filters.end() || f->second->readOnly) {
 		return; // not found or read-only
 	}
 
 	// Move the object from _filters to _deletedfilters
-	self->_deletedFilters.insert(*f);
-	self->_filters.erase(f);
+	_deletedFilters.insert(*f);
+	_filters.erase(f);
 
 	// Update all widgets
-	self->update();
+	update();
 }
 
-void FilterDialog::onFilterSelectionChanged(GtkTreeSelection* sel, FilterDialog* self) {
-	// Get the selection
-	GtkTreeIter selected;
-	bool hasSelection = gtk_tree_selection_get_selected(sel, NULL, &selected) ? true : false;
+void FilterDialog::onFilterSelectionChanged()
+{
+	Gtk::TreeModel::iterator iter = _filterView->get_selection()->get_selected();
 
-	if (hasSelection) {
-		self->_selectedFilter = gtkutil::TreeModel::getString(
-			GTK_TREE_MODEL(self->_filterStore), &selected, COL_NAME
-		);
+	if (iter)
+	{
+		Gtk::TreeModel::Row row = *iter;
+		_selectedFilter = Glib::ustring(row[_columns.name]);
 	}
-	else {
-		self->_selectedFilter = "";
+	else
+	{
+		_selectedFilter.clear();
 	}
 
-	self->updateWidgetSensitivity();
+	updateWidgetSensitivity();
 }
 
 } // namespace ui

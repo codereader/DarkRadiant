@@ -207,35 +207,27 @@ StimResponse::EffectMap& StimResponse::getEffects() {
 	return _effects;
 }
 
-GtkListStore* StimResponse::getEffectStore() {
-	GtkListStore* store = gtk_list_store_new(EFFECT_NUM_COLS,
-											 G_TYPE_INT,	// Index
-											 G_TYPE_STRING, // Caption
-											 G_TYPE_STRING, // Arguments
-											 -1);
+const Glib::RefPtr<Gtk::ListStore>& StimResponse::updateAndGetEffectStore()
+{
+	const Columns& columns = getColumns();
+
+	_effectStore = Gtk::ListStore::create(columns);
 	
-	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); i++) {
-		GtkTreeIter iter;
-		
-		int index = i->first;
-		
-		gtk_list_store_append(store, &iter);
+	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); ++i)
+	{
+		Gtk::TreeModel::Row row = *_effectStore->append();
+
 		// Store the ID into the liststore
-		gtk_list_store_set(store, &iter, 
-						   EFFECT_INDEX_COL, index,
-						   -1);
-		
-		// And write the rest of the data to the row
-		ResponseEffect& effect = i->second;
-		writeToListStore(store, &iter, effect);
+		row[columns.index] = i->first;
+		row[columns.caption] = i->second.getCaption();
+		row[columns.arguments] = i->second.getArgumentStr();
 	}
 	
-	return store;
+	return _effectStore;
 }
 
-void StimResponse::writeToListStore(GtkListStore* store, GtkTreeIter* iter, ResponseEffect& effect) {
-	gtk_list_store_set(store, iter, 
-					   EFFECT_CAPTION_COL, effect.getCaption().c_str(),
-					   EFFECT_ARGS_COL, effect.getArgumentStr().c_str(),
-					   -1);
+const StimResponse::Columns& StimResponse::getColumns()
+{
+	static Columns _columns;
+	return _columns;
 }

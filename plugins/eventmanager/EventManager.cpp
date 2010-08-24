@@ -8,12 +8,12 @@
 #include <iostream>
 #include <typeinfo>
 
-#include "gdk/gdkevents.h"
-#include "gdk/gdkkeysyms.h"
-#include "gtk/gtkwindow.h"
-#include "gtk/gtkaccelgroup.h"
-#include "gtk/gtkeditable.h"
-#include "gtk/gtktextview.h"
+#include <gdk/gdkevents.h>
+#include <gdk/gdkkeysyms.h>
+#include <gtkmm/window.h>
+#include <gtkmm/accelgroup.h>
+#include <gtkmm/editable.h>
+#include <gtkmm/textview.h>
 
 #include "xmlutil/Node.h"
 
@@ -64,7 +64,7 @@ void EventManager::initialiseModule(const ApplicationContext& ctx) {
 	_emptyEvent->setEnabled(false);
 	
 	// Create an empty GClosure
-	_accelGroup = gtk_accel_group_new();
+	_accelGroup =  Gtk::AccelGroup::create();
 	
 	if (_debugMode) {
 		globalOutputStream() << "EventManager intitialised in debug mode.\n";
@@ -74,7 +74,8 @@ void EventManager::initialiseModule(const ApplicationContext& ctx) {
 	}
 }
 
-void EventManager::shutdownModule() {
+void EventManager::shutdownModule()
+{
 	globalOutputStream() << "EventManager: shutting down.\n";
 	saveEventListToRegistry();
 
@@ -82,6 +83,8 @@ void EventManager::shutdownModule() {
 	_dialogWindows.clear();
 	_accelerators.clear();
 	_events.clear();
+
+	_accelGroup.reset();
 }
 
 // Constructor
@@ -94,12 +97,13 @@ EventManager::EventManager() :
 {}
 
 // Destructor, un-reference the GTK accelerator group
-EventManager::~EventManager() {
-	g_object_unref(_accelGroup);
+EventManager::~EventManager()
+{
 	globalOutputStream() << "EventManager successfully shut down.\n";
 }
 
-void EventManager::connectSelectionSystem(SelectionSystem* selectionSystem) {
+void EventManager::connectSelectionSystem(SelectionSystem* selectionSystem)
+{
 	_mouseEvents.connectSelectionSystem(selectionSystem);
 }
 
@@ -348,27 +352,41 @@ void EventManager::removeEvent(const std::string& eventName) {
 }
 
 // Catches the key/mouse press/release events from the given GtkObject
-void EventManager::connect(GtkObject* object)	{
-	// Create and store the handler into the map
-	gulong handlerId = g_signal_connect(G_OBJECT(object), "key-press-event", 
-										G_CALLBACK(onKeyPress), this);
-	_handlers[handlerId] = object;
-	
-	handlerId = g_signal_connect(G_OBJECT(object), "key-release-event", 
-								 G_CALLBACK(onKeyRelease), this);
-	_handlers[handlerId] = object;
+void EventManager::connect(Gtk::Widget* widget)
+{
+	std::pair<HandlerMap::iterator, bool> result = _handlers.insert(
+		HandlerMap::value_type(widget, ConnectionPair()));
+
+	if (result.second == false)
+	{
+		// Widget already connected
+		return;
+	}
+
+	// Key press
+	result.first->second.first = widget->signal_key_press_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &EventManager::onKeyPress), widget));
+
+	// Key release
+	result.first->second.second = widget->signal_key_release_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &EventManager::onKeyRelease), widget));
 }
 
-void EventManager::disconnect(GtkObject* object) {
-	for (HandlerMap::iterator i = _handlers.begin(); i != _handlers.end(); ) {
-		if (i->second == object) {
-			g_signal_handler_disconnect(G_OBJECT(i->second), i->first);
-			// Be sure to increment the iterator with a postfix ++, so that the "old" iterator is passed
-			_handlers.erase(i++);
-		}
-		else {
-			i++;
-		}
+void EventManager::disconnect(Gtk::Widget* widget)
+{
+	HandlerMap::iterator found = _handlers.find(widget);
+
+	if (found != _handlers.end())
+	{
+		found->second.first.disconnect();
+		found->second.second.disconnect();
+
+		_handlers.erase(found);
+	}
+	else
+	{
+		// Widget not connected
+		return;
 	}
 }
 
@@ -384,36 +402,50 @@ void EventManager::disconnect(GtkObject* object) {
  * This way it is ensured that the dialog window can handle, say, text entries without
  * firing global shortcuts all the time.   
  */
-void EventManager::connectDialogWindow(GtkWindow* window) {
-	gulong handlerId = g_signal_connect(G_OBJECT(window), "key-press-event", 
-										G_CALLBACK(onDialogKeyPress), this);
+void EventManager::connectDialogWindow(Gtk::Window* window)
+{
+	std::pair<HandlerMap::iterator, bool> result = _handlers.insert(
+		HandlerMap::value_type(window, ConnectionPair()));
 
-	_dialogWindows[handlerId] = GTK_OBJECT(window);		
+	if (result.second == false)
+	{
+		globalErrorStream() << "EventManager::connect: Widget is already connected." << std::endl;
+	}
 
-	handlerId = g_signal_connect(G_OBJECT(window), "key-release-event", 
-								 G_CALLBACK(onDialogKeyRelease), this);
+	// Key press
+	result.first->second.first = window->signal_key_press_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &EventManager::onDialogKeyPress), window));
 
-	_dialogWindows[handlerId] = GTK_OBJECT(window);		
+	// Key release
+	result.first->second.second = window->signal_key_release_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &EventManager::onDialogKeyRelease), window));
 }
 
-void EventManager::disconnectDialogWindow(GtkWindow* window) {
-	GtkObject* object = GTK_OBJECT(window);
-	
-	for (HandlerMap::iterator i = _dialogWindows.begin(); i != _dialogWindows.end(); ) {
-		// If the object pointer matches the one stored in the list, remove the handler id
-		if (i->second == object) {
-			g_signal_handler_disconnect(G_OBJECT(i->second), i->first);
-			// Be sure to increment the iterator with a postfix ++, so that the "old" iterator is passed
-			_dialogWindows.erase(i++);
-		}
-		else {
-			i++;
-		}
+void EventManager::disconnectDialogWindow(Gtk::Window* window)
+{
+	HandlerMap::iterator found = _dialogWindows.find(window);
+
+	if (found != _dialogWindows.end())
+	{
+		found->second.first.disconnect();
+		found->second.second.disconnect();
+
+		_dialogWindows.erase(found);
+	}
+	else
+	{
+		globalWarningStream()  << "EventManager::disconnect: Widget is not connected." << std::endl;
 	}
 }
 
-void EventManager::connectAccelGroup(GtkWindow* window) {
-	gtk_window_add_accel_group(window, _accelGroup); 
+void EventManager::connectAccelGroup(Gtk::Window* window)
+{
+	window->add_accel_group(_accelGroup);
+}
+
+void EventManager::connectAccelGroup(const Glib::RefPtr<Gtk::Window>& window)
+{
+	window->add_accel_group(_accelGroup);
 }
 
 // Loads the default shortcuts from the registry
@@ -577,23 +609,27 @@ EventManager::AcceleratorList EventManager::findAccelerator(GdkEventKey* event) 
 }
 
 // The GTK keypress callback
-gboolean EventManager::onDialogKeyPress(GtkWindow* window, GdkEventKey* event, EventManager* self) {
+bool EventManager::onDialogKeyPress(GdkEventKey* ev, Gtk::Window* window)
+{
 	// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
-	gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
+	// greebo: gtkmm is not exposing this function??
+	bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
 
 	// Get the focus widget, is it an editable widget?
-	GtkWidget* focus = gtk_window_get_focus(window);
-	bool isEditableWidget = GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus);
+	Gtk::Widget* focus = window->get_focus();
+	bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
 
 	// never pass onKeyPress event to the accelerator manager if an editable widget is focused
 	// the only exception is the ESC key
-	if (isEditableWidget && event->keyval != GDK_Escape) {
+	if (isEditableWidget && ev->keyval != GDK_Escape)
+	{
 		return keyProcessed;
 	}
 	
-	if (!keyProcessed) {
+	if (!keyProcessed)
+	{
 		// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
-		self->onKeyPress(GTK_WIDGET(window), event, self);
+		onKeyPress(ev, window);
 	}
 	
 	// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped 
@@ -601,29 +637,34 @@ gboolean EventManager::onDialogKeyPress(GtkWindow* window, GdkEventKey* event, E
 }
 
 // The GTK keyrelease callback
-gboolean EventManager::onDialogKeyRelease(GtkWindow* window, GdkEventKey* event, EventManager* self) {
+bool EventManager::onDialogKeyRelease(GdkEventKey* ev, Gtk::Window* window)
+{
 	// Pass the key event to the connected dialog window and see if it can process it (returns TRUE)
-	gboolean keyProcessed = gtk_window_propagate_key_event(window, event);
+	// greebo: gtkmm is not exposing this function??
+	bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
 	
 	// Get the focus widget, is it an editable widget?
-	GtkWidget* focus = gtk_window_get_focus(window);
-	bool isEditableWidget = GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus);
+	Gtk::Widget* focus = window->get_focus();
+	bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
 
-	if (isEditableWidget && event->keyval != GDK_Escape) {
+	if (isEditableWidget && ev->keyval != GDK_Escape)
+	{
 		// never pass onKeyPress event to the accelerator manager if an editable widget is focused
 		return keyProcessed;
 	}
 
-	if (!keyProcessed) {
-		// The dialog window returned FALSE, pass the key on to the default onKeyPress handler
-		self->onKeyRelease(GTK_WIDGET(window), event, self);
+	if (!keyProcessed)
+	{
+		// The dialog window returned FALSE, pass the key on to the default key handler
+		onKeyRelease(ev, window);
 	}
 	
 	// If we return true here, the dialog window could process the key, and the GTK callback chain is stopped 
 	return keyProcessed;
 }
 
-void EventManager::updateStatusText(GdkEventKey* event, bool keyPress) {
+void EventManager::updateStatusText(GdkEventKey* event, bool keyPress)
+{
 	// Make a copy of the given event key
 	GdkEventKey eventKey = *event;
 	
@@ -640,42 +681,38 @@ void EventManager::updateStatusText(GdkEventKey* event, bool keyPress) {
 	_mouseEvents.updateStatusText(&eventKey);
 }
 
-// The GTK keypress callback
-gboolean EventManager::onKeyPress(GtkWidget* widget, GdkEventKey* event, gpointer data)
+bool EventManager::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
 {
-	// Convert the passed pointer onto a KeyEventManager pointer
-	EventManager* self = reinterpret_cast<EventManager*>(data);
-
-	if (!GTK_IS_WIDGET(widget)) return FALSE;
-
-	if (GTK_IS_WINDOW(widget))
+	if (dynamic_cast<Gtk::Window*>(widget) != NULL)
 	{
+		Gtk::Window* window = static_cast<Gtk::Window*>(widget);
+
 		// Pass the key event to the connected window and see if it can process it (returns TRUE)
-		gboolean keyProcessed = gtk_window_propagate_key_event(GTK_WINDOW(widget), event);
+		bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
 
 		// Get the focus widget, is it an editable widget?
-		GtkWidget* focus = gtk_window_get_focus(GTK_WINDOW(widget));
-		bool isEditableWidget = GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus);
+		Gtk::Widget* focus = window->get_focus();
+		bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
 
 		// Never propagate keystrokes if editable widgets are focused
-		if ((isEditableWidget && event->keyval != GDK_Escape) || keyProcessed)
+		if ((isEditableWidget && ev->keyval != GDK_Escape) || keyProcessed)
 		{
 			return keyProcessed;
 		}
 	}
 
 	// Try to find a matching accelerator
-	AcceleratorList accelList = self->findAccelerator(event);
+	AcceleratorList accelList = findAccelerator(ev);
 	
 	if (!accelList.empty())
 	{
 		// Release any modifiers
-		self->_modifiers.setState(0);
+		_modifiers.setState(0);
 		
 		// Fake a "non-modifier" event to the MouseEvents class 
-		GdkEventKey eventKey = *event;
+		GdkEventKey eventKey = *ev;
 		eventKey.state &= ~(GDK_MOD1_MASK|GDK_SHIFT_MASK|GDK_CONTROL_MASK);
-		self->_mouseEvents.updateStatusText(&eventKey);
+		_mouseEvents.updateStatusText(&eventKey);
 		
 		// Pass the execute() call to all found accelerators
 		for (AcceleratorList::iterator i = accelList.begin(); i != accelList.end(); ++i)
@@ -686,38 +723,35 @@ gboolean EventManager::onKeyPress(GtkWidget* widget, GdkEventKey* event, gpointe
 		return true;
 	}
 	
-	self->_modifiers.updateState(event, true);
+	_modifiers.updateState(ev, true);
 	
-	self->updateStatusText(event, true);
+	updateStatusText(ev, true);
 	
 	return false;
 }
 
-gboolean EventManager::onKeyRelease(GtkWidget* widget, GdkEventKey* event, gpointer data)
+bool EventManager::onKeyRelease(GdkEventKey* ev, Gtk::Widget* widget)
 {
-	// Convert the passed pointer onto a KeyEventManager pointer
-	EventManager* self = reinterpret_cast<EventManager*>(data);
-	
-	if (!GTK_IS_WIDGET(widget)) return FALSE;
-
-	if (GTK_IS_WINDOW(widget))
+	if (dynamic_cast<Gtk::Window*>(widget) != NULL)
 	{
+		Gtk::Window* window = static_cast<Gtk::Window*>(widget);
+
 		// Pass the key event to the connected window and see if it can process it (returns TRUE)
-		gboolean keyProcessed = gtk_window_propagate_key_event(GTK_WINDOW(widget), event);
+		bool keyProcessed = gtk_window_propagate_key_event(window->gobj(), ev);
 
 		// Get the focus widget, is it an editable widget?
-		GtkWidget* focus = gtk_window_get_focus(GTK_WINDOW(widget));
-		bool isEditableWidget = GTK_IS_EDITABLE(focus) || GTK_IS_TEXT_VIEW(focus);
+		Gtk::Widget* focus = window->get_focus();
+		bool isEditableWidget = dynamic_cast<Gtk::Editable*>(focus) != NULL || dynamic_cast<Gtk::TextView*>(focus) != NULL;
 
 		// Never propagate keystrokes if editable widgets are focused
-		if ((isEditableWidget && event->keyval != GDK_Escape) || keyProcessed)
+		if ((isEditableWidget && ev->keyval != GDK_Escape) || keyProcessed)
 		{
 			return keyProcessed;
 		}
 	}
 
 	// Try to find a matching accelerator
-	AcceleratorList accelList = self->findAccelerator(event);
+	AcceleratorList accelList = findAccelerator(ev);
 	
 	if (!accelList.empty())
 	{
@@ -730,14 +764,15 @@ gboolean EventManager::onKeyRelease(GtkWidget* widget, GdkEventKey* event, gpoin
 		return true;
 	}
 	
-	self->_modifiers.updateState(event, false);
+	_modifiers.updateState(ev, false);
 	
-	self->updateStatusText(event, false);
+	updateStatusText(ev, false);
 	
 	return false;
 }
 
-guint EventManager::getGDKCode(const std::string& keyStr) {
+guint EventManager::getGDKCode(const std::string& keyStr)
+{
 	guint returnValue = gdk_keyval_to_upper(gdk_keyval_from_name(keyStr.c_str()));
 	
 	if (returnValue == GDK_VoidSymbol) {

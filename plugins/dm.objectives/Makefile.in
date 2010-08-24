@@ -155,6 +155,8 @@ GL_LIBS = @GL_LIBS@
 GREP = @GREP@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
+GTKMM_CFLAGS = @GTKMM_CFLAGS@
+GTKMM_LIBS = @GTKMM_LIBS@
 GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
 GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
@@ -266,55 +268,55 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
-			  $(XML_CFLAGS) $(GTK_CFLAGS)
+               $(XML_CFLAGS) $(GTKMM_CFLAGS)
 
 pluginsdir = $(pkglibdir)/plugins
 plugins_LTLIBRARIES = dm_objectives.la
 dm_objectives_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-						  $(top_builddir)/libs/xmlutil/libxmlutil.la
+                          $(top_builddir)/libs/xmlutil/libxmlutil.la
 
 dm_objectives_la_LDFLAGS = -module -avoid-version -Wl,-z,defs \
-						   $(REGEX_LIBS) $(GTK_LIBS) $(XML_LIBS)
+                           $(REGEX_LIBS) $(GTKMM_LIBS) $(XML_LIBS)
 
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
-						   objectives.cpp \
-						   SpecifierType.cpp \
-						   ce/ComponentEditorFactory.cpp \
-						   ce/KnockoutComponentEditor.cpp \
-						   ce/KillComponentEditor.cpp \
-						   ce/SpecifierEditCombo.cpp \
-						   ce/LocationComponentEditor.cpp \
-						   ce/AIFindBodyComponentEditor.cpp \
-						   ce/AlertComponentEditor.cpp \
-						   ce/ItemComponentEditor.cpp \
-						   ce/InfoLocationComponentEditor.cpp \
-						   ce/CustomComponentEditor.cpp \
-						   ce/DistanceComponentEditor.cpp \
-						   ce/CustomClockedComponentEditor.cpp \
-						   ce/PickpocketComponentEditor.cpp \
-						   ce/DestroyComponentEditor.cpp \
-						   ce/AIFindItemComponentEditor.cpp \
-						   ce/ReadableOpenedComponentEditor.cpp \
-						   ce/ReadableClosedComponentEditor.cpp \
-						   ce/ReadablePageReachedComponentEditor.cpp \
-						   ce/specpanel/AIInnocenceSpecifierPanel.cpp \
-						   ce/specpanel/AITypeSpecifierPanel.cpp \
-						   ce/specpanel/SpawnClassSpecifierPanel.cpp \
-						   ce/specpanel/ClassnameSpecifierPanel.cpp \
-						   ce/specpanel/AITeamSpecifierPanel.cpp \
-						   ce/specpanel/GroupSpecifierPanel.cpp \
-						   ce/specpanel/SpecifierPanelFactory.cpp \
-						   ce/specpanel/EntityNameSpecifierPanel.cpp \
-						   ce/specpanel/TextSpecifierPanel.cpp \
-						   ObjectiveEntity.cpp \
-						   ObjectiveKeyExtractor.cpp \
-						   Component.cpp \
-						   ComponentsDialog.cpp \
-						   ComponentType.cpp \
-						   DifficultyPanel.cpp \
-						   LogicEditor.cpp \
-						   MissionLogicDialog.cpp \
-						   Specifier.cpp
+                     objectives.cpp \
+                     SpecifierType.cpp \
+                     ce/ComponentEditorFactory.cpp \
+                     ce/KnockoutComponentEditor.cpp \
+                     ce/KillComponentEditor.cpp \
+                     ce/SpecifierEditCombo.cpp \
+                     ce/LocationComponentEditor.cpp \
+                     ce/AIFindBodyComponentEditor.cpp \
+                     ce/AlertComponentEditor.cpp \
+                     ce/ItemComponentEditor.cpp \
+                     ce/InfoLocationComponentEditor.cpp \
+                     ce/CustomComponentEditor.cpp \
+                     ce/DistanceComponentEditor.cpp \
+                     ce/CustomClockedComponentEditor.cpp \
+                     ce/PickpocketComponentEditor.cpp \
+                     ce/DestroyComponentEditor.cpp \
+                     ce/AIFindItemComponentEditor.cpp \
+                     ce/ReadableOpenedComponentEditor.cpp \
+                     ce/ReadableClosedComponentEditor.cpp \
+                     ce/ReadablePageReachedComponentEditor.cpp \
+                     ce/specpanel/AIInnocenceSpecifierPanel.cpp \
+                     ce/specpanel/AITypeSpecifierPanel.cpp \
+                     ce/specpanel/SpawnClassSpecifierPanel.cpp \
+                     ce/specpanel/ClassnameSpecifierPanel.cpp \
+                     ce/specpanel/AITeamSpecifierPanel.cpp \
+                     ce/specpanel/GroupSpecifierPanel.cpp \
+                     ce/specpanel/SpecifierPanelFactory.cpp \
+                     ce/specpanel/EntityNameSpecifierPanel.cpp \
+                     ce/specpanel/TextSpecifierPanel.cpp \
+                     ObjectiveEntity.cpp \
+                     ObjectiveKeyExtractor.cpp \
+                     Component.cpp \
+                     ComponentsDialog.cpp \
+                     ComponentType.cpp \
+                     DifficultyPanel.cpp \
+                     LogicEditor.cpp \
+                     MissionLogicDialog.cpp \
+                     Specifier.cpp
 
 all: all-am
 

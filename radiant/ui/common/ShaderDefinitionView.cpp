@@ -2,41 +2,37 @@
 
 #include "i18n.h"
 #include "ishaders.h"
-#include <gtk/gtkvbox.h>
-#include <gtk/gtktable.h>
 #include "gtkutil/LeftAlignedLabel.h"
+
+#include <gtkmm/table.h>
 
 namespace ui 
 {
 
 ShaderDefinitionView::ShaderDefinitionView() :
-	_vbox(gtk_vbox_new(FALSE, 6)),
-	_view("d3material", true)
+	Gtk::VBox(false, 6),
+	_view(Gtk::manage(new gtkutil::SourceView("d3material", true)))
 {
-	GtkTable* table = GTK_TABLE(gtk_table_new(2, 2, FALSE));
-	gtk_box_pack_start(GTK_BOX(_vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
-
-	GtkWidget* nameLabel = gtkutil::LeftAlignedLabel(_("Material:"));
-	GtkWidget* materialFileLabel = gtkutil::LeftAlignedLabel(_("Defined in:"));
-
-	_materialName = gtkutil::LeftAlignedLabel("");
-	_filename = gtkutil::LeftAlignedLabel("");
-
-	gtk_widget_set_size_request(nameLabel, 90, -1);
-	gtk_widget_set_size_request(materialFileLabel, 90, -1);
-
-	gtk_table_attach(table, nameLabel, 0, 1, 0, 1,
-					(GtkAttachOptions) (0),
-					(GtkAttachOptions) (0), 0, 0);
-	gtk_table_attach(table, materialFileLabel, 0, 1, 1, 2,
-					(GtkAttachOptions) (0),
-					(GtkAttachOptions) (0), 0, 0);
+	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 2, false));
+	pack_start(*table, false, false,  0);
 	
-	gtk_table_attach_defaults(table, _materialName, 1, 2, 0, 1);
-	gtk_table_attach_defaults(table, _filename, 1, 2, 1, 2);
+	Gtk::Label* nameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Material:")));
+	Gtk::Label* materialFileLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Defined in:")));
 
-	gtk_box_pack_start(GTK_BOX(_vbox), gtkutil::LeftAlignedLabel(_("Definition")), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_vbox), _view.getWidget(), TRUE, TRUE, 0);
+	_materialName = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	_filename = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+
+	nameLabel->set_size_request(90, -1);
+	materialFileLabel->set_size_request(90, -1);
+
+	table->attach(*nameLabel, 0, 1, 0, 1, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+	table->attach(*materialFileLabel, 0, 1, 1, 2, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+	
+	table->attach(*_materialName, 1, 2, 0, 1);
+	table->attach(*_filename, 1, 2, 1, 2);
+
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Definition"))), false, false, 0);
+	pack_start(*_view, true, true, 0);
 }
 
 void ShaderDefinitionView::setShader(const std::string& shader)
@@ -44,11 +40,6 @@ void ShaderDefinitionView::setShader(const std::string& shader)
 	_shader = shader;
 	
 	update();
-}
-
-GtkWidget* ShaderDefinitionView::getWidget()
-{
-	return _vbox;
 }
 
 void ShaderDefinitionView::update()
@@ -59,26 +50,26 @@ void ShaderDefinitionView::update()
 	if (material == NULL) 
 	{
 		// Null-ify the contents
-		gtk_label_set_markup(GTK_LABEL(_materialName), "");
-		gtk_label_set_markup(GTK_LABEL(_filename), "");
+		_materialName->set_markup("");
+		_filename->set_markup("");
 
-		gtk_widget_set_sensitive(_view.getWidget(), FALSE);
+		_view->set_sensitive(false);
 
 		return;
 	}
 	
 	// Add the shader and file name 
-	gtk_label_set_markup(GTK_LABEL(_materialName), ("<b>" + material->getName() + "</b>").c_str());
-	gtk_label_set_markup(GTK_LABEL(_filename), (std::string("<b>") + material->getShaderFileName() + "</b>").c_str());
-
-	gtk_widget_set_sensitive(_view.getWidget(), TRUE);
+	_materialName->set_markup("<b>" + material->getName() + "</b>");
+	_filename->set_markup(std::string("<b>") + material->getShaderFileName() + "</b>");
+	
+	_view->set_sensitive(true);
 
 	// Surround the definition with curly braces, these are not included
 	std::string definition = _shader + "\n{\n\r";
 	definition += material->getDefinition();
 	definition += "\n\r}";
 
-	_view.setContents(definition);
+	_view->setContents(definition);
 }
 
 } // namespace ui

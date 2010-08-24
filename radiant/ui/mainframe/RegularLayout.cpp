@@ -8,11 +8,12 @@
 #include "ientityinspector.h"
 
 #include "gtkutil/FramedWidget.h"
-#include "gtkutil/Paned.h"
 
 #include "camera/GlobalCamera.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
+
+#include <gtkmm/paned.h>
 
 namespace ui {
 
@@ -32,62 +33,58 @@ std::string RegularLayout::getName() {
 
 void RegularLayout::activate() {
 
-	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
+	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd();
 	 // greebo: The mainframe window acts as parent for the camwindow
 	_camWnd->setContainer(parent);
 	// Pack in the camera window
-	GtkWidget* camWindow = gtkutil::FramedWidget(_camWnd->getWidget());
+	Gtk::Widget* camWindow = Gtk::manage(new gtkutil::FramedWidget(*_camWnd->getWidget()));
 
 	// Allocate a new OrthoView and set its ViewType to XY
 	XYWndPtr xyWnd = GlobalXYWnd().createEmbeddedOrthoView();
     xyWnd->setViewType(XY);
     // Create a framed window out of the view's internal widget
-    GtkWidget* xyView = gtkutil::FramedWidget(xyWnd->getWidget());
+	Gtk::Widget* xyView = Gtk::manage(new gtkutil::FramedWidget(*xyWnd->getWidget()));
 
 	// Create the texture window
-	GtkWidget* texWindow = gtkutil::FramedWidget(
-		GlobalTextureBrowser().constructWindow(parent)
-	);
+	Gtk::Frame* texWindow = Gtk::manage(new gtkutil::FramedWidget(
+		*GlobalTextureBrowser().constructWindow(parent)
+	));
 
 	// Now pack those widgets into the paned widgets
-	gtkutil::Paned texCamPane(gtkutil::Paned::Vertical);
+	_regular.texCamPane = Gtk::manage(new Gtk::VPaned);
 
 	// First, pack the texwindow and the camera
-	texCamPane.setFirstChild(camWindow, true); // allow shrinking
-	texCamPane.setSecondChild(texWindow, true); // allow shrinking
+	_regular.texCamPane->pack1(*camWindow, true, true); // allow shrinking
+	_regular.texCamPane->pack2(*texWindow, true, true); // allow shrinking
 
-	_regular.texCamPane = texCamPane.getWidget();
-    
     // Depending on the viewstyle, pack the xy left or right
-	gtkutil::Paned horizPane(gtkutil::Paned::Horizontal);
+	_regular.horizPane.reset(new Gtk::HPaned);
 
     if (_regularLeft)
 	{
-		horizPane.setFirstChild(_regular.texCamPane, true); // allow shrinking
-		horizPane.setSecondChild(xyView, true); // allow shrinking
+		_regular.horizPane->pack1(*_regular.texCamPane, true, true); // allow shrinking
+		_regular.horizPane->pack2(*xyView, true, true); // allow shrinking
     }
     else
 	{
 		// This is "regular", put the xyview to the left
-		horizPane.setFirstChild(xyView, true); // allow shrinking
-		horizPane.setSecondChild(_regular.texCamPane, true); // allow shrinking
+		_regular.horizPane->pack1(*xyView, true, true); // allow shrinking
+		_regular.horizPane->pack2(*_regular.texCamPane, true, true); // allow shrinking
     }
 
-	_regular.horizPane = horizPane.getWidget();
-    
 	// Retrieve the main container of the main window
-	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
-	gtk_container_add(GTK_CONTAINER(mainContainer), GTK_WIDGET(_regular.horizPane));
+	Gtk::Container* mainContainer = GlobalMainFrame().getMainContainer();
+	mainContainer->add(*_regular.horizPane);
 
 	// Set some default values for the width and height
-	gtk_paned_set_position(GTK_PANED(_regular.horizPane), 500);
-	gtk_paned_set_position(GTK_PANED(_regular.texCamPane), 350);
+	_regular.horizPane->set_position(500);
+	_regular.texCamPane->set_position(350);
 
 	// Connect the pane position trackers
-	_regular.posHPane.connect(_regular.horizPane);
+	_regular.posHPane.connect(_regular.horizPane.get());
 	_regular.posTexCamPane.connect(_regular.texCamPane);
 	
 	// Now attempt to load the paned positions from the registry
@@ -101,7 +98,7 @@ void RegularLayout::activate() {
 
 	GlobalGroupDialog().hideDialogWindow();
 
-	gtk_widget_show_all(mainContainer);
+	mainContainer->show_all();
 
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
@@ -109,7 +106,8 @@ void RegularLayout::activate() {
 	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
 }
 
-void RegularLayout::deactivate() {
+void RegularLayout::deactivate()
+{
 	// Show the camera toggle option again
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
 	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", true);
@@ -132,7 +130,7 @@ void RegularLayout::deactivate() {
 	GlobalTextureBrowser().destroyWindow();
 
 	// Destroy the widget, so it gets removed from the main container
-	gtk_widget_destroy(GTK_WIDGET(_regular.horizPane));
+	_regular.horizPane.reset();
 }
 
 void RegularLayout::maximiseCameraSize()

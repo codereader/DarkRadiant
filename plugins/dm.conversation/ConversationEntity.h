@@ -4,11 +4,30 @@
 #include "inode.h"
 #include "ientity.h"
 #include <boost/shared_ptr.hpp>
-#include <gtk/gtkliststore.h>
+#include <gtkmm/liststore.h>
 
 #include "Conversation.h"
 
-namespace conversation {
+namespace conversation
+{
+
+struct ConvEntityColumns : 
+	public Gtk::TreeModel::ColumnRecord
+{
+	ConvEntityColumns() { add(displayName); add(entityName); }
+
+	Gtk::TreeModelColumn<Glib::ustring> displayName;
+	Gtk::TreeModelColumn<Glib::ustring> entityName;
+};
+
+struct ConversationColumns : 
+	public Gtk::TreeModel::ColumnRecord
+{
+	ConversationColumns() { add(index); add(name); }
+
+	Gtk::TreeModelColumn<int> index;			// conversation index
+	Gtk::TreeModelColumn<Glib::ustring> name;	// conversation name
+};
 
 /**
  * Representation of a single conversation entity (atdm:conversation_info). 
@@ -93,7 +112,7 @@ public:
 	 * The list store to populate. This must have 2 columns -- an integer 
 	 * column for the conversation number, and a text column for the name.
 	 */
-	void populateListStore(GtkListStore* store) const;
+	void populateListStore(const Glib::RefPtr<Gtk::ListStore>& store, const ConversationColumns& columns) const;
 	
 	/**
 	 * Write all conversation data to keyvals on the underlying entity.

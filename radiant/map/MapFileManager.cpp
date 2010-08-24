@@ -8,7 +8,6 @@
 #include "gtkutil/IConv.h"
 #include "os/path.h"
 #include "MapFileChooserPreview.h"
-#include <gtk/gtkwidget.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -46,7 +45,7 @@ std::string MapFileManager::selectFile(bool open,
 	boost::algorithm::erase_all(defaultExt, "*");
 	
 	// Display a file chooser dialog to get a new path
-	gtkutil::FileChooser fileChooser(GTK_WIDGET(GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::FileChooser fileChooser(GlobalMainFrame().getTopLevelWindow(),
 		title, open, false, type, defaultExt);
 
 	fileChooser.setCurrentFile(defaultFile);

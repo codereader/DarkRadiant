@@ -63,7 +63,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="libiconv.lib kernel32.lib"
-				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\win_iconv\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -126,7 +126,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="libiconv.lib kernel32.lib"
-				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\&quot;;&quot;$(SolutionDir)\..\..\w64deps\win_iconv\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -188,7 +188,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="libiconv.lib kernel32.lib"
-				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\&quot;;&quot;$(SolutionDir)\..\..\w32deps\win_iconv\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -250,7 +250,7 @@
 			<Tool
 				Name="VCLibrarianTool"
 				AdditionalDependencies="libiconv.lib kernel32.lib"
-				AdditionalLibraryDirectories="$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\..\..\build\libs\$(PlatformName)\$(ConfigurationName)\&quot;;&quot;$(SolutionDir)\..\..\w64deps\win_iconv\lib&quot;"
 			/>
 			<Tool
 				Name="VCALinkTool"

@@ -1,12 +1,13 @@
 #ifndef GRAPHTREEMODEL_H_
 #define GRAPHTREEMODEL_H_
 
-#include <gtk/gtktreestore.h>
-#include <gtk/gtktreeselection.h>
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include "iscenegraph.h"
 #include "GraphTreeNode.h"
+
+#include <gtkmm/treestore.h>
+#include <gtkmm/treeselection.h>
 
 namespace ui {
 
@@ -21,11 +22,13 @@ class GraphTreeModel :
 	public scene::Graph::Observer
 {
 public:
-	// The enumeration of GTK column names
-	enum {
-		COL_NODE_POINTER, // this is scene::INode*
-		COL_NAME,             // the name (caption)
-		NUM_COLS
+	struct TreeColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TreeColumns() { add(node); add(name); }
+
+		Gtk::TreeModelColumn<scene::INode*> node;	// node ptr
+		Gtk::TreeModelColumn<Glib::ustring> name;	// name
 	};
 
 private:
@@ -37,7 +40,8 @@ private:
 	const GraphTreeNodePtr _nullTreeNode;
 	
 	// The actual GTK model
-	GtkTreeStore* _model;
+	TreeColumns _columns;
+	Glib::RefPtr<Gtk::TreeStore> _model;
 	
 public:
 	GraphTreeModel();
@@ -58,13 +62,13 @@ public:
 	void refresh();
 	
 	// Updates the selection status of the entire tree
-	void updateSelectionStatus(GtkTreeSelection* selection);
+	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection);
 	
 	// Updates the selection status of the given node only
-	void updateSelectionStatus(GtkTreeSelection* selection, const scene::INodePtr& node);
+	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node);
 	
-	// Operator-cast to GtkTreeModel to allow for implicit conversion
-	operator GtkTreeModel*();
+	const TreeColumns& getColumns() const;
+	Glib::RefPtr<Gtk::TreeModel> getModel();
 	
 	// Connects/disconnects this class as SceneObserver
 	void connectToSceneGraph();
@@ -83,7 +87,7 @@ private:
 	
 	// Tries to lookup the iterator to the parent item of the given node, 
 	// returns NULL if not found
-	GtkTreeIter* findParentIter(const scene::INodePtr& node) const;
+	Gtk::TreeModel::iterator findParentIter(const scene::INodePtr& node) const;
 	
 	// Get the caption string used to display the node in the tree
 	std::string getNodeCaption(const scene::INodePtr& node);

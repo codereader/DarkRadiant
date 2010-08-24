@@ -8,7 +8,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk { class Widget; }
 
 /** greebo: This is a representation of a general menu item/element. 
  * 			
@@ -18,11 +18,8 @@ typedef struct _GtkWidget GtkWidget;
  * 
  * Use the MenuManager class to access these menuitems. 
  */
-namespace gtkutil {
-	typedef boost::shared_ptr<TextMenuItemAccelerator> MenuItemAcceleratorPtr;
-}
-
-namespace ui {
+namespace ui
+{
 
 class MenuItem;
 typedef boost::shared_ptr<MenuItem> MenuItemPtr;
@@ -45,10 +42,9 @@ class MenuItem
 	// The associated event
 	std::string _event;
 	
-	// The associated GtkWidget
-	gtkutil::MenuItemAcceleratorPtr _menuItem;
+	gtkutil::TextMenuItemBase* _menuItem;
 	
-	GtkWidget* _widget;
+	Gtk::Widget* _widget;
 	
 	// The children of this MenuItem
 	typedef std::vector<MenuItemPtr> MenuItemList;
@@ -113,7 +109,7 @@ public:
 	void setEvent(const std::string& eventName);
 	
 	// Use this to get the according Gtk menu widget out of this item.
-	operator GtkWidget*();
+	Gtk::Widget* getWidget();
 	
 	// Tries to (recursively) locate the menuitem by looking up the path 
 	MenuItemPtr find(const std::string& menuPath);

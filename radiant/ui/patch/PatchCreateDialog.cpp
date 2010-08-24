@@ -2,19 +2,26 @@
 
 #include "i18n.h"
 #include "imainframe.h"
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
-#include "gtkutil/ComboBox.h"
+#include "selectionlib.h"
+#include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/LeftAlignment.h"
 #include "string/string.h"
 
-namespace {
-	const char* WINDOW_TITLE = _("Create Flat Patch Mesh");
-	const char* LABEL_TITLE = _("Create Simple Patch Mesh");
-	const char* LABEL_WIDTH_COMBO = _("Width: ");
-	const char* LABEL_HEIGHT_COMBO = _("Height: ");
-	const char* LABEL_REMOVE_BRUSHES = _("Remove selected Brush");
+#include <gtkmm/comboboxtext.h>
+#include <gtkmm/table.h>
+#include <gtkmm/alignment.h>
+#include <gtkmm/box.h>
+#include <gtkmm/label.h>
+
+namespace
+{
+	const char* WINDOW_TITLE = N_("Create Flat Patch Mesh");
+	const char* LABEL_TITLE = N_("Create Simple Patch Mesh");
+	const char* LABEL_WIDTH_COMBO = N_("Width: ");
+	const char* LABEL_HEIGHT_COMBO = N_("Height: ");
+	const char* LABEL_REMOVE_BRUSHES = N_("Remove selected Brush");
 	
-	const gboolean DEFAULT_REMOVE_BRUSHES = FALSE;
+	const bool DEFAULT_REMOVE_BRUSHES = false;
 	
 	const int MIN_PATCH_DIM = 3;
 	const int MAX_PATCH_DIM = 15;
@@ -24,127 +31,89 @@ namespace {
 namespace ui {
 
 PatchCreateDialog::PatchCreateDialog() :
-	_parent(GlobalMainFrame().getTopLevelWindow()),
-	_dialog(NULL)
+	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
-	// Create the new dialog window with OK and CANCEL button    
-  	_dialog = gtk_dialog_new_with_buttons(_(WINDOW_TITLE), _parent,
-                                         GTK_DIALOG_DESTROY_WITH_PARENT, 
-                                         GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT,
-                                         GTK_STOCK_OK, GTK_RESPONSE_OK,
-                                         NULL);
-    
-    // Set the dialog properties
-    gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(_dialog)->vbox), 6);
-    gtk_container_set_border_width(GTK_CONTAINER(_dialog), 6);
-    gtk_dialog_set_has_separator(GTK_DIALOG(_dialog), FALSE);
-    
     // Create the title label (bold font)
-    GtkWidget* topLabel = gtk_label_new(NULL);
-    std::string markup = std::string("<span weight=\"bold\">") + _(LABEL_TITLE) + "</span>";
-    gtk_label_set_markup(GTK_LABEL(topLabel), markup.c_str());
-    gtk_misc_set_alignment(GTK_MISC(topLabel), 0.0f, 0.5f);
-    gtk_misc_set_padding(GTK_MISC(topLabel), 6, 2);
+	Gtk::Label* topLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
+		std::string("<span weight=\"bold\">") + _(LABEL_TITLE) + "</span>"
+	));
+    topLabel->set_padding(6, 2);
     
-    gtk_box_pack_start(GTK_BOX(GTK_DIALOG(_dialog)->vbox), topLabel, TRUE, TRUE, 0);
+	_vbox->pack_start(*topLabel, false, false, 0);
     
     // Create the labels for the combo boxes
-	GtkWidget* labelWidth = gtk_label_new(_(LABEL_WIDTH_COMBO));
-	GtkWidget* labelHeight = gtk_label_new(_(LABEL_HEIGHT_COMBO));
-	gtk_misc_set_alignment(GTK_MISC(labelWidth), 0.0f, 0.5f);
-	gtk_misc_set_alignment(GTK_MISC(labelHeight), 0.0f, 0.5f);
-	
+	Gtk::Label* labelWidth = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_WIDTH_COMBO)));
+	Gtk::Label* labelHeight = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_HEIGHT_COMBO)));
+
 	// Create the two combo boxes for width and height
-	_comboWidth = gtk_combo_box_new_text();
-	_comboHeight = gtk_combo_box_new_text();
+	_comboWidth = Gtk::manage(new Gtk::ComboBoxText);
+	_comboHeight = Gtk::manage(new Gtk::ComboBoxText);
 	
 	// Fill the values into the combo boxes
-	for (int i = MIN_PATCH_DIM; i <= MAX_PATCH_DIM; i += INCR_PATCH_DIM) {
-		gtk_combo_box_append_text(GTK_COMBO_BOX(_comboWidth), intToStr(i).c_str());
-		gtk_combo_box_append_text(GTK_COMBO_BOX(_comboHeight), intToStr(i).c_str());
+	for (int i = MIN_PATCH_DIM; i <= MAX_PATCH_DIM; i += INCR_PATCH_DIM)
+	{
+		_comboWidth->append_text(intToStr(i));
+		_comboHeight->append_text(intToStr(i));
 	}
 	
 	// Activate the first item in the combo boxes
-	gtk_combo_box_set_active(GTK_COMBO_BOX(_comboWidth), 0);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(_comboHeight), 0);
+	_comboWidth->set_active(0);
+	_comboHeight->set_active(0);
 	
 	// Create a new 2x5 table and pack it into an alignment
-	GtkWidget* alignment = gtk_alignment_new(0.0f, 0.0f, 1.0f, 1.0f);
-	
-	// Setup the table with default spacings
-	GtkTable* table = GTK_TABLE(gtk_table_new(2, 5, FALSE));
-    gtk_table_set_col_spacings(table, 12);
-    gtk_table_set_row_spacings(table, 6);
+	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 5, false));
+    table->set_col_spacings(12);
+    table->set_row_spacings(6);
+
+	// Indent the table by adding a left-padding to the alignment
+	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*table, 18, 1.0f));
     
-    // Indent the table by adding a left-padding to the alignment
-    gtk_alignment_set_padding(GTK_ALIGNMENT(alignment), 0, 0, 18, 6); 
-    gtk_container_add(GTK_CONTAINER(alignment), GTK_WIDGET(table));
-    
-    // Pack the buttons into the table
-	gtk_table_attach_defaults(table, labelWidth, 0, 1, 0, 1);
-	gtk_table_attach_defaults(table, _comboWidth, 1, 2, 0, 1);
-	gtk_table_attach_defaults(table, labelHeight, 0, 1, 1, 2);
-	gtk_table_attach_defaults(table, _comboHeight, 1, 2, 1, 2);
+    // Pack the widgets into the table
+	table->attach(*labelWidth, 0, 1, 0, 1);
+	table->attach(*_comboWidth, 1, 2, 0, 1);
+	table->attach(*labelHeight, 0, 1, 1, 2);
+	table->attach(*_comboHeight, 1, 2, 1, 2);
 	
 	// Create the "create seams" label
-	_removeBrushCheckbox = gtk_check_button_new_with_mnemonic(_(LABEL_REMOVE_BRUSHES));
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox), DEFAULT_REMOVE_BRUSHES);
-	gtk_table_attach_defaults(table, _removeBrushCheckbox, 0, 2, 2, 3);
+	_removeBrushCheckbox = Gtk::manage(new Gtk::CheckButton(_(LABEL_REMOVE_BRUSHES), true));
+	_removeBrushCheckbox->set_active(DEFAULT_REMOVE_BRUSHES);
+
+	table->attach(*_removeBrushCheckbox, 0, 2, 2, 3);
 	
 	// Pack the table into the dialog
-	gtk_box_pack_end(GTK_BOX(GTK_DIALOG(_dialog)->vbox), GTK_WIDGET(alignment), TRUE, TRUE, 0);
-	
-	// Make the OK button to the default response 
-	gtk_dialog_set_default_response(GTK_DIALOG(_dialog), GTK_RESPONSE_OK);
-	
-	// Catch key events so that ENTER/ESC do as they are expected
-	g_signal_connect(G_OBJECT(_dialog), "key-press-event", G_CALLBACK(onKeyPress), this);
+	_vbox->pack_start(*alignment, true, true, 0);
 }
 
-bool PatchCreateDialog::queryPatchDimensions(int& width, int& height, 
-							const int& selBrushCount, bool& removeBrush) 
+void PatchCreateDialog::_postShow()
 {
-	bool returnValue = false;
-	
 	// Activate/Inactivate the check box depending on the selected brush count
-	if (selBrushCount == 1) {
-		gtk_widget_set_sensitive(_removeBrushCheckbox, TRUE);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox), TRUE);
+	if (GlobalSelectionSystem().getSelectionInfo().brushCount == 1)
+	{
+		_removeBrushCheckbox->set_sensitive(true);
+		_removeBrushCheckbox->set_active(true);
 	}
-	else {
-		gtk_widget_set_sensitive(_removeBrushCheckbox, FALSE);
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox), FALSE);
+	else
+	{
+		_removeBrushCheckbox->set_sensitive(false);
+		_removeBrushCheckbox->set_active(false);
 	}
-	
-	gtk_widget_show_all(_dialog);
-	gint response = gtk_dialog_run(GTK_DIALOG(_dialog));
-		
-	if (response == GTK_RESPONSE_OK) {
-		// Retrieve the width/height from the widgets
-		width = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_comboWidth)));
-		height = strToInt(gtkutil::ComboBox::getActiveText(GTK_COMBO_BOX(_comboHeight)));
-		
-		removeBrush = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(_removeBrushCheckbox)) ? true : false;
-		
-		returnValue = true;
-	}
-	
-	gtk_widget_destroy(GTK_WIDGET(_dialog));
-	
-	return returnValue;
+
+	gtkutil::Dialog::_postShow();
 }
 
-gboolean PatchCreateDialog::onKeyPress(GtkWidget* widget, GdkEventKey* event, PatchCreateDialog* self) {
-	
-	// Check for ESC and ENTER keys
-	if (event->keyval == GDK_Escape) {
-		gtk_dialog_response(GTK_DIALOG(self->_dialog), GTK_RESPONSE_REJECT);
-	}
-	else if (event->keyval == GDK_Return) {
-		gtk_dialog_response(GTK_DIALOG(self->_dialog), GTK_RESPONSE_OK);
-	}
-	
-	return false;
+int PatchCreateDialog::getSelectedWidth()
+{
+	return strToInt(_comboWidth->get_active_text());
+}
+
+int PatchCreateDialog::getSelectedHeight()
+{
+	return strToInt(_comboHeight->get_active_text());
+}
+
+bool PatchCreateDialog::getRemoveSelectedBrush()
+{
+	return _removeBrushCheckbox->get_active();
 }
 
 } // namespace ui

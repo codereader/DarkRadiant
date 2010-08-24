@@ -9,6 +9,10 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
+#include <gtkmm/box.h>
+#include <gtkmm/image.h>
+#include <gtkmm/button.h>
+
 namespace ui
 {
 
@@ -20,39 +24,40 @@ TexturePropertyEditor::TexturePropertyEditor(Entity* entity,
   _prefixes(options),
   _key(name)
 {
-	_widget = gtk_vbox_new(FALSE, 6);
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 6);
 	
-	GtkWidget* outer = gtk_vbox_new(FALSE, 0);
-	GtkWidget* editBox = gtk_hbox_new(FALSE, 3);
-
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
+	
+	Gtk::VBox* outer = Gtk::manage(new Gtk::VBox(false, 0));
+	Gtk::HBox* editBox = Gtk::manage(new Gtk::HBox(false, 3));
+	
 	// Create the browse button	
-	GtkWidget* browseButton = gtk_button_new_with_label(_("Choose texture..."));
-	gtk_button_set_image(
-		GTK_BUTTON(browseButton),
-		gtk_image_new_from_pixbuf(
-			PropertyEditorFactory::getPixbufFor("texture")
-		)
-	);
-	g_signal_connect(
-		G_OBJECT(browseButton), "clicked", G_CALLBACK(callbackBrowse), this
-	);
+	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose texture...")));
+	browseButton->set_image(*Gtk::manage(new Gtk::Image(
+		PropertyEditorFactory::getPixbufFor("texture"))));
+
+	browseButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &TexturePropertyEditor::_onBrowse));
 	
-	gtk_box_pack_start(GTK_BOX(editBox), browseButton, TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(outer), editBox, TRUE, FALSE, 0);
+	editBox->pack_start(*browseButton, true, false, 0);
+	outer->pack_start(*editBox, true, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_widget), outer, TRUE, TRUE, 0);
+	mainVBox->pack_start(*outer, true, true, 0);
 }
 
 // Browse button callback
-void TexturePropertyEditor::callbackBrowse(GtkWidget* widget, 
-										   TexturePropertyEditor* self) 
+void TexturePropertyEditor::_onBrowse() 
 {
 	// Light texture chooser (self-destructs on close)
 	LightTextureChooser chooser;
 	std::string texture = chooser.chooseTexture();
-	if (!texture.empty()) {
+
+	if (!texture.empty())
+	{
 		// Apply the keyvalue immediately
-		self->setKeyValue(self->_key, texture);
+		setKeyValue(_key, texture);
 	}
 }
 

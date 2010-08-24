@@ -18,8 +18,7 @@
 
 // Constructor
 GlobalCameraManager::GlobalCameraManager() :
-	_activeCam(-1),
-	_parent(NULL)
+	_activeCam(-1)
 {}
 
 void GlobalCameraManager::registerCommands()
@@ -154,7 +153,8 @@ void GlobalCameraManager::removeCamWnd(int id) {
 }
 
 // Construct/return a floating window containing the CamWnd widget
-FloatingCamWndPtr GlobalCameraManager::createFloatingWindow() {
+FloatingCamWndPtr GlobalCameraManager::createFloatingWindow()
+{
 	// Create a new floating camera window widget and return it
 	FloatingCamWndPtr cam(new FloatingCamWnd(_parent));
 
@@ -167,7 +167,8 @@ FloatingCamWndPtr GlobalCameraManager::createFloatingWindow() {
 	return cam;
 }
 
-void GlobalCameraManager::resetCameraAngles(const cmd::ArgumentList& args) {
+void GlobalCameraManager::resetCameraAngles(const cmd::ArgumentList& args)
+{
 	CamWndPtr camWnd = getActiveCamWnd();
 
 	if (camWnd != NULL) {
@@ -226,7 +227,8 @@ void GlobalCameraManager::update() {
 }
 
 // Set the global parent window
-void GlobalCameraManager::setParent(GtkWindow* parent) {
+void GlobalCameraManager::setParent(const Glib::RefPtr<Gtk::Window>& parent)
+{
 	_parent = parent;
 }
 

@@ -3,8 +3,7 @@
 
 #include "iuimanager.h"
 #include <boost/shared_ptr.hpp>
-
-typedef struct _GtkWindow GtkWindow;
+#include <gtkmm/window.h>
 
 namespace ui
 {
@@ -51,7 +50,7 @@ public:
 	virtual Handle addComboBox(const std::string& label, const ComboBoxOptions& options) = 0;
 	virtual Handle addEntryBox(const std::string& label) = 0;
 	virtual Handle addPathEntry(const std::string& label, bool foldersOnly = false) = 0;
-	virtual Handle addSpinButton(const std::string& label, double min, double max, double step) = 0;
+	virtual Handle addSpinButton(const std::string& label, double min, double max, double step, unsigned int digits) = 0;
 	virtual Handle addCheckbox(const std::string& label) = 0;
 
 	// ----------------- Element Value --------------------
@@ -93,7 +92,8 @@ public:
 	 * @parent: optional top-level widget this dialog should be parented to, defaults to
 	 *			GlobalMainFrame().getMainWindow().
 	 */
-	virtual IDialogPtr createDialog(const std::string& title, GtkWindow* parent = NULL) = 0;
+	virtual IDialogPtr createDialog(const std::string& title, 
+									const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
 
 	/**
 	 * Create a simple message box, which can either notify the user about something,
@@ -107,7 +107,8 @@ public:
 	 *			GlobalMainFrame().getMainWindow().
 	 */
 	virtual IDialogPtr createMessageBox(const std::string& title, const std::string& text, 
-										IDialog::MessageType type, GtkWindow* parent = NULL) = 0;
+										IDialog::MessageType type, 
+										const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
 
 	/**
 	 * Acquire a new filechooser instance with the given parameters.

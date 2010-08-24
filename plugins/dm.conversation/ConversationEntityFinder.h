@@ -3,7 +3,7 @@
 
 #include "i18n.h"
 #include "scenelib.h"
-#include <gtk/gtkliststore.h>
+#include <gtkmm/liststore.h>
 #include <string>
 
 #include "ConversationEntity.h"
@@ -27,8 +27,9 @@ class ConversationEntityFinder :
 	// Name of entity class we are looking for
 	std::string _className;
 	
-	// GtkListStore to populate with results
-	GtkListStore* _store;
+	// ListStore to populate with results
+	Glib::RefPtr<Gtk::ListStore> _store;
+	const ConvEntityColumns& _columns;
 	
 	// ConversationEntityMap which we also populate
 	ConversationEntityMap& _map;
@@ -53,11 +54,13 @@ public:
 	 * @param classname
 	 * The text classname used to identify a Conversation entity.
 	 */
-	ConversationEntityFinder(GtkListStore* st, 
+	ConversationEntityFinder(const Glib::RefPtr<Gtk::ListStore>& st, 
+							 const ConvEntityColumns& columns,
 						    ConversationEntityMap& map,
 						    const std::string& classname)
 	: _className(classname),
 	  _store(st),
+	  _columns(columns),
 	  _map(map)
 	{}
 	
@@ -78,12 +81,10 @@ public:
 				(boost::format(_("<b>%s</b> at [ %s ]")) % name % entity->getKeyValue("origin")).str();
 			
 			// Add the entity to the list
-			GtkTreeIter iter;
-			gtk_list_store_append(_store, &iter);
-			gtk_list_store_set(_store, &iter, 
-							   0, sDisplay.c_str(),		// display name
-							   1, name.c_str(), 		// raw name
-							   -1);
+			Gtk::TreeModel::Row row = *_store->append();
+			
+			row[_columns.displayName] = sDisplay;
+			row[_columns.entityName] = name;
 							   
 			// Construct an ObjectiveEntity with the node, and add to the map
 			ConversationEntityPtr ce(new ConversationEntity(node));

@@ -1,6 +1,5 @@
 #include "ShaderInfoTab.h"
 
-#include <gtk/gtk.h>
 #include "i18n.h"
 
 #include "string/string.h"
@@ -8,97 +7,99 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
-namespace ui {
+#include <gtkmm/treeview.h>
+#include <gtkmm/box.h>
+#include <gtkmm/table.h>
 
-	namespace {
+namespace ui 
+{
+	namespace
+	{
 		const char* const TAB_NAME = N_("Shaders");
 		const std::string TAB_ICON("icon_texture.png");
-	   	
-	   	enum {
-	   		SHADER_COL,
-	   		FACE_COUNT_COL,
-			PATCH_COUNT_COL,
-	   		NUM_COLS
-	   	};
 	}
 
 ShaderInfoTab::ShaderInfoTab() :
-	_widget(gtk_vbox_new(FALSE, 6))
+	_widget(NULL)
 {
 	// Create all the widgets
 	populateTab();
 }
 
-GtkWidget* ShaderInfoTab::getWidget() {
-	return _widget;
+Gtk::Widget& ShaderInfoTab::getWidget()
+{
+	return *_widget;
 }
 
-std::string ShaderInfoTab::getLabel() {
+std::string ShaderInfoTab::getLabel()
+{
 	return _(TAB_NAME);
 }
 
-std::string ShaderInfoTab::getIconName() {
+std::string ShaderInfoTab::getIconName()
+{
 	return TAB_ICON;
 }
 
-void ShaderInfoTab::populateTab() {
+void ShaderInfoTab::populateTab()
+{
+	_widget = Gtk::manage(new Gtk::VBox(false, 6));
+
 	// Set the outer space of the vbox
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-	
-	// Create the list store that contains the shader => count, count map 
-	_listStore = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT);
+	_widget->set_border_width(12);
+
+	// Create the list store that contains the eclass => count map 
+	_listStore = Gtk::ListStore::create(_columns);
 
 	// Create the treeview and pack two columns into it
-	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
-	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(_treeView), TRUE);
+	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
+	_treeView->set_headers_clickable(true);
 
-	GtkTreeViewColumn* shaderCol = gtkutil::TextColumn(_("Shader"), SHADER_COL);
-	gtk_tree_view_column_set_sort_column_id(shaderCol, SHADER_COL);
-	
-	GtkTreeViewColumn* faceCountCol = gtkutil::TextColumn(_("Faces"), FACE_COUNT_COL);
-	gtk_tree_view_column_set_sort_column_id(faceCountCol, FACE_COUNT_COL);
+	Gtk::TreeViewColumn* shaderCol = Gtk::manage(new gtkutil::TextColumn(_("Shader"), _columns.shader));
+	shaderCol->set_sort_column(_columns.shader);
 
-	GtkTreeViewColumn* patchCountCol = gtkutil::TextColumn(_("Patches"), PATCH_COUNT_COL);
-	gtk_tree_view_column_set_sort_column_id(patchCountCol, PATCH_COUNT_COL);
+	Gtk::TreeViewColumn* faceCountCol = Gtk::manage(new gtkutil::TextColumn(_("Faces"), _columns.faceCount));
+	faceCountCol->set_sort_column(_columns.faceCount);
 
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), shaderCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), faceCountCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), patchCountCol);
-	
-    gtk_box_pack_start(GTK_BOX(_widget), gtkutil::ScrolledFrame(_treeView), TRUE, TRUE, 0);
+	Gtk::TreeViewColumn* patchCountCol = Gtk::manage(new gtkutil::TextColumn(_("Patches"), _columns.patchCount));
+	patchCountCol->set_sort_column(_columns.patchCount);
+
+	_treeView->append_column(*shaderCol);
+	_treeView->append_column(*faceCountCol);
+	_treeView->append_column(*patchCountCol);
+
+    _widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
     
     // Populate the liststore with the entity count information
     for (map::ShaderBreakdown::Map::const_iterator i = _shaderBreakdown.begin(); 
 		 i != _shaderBreakdown.end(); 
 		 ++i)
 	{
-		GtkTreeIter iter;
-		gtk_list_store_append(_listStore, &iter);
-		gtk_list_store_set(_listStore, &iter, 
-						   SHADER_COL, i->first.c_str(),
-						   FACE_COUNT_COL, i->second.faceCount, 
-						   PATCH_COUNT_COL, i->second.patchCount, 
-						   -1);
+		Gtk::TreeModel::Row row = *_listStore->append();
+
+		row[_columns.shader] = i->first;
+		row[_columns.faceCount] = static_cast<int>(i->second.faceCount);
+		row[_columns.patchCount] = static_cast<int>(i->second.patchCount);
 	}
 
-	// The table containing the primitive statistics
-	GtkTable* table = GTK_TABLE(gtk_table_new(1, 2, FALSE));
-	gtk_box_pack_start(GTK_BOX(_widget), GTK_WIDGET(table), FALSE, FALSE, 0);
+	// The table containing the statistics
+	Gtk::Table* table = Gtk::manage(new Gtk::Table(1, 2, false));
+	_widget->pack_start(*table, false, false, 0);
 	
-	_shaderCount = gtkutil::LeftAlignedLabel("");
-	
-	GtkWidget* shaderLabel = gtkutil::LeftAlignedLabel(_("Shaders used:"));
-	
-	gtk_widget_set_size_request(shaderLabel, 100, -1);
+	_shaderCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+
+	Gtk::Label* shaderLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Shaders used:")));
 		
-	gtk_table_attach(table, shaderLabel, 0, 1, 0, 1,
-					(GtkAttachOptions) (0),
-					(GtkAttachOptions) (0), 0, 0);
+	shaderLabel->set_size_request(100, -1);
 	
+	table->attach(*shaderLabel, 0, 1, 0, 1,
+				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+
 	std::string sc = "<b>" + sizetToStr(_shaderBreakdown.getMap().size()) + "</b>";
+
+	_shaderCount->set_markup(sc);
 	
-	gtk_label_set_markup(GTK_LABEL(_shaderCount), sc.c_str());
-	gtk_table_attach_defaults(table, _shaderCount, 1, 2, 0, 1);
+	table->attach(*_shaderCount, 1, 2, 0, 1);
 }
 
 } // namespace ui

@@ -6,7 +6,7 @@
 
 #include "inode.h"
 #include <boost/shared_ptr.hpp>
-#include <gtk/gtkliststore.h>
+#include <gtkmm/liststore.h>
 
 // FORWARD DECLS
 namespace objectives { class TargetList; }
@@ -14,6 +14,21 @@ class Entity;
 
 namespace objectives
 {
+
+struct ObjectivesListColumns :
+	public Gtk::TreeModel::ColumnRecord
+{
+	ObjectivesListColumns()
+	{ 
+		add(objNumber);
+		add(description);
+		add(difficultyLevel);
+	}
+
+	Gtk::TreeModelColumn<int> objNumber;
+	Gtk::TreeModelColumn<Glib::ustring> description;
+	Gtk::TreeModelColumn<Glib::ustring> difficultyLevel;
+};
 
 /**
  * Representation of a single objective entity (target_tdm_addobjectives). 
@@ -156,7 +171,8 @@ public:
 	 * The list store to populate. This must have 2 columns -- an integer 
 	 * column for the objective number, and a text column for the description.
 	 */
-	void populateListStore(GtkListStore* store) const;
+	void populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
+						   const ObjectivesListColumns& columns) const;
 	
 	/**
 	 * Write all objective data to keyvals on the underlying entity.

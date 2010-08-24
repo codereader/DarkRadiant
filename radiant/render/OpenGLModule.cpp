@@ -6,8 +6,7 @@
 #include "modulesystem/StaticModule.h"
 
 #include "gtkutil/GLWidget.h"
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkglwidget.h>
+#include <gdkmm/gl/context.h>
 
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
@@ -15,9 +14,8 @@
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
 	_font(0, 0),
-	_sharedContext(NULL),
-	_realisedGLWidgets(0)
-{ }
+	_sharedContext(NULL)
+{}
 
 void OpenGLModule::assertNoErrors()
 {
@@ -69,7 +67,7 @@ void OpenGLModule::sharedContextCreated()
 	GlobalRenderSystem().extensionsInitialised();
 	GlobalRenderSystem().realise();
 
-	_font = glfont_create("Sans 8");
+	_font = GLFont::create("Sans 8");
 	m_font = _font.getDisplayList();
 	m_fontHeight = _font.getPixelHeight();
 }
@@ -79,28 +77,29 @@ void OpenGLModule::sharedContextDestroyed()
 	GlobalRenderSystem().unrealise();
 }
 
-GtkWidget* OpenGLModule::getGLContextWidget()
+Gtk::Widget* OpenGLModule::getGLContextWidget()
 {
 	return _sharedContext;
 }
 
-GtkWidget* OpenGLModule::registerGLWidget(GtkWidget* widget)
+Gtk::Widget* OpenGLModule::registerGLWidget(Gtk::Widget* widget)
 {
-	if (++_realisedGLWidgets == 1)
-	{
-		_sharedContext = widget;
-		gtk_widget_ref(_sharedContext);
+	std::pair<GLWidgets::iterator, bool> result = _glWidgets.insert(widget);
 
+	if (result.second && _glWidgets.size() == 1)
+	{
+		// First non-duplicated widget registered, take this as context
+		_sharedContext = widget;
+		_sharedContext->reference();
+		
 		// Create a context
-		gtkutil::GLWidget::makeCurrent(_sharedContext);
+		gtkutil::GLWidget::makeCurrent(*_sharedContext);
         assertNoErrors();
 
 #ifdef DEBUG_GL_WIDGETS
         std::cout << "GLWidget: created shared context using ";
 
-        if (gdk_gl_context_is_direct(
-                gtk_widget_get_gl_context(_sharedContext)
-            ) == TRUE)
+		if (Gtk::GL::widget_get_gl_context(*_sharedContext)->is_direct())
         {
             std::cout << "DIRECT rendering" << std::endl;
         }
@@ -118,19 +117,26 @@ GtkWidget* OpenGLModule::registerGLWidget(GtkWidget* widget)
 	return _sharedContext;
 }
 
-void OpenGLModule::unregisterGLWidget(GtkWidget* widget)
+void OpenGLModule::unregisterGLWidget(Gtk::Widget* widget)
 {
-	assert(_realisedGLWidgets > 0);
+	GLWidgets::iterator found = _glWidgets.find(widget);
 
-	if (--_realisedGLWidgets == 0)
+	assert(found != _glWidgets.end());
+
+	if (found != _glWidgets.end())
 	{
-		// This was the last active GL widget
-		contextValid = false;
+		if (_glWidgets.size() == 1)
+		{
+			// This was the last active GL widget
+			contextValid = false;
 
-		sharedContextDestroyed();
+			sharedContextDestroyed();
 
-		gtk_widget_unref(_sharedContext);
-		_sharedContext = NULL;
+			_sharedContext->unreference();
+			_sharedContext = NULL;
+		}
+
+		_glWidgets.erase(found);
 	}
 }
 

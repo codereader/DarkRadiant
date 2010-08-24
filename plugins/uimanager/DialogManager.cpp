@@ -19,17 +19,14 @@ DialogManager::~DialogManager()
 	}
 }
 
-IDialogPtr DialogManager::createDialog(const std::string& title, GtkWindow* parent)
+IDialogPtr DialogManager::createDialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent)
 {
 	cleanupOldDialogs();
 
-	if (parent == NULL)
-	{
-		parent = GlobalMainFrame().getTopLevelWindow();
-	}
-
 	// Allocate a new dialog
-	gtkutil::DialogPtr dialog(new gtkutil::Dialog(title, parent));
+	gtkutil::DialogPtr dialog(
+		new gtkutil::Dialog(title, parent ? parent : GlobalMainFrame().getTopLevelWindow())
+	);
 
 	_dialogs.push_back(dialog);
 
@@ -39,18 +36,14 @@ IDialogPtr DialogManager::createDialog(const std::string& title, GtkWindow* pare
 IDialogPtr DialogManager::createMessageBox(const std::string& title, 
 										   const std::string& text, 
 										   IDialog::MessageType type, 
-										   GtkWindow* parent)
+										   const Glib::RefPtr<Gtk::Window>& parent)
 {
 	cleanupOldDialogs();
 
-	// Use the main window if no parent specified
-	if (parent == NULL)
-	{
-		parent = GlobalMainFrame().getTopLevelWindow();
-	}
-
-	// Allocate a new dialog
-	gtkutil::MessageBoxPtr box(new gtkutil::MessageBox(title, text, type, parent));
+	// Allocate a new dialog, use the main window if no parent specified
+	gtkutil::MessageBoxPtr box(
+		new gtkutil::MessageBox(title, text, type, parent ? parent : GlobalMainFrame().getTopLevelWindow())
+	);
 
 	// Store it in the local map so that references are held
 	_dialogs.push_back(box);
@@ -62,10 +55,9 @@ IFileChooserPtr DialogManager::createFileChooser(const std::string& title,
 	bool open, bool browseFolders, const std::string& pattern, const std::string& defaultExt)
 {
 	return IFileChooserPtr(new gtkutil::FileChooser(
-		GTK_WIDGET(GlobalMainFrame().getTopLevelWindow()),
+		GlobalMainFrame().getTopLevelWindow(),
 		title, open, browseFolders, pattern, defaultExt));
 }
-
 
 void DialogManager::cleanupOldDialogs()
 {

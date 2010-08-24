@@ -1,6 +1,5 @@
 #include "ResponseEditor.h"
 
-#include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
@@ -12,6 +11,16 @@
 #include "i18n.h"
 #include "EffectEditor.h"
 
+#include <gtkmm/treeview.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/combobox.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/table.h>
+#include <gtkmm/stock.h>
+
 namespace ui {
 	
 	namespace
@@ -19,7 +28,7 @@ namespace ui {
 		const char* const LABEL_RESPONSE_EFFECTS = N_("Response Effects");
 	}
 
-ResponseEditor::ResponseEditor(GtkWidget* parent, StimTypes& stimTypes) :
+ResponseEditor::ResponseEditor(const Glib::RefPtr<Gtk::Window>& parent, StimTypes& stimTypes) :
 	ClassEditor(stimTypes),
 	_parent(parent)
 {
@@ -27,253 +36,222 @@ ResponseEditor::ResponseEditor(GtkWidget* parent, StimTypes& stimTypes) :
 	createContextMenu();
 }
 
-void ResponseEditor::setEntity(SREntityPtr entity) {
+void ResponseEditor::setEntity(const SREntityPtr& entity)
+{
 	// Pass the call to the base class
 	ClassEditor::setEntity(entity);
 	
-	if (entity != NULL) {
-		GtkListStore* listStore = _entity->getResponseStore();
-		gtk_tree_view_set_model(GTK_TREE_VIEW(_list), GTK_TREE_MODEL(listStore));
-		g_object_unref(listStore); // treeview owns reference now
+	if (entity != NULL)
+	{
+		_list->set_model(_entity->getResponseStore());
 		
 		// Clear the treeview (unset the model)
-		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
+		_effectWidgets.view->unset_model();
 	}
 }
 
-void ResponseEditor::update() {
+void ResponseEditor::update()
+{
 	_updatesDisabled = true;
 	
 	int id = getIdFromSelection();
 	
-	if (id > 0 && _entity != NULL) {
-		gtk_widget_set_sensitive(_propertyWidgets.vbox, TRUE);
+	if (id > 0 && _entity != NULL)
+	{
+		_propertyWidgets.vbox->set_sensitive(true);
 		
 		StimResponse& sr = _entity->get(id);
 		
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
-		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_type.list), &typeIter);
+		_type.list->set_active(_stimTypes.getIterForName(sr.get("type")));
 		
 		// Active
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.active),
-			(sr.get("state") == "1")
-		);
+		_propertyWidgets.active->set_active(sr.get("state") == "1");
 		
 		// Use Radius
 		bool useRandomEffects = (sr.get("random_effects") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.randomEffectsToggle),
-			useRandomEffects
-		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.randomEffectsEntry), 
-			sr.get("random_effects").c_str()
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.randomEffectsEntry, 
-			useRandomEffects
-		);
+		_propertyWidgets.randomEffectsToggle->set_active(useRandomEffects);
+		_propertyWidgets.randomEffectsEntry->set_text(sr.get("random_effects"));
+		_propertyWidgets.randomEffectsEntry->set_sensitive(useRandomEffects);
 		
 		// Use Chance
 		bool useChance = (sr.get("chance") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.chanceToggle),
-			useChance
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry),
-			strToFloat(sr.get("chance"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.chanceEntry, 
-			useChance
-		);
+		_propertyWidgets.chanceToggle->set_active(useChance);
+		_propertyWidgets.chanceEntry->set_value(strToFloat(sr.get("chance")));
+		_propertyWidgets.chanceEntry->set_sensitive(useChance);
 		
-		GtkListStore* effectStore = sr.getEffectStore();
-		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), GTK_TREE_MODEL(effectStore));
-		g_object_unref(effectStore);
+		_effectWidgets.view->set_model(sr.updateAndGetEffectStore());
 		
 		// Disable the editing of inherited properties completely
-		if (sr.inherited()) {
-			gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
+		if (sr.inherited())
+		{
+			_propertyWidgets.vbox->set_sensitive(false);
 		}
 		
 		// Update the delete context menu item
-		gtk_widget_set_sensitive(_contextMenu.remove, !sr.inherited());
+		_contextMenu.remove->set_sensitive(!sr.inherited());
 		
 		// If there is anything selected, the duplicate item is always active
-		gtk_widget_set_sensitive(_contextMenu.duplicate, TRUE);
+		_contextMenu.duplicate->set_sensitive(true);
 		
 		// Update the "enable/disable" menu items
 		bool state = sr.get("state") == "1";
-		gtk_widget_set_sensitive(_contextMenu.enable, !state);
-		gtk_widget_set_sensitive(_contextMenu.disable, state);
+		_contextMenu.enable->set_sensitive(!state);
+		_contextMenu.disable->set_sensitive(state);
 		
 		// The response effect list may be empty, so force an update of the
 		// context menu sensitivity, in the case the "selection changed" 
 		// signal doesn't get called
 		updateEffectContextMenu();
 	}
-	else {
+	else 
+	{
 		// Nothing selected
-		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
+		_propertyWidgets.vbox->set_sensitive(false);
 		// Clear the effect tree view
-		gtk_tree_view_set_model(GTK_TREE_VIEW(_effectWidgets.view), NULL);
+		_effectWidgets.view->unset_model();
 		
-		gtk_widget_set_sensitive(_contextMenu.enable, FALSE);
-		gtk_widget_set_sensitive(_contextMenu.disable, FALSE);
-		gtk_widget_set_sensitive(_contextMenu.remove, FALSE);
-		gtk_widget_set_sensitive(_contextMenu.duplicate, FALSE);
+		_contextMenu.enable->set_sensitive(false);
+		_contextMenu.disable->set_sensitive(false);
+		_contextMenu.remove->set_sensitive(false);
+		_contextMenu.duplicate->set_sensitive(false);
 	}
 	
 	_updatesDisabled = false;
 }
 
-void ResponseEditor::populatePage() {
-	GtkWidget* srHBox = gtk_hbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(_pageVBox), GTK_WIDGET(srHBox), TRUE, TRUE, 0);
+void ResponseEditor::populatePage()
+{
+	Gtk::HBox* srHBox = Gtk::manage(new Gtk::HBox(false, 12));
+	pack_start(*srHBox, true, true, 0);
 	
 	// List and buttons below
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox), 
-		gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_list)), true, true, 0);
 	
 	// Create the type selector plus buttons and pack them
-	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 0);
+	vbox->pack_start(createListButtons(), false, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
+	srHBox->pack_start(*vbox, false, false, 0);
 	
 	// Response property section
-	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(srHBox), _propertyWidgets.vbox, TRUE, TRUE, 0);
+	_propertyWidgets.vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	srHBox->pack_start(*_propertyWidgets.vbox, true, true, 0);
 	
 	_type = createStimTypeSelector();
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _type.hbox, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
-	
+	_propertyWidgets.vbox->pack_start(*_type.hbox, false, false, 0);
+	_type.list->signal_changed().connect(sigc::mem_fun(*this, &ResponseEditor::onStimTypeSelect));
+
 	// Create the table for the widget alignment
-	GtkTable* table = GTK_TABLE(gtk_table_new(3, 2, FALSE));
-	gtk_table_set_row_spacings(table, 6);
-	gtk_table_set_col_spacings(table, 6);
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), GTK_WIDGET(table), FALSE, FALSE, 0);	
+	Gtk::Table* table = Gtk::manage(new Gtk::Table(3, 2, false));
+	table->set_row_spacings(6);
+	table->set_col_spacings(6);
+	_propertyWidgets.vbox->pack_start(*table, false, false, 0);	
 	
 	// Active
-	_propertyWidgets.active = gtk_check_button_new_with_label(_("Active"));
-	gtk_table_attach_defaults(table, _propertyWidgets.active, 0, 2, 0, 1);
+	_propertyWidgets.active = Gtk::manage(new Gtk::CheckButton(_("Active")));
+	table->attach(*_propertyWidgets.active, 0, 2, 0, 1);
 		
 	// Random Effects Toggle
-	_propertyWidgets.randomEffectsToggle = gtk_check_button_new_with_label(_("Random Effects:"));
-	_propertyWidgets.randomEffectsEntry = gtk_entry_new();
+	_propertyWidgets.randomEffectsToggle = Gtk::manage(new Gtk::CheckButton(_("Random Effects:")));
+	_propertyWidgets.randomEffectsEntry = Gtk::manage(new Gtk::Entry);
 	
-	gtk_table_attach(table, _propertyWidgets.randomEffectsToggle, 0, 1, 2, 3, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(table, _propertyWidgets.randomEffectsEntry, 1, 2, 2, 3);
+	table->attach(*_propertyWidgets.randomEffectsToggle, 0, 1, 2, 3, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*_propertyWidgets.randomEffectsEntry, 1, 2, 2, 3);
 	
 	// Chance variable
-	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label(_("Chance:"));
-	_propertyWidgets.chanceEntry = gtk_spin_button_new_with_range(0.0f, 1.0f, 0.1f);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry), 2);
+	_propertyWidgets.chanceToggle = Gtk::manage(new Gtk::CheckButton(_("Chance:")));
+	_propertyWidgets.chanceEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 1.0, 0.1)), 0, 2));
 	
-	gtk_table_attach(table, _propertyWidgets.chanceToggle, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(table, _propertyWidgets.chanceEntry, 1, 2, 1, 2);
+	table->attach(*_propertyWidgets.chanceToggle, 0, 1, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*_propertyWidgets.chanceEntry, 1, 2, 1, 2);
 	
 	// Connect the signals
-	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.randomEffectsToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	connectCheckButton(_propertyWidgets.active);
+	connectCheckButton(_propertyWidgets.randomEffectsToggle);
+	connectCheckButton(_propertyWidgets.chanceToggle);
+
+	connectEntry(_propertyWidgets.randomEffectsEntry, "random_effects");
+
+	connectSpinButton(_propertyWidgets.chanceEntry, "chance");
 	
-	g_signal_connect(G_OBJECT(_propertyWidgets.randomEffectsEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	
-	// The map associating entry fields to response property keys
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.randomEffectsEntry)] = "random_effects";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)] = "chance";
-	
-	gtk_box_pack_start(
-		GTK_BOX(_propertyWidgets.vbox), 
-		gtkutil::LeftAlignedLabel(std::string("<b>") + _(LABEL_RESPONSE_EFFECTS) + "</b>"),
-		FALSE, FALSE, 0
+	_propertyWidgets.vbox->pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _(LABEL_RESPONSE_EFFECTS) + "</b>")),
+		false, false, 0
 	);
-	gtk_box_pack_start(
-		GTK_BOX(_propertyWidgets.vbox), 
-		createEffectWidgets(),
-		TRUE, TRUE, 0
-	);
+
+	_propertyWidgets.vbox->pack_start(createEffectWidgets(), true, true, 0);
 }
 
 // Create the response effect list widgets
-GtkWidget* ResponseEditor::createEffectWidgets() {
-
-	_effectWidgets.view = gtk_tree_view_new();
-	_effectWidgets.selection = 
-		gtk_tree_view_get_selection(GTK_TREE_VIEW(_effectWidgets.view));
-	gtk_widget_set_size_request(_effectWidgets.view, -1, 150);
+Gtk::Widget& ResponseEditor::createEffectWidgets()
+{
+	_effectWidgets.view = Gtk::manage(new Gtk::TreeView);
+	_effectWidgets.view->set_size_request(-1, 150);
 	
 	// Connect the signals
-	g_signal_connect(G_OBJECT(_effectWidgets.selection), "changed",
-					 G_CALLBACK(onEffectSelectionChange), this);
-	g_signal_connect(G_OBJECT(_effectWidgets.view), "key-press-event", 
-					 G_CALLBACK(onTreeViewKeyPress), this);
-	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-press-event",
-					 G_CALLBACK(onTreeViewButtonPress), this);
-	g_signal_connect(G_OBJECT(_effectWidgets.view), "button-release-event",
-					 G_CALLBACK(onTreeViewButtonRelease), this);
+	_effectWidgets.view->get_selection()->signal_changed().connect(
+		sigc::mem_fun(*this, &ResponseEditor::onEffectSelectionChange));
 	
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_effectWidgets.view), 
-		gtkutil::TextColumn("#", EFFECT_INDEX_COL)
-	);
+	_effectWidgets.view->signal_button_press_event().connect(
+		sigc::mem_fun(*this, &ResponseEditor::onEffectsViewButtonPress), false);
+
+	_effectWidgets.view->signal_button_release_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &ResponseEditor::onTreeViewButtonRelease), _effectWidgets.view));
+
+	_effectWidgets.view->append_column(
+		*Gtk::manage(new gtkutil::TextColumn("#", StimResponse::getColumns().index)));
 	
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_effectWidgets.view), 
-		gtkutil::TextColumn(_("Effect"), EFFECT_CAPTION_COL)
-	);
+	_effectWidgets.view->append_column(
+		*Gtk::manage(new gtkutil::TextColumn(_("Effect"), StimResponse::getColumns().caption)));
 	
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_effectWidgets.view), 
-		gtkutil::TextColumn(_("Details (double-click to edit)"), EFFECT_ARGS_COL)
-	);
+	_effectWidgets.view->append_column(
+		*Gtk::manage(new gtkutil::TextColumn(_("Details (double-click to edit)"), StimResponse::getColumns().arguments)));
 	
 	// Return the tree view in a frame
-	return gtkutil::ScrolledFrame(_effectWidgets.view);
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_effectWidgets.view));
 }
 
-void ResponseEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
-	GtkWidget* toggleWidget = GTK_WIDGET(toggleButton);
-	bool active = gtk_toggle_button_get_active(toggleButton) ? true : false;
+void ResponseEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
+{
+	bool active = toggleButton->get_active();
 	
-	if (toggleWidget == _propertyWidgets.active) {
+	if (toggleButton == _propertyWidgets.active)
+	{
 		setProperty("state", active ? "1" : "0");
 	}
-	else if (toggleWidget == _propertyWidgets.randomEffectsToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.randomEffectsEntry));
+	else if (toggleButton == _propertyWidgets.randomEffectsToggle)
+	{
+		std::string entryText = _propertyWidgets.randomEffectsEntry->get_text();
 	
 		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
+		if (active)
+		{
 			entryText += (entryText.empty()) ? "1" : "";	
 		}
 		else {
 			entryText = "";
 		}
+
 		setProperty("random_effects", entryText);
 	}
-	else if (toggleWidget == _propertyWidgets.chanceToggle) {
-		std::string entryText = doubleToStr(gtk_spin_button_get_value_as_float(
-			GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)
-		));
+	else if (toggleButton == _propertyWidgets.chanceToggle)
+	{
+		std::string entryText = doubleToStr(_propertyWidgets.chanceEntry->get_value());
 
 		setProperty("chance", active ? entryText : "");
 	}
 }
 
-void ResponseEditor::addEffect() {
+void ResponseEditor::addEffect()
+{
 	if (_entity == NULL) return;
 	
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
+	if (id > 0)
+	{
 		StimResponse& sr = _entity->get(id);
 		int effectIndex = getEffectIdFromSelection();
 		
@@ -286,17 +264,20 @@ void ResponseEditor::addEffect() {
 	}
 }
 
-void ResponseEditor::removeEffect() {
+void ResponseEditor::removeEffect()
+{
 	if (_entity == NULL) return;
 	
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
+	if (id > 0)
+	{
 		StimResponse& sr = _entity->get(id);
 		int effectIndex = getEffectIdFromSelection();
 		
 		// Make sure we have a response and anything selected
-		if (sr.get("class") == "R" && effectIndex > 0) {
+		if (sr.get("class") == "R" && effectIndex > 0)
+		{
 			// Remove the effect and update all the widgets
 			sr.deleteEffect(effectIndex);
 			update();
@@ -304,36 +285,41 @@ void ResponseEditor::removeEffect() {
 	}
 }
 
-void ResponseEditor::editEffect() {
+void ResponseEditor::editEffect()
+{
 	if (_entity == NULL) return;
 	
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
+	if (id > 0)
+	{
 		StimResponse& sr = _entity->get(id);
 		int effectIndex = getEffectIdFromSelection();
 		
 		// Make sure we have a response and anything selected
-		if (sr.get("class") == "R" && effectIndex > 0) {
+		if (sr.get("class") == "R" && effectIndex > 0)
+		{
 			// Create a new effect editor (self-destructs)
-			new EffectEditor(GTK_WINDOW(_parent), sr, 
-							 effectIndex, _stimTypes, *this);
+			new EffectEditor(_parent, sr, effectIndex, _stimTypes, *this);
 			
 			// The editor is modal and will destroy itself, our work is done
 		}
 	}
 }
 
-void ResponseEditor::moveEffect(int direction) {
+void ResponseEditor::moveEffect(int direction)
+{
 	if (_entity == NULL) return;
 	
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
+	if (id > 0)
+	{
 		StimResponse& sr = _entity->get(id);
 		int effectIndex = getEffectIdFromSelection();
 		
-		if (sr.get("class") == "R" && effectIndex > 0) {
+		if (sr.get("class") == "R" && effectIndex > 0)
+		{
 			// Move the index (swap the specified indices)
 			sr.moveEffect(effectIndex, effectIndex + direction);
 			update();
@@ -343,7 +329,8 @@ void ResponseEditor::moveEffect(int direction) {
 	}
 }
 
-void ResponseEditor::updateEffectContextMenu() {
+void ResponseEditor::updateEffectContextMenu()
+{
 	// Check if we have anything selected at all
 	int curEffectIndex = getEffectIdFromSelection();
 	int highestEffectIndex = 0;
@@ -361,130 +348,119 @@ void ResponseEditor::updateEffectContextMenu() {
 	
 	// Enable or disable the "Delete" context menu items based on the presence
 	// of a selection.
-	gtk_widget_set_sensitive(_effectWidgets.deleteMenuItem, anythingSelected);
-	gtk_widget_set_sensitive(_effectWidgets.editMenuItem, anythingSelected);
+	_effectWidgets.deleteMenuItem->set_sensitive(anythingSelected);
+	_effectWidgets.editMenuItem->set_sensitive(anythingSelected);
 		
-	gtk_widget_set_sensitive(_effectWidgets.upMenuItem, upActive);
-	gtk_widget_set_sensitive(_effectWidgets.downMenuItem, downActive);
+	_effectWidgets.upMenuItem->set_sensitive(upActive);
+	_effectWidgets.downMenuItem->set_sensitive(downActive);
 }
 
 // Create the context menus
-void ResponseEditor::createContextMenu() {
+void ResponseEditor::createContextMenu()
+{
 	// Menu widgets
-	_contextMenu.menu = gtk_menu_new();
-	_effectWidgets.contextMenu = gtk_menu_new();
+	_contextMenu.menu = Gtk::manage(new Gtk::Menu);
 	
 	// Each menu gets a delete item
-	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE, _("Delete"));
-	//_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add");
-	_contextMenu.enable = gtkutil::StockIconMenuItem(GTK_STOCK_YES, _("Activate"));
-	_contextMenu.disable = gtkutil::StockIconMenuItem(GTK_STOCK_NO, _("Deactivate"));
-	_contextMenu.duplicate = gtkutil::StockIconMenuItem(GTK_STOCK_COPY, _("Duplicate"));
+	_contextMenu.remove = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete")));
+	//_contextMenu.add = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, "Add"));
+	_contextMenu.enable = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::YES, _("Activate")));
+	_contextMenu.disable = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::NO, _("Deactivate")));
+	_contextMenu.duplicate = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Duplicate")));
 	
-	//gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.add);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.enable);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.disable);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.duplicate);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.remove);
+	//_contextMenu.menu->append(*_contextMenu.add);
+	_contextMenu.menu->append(*_contextMenu.enable);
+	_contextMenu.menu->append(*_contextMenu.disable);
+	_contextMenu.menu->append(*_contextMenu.duplicate);
+	_contextMenu.menu->append(*_contextMenu.remove);
+
+	_effectWidgets.contextMenu = Gtk::manage(new Gtk::Menu);
 	
-	_effectWidgets.addMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
-															   _("Add new Effect"));
-	_effectWidgets.editMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_EDIT,
-															   _("Edit"));
-	_effectWidgets.deleteMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
-															   _("Delete"));
-	_effectWidgets.upMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_GO_UP,
-															   _("Move Up"));
-	_effectWidgets.downMenuItem = gtkutil::StockIconMenuItem(GTK_STOCK_GO_DOWN,
-															   _("Move Down"));
-	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
-						  _effectWidgets.addMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
-						  _effectWidgets.editMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
-						  _effectWidgets.upMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
-						  _effectWidgets.downMenuItem);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_effectWidgets.contextMenu), 
-						  _effectWidgets.deleteMenuItem);
+	_effectWidgets.addMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD,
+															   _("Add new Effect")));
+	_effectWidgets.editMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::EDIT,
+															   _("Edit")));
+	_effectWidgets.deleteMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE,
+															   _("Delete")));
+	_effectWidgets.upMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::GO_UP,
+															   _("Move Up")));
+	_effectWidgets.downMenuItem = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::GO_DOWN,
+															   _("Move Down")));
+
+	_effectWidgets.contextMenu->append(*_effectWidgets.addMenuItem);
+	_effectWidgets.contextMenu->append(*_effectWidgets.editMenuItem);
+	_effectWidgets.contextMenu->append(*_effectWidgets.upMenuItem);
+	_effectWidgets.contextMenu->append(*_effectWidgets.downMenuItem);
+	_effectWidgets.contextMenu->append(*_effectWidgets.deleteMenuItem);
 
 	// Connect up the signals
-	g_signal_connect(G_OBJECT(_contextMenu.remove), "activate",
-					 G_CALLBACK(onContextMenuDelete), this);
-	/*g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
-					 G_CALLBACK(onContextMenuAdd), this);*/
-	g_signal_connect(G_OBJECT(_contextMenu.enable), "activate",
-					 G_CALLBACK(onContextMenuEnable), this);
-	g_signal_connect(G_OBJECT(_contextMenu.disable), "activate",
-					 G_CALLBACK(onContextMenuDisable), this);
-	g_signal_connect(G_OBJECT(_contextMenu.duplicate), "activate",
-					 G_CALLBACK(onContextMenuDuplicate), this);
+	_contextMenu.remove->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onContextMenuDelete));
 	
-	g_signal_connect(G_OBJECT(_effectWidgets.deleteMenuItem), "activate",
-					 G_CALLBACK(onContextMenuDelete), this);
-	g_signal_connect(G_OBJECT(_effectWidgets.editMenuItem), "activate",
-					 G_CALLBACK(onContextMenuEdit), this);			 
-	g_signal_connect(G_OBJECT(_effectWidgets.addMenuItem), "activate",
-					 G_CALLBACK(onContextMenuAdd), this);
-	g_signal_connect(G_OBJECT(_effectWidgets.upMenuItem), "activate",
-					 G_CALLBACK(onContextMenuEffectUp), this);
-	g_signal_connect(G_OBJECT(_effectWidgets.downMenuItem), "activate",
-					 G_CALLBACK(onContextMenuEffectDown), this);
+	/*_contextMenu.add->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onContextMenuAdd));*/
+	_contextMenu.enable->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onContextMenuEnable));
+	_contextMenu.disable->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onContextMenuDisable));
+	_contextMenu.duplicate->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onContextMenuDuplicate));
+	
+	_effectWidgets.deleteMenuItem->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onEffectMenuDelete));
+	_effectWidgets.editMenuItem->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onEffectMenuEdit));			 
+	_effectWidgets.addMenuItem->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onEffectMenuAdd));
+	_effectWidgets.upMenuItem->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onEffectMenuEffectUp));
+	_effectWidgets.downMenuItem->signal_activate().connect(sigc::mem_fun(*this, &ResponseEditor::onEffectMenuEffectDown));
 					 
 	// Show menus (not actually visible until popped up)
-	gtk_widget_show_all(_contextMenu.menu);
-	gtk_widget_show_all(_effectWidgets.contextMenu);
+	_contextMenu.menu->show_all();
+	_effectWidgets.contextMenu->show_all();
 }
 
-void ResponseEditor::selectEffectIndex(const unsigned int index) {
+void ResponseEditor::selectEffectIndex(const unsigned int index)
+{
 	// Setup the selectionfinder to search for the index string
-	gtkutil::TreeModel::SelectionFinder finder(index, EFFECT_INDEX_COL);
+	gtkutil::TreeModel::SelectionFinder finder(index, StimResponse::getColumns().index.index());
 
-	gtk_tree_model_foreach(
-		gtk_tree_view_get_model(GTK_TREE_VIEW(_effectWidgets.view)),
-		gtkutil::TreeModel::SelectionFinder::forEach,
-		&finder
-	);
+	_effectWidgets.view->get_model()->foreach_iter(
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
-	if (finder.getPath() != NULL) {
-		GtkTreeIter iter = finder.getIter();
+	if (finder.getIter())
+	{
 		// Set the active row of the list to the given effect
-		gtk_tree_selection_select_iter(_effectWidgets.selection, &iter);
+		_effectWidgets.view->get_selection()->select(finder.getIter());
 	}
 }
 
-int ResponseEditor::getEffectIdFromSelection() {
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(
-		_effectWidgets.selection, &model, &iter
-	) ? true : false;
+int ResponseEditor::getEffectIdFromSelection()
+{
+	Gtk::TreeModel::iterator iter = _effectWidgets.view->get_selection()->get_selected();
 	
-	if (anythingSelected && _entity != NULL) {
-		return gtkutil::TreeModel::getInt(model, &iter, EFFECT_INDEX_COL);
+	if (iter && _entity != NULL)
+	{
+		return (*iter)[StimResponse::getColumns().index];
 	}
-	else {
+	else
+	{
 		return -1;
 	}
 }
 
-void ResponseEditor::openContextMenu(GtkTreeView* view) {
+void ResponseEditor::openContextMenu(Gtk::TreeView* view)
+{
 	// Check the treeview this remove call is targeting
-	if (view == GTK_TREE_VIEW(_list)) {
-		gtk_menu_popup(GTK_MENU(_contextMenu.menu), NULL, NULL, 
-					   NULL, NULL, 1, GDK_CURRENT_TIME);	
+	if (view == _list)
+	{
+		_contextMenu.menu->popup(1, gtk_get_current_event_time());
 	}
-	else if (view == GTK_TREE_VIEW(_effectWidgets.view)) {
-		gtk_menu_popup(GTK_MENU(_effectWidgets.contextMenu), NULL, NULL, 
-					   NULL, NULL, 1, GDK_CURRENT_TIME);
+	else if (view == _effectWidgets.view)
+	{
+		_effectWidgets.contextMenu->popup(1, gtk_get_current_event_time());
 	}
 }
 
-void ResponseEditor::selectionChanged() {
+void ResponseEditor::selectionChanged()
+{
 	update();
 }
 
-void ResponseEditor::addSR() {
+void ResponseEditor::addSR()
+{
 	if (_entity == NULL) return;
 
 	// Create a new StimResponse object
@@ -495,7 +471,7 @@ void ResponseEditor::addSR() {
 	sr.set("class", "R");
 	
 	// Get the selected stim type name from the combo box
-	std::string name = getStimTypeIdFromSelector(GTK_COMBO_BOX(_addType.list));
+	std::string name = getStimTypeIdFromSelector(_addType.list);
 	sr.set("type", (!name.empty()) ? name : _stimTypes.getFirstName());
 
 	sr.set("state", "1");
@@ -507,60 +483,64 @@ void ResponseEditor::addSR() {
 	selectId(id);
 }
 
-// Static GTK Callbacks
 // Button click events on TreeViews
-gboolean ResponseEditor::onTreeViewButtonPress(
-	GtkTreeView* view, GdkEventButton* ev, ResponseEditor* self)
+bool ResponseEditor::onEffectsViewButtonPress(GdkEventButton* ev)
 {
-	if (ev->type == GDK_2BUTTON_PRESS) {
+	if (ev->type == GDK_2BUTTON_PRESS)
+	{
 		// Call the effect editor upon double click
-		self->editEffect();
+		editEffect();
+		return true;
 	}
 	
-	return FALSE;
+	return false;
+}
+
+void ResponseEditor::onEffectMenuDelete()
+{
+	removeEffect();
+}
+
+void ResponseEditor::onEffectMenuEdit()
+{
+	editEffect();
+}
+
+void ResponseEditor::onEffectMenuAdd()
+{
+	addEffect();
+}
+
+void ResponseEditor::onEffectMenuEffectUp()
+{
+	moveEffect(-1);
+}
+
+void ResponseEditor::onEffectMenuEffectDown()
+{
+	moveEffect(+1);
 }
 
 // Delete context menu items activated
-void ResponseEditor::onContextMenuDelete(GtkWidget* w, ResponseEditor* self) {
-	if (w == self->_contextMenu.remove) {
-		// Delete the selected stim from the list
-		self->removeSR(GTK_TREE_VIEW(self->_list));
-	}
-	else if (w == self->_effectWidgets.deleteMenuItem) {
-		self->removeEffect();
-	}
+void ResponseEditor::onContextMenuDelete()
+{
+	// Delete the selected stim from the list
+	removeSR();
 }
 
 // Delete context menu items activated
-void ResponseEditor::onContextMenuAdd(GtkWidget* w, ResponseEditor* self) {
-	if (w == self->_contextMenu.add) {
-		self->addSR();
-	}
-	else if (w == self->_effectWidgets.addMenuItem) {
-		self->addEffect();
-	}
+void ResponseEditor::onContextMenuAdd()
+{
+	addSR();
 }
 
 // Callback for effects treeview selection changes
-void ResponseEditor::onEffectSelectionChange(GtkTreeSelection* selection, 
-										   ResponseEditor* self) 
+void ResponseEditor::onEffectSelectionChange() 
 {
-	if (self->_updatesDisabled)	return; // Callback loop guard
+	if (_updatesDisabled)	return; // Callback loop guard
 
 	// Update the sensitivity
-	self->updateEffectContextMenu();
-}
-
-void ResponseEditor::onContextMenuEffectUp(GtkWidget* widget, ResponseEditor* self) {
-	self->moveEffect(-1);
-}
-
-void ResponseEditor::onContextMenuEffectDown(GtkWidget* widget, ResponseEditor* self) {
-	self->moveEffect(+1);
-}
-
-void ResponseEditor::onContextMenuEdit(GtkWidget* widget, ResponseEditor* self) {
-	self->editEffect();
+	updateEffectContextMenu();
 }
 
 } // namespace ui

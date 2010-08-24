@@ -10,28 +10,27 @@ namespace gui
 
 	namespace
 	{
-		const gint DEFAULT_WIDTH = 640;
-		const gint DEFAULT_HEIGHT = 480;
+		const int DEFAULT_WIDTH = 640;
+		const int DEFAULT_HEIGHT = 480;
 	}
 
 GuiView::GuiView() :
-	_glWidget(new gtkutil::GLWidget(true, "GUI"))
+	Gtk::HBox(false, 6),
+	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "GUI")))
 {
 	// Construct the widgets
-	_widget = gtk_hbox_new(FALSE, 6);
-	gtk_widget_set_size_request(*_glWidget, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	_glWidget->set_size_request(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
-	gtk_box_pack_start(GTK_BOX(_widget), *_glWidget, TRUE, TRUE, 0);
+	pack_start(*_glWidget, true, true, 0);
 
-	GtkWidget* glWidget = *_glWidget;
-	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | 
-		GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | 
-		GDK_POINTER_MOTION_MASK);
-	g_signal_connect(G_OBJECT(glWidget), "expose-event", G_CALLBACK(onGLDraw), this);
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | 
+		Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
+
+	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &GuiView::onGLDraw));
 
 	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is 
 	// often called for subsets of the widget and the size info in there is therefore not reliable.
-	g_signal_connect(G_OBJECT(glWidget), "size-allocate", G_CALLBACK(onSizeAllocate), this);
+	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &GuiView::onSizeAllocate));
 
 	// Ignore visibility flag and turn invisible background images to visible ones
 	_renderer.setIgnoreVisibility(true);
@@ -39,7 +38,7 @@ GuiView::GuiView() :
 
 void GuiView::redraw()
 {
-	gtk_widget_queue_draw(*_glWidget);
+	_glWidget->queueDraw();
 }
 
 void GuiView::setGui(const GuiPtr& gui)
@@ -112,19 +111,20 @@ void GuiView::draw()
 	_renderer.render();
 }
 
-
-void GuiView::onSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, GuiView* self)
+void GuiView::onSizeAllocate(Gtk::Allocation& allocation)
 {
 	// Store the window dimensions for later calculations
-	self->_windowDims = Vector2(allocation->width, allocation->height);
+	_windowDims = Vector2(allocation.get_width(), allocation.get_height());
 
 	// Queue an expose event
-	gtk_widget_queue_draw(widget);
+	_glWidget->queueDraw();
 }
 
-void GuiView::onGLDraw(GtkWidget*, GdkEventExpose*, GuiView* self)
+bool GuiView::onGLDraw(GdkEventExpose*)
 {
-	self->draw();
+	draw();
+
+	return false;
 }
 
 } // namespace

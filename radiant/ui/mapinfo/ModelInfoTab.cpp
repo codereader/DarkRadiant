@@ -1,37 +1,33 @@
 #include "ModelInfoTab.h"
 
-#include <gtk/gtk.h>
-
 #include "i18n.h"
 #include "string/string.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
-namespace ui {
+#include <gtkmm/treeview.h>
+#include <gtkmm/box.h>
+#include <gtkmm/table.h>
 
-	namespace {
+namespace ui
+{
+	namespace
+	{
 		const char* const TAB_NAME = N_("Models");
 		const std::string TAB_ICON("model16green.png");
-	   	
-	   	enum {
-	   		MODEL_COL,
-	   		MODELCOUNT_COL,
-			POLYCOUNT_COL,
-			SKINCOUNT_COL,
-	   		NUM_COLS
-	   	};
 	}
 
 ModelInfoTab::ModelInfoTab() :
-	_widget(gtk_vbox_new(FALSE, 6))
+	_widget(NULL)
 {
 	// Create all the widgets
 	populateTab();
 }
 
-GtkWidget* ModelInfoTab::getWidget() {
-	return _widget;
+Gtk::Widget& ModelInfoTab::getWidget()
+{
+	return *_widget;
 }
 
 std::string ModelInfoTab::getLabel() {
@@ -42,79 +38,79 @@ std::string ModelInfoTab::getIconName() {
 	return TAB_ICON;
 }
 
-void ModelInfoTab::populateTab() {
+void ModelInfoTab::populateTab()
+{
+	_widget = Gtk::manage(new Gtk::VBox(false, 6));
+
 	// Set the outer space of the vbox
-	gtk_container_set_border_width(GTK_CONTAINER(_widget), 12);
-	
-	// Create the list store that contains the model => info map 
-	_listStore = gtk_list_store_new(4, G_TYPE_STRING, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT);
+	_widget->set_border_width(12);
+
+	// Create the list store that contains the eclass => count map 
+	_listStore = Gtk::ListStore::create(_columns);
 
 	// Create the treeview and pack two columns into it
-	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_listStore));
-	gtk_tree_view_set_headers_clickable(GTK_TREE_VIEW(_treeView), TRUE);
+	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
+	_treeView->set_headers_clickable(true);
 
-	GtkTreeViewColumn* modelCol = gtkutil::TextColumn(_("Model"), MODEL_COL);
-	gtk_tree_view_column_set_sort_column_id(modelCol, MODEL_COL);
+	Gtk::TreeViewColumn* modelCol = Gtk::manage(new gtkutil::TextColumn(_("Model"), _columns.model));
+	modelCol->set_sort_column(_columns.model);
+
+	Gtk::TreeViewColumn* polyCountCol = Gtk::manage(new gtkutil::TextColumn(_("Polys"), _columns.polycount));
+	polyCountCol->set_sort_column(_columns.polycount);
+
+	Gtk::TreeViewColumn* modelCountCol = Gtk::manage(new gtkutil::TextColumn(_("Count"), _columns.modelcount));
+	modelCountCol->set_sort_column(_columns.modelcount);
+
+	Gtk::TreeViewColumn* skinCountCol = Gtk::manage(new gtkutil::TextColumn(_("Skins"), _columns.skincount));
+	skinCountCol->set_sort_column(_columns.skincount);
 	
-	GtkTreeViewColumn* polyCountCol = gtkutil::TextColumn(_("Polys"), POLYCOUNT_COL);
-	gtk_tree_view_column_set_sort_column_id(polyCountCol, POLYCOUNT_COL);
-
-	GtkTreeViewColumn* modelCountCol = gtkutil::TextColumn(_("Count"), MODELCOUNT_COL);
-	gtk_tree_view_column_set_sort_column_id(modelCountCol, MODELCOUNT_COL);
-
-	GtkTreeViewColumn* skinCountCol = gtkutil::TextColumn(_("Skins"), SKINCOUNT_COL);
-	gtk_tree_view_column_set_sort_column_id(skinCountCol, SKINCOUNT_COL);
-
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), modelCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), polyCountCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), modelCountCol);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView), skinCountCol);
+	_treeView->append_column(*modelCol);
+	_treeView->append_column(*polyCountCol);
+	_treeView->append_column(*modelCountCol);
+	_treeView->append_column(*skinCountCol);
 	
-    gtk_box_pack_start(GTK_BOX(_widget), gtkutil::ScrolledFrame(_treeView), TRUE, TRUE, 0);
+    _widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
     
     // Populate the liststore with the entity count information
     for (map::ModelBreakdown::Map::const_iterator i = _modelBreakdown.begin(); 
 		 i != _modelBreakdown.end(); 
 		 ++i)
 	{
-		GtkTreeIter iter;
-		gtk_list_store_append(_listStore, &iter);
-		gtk_list_store_set(_listStore, &iter, 
-						   MODEL_COL, i->first.c_str(),
-						   POLYCOUNT_COL, i->second.polyCount,
-						   MODELCOUNT_COL, i->second.count, 
-						   SKINCOUNT_COL, i->second.skinCount.size(), 
-						   -1);
+		Gtk::TreeModel::Row row = *_listStore->append();
+
+		row[_columns.model] = i->first;
+		row[_columns.polycount] = static_cast<int>(i->second.polyCount);
+		row[_columns.modelcount] = static_cast<int>(i->second.count);
+		row[_columns.skincount] = static_cast<int>(i->second.skinCount.size());
 	}
 
-	// The table containing the primitive statistics
-	GtkTable* table = GTK_TABLE(gtk_table_new(2, 2, FALSE));
-	gtk_box_pack_start(GTK_BOX(_widget), GTK_WIDGET(table), FALSE, FALSE, 0);
+	// The table containing the statistics
+	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 2, false));
+	_widget->pack_start(*table, false, false, 0);
 	
-	_modelCount = gtkutil::LeftAlignedLabel("");
-	_skinCount = gtkutil::LeftAlignedLabel("");
+	_modelCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	_skinCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	
-	GtkWidget* modelsLabel = gtkutil::LeftAlignedLabel(_("Models used:"));
-	GtkWidget* skinsLabel = gtkutil::LeftAlignedLabel(_("Named Skins used:"));
-	
-	gtk_widget_set_size_request(modelsLabel, 120, -1);
-	gtk_widget_set_size_request(skinsLabel, 120, -1);
+	Gtk::Label* modelsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Models used:")));
+	Gtk::Label* skinsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Named Skins used:")));
 		
-	gtk_table_attach(table, modelsLabel, 0, 1, 0, 1,
-					(GtkAttachOptions) (0),
-					(GtkAttachOptions) (0), 0, 0);
-	gtk_table_attach(table, skinsLabel, 0, 1, 1, 2,
-					(GtkAttachOptions) (0),
-					(GtkAttachOptions) (0), 0, 0);
+	modelsLabel->set_size_request(120, -1);
+	skinsLabel->set_size_request(120, -1);
 	
+	table->attach(*modelsLabel, 0, 1, 0, 1,
+				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+
+	table->attach(*skinsLabel, 0, 1, 1, 2,
+				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
+
 	std::string mc = "<b>" + sizetToStr(_modelBreakdown.getMap().size()) + "</b>";
 	std::string sc = "<b>" + sizetToStr(_modelBreakdown.getNumSkins()) + "</b>";
+		
+	_modelCount->set_markup(mc);
+	_skinCount->set_markup(sc);
 	
-	gtk_label_set_markup(GTK_LABEL(_modelCount), mc.c_str());
-	gtk_label_set_markup(GTK_LABEL(_skinCount), sc.c_str());
-
-	gtk_table_attach_defaults(table, _modelCount, 1, 2, 0, 1);
-	gtk_table_attach_defaults(table, _skinCount, 1, 2, 1, 2);
+	table->attach(*_modelCount, 1, 2, 0, 1);
+	table->attach(*_skinCount, 1, 2, 1, 2);
 }
 
 } // namespace ui

@@ -1,6 +1,5 @@
 #include "ScriptMenu.h"
 
-#include <gtk/gtkwidget.h>
 #include "iuimanager.h"
 #include "i18n.h"
 

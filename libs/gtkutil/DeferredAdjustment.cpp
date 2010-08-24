@@ -26,11 +26,8 @@ void DeferredAdjustment::value_changed(gdouble value) {
 	}
 }
 
-void DeferredAdjustment::adjustment_value_changed(GtkAdjustment *adjustment, DeferredAdjustment* self) {
-	self->value_changed(adjustment->value);
-}
-
-gboolean DeferredAdjustment::deferred_value_changed(gpointer data) {
+gboolean DeferredAdjustment::deferred_value_changed(gpointer data)
+{
 	DeferredAdjustment* self = reinterpret_cast<DeferredAdjustment*>(data);
 	
 	self->m_function(self->m_data, self->m_value);

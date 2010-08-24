@@ -1,10 +1,12 @@
 #ifndef AI_FIND_BODY_COMPONENT_EDITOR_H_
 #define AI_FIND_BODY_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
+
+namespace Gtk { class SpinButton; }
 
 namespace objectives {
 
@@ -16,7 +18,7 @@ namespace ce {
  * An COMP_AI_FIND_BODY component doesn't use specifiers.
  */
 class AIFindBodyComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -29,17 +31,14 @@ class AIFindBodyComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;
 
 	// SpecifierEditCombo for the body to be found
-	SpecifierEditCombo _bodyCombo;
+	SpecifierEditCombo* _bodyCombo;
 
 	// The spin button to specify the amount of AI to be knocked out
-	GtkWidget* _amount;
+	Gtk::SpinButton* _amount;
 	
 public:
 
@@ -47,7 +46,6 @@ public:
 	 * Construct a default AIFindBodyComponentEditor.
 	 */
 	AIFindBodyComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_amount(NULL)
 	{}
@@ -61,20 +59,13 @@ public:
 	 */
 	AIFindBodyComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~AIFindBodyComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new AIFindBodyComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
-    void writeToComponent() const;
+	void writeToComponent() const;
 };
 
 } // namespace ce

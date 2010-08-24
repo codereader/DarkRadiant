@@ -1,8 +1,7 @@
 #ifndef TRANSIENTDIALOG_H_
 #define TRANSIENTDIALOG_H_
 
-#include <gtk/gtkwindow.h>
-#include "gtkutil/pointer.h"
+#include <gtkmm/window.h>
 
 #include <string>
 #include <iostream>
@@ -13,11 +12,11 @@ namespace gtkutil
 /**
  * A basic GtkWindow that is transient for the given parent window.
  */
-class TransientWindow
+class TransientWindow :
+	public Gtk::Window
 {
-	// The main window
-	GtkWidget* _window;
-	
+private:
+
 	// Whether this window should be hidden rather than destroyed
 	bool _hideOnDelete;
 	
@@ -48,30 +47,12 @@ protected:
 
 private:
 	
-	// GTK delete callback
-	static gboolean _onDelete(GtkWidget* w, GdkEvent* e, TransientWindow* self) 
+	// GTKmm delete callback
+	bool _onDelete(GdkEventAny* ev) 
 	{
 		// Invoke the virtual function
-		self->_onDeleteEvent();
-		return TRUE;
-	}
-	
-	/** greebo: This (hopefully) is to prevent the parent window from staying hidden 
-	 *          (rarely) when Alt-TABbing from other applications. Often only one 
-	 *          of the many top-level windows gets shown which is very annoying.
-	 *          If this doesn't help, this callback can be removed, of course, the 
-	 *          bug is hard to reproduce.  
-	 */ 
-	static gboolean _onExpose(GtkWidget* self, GdkEventExpose* event, GtkWindow* parent) {
-		// Make sure the parent window is shown as well
-		if (parent != NULL && !GTK_WIDGET_VISIBLE(parent)) {
-			gtk_window_present(parent);
-			
-			// Refocus on the self window
-			gtk_widget_show(self);
-		}
-		
-		return FALSE;
+		_onDeleteEvent();
+		return true;
 	}
 	
 public:
@@ -92,54 +73,66 @@ public:
 	 * _preDestroy() and _postDestroy() equivalents. The default value is false.
 	 */
 	TransientWindow(const std::string& title, 
-					GtkWindow* parent, 
+					const Glib::RefPtr<Gtk::Window>& parent, 
 					bool hideOnDelete = false)
-	: _window(gtk_window_new(GTK_WINDOW_TOPLEVEL)),
+	: Gtk::Window(Gtk::WINDOW_TOPLEVEL),
 	  _hideOnDelete(hideOnDelete)
 	{
 		// Set up the window
-		gtk_window_set_title(GTK_WINDOW(_window), title.c_str());
-		gtk_window_set_transient_for(GTK_WINDOW(_window), parent);
-	    gtk_window_set_position(
-	    	GTK_WINDOW(_window), GTK_WIN_POS_CENTER_ON_PARENT
-	    );
-#ifdef POSIX 
-	    gtk_window_set_skip_taskbar_hint(GTK_WINDOW(_window), TRUE);
+		set_title(title);
+
+		// Set transient
+		setParentWindow(parent);
+
+		set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
+
+#ifdef POSIX
+		set_skip_taskbar_hint(true);
 #endif
-	    gtk_window_set_skip_pager_hint(GTK_WINDOW(_window), TRUE);
+	    set_skip_pager_hint(true);
 	    
 	    // Connect up the destroy signal (close box)
-	    g_signal_connect(
-	    	G_OBJECT(_window), "delete-event", G_CALLBACK(_onDelete), this
-	    );
-	    
-	    g_signal_connect(
-	    	G_OBJECT(_window), "expose-event", G_CALLBACK(_onExpose), parent
-	    );
+		signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
+	}
+
+	virtual void setParentWindow(const Glib::RefPtr<Gtk::Window>& parent)
+	{
+		if (parent)
+		{
+			Gtk::Container* toplevel = parent->get_toplevel();
+
+			if (toplevel != NULL && toplevel->is_toplevel() &&
+				dynamic_cast<Gtk::Window*>(toplevel) != NULL)
+			{
+				set_transient_for(*static_cast<Gtk::Window*>(toplevel));
+			}
+		}
+	}
+	
+	virtual ~TransientWindow()
+	{
+		// Destruction is handled by the Gtk::Window destructor
 	}
 	
 	/**
-	 * Destructor. Invokes the destroy() event if necessary.
+	 * Create a new Glib::RefPtr<> from this class. There is no shared_from_this() equivalent,
+	 * but I had to use this hack several times to get a smart pointer from an instance to
+	 * pass it as parent window.
 	 */
-	virtual ~TransientWindow() {
-		if (GTK_IS_WIDGET(_window))
-			destroy();
-	}
-	
-	/**
-	 * Return the underlying GtkWindow.
-	 */
-	GtkWidget* getWindow() { 
-		return _window; 
+	Glib::RefPtr<Gtk::Window> getRefPtr()
+	{
+		return Glib::RefPtr<Gtk::Window>(Glib::wrap(gobj(), true)); // copy reference
 	}
 	
 	/**
 	 * Show the dialog. If the window is already visible, this has no effect.
 	 */
-	void show() {
-		if (!isVisible()) {
+	void show()
+	{
+		if (!isVisible())
+		{
 			_preShow();
-			gtk_widget_show_all(_window);
+			show_all();
 			_postShow();
 		}
 	}
@@ -147,20 +140,21 @@ public:
 	/**
 	 * Hide the window.
 	 */
-	void hide() {
+	void hide()
+	{
 		_preHide();
-		gtk_widget_hide(_window);
+
+		Window::hide();
+
 		_postHide();
 	}
 	
 	/**
 	 * Test for visibility.
 	 */
-	bool isVisible() {
-		if (GTK_WIDGET_VISIBLE(_window))
-			return true;
-		else
-			return false;
+	bool isVisible()
+	{
+		return is_visible();
 	}
 
 	/**
@@ -168,50 +162,57 @@ public:
 	 */
 	void setTitle(const std::string& title)
 	{
-		gtk_window_set_title(GTK_WINDOW(_window), title.c_str());
+		set_title(title);
 	}
 	
 	/**
 	 * Destroy the window. If the window is currently visible, the hide()
 	 * operation will be automatically performed first.
 	 */
-	void destroy() {
+	void destroy()
+	{
 		// Trigger a hide sequence if necessary
-		if (isVisible()) {
-			hide();
+		if (isVisible())
+		{
+			TransientWindow::hide();
 		}
 		
 		// Invoke destroy callbacks and destroy the Gtk widget
 		_preDestroy();
 
-		gtk_widget_destroy(_window);
-		// Set the pointer to NULL to make life easier for the GTK macros
-		_window = NULL;
+		// No destroy anymore, this is handled by the destructors
+		//Gtk::Widget::destroy();
 
 		_postDestroy();
 	}
 
-	void toggleFullscreen() {
+	void toggleFullscreen()
+	{
 		setFullscreen(!isFullscreen());
 	}
 
-	bool isFullscreen() {
-		// Query the current fullscreen state variable
-		gpointer ptrData = g_object_get_data(G_OBJECT(_window), "dr-fullscreen");
-
-		return !(ptrData == NULL || gpointer_to_int(ptrData) == 0);
+	bool isFullscreen()
+	{
+		intptr_t val = reinterpret_cast<intptr_t>(get_data("dr-fullscreen"));
+		
+		return val != 0;
 	}
 
-	void setFullscreen(bool fullscreen) {
-		if (fullscreen) {
-			gtk_window_fullscreen(GTK_WINDOW(_window));
+	void setFullscreen(bool isFullScreen)
+	{
+		if (isFullScreen)
+		{
+			fullscreen();
+
 			// Set the flag to 1
-			g_object_set_data(G_OBJECT(_window), "dr-fullscreen", gint_to_pointer(1));
+			set_data("dr-fullscreen", reinterpret_cast<void*>(1));
 		}
-		else {
-			gtk_window_unfullscreen(GTK_WINDOW(_window));
-			// Set the flag to 1
-			g_object_set_data(G_OBJECT(_window), "dr-fullscreen", gint_to_pointer(0));
+		else
+		{
+			unfullscreen();
+
+			// Set the flag to 0
+			set_data("dr-fullscreen", NULL);
 		}
 	}
 };

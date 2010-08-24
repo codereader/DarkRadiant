@@ -24,50 +24,48 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <boost/shared_ptr.hpp>
 #include <string>
+#include <GL/glew.h>
+#include <gtkmm/gl/drawingarea.h>
 
-// Forward declarations
-typedef struct _GdkGLConfig GdkGLConfig;
-typedef struct _GtkWidget GtkWidget;
-typedef int    gint;
-typedef gint   gboolean;
+// greebo: Undo the min max macro definitions coming from a windows header
+#undef min
+#undef max
 
-namespace gtkutil {
-
-class GLWidget 
+namespace gtkutil
 {
-	// The actual widget, a GTK drawing area
-	GtkWidget* _widget;
 
+class GLWidget :
+	public Gtk::GL::DrawingArea
+{
+private:
 	// TRUE, if this GL widget has depth-buffering enabled 
 	bool _zBuffer;
-
-	// (Shared) widget holding the context, managed in the OpenGLModule
-	GtkWidget* _context;
 	
 public:
 
 	// Constructor, pass TRUE to enable depth-buffering
     GLWidget(bool zBuffer, const std::string& debugName = std::string());
-	
-	// Operator cast to GtkWidget*, for packing into parent containers
-	operator GtkWidget*() const;
+
+	~GLWidget();
 	
 	// Switches the GL context to the given widget
-	static bool makeCurrent(GtkWidget* widget);
-	static void swapBuffers(GtkWidget* widget);
+	static bool makeCurrent(Gtk::Widget& widget);
+	static void swapBuffers(Gtk::Widget& widget);
+
+	void queueDraw();
 	
 private:
 	// As soon as the widget is packed into a parent, this callback is invoked
 	// and enables the GL drawing for this widget
-	static gboolean onHierarchyChanged(GtkWidget* widget, GtkWidget* previous_toplevel, GLWidget* self);
+	void onHierarchyChanged(Gtk::Widget* previous_toplevel);
 	
 	// Called when the GTK drawing area is realised/unrealised 
-	static gint onRealise(GtkWidget* widget, GLWidget* self);
-	static gint onUnRealise(GtkWidget* widget, GLWidget* self);
+	void onRealise();
+	void onUnRealise();
 	
 	// Acquires a GDK GL config structure with or without depth
-	static GdkGLConfig* createGLConfigWithDepth();
-	static GdkGLConfig* createGLConfig();
+	static Glib::RefPtr<Gdk::GL::Config> createGLConfigWithDepth();
+	static Glib::RefPtr<Gdk::GL::Config> createGLConfig();
 };
 typedef boost::shared_ptr<GLWidget> GLWidgetPtr;
 

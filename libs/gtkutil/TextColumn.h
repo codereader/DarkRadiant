@@ -1,8 +1,8 @@
 #ifndef TEXTCOLUMN_H_
 #define TEXTCOLUMN_H_
 
-#include <gtk/gtktreeviewcolumn.h>
-#include <gtk/gtkcellrenderertext.h>
+#include <gtkmm/cellrenderertext.h>
+#include <gtkmm/treeviewcolumn.h>
 
 namespace gtkutil
 {
@@ -11,48 +11,76 @@ namespace gtkutil
  * column number. The text is interpreted as Pango markup to allow formatting
  * such as bold text.
  */
-
-class TextColumn
+class TextColumn :
+	public Gtk::TreeViewColumn
 {
-	// Column widget
-	GtkTreeViewColumn* _column;
-	GtkCellRenderer* _renderer;
-	
 public:
-
 	/** Create a TextColumn which displays the text in the given column.
 	 * 
 	 * @param title
 	 * The title of the column.
 	 * 
-	 * @param colno
-	 * The integer column id to display text from.
+	 * @param textColumn
+	 * The column reference to display text from.
 	 * 
 	 * @param useMarkup
 	 * Whether to use Pango markup to format text in the column (default true).
 	 */
-	TextColumn(const std::string& title, gint colno, bool useMarkup = true) {
+	TextColumn(const std::string& title, 
+				const Gtk::TreeModelColumnBase& textColumn, 
+				bool useMarkup = true) :
+		Gtk::TreeViewColumn(title, *Gtk::manage(new Gtk::CellRendererText))
+	{
+		// Get the cell renderer from the column (as created in the constructor)
+		Gtk::CellRendererText* renderer = static_cast<Gtk::CellRendererText*>(get_first_cell_renderer());
 		
-		// Create the cell renderer
-		_renderer = gtk_cell_renderer_text_new();
-		
-		// Construct the column itself
-		_column = gtk_tree_view_column_new_with_attributes(
-			title.c_str(),
-			_renderer,
-			(useMarkup) ? "markup" : "text", colno,
-			NULL
-		);
+		// Associate the cell renderer with the given model column
+		if (useMarkup)
+		{
+			add_attribute(renderer->property_markup(), textColumn);
+		}
+		else
+		{
+			add_attribute(renderer->property_text(), textColumn);
+		}
 	}
 
-	GtkCellRendererText* getCellRenderer() {
-		return GTK_CELL_RENDERER_TEXT(_renderer);
+	Gtk::CellRendererText* getCellRenderer()
+	{
+		return static_cast<Gtk::CellRendererText*>(get_first_cell_renderer());
 	}
-	
-	/** Operator cast to GtkTreeViewColumn*.
+};
+
+class ColouredTextColumn :
+	public TextColumn
+{
+public:
+	/** Create a TextColumn which displays the text in the given column.
+	 * 
+	 * @param title
+	 * The title of the column.
+	 * 
+	 * @param textColumn
+	 * The column reference to display text from.
+	 *
+	 * @param colourColumn
+	 * The column reference to retrieve the colour from 
+	 * This is a string column, containing "#707070", "black", etc.
+	 * 
+	 * @param useMarkup
+	 * Whether to use Pango markup to format text in the column (default true).
 	 */
-	operator GtkTreeViewColumn* () {
-		return _column;	
+	ColouredTextColumn(const std::string& title, 
+					   const Gtk::TreeModelColumnBase& textColumn, 
+					   const Gtk::TreeModelColumn<Glib::ustring>& colourColumn,
+					   bool useMarkup = true) :
+		TextColumn(title, textColumn, useMarkup)
+	{
+		// Get the cell renderer from the column (as created in the constructor)
+		Gtk::CellRendererText* renderer = static_cast<Gtk::CellRendererText*>(get_first_cell_renderer());
+		
+		// Associate foreground colour
+		add_attribute(renderer->property_foreground(), colourColumn);
 	}
 };
 

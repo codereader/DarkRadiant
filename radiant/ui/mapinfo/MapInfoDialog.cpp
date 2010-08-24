@@ -1,10 +1,14 @@
 #include "MapInfoDialog.h"
 
-#include <gtk/gtk.h>
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "iuimanager.h"
+
+#include <gtkmm/box.h>
+#include <gtkmm/notebook.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
 namespace ui {
 
@@ -17,96 +21,97 @@ namespace ui {
 MapInfoDialog::MapInfoDialog() :
 	BlockingTransientWindow(_(MAPINFO_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), MAPINFO_DEFAULT_SIZE_X, MAPINFO_DEFAULT_SIZE_Y);
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_default_size(MAPINFO_DEFAULT_SIZE_X, MAPINFO_DEFAULT_SIZE_Y);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	
 	// Create all the widgets
 	populateWindow();
 	
 	// Propagate shortcuts to the main window
-	GlobalEventManager().connectDialogWindow(GTK_WINDOW(getWindow()));
-	
-	// Show the window and its children, enter the main loop
-	show();
+	GlobalEventManager().connectDialogWindow(this);
 }
 
-void MapInfoDialog::shutdown() {
+void MapInfoDialog::shutdown()
+{
 	// Stop propagating shortcuts to the main window
-	GlobalEventManager().disconnectDialogWindow(GTK_WINDOW(getWindow()));
+	GlobalEventManager().disconnectDialogWindow(this);
 }
 
-void MapInfoDialog::populateWindow() {
+void MapInfoDialog::populateWindow()
+{
 	// Create the vbox containing the notebook and the buttons
-	GtkWidget* dialogVBox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create the tabs
-	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
+	_notebook = Gtk::manage(new Gtk::Notebook);
 
 	// Entity Info
-	gtk_notebook_append_page(
-		_notebook, 
+	_notebook->append_page(
 		_entityInfo.getWidget(), 
 		createTabLabel(_entityInfo.getLabel(), _entityInfo.getIconName())
 	);
 
 	// Shader Info
-	gtk_notebook_append_page(
-		_notebook, 
+	_notebook->append_page(
 		_shaderInfo.getWidget(), 
 		createTabLabel(_shaderInfo.getLabel(), _shaderInfo.getIconName())
 	);
 
 	// Model Info
-	gtk_notebook_append_page(
-		_notebook, 
+	_notebook->append_page(
 		_modelInfo.getWidget(), 
 		createTabLabel(_modelInfo.getLabel(), _modelInfo.getIconName())
 	);
 	
 	// Add notebook plus buttons to vbox
-	gtk_box_pack_start(GTK_BOX(dialogVBox), GTK_WIDGET(_notebook), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(dialogVBox), createButtons(), FALSE, FALSE, 0);
+	dialogVBox->pack_start(*_notebook, true, true, 0);
+	dialogVBox->pack_start(createButtons(), false, false, 0);
 
 	// Add vbox to dialog window
-	gtk_container_add(GTK_CONTAINER(getWindow()), dialogVBox);
+	add(*dialogVBox);
 }
 
-GtkWidget* MapInfoDialog::createTabLabel(const std::string& label, const std::string& iconName) {
+Gtk::Widget& MapInfoDialog::createTabLabel(const std::string& label, const std::string& iconName)
+{
 	// The tab label items (icon + label)
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 3);
-	gtk_box_pack_start(
-    	GTK_BOX(hbox), 
-    	gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask(iconName)), 
-    	FALSE, FALSE, 3
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 3));
+	
+	hbox->pack_start(
+		*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask(iconName))),
+    	false, false, 3
     );
-	gtk_box_pack_start(GTK_BOX(hbox), gtk_label_new(label.c_str()), FALSE, FALSE, 3);
+	hbox->pack_start(*Gtk::manage(new Gtk::Label(label)), false, false, 3);
 
 	// Show the widgets before using them as label, they won't appear otherwise
-	gtk_widget_show_all(hbox);
+	hbox->show_all();
 
-	return hbox;
+	return *hbox;
 }
 
-GtkWidget* MapInfoDialog::createButtons() {
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+Gtk::Widget& MapInfoDialog::createButtons()
+{
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 
-	GtkWidget* closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	g_signal_connect(G_OBJECT(closeButton), "clicked", G_CALLBACK(onClose), this);
+	Gtk::Button* closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLOSE));
+	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &MapInfoDialog::onClose));
 
-	gtk_box_pack_end(GTK_BOX(hbox), closeButton, FALSE, FALSE, 0);
+	hbox->pack_end(*closeButton, false, false, 0);
 	
-	return hbox;
+	return *hbox;
 }
 
-void MapInfoDialog::onClose(GtkWidget* widget, MapInfoDialog* self) {
+void MapInfoDialog::onClose()
+{
 	// Call the destroy method which exits the main loop
-	self->shutdown();
-	self->destroy();
+	shutdown();
+	destroy();
 }
 
-void MapInfoDialog::showDialog(const cmd::ArgumentList& args) {
-	MapInfoDialog dialog; // blocks on instantiation
+void MapInfoDialog::showDialog(const cmd::ArgumentList& args)
+{
+	MapInfoDialog dialog; 
+	dialog.show(); // blocks
 }
 
 } // namespace ui
