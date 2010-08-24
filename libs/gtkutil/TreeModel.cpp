@@ -129,6 +129,12 @@ bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& need
 	return findAndSelectString(view, needle, column.index());
 }
 
+bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle, 
+									const Gtk::TreeModelColumn<std::string>& column)
+{
+	return findAndSelectString(view, needle, column.index());
+}
+
 bool TreeModel::findAndSelectInteger(Gtk::TreeView* view, int needle, 
 									const Gtk::TreeModelColumn<int>& column)
 {

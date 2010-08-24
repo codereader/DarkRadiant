@@ -91,6 +91,14 @@ public:
 	 * greebo: Tries to lookup the given string in the given column of the given view.
 	 * Returns TRUE if the lookup and the selection was successful, FALSE otherwise.
 	 */
+	static bool findAndSelectString(Gtk::TreeView* view, 
+									const std::string& needle, 
+									const Gtk::TreeModelColumn<std::string>& column);
+
+	/**
+	 * greebo: Tries to lookup the given string in the given column of the given view.
+	 * Returns TRUE if the lookup and the selection was successful, FALSE otherwise.
+	 */
 	static bool findAndSelectInteger(Gtk::TreeView* view, int needle, 
 									 const Gtk::TreeModelColumn<int>& column);
 

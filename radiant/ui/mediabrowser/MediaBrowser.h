@@ -44,8 +44,8 @@ public:
 			add(isOtherMaterialsFolder);
 		}
 
-		Gtk::TreeModelColumn<Glib::ustring> displayName;
-		Gtk::TreeModelColumn<Glib::ustring> fullName;
+		Gtk::TreeModelColumn<std::string> displayName; // std::string is sorting faster
+		Gtk::TreeModelColumn<std::string> fullName;
 		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
 		Gtk::TreeModelColumn<bool> isFolder;
 		Gtk::TreeModelColumn<bool> isOtherMaterialsFolder;

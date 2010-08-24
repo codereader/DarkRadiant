@@ -17,6 +17,8 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/IconTextColumn.h"
 
+//#include "debugging/ScopedDebugTimer.h"
+
 #include <gtkmm/box.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/frame.h>
@@ -157,15 +159,20 @@ struct ShaderNameFunctor
 	typedef std::map<std::string, Gtk::TreeModel::iterator, ShaderNameCompareFunctor> NamedIterMap;
 	NamedIterMap _iters;
 
+	Glib::RefPtr<Gdk::Pixbuf> _folderIcon;
+	Glib::RefPtr<Gdk::Pixbuf> _textureIcon;
+
 	ShaderNameFunctor(const Glib::RefPtr<Gtk::TreeStore>& store,
 					 const MediaBrowser::TreeColumns& columns) :
 		_store(store),
 		_columns(columns),
-		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER))
+		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER)),
+		_folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
+		_textureIcon(GlobalUIManager().getLocalPixbuf(TEXTURE_ICON))
 	{}
 	
 	// Recursive add function
-	const Gtk::TreeModel::iterator& addRecursive(const std::string& path)
+	Gtk::TreeModel::iterator& addRecursive(const std::string& path)
 	{
 		// Look up candidate in the map and return it if found	
 		NamedIterMap::iterator it = _iters.find(path);
@@ -195,7 +202,7 @@ struct ShaderNameFunctor
 
 		row[_columns.displayName] = path.substr(slashPos + 1);
 		row[_columns.fullName] = path;
-		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
+		row[_columns.icon] = _folderIcon;
 		row[_columns.isFolder] = true;
 		row[_columns.isOtherMaterialsFolder] = path.length() == _otherMaterialsPath.length() && path == _otherMaterialsPath;
 		
@@ -209,7 +216,7 @@ struct ShaderNameFunctor
 	void visit(const std::string& name)
 	{
 		// If the name starts with "textures/", add it to the treestore.
-		const Gtk::TreeModel::iterator& iter = 
+		Gtk::TreeModel::iterator& iter = 
 			boost::algorithm::istarts_with(name, "textures/") ? addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
 		
 		// Check the position of the last slash
@@ -219,7 +226,7 @@ struct ShaderNameFunctor
 
 		row[_columns.displayName] = name.substr(slashPos + 1);
 		row[_columns.fullName] = name;
-		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(TEXTURE_ICON);
+		row[_columns.icon] = _textureIcon;
 		row[_columns.isFolder] = false;
 		row[_columns.isOtherMaterialsFolder] = false;
 	}
@@ -248,7 +255,7 @@ std::string MediaBrowser::getSelectedName()
 	if (!iter) return ""; // nothing selected
 
 	// Cast to TreeModel::Row and get the full name
-	std::string rv = Glib::ustring((*iter)[_columns.fullName]);
+	std::string rv = (*iter)[_columns.fullName];
 
 	// Strip off "Other Materials" if we need to
 	std::string otherMaterialsFolder = std::string(_(OTHER_MATERIALS_FOLDER)) + "/";
@@ -334,6 +341,8 @@ void MediaBrowser::populate()
 {
 	// Set the flag to true to avoid double-entering this function
 	_isPopulated = true;
+
+	//ScopedDebugTimer timer("MediaBrowserPopulation");
 
 	ShaderNameFunctor functor(_treeStore, _columns);
 	
@@ -439,29 +448,31 @@ int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk:
 	Gtk::TreeModel::Row rowA = *a;
 	Gtk::TreeModel::Row rowB = *b;
 
-	// Special treatment for "Other Materials" folder, which always comes last
-	if (rowA[_columns.isOtherMaterialsFolder])
-	{
-		return 1;
-	}
-
-	if (rowB[_columns.isOtherMaterialsFolder])
-	{
-		return -1;
-	}
-
 	// Check if A or B are folders
 	bool aIsFolder = rowA[_columns.isFolder];
-	bool bIsFolder = rowB[_columns.isFolder];;
+	bool bIsFolder = rowB[_columns.isFolder];
 
 	if (aIsFolder)
 	{
 		// A is a folder, check if B is as well
 		if (bIsFolder)
 		{
-			// A and B are both folders, compare names
+			// A and B are both folders
+
+			// Special treatment for "Other Materials" folder, which always comes last
+			if (rowA[_columns.isOtherMaterialsFolder])
+			{
+				return 1;
+			}
+
+			if (rowB[_columns.isOtherMaterialsFolder])
+			{
+				return -1;
+			}
+
+			// Compare folder names
 			// greebo: We're not checking for equality here, shader names are unique
-			return (Glib::ustring(rowA[_columns.displayName]) < Glib::ustring(rowB[_columns.displayName])) ? -1 : 1;
+			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName);
 		}
 		else
 		{
@@ -481,7 +492,7 @@ int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk:
 		{
 			// Neither A nor B are folders, compare names
 			// greebo: We're not checking for equality here, shader names are unique
-			return (Glib::ustring(rowA[_columns.displayName]) < Glib::ustring(rowB[_columns.displayName])) ? -1 : 1;
+			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName);
 		}
 	}
 }
