@@ -1,7 +1,5 @@
 #include "ClassEditor.h"
 
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -9,103 +7,102 @@
 #include <iostream>
 #include "i18n.h"
 
-namespace ui {
+#include <gtkmm/treeview.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/combobox.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/image.h>
+
+namespace ui
+{
 	
-	namespace {
-		const gint TREE_VIEW_WIDTH = 320;
-		const gint TREE_VIEW_HEIGHT = 160;
+	namespace
+	{
+		const int TREE_VIEW_WIDTH = 320;
+		const int TREE_VIEW_HEIGHT = 160;
 	}
 
 ClassEditor::ClassEditor(StimTypes& stimTypes) :
+	Gtk::VBox(false, 6),
 	_stimTypes(stimTypes),
 	_updatesDisabled(false)
 {
-	_pageVBox = gtk_vbox_new(FALSE, 6);
-	gtk_container_set_border_width(GTK_CONTAINER(_pageVBox), 6);
+	set_border_width(6);
 	
-	_list = gtk_tree_view_new();
-	gtk_widget_set_size_request(_list, TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
+	_list = Gtk::manage(new Gtk::TreeView);
+	_list->set_size_request(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
 	
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_list));
-
 	// Connect the signals to the callbacks
-	g_signal_connect(G_OBJECT(_selection), "changed", 
-					 G_CALLBACK(onSRSelectionChange), this);
-	g_signal_connect(G_OBJECT(_list), "key-press-event", 
-					 G_CALLBACK(onTreeViewKeyPress), this);
-	g_signal_connect(G_OBJECT(_list), "button-release-event", 
-					 G_CALLBACK(onTreeViewButtonRelease), this);
+	_list->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ClassEditor::onSRSelectionChange));
+	_list->signal_key_press_event().connect(sigc::mem_fun(*this, &ClassEditor::onTreeViewKeyPress), false);
+	_list->signal_button_release_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onTreeViewButtonRelease), _list));
 					 
 	// Add the columns to the treeview
 	// ID number
-	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(numCol, "#");
-	GtkCellRenderer* numRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(numCol, numRenderer, FALSE);
-	gtk_tree_view_column_set_attributes(numCol, numRenderer, 
-										"text", INDEX_COL,
-										"foreground", COLOUR_COLUMN,
-										NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), numCol);
+	Gtk::TreeViewColumn* numCol = Gtk::manage(new Gtk::TreeViewColumn("#"));
+	Gtk::CellRendererText* numRenderer = Gtk::manage(new Gtk::CellRendererText);
+
+	numCol->pack_start(*numRenderer, false);
+	numCol->add_attribute(numRenderer->property_text(), SREntity::getColumns().index);
+	numCol->add_attribute(numRenderer->property_foreground(), SREntity::getColumns().colour);
+	
+	_list->append_column(*numCol);
 	
 	// The S/R icon
-	GtkTreeViewColumn* classCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(classCol, _("S/R"));
-	GtkCellRenderer* pixbufRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(classCol, pixbufRenderer, FALSE);
-	gtk_tree_view_column_set_attributes(classCol, pixbufRenderer, 
-										"pixbuf", CLASS_COL,
-										NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), classCol);
+	Gtk::TreeViewColumn* classCol = Gtk::manage(new Gtk::TreeViewColumn(_("S/R")));
+	
+	Gtk::CellRendererPixbuf* pixbufRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
+	
+	classCol->pack_start(*pixbufRenderer, false);
+	classCol->add_attribute(pixbufRenderer->property_pixbuf(), SREntity::getColumns().srClass);
+	
+	_list->append_column(*classCol);
 	
 	// The Type
-	GtkTreeViewColumn* typeCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(typeCol, _("Type"));
+	Gtk::TreeViewColumn* typeCol = Gtk::manage(new Gtk::TreeViewColumn(_("Type")));
 	
-	GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(typeCol, typeIconRenderer, FALSE);
+	Gtk::CellRendererPixbuf* typeIconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
 	
-	GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(typeCol, typeTextRenderer, FALSE);
-	
-	gtk_tree_view_column_set_attributes(typeCol, typeTextRenderer, 
-										"text", CAPTION_COL,
-										"foreground", COLOUR_COLUMN,
-										NULL);
-	gtk_tree_view_column_set_attributes(typeCol, typeIconRenderer, 
-										"pixbuf", ICON_COL,
-										NULL);
+	typeCol->pack_start(*typeIconRenderer, false);
+	typeCol->add_attribute(typeIconRenderer->property_pixbuf(), SREntity::getColumns().icon);
 
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), typeCol);
-	
-	
+	Gtk::CellRendererText* typeTextRenderer = Gtk::manage(new Gtk::CellRendererText);
+
+	typeCol->pack_start(*typeTextRenderer, false);
+	typeCol->add_attribute(typeTextRenderer->property_text(), SREntity::getColumns().caption);
+	typeCol->add_attribute(typeTextRenderer->property_foreground(), SREntity::getColumns().colour);
+		
+	_list->append_column(*typeCol);
 }
 
-ClassEditor::operator GtkWidget*() {
-	return _pageVBox;
-}
-
-void ClassEditor::setEntity(SREntityPtr entity) {
+void ClassEditor::setEntity(const SREntityPtr& entity)
+{
 	_entity = entity; 
 }
 
-int ClassEditor::getIdFromSelection() {
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter) ? true : false;
-	
-	if (anythingSelected && _entity != NULL) {
-		return gtkutil::TreeModel::getInt(model, &iter, ID_COL);
+int ClassEditor::getIdFromSelection()
+{
+	Gtk::TreeModel::iterator iter = _list->get_selection()->get_selected();
+
+	if (iter && _entity != NULL)
+	{
+		return (*iter)[SREntity::getColumns().id];
 	}
-	else {
+	else
+	{
 		return -1;
 	}
 }
 
-void ClassEditor::setProperty(const std::string& key, const std::string& value) {
+void ClassEditor::setProperty(const std::string& key, const std::string& value)
+{
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
+	if (id > 0)
+	{
 		// Don't edit inherited stims/responses
 		_entity->setProperty(id, key, value);
 	}
@@ -114,132 +111,130 @@ void ClassEditor::setProperty(const std::string& key, const std::string& value) 
 	update();
 }
 
-void ClassEditor::entryChanged(GtkEditable* editable) {
+void ClassEditor::entryChanged(Gtk::Entry* entry)
+{
 	// Try to find the key this entry widget is associated to
-	EntryMap::iterator found = _entryWidgets.find(editable);
+	EntryMap::iterator found = _entryWidgets.find(entry);
 	
-	if (found != _entryWidgets.end()) {
-		std::string entryText = gtk_entry_get_text(GTK_ENTRY(editable));
+	if (found != _entryWidgets.end())
+	{
+		std::string entryText = entry->get_text();
 		
-		if (!entryText.empty()) {
+		if (!entryText.empty())
+		{
 			setProperty(found->second, entryText);
 		}
 	}
 }
 
-void ClassEditor::spinButtonChanged(GtkSpinButton* spinButton) {
+void ClassEditor::spinButtonChanged(Gtk::SpinButton* spinButton)
+{
 	// Try to find the key this spinbutton widget is associated to
 	SpinButtonMap::iterator found = _spinWidgets.find(spinButton);
 	
-	if (found != _spinWidgets.end()) {
-		std::string entryText = doubleToStr(
-			gtk_spin_button_get_value_as_float(spinButton)
-		);
+	if (found != _spinWidgets.end())
+	{
+		std::string valueText = doubleToStr(spinButton->get_value());
 		
-		if (!entryText.empty()) {
-			setProperty(found->second, entryText);
+		if (!valueText.empty())
+		{
+			setProperty(found->second, valueText);
 		}
 	}
 }
 
-ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector() {
+ClassEditor::TypeSelectorWidgets ClassEditor::createStimTypeSelector()
+{
 	TypeSelectorWidgets widgets;
 	
 	// Type Selector
-	widgets.hbox = gtk_hbox_new(FALSE, 0);
+	widgets.hbox = Gtk::manage(new Gtk::HBox(false, 0));
 	
-	widgets.label = gtkutil::LeftAlignedLabel(_("Type:"));
+	widgets.label = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Type:")));
+	
 	// Cast the helper class onto a ListStore and create a new treeview
-	GtkListStore* stimListStore = _stimTypes;
-	widgets.list = gtk_combo_box_new_with_model(GTK_TREE_MODEL(stimListStore));
-	gtk_widget_set_size_request(widgets.list, -1, -1);
+	widgets.list = Gtk::manage(new Gtk::ComboBox(_stimTypes.getListStore()));
+	widgets.list->set_size_request(-1, -1);
 	
 	// Add the cellrenderer for the name
-	GtkCellRenderer* nameRenderer = gtk_cell_renderer_text_new();
-	GtkCellRenderer* iconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(widgets.list), iconRenderer, FALSE);
-	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(widgets.list), nameRenderer, TRUE);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(widgets.list), iconRenderer, "pixbuf", ST_ICON_COL);
-	gtk_cell_layout_add_attribute(GTK_CELL_LAYOUT(widgets.list), nameRenderer, "text", ST_CAPTION_PLUS_ID_COL);
-	gtk_cell_renderer_set_fixed_size(iconRenderer, 26, -1);
+	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
+	Gtk::CellRendererPixbuf* iconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
 
-	gtk_box_pack_start(GTK_BOX(widgets.hbox), widgets.label, FALSE, FALSE, 0);
-	gtk_box_pack_start(
-		GTK_BOX(widgets.hbox), 
-		gtkutil::LeftAlignment(widgets.list, 12, 1.0f), 
-		TRUE, TRUE,	0
+	widgets.list->pack_start(*iconRenderer, false);
+	widgets.list->pack_start(*nameRenderer, true);
+	
+	widgets.list->add_attribute(iconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
+	widgets.list->add_attribute(nameRenderer->property_text(), _stimTypes.getColumns().captionPlusID);
+	iconRenderer->set_fixed_size(26, -1);
+	
+	widgets.hbox->pack_start(*widgets.label, false, false, 0);
+	widgets.hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*widgets.list, 12, 1.0f)), 
+		true, true,	0
 	);
 	
 	// Set the combo box to use two-column
-	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(widgets.list), 2);
-	gtk_combo_box_set_active(GTK_COMBO_BOX(widgets.list), 0);
+	widgets.list->set_wrap_width(2);
+	widgets.list->set_active(0);
 	
 	return widgets;
 }
 
-GtkWidget* ClassEditor::createListButtons() {
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+Gtk::Widget& ClassEditor::createListButtons()
+{
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 	
 	// Create the type selector and pack it
 	_addType = createStimTypeSelector();
-	gtk_combo_box_set_active(GTK_COMBO_BOX(_addType.list), 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _addType.hbox, TRUE, TRUE, 0);
+	hbox->pack_start(*_addType.hbox, true, true, 0);
 	
-	_listButtons.add = gtk_button_new_with_label(_("Add"));
-	gtk_button_set_image(
-		GTK_BUTTON(_listButtons.add), 
-		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
-	);
+	_listButtons.add = Gtk::manage(new Gtk::Button(_("Add")));
+	_listButtons.add->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::ADD, Gtk::ICON_SIZE_BUTTON)));
 	
-	_listButtons.remove = gtk_button_new_with_label(_("Remove"));
-	gtk_button_set_image(
-		GTK_BUTTON(_listButtons.remove), 
-		gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON)
-	);
+	_listButtons.remove = Gtk::manage(new Gtk::Button(_("Remove")));
+	_listButtons.remove->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_BUTTON)));
 	
-	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.add, FALSE, FALSE, 0);
-	//gtk_box_pack_start(GTK_BOX(hbox), _listButtons.remove, TRUE, TRUE, 0);
+	hbox->pack_start(*_listButtons.add, false, false, 0);
+	hbox->pack_start(*_listButtons.remove, false, false, 0);
 	
-	g_signal_connect(G_OBJECT(_addType.list), "changed", G_CALLBACK(onAddTypeSelect), this);
-	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddSR), this);
-	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveSR), this);
+	_addType.list->signal_changed().connect(sigc::mem_fun(*this, &ClassEditor::onAddTypeSelect));
+	_listButtons.add->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onAddSR));
+	_listButtons.remove->signal_clicked().connect(sigc::mem_fun(*this, &ClassEditor::onAddSR));
 	
-	return hbox; 
+	return *hbox;
 }
 
-void ClassEditor::removeSR(GtkTreeView* view) {
-	// Check the treeview this remove call is targeting
-	if (view == GTK_TREE_VIEW(_list)) {	
-		// Get the selected stim ID
-		int id = getIdFromSelection();
-		
-		if (id > 0) {
-			_entity->remove(id);
-		}
-	}
-}
-
-void ClassEditor::selectId(int id) {
-	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFinder finder(id, ID_COL);
-
-	gtk_tree_model_foreach(
-		gtk_tree_view_get_model(GTK_TREE_VIEW(_list)),
-		gtkutil::TreeModel::SelectionFinder::forEach,
-		&finder
-	);
-	
-	if (finder.getPath() != NULL) {
-		GtkTreeIter iter = finder.getIter();
-		// Set the active row of the list to the given effect
-		gtk_tree_selection_select_iter(_selection, &iter);
-	}
-}
-
-void ClassEditor::duplicateStimResponse() {
+void ClassEditor::removeSR()
+{
+	// Get the selected stim ID
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
+	if (id > 0)
+	{
+		_entity->remove(id);
+	}
+}
+
+void ClassEditor::selectId(int id)
+{
+	// Setup the selectionfinder to search for the id
+	gtkutil::TreeModel::SelectionFinder finder(id, SREntity::getColumns().id.index());
+
+	_list->get_model()->foreach_iter(
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
+	
+	if (finder.getIter())
+	{
+		// Set the active row of the list to the given effect
+		_list->get_selection()->select(finder.getIter());
+	}
+}
+
+void ClassEditor::duplicateStimResponse()
+{
+	int id = getIdFromSelection();
+	
+	if (id > 0)
+	{
 		int newId = _entity->duplicate(id);
 		// Select the newly created stim
 		selectId(newId);
@@ -250,102 +245,152 @@ void ClassEditor::duplicateStimResponse() {
 }
 
 // Static callbacks
-void ClassEditor::onSRSelectionChange(GtkTreeSelection* treeView, ClassEditor* self) {
-	self->selectionChanged();
+void ClassEditor::onSRSelectionChange()
+{
+	selectionChanged();
 }
 
-gboolean ClassEditor::onTreeViewKeyPress(GtkTreeView* view, GdkEventKey* event, ClassEditor* self) {
-	if (event->keyval == GDK_Delete) {
-		self->removeSR(view);
+bool ClassEditor::onTreeViewKeyPress(GdkEventKey* ev)
+{
+	if (ev->keyval == GDK_Delete)
+	{
+		removeSR();
 		
 		// Catch this keyevent, don't propagate
-		return TRUE;
+		return true;
 	}
 	
 	// Propagate further
-	return FALSE;
+	return false;
 }
 
-gboolean ClassEditor::onTreeViewButtonRelease(GtkTreeView* view, GdkEventButton* ev, ClassEditor* self) {
+bool ClassEditor::onTreeViewButtonRelease(GdkEventButton* ev, Gtk::TreeView* view)
+{
 	// Single click with RMB (==> open context menu)
-	if (ev->button == 3) {
-		self->openContextMenu(view);
+	if (ev->button == 3)
+	{
+		openContextMenu(view);
 	}
 	
-	return FALSE;
+	return false;
 }
 
-void ClassEditor::onSpinButtonChanged(GtkSpinButton* spinButton, ClassEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
+void ClassEditor::onSpinButtonChanged(Gtk::SpinButton* spinButton)
+{
+	if (_updatesDisabled) return; // Callback loop guard
 	
-	self->spinButtonChanged(spinButton);
+	spinButtonChanged(spinButton);
 }
 
-void ClassEditor::onEntryChanged(GtkEditable* editable, ClassEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
+void ClassEditor::connectSpinButton(Gtk::SpinButton* spinButton, const std::string& key)
+{
+	// Associate the spin button with a specific entity key, if not empty
+	if (!key.empty())
+	{
+		_spinWidgets[spinButton] = key;
+	}
+
+	// Connect the callback and bind the spinbutton pointer as first argument
+	spinButton->signal_value_changed().connect(
+		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onSpinButtonChanged), spinButton));
+}
+
+void ClassEditor::onEntryChanged(Gtk::Entry* entry)
+{
+	if (_updatesDisabled) return; // Callback loop guard
 	
-	self->entryChanged(editable);
+	entryChanged(entry);
 }
 
-void ClassEditor::onCheckboxToggle(GtkToggleButton* toggleButton, ClassEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
+void ClassEditor::connectEntry(Gtk::Entry* entry, const std::string& key)
+{
+	// Associate the entry with a specific entity key
+	_entryWidgets[entry] = key;
+
+	// Connect the callback and bind the entry pointer as first argument
+	entry->signal_changed().connect(
+		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onEntryChanged), entry));
+}
+
+void ClassEditor::onCheckboxToggle(Gtk::CheckButton* toggleButton)
+{
+	if (_updatesDisabled) return; // Callback loop guard
 	
-	self->checkBoxToggled(toggleButton);
+	checkBoxToggled(toggleButton);
 }
 
-std::string ClassEditor::getStimTypeIdFromSelector(GtkComboBox* widget) {
-	GtkTreeIter iter;
-	if (gtk_combo_box_get_active_iter(widget, &iter)) {
+void ClassEditor::connectCheckButton(Gtk::CheckButton* checkButton)
+{
+	// Bind the checkbutton pointer to the callback, it is needed in onCheckboxToggle
+	checkButton->signal_toggled().connect(
+		sigc::bind(sigc::mem_fun(*this, &ClassEditor::onCheckboxToggle), checkButton));
+}
+
+std::string ClassEditor::getStimTypeIdFromSelector(Gtk::ComboBox* widget)
+{
+	Gtk::TreeModel::iterator iter = widget->get_active();
+	
+	if (iter)
+	{
 		// Load the stim name (e.g. "STIM_FIRE") directly from the liststore
-		GtkTreeModel* model = gtk_combo_box_get_model(widget);
-		std::string name = gtkutil::TreeModel::getString(model, &iter, ST_NAME_COL);
-		
-		return name;
+		return Glib::ustring((*iter)[_stimTypes.getColumns().name]);
 	}
+
 	return "";
 }
 
-void ClassEditor::onStimTypeSelect(GtkComboBox* widget, ClassEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
+void ClassEditor::onStimTypeSelect()
+{
+	if (_updatesDisabled || _type.list == NULL) return; // Callback loop guard
 	
-	std::string name = self->getStimTypeIdFromSelector(widget);
-	if (!name.empty()) {
+	std::string name = getStimTypeIdFromSelector(_type.list);
+
+	if (!name.empty())
+	{
 		// Write it to the entity
-		self->setProperty("type", name);
+		setProperty("type", name);
 	}
 }
 
-void ClassEditor::onAddTypeSelect(GtkComboBox* widget, ClassEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
+void ClassEditor::onAddTypeSelect()
+{
+	if (_updatesDisabled || _addType.list == NULL) return; // Callback loop guard
 	
-	std::string name = self->getStimTypeIdFromSelector(widget);
-	if (!name.empty()) {
-		self->addSR();
+	std::string name = getStimTypeIdFromSelector(_addType.list);
+
+	if (!name.empty())
+	{
+		addSR();
 	}
 }
 
 // "Disable" context menu item
-void ClassEditor::onContextMenuDisable(GtkWidget* w, ClassEditor* self) {
-	self->setProperty("state", "0");
+void ClassEditor::onContextMenuDisable()
+{
+	setProperty("state", "0");
 }
 
 // "Enable" context menu item
-void ClassEditor::onContextMenuEnable(GtkWidget* w, ClassEditor* self) {
-	self->setProperty("state", "1");
+void ClassEditor::onContextMenuEnable()
+{
+	setProperty("state", "1");
 }
 
-void ClassEditor::onContextMenuDuplicate(GtkWidget* w, ClassEditor* self) {
-	self->duplicateStimResponse();
+void ClassEditor::onContextMenuDuplicate()
+{
+	duplicateStimResponse();
 }
 
-void ClassEditor::onAddSR(GtkWidget* button, ClassEditor* self) {
+void ClassEditor::onAddSR()
+{
 	// Add a S/R
-	self->addSR();
+	addSR();
 }
 
-void ClassEditor::onRemoveSR(GtkWidget* button, ClassEditor* self) {
+void ClassEditor::onRemoveSR()
+{
 	// Delete the selected S/R from the list
-	self->removeSR(GTK_TREE_VIEW(self->_list));
+	removeSR();
 }
 
 } // namespace ui

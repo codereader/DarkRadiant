@@ -595,24 +595,23 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
  * class would get stuck in a loop (as the newly created patches get selected,
  * and they are thickened as well, and again and again).  
  */
-void thickenSelectedPatches(const cmd::ArgumentList& args) {
+void thickenSelectedPatches(const cmd::ArgumentList& args)
+{
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
 	
-	if (patchList.size() > 0) {
+	if (patchList.size() > 0)
+	{
 		UndoableCommand undo("patchThicken");
 		
 		ui::PatchThickenDialog dialog;
-		
-		bool createSeams = false;
-		float thickness = 0.0f;
-		// Extrude along normals is the default (axis=3)
-		int axis = 3;
-		
-		if (dialog.queryPatchThickness(thickness, createSeams, axis)) {
+
+		if (dialog.run() == ui::IDialog::RESULT_OK)
+		{
 			// Go through the list and thicken all the found ones
-			for (std::size_t i = 0; i < patchList.size(); i++) {
-				thickenPatch(patchList[i], thickness, createSeams, axis);
+			for (std::size_t i = 0; i < patchList.size(); i++)
+			{
+				thickenPatch(patchList[i], dialog.getThickness(), dialog.getCeateSeams(), dialog.getAxis());
 			}
 		}
 	}
@@ -622,25 +621,19 @@ void thickenSelectedPatches(const cmd::ArgumentList& args) {
 	}
 }
 
-void createSimplePatch(const cmd::ArgumentList& args) {
+void createSimplePatch(const cmd::ArgumentList& args)
+{
 	ui::PatchCreateDialog dialog;
 	
-	int width = 3;
-	int height = 3;
-	bool removeSelectedBrush = false;
-	
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
-	if (dialog.queryPatchDimensions(width, height, 
-									info.brushCount, 
-									removeSelectedBrush)) 
+	if (dialog.run() == ui::IDialog::RESULT_OK)
 	{
 		UndoableCommand undo("patchCreatePlane");
 		
 		// Retrieve the boundaries 
 		AABB bounds = PatchCreator_getBounds();
 		
-		if (removeSelectedBrush) {
+		if (dialog.getRemoveSelectedBrush())
+		{
 			// Delete the selection, the should be only one brush selected
 			selection::algorithm::deleteSelection();
 		}
@@ -649,7 +642,7 @@ void createSimplePatch(const cmd::ArgumentList& args) {
 		Scene_PatchConstructPrefab(bounds, 
 								   GlobalTextureBrowser().getSelectedShader(), 
 								   ePlane, GlobalXYWnd().getActiveViewType(), 
-								   width, height);
+								   dialog.getSelectedWidth(), dialog.getSelectedHeight());
 	}
 }
 

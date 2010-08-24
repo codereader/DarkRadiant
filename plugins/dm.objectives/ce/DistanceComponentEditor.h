@@ -1,10 +1,16 @@
 #ifndef DISTANCE_COMPONENT_EDITOR_H_
 #define DISTANCE_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
+
+namespace Gtk
+{
+	class Entry;
+	class SpinButton;
+}
 
 namespace objectives {
 
@@ -16,7 +22,7 @@ namespace ce {
  * An COMP_DISTANCE component usually uses a two specifiers.
  */
 class DistanceComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -29,23 +35,20 @@ class DistanceComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;	
 	
 	// Name of the entity in question
-	GtkWidget* _entity;
+	Gtk::Entry* _entity;
 
 	// Name of the location entity
-	GtkWidget* _location;
+	Gtk::Entry* _location;
 
 	// The distance between these two
-	GtkWidget* _distance;
+	Gtk::SpinButton* _distance;
 
 	// The evaluation interval in seconds
-	GtkWidget* _interval;
+	Gtk::SpinButton* _interval;
 	
 public:
 
@@ -53,7 +56,6 @@ public:
 	 * Construct a default DistanceComponentEditor.
 	 */
 	DistanceComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_entity(NULL),
 		_location(NULL),
@@ -70,19 +72,12 @@ public:
 	 */
 	DistanceComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~DistanceComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new DistanceComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 

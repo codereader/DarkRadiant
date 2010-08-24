@@ -1,96 +1,142 @@
 #include "Splash.h"
 
-#include <gtk/gtk.h>
 #include "gtkutil/LeftAlignedLabel.h"
+
+#include <gtkmm/progressbar.h>
+#include <gtkmm/image.h>
+#include <gtkmm/box.h>
+#include <gtkmm/main.h>
 
 #include "modulesystem/ModuleRegistry.h"
 
-namespace ui {
+namespace ui
+{
 	
-	namespace {
-		const std::string SPLASH_FILENAME = "darksplash.png";
-	}
+namespace
+{
+	const char* const SPLASH_FILENAME = "darksplash.png";
+}
 
 Splash::Splash() :
-	_window(GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL))),
+	Gtk::Window(Gtk::WINDOW_TOPLEVEL),
 	_progressBar(NULL)
 {
-	gtk_window_set_decorated(_window, FALSE);
-	gtk_window_set_resizable(_window, FALSE);
-	gtk_window_set_modal(_window, TRUE);
-	gtk_window_set_default_size(_window, -1, -1);
-	gtk_window_set_position(_window, GTK_WIN_POS_CENTER);
-	gtk_container_set_border_width(GTK_CONTAINER(_window), 0);
+	set_decorated(false);
+	set_resizable(false);
+	set_modal(true);
+	set_default_size(-1, -1);
+	set_position(Gtk::WIN_POS_CENTER);
+	set_border_width(0);
 	
 	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
 	std::string fullFileName(ctx.getBitmapsPath() + SPLASH_FILENAME);
-	GtkWidget* image = gtk_image_new_from_pixbuf(
-		gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL)
+
+	Gtk::Image* image = Gtk::manage(new Gtk::Image(
+		Gdk::Pixbuf::create_from_file(fullFileName))
 	);
 	
-	_vbox = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_vbox), image, TRUE, TRUE, 0);
+	_vbox = Gtk::manage(new Gtk::VBox(false, 0));
+	_vbox->pack_start(*image, true, true, 0);
 	
-	gtk_container_add(GTK_CONTAINER(_window), _vbox);
-	gtk_widget_set_size_request(GTK_WIDGET(_window), -1, -1);
+	add(*_vbox);
+
+	set_size_request(-1, -1);
 }
 
-GtkWindow* Splash::getWindow() {
-	return _window;
+bool Splash::isVisible()
+{
+	return InstancePtr() != NULL && Instance().is_visible();
 }
 
-void Splash::createProgressBar() {
-	_progressBar = gtk_progress_bar_new();
-	gtk_box_pack_start(GTK_BOX(_vbox), _progressBar, FALSE, FALSE, 0);
-	gtk_widget_set_size_request(GTK_WIDGET(_window), -1, -1);
-	gtk_widget_show_all(_progressBar);
+void Splash::setTopLevelWindow(const Glib::RefPtr<Gtk::Window>& window)
+{
+	if (!window) return;
+
+	Gtk::Container* toplevel = window->get_toplevel();
+
+	if (toplevel != NULL && toplevel->is_toplevel() &&
+		dynamic_cast<Gtk::Window*>(toplevel) != NULL)
+	{
+		set_transient_for(*static_cast<Gtk::Window*>(toplevel));
+	}
 }
 
-void Splash::setText(const std::string& text) {
-	if (_progressBar == NULL) {
+void Splash::createProgressBar()
+{
+	_progressBar = Gtk::manage(new Gtk::ProgressBar);
+	_vbox->pack_start(*_progressBar, false, false, 0);
+
+	set_size_request(-1, -1);
+
+	_progressBar->show_all();
+}
+
+void Splash::setText(const std::string& text)
+{
+	if (_progressBar == NULL)
+	{
 		createProgressBar();
 	}
 	
-	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(_progressBar), text.c_str());
+	_progressBar->set_text(text);
 	queueDraw();
 }
 
-void Splash::setProgress(float fraction) {
-	if (_progressBar == NULL) {
+void Splash::setProgress(float fraction)
+{
+	if (_progressBar == NULL)
+	{
 		createProgressBar();
 	}
 	
-	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(_progressBar), fraction);
+	_progressBar->set_fraction(fraction);
 	queueDraw();
 }
 
-void Splash::setProgressAndText(const std::string& text, float fraction) {
+void Splash::setProgressAndText(const std::string& text, float fraction)
+{
 	setText(text);
 	setProgress(fraction);
 }
 
-void Splash::show() {
-	gtk_widget_show_all(GTK_WIDGET(_window));
-	queueDraw();		
+void Splash::show_all()
+{
+	Gtk::Window::show_all();
+	queueDraw();
 }
 
-void Splash::hide() {
-	gtk_widget_hide(GTK_WIDGET(_window));
-}
-
-void Splash::queueDraw() {
+void Splash::queueDraw()
+{
 	// Trigger a (re)draw, just to make sure that it gets displayed
-	gtk_widget_queue_draw(GTK_WIDGET(_window));
+	queue_draw();
 	
-	while(gtk_events_pending())
+	while (Gtk::Main::events_pending())
 	{
-		gtk_main_iteration();
+		Gtk::Main::iteration();
 	}
 }
 
-Splash& Splash::Instance() {
-	static Splash _instance;
-	return _instance;
+void Splash::destroy()
+{
+	InstancePtr().reset();
+}
+
+SplashPtr& Splash::InstancePtr()
+{
+	static SplashPtr _instancePtr;
+	return _instancePtr;
+}
+
+Splash& Splash::Instance()
+{
+	SplashPtr& instancePtr = InstancePtr();
+
+	if (instancePtr == NULL)
+	{
+		instancePtr.reset(new Splash);
+	}
+
+	return *instancePtr;
 }
 
 } // namespace ui

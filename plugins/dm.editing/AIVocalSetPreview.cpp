@@ -3,7 +3,9 @@
 #include "i18n.h"
 #include "isound.h"
 #include "gtkutil/LeftAlignedLabel.h"
-#include <gtk/gtk.h>
+
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,11 +13,10 @@
 
 namespace ui {
 
-AIVocalSetPreview::AIVocalSetPreview()
+AIVocalSetPreview::AIVocalSetPreview() :
+	Gtk::HBox(false, 12)
 {
-	_widget = gtk_hbox_new(FALSE, 12);
-	
-	gtk_box_pack_start(GTK_BOX(_widget), createControlPanel(), TRUE, TRUE, 0);
+	pack_start(createControlPanel(), true, true, 0);
 	
 	// Trigger the initial update of the widgets
 	update();
@@ -23,27 +24,29 @@ AIVocalSetPreview::AIVocalSetPreview()
 	srand(static_cast<unsigned int>(time(NULL)));
 }
 
-GtkWidget* AIVocalSetPreview::createControlPanel()
+Gtk::Widget& AIVocalSetPreview::createControlPanel()
 {
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
-	gtk_widget_set_size_request(vbox, 200, -1);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	vbox->set_size_request(200, -1);
 	
 	// Create the playback button
-	_playButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_PLAY);
-	_stopButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_STOP);
-	g_signal_connect(G_OBJECT(_playButton), "clicked", G_CALLBACK(onPlay), this);
-	g_signal_connect(G_OBJECT(_stopButton), "clicked", G_CALLBACK(onStop), this);
+	_playButton = Gtk::manage(new Gtk::Button(Gtk::Stock::MEDIA_PLAY));
+	_stopButton = Gtk::manage(new Gtk::Button(Gtk::Stock::MEDIA_STOP));
+
+	_playButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetPreview::onPlay));
+	_stopButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetPreview::onStop));
 	
-	GtkWidget* btnHBox = gtk_hbox_new(TRUE, 6);
-	gtk_box_pack_start(GTK_BOX(btnHBox), _playButton, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(btnHBox), _stopButton, TRUE, TRUE, 0);
+	Gtk::HBox* btnHBox = Gtk::manage(new Gtk::HBox(true, 6));
+
+	btnHBox->pack_start(*_playButton, true, true, 0);
+	btnHBox->pack_start(*_stopButton, true, true, 0);
 	
-	gtk_box_pack_end(GTK_BOX(vbox), btnHBox, FALSE, FALSE, 0);
+	vbox->pack_end(*btnHBox, false, false, 0);
 	
-	_statusLabel = gtkutil::LeftAlignedLabel("");
-	gtk_box_pack_end(GTK_BOX(vbox), _statusLabel, FALSE, FALSE, 0);
+	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	vbox->pack_end(*_statusLabel, false, false, 0);
 	
-	return vbox; 
+	return *vbox; 
 }
 
 void AIVocalSetPreview::setVocalSetEclass(const IEntityClassPtr& vocalSetDef)
@@ -69,7 +72,7 @@ void AIVocalSetPreview::update()
 	}
 
 	// If the soundshader string is empty, desensitise the widgets
-	gtk_widget_set_sensitive(_widget, (_vocalSetDef != NULL && !_setShaders.empty()) ? TRUE : FALSE);
+	set_sensitive(_vocalSetDef != NULL && !_setShaders.empty());
 }
 
 std::string AIVocalSetPreview::getRandomSoundFile()
@@ -90,30 +93,27 @@ std::string AIVocalSetPreview::getRandomSoundFile()
 	return files[fileIdx];
 }
 
-void AIVocalSetPreview::onPlay(GtkWidget*, AIVocalSetPreview* self)
+void AIVocalSetPreview::onPlay()
 {
-	gtk_label_set_markup(GTK_LABEL(self->_statusLabel), "");
+	_statusLabel->set_text("");
 
-	std::string file = self->getRandomSoundFile();
+	std::string file = getRandomSoundFile();
 	
 	if (!file.empty())
 	{
 		// Pass the call to the sound manager
 		if (!GlobalSoundManager().playSound(file))
 		{
-			gtk_label_set_markup(
-				GTK_LABEL(self->_statusLabel), 
-				_("<b>Error:</b> File not found.")
-			);
+			_statusLabel->set_markup(_("<b>Error:</b> File not found."));
 		}
 	}
 }
 
-void AIVocalSetPreview::onStop(GtkWidget*, AIVocalSetPreview* self)
+void AIVocalSetPreview::onStop()
 {
 	// Pass the call to the sound manager
 	GlobalSoundManager().stopSound();
-	gtk_label_set_markup(GTK_LABEL(self->_statusLabel), "");
+	_statusLabel->set_text("");
 }
 
 } // namespace ui

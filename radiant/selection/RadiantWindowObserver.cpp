@@ -19,19 +19,14 @@ RadiantWindowObserver::RadiantWindowObserver() :
 	_listenForCancelEvents(false)
 {}
 
-void RadiantWindowObserver::addObservedWidget(GtkWidget* observed)
+void RadiantWindowObserver::addObservedWidget(Gtk::Widget* observed)
 {
 	// Connect the keypress event to catch the "cancel" events (ESC)
-	gulong keyPressHandler = g_signal_connect(G_OBJECT(observed), 
-					 					"key-press-event", 
-					 					G_CALLBACK(onKeyPress), 
-					 					this);
-
-	// Remember this keyhandler (for later disconnections)
-	_keyHandlers.insert(KeyHandlerMap::value_type(observed, keyPressHandler));
+	_keyHandlers[observed] = observed->signal_key_press_event().connect(
+		sigc::mem_fun(*this, &RadiantWindowObserver::onKeyPress), false);
 }
 
-void RadiantWindowObserver::removeObservedWidget(GtkWidget* observed)
+void RadiantWindowObserver::removeObservedWidget(Gtk::Widget* observed)
 {
 	KeyHandlerMap::iterator found = _keyHandlers.find(observed);
 	
@@ -44,13 +39,39 @@ void RadiantWindowObserver::removeObservedWidget(GtkWidget* observed)
 	}
 
 	// Disconnect the key handler
-	g_signal_handler_disconnect(G_OBJECT(observed), found->second);
+	found->second.disconnect();
 
 	// And remove the element from our map
 	_keyHandlers.erase(found);
 }
 
-void RadiantWindowObserver::setView(const View& view) {
+void RadiantWindowObserver::addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed)
+{
+	_refKeyHandlers[observed] = observed->signal_key_press_event().connect(
+		sigc::mem_fun(*this, &RadiantWindowObserver::onKeyPress), false);
+}
+
+void RadiantWindowObserver::removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed)
+{
+	RefPtrKeyHandlerMap::iterator found = _refKeyHandlers.find(observed);
+	
+	if (found == _refKeyHandlers.end())
+	{
+		globalWarningStream() << 
+			"RadiantWindowObserver: Cannot remove observed refptr widget, not found." 
+			<< std::endl;
+		return;
+	}
+
+	// Disconnect the key handler
+	found->second.disconnect();
+
+	// And remove the element from our map
+	_refKeyHandlers.erase(found);
+}
+
+void RadiantWindowObserver::setView(const View& view)
+{
 	_selectObserver._view = &view;
 	_manipulateObserver._view = &view;
 }
@@ -61,7 +82,8 @@ void RadiantWindowObserver::setRectangleDrawCallback(const Rectangle::Callback& 
 }
 
 // greebo: This is called if the window size changes (camera, orthoview)
-void RadiantWindowObserver::onSizeChanged(int width, int height) {
+void RadiantWindowObserver::onSizeChanged(int width, int height)
+{
 	// Store the new width and height
 	_width = width;
 	_height = height;
@@ -74,10 +96,10 @@ void RadiantWindowObserver::onSizeChanged(int width, int height) {
 }
   
 // Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
-void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventButton* event) {
-	
+void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventButton* ev)
+{
 	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(event);
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
 	
 	// Check if the user wants to copy/paste a texture
 	if (observerEvent == ui::obsCopyTexture || observerEvent == ui::obsPasteTextureProjected ||
@@ -93,7 +115,8 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 		SelectionVolume volume(scissored);
 		
 		// Do we have a camera view (fill() == true)?
-		if (_selectObserver._view->fill()) {
+		if (_selectObserver._view->fill())
+		{
 			if (observerEvent == ui::obsJumpToObject) {
 				CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 				if (cam != NULL) {
@@ -162,7 +185,8 @@ void RadiantWindowObserver::onMouseDown(const WindowVector& position, GdkEventBu
 /* greebo: Handle the mouse movement. This notifies the registered mouseMove callback
  * and resets the cycle selection counter. The argument state is unused at the moment.  
  */
-void RadiantWindowObserver::onMouseMotion(const WindowVector& position, const unsigned int& state) {
+void RadiantWindowObserver::onMouseMotion(const WindowVector& position, unsigned int state)
+{
 	// The mouse has been moved, so reset the counter of the cycle selection stack
 	_selectObserver._unmovedReplaces = 0;
 	
@@ -179,10 +203,10 @@ void RadiantWindowObserver::onMouseMotion(const WindowVector& position, const un
 /* greebo: Handle the mouseUp event. Usually, this means the end of an operation, so
  * this has to check, if there are any callbacks connected, and call them if this is the case
  */
-void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButton* event) {
-	
+void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButton* ev)
+{
 	// Retrieve the according ObserverEvent for the GdkEventButton
-	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(event);
+	ui::ObserverEvent observerEvent = GlobalEventManager().MouseEvents().getObserverEvent(ev);
 	
 	// Only react, if the "select" or "manipulate" is held, ignore this otherwise
 	bool reactToEvent = (observerEvent == ui::obsManipulate || observerEvent == ui::obsSelect ||
@@ -196,8 +220,8 @@ void RadiantWindowObserver::onMouseUp(const WindowVector& position, GdkEventButt
   		_mouseDown = false;
   		
   		// Store the current event in the observer classes
-  		_selectObserver.setEvent(event);
-  		_manipulateObserver.setEvent(event);
+  		_selectObserver.setEvent(ev);
+  		_manipulateObserver.setEvent(ev);
   		
   		// Get the callback and call it with the arguments
 		if (_mouseUpCallback)
@@ -228,23 +252,22 @@ void RadiantWindowObserver::cancelOperation()
 }
 
 // The GTK keypress callback
-gboolean RadiantWindowObserver::onKeyPress(GtkWindow* window, 
-	GdkEventKey* event, RadiantWindowObserver* self) 
+bool RadiantWindowObserver::onKeyPress(GdkEventKey* ev) 
 {
-	if (!self->_listenForCancelEvents) 
+	if (!_listenForCancelEvents) 
 	{
 		// Not listening, let the event pass through
-		return FALSE;
+		return false;
 	}
 
 	// Check for ESC and call the cancelOperation method, if found
-	if (event->keyval == GDK_Escape)
+	if (ev->keyval == GDK_Escape)
 	{
-		self->cancelOperation();
+		cancelOperation();
 		
 		// Don't pass the key event to the event chain 
-		return TRUE;
+		return true;
 	}
 	
-	return FALSE;
+	return false;
 }

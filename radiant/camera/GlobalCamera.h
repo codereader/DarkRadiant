@@ -28,7 +28,7 @@ private:
 	int _activeCam;
 	
 	// The parent widget for the camera window (this should be the main frame)
-	GtkWindow* _parent;
+	Glib::RefPtr<Gtk::Window> _parent;
 	
 	// The connected callbacks (get invoked when movedNotify() is called)	
 	CameraObserverList _cameraObservers;
@@ -43,7 +43,7 @@ public:
 	/**
 	 * Specifies the parent window which should be used for the CamWnd.
 	 */
-	void setParent(GtkWindow* parent);
+	void setParent(const Glib::RefPtr<Gtk::Window>& parent);
 	
 	/**
 	 * Returns the currently active CamWnd or NULL if none is active.

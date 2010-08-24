@@ -2,161 +2,261 @@
 
 #include <StringSerialisable.h>
 
-#include "ifc/Widget.h"
+#include <gtkmm/adjustment.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/togglebutton.h>
+#include <gtkmm/comboboxtext.h>
+#include <gtkmm/range.h>
 
 namespace gtkutil
 {
 
 /**
- * \brief
- * ABC for a class which wraps an existing GtkWidget and implements
- * StringSerialisable to read/write the data from that widget.
+ * StringSerialisable Gtk::Adjustment class.
  */
-class SerialisableWidgetWrapper
-: public StringSerialisable,
-  public Widget
-{ 
-   // The widget
-   GtkWidget* _widget;
-
-protected:
-
-   /* Widget implementation */
-   GtkWidget* _getWidget() const
-   {
-      return _widget;
-   }
-
-public:
-
-   /**
-    * \brief
-    * Construct a SerialisableWidgetWrapper to wrap and serialise the given
-    * GtkWidget.
-    */
-   SerialisableWidgetWrapper(GtkWidget* w)
-   : _widget(w)
-   { }
-};
-
-// Shared pointer typedef
-typedef 
-boost::shared_ptr<SerialisableWidgetWrapper> SerialisableWidgetWrapperPtr;
-
-/**
- * \brief
- * Serialisable GtkAdjustment class.
- *
- * A GtkAdjustment is not a GtkWidget but a GtkObject, so this is not a subclass
- * of SerialisableWidgetWrapper.
- */
-class SerialisableAdjustment
-: public StringSerialisable
+class SerialisableAdjustment :
+	public Gtk::Adjustment,
+	public StringSerialisable
 {
-   // The adjustment
-   GtkObject* _adjustment;
-
 public:
+	// Main constructor
+	SerialisableAdjustment(double value, double lower, double upper);
 
-   // Main constructor
-   SerialisableAdjustment(GtkObject* adj);
-
-   /* StringSerialisable implementation */
-   void importFromString(const std::string& str);
-   std::string exportToString() const;
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
 };
+typedef boost::shared_ptr<SerialisableAdjustment> SerialisableAdjustmentPtr;
+
+// Wrapper class to make existing Gtk::Entries serialisable
+class SerialisableAdjustmentWrapper :
+	public StringSerialisable
+{
+private:
+	Gtk::Adjustment* _adjustment;
+public:
+	// Main constructor, wrapping around an existing widget
+	SerialisableAdjustmentWrapper(Gtk::Adjustment* adjustment);
+
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableAdjustmentWrapper> SerialisableAdjustmentWrapperPtr;
 
 /*
- * Objects which implement StringSerialisable and wrap a GtkWidget.
+ * Gtk::Entry object which implements StringSerialisable.
  */
-
-class SerialisableTextEntry
-: public SerialisableWidgetWrapper
+class SerialisableTextEntry :
+	public Gtk::Entry,
+	public StringSerialisable
 {
 public:
+	// Main constructor
+	SerialisableTextEntry();
 
-   // Main constructor
-   SerialisableTextEntry(GtkWidget* w);
-
-   /* StringSerialisable implementation */
-   void importFromString(const std::string& str);
-   std::string exportToString() const;
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
 };
+typedef boost::shared_ptr<SerialisableTextEntry> SerialisableTextEntryPtr;
 
-class SerialisableSpinButton
-: public SerialisableWidgetWrapper
+// Wrapper class to make existing Gtk::Entries serialisable
+class SerialisableTextEntryWrapper :
+	public StringSerialisable
+{
+private:
+	Gtk::Entry* _entry;
+public:
+	// Main constructor, wrapping around an existing widget
+	SerialisableTextEntryWrapper(Gtk::Entry* entry);
+
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableTextEntryWrapper> SerialisableTextEntryWrapperPtr;
+
+/**
+ * Gtk::SpinButton object which implements StringSerialisable.
+ */
+class SerialisableSpinButton : 
+	public Gtk::SpinButton,
+	public StringSerialisable
 {
 public:
+	// Main constructor
+	SerialisableSpinButton(double value, 
+						   double min, double max, 
+						   double step, guint digits);
 
-   // Main constructor
-   SerialisableSpinButton(GtkWidget* w);
-
-   /* StringSerialisable implementation */
-   void importFromString(const std::string& str);
-   std::string exportToString() const;
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
 };
+typedef boost::shared_ptr<SerialisableSpinButton> SerialisableSpinButtonPtr;
 
-class SerialisableScaleWidget
-: public SerialisableWidgetWrapper
+// Wrapper class to make an existing Gtk::SpinButton serialisable
+class SerialisableSpinButtonWrapper :
+	public StringSerialisable
+{
+private:
+	Gtk::SpinButton* _spin;
+public:
+	// Main constructor, wrapping around an existing widget
+	SerialisableSpinButtonWrapper(Gtk::SpinButton* spin);
+
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableSpinButtonWrapper> SerialisableSpinButtonWrapperPtr;
+
+/**
+ * Gtk::Range object which implements StringSerialisable.
+ */
+class SerialisableScaleWidget :
+	public Gtk::Range,
+	public StringSerialisable
 {
 public:
+	// Main constructor
+	SerialisableScaleWidget();
 
-   // Main constructor
-   SerialisableScaleWidget(GtkWidget*);
-
-   /* StringSerialisable implementation */
-   void importFromString(const std::string& str);
-   std::string exportToString() const;
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
 };
+typedef boost::shared_ptr<SerialisableScaleWidget> SerialisableScaleWidgetPtr;
 
-class SerialisableToggleButton
-: public SerialisableWidgetWrapper
+// Wrapper class to make existing Gtk::Range serialisable
+class SerialisableScaleWidgetWrapper :
+	public StringSerialisable
+{
+private:
+	Gtk::Range* _range;
+public:
+	// Main constructor, wrapping around an existing widget
+	SerialisableScaleWidgetWrapper(Gtk::Range* range);
+
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableScaleWidgetWrapper> SerialisableScaleWidgetWrapperPtr;
+
+/**
+ * Gtk::ToggleButton object which implements StringSerialisable.
+ */
+class SerialisableToggleButton :
+	public Gtk::ToggleButton,
+	public StringSerialisable
 {
 public:
+	// Main constructors
+	SerialisableToggleButton();
+	SerialisableToggleButton(const std::string& label);
 
-   // Main constructor
-   SerialisableToggleButton(GtkWidget* w);
-
-   /* StringSerialisable implementation */
-   void importFromString(const std::string& str);
-   std::string exportToString() const;
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
 };
+typedef boost::shared_ptr<SerialisableToggleButton> SerialisableToggleButtonPtr;
 
+// Wrapper class to make existing Gtk::ToggleButton serialisable
+class SerialisableToggleButtonWrapper :
+	public StringSerialisable
+{
+private:
+	Gtk::ToggleButton* _button;
+public:
+	// Main constructor, wrapping around an existing widget
+	SerialisableToggleButtonWrapper(Gtk::ToggleButton* button);
+
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableToggleButtonWrapper> SerialisableToggleButtonWrapperPtr;
+
+// Base class for serialisable combo boxes (text or index)
+class SerialisableComboBox : 
+	public Gtk::ComboBoxText,
+	public StringSerialisable
+{
+public:
+	SerialisableComboBox() :
+		Gtk::ComboBoxText()
+	{}
+};
+typedef boost::shared_ptr<SerialisableComboBox> SerialisableComboBoxPtr;
 
 /**
  * \brief
- * StringSerialisable combo box which saves the selected value as a numeric
- * index.
+ * StringSerialisable combo box (text values) which saves the 
+ * selected value as a numeric index.
  */
-class SerialisableComboBox_Index
-: public SerialisableWidgetWrapper
+class SerialisableComboBox_Index : 
+	public SerialisableComboBox
 {
 public:
+	/* Main constructor */
+	SerialisableComboBox_Index();
 
-   /* Main constructor */
-   SerialisableComboBox_Index();
-
-   /* StringSerialisable implementation */
-   void importFromString(const std::string& str);
-   std::string exportToString() const;
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
 };
+typedef boost::shared_ptr<SerialisableComboBox_Index> SerialisableComboBox_IndexPtr;
+
+// Wrapper class to make existing Gtk::ComboBoxText serialisable
+class SerialisableComboBox_IndexWrapper :
+	public StringSerialisable
+{
+private:
+	Gtk::ComboBoxText* _combo;
+public:
+	// Main constructor, wrapping around an existing widget
+	SerialisableComboBox_IndexWrapper(Gtk::ComboBoxText* combo);
+
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableComboBox_IndexWrapper> SerialisableComboBox_IndexWrapperPtr;
 
 /**
  * \brief
  * Serialisable combo box which saves the selected value as a text string.
  */
-class SerialisableComboBox_Text
-: public SerialisableWidgetWrapper
+class SerialisableComboBox_Text : 
+	public SerialisableComboBox
 {
 public:
+	/* Main constructor */
+	SerialisableComboBox_Text();
 
-   /* Main constructor */
-   SerialisableComboBox_Text();
-
-   /* StringSerialisable implementation */
-   void importFromString(const std::string& str);
-   std::string exportToString() const;
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
 };
+typedef boost::shared_ptr<SerialisableComboBox_Text> SerialisableComboBox_TextPtr;
 
-}
+// Wrapper class to make existing Gtk::ComboBoxText serialisable
+class SerialisableComboBox_TextWrapper :
+	public StringSerialisable
+{
+private:
+	Gtk::ComboBoxText* _combo;
+public:
+	// Main constructor, wrapping around an existing widget
+	SerialisableComboBox_TextWrapper(Gtk::ComboBoxText* combo);
 
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableComboBox_TextWrapper> SerialisableComboBox_TextWrapperPtr;
+
+} // namespace

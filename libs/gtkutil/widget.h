@@ -49,11 +49,6 @@ inline void widget_toggle_visible(GtkWidget* widget)
   widget_set_visible(widget, !widget_is_visible(widget));
 }
 
-inline void widget_queue_draw(GtkWidget* widget)
-{
-	gtk_widget_queue_draw(widget);
-}
-
 inline void widget_make_default(GtkWidget* widget)
 {
   GTK_WIDGET_SET_FLAGS(widget, GTK_CAN_DEFAULT);

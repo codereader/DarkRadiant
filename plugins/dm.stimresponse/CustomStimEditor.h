@@ -3,44 +3,49 @@
 
 #include "StimTypes.h"
 #include "SREntity.h"
+#include <gtkmm/box.h>
+#include <gtkmm/treemodelfilter.h>
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTreeModel GtkTreeModel;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GtkTreeView GtkTreeView;
-typedef struct _GtkEditable GtkEditable;
-typedef struct _GdkEventButton GdkEventButton;
+namespace Gtk
+{
+	class Entry;
+	class VBox;
+	class Label;
+	class Menu;
+	class MenuItem;
+	class Button;
+	class TreeView;
+}
 
 namespace ui {
 	
-class CustomStimEditor
+class CustomStimEditor :
+	public Gtk::HBox
 {
-	struct PropertyWidget {
-		GtkWidget* vbox;
-		GtkWidget* nameLabel;
-		GtkWidget* nameEntry;
+	struct PropertyWidget
+	{
+		Gtk::VBox* vbox;
+		Gtk::Label* nameLabel;
+		Gtk::Entry* nameEntry;
 	} _propertyWidgets;
 	
 	struct ListContextMenu {
-		GtkWidget* menu;
-		GtkWidget* remove;
-		GtkWidget* add;
+		Gtk::Menu* menu;
+		Gtk::MenuItem* remove;
+		Gtk::MenuItem* add;
 	} _contextMenu;
 
-	struct ListButtons {
-		GtkWidget* add;
-		GtkWidget* remove;
+	struct ListButtons
+	{
+		Gtk::Button* add;
+		Gtk::Button* remove;
 	} _listButtons;
 	
-	// The overall hbox of this page
-	GtkWidget* _pageHBox;
-	
 	// The filtered liststore (a GtkTreeModelFilter)
-	GtkTreeModel* _customStimStore;
+	Glib::RefPtr<Gtk::TreeModelFilter> _customStimStore;
 	
 	// The treeview and its selection
-	GtkWidget* _list;
-	GtkTreeSelection* _selection;
+	Gtk::TreeView* _list;
 	
 	// Reference to the helper object (owned by StimResponseEditor)
 	StimTypes& _stimTypes;
@@ -50,19 +55,15 @@ class CustomStimEditor
 	
 	// The entity we're working on
 	SREntityPtr _entity;
-	
-	GtkWidget* _parentWindow;
 
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	CustomStimEditor(GtkWidget* parentWindow, StimTypes& stimTypes);
+	CustomStimEditor(StimTypes& stimTypes);
 
-	operator GtkWidget*();
-	
 	/** greebo: Sets the new entity (is called by the subclasses)
 	 */
-	void setEntity(SREntityPtr entity);
+	void setEntity(const SREntityPtr& entity);
 	
 private:
 	/** greebo: Updates the property widgets on selection change
@@ -72,7 +73,7 @@ private:
 	/** greebo: Gets called when an entry box changes, this can be
 	 * 			overriden by the subclasses, if this is needed
 	 */
-	void entryChanged(GtkEditable* editable);
+	void entryChanged(Gtk::Entry* editable);
 
 	/** greebo: Returns the ID of the currently selected stim type
 	 * 		
@@ -92,23 +93,24 @@ private:
 	/** greebo: Widget creators
 	 */
 	void createContextMenu();
-	GtkWidget* createListButtons();
+	Gtk::Widget& createListButtons();
 
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
 
-	// GTK Callbacks
-	static void onAddStimType(GtkWidget* button, CustomStimEditor* self);
-	static void onRemoveStimType(GtkWidget* button, CustomStimEditor* self);
-	static void onEntryChanged(GtkEditable* editable, CustomStimEditor* self);
-	static void onSelectionChange(GtkTreeSelection* selection, CustomStimEditor* self);
+	// gtkmm Callbacks
+	void onAddStimType();
+	void onRemoveStimType();
+	void onEntryChanged();
+	void onSelectionChange();
 	
 	// Context menu
 	// Release-event opens the context menu for right clicks
-	static gboolean onTreeViewButtonRelease(GtkTreeView* view, GdkEventButton* ev, CustomStimEditor* self);
-	static void onContextMenuAdd(GtkWidget* w, CustomStimEditor* self);
-	static void onContextMenuDelete(GtkWidget* w, CustomStimEditor* self);
+	bool onTreeViewButtonRelease(GdkEventButton* ev);
+
+	void onContextMenuAdd();
+	void onContextMenuDelete();
 };
 
 } // namespace ui

@@ -6,12 +6,14 @@
 #include "gtkutil/LeftAlignedLabel.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
+#include <gtkmm/spinbutton.h>
 #include "string/string.h"
 
-namespace objectives {
+namespace objectives
+{
 
-namespace ce {
+namespace ce
+{
 
 // Registration helper, will register this editor in the factory
 ReadablePageReachedComponentEditor::RegHelper ReadablePageReachedComponentEditor::regHelper;
@@ -19,44 +21,22 @@ ReadablePageReachedComponentEditor::RegHelper ReadablePageReachedComponentEditor
 // Constructor
 ReadablePageReachedComponentEditor::ReadablePageReachedComponentEditor(Component& component) :
 	_component(&component),
-	_readableSpec(SpecifierType::SET_READABLE()),
-	_pageNum(gtk_spin_button_new_with_range(1, 65535, 1))
+	_readableSpec(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_READABLE())))
 {
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_pageNum), 0);
+	_pageNum = Gtk::manage(new Gtk::SpinButton(*Gtk::manage(new Gtk::Adjustment(1, 1, 65535, 1)), 0, 0));
 
-	// Main vbox
-	_widget = gtk_vbox_new(FALSE, 6);
-
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(std::string("<b>") + _("Readable:") + "</b>"), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), _readableSpec.getWidget(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignedLabel(_("Page Number:")), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::LeftAlignment(_pageNum), FALSE, FALSE, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Readable:") + "</b>")), false, false, 0);
+	pack_start(*_readableSpec, true, true, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Page Number:"))), false, false, 0);
+	pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_pageNum)), false, false, 0);
 
     // Populate the SpecifierEditCombo with the first specifier
-    _readableSpec.setSpecifier(
+    _readableSpec->setSpecifier(
         component.getSpecifier(Specifier::FIRST_SPECIFIER)
     );
 
 	// Initialise the spin button with the value from the first component argument
-	gtk_spin_button_set_value(
-		GTK_SPIN_BUTTON(_pageNum), 
-		strToDouble(component.getArgument(0))
-	);
-}
-
-// Destructor
-ReadablePageReachedComponentEditor::~ReadablePageReachedComponentEditor()
-{
-	if (GTK_IS_WIDGET(_widget))
-	{
-		gtk_widget_destroy(_widget);
-	}
-}
-
-// Get the main widget
-GtkWidget* ReadablePageReachedComponentEditor::getWidget() const
-{
-	return _widget;
+	_pageNum->set_value(strToDouble(component.getArgument(0)));
 }
 
 // Write to component
@@ -65,11 +45,10 @@ void ReadablePageReachedComponentEditor::writeToComponent() const
     assert(_component);
 
     _component->setSpecifier(
-        Specifier::FIRST_SPECIFIER, _readableSpec.getSpecifier()
+        Specifier::FIRST_SPECIFIER, _readableSpec->getSpecifier()
     );
 
-	_component->setArgument(0, 
-		doubleToStr(gtk_spin_button_get_value(GTK_SPIN_BUTTON(_pageNum))));
+	_component->setArgument(0, doubleToStr(_pageNum->get_value()));
 }
 
 } // namespace ce

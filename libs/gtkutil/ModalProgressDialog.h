@@ -1,12 +1,17 @@
 #ifndef MODALINFODIALOG_H_
 #define MODALINFODIALOG_H_
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkwindow.h>
+#include "window/TransientWindow.h"
 
 #include <string>
 #include <stdexcept>
 #include <boost/shared_ptr.hpp>
+
+namespace Gtk
+{
+	class Label;
+	class ProgressBar;
+}
 
 namespace gtkutil
 {
@@ -16,47 +21,39 @@ namespace gtkutil
  * textures.
  */
 
-class ModalProgressDialog
+class ModalProgressDialog :
+	public TransientWindow
 {
-	// Main dialog widget
-	GtkWidget* _widget;
-	
+private:
 	// Label with info text
-	GtkWidget* _label;
+	Gtk::Label* _label;
 	
 	// Progress bar
-	GtkWidget* _progressBar;
+	Gtk::ProgressBar* _progressBar;
 	
 	// Flag to indicate the operation has aborted
 	bool _aborted;
 	
 private:
-
-	// GTK Callback to catch delete-event, to prevent destruction of the
-	// window
-	static gboolean _onDelete(GtkWidget* widget, gpointer data) {
-		return TRUE; // stop event	
-	}
-	
 	// Cancel button callback
-	static void _onCancel(GtkWidget*, ModalProgressDialog*);
+	void _onCancel();
 	
+	void _onRealize();
+
 	// Process the GTK events to ensure the progress bar/text is updated
 	// on screen
 	void handleEvents();
 	
+protected:
+	// Override TransientWindow's delete event
+	void _onDeleteEvent();
+
 public:
 
 	/** Constructor accepts window to be modal for and the dialog
 	 *  title.
 	 */
-	ModalProgressDialog(GtkWindow* parent, const std::string& title);
-
-	/** Destructor. Destroys window and contained widgets.
-	 */
-	~ModalProgressDialog() {
-		gtk_widget_destroy(_widget);
-	}
+	ModalProgressDialog(const Glib::RefPtr<Gtk::Window>& parent, const std::string& title);
 	
 	/**
 	 * Exception thrown when cancel button is pressed.

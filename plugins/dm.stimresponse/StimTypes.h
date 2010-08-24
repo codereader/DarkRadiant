@@ -4,22 +4,8 @@
 #include <map>
 #include <string>
 #include "ientity.h"
-
-// Forward Declaration
-typedef struct _GtkListStore GtkListStore; 
-typedef struct _GtkTreeIter GtkTreeIter;
-
-	namespace {
-		enum {
-		  ST_ID_COL,
-		  ST_CAPTION_COL,
-		  ST_ICON_COL,
-		  ST_NAME_COL,
-		  ST_CAPTION_PLUS_ID_COL,	// The caption plus ID in brackets
-		  ST_CUSTOM_COL,	// TRUE if the row is a custom stim type
-		  ST_NUM_COLS
-		};
-	}
+#include <gtkmm/liststore.h>
+#include <gdkmm/pixbuf.h>
 
 /** greebo: A simple StimType representation.
  */
@@ -35,6 +21,30 @@ typedef std::map<int, StimType> StimTypeMap;
 class StimTypes :
 	public Entity::Visitor // for parsing custom stim keyvalues from entities
 {
+public:
+	// Tree model definition for a Stim/Response list
+	struct Columns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		Columns()
+		{ 
+			add(id);
+			add(caption);
+			add(icon);
+			add(name);
+			add(captionPlusID);
+			add(isCustom);
+		}
+
+		Gtk::TreeModelColumn<int> id;						// ID
+		Gtk::TreeModelColumn<Glib::ustring> caption;		// Caption String
+		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon; // Icon
+		Gtk::TreeModelColumn<Glib::ustring> name;			// Name
+		Gtk::TreeModelColumn<Glib::ustring> captionPlusID;	// The caption plus ID in brackets
+		Gtk::TreeModelColumn<bool> isCustom;				// TRUE if the row is a custom stim type
+	};
+
+private:
 	// The list of available stims 
 	StimTypeMap _stimTypes;
 	
@@ -42,7 +52,8 @@ class StimTypes :
 	StimType _emptyStimType;
 	
 	// The GTK list store for use in combo boxes
-	GtkListStore* _listStore;
+	Columns _columns;
+	Glib::RefPtr<Gtk::ListStore> _listStore;
 
 public:
 	/** greebo: Constructor, loads the Stim types from the registry.
@@ -76,10 +87,11 @@ public:
 	/** greebo: Returns the GtkTreeIter pointing to the element
 	 * 			named <name> located in the member _listStore.
 	 */
-	GtkTreeIter getIterForName(const std::string& name);
+	Gtk::TreeModel::iterator getIterForName(const std::string& name);
 	
-	// operator cast onto a GtkListStore, use this to pack the liststore
-	operator GtkListStore* ();
+	// Get the liststore for use in combo boxes and treeviews
+	const Columns& getColumns() const;
+	const Glib::RefPtr<Gtk::ListStore>& getListStore() const;
 	
 	/** greebo: Entity::Visitor implementation. This parses the keyvalues
 	 * 			for custom stim definitions.
@@ -110,10 +122,11 @@ public:
 	 */		 
 	void remove(int id);
 	
-	/** greebo: Retrieves the GtkTreeIter pointing at the row with the
-	 * 			stim type with the given ID
+	/** 
+	 * greebo: Retrieves the GtkTreeIter pointing at the row with the
+	 * stim type with the given ID
 	 */
-	GtkTreeIter getIterForId(int id);
+	Gtk::TreeModel::iterator getIterForId(int id);
 };
 
 

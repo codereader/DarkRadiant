@@ -212,7 +212,7 @@ void Map::updateTitle() {
 		title += " *";
 	}
 
-	gtk_window_set_title(GlobalMainFrame().getTopLevelWindow(), title.c_str());
+	GlobalMainFrame().getTopLevelWindow()->set_title(title);
 }
 
 void Map::setMapName(const std::string& newName) {

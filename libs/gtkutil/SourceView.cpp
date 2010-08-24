@@ -3,10 +3,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 
-#include "ScrolledFrame.h"
-#include <gtksourceview/gtksourcelanguagemanager.h>
-#include <gtksourceview/gtksourcestyleschememanager.h>
-#include <gtksourceview/gtksourceview.h>
+#include <gtksourceviewmm/sourcestyleschememanager.h>
 
 #include "nonmodal.h"
 
@@ -15,104 +12,91 @@ namespace gtkutil
 
 SourceView::SourceView(const std::string& language, bool readOnly)
 {
-	// Set the search path to the language and style files
-	gchar* directories[2];
+	// Create the GtkScrolledWindow
+	set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+	set_shadow_type(Gtk::SHADOW_ETCHED_IN);
 
+	// Set the search path to the language and style files
 #if defined(POSIX) && defined(PKGDATADIR)
 	std::string langFilesDir = std::string(PKGDATADIR) + "/sourceviewer/";
 #else
 	std::string langFilesDir = GlobalRegistry().get(RKEY_APP_PATH) + "sourceviewer/";
 #endif
 
-	directories[0] = const_cast<gchar*>(langFilesDir.c_str()); // stupid GtkSourceLanguageManager is expecting non-const gchar* pointer...
-	directories[1] = NULL;
+	std::vector<Glib::ustring> path;
+	path.push_back(langFilesDir);
 
-	GtkSourceStyleSchemeManager* styleSchemeManager = gtk_source_style_scheme_manager_get_default();
-	gtk_source_style_scheme_manager_set_search_path(styleSchemeManager, directories);
-	gtk_source_style_scheme_manager_force_rescan(styleSchemeManager);
+	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager = 
+		gtksourceview::SourceStyleSchemeManager::get_default();
 
-	_langManager = gtk_source_language_manager_new();
-	gtk_source_language_manager_set_search_path(_langManager, directories);
-
-	GtkSourceLanguage* lang = gtk_source_language_manager_get_language(_langManager, language.c_str());
-
-	if (lang == NULL)
+	styleSchemeManager->set_search_path(path);
+	styleSchemeManager->force_rescan();
+	
+	_langManager = gtksourceview::SourceLanguageManager::create();
+	_langManager->set_search_path(path);
+	
+	Glib::RefPtr<gtksourceview::SourceLanguage> lang = _langManager->get_language(language);
+	
+	if (!lang)
 	{
 		globalErrorStream() << "SourceView: Cannot find language " << language << " in " << langFilesDir << std::endl;
 	}
 
 	// Remember the pointers to the textbuffers
-	if (lang != NULL)
+	if (lang)
 	{
-		_buffer = gtk_source_buffer_new_with_language(lang);
-		gtk_source_buffer_set_highlight_syntax(_buffer, TRUE);
+		_buffer = gtksourceview::SourceBuffer::create(lang);
+		_buffer->set_highlight_syntax(true);
 	}
 	else
 	{
-		_buffer = gtk_source_buffer_new(NULL);
-		gtk_source_buffer_set_highlight_syntax(_buffer, FALSE);
+		Glib::RefPtr<Gtk::TextTagTable> table = Gtk::TextTagTable::create();
+		_buffer = gtksourceview::SourceBuffer::create(table);
+		_buffer->set_highlight_syntax(false);
 	}
 
-	_view = GTK_SOURCE_VIEW(gtk_source_view_new_with_buffer(_buffer));
-
-	gtk_widget_set_size_request(GTK_WIDGET(_view), 0, -1); // allow shrinking
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_view), GTK_WRAP_WORD);
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(_view), readOnly ? FALSE : TRUE);
-
-	gtk_source_view_set_show_line_numbers(_view, TRUE);
-	gtk_source_view_set_auto_indent(_view, TRUE);
-
+	_view = Gtk::manage(Gtk::manage(new gtksourceview::SourceView(_buffer)));
+	
+	_view->set_size_request(0, -1); // allow shrinking
+	_view->set_wrap_mode(Gtk::WRAP_WORD);
+	_view->set_editable(!readOnly);
+	
+	_view->set_show_line_numbers(true);
+	_view->set_auto_indent(true);
+	
 	// Use a fixed width font
 	PangoFontDescription* fontDesc = pango_font_description_from_string("Monospace");
 
 	if (fontDesc != NULL)
 	{
-		gtk_widget_modify_font(GTK_WIDGET(_view), fontDesc);
+		gtk_widget_modify_font(GTK_WIDGET(_view->gobj()), fontDesc);
 	}
 
 	// Use a tab size of 4
-	gtk_source_view_set_tab_width(GTK_SOURCE_VIEW(_view), 4);
+	_view->set_tab_width(4);
+	
+	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_view->gobj()));
 
-	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_view));
-
-	_widget = gtkutil::ScrolledFrame(GTK_WIDGET(_view));
+	add(*_view);
 }
 
 SourceView::~SourceView()
-{
-	g_object_unref(_langManager);
-}
+{}
 
 void SourceView::setContents(const std::string& newContents)
 {
-	gtk_text_buffer_set_text(GTK_TEXT_BUFFER(_buffer), newContents.c_str(), -1);
+	_buffer->set_text(newContents);
 }
 
 std::string SourceView::getContents()
 {
-	GtkTextIter start;
-	GtkTextIter end;
-
-	gtk_text_buffer_get_bounds(GTK_TEXT_BUFFER(_buffer), &start, &end);
-
 	// Extract the script from the input window
-	gchar* text = gtk_text_buffer_get_text(GTK_TEXT_BUFFER(_buffer), &start, &end, TRUE);
-
-	if (text == NULL)
-	{
-		return std::string("");
-	}
-
-	// Convert to std::string, free the GLIB stuff and return
-	std::string contents(text);
-	g_free(text);
-
-	return contents;
+	return _buffer->get_text();
 }
 
 void SourceView::clear()
 {
-	gtk_text_buffer_set_text(GTK_TEXT_BUFFER(_buffer), "", -1);
+	setContents("");
 }
 
 } // namespace gtkutil

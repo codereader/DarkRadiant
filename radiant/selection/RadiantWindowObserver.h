@@ -1,7 +1,6 @@
 #ifndef RADIANTWINDOWOBSERVER_H_
 #define RADIANTWINDOWOBSERVER_H_
 
-#include "gdk/gdkevents.h"
 #include "view.h"
 
 #include "windowobserver.h"
@@ -10,16 +9,26 @@
 #include "ManipulateObserver.h"
 #include "SelectionTest.h"
 
-typedef struct _GtkWindow GtkWindow;
-typedef struct _GtkWidget GtkWidget;
+#include <sigc++/connection.h>
+
+typedef struct _GdkEventButton GdkEventButton;
+typedef struct _GdkEventKey GdkEventKey;
+
+namespace Glib { template<class T>class RefPtr; }
+namespace Gtk { class Widget; }
 
 // Abstract base class of the SelectionSystem Observer extending the WindowObserver interface
-class SelectionSystemWindowObserver : public WindowObserver {
+class SelectionSystemWindowObserver : 
+	public WindowObserver
+{
 public:
 	virtual void setView(const View& view) = 0;
 	virtual void setRectangleDrawCallback(const Rectangle::Callback& callback) = 0;
-	virtual void addObservedWidget(GtkWidget* observed) = 0;
-	virtual void removeObservedWidget(GtkWidget* observed) = 0;
+	virtual void addObservedWidget(Gtk::Widget* observed) = 0;
+	virtual void removeObservedWidget(Gtk::Widget* observed) = 0;
+
+	virtual void addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed) = 0;
+	virtual void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed) = 0;
 };
 
 // ====================================================================================
@@ -49,7 +58,10 @@ class RadiantWindowObserver :
 	// Whether the key handler should listen for cancel events
 	bool _listenForCancelEvents;
 
-	typedef std::map<GtkWidget*, gulong> KeyHandlerMap;
+	typedef std::map<Gtk::Widget*, sigc::connection> KeyHandlerMap;
+	typedef std::map<Glib::RefPtr<Gtk::Widget>, sigc::connection> RefPtrKeyHandlerMap;
+	
+	RefPtrKeyHandlerMap _refKeyHandlers;
 	KeyHandlerMap _keyHandlers;
   	
   	// A "third-party" event to be called when the mouse moved and/or button is released
@@ -75,8 +87,11 @@ public:
 	void setView(const View& view);
 	
 	// Tells the observer which GtkWidget it is actually observing
-	void addObservedWidget(GtkWidget* observed);
-	void removeObservedWidget(GtkWidget* observed);
+	void addObservedWidget(Gtk::Widget* observed);
+	void removeObservedWidget(Gtk::Widget* observed);
+
+	void addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
+	void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
 	
 	// Pass the rectangle callback function to the selector subclass
 	void setRectangleDrawCallback(const Rectangle::Callback& callback);
@@ -85,24 +100,24 @@ public:
 	void onSizeChanged(int width, int height);
   
 	// Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
-	void onMouseDown(const WindowVector& position, GdkEventButton* event);
+	void onMouseDown(const WindowVector& position, GdkEventButton* ev);
 	
   	/* greebo: Handle the mouse movement. This notifies the registered mouseMove callback
   	 * and resets the cycle selection counter 
   	 */
-	void onMouseMotion(const WindowVector& position, const unsigned int& state);
+	void onMouseMotion(const WindowVector& position, unsigned int state);
 	
 	/* greebo: Handle the mouseUp event. Usually, this means the end of an operation, so
 	 * this has to check, if there are any callbacks connected, and call them if this is the case
 	 */
-  	void onMouseUp(const WindowVector& position, GdkEventButton* event);
+  	void onMouseUp(const WindowVector& position, GdkEventButton* ev);
   	
 	// Cancels the current operation and disconnects the mouse handlers
 	void cancelOperation();
 
 private:
 	// The callback for catching the cancel-event (ESC-key) 
-  	static gboolean onKeyPress(GtkWindow* window, GdkEventKey* event, RadiantWindowObserver* self);
+  	bool onKeyPress(GdkEventKey* ev);
 
 }; // class RadiantWindowObserver
 

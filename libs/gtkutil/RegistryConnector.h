@@ -7,10 +7,8 @@
 #include "iregistry.h"
 #include <StringSerialisable.h>
 
-// Forward declarations to avoid including the whole GTK headers
-typedef struct _GtkObject GtkObject;
-
-namespace gtkutil {
+namespace gtkutil
+{
 
 /**
  * \brief

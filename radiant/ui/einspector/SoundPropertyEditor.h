@@ -12,24 +12,13 @@ namespace ui
 class SoundPropertyEditor
 : public PropertyEditor
 {
-	// Main widget
-	GtkWidget* _widget;
-	
+private:
 	// Keyvalue to set
 	std::string _key;
 	
 private:
 
-	/* GTK CALLBACKS */
-	static void _onBrowseButton(GtkWidget*, SoundPropertyEditor*);
-	
-protected:
-	
-	// Return main widget to parent class
-	GtkWidget* _getWidget() const 
-    {
-		return _widget;
-	}
+	void _onBrowseButton();
 	
 public:
 
@@ -40,7 +29,7 @@ public:
 	SoundPropertyEditor(Entity* entity, 
 					    const std::string& name,
 					    const std::string& options);
-					   
+
 	// Clone method for virtual construction
 	IPropertyEditorPtr createNew(Entity* entity,
 								const std::string& name,
@@ -50,7 +39,6 @@ public:
 			new SoundPropertyEditor(entity, name, options)
 		);
 	}
-	
 };
 
 }

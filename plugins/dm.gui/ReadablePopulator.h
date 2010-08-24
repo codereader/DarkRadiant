@@ -30,7 +30,7 @@ private:
 
 public:
 	ReadablePopulator(gtkutil::VFSTreePopulator& popOne,
-					  gtkutil::VFSTreePopulator& popTwo, GtkWindow* parent) :
+					  gtkutil::VFSTreePopulator& popTwo, const Glib::RefPtr<Gtk::Window>& parent) :
 		_popOne(popOne),
 		_popTwo(popTwo),
 		_progress(parent, _("Analysing Guis")),

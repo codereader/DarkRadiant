@@ -1,10 +1,16 @@
 #ifndef CUSTOM_CLOCKED_COMPONENT_EDITOR_H_
 #define CUSTOM_CLOCKED_COMPONENT_EDITOR_H_
 
-#include "ComponentEditor.h"
+#include "ComponentEditorBase.h"
 #include "ComponentEditorFactory.h"
 #include "SpecifierEditCombo.h"
 #include "../ComponentType.h"
+
+namespace Gtk
+{
+	class Entry;
+	class SpinButton;
+}
 
 namespace objectives {
 
@@ -17,7 +23,7 @@ namespace ce {
  * and a special spawnarg.
  */
 class CustomClockedComponentEditor : 
-	public ComponentEditor
+	public ComponentEditorBase
 {
 	// Registration class
 	static struct RegHelper 
@@ -30,17 +36,14 @@ class CustomClockedComponentEditor :
 		}
 	} regHelper;
 	
-	// Main widget
-	GtkWidget* _widget;
-	
 	// Component to edit
 	Component* _component;
 
 	// The text field for the script function name
-	GtkWidget* _scriptFunction;
+	Gtk::Entry* _scriptFunction;
 
 	// The spin button for the clock interval
-	GtkWidget* _interval;
+	Gtk::SpinButton* _interval;
 	
 public:
 
@@ -48,7 +51,6 @@ public:
 	 * Construct a default CustomClockedComponentEditor.
 	 */
 	CustomClockedComponentEditor() : 
-		_widget(NULL),
 		_component(NULL),
 		_scriptFunction(NULL),
 		_interval(NULL)
@@ -63,19 +65,12 @@ public:
 	 */
 	CustomClockedComponentEditor(Component& component);
 	
-	/**
-	 * Destructor
-	 */
-	~CustomClockedComponentEditor();
-	
 	/* ComponentEditor implementation */
 	
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new CustomClockedComponentEditor(component));
 	}
 	
-	GtkWidget* getWidget() const; 
-
     void writeToComponent() const;
 };
 

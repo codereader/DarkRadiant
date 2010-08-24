@@ -6,11 +6,24 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "ReadableGuiView.h"
 #include <map>
-#include <gtk/gtk.h>
 #include "XDataLoader.h"
 #include "string/string.h"
 
 class Entity;
+
+namespace Gtk
+{
+	class VBox;
+	class HPaned;
+	class Entry;
+	class SpinButton;
+	class RadioButton;
+	class Table;
+	class TextView;
+	class ScrolledWindow;
+	class Menu;
+	class Button;
+}
 
 namespace ui
 {
@@ -26,7 +39,6 @@ namespace
 class ReadableEditorDialog :
 	public gtkutil::BlockingTransientWindow
 {
-
 public:
 	enum Result
 	{
@@ -36,7 +48,7 @@ public:
 	};
 
 private:
-	gui::GuiViewPtr _guiView;
+	gui::GuiView* _guiView;
 
 	// A container for storing enumerated widgets
 	std::map<int, GtkWidget*> _widgets;
@@ -76,6 +88,37 @@ private:
 	// Prevents saving races.
 	bool _saveInProgress;
 
+	Gtk::VBox* _editPane;
+	Gtk::HPaned* _paned;
+	Gtk::Entry* _nameEntry;
+	Gtk::Entry* _xDataNameEntry;
+	Gtk::SpinButton* _numPages;
+
+	Gtk::RadioButton* _oneSidedButton;
+	Gtk::RadioButton* _twoSidedButton;
+	Gtk::Entry* _pageTurnEntry;
+	Gtk::Label* _curPageDisplay;
+	Gtk::Entry* _guiEntry;
+	Gtk::Table* _textViewTable;
+
+	Gtk::Label* _pageLeftLabel;
+	Gtk::Label* _pageRightLabel;
+
+	Gtk::TextView* _textViewTitle;
+	Gtk::TextView* _textViewRightTitle;
+	Gtk::TextView* _textViewBody;
+	Gtk::TextView* _textViewRightBody;
+	Gtk::ScrolledWindow* _textViewRightTitleScrolled;
+	Gtk::ScrolledWindow* _textViewRightBodyScrolled;
+
+	Gtk::Menu* _insertMenu;
+	Gtk::Menu* _deleteMenu;
+	Gtk::Menu* _appendMenu;
+	Gtk::Menu* _prependMenu;
+	Gtk::Menu* _toolsMenu;
+
+	Gtk::Button* _saveButton;
+
 public:
 	// Pass the working entity to the constructor
 	ReadableEditorDialog(Entity* entity);
@@ -90,7 +133,10 @@ public:
 	// Uses the current data in the readable editor for updating or imports XData/guis by the passed strings.
 	// This Method can create error-messages. For that reason a parent window can be specified. If Null the Readable
 	// Editor Dialog is parent.
-	void updateGuiView(GtkWindow* parent = NULL, const std::string& guiPath = "", const std::string& xDataName = "", const std::string& xDataPath = "");
+	void updateGuiView(const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(), 
+					   const std::string& guiPath = "", 
+					   const std::string& xDataName = "", 
+					   const std::string& xDataPath = "");
 
 protected:
 	virtual void _postShow();
@@ -150,67 +196,53 @@ private:
 	void deleteSide(bool rightSide);
 
 	// Ui Creation:
-	GtkWidget* createEditPane();
-	GtkWidget* createGeneralPropertiesInterface();
-	GtkWidget* createPageRelatedInterface();
-	GtkWidget* createButtonPanel();
+	Gtk::Widget& createEditPane();
+	Gtk::Widget& createGeneralPropertiesInterface();
+	Gtk::Widget& createPageRelatedInterface();
+	Gtk::Widget& createButtonPanel();
 	void createMenus();
 
 	// Callback methods for Signals:
-	static void onCancel(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onSave(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onSaveClose(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onBrowseXd(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onBrowseGui(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onFirstPage(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onPrevPage(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onNextPage(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onLastPage(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onInsert(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onDelete(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onValueChanged(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onMenuAppend(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onMenuPrepend(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onToolsClicked(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onXdImpSum(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onDupDef(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onGuiImpSum(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onInsertWhole(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onInsertLeft(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onInsertRight(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onDeleteWhole(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onDeleteLeft(GtkWidget* widget, ReadableEditorDialog* self);
-	static void onDeleteRight(GtkWidget* widget, ReadableEditorDialog* self);
+	void onCancel();
+	void onSave();
+	void onSaveClose();
+	void onBrowseXd();
+	void onBrowseGui();
+	void onFirstPage();
+	void onPrevPage();
+	void onNextPage();
+	void onLastPage();
+	void onInsert();
+	void onDelete();
+	void onValueChanged();
+	void onMenuAppend();
+	void onMenuPrepend();
+	void onToolsClicked();
+	void onXdImpSum();
+	void onDupDef();
+	void onGuiImpSum();
+	void onInsertWhole();
+	void onInsertLeft();
+	void onInsertRight();
+	void onDeleteWhole();
+	void onDeleteLeft();
+	void onDeleteRight();
 
 	
 	// Callback methods for Events:
-	static gboolean onOneSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
-	static gboolean onTwoSided(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
-	static gboolean onFocusOut(GtkWidget* widget, GdkEventKey* event, ReadableEditorDialog* self);
-	static gboolean onKeyPress(GtkWidget *widget, GdkEventKey *event, ReadableEditorDialog* self);
-	static void onTextChanged(GtkTextBuffer* textbuffer, ReadableEditorDialog* self);
+	bool onOneSided(GdkEventButton* ev);
+	bool onTwoSided(GdkEventButton* ev);
+	bool onFocusOut(GdkEventFocus* ev, Gtk::Widget* widget); // widget is manually bound
+	bool onKeyPress(GdkEventKey* ev, Gtk::Widget* widget); // widget is manually bound
+	void onTextChanged();
 
 	// Helper Methods:
 
 	// Read Text from a given TextView Widget identified by its widget enumerator.
-	std::string readTextBuffer(int wEnum)
-	{
-		GtkTextBuffer* buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[wEnum]));
-		GtkTextIter start, end;
-		gtk_text_buffer_get_bounds(buffer,&start,&end);
-		return gtk_text_buffer_get_text(buffer,&start,&end, TRUE);
-	}
+	std::string readTextBuffer(Gtk::TextView* view);
 
 	// Sets the text of a TextView identified by its widget enumerator and scrolls it to the end.
-	void setTextViewAndScroll(int wEnum, std::string text)
-	{
-		GtkTextBuffer* bfr = GTK_TEXT_BUFFER(gtk_text_view_get_buffer(GTK_TEXT_VIEW(_widgets[wEnum])));
-		gtk_text_buffer_set_text(bfr, text.c_str(), static_cast<gint>(text.size()));
-		GtkTextIter ending;
-		gtk_text_buffer_get_end_iter( bfr, &ending );
-		GtkTextMark* pMarkEnd = gtk_text_buffer_create_mark(bfr, "", &ending,FALSE);
-		gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(_widgets[wEnum]), pMarkEnd, 0, FALSE, 0, 0);	//for some strange reason scroll to iter does not work...
-	}
+	void setTextViewAndScroll(Gtk::TextView* view, std::string text);
 };
 
 } // namespace ui

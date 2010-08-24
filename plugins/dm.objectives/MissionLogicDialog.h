@@ -21,11 +21,9 @@ class ObjectiveEntity;
 class MissionLogicDialog : 
 	public gtkutil::BlockingTransientWindow
 {
-	// Widgets map
-	std::map<int, GtkWidget*> _widgets;
-
+private:
 	// A container for the logic editors of the various difficulty levels
-	typedef std::map<int, LogicEditorPtr> LogicEditorMap;
+	typedef std::map<int, LogicEditor*> LogicEditorMap;
 	LogicEditorMap _logicEditors;
 
 	// The objective entity we're working on
@@ -41,12 +39,12 @@ public:
 	 * @param objectiveEnt
 	 * The Objective Entity object for which the logic should be edited.
 	 */
-	MissionLogicDialog(GtkWindow* parent, ObjectiveEntity& objectiveEnt);
+	MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, ObjectiveEntity& objectiveEnt);
 
 private:
 
 	// Helper methods
-	GtkWidget* createButtons();
+	Gtk::Widget& createButtons();
 
 	// Creates one logic editor for each difficulty level plus the default one
 	void createLogicEditors();
@@ -57,9 +55,9 @@ private:
 	// Writes the contents of the widgets to the objective entity
 	void save();
 
-	// GTK CALLBACKS
-	static void _onOK(GtkWidget*, MissionLogicDialog*);
-	static void _onCancel(GtkWidget*, MissionLogicDialog*);
+	// gtkmm CALLBACKS
+	void _onOK();
+	void _onCancel();
 };
 
 } // namespace objectives

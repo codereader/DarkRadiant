@@ -48,9 +48,9 @@ public:
 		return (_dialog != NULL) ? _dialog->addPathEntry(label, foldersOnly) : ui::INVALID_HANDLE;
 	}
 
-	ui::IDialog::Handle addSpinButton(const std::string& label, double min, double max, double step)
+	ui::IDialog::Handle addSpinButton(const std::string& label, double min, double max, double step, unsigned int digits)
 	{
-		return (_dialog != NULL) ? _dialog->addSpinButton(label, min, max, step) : ui::INVALID_HANDLE;
+		return (_dialog != NULL) ? _dialog->addSpinButton(label, min, max, step, digits) : ui::INVALID_HANDLE;
 	}
 
 	ui::IDialog::Handle addCheckbox(const std::string& label)

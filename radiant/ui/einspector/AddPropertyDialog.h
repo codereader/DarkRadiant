@@ -1,13 +1,19 @@
 #ifndef ADDPROPERTYDIALOG_H_
 #define ADDPROPERTYDIALOG_H_
 
-#include <gtk/gtkwidget.h>
-#include <gtk/gtktreeview.h>
-#include <gtk/gtktreestore.h>
-#include <gtk/gtktreeselection.h>
+#include "gtkutil/window/BlockingTransientWindow.h"
 
 #include <string>
 #include "ientity.h"
+
+#include <gtkmm/treestore.h>
+#include <gtkmm/treeselection.h>
+
+namespace Gtk
+{
+	class TreeView;
+	class TextView;
+}
 
 namespace ui
 {
@@ -17,23 +23,39 @@ namespace ui
  * creates the dialog, blocks in a recursive main loop until the choice is
  * made, and then returns the string property that was selected.
  */
-
-class AddPropertyDialog
+class AddPropertyDialog :
+	public gtkutil::BlockingTransientWindow
 {
 public:
 	typedef std::vector<std::string> PropertyList;
 
+	// Treemodel definition
+	struct TreeColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TreeColumns()
+		{ 
+			add(displayName); 
+			add(propertyName); 
+			add(icon);
+			add(description);
+		}
+
+		Gtk::TreeModelColumn<Glib::ustring> displayName;
+		Gtk::TreeModelColumn<Glib::ustring> propertyName;
+		Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > icon;
+		Gtk::TreeModelColumn<Glib::ustring> description;
+	};
+
 private:
-	// Main dialog widget
-	GtkWidget* _widget;
-	
 	// Tree view, selection and model
-	GtkTreeStore* _treeStore;
-	GtkWidget* _treeView;
-	GtkTreeSelection* _selection;
+	TreeColumns _columns;
+	Glib::RefPtr<Gtk::TreeStore> _treeStore;
+	Gtk::TreeView* _treeView;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 	
 	// Text view for displaying usage info
-	GtkWidget* _usageTextView;
+	Gtk::TextView* _usageTextView;
 	
 	// The selected properties
 	PropertyList _selectedProperties;
@@ -42,29 +64,29 @@ private:
 	Entity* _entity;
 	
 private:
-
 	// Create GUI components
-	GtkWidget* createTreeView();
-	GtkWidget* createButtonsPanel();
-	GtkWidget* createUsagePanel();
+	Gtk::Widget& createTreeView();
+	Gtk::Widget& createButtonsPanel();
+	Gtk::Widget& createUsagePanel();
 	
 	// Populate tree view with properties
 	void populateTreeView();
 
 	void updateUsagePanel();
 	
-	/* GTK CALLBACKS */
-	
-	static void _onDelete(GtkWidget*, GdkEvent*, AddPropertyDialog*);
-	static void _onOK(GtkWidget*, AddPropertyDialog*);
-	static void _onCancel(GtkWidget*, AddPropertyDialog*);
-	static void _onSelectionChanged(GtkWidget*, AddPropertyDialog*);
+	void _onOK();
+	void _onCancel();
+	void _onSelectionChanged();
 		
 	/* Private constructor creates the dialog widgets. Accepts an Entity
 	 * to use for populating class-specific keys.
 	 */
 	AddPropertyDialog(Entity* entity);
 	
+protected:
+	// Override TransientWindow::_onDeleteEvent
+	void _onDeleteEvent();
+
 public:
 
 	/** 
@@ -78,9 +100,8 @@ public:
 	 * String list of the chosen properties (e.g. "light_radius").
 	 */
 	static PropertyList chooseProperty(Entity* entity);
-
 };
 
-}
+} // namespace
 
 #endif /*ADDPROPERTYDIALOG_H_*/

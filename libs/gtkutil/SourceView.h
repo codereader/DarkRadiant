@@ -2,26 +2,21 @@
 #define GTKUTIL_SOURCEVIEW_H_
 
 #include <string>
-#include "gtkutil/ifc/Widget.h"
-
-typedef struct _GtkSourceBuffer GtkSourceBuffer;
-typedef struct _GtkSourceView GtkSourceView;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkSourceLanguageManager GtkSourceLanguageManager;
+#include <gtkmm/scrolledwindow.h>
+#include <gtksourceviewmm/sourceview.h>
+#include <gtksourceviewmm/sourcelanguagemanager.h>
 
 namespace gtkutil 
 {
 
 class SourceView :
-	public Widget
+	public Gtk::ScrolledWindow
 {
-	// The top-level widget
-	GtkWidget* _widget;
+private:
+	gtksourceview::SourceView* _view;
+	Glib::RefPtr<gtksourceview::SourceBuffer> _buffer;
 
-	GtkSourceView* _view;
-	GtkSourceBuffer* _buffer;
-
-	GtkSourceLanguageManager* _langManager;
+	Glib::RefPtr<gtksourceview::SourceLanguageManager> _langManager;
 
 public:
 	/**
@@ -41,13 +36,6 @@ public:
 
 	// Clears the contents of the buffer
 	void clear();
-
-protected:
-	// gtkutil::Widget implementation
-	GtkWidget* _getWidget() const
-	{
-		return _widget;
-	}
 };
 
 } // namespace gtkutil

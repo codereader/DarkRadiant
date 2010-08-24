@@ -13,8 +13,9 @@
 #include "ishaders.h"
 #include "iregistry.h"
 
-#include <gtk/gtk.h>
 #include <GL/glew.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/treestore.h>
 #include <vector>
 #include <string>
 #include <map>
@@ -30,23 +31,17 @@ namespace ui
 
 /* CONSTANTS */
 
-namespace {
-	const char* FOLDER_ICON = "folder16.png";
-	const char* TEXTURE_ICON = "icon_texture.png";
-	
-	// Column enum
-	enum {
-		NAME_COL, // shader name only (without path)
-		FULLNAME_COL, // Full shader name 
-		IMAGE_COL, // Icon
-		N_COLUMNS
-	};
+namespace
+{
+	const char* const FOLDER_ICON = "folder16.png";
+	const char* const TEXTURE_ICON = "icon_texture.png";
 }
 
 // Constructor creates GTK elements
 ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture) :
-	_glWidget(true),
-	_infoStore(gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING)),
+	Gtk::VBox(false, 3),
+	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ShaderSelector"))),
+	_infoStore(Gtk::ListStore::create(_infoStoreColumns)),
 	_client(client),
 	_isLightTexture(isLightTexture)
 {
@@ -54,39 +49,41 @@ ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes, bool
 	boost::algorithm::split(_prefixes, prefixes, boost::algorithm::is_any_of(","));
 	
 	// Construct main VBox, and pack in TreeView and info panel
-	_widget = gtk_vbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(_widget), createTreeView(), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), createPreview(), FALSE, FALSE, 0);
+	pack_start(createTreeView(), true, true, 0);
+	pack_start(createPreview(), false, false, 0);
 }
 
 // Return the selection to the calling code
-std::string ShaderSelector::getSelection() {
+std::string ShaderSelector::getSelection()
+{
+	Gtk::TreeModel::iterator iter = _selection->get_selected();
 
-	// Get the selection
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	if (gtk_tree_selection_get_selected(_selection, &model, &iter)) {
-		return gtkutil::TreeModel::getString(model, &iter, FULLNAME_COL);
+	if (iter)
+	{
+		Gtk::TreeModel::Row row = *iter;
+		return row[_shaderTreeColumns.shaderName];
 	}
-	else {
+	else
+	{
 		// Nothing selected, return empty string
 		return "";
 	}
 }
 
 // Set the selection in the treeview
-void ShaderSelector::setSelection(const std::string& sel) {
-
+void ShaderSelector::setSelection(const std::string& sel)
+{
 	// If the selection string is empty, collapse the treeview and return with
 	// no selection
-	if (sel.empty()) {
-		gtk_tree_view_collapse_all(GTK_TREE_VIEW(_treeView));
+	if (sel.empty())
+	{
+		_treeView->collapse_all();
 		return;
 	}
 
 	// Use the gtkutil TreeModel algorithms to select the shader
 	gtkutil::TreeModel::findAndSelectString(
-		GTK_TREE_VIEW(_treeView), boost::algorithm::to_lower_copy(sel), FULLNAME_COL);
+		_treeView, boost::algorithm::to_lower_copy(sel), _shaderTreeColumns.shaderName);
 }
 
 // Local functor to populate the tree view with shader names
@@ -94,12 +91,22 @@ void ShaderSelector::setSelection(const std::string& sel) {
 namespace {
 
 	// VFSPopulatorVisitor to fill in column data for the populator tree nodes
-	class DataInserter
-	: public gtkutil::VFSTreePopulator::Visitor
+	class DataInserter : 
+		public gtkutil::VFSTreePopulator::Visitor
 	{
+	private:
+		const ShaderSelector::ShaderTreeColumns& _columns;
+
+	public:
+		DataInserter(const ShaderSelector::ShaderTreeColumns& columns) :
+			_columns(columns)
+		{}
+
+		virtual ~DataInserter() {}
+
 		// Required visit function
-		void visit(GtkTreeStore* store, 
-				   GtkTreeIter* iter, 
+		void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+				   const Gtk::TreeModel::iterator& iter, 
 				   const std::string& path,
 				   bool isExplicit)
 		{
@@ -111,19 +118,13 @@ namespace {
 			// Pathname is the model VFS name for a model, and blank for a folder
 			std::string fullPath = isExplicit ? path : "";
 
-			// Pixbuf depends on node type
-			GdkPixbuf* pixBuf = isExplicit 
-								? GlobalUIManager().getLocalPixbuf(TEXTURE_ICON)
-								: GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
 			// Fill in the column values
-			gtk_tree_store_set(store, iter, 
-							   NAME_COL, displayName.c_str(),
-							   FULLNAME_COL, fullPath.c_str(),
-							   IMAGE_COL, pixBuf,
-							   -1);
-		} 	
-		public:
-		virtual ~DataInserter() {}
+			Gtk::TreeModel::Row row = *iter;
+
+			row[_columns.displayName] = displayName;
+			row[_columns.shaderName] = fullPath;
+			row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? TEXTURE_ICON : FOLDER_ICON);
+		}
 	};
 
 	class ShaderNameFunctor 
@@ -135,36 +136,22 @@ namespace {
 		// The populator that gets called to add the parsed elements
 		gtkutil::VFSTreePopulator& _populator;
 
-		// Map of prefix to an path pointing to the top-level row that contains
-		// instances of this prefix
-		std::map<std::string, GtkTreePath*> _iterMap;
-		
 		// Constructor
 		ShaderNameFunctor(gtkutil::VFSTreePopulator& populator, ShaderSelector::PrefixList& prefixes) :
 			_prefixes(prefixes), 
 			_populator(populator)
 		{}
 		
-		// Destructor. Each GtkTreePath needs to be explicitly freed
-		~ShaderNameFunctor() {
-			for (std::map<std::string, GtkTreePath*>::iterator i = _iterMap.begin();
-					i != _iterMap.end();
-				 		++i) 
-			{
-				gtk_tree_path_free(i->second);
-			}
-		}
-	
 		void visit(const std::string& shaderName)
 		{
-			std::string name = boost::algorithm::to_lower_copy(shaderName);
-			
 			for (ShaderSelector::PrefixList::iterator i = _prefixes.begin();
 				 i != _prefixes.end();
-				 i++)
+				 ++i)
 			{
-				if (!name.empty() && boost::algorithm::istarts_with(name, (*i) + "/")) {
-					_populator.addPath(name);
+				// Only allow the prefixes passed in the constructor
+				if (!shaderName.empty() && boost::algorithm::istarts_with(shaderName, (*i) + "/"))
+				{
+					_populator.addPath(boost::algorithm::to_lower_copy(shaderName));
 					break; // don't consider any further prefixes
 				}
 			}
@@ -173,88 +160,72 @@ namespace {
 }
 
 // Create the Tree View
-GtkWidget* ShaderSelector::createTreeView() {
-	// Tree model
-	GtkTreeStore* store = gtk_tree_store_new(N_COLUMNS,
-											 G_TYPE_STRING, // display name in tree
-											 G_TYPE_STRING, // full shader name
-											 GDK_TYPE_PIXBUF); 
-	
+Gtk::Widget& ShaderSelector::createTreeView()
+{
+	Glib::RefPtr<Gtk::TreeStore> treeStore = Gtk::TreeStore::create(_shaderTreeColumns);
+	// Set the tree store to sort on this column	
+	treeStore->set_sort_column(_shaderTreeColumns.displayName, Gtk::SORT_ASCENDING);
+
 	// Instantiate the helper class that populates the tree according to the paths
-	gtkutil::VFSTreePopulator populator(store);
+	gtkutil::VFSTreePopulator populator(treeStore);
 	
 	ShaderNameFunctor func(populator, _prefixes);
 	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &func, _1));
 	
-	// Now visit the created GtkTreeIters to load the actual data into the tree
-	DataInserter inserter;
+	// Now visit the created iterators to load the actual data into the tree
+	DataInserter inserter(_shaderTreeColumns);
 	populator.forEachNode(inserter);
 	
 	// Tree view
-	_treeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(store));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_treeView), FALSE);
-	g_object_unref(store); // tree view owns the reference now
+	_treeView = Gtk::manage(new Gtk::TreeView(treeStore));
+	_treeView->set_headers_visible(false);
 
 	// Single visible column, containing the directory/shader name and the icon
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_treeView),
-								gtkutil::IconTextColumn(_("Value"),
-														NAME_COL,
-														IMAGE_COL));
-
-	// Set the tree store to sort on this column
-    gtk_tree_sortable_set_sort_column_id(
-        GTK_TREE_SORTABLE(store),
-        NAME_COL,
-        GTK_SORT_ASCENDING
-    );
+	Gtk::TreeView::Column* col = Gtk::manage(new gtkutil::IconTextColumn(
+		_("Value"), _shaderTreeColumns.displayName, _shaderTreeColumns.icon)
+	);
+	// The name column should
+	col->set_sort_column(_shaderTreeColumns.displayName);
+	
+	_treeView->append_column(*col);
 
 	// Use the TreeModel's full string search function
-	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(_treeView), gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
 	// Get selection and connect the changed callback
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
-	g_signal_connect(G_OBJECT(_selection), 
-					 "changed", 
-					 G_CALLBACK(_onSelChange), 
-					 this);
+	_selection = _treeView->get_selection();
+	_selection->signal_changed().connect(sigc::mem_fun(*this, &ShaderSelector::_onSelChange));
 
 	// Pack into scrolled window and frame
-	return gtkutil::ScrolledFrame(_treeView);
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Create the preview panel (GL widget and info table)
-GtkWidget* ShaderSelector::createPreview() {
-
+Gtk::Widget& ShaderSelector::createPreview()
+{
 	// HBox contains the preview GL widget along with a texture attributes
 	// pane.
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
 
 	// Cast the GLWidget object to GtkWidget
-	GtkWidget* glWidget = _glWidget;
-	gtk_widget_set_size_request(glWidget, 128, 128);
-	g_signal_connect(G_OBJECT(glWidget), 
-					 "expose-event", 
-					 G_CALLBACK(_onExpose), 
-					 this);
-	GtkWidget* glFrame = gtk_frame_new(NULL);
-	gtk_container_add(GTK_CONTAINER(glFrame), glWidget);
-	gtk_box_pack_start(GTK_BOX(hbx), glFrame, FALSE, FALSE, 0);
+	_glWidget->set_size_request(128, 128);
+	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ShaderSelector::_onExpose));
+
+	Gtk::Frame* glFrame = Gtk::manage(new Gtk::Frame);
+	glFrame->add(*_glWidget);
+
+	hbx->pack_start(*glFrame, false, false, 0);
 	
 	// Attributes table
-
-	GtkWidget* tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_infoStore));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tree), FALSE);
+	Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView(_infoStore));
+	tree->set_headers_visible(false);
 	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tree),
-								gtkutil::TextColumn(_("Attribute"), 0));
-	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tree),
-								gtkutil::TextColumn(_("Value"), 1));
+	tree->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)));
+	tree->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Value"), _infoStoreColumns.value)));
 
-	gtk_box_pack_start(GTK_BOX(hbx), 
-					   gtkutil::ScrolledFrame(tree), 
-					   TRUE, TRUE, 0);
-	return hbx;
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*tree)), true, true, 0);
+
+	return *hbx;
 }
 
 // Get the selected shader
@@ -263,31 +234,29 @@ MaterialPtr ShaderSelector::getSelectedShader() {
 }
 
 // Update the attributes table
-void ShaderSelector::updateInfoTable() {
-	
-	gtk_list_store_clear(_infoStore);
+void ShaderSelector::updateInfoTable()
+{
+	_infoStore->clear();
 
 	// Get the selected texture name. If nothing is selected, we just leave the
 	// infotable empty.
 	std::string selName = getSelection();
 	
 	// Notify the client of the change to give it a chance to update the infostore
-	if (_client != NULL && !selName.empty()) {
+	if (_client != NULL && !selName.empty())
+	{
 		_client->shaderSelectionChanged(selName, _infoStore);
 	}
 }
 
 // Callback to redraw the GL widget
-void ShaderSelector::_onExpose(GtkWidget* widget, 
-								GdkEventExpose* ev,
-								ShaderSelector* self) 
+bool ShaderSelector::_onExpose(GdkEventExpose* ev) 
 {
 	// The scoped object making the GL widget the current one
-	gtkutil::GLWidgetSentry sentry(widget);
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 	
 	// Get the viewport size from the GL widget
-	GtkRequisition req;
-	gtk_widget_size_request(widget, &req);
+	Gtk::Requisition req = _glWidget->size_request();
 	glViewport(0, 0, req.width, req.height);
 
 	// Initialise
@@ -301,13 +270,13 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 
 	// Get the selected texture, and set up OpenGL to render it on
 	// the quad.
-	MaterialPtr shader = self->getSelectedShader();
+	MaterialPtr shader = getSelectedShader();
 	
 	bool drawQuad = false;
 	TexturePtr tex;
 	
 	// Check what part of the shader we should display in the preview 
-	if (self->_isLightTexture) {
+	if (_isLightTexture) {
 		// This is a light, take the first layer texture
 		const ShaderLayer* first = shader->firstLayer();
 		if (first != NULL) {
@@ -354,36 +323,35 @@ void ShaderSelector::_onExpose(GtkWidget* widget,
 		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height + hfHeight);
 		glEnd();
 	}
+
+	return false;
 }
 
-void ShaderSelector::displayShaderInfo(MaterialPtr shader, GtkListStore* listStore) 
+void ShaderSelector::displayShaderInfo(const MaterialPtr& shader, 
+									   const Glib::RefPtr<Gtk::ListStore>& listStore,
+									   int attrCol, int valueCol)
 {
 	// Update the infostore in the ShaderSelector
-	GtkTreeIter iter;
-	
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-		0, (std::string("<b>") + _("Shader") + "</b>").c_str(),
-		1, shader->getName().c_str(),
-		-1);
-	
-	// Containing MTR	
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-		0, (std::string("<b>") + _("Defined in") + "</b>").c_str(),
-		1, shader->getShaderFileName(),
-		-1);
+	Gtk::TreeModel::iterator iter = listStore->append();
 
-	// Description	
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-		0, (std::string("<b>") + _("Description") + "</b>").c_str(),
-		1, shader->getDescription().c_str(),
-		-1);
+	iter->set_value(attrCol, std::string("<b>") + _("Shader") + "</b>");
+	iter->set_value(valueCol, shader->getName());
+
+	// Containing MTR File
+	iter = listStore->append();
+	iter->set_value(attrCol, std::string("<b>") + _("Defined in") + "</b>");
+	iter->set_value(valueCol, Glib::ustring(shader->getShaderFileName()));
+	
+	// Description
+	iter = listStore->append();
+	iter->set_value(attrCol, std::string("<b>") + _("Description") + "</b>");
+	iter->set_value(valueCol, shader->getDescription());
 }
 
-void ShaderSelector::displayLightShaderInfo(MaterialPtr shader, GtkListStore* listStore) {
-	
+void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader, 
+											const Glib::RefPtr<Gtk::ListStore>& listStore,
+											int attrCol, int valueCol)
+{
 	const ShaderLayer* first = shader->firstLayer();
 	std::string texName = _("None");
 	if (first != NULL) {
@@ -391,22 +359,17 @@ void ShaderSelector::displayLightShaderInfo(MaterialPtr shader, GtkListStore* li
 		texName = tex->getName();
 	}
 
-	GtkTreeIter iter;
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, (std::string("<b>") + _("Image map") + "</b>").c_str(),
-					   1, texName.c_str(),
-					   -1);
+	Gtk::TreeModel::iterator iter = listStore->append();
+
+	iter->set_value(attrCol, std::string("<b>") + _("Image map") + "</b>");
+	iter->set_value(valueCol, texName);
 
 	// Name of file containing the shader
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, (std::string("<b>") + _("Defined in") + "</b>").c_str(),
-					   1, shader->getShaderFileName(),
-					   -1);
+	iter = listStore->append();
+	iter->set_value(attrCol, std::string("<b>") + _("Defined in") + "</b>");
+	iter->set_value(valueCol, Glib::ustring(shader->getShaderFileName()));
 
 	// Light types, from the Material
-
 	std::string lightType;
 	if (shader->isAmbientLight())
 		lightType.append("ambient ");
@@ -417,17 +380,16 @@ void ShaderSelector::displayLightShaderInfo(MaterialPtr shader, GtkListStore* li
 	if (lightType.size() == 0)
 		lightType.append("-");
 	
-	gtk_list_store_append(listStore, &iter);
-	gtk_list_store_set(listStore, &iter, 
-					   0, (std::string("<b>") + _("Light flags") + "</b>").c_str(),
-					   1, lightType.c_str(),
-					   -1);
+	iter = listStore->append();
+	iter->set_value(attrCol, std::string("<b>") + _("Light flags") + "</b>");
+	iter->set_value(valueCol, lightType);
 }
 
 // Callback for selection changed
-void ShaderSelector::_onSelChange(GtkWidget* widget, ShaderSelector* self) {
-	self->updateInfoTable();
-	gtk_widget_queue_draw(self->_glWidget);
+void ShaderSelector::_onSelChange()
+{
+	updateInfoTable();
+	_glWidget->queueDraw();
 }
 
 } // namespace ui

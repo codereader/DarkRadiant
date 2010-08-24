@@ -19,32 +19,17 @@ AIFindItemComponentEditor::RegHelper AIFindItemComponentEditor::regHelper;
 AIFindItemComponentEditor::AIFindItemComponentEditor(Component& component) :
 	_component(&component)
 {
-	// Main vbox
-	_widget = gtk_vbox_new(FALSE, 6);
-
-    gtk_box_pack_start(
-        GTK_BOX(_widget), 
-		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>"),
-        FALSE, FALSE, 0
+	pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>")),
+        false, false, 0
     );
 	
 	// TODO
 }
 
-// Destructor
-AIFindItemComponentEditor::~AIFindItemComponentEditor() {
-	if (GTK_IS_WIDGET(_widget)) {
-		gtk_widget_destroy(_widget);
-	}
-}
-
-// Get the main widget
-GtkWidget* AIFindItemComponentEditor::getWidget() const {
-	return _widget;
-}
-
 // Write to component
-void AIFindItemComponentEditor::writeToComponent() const {
+void AIFindItemComponentEditor::writeToComponent() const
+{
     assert(_component);
 	// TODO
 }

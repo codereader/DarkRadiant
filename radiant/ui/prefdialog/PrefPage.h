@@ -2,8 +2,16 @@
 #define PREFPAGE_H_
 
 #include "ipreferencesystem.h"
-#include "gtkutil/ifc/Widget.h"
 #include "gtkutil/RegistryConnector.h"
+
+namespace Gtk
+{
+	class VBox;
+	class Notebook;
+	class Widget;
+	class Label;
+	class SpinButton;
+}
 
 namespace ui {
 
@@ -23,7 +31,7 @@ public:
 
 private:
 	// The vbox this page is adding the widgets to
-	GtkWidget* _vbox;
+	Gtk::VBox* _vbox;
   
   	// The list of child pages
 	std::vector<PrefPagePtr> _children;
@@ -35,32 +43,29 @@ private:
 	std::string _path;
 	
 	// The notebook this page is packed into
-	GtkWidget* _notebook;
+	Gtk::Notebook* _notebook;
 	
 	// The actual page that gets attached to the notebook
-	GtkWidget* _pageWidget;
+	Gtk::VBox* _pageWidget;
 	
-	GtkWidget* _titleLabel;
+	Gtk::Label* _titleLabel;
 	
 	// The reference to the dialog's connector object
 	gtkutil::RegistryConnector& _connector;
-
-	// A list of heap-allocated Widets, to be destroyed on PrefPage destruction
-	std::list<gtkutil::WidgetPtr> _widgets;
 
 public:
 	/** greebo: Constructor
 	 * 
 	 * @name: The display caption of this prefpage
 	 * @parentPath: the path to the parent of this page
-	 * @notebook: The GtkNotebook widget this page is child of.
+	 * @notebook: The Gtk::Notebook widget this page is child of.
 	 * @connector: the reference to the RegistryConnector that can
 	 * 			   be used to connect the widget to the registry.
 	 * 			   Usually, this owned by the PrefsDlg class.
 	 */
 	PrefPage(const std::string& name,
 	         const std::string& parentPath,
-	         GtkWidget* notebook,
+	         Gtk::Notebook* notebook,
 	         gtkutil::RegistryConnector& connector);
 	
 	/** greebo: Sets the title caption that is displayed on the right.
@@ -80,16 +85,16 @@ public:
 	/** greebo: Returns the widget that can be used to determine
 	 * 			the notebook page number.
 	 */
-	GtkWidget* getWidget();
+	Gtk::Widget& getWidget();
 	
 	void foreachPage(Visitor& visitor);
 	
 	// Appends a simple static label
-	GtkWidget* appendLabel(const std::string& caption);
+	Gtk::Widget* appendLabel(const std::string& caption);
 	
 	/* greebo: This adds a checkbox and connects it to an XMLRegistry key.
 	 * @returns: the pointer to the created GtkWidget */
-	GtkWidget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey);
+	Gtk::Widget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey);
 	
 	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
 	 * it to the given registryKey. */
@@ -103,15 +108,15 @@ public:
 	
 	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
 	 */
-	GtkWidget* appendEntry(const std::string& name, const std::string& registryKey);
+	Gtk::Widget* appendEntry(const std::string& name, const std::string& registryKey);
 	
 	// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
-	GtkWidget* appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories);
+	Gtk::Widget* appendPathEntry(const std::string& name, const std::string& registryKey, bool browseDirectories);
 	
 	/* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
 	 * RegistryKey. The lower and upper values have to be passed as well.
 	 */
-	GtkWidget* appendSpinner(const std::string& name, const std::string& registryKey,
+	Gtk::Widget* appendSpinner(const std::string& name, const std::string& registryKey,
 	                         double lower, double upper, int fraction);
 
 	/** greebo: Performs a recursive lookup of the given path
@@ -122,7 +127,9 @@ public:
 	PrefPagePtr createOrFindPage(const std::string& path);
 
 private:
-	void appendNamedWidget(const std::string& name, GtkWidget* widget);
+	Gtk::SpinButton* createSpinner(double value, double lower, double upper, int fraction);
+
+	void appendNamedWidget(const std::string& name, Gtk::Widget& widget);
 };
 
 } // namespace ui

@@ -5,12 +5,6 @@
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/dialog/MessageBox.h"
 
-#include <gtk/gtktextview.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkstock.h>
-#include <gtk/gtkbutton.h>
-
 #include "string/string.h"
 #include "FixupMap.h"
 
@@ -27,11 +21,11 @@ FixupMapDialog::FixupMapDialog() :
 	gtkutil::Dialog(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Set size of the window, default size is too narrow for path entries
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
 		GlobalMainFrame().getTopLevelWindow()
 	);
 
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), static_cast<gint>(rect.width*0.4f), -1);
+	set_default_size(static_cast<int>(rect.get_width()*0.4f), -1);
 
 	// Add the path entry
 	_pathEntry = addPathEntry(FIXUP_FILE_LABEL, false);

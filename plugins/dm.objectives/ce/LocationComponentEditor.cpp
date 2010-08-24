@@ -6,7 +6,6 @@
 #include "gtkutil/LeftAlignedLabel.h"
 
 #include "i18n.h"
-#include <gtk/gtk.h>
 
 namespace objectives {
 
@@ -18,59 +17,40 @@ LocationComponentEditor::RegHelper LocationComponentEditor::regHelper;
 // Constructor
 LocationComponentEditor::LocationComponentEditor(Component& component) :
 	_component(&component),
-	_locationSpec(SpecifierType::SET_LOCATION())
+	_entSpec(Gtk::manage(new SpecifierEditCombo)),
+	_locationSpec(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_LOCATION())))
 {
-	// Main vbox
-	_widget = gtk_vbox_new(FALSE, 6);
-
-    gtk_box_pack_start(
-        GTK_BOX(_widget), 
-		gtkutil::LeftAlignedLabel(std::string("<b>") + _("Entity:") + "</b>"),
-        FALSE, FALSE, 0
+    pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Entity:") + "</b>")),
+        false, false, 0
     );
-	gtk_box_pack_start(
-		GTK_BOX(_widget), _entSpec.getWidget(), FALSE, FALSE, 0
-	);
-	gtk_box_pack_start(
-        GTK_BOX(_widget), 
-        gtkutil::LeftAlignedLabel(std::string("<b>") + _("Location:") + "</b>"),
-        FALSE, FALSE, 0
+	pack_start(*_entSpec, false, false, 0);
+	pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Location:") + "</b>")),
+        false, false, 0
     );
-	gtk_box_pack_start(
-		GTK_BOX(_widget), _locationSpec.getWidget(), FALSE, FALSE, 0
-	);
+	pack_start(*_locationSpec, false, false, 0);
 
     // Populate the SpecifierEditCombo with the first specifier
-    _entSpec.setSpecifier(
+    _entSpec->setSpecifier(
         component.getSpecifier(Specifier::FIRST_SPECIFIER)
     );
 
-	_locationSpec.setSpecifier(
+	_locationSpec->setSpecifier(
 		component.getSpecifier(Specifier::SECOND_SPECIFIER)
     );
 }
 
-// Destructor
-LocationComponentEditor::~LocationComponentEditor() {
-	if (GTK_IS_WIDGET(_widget)) {
-		gtk_widget_destroy(_widget);
-	}
-}
-
-// Get the main widget
-GtkWidget* LocationComponentEditor::getWidget() const {
-	return _widget;
-}
-
 // Write to component
-void LocationComponentEditor::writeToComponent() const {
+void LocationComponentEditor::writeToComponent() const
+{
     assert(_component);
     _component->setSpecifier(
-        Specifier::FIRST_SPECIFIER, _entSpec.getSpecifier()
+        Specifier::FIRST_SPECIFIER, _entSpec->getSpecifier()
     );
 
 	_component->setSpecifier(
-		Specifier::SECOND_SPECIFIER, _locationSpec.getSpecifier()
+		Specifier::SECOND_SPECIFIER, _locationSpec->getSpecifier()
     );
 }
 

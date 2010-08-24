@@ -5,9 +5,6 @@
 #include "ieventmanager.h"
 #include "imainframe.h"
 
-#include "gdk/gdkkeysyms.h"
-
-#include "gtkutil/widget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include <time.h>
 #include <boost/format.hpp>
@@ -65,8 +62,10 @@ public:
 	}
 };
 
-inline WindowVector windowvector_for_widget_centre(GtkWidget* widget) {
-	return WindowVector(static_cast<float>(widget->allocation.width / 2), static_cast<float>(widget->allocation.height / 2));
+inline WindowVector windowvector_for_widget_centre(Gtk::Widget& widget)
+{
+	Gtk::Allocation alloc = widget.get_allocation();
+	return WindowVector(static_cast<float>(alloc.get_width() / 2), static_cast<float>(alloc.get_height() / 2));
 }
 
 class FloorHeightWalker : 
@@ -113,22 +112,9 @@ public:
 
 // --------------- Callbacks ---------------------------------------------------------
 
-void selection_motion(gdouble x, gdouble y, guint state, void* data) {
+void selection_motion(gdouble x, gdouble y, guint state, void* data)
+{
 	reinterpret_cast<WindowObserver*>(data)->onMouseMotion(WindowVector(x, y), state);
-}
-
-gboolean camera_size_allocate(GtkWidget* widget, GtkAllocation* allocation, CamWnd* camwnd) {
-	camwnd->getCamera().width = allocation->width;
-	camwnd->getCamera().height = allocation->height;
-	camwnd->getCamera().updateProjection();
-	camwnd->m_window_observer->onSizeChanged(camwnd->getCamera().width, camwnd->getCamera().height);
-	camwnd->queueDraw();
-	return FALSE;
-}
-
-gboolean camera_expose(GtkWidget* widget, GdkEventExpose* event, gpointer data) {
-	reinterpret_cast<CamWnd*>(data)->draw();
-	return FALSE;
 }
 
 void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
@@ -144,101 +130,6 @@ void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
 	}
 }
 
-// greebo: The GTK Callback during freemove mode for mouseDown. Passes the call on to the Windowobserver
-gboolean selection_button_press_freemove(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
-	// Check for the correct event type
-	if (event->type == GDK_BUTTON_PRESS) {
-		observer->onMouseDown(windowvector_for_widget_centre(widget), event);
-	}
-	return FALSE;
-}
-
-// greebo: The GTK Callback during freemove mode for mouseUp. Passes the call on to the Windowobserver
-gboolean selection_button_release_freemove(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
-	if (event->type == GDK_BUTTON_RELEASE) {
-		observer->onMouseUp(windowvector_for_widget_centre(widget), event);
-	}
-	return FALSE;
-}
-
-// greebo: The GTK Callback during freemove mode for mouseMoved. Passes the call on to the Windowobserver
-gboolean selection_motion_freemove(GtkWidget *widget, GdkEventMotion *event, WindowObserver* observer) {
-	observer->onMouseMotion(windowvector_for_widget_centre(widget), event->state);
-	return FALSE;
-}
-
-// greebo: The GTK Callback during freemove mode for scroll events.
-gboolean wheelmove_scroll(GtkWidget* widget, GdkEventScroll* event, CamWnd* camwnd) {
-	// Set the GTK focus to this widget
-	gtk_widget_grab_focus(widget);
-
-	// Determine the direction we are moving.
-	if (event->direction == GDK_SCROLL_UP) {
-		camwnd->getCamera().freemoveUpdateAxes();
-		camwnd->setCameraOrigin(camwnd->getCameraOrigin() + camwnd->getCamera().forward * static_cast<float>(getCameraSettings()->movementSpeed()));
-	}
-	else if (event->direction == GDK_SCROLL_DOWN) {
-		camwnd->getCamera().freemoveUpdateAxes();
-		camwnd->setCameraOrigin(camwnd->getCameraOrigin() + camwnd->getCamera().forward * (-static_cast<float>(getCameraSettings()->movementSpeed())));
-	}
-
-	return FALSE;
-}
-
-/* greebo: GTK Callback: This gets called on "button_press_event" and basically just passes the call on 
- * to the according window observer. */
-gboolean selection_button_press(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
-	
-	// Set the GTK focus to this widget
-	gtk_widget_grab_focus(widget);
-
-	// Check for the correct event type
-	if (event->type == GDK_BUTTON_PRESS) {
-		observer->onMouseDown(WindowVector(event->x, event->y), event);
-	}
-	return FALSE;
-}
-
-/* greebo: GTK Callback: This gets called on "button_release_event" and basically just passes the call on 
- * to the according window observer. */
-gboolean selection_button_release(GtkWidget* widget, GdkEventButton* event, WindowObserver* observer) {
-	if (event->type == GDK_BUTTON_RELEASE) {
-		observer->onMouseUp(WindowVector(event->x, event->y), event);
-	}
-	return FALSE;
-}
-
-gboolean enable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd) {
-	if (event->type == GDK_BUTTON_PRESS) {
-		
-		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, event)) {
-			camwnd->enableFreeMove();
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
-
-gboolean disable_freelook_button_press(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd) {
-	if (event->type == GDK_BUTTON_PRESS) {
-		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, event)) {
-			camwnd->disableFreeMove();
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
-
-gboolean disable_freelook_button_release(GtkWidget* widget, GdkEventButton* event, CamWnd* camwnd) {
-	if (event->type == GDK_BUTTON_RELEASE) {
-		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, event)) {
-			camwnd->disableFreeMove();
-			return TRUE;
-		}
-	}
-	return FALSE;
-}
-
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd() :
@@ -248,30 +139,21 @@ CamWnd::CamWnd() :
 	m_cameraview(m_Camera, &m_view, Callback(boost::bind(&CamWnd::update, this))),
 	m_drawing(false),
 	m_bFreeMove(false),
-	m_gl_widget(true, "CamWnd"),
-	_parentWidget(NULL),
+	m_gl_widget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
 	m_window_observer(NewWindowObserver()),
-	m_deferredDraw(boost::bind(widget_queue_draw, m_gl_widget)),
-	m_deferred_motion(selection_motion, m_window_observer),
-	m_selection_button_press_handler(0),
-	m_selection_button_release_handler(0),
-	m_selection_motion_handler(0),
-	m_freelook_button_press_handler(0),
-	m_freelook_button_release_handler(0)
+	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, m_gl_widget)),
+	m_deferred_motion(selection_motion, m_window_observer)
 {
-	GtkWidget* glWidget = m_gl_widget;
-	
 	m_window_observer->setRectangleDrawCallback(boost::bind(&CamWnd::updateSelectionBox, this, _1));
 	m_window_observer->setView(m_view);
 
-	gtk_widget_set_events(glWidget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK);
-	GTK_WIDGET_SET_FLAGS (glWidget, GTK_CAN_FOCUS);
-	gtk_widget_set_size_request(glWidget, CAMWND_MINSIZE_X, CAMWND_MINSIZE_Y);
+	m_gl_widget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+	m_gl_widget->set_flags(Gtk::CAN_FOCUS);
+	m_gl_widget->set_size_request(CAMWND_MINSIZE_X, CAMWND_MINSIZE_Y);
+	m_gl_widget->property_can_focus() = true;
 
-	g_object_set(m_gl_widget, "can-focus", TRUE, NULL);
-
-	m_sizeHandler = g_signal_connect(G_OBJECT(glWidget), "size_allocate", G_CALLBACK(camera_size_allocate), this);
-	m_exposeHandler = g_signal_connect(G_OBJECT(glWidget), "expose_event", G_CALLBACK(camera_expose), this);
+	m_gl_widget->signal_size_allocate().connect(sigc::mem_fun(*this, &CamWnd::onSizeAllocate));
+	m_gl_widget->signal_expose_event().connect(sigc::mem_fun(*this, &CamWnd::onExpose));
 
 	_mapValidHandle = GlobalMap().addValidCallback(boost::bind(&DeferredDraw::onMapValidChanged, &m_deferredDraw));
 
@@ -282,7 +164,7 @@ CamWnd::CamWnd() :
 	// Now add the handlers for the non-freelook mode, the events are activated by this
 	addHandlersMove();
 
-	g_signal_connect(G_OBJECT(glWidget), "scroll_event", G_CALLBACK(wheelmove_scroll), this);
+	m_gl_widget->signal_scroll_event().connect(sigc::mem_fun(*this, &CamWnd::onMouseScroll));
 
 	// Subscribe to the global scene graph update 
 	GlobalSceneGraph().addSceneObserver(this);
@@ -290,19 +172,18 @@ CamWnd::CamWnd() :
 	// Let the window observer connect its handlers to the GL widget first (before the eventmanager)
 	m_window_observer->addObservedWidget(m_gl_widget);
 
-	GlobalEventManager().connect(GTK_OBJECT(glWidget));
+	GlobalEventManager().connect(m_gl_widget);
 }
 
-CamWnd::~CamWnd() {
+CamWnd::~CamWnd()
+{
 	// Unsubscribe from the global scene graph update 
 	GlobalSceneGraph().removeSceneObserver(this);
 	
-	GtkWidget* glWidget = m_gl_widget; // cast
-
-	m_window_observer->removeObservedWidget(glWidget);
+	m_window_observer->removeObservedWidget(m_gl_widget);
 	
 	// Disconnect self from EventManager
-	GlobalEventManager().disconnect(GTK_OBJECT(glWidget));
+	GlobalEventManager().disconnect(m_gl_widget);
 
 	GlobalMap().removeValidCallback(_mapValidHandle);
 	
@@ -312,8 +193,8 @@ CamWnd::~CamWnd() {
 
 	removeHandlersMove();
 
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);
+	/*g_signal_handler_disconnect(G_OBJECT(glWidget), m_sizeHandler);
+	g_signal_handler_disconnect(G_OBJECT(glWidget), m_exposeHandler);*/
 
 	m_window_observer->release();
 
@@ -341,7 +222,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 
 void CamWnd::updateSelectionBox(const Rectangle& area)
 {
-	if (GTK_WIDGET_VISIBLE(static_cast<GtkWidget*>(m_gl_widget)))
+	if (m_gl_widget->is_visible())
 	{
 		// Get the rectangle and convert it to screen coordinates
 		_dragRectangle = area;
@@ -374,70 +255,74 @@ void CamWnd::changeFloor(const bool up) {
 	GlobalCamera().movedNotify();
 }
 
-// NOTE TTimo if there's an OS-level focus out of the application
-//   then we can release the camera cursor grab
-static gboolean camwindow_freemove_focusout(GtkWidget* widget, GdkEventFocus* event, gpointer data) {
-	reinterpret_cast<CamWnd*>(data)->disableFreeMove();
-	return FALSE;
-}
-
-void CamWnd::enableFreeMove() {
+void CamWnd::enableFreeMove()
+{
 	ASSERT_MESSAGE(!m_bFreeMove, "EnableFreeMove: free-move was already enabled");
 	m_bFreeMove = true;
 	m_Camera.clearMovementFlags(MOVE_ALL);
 
 	removeHandlersMove();
 	
-	GtkWidget* glWidget = m_gl_widget; // cast
-	
-	m_selection_button_press_handler = g_signal_connect(G_OBJECT(glWidget), "button_press_event", G_CALLBACK(selection_button_press_freemove), m_window_observer);
-	m_selection_button_release_handler = g_signal_connect(G_OBJECT(glWidget), "button_release_event", G_CALLBACK(selection_button_release_freemove), m_window_observer);
-	m_selection_motion_handler = g_signal_connect(G_OBJECT(glWidget), "motion_notify_event", G_CALLBACK(selection_motion_freemove), m_window_observer);
+	m_selection_button_press_handler = m_gl_widget->signal_button_press_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonPressFreemove), m_window_observer));
 
-	if (getCameraSettings()->toggleFreelook()) {
-		m_freelook_button_press_handler = g_signal_connect(G_OBJECT(glWidget), "button_press_event", G_CALLBACK(disable_freelook_button_press), this);
+	m_selection_button_release_handler = m_gl_widget->signal_button_release_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonReleaseFreemove), m_window_observer));
+
+	m_selection_motion_handler = m_gl_widget->signal_motion_notify_event().connect(
+		sigc::bind(sigc::mem_fun(*this,& CamWnd::selectionMotionFreemove), m_window_observer));
+	
+	if (getCameraSettings()->toggleFreelook())
+	{
+		m_freelook_button_press_handler = m_gl_widget->signal_button_press_event().connect(
+			sigc::mem_fun(*this, &CamWnd::disableFreelookButtonPress));
 	}
-	else {
-		m_freelook_button_release_handler = g_signal_connect(G_OBJECT(glWidget), "button-release-event", G_CALLBACK(disable_freelook_button_release), this);
+	else
+	{
+		m_freelook_button_release_handler = m_gl_widget->signal_button_release_event().connect(
+			sigc::mem_fun(*this, &CamWnd::disableFreelookButtonRelease));
 	}
 
 	enableFreeMoveEvents();
 
 	// greebo: For entering free move, we need a valid parent window
-	assert(_parentWidget != NULL);
+	assert(_parentWindow);
 	
-	gtk_window_set_focus(_parentWidget, glWidget);
-	m_freemove_handle_focusout = g_signal_connect(G_OBJECT(glWidget), "focus_out_event", G_CALLBACK(camwindow_freemove_focusout), this);
-	m_freezePointer.freeze_pointer(_parentWidget, Camera_motionDelta, &m_Camera);
+	_parentWindow->set_focus(*m_gl_widget);
+	
+	m_freemove_handle_focusout = m_gl_widget->signal_focus_out_event().connect(sigc::mem_fun(*this, &CamWnd::freeMoveFocusOut));
+	m_freezePointer.freeze_pointer(_parentWindow->gobj(), Camera_motionDelta, &m_Camera);
 
 	update();
 }
 
-void CamWnd::disableFreeMove() {
+void CamWnd::disableFreeMove()
+{
 	ASSERT_MESSAGE(m_bFreeMove, "DisableFreeMove: free-move was not enabled");
 	m_bFreeMove = false;
 	m_Camera.clearMovementFlags(MOVE_ALL);
 
 	disableFreeMoveEvents();
 	
-	GtkWidget* glWidget = m_gl_widget; // cast
+	m_selection_button_press_handler.disconnect();
+	m_selection_button_release_handler.disconnect();
+	m_selection_motion_handler.disconnect();
 
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_selection_button_press_handler);
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_selection_button_release_handler);
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_selection_motion_handler);
-
-	if (getCameraSettings()->toggleFreelook()) {
-		g_signal_handler_disconnect(G_OBJECT(glWidget), m_freelook_button_press_handler);
+	if (getCameraSettings()->toggleFreelook())
+	{
+		m_freelook_button_press_handler.disconnect();
 	}
-	else {
-		g_signal_handler_disconnect(G_OBJECT(glWidget), m_freelook_button_release_handler);
-	}	
+	else
+	{
+		m_freelook_button_release_handler.disconnect();
+	}
 
 	addHandlersMove();
 
-	assert(_parentWidget != NULL);
-	m_freezePointer.unfreeze_pointer(_parentWidget);
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_freemove_handle_focusout);
+	assert(_parentWindow);
+	m_freezePointer.unfreeze_pointer(_parentWindow->gobj());
+
+	m_freemove_handle_focusout.disconnect();
 
 	update();
 }
@@ -690,11 +575,12 @@ void CamWnd::Cam_Draw() {
 	glBindTexture( GL_TEXTURE_2D, 0 );
 }
 
-void CamWnd::draw() {
+void CamWnd::draw()
+{
 	m_drawing = true;
 
 	// Scoped object handling the GL context switching
-	gtkutil::GLWidgetSentry sentry(m_gl_widget);
+	gtkutil::GLWidgetSentry sentry(*m_gl_widget);
 
 	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
 		GlobalOpenGL().assertNoErrors();
@@ -728,7 +614,8 @@ void CamWnd::onSceneGraphChange() {
 
 // ----------------------------------------------------------
 
-void CamWnd::enableFreeMoveEvents() {
+void CamWnd::enableFreeMoveEvents()
+{
 	GlobalEventManager().enableEvent("CameraFreeMoveForward");
 	GlobalEventManager().enableEvent("CameraFreeMoveBack");
 	GlobalEventManager().enableEvent("CameraFreeMoveLeft");
@@ -737,7 +624,8 @@ void CamWnd::enableFreeMoveEvents() {
 	GlobalEventManager().enableEvent("CameraFreeMoveDown");
 }
 
-void CamWnd::disableFreeMoveEvents() {
+void CamWnd::disableFreeMoveEvents()
+{
 	GlobalEventManager().disableEvent("CameraFreeMoveForward");
 	GlobalEventManager().disableEvent("CameraFreeMoveBack");
 	GlobalEventManager().disableEvent("CameraFreeMoveLeft");
@@ -746,7 +634,8 @@ void CamWnd::disableFreeMoveEvents() {
 	GlobalEventManager().disableEvent("CameraFreeMoveDown");
 }
 
-void CamWnd::enableDiscreteMoveEvents() {
+void CamWnd::enableDiscreteMoveEvents()
+{
 	GlobalEventManager().enableEvent("CameraForward");
 	GlobalEventManager().enableEvent("CameraBack");
 	GlobalEventManager().enableEvent("CameraLeft");
@@ -759,7 +648,8 @@ void CamWnd::enableDiscreteMoveEvents() {
 	GlobalEventManager().enableEvent("CameraAngleDown");
 }
 
-void CamWnd::disableDiscreteMoveEvents() {
+void CamWnd::disableDiscreteMoveEvents()
+{
 	GlobalEventManager().disableEvent("CameraForward");
 	GlobalEventManager().disableEvent("CameraBack");
 	GlobalEventManager().disableEvent("CameraLeft");
@@ -772,41 +662,50 @@ void CamWnd::disableDiscreteMoveEvents() {
 	GlobalEventManager().disableEvent("CameraAngleDown");
 }
 
-void CamWnd::addHandlersMove() {
-	GtkWidget* glWidget = m_gl_widget;
-	
-	m_selection_button_press_handler = g_signal_connect(G_OBJECT(glWidget), "button_press_event", G_CALLBACK(selection_button_press), m_window_observer);
-	m_selection_button_release_handler = g_signal_connect(G_OBJECT(glWidget), "button_release_event", G_CALLBACK(selection_button_release), m_window_observer);
-	m_selection_motion_handler = g_signal_connect(G_OBJECT(glWidget), "motion_notify_event", G_CALLBACK(DeferredMotion::gtk_motion), &m_deferred_motion);
+void CamWnd::addHandlersMove()
+{
+	m_selection_button_press_handler = m_gl_widget->signal_button_press_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonPress), m_window_observer));
 
-	m_freelook_button_press_handler = g_signal_connect(G_OBJECT(glWidget), "button_press_event", G_CALLBACK(enable_freelook_button_press), this);
+	m_selection_button_release_handler = m_gl_widget->signal_button_release_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonRelease), m_window_observer));
+	
+	m_selection_motion_handler = m_gl_widget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &DeferredMotion::gtk_motion));
+
+	m_freelook_button_press_handler = m_gl_widget->signal_button_press_event().connect(
+		sigc::mem_fun(*this, &CamWnd::enableFreelookButtonPress));
 
 	// Enable either the free-look movement commands or the discrete ones, depending on the selection
-	if (getCameraSettings()->discreteMovement()) {
+	if (getCameraSettings()->discreteMovement())
+	{
 		enableDiscreteMoveEvents();
-	} else {
+	}
+	else
+	{
 		enableFreeMoveEvents();
 	}
 }
 
-void CamWnd::removeHandlersMove() {
-	GtkWidget* glWidget = m_gl_widget; // cast to GtkWidget*
-	
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_selection_button_press_handler);
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_selection_button_release_handler);
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_selection_motion_handler);
-
-	g_signal_handler_disconnect(G_OBJECT(glWidget), m_freelook_button_press_handler);
+void CamWnd::removeHandlersMove()
+{
+	m_selection_button_press_handler.disconnect();
+	m_selection_button_release_handler.disconnect();
+	m_selection_motion_handler.disconnect();
+	m_freelook_button_press_handler.disconnect();
 
 	// Disable either the free-look movement commands or the discrete ones, depending on the selection
-	if (getCameraSettings()->discreteMovement()) {
+	if (getCameraSettings()->discreteMovement())
+	{
 		disableDiscreteMoveEvents();
-	} else {
+	}
+	else
+	{
 		disableFreeMoveEvents();
 	}
 }
 
-void CamWnd::update() {
+void CamWnd::update()
+{
 	queueDraw();
 }
 
@@ -836,39 +735,44 @@ CameraView* CamWnd::getCameraView() {
 	return &m_cameraview;
 }
 
-GtkWidget* CamWnd::getWidget() const {
+Gtk::Widget* CamWnd::getWidget() const
+{
 	return m_gl_widget;
 }
 
-GtkWindow* CamWnd::getParent() const {
-	return _parentWidget;
+const Glib::RefPtr<Gtk::Window>& CamWnd::getParent() const
+{
+	return _parentWindow;
 }
 
-void CamWnd::setContainer(GtkWindow* newParent) {
-	if (newParent == _parentWidget) {
+void CamWnd::setContainer(const Glib::RefPtr<Gtk::Window>& newParent)
+{
+	if (newParent == _parentWindow)
+	{
 		// Do nothing if no change required
 		return;
 	}
 
-	if (_parentWidget != NULL)
+	if (_parentWindow != NULL)
 	{
 		// Parent change, disconnect first
-		m_window_observer->removeObservedWidget(GTK_WIDGET(_parentWidget));
-		GlobalEventManager().disconnect(GTK_OBJECT(_parentWidget));
+		m_window_observer->removeObservedWidget(_parentWindow);
+		GlobalEventManager().disconnect(_parentWindow->get_toplevel());
 
 		if (m_bFreeMove)
 		{
 			disableFreeMove();
 		}
 
-		_parentWidget = NULL;
+		_parentWindow.reset();
 	}
 
 	if (newParent != NULL)
 	{
-		_parentWidget = newParent;
-		m_window_observer->addObservedWidget(GTK_WIDGET(_parentWidget));
-		GlobalEventManager().connect(GTK_OBJECT(_parentWidget));
+		_parentWindow = newParent;
+
+		m_window_observer->addObservedWidget(_parentWindow);
+		GlobalEventManager().connect(_parentWindow->get_toplevel());
 	}
 }
 
@@ -900,6 +804,145 @@ void CamWnd::cubicScaleIn() {
 
 	m_Camera.updateProjection();
 	update();
+}
+
+void CamWnd::onSizeAllocate(Gtk::Allocation& allocation)
+{
+	getCamera().width = allocation.get_width();
+	getCamera().height = allocation.get_height();
+	getCamera().updateProjection();
+
+	m_window_observer->onSizeChanged(getCamera().width, getCamera().height);
+
+	queueDraw();
+}
+
+bool CamWnd::onExpose(GdkEventExpose* ev)
+{
+	draw();
+
+	return false;
+}
+
+bool CamWnd::onMouseScroll(GdkEventScroll* ev)
+{
+	// Set the GTK focus to this widget
+	m_gl_widget->grab_focus();
+
+	// Determine the direction we are moving.
+	if (ev->direction == GDK_SCROLL_UP)
+	{
+		getCamera().freemoveUpdateAxes();
+		setCameraOrigin(getCameraOrigin() + getCamera().forward * static_cast<float>(getCameraSettings()->movementSpeed()));
+	}
+	else if (ev->direction == GDK_SCROLL_DOWN)
+	{
+		getCamera().freemoveUpdateAxes();
+		setCameraOrigin(getCameraOrigin() + getCamera().forward * (-static_cast<float>(getCameraSettings()->movementSpeed())));
+	}
+
+	return false;
+}
+
+bool CamWnd::enableFreelookButtonPress(GdkEventButton* ev)
+{
+	if (ev->type == GDK_BUTTON_PRESS)
+	{
+		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camEnableFreeLookMode, ev))
+		{
+			enableFreeMove();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CamWnd::disableFreelookButtonPress(GdkEventButton* ev)
+{
+	if (ev->type == GDK_BUTTON_PRESS)
+	{
+		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, ev))
+		{
+			disableFreeMove();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CamWnd::disableFreelookButtonRelease(GdkEventButton* ev)
+{
+	if (ev->type == GDK_BUTTON_RELEASE)
+	{
+		if (GlobalEventManager().MouseEvents().stateMatchesCameraViewEvent(ui::camDisableFreeLookMode, ev))
+		{
+			disableFreeMove();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CamWnd::selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer)
+{
+	// Set the GTK focus to this widget
+	m_gl_widget->grab_focus();
+
+	// Check for the correct event type
+	if (ev->type == GDK_BUTTON_PRESS)
+	{
+		observer->onMouseDown(WindowVector(ev->x, ev->y), ev);
+	}
+
+	return false;
+}
+
+bool CamWnd::selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObserver* observer)
+{
+	if (ev->type == GDK_BUTTON_RELEASE)
+	{
+		observer->onMouseUp(WindowVector(ev->x, ev->y), ev);
+	}
+
+	return false;
+}
+
+bool CamWnd::selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer)
+{
+	// Check for the correct event type
+	if (ev->type == GDK_BUTTON_PRESS)
+	{
+		observer->onMouseDown(windowvector_for_widget_centre(*m_gl_widget), ev);
+	}
+
+	return false;
+}
+
+bool CamWnd::selectionButtonReleaseFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer)
+{
+	if (ev->type == GDK_BUTTON_RELEASE)
+	{
+		observer->onMouseUp(windowvector_for_widget_centre(*m_gl_widget), ev);
+	}
+
+	return false;
+}
+
+bool CamWnd::selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer)
+{
+	observer->onMouseMotion(windowvector_for_widget_centre(*m_gl_widget), ev->state);
+
+	return false;
+}
+
+bool CamWnd::freeMoveFocusOut(GdkEventFocus* ev)
+{
+	// Disable free look mode when focus is lost
+	disableFreeMove();
+	return false;
 }
 
 // -------------------------------------------------------------------------------

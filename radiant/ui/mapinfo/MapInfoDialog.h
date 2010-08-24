@@ -7,7 +7,10 @@
 #include "ShaderInfoTab.h"
 #include "ModelInfoTab.h"
 
-typedef struct _GtkNotebook GtkNotebook;
+namespace Gtk
+{
+	class Notebook;
+}
 
 namespace ui {
 
@@ -20,7 +23,7 @@ class MapInfoDialog :
 	ModelInfoTab _modelInfo;
 	
 	// The tabs of this dialog
-	GtkNotebook* _notebook;
+	Gtk::Notebook* _notebook;
 	
 public:
 	// Constructor
@@ -39,12 +42,12 @@ private:
 	void shutdown();
 
 	// Helper method to create the OK/Cancel button
-	GtkWidget* createButtons();
+	Gtk::Widget& createButtons();
 
-	GtkWidget* createTabLabel(const std::string& label, const std::string& iconName);
+	Gtk::Widget& createTabLabel(const std::string& label, const std::string& iconName);
 	
 	// The callback for the buttons
-	static void onClose(GtkWidget* widget, MapInfoDialog* self);
+	void onClose();
 
 }; // class MapInfoDialog
 

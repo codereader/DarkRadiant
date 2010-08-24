@@ -6,41 +6,56 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <boost/shared_ptr.hpp>
 
-typedef struct _GtkListStore GtkListStore;
-typedef struct _GtkTreeView GtkTreeView;
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTreeStore GtkTreeStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-typedef struct _GtkTreeModel GtkTreeModel;
-typedef struct _GtkTreeIter GtkTreeIter;
+#include <gtkmm/liststore.h>
+#include <gtkmm/treestore.h>
+#include <gtkmm/treeselection.h>
 
-namespace ui {
-
-	namespace {
-		// Tree column enum
-	    enum {
-	        NAME_COLUMN,
-	        ICON_COLUMN,
-	        N_COLUMNS
-	    };
-	}
+namespace ui
+{
 
 class EClassTree;
 typedef boost::shared_ptr<EClassTree> EClassTreePtr;
 
+struct EClassTreeColumns : 
+	public Gtk::TreeModel::ColumnRecord
+{
+	EClassTreeColumns() { add(name); add(icon); }
+
+	Gtk::TreeModelColumn<Glib::ustring> name;	// name
+	Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;	// icon
+};
+
 class EClassTree :
 	public gtkutil::BlockingTransientWindow
 {
+private:
 	// The EClass treeview widget and underlying liststore
-	GtkTreeView* _eclassView;
-	GtkTreeStore* _eclassStore;
-	GtkTreeSelection* _eclassSelection;
+	EClassTreeColumns _eclassColumns;
+	Gtk::TreeView* _eclassView;
+	Glib::RefPtr<Gtk::TreeStore> _eclassStore;
+	Glib::RefPtr<Gtk::TreeSelection> _eclassSelection;
 	
+	struct PropertyListColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		PropertyListColumns()
+		{ 
+			add(name); 
+			add(value);
+			add(colour);
+			add(inherited);
+		}
+
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<Glib::ustring> value;
+		Gtk::TreeModelColumn<Glib::ustring> colour;
+		Gtk::TreeModelColumn<Glib::ustring> inherited;
+	};
+
 	// The treeview and liststore for the property pane
-	GtkTreeView* _propertyView;
-	GtkListStore* _propertyStore;
-	
-	GtkWidget* _dialogVBox;
+	PropertyListColumns _propertyColumns;
+	Gtk::TreeView* _propertyView;
+	Glib::RefPtr<Gtk::ListStore> _propertyStore;
 	
 	// Private constructor, traverses the entity classes
 	EClassTree();
@@ -55,23 +70,16 @@ private:
 	// Constructs and adds all the dialog widgets
 	void populateWindow();
 	
-	GtkWidget* createButtons(); 	// Dialog buttons
-	GtkWidget* createEClassTreeView(); // EClass Tree
-	GtkWidget* createPropertyTreeView(); // Property Tree
+	Gtk::Widget& createButtons(); 	// Dialog buttons
+	Gtk::Widget& createEClassTreeView(); // EClass Tree
+	Gtk::Widget& createPropertyTreeView(); // Property Tree
 	
 	// Loads the spawnargs into the right treeview
 	void updatePropertyView(const std::string& eclassName);
 	
-	// Static GTK callbacks
-	static void onClose(GtkWidget* button, EClassTree* self);
-	static void onSelectionChanged(GtkWidget* widget, EClassTree* self);
-
-	// The comparison function for eclasstree's type-in search
-	static gboolean eClassnameEqualFunc(GtkTreeModel* model, 
-										 gint column,
-										 const gchar* key,
-										 GtkTreeIter* iter,
-										 gpointer search_data);
+	// GTKmm callbacks
+	void onClose();
+	void onSelectionChanged();
 };
 
 } // namespace ui

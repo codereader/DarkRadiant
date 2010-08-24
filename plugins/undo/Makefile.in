@@ -134,6 +134,8 @@ GL_LIBS = @GL_LIBS@
 GREP = @GREP@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
+GTKMM_CFLAGS = @GTKMM_CFLAGS@
+GTKMM_LIBS = @GTKMM_LIBS@
 GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
 GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
@@ -247,7 +249,7 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS) $(GLIB_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = undo.la
-undo_la_LDFLAGS = -module -avoid-version $(GTK_LIBS)
+undo_la_LDFLAGS = -module -avoid-version $(GTKMM_LIBS)
 undo_la_SOURCES = UndoSystem.cpp
 all: all-am
 

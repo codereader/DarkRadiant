@@ -2,6 +2,7 @@
 #define UIMANAGER_H_
 
 #include "imodule.h"
+#include "iradiant.h"
 #include "iuimanager.h"
 #include "idialogmanager.h"
 
@@ -12,14 +13,14 @@
 #include "colourscheme/ColourSchemeManager.h"
 #include <iostream>
 #include <map>
+#include <boost/enable_shared_from_this.hpp>
 
 namespace ui {
 
-class UIManagerShutdownListener;
-typedef boost::shared_ptr<UIManagerShutdownListener> UIManagerShutdownListenerPtr;
-
 class UIManager :
-	public IUIManager
+	public IUIManager,
+	public RadiantEventListener,
+	public boost::enable_shared_from_this<UIManager>
 {
 private:
 	// Local helper class taking care of the menu
@@ -29,11 +30,9 @@ private:
 
 	StatusBarManager _statusBarManager;
 
-	UIManagerShutdownListenerPtr _shutdownListener;
-
 	DialogManagerPtr _dialogManager;
 
-	typedef std::map<std::string, GdkPixbuf*> PixBufMap;
+	typedef std::map<std::string, Glib::RefPtr<Gdk::Pixbuf> > PixBufMap;
 	PixBufMap _localPixBufs;
 	PixBufMap _localPixBufsWithMask;
 
@@ -53,14 +52,17 @@ public:
 
 	IDialogManager& getDialogManager();
 
-	GdkPixbuf* getLocalPixbuf(const std::string& fileName);
-	GdkPixbuf* getLocalPixbufWithMask(const std::string& fileName);
+	Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName);
+	Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName);
 
 	IFilterMenuPtr createFilterMenu();
 	IModelPreviewPtr createModelPreview();
 
 	// Called on radiant shutdown
 	void clear();
+
+	// RadiantEventListener
+	void onRadiantShutdown();
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

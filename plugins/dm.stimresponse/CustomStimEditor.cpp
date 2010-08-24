@@ -2,7 +2,6 @@
 
 #include "idialogmanager.h"
 
-#include <gtk/gtk.h>
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -10,19 +9,29 @@
 #include "string/string.h"
 #include "i18n.h"
 
+#include <gtkmm/treeview.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/image.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/label.h>
+
 namespace ui {
 
-	namespace {
-		const unsigned int TREE_VIEW_WIDTH = 250;
-		const unsigned int TREE_VIEW_HEIGHT = 200;
+	namespace
+	{
+		const int TREE_VIEW_WIDTH = 250;
+		const int TREE_VIEW_HEIGHT = 200;
 	}
 
 /** greebo: Constructor creates all the widgets
  */
-CustomStimEditor::CustomStimEditor(GtkWidget* parentWindow, StimTypes& stimTypes) :
+CustomStimEditor::CustomStimEditor(StimTypes& stimTypes) :
+	Gtk::HBox(false, 12),
 	_stimTypes(stimTypes),
-	_updatesDisabled(false),
-	_parentWindow(parentWindow)
+	_updatesDisabled(false)
 {
 	populatePage();
 	
@@ -31,209 +40,185 @@ CustomStimEditor::CustomStimEditor(GtkWidget* parentWindow, StimTypes& stimTypes
 	
 	// The list may be empty, update the sensitivity 
 	update();
+
+	show_all();
 }
 
-CustomStimEditor::operator GtkWidget*() {
-	gtk_widget_show_all(_pageHBox);
-	return _pageHBox;
-}
-
-void CustomStimEditor::setEntity(SREntityPtr entity) {
+void CustomStimEditor::setEntity(const SREntityPtr& entity)
+{
 	_entity = entity;
 }
 
 /** greebo: As the name states, this creates the context menu widgets.
  */
-void CustomStimEditor::createContextMenu() {
+void CustomStimEditor::createContextMenu()
+{
 	// Menu widgets
-	_contextMenu.menu = gtk_menu_new();
+	_contextMenu.menu = Gtk::manage(new Gtk::Menu);
 		
 	// Each menu gets a delete item
-	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
-														   _("Delete"));
-	_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD,
-														   _("Add"));
+	_contextMenu.remove = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete")));
+	_contextMenu.add = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Add")));
 	
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu),
-						  _contextMenu.add);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
-						  _contextMenu.remove);
+	_contextMenu.menu->append(*_contextMenu.add);
+	_contextMenu.menu->append(*_contextMenu.remove);
 
 	// Connect up the signals
-	g_signal_connect(G_OBJECT(_contextMenu.remove), "activate",
-					 G_CALLBACK(onContextMenuDelete), this);
-	g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
-					 G_CALLBACK(onContextMenuAdd), this);
+	_contextMenu.remove->signal_activate().connect(sigc::mem_fun(*this, &CustomStimEditor::onContextMenuDelete));
+	_contextMenu.add->signal_activate().connect(sigc::mem_fun(*this, &CustomStimEditor::onContextMenuAdd));
 	
 	// Show menus (not actually visible until popped up)
-	gtk_widget_show_all(_contextMenu.menu);
+	_contextMenu.menu->show_all();
 }
 
 /** greebo: Creates all the widgets
  */
-void CustomStimEditor::populatePage() {
-	_pageHBox = gtk_hbox_new(FALSE, 12);
-	gtk_container_set_border_width(GTK_CONTAINER(_pageHBox), 6);
-	
-	_list = gtk_tree_view_new();
-	gtk_widget_set_size_request(_list, TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
-	
-	_selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_list));
-
-	GtkListStore* listStore = _stimTypes;
+void CustomStimEditor::populatePage()
+{
+	set_border_width(6);
 	
 	// Setup a treemodel filter to display the custom stims only
-	_customStimStore = gtk_tree_model_filter_new(GTK_TREE_MODEL(listStore), NULL);
-	gtk_tree_model_filter_set_visible_column(GTK_TREE_MODEL_FILTER(_customStimStore), ST_CUSTOM_COL);
+	_customStimStore = Gtk::TreeModelFilter::create(_stimTypes.getListStore());
+	_customStimStore->set_visible_column(_stimTypes.getColumns().isCustom);
 	
-	gtk_tree_view_set_model(GTK_TREE_VIEW(_list), _customStimStore);
-	g_object_unref(_customStimStore); // treeview owns reference now
+	_list = Gtk::manage(new Gtk::TreeView(_customStimStore));
+	_list->set_size_request(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT);
 
 	// Connect the signals to the callbacks
-	g_signal_connect(G_OBJECT(_selection), "changed", 
-					 G_CALLBACK(onSelectionChange), this);
-	/*g_signal_connect(G_OBJECT(_list), "key-press-event", 
-					 G_CALLBACK(onTreeViewKeyPress), this);*/
-	g_signal_connect(G_OBJECT(_list), "button-release-event", 
-					 G_CALLBACK(onTreeViewButtonRelease), this);
+	_list->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &CustomStimEditor::onSelectionChange));
+	_list->signal_button_release_event().connect(sigc::mem_fun(*this, &CustomStimEditor::onTreeViewButtonRelease));
 					 
 	// Add the columns to the treeview
 	// ID number
-	GtkTreeViewColumn* numCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(numCol, _("ID"));
-	GtkCellRenderer* numRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(numCol, numRenderer, FALSE);
-	gtk_tree_view_column_set_attributes(numCol, numRenderer, 
-										"text", ST_ID_COL,
-										NULL);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), numCol);
+	Gtk::TreeViewColumn* numCol = Gtk::manage(new Gtk::TreeViewColumn(_("ID")));
+	
+	Gtk::CellRendererText* numRenderer = Gtk::manage(new Gtk::CellRendererText);
+	numCol->pack_start(*numRenderer, false);
+	numCol->add_attribute(numRenderer->property_text(), _stimTypes.getColumns().id);
+	
+	_list->append_column(*numCol);
 	
 	// The Type
-	GtkTreeViewColumn* typeCol = gtk_tree_view_column_new();
-	gtk_tree_view_column_set_title(typeCol, _("Type"));
+	Gtk::TreeViewColumn* typeCol = Gtk::manage(new Gtk::TreeViewColumn(_("Type")));
+		
+	Gtk::CellRendererPixbuf* typeIconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
+	typeCol->pack_start(*typeIconRenderer, false);
 	
-	GtkCellRenderer* typeIconRenderer = gtk_cell_renderer_pixbuf_new();
-	gtk_tree_view_column_pack_start(typeCol, typeIconRenderer, FALSE);
+	Gtk::CellRendererText* typeTextRenderer = Gtk::manage(new Gtk::CellRendererText);
+	typeCol->pack_start(*typeTextRenderer, false);
 	
-	GtkCellRenderer* typeTextRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(typeCol, typeTextRenderer, FALSE);
-	
-	gtk_tree_view_column_set_attributes(typeCol, typeTextRenderer, 
-										"text", ST_CAPTION_COL,
-										NULL);
-	gtk_tree_view_column_set_attributes(typeCol, typeIconRenderer, 
-										"pixbuf", ST_ICON_COL,
-										NULL);
+	typeCol->add_attribute(typeTextRenderer->property_text(), _stimTypes.getColumns().caption);
+	typeCol->add_attribute(typeIconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
 
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_list), typeCol);
+	_list->append_column(*typeCol);
 	
-	GtkWidget* listVBox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(listVBox), gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(listVBox), createListButtons(), FALSE, FALSE, 0);
+	Gtk::VBox* listVBox = Gtk::manage(new Gtk::VBox(false, 6));
+	listVBox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_list)), true, true, 0);
+	listVBox->pack_start(createListButtons(), false, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(_pageHBox), listVBox, FALSE, FALSE, 0);
+	pack_start(*listVBox, false, false, 0);
 	
-	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(_pageHBox), _propertyWidgets.vbox, TRUE, TRUE, 0);
+	_propertyWidgets.vbox = Gtk::manage(new Gtk::VBox(false, 6));
+
+	pack_start(*_propertyWidgets.vbox, true, true, 0);
 	
 	// The name widgets
-	GtkWidget* nameHBox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.nameLabel = gtk_label_new(_("Name:"));
-	_propertyWidgets.nameEntry = gtk_entry_new();
-	gtk_box_pack_start(GTK_BOX(nameHBox), _propertyWidgets.nameLabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(nameHBox), _propertyWidgets.nameEntry, TRUE, TRUE, 0);
+	Gtk::HBox* nameHBox = Gtk::manage(new Gtk::HBox(false, 6));
+	_propertyWidgets.nameLabel = Gtk::manage(new Gtk::Label(_("Name:")));
+	_propertyWidgets.nameEntry = Gtk::manage(new Gtk::Entry);
+
+	nameHBox->pack_start(*_propertyWidgets.nameLabel, false, false, 0);
+	nameHBox->pack_start(*_propertyWidgets.nameEntry, true, true, 0);
 	
 	// Connect the entry field
-	g_signal_connect(G_OBJECT(_propertyWidgets.nameEntry), "changed", G_CALLBACK(onEntryChanged), this);
+	_propertyWidgets.nameEntry->signal_changed().connect(sigc::mem_fun(*this, &CustomStimEditor::onEntryChanged));
 	
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), nameHBox, FALSE, FALSE, 0);
+	_propertyWidgets.vbox->pack_start(*nameHBox, false, false, 0);
 	
-	GtkWidget* infoText = gtkutil::LeftAlignedLabel(
+	Gtk::Label* infoText = Gtk::manage(new gtkutil::LeftAlignedLabel(
 		_("<b>Note:</b> Please beware that deleting custom stims may\n"
 		"affect other entities as well. So check before you delete.")
-	);
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), infoText, FALSE, FALSE, 0);
+	));
+	_propertyWidgets.vbox->pack_start(*infoText, false, false, 0);
 }
 
-GtkWidget* CustomStimEditor::createListButtons() {
-	GtkWidget* hbox = gtk_hbox_new(TRUE, 6);
+Gtk::Widget& CustomStimEditor::createListButtons()
+{
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 6));
 	
-	_listButtons.add = gtk_button_new_with_label(_("Add Stim Type"));
-	gtk_button_set_image(
-		GTK_BUTTON(_listButtons.add), 
-		gtk_image_new_from_stock(GTK_STOCK_ADD, GTK_ICON_SIZE_BUTTON)
-	);
+	_listButtons.add = Gtk::manage(new Gtk::Button(_("Add Stim Type")));
+	_listButtons.add->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::ADD, Gtk::ICON_SIZE_BUTTON)));
 	
-	_listButtons.remove = gtk_button_new_with_label(_("Remove Stim Type"));
-	gtk_button_set_image(
-		GTK_BUTTON(_listButtons.remove), 
-		gtk_image_new_from_stock(GTK_STOCK_DELETE, GTK_ICON_SIZE_BUTTON)
-	);
+	_listButtons.remove = Gtk::manage(new Gtk::Button(_("Remove Stim Type")));
+	_listButtons.remove->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_BUTTON)));
 	
-	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.add, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), _listButtons.remove, TRUE, TRUE, 0);
+	hbox->pack_start(*_listButtons.add, true, true, 0);
+	hbox->pack_start(*_listButtons.remove, true, true, 0);
 	
-	g_signal_connect(G_OBJECT(_listButtons.add), "clicked", G_CALLBACK(onAddStimType), this);
-	g_signal_connect(G_OBJECT(_listButtons.remove), "clicked", G_CALLBACK(onRemoveStimType), this);
-	
-	return hbox; 
+	_listButtons.add->signal_clicked().connect(sigc::mem_fun(*this, &CustomStimEditor::onAddStimType));
+	_listButtons.remove->signal_clicked().connect(sigc::mem_fun(*this, &CustomStimEditor::onRemoveStimType));
+
+	return *hbox; 
 }
 
-void CustomStimEditor::entryChanged(GtkEditable* editable) {
-	if (editable == GTK_EDITABLE(_propertyWidgets.nameEntry)) {
+void CustomStimEditor::entryChanged(Gtk::Entry* entry)
+{
+	if (entry == _propertyWidgets.nameEntry)
+	{
 		// Set the caption of the curently selected stim type
-		std::string caption = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.nameEntry));
+		std::string caption = _propertyWidgets.nameEntry->get_text();
+
 		// Pass the call to the helper class 
 		_stimTypes.setStimTypeCaption(getIdFromSelection(), caption);
 		
-		if (_entity != NULL) {
+		if (_entity != NULL)
+		{
 			_entity->updateListStores();
 		}
 	}
 }
 
-void CustomStimEditor::update() {
+void CustomStimEditor::update()
+{
 	_updatesDisabled = true;
 	
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
-		gtk_widget_set_sensitive(_propertyWidgets.vbox, TRUE);
+	if (id > 0)
+	{
+		_propertyWidgets.vbox->set_sensitive(true);
 		
 		StimType stimType = _stimTypes.get(id);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.nameEntry), 
-			stimType.caption.c_str()
-		);
+		_propertyWidgets.nameEntry->set_text(stimType.caption);
 		
-		gtk_widget_set_sensitive(_contextMenu.remove, TRUE);
+		_contextMenu.remove->set_sensitive(true);
 	}
-	else {
-		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
-		gtk_widget_set_sensitive(_contextMenu.remove, FALSE);
+	else
+	{
+		_propertyWidgets.vbox->set_sensitive(false);
+		_contextMenu.remove->set_sensitive(false);
 	}
 	
 	_updatesDisabled = false;
 }
 
-void CustomStimEditor::selectId(int id) {
+void CustomStimEditor::selectId(int id)
+{
 	// Setup the selectionfinder to search for the id
-	gtkutil::TreeModel::SelectionFinder finder(id, ST_ID_COL);
+	gtkutil::TreeModel::SelectionFinder finder(id, _stimTypes.getColumns().id.index());
 
-	gtk_tree_model_foreach(
-		_customStimStore,
-		gtkutil::TreeModel::SelectionFinder::forEach,
-		&finder
-	);
+	_customStimStore->foreach_iter(
+		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 	
-	if (finder.getPath() != NULL) {
-		GtkTreeIter iter = finder.getIter();
-		// Set the active row of the list to the given effect
-		gtk_tree_selection_select_iter(_selection, &iter);
+	if (finder.getIter())
+	{
+		// Set the active row of the list to the given stim
+		_list->get_selection()->select(finder.getIter());
 	}
 }
 
-void CustomStimEditor::addStimType() {
+void CustomStimEditor::addStimType()
+{
 	// Add a new stim type with the lowest free custom id
 	int id = _stimTypes.getFreeCustomStimId();
 	
@@ -247,12 +232,11 @@ void CustomStimEditor::addStimType() {
 	selectId(id);
 }
 
-int CustomStimEditor::getIdFromSelection() {
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(_selection, &model, &iter) ? true : false;
+int CustomStimEditor::getIdFromSelection()
+{
+	Gtk::TreeModel::iterator iter = _list->get_selection()->get_selected();
 	
-	return (anythingSelected) ? gtkutil::TreeModel::getInt(model, &iter, ST_ID_COL) : -1;
+	return (iter) ? (*iter)[_stimTypes.getColumns().id] : -1;
 }
 
 void CustomStimEditor::removeStimType()
@@ -267,46 +251,51 @@ void CustomStimEditor::removeStimType()
 	}
 }
 
-void CustomStimEditor::onAddStimType(GtkWidget* button, CustomStimEditor* self) {
-	self->addStimType();
+void CustomStimEditor::onAddStimType()
+{
+	addStimType();
 }
 
-void CustomStimEditor::onRemoveStimType(GtkWidget* button, CustomStimEditor* self) {
+void CustomStimEditor::onRemoveStimType()
+{
 	// Delete the selected stim type from the list
-	self->removeStimType();
+	removeStimType();
 }
 
-void CustomStimEditor::onEntryChanged(GtkEditable* editable, CustomStimEditor* self) {
-	if (self->_updatesDisabled) return; // Callback loop guard
+void CustomStimEditor::onEntryChanged()
+{
+	if (_updatesDisabled) return; // Callback loop guard
 	
-	self->entryChanged(editable);
+	entryChanged(_propertyWidgets.nameEntry);
 }
 
-void CustomStimEditor::onSelectionChange(GtkTreeSelection* selection, CustomStimEditor* self) {
-	self->update();
+void CustomStimEditor::onSelectionChange()
+{
+	update();
 }
 
 // Delete context menu items activated
-void CustomStimEditor::onContextMenuDelete(GtkWidget* w, CustomStimEditor* self) {
+void CustomStimEditor::onContextMenuDelete()
+{
 	// Delete the selected stim from the list
-	self->removeStimType();
+	removeStimType();
 }
 
 // Delete context menu items activated
-void CustomStimEditor::onContextMenuAdd(GtkWidget* w, CustomStimEditor* self) {
-	self->addStimType();
+void CustomStimEditor::onContextMenuAdd()
+{
+	addStimType();
 }
 
-gboolean CustomStimEditor::onTreeViewButtonRelease(
-	GtkTreeView* view, GdkEventButton* ev, CustomStimEditor* self)
+bool CustomStimEditor::onTreeViewButtonRelease(GdkEventButton* ev)
 {
 	// Single click with RMB (==> open context menu)
-	if (ev->button == 3) {
-		gtk_menu_popup(GTK_MENU(self->_contextMenu.menu), 
-					   NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+	if (ev->button == 3)
+	{
+		_contextMenu.menu->popup(1, gtk_get_current_event_time());
 	}
 	
-	return FALSE;
+	return false;
 }
 	
 } // namespace ui

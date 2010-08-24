@@ -21,7 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "RadiantModule.h"
 
 #include <iostream>
-#include <gtk/gtkimage.h>
 
 #include "ifiletypes.h"
 #include "iregistry.h"
@@ -41,6 +40,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "map/PointFile.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/mediabrowser/MediaBrowser.h"
+#include "ui/overlay/OverlayDialog.h"
 #include "gtkutil/FileChooser.h"
 
 #include "modulesystem/StaticModule.h"
@@ -145,7 +145,7 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
 	ui::MediaBrowser::registerPreferences();
-    GlobalTextureBrowser().construct();
+	ui::TextureBrowser::construct();
 	entity::registerCommands();
     map::AutoSaver().init();
 }
@@ -157,6 +157,8 @@ void RadiantModule::shutdownModule()
 	GlobalFileSystem().shutdown();
 
 	map::PointFile::Instance().destroy();
+	ui::OverlayDialog::destroy();
+	ui::TextureBrowser::destroy();
     
     // Remove all the event listeners, otherwise the shared_ptrs 
     // lock the instances. This is just for safety, usually all

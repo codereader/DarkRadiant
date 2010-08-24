@@ -4,29 +4,38 @@
 #include "iuimanager.h"
 #include <map>
 #include "gtkutil/event/SingleIdleCallback.h"
-#include <gtk/gtkwidget.h>
 
-namespace ui {
+namespace Gtk
+{ 
+	class Table;
+	class Widget;
+	class Label;
+}
+
+namespace ui
+{
 
 class StatusBarManager :
 	public IStatusBarManager,
 	protected gtkutil::SingleIdleCallback
 {
-	struct StatusBarElement {
+	struct StatusBarElement
+	{
 		// The toplevel container 
-		GtkWidget* toplevel;
+		Gtk::Widget* toplevel;
 
 		// If this status bar element is a label, this is not NULL
-		GtkWidget* label;
+		Gtk::Label* label;
+
 		// The text for this label, gets filled in when GTK is idle
 		std::string text;
 
-		StatusBarElement(GtkWidget* _toplevel) :
+		StatusBarElement(Gtk::Widget* _toplevel) :
 			toplevel(_toplevel),
 			label(NULL)
 		{}
 
-		StatusBarElement(GtkWidget* _toplevel, GtkWidget* _label) :
+		StatusBarElement(Gtk::Widget* _toplevel, Gtk::Label* _label) :
 			toplevel(_toplevel),
 			label(_label)
 		{}
@@ -42,7 +51,7 @@ class StatusBarManager :
 	PositionMap _positions;
 
 	// The main status bar
-	GtkWidget* _statusBar;
+	Gtk::Table* _statusBar;
 
 public:
 	StatusBarManager();
@@ -50,7 +59,7 @@ public:
 	/**
 	 * Get the status bar widget, for packing into the main window.
 	 */
-	GtkWidget* getStatusBar();
+	Gtk::Widget* getStatusBar();
 
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
@@ -61,14 +70,14 @@ public:
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
 	 *       at the front or back of the status bar container.
 	 */
-	void addElement(const std::string& name, GtkWidget* widget, int pos);
+	void addElement(const std::string& name, Gtk::Widget* widget, int pos);
 
 	/**
 	 * Returns a named status bar widget, previously added by addElement().
 	 * 
 	 * @returns: NULL if the named widget does not exist.
 	 */
-	GtkWidget* getElement(const std::string& name);
+	Gtk::Widget* getElement(const std::string& name);
 
 	/**
 	 * greebo: A specialised method, adding a named text element.
@@ -100,7 +109,7 @@ private:
 	void rebuildStatusBar();
 
 	// Removes all encountered widgets from the statusbar
-	static void _removeChildWidgets(GtkWidget* child, gpointer statusBar);
+	void _removeChildWidgets(Gtk::Widget& child);
 };
 
 } // namespace ui

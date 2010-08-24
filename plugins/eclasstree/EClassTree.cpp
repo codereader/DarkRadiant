@@ -1,7 +1,5 @@
 #include "EClassTree.h"
 
-#include <gtk/gtk.h>
-
 #include "ieclass.h"
 #include "imainframe.h"
 #include "selectionlib.h"
@@ -14,38 +12,31 @@
 #include "EClassTreeBuilder.h"
 #include "i18n.h"
 
+#include <gtkmm/treeview.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/paned.h>
+
 namespace ui {
 
 	namespace
 	{
 		const char* const ECLASSTREE_TITLE = N_("Entity Class Tree");
-
-		// TreeView column numbers
-	    enum {
-	        PROPERTY_NAME_COLUMN,
-	        PROPERTY_VALUE_COLUMN,
-	        PROPERTY_TEXT_COLOUR_COLUMN,
-	        PROPERTY_INHERITED_FLAG_COLUMN,
-	        NUM_PROPERTY_COLUMNS
-	    };
 	}
 
 EClassTree::EClassTree() :
 	gtkutil::BlockingTransientWindow(_(ECLASSTREE_TITLE), GlobalMainFrame().getTopLevelWindow())
 {
 	// Set the default border width in accordance to the HIG
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 		
 	// Create a new tree store for the entityclasses
-	_eclassStore = gtk_tree_store_new(
-		N_COLUMNS, 
-		G_TYPE_STRING,		// name
-		GDK_TYPE_PIXBUF		// icon
-	);
+	_eclassStore = Gtk::TreeStore::create(_eclassColumns);
 	
 	// Construct an eclass visitor and traverse the entity classes
-	EClassTreeBuilder builder(_eclassStore);
+	EClassTreeBuilder builder(_eclassStore, _eclassColumns);
 	
 	// Construct the window's widgets
 	populateWindow();
@@ -54,122 +45,116 @@ EClassTree::EClassTree() :
 	show();
 }
 
-void EClassTree::populateWindow() {
+void EClassTree::populateWindow()
+{
 	// Create the overall vbox
-	_dialogVBox = gtk_vbox_new(FALSE, 12);
-	gtk_container_add(GTK_CONTAINER(getWindow()), _dialogVBox);
+	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 12));
+	add(*dialogVBox);
 	
-	GtkWidget* paned = gtk_hpaned_new();
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), paned, TRUE, TRUE, 0);
+	Gtk::HPaned* paned = Gtk::manage(new Gtk::HPaned);
+	dialogVBox->pack_start(*paned, true, true, 0);
 	
 	// Pack tree view
-	gtk_paned_add1(GTK_PANED(paned), createEClassTreeView());
+	paned->add1(createEClassTreeView());
 	
 	// Pack spawnarg treeview
-	gtk_paned_add2(GTK_PANED(paned), GTK_WIDGET(createPropertyTreeView()));
+	paned->add2(createPropertyTreeView());
 	
 	// Pack in dialog buttons
-	gtk_box_pack_start(GTK_BOX(_dialogVBox), createButtons(), FALSE, FALSE, 0);
+	dialogVBox->pack_start(createButtons(), false, false, 0);
 	
 	// Set the default size of the window
-	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
-	gtk_window_set_default_size(
-		GTK_WINDOW(getWindow()), gint(rect.width * 0.8f), gint(rect.height * 0.8f)
+	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+
+	set_default_size(
+		static_cast<int>(rect.get_width() * 0.8f), static_cast<int>(rect.get_height() * 0.8f)
 	);
 
-	gtk_paned_set_position(GTK_PANED(paned), static_cast<gint>(rect.width * 0.25f));
+	paned->set_position(static_cast<int>(rect.get_width() * 0.25f));
 }
 
-GtkWidget* EClassTree::createEClassTreeView() {
-	_eclassView = GTK_TREE_VIEW(
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_eclassStore))
-	);
+Gtk::Widget& EClassTree::createEClassTreeView()
+{
+	_eclassView = Gtk::manage(new Gtk::TreeView(_eclassStore));
 
 	// Use the TreeModel's full string search function
-	gtk_tree_view_set_search_equal_func(_eclassView, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+	_eclassView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 	
 	// Tree selection
-	_eclassSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_eclassView));
-	gtk_tree_selection_set_mode(_eclassSelection, GTK_SELECTION_BROWSE);
-	g_signal_connect(G_OBJECT(_eclassSelection), "changed", G_CALLBACK(onSelectionChanged), this);
+	_eclassSelection = _eclassView->get_selection();
+	_eclassSelection->set_mode(Gtk::SELECTION_BROWSE);
+	_eclassSelection->signal_changed().connect(sigc::mem_fun(*this, &EClassTree::onSelectionChanged));
 	
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(_eclassView), TRUE);
+	_eclassView->set_headers_visible(true);
 
 	// Pack the columns
 	// Single column with icon and name
-	GtkTreeViewColumn* col = 
-		gtkutil::IconTextColumn(_("Classname"), NAME_COLUMN, ICON_COLUMN);
-	gtk_tree_view_column_set_sort_column_id(col, NAME_COLUMN);
+	Gtk::TreeViewColumn* col = Gtk::manage(
+		new gtkutil::IconTextColumn(_("Classname"), _eclassColumns.name, _eclassColumns.icon
+	));
+	col->set_sort_column(_eclassColumns.name);
 	
-	gtk_tree_view_append_column(GTK_TREE_VIEW(_eclassView), col);
+	_eclassView->append_column(*col);
 	
-	return gtkutil::ScrolledFrame(GTK_WIDGET(_eclassView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_eclassView));
 }
 
-GtkWidget* EClassTree::createPropertyTreeView() {
+Gtk::Widget& EClassTree::createPropertyTreeView()
+{
 	// Initialise the instance TreeStore
-	_propertyStore = gtk_list_store_new(NUM_PROPERTY_COLUMNS, 
-    							    G_TYPE_STRING, // property
-    							    G_TYPE_STRING, // value
-                                    G_TYPE_STRING, // text colour
-    							    G_TYPE_STRING); // inherited flag
+	_propertyStore = Gtk::ListStore::create(_propertyColumns);
     
     // Create the TreeView widget and link it to the model
-	_propertyView = GTK_TREE_VIEW(gtk_tree_view_new_with_model(
-		GTK_TREE_MODEL(_propertyStore))
-	);
+	_propertyView = Gtk::manage(new Gtk::TreeView(_propertyStore));
 
     // Create the Property column
-    GtkTreeViewColumn* nameCol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(nameCol, _("Property"));
-	gtk_tree_view_column_set_sizing(nameCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
-    gtk_tree_view_column_set_spacing(nameCol, 3);
+	Gtk::TreeViewColumn* nameCol = Gtk::manage(new Gtk::TreeViewColumn);
+    nameCol->set_title(_("Property"));
+	nameCol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
+    nameCol->set_spacing(3);
 
-    GtkCellRenderer* textRenderer = gtk_cell_renderer_text_new();
-	gtk_tree_view_column_pack_start(nameCol, textRenderer, FALSE);
-    gtk_tree_view_column_set_attributes(nameCol, textRenderer,
-                                        "text", PROPERTY_NAME_COLUMN,
-                                        "foreground", PROPERTY_TEXT_COLOUR_COLUMN,
-                                        NULL);
+	Gtk::CellRendererText* textRenderer = Gtk::manage(new Gtk::CellRendererText);
+	nameCol->pack_start(*textRenderer, false);
+	nameCol->add_attribute(textRenderer->property_text(), _propertyColumns.name);
+	nameCol->add_attribute(textRenderer->property_foreground(), _propertyColumns.colour);
 
-    //GtkTreeViewColumn* nameCol = gtkutil::TextColumn("Property", PROPERTY_NAME_COLUMN);
-	gtk_tree_view_column_set_sort_column_id(nameCol, PROPERTY_NAME_COLUMN);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(_propertyView), nameCol);                                                                        
+	nameCol->set_sort_column(_propertyColumns.name);
+    _propertyView->append_column(*nameCol);
 
 	// Create the value column
-    GtkTreeViewColumn* valCol = gtk_tree_view_column_new();
-    gtk_tree_view_column_set_title(valCol, _("Value"));
-	gtk_tree_view_column_set_sizing(valCol, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+	Gtk::TreeViewColumn* valCol = Gtk::manage(new Gtk::TreeViewColumn);
+    valCol->set_title(_("Value"));
+	valCol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
 
-    GtkCellRenderer* valRenderer = gtk_cell_renderer_text_new();
-    gtk_tree_view_column_pack_start(valCol, valRenderer, TRUE);
-    gtk_tree_view_column_set_attributes(valCol, valRenderer, 
-    									"text", PROPERTY_VALUE_COLUMN, 
-    									"foreground", PROPERTY_TEXT_COLOUR_COLUMN,
-    									NULL);
+	Gtk::CellRendererText* valRenderer = Gtk::manage(new Gtk::CellRendererText);
+	valCol->pack_start(*valRenderer, true);
+	valCol->add_attribute(valRenderer->property_text(), _propertyColumns.value);
+	valCol->add_attribute(valRenderer->property_foreground(), _propertyColumns.colour);
 
-	gtk_tree_view_column_set_sort_column_id(valCol, PROPERTY_VALUE_COLUMN);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(_propertyView), valCol);
+	valCol->set_sort_column(_propertyColumns.value);
+    _propertyView->append_column(*valCol);
     
-    return gtkutil::ScrolledFrame(GTK_WIDGET(_propertyView));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_propertyView));
 }
 
 // Lower dialog buttons
-GtkWidget* EClassTree::createButtons() {
-	GtkWidget* buttonHBox = gtk_hbox_new(TRUE, 12);
+Gtk::Widget& EClassTree::createButtons()
+{
+	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
 	
 	// Close Button
-	GtkWidget* closeButton = gtk_button_new_from_stock(GTK_STOCK_CLOSE);
-	g_signal_connect(G_OBJECT(closeButton), "clicked", G_CALLBACK(onClose), this);
-	gtk_box_pack_end(GTK_BOX(buttonHBox), closeButton, TRUE, TRUE, 0);
+	Gtk::Button* closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLOSE));
+	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &EClassTree::onClose));
+	buttonHBox->pack_end(*closeButton, true, true, 0);
 	
-	return gtkutil::RightAlignment(buttonHBox);	
+	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
-void EClassTree::updatePropertyView(const std::string& eclassName) {
+void EClassTree::updatePropertyView(const std::string& eclassName)
+{
 	// Clear the existing list
-	gtk_list_store_clear(_propertyStore);
+	_propertyStore->clear();
 	
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
 	if (eclass == NULL) {
@@ -179,32 +164,33 @@ void EClassTree::updatePropertyView(const std::string& eclassName) {
 	class ListStorePopulator :
 		public EntityClassAttributeVisitor
 	{
-		GtkListStore* _listStore;
+		Glib::RefPtr<Gtk::ListStore> _listStore;
+		const PropertyListColumns& _columns;
 	public:
-		ListStorePopulator(GtkListStore* targetStore) :
-			_listStore(targetStore)
+		ListStorePopulator(const Glib::RefPtr<Gtk::ListStore>& targetStore,
+						   const PropertyListColumns& columns) :
+			_listStore(targetStore),
+			_columns(columns)
 		{}
 		
-		virtual void visit(const EntityClassAttribute& attr) {
+		virtual void visit(const EntityClassAttribute& attr)
+		{
 			// Append the details to the treestore
-			GtkTreeIter iter;
-			gtk_list_store_append(_listStore, &iter);
-			gtk_list_store_set(
-				_listStore, &iter,
-				PROPERTY_NAME_COLUMN, attr.name.c_str(),
-				PROPERTY_VALUE_COLUMN, attr.value.c_str(),
-				PROPERTY_TEXT_COLOUR_COLUMN, attr.inherited ? "#666666" : "black",
-				PROPERTY_INHERITED_FLAG_COLUMN, attr.inherited ? "1" : "0",
-				-1
-			);
+			Gtk::TreeModel::Row row = *_listStore->append();
+
+			row[_columns.name] = attr.name;
+			row[_columns.value] = attr.value;
+			row[_columns.colour] = attr.inherited ? "#666666" : "black";
+			row[_columns.inherited] = attr.inherited ? "1" : "0";
 		}
 	};
 	
-	ListStorePopulator populator(_propertyStore);
+	ListStorePopulator populator(_propertyStore, _propertyColumns);
 	eclass->forEachClassAttribute(populator, true);
 }
 
-void EClassTree::_preShow() {
+void EClassTree::_preShow()
+{
 	// Do we have anything selected
 	if (GlobalSelectionSystem().countSelected() == 0) {
 		return;
@@ -215,41 +201,44 @@ void EClassTree::_preShow() {
 
 	Entity* entity = Node_getEntity(lastSelected);
 
-	if (entity != NULL) {
+	if (entity != NULL)
+	{
 		// There is an entity selected, extract the classname
 		std::string classname = entity->getKeyValue("classname");
 
 		// Find the classname
-		gtkutil::TreeModel::findAndSelectString(_eclassView, classname, NAME_COLUMN);
+		gtkutil::TreeModel::findAndSelectString(_eclassView, classname, _eclassColumns.name);
 	}
 }
 
 // Static command target
-void EClassTree::showWindow(const cmd::ArgumentList& args) {
+void EClassTree::showWindow(const cmd::ArgumentList& args)
+{
 	// Construct a new instance, this enters the main loop
 	EClassTree _tree;
 }
 
-void EClassTree::onClose(GtkWidget* button, EClassTree* self) {
-	self->destroy();
+void EClassTree::onClose()
+{
+	destroy();
 }
 
-void EClassTree::onSelectionChanged(GtkWidget* widget, EClassTree* self) {
+void EClassTree::onSelectionChanged()
+{
 	// Prepare to check for a selection
-	GtkTreeIter iter;
-	GtkTreeModel* model;
+	Gtk::TreeModel::iterator iter = _eclassSelection->get_selected();
 	
 	// Add button is enabled if there is a selection and it is not a folder.
-	if (gtk_tree_selection_get_selected(self->_eclassSelection, &model, &iter)) 
+	if (iter) 
 	{
-		gtk_widget_set_sensitive(GTK_WIDGET(self->_propertyView), TRUE);
+		_propertyView->set_sensitive(true);
 		
 		// Set the panel text with the usage information
-		self->updatePropertyView(
-			gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN));
+		updatePropertyView(Glib::ustring((*iter)[_eclassColumns.name]));
 	}
-	else {
-		gtk_widget_set_sensitive(GTK_WIDGET(self->_propertyView), FALSE);
+	else
+	{
+		_propertyView->set_sensitive(false);
 	}
 }
 

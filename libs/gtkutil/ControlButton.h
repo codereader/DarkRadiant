@@ -3,12 +3,14 @@
 
 #include "Timer.h"
 
-#include <gtk/gtkbutton.h>
-#include <gtk/gtkvbox.h>
+#include <gtkmm/image.h>
+#include <gtkmm/button.h>
+#include <gtkmm/box.h>
 
 namespace gtkutil {
 	
-	namespace {
+	namespace
+	{
 		// The delay between the first "click" and the second "click" event
 		const int DELAY_INITIAL = 200;
 		// The delay between all following "click" events		
@@ -20,69 +22,61 @@ namespace gtkutil {
  * "clicked" event as long as the user keeps the mouse button pressed. 
  * Used for Surface Inspector controls, for example.
  */
-class ControlButton
+class ControlButton :
+	public Gtk::Button
 {
-	// Icon pixbuf
-	GdkPixbuf* _iconPixBuf;
-	
-	// The actual button widget
-	GtkWidget* _button;
-	
+private:
 	// The timer object that periodically fires the onTimeOut() method
 	Timer _timer;
 
 public:
 
-	ControlButton(GdkPixbuf* iconPixbuf) :
-		_iconPixBuf(iconPixbuf),
-		_button(gtk_button_new()),
+	ControlButton(const Glib::RefPtr<Gdk::Pixbuf>& iconPixbuf) :
+		Gtk::Button(),
 		_timer(DELAY_INITIAL, onTimeOut, this)
 	{
 		_timer.disable();
 		
 		// Add the icon to the button
-		GtkWidget* icon = gtk_image_new_from_pixbuf(_iconPixBuf);
-		GtkWidget* vbox = gtk_vbox_new(false, 3);
-		gtk_box_pack_start(GTK_BOX(vbox), icon, true, false, 0);
+		Gtk::Image* icon = Gtk::manage(new Gtk::Image(iconPixbuf));
+
+		Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 3));
+		vbox->pack_start(*icon, true, false, 0);
 		
-		gtk_container_add(GTK_CONTAINER(_button), vbox);
+		add(*vbox);
 
 		// Connect the pressed/released signals
-		g_signal_connect(G_OBJECT(_button), "pressed", G_CALLBACK(onPress), this);
-		g_signal_connect(G_OBJECT(_button), "released", G_CALLBACK(onRelease), this);
+		signal_pressed().connect(sigc::mem_fun(*this, &ControlButton::onPress), false);
+		signal_released().connect(sigc::mem_fun(*this, &ControlButton::onRelease), false);
 	}
 	
-	/** Operator cast to GtkWidget*
-	 */
-	operator GtkWidget* () {
-		// Return the button
-		return _button;
-	}
-	
-	static gboolean onTimeOut(gpointer data) {
+	static gboolean onTimeOut(gpointer data)
+	{
 		ControlButton* self = reinterpret_cast<ControlButton*>(data);
 		
 		// Fire the "clicked" signal
-		gtk_button_clicked(GTK_BUTTON(self->_button));
+		self->clicked();
 		
 		// Set the interval to a smaller value
 		self->_timer.setTimeout(DELAY_PERIODIC);
 		self->_timer.enable();
 		
 		// Return true, so that the timer gets called again
-		return true;
+		return TRUE;
 	}
 	
-	static void onPress(GtkButton* button, ControlButton* self) {
+	void onPress()
+	{
 		// Connect the timing event
-		self->_timer.enable();
+		_timer.enable();
 	}
 	
-	static void onRelease(GtkButton* button, ControlButton* self) {
+	void onRelease()
+	{
 		// Disconnect the timing event
-		self->_timer.disable();
+		_timer.disable();
 		// Reset the interval to the initial value
-		self->_timer.setTimeout(DELAY_INITIAL);
+		_timer.setTimeout(DELAY_INITIAL);
 	}
 };
 

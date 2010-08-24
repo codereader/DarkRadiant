@@ -12,7 +12,7 @@ class FloatingCamWnd :
 {
 public:
 	// Pass the parent widget to this camwnd
-	FloatingCamWnd(GtkWindow* parent);
+	FloatingCamWnd(const Glib::RefPtr<Gtk::Window>& parent);
 
 	virtual ~FloatingCamWnd();
 };

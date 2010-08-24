@@ -12,17 +12,27 @@
 #include "gtkutil/RegistryConnector.h"
 #include "gtkutil/event/SingleIdleCallback.h"
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTable GtkTable;
-typedef struct _GtkObject GtkObject;
-typedef struct _GtkEditable GtkEditable;
-namespace gtkutil { class ControlButton; }
 class Patch;
 class PatchNode;
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
 typedef boost::weak_ptr<PatchNode> PatchNodeWeakPtr;
 
-namespace ui {
+// Forward decls.
+namespace Gtk
+{
+	class Table;
+	class HBox;
+	class Entry;
+	class Label;
+	class ComboBoxText;
+	class SpinButton;
+	class CheckButton;
+}
+
+namespace gtkutil { class ControlButton; }
+
+namespace ui
+{
 
 // Forward declaration
 class PatchInspector;
@@ -39,43 +49,43 @@ class PatchInspector
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
-	struct VertexChooser {
-		GtkTable* table;
-		GtkWidget* title;
-		GtkWidget* rowLabel;
-		GtkWidget* colLabel;
-		GtkWidget* rowCombo;
-		GtkWidget* colCombo;
+	struct VertexChooser
+	{
+		Gtk::Table* table;
+		Gtk::Label* title;
+		Gtk::Label* rowLabel;
+		Gtk::Label* colLabel;
+		Gtk::ComboBoxText* rowCombo;
+		Gtk::ComboBoxText* colCombo;
 	} _vertexChooser;
 	
-	typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
-	
-	struct CoordRow {
-		GtkWidget* hbox;
-		GtkWidget* label;
-		GtkWidget* value;
-		gulong valueChangedHandler;
-		ControlButtonPtr smaller; 
-		ControlButtonPtr larger;
-		GtkWidget* step;
-		GtkWidget* steplabel;
+	struct CoordRow
+	{
+		Gtk::HBox* hbox;
+		Gtk::Label* label;
+		Gtk::Entry* value;
+		gtkutil::ControlButton* smaller;
+		gtkutil::ControlButton* larger;
+		Gtk::Entry* step;
+		Gtk::Label* steplabel;
 	};
 	
 	// This are the named manipulator rows (x, y, z, s, t) 
 	typedef std::map<std::string, CoordRow> CoordMap;
 	CoordMap _coords;
 	
-	GtkWidget* _coordsLabel;
-	GtkTable* _coordsTable;
+	Gtk::Label* _coordsLabel;
+	Gtk::Table* _coordsTable;
 	
-	struct TessWidgets {
-		GtkWidget* title;
-		GtkTable* table;
-		GtkWidget* fixed;
-		GtkWidget* horiz;
-		GtkWidget* vert;
-		GtkWidget* horizLabel;
-		GtkWidget* vertLabel;
+	struct TesselationWidgets
+	{
+		Gtk::Label* title;
+		Gtk::Table* table;
+		Gtk::CheckButton* fixed;
+		Gtk::SpinButton* horiz;
+		Gtk::SpinButton* vert;
+		Gtk::Label* horizLabel;
+		Gtk::Label* vertLabel;
 	} _tesselation;
 
 	const SelectionInfo& _selectionInfo;
@@ -129,23 +139,24 @@ private:
 	 * @table: The GtkTable the widgets should be packed in
 	 * @row: the row index of _coordsTable to pack the row into.
 	 */
-	CoordRow createCoordRow(const std::string& label, GtkTable* table, int row);
+	CoordRow createCoordRow(const std::string& label, Gtk::Table& table, int row);
 
 	// Creates and packs the widgets into the dialog (called by constructor)
 	void populateWindow();
 
-	static void onComboBoxChange(GtkWidget* combo, PatchInspector* self);
+	// gtkmm callbacks
+	void onComboBoxChange();
 	
 	// Gets called if the spin buttons with the coordinates get changed
-	static void onCoordChange(GtkEditable* editable, PatchInspector* self);
-	static void onStepChanged(GtkEditable* editable, PatchInspector* self);
+	void onCoordChange();
+	void onStepChanged();
 	
-	static void onClickSmaller(GtkWidget* button, CoordRow* row);
-	static void onClickLarger(GtkWidget* button, CoordRow* row);
+	void onClickSmaller(CoordRow& row);
+	void onClickLarger(CoordRow& row);
 
 	// Gets called when the "Fixed Tesselation" settings are changed 
-	static void onFixedTessChange(GtkWidget* checkButton, PatchInspector* self);
-	static void onTessChange(GtkEditable* editable, PatchInspector* self);
+	void onFixedTessChange();
+	void onTessChange();
 
 public:
 	PatchInspector();

@@ -6,7 +6,14 @@
 
 #include "camera/CamWnd.h"
 
-namespace ui {
+namespace Gtk
+{
+	class HPaned;
+	class VPaned;
+}
+
+namespace ui
+{
 
 #define REGULAR_LAYOUT_NAME "Regular"
 #define REGULAR_LEFT_LAYOUT_NAME "RegularLeft"
@@ -20,9 +27,10 @@ class RegularLayout :
 	// The camera view
 	CamWndPtr _camWnd;
 
-	struct RegularView {
-		GtkWidget* horizPane;
-		GtkWidget* texCamPane;
+	struct RegularView
+	{
+		boost::shared_ptr<Gtk::HPaned> horizPane;
+		Gtk::VPaned* texCamPane;
 		
 		gtkutil::PanedPosition posHPane;
 		gtkutil::PanedPosition posTexCamPane;

@@ -1,7 +1,7 @@
 #ifndef VFSTREEPOPULATOR_H_
 #define VFSTREEPOPULATOR_H_
 
-#include <gtk/gtktreestore.h>
+#include <gtkmm/treestore.h>
 
 #include <map>
 #include <string>
@@ -12,35 +12,37 @@
 namespace gtkutil
 {
 	
-/** Utility class to construct a GtkTreeStore from a series of string paths
+/** 
+ * Utility class to construct a Gtk::TreeStore from a series of string paths
  * in the form "models/first/second/object.lwo" or similar. The class accepts
  * the Tree Store and then string paths, one by one, adding each one to the
  * tree in the appropriate place.
  * 
  * Since the VFSTreePopulator has no knowledge of the column data to be inserted
  * into the tree, it does not set any of the values but merely calls
- * gtk_tree_store_append to get a GtkTreeIter* pointing to the newly-added
+ * TreeStore::append() to get an iterator pointing to the newly-added
  * row. In order to insert the data, the calling code must then call the 
  * visitor function which will provide the visitor with two objects - the
- * created GtkTreeIter*, and the full input string which the visitor can then
+ * created iterator and the full input string which the visitor can then
  * use to populate the data appropriately.
  * 
  * When the VFSTreePopulator is destroyed it will free any temporary structures
- * used during tree creation, such as the hashtable of GtkTreeIter* objects
- * used to locate parent nodes. The GtkTreeModel will not be destroyed since it
+ * used during tree creation, such as the hashtable of iterator objects
+ * used to locate parent nodes. The TreeModel will not be destroyed since it
  * is owned by the calling code.
  */
 class VFSTreePopulator
 {
+private:
 	// The GtkTreeStore to populate
-	GtkTreeStore* _store;
+	Glib::RefPtr<Gtk::TreeStore> _store;
 	
 	// Toplevel node to add children under
-	GtkTreeIter* _topLevel;
+	Gtk::TreeModel::iterator _topLevel;
 	
-	// Maps of names to corresponding GtkTreeIter* nodes, for both intermediate
+	// Maps of names to corresponding treemodel iterators, for both intermediate
 	// paths and explicitly presented paths
-	typedef std::map<std::string, GtkTreeIter*> NamedIterMap;
+	typedef std::map<std::string, Gtk::TreeModel::iterator> NamedIterMap;
 	NamedIterMap _iters;
 	
 	// Set of paths that are passed in through addPath(), to distinguish them
@@ -51,8 +53,8 @@ private:
 
 	// Main recursive add function. Accepts a VFS path and adds the new node,
 	// calling itself if necessary to add all of the parent directories, then
-	// returns a GtkTreeIter* pointing to the new node.
-	GtkTreeIter* addRecursive(const std::string& path);
+	// returns a Gtk::TreeModel::iterator pointing to the new node.
+	const Gtk::TreeModel::iterator& addRecursive(const std::string& path);
 	
 public:
 
@@ -63,11 +65,12 @@ public:
 	 * Tree store to populate.
 	 * 
 	 * @param toplevel
-	 * GtkTreeIter pointing to the toplevel node, under which all paths should
-	 * be added. Default is NULL to indicate that paths should be added under 
+	 * TreeModel::iterator pointing to the toplevel node, under which all paths should
+	 * be added. Default is empty to indicate that paths should be added under
 	 * the tree root.
 	 */
-	VFSTreePopulator(GtkTreeStore* store, GtkTreeIter* toplevel = NULL);
+	VFSTreePopulator(const Glib::RefPtr<Gtk::TreeStore>& store, 
+					   Gtk::TreeModel::iterator toplevel = Gtk::TreeModel::iterator());
 
 	/** Destroy the VFSTreePopulator and all temporary data.
 	 */
@@ -80,7 +83,8 @@ public:
 
 	/** Visitor interface.
 	 */
-	struct Visitor {
+	struct Visitor
+	{
 		virtual ~Visitor() {}
 		
 		/**
@@ -90,7 +94,7 @@ public:
 		 * The tree store to insert into.
 		 * 
 		 * @param iter
-		 * A GtkTreeIter* pointing to the current node.
+		 * A Gtk::TreeModel::iterator* pointing to the current node.
 		 * 
 		 * @param path
 		 * Full VFS path of the current node, as presented to addPath().
@@ -99,8 +103,8 @@ public:
 		 * true if the path was explicitly inserted via addPath(), false if the
 		 * path was created as an intermediate parent of another explicit path.
 		 */
-		virtual void visit(GtkTreeStore* store,
-						   GtkTreeIter* iter, 
+		virtual void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+						   const Gtk::TreeModel::iterator& iter, 
 						   const std::string& path,
 						   bool isExplicit) = 0;
 	};

@@ -1,7 +1,5 @@
 #include "TextSpecifierPanel.h"
 
-#include <gtk/gtkentry.h>
-
 namespace objectives
 {
 
@@ -9,34 +7,21 @@ namespace ce
 {
 
 // Constructor
-TextSpecifierPanel::TextSpecifierPanel()
+Gtk::Widget* TextSpecifierPanel::getWidget()
 {
-	_widget = gtk_entry_new();
-}
-
-// Destructor
-TextSpecifierPanel::~TextSpecifierPanel() 
-{
-	if (GTK_IS_WIDGET(_widget))
-		gtk_widget_destroy(_widget);
-}
-
-// Show and return the widget
-GtkWidget* TextSpecifierPanel::_getWidget() const 
-{
-	return _widget;
+	return this;
 }
 
 // Set the displayed value
 void TextSpecifierPanel::setValue(const std::string& value)
 {
-    gtk_entry_set_text(GTK_ENTRY(_widget), value.c_str());
+    set_text(value);
 }
 
 // Get the edited value
 std::string TextSpecifierPanel::getValue() const
 {
-    return std::string(gtk_entry_get_text(GTK_ENTRY(_widget)));
+    return get_text();
 }
 
 } // namespace ce

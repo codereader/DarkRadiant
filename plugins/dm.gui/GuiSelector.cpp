@@ -1,5 +1,4 @@
 #include "GuiSelector.h"
-#include "GuiInserter.h"
 
 #include "gtkutil/VFSTreePopulator.h"
 #include "gtkutil/TreeModel.h"
@@ -9,10 +8,19 @@
 
 #include "i18n.h"
 #include "imainframe.h"
+#include "iuimanager.h"
 #include "gui/GuiManager.h"
 #include "gtkutil/dialog.h"
 
 #include "ReadablePopulator.h"
+#include "ReadableEditorDialog.h"
+
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/notebook.h>
+#include <gtkmm/label.h>
+#include <gtkmm/box.h>
+#include <gtkmm/treeview.h>
 
 namespace ui
 {
@@ -21,31 +29,34 @@ namespace
 {
 	const char* const WINDOW_TITLE = N_("Choose a Gui Definition...");
 
-	const gint WINDOW_WIDTH = 400;
-	const gint WINDOW_HEIGHT = 500;
+	const int WINDOW_WIDTH = 400;
+	const int WINDOW_HEIGHT = 500;
+
+	const char* const GUI_ICON = "sr_icon_readable.png";
+	const char* const FOLDER_ICON = "folder16.png";
 }
 
 GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
-	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GTK_WINDOW(editorDialog.getWindow())),
+	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), editorDialog.getRefPtr()),
 	_editorDialog(editorDialog),
-	_oneSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
-	_twoSidedStore(gtk_tree_store_new(N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, GDK_TYPE_PIXBUF, G_TYPE_BOOLEAN)),
+	_oneSidedStore(Gtk::TreeStore::create(_columns)),
+	_twoSidedStore(Gtk::TreeStore::create(_columns)),
 	_result(RESULT_CANCELLED)
 {
 	// Set the windowsize and default border width in accordance to the HIG
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), WINDOW_WIDTH, WINDOW_HEIGHT);
+	set_default_size(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
-	gtk_container_add(GTK_CONTAINER(getWindow()), createInterface());
+	add(createInterface());
 
 	// Set the current page and connect the switch-page signal afterwards.
-	gtk_notebook_set_current_page(_notebook, twoSided);
-	g_signal_connect(G_OBJECT(_notebook), "switch-page", G_CALLBACK(onPageSwitch), this);
-
+	_notebook->set_current_page(twoSided ? 1 : 0);
+	_notebook->signal_switch_page().connect(sigc::mem_fun(*this, &GuiSelector::onPageSwitch));
+	
 	// We start with an empty selection, so de-sensitise the OK button
-	gtk_widget_set_sensitive(_okButton, FALSE);
+	_okButton->set_sensitive(false);
 }
 
 void GuiSelector::_preShow()
@@ -73,185 +84,166 @@ std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
 	return (dialog._result == RESULT_OK) ? "guis/" + dialog._name : "";
 }
 
+void GuiSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+						const Gtk::TreeModel::iterator& iter, 
+						const std::string& path,
+						bool isExplicit)
+{
+	// Get the display name by stripping off everything before the last
+	// slash
+	std::string displayName = path.substr(path.rfind("/") + 1);
+	displayName = displayName.substr(0,displayName.rfind("."));
+
+	// Fill in the column values
+	Gtk::TreeModel::Row row = *iter;
+
+	row[_columns.name] = displayName;
+	row[_columns.fullName] = path;
+	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? GUI_ICON : FOLDER_ICON);
+	row[_columns.isFolder] = !isExplicit;
+}
+
 void GuiSelector::fillTrees()
 {
 	gtkutil::VFSTreePopulator popOne(_oneSidedStore);
 	gtkutil::VFSTreePopulator popTwo(_twoSidedStore);
 
-	ReadablePopulator walker(popOne, popTwo, GTK_WINDOW(_editorDialog.getWindow()));
+	ReadablePopulator walker(popOne, popTwo, _editorDialog.getRefPtr());
 	gui::GuiManager::Instance().foreachGui(walker);
 	
-	GuiInserter inserter;
-	popOne.forEachNode(inserter);
-	popTwo.forEachNode(inserter);
+	popOne.forEachNode(*this);
+	popTwo.forEachNode(*this);
 }
 
-GtkWidget* GuiSelector::createInterface()
+Gtk::Widget& GuiSelector::createInterface()
 {
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
 	// Create the tabs
-	_notebook = GTK_NOTEBOOK(gtk_notebook_new());
+	_notebook = Gtk::manage(new Gtk::Notebook);
 
 	// One-Sided Readables Tab
-	GtkWidget* labelOne = gtk_label_new(_("One-Sided Readable Guis"));
-	gtk_widget_show_all(labelOne);
-	gtk_notebook_append_page(
-		_notebook,
-		createOneSidedTreeView(),
-		labelOne
-	);
+	Gtk::Label* labelOne = Gtk::manage(new Gtk::Label(_("One-Sided Readable Guis")));
+	labelOne->show_all();
+
+	_notebook->append_page(createOneSidedTreeView(), *labelOne);
 
 	// Two-Sided Readables Tab
-	GtkWidget* labelTwo = gtk_label_new(_("Two-Sided Readable Guis"));
-	gtk_widget_show_all(labelTwo);
-	gtk_notebook_append_page(
-		_notebook,
-		createTwoSidedTreeView(),
-		labelTwo
-	);
+	Gtk::Label* labelTwo = Gtk::manage(new Gtk::Label(_("Two-Sided Readable Guis")));
+	labelTwo->show_all();
+
+	_notebook->append_page(createTwoSidedTreeView(), *labelTwo);
 
 	// Packing
-	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(_notebook), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), createButtons(), FALSE, FALSE, 0);
+	vbox->pack_start(*_notebook, true, true, 0);
+	vbox->pack_start(createButtons(), false, false, 0);
 
-	return vbox;
+	return *vbox;
 }
 
-GtkWidget* GuiSelector::createButtons()
+Gtk::Widget& GuiSelector::createButtons()
 {
-	_okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	g_signal_connect(G_OBJECT(_okButton), "clicked", G_CALLBACK(onOk), this);
+	_okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+	_okButton->signal_clicked().connect(sigc::mem_fun(*this, &GuiSelector::onOk));
 
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this);
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &GuiSelector::onCancel));
+	
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
+	hbox->pack_start(*_okButton, false, false, 0);
+	hbox->pack_start(*cancelButton, false, false, 0);
 
-	gtk_box_pack_start(GTK_BOX(hbox), _okButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(hbox), cancelButton, FALSE, FALSE, 0);
-
-	return gtkutil::RightAlignment(hbox);
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbox));
 }
 
-GtkWidget* GuiSelector::createOneSidedTreeView()
+Gtk::TreeView* GuiSelector::createTreeView(const Glib::RefPtr<Gtk::TreeStore>& store)
 {
 	// Create the treeview
-	GtkTreeView* treeViewOne = GTK_TREE_VIEW(
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_oneSidedStore))
-	);
-	// Let the treestore be destroyed along with the treeview
-	g_object_unref(_oneSidedStore);
+	Gtk::TreeView* treeView = Gtk::manage(new Gtk::TreeView(store));
 
-	gtk_tree_view_set_headers_visible(treeViewOne, FALSE);
+	treeView->set_headers_visible(false);
 
 	// Add the selection and connect the signal
-	GtkTreeSelection* select = gtk_tree_view_get_selection ( treeViewOne );
-	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
-	g_signal_connect(
-		select, "changed", G_CALLBACK(onSelectionChanged), this
-	);
-
+	Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
+	selection->set_mode(Gtk::SELECTION_SINGLE);
+	selection->signal_changed().connect(sigc::bind(sigc::mem_fun(*this, &GuiSelector::onSelectionChanged), treeView));
+	
 	// Single visible column, containing the directory/model name and the icon
-	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
-		_("Gui Path"), NAME_COLUMN, IMAGE_COLUMN
-	);
-	gtk_tree_view_append_column(treeViewOne, nameCol);
+	Gtk::TreeViewColumn* nameCol = Gtk::manage(new gtkutil::IconTextColumn(
+		_("Gui Path"), _columns.name, _columns.icon
+	));
+
+	treeView->append_column(*nameCol);
 
 	// Set the tree store's sort behaviour
-	gtkutil::TreeModel::applyFoldersFirstSortFunc(
-		GTK_TREE_MODEL(_oneSidedStore), NAME_COLUMN, IS_FOLDER_COLUMN
-	);
+	gtkutil::TreeModel::applyFoldersFirstSortFunc(store, _columns.name, _columns.isFolder);
 
 	// Use the TreeModel's full string search function
-	gtk_tree_view_set_search_equal_func(treeViewOne, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
+	treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
-	GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(treeViewOne));
-	gtk_widget_show_all(scrolledFrame);
-	gtk_container_set_border_width(GTK_CONTAINER(scrolledFrame), 12);
-
-	// Pack treeview into a scrolled window and frame, and return
-	return scrolledFrame;
+	return treeView;
 }
 
-GtkWidget* GuiSelector::createTwoSidedTreeView()
+Gtk::Widget& GuiSelector::createOneSidedTreeView()
 {
 	// Create the treeview
-	GtkTreeView* treeViewTwo = GTK_TREE_VIEW(
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_twoSidedStore))
-	);
-	// Let the treestore be destroyed along with the treeview
-	g_object_unref(_twoSidedStore);
+	Gtk::TreeView* treeViewOne = createTreeView(_oneSidedStore);
 
-	gtk_tree_view_set_headers_visible(treeViewTwo, FALSE);
+	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*treeViewOne));
+	scrolledFrame->set_border_width(12);
 
-	// Add selection and connect signal
-	GtkTreeSelection* select = gtk_tree_view_get_selection ( treeViewTwo );
-	gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
-	g_signal_connect(
-		select, "changed", G_CALLBACK(onSelectionChanged), this
-	);
-
-	// Single visible column, containing the directory/model name and the icon
-	GtkTreeViewColumn* nameCol = gtkutil::IconTextColumn(
-		_("Gui Path"), NAME_COLUMN, IMAGE_COLUMN
-	);
-	gtk_tree_view_append_column(treeViewTwo, nameCol);
-
-	// Set the tree store's sort behaviour
-	gtkutil::TreeModel::applyFoldersFirstSortFunc(
-		GTK_TREE_MODEL(_twoSidedStore), NAME_COLUMN, IS_FOLDER_COLUMN
-	);
-
-	// Use the TreeModel's full string search function
-	gtk_tree_view_set_search_equal_func(treeViewTwo, gtkutil::TreeModel::equalFuncStringContains, NULL, NULL);
-
-	GtkWidget* scrolledFrame = gtkutil::ScrolledFrame(GTK_WIDGET(treeViewTwo));
-	gtk_widget_show_all(scrolledFrame);
-	gtk_container_set_border_width(GTK_CONTAINER(scrolledFrame), 12);
-
-	// Pack treeview into a scrolled window and frame, and return
-	return scrolledFrame;
+	return *scrolledFrame;
 }
 
-void GuiSelector::onCancel(GtkWidget* widget, GuiSelector* self)
+Gtk::Widget& GuiSelector::createTwoSidedTreeView()
 {
-	self->destroy();
+	// Create the treeview
+	Gtk::TreeView* treeViewTwo = createTreeView(_twoSidedStore);
+
+	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*treeViewTwo));
+	scrolledFrame->set_border_width(12);
+
+	return *scrolledFrame;
 }
 
-void GuiSelector::onOk(GtkWidget* widget, GuiSelector* self)
+void GuiSelector::onCancel()
 {
-	self->_result = RESULT_OK;
+	destroy();
+}
+
+void GuiSelector::onOk()
+{
+	_result = RESULT_OK;
 
 	// Everything done. Destroy the window!
-	self->destroy();
+	destroy();
 }
 
-void GuiSelector::onPageSwitch(GtkNotebook *notebook, GtkNotebookPage *page, guint page_num, GuiSelector* self)
+void GuiSelector::onPageSwitch(GtkNotebookPage* page, guint page_num)
 {
 	if (page_num == 0)
-		self->_editorDialog.useOneSidedEditing();
+		_editorDialog.useOneSidedEditing();
 	else
-		self->_editorDialog.useTwoSidedEditing();
+		_editorDialog.useTwoSidedEditing();
 }
 
-void GuiSelector::onSelectionChanged(GtkTreeSelection* treeselection, GuiSelector* self)
+void GuiSelector::onSelectionChanged(Gtk::TreeView* view)
 {
-	GtkTreeModel* model;
-	bool anythingSelected = gtk_tree_selection_get_selected(treeselection, &model, NULL) ? true : false;
-
-	if (anythingSelected && !gtkutil::TreeModel::getSelectedBoolean(treeselection, IS_FOLDER_COLUMN))
+	Gtk::TreeModel::iterator iter = view->get_selection()->get_selected();
+	
+	if (iter && !(*iter)[_columns.isFolder])
 	{
-		self->_name = gtkutil::TreeModel::getSelectedString(treeselection, FULLNAME_COLUMN);
-		std::string guiPath = "guis/" + self->_name;
+		_name = Glib::ustring((*iter)[_columns.fullName]);
+		std::string guiPath = "guis/" + _name;
 
-		self->_editorDialog.updateGuiView(GTK_WINDOW(self->getWindow()), guiPath.c_str());
+		_editorDialog.updateGuiView(getRefPtr(), guiPath);
 
-		gtk_widget_set_sensitive(self->_okButton, TRUE);
+		_okButton->set_sensitive(true);
 	}
 	else
 	{
-		gtk_widget_set_sensitive(self->_okButton, FALSE);
+		_okButton->set_sensitive(false);
 	}
 }
 

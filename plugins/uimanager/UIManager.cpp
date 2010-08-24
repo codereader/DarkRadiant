@@ -7,7 +7,6 @@
 #include "ieventmanager.h"
 #include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"
-#include "ShutdownListener.h"
 #include "debugging/debugging.h"
 #include "FilterMenu.h"
 #include "ModelPreview.h"
@@ -39,11 +38,13 @@ IStatusBarManager& UIManager::getStatusBarManager() {
 	return _statusBarManager;
 }
 
-GdkPixbuf* UIManager::getLocalPixbuf(const std::string& fileName) {
+Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
+{
 	// Try to use a cached pixbuf first
 	PixBufMap::iterator i = _localPixBufs.find(fileName);
 	
-	if (i != _localPixBufs.end()) {
+	if (i != _localPixBufs.end())
+	{
 		return i->second;
 	}
 
@@ -52,52 +53,67 @@ GdkPixbuf* UIManager::getLocalPixbuf(const std::string& fileName) {
 	// Construct the full filename using the Bitmaps path
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
 
-	GdkPixbuf* pixbuf = gdk_pixbuf_new_from_file(fullFileName.c_str(), NULL);
+	Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 
-	if (pixbuf != NULL) {
-		_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
+	try
+	{
+		pixbuf = Gdk::Pixbuf::create_from_file(fullFileName);
 		
-		// Avoid destruction of this pixbuf
-		g_object_ref(pixbuf);
+		if (pixbuf == NULL)
+		{
+			globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
+		}
 	}
-	else {
-		globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
+	catch (Glib::FileError& err)
+	{
+		globalWarningStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
+		globalWarningStream() << err.what() << std::endl; 
 	}
+
+	_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
 
 	return pixbuf;
 }
 
-GdkPixbuf* UIManager::getLocalPixbufWithMask(const std::string& fileName) {
+Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& fileName) {
 
 	// Try to find a cached pixbuf before loading from disk
 	PixBufMap::iterator i = _localPixBufsWithMask.find(fileName);
 	
-	if (i != _localPixBufsWithMask.end()) {
+	if (i != _localPixBufsWithMask.end())
+	{
 		return i->second;
 	}
 
 	// Not cached yet, load afresh
 
 	std::string fullFileName(GlobalRegistry().get(RKEY_BITMAPS_PATH) + fileName);
-	
-	GdkPixbuf* rgb = gdk_pixbuf_new_from_file(fullFileName.c_str(), 0);
-	if (rgb != NULL) {
-		// File load successful, add alpha channel
-		GdkPixbuf* rgba = gdk_pixbuf_add_alpha(rgb, TRUE, 255, 0, 255);
-		gdk_pixbuf_unref(rgb);
 
-		_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
+	Glib::RefPtr<Gdk::Pixbuf> rgba;
 
-		// Avoid destruction of this pixbuf
-		g_object_ref(rgba);
-
-		return rgba;
+	try
+	{
+		Glib::RefPtr<Gdk::Pixbuf> rgb = Gdk::Pixbuf::create_from_file(fullFileName);
+		
+		if (rgb != NULL)
+		{
+			// File load successful, add alpha channel
+			rgba = rgb->add_alpha(true, 255, 0, 255);
+		}
+		else
+		{
+			globalErrorStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl; 
+		}
 	}
-	else {
-		// File load failed
-		globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
-		return NULL;
+	catch (Glib::FileError& err)
+	{
+		globalWarningStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl; 
+		globalWarningStream() << err.what() << std::endl; 
 	}
+
+	_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
+
+	return rgba;
 }
 
 IFilterMenuPtr UIManager::createFilterMenu()
@@ -114,6 +130,12 @@ void UIManager::clear()
 {
 	_menuManager.clear();
 	_dialogManager = DialogManagerPtr();
+}
+
+void UIManager::onRadiantShutdown()
+{
+	// Clear the menu manager on shutdown
+	clear();
 }
 
 const std::string& UIManager::getName() const {
@@ -148,8 +170,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::editColourSchemes);
 	GlobalEventManager().addCommand("EditColourScheme", "EditColourScheme");
 
-	_shutdownListener = UIManagerShutdownListenerPtr(new UIManagerShutdownListener(*this));
-	GlobalRadiant().addEventListener(_shutdownListener);
+	GlobalRadiant().addEventListener(shared_from_this());
 
 	// Add the statusbar command text item
 	_statusBarManager.addTextElement(
@@ -161,22 +182,8 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 void UIManager::shutdownModule()
 {
-	// Remove all remaining pixbufs
-	for (PixBufMap::iterator i = _localPixBufs.begin(); i != _localPixBufs.end(); ++i)
-	{
-		if (GDK_IS_PIXBUF(i->second))
-		{
-			g_object_unref(i->second);
-		}
-	}
-
-	for (PixBufMap::iterator i = _localPixBufsWithMask.begin(); i != _localPixBufsWithMask.end(); ++i)
-	{
-		if (GDK_IS_PIXBUF(i->second))
-		{
-			g_object_unref(i->second);
-		}
-	}
+	_localPixBufs.clear();
+	_localPixBufsWithMask.clear();
 }
 
 } // namespace ui

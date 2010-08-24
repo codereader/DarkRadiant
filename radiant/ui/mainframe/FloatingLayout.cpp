@@ -30,15 +30,13 @@ std::string FloatingLayout::getName() {
 void FloatingLayout::activate() {
  	// Get the floating window with the CamWnd packed into it
 	_floatingCamWnd = GlobalCamera().createFloatingWindow();
-	GlobalEventManager().connectAccelGroup(GTK_WINDOW(_floatingCamWnd->getWindow()));
+	GlobalEventManager().connectAccelGroup(_floatingCamWnd.get());
 
 	// Restore the window position from the registry if possible
 	if (!GlobalRegistry().findXPath(RKEY_CAMERA_WINDOW_STATE).empty())
 	{
 		_camWndPosition.loadFromPath(RKEY_CAMERA_WINDOW_STATE);
-		_camWndPosition.connect(
-			GTK_WINDOW(_floatingCamWnd->getWindow())
-		);
+		_camWndPosition.connect(_floatingCamWnd.get());
 	}
 	  
 	_floatingCamWnd->show();
@@ -46,23 +44,25 @@ void FloatingLayout::activate() {
 	// Connect up the toggle camera event
 	IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
 	if (!ev->empty()) {
-		ev->connectWidget(_floatingCamWnd->getWindow());
+		ev->connectWidget(_floatingCamWnd.get());
 		ev->updateWidgets();
 	}
 	else {
 		globalErrorStream() << "Could not connect ToggleCamera event\n";
 	}
 
-	GtkWidget* page = gtkutil::FramedWidget(
-		GlobalTextureBrowser().constructWindow(GTK_WINDOW(GlobalGroupDialog().getDialogWindow()))
-	);
+	Glib::RefPtr<Gtk::Window> groupDialog(GlobalGroupDialog().getDialogWindow());
+
+	Gtk::Widget* page = Gtk::manage(new gtkutil::FramedWidget(
+		*GlobalTextureBrowser().constructWindow(groupDialog)
+	));
 
 	// Add the Texture Browser page to the group dialog
 	GlobalGroupDialog().addPage(
     	"textures",	// name
     	"Textures", // tab title
     	"icon_texture.png", // tab icon 
-    	GTK_WIDGET(page), // page widget
+    	*page, // page widget
     	_("Texture Browser")
     );
 
@@ -90,7 +90,7 @@ void FloatingLayout::deactivate()
 
 	// Save groupdialog state
 	GlobalRegistry().set(RKEY_GROUPDIALOG_VISIBLE, 
-		GTK_WIDGET_VISIBLE(GlobalGroupDialog().getDialogWindow()) ? "1" : "0");
+		GlobalGroupDialog().getDialogWindow()->is_visible() ? "1" : "0");
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
@@ -112,7 +112,7 @@ void FloatingLayout::deactivate()
 
 		IEventPtr ev = GlobalEventManager().findEvent("ToggleCamera");
 		if (!ev->empty()) {
-			ev->disconnectWidget(_floatingCamWnd->getWindow());
+			ev->disconnectWidget(_floatingCamWnd.get());
 		}
 		else {
 			globalErrorStream() << "Could not disconnect ToggleCamera event\n";

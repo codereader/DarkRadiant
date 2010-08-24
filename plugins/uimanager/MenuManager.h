@@ -5,9 +5,6 @@
 #include "iuimanager.h"
 #include "MenuItem.h"
 
-// Forward declarations
-typedef struct _GtkWidget GtkWidget;
-
 /** greebo: The MenuManager takes care of adding and inserting the 
  * 			menuitems at the given paths.
  * 
@@ -40,7 +37,7 @@ public:
 	 * 
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
-	GtkWidget* get(const std::string& path);
+	Gtk::Widget* get(const std::string& path);
 	
 	/** greebo: Shows/hides the menuitem under the given path. 
 	 * 
@@ -58,7 +55,7 @@ public:
 	 * @icon: the icon filename (can be empty)
 	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
 	 */
-	GtkWidget* add(const std::string& insertPath,
+	Gtk::Widget* add(const std::string& insertPath,
 				   const std::string& name,
 			 	   eMenuItemType type, 
 				   const std::string& caption,
@@ -73,9 +70,9 @@ public:
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
 	 * 
-	 * @returns: the GtkWidget* 
+	 * @returns: the Gtk::Widget* 
 	 */
-	GtkWidget* insert(const std::string& insertPath,
+	Gtk::Widget* insert(const std::string& insertPath,
 					  const std::string& name,
 					  eMenuItemType type,
 					  const std::string& caption,

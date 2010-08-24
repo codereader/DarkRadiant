@@ -4,53 +4,31 @@
 #include "iuimanager.h"
 #include "EClassTree.h"
 
+#include <gtkmm/treemodel.h>
+
 namespace ui {
 
-	namespace {
+	namespace
+	{
 		const char* ENTITY_ICON = "cmenu_add_entity.png";
 		const std::string INHERIT_KEY("inherit");
-		
-		/**
-		 * Visitor class to fill in column data for the tree.
-		 */
-		class EClassTreeVisitor : 
-			public gtkutil::VFSTreePopulator::Visitor
-		{
-		public:
-		    virtual ~EClassTreeVisitor() {}
-			// Required visit function
-			void visit(GtkTreeStore* store, 
-					   GtkTreeIter* it, 
-					   const std::string& path,
-					   bool isExplicit) 
-			{
-				// Get the display path, everything after rightmost slash
-				std::string displayPath = path.substr(path.rfind("/") + 1);
-				
-				// Get the icon, either folder or skin
-				GdkPixbuf* pixBuf = GlobalUIManager().getLocalPixbuf(ENTITY_ICON);
-				
-				gtk_tree_store_set(store, it, 
-								   NAME_COLUMN, displayPath.c_str(),
-								   ICON_COLUMN, pixBuf,
-								   -1);
-			}
-		};
 	}
 
-EClassTreeBuilder::EClassTreeBuilder(GtkTreeStore* targetStore) :
-	_treeStore(targetStore),
-	_treePopulator(_treeStore)
+EClassTreeBuilder::EClassTreeBuilder(const Glib::RefPtr<Gtk::TreeStore>& targetStore,
+									 const EClassTreeColumns& columns) :
+	_treePopulator(targetStore),
+	_columns(columns),
+	_entityIcon(GlobalUIManager().getLocalPixbuf(ENTITY_ICON))
 {
 	// Travese the entity classes, this will call visit() for each eclass
 	GlobalEntityClassManager().forEach(*this);
 	
 	// Visit the tree populator in order to fill in the column data
-	EClassTreeVisitor visitor;
-	_treePopulator.forEachNode(visitor);
+	_treePopulator.forEachNode(*this);
 }
 
-void EClassTreeBuilder::visit(IEntityClassPtr eclass) {
+void EClassTreeBuilder::visit(IEntityClassPtr eclass)
+{
 	std::string fullPath;
 	
 	// Prefix mod name
@@ -64,6 +42,17 @@ void EClassTreeBuilder::visit(IEntityClassPtr eclass) {
 	
 	// Let the VFSTreePopulator do the insertion
 	_treePopulator.addPath(fullPath);
+}
+
+void EClassTreeBuilder::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+							  const Gtk::TreeModel::iterator& iter, 
+							  const std::string& path,
+							  bool isExplicit)
+{
+	// Get the display path, everything after rightmost slash
+	Gtk::TreeModel::Row row = *iter;
+	row[_columns.name] = path.substr(path.rfind("/") + 1);
+	row[_columns.icon] = _entityIcon;
 }
 
 std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr& eclass) {

@@ -5,16 +5,11 @@
 #include "iuimanager.h"
 #include "idialogmanager.h"
 
-#include <gtk/gtktoolitem.h>
-#include <gtk/gtktoolbutton.h>
-#include <gtk/gtkimage.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkcomboboxentry.h>
-#include <gtk/gtkliststore.h>
-#include <gtk/gtkstock.h>
-
-#include "gtkutil/ComboBox.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include <gtkmm/box.h>
+#include <gtkmm/comboboxentry.h>
+#include <gtkmm/image.h>
+#include <gtkmm/toolbutton.h>
 
 namespace selection
 {
@@ -27,63 +22,60 @@ namespace selection
 	}
 
 SelectionSetToolmenu::SelectionSetToolmenu() :
-	_toolItem(gtk_tool_item_new()),
-	_listStore(gtk_list_store_new(1, G_TYPE_STRING)),
+	Gtk::ToolItem(),
+	_listStore(Gtk::ListStore::create(_columns)),
 	_clearSetsButton(NULL),
-	_entry(gtk_combo_box_entry_new_with_model(GTK_TREE_MODEL(_listStore), 0))
+	_entry(Gtk::manage(new Gtk::ComboBoxEntry(_listStore, _columns.name)))
 {
 	// Hbox containing all our items
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_add(GTK_CONTAINER(_toolItem), hbox);
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 3));
+	add(*hbox);
 
 	// Pack Label
-	gtk_box_pack_start(GTK_BOX(hbox), 
-		gtkutil::LeftAlignedLabel(_("Selection Set: ")), FALSE, FALSE, 0);
+	hbox->pack_start(
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Selection Set: "))), 
+		false, false, 0);
 
 	// Pack Combo Box
-	gtk_box_pack_start(GTK_BOX(hbox), _entry, TRUE, TRUE, 0);
+	hbox->pack_start(*_entry, true, true, 0);
 
 	// Add tooltip
-	gtk_widget_set_tooltip_markup(_entry, _(ENTRY_TOOLTIP));
+	_entry->set_tooltip_markup(_(ENTRY_TOOLTIP));
 
 	// Add clear button
 	{
-		GtkWidget* image = gtk_image_new_from_pixbuf(GlobalUIManager().getLocalPixbufWithMask("delete.png"));
-		gtk_widget_show(image);
+		Gtk::Image* image = Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask("delete.png")));
+		image->show();
 
-		_clearSetsButton = gtk_tool_button_new(image, _("Clear Selection Sets"));
+		_clearSetsButton = Gtk::manage(new Gtk::ToolButton(*image, _("Clear Selection Sets")));
 		
 		// Set tooltip
-		gtk_tool_item_set_tooltip_text(_clearSetsButton, _("Clear Selection Sets"));
+		_clearSetsButton->set_tooltip_text(_("Clear Selection Sets"));
 
 		// Connect event
-		g_signal_connect(G_OBJECT(_clearSetsButton), "clicked", G_CALLBACK(onDeleteAllSetsClicked), this);
+		_clearSetsButton->signal_clicked().connect(sigc::mem_fun(*this, &SelectionSetToolmenu::onDeleteAllSetsClicked));
 
-		gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(_clearSetsButton), FALSE, FALSE, 0);
+		hbox->pack_start(*_clearSetsButton, false, false, 0);
 	}
 
 	// Connect the signals
-	GtkWidget* childEntry = gtk_bin_get_child(GTK_BIN(_entry));
-	g_signal_connect(G_OBJECT(childEntry), "activate", G_CALLBACK(onEntryActivated), this); 
+	Gtk::Entry* childEntry = _entry->get_entry();
+	childEntry->signal_activate().connect(sigc::mem_fun(*this, &SelectionSetToolmenu::onEntryActivated));
 
-	g_signal_connect(G_OBJECT(_entry), "changed", G_CALLBACK(onSelectionChanged), this);
+	_entry->signal_changed().connect(sigc::mem_fun(*this, &SelectionSetToolmenu::onSelectionChanged));
 
 	// Populate the list
 	update();
 
 	// Add self as observer
 	GlobalSelectionSetManager().addObserver(*this);
+
+	show_all();
 }
 
 SelectionSetToolmenu::~SelectionSetToolmenu()
 {
 	GlobalSelectionSetManager().removeObserver(*this);
-}
-
-GtkToolItem* SelectionSetToolmenu::getToolItem()
-{
-	gtk_widget_show_all(GTK_WIDGET(_toolItem));
-	return _toolItem;
 }
 
 void SelectionSetToolmenu::onSelectionSetsChanged()
@@ -94,18 +86,21 @@ void SelectionSetToolmenu::onSelectionSetsChanged()
 void SelectionSetToolmenu::update()
 {
 	// Clear all items from the treemodel first
-	gtk_list_store_clear(_listStore);
+	_listStore->clear();
 
 	// Populate the list store with all available selection sets
 	class Visitor :
 		public ISelectionSetManager::Visitor
 	{
 	private:
-		GtkListStore* _store;
+		const SelectionSetToolmenu::ListStoreColumns& _columns;
+		Glib::RefPtr<Gtk::ListStore> _store;
 
 		bool _hasItems;
 	public:
-		Visitor(GtkListStore* store) :
+		Visitor(const Glib::RefPtr<Gtk::ListStore>& store, 
+				const SelectionSetToolmenu::ListStoreColumns& columns) :
+			_columns(columns),
 			_store(store),
 			_hasItems(false)
 		{}
@@ -114,11 +109,9 @@ void SelectionSetToolmenu::update()
 		{
 			_hasItems = true;
 
-			GtkTreeIter iter;
-			gtk_list_store_append(_store, &iter);
-			gtk_list_store_set(_store, &iter, 
-							   0, set->getName().c_str(),
-							   -1);
+			Gtk::TreeModel::Row row = *_store->append();
+
+			row[_columns.name] = set->getName();
 		}
 
 		bool foundItems() const
@@ -126,19 +119,18 @@ void SelectionSetToolmenu::update()
 			return _hasItems;
 		}
 
-	} visitor(_listStore);
+	} visitor(_listStore, _columns);
 
 	GlobalSelectionSetManager().foreachSelectionSet(visitor);
 
 	// Tool button is sensitive if we have items in the list
-	gtk_widget_set_sensitive(GTK_WIDGET(_clearSetsButton), visitor.foundItems() ? TRUE : FALSE);
+	_clearSetsButton->set_sensitive(visitor.foundItems());
 }
 
-void SelectionSetToolmenu::onEntryActivated(GtkEntry* entry, 
-											SelectionSetToolmenu* self)
+void SelectionSetToolmenu::onEntryActivated()
 {
 	// Create new selection set if possible
-	std::string name = gtk_entry_get_text(entry);
+	std::string name = _entry->get_entry()->get_text();
 
 	if (name.empty()) return;
 
@@ -161,41 +153,33 @@ void SelectionSetToolmenu::onEntryActivated(GtkEntry* entry,
 	set->assignFromCurrentScene();
 
 	// Clear the entry again
-	gtk_entry_set_text(GTK_ENTRY(entry), "");
+	_entry->get_entry()->set_text("");
 }
 
-void SelectionSetToolmenu::onSelectionChanged(GtkComboBox* comboBox, 
-											  SelectionSetToolmenu* self)
+void SelectionSetToolmenu::onSelectionChanged()
 {
-	GtkTreeIter iter;
+	std::string name = _entry->get_active_text();
 
-	if (gtk_combo_box_get_active_iter(comboBox, &iter))
+	if (name.empty()) return;
+
+	ISelectionSetPtr set = GlobalSelectionSetManager().findSelectionSet(name);
+
+	if (set == NULL) return;
+
+	// The user can choose to DESELECT the set nodes when holding down shift
+	if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0)
 	{
-		std::string name = gtkutil::ComboBox::getActiveText(comboBox);
-
-		if (name.empty()) return;
-
-		ISelectionSetPtr set = GlobalSelectionSetManager().findSelectionSet(name);
-
-		if (set == NULL) return;
-
-		// The user can choose to DESELECT the set nodes when holding down shift
-		if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0)
-		{
-			set->deselect();
-		}
-		else
-		{
-			set->select();
-		}
-
-		GtkWidget* childEntry = gtk_bin_get_child(GTK_BIN(self->_entry));
-		gtk_entry_set_text(GTK_ENTRY(childEntry), "");
+		set->deselect();
 	}
+	else
+	{
+		set->select();
+	}
+
+	_entry->get_entry()->set_text("");
 }
 
-void SelectionSetToolmenu::onDeleteAllSetsClicked(GtkToolButton* toolbutton, 
-												  SelectionSetToolmenu* self) 
+void SelectionSetToolmenu::onDeleteAllSetsClicked() 
 {
 	ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(
 		_("Delete all selection sets?"), 

@@ -59,7 +59,7 @@ void FilterMenu::visit(const std::string& filterName)
 					MENU_ICON, eventName);
 }
 
-GtkWidget* FilterMenu::getMenuBarWidget()
+Gtk::Widget* FilterMenu::getMenuBarWidget()
 {
 	return _menu;
 }

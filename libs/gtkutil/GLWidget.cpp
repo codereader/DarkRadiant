@@ -1,37 +1,14 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-// OpenGL widget based on GtkGLExt
-
 #include "GLWidget.h"
 
 #include "igl.h"
 #include "itextstream.h"
 
-#include <gtk/gtkdrawingarea.h>
-#include <gtk/gtkglwidget.h>
+#include <gtkmm/gl/widget.h>
+#include <gtkmm/container.h>
 
-#include "pointer.h"
-
-namespace gtkutil {
+// OpenGL widget based on GtkGLExtmm
+namespace gtkutil
+{
 
 typedef int* attribs_t;
 struct config_t
@@ -42,17 +19,17 @@ struct config_t
 typedef const config_t* configs_iterator;
 
 int config_rgba32[] = {
-  GDK_GL_RGBA,
-  GDK_GL_DOUBLEBUFFER,
-  GDK_GL_BUFFER_SIZE, 24,
-  GDK_GL_ATTRIB_LIST_NONE,
+  Gdk::GL::RGBA,
+  Gdk::GL::DOUBLEBUFFER,
+  Gdk::GL::BUFFER_SIZE, 24,
+  Gdk::GL::ATTRIB_LIST_NONE,
 };
 
 int config_rgba[] = {
-  GDK_GL_RGBA,
-  GDK_GL_DOUBLEBUFFER,
-  GDK_GL_BUFFER_SIZE, 16,
-  GDK_GL_ATTRIB_LIST_NONE,
+  Gdk::GL::RGBA,
+  Gdk::GL::DOUBLEBUFFER,
+  Gdk::GL::BUFFER_SIZE, 16,
+  Gdk::GL::ATTRIB_LIST_NONE,
 };
 
 const config_t configs[] = {
@@ -67,51 +44,51 @@ const config_t configs[] = {
 };
 
 int config_rgba32_depth32[] = {
-  GDK_GL_RGBA,
-  GDK_GL_DOUBLEBUFFER,
-  GDK_GL_BUFFER_SIZE, 24,
-  GDK_GL_DEPTH_SIZE, 32,
-  GDK_GL_ATTRIB_LIST_NONE,
+  Gdk::GL::RGBA,
+  Gdk::GL::DOUBLEBUFFER,
+  Gdk::GL::BUFFER_SIZE, 24,
+  Gdk::GL::DEPTH_SIZE, 32,
+  Gdk::GL::ATTRIB_LIST_NONE,
 };
 
 int config_rgba32_depth24[] = {
-  GDK_GL_RGBA,
-  GDK_GL_DOUBLEBUFFER,
-  GDK_GL_BUFFER_SIZE, 24,
-  GDK_GL_DEPTH_SIZE, 24,
-  GDK_GL_ATTRIB_LIST_NONE,
+  Gdk::GL::RGBA,
+  Gdk::GL::DOUBLEBUFFER,
+  Gdk::GL::BUFFER_SIZE, 24,
+  Gdk::GL::DEPTH_SIZE, 24,
+  Gdk::GL::ATTRIB_LIST_NONE,
 };
 
 int config_rgba32_depth16[] = {
-  GDK_GL_RGBA,
-  GDK_GL_DOUBLEBUFFER,
-  GDK_GL_BUFFER_SIZE, 24,
-  GDK_GL_DEPTH_SIZE, 16,
-  GDK_GL_ATTRIB_LIST_NONE,
+  Gdk::GL::RGBA,
+  Gdk::GL::DOUBLEBUFFER,
+  Gdk::GL::BUFFER_SIZE, 24,
+  Gdk::GL::DEPTH_SIZE, 16,
+  Gdk::GL::ATTRIB_LIST_NONE,
 };
 
 int config_rgba32_depth[] = {
-  GDK_GL_RGBA,
-  GDK_GL_DOUBLEBUFFER,
-  GDK_GL_BUFFER_SIZE, 24,
-  GDK_GL_DEPTH_SIZE, 1,
-  GDK_GL_ATTRIB_LIST_NONE,
+  Gdk::GL::RGBA,
+  Gdk::GL::DOUBLEBUFFER,
+  Gdk::GL::BUFFER_SIZE, 24,
+  Gdk::GL::DEPTH_SIZE, 1,
+  Gdk::GL::ATTRIB_LIST_NONE,
 };
 
 int config_rgba_depth16[] = {
-  GDK_GL_RGBA,
-  GDK_GL_DOUBLEBUFFER,
-  GDK_GL_BUFFER_SIZE, 16,
-  GDK_GL_DEPTH_SIZE, 16,
-  GDK_GL_ATTRIB_LIST_NONE,
+  Gdk::GL::RGBA,
+  Gdk::GL::DOUBLEBUFFER,
+  Gdk::GL::BUFFER_SIZE, 16,
+  Gdk::GL::DEPTH_SIZE, 16,
+  Gdk::GL::ATTRIB_LIST_NONE,
 };
 
 int config_rgba_depth[] = {
-  GDK_GL_RGBA,
-  GDK_GL_DOUBLEBUFFER,
-  GDK_GL_BUFFER_SIZE, 16,
-  GDK_GL_DEPTH_SIZE, 1,
-  GDK_GL_ATTRIB_LIST_NONE,
+  Gdk::GL::RGBA,
+  Gdk::GL::DOUBLEBUFFER,
+  Gdk::GL::BUFFER_SIZE, 16,
+  Gdk::GL::DEPTH_SIZE, 1,
+  Gdk::GL::ATTRIB_LIST_NONE,
 };
 
 const config_t configs_with_depth[] = 
@@ -143,9 +120,9 @@ const config_t configs_with_depth[] =
 };
 
 // Constructor, pass TRUE to enable depth-buffering
-GLWidget::GLWidget(bool zBuffer, const std::string& debugName) 
-: _widget(gtk_drawing_area_new()),
-  _zBuffer(zBuffer)
+GLWidget::GLWidget(bool zBuffer, const std::string& debugName) :
+	Gtk::GL::DrawingArea(),
+	_zBuffer(zBuffer)
 {
 #ifdef DEBUG_GL_WIDGETS
     std::cout << "GLWidget: constructed with name '" << debugName << "'" 
@@ -155,113 +132,114 @@ GLWidget::GLWidget(bool zBuffer, const std::string& debugName)
     // Name the widget
     if (!debugName.empty())
     {
-        gtk_widget_set_name(_widget, debugName.c_str());
+		set_name(debugName);
     }
 
-	g_signal_connect(G_OBJECT(_widget), "hierarchy-changed", G_CALLBACK(onHierarchyChanged), this);
-	g_signal_connect(G_OBJECT(_widget), "realize", G_CALLBACK(onRealise), this);
-	g_signal_connect(G_OBJECT(_widget), "unrealize", G_CALLBACK(onUnRealise), this);
+	signal_hierarchy_changed().connect(sigc::mem_fun(*this, &GLWidget::onHierarchyChanged));
+	signal_realize().connect(sigc::mem_fun(*this, &GLWidget::onRealise));
+	signal_unrealize().connect(sigc::mem_fun(*this, &GLWidget::onUnRealise));
 }
+
+GLWidget::~GLWidget()
+{
+}
+
+void GLWidget::queueDraw()
+{
+	queue_draw();
+}
+
+Glib::RefPtr<Gdk::GL::Config> GLWidget::createGLConfigWithDepth()
+{
+	Glib::RefPtr<Gdk::GL::Config> glconfig;
 	
-// Operator cast to GtkWidget*, for packing into parent containers
-GLWidget::operator GtkWidget*() const {
-	return _widget;
-}
-
-GdkGLConfig* GLWidget::createGLConfigWithDepth() {
-	GdkGLConfig* glconfig(NULL);
-
 	for (configs_iterator i = configs_with_depth, end = configs_with_depth + 6; 
 		 i != end; ++i)
 	{
-		glconfig = gdk_gl_config_new(i->attribs);
+		glconfig = Gdk::GL::Config::create(i->attribs);
 		
-		if (glconfig != NULL) {
-			globalOutputStream() << "OpenGL window configuration: " << i->name << "\n";
+		if (glconfig)
+		{
+			globalOutputStream() << "OpenGL window configuration: " << i->name << std::endl;
 			return glconfig;
 		}
 	}
 
 	globalOutputStream() << "OpenGL window configuration: colour-buffer = auto, depth-buffer = auto (fallback)\n";
-	return gdk_gl_config_new_by_mode((GdkGLConfigMode)(GDK_GL_MODE_RGBA | GDK_GL_MODE_DOUBLE | GDK_GL_MODE_DEPTH));
+	return Gdk::GL::Config::create(Gdk::GL::MODE_RGBA | Gdk::GL::MODE_DOUBLE | Gdk::GL::MODE_DEPTH);
 }
 
-GdkGLConfig* GLWidget::createGLConfig() {
-	GdkGLConfig* glconfig(NULL);
+Glib::RefPtr<Gdk::GL::Config>GLWidget::createGLConfig()
+{
+	Glib::RefPtr<Gdk::GL::Config> glconfig;
 
-	for (configs_iterator i = configs, end = configs + 2; i != end; ++i) {
-		glconfig = gdk_gl_config_new(i->attribs);
+	for (configs_iterator i = configs, end = configs + 2; i != end; ++i)
+	{
+		glconfig = Gdk::GL::Config::create(i->attribs);
 		
-		if (glconfig != NULL) {
+		if (glconfig)
+		{
 			globalOutputStream() << "OpenGL window configuration: " << i->name << std::endl;
 			return glconfig;
 		}
 	}
 
 	globalOutputStream() << "OpenGL window configuration: colour-buffer = auto, depth-buffer = none\n";
-	return gdk_gl_config_new_by_mode((GdkGLConfigMode)(GDK_GL_MODE_RGBA | GDK_GL_MODE_DOUBLE));
+	return Gdk::GL::Config::create(Gdk::GL::MODE_RGBA | Gdk::GL::MODE_DOUBLE);
 }
 
-bool GLWidget::makeCurrent(GtkWidget* widget) 
+bool GLWidget::makeCurrent(Gtk::Widget& widget) 
 {
 #ifdef DEBUG_GL_WIDGETS
-    std::cout << "GLWidget: widget '" << gtk_widget_get_name(widget)
+    std::cout << "GLWidget: widget '" << widget.get_name()
               << "' made current." << std::endl;
 #endif
 
-	 GdkGLContext* glcontext = gtk_widget_get_gl_context(widget);
-	 GdkGLDrawable* gldrawable = gtk_widget_get_gl_drawable(widget);
-	 return gdk_gl_drawable_gl_begin(gldrawable, glcontext) ? true : false;
+	Glib::RefPtr<Gdk::GL::Context> glcontext = Gtk::GL::widget_get_gl_context(widget);
+	Glib::RefPtr<Gdk::GL::Drawable> gldrawable = Gtk::GL::widget_get_gl_drawable(widget);
+	return gldrawable->gl_begin(glcontext);
 }
 
-void GLWidget::swapBuffers(GtkWidget* widget) 
+void GLWidget::swapBuffers(Gtk::Widget& widget) 
 {
 #ifdef DEBUG_GL_WIDGETS
     std::cout << "GLWidget: widget '" << gtk_widget_get_name(widget)
               << "' swapped buffers." << std::endl;
 #endif
-	GdkGLDrawable* gldrawable = gtk_widget_get_gl_drawable(widget);
-	gdk_gl_drawable_swap_buffers(gldrawable);
+	Glib::RefPtr<Gdk::GL::Drawable> gldrawable = Gtk::GL::widget_get_gl_drawable(widget);
+	gldrawable->swap_buffers();
 }
 
-gboolean GLWidget::onHierarchyChanged(GtkWidget* widget,
-                                      GtkWidget* previous_toplevel,
-                                      GLWidget* self) 
+void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
 {
-	if (previous_toplevel == NULL && !gtk_widget_is_gl_capable(widget)) 
+	if (previous_toplevel == NULL && !Gtk::GL::widget_is_gl_capable(*this))
     {
 		// Create a new GL config structure
-		GdkGLConfig* glconfig = (self->_zBuffer) ? createGLConfigWithDepth() : createGLConfig();
-		assert(glconfig != NULL);
+		Glib::RefPtr<Gdk::GL::Config> glconfig = _zBuffer ? createGLConfigWithDepth() : createGLConfig();
+		assert(glconfig);
 
-		GtkWidget* context = GlobalOpenGL().getGLContextWidget();
+		Gtk::Widget* context = GlobalOpenGL().getGLContextWidget();
 
-		gtk_widget_set_gl_capability(
-			widget, 
-			glconfig, 
-			context != NULL ? gtk_widget_get_gl_context(context) : NULL, 
-			TRUE, 
-			GDK_GL_RGBA_TYPE
+		Gtk::GL::widget_set_gl_capability(
+			*this,
+			glconfig,
+			context ? Gtk::GL::widget_get_gl_context(*context) : Glib::RefPtr<Gdk::GL::Context>(),
+			true,
+			Gdk::GL::RGBA_TYPE
 		);
 
-		gtk_widget_realize(widget);
+		realize();
 	}
-
-	return FALSE;
 }
 
-gint GLWidget::onRealise(GtkWidget* widget, GLWidget* self) 
+void GLWidget::onRealise() 
 {
-	self->_context = GlobalOpenGL().registerGLWidget(widget);
-
-	return FALSE;
+	GlobalOpenGL().registerGLWidget(this);
 }
 
-gint GLWidget::onUnRealise(GtkWidget* widget, GLWidget* self)
+void GLWidget::onUnRealise()
 {
-	GlobalOpenGL().unregisterGLWidget(widget);
-
-	return FALSE;
+	GlobalOpenGL().unregisterGLWidget(this);
 }
 
 } // namespace gtkutil

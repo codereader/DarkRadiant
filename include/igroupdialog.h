@@ -2,9 +2,10 @@
 #define INCLUDE_GROUP_DIALOG_H_
 
 #include <string>
+#include <glibmm/refptr.h>
 
 // Forward declarations
-typedef struct _GtkWidget GtkWidget;
+namespace Gtk { class Widget; class Window; }
 
 /**
  * greebo: This defines the interface for accessing the GroupDialog
@@ -33,9 +34,9 @@ public:
 	 * 
 	 * @returns: the notebook page widget
 	 */
-	virtual GtkWidget* addPage(const std::string& name, 
+	virtual Gtk::Widget* addPage(const std::string& name, 
 							   const std::string& tabLabel, const std::string& tabIcon, 
-							   GtkWidget* page, const std::string& windowLabel, 
+							   Gtk::Widget& page, const std::string& windowLabel, 
 							   const std::string& insertBefore = "") = 0;
 
 	/**
@@ -49,7 +50,7 @@ public:
 	 * @page: The widget that should be displayed, must have been added
 	 * 		  using addPage() beforehand.
 	 */
-	virtual void setPage(GtkWidget* page) = 0;
+	virtual void setPage(Gtk::Widget* page) = 0;
 	
 	/** greebo: Activated the named page. The <name> parameter
 	 * 			refers to the name string passed to the addPage() method.
@@ -70,7 +71,7 @@ public:
 	
 	/** greebo: Returns the widget of the currently visible page.
 	 */
-	virtual GtkWidget* getPage() = 0;
+	virtual Gtk::Widget* getPage() = 0;
 
 	/**
 	 * greebo: Returns the name of the current groupdialog page or "" if none is set.
@@ -78,7 +79,7 @@ public:
 	virtual std::string getPageName() = 0;
 
 	// Returns the window widget containing the GroupDialog.
-	virtual GtkWidget* getDialogWindow() = 0;
+	virtual Glib::RefPtr<Gtk::Window> getDialogWindow() = 0;
 
 	// Shows the dialog
 	virtual void showDialogWindow() = 0;
@@ -92,7 +93,12 @@ public:
 	 * Layout code shouldn't forget to reparent it to the groupdialog again
 	 * on deactivation.
 	 */
-	virtual void reparentNotebook(GtkWidget* newParent) = 0;
+	virtual void reparentNotebook(Gtk::Widget* newParent) = 0;
+
+	/** 
+	 * Reparents the groupdialog notebook back to the GroupDialog itself.
+	 */
+	virtual void reparentNotebookToSelf() = 0;
 };
 
 #endif /* INCLUDE_GROUP_DIALOG_H_ */

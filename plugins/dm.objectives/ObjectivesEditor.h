@@ -5,17 +5,22 @@
 #include "ObjectiveEntity.h"
 
 #include "icommandsystem.h"
-#include <gtk/gtkwidget.h>
-#include <gtk/gtkliststore.h>
-#include <gtk/gtktreestore.h>
-#include <gtk/gtkcellrenderertoggle.h>
-#include <gtk/gtktreeselection.h>
-#include <gtk/gtkeditable.h>
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
+#include "ObjectiveEntityFinder.h"
+
 #include <map>
 #include <string>
+#include <gtkmm/liststore.h>
+
+namespace Gtk
+{
+	class VBox;
+	class HBox;
+	class TreeView;
+	class Button;
+}
 
 /* FORWARD DECLS */
 class Entity;
@@ -29,15 +34,17 @@ namespace objectives
 class ObjectivesEditor :
 	public gtkutil::BlockingTransientWindow
 {
+private:
 	// List of target_addobjectives entities
-	GtkListStore* _objectiveEntityList;
+	ObjectiveEntityListColumns _objEntityColumns;
+	Glib::RefPtr<Gtk::ListStore> _objectiveEntityList;
+	Gtk::TreeView* _entityList;
 
 	// List of actual objectives associated with the selected entity
-	GtkListStore* _objectiveList;
+	ObjectivesListColumns _objectiveColumns;
+	Glib::RefPtr<Gtk::ListStore> _objectiveList;
+	Gtk::TreeView* _objList;
 	
-	// Table of dialog subwidgets
-	std::map<int, GtkWidget*> _widgets;
-
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;
 	
@@ -47,7 +54,7 @@ class ObjectivesEditor :
 	
 	// Iterators for current entity and current objective
 	ObjectiveEntityMap::iterator _curEntity;
-	GtkTreeIter _curObjective;
+	Gtk::TreeModel::iterator _curObjective;
 
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
@@ -55,35 +62,43 @@ class ObjectivesEditor :
 	// The list of objective eclasses (defined in the registry)
 	std::vector<std::string> _objectiveEClasses;
 
+	Gtk::Button* _delEntityButton;
+	Gtk::VBox* _objButtonPanel;
+	Gtk::HBox* _logicPanel;
+
+	Gtk::Button* _editObjButton;
+	Gtk::Button* _delObjButton;
+	Gtk::Button* _moveUpObjButton;
+	Gtk::Button* _moveDownObjButton;
+	Gtk::Button* _clearObjButton;
+
 private:
 
 	// Constructor creates widgets	
 	ObjectivesEditor();
 	
 	// Widget construction helpers
-	GtkWidget* createEntitiesPanel();
-	GtkWidget* createObjectivesPanel();
-	GtkWidget* createObjectiveEditPanel();
-	GtkWidget* createLogicPanel();
-	GtkWidget* createButtons();	
+	Gtk::Widget& createEntitiesPanel();
+	Gtk::Widget& createObjectivesPanel();
+	Gtk::Widget& createObjectiveEditPanel();
+	Gtk::Widget& createLogicPanel();
+	Gtk::Widget& createButtons();	
 	
-	// GTK callbacks
-	static void _onCancel(GtkWidget* w, ObjectivesEditor* self);
-	static void _onOK(GtkWidget*, ObjectivesEditor* self);
-	static void _onStartActiveCellToggled(
-		GtkCellRendererToggle*, const gchar* path, ObjectivesEditor* self);
-	static void _onEntitySelectionChanged(GtkTreeSelection*, ObjectivesEditor*);
-	static void _onObjectiveSelectionChanged(GtkTreeSelection*, 
-											 ObjectivesEditor*);
-	static void _onAddEntity(GtkWidget*, ObjectivesEditor*);
-	static void _onDeleteEntity(GtkWidget*, ObjectivesEditor*);
-	static void _onAddObjective(GtkWidget*, ObjectivesEditor*);
-	static void _onEditObjective(GtkWidget*, ObjectivesEditor*);
-	static void _onMoveUpObjective(GtkWidget*, ObjectivesEditor*);
-	static void _onMoveDownObjective(GtkWidget*, ObjectivesEditor*);
-	static void _onDeleteObjective(GtkWidget*, ObjectivesEditor*);
-	static void _onClearObjectives(GtkWidget*, ObjectivesEditor*);
-	static void _onEditLogic(GtkWidget*, ObjectivesEditor*);
+	// gtkmm callbacks
+	void _onCancel();
+	void _onOK();
+	void _onStartActiveCellToggled(const Glib::ustring& path);
+	void _onEntitySelectionChanged();
+	void _onObjectiveSelectionChanged();
+	void _onAddEntity();
+	void _onDeleteEntity();
+	void _onAddObjective();
+	void _onEditObjective();
+	void _onMoveUpObjective();
+	void _onMoveDownObjective();
+	void _onDeleteObjective();
+	void _onClearObjectives();
+	void _onEditLogic();
 	
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();

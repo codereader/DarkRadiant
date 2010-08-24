@@ -59,9 +59,8 @@ namespace
 // Constructors
 XYWnd::XYWnd(int id) :
 	_id(id),
-	_glWidget(false, "XYWnd"),
-	m_gl_widget(static_cast<GtkWidget*>(_glWidget)),
-	m_deferredDraw(boost::bind(widget_queue_draw, m_gl_widget)),
+	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
+	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, _glWidget)),
 	m_deferred_motion(callbackMouseMotion, this),
 	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
 	_maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
@@ -69,8 +68,7 @@ XYWnd::XYWnd(int id) :
 	_zoomStarted(false),
 	_chaseMouseHandler(0),
 	m_window_observer(NewWindowObserver()),
-	_isActive(false),
-	_parent(NULL)
+	_isActive(false)
 {
 	m_buttonstate = 0;
 
@@ -96,24 +94,20 @@ XYWnd::XYWnd(int id) :
 	m_window_observer->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
 	m_window_observer->setView(m_view);
 		
-	gtk_widget_ref(m_gl_widget);
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | 
+						  Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
 
-	gtk_widget_set_events(m_gl_widget, GDK_DESTROY | GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | 
-		GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK | GDK_SCROLL_MASK | GDK_KEY_PRESS_MASK);
+	_glWidget->set_flags(Gtk::CAN_FOCUS);
+	_glWidget->set_size_request(XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
+	_glWidget->property_can_focus() = true;
+	
+	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &XYWnd::callbackSizeAllocate));
+	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &XYWnd::callbackExpose));
 
-	GTK_WIDGET_SET_FLAGS(m_gl_widget, GTK_CAN_FOCUS);
-	gtk_widget_set_size_request(m_gl_widget, XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
-
-	g_object_set(m_gl_widget, "can-focus", TRUE, NULL);
-
-	m_sizeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "size_allocate", G_CALLBACK(callbackSizeAllocate), this);
-	m_exposeHandler = g_signal_connect(G_OBJECT(m_gl_widget), "expose_event", G_CALLBACK(callbackExpose), this);
-
-	g_signal_connect(G_OBJECT(m_gl_widget), "button_press_event", G_CALLBACK(callbackButtonPress), this);
-	g_signal_connect(G_OBJECT(m_gl_widget), "button_release_event", G_CALLBACK(callbackButtonRelease), this);
-	g_signal_connect(G_OBJECT(m_gl_widget), "motion_notify_event", G_CALLBACK(DeferredMotion::gtk_motion), &m_deferred_motion);
-
-	g_signal_connect(G_OBJECT(m_gl_widget), "scroll_event", G_CALLBACK(callbackMouseWheelScroll), this);
+	_glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &XYWnd::callbackButtonPress));
+	_glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &XYWnd::callbackButtonRelease));
+	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &DeferredMotion::gtk_motion));
+	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMouseWheelScroll));
 
 	_validCallbackHandle = GlobalMap().addValidCallback(
 		boost::bind(&DeferredDraw::onMapValidChanged, &m_deferredDraw)
@@ -129,9 +123,9 @@ XYWnd::XYWnd(int id) :
 	GlobalCamera().addCameraObserver(this);
 
 	// Let the window observer connect its handlers to the GL widget first (before the event manager)
-	m_window_observer->addObservedWidget(m_gl_widget);
+	m_window_observer->addObservedWidget(_glWidget);
 
-	GlobalEventManager().connect(GTK_OBJECT(m_gl_widget));
+	GlobalEventManager().connect(_glWidget);
 }
 
 // Destructor
@@ -158,19 +152,14 @@ void XYWnd::destroyXYView() {
 	// greebo: Remove <self> as CameraObserver from the CamWindow.
 	GlobalCamera().removeCameraObserver(this);
 	
-	if (m_gl_widget != NULL)
+	if (_glWidget != NULL)
 	{
-		m_window_observer->removeObservedWidget(m_gl_widget);
-
-		GlobalEventManager().disconnect(GTK_OBJECT(m_gl_widget));
-		
-		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_sizeHandler);
-		g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_exposeHandler);
-	
-		if (GTK_IS_WIDGET(m_gl_widget)) {
-			gtk_widget_destroy(m_gl_widget);
-			m_gl_widget = NULL;
+		if (m_window_observer != NULL)
+		{
+			m_window_observer->removeObservedWidget(_glWidget);
 		}
+
+		GlobalEventManager().disconnect(_glWidget);
 	}
 
 	// This deletes the RadiantWindowObserver from the heap
@@ -200,24 +189,26 @@ int XYWnd::getHeight() const {
 	return _height;
 }
 
-void XYWnd::setParent(GtkWindow* parent)
+void XYWnd::setParent(const Glib::RefPtr<Gtk::Window>& parent)
 {
-	if (_parent != NULL && parent != _parent)
+	if (_parent && parent != _parent)
 	{
 		// Parent change, disconnect first
-		m_window_observer->removeObservedWidget(GTK_WIDGET(_parent));
+		m_window_observer->removeObservedWidget(_parent);
 	}
 
 	_parent = parent;
 	
 	// Connect the position observer to the new parent
-	_windowPosition.connect(_parent);
+	assert(dynamic_cast<Gtk::Window*>(_parent->get_toplevel()) != NULL);
+	_windowPosition.connect(static_cast<Gtk::Window*>(_parent->get_toplevel()));
 	_windowPosition.applyPosition();
 	
-	m_window_observer->addObservedWidget(GTK_WIDGET(_parent));
+	m_window_observer->addObservedWidget(_parent);
 }
 
-GtkWindow* XYWnd::getParent() const {
+const Glib::RefPtr<Gtk::Window>& XYWnd::getParent() const
+{
 	return _parent;
 }
 
@@ -264,8 +255,9 @@ void XYWnd::onSceneGraphChange() {
 	queueDraw();
 }
 
-GtkWidget* XYWnd::getWidget() {
-	return m_gl_widget;
+Gtk::Widget* XYWnd::getWidget()
+{
+	return _glWidget;
 }
 
 void XYWnd::setActive(bool b) {
@@ -432,16 +424,21 @@ void XYWnd::Clipper_OnMouseMoved(int x, int y) {
 	}
 }
 
-void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y) {
+void XYWnd::Clipper_Crosshair_OnMouseMoved(int x, int y)
+{
 	Vector3 mousePosition;
 	convertXYToWorld(x, y , mousePosition);
-	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale) != 0) {
+
+	if (GlobalClipper().clipMode() && GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale) != 0)
+	{
 		GdkCursor *cursor;
 		cursor = gdk_cursor_new (GDK_CROSSHAIR);
-		gdk_window_set_cursor (m_gl_widget->window, cursor);
+		gdk_window_set_cursor(_glWidget->get_window()->gobj(), cursor);
 		gdk_cursor_unref (cursor);
-	} else {
-		gdk_window_set_cursor (m_gl_widget->window, 0);
+	}
+	else
+	{
+		gdk_window_set_cursor(_glWidget->get_window()->gobj(), 0);
 	}
 }
 
@@ -554,36 +551,40 @@ void XYWnd::onContextMenu() {
 	ui::OrthoContextMenu::Instance().show(point);
 }
 
-void XYWnd::beginMove() {
+void XYWnd::beginMove()
+{
 	if (_moveStarted) {
 		endMove();
 	}
 	_moveStarted = true;
-	_freezePointer.freeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow(), callbackMoveDelta, this);
-	m_move_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackMoveFocusOut), this);
+	_freezePointer.freeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj(), callbackMoveDelta, this);
+
+	m_move_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMoveFocusOut));
 }
 
 
-void XYWnd::endMove() {
+void XYWnd::endMove()
+{
 	_moveStarted = false;
-	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow());
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_move_focusOut);
+	_freezePointer.unfreeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj());
+	m_move_focusOut.disconnect();
 }
 
-void XYWnd::beginZoom() {
+void XYWnd::beginZoom()
+{
 	if (_zoomStarted) {
 		endZoom();
 	}
 	_zoomStarted = true;
 	_dragZoom = 0;
-	_freezePointer.freeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow(), callbackZoomDelta, this);
-	m_zoom_focusOut = g_signal_connect(G_OBJECT(m_gl_widget), "focus_out_event", G_CALLBACK(callbackZoomFocusOut), this);
+	_freezePointer.freeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj(), callbackZoomDelta, this);
+	m_zoom_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackZoomFocusOut));
 }
 
 void XYWnd::endZoom() {
 	_zoomStarted = false;
-	_freezePointer.unfreeze_pointer(_parent != 0 ? _parent : GlobalMainFrame().getTopLevelWindow());
-	g_signal_handler_disconnect(G_OBJECT(m_gl_widget), m_zoom_focusOut);
+	_freezePointer.unfreeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj());
+	m_zoom_focusOut.disconnect();
 }
 
 // makes sure the selected brush or camera is in view
@@ -1590,7 +1591,7 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point) {
 
 void XYWnd::updateSelectionBox(const Rectangle& area)
 {
-	if(GTK_WIDGET_VISIBLE(getWidget()))
+	if (getWidget()->is_visible())
 	{
 		// Take the rectangle and convert it to screen coordinates
 		_dragRectangle = area;
@@ -1636,7 +1637,7 @@ int& XYWnd::dragZoom() {
 
 void XYWnd::saveStateToPath(const std::string& rootPath)
 {
-	if (_parent == NULL || !GTK_WIDGET_VISIBLE(GTK_WIDGET(_parent))) return;
+	if (!_parent || !_parent->is_visible()) return;
 
 	// Create a new child under the given root path
 	std::string viewNodePath = rootPath + "/view[@name='" + intToStr(_id) + "']";
@@ -1657,42 +1658,45 @@ void XYWnd::readStateFromPath(const std::string& path)
 	_windowPosition.applyPosition();
 }
 
-// ================ GTK CALLBACKS ======================================
+// ================ gtkmm CALLBACKS ======================================
 
 /* greebo: This is the callback for the mouse_press event that is invoked by GTK
  * it checks for the correct event type and passes the call to the according xy view window. 
  */
-gboolean XYWnd::callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XYWnd* self) {
-
+bool XYWnd::callbackButtonPress(GdkEventButton* ev)
+{
 	// Move the focus to this GL widget
-	gtk_widget_grab_focus(widget);
+	_glWidget->grab_focus();
 
-	if (event->type == GDK_BUTTON_PRESS) {
-
+	if (ev->type == GDK_BUTTON_PRESS)
+	{
 		// Put the focus on the xy view that has been clicked on
-		GlobalXYWnd().setActiveXY(self->_id);
+		GlobalXYWnd().setActiveXY(_id);
 
 		//xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
-		self->_eventState = event->state;
+		_eventState = ev->state;
 		
 		// Pass the GdkEventButton* to the XYWnd class, the boolean <true> is passed but never used
-		self->mouseDown(static_cast<int>(event->x), static_cast<int>(event->y), event);
+		mouseDown(static_cast<int>(ev->x), static_cast<int>(ev->y), ev);
 	}
-	return FALSE;
+
+	return false;
 }
 
 // greebo: This is the GTK callback for mouseUp. 
-gboolean XYWnd::callbackButtonRelease(GtkWidget* widget, GdkEventButton* event, XYWnd* self) {
-	
+bool XYWnd::callbackButtonRelease(GdkEventButton* ev)
+{
 	// greebo: Check for the correct event type (redundant?)
-	if (event->type == GDK_BUTTON_RELEASE) {
+	if (ev->type == GDK_BUTTON_RELEASE)
+	{
 		// Call the according mouseUp method
-		self->mouseUp(static_cast<int>(event->x), static_cast<int>(event->y), event);
+		mouseUp(static_cast<int>(ev->x), static_cast<int>(ev->y), ev);
 
 		// Clear the buttons that the button_release has been called with
-		self->_eventState = event->state;
+		_eventState = ev->state;
 	}
-	return FALSE;
+
+	return false;
 }
 
 /* greebo: This is the GTK callback for mouse movement. */
@@ -1711,39 +1715,40 @@ void XYWnd::callbackMouseMotion(gdouble x, gdouble y, guint state, void* data) {
 }
 
 // This is the onWheelScroll event, that is used to Zoom in/out in the xyview
-gboolean XYWnd::callbackMouseWheelScroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* self) {
-	if (event->direction == GDK_SCROLL_UP) {
-		self->zoomIn();
+bool XYWnd::callbackMouseWheelScroll(GdkEventScroll* ev)
+{
+	if (ev->direction == GDK_SCROLL_UP) {
+		zoomIn();
 	}
-	else if (event->direction == GDK_SCROLL_DOWN) {
-		self->zoomOut();
+	else if (ev->direction == GDK_SCROLL_DOWN) {
+		zoomOut();
 	}
-	return FALSE;
+
+	return false;
 }
 
-gboolean XYWnd::callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* self) 
+void XYWnd::callbackSizeAllocate(Gtk::Allocation& allocation) 
 {
-	self->_width = allocation->width;
-	self->_height = allocation->height;
-	self->updateProjection();
-	self->m_window_observer->onSizeChanged(self->getWidth(), self->getHeight());
-
-	return FALSE;
+	_width = allocation.get_width();
+	_height = allocation.get_height();
+	updateProjection();
+	m_window_observer->onSizeChanged(getWidth(), getHeight());
 }
 
-gboolean XYWnd::callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self) 
+bool XYWnd::callbackExpose(GdkEventExpose* ev) 
 {
-	gtkutil::GLWidgetSentry sentry(self->getWidget());
+	gtkutil::GLWidgetSentry sentry(*_glWidget);
 	
     GlobalOpenGL().assertNoErrors();
 
-	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled()) {
-		self->draw();
+	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
+	{
+		draw();
 	}
 
     GlobalOpenGL().assertNoErrors();
 
-	return FALSE;
+	return false;
 }
 
 // This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
@@ -1754,14 +1759,16 @@ gboolean XYWnd::callbackChaseMouse(gpointer data) {
 	return TRUE;
 }
 
-gboolean XYWnd::callbackZoomFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self) {
-	self->endZoom();
-	return FALSE;
+bool XYWnd::callbackZoomFocusOut(GdkEventFocus* ev)
+{
+	endZoom();
+	return false;
 }
 
-gboolean XYWnd::callbackMoveFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self) {
-	self->endMove();
-	return FALSE;
+bool XYWnd::callbackMoveFocusOut(GdkEventFocus* ev)
+{
+	endMove();
+	return false;
 }
 
 void XYWnd::callbackZoomDelta(int x, int y, unsigned int state, void* data) {

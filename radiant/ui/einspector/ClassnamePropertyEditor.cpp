@@ -5,9 +5,9 @@
 #include "ientity.h"
 #include "iundo.h"
 
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkbutton.h>
+#include <gtkmm/box.h>
+#include <gtkmm/image.h>
+#include <gtkmm/button.h>
 
 #include "selection/algorithm/Entity.h"
 #include "ui/entitychooser/EntityClassChooser.h"
@@ -22,44 +22,40 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(Entity* entity,
 : PropertyEditor(entity),
   _key(name)
 {
-	_widget = gtk_vbox_new(FALSE, 0);
+	// Construct the main widget (will be managed by the base class)
+	Gtk::VBox* mainVBox = new Gtk::VBox(false, 0);
+
+	// Register the main widget in the base class
+	setMainWidget(mainVBox);
 
 	// Horizontal box contains the browse button
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 3);
-	gtk_container_set_border_width(GTK_CONTAINER(hbx), 3);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
+	hbx->set_border_width(3);
 	
 	// Browse button
-	GtkWidget* browseButton = gtk_button_new_with_label(
-		_("Choose entity class...")
-	);
-	gtk_button_set_image(
-		GTK_BUTTON(browseButton),
-		gtk_image_new_from_pixbuf(
-			PropertyEditorFactory::getPixbufFor("classname")
-		)
-	);
+	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose entity class...")));
+	browseButton->set_image(*Gtk::manage(new Gtk::Image(
+		PropertyEditorFactory::getPixbufFor("classname"))));
 			
-	g_signal_connect(G_OBJECT(browseButton), 
-					 "clicked", 
-					 G_CALLBACK(_onBrowseButton), 
-					 this);
-	gtk_box_pack_start(GTK_BOX(hbx), browseButton, TRUE, FALSE, 0);
+	browseButton->signal_clicked().connect(
+		sigc::mem_fun(*this, &ClassnamePropertyEditor::_onBrowseButton));
+	
+	hbx->pack_start(*browseButton, true, false, 0);
 	
 	// Pack hbox into vbox (to limit vertical size), then edit frame
-	GtkWidget* vbx = gtk_vbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbx), hbx, TRUE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), vbx, TRUE, TRUE, 0);
+	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
+	vbx->pack_start(*hbx, true, false, 0);
+
+	mainVBox->pack_start(*vbx, true, true, 0);
 }
 
-/* GTK CALLBACKS */
-
-void ClassnamePropertyEditor::_onBrowseButton(GtkWidget* w, 
-											  ClassnamePropertyEditor* self)
+void ClassnamePropertyEditor::_onBrowseButton()
 {
 	// Use the EntityClassChooser dialog to get a selection from the user
 	std::string selection = EntityClassChooser::chooseEntityClass();
+
 	// Only apply non-empty selections if the classname has actually changed
-	if (!selection.empty() && selection != self->_entity->getKeyValue(self->_key))
+	if (!selection.empty() && selection != _entity->getKeyValue(_key))
 	{
 		UndoableCommand cmd("changeEntityClass");
 

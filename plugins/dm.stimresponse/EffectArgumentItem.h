@@ -1,24 +1,32 @@
 #ifndef EFFECTARGUMENTITEM_H_
 #define EFFECTARGUMENTITEM_H_
 
-#include "StimTypes.h"
 #include "ResponseEffect.h"
+#include <gtkmm/liststore.h>
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkTooltips GtkTooltips;
-typedef struct _GtkListStore GtkListStore;
+class StimTypes;
+
+namespace Gtk
+{
+	class EventBox;
+	class ComboBoxEntry;
+	class CheckButton;
+	class Entry;
+	class ComboBox;
+	class Widget;
+}
 
 class EffectArgumentItem
 {
 protected:
 	// The argument this row is referring to
 	ResponseEffect::Argument& _arg;
-	GtkWidget* _labelBox;
-	GtkWidget* _descBox;
-	GtkTooltips* _tooltips;
+
+	Gtk::EventBox* _labelBox;
+	Gtk::EventBox* _descBox;
 
 public:
-	EffectArgumentItem(ResponseEffect::Argument& arg, GtkTooltips* tooltips);
+	EffectArgumentItem(ResponseEffect::Argument& arg);
 
 	// destructor
 	virtual ~EffectArgumentItem() {}
@@ -30,13 +38,13 @@ public:
 	virtual std::string getValue() = 0;
 	
 	// Retrieve the label widget
-	virtual GtkWidget* getLabelWidget();
+	virtual Gtk::Widget& getLabelWidget();
 	
 	// Retrieve the edit widgets (abstract)
-	virtual GtkWidget* getEditWidget() = 0;
+	virtual Gtk::Widget& getEditWidget() = 0;
 	
 	// Retrieves the help widget (a question mark with a tooltip)
-	virtual GtkWidget* getHelpWidget();
+	virtual Gtk::Widget& getHelpWidget();
 	
 	/** greebo: This saves the value to the according response effect.
 	 */
@@ -49,12 +57,12 @@ class StringArgument :
 	public EffectArgumentItem
 {
 protected:
-	GtkWidget* _entry;
+	Gtk::Entry* _entry;
 
 public:
-	StringArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips);
+	StringArgument(ResponseEffect::Argument& arg);
 	
-	virtual GtkWidget* getEditWidget();
+	virtual Gtk::Widget& getEditWidget();
 	virtual std::string getValue();
 };
 
@@ -64,8 +72,8 @@ class FloatArgument :
 	public StringArgument
 {
 public:
-	FloatArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
-		StringArgument(arg, tooltips)
+	FloatArgument(ResponseEffect::Argument& arg) :
+		StringArgument(arg)
 	{}
 };
 
@@ -75,19 +83,19 @@ class VectorArgument :
 	public StringArgument
 {
 public:
-	VectorArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips) :
-		StringArgument(arg, tooltips)
+	VectorArgument(ResponseEffect::Argument& arg) :
+		StringArgument(arg)
 	{}
 };
 
 class BooleanArgument :
 	public EffectArgumentItem
 {
-	GtkWidget* _checkButton;
+	Gtk::CheckButton* _checkButton;
 public:
-	BooleanArgument(ResponseEffect::Argument& arg, GtkTooltips* tooltips);
+	BooleanArgument(ResponseEffect::Argument& arg);
 	
-	virtual GtkWidget* getEditWidget();
+	virtual Gtk::Widget& getEditWidget();
 	virtual std::string getValue();
 };
 
@@ -96,16 +104,15 @@ public:
 class EntityArgument :
 	public EffectArgumentItem
 {
-	GtkListStore* _entityStore;
-	GtkWidget* _comboBox;	
+	const Glib::RefPtr<Gtk::ListStore>& _entityStore;
+	Gtk::ComboBoxEntry* _comboBox;
 public:
 	// Pass the entity liststore to this item so that the auto-completion
 	// of the entity combo box works correctly 
 	EntityArgument(ResponseEffect::Argument& arg, 
-				   GtkTooltips* tooltips, 
-				   GtkListStore* entityStore);
+				   const Glib::RefPtr<Gtk::ListStore>& entityStore);
 	
-	virtual GtkWidget* getEditWidget();
+	virtual Gtk::Widget& getEditWidget();
 	virtual std::string getValue();
 };
 
@@ -114,15 +121,15 @@ public:
 class StimTypeArgument :
 	public EffectArgumentItem
 {
-	GtkListStore* _stimTypeStore;
-	GtkWidget* _comboBox;
+private:
+	const StimTypes& _stimTypes;
+	Gtk::ComboBox* _comboBox;
 public:
 	// Pass the reference to the StimType helper class  
 	StimTypeArgument(ResponseEffect::Argument& arg, 
-				   GtkTooltips* tooltips,
-				   GtkListStore* stimTypeStore);
+				     const StimTypes& stimTypes);
 	
-	virtual GtkWidget* getEditWidget();
+	virtual Gtk::Widget& getEditWidget();
 	virtual std::string getValue();
 };
 

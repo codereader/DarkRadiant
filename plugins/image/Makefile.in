@@ -135,6 +135,8 @@ GL_LIBS = @GL_LIBS@
 GREP = @GREP@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
+GTKMM_CFLAGS = @GTKMM_CFLAGS@
+GTKMM_LIBS = @GTKMM_LIBS@
 GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
 GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
@@ -245,11 +247,11 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(GTK_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(GTKMM_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = image.la
 image_la_LDFLAGS = -module -avoid-version \
-				   $(GTK_LIBS) $(JPEG_LIBS) $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS)
+                   $(GTKMM_LIBS) $(JPEG_LIBS) $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS)
 
 image_la_LIBADD = $(top_builddir)/libs/ddslib/libdds.la
 image_la_SOURCES = dds.cpp \

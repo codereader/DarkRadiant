@@ -37,7 +37,7 @@ class CamWnd :
 	
 	RadiantCameraView m_cameraview;
 
-	guint m_freemove_handle_focusout;
+	sigc::connection m_freemove_handle_focusout;
 	
 	static ShaderPtr m_state_select1;
 	static ShaderPtr m_state_select2;
@@ -49,8 +49,8 @@ class CamWnd :
 
 	bool m_bFreeMove;
 
-	gtkutil::GLWidget m_gl_widget;
-	GtkWindow* _parentWidget;
+	gtkutil::GLWidget* m_gl_widget;
+	Glib::RefPtr<Gtk::Window> _parentWindow;
 
 	std::size_t _mapValidHandle;
 
@@ -62,13 +62,11 @@ public:
 	DeferredDraw m_deferredDraw;
 	DeferredMotion m_deferred_motion;
 
-	guint m_selection_button_press_handler;
-	guint m_selection_button_release_handler;
-	guint m_selection_motion_handler;
-	guint m_freelook_button_press_handler;
-	guint m_freelook_button_release_handler;
-	guint m_sizeHandler;
-	guint m_exposeHandler;
+	sigc::connection m_selection_button_press_handler;
+	sigc::connection m_selection_button_release_handler;
+	sigc::connection m_selection_motion_handler;
+	sigc::connection m_freelook_button_press_handler;
+	sigc::connection m_freelook_button_release_handler;
 
 	// Constructor and destructor
 	CamWnd();
@@ -104,13 +102,13 @@ public:
 	// This tries to find brushes above/below the current camera position and moves the view upwards/downwards
 	void changeFloor(const bool up);
 
-	GtkWidget* getWidget() const;
-	GtkWindow* getParent() const;
+	Gtk::Widget* getWidget() const;
+	const Glib::RefPtr<Gtk::Window>& getParent() const;
 	
 	/**
-	 * Set the immediate GTK container of this CamWnd.
+	 * Set the immediate parent window of this CamWnd.
 	 */
-	void setContainer(GtkWindow* newParent);
+	void setContainer(const Glib::RefPtr<Gtk::Window>& newParent);
 
 	void enableFreeMove();
 	void disableFreeMove();
@@ -135,6 +133,24 @@ public:
 	
 private:
 	void Cam_Draw();
+
+	void onSizeAllocate(Gtk::Allocation& allocation);
+	bool onExpose(GdkEventExpose* ev);
+
+	bool onMouseScroll(GdkEventScroll* ev);
+
+	bool enableFreelookButtonPress(GdkEventButton* ev);
+	bool disableFreelookButtonPress(GdkEventButton* ev);
+	bool disableFreelookButtonRelease(GdkEventButton* ev);
+
+	bool freeMoveFocusOut(GdkEventFocus* ev);
+
+	bool selectionButtonPress(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+	bool selectionButtonRelease(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+
+	bool selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+	bool selectionButtonReleaseFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
+	bool selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer);
 };
 
 /**

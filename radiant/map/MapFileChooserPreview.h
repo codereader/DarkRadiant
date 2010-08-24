@@ -8,32 +8,36 @@
 #include "gtkutil/FileChooser.h"
 #include <boost/shared_ptr.hpp>
 
-namespace map {
+#include <gtkmm/box.h>
+
+namespace Gtk { class TextView; }
+
+namespace map
+{
 
 class MapFileChooserPreview :
+	public Gtk::VBox,
 	public gtkutil::FileChooser::Preview
 {
+private:
 	// The loaded map resource
 	IMapResourcePtr _mapResource;
 
 	// The name of the map being previewed
 	std::string _mapName;
 
-	GtkWidget* _previewContainer;
-
 	// The description widget (text entry)
-	GtkWidget* _usageInfo;
+	Gtk::TextView* _usageInfo;
 
 	// The actual MapPreview widget
-	ui::MapPreview _preview;
+	ui::MapPreview* _preview;
 
 public:
 	MapFileChooserPreview();
 
 	virtual ~MapFileChooserPreview() {}
 
-	// Retrieve the preview widget for packing into the dialog
-	GtkWidget* getPreviewWidget();
+	virtual Gtk::Widget& getPreviewWidget();
 
 	/**
 	 * Gets called whenever the user changes the file selection.
@@ -47,7 +51,7 @@ private:
 	void updateUsageInfo();
 
 	// The usage text view
-	GtkWidget* createUsagePanel();
+	Gtk::Widget& createUsagePanel();
 
 	// Sets the name of the map to preview, returns TRUE on success
 	bool setMapName(const std::string& name);

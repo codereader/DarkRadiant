@@ -1,52 +1,68 @@
 #ifndef RESPONSEEDITOR_H_
 #define RESPONSEEDITOR_H_
 
+#include <gtkmm/window.h>
 #include "ClassEditor.h"
 
-namespace ui {
+namespace Gtk
+{
+	class Menu;
+	class MenuItem;
+	class TreeView;
+	class VBox;
+	class CheckButton;
+	class Entry;
+	class SpinButton;
+}
+
+namespace ui
+{
 
 class ResponseEditor :
 	public ClassEditor
 {
-	struct ListContextMenu {
-		GtkWidget* menu;
-		GtkWidget* remove;
-		GtkWidget* add;
-		GtkWidget* enable;
-		GtkWidget* disable;
-		GtkWidget* duplicate;
+private:
+	struct ListContextMenu
+	{
+		Gtk::Menu* menu;
+		Gtk::MenuItem* remove;
+		Gtk::MenuItem* add;
+		Gtk::MenuItem* enable;
+		Gtk::MenuItem* disable;
+		Gtk::MenuItem* duplicate;
 	} _contextMenu;
 	
-	struct EffectWidgets {
-		GtkWidget* view;
-		GtkTreeSelection* selection;
-		GtkWidget* contextMenu;
-		GtkWidget* deleteMenuItem;
-		GtkWidget* addMenuItem;
-		GtkWidget* editMenuItem;
-		GtkWidget* upMenuItem;
-		GtkWidget* downMenuItem;
+	struct EffectWidgets
+	{
+		Gtk::TreeView* view;
+		Gtk::Menu* contextMenu;
+		Gtk::MenuItem* deleteMenuItem;
+		Gtk::MenuItem* addMenuItem;
+		Gtk::MenuItem* editMenuItem;
+		Gtk::MenuItem* upMenuItem;
+		Gtk::MenuItem* downMenuItem;
 	} _effectWidgets;
 	
-	struct PropertyWidgets {
-		GtkWidget* vbox;
-		GtkWidget* active;
-		GtkWidget* chanceToggle;
-		GtkWidget* chanceEntry;
-		GtkWidget* randomEffectsToggle;
-		GtkWidget* randomEffectsEntry;
+	struct PropertyWidgets
+	{
+		Gtk::VBox* vbox;
+		Gtk::CheckButton* active;
+		Gtk::CheckButton* chanceToggle;
+		Gtk::SpinButton* chanceEntry;
+		Gtk::CheckButton* randomEffectsToggle;
+		Gtk::Entry* randomEffectsEntry;
 	} _propertyWidgets;
 	
-	GtkWidget* _parent;
+	Glib::RefPtr<Gtk::Window> _parent;
 	
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
-	ResponseEditor(GtkWidget* parent, StimTypes& stimTypes);
+	ResponseEditor(const Glib::RefPtr<Gtk::Window>& parent, StimTypes& stimTypes);
 
 	/** greebo: Sets the new entity (updates the treeviews)
 	 */
-	virtual void setEntity(SREntityPtr entity);
+	virtual void setEntity(const SREntityPtr& entity);
 
 	/** greebo: Updates the widgets (e.g. after a selection change) 
 	 */
@@ -56,7 +72,7 @@ private:
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.
 	 */
-	void checkBoxToggled(GtkToggleButton* toggleButton);
+	void checkBoxToggled(Gtk::CheckButton* toggleButton);
 
 	/** greebo: Adds a new response effect to the list.
 	 */
@@ -98,30 +114,36 @@ private:
 
 	// Widget creator helpers
 	void createContextMenu();
-	GtkWidget* createEffectWidgets(); // Response effect list 
+	Gtk::Widget& createEffectWidgets(); // Response effect list
 
 	/** greebo: Gets called when the response selection gets changed 
 	 */
 	virtual void selectionChanged();
 	
-	void openContextMenu(GtkTreeView* view);
+	void openContextMenu(Gtk::TreeView* view);
 
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
 	
 	// Context menu GTK callbacks
-	static void onContextMenuAdd(GtkWidget* w, ResponseEditor* self);
-	static void onContextMenuDelete(GtkWidget* w, ResponseEditor* self);
-	static void onContextMenuEffectUp(GtkWidget* widget, ResponseEditor* self);
-	static void onContextMenuEffectDown(GtkWidget* widget, ResponseEditor* self);
-	static void onContextMenuEdit(GtkWidget* widget, ResponseEditor* self);
+	void onContextMenuAdd();
+	void onContextMenuDelete();
+	void onContextMenuEffectUp();
+	void onContextMenuEffectDown();
+	void onContextMenuEdit();
+
+	void onEffectMenuDelete();
+	void onEffectMenuEdit();
+	void onEffectMenuAdd();
+	void onEffectMenuEffectUp();
+	void onEffectMenuEffectDown();
 	
 	// To catch double-clicks in the response effect list 
-	static gboolean onTreeViewButtonPress(GtkTreeView*, GdkEventButton*, ResponseEditor* self);
+	bool onEffectsViewButtonPress(GdkEventButton*);
 	
 	// Callback for Stim/Response and effect selection changes
-	static void onEffectSelectionChange(GtkTreeSelection* selection, ResponseEditor* self); 
+	void onEffectSelectionChange();
 };
 
 } // namespace ui

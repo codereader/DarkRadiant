@@ -1,33 +1,39 @@
 #include "Statement.h"
 
 #include "icommandsystem.h"
+#include <gtkmm/menuitem.h>
+#include <gtkmm/button.h>
+#include <gtkmm/toolbutton.h>
 
 Statement::Statement(const std::string& statement, bool reactOnKeyUp) :
 	_statement(statement),
 	_reactOnKeyUp(reactOnKeyUp)
 {}
 
-Statement::~Statement() {
-	for (WidgetList::iterator i = _connectedWidgets.begin(); i != _connectedWidgets.end(); ++i) {
-		if (GTK_IS_WIDGET(i->first)) {
-			g_signal_handler_disconnect(i->first, i->second);
-		}
+Statement::~Statement()
+{
+	for (WidgetList::iterator i = _connectedWidgets.begin(); i != _connectedWidgets.end(); ++i)
+	{
+		i->second.disconnect();
 	}
 }
 
-bool Statement::empty() const {
+bool Statement::empty() const
+{
 	return false;
 }
 
 // Invoke the registered callback
-void Statement::execute() {
+void Statement::execute()
+{
 	if (_enabled) {
 		GlobalCommandSystem().execute(_statement);
 	}
 }
 
 // Override the derived keyUp method
-void Statement::keyUp() {
+void Statement::keyUp()
+{
 	if (_reactOnKeyUp) {
 		// Execute the Statement on key up event
 		execute();
@@ -35,7 +41,8 @@ void Statement::keyUp() {
 }
 
 // Override the derived keyDown method
-void Statement::keyDown() {
+void Statement::keyDown()
+{
 	if (!_reactOnKeyUp) {
 		// Execute the Statement on key down event
 		execute();
@@ -43,47 +50,47 @@ void Statement::keyDown() {
 }
 
 // Connect the given menuitem or toolbutton to this Statement
-void Statement::connectWidget(GtkWidget* widget) {
-	if (GTK_IS_MENU_ITEM(widget)) {
-		// Connect the static callback function and pass the pointer to this class
-		gulong handler = g_signal_connect(G_OBJECT(widget), "activate", G_CALLBACK(onMenuItemClicked), this);
+void Statement::connectWidget(Gtk::Widget* widget)
+{
+	if (dynamic_cast<Gtk::MenuItem*>(widget) != NULL)
+	{
+		// Connect the callback function
+		Gtk::MenuItem* menuItem = static_cast<Gtk::MenuItem*>(widget);
 
-		_connectedWidgets[widget] = handler;
+		_connectedWidgets[widget] = menuItem->signal_activate().connect(
+			sigc::mem_fun(*this, &Statement::onMenuItemClicked));
 	}
-	else if (GTK_IS_TOOL_BUTTON(widget)) {
-		// Connect the static callback function and pass the pointer to this class
-		gulong handler = g_signal_connect(G_OBJECT(widget), "clicked", G_CALLBACK(onToolButtonPress), this);
+	else if (dynamic_cast<Gtk::ToolButton*>(widget) != NULL)
+	{
+		// Connect the callback function
+		Gtk::ToolButton* toolButton = static_cast<Gtk::ToolButton*>(widget);
 
-		_connectedWidgets[widget] = handler;
+		_connectedWidgets[widget] = toolButton->signal_clicked().connect(
+			sigc::mem_fun(*this, &Statement::onToolButtonPress));
 	}
-	else if (GTK_IS_BUTTON(widget)) {
-		// Connect the static callback function and pass the pointer to this class
-		gulong handler = g_signal_connect(G_OBJECT(widget), "clicked", G_CALLBACK(onButtonPress), this);
+	else if (dynamic_cast<Gtk::Button*>(widget) != NULL)
+	{
+		Gtk::Button* button = static_cast<Gtk::Button*>(widget);
 
-		_connectedWidgets[widget] = handler;
+		_connectedWidgets[widget] = button->signal_clicked().connect(
+			sigc::mem_fun(*this, &Statement::onButtonPress));
 	}
 }
 
-gboolean Statement::onButtonPress(GtkButton* button, Statement* self)
+void Statement::onButtonPress()
 {
 	// Execute the Statement
-	self->execute();
-
-	return true;
+	execute();
 }
 
-gboolean Statement::onToolButtonPress(GtkToolButton* toolButton, Statement* self)
+void Statement::onToolButtonPress()
 {
 	// Execute the Statement
-	self->execute();
-
-	return true;
+	execute();
 }
 
-gboolean Statement::onMenuItemClicked(GtkMenuItem* menuitem, Statement* self)
+void Statement::onMenuItemClicked()
 {
 	// Execute the Statement
-	self->execute();
-
-	return true;
+	execute();
 }

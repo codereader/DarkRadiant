@@ -174,10 +174,13 @@ void ScriptingSystem::initialise()
 	// Start the init script
 	executeScriptFile("init.py");
 
+	// Ensure the singleton instance exists
+	ScriptWindow::create();
+
 	// Add the scripting widget to the groupdialog
 	GlobalGroupDialog().addPage(
 		"ScriptWindow", _("Script"), "icon_script.png", 
-		ScriptWindow::Instance().getWidget(), 
+		*ScriptWindow::InstancePtr().get(),
 		_("Script"), "console"
 	);
 }
@@ -332,7 +335,8 @@ void ScriptingSystem::reloadScripts()
 }
 
 // RegisterableModule implementation
-const std::string& ScriptingSystem::getName() const {
+const std::string& ScriptingSystem::getName() const
+{
 	static std::string _name(MODULE_SCRIPTING_SYSTEM);
 	return _name;
 }
@@ -462,6 +466,8 @@ void ScriptingSystem::shutdownModule()
 	globalOutputStream() << getName() << "::shutdownModule called." << std::endl;
 
 	_scriptMenu = ui::ScriptMenuPtr();
+
+	ScriptWindow::destroy();
 
 	// Clear the buffer so that nodes finally get destructed
 	SceneNodeBuffer::Instance().clear();

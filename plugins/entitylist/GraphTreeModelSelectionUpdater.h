@@ -2,7 +2,7 @@
 #define GRAPHTREEMODELSELECTIONUPDATER_H_
 
 #include "scenelib.h"
-#include <gtk/gtktreeselection.h>
+#include <gtkmm/treeselection.h>
 #include "GraphTreeModel.h"
 
 namespace ui {
@@ -10,26 +10,31 @@ namespace ui {
 class GraphTreeModelSelectionUpdater :
 	public scene::NodeVisitor
 {
+private:
 	GraphTreeModel& _model;
-	GtkTreeSelection* _selection;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
+
 public:
-	GraphTreeModelSelectionUpdater(GraphTreeModel& model, GtkTreeSelection* selection) :
+	GraphTreeModelSelectionUpdater(GraphTreeModel& model, const Glib::RefPtr<Gtk::TreeSelection>& selection) :
 		_model(model),
 		_selection(selection)
 	{}
 	
-	bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& node) 
+	{
 		const GraphTreeNodePtr& gtNode = _model.find(node);
 		
 		if (gtNode == NULL) {
 			return true;
 		}
 		
-		if (Node_isSelected(node)) {
-			gtk_tree_selection_select_iter(_selection, gtNode->getIter());
+		if (Node_isSelected(node))
+		{
+			_selection->select(gtNode->getIter());
 		}
-		else {
-			gtk_tree_selection_unselect_iter(_selection, gtNode->getIter());
+		else
+		{
+			_selection->unselect(gtNode->getIter());
 		}
 		
 		return true;

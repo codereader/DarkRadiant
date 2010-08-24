@@ -6,158 +6,158 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/TreeModel.h"
-#include <gtk/gtk.h>
 #include <iostream>
+
+#include <gtkmm/box.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/cellrenderertext.h>
+#include <gtkmm/liststore.h>
+#include <gtkmm/button.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/label.h>
 
 namespace ui {
 
-	namespace {
-		enum FileListCols {
-			FILENAME_COL,	// The filename (VFS path)
-			NUM_COLS
-		};
-	}
-
 SoundShaderPreview::SoundShaderPreview() :
+	Gtk::HBox(false, 12),
 	_soundShader("")
 {
-	_widget = gtk_hbox_new(FALSE, 12);
+	_treeView = Gtk::manage(new Gtk::TreeView);
+	_treeView->set_size_request(-1, 130);
+	_treeView->append_column(_("Sound Files"), _columns.shader);
 	
-	_treeView = gtk_tree_view_new();
-	gtk_widget_set_size_request(_treeView, -1, 130);
+	// Connect the "changed" signal
+	_selection = _treeView->get_selection();
+	_selection->signal_changed().connect(sigc::mem_fun(*this,&SoundShaderPreview::onSelectionChanged));
 	
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(_treeView),
-		gtkutil::TextColumn(_("Sound Files"), FILENAME_COL)
-	);
-	
-	// Point the TreeSelection to this treeview
-	_treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(_treeView));
-	g_signal_connect(G_OBJECT(_treeSelection), "changed", 
-					 G_CALLBACK(onSelectionChange), this);
-	
-	gtk_box_pack_start(GTK_BOX(_widget), gtkutil::ScrolledFrame(_treeView), TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(_widget), createControlPanel(), FALSE, FALSE, 0);
+	pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true);
+	pack_start(createControlPanel(), false, false);
 	
 	// Trigger the initial update of the widgets
 	update();
 }
 
-GtkWidget* SoundShaderPreview::createControlPanel() {
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
-	gtk_widget_set_size_request(vbox, 200, -1);
+Gtk::Widget& SoundShaderPreview::createControlPanel()
+{
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	vbox->set_size_request(200, -1);
 	
 	// Create the playback button
-	_playButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_PLAY);
-	_stopButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_STOP);
-	g_signal_connect(G_OBJECT(_playButton), "clicked", G_CALLBACK(onPlay), this);
-	g_signal_connect(G_OBJECT(_stopButton), "clicked", G_CALLBACK(onStop), this);
+	_playButton = Gtk::manage(new Gtk::Button(Gtk::Stock::MEDIA_PLAY));
+	_stopButton = Gtk::manage(new Gtk::Button(Gtk::Stock::MEDIA_STOP));
+
+	_playButton->signal_clicked().connect(sigc::mem_fun(*this, &SoundShaderPreview::onPlay));
+	_stopButton->signal_clicked().connect(sigc::mem_fun(*this, &SoundShaderPreview::onStop));
 	
-	GtkWidget* btnHBox = gtk_hbox_new(TRUE, 6);
-	gtk_box_pack_start(GTK_BOX(btnHBox), _playButton, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(btnHBox), _stopButton, TRUE, TRUE, 0);
+	Gtk::HBox* btnHBox = Gtk::manage(new Gtk::HBox(true, 6));
+
+	btnHBox->pack_start(*_playButton, true, true);
+	btnHBox->pack_start(*_stopButton, true, true);
+
+	vbox->pack_end(*btnHBox, false, false);
 	
-	gtk_box_pack_end(GTK_BOX(vbox), btnHBox, FALSE, FALSE, 0);
+	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
+	vbox->pack_end(*_statusLabel, false, false);
 	
-	_statusLabel = gtkutil::LeftAlignedLabel("");
-	gtk_box_pack_end(GTK_BOX(vbox), _statusLabel, FALSE, FALSE, 0);
-	
-	return vbox; 
+	return *vbox;
 }
 
-void SoundShaderPreview::setSoundShader(const std::string& soundShader) {
+void SoundShaderPreview::setSoundShader(const std::string& soundShader)
+{
 	_soundShader = soundShader;
 	update();
 }
 
-void SoundShaderPreview::update() {
+void SoundShaderPreview::update()
+{
 	// Clear the current treeview model
-	gtk_tree_view_set_model(GTK_TREE_VIEW(_treeView), NULL);
-	
+	_treeView->unset_model();
+		
 	// If the soundshader string is empty, desensitise the widgets
-	gtk_widget_set_sensitive(_widget, !_soundShader.empty());
+	set_sensitive(!_soundShader.empty());
 	
-	if (!_soundShader.empty()) {
+	if (!_soundShader.empty())
+	{
 		// We have a sound shader, update the liststore
 		
 		// Get the list of sound files associated to this shader
 		const ISoundShaderPtr& shader = GlobalSoundManager().getSoundShader(_soundShader);
 		
-		if (!shader->getName().empty()) {
+		if (!shader->getName().empty())
+		{
 			// Create a new liststore and pack it into the treeview
-			_listStore = gtk_list_store_new(NUM_COLS, G_TYPE_STRING);
-			gtk_tree_view_set_model(GTK_TREE_VIEW(_treeView), GTK_TREE_MODEL(_listStore));
+			_listStore = Gtk::ListStore::create(_columns);
+			_treeView->set_model(_listStore);
 			
 			// Retrieve the list of associated filenames (VFS paths)
 			SoundFileList list = shader->getSoundFileList();
 			
-			for (std::size_t i = 0; i < list.size(); i++) {
-				GtkTreeIter iter;
-				gtk_list_store_append(_listStore, &iter);
-				gtk_list_store_set(_listStore, &iter, 
-								   FILENAME_COL, list[i].c_str(),
-								   -1);
+			for (std::size_t i = 0; i < list.size(); ++i)
+			{
+				Gtk::TreeModel::iterator iter = _listStore->append();
+				Gtk::TreeModel::Row row = *iter;
+
+				row[_columns.shader] = list[i];
 
 				// Pre-select the first sound file, for the user's convenience
 				if (i == 0)
 				{
-					gtk_tree_selection_select_iter(_treeSelection, &iter);
+					_selection->select(iter);
 				}
 			}
 		}
-		else {
+		else
+		{
 			// Not a valid soundshader, switch to inactive
-			gtk_widget_set_sensitive(_widget, FALSE);
+			set_sensitive(false);
 		}
 	}
 }
 
-SoundShaderPreview::operator GtkWidget*() {
-	return _widget;
-}
+std::string SoundShaderPreview::getSelectedSoundFile()
+{
+	Gtk::TreeModel::Row selected = *_selection->get_selected();
 
-std::string SoundShaderPreview::getSelectedSoundFile() {
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	bool anythingSelected = 
-		gtk_tree_selection_get_selected(_treeSelection, &model, &iter) ? true : false;
-	
-	if (anythingSelected) {
-		return gtkutil::TreeModel::getString(model, &iter, FILENAME_COL);
+	if (selected)
+	{
+		return Glib::ustring(selected[_columns.shader]);
 	}
-	else {
+	else
+	{
 		return "";
 	}
 }
 
-void SoundShaderPreview::onSelectionChange(
-	GtkTreeSelection* ts, SoundShaderPreview* self)
+void SoundShaderPreview::onSelectionChanged()
 {
-	std::string selectedFile = self->getSelectedSoundFile();
+	std::string selectedFile = getSelectedSoundFile();
 	
 	// Set the sensitivity of the playbutton accordingly
-	gtk_widget_set_sensitive(self->_playButton, !selectedFile.empty());
+	_playButton->set_sensitive(!selectedFile.empty());
 }
 
-void SoundShaderPreview::onPlay(GtkButton* button, SoundShaderPreview* self) {
-	gtk_label_set_markup(GTK_LABEL(self->_statusLabel), "");
-	std::string selectedFile = self->getSelectedSoundFile();
+void SoundShaderPreview::onPlay()
+{
+	_statusLabel->set_markup("");
+
+	std::string selectedFile = getSelectedSoundFile();
 	
-	if (!selectedFile.empty()) {
+	if (!selectedFile.empty())
+	{
 		// Pass the call to the sound manager
-		if (!GlobalSoundManager().playSound(selectedFile)) {
-			gtk_label_set_markup(
-				GTK_LABEL(self->_statusLabel), 
-				_("<b>Error:</b> File not found.")
-			);
+		if (!GlobalSoundManager().playSound(selectedFile))
+		{
+			_statusLabel->set_markup(_("<b>Error:</b> File not found."));
 		}
 	}
 }
 
-void SoundShaderPreview::onStop(GtkButton* button, SoundShaderPreview* self) {
+void SoundShaderPreview::onStop()
+{
 	// Pass the call to the sound manager
 	GlobalSoundManager().stopSound();
-	gtk_label_set_markup(GTK_LABEL(self->_statusLabel), "");
+
+	_statusLabel->set_markup("");
 }
 
 } // namespace ui

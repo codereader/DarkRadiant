@@ -2,6 +2,7 @@
 #define _SCREEN_UPDATE_BLOCKER_H_
 
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include <sigc++/connection.h>
 
 namespace ui {
 
@@ -10,7 +11,8 @@ class ScreenUpdateBlocker :
 {
 	bool _grabbedFocus;
 
-	gulong _focusHandler;
+	sigc::connection _focusHandler;
+	sigc::connection _realizeHandler;
 
 public:
 	// Pass the window title and the text message to the constructor
@@ -27,9 +29,9 @@ private:
 	bool isActiveApp();
 
 	// Called whenever the main window is changing its "active" state property.
-	static void onMainWindowFocus(GtkWindow* mainWindow, void* dummy, ScreenUpdateBlocker* self);
+	void onMainWindowFocus();
 
-	static void onRealize(GtkWidget* widget, ScreenUpdateBlocker* self);
+	void onRealize();
 };
 
 } // namespace ui

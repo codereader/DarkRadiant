@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "iregistry.h"
-#include <gtk/gtkliststore.h>
+#include <gtkmm/liststore.h>
 
 namespace difficulty {
 
@@ -113,24 +113,32 @@ void Setting::parseAppType() {
 	}
 }
 
-GtkListStore* Setting::getAppTypeStore() {
-	GtkListStore* store = gtk_list_store_new(2, 
-		G_TYPE_STRING, // the caption
-		G_TYPE_INT     // the enum int
-	);
+const Setting::ListStoreColumns& Setting::getTreeModelColumns()
+{
+	static ListStoreColumns cols;
+	return cols;
+}
 
-	GtkTreeIter iter;
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, _("Assign"), 1, EAssign, -1);
+Glib::RefPtr<Gtk::ListStore> Setting::getAppTypeStore()
+{
+	const ListStoreColumns& columns = getTreeModelColumns();
+	Glib::RefPtr<Gtk::ListStore> store = Gtk::ListStore::create(columns);
 
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, _("Add"), 1, EAdd, -1);
+	Gtk::TreeModel::Row row = *store->append();
+	row[columns.name] = _("Assign");
+	row[columns.type] = EAssign;
 
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, _("Multiply"), 1, EMultiply, -1);
+	row = *store->append();
+	row[columns.name] = _("Add");
+	row[columns.type] = EAdd;
 
-	gtk_list_store_append(store, &iter);
-	gtk_list_store_set(store, &iter, 0, _("Ignore"), 1, EIgnore, -1);
+	row = *store->append();
+	row[columns.name] = _("Multiply");
+	row[columns.type] = EMultiply;
+
+	row = *store->append();
+	row[columns.name] = _("Ignore");
+	row[columns.type] = EIgnore;
 
 	return store;
 }

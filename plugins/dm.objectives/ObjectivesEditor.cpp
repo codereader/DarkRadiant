@@ -18,12 +18,19 @@
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "gtkutil/MultiMonitor.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/dialog.h"
 
-#include <gtk/gtk.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/button.h>
+#include <gtkmm/image.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/box.h>
+#include <gtkmm/separator.h>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
@@ -33,27 +40,12 @@ namespace objectives
 // CONSTANTS 
 namespace {
 
-	const char* DIALOG_TITLE = N_("Mission Objectives");
+	const char* const DIALOG_TITLE = N_("Mission Objectives");
 	
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	const std::string RKEY_OBJECTIVE_ENTS = "game/objectivesEditor//objectivesEClass";
 	
-	// WIDGETS ENUM 
-	enum {
-		WIDGET_ENTITY_LIST,
-		WIDGET_LOGIC_PANEL,
-		WIDGET_DELETE_ENTITY,
-		WIDGET_DELETE_OBJECTIVE,
-		WIDGET_MOVE_UP_OBJECTIVE,
-		WIDGET_MOVE_DOWN_OBJECTIVE,
-		WIDGET_EDIT_OBJECTIVE,
-		WIDGET_CLEAR_OBJECTIVES,
-        WIDGET_OBJ_BUTTONS_PANEL,
-		WIDGET_MISSION_SUCCESS_LOGIC,
-		WIDGET_MISSION_FAILURE_LOGIC,
-	};
-
 	inline std::string makeBold(const std::string& input)
 	{
 		return "<b>" + input + "</b>";
@@ -63,56 +55,42 @@ namespace {
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor() :
 	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow()),
-	_objectiveEntityList(gtk_list_store_new(3, 
-  										  G_TYPE_STRING, 		// display text
-  										  G_TYPE_BOOLEAN,		// start active
-  										  G_TYPE_STRING)),		// entity name
-	_objectiveList(gtk_list_store_new(3, 
-  								    G_TYPE_INT,			// obj number 
-  								    G_TYPE_STRING,		// obj description
-									G_TYPE_STRING))		// obj difficulty level
+	_objectiveEntityList(Gtk::ListStore::create(_objEntityColumns)),
+	_objectiveList(Gtk::ListStore::create(_objectiveColumns))
 {
 	// Window properties
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+	set_border_width(12);
     
     // Window size
-	GdkScreen* scr = gtk_window_get_screen(GTK_WINDOW(getWindow()));
-	gtk_window_set_default_size(GTK_WINDOW(getWindow()), 
-		gint(gdk_screen_get_width(scr) * 0.5f), 
-		gint(gdk_screen_get_height(scr) * 0.6)
-	);
-    
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
+
+	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
+
     // Main dialog vbox
-	GtkWidget* mainVbx = gtk_vbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(mainVbx), 
-					   gtkutil::LeftAlignedLabel(makeBold(_("Objectives entities"))),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(mainVbx),
-					   gtkutil::LeftAlignment(createEntitiesPanel(), 18, 1.0),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(mainVbx), 
-					   gtkutil::LeftAlignedLabel(makeBold(_("Objectives"))),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(mainVbx),
-					   gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0),
-					   TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(mainVbx), 
-					   gtkutil::LeftAlignedLabel(makeBold(_("Success/Failure Logic"))),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(mainVbx),
-					   gtkutil::LeftAlignment(createLogicPanel(), 18, 1.0),
-					   FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(mainVbx), gtk_hseparator_new(), FALSE, FALSE, 0);
-	gtk_box_pack_end(GTK_BOX(mainVbx), createButtons(), FALSE, FALSE, 0);
+	Gtk::VBox* mainVbx = Gtk::manage(new Gtk::VBox(false, 12));
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Objectives entities")))),
+					   false, false, 0);
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createEntitiesPanel(), 18, 1.0)),
+					   false, false, 0);
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Objectives")))),
+					   false, false, 0);
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createObjectivesPanel(), 18, 1.0)),
+					   true, true, 0);
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Success/Failure Logic")))),
+					   false, false, 0);
+	mainVbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createLogicPanel(), 18, 1.0)),
+					   false, false, 0);
+	mainVbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
+	mainVbx->pack_end(createButtons(), false, false, 0);
 
 	// Add vbox to dialog
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_container_add(GTK_CONTAINER(getWindow()), mainVbx);
+	add(*mainVbx);
 
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
 	
-	_windowPosition.connect(GTK_WINDOW(getWindow()));
+	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 
 	_objectiveEClasses.clear();
@@ -126,198 +104,182 @@ ObjectivesEditor::ObjectivesEditor() :
 }
 
 // Create the objects panel (for manipulating the target_addobjectives objects)
-GtkWidget* ObjectivesEditor::createEntitiesPanel() {
-	
+Gtk::Widget& ObjectivesEditor::createEntitiesPanel()
+{
 	// Hbox containing the entity list and the buttons vbox
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
 	
 	// Tree view listing the target_addobjectives entities
-	GtkWidget* tv = 
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objectiveEntityList));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), FALSE);
-	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
-	g_signal_connect(G_OBJECT(sel), "changed",
-					 G_CALLBACK(_onEntitySelectionChanged), this);
-	_widgets[WIDGET_ENTITY_LIST] = tv;
+	_entityList = Gtk::manage(new Gtk::TreeView(_objectiveEntityList));
+
+	_entityList->set_headers_visible(false);
+
+	_entityList->get_selection()->signal_changed().connect(
+		sigc::mem_fun(*this, &ObjectivesEditor::_onEntitySelectionChanged));
 	
 	// Active-at-start column (checkbox)
-	GtkCellRenderer* startToggle = gtk_cell_renderer_toggle_new();
-	GtkTreeViewColumn* startCol = 
-		gtk_tree_view_column_new_with_attributes(
-			_("Start"), startToggle, "active", 1, NULL);
-	g_signal_connect(G_OBJECT(startToggle), "toggled", 
-					 G_CALLBACK(_onStartActiveCellToggled), this);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), startCol);
+	Gtk::CellRendererToggle* startToggle = Gtk::manage(new Gtk::CellRendererToggle);
+	startToggle->signal_toggled().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onStartActiveCellToggled));
+	
+	Gtk::TreeViewColumn* startCol = Gtk::manage(new Gtk::TreeViewColumn(_("Start")));
+	startCol->add_attribute(startToggle->property_active(), _objEntityColumns.startActive);
+	
+	_entityList->append_column(*startCol);
 	
 	// Name column
-	gtk_tree_view_append_column(GTK_TREE_VIEW(tv), gtkutil::TextColumn("", 0));
+	_entityList->append_column(*Gtk::manage(new gtkutil::TextColumn("", _objEntityColumns.displayName)));
 	
-	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0);
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_entityList)), true, true, 0);
 					   
 	// Vbox for the buttons
-	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* buttonBox = Gtk::manage(new Gtk::VBox(false, 6));
 	
-	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD);
-	g_signal_connect(
-		G_OBJECT(addButton), "clicked", G_CALLBACK(_onAddEntity), this);
-	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, TRUE, TRUE, 0);
+	Gtk::Button* addButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
+	addButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onAddEntity));
+
+	_delEntityButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
+	_delEntityButton->set_sensitive(false); // disabled at start
+	_delEntityButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onDeleteEntity));
 	
-	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	gtk_widget_set_sensitive(delButton, FALSE); // disabled at start
-	g_signal_connect(
-		G_OBJECT(delButton), "clicked", G_CALLBACK(_onDeleteEntity), this);
-	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, TRUE, TRUE, 0);
-	_widgets[WIDGET_DELETE_ENTITY] = delButton;
+	buttonBox->pack_start(*addButton, true, true, 0);
+	buttonBox->pack_start(*_delEntityButton, true, true, 0);
 					   
-	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
-	return hbx;
+	hbx->pack_start(*buttonBox, false, false, 0);
+
+	return *hbx;
 }
 
 // Create the main objective editing widgets
-GtkWidget* ObjectivesEditor::createObjectivesPanel() {
-	
+Gtk::Widget& ObjectivesEditor::createObjectivesPanel()
+{
 	// Tree view
-	GtkWidget* tv = 
-		gtk_tree_view_new_with_model(GTK_TREE_MODEL(_objectiveList));
-	gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(tv), TRUE);
-	GtkTreeSelection* sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv));
-	g_signal_connect(G_OBJECT(sel), "changed", 
-					 G_CALLBACK(_onObjectiveSelectionChanged), this);
+	_objList = Gtk::manage(new Gtk::TreeView(_objectiveList));
+	_objList->set_headers_visible(true);
+
+	_objList->get_selection()->signal_changed().connect(
+		sigc::mem_fun(*this, &ObjectivesEditor::_onObjectiveSelectionChanged));
 	
 	// Key and value text columns
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn("#", 0, false));
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Description"), 1, false));
-	gtk_tree_view_append_column(
-		GTK_TREE_VIEW(tv), gtkutil::TextColumn(_("Diff."), 2, false));
+	_objList->append_column(*Gtk::manage(
+		new gtkutil::TextColumn("#", _objectiveColumns.objNumber, false)));
+	_objList->append_column(*Gtk::manage(
+		new gtkutil::TextColumn(_("Description"), _objectiveColumns.description, false)));
+	_objList->append_column(*Gtk::manage(
+		new gtkutil::TextColumn(_("Diff."), _objectiveColumns.difficultyLevel, false)));
 	
 	// Beside the list is an vbox containing add, edit, delete and clear buttons
-	GtkWidget* buttonBox = gtk_vbox_new(FALSE, 6);
+	_objButtonPanel = Gtk::manage(new Gtk::VBox(false, 6));
     
     // Buttons panel box is disabled by default, enabled once an Entity is
     // selected.
-    gtk_widget_set_sensitive(buttonBox, FALSE);
-    _widgets[WIDGET_OBJ_BUTTONS_PANEL] = buttonBox;
+    _objButtonPanel->set_sensitive(false);
 
-	GtkWidget* addButton = gtk_button_new_from_stock(GTK_STOCK_ADD); 
-	g_signal_connect(G_OBJECT(addButton), "clicked",
-					 G_CALLBACK(_onAddObjective), this);
+	Gtk::Button* addButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD)); 
+	addButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onAddObjective));
 
-	GtkWidget* editButton = gtk_button_new_from_stock(GTK_STOCK_EDIT); 
-	gtk_widget_set_sensitive(editButton, FALSE); // not enabled without selection 
-	g_signal_connect(G_OBJECT(editButton), "clicked",
-					 G_CALLBACK(_onEditObjective), this);
-	_widgets[WIDGET_EDIT_OBJECTIVE] = editButton;
+	_editObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT)); 
+	_editObjButton->set_sensitive(false); // not enabled without selection 
+	_editObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onEditObjective));
 
-	GtkWidget* moveUpButton = gtk_button_new_from_stock(GTK_STOCK_GO_UP);
-	gtk_widget_set_sensitive(moveUpButton, FALSE); // not enabled without selection 
-	g_signal_connect(G_OBJECT(moveUpButton), "clicked",
-					 G_CALLBACK(_onMoveUpObjective), this);
-	_widgets[WIDGET_MOVE_UP_OBJECTIVE] = moveUpButton;
+	_moveUpObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::GO_UP));
+	_moveUpObjButton->set_sensitive(false); // not enabled without selection 
+	_moveUpObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onMoveUpObjective));
 
-	GtkWidget* moveDownButton = gtk_button_new_from_stock(GTK_STOCK_GO_DOWN);
-	gtk_widget_set_sensitive(moveDownButton, FALSE); // not enabled without selection 
-	g_signal_connect(G_OBJECT(moveDownButton), "clicked",
-					 G_CALLBACK(_onMoveDownObjective), this);
-	_widgets[WIDGET_MOVE_DOWN_OBJECTIVE] = moveDownButton;
+	_moveDownObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::GO_DOWN));
+	_moveDownObjButton->set_sensitive(false); // not enabled without selection 
+	_moveDownObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onMoveDownObjective));
 
-	GtkWidget* delButton = gtk_button_new_from_stock(GTK_STOCK_DELETE);
-	gtk_widget_set_sensitive(delButton, FALSE); // not enabled without selection 
-	g_signal_connect(G_OBJECT(delButton), "clicked",
-					 G_CALLBACK(_onDeleteObjective), this);
-	_widgets[WIDGET_DELETE_OBJECTIVE] = delButton;
+	_delObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
+	_delObjButton->set_sensitive(false); // not enabled without selection 
+	_delObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onDeleteObjective));
 	
-	GtkWidget* clearButton = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-	gtk_widget_set_sensitive(clearButton, FALSE); // requires >0 objectives
-	g_signal_connect(G_OBJECT(clearButton), "clicked",
-					 G_CALLBACK(_onClearObjectives), this);
-	_widgets[WIDGET_CLEAR_OBJECTIVES] = clearButton;
+	_clearObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLEAR));
+	_clearObjButton->set_sensitive(false); // requires >0 objectives
+	_clearObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onClearObjectives));
 	
-	gtk_box_pack_start(GTK_BOX(buttonBox), addButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), editButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), moveUpButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), moveDownButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), delButton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(buttonBox), clearButton, FALSE, FALSE, 0);
+	_objButtonPanel->pack_start(*addButton, false, false, 0);
+	_objButtonPanel->pack_start(*_editObjButton, false, false, 0);
+	_objButtonPanel->pack_start(*_moveUpObjButton, false, false, 0);
+	_objButtonPanel->pack_start(*_moveDownObjButton, false, false, 0);
+	_objButtonPanel->pack_start(*_delObjButton, false, false, 0);
+	_objButtonPanel->pack_start(*_clearObjButton, false, false, 0);
 
 	// Pack the list and the buttons into an hbox
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(hbx), gtkutil::ScrolledFrame(tv), TRUE, TRUE, 0); 
-	gtk_box_pack_start(GTK_BOX(hbx), buttonBox, FALSE, FALSE, 0);
-					   
-	return hbx; 
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_objList)), true, true, 0); 
+	hbx->pack_start(*_objButtonPanel, false, false, 0);
+
+	return *hbx; 
 }
 
-GtkWidget* ObjectivesEditor::createLogicPanel() {
-	// Align the widgets in a table
-	GtkWidget* hbox = gtk_hbox_new(FALSE, 6);
-	gtk_widget_set_sensitive(hbox, FALSE);
+Gtk::Widget& ObjectivesEditor::createLogicPanel()
+{
+	_logicPanel = Gtk::manage(new Gtk::HBox(false, 6));
+	_logicPanel->set_sensitive(false);
 
-	GtkWidget* editLogicButton = gtk_button_new_with_label(_("Edit mission success/failure logic...")); 
-	gtk_button_set_image(GTK_BUTTON(editLogicButton), 
-						 gtk_image_new_from_stock(GTK_STOCK_EDIT, 
-						 						  GTK_ICON_SIZE_BUTTON));
+	Gtk::Button* editLogicButton = Gtk::manage(new Gtk::Button(_("Edit mission success/failure logic..."))); 
+	editLogicButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::EDIT, Gtk::ICON_SIZE_BUTTON)));
 
-	g_signal_connect(G_OBJECT(editLogicButton), "clicked", 
-					 G_CALLBACK(_onEditLogic), this);
+	editLogicButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onEditLogic));
 
-	gtk_box_pack_start(GTK_BOX(hbox), editLogicButton, TRUE, TRUE, 0);
+	_logicPanel->pack_start(*editLogicButton, true, true, 0);
 
-	_widgets[WIDGET_LOGIC_PANEL] = hbox;
-
-	return hbox;
+	return *_logicPanel;
 }
 
-// Create the buttons panel
-GtkWidget* ObjectivesEditor::createButtons () {
-	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+Gtk::Widget& ObjectivesEditor::createButtons()
+{
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
 
-	GtkWidget* okButton = gtk_button_new_from_stock(GTK_STOCK_OK);
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onCancel));
+	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onOK));
 	
-	g_signal_connect(G_OBJECT(okButton), "clicked", G_CALLBACK(_onOK), this);
-	g_signal_connect(G_OBJECT(cancelButton), "clicked", G_CALLBACK(_onCancel), this);
-	
-	gtk_box_pack_end(GTK_BOX(hbx), okButton, TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
+	hbx->pack_end(*okButton, true, true, 0);
+	hbx->pack_end(*cancelButton, true, true, 0);
 
-	return gtkutil::RightAlignment(hbx);
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
-void ObjectivesEditor::clear() {
+void ObjectivesEditor::clear()
+{
 	// Clear internal data
 	_worldSpawn = NULL;
 	_entities.clear();
 	_curEntity = _entities.end();
 
 	// Clear the list boxes
-	gtk_list_store_clear(_objectiveEntityList);
-	gtk_list_store_clear(_objectiveList);
+	_objectiveEntityList->clear();
+	_objectiveList->clear();
 }
 
 // Populate widgets with map data
-void ObjectivesEditor::populateWidgets() {
+void ObjectivesEditor::populateWidgets()
+{
 	// Clear internal data first
 	clear();
 
 	// Use an ObjectiveEntityFinder to walk the map and add any objective
 	// entities to the liststore and entity map
-	ObjectiveEntityFinder finder(_objectiveEntityList, 
+	ObjectiveEntityFinder finder(_objectiveEntityList,
+								 _objEntityColumns,
 								 _entities, 
 								 _objectiveEClasses);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
 	
 	// Set the worldspawn entity and populate the active-at-start column
 	_worldSpawn = finder.getWorldSpawn();
-	if (_worldSpawn != NULL) {
+	if (_worldSpawn != NULL)
+	{
 		populateActiveAtStart();
 	}
 }
 
 // Populate the active-at-start column.
-void ObjectivesEditor::populateActiveAtStart() {
-	
+void ObjectivesEditor::populateActiveAtStart()
+{
 	// Construct the list of entities targeted by the worldspawn
 	TargetList targets(_worldSpawn);
 	
@@ -325,30 +287,25 @@ void ObjectivesEditor::populateActiveAtStart() {
 	// name and check if the worldspawn entity has a "target" key for this
 	// entity name. This indicates that the objective entity will be active at
 	// game start.
-	GtkTreeIter iter;
-	GtkTreeModel* model = GTK_TREE_MODEL(_objectiveEntityList);
-	
-	// Get the initial iter, which may return FALSE if the tree is empty
-	if (!gtk_tree_model_get_iter_first(model, &iter)) {
-		return;
-	}
-		
-	// Otherwise, iterate over each row, checking for the target each time
-	do {
-		// Get the entity name and find it in the map
-		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
+	Gtk::TreeModel::Children rows = _objectiveEntityList->children();
+
+	for (Gtk::TreeModel::Children::iterator i = rows.begin(); i != rows.end(); ++i)
+	{
+		std::string name = Glib::ustring((*i)[_objEntityColumns.entityName]);
+
 		ObjectiveEntityPtr obj = _entities[name];
 		
 		// Test if the worldspawn is targeting this entity by passing the
 		// target list to the objective entity.
-		if (obj->isOnTargetList(targets)) {
-			gtk_list_store_set(_objectiveEntityList, &iter, 1, TRUE, -1);
+		if (obj->isOnTargetList(targets))
+		{
+			(*i)[_objEntityColumns.startActive] = true;
 		}
 	}
-	while (gtk_tree_model_iter_next(model, &iter));
 }
 
-void ObjectivesEditor::_preHide() {
+void ObjectivesEditor::_preHide()
+{
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
@@ -356,7 +313,8 @@ void ObjectivesEditor::_preHide() {
 	clear();
 }
 
-void ObjectivesEditor::_preShow() {
+void ObjectivesEditor::_preShow()
+{
 	// Restore the position
 	_windowPosition.applyPosition();
 
@@ -364,7 +322,8 @@ void ObjectivesEditor::_preShow() {
 }
 
 // Static method to display dialog
-void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args) {
+void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args) 
+{
 	// Create a new dialog instance
 	ObjectivesEditor _instance;
 	
@@ -372,163 +331,152 @@ void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args) {
 		// Show the instance
 		_instance.show();
 	}
-	catch (ObjectivesException e) {
+	catch (ObjectivesException& e)
+	{
 		gtkutil::errorDialog(
 			std::string(_("Exception occurred: ")) + e.what(), 
 			GlobalMainFrame().getTopLevelWindow()
 		);
 
-		if (GTK_IS_WIDGET(_instance.getWindow())) {
+		if (_instance.is_visible())
+		{
 			_instance.destroy();
 		}
 	}
 }
 
 // Refresh the objectives list from the ObjectiveEntity
-void ObjectivesEditor::refreshObjectivesList() {
-	
+void ObjectivesEditor::refreshObjectivesList() 
+{
 	// Clear and refresh the objective list
-	gtk_list_store_clear(_objectiveList);
-	_curEntity->second->populateListStore(_objectiveList);
+	_objectiveList->clear();
+	_curEntity->second->populateListStore(_objectiveList, _objectiveColumns);
 	
 	// If there is at least one objective, make the Clear button available
-	if (_curEntity->second->isEmpty()) {
-		gtk_widget_set_sensitive(_widgets[WIDGET_CLEAR_OBJECTIVES], FALSE);
+	if (_curEntity->second->isEmpty())
+	{
+		_clearObjButton->set_sensitive(false);
 	}
-	else {
-		gtk_widget_set_sensitive(_widgets[WIDGET_CLEAR_OBJECTIVES], TRUE);
+	else
+	{
+		_clearObjButton->set_sensitive(true);
 	}
 }
 
 // Get the currently selected objective
-Objective& ObjectivesEditor::getCurrentObjective() {
-	
+Objective& ObjectivesEditor::getCurrentObjective()
+{
 	// Get the objective index from the list
-	int iNum;
-	gtk_tree_model_get(
-		GTK_TREE_MODEL(_objectiveList), &_curObjective, 0, &iNum, -1);
-		
+	int objNum = (*_curObjective)[_objectiveColumns.objNumber];
+
 	// Pass the index to the ObjectiveEntity to get an actual Objective
-	return _curEntity->second->getObjective(iNum);
+	return _curEntity->second->getObjective(objNum);
 }
 
-/* GTK CALLBACKS */
-
-void ObjectivesEditor::_onCancel(GtkWidget* w, ObjectivesEditor* self) {
+void ObjectivesEditor::_onCancel()
+{
 	// Close the window without saving
-	self->destroy();
+	destroy();
 }
 
 // OK button
-void ObjectivesEditor::_onOK(GtkWidget* w, ObjectivesEditor* self) {
-	
+void ObjectivesEditor::_onOK()
+{
 	// Write all ObjectiveEntity data to the underlying entities
-	for (ObjectiveEntityMap::iterator i = self->_entities.begin();
-		 i != self->_entities.end();
+	for (ObjectiveEntityMap::iterator i = _entities.begin();
+		 i != _entities.end();
 		 ++i)
 	{
 		i->second->writeToEntity();		
 	} 
 	
 	// Close the window
-	self->destroy();
+	destroy();
 }
 
 // Callback for "start active" cell toggle in entities list
-void ObjectivesEditor::_onStartActiveCellToggled(GtkCellRendererToggle* w,
-												 const gchar* path,
-												 ObjectivesEditor* self)
+void ObjectivesEditor::_onStartActiveCellToggled(const Glib::ustring& path)
 {
 	// Get the relevant row
-	GtkTreeIter iter;
-	gtk_tree_model_get_iter_from_string(
-		GTK_TREE_MODEL(self->_objectiveEntityList), &iter, path);
+	Gtk::TreeModel::iterator iter = _objectiveEntityList->get_iter(path);
 	
 	// Toggle the state of the column
-	gboolean current;
-	gtk_tree_model_get(GTK_TREE_MODEL(self->_objectiveEntityList), &iter, 
-					   1, &current, -1);
-	gtk_list_store_set(self->_objectiveEntityList, &iter, 1, !current, -1);
+	bool current = (*iter)[_objEntityColumns.startActive];
+	(*iter)[_objEntityColumns.startActive] = !current;
 }
 
 // Callback for objective entity selection changed in list box
-void ObjectivesEditor::_onEntitySelectionChanged(GtkTreeSelection* sel,
-												 ObjectivesEditor* self)
+void ObjectivesEditor::_onEntitySelectionChanged()
 {
 	// Clear the objectives list
-	gtk_list_store_clear(self->_objectiveList);
+	_objectiveList->clear();
 	
 	// Get the selection
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	if (gtk_tree_selection_get_selected(sel, &model, &iter)) 
+	Gtk::TreeModel::iterator iter = _entityList->get_selection()->get_selected();
+	
+	if (iter) 
     {
 		// Get name of the entity and find the corresponding ObjectiveEntity in
 		// the map
-		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
+		std::string name = Glib::ustring((*iter)[_objEntityColumns.entityName]);
 		
 		// Save the current selection and refresh the objectives list
-		self->_curEntity = self->_entities.find(name);
-		self->refreshObjectivesList();
+		_curEntity = _entities.find(name);
+		refreshObjectivesList();
 		
 		// Enable the delete button and objectives panel
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], TRUE); 
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_LOGIC_PANEL], TRUE);
-        gtk_widget_set_sensitive(
-            self->_widgets[WIDGET_OBJ_BUTTONS_PANEL], TRUE
-        );
+		_delEntityButton->set_sensitive(true);
+		_logicPanel->set_sensitive(true);
+        _objButtonPanel->set_sensitive(true);
 	}
 	else 
     {
 		// No selection, disable the delete button and clear the objective
 		// panel
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_ENTITY], FALSE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_LOGIC_PANEL], FALSE);
-
-        // Disable all the Objective edit buttons
-        gtk_widget_set_sensitive(
-            self->_widgets[WIDGET_OBJ_BUTTONS_PANEL], FALSE
-        );
+		_delEntityButton->set_sensitive(false);
+		_logicPanel->set_sensitive(false);
+		_objButtonPanel->set_sensitive(false);
 	}
 }
 
 // Callback for current objective selection changed
-void ObjectivesEditor::_onObjectiveSelectionChanged(GtkTreeSelection* sel, 
-											 		ObjectivesEditor* self)
+void ObjectivesEditor::_onObjectiveSelectionChanged()
 {
 	// Get the selection
-	if (gtk_tree_selection_get_selected(sel, NULL, &(self->_curObjective))) 
+	_curObjective = _objList->get_selection()->get_selected();
+
+	if (_curObjective) 
     {
 		// Enable the edit and delete buttons
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_OBJECTIVE], TRUE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], TRUE);		
+		_editObjButton->set_sensitive(true);
+		_delObjButton->set_sensitive(true);
 
 		// Check if this is the first command in the list, get the ID of the selected item
-		int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_objectiveList), &(self->_curObjective), 0);
+		int index = (*_curObjective)[_objectiveColumns.objNumber];
 
-		int highestIndex = self->_curEntity->second->getHighestObjIndex();
-		int lowestIndex = self->_curEntity->second->getLowestObjIndex();
+		int highestIndex = _curEntity->second->getHighestObjIndex();
+		int lowestIndex = _curEntity->second->getLowestObjIndex();
 
 		bool hasNext = (highestIndex != -1 && highestIndex > index);
 		bool hasPrev = (lowestIndex != -1 && lowestIndex < index);
 
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_MOVE_UP_OBJECTIVE], hasPrev ? TRUE : FALSE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_MOVE_DOWN_OBJECTIVE], hasNext ? TRUE : FALSE);
+		_moveUpObjButton->set_sensitive(hasPrev);
+		_moveDownObjButton->set_sensitive(hasNext);
 	}
 	else 
     {
 		// Disable the edit, delete and move buttons
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_EDIT_OBJECTIVE], FALSE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_MOVE_UP_OBJECTIVE], FALSE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_MOVE_DOWN_OBJECTIVE], FALSE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_DELETE_OBJECTIVE], FALSE);
+		_editObjButton->set_sensitive(false);
+		_delObjButton->set_sensitive(false);
+		_moveUpObjButton->set_sensitive(false);
+		_moveDownObjButton->set_sensitive(false);
 	}
 }
 
 // Add a new objectives entity button
-void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
-	
-	if (self->_objectiveEClasses.empty())
+void ObjectivesEditor::_onAddEntity()
+{
+	if (_objectiveEClasses.empty())
 	{
 		// Objective entityclass(es) not defined
         gtkutil::errorDialog(
@@ -538,7 +486,7 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 		return;
 	}
 
-	const std::string& objEClass = self->_objectiveEClasses.front();
+	const std::string& objEClass = _objectiveEClasses.front();
 
 	// Obtain the entity class object
 	IEntityClassPtr eclass = 
@@ -557,7 +505,7 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
         GlobalSceneGraph().root()->addChildNode(node);
         
         // Refresh the widgets
-        self->populateWidgets();
+        populateWidgets();
     }
     else 
     {
@@ -570,99 +518,94 @@ void ObjectivesEditor::_onAddEntity(GtkWidget* w, ObjectivesEditor* self) {
 }
 
 // Delete entity button
-void ObjectivesEditor::_onDeleteEntity(GtkWidget* w, ObjectivesEditor* self) {
+void ObjectivesEditor::_onDeleteEntity()
+{
+	// Get the selection
+	Gtk::TreeModel::iterator iter = _entityList->get_selection()->get_selected();
 	
-	// Get the tree selection
-	GtkTreeSelection* sel = 
-		gtk_tree_view_get_selection(
-			GTK_TREE_VIEW(self->_widgets[WIDGET_ENTITY_LIST]));
-			
-	// Get the Node* from the tree model and remove it from the scenegraph
-	GtkTreeIter iter;
-	GtkTreeModel* model;
-	if (gtk_tree_selection_get_selected(sel, &model, &iter)) {
-		
+	if (iter) 
+	{
 		// Get the name of the selected entity
-		std::string name = gtkutil::TreeModel::getString(model, &iter, 2);
-		
+		std::string name = Glib::ustring((*iter)[_objEntityColumns.entityName]);
+
 		// Instruct the ObjectiveEntity to delete its world node, and then
 		// remove it from the map
-		self->_entities[name]->deleteWorldNode();
-		self->_entities.erase(name);
+		_entities[name]->deleteWorldNode();
+		_entities.erase(name);
 
 		// Update the widgets to remove the selection from the list
-		self->populateWidgets();
+		populateWidgets();
 	}
 }
 
 // Add a new objective
-void ObjectivesEditor::_onAddObjective(GtkWidget* w, ObjectivesEditor* self) {
+void ObjectivesEditor::_onAddObjective()
+{
 	// Add a new objective to the ObjectiveEntity and refresh the list store
-	self->_curEntity->second->addObjective();
-	self->refreshObjectivesList();	
+	_curEntity->second->addObjective();
+	refreshObjectivesList();	
 }
 
 // Edit an existing objective
-void ObjectivesEditor::_onEditObjective(GtkWidget* w, ObjectivesEditor* self) {
+void ObjectivesEditor::_onEditObjective()
+{
 	// Display the ComponentsDialog
-	ComponentsDialog compDialog(GTK_WINDOW(self->getWindow()),
-								self->getCurrentObjective());
+	ComponentsDialog compDialog(getRefPtr(), getCurrentObjective());
 	compDialog.show(); // show and block
 
 	// Repopulate the objective list
-	self->refreshObjectivesList();
+	refreshObjectivesList();
 }
 
-void ObjectivesEditor::_onMoveUpObjective(GtkWidget* w, ObjectivesEditor* self) {
+void ObjectivesEditor::_onMoveUpObjective()
+{
 	// get the current index
-	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_objectiveList), &(self->_curObjective), 0);
+	int index = (*_curObjective)[_objectiveColumns.objNumber];
 
 	// Pass the call to the general method
-	self->_curEntity->second->moveObjective(index, -1);
+	_curEntity->second->moveObjective(index, -1);
 
-	self->refreshObjectivesList();	
+	refreshObjectivesList();	
 }
 
-void ObjectivesEditor::_onMoveDownObjective(GtkWidget* w, ObjectivesEditor* self) {
+void ObjectivesEditor::_onMoveDownObjective()
+{
 	// get the current index
-	int index = gtkutil::TreeModel::getInt(GTK_TREE_MODEL(self->_objectiveList), &(self->_curObjective), 0);
+	int index = (*_curObjective)[_objectiveColumns.objNumber];
 
 	// Pass the call to the general method
-	self->_curEntity->second->moveObjective(index, +1);
+	_curEntity->second->moveObjective(index, +1);
 
-	self->refreshObjectivesList();	
+	refreshObjectivesList();
 }
 
 // Delete an objective
-void ObjectivesEditor::_onDeleteObjective(GtkWidget* w, 
-										  ObjectivesEditor* self)
+void ObjectivesEditor::_onDeleteObjective()
 {
 	// Get the index of the current objective
-	int index = gtkutil::TreeModel::getInt(
-		GTK_TREE_MODEL(self->_objectiveList), &(self->_curObjective), 0
-	);
+	int index = (*_curObjective)[_objectiveColumns.objNumber];
 					   
 	// Tell the ObjectiveEntity to delete this objective
-	self->_curEntity->second->deleteObjective(index);
+	_curEntity->second->deleteObjective(index);
 	
 	// Repopulate the objective list
-	self->refreshObjectivesList();
+	refreshObjectivesList();
 }
 
 // Clear the objectives
-void ObjectivesEditor::_onClearObjectives(GtkWidget* w, 
-										  ObjectivesEditor* self)
+void ObjectivesEditor::_onClearObjectives()
 {
 	// Clear the entity and refresh the list
-	self->_curEntity->second->clearObjectives();
-	self->refreshObjectivesList();
+	_curEntity->second->clearObjectives();
+	refreshObjectivesList();
 }
 
-void ObjectivesEditor::_onEditLogic(GtkWidget* w, ObjectivesEditor* self) {
-	MissionLogicDialog _dialog(GTK_WINDOW(self->getWindow()), *self->_curEntity->second);
+void ObjectivesEditor::_onEditLogic()
+{
+	MissionLogicDialog _dialog(getRefPtr(), *_curEntity->second);
 	_dialog.show();
 
-	self->refreshObjectivesList();
+	refreshObjectivesList();
 }
 
 } // namespace objectives

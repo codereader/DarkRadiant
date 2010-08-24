@@ -13,6 +13,8 @@
 #include "camera/GlobalCamera.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
+#include <gtkmm/paned.h>
+
 namespace ui {
 
 	namespace
@@ -54,30 +56,35 @@ void SplitPaneLayout::constructLayout()
 
 	_cameraPosition = getCameraPositionFromRegistry();
 
-	GtkWindow* parent = GlobalMainFrame().getTopLevelWindow();
+	const Glib::RefPtr<Gtk::Window>& parent = GlobalMainFrame().getTopLevelWindow();
 
 	// Create a new camera window and parent it
 	_camWnd = GlobalCamera().createCamWnd();
 	 // greebo: The mainframe window acts as parent for the camwindow
 	_camWnd->setContainer(parent);
 
-	_camera = gtkutil::FramedWidget(_camWnd->getWidget());
+	_camera = Gtk::manage(new gtkutil::FramedWidget(*_camWnd->getWidget()));
+
+	// Allocate paned widgets
+	_splitPane.horizPane.reset(new Gtk::HPaned);
+	_splitPane.vertPane1 = Gtk::manage(new Gtk::VPaned);
+	_splitPane.vertPane2 = Gtk::manage(new Gtk::VPaned);
 
 	// Arrange the widgets into the paned views
-	_splitPane.horizPane.setFirstChild(_splitPane.vertPane1.getWidget(), true);
-	_splitPane.horizPane.setSecondChild(_splitPane.vertPane2.getWidget(), true);
+	_splitPane.horizPane->pack1(*_splitPane.vertPane1, true, true);
+	_splitPane.horizPane->pack2(*_splitPane.vertPane2, true, true);
 
 	// Retrieve the main container of the main window
-	GtkWidget* mainContainer = GlobalMainFrame().getMainContainer();
-	gtk_container_add(GTK_CONTAINER(mainContainer), _splitPane.horizPane.getWidget());
+	Gtk::Container* mainContainer = GlobalMainFrame().getMainContainer();
+	mainContainer->add(*_splitPane.horizPane);
 
-	gtk_paned_set_position(GTK_PANED(_splitPane.horizPane.getWidget()), 200);
-	gtk_paned_set_position(GTK_PANED(_splitPane.vertPane1.getWidget()), 200);
-	gtk_paned_set_position(GTK_PANED(_splitPane.vertPane2.getWidget()), 400);
+	_splitPane.horizPane->set_position(200);
+	_splitPane.vertPane1->set_position(200);
+	_splitPane.vertPane2->set_position(400);
 
-	_splitPane.posHPane.connect(_splitPane.horizPane.getWidget());
-	_splitPane.posVPane1.connect(_splitPane.vertPane1.getWidget());
-	_splitPane.posVPane2.connect(_splitPane.vertPane2.getWidget());
+	_splitPane.posHPane.connect(_splitPane.horizPane.get());
+	_splitPane.posVPane1.connect(_splitPane.vertPane1);
+	_splitPane.posVPane2.connect(_splitPane.vertPane2);
 	
 	// Attempt to restore this layout's state, this will also construct the orthoviews
 	restoreStateFromPath(RKEY_SPLITPANE_ROOT);
@@ -86,16 +93,16 @@ void SplitPaneLayout::constructLayout()
 	distributeWidgets();
 	
     {      
-		GtkWidget* textureBrowser = gtkutil::FramedWidget(
-			GlobalTextureBrowser().constructWindow(parent)
-		);
+		Gtk::Frame* textureBrowser = Gtk::manage(new gtkutil::FramedWidget(
+			*GlobalTextureBrowser().constructWindow(parent)
+		));
 
 		// Add the Media Browser page
 		GlobalGroupDialog().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
 	    	"icon_texture.png", // tab icon 
-	    	GTK_WIDGET(textureBrowser), // page widget
+	    	*textureBrowser, // page widget
 	    	_("Texture Browser")
 	    );
     }
@@ -108,7 +115,7 @@ void SplitPaneLayout::constructLayout()
 
 	GlobalGroupDialog().hideDialogWindow();
 
-	gtk_widget_show_all(mainContainer);
+	mainContainer->show_all();
 }
 
 void SplitPaneLayout::constructMenus()
@@ -193,8 +200,8 @@ void SplitPaneLayout::deconstructLayout()
 	GlobalGroupDialog().removePage("textures");
 	GlobalTextureBrowser().destroyWindow();
 
-	// Destroy the widget, so it gets removed from the main container
-	gtk_widget_destroy(_splitPane.horizPane.getWidget());
+	// Destroy the widgets, so it gets removed from the main container
+	_splitPane = SplitPaneView();
 }
 
 void SplitPaneLayout::maximiseCameraSize()
@@ -431,15 +438,15 @@ void SplitPaneLayout::distributeWidgets()
 			}
 
 			// Frame the widget to make it ready for packing
-			i->second.widget = gtkutil::FramedWidget(i->second.xyWnd->getWidget());
+			i->second.widget = Gtk::manage(new gtkutil::FramedWidget(*i->second.xyWnd->getWidget()));
 		}
 	}
 
-	_splitPane.vertPane1.setFirstChild(_quadrants[QuadrantTopLeft].widget, true); // allow shrinking
-	_splitPane.vertPane1.setSecondChild(_quadrants[QuadrantBottomLeft].widget, true); // allow shrinking
+	_splitPane.vertPane1->pack1(*_quadrants[QuadrantTopLeft].widget, true, true); // allow shrinking
+	_splitPane.vertPane1->pack2(*_quadrants[QuadrantBottomLeft].widget, true, true); // allow shrinking
 
-	_splitPane.vertPane2.setFirstChild(_quadrants[QuadrantTopRight].widget, true); // allow shrinking
-	_splitPane.vertPane2.setSecondChild(_quadrants[QuadrantBottomRight].widget, true); // allow shrinking
+	_splitPane.vertPane2->pack1(*_quadrants[QuadrantTopRight].widget, true, true); // allow shrinking
+	_splitPane.vertPane2->pack2(*_quadrants[QuadrantBottomRight].widget, true, true); // allow shrinking
 }
 
 // The creation function, needed by the mainframe layout manager

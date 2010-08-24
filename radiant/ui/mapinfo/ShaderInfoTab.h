@@ -3,31 +3,52 @@
 
 #include "map/ShaderBreakdown.h"
 
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkListStore GtkListStore;
+#include <gtkmm/liststore.h>
+
+namespace Gtk
+{
+	class Label;
+	class VBox;
+	class TreeView;
+	class Widget;
+}
 
 namespace ui {
 
 class ShaderInfoTab
 {
+private:
 	// The "master" widget
-	GtkWidget* _widget;
+	Gtk::VBox* _widget;
 
 	// The helper class counting the shaders in the map
 	map::ShaderBreakdown _shaderBreakdown;
 	
-	// The treeview containing the above liststore
-	GtkListStore* _listStore;
-	GtkWidget* _treeView;
-
-	GtkWidget* _shaderCount;
+	Gtk::Label* _shaderCount;
 	
+	// Treemodel definition
+	struct ListColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListColumns() { add(shader); add(faceCount); add(patchCount); }
+
+		Gtk::TreeModelColumn<Glib::ustring> shader;
+		Gtk::TreeModelColumn<int> faceCount;
+		Gtk::TreeModelColumn<int> patchCount;
+	};
+
+	ListColumns _columns;
+	
+	// The treeview containing the above liststore
+	Glib::RefPtr<Gtk::ListStore> _listStore;
+	Gtk::TreeView* _treeView;
+
 public:
 	// Constructor
 	ShaderInfoTab();
 
 	// Use this to pack the tab into a parent container
-	GtkWidget* getWidget();
+	Gtk::Widget& getWidget();
 
 	std::string getLabel();
 	std::string getIconName();

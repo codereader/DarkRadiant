@@ -3,30 +3,28 @@
 
 #include <string>
 #include "gtkutil/SourceView.h"
-typedef struct _GtkWidget GtkWidget;
+#include <gtkmm/box.h>
+
+namespace Gtk { class Label; }
 
 namespace ui 
 {
 
-class ShaderDefinitionView
+class ShaderDefinitionView :
+	public Gtk::VBox
 {
+private:
 	// The shader which should be previewed
 	std::string _shader;
 
-	// The top-level widget
-	GtkWidget* _vbox;
-
-	GtkWidget* _materialName;
-	GtkWidget* _filename;
+	Gtk::Label* _materialName;
+	Gtk::Label* _filename;
 
 	// The actual code view
-	gtkutil::SourceView _view;
+	gtkutil::SourceView* _view;
 
 public:
 	ShaderDefinitionView();
-
-	// Returns the topmost widget for packing this view into a parent container
-	GtkWidget* getWidget();
 
 	void setShader(const std::string& shader);
 

@@ -6,8 +6,6 @@
 #include "ieclass.h"
 #include "isound.h"
 
-#include <gtk/gtk.h>
-
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/TreeModel.h"
@@ -15,95 +13,85 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
+#include <gtkmm/treeview.h>
+#include <gtkmm/button.h>
+#include <gtkmm/box.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/textview.h>
+
 namespace ui
 {
 
 	namespace
 	{
 		const char* const WINDOW_TITLE = N_("Choose AI Vocal Set");
-
-		// ListStore columns
-		enum
-		{
-			NAME_COLUMN,
-			NUM_COLUMNS,
-		};
-
-		// Widgets
-		enum
-		{
-			WIDGET_VOCALSETVIEW,
-			WIDGET_OKBUTTON,
-			WIDGET_DESCRIPTION,
-		};
 	}
 
 AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
-	_setStore(gtk_list_store_new(NUM_COLUMNS, G_TYPE_STRING)),
-	_result(RESULT_CANCEL)
+	_setStore(Gtk::ListStore::create(_columns)),
+	_result(RESULT_CANCEL),
+	_preview(NULL)
 {
 	if (module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
 	{
-		_preview = AIVocalSetPreviewPtr(new AIVocalSetPreview);
+		_preview = Gtk::manage(new AIVocalSetPreview);
 	}
 
-	_widgets[WIDGET_VOCALSETVIEW] = gtk_tree_view_new_with_model(GTK_TREE_MODEL(_setStore));
+	_setView = Gtk::manage(new Gtk::TreeView(_setStore));
 
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
-	gtk_container_set_border_width(GTK_CONTAINER(getWindow()), 12);
-	gtk_window_set_type_hint(GTK_WINDOW(getWindow()), GDK_WINDOW_TYPE_HINT_DIALOG);
+	set_border_width(12);
+	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
-	GtkWindow* mainWindow = GlobalMainFrame().getTopLevelWindow();
+	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
 
-	GdkRectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
-	gtk_window_set_default_size(
-		GTK_WINDOW(getWindow()), gint(rect.width * 0.5f), gint(rect.height * 0.6f)
+	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+	set_default_size(
+		static_cast<int>(rect.get_width() * 0.7f), static_cast<int>(rect.get_height() * 0.6f)
 	);
 
-	GtkTreeView* setsView = GTK_TREE_VIEW(_widgets[WIDGET_VOCALSETVIEW]);
-	GtkWidget* hbx = gtk_hbox_new(FALSE, 6);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
 
-	gtk_tree_view_set_headers_visible(setsView, FALSE);
+	_setView->set_headers_visible(false);
 
-	_setSelection = gtk_tree_view_get_selection(setsView);
-	g_signal_connect(G_OBJECT(_setSelection), "changed",
-					 G_CALLBACK(onSetSelectionChanged), this);
+	_setView->get_selection()->signal_changed().connect(
+		sigc::mem_fun(*this, &AIVocalSetChooserDialog::onSetSelectionChanged));
 	
 	// Head Name column
-	gtk_tree_view_append_column(setsView, gtkutil::TextColumn("", 0));
+	_setView->append_column(*Gtk::manage(new gtkutil::TextColumn("", _columns.name)));
 
 	// Left: the treeview
-	GtkWidget* vbox1 = gtk_vbox_new(FALSE, 3);
-	gtk_box_pack_start(GTK_BOX(hbx), vbox1, TRUE, TRUE, 0);
+	Gtk::VBox* vbox1 = Gtk::manage(new Gtk::VBox(false, 3));
+	hbx->pack_start(*vbox1, true, true, 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox1), gtkutil::LeftAlignedLabel(_("<b>Available Sets:</b>")), FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox1), gtkutil::ScrolledFrame(GTK_WIDGET(setsView)), TRUE, TRUE, 0);
+	vbox1->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("<b>Available Sets:</b>"))), false, false, 0);
+	vbox1->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_setView)), true, true, 0);
 
 	// Right: the description
-	GtkWidget* vbox2 = gtk_vbox_new(FALSE, 3);
+	Gtk::VBox* vbox2 = Gtk::manage(new Gtk::VBox(false, 3));
 
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkutil::LeftAlignedLabel(_("<b>Description:</b>")), FALSE, FALSE, 0);
+	vbox2->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("<b>Description:</b>"))), false, false, 0);
 
-	GtkWidget* descPanel = createDescriptionPanel();
-	gtk_box_pack_start(GTK_BOX(vbox2), descPanel, TRUE, TRUE, 0);
-	gtk_widget_set_size_request(descPanel, static_cast<gint>(rect.width*0.2f), -1);
+	Gtk::Widget& descPanel = createDescriptionPanel();
+	vbox2->pack_start(descPanel, true, true, 0);
+	descPanel.set_size_request(static_cast<int>(rect.get_width()*0.2f), -1);
 
 	// Right: the preview control panel
 	if (_preview != NULL)
 	{
-		gtk_box_pack_start(GTK_BOX(vbox2), _preview->getWidget(), FALSE, FALSE, 0);
+		vbox2->pack_start(*_preview, false, false, 0);
 	}
 
-	gtk_box_pack_start(GTK_BOX(hbx), vbox2, FALSE, FALSE, 0);
+	hbx->pack_start(*vbox2, false, false, 0);
 
 	// Topmost: the tree plus description
-	gtk_box_pack_start(GTK_BOX(vbox), hbx, TRUE, TRUE, 0);
+	vbox->pack_start(*hbx, true, true, 0);
 	// Bottom: the button panel
-	gtk_box_pack_start(GTK_BOX(vbox), createButtonPanel(), FALSE, FALSE, 0);
+	vbox->pack_start(createButtonPanel(), false, false, 0);
 
-	gtk_container_add(GTK_CONTAINER(getWindow()), vbox);
+	add(*vbox);
 
 	// Check if the liststore is populated
 	findAvailableSets();
@@ -123,16 +111,14 @@ void AIVocalSetChooserDialog::setSelectedVocalSet(const std::string& setName)
 
 	if (_selectedSet.empty())
 	{
-		gtk_tree_selection_unselect_all(_setSelection);
+		_setView->get_selection()->unselect_all();
 		return;
 	}
 
 	// Lookup the model path in the treemodel
-	GtkTreeView* setView = GTK_TREE_VIEW(_widgets[WIDGET_VOCALSETVIEW]);
-
-	if (!gtkutil::TreeModel::findAndSelectString(setView, _selectedSet, NAME_COLUMN))
+	if (!gtkutil::TreeModel::findAndSelectString(_setView, _selectedSet, _columns.name))
 	{
-		gtk_tree_selection_unselect_all(_setSelection);
+		_setView->get_selection()->unselect_all();
 	}
 }
 
@@ -141,91 +127,83 @@ std::string AIVocalSetChooserDialog::getSelectedVocalSet()
 	return _selectedSet;
 }
 
-GtkWidget* AIVocalSetChooserDialog::createButtonPanel()
+Gtk::Widget& AIVocalSetChooserDialog::createButtonPanel()
 {
-	GtkWidget* hbx = gtk_hbox_new(TRUE, 6);
+	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
 
-	GtkWidget* cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
-	_widgets[WIDGET_OKBUTTON] = gtk_button_new_from_stock(GTK_STOCK_OK);
+	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
+	_okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
+
+	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetChooserDialog::onCancel));
+	_okButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetChooserDialog::onOK));
 	
-	g_signal_connect(
-		G_OBJECT(cancelButton), "clicked", G_CALLBACK(onCancel), this
-	);
-	g_signal_connect(
-		G_OBJECT(_widgets[WIDGET_OKBUTTON]), "clicked", G_CALLBACK(onOK), this
-	);
+	hbx->pack_end(*_okButton, true, true, 0);
+	hbx->pack_end(*cancelButton, true, true, 0);
 
-	gtk_box_pack_end(GTK_BOX(hbx), _widgets[WIDGET_OKBUTTON], TRUE, TRUE, 0);
-	gtk_box_pack_end(GTK_BOX(hbx), cancelButton, TRUE, TRUE, 0);
-
-	return gtkutil::RightAlignment(hbx);
+	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
-GtkWidget* AIVocalSetChooserDialog::createDescriptionPanel()
+Gtk::Widget& AIVocalSetChooserDialog::createDescriptionPanel()
 {
 	// Create a GtkTextView
-	GtkWidget* textView = gtk_text_view_new();
-	_widgets[WIDGET_DESCRIPTION] = textView;
+	_description = Gtk::manage(new Gtk::TextView);
+	
+	_description->set_wrap_mode(Gtk::WRAP_WORD);
+	_description->set_editable(false);
 
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textView), GTK_WRAP_WORD);
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(textView), FALSE);
-
-	return gtkutil::ScrolledFrame(textView);	
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_description));
 }
 
-void AIVocalSetChooserDialog::onCancel(GtkWidget* widget, 
-									AIVocalSetChooserDialog* self) 
+void AIVocalSetChooserDialog::onCancel() 
 {
-	self->_selectedSet = "";
-	self->_result = RESULT_CANCEL;
+	_selectedSet = "";
+	_result = RESULT_CANCEL;
 
-	self->destroy();
+	destroy();
 }
 
-void AIVocalSetChooserDialog::onOK(GtkWidget* widget, AIVocalSetChooserDialog* self) 
+void AIVocalSetChooserDialog::onOK() 
 {
-	self->_result = RESULT_OK;
+	_result = RESULT_OK;
 
 	// Done, just destroy the window
-	self->destroy();
+	destroy();
 }
 
-void AIVocalSetChooserDialog::onSetSelectionChanged(GtkTreeSelection* sel,
-												   AIVocalSetChooserDialog* self)
+void AIVocalSetChooserDialog::onSetSelectionChanged()
 {
 	// Prepare to check for a selection
-	GtkTreeIter iter;
-	GtkTreeModel* model;
+	Gtk::TreeModel::iterator iter = _setView->get_selection()->get_selected();
 
 	// Add button is enabled if there is a selection and it is not a folder.
-	if (gtk_tree_selection_get_selected(sel, &model, &iter)) 
+	if (iter) 
 	{
 		// Make the OK button active 
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_OKBUTTON], TRUE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_DESCRIPTION], TRUE);
+		_okButton->set_sensitive(true);
+		_description->set_sensitive(true);
 
 		// Set the panel text with the usage information
-		self->_selectedSet = gtkutil::TreeModel::getString(model, &iter, NAME_COLUMN); 
+		_selectedSet = Glib::ustring((*iter)[_columns.name]);
 
 		// Lookup the IEntityClass instance
-		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(self->_selectedSet);	
+		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(_selectedSet);	
 
 		if (eclass != NULL)
 		{
 			// Update the preview pane
-			if (self->_preview != NULL)
+			if (_preview != NULL)
 			{
-				self->_preview->setVocalSetEclass(eclass);
+				_preview->setVocalSetEclass(eclass);
 			}
 
 			// Update the usage panel
-			GtkTextView* textView = GTK_TEXT_VIEW(self->_widgets[WIDGET_DESCRIPTION]);
-			GtkTextBuffer* buf = gtk_text_view_get_buffer(textView);
+			Glib::RefPtr<Gtk::TextBuffer> buf = _description->get_buffer();
 
 			// Create the concatenated usage string
 			// TODO: move this algorithm to IEntityClass?
 			std::string usage = "";
 			EntityClassAttributeList usageAttrs = eclass->getAttributeList("editor_usage");
+
 			for (EntityClassAttributeList::const_iterator i = usageAttrs.begin();
 				 i != usageAttrs.end();
 				 ++i)
@@ -239,36 +217,34 @@ void AIVocalSetChooserDialog::onSetSelectionChanged(GtkTreeSelection* sel,
 				}
 			}
 			
-			gtk_text_buffer_set_text(buf, usage.c_str(), -1);
+			buf->set_text(usage);
 		}
 	}
 	else
 	{
-		self->_selectedSet = "";
+		_selectedSet = "";
 
-		if (self->_preview != NULL)
+		if (_preview != NULL)
 		{
-			self->_preview->setVocalSetEclass(IEntityClassPtr());
+			_preview->setVocalSetEclass(IEntityClassPtr());
 		}
 
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_OKBUTTON], FALSE);
-		gtk_widget_set_sensitive(self->_widgets[WIDGET_DESCRIPTION], FALSE);
+		_okButton->set_sensitive(false);
+		_description->set_sensitive(false);
 	}
 }
 
 void AIVocalSetChooserDialog::populateSetStore()
 {
 	// Clear the head list to be safe
-	gtk_list_store_clear(_setStore);
+	_setStore->clear();
 
 	for (SetList::const_iterator i = _availableSets.begin(); i != _availableSets.end(); ++i)
 	{
 		// Add the entity to the list
-		GtkTreeIter iter;
-		gtk_list_store_append(_setStore, &iter);
-		gtk_list_store_set(_setStore, &iter, 
-						   NAME_COLUMN, i->c_str(),
-						   -1);
+		Gtk::TreeModel::Row row = *_setStore->append();
+
+		row[_columns.name] = *i;
 	}
 }
 

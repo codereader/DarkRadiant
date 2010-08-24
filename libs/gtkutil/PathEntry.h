@@ -1,7 +1,12 @@
 #ifndef _GTKUTIL_PATHENTRY_H_
 #define _GTKUTIL_PATHENTRY_H_
 
-#include "ifc/EditorWidget.h"
+#include "FramedWidget.h"
+
+#include <gtkmm/frame.h>
+#include <gtkmm/box.h>
+#include <gtkmm/button.h>
+#include <gtkmm/entry.h>
 
 namespace gtkutil
 {
@@ -12,15 +17,14 @@ namespace gtkutil
  * which opens a FileChooser dialog when clicked.
  */
 class PathEntry : 
-	public EditorWidget
+	public Gtk::Frame
 {
 protected:
-
-	// The toplevel widget
-	GtkWidget* _topLevel;
+	// Browse button
+	Gtk::Button* _button;
 
 	// The text entry box
-	GtkWidget* _entry;
+	Gtk::Entry* _entry;
 
 public:
 	/** 
@@ -30,24 +34,18 @@ public:
 	 */
 	PathEntry(bool foldersOnly = false);
 
-	// Editor widget implementation
-	virtual void setValue(const std::string& val);
-    virtual std::string getValue() const;
+	// get/set selected path
+	void setValue(const std::string& val);
+    std::string getValue() const;
 
 	// Returns the text entry widget
-	GtkWidget* getEntryWidget() const;
-
-protected:
-   
-	// gtkutil::Widget implementation
-	virtual GtkWidget* _getWidget() const;
+	Gtk::Entry& getEntryWidget();
 
 private:
-	// GTK callbacks
-	static void onBrowseFiles(GtkWidget* button, PathEntry* self);
-	static void onBrowseFolders(GtkWidget* button, PathEntry* self);
+	// gtkmm callbacks
+	void onBrowseFiles();
+	void onBrowseFolders();
 };
-typedef boost::shared_ptr<PathEntry> PathEntryPtr;
 
 } // namespace gtkutil
 

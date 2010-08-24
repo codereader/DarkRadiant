@@ -1,8 +1,11 @@
 #ifndef SPECIFIEREDITCOMBO_H_
 #define SPECIFIEREDITCOMBO_H_
 
+#include <gtkmm/box.h>
 #include "../Specifier.h"
 #include "specpanel/SpecifierPanel.h"
+
+namespace Gtk { class ComboBox; }
 
 namespace objectives
 {
@@ -25,16 +28,15 @@ namespace ce
  * in its dropdown list. Alternatively the entire set of Specifiers can be
  * made available.
  */
-class SpecifierEditCombo
+class SpecifierEditCombo :
+	public Gtk::HBox
 {
-	// Main widget
-	GtkWidget* _widget;
-	
+private:	
 	// Current SpecifierPanel
 	SpecifierPanelPtr _specPanel;
 	
     // Combo box containing Specifiers
-    GtkWidget* _specifierCombo;
+	Gtk::ComboBox* _specifierCombo;
 
 private:
 	
@@ -44,8 +46,8 @@ private:
     // Create the SpecifierPanel for the given specifier type
     void createSpecifierPanel(const std::string& type);
 
-	/* GTK CALLBACKS */
-	static void _onChange(GtkWidget* w, SpecifierEditCombo* self);
+	// gtkmm callback
+	void _onChange();
 	
 public:
 	
@@ -59,14 +61,6 @@ public:
 	 * specifiers.
 	 */
 	SpecifierEditCombo(const SpecifierTypeSet& set = SpecifierType::SET_ALL());
-
-    /**
-     * Return the main GtkWidget for this edit panel.
-     *
-     * @return
-     * A GtkWidget containing all widgets involved in this edit panel.
-     */
-    GtkWidget* getWidget() const;
 
     /**
      * Return the current value of the Specifier (type and value).
@@ -85,7 +79,6 @@ public:
      * widgets.
      */
     void setSpecifier(SpecifierPtr spec);
-
 };
 
 }

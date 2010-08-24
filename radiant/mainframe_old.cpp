@@ -78,18 +78,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ctime>
 #include <iostream>
 
-#include <gdk/gdkkeysyms.h>
-#include <gtk/gtkhbox.h>
-#include <gtk/gtkvbox.h>
-#include <gtk/gtkframe.h>
-#include <gtk/gtklabel.h>
-#include <gtk/gtkhpaned.h>
-#include <gtk/gtkvpaned.h>
-#include <gtk/gtktoolbar.h>
-#include <gtk/gtkmenubar.h>
-#include <gtk/gtkimage.h>
-#include <gtk/gtktable.h>
-
 #include "scenelib.h"
 #include "os/path.h"
 #include "os/file.h"
@@ -98,7 +86,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/clipboard.h"
 #include "gtkutil/glfont.h"
 #include "gtkutil/GLWidget.h"
-#include "gtkutil/Paned.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/widget.h"
 #include "gtkutil/FramedWidget.h"
@@ -155,7 +142,7 @@ void Radiant_Initialise()
 
 void Exit(const cmd::ArgumentList& args) {
 	if (GlobalMap().askForSave(_("Exit Radiant"))) {
-		gtk_main_quit();
+		Gtk::Main::quit();
 	}
 }
 

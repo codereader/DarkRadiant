@@ -1,6 +1,5 @@
 #include "StimEditor.h"
 
-#include <gtk/gtk.h>
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/RightAlignedLabel.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -15,12 +14,19 @@
 #include "i18n.h"
 #include "SREntity.h"
 
-namespace ui {
+#include <gtkmm/box.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menuitem.h>
+#include <gtkmm/table.h>
+#include <gtkmm/checkbutton.h>
+#include <gtkmm/spinbutton.h>
+#include <gtkmm/treeview.h>
+#include <gtkmm/entry.h>
+#include <gtkmm/stock.h>
+#include <gtkmm/combobox.h>
 
-	namespace {
-		// Needed for boost::algorithm::split
-		typedef std::vector<std::string> StringParts;
-	}
+namespace ui
+{
 
 StimEditor::StimEditor(StimTypes& stimTypes) :
 	ClassEditor(stimTypes)
@@ -31,430 +37,447 @@ StimEditor::StimEditor(StimTypes& stimTypes) :
 	createContextMenu();
 }
 
-void StimEditor::populatePage() {
-	GtkWidget* srHBox = gtk_hbox_new(FALSE, 12);
-	gtk_box_pack_start(GTK_BOX(_pageVBox), GTK_WIDGET(srHBox), TRUE, TRUE, 0);
+void StimEditor::populatePage()
+{
+	Gtk::HBox* srHBox = Gtk::manage(new Gtk::HBox(false, 12));
+	pack_start(*srHBox, true, true, 0);
 	
-	GtkWidget* vbox = gtk_vbox_new(FALSE, 6);
-	gtk_box_pack_start(GTK_BOX(vbox), 
-		gtkutil::ScrolledFrame(_list), TRUE, TRUE, 0);
+	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
+	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_list)), true, true, 0);
 	
 	// Create the type selector plus buttons and pack them
-	gtk_box_pack_start(GTK_BOX(vbox), createListButtons(), FALSE, FALSE, 0);
+	vbox->pack_start(createListButtons(), false, false, 0);
 	
-	gtk_box_pack_start(GTK_BOX(srHBox),	vbox, FALSE, FALSE, 0);
+	srHBox->pack_start(*vbox, false, false, 0);
 	
 	// The property pane
-	gtk_box_pack_start(GTK_BOX(srHBox), createPropertyWidgets(), TRUE, TRUE, 0);
+	srHBox->pack_start(createPropertyWidgets(), true, true, 0);
 }
 
-void StimEditor::setEntity(SREntityPtr entity) {
+void StimEditor::setEntity(const SREntityPtr& entity)
+{
 	// Pass the call to the base class
 	ClassEditor::setEntity(entity);
 	
-	if (entity != NULL) {
-		GtkListStore* listStore = _entity->getStimStore();
-		gtk_tree_view_set_model(GTK_TREE_VIEW(_list), GTK_TREE_MODEL(listStore));
-		g_object_unref(listStore); // treeview owns reference now
+	if (entity != NULL)
+	{
+		const Glib::RefPtr<Gtk::ListStore>& stimStore = _entity->getStimStore();
+		_list->set_model(stimStore);
 	}
 }
 
-GtkWidget* StimEditor::createPropertyWidgets() {
-	_propertyWidgets.vbox = gtk_vbox_new(FALSE, 6);
+Gtk::Widget& StimEditor::createPropertyWidgets()
+{
+	_propertyWidgets.vbox = Gtk::manage(new Gtk::VBox(false, 6));
 	
 	// Type Selector
 	_type = createStimTypeSelector();
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), _type.hbox, FALSE, FALSE, 0);
-	g_signal_connect(G_OBJECT(_type.list), "changed", G_CALLBACK(onStimTypeSelect), this);
+	_propertyWidgets.vbox->pack_start(*_type.hbox, false, false, 0);
+
+	_type.list->signal_changed().connect(sigc::mem_fun(*this, &StimEditor::onStimTypeSelect));
 	
 	// Create the table for the widget alignment
-	GtkTable* table = GTK_TABLE(gtk_table_new(12, 2, FALSE));
-	gtk_table_set_row_spacings(table, 6);
-	gtk_table_set_col_spacings(table, 6);
-	gtk_box_pack_start(GTK_BOX(_propertyWidgets.vbox), GTK_WIDGET(table), FALSE, FALSE, 0);
+	Gtk::Table* table = Gtk::manage(new Gtk::Table(12, 2, false));
+	table->set_row_spacings(6);
+	table->set_col_spacings(6);
+
+	_propertyWidgets.vbox->pack_start(*table, false, false, 0);
 
 	int curRow = 0;
 	
 	// Active
-	_propertyWidgets.active = gtk_check_button_new_with_label(_("Active"));
-	 gtk_table_attach_defaults(table, _propertyWidgets.active, 0, 2, curRow, curRow+1);
+	_propertyWidgets.active = Gtk::manage(new Gtk::CheckButton(_("Active")));
+	 table->attach(*_propertyWidgets.active, 0, 2, curRow, curRow+1);
 
 	 curRow++;
 	
 	// Timer Time
-	_propertyWidgets.timer.toggle = gtk_check_button_new_with_label(_("Activation Timer:"));
+	_propertyWidgets.timer.toggle = Gtk::manage(new Gtk::CheckButton(_("Activation Timer:")));
 	
-	_propertyWidgets.timer.hour =  gtk_spin_button_new_with_range(0, 200, 1);
-	_propertyWidgets.timer.minute = gtk_spin_button_new_with_range(0, 59, 1);
-	_propertyWidgets.timer.second = gtk_spin_button_new_with_range(0, 59, 1);
-	_propertyWidgets.timer.millisecond = gtk_spin_button_new_with_range(0, 999, 10);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timer.hour), 0);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timer.minute), 0);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timer.second), 0);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timer.millisecond), 0);
+	_propertyWidgets.timer.hour =  Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 200)), 0, 0));
+	_propertyWidgets.timer.minute = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 59)), 0, 0));
+	_propertyWidgets.timer.second = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 59)), 0, 0));
+	_propertyWidgets.timer.millisecond = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 999, 10)), 0, 0));
 	
-	_propertyWidgets.timer.entryHBox = gtk_hbox_new(FALSE, 3);
-	GtkBox* entryHBox = GTK_BOX(_propertyWidgets.timer.entryHBox); // shortcut cast
-	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.hour, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtk_label_new("h"), FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.minute, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtk_label_new("m"), FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.second, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtk_label_new("s"), FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, _propertyWidgets.timer.millisecond, FALSE, FALSE, 0);
-	gtk_box_pack_start(entryHBox, gtkutil::LeftAlignedLabel("ms"), FALSE, FALSE, 0);
+	_propertyWidgets.timer.entryHBox = Gtk::manage(new Gtk::HBox(false, 3));
+
+	Gtk::HBox* entryHBox = _propertyWidgets.timer.entryHBox; // shortcut
+	entryHBox->pack_start(*_propertyWidgets.timer.hour, false, false, 0);
+	entryHBox->pack_start(*Gtk::manage(new Gtk::Label("h")), false, false, 0);
+	entryHBox->pack_start(*_propertyWidgets.timer.minute, false, false, 0);
+	entryHBox->pack_start(*Gtk::manage(new Gtk::Label("m")), false, false, 0);
+	entryHBox->pack_start(*_propertyWidgets.timer.second, false, false, 0);
+	entryHBox->pack_start(*Gtk::manage(new Gtk::Label("s")), false, false, 0);
+	entryHBox->pack_start(*_propertyWidgets.timer.millisecond, false, false, 0);
+	entryHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel("ms")), false, false, 0);
 		
-	gtk_table_attach(table, _propertyWidgets.timer.toggle, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach_defaults(table, _propertyWidgets.timer.entryHBox, 1, 2, curRow, curRow+1);
+	table->attach(*_propertyWidgets.timer.toggle, 0, 1, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*_propertyWidgets.timer.entryHBox, 1, 2, curRow, curRow+1);
 
 	curRow++;
 	
 	// Timer type
-	GtkWidget* timerTypeHBox = gtk_hbox_new(FALSE, 12); 
-	_propertyWidgets.timer.typeToggle = gtk_check_button_new_with_label(_("Timer restarts after firing"));
+	Gtk::HBox* timerTypeHBox = Gtk::manage(new Gtk::HBox(false, 12)); 
+	_propertyWidgets.timer.typeToggle = Gtk::manage(new Gtk::CheckButton(_("Timer restarts after firing")));
 			
-	_propertyWidgets.timer.reloadHBox = gtk_hbox_new(FALSE, 3);
-	_propertyWidgets.timer.reloadEntry = gtk_spin_button_new_with_range(0, 1000, 1);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry), 0);
-	gtk_widget_set_size_request(_propertyWidgets.timer.reloadEntry, 50, -1);
-	_propertyWidgets.timer.reloadToggle = gtk_check_button_new_with_label(_("Timer reloads"));
-	_propertyWidgets.timer.reloadLabel = gtkutil::LeftAlignedLabel(_("times"));
-	GtkBox* reloadHBox = GTK_BOX(_propertyWidgets.timer.reloadHBox); // shortcut
-	gtk_box_pack_start(reloadHBox, _propertyWidgets.timer.reloadEntry, FALSE, FALSE, 0);
-	gtk_box_pack_start(reloadHBox, _propertyWidgets.timer.reloadLabel, TRUE, TRUE, 0);
+	_propertyWidgets.timer.reloadHBox = Gtk::manage(new Gtk::HBox(false, 3));
+
+	_propertyWidgets.timer.reloadEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 1000)), 0, 0));
+	_propertyWidgets.timer.reloadEntry->set_size_request(50, -1);
+
+	_propertyWidgets.timer.reloadToggle = Gtk::manage(new Gtk::CheckButton(_("Timer reloads")));
+	_propertyWidgets.timer.reloadLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("times")));
+
+	_propertyWidgets.timer.reloadHBox->pack_start(*_propertyWidgets.timer.reloadEntry, false, false, 0);
+	_propertyWidgets.timer.reloadHBox->pack_start(*_propertyWidgets.timer.reloadLabel, true, true, 0);
 	
-	gtk_box_pack_start(GTK_BOX(timerTypeHBox), _propertyWidgets.timer.typeToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(timerTypeHBox), _propertyWidgets.timer.reloadToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(timerTypeHBox), GTK_WIDGET(reloadHBox), TRUE, TRUE, 0);
+	timerTypeHBox->pack_start(*_propertyWidgets.timer.typeToggle, false, false, 0);
+	timerTypeHBox->pack_start(*_propertyWidgets.timer.reloadToggle, false, false, 0);
+	timerTypeHBox->pack_start(*_propertyWidgets.timer.reloadHBox, true, true, 0);
 	
-	gtk_table_attach_defaults(table, timerTypeHBox, 0, 2, curRow, curRow+1);
+	table->attach(*timerTypeHBox, 0, 2, curRow, curRow+1);
 
 	curRow++;
 	
 	_propertyWidgets.timer.waitToggle = 
-		gtk_check_button_new_with_label(_("Timer waits for start (when disabled: starts at spawn time)"));
-	gtk_table_attach_defaults(table, _propertyWidgets.timer.waitToggle, 0, 2, curRow, curRow+1);
+		Gtk::manage(new Gtk::CheckButton(_("Timer waits for start (when disabled: starts at spawn time)")));
+	table->attach(*_propertyWidgets.timer.waitToggle, 0, 2, curRow, curRow+1);
 
 	curRow++;
 
 	// Time Interval
-	GtkWidget* timeHBox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.timeIntToggle = gtk_check_button_new_with_label(_("Time interval:"));
-	_propertyWidgets.timeIntEntry = gtk_spin_button_new_with_range(0, 9999999, 10);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.timeIntEntry), 0);
-	_propertyWidgets.timeUnitLabel = gtkutil::RightAlignedLabel(_("ms"));
+	Gtk::HBox* timeHBox = Gtk::manage(new Gtk::HBox(false, 6));
+	_propertyWidgets.timeIntToggle = Gtk::manage(new Gtk::CheckButton(_("Time interval:")));
+	_propertyWidgets.timeIntEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 9999999, 10)), 0, 0));
+	_propertyWidgets.timeUnitLabel = Gtk::manage(new gtkutil::RightAlignedLabel(_("ms")));
 		
-	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeIntEntry, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(timeHBox), _propertyWidgets.timeUnitLabel, FALSE, FALSE, 0);
+	timeHBox->pack_start(*_propertyWidgets.timeIntEntry, true, true, 0);
+	timeHBox->pack_start(*_propertyWidgets.timeUnitLabel, false, false, 0);
 	
-	gtk_table_attach(table, _propertyWidgets.timeIntToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, timeHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.timeIntToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*timeHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 
 	// Duration
-	GtkWidget* durationHBox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.durationToggle = gtk_check_button_new_with_label(_("Duration:"));
-	_propertyWidgets.durationEntry = gtk_spin_button_new_with_range(0, 9999999, 10);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.durationEntry), 0);
-	_propertyWidgets.durationUnitLabel = gtkutil::RightAlignedLabel(_("ms"));
+	Gtk::HBox* durationHBox = Gtk::manage(new Gtk::HBox(false, 6));
+	_propertyWidgets.durationToggle = Gtk::manage(new Gtk::CheckButton(_("Duration:")));
+	_propertyWidgets.durationEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 9999999, 10)), 0, 0));
+	_propertyWidgets.durationUnitLabel = Gtk::manage(new gtkutil::RightAlignedLabel(_("ms")));
 	
-	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationEntry, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(durationHBox), _propertyWidgets.durationUnitLabel, FALSE, FALSE, 0);
+	durationHBox->pack_start(*_propertyWidgets.durationEntry, true, true, 0);
+	durationHBox->pack_start(*_propertyWidgets.durationUnitLabel, false, false, 0);
 	
-	gtk_table_attach(table, _propertyWidgets.durationToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, durationHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.durationToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*durationHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 	
 	// Radius / Use Bounds
-	GtkWidget* radiusHBox = gtk_hbox_new(FALSE, 0);
-	_propertyWidgets.radiusToggle = gtk_check_button_new_with_label(_("Radius:"));
+	Gtk::HBox* radiusHBox = Gtk::manage(new Gtk::HBox(false, 0));
+	_propertyWidgets.radiusToggle = Gtk::manage(new Gtk::CheckButton(_("Radius:")));
+	_propertyWidgets.radiusEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 99999, 1)), 0, 1));
+	_propertyWidgets.useBounds = Gtk::manage(new Gtk::CheckButton(_("Use bounds")));
+	radiusHBox->pack_start(*_propertyWidgets.radiusEntry, true, true, 0);
+	radiusHBox->pack_start(*_propertyWidgets.useBounds, false, false, 6);
 	
-	_propertyWidgets.radiusEntry = gtk_spin_button_new_with_range(0, 99999, 1);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.radiusEntry), 1);
-	_propertyWidgets.useBounds = gtk_check_button_new_with_label(_("Use bounds"));
-	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.radiusEntry, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(radiusHBox), _propertyWidgets.useBounds, FALSE, FALSE, 6);
-	
-	gtk_table_attach(table, _propertyWidgets.radiusToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, radiusHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.radiusToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*radiusHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 
 	// Final Radius
-	GtkWidget* finalRadiusHBox = gtk_hbox_new(FALSE, 0);
-	_propertyWidgets.finalRadiusToggle = gtk_check_button_new_with_label(_("Radius changes over time to:"));
+	Gtk::HBox* finalRadiusHBox = Gtk::manage(new Gtk::HBox(false, 0));
+	_propertyWidgets.finalRadiusToggle = Gtk::manage(new Gtk::CheckButton(_("Radius changes over time to:")));
 	
-	_propertyWidgets.finalRadiusEntry = gtk_spin_button_new_with_range(0, 99999, 1);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.finalRadiusEntry), 1);
-	gtk_box_pack_start(GTK_BOX(finalRadiusHBox), _propertyWidgets.finalRadiusEntry, TRUE, TRUE, 0);
+	_propertyWidgets.finalRadiusEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 99999, 1)), 0, 1));
+	finalRadiusHBox->pack_start(*_propertyWidgets.finalRadiusEntry, true, true, 0);
 	
-	gtk_table_attach(table, _propertyWidgets.finalRadiusToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, finalRadiusHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.finalRadiusToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*finalRadiusHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 	
 	// Magnitude
-	_propertyWidgets.magnToggle = gtk_check_button_new_with_label(_("Magnitude:"));
+	_propertyWidgets.magnToggle = Gtk::manage(new Gtk::CheckButton(_("Magnitude:")));
 	
-	GtkWidget* magnHBox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.magnEntry = gtk_spin_button_new_with_range(0, 10000, 1);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.magnEntry), 2);
-	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.magnEntry), 7);
+	Gtk::HBox* magnHBox = Gtk::manage(new Gtk::HBox(false, 6));
+	_propertyWidgets.magnEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 10000, 1)), 0, 2));
+	_propertyWidgets.magnEntry->set_width_chars(7);
 	
 	// Falloff exponent
-	_propertyWidgets.falloffToggle = gtk_check_button_new_with_label(_("Falloff Exponent:"));
-	_propertyWidgets.falloffEntry = gtk_spin_button_new_with_range(-10, 10, 0.1f);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.falloffEntry), 2);
-	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.falloffEntry), 7);
+	_propertyWidgets.falloffToggle = Gtk::manage(new Gtk::CheckButton(_("Falloff Exponent:")));
+	_propertyWidgets.falloffEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, -10, 10, 0.1)), 0, 2));
+	_propertyWidgets.falloffEntry->set_width_chars(7);
 	
-	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.magnEntry, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.falloffToggle, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(magnHBox), _propertyWidgets.falloffEntry, TRUE, TRUE, 0);
+	magnHBox->pack_start(*_propertyWidgets.magnEntry, false, false, 0);
+	magnHBox->pack_start(*_propertyWidgets.falloffToggle, false, false, 0);
+	magnHBox->pack_start(*_propertyWidgets.falloffEntry, true, true, 0);
 	
-	gtk_table_attach(table, _propertyWidgets.magnToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, magnHBox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.magnToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*magnHBox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 
 	// Max fire count
-	_propertyWidgets.maxFireCountToggle = gtk_check_button_new_with_label(_("Max Fire Count:"));
-	_propertyWidgets.maxFireCountEntry = gtk_spin_button_new_with_range(0, 1000000, 1);
-
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.maxFireCountEntry), 0);
-	gtk_entry_set_width_chars(GTK_ENTRY(_propertyWidgets.maxFireCountEntry), 7);
+	_propertyWidgets.maxFireCountToggle = Gtk::manage(new Gtk::CheckButton(_("Max Fire Count:")));
+	_propertyWidgets.maxFireCountEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 1000000)), 0, 0));
+	_propertyWidgets.maxFireCountEntry->set_width_chars(7);
 	
-	gtk_table_attach(table, _propertyWidgets.maxFireCountToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, _propertyWidgets.maxFireCountEntry, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.maxFireCountToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*_propertyWidgets.maxFireCountEntry, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 	
 	// Chance variable
-	_propertyWidgets.chanceToggle = gtk_check_button_new_with_label(_("Chance:"));
-	_propertyWidgets.chanceEntry = gtk_spin_button_new_with_range(0.0f, 1.0f, 0.01f);
-	gtk_spin_button_set_digits(GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry), 2);
+	_propertyWidgets.chanceToggle = Gtk::manage(new Gtk::CheckButton(_("Chance:")));
+	_propertyWidgets.chanceEntry = Gtk::manage(new Gtk::SpinButton(
+		*Gtk::manage(new Gtk::Adjustment(0, 0, 1.0, 0.01)), 0, 2));
 	
-	gtk_table_attach(table, _propertyWidgets.chanceToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, _propertyWidgets.chanceEntry, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.chanceToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*_propertyWidgets.chanceEntry, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 	
 	// Velocity variable
-	_propertyWidgets.velocityToggle = gtk_check_button_new_with_label(_("Velocity:"));
-	_propertyWidgets.velocityEntry = gtk_entry_new();
+	_propertyWidgets.velocityToggle = Gtk::manage(new Gtk::CheckButton(_("Velocity:")));
+	_propertyWidgets.velocityEntry = Gtk::manage(new Gtk::Entry);
 	
-	gtk_table_attach(table, _propertyWidgets.velocityToggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, _propertyWidgets.velocityEntry, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.velocityToggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*_propertyWidgets.velocityEntry, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 	
 	// Bounds mins and maxs
-	_propertyWidgets.bounds.hbox = gtk_hbox_new(FALSE, 6);
-	_propertyWidgets.bounds.toggle = gtk_check_button_new_with_label(_("Bounds "));
-	_propertyWidgets.bounds.minLabel = gtk_label_new(_("Min:"));
-	_propertyWidgets.bounds.maxLabel = gtk_label_new(_("Max:"));
-	_propertyWidgets.bounds.minEntry = gtk_entry_new();
-	_propertyWidgets.bounds.maxEntry = gtk_entry_new();
-	gtk_widget_set_size_request(_propertyWidgets.bounds.minEntry, 100, -1);
-	gtk_widget_set_size_request(_propertyWidgets.bounds.maxEntry, 100, -1);
-	GtkBox* boundsHBox = GTK_BOX(_propertyWidgets.bounds.hbox); // shortcut cast
-	gtk_box_pack_start(boundsHBox, _propertyWidgets.bounds.minLabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(boundsHBox, _propertyWidgets.bounds.minEntry, TRUE, TRUE, 0);
-	gtk_box_pack_start(boundsHBox, _propertyWidgets.bounds.maxLabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(boundsHBox, _propertyWidgets.bounds.maxEntry, TRUE, TRUE, 0);
+	_propertyWidgets.bounds.hbox = Gtk::manage(new Gtk::HBox(false, 6));
+	_propertyWidgets.bounds.toggle = Gtk::manage(new Gtk::CheckButton(_("Bounds ")));
+	_propertyWidgets.bounds.minLabel = Gtk::manage(new Gtk::Label(_("Min:")));
+	_propertyWidgets.bounds.maxLabel = Gtk::manage(new Gtk::Label(_("Max:")));
+	_propertyWidgets.bounds.minEntry = Gtk::manage(new Gtk::Entry);
+	_propertyWidgets.bounds.maxEntry = Gtk::manage(new Gtk::Entry);
+	_propertyWidgets.bounds.minEntry->set_size_request(100, -1);
+	_propertyWidgets.bounds.maxEntry->set_size_request(100, -1);
+
+	_propertyWidgets.bounds.hbox->pack_start(*_propertyWidgets.bounds.minLabel, false, false, 0);
+	_propertyWidgets.bounds.hbox->pack_start(*_propertyWidgets.bounds.minEntry, true, true, 0);
+	_propertyWidgets.bounds.hbox->pack_start(*_propertyWidgets.bounds.maxLabel, false, false, 0);
+	_propertyWidgets.bounds.hbox->pack_start(*_propertyWidgets.bounds.maxEntry, true, true, 0);
 	
-	gtk_table_attach(table, _propertyWidgets.bounds.toggle, 0, 1, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
-	gtk_table_attach(table, _propertyWidgets.bounds.hbox, 1, 2, curRow, curRow+1, GTK_FILL, GTK_FILL, 0, 0);
+	table->attach(*_propertyWidgets.bounds.toggle, 0, 1, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
+	table->attach(*_propertyWidgets.bounds.hbox, 1, 2, curRow, curRow+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	curRow++;
 	
-	// The map associating entry fields to stim property keys  
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.radiusEntry)] = "radius";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.finalRadiusEntry)] = "radius_final";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.timeIntEntry)] = "time_interval";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.magnEntry)] = "magnitude";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.falloffEntry)] = "falloffexponent";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)] = "chance";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.maxFireCountEntry)] = "max_fire_count";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.durationEntry)] = "duration";
-	_spinWidgets[GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry)] = "timer_reload";
+	// Associae the entry fields to stim property keys
+	connectSpinButton(_propertyWidgets.radiusEntry, "radius");
+	connectSpinButton(_propertyWidgets.finalRadiusEntry, "radius_final");
+	connectSpinButton(_propertyWidgets.timeIntEntry, "time_interval");
+	connectSpinButton(_propertyWidgets.magnEntry, "magnitude");
+	connectSpinButton(_propertyWidgets.falloffEntry, "falloffexponent");
+	connectSpinButton(_propertyWidgets.chanceEntry, "chance");
+	connectSpinButton(_propertyWidgets.maxFireCountEntry, "max_fire_count");
+	connectSpinButton(_propertyWidgets.durationEntry, "duration");
+	connectSpinButton(_propertyWidgets.timer.reloadEntry, "timer_reload");
+
+	// These four don't have a direct entity key associated
+	connectSpinButton(_propertyWidgets.timer.hour, "");
+	connectSpinButton(_propertyWidgets.timer.minute, "");
+	connectSpinButton(_propertyWidgets.timer.second, "");
+	connectSpinButton(_propertyWidgets.timer.millisecond, "");
 	
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.velocityEntry)] = "velocity";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.bounds.minEntry)] = "bounds_mins";
-	_entryWidgets[GTK_EDITABLE(_propertyWidgets.bounds.maxEntry)] = "bounds_maxs";
+	// Connect text entries
+	connectEntry(_propertyWidgets.velocityEntry, "velocity");
+	connectEntry(_propertyWidgets.bounds.minEntry, "bounds_mins");
+	connectEntry(_propertyWidgets.bounds.maxEntry, "bounds_maxs");
 	
 	// Connect the checkboxes
-	g_signal_connect(G_OBJECT(_propertyWidgets.active), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.useBounds), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.radiusToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.finalRadiusToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.magnToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.falloffToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.typeToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.chanceToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.maxFireCountToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.durationToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.toggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.waitToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.velocityToggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.toggle), "toggled", G_CALLBACK(onCheckboxToggle), this);
+	connectCheckButton(_propertyWidgets.active);
+	connectCheckButton(_propertyWidgets.useBounds);
+	connectCheckButton(_propertyWidgets.radiusToggle);
+	connectCheckButton(_propertyWidgets.finalRadiusToggle);
+	connectCheckButton(_propertyWidgets.timeIntToggle);
+	connectCheckButton(_propertyWidgets.magnToggle);
+	connectCheckButton(_propertyWidgets.falloffToggle);
+	connectCheckButton(_propertyWidgets.timer.typeToggle);
+	connectCheckButton(_propertyWidgets.chanceToggle);
+	connectCheckButton(_propertyWidgets.maxFireCountToggle);
+	connectCheckButton(_propertyWidgets.durationToggle);
+	connectCheckButton(_propertyWidgets.timer.toggle);
+	connectCheckButton(_propertyWidgets.timer.reloadToggle);
+	connectCheckButton(_propertyWidgets.timer.waitToggle);
+	connectCheckButton(_propertyWidgets.velocityToggle);
+	connectCheckButton(_propertyWidgets.bounds.toggle);
 	
-	// Connect the entry fields
-	g_signal_connect(G_OBJECT(_propertyWidgets.velocityEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.minEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.bounds.maxEntry), "changed", G_CALLBACK(onEntryChanged), this);
-	
-	// Connect the spin button fields
-	g_signal_connect(G_OBJECT(_propertyWidgets.magnEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.falloffEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.radiusEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.finalRadiusEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timeIntEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.chanceEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.maxFireCountEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.durationEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.hour), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.minute), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.second), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.millisecond), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	g_signal_connect(G_OBJECT(_propertyWidgets.timer.reloadEntry), "value-changed", G_CALLBACK(onSpinButtonChanged), this);
-	
-	return _propertyWidgets.vbox;
+	return *_propertyWidgets.vbox;
 }
 
-std::string StimEditor::getTimerString() {
-	std::string hour = intToStr(gtk_spin_button_get_value_as_int(
-		GTK_SPIN_BUTTON(_propertyWidgets.timer.hour)));
-	std::string minute = intToStr(gtk_spin_button_get_value_as_int(
-		GTK_SPIN_BUTTON(_propertyWidgets.timer.minute)));
-	std::string second = intToStr(gtk_spin_button_get_value_as_int(
-		GTK_SPIN_BUTTON(_propertyWidgets.timer.second)));
-	std::string ms = intToStr(gtk_spin_button_get_value_as_int(
-		GTK_SPIN_BUTTON(_propertyWidgets.timer.millisecond)));
-		
+std::string StimEditor::getTimerString()
+{
+	std::string hour = intToStr(_propertyWidgets.timer.hour->get_value_as_int());
+	std::string minute = intToStr(_propertyWidgets.timer.minute->get_value_as_int());
+	std::string second = intToStr(_propertyWidgets.timer.second->get_value_as_int());
+	std::string ms = intToStr(_propertyWidgets.timer.millisecond->get_value_as_int());
+	
 	return hour + ":" + minute + ":" + second + ":" + ms;
 }
 
-void StimEditor::spinButtonChanged(GtkSpinButton* spinButton) {
+void StimEditor::spinButtonChanged(Gtk::SpinButton* spinButton)
+{
 	// Pass the call to the base class
 	ClassEditor::spinButtonChanged(spinButton);
 	
-	if (spinButton == GTK_SPIN_BUTTON(_propertyWidgets.timer.hour) || 
-		spinButton == GTK_SPIN_BUTTON(_propertyWidgets.timer.minute) || 
-		spinButton == GTK_SPIN_BUTTON(_propertyWidgets.timer.second) ||
-		spinButton == GTK_SPIN_BUTTON(_propertyWidgets.timer.millisecond))
+	// These four time entries are not in the SpinButtonMap, treat them separately
+	if (spinButton == _propertyWidgets.timer.hour || 
+		spinButton == _propertyWidgets.timer.minute || 
+		spinButton == _propertyWidgets.timer.second ||
+		spinButton == _propertyWidgets.timer.millisecond)
 	{
 		setProperty("timer_time", getTimerString());
 	}
 }
 
-void StimEditor::checkBoxToggled(GtkToggleButton* toggleButton) {
-	GtkWidget* toggleWidget = GTK_WIDGET(toggleButton);
-	bool active = gtk_toggle_button_get_active(toggleButton) ? true : false;
+void StimEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
+{
+	bool active = toggleButton->get_active();
 	
-	if (toggleWidget == _propertyWidgets.active) {
+	if (toggleButton == _propertyWidgets.active)
+	{
 		setProperty("state", active ? "1" : "0");
 	}
-	else if (toggleWidget == _propertyWidgets.useBounds) {
+	else if (toggleButton == _propertyWidgets.useBounds)
+	{
 		setProperty("use_bounds", active ? "1" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.timer.typeToggle) {
+	else if (toggleButton == _propertyWidgets.timer.typeToggle)
+	{
 		setProperty("timer_type", active ? "RELOAD" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.radiusToggle) {
+	else if (toggleButton == _propertyWidgets.radiusToggle)
+	{
 		setProperty("radius", active ? "10" : "");
 
 		// Clear final radius if disabled
-		if (!active) {
+		if (!active)
+		{
 			setProperty("radius_final", "");	
 		}
 	}
-	if (toggleWidget == _propertyWidgets.finalRadiusToggle) {
+	else if (toggleButton == _propertyWidgets.finalRadiusToggle)
+	{
 		setProperty("radius_final", active ? "10" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.magnToggle) {
+	else if (toggleButton == _propertyWidgets.magnToggle)
+	{
 		setProperty("magnitude", active ? "10" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.maxFireCountToggle) {
+	else if (toggleButton == _propertyWidgets.maxFireCountToggle)
+	{
 		setProperty("max_fire_count", active ? "10" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.falloffToggle) {
+	else if (toggleButton == _propertyWidgets.falloffToggle)
+	{
 		setProperty("falloffexponent", active ? "1" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.timeIntToggle) {
+	else if (toggleButton == _propertyWidgets.timeIntToggle)
+	{
 		setProperty("time_interval", active ? "1000" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.chanceToggle) {
-		std::string entryText = doubleToStr(gtk_spin_button_get_value_as_float(
-			GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry)
-		));
+	else if (toggleButton == _propertyWidgets.chanceToggle)
+	{
+		std::string entryText = doubleToStr(_propertyWidgets.chanceEntry->get_value());
 
 		setProperty("chance", active ? entryText : "");
 	}
-	else if (toggleWidget == _propertyWidgets.velocityToggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.velocityEntry));
+	else if (toggleButton == _propertyWidgets.velocityToggle)
+	{
+		std::string entryText = _propertyWidgets.velocityEntry->get_text();
 	
 		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
+		if (active)
+		{
 			entryText += (entryText.empty()) ? "0 0 100" : "";	
 		}
-		else {
+		else
+		{
 			entryText = "";
 		}
+
 		setProperty("velocity", entryText);
 	}
-	else if (toggleWidget == _propertyWidgets.bounds.toggle) {
-		std::string entryText = 
-			gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.bounds.minEntry));
+	else if (toggleButton == _propertyWidgets.bounds.toggle)
+	{
+		std::string entryText = _propertyWidgets.bounds.minEntry->get_text();
 	
 		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
+		if (active)
+		{
 			entryText += (entryText.empty()) ? "-10 -10 -10" : "";	
 		}
-		else {
+		else
+		{
 			entryText = "";
 		}
+
 		setProperty("bounds_mins", entryText);
 		
-		entryText = gtk_entry_get_text(GTK_ENTRY(_propertyWidgets.bounds.maxEntry));
+		entryText = _propertyWidgets.bounds.maxEntry->get_text();
+
 		// Enter a default value for the entry text, if it's empty up till now.
-		if (active) {
+		if (active)
+		{
 			entryText += (entryText.empty()) ? "10 10 10" : "";	
 		}
-		else {
+		else
+		{
 			entryText = "";
 		}
+
 		setProperty("bounds_maxs", entryText);
 	}
-	else if (toggleWidget == _propertyWidgets.durationToggle) {
+	else if (toggleButton == _propertyWidgets.durationToggle)
+	{
 		setProperty("duration", active ? "1000" : "");
 
 		// Clear final radius if disabled
-		if (!active) {
+		if (!active)
+		{
 			setProperty("radius_final", "");	
 		}
 	}
-	else if (toggleWidget == _propertyWidgets.timer.toggle) {
+	else if (toggleButton == _propertyWidgets.timer.toggle)
+	{
 		std::string timerStr = getTimerString();
 		setProperty("timer_time", active ? timerStr : "");
 	}
-	else if (toggleWidget == _propertyWidgets.timer.reloadToggle) {
+	else if (toggleButton == _propertyWidgets.timer.reloadToggle)
+	{
 		setProperty("timer_reload", active ? "1" : "");
 	}
-	else if (toggleWidget == _propertyWidgets.timer.waitToggle) {
+	else if (toggleButton == _propertyWidgets.timer.waitToggle)
+	{
 		setProperty("timer_waitforstart", active ? "1" : "");
 	}
 }
 
-void StimEditor::openContextMenu(GtkTreeView* view) {
-	gtk_menu_popup(GTK_MENU(_contextMenu.menu), NULL, NULL, NULL, NULL, 1, GDK_CURRENT_TIME);
+void StimEditor::openContextMenu(Gtk::TreeView* view)
+{
+	_contextMenu.menu->popup(1, gtk_get_current_event_time());
 }
 
-void StimEditor::addSR() {
+void StimEditor::addSR()
+{
 	if (_entity == NULL) return;
 
 	// Create a new StimResponse object
@@ -465,7 +488,7 @@ void StimEditor::addSR() {
 	sr.set("class", "S");
 	
 	// Get the selected stim type name from the combo box
-	std::string name = getStimTypeIdFromSelector(GTK_COMBO_BOX(_addType.list));
+	std::string name = getStimTypeIdFromSelector(_addType.list);
 	sr.set("type", (!name.empty()) ? name : _stimTypes.getFirstName());
 	
 	sr.set("state", "1");
@@ -478,342 +501,210 @@ void StimEditor::addSR() {
 }
 
 // Create the context menus
-void StimEditor::createContextMenu() {
-	// Menu widgets
-	_contextMenu.menu = gtk_menu_new();
+void StimEditor::createContextMenu()
+{
+	// Menu widgets (is not packed, hence create a shared_ptr)
+	_contextMenu.menu.reset(new Gtk::Menu());
 		
 	// Each menu gets a delete item
-	_contextMenu.remove = gtkutil::StockIconMenuItem(GTK_STOCK_DELETE,
-														   _("Delete"));
-	//_contextMenu.add = gtkutil::StockIconMenuItem(GTK_STOCK_ADD, "Add Stim");
-	_contextMenu.disable = gtkutil::StockIconMenuItem(GTK_STOCK_NO,
-														   _("Deactivate"));
-	_contextMenu.enable = gtkutil::StockIconMenuItem(GTK_STOCK_YES,
-														   _("Activate"));
-	_contextMenu.duplicate = gtkutil::StockIconMenuItem(GTK_STOCK_COPY,
-														   _("Duplicate"));
+	_contextMenu.remove = 
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::DELETE, _("Delete")));
+	//_contextMenu.add = Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, "Add Stim"));
+	_contextMenu.disable = 
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::NO, _("Deactivate")));
+	_contextMenu.enable = 
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::YES, _("Activate")));
+	_contextMenu.duplicate = 
+		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Duplicate")));
 
-	//gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), _contextMenu.add);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
-						  _contextMenu.enable);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
-						  _contextMenu.disable);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
-						  _contextMenu.duplicate);
-	gtk_menu_shell_append(GTK_MENU_SHELL(_contextMenu.menu), 
-						  _contextMenu.remove);
+	//_contextMenu.menu->append(*_contextMenu.add);
+	_contextMenu.menu->append(*_contextMenu.enable);
+	_contextMenu.menu->append(*_contextMenu.disable);
+	_contextMenu.menu->append(*_contextMenu.duplicate);
+	_contextMenu.menu->append(*_contextMenu.remove);
 
 	// Connect up the signals
-	g_signal_connect(G_OBJECT(_contextMenu.remove), "activate",
-					 G_CALLBACK(onContextMenuDelete), this);
-	/*g_signal_connect(G_OBJECT(_contextMenu.add), "activate",
-					 G_CALLBACK(onContextMenuAdd), this);*/
-	g_signal_connect(G_OBJECT(_contextMenu.enable), "activate",
-					 G_CALLBACK(onContextMenuEnable), this);
-	g_signal_connect(G_OBJECT(_contextMenu.disable), "activate",
-					 G_CALLBACK(onContextMenuDisable), this);
-	g_signal_connect(G_OBJECT(_contextMenu.duplicate), "activate",
-					 G_CALLBACK(onContextMenuDuplicate), this);
+	_contextMenu.remove->signal_activate().connect(sigc::mem_fun(*this, &StimEditor::onContextMenuDelete));
+	_contextMenu.enable->signal_activate().connect(sigc::mem_fun(*this, &StimEditor::onContextMenuEnable));
+	_contextMenu.disable->signal_activate().connect(sigc::mem_fun(*this, &StimEditor::onContextMenuDisable));
+	_contextMenu.duplicate->signal_activate().connect(sigc::mem_fun(*this, &StimEditor::onContextMenuDuplicate));
 	
 	// Show menus (not actually visible until popped up)
-	gtk_widget_show_all(_contextMenu.menu);
+	_contextMenu.menu->show_all();
 }
 
-void StimEditor::update() {
+void StimEditor::update()
+{
 	_updatesDisabled = true; // avoid unwanted callbacks
 	
 	int id = getIdFromSelection();
 	
-	if (id > 0) {
+	if (id > 0)
+	{
 		// Update all the widgets
-		gtk_widget_set_sensitive(_propertyWidgets.vbox, TRUE);
+		_propertyWidgets.vbox->set_sensitive(true);
 		
 		StimResponse& sr = _entity->get(id);
 		
 		// Get the iter into the liststore pointing at the correct STIM_YYYY type
-		GtkTreeIter typeIter = _stimTypes.getIterForName(sr.get("type"));
-		gtk_combo_box_set_active_iter(GTK_COMBO_BOX(_type.list), &typeIter);
+		_type.list->set_active(_stimTypes.getIterForName(sr.get("type")));
 		
 		// Active
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.active),
-			(sr.get("state") == "1")
-		);
+		_propertyWidgets.active->set_active(sr.get("state") == "1");
 		
 		// Use Radius
 		bool useRadius = (sr.get("radius") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.radiusToggle),
-			useRadius
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.radiusEntry), 
-			strToFloat(sr.get("radius"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.radiusEntry, 
-			useRadius
-		);
+		_propertyWidgets.radiusToggle->set_active(useRadius);
+		_propertyWidgets.radiusEntry->set_value(strToFloat(sr.get("radius")));
+		_propertyWidgets.radiusEntry->set_sensitive(useRadius);
 
 		// Use Bounds
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.useBounds),
-			sr.get("use_bounds") == "1" && useRadius
-		);
-		gtk_widget_set_sensitive(_propertyWidgets.useBounds, useRadius);
+		_propertyWidgets.useBounds->set_active(sr.get("use_bounds") == "1" && useRadius);
+		_propertyWidgets.useBounds->set_sensitive(useRadius);
 
 		// Use Duration
 		bool useDuration = (sr.get("duration") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.durationToggle),
-			useDuration
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.durationEntry), 
-			strToInt(sr.get("duration"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.durationEntry, 
-			useDuration
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.durationUnitLabel, 
-			useDuration
-		);
+		_propertyWidgets.durationToggle->set_active(useDuration);
+		_propertyWidgets.durationEntry->set_value(strToInt(sr.get("duration")));
+		_propertyWidgets.durationEntry->set_sensitive(useDuration);
+		_propertyWidgets.durationUnitLabel->set_sensitive(useDuration);
 			
 		// Use Time interval
 		bool useTimeInterval = (sr.get("time_interval") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.timeIntToggle),
-			useTimeInterval
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.timeIntEntry), 
-			strToInt(sr.get("time_interval"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.timeIntEntry, 
-			useTimeInterval
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.timeUnitLabel, 
-			useTimeInterval
-		);
+		_propertyWidgets.timeIntToggle->set_active(useTimeInterval);
+		_propertyWidgets.timeIntEntry->set_value(strToInt(sr.get("time_interval")));
+		_propertyWidgets.timeIntEntry->set_sensitive(useTimeInterval);
+		_propertyWidgets.timeUnitLabel->set_sensitive(useTimeInterval);
 
 		// Use Final radius (duration must be enabled for this to work)
 		bool useFinalRadius = (sr.get("radius_final") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.finalRadiusToggle),
-			useFinalRadius && useDuration
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.finalRadiusEntry), 
-			strToFloat(sr.get("radius_final"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.finalRadiusToggle, 
-			useRadius && useDuration
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.finalRadiusEntry, 
-			useFinalRadius && useDuration && useRadius
-		);
+		_propertyWidgets.finalRadiusToggle->set_active(useFinalRadius && useDuration);
+		_propertyWidgets.finalRadiusEntry->set_value(strToFloat(sr.get("radius_final")));
+		_propertyWidgets.finalRadiusToggle->set_sensitive(useRadius && useDuration);
+		_propertyWidgets.finalRadiusEntry->set_sensitive(useFinalRadius && useDuration && useRadius);
 		
 		// Timer time
 		bool useTimerTime = !sr.get("timer_time").empty();
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.timer.toggle),
-			useTimerTime
-		);
-		gtk_widget_set_sensitive(_propertyWidgets.timer.toggle,	TRUE);
-		gtk_widget_set_sensitive(_propertyWidgets.timer.entryHBox, useTimerTime);
+		_propertyWidgets.timer.toggle->set_active(useTimerTime);
+		_propertyWidgets.timer.toggle->set_sensitive(true);
+		_propertyWidgets.timer.entryHBox->set_sensitive(useTimerTime);
 		
 		// Split the property string and distribute the parts into the entry fields
-		StringParts parts;
+		std::vector<std::string> parts;
 		std::string timerTime = sr.get("timer_time");
 		boost::algorithm::split(parts, timerTime, boost::algorithm::is_any_of(":"));
+		
 		std::string hour = (parts.size() > 0) ? parts[0] : "";
 		std::string minute = (parts.size() > 1) ? parts[1] : "";
 		std::string second = (parts.size() > 2) ? parts[2] : "";
 		std::string ms = (parts.size() > 3) ? parts[3] : "";
 		
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_propertyWidgets.timer.hour), strToInt(hour));
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_propertyWidgets.timer.minute), strToInt(minute));
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_propertyWidgets.timer.second), strToInt(second));
-		gtk_spin_button_set_value(GTK_SPIN_BUTTON(_propertyWidgets.timer.millisecond), strToInt(ms));
+		_propertyWidgets.timer.hour->set_value(strToInt(hour));
+		_propertyWidgets.timer.minute->set_value(strToInt(minute));
+		_propertyWidgets.timer.second->set_value(strToInt(second));
+		_propertyWidgets.timer.millisecond->set_value(strToInt(ms));
 		
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.timer.waitToggle),
+		_propertyWidgets.timer.waitToggle->set_active(
 			useTimerTime && sr.get("timer_waitforstart") == "1"
 		);
-		gtk_widget_set_sensitive(_propertyWidgets.timer.waitToggle, useTimerTime);
+		_propertyWidgets.timer.waitToggle->set_sensitive(useTimerTime);
 		
 		// Timer Type
 		bool useTimerType = sr.get("timer_type") == "RELOAD" && useTimerTime;
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.timer.typeToggle),
-			useTimerType
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.timer.typeToggle, 
-			useTimerTime
-		);
+		_propertyWidgets.timer.typeToggle->set_active(useTimerType);
+		_propertyWidgets.timer.typeToggle->set_sensitive(useTimerTime);
 		
 		bool userTimerReload = useTimerType && !sr.get("timer_reload").empty(); 
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.timer.reloadToggle),
-			userTimerReload
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.timer.reloadToggle, 
-			useTimerType
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.timer.reloadEntry),
-			strToInt(sr.get("timer_reload"))
-		);
-		gtk_widget_set_sensitive(_propertyWidgets.timer.reloadHBox, userTimerReload);
+		_propertyWidgets.timer.reloadToggle->set_active(userTimerReload);
+		_propertyWidgets.timer.reloadToggle->set_sensitive(useTimerType);
+		_propertyWidgets.timer.reloadEntry->set_value(strToInt(sr.get("timer_reload")));
+		_propertyWidgets.timer.reloadHBox->set_sensitive(userTimerReload);
 		
 		// Use Magnitude
 		bool useMagnitude = (sr.get("magnitude") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.magnToggle),
-			useMagnitude
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.magnEntry),
-			strToFloat(sr.get("magnitude"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.magnEntry, 
-			useMagnitude
-		);
+		_propertyWidgets.magnToggle->set_active(useMagnitude);
+		_propertyWidgets.magnEntry->set_value(strToFloat(sr.get("magnitude")));
+		_propertyWidgets.magnEntry->set_sensitive(useMagnitude);
 		
 		// Use falloff exponent widgets
 		bool useFalloff = (sr.get("falloffexponent") != "");
 		
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.falloffToggle),
-			useFalloff
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.falloffEntry),
-			strToFloat(sr.get("falloffexponent"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.falloffToggle, 
-			useMagnitude
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.falloffEntry, 
-			useMagnitude && useFalloff
-		);
+		_propertyWidgets.falloffToggle->set_active(useFalloff);
+		_propertyWidgets.falloffEntry->set_value(strToFloat(sr.get("falloffexponent")));
+		_propertyWidgets.falloffToggle->set_sensitive(useMagnitude);
+		_propertyWidgets.falloffEntry->set_sensitive(useMagnitude && useFalloff);
 		
 		// Use Chance
 		bool useChance = (sr.get("chance") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.chanceToggle),
-			useChance
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.chanceEntry),
-			strToFloat(sr.get("chance"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.chanceEntry, 
-			useChance
-		);
+		_propertyWidgets.chanceToggle->set_active(useChance);
+		_propertyWidgets.chanceEntry->set_value(strToFloat(sr.get("chance")));
+		_propertyWidgets.chanceEntry->set_sensitive(useChance);
 
 		// Use Max Fire Count
 		bool useMaxFireCount = (sr.get("max_fire_count") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.maxFireCountToggle),
-			useMaxFireCount
-		);
-		gtk_spin_button_set_value(
-			GTK_SPIN_BUTTON(_propertyWidgets.maxFireCountEntry),
-			strToFloat(sr.get("max_fire_count"))
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.maxFireCountEntry, 
-			useMaxFireCount
-		);
+		_propertyWidgets.maxFireCountToggle->set_active(useMaxFireCount);
+		_propertyWidgets.maxFireCountEntry->set_value(strToFloat(sr.get("max_fire_count")));
+		_propertyWidgets.maxFireCountEntry->set_sensitive(useMaxFireCount);
 		
 		// Use Velocity
 		bool useVelocity = (sr.get("velocity") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.velocityToggle),
-			useVelocity
-		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.velocityEntry),
-			sr.get("velocity").c_str()
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.velocityEntry, 
-			useVelocity
-		);
+		_propertyWidgets.velocityToggle->set_active(useVelocity);
+		_propertyWidgets.velocityEntry->set_text(sr.get("velocity"));
+		_propertyWidgets.velocityEntry->set_sensitive(useVelocity);
 		
-		// Use Velocity
+		// Use Bounds mins/max
 		bool useBoundsMinMax = (sr.get("bounds_mins") != "");
-		gtk_toggle_button_set_active(
-			GTK_TOGGLE_BUTTON(_propertyWidgets.bounds.toggle),
-			useBoundsMinMax
-		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.bounds.minEntry),
-			sr.get("bounds_mins").c_str()
-		);
-		gtk_entry_set_text(
-			GTK_ENTRY(_propertyWidgets.bounds.maxEntry),
-			sr.get("bounds_maxs").c_str()
-		);
-		gtk_widget_set_sensitive(
-			_propertyWidgets.bounds.hbox, 
-			useBoundsMinMax
-		);
+		_propertyWidgets.bounds.toggle->set_active(useBoundsMinMax);
+		_propertyWidgets.bounds.minEntry->set_text(sr.get("bounds_mins"));
+		_propertyWidgets.bounds.maxEntry->set_text(sr.get("bounds_maxs"));
+		_propertyWidgets.bounds.hbox->set_sensitive(useBoundsMinMax);
 		
 		// Disable the editing of inherited properties completely
-		if (sr.inherited()) {
-			gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
+		if (sr.inherited())
+		{
+			_propertyWidgets.vbox->set_sensitive(false);
 		}
 		
 		// If there is anything selected, the duplicate item is always active
-		gtk_widget_set_sensitive(_contextMenu.duplicate, TRUE);
+		_contextMenu.duplicate->set_sensitive(true);
 		
 		// Update the delete context menu item
-		gtk_widget_set_sensitive(_contextMenu.remove, !sr.inherited());
+		_contextMenu.remove->set_sensitive(!sr.inherited());
 				
 		// Update the "enable/disable" menu items
 		bool state = sr.get("state") == "1";
-		gtk_widget_set_sensitive(_contextMenu.enable, !state);
-		gtk_widget_set_sensitive(_contextMenu.disable, state);
+		_contextMenu.enable->set_sensitive(!state);
+		_contextMenu.disable->set_sensitive(state);
 	}
-	else {
-		gtk_widget_set_sensitive(_propertyWidgets.vbox, FALSE);
+	else
+	{
+		_propertyWidgets.vbox->set_sensitive(false);
 		// Disable the "non-Add" context menu items
-		gtk_widget_set_sensitive(_contextMenu.remove, FALSE);
-		gtk_widget_set_sensitive(_contextMenu.enable, FALSE);
-		gtk_widget_set_sensitive(_contextMenu.disable, FALSE);
-		gtk_widget_set_sensitive(_contextMenu.duplicate, FALSE);
+		_contextMenu.remove->set_sensitive(false);
+		_contextMenu.enable->set_sensitive(false);
+		_contextMenu.disable->set_sensitive(false);
+		_contextMenu.duplicate->set_sensitive(false);
 	}
 	
 	_updatesDisabled = false;
 }
 
-void StimEditor::selectionChanged() {
+void StimEditor::selectionChanged()
+{
 	update();
 }
 
 // Delete context menu items activated
-void StimEditor::onContextMenuDelete(GtkWidget* w, StimEditor* self) {
+void StimEditor::onContextMenuDelete()
+{
 	// Delete the selected stim from the list
-	self->removeSR(GTK_TREE_VIEW(self->_list));
+	removeSR();
 }
 
 // Delete context menu items activated
-void StimEditor::onContextMenuAdd(GtkWidget* w, StimEditor* self) {
-	self->addSR();
+void StimEditor::onContextMenuAdd()
+{
+	addSR();
 }
 
 } // namespace ui

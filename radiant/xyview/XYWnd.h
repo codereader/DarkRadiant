@@ -4,14 +4,10 @@
 #include "iclipper.h"
 #include "iscenegraph.h"
 
-#include "gdk/gdkevents.h"
-#include "gtk/gtkwidget.h"
-
 #include "math/Vector3.h"
 #include "math/matrix.h"
 #include "math/Vector4.h"
 #include "gtkutil/cursor.h"
-#include "gtkutil/window.h"
 #include "gtkutil/WindowPosition.h"
 #include "xmlutil/Node.h"
 #include "timer.h"
@@ -33,11 +29,8 @@ class XYWnd :
 	// Unique ID of this XYWnd
 	int _id;
 	
-	gtkutil::GLWidget _glWidget;
-	GtkWidget* m_gl_widget;
-	guint m_sizeHandler;
-	guint m_exposeHandler;
-
+	gtkutil::GLWidget* _glWidget;
+	
 	DeferredDraw m_deferredDraw;
 	DeferredMotion m_deferred_motion;
 
@@ -87,8 +80,8 @@ class XYWnd :
   	// Save the current button state
   	guint _eventState;
   	
-  	guint m_move_focusOut;
-	guint m_zoom_focusOut;
+	sigc::connection m_move_focusOut;
+	sigc::connection m_zoom_focusOut;
 	
 	bool _isActive;
 	
@@ -103,7 +96,7 @@ class XYWnd :
 	
 	int _dragZoom;
 	
-	GtkWindow* _parent;
+	Glib::RefPtr<Gtk::Window> _parent;
 
 	// The handle returned from the Map valid callback signal
 	std::size_t _validCallbackHandle;
@@ -116,10 +109,10 @@ public:
 	virtual ~XYWnd();
 	
 	void queueDraw();	
-	GtkWidget* getWidget();
+	Gtk::Widget* getWidget();
 	
-	void setParent(GtkWindow* parent);
-	GtkWindow* getParent() const;
+	void setParent(const Glib::RefPtr<Gtk::Window>& parent);
+	const Glib::RefPtr<Gtk::Window>& getParent() const;
 
 	// Capture and release the selected shader
 	static void captureStates();
@@ -222,17 +215,17 @@ private:
 	void onContextMenu();
 	void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
 
-	// GTK Callbacks, these have to be static
-	static gboolean	callbackButtonPress(GtkWidget* widget, GdkEventButton* event, XYWnd* self);
-	static gboolean	callbackButtonRelease(GtkWidget* widget, GdkEventButton* event, XYWnd* self);
+	// gtkmm Callbacks
+	bool callbackButtonPress(GdkEventButton* ev);
+	bool callbackButtonRelease(GdkEventButton* ev);
 	static void 	callbackMouseMotion(gdouble x, gdouble y, guint state, void* data);
-	static gboolean	callbackMouseWheelScroll(GtkWidget* widget, GdkEventScroll* event, XYWnd* self);
-	static gboolean	callbackSizeAllocate(GtkWidget* widget, GtkAllocation* allocation, XYWnd* self);	
-	static gboolean	callbackExpose(GtkWidget* widget, GdkEventExpose* event, XYWnd* self);
+	bool callbackMouseWheelScroll(GdkEventScroll* ev);
+	void callbackSizeAllocate(Gtk::Allocation& allocation);
+	bool callbackExpose(GdkEventExpose* ev);
 	static void 	callbackMoveDelta(int x, int y, unsigned int state, void* data);
-	static gboolean callbackMoveFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self);
+	bool callbackMoveFocusOut(GdkEventFocus* ev);
 	static gboolean	callbackChaseMouse(gpointer data);
-	static gboolean callbackZoomFocusOut(GtkWidget* widget, GdkEventFocus* event, XYWnd* self);
+	bool callbackZoomFocusOut(GdkEventFocus* ev);
 	static void		callbackZoomDelta(int x, int y, unsigned int state, void* data);
 
 }; // class XYWnd

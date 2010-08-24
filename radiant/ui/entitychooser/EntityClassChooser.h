@@ -5,31 +5,16 @@
 #include "ieclass.h"
 #include "imodelpreview.h"
 
-#include "math/Vector3.h"
+#include "gtkutil/window/BlockingTransientWindow.h"
 
-#include <gtk/gtkwidget.h>
+#include <gtkmm/treestore.h>
+#include <gtkmm/treeselection.h>
 
-typedef struct _GtkTreeStore GtkTreeStore;
-typedef struct _GtkTreeSelection GtkTreeSelection;
-
-namespace {
-
-    /* CONSTANTS */
-    
-    const char* FOLDER_ICON = "folder16.png";
-    const char* ENTITY_ICON = "cmenu_add_entity.png";
-    
-    // Registry XPath to lookup key that specifies the display folder
-    const char* FOLDER_KEY_PATH = "game/entityChooser/displayFolderKey";
-
-    // Tree column enum
-    enum {
-        NAME_COLUMN,
-        ICON_COLUMN,
-        DIR_FLAG_COLUMN,
-        N_COLUMNS
-    };
-
+namespace Gtk
+{
+	class TreeView;
+	class TextView;
+	class Button;
 }
 
 namespace ui
@@ -43,25 +28,38 @@ typedef boost::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
  * of a class to create at the current location. 
  */
 class EntityClassChooser :
+	public gtkutil::BlockingTransientWindow,
 	public RadiantEventListener,
 	public IEntityClassManager::Observer
 {
-	// Main dialog window
-	GtkWidget* _widget;
-	
+public:
+	// Treemodel definition
+	struct TreeColumns : 
+		public Gtk::TreeModel::ColumnRecord
+	{
+		TreeColumns() { add(name); add(icon); add(isFolder); }
+
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
+		Gtk::TreeModelColumn<bool> isFolder;
+	};
+
+private:
+	TreeColumns _columns;
+
 	// Tree model holding the classnames, and the corresponding treeview
-	GtkTreeStore* _treeStore;
-	GtkWidget* _treeView;
+	Glib::RefPtr<Gtk::TreeStore> _treeStore;
+	Gtk::TreeView* _treeView;
 	
 	// GtkTreeSelection holding the currently-selected classname
-	GtkTreeSelection* _selection;
+	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
 	// Usage information textview
-	GtkWidget* _usageTextView;
+	Gtk::TextView* _usageTextView;
 
 	// OK button. Needs to be a member since we enable/disable it in the
 	// selectionchanged callback.
-	GtkWidget* _okButton;
+	Gtk::Button* _okButton;
 	
 	// Last selected classname
 	std::string _selectedName;
@@ -73,9 +71,9 @@ private:
 
 	/* Widget construction helpers */
 	
-	GtkWidget* createTreeView();
-	GtkWidget* createUsagePanel();
-	GtkWidget* createButtonPanel();
+	Gtk::Widget& createTreeView();
+	Gtk::Widget& createUsagePanel();
+	Gtk::Widget& createButtonPanel();
 
 	// Update the usage panel with information from the provided entityclass
 	void updateUsageInfo(const std::string& eclass);
@@ -83,19 +81,13 @@ private:
 	// Updates the member variables based on the current tree selection
 	void updateSelection();
 
-	/* GTK callbacks */
-	
-	// Called when close button is clicked, ensure that window is hidden
-	// not destroyed.
-	static gboolean callbackHide(GtkWidget* widget, GdkEvent* ev, EntityClassChooser* self);
-
 	// Button callbacks
-	static void callbackCancel(GtkWidget*, EntityClassChooser*);
-	static void callbackOK(GtkWidget*, EntityClassChooser*);
+	void callbackCancel();
+	void callbackOK();
 
 	// Check when the selection changes, disable the add button if there
 	// is nothing selected.
-	static void callbackSelectionChanged(GtkWidget*, EntityClassChooser*);
+	void callbackSelectionChanged();
 
 	/// Constructor. Creates the GTK widgets.
 	EntityClassChooser();
@@ -106,9 +98,18 @@ private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityClassChooserPtr& InstancePtr();
 
+	static EntityClassChooser& Instance();
+
 	// Loads or reloads the entity class tree
 	void loadEntityClasses();
 	
+protected:
+	// Override TransientWindow::_onDeleteEvent
+	void _onDeleteEvent();
+
+	// Override BlockingTransientWindow::_postShow()
+	void _postShow();
+
 public:
 	
 	/** 

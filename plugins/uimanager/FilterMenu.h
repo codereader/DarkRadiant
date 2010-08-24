@@ -18,7 +18,7 @@ class FilterMenu :
 	public IFilterVisitor
 {
 private:
-	GtkWidget* _menu;
+	Gtk::Widget* _menu;
 
 	// Static counter to create unique menu bar widgets
 	static std::size_t _counter;
@@ -37,7 +37,7 @@ public:
 
 	// Returns a GtkWidget* with a fabricated filters submenu,
 	// ready for packing into a menu bar.
-	GtkWidget* getMenuBarWidget();
+	Gtk::Widget* getMenuBarWidget();
 
 	// IFilterVisitor implementation
 	void visit(const std::string& filterName);

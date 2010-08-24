@@ -1,46 +1,61 @@
 #include "ConsoleView.h"
 
-#include <gtk/gtk.h>
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/IConv.h"
 #include "i18n.h"
+
+#include <gtkmm/textmark.h>
+#include <gtkmm/menu.h>
+#include <gtkmm/menuitem.h>
 #include <boost/algorithm/string/replace.hpp>
 
 namespace gtkutil
 {
 
 ConsoleView::ConsoleView() :
-	_textView(gtk_text_view_new()),
-	_end(NULL)
+	Gtk::ScrolledWindow(),
+	_textView(Gtk::manage(new Gtk::TextView))
 {
 	// Remember the buffer of this textview
-	_buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(_textView));
+	_buffer = _textView->get_buffer();
 
-	gtk_widget_set_size_request(_textView, 0, -1); // allow shrinking
-	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(_textView), GTK_WRAP_WORD);
-	gtk_text_view_set_editable(GTK_TEXT_VIEW(_textView), FALSE);
+	_textView->set_size_request(0, -1); // allow shrinking
+	_textView->set_wrap_mode(Gtk::WRAP_WORD);
+	_textView->set_editable(false);
 
-	widget_connect_escape_clear_focus_widget(_textView);
+	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_textView->gobj())); // TODO
 
-	g_signal_connect(G_OBJECT(_textView), "populate-popup", G_CALLBACK(onPopulatePopup), this);
+	_textView->signal_populate_popup().connect(sigc::mem_fun(*this, &ConsoleView::onPopulatePopup));
+	
+	set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+	set_shadow_type(Gtk::SHADOW_ETCHED_IN);
+	add(*_textView);
 
-	_scrolledFrame = gtkutil::ScrolledFrame(_textView);
-	gtk_container_set_focus_chain(GTK_CONTAINER(_scrolledFrame), NULL);
+	unset_focus_chain();
 
 	// Initialise tags
-	const GdkColor yellow = { 0, 0xb0ff, 0xb0ff, 0x0000 };
-	const GdkColor red = { 0, 0xffff, 0x0000, 0x0000 };
-	const GdkColor black = { 0, 0x0000, 0x0000, 0x0000 };
+	Gdk::Color yellow; 
+	yellow.set_rgb(0xb0ff, 0xb0ff, 0x0000);
 
-	_errorTag = gtk_text_buffer_create_tag(_buffer, "red_foreground", "foreground-gdk", &red, 0);
-	_warningTag = gtk_text_buffer_create_tag(_buffer, "yellow_foreground", "foreground-gdk", &yellow, 0);
-	_standardTag = gtk_text_buffer_create_tag(_buffer, "black_foreground", "foreground-gdk", &black, 0);
+	Gdk::Color red;
+	red.set_rgb(0xffff, 0x0000, 0x0000);
+
+	Gdk::Color black;
+	black.set_rgb(0x0000, 0x0000, 0x0000);
+
+	_errorTag = _buffer->create_tag("red_foreground");
+	_warningTag = _buffer->create_tag("yellow_foreground");
+	_standardTag = _buffer->create_tag("black_foreground");
+
+	_errorTag->set_property("foreground-gdk", red);
+	_warningTag->set_property("foreground-gdk", yellow);
+	_standardTag->set_property("foreground-gdk", black);
 }
 
 void ConsoleView::appendText(const std::string& text, ETextMode mode)
 {
 	// Select a tag according to the log level
-	GtkTextTag* tag;
+	Glib::RefPtr<Gtk::TextBuffer::Tag> tag;
 
 	switch (mode) {
 		case STANDARD:
@@ -56,12 +71,10 @@ void ConsoleView::appendText(const std::string& text, ETextMode mode)
 			tag = _standardTag;
 	};
 
-	GtkTextIter iter;
-	gtk_text_buffer_get_end_iter(_buffer, &iter);
-
-	if (_end == NULL)
+	if (!_end)
 	{
-		_end = gtk_text_buffer_create_mark(_buffer, "end", &iter, FALSE);
+		_end = Gtk::TextMark::create("end", false);
+		_buffer->add_mark(_end, _buffer->end());
 	}
 	
 	// GTK expects UTF8 characters, so convert the incoming string
@@ -70,33 +83,32 @@ void ConsoleView::appendText(const std::string& text, ETextMode mode)
 	// Replace NULL characters, this is not caught by localeToUTF8
 	boost::algorithm::replace_all(converted, "\0", "NULL");
 
-	// Insert into the text buffer
-	gtk_text_buffer_insert_with_tags(_buffer, &iter, 
-		converted.c_str(), gint(converted.size()), tag, NULL);
-
-	gtk_text_buffer_move_mark(_buffer, _end, &iter);
-	gtk_text_view_scroll_mark_onscreen(GTK_TEXT_VIEW(_textView), _end);
+	// Insert at the end of the text buffer
+	_buffer->insert_with_tag(_buffer->end(), converted, tag);
+	
+	_buffer->move_mark(_end, _buffer->end());
+	_textView->scroll_mark_onscreen(_end);
 }
 
 void ConsoleView::clear()
 {
-	gtk_text_buffer_set_text(_buffer, "", -1);
+	_buffer->set_text("");
 }
 
-void ConsoleView::onClearConsole(GtkMenuItem* menuitem, ConsoleView* self)
+void ConsoleView::onClearConsole()
 {
-	self->clear();
+	clear();
 }
 
-void ConsoleView::onPopulatePopup(GtkTextView* textview, GtkMenu* menu, ConsoleView* self)
+void ConsoleView::onPopulatePopup(Gtk::Menu* menu)
 {
-	gtk_container_add(GTK_CONTAINER(menu), gtk_separator_menu_item_new());
+	menu->add(*Gtk::manage(new Gtk::SeparatorMenuItem));
+	
+	Gtk::MenuItem* item = Gtk::manage(new Gtk::MenuItem(_("Clear")));
+	item->signal_activate().connect(sigc::mem_fun(*this, &ConsoleView::onClearConsole));
 
-	GtkWidget* item = gtk_menu_item_new_with_label(_("Clear"));
-	g_signal_connect(G_OBJECT (item), "activate", G_CALLBACK(onClearConsole), self);
-
-	gtk_widget_show(item);
-	gtk_container_add(GTK_CONTAINER(menu), item);
+	item->show();
+	menu->add(*item);
 }
 
 } // namespace gtkutil

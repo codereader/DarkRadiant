@@ -4,6 +4,10 @@
 #if defined(_MSC_VER) || defined(_WINDOWS_)
    #include <time.h>
    #include <windows.h>
+
+	#undef min
+	#undef max
+
    #if !defined(_WINSOCK2API_) && !defined(_WINSOCKAPI_)
          struct timeval 
          {

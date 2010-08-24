@@ -4,16 +4,16 @@
 #include "ifiltermenu.h"
 #include "gtkutil/GLWidget.h"
 #include "math/matrix.h"
-#include <gtk/gtkwidget.h>
 #include "igl.h"
 #include "irender.h"
 #include "inode.h"
 
 #include "ui/menu/FiltersMenu.h"
 
-typedef struct _GdkEventExpose GdkEventExpose;
+#include <gtkmm/frame.h>
 
-namespace ui {
+namespace ui
+{
 
 // Forward decl.
 class MapPreviewFilterObserver;
@@ -28,13 +28,12 @@ typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
  *
  * Use the setRootNode() method to specify the subgraph to preview.
  */
-class MapPreview
+class MapPreview :
+	public Gtk::Frame
 {
-	// Top-level widget
-	GtkWidget* _widget;
-	
+private:	
 	// GL widget
-	gtkutil::GLWidget _glWidget;
+	gtkutil::GLWidget* _glWidget;
 	
 	// Current distance between camera and preview
 	GLfloat _camDist;
@@ -74,12 +73,6 @@ public:
 	 */
 	void initialisePreview();	 
 
-	/** Operator cast to GtkWidget*, for packing into the parent window.
-	 */
-	operator GtkWidget* () {
-		return _widget;
-	}
-
 	// Get/set the map root to render
 	void setRootNode(const scene::INodePtr& root);
 	scene::INodePtr getRootNode();
@@ -91,10 +84,10 @@ public:
 	void onFiltersChanged();
 
 private:
-	// GTK Callbacks
-	static void onExpose(GtkWidget*, GdkEventExpose*, MapPreview*);
-	static void onMouseMotion(GtkWidget*, GdkEventMotion*, MapPreview*);
-	static void onMouseScroll(GtkWidget*, GdkEventScroll*, MapPreview*);
+	// gtkmm Callbacks
+	bool onExpose(GdkEventExpose*);
+	bool onMouseMotion(GdkEventMotion*);
+	bool onMouseScroll(GdkEventScroll*);
 };
 
 } // namespace ui

@@ -50,8 +50,8 @@ public:
 	
 	// Empty standard implementation 
 	// (implement this in the derived classes to support the various GTKWidget types)
-	virtual void connectWidget(GtkWidget* widget) {}
-	virtual void disconnectWidget(GtkWidget* widget) {}
+	virtual void connectWidget(Gtk::Widget* widget) {}
+	virtual void disconnectWidget(Gtk::Widget* widget) {}
 
 }; // class Event
 

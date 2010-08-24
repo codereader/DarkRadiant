@@ -3,72 +3,89 @@
 
 #include "ClassEditor.h"
 
-namespace ui {
+namespace Gtk
+{
+	class VBox;
+	class HBox;
+	class CheckButton;
+	class SpinButton;
+	class Label;
+	class Menu;
+	class Entry;
+	class MenuItem;
+}
+
+namespace ui
+{
 
 class StimEditor :
 	public ClassEditor
 {
-	struct PropertyWidgets {
-		GtkWidget* vbox;
-		GtkWidget* active;
-		GtkWidget* useBounds;
-		GtkWidget* radiusToggle;
-		GtkWidget* radiusEntry;
-		GtkWidget* finalRadiusToggle;
-		GtkWidget* finalRadiusEntry;
-		GtkWidget* timeIntToggle;
-		GtkWidget* timeIntEntry;
-		GtkWidget* timeUnitLabel;
+	struct PropertyWidgets
+	{
+		Gtk::VBox* vbox;
+		Gtk::CheckButton* active;
+		Gtk::CheckButton* useBounds;
+		Gtk::CheckButton* radiusToggle;
+		Gtk::SpinButton* radiusEntry;
+		Gtk::CheckButton* finalRadiusToggle;
+		Gtk::SpinButton* finalRadiusEntry;
+		Gtk::CheckButton* timeIntToggle;
+		Gtk::SpinButton* timeIntEntry;
+		Gtk::Label* timeUnitLabel;
 		
-		struct TimerWidgets {
-			GtkWidget* toggle;
-			GtkWidget* entryHBox;
-			GtkWidget* hour;
-			GtkWidget* minute;
-			GtkWidget* second;
-			GtkWidget* millisecond;
+		struct TimerWidgets
+		{
+			Gtk::CheckButton* toggle;
+			Gtk::HBox* entryHBox;
+			Gtk::SpinButton* hour;
+			Gtk::SpinButton* minute;
+			Gtk::SpinButton* second;
+			Gtk::SpinButton* millisecond;
 			
-			GtkWidget* typeToggle;
+			Gtk::CheckButton* typeToggle;
 			
-			GtkWidget* reloadHBox;
-			GtkWidget* reloadToggle;
-			GtkWidget* reloadEntry;
-			GtkWidget* reloadLabel;
+			Gtk::HBox* reloadHBox;
+			Gtk::CheckButton* reloadToggle;
+			Gtk::SpinButton* reloadEntry;
+			Gtk::Label* reloadLabel;
 			
-			GtkWidget* waitToggle;
+			Gtk::CheckButton* waitToggle;
 		} timer;
 		
-		GtkWidget* durationToggle;
-		GtkWidget* durationEntry;
-		GtkWidget* durationUnitLabel;
-		GtkWidget* maxFireCountToggle;
-		GtkWidget* maxFireCountEntry;
-		GtkWidget* magnToggle;
-		GtkWidget* magnEntry;
-		GtkWidget* falloffToggle;
-		GtkWidget* falloffEntry;
-		GtkWidget* chanceToggle;
-		GtkWidget* chanceEntry;
-		GtkWidget* velocityToggle;
-		GtkWidget* velocityEntry;
+		Gtk::CheckButton* durationToggle;
+		Gtk::SpinButton* durationEntry;
+		Gtk::Label* durationUnitLabel;
+		Gtk::CheckButton* maxFireCountToggle;
+		Gtk::SpinButton* maxFireCountEntry;
+		Gtk::CheckButton* magnToggle;
+		Gtk::SpinButton* magnEntry;
+		Gtk::CheckButton* falloffToggle;
+		Gtk::SpinButton* falloffEntry;
+		Gtk::CheckButton* chanceToggle;
+		Gtk::SpinButton* chanceEntry;
+		Gtk::CheckButton* velocityToggle;
+		Gtk::Entry* velocityEntry;
 		
-		struct BoundsWidgets {
-			GtkWidget* toggle;
-			GtkWidget* hbox;
-			GtkWidget* minLabel;
-			GtkWidget* minEntry;
-			GtkWidget* maxLabel;
-			GtkWidget* maxEntry;
+		struct BoundsWidgets
+		{
+			Gtk::CheckButton* toggle;
+			Gtk::HBox* hbox;
+			Gtk::Label* minLabel;
+			Gtk::Entry* minEntry;
+			Gtk::Label* maxLabel;
+			Gtk::Entry* maxEntry;
 		} bounds;
 	} _propertyWidgets;
 	
-	struct ListContextMenu {
-		GtkWidget* menu;
-		GtkWidget* remove;
-		GtkWidget* add;
-		GtkWidget* enable;
-		GtkWidget* disable;
-		GtkWidget* duplicate;
+	struct ListContextMenu
+	{
+		boost::shared_ptr<Gtk::Menu> menu;
+		Gtk::MenuItem* remove;
+		Gtk::MenuItem* add;
+		Gtk::MenuItem* enable;
+		Gtk::MenuItem* disable;
+		Gtk::MenuItem* duplicate;
 	} _contextMenu;
 
 public:
@@ -78,7 +95,7 @@ public:
 
 	/** greebo: Sets the new entity (is called by the StimResponseEditor class)
 	 */
-	virtual void setEntity(SREntityPtr entity);
+	virtual void setEntity(const SREntityPtr& entity);
 
 	/** greebo: Updates the widgets (e.g. after a selection change) 
 	 */
@@ -96,12 +113,12 @@ private:
 	/** greebo: Gets called when a spinbutton changes, overrides the 
 	 * 			method from the base class.
 	 */
-	void spinButtonChanged(GtkSpinButton* spinButton);
+	void spinButtonChanged(Gtk::SpinButton* spinButton);
 
 	/** greebo: Updates the associated text fields when a check box
 	 * 			is toggled.
 	 */
-	void checkBoxToggled(GtkToggleButton* toggleButton);
+	void checkBoxToggled(Gtk::CheckButton* toggleButton);
 
 	/** greebo: As the name states, this creates the context menu widgets.
 	 */
@@ -109,21 +126,21 @@ private:
 
 	/** greebo: Widget creation helper methods
 	 */
-	GtkWidget* createPropertyWidgets();
+	Gtk::Widget& createPropertyWidgets();
 	
 	/** greebo: Gets called when the stim selection gets changed 
 	 */
 	virtual void selectionChanged();
 
-	void openContextMenu(GtkTreeView* view);
+	void openContextMenu(Gtk::TreeView* view);
 
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
 	
 	// Context menu GTK callbacks
-	static void onContextMenuAdd(GtkWidget* w, StimEditor* self);
-	static void onContextMenuDelete(GtkWidget* w, StimEditor* self);
+	void onContextMenuAdd();
+	void onContextMenuDelete();
 };
 
 } // namespace ui

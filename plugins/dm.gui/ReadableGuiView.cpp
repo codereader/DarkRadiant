@@ -19,7 +19,7 @@ void ReadableGuiView::setGLViewPort()
 		height = width / aspectRatio;
 	}
 
-	gtk_widget_set_size_request(_widget, static_cast<gint>(width), -1);
+	set_size_request(static_cast<int>(width), -1);
 
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 }

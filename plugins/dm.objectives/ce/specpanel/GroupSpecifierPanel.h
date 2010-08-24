@@ -1,14 +1,14 @@
 #ifndef GROUPSPECIFIERPANEL_H_
 #define GROUPSPECIFIERPANEL_H_
 
-#include "SpecifierPanel.h"
 #include "TextSpecifierPanel.h"
+#include <gtkmm/liststore.h>
 
-typedef struct _GtkListStore GtkListStore;
+namespace objectives
+{
 
-namespace objectives {
-
-namespace ce {
+namespace ce
+{
 
 /**
  * SpecifierPanel subclass for the SPEC_GROUP specifier type.
@@ -16,8 +16,9 @@ namespace ce {
  * for a few special cases like "loot_gold" etc.
  */
 class GroupSpecifierPanel : 
-	public SpecifierPanel
+	public TextSpecifierPanel
 {
+private:
 	// Map registration
 	static struct RegHelper {
 		RegHelper() { 
@@ -28,13 +29,16 @@ class GroupSpecifierPanel :
 		}
 	} _regHelper;
 
-private:
-	// Main widget
-	GtkWidget* _widget;
+	struct ListColumns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ListColumns() { add(name); }
 
-protected:
-    // gtkutil::EditorWidget implementation
-    virtual GtkWidget* _getWidget() const;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+	};
+
+	ListColumns _columns;
+	Glib::RefPtr<Gtk::ListStore> _listStore;
 
 public:
 	/**
@@ -42,23 +46,15 @@ public:
 	 */
 	GroupSpecifierPanel();
 
-	/**
-	 * Destroy this GroupSpecifierPanel including all widgets.
-	 */
-	~GroupSpecifierPanel();
-
 	// SpecifierPanel implementation
-	SpecifierPanelPtr clone() const {
+	SpecifierPanelPtr clone() const
+	{
 		return SpecifierPanelPtr(new GroupSpecifierPanel());
 	}
 
-	// gtkutil::EditorWidget implementation
-    void setValue(const std::string& value);
-    std::string getValue() const;
-
 private:
 	// Creates and fills the auto-completion liststore for this specifier panel
-	GtkListStore* createCompletionListStore();
+	void populateCompletionListStore();
 };
 
 } // namespace objectives
