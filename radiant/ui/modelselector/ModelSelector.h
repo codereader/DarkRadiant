@@ -66,9 +66,9 @@ public:
 			add(isFolder);
 		}
 
-		Gtk::TreeModelColumn<Glib::ustring> filename;		// e.g. "chair1.lwo"
-		Gtk::TreeModelColumn<Glib::ustring> vfspath;		// e.g. "models/darkmod/props/chair1.lwo"
-		Gtk::TreeModelColumn<Glib::ustring> skin;			// e.g. "chair1_brown_wood", or "" for no skin
+		Gtk::TreeModelColumn<std::string> filename;		// e.g. "chair1.lwo"
+		Gtk::TreeModelColumn<std::string> vfspath;		// e.g. "models/darkmod/props/chair1.lwo"
+		Gtk::TreeModelColumn<std::string> skin;			// e.g. "chair1_brown_wood", or "" for no skin
 		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon; // icon to display
 		Gtk::TreeModelColumn<bool> isFolder;				// whether this is a folder
 	};

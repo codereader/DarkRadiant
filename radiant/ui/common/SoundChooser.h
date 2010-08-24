@@ -35,8 +35,8 @@ public:
 			add(icon);
 		}
 
-		Gtk::TreeModelColumn<Glib::ustring> displayName;
-		Gtk::TreeModelColumn<Glib::ustring> shaderName;
+		Gtk::TreeModelColumn<std::string> displayName;
+		Gtk::TreeModelColumn<std::string> shaderName;
 		Gtk::TreeModelColumn<bool> isFolder;
 		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
 	};
