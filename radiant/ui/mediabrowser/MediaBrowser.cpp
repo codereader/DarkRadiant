@@ -472,7 +472,7 @@ int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk:
 
 			// Compare folder names
 			// greebo: We're not checking for equality here, shader names are unique
-			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName);
+			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName) ? -1 : 1;
 		}
 		else
 		{
@@ -492,7 +492,7 @@ int MediaBrowser::treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk:
 		{
 			// Neither A nor B are folders, compare names
 			// greebo: We're not checking for equality here, shader names are unique
-			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName);
+			return a->get_value(_columns.displayName) < b->get_value(_columns.displayName) ? -1 : 1;
 		}
 	}
 }

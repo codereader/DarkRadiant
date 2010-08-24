@@ -114,7 +114,16 @@ public:
 										  const Gtk::TreeModelColumn<Glib::ustring>& nameColumn,
 										  const Gtk::TreeModelColumn<bool>& isFolderColumn);
 
+	static void applyFoldersFirstSortFunc(const Glib::RefPtr<Gtk::TreeSortable>& model, 
+										  const Gtk::TreeModelColumn<std::string>& nameColumn,
+										  const Gtk::TreeModelColumn<bool>& isFolderColumn);
+
 private:
+	static int sortFuncFoldersFirstStd(const Gtk::TreeModel::iterator& a, 
+									const Gtk::TreeModel::iterator& b, 
+									const Gtk::TreeModelColumn<std::string>& nameColumn, // columns are bound 
+									const Gtk::TreeModelColumn<bool>& isFolderColumn);	 // by applyFoldersFirstSortFunc
+
 	static int sortFuncFoldersFirst(const Gtk::TreeModel::iterator& a, 
 									const Gtk::TreeModel::iterator& b, 
 									const Gtk::TreeModelColumn<Glib::ustring>& nameColumn, // columns are bound 

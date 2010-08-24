@@ -187,7 +187,7 @@ void SoundChooser::_onSelectionChange()
 
 		bool isFolder = row[_columns.isFolder];
 
-		_selectedShader = isFolder ? "" : Glib::ustring(row[_columns.shaderName]);
+		_selectedShader = isFolder ? "" : std::string(row[_columns.shaderName]);
 	}
 	else
 	{

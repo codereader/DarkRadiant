@@ -61,7 +61,7 @@ std::string ShaderSelector::getSelection()
 	if (iter)
 	{
 		Gtk::TreeModel::Row row = *iter;
-		return Glib::ustring(row[_shaderTreeColumns.shaderName]);
+		return row[_shaderTreeColumns.shaderName];
 	}
 	else
 	{
