@@ -10,7 +10,7 @@ if os.path.exists(pot_file):
 
 # xgettext needs to be in your path
 xgettext_cmd = "xgettext";
-xgettext_options = " --c++ --keyword=_ --keyword=N_ -o " + pot_file + " --package-name=DarkRadiant --msgid-bugs-address=greebo@angua.at ";
+xgettext_options = " --c++ --keyword=_ --keyword=N_ -o " + pot_file + " --msgid-bugs-address=greebo@angua.at ";
 
 def invokeXGettext(targetfile):
 	norm_filename = os.path.normpath(targetfile);
