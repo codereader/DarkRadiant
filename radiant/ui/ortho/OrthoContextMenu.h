@@ -99,6 +99,7 @@ private:
 	bool checkConvertStatic();
 	bool checkRevertToWorldspawn();
 	bool checkMergeEntities();
+	bool checkReparentPrimitives();
 	bool checkRevertToWorldspawnPartial();
 	bool checkAddPlayerStart();
 	bool checkMovePlayerStart();

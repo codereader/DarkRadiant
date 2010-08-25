@@ -70,6 +70,7 @@ namespace {
     const char* ADD_SPEAKER_ICON = "icon_sound.png";
     const char* CONVERT_TO_STATIC_TEXT = N_("Convert to func_static");
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
+	const char* REPARENT_PRIMITIVES_TEXT = N_("Reparent primitives");
     const char* REVERT_TO_WORLDSPAWN_TEXT = N_("Revert to worldspawn");
 	const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = N_("Revert part to worldspawn");
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
@@ -222,6 +223,11 @@ bool OrthoContextMenu::checkRevertToWorldspawn()
 bool OrthoContextMenu::checkMergeEntities()
 {
 	return _selectionInfo.onlyGroupsSelected && !_selectionInfo.singleGroupSelected;
+}
+
+bool OrthoContextMenu::checkReparentPrimitives()
+{
+	return selection::algorithm::curSelectionIsSuitableForReparent();
 }
 
 bool OrthoContextMenu::checkRevertToWorldspawnPartial()
@@ -522,6 +528,13 @@ void OrthoContextMenu::registerDefaultItems()
 			boost::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
 	);
 
+	gtkutil::CommandMenuItemPtr reparentPrimitives(
+		new gtkutil::CommandMenuItem(
+			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(REPARENT_PRIMITIVES_TEXT))),
+			"ParentSelection",
+			boost::bind(&OrthoContextMenu::checkReparentPrimitives, this))
+	);
+
 	gtkutil::CommandMenuItemPtr makeVisportal(
 		new gtkutil::CommandMenuItem(
 			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL))),
@@ -542,6 +555,7 @@ void OrthoContextMenu::registerDefaultItems()
 	addItem(revertWorldspawn, SECTION_ACTION);
 	addItem(revertToWorldspawnPartial, SECTION_ACTION);
 	addItem(mergeEntities, SECTION_ACTION);
+	addItem(reparentPrimitives, SECTION_ACTION);
 	addItem(makeVisportal, SECTION_ACTION);
 	addItem(surroundWithMonsterClip, SECTION_ACTION);
 }
