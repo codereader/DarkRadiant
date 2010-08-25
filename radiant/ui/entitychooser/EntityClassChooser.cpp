@@ -29,7 +29,16 @@ namespace ui
 // Display the singleton instance
 std::string EntityClassChooser::chooseEntityClass()
 {
-	return Instance().showAndBlock();
+	Instance().show();
+
+	if (Instance().getResult() == RESULT_OK)
+	{
+		return Instance().getSelectedEntityClass();
+	}
+	else
+	{
+		return ""; // Empty selection on cancel
+	}
 }
 
 EntityClassChooser& EntityClassChooser::Instance()
@@ -44,7 +53,6 @@ EntityClassChooser& EntityClassChooser::Instance()
 		// Register this instance with GlobalRadiant() at once
 		GlobalRadiant().addEventListener(instancePtr);
 	}
-
 
 	return *instancePtr;
 }
@@ -73,18 +81,6 @@ void EntityClassChooser::onEClassReload()
 	loadEntityClasses();
 }
 
-std::string EntityClassChooser::showAndBlock()
-{
-	// Show and enter main recursion
-	show(); 
-
-	// Release the models after showing
-	_modelPreview->clear();
-	
-	// Return the last selection (may be "" if dialog was cancelled)
-	return _selectedName;
-}
-
 // Constructor. Creates GTK widgets.
 
 EntityClassChooser::EntityClassChooser()
@@ -94,7 +90,8 @@ EntityClassChooser::EntityClassChooser()
   _selection(NULL),
   _okButton(NULL),
   _selectedName(""),
-  _modelPreview(GlobalUIManager().createModelPreview())
+  _modelPreview(GlobalUIManager().createModelPreview()),
+  _result(RESULT_CANCELLED)
 {
 	set_border_width(12);
 
@@ -128,8 +125,33 @@ EntityClassChooser::EntityClassChooser()
 	loadEntityClasses();
 }
 
+EntityClassChooser::Result EntityClassChooser::getResult()
+{
+	return _result;
+}
+
+void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
+{
+	gtkutil::TreeModel::findAndSelectString(_treeView, eclass, _columns.name);
+}
+
+const std::string& EntityClassChooser::getSelectedEntityClass() const
+{
+	return _selectedName;
+}
+
+void EntityClassChooser::_postHide()
+{
+	BlockingTransientWindow::_postHide();
+
+	// Release the models when the dialog is hidden again
+	_modelPreview->clear();
+}
+
 void EntityClassChooser::_onDeleteEvent()
 {
+	_result = RESULT_CANCELLED;
+
 	// greebo: Clear the selected name on hide, we don't want to create another entity when 
 	// the user clicks on the X in the upper right corner.
 	_selectedName.clear();
@@ -267,7 +289,7 @@ void EntityClassChooser::updateSelection()
 			_okButton->set_sensitive(true);
 
 			// Set the panel text with the usage information
-			std::string selName = Glib::ustring(row[_columns.name]);
+			std::string selName = row[_columns.name];
 			updateUsageInfo(selName);
 
 			// Lookup the IEntityClass instance
@@ -295,6 +317,7 @@ void EntityClassChooser::updateSelection()
 
 void EntityClassChooser::callbackCancel() 
 {
+	_result = RESULT_CANCELLED;
 	_selectedName.clear();
 	
 	hide(); // breaks main loop
@@ -302,6 +325,8 @@ void EntityClassChooser::callbackCancel()
 
 void EntityClassChooser::callbackOK() 
 {
+	_result = RESULT_OK;
+
 	hide(); // breaks main loop
 }
 
