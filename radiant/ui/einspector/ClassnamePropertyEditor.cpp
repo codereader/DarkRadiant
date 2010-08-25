@@ -51,11 +51,20 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(Entity* entity,
 
 void ClassnamePropertyEditor::_onBrowseButton()
 {
-	// Use the EntityClassChooser dialog to get a selection from the user
-	std::string selection = EntityClassChooser::chooseEntityClass();
+	std::string currentEclass = _entity->getKeyValue(_key);
 
-	// Only apply non-empty selections if the classname has actually changed
-	if (!selection.empty() && selection != _entity->getKeyValue(_key))
+	// Use the EntityClassChooser dialog to get a selection from the user
+	EntityClassChooser& chooser = EntityClassChooser::Instance();
+
+	chooser.setSelectedEntityClass(currentEclass);
+
+	chooser.show(); // enter main loop
+
+	// Check the result and the selected eclass
+	const std::string& selection = chooser.getSelectedEntityClass();
+
+	// Only apply if the classname has actually changed
+	if (chooser.getResult() == EntityClassChooser::RESULT_OK && selection != currentEclass)
 	{
 		UndoableCommand cmd("changeEntityClass");
 

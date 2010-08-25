@@ -39,9 +39,15 @@ public:
 	{
 		TreeColumns() { add(name); add(icon); add(isFolder); }
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<std::string> name;
 		Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
 		Gtk::TreeModelColumn<bool> isFolder;
+	};
+
+	enum Result
+	{
+		RESULT_CANCELLED,
+		RESULT_OK
 	};
 
 private:
@@ -67,7 +73,11 @@ private:
 	// Model preview widget
 	IModelPreviewPtr _modelPreview;
 
+	Result _result;
+
 private:
+	// Constructor. Creates the GTK widgets.
+	EntityClassChooser();
 
 	/* Widget construction helpers */
 	
@@ -89,20 +99,12 @@ private:
 	// is nothing selected.
 	void callbackSelectionChanged();
 
-	/// Constructor. Creates the GTK widgets.
-	EntityClassChooser();
-	
-	// Show the dialog and choose an entity class.
-	std::string showAndBlock();
-
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityClassChooserPtr& InstancePtr();
 
-	static EntityClassChooser& Instance();
-
 	// Loads or reloads the entity class tree
 	void loadEntityClasses();
-	
+
 protected:
 	// Override TransientWindow::_onDeleteEvent
 	void _onDeleteEvent();
@@ -110,9 +112,24 @@ protected:
 	// Override BlockingTransientWindow::_postShow()
 	void _postShow();
 
+	// Override BlockingTransientWindow::_postHide()
+	void _postHide();
+
 public:
+	// Public accessor to the singleton instance
+	static EntityClassChooser& Instance();
+
+	// Returns the Result (OK, CANCELLED)
+	Result getResult();
+
+	// Sets the tree selection to the given entity class
+	void setSelectedEntityClass(const std::string& eclass);
+
+	// Sets the tree selection to the given entity class
+	const std::string& getSelectedEntityClass() const;
 	
 	/** 
+	 * Convenience function:
 	 * Display the dialog and block awaiting the selection of an entity class,
 	 * which is returned to the caller. If the dialog is cancelled or no
 	 * selection is made, and empty string will be returned.
