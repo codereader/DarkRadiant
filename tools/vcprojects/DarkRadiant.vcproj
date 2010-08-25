@@ -1261,7 +1261,19 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\selection\ClipManipulator.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\selection\Device.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\DragManipulator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\DragManipulator.h"
 					>
 				</File>
 				<File
@@ -1289,11 +1301,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\radiant\selection\Manipulators.cpp"
+					RelativePath="..\..\radiant\selection\Manipulator.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\radiant\selection\Manipulators.h"
+					RelativePath="..\..\radiant\selection\Manipulator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\ManipulatorComponent.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\Pivot2World.h"
 					>
 				</File>
 				<File
@@ -1326,6 +1346,22 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\selection\Renderables.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\RotateManipulator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\RotateManipulator.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\ScaleManipulator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\ScaleManipulator.h"
 					>
 				</File>
 				<File
@@ -1370,6 +1406,14 @@
 				</File>
 				<File
 					RelativePath="..\..\radiant\selection\TransformationVisitors.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\TranslateManipulator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\selection\TranslateManipulator.h"
 					>
 				</File>
 				<Filter
