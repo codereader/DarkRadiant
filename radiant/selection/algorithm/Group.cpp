@@ -209,25 +209,43 @@ scene::INodePtr GroupNodeChecker::getFirstSelectedGroupNode() const
 }
 
 // re-parents the selected brushes/patches
-void parentSelection(const cmd::ArgumentList& args) {
-	// Retrieve the selection information structure
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
-	if (info.totalCount > 1 && info.entityCount == 1) {
+void parentSelection(const cmd::ArgumentList& args)
+{
+	try
+	{
+		// Retrieve the selection information structure
+		const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+		if (info.totalCount <= 1 || info.entityCount != 1)
+		{
+			throw std::runtime_error("Current selection not suitable.");
+		}
+
+		Entity* entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+
+		if (entity == NULL)
+		{
+			throw std::runtime_error("Last selected node is not an entity.");
+		}
+
 		UndoableCommand undo("parentSelectedPrimitives");
 		
-		// Take the last selected item (this should be an entity)
+		// Take the last selected item (this is an entity)
 		ParentPrimitivesToEntityWalker visitor(
 			GlobalSelectionSystem().ultimateSelected()
 		);
+
 		GlobalSelectionSystem().foreachSelected(visitor);
 		visitor.reparent();
 	}
-	else {
+	catch (std::runtime_error& e)
+	{
 		gtkutil::errorDialog(_("Cannot reparent primitives to entity. "
 							 "Please select at least one brush/patch and exactly one entity."
 							 "(The entity has to be selected last.)"), 
 							 GlobalMainFrame().getTopLevelWindow());
+
+		globalErrorStream() << "Cannot reparent primitives: " << e.what() << std::endl;
 	}
 }
 
