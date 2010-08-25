@@ -869,7 +869,8 @@ void RadiantSelectionSystem::endMove() {
 	freezeTransforms();
 
 	// greebo: Deselect all faces if we are in brush and drag mode
-	if (Mode() == ePrimitive && ManipulatorMode() == eDrag)
+	if ((Mode() == ePrimitive || Mode() == eGroupPart) &&
+		ManipulatorMode() == eDrag)
 	{
 		SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
 		Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
