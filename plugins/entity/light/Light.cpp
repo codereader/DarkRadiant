@@ -349,6 +349,9 @@ void Light::rotationChanged()
 	_owner.localToParent().translateBy(worldOrigin());
 	_owner.localToParent().multiplyBy(m_rotation.getMatrix4());
 
+	// Notify owner about this
+	m_transformChanged();
+
 	GlobalSelectionSystem().pivotChanged();
 }
 
@@ -364,9 +367,10 @@ void Light::lightRotationChanged(const std::string& value) {
  */
 void Light::updateRenderableRadius() const 
 {
+#if 0
 	// Get the rotation matrix
 	Matrix4 rotation = m_rotation.getMatrix4();
-	
+
     // Calculate the corners of the light radius box and store them into
     // <_renderableRadius.m_points> For the first calculation an AABB with
     // origin 0,0,0 is needed, the vectors get added to the origin AFTER they
@@ -393,6 +397,13 @@ void Light::updateRenderableRadius() const
 	_renderableRadius.m_points[6] += _lightBox.origin;
 	matrix4_transform_point(rotation, _renderableRadius.m_points[7]);
 	_renderableRadius.m_points[7] += _lightBox.origin;
+#endif
+
+	// greebo: Don't rotate the light radius box, that's done via local2world
+	aabb_corners(
+        AABB(_lightBox.origin, m_doom3Radius.m_radiusTransformed),
+        _renderableRadius.m_points
+    );
 }
 
 /* greebo: Snaps the current light origin to the grid. 
