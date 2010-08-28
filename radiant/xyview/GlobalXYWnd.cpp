@@ -366,7 +366,8 @@ void XYWndManager::focusActiveView(const cmd::ArgumentList& args) {
 	positionActiveView(getFocusPosition());
 }
 
-XYWndPtr XYWndManager::getView(EViewType viewType) {
+XYWndPtr XYWndManager::getView(EViewType viewType)
+{
 	// Cycle through the list of views and get the one matching the type 
 	for (XYWndMap::iterator i = _xyWnds.begin(); 
 		 i != _xyWnds.end(); 
@@ -385,22 +386,29 @@ XYWndPtr XYWndManager::getView(EViewType viewType) {
 void XYWndManager::setActiveXY(int index) {
 
 	// Notify the currently active XYView that is has been deactivated
-	if (_activeXY != NULL) {
+	if (_activeXY != NULL)
+	{
 		_activeXY->setActive(false);
 	}
 	
 	// Find the ID in the map and update the active pointer
 	XYWndMap::const_iterator it = _xyWnds.find(index);
+
 	if (it != _xyWnds.end())
+	{
 		_activeXY = it->second;
+	}
 	else
+	{
 		throw std::logic_error(
 			"Cannot set XYWnd with ID " + intToStr(index) + " as active, "
 			+ " ID not found in map."
 		);
+	}
 	
 	// Notify the new active XYView about its activation
-	if (_activeXY != NULL) {
+	if (_activeXY != NULL)
+	{
 		_activeXY->setActive(true);
 	}
 }
@@ -410,37 +418,61 @@ void XYWndManager::setGlobalParentWindow(const Glib::RefPtr<Gtk::Window>& global
 	_globalParentWindow = globalParentWindow;
 }
 
-// Notification for a floating XYWnd destruction, so that it can be removed
-// from the map
-void XYWndManager::notifyXYWndDestroy(int index) {
-	XYWndMap::iterator found = _xyWnds.find(index);
+void XYWndManager::destroyXYWnd(int id)
+{
+	XYWndMap::iterator found = _xyWnds.find(id);
 
-	if (found != _xyWnds.end()) {
+	if (found != _xyWnds.end())
+	{
+		// Remove the shared_ptr from the map
 		_xyWnds.erase(found);
+	}
+
+	// Also check if the activeXY is holding a strong reference of the XYWnd
+	// which prevents destruction - release the shared_ptr
+	if (_activeXY != NULL && _activeXY->getId() == id)
+	{
+		_activeXY.reset();
+
+		// Set the activeXY to the next possible XYWnd
+		if (!_xyWnds.empty())
+		{
+			_activeXY = _xyWnds.begin()->second;
+			_activeXY->setActive(true);
+		}
 	}
 }
 
-// Create a unique ID for the window map
-int XYWndManager::getUniqueID() const {
-	for (int i = 0; i < INT_MAX; ++i) {
+int XYWndManager::getUniqueID() const
+{
+	for (int i = 0; i < INT_MAX; ++i)
+	{
 		if (_xyWnds.count(i) == 0)
 			return i;
 	}
+
 	throw std::runtime_error(
 		"Cannot create unique ID for ortho view: no more IDs."
 	);
 }
 
 // Create a standard (non-floating) ortho view
-XYWndPtr XYWndManager::createEmbeddedOrthoView() {
-
+XYWndPtr XYWndManager::createEmbeddedOrthoView()
+{
 	// Allocate a new window and add it to the map
 	int id = getUniqueID();
+
 	XYWndPtr newWnd = XYWndPtr(new XYWnd(id));
-	_xyWnds.insert(XYWndMap::value_type(id, newWnd));
+
+	std::pair<XYWndMap::iterator, bool> result = _xyWnds.insert(
+		XYWndMap::value_type(id, newWnd));
+
+	// Ensure that the insertion is successful
+	assert(result.second == true);
 	
 	// Tag the new view as active, if there is no active view yet
-	if (_activeXY == NULL) {
+	if (_activeXY == NULL)
+	{
 		_activeXY = newWnd;
 	}
 	
@@ -448,21 +480,28 @@ XYWndPtr XYWndManager::createEmbeddedOrthoView() {
 }
 
 // Create a new floating ortho view
-XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType) {
-	
+XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType)
+{
 	// Create a new XY view
 	int uniqueId = getUniqueID();
-	boost::shared_ptr<FloatingOrthoView> newWnd(
+
+	FloatingOrthoViewPtr newWnd(
 		new FloatingOrthoView(
 			uniqueId, 
 			XYWnd::getViewTypeTitle(viewType), 
 			_globalParentWindow
 		)
 	);
-	_xyWnds.insert(XYWndMap::value_type(uniqueId, newWnd));
+
+	std::pair<XYWndMap::iterator, bool> result = _xyWnds.insert(
+		XYWndMap::value_type(uniqueId, newWnd));
+
+	// Ensure that the insertion is successful
+	assert(result.second == true);
 	
 	// Tag the new view as active, if there is no active view yet
-	if (_activeXY == NULL) {
+	if (_activeXY == NULL)
+	{
 		_activeXY = newWnd;
 	}
 
@@ -474,7 +513,8 @@ XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType) {
 }
 
 // Shortcut method for connecting to a GlobalEventManager command
-void XYWndManager::createXYFloatingOrthoView(const cmd::ArgumentList& args) {
+void XYWndManager::createXYFloatingOrthoView(const cmd::ArgumentList& args)
+{
 	createFloatingOrthoView(XY);
 }
 
@@ -482,7 +522,8 @@ void XYWndManager::createXYFloatingOrthoView(const cmd::ArgumentList& args) {
  * If something is selected the center of the selection is taken as new origin, otherwise the camera
  * position is considered to be the new origin of the toggled orthoview.
 */
-Vector3 XYWndManager::getFocusPosition() {
+Vector3 XYWndManager::getFocusPosition()
+{
 	Vector3 position(0,0,0);
 	
 	if (GlobalSelectionSystem().countSelected() != 0) {
