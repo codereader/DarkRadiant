@@ -26,6 +26,7 @@ class XYWnd :
 	public CameraObserver,
 	public scene::Graph::Observer
 {
+protected:
 	// Unique ID of this XYWnd
 	int _id;
 	
@@ -107,6 +108,8 @@ public:
 	
 	// Destructor
 	virtual ~XYWnd();
+
+	int getId() const;
 	
 	void queueDraw();	
 	Gtk::Widget* getWidget();

@@ -56,7 +56,7 @@ namespace
 	const std::string RKEY_XYVIEW_ROOT = "user/ui/xyview";
 }
 
-// Constructors
+// Constructor
 XYWnd::XYWnd(int id) :
 	_id(id),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
@@ -131,9 +131,6 @@ XYWnd::XYWnd(int id) :
 // Destructor
 XYWnd::~XYWnd()
 {
-	// Destroy the widgets now, not all XYWnds are FloatingOrthoViews,
-	// which calls destroyXYView() in their _preDestroy event.
-	// Double-calls don't harm, so this is safe to do.
 	destroyXYView();
 
 	GlobalMap().removeValidCallback(_validCallbackHandle);
@@ -145,7 +142,13 @@ XYWnd::~XYWnd()
 	GlobalRegistry().setAttribute(recentPath, "scale", doubleToStr(m_fScale));
 }
 
-void XYWnd::destroyXYView() {
+int XYWnd::getId() const
+{
+	return _id;
+}
+
+void XYWnd::destroyXYView()
+{
 	// Remove <self> from the scene change callback list
 	GlobalSceneGraph().removeSceneObserver(this);
 	

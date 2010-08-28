@@ -138,14 +138,11 @@ public:
 	 */
 	void createXYFloatingOrthoView(const cmd::ArgumentList& args);
 	
-	/**
-	 * Invoked by the PersistentTransientWindow when a floating XY window is
-	 * destroyed, so that the XYWnd can be removed from the map.
-	 * 
-	 * @param index
-	 * The unique ID of the destroyed window.
+	/** 
+	 * greebo: This removes a certain orthoview ID, usually initiating 
+	 * destruction of the XYWnd/FloatingOrthoView object.
 	 */
-	void notifyXYWndDestroy(int index);
+	void destroyXYWnd(int id);
 	
 	// Determines the global parent the xyviews are children of
 	void setGlobalParentWindow(const Glib::RefPtr<Gtk::Window>& globalParentWindow);

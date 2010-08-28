@@ -16,28 +16,7 @@ class FloatingOrthoView
 : public gtkutil::PersistentTransientWindow,
   public XYWnd
 {
-private:
-	// The numeric ID of this window
-	int _id;
-	
-protected:
-	
-	// Pre-destroy callback, disconnect the XYview from all other systems
-	virtual void _preDestroy()
-	{
-		// Call destroyXYView before the actual window container is destroyed
-		XYWnd::destroyXYView();
-		PersistentTransientWindow::_preDestroy();
-	}
-
-	// Post-destroy callback. Inform the XYWndManager of our destruction
-	virtual void _postDestroy()
-	{
-		GlobalXYWnd().notifyXYWndDestroy(_id);
-	}
-	
 public:
-	
 	/**
 	 * Construct a floating XY window with the given numeric ID (assigned by
 	 * the XYWndManager).
@@ -54,9 +33,8 @@ public:
 	 */
 	FloatingOrthoView(int id, const std::string& title, const Glib::RefPtr<Gtk::Window>& parent)
 	: gtkutil::PersistentTransientWindow(title, parent, false),
-	  XYWnd(id),
-	  _id(id) 
-	{ 
+	  XYWnd(id)
+	{
 		// Get the GL widget from XYWnd parent, and embed it in a frame in the
 		// floating window
 		Gtk::Frame* framedWidget = Gtk::manage(new gtkutil::FramedWidget(*XYWnd::getWidget()));
@@ -81,13 +59,15 @@ public:
 		// Get the title string and write it to the window
 		set_title(getViewTypeTitle(viewType));
 	}
+
+protected:
 	
-	virtual ~FloatingOrthoView()
+	// Post-destroy callback, initiate destruction of this XYWnd
+	virtual void _postDestroy()
 	{
-		// greebo: Call the destroy method of the subclass, before
-		// this class gets destructed, otherwise the virtual overridden
-		// methods won't get called anymore.
-		destroy();
+		// Tell the XYWndManager to release the shared_ptr of this instance.
+		// Otherwise our destructor will never be called.
+		GlobalXYWnd().destroyXYWnd(_id);
 	}
 
 private:
@@ -99,5 +79,6 @@ private:
 		return false;
 	}
 };
+typedef boost::shared_ptr<FloatingOrthoView> FloatingOrthoViewPtr;
 
 #endif /*FLOATINGORTHOVIEW_H_*/
