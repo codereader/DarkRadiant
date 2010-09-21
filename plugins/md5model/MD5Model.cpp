@@ -96,12 +96,18 @@ void MD5Model::updateMaterialList() {
 		 i != _surfaces.end();
 		 ++i)
 	{
-		_surfaceNames.push_back((*i)->getShader());
+		_surfaceNames.push_back((*i)->getActiveMaterial());
 	}
 }
 
 const model::MaterialList& MD5Model::getActiveMaterials() const {
 	return _surfaceNames;
+}
+
+const model::IModelSurface& MD5Model::getSurface(int surfaceNum) const
+{
+	assert(surfaceNum >= 0 && surfaceNum < _surfaces.size());
+	return *_surfaces[surfaceNum];
 }
 
 void MD5Model::render(const RenderInfo& info) const {

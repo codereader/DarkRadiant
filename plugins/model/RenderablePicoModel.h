@@ -4,6 +4,7 @@
 #include "imodel.h"
 #include "picomodel.h"
 #include "math/aabb.h"
+#include "imodelsurface.h"
 
 #include <boost/shared_ptr.hpp>
 
@@ -98,6 +99,8 @@ public:
 	 */
 	 
 	int getPolyCount() const;
+
+	const IModelSurface& getSurface(int surfaceNum) const;
 	
 	/** 
 	 * Return the enclosing AABB for this model.

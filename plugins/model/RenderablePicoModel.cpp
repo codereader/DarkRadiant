@@ -6,6 +6,7 @@
 #include "texturelib.h"
 #include "ishaders.h"
 #include "ifilter.h"
+#include "imodelsurface.h"
 #include "math/frustum.h" // VolumeIntersectionValue
 
 namespace model {
@@ -97,21 +98,30 @@ int RenderablePicoModel::getVertexCount() const {
 		 i != _surfVec.end();
 		 ++i)
 	{
-		sum += (*i)->getVertexCount();
+		sum += (*i)->getNumVertices();
 	}
 	return sum;
 }
 
 // Return poly count of this model
-int RenderablePicoModel::getPolyCount() const {
+int RenderablePicoModel::getPolyCount() const
+{
 	int sum = 0;
+
 	for (SurfaceList::const_iterator i = _surfVec.begin();
 		 i != _surfVec.end();
 		 ++i)
 	{
-		sum += (*i)->getPolyCount();
+		sum += (*i)->getNumTriangles();
 	}
+
 	return sum;
+}
+
+const IModelSurface& RenderablePicoModel::getSurface(int surfaceNum) const
+{
+	assert(surfaceNum >= 0 && surfaceNum < _surfVec.size());
+	return *_surfVec[surfaceNum];
 }
 	
 // Apply the given skin to this model

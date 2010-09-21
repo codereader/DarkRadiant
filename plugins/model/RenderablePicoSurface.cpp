@@ -131,7 +131,7 @@ void RenderablePicoSurface::calculateTangents() {
 		ArbitraryMeshVertex& b = _vertices[*(i + 1)];
 		ArbitraryMeshVertex& c = _vertices[*(i + 2)];
 		
-		// Call the tangent calculation function from render.h
+		// Call the tangent calculation function
 		ArbitraryMeshTriangle_sumTangents(a, b, c);
 	}
 	
@@ -316,6 +316,45 @@ void RenderablePicoSurface::testSelect(Selector& selector,
 			selector.addIntersection(result);
 		}
 	}
+}
+
+int RenderablePicoSurface::getNumVertices() const
+{
+	return static_cast<int>(_vertices.size());
+}
+
+int RenderablePicoSurface::getNumTriangles() const
+{
+	return static_cast<int>(_indices.size() / 3); // 3 indices per triangle
+}
+
+const ArbitraryMeshVertex& RenderablePicoSurface::getVertex(int vertexIndex) const
+{
+	assert(vertexIndex >= 0 && vertexIndex < _vertices.size());
+	return _vertices[vertexIndex];
+}
+
+ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
+{
+	assert(polygonIndex >= 0 && polygonIndex*3 < _indices.size());
+
+	ModelPolygon poly;
+
+	poly.a = _vertices[_indices[polygonIndex*3]];
+	poly.b = _vertices[_indices[polygonIndex*3 + 1]];
+	poly.c = _vertices[_indices[polygonIndex*3 + 2]];
+
+	return poly;
+}
+
+const std::string& RenderablePicoSurface::getDefaultMaterial() const
+{
+	return _originalShaderName;
+}
+
+const std::string& RenderablePicoSurface::getActiveMaterial() const
+{
+	return _mappedShaderName;
 }
 
 } // namespace model

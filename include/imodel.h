@@ -31,77 +31,87 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 class AABB;
 class ModelSkin;
 
-namespace model {
+namespace model
+{
 
-	/** 
-	 * Interface for static models. This interface provides functions for 
-	 * obtaining information about a LWO or ASE model, such as its bounding box 
-	 * or poly count. The interface also inherits from OpenGLRenderable to allow 
-	 * model instances to be used for rendering.
+class IModelSurface; // see imodelsurface.h
+
+/** 
+ * Interface for static models. This interface provides functions for 
+ * obtaining information about a LWO or ASE model, such as its bounding box 
+ * or poly count. The interface also inherits from OpenGLRenderable to allow 
+ * model instances to be used for rendering.
+ */
+typedef std::vector<std::string> MaterialList;
+ 
+class IModel
+: public OpenGLRenderable,
+  public Bounded
+{
+public:
+	/**
+	 * greebo: The filename (without path) of this model.
 	 */
-	typedef std::vector<std::string> MaterialList;
-	 
-	class IModel
-	: public OpenGLRenderable,
-	  public Bounded
-	{
-	public:
-		/**
-		 * greebo: The filename (without path) of this model.
-		 */
-		virtual std::string getFilename() const = 0;
-
-		/**
-		 * greebo: Returns the VFS path which can be used to load
-		 *         this model from the modelcache.
-		 */
-		virtual std::string getModelPath() const = 0;
-
-		/** Apply the given skin to this model.
-		 * 
-		 * @param skin
-		 * The ModelSkin instance to apply to this model.
-		 */
-		virtual void applySkin(const ModelSkin& skin) = 0;
-
-		/** Return the number of material surfaces on this model. Each material
-		 * surface consists of a set of polygons sharing the same material.
-		 */
-		virtual int getSurfaceCount() const = 0;
-		
-		/** Return the number of vertices in this model, equal to the sum of the
-		 * vertex count from each surface.
-		 */
-		virtual int getVertexCount() const = 0;
-
-		/** Return the number of triangles in this model, equal to the sum of the
-		 * triangle count from each surface.
-		 */
-		virtual int getPolyCount() const = 0;
-		
-		/** Return a vector of strings listing the active materials used in this
-		 * model, after any skin remaps. The list is owned by the model instance.
-		 */
-		virtual const MaterialList& getActiveMaterials() const = 0;
-		
-	};
-	
-	// Smart pointer typedefs
-	typedef boost::shared_ptr<IModel> IModelPtr;
-	typedef boost::weak_ptr<IModel> IModelWeakPtr;
+	virtual std::string getFilename() const = 0;
 
 	/**
-	 * greebo: Each node in the scene that represents "just" a model,
-	 *         derives from this class. Use a cast on this class to
-	 *         identify model nodes in the scene.
+	 * greebo: Returns the VFS path which can be used to load
+	 *         this model from the modelcache.
 	 */
-	class ModelNode {
-	public:
-	    virtual ~ModelNode() {}
-		// Returns the contained IModel
-		virtual const IModel& getIModel() const = 0;
-	};
-	typedef boost::shared_ptr<ModelNode> ModelNodePtr;
+	virtual std::string getModelPath() const = 0;
+
+	/** Apply the given skin to this model.
+	 * 
+	 * @param skin
+	 * The ModelSkin instance to apply to this model.
+	 */
+	virtual void applySkin(const ModelSkin& skin) = 0;
+
+	/** Return the number of material surfaces on this model. Each material
+	 * surface consists of a set of polygons sharing the same material.
+	 */
+	virtual int getSurfaceCount() const = 0;
+	
+	/** Return the number of vertices in this model, equal to the sum of the
+	 * vertex count from each surface.
+	 */
+	virtual int getVertexCount() const = 0;
+
+	/** Return the number of triangles in this model, equal to the sum of the
+	 * triangle count from each surface.
+	 */
+	virtual int getPolyCount() const = 0;
+	
+	/** Return a vector of strings listing the active materials used in this
+	 * model, after any skin remaps. The list is owned by the model instance.
+	 */
+	virtual const MaterialList& getActiveMaterials() const = 0;
+
+	/**
+	 * greebo: Retrieve the interface of a specific surface,
+	 * to get access to the surface's polygons and vertices.
+	 * 
+	 * @surfaceNum: the surface index, must be in [0..getSurfaceCount())
+	 */
+	virtual const IModelSurface& getSurface(int surfaceNum) const = 0;
+};
+
+// Smart pointer typedefs
+typedef boost::shared_ptr<IModel> IModelPtr;
+typedef boost::weak_ptr<IModel> IModelWeakPtr;
+
+/**
+ * greebo: Each node in the scene that represents "just" a model,
+ *         derives from this class. Use a cast on this class to
+ *         identify model nodes in the scene.
+ */
+class ModelNode {
+public:
+    virtual ~ModelNode() {}
+	// Returns the contained IModel
+	virtual const IModel& getIModel() const = 0;
+};
+typedef boost::shared_ptr<ModelNode> ModelNodePtr;
 
 } // namespace model
 
