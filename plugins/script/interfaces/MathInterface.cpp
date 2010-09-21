@@ -5,6 +5,7 @@
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
+#include "render/Vertex3f.h"
 
 namespace script {
 
@@ -37,6 +38,13 @@ void MathInterface::registerInterface(boost::python::object& nspace) {
 		.def(boost::python::self += boost::python::self)
 		.def(boost::python::self -= boost::python::self)
 		.def(boost::python::self < boost::python::self);	// __lt__
+	;
+
+	// Register Vertex3f, which extends Vector3
+	nspace["Vertex3f"] = boost::python::class_<Vertex3f, 
+		boost::python::bases<Vector3> >("Vertex3f", boost::python::init<>() )
+		.def(boost::python::init<const Vector3&>())
+		.def(boost::python::init<double, double, double>())
 	;
 
 	// Add the Vector2 class
