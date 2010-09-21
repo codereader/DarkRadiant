@@ -5,10 +5,30 @@
 #include "iscript.h"
 
 #include "imodel.h"
-
 #include "SceneGraphInterface.h"
 
-namespace script {
+class ArbitraryMeshVertex;
+namespace model { struct ModelPolygon; }
+
+namespace script
+{
+
+// Wrapper around a IModelSurface reference
+class ScriptModelSurface
+{
+	const model::IModelSurface& _surface;
+public:
+	ScriptModelSurface(const model::IModelSurface& surface) :
+		_surface(surface)
+	{}
+
+	int getNumVertices() const;
+	int getNumTriangles() const;
+	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
+	model::ModelPolygon getPolygon(int polygonIndex) const;
+	std::string getDefaultMaterial() const;
+	std::string getActiveMaterial() const;
+};
 
 class ScriptModelNode :
 	public ScriptSceneNode
@@ -25,6 +45,7 @@ public:
 	int getVertexCount();
 	int getPolyCount();
 	model::MaterialList getActiveMaterials();
+	ScriptModelSurface getSurface(int surfaceNum); 
 
 	// Checks if the given SceneNode structure is a ModelNode
 	static bool isModel(const ScriptSceneNode& node);

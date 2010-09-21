@@ -1,9 +1,43 @@
 #include "ModelInterface.h"
 
+#include "imodelsurface.h"
 #include "modelskin.h"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-namespace script {
+namespace script
+{
+
+int ScriptModelSurface::getNumVertices() const
+{
+	return _surface.getNumVertices();
+}
+
+int ScriptModelSurface::getNumTriangles() const
+{
+	return _surface.getNumTriangles();
+}
+
+const ArbitraryMeshVertex& ScriptModelSurface::getVertex(int vertexIndex) const
+{
+	return _surface.getVertex(vertexIndex);
+}
+
+model::ModelPolygon ScriptModelSurface::getPolygon(int polygonIndex) const
+{
+	return _surface.getPolygon(polygonIndex);
+}
+
+std::string ScriptModelSurface::getDefaultMaterial() const
+{
+	return _surface.getDefaultMaterial();
+}
+
+std::string ScriptModelSurface::getActiveMaterial() const
+{
+	return _surface.getActiveMaterial();
+}
+
+// ----------- ScriptModelNode -----------
 
 // Constructor, checks if the passed node is actually an entity
 ScriptModelNode::ScriptModelNode(const scene::INodePtr& node) :
@@ -25,8 +59,6 @@ std::string ScriptModelNode::getModelPath()
 	
 	return modelNode->getIModel().getModelPath();
 }
-
-//void applySkin(const ModelSkin& skin);
 
 int ScriptModelNode::getSurfaceCount()
 {
@@ -50,6 +82,14 @@ int ScriptModelNode::getPolyCount()
 	if (modelNode == NULL) return -1;
 	
 	return modelNode->getIModel().getPolyCount();
+}
+
+ScriptModelSurface ScriptModelNode::getSurface(int surfaceNum)
+{
+	model::ModelNodePtr modelNode = Node_getModel(*this);
+	if (modelNode == NULL) throw std::runtime_error("Empty model node.");
+
+	return ScriptModelSurface(modelNode->getIModel().getSurface(surfaceNum));
 }
 
 model::MaterialList ScriptModelNode::getActiveMaterials()
@@ -103,6 +143,33 @@ ScriptModelNode ScriptModelNode::getModel(const ScriptSceneNode& node) {
 
 void ModelInterface::registerInterface(boost::python::object& nspace)
 {
+	nspace["ArbitraryMeshVertex"] = boost::python::class_<ArbitraryMeshVertex>("ArbitraryMeshVertex")
+		.def_readwrite("texcoord", &ArbitraryMeshVertex::texcoord)
+		.def_readwrite("normal", &ArbitraryMeshVertex::normal)
+		.def_readwrite("vertex", &ArbitraryMeshVertex::vertex)
+		.def_readwrite("tangent", &ArbitraryMeshVertex::tangent)
+		.def_readwrite("bitangent", &ArbitraryMeshVertex::bitangent)
+		.def_readwrite("colour", &ArbitraryMeshVertex::colour)
+	;
+
+	nspace["ModelPolygon"] = boost::python::class_<model::ModelPolygon>("ModelPolygon")
+		.def_readonly("a", &model::ModelPolygon::a)
+		.def_readonly("b", &model::ModelPolygon::b)
+		.def_readonly("c", &model::ModelPolygon::c)
+	;
+
+	// Add the ModelSurface interface
+	nspace["ModelSurface"] = boost::python::class_<ScriptModelSurface>( 
+		"ModelSurface", boost::python::init<const model::IModelSurface&>() )
+		.def("getNumVertices", &ScriptModelSurface::getNumVertices)
+		.def("getNumTriangles", &ScriptModelSurface::getNumTriangles)
+		.def("getVertex", &ScriptModelSurface::getVertex,
+			boost::python::return_value_policy<boost::python::copy_const_reference>())
+		.def("getPolygon", &ScriptModelSurface::getPolygon)
+		.def("getDefaultMaterial", &ScriptModelSurface::getDefaultMaterial)
+		.def("getActiveMaterial", &ScriptModelSurface::getActiveMaterial)
+	;
+
 	// Add the ModelNode interface
 	nspace["ModelNode"] = boost::python::class_<ScriptModelNode, 
 		boost::python::bases<ScriptSceneNode> >("ModelNode", boost::python::init<const scene::INodePtr&>() )
@@ -112,6 +179,7 @@ void ModelInterface::registerInterface(boost::python::object& nspace)
 		.def("getVertexCount", &ScriptModelNode::getVertexCount)
 		.def("getPolyCount", &ScriptModelNode::getPolyCount)
 		.def("getActiveMaterials", &ScriptModelNode::getActiveMaterials)
+		.def("getSurface", &ScriptModelNode::getSurface)
 	;
 
 	// Add the "isModel" and "getModel" methods to all ScriptSceneNodes

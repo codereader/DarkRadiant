@@ -177,6 +177,22 @@ class ModelFinder(SceneNodeVisitor) :
 			print('Active Materials:')
 			for material in materials:
 				print(material)
+			
+			for i in range(0, model.getSurfaceCount()):
+				surface = model.getSurface(i)
+				print('Surface: ' + str(i))
+				print('  Default Shader: ' + surface.getDefaultMaterial())
+				print('  Active Shader: ' + surface.getActiveMaterial())
+				print('  PolyCount: ' + str(surface.getNumTriangles()))
+				print('  Vertex Count: ' + str(surface.getNumVertices()))
+				
+				s = Vector3(0,0,0)
+				numverts = surface.getNumVertices()
+				for v in range(0, numverts):
+					meshvertex = surface.getVertex(v)
+					s += meshvertex.vertex
+				
+				print('  Sum of all vertices: ' + str(s.x()) + ',' + str(s.y()) + ',' + str(s.z()))
 
 		return 1
 
