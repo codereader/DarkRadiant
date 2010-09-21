@@ -296,8 +296,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 				skinned += (rotatedPoint + joint.position) * weight.t;
 			}
 
-			surface.vertices().push_back(ArbitraryMeshVertex(Vertex3f(skinned),
-					Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v)));
+			surface.vertices().push_back(
+				ArbitraryMeshVertex(skinned, Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v))
+			);
 		}
 
 		for (MD5Tris::iterator j = tris.begin(); j != tris.end(); ++j) {

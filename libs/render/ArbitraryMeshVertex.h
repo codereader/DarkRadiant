@@ -25,19 +25,49 @@ struct ArbitraryMeshVertex {
 	: tangent(0, 0, 0), 
 	  bitangent(0, 0, 0),
 	  colour(1.0, 1.0, 1.0)
-	{ }
+	{}
 
 	/**
 	 * Initialising constructor.
 	 */
-	ArbitraryMeshVertex(Vertex3f v, Normal3f n, TexCoord2f t)
+	ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t)
     : texcoord(t), 
       normal(n), 
       vertex(v), 
       tangent(0, 0, 0), 
       bitangent(0, 0, 0),
       colour(1.0, 1.0, 1.0)
-    { }
+    {}
+
+	bool operator<(const ArbitraryMeshVertex& other)
+	{
+		if (texcoord != other.texcoord)
+		{
+			return texcoord < other.texcoord;
+		}
+
+		if (normal != other.normal)
+		{
+			return normal < other.normal;
+		}
+
+		if (vertex != other.vertex)
+		{
+			return vertex < other.vertex;
+		}
+
+		return false;
+	}
+
+	bool operator==(const ArbitraryMeshVertex& other)
+	{
+		return texcoord == other.texcoord && normal == other.normal && vertex == other.vertex;
+	}
+
+	bool operator!=(const ArbitraryMeshVertex& other)
+	{
+		return !operator==(other);
+	}
 };
 
 /**
@@ -51,27 +81,6 @@ inline std::ostream& operator<< (std::ostream& os, const ArbitraryMeshVertex& v)
 	   << " }";
 	
 	return os;
-}
-
-inline bool operator<(const ArbitraryMeshVertex& self, const ArbitraryMeshVertex& other) {
-	if(self.texcoord != other.texcoord) {
-		return self.texcoord < other.texcoord;
-	}
-	if(self.normal != other.normal) {
-		return self.normal < other.normal;
-	}
-	if(self.vertex != other.vertex) {
-		return self.vertex < other.vertex;
-	}
-	return false;
-}
-
-inline bool operator==(const ArbitraryMeshVertex& self, const ArbitraryMeshVertex& other) {
-	return self.texcoord == other.texcoord && self.normal == other.normal && self.vertex == other.vertex;
-}
-
-inline bool operator!=(const ArbitraryMeshVertex& self, const ArbitraryMeshVertex& other) {
-	return !operator==(self, other);
 }
 
 #endif /*ARBITRARYMESHVERTEX_H_*/
