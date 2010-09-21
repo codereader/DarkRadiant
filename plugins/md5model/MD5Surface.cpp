@@ -160,10 +160,6 @@ void MD5Surface::setShader(const std::string& name) {
 	captureShader();
 }
 
-std::string MD5Surface::getShader() const {
-	return _shaderName;
-}
-
 ShaderPtr MD5Surface::getState() const {
 	return _shader;
 }
@@ -196,6 +192,45 @@ void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWo
 
 void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld) const {
 	render(collector, localToWorld, _shader);
+}
+
+int MD5Surface::getNumVertices() const
+{
+	return static_cast<int>(_vertices.size());
+}
+
+int MD5Surface::getNumTriangles() const
+{
+	return static_cast<int>(_indices.size() / 3);
+}
+
+const ArbitraryMeshVertex& MD5Surface::getVertex(int vertexIndex) const
+{
+	assert(vertexIndex >= 0 && vertexIndex < _vertices.size());
+	return _vertices[vertexIndex];
+}
+
+model::ModelPolygon MD5Surface::getPolygon(int polygonIndex) const
+{
+	assert(polygonIndex >= 0 && polygonIndex*3 < _indices.size());
+
+	model::ModelPolygon poly;
+
+	poly.a = _vertices[_indices[polygonIndex*3]];
+	poly.b = _vertices[_indices[polygonIndex*3 + 1]];
+	poly.c = _vertices[_indices[polygonIndex*3 + 2]];
+
+	return poly;
+}
+
+const std::string& MD5Surface::getDefaultMaterial() const
+{
+	return _originalShaderName;
+}
+
+const std::string& MD5Surface::getActiveMaterial() const
+{
+	return _shaderName;
 }
 
 } // namespace md5

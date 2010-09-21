@@ -8,12 +8,14 @@
 #include "math/frustum.h"
 #include "iselectable.h"
 #include "modelskin.h"
+#include "imodelsurface.h"
 
 namespace md5
 {
 
 class MD5Surface : 
-public OpenGLRenderable
+	public model::IModelSurface,
+	public OpenGLRenderable
 {
 public:
 	typedef VertexBuffer<ArbitraryMeshVertex> vertices_t;
@@ -61,7 +63,6 @@ public:
 
 	// Set/get the shader name
 	void setShader(const std::string& name);
-	std::string getShader() const;
 	
 	/**
 	 * Get the Shader object.
@@ -88,6 +89,16 @@ public:
 	void testSelect(Selector& selector, 
 					SelectionTest& test, 
 					const Matrix4& localToWorld);
+
+	// IModelSurface implementation
+	int getNumVertices() const;
+	int getNumTriangles() const;
+
+	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
+	model::ModelPolygon getPolygon(int polygonIndex) const;
+
+	const std::string& getDefaultMaterial() const;
+	const std::string& getActiveMaterial() const;
 };
 typedef boost::shared_ptr<MD5Surface> MD5SurfacePtr;
 

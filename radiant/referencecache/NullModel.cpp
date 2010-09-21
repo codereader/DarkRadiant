@@ -2,6 +2,7 @@
 
 #include "math/frustum.h"
 #include "irenderable.h"
+#include <stdexcept>
 
 namespace model {
 
@@ -76,6 +77,11 @@ int NullModel::getVertexCount() const {
 
 int NullModel::getPolyCount() const {
 	return 0;
+}
+
+const IModelSurface& NullModel::getSurface(int surfaceNum) const
+{
+	throw new std::runtime_error("NullModel::getSurface: invalid call, no surfaces.");
 }
 
 const MaterialList& NullModel::getActiveMaterials() const {

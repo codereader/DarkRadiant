@@ -7,16 +7,17 @@
 /**
  * Data structure representing a mesh vertex.
  */
-struct ArbitraryMeshVertex
+class ArbitraryMeshVertex
 {
-	TexCoord2f texcoord;
-	Normal3f normal;
-	Vertex3f vertex;
-	Normal3f tangent;
-	Normal3f bitangent;
+public:
+	TexCoord2f	texcoord;
+	Normal3f	normal;
+	Vertex3f	vertex;
+	Normal3f	tangent;
+	Normal3f	bitangent;
 	
 	// Vertex colour
-	Vector3 colour;
+	Vector3		colour;
 
 	/**
 	 * Default constructor.

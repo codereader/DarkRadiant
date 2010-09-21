@@ -7,6 +7,7 @@
 #include "math/aabb.h"
 
 #include "ishaders.h"
+#include "imodelsurface.h"
 
 /* FORWARD DECLS */
 class ModelSkin;
@@ -23,8 +24,9 @@ namespace model
  * object to create a renderable static mesh.
  */
 
-class RenderablePicoSurface
-: public OpenGLRenderable
+class RenderablePicoSurface :
+	public IModelSurface,
+	public OpenGLRenderable
 {
 	// Name of the material this surface is using, both originally and after a 
 	// skin remap.
@@ -70,7 +72,6 @@ private:
 	void createDisplayLists();
 
 public:
-
 	/** 
 	 * Constructor. Accepts a picoSurface_t struct and the file extension to determine
 	 * how to assign materials.
@@ -98,30 +99,12 @@ public:
 	 */
 	void render(const RenderInfo& info) const;
 	
-	/** Return the vertex count for this surface
-	 */
-	int getVertexCount() const {
-		return static_cast<int>(_vertices.size());
-	}
-	
-	/** Return the poly count for this surface
-	 */
-	int getPolyCount() const {
-		return static_cast<int>(_indices.size() / 3); // 3 indices per triangle
-	}
-	
 	/** Get the Shader for this surface.
 	 */
-	ShaderPtr getShader() const {
+	const ShaderPtr& getShader() const {
 		return _shader;
 	}	 
 	
-	/** Get the active shader name for this surface, after any skin remaps.
-	 */
-	const std::string& getActiveMaterial() const {
-		return _mappedShaderName;
-	}
-
 	/** Get the containing AABB for this surface.
 	 */
 	const AABB& getAABB() const {
@@ -142,7 +125,17 @@ public:
 	 */
 	void testSelect(Selector& selector, 
 					SelectionTest& test,
-					const Matrix4& localToWorld) const; 
+					const Matrix4& localToWorld) const;
+
+	// IModelSurface implementation
+	int getNumVertices() const;
+	int getNumTriangles() const;
+
+	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
+	ModelPolygon getPolygon(int polygonIndex) const;
+
+	const std::string& getDefaultMaterial() const;
+	const std::string& getActiveMaterial() const;
 };
 
 }

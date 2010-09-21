@@ -40,6 +40,7 @@ public:
 	virtual int getSurfaceCount() const;
 	virtual int getVertexCount() const;
 	virtual int getPolyCount() const;
+	virtual const IModelSurface& getSurface(int surfaceNum) const;
 	
 	virtual const std::vector<std::string>& getActiveMaterials() const;
 

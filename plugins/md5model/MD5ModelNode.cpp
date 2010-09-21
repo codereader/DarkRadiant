@@ -128,9 +128,11 @@ void MD5ModelNode::constructRemaps() {
 	// Iterate over all surfaces and remaps
 	_surfaceRemaps.resize(_model->size());
 	MD5ModelNode::SurfaceRemaps::iterator j = _surfaceRemaps.begin();
-	for (MD5Model::const_iterator i = _model->begin(); i != _model->end(); ++i,++j) {
+
+	for (MD5Model::const_iterator i = _model->begin(); i != _model->end(); ++i,++j)
+	{
 		// Get the replacement shadername
-		std::string remap = skin.getRemap((*i)->getShader());
+		std::string remap = skin.getRemap((*i)->getDefaultMaterial());
 
 		if (!remap.empty()) {
 			// We have a valid remap, store it
