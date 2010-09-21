@@ -27,30 +27,32 @@ MD5Surface::~MD5Surface() {
 }
 
 // Update geometry
-void MD5Surface::updateGeometry() {
+void MD5Surface::updateGeometry()
+{
 	_aabb_local = AABB();
-	for (vertices_t::iterator i = _vertices.begin(); 
-		 i != _vertices.end(); 
-		 ++i)
-	  _aabb_local.includePoint(reinterpret_cast<const Vector3&>(i->vertex));
+
+	for (vertices_t::iterator i = _vertices.begin(); i != _vertices.end(); ++i)
+	{
+		_aabb_local.includePoint(i->vertex);
+	}
 	
 	for (MD5Surface::indices_t::iterator i = _indices.begin(); 
 		 i != _indices.end(); 
 		 i += 3)
 	{
-			ArbitraryMeshVertex& a = _vertices[*(i + 0)];
-			ArbitraryMeshVertex& b = _vertices[*(i + 1)];
-			ArbitraryMeshVertex& c = _vertices[*(i + 2)];
+		ArbitraryMeshVertex& a = _vertices[*(i + 0)];
+		ArbitraryMeshVertex& b = _vertices[*(i + 1)];
+		ArbitraryMeshVertex& c = _vertices[*(i + 2)];
 	
-	  ArbitraryMeshTriangle_sumTangents(a, b, c);
+		ArbitraryMeshTriangle_sumTangents(a, b, c);
 	}
 	
 	for (MD5Surface::vertices_t::iterator i = _vertices.begin(); 
 		 i != _vertices.end(); 
 		 ++i)
 	{
-	  vector3_normalise(reinterpret_cast<Vector3&>((*i).tangent));
-	  vector3_normalise(reinterpret_cast<Vector3&>((*i).bitangent));
+		i->tangent.normalise();
+		i->bitangent.normalise();
 	}
 	
 	// Build the display lists
