@@ -126,7 +126,7 @@ bool SoundManager::loadShadersFromFilesystem() const
 
         return true;
     }
-    catch (const gtkutil::ModalProgressDialog::OperationAbortedException& e)
+    catch (const gtkutil::ModalProgressDialog::OperationAbortedException&)
     {
         return false;
     }

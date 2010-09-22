@@ -35,6 +35,20 @@ class SoundFileLoader :
 	
 private:
 
+	std::string getShortened(const std::string& input, std::size_t maxLength)
+	{
+		if (input.length() > maxLength)
+		{
+			std::size_t diff = input.length() - maxLength + 3; // 3 chars for the ellipsis
+			std::size_t curLength = input.length();
+
+			return input.substr(0, (curLength - diff) / 2) + "..." + 
+				input.substr((curLength + diff) / 2);
+		}
+
+		return input;
+	}
+
     // Accept a stream of shaders to parse
     void parseShadersFromStream(std::istream& contents,
                                 const std::string& modName)
@@ -47,7 +61,7 @@ private:
             // Retrieve a named definition block from the parser
             parser::BlockTokeniser::Block block = tok.nextBlock();
 
-            _progressDlg.setText(block.name);
+            _progressDlg.setText(getShortened(block.name, 40));
 
             // Create a new shader with this name
             std::pair<SoundManager::ShaderMap::iterator, bool> result;
