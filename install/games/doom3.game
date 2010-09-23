@@ -137,7 +137,7 @@
 		<visportalShader value="textures/editor/visportal" />
 		<nodrawShader value="textures/common/nodraw" />
 		<collisionModelExt value="cm" />
-		<defaultCurveEntity value="func_static" />
+		<defaultCurveEntity value="func_splinemover" />
 		<curveNurbsKey value="curve_Nurbs" />
 		<curveCatmullRomKey value="curve_CatmullRomSpline" />
 		<bindKey value="bind" />
