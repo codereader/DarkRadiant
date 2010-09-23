@@ -48,7 +48,8 @@ public:
 	Vector3& getMovingClipCoords();
 	void setMovingClip(ClipPoint* clipPoint);
 	
-	const std::string getShader() const;
+	bool useCaulkForNewFaces() const;
+	const std::string& getCaulkShader() const;
 	
 	// greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
 	ClipPoint* find(const Vector3& point, EViewType viewtype, float scale);
@@ -60,7 +61,7 @@ public:
 	
 	void splitBrushes(const Vector3& p0, 
 					const Vector3& p1, const Vector3& p2, 
-					const std::string& shader, EBrushSplit split);
+					EBrushSplit split);
 	void setClipPlane(const Plane3& plane);
 	
 	void update();

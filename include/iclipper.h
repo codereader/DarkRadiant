@@ -59,6 +59,12 @@ public:
 	
 	// Inverts the clip plane "direction" to determine which part of the brush is kept after clipping 
 	virtual void flipClip() = 0;
+
+	// True when new faces should get caulked
+	virtual bool useCaulkForNewFaces() const = 0;
+
+	// Returns the name of the caulk shader to be used for clip-created planes
+	virtual const std::string& getCaulkShader() const = 0;
 	
 	// Return or set the view type of the xy view (needed for the projections).
 	virtual EViewType getViewType() const = 0;

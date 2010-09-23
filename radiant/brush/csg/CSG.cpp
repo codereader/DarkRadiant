@@ -508,7 +508,7 @@ void setBrushClipPlane(const Plane3& plane) {
 /**
  * greebo: Splits the selected brushes by the given plane.
  */
-void splitBrushesByPlane(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split) {
+void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split) {
 	TextureProjection projection;
 	projection.constructDefault();
 
@@ -518,7 +518,6 @@ void splitBrushesByPlane(const Vector3 planePoints[3], const std::string& shader
 			planePoints[0], 
 			planePoints[1], 
 			planePoints[2], 
-			shader, 
 			projection, 
 			split
 		);

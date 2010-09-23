@@ -17,9 +17,10 @@
 
 #include <boost/bind.hpp>
 
-namespace {
-	const std::string RKEY_CLIPPER_CAULK_SHADER = "user/ui/clipper/caulkTexture";
-	const std::string RKEY_CLIPPER_USE_CAULK = "user/ui/clipper/useCaulk";
+namespace
+{
+	const char* const RKEY_CLIPPER_CAULK_SHADER = "user/ui/clipper/caulkTexture";
+	const char* const RKEY_CLIPPER_USE_CAULK = "user/ui/clipper/useCaulk";
 }
 
 // Constructor
@@ -68,8 +69,14 @@ void Clipper::setMovingClip(ClipPoint* clipPoint) {
 	_movingClip = clipPoint;
 }
 
-const std::string Clipper::getShader() const {
-	return (_useCaulk) ? _caulkShader : GlobalTextureBrowser().getSelectedShader();
+bool Clipper::useCaulkForNewFaces() const
+{
+	return _useCaulk;
+}
+
+const std::string& Clipper::getCaulkShader() const
+{
+	return _caulkShader;
 }
 
 // greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
@@ -133,11 +140,11 @@ void Clipper::getPlanePoints(Vector3 planepts[3], const AABB& bounds) const {
 
 void Clipper::splitBrushes(const Vector3& p0, 
 	const Vector3& p1, const Vector3& p2, 
-	const std::string& shader, EBrushSplit split)
+	EBrushSplit split)
 {
 	Vector3 planePoints[3] = {p0, p1, p2};
 	
-	brush::algorithm::splitBrushesByPlane(planePoints, shader, split);
+	brush::algorithm::splitBrushesByPlane(planePoints, split);
 	GlobalMainFrame().updateAllWindows();
 }
 
@@ -182,7 +189,7 @@ void Clipper::clip() {
 		AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
 		getPlanePoints(planepts, bounds);
 		
-		splitBrushes(planepts[0], planepts[1], planepts[2], getShader().c_str(), (!_switch) ? eFront : eBack);
+		splitBrushes(planepts[0], planepts[1], planepts[2], (!_switch) ? eFront : eBack);
 		
 		reset();
 		update();
@@ -195,7 +202,7 @@ void Clipper::splitClip() {
 		AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
 		getPlanePoints(planepts, bounds);
 		
-		splitBrushes(planepts[0], planepts[1], planepts[2], getShader().c_str(), eFrontAndBack);
+		splitBrushes(planepts[0], planepts[1], planepts[2], eFrontAndBack);
 		
 		reset();
 		update();

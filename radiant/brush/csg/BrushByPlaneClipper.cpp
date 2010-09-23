@@ -3,32 +3,34 @@
 #include "CSG.h"
 #include "scenelib.h"
 #include "brush/Brush.h"
+#include "ui/texturebrowser/TextureBrowser.h"
 
 namespace brush {
 namespace algorithm {
 
 BrushByPlaneClipper::BrushByPlaneClipper(
 	const Vector3& p0, const Vector3& p1, const Vector3& p2, 
-	const std::string& shader, 
 	const TextureProjection& projection, EBrushSplit split) : 
 		_p0(p0), 
 		_p1(p1), 
 		_p2(p2), 
-		_shader(shader), 
 		_projection(projection), 
-		_split(split)
+		_split(split),
+		_useCaulk(GlobalClipper().useCaulkForNewFaces()),
+		_caulkShader(GlobalClipper().getCaulkShader())
 {}
 
-BrushByPlaneClipper::~BrushByPlaneClipper() {
+BrushByPlaneClipper::~BrushByPlaneClipper()
+{
 	for (std::set<scene::INodePtr>::iterator i = _deleteList.begin(); 
-		 i != _deleteList.end(); i++)
+		 i != _deleteList.end(); ++i)
 	{
 		// Remove the node from the scene
 		scene::removeNodeFromParent(*i);
 	}
 
 	for (InsertMap::iterator i = _insertList.begin();
-		 i != _insertList.end(); i++)
+		 i != _insertList.end(); ++i)
 	{
 		// Insert the child into the designated parent
 		scene::addNodeToContainer(i->first, i->second);
@@ -38,7 +40,8 @@ BrushByPlaneClipper::~BrushByPlaneClipper() {
 	}
 }
 
-void BrushByPlaneClipper::visit(const scene::INodePtr& node) const {
+void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
+{
 	// Don't clip invisible nodes
 	if (!node->visible()) {
 		return;
@@ -102,14 +105,23 @@ void BrushByPlaneClipper::visit(const scene::INodePtr& node) const {
 	}
 }
 
-void BrushByPlaneClipper::getMostUsedTexturing(const Brush* brush) const {
+void BrushByPlaneClipper::getMostUsedTexturing(const Brush* brush) const
+{
+	// Intercept this call to apply caulk to all faces when the registry key is set
+	if (_useCaulk)
+	{
+		_mostUsedShader =  _caulkShader;
+		return;
+	}
+
 	std::map<std::string, int> shaderCount;
 	_mostUsedShader = "";
 	int mostUsedShaderCount(0);
 	_mostUsedProjection = TextureProjection();
 
 	// greebo: Get the most used shader of this brush
-	for (Brush::const_iterator i = brush->begin(); i != brush->end(); i++) {
+	for (Brush::const_iterator i = brush->begin(); i != brush->end(); ++i)
+	{
 		// Get the shadername
 		const std::string& shader = (*i)->getShader();
 
@@ -131,8 +143,9 @@ void BrushByPlaneClipper::getMostUsedTexturing(const Brush* brush) const {
 	}
 
 	// Fall back to the default shader, if nothing found
-	if (_mostUsedShader.empty() || mostUsedShaderCount == 1) {
-		_mostUsedShader = _shader;
+	if (_mostUsedShader.empty() || mostUsedShaderCount == 1)
+	{
+		_mostUsedShader = GlobalTextureBrowser().getSelectedShader();
 		_mostUsedProjection = _projection;
 	}
 }
