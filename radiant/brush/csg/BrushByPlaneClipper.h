@@ -15,12 +15,18 @@ namespace algorithm {
 class BrushByPlaneClipper : 
 	public SelectionSystem::Visitor
 {
+private:
 	const Vector3& _p0;
 	const Vector3& _p1;
 	const Vector3& _p2;
-	std::string _shader;
 	TextureProjection _projection;
 	EBrushSplit _split;
+
+	// Whether to use the _caulkShader texture for new brush faces
+	bool _useCaulk;
+	
+	// The shader name used for new faces when _useCaulk is true
+	std::string _caulkShader;
 
 	mutable std::string _mostUsedShader;
 	mutable TextureProjection _mostUsedProjection;
@@ -32,8 +38,7 @@ class BrushByPlaneClipper :
 
 public:
 	BrushByPlaneClipper(const Vector3& p0, const Vector3& p1, const Vector3& p2, 
-							  const std::string& shader, 
-							  const TextureProjection& projection, EBrushSplit split);
+						const TextureProjection& projection, EBrushSplit split);
 
 	// The destructor performs the node deletions and insertions
 	virtual ~BrushByPlaneClipper();

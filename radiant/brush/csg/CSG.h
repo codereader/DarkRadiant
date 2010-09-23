@@ -56,7 +56,7 @@ BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane);
 /**
  * greebo: Splits the selected brushes by the given plane.
  */
-void splitBrushesByPlane(const Vector3 planePoints[3], const std::string& shader, EBrushSplit split);
+void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split);
 
 } // namespace algorihtm
 } // namespace brush
