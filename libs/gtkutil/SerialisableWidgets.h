@@ -5,6 +5,7 @@
 #include <gtkmm/adjustment.h>
 #include <gtkmm/entry.h>
 #include <gtkmm/spinbutton.h>
+#include <gtkmm/checkbutton.h>
 #include <gtkmm/togglebutton.h>
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/range.h>
@@ -179,6 +180,40 @@ public:
 	std::string exportToString() const;
 };
 typedef boost::shared_ptr<SerialisableToggleButtonWrapper> SerialisableToggleButtonWrapperPtr;
+
+/**
+ * Gtk::CheckButton object which implements StringSerialisable.
+ */
+class SerialisableCheckButton :
+	public Gtk::CheckButton,
+	public StringSerialisable
+{
+public:
+	// Main constructors
+	SerialisableCheckButton();
+	SerialisableCheckButton(const std::string& label);
+
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableCheckButton> SerialisableCheckButtonPtr;
+
+// Wrapper class to make existing Gtk::CheckButton serialisable
+class SerialisableCheckButtonWrapper :
+	public StringSerialisable
+{
+private:
+	Gtk::CheckButton* _button;
+public:
+	// Main constructor, wrapping around an existing widget
+	SerialisableCheckButtonWrapper(Gtk::CheckButton* button);
+
+	/* StringSerialisable implementation */
+	void importFromString(const std::string& str);
+	std::string exportToString() const;
+};
+typedef boost::shared_ptr<SerialisableCheckButtonWrapper> SerialisableCheckButtonWrapperPtr;
 
 // Base class for serialisable combo boxes (text or index)
 class SerialisableComboBox : 

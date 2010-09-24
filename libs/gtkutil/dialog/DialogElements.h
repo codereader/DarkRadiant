@@ -147,24 +147,24 @@ public:
 
 class DialogCheckBox :
 	public DialogElement,
-	public SerialisableToggleButton
+	public SerialisableCheckButton
 {
 public:
 	DialogCheckBox(const std::string& label) :
 		DialogElement(""), // empty label, the description is included in the toggle button
-		SerialisableToggleButton(label)
+		SerialisableCheckButton(label)
 	{
-		DialogElement::setValueWidget(this); // this as SerialisableToggleButton
+		DialogElement::setValueWidget(this); // this as SerialisableCheckButton
 	}
 
 	virtual std::string exportToString() const 
 	{
-		return SerialisableToggleButton::exportToString();
+		return SerialisableCheckButton::exportToString();
 	}
 
 	virtual void importFromString(const std::string& str)
 	{
-		SerialisableToggleButton::importFromString(str);
+		SerialisableCheckButton::importFromString(str);
 	}
 };
 

@@ -171,6 +171,40 @@ std::string SerialisableToggleButtonWrapper::exportToString() const
 	return _button->get_active() ? "1" : "0";
 }
 
+// Check Button
+
+SerialisableCheckButton::SerialisableCheckButton() :
+	Gtk::CheckButton()
+{}
+
+SerialisableCheckButton::SerialisableCheckButton(const std::string& label) :
+	Gtk::CheckButton(label)
+{}
+
+void SerialisableCheckButton::importFromString(const std::string& str)
+{
+	set_active(str == "1");
+}
+
+std::string SerialisableCheckButton::exportToString() const
+{
+	return get_active() ? "1" : "0";
+}
+
+SerialisableCheckButtonWrapper::SerialisableCheckButtonWrapper(Gtk::CheckButton* button) :
+	_button(button)
+{}
+
+void SerialisableCheckButtonWrapper::importFromString(const std::string& str)
+{
+	_button->set_active(str == "1");
+}
+
+std::string SerialisableCheckButtonWrapper::exportToString() const
+{
+	return _button->get_active() ? "1" : "0";
+}
+
 // SerialisableComboBox_Index
 
 SerialisableComboBox_Index::SerialisableComboBox_Index() :
