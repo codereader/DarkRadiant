@@ -224,7 +224,8 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 	_oneSidedButton->add_events(Gdk::BUTTON_PRESS_MASK);
 	_oneSidedButton->signal_button_press_event().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onOneSided));
 	
-	_twoSidedButton = Gtk::manage(new Gtk::RadioButton(_oneSidedButton->get_group(), _("Two-sided")));
+    Gtk::RadioButtonGroup group = _oneSidedButton->get_group();
+	_twoSidedButton = Gtk::manage(new Gtk::RadioButton(group, "Two-sided"));
 	_twoSidedButton->add_events(Gdk::BUTTON_PRESS_MASK);
 	_twoSidedButton->signal_button_press_event().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTwoSided));
 	
@@ -889,7 +890,9 @@ void ReadableEditorDialog::updateGuiView(const Glib::RefPtr<Gtk::Window>& parent
 
 		if (gui == NULL)
 		{
-			std::string nameGui = guiPath.empty() ? _guiEntry->get_text() : guiPath;
+			std::string nameGui = guiPath.empty() 
+                                  ? _guiEntry->get_text().raw() 
+                                  : guiPath;
 
 			std::string msg = (boost::format(_("Failed to load gui definition %s.")) % nameGui).str();
 			msg += "\n\n";
