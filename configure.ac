@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [1.4.0])
+AC_INIT([darkradiant], [1.5.0])
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_MACRO_DIR([m4])
@@ -73,6 +73,7 @@ PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
 PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
                   [AC_MSG_FAILURE([GTKMM libraries not found])])
 PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
+PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 
 # GLEW
@@ -145,7 +146,7 @@ then
 fi
 
 # GTKSourceView 
-PKG_CHECK_MODULES([GTKSOURCEVIEW], [gtksourceview-2.0], [],
+PKG_CHECK_MODULES([GTKSOURCEVIEWMM], [gtksourceviewmm-2.0], [],
                   [script_module=''])
 
 # Dependent Boost headers

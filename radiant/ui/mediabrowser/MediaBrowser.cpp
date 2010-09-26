@@ -66,7 +66,7 @@ MediaBrowser::MediaBrowser()
 : _treeStore(Gtk::TreeStore::create(_columns)),
   _treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
   _selection(_treeView->get_selection()),
-  _popupMenu(gtkutil::PopupMenu(_treeView)),
+  _popupMenu(_treeView),
   _preview(Gtk::manage(new TexturePreviewCombo)),
   _isPopulated(false)
 {

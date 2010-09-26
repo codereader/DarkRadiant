@@ -110,7 +110,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-EntityPropertyEditor.$(OBJEXT) \
 	darkradiant-SkinPropertyEditor.$(OBJEXT) \
 	darkradiant-Vector3PropertyEditor.$(OBJEXT) \
-	darkradiant-ComboBoxPropertyEditor.$(OBJEXT) \
 	darkradiant-AddPropertyDialog.$(OBJEXT) \
 	darkradiant-FloatPropertyEditor.$(OBJEXT) \
 	darkradiant-BooleanPropertyEditor.$(OBJEXT) \
@@ -296,12 +295,14 @@ GLIB_LIBS = @GLIB_LIBS@
 GLU_LIBS = @GLU_LIBS@
 GL_LIBS = @GL_LIBS@
 GREP = @GREP@
+GTKGLEXTMM_CFLAGS = @GTKGLEXTMM_CFLAGS@
+GTKGLEXTMM_LIBS = @GTKGLEXTMM_LIBS@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
 GTKMM_CFLAGS = @GTKMM_CFLAGS@
 GTKMM_LIBS = @GTKMM_LIBS@
-GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
-GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
+GTKSOURCEVIEWMM_CFLAGS = @GTKSOURCEVIEWMM_CFLAGS@
+GTKSOURCEVIEWMM_LIBS = @GTKSOURCEVIEWMM_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
@@ -415,223 +416,222 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
               -I$(top_srcdir)/include \
               -I$(libsdir) \
-              $(GTKMM_CFLAGS) $(GTKGLEXT_CFLAGS) $(XML_CFLAGS)
+              $(GTKMM_CFLAGS) $(GTKGLEXTMM_CFLAGS) $(XML_CFLAGS) $(GTKSOURCEVIEWMM_CFLAGS)
 
 darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
 darkradiant_LDFLAGS = $(GTKMM_LIBS) \
-			             $(GTKGLEXT_LIBS) \
+                      $(GTKGLEXTMM_LIBS) \
                       $(XML_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
-					       $(REGEX_LIBS)
+                      $(REGEX_LIBS)
 
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
-					$(top_builddir)/libs/gtkutil/libgtkutil.la \
-					$(top_builddir)/libs/xmlutil/libxmlutil.la \
+                    $(top_builddir)/libs/gtkutil/libgtkutil.la \
+                    $(top_builddir)/libs/xmlutil/libxmlutil.la \
                     $(top_builddir)/libs/math/libmath.la
 
 darkradiant_SOURCES = main.cpp \
-					  RadiantModule.cpp \
-					  brushmanip.cpp \
-					  brush/Winding.cpp \
-					  brush/export/CollisionModel.cpp \
-					  brush/FaceTexDef.cpp \
-					  brush/BrushModule.cpp \
-					  brush/FixedWinding.cpp \
-					  brush/BrushNode.cpp \
-					  brush/FaceInstance.cpp \
-					  brush/Brush.cpp \
-					  brush/TextureProjection.cpp \
-					  brush/Face.cpp \
-					  brush/TexDef.cpp \
-					  brush/BrushPrimitTexDef.cpp \
-					  brush/FaceShader.cpp \
-					  brush/csg/BrushByPlaneClipper.cpp \
-					  brush/csg/CSG.cpp \
-					  brush/FacePlane.cpp \
-					  camera/Camera.cpp \
-					  camera/GlobalCamera.cpp \
-					  camera/CameraSettings.cpp \
-					  camera/CamWnd.cpp \
-					  camera/FloatingCamWnd.cpp \
-					  namespace/Namespace.cpp \
-					  namespace/NamespaceFactory.cpp \
-					  render/backend/glprogram/ARBBumpProgram.cpp \
-					  render/backend/glprogram/ARBDepthFillProgram.cpp \
-					  render/backend/glprogram/GLSLBumpProgram.cpp \
-					  render/backend/glprogram/GLSLDepthFillProgram.cpp \
-					  render/backend/OpenGLShader.cpp \
-					  render/backend/GLProgramFactory.cpp \
-					  render/backend/OpenGLShaderPass.cpp \
-					  render/OpenGLModule.cpp \
-					  render/OpenGLRenderSystem.cpp \
-					  render/debug/SpacePartitionRenderer.cpp \
-					  ui/entitychooser/EntityClassChooser.cpp \
-					  ui/entitychooser/EntityClassTreePopulator.cpp \
-					  ui/texturebrowser/TextureBrowser.cpp \
-					  ui/findshader/FindShader.cpp \
-					  ui/mapinfo/MapInfoDialog.cpp \
-					  ui/mapinfo/EntityInfoTab.cpp \
-					  ui/mapinfo/ShaderInfoTab.cpp \
-					  ui/mapinfo/ModelInfoTab.cpp \
-					  ui/mediabrowser/MediaBrowser.cpp \
-					  ui/particles/ParticlesChooser.cpp \
-					  ui/brush/QuerySidesDialog.cpp \
-					  ui/overlay/OverlayDialog.cpp \
-					  ui/overlay/Overlay.cpp \
-					  ui/splash/Splash.cpp \
-					  ui/mru/MRUMenuItem.cpp \
-					  ui/mru/MRU.cpp \
-					  ui/layers/LayerControl.cpp \
-					  ui/layers/LayerContextMenu.cpp \
-					  ui/layers/LayerControlDialog.cpp \
-					  ui/layers/LayerOrthoContextMenuItem.cpp \
-					  ui/ortho/OrthoContextMenu.cpp \
-					  ui/about/AboutDialog.cpp \
-					  ui/einspector/AnglePropertyEditor.cpp \
-					  ui/einspector/TexturePropertyEditor.cpp \
-					  ui/einspector/EntityInspector.cpp \
-					  ui/einspector/SkinChooser.cpp \
-					  ui/einspector/ColourPropertyEditor.cpp \
-					  ui/einspector/EntityPropertyEditor.cpp \
-					  ui/einspector/SkinPropertyEditor.cpp \
-					  ui/einspector/Vector3PropertyEditor.cpp \
-					  ui/einspector/ComboBoxPropertyEditor.cpp \
-					  ui/einspector/AddPropertyDialog.cpp \
-					  ui/einspector/FloatPropertyEditor.cpp \
-					  ui/einspector/BooleanPropertyEditor.cpp \
-					  ui/einspector/LightTextureChooser.cpp \
-					  ui/einspector/SoundPropertyEditor.cpp \
-					  ui/einspector/PropertyEditor.cpp \
-					  ui/einspector/PropertyEditorFactory.cpp \
-					  ui/einspector/ClassnamePropertyEditor.cpp \
-					  ui/einspector/ModelPropertyEditor.cpp \
-					  ui/common/SoundChooser.cpp \
-					  ui/common/TexturePreviewCombo.cpp \
-					  ui/common/ShaderSelector.cpp \
-					  ui/common/ShaderChooser.cpp \
-					  ui/common/ShaderDefinitionView.cpp \
-					  ui/common/SoundShaderPreview.cpp \
-					  ui/common/RenderableAABB.cpp \
-					  ui/common/CommandEntry.cpp \
-					  ui/common/EntityChooser.cpp \
-					  ui/common/MapPreview.cpp \
-					  ui/menu/FiltersMenu.cpp \
-					  ui/prefdialog/PrefPage.cpp \
-					  ui/prefdialog/PrefDialog.cpp \
-					  ui/transform/TransformDialog.cpp \
-					  ui/modelselector/ModelSelector.cpp \
-					  ui/surfaceinspector/SurfaceInspector.cpp \
-					  ui/patch/CapDialog.cpp \
-					  ui/patch/PatchThickenDialog.cpp \
-					  ui/patch/PatchInspector.cpp \
-					  ui/patch/PatchCreateDialog.cpp \
-					  ui/patch/BulgePatchDialog.cpp \
-					  ui/lightinspector/LightInspector.cpp \
-					  ui/commandlist/CommandList.cpp \
-					  ui/commandlist/ShortcutChooser.cpp \
-					  ui/filterdialog/FilterDialog.cpp \
-					  ui/filterdialog/FilterEditor.cpp \
-					  ui/mainframe/MainFrame.cpp \
-					  ui/mainframe/MainFrameLayoutManager.cpp \
-					  ui/mainframe/FloatingLayout.cpp \
-					  ui/mainframe/EmbeddedLayout.cpp \
-					  ui/mainframe/SplitPaneLayout.cpp \
-					  ui/mainframe/RegularLayout.cpp \
-					  ui/mainframe/ScreenUpdateBlocker.cpp \
-					  patchmanip.cpp \
-					  xyview/XYWnd.cpp \
-					  xyview/GlobalXYWnd.cpp \
-					  textool/TexToolItem.cpp \
-					  textool/item/BrushItem.cpp \
-					  textool/item/FaceItem.cpp \
-					  textool/item/FaceVertexItem.cpp \
-					  textool/item/PatchItem.cpp \
-					  textool/item/PatchVertexItem.cpp \
-					  textool/TexTool.cpp \
-					  layers/LayerCommandTarget.cpp \
-					  layers/LayerSystem.cpp \
-					  view.cpp \
-					  modulesystem/DynamicLibrary.cpp \
-					  modulesystem/ApplicationContextImpl.cpp \
-					  modulesystem/DynamicLibraryLoader.cpp \
-					  modulesystem/ModuleLoader.cpp \
-					  modulesystem/ModuleRegistry.cpp \
-					  select.cpp \
-					  selection/SelectedNodeList.cpp \
-					  selection/shaderclipboard/ShaderClipboard.cpp \
-					  selection/shaderclipboard/Texturable.cpp \
-					  selection/selectionset/SelectionSetManager.cpp \
-					  selection/selectionset/SelectionSetToolmenu.cpp \
-					  selection/selectionset/SelectionSet.cpp \
-					  selection/SelectionTest.cpp \
-					  selection/ManipulateObserver.cpp \
+                      RadiantModule.cpp \
+                      brushmanip.cpp \
+                      brush/Winding.cpp \
+                      brush/export/CollisionModel.cpp \
+                      brush/FaceTexDef.cpp \
+                      brush/BrushModule.cpp \
+                      brush/FixedWinding.cpp \
+                      brush/BrushNode.cpp \
+                      brush/FaceInstance.cpp \
+                      brush/Brush.cpp \
+                      brush/TextureProjection.cpp \
+                      brush/Face.cpp \
+                      brush/TexDef.cpp \
+                      brush/BrushPrimitTexDef.cpp \
+                      brush/FaceShader.cpp \
+                      brush/csg/BrushByPlaneClipper.cpp \
+                      brush/csg/CSG.cpp \
+                      brush/FacePlane.cpp \
+                      camera/Camera.cpp \
+                      camera/GlobalCamera.cpp \
+                      camera/CameraSettings.cpp \
+                      camera/CamWnd.cpp \
+                      camera/FloatingCamWnd.cpp \
+                      namespace/Namespace.cpp \
+                      namespace/NamespaceFactory.cpp \
+                      render/backend/glprogram/ARBBumpProgram.cpp \
+                      render/backend/glprogram/ARBDepthFillProgram.cpp \
+                      render/backend/glprogram/GLSLBumpProgram.cpp \
+                      render/backend/glprogram/GLSLDepthFillProgram.cpp \
+                      render/backend/OpenGLShader.cpp \
+                      render/backend/GLProgramFactory.cpp \
+                      render/backend/OpenGLShaderPass.cpp \
+                      render/OpenGLModule.cpp \
+                      render/OpenGLRenderSystem.cpp \
+                      render/debug/SpacePartitionRenderer.cpp \
+                      ui/entitychooser/EntityClassChooser.cpp \
+                      ui/entitychooser/EntityClassTreePopulator.cpp \
+                      ui/texturebrowser/TextureBrowser.cpp \
+                      ui/findshader/FindShader.cpp \
+                      ui/mapinfo/MapInfoDialog.cpp \
+                      ui/mapinfo/EntityInfoTab.cpp \
+                      ui/mapinfo/ShaderInfoTab.cpp \
+                      ui/mapinfo/ModelInfoTab.cpp \
+                      ui/mediabrowser/MediaBrowser.cpp \
+                      ui/particles/ParticlesChooser.cpp \
+                      ui/brush/QuerySidesDialog.cpp \
+                      ui/overlay/OverlayDialog.cpp \
+                      ui/overlay/Overlay.cpp \
+                      ui/splash/Splash.cpp \
+                      ui/mru/MRUMenuItem.cpp \
+                      ui/mru/MRU.cpp \
+                      ui/layers/LayerControl.cpp \
+                      ui/layers/LayerContextMenu.cpp \
+                      ui/layers/LayerControlDialog.cpp \
+                      ui/layers/LayerOrthoContextMenuItem.cpp \
+                      ui/ortho/OrthoContextMenu.cpp \
+                      ui/about/AboutDialog.cpp \
+                      ui/einspector/AnglePropertyEditor.cpp \
+                      ui/einspector/TexturePropertyEditor.cpp \
+                      ui/einspector/EntityInspector.cpp \
+                      ui/einspector/SkinChooser.cpp \
+                      ui/einspector/ColourPropertyEditor.cpp \
+                      ui/einspector/EntityPropertyEditor.cpp \
+                      ui/einspector/SkinPropertyEditor.cpp \
+                      ui/einspector/Vector3PropertyEditor.cpp \
+                      ui/einspector/AddPropertyDialog.cpp \
+                      ui/einspector/FloatPropertyEditor.cpp \
+                      ui/einspector/BooleanPropertyEditor.cpp \
+                      ui/einspector/LightTextureChooser.cpp \
+                      ui/einspector/SoundPropertyEditor.cpp \
+                      ui/einspector/PropertyEditor.cpp \
+                      ui/einspector/PropertyEditorFactory.cpp \
+                      ui/einspector/ClassnamePropertyEditor.cpp \
+                      ui/einspector/ModelPropertyEditor.cpp \
+                      ui/common/SoundChooser.cpp \
+                      ui/common/TexturePreviewCombo.cpp \
+                      ui/common/ShaderSelector.cpp \
+                      ui/common/ShaderChooser.cpp \
+                      ui/common/ShaderDefinitionView.cpp \
+                      ui/common/SoundShaderPreview.cpp \
+                      ui/common/RenderableAABB.cpp \
+                      ui/common/CommandEntry.cpp \
+                      ui/common/EntityChooser.cpp \
+                      ui/common/MapPreview.cpp \
+                      ui/menu/FiltersMenu.cpp \
+                      ui/prefdialog/PrefPage.cpp \
+                      ui/prefdialog/PrefDialog.cpp \
+                      ui/transform/TransformDialog.cpp \
+                      ui/modelselector/ModelSelector.cpp \
+                      ui/surfaceinspector/SurfaceInspector.cpp \
+                      ui/patch/CapDialog.cpp \
+                      ui/patch/PatchThickenDialog.cpp \
+                      ui/patch/PatchInspector.cpp \
+                      ui/patch/PatchCreateDialog.cpp \
+                      ui/patch/BulgePatchDialog.cpp \
+                      ui/lightinspector/LightInspector.cpp \
+                      ui/commandlist/CommandList.cpp \
+                      ui/commandlist/ShortcutChooser.cpp \
+                      ui/filterdialog/FilterDialog.cpp \
+                      ui/filterdialog/FilterEditor.cpp \
+                      ui/mainframe/MainFrame.cpp \
+                      ui/mainframe/MainFrameLayoutManager.cpp \
+                      ui/mainframe/FloatingLayout.cpp \
+                      ui/mainframe/EmbeddedLayout.cpp \
+                      ui/mainframe/SplitPaneLayout.cpp \
+                      ui/mainframe/RegularLayout.cpp \
+                      ui/mainframe/ScreenUpdateBlocker.cpp \
+                      patchmanip.cpp \
+                      xyview/XYWnd.cpp \
+                      xyview/GlobalXYWnd.cpp \
+                      textool/TexToolItem.cpp \
+                      textool/item/BrushItem.cpp \
+                      textool/item/FaceItem.cpp \
+                      textool/item/FaceVertexItem.cpp \
+                      textool/item/PatchItem.cpp \
+                      textool/item/PatchVertexItem.cpp \
+                      textool/TexTool.cpp \
+                      layers/LayerCommandTarget.cpp \
+                      layers/LayerSystem.cpp \
+                      view.cpp \
+                      modulesystem/DynamicLibrary.cpp \
+                      modulesystem/ApplicationContextImpl.cpp \
+                      modulesystem/DynamicLibraryLoader.cpp \
+                      modulesystem/ModuleLoader.cpp \
+                      modulesystem/ModuleRegistry.cpp \
+                      select.cpp \
+                      selection/SelectedNodeList.cpp \
+                      selection/shaderclipboard/ShaderClipboard.cpp \
+                      selection/shaderclipboard/Texturable.cpp \
+                      selection/selectionset/SelectionSetManager.cpp \
+                      selection/selectionset/SelectionSetToolmenu.cpp \
+                      selection/selectionset/SelectionSet.cpp \
+                      selection/SelectionTest.cpp \
+                      selection/ManipulateObserver.cpp \
                       selection/Manipulator.cpp \
-					  selection/TransformationVisitors.cpp \
-					  selection/algorithm/Transformation.cpp \
-					  selection/algorithm/GroupCycle.cpp \
-					  selection/algorithm/Curves.cpp \
-					  selection/algorithm/Entity.cpp \
-					  selection/algorithm/Shader.cpp \
-					  selection/algorithm/Primitives.cpp \
-					  selection/algorithm/Group.cpp \
-					  selection/algorithm/ModelFinder.cpp \
-					  selection/algorithm/General.cpp \
-					  selection/BestPoint.cpp \
+                      selection/TransformationVisitors.cpp \
+                      selection/algorithm/Transformation.cpp \
+                      selection/algorithm/GroupCycle.cpp \
+                      selection/algorithm/Curves.cpp \
+                      selection/algorithm/Entity.cpp \
+                      selection/algorithm/Shader.cpp \
+                      selection/algorithm/Primitives.cpp \
+                      selection/algorithm/Group.cpp \
+                      selection/algorithm/ModelFinder.cpp \
+                      selection/algorithm/General.cpp \
+                      selection/BestPoint.cpp \
                       selection/DragManipulator.cpp \
-					  selection/Planes.cpp \
-					  selection/RadiantWindowObserver.cpp \
-					  selection/RadiantSelectionSystem.cpp \
+                      selection/Planes.cpp \
+                      selection/RadiantWindowObserver.cpp \
+                      selection/RadiantSelectionSystem.cpp \
                       selection/RotateManipulator.cpp \
-					  selection/Manipulatables.cpp \
-					  selection/SelectObserver.cpp \
+                      selection/Manipulatables.cpp \
+                      selection/SelectObserver.cpp \
                       selection/ScaleManipulator.cpp \
                       selection/TranslateManipulator.cpp \
-					  selection/Intersection.cpp \
-					  settings/GameFileLoader.cpp \
-					  settings/Game.cpp \
-					  settings/GameManager.cpp \
-					  settings/LanguageManager.cpp \
-					  settings/PreferenceSystem.cpp \
-					  settings/Win32Registry.cpp \
-					  patch/Patch.cpp \
-					  patch/PatchNode.cpp \
-					  patch/PatchModule.cpp \
-					  patch/PatchBezier.cpp \
+                      selection/Intersection.cpp \
+                      settings/GameFileLoader.cpp \
+                      settings/Game.cpp \
+                      settings/GameManager.cpp \
+                      settings/LanguageManager.cpp \
+                      settings/PreferenceSystem.cpp \
+                      settings/Win32Registry.cpp \
+                      patch/Patch.cpp \
+                      patch/PatchNode.cpp \
+                      patch/PatchModule.cpp \
+                      patch/PatchBezier.cpp \
                       patch/PatchRenderables.cpp \
-					  map/RootNode.cpp \
-					  map/MapPosition.cpp \
-					  map/FindMapElements.cpp \
-					  map/MapFileManager.cpp \
-					  map/MapFileChooserPreview.cpp \
-					  map/algorithm/Traverse.cpp \
-					  map/CounterManager.cpp \
-					  map/RegionManager.cpp \
-					  map/PointFile.cpp \
-					  map/MapPositionManager.cpp \
-					  map/MapResource.cpp \
-					  map/Map.cpp \
-					  map/AutoSaver.cpp \
-					  map/StartupMapLoader.cpp \
-					  map/MapResourceManager.cpp \
-					  map/MapFormatManager.cpp \
-					  entity.cpp \
-					  clipper/ClipPoint.cpp \
-					  clipper/Clipper.cpp \
-					  timer.cpp \
-					  mainframe_old.cpp \
-					  log/Console.cpp \
-					  log/LogStream.cpp \
-					  log/LogWriter.cpp \
-					  log/COutRedirector.cpp \
-					  log/GtkLogRedirector.cpp \
-					  log/StringLogDevice.cpp \
-					  log/LogStreamBuf.cpp \
-					  log/LogFile.cpp \
-					  referencecache/ModelCache.cpp \
-					  referencecache/NullModel.cpp \
-					  referencecache/NullModelNode.cpp 
+                      map/RootNode.cpp \
+                      map/MapPosition.cpp \
+                      map/FindMapElements.cpp \
+                      map/MapFileManager.cpp \
+                      map/MapFileChooserPreview.cpp \
+                      map/algorithm/Traverse.cpp \
+                      map/CounterManager.cpp \
+                      map/RegionManager.cpp \
+                      map/PointFile.cpp \
+                      map/MapPositionManager.cpp \
+                      map/MapResource.cpp \
+                      map/Map.cpp \
+                      map/AutoSaver.cpp \
+                      map/StartupMapLoader.cpp \
+                      map/MapResourceManager.cpp \
+                      map/MapFormatManager.cpp \
+                      entity.cpp \
+                      clipper/ClipPoint.cpp \
+                      clipper/Clipper.cpp \
+                      timer.cpp \
+                      mainframe_old.cpp \
+                      log/Console.cpp \
+                      log/LogStream.cpp \
+                      log/LogWriter.cpp \
+                      log/COutRedirector.cpp \
+                      log/GtkLogRedirector.cpp \
+                      log/StringLogDevice.cpp \
+                      log/LogStreamBuf.cpp \
+                      log/LogFile.cpp \
+                      referencecache/ModelCache.cpp \
+                      referencecache/NullModel.cpp \
+                      referencecache/NullModelNode.cpp 
 
 all: all-am
 
@@ -747,7 +747,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Clipper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CollisionModel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ColourPropertyEditor.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ComboBoxPropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CommandEntry.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CommandList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Console.Po@am__quote@
@@ -1866,20 +1865,6 @@ darkradiant-Vector3PropertyEditor.obj: ui/einspector/Vector3PropertyEditor.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/Vector3PropertyEditor.cpp' object='darkradiant-Vector3PropertyEditor.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Vector3PropertyEditor.obj `if test -f 'ui/einspector/Vector3PropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/Vector3PropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/Vector3PropertyEditor.cpp'; fi`
-
-darkradiant-ComboBoxPropertyEditor.o: ui/einspector/ComboBoxPropertyEditor.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ComboBoxPropertyEditor.o -MD -MP -MF $(DEPDIR)/darkradiant-ComboBoxPropertyEditor.Tpo -c -o darkradiant-ComboBoxPropertyEditor.o `test -f 'ui/einspector/ComboBoxPropertyEditor.cpp' || echo '$(srcdir)/'`ui/einspector/ComboBoxPropertyEditor.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-ComboBoxPropertyEditor.Tpo $(DEPDIR)/darkradiant-ComboBoxPropertyEditor.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/ComboBoxPropertyEditor.cpp' object='darkradiant-ComboBoxPropertyEditor.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ComboBoxPropertyEditor.o `test -f 'ui/einspector/ComboBoxPropertyEditor.cpp' || echo '$(srcdir)/'`ui/einspector/ComboBoxPropertyEditor.cpp
-
-darkradiant-ComboBoxPropertyEditor.obj: ui/einspector/ComboBoxPropertyEditor.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ComboBoxPropertyEditor.obj -MD -MP -MF $(DEPDIR)/darkradiant-ComboBoxPropertyEditor.Tpo -c -o darkradiant-ComboBoxPropertyEditor.obj `if test -f 'ui/einspector/ComboBoxPropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/ComboBoxPropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/ComboBoxPropertyEditor.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-ComboBoxPropertyEditor.Tpo $(DEPDIR)/darkradiant-ComboBoxPropertyEditor.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/einspector/ComboBoxPropertyEditor.cpp' object='darkradiant-ComboBoxPropertyEditor.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ComboBoxPropertyEditor.obj `if test -f 'ui/einspector/ComboBoxPropertyEditor.cpp'; then $(CYGPATH_W) 'ui/einspector/ComboBoxPropertyEditor.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/einspector/ComboBoxPropertyEditor.cpp'; fi`
 
 darkradiant-AddPropertyDialog.o: ui/einspector/AddPropertyDialog.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-AddPropertyDialog.o -MD -MP -MF $(DEPDIR)/darkradiant-AddPropertyDialog.Tpo -c -o darkradiant-AddPropertyDialog.o `test -f 'ui/einspector/AddPropertyDialog.cpp' || echo '$(srcdir)/'`ui/einspector/AddPropertyDialog.cpp
