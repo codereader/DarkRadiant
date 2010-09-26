@@ -9,6 +9,7 @@ namespace ce
 // Constructor
 Gtk::Widget* TextSpecifierPanel::getWidget()
 {
+	show_all();
 	return this;
 }
 
