@@ -126,8 +126,24 @@ const SpecifierTypeSet& SpecifierType::SET_STANDARD_AI() {
 }
 
 // Map instance owner
-SpecifierType::SpecifierTypeMap& SpecifierType::getMap() {
+SpecifierType::SpecifierTypeMap& SpecifierType::getMap()
+{
 	static SpecifierTypeMap _instance;
+
+	if (_instance.empty())
+	{
+		// greebo: Make sure all default specifiers are in the map
+		SPEC_NONE();
+		SPEC_NAME();
+		SPEC_OVERALL();
+		SPEC_GROUP();
+		SPEC_CLASSNAME();
+		SPEC_SPAWNCLASS();
+		SPEC_AI_TYPE();
+		SPEC_AI_TEAM();
+		SPEC_AI_INNOCENCE();
+	}
+
 	return _instance;
 }
 
