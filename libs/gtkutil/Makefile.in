@@ -79,7 +79,7 @@ am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
 	DeferredAdjustment.lo PopupMenu.lo widget.lo \
 	RegistryConnector.lo PathEntry.lo TreeModel.lo \
 	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
-	window.lo clipboard.lo FileChooser.lo
+	clipboard.lo FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 libgtkutil_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -140,12 +140,14 @@ GLIB_LIBS = @GLIB_LIBS@
 GLU_LIBS = @GLU_LIBS@
 GL_LIBS = @GL_LIBS@
 GREP = @GREP@
+GTKGLEXTMM_CFLAGS = @GTKGLEXTMM_CFLAGS@
+GTKGLEXTMM_LIBS = @GTKGLEXTMM_LIBS@
 GTKGLEXT_CFLAGS = @GTKGLEXT_CFLAGS@
 GTKGLEXT_LIBS = @GTKGLEXT_LIBS@
 GTKMM_CFLAGS = @GTKMM_CFLAGS@
 GTKMM_LIBS = @GTKMM_LIBS@
-GTKSOURCEVIEW_CFLAGS = @GTKSOURCEVIEW_CFLAGS@
-GTKSOURCEVIEW_LIBS = @GTKSOURCEVIEW_LIBS@
+GTKSOURCEVIEWMM_CFLAGS = @GTKSOURCEVIEWMM_CFLAGS@
+GTKSOURCEVIEWMM_LIBS = @GTKSOURCEVIEWMM_LIBS@
 GTK_CFLAGS = @GTK_CFLAGS@
 GTK_LIBS = @GTK_LIBS@
 INSTALL = @INSTALL@
@@ -259,15 +261,15 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 			  -DPKGLIBDIR='"$(pkglibdir)"' \
 			  -DPKGDATADIR='"$(pkgdatadir)"' \
 			  $(GTKMM_CFLAGS) \
-			  $(GTKGLEXT_CFLAGS) \
+			  $(GTKGLEXTMM_CFLAGS) \
 			  $(XML_CFLAGS) \
-			  $(GTKSOURCEVIEW_CFLAGS)
+			  $(GTKSOURCEVIEWMM_CFLAGS)
 
 AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libgtkutil.la
 libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
-						$(GTKGLEXT_LIBS) $(GTKMM_LIBS) $(XML_LIBS) \
-						$(GTKSOURCEVIEW_LIBS)
+						$(GTKGLEXTMM_LIBS) $(GTKMM_LIBS) $(XML_LIBS) \
+						$(GTKSOURCEVIEWMM_LIBS)
 
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
@@ -292,7 +294,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						ModalProgressDialog.cpp \
 						SerialisableWidgets.cpp \
 						SourceView.cpp \
-						window.cpp \
 						clipboard.cpp \
 						FileChooser.cpp
 
@@ -394,7 +395,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dialog_legacy.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/glfont.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/widget.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/window.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
