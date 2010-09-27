@@ -2050,11 +2050,106 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
   NaturalTexture();
 }
 
+void Patch::constructBevel(const AABB& aabb, EViewType viewType)
+{
+	Vector3 vPos[3] = 
+	{
+		aabb.origin - aabb.extents,
+		aabb.origin,
+		aabb.origin + aabb.extents
+	};
+
+	std::size_t constDim = 0;
+	std::size_t dim1 = 0;
+	std::size_t dim2 = 0;
+
+	switch (viewType)
+	{
+	case YZ:
+		constDim = 1;	// y
+		dim1 = 2;		// z
+		dim2 = 0;		// x
+		break;
+	case XZ:
+		constDim = 0;	// x
+		dim1 = 2;		// z
+		dim2 = 1;		// y
+		break;
+	case XY:
+		constDim = 0;	// x
+		dim1 = 1;		// y
+		dim2 = 2;		// z
+		break;
+	};
+
+	std::size_t lowlowhigh[3] = { 0, 0, 2 }; 
+	std::size_t lowhighhigh[3] = { 0, 2, 2 }; 
+
+	setDims(3, 3);
+
+	PatchControlIter ctrl = m_ctrl.begin();
+
+	for (std::size_t h = 0; h < 3; ++h)
+	{
+		for (std::size_t w = 0; w < 3; ++w, ++ctrl)
+		{
+			// One of the dimensions stays constant per row
+			ctrl->vertex[constDim] = vPos[h][constDim];
+
+			// One dimension goes like "low", "low", "high" in a row
+			ctrl->vertex[dim1] = vPos[ lowlowhigh[w] ][dim1];
+
+			// One dimension goes like "low", "high", "high" in a row
+			ctrl->vertex[dim2] = vPos[ lowhighhigh[w] ][dim2];
+		}
+	}
+
+	if (viewType == XZ)
+	{
+		InvertMatrix();
+	}
+}
+
+void Patch::constructEndcap(const AABB& aabb)
+{
+	Vector3 vPos[3] = 
+	{
+		aabb.origin - aabb.extents,
+		aabb.origin,
+		aabb.origin + aabb.extents
+	};
+
+	unsigned char pEndIndex[] =
+	{
+		2, 0,
+		2, 2,
+		1, 2,
+		0, 2,
+		0, 0,
+	};
+
+	setDims(5, 3);
+
+	PatchControlIter pCtrl = m_ctrl.begin();
+
+	for (std::size_t h = 0; h < 3; ++h)
+	{
+		unsigned char* pIndex = pEndIndex;
+
+		for (std::size_t w = 0; w < 5; ++w, pIndex += 2, ++pCtrl)
+		{
+			pCtrl->vertex[0] = vPos[pIndex[0]][0];
+			pCtrl->vertex[1] = vPos[pIndex[1]][1];
+			pCtrl->vertex[2] = vPos[h][2];
+		}
+	}
+}
+
 void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width, std::size_t height)
 {
 	Vector3 vPos[3];
     
-	if(eType != ePlane)
+	if (eType != ePlane)
 	{
 		vPos[0] = aabb.origin - aabb.extents;
 		vPos[1] = aabb.origin;
@@ -2216,97 +2311,25 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			ERROR_MESSAGE("this should be unreachable");
 			return;
 		}
+
+		if (eType == eDenseCylinder)
+		{
+			InsertRemove(true, false, true);
+		}
+
+		if (eType == eVeryDenseCylinder)
+		{
+			InsertRemove(true, false, false);
+			InsertRemove(true, false, true);
+		}
 	}
 	else if (eType == eBevel)
 	{
-		std::size_t constDim = 0;
-		std::size_t dim1 = 0;
-		std::size_t dim2 = 0;
-
-		switch (viewType)
-		{
-		case YZ:
-			constDim = 1;	// y
-			dim1 = 2;		// z
-			dim2 = 0;		// x
-			break;
-		case XZ:
-			constDim = 0;	// x
-			dim1 = 2;		// z
-			dim2 = 1;		// y
-			break;
-		case XY:
-			constDim = 0;	// x
-			dim1 = 1;		// y
-			dim2 = 2;		// z
-			break;
-		};
-
-		std::size_t lowlowhigh[3] = { 0, 0, 2 }; 
-		std::size_t lowhighhigh[3] = { 0, 2, 2 }; 
-
-		setDims(3, 3);
-
-		PatchControlIter ctrl = m_ctrl.begin();
-
-		for (std::size_t h = 0; h < 3; ++h)
-		{
-			for (std::size_t w = 0; w < 3; ++w, ++ctrl)
-			{
-				// One of the dimensions stays constant per row
-				ctrl->vertex[constDim] = vPos[h][constDim];
-
-				// One dimension goes like "low", "low", "high" in a row
-				ctrl->vertex[dim1] = vPos[ lowlowhigh[w] ][dim1];
-
-				// One dimension goes like "low", "high", "high" in a row
-				ctrl->vertex[dim2] = vPos[ lowhighhigh[w] ][dim2];
-			}
-		}
-
-		if (viewType == XZ)
-		{
-			InvertMatrix();
-		}
+		constructBevel(aabb, viewType);
 	}
 	else if (eType == eEndCap)
 	{
-		unsigned char *pIndex;
-		unsigned char pEndIndex[] =
-		{
-			2, 0,
-			2, 2,
-			1, 2,
-			0, 2,
-			0, 0,
-		};
-
-		setDims(5, 3);
-
-		PatchControlIter pCtrl = m_ctrl.begin();
-
-		for(std::size_t h = 0; h < 3; ++h)
-		{
-			pIndex=pEndIndex;
-
-			for (std::size_t w = 0; w < 5; ++w, pIndex += 2, ++pCtrl)
-			{
-				pCtrl->vertex[0] = vPos[pIndex[0]][0];
-				pCtrl->vertex[1] = vPos[pIndex[1]][1];
-				pCtrl->vertex[2] = vPos[h][2];
-			}
-		}
-	}
-
-	if (eType == eDenseCylinder)
-	{
-		InsertRemove(true, false, true);
-	}
-
-	if (eType == eVeryDenseCylinder)
-	{
-		InsertRemove(true, false, false);
-		InsertRemove(true, false, true);
+		constructEndcap(aabb);
 	}
 
 	NaturalTexture();
