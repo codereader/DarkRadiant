@@ -74,7 +74,7 @@ PatchCreateDialog::PatchCreateDialog() :
 	table->attach(*labelHeight, 0, 1, 1, 2);
 	table->attach(*_comboHeight, 1, 2, 1, 2);
 	
-	// Create the "create seams" label
+	// Create the "remove brushes" label
 	_removeBrushCheckbox = Gtk::manage(new Gtk::CheckButton(_(LABEL_REMOVE_BRUSHES), true));
 	_removeBrushCheckbox->set_active(DEFAULT_REMOVE_BRUSHES);
 

@@ -2052,164 +2052,172 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
 
 void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width, std::size_t height)
 {
-  Vector3 vPos[3];
+	Vector3 vPos[3];
     
-  if(eType != ePlane)
-  {
-    vPos[0] = aabb.origin - aabb.extents;
-    vPos[1] = aabb.origin;
-    vPos[2] = aabb.origin + aabb.extents;
-  }
+	if(eType != ePlane)
+	{
+		vPos[0] = aabb.origin - aabb.extents;
+		vPos[1] = aabb.origin;
+		vPos[2] = aabb.origin + aabb.extents;
+	}
   
-  if(eType == ePlane)
-  {
-    constructPlane(aabb, viewType, width, height);
-  }
-  else if(eType == eSqCylinder
-    || eType == eCylinder
-    || eType == eDenseCylinder
-    || eType == eVeryDenseCylinder
-    || eType == eCone
-    || eType == eSphere)
-  {
-    unsigned char *pIndex;
-    unsigned char pCylIndex[] =
-    {
-      0, 0,
-      1, 0,
-      2, 0,
-      2, 1,
-      2, 2,
-      1, 2,
-      0, 2,
-      0, 1,
-      0, 0
-    };
+	if (eType == ePlane)
+	{
+		constructPlane(aabb, viewType, width, height);
+	}
+	else if (eType == eSqCylinder || eType == eCylinder || 
+			 eType == eDenseCylinder || eType == eVeryDenseCylinder || 
+			 eType == eCone || eType == eSphere)
+	{
+		unsigned char *pIndex;
 
-    
-    PatchControlIter pStart;
-    switch(eType)
-    {
-    case eSqCylinder: setDims(9, 3);
-      pStart = m_ctrl.begin();
-      break;
-    case eDenseCylinder: 
-    case eVeryDenseCylinder: 
-    case eCylinder:
-      setDims(9, 3);
-      pStart = m_ctrl.begin() + 1;
-      break;
-    case eCone: setDims(9, 3);
-      pStart = m_ctrl.begin() + 1;
-      break;
-    case eSphere:
-      setDims(9, 5);
-      pStart = m_ctrl.begin() + (9+1);
-      break;
-    default:
-      ERROR_MESSAGE("this should be unreachable");
-      return;
-    }
+		unsigned char pCylIndex[] =
+		{
+			0, 0,
+			1, 0,
+			2, 0,
+			2, 1,
+			2, 2,
+			1, 2,
+			0, 2,
+			0, 1,
+			0, 0
+		};
 
-    for(std::size_t h=0; h<3; h++)
-    {
-      pIndex = pCylIndex;
-      PatchControlIter pCtrl = pStart;
-      for(std::size_t w=0; w<8; w++, pCtrl++)
-      {
-        pCtrl->vertex[0] = vPos[pIndex[0]][0];
-        pCtrl->vertex[1] = vPos[pIndex[1]][1];
-        pCtrl->vertex[2] = vPos[h][2];
-        pIndex+=2;
-      }
+		PatchControlIter pStart;
 
-	  // Go to the next line, but only do that if we're not at the last one already
-	  // to not increment the pStart iterator beyond the end of the container
-	  if (h < 2) pStart+=9;
-    }
+		switch(eType)
+		{
+		case eSqCylinder: setDims(9, 3);
+			pStart = m_ctrl.begin();
+			break;
+		case eDenseCylinder: 
+		case eVeryDenseCylinder: 
+		case eCylinder:
+			setDims(9, 3);
+			pStart = m_ctrl.begin() + 1;
+			break;
+		case eCone: setDims(9, 3);
+			pStart = m_ctrl.begin() + 1;
+			break;
+		case eSphere:
+			setDims(9, 5);
+			pStart = m_ctrl.begin() + (9+1);
+			break;
+		default:
+			ERROR_MESSAGE("this should be unreachable");
+			return;
+		}
 
-    switch(eType)
-    {
-    case eSqCylinder:
-      {
-        PatchControlIter pCtrl = m_ctrl.begin();
-        for(std::size_t h=0; h<3; h++)
-        {
-          pCtrl[8].vertex = pCtrl[0].vertex;
+		for (std::size_t h = 0; h < 3; ++h)
+		{
+			pIndex = pCylIndex;
+			PatchControlIter pCtrl = pStart;
 
-		  // Go to the next line
-		  if (h < 2) pCtrl+=9;
-        }
-      }
-      break;
-    case eDenseCylinder:
-    case eVeryDenseCylinder:
-    case eCylinder:
-      {
-        PatchControlIter pCtrl = m_ctrl.begin();
-        for (std::size_t h=0; h<3; h++)
-        {
-          pCtrl[0].vertex = pCtrl[8].vertex;
+			for (std::size_t w = 0; w < 8; ++w, ++pCtrl)
+			{
+				pCtrl->vertex[0] = vPos[pIndex[0]][0];
+				pCtrl->vertex[1] = vPos[pIndex[1]][1];
+				pCtrl->vertex[2] = vPos[h][2];
+				pIndex += 2;
+			}
 
-		  // Go to the next line
-		  if (h < 2) pCtrl+=9;
-        }
-      }
-      break;
-    case eCone:
-      {
-        PatchControlIter pCtrl = m_ctrl.begin();
-        for (std::size_t h=0; h<2; h++)
-        {
-          pCtrl[0].vertex = pCtrl[8].vertex;
-		  // Go to the next line
-		  if (h < 1) pCtrl+=9;
-        }
-      }
-      {
-        PatchControlIter pCtrl=m_ctrl.begin() + 9*2;
-        for (std::size_t w=0; w<9; w++, pCtrl++)
-        {
-          pCtrl->vertex[0] = vPos[1][0];
-          pCtrl->vertex[1] = vPos[1][1];
-          pCtrl->vertex[2] = vPos[2][2];
-        }
-      }
-      break;
-    case eSphere:
-      {
-        PatchControlIter pCtrl = m_ctrl.begin() + 9;
-        for (std::size_t h=0; h<3; h++)
-        {
-          pCtrl[0].vertex = pCtrl[8].vertex;
-		  // Go to the next line
-		  if (h < 2) pCtrl+=9;
-        }
-      }
-      {
-        PatchControlIter pCtrl = m_ctrl.begin();
-        for (std::size_t w=0; w<9; w++, pCtrl++)
-        {
-          pCtrl->vertex[0] = vPos[1][0];
-          pCtrl->vertex[1] = vPos[1][1];
-          pCtrl->vertex[2] = vPos[2][2];
-        }
-      }
-      {
-        PatchControlIter pCtrl = m_ctrl.begin() + (9*4);
-        for (std::size_t w=0; w<9; w++, pCtrl++)
-        {
-          pCtrl->vertex[0] = vPos[1][0];
-          pCtrl->vertex[1] = vPos[1][1];
-          pCtrl->vertex[2] = vPos[2][2];
-        }
-      }
-    default:
-      ERROR_MESSAGE("this should be unreachable");
-      return;
-    }
-  }
-	else if  (eType == eBevel)
+			// Go to the next line, but only do that if we're not at the last one already
+			// to not increment the pStart iterator beyond the end of the container
+			if (h < 2) pStart+=9;
+		}
+
+		switch(eType)
+		{
+		case eSqCylinder:
+			{
+				PatchControlIter pCtrl = m_ctrl.begin();
+
+				for (std::size_t h = 0; h < 3; ++h)
+				{
+					pCtrl[8].vertex = pCtrl[0].vertex;
+
+					// Go to the next line
+					if (h < 2) pCtrl+=9;
+				}
+			}
+			break;
+		
+		case eDenseCylinder:
+		case eVeryDenseCylinder:
+		case eCylinder:
+			{
+				PatchControlIter pCtrl = m_ctrl.begin();
+
+				for (std::size_t h = 0; h < 3; ++h)
+				{
+					pCtrl[0].vertex = pCtrl[8].vertex;
+
+					// Go to the next line
+					if (h < 2) pCtrl+=9;
+				}
+			}
+			break;
+		case eCone:
+			{
+				PatchControlIter pCtrl = m_ctrl.begin();
+
+				for (std::size_t h = 0; h < 2; ++h)
+				{
+					pCtrl[0].vertex = pCtrl[8].vertex;
+					// Go to the next line
+					if (h < 1) pCtrl+=9;
+				}
+			}
+			{
+				PatchControlIter pCtrl = m_ctrl.begin() + 9*2;
+
+				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
+				{
+				  pCtrl->vertex[0] = vPos[1][0];
+				  pCtrl->vertex[1] = vPos[1][1];
+				  pCtrl->vertex[2] = vPos[2][2];
+				}
+			}
+			break;
+		case eSphere:
+			{
+				PatchControlIter pCtrl = m_ctrl.begin() + 9;
+
+				for (std::size_t h = 0; h < 3; ++h)
+				{
+					pCtrl[0].vertex = pCtrl[8].vertex;
+					// Go to the next line
+					if (h < 2) pCtrl+=9;
+				}
+			}
+			{
+				PatchControlIter pCtrl = m_ctrl.begin();
+
+				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
+				{
+					pCtrl->vertex[0] = vPos[1][0];
+					pCtrl->vertex[1] = vPos[1][1];
+					pCtrl->vertex[2] = vPos[2][2];
+				}
+			}
+			{
+				PatchControlIter pCtrl = m_ctrl.begin() + (9*4);
+
+				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
+				{
+					pCtrl->vertex[0] = vPos[1][0];
+					pCtrl->vertex[1] = vPos[1][1];
+					pCtrl->vertex[2] = vPos[2][2];
+				}
+			}
+			break;
+		default:
+			ERROR_MESSAGE("this should be unreachable");
+			return;
+		}
+	}
+	else if (eType == eBevel)
 	{
 		std::size_t constDim = 0;
 		std::size_t dim1 = 0;
@@ -2261,45 +2269,47 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			InvertMatrix();
 		}
 	}
-  else if(eType == eEndCap)
-  {
-    unsigned char *pIndex;
-    unsigned char pEndIndex[] =
-    {
-      2, 0,
-      2, 2,
-      1, 2,
-      0, 2,
-      0, 0,
-    };
+	else if (eType == eEndCap)
+	{
+		unsigned char *pIndex;
+		unsigned char pEndIndex[] =
+		{
+			2, 0,
+			2, 2,
+			1, 2,
+			0, 2,
+			0, 0,
+		};
 
-    setDims(5, 3);
+		setDims(5, 3);
 
-    PatchControlIter pCtrl = m_ctrl.begin();
-    for(std::size_t h=0; h<3; h++)
-    {
-      pIndex=pEndIndex;
-      for(std::size_t w=0; w<5; w++, pIndex+=2, pCtrl++)
-      {
-        pCtrl->vertex[0] = vPos[pIndex[0]][0];
-        pCtrl->vertex[1] = vPos[pIndex[1]][1];
-        pCtrl->vertex[2] = vPos[h][2];
-      }
-    }
-  }
+		PatchControlIter pCtrl = m_ctrl.begin();
 
-  if(eType == eDenseCylinder)
-  {
-    InsertRemove(true, false, true);
-  }
+		for(std::size_t h = 0; h < 3; ++h)
+		{
+			pIndex=pEndIndex;
 
-  if(eType == eVeryDenseCylinder)
-  {
-    InsertRemove(true, false, false);
-    InsertRemove(true, false, true);
-  }
+			for (std::size_t w = 0; w < 5; ++w, pIndex += 2, ++pCtrl)
+			{
+				pCtrl->vertex[0] = vPos[pIndex[0]][0];
+				pCtrl->vertex[1] = vPos[pIndex[1]][1];
+				pCtrl->vertex[2] = vPos[h][2];
+			}
+		}
+	}
 
-  NaturalTexture();
+	if (eType == eDenseCylinder)
+	{
+		InsertRemove(true, false, true);
+	}
+
+	if (eType == eVeryDenseCylinder)
+	{
+		InsertRemove(true, false, false);
+		InsertRemove(true, false, true);
+	}
+
+	NaturalTexture();
 }
 
 void Patch::RenderDebug(RenderStateFlags state) const
