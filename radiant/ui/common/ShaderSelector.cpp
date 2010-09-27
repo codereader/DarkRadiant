@@ -383,6 +383,13 @@ void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 	iter = listStore->append();
 	iter->set_value(attrCol, std::string("<b>") + _("Light flags") + "</b>");
 	iter->set_value(valueCol, lightType);
+
+	// Description
+	iter = listStore->append();
+	iter->set_value(attrCol, std::string("<b>") + _("Description") + "</b>");
+
+	std::string descr = shader->getDescription();
+	iter->set_value(valueCol, descr.empty() ? "-" : descr);
 }
 
 // Callback for selection changed
