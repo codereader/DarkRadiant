@@ -886,7 +886,8 @@ void RadiantSelectionSystem::endMove() {
 	SceneChangeNotify();
 	
 	// If we started an undoable operation, end it now and tell the console what happened 
-	if (_undoBegun) {
+	if (_undoBegun)
+	{
 		std::ostringstream command;
 
 		if (ManipulatorMode() == eTranslate) {
@@ -904,6 +905,8 @@ void RadiantSelectionSystem::endMove() {
 		else if (ManipulatorMode() == eDrag) {
 			command << "dragTool";
 		}
+
+		_undoBegun = false;
 
 		// Finish the undo move
 		GlobalUndoSystem().finish(command.str());
