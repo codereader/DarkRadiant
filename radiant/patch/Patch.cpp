@@ -2147,24 +2147,28 @@ void Patch::constructEndcap(const AABB& aabb)
 
 void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width, std::size_t height)
 {
-	Vector3 vPos[3];
-    
-	if (eType != ePlane)
-	{
-		vPos[0] = aabb.origin - aabb.extents;
-		vPos[1] = aabb.origin;
-		vPos[2] = aabb.origin + aabb.extents;
-	}
-  
 	if (eType == ePlane)
 	{
 		constructPlane(aabb, viewType, width, height);
+	}
+	else if (eType == eBevel)
+	{
+		constructBevel(aabb, viewType);
+	}
+	else if (eType == eEndCap)
+	{
+		constructEndcap(aabb);
 	}
 	else if (eType == eSqCylinder || eType == eCylinder || 
 			 eType == eDenseCylinder || eType == eVeryDenseCylinder || 
 			 eType == eCone || eType == eSphere)
 	{
-		unsigned char *pIndex;
+		Vector3 vPos[3] = 
+		{
+    		aabb.origin - aabb.extents,
+			aabb.origin,
+			aabb.origin + aabb.extents,
+		};
 
 		unsigned char pCylIndex[] =
 		{
@@ -2183,7 +2187,8 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 
 		switch(eType)
 		{
-		case eSqCylinder: setDims(9, 3);
+		case eSqCylinder:
+			setDims(9, 3);
 			pStart = m_ctrl.begin();
 			break;
 		case eDenseCylinder: 
@@ -2206,7 +2211,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 
 		for (std::size_t h = 0; h < 3; ++h)
 		{
-			pIndex = pCylIndex;
+			unsigned char* pIndex = pCylIndex;
 			PatchControlIter pCtrl = pStart;
 
 			for (std::size_t w = 0; w < 8; ++w, ++pCtrl)
@@ -2269,9 +2274,9 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 
 				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
 				{
-				  pCtrl->vertex[0] = vPos[1][0];
-				  pCtrl->vertex[1] = vPos[1][1];
-				  pCtrl->vertex[2] = vPos[2][2];
+					pCtrl->vertex[0] = vPos[1][0];
+					pCtrl->vertex[1] = vPos[1][1];
+					pCtrl->vertex[2] = vPos[2][2];
 				}
 			}
 			break;
@@ -2322,14 +2327,6 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			InsertRemove(true, false, false);
 			InsertRemove(true, false, true);
 		}
-	}
-	else if (eType == eBevel)
-	{
-		constructBevel(aabb, viewType);
-	}
-	else if (eType == eEndCap)
-	{
-		constructEndcap(aabb);
 	}
 
 	NaturalTexture();
