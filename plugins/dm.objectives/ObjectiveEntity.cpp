@@ -5,6 +5,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "scenelib.h"
+#include "iundo.h"
 #include "ientity.h"
 
 #include "string/string.h"
@@ -321,7 +322,10 @@ void ObjectiveEntity::clearEntity(Entity* entity) {
 }
 
 // Write out Objectives to entity keyvals
-void ObjectiveEntity::writeToEntity() {
+void ObjectiveEntity::writeToEntity()
+{
+	UndoableCommand cmd("saveObjectives");
+
 	// Try to convert the weak_ptr reference to a shared_ptr
 	Entity* entity = Node_getEntity(_entityNode.lock());
 	assert(entity != NULL);
