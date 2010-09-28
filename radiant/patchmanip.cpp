@@ -333,6 +333,13 @@ void Patch_SquareCylinder(const cmd::ArgumentList& args)
   Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eSqCylinder, GlobalXYWnd().getActiveViewType());
 }
 
+void Patch_Sphere(const cmd::ArgumentList& args)
+{
+  UndoableCommand undo("patchCreateSphere");
+
+  Scene_PatchConstructPrefab(PatchCreator_getBounds(), GlobalTextureBrowser().getSelectedShader(), eSphere, GlobalXYWnd().getActiveViewType());
+}
+
 void Patch_Endcap(const cmd::ArgumentList& args)
 {
   UndoableCommand undo("patchCreateCaps");
@@ -727,6 +734,7 @@ void Patch_registerCommands() {
 	GlobalCommandSystem().addCommand("PatchEndCap", Patch_Endcap);
 	GlobalCommandSystem().addCommand("PatchBevel", Patch_Bevel);
 	GlobalCommandSystem().addCommand("PatchCone", Patch_Cone);
+	GlobalCommandSystem().addCommand("PatchSphere", Patch_Sphere);
 	GlobalCommandSystem().addCommand("SimplePatchMesh", patch::createSimplePatch);
 
 	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", patch::insertColumnsAtEnd);
@@ -762,6 +770,7 @@ void Patch_registerCommands() {
 	GlobalEventManager().addCommand("PatchEndCap", "PatchEndCap");
 	GlobalEventManager().addCommand("PatchBevel", "PatchBevel");
 	GlobalEventManager().addCommand("PatchCone", "PatchCone");
+	GlobalEventManager().addCommand("PatchSphere", "PatchSphere");
 	GlobalEventManager().addCommand("SimplePatchMesh", "SimplePatchMesh");
 
 	GlobalEventManager().addCommand("PatchInsertColumnEnd", "PatchInsertColumnEnd");
