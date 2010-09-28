@@ -235,6 +235,7 @@
 		<menuSeparator />
 		<menuItem name="cone" caption="Create Cone" command="PatchCone" />
 		<menuItem name="cylinder" caption="Create Cylinder" command="PatchCylinder" />
+		<menuItem name="patch_sphere" caption="Create Sphere" command="PatchSphere" />
 
 		<subMenu name="moreCylinders" caption="More cylinders">
 			<menuItem name="denseCylinder" caption="Create Dense Cylinder" command="PatchDenseCylinder" />

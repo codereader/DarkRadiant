@@ -2170,19 +2170,6 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			aabb.origin + aabb.extents,
 		};
 
-		unsigned char pCylIndex[] =
-		{
-			0, 0,
-			1, 0,
-			2, 0,
-			2, 1,
-			2, 2,
-			1, 2,
-			0, 2,
-			0, 1,
-			0, 0
-		};
-
 		PatchControlIter pStart;
 
 		switch(eType)
@@ -2209,22 +2196,67 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			return;
 		}
 
-		for (std::size_t h = 0; h < 3; ++h)
+		// greebo: Determine which dimensions are assigned, depending on the view type
+
+		// Define the "row" dimension, e.g. z for an XY-oriented cylinder
+		std::size_t rowDim = 0;
+		
+		switch (viewType)
 		{
-			unsigned char* pIndex = pCylIndex;
-			PatchControlIter pCtrl = pStart;
+			case XY: rowDim = 2; break; // z coordinate is incremented each patch row
+			case YZ: rowDim = 0; break; // x coordinate is incremented each patch row
+			case XZ: rowDim = 1; break; // y coordinate is incremented each patch row
+		};
 
-			for (std::size_t w = 0; w < 8; ++w, ++pCtrl)
+		// Calculate the other two dimensions, such that colDim1 < colDim2
+		std::size_t colDim1 = (rowDim + 1) % 3;
+		std::size_t colDim2 = (rowDim + 2) % 3;
+
+		if (colDim2 < colDim1)
+		{
+			std::swap(colDim1, colDim2);
+		}
+
+		// As first measure, assign a closed, axis-aligned loop of vertices for each patch row
+		// Depending on the prefab type, further actions are performed in the switch statement below
+		{
+			// greebo: the other "column" dimensions are using the same pattern for each view
+			// 0 = min, 1 = mid, 2 = max
+			std::size_t pCylIndex[] =
 			{
-				pCtrl->vertex[0] = vPos[pIndex[0]][0];
-				pCtrl->vertex[1] = vPos[pIndex[1]][1];
-				pCtrl->vertex[2] = vPos[h][2];
-				pIndex += 2;
-			}
+				0, 0,
+				1, 0,
+				2, 0,
+				2, 1,
+				2, 2,
+				1, 2,
+				0, 2,
+				0, 1,
+				0, 0,
+			};
 
-			// Go to the next line, but only do that if we're not at the last one already
-			// to not increment the pStart iterator beyond the end of the container
-			if (h < 2) pStart+=9;
+			for (std::size_t h = 0; h < 3; ++h)
+			{
+				std::size_t* pIndex = pCylIndex;
+
+				PatchControlIter pCtrl = pStart;
+
+				for (std::size_t w = 0; w < 8; ++w, ++pCtrl)
+				{
+					// For the "row" dimension, we use the patch height 0..2
+					pCtrl->vertex[rowDim] = vPos[h][rowDim];
+
+					// Assign the other two "column" dimensions
+					pCtrl->vertex[colDim1] = vPos[pIndex[0]][colDim1];
+					pCtrl->vertex[colDim2] = vPos[pIndex[1]][colDim2];
+
+					pIndex += 2;
+				}
+
+				// Go to the next line, but only do that if we're not at the last one already
+				// to not increment the pStart iterator beyond the end of the container
+				if (h < 2) pStart += 9;
+			}
 		}
 
 		switch(eType)
@@ -2247,6 +2279,8 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 		case eVeryDenseCylinder:
 		case eCylinder:
 			{
+				// Regular cylinders get the first column snapped to the last one
+				// to form a closed loop
 				PatchControlIter pCtrl = m_ctrl.begin();
 
 				for (std::size_t h = 0; h < 3; ++h)
@@ -2259,6 +2293,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			}
 			break;
 		case eCone:
+			// Close the control vertex loop of cones
 			{
 				PatchControlIter pCtrl = m_ctrl.begin();
 
@@ -2269,36 +2304,40 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 					if (h < 1) pCtrl+=9;
 				}
 			}
+			// And "merge" the vertices of the last row into one single point
 			{
 				PatchControlIter pCtrl = m_ctrl.begin() + 9*2;
 
 				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
 				{
-					pCtrl->vertex[0] = vPos[1][0];
-					pCtrl->vertex[1] = vPos[1][1];
-					pCtrl->vertex[2] = vPos[2][2];
+					pCtrl->vertex[colDim1] = vPos[1][colDim1];
+					pCtrl->vertex[colDim2] = vPos[1][colDim2];
+					pCtrl->vertex[rowDim] = vPos[2][rowDim];
 				}
 			}
 			break;
 		case eSphere:
+			// Close the vertex loop for spheres too (middle row)
 			{
 				PatchControlIter pCtrl = m_ctrl.begin() + 9;
 
 				for (std::size_t h = 0; h < 3; ++h)
 				{
 					pCtrl[0].vertex = pCtrl[8].vertex;
+
 					// Go to the next line
 					if (h < 2) pCtrl+=9;
 				}
 			}
+			// Merge the first and last row vertices into one single point
 			{
 				PatchControlIter pCtrl = m_ctrl.begin();
 
 				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
 				{
-					pCtrl->vertex[0] = vPos[1][0];
-					pCtrl->vertex[1] = vPos[1][1];
-					pCtrl->vertex[2] = vPos[2][2];
+					pCtrl->vertex[colDim1] = vPos[1][colDim1];
+					pCtrl->vertex[colDim2] = vPos[1][colDim2];
+					pCtrl->vertex[rowDim] = vPos[0][rowDim];
 				}
 			}
 			{
@@ -2306,9 +2345,9 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 
 				for (std::size_t w = 0; w < 9; ++w, ++pCtrl)
 				{
-					pCtrl->vertex[0] = vPos[1][0];
-					pCtrl->vertex[1] = vPos[1][1];
-					pCtrl->vertex[2] = vPos[2][2];
+					pCtrl->vertex[colDim1] = vPos[1][colDim1];
+					pCtrl->vertex[colDim2] = vPos[1][colDim2];
+					pCtrl->vertex[rowDim] = vPos[2][rowDim];
 				}
 			}
 			break;
@@ -2326,6 +2365,11 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 		{
 			InsertRemove(true, false, false);
 			InsertRemove(true, false, true);
+		}
+
+		if (viewType == XZ)
+		{
+			InvertMatrix();
 		}
 	}
 
