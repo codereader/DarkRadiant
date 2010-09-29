@@ -231,15 +231,15 @@
 		<separator/>
 			<toolbutton name="snaptogrid" action="SnapToGrid" tooltip="Snap selection to grid" icon="grid_snap.png"/>
 		<separator/>
-			<toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.png"/>
-			<toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.png"/>
-			<toolbutton name="csghollow" action="CSGHollow" tooltip="Hollow" icon="selection_makehollow.png"/>
-			<toolbutton name="csgroom" action="CSGRoom" tooltip="Make Room" icon="selection_makeroom.png"/>
-		<separator/>
 			<toggletoolbutton name="translate" action="MouseTranslate" tooltip="Translate" icon="select_mousetranslate.png"/>
 			<toggletoolbutton name="rotate" action="MouseRotate" tooltip="Rotate" icon="select_mouserotate.png"/>
 			<toggletoolbutton name="resize" action="MouseDrag" tooltip="Resize" icon="select_mouseresize.png"/>
 			<toggletoolbutton name="clipper" action="ToggleClipper" tooltip="Clipper" icon="view_clipper.png"/>
+		<separator/>
+			<toolbutton name="csgsubstract" action="CSGSubtract" tooltip="CSG Subtract" icon="selection_csgsubtract.png"/>
+			<toolbutton name="csgmerge" action="CSGMerge" tooltip="CSG Merge" icon="selection_csgmerge.png"/>
+			<toolbutton name="csghollow" action="CSGHollow" tooltip="Hollow" icon="selection_makehollow.png"/>
+			<toolbutton name="csgroom" action="CSGRoom" tooltip="Make Room" icon="selection_makeroom.png"/>
 		<separator/>
 			<toolbutton name="capcurrentcurve" action="CapCurrentCurve" tooltip="Put caps on the current patch" icon="curve_cap.png"/>
 		<separator/>
