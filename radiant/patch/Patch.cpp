@@ -2066,19 +2066,19 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 	switch (viewType)
 	{
 	case YZ:
-		constDim = 1;	// y
-		dim1 = 2;		// z
-		dim2 = 0;		// x
-		break;
-	case XZ:
-		constDim = 0;	// x
-		dim1 = 2;		// z
-		dim2 = 1;		// y
-		break;
-	case XY:
 		constDim = 0;	// x
 		dim1 = 1;		// y
 		dim2 = 2;		// z
+		break;
+	case XZ:
+		constDim = 1;	// y
+		dim1 = 0;		// x
+		dim2 = 2;		// z
+		break;
+	case XY:
+		constDim = 2;	// z
+		dim1 = 0;		// x
+		dim2 = 1;		// y
 		break;
 	};
 
