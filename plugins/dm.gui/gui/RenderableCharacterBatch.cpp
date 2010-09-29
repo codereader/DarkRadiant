@@ -55,6 +55,7 @@ void RenderableCharacterBatch::render() const
 {
 	glBindBuffer(GL_ARRAY_BUFFER, _vboData);
 	
+	glClientActiveTexture(GL_TEXTURE0);
 	glTexCoordPointer(2, GL_DOUBLE, sizeof(Vertex2D), BUFFER_OFFSET(sizeof(double)*2));
 	glVertexPointer(2, GL_DOUBLE, sizeof(Vertex2D), BUFFER_OFFSET(0));
 		
