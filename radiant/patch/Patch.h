@@ -246,7 +246,7 @@ public:
 	void ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType viewType, std::size_t width = 3, std::size_t height = 3);
 	void constructPlane(const AABB& aabb, int axis, std::size_t width, std::size_t height);
 	void constructBevel(const AABB& aabb, EViewType viewType);
-	void constructEndcap(const AABB& aabb);
+	void constructEndcap(const AABB& aabb, EViewType viewType);
 	void InvertMatrix();
 
 	/**

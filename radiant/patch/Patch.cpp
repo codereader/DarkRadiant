@@ -2050,6 +2050,29 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
   NaturalTexture();
 }
 
+// Returns the dimension for the given viewtype, used by the patch prefab routines
+// constDim will be the dimension which is held constant for each patch row,
+// matching to the view vector, e.g. Z for the XY viewtype
+// It is ensured that dim1 < dim2
+inline void assignDimsForViewType(EViewType viewType, std::size_t& dim1, std::size_t& dim2, std::size_t& constDim)
+{
+	switch (viewType)
+	{
+		case XY: constDim = 2; break; // z coordinate is incremented each patch row
+		case YZ: constDim = 0; break; // x coordinate is incremented each patch row
+		case XZ: constDim = 1; break; // y coordinate is incremented each patch row
+	};
+
+	// Calculate the other two dimensions, such that colDim1 < colDim2
+	dim1 = (constDim + 1) % 3;
+	dim2 = (constDim + 2) % 3;
+
+	if (dim2 < dim1)
+	{
+		std::swap(dim1, dim2);
+	}
+}
+
 void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 {
 	Vector3 vPos[3] = 
@@ -2059,29 +2082,9 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 		aabb.origin + aabb.extents
 	};
 
-	std::size_t constDim = 0;
-	std::size_t dim1 = 0;
-	std::size_t dim2 = 0;
-
-	switch (viewType)
-	{
-	case YZ:
-		constDim = 0;	// x
-		dim1 = 1;		// y
-		dim2 = 2;		// z
-		break;
-	case XZ:
-		constDim = 1;	// y
-		dim1 = 0;		// x
-		dim2 = 2;		// z
-		break;
-	case XY:
-		constDim = 2;	// z
-		dim1 = 0;		// x
-		dim2 = 1;		// y
-		break;
-	};
-
+	std::size_t dim1, dim2, constDim;
+	assignDimsForViewType(viewType, dim1, dim2, constDim);
+		
 	std::size_t lowlowhigh[3] = { 0, 0, 2 }; 
 	std::size_t lowhighhigh[3] = { 0, 2, 2 }; 
 
@@ -2110,7 +2113,7 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 	}
 }
 
-void Patch::constructEndcap(const AABB& aabb)
+void Patch::constructEndcap(const AABB& aabb, EViewType viewType)
 {
 	Vector3 vPos[3] = 
 	{
@@ -2119,7 +2122,7 @@ void Patch::constructEndcap(const AABB& aabb)
 		aabb.origin + aabb.extents
 	};
 
-	unsigned char pEndIndex[] =
+	std::size_t pEndIndex[] =
 	{
 		2, 0,
 		2, 2,
@@ -2128,20 +2131,29 @@ void Patch::constructEndcap(const AABB& aabb)
 		0, 0,
 	};
 
+	// Define the "row" dimension, e.g. z for an XY-oriented patch
+	std::size_t dim1, dim2, constDim;
+	assignDimsForViewType(viewType, dim1, dim2, constDim);
+
 	setDims(5, 3);
 
 	PatchControlIter pCtrl = m_ctrl.begin();
 
 	for (std::size_t h = 0; h < 3; ++h)
 	{
-		unsigned char* pIndex = pEndIndex;
+		std::size_t* pIndex = pEndIndex;
 
 		for (std::size_t w = 0; w < 5; ++w, pIndex += 2, ++pCtrl)
 		{
-			pCtrl->vertex[0] = vPos[pIndex[0]][0];
-			pCtrl->vertex[1] = vPos[pIndex[1]][1];
-			pCtrl->vertex[2] = vPos[h][2];
+			pCtrl->vertex[dim1] = vPos[pIndex[0]][dim1];
+			pCtrl->vertex[dim2] = vPos[pIndex[1]][dim2];
+			pCtrl->vertex[constDim] = vPos[h][constDim];
 		}
+	}
+
+	if (viewType != XZ)
+	{
+		InvertMatrix();
 	}
 }
 
@@ -2157,7 +2169,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 	}
 	else if (eType == eEndCap)
 	{
-		constructEndcap(aabb);
+		constructEndcap(aabb, viewType);
 	}
 	else if (eType == eSqCylinder || eType == eCylinder || 
 			 eType == eDenseCylinder || eType == eVeryDenseCylinder || 
@@ -2199,23 +2211,8 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 		// greebo: Determine which dimensions are assigned, depending on the view type
 
 		// Define the "row" dimension, e.g. z for an XY-oriented cylinder
-		std::size_t rowDim = 0;
-		
-		switch (viewType)
-		{
-			case XY: rowDim = 2; break; // z coordinate is incremented each patch row
-			case YZ: rowDim = 0; break; // x coordinate is incremented each patch row
-			case XZ: rowDim = 1; break; // y coordinate is incremented each patch row
-		};
-
-		// Calculate the other two dimensions, such that colDim1 < colDim2
-		std::size_t colDim1 = (rowDim + 1) % 3;
-		std::size_t colDim2 = (rowDim + 2) % 3;
-
-		if (colDim2 < colDim1)
-		{
-			std::swap(colDim1, colDim2);
-		}
+		std::size_t colDim1, colDim2, rowDim;
+		assignDimsForViewType(viewType, colDim1, colDim2, rowDim);
 
 		// As first measure, assign a closed, axis-aligned loop of vertices for each patch row
 		// Depending on the prefab type, further actions are performed in the switch statement below
