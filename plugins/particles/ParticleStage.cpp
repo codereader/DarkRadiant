@@ -101,6 +101,8 @@ void ParticleStage::reset()
 
 	_speed = ParticleParameter();
 	_rotationSpeed = ParticleParameter();
+	_size = ParticleParameter();
+	_aspect = ParticleParameter();
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -222,6 +224,14 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		else if (token == "speed")
 		{
 			_speed.parseFromTokens(tok);
+		}
+		else if (token == "size")
+		{
+			_size.parseFromTokens(tok);
+		}
+		else if (token == "aspect")
+		{
+			_aspect.parseFromTokens(tok);
 		}
 		else if (token == "orientation")
 		{

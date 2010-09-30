@@ -54,7 +54,7 @@ public:
 		_to = value;
 	}
 
-	float evaluate(float fraction)
+	float evaluate(float fraction) const
 	{
 		return _from + fraction * (_to - _from);
 	}
