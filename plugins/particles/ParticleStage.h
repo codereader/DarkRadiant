@@ -107,6 +107,17 @@ class ParticleStage
 	float _fadeOutFraction;			// in 0.0 to 1.0 range
 	float _fadeIndexFraction;		// in 0.0 to 1.0 range, causes later index smokes to be more faded 
 
+	int	_animationFrames;			// if > 1, subdivide the texture S axis into frames and crossfade
+	float _animationRate;			// frames per second
+	
+	float _initialAngle;			// in degrees
+
+	float _boundsExpansion;			// user tweak to fix poorly calculated bounds
+
+	bool _randomDistribution;		// randomly orient the quad on emission ( defaults to true ) 
+	bool _entityColor;				// force color from render entity ( fadeColor is still valid )
+
+
 	/*
 	This is an excerpt from the D3 SDK declparticle.h:
 
@@ -306,6 +317,67 @@ public:
 	 * Set the fade index fraction [0..1]
 	 */
 	void setFadeIndexFraction(float fraction) { _fadeIndexFraction = clampOneZero(fraction); }
+
+	/** 
+	 * Get the animation frames.
+	 */
+	int getAnimationFrames() const { return _animationFrames; }
+
+	/** 
+	 * Set the animation frames.
+	 */
+	void setAnimationFrames(int animationFrames) { _animationFrames = animationFrames; }
+
+	/** 
+	 * Get the animation rate.
+	 */
+	float getAnimationRate() const { return _animationRate; }
+
+	/** 
+	 * Set the animation frames.
+	 */
+	void setAnimationRate(float animationRate) { _animationRate = animationRate; }
+
+	/** 
+	 * Get the initial angle.
+	 */
+	float getInitialAngle() const { return _initialAngle; }
+
+	/** 
+	 * Set the initial angle.
+	 */
+	void setInitialAngle(float angle) { _initialAngle = angle; }
+
+	/** 
+	 * Get the bounds expansion value.
+	 */
+	float getBoundsExpansion() const { return _boundsExpansion; }
+
+	/** 
+	 * Set the bounds expansion value.
+	 */
+	void setBoundsExpansion(float value) { _boundsExpansion = value; }
+
+	/** 
+	 * Get the random distribution flag.
+	 */
+	bool getRandomDistribution() const { return _randomDistribution; }
+
+	/** 
+	 * Set the random distribution flag.
+	 */
+	void setRandomDistribution(bool value) { _randomDistribution = value; }
+
+	/** 
+	 * Get the "use entity colour" flag.
+	 */
+	bool getUseEntityColour() const { return _entityColor; }
+
+	/** 
+	 * Set the "use entity colour" flag.
+	 */
+	void setUseEntityColour(bool value) { _entityColor = value; }
+
 
 	// Parser method, reads in all stage parameters from the given token stream
 	// The initial opening brace { has already been parsed.

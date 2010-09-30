@@ -72,6 +72,16 @@ void ParticleStage::reset()
 	_fadeInFraction = 0.0f;
 	_fadeOutFraction = 0.0f;
 	_fadeIndexFraction = 0.0f;
+
+	_animationFrames = 0;
+	_animationRate = 0;
+
+	_initialAngle = 0;
+
+	_boundsExpansion = 0;
+
+	_randomDistribution = true;
+	_entityColor = false;
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -130,7 +140,31 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		{
 			setFadeIndexFraction(parseWithErrorMsg<float>(tok, "Bad fade index fraction value"));
 		}
-		
+		else if (token == "animationFrames")
+		{
+			setAnimationFrames(parseWithErrorMsg<int>(tok, "Bad anim frames value"));
+		}
+		else if (token == "animationrate")
+		{
+			setAnimationRate(parseWithErrorMsg<float>(tok, "Bad anim rate value"));
+		}
+		else if (token == "angle")
+		{
+			setInitialAngle(parseWithErrorMsg<float>(tok, "Bad initial angle value"));
+		}
+		else if (token == "boundsExpansion")
+		{
+			setBoundsExpansion(parseWithErrorMsg<float>(tok, "Bad bounds expansion value"));
+		}
+		else if (token == "randomDistribution")
+		{
+			setRandomDistribution(tok.nextToken() == "1");
+		}
+		else if (token == "entityColor")
+		{
+			setUseEntityColour(tok.nextToken() == "1");
+		}
+
 		token = tok.nextToken();
 	}
 }
