@@ -82,6 +82,9 @@ void ParticleStage::reset()
 
 	_randomDistribution = true;
 	_entityColor = false;
+
+	_gravity = -1.0f;
+	_applyWorldGravity = true;
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -163,6 +166,34 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		else if (token == "entityColor")
 		{
 			setUseEntityColour(tok.nextToken() == "1");
+		}
+		else if (token == "gravity")
+		{
+			// Get the next token. If it is "world", then parse another token for the actual strength
+			token = tok.nextToken();
+
+			if (token == "world")
+			{
+				setWorldGravityFlag(true);
+
+				// Skip the "world" keyword and get the float
+				token = tok.nextToken();
+			}
+			else
+			{
+				setWorldGravityFlag(false);
+			}
+
+			// At this point, the token contains the gravity factor, parse and assign it
+			try
+			{
+				setGravity(boost::lexical_cast<float>(token));
+			}
+			catch (boost::bad_lexical_cast&)
+			{
+				globalErrorStream() << "[particles] Bad gravity value, token is '" << 
+					token << "'" << std::endl;
+			}
 		}
 
 		token = tok.nextToken();
