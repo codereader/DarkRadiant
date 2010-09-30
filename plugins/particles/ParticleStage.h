@@ -24,17 +24,6 @@ public:
 	float					Integrate( float frac, idRandom &rand ) const;
 };
 
-typedef enum {
-	PPATH_STANDARD,
-	PPATH_HELIX,			// ( sizeX sizeY sizeZ radialSpeed climbSpeed )
-	PPATH_FLIES,
-	PPATH_ORBIT,
-	PPATH_DRIP
-} prtCustomPth_t;
-
-typedef struct renderEntity_s renderEntity_t;
-typedef struct renderView_s renderView_t;
-
 typedef struct {
 	const renderEntity_t *	renderEnt;			// for shaderParms, etc
 	const renderView_t *	renderView;
@@ -85,8 +74,17 @@ public:
 	// Particle direction
 	enum DirectionType
 	{
-		DIRECTION_CONE,			// parm0 is the solid cone angle
-		DIRECTION_OUTWARD		// direction is relative to offset from origin, parm0 is an upward bias
+		DIRECTION_CONE,		// parm0 is the solid cone angle
+		DIRECTION_OUTWARD	// direction is relative to offset from origin, parm0 is an upward bias
+	};
+
+	enum CustomPathType
+	{
+		PATH_STANDARD,
+		PATH_HELIX,		// ( sizeX sizeY sizeZ radialSpeed climbSpeed )
+		PATH_FLIES,
+		PATH_ORBIT,
+		PATH_DRIP
 	};
 
 private:
@@ -133,11 +131,18 @@ private:
 	OrientationType _orientationType;	// view, aimed, or axis fixed
 	float _orientationParms[4];			// Orientation parameters
 
+	// Standard path parms
+
 	DistributionType _distributionType;	// Distribution type
 	float _distributionParms[4];		// Distribution parameters
 
 	DirectionType _directionType;	// Direction type
 	float _directionParms[4];		// Direction parameters
+
+	// Custom path will completely replace the standard path calculations
+
+	CustomPathType _customPathType;	// use custom C code routines for determining the origin
+	float _customPathParms[8];		// custom path parameters
 
 	/*
 	This is an excerpt from the D3 SDK declparticle.h:
@@ -145,11 +150,6 @@ private:
 	//-------------------------------	// standard path parms
 		
 "speed"	idParticleParm			speed;
-	
-	//------------------------------	// custom path will completely replace the standard path calculations
-	
-"customPath"	prtCustomPth_t			customPathType;		// use custom C code routines for determining the origin
-"customPath"	float					customPathParms[8];
 	
 	//--------------------------------
 	
@@ -468,6 +468,34 @@ public:
 	{ 
 		assert(parmNum >= 0 && parmNum < 4); 
 		_directionParms[parmNum] = value;
+	}
+
+	/**
+	 * Get the custom path type.
+	 */
+	CustomPathType getCustomPathType() const { return _customPathType; }
+
+	/**
+	 * Set the custom path type.
+	 */
+	void setCustomPathType(CustomPathType value) { _customPathType = value; }
+
+	/**
+	 * Get the custom path parameter with the given index [0..7]
+	 */
+	float getCustomPathParm(int parmNum) const
+	{ 
+		assert(parmNum >= 0 && parmNum < 8); 
+		return _customPathParms[parmNum]; 
+	}
+
+	/*
+	 * Set the custom path parameter with the given index [0..7].
+	 */
+	void setCustomPathParm(int parmNum, float value)
+	{ 
+		assert(parmNum >= 0 && parmNum < 8); 
+		_customPathParms[parmNum] = value;
 	}
 
 	// Parser method, reads in all stage parameters from the given token stream
