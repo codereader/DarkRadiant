@@ -488,7 +488,8 @@ public:
      * @returns
      * true if there are further tokens, false otherwise
      */
-    bool hasMoreTokens() {
+    bool hasMoreTokens() const
+	{
         return _tokIter != _tok.end();
     }
 
@@ -510,6 +511,17 @@ public:
             throw ParseException("DefTokeniser: no more tokens");
     }
     
+	std::string peek() const
+	{
+		if (hasMoreTokens())
+		{
+            return *_tokIter;
+		}
+        else
+		{
+			throw ParseException("DefTokeniser: no more tokens");
+		}
+	}    
 };
 
 /**
@@ -582,7 +594,7 @@ public:
 		fillTokenBuffer();
 	}
         
-    bool hasMoreTokens()
+    bool hasMoreTokens() const
 	{
 		return !_tokenBuffer.empty();
     }
@@ -604,6 +616,16 @@ public:
 		}
 
 		return temp;
+    }
+
+	std::string peek() const
+	{
+		if (_tokenBuffer.empty())
+		{
+			throw ParseException("No more tokens.");
+		}
+
+		return _tokenBuffer.front();
     }
     
 private:

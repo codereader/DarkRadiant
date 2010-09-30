@@ -353,7 +353,7 @@ public:
      * @returns
      * true if there are further tokens, false otherwise
      */
-    virtual bool hasMoreTokens() = 0;
+    virtual bool hasMoreTokens() const = 0;
 
     /** 
      * Return the next token in the sequence. This function consumes
@@ -394,6 +394,13 @@ public:
         	nextToken();
         }
     }
+
+	/** 
+	 * Returns the next token without incrementing the internal
+	 * iterator. Use this if you want to take a look at what is coming 
+	 * next without actually changing the tokeniser's state.
+	 */
+	virtual std::string peek() const = 0;
 };
 
 /** 
@@ -441,7 +448,7 @@ public:
      * @returns
      * true if there are further tokens, false otherwise
      */
-    bool hasMoreTokens() {
+    bool hasMoreTokens() const {
         return _tokIter != _tok.end();
     }
 
@@ -461,6 +468,23 @@ public:
         else
             throw ParseException("DefTokeniser: no more tokens");
     }
+
+	/** 
+	 * Returns the next token without incrementing the internal
+	 * iterator. Use this if you want to take a look at what is coming 
+	 * next without actually changing the tokeniser's state.
+	 */
+	std::string peek() const
+	{
+		if (hasMoreTokens())
+		{
+            return *_tokIter;
+		}
+        else
+		{
+			throw ParseException("DefTokeniser: no more tokens");
+		}
+	}
 };
 
 /**
@@ -523,7 +547,7 @@ public:
      * @returns
      * true if there are further tokens, false otherwise
      */
-    bool hasMoreTokens() {
+    bool hasMoreTokens() const {
         return _tokIter != _tok.end();
     }
 
@@ -544,7 +568,23 @@ public:
         else
             throw ParseException("DefTokeniser: no more tokens");
     }
-    
+
+	/** 
+	 * Returns the next token without incrementing the internal
+	 * iterator. Use this if you want to take a look at what is coming 
+	 * next without actually changing the tokeniser's state.
+	 */
+	std::string peek() const
+	{
+		if (hasMoreTokens())
+		{
+            return *_tokIter;
+		}
+        else
+		{
+			throw ParseException("DefTokeniser: no more tokens");
+		}
+	}    
 };
 
 
