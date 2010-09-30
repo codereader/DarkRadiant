@@ -77,6 +77,8 @@ typedef struct {
 /**
  * Representation of a single particle stage. Each stage consists of a set of
  * particles with the same properties (texture, acceleration etc).
+ *
+ * Most of the member descriptions are directly taken from the D3 SDK.
  */
 class ParticleStage
 {
@@ -89,7 +91,10 @@ class ParticleStage
 	std::string _material;
 	
 	float _duration;				// Duration in seconds
-	
+	float _cycles;					// allows things to oneShot ( 1 cycle ) or run for a set number of cycles
+									// on a per stage basis
+	float _bunching;				// 0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time
+
 	Vector4 _colour;				// Render colour
 	Vector4 _fadeColour;			// Fade colour
 
@@ -173,6 +178,16 @@ public:
 	void reset();
 
 	/** 
+	 * Get the shader name.
+	 */
+	const std::string& getMaterialName() const { return _material; }
+
+	/** 
+	 * Set the shader name.
+	 */
+	void setMaterialName(const std::string& material) { _material = material; }
+
+	/** 
 	 * Get the particle count.
 	 */
 	int getCount() const { return _count; }
@@ -181,7 +196,37 @@ public:
 	 * Set the particle count.
 	 */
 	void setCount(int count) { _count = count; }
-	
+
+	/**
+	 * Get the duration in seconds.
+	 */
+	float getDuration() const { return _duration; }
+
+	/**
+	 * Set the duration in seconds.
+	 */
+	void setDuration(float duration) { _duration = duration; }
+
+	/**
+	 * Get the cycles value. 
+	 */
+	float getCycles() const { return _cycles; }
+
+	/**
+	 * Set the cycles value. 
+	 */
+	void setCycles(float cycles) { _cycles = clampZeroOrPositive(cycles); }
+
+	/**
+	 * Get the bunching value [0..1]
+	 */
+	float getBunching() const { return _bunching; }
+
+	/**
+	 * Set the bunching value [0..1]
+	 */
+	void setBunching(float value) { _bunching = clampOneZero(value); }
+
 	/**
 	 * Get the particle render colour.
 	 */
@@ -245,6 +290,12 @@ private:
 		if (input > 1.0f) return 1.0f;
 
 		return input;
+	}
+
+	// Clamps the given float to positive values
+	float clampZeroOrPositive(float input)
+	{
+		return (input < 0.0f) ? 0.0f : input;
 	}
 
 	Vector4 parseVector4(parser::DefTokeniser& tok);
