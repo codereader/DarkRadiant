@@ -25,11 +25,6 @@ public:
 };
 
 typedef enum {
-	PDIR_CONE,				// parm0 is the solid cone angle
-	PDIR_OUTWARD			// direction is relative to offset from origin, parm0 is an upward bias
-} prtDirection_t;
-
-typedef enum {
 	PPATH_STANDARD,
 	PPATH_HELIX,			// ( sizeX sizeY sizeZ radialSpeed climbSpeed )
 	PPATH_FLIES,
@@ -87,6 +82,13 @@ public:
 								// allow the outer 10% of the sphere
 	};
 
+	// Particle direction
+	enum DirectionType
+	{
+		DIRECTION_CONE,			// parm0 is the solid cone angle
+		DIRECTION_OUTWARD		// direction is relative to offset from origin, parm0 is an upward bias
+	};
+
 private:
 	friend std::ostream& operator<< (std::ostream&, const ParticleStage&);
 	
@@ -131,17 +133,17 @@ private:
 	OrientationType _orientationType;	// view, aimed, or axis fixed
 	float _orientationParms[4];			// Orientation parameters
 
-	DistributionType _distributionType;	// distribution type
-	float _distributionParms[4];		// distribution parameters
+	DistributionType _distributionType;	// Distribution type
+	float _distributionParms[4];		// Distribution parameters
+
+	DirectionType _directionType;	// Direction type
+	float _directionParms[4];		// Direction parameters
 
 	/*
 	This is an excerpt from the D3 SDK declparticle.h:
 
 	//-------------------------------	// standard path parms
 		
-"direction"	prtDirection_t			directionType;
-"direction"	float					directionParms[4];
-	
 "speed"	idParticleParm			speed;
 	
 	//------------------------------	// custom path will completely replace the standard path calculations
@@ -438,6 +440,34 @@ public:
 	{ 
 		assert(parmNum >= 0 && parmNum < 4); 
 		_distributionParms[parmNum] = value;
+	}
+
+	/**
+	 * Get the direction type.
+	 */
+	DirectionType getDirectionType() const { return _directionType; }
+
+	/**
+	 * Set the direction type.
+	 */
+	void setDirectionType(DirectionType value) { _directionType = value; }
+
+	/**
+	 * Get the direction parameter with the given index [0..3]
+	 */
+	float getDirectionParm(int parmNum) const
+	{ 
+		assert(parmNum >= 0 && parmNum < 4); 
+		return _directionParms[parmNum]; 
+	}
+
+	/*
+	 * Set the direction parameter with the given index [0..3].
+	 */
+	void setDirectionParm(int parmNum, float value)
+	{ 
+		assert(parmNum >= 0 && parmNum < 4); 
+		_directionParms[parmNum] = value;
 	}
 
 	// Parser method, reads in all stage parameters from the given token stream

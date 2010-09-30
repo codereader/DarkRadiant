@@ -91,6 +91,9 @@ void ParticleStage::reset()
 
 	_distributionType = DISTRIBUTION_RECT;
 	_distributionParms[0] = _distributionParms[1] = _distributionParms[2] = _distributionParms[3] = 0;
+
+	_directionType = DIRECTION_CONE;
+	_directionParms[0] = _directionParms[1] = _directionParms[2] = _directionParms[3] = 0;
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -275,6 +278,30 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			{
 				globalErrorStream() << "[particles] Unknown distribution type: " << 
 					distrType << std::endl;
+			}
+		}
+		else if (token == "direction")
+		{
+			std::string dirType = tok.nextToken();
+
+			if (dirType == "cone")
+			{
+				setDirectionType(DIRECTION_CONE);
+
+				// Read solid cone angle
+				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad cone angle value"));
+			}
+			else if (dirType == "outward")
+			{
+				setDirectionType(DIRECTION_OUTWARD);
+
+				// Read upward bias
+				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad upward bias value"));
+			}
+			else
+			{
+				globalErrorStream() << "[particles] Unknown direction type: " << 
+					dirType << std::endl;
 			}
 		}
 
