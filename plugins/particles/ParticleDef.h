@@ -19,6 +19,9 @@ class ParticleDef
 {
 	// Name
 	std::string _name;
+
+	// Depth hack
+	float _depthHack;
 	
 	// Vector of stages
 	typedef std::vector<ParticleStage> StageList;
@@ -38,6 +41,16 @@ public:
 	 */
 	std::string getName() const {
 		return _name;
+	}
+
+	float getDepthHack() const
+	{
+		return _depthHack;
+	}
+
+	void setDepthHack(float value)
+	{
+		_depthHack = value;
 	}
 	
 	/**

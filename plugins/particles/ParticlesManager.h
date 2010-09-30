@@ -29,7 +29,6 @@ private:
 	
 	// Recursive-descent parse functions
 	void parseParticleDef(parser::DefTokeniser& tok);
-	ParticleStage parseParticleStage(parser::DefTokeniser& tok);
 	
 public:
 	/*

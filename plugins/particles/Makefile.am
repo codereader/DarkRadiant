@@ -4,5 +4,5 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = particles.la
 
 particles_la_LDFLAGS = -module -avoid-version
-particles_la_SOURCES = ParticlesManager.cpp particles.cpp
+particles_la_SOURCES = ParticlesManager.cpp particles.cpp ParticleStage.cpp
 
