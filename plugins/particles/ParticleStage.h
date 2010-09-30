@@ -85,7 +85,7 @@ class ParticleStage
 	friend std::ostream& operator<< (std::ostream&, const ParticleStage&);
 	
 	// Number of particles
-	int _count;
+	int _count;						// total number of particles, although some may be invisible at a given time
 	
 	// Material to render onto each quad
 	std::string _material;
@@ -101,7 +101,7 @@ class ParticleStage
 	int _cycleMsec;					// calculated as ( _duration + _deadTime ) in msec, read-only for public
 
 	Vector4 _colour;				// Render colour
-	Vector4 _fadeColour;			// Fade colour
+	Vector4 _fadeColour;			// either 0 0 0 0 for additive, or 1 1 1 0 for blended materials
 
 	float _fadeInFraction;			// in 0.0 to 1.0 range
 	float _fadeOutFraction;			// in 0.0 to 1.0 range
@@ -110,30 +110,20 @@ class ParticleStage
 	int	_animationFrames;			// if > 1, subdivide the texture S axis into frames and crossfade
 	float _animationRate;			// frames per second
 	
-	float _initialAngle;			// in degrees
+	float _initialAngle;			// in degrees, random angle is used if zero ( default ) 
 
 	float _boundsExpansion;			// user tweak to fix poorly calculated bounds
 
 	bool _randomDistribution;		// randomly orient the quad on emission ( defaults to true ) 
 	bool _entityColor;				// force color from render entity ( fadeColor is still valid )
 
+	float _gravity;					// can be negative to float up
+	bool _applyWorldGravity;		// apply gravity in world space
+
 
 	/*
 	This is an excerpt from the D3 SDK declparticle.h:
 
-"material"	const idMaterial *		material;
-
-"count"		int						totalParticles;		// total number of particles, although some may be invisible at a given time
-"cycles"	float					cycles;				// allows things to oneShot ( 1 cycle ) or run for a set number of cycles
-												// on a per stage basis
-
-			int						cycleMsec;			// ( particleLife + deadTime ) in msec
-
-"bunching"		float					spawnBunching;		// 0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time
-"time"			float					particleLife;		// total seconds of life for each particle
-"timeOffset"	float					timeOffset;			// time offset from system start for the first particle to spawn
-"deadTime"		float					deadTime;			// time after particleLife before respawning
-	
 	//-------------------------------	// standard path parms
 		
 "distribution"	prtDistribution_t		distributionType;
@@ -143,10 +133,6 @@ class ParticleStage
 "direction"	float					directionParms[4];
 	
 "speed"	idParticleParm			speed;
-"gravity"	float					gravity;				// can be negative to float up
-"gravity"	bool					worldGravity;			// apply gravity in world space
-"randomDistribution" bool					randomDistribution;		// randomly orient the quad on emission ( defaults to true ) 
-"entityColor 1"		bool					entityColor;			// force color from render entity ( fadeColor is still valid )
 	
 	//------------------------------	// custom path will completely replace the standard path calculations
 	
@@ -157,10 +143,6 @@ class ParticleStage
 	
 "offset"	idVec3					offset;				// offset from origin to spawn all particles, also applies to customPath
 	
-"animationFrames"	int						animationFrames;	// if > 1, subdivide the texture S axis into frames and crossfade
-"animationrate"		float					animationRate;		// frames per second
-
-"angle"		float					initialAngle;		// in degrees, random angle is used if zero ( default ) 
 "rotation"	idParticleParm			rotationSpeed;		// half the particles will have negative rotation speeds
 	
 "orientation"	prtOrientation_t		orientation;	// view, aimed, or axis fixed
@@ -168,17 +150,6 @@ class ParticleStage
 
 "size"	idParticleParm			size;
 "aspect"	idParticleParm			aspect;				// greater than 1 makes the T axis longer
-
-"color"	idVec4					color;
-"fadeColor"	idVec4					fadeColor;			// either 0 0 0 0 for additive, or 1 1 1 0 for blended materials
-"fadeIn"	float					fadeInFraction;		// in 0.0 to 1.0 range
-"fadeOut"	float					fadeOutFraction;	// in 0.0 to 1.0 range
-"fadeIndex"	float					fadeIndexFraction;	// in 0.0 to 1.0 range, causes later index smokes to be more faded 
-
-	bool					hidden;				// for editor use
-	//-----------------------------------
-
-"boundsExpansion"	float					boundsExpansion;	// user tweak to fix poorly calculated bounds
 
 	idBounds				bounds;				// derived
 	*/
@@ -378,6 +349,25 @@ public:
 	 */
 	void setUseEntityColour(bool value) { _entityColor = value; }
 
+	/** 
+	 * Get the gravity factor.
+	 */
+	float getGravity() const { return _gravity; }
+
+	/** 
+	 * Set the gravity factor.
+	 */
+	void setGravity(float value) { _gravity = value; }
+
+	/** 
+	 * Get the "apply gravity in world space" flag.
+	 */
+	bool getWorldGravityFlag() const { return _applyWorldGravity; }
+
+	/** 
+	 * Get the "apply gravity in world space" flag.
+	 */
+	void setWorldGravityFlag(bool value) { _applyWorldGravity = value; }
 
 	// Parser method, reads in all stage parameters from the given token stream
 	// The initial opening brace { has already been parsed.
