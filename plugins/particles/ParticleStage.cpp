@@ -85,6 +85,9 @@ void ParticleStage::reset()
 
 	_gravity = -1.0f;
 	_applyWorldGravity = true;
+
+	_orientation = ORIENTATION_VIEW;
+	_orientationParms[0] = _orientationParms[1] = _orientationParms[2] = _orientationParms[3] = 0;
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -198,6 +201,40 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		else if (token == "offset")
 		{
 			setOffset(parseVector3(tok));
+		}
+		else if (token == "orientation")
+		{
+			std::string orientationType = tok.nextToken();
+
+			if (orientationType == "view")
+			{
+				setOrientation(ORIENTATION_VIEW);
+			}
+			else if (orientationType == "aimed")
+			{
+				setOrientation(ORIENTATION_AIMED);
+
+				// Read orientation parameters
+				setOrientationParm(0, parseWithErrorMsg<float>(tok, "Bad aimed param1 value"));
+				setOrientationParm(1, parseWithErrorMsg<float>(tok, "Bad aimed param2 value"));
+			}
+			else if (orientationType == "x")
+			{
+				setOrientation(ORIENTATION_X);
+			}
+			else if (orientationType == "y")
+			{
+				setOrientation(ORIENTATION_Y);
+			}
+			else if (orientationType == "z")
+			{
+				setOrientation(ORIENTATION_Z);
+			}
+			else
+			{
+				globalErrorStream() << "[particles] Unknown orientation type: " << 
+					orientationType << std::endl;
+			}			
 		}
 
 		token = tok.nextToken();
