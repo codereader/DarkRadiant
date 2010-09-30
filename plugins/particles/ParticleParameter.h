@@ -65,13 +65,12 @@ public:
 
 		try
 		{
-			// cut off the quotes before converting to double
-			setFrom(boost::lexical_cast<float>(val.substr(1, val.length() - 2)));
+			setFrom(boost::lexical_cast<float>(val));
 		}
 		catch (boost::bad_lexical_cast&)
 		{
 			globalErrorStream() << "[particles] Bad lower value, token is '" << 
-				val.substr(1, val.length() - 2) << "'" << std::endl;
+				val << "'" << std::endl;
 		}
 
 		if (tok.peek() == "to")	
@@ -84,12 +83,12 @@ public:
 			try
 			{
 				// cut off the quotes before converting to double
-				setTo(boost::lexical_cast<float>(val.substr(1, val.length() - 2)));
+				setTo(boost::lexical_cast<float>(val));
 			}
 			catch (boost::bad_lexical_cast&)
 			{
 				globalErrorStream() << "[particles] Bad upper value, token is '" << 
-					val.substr(1, val.length() - 2) << "'" << std::endl;
+					val << "'" << std::endl;
 			}
 		}
 	}

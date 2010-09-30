@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
 
 namespace particles
 {
@@ -270,6 +271,9 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		else if (token == "distribution")
 		{
 			std::string distrType = tok.nextToken();
+
+			// We have old vanilla Doom 3 particles with upper case distribution types
+			boost::algorithm::to_lower(distrType);
 
 			if (distrType == "rect")
 			{
