@@ -120,6 +120,7 @@ class ParticleStage
 	float _gravity;					// can be negative to float up
 	bool _applyWorldGravity;		// apply gravity in world space
 
+	Vector3 _offset;				// offset from origin to spawn all particles, also applies to customPath
 
 	/*
 	This is an excerpt from the D3 SDK declparticle.h:
@@ -140,8 +141,6 @@ class ParticleStage
 "customPath"	float					customPathParms[8];
 	
 	//--------------------------------
-	
-"offset"	idVec3					offset;				// offset from origin to spawn all particles, also applies to customPath
 	
 "rotation"	idParticleParm			rotationSpeed;		// half the particles will have negative rotation speeds
 	
@@ -369,6 +368,16 @@ public:
 	 */
 	void setWorldGravityFlag(bool value) { _applyWorldGravity = value; }
 
+	/**
+	 * Get the offset vector.
+	 */
+	const Vector3& getOffset() const { return _offset; }
+
+	/**
+	 * Set the offset vector.
+	 */
+	void setOffset(const Vector3& value) { _offset = value; }
+
 	// Parser method, reads in all stage parameters from the given token stream
 	// The initial opening brace { has already been parsed.
 	// The routine will continue parsing until the matching closing } is encountered.
@@ -395,6 +404,7 @@ private:
 		return (input < 0.0f) ? 0.0f : input;
 	}
 
+	Vector3 parseVector3(parser::DefTokeniser& tok);
 	Vector4 parseVector4(parser::DefTokeniser& tok);
 };
 
