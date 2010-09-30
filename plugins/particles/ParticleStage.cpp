@@ -60,6 +60,12 @@ void ParticleStage::reset()
 	_duration = 1;
 	_cycles = 0;
 	_bunching = 0.0f;
+
+	_timeOffset = 0;
+	_deadTime = 0;
+
+	recalculateCycleMsec();
+
 	_colour = Vector4(1,1,1,1);
 	_fadeColour = Vector4(1,1,1,0);
 
@@ -91,6 +97,14 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		else if (token == "cycles")
 		{
 			setCycles(parseWithErrorMsg<float>(tok, "Bad cycles value"));
+		}
+		else if (token == "timeOffset")
+		{
+			setTimeOffset(parseWithErrorMsg<float>(tok, "Bad time offset value"));
+		}
+		else if (token == "deadTime")
+		{
+			setDeadTime(parseWithErrorMsg<float>(tok, "Bad dead time value"));
 		}
 		else if (token == "bunching")
 		{

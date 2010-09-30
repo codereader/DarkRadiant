@@ -95,6 +95,11 @@ class ParticleStage
 									// on a per stage basis
 	float _bunching;				// 0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time
 
+	float _timeOffset;				// time offset from system start for the first particle to spawn
+	float _deadTime;				// time after particleLife before respawning
+
+	int _cycleMsec;					// calculated as ( _duration + _deadTime ) in msec, read-only for public
+
 	Vector4 _colour;				// Render colour
 	Vector4 _fadeColour;			// Fade colour
 
@@ -105,64 +110,64 @@ class ParticleStage
 	/*
 	This is an excerpt from the D3 SDK declparticle.h:
 
-	const idMaterial *		material;
+"material"	const idMaterial *		material;
 
-	int						totalParticles;		// total number of particles, although some may be invisible at a given time
-	float					cycles;				// allows things to oneShot ( 1 cycle ) or run for a set number of cycles
+"count"		int						totalParticles;		// total number of particles, although some may be invisible at a given time
+"cycles"	float					cycles;				// allows things to oneShot ( 1 cycle ) or run for a set number of cycles
 												// on a per stage basis
 
-	int						cycleMsec;			// ( particleLife + deadTime ) in msec
+			int						cycleMsec;			// ( particleLife + deadTime ) in msec
 
-	float					spawnBunching;		// 0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time
-	float					particleLife;		// total seconds of life for each particle
-	float					timeOffset;			// time offset from system start for the first particle to spawn
-	float					deadTime;			// time after particleLife before respawning
+"bunching"		float					spawnBunching;		// 0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time
+"time"			float					particleLife;		// total seconds of life for each particle
+"timeOffset"	float					timeOffset;			// time offset from system start for the first particle to spawn
+"deadTime"		float					deadTime;			// time after particleLife before respawning
 	
 	//-------------------------------	// standard path parms
 		
-	prtDistribution_t		distributionType;
-	float					distributionParms[4];
+"distribution"	prtDistribution_t		distributionType;
+"distribution"	float					distributionParms[4];
 	
-	prtDirection_t			directionType;
-	float					directionParms[4];
+"direction"	prtDirection_t			directionType;
+"direction"	float					directionParms[4];
 	
-	idParticleParm			speed;
-	float					gravity;				// can be negative to float up
-	bool					worldGravity;			// apply gravity in world space
-	bool					randomDistribution;		// randomly orient the quad on emission ( defaults to true ) 
-	bool					entityColor;			// force color from render entity ( fadeColor is still valid )
+"speed"	idParticleParm			speed;
+"gravity"	float					gravity;				// can be negative to float up
+"gravity"	bool					worldGravity;			// apply gravity in world space
+"randomDistribution" bool					randomDistribution;		// randomly orient the quad on emission ( defaults to true ) 
+"entityColor 1"		bool					entityColor;			// force color from render entity ( fadeColor is still valid )
 	
 	//------------------------------	// custom path will completely replace the standard path calculations
 	
-	prtCustomPth_t			customPathType;		// use custom C code routines for determining the origin
-	float					customPathParms[8];
+"customPath"	prtCustomPth_t			customPathType;		// use custom C code routines for determining the origin
+"customPath"	float					customPathParms[8];
 	
 	//--------------------------------
 	
-	idVec3					offset;				// offset from origin to spawn all particles, also applies to customPath
+"offset"	idVec3					offset;				// offset from origin to spawn all particles, also applies to customPath
 	
-	int						animationFrames;	// if > 1, subdivide the texture S axis into frames and crossfade
-	float					animationRate;		// frames per second
+"animationFrames"	int						animationFrames;	// if > 1, subdivide the texture S axis into frames and crossfade
+"animationrate"		float					animationRate;		// frames per second
 
-	float					initialAngle;		// in degrees, random angle is used if zero ( default ) 
-	idParticleParm			rotationSpeed;		// half the particles will have negative rotation speeds
+"angle"		float					initialAngle;		// in degrees, random angle is used if zero ( default ) 
+"rotation"	idParticleParm			rotationSpeed;		// half the particles will have negative rotation speeds
 	
-	prtOrientation_t		orientation;	// view, aimed, or axis fixed
-	float					orientationParms[4];
+"orientation"	prtOrientation_t		orientation;	// view, aimed, or axis fixed
+"orientation" float					orientationParms[4];
 
-	idParticleParm			size;
-	idParticleParm			aspect;				// greater than 1 makes the T axis longer
+"size"	idParticleParm			size;
+"aspect"	idParticleParm			aspect;				// greater than 1 makes the T axis longer
 
-	idVec4					color;
-	idVec4					fadeColor;			// either 0 0 0 0 for additive, or 1 1 1 0 for blended materials
-	float					fadeInFraction;		// in 0.0 to 1.0 range
-	float					fadeOutFraction;	// in 0.0 to 1.0 range
-	float					fadeIndexFraction;	// in 0.0 to 1.0 range, causes later index smokes to be more faded 
+"color"	idVec4					color;
+"fadeColor"	idVec4					fadeColor;			// either 0 0 0 0 for additive, or 1 1 1 0 for blended materials
+"fadeIn"	float					fadeInFraction;		// in 0.0 to 1.0 range
+"fadeOut"	float					fadeOutFraction;	// in 0.0 to 1.0 range
+"fadeIndex"	float					fadeIndexFraction;	// in 0.0 to 1.0 range, causes later index smokes to be more faded 
 
 	bool					hidden;				// for editor use
 	//-----------------------------------
 
-	float					boundsExpansion;	// user tweak to fix poorly calculated bounds
+"boundsExpansion"	float					boundsExpansion;	// user tweak to fix poorly calculated bounds
 
 	idBounds				bounds;				// derived
 	*/
@@ -203,9 +208,14 @@ public:
 	float getDuration() const { return _duration; }
 
 	/**
-	 * Set the duration in seconds.
+	 * Set the duration in seconds, updates cyclemsec.
 	 */
-	void setDuration(float duration) { _duration = duration; }
+	void setDuration(float duration) { _duration = duration; recalculateCycleMsec(); }
+
+	/**
+	 * Returns ( duration + deadTime ) in msec. 
+	 */
+	int getCycleMsec() const { return _cycleMsec; }
 
 	/**
 	 * Get the cycles value. 
@@ -226,6 +236,26 @@ public:
 	 * Set the bunching value [0..1]
 	 */
 	void setBunching(float value) { _bunching = clampOneZero(value); }
+
+	/**
+	 * Get the time offset in seconds
+	 */
+	float getTimeOffset() const { return _timeOffset; }
+
+	/**
+	 * Set the time offset in seconds
+	 */
+	void setTimeOffset(float value) { _timeOffset = value; }
+
+	/**
+	 * Get the dead time in seconds
+	 */
+	float getDeadTime() const { return _deadTime; }
+
+	/**
+	 * Set the dead time in seconds, updates cyclemsec.
+	 */
+	void setDeadTime(float value) { _deadTime = value; recalculateCycleMsec(); }
 
 	/**
 	 * Get the particle render colour.
@@ -283,6 +313,11 @@ public:
 	void parseFromTokens(parser::DefTokeniser& tok);
 
 private:
+	void recalculateCycleMsec()
+	{
+		_cycleMsec = static_cast<int>(_duration + _deadTime) * 1000;
+	}
+
 	// Clamps the given float to the range [0..1]
 	float clampOneZero(float input)
 	{
