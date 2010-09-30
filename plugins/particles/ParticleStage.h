@@ -11,38 +11,6 @@
 namespace particles
 {
 
-/* 
-Excerpt from the D3 SDK:
-
-class idParticleParm {
-public:
-							idParticleParm( void ) { table = NULL; from = to = 0.0f; }
-
-	const idDeclTable *		table;
-	float					from;
-	float					to;
-	
-	float					Eval( float frac, idRandom &rand ) const;
-	float					Integrate( float frac, idRandom &rand ) const;
-};
-
-typedef struct {
-	const renderEntity_t *	renderEnt;			// for shaderParms, etc
-	const renderView_t *	renderView;
-	int						index;				// particle number in the system
-	float					frac;				// 0.0 to 1.0
-	idRandom				random;
-	idVec3					origin;				// dynamic smoke particles can have individual origins and axis
-	idMat3					axis;
-
-
-	float					age;				// in seconds, calculated as fraction * stage->particleLife
-	idRandom				originalRandom;		// needed so aimed particles can reset the random for another origin calculation
-	float					animationFrameFrac;	// set by ParticleTexCoords, used to make the cross faded version
-} particleGen_t;
-
-*/
-
 /**
  * Representation of a single particle stage. Each stage consists of a set of
  * particles with the same properties (texture, acceleration etc).
@@ -150,22 +118,9 @@ private:
 	CustomPathType _customPathType;	// use custom C code routines for determining the origin
 	float _customPathParms[8];		// custom path parameters
 
-	/*
-	This is an excerpt from the D3 SDK declparticle.h:
+	ParticleParameter _size;		// Size
 
-	//-------------------------------	// standard path parms
-		
-"speed"	idParticleParm			speed;
-	
-	//--------------------------------
-	
-"rotation"	idParticleParm			rotationSpeed;		// half the particles will have negative rotation speeds
-	
-"size"	idParticleParm			size;
-"aspect"	idParticleParm			aspect;				// greater than 1 makes the T axis longer
-
-	idBounds				bounds;				// derived
-	*/
+	ParticleParameter _aspect;		// greater than 1 makes the T axis longer
 	
 public:
 	// Create an empty particle stage with default values
@@ -503,6 +458,30 @@ public:
 		assert(parmNum >= 0 && parmNum < 8); 
 		_customPathParms[parmNum] = value;
 	}
+
+	/**
+	 * Get the particle size
+	 */
+	const ParticleParameter& getSize() const { return _size; }
+	ParticleParameter& getSize() { return _size; }
+
+	/**
+	 * Get the aspect ratio.
+	 */
+	const ParticleParameter& getAspect() const { return _aspect; }
+	ParticleParameter& getAspect() { return _aspect; }
+
+	/**
+	 * Get the particle speed.
+	 */
+	const ParticleParameter& getSpeed() const { return _speed; }
+	ParticleParameter& getSpeed() { return _speed; }
+
+	/**
+	 * Get the particle rotation speed.
+	 */
+	const ParticleParameter& getRotationSpeed() const { return _rotationSpeed; }
+	ParticleParameter& getRotationSpeed() { return _rotationSpeed; }
 
 	// Parser method, reads in all stage parameters from the given token stream
 	// The initial opening brace { has already been parsed.
