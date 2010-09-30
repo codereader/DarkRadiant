@@ -94,6 +94,10 @@ void ParticleStage::reset()
 
 	_directionType = DIRECTION_CONE;
 	_directionParms[0] = _directionParms[1] = _directionParms[2] = _directionParms[3] = 0;
+
+	_customPathType = PATH_STANDARD;
+	_customPathParms[0] = _customPathParms[1] = _customPathParms[2] = _customPathParms[3] = 0;
+	_customPathParms[4] = _customPathParms[5] = _customPathParms[6] = _customPathParms[7] = 0;
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -289,19 +293,61 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 				setDirectionType(DIRECTION_CONE);
 
 				// Read solid cone angle
-				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad cone angle value"));
+				setDirectionParm(0, parseWithErrorMsg<float>(tok, "Bad cone angle value"));
 			}
 			else if (dirType == "outward")
 			{
 				setDirectionType(DIRECTION_OUTWARD);
 
 				// Read upward bias
-				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad upward bias value"));
+				setDirectionParm(0, parseWithErrorMsg<float>(tok, "Bad upward bias value"));
 			}
 			else
 			{
 				globalErrorStream() << "[particles] Unknown direction type: " << 
 					dirType << std::endl;
+			}
+		}
+		else if (token == "customPath")
+		{
+			std::string pathType = tok.nextToken();
+
+			if (pathType == "helix")
+			{
+				setCustomPathType(PATH_HELIX);
+
+				// Read helix parameters ( sizeX sizeY sizeZ radialSpeed climbSpeed )
+				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad helix param1 value"));
+				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad helix param2 value"));
+				setCustomPathParm(2, parseWithErrorMsg<float>(tok, "Bad helix param3 value"));
+				setCustomPathParm(3, parseWithErrorMsg<float>(tok, "Bad helix param4 value"));
+				setCustomPathParm(5, parseWithErrorMsg<float>(tok, "Bad helix param5 value"));
+			}
+			else if (pathType == "flies")
+			{
+				setCustomPathType(PATH_FLIES);
+
+				// Read flies parameters
+				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad flies param1 value"));
+				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad flies param2 value"));
+				setCustomPathParm(2, parseWithErrorMsg<float>(tok, "Bad flies param3 value"));
+			}
+			else if (pathType == "orbit")
+			{
+				setCustomPathType(PATH_ORBIT);
+
+				// TODO: Figure out parameters
+			}
+			else if (pathType == "drip")
+			{
+				setCustomPathType(PATH_DRIP);
+
+				// TODO: Figure out parameters
+			}
+			else
+			{
+				globalErrorStream() << "[particles] Unknown custom path type type: " << 
+					pathType << std::endl;
 			}
 		}
 
