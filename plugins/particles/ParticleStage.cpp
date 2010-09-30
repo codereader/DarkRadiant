@@ -86,8 +86,11 @@ void ParticleStage::reset()
 	_gravity = -1.0f;
 	_applyWorldGravity = true;
 
-	_orientation = ORIENTATION_VIEW;
+	_orientationType = ORIENTATION_VIEW;
 	_orientationParms[0] = _orientationParms[1] = _orientationParms[2] = _orientationParms[3] = 0;
+
+	_distributionType = DISTRIBUTION_RECT;
+	_distributionParms[0] = _distributionParms[1] = _distributionParms[2] = _distributionParms[3] = 0;
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -208,11 +211,11 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 
 			if (orientationType == "view")
 			{
-				setOrientation(ORIENTATION_VIEW);
+				setOrientationType(ORIENTATION_VIEW);
 			}
 			else if (orientationType == "aimed")
 			{
-				setOrientation(ORIENTATION_AIMED);
+				setOrientationType(ORIENTATION_AIMED);
 
 				// Read orientation parameters
 				setOrientationParm(0, parseWithErrorMsg<float>(tok, "Bad aimed param1 value"));
@@ -220,21 +223,59 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else if (orientationType == "x")
 			{
-				setOrientation(ORIENTATION_X);
+				setOrientationType(ORIENTATION_X);
 			}
 			else if (orientationType == "y")
 			{
-				setOrientation(ORIENTATION_Y);
+				setOrientationType(ORIENTATION_Y);
 			}
 			else if (orientationType == "z")
 			{
-				setOrientation(ORIENTATION_Z);
+				setOrientationType(ORIENTATION_Z);
 			}
 			else
 			{
 				globalErrorStream() << "[particles] Unknown orientation type: " << 
 					orientationType << std::endl;
-			}			
+			}	
+		}
+		else if (token == "distribution")
+		{
+			std::string distrType = tok.nextToken();
+
+			if (distrType == "rect")
+			{
+				setDistributionType(DISTRIBUTION_RECT);
+
+				// Read orientation parameters (sizex, sizey, sizez)
+				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad distr param1 value"));
+				setDistributionParm(1, parseWithErrorMsg<float>(tok, "Bad distr param2 value"));
+				setDistributionParm(2, parseWithErrorMsg<float>(tok, "Bad distr param3 value"));
+			}
+			else if (distrType == "cylinder")
+			{
+				setDistributionType(DISTRIBUTION_CYLINDER);
+
+				// Read orientation parameters (sizex, sizey, sizez ringFraction?)
+				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad distr param1 value"));
+				setDistributionParm(1, parseWithErrorMsg<float>(tok, "Bad distr param2 value"));
+				setDistributionParm(2, parseWithErrorMsg<float>(tok, "Bad distr param3 value"));
+				setDistributionParm(3, parseWithErrorMsg<float>(tok, "Bad distr param4 value"));
+			}
+			else if (distrType == "sphere")
+			{
+				setDistributionType(DISTRIBUTION_SPHERE);
+
+				// Read orientation parameters (sizex, sizey, sizez)
+				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad distr param1 value"));
+				setDistributionParm(1, parseWithErrorMsg<float>(tok, "Bad distr param2 value"));
+				setDistributionParm(2, parseWithErrorMsg<float>(tok, "Bad distr param3 value"));
+			}
+			else
+			{
+				globalErrorStream() << "[particles] Unknown distribution type: " << 
+					distrType << std::endl;
+			}
 		}
 
 		token = tok.nextToken();

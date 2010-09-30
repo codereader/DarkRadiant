@@ -24,15 +24,6 @@ public:
 	float					Integrate( float frac, idRandom &rand ) const;
 };
 
-
-typedef enum {
-	PDIST_RECT,				// ( sizeX sizeY sizeZ )
-	PDIST_CYLINDER,			// ( sizeX sizeY sizeZ )
-	PDIST_SPHERE			// ( sizeX sizeY sizeZ ringFraction )
-							// a ringFraction of zero allows the entire sphere, 0.9 would only
-							// allow the outer 10% of the sphere
-} prtDistribution_t;
-
 typedef enum {
 	PDIR_CONE,				// parm0 is the solid cone angle
 	PDIR_OUTWARD			// direction is relative to offset from origin, parm0 is an upward bias
@@ -77,13 +68,23 @@ class ParticleStage
 public:
 
 	// Particle orientation
-	enum Orientation
+	enum OrientationType
 	{
 		ORIENTATION_VIEW,
 		ORIENTATION_AIMED,	// angle and aspect are disregarded
 		ORIENTATION_X,
 		ORIENTATION_Y,
 		ORIENTATION_Z
+	};
+
+	// Particle distribution
+	enum DistributionType
+	{
+		DISTRIBUTION_RECT,		// ( sizeX sizeY sizeZ )
+		DISTRIBUTION_CYLINDER,	// ( sizeX sizeY sizeZ )
+		DISTRIBUTION_SPHERE		// ( sizeX sizeY sizeZ ringFraction )
+								// a ringFraction of zero allows the entire sphere, 0.9 would only
+								// allow the outer 10% of the sphere
 	};
 
 private:
@@ -127,17 +128,17 @@ private:
 
 	Vector3 _offset;				// offset from origin to spawn all particles, also applies to customPath
 
-	Orientation _orientation;		// view, aimed, or axis fixed
-	float _orientationParms[4];		// Orientation parameters
+	OrientationType _orientationType;	// view, aimed, or axis fixed
+	float _orientationParms[4];			// Orientation parameters
+
+	DistributionType _distributionType;	// distribution type
+	float _distributionParms[4];		// distribution parameters
 
 	/*
 	This is an excerpt from the D3 SDK declparticle.h:
 
 	//-------------------------------	// standard path parms
 		
-"distribution"	prtDistribution_t		distributionType;
-"distribution"	float					distributionParms[4];
-	
 "direction"	prtDirection_t			directionType;
 "direction"	float					directionParms[4];
 	
@@ -386,12 +387,12 @@ public:
 	/**
 	 * Get the orientation type.
 	 */
-	Orientation getOrientation() const { return _orientation; }
+	OrientationType getOrientationType() const { return _orientationType; }
 
 	/**
 	 * Set the orientation type.
 	 */
-	void setOrientation(Orientation value) { _orientation = value; }
+	void setOrientationType(OrientationType value) { _orientationType = value; }
 
 	/**
 	 * Get the orientation parameter with the given index [0..3]
@@ -409,6 +410,34 @@ public:
 	{ 
 		assert(parmNum >= 0 && parmNum < 4); 
 		_orientationParms[parmNum] = value;
+	}
+
+	/**
+	 * Get the distribution type.
+	 */
+	DistributionType getDistributionType() const { return _distributionType; }
+
+	/**
+	 * Set the distribution type.
+	 */
+	void setDistributionType(DistributionType value) { _distributionType = value; }
+
+	/**
+	 * Get the distribution parameter with the given index [0..3]
+	 */
+	float getDistributionParm(int parmNum) const
+	{ 
+		assert(parmNum >= 0 && parmNum < 4); 
+		return _distributionParms[parmNum]; 
+	}
+
+	/*
+	 * Set the distribution parameter with the given index [0..3].
+	 */
+	void setDistributionParm(int parmNum, float value)
+	{ 
+		assert(parmNum >= 0 && parmNum < 4); 
+		_distributionParms[parmNum] = value;
 	}
 
 	// Parser method, reads in all stage parameters from the given token stream
