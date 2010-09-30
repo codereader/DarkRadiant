@@ -195,31 +195,56 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 					token << "'" << std::endl;
 			}
 		}
+		else if (token == "offset")
+		{
+			setOffset(parseVector3(tok));
+		}
 
 		token = tok.nextToken();
 	}
 }
 
-Vector4 ParticleStage::parseVector4(parser::DefTokeniser& tok)
+Vector3 ParticleStage::parseVector3(parser::DefTokeniser& tok)
 {
-	// Read 4 values and assemble to a Vector4
-	Vector4 col;
+	// Read 3 values and assemble to a Vector3
+	Vector3 vec;
 
 	try
 	{
-		col.x() = boost::lexical_cast<float>(tok.nextToken());
-		col.y() = boost::lexical_cast<float>(tok.nextToken());
-		col.z() = boost::lexical_cast<float>(tok.nextToken());
-		col.w() = boost::lexical_cast<float>(tok.nextToken());
+		vec.x() = boost::lexical_cast<float>(tok.nextToken());
+		vec.y() = boost::lexical_cast<float>(tok.nextToken());
+		vec.z() = boost::lexical_cast<float>(tok.nextToken());
 	}
 	catch (boost::bad_lexical_cast&)
 	{
-		col = Vector4(1,1,1,1);
+		vec = Vector3(0,0,0);
 
-		globalErrorStream() << "[particles] Bad colour value." << std::endl;
+		globalErrorStream() << "[particles] Bad vector3 value." << std::endl;
 	}
 
-	return col;
+	return vec;
+}
+
+Vector4 ParticleStage::parseVector4(parser::DefTokeniser& tok)
+{
+	// Read 4 values and assemble to a Vector4
+	Vector4 vec;
+
+	try
+	{
+		vec.x() = boost::lexical_cast<float>(tok.nextToken());
+		vec.y() = boost::lexical_cast<float>(tok.nextToken());
+		vec.z() = boost::lexical_cast<float>(tok.nextToken());
+		vec.w() = boost::lexical_cast<float>(tok.nextToken());
+	}
+	catch (boost::bad_lexical_cast&)
+	{
+		vec = Vector4(1,1,1,1);
+
+		globalErrorStream() << "[particles] Bad vector4 value." << std::endl;
+	}
+
+	return vec;
 }
 
 } // namespace
