@@ -6,6 +6,8 @@
 #include <iostream>
 #include "parser/DefTokeniser.h"
 
+#include "ParticleParameter.h"
+
 namespace particles
 {
 
@@ -118,6 +120,8 @@ private:
 	
 	float _initialAngle;			// in degrees, random angle is used if zero ( default ) 
 
+	ParticleParameter _rotationSpeed; // half the particles will have negative rotation speeds
+
 	float _boundsExpansion;			// user tweak to fix poorly calculated bounds
 
 	bool _randomDistribution;		// randomly orient the quad on emission ( defaults to true ) 
@@ -138,6 +142,8 @@ private:
 
 	DirectionType _directionType;	// Direction type
 	float _directionParms[4];		// Direction parameters
+
+	ParticleParameter _speed;		// Speed
 
 	// Custom path will completely replace the standard path calculations
 
