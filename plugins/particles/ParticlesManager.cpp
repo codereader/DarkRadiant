@@ -43,7 +43,33 @@ void ParticlesManager::parseStream(std::istream& contents)
 void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 {
 	// Standard DEF, starts with "particle <name> {"
-	tok.assertNextToken("particle");
+	std::string declName = tok.nextToken();
+
+	// Check for a valid particle declaration, some .prt files contain materials
+	if (declName != "particle")
+	{
+		// No particle, skip name plus whole block
+		tok.skipTokens(1);
+		tok.assertNextToken("{");
+
+		for (std::size_t level = 1; level > 0;)
+		{
+			std::string token = tok.nextToken();
+
+			if (token == "}")
+			{
+				level--;
+			}
+			else if (token == "{")
+			{
+				level++;
+			}
+		}
+
+		return;
+	}
+
+	// Valid particle declaration, go ahead parsing the name
 	std::string name = tok.nextToken();
 	tok.assertNextToken("{");
 	
