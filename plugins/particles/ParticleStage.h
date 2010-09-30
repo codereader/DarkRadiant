@@ -46,14 +46,6 @@ typedef enum {
 	PPATH_DRIP
 } prtCustomPth_t;
 
-typedef enum {
-	POR_VIEW,
-	POR_AIMED,				// angle and aspect are disregarded
-	POR_X,
-	POR_Y,
-	POR_Z
-} prtOrientation_t;
-
 typedef struct renderEntity_s renderEntity_t;
 typedef struct renderView_s renderView_t;
 
@@ -82,6 +74,19 @@ typedef struct {
  */
 class ParticleStage
 {
+public:
+
+	// Particle orientation
+	enum Orientation
+	{
+		ORIENTATION_VIEW,
+		ORIENTATION_AIMED,	// angle and aspect are disregarded
+		ORIENTATION_X,
+		ORIENTATION_Y,
+		ORIENTATION_Z
+	};
+
+private:
 	friend std::ostream& operator<< (std::ostream&, const ParticleStage&);
 	
 	// Number of particles
@@ -122,6 +127,9 @@ class ParticleStage
 
 	Vector3 _offset;				// offset from origin to spawn all particles, also applies to customPath
 
+	Orientation _orientation;		// view, aimed, or axis fixed
+	float _orientationParms[4];		// Orientation parameters
+
 	/*
 	This is an excerpt from the D3 SDK declparticle.h:
 
@@ -144,9 +152,6 @@ class ParticleStage
 	
 "rotation"	idParticleParm			rotationSpeed;		// half the particles will have negative rotation speeds
 	
-"orientation"	prtOrientation_t		orientation;	// view, aimed, or axis fixed
-"orientation" float					orientationParms[4];
-
 "size"	idParticleParm			size;
 "aspect"	idParticleParm			aspect;				// greater than 1 makes the T axis longer
 
@@ -377,6 +382,34 @@ public:
 	 * Set the offset vector.
 	 */
 	void setOffset(const Vector3& value) { _offset = value; }
+
+	/**
+	 * Get the orientation type.
+	 */
+	Orientation getOrientation() const { return _orientation; }
+
+	/**
+	 * Set the orientation type.
+	 */
+	void setOrientation(Orientation value) { _orientation = value; }
+
+	/**
+	 * Get the orientation parameter with the given index [0..3]
+	 */
+	float getOrientationParm(int parmNum) const
+	{ 
+		assert(parmNum >= 0 && parmNum < 4); 
+		return _orientationParms[parmNum]; 
+	}
+
+	/*
+	 * Set the orientation parameter with the given index [0..3].
+	 */
+	void setOrientationParm(int parmNum, float value)
+	{ 
+		assert(parmNum >= 0 && parmNum < 4); 
+		_orientationParms[parmNum] = value;
+	}
 
 	// Parser method, reads in all stage parameters from the given token stream
 	// The initial opening brace { has already been parsed.
