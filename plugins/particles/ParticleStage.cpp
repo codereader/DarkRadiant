@@ -316,18 +316,18 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			{
 				setCustomPathType(PATH_HELIX);
 
-				// Read helix parameters ( sizeX sizeY sizeZ radialSpeed climbSpeed )
+				// Read helix parameters ( sizeX sizeY sizeZ radialSpeed axialSpeed )
 				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad helix param1 value"));
 				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad helix param2 value"));
 				setCustomPathParm(2, parseWithErrorMsg<float>(tok, "Bad helix param3 value"));
 				setCustomPathParm(3, parseWithErrorMsg<float>(tok, "Bad helix param4 value"));
-				setCustomPathParm(5, parseWithErrorMsg<float>(tok, "Bad helix param5 value"));
+				setCustomPathParm(4, parseWithErrorMsg<float>(tok, "Bad helix param5 value"));
 			}
 			else if (pathType == "flies")
 			{
 				setCustomPathType(PATH_FLIES);
 
-				// Read flies parameters
+				// Read flies parameters (radial_speed, axial_speed, size)
 				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad flies param1 value"));
 				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad flies param2 value"));
 				setCustomPathParm(2, parseWithErrorMsg<float>(tok, "Bad flies param3 value"));
@@ -336,13 +336,17 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			{
 				setCustomPathType(PATH_ORBIT);
 
-				// TODO: Figure out parameters
+				// Read flies parameters (radius, speed)
+				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad orbit param1 value"));
+				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad orbit param2 value"));
 			}
 			else if (pathType == "drip")
 			{
 				setCustomPathType(PATH_DRIP);
 
-				// TODO: Figure out parameters
+				// Read flies parameters (something something) (sic!, as seen in the particle editor)
+				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad drip param1 value"));
+				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad drip param2 value"));
 			}
 			else
 			{
