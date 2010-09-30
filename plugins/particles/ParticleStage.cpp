@@ -6,6 +6,27 @@
 namespace particles
 {
 
+namespace
+{
+	// Returns next token as number, or returns zero on fail, printing the given error message
+	template<typename Type>
+	inline Type parseWithErrorMsg(parser::DefTokeniser& tok, const char* errorMsg)
+	{
+		std::string str = tok.nextToken();
+
+		try
+		{
+			return boost::lexical_cast<Type>(str);
+		}
+		catch (boost::bad_lexical_cast&)
+		{
+			globalErrorStream() << "[particles] " << errorMsg << ", token is '" << 
+				str << "'" << std::endl;
+			return 0;
+		}
+	}
+}
+
 ParticleStage::ParticleStage()
 {
 	reset();
@@ -37,12 +58,14 @@ void ParticleStage::reset()
 	_material.clear();
 
 	_duration = 1;
+	_cycles = 0;
+	_bunching = 0.0f;
 	_colour = Vector4(1,1,1,1);
 	_fadeColour = Vector4(1,1,1,0);
 
-	_fadeInFraction = 0;
-	_fadeOutFraction = 0;
-	_fadeIndexFraction = 0;
+	_fadeInFraction = 0.0f;
+	_fadeOutFraction = 0.0f;
+	_fadeIndexFraction = 0.0f;
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -55,20 +78,43 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 	{
 		if (token == "count")
 		{
-			try
-			{
-				setCount(boost::lexical_cast<int>(tok.nextToken()));
-			}
-			catch (boost::bad_lexical_cast&)
-			{
-				std::cerr << "[particles] Bad count value '" << token 
-						  << "'" << std::endl;
-			}
+			setCount(parseWithErrorMsg<int>(tok, "Bad count value"));
+		}
+		else if (token == "material")
+		{
+			setMaterialName(tok.nextToken());
+		}
+		else if (token == "time") // duration
+		{
+			setDuration(parseWithErrorMsg<float>(tok, "Bad duration value"));
+		}
+		else if (token == "cycles")
+		{
+			setCycles(parseWithErrorMsg<float>(tok, "Bad cycles value"));
+		}
+		else if (token == "bunching")
+		{
+			setBunching(parseWithErrorMsg<float>(tok, "Bad bunching value"));
 		}
 		else if (token == "color")
 		{
-			// Read 4 values and assemble as a vector4
 			setColour(parseVector4(tok));
+		}
+		else if (token == "fadeColor")
+		{
+			setFadeColour(parseVector4(tok));
+		}
+		else if (token == "fadeIn")
+		{
+			setFadeInFraction(parseWithErrorMsg<float>(tok, "Bad fade in fraction value"));
+		}
+		else if (token == "fadeOut")
+		{
+			setFadeOutFraction(parseWithErrorMsg<float>(tok, "Bad fade out fraction value"));
+		}
+		else if (token == "fadeIndex")
+		{
+			setFadeIndexFraction(parseWithErrorMsg<float>(tok, "Bad fade index fraction value"));
 		}
 		
 		token = tok.nextToken();
@@ -77,6 +123,7 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 
 Vector4 ParticleStage::parseVector4(parser::DefTokeniser& tok)
 {
+	// Read 4 values and assemble to a Vector4
 	Vector4 col;
 
 	try
