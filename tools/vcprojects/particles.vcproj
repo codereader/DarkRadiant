@@ -422,6 +422,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\particles\ParticleParameter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\particles\particles.cpp"
 				>
 			</File>

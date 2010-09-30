@@ -98,6 +98,9 @@ void ParticleStage::reset()
 	_customPathType = PATH_STANDARD;
 	_customPathParms[0] = _customPathParms[1] = _customPathParms[2] = _customPathParms[3] = 0;
 	_customPathParms[4] = _customPathParms[5] = _customPathParms[6] = _customPathParms[7] = 0;
+
+	_speed = ParticleParameter();
+	_rotationSpeed = ParticleParameter();
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -168,6 +171,10 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		{
 			setInitialAngle(parseWithErrorMsg<float>(tok, "Bad initial angle value"));
 		}
+		else if (token == "rotation")
+		{
+			_rotationSpeed.parseFromTokens(tok);
+		}
 		else if (token == "boundsExpansion")
 		{
 			setBoundsExpansion(parseWithErrorMsg<float>(tok, "Bad bounds expansion value"));
@@ -211,6 +218,10 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		else if (token == "offset")
 		{
 			setOffset(parseVector3(tok));
+		}
+		else if (token == "speed")
+		{
+			_speed.parseFromTokens(tok);
 		}
 		else if (token == "orientation")
 		{
