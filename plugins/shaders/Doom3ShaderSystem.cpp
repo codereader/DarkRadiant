@@ -156,10 +156,23 @@ void Doom3ShaderSystem::incrementActiveShadersIterator() {
 	_library->incrementIterator();
 }
 
-void Doom3ShaderSystem::attach(ModuleObserver& observer) {
+void Doom3ShaderSystem::attach(ModuleObserver& observer)
+{
 	_observers.attach(observer);
+
+	if (_realised)
+	{
+		observer.realise();
+	}
 }
-void Doom3ShaderSystem::detach(ModuleObserver& observer) {
+
+void Doom3ShaderSystem::detach(ModuleObserver& observer)
+{
+	if (_realised)
+	{
+		observer.unrealise();
+	}
+
 	_observers.detach(observer);
 }
 
