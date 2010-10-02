@@ -84,6 +84,7 @@ public:
 		_stages.push_back(stage);
 	}
 };
+typedef boost::shared_ptr<ParticleDef> ParticleDefPtr;
 
 }
 

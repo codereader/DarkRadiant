@@ -22,7 +22,7 @@ class ParticlesManager :
 	public IParticlesManager
 {
 	// Map of named particle defs
-	typedef std::map<std::string, ParticleDef> ParticleDefMap;
+	typedef std::map<std::string, ParticleDefPtr> ParticleDefMap;
 	ParticleDefMap _particleDefs;
 	
 private:
@@ -35,6 +35,11 @@ public:
 	 * Visit each particles def.
 	 */
 	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
+
+	/**
+	 * Get a named particle definition, returns NULL if not found.
+	 */
+	IParticleDefPtr getParticle(const std::string& name);
 	
 	/**
 	 * Accept a stream containing particle definitions to parse and add to the

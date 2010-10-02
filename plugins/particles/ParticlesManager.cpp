@@ -23,8 +23,15 @@ void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v) const
 		 i != _particleDefs.end();
 		 ++i)
 	{
-		v(i->second);
+		v(*i->second);
 	}
+}
+
+IParticleDefPtr ParticlesManager::getParticle(const std::string& name)
+{
+	ParticleDefMap::const_iterator found = _particleDefs.find(name);
+
+	return (found != _particleDefs.end()) ? found->second : IParticleDefPtr();
 }
 
 // Parse particle defs from string
@@ -73,7 +80,7 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 	std::string name = tok.nextToken();
 	tok.assertNextToken("{");
 	
-	ParticleDef pdef(name);
+	ParticleDefPtr pdef(new ParticleDef(name));
 
 	// Any global keywords will come first, after which we get a series of 
 	// brace-delimited stages.
@@ -83,7 +90,7 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 	{
 		if (token == "depthHack")
 		{
-			pdef.setDepthHack(strToFloat(tok.nextToken()));
+			pdef->setDepthHack(strToFloat(tok.nextToken()));
 		}
 		else if (token == "{")
 		{
@@ -91,7 +98,7 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 			ParticleStage stage(tok);
 			
 			// Append to the ParticleDef
-			pdef.appendStage(stage);
+			pdef->appendStage(stage);
 		}
 		
 		// Get next token
