@@ -46,6 +46,7 @@ public:
 	 */
 	virtual IParticleStage& getParticleStages(std::size_t stageNum) = 0;
 };
+typedef boost::shared_ptr<IParticleDef> IParticleDefPtr;
 
 /**
  * Callback for evaluation particle defs.
@@ -63,6 +64,11 @@ public:
 	 * Enumerate each particle def.
 	 */
 	virtual void forEachParticleDef(const ParticleDefVisitor&) const = 0;
+
+	/**
+	 * Get a named particle definition, returns NULL if not found.
+	 */
+	virtual IParticleDefPtr getParticle(const std::string& name) = 0;
 };
 
 } // namespace
