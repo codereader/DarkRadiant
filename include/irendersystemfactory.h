@@ -24,6 +24,12 @@ public:
 	 * Instantiates a new rendersystem.
 	 */
 	virtual RenderSystemPtr createRenderSystem() = 0;
+
+	/**
+	 * Returns the "default" rendersystem used by 
+	 * the camera and orthoviews to submit the map geometry.
+	 */
+	virtual RenderSystem& getDefaultRenderSystem() = 0;
 };
 
 } // namespace

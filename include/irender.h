@@ -22,12 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_IRENDER_H)
 #define INCLUDED_IRENDER_H
 
-#include "imodule.h"
 #include <boost/function/function_fwd.hpp>
 
 #include "math/Vector3.h"
 
 #include "ShaderLayer.h"
+#include "irendersystemfactory.h"
 
 // Rendering states to sort by.
 // Higher bits have the most effect - slowest state changes should be highest.
@@ -323,14 +323,11 @@ public:
  */
 typedef boost::shared_ptr<Shader> ShaderPtr;
 
-const std::string MODULE_RENDERSYSTEM("ShaderCache");
-
 /**
  * \brief
- * The main interface for the backend renderer.
+ * The main interface for DarkRadiant's backend renderer.
  */
 class RenderSystem
-: public RegisterableModule
 {
 public:
 
@@ -427,16 +424,12 @@ typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
 /**
  * \brief
  * Global accessor method for the RenderSystem instance.
+ * This is just a shortcut to retrive the "default" rendersystem
+ * from the rendersystem factory module.
  */
 inline RenderSystem& GlobalRenderSystem() 
 {
-	// Cache the reference locally
-	static RenderSystem& _instance(
-		*boost::static_pointer_cast<RenderSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)
-		)
-	);
-	return _instance;
+	return GlobalRenderSystemFactory().getDefaultRenderSystem();
 }
 
 #endif

@@ -164,7 +164,7 @@ const StringSet& Doom3EntityCreator::getDependencies() const {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_SCENEGRAPH);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
+		_dependencies.insert(MODULE_RENDERSYSTEMFACTORY);
 		_dependencies.insert(MODULE_UNDOSYSTEM);
 	}
 

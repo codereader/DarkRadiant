@@ -43,7 +43,7 @@ const StringSet& SpacePartitionRenderer::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_RENDERSYSTEM);
+		_dependencies.insert(MODULE_RENDERSYSTEMFACTORY);
 		_dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
