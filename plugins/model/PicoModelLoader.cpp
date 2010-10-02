@@ -121,7 +121,6 @@ const StringSet& PicoModelLoader::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_FILETYPES);
 	}
 
