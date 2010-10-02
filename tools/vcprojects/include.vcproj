@@ -292,6 +292,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\iparticlestage.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\ipatch.h"
 			>
 		</File>

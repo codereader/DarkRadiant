@@ -1,6 +1,8 @@
 #ifndef _PARTICLE_PARAMETER_H_
 #define _PARTICLE_PARAMETER_H_
 
+#include "iparticlestage.h"
+
 #include "parser/DefTokeniser.h"
 #include <boost/lexical_cast.hpp>
 
@@ -17,7 +19,8 @@ namespace particles
  * 
  * It is modeled after the idParticleParam class in the D3 SDK.
  */
-class ParticleParameter
+class ParticleParameter :
+	public IParticleParameter
 {
 private:
 	float _from;	// lower bound
