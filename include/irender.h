@@ -422,6 +422,7 @@ public:
   	// Initialises the OpenGL extensions 
     virtual void extensionsInitialised() = 0;
 };
+typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
 
 /**
  * \brief
