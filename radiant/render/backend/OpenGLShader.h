@@ -10,18 +10,12 @@
 
 #include <list>
 
-namespace render { class OpenGLRenderSystem; }
-
 /**
  * Implementation of the Shader class.
  */
 class OpenGLShader 
 : public Shader
 {
-private:
-	// The "owning" rendersystem for upwards communication
-	render::OpenGLRenderSystem& _renderSystem;
-
     // List of shader passes for this shader
 	typedef std::list<OpenGLShaderPass*> Passes;
 	Passes _shaderPasses;
@@ -93,10 +87,9 @@ public:
 	/** 
 	 * Constructor.
 	 */
-	OpenGLShader(render::OpenGLRenderSystem& renderSystem) : 
-		_renderSystem(renderSystem),
-		m_used(0)
-	{}
+	OpenGLShader() 
+	: m_used(0)
+	{ }
 
 	/**
 	 * Add a renderable object to this shader.
