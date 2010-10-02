@@ -38,7 +38,7 @@ public:
 	/**
 	 * Functor operator.
 	 */
-	void operator() (const IParticleDef& def)
+	void operator() (const particles::IParticleDef& def)
 	{
 		// Add the ".prt" extension to the name fo display in the list
 		std::string prtName = def.getName() + ".prt";

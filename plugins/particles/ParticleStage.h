@@ -3,6 +3,8 @@
 
 #include "math/Vector4.h"
 
+#include "iparticles.h"
+
 #include <iostream>
 #include "parser/DefTokeniser.h"
 
@@ -17,46 +19,10 @@ namespace particles
  *
  * Most of the member descriptions are directly taken from the D3 SDK.
  */
-class ParticleStage
+class ParticleStage :
+	public IParticleStage
 {
 public:
-
-	// Particle orientation
-	enum OrientationType
-	{
-		ORIENTATION_VIEW,
-		ORIENTATION_AIMED,	// angle and aspect are disregarded
-		ORIENTATION_X,
-		ORIENTATION_Y,
-		ORIENTATION_Z
-	};
-
-	// Particle distribution
-	enum DistributionType
-	{
-		DISTRIBUTION_RECT,		// ( sizeX sizeY sizeZ )
-		DISTRIBUTION_CYLINDER,	// ( sizeX sizeY sizeZ )
-		DISTRIBUTION_SPHERE		// ( sizeX sizeY sizeZ ringFraction )
-								// a ringFraction of zero allows the entire sphere, 0.9 would only
-								// allow the outer 10% of the sphere
-	};
-
-	// Particle direction
-	enum DirectionType
-	{
-		DIRECTION_CONE,		// parm0 is the solid cone angle
-		DIRECTION_OUTWARD	// direction is relative to offset from origin, parm0 is an upward bias
-	};
-
-	enum CustomPathType
-	{
-		PATH_STANDARD,
-		PATH_HELIX,		// ( sizeX sizeY sizeZ radialSpeed climbSpeed )
-		PATH_FLIES,
-		PATH_ORBIT,
-		PATH_DRIP
-	};
-
 private:
 	friend std::ostream& operator<< (std::ostream&, const ParticleStage&);
 	
