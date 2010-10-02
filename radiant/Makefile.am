@@ -53,6 +53,7 @@ darkradiant_SOURCES = main.cpp \
                       render/backend/OpenGLShaderPass.cpp \
                       render/OpenGLModule.cpp \
                       render/OpenGLRenderSystem.cpp \
+					  render/RenderSystemFactory.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
                       ui/entitychooser/EntityClassTreePopulator.cpp \

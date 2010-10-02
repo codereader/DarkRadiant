@@ -320,6 +320,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\irendersystemfactory.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\iscenegraph.h"
 			>
 		</File>

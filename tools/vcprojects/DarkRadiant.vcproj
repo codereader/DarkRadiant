@@ -1156,6 +1156,14 @@
 					RelativePath="..\..\radiant\render\RenderStatistics.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\radiant\render\RenderSystemFactory.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\render\RenderSystemFactory.h"
+					>
+				</File>
 				<Filter
 					Name="backend"
 					>
