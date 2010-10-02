@@ -61,7 +61,7 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name) {
 	// Either the shader was not found, or the weak pointer failed to lock
 	// because the shader had been deleted. Either way, create a new shader
 	// and insert into the cache.
-	OpenGLShaderPtr shd(new OpenGLShader());
+	OpenGLShaderPtr shd(new OpenGLShader(*this));
 	_shaders[name] = shd;
 		
 	// Realise the shader if the cache is realised
@@ -428,9 +428,5 @@ void OpenGLRenderSystem::shutdownModule() {
 
 // Define the static ShaderCache module
 module::StaticModule<OpenGLRenderSystem> openGLRenderSystemModule;
-
-OpenGLRenderSystem& getOpenGLRenderSystem() {
-	return *openGLRenderSystemModule.getModule();
-}
 
 } // namespace render
