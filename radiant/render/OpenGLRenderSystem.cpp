@@ -42,19 +42,8 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 	m_lightingSupported(false),
 	m_lightsChanged(true),
 	m_traverseRenderablesMutex(false)
-{
-	GlobalMaterialManager().attach(*this);
-
-	// greebo: Don't realise this class yet, this must wait
-	// until the shared GL context has been created (this 
-	// happens as soon as the first GL widget has been realised).
-}
-
-OpenGLRenderSystem::~OpenGLRenderSystem()
-{
-	GlobalMaterialManager().detach(*this);
-}
-
+{}
+	
 /* Capture the given shader.
  */
 ShaderPtr OpenGLRenderSystem::capture(const std::string& name) {
@@ -72,7 +61,7 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name) {
 	// Either the shader was not found, or the weak pointer failed to lock
 	// because the shader had been deleted. Either way, create a new shader
 	// and insert into the cache.
-	OpenGLShaderPtr shd(new OpenGLShader(*this));
+	OpenGLShaderPtr shd(new OpenGLShader());
 	_shaders[name] = shd;
 		
 	// Realise the shader if the cache is realised
@@ -403,4 +392,45 @@ void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) c
 	m_traverseRenderablesMutex = false;
 }
   
+// RegisterableModule implementation
+const std::string& OpenGLRenderSystem::getName() const {
+	static std::string _name(MODULE_RENDERSYSTEM);
+	return _name;
+}
+
+const StringSet& OpenGLRenderSystem::getDependencies() const 
+{
+	static StringSet _dependencies;
+
+	if (_dependencies.empty()) {
+		_dependencies.insert(MODULE_SHADERSYSTEM);
+		_dependencies.insert(MODULE_OPENGL);
+	}
+
+	return _dependencies;
+}
+
+void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx) {
+	globalOutputStream() << "ShaderCache::initialiseModule called.\n";
+	
+	GlobalMaterialManager().attach(*this);
+	
+	capture("$OVERBRIGHT");
+	
+	// greebo: Don't realise the module yet, this must wait
+	// until the shared GL context has been created (this 
+	// happens as soon as the first GL widget has been realised).
+}
+	
+void OpenGLRenderSystem::shutdownModule() {
+	GlobalMaterialManager().detach(*this);
+}
+
+// Define the static ShaderCache module
+module::StaticModule<OpenGLRenderSystem> openGLRenderSystemModule;
+
+OpenGLRenderSystem& getOpenGLRenderSystem() {
+	return *openGLRenderSystemModule.getModule();
+}
+
 } // namespace render

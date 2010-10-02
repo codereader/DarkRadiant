@@ -17,8 +17,7 @@ typedef std::map<OpenGLState*,
 				 OpenGLShaderPass*, 
 				 OpenGLStateLess> OpenGLStates;
 
-namespace render
-{
+namespace render {
 
 /**
  * \brief
@@ -28,7 +27,6 @@ class OpenGLRenderSystem
 : public RenderSystem, 
   public ModuleObserver
 {
-private:
 	// Map of named Shader objects
 	typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
 	typedef boost::weak_ptr<OpenGLShader> OpenGLShaderWeakPtr;
@@ -50,13 +48,12 @@ private:
 	void setLighting(bool supported, bool enabled);
 	
 public:
+
 	/**
 	 * Main constructor.
 	 */
 	OpenGLRenderSystem();
-
-	virtual ~OpenGLRenderSystem();
-
+	
 	/* Capture the given shader.
 	 */
 	ShaderPtr capture(const std::string& name);
@@ -109,8 +106,16 @@ public:
 	void attachRenderable(const Renderable& renderable);
 	void detachRenderable(const Renderable& renderable);
 	void forEachRenderable(const RenderableCallback& callback) const;
+  
+	// RegisterableModule implementation
+	virtual const std::string& getName() const;
+	virtual const StringSet& getDependencies() const;
+	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
 };
-typedef boost::shared_ptr<OpenGLRenderSystem> OpenGLRenderSystemPtr;
+
+// Accessor method to the Singleton module
+OpenGLRenderSystem& getOpenGLRenderSystem();
 
 } // namespace render
 
