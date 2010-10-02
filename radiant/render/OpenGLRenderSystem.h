@@ -113,9 +113,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 };
-
-// Accessor method to the Singleton module
-OpenGLRenderSystem& getOpenGLRenderSystem();
+typedef boost::shared_ptr<OpenGLRenderSystem> OpenGLRenderSystemPtr;
 
 } // namespace render
 

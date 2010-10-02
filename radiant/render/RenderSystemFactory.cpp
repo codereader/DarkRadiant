@@ -3,6 +3,8 @@
 #include "itextstream.h"
 #include "modulesystem/StaticModule.h"
 
+#include "OpenGLRenderSystem.h"
+
 namespace render
 {
 

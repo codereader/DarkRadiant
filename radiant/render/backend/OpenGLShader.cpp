@@ -75,7 +75,7 @@ void OpenGLShader::realise(const std::string& name)
     }
     
     for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i) {
-    	render::getOpenGLRenderSystem().insertSortedState(
+    	_renderSystem.insertSortedState(
 			OpenGLStates::value_type((*i)->statePtr(), *i));
     }
 
@@ -87,7 +87,7 @@ void OpenGLShader::unrealise() {
 
     for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
 	{
-    	render::getOpenGLRenderSystem().eraseSortedState((*i)->statePtr());
+    	_renderSystem.eraseSortedState((*i)->statePtr());
     }
 
     destroy();
