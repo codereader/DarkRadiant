@@ -7,6 +7,9 @@
 
 #include "TextParts.h"
 
+// Define this to use VBOs instead of regular vertex arrays
+//#define RENDERABLE_CHARACTER_BATCH_USE_VBO 1
+
 namespace gui
 {
 
@@ -22,8 +25,10 @@ private:
 	typedef std::vector<Vertex2D> Vertices;
 	Vertices _verts;
 
+#ifdef RENDERABLE_CHARACTER_BATCH_USE_VBO
 	// Vertex buffer objects
 	GLuint _vboData;
+#endif
 
 public:
 	RenderableCharacterBatch();
