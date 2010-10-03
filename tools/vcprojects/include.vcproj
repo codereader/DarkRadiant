@@ -288,6 +288,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\include\iparticlepreview.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\include\iparticles.h"
 			>
 		</File>

@@ -189,6 +189,9 @@ typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
 class IModelPreview;	// see imodelpreview.h for definition
 typedef boost::shared_ptr<IModelPreview> IModelPreviewPtr;
 
+class IParticlePreview;	// see iparticlepreview.h for definition
+typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
+
 } // namespace ui
 
 const std::string MODULE_UIMANAGER("UIManager");
@@ -219,6 +222,9 @@ public:
 	
 	// Creates a new model preview (GL view with draggable viewpoint, zoom and filter functionality)
 	virtual ui::IModelPreviewPtr createModelPreview() = 0;
+
+	// Creates a new particle preview GL widget
+	virtual ui::IParticlePreviewPtr createParticlePreview() = 0;
 };
 
 // This is the accessor for the UI manager

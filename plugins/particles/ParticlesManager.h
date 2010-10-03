@@ -40,6 +40,14 @@ public:
 	 * Get a named particle definition, returns NULL if not found.
 	 */
 	IParticleDefPtr getParticle(const std::string& name);
+
+	/**
+	 * Create a renderable particle, which is capable of compiling the
+	 * particle system into actual geometry usable for the backend rendersystem.
+	 * 
+	 * @returns: the renderable particle instance or NULL if the named particle was not found.
+	 */
+	IRenderableParticlePtr getRenderableParticle(const std::string& name);
 	
 	/**
 	 * Accept a stream containing particle definitions to parse and add to the
@@ -48,9 +56,9 @@ public:
 	void parseStream(std::istream& s);
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
 };
 typedef boost::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 

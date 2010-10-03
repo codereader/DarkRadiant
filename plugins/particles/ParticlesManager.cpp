@@ -1,7 +1,9 @@
 #include "ParticlesManager.h"
+
 #include "ParticleFileLoader.h"
 #include "ParticleDef.h"
 #include "ParticleStage.h"
+#include "RenderableParticle.h"
 
 #include "ifilesystem.h"
 
@@ -32,6 +34,20 @@ IParticleDefPtr ParticlesManager::getParticle(const std::string& name)
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
 
 	return (found != _particleDefs.end()) ? found->second : IParticleDefPtr();
+}
+
+IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string& name)
+{
+	ParticleDefMap::const_iterator found = _particleDefs.find(name);
+
+	if (found != _particleDefs.end()) 
+	{
+		return RenderableParticlePtr(new RenderableParticle(found->second));
+	}
+	else
+	{
+		return IRenderableParticlePtr();
+	}
 }
 
 // Parse particle defs from string

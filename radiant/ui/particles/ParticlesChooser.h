@@ -16,6 +16,9 @@ namespace ui
 class ParticlesChooser;
 typedef boost::shared_ptr<ParticlesChooser> ParticlesChooserPtr;
 
+class IParticlePreview;
+typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
+
 /**
  * Chooser dialog for selection (and possibly preview) of particle systems.
  */
@@ -47,6 +50,9 @@ private:
 	
 	// Map of particle names -> GtkTreeIter* for quick selection
 	IterMap _iterMap;
+
+	// The preview widget
+	IParticlePreviewPtr _preview;
 	
 private:
 	
@@ -76,6 +82,9 @@ private:
 protected:
 	// Override TransientWindow::_onDeleteEvent
 	void _onDeleteEvent();
+
+	// Override BlockingTransientWindow::_postShow()
+	void _postShow();
 
 public:
 	
