@@ -88,7 +88,7 @@ void ParticlePreview::initialisePreview()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
-	
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 			
@@ -115,16 +115,23 @@ void ParticlePreview::initialisePreview()
 
 void ParticlePreview::setParticle(const std::string& name)
 {
+	std::string nameClean = name;
+
+	if (boost::algorithm::ends_with(nameClean, ".prt")) 
+	{
+		nameClean = nameClean.substr(0, nameClean.length() - 4);
+	}
+
 	// If the model name is empty, release the model
-	if (name.empty())
+	if (nameClean.empty())
 	{
 		_particle.reset();
 		return;
 	}
 
-	_particle = GlobalParticlesManager().getRenderableParticle(name);
+	_particle = GlobalParticlesManager().getRenderableParticle(nameClean);
 			
-	if (_particle != NULL && _lastParticle != name)
+	if (_particle != NULL && _lastParticle != nameClean)
 	{
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
@@ -132,7 +139,7 @@ void ParticlePreview::setParticle(const std::string& name)
 		// Calculate camera distance so model is appropriately zoomed
 		//_camDist = -(_model->localAABB().getRadius() * 2.0); 
 
-		_lastParticle = name;
+		_lastParticle = nameClean;
 	}
 
 	// Redraw
@@ -158,6 +165,46 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	// Front-end render phase, collect OpenGLRenderable objects from the
 	// particle system
 	_particle->renderSolid(_renderer, _volumeTest);
+
+	RenderStateFlags flags = RENDER_DEPTHTEST
+                             | RENDER_COLOURWRITE
+                             | RENDER_DEPTHWRITE
+                             | RENDER_ALPHATEST
+                             | RENDER_BLEND
+                             | RENDER_CULLFACE
+                             | RENDER_COLOURARRAY
+                             | RENDER_OFFSETLINE
+                             | RENDER_POLYGONSMOOTH
+                             | RENDER_LINESMOOTH
+                             | RENDER_COLOURCHANGE;
+
+    // Add mode-specific render flags
+	flags |= RENDER_FILL
+           | RENDER_LIGHTING
+           | RENDER_TEXTURE_2D
+           | RENDER_TEXTURE_CUBEMAP
+           | RENDER_SMOOTH
+           | RENDER_SCALED
+           | RENDER_BUMP
+           | RENDER_PROGRAM
+           | RENDER_MATERIAL_VCOL
+           | RENDER_VCOL_INVERT
+           | RENDER_SCREEN;
+
+	// Set up the camera
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
+
+	// Load the matrix from openGL
+	GLfloat proj[16];
+	glGetFloatv(GL_PROJECTION_MATRIX, proj);
+
+	Matrix4 projection;
+	for (std::size_t i = 0; i < 16; ++i)
+	{
+		projection[i] = proj[i];
+	}
 
 	model::IModelPtr _model;
 	
@@ -189,6 +236,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	_rotation = Matrix4::getIdentity();
 
 	// Premultiply with the translations
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glTranslatef(0, 0, _camDist); // camera translation
 	glMultMatrixd(_rotation); // post multiply with rotations
@@ -198,6 +246,8 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	glEnable(GL_LIGHTING);
 	glTranslated(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
 	model->render(RENDER_TEXTURE_2D);
+
+	//_renderSystem->render(flags, Matrix4::getIdentity(), projection);
 
 	return false;
 }
