@@ -470,6 +470,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\uimanager\ParticleRenderer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\uimanager\StatusBarManager.cpp"
 				>
 			</File>

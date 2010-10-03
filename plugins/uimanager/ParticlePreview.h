@@ -3,6 +3,7 @@
 
 #include "iparticles.h"
 #include "iparticlepreview.h"
+#include "irendersystemfactory.h"
 
 #include "math/matrix.h"
 
@@ -10,6 +11,8 @@
 #include <map>
 #include "gtkutil/GLWidget.h"
 #include <gtkmm/frame.h>
+
+#include "ParticleRenderer.h"
 
 namespace ui
 {
@@ -21,6 +24,14 @@ class ParticlePreview :
 private:
 	// GL widget
 	gtkutil::GLWidget* _glWidget;
+
+	// The backend rendersystem instance
+	RenderSystemPtr _renderSystem;
+
+	// The front-end renderer, collecting the OpenGLRenderables 
+	// from the particle system
+	ParticleRenderer _renderer;
+	ParticleVolumeTest _volumeTest;
 	
 	// Current particle to display
 	particles::IRenderableParticlePtr _particle;

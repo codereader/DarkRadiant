@@ -32,7 +32,9 @@ namespace {
 
 ParticlePreview::ParticlePreview() :
 	Gtk::Frame(),
-	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ParticlePreview")))
+	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ParticlePreview"))),
+	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
+	_renderer(_renderSystem)
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
@@ -130,7 +132,7 @@ void ParticlePreview::setParticle(const std::string& name)
 		// Calculate camera distance so model is appropriately zoomed
 		//_camDist = -(_model->localAABB().getRadius() * 2.0); 
 
-		_lastParticle = name;	
+		_lastParticle = name;
 	}
 
 	// Redraw
@@ -147,9 +149,15 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
-	// Set up the render
+	// Set up the render and clear the drawing area in any case
 	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	if (_particle == NULL) return false; // nothing to do
+
+	// Front-end render phase, collect OpenGLRenderable objects from the
+	// particle system
+	_particle->renderSolid(_renderer, _volumeTest);
 
 	model::IModelPtr _model;
 	
@@ -188,7 +196,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 
 	// Render the actual model.
 	glEnable(GL_LIGHTING);
-	glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
+	glTranslated(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
 	model->render(RENDER_TEXTURE_2D);
 
 	return false;
