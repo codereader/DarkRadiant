@@ -10,6 +10,7 @@
 #include "debugging/debugging.h"
 #include "FilterMenu.h"
 #include "ModelPreview.h"
+#include "ParticlePreview.h"
 
 namespace ui {
 
@@ -124,6 +125,11 @@ IFilterMenuPtr UIManager::createFilterMenu()
 IModelPreviewPtr UIManager::createModelPreview()
 {
 	return IModelPreviewPtr(new ModelPreview);
+}
+
+IParticlePreviewPtr UIManager::createParticlePreview()
+{
+	return IParticlePreviewPtr(new ParticlePreview);
 }
 
 void UIManager::clear()

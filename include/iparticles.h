@@ -4,6 +4,8 @@
 #include "imodule.h"
 #include <boost/function.hpp>
 
+#include "irenderable.h"
+
 namespace particles
 {
 
@@ -49,6 +51,34 @@ public:
 typedef boost::shared_ptr<IParticleDef> IParticleDefPtr;
 
 /**
+ * A renderable particle, which is capable of compiling the
+ * particle system into actual geometry usable for the backend rendersystem.
+ *
+ * As it derives from Renderable, this object can be added to a RenderableCollector
+ * during the front-end render phase.
+ */
+class IRenderableParticle :
+	public Renderable
+{
+public:
+	/**
+	 * Update the particle geometry using the given time.
+	 */
+	virtual void update(std::size_t time) = 0;
+
+	/**
+	 * Get the particle definition used by this renderable.
+	 */
+	virtual const IParticleDefPtr& getParticleDef() const = 0;
+
+	/**
+	 * Set the particle definition (triggers an update(0) call).
+	 */
+	virtual void setParticleDef(const IParticleDefPtr& def) = 0;
+};
+typedef boost::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
+
+/**
  * Callback for evaluation particle defs.
  */
 typedef boost::function< void (const IParticleDef&) > ParticleDefVisitor;
@@ -69,6 +99,14 @@ public:
 	 * Get a named particle definition, returns NULL if not found.
 	 */
 	virtual IParticleDefPtr getParticle(const std::string& name) = 0;
+
+	/**
+	 * Create a renderable particle, which is capable of compiling the
+	 * particle system into actual geometry usable for the backend rendersystem.
+	 * 
+	 * @returns: the renderable particle instance or NULL if the named particle was not found.
+	 */
+	virtual IRenderableParticlePtr getRenderableParticle(const std::string& name) = 0;
 };
 
 } // namespace

@@ -4,6 +4,8 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iparticles.h"
+#include "iuimanager.h"
+#include "iparticlepreview.h"
 
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -22,7 +24,8 @@ namespace ui
 ParticlesChooser::ParticlesChooser() :
 	gtkutil::BlockingTransientWindow(_("Choose particles"), GlobalMainFrame().getTopLevelWindow()),
 	_particlesList(Gtk::ListStore::create(_columns)),
-	_selectedParticle("")
+	_selectedParticle(""),
+	_preview(GlobalUIManager().createParticlePreview())
 {
 	set_border_width(12);
 
@@ -34,9 +37,23 @@ ParticlesChooser::ParticlesChooser() :
 		static_cast<int>(rect.get_width() * 0.4f), static_cast<int>(rect.get_height() * 0.6f)
 	);
 
+	// Set the default size of the window
+	_preview->setSize(400);
+
 	// Main dialog vbox
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 12));
-	vbox->pack_start(createTreeView(), true, true, 0);
+
+	// Create a horizontal box to pack the treeview on the left and the preview on the right
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
+
+	hbox->pack_start(createTreeView(), true, true, 0);
+
+	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
+	previewBox->pack_start(*_preview->getWidget(), true, true, 0);
+
+	hbox->pack_start(*previewBox, false, false, 0);
+
+	vbox->pack_start(*hbox, true, true, 0);
 	vbox->pack_end(createButtons(), false, false, 0);
 	
 	// Add main vbox to dialog
@@ -90,9 +107,20 @@ void ParticlesChooser::populateParticleList()
 	GlobalParticlesManager().forEachParticleDef(visitor);
 }
 
+void ParticlesChooser::_postShow()
+{
+	// Initialise the GL widget after the widgets have been shown
+	_preview->initialisePreview();
+
+	// Call the base class, will enter main loop
+	BlockingTransientWindow::_postShow();
+}
+
 void ParticlesChooser::onRadiantShutdown()
 {
 	globalOutputStream() << "ParticlesChooser shutting down." << std::endl;
+
+	_preview.reset();
 
 	// Clear the instance pointer
 	getInstancePtr().reset();
@@ -176,6 +204,8 @@ void ParticlesChooser::_onSelChanged()
 	{
 		Gtk::TreeModel::Row row = *iter;
 		_selectedParticle = Glib::ustring(row[_columns.name]);
+
+		_preview->setParticle(_selectedParticle);
 	}
 }
 
