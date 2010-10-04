@@ -28,7 +28,10 @@ private:
 public:
 	ParticleRenderer(const RenderSystemPtr& renderSystem) :
 		_renderSystem(renderSystem)
-	{}
+	{
+		// Start with an empty shader, which can be assigned in SetState
+		_stateStack.push_back(ShaderPtr());
+	}
 
 	void PushState()
 	{

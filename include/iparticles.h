@@ -6,6 +6,8 @@
 
 #include "irenderable.h"
 
+class RenderSystem;
+
 namespace particles
 {
 
@@ -63,8 +65,9 @@ class IRenderableParticle :
 public:
 	/**
 	 * Update the particle geometry using the given time.
+	 * The rendersystem is needed for acquiring the shaders.
 	 */
-	virtual void update(std::size_t time) = 0;
+	virtual void update(std::size_t time, RenderSystem& renderSystem) = 0;
 
 	/**
 	 * Get the particle definition used by this renderable.
@@ -72,7 +75,8 @@ public:
 	virtual const IParticleDefPtr& getParticleDef() const = 0;
 
 	/**
-	 * Set the particle definition (triggers an update(0) call).
+	 * Set the particle definition. You'll need to call update() after
+	 * setting a new particle def.
 	 */
 	virtual void setParticleDef(const IParticleDefPtr& def) = 0;
 };

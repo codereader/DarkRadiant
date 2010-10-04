@@ -139,7 +139,13 @@ void ParticlePreview::setParticle(const std::string& name)
 		// Calculate camera distance so model is appropriately zoomed
 		//_camDist = -(_model->localAABB().getRadius() * 2.0); 
 
+		_camDist = -(40 * 2.0);
+		_rotation = Matrix4::getIdentity();
+
 		_lastParticle = nameClean;
+
+		// Update the particle
+		_particle->update(0, *_renderSystem);
 	}
 
 	// Redraw
@@ -178,8 +184,14 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
                              | RENDER_LINESMOOTH
                              | RENDER_COLOURCHANGE;
 
-    // Add mode-specific render flags
 	flags |= RENDER_FILL
+           | RENDER_LIGHTING
+           | RENDER_TEXTURE_2D
+           | RENDER_SMOOTH
+           | RENDER_SCALED;
+
+    // Add mode-specific render flags
+	/*flags |= RENDER_FILL
            | RENDER_LIGHTING
            | RENDER_TEXTURE_2D
            | RENDER_TEXTURE_CUBEMAP
@@ -189,7 +201,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
            | RENDER_PROGRAM
            | RENDER_MATERIAL_VCOL
            | RENDER_VCOL_INVERT
-           | RENDER_SCREEN;
+           | RENDER_SCREEN;*/
 
 	// Set up the camera
 	glMatrixMode(GL_PROJECTION);
@@ -197,14 +209,8 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
 
 	// Load the matrix from openGL
-	GLfloat proj[16];
-	glGetFloatv(GL_PROJECTION_MATRIX, proj);
-
 	Matrix4 projection;
-	for (std::size_t i = 0; i < 16; ++i)
-	{
-		projection[i] = proj[i];
-	}
+	glGetDoublev(GL_PROJECTION_MATRIX, projection);
 
 	model::IModelPtr _model;
 	
@@ -232,9 +238,6 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 		
 	AABB aabb(model->localAABB());
 
-	_camDist = -(_model->localAABB().getRadius() * 2.0);
-	_rotation = Matrix4::getIdentity();
-
 	// Premultiply with the translations
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -245,16 +248,21 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	// Render the actual model.
 	glEnable(GL_LIGHTING);
 	glTranslated(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
+
+	// Load the matrix from openGL
+	Matrix4 modelview;
+	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+
 	model->render(RENDER_TEXTURE_2D);
 
-	//_renderSystem->render(flags, Matrix4::getIdentity(), projection);
+	_renderSystem->render(flags, modelview, projection);
 
 	return false;
 }
 
 bool ParticlePreview::callbackGLMotion(GdkEventMotion* ev)
 {
-	/*if (ev->state & GDK_BUTTON1_MASK) // dragging with mouse button
+	if (ev->state & GDK_BUTTON1_MASK) // dragging with mouse button
 	{
 		static gdouble _lastX = ev->x;
 		static gdouble _lastY = ev->y;
@@ -289,22 +297,22 @@ bool ParticlePreview::callbackGLMotion(GdkEventMotion* ev)
 
 			_glWidget->queueDraw(); // trigger the GLDraw method to draw the actual model
 		}
-	}*/
+	}
 
 	return false;
 }
 
 bool ParticlePreview::callbackGLScroll(GdkEventScroll* ev)
 {
-	/*if (_model == NULL) return false;
+	//if (_model == NULL) return false;
 
-	float inc = _model->localAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
+	float inc = 40 * 0.1; // Scroll increment is a fraction of the AABB radius
 	if (ev->direction == GDK_SCROLL_UP)
 		_camDist += inc;
 	else if (ev->direction == GDK_SCROLL_DOWN)
 		_camDist -= inc;
 
-	_glWidget->queueDraw();*/
+	_glWidget->queueDraw();
 
 	return false;
 }
