@@ -53,6 +53,8 @@ public:
 	 * Main constructor.
 	 */
 	OpenGLRenderSystem();
+
+	virtual ~OpenGLRenderSystem();
 	
 	/* Capture the given shader.
 	 */
