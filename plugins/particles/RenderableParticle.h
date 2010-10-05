@@ -7,17 +7,19 @@
 #include "render.h"
 #include "math/matrix.h"
 
+#include <boost/random/linear_congruential.hpp>
+
 namespace particles
 {
 
 // Seconds to milliseconds
 #define SEC2MS(x) ((x)*1000)
 
-class RenerableParticleStage :
+class RenderableParticleBunch :
 	public OpenGLRenderable
 {
 private:
-	// The stage def we're rendering
+	// The stage this bunch is part of
 	const IParticleStage& _stage;
 
 	struct VertexInfo
@@ -25,6 +27,7 @@ private:
 		Vector3 vertex;			// The 3D coordinates of the point
 		Vector2 texcoord;		// The UV coordinates
 		Vector3 normal;			// The normals
+		Colour4b colour;		// vertex colour
 
 		VertexInfo()
 		{}
@@ -32,16 +35,23 @@ private:
 		VertexInfo(const Vector3& vertex_, const Vector2& texcoord_) :
 			vertex(vertex_),
 			texcoord(texcoord_),
-			normal(0,0,1)
+			normal(0,0,1),
+			colour(1,1,1,1)
 		{}
 	};
 
-	std::vector<VertexInfo> _vertices;
+	// The quads of this particle bunch
+	typedef std::vector<VertexInfo> Vertices;
+	Vertices _vertices;
 
 public:
-	RenerableParticleStage(const IParticleStage& stage) :
+	RenderableParticleBunch(std::size_t count, const IParticleStage& stage) :
+		_vertices(count*4), // 4 vertices per particle
 		_stage(stage)
-	{}
+	{
+		// Generate the vertex data for this bunch
+
+	}
 
 	void render(const RenderInfo& info) const
 	{
@@ -50,14 +60,56 @@ public:
 		glVertexPointer(3, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().vertex));
 		glTexCoordPointer(2, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().texcoord));
 		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().normal));
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexInfo), &(_vertices.front().colour));
 
 		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_vertices.size()));
+	}
+};
+
+class RenerableParticleStage :
+	public OpenGLRenderable
+{
+private:
+	// The stage def we're rendering
+	const IParticleStage& _stage;
+
+	// We use these values as seeds whenever we instantiate a new bunch of particles
+	// each bunch has a distinct index and is using the same seed during the lifetime
+	// of this particle stage
+	std::size_t _numSeeds;
+	std::vector<int> _seeds;
+
+public:
+	RenerableParticleStage(const IParticleStage& stage, boost::rand48& random) :
+		_stage(stage),
+		_numSeeds(32),
+		_seeds(_numSeeds)
+	{
+		// Generate our vector of random numbers used seed particle bunches
+		// using the random number generator as provided by our parent particle system
+		for (std::size_t i = 0; i < _numSeeds; ++i)
+		{
+			_seeds[i] = random();
+		}
+	}
+
+	void render(const RenderInfo& info) const
+	{
+		/*if (_vertices.empty()) return;
+
+		glVertexPointer(3, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().vertex));
+		glTexCoordPointer(2, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().texcoord));
+		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().normal));
+
+		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_vertices.size()));*/
+
+		// TODO: Draw active bunches
 	}
 
 	// Generate particle geometry, time is absolute in msecs 
 	void update(std::size_t time)
 	{
-		_vertices.clear();
+		//_vertices.clear();
 
 		// Check time offset (msecs)
 		std::size_t timeOffset = static_cast<std::size_t>(SEC2MS(_stage.getTimeOffset()));
@@ -102,18 +154,25 @@ public:
 		// Get current quad size
 		float size = _stage.getSize().evaluate(timeFrac);
 
-		pushQuad(Vector3(0,0,0), size);
+		// Consider the "origin" vector of this stage
+		Vector3 origin = _stage.getOffset();
+
+		// Generate N particles (disregard bunching for the moment)
+		for (int p = 0; p < _stage.getCount(); ++p)
+		{
+			//pushQuad(origin, size);	
+		}
 	}
 	
 	// Generates a new quad using the given origin as centroid
-	void pushQuad(const Vector3& origin, float size)
+	/*void pushQuad(const Vector3& origin, float size)
 	{
 		// Create a simple quad facing the z axis
 		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() + size, origin.z()), Vector2(0,0)));
 		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() + size, origin.z()), Vector2(1,0)));
 		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() - size, origin.z()), Vector2(1,1)));
 		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() - size, origin.z()), Vector2(0,1)));
-	}
+	}*/
 };
 typedef boost::shared_ptr<RenerableParticleStage> RenerableParticleStagePtr;
 
@@ -137,9 +196,15 @@ private:
 	typedef std::map<std::string, ParticleStageGroup> ShaderMap;
 	ShaderMap _shaderMap;
 
+	// The random number generator, this is used to generate "constant"
+	// starting values for each bunch of particles. This enables us
+	// to go back in time when rendering the particle stage.
+	boost::rand48 _random;
+
 public:
 	RenderableParticle(const IParticleDefPtr& particleDef) :
-		_particleDef(particleDef)
+		_particleDef(particleDef),
+		_random(rand()) // use a random seed
 	{
 		setupStages();
 	}
@@ -213,7 +278,7 @@ private:
 			}
 
 			// Create a new renderable stage and add it to the shader
-			RenerableParticleStagePtr renderableStage(new RenerableParticleStage(stage));
+			RenerableParticleStagePtr renderableStage(new RenerableParticleStage(stage, _random));
 			_shaderMap[materialName].stages.push_back(renderableStage);
 		}
 	}
