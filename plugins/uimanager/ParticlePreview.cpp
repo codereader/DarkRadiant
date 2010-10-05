@@ -12,10 +12,8 @@
 #include <gtkmm/image.h>
 #include <gtkmm/toggletoolbutton.h>
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
-
-#include "os/path.h"
-#include "imodelcache.h"
 
 namespace ui
 {
