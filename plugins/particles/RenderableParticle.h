@@ -38,15 +38,7 @@ private:
 public:
 	RenerableParticleStage(const IParticleStage& stage) :
 		_stage(stage)
-	{
-		double len = 5;
-
-		// Create a simple quad facing the z axis
-		_vertices.push_back(VertexInfo(Vector3(-len, +len, 0), Vector2(0,0)));
-		_vertices.push_back(VertexInfo(Vector3(+len, +len, 0), Vector2(1,0)));
-		_vertices.push_back(VertexInfo(Vector3(+len, -len, 0), Vector2(1,1)));
-		_vertices.push_back(VertexInfo(Vector3(-len, -len, 0), Vector2(0,1)));
-	}
+	{}
 
 	void render(const RenderInfo& info) const
 	{
@@ -55,6 +47,24 @@ public:
 		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().normal));
 
 		glDrawArrays(GL_QUADS, 0, _vertices.size());
+	}
+
+	// Generate particle geometry 
+	void update(std::size_t time)
+	{
+		_vertices.clear();
+
+		pushQuad(Vector3(0,0,0), 10);
+	}
+	
+	// Generates a new quad using the given origin as centroid
+	void pushQuad(const Vector3& origin, double size)
+	{
+		// Create a simple quad facing the z axis
+		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() + size, origin.z()), Vector2(0,0)));
+		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() + size, origin.z()), Vector2(1,0)));
+		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() - size, origin.z()), Vector2(1,1)));
+		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() - size, origin.z()), Vector2(0,1)));
 	}
 };
 typedef boost::shared_ptr<RenerableParticleStage> RenerableParticleStagePtr;
@@ -93,6 +103,16 @@ public:
 		// TODO: Update renderable geometry
 
 		ensureShaders(renderSystem);
+
+		// Traverse the stages and call update
+		for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
+		{
+			for (RenerableParticleStageList::const_iterator stage = i->second.stages.begin();
+				 stage != i->second.stages.end(); ++stage)
+			{
+				(*stage)->update(time);
+			}
+		}
 	}
 
 	// Front-end render methods
