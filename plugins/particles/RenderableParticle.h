@@ -19,6 +19,9 @@ class RenderableParticleBunch :
 	public OpenGLRenderable
 {
 private:
+	// The bunch index
+	std::size_t _index;
+
 	// The stage this bunch is part of
 	const IParticleStage& _stage;
 
@@ -45,12 +48,26 @@ private:
 	Vertices _vertices;
 
 public:
-	RenderableParticleBunch(std::size_t count, const IParticleStage& stage) :
-		_vertices(count*4), // 4 vertices per particle
+	// Each bunch has a defined zero-based index
+	RenderableParticleBunch(std::size_t index, 
+							std::size_t particleCount, 
+							const IParticleStage& stage) :
+		_vertices(particleCount*4), // 4 vertices per particle
 		_stage(stage)
 	{
-		// Generate the vertex data for this bunch
+		// Geometry is written in update(), just reserve the space
+	}
 
+	std::size_t getIndex() const
+	{
+		return _index;
+	}
+
+	// Update the particle geometry and render information. 
+	// Time is specified in "local time", i.e. "time within the cycle", in msecs.
+	void update(std::size_t time, boost::rand48& random)
+	{
+		// TODO
 	}
 
 	void render(const RenderInfo& info) const
@@ -62,10 +79,18 @@ public:
 		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().normal));
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexInfo), &(_vertices.front().colour));
 
+		// TODO: Use calculated start and end array indices, not all particles may be visible at the same time
 		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_vertices.size()));
 	}
 };
+typedef boost::shared_ptr<RenderableParticleBunch> RenderableParticleBunchPtr;
 
+/**
+ * greebo: Each particle stage generates its geometry in one or more cycles.
+ * Each cycle comes as a bunch of quads with a defined lifespan. It's possible
+ * for quads of one cycle to exist during the lifetime of the next cycle (if bunching 
+ * is set to values below 1), but there can always be 2 bunches active at the same time.
+ */
 class RenerableParticleStage :
 	public OpenGLRenderable
 {
@@ -79,11 +104,14 @@ private:
 	std::size_t _numSeeds;
 	std::vector<int> _seeds;
 
+	std::vector<RenderableParticleBunchPtr> _bunches;
+
 public:
 	RenerableParticleStage(const IParticleStage& stage, boost::rand48& random) :
 		_stage(stage),
 		_numSeeds(32),
-		_seeds(_numSeeds)
+		_seeds(_numSeeds),
+		_bunches(2) // two bunches 
 	{
 		// Generate our vector of random numbers used seed particle bunches
 		// using the random number generator as provided by our parent particle system
@@ -95,28 +123,29 @@ public:
 
 	void render(const RenderInfo& info) const
 	{
-		/*if (_vertices.empty()) return;
-
-		glVertexPointer(3, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().vertex));
-		glTexCoordPointer(2, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().texcoord));
-		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().normal));
-
-		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_vertices.size()));*/
-
-		// TODO: Draw active bunches
+		// Draw up to two active bunches
+		if (_bunches[0])
+		{
+			_bunches[0]->render(info);
+		}
+		
+		if (_bunches[1])
+		{
+			_bunches[1]->render(info);
+		}
 	}
 
 	// Generate particle geometry, time is absolute in msecs 
 	void update(std::size_t time)
 	{
-		//_vertices.clear();
-
 		// Check time offset (msecs)
 		std::size_t timeOffset = static_cast<std::size_t>(SEC2MS(_stage.getTimeOffset()));
 
 		if (time < timeOffset)
 		{
 			// We're still in the timeoffset zone where particle spawn is inhibited
+			_bunches[0].reset();
+			_bunches[1].reset();
 			return;
 		}
 
