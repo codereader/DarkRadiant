@@ -64,7 +64,7 @@ class IRenderableParticle :
 {
 public:
 	/**
-	 * Update the particle geometry using the given time.
+	 * Update the particle geometry using the given time in milliseconds.
 	 * The rendersystem is needed for acquiring the shaders.
 	 */
 	virtual void update(std::size_t time, RenderSystem& renderSystem) = 0;
