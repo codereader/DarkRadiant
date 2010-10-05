@@ -243,7 +243,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	glLoadIdentity();
 	glTranslatef(0, 0, _camDist); // camera translation
 	glMultMatrixd(_rotation); // post multiply with rotations
-	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
+	//glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
 
 	// Render the actual model.
 	glEnable(GL_LIGHTING);
@@ -253,7 +253,29 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	Matrix4 modelview;
 	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 
-	model->render(RENDER_TEXTURE_2D);
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
+
+	glLineWidth(2);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+	glBegin(GL_LINES);
+
+	glColor4f(1,0,0,0.6f);
+	glVertex3f(0,0,0);
+	glVertex3f(5,0,0);
+
+	glColor4f(0,1,0,0.6f);
+	glVertex3f(0,0,0);
+	glVertex3f(0,5,0);
+
+	glColor4f(0,0,1,0.6f);
+	glVertex3f(0,0,0);
+	glVertex3f(0,0,5);
+
+	glEnd();
+
+	//model->render(RENDER_TEXTURE_2D);
 
 	_renderSystem->render(flags, modelview, projection);
 

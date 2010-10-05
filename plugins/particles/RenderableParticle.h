@@ -35,44 +35,17 @@ private:
 
 	std::vector<VertexInfo> _vertices;
 
-	ShaderPtr _shader;
-
 public:
 	RenerableParticleStage(const IParticleStage& stage) :
 		_stage(stage)
 	{
 		double len = 5;
 
-		// Create a simple cube of unwelded vertices
-		_vertices.push_back(VertexInfo(Vector3(-len, -len, -len), Vector2(0,0)));
-		_vertices.push_back(VertexInfo(Vector3(+len, -len, -len), Vector2(1,0)));
-		_vertices.push_back(VertexInfo(Vector3(+len, +len, -len), Vector2(1,1)));
-		_vertices.push_back(VertexInfo(Vector3(-len, +len, -len), Vector2(0,1)));
-
-		_vertices.push_back(VertexInfo(Vector3(-len, -len, -len), Vector2(0,0)));
-		_vertices.push_back(VertexInfo(Vector3(-len, +len, -len), Vector2(1,0)));
-		_vertices.push_back(VertexInfo(Vector3(-len, +len, +len), Vector2(1,1)));
-		_vertices.push_back(VertexInfo(Vector3(-len, -len, +len), Vector2(0,1)));
-		
-		_vertices.push_back(VertexInfo(Vector3(+len, -len, -len), Vector2(0,0)));
-		_vertices.push_back(VertexInfo(Vector3(+len, +len, -len), Vector2(1,0)));
-		_vertices.push_back(VertexInfo(Vector3(+len, +len, +len), Vector2(1,1)));
-		_vertices.push_back(VertexInfo(Vector3(+len, -len, +len), Vector2(0,1)));
-
-		_vertices.push_back(VertexInfo(Vector3(-len, -len, +len), Vector2(0,0)));
-		_vertices.push_back(VertexInfo(Vector3(+len, -len, +len), Vector2(1,0)));
-		_vertices.push_back(VertexInfo(Vector3(+len, +len, +len), Vector2(1,1)));
-		_vertices.push_back(VertexInfo(Vector3(-len, +len, +len), Vector2(0,1)));
-	}
-
-	const ShaderPtr& getShader() const
-	{
-		return _shader;
-	}
-
-	void setShader(const ShaderPtr& shader)
-	{
-		_shader = shader;
+		// Create a simple quad facing the z axis
+		_vertices.push_back(VertexInfo(Vector3(-len, +len, 0), Vector2(0,1)));
+		_vertices.push_back(VertexInfo(Vector3(+len, +len, 0), Vector2(1,1)));
+		_vertices.push_back(VertexInfo(Vector3(+len, -len, 0), Vector2(1,0)));
+		_vertices.push_back(VertexInfo(Vector3(-len, -len, 0), Vector2(0,0)));
 	}
 
 	void render(const RenderInfo& info) const
