@@ -42,10 +42,10 @@ public:
 		double len = 5;
 
 		// Create a simple quad facing the z axis
-		_vertices.push_back(VertexInfo(Vector3(-len, +len, 0), Vector2(0,1)));
-		_vertices.push_back(VertexInfo(Vector3(+len, +len, 0), Vector2(1,1)));
-		_vertices.push_back(VertexInfo(Vector3(+len, -len, 0), Vector2(1,0)));
-		_vertices.push_back(VertexInfo(Vector3(-len, -len, 0), Vector2(0,0)));
+		_vertices.push_back(VertexInfo(Vector3(-len, +len, 0), Vector2(0,0)));
+		_vertices.push_back(VertexInfo(Vector3(+len, +len, 0), Vector2(1,0)));
+		_vertices.push_back(VertexInfo(Vector3(+len, -len, 0), Vector2(1,1)));
+		_vertices.push_back(VertexInfo(Vector3(-len, -len, 0), Vector2(0,1)));
 	}
 
 	void render(const RenderInfo& info) const

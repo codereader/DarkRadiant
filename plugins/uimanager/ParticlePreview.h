@@ -89,6 +89,10 @@ public:
 	{
 		return _particle ? _particle->getParticleDef() : particles::IParticleDefPtr();	
 	}
+
+private:
+
+	void drawAxes();
 };
 typedef boost::shared_ptr<ParticlePreview> ParticlePreviewPtr;
 

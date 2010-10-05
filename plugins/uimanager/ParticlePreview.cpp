@@ -136,10 +136,8 @@ void ParticlePreview::setParticle(const std::string& name)
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
 		
-		// Calculate camera distance so model is appropriately zoomed
-		//_camDist = -(_model->localAABB().getRadius() * 2.0); 
-
-		_camDist = -(40 * 2.0);
+		// TODO: Use particle AABB
+		_camDist = -(20 * 2.0);
 		_rotation = Matrix4::getIdentity();
 
 		_lastParticle = nameClean;
@@ -182,77 +180,50 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
                              | RENDER_OFFSETLINE
                              | RENDER_POLYGONSMOOTH
                              | RENDER_LINESMOOTH
-                             | RENDER_COLOURCHANGE;
-
-	flags |= RENDER_FILL
-           | RENDER_LIGHTING
-           | RENDER_TEXTURE_2D
-           | RENDER_SMOOTH
-           | RENDER_SCALED;
-
-    // Add mode-specific render flags
-	/*flags |= RENDER_FILL
-           | RENDER_LIGHTING
-           | RENDER_TEXTURE_2D
-           | RENDER_TEXTURE_CUBEMAP
-           | RENDER_SMOOTH
-           | RENDER_SCALED
-           | RENDER_BUMP
-           | RENDER_PROGRAM
-           | RENDER_MATERIAL_VCOL
-           | RENDER_VCOL_INVERT
-           | RENDER_SCREEN;*/
+                             | RENDER_COLOURCHANGE
+							 | RENDER_FILL
+							 | RENDER_LIGHTING
+							 | RENDER_TEXTURE_2D
+							 | RENDER_SMOOTH
+							 | RENDER_SCALED;
 
 	// Set up the camera
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
-
-	// Load the matrix from openGL
 	Matrix4 projection;
-	glGetDoublev(GL_PROJECTION_MATRIX, projection);
-
-	model::IModelPtr _model;
-	
 	{
-		std::string modelToLoad = "models/darkmod/fireplace/burntwood.lwo";
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
 
-		std::string ldrName = os::getExtension(modelToLoad);
-		boost::algorithm::to_lower(ldrName);
-
-		ModelLoaderPtr loader = GlobalModelCache().getModelLoaderForType(ldrName);
-		
-		if (loader != NULL)
-		{
-			_model = loader->loadModelFromPath(modelToLoad);
-		}
-		else
-		{
-			_model = model::IModelPtr();
-		}
+		// Load the matrix from openGL
+		glGetDoublev(GL_PROJECTION_MATRIX, projection);
 	}
 
-	model::IModelPtr model = _model;
-	if (!model)
-		return false;
-		
-	AABB aabb(model->localAABB());
-
 	// Premultiply with the translations
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(0, 0, _camDist); // camera translation
-	glMultMatrixd(_rotation); // post multiply with rotations
-	//glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
-
-	// Render the actual model.
-	glEnable(GL_LIGHTING);
-	glTranslated(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
-
-	// Load the matrix from openGL
 	Matrix4 modelview;
-	glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	{
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
 
+		glTranslatef(0, 0, _camDist); // camera translation
+		glMultMatrixd(_rotation); // post multiply with rotations
+
+		//glTranslated(0, 0, -20); // place the model a few units away from the camera
+
+		// Load the matrix from openGL
+		glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
+	}
+
+	// Draw coordinate axes for better orientation
+	drawAxes();
+
+	// Launch the back end rendering
+	_renderSystem->render(flags, modelview, projection);
+
+	return false;
+}
+
+void ParticlePreview::drawAxes()
+{
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
 
@@ -274,12 +245,6 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	glVertex3f(0,0,5);
 
 	glEnd();
-
-	//model->render(RENDER_TEXTURE_2D);
-
-	_renderSystem->render(flags, modelview, projection);
-
-	return false;
 }
 
 bool ParticlePreview::callbackGLMotion(GdkEventMotion* ev)
