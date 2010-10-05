@@ -53,7 +53,10 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
 OpenGLRenderSystem::~OpenGLRenderSystem()
 {
-	GlobalMaterialManager().detach(*this);
+	if (module::getRegistry().moduleExists(MODULE_SHADERSYSTEM))
+	{
+		GlobalMaterialManager().detach(*this);
+	}
 }
 
 /* Capture the given shader.
@@ -437,7 +440,6 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 	
 void OpenGLRenderSystem::shutdownModule()
 {
-	GlobalMaterialManager().detach(*this);
 }
 
 // Define the static ShaderCache module
