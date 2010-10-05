@@ -23,7 +23,26 @@ namespace ui
 namespace {
 
 	const GLfloat PREVIEW_FOV = 60;
+	const unsigned int MSEC_PER_FRAME = 16;
 
+	// Set the bool to true for the lifetime of this object
+	class ScopedBoolLock
+	{
+	private:
+		bool& _target;
+
+	public:
+		ScopedBoolLock(bool& target) :
+			_target(target)
+		{
+			_target = true;
+		}
+
+		~ScopedBoolLock()
+		{
+			_target = false;
+		}
+	};
 }
 
 // Construct the widgets
@@ -33,7 +52,9 @@ ParticlePreview::ParticlePreview() :
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ParticlePreview"))),
 	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
 	_renderer(_renderSystem),
-	_previewTimeMsec(0)
+	_previewTimeMsec(0),
+	_renderingInProgress(false),
+	_timer(MSEC_PER_FRAME, _onFrame, this)
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
@@ -60,6 +81,14 @@ ParticlePreview::ParticlePreview() :
 		
 	// Pack into a frame and return
 	add(*vbx);
+}
+
+ParticlePreview::~ParticlePreview()
+{
+	if (_timer.isEnabled())
+	{
+		_timer.disable();
+	}
 }
 
 // Set the size request for the widget
@@ -125,6 +154,7 @@ void ParticlePreview::setParticle(const std::string& name)
 	if (nameClean.empty())
 	{
 		_particle.reset();
+		_timer.disable();
 		return;
 	}
 
@@ -134,6 +164,8 @@ void ParticlePreview::setParticle(const std::string& name)
 	{
 		// Reset preview time
 		_previewTimeMsec = 0;
+
+		_timer.enable();
 
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
@@ -159,6 +191,8 @@ Gtk::Widget* ParticlePreview::getWidget()
 
 bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev) 
 {
+	ScopedBoolLock lock(_renderingInProgress); // will be set to false on method exit
+
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
@@ -167,6 +201,9 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (_particle == NULL) return false; // nothing to do
+
+	// Update the particle
+	_particle->update(_previewTimeMsec, *_renderSystem);
 
 	// Front-end render phase, collect OpenGLRenderable objects from the
 	// particle system
@@ -222,6 +259,20 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	_renderSystem->render(flags, modelview, projection);
 
 	return false;
+}
+
+gboolean ParticlePreview::_onFrame(gpointer data)
+{
+	ParticlePreview* self = reinterpret_cast<ParticlePreview*>(data);
+
+	if (!self->_renderingInProgress)
+	{
+		self->_previewTimeMsec += MSEC_PER_FRAME;
+		self->_glWidget->queue_draw();
+	}
+
+	// Return true, so that the timer gets called again
+	return TRUE;
 }
 
 void ParticlePreview::drawAxes()
@@ -293,15 +344,17 @@ bool ParticlePreview::callbackGLMotion(GdkEventMotion* ev)
 
 bool ParticlePreview::callbackGLScroll(GdkEventScroll* ev)
 {
-	//if (_model == NULL) return false;
-
 	float inc = 40 * 0.1; // Scroll increment is a fraction of the AABB radius
+
 	if (ev->direction == GDK_SCROLL_UP)
 		_camDist += inc;
 	else if (ev->direction == GDK_SCROLL_DOWN)
 		_camDist -= inc;
 
-	_glWidget->queueDraw();
+	if (!_renderingInProgress)
+	{
+		_glWidget->queueDraw();
+	}
 
 	return false;
 }
