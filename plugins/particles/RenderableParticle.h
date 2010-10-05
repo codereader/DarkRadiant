@@ -10,6 +10,9 @@
 namespace particles
 {
 
+// Seconds to milliseconds
+#define SEC2MS(x) ((x)*1000)
+
 class RenerableParticleStage :
 	public OpenGLRenderable
 {
@@ -46,19 +49,55 @@ public:
 		glTexCoordPointer(2, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().texcoord));
 		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().normal));
 
-		glDrawArrays(GL_QUADS, 0, _vertices.size());
+		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_vertices.size()));
 	}
 
-	// Generate particle geometry 
+	// Generate particle geometry, time is absolute in msecs 
 	void update(std::size_t time)
 	{
 		_vertices.clear();
 
-		pushQuad(Vector3(0,0,0), 10);
+		// Check time offset (msecs)
+		std::size_t timeOffset = static_cast<std::size_t>(SEC2MS(_stage.getTimeOffset()));
+
+		if (time < timeOffset)
+		{
+			// We're still in the timeoffset zone where particle spawn is inhibited
+			return;
+		}
+
+		// Time >= timeOffset at this point
+
+		// Get rid of the time offset
+		std::size_t localtimeMsec = time - timeOffset;
+
+		// Transform time
+		std::size_t cycleTimeMsec = localtimeMsec % _stage.getCycleMsec();
+
+		std::size_t durationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
+
+		// Consider deadtime parameter
+		if (cycleTimeMsec > durationMsec)
+		{
+			// Cycle time is past stage duration, don't render anything
+			return;
+		}
+
+		// Calculate the time fraction [0..1]
+		float timeFrac = static_cast<float>(cycleTimeMsec) / durationMsec;
+
+		// Sanitise fraction if necessary
+		if (timeFrac > 1.0f) timeFrac = 1.0f;
+		if (timeFrac < 0.0f) timeFrac = 0.0f;
+
+		// Get current quad size
+		float size = _stage.getSize().evaluate(timeFrac);
+
+		pushQuad(Vector3(0,0,0), size);
 	}
 	
 	// Generates a new quad using the given origin as centroid
-	void pushQuad(const Vector3& origin, double size)
+	void pushQuad(const Vector3& origin, float size)
 	{
 		// Create a simple quad facing the z axis
 		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() + size, origin.z()), Vector2(0,0)));
@@ -96,12 +135,10 @@ public:
 		setupStages();
 	}
 
+	// Time is in msecs
 	void update(std::size_t time, RenderSystem& renderSystem)
 	{
-		// TODO: Evaluate particle state
-
-		// TODO: Update renderable geometry
-
+		// Make sure all shaders are constructed		
 		ensureShaders(renderSystem);
 
 		// Traverse the stages and call update
@@ -138,17 +175,11 @@ public:
 		renderSolid(collector, volume);
 	}
 
-	/**
-	 * Get the particle definition used by this renderable.
-	 */
 	const IParticleDefPtr& getParticleDef() const
 	{
 		return _particleDef;
 	}
 
-	/**
-	 * Set the particle definition.
-	 */
 	void setParticleDef(const IParticleDefPtr& def) 
 	{
 		_particleDef = def;
@@ -178,6 +209,7 @@ private:
 		}
 	}
 
+	// Capture all shaders, if necessary
 	void ensureShaders(RenderSystem& renderSystem)
 	{
 		for (ShaderMap::iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)

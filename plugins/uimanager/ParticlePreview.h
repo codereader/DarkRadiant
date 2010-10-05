@@ -44,6 +44,9 @@ private:
 
 	std::string _lastParticle;
 
+	// Increasing preview time in msecs
+	std::size_t _previewTimeMsec;
+
 private:
 	// gtkmm callbacks
 	bool callbackGLDraw(GdkEventExpose*);

@@ -32,7 +32,8 @@ ParticlePreview::ParticlePreview() :
 	Gtk::Frame(),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ParticlePreview"))),
 	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
-	_renderer(_renderSystem)
+	_renderer(_renderSystem),
+	_previewTimeMsec(0)
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
@@ -131,6 +132,9 @@ void ParticlePreview::setParticle(const std::string& name)
 			
 	if (_particle != NULL && _lastParticle != nameClean)
 	{
+		// Reset preview time
+		_previewTimeMsec = 0;
+
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
 		
@@ -141,7 +145,7 @@ void ParticlePreview::setParticle(const std::string& name)
 		_lastParticle = nameClean;
 
 		// Update the particle
-		_particle->update(0, *_renderSystem);
+		_particle->update(_previewTimeMsec, *_renderSystem);
 	}
 
 	// Redraw
