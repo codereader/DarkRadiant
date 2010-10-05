@@ -246,8 +246,6 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 		glTranslatef(0, 0, _camDist); // camera translation
 		glMultMatrixd(_rotation); // post multiply with rotations
 
-		//glTranslated(0, 0, -20); // place the model a few units away from the camera
-
 		// Load the matrix from openGL
 		glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 	}
