@@ -45,6 +45,8 @@ public:
 
 	void render(const RenderInfo& info) const
 	{
+		if (_vertices.empty()) return;
+
 		glVertexPointer(3, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().vertex));
 		glTexCoordPointer(2, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().texcoord));
 		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().normal));
@@ -71,8 +73,15 @@ public:
 		// Get rid of the time offset
 		std::size_t localtimeMsec = time - timeOffset;
 
-		// Transform time
-		std::size_t cycleTimeMsec = localtimeMsec % _stage.getCycleMsec();
+		// Transform time to local stage cycle time
+		int stageCycleMsec = _stage.getCycleMsec();
+
+		if (stageCycleMsec <= 0) 
+		{
+			return;
+		}
+
+		std::size_t cycleTimeMsec = localtimeMsec % stageCycleMsec;
 
 		std::size_t durationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
 

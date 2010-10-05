@@ -10,6 +10,7 @@
 #include <string>
 #include <map>
 #include "gtkutil/GLWidget.h"
+#include "gtkutil/Timer.h"
 #include <gtkmm/frame.h>
 
 #include "ParticleRenderer.h"
@@ -47,6 +48,11 @@ private:
 	// Increasing preview time in msecs
 	std::size_t _previewTimeMsec;
 
+	// Mutex flag to avoid draw call bunching
+	bool _renderingInProgress;
+
+	gtkutil::Timer _timer;
+
 private:
 	// gtkmm callbacks
 	bool callbackGLDraw(GdkEventExpose*);
@@ -58,6 +64,8 @@ public:
 	/** Construct a ParticlePreview widget.
 	 */
 	ParticlePreview();
+
+	~ParticlePreview();
 	
 	/** 
 	 * Set the pixel size of the ParticlePreview widget. The widget is always 
@@ -94,6 +102,8 @@ public:
 	}
 
 private:
+	// Called each frame by gtkutil::Timer
+	static gboolean _onFrame(gpointer data);
 
 	void drawAxes();
 };
