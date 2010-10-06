@@ -47,13 +47,21 @@ private:
 	typedef std::vector<VertexInfo> Vertices;
 	Vertices _vertices;
 
+	// The seed for our local randomiser, as passed by the parent stage
+	int _randSeed;
+
+	// The randomiser itself, which is reset everytime we rebuild the geometry
+	boost::rand48 _random;
+
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index, 
-							std::size_t particleCount, 
+							int randSeed,
 							const IParticleStage& stage) :
-		_vertices(particleCount*4), // 4 vertices per particle
-		_stage(stage)
+		_index(index),
+		_stage(stage),
+		_vertices(stage.getCount()*4), // 4 vertices per particle
+		_randSeed(randSeed)
 	{
 		// Geometry is written in update(), just reserve the space
 	}
@@ -64,10 +72,45 @@ public:
 	}
 
 	// Update the particle geometry and render information. 
-	// Time is specified in "local time", i.e. "time within the cycle", in msecs.
-	void update(std::size_t time, boost::rand48& random)
+	// Time is specified in stage time without offset,in msecs.
+	void update(std::size_t time)
 	{
 		// TODO
+
+		/*if (stageCycleMsec <= 0) 
+		{
+			return;
+		}
+
+		std::size_t cycleTimeMsec = localtimeMsec % stageCycleMsec;
+
+		std::size_t durationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
+
+		// Consider deadtime parameter
+		if (cycleTimeMsec > durationMsec)
+		{
+			// Cycle time is past stage duration, don't render anything
+			return;
+		}
+
+		// Calculate the time fraction [0..1]
+		float timeFrac = static_cast<float>(cycleTimeMsec) / durationMsec;
+
+		// Sanitise fraction if necessary
+		if (timeFrac > 1.0f) timeFrac = 1.0f;
+		if (timeFrac < 0.0f) timeFrac = 0.0f;
+
+		// Get current quad size
+		float size = _stage.getSize().evaluate(timeFrac);
+
+		// Consider the "origin" vector of this stage
+		Vector3 origin = _stage.getOffset();
+
+		// Generate N particles (disregard bunching for the moment)
+		for (int p = 0; p < _stage.getCount(); ++p)
+		{
+			//pushQuad(origin, size);	
+		}*/
 	}
 
 	void render(const RenderInfo& info) const
@@ -91,7 +134,7 @@ typedef boost::shared_ptr<RenderableParticleBunch> RenderableParticleBunchPtr;
  * for quads of one cycle to exist during the lifetime of the next cycle (if bunching 
  * is set to values below 1), but there can always be 2 bunches active at the same time.
  */
-class RenerableParticleStage :
+class RenderableParticleStage :
 	public OpenGLRenderable
 {
 private:
@@ -107,7 +150,7 @@ private:
 	std::vector<RenderableParticleBunchPtr> _bunches;
 
 public:
-	RenerableParticleStage(const IParticleStage& stage, boost::rand48& random) :
+	RenderableParticleStage(const IParticleStage& stage, boost::rand48& random) :
 		_stage(stage),
 		_numSeeds(32),
 		_seeds(_numSeeds),
@@ -157,40 +200,91 @@ public:
 		// Transform time to local stage cycle time
 		int stageCycleMsec = _stage.getCycleMsec();
 
-		if (stageCycleMsec <= 0) 
+		// Make sure the correct bunches are allocated for this stage time
+		ensureBunches(localtimeMsec);
+
+		// The 0 bunch is the active one, the 1 bunch is the previous one if not null
+
+		// Tell the particle batches to update their geometry
+		if (_bunches[0] != NULL)
 		{
-			return;
+			// Get one of our seed values
+			_bunches[0]->update(localtimeMsec);
 		}
 
-		std::size_t cycleTimeMsec = localtimeMsec % stageCycleMsec;
-
-		std::size_t durationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
-
-		// Consider deadtime parameter
-		if (cycleTimeMsec > durationMsec)
+		if (_bunches[1] != NULL)
 		{
-			// Cycle time is past stage duration, don't render anything
-			return;
+			_bunches[1]->update(localtimeMsec);
 		}
+	}
 
-		// Calculate the time fraction [0..1]
-		float timeFrac = static_cast<float>(cycleTimeMsec) / durationMsec;
+private:
+	void ensureBunches(std::size_t localTimeMSec)
+	{
+		// Check which bunches is active at this time
+		float cycleFrac = floor(static_cast<float>(localTimeMSec) / _stage.getCycleMsec());
 
-		// Sanitise fraction if necessary
-		if (timeFrac > 1.0f) timeFrac = 1.0f;
-		if (timeFrac < 0.0f) timeFrac = 0.0f;
+		std::size_t curCycleIndex = static_cast<std::size_t>(cycleFrac);
 
-		// Get current quad size
-		float size = _stage.getSize().evaluate(timeFrac);
-
-		// Consider the "origin" vector of this stage
-		Vector3 origin = _stage.getOffset();
-
-		// Generate N particles (disregard bunching for the moment)
-		for (int p = 0; p < _stage.getCount(); ++p)
+		if (curCycleIndex == 0)
 		{
-			//pushQuad(origin, size);	
+			// This is the only active bunch (the first one), there is no previous cycle
+			// it's possible that this one is already existing.
+			if (_bunches[0] == NULL || _bunches[0]->getIndex() != curCycleIndex)
+			{
+				// First bunch is not matching, re-assign
+				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage));
+			}
+
+			// Reset the previous bunch in any case
+			_bunches[1].reset();
 		}
+		else
+		{
+			// Current cycle > 0, this means we have possibly two active ones
+			std::size_t prevCycleIndex = curCycleIndex - 1;
+
+			// Reuse any existing instances, to avoid re-instancing them all over again
+			RenderableParticleBunchPtr cur = getExistingBunchByIndex(curCycleIndex);
+			RenderableParticleBunchPtr prev = getExistingBunchByIndex(prevCycleIndex);
+			
+			if (cur != NULL)
+			{
+				_bunches[0] = cur;
+			}
+			else
+			{
+				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage));
+			}
+
+			if (prev != NULL)
+			{
+				_bunches[1] = prev;
+			}
+			else
+			{
+				_bunches[1].reset(new RenderableParticleBunch(prevCycleIndex, getSeed(prevCycleIndex), _stage));
+			}
+		}
+	}
+
+	int getSeed(std::size_t cycleIndex)
+	{
+		return _seeds[cycleIndex % _seeds.size()];
+	}
+
+	RenderableParticleBunchPtr getExistingBunchByIndex(std::size_t index)	
+	{
+		if (_bunches[0] != NULL && _bunches[0]->getIndex() == index)
+		{
+			return _bunches[0];
+		}
+		else if (_bunches[1] != NULL && _bunches[1]->getIndex() == index)
+		{
+			return _bunches[1];
+		}
+		
+		return RenderableParticleBunchPtr();
 	}
 	
 	// Generates a new quad using the given origin as centroid
@@ -203,7 +297,7 @@ public:
 		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() - size, origin.z()), Vector2(0,1)));
 	}*/
 };
-typedef boost::shared_ptr<RenerableParticleStage> RenerableParticleStagePtr;
+typedef boost::shared_ptr<RenderableParticleStage> RenderableParticleStagePtr;
 
 class RenderableParticle :
 	public IRenderableParticle
@@ -212,13 +306,13 @@ private:
 	// The particle definition containing the stage info
 	IParticleDefPtr _particleDef;
 
-	typedef std::vector<RenerableParticleStagePtr> RenerableParticleStageList;
+	typedef std::vector<RenderableParticleStagePtr> RenderableParticleStageList;
 
 	// Particle stages using the same shader get grouped
 	struct ParticleStageGroup
 	{
 		ShaderPtr shader;
-		RenerableParticleStageList stages;
+		RenderableParticleStageList stages;
 	};
 
 	// Each captured shader can have one or more particle stages assigned to it
@@ -247,7 +341,7 @@ public:
 		// Traverse the stages and call update
 		for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
 		{
-			for (RenerableParticleStageList::const_iterator stage = i->second.stages.begin();
+			for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
 				 stage != i->second.stages.end(); ++stage)
 			{
 				(*stage)->update(time);
@@ -264,7 +358,7 @@ public:
 
 			collector.SetState(i->second.shader, RenderableCollector::eFullMaterials);
 
-			for (RenerableParticleStageList::const_iterator stage = i->second.stages.begin();
+			for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
 				 stage != i->second.stages.end(); ++stage)
 			{
 				collector.addRenderable(**stage, Matrix4::getIdentity());
@@ -307,7 +401,7 @@ private:
 			}
 
 			// Create a new renderable stage and add it to the shader
-			RenerableParticleStagePtr renderableStage(new RenerableParticleStage(stage, _random));
+			RenderableParticleStagePtr renderableStage(new RenderableParticleStage(stage, _random));
 			_shaderMap[materialName].stages.push_back(renderableStage);
 		}
 	}
