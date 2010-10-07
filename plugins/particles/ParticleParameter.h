@@ -62,6 +62,11 @@ public:
 		return _from + fraction * (_to - _from);
 	}
 
+	float integrate(float fraction) const
+	{
+		return (_to - _from) * 0.5f * (fraction*fraction) + _from * fraction;
+	}
+
 	void parseFromTokens(parser::DefTokeniser& tok)
 	{
 		std::string val = tok.nextToken();
