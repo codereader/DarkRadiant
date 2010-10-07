@@ -163,7 +163,10 @@ public:
 			std::size_t particleTime = cycleTime - particleStartTime;
 
 			// Each particle has a lifetime of <stage duration> at maximum, double-check that
-			assert(particleTime <= stageDurationMsec);
+			if (particleTime > stageDurationMsec)
+			{
+				continue; // particle has expired
+			}
 
 			// Calculate the time fraction [0..1]
 			float timeFraction = static_cast<float>(particleTime) / stageDurationMsec;
