@@ -155,6 +155,11 @@ public:
 				angle = 360 * static_cast<float>(_random()) / boost::rand48::max_value;
 			}
 
+			// Calculate the time-dependent angle
+			// according to docs, half the quads have negative rotation speed
+			float rotFactor = _random() % 2 == 0 ? -1 : 1;
+			angle += rotFactor * _stage.getRotationSpeed().integrate(timeFraction);
+
 			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle);
 		}
 	}
