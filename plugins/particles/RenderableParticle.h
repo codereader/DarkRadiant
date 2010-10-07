@@ -75,42 +75,34 @@ public:
 	// Time is specified in stage time without offset,in msecs.
 	void update(std::size_t time)
 	{
-		// TODO
+		_vertices.clear();
 
-		/*if (stageCycleMsec <= 0) 
+		// Length of one cycle (duration + deadtime)
+		std::size_t cycleMsec = static_cast<std::size_t>(_stage.getCycleMsec());
+
+		if (cycleMsec == 0)
 		{
 			return;
 		}
 
-		std::size_t cycleTimeMsec = localtimeMsec % stageCycleMsec;
+		// Normalise the global input time into local cycle time
+		std::size_t cycleTime = time % cycleMsec;
 
-		std::size_t durationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
+		// Reset the random number generator using our stored seed
+		_random.seed(_randSeed);
 
-		// Consider deadtime parameter
-		if (cycleTimeMsec > durationMsec)
-		{
-			// Cycle time is past stage duration, don't render anything
-			return;
-		}
+		// Consider the offset parameter
+		const Vector3& offset = _stage.getOffset();
 
 		// Calculate the time fraction [0..1]
-		float timeFrac = static_cast<float>(cycleTimeMsec) / durationMsec;
+		float timeFraction = static_cast<float>(cycleTime) / SEC2MS(_stage.getDuration());
 
-		// Sanitise fraction if necessary
-		if (timeFrac > 1.0f) timeFrac = 1.0f;
-		if (timeFrac < 0.0f) timeFrac = 0.0f;
-
-		// Get current quad size
-		float size = _stage.getSize().evaluate(timeFrac);
-
-		// Consider the "origin" vector of this stage
-		Vector3 origin = _stage.getOffset();
-
-		// Generate N particles (disregard bunching for the moment)
-		for (int p = 0; p < _stage.getCount(); ++p)
+		// Generate all particle quads, regardless of their visibility
+		// Visibility is considered by not rendering particles that haven't been spawned yet
+		for (int i = 0; i < _stage.getCount(); ++i)
 		{
-			//pushQuad(origin, size);	
-		}*/
+			pushQuad(offset, _stage.getSize().evaluate(timeFraction));
+		}
 	}
 
 	void render(const RenderInfo& info) const
@@ -124,6 +116,17 @@ public:
 
 		// TODO: Use calculated start and end array indices, not all particles may be visible at the same time
 		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_vertices.size()));
+	}
+
+private:
+	// Generates a new quad using the given origin as centroid
+	void pushQuad(const Vector3& origin, float size)
+	{
+		// Create a simple quad facing the z axis
+		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() + size, origin.z()), Vector2(0,0)));
+		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() + size, origin.z()), Vector2(1,0)));
+		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() - size, origin.z()), Vector2(1,1)));
+		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() - size, origin.z()), Vector2(0,1)));
 	}
 };
 typedef boost::shared_ptr<RenderableParticleBunch> RenderableParticleBunchPtr;
@@ -196,9 +199,6 @@ public:
 
 		// Get rid of the time offset
 		std::size_t localtimeMsec = time - timeOffset;
-
-		// Transform time to local stage cycle time
-		int stageCycleMsec = _stage.getCycleMsec();
 
 		// Make sure the correct bunches are allocated for this stage time
 		ensureBunches(localtimeMsec);
@@ -286,16 +286,6 @@ private:
 		
 		return RenderableParticleBunchPtr();
 	}
-	
-	// Generates a new quad using the given origin as centroid
-	/*void pushQuad(const Vector3& origin, float size)
-	{
-		// Create a simple quad facing the z axis
-		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() + size, origin.z()), Vector2(0,0)));
-		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() + size, origin.z()), Vector2(1,0)));
-		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() - size, origin.z()), Vector2(1,1)));
-		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() - size, origin.z()), Vector2(0,1)));
-	}*/
 };
 typedef boost::shared_ptr<RenderableParticleStage> RenderableParticleStagePtr;
 
