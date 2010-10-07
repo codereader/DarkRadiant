@@ -127,7 +127,8 @@ public:
 		}
 
 		// Normalise the global input time into local cycle time
-		std::size_t cycleTime = time % cycleMsec;
+		// The cycleTime may be larger than the _stage.cycleMsec argument if bunching is turned off
+		std::size_t cycleTime = time - cycleMsec * _index;
 
 		// Reset the random number generator using our stored seed
 		_random.seed(_randSeed);
@@ -135,15 +136,38 @@ public:
 		// Consider the offset parameter
 		const Vector3& offset = _stage.getOffset();
 
-		// Calculate the time fraction [0..1]
-		float timeFraction = static_cast<float>(cycleTime) / SEC2MS(_stage.getDuration());
-
 		Vector3 direction(0,1,0); // y direction
+
+		// Calculate the time between each particle spawn
+		// When bunching is set to 1 the spacing is 0, and vice versa.
+		std::size_t stageDurationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
+
+		std::size_t spawnSpacing = static_cast<std::size_t>((1.0f - _stage.getBunching()) / static_cast<float>(stageDurationMsec));
 
 		// Generate all particle quads, regardless of their visibility
 		// Visibility is considered by not rendering particles that haven't been spawned yet
-		for (int i = 0; i < _stage.getCount(); ++i)
+		for (std::size_t i = 0; i < static_cast<std::size_t>(_stage.getCount()); ++i)
 		{
+			// Consider bunching parameter
+			std::size_t particleStartTime = i * spawnSpacing;
+
+			if (cycleTime < particleStartTime)
+			{
+				// This particle is not visible at the given time
+				continue;
+			}
+
+			assert(particleStartTime < stageDurationMsec);  // some sanity checks
+
+			// Get the "local particle time"
+			std::size_t particleTime = cycleTime - particleStartTime;
+
+			// Each particle has a lifetime of <stage duration> at maximum, double-check that
+			assert(particleTime <= stageDurationMsec);
+
+			// Calculate the time fraction [0..1]
+			float timeFraction = static_cast<float>(particleTime) / stageDurationMsec;
+
 			Vector3 particleOrigin = offset + direction * _stage.getSpeed().integrate(timeFraction);
 
 			// Get the initial angle value
