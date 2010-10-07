@@ -137,6 +137,8 @@ void ParticlePreview::initialisePreview()
 	glLightfv(GL_LIGHT1, GL_DIFFUSE, l1Dif);
 	glLightfv(GL_LIGHT1, GL_POSITION, l1Pos);
 
+
+	_renderSystem->setLightingEnabled(true);
 }
 
 // Set the model, this also resets the camera
@@ -197,7 +199,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
 	// Set up the render and clear the drawing area in any case
-	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (_particle == NULL) return false; // nothing to do
@@ -226,6 +228,18 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 							 | RENDER_SMOOTH
 							 | RENDER_SCALED;
 
+	flags |= RENDER_FILL
+           | RENDER_LIGHTING
+           | RENDER_TEXTURE_2D
+           | RENDER_TEXTURE_CUBEMAP
+           | RENDER_SMOOTH
+           | RENDER_SCALED
+           | RENDER_BUMP
+           | RENDER_PROGRAM
+           | RENDER_MATERIAL_VCOL
+           | RENDER_VCOL_INVERT
+           | RENDER_SCREEN;
+
 	// Set up the camera
 	Matrix4 projection;
 	{
@@ -250,11 +264,11 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 		glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
 	}
 
-	// Draw coordinate axes for better orientation
-	drawAxes();
-
 	// Launch the back end rendering
 	_renderSystem->render(flags, modelview, projection);
+
+	// Draw coordinate axes for better orientation
+	drawAxes();
 
 	return false;
 }

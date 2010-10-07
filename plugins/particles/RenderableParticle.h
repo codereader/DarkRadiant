@@ -97,11 +97,15 @@ public:
 		// Calculate the time fraction [0..1]
 		float timeFraction = static_cast<float>(cycleTime) / SEC2MS(_stage.getDuration());
 
+		Vector3 direction(0,1,0); // y direction
+
 		// Generate all particle quads, regardless of their visibility
 		// Visibility is considered by not rendering particles that haven't been spawned yet
 		for (int i = 0; i < _stage.getCount(); ++i)
 		{
-			pushQuad(offset, _stage.getSize().evaluate(timeFraction));
+			Vector3 particleOrigin = offset + direction * _stage.getSpeed().integrate(timeFraction);
+
+			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction));
 		}
 	}
 
