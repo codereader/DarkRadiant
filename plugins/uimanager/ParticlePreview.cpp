@@ -213,7 +213,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 
 	RenderStateFlags flags = RENDER_DEPTHTEST
                              | RENDER_COLOURWRITE
-                             | RENDER_DEPTHWRITE
+                             //| RENDER_DEPTHWRITE
                              | RENDER_ALPHATEST
                              | RENDER_BLEND
                              | RENDER_CULLFACE
