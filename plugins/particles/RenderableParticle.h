@@ -6,6 +6,7 @@
 
 #include "render.h"
 #include "math/matrix.h"
+#include "math/pi.h"
 
 #include <boost/random/linear_congruential.hpp>
 
@@ -43,9 +44,49 @@ private:
 		{}
 	};
 
+	struct Quad
+	{
+		VertexInfo verts[4];
+
+		Quad()
+		{}
+
+		Quad(float size) 
+		{
+			verts[0] = VertexInfo(Vector3(-size, +size, 0), Vector2(0,0));
+			verts[1] = VertexInfo(Vector3(+size, +size, 0), Vector2(1,0));
+			verts[2] = VertexInfo(Vector3(+size, -size, 0), Vector2(1,1));
+			verts[3] = VertexInfo(Vector3(-size, -size, 0), Vector2(0,1));
+		}
+
+		Quad(float size, float angle)
+		{
+			double cosPhi = cos(degrees_to_radians(angle));
+			double sinPhi = sin(degrees_to_radians(angle));
+			Matrix4 rotation = Matrix4::byColumns(
+				cosPhi, -sinPhi, 0, 0,
+				sinPhi, cosPhi, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1);
+
+			verts[0] = VertexInfo(rotation.transform(Vector3(-size, +size, 0)).getProjected(), Vector2(0,0));
+			verts[1] = VertexInfo(rotation.transform(Vector3(+size, +size, 0)).getProjected(), Vector2(1,0));
+			verts[2] = VertexInfo(rotation.transform(Vector3(+size, -size, 0)).getProjected(), Vector2(1,1));
+			verts[3] = VertexInfo(rotation.transform(Vector3(-size, -size, 0)).getProjected(), Vector2(0,1));
+		}
+
+		void translate(const Vector3& offset)
+		{
+			verts[0].vertex += offset;
+			verts[1].vertex += offset;
+			verts[2].vertex += offset;
+			verts[3].vertex += offset;
+		}
+	};
+
 	// The quads of this particle bunch
-	typedef std::vector<VertexInfo> Vertices;
-	Vertices _vertices;
+	typedef std::vector<Quad> Quads;
+	Quads _quads;
 
 	// The seed for our local randomiser, as passed by the parent stage
 	int _randSeed;
@@ -60,7 +101,7 @@ public:
 							const IParticleStage& stage) :
 		_index(index),
 		_stage(stage),
-		_vertices(stage.getCount()*4), // 4 vertices per particle
+		_quads(stage.getCount()), // 4 vertices per particle
 		_randSeed(randSeed)
 	{
 		// Geometry is written in update(), just reserve the space
@@ -75,7 +116,7 @@ public:
 	// Time is specified in stage time without offset,in msecs.
 	void update(std::size_t time)
 	{
-		_vertices.clear();
+		_quads.clear();
 
 		// Length of one cycle (duration + deadtime)
 		std::size_t cycleMsec = static_cast<std::size_t>(_stage.getCycleMsec());
@@ -105,32 +146,48 @@ public:
 		{
 			Vector3 particleOrigin = offset + direction * _stage.getSpeed().integrate(timeFraction);
 
-			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction));
+			// Get the initial angle value
+			float angle = _stage.getInitialAngle();
+
+			if (angle == 0)
+			{
+				// Use random angle
+				angle = 360 * static_cast<float>(_random()) / boost::rand48::max_value;
+			}
+
+			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle);
 		}
 	}
 
 	void render(const RenderInfo& info) const
 	{
-		if (_vertices.empty()) return;
+		if (_quads.empty()) return;
 
-		glVertexPointer(3, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().vertex));
-		glTexCoordPointer(2, GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().texcoord));
-		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_vertices.front().normal));
-		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexInfo), &(_vertices.front().colour));
+		glVertexPointer(3, GL_DOUBLE, sizeof(VertexInfo), &(_quads.front().verts[0].vertex));
+		glTexCoordPointer(2, GL_DOUBLE, sizeof(VertexInfo), &(_quads.front().verts[0].texcoord));
+		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_quads.front().verts[0].normal));
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexInfo), &(_quads.front().verts[0].colour));
 
 		// TODO: Use calculated start and end array indices, not all particles may be visible at the same time
-		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_vertices.size()));
+		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_quads.size())*4);
 	}
 
 private:
-	// Generates a new quad using the given origin as centroid
-	void pushQuad(const Vector3& origin, float size)
+	// Generates a new quad using the given origin as centroid, angle is in degrees
+	void pushQuad(const Vector3& origin, float size, float angle)
 	{
+		double cosPhi = cos(degrees_to_radians(angle));
+		double sinPhi = sin(degrees_to_radians(angle));
+		Matrix4 rotation = Matrix4::byColumns(
+			cosPhi, -sinPhi, 0, 0,
+			sinPhi, cosPhi, 0, 0,
+			0, 0, 1, 0,
+			0, 0, 0, 1);
+
 		// Create a simple quad facing the z axis
-		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() + size, origin.z()), Vector2(0,0)));
-		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() + size, origin.z()), Vector2(1,0)));
-		_vertices.push_back(VertexInfo(Vector3(origin.x() + size, origin.y() - size, origin.z()), Vector2(1,1)));
-		_vertices.push_back(VertexInfo(Vector3(origin.x() - size, origin.y() - size, origin.z()), Vector2(0,1)));
+		_quads.push_back(Quad(size, angle));
+
+		_quads.back().translate(origin);
 	}
 };
 typedef boost::shared_ptr<RenderableParticleBunch> RenderableParticleBunchPtr;
