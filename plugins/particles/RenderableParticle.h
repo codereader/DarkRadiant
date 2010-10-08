@@ -181,6 +181,9 @@ public:
 
 			Vector3 particleOrigin = offset + direction * integrate(_stage.getSpeed(), particleTimeSecs);
 
+			// Consider gravity, ignore "world" parameter for now
+			particleOrigin += Vector3(0,-1,0) * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
+
 			// Get the initial angle value
 			float angle = _stage.getInitialAngle();
 
