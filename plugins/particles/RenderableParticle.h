@@ -353,8 +353,15 @@ private:
 			// Reuse any existing instances, to avoid re-instancing them all over again
 			RenderableParticleBunchPtr cur = getExistingBunchByIndex(curCycleIndex);
 			RenderableParticleBunchPtr prev = getExistingBunchByIndex(prevCycleIndex);
-			
-			if (cur != NULL)
+
+			std::size_t numCycles = static_cast<std::size_t>(_stage.getCycles());
+
+			if (numCycles > 0 && curCycleIndex > numCycles)
+			{
+				// We've exceeded the maximum number of cycles
+				_bunches[0].reset();
+			}
+			else if (cur != NULL)
 			{
 				_bunches[0] = cur;
 			}
@@ -363,7 +370,12 @@ private:
 				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage));
 			}
 
-			if (prev != NULL)
+			if (numCycles > 0 && prevCycleIndex > numCycles)
+			{
+				// We've exceeded the maximum number of cycles
+				_bunches[1].reset();
+			}
+			else if (prev != NULL)
 			{
 				_bunches[1] = prev;
 			}
