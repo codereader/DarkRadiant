@@ -193,6 +193,8 @@ Gtk::Widget* ParticlePreview::getWidget()
 
 bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev) 
 {
+	if (_renderingInProgress) return false; // avoid double-entering this method
+
 	ScopedBoolLock lock(_renderingInProgress); // will be set to false on method exit
 
 	// Create scoped sentry object to swap the GLWidget's buffers

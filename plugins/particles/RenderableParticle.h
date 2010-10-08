@@ -15,6 +15,7 @@ namespace particles
 
 // Seconds to milliseconds
 #define SEC2MS(x) ((x)*1000)
+#define MS2SEC(x) ((x)*0.001f)
 
 class RenderableParticleBunch :
 	public OpenGLRenderable
@@ -142,25 +143,29 @@ public:
 		// When bunching is set to 1 the spacing is 0, and vice versa.
 		std::size_t stageDurationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
 
-		std::size_t spawnSpacing = static_cast<std::size_t>((1.0f - _stage.getBunching()) / static_cast<float>(stageDurationMsec));
+		float bunchingFactor = 1.0f - _stage.getBunching();
+		float spawnSpacing = bunchingFactor * static_cast<float>(stageDurationMsec) / _stage.getCount();
+
+		// This is the spacing between each particle
+		std::size_t spawnSpacingMsec = static_cast<std::size_t>(spawnSpacing);
 
 		// Generate all particle quads, regardless of their visibility
 		// Visibility is considered by not rendering particles that haven't been spawned yet
 		for (std::size_t i = 0; i < static_cast<std::size_t>(_stage.getCount()); ++i)
 		{
 			// Consider bunching parameter
-			std::size_t particleStartTime = i * spawnSpacing;
+			std::size_t particleStartTimeMsec = i * spawnSpacingMsec;
 
-			if (cycleTime < particleStartTime)
+			if (cycleTime < particleStartTimeMsec)
 			{
 				// This particle is not visible at the given time
 				continue;
 			}
 
-			assert(particleStartTime < stageDurationMsec);  // some sanity checks
+			assert(particleStartTimeMsec < stageDurationMsec);  // some sanity checks
 
 			// Get the "local particle time"
-			std::size_t particleTime = cycleTime - particleStartTime;
+			std::size_t particleTime = cycleTime - particleStartTimeMsec;
 
 			// Each particle has a lifetime of <stage duration> at maximum, double-check that
 			if (particleTime > stageDurationMsec)
@@ -171,7 +176,10 @@ public:
 			// Calculate the time fraction [0..1]
 			float timeFraction = static_cast<float>(particleTime) / stageDurationMsec;
 
-			Vector3 particleOrigin = offset + direction * _stage.getSpeed().integrate(timeFraction);
+			// We need the particle time in seconds for the location/angle integrations
+			float particleTimeSecs = MS2SEC(particleTime);
+
+			Vector3 particleOrigin = offset + direction * integrate(_stage.getSpeed(), particleTimeSecs);
 
 			// Get the initial angle value
 			float angle = _stage.getInitialAngle();
@@ -184,11 +192,16 @@ public:
 
 			// Calculate the time-dependent angle
 			// according to docs, half the quads have negative rotation speed
-			int rotFactor = _random() % 2 == 0 ? -1 : 1;
-			angle += rotFactor * _stage.getRotationSpeed().integrate(timeFraction);
+			int rotFactor = i % 2 == 0 ? -1 : 1;
+			angle += rotFactor * integrate(_stage.getRotationSpeed(), particleTimeSecs);
 
 			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle);
 		}
+	}
+
+	float integrate(const IParticleParameter& param, float time)
+	{
+		return (param.getTo() - param.getFrom()) / SEC2MS(_stage.getDuration()) * time*time * 0.5f + param.getFrom() * time;
 	}
 
 	void render(const RenderInfo& info) const
