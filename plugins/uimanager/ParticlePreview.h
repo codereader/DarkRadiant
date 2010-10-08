@@ -53,11 +53,15 @@ private:
 
 	gtkutil::Timer _timer;
 
+	int _previewWidth;
+	int _previewHeight;
+
 private:
 	// gtkmm callbacks
 	bool callbackGLDraw(GdkEventExpose*);
 	bool callbackGLMotion(GdkEventMotion*);
 	bool callbackGLScroll(GdkEventScroll*);
+	void onSizeAllocate(Gtk::Allocation& allocation);
 	
 public:
 	
@@ -106,6 +110,7 @@ private:
 	static gboolean _onFrame(gpointer data);
 
 	void drawAxes();
+	void drawTime();
 };
 typedef boost::shared_ptr<ParticlePreview> ParticlePreviewPtr;
 

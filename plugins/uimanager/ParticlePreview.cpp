@@ -7,11 +7,14 @@
 #include "math/aabb.h"
 #include "entitylib.h"
 
+#include "string/string.h"
+
 #include <gtkmm/box.h>
 #include <gtkmm/toolbar.h>
 #include <gtkmm/image.h>
 #include <gtkmm/toggletoolbutton.h>
 
+#include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -54,7 +57,9 @@ ParticlePreview::ParticlePreview() :
 	_renderer(_renderSystem),
 	_previewTimeMsec(0),
 	_renderingInProgress(false),
-	_timer(MSEC_PER_FRAME, _onFrame, this)
+	_timer(MSEC_PER_FRAME, _onFrame, this),
+	_previewWidth(0),
+	_previewHeight(0)
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
@@ -69,6 +74,7 @@ ParticlePreview::ParticlePreview() :
 	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ParticlePreview::callbackGLDraw));
 	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &ParticlePreview::callbackGLMotion));
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &ParticlePreview::callbackGLScroll));
+	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &ParticlePreview::onSizeAllocate));
 	
 	// The HBox containing the toolbar and the menubar
 	Gtk::HBox* toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
@@ -191,6 +197,12 @@ Gtk::Widget* ParticlePreview::getWidget()
 	return this;
 }
 
+void ParticlePreview::onSizeAllocate(Gtk::Allocation& allocation)
+{
+	_previewWidth = allocation.get_width();
+	_previewHeight = allocation.get_height();
+}
+
 bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev) 
 {
 	if (_renderingInProgress) return false; // avoid double-entering this method
@@ -272,6 +284,8 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	// Draw coordinate axes for better orientation
 	drawAxes();
 
+	drawTime();
+
 	return false;
 }
 
@@ -287,6 +301,41 @@ gboolean ParticlePreview::_onFrame(gpointer data)
 
 	// Return true, so that the timer gets called again
 	return TRUE;
+}
+
+void ParticlePreview::drawTime()
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, static_cast<float>(_previewWidth), 0, static_cast<float>(_previewHeight), -100, 100);
+
+	glScalef(1, -1, 1);
+	glTranslatef(0, -static_cast<float>(_previewHeight), 0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	if (GLEW_VERSION_1_3)
+	{
+		glClientActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_DEPTH_TEST);
+
+	glColor3f( 1.f, 1.f, 1.f );
+	glLineWidth(1);
+
+	glRasterPos3f(1.0f, static_cast<float>(_previewHeight) - 1.0f, 0.0f);
+
+	GlobalOpenGL().drawString((boost::format("%.3f sec.") % (_previewTimeMsec * 0.001f)).str());
 }
 
 void ParticlePreview::drawAxes()
