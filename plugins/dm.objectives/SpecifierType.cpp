@@ -161,9 +161,6 @@ SpecifierType::SpecifierType(const std::string& name, const std::string& display
 : _id(enumCount++),
   _name(name),
   _displayName(displayName)
-{ 
-	// Register self in map
-	getMap().insert(SpecifierTypeMap::value_type(name, *this));
-}
+{ }
 
 }
