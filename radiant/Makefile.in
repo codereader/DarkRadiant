@@ -38,10 +38,7 @@ bin_PROGRAMS = darkradiant$(EXEEXT)
 subdir = radiant
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -81,6 +78,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-OpenGLShaderPass.$(OBJEXT) \
 	darkradiant-OpenGLModule.$(OBJEXT) \
 	darkradiant-OpenGLRenderSystem.$(OBJEXT) \
+	darkradiant-RenderSystemFactory.$(OBJEXT) \
 	darkradiant-SpacePartitionRenderer.$(OBJEXT) \
 	darkradiant-EntityClassChooser.$(OBJEXT) \
 	darkradiant-EntityClassTreePopulator.$(OBJEXT) \
@@ -467,6 +465,7 @@ darkradiant_SOURCES = main.cpp \
                       render/backend/OpenGLShaderPass.cpp \
                       render/OpenGLModule.cpp \
                       render/OpenGLRenderSystem.cpp \
+					  render/RenderSystemFactory.cpp \
                       render/debug/SpacePartitionRenderer.cpp \
                       ui/entitychooser/EntityClassChooser.cpp \
                       ui/entitychooser/EntityClassTreePopulator.cpp \
@@ -866,6 +865,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RadiantWindowObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RegionManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RegularLayout.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RenderSystemFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RenderableAABB.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RootNode.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-RotateManipulator.Po@am__quote@
@@ -1431,6 +1431,20 @@ darkradiant-OpenGLRenderSystem.obj: render/OpenGLRenderSystem.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/OpenGLRenderSystem.cpp' object='darkradiant-OpenGLRenderSystem.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLRenderSystem.obj `if test -f 'render/OpenGLRenderSystem.cpp'; then $(CYGPATH_W) 'render/OpenGLRenderSystem.cpp'; else $(CYGPATH_W) '$(srcdir)/render/OpenGLRenderSystem.cpp'; fi`
+
+darkradiant-RenderSystemFactory.o: render/RenderSystemFactory.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RenderSystemFactory.o -MD -MP -MF $(DEPDIR)/darkradiant-RenderSystemFactory.Tpo -c -o darkradiant-RenderSystemFactory.o `test -f 'render/RenderSystemFactory.cpp' || echo '$(srcdir)/'`render/RenderSystemFactory.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-RenderSystemFactory.Tpo $(DEPDIR)/darkradiant-RenderSystemFactory.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/RenderSystemFactory.cpp' object='darkradiant-RenderSystemFactory.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RenderSystemFactory.o `test -f 'render/RenderSystemFactory.cpp' || echo '$(srcdir)/'`render/RenderSystemFactory.cpp
+
+darkradiant-RenderSystemFactory.obj: render/RenderSystemFactory.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-RenderSystemFactory.obj -MD -MP -MF $(DEPDIR)/darkradiant-RenderSystemFactory.Tpo -c -o darkradiant-RenderSystemFactory.obj `if test -f 'render/RenderSystemFactory.cpp'; then $(CYGPATH_W) 'render/RenderSystemFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/render/RenderSystemFactory.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/darkradiant-RenderSystemFactory.Tpo $(DEPDIR)/darkradiant-RenderSystemFactory.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/RenderSystemFactory.cpp' object='darkradiant-RenderSystemFactory.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-RenderSystemFactory.obj `if test -f 'render/RenderSystemFactory.cpp'; then $(CYGPATH_W) 'render/RenderSystemFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/render/RenderSystemFactory.cpp'; fi`
 
 darkradiant-SpacePartitionRenderer.o: render/debug/SpacePartitionRenderer.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-SpacePartitionRenderer.o -MD -MP -MF $(DEPDIR)/darkradiant-SpacePartitionRenderer.Tpo -c -o darkradiant-SpacePartitionRenderer.o `test -f 'render/debug/SpacePartitionRenderer.cpp' || echo '$(srcdir)/'`render/debug/SpacePartitionRenderer.cpp
