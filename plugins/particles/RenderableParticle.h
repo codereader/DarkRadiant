@@ -206,7 +206,7 @@ public:
 			angle += rotFactor * integrate(_stage.getRotationSpeed(), particleTimeSecs);
 
 			// Calculate render colour
-			Vector4 colour(1,0,0,1);
+			Vector4 colour = _stage.getColour();
 
 			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, colour);
 		}
