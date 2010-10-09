@@ -33,21 +33,11 @@ public:
 	// Initialises the function handling pointers for debug builds
 	void initErrorHandler();
 	
-	/**
-	 * Return the application path of the current Radiant instance.
-	 */
-	virtual const std::string& getApplicationPath() const;
-	
-	/**
-	 * Return the settings path of the current Radiant instance.
-	 */
-	virtual const std::string& getSettingsPath() const;
-	
-	/** 
-	 * Return the path where the application's bitmaps are stored.
-	 */
-	virtual const std::string& getBitmapsPath() const;
-
+    /* ApplicationContext implementation */
+	std::string getApplicationPath() const;
+    std::string getRuntimeDataPath() const;
+	std::string getSettingsPath() const;
+	std::string getBitmapsPath() const;
 	const ArgumentList& getCmdLineArgs() const;	
 	
 	// Return the global stream references

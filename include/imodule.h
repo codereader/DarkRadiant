@@ -53,17 +53,25 @@ public:
 	/**
 	 * Return the application path of the current Radiant instance.
 	 */
-	virtual const std::string& getApplicationPath() const = 0;
+	virtual std::string getApplicationPath() const = 0;
+
+    /**
+     * Return the toplevel path contaning runtime data files, such as the GL
+     * programs or UI descriptor files. On Windows this is the same as the
+     * application path, on Linux it is determined at compile-time but probably
+     * something like /usr/share/darkradiant.
+     */
+    virtual std::string getRuntimeDataPath() const = 0;
 	
 	/**
 	 * Return the settings path of the current Radiant instance.
 	 */
-	virtual const std::string& getSettingsPath() const = 0;
+	virtual std::string getSettingsPath() const = 0;
 	
 	/**
 	 * Return the settings path of the current Radiant instance.
 	 */
-	virtual const std::string& getBitmapsPath() const = 0;
+	virtual std::string getBitmapsPath() const = 0;
 
 	/**
      * \brief
