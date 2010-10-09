@@ -1,21 +1,14 @@
-#ifndef OPENGLSHADERCACHE_H_
-#define OPENGLSHADERCACHE_H_
+#pragma once
 
 #include "irender.h"
 #include <map>
 #include "moduleobserver.h"
+#include "backend/OpenGLStateManager.h"
 #include "backend/OpenGLShader.h"
 #include "LinearLightList.h"
 #include "render/backend/OpenGLStateLess.h"
 
-class OpenGLState;
-class OpenGLShaderPass;
-
-/* Sorted state map */
-
-typedef std::map<OpenGLState*, 
-				 OpenGLShaderPass*, 
-				 OpenGLStateLess> OpenGLStates;
+#include <boost/weak_ptr.hpp>
 
 namespace render {
 
@@ -25,6 +18,7 @@ namespace render {
  */
 class OpenGLRenderSystem 
 : public RenderSystem, 
+  public OpenGLStateManager,
   public ModuleObserver
 {
 	// Map of named Shader objects
@@ -98,7 +92,7 @@ public:
 	Renderables m_renderables;
 	mutable bool m_traverseRenderablesMutex;
 
-	// Called by OpenGLShader
+    /* OpenGLStateManager implementation */
 	void insertSortedState(const OpenGLStates::value_type& val);
 	void eraseSortedState(const OpenGLStates::key_type& key);
 	
@@ -117,4 +111,3 @@ typedef boost::shared_ptr<OpenGLRenderSystem> OpenGLRenderSystemPtr;
 
 } // namespace render
 
-#endif /*OPENGLSHADERCACHE_H_*/
