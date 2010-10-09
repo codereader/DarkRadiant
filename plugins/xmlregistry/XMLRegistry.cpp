@@ -254,20 +254,18 @@ const StringSet& XMLRegistry::getDependencies() const {
 	return _dependencies;
 }
 
-void XMLRegistry::initialiseModule(const ApplicationContext& ctx) {
+void XMLRegistry::initialiseModule(const ApplicationContext& ctx) 
+{
 	globalOutputStream() << "XMLRegistry::initialiseModule called\n";
 	
-#if defined(POSIX) && defined(PKGDATADIR)
-    // Use "/usr/share/darkradiant" (default) on POSIX
-    std::string base = os::standardPathWithSlash(PKGDATADIR);
+	// Load the XML files from the runtime data directory
+	std::string base = ctx.getRuntimeDataPath();
+
     std::cout << "XMLRegistry: looking for XML files under " 
               << base << std::endl;
-#else
-	// Load the XML files from the installation directory
-	std::string base = ctx.getApplicationPath();
-#endif
 
-	try {
+	try 
+    {
 		// Load all of the required XML files
 		import(base + "user.xml", "", Registry::treeStandard);
 		import(base + "colours.xml", "user/ui", Registry::treeStandard);
