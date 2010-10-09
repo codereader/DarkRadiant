@@ -254,6 +254,9 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
            | RENDER_VCOL_INVERT
            | RENDER_SCREEN;
 
+	// Force activation of client state GL_COLOR_ARRAY, shaders don't require this state
+	flags |= RENDER_FORCE_COLORARRAY;
+
 	// Set up the camera
 	Matrix4 projection;
 	{
