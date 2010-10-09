@@ -32,7 +32,7 @@ private:
 		Vector3 vertex;			// The 3D coordinates of the point
 		Vector2 texcoord;		// The UV coordinates
 		Vector3 normal;			// The normals
-		Colour4b colour;		// vertex colour
+		Vector4 colour;		// vertex colour
 
 		VertexInfo()
 		{}
@@ -42,6 +42,13 @@ private:
 			texcoord(texcoord_),
 			normal(0,0,1),
 			colour(1,1,1,1)
+		{}
+
+		VertexInfo(const Vector3& vertex_, const Vector2& texcoord_, const Vector4& colour_) :
+			vertex(vertex_),
+			texcoord(texcoord_),
+			normal(0,0,1),
+			colour(colour_)
 		{}
 	};
 
@@ -60,7 +67,7 @@ private:
 			verts[3] = VertexInfo(Vector3(-size, -size, 0), Vector2(0,1));
 		}
 
-		Quad(float size, float angle)
+		Quad(float size, float angle, const Vector4& colour = Vector4(1,1,1,1))
 		{
 			double cosPhi = cos(degrees_to_radians(angle));
 			double sinPhi = sin(degrees_to_radians(angle));
@@ -70,10 +77,10 @@ private:
 				0, 0, 1, 0,
 				0, 0, 0, 1);
 
-			verts[0] = VertexInfo(rotation.transform(Vector3(-size, +size, 0)).getProjected(), Vector2(0,0));
-			verts[1] = VertexInfo(rotation.transform(Vector3(+size, +size, 0)).getProjected(), Vector2(1,0));
-			verts[2] = VertexInfo(rotation.transform(Vector3(+size, -size, 0)).getProjected(), Vector2(1,1));
-			verts[3] = VertexInfo(rotation.transform(Vector3(-size, -size, 0)).getProjected(), Vector2(0,1));
+			verts[0] = VertexInfo(rotation.transform(Vector3(-size, +size, 0)).getProjected(), Vector2(0,0), colour);
+			verts[1] = VertexInfo(rotation.transform(Vector3(+size, +size, 0)).getProjected(), Vector2(1,0), colour);
+			verts[2] = VertexInfo(rotation.transform(Vector3(+size, -size, 0)).getProjected(), Vector2(1,1), colour);
+			verts[3] = VertexInfo(rotation.transform(Vector3(-size, -size, 0)).getProjected(), Vector2(0,1), colour);
 		}
 
 		void translate(const Vector3& offset)
@@ -198,7 +205,10 @@ public:
 			int rotFactor = i % 2 == 0 ? -1 : 1;
 			angle += rotFactor * integrate(_stage.getRotationSpeed(), particleTimeSecs);
 
-			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle);
+			// Calculate render colour
+			Vector4 colour(1,0,0,1);
+
+			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, colour);
 		}
 	}
 
@@ -208,21 +218,20 @@ public:
 	}
 
 	void render(const RenderInfo& info) const
-	{
+	{ 
 		if (_quads.empty()) return;
 
 		glVertexPointer(3, GL_DOUBLE, sizeof(VertexInfo), &(_quads.front().verts[0].vertex));
 		glTexCoordPointer(2, GL_DOUBLE, sizeof(VertexInfo), &(_quads.front().verts[0].texcoord));
 		glNormalPointer(GL_DOUBLE, sizeof(VertexInfo), &(_quads.front().verts[0].normal));
-		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexInfo), &(_quads.front().verts[0].colour));
-
-		// TODO: Use calculated start and end array indices, not all particles may be visible at the same time
+		glColorPointer(4, GL_DOUBLE, sizeof(VertexInfo), &(_quads.front().verts[0].colour));
+		
 		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_quads.size())*4);
 	}
 
 private:
 	// Generates a new quad using the given origin as centroid, angle is in degrees
-	void pushQuad(const Vector3& origin, float size, float angle)
+	void pushQuad(const Vector3& origin, float size, float angle, const Vector4& colour)
 	{
 		double cosPhi = cos(degrees_to_radians(angle));
 		double sinPhi = sin(degrees_to_radians(angle));
@@ -233,7 +242,7 @@ private:
 			0, 0, 0, 1);
 
 		// Create a simple quad facing the z axis
-		_quads.push_back(Quad(size, angle));
+		_quads.push_back(Quad(size, angle, colour));
 
 		_quads.back().translate(origin);
 	}
