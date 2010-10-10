@@ -206,14 +206,23 @@ public:
 
 			// Calculate render colour
 			Vector4 colour = _stage.getColour();
+			float fadeInFracion = _stage.getFadeInFraction();
+
+			if (fadeInFracion > 0 && timeFraction <= fadeInFracion)
+			{
+				colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), timeFraction / fadeInFracion); 
+			}
+
+			float fadeOutFracion = _stage.getFadeOutFraction();
+			float fadeOutFractionInverse = 1.0f - fadeOutFracion;
+
+			if (fadeOutFracion > 0 && timeFraction >= fadeOutFractionInverse)
+			{
+				colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (timeFraction - fadeOutFractionInverse) / fadeOutFracion);
+			}
 
 			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, colour);
 		}
-	}
-
-	float integrate(const IParticleParameter& param, float time)
-	{
-		return (param.getTo() - param.getFrom()) / SEC2MS(_stage.getDuration()) * time*time * 0.5f + param.getFrom() * time;
 	}
 
 	void render(const RenderInfo& info) const
@@ -229,6 +238,16 @@ public:
 	}
 
 private:
+	float integrate(const IParticleParameter& param, float time)
+	{
+		return (param.getTo() - param.getFrom()) / SEC2MS(_stage.getDuration()) * time*time * 0.5f + param.getFrom() * time;
+	}
+
+	Vector4 lerpColour(const Vector4& startColour, const Vector4& endColour, float fraction)
+	{
+		return startColour * (1.0f - fraction) + endColour * fraction;
+	}
+
 	// Generates a new quad using the given origin as centroid, angle is in degrees
 	void pushQuad(const Vector3& origin, float size, float angle, const Vector4& colour)
 	{
