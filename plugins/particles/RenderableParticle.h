@@ -150,8 +150,7 @@ public:
 		// When bunching is set to 1 the spacing is 0, and vice versa.
 		std::size_t stageDurationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
 
-		float bunchingFactor = 1.0f - _stage.getBunching();
-		float spawnSpacing = bunchingFactor * static_cast<float>(stageDurationMsec) / _stage.getCount();
+		float spawnSpacing = _stage.getBunching() * static_cast<float>(stageDurationMsec) / _stage.getCount();
 
 		// This is the spacing between each particle
 		std::size_t spawnSpacingMsec = static_cast<std::size_t>(spawnSpacing);
