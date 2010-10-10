@@ -155,6 +155,9 @@ public:
 		// This is the spacing between each particle
 		std::size_t spawnSpacingMsec = static_cast<std::size_t>(spawnSpacing);
 
+		// Load the flag whether to spawn particles at random locations
+		bool distributeParticlesRandomly = _stage.getRandomDistribution();
+
 		// Generate all particle quads, regardless of their visibility
 		// Visibility is considered by not rendering particles that haven't been spawned yet
 		for (std::size_t i = 0; i < static_cast<std::size_t>(_stage.getCount()); ++i)
@@ -185,7 +188,32 @@ public:
 			// We need the particle time in seconds for the location/angle integrations
 			float particleTimeSecs = MS2SEC(particleTime);
 
-			Vector3 particleOrigin = offset + direction * integrate(_stage.getSpeed(), particleTimeSecs);
+			// Calculate particle origin at time t, consider offset
+			Vector3 particleOrigin = offset;
+
+			if (distributeParticlesRandomly)
+			{
+				switch (_stage.getDistributionType())
+				{
+				case IParticleStage::DISTRIBUTION_RECT:
+					{
+						// Rectangular spawn zone
+						float randX = static_cast<float>(_random()) / boost::rand48::max_value;
+						float randY = static_cast<float>(_random()) / boost::rand48::max_value;
+						float randZ = static_cast<float>(_random()) / boost::rand48::max_value;
+
+						particleOrigin += Vector3(randX * _stage.getDistributionParm(0), 
+												  randY * _stage.getDistributionParm(1), 
+												  randZ * _stage.getDistributionParm(2));
+					}
+					break;
+				default:
+					break;
+				};
+			}
+				
+			// Consider speed
+			particleOrigin += direction * integrate(_stage.getSpeed(), particleTimeSecs);
 
 			// Consider gravity, ignore "world" parameter for now
 			particleOrigin += Vector3(0,-1,0) * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
@@ -251,14 +279,6 @@ private:
 	// Generates a new quad using the given origin as centroid, angle is in degrees
 	void pushQuad(const Vector3& origin, float size, float angle, const Vector4& colour)
 	{
-		double cosPhi = cos(degrees_to_radians(angle));
-		double sinPhi = sin(degrees_to_radians(angle));
-		Matrix4 rotation = Matrix4::byColumns(
-			cosPhi, -sinPhi, 0, 0,
-			sinPhi, cosPhi, 0, 0,
-			0, 0, 1, 0,
-			0, 0, 0, 1);
-
 		// Create a simple quad facing the z axis
 		_quads.push_back(Quad(size, angle, colour));
 
