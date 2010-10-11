@@ -176,12 +176,6 @@ public:
 			// Get the "local particle time"
 			std::size_t particleTime = cycleTime - particleStartTimeMsec;
 
-			// Each particle has a lifetime of <stage duration> at maximum, double-check that
-			if (particleTime > stageDurationMsec)
-			{
-				continue; // particle has expired
-			}
-
 			// Calculate the time fraction [0..1]
 			float timeFraction = static_cast<float>(particleTime) / stageDurationMsec;
 
@@ -225,6 +219,17 @@ public:
 			{
 				// Use random angle
 				angle = 360 * static_cast<float>(_random()) / boost::rand48::max_value;
+			}
+
+			// Past this point, no more "randomness" is required, so let's check if we still need
+			// to render this particular particle. Don't dismiss particles too early, as each of them
+			// will change the RNG state in the calculations above. These state changes are important for
+			// all the subsequent particles.
+
+			// Each particle has a lifetime of <stage duration> at maximum
+			if (particleTime > stageDurationMsec)
+			{
+				continue; // particle has expired
 			}
 
 			// Calculate the time-dependent angle
