@@ -192,9 +192,9 @@ public:
 				case IParticleStage::DISTRIBUTION_RECT:
 					{
 						// Rectangular spawn zone
-						float randX = static_cast<float>(_random()) / boost::rand48::max_value;
-						float randY = static_cast<float>(_random()) / boost::rand48::max_value;
-						float randZ = static_cast<float>(_random()) / boost::rand48::max_value;
+						float randX = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
+						float randY = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
+						float randZ = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
 
 						particleOrigin += Vector3(randX * _stage.getDistributionParm(0), 
 												  randY * _stage.getDistributionParm(1), 
