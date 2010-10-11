@@ -5,6 +5,7 @@
 #include "imodule.h"
 
 #include <gdkmm/pixbuf.h>
+#include <gtkmm/builder.h>
 
 // Forward declarations
 namespace Gtk
@@ -213,6 +214,15 @@ public:
 	// and return a Gdk::PixBuf reference for use by certain widgets (e.g. TreeView).
 	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName) = 0;
 	virtual Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName) = 0;
+
+    /**
+     * \brief
+     * Create a GtkBuilder object from a .glade UI file in the runtime ui/
+     * directory.
+     */
+    virtual Glib::RefPtr<Gtk::Builder> getGtkBuilderFromFile(
+                const std::string& localFileName
+    ) const = 0;
 
 	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
 	virtual ui::IFilterMenuPtr createFilterMenu() = 0;

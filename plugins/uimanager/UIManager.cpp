@@ -116,6 +116,17 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& f
 	return rgba;
 }
 
+Glib::RefPtr<Gtk::Builder> 
+UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
+{
+    std::string fullPath = module::GlobalModuleRegistry()
+                           .getApplicationContext()
+                           .getRuntimeDataPath()
+                           + localFileName;
+
+    return Gtk::Builder::create_from_file(fullPath);
+}
+
 IFilterMenuPtr UIManager::createFilterMenu()
 {
 	return IFilterMenuPtr(new FilterMenu);
@@ -188,7 +199,8 @@ void UIManager::shutdownModule()
 
 } // namespace ui
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
+{
 	registry.registerModule(ui::UIManagerPtr(new ui::UIManager));
 	
 	// Initialise the streams using the given application context
