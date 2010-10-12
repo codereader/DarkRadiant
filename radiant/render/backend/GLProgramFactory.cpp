@@ -46,13 +46,13 @@ void GLProgramFactory::setUsingGLSL(bool useGLSL)
 {
     if (useGLSL)
     {
-        _map.insert(std::make_pair("depthFill", new GLSLDepthFillProgram())); 
-        _map.insert(std::make_pair("bumpMap", new GLSLBumpProgram()));
+        _map["depthFill"] = GLProgramPtr(new GLSLDepthFillProgram());
+        _map["bumpMap"] = GLProgramPtr(new GLSLBumpProgram());
     }
     else
     {
-        _map.insert(std::make_pair("depthFill", new ARBDepthFillProgram())); 
-        _map.insert(std::make_pair("bumpMap", new ARBBumpProgram()));
+        _map["depthFill"] = GLProgramPtr(new ARBDepthFillProgram()); 
+        _map["bumpMap"] = GLProgramPtr(new ARBBumpProgram());
     }
 }
 
