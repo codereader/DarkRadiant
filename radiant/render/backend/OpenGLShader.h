@@ -2,6 +2,7 @@
 #define OPENGLSHADER_H_
 
 #include "OpenGLShaderPass.h"
+#include "OpenGLStateManager.h"
 
 #include "irender.h"
 #include "ishaders.h"
@@ -10,8 +11,6 @@
 
 #include <list>
 
-namespace render { class OpenGLRenderSystem; } 
-
 /**
  * Implementation of the Shader class.
  */
@@ -19,8 +18,10 @@ class OpenGLShader
 : public Shader
 {
 private:
-	// The rendersystem we're associated with
-	render::OpenGLRenderSystem& _renderSystem;
+
+    // The state manager we will be inserting/removing OpenGL states from (this
+    // will be the OpenGLRenderSystem).
+	render::OpenGLStateManager& _glStateManager;
 
     // List of shader passes for this shader
 	typedef std::list<OpenGLShaderPass*> Passes;
@@ -93,8 +94,8 @@ public:
 	/** 
 	 * Constructor.
 	 */
-	OpenGLShader(render::OpenGLRenderSystem& renderSystem) : 
-		_renderSystem(renderSystem),
+	OpenGLShader(render::OpenGLStateManager& glStateManager) : 
+		_glStateManager(glStateManager),
 		m_used(0)
 	{ }
 

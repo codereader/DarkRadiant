@@ -48,16 +48,9 @@ const StringSet& Manager::getDependencies() const {
 	return _dependencies;
 }
 
-void Manager::initialiseModule(const ApplicationContext& ctx) {
-	// Load the game settings and select the game type
-#if defined(POSIX) && defined(PKGDATADIR)
-    // Load game files from compiled-in data path (e.g.
-    // /usr/share/darkradiant/games).
-    initialise(os::standardPathWithSlash(PKGDATADIR));
-#else
-    // Load game files from application-relative path
-	initialise(ctx.getApplicationPath());
-#endif
+void Manager::initialiseModule(const ApplicationContext& ctx) 
+{
+	initialise(ctx.getRuntimeDataPath());
 
 	initEnginePath();
 }
@@ -216,7 +209,8 @@ void Manager::constructPaths() {
 	}
 }
 
-void Manager::initEnginePath() {
+void Manager::initEnginePath() 
+{
 	// Try to retrieve a saved value for the engine path
 	std::string enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
 	xml::NodeList gameNodeList = GlobalRegistry().findXPath("game");

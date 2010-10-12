@@ -212,6 +212,8 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
+	glViewport(0, 0, _previewWidth, _previewHeight);
+
 	// Set up the render and clear the drawing area in any case
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

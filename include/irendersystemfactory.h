@@ -2,6 +2,7 @@
 #define _IRENDERSYSTEM_FACTORY_H_
 
 #include "imodule.h"
+#include "irender.h"
 
 class RenderSystem;
 typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
