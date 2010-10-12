@@ -19,19 +19,28 @@ namespace module {
 /**
  * Return the application path of the current Radiant instance.
  */
-const std::string& ApplicationContextImpl::getApplicationPath() const {
+std::string ApplicationContextImpl::getApplicationPath() const 
+{
 	return _appPath;
 }
 
-/**
- * Return the settings path of the current Radiant instance.
- */
-const std::string& ApplicationContextImpl::getSettingsPath() const {
+std::string ApplicationContextImpl::getRuntimeDataPath() const
+{
+#if defined(POSIX) && defined (PKGDATADIR)
+    return std::string(PKGDATADIR) + "/";
+#else
+    return getApplicationPath();
+#endif
+}
+
+std::string ApplicationContextImpl::getSettingsPath() const 
+{
 	return _settingsPath;
 }
 
-const std::string& ApplicationContextImpl::getBitmapsPath() const {
-	return _bitmapsPath;
+std::string ApplicationContextImpl::getBitmapsPath() const
+{
+	return getRuntimeDataPath() + "bitmaps/";
 }
 
 const ApplicationContext::ArgumentList& 
@@ -207,19 +216,13 @@ void ApplicationContextImpl::initPaths()
 
 	_settingsPath = _homePath;
 	os::makeDirectory(_settingsPath);
-
-#if defined(POSIX) && defined(PKGDATADIR)
-    _bitmapsPath = os::standardPathWithSlash(PKGDATADIR) + "bitmaps/";
-#else
-	_bitmapsPath = _appPath + "bitmaps/";
-#endif
 }
 
 void ApplicationContextImpl::savePathsToRegistry() const {
 	GlobalRegistry().set(RKEY_APP_PATH, _appPath);
 	GlobalRegistry().set(RKEY_HOME_PATH, _homePath);
 	GlobalRegistry().set(RKEY_SETTINGS_PATH, _settingsPath);
-	GlobalRegistry().set(RKEY_BITMAPS_PATH, _bitmapsPath);
+	GlobalRegistry().set(RKEY_BITMAPS_PATH, getBitmapsPath());
 }
 
 const ErrorHandlingFunction& ApplicationContextImpl::getErrorHandlingFunction() const

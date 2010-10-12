@@ -11,18 +11,18 @@ uimanager_la_LDFLAGS = -module -avoid-version \
                        $(GLEW_LIBS) \
                        $(GL_LIBS)
 uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-         $(top_builddir)/libs/math/libmath.la \
-         $(top_builddir)/libs/xmlutil/libxmlutil.la
+                      $(top_builddir)/libs/math/libmath.la \
+                      $(top_builddir)/libs/xmlutil/libxmlutil.la
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
                        colourscheme/ColourScheme.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
                        StatusBarManager.cpp \
-                  DialogManager.cpp \
+                       DialogManager.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
-                  FilterMenu.cpp \
-                  ModelPreview.cpp \
+                       FilterMenu.cpp \
+                       ModelPreview.cpp \
                        MenuManager.cpp
 

@@ -37,10 +37,7 @@ host_triplet = @host@
 subdir = plugins/uimanager
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -267,8 +264,8 @@ uimanager_la_LDFLAGS = -module -avoid-version \
                        $(GL_LIBS)
 
 uimanager_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-         $(top_builddir)/libs/math/libmath.la \
-         $(top_builddir)/libs/xmlutil/libxmlutil.la
+                      $(top_builddir)/libs/math/libmath.la \
+                      $(top_builddir)/libs/xmlutil/libxmlutil.la
 
 uimanager_la_SOURCES = MenuItem.cpp \
                        GroupDialog.cpp \
@@ -276,11 +273,11 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        colourscheme/ColourSchemeEditor.cpp \
                        colourscheme/ColourSchemeManager.cpp \
                        StatusBarManager.cpp \
-                  DialogManager.cpp \
+                       DialogManager.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
-                  FilterMenu.cpp \
-                  ModelPreview.cpp \
+                       FilterMenu.cpp \
+                       ModelPreview.cpp \
                        MenuManager.cpp
 
 all: all-am

@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "iregistry.h"
+#include "imodule.h"
 
 #include <gtksourceviewmm/sourcestyleschememanager.h>
 
@@ -17,11 +18,9 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	set_shadow_type(Gtk::SHADOW_ETCHED_IN);
 
 	// Set the search path to the language and style files
-#if defined(POSIX) && defined(PKGDATADIR)
-	std::string langFilesDir = std::string(PKGDATADIR) + "/sourceviewer/";
-#else
-	std::string langFilesDir = GlobalRegistry().get(RKEY_APP_PATH) + "sourceviewer/";
-#endif
+	std::string langFilesDir = module::GlobalModuleRegistry()
+                               .getApplicationContext()
+                               .getRuntimeDataPath() + "sourceviewer/";
 
 	std::vector<Glib::ustring> path;
 	path.push_back(langFilesDir);

@@ -52,8 +52,9 @@ public:
 
 	IDialogManager& getDialogManager();
 
-	Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string& fileName);
-	Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string& fileName);
+    Glib::RefPtr<Gdk::Pixbuf> getLocalPixbuf(const std::string&);
+    Glib::RefPtr<Gdk::Pixbuf> getLocalPixbufWithMask(const std::string&);
+    Glib::RefPtr<Gtk::Builder> getGtkBuilderFromFile(const std::string&) const;
 
 	IFilterMenuPtr createFilterMenu();
 	IModelPreviewPtr createModelPreview();
