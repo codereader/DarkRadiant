@@ -65,6 +65,8 @@ Gtk::Widget& ParticlesChooser::createTreeView()
 {
 	Gtk::TreeView* tv = Gtk::manage(new Gtk::TreeView(_particlesList));
 
+	tv->set_size_request(300, -1);
+
 	// Single text column
 	tv->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), _columns.name, false)));
 
