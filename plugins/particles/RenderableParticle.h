@@ -296,7 +296,7 @@ private:
 			// Rectangular distribution
 			case IParticleStage::DISTRIBUTION_RECT:
 			{
-				// Factors to use for 
+				// Factors to use for the random distribution
 				float randX = 1.0f;
 				float randY = 1.0f;
 				float randZ = 1.0f;
@@ -314,6 +314,43 @@ private:
 				return Vector3(randX * _stage.getDistributionParm(0), 
 							   randY * _stage.getDistributionParm(1), 
 							   randZ * _stage.getDistributionParm(2));
+			}
+
+			case IParticleStage::DISTRIBUTION_CYLINDER:
+			{
+				// Get the cylinder dimensions
+				float sizeX = _stage.getDistributionParm(0);
+				float sizeY = _stage.getDistributionParm(1);
+				float sizeZ = _stage.getDistributionParm(2);
+				float ringFrac = _stage.getDistributionParm(3);
+
+				// greebo: Some tests showed that for the cylinder type
+				// the fourth parameter ("ringfraction") is only effective if >1,
+				// it effectively scales the elliptic shape by that factor. 
+				// Values < 1.0 didn't have any effect (?) Someone could double-check that.
+				// Interestingly, the built-in particle editor doesn't really allow editing that parameter.
+				if (ringFrac > 1.0f) 
+				{
+					sizeX *= ringFrac;
+					sizeY *= ringFrac;
+				}
+
+				if (distributeParticlesRandomly)
+				{
+					// Get a random angle in [0..2pi]
+					float angle = static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+
+					float xPos = cos(angle) * sizeX;
+					float yPos = sin(angle) * sizeY;
+					float zPos = sizeZ * (2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f);
+
+					return Vector3(xPos, yPos, zPos);
+				}
+				else
+				{
+					// Random distribution is off, particles get spawned at <sizex, sizey, sizez>
+					return Vector3(sizeX, sizeY, sizeZ);
+				}
 			}
 
 			// Default case, should not be reachable
