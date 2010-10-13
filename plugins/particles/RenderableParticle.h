@@ -239,19 +239,45 @@ public:
 
 			// Calculate render colour
 			Vector4 colour = _stage.getColour();
-			float fadeInFracion = _stage.getFadeInFraction();
 
-			if (fadeInFracion > 0 && timeFraction <= fadeInFracion)
+			// Consider fade index fraction, which can spawn particles already faded to some extent
+			float fadeIndexFraction = _stage.getFadeIndexFraction();
+
+			if (fadeIndexFraction > 0)
 			{
-				colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), timeFraction / fadeInFracion); 
+				// greebo: The linear fading function goes like this:
+				// frac(t) = (startFrac - t) / (startFrac - 1) with t in [0..1]
+				// Boundary conditions: frac(1) = 1 and frac(startFrac) = 0
+
+				// Use the particle index as "time", normalised to [0..1]
+				// such that particle with higher index start more faded
+				float pIdx = static_cast<float>(i) / _stage.getCount();
+
+				// Calculate how much we should be faded already
+				float startFrac = 1.0f - fadeIndexFraction;
+				float frac = (startFrac - pIdx) / (startFrac - 1.0f);
+				
+				// Ignore negative fraction values, this also takes care that only
+				// those particles with time >= fadeIndexFraction get faded.
+				if (frac > 0)
+				{
+					colour = lerpColour(colour, _stage.getFadeColour(), frac);
+				}
 			}
 
-			float fadeOutFracion = _stage.getFadeOutFraction();
-			float fadeOutFractionInverse = 1.0f - fadeOutFracion;
+			float fadeInFraction = _stage.getFadeInFraction();
 
-			if (fadeOutFracion > 0 && timeFraction >= fadeOutFractionInverse)
+			if (fadeInFraction > 0 && timeFraction <= fadeInFraction)
 			{
-				colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (timeFraction - fadeOutFractionInverse) / fadeOutFracion);
+				colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), timeFraction / fadeInFraction); 
+			}
+
+			float fadeOutFraction = _stage.getFadeOutFraction();
+			float fadeOutFractionInverse = 1.0f - fadeOutFraction;
+
+			if (fadeOutFraction > 0 && timeFraction >= fadeOutFractionInverse)
+			{
+				colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (timeFraction - fadeOutFractionInverse) / fadeOutFraction);
 			}
 
 			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, colour);
