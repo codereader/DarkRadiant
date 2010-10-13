@@ -319,6 +319,24 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad distr param1 value"));
 				setDistributionParm(1, parseWithErrorMsg<float>(tok, "Bad distr param2 value"));
 				setDistributionParm(2, parseWithErrorMsg<float>(tok, "Bad distr param3 value"));
+
+				// Try to parse that next value, the D3 particle editor won't save the 4th parameter
+				std::string nextToken = tok.peek();
+
+				try
+				{
+					float parm = boost::lexical_cast<float>(nextToken);
+
+					// successfully converted the next token to a number
+					setDistributionParm(3, parm);
+
+					// Skip that next token
+					tok.skipTokens(1);
+				}
+				catch (boost::bad_lexical_cast&)
+				{
+					setDistributionParm(3, 0.0f);
+				}
 			}
 			else
 			{

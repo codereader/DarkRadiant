@@ -353,6 +353,41 @@ private:
 				}
 			}
 
+			case IParticleStage::DISTRIBUTION_SPHERE:
+			{
+				// Get the sphere dimensions
+				float maxX = _stage.getDistributionParm(0);
+				float maxY = _stage.getDistributionParm(1);
+				float maxZ = _stage.getDistributionParm(2);
+				float ringFrac = _stage.getDistributionParm(3);
+
+				float minX = maxX * ringFrac;
+				float minY = maxY * ringFrac;
+				float minZ = maxZ * ringFrac;
+
+				if (distributeParticlesRandomly)
+				{
+					// Get a random angle in [0..2pi]
+					float horizAngle = static_cast<float>(2*c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+					float vertAngle = static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+
+					float radiusX = minX + (maxX - minX) * static_cast<float>(_random()) / boost::rand48::max_value;
+					float radiusY = minY + (maxY - minY) * static_cast<float>(_random()) / boost::rand48::max_value;
+					float radiusZ = minZ + (maxZ - minZ) * static_cast<float>(_random()) / boost::rand48::max_value;
+
+					float xPos = radiusX * cos(horizAngle) * sin(vertAngle);
+					float yPos = radiusY * sin(horizAngle) * sin(vertAngle);
+					float zPos = radiusZ * cos(vertAngle);
+
+					return Vector3(xPos, yPos, zPos);
+				}
+				else
+				{
+					// Random distribution is off, particles get spawned at <sizex, sizey, sizez>
+					return Vector3(maxX, maxY, maxZ);
+				}
+			}
+
 			// Default case, should not be reachable
 			default:
 				return Vector3(0,0,0);
