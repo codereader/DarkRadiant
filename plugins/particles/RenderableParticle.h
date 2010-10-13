@@ -185,27 +185,9 @@ public:
 			// Calculate particle origin at time t, consider offset
 			Vector3 particleOrigin = offset;
 
-			if (distributeParticlesRandomly)
-			{
-				switch (_stage.getDistributionType())
-				{
-				case IParticleStage::DISTRIBUTION_RECT:
-					{
-						// Rectangular spawn zone
-						float randX = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
-						float randY = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
-						float randZ = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
-
-						particleOrigin += Vector3(randX * _stage.getDistributionParm(0), 
-												  randY * _stage.getDistributionParm(1), 
-												  randZ * _stage.getDistributionParm(2));
-					}
-					break;
-				default:
-					break;
-				};
-			}
-				
+			// Consider particle distribution
+			particleOrigin += getDistributionOffset(distributeParticlesRandomly);
+			
 			// Consider speed
 			particleOrigin += direction * integrate(_stage.getSpeed(), particleTimeSecs);
 
@@ -305,6 +287,39 @@ private:
 	Vector4 lerpColour(const Vector4& startColour, const Vector4& endColour, float fraction)
 	{
 		return startColour * (1.0f - fraction) + endColour * fraction;
+	}
+
+	Vector3 getDistributionOffset(bool distributeParticlesRandomly)
+	{
+		switch (_stage.getDistributionType())
+		{
+			// Rectangular distribution
+			case IParticleStage::DISTRIBUTION_RECT:
+			{
+				// Factors to use for 
+				float randX = 1.0f;
+				float randY = 1.0f;
+				float randZ = 1.0f;
+
+				if (distributeParticlesRandomly)
+				{
+					// Rectangular spawn zone
+					randX = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
+					randY = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
+					randZ = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
+				}
+
+				// If random distribution is off, particles get spawned at <sizex, sizey, sizez>
+
+				return Vector3(randX * _stage.getDistributionParm(0), 
+							   randY * _stage.getDistributionParm(1), 
+							   randZ * _stage.getDistributionParm(2));
+			}
+
+			// Default case, should not be reachable
+			default:
+				return Vector3(0,0,0);
+		};
 	}
 
 	// Generates a new quad using the given origin as centroid, angle is in degrees
