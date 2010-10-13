@@ -192,7 +192,7 @@ public:
 			particleOrigin += direction * integrate(_stage.getSpeed(), particleTimeSecs);
 
 			// Consider gravity, ignore "world" parameter for now
-			particleOrigin += Vector3(0,-1,0) * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
+			particleOrigin += Vector3(0,0,-1) * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
 
 			// Get the initial angle value
 			float angle = _stage.getInitialAngle();
@@ -338,7 +338,7 @@ private:
 				if (distributeParticlesRandomly)
 				{
 					// Get a random angle in [0..2pi]
-					float angle = static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+					float angle = static_cast<float>(2*c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
 
 					float xPos = cos(angle) * sizeX;
 					float yPos = sin(angle) * sizeY;
