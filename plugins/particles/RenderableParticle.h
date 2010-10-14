@@ -134,6 +134,9 @@ public:
 			return;
 		}
 
+		// Reserve enough space for all the particles
+		_quads.reserve(_stage.getCount()*4);
+
 		// Normalise the global input time into local cycle time
 		// The cycleTime may be larger than the _stage.cycleMsec argument if bunching is turned off
 		std::size_t cycleTime = time - cycleMsec * _index;
