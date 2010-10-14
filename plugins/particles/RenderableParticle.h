@@ -370,33 +370,21 @@ private:
 
 				if (distributeParticlesRandomly)
 				{
-					// Calculate inverse squares
-					float minXInvSq = 1 / (minX * minX);
-					float minYInvSq = 1 / (minY * minY);
-					float minZInvSq = 1 / (minZ * minZ);
+					// The following is modeled after http://mathworld.wolfram.com/SpherePointPicking.html
+					float u = static_cast<float>(_random()) / boost::rand48::max_value;
+					float v = static_cast<float>(_random()) / boost::rand48::max_value;
 
-					float maxXInvSq = 1 / (maxX * maxX);
-					float maxYInvSq = 1 / (maxY * maxY);
-					float maxZInvSq = 1 / (maxZ * maxZ);
+					float theta = 2 * c_pi * u;
+					float phi = acos(2*v - 1);
 
-					// Max 1000 tries to find a suitable position
-					int i = 1000;
-					while (--i > 0)
-					{
-						float x = maxX * (2 * static_cast<float>(_random()) / boost::rand48::max_value - 1);
-						float y = maxY * (2 * static_cast<float>(_random()) / boost::rand48::max_value - 1);
-						float z = maxZ * (2 * static_cast<float>(_random()) / boost::rand48::max_value - 1);
+					// Take the sqrt(radius) to correct bunching at the center of the sphere
+					float r = sqrt(static_cast<float>(_random()) / boost::rand48::max_value);
 
-						// Check if the point lies within the ellipsoid (or ellipsoid border, resp.)
-						if (x*x*maxXInvSq + y*y*maxYInvSq + z*z*maxZInvSq <= 1 &&
-							(ringFrac == 0 || x*x*minXInvSq + y*y*minYInvSq + z*z*minZInvSq >= 1))
-						{
-							// Found a suitable point, break
-							return Vector3(x,y,z);
-						}
-					}
+					float x = (minX + (maxX - minX) * r) * cos(theta) * sin(phi);
+					float y = (minY + (maxY - minY) * r) * sin(theta) * sin(phi);
+					float z = (minZ + (maxZ - minZ) * r) * cos(phi);
 
-					return Vector3(0,0,0);
+					return Vector3(x,y,z);
 				}
 				else
 				{
