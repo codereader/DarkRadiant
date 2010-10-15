@@ -295,33 +295,49 @@ private:
 		return startColour * (1.0f - fraction) + endColour * fraction;
 	}
 
-	// baseDirection should be normalised
+	// baseDirection should be normalised and not degenerate
 	Vector3 getDirection(const Vector3& baseDirection)
 	{
-		Vector3 dir = baseDirection;
-		dir.normalise();
+		if (baseDirection.getLengthSquared() == 0)
+		{
+			return Vector3(0,0,1); // degenerate input
+		}
 
-		// Find a normal vector to the base direction
-		Vector3 base1 = abs(dir.x()) < abs(dir.y()) ? 
-			(abs(dir.x()) < abs(dir.z()) ? Vector3(1,0,0) : Vector3(0,0,1)) : 
-			(abs(dir.y()) < abs(dir.z()) ? Vector3(0,1,0) : Vector3(0,0,1));
+		switch (_stage.getDirectionType())
+		{
+		case IParticleStage::DIRECTION_CONE:
+			{
+				Vector3 dir = baseDirection.getNormalised();
 
-		base1 = dir.crossProduct(base1);
-		base1.normalise();
+				// Find a normal vector to the base direction
+				Vector3 base1 = abs(dir.x()) < abs(dir.y()) ? 
+					(abs(dir.x()) < abs(dir.z()) ? Vector3(1,0,0) : Vector3(0,0,1)) : 
+					(abs(dir.y()) < abs(dir.z()) ? Vector3(0,1,0) : Vector3(0,0,1));
 
-		Vector3 base2 = dir.crossProduct(base1);
+				base1 = dir.crossProduct(base1);
+				base1.normalise();
 
-		// Pick a random point in the disc of radius discRadius
-		float coneAngle = _stage.getDirectionParm(0);
-		float discRadius = tan(coneAngle);
+				// Another vector perpendicular to baseDir, forming the second base
+				Vector3 base2 = dir.crossProduct(base1);
 
-		// Use sqrt(r) to fix bunching at the disc center
-		float r = discRadius * sqrt(static_cast<float>(_random()) / boost::rand48::max_value);
-		float phi = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+				// Pick a random point in the disc of radius discRadius
+				float coneAngle = _stage.getDirectionParm(0);
+				float discRadius = tan(coneAngle);
 
-		Vector3 endPoint = baseDirection + base1 * r * cos(phi) + base2 * r * sin(phi);
-		
-		return endPoint.getNormalised();
+				// Use sqrt(r) to fix bunching at the disc center
+				float r = discRadius * sqrt(static_cast<float>(_random()) / boost::rand48::max_value);
+				float phi = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+
+				Vector3 endPoint = baseDirection + base1 * r * cos(phi) + base2 * r * sin(phi);
+				
+				return endPoint.getNormalised();
+			}
+		case IParticleStage::DIRECTION_OUTWARD:
+			// TODO
+			return Vector3(0,1,0);
+		default:
+			return Vector3(0,0,1);
+		};
 	}
 
 	Vector3 getDistributionOffset(bool distributeParticlesRandomly)
