@@ -315,7 +315,35 @@ private:
 
 		case IParticleStage::PATH_FLIES:
 			{
-				// TODO				
+				// greebo: "Flies" particles are moving on the surface of a sphere of radius <size>
+				// The radial and axial speeds are chosen at random (but never 0) and are constant
+				// during the lifetime of a particle. Starting position appears to be random,
+				// but different to the "distribution sphere" type (i.e. it is not evenly distributed,
+				// instead the particles seem to bunch themselves at the poles).
+
+				// Sphere radius
+				float radius = _stage.getCustomPathParm(2);
+
+				// Generate starting conditions speed (+/-50%)
+				float rand = 2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f;
+				float radialSpeedFactor = 1.0f + 0.5f * rand * rand;
+
+				// greebo: factor 0.4 is empirical, I measured a few D3 particles for their circulation times
+				float radialSpeed = _stage.getCustomPathParm(0) * 0.4f;
+
+				rand = 2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f;
+				float axialSpeedFactor = 1.0f + 0.5f * rand * rand;
+				float axialSpeed = _stage.getCustomPathParm(1) * 0.4f;
+
+				float phi0 = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+				float theta0 = static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+
+				// Calculate angles at the given particleTime
+				float phi = phi0 + axialSpeed * particleTimeSecs;
+				float theta = theta0 + radialSpeed * particleTimeSecs;
+
+				// Move the particle origin to the starting position at t == 0
+				particleOrigin += Vector3(radius * cos(theta) * sin(phi), radius * sin(theta) * sin(phi), radius * cos(phi));
 			}
 			break;
 
