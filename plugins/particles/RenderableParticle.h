@@ -102,6 +102,15 @@ private:
 	// The randomiser itself, which is reset everytime we rebuild the geometry
 	boost::rand48 _random;
 
+	// The flag whether to spawn particles at random locations (standard path calculation)
+	bool _distributeParticlesRandomly;
+
+	// The default direction of the emitter
+	Vector3 _direction;
+
+	// Stage-specific offset
+	const Vector3& _offset;
+
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index, 
@@ -110,7 +119,10 @@ public:
 		_index(index),
 		_stage(stage),
 		_quads(),
-		_randSeed(randSeed)
+		_randSeed(randSeed),
+		_distributeParticlesRandomly(_stage.getRandomDistribution()),
+		_direction(0,1,0),
+		_offset(_stage.getOffset())
 	{
 		// Geometry is written in update(), just reserve the space
 	}
@@ -144,11 +156,6 @@ public:
 		// Reset the random number generator using our stored seed
 		_random.seed(_randSeed);
 
-		// Consider the offset parameter
-		const Vector3& offset = _stage.getOffset();
-
-		Vector3 direction(0,1,0); // y direction
-
 		// Calculate the time between each particle spawn
 		// When bunching is set to 1 the spacing is 0, and vice versa.
 		std::size_t stageDurationMsec = static_cast<std::size_t>(SEC2MS(_stage.getDuration()));
@@ -157,9 +164,6 @@ public:
 
 		// This is the spacing between each particle
 		std::size_t spawnSpacingMsec = static_cast<std::size_t>(spawnSpacing);
-
-		// Load the flag whether to spawn particles at random locations
-		bool distributeParticlesRandomly = _stage.getRandomDistribution();
 
 		// Generate all particle quads, regardless of their visibility
 		// Visibility is considered by not rendering particles that haven't been spawned yet
@@ -185,20 +189,8 @@ public:
 			// We need the particle time in seconds for the location/angle integrations
 			float particleTimeSecs = MS2SEC(particleTime);
 
-			// Calculate particle origin at time t, consider offset
-			Vector3 particleOrigin = offset;
-
-			// Consider particle distribution
-			Vector3 distributionOffset = getDistributionOffset(distributeParticlesRandomly);
-
-			// Add this to the origin
-			particleOrigin += distributionOffset;
-
-			// Calculate particle direction, pass distribution offset (this is needed for DIRECTION_OUTWARD)
-			Vector3 particleDirection = getDirection(direction, distributionOffset);
-			
-			// Consider speed
-			particleOrigin += particleDirection * integrate(_stage.getSpeed(), particleTimeSecs);
+			// Calculate particle origin at time t
+			Vector3 particleOrigin = getOrigin(particleTimeSecs);
 
 			// Consider gravity, ignore "world" parameter for now
 			particleOrigin += Vector3(0,0,-1) * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
@@ -296,6 +288,43 @@ private:
 	Vector4 lerpColour(const Vector4& startColour, const Vector4& endColour, float fraction)
 	{
 		return startColour * (1.0f - fraction) + endColour * fraction;
+	}
+
+	Vector3 getOrigin(float particleTimeSecs)
+	{
+		// Consider offset
+		Vector3 particleOrigin = _offset;
+
+		switch (_stage.getCustomPathType())
+		{
+		case IParticleStage::PATH_STANDARD: // Standard path calculation
+			{
+				// Consider particle distribution
+				Vector3 distributionOffset = getDistributionOffset(_distributeParticlesRandomly);
+
+				// Add this to the origin
+				particleOrigin += distributionOffset;
+
+				// Calculate particle direction, pass distribution offset (this is needed for DIRECTION_OUTWARD)
+				Vector3 particleDirection = getDirection(_direction, distributionOffset);
+				
+				// Consider speed
+				particleOrigin += particleDirection * integrate(_stage.getSpeed(), particleTimeSecs);
+			}
+			break;
+
+		case IParticleStage::PATH_FLIES:
+			{
+				// TODO				
+			}
+			break;
+
+		default:
+			// Nothing
+			break;
+		};
+
+		return particleOrigin;
 	}
 
 	// baseDirection should be normalised and not degenerate
