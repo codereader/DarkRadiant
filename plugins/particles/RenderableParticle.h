@@ -190,9 +190,12 @@ public:
 
 			// Consider particle distribution
 			particleOrigin += getDistributionOffset(distributeParticlesRandomly);
+
+			// Calculate particle direction
+			Vector3 particleDirection = getDirection(direction);
 			
 			// Consider speed
-			particleOrigin += direction * integrate(_stage.getSpeed(), particleTimeSecs);
+			particleOrigin += particleDirection * integrate(_stage.getSpeed(), particleTimeSecs);
 
 			// Consider gravity, ignore "world" parameter for now
 			particleOrigin += Vector3(0,0,-1) * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
@@ -292,6 +295,35 @@ private:
 		return startColour * (1.0f - fraction) + endColour * fraction;
 	}
 
+	// baseDirection should be normalised
+	Vector3 getDirection(const Vector3& baseDirection)
+	{
+		Vector3 dir = baseDirection;
+		dir.normalise();
+
+		// Find a normal vector to the base direction
+		Vector3 base1 = abs(dir.x()) < abs(dir.y()) ? 
+			(abs(dir.x()) < abs(dir.z()) ? Vector3(1,0,0) : Vector3(0,0,1)) : 
+			(abs(dir.y()) < abs(dir.z()) ? Vector3(0,1,0) : Vector3(0,0,1));
+
+		base1 = dir.crossProduct(base1);
+		base1.normalise();
+
+		Vector3 base2 = dir.crossProduct(base1);
+
+		// Pick a random point in the disc of radius discRadius
+		float coneAngle = _stage.getDirectionParm(0);
+		float discRadius = tan(coneAngle);
+
+		// Use sqrt(r) to fix bunching at the disc center
+		float r = discRadius * sqrt(static_cast<float>(_random()) / boost::rand48::max_value);
+		float phi = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+
+		Vector3 endPoint = baseDirection + base1 * r * cos(phi) + base2 * r * sin(phi);
+		
+		return endPoint.getNormalised();
+	}
+
 	Vector3 getDistributionOffset(bool distributeParticlesRandomly)
 	{
 		switch (_stage.getDistributionType())
@@ -374,7 +406,7 @@ private:
 					float u = static_cast<float>(_random()) / boost::rand48::max_value;
 					float v = static_cast<float>(_random()) / boost::rand48::max_value;
 
-					float theta = 2 * c_pi * u;
+					float theta = 2 * static_cast<float>(c_pi) * u;
 					float phi = acos(2*v - 1);
 
 					// Take the sqrt(radius) to correct bunching at the center of the sphere
