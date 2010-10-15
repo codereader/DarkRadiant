@@ -372,6 +372,12 @@ private:
 			}
 			break;
 
+		case IParticleStage::PATH_ORBIT:
+		case IParticleStage::PATH_DRIP:
+			// These are actually unsupported by the engine ("bad path type")
+			globalWarningStream() << "Unsupported path type (drip/orbit)." << std::endl;
+			break;
+
 		default:
 			// Nothing
 			break;
