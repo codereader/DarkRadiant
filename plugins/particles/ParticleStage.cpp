@@ -396,7 +396,8 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			{
 				setCustomPathType(PATH_ORBIT);
 
-				// Read flies parameters (radius, speed)
+				// Read orbit parameters (radius, speed)
+				// These are actually unsupported by the engine ("bad path type")
 				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad orbit param1 value"));
 				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad orbit param2 value"));
 			}
@@ -404,7 +405,8 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			{
 				setCustomPathType(PATH_DRIP);
 
-				// Read flies parameters (something something) (sic!, as seen in the particle editor)
+				// Read drip parameters (something something) (sic!, as seen in the particle editor)
+				// These are actually unsupported by the engine ("bad path type")
 				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad drip param1 value"));
 				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad drip param2 value"));
 			}
