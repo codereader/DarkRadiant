@@ -342,8 +342,33 @@ private:
 				float phi = phi0 + axialSpeed * particleTimeSecs;
 				float theta = theta0 + radialSpeed * particleTimeSecs;
 
-				// Move the particle origin to the starting position at t == 0
+				// Move the particle origin
 				particleOrigin += Vector3(radius * cos(theta) * sin(phi), radius * sin(theta) * sin(phi), radius * cos(phi));
+			}
+			break;
+
+		case IParticleStage::PATH_HELIX:
+			{
+				// greebo: Helical movement is describing an elliptic cylinder, its shape is determined by
+				// sizeX, sizeY and sizeZ. Particles are spawned randomly on that cylinder surface,
+				// their velocities (radial and axial) are also random (both negative and positive
+				// velocities are allowed).
+
+				float sizeX = _stage.getCustomPathParm(0);
+				float sizeY = _stage.getCustomPathParm(1);
+				float sizeZ = _stage.getCustomPathParm(2);
+
+				float radialSpeed = _stage.getCustomPathParm(3) * (2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f);
+				float axialSpeed = _stage.getCustomPathParm(4) * (2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f);
+
+				float phi0 = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+				float z0 = sizeZ * (2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f);
+
+				float x = sizeX * cos(phi0 + radialSpeed * particleTimeSecs);
+				float y = sizeY * sin(phi0 + radialSpeed * particleTimeSecs);
+				float z = z0 + axialSpeed * particleTimeSecs;
+
+				particleOrigin += Vector3(x, y, z);
 			}
 			break;
 
