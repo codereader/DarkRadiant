@@ -189,10 +189,13 @@ public:
 			Vector3 particleOrigin = offset;
 
 			// Consider particle distribution
-			particleOrigin += getDistributionOffset(distributeParticlesRandomly);
+			Vector3 distributionOffset = getDistributionOffset(distributeParticlesRandomly);
 
-			// Calculate particle direction
-			Vector3 particleDirection = getDirection(direction);
+			// Add this to the origin
+			particleOrigin += distributionOffset;
+
+			// Calculate particle direction, pass distribution offset (this is needed for DIRECTION_OUTWARD)
+			Vector3 particleDirection = getDirection(direction, distributionOffset);
 			
 			// Consider speed
 			particleOrigin += particleDirection * integrate(_stage.getSpeed(), particleTimeSecs);
@@ -296,7 +299,7 @@ private:
 	}
 
 	// baseDirection should be normalised and not degenerate
-	Vector3 getDirection(const Vector3& baseDirection)
+	Vector3 getDirection(const Vector3& baseDirection, const Vector3& distributionOffset)
 	{
 		if (baseDirection.getLengthSquared() == 0)
 		{
@@ -334,22 +337,11 @@ private:
 			}
 		case IParticleStage::DIRECTION_OUTWARD:
 			{
-				// Pick a random point on the unit sphere, modeled after 
-				// http://mathworld.wolfram.com/SpherePointPicking.html
-				float u = static_cast<float>(_random()) / boost::rand48::max_value;
-				float v = static_cast<float>(_random()) / boost::rand48::max_value;
+				// This heavily relies on particles being distributed randomly within the spawn area
+				Vector3 direction = distributionOffset.getNormalised();
 
-				float theta = 2 * static_cast<float>(c_pi) * u;
-				float phi = acos(2*v - 1);
-
-				// Calculate the cartesian coordinates using r = 1
-				float x = cos(theta) * sin(phi);
-				float y = sin(theta) * sin(phi);
-				float z = cos(phi);
-
-				Vector3 direction(x, y, z);
-				
-				// TODO: Consider upwards bias
+				// Consider upwards bias
+				direction.z() += _stage.getDirectionParm(0);
 
 				return direction;
 			}
