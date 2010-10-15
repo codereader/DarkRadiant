@@ -333,8 +333,26 @@ private:
 				return endPoint.getNormalised();
 			}
 		case IParticleStage::DIRECTION_OUTWARD:
-			// TODO
-			return Vector3(0,1,0);
+			{
+				// Pick a random point on the unit sphere, modeled after 
+				// http://mathworld.wolfram.com/SpherePointPicking.html
+				float u = static_cast<float>(_random()) / boost::rand48::max_value;
+				float v = static_cast<float>(_random()) / boost::rand48::max_value;
+
+				float theta = 2 * static_cast<float>(c_pi) * u;
+				float phi = acos(2*v - 1);
+
+				// Calculate the cartesian coordinates using r = 1
+				float x = cos(theta) * sin(phi);
+				float y = sin(theta) * sin(phi);
+				float z = cos(phi);
+
+				Vector3 direction(x, y, z);
+				
+				// TODO: Consider upwards bias
+
+				return direction;
+			}
 		default:
 			return Vector3(0,0,1);
 		};
