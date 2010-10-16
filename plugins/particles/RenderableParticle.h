@@ -67,7 +67,16 @@ private:
 			verts[3] = VertexInfo(Vector3(-size, -size, 0), Vector2(0,1));
 		}
 
-		Quad(float size, float angle, const Vector4& colour = Vector4(1,1,1,1))
+		/**
+		 * Create a new quad, using the given size and angle.
+		 * Specify an optional vertex colour which is assigned to all four corners
+		 * 
+		 * [Optional]: s0 and sWidth are used for particle animation frames.
+		 *
+		 * @s0: defines the horizontal frame start coordinate in texture space (s).
+		 * @sWidth: defines the width of this frame in texture space.
+		 */
+		Quad(float size, float angle, const Vector4& colour = Vector4(1,1,1,1), float s0 = 0.0f, float sWidth = 1.0f)
 		{
 			double cosPhi = cos(degrees_to_radians(angle));
 			double sinPhi = sin(degrees_to_radians(angle));
@@ -77,10 +86,10 @@ private:
 				0, 0, 1, 0,
 				0, 0, 0, 1);
 
-			verts[0] = VertexInfo(rotation.transform(Vector3(-size, +size, 0)).getProjected(), Vector2(0,0), colour);
-			verts[1] = VertexInfo(rotation.transform(Vector3(+size, +size, 0)).getProjected(), Vector2(1,0), colour);
-			verts[2] = VertexInfo(rotation.transform(Vector3(+size, -size, 0)).getProjected(), Vector2(1,1), colour);
-			verts[3] = VertexInfo(rotation.transform(Vector3(-size, -size, 0)).getProjected(), Vector2(0,1), colour);
+			verts[0] = VertexInfo(rotation.transform(Vector3(-size, +size, 0)).getProjected(), Vector2(s0,0), colour);
+			verts[1] = VertexInfo(rotation.transform(Vector3(+size, +size, 0)).getProjected(), Vector2(s0 + sWidth,0), colour);
+			verts[2] = VertexInfo(rotation.transform(Vector3(+size, -size, 0)).getProjected(), Vector2(s0 + sWidth,1), colour);
+			verts[3] = VertexInfo(rotation.transform(Vector3(-size, -size, 0)).getProjected(), Vector2(s0,1), colour);
 		}
 
 		void translate(const Vector3& offset)
@@ -180,7 +189,7 @@ public:
 
 			assert(particleStartTimeMsec < stageDurationMsec);  // some sanity checks
 
-			// Get the "local particle time"
+			// Get the "local particle time" in msecs
 			std::size_t particleTime = cycleTime - particleStartTimeMsec;
 
 			// Calculate the time fraction [0..1]
@@ -263,7 +272,46 @@ public:
 				colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (timeFraction - fadeOutFractionInverse) / fadeOutFraction);
 			}
 
-			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, colour);
+			// Consider animation frames
+			std::size_t animFrames = static_cast<std::size_t>(_stage.getAnimationFrames());
+
+			if (animFrames > 0)
+			{
+				// At a given time, two particles can be visible at most
+				float frameRate = _stage.getAnimationRate();
+
+				// The time interval for cross-fading, fall back to entire duration * 3 for zero animation rates
+				float frameIntervalSecs = frameRate > 0 ? 1.0f / frameRate : 3 * _stage.getDuration();
+
+				// Calculate the current frame number, wrap around
+				std::size_t curFrame = static_cast<std::size_t>(floor(particleTimeSecs / frameIntervalSecs)) % animFrames;
+
+				// Wrap next frame around animationFrame count for looping
+				std::size_t nextFrame = (curFrame + 1) % animFrames;
+
+				// Calculate the time within the frame, relative to frame start
+				float frameMicrotime = float_mod(particleTimeSecs, frameIntervalSecs);
+
+				// As a fading lasts as long as the entire interval, the alpha gradient is the same as the FPS value
+				// The "current" particle is always fading out, the nextFrame is fading in
+				float curAlpha = 1.0f - frameRate * frameMicrotime;
+				float nextAlpha = frameRate * frameMicrotime;
+
+				Vector4 curColour = colour * curAlpha;
+				Vector4 nextColour = colour* nextAlpha;
+
+				// The width of a single frame in texture space
+				float sWidth = 1.0f / animFrames;
+
+				// Calculate the texture space for each frame and push the quads
+				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, curColour, sWidth * curFrame, sWidth);
+				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, nextColour, sWidth * nextFrame, sWidth);
+			}
+			else
+			{
+				// Generate a single quad using the given parameters
+				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, colour);
+			}
 		}
 	}
 
@@ -546,11 +594,10 @@ private:
 	}
 
 	// Generates a new quad using the given origin as centroid, angle is in degrees
-	void pushQuad(const Vector3& origin, float size, float angle, const Vector4& colour)
+	void pushQuad(const Vector3& origin, float size, float angle, const Vector4& colour, float s0 = 0.0f, float sWidth = 1.0f)
 	{
 		// Create a simple quad facing the z axis
-		_quads.push_back(Quad(size, angle, colour));
-
+		_quads.push_back(Quad(size, angle, colour, s0, sWidth));
 		_quads.back().translate(origin);
 	}
 };
