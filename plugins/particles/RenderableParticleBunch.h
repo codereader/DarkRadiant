@@ -45,10 +45,10 @@ private:
 			colour(1,1,1,1)
 		{}
 
-		VertexInfo(const Vector3& vertex_, const Vector2& texcoord_, const Vector4& colour_) :
+		VertexInfo(const Vector3& vertex_, const Vector2& texcoord_, const Vector4& colour_, const Vector3& normal_) :
 			vertex(vertex_),
 			texcoord(texcoord_),
-			normal(0,0,1),
+			normal(normal_),
 			colour(colour_)
 		{}
 	};
@@ -70,14 +70,15 @@ private:
 
 		/**
 		 * Create a new quad, using the given size and angle.
-		 * Specify an optional vertex colour which is assigned to all four corners
+		 * Specify an optional vertex colour which is assigned to all four corners.
 		 * 
 		 * [Optional]: s0 and sWidth are used for particle animation frames.
 		 *
 		 * @s0: defines the horizontal frame start coordinate in texture space (s).
 		 * @sWidth: defines the width of this frame in texture space.
 		 */
-		Quad(float size, float angle, const Vector4& colour = Vector4(1,1,1,1), float s0 = 0.0f, float sWidth = 1.0f)
+		Quad(float size, float angle, const Vector4& colour = Vector4(1,1,1,1), 
+			 const Vector3& normal = Vector3(0,0,1), float s0 = 0.0f, float sWidth = 1.0f)
 		{
 			double cosPhi = cos(degrees_to_radians(angle));
 			double sinPhi = sin(degrees_to_radians(angle));
@@ -87,10 +88,10 @@ private:
 				0, 0, 1, 0,
 				0, 0, 0, 1);
 
-			verts[0] = VertexInfo(rotation.transform(Vector3(-size, +size, 0)).getProjected(), Vector2(s0,0), colour);
-			verts[1] = VertexInfo(rotation.transform(Vector3(+size, +size, 0)).getProjected(), Vector2(s0 + sWidth,0), colour);
-			verts[2] = VertexInfo(rotation.transform(Vector3(+size, -size, 0)).getProjected(), Vector2(s0 + sWidth,1), colour);
-			verts[3] = VertexInfo(rotation.transform(Vector3(-size, -size, 0)).getProjected(), Vector2(s0,1), colour);
+			verts[0] = VertexInfo(rotation.transform(Vector3(-size, +size, 0)).getVector3(), Vector2(s0,0), colour, normal);
+			verts[1] = VertexInfo(rotation.transform(Vector3(+size, +size, 0)).getVector3(), Vector2(s0 + sWidth,0), colour, normal);
+			verts[2] = VertexInfo(rotation.transform(Vector3(+size, -size, 0)).getVector3(), Vector2(s0 + sWidth,1), colour, normal);
+			verts[3] = VertexInfo(rotation.transform(Vector3(-size, -size, 0)).getVector3(), Vector2(s0,1), colour, normal);
 		}
 
 		void translate(const Vector3& offset)
@@ -610,8 +611,13 @@ private:
 	// Generates a new quad using the given origin as centroid, angle is in degrees
 	void pushQuad(const Vector3& origin, float size, float angle, const Vector4& colour, float s0 = 0.0f, float sWidth = 1.0f)
 	{
-		// Create a simple quad facing the z axis
-		_quads.push_back(Quad(size, angle, colour, s0, sWidth));
+		// greebo: Create a (rotated) quad facing the z axis
+		// then rotate it to fit the requested orientation
+		// finally translate it to its position.
+
+		const Vector3& normal = _viewRotation.z().getVector3();
+
+		_quads.push_back(Quad(size, angle, colour, normal, s0, sWidth));
 		_quads.back().transform(_viewRotation);
 		_quads.back().translate(origin);
 	}
