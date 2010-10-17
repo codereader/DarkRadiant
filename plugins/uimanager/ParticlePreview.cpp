@@ -183,9 +183,6 @@ void ParticlePreview::setParticle(const std::string& name)
 		_rotation = Matrix4::getIdentity();
 
 		_lastParticle = nameClean;
-
-		// Update the particle
-		_particle->update(_previewTimeMsec, *_renderSystem);
 	}
 
 	// Redraw
@@ -221,7 +218,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	if (_particle == NULL) return false; // nothing to do
 
 	// Update the particle
-	_particle->update(_previewTimeMsec, *_renderSystem);
+	_particle->update(_previewTimeMsec, *_renderSystem, _rotation);
 
 	// Front-end render phase, collect OpenGLRenderable objects from the
 	// particle system

@@ -27,6 +27,9 @@ private:
 
 	std::vector<RenderableParticleBunchPtr> _bunches;
 
+	// The rotation matrix to orient particles
+	Matrix4 _viewRotation;
+
 public:
 	RenderableParticleStage(const IParticleStage& stage, boost::rand48& random) :
 		_stage(stage),
@@ -57,7 +60,7 @@ public:
 	}
 
 	// Generate particle geometry, time is absolute in msecs 
-	void update(std::size_t time)
+	void update(std::size_t time, const Matrix4& viewRotation)
 	{
 		// Check time offset (msecs)
 		std::size_t timeOffset = static_cast<std::size_t>(SEC2MS(_stage.getTimeOffset()));
@@ -74,6 +77,9 @@ public:
 
 		// Get rid of the time offset
 		std::size_t localtimeMsec = time - timeOffset;
+
+		// Consider stage orientation (x,y,z,view,aimed)
+		calculateStageViewRotation(viewRotation);
 
 		// Make sure the correct bunches are allocated for this stage time
 		ensureBunches(localtimeMsec);
@@ -94,6 +100,12 @@ public:
 	}
 
 private:
+	// Returns the correct rotation matrix required by the stage orientation settings
+	void calculateStageViewRotation(const Matrix4& viewRotation)
+	{
+		_viewRotation = viewRotation;
+	}
+
 	void ensureBunches(std::size_t localTimeMSec)
 	{
 		// Check which bunches is active at this time
@@ -108,7 +120,7 @@ private:
 			if (_bunches[0] == NULL || _bunches[0]->getIndex() != curCycleIndex)
 			{
 				// First bunch is not matching, re-assign
-				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage));
+				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage, _viewRotation));
 			}
 
 			// Reset the previous bunch in any case
@@ -136,7 +148,7 @@ private:
 			}
 			else
 			{
-				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage));
+				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage, _viewRotation));
 			}
 
 			if (numCycles > 0 && prevCycleIndex > numCycles)
@@ -150,7 +162,7 @@ private:
 			}
 			else
 			{
-				_bunches[1].reset(new RenderableParticleBunch(prevCycleIndex, getSeed(prevCycleIndex), _stage));
+				_bunches[1].reset(new RenderableParticleBunch(prevCycleIndex, getSeed(prevCycleIndex), _stage, _viewRotation));
 			}
 		}
 	}

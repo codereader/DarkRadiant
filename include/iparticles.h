@@ -7,6 +7,7 @@
 #include "irenderable.h"
 
 class RenderSystem;
+class Matrix4;
 
 namespace particles
 {
@@ -66,8 +67,10 @@ public:
 	/**
 	 * Update the particle geometry using the given time in milliseconds.
 	 * The rendersystem is needed for acquiring the shaders.
+	 * 
+	 * @rotation: the matrix to orient themselves to the viewer.
 	 */
-	virtual void update(std::size_t time, RenderSystem& renderSystem) = 0;
+	virtual void update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation) = 0;
 
 	/**
 	 * Get the particle definition used by this renderable.
