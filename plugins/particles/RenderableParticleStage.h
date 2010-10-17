@@ -103,7 +103,30 @@ private:
 	// Returns the correct rotation matrix required by the stage orientation settings
 	void calculateStageViewRotation(const Matrix4& viewRotation)
 	{
-		_viewRotation = viewRotation;
+		switch (_stage.getOrientationType())
+		{
+		case IParticleStage::ORIENTATION_VIEW:
+			_viewRotation = viewRotation;
+			break;
+
+		case IParticleStage::ORIENTATION_X:
+			// Rotate the z vector such that it faces the x axis, and use that as transform
+			_viewRotation = Matrix4::getRotation(Vector3(0,0,1), Vector3(1,0,0));
+			break;
+
+		case IParticleStage::ORIENTATION_Y:
+			// Rotate the z vector such that it faces the y axis, and use that as transform
+			_viewRotation = Matrix4::getRotation(Vector3(0,0,1), Vector3(0,1,0));
+			break;
+
+		case IParticleStage::ORIENTATION_Z:
+			// Particles are already facing the z axis by default
+			_viewRotation = Matrix4::getIdentity();
+			break;
+
+		default:
+			_viewRotation = Matrix4::getIdentity();
+		};
 	}
 
 	void ensureBunches(std::size_t localTimeMSec)
