@@ -46,10 +46,14 @@ public:
 	}
 
 	// Time is in msecs
-	void update(std::size_t time, RenderSystem& renderSystem)
+	void update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation)
 	{
 		// Make sure all shaders are constructed		
 		ensureShaders(renderSystem);
+
+		// greebo: Use the inverse matrix of the incoming matrix, this is enough to compensate
+		// the camera rotation.
+		Matrix4 invViewRotation = viewRotation.getInverse();
 
 		// Traverse the stages and call update
 		for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
@@ -57,7 +61,7 @@ public:
 			for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
 				 stage != i->second.stages.end(); ++stage)
 			{
-				(*stage)->update(time);
+				(*stage)->update(time, invViewRotation);
 			}
 		}
 	}

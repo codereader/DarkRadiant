@@ -100,6 +100,14 @@ private:
 			verts[2].vertex += offset;
 			verts[3].vertex += offset;
 		}
+
+		void transform(const Matrix4& mat)
+		{
+			verts[0].vertex = mat.transform(verts[0].vertex).getVector3();
+			verts[1].vertex = mat.transform(verts[1].vertex).getVector3();
+			verts[2].vertex = mat.transform(verts[2].vertex).getVector3();
+			verts[3].vertex = mat.transform(verts[3].vertex).getVector3();
+		}
 	};
 
 	// The quads of this particle bunch
@@ -121,18 +129,23 @@ private:
 	// Stage-specific offset
 	const Vector3& _offset;
 
+	// The matrix to orient quads (owned by the RenderableParticleStage)
+	const Matrix4& _viewRotation;
+
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index, 
 							int randSeed,
-							const IParticleStage& stage) :
+							const IParticleStage& stage,
+							const Matrix4& viewRotation) :
 		_index(index),
 		_stage(stage),
 		_quads(),
 		_randSeed(randSeed),
 		_distributeParticlesRandomly(_stage.getRandomDistribution()),
 		_direction(0,1,0),
-		_offset(_stage.getOffset())
+		_offset(_stage.getOffset()),
+		_viewRotation(viewRotation)
 	{
 		// Geometry is written in update(), just reserve the space
 	}
@@ -599,6 +612,7 @@ private:
 	{
 		// Create a simple quad facing the z axis
 		_quads.push_back(Quad(size, angle, colour, s0, sWidth));
+		_quads.back().transform(_viewRotation);
 		_quads.back().translate(origin);
 	}
 };
