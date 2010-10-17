@@ -74,10 +74,11 @@ private:
 		 * 
 		 * [Optional]: s0 and sWidth are used for particle animation frames.
 		 *
+		 * @aspect: scales the horizontal coords by this factor.
 		 * @s0: defines the horizontal frame start coordinate in texture space (s).
 		 * @sWidth: defines the width of this frame in texture space.
 		 */
-		Quad(float size, float angle, const Vector4& colour = Vector4(1,1,1,1), 
+		Quad(float size, float aspect, float angle, const Vector4& colour = Vector4(1,1,1,1), 
 			 const Vector3& normal = Vector3(0,0,1), float s0 = 0.0f, float sWidth = 1.0f)
 		{
 			double cosPhi = cos(degrees_to_radians(angle));
@@ -88,10 +89,10 @@ private:
 				0, 0, 1, 0,
 				0, 0, 0, 1);
 
-			verts[0] = VertexInfo(rotation.transform(Vector3(-size, +size, 0)).getVector3(), Vector2(s0,0), colour, normal);
-			verts[1] = VertexInfo(rotation.transform(Vector3(+size, +size, 0)).getVector3(), Vector2(s0 + sWidth,0), colour, normal);
-			verts[2] = VertexInfo(rotation.transform(Vector3(+size, -size, 0)).getVector3(), Vector2(s0 + sWidth,1), colour, normal);
-			verts[3] = VertexInfo(rotation.transform(Vector3(-size, -size, 0)).getVector3(), Vector2(s0,1), colour, normal);
+			verts[0] = VertexInfo(rotation.transform(Vector3(-size*aspect, +size, 0)).getVector3(), Vector2(s0,0), colour, normal);
+			verts[1] = VertexInfo(rotation.transform(Vector3(+size*aspect, +size, 0)).getVector3(), Vector2(s0 + sWidth,0), colour, normal);
+			verts[2] = VertexInfo(rotation.transform(Vector3(+size*aspect, -size, 0)).getVector3(), Vector2(s0 + sWidth,1), colour, normal);
+			verts[3] = VertexInfo(rotation.transform(Vector3(-size*aspect, -size, 0)).getVector3(), Vector2(s0,1), colour, normal);
 		}
 
 		void translate(const Vector3& offset)
@@ -287,6 +288,9 @@ public:
 				colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (timeFraction - fadeOutFractionInverse) / fadeOutFraction);
 			}
 
+			// Consider aspect ratio
+			float aspect = _stage.getAspect().evaluate(timeFraction);
+
 			// Consider animation frames
 			std::size_t animFrames = static_cast<std::size_t>(_stage.getAnimationFrames());
 
@@ -319,13 +323,13 @@ public:
 				float sWidth = 1.0f / animFrames;
 
 				// Calculate the texture space for each frame and push the quads
-				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, curColour, sWidth * curFrame, sWidth);
-				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, nextColour, sWidth * nextFrame, sWidth);
+				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), aspect, angle, curColour, sWidth * curFrame, sWidth);
+				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), aspect, angle, nextColour, sWidth * nextFrame, sWidth);
 			}
 			else
 			{
 				// Generate a single quad using the given parameters
-				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), angle, colour);
+				pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), aspect, angle, colour);
 			}
 		}
 	}
@@ -609,7 +613,7 @@ private:
 	}
 
 	// Generates a new quad using the given origin as centroid, angle is in degrees
-	void pushQuad(const Vector3& origin, float size, float angle, const Vector4& colour, float s0 = 0.0f, float sWidth = 1.0f)
+	void pushQuad(const Vector3& origin, float size, float aspect, float angle, const Vector4& colour, float s0 = 0.0f, float sWidth = 1.0f)
 	{
 		// greebo: Create a (rotated) quad facing the z axis
 		// then rotate it to fit the requested orientation
@@ -617,7 +621,7 @@ private:
 
 		const Vector3& normal = _viewRotation.z().getVector3();
 
-		_quads.push_back(Quad(size, angle, colour, normal, s0, sWidth));
+		_quads.push_back(Quad(size, aspect, angle, colour, normal, s0, sWidth));
 		_quads.back().transform(_viewRotation);
 		_quads.back().translate(origin);
 	}
