@@ -396,11 +396,11 @@ private:
 				float radialSpeedFactor = 1.0f + 0.5f * rand * rand;
 
 				// greebo: factor 0.4 is empirical, I measured a few D3 particles for their circulation times
-				float radialSpeed = _stage.getCustomPathParm(0) * 0.4f;
+				float radialSpeed = _stage.getCustomPathParm(0) * radialSpeedFactor * 0.4f;
 
 				rand = 2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f;
 				float axialSpeedFactor = 1.0f + 0.5f * rand * rand;
-				float axialSpeed = _stage.getCustomPathParm(1) * 0.4f;
+				float axialSpeed = _stage.getCustomPathParm(1) * axialSpeedFactor * 0.4f;
 
 				float phi0 = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
 				float theta0 = static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
