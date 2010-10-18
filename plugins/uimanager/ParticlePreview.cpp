@@ -3,6 +3,7 @@
 #include "gtkutil/GLWidgetSentry.h"
 #include "iuimanager.h"
 #include "iparticles.h"
+#include "i18n.h"
 
 #include "math/aabb.h"
 #include "entitylib.h"
@@ -13,6 +14,8 @@
 #include <gtkmm/toolbar.h>
 #include <gtkmm/image.h>
 #include <gtkmm/toggletoolbutton.h>
+#include <gtkmm/toolbutton.h>
+#include <gtkmm/stock.h>
 
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -53,6 +56,9 @@ namespace {
 ParticlePreview::ParticlePreview() :
 	Gtk::Frame(),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ParticlePreview"))),
+	_startButton(NULL),
+	_pauseButton(NULL),
+	_stopButton(NULL),
 	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
 	_renderer(_renderSystem),
 	_previewTimeMsec(0),
@@ -83,7 +89,39 @@ ParticlePreview::ParticlePreview() :
 	// Create the toolbar
 	Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
 	toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
-	toolHBox->pack_end(*toolbar, true, true, 0);
+
+	_startButton = Gtk::manage(new Gtk::ToolButton);
+	_startButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlePreview::callbackStart));
+	_startButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU)));
+	_startButton->set_tooltip_text(_("Start time"));
+
+	_pauseButton = Gtk::manage(new Gtk::ToolButton);
+	_pauseButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlePreview::callbackPause));
+	_pauseButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PAUSE, Gtk::ICON_SIZE_MENU)));
+	_pauseButton->set_tooltip_text(_("Pause time"));
+
+	_stopButton = Gtk::manage(new Gtk::ToolButton);
+	_stopButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlePreview::callbackStop));
+	_stopButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_STOP, Gtk::ICON_SIZE_MENU)));
+	_stopButton->set_tooltip_text(_("Stop time"));
+
+	toolbar->insert(*_startButton, 0);
+	toolbar->insert(*_pauseButton, 0);
+	toolbar->insert(*_stopButton, 0);
+
+	Gtk::Toolbar* toolbar2 = Gtk::manage(new Gtk::Toolbar);
+	toolbar2->set_toolbar_style(Gtk::TOOLBAR_ICONS);
+
+	_showAxesButton = Gtk::manage(new Gtk::ToggleToolButton);
+	_showAxesButton->signal_toggled().connect(sigc::mem_fun(*this, &ParticlePreview::callbackToggleAxes));
+	_showAxesButton->set_icon_widget(*Gtk::manage(new Gtk::Image(
+		GlobalUIManager().getLocalPixbufWithMask("axes.png"))));
+	_showAxesButton->set_tooltip_text(_("Show coordinate axes"));
+
+	toolbar2->insert(*_showAxesButton, 0);
+	
+	toolHBox->pack_start(*toolbar, true, true, 0);
+	toolHBox->pack_start(*toolbar2, true, true, 0);
 		
 	// Pack into a frame and return
 	add(*vbx);
@@ -162,7 +200,7 @@ void ParticlePreview::setParticle(const std::string& name)
 	if (nameClean.empty())
 	{
 		_particle.reset();
-		_timer.disable();
+		stopPlayback();
 		return;
 	}
 
@@ -171,9 +209,7 @@ void ParticlePreview::setParticle(const std::string& name)
 	if (_particle != NULL && _lastParticle != nameClean)
 	{
 		// Reset preview time
-		_previewTimeMsec = 0;
-
-		_timer.enable();
+		stopPlayback();
 
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
@@ -183,6 +219,9 @@ void ParticlePreview::setParticle(const std::string& name)
 		_rotation = Matrix4::getIdentity();
 
 		_lastParticle = nameClean;
+
+		// Start playback when switching particles
+		startPlayback();
 	}
 
 	// Redraw
@@ -192,6 +231,64 @@ void ParticlePreview::setParticle(const std::string& name)
 Gtk::Widget* ParticlePreview::getWidget()
 {
 	return this;
+}
+
+void ParticlePreview::startPlayback()
+{
+	if (_timer.isEnabled())
+	{
+		// Timer is already running, just reset the preview time
+		_previewTimeMsec = 0;
+	}
+	else
+	{
+		// Timer is not enabled, we're paused or stopped
+		_timer.enable();
+	}
+
+	_pauseButton->set_sensitive(true);
+	_stopButton->set_sensitive(true);
+}
+
+void ParticlePreview::stopPlayback()
+{
+	_previewTimeMsec = 0;
+	_timer.disable();
+
+	_pauseButton->set_sensitive(false);
+	_stopButton->set_sensitive(false);
+
+	_glWidget->queue_draw();
+}
+
+void ParticlePreview::callbackStart()
+{
+	startPlayback();
+}
+
+void ParticlePreview::callbackPause()
+{
+	// Disable the button
+	_pauseButton->set_sensitive(false);
+
+	if (_timer.isEnabled())
+	{
+		_timer.disable();
+	}
+	else
+	{
+		_timer.enable(); // re-enable playback
+	}
+}
+
+void ParticlePreview::callbackStop()
+{
+	stopPlayback();
+}
+
+void ParticlePreview::callbackToggleAxes()
+{
+	_glWidget->queue_draw();
 }
 
 void ParticlePreview::onSizeAllocate(Gtk::Allocation& allocation)
@@ -215,7 +312,11 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (_particle == NULL) return false; // nothing to do
+	if (_particle == NULL) 
+	{
+		drawTime();
+		return false; // nothing to do
+	}
 
 	// Update the particle
 	_particle->update(_previewTimeMsec, *_renderSystem, _rotation);
@@ -284,7 +385,10 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	_renderSystem->render(flags, modelview, projection);
 
 	// Draw coordinate axes for better orientation
-	drawAxes();
+	if (_showAxesButton->get_active())
+	{
+		drawAxes();
+	}
 
 	drawTime();
 

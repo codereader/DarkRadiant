@@ -15,6 +15,12 @@
 
 #include "ParticleRenderer.h"
 
+namespace Gtk
+{
+	class ToolButton;
+	class ToggleToolButton;
+}
+
 namespace ui
 {
 	
@@ -25,6 +31,11 @@ class ParticlePreview :
 private:
 	// GL widget
 	gtkutil::GLWidget* _glWidget;
+
+	Gtk::ToolButton* _startButton;
+	Gtk::ToolButton* _pauseButton;
+	Gtk::ToolButton* _stopButton;
+	Gtk::ToggleToolButton* _showAxesButton;
 
 	// The backend rendersystem instance
 	RenderSystemPtr _renderSystem;
@@ -61,6 +72,10 @@ private:
 	bool callbackGLDraw(GdkEventExpose*);
 	bool callbackGLMotion(GdkEventMotion*);
 	bool callbackGLScroll(GdkEventScroll*);
+	void callbackStart();
+	void callbackPause();
+	void callbackStop();
+	void callbackToggleAxes();
 	void onSizeAllocate(Gtk::Allocation& allocation);
 	
 public:
@@ -111,6 +126,9 @@ private:
 
 	void drawAxes();
 	void drawTime();
+
+	void startPlayback();
+	void stopPlayback();
 };
 typedef boost::shared_ptr<ParticlePreview> ParticlePreviewPtr;
 
