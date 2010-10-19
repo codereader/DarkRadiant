@@ -114,6 +114,20 @@ class IParticlesManager :
 	public RegisterableModule
 {
 public:
+	class Observer
+	{
+	public:
+		virtual ~Observer() {}
+
+		// Gets invoked after the module reloaded the .prt files
+		// This gives any observers the chance to react to particle def changes
+		virtual void onParticleDefReload() {} // empty default impl.
+	};
+
+	// Add or remove an observer to get notified on particle events
+	virtual void addObserver(Observer* observer) = 0;
+	virtual void removeObserver(Observer* observer) = 0;
+
 	/**
 	 * Enumerate each particle def.
 	 */
@@ -131,6 +145,17 @@ public:
 	 * @returns: the renderable particle instance or NULL if the named particle was not found.
 	 */
 	virtual IRenderableParticlePtr getRenderableParticle(const std::string& name) = 0;
+
+	/**
+	 * Reloads the definitions from the .prt files. Any existing references to IParticleDefs 
+	 * will remain valid, but their contents might change. Anything sensitive to these changes 
+	 * (like the renderable particles) should subscribe as Observer to this manager class to 
+	 * get notified on changes/reloads.
+	 * 
+	 * If particle defs are removed from the .prt files, the corresponding IParticleDef instance
+	 * will remain in memory, but will be empty after reload.
+	 */
+	virtual void reloadParticleDefs() = 0;
 };
 
 } // namespace
