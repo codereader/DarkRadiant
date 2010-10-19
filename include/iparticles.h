@@ -10,6 +10,7 @@ class RenderSystem;
 class Matrix4;
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
+class AABB;
 
 namespace particles
 {
@@ -91,6 +92,13 @@ public:
 	 * this direction defaults to <0,0,1>, but can be overridden here.
 	 */
 	virtual void setMainDirection(const Vector3& direction) = 0;
+
+	/**
+	 * Returns the bounding box taken by the entirety of quads in this particle.
+	 * Make sure to call this after the update() method, as getAABB() will 
+	 * calculate and return the bounds at the time passed to update().
+	 */
+	virtual const AABB& getBounds() = 0;
 };
 typedef boost::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
 
