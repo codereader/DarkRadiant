@@ -5,6 +5,8 @@
 #include "ParticleStage.h"
 #include "RenderableParticle.h"
 
+#include "icommandsystem.h"
+#include "ieventmanager.h"
 #include "ifilesystem.h"
 
 #include "parser/DefTokeniser.h"
@@ -14,8 +16,19 @@
 
 #include "string/string.h"
 #include <iostream>
+#include <boost/bind.hpp>
 
 namespace particles {
+
+void ParticlesManager::addObserver(IParticlesManager::Observer* observer)
+{
+	_observers.insert(observer);
+}
+
+void ParticlesManager::removeObserver(IParticlesManager::Observer* observer)
+{
+	_observers.erase(observer);
+}
 
 // Visit all of the particle defs
 void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v) const
@@ -138,6 +151,8 @@ const StringSet& ParticlesManager::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_EVENTMANAGER);
 	}
 
 	return _dependencies;
@@ -152,6 +167,15 @@ void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 
 	ScopedDebugTimer timer("Particle definitions parsed: ");
 	GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, loader, 1);
+
+	// Register the "ReloadParticles" commands
+	GlobalCommandSystem().addCommand("ReloadParticles", boost::bind(&ParticlesManager::reloadParticleDefs, this));
+	GlobalEventManager().addCommand("ReloadParticles", "ReloadParticles");
+}
+
+void ParticlesManager::reloadParticleDefs()
+{
+	// TODO
 }
 
 } // namespace particles

@@ -21,33 +21,22 @@ namespace {
 class ParticlesManager : 
 	public IParticlesManager
 {
+private:
 	// Map of named particle defs
 	typedef std::map<std::string, ParticleDefPtr> ParticleDefMap;
 	ParticleDefMap _particleDefs;
-	
-private:
-	
-	// Recursive-descent parse functions
-	void parseParticleDef(parser::DefTokeniser& tok);
+
+	typedef std::set<IParticlesManager::Observer*> Observers;
+	Observers _observers;
 	
 public:
-	/*
-	 * Visit each particles def.
-	 */
+	// IParticlesManager implementation. For documentation see iparticles.h
+	void addObserver(IParticlesManager::Observer* observer);
+	void removeObserver(IParticlesManager::Observer* observer);
 	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
-
-	/**
-	 * Get a named particle definition, returns NULL if not found.
-	 */
 	IParticleDefPtr getParticle(const std::string& name);
-
-	/**
-	 * Create a renderable particle, which is capable of compiling the
-	 * particle system into actual geometry usable for the backend rendersystem.
-	 * 
-	 * @returns: the renderable particle instance or NULL if the named particle was not found.
-	 */
 	IRenderableParticlePtr getRenderableParticle(const std::string& name);
+	void reloadParticleDefs();
 	
 	/**
 	 * Accept a stream containing particle definitions to parse and add to the
@@ -59,6 +48,10 @@ public:
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
+
+private:
+	// Recursive-descent parse functions
+	void parseParticleDef(parser::DefTokeniser& tok);
 };
 typedef boost::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 
