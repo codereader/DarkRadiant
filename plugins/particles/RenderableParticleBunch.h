@@ -125,29 +125,30 @@ private:
 	// The flag whether to spawn particles at random locations (standard path calculation)
 	bool _distributeParticlesRandomly;
 
-	// The default direction of the emitter
-	Vector3 _direction;
-
 	// Stage-specific offset
 	const Vector3& _offset;
 
 	// The matrix to orient quads (owned by the RenderableParticleStage)
 	const Matrix4& _viewRotation;
 
+	// The particle direction (instance owned by RenderableParticle)
+	const Vector3& _direction;
+
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index, 
 							int randSeed,
 							const IParticleStage& stage,
-							const Matrix4& viewRotation) :
+							const Matrix4& viewRotation,
+							const Vector3& direction) :
 		_index(index),
 		_stage(stage),
 		_quads(),
 		_randSeed(randSeed),
 		_distributeParticlesRandomly(_stage.getRandomDistribution()),
-		_direction(0,1,0),
 		_offset(_stage.getOffset()),
-		_viewRotation(viewRotation)
+		_viewRotation(viewRotation),
+		_direction(direction)
 	{
 		// Geometry is written in update(), just reserve the space
 	}
