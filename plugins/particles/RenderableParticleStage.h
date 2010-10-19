@@ -148,8 +148,7 @@ private:
 			if (_bunches[0] == NULL || _bunches[0]->getIndex() != curCycleIndex)
 			{
 				// First bunch is not matching, re-assign
-				_bunches[0].reset(new RenderableParticleBunch(
-					curCycleIndex, getSeed(curCycleIndex), _stage, _viewRotation, _direction));
+				_bunches[0] = createBunch(curCycleIndex);
 			}
 
 			// Reset the previous bunch in any case
@@ -177,8 +176,7 @@ private:
 			}
 			else
 			{
-				_bunches[0].reset(new RenderableParticleBunch(
-					curCycleIndex, getSeed(curCycleIndex), _stage, _viewRotation, _direction));
+				_bunches[0] = createBunch(curCycleIndex);
 			}
 
 			if (numCycles > 0 && prevCycleIndex > numCycles)
@@ -192,10 +190,15 @@ private:
 			}
 			else
 			{
-				_bunches[1].reset(new RenderableParticleBunch(
-					prevCycleIndex, getSeed(prevCycleIndex), _stage, _viewRotation, _direction));
+				_bunches[1] = createBunch(prevCycleIndex);
 			}
 		}
+	}
+
+	RenderableParticleBunchPtr createBunch(std::size_t cycleIndex)
+	{
+		return RenderableParticleBunchPtr(new RenderableParticleBunch(
+					cycleIndex, getSeed(cycleIndex), _stage, _viewRotation, _direction));
 	}
 
 	int getSeed(std::size_t cycleIndex)
