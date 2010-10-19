@@ -211,12 +211,12 @@ void ParticlePreview::setParticle(const std::string& name)
 		// Reset preview time
 		stopPlayback();
 
-		// Reset the rotation
-		_rotation = Matrix4::getIdentity();
+		// Reset the rotation to the default one
+		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3,1));
+		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
 		
 		// TODO: Use particle AABB
 		_camDist = -(20 * 2.0);
-		_rotation = Matrix4::getIdentity();
 
 		_lastParticle = nameClean;
 
