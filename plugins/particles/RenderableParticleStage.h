@@ -30,12 +30,17 @@ private:
 	// The rotation matrix to orient particles
 	Matrix4 _viewRotation;
 
+	// The particle direction (instance owned by RenderableParticle)
+	const Vector3& _direction;
+
 public:
-	RenderableParticleStage(const IParticleStage& stage, boost::rand48& random) :
+	RenderableParticleStage(const IParticleStage& stage, boost::rand48& random, const Vector3& direction) :
 		_stage(stage),
 		_numSeeds(32),
 		_seeds(_numSeeds),
-		_bunches(2) // two bunches 
+		_bunches(2), // two bunches
+		_viewRotation(Matrix4::getIdentity()), // is re-calculated each update anyway
+		_direction(direction)
 	{
 		// Generate our vector of random numbers used seed particle bunches
 		// using the random number generator as provided by our parent particle system
@@ -143,7 +148,8 @@ private:
 			if (_bunches[0] == NULL || _bunches[0]->getIndex() != curCycleIndex)
 			{
 				// First bunch is not matching, re-assign
-				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage, _viewRotation));
+				_bunches[0].reset(new RenderableParticleBunch(
+					curCycleIndex, getSeed(curCycleIndex), _stage, _viewRotation, _direction));
 			}
 
 			// Reset the previous bunch in any case
@@ -171,7 +177,8 @@ private:
 			}
 			else
 			{
-				_bunches[0].reset(new RenderableParticleBunch(curCycleIndex, getSeed(curCycleIndex), _stage, _viewRotation));
+				_bunches[0].reset(new RenderableParticleBunch(
+					curCycleIndex, getSeed(curCycleIndex), _stage, _viewRotation, _direction));
 			}
 
 			if (numCycles > 0 && prevCycleIndex > numCycles)
@@ -185,7 +192,8 @@ private:
 			}
 			else
 			{
-				_bunches[1].reset(new RenderableParticleBunch(prevCycleIndex, getSeed(prevCycleIndex), _stage, _viewRotation));
+				_bunches[1].reset(new RenderableParticleBunch(
+					prevCycleIndex, getSeed(prevCycleIndex), _stage, _viewRotation, _direction));
 			}
 		}
 	}

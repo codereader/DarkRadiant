@@ -37,6 +37,9 @@ private:
 	// to go back in time when rendering the particle stage.
 	boost::rand48 _random;
 
+	// The particle direction, usually set by the emitter entity or the preview
+	Vector3 _direction;
+
 public:
 	RenderableParticle(const IParticleDefPtr& particleDef) :
 		_particleDef(particleDef),
@@ -100,6 +103,14 @@ public:
 		setupStages();
 	}
 
+	void setMainDirection(const Vector3& direction)
+	{
+		_direction = direction;
+
+		// The particle stages hold a const-reference to _direction
+		// so no further update is needed
+	}
+
 private:
 	// Sort stages into groups sharing a material, without capturing the shader yet
 	void setupStages()
@@ -118,7 +129,7 @@ private:
 			}
 
 			// Create a new renderable stage and add it to the shader
-			RenderableParticleStagePtr renderableStage(new RenderableParticleStage(stage, _random));
+			RenderableParticleStagePtr renderableStage(new RenderableParticleStage(stage, _random, _direction));
 			_shaderMap[materialName].stages.push_back(renderableStage);
 		}
 	}

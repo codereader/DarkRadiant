@@ -8,6 +8,8 @@
 
 class RenderSystem;
 class Matrix4;
+template<typename Element> class BasicVector3;
+typedef BasicVector3<double> Vector3;
 
 namespace particles
 {
@@ -82,6 +84,13 @@ public:
 	 * setting a new particle def.
 	 */
 	virtual void setParticleDef(const IParticleDefPtr& def) = 0;
+
+	/**
+	 * greebo: Particles have a main direction, usually defined by the 
+	 * emitter's rotation. For a stand-alone particle (without emitter)
+	 * this direction defaults to <0,0,1>, but can be overridden here.
+	 */
+	virtual void setMainDirection(const Vector3& direction) = 0;
 };
 typedef boost::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
 
