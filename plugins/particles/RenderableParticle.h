@@ -6,6 +6,7 @@
 #include "iparticles.h"
 #include "irender.h"
 
+#include "math/aabb.h"
 #include "render.h"
 #include <boost/random/linear_congruential.hpp>
 
@@ -40,6 +41,10 @@ private:
 	// The particle direction, usually set by the emitter entity or the preview
 	Vector3 _direction;
 
+	// Holds the bounds of all stages at the current time. Will be updated
+	// by calls to getBounds(), otherwise might hold outdated bounds information.
+	AABB _bounds;
+
 public:
 	RenderableParticle(const IParticleDefPtr& particleDef) :
 		_particleDef(particleDef),
@@ -51,6 +56,9 @@ public:
 	// Time is in msecs
 	void update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation)
 	{
+		// Invalidate our bounds information
+		_bounds = AABB();
+
 		// Make sure all shaders are constructed		
 		ensureShaders(renderSystem);
 
@@ -111,7 +119,30 @@ public:
 		// so no further update is needed
 	}
 
+	// Updates bounds from stages and returns the value
+	const AABB& getBounds() 
+	{
+		if (!_bounds.isValid())
+		{
+			calculateBounds();
+		}
+
+		return _bounds;
+	}
+
 private:
+	void calculateBounds()
+	{
+		for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
+		{
+			for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
+				 stage != i->second.stages.end(); ++stage)
+			{
+				_bounds.includeAABB((*stage)->getBounds());
+			}
+		}
+	}
+
 	// Sort stages into groups sharing a material, without capturing the shader yet
 	void setupStages()
 	{

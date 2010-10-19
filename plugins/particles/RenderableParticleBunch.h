@@ -4,6 +4,7 @@
 #include "irender.h"
 #include "iparticlestage.h"
 
+#include "math/aabb.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/matrix.h"
@@ -134,6 +135,9 @@ private:
 	// The particle direction (instance owned by RenderableParticle)
 	const Vector3& _direction;
 
+	// The bounds of this quad group, calculated on demand
+	AABB _bounds;
+
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index, 
@@ -162,6 +166,7 @@ public:
 	// Time is specified in stage time without offset,in msecs.
 	void update(std::size_t time)
 	{
+		_bounds = AABB();
 		_quads.clear();
 
 		// Length of one cycle (duration + deadtime)
@@ -345,6 +350,16 @@ public:
 		glColorPointer(4, GL_DOUBLE, sizeof(VertexInfo), &(_quads.front().verts[0].colour));
 		
 		glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_quads.size())*4);
+	}
+
+	const AABB& getBounds()
+	{
+		if (!_bounds.isValid())
+		{
+			calculateBounds();
+		}
+
+		return _bounds;
 	}
 
 private:
@@ -625,6 +640,17 @@ private:
 		_quads.push_back(Quad(size, aspect, angle, colour, normal, s0, sWidth));
 		_quads.back().transform(_viewRotation);
 		_quads.back().translate(origin);
+	}
+
+	void calculateBounds()
+	{
+		for (Quads::const_iterator i = _quads.begin(); i != _quads.end(); ++i)
+		{
+			_bounds.includePoint(i->verts[0].vertex);
+			_bounds.includePoint(i->verts[1].vertex);
+			_bounds.includePoint(i->verts[2].vertex);
+			_bounds.includePoint(i->verts[3].vertex);
+		}
 	}
 };
 typedef boost::shared_ptr<RenderableParticleBunch> RenderableParticleBunchPtr;

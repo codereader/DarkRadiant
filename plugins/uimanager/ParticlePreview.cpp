@@ -215,8 +215,21 @@ void ParticlePreview::setParticle(const std::string& name)
 		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3,1));
 		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
 		
-		// TODO: Use particle AABB
-		_camDist = -(20 * 2.0);
+		// Call update(0) once to enable the bounds calculation
+		_particle->update(_previewTimeMsec, *_renderSystem, _rotation);
+
+		// Use particle AABB to adjust camera distance
+		const AABB& particleBounds = _particle->getBounds();
+
+		if (particleBounds.isValid())
+		{
+			_camDist = -2.0f * static_cast<float>(particleBounds.getRadius());
+		}
+		else
+		{
+			// Bounds not valid, fall back to default
+			_camDist = -40.0f;
+		}
 
 		_lastParticle = nameClean;
 
@@ -513,7 +526,10 @@ bool ParticlePreview::callbackGLMotion(GdkEventMotion* ev)
 
 bool ParticlePreview::callbackGLScroll(GdkEventScroll* ev)
 {
-	float inc = 40 * 0.1; // Scroll increment is a fraction of the AABB radius
+	if (_particle == NULL) return false;
+
+	// Scroll increment is a fraction of the AABB radius
+	float inc = static_cast<float>(_particle->getBounds().getRadius()) * 0.1f;
 
 	if (ev->direction == GDK_SCROLL_UP)
 		_camDist += inc;

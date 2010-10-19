@@ -33,6 +33,9 @@ private:
 	// The particle direction (instance owned by RenderableParticle)
 	const Vector3& _direction;
 
+	// The bounds of this stage (calculated on demand)
+	AABB _bounds;
+
 public:
 	RenderableParticleStage(const IParticleStage& stage, boost::rand48& random, const Vector3& direction) :
 		_stage(stage),
@@ -67,6 +70,9 @@ public:
 	// Generate particle geometry, time is absolute in msecs 
 	void update(std::size_t time, const Matrix4& viewRotation)
 	{
+		// Invalidate our bounds information
+		_bounds = AABB();
+
 		// Check time offset (msecs)
 		std::size_t timeOffset = static_cast<std::size_t>(SEC2MS(_stage.getTimeOffset()));
 
@@ -102,6 +108,16 @@ public:
 		{
 			_bunches[1]->update(localtimeMsec);
 		}
+	}
+
+	const AABB& getBounds()
+	{
+		if (!_bounds.isValid())
+		{
+			calculateBounds();
+		}
+
+		return _bounds;
 	}
 
 private:
@@ -218,6 +234,20 @@ private:
 		}
 		
 		return RenderableParticleBunchPtr();
+	}
+
+	void calculateBounds()
+	{
+		if (_bunches[0] != NULL)
+		{
+			// Get one of our seed values
+			_bounds.includeAABB(_bunches[0]->getBounds());
+		}
+
+		if (_bunches[1] != NULL)
+		{
+			_bounds.includeAABB(_bunches[1]->getBounds());
+		}
 	}
 };
 typedef boost::shared_ptr<RenderableParticleStage> RenderableParticleStagePtr;
