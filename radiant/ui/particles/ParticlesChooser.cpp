@@ -63,25 +63,25 @@ ParticlesChooser::ParticlesChooser() :
 // Create the tree view
 Gtk::Widget& ParticlesChooser::createTreeView()
 {
-	Gtk::TreeView* tv = Gtk::manage(new Gtk::TreeView(_particlesList));
+	_treeView = Gtk::manage(new Gtk::TreeView(_particlesList));
 
-	tv->set_size_request(300, -1);
+	_treeView->set_size_request(300, -1);
 
 	// Single text column
-	tv->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), _columns.name, false)));
+	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), _columns.name, false)));
 
 	// Apply full-text search to the column
-	tv->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 	
 	// Populate with particle names
 	populateParticleList();
 	
 	// Connect up the selection changed callback
-	_selection = tv->get_selection();
+	_selection = _treeView->get_selection();
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &ParticlesChooser::_onSelChanged));
 	
 	// Pack into scrolled window and return
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*tv));
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Create the buttons panel
@@ -104,6 +104,8 @@ Gtk::Widget& ParticlesChooser::createButtons()
 // Populate the particles list
 void ParticlesChooser::populateParticleList()
 {
+	_particlesList->clear();
+
 	// Create and use a ParticlesVisitor to populate the list
 	ParticlesVisitor visitor(_particlesList, _columns, _iterMap);
 	GlobalParticlesManager().forEachParticleDef(visitor);
@@ -128,6 +130,16 @@ void ParticlesChooser::onRadiantShutdown()
 	getInstancePtr().reset();
 }
 
+void ParticlesChooser::onParticleDefReload()
+{
+	std::string prevSelection = _selectedParticle;
+
+	populateParticleList();
+
+	// Try to select the previously selected particle again
+	setSelectedParticle(prevSelection);
+}
+
 ParticlesChooserPtr& ParticlesChooser::getInstancePtr()
 {
 	static ParticlesChooserPtr _instancePtr;
@@ -149,19 +161,34 @@ ParticlesChooser& ParticlesChooser::getInstance()
 	return *instancePtr;
 }
 
+void ParticlesChooser::setSelectedParticle(const std::string& particleName)
+{
+	// Highlight the current particle
+    IterMap::const_iterator i = _iterMap.find(particleName);
+
+    if (i != _iterMap.end())
+	{
+        _selectedParticle = particleName;
+		_selection->select(i->second);
+
+		Gtk::TreeModel::Path path(i->second);
+
+		// Expand the treeview to display the target row
+		_treeView->expand_to_path(path);
+		// Highlight the target row
+		_treeView->set_cursor(path);
+		// Make the selected row visible 
+		_treeView->scroll_to_row(path, 0.3f);
+    }
+}
+
 // Enter recursive main loop
 void ParticlesChooser::showAndBlock(const std::string& current)
 {
     _selectedParticle.clear();
 
     // Highlight the current particle
-    IterMap::const_iterator i = _iterMap.find(current);
-
-    if (i != _iterMap.end())
-	{
-        _selectedParticle = current;
-		_selection->select(i->second);
-    }
+    setSelectedParticle(current);
     
     // Show and block
 	show();
@@ -205,7 +232,7 @@ void ParticlesChooser::_onSelChanged()
 	if (iter)
 	{
 		Gtk::TreeModel::Row row = *iter;
-		_selectedParticle = Glib::ustring(row[_columns.name]);
+		_selectedParticle = row[_columns.name];
 
 		_preview->setParticle(_selectedParticle);
 	}
