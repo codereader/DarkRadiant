@@ -5,7 +5,10 @@
 
 #include "iparticles.h"
 
+#include "parser/DefTokeniser.h"
+#include "string/string.h"
 #include <vector>
+#include <set>
 
 namespace particles
 {
@@ -26,6 +29,9 @@ class ParticleDef
 	// Vector of stages
 	typedef std::vector<ParticleStage> StageList;
 	StageList _stages;
+
+	typedef std::set<IParticleDef::Observer*> Observers;
+	Observers _observers;
 	
 public:
 	
@@ -89,6 +95,51 @@ public:
 	 */
 	void appendStage(const ParticleStage& stage) {
 		_stages.push_back(stage);
+	}
+
+	void addObserver(IParticleDef::Observer* observer)
+	{
+		_observers.insert(observer);
+	}
+
+	void removeObserver(IParticleDef::Observer* observer)
+	{
+		_observers.erase(observer);
+	}
+
+	void parseFromTokens(parser::DefTokeniser& tok)
+	{
+		// Clear out the particle def (except the name) before parsing
+		clear();
+
+		// Any global keywords will come first, after which we get a series of 
+		// brace-delimited stages.
+		std::string token = tok.nextToken();
+
+		while (token != "}")
+		{
+			if (token == "depthHack")
+			{
+				setDepthHack(strToFloat(tok.nextToken()));
+			}
+			else if (token == "{")
+			{
+				// Construct/Parse the stage from the tokens
+				ParticleStage stage(tok);
+				
+				// Append to the ParticleDef
+				appendStage(stage);
+			}
+			
+			// Get next token
+			token = tok.nextToken();
+		}
+
+		// Notify any observers about this event
+		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
+		{
+			(*i++)->onParticleReload();
+		}
 	}
 };
 typedef boost::shared_ptr<ParticleDef> ParticleDefPtr;

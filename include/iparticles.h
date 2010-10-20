@@ -21,8 +21,20 @@ class IParticleStage;
 /**
  * Representation of a particles declaration.
  */
-class IParticleDef {
+class IParticleDef
+{
 public:
+	class Observer
+	{
+	public:
+		virtual ~Observer() {}
+
+		// Gets invoked after this particle def has been reloaded 
+		// from the .prt files. RenderableParticles are monitoring
+		// this event to re-construct their render information
+		virtual void onParticleReload() {} // empty default impl.
+	};
+
     /**
 	 * Destructor
 	 */
@@ -53,6 +65,10 @@ public:
 	 * Return a specific particle stage (non-const version)
 	 */
 	virtual IParticleStage& getParticleStages(std::size_t stageNum) = 0;
+
+	// Add or remove an observer to get notified on particle events
+	virtual void addObserver(Observer* observer) = 0;
+	virtual void removeObserver(Observer* observer) = 0;
 };
 typedef boost::shared_ptr<IParticleDef> IParticleDefPtr;
 
@@ -121,7 +137,7 @@ public:
 
 		// Gets invoked after the module reloaded the .prt files
 		// This gives any observers the chance to react to particle def changes
-		virtual void onParticleDefReload() {} // empty default impl.
+		virtual void onReloadParticles() {} // empty default impl.
 	};
 
 	// Add or remove an observer to get notified on particle events

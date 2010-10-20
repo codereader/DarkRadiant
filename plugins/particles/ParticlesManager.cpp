@@ -14,7 +14,6 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
-#include "string/string.h"
 #include <iostream>
 #include <boost/bind.hpp>
 
@@ -129,31 +128,8 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 	
 	ParticleDefPtr pdef = findOrInsertParticleDef(name);
 
-	// Clear out the particle def before parsing
-	pdef->clear();
-
-	// Any global keywords will come first, after which we get a series of 
-	// brace-delimited stages.
-	std::string token = tok.nextToken();
-
-	while (token != "}")
-	{
-		if (token == "depthHack")
-		{
-			pdef->setDepthHack(strToFloat(tok.nextToken()));
-		}
-		else if (token == "{")
-		{
-			// Construct/Parse the stage from the tokens
-			ParticleStage stage(tok);
-			
-			// Append to the ParticleDef
-			pdef->appendStage(stage);
-		}
-		
-		// Get next token
-		token = tok.nextToken();
-	}
+	// Let the particle construct itself from the token stream
+	pdef->parseFromTokens(tok);
 }
 
 const std::string& ParticlesManager::getName() const
@@ -199,7 +175,7 @@ void ParticlesManager::reloadParticleDefs()
 	// Notify observers about this event
 	for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
 	{
-		(*i++)->onParticleDefReload();
+		(*i++)->onReloadParticles();
 	}
 }
 
