@@ -130,7 +130,7 @@ void ParticlesChooser::onRadiantShutdown()
 	getInstancePtr().reset();
 }
 
-void ParticlesChooser::onParticleDefReload()
+void ParticlesChooser::onReloadParticles()
 {
 	std::string prevSelection = _selectedParticle;
 

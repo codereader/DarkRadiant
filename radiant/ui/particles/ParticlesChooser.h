@@ -118,7 +118,7 @@ public:
 	void onRadiantShutdown();
 
 	// IParticlesManager::Observer
-	void onParticleDefReload();
+	void onReloadParticles();
 };
 
 }
