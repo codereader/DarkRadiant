@@ -195,6 +195,12 @@ void ParticlesManager::reloadParticleDefs()
 
 	ScopedDebugTimer timer("Particle definitions parsed: ");
 	GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, loader, 1);
+
+	// Notify observers about this event
+	for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
+	{
+		(*i++)->onParticleDefReload();
+	}
 }
 
 } // namespace particles

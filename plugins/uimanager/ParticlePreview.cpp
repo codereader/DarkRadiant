@@ -2,6 +2,7 @@
 
 #include "gtkutil/GLWidgetSentry.h"
 #include "iuimanager.h"
+#include "ieventmanager.h"
 #include "iparticles.h"
 #include "i18n.h"
 
@@ -118,7 +119,12 @@ ParticlePreview::ParticlePreview() :
 		GlobalUIManager().getLocalPixbufWithMask("axes.png"))));
 	_showAxesButton->set_tooltip_text(_("Show coordinate axes"));
 
+	Gtk::ToolButton* reloadButton = Gtk::manage(new Gtk::ToolButton("Reload Particles"));
+	IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
+	ev->connectWidget(reloadButton);
+
 	toolbar2->insert(*_showAxesButton, 0);
+	toolbar2->insert(*reloadButton, 0);
 	
 	toolHBox->pack_start(*toolbar, true, true, 0);
 	toolHBox->pack_start(*toolbar2, true, true, 0);
