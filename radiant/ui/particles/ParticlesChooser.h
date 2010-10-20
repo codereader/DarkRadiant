@@ -3,12 +3,18 @@
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 
+#include "iparticles.h"
 #include "iradiant.h"
 #include <string>
 #include <map>
 
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeselection.h>
+
+namespace Gtk
+{
+	class TreeView;
+}
 
 namespace ui
 {
@@ -24,7 +30,8 @@ typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
  */
 class ParticlesChooser :
 	public gtkutil::BlockingTransientWindow,
-	public RadiantEventListener
+	public RadiantEventListener,
+	public particles::IParticlesManager::Observer
 {
 public:
 	// Treemodel definition
@@ -33,7 +40,7 @@ public:
 	{
 		ListColumns() { add(name); }
 
-		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<std::string> name;
 	};
 
 	typedef std::map<std::string, Gtk::TreeModel::iterator> IterMap;
@@ -44,6 +51,8 @@ private:
 	// Liststore for the main particles list, and its selection object
 	Glib::RefPtr<Gtk::ListStore> _particlesList;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
+
+	Gtk::TreeView* _treeView;
 	
 	// Last selected particle
 	std::string _selectedParticle;
@@ -79,6 +88,8 @@ private:
 	// Populate the list of particles
 	void populateParticleList();
 
+	void setSelectedParticle(const std::string& particleName);
+
 protected:
 	// Override TransientWindow::_onDeleteEvent
 	void _onDeleteEvent();
@@ -105,6 +116,9 @@ public:
 
 	// RadiantEventListener
 	void onRadiantShutdown();
+
+	// IParticlesManager::Observer
+	void onParticleDefReload();
 };
 
 }
