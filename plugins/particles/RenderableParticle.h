@@ -14,7 +14,8 @@ namespace particles
 {
 
 class RenderableParticle :
-	public IRenderableParticle
+	public IRenderableParticle,
+	public IParticleDef::Observer
 {
 private:
 	// The particle definition containing the stage info
@@ -107,7 +108,20 @@ public:
 
 	void setParticleDef(const IParticleDefPtr& def) 
 	{
+		if (_particleDef != NULL)
+		{
+			_particleDef->removeObserver(this);
+		}
+
 		_particleDef = def;
+
+		if (_particleDef != NULL)
+		{
+			// Start monitoring this particle for reload events
+			_particleDef->addObserver(this);
+		}
+
+		// Re-construct our stage information
 		setupStages();
 	}
 
@@ -128,6 +142,13 @@ public:
 		}
 
 		return _bounds;
+	}
+
+	// IParticleDef::Observer implementation
+	void onParticleReload()
+	{
+		// Re-construct our renderable stages
+		setupStages();
 	}
 
 private:
