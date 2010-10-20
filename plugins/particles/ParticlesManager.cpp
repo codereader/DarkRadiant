@@ -63,6 +63,24 @@ IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string
 	}
 }
 
+ParticleDefPtr ParticlesManager::findOrInsertParticleDef(const std::string& name)
+{
+	ParticleDefMap::iterator i = _particleDefs.find(name);
+
+	if (i != _particleDefs.end())
+	{
+		// Particle def is already existing in the map
+		return i->second;
+	}
+
+	// Not existing, add a new ParticleDef to the map
+	std::pair<ParticleDefMap::iterator, bool> result = _particleDefs.insert(
+		ParticleDefMap::value_type(name, ParticleDefPtr(new ParticleDef(name))));
+
+	// Return the iterator from the insertion result
+	return result.first->second;
+}
+
 // Parse particle defs from string
 void ParticlesManager::parseStream(std::istream& contents)
 {
@@ -109,7 +127,10 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 	std::string name = tok.nextToken();
 	tok.assertNextToken("{");
 	
-	ParticleDefPtr pdef(new ParticleDef(name));
+	ParticleDefPtr pdef = findOrInsertParticleDef(name);
+
+	// Clear out the particle def before parsing
+	pdef->clear();
 
 	// Any global keywords will come first, after which we get a series of 
 	// brace-delimited stages.
@@ -133,9 +154,6 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 		// Get next token
 		token = tok.nextToken();
 	}
-	
-	// Add the ParticleDef to the map
-	_particleDefs.insert(ParticleDefMap::value_type(name, pdef));
 }
 
 const std::string& ParticlesManager::getName() const
@@ -162,11 +180,8 @@ void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "ParticlesManager::initialiseModule called" << std::endl;
 	
-	// Use a ParticleFileLoader to load each file
-	ParticleFileLoader loader(*this);
-
-	ScopedDebugTimer timer("Particle definitions parsed: ");
-	GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, loader, 1);
+	// Load the .prt files
+	reloadParticleDefs();
 
 	// Register the "ReloadParticles" commands
 	GlobalCommandSystem().addCommand("ReloadParticles", boost::bind(&ParticlesManager::reloadParticleDefs, this));
@@ -175,7 +190,11 @@ void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 
 void ParticlesManager::reloadParticleDefs()
 {
-	// TODO
+	// Use a ParticleFileLoader to load each file
+	ParticleFileLoader loader(*this);
+
+	ScopedDebugTimer timer("Particle definitions parsed: ");
+	GlobalFileSystem().forEachFile(PARTICLES_DIR, PARTICLES_EXT, loader, 1);
 }
 
 } // namespace particles

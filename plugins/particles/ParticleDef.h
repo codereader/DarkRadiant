@@ -43,6 +43,13 @@ public:
 		return _name;
 	}
 
+	// Clears everything but the name of this particle (stages, depthhack)
+	void clear()
+	{
+		_depthHack = false;
+		_stages.clear();
+	}
+
 	float getDepthHack() const
 	{
 		return _depthHack;

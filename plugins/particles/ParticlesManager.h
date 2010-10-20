@@ -52,6 +52,9 @@ public:
 private:
 	// Recursive-descent parse functions
 	void parseParticleDef(parser::DefTokeniser& tok);
+
+	// Finds or creates the particle def with the given name, always returns non-NULL
+	ParticleDefPtr findOrInsertParticleDef(const std::string& name);
 };
 typedef boost::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 
