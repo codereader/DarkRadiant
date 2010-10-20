@@ -119,7 +119,9 @@ ParticlePreview::ParticlePreview() :
 		GlobalUIManager().getLocalPixbufWithMask("axes.png"))));
 	_showAxesButton->set_tooltip_text(_("Show coordinate axes"));
 
-	Gtk::ToolButton* reloadButton = Gtk::manage(new Gtk::ToolButton("Reload Particles"));
+	Gtk::ToolButton* reloadButton = Gtk::manage(new Gtk::ToolButton);
+	reloadButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::REFRESH, Gtk::ICON_SIZE_MENU)));
+	reloadButton->set_tooltip_text(_("Reload Particle Defs"));
 	IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
 	ev->connectWidget(reloadButton);
 
