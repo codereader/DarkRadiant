@@ -251,48 +251,8 @@ public:
 			int rotFactor = i % 2 == 0 ? -1 : 1;
 			angle += rotFactor * integrate(_stage.getRotationSpeed(), particleTimeSecs);
 
-			// Calculate render colour
-			Vector4 colour = _stage.getColour();
-
-			// Consider fade index fraction, which can spawn particles already faded to some extent
-			float fadeIndexFraction = _stage.getFadeIndexFraction();
-
-			if (fadeIndexFraction > 0)
-			{
-				// greebo: The linear fading function goes like this:
-				// frac(t) = (startFrac - t) / (startFrac - 1) with t in [0..1]
-				// Boundary conditions: frac(1) = 1 and frac(startFrac) = 0
-
-				// Use the particle index as "time", normalised to [0..1]
-				// such that particle with higher index start more faded
-				float pIdx = static_cast<float>(i) / _stage.getCount();
-
-				// Calculate how much we should be faded already
-				float startFrac = 1.0f - fadeIndexFraction;
-				float frac = (startFrac - pIdx) / (startFrac - 1.0f);
-				
-				// Ignore negative fraction values, this also takes care that only
-				// those particles with time >= fadeIndexFraction get faded.
-				if (frac > 0)
-				{
-					colour = lerpColour(colour, _stage.getFadeColour(), frac);
-				}
-			}
-
-			float fadeInFraction = _stage.getFadeInFraction();
-
-			if (fadeInFraction > 0 && timeFraction <= fadeInFraction)
-			{
-				colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), timeFraction / fadeInFraction); 
-			}
-
-			float fadeOutFraction = _stage.getFadeOutFraction();
-			float fadeOutFractionInverse = 1.0f - fadeOutFraction;
-
-			if (fadeOutFraction > 0 && timeFraction >= fadeOutFractionInverse)
-			{
-				colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (timeFraction - fadeOutFractionInverse) / fadeOutFraction);
-			}
+			// Calculate render colour for this particle (pass the index)
+			Vector4 colour = calculateColour(timeFraction, i);
 
 			// Consider aspect ratio
 			float aspect = _stage.getAspect().evaluate(timeFraction);
@@ -363,6 +323,53 @@ public:
 	}
 
 private:
+	Vector4 calculateColour(float timeFraction, std::size_t particleIndex)
+	{
+		Vector4 colour = _stage.getColour();
+
+		// Consider fade index fraction, which can spawn particles already faded to some extent
+		float fadeIndexFraction = _stage.getFadeIndexFraction();
+
+		if (fadeIndexFraction > 0)
+		{
+			// greebo: The linear fading function goes like this:
+			// frac(t) = (startFrac - t) / (startFrac - 1) with t in [0..1]
+			// Boundary conditions: frac(1) = 1 and frac(startFrac) = 0
+
+			// Use the particle index as "time", normalised to [0..1]
+			// such that particle with higher index start more faded
+			float pIdx = static_cast<float>(particleIndex) / _stage.getCount();
+
+			// Calculate how much we should be faded already
+			float startFrac = 1.0f - fadeIndexFraction;
+			float frac = (startFrac - pIdx) / (startFrac - 1.0f);
+			
+			// Ignore negative fraction values, this also takes care that only
+			// those particles with time >= fadeIndexFraction get faded.
+			if (frac > 0)
+			{
+				colour = lerpColour(colour, _stage.getFadeColour(), frac);
+			}
+		}
+
+		float fadeInFraction = _stage.getFadeInFraction();
+
+		if (fadeInFraction > 0 && timeFraction <= fadeInFraction)
+		{
+			colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), timeFraction / fadeInFraction); 
+		}
+
+		float fadeOutFraction = _stage.getFadeOutFraction();
+		float fadeOutFractionInverse = 1.0f - fadeOutFraction;
+
+		if (fadeOutFraction > 0 && timeFraction >= fadeOutFractionInverse)
+		{
+			colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (timeFraction - fadeOutFractionInverse) / fadeOutFraction);
+		}
+
+		return colour;
+	}
+
 	float integrate(const IParticleParameter& param, float time)
 	{
 		return (param.getTo() - param.getFrom()) / SEC2MS(_stage.getDuration()) * time*time * 0.5f + param.getFrom() * time;
