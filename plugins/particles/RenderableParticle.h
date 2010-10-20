@@ -48,10 +48,11 @@ private:
 
 public:
 	RenderableParticle(const IParticleDefPtr& particleDef) :
-		_particleDef(particleDef),
+		_particleDef(), // don't initialise the ptr yet
 		_random(rand()) // use a random seed
 	{
-		setupStages();
+		// Use this method, for observer handling
+		setParticleDef(particleDef);
 	}
 
 	// Time is in msecs

@@ -49,7 +49,8 @@ public:
 		return _name;
 	}
 
-	// Clears everything but the name of this particle (stages, depthhack)
+	// Clears stage and depth hack information
+	// Name and observers are NOT cleared
 	void clear()
 	{
 		_depthHack = false;
