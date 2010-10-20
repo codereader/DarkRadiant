@@ -55,6 +55,12 @@ public:
 		setParticleDef(particleDef);
 	}
 
+	~RenderableParticle()
+	{
+		// Clear the particle def reference (remove this class as observer)
+		setParticleDef(IParticleDefPtr());
+	}
+
 	// Time is in msecs
 	void update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation)
 	{
@@ -169,6 +175,8 @@ private:
 	void setupStages()
 	{
 		_shaderMap.clear();
+
+		if (_particleDef == NULL) return; // nothing to do.
 
 		for (std::size_t i = 0; i < _particleDef->getNumStages(); ++i)
 		{
