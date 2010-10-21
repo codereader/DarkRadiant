@@ -88,9 +88,10 @@ public:
 	const AABB& getBounds();
 
 private:
+	// Time is measured in seconds!
 	float integrate(const IParticleParameter& param, float time)
 	{
-		return (param.getTo() - param.getFrom()) / SEC2MS(_stage.getDuration()) * time*time * 0.5f + param.getFrom() * time;
+		return (param.getTo() - param.getFrom()) / _stage.getDuration() * time*time * 0.5f + param.getFrom() * time;
 	}
 
 	Vector4 lerpColour(const Vector4& startColour, const Vector4& endColour, float fraction)
