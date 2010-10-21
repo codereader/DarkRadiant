@@ -63,10 +63,9 @@ void RenderableParticleBunch::update(std::size_t time)
 		float particleTimeSecs = MS2SEC(particleTime);
 
 		// Calculate particle origin at time t
-		Vector3 particleOrigin = getOrigin(particleTimeSecs);
-
-		// Consider gravity, ignore "world" parameter for now
-		particleOrigin += Vector3(0,0,-1) * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
+		Vector3 particleOrigin;
+		Vector3 particleVelocity;
+		getOriginAndVelocity(particleTimeSecs, particleOrigin, particleVelocity);
 
 		// Get the initial angle value
 		float angle = _stage.getInitialAngle();
@@ -211,10 +210,11 @@ Vector4 RenderableParticleBunch::getColour(float timeFraction, std::size_t parti
 	return colour;
 }
 
-Vector3 RenderableParticleBunch::getOrigin(float particleTimeSecs)
+void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, Vector3& particleOrigin, Vector3& particleVelocity)
 {
-	// Consider offset
-	Vector3 particleOrigin = _offset;
+	// Consider offset as starting point
+	particleOrigin = _offset;
+	particleVelocity.set(0,0,0);
 
 	switch (_stage.getCustomPathType())
 	{
@@ -304,7 +304,11 @@ Vector3 RenderableParticleBunch::getOrigin(float particleTimeSecs)
 		break;
 	};
 
-	return particleOrigin;
+	// Consider gravity
+	// if "world" is set, use -z as gravity direction, otherwise use the reverse emitter direction
+	Vector3 gravity = _stage.getWorldGravityFlag() ? Vector3(0,0,-1) : -_direction.getNormalised();
+
+	particleOrigin += gravity * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
 }
 
 // baseDirection should be normalised and not degenerate
