@@ -426,6 +426,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\particles\ParticleQuad.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\particles\particles.cpp"
 				>
 			</File>
@@ -446,11 +450,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\particles\RenderableParticle.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\particles\RenderableParticle.h"
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\particles\RenderableParticleBunch.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\particles\RenderableParticleBunch.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\particles\RenderableParticleStage.cpp"
 				>
 			</File>
 			<File
