@@ -65,7 +65,7 @@ void RenderableParticleBunch::update(std::size_t time)
 		// Calculate particle origin at time t
 		Vector3 particleOrigin;
 		Vector3 particleVelocity;
-		getOriginAndVelocity(particleTimeSecs, particleOrigin, particleVelocity);
+		getOriginAndVelocity(particleTimeSecs, timeFraction, particleOrigin, particleVelocity);
 
 		// Get the initial angle value
 		float angle = _stage.getInitialAngle();
@@ -210,11 +210,11 @@ Vector4 RenderableParticleBunch::getColour(float timeFraction, std::size_t parti
 	return colour;
 }
 
-void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, Vector3& particleOrigin, Vector3& particleVelocity)
+void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float timeFraction,
+												   Vector3& particleOrigin, Vector3& particleVelocity)
 {
 	// Consider offset as starting point
 	particleOrigin = _offset;
-	particleVelocity.set(0,0,0);
 
 	switch (_stage.getCustomPathType())
 	{
@@ -231,6 +231,9 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, Vecto
 			
 			// Consider speed
 			particleOrigin += particleDirection * integrate(_stage.getSpeed(), particleTimeSecs);
+
+			// Save velocity for later use
+			particleVelocity = particleDirection * _stage.getSpeed().evaluate(timeFraction);
 		}
 		break;
 
@@ -263,8 +266,21 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, Vecto
 			float phi = phi0 + axialSpeed * particleTimeSecs;
 			float theta = theta0 + radialSpeed * particleTimeSecs;
 
+			// Pre-calculate the sin/cos values
+			float cosPhi = cos(phi);
+			float sinPhi = sin(phi);
+			float cosTheta = cos(theta);
+			float sinTheta = sin(theta);
+
 			// Move the particle origin
-			particleOrigin += Vector3(radius * cos(theta) * sin(phi), radius * sin(theta) * sin(phi), radius * cos(phi));
+			particleOrigin += Vector3(radius * cosTheta * sinPhi, radius * sinTheta * sinPhi, radius * cosPhi);
+
+			// Calculate the time derivative as velocity
+			particleVelocity = Vector3(
+				radius * (cosTheta * cosPhi * axialSpeed - sinTheta * sinPhi * radialSpeed),	// dx/dt
+				radius * (cosTheta * sinPhi * radialSpeed + sinTheta * cosPhi * axialSpeed),	// dy/dt
+				radius * (-1) * sinTheta * axialSpeed											// dz/dt
+			);
 		}
 		break;
 
@@ -285,11 +301,20 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, Vecto
 			float phi0 = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
 			float z0 = sizeZ * (2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f);
 
-			float x = sizeX * cos(phi0 + radialSpeed * particleTimeSecs);
-			float y = sizeY * sin(phi0 + radialSpeed * particleTimeSecs);
+			float sinPhi = sin(phi0 + radialSpeed * particleTimeSecs);
+			float cosPhi = cos(phi0 + radialSpeed * particleTimeSecs);
+
+			float x = sizeX * cosPhi;
+			float y = sizeY * sinPhi;
 			float z = z0 + axialSpeed * particleTimeSecs;
 
 			particleOrigin += Vector3(x, y, z);
+
+			particleVelocity = Vector3(
+				sizeX * (-1) * sinPhi * radialSpeed,	// dx/dt
+				sizeY * cosPhi * radialSpeed,			// dy/dt
+				axialSpeed								// dz/dt
+			);
 		}
 		break;
 
@@ -297,10 +322,12 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, Vecto
 	case IParticleStage::PATH_DRIP:
 		// These are actually unsupported by the engine ("bad path type")
 		globalWarningStream() << "Unsupported path type (drip/orbit)." << std::endl;
+		particleVelocity.set(0,0,0);
 		break;
 
 	default:
 		// Nothing
+		particleVelocity.set(0,0,0);
 		break;
 	};
 
@@ -309,6 +336,9 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, Vecto
 	Vector3 gravity = _stage.getWorldGravityFlag() ? Vector3(0,0,-1) : -_direction.getNormalised();
 
 	particleOrigin += gravity * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
+
+	// Add gravity to particle speed result
+	particleVelocity += gravity * _stage.getGravity() * particleTimeSecs;
 }
 
 // baseDirection should be normalised and not degenerate
@@ -356,7 +386,7 @@ Vector3 RenderableParticleBunch::getDirection(const Vector3& baseDirection, cons
 			// Consider upwards bias
 			direction.z() += _stage.getDirectionParm(0);
 
-			return direction;
+			return direction; // CHECKME: Use .getNormalised() ?
 		}
 	default:
 		return Vector3(0,0,1);

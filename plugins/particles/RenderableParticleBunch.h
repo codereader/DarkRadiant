@@ -101,7 +101,7 @@ private:
 	Vector4 getColour(float timeFraction, std::size_t particleIndex);
 
 	// Calculates origin and velocity at the given time, write result back to the given vectors
-	void getOriginAndVelocity(float particleTimeSecs, Vector3& particleOrigin, Vector3& particleVelocity);
+	void getOriginAndVelocity(float particleTimeSecs, float timeFraction, Vector3& particleOrigin, Vector3& particleVelocity);
 
 	// baseDirection should be normalised and not degenerate
 	Vector3 getDirection(const Vector3& baseDirection, const Vector3& distributionOffset);
