@@ -5,7 +5,8 @@ namespace particles
 
 RenderableParticle::RenderableParticle(const IParticleDefPtr& particleDef) :
 	_particleDef(), // don't initialise the ptr yet
-	_random(rand()) // use a random seed
+	_random(rand()), // use a random seed
+	_direction(0,0,1) // default direction
 {
 	// Use this method, for observer handling
 	setParticleDef(particleDef);

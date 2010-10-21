@@ -156,6 +156,7 @@ ParticlesChooser& ParticlesChooser::getInstance()
 		instancePtr.reset(new ParticlesChooser);
 
 		GlobalRadiant().addEventListener(instancePtr);
+		GlobalParticlesManager().addObserver(instancePtr.get());
 	}
 
 	return *instancePtr;
