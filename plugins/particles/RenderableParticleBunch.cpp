@@ -95,11 +95,26 @@ void RenderableParticleBunch::update(std::size_t time)
 		// Calculate render colour for this particle (pass the index)
 		Vector4 colour = getColour(timeFraction, i);
 
+		// Consider quad size
+		float size = _stage.getSize().evaluate(timeFraction);
+
 		// Consider aspect ratio
 		float aspect = _stage.getAspect().evaluate(timeFraction);
 
 		// Consider animation frames
 		std::size_t animFrames = static_cast<std::size_t>(_stage.getAnimationFrames());
+
+		// For aimed orientation, we need to override particle height and aspect
+		if (_stage.getOrientationType() == IParticleStage::ORIENTATION_AIMED)
+		{
+			// particle height is half the velocity
+			float height = static_cast<float>(particleVelocity.getLength()) * 0.5f;
+
+			// Abuse aspect ratio to set the particle width to the desired value
+			aspect = size / height;
+
+			size = height;
+		}
 
 		if (animFrames > 0)
 		{
@@ -130,13 +145,13 @@ void RenderableParticleBunch::update(std::size_t time)
 			float sWidth = 1.0f / animFrames;
 
 			// Calculate the texture space for each frame and push the quads
-			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), aspect, angle, curColour, sWidth * curFrame, sWidth);
-			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), aspect, angle, nextColour, sWidth * nextFrame, sWidth);
+			pushQuad(particleOrigin, size, aspect, angle, curColour, sWidth * curFrame, sWidth);
+			pushQuad(particleOrigin, size, aspect, angle, nextColour, sWidth * nextFrame, sWidth);
 		}
 		else
 		{
 			// Generate a single quad using the given parameters
-			pushQuad(particleOrigin, _stage.getSize().evaluate(timeFraction), aspect, angle, colour);
+			pushQuad(particleOrigin, size, aspect, angle, colour);
 		}
 	}
 }
