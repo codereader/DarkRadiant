@@ -110,7 +110,8 @@ private:
 	Vector3 getDistributionOffset(bool distributeParticlesRandomly);
 
 	// Generates a new quad using the given origin as centroid, angle is in degrees
-	void pushQuad(const Vector3& origin, float size, float aspect, float angle, 
+	void pushQuad(const Vector3& origin, const Vector3& velocity,
+				  float size, float aspect, float angle, 
 				  const Vector4& colour, float s0 = 0.0f, float sWidth = 1.0f);
 
 	void calculateBounds();

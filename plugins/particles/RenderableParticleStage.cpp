@@ -93,6 +93,10 @@ void RenderableParticleStage::calculateStageViewRotation(const Matrix4& viewRota
 {
 	switch (_stage.getOrientationType())
 	{
+	case IParticleStage::ORIENTATION_AIMED:
+		_viewRotation = viewRotation;
+		break;
+
 	case IParticleStage::ORIENTATION_VIEW:
 		_viewRotation = viewRotation;
 		break;

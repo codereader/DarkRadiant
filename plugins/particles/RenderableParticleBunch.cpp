@@ -145,13 +145,13 @@ void RenderableParticleBunch::update(std::size_t time)
 			float sWidth = 1.0f / animFrames;
 
 			// Calculate the texture space for each frame and push the quads
-			pushQuad(particleOrigin, size, aspect, angle, curColour, sWidth * curFrame, sWidth);
-			pushQuad(particleOrigin, size, aspect, angle, nextColour, sWidth * nextFrame, sWidth);
+			pushQuad(particleOrigin, particleVelocity, size, aspect, angle, curColour, sWidth * curFrame, sWidth);
+			pushQuad(particleOrigin, particleVelocity, size, aspect, angle, nextColour, sWidth * nextFrame, sWidth);
 		}
 		else
 		{
 			// Generate a single quad using the given parameters
-			pushQuad(particleOrigin, size, aspect, angle, colour);
+			pushQuad(particleOrigin, particleVelocity, size, aspect, angle, colour);
 		}
 	}
 }
@@ -516,18 +516,46 @@ Vector3 RenderableParticleBunch::getDistributionOffset(bool distributeParticlesR
 }
 
 // Generates a new quad using the given origin as centroid, angle is in degrees
-void RenderableParticleBunch::pushQuad(const Vector3& origin, float size, float aspect, float angle, 
+void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& velocity, 
+									   float size, float aspect, float angle, 
 									   const Vector4& colour, float s0, float sWidth)
 {
 	// greebo: Create a (rotated) quad facing the z axis
 	// then rotate it to fit the requested orientation
 	// finally translate it to its position.
 
-	const Vector3& normal = _viewRotation.z().getVector3();
+	if (_stage.getOrientationType() == IParticleStage::ORIENTATION_AIMED)
+	{
+		// Aimed case, the matrix is special for each particle
+		
+		// First step: transform the particle's z axis to the view
+		Vector3 zView = _viewRotation.transform(Vector3(0,0,1)).getVector3();
 
-	_quads.push_back(ParticleQuad(size, aspect, angle, colour, normal, s0, sWidth));
-	_quads.back().transform(_viewRotation);
-	_quads.back().translate(origin);
+		// Project the transformed z vector onto the plane parallel to the velocity
+		Vector3 velNormal = velocity.getNormalised();
+
+		Vector3 zProj = zView - velNormal * (zView*velNormal);
+
+		// Get the rotation matrix which is rotating the quad into aimed perspective
+		Matrix4 rot = Matrix4::getRotation(zView, zProj);
+
+		// Post-multiply the rotation to the view
+		Matrix4 combined = _viewRotation.getMultipliedBy(rot);
+
+		const Vector3& normal = combined.z().getVector3();
+
+		_quads.push_back(ParticleQuad(size, aspect, angle, colour, normal, s0, sWidth));
+		_quads.back().transform(combined);
+		_quads.back().translate(origin);
+	}
+	else
+	{
+		const Vector3& normal = _viewRotation.z().getVector3();
+
+		_quads.push_back(ParticleQuad(size, aspect, angle, colour, normal, s0, sWidth));
+		_quads.back().transform(_viewRotation);
+		_quads.back().translate(origin);
+	}
 }
 
 void RenderableParticleBunch::calculateBounds()
