@@ -227,7 +227,7 @@ Plane3 Matrix4::inverseTransform(const Plane3& plane) const
 }
 
 // Return matrix product
-Matrix4 Matrix4::getMultipliedBy(const Matrix4& rhs)
+Matrix4 Matrix4::getMultipliedBy(const Matrix4& rhs) const
 {
     return Matrix4::byColumns(
         rhs[0] * _m[0] + rhs[1] * _m[4] + rhs[2] * _m[8] + rhs[3] * _m[12],

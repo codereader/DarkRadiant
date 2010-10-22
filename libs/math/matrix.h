@@ -283,7 +283,7 @@ public:
      * \brief
      * Return the result of this matrix post-multiplied by another matrix.
      */
-    Matrix4 getMultipliedBy(const Matrix4& other);
+    Matrix4 getMultipliedBy(const Matrix4& other) const;
 
     /**
      * \brief
