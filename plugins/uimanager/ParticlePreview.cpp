@@ -125,7 +125,13 @@ ParticlePreview::ParticlePreview() :
 	IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
 	ev->connectWidget(reloadButton);
 
+	_showWireFrameButton = Gtk::manage(new Gtk::ToggleToolButton);
+	/*_showWireFrameButton->set_icon_widget(*Gtk::manage(new Gtk::Image(
+		GlobalUIManager().getLocalPixbufWithMask("axes.png"))));*/
+	_showWireFrameButton->set_tooltip_text(_("Show wireframe"));
+
 	toolbar2->insert(*_showAxesButton, 0);
+	toolbar2->insert(*_showWireFrameButton, 0);
 	toolbar2->insert(*reloadButton, 0);
 	
 	toolHBox->pack_start(*toolbar, true, true, 0);
@@ -404,6 +410,40 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 
 	// Launch the back end rendering
 	_renderSystem->render(flags, modelview, projection);
+
+	if (_showWireFrameButton->get_active())
+	{
+		flags = RENDER_DEPTHTEST
+                             | RENDER_COLOURWRITE
+                             //| RENDER_DEPTHWRITE
+                             | RENDER_ALPHATEST
+                             | RENDER_BLEND
+                             | RENDER_CULLFACE
+                             | RENDER_COLOURARRAY
+                             | RENDER_OFFSETLINE
+                             | RENDER_POLYGONSMOOTH
+                             | RENDER_LINESMOOTH
+                             | RENDER_COLOURCHANGE
+							 | RENDER_LIGHTING
+							 | RENDER_SMOOTH
+							 | RENDER_SCALED;
+
+		flags |= RENDER_LIGHTING
+			   | RENDER_TEXTURE_CUBEMAP
+			   | RENDER_SMOOTH
+			   | RENDER_SCALED
+			   | RENDER_BUMP
+			   | RENDER_PROGRAM
+			   | RENDER_MATERIAL_VCOL
+			   | RENDER_VCOL_INVERT
+			   | RENDER_SCREEN;
+
+		flags |= RENDER_FORCE_COLORARRAY;
+
+		_particle->renderSolid(_renderer, _volumeTest);
+
+		_renderSystem->render(flags, modelview, projection);
+	}
 
 	// Draw coordinate axes for better orientation
 	if (_showAxesButton->get_active())
