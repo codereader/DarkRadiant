@@ -207,11 +207,11 @@ Gtk::Widget& EntityClassChooser::createTreeView()
 	Gtk::TreeViewColumn* col = Gtk::manage(
 		new gtkutil::IconTextColumn(_("Classname"), _columns.name, _columns.icon)
 	);
-	col->set_sort_column_id(_columns.name);
+	col->set_sort_column(_columns.name);
 
 	_treeView->append_column(*col);
 
-	_treeStore->set_sort_column_id(_columns.name, Gtk::SORT_ASCENDING);
+	gtkutil::TreeModel::applyFoldersFirstSortFunc(_treeStore, _columns.name, _columns.isFolder);
 
 	// Pack treeview into a scrolled frame and return
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
