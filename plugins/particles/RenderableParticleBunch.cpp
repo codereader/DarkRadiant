@@ -540,7 +540,7 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		Matrix4 rot = Matrix4::getRotation(zView, zProj);
 
 		// Post-multiply the rotation to the view
-		Matrix4 combined = _viewRotation.getMultipliedBy(rot);
+		Matrix4 combined = _viewRotation.getMultipliedBy(rot.getTransposed());
 
 		const Vector3& normal = combined.z().getVector3();
 
