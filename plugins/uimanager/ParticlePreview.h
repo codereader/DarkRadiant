@@ -36,6 +36,7 @@ private:
 	Gtk::ToolButton* _pauseButton;
 	Gtk::ToolButton* _stopButton;
 	Gtk::ToggleToolButton* _showAxesButton;
+	Gtk::ToggleToolButton* _showWireFrameButton;
 
 	// The backend rendersystem instance
 	RenderSystemPtr _renderSystem;
