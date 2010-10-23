@@ -454,7 +454,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	}
 
 	drawTime();
-	drawDebugInfo();
+	//drawDebugInfo();
 
 	return false;
 }
