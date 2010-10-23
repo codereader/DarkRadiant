@@ -46,6 +46,8 @@ public:
 
 	const AABB& getBounds();
 
+	std::string getDebugInfo();
+
 private:
 	// Returns the correct rotation matrix required by the stage orientation settings
 	void calculateStageViewRotation(const Matrix4& viewRotation);

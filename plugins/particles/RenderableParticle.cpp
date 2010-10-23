@@ -108,6 +108,22 @@ const AABB& RenderableParticle::getBounds()
 	return _bounds;
 }
 
+const std::string& RenderableParticle::getDebugInfo()
+{
+	_debugInfo.clear();
+	
+	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
+	{
+		for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
+			 stage != i->second.stages.end(); ++stage)
+		{
+			_debugInfo += (*stage)->getDebugInfo();
+		}
+	}
+
+	return _debugInfo;
+}
+
 // IParticleDef::Observer implementation
 void RenderableParticle::onParticleReload()
 {

@@ -115,6 +115,11 @@ public:
 	 * calculate and return the bounds at the time passed to update().
 	 */
 	virtual const AABB& getBounds() = 0;
+
+	/** 
+	 * greebo: Some development helper stuff.
+	 */
+	virtual const std::string& getDebugInfo() = 0;
 };
 typedef boost::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
 

@@ -127,6 +127,7 @@ private:
 
 	void drawAxes();
 	void drawTime();
+	void drawDebugInfo();
 
 	void startPlayback();
 	void stopPlayback();
