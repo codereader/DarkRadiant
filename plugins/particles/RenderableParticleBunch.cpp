@@ -528,58 +528,39 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 	{
 		// Aimed case, the matrix is special for each particle
 
-		// First step: rotate the particle such that its y axis is parallel to its velocity
+		// Get the velocity direction in object space
 		Vector3 vel = velocity.getNormalised();
-		Matrix4 velRot = Matrix4::getRotation(Vector3(0,1,0), vel);
-		
+
+		// Construct the matrices
 		Matrix4 object2Camera = _viewRotation.getTransposed();
 		const Matrix4& camera2Object = _viewRotation;
 
-		// Coordinates with "2" in their name are in camera space
-		Vector3 z = velRot.z().getVector3();
+		// The matrix rotating the particle into velocity space
+		Matrix4 object2Vel = Matrix4::getRotation(Vector3(0,1,0), vel);
 
-		Vector3 z2 = object2Camera.transform(z).getVector3();
-		Vector3 vel2 = object2Camera.transform(vel).getVector3();
-		Vector3 view2 = Vector3(0,0,-1);
-
-		// Project the z2 vector onto the plane described by vel2 and view2
-		Vector3 n2 = (-view2).crossProduct(vel2).getNormalised();
-
-		Vector3 zproj2 = z2 - n2 * z2.dot(n2);
-
-		// Transform the zproj2 back into object space
-		Vector3 zproj = camera2Object.transform(zproj2).getVector3().getNormalised();
-
-		// Calculate the angle to rotate around the velocity axis
-		double phi = z.angle(zproj);
-		double phi2 = z2.angle(zproj2);
-
-		Matrix4 m = Matrix4::getRotation(z, zproj);
-
-		// Post-multiply that rotation to the inverse view matrix
-		Matrix4 combined = m.getMultipliedBy(velRot);
-
-		// Post-multiple the velRot*m matrix on the viewrotation
-		//combined = _viewRotation.getMultipliedBy(combined);
-
-		//Matrix4 combined = _viewRotation.getMultipliedBy(velRot);
+		// Transform the view (-z) vector into object space
+		Vector3 view = camera2Object.transform(Vector3(0,0,-1)).getVector3();
 		
-		/*// First step: transform the particle's z axis to the view
-		Vector3 zView = _viewRotation.transform(Vector3(0,0,1)).getVector3();
+		// This is the particle normal in object space (after being oriented such that y || velocity)
+		Vector3 z = object2Vel.z().getVector3();
 
-		// Project the transformed z vector onto the plane parallel to the velocity
-		Vector3 velNormal = velocity.getNormalised();
+		// The particle needs to be rotated by this angle around the velocity axis
+		double aimedAngle = z.angle(-view);
 
-		Vector3 zProj = zView - velNormal * (zView*velNormal);
+		// Calculate the rotation of the particle normal towards the view vector, around the velocity axis
+		Matrix4 vel2aimed = Matrix4::getRotation(vel, aimedAngle);
 
-		// Get the rotation matrix which is rotating the quad into aimed perspective
-		Matrix4 rot = Matrix4::getRotation(zView, zProj);
+		// Test for large angles
+		Vector3 testZ = vel2aimed.transform(z).getVector3();
 
-		// Post-multiply the rotation to the view
-		Matrix4 combined = _viewRotation.getMultipliedBy(rot.getTransposed());*/
+		if (testZ.angle(-view) >= c_half_pi)
+		{
+			vel2aimed = Matrix4::getRotation(vel, aimedAngle + c_half_pi);
+		}
 
-		//Vector3 n(0,0,1);
-
+		// Combine the matrices object2Vel => vel2aimed;
+		Matrix4 combined = vel2aimed.getMultipliedBy(object2Vel);
+		
 		const Vector3& normal = combined.z().getVector3();
 
 		_quads.push_back(ParticleQuad(size, aspect, angle, colour, normal, s0, sWidth));
