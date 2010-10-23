@@ -55,6 +55,8 @@ private:
 	// The bounds of this quad group, calculated on demand
 	AABB _bounds;
 
+	std::string _debugInfo;
+
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index, 
@@ -86,6 +88,8 @@ public:
 	void render(const RenderInfo& info) const;
 
 	const AABB& getBounds();
+
+	std::string getDebugInfo();
 
 private:
 	// Time is measured in seconds!

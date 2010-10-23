@@ -3,6 +3,8 @@
 #include "itextstream.h"
 #include "math/pi.h"
 
+#include "string/string.h"
+
 namespace particles
 {
 
@@ -10,6 +12,7 @@ void RenderableParticleBunch::update(std::size_t time)
 {
 	_bounds = AABB();
 	_quads.clear();
+	_debugInfo.clear();
 
 	// Length of one cycle (duration + deadtime)
 	std::size_t cycleMsec = static_cast<std::size_t>(_stage.getCycleMsec());
@@ -540,12 +543,26 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 
 		// Transform the view (-z) vector into object space
 		Vector3 view = camera2Object.transform(Vector3(0,0,-1)).getVector3();
+
+		// Project the view vector onto the plane defined by the velocity vector
+		Vector3 viewProj = view - vel * view.dot(vel);
 		
 		// This is the particle normal in object space (after being oriented such that y || velocity)
 		Vector3 z = object2Vel.z().getVector3();
 
 		// The particle needs to be rotated by this angle around the velocity axis
-		double aimedAngle = z.angle(-view);
+		double aimedAngle = z.angle(-viewProj);
+
+		_debugInfo +=  "Aimed angle: " + doubleToStr(aimedAngle) + " - dot: " + doubleToStr(z.dot(-viewProj)) + "\n";
+
+		_debugInfo +=  "Cross: " + std::string(z.crossProduct(-viewProj)) + 
+					   " cross.dot(v): " + doubleToStr(z.crossProduct(-viewProj).dot(vel)) + "\n";
+
+		// Use the cross to check whether to rotate in negative or positive direction
+		if (z.crossProduct(-viewProj).dot(vel) > 0)
+		{
+			aimedAngle *= -1;
+		}
 
 		// Calculate the rotation of the particle normal towards the view vector, around the velocity axis
 		Matrix4 vel2aimed = Matrix4::getRotation(vel, aimedAngle);
@@ -553,10 +570,12 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		// Test for large angles
 		Vector3 testZ = vel2aimed.transform(z).getVector3();
 
-		if (testZ.angle(-view) >= c_half_pi)
+		_debugInfo += "testZ.angle(-viewProj): " + doubleToStr(testZ.angle(-viewProj)) + "\n";
+
+		/*if (testZ.angle(-viewProj) >= c_half_pi)
 		{
 			vel2aimed = Matrix4::getRotation(vel, aimedAngle + c_half_pi);
-		}
+		}*/
 
 		// Combine the matrices object2Vel => vel2aimed;
 		Matrix4 combined = vel2aimed.getMultipliedBy(object2Vel);
@@ -586,6 +605,11 @@ void RenderableParticleBunch::calculateBounds()
 		_bounds.includePoint(i->verts[2].vertex);
 		_bounds.includePoint(i->verts[3].vertex);
 	}
+}
+
+std::string RenderableParticleBunch::getDebugInfo()
+{
+	return _debugInfo;
 }
 
 } // namespace

@@ -21,6 +21,8 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 
 namespace ui
 {
@@ -452,6 +454,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	}
 
 	drawTime();
+	drawDebugInfo();
 
 	return false;
 }
@@ -503,6 +506,46 @@ void ParticlePreview::drawTime()
 	glRasterPos3f(1.0f, static_cast<float>(_previewHeight) - 1.0f, 0.0f);
 
 	GlobalOpenGL().drawString((boost::format("%.3f sec.") % (_previewTimeMsec * 0.001f)).str());
+}
+
+void ParticlePreview::drawDebugInfo()
+{
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, static_cast<float>(_previewWidth), 0, static_cast<float>(_previewHeight), -100, 100);
+
+	glScalef(1, -1, 1);
+	glTranslatef(0, -static_cast<float>(_previewHeight), 0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	if (GLEW_VERSION_1_3)
+	{
+		glClientActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_DEPTH_TEST);
+
+	glColor3f( 1.f, 1.f, 1.f );
+	glLineWidth(1);
+
+	std::vector<std::string> parts;
+	boost::algorithm::split(parts, _particle->getDebugInfo(), boost::algorithm::is_any_of("\n"));
+
+	for (std::size_t i = 0; i < parts.size(); ++i)
+	{
+		glRasterPos3f(1.0f, 10.0f + 20.0f*i, 0.0f);
+		GlobalOpenGL().drawString(parts[i]);
+	}
 }
 
 void ParticlePreview::drawAxes()

@@ -89,6 +89,24 @@ const AABB& RenderableParticleStage::getBounds()
 	return _bounds;
 }
 
+std::string RenderableParticleStage::getDebugInfo()
+{
+	std::string returnVal;
+
+	if (_bunches[0] != NULL)
+	{
+		// Get one of our seed values
+		returnVal += _bunches[0]->getDebugInfo();
+	}
+
+	if (_bunches[1] != NULL)
+	{
+		returnVal += _bunches[1]->getDebugInfo();
+	}
+
+	return returnVal;
+}
+
 void RenderableParticleStage::calculateStageViewRotation(const Matrix4& viewRotation)
 {
 	switch (_stage.getOrientationType())

@@ -47,6 +47,9 @@ private:
 	// by calls to getBounds(), otherwise might hold outdated bounds information.
 	AABB _bounds;
 
+	// Holds debug text
+	std::string _debugInfo;
+
 public:
 	RenderableParticle(const IParticleDefPtr& particleDef);
 
@@ -66,6 +69,8 @@ public:
 
 	// Updates bounds from stages and returns the value
 	const AABB& getBounds();
+
+	const std::string& getDebugInfo();
 
 	// IParticleDef::Observer implementation
 	void onParticleReload();
