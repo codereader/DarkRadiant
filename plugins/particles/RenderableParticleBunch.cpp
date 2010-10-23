@@ -110,13 +110,13 @@ void RenderableParticleBunch::update(std::size_t time)
 		// For aimed orientation, we need to override particle height and aspect
 		if (_stage.getOrientationType() == IParticleStage::ORIENTATION_AIMED)
 		{
-			// particle height is half the velocity
+			// Total particle height is half the velocity, so set size to v/4
 			float height = static_cast<float>(particleVelocity.getLength()) * 0.5f;
 
 			// Abuse aspect ratio to set the particle width to the desired value
-			aspect = size / height;
+			aspect = 2 * size / height;
 
-			size = height;
+			size = height * 0.5f;
 		}
 
 		if (animFrames > 0)
@@ -534,8 +534,9 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		// Get the velocity direction in object space
 		Vector3 vel = velocity.getNormalised();
 
+		//_debugInfo +=  "velocity: " + std::string(vel) + "\n";
+
 		// Construct the matrices
-		Matrix4 object2Camera = _viewRotation.getTransposed();
 		const Matrix4& camera2Object = _viewRotation;
 
 		// The matrix rotating the particle into velocity space
@@ -553,10 +554,10 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		// The particle needs to be rotated by this angle around the velocity axis
 		double aimedAngle = z.angle(-viewProj);
 
-		_debugInfo +=  "Aimed angle: " + doubleToStr(aimedAngle) + " - dot: " + doubleToStr(z.dot(-viewProj)) + "\n";
+		//_debugInfo +=  "Aimed angle: " + doubleToStr(aimedAngle) + " - dot: " + doubleToStr(z.dot(-viewProj)) + "\n";
 
-		_debugInfo +=  "Cross: " + std::string(z.crossProduct(-viewProj)) + 
-					   " cross.dot(v): " + doubleToStr(z.crossProduct(-viewProj).dot(vel)) + "\n";
+		//_debugInfo +=  "Cross: " + std::string(z.crossProduct(-viewProj)) + 
+		//			   " cross.dot(v): " + doubleToStr(z.crossProduct(-viewProj).dot(vel)) + "\n";
 
 		// Use the cross to check whether to rotate in negative or positive direction
 		if (z.crossProduct(-viewProj).dot(vel) > 0)
@@ -568,9 +569,9 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		Matrix4 vel2aimed = Matrix4::getRotation(vel, aimedAngle);
 
 		// Test for large angles
-		Vector3 testZ = vel2aimed.transform(z).getVector3();
+		//Vector3 testZ = vel2aimed.transform(z).getVector3();
 
-		_debugInfo += "testZ.angle(-viewProj): " + doubleToStr(testZ.angle(-viewProj)) + "\n";
+		//_debugInfo += "testZ.angle(-viewProj): " + doubleToStr(testZ.angle(-viewProj)) + "\n";
 
 		/*if (testZ.angle(-viewProj) >= c_half_pi)
 		{
@@ -582,7 +583,7 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		
 		const Vector3& normal = combined.z().getVector3();
 
-		_quads.push_back(ParticleQuad(size, aspect, angle, colour, normal, s0, sWidth));
+		_quads.push_back(ParticleQuad(size, aspect, 0, colour, normal, s0, sWidth));
 		_quads.back().transform(combined);
 		_quads.back().translate(origin);
 	}
