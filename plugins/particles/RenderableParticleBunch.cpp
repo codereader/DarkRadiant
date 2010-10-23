@@ -527,8 +527,44 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 	if (_stage.getOrientationType() == IParticleStage::ORIENTATION_AIMED)
 	{
 		// Aimed case, the matrix is special for each particle
+
+		// First step: rotate the particle such that its y axis is parallel to its velocity
+		Vector3 vel = velocity.getNormalised();
+		Matrix4 velRot = Matrix4::getRotation(Vector3(0,1,0), vel);
 		
-		// First step: transform the particle's z axis to the view
+		Matrix4 object2Camera = _viewRotation.getTransposed();
+		const Matrix4& camera2Object = _viewRotation;
+
+		// Coordinates with "2" in their name are in camera space
+		Vector3 z = velRot.z().getVector3();
+
+		Vector3 z2 = object2Camera.transform(z).getVector3();
+		Vector3 vel2 = object2Camera.transform(vel).getVector3();
+		Vector3 view2 = Vector3(0,0,-1);
+
+		// Project the z2 vector onto the plane described by vel2 and view2
+		Vector3 n2 = (-view2).crossProduct(vel2).getNormalised();
+
+		Vector3 zproj2 = z2 - n2 * z2.dot(n2);
+
+		// Transform the zproj2 back into object space
+		Vector3 zproj = camera2Object.transform(zproj2).getVector3().getNormalised();
+
+		// Calculate the angle to rotate around the velocity axis
+		double phi = z.angle(zproj);
+		double phi2 = z2.angle(zproj2);
+
+		Matrix4 m = Matrix4::getRotation(z, zproj);
+
+		// Post-multiply that rotation to the inverse view matrix
+		Matrix4 combined = m.getMultipliedBy(velRot);
+
+		// Post-multiple the velRot*m matrix on the viewrotation
+		//combined = _viewRotation.getMultipliedBy(combined);
+
+		//Matrix4 combined = _viewRotation.getMultipliedBy(velRot);
+		
+		/*// First step: transform the particle's z axis to the view
 		Vector3 zView = _viewRotation.transform(Vector3(0,0,1)).getVector3();
 
 		// Project the transformed z vector onto the plane parallel to the velocity
@@ -540,7 +576,9 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		Matrix4 rot = Matrix4::getRotation(zView, zProj);
 
 		// Post-multiply the rotation to the view
-		Matrix4 combined = _viewRotation.getMultipliedBy(rot.getTransposed());
+		Matrix4 combined = _viewRotation.getMultipliedBy(rot.getTransposed());*/
+
+		//Vector3 n(0,0,1);
 
 		const Vector3& normal = combined.z().getVector3();
 
