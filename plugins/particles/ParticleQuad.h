@@ -92,6 +92,14 @@ struct ParticleQuad
 		verts[2].vertex = mat.transform(verts[2].vertex).getVector3();
 		verts[3].vertex = mat.transform(verts[3].vertex).getVector3();
 	}
+
+	void assignColour(const Vector4& colour)
+	{
+		verts[0].colour = colour;
+		verts[1].colour = colour;
+		verts[2].colour = colour;
+		verts[3].colour = colour;
+	}
 };
 
 } // namespace
