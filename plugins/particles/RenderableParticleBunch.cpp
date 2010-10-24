@@ -59,30 +59,33 @@ void RenderableParticleBunch::update(std::size_t time)
 		// Get the "local particle time" in msecs
 		std::size_t particleTime = cycleTime - particleStartTimeMsec;
 
+		// Generate the particle structure (our working set)
+		ParticleInfo particle;
+
+		particle.index = i;
+
 		// Calculate the time fraction [0..1]
-		float timeFraction = static_cast<float>(particleTime) / stageDurationMsec;
+		particle.timeFraction = static_cast<float>(particleTime) / stageDurationMsec;
 
 		// We need the particle time in seconds for the location/angle integrations
-		float particleTimeSecs = MS2SEC(particleTime);
+		particle.timeSecs = MS2SEC(particleTime);
 
-		// // Generate four random numbers for custom path calcs, this is needed in getOriginAndVelocity
-		float rands[4] = { static_cast<float>(_random()) / boost::rand48::max_value, 
-						   static_cast<float>(_random()) / boost::rand48::max_value, 
-						   static_cast<float>(_random()) / boost::rand48::max_value, 
-						   static_cast<float>(_random()) / boost::rand48::max_value };
+		// Generate four random numbers for custom path calcs, this is needed in getOriginAndVelocity
+		particle.rand[0] = static_cast<float>(_random()) / boost::rand48::max_value;
+		particle.rand[1] = static_cast<float>(_random()) / boost::rand48::max_value;
+		particle.rand[2] = static_cast<float>(_random()) / boost::rand48::max_value;
+		particle.rand[3] = static_cast<float>(_random()) / boost::rand48::max_value;
 
 		// Calculate particle origin at time t
-		Vector3 particleOrigin;
-		Vector3 particleVelocity;
-		getOriginAndVelocity(particleTimeSecs, timeFraction, rands, particleOrigin, particleVelocity);
+		calculateOriginAndVelocity(particle);
 
 		// Get the initial angle value
-		float angle = _stage.getInitialAngle();
+		particle.angle = _stage.getInitialAngle();
 
-		if (angle == 0)
+		if (particle.angle == 0)
 		{
 			// Use random angle
-			angle = 360 * static_cast<float>(_random()) / boost::rand48::max_value;
+			particle.angle = 360 * static_cast<float>(_random()) / boost::rand48::max_value;
 		}
 
 		// Past this point, no more "randomness" is required, so let's check if we still need
@@ -99,33 +102,44 @@ void RenderableParticleBunch::update(std::size_t time)
 		// Calculate the time-dependent angle
 		// according to docs, half the quads have negative rotation speed
 		int rotFactor = i % 2 == 0 ? -1 : 1;
-		angle += rotFactor * integrate(_stage.getRotationSpeed(), particleTimeSecs);
+		particle.angle += rotFactor * integrate(_stage.getRotationSpeed(), particle.timeSecs);
 
-		// Calculate render colour for this particle (pass the index)
-		Vector4 colour = getColour(timeFraction, i);
+		// Calculate render colour for this particle
+		calculateColour(particle);
 
 		// Consider quad size
-		float size = _stage.getSize().evaluate(timeFraction);
+		particle.size = _stage.getSize().evaluate(particle.timeFraction);
 
 		// Consider aspect ratio
-		float aspect = _stage.getAspect().evaluate(timeFraction);
+		particle.aspect = _stage.getAspect().evaluate(particle.timeFraction);
 
 		// Consider animation frames
-		std::size_t animFrames = static_cast<std::size_t>(_stage.getAnimationFrames());
+		particle.animFrames = static_cast<std::size_t>(_stage.getAnimationFrames());
+
+		if (particle.animFrames > 0)
+		{
+			// Calculate the s coordinates and the resulting particle colour
+			calculateAnim(particle);
+		}
 
 		// For aimed orientation, we need to override particle height and aspect
 		if (_stage.getOrientationType() == IParticleStage::ORIENTATION_AIMED)
 		{
-			pushAimedParticles(particleOrigin, particleTimeSecs, stageDurationMsec, size, aspect, colour, rands);
-		}
-		else if (animFrames > 0)
-		{
-			pushAnimatedQuads(animFrames, particleOrigin, particleVelocity, size, aspect, angle, colour, particleTimeSecs);
+			pushAimedParticles(particle, stageDurationMsec);
 		}
 		else
 		{
-			// Generate a single quad using the given parameters
-			pushQuad(particleOrigin, particleVelocity, size, aspect, angle, colour);
+			if (particle.animFrames > 0)
+			{
+				// Animated, push two crossfaded quads
+				pushQuad(particle, particle.curColour, particle.sWidth * particle.curFrame, particle.sWidth);
+				pushQuad(particle, particle.nextColour, particle.sWidth * particle.nextFrame, particle.sWidth);
+			}
+			else
+			{
+				// Non-animated quad
+				pushQuad(particle, particle.colour);
+			}
 		}
 	}
 }
@@ -188,9 +202,39 @@ Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
 	return vel2aimed.getMultipliedBy(object2Vel);
 }
 
-Vector4 RenderableParticleBunch::getColour(float timeFraction, std::size_t particleIndex)
+void RenderableParticleBunch::calculateAnim(ParticleInfo& particle)
 {
-	Vector4 colour = _stage.getColour();
+	// At a given time, two particles can be visible at most
+	float frameRate = _stage.getAnimationRate();
+
+	// The time interval for cross-fading, fall back to entire duration * 3 for zero animation rates
+	float frameIntervalSecs = frameRate > 0 ? 1.0f / frameRate : 3 * _stage.getDuration();
+
+	// Calculate the current frame number, wrap around
+	particle.curFrame = static_cast<std::size_t>(floor(particle.timeSecs / frameIntervalSecs)) % particle.animFrames;
+
+	// Wrap next frame around animationFrame count for looping
+	particle.nextFrame = (particle.curFrame + 1) % particle.animFrames;
+
+	// Calculate the time within the frame, relative to frame start
+	float frameMicrotime = float_mod(particle.timeSecs, frameIntervalSecs);
+
+	// As a fading lasts as long as the entire interval, the alpha gradient is the same as the FPS value
+	// The "current" particle is always fading out, the nextFrame is fading in
+	float curAlpha = 1.0f - frameRate * frameMicrotime;
+	float nextAlpha = frameRate * frameMicrotime;
+
+	particle.curColour = particle.colour * curAlpha;
+	particle.nextColour = particle.colour * nextAlpha;
+
+	// The width of a single frame in texture space
+	particle.sWidth = 1.0f / particle.animFrames;
+}
+
+void RenderableParticleBunch::calculateColour(ParticleInfo& particle)
+{
+	// We start with the stage's standard colour
+	particle.colour = _stage.getColour();
 
 	// Consider fade index fraction, which can spawn particles already faded to some extent
 	float fadeIndexFraction = _stage.getFadeIndexFraction();
@@ -203,7 +247,7 @@ Vector4 RenderableParticleBunch::getColour(float timeFraction, std::size_t parti
 
 		// Use the particle index as "time", normalised to [0..1]
 		// such that particle with higher index start more faded
-		float pIdx = static_cast<float>(particleIndex) / _stage.getCount();
+		float pIdx = static_cast<float>(particle.index) / _stage.getCount();
 
 		// Calculate how much we should be faded already
 		float startFrac = 1.0f - fadeIndexFraction;
@@ -213,33 +257,30 @@ Vector4 RenderableParticleBunch::getColour(float timeFraction, std::size_t parti
 		// those particles with time >= fadeIndexFraction get faded.
 		if (frac > 0)
 		{
-			colour = lerpColour(colour, _stage.getFadeColour(), frac);
+			particle.colour = lerpColour(particle.colour, _stage.getFadeColour(), frac);
 		}
 	}
 
 	float fadeInFraction = _stage.getFadeInFraction();
 
-	if (fadeInFraction > 0 && timeFraction <= fadeInFraction)
+	if (fadeInFraction > 0 && particle.timeFraction <= fadeInFraction)
 	{
-		colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), timeFraction / fadeInFraction); 
+		particle.colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), particle.timeFraction / fadeInFraction); 
 	}
 
 	float fadeOutFraction = _stage.getFadeOutFraction();
 	float fadeOutFractionInverse = 1.0f - fadeOutFraction;
 
-	if (fadeOutFraction > 0 && timeFraction >= fadeOutFractionInverse)
+	if (fadeOutFraction > 0 && particle.timeFraction >= fadeOutFractionInverse)
 	{
-		colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (timeFraction - fadeOutFractionInverse) / fadeOutFraction);
+		particle.colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (particle.timeFraction - fadeOutFractionInverse) / fadeOutFraction);
 	}
-
-	return colour;
 }
 
-void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float timeFraction, float rands[4],
-												   Vector3& particleOrigin, Vector3& particleVelocity)
+void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 {
 	// Consider offset as starting point
-	particleOrigin = _offset;
+	particle.origin = _offset;
 
 	switch (_stage.getCustomPathType())
 	{
@@ -249,16 +290,16 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float
 			Vector3 distributionOffset = getDistributionOffset(_distributeParticlesRandomly);
 
 			// Add this to the origin
-			particleOrigin += distributionOffset;
+			particle.origin += distributionOffset;
 
 			// Calculate particle direction, pass distribution offset (this is needed for DIRECTION_OUTWARD)
 			Vector3 particleDirection = getDirection(_direction, distributionOffset);
 			
 			// Consider speed
-			particleOrigin += particleDirection * integrate(_stage.getSpeed(), particleTimeSecs);
+			particle.origin += particleDirection * integrate(_stage.getSpeed(), particle.timeSecs);
 
 			// Save velocity for later use
-			particleVelocity = particleDirection * _stage.getSpeed().evaluate(timeFraction);
+			particle.velocity = particleDirection * _stage.getSpeed().evaluate(particle.timeFraction);
 		}
 		break;
 
@@ -274,22 +315,22 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float
 			float radius = _stage.getCustomPathParm(2);
 
 			// Generate starting conditions speed (+/-50%)
-			float rand = 2 * rands[0] - 1.0f;
+			float rand = 2 * particle.rand[0] - 1.0f;
 			float radialSpeedFactor = 1.0f + 0.5f * rand * rand;
 
 			// greebo: factor 0.4 is empirical, I measured a few D3 particles for their circulation times
 			float radialSpeed = _stage.getCustomPathParm(0) * radialSpeedFactor * 0.4f;
 
-			rand = 2 * rands[1] - 1.0f;
+			rand = 2 * particle.rand[1] - 1.0f;
 			float axialSpeedFactor = 1.0f + 0.5f * rand * rand;
 			float axialSpeed = _stage.getCustomPathParm(1) * axialSpeedFactor * 0.4f;
 
-			float phi0 = 2 * static_cast<float>(c_pi) * rands[2];
-			float theta0 = static_cast<float>(c_pi) * rands[3];
+			float phi0 = 2 * static_cast<float>(c_pi) * particle.rand[2];
+			float theta0 = static_cast<float>(c_pi) * particle.rand[3];
 
 			// Calculate angles at the given particleTime
-			float phi = phi0 + axialSpeed * particleTimeSecs;
-			float theta = theta0 + radialSpeed * particleTimeSecs;
+			float phi = phi0 + axialSpeed * particle.timeSecs;
+			float theta = theta0 + radialSpeed * particle.timeSecs;
 
 			// Pre-calculate the sin/cos values
 			float cosPhi = cos(phi);
@@ -298,10 +339,10 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float
 			float sinTheta = sin(theta);
 
 			// Move the particle origin
-			particleOrigin += Vector3(radius * cosTheta * sinPhi, radius * sinTheta * sinPhi, radius * cosPhi);
+			particle.origin += Vector3(radius * cosTheta * sinPhi, radius * sinTheta * sinPhi, radius * cosPhi);
 
 			// Calculate the time derivative as velocity
-			particleVelocity = Vector3(
+			particle.velocity = Vector3(
 				radius * (cosTheta * cosPhi * axialSpeed - sinTheta * sinPhi * radialSpeed),	// dx/dt
 				radius * (cosTheta * sinPhi * radialSpeed + sinTheta * cosPhi * axialSpeed),	// dy/dt
 				radius * (-1) * sinTheta * axialSpeed											// dz/dt
@@ -320,22 +361,22 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float
 			float sizeY = _stage.getCustomPathParm(1);
 			float sizeZ = _stage.getCustomPathParm(2);
 
-			float radialSpeed = _stage.getCustomPathParm(3) * (2 * rands[0] - 1.0f);
-			float axialSpeed = _stage.getCustomPathParm(4) * (2 * rands[1] - 1.0f);
+			float radialSpeed = _stage.getCustomPathParm(3) * (2 * particle.rand[0] - 1.0f);
+			float axialSpeed = _stage.getCustomPathParm(4) * (2 * particle.rand[1] - 1.0f);
 
-			float phi0 = 2 * static_cast<float>(c_pi) * rands[2];
-			float z0 = sizeZ * (2 * rands[3] - 1.0f);
+			float phi0 = 2 * static_cast<float>(c_pi) * particle.rand[2];
+			float z0 = sizeZ * (2 * particle.rand[3] - 1.0f);
 
-			float sinPhi = sin(phi0 + radialSpeed * particleTimeSecs);
-			float cosPhi = cos(phi0 + radialSpeed * particleTimeSecs);
+			float sinPhi = sin(phi0 + radialSpeed * particle.timeSecs);
+			float cosPhi = cos(phi0 + radialSpeed * particle.timeSecs);
 
 			float x = sizeX * cosPhi;
 			float y = sizeY * sinPhi;
-			float z = z0 + axialSpeed * particleTimeSecs;
+			float z = z0 + axialSpeed * particle.timeSecs;
 
-			particleOrigin += Vector3(x, y, z);
+			particle.origin += Vector3(x, y, z);
 
-			particleVelocity = Vector3(
+			particle.velocity = Vector3(
 				sizeX * (-1) * sinPhi * radialSpeed,	// dx/dt
 				sizeY * cosPhi * radialSpeed,			// dy/dt
 				axialSpeed								// dz/dt
@@ -347,12 +388,12 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float
 	case IParticleStage::PATH_DRIP:
 		// These are actually unsupported by the engine ("bad path type")
 		globalWarningStream() << "Unsupported path type (drip/orbit)." << std::endl;
-		particleVelocity.set(0,0,0);
+		particle.velocity.set(0,0,0);
 		break;
 
 	default:
 		// Nothing
-		particleVelocity.set(0,0,0);
+		particle.velocity.set(0,0,0);
 		break;
 	};
 
@@ -360,10 +401,10 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float
 	// if "world" is set, use -z as gravity direction, otherwise use the reverse emitter direction
 	Vector3 gravity = _stage.getWorldGravityFlag() ? Vector3(0,0,-1) : -_direction.getNormalised();
 
-	particleOrigin += gravity * _stage.getGravity() * particleTimeSecs * particleTimeSecs * 0.5f;
+	particle.origin += gravity * _stage.getGravity() * particle.timeSecs * particle.timeSecs * 0.5f;
 
 	// Add gravity to particle speed result
-	particleVelocity += gravity * _stage.getGravity() * particleTimeSecs;
+	particle.velocity += gravity * _stage.getGravity() * particle.timeSecs;
 }
 
 // baseDirection should be normalised and not degenerate
@@ -526,58 +567,19 @@ Vector3 RenderableParticleBunch::getDistributionOffset(bool distributeParticlesR
 }
 
 // Generates a new quad using the given origin as centroid, angle is in degrees
-void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& velocity, 
-									   float size, float aspect, float angle, 
-									   const Vector4& colour, float s0, float sWidth)
+void RenderableParticleBunch::pushQuad(ParticleInfo& particle, const Vector4& colour, float s0, float sWidth)
 {
 	// greebo: Create a (rotated) quad facing the z axis
 	// then rotate it to fit the requested orientation
 	// finally translate it to its position.
 	const Vector3& normal = _viewRotation.z().getVector3();
 
-	_quads.push_back(ParticleQuad(size, aspect, angle, colour, normal, s0, sWidth));
+	_quads.push_back(ParticleQuad(particle.size, particle.aspect, particle.angle, colour, normal, s0, sWidth));
 	_quads.back().transform(_viewRotation);
-	_quads.back().translate(origin);
+	_quads.back().translate(particle.origin);
 }
 
-void RenderableParticleBunch::pushAnimatedQuads(std::size_t animFrames, const Vector3& particleOrigin, 
-												const Vector3& particleVelocity, float size, float aspect, 
-												float angle, const Vector4& colour, float particleTimeSecs)
-{
-	// At a given time, two particles can be visible at most
-	float frameRate = _stage.getAnimationRate();
-
-	// The time interval for cross-fading, fall back to entire duration * 3 for zero animation rates
-	float frameIntervalSecs = frameRate > 0 ? 1.0f / frameRate : 3 * _stage.getDuration();
-
-	// Calculate the current frame number, wrap around
-	std::size_t curFrame = static_cast<std::size_t>(floor(particleTimeSecs / frameIntervalSecs)) % animFrames;
-
-	// Wrap next frame around animationFrame count for looping
-	std::size_t nextFrame = (curFrame + 1) % animFrames;
-
-	// Calculate the time within the frame, relative to frame start
-	float frameMicrotime = float_mod(particleTimeSecs, frameIntervalSecs);
-
-	// As a fading lasts as long as the entire interval, the alpha gradient is the same as the FPS value
-	// The "current" particle is always fading out, the nextFrame is fading in
-	float curAlpha = 1.0f - frameRate * frameMicrotime;
-	float nextAlpha = frameRate * frameMicrotime;
-
-	Vector4 curColour = colour * curAlpha;
-	Vector4 nextColour = colour * nextAlpha;
-
-	// The width of a single frame in texture space
-	float sWidth = 1.0f / animFrames;
-
-	// Calculate the texture space for each frame and push the quads
-	pushQuad(particleOrigin, particleVelocity, size, aspect, angle, curColour, sWidth * curFrame, sWidth);
-	pushQuad(particleOrigin, particleVelocity, size, aspect, angle, nextColour, sWidth * nextFrame, sWidth);
-}
-
-void RenderableParticleBunch::pushAimedParticles(const Vector3& particleOrigin, float particleTimeSecs, 
-												 std::size_t stageDurationMsec, float size, float aspect, 
-												 const Vector4& colour, float rands[4])
+void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::size_t stageDurationMsec)
 {
 	float aimedTime = _stage.getOrientationParm(0);	// time
 	int trails = static_cast<int>(_stage.getOrientationParm(1)); // trails
@@ -599,72 +601,117 @@ void RenderableParticleBunch::pushAimedParticles(const Vector3& particleOrigin, 
 	// The time delta between quads
 	float timeStep = aimedTime / numQuads;
 
-	Vector3 lastOrigin = particleOrigin;
+	Vector3 lastOrigin = particle.origin;
 	
 	for (int i = 1; i <= numQuads; ++i)
 	{
+		// Copy over the info of the incoming particle (contains anim info, colour, etc.)
+		ParticleInfo aimedParticle = particle;
+
 		// Get the time of the i-th particle in seconds, plus the fraction
-		float timeSecs = particleTimeSecs - timeStep * i;
-		float timeFrac = SEC2MS(timeSecs) / stageDurationMsec;
+		aimedParticle.timeSecs = particle.timeSecs - timeStep * i;
+		aimedParticle.timeFraction = SEC2MS(aimedParticle.timeSecs) / stageDurationMsec;
 
 		// Get origin and velocity at that time
-		Vector3 origin;
-		Vector3 velocity;
-		getOriginAndVelocity(timeSecs, timeFrac, rands, origin, velocity);
+		calculateOriginAndVelocity(aimedParticle);
 
-		float height = static_cast<float>((origin - lastOrigin).getLength());
+		float height = static_cast<float>((aimedParticle.origin - lastOrigin).getLength());
 
-		aspect = 2 * size / height;
-
-		float particleSize = height * 0.5f;
+		aimedParticle.aspect = 2 * aimedParticle.size / height;
+		aimedParticle.size = height * 0.5f;
 
 		// Calculate the vertical texture coordinates
-		float tWidth = 1.0f / static_cast<float>(numQuads);
-		float t0 = (i - 1) * tWidth;
+		aimedParticle.tWidth = 1.0f / static_cast<float>(numQuads);
+		aimedParticle.t0 = (i - 1) * aimedParticle.tWidth;
 
 		// The matrix is special for each particle. For helix and other path types
 		// it's necessary to apply the same matrix to each vertex sharing the same 3D location.
 
 		// Calculate the matrix for the "older" two vertices of the quad
-		Matrix4 local2aimed = getAimedMatrix(velocity);
+		Matrix4 local2aimed = getAimedMatrix(aimedParticle.velocity);
 
 		{
 			const Vector3& normal = local2aimed.z().getVector3();
 
 			// Ignore the angle for aimed orientation
-			_quads.push_back(ParticleQuad(particleSize, aspect, 0, colour, normal, 0, 1, t0, tWidth));
-
-			ParticleQuad& curQuad = _quads.back();
+			ParticleQuad curQuad(aimedParticle.size, aimedParticle.aspect, 0, 
+								 aimedParticle.colour, normal, 0, 1, aimedParticle.t0, aimedParticle.tWidth);
 
 			// Apply a slight origin correction before rotating them, particles are not centered around 0,0,0 here
 			curQuad.translate(Vector3(0, -height*0.5f, 0));
-			curQuad.transform(local2aimed);				
-			curQuad.translate(origin);
+			curQuad.transform(local2aimed);
+			curQuad.translate(aimedParticle.origin);
 
-			// Glue the first row of vertices to the last quad, if applicable
-			if (i > 1)
+			// Push two quads for animated particles
+			if (aimedParticle.animFrames > 0)
 			{
-				ParticleQuad& prevQuad = _quads[_quads.size() - 2];
+				// "Current" quad
+				curQuad.assignColour(aimedParticle.curColour);
 
-				// Take the midpoint 
-				curQuad.verts[0].vertex = (curQuad.verts[0].vertex + prevQuad.verts[3].vertex) * 0.5f;
-				curQuad.verts[1].vertex = (curQuad.verts[1].vertex + prevQuad.verts[2].vertex) * 0.5f;
+				float s0 = aimedParticle.sWidth * aimedParticle.curFrame;
 
-				// Snap the "previous" vertices to the same spot
-				prevQuad.verts[3].vertex = curQuad.verts[0].vertex;
-				prevQuad.verts[2].vertex = curQuad.verts[1].vertex;
+				curQuad.verts[0].texcoord[0] = s0;
+				curQuad.verts[1].texcoord[0] = s0 + aimedParticle.sWidth;
+				curQuad.verts[2].texcoord[0] = s0 + aimedParticle.sWidth;
+				curQuad.verts[3].texcoord[0] = s0;
+				
+				// Glue the first row of vertices to the last quad, if applicable
+				if (i > 1)
+				{
+					snapQuads(curQuad, *(_quads.end()-2));
+				}
 
-				// Interpolate the normals too
-				curQuad.verts[0].normal = (curQuad.verts[0].normal + prevQuad.verts[3].normal).getNormalised();
-				curQuad.verts[1].normal = (curQuad.verts[1].normal + prevQuad.verts[2].normal).getNormalised();
+				_quads.push_back(curQuad);
 
-				prevQuad.verts[3].normal = curQuad.verts[0].normal;
-				prevQuad.verts[2].normal = curQuad.verts[1].normal;
+				// "Next" quad
+				curQuad.assignColour(aimedParticle.nextColour);
+
+				s0 = aimedParticle.sWidth * aimedParticle.nextFrame;
+
+				curQuad.verts[0].texcoord[0] = s0;
+				curQuad.verts[1].texcoord[0] = s0 + aimedParticle.sWidth;
+				curQuad.verts[2].texcoord[0] = s0 + aimedParticle.sWidth;
+				curQuad.verts[3].texcoord[0] = s0;
+
+				if (i > 1)
+				{
+					snapQuads(curQuad, *(_quads.end()-2));
+				}
+
+				_quads.push_back(curQuad);
+			}
+			else
+			{
+				if (i > 1)
+				{
+					snapQuads(curQuad, _quads.back());
+				}
+
+				// Non-animated case
+				_quads.push_back(curQuad);
 			}
 		}
 
-		lastOrigin = origin;
+		lastOrigin = aimedParticle.origin;
 	}
+}
+
+void RenderableParticleBunch::snapQuads(ParticleQuad& curQuad, ParticleQuad& prevQuad)
+{
+	// Take the midpoint
+	curQuad.verts[0].vertex = (curQuad.verts[0].vertex + prevQuad.verts[3].vertex) * 0.5f;
+	curQuad.verts[1].vertex = (curQuad.verts[1].vertex + prevQuad.verts[2].vertex) * 0.5f;
+
+	// Snap the "previous" vertices to the same spot
+	prevQuad.verts[3].vertex = curQuad.verts[0].vertex;
+	prevQuad.verts[2].vertex = curQuad.verts[1].vertex;
+
+	// Interpolate the normals too
+	curQuad.verts[0].normal = (curQuad.verts[0].normal + prevQuad.verts[3].normal).getNormalised();
+	curQuad.verts[1].normal = (curQuad.verts[1].normal + prevQuad.verts[2].normal).getNormalised();
+
+	prevQuad.verts[3].normal = curQuad.verts[0].normal;
+	prevQuad.verts[2].normal = curQuad.verts[1].normal;
 }
 
 void RenderableParticleBunch::calculateBounds()

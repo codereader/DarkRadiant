@@ -57,6 +57,46 @@ private:
 
 	std::string _debugInfo;
 
+	// A structure holding info about how to draw a certain
+	// particle, including texcoords, fade colour, etc.
+	// This info can apply to a single quad or a quad group 
+	// if the particle stage is animated or aimed
+	struct ParticleInfo
+	{
+		std::size_t index;	// zero-based index of this particle within a stage
+
+		float timeSecs;		// time in seconds
+		float timeFraction;	// time fraction within particle lifetime
+
+		Vector3 origin;
+		Vector3 velocity;	// velocity of this quad/particle
+		Vector4 colour;		// resulting colour
+
+		float angle;		// the angle of the quad
+		float size;			// the desired size (might be overridden when aimed)
+		float aspect;		// the desired aspect ratio (might be overridden when aimed)
+
+		float sWidth;		// the horizontal amount of texture space occupied by this particle (for anims)
+		float t0;			// Vertical texture coordinate
+		float tWidth;		// the vertical amount of texture space occupied by this particle (for aiming)
+
+		float rand[4];		// 4 random numbers needed for custom paths
+
+		std::size_t animFrames; // animation: number of frames (0 if not animated)
+		std::size_t curFrame;	// animation: current frame
+		std::size_t nextFrame;	// animation: next frame
+
+		Vector4 curColour;
+		Vector4 nextColour;
+
+		ParticleInfo() :
+			angle(0),
+			sWidth(1),
+			t0(0),
+			tWidth(1)
+		{}
+	};
+
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index, 
@@ -103,11 +143,13 @@ private:
 		return startColour * (1.0f - fraction) + endColour * fraction;
 	}
 
-	Vector4 getColour(float timeFraction, std::size_t particleIndex);
+	void calculateColour(ParticleInfo& particle);
 
-	// Calculates origin and velocity at the given time, write result back to the given vectors
-	void getOriginAndVelocity(float particleTimeSecs, float timeFraction, float rands[4],
-							  Vector3& particleOrigin, Vector3& particleVelocity);
+	// Calculates origin and velocity at the given time, write result back to the given struct
+	void calculateOriginAndVelocity(ParticleInfo& particle);
+
+	// Handles animFrame stuff, may only be called if animFrames > 0
+	void calculateAnim(ParticleInfo& particle);
 
 	// baseDirection should be normalised and not degenerate
 	Vector3 getDirection(const Vector3& baseDirection, const Vector3& distributionOffset);
@@ -117,19 +159,15 @@ private:
 	// Calculates the matrix which rotates faces towards the viewer (used for "aimed" orientation)
 	Matrix4 getAimedMatrix(const Vector3& particleVelocity);
 
-	// Handles animation frames and pushes quads
-	void pushAnimatedQuads(std::size_t animFrames, const Vector3& particleOrigin, const Vector3& particleVelocity, 
-						   float size, float aspect, float angle, const Vector4& colour, float particleTimeSecs);
-
 	// Handles aimed particles
-	void pushAimedParticles(const Vector3& particleOrigin, float particleTimeSecs, 
-						    std::size_t stageDurationMsec, float size, float aspect, 
-							const Vector4& colour, float rands[4]);
+	void pushAimedParticles(ParticleInfo& particle, std::size_t stageDurationMsec);
 
-	// Generates a new quad using the given origin as centroid, angle is in degrees
-	void pushQuad(const Vector3& origin, const Vector3& velocity,
-				  float size, float aspect, float angle, 
-				  const Vector4& colour, float s0 = 0.0f, float sWidth = 1.0f);
+	// Generates a new quad using the given struct as data source. 
+	// colour, s0 and sWidth override the values in info
+	void pushQuad(ParticleInfo& particle, const Vector4& colour, float s0 = 0.0f, float sWidth = 1.0f);
+
+	// Makes the quad transition seamless by snapping the adjacent vertices at the midpoint
+	void snapQuads(ParticleQuad& curQuad, ParticleQuad& prevQuad);
 
 	void calculateBounds();
 };
