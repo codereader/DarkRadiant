@@ -113,6 +113,10 @@ private:
 
 	Vector3 getDistributionOffset(bool distributeParticlesRandomly);
 
+	// Handles animation frames and pushes quads
+	void pushAnimatedQuads(std::size_t animFrames, const Vector3& particleOrigin, const Vector3& particleVelocity, 
+						   float size, float aspect, float angle, const Vector4& colour, float particleTimeSecs);
+
 	// Generates a new quad using the given origin as centroid, angle is in degrees
 	void pushQuad(const Vector3& origin, const Vector3& velocity,
 				  float size, float aspect, float angle, 
