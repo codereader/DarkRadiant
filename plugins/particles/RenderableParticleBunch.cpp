@@ -110,46 +110,101 @@ void RenderableParticleBunch::update(std::size_t time)
 		// For aimed orientation, we need to override particle height and aspect
 		if (_stage.getOrientationType() == IParticleStage::ORIENTATION_AIMED)
 		{
-			// Total particle height is half the velocity, so set size to v/4
-			float height = static_cast<float>(particleVelocity.getLength()) * 0.5f;
+			float aimedTime = _stage.getOrientationParm(0);	// time
+			int trails = static_cast<int>(_stage.getOrientationParm(1)); // trails
 
-			// Abuse aspect ratio to set the particle width to the desired value
-			aspect = 2 * size / height;
+			if (trails < 0) 
+			{
+				trails = 0;
+			}
 
-			size = height * 0.5f;
+			// The time parameter defaults to 0.5 if not specified
+			if (aimedTime == 0.0f)
+			{
+				aimedTime = 0.5f;
+			}
+
+			// The time delta to step into the past
+			int numQuads = trails + 1;
+
+			// The time delta between quads
+			float timeStep = aimedTime / numQuads;
+
+			Vector3 lastOrigin = particleOrigin;
+			Vector3 lastVelocity = particleVelocity;
+
+			for (int i = 1; i <= numQuads; ++i)
+			{
+				// Get the time of the i-th particle in seconds, plus the fraction
+				float timeSecs = particleTimeSecs - timeStep * i;
+				float timeFrac = SEC2MS(timeSecs) / stageDurationMsec;
+
+				// Get origin and velocity at that time
+				Vector3 origin;
+				Vector3 velocity;
+				getOriginAndVelocity(timeSecs, timeFrac, origin, velocity);
+
+				float height = static_cast<float>((origin - lastOrigin).getLength());
+
+				aspect = 2 * size / height;
+
+				float particleSize = height * 0.5f;
+
+				// The matrix is special for each particle
+
+				{
+					// Get the velocity direction in object space
+					Vector3 vel = velocity.getNormalised();
+
+					// Construct the matrices
+					const Matrix4& camera2Object = _viewRotation;
+
+					// The matrix rotating the particle into velocity space
+					Matrix4 object2Vel = Matrix4::getRotation(Vector3(0,1,0), vel);
+
+					// Transform the view (-z) vector into object space
+					Vector3 view = camera2Object.transform(Vector3(0,0,-1)).getVector3();
+
+					// Project the view vector onto the plane defined by the velocity vector
+					Vector3 viewProj = view - vel * view.dot(vel);
+					
+					// This is the particle normal in object space (after being oriented such that y || velocity)
+					Vector3 z = object2Vel.z().getVector3();
+
+					// The particle needs to be rotated by this angle around the velocity axis
+					double aimedAngle = z.angle(-viewProj);
+
+					// Use the cross to check whether to rotate in negative or positive direction
+					if (z.crossProduct(-viewProj).dot(vel) > 0)
+					{
+						aimedAngle *= -1;
+					}
+
+					// Calculate the rotation of the particle normal towards the view vector, around the velocity axis
+					Matrix4 vel2aimed = Matrix4::getRotation(vel, aimedAngle);
+
+					// Combine the matrices object2Vel => vel2aimed;
+					Matrix4 combined = vel2aimed.getMultipliedBy(object2Vel);
+				
+					const Vector3& normal = combined.z().getVector3();
+
+					// Ignore the angle for aimed orientation
+					_quads.push_back(ParticleQuad(particleSize, aspect, 0, colour, normal));
+
+					// Apply a slight origin correction before rotating them, particles are not centered around 0,0,0 here
+					_quads.back().translate(Vector3(0, -height*0.5f, 0));
+
+					_quads.back().transform(combined);
+					_quads.back().translate(lastOrigin);
+				}
+
+				lastOrigin = origin;
+				lastVelocity = velocity;
+			}
 		}
-
-		if (animFrames > 0)
+		else if (animFrames > 0)
 		{
-			// At a given time, two particles can be visible at most
-			float frameRate = _stage.getAnimationRate();
-
-			// The time interval for cross-fading, fall back to entire duration * 3 for zero animation rates
-			float frameIntervalSecs = frameRate > 0 ? 1.0f / frameRate : 3 * _stage.getDuration();
-
-			// Calculate the current frame number, wrap around
-			std::size_t curFrame = static_cast<std::size_t>(floor(particleTimeSecs / frameIntervalSecs)) % animFrames;
-
-			// Wrap next frame around animationFrame count for looping
-			std::size_t nextFrame = (curFrame + 1) % animFrames;
-
-			// Calculate the time within the frame, relative to frame start
-			float frameMicrotime = float_mod(particleTimeSecs, frameIntervalSecs);
-
-			// As a fading lasts as long as the entire interval, the alpha gradient is the same as the FPS value
-			// The "current" particle is always fading out, the nextFrame is fading in
-			float curAlpha = 1.0f - frameRate * frameMicrotime;
-			float nextAlpha = frameRate * frameMicrotime;
-
-			Vector4 curColour = colour * curAlpha;
-			Vector4 nextColour = colour* nextAlpha;
-
-			// The width of a single frame in texture space
-			float sWidth = 1.0f / animFrames;
-
-			// Calculate the texture space for each frame and push the quads
-			pushQuad(particleOrigin, particleVelocity, size, aspect, angle, curColour, sWidth * curFrame, sWidth);
-			pushQuad(particleOrigin, particleVelocity, size, aspect, angle, nextColour, sWidth * nextFrame, sWidth);
+			pushAnimatedQuads(animFrames, particleOrigin, particleVelocity, size, aspect, angle, colour, particleTimeSecs);
 		}
 		else
 		{
@@ -534,8 +589,6 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		// Get the velocity direction in object space
 		Vector3 vel = velocity.getNormalised();
 
-		//_debugInfo +=  "velocity: " + std::string(vel) + "\n";
-
 		// Construct the matrices
 		const Matrix4& camera2Object = _viewRotation;
 
@@ -554,11 +607,6 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		// The particle needs to be rotated by this angle around the velocity axis
 		double aimedAngle = z.angle(-viewProj);
 
-		//_debugInfo +=  "Aimed angle: " + doubleToStr(aimedAngle) + " - dot: " + doubleToStr(z.dot(-viewProj)) + "\n";
-
-		//_debugInfo +=  "Cross: " + std::string(z.crossProduct(-viewProj)) + 
-		//			   " cross.dot(v): " + doubleToStr(z.crossProduct(-viewProj).dot(vel)) + "\n";
-
 		// Use the cross to check whether to rotate in negative or positive direction
 		if (z.crossProduct(-viewProj).dot(vel) > 0)
 		{
@@ -567,16 +615,6 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 
 		// Calculate the rotation of the particle normal towards the view vector, around the velocity axis
 		Matrix4 vel2aimed = Matrix4::getRotation(vel, aimedAngle);
-
-		// Test for large angles
-		//Vector3 testZ = vel2aimed.transform(z).getVector3();
-
-		//_debugInfo += "testZ.angle(-viewProj): " + doubleToStr(testZ.angle(-viewProj)) + "\n";
-
-		/*if (testZ.angle(-viewProj) >= c_half_pi)
-		{
-			vel2aimed = Matrix4::getRotation(vel, aimedAngle + c_half_pi);
-		}*/
 
 		// Combine the matrices object2Vel => vel2aimed;
 		Matrix4 combined = vel2aimed.getMultipliedBy(object2Vel);
@@ -595,6 +633,41 @@ void RenderableParticleBunch::pushQuad(const Vector3& origin, const Vector3& vel
 		_quads.back().transform(_viewRotation);
 		_quads.back().translate(origin);
 	}
+}
+
+void RenderableParticleBunch::pushAnimatedQuads(std::size_t animFrames, const Vector3& particleOrigin, 
+												const Vector3& particleVelocity, float size, float aspect, 
+												float angle, const Vector4& colour, float particleTimeSecs)
+{
+	// At a given time, two particles can be visible at most
+	float frameRate = _stage.getAnimationRate();
+
+	// The time interval for cross-fading, fall back to entire duration * 3 for zero animation rates
+	float frameIntervalSecs = frameRate > 0 ? 1.0f / frameRate : 3 * _stage.getDuration();
+
+	// Calculate the current frame number, wrap around
+	std::size_t curFrame = static_cast<std::size_t>(floor(particleTimeSecs / frameIntervalSecs)) % animFrames;
+
+	// Wrap next frame around animationFrame count for looping
+	std::size_t nextFrame = (curFrame + 1) % animFrames;
+
+	// Calculate the time within the frame, relative to frame start
+	float frameMicrotime = float_mod(particleTimeSecs, frameIntervalSecs);
+
+	// As a fading lasts as long as the entire interval, the alpha gradient is the same as the FPS value
+	// The "current" particle is always fading out, the nextFrame is fading in
+	float curAlpha = 1.0f - frameRate * frameMicrotime;
+	float nextAlpha = frameRate * frameMicrotime;
+
+	Vector4 curColour = colour * curAlpha;
+	Vector4 nextColour = colour * nextAlpha;
+
+	// The width of a single frame in texture space
+	float sWidth = 1.0f / animFrames;
+
+	// Calculate the texture space for each frame and push the quads
+	pushQuad(particleOrigin, particleVelocity, size, aspect, angle, curColour, sWidth * curFrame, sWidth);
+	pushQuad(particleOrigin, particleVelocity, size, aspect, angle, nextColour, sWidth * nextFrame, sWidth);
 }
 
 void RenderableParticleBunch::calculateBounds()
