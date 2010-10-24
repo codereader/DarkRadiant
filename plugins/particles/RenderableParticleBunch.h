@@ -121,6 +121,11 @@ private:
 	void pushAnimatedQuads(std::size_t animFrames, const Vector3& particleOrigin, const Vector3& particleVelocity, 
 						   float size, float aspect, float angle, const Vector4& colour, float particleTimeSecs);
 
+	// Handles aimed particles
+	void pushAimedParticles(const Vector3& particleOrigin, float particleTimeSecs, 
+						    std::size_t stageDurationMsec, float size, float aspect, 
+							const Vector4& colour, float rands[4]);
+
 	// Generates a new quad using the given origin as centroid, angle is in degrees
 	void pushQuad(const Vector3& origin, const Vector3& velocity,
 				  float size, float aspect, float angle, 

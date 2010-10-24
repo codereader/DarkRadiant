@@ -116,85 +116,7 @@ void RenderableParticleBunch::update(std::size_t time)
 		// For aimed orientation, we need to override particle height and aspect
 		if (_stage.getOrientationType() == IParticleStage::ORIENTATION_AIMED)
 		{
-			float aimedTime = _stage.getOrientationParm(0);	// time
-			int trails = static_cast<int>(_stage.getOrientationParm(1)); // trails
-
-			if (trails < 0) 
-			{
-				trails = 0;
-			}
-
-			// The time parameter defaults to 0.5 if not specified
-			if (aimedTime == 0.0f)
-			{
-				aimedTime = 0.5f;
-			}
-
-			// The time delta to step into the past
-			int numQuads = trails + 1;
-
-			// The time delta between quads
-			float timeStep = aimedTime / numQuads;
-
-			Vector3 lastOrigin = particleOrigin;
-			
-			for (int i = 1; i <= numQuads; ++i)
-			{
-				// Get the time of the i-th particle in seconds, plus the fraction
-				float timeSecs = particleTimeSecs - timeStep * i;
-				float timeFrac = SEC2MS(timeSecs) / stageDurationMsec;
-
-				// Get origin and velocity at that time
-				Vector3 origin;
-				Vector3 velocity;
-				getOriginAndVelocity(timeSecs, timeFrac, rands, origin, velocity);
-
-				float height = static_cast<float>((origin - lastOrigin).getLength());
-
-				aspect = 2 * size / height;
-
-				float particleSize = height * 0.5f;
-
-				// Calculate the vertical texture coordinates
-				float tWidth = 1.0f / static_cast<float>(numQuads);
-				float t0 = (i - 1) * tWidth;
-
-				// The matrix is special for each particle. For helix and other path types
-				// it's necessary to apply the same matrix to each vertex sharing the same 3D location.
-
-				// Calculate the matrix for the "older" two vertices of the quad
-				Matrix4 local2aimed = getAimedMatrix(velocity);
-
-				{
-					const Vector3& normal = local2aimed.z().getVector3();
-
-					// Ignore the angle for aimed orientation
-					_quads.push_back(ParticleQuad(particleSize, aspect, 0, colour, normal, 0, 1, t0, tWidth));
-
-					ParticleQuad& curQuad = _quads.back();
-
-					// Apply a slight origin correction before rotating them, particles are not centered around 0,0,0 here
-					curQuad.translate(Vector3(0, -height*0.5f, 0));
-					curQuad.transform(local2aimed);				
-					curQuad.translate(origin);
-
-					// Glue the first row of vertices to the last quad, if applicable
-					if (i > 1)
-					{
-						ParticleQuad& prevQuad = _quads[_quads.size() - 2];
-
-						// Take the midpoint 
-						curQuad.verts[0].vertex = (curQuad.verts[0].vertex + prevQuad.verts[3].vertex) * 0.5f;
-						curQuad.verts[1].vertex = (curQuad.verts[1].vertex + prevQuad.verts[2].vertex) * 0.5f;
-
-						// Snap the "previous" vertices to the same spot
-						prevQuad.verts[3].vertex = curQuad.verts[0].vertex;
-						prevQuad.verts[2].vertex = curQuad.verts[1].vertex;
-					}
-				}
-
-				lastOrigin = origin;
-			}
+			pushAimedParticles(particleOrigin, particleTimeSecs, stageDurationMsec, size, aspect, colour, rands);
 		}
 		else if (animFrames > 0)
 		{
@@ -651,6 +573,98 @@ void RenderableParticleBunch::pushAnimatedQuads(std::size_t animFrames, const Ve
 	// Calculate the texture space for each frame and push the quads
 	pushQuad(particleOrigin, particleVelocity, size, aspect, angle, curColour, sWidth * curFrame, sWidth);
 	pushQuad(particleOrigin, particleVelocity, size, aspect, angle, nextColour, sWidth * nextFrame, sWidth);
+}
+
+void RenderableParticleBunch::pushAimedParticles(const Vector3& particleOrigin, float particleTimeSecs, 
+												 std::size_t stageDurationMsec, float size, float aspect, 
+												 const Vector4& colour, float rands[4])
+{
+	float aimedTime = _stage.getOrientationParm(0);	// time
+	int trails = static_cast<int>(_stage.getOrientationParm(1)); // trails
+
+	if (trails < 0) 
+	{
+		trails = 0;
+	}
+
+	// The time parameter defaults to 0.5 if not specified
+	if (aimedTime == 0.0f)
+	{
+		aimedTime = 0.5f;
+	}
+
+	// The time delta to step into the past
+	int numQuads = trails + 1;
+
+	// The time delta between quads
+	float timeStep = aimedTime / numQuads;
+
+	Vector3 lastOrigin = particleOrigin;
+	
+	for (int i = 1; i <= numQuads; ++i)
+	{
+		// Get the time of the i-th particle in seconds, plus the fraction
+		float timeSecs = particleTimeSecs - timeStep * i;
+		float timeFrac = SEC2MS(timeSecs) / stageDurationMsec;
+
+		// Get origin and velocity at that time
+		Vector3 origin;
+		Vector3 velocity;
+		getOriginAndVelocity(timeSecs, timeFrac, rands, origin, velocity);
+
+		float height = static_cast<float>((origin - lastOrigin).getLength());
+
+		aspect = 2 * size / height;
+
+		float particleSize = height * 0.5f;
+
+		// Calculate the vertical texture coordinates
+		float tWidth = 1.0f / static_cast<float>(numQuads);
+		float t0 = (i - 1) * tWidth;
+
+		// The matrix is special for each particle. For helix and other path types
+		// it's necessary to apply the same matrix to each vertex sharing the same 3D location.
+
+		// Calculate the matrix for the "older" two vertices of the quad
+		Matrix4 local2aimed = getAimedMatrix(velocity);
+
+		{
+			const Vector3& normal = local2aimed.z().getVector3();
+
+			// Ignore the angle for aimed orientation
+			_quads.push_back(ParticleQuad(particleSize, aspect, 0, colour, normal, 0, 1, t0, tWidth));
+
+			ParticleQuad& curQuad = _quads.back();
+
+			// Apply a slight origin correction before rotating them, particles are not centered around 0,0,0 here
+			curQuad.translate(Vector3(0, -height*0.5f, 0));
+			curQuad.transform(local2aimed);				
+			curQuad.translate(origin);
+
+			// Glue the first row of vertices to the last quad, if applicable
+			if (i > 1)
+			{
+				ParticleQuad& prevQuad = _quads[_quads.size() - 2];
+
+				// Take the midpoint 
+				curQuad.verts[0].vertex = (curQuad.verts[0].vertex + prevQuad.verts[3].vertex) * 0.5f;
+				curQuad.verts[1].vertex = (curQuad.verts[1].vertex + prevQuad.verts[2].vertex) * 0.5f;
+
+				// Snap the "previous" vertices to the same spot
+				prevQuad.verts[3].vertex = curQuad.verts[0].vertex;
+				prevQuad.verts[2].vertex = curQuad.verts[1].vertex;
+
+				// Interpolate the normals too
+				curQuad.verts[0].normal = (curQuad.verts[0].normal + prevQuad.verts[3].normal).getNormalised();
+				curQuad.verts[1].normal = (curQuad.verts[1].normal + prevQuad.verts[2].normal).getNormalised();
+
+				prevQuad.verts[3].normal = curQuad.verts[0].normal;
+				prevQuad.verts[2].normal = curQuad.verts[1].normal;
+			}
+		}
+
+		lastOrigin = origin;
+	}
 }
 
 void RenderableParticleBunch::calculateBounds()
