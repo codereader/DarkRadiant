@@ -159,52 +159,38 @@ void RenderableParticleBunch::update(std::size_t time)
 				float tWidth = 1.0f / static_cast<float>(numQuads);
 				float t0 = (i - 1) * tWidth;
 
-				// The matrix is special for each particle
+				// The matrix is special for each particle. For helix and other path types
+				// it's necessary to apply the same matrix to each vertex sharing the same 3D location.
+
+				// Calculate the matrix for the "older" two vertices of the quad
+				Matrix4 local2aimed = getAimedMatrix(velocity);
 
 				{
-					// Get the velocity direction in object space
-					Vector3 vel = velocity.getNormalised();
-
-					// Construct the matrices
-					const Matrix4& camera2Object = _viewRotation;
-
-					// The matrix rotating the particle into velocity space
-					Matrix4 object2Vel = Matrix4::getRotation(Vector3(0,1,0), vel);
-
-					// Transform the view (-z) vector into object space
-					Vector3 view = camera2Object.transform(Vector3(0,0,-1)).getVector3();
-
-					// Project the view vector onto the plane defined by the velocity vector
-					Vector3 viewProj = view - vel * view.dot(vel);
-					
-					// This is the particle normal in object space (after being oriented such that y || velocity)
-					Vector3 z = object2Vel.z().getVector3();
-
-					// The particle needs to be rotated by this angle around the velocity axis
-					double aimedAngle = z.angle(-viewProj);
-
-					// Use the cross to check whether to rotate in negative or positive direction
-					if (z.crossProduct(-viewProj).dot(vel) > 0)
-					{
-						aimedAngle *= -1;
-					}
-
-					// Calculate the rotation of the particle normal towards the view vector, around the velocity axis
-					Matrix4 vel2aimed = Matrix4::getRotation(vel, aimedAngle);
-
-					// Combine the matrices object2Vel => vel2aimed;
-					Matrix4 combined = vel2aimed.getMultipliedBy(object2Vel);
-				
-					const Vector3& normal = combined.z().getVector3();
+					const Vector3& normal = local2aimed.z().getVector3();
 
 					// Ignore the angle for aimed orientation
 					_quads.push_back(ParticleQuad(particleSize, aspect, 0, colour, normal, 0, 1, t0, tWidth));
 
-					// Apply a slight origin correction before rotating them, particles are not centered around 0,0,0 here
-					_quads.back().translate(Vector3(0, -height*0.5f, 0));
+					ParticleQuad& curQuad = _quads.back();
 
-					_quads.back().transform(combined);
-					_quads.back().translate(lastOrigin);
+					// Apply a slight origin correction before rotating them, particles are not centered around 0,0,0 here
+					curQuad.translate(Vector3(0, -height*0.5f, 0));
+					curQuad.transform(local2aimed);				
+					curQuad.translate(origin);
+
+					// Glue the first row of vertices to the last quad, if applicable
+					if (i > 1)
+					{
+						ParticleQuad& prevQuad = _quads[_quads.size() - 2];
+
+						// Take the midpoint 
+						curQuad.verts[0].vertex = (curQuad.verts[0].vertex + prevQuad.verts[3].vertex) * 0.5f;
+						curQuad.verts[1].vertex = (curQuad.verts[1].vertex + prevQuad.verts[2].vertex) * 0.5f;
+
+						// Snap the "previous" vertices to the same spot
+						prevQuad.verts[3].vertex = curQuad.verts[0].vertex;
+						prevQuad.verts[2].vertex = curQuad.verts[1].vertex;
+					}
 				}
 
 				lastOrigin = origin;
@@ -242,6 +228,42 @@ const AABB& RenderableParticleBunch::getBounds()
 	}
 
 	return _bounds;
+}
+
+Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
+{
+	// Get the velocity direction in object space, use the same velocity for all trailing quads
+	Vector3 vel = particleVelocity.getNormalised();
+
+	// Construct the matrices
+	const Matrix4& camera2Object = _viewRotation;
+
+	// The matrix rotating the particle into velocity space
+	Matrix4 object2Vel = Matrix4::getRotation(Vector3(0,1,0), vel);
+
+	// Transform the view (-z) vector into object space
+	Vector3 view = camera2Object.transform(Vector3(0,0,-1)).getVector3();
+
+	// Project the view vector onto the plane defined by the velocity vector
+	Vector3 viewProj = view - vel * view.dot(vel);
+	
+	// This is the particle normal in object space (after being oriented such that y || velocity)
+	Vector3 z = object2Vel.z().getVector3();
+
+	// The particle needs to be rotated by this angle around the velocity axis
+	double aimedAngle = z.angle(-viewProj);
+
+	// Use the cross to check whether to rotate in negative or positive direction
+	if (z.crossProduct(-viewProj).dot(vel) > 0)
+	{
+		aimedAngle *= -1;
+	}
+
+	// Calculate the rotation of the particle normal towards the view vector, around the velocity axis
+	Matrix4 vel2aimed = Matrix4::getRotation(vel, aimedAngle);
+
+	// Combine the matrices object2Vel => vel2aimed;
+	return vel2aimed.getMultipliedBy(object2Vel);
 }
 
 Vector4 RenderableParticleBunch::getColour(float timeFraction, std::size_t particleIndex)
