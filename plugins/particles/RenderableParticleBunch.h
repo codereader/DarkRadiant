@@ -114,6 +114,9 @@ private:
 
 	Vector3 getDistributionOffset(bool distributeParticlesRandomly);
 
+	// Calculates the matrix which rotates faces towards the viewer (used for "aimed" orientation)
+	Matrix4 getAimedMatrix(const Vector3& particleVelocity);
+
 	// Handles animation frames and pushes quads
 	void pushAnimatedQuads(std::size_t animFrames, const Vector3& particleOrigin, const Vector3& particleVelocity, 
 						   float size, float aspect, float angle, const Vector4& colour, float particleTimeSecs);
