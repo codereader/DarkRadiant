@@ -60,7 +60,8 @@ struct ParticleQuad
 	 * @sWidth: defines the width of this frame in texture space.
 	 */
 	ParticleQuad(float size, float aspect, float angle, const Vector4& colour = Vector4(1,1,1,1), 
-		 const Vector3& normal = Vector3(0,0,1), float s0 = 0.0f, float sWidth = 1.0f)
+				 const Vector3& normal = Vector3(0,0,1), 
+				 float s0 = 0.0f, float sWidth = 1.0f, float t0 = 0.0f, float tWidth = 1.0f)
 	{
 		double cosPhi = cos(degrees_to_radians(angle));
 		double sinPhi = sin(degrees_to_radians(angle));
@@ -70,10 +71,10 @@ struct ParticleQuad
 			0, 0, 1, 0,
 			0, 0, 0, 1);
 
-		verts[0] = Vertex(rotation.transform(Vector3(-size*aspect, +size, 0)).getVector3(), Vector2(s0,0), colour, normal);
-		verts[1] = Vertex(rotation.transform(Vector3(+size*aspect, +size, 0)).getVector3(), Vector2(s0 + sWidth,0), colour, normal);
-		verts[2] = Vertex(rotation.transform(Vector3(+size*aspect, -size, 0)).getVector3(), Vector2(s0 + sWidth,1), colour, normal);
-		verts[3] = Vertex(rotation.transform(Vector3(-size*aspect, -size, 0)).getVector3(), Vector2(s0,1), colour, normal);
+		verts[0] = Vertex(rotation.transform(Vector3(-size*aspect, +size, 0)).getVector3(), Vector2(s0,t0), colour, normal);
+		verts[1] = Vertex(rotation.transform(Vector3(+size*aspect, +size, 0)).getVector3(), Vector2(s0 + sWidth,t0), colour, normal);
+		verts[2] = Vertex(rotation.transform(Vector3(+size*aspect, -size, 0)).getVector3(), Vector2(s0 + sWidth,t0 + tWidth), colour, normal);
+		verts[3] = Vertex(rotation.transform(Vector3(-size*aspect, -size, 0)).getVector3(), Vector2(s0,t0 + tWidth), colour, normal);
 	}
 
 	void translate(const Vector3& offset)
