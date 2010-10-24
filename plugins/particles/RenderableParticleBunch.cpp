@@ -65,10 +65,16 @@ void RenderableParticleBunch::update(std::size_t time)
 		// We need the particle time in seconds for the location/angle integrations
 		float particleTimeSecs = MS2SEC(particleTime);
 
+		// // Generate four random numbers for custom path calcs, this is needed in getOriginAndVelocity
+		float rands[4] = { static_cast<float>(_random()) / boost::rand48::max_value, 
+						   static_cast<float>(_random()) / boost::rand48::max_value, 
+						   static_cast<float>(_random()) / boost::rand48::max_value, 
+						   static_cast<float>(_random()) / boost::rand48::max_value };
+
 		// Calculate particle origin at time t
 		Vector3 particleOrigin;
 		Vector3 particleVelocity;
-		getOriginAndVelocity(particleTimeSecs, timeFraction, particleOrigin, particleVelocity);
+		getOriginAndVelocity(particleTimeSecs, timeFraction, rands, particleOrigin, particleVelocity);
 
 		// Get the initial angle value
 		float angle = _stage.getInitialAngle();
@@ -131,8 +137,7 @@ void RenderableParticleBunch::update(std::size_t time)
 			float timeStep = aimedTime / numQuads;
 
 			Vector3 lastOrigin = particleOrigin;
-			Vector3 lastVelocity = particleVelocity;
-
+			
 			for (int i = 1; i <= numQuads; ++i)
 			{
 				// Get the time of the i-th particle in seconds, plus the fraction
@@ -142,7 +147,7 @@ void RenderableParticleBunch::update(std::size_t time)
 				// Get origin and velocity at that time
 				Vector3 origin;
 				Vector3 velocity;
-				getOriginAndVelocity(timeSecs, timeFrac, origin, velocity);
+				getOriginAndVelocity(timeSecs, timeFrac, rands, origin, velocity);
 
 				float height = static_cast<float>((origin - lastOrigin).getLength());
 
@@ -203,7 +208,6 @@ void RenderableParticleBunch::update(std::size_t time)
 				}
 
 				lastOrigin = origin;
-				lastVelocity = velocity;
 			}
 		}
 		else if (animFrames > 0)
@@ -287,7 +291,7 @@ Vector4 RenderableParticleBunch::getColour(float timeFraction, std::size_t parti
 	return colour;
 }
 
-void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float timeFraction,
+void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float timeFraction, float rands[4],
 												   Vector3& particleOrigin, Vector3& particleVelocity)
 {
 	// Consider offset as starting point
@@ -326,18 +330,18 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float
 			float radius = _stage.getCustomPathParm(2);
 
 			// Generate starting conditions speed (+/-50%)
-			float rand = 2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f;
+			float rand = 2 * rands[0] - 1.0f;
 			float radialSpeedFactor = 1.0f + 0.5f * rand * rand;
 
 			// greebo: factor 0.4 is empirical, I measured a few D3 particles for their circulation times
 			float radialSpeed = _stage.getCustomPathParm(0) * radialSpeedFactor * 0.4f;
 
-			rand = 2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f;
+			rand = 2 * rands[1] - 1.0f;
 			float axialSpeedFactor = 1.0f + 0.5f * rand * rand;
 			float axialSpeed = _stage.getCustomPathParm(1) * axialSpeedFactor * 0.4f;
 
-			float phi0 = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
-			float theta0 = static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+			float phi0 = 2 * static_cast<float>(c_pi) * rands[2];
+			float theta0 = static_cast<float>(c_pi) * rands[3];
 
 			// Calculate angles at the given particleTime
 			float phi = phi0 + axialSpeed * particleTimeSecs;
@@ -372,11 +376,11 @@ void RenderableParticleBunch::getOriginAndVelocity(float particleTimeSecs, float
 			float sizeY = _stage.getCustomPathParm(1);
 			float sizeZ = _stage.getCustomPathParm(2);
 
-			float radialSpeed = _stage.getCustomPathParm(3) * (2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f);
-			float axialSpeed = _stage.getCustomPathParm(4) * (2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f);
+			float radialSpeed = _stage.getCustomPathParm(3) * (2 * rands[0] - 1.0f);
+			float axialSpeed = _stage.getCustomPathParm(4) * (2 * rands[1] - 1.0f);
 
-			float phi0 = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
-			float z0 = sizeZ * (2 * (static_cast<float>(_random()) / boost::rand48::max_value) - 1.0f);
+			float phi0 = 2 * static_cast<float>(c_pi) * rands[2];
+			float z0 = sizeZ * (2 * rands[3] - 1.0f);
 
 			float sinPhi = sin(phi0 + radialSpeed * particleTimeSecs);
 			float cosPhi = cos(phi0 + radialSpeed * particleTimeSecs);
