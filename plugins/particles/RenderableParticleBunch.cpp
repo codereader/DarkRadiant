@@ -419,29 +419,35 @@ Vector3 RenderableParticleBunch::getDirection(ParticleInfo& particle, const Vect
 	{
 	case IParticleStage::DIRECTION_CONE:
 		{
+			// Find a random vector on the sphere surface defined by the cone with apex 2*angle
+			float u = particle.rand[0];
+
+			// Scale the variable v such that it takes uniform values in the interval [(1+cos(angle))/2 .. 1]
+			float angleRad = _stage.getDirectionParm(0) * static_cast<float>(c_pi) / 180.0f;
+			float v0 = (1 + cos(angleRad)) * 0.5f;
+			float v1 = 1;
+
+			float v = v0 + particle.rand[1] * (v1 - v0);
+
+			float theta = 2 * static_cast<float>(c_pi) * u;
+			float phi = acos(2*v - 1);
+
+			Vector3 endPoint(cos(theta) * sin(phi), sin(theta) * sin(phi), cos(phi));
+
+			// Check if the main direction is different to the z axis
 			Vector3 dir = baseDirection.getNormalised();
+			Vector3 z(0,0,1);
 
-			// Find a normal vector to the base direction
-			Vector3 base1 = abs(dir.x()) < abs(dir.y()) ? 
-				(abs(dir.x()) < abs(dir.z()) ? Vector3(1,0,0) : Vector3(0,0,1)) : 
-				(abs(dir.y()) < abs(dir.z()) ? Vector3(0,1,0) : Vector3(0,0,1));
+			double deviation = dir.angle(z);
 
-			base1 = dir.crossProduct(base1);
-			base1.normalise();
+			if (deviation != 0)
+			{
+				Matrix4 rotation = Matrix4::getRotation(z, dir);
 
-			// Another vector perpendicular to baseDir, forming the second base
-			Vector3 base2 = dir.crossProduct(base1);
+				// Rotate the vector into the particle's main direction
+				endPoint = rotation.transform(endPoint).getVector3();
+			}
 
-			// Pick a random point in the disc of radius discRadius
-			float coneAngle = _stage.getDirectionParm(0) * static_cast<float>(c_pi) / 180.0f;
-			float discRadius = tan(coneAngle);
-
-			// Use sqrt(r) to fix bunching at the disc center
-			float r = discRadius * sqrt(particle.rand[0]);
-			float phi = 2 * static_cast<float>(c_pi) * particle.rand[1];
-
-			Vector3 endPoint = baseDirection + base1 * r * cos(phi) + base2 * r * sin(phi);
-			
 			return endPoint.getNormalised();
 		}
 	case IParticleStage::DIRECTION_OUTWARD:
