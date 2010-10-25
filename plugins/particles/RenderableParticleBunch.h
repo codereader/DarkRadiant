@@ -80,7 +80,7 @@ private:
 		float t0;			// Vertical texture coordinate
 		float tWidth;		// the vertical amount of texture space occupied by this particle (for aiming)
 
-		float rand[4];		// 4 random numbers needed for custom paths
+		float rand[4];		// 4 random numbers needed for pathing
 
 		std::size_t animFrames; // animation: number of frames (0 if not animated)
 		std::size_t curFrame;	// animation: current frame
@@ -152,7 +152,7 @@ private:
 	void calculateAnim(ParticleInfo& particle);
 
 	// baseDirection should be normalised and not degenerate
-	Vector3 getDirection(const Vector3& baseDirection, const Vector3& distributionOffset);
+	Vector3 getDirection(ParticleInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset);
 
 	Vector3 getDistributionOffset(bool distributeParticlesRandomly);
 

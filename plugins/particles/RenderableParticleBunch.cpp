@@ -293,7 +293,7 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 			particle.origin += distributionOffset;
 
 			// Calculate particle direction, pass distribution offset (this is needed for DIRECTION_OUTWARD)
-			Vector3 particleDirection = getDirection(_direction, distributionOffset);
+			Vector3 particleDirection = getDirection(particle, _direction, distributionOffset);
 			
 			// Consider speed
 			particle.origin += particleDirection * integrate(_stage.getSpeed(), particle.timeSecs);
@@ -408,7 +408,7 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 }
 
 // baseDirection should be normalised and not degenerate
-Vector3 RenderableParticleBunch::getDirection(const Vector3& baseDirection, const Vector3& distributionOffset)
+Vector3 RenderableParticleBunch::getDirection(ParticleInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset)
 {
 	if (baseDirection.getLengthSquared() == 0)
 	{
@@ -433,12 +433,12 @@ Vector3 RenderableParticleBunch::getDirection(const Vector3& baseDirection, cons
 			Vector3 base2 = dir.crossProduct(base1);
 
 			// Pick a random point in the disc of radius discRadius
-			float coneAngle = _stage.getDirectionParm(0);
+			float coneAngle = _stage.getDirectionParm(0) * static_cast<float>(c_pi) / 180.0f;
 			float discRadius = tan(coneAngle);
 
 			// Use sqrt(r) to fix bunching at the disc center
-			float r = discRadius * sqrt(static_cast<float>(_random()) / boost::rand48::max_value);
-			float phi = 2 * static_cast<float>(c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+			float r = discRadius * sqrt(particle.rand[0]);
+			float phi = 2 * static_cast<float>(c_pi) * particle.rand[1];
 
 			Vector3 endPoint = baseDirection + base1 * r * cos(phi) + base2 * r * sin(phi);
 			
