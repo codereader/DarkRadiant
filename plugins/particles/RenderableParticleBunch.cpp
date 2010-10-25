@@ -581,9 +581,9 @@ void RenderableParticleBunch::pushQuad(ParticleInfo& particle, const Vector4& co
 
 void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::size_t stageDurationMsec)
 {
-	float aimedTime = _stage.getOrientationParm(0);	// time
-	int trails = static_cast<int>(_stage.getOrientationParm(1)); // trails
-
+	int trails = static_cast<int>(_stage.getOrientationParm(0)); // trails
+	float aimedTime = _stage.getOrientationParm(1);	// time
+	
 	if (trails < 0) 
 	{
 		trails = 0;
@@ -640,7 +640,7 @@ void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::si
 			// Apply a slight origin correction before rotating them, particles are not centered around 0,0,0 here
 			curQuad.translate(Vector3(0, -height*0.5f, 0));
 			curQuad.transform(local2aimed);
-			curQuad.translate(aimedParticle.origin);
+			curQuad.translate(lastOrigin);
 
 			// Push two quads for animated particles
 			if (aimedParticle.animFrames > 0)
