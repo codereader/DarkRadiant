@@ -55,8 +55,6 @@ private:
 	// The bounds of this quad group, calculated on demand
 	AABB _bounds;
 
-	std::string _debugInfo;
-
 	// A structure holding info about how to draw a certain
 	// particle, including texcoords, fade colour, etc.
 	// This info can apply to a single quad or a quad group 
@@ -69,7 +67,6 @@ private:
 		float timeFraction;	// time fraction within particle lifetime
 
 		Vector3 origin;
-		Vector3 velocity;	// velocity of this quad/particle
 		Vector4 colour;		// resulting colour
 
 		float angle;		// the angle of the quad
@@ -128,8 +125,6 @@ public:
 	void render(const RenderInfo& info) const;
 
 	const AABB& getBounds();
-
-	std::string getDebugInfo();
 
 private:
 	// Time is measured in seconds!
