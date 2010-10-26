@@ -108,8 +108,20 @@ ParticlePreview::ParticlePreview() :
 	_stopButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_STOP, Gtk::ICON_SIZE_MENU)));
 	_stopButton->set_tooltip_text(_("Stop time"));
 
+	Gtk::ToolButton* nextButton = Gtk::manage(new Gtk::ToolButton);
+	nextButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlePreview::callbackStepForward));
+	nextButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_NEXT, Gtk::ICON_SIZE_MENU)));
+	nextButton->set_tooltip_text(_("Next frame"));
+
+	Gtk::ToolButton* prevButton = Gtk::manage(new Gtk::ToolButton);
+	prevButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlePreview::callbackStepBack));
+	prevButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PREVIOUS, Gtk::ICON_SIZE_MENU)));
+	prevButton->set_tooltip_text(_("Previous frame"));
+
 	toolbar->insert(*_startButton, 0);
 	toolbar->insert(*_pauseButton, 0);
+	toolbar->insert(*nextButton, 0);
+	toolbar->insert(*prevButton, 0);
 	toolbar->insert(*_stopButton, 0);
 
 	Gtk::Toolbar* toolbar2 = Gtk::manage(new Gtk::Toolbar);
@@ -313,6 +325,38 @@ void ParticlePreview::callbackPause()
 void ParticlePreview::callbackStop()
 {
 	stopPlayback();
+}
+
+void ParticlePreview::callbackStepForward()
+{
+	// Disable the button
+	_pauseButton->set_sensitive(false);
+
+	if (_timer.isEnabled())
+	{
+		_timer.disable();
+	}
+	
+	_previewTimeMsec += MSEC_PER_FRAME;
+	_glWidget->queue_draw();
+}
+
+void ParticlePreview::callbackStepBack()
+{
+	// Disable the button
+	_pauseButton->set_sensitive(false);
+
+	if (_timer.isEnabled())
+	{
+		_timer.disable();
+	}
+	
+	if (_previewTimeMsec > 0)
+	{
+		_previewTimeMsec -= MSEC_PER_FRAME;
+	}
+
+	_glWidget->queue_draw();
 }
 
 void ParticlePreview::callbackToggleAxes()
@@ -543,7 +587,7 @@ void ParticlePreview::drawDebugInfo()
 
 	for (std::size_t i = 0; i < parts.size(); ++i)
 	{
-		glRasterPos3f(1.0f, 10.0f + 20.0f*i, 0.0f);
+		glRasterPos3f(1.0f, 10.0f + 16.0f*i, 0.0f);
 		GlobalOpenGL().drawString(parts[i]);
 	}
 }
