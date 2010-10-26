@@ -100,6 +100,15 @@ struct ParticleQuad
 		verts[2].colour = colour;
 		verts[3].colour = colour;
 	}
+
+	// Sets the horizontal texture coordinates, the quad will use the interval [s0..s0+sWidth]
+	void setHorizTexCoords(float s0, float sWidth)
+	{
+		verts[0].texcoord[0] = s0;
+		verts[1].texcoord[0] = s0 + sWidth;
+		verts[2].texcoord[0] = s0 + sWidth;
+		verts[3].texcoord[0] = s0;
+	}
 };
 
 } // namespace
