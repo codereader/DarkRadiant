@@ -32,6 +32,11 @@ public:
 		_to(0)
 	{}
 
+	ParticleParameter(float constantValue) :
+		_from(constantValue),
+		_to(constantValue)
+	{}
+
 	ParticleParameter(float from, float to) :
 		_from(from),
 		_to(to)
@@ -60,6 +65,11 @@ public:
 	float evaluate(float fraction) const
 	{
 		return _from + fraction * (_to - _from);
+	}
+
+	float integrate(float fraction) const
+	{
+		return (_to - _from) * 0.5f * (fraction*fraction) + _from * fraction;
 	}
 
 	void parseFromTokens(parser::DefTokeniser& tok)
@@ -93,6 +103,10 @@ public:
 				globalErrorStream() << "[particles] Bad upper value, token is '" << 
 					val << "'" << std::endl;
 			}
+		}
+		else
+		{
+			setTo(getFrom());
 		}
 	}
 };

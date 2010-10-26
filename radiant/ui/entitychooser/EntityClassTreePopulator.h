@@ -30,6 +30,9 @@ private:
     // Key that specifies the display folder
     std::string _folderKey;
 
+	Glib::RefPtr<Gdk::Pixbuf> _folderIcon;
+	Glib::RefPtr<Gdk::Pixbuf> _entityIcon;
+
 public:
     // Constructor
 	EntityClassTreePopulator(const Glib::RefPtr<Gtk::TreeStore>& store,

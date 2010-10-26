@@ -34,6 +34,9 @@ public:
 
 	// Return a specific value. Fraction == 0 returns the lower bound value.
 	virtual float evaluate(float fraction) const = 0;
+
+	// Returns the integrated value at the point <fraction>.
+	virtual float integrate(float fraction) const = 0;
 };
 
 /**

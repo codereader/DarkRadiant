@@ -71,12 +71,21 @@ public:
 	 */
 	static Matrix4 getTranslation(const Vector3& translation);
 	
-	/* greebo: Returns the rotation matrix defined by two three-component 
+	/** 
+	 * greebo: Returns the rotation matrix defined by two three-component 
 	 * vectors.
 	 * The rotational axis is defined by the normalised cross product of those 
 	 * two vectors, the angle can be retrieved from the dot product.
 	 */
 	static Matrix4 getRotation(const Vector3& a, const Vector3& b);
+
+	/**
+	 * greebo: Returns the rotation matrix defined by an arbitrary axis 
+	 * and an angle.
+	 *
+	 * Important: the axis vector must be normalised.
+	 */
+	static Matrix4 getRotation(const Vector3& axis, const double angle);
 
     /**
      * \brief
@@ -283,7 +292,7 @@ public:
      * \brief
      * Return the result of this matrix post-multiplied by another matrix.
      */
-    Matrix4 getMultipliedBy(const Matrix4& other);
+    Matrix4 getMultipliedBy(const Matrix4& other) const;
 
     /**
      * \brief
