@@ -140,8 +140,8 @@ ParticlePreview::ParticlePreview() :
 	ev->connectWidget(reloadButton);
 
 	_showWireFrameButton = Gtk::manage(new Gtk::ToggleToolButton);
-	/*_showWireFrameButton->set_icon_widget(*Gtk::manage(new Gtk::Image(
-		GlobalUIManager().getLocalPixbufWithMask("axes.png"))));*/
+	_showWireFrameButton->set_icon_widget(*Gtk::manage(new Gtk::Image(
+		GlobalUIManager().getLocalPixbufWithMask("wireframe.png"))));
 	_showWireFrameButton->set_tooltip_text(_("Show wireframe"));
 
 	toolbar2->insert(*_showAxesButton, 0);
