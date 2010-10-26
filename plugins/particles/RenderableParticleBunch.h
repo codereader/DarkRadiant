@@ -140,8 +140,8 @@ private:
 
 	void calculateColour(ParticleInfo& particle);
 
-	// Calculates origin and velocity at the given time, write result back to the given struct
-	void calculateOriginAndVelocity(ParticleInfo& particle);
+	// Calculates origin at the given time, write result back to the given struct
+	void calculateOrigin(ParticleInfo& particle);
 
 	// Handles animFrame stuff, may only be called if animFrames > 0
 	void calculateAnim(ParticleInfo& particle);

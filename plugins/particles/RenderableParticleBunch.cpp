@@ -77,7 +77,7 @@ void RenderableParticleBunch::update(std::size_t time)
 		particle.rand[4] = static_cast<float>(_random()) / boost::rand48::max_value;
 
 		// Calculate particle origin at time t
-		calculateOriginAndVelocity(particle);
+		calculateOrigin(particle);
 
 		// Get the initial angle value
 		particle.angle = _stage.getInitialAngle();
@@ -277,7 +277,7 @@ void RenderableParticleBunch::calculateColour(ParticleInfo& particle)
 	}
 }
 
-void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
+void RenderableParticleBunch::calculateOrigin(ParticleInfo& particle)
 {
 	// Consider offset as starting point
 	particle.origin = _offset;
@@ -386,7 +386,6 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 	particle.origin += gravity * _stage.getGravity() * particle.timeSecs * particle.timeSecs * 0.5f;
 }
 
-// baseDirection should be normalised and not degenerate
 Vector3 RenderableParticleBunch::getDirection(ParticleInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset)
 {
 	if (baseDirection.getLengthSquared() == 0)
@@ -551,7 +550,6 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleInfo& particle, b
 	};
 }
 
-// Generates a new quad using the given origin as centroid, angle is in degrees
 void RenderableParticleBunch::pushQuad(ParticleInfo& particle, const Vector4& colour, float s0, float sWidth)
 {
 	// greebo: Create a (rotated) quad facing the z axis
@@ -598,7 +596,7 @@ void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::si
 		aimedParticle.timeFraction = SEC2MS(aimedParticle.timeSecs) / stageDurationMsec;
 
 		// Get origin and velocity at that time
-		calculateOriginAndVelocity(aimedParticle);
+		calculateOrigin(aimedParticle);
 
 		// Gotcha: don't bother calculating the actual velocity at the given time, just use the 
 		// difference vector of the two origins, this is enough to receive the "aimed" direction
@@ -637,13 +635,9 @@ void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::si
 				// "Current" quad
 				curQuad.assignColour(aimedParticle.curColour);
 
-				float s0 = aimedParticle.sWidth * aimedParticle.curFrame;
+				// Set the hoirzontal texcoord for the current frame
+				curQuad.setHorizTexCoords(aimedParticle.sWidth * aimedParticle.curFrame, aimedParticle.sWidth);
 
-				curQuad.verts[0].texcoord[0] = s0;
-				curQuad.verts[1].texcoord[0] = s0 + aimedParticle.sWidth;
-				curQuad.verts[2].texcoord[0] = s0 + aimedParticle.sWidth;
-				curQuad.verts[3].texcoord[0] = s0;
-				
 				// Glue the first row of vertices to the last quad, if applicable
 				if (i > 1)
 				{
@@ -652,15 +646,11 @@ void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::si
 
 				_quads.push_back(curQuad);
 
-				// "Next" quad
+				// "Next" quad, re-use the curQuad structure
 				curQuad.assignColour(aimedParticle.nextColour);
 
-				s0 = aimedParticle.sWidth * aimedParticle.nextFrame;
-
-				curQuad.verts[0].texcoord[0] = s0;
-				curQuad.verts[1].texcoord[0] = s0 + aimedParticle.sWidth;
-				curQuad.verts[2].texcoord[0] = s0 + aimedParticle.sWidth;
-				curQuad.verts[3].texcoord[0] = s0;
+				// Set the hoirzontal texcoord for the next frame
+				curQuad.setHorizTexCoords(aimedParticle.sWidth * aimedParticle.nextFrame, aimedParticle.sWidth);
 
 				if (i > 1)
 				{
