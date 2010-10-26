@@ -21,25 +21,22 @@ namespace {
 class ParticlesManager : 
 	public IParticlesManager
 {
+private:
 	// Map of named particle defs
 	typedef std::map<std::string, ParticleDefPtr> ParticleDefMap;
 	ParticleDefMap _particleDefs;
-	
-private:
-	
-	// Recursive-descent parse functions
-	void parseParticleDef(parser::DefTokeniser& tok);
+
+	typedef std::set<IParticlesManager::Observer*> Observers;
+	Observers _observers;
 	
 public:
-	/*
-	 * Visit each particles def.
-	 */
+	// IParticlesManager implementation. For documentation see iparticles.h
+	void addObserver(IParticlesManager::Observer* observer);
+	void removeObserver(IParticlesManager::Observer* observer);
 	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
-
-	/**
-	 * Get a named particle definition, returns NULL if not found.
-	 */
 	IParticleDefPtr getParticle(const std::string& name);
+	IRenderableParticlePtr getRenderableParticle(const std::string& name);
+	void reloadParticleDefs();
 	
 	/**
 	 * Accept a stream containing particle definitions to parse and add to the
@@ -48,9 +45,16 @@ public:
 	void parseStream(std::istream& s);
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
+
+private:
+	// Recursive-descent parse functions
+	void parseParticleDef(parser::DefTokeniser& tok);
+
+	// Finds or creates the particle def with the given name, always returns non-NULL
+	ParticleDefPtr findOrInsertParticleDef(const std::string& name);
 };
 typedef boost::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 

@@ -54,7 +54,8 @@ private:
 	
 	float _initialAngle;			// in degrees, random angle is used if zero ( default ) 
 
-	ParticleParameter _rotationSpeed; // half the particles will have negative rotation speeds
+	ParticleParameter _rotationSpeed; // half the particles will have negative rotation speeds, 
+									  // this is measured in degrees/sec
 
 	float _boundsExpansion;			// user tweak to fix poorly calculated bounds
 

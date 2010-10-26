@@ -51,6 +51,12 @@ Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 {
 	double angle = a.angle(b);
 	Vector3 axis = b.crossProduct(a).getNormalised();
+
+	return getRotation(axis, angle);
+}
+
+Matrix4 Matrix4::getRotation(const Vector3& axis, const double angle) 
+{
 	// Pre-calculate the terms
 	double cosPhi = cos(angle);
 	double sinPhi = sin(angle);
@@ -227,7 +233,7 @@ Plane3 Matrix4::inverseTransform(const Plane3& plane) const
 }
 
 // Return matrix product
-Matrix4 Matrix4::getMultipliedBy(const Matrix4& rhs)
+Matrix4 Matrix4::getMultipliedBy(const Matrix4& rhs) const
 {
     return Matrix4::byColumns(
         rhs[0] * _m[0] + rhs[1] * _m[4] + rhs[2] * _m[8] + rhs[3] * _m[12],

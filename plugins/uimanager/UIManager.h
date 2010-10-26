@@ -58,6 +58,7 @@ public:
 
 	IFilterMenuPtr createFilterMenu();
 	IModelPreviewPtr createModelPreview();
+	IParticlePreviewPtr createParticlePreview();
 
 	// Called on radiant shutdown
 	void clear();

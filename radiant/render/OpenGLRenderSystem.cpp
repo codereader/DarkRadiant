@@ -42,8 +42,23 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 	m_lightingSupported(false),
 	m_lightsChanged(true),
 	m_traverseRenderablesMutex(false)
-{}
-	
+{
+	// For the static default rendersystem, the MaterialManager is not existent yet,
+	// hence it will be attached in initialiseModule().
+	if (module::getRegistry().moduleExists(MODULE_SHADERSYSTEM))
+	{
+		GlobalMaterialManager().attach(*this);
+	}
+}
+
+OpenGLRenderSystem::~OpenGLRenderSystem()
+{
+	if (module::getRegistry().moduleExists(MODULE_SHADERSYSTEM))
+	{
+		GlobalMaterialManager().detach(*this);
+	}
+}
+
 /* Capture the given shader.
  */
 ShaderPtr OpenGLRenderSystem::capture(const std::string& name) {
@@ -410,7 +425,8 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 	return _dependencies;
 }
 
-void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx) {
+void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
+{
 	globalOutputStream() << "ShaderCache::initialiseModule called.\n";
 	
 	GlobalMaterialManager().attach(*this);
@@ -422,8 +438,8 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx) {
 	// happens as soon as the first GL widget has been realised).
 }
 	
-void OpenGLRenderSystem::shutdownModule() {
-	GlobalMaterialManager().detach(*this);
+void OpenGLRenderSystem::shutdownModule()
+{
 }
 
 // Define the static ShaderCache module

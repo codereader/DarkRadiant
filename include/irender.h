@@ -58,6 +58,7 @@ const unsigned int RENDER_BUMP = 1 << 21;
 const unsigned int RENDER_PROGRAM = 1 << 22;
 const unsigned int RENDER_SCREEN = 1 << 23;
 const unsigned int RENDER_OVERRIDE = 1 << 24;
+const unsigned int RENDER_FORCE_COLORARRAY = 1 << 25; // always enable client state GL_COLOR_ARRAY, ignoring shader flags
 typedef unsigned int RenderStateFlags;
 
 

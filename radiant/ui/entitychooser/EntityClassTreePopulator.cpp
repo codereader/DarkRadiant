@@ -23,7 +23,9 @@ EntityClassTreePopulator::EntityClassTreePopulator(const Glib::RefPtr<Gtk::TreeS
 : gtkutil::VFSTreePopulator(store),
   _store(store),
   _columns(columns),
-  _folderKey(GlobalRegistry().get(FOLDER_KEY_PATH))
+  _folderKey(GlobalRegistry().get(FOLDER_KEY_PATH)),
+  _folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
+  _entityIcon(GlobalUIManager().getLocalPixbuf(ENTITY_ICON))
 {}
 
 // Required visit function
@@ -51,7 +53,7 @@ void EntityClassTreePopulator::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
 	// Get the display name by stripping off everything before the last slash
 	row[_columns.name] = path.substr(path.rfind("/") + 1);
 	row[_columns.isFolder] = !isExplicit;
-	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? ENTITY_ICON : FOLDER_ICON);
+	row[_columns.icon] = isExplicit ? _entityIcon : _folderIcon;
 }
 
 } // namespace ui

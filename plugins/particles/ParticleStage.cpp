@@ -55,12 +55,12 @@ ParticleStage::ParticleStage(parser::DefTokeniser& tok)
 
 void ParticleStage::reset()
 {
-	_count = 1;
+	_count = 100;
 	_material.clear();
 
-	_duration = 1;
+	_duration = 1.5f;
 	_cycles = 0;
-	_bunching = 0.0f;
+	_bunching = 1.0f;
 
 	_timeOffset = 0;
 	_deadTime = 0;
@@ -68,10 +68,10 @@ void ParticleStage::reset()
 	recalculateCycleMsec();
 
 	_colour = Vector4(1,1,1,1);
-	_fadeColour = Vector4(1,1,1,0);
+	_fadeColour = Vector4(0,0,0,0);
 
-	_fadeInFraction = 0.0f;
-	_fadeOutFraction = 0.0f;
+	_fadeInFraction = 0.1f;		// 10% fade in by default
+	_fadeOutFraction = 0.25f;	// 25% fade out by default
 	_fadeIndexFraction = 0.0f;
 
 	_animationFrames = 0;
@@ -84,26 +84,28 @@ void ParticleStage::reset()
 	_randomDistribution = true;
 	_entityColor = false;
 
-	_gravity = -1.0f;
-	_applyWorldGravity = true;
+	_gravity = 1.0f;
+	_applyWorldGravity = false;
 
 	_orientationType = ORIENTATION_VIEW;
 	_orientationParms[0] = _orientationParms[1] = _orientationParms[2] = _orientationParms[3] = 0;
 
 	_distributionType = DISTRIBUTION_RECT;
-	_distributionParms[0] = _distributionParms[1] = _distributionParms[2] = _distributionParms[3] = 0;
+	_distributionParms[0] = _distributionParms[1] = _distributionParms[2] = 8.0f; // 8x8x8 cube
+	_distributionParms[3] = 0;
 
 	_directionType = DIRECTION_CONE;
-	_directionParms[0] = _directionParms[1] = _directionParms[2] = _directionParms[3] = 0;
+	_directionParms[0] = 90.0f;
+	_directionParms[1] = _directionParms[2] = _directionParms[3] = 0;
 
 	_customPathType = PATH_STANDARD;
 	_customPathParms[0] = _customPathParms[1] = _customPathParms[2] = _customPathParms[3] = 0;
 	_customPathParms[4] = _customPathParms[5] = _customPathParms[6] = _customPathParms[7] = 0;
 
-	_speed = ParticleParameter();
+	_speed = ParticleParameter(150.0f);
 	_rotationSpeed = ParticleParameter();
-	_size = ParticleParameter();
-	_aspect = ParticleParameter();
+	_size = ParticleParameter(4.0f);
+	_aspect = ParticleParameter(1.0f);
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -319,6 +321,24 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 				setDistributionParm(0, parseWithErrorMsg<float>(tok, "Bad distr param1 value"));
 				setDistributionParm(1, parseWithErrorMsg<float>(tok, "Bad distr param2 value"));
 				setDistributionParm(2, parseWithErrorMsg<float>(tok, "Bad distr param3 value"));
+
+				// Try to parse that next value, the D3 particle editor won't save the 4th parameter
+				std::string nextToken = tok.peek();
+
+				try
+				{
+					float parm = boost::lexical_cast<float>(nextToken);
+
+					// successfully converted the next token to a number
+					setDistributionParm(3, parm);
+
+					// Skip that next token
+					tok.skipTokens(1);
+				}
+				catch (boost::bad_lexical_cast&)
+				{
+					setDistributionParm(3, 0.0f);
+				}
 			}
 			else
 			{
@@ -378,7 +398,8 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			{
 				setCustomPathType(PATH_ORBIT);
 
-				// Read flies parameters (radius, speed)
+				// Read orbit parameters (radius, speed)
+				// These are actually unsupported by the engine ("bad path type")
 				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad orbit param1 value"));
 				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad orbit param2 value"));
 			}
@@ -386,7 +407,8 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			{
 				setCustomPathType(PATH_DRIP);
 
-				// Read flies parameters (something something) (sic!, as seen in the particle editor)
+				// Read drip parameters (something something) (sic!, as seen in the particle editor)
+				// These are actually unsupported by the engine ("bad path type")
 				setCustomPathParm(0, parseWithErrorMsg<float>(tok, "Bad drip param1 value"));
 				setCustomPathParm(1, parseWithErrorMsg<float>(tok, "Bad drip param2 value"));
 			}
