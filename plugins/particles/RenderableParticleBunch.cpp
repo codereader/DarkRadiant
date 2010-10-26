@@ -12,7 +12,6 @@ void RenderableParticleBunch::update(std::size_t time)
 {
 	_bounds = AABB();
 	_quads.clear();
-	_debugInfo.clear();
 
 	// Length of one cycle (duration + deadtime)
 	std::size_t cycleMsec = static_cast<std::size_t>(_stage.getCycleMsec());
@@ -298,9 +297,6 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 			
 			// Consider speed
 			particle.origin += particleDirection * integrate(_stage.getSpeed(), particle.timeSecs);
-
-			// Save velocity for later use
-			particle.velocity = particleDirection * _stage.getSpeed().evaluate(particle.timeFraction);
 		}
 		break;
 
@@ -341,13 +337,6 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 
 			// Move the particle origin
 			particle.origin += Vector3(radius * cosTheta * sinPhi, radius * sinTheta * sinPhi, radius * cosPhi);
-
-			// Calculate the time derivative as velocity
-			particle.velocity = Vector3(
-				radius * (cosTheta * cosPhi * axialSpeed - sinTheta * sinPhi * radialSpeed),	// dx/dt
-				radius * (cosTheta * sinPhi * radialSpeed + sinTheta * cosPhi * axialSpeed),	// dy/dt
-				radius * (-1) * sinTheta * axialSpeed											// dz/dt
-			);
 		}
 		break;
 
@@ -376,12 +365,6 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 			float z = z0 + axialSpeed * particle.timeSecs;
 
 			particle.origin += Vector3(x, y, z);
-
-			particle.velocity = Vector3(
-				sizeX * (-1) * sinPhi * radialSpeed,	// dx/dt
-				sizeY * cosPhi * radialSpeed,			// dy/dt
-				axialSpeed								// dz/dt
-			);
 		}
 		break;
 
@@ -389,12 +372,10 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 	case IParticleStage::PATH_DRIP:
 		// These are actually unsupported by the engine ("bad path type")
 		globalWarningStream() << "Unsupported path type (drip/orbit)." << std::endl;
-		particle.velocity.set(0,0,0);
 		break;
 
 	default:
 		// Nothing
-		particle.velocity.set(0,0,0);
 		break;
 	};
 
@@ -403,9 +384,6 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 	Vector3 gravity = _stage.getWorldGravityFlag() ? Vector3(0,0,-1) : -_direction.getNormalised();
 
 	particle.origin += gravity * _stage.getGravity() * particle.timeSecs * particle.timeSecs * 0.5f;
-
-	// Add gravity to particle speed result
-	particle.velocity += gravity * _stage.getGravity() * particle.timeSecs;
 }
 
 // baseDirection should be normalised and not degenerate
@@ -622,19 +600,11 @@ void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::si
 		// Get origin and velocity at that time
 		calculateOriginAndVelocity(aimedParticle);
 
-		_debugInfo += "Aimed origin at time " + doubleToStr(aimedParticle.timeSecs) + ": " + std::string(aimedParticle.origin) + "\n";
-		_debugInfo += "Velocity: " + doubleToStr(aimedParticle.velocity.getLength()) + ": " + std::string(aimedParticle.velocity) + "\n";
-		_debugInfo += "Last origin: " + std::string(lastOrigin) + "\n";
-
 		// Gotcha: don't bother calculating the actual velocity at the given time, just use the 
 		// difference vector of the two origins, this is enough to receive the "aimed" direction
 		Vector3 velocity = lastOrigin - aimedParticle.origin;
 
 		float height = static_cast<float>(velocity.getLength());
-
-		_debugInfo += "Height: " + floatToStr(height) + "\n";
-
-		globalOutputStream() << _debugInfo << std::endl;
 
 		aimedParticle.aspect = 2 * aimedParticle.size / height;
 		aimedParticle.size = height * 0.5f;
@@ -742,11 +712,6 @@ void RenderableParticleBunch::calculateBounds()
 		_bounds.includePoint(i->verts[2].vertex);
 		_bounds.includePoint(i->verts[3].vertex);
 	}
-}
-
-std::string RenderableParticleBunch::getDebugInfo()
-{
-	return _debugInfo;
 }
 
 } // namespace
