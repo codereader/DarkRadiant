@@ -430,6 +430,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\particles\ParticleRenderInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\particles\particles.cpp"
 				>
 			</File>
