@@ -33,12 +33,14 @@ ParticlesChooser::ParticlesChooser() :
 	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();	
 
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+	int height = static_cast<int>(rect.get_height() * 0.6f);
+
 	set_default_size(
 		static_cast<int>(rect.get_width() * 0.4f), static_cast<int>(rect.get_height() * 0.6f)
 	);
 
 	// Set the default size of the window
-	_preview->setSize(400);
+	_preview->setSize(height);
 
 	// Main dialog vbox
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 12));
@@ -49,7 +51,7 @@ ParticlesChooser::ParticlesChooser() :
 	hbox->pack_start(createTreeView(), true, true, 0);
 
 	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
-	previewBox->pack_start(*_preview->getWidget(), true, true, 0);
+	previewBox->pack_start(*_preview->getWidget(), true, false, 0);
 
 	hbox->pack_start(*previewBox, false, false, 0);
 
