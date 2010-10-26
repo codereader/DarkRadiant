@@ -76,6 +76,8 @@ private:
 	void callbackStart();
 	void callbackPause();
 	void callbackStop();
+	void callbackStepForward();
+	void callbackStepBack();
 	void callbackToggleAxes();
 	void onSizeAllocate(Gtk::Allocation& allocation);
 	

@@ -70,11 +70,12 @@ void RenderableParticleBunch::update(std::size_t time)
 		// We need the particle time in seconds for the location/angle integrations
 		particle.timeSecs = MS2SEC(particleTime);
 
-		// Generate four random numbers for custom path calcs, this is needed in getOriginAndVelocity
+		// Generate five random numbers for path calcs, this is needed in calculateOriginAndVelocity
 		particle.rand[0] = static_cast<float>(_random()) / boost::rand48::max_value;
 		particle.rand[1] = static_cast<float>(_random()) / boost::rand48::max_value;
 		particle.rand[2] = static_cast<float>(_random()) / boost::rand48::max_value;
 		particle.rand[3] = static_cast<float>(_random()) / boost::rand48::max_value;
+		particle.rand[4] = static_cast<float>(_random()) / boost::rand48::max_value;
 
 		// Calculate particle origin at time t
 		calculateOriginAndVelocity(particle);
@@ -287,7 +288,7 @@ void RenderableParticleBunch::calculateOriginAndVelocity(ParticleInfo& particle)
 	case IParticleStage::PATH_STANDARD: // Standard path calculation
 		{
 			// Consider particle distribution
-			Vector3 distributionOffset = getDistributionOffset(_distributeParticlesRandomly);
+			Vector3 distributionOffset = getDistributionOffset(particle, _distributeParticlesRandomly);
 
 			// Add this to the origin
 			particle.origin += distributionOffset;
@@ -420,14 +421,14 @@ Vector3 RenderableParticleBunch::getDirection(ParticleInfo& particle, const Vect
 	case IParticleStage::DIRECTION_CONE:
 		{
 			// Find a random vector on the sphere surface defined by the cone with apex 2*angle
-			float u = particle.rand[0];
+			float u = particle.rand[3];
 
 			// Scale the variable v such that it takes uniform values in the interval [(1+cos(angle))/2 .. 1]
 			float angleRad = _stage.getDirectionParm(0) * static_cast<float>(c_pi) / 180.0f;
 			float v0 = (1 + cos(angleRad)) * 0.5f;
 			float v1 = 1;
 
-			float v = v0 + particle.rand[1] * (v1 - v0);
+			float v = v0 + particle.rand[4] * (v1 - v0);
 
 			float theta = 2 * static_cast<float>(c_pi) * u;
 			float phi = acos(2*v - 1);
@@ -465,7 +466,7 @@ Vector3 RenderableParticleBunch::getDirection(ParticleInfo& particle, const Vect
 	};
 }
 
-Vector3 RenderableParticleBunch::getDistributionOffset(bool distributeParticlesRandomly)
+Vector3 RenderableParticleBunch::getDistributionOffset(ParticleInfo& particle, bool distributeParticlesRandomly)
 {
 	switch (_stage.getDistributionType())
 	{
@@ -480,9 +481,9 @@ Vector3 RenderableParticleBunch::getDistributionOffset(bool distributeParticlesR
 			if (distributeParticlesRandomly)
 			{
 				// Rectangular spawn zone
-				randX = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
-				randY = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
-				randZ = 2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f;
+				randX = 2 * particle.rand[0] - 1.0f;
+				randY = 2 * particle.rand[1] - 1.0f;
+				randZ = 2 * particle.rand[2] - 1.0f;
 			}
 
 			// If random distribution is off, particles get spawned at <sizex, sizey, sizez>
@@ -514,11 +515,11 @@ Vector3 RenderableParticleBunch::getDistributionOffset(bool distributeParticlesR
 			if (distributeParticlesRandomly)
 			{
 				// Get a random angle in [0..2pi]
-				float angle = static_cast<float>(2*c_pi) * static_cast<float>(_random()) / boost::rand48::max_value;
+				float angle = static_cast<float>(2*c_pi) * particle.rand[0];
 
 				float xPos = cos(angle) * sizeX;
 				float yPos = sin(angle) * sizeY;
-				float zPos = sizeZ * (2 * static_cast<float>(_random()) / boost::rand48::max_value - 1.0f);
+				float zPos = sizeZ * (2 * particle.rand[1] - 1.0f);
 
 				return Vector3(xPos, yPos, zPos);
 			}
@@ -544,14 +545,14 @@ Vector3 RenderableParticleBunch::getDistributionOffset(bool distributeParticlesR
 			if (distributeParticlesRandomly)
 			{
 				// The following is modeled after http://mathworld.wolfram.com/SpherePointPicking.html
-				float u = static_cast<float>(_random()) / boost::rand48::max_value;
-				float v = static_cast<float>(_random()) / boost::rand48::max_value;
+				float u = particle.rand[0];
+				float v = particle.rand[1];
 
 				float theta = 2 * static_cast<float>(c_pi) * u;
 				float phi = acos(2*v - 1);
 
 				// Take the sqrt(radius) to correct bunching at the center of the sphere
-				float r = sqrt(static_cast<float>(_random()) / boost::rand48::max_value);
+				float r = sqrt(particle.rand[2]);
 
 				float x = (minX + (maxX - minX) * r) * cos(theta) * sin(phi);
 				float y = (minY + (maxY - minY) * r) * sin(theta) * sin(phi);
@@ -621,7 +622,19 @@ void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::si
 		// Get origin and velocity at that time
 		calculateOriginAndVelocity(aimedParticle);
 
-		float height = static_cast<float>((aimedParticle.origin - lastOrigin).getLength());
+		_debugInfo += "Aimed origin at time " + doubleToStr(aimedParticle.timeSecs) + ": " + std::string(aimedParticle.origin) + "\n";
+		_debugInfo += "Velocity: " + doubleToStr(aimedParticle.velocity.getLength()) + ": " + std::string(aimedParticle.velocity) + "\n";
+		_debugInfo += "Last origin: " + std::string(lastOrigin) + "\n";
+
+		// Gotcha: don't bother calculating the actual velocity at the given time, just use the 
+		// difference vector of the two origins, this is enough to receive the "aimed" direction
+		Vector3 velocity = lastOrigin - aimedParticle.origin;
+
+		float height = static_cast<float>(velocity.getLength());
+
+		_debugInfo += "Height: " + floatToStr(height) + "\n";
+
+		globalOutputStream() << _debugInfo << std::endl;
 
 		aimedParticle.aspect = 2 * aimedParticle.size / height;
 		aimedParticle.size = height * 0.5f;
@@ -633,8 +646,8 @@ void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::si
 		// The matrix is special for each particle. For helix and other path types
 		// it's necessary to apply the same matrix to each vertex sharing the same 3D location.
 
-		// Calculate the matrix for the "older" two vertices of the quad
-		Matrix4 local2aimed = getAimedMatrix(aimedParticle.velocity);
+		// Calculate the matrix to orient it towards the viewer
+		Matrix4 local2aimed = getAimedMatrix(velocity);
 
 		{
 			const Vector3& normal = local2aimed.z().getVector3();
