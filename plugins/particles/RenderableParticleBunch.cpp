@@ -21,8 +21,8 @@ void RenderableParticleBunch::update(std::size_t time)
 		return;
 	}
 
-	// Reserve enough space for all the particles
-	_quads.reserve(_stage.getCount()*4);
+	// Reserve enough space for all the particles (non-animated case)
+	_quads.reserve(_stage.getCount() * 4);
 
 	// Normalise the global input time into local cycle time
 	// The cycleTime may be larger than the _stage.cycleMsec argument if bunching is turned off
@@ -58,23 +58,14 @@ void RenderableParticleBunch::update(std::size_t time)
 		// Get the "local particle time" in msecs
 		std::size_t particleTime = cycleTime - particleStartTimeMsec;
 
-		// Generate the particle structure (our working set)
-		ParticleInfo particle;
-
-		particle.index = i;
+		// Generate the particle renderinfo structure (our working set)
+		ParticleRenderInfo particle(i, _random);
 
 		// Calculate the time fraction [0..1]
 		particle.timeFraction = static_cast<float>(particleTime) / stageDurationMsec;
 
 		// We need the particle time in seconds for the location/angle integrations
 		particle.timeSecs = MS2SEC(particleTime);
-
-		// Generate five random numbers for path calcs, this is needed in calculateOriginAndVelocity
-		particle.rand[0] = static_cast<float>(_random()) / boost::rand48::max_value;
-		particle.rand[1] = static_cast<float>(_random()) / boost::rand48::max_value;
-		particle.rand[2] = static_cast<float>(_random()) / boost::rand48::max_value;
-		particle.rand[3] = static_cast<float>(_random()) / boost::rand48::max_value;
-		particle.rand[4] = static_cast<float>(_random()) / boost::rand48::max_value;
 
 		// Calculate particle origin at time t
 		calculateOrigin(particle);
@@ -202,7 +193,7 @@ Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
 	return vel2aimed.getMultipliedBy(object2Vel);
 }
 
-void RenderableParticleBunch::calculateAnim(ParticleInfo& particle)
+void RenderableParticleBunch::calculateAnim(ParticleRenderInfo& particle)
 {
 	// At a given time, two particles can be visible at most
 	float frameRate = _stage.getAnimationRate();
@@ -231,7 +222,7 @@ void RenderableParticleBunch::calculateAnim(ParticleInfo& particle)
 	particle.sWidth = 1.0f / particle.animFrames;
 }
 
-void RenderableParticleBunch::calculateColour(ParticleInfo& particle)
+void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 {
 	// We start with the stage's standard colour
 	particle.colour = _stage.getColour();
@@ -277,7 +268,7 @@ void RenderableParticleBunch::calculateColour(ParticleInfo& particle)
 	}
 }
 
-void RenderableParticleBunch::calculateOrigin(ParticleInfo& particle)
+void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 {
 	// Consider offset as starting point
 	particle.origin = _offset;
@@ -386,7 +377,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleInfo& particle)
 	particle.origin += gravity * _stage.getGravity() * particle.timeSecs * particle.timeSecs * 0.5f;
 }
 
-Vector3 RenderableParticleBunch::getDirection(ParticleInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset)
+Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset)
 {
 	if (baseDirection.getLengthSquared() == 0)
 	{
@@ -443,7 +434,7 @@ Vector3 RenderableParticleBunch::getDirection(ParticleInfo& particle, const Vect
 	};
 }
 
-Vector3 RenderableParticleBunch::getDistributionOffset(ParticleInfo& particle, bool distributeParticlesRandomly)
+Vector3 RenderableParticleBunch::getDistributionOffset(ParticleRenderInfo& particle, bool distributeParticlesRandomly)
 {
 	switch (_stage.getDistributionType())
 	{
@@ -550,7 +541,7 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleInfo& particle, b
 	};
 }
 
-void RenderableParticleBunch::pushQuad(ParticleInfo& particle, const Vector4& colour, float s0, float sWidth)
+void RenderableParticleBunch::pushQuad(ParticleRenderInfo& particle, const Vector4& colour, float s0, float sWidth)
 {
 	// greebo: Create a (rotated) quad facing the z axis
 	// then rotate it to fit the requested orientation
@@ -562,7 +553,7 @@ void RenderableParticleBunch::pushQuad(ParticleInfo& particle, const Vector4& co
 	_quads.back().translate(particle.origin);
 }
 
-void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::size_t stageDurationMsec)
+void RenderableParticleBunch::pushAimedParticles(ParticleRenderInfo& particle, std::size_t stageDurationMsec)
 {
 	int trails = static_cast<int>(_stage.getOrientationParm(0)); // trails
 	float aimedTime = _stage.getOrientationParm(1);	// time
@@ -589,7 +580,7 @@ void RenderableParticleBunch::pushAimedParticles(ParticleInfo& particle, std::si
 	for (int i = 1; i <= numQuads; ++i)
 	{
 		// Copy over the info of the incoming particle (contains anim info, colour, etc.)
-		ParticleInfo aimedParticle = particle;
+		ParticleRenderInfo aimedParticle = particle;
 
 		// Get the time of the i-th particle in seconds, plus the fraction
 		aimedParticle.timeSecs = particle.timeSecs - timeStep * i;
