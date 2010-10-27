@@ -53,7 +53,7 @@ ParticlesChooser::ParticlesChooser() :
 	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
 	previewBox->pack_start(*_preview->getWidget(), true, true, 0);
 
-	hbox->pack_start(*previewBox, false, false, 0);
+	hbox->pack_start(*previewBox, true, true, 0);
 
 	vbox->pack_start(*hbox, true, true, 0);
 	vbox->pack_end(createButtons(), false, false, 0);

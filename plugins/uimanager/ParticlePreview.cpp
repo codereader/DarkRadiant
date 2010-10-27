@@ -7,6 +7,7 @@
 #include "i18n.h"
 
 #include "math/aabb.h"
+#include "math/frustum.h"
 #include "entitylib.h"
 
 #include "string/string.h"
@@ -370,6 +371,21 @@ void ParticlePreview::onSizeAllocate(Gtk::Allocation& allocation)
 	_previewHeight = allocation.get_height();
 }
 
+Matrix4 ParticlePreview::getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height)
+{
+	const float half_width = static_cast<float>(near_z * tan(degrees_to_radians(fieldOfView * 0.5)));
+	const float half_height = half_width * (static_cast<float>(height) / static_cast<float>(width));
+
+	return matrix4_frustum(
+		-half_width,
+		half_width,
+		-half_height,
+		half_height,
+		near_z,
+		far_z
+	);
+}
+
 bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev) 
 {
 	if (_renderingInProgress) return false; // avoid double-entering this method
@@ -380,8 +396,6 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
 
 	glViewport(0, 0, _previewWidth, _previewHeight);
-
-	glDepthMask(GL_TRUE);
 
 	// Set up the render and clear the drawing area in any case
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -433,15 +447,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	flags |= RENDER_FORCE_COLORARRAY;
 
 	// Set up the camera
-	Matrix4 projection;
-	{
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
-
-		// Load the matrix from openGL
-		glGetDoublev(GL_PROJECTION_MATRIX, projection);
-	}
+	Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
 	// Premultiply with the translations
 	Matrix4 modelview;

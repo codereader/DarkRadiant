@@ -80,6 +80,8 @@ private:
 	void callbackStepBack();
 	void callbackToggleAxes();
 	void onSizeAllocate(Gtk::Allocation& allocation);
+
+	static Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
 	
 public:
 	
