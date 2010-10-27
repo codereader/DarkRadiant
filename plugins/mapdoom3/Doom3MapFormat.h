@@ -6,11 +6,10 @@
 namespace map {
 
 	namespace {
-		// The supported Doom3 map version 
-		const int MAPVERSION = 2;
-
 		// The version of the map info file
 		const int MAP_INFO_VERSION = 2;
+
+		const char* const RKEY_GAME_MAP_VERSION = "/mapFormat/version";
 	}
 
 class Doom3MapFormat : 

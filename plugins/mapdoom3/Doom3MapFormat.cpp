@@ -4,6 +4,7 @@
 #include "ieclass.h"
 #include "ibrush.h"
 #include "ipatch.h"
+#include "igame.h"
 #include "iregistry.h"
 #include "igroupnode.h"
 
@@ -19,6 +20,7 @@
 #include "MapExportInfo.h"
 #include "InfoFile.h"
 #include "AssignLayerMappingWalker.h"
+#include "string/string.h"
 
 #include "primitiveparsers/BrushDef3.h"
 #include "primitiveparsers/PatchDef2.h"
@@ -30,7 +32,7 @@
 namespace map {
 
 	namespace {
-		const std::string RKEY_PRECISION = "game/mapFormat/floatPrecision";
+		const std::string RKEY_FLOAT_PRECISION = "/mapFormat/floatPrecision";
 	}
 
 // RegisterableModule implementation
@@ -98,11 +100,22 @@ void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {
 	// Prepare the func_statics contained in the subgraph
 	removeOriginFromChildPrimitives(exportInfo.root);
 
-	int precision = GlobalRegistry().getInt(RKEY_PRECISION);
+	game::IGamePtr curGame = GlobalGameManager().currentGame();
+	assert(curGame != NULL);
+
+	xml::NodeList nodes = curGame->getLocalXPath(RKEY_GAME_MAP_VERSION);
+	assert(!nodes.empty());
+
+	std::string mapVersion = nodes[0].getAttributeValue("value");
+
+	nodes = curGame->getLocalXPath(RKEY_FLOAT_PRECISION);
+	assert(!nodes.empty());
+
+	int precision = strToInt(nodes[0].getAttributeValue("value"));
 	exportInfo.mapStream.precision(precision);
 
 	// Write the version tag first
-    exportInfo.mapStream << VERSION << " " << MAPVERSION << std::endl;
+    exportInfo.mapStream << VERSION << " " << mapVersion << std::endl;
 
 	// Instantiate a NodeExporter class and call the traverse function
 	NodeExporter exporter(exportInfo.mapStream, exportInfo.infoStream);
