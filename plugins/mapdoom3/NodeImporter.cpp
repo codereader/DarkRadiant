@@ -5,6 +5,7 @@
 #include "imainframe.h"
 #include "iregistry.h"
 #include "ieclass.h"
+#include "igame.h"
 #include "string/string.h"
 
 #include "gtkutil/dialog.h"
@@ -110,7 +111,8 @@ bool NodeImporter::parse() {
 	return true;
 }
 
-bool NodeImporter::parseMapVersion() {
+bool NodeImporter::parseMapVersion()
+{
 	// Parse the map version
     float version = 0;
 
@@ -122,23 +124,29 @@ bool NodeImporter::parseMapVersion() {
 	{
         globalErrorStream() 
             << "[mapdoom3] Unable to parse map version: " 
-            << e.what() << "\n";
+            << e.what() << std::endl;
         return false;
     }
     catch (boost::bad_lexical_cast& e)
 	{
         globalErrorStream() 
             << "[mapdoom3] Unable to parse map version: " 
-            << e.what() << "\n";
+            << e.what() << std::endl;
         return false;
     }
 
+	// Load the required version from the .game file
+	xml::NodeList nodes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_GAME_MAP_VERSION);
+	assert(!nodes.empty());
+
+	float requiredVersion = strToFloat(nodes[0].getAttributeValue("value"));
+
     // Check we have the correct version for this module
-    if (version != MAPVERSION)
+    if (version != requiredVersion)
 	{
         globalErrorStream() 
-            << "Incorrect map version: required " << MAPVERSION 
-            << ", found " << version << "\n";
+            << "Incorrect map version: required " << requiredVersion 
+			<< ", found " << version << std::endl;
         return false;
     }
 
