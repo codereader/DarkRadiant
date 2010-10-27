@@ -51,7 +51,7 @@ ParticlesChooser::ParticlesChooser() :
 	hbox->pack_start(createTreeView(), true, true, 0);
 
 	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
-	previewBox->pack_start(*_preview->getWidget(), true, false, 0);
+	previewBox->pack_start(*_preview->getWidget(), true, true, 0);
 
 	hbox->pack_start(*previewBox, false, false, 0);
 
