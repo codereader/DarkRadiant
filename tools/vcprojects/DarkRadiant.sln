@@ -85,12 +85,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "uimanager", "uimanager.vcpr
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "undo", "undo.vcproj", "{4BCE007A-3FD5-404B-9624-727736437EB0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vfspk3", "vfspk3.vcproj", "{D933EF8B-2C21-46E7-B720-0621C090AE6E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xmlregistry", "xmlregistry.vcproj", "{AC08880C-1150-4579-8870-A8C47C8E5B61}"
 	ProjectSection(ProjectDependencies) = postProject
 		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
+		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.stimresponse", "dm.stimresponse.vcproj", "{EE9A3B61-58E0-4AA4-8942-6CFCBFAACC3F}"
