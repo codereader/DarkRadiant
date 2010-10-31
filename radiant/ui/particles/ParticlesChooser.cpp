@@ -106,6 +106,7 @@ Gtk::Widget& ParticlesChooser::createButtons()
 // Populate the particles list
 void ParticlesChooser::populateParticleList()
 {
+	_iterMap.clear();
 	_particlesList->clear();
 
 	// Create and use a ParticlesVisitor to populate the list
