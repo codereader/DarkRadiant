@@ -1,5 +1,41 @@
-This package was debianized by orbweaver <orbweaver3d@gmail.com> on
-Sat, 21 Jun 2008 15:25:20 +0100.
+Authors: 
+
+    DarkRadiant portions:
+
+        OrbWeaver <orbweaver3d@gmail.com>
+        greebo
+        STiFU
+        mohij
+        angua
+        Crispy
+        Gildoran
+        Jesps (Bulge patch algorithm)
+
+    GtkRadiant portions:
+
+        Leonardo Zide leo@lokigames.com
+        Mike Phillips (Loki QA)
+        Bernd Kreimeier (overall coordination)
+        TTimo timo@idsoftware.com
+        ^Fishman (Pablo Zurita) fish@gamedesign.net
+        RR2DO2 rr2do2@q3f.com
+        SmallPileofGibs spog@planetquake.com
+        Mike "mickey" Jackman
+        Tim "Maj" Rennie
+        Geoffrey DeWan
+        David Hyde
+        seaw0lf with assist by ydnar
+        Randy 'ydnar' Reddig
+        Jean-Francois "Eutectic" Groleau
+        Jan Paul "MrElusive" van Waveren
+        Robert Duffy
+        Forest "LordHavoc" Wroncy-Hale
+        Nurail
+        AcidDeath
+        Chronos
+        Michael Schlueter
+        Jamie Wilkinson
+        Robert "Tr3B" Beckebans
 
 License:
 
@@ -23,6 +59,3 @@ Public License can be found in `/usr/share/common-licenses/GPL'.
 The Debian packaging is (C) 2008, orbweaver <orbweaver3d@gmail.com> and
 is licensed under the GPL, see above.
 
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.

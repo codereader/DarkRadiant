@@ -10,8 +10,14 @@
 #export DH_VERBOSE=1
 
 # Handle some DEB_BUILD_OPTIONS standards
+
 ifneq (,$(filter noopt,$(DEB_BUILD_OPTIONS)))
     CFLAGS += -O0
+endif
+
+INSTALL_TARGET=install-strip
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+    INSTALL_TARGET=install
 endif
 
 config.status: configure
@@ -44,12 +50,12 @@ install: build
 	dh_clean -k 
 	dh_installdirs
 
-	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/tmp $(INSTALL_TARGET)
 
 
 # Build architecture-independent files here.
 binary-indep: build install
-# We have nothing to do by default.
+	dh_installdocs --link-doc=darkradiant
 
 # Build architecture-dependent files here.
 binary-arch: build install
@@ -57,23 +63,10 @@ binary-arch: build install
 	dh_testroot
 	dh_installchangelogs ChangeLog
 	dh_install --sourcedir=debian/tmp
-#	dh_installmenu
-#	dh_installdebconf	
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_python
-#	dh_installinit
-#	dh_installcron
-#	dh_installinfo
-	dh_installman
-	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms
-#	dh_perl
-	dh_makeshlibs
+	dh_makeshlibs --noscripts
 	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol
