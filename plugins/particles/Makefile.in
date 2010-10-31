@@ -67,9 +67,10 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
-particles_la_LIBADD =
+particles_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la
 am_particles_la_OBJECTS = ParticlesManager.lo particles.lo \
-	ParticleStage.lo
+	ParticleStage.lo RenderableParticle.lo \
+	RenderableParticleStage.lo RenderableParticleBunch.lo
 particles_la_OBJECTS = $(am_particles_la_OBJECTS)
 particles_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -249,8 +250,17 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = particles.la
-particles_la_LDFLAGS = -module -avoid-version
-particles_la_SOURCES = ParticlesManager.cpp particles.cpp ParticleStage.cpp
+particles_la_LDFLAGS = -module -avoid-version \
+                       ${GL_LIBS}
+
+particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la
+particles_la_SOURCES = ParticlesManager.cpp \
+		       particles.cpp \
+		       ParticleStage.cpp \
+		       RenderableParticle.cpp \
+		       RenderableParticleStage.cpp \
+		       RenderableParticleBunch.cpp
+
 all: all-am
 
 .SUFFIXES:
@@ -327,6 +337,9 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleStage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticlesManager.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableParticle.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableParticleBunch.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableParticleStage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/particles.Plo@am__quote@
 
 .cpp.o:

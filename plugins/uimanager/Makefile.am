@@ -24,5 +24,6 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        UIManager.cpp \
                        FilterMenu.cpp \
                        ModelPreview.cpp \
-                       MenuManager.cpp
+                       MenuManager.cpp \
+                       ParticlePreview.cpp
 

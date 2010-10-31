@@ -74,7 +74,8 @@ uimanager_la_DEPENDENCIES =  \
 am_uimanager_la_OBJECTS = MenuItem.lo GroupDialog.lo ColourScheme.lo \
 	ColourSchemeEditor.lo ColourSchemeManager.lo \
 	StatusBarManager.lo DialogManager.lo ToolbarManager.lo \
-	UIManager.lo FilterMenu.lo ModelPreview.lo MenuManager.lo
+	UIManager.lo FilterMenu.lo ModelPreview.lo MenuManager.lo \
+	ParticlePreview.lo
 uimanager_la_OBJECTS = $(am_uimanager_la_OBJECTS)
 uimanager_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -278,7 +279,8 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        UIManager.cpp \
                        FilterMenu.cpp \
                        ModelPreview.cpp \
-                       MenuManager.cpp
+                       MenuManager.cpp \
+                       ParticlePreview.cpp
 
 all: all-am
 
@@ -363,6 +365,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelPreview.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticlePreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StatusBarManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ToolbarManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UIManager.Plo@am__quote@
