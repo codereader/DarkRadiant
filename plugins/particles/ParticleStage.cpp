@@ -36,7 +36,7 @@ ParticleStage::ParticleStage()
 ParticleStage::ParticleStage(parser::DefTokeniser& tok)
 {
 	// Parse from the tokens, but don't allow any parse exceptions
-	// from leaving this destructor.
+	// from leaving this constructor.
 	try
 	{
 		parseFromTokens(tok);
