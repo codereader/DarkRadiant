@@ -1,3 +1,9 @@
+darkradiant (1.4.0svn5702~maverick1) maverick; urgency=low
+
+  * Build ~maverick1 version for Maverick section in PPA.
+
+ -- Matthew Mott <matthew.mott@gmail.com>  Sun, 31 Oct 2010 11:55:34 +0000
+
 darkradiant (1.4.0svn5702~lucid1) lucid; urgency=low
 
   * New upstream release, changes at:

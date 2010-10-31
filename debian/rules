@@ -9,6 +9,11 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+# Handle some DEB_BUILD_OPTIONS standards
+ifneq (,$(filter noopt,$(DEB_BUILD_OPTIONS)))
+    CFLAGS += -O0
+endif
+
 config.status: configure
 	dh_testdir
 	./configure --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info LDFLAGS="-Wl,-z,defs" --enable-darkmod-plugins
@@ -29,7 +34,7 @@ clean:
 	rm -f build-stamp 
 
 	# Add here commands to clean up after the build process.
-	-$(MAKE) distclean
+	[ ! -f Makefile ] || $(MAKE) distclean
 
 	dh_clean 
 
