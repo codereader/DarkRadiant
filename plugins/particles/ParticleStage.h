@@ -458,7 +458,7 @@ public:
 private:
 	void recalculateCycleMsec()
 	{
-		_cycleMsec = static_cast<int>(_duration + _deadTime) * 1000;
+		_cycleMsec = static_cast<int>((_duration + _deadTime) * 1000);
 	}
 
 	// Clamps the given float to the range [0..1]
