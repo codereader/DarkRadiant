@@ -1,9 +1,9 @@
 Source: darkradiant
 Section: games
 Priority: extra
-Maintainer: orbweaver <orbweaver3d@gmail.com>
+Maintainer: Matthew Mott <matthew.mott@gmail.com>
 Build-Depends: debhelper (>= 5), autotools-dev, libgtkmm-2.4-dev, libgtkglextmm-x11-1.2-dev, libxml2-dev, libglew-dev, libboost-regex-dev, libboost-filesystem-dev, libboost-serialization-dev, libboost-python-dev, python-dev, libvorbis-dev, libopenal-dev, libalut-dev, libjpeg-dev, libgtksourceviewmm-2.0-dev
-Standards-Version: 3.7.2
+Standards-Version: 3.9.1
 
 Package: darkradiant
 Architecture: any
