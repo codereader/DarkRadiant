@@ -55,13 +55,14 @@ install: build
 
 # Build architecture-independent files here.
 binary-indep: build install
-	dh_installdocs --link-doc=darkradiant
+# Nothing here
 
 # Build architecture-dependent files here.
 binary-arch: build install
 	dh_testdir
 	dh_testroot
 	dh_installchangelogs ChangeLog
+	dh_installdocs
 	dh_install --sourcedir=debian/tmp
 	dh_strip
 	dh_compress
