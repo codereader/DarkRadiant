@@ -1,8 +1,59 @@
 .TH DarkRadiant 1 2010-10-31
+.ad l
 .SH NAME
-DarkRadiant - the level editor for The Dark Mod
+DarkRadiant \- the level editor for The Dark Mod
 .SH SYNOPSIS
-.B darkradiant
+\fBdarkradiant\ \fR[\ options\ ]\ \fIfilename
 .SH DESCRIPTION
 DarkRadiant is a level editor for The Dark Mod. It loads and saves
 Doom 3-format *.map files, making use of assets within a game installation tree.
+.SH OPTIONS
+.TP 6
+.B --disable-sound
+Disable the sound manager module. This may be useful if there are problems with
+sound devices on the system.
+.TP
+.BI fs_game= game
+Override the configured fs_game value.
+.TP
+.BI fs_game_base= game_base
+Override the configured fs_game_base value.
+.IP
+In order to allow maximum customisability by after-market mods, the \fBid
+software\fR game engines use a three-directory system: the
+.I base
+directory, which is where the core game assets are installed, and then two
+mod-specific directories known as 
+.I fs_game
+and 
+.IR fs_game_base .
+The intention is that
+.I fs_game_base
+is used for the common mod assets, and
+.I fs_game
+is available for individual map authors to further customise assets used in
+their own releases.
+.IP
+When editing Dark Mod missions, typically
+.I fs_game_base
+would be set to "darkmod", with
+.I fs_game
+either left blank or set to the value associated with a particular map author's
+own release.
+.IP
+These values are normally configured in preferences, but they can be overridden
+on the command line if required.
+.TP
+.I filename
+Path to a map file to load. This may be either an absolute filesystem path, or a
+mod-local path.
+.SH BUGS
+The lighting render mode is very limited compared to the Doom 3 rendering
+system. In particular, there are no stencil shadows, foglights or any other
+complex lighting effects.
+
+It's too big and too slow.
+.SH AUTHOR
+.nh
+DarkRadiant is developed by the Dark Mod team, at \fIhttp://www.thedarkmod.com
+.hy
