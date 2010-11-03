@@ -148,7 +148,7 @@ LightInspectorPtr& LightInspector::InstancePtr()
 void LightInspector::onRadiantShutdown()
 {
 	// Hide the window, if we're visible
-	if (isVisible())
+	if (is_visible())
 	{
 		hide();
 	}
@@ -350,7 +350,7 @@ void LightInspector::postRedo()
 // Toggle this dialog
 void LightInspector::toggle()
 {
-	if (isVisible())
+	if (is_visible())
 	{
 		hide();
 	}

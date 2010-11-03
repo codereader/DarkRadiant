@@ -80,22 +80,6 @@ public:
 	void hide();
 	
 	/**
-	 * Test for visibility.
-	 */
-	bool isVisible()
-	{
-		return is_visible();
-	}
-
-	/**
-	 * Sets the window title.
-	 */
-	void setTitle(const std::string& title)
-	{
-		set_title(title);
-	}
-	
-	/**
 	 * Destroy the window. If the window is currently visible, the hide()
 	 * operation will be automatically performed first.
 	 */

@@ -96,7 +96,7 @@ Gtk::Widget& LayerControlDialog::createButtons()
 
 void LayerControlDialog::toggleDialog()
 {
-	if (isVisible())
+	if (is_visible())
 	{
 		hide();
 	}
@@ -243,7 +243,7 @@ void LayerControlDialog::onRadiantShutdown()
 	GlobalEventManager().disconnectDialogWindow(this);
 
 	// Write the visibility status to the registry
-	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", isVisible() ? "1" : "0");
+	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", is_visible() ? "1" : "0");
 	
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	destroy();

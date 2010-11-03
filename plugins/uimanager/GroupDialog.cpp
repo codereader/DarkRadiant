@@ -146,7 +146,7 @@ void GroupDialog::setPage(Gtk::Widget* page)
 void GroupDialog::togglePage(const std::string& name)
 {
 	// We still own the notebook in this dialog
-	if (getPageName() != name || !isVisible())
+	if (getPageName() != name || !is_visible())
 	{
 		// page not yet visible, show it
 		setPage(name);
@@ -188,7 +188,7 @@ void GroupDialog::hideDialogWindow()
 // Public static method to toggle the window visibility
 void GroupDialog::toggle()
 {
-	if (Instance().isVisible())
+	if (Instance().is_visible())
 		Instance().hide();
 	else
 		Instance().show();
@@ -197,7 +197,7 @@ void GroupDialog::toggle()
 // Pre-hide callback from TransientWindow
 void GroupDialog::_preHide()
 {
-	if (isVisible())
+	if (is_visible())
 	{
 		// Save the window position, to make sure
 		_windowPosition.readPosition();

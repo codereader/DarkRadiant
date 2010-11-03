@@ -101,7 +101,7 @@ void EntityList::update()
 // Gets notified upon selection change
 void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
-	if (_callbackActive || !isVisible() || isComponent)
+	if (_callbackActive || !is_visible() || isComponent)
 	{
 		// Don't update if not shown or already updating, also ignore components
 		return;
@@ -116,7 +116,7 @@ void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 
 void EntityList::toggleWindow()
 {
-	if (isVisible())
+	if (is_visible())
 	{
 		hide();
 	}

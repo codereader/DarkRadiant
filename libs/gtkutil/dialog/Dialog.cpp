@@ -43,7 +43,7 @@ Dialog::Dialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent
 void Dialog::setTitle(const std::string& title)
 {
 	// Dispatch this call to the base class
-	BlockingTransientWindow::setTitle(title);
+	BlockingTransientWindow::set_title(title);
 }
 
 ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
