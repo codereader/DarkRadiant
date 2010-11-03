@@ -284,6 +284,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\libs\gtkutil\window\TransientWindow.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\libs\gtkutil\window\TransientWindow.h"
 				>
 			</File>
