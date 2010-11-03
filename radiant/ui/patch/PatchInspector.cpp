@@ -88,7 +88,7 @@ void PatchInspector::onRadiantShutdown()
 {
 	globalOutputStream() << "PatchInspector shutting down." << std::endl;
 
-	if (isVisible())
+	if (is_visible())
 	{
 		hide();
 	}
@@ -393,7 +393,7 @@ void PatchInspector::loadControlVertex()
 }
 
 void PatchInspector::toggleWindow() {
-	if (isVisible())
+	if (is_visible())
 		hide();
 	else
 		show();

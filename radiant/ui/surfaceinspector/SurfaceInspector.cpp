@@ -183,7 +183,7 @@ void SurfaceInspector::onRadiantShutdown()
 {
 	globalOutputStream() << "SurfaceInspector shutting down.\n";
 
-	if (isVisible())
+	if (is_visible())
 	{
 		hide();
 	}
@@ -249,7 +249,7 @@ void SurfaceInspector::connectEvents()
 
 void SurfaceInspector::toggleWindow() {
 	// Toggle the dialog visibility
-	if (isVisible())
+	if (is_visible())
 		hide();
 	else
 		show();

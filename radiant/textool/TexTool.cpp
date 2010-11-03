@@ -138,7 +138,7 @@ void TexTool::populateWindow()
 
 void TexTool::toggleWindow()
 {
-	if (isVisible())
+	if (is_visible())
 		hide();
 	else
 		show();

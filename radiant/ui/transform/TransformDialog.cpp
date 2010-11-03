@@ -262,7 +262,7 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 
 void TransformDialog::toggleDialog()
 {
-	if (isVisible())
+	if (is_visible())
 		hide();
 	else
 		show();

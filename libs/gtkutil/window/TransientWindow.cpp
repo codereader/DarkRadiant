@@ -66,7 +66,7 @@ Glib::RefPtr<Gtk::Window> TransientWindow::getRefPtr()
 
 void TransientWindow::show()
 {
-    if (!isVisible())
+    if (!is_visible())
     {
         _preShow();
         show_all();
@@ -86,7 +86,7 @@ void TransientWindow::hide()
 void TransientWindow::destroy()
 {
     // Trigger a hide sequence if necessary
-    if (isVisible())
+    if (is_visible())
     {
         TransientWindow::hide();
     }
