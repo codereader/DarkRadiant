@@ -20,6 +20,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						Timer.cpp \
 						WindowPosition.cpp \
 						window/PersistentTransientWindow.cpp \
+                        window/TransientWindow.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
 						dialog_legacy.cpp \
