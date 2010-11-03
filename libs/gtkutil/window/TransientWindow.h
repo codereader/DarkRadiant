@@ -78,6 +78,9 @@ public:
 	 * Hide the window.
 	 */
 	void hide();
+
+    /// Toggle visibility
+    void toggleVisibility();
 	
 	/**
 	 * Destroy the window. If the window is currently visible, the hide()

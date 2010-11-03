@@ -188,10 +188,7 @@ void GroupDialog::hideDialogWindow()
 // Public static method to toggle the window visibility
 void GroupDialog::toggle()
 {
-	if (Instance().is_visible())
-		Instance().hide();
-	else
-		Instance().show();
+    Instance().toggleVisibility();
 }
 
 // Pre-hide callback from TransientWindow

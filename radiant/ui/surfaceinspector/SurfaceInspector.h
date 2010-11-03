@@ -168,12 +168,6 @@ private:
 	void _postShow();
 	void _preHide();
 	
-	/** greebo: This toggles the visibility of the surface dialog.
-	 * The dialog is constructed only once and never destructed 
-	 * during runtime.
-	 */
-	void toggleWindow();
-
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.
 	 * 

@@ -47,9 +47,6 @@ public:
 	// Updates the state of all LayerControls
 	void update();
 
-	// Toggles the visibility of the dialog
-	void toggleDialog();
-
 	// Command target (registered in the event manager)
 	static void toggle(const cmd::ArgumentList& args);
 

@@ -105,8 +105,9 @@ TransformDialog& TransformDialog::Instance() {
 }
 
 // The command target
-void TransformDialog::toggle(const cmd::ArgumentList& args) {
-	Instance().toggleDialog();
+void TransformDialog::toggle(const cmd::ArgumentList& args) 
+{
+	Instance().toggleVisibility();
 }
 
 void TransformDialog::populateWindow()
@@ -258,14 +259,6 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 	
 	// Return the filled structure
 	return entryRow;
-}
-
-void TransformDialog::toggleDialog()
-{
-	if (is_visible())
-		hide();
-	else
-		show();
 }
 
 // Pre-hide callback

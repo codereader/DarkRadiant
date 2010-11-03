@@ -347,19 +347,6 @@ void LightInspector::postRedo()
 	update();
 }
 
-// Toggle this dialog
-void LightInspector::toggle()
-{
-	if (is_visible())
-	{
-		hide();
-	}
-	else
-	{
-		show();
-	}
-}
-
 // Pre-hide callback
 void LightInspector::_preHide()
 {
@@ -394,7 +381,7 @@ void LightInspector::selectionChanged(const scene::INodePtr& node, bool isCompon
 void LightInspector::toggleInspector(const cmd::ArgumentList& args)
 {
 	// Toggle the instance
-	Instance().toggle();
+	Instance().toggleVisibility();
 }
 
 LightInspector& LightInspector::Instance()

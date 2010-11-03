@@ -81,9 +81,6 @@ private:
 	// Constructor creates GTK widgets
 	LightInspector();
 
-	// Show this LightInspector dialog
-	void toggle();
-	
 	// TransientWindow callbacks
 	virtual void _preShow();
 	virtual void _preHide();

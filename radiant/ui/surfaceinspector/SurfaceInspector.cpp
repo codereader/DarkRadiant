@@ -247,14 +247,6 @@ void SurfaceInspector::connectEvents()
 	}
 }
 
-void SurfaceInspector::toggleWindow() {
-	// Toggle the dialog visibility
-	if (is_visible())
-		hide();
-	else
-		show();
-}
-
 void SurfaceInspector::keyChanged(const std::string& key, const std::string& val) 
 {
 	// Avoid callback loops
@@ -778,8 +770,9 @@ void SurfaceInspector::onShaderSelect()
 }
 
 // Static command target to toggle the window
-void SurfaceInspector::toggle(const cmd::ArgumentList& args) {
-	Instance().toggleWindow();
+void SurfaceInspector::toggle(const cmd::ArgumentList& args) 
+{
+	Instance().toggleVisibility();
 }
 
 // TransientWindow callbacks
