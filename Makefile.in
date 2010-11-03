@@ -86,11 +86,11 @@ am__installdirs = "$(DESTDIR)$(applicationsdir)" \
 	"$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" \
 	"$(DESTDIR)$(languagedir)" "$(DESTDIR)$(languagededir)" \
 	"$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" \
-	"$(DESTDIR)$(sourceviewerdir)"
+	"$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"
 DATA = $(applications_DATA) $(bitmaps_DATA) $(commands_DATA) \
 	$(game_DATA) $(glprogs_DATA) $(language_DATA) \
 	$(languagede_DATA) $(pkgdata_DATA) $(scripts_DATA) \
-	$(sourceviewer_DATA)
+	$(sourceviewer_DATA) $(uifiles_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -314,6 +314,10 @@ pkgdata_DATA = $(top_srcdir)/install/colours.xml \
 # Install GL programs
 glprogsdir = $(pkgdatadir)/gl
 glprogs_DATA = $(top_srcdir)/install/gl/*
+
+# Install UI files
+uifilesdir = $(pkgdatadir)/ui
+uifiles_DATA = $(top_srcdir)/install/ui/*
 
 # Install python scripts
 scriptsdir = $(pkglibdir)/scripts
@@ -598,6 +602,26 @@ uninstall-sourceviewerDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(sourceviewerdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(sourceviewerdir)" && rm -f $$files
+install-uifilesDATA: $(uifiles_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(uifilesdir)" || $(MKDIR_P) "$(DESTDIR)$(uifilesdir)"
+	@list='$(uifiles_DATA)'; test -n "$(uifilesdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(uifilesdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(uifilesdir)" || exit $$?; \
+	done
+
+uninstall-uifilesDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(uifiles_DATA)'; test -n "$(uifilesdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(uifilesdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(uifilesdir)" && rm -f $$files
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -914,7 +938,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(languagedir)" "$(DESTDIR)$(languagededir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)"; do \
+	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(languagedir)" "$(DESTDIR)$(languagededir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -968,7 +992,7 @@ install-data-am: install-applicationsDATA install-bitmapsDATA \
 	install-commandsDATA install-gameDATA install-glprogsDATA \
 	install-languageDATA install-languagedeDATA \
 	install-pkgdataDATA install-scriptsDATA \
-	install-sourceviewerDATA
+	install-sourceviewerDATA install-uifilesDATA
 
 install-dvi: install-dvi-recursive
 
@@ -1018,7 +1042,8 @@ uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	uninstall-commandsDATA uninstall-gameDATA \
 	uninstall-glprogsDATA uninstall-languageDATA \
 	uninstall-languagedeDATA uninstall-pkgdataDATA \
-	uninstall-scriptsDATA uninstall-sourceviewerDATA
+	uninstall-scriptsDATA uninstall-sourceviewerDATA \
+	uninstall-uifilesDATA
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all \
 	ctags-recursive install-am install-strip tags-recursive
@@ -1038,15 +1063,16 @@ uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	install-languageDATA install-languagedeDATA install-man \
 	install-pdf install-pdf-am install-pkgdataDATA install-ps \
 	install-ps-am install-scriptsDATA install-sourceviewerDATA \
-	install-strip installcheck installcheck-am installdirs \
-	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
-	ps ps-am tags tags-recursive uninstall uninstall-am \
-	uninstall-applicationsDATA uninstall-bitmapsDATA \
-	uninstall-commandsDATA uninstall-gameDATA \
-	uninstall-glprogsDATA uninstall-languageDATA \
-	uninstall-languagedeDATA uninstall-pkgdataDATA \
-	uninstall-scriptsDATA uninstall-sourceviewerDATA
+	install-strip install-uifilesDATA installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic \
+	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
+	uninstall uninstall-am uninstall-applicationsDATA \
+	uninstall-bitmapsDATA uninstall-commandsDATA \
+	uninstall-gameDATA uninstall-glprogsDATA \
+	uninstall-languageDATA uninstall-languagedeDATA \
+	uninstall-pkgdataDATA uninstall-scriptsDATA \
+	uninstall-sourceviewerDATA uninstall-uifilesDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
