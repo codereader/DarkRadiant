@@ -24,6 +24,10 @@ pkgdata_DATA = $(top_srcdir)/install/colours.xml \
 glprogsdir = $(pkgdatadir)/gl
 glprogs_DATA = $(top_srcdir)/install/gl/*
 
+# Install UI files
+uifilesdir = $(pkgdatadir)/ui
+uifiles_DATA = $(top_srcdir)/install/ui/*
+
 # Install python scripts
 scriptsdir = $(pkglibdir)/scripts
 scripts_DATA = $(top_srcdir)/install/scripts/*.py
