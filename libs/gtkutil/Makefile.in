@@ -71,12 +71,12 @@ libgtkutil_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
 	VFSTreePopulator.lo Timer.lo WindowPosition.lo \
-	PersistentTransientWindow.lo Dialog.lo MessageBox.lo \
-	dialog_legacy.lo glfont.lo MenuItemAccelerator.lo cursor.lo \
-	DeferredAdjustment.lo PopupMenu.lo widget.lo \
-	RegistryConnector.lo PathEntry.lo TreeModel.lo \
-	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
-	clipboard.lo FileChooser.lo
+	PersistentTransientWindow.lo TransientWindow.lo Dialog.lo \
+	MessageBox.lo dialog_legacy.lo glfont.lo \
+	MenuItemAccelerator.lo cursor.lo DeferredAdjustment.lo \
+	PopupMenu.lo widget.lo RegistryConnector.lo PathEntry.lo \
+	TreeModel.lo ModalProgressDialog.lo SerialisableWidgets.lo \
+	SourceView.lo clipboard.lo FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 libgtkutil_la_LINK = $(LIBTOOL) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
@@ -178,6 +178,8 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PYTHON_CFLAGS = @PYTHON_CFLAGS@
 PYTHON_CONFIG = @PYTHON_CONFIG@
 PYTHON_LIBS = @PYTHON_LIBS@
@@ -276,6 +278,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						Timer.cpp \
 						WindowPosition.cpp \
 						window/PersistentTransientWindow.cpp \
+                        window/TransientWindow.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
 						dialog_legacy.cpp \
@@ -384,6 +387,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SerialisableWidgets.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Timer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TransientWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TreeModel.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFSTreePopulator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WindowPosition.Plo@am__quote@
@@ -420,6 +424,13 @@ PersistentTransientWindow.lo: window/PersistentTransientWindow.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='window/PersistentTransientWindow.cpp' object='PersistentTransientWindow.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o PersistentTransientWindow.lo `test -f 'window/PersistentTransientWindow.cpp' || echo '$(srcdir)/'`window/PersistentTransientWindow.cpp
+
+TransientWindow.lo: window/TransientWindow.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT TransientWindow.lo -MD -MP -MF $(DEPDIR)/TransientWindow.Tpo -c -o TransientWindow.lo `test -f 'window/TransientWindow.cpp' || echo '$(srcdir)/'`window/TransientWindow.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/TransientWindow.Tpo $(DEPDIR)/TransientWindow.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='window/TransientWindow.cpp' object='TransientWindow.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o TransientWindow.lo `test -f 'window/TransientWindow.cpp' || echo '$(srcdir)/'`window/TransientWindow.cpp
 
 Dialog.lo: dialog/Dialog.cpp
 @am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Dialog.lo -MD -MP -MF $(DEPDIR)/Dialog.Tpo -c -o Dialog.lo `test -f 'dialog/Dialog.cpp' || echo '$(srcdir)/'`dialog/Dialog.cpp
