@@ -119,11 +119,6 @@ public:
 	 */
 	static TransformDialog& Instance();
 	
-	/** greebo: This toggles the visibility of the dialog.
-	 * It is constructed only once and never destructed during runtime.
-	 */
-	void toggleDialog();
-	
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating of the
 	 * widget sensitivity.

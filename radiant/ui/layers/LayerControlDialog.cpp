@@ -94,18 +94,6 @@ Gtk::Widget& LayerControlDialog::createButtons()
 	return *buttonVBox;
 }
 
-void LayerControlDialog::toggleDialog()
-{
-	if (is_visible())
-	{
-		hide();
-	}
-	else
-	{
-		show();
-	}
-}
-
 void LayerControlDialog::refresh()
 {
 	// Remove the widgets from the vbox first
@@ -220,7 +208,7 @@ void LayerControlDialog::update()
 
 void LayerControlDialog::toggle(const cmd::ArgumentList& args)
 {
-	Instance().toggleDialog();
+	Instance().toggleVisibility();
 }
 
 void LayerControlDialog::init()

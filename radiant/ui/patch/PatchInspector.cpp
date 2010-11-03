@@ -392,13 +392,6 @@ void PatchInspector::loadControlVertex()
 	}
 }
 
-void PatchInspector::toggleWindow() {
-	if (is_visible())
-		hide();
-	else
-		show();
-}
-
 // Pre-hide callback
 void PatchInspector::_preHide()
 {
@@ -694,7 +687,7 @@ void PatchInspector::onClickSmaller(CoordRow& row)
 // static command target
 void PatchInspector::toggle(const cmd::ArgumentList& args)
 {
-	Instance().toggleWindow();
+	Instance().toggleVisibility();
 }
 
 void PatchInspector::onPatchControlPointsChanged()

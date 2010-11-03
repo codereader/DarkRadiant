@@ -136,14 +136,6 @@ void TexTool::populateWindow()
 	add(*vbox);
 }
 
-void TexTool::toggleWindow()
-{
-	if (is_visible())
-		hide();
-	else
-		show();
-}
-
 // Pre-hide callback
 void TexTool::_preHide() {
 	// Save the window position, to make sure
@@ -956,7 +948,7 @@ bool TexTool::onMouseScroll(GdkEventScroll* ev)
 // Static command targets
 void TexTool::toggle(const cmd::ArgumentList& args) {
 	// Call the toggle() method of the static instance
-	Instance().toggleWindow();
+	Instance().toggleVisibility();
 }
 
 void TexTool::texToolGridUp(const cmd::ArgumentList& args) {

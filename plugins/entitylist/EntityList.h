@@ -61,10 +61,6 @@ private:
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
-	/** greebo: Toggles the visibility of this dialog
-	 */
-	void toggleWindow();
-
 	void onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
 	bool onSelection(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::Path& path, bool path_currently_selected);
 	void onFocusSelectionToggle();

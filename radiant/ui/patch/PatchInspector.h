@@ -108,12 +108,6 @@ private:
 	void _preShow();
 	void _preHide();
 	
-	/** greebo: This toggles the visibility of the patch inspector.
-	 * The dialog is constructed only once and never destructed 
-	 * during runtime.
-	 */
-	void toggleWindow();
-
 	/** greebo: Saves the step values to the registry
 	 */
 	void saveToRegistry();

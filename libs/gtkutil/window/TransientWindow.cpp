@@ -83,6 +83,18 @@ void TransientWindow::hide()
     _postHide();
 }
 
+void TransientWindow::toggleVisibility()
+{
+    if (is_visible())
+    {
+        hide();
+    }
+    else
+    {
+        show();
+    }
+}
+
 void TransientWindow::destroy()
 {
     // Trigger a hide sequence if necessary

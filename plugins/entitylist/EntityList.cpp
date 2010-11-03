@@ -114,18 +114,6 @@ void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 	_callbackActive = false;
 }
 
-void EntityList::toggleWindow()
-{
-	if (is_visible())
-	{
-		hide();
-	}
-	else
-	{
-		show();
-	}
-}
-
 // Pre-hide callback
 void EntityList::_preHide()
 {
@@ -163,7 +151,7 @@ void EntityList::_preShow()
 
 void EntityList::toggle(const cmd::ArgumentList& args)
 {
-	Instance().toggleWindow();
+	Instance().toggleVisibility();
 }
 
 void EntityList::onRadiantShutdown()

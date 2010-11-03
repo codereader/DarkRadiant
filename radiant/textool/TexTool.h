@@ -103,11 +103,6 @@ private:
 	 */
 	void selectRelatedItems();
 	
-	/** greebo: Toggles the visibility of this TexTool instance.
-	 * The actual static instance is owned by the Instane() method.
-	 */
-	void toggleWindow();
-
 	/** greebo: Helper methods that start/end an undoable operation.
 	 */
 	void beginOperation();
