@@ -1,5 +1,7 @@
 #include "TransientWindow.h"
 
+#include <cassert>
+
 namespace gtkutil
 {
 
@@ -56,6 +58,26 @@ void TransientWindow::setParentWindow(const Glib::RefPtr<Gtk::Window>& parent)
         {
             set_transient_for(*static_cast<Gtk::Window*>(toplevel));
         }
+    }
+}
+
+void TransientWindow::addChildFromBuilder(
+    Glib::RefPtr<Gtk::Builder> builder, const std::string& childName
+)
+{
+    Gtk::Bin* bin = NULL;
+    builder->get_widget(childName, bin);
+    assert(bin);
+
+    // Get the child from the bin, and add it to ourselves as a child
+    Gtk::Widget* child = bin->get_child();
+    assert(child);
+    add(*child);
+
+    // If the bin was a top-level widget, we should delete it
+    if (bin->get_is_toplevel())
+    {
+        bin->unreference();
     }
 }
 
