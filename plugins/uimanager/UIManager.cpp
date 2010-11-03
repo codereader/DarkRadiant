@@ -123,6 +123,7 @@ UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
     std::string fullPath = module::GlobalModuleRegistry()
                            .getApplicationContext()
                            .getRuntimeDataPath()
+                           + "ui/"
                            + localFileName;
 
     return Gtk::Builder::create_from_file(fullPath);

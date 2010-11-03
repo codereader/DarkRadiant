@@ -72,13 +72,9 @@ void TransientWindow::addChildFromBuilder(
     // Get the child from the bin, and add it to ourselves as a child
     Gtk::Widget* child = bin->get_child();
     assert(child);
-    add(*child);
 
-    // If the bin was a top-level widget, we should delete it
-    if (bin->get_is_toplevel())
-    {
-        bin->unreference();
-    }
+    child->show_all();
+    child->reparent(*this);
 }
 
 Glib::RefPtr<Gtk::Window> TransientWindow::getRefPtr()

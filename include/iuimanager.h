@@ -193,6 +193,9 @@ typedef boost::shared_ptr<IModelPreview> IModelPreviewPtr;
 class IParticlePreview;	// see iparticlepreview.h for definition
 typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
 
+/// Convenience type for GtkBuilder refptr
+typedef Glib::RefPtr<Gtk::Builder> GtkBuilderPtr;
+
 } // namespace ui
 
 const std::string MODULE_UIMANAGER("UIManager");
@@ -223,7 +226,7 @@ public:
      * Create a GtkBuilder object from a .glade UI file in the runtime ui/
      * directory.
      */
-    virtual Glib::RefPtr<Gtk::Builder> getGtkBuilderFromFile(
+    virtual ui::GtkBuilderPtr getGtkBuilderFromFile(
                 const std::string& localFileName
     ) const = 0;
 
