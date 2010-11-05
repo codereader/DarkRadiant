@@ -19,6 +19,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						VFSTreePopulator.cpp \
 						Timer.cpp \
 						WindowPosition.cpp \
+                        window/GladeWindow.cpp \
 						window/PersistentTransientWindow.cpp \
                         window/TransientWindow.cpp \
 						dialog/Dialog.cpp \

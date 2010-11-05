@@ -8,8 +8,7 @@ namespace gtkutil
 TransientWindow::TransientWindow(const std::string& title, 
                                  const Glib::RefPtr<Gtk::Window>& parent, 
                                  bool hideOnDelete)
-: Gtk::Window(Gtk::WINDOW_TOPLEVEL),
-  _hideOnDelete(hideOnDelete)
+: _hideOnDelete(hideOnDelete)
 {
     // Set up the window
     set_title(title);
@@ -59,22 +58,6 @@ void TransientWindow::setParentWindow(const Glib::RefPtr<Gtk::Window>& parent)
             set_transient_for(*static_cast<Gtk::Window*>(toplevel));
         }
     }
-}
-
-void TransientWindow::addChildFromBuilder(
-    Glib::RefPtr<Gtk::Builder> builder, const std::string& childName
-)
-{
-    Gtk::Bin* bin = NULL;
-    builder->get_widget(childName, bin);
-    assert(bin);
-
-    // Get the child from the bin, and add it to ourselves as a child
-    Gtk::Widget* child = bin->get_child();
-    assert(child);
-
-    child->show_all();
-    child->reparent(*this);
 }
 
 Glib::RefPtr<Gtk::Window> TransientWindow::getRefPtr()
