@@ -51,11 +51,7 @@ private:
 	// Tree view, selection and model
 	TreeColumns _columns;
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Gtk::TreeView* _treeView;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
-	
-	// Text view for displaying usage info
-	Gtk::TextView* _usageTextView;
 	
 	// The selected properties
 	PropertyList _selectedProperties;
@@ -64,11 +60,10 @@ private:
 	Entity* _entity;
 	
 private:
-	// Create GUI components
-	Gtk::Widget& createTreeView();
-	Gtk::Widget& createButtonsPanel();
-	Gtk::Widget& createUsagePanel();
 	
+    // Set up tree model and columns
+    void setupTreeView();
+
 	// Populate tree view with properties
 	void populateTreeView();
 

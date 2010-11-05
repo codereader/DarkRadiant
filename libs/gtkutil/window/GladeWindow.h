@@ -50,12 +50,12 @@ protected:
     template<typename WidgetType>
     WidgetType* getGladeWidget(const std::string& name)
     {
-        assert(_builder);
+        g_assert(_builder);
 
         WidgetType* widget = NULL;
         _builder->get_widget(name, widget);
 
-        assert(widget);
+        g_assert(widget);
         return widget;
     }
 
