@@ -126,23 +126,26 @@ UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
                            + "ui/"
                            + localFileName;
 
-    Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_file(
-        fullPath
-    );
-
-    // The builder must be created successfully.
-    if (!builder)
+    // Attempt to load the Glade file into a Gtk::Builder
+    Glib::RefPtr<Gtk::Builder> builder;
+    try
     {
-        throw std::runtime_error(
-            "Unable to construct Gtk::Builder from Glade file: "
-            + fullPath
+        builder = Gtk::Builder::create_from_file(
+            fullPath
         );
     }
-    else
+    catch (const Glib::FileError& e)
     {
-        std::cout << "[UIManager] Successfully loaded " << fullPath 
-                  << std::endl;
+        std::cerr << "[UIManager] Glib::FileError with code "
+                  << e.code()
+                  << " attempting to load Glade file '"
+                  << fullPath << "'";
+        throw;
     }
+
+    // The builder was created successfully.
+    std::cout << "[UIManager] Successfully loaded " << fullPath
+              << std::endl;
 
     return builder;
 }
