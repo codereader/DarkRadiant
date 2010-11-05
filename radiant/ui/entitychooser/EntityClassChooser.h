@@ -53,20 +53,12 @@ public:
 private:
 	TreeColumns _columns;
 
-	// Tree model holding the classnames, and the corresponding treeview
+	// Tree model holding the classnames
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	Gtk::TreeView* _treeView;
 	
 	// GtkTreeSelection holding the currently-selected classname
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
-	// Usage information textview
-	Gtk::TextView* _usageTextView;
-
-	// OK button. Needs to be a member since we enable/disable it in the
-	// selectionchanged callback.
-	Gtk::Button* _okButton;
-	
 	// Last selected classname
 	std::string _selectedName;
 
@@ -80,10 +72,7 @@ private:
 	EntityClassChooser();
 
 	/* Widget construction helpers */
-	
-	Gtk::Widget& createTreeView();
-	Gtk::Widget& createUsagePanel();
-	Gtk::Widget& createButtonPanel();
+	void setupTreeView();
 
 	// Update the usage panel with information from the provided entityclass
 	void updateUsageInfo(const std::string& eclass);
