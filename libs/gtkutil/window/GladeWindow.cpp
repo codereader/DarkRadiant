@@ -9,6 +9,8 @@ void GladeWindow::addChildFromBuilder(
     Glib::RefPtr<Gtk::Builder> builder, const std::string& childName
 )
 {
+    assert(builder);
+
     Gtk::Bin* bin = NULL;
     builder->get_widget(childName, bin);
     assert(bin);

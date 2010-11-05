@@ -43,12 +43,11 @@ namespace
 // Constructor creates GTK widgets
 
 AddPropertyDialog::AddPropertyDialog(Entity* entity) :
-	gtkutil::BlockingTransientWindow(_(ADDPROPERTY_TITLE), GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(
+        _(ADDPROPERTY_TITLE), GlobalMainFrame().getTopLevelWindow()
+    ),
 	_entity(entity)
 {
-	// Window properties
-	set_border_width(6);
-	
     // Set size of dialog
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(
 		GlobalMainFrame().getTopLevelWindow()
@@ -56,15 +55,21 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(rect.get_height()*2/3));
     
     // Create components
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
+    addChildFromBuilder(
+        GlobalUIManager().getGtkBuilderFromFile("AddPropertyDialog.glade"),
+        "addPropertyDialog"
+    );
+    assert(get_child() != 0);
 
-    vbx->pack_start(createTreeView(), true, true, 0);
-    vbx->pack_start(createUsagePanel(), false, false, 0);
-    vbx->pack_end(createButtonsPanel(), false, false, 0);
-    
-    add(*vbx);
+	getGladeWidget<Gtk::Button>("addButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &AddPropertyDialog::_onOK)
+    );
+	getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &AddPropertyDialog::_onCancel)
+    );
     
     // Populate the tree view with properties
+    setupTreeView();
     populateTreeView();
 
 	updateUsagePanel();
@@ -72,59 +77,34 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 
 // Construct the tree view
 
-Gtk::Widget& AddPropertyDialog::createTreeView()
+void AddPropertyDialog::setupTreeView()
 {
 	// Set up the tree store
 	_treeStore = Gtk::TreeStore::create(_columns);
 
-	// Create tree view
-	_treeView = Gtk::manage(new Gtk::TreeView(_treeStore));
-	_treeView->set_headers_visible(false);
+    Gtk::TreeView* treeView = getGladeWidget<Gtk::TreeView>(
+        "propertyTreeView"
+    );
+    treeView->set_model(_treeStore);
 
 	// Connect up selection changed callback
-	_selection = _treeView->get_selection();
+	_selection = treeView->get_selection();
 	_selection->signal_changed().connect(
-		sigc::mem_fun(*this, &AddPropertyDialog::_onSelectionChanged));
+		sigc::mem_fun(*this, &AddPropertyDialog::_onSelectionChanged)
+    );
 	
 	// Allow multiple selections
 	_selection->set_mode(Gtk::SELECTION_MULTIPLE);
 	
 	// Display name column with icon
-	_treeView->append_column(*Gtk::manage(
-		new gtkutil::IconTextColumn("", _columns.displayName, _columns.icon, true)));
+	treeView->append_column(*Gtk::manage(
+		new gtkutil::IconTextColumn("", _columns.displayName, _columns.icon, true))
+    );
 
 	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
-	
-	// Pack into scrolled window and frame, and return
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
-}
-
-// Construct the usage panel
-Gtk::Widget& AddPropertyDialog::createUsagePanel()
-{
-	// Create a GtkTextView
-	_usageTextView = Gtk::manage(new Gtk::TextView);
-	_usageTextView->set_wrap_mode(Gtk::WRAP_WORD);
-
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_usageTextView));
-}
-
-// Construct the buttons panel
-Gtk::Widget& AddPropertyDialog::createButtonsPanel()
-{
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-	
-	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
-	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	
-	okButton->signal_clicked().connect(sigc::mem_fun(*this, &AddPropertyDialog::_onOK));
-	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &AddPropertyDialog::_onCancel));
-
-	hbx->pack_end(*okButton, true, true, 0);
-	hbx->pack_end(*cancelButton, true, true, 0);
-
-	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
+	treeView->set_search_equal_func(
+        sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains)
+    );
 }
 
 namespace
@@ -309,12 +289,15 @@ AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity
 
 void AddPropertyDialog::updateUsagePanel()
 {
-	Glib::RefPtr<Gtk::TextBuffer> buf = _usageTextView->get_buffer();
+    Gtk::TextView* usageTextView = getGladeWidget<Gtk::TextView>(
+        "usageTextView"
+    );
+	Glib::RefPtr<Gtk::TextBuffer> buf = usageTextView->get_buffer();
 
 	if (_selectedProperties.size() != 1)
 	{
 		buf->set_text("");
-		_usageTextView->set_sensitive(false);
+		usageTextView->set_sensitive(false);
 	}
 	else
 	{
@@ -330,7 +313,7 @@ void AddPropertyDialog::updateUsagePanel()
 			buf->set_text(desc);
 		}
 
-		_usageTextView->set_sensitive(true);
+		usageTextView->set_sensitive(true);
 	}
 }
 

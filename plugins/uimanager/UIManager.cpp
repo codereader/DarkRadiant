@@ -126,7 +126,25 @@ UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
                            + "ui/"
                            + localFileName;
 
-    return Gtk::Builder::create_from_file(fullPath);
+    Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_file(
+        fullPath
+    );
+
+    // The builder must be created successfully.
+    if (!builder)
+    {
+        throw std::runtime_error(
+            "Unable to construct Gtk::Builder from Glade file: "
+            + fullPath
+        );
+    }
+    else
+    {
+        std::cout << "[UIManager] Successfully loaded " << fullPath 
+                  << std::endl;
+    }
+
+    return builder;
 }
 
 IFilterMenuPtr UIManager::createFilterMenu()
