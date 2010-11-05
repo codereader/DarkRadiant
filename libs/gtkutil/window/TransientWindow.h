@@ -1,7 +1,6 @@
 #pragma once
 
-#include <gtkmm/window.h>
-#include <gtkmm/builder.h>
+#include "GladeWindow.h"
 
 #include <string>
 #include <iostream>
@@ -13,7 +12,7 @@ namespace gtkutil
  * A basic GtkWindow that is transient for the given parent window.
  */
 class TransientWindow :
-	public Gtk::Window
+	public GladeWindow
 {
 private:
 
@@ -63,21 +62,6 @@ public:
 
 	virtual void setParentWindow(const Glib::RefPtr<Gtk::Window>& parent);
 	
-    /**
-     * \brief
-     * Add a child widget from a Gtk::Builder object.
-     *
-     * \param builder
-     * The Gtk::Builder containing the child widget hierarchy.
-     *
-     * \param childName
-     * The name of the widget within the Gtk::Builder whose child should be
-     * placed into this Gtk::Window. The childName must refer to a Gtk::Bin
-     * subclass, which may contain only a single child widget.
-     */
-    void addChildFromBuilder(Glib::RefPtr<Gtk::Builder> builder, 
-                             const std::string& childName);
-
 	/**
      * Create a new Glib::RefPtr<> from this class. There is no
      * shared_from_this() equivalent, but I had to use this hack several times
