@@ -1,5 +1,6 @@
 AC_INIT([darkradiant], [1.5.0])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([1.11])
+AM_SILENT_RULES([yes])
 
 AC_CONFIG_MACRO_DIR([m4])
 
