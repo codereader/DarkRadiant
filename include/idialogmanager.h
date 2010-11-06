@@ -21,14 +21,26 @@ public:
 		RESULT_YES,
 	};
 
-	// Possible message types (used for IDialogManager::createMessageBox())
+	/// Possible message types (used for IDialogManager::createMessageBox())
 	enum MessageType
 	{
-		MESSAGE_CONFIRM,		// Just a plain message with an OK button
-		MESSAGE_ASK,			// Queries Yes/No from the user
-		MESSAGE_WARNING,		// Displays a warning message
-		MESSAGE_ERROR,			// Displays an error message
-		MESSAGE_YESNOCANCEL,	// Has three options: Yes, No or Cancel
+        /// Just a plain message with an OK button
+		MESSAGE_CONFIRM,		
+
+        // Queries Yes//No from the user
+		MESSAGE_ASK,			
+
+        /// Displays a warning message
+		MESSAGE_WARNING,		
+
+        /// Displays an error message
+		MESSAGE_ERROR,			
+
+        /// Has three options: Yes, No or Cancel
+		MESSAGE_YESNOCANCEL,	
+
+        /// Save confirmation as per HIG 2.32/3.4.6.1
+        MESSAGE_SAVECONFIRMATION 
 	};
 
 	// Sets the dialog title
@@ -106,7 +118,8 @@ public:
 	 * @parent: optional top-level widget this dialog should be parented to, defaults to
 	 *			GlobalMainFrame().getMainWindow().
 	 */
-	virtual IDialogPtr createMessageBox(const std::string& title, const std::string& text, 
+	virtual IDialogPtr createMessageBox(const std::string& title,
+                                        const std::string& text, 
 										IDialog::MessageType type, 
 										const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
 

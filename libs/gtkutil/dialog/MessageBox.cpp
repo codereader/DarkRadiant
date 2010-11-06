@@ -1,6 +1,7 @@
 #include "MessageBox.h"
 
 #include "itextstream.h"
+#include "i18n.h"
 
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
@@ -28,7 +29,7 @@ void MessageBox::construct()
 
 	// Add an hbox for the icon and the content
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-	_vbox->pack_start(*hbox, true, true, 0);
+	_vbox->pack_start(*hbox, false, false, 0);
 
 	// Add the icon
 	Gtk::Widget* icon = createIcon();
@@ -70,14 +71,16 @@ Gtk::Widget* MessageBox::createIcon()
 // Override Dialog::createButtons() to add the custom ones
 Gtk::Widget& MessageBox::createButtons()
 {
-	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(false, 6));
+	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 6));
 
-	if (_type == MESSAGE_CONFIRM || _type == MESSAGE_WARNING || _type == MESSAGE_ERROR)
+	if (   _type == MESSAGE_CONFIRM 
+        || _type == MESSAGE_WARNING 
+        || _type == MESSAGE_ERROR)
 	{
 		// Add an OK button
 		Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 		okButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onOK));
-		buttonHBox->pack_end(*okButton, false, false, 0);
+		buttonHBox->pack_end(*okButton, true, true, 0);
 
 		mapKeyToButton(GDK_O, *okButton);
 		mapKeyToButton(GDK_Return, *okButton);
@@ -88,7 +91,7 @@ Gtk::Widget& MessageBox::createButtons()
 		// YES button
 		Gtk::Button* yesButton = Gtk::manage(new Gtk::Button(Gtk::Stock::YES));
 		yesButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onYes));
-		buttonHBox->pack_end(*yesButton, false, false, 0);
+		buttonHBox->pack_end(*yesButton, true, true, 0);
 
 		mapKeyToButton(GDK_Y, *yesButton);
 		mapKeyToButton(GDK_Return, *yesButton);
@@ -96,35 +99,59 @@ Gtk::Widget& MessageBox::createButtons()
 		// NO button
 		Gtk::Button* noButton = Gtk::manage(new Gtk::Button(Gtk::Stock::NO));
 		noButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onNo));
-		buttonHBox->pack_end(*noButton, false, false, 0);
+		buttonHBox->pack_end(*noButton, true, true, 0);
 
 		mapKeyToButton(GDK_N, *noButton);
 		mapKeyToButton(GDK_Escape, *noButton);
 	}
-	else if (_type == MESSAGE_YESNOCANCEL)
+	else if (   _type == MESSAGE_YESNOCANCEL 
+             || _type == MESSAGE_SAVECONFIRMATION)
 	{
-		// YES button
-		Gtk::Button* yesButton = Gtk::manage(new Gtk::Button(Gtk::Stock::YES));
-		yesButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onYes));
-		buttonHBox->pack_start(*yesButton, false, false, 0);
-
-		mapKeyToButton(GDK_Y, *yesButton);
-		mapKeyToButton(GDK_Return, *yesButton);
-		
-		// NO button
-		Gtk::Button* noButton = Gtk::manage(new Gtk::Button(Gtk::Stock::NO));
-		noButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onNo));
-		buttonHBox->pack_start(*noButton, false, false, 0);
-
-		mapKeyToButton(GDK_N, *noButton);
+        bool isYesNo = (_type == MESSAGE_YESNOCANCEL);
 
 		// Cancel button
-		Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-		cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onCancel));
-		buttonHBox->pack_start(*cancelButton, false, false, 0);
+		Gtk::Button* cancelButton = Gtk::manage(
+            new Gtk::Button(Gtk::Stock::CANCEL)
+        );
+		cancelButton->signal_clicked().connect(
+            sigc::mem_fun(*this, &MessageBox::onCancel)
+        );
 
 		mapKeyToButton(GDK_Escape, *cancelButton);
 		mapKeyToButton(GDK_C, *cancelButton);
+
+		// NO button / "Close without saving" button
+		Gtk::Button* noButton = Gtk::manage(
+            isYesNo
+            ? new Gtk::Button(Gtk::Stock::NO)
+            : new Gtk::Button(_("Close without saving"))
+        );
+		noButton->signal_clicked().connect(
+            sigc::mem_fun(*this, &MessageBox::onNo)
+        );
+
+		mapKeyToButton(isYesNo ? GDK_N : GDK_W, *noButton);
+
+		// YES button / Save button
+		Gtk::Button* yesButton = Gtk::manage(
+            new Gtk::Button(isYesNo ? Gtk::Stock::YES : Gtk::Stock::SAVE)
+        );
+		yesButton->signal_clicked().connect(
+            sigc::mem_fun(*this, &MessageBox::onYes)
+        );
+
+		mapKeyToButton(isYesNo ? GDK_Y : GDK_S, *yesButton);
+		mapKeyToButton(GDK_Return, *yesButton);
+
+        // Pack buttons
+        buttonHBox->pack_start(
+            isYesNo ? *cancelButton : *noButton, true, true, 0
+        );
+		buttonHBox->pack_start(
+            isYesNo ? *noButton : *cancelButton, true, true, 0
+        );
+		buttonHBox->pack_start(*yesButton, true, true, 0);
+
 	}
 	else
 	{
