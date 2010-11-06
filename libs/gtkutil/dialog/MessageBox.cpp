@@ -6,6 +6,7 @@
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
 #include <gtkmm/stock.h>
+#include <gtkmm/table.h>
 #include <gdk/gdkkeysyms.h>
 
 #include "gtkutil/LeftAlignedLabel.h"
@@ -28,7 +29,7 @@ void MessageBox::construct()
 	Dialog::construct();
 
 	// Add an hbox for the icon and the content
-	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
+	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 12));
 	_vbox->pack_start(*hbox, false, false, 0);
 
 	// Add the icon
@@ -40,7 +41,9 @@ void MessageBox::construct()
 	}
 
 	// Add the text
-	hbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_text)), true, true, 0);
+	hbox->pack_start(
+        *Gtk::manage(new gtkutil::LeftAlignedLabel(_text)), true, true, 0
+    );
 }
 
 Gtk::Widget* MessageBox::createIcon()

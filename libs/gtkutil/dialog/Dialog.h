@@ -58,6 +58,10 @@ protected:
 
 	Handle _highestUsedHandle;
 
+private:
+
+    void createAndPackElementsTable();
+
 public:
 	Dialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
 

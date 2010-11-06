@@ -15,8 +15,8 @@ namespace gtkutil
 Dialog::Dialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent) :
 	BlockingTransientWindow(title, parent),
 	_result(RESULT_CANCELLED),
-	_vbox(Gtk::manage(new Gtk::VBox(false, 6))),
-	_elementsTable(Gtk::manage(new Gtk::Table(1, 1, false))),
+	_vbox(Gtk::manage(new Gtk::VBox(false, 24))),
+	_elementsTable(NULL),
 	_accelGroup(Gtk::AccelGroup::create()),
 	_constructed(false),
 	_highestUsedHandle(0)
@@ -32,12 +32,17 @@ Dialog::Dialog(const std::string& title, const Glib::RefPtr<Gtk::Window>& parent
 
 	add(*_vbox);
 
+	add_accel_group(_accelGroup);
+}
+
+void Dialog::createAndPackElementsTable()
+{
+    _elementsTable = Gtk::manage(new Gtk::Table(1, 1, false));
+
 	_elementsTable->set_col_spacings(12);
 	_elementsTable->set_row_spacings(6);
 	
 	_vbox->pack_start(*_elementsTable, true, true, 0);
-
-	add_accel_group(_accelGroup);
 }
 
 void Dialog::setTitle(const std::string& title)
@@ -48,6 +53,14 @@ void Dialog::setTitle(const std::string& title)
 
 ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 {
+    // Create the elements table if necessary
+    if (!_elementsTable)
+    {
+        createAndPackElementsTable();
+    }
+
+    g_assert(_elementsTable);
+
 	Gtk::Label* first = element->getLabel();
 	Gtk::Widget* second = element->getValueWidget();
 
