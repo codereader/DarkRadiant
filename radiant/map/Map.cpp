@@ -616,9 +616,16 @@ bool Map::askForSave(const std::string& title)
 	}
 
 	// Ask the user
+    Glib::ustring confirmText = Glib::ustring::compose(
+        "<span weight=\"bold\" size=\"larger\">%1</span>\n\n%2",
+         _("Save changes to current map before closing?"),
+         _("If you don't save, all changes will be lost.")
+    );
 	ui::IDialogPtr msgBox = GlobalDialogManager().createMessageBox(
-		title, _("The current map has changed since it was last saved."
-		"\nDo you want to save the current map before continuing?"), ui::IDialog::MESSAGE_YESNOCANCEL);
+		title,
+        confirmText,
+        ui::IDialog::MESSAGE_SAVECONFIRMATION
+    );
 
 	ui::IDialog::Result result = msgBox->run();
 	
