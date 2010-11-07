@@ -38,14 +38,11 @@ subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/configure \
-	$(top_srcdir)/install/darkradiant.desktop.in AUTHORS ChangeLog \
-	NEWS config.guess config.sub depcomp install-sh ltmain.sh \
-	missing
+	$(top_srcdir)/install/darkradiant.desktop.in ABOUT-NLS AUTHORS \
+	ChangeLog NEWS config.guess config.rpath config.sub depcomp \
+	install-sh ltmain.sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
-	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
-	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -93,12 +90,10 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(applicationsdir)" \
 	"$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" \
 	"$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" \
-	"$(DESTDIR)$(languagedir)" "$(DESTDIR)$(languagededir)" \
 	"$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" \
 	"$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"
 DATA = $(applications_DATA) $(bitmaps_DATA) $(commands_DATA) \
-	$(game_DATA) $(glprogs_DATA) $(language_DATA) \
-	$(languagede_DATA) $(pkgdata_DATA) $(scripts_DATA) \
+	$(game_DATA) $(glprogs_DATA) $(pkgdata_DATA) $(scripts_DATA) \
 	$(sourceviewer_DATA) $(uifiles_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -177,11 +172,14 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 GLEW_LIBS = @GLEW_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
 GLIB_LIBS = @GLIB_LIBS@
 GLU_LIBS = @GLU_LIBS@
 GL_LIBS = @GL_LIBS@
+GMSGFMT = @GMSGFMT@
+GMSGFMT_015 = @GMSGFMT_015@
 GREP = @GREP@
 GTKGLEXTMM_CFLAGS = @GTKGLEXTMM_CFLAGS@
 GTKGLEXTMM_LIBS = @GTKGLEXTMM_LIBS@
@@ -198,17 +196,26 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+INTLLIBS = @INTLLIBS@
+INTL_MACOSX_LIBS = @INTL_MACOSX_LIBS@
 JPEG_LIBS = @JPEG_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
+LIBICONV = @LIBICONV@
+LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
+LTLIBICONV = @LTLIBICONV@
+LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
+MSGFMT = @MSGFMT@
+MSGFMT_015 = @MSGFMT_015@
+MSGMERGE = @MSGMERGE@
 NM = @NM@
 NMEDIT = @NMEDIT@
 OBJDUMP = @OBJDUMP@
@@ -226,6 +233,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
 PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
+POSUB = @POSUB@
 PYTHON_CFLAGS = @PYTHON_CFLAGS@
 PYTHON_CONFIG = @PYTHON_CONFIG@
 PYTHON_LIBS = @PYTHON_LIBS@
@@ -235,8 +243,12 @@ SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
+USE_NLS = @USE_NLS@
 VERSION = @VERSION@
 VORBIS_LIBS = @VORBIS_LIBS@
+XGETTEXT = @XGETTEXT@
+XGETTEXT_015 = @XGETTEXT_015@
+XGETTEXT_EXTRA_OPTIONS = @XGETTEXT_EXTRA_OPTIONS@
 XML_CFLAGS = @XML_CFLAGS@
 XML_LIBS = @XML_LIBS@
 Z_LIBS = @Z_LIBS@
@@ -302,7 +314,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 ACLOCAL_AMFLAGS = -I m4
-SUBDIRS = libs radiant plugins
+SUBDIRS = libs radiant plugins install/i18n
 
 # Install data and stuff
 gamedir = $(pkgdatadir)/games
@@ -338,14 +350,7 @@ commands_DATA = $(top_srcdir)/install/scripts/commands/*.py
 # Install sourceviewer synax and colour files
 sourceviewerdir = $(pkglibdir)/sourceviewer
 sourceviewer_DATA = $(top_srcdir)/install/sourceviewer/*
-
-# Install POT template
-languagedir = $(pkglibdir)/i18n
-language_DATA = $(top_srcdir)/install/i18n/*.pot
-
-# Install German language module
-languagededir = $(pkglibdir)/i18n/de/LC_MESSAGES
-languagede_DATA = $(top_srcdir)/install/i18n/de/LC_MESSAGES/*.mo
+EXTRA_DIST = config.rpath
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -512,46 +517,6 @@ uninstall-glprogsDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(glprogsdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(glprogsdir)" && rm -f $$files
-install-languageDATA: $(language_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(languagedir)" || $(MKDIR_P) "$(DESTDIR)$(languagedir)"
-	@list='$(language_DATA)'; test -n "$(languagedir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(languagedir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(languagedir)" || exit $$?; \
-	done
-
-uninstall-languageDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(language_DATA)'; test -n "$(languagedir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(languagedir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(languagedir)" && rm -f $$files
-install-languagedeDATA: $(languagede_DATA)
-	@$(NORMAL_INSTALL)
-	test -z "$(languagededir)" || $(MKDIR_P) "$(DESTDIR)$(languagededir)"
-	@list='$(languagede_DATA)'; test -n "$(languagededir)" || list=; \
-	for p in $$list; do \
-	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
-	  echo "$$d$$p"; \
-	done | $(am__base_list) | \
-	while read files; do \
-	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(languagededir)'"; \
-	  $(INSTALL_DATA) $$files "$(DESTDIR)$(languagededir)" || exit $$?; \
-	done
-
-uninstall-languagedeDATA:
-	@$(NORMAL_UNINSTALL)
-	@list='$(languagede_DATA)'; test -n "$(languagededir)" || list=; \
-	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
-	test -n "$$files" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(languagededir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(languagededir)" && rm -f $$files
 install-pkgdataDATA: $(pkgdata_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(pkgdatadir)" || $(MKDIR_P) "$(DESTDIR)$(pkgdatadir)"
@@ -948,7 +913,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(languagedir)" "$(DESTDIR)$(languagededir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"; do \
+	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -1000,7 +965,6 @@ info-am:
 
 install-data-am: install-applicationsDATA install-bitmapsDATA \
 	install-commandsDATA install-gameDATA install-glprogsDATA \
-	install-languageDATA install-languagedeDATA \
 	install-pkgdataDATA install-scriptsDATA \
 	install-sourceviewerDATA install-uifilesDATA
 
@@ -1050,8 +1014,7 @@ ps-am:
 
 uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	uninstall-commandsDATA uninstall-gameDATA \
-	uninstall-glprogsDATA uninstall-languageDATA \
-	uninstall-languagedeDATA uninstall-pkgdataDATA \
+	uninstall-glprogsDATA uninstall-pkgdataDATA \
 	uninstall-scriptsDATA uninstall-sourceviewerDATA \
 	uninstall-uifilesDATA
 
@@ -1070,19 +1033,18 @@ uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	install-data-am install-dvi install-dvi-am install-exec \
 	install-exec-am install-gameDATA install-glprogsDATA \
 	install-html install-html-am install-info install-info-am \
-	install-languageDATA install-languagedeDATA install-man \
-	install-pdf install-pdf-am install-pkgdataDATA install-ps \
-	install-ps-am install-scriptsDATA install-sourceviewerDATA \
-	install-strip install-uifilesDATA installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-applicationsDATA \
-	uninstall-bitmapsDATA uninstall-commandsDATA \
-	uninstall-gameDATA uninstall-glprogsDATA \
-	uninstall-languageDATA uninstall-languagedeDATA \
-	uninstall-pkgdataDATA uninstall-scriptsDATA \
-	uninstall-sourceviewerDATA uninstall-uifilesDATA
+	install-man install-pdf install-pdf-am install-pkgdataDATA \
+	install-ps install-ps-am install-scriptsDATA \
+	install-sourceviewerDATA install-strip install-uifilesDATA \
+	installcheck installcheck-am installdirs installdirs-am \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	tags tags-recursive uninstall uninstall-am \
+	uninstall-applicationsDATA uninstall-bitmapsDATA \
+	uninstall-commandsDATA uninstall-gameDATA \
+	uninstall-glprogsDATA uninstall-pkgdataDATA \
+	uninstall-scriptsDATA uninstall-sourceviewerDATA \
+	uninstall-uifilesDATA
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
