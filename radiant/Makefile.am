@@ -1,6 +1,7 @@
 libsdir = $(top_srcdir)/libs
 AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
+              -DLOCALEDIR='"$(localedir)"' \
               -I$(top_srcdir)/include \
               -I$(libsdir) \
               $(GTKMM_CFLAGS) $(GTKGLEXTMM_CFLAGS) $(XML_CFLAGS) $(GTKSOURCEVIEWMM_CFLAGS)
@@ -179,7 +180,6 @@ darkradiant_SOURCES = main.cpp \
                       settings/GameFileLoader.cpp \
                       settings/Game.cpp \
                       settings/GameManager.cpp \
-                      settings/LanguageManager.cpp \
                       settings/PreferenceSystem.cpp \
                       settings/Win32Registry.cpp \
                       patch/Patch.cpp \

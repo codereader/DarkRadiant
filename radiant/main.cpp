@@ -19,7 +19,10 @@
 #include "ui/splash/Splash.h"
 #include "modulesystem/ModuleLoader.h"
 #include "modulesystem/ModuleRegistry.h"
+
+#ifndef POSIX
 #include "settings/LanguageManager.h"
+#endif
 
 #include <gtkmm/main.h>
 #include <gtkmm/gl/init.h>
@@ -62,12 +65,29 @@ int main (int argc, char* argv[])
     // The settings path is set, start logging now
     applog::LogFile::create("darkradiant.log");
 
+#ifndef POSIX
     // Initialise the language based on the settings in the user settings folder
     // This needs to happen before gtk_init() to set up the environment for GTK
     language::LanguageManager().init(ctx);
+#endif
 
-    // Initialise gtkmm (don't set locale)
+    // Initialise gtkmm (don't set locale on Windows)
+#ifndef POSIX
     Gtk::Main gtkmm_main(argc, argv, false);
+#else
+    Gtk::Main gtkmm_main(argc, argv, true);
+
+#ifndef LOCALEDIR
+#error LOCALEDIR not defined
+#endif
+
+    // Other POSIX gettext initialisation
+    setlocale(LC_ALL, "");
+    textdomain(GETTEXT_PACKAGE);
+    bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
+
+#endif
+
     Glib::add_exception_handler(&std::terminate);
 
     // Initialise gtksourceviewmm
