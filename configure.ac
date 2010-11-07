@@ -4,6 +4,9 @@ AM_SILENT_RULES([yes])
 
 AC_CONFIG_MACRO_DIR([m4])
 
+# Initialise Gettext
+AM_GNU_GETTEXT([external])
+
 # Save user flags
 USER_CFLAGS=$CFLAGS
 USER_CXXFLAGS=$CXXFLAGS
@@ -200,9 +203,10 @@ AC_SUBST([LDFLAGS])
 
 # Generate output files
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([install/darkradiant.desktop
-                 Makefile 
+AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
+                 Makefile
                  radiant/Makefile
+                 install/i18n/Makefile.in
                  libs/Makefile
                  libs/ddslib/Makefile
                  libs/gtkutil/Makefile
