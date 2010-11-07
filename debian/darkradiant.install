@@ -3,4 +3,5 @@ usr/lib/darkradiant/lib*
 usr/lib/darkradiant/modules
 usr/lib/darkradiant/scripts
 usr/lib/darkradiant/plugins/eclasstree*
-usr/share
+usr/share/darkradiant
+usr/share/applications

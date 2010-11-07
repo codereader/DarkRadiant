@@ -17,3 +17,12 @@ Architecture: any
 Depends: darkradiant, ${shlibs:Depends}, ${misc:Depends}
 Description: DarkMod-specific plugins for DarkRadiant
  These plugins are used for editing Dark Mod missions.
+
+Package: darkradiant-i18n
+Architecture: any
+Depends: darkradiant, ${shlibs:Depends}, ${misc:Depends}
+Description: Internationalisation files for DarkRadiant.
+ This package includes the translated strings for localising DarkRadiant into
+ different languages. The currently-available languages are:
+ . 
+ de (German)
