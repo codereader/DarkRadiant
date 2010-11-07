@@ -183,14 +183,15 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
 
 	globalOutputStream() << "Current language setting: " << _curLanguage << std::endl;
 
-#if defined(POSIX) && defined(PKGLIBDIR)
-	_i18nPath = std::string(PKGLIBDIR) + "/i18n/";
-#else
-	_i18nPath = os::standardPathWithSlash(ctx.getApplicationPath() + "i18n");
-#endif
+    // No handling of POSIX needed, since we don't use the LanguageManager on
+    // POSIX
+	_i18nPath = os::standardPathWithSlash(
+        ctx.getApplicationPath() + "i18n"
+    );
 	
-	// Set the LANG environment. As GLIB/GTK+ (in Win32) is using its own C runtime, we need
-	// to call their GLIB setenv function for the environment variable to take effect.
+    // Set the LANG environment. As GLIB/GTK+ (in Win32) is using its own C
+    // runtime, we need to call their GLIB setenv function for the environment
+    // variable to take effect.
 	g_setenv("LANG", _curLanguage.c_str(), TRUE);
 
 	// Tell glib to load stuff from the given i18n path

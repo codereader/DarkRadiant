@@ -194,7 +194,6 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-Intersection.$(OBJEXT) \
 	darkradiant-GameFileLoader.$(OBJEXT) \
 	darkradiant-Game.$(OBJEXT) darkradiant-GameManager.$(OBJEXT) \
-	darkradiant-LanguageManager.$(OBJEXT) \
 	darkradiant-PreferenceSystem.$(OBJEXT) \
 	darkradiant-Win32Registry.$(OBJEXT) \
 	darkradiant-Patch.$(OBJEXT) darkradiant-PatchNode.$(OBJEXT) \
@@ -448,6 +447,7 @@ top_srcdir = @top_srcdir@
 libsdir = $(top_srcdir)/libs
 AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -DPKGDATADIR='"$(pkgdatadir)"' \
+              -DLOCALEDIR='"$(localedir)"' \
               -I$(top_srcdir)/include \
               -I$(libsdir) \
               $(GTKMM_CFLAGS) $(GTKGLEXTMM_CFLAGS) $(XML_CFLAGS) $(GTKSOURCEVIEWMM_CFLAGS)
@@ -627,7 +627,6 @@ darkradiant_SOURCES = main.cpp \
                       settings/GameFileLoader.cpp \
                       settings/Game.cpp \
                       settings/GameManager.cpp \
-                      settings/LanguageManager.cpp \
                       settings/PreferenceSystem.cpp \
                       settings/Win32Registry.cpp \
                       patch/Patch.cpp \
@@ -827,7 +826,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-GroupCycle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-GtkLogRedirector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Intersection.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LanguageManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerCommandTarget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerContextMenu.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerControl.Po@am__quote@
@@ -3556,22 +3554,6 @@ darkradiant-GameManager.obj: settings/GameManager.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='settings/GameManager.cpp' object='darkradiant-GameManager.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-GameManager.obj `if test -f 'settings/GameManager.cpp'; then $(CYGPATH_W) 'settings/GameManager.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/GameManager.cpp'; fi`
-
-darkradiant-LanguageManager.o: settings/LanguageManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-LanguageManager.o -MD -MP -MF $(DEPDIR)/darkradiant-LanguageManager.Tpo -c -o darkradiant-LanguageManager.o `test -f 'settings/LanguageManager.cpp' || echo '$(srcdir)/'`settings/LanguageManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-LanguageManager.Tpo $(DEPDIR)/darkradiant-LanguageManager.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='settings/LanguageManager.cpp' object='darkradiant-LanguageManager.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LanguageManager.o `test -f 'settings/LanguageManager.cpp' || echo '$(srcdir)/'`settings/LanguageManager.cpp
-
-darkradiant-LanguageManager.obj: settings/LanguageManager.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-LanguageManager.obj -MD -MP -MF $(DEPDIR)/darkradiant-LanguageManager.Tpo -c -o darkradiant-LanguageManager.obj `if test -f 'settings/LanguageManager.cpp'; then $(CYGPATH_W) 'settings/LanguageManager.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/LanguageManager.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-LanguageManager.Tpo $(DEPDIR)/darkradiant-LanguageManager.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='settings/LanguageManager.cpp' object='darkradiant-LanguageManager.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LanguageManager.obj `if test -f 'settings/LanguageManager.cpp'; then $(CYGPATH_W) 'settings/LanguageManager.cpp'; else $(CYGPATH_W) '$(srcdir)/settings/LanguageManager.cpp'; fi`
 
 darkradiant-PreferenceSystem.o: settings/PreferenceSystem.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-PreferenceSystem.o -MD -MP -MF $(DEPDIR)/darkradiant-PreferenceSystem.Tpo -c -o darkradiant-PreferenceSystem.o `test -f 'settings/PreferenceSystem.cpp' || echo '$(srcdir)/'`settings/PreferenceSystem.cpp
