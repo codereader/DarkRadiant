@@ -13,6 +13,9 @@
 
 #include "StartupMapLoader.h"
 
+#include <glibmm/ustring.h>
+#include <glibmm/timer.h>
+
 class TextInputStream;
 
 namespace map {
@@ -22,7 +25,7 @@ class Map :
 	public IMapResource::Observer
 {
 	// The map name
-	std::string m_name;
+	std::string _mapName;
 
 	// The name of the last "save copy as" filename
 	std::string _lastCopyMapName;
@@ -31,7 +34,6 @@ class Map :
 	IMapResourcePtr m_resource;
 	
 	bool m_valid;
-
 	bool m_modified;
 
 	Signal _mapValidCallbacks;
@@ -42,6 +44,17 @@ class Map :
 
 	// A local helper object, observing the radiant module
 	StartupMapLoaderPtr _startupMapLoader;
+
+    // Map save timer, for displaying "changes from last n minutes will be lost"
+    // messages
+    Glib::Timer _mapSaveTimer;
+
+private:
+
+    // If no worldspawn can be found in the scenegraph, this creates one
+	void updateWorldspawn();
+
+    Glib::ustring getSaveConfirmationText() const;
 
 public:
 	Map();
@@ -224,10 +237,6 @@ public:
 	 */
 	static void loadPrefab(const cmd::ArgumentList& args);
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args); 
-
-private:
-	// If no worldspawn can be found in the scenegraph, this creates one
-	void updateWorldspawn();
 
 }; // class Map
 
