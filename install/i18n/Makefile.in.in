@@ -380,6 +380,16 @@ dist2: stamp-po $(DISTFILES)
 	  fi; \
 	done
 
+# Custom target added to gather the .po files in the top-level directory and
+# with the correct names. The Win32 gettext implementation keeps them next to
+# the .mo files.
+gather-po-files:
+	for dir in *; do \
+		if test -d $${dir}; then \
+			cp $${dir}/LC_MESSAGES/darkradiant.po $${dir}.po; \
+		fi; \
+	done
+
 update-po: Makefile
 	$(MAKE) $(DOMAIN).pot-update
 	test -z "$(UPDATEPOFILES)" || $(MAKE) $(UPDATEPOFILES)
@@ -426,7 +436,7 @@ update-po: Makefile
 
 $(DUMMYPOFILES):
 
-update-gmo: Makefile $(GMOFILES)
+update-gmo: Makefile gather-po-files $(GMOFILES)
 	@:
 
 # Recreate Makefile by invoking config.status. Explicitly invoke the shell,
