@@ -38,13 +38,11 @@ private:
 	// List of target_addobjectives entities
 	ObjectiveEntityListColumns _objEntityColumns;
 	Glib::RefPtr<Gtk::ListStore> _objectiveEntityList;
-	Gtk::TreeView* _entityList;
 
 	// List of actual objectives associated with the selected entity
 	ObjectivesListColumns _objectiveColumns;
 	Glib::RefPtr<Gtk::ListStore> _objectiveList;
-	Gtk::TreeView* _objList;
-
+	
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;
 
@@ -62,24 +60,14 @@ private:
 	// The list of objective eclasses (defined in the registry)
 	std::vector<std::string> _objectiveEClasses;
 
-	Gtk::Button* _delEntityButton;
-	Gtk::VBox* _objButtonPanel;
-	Gtk::HBox* _logicPanel;
-
-	Gtk::Button* _editObjButton;
-	Gtk::Button* _delObjButton;
-	Gtk::Button* _moveUpObjButton;
-	Gtk::Button* _moveDownObjButton;
-	Gtk::Button* _clearObjButton;
-
 private:
 
 	// Constructor creates widgets
 	ObjectivesEditor();
 
 	// Widget construction helpers
-	Gtk::Widget& createEntitiesPanel();
-	Gtk::Widget& createObjectivesPanel();
+	void setupEntitiesPanel();
+	void setupObjectivesPanel();
 	Gtk::Widget& createObjectiveEditPanel();
 	Gtk::Widget& createLogicPanel();
 	Gtk::Widget& createButtons();

@@ -80,6 +80,7 @@
                       <object class="GtkButton" id="deleteEntityButton">
                         <property name="label">gtk-delete</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">True</property>
                         <property name="use_stock">True</property>
@@ -154,11 +155,11 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkVBox" id="vbox1">
+                  <object class="GtkVBox" id="objButtonPanel">
                     <property name="visible">True</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkButton" id="addObjectiveButton">
+                      <object class="GtkButton" id="addObjButton">
                         <property name="label">gtk-add</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -171,7 +172,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="deleteObjectiveButton">
+                      <object class="GtkButton" id="delObjButton">
                         <property name="label">gtk-delete</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -197,7 +198,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="editObjectiveButton">
+                      <object class="GtkButton" id="editObjButton">
                         <property name="label">gtk-edit</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -221,7 +222,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="objectiveMoveUpButton">
+                      <object class="GtkButton" id="objMoveUpButton">
                         <property name="label">gtk-go-up</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -234,7 +235,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkButton" id="objectiveMoveDownButton">
+                      <object class="GtkButton" id="objMoveDownButton">
                         <property name="label">gtk-go-down</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
@@ -278,7 +279,7 @@
             <property name="visible">True</property>
             <property name="left_padding">12</property>
             <child>
-              <object class="GtkButton" id="editSuccFailLogicButton">
+              <object class="GtkButton" id="editSuccessLogicButton">
                 <property name="label" translatable="yes">Edit mission success logic</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
