@@ -63,8 +63,8 @@ typedef struct S3dsLoaderPers
 	picoShader_t   *shader;			/* ptr to current shader */
 	picoByte_t	   *bufptr;			/* ptr to raw data */
 	char		   *basename;		/* ptr to model base name (eg. jeep) */
-	int	 			cofs;
-	int	 			maxofs;
+	int				cofs;
+	int				maxofs;
 }
 T3dsLoaderPers;
 

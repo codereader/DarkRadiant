@@ -57,7 +57,7 @@ public:
 	 */
 	Gtk::Widget* add(const std::string& insertPath,
 				   const std::string& name,
-			 	   eMenuItemType type,
+				   eMenuItemType type,
 				   const std::string& caption,
 				   const std::string& icon,
 				   const std::string& eventName);

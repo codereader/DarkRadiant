@@ -70,8 +70,8 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 	  ITransformablePtr transform = Node_getTransformable(node);
 
 	  if(transform != 0) {
-	  	// The object is not scaled or translated
-	  	transform->setType(TRANSFORM_PRIMITIVE);
+		// The object is not scaled or translated
+		transform->setType(TRANSFORM_PRIMITIVE);
 	    transform->setScale(c_scale_identity);
 	    transform->setTranslation(c_translation_identity);
 

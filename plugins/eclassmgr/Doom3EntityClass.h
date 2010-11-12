@@ -124,10 +124,10 @@ public:
      * Display colour for this entity.
      */
     Doom3EntityClass(const std::string& name,
-				 	 const Vector3& colour = Vector3(-1, -1, -1),
+					 const Vector3& colour = Vector3(-1, -1, -1),
 					 bool fixedSize = false,
-				 	 const Vector3& mins = Vector3(1, 1, 1),
-				 	 const Vector3& maxs = Vector3(-1, -1, -1));
+					 const Vector3& mins = Vector3(1, 1, 1),
+					 const Vector3& maxs = Vector3(-1, -1, -1));
 
     /** Destructor.
      */

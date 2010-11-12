@@ -33,9 +33,9 @@ public:
 	// Constructor
 	RenderableVertex(const Vector3& center, const Vector3& origin, const Vector3& colour)
 		: 	_localCentre(center),
-	  		_shader(GlobalRenderSystem().capture("$BIGPOINT")),
-	  		_worldOrigin(origin),
-	  		_colour(colour)
+			_shader(GlobalRenderSystem().capture("$BIGPOINT")),
+			_worldOrigin(origin),
+			_colour(colour)
 	{}
 
   	Vector3 getOrigin() {

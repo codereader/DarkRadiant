@@ -267,9 +267,9 @@ public:
 	template<typename OtherT>
 	Element dot(const BasicVector4<OtherT>& other) const {
 		return 	Element(_v[0] * other.x() +
-				 		_v[1] * other.y() +
-				 		_v[2] * other.z() +
-				 		_v[3] * other.w());
+						_v[1] * other.y() +
+						_v[2] * other.z() +
+						_v[3] * other.w());
 	}
 
 	/** Project this homogeneous Vector4 into a Cartesian Vector3

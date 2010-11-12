@@ -102,7 +102,7 @@ void FileChooser::construct()
 	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(_pattern);
 
 	for (ModuleTypeList::iterator i = typeList->begin();
-	 	 i != typeList->end();
+		 i != typeList->end();
 		 ++i)
 	{
 		// Create a GTK file filter and add it to the chooser dialog

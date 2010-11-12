@@ -491,7 +491,7 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD )
 	int			    entries;
 	int				numVerts   	= 0;
 	int				numNormals 	= 0;
-	int				numUVs	   	= 0;
+	int				numUVs		= 0;
 	int				curVertex	= 0;
 	int				curFace		= 0;
 

@@ -39,7 +39,7 @@ public:
 	 * 				 This defaults to "BMP".
 	 */
 	TexturePtr getBinding(const std::string& fullPath,
-				 		const std::string& moduleNames = "bmp");
+						const std::string& moduleNames = "bmp");
 
 	/**
      * \brief

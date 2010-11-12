@@ -99,7 +99,7 @@ void RotateManipulator::updateCircleTransforms()  {
       _local2worldY = Matrix4::getIdentity();
       _local2worldY.z().getVector3() = g_vector3_axis_y.crossProduct(localViewpoint).getNormalised();
       _local2worldY.x().getVector3() = _local2worldY.y().getVector3().crossProduct(
-      											 		_local2worldY.z().getVector3()).getNormalised();
+      													_local2worldY.z().getVector3()).getNormalised();
       matrix4_premultiply_by_matrix4(_local2worldY, _pivot._worldSpace);
     }
 

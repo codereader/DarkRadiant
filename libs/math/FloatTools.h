@@ -108,7 +108,7 @@ template <typename Element>
 inline bool isValid(Element x) {
 	// Check for infinity and NaN
 	return !isNaN(x) && !(std::numeric_limits<Element>::has_infinity &&
-			  			   fabs(x) == std::numeric_limits<Element>::infinity());
+						   fabs(x) == std::numeric_limits<Element>::infinity());
 }
 
 #endif /*FLOATTOOLS_H_*/

@@ -291,7 +291,7 @@ public:
 	template<typename OtherT>
 	Element dot(const BasicVector2<OtherT>& other) const {
 		return 	Element(_v[0] * other.x() +
-				 		_v[1] * other.y());
+						_v[1] * other.y());
 	}
 
 	/* Cross-product this vector with another Vector2, returning the scalar result

@@ -106,7 +106,7 @@ public:
 	 * 			Pass the relevant string properties like "name" as arguments.
 	 */
 	void add(int id,
-		 	 const std::string& name,
+			 const std::string& name,
 			 const std::string& caption,
 			 const std::string& description,
 			 const std::string& icon,

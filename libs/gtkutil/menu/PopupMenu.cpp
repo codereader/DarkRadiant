@@ -23,8 +23,8 @@ PopupMenu::~PopupMenu()
 
 // Add a named menu item
 void PopupMenu::addItem(Gtk::MenuItem* widget,
-			 			const Callback& callback,
-			 			const SensitivityTest& sensTest,
+						const Callback& callback,
+						const SensitivityTest& sensTest,
 						const VisibilityTest& visTest)
 {
 	// Construct a wrapper and pass to specialised method

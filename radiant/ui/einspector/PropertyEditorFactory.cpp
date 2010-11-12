@@ -75,9 +75,9 @@ void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
 
 // Create a PropertyEditor from the given name.
 IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
-											  	Entity* entity,
-											  	const std::string& key,
-											  	const std::string& options)
+												Entity* entity,
+												const std::string& key,
+												const std::string& options)
 {
     // Register the PropertyEditors if the map is empty
     if (_peMap.empty()) {

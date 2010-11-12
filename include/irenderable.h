@@ -157,7 +157,7 @@ public:
 	/** Submit renderable geometry when rendering takes place in Solid mode.
 	 */
 	virtual void renderSolid(RenderableCollector& collector,
-  						  	 const VolumeTest& volume) const = 0;
+  							 const VolumeTest& volume) const = 0;
 
 	/** Submit renderable geometry when rendering takes place in Wireframe
 	 * mode.

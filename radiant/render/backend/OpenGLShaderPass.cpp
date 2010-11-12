@@ -601,8 +601,8 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 
 	// Iterate over each transformed renderable in the vector
 	for(OpenGLShaderPass::Renderables::const_iterator i = _renderables.begin();
-  	  	i != _renderables.end();
-  	  	++i)
+  		i != _renderables.end();
+  		++i)
 	{
 		// If the current iteration's transform matrix was different from the
 		// last, apply it and store for the next iteration

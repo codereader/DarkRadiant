@@ -15,7 +15,7 @@ namespace ui {
 	namespace {
 		const int MAPINFO_DEFAULT_SIZE_X = 600;
 	    const int MAPINFO_DEFAULT_SIZE_Y = 550;
-	   	const char* const MAPINFO_WINDOW_TITLE = N_("Map Info");
+		const char* const MAPINFO_WINDOW_TITLE = N_("Map Info");
 	}
 
 MapInfoDialog::MapInfoDialog() :

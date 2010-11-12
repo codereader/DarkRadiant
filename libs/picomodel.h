@@ -101,7 +101,7 @@ struct picoSurface_s
 	picoModel_t					*model;		/* owner model */
 
 	picoSurfaceType_t			type;
-	char					 	*name;		/* sea: surface name */
+	char						*name;		/* sea: surface name */
 	picoShader_t				*shader;	/* ydnar: changed to ptr */
 
 	int							numVertexes, maxVertexes;
@@ -229,7 +229,7 @@ int							PicoAdjustModel( picoModel_t *model, int numShaders, int numSurfaces )
 
 
 /* shader functions */
-picoShader_t	   			*PicoNewShader( picoModel_t *model );
+picoShader_t				*PicoNewShader( picoModel_t *model );
 void						PicoFreeShader( picoShader_t *shader );
 picoShader_t				*PicoFindShader( picoModel_t *model, char *name, int caseSensitive );
 
