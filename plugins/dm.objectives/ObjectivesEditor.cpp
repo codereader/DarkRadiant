@@ -61,7 +61,6 @@ ObjectivesEditor::ObjectivesEditor() :
 {
     // Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-    set_border_width(12);
     
     // Window size
     Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
@@ -411,6 +410,11 @@ void ObjectivesEditor::_onEntitySelectionChanged()
 		// Enable the delete button and objectives panel
 		delEntityButton->set_sensitive(true);
         objButtonPanel->set_sensitive(true);
+
+        // Enable mission logic button
+        getGladeWidget<Gtk::Widget>(
+            "editSuccessLogicButton"
+        )->set_sensitive(true);
 	}
 	else
     {
@@ -418,6 +422,11 @@ void ObjectivesEditor::_onEntitySelectionChanged()
 		// panel
 		delEntityButton->set_sensitive(false);
 		objButtonPanel->set_sensitive(false);
+
+        // Disable mission logic button
+        getGladeWidget<Gtk::Widget>(
+            "editSuccessLogicButton"
+        )->set_sensitive(false);
 	}
 }
 
@@ -444,16 +453,16 @@ void ObjectivesEditor::_onObjectiveSelectionChanged()
         bool hasNext = (highestIndex != -1 && highestIndex > index);
         bool hasPrev = (lowestIndex != -1 && lowestIndex < index);
 
-        getGladeWidget<Gtk::Widget>("moveUpObjButton")->set_sensitive(hasPrev);
-        getGladeWidget<Gtk::Widget>("moveDownObjButton")->set_sensitive(hasNext);
+        getGladeWidget<Gtk::Widget>("objMoveUpButton")->set_sensitive(hasPrev);
+        getGladeWidget<Gtk::Widget>("objMoveDownButton")->set_sensitive(hasNext);
 	}
 	else
     {
 		// Disable the edit, delete and move buttons
 		getGladeWidget<Gtk::Widget>("editObjButton")->set_sensitive(false);
 		getGladeWidget<Gtk::Widget>("delObjButton")->set_sensitive(false);
-		getGladeWidget<Gtk::Widget>("moveUpObjButton")->set_sensitive(false);
-        getGladeWidget<Gtk::Widget>("moveDownObjButton")->set_sensitive(false);
+		getGladeWidget<Gtk::Widget>("objMoveUpButton")->set_sensitive(false);
+        getGladeWidget<Gtk::Widget>("objMoveDownButton")->set_sensitive(false);
 	}
 }
 
