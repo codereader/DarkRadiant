@@ -13,7 +13,7 @@ class NamedBindable
 : public BindableTexture
 {
 public:
-    
+
     /**
      * \brief
      * Get the string identifier.

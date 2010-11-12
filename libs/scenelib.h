@@ -1,19 +1,19 @@
 /*
 Copyright (C) 2001-2006, William Joseph.
 All Rights Reserved.
- 
+
 This file is part of GtkRadiant.
- 
+
 GtkRadiant is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 GtkRadiant is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -74,7 +74,7 @@ inline void Node_traverseSubgraph(const scene::INodePtr& node, scene::NodeVisito
 		// The walker requested to descend the children of this node as well,
 		node->traverse(visitor);
 	}
-	
+
 	visitor.post(node);
 }
 
@@ -102,12 +102,12 @@ inline bool Node_isPrimitive(const scene::INodePtr& node)
 	return Node_isBrush(node) || Node_isPatch(node);
 }
 
-class ParentBrushes : 
+class ParentBrushes :
 	public scene::NodeVisitor
 {
 	scene::INodePtr m_parent;
 public:
-	ParentBrushes(scene::INodePtr parent) : 
+	ParentBrushes(scene::INodePtr parent) :
 		m_parent(parent)
 	{}
 
@@ -127,17 +127,17 @@ inline void parentBrushes(const scene::INodePtr& subgraph, const scene::INodePtr
 	subgraph->traverse(visitor);
 }
 
-class HasBrushes : 
+class HasBrushes :
 	public scene::NodeVisitor
 {
 	bool& m_hasBrushes;
 public:
-	HasBrushes(bool& hasBrushes) : 
+	HasBrushes(bool& hasBrushes) :
 		m_hasBrushes(hasBrushes)
 	{
 		m_hasBrushes = true;
 	}
-	
+
 	virtual bool pre(const scene::INodePtr& node) {
 		if(!Node_isPrimitive(node)) {
 			m_hasBrushes = false;
@@ -177,7 +177,7 @@ inline void removeNodeFromParent(const scene::INodePtr& node) {
 	}
 }
 
-/** 
+/**
  * greebo: This assigns the given node to the given set of layers. Any previous
  *         assignments of the node get overwritten by this routine.
  */
@@ -196,7 +196,7 @@ inline void assignNodeToLayers(const scene::INodePtr& node, const scene::LayerLi
 }
 
 /**
- * This assigns every visited node to the given set of layers. 
+ * This assigns every visited node to the given set of layers.
  * Any previous assignments of the node get overwritten by this routine.
  */
 class AssignNodeToLayersWalker :
@@ -282,12 +282,12 @@ typedef boost::shared_ptr<SelectableLight> SelectableLightPtr;
 } // namespace scene
 
 template<typename Functor>
-class NodeWalker : 
+class NodeWalker :
 	public scene::NodeVisitor
 {
 	const Functor& m_functor;
 public:
-	NodeWalker(const Functor& functor) : 
+	NodeWalker(const Functor& functor) :
 		m_functor(functor)
 	{}
 
@@ -299,14 +299,14 @@ public:
 };
 
 template<typename Type, typename Functor>
-class InstanceApply : 
+class InstanceApply :
 	public Functor
 {
 public:
-	InstanceApply(const Functor& functor) : 
+	InstanceApply(const Functor& functor) :
 		Functor(functor)
 	{}
-	
+
 	void operator()(const scene::INodePtr& node) const {
 		boost::shared_ptr<Type> result = boost::dynamic_pointer_cast<Type>(node);
 		if (result != NULL) {
@@ -323,7 +323,7 @@ inline scene::SelectableLightPtr Node_getLight(const scene::INodePtr& node) {
 	return boost::dynamic_pointer_cast<scene::SelectableLight>(node);
 }
 
-class NodeSelector : 
+class NodeSelector :
 	public scene::NodeVisitor
 {
 public:
@@ -336,13 +336,13 @@ public:
 class InstanceCounter {
 public:
 	unsigned int m_count;
-	InstanceCounter() : 
+	InstanceCounter() :
 		m_count(0)
 	{}
 };
 
 /** greebo: Cast a node onto a BrushDoom3 pointer
- * 
+ *
  * @returns: NULL, if failed, the pointer to the class otherwise.
  */
 inline BrushDoom3Ptr Node_getBrushDoom3(scene::INodePtr node) {
@@ -469,7 +469,7 @@ inline ENodeType node_get_nodetype(const scene::INodePtr& node) {
 	return eNodeUnknown;
 }
 
-class SelectedDescendantWalker : 
+class SelectedDescendantWalker :
 	public scene::NodeVisitor
 {
 	bool& m_selected;
@@ -556,7 +556,7 @@ class NodeRemover :
 {
 public:
 	bool pre(const INodePtr& node) {
-		// Copy the node, the reference might point right to 
+		// Copy the node, the reference might point right to
 		// the parent's container
 		scene::INodePtr copy(node);
 

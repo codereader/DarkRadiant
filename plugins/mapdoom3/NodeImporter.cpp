@@ -27,7 +27,7 @@ namespace map {
 	}
 
 // Constructor
-NodeImporter::NodeImporter(const MapImportInfo& importInfo) 
+NodeImporter::NodeImporter(const MapImportInfo& importInfo)
 : _root(importInfo.root),
   _inputStream(importInfo.inputStream),
   _fileSize(importInfo.inputStreamSize),
@@ -40,7 +40,7 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo)
 {
 	bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
 
-	if (showProgressDialog) 
+	if (showProgressDialog)
 	{
 		_dialog = gtkutil::ModalProgressDialogPtr(
 			new gtkutil::ModalProgressDialog(
@@ -58,13 +58,13 @@ bool NodeImporter::parse() {
 	}
 
 	// Read each entity in the map, until EOF is reached
-	while (_tok.hasMoreTokens()) 
+	while (_tok.hasMoreTokens())
    {
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
-		if (_dialog && _dialogEventLimiter.readyForEvent()) 
+		if (_dialog && _dialogEventLimiter.readyForEvent())
 		{
-			try 
+			try
 			{
 				std::string text = (boost::format(_("Loading entity %d")) % _entityCount).str();
 				_dialog->setTextAndFraction(text, getProgressFraction());
@@ -72,15 +72,15 @@ bool NodeImporter::parse() {
 			catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
 			{
 				gtkutil::errorDialog(
-					_("Map loading cancelled"), 
+					_("Map loading cancelled"),
 					GlobalMainFrame().getTopLevelWindow()
 				);
 
 				// Clear out the root node, otherwise we end up with half a map
 				scene::NodeRemover remover;
-				_root->traverse(remover); 
+				_root->traverse(remover);
 
-				return false;	
+				return false;
 			}
 		}
 
@@ -93,15 +93,15 @@ bool NodeImporter::parse() {
 		{
 			std::string text = (boost::format(_("Failed on entity %d")) % _entityCount).str();
 			gtkutil::errorDialog(
-				text + "\n\n" + e.what(), 
+				text + "\n\n" + e.what(),
 				GlobalMainFrame().getTopLevelWindow()
 			);
 
 			// Clear out the root node, otherwise we end up with half a map
 			scene::NodeRemover remover;
-			_root->traverse(remover); 
+			_root->traverse(remover);
 
-			return false;			
+			return false;
 		}
 
 		_entityCount++;
@@ -122,15 +122,15 @@ bool NodeImporter::parseMapVersion()
     }
     catch (parser::ParseException& e)
 	{
-        globalErrorStream() 
-            << "[mapdoom3] Unable to parse map version: " 
+        globalErrorStream()
+            << "[mapdoom3] Unable to parse map version: "
             << e.what() << std::endl;
         return false;
     }
     catch (boost::bad_lexical_cast& e)
 	{
-        globalErrorStream() 
-            << "[mapdoom3] Unable to parse map version: " 
+        globalErrorStream()
+            << "[mapdoom3] Unable to parse map version: "
             << e.what() << std::endl;
         return false;
     }
@@ -144,8 +144,8 @@ bool NodeImporter::parseMapVersion()
     // Check we have the correct version for this module
     if (version != requiredVersion)
 	{
-        globalErrorStream() 
-            << "Incorrect map version: required " << requiredVersion 
+        globalErrorStream()
+            << "Incorrect map version: required " << requiredVersion
 			<< ", found " << version << std::endl;
         return false;
     }
@@ -153,10 +153,10 @@ bool NodeImporter::parseMapVersion()
 	return true;
 }
 
-void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity) 
+void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity)
 {
     // Update the dialog
-    if (_dialog && _dialogEventLimiter.readyForEvent()) 
+    if (_dialog && _dialogEventLimiter.readyForEvent())
     {
         _dialog->setTextAndFraction(
             _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount),
@@ -184,7 +184,7 @@ void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity)
 		std::string text = (boost::format(_("Primitive #%d: parse error")) % _primitiveCount).str();
         throw std::runtime_error(text + "\n");
     }
-    
+
     // Now add the primitive as a child of the entity
     if (Node_getEntity(parentEntity)->isContainer())
 	{
@@ -199,27 +199,27 @@ scene::INodePtr NodeImporter::createEntity(const EntityKeyValues& keyValues) {
     if (found == keyValues.end()) {
 		throw std::runtime_error("NodeImporter::createEntity(): could not find classname.");
     }
-    
+
     // Otherwise create the entity and add all of the properties
     std::string className = found->second;
 	IEntityClassPtr classPtr = GlobalEntityClassManager().findClass(className);
 
 	if (classPtr == NULL) {
-		globalErrorStream() << "[mapdoom3]: Could not find entity class: " 
+		globalErrorStream() << "[mapdoom3]: Could not find entity class: "
 			<< className << std::endl;
 
 		// greebo: EntityClass not found, insert a brush-based one
 		classPtr = GlobalEntityClassManager().findOrInsert(className, true);
 	}
-    
+
 	// Create the actual entity node
     scene::INodePtr entity(GlobalEntityCreator().createEntity(classPtr));
 
 	Entity* ent = Node_getEntity(entity);
 	assert(ent != NULL); // entity cast must not fail
 
-    for (EntityKeyValues::const_iterator i = keyValues.begin(); 
-         i != keyValues.end(); 
+    for (EntityKeyValues::const_iterator i = keyValues.begin();
+         i != keyValues.end();
          ++i)
     {
         ent->setKeyValue(i->first, i->second);
@@ -231,7 +231,7 @@ scene::INodePtr NodeImporter::createEntity(const EntityKeyValues& keyValues) {
 void NodeImporter::parseEntity() {
 	// Set up the progress dialog text
 	_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
-	
+
     // Map of keyvalues for this entity
     EntityKeyValues keyValues;
 
@@ -246,9 +246,9 @@ void NodeImporter::parseEntity() {
 
 	// Reset the primitive counter, we're starting a new entity
 	_primitiveCount = 0;
-	
+
 	while (true) {
-	    // Token must be either a key, a "{" to indicate the start of a 
+	    // Token must be either a key, a "{" to indicate the start of a
 	    // primitive, or a "}" to indicate the end of the entity
 
 	    if (token == "{") { // PRIMITIVE
@@ -276,11 +276,11 @@ void NodeImporter::parseEntity() {
 				std::string text = (boost::format(_("Parsed invalid value '%s' for key '%s'")) % value % token).str();
 	            throw std::runtime_error(text);
 	        }
-	        
+
 	        // Otherwise add the keyvalue pair to our map
 	        keyValues.insert(EntityKeyValues::value_type(token, value));
 	    }
-	    
+
 	    // Get the next token
 	    token = _tok.nextToken();
 	}
@@ -291,11 +291,11 @@ void NodeImporter::parseEntity() {
 
 bool NodeImporter::checkEntityClass(const scene::INodePtr& entity) {
 	// Obtain list of entityclasses to skip
-	static xml::NodeList skipLst = 
+	static xml::NodeList skipLst =
 		GlobalRegistry().findXPath("debug/mapdoom3//discardEntityClass");
 
 	// Obtain the entity class of this node
-	IEntityClassConstPtr entityClass = 
+	IEntityClassConstPtr entityClass =
 			Node_getEntity(entity)->getEntityClass();
 
 	// Skip this entity class if it is in the list
@@ -304,7 +304,7 @@ bool NodeImporter::checkEntityClass(const scene::INodePtr& entity) {
 		 ++i)
 	{
 		if (i->getAttributeValue("value") == entityClass->getName()) {
-			std::cout << "DEBUG: discarding entity class " 
+			std::cout << "DEBUG: discarding entity class "
 					  << entityClass->getName() << std::endl;
 			return false;
 		}
@@ -315,15 +315,15 @@ bool NodeImporter::checkEntityClass(const scene::INodePtr& entity) {
 
 bool NodeImporter::checkEntityNum() {
 	// Entity range XPath
-	static xml::NodeList entityRange = 
+	static xml::NodeList entityRange =
 					GlobalRegistry().findXPath("debug/mapdoom3/entityRange");
 	static xml::NodeList::iterator i = entityRange.begin();
-	
+
 	// Test the entity number is in the range
 	if (i != entityRange.end()) {
 		static std::size_t lower = strToSizet(i->getAttributeValue("start"));
 		static std::size_t upper = strToSizet(i->getAttributeValue("end"));
-	
+
 		if (_entityCount < lower || _entityCount > upper) {
 			std::cout << "DEBUG: Discarding entity " << _entityCount << ", out of range"
 					  << std::endl;
@@ -338,7 +338,7 @@ void NodeImporter::insertEntity(const scene::INodePtr& entity) {
 	if (_debug && (!checkEntityClass(entity) || !checkEntityNum())) {
 		return;
 	}
-	
+
 	// Insert the node into the given root
 	_root->addChildNode(entity);
 }

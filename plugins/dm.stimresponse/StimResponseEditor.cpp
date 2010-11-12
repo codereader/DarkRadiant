@@ -42,12 +42,12 @@ namespace ui
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Stim/Response Editor");
-	
+
 	const std::string RKEY_ROOT = "user/ui/stimResponseEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-	
+
 	const char* NO_ENTITY_ERROR = N_("A single entity must be selected to edit "
-								  "Stim/Response properties."); 
+								  "Stim/Response properties.");
 }
 
 StimResponseEditor::StimResponseEditor() :
@@ -60,15 +60,15 @@ StimResponseEditor::StimResponseEditor() :
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-	
+
 	signal_key_press_event().connect(sigc::mem_fun(*this, &StimResponseEditor::onWindowKeyPress), false);
-	
+
 	// Create the widgets
 	populateWindow();
 
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-	
+
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 
@@ -79,7 +79,7 @@ StimResponseEditor::StimResponseEditor() :
 void StimResponseEditor::_preHide()
 {
 	_lastShownPage = _notebook->get_current_page();
-	
+
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 }
@@ -88,11 +88,11 @@ void StimResponseEditor::_preShow()
 {
 	// Restore the position
 	_windowPosition.applyPosition();
-	// Reload all the stim types, the map might have changed 
+	// Reload all the stim types, the map might have changed
 	_stimTypes.reload();
 	// Scan the selection for entities
 	rescanSelection();
-		
+
 	// Has the rescan found an entity (the pointer is non-NULL then)
 	if (_entity != NULL)
 	{
@@ -109,24 +109,24 @@ void StimResponseEditor::populateWindow()
 	// Create the overall vbox
 	_dialogVBox = Gtk::manage(new Gtk::VBox(false, 12));
 	add(*_dialogVBox);
-	
+
 	// Create the notebook and add it to the vbox
 	_notebook = Gtk::manage(new Gtk::Notebook);
 	_dialogVBox->pack_start(*_notebook, true, true, 0);
-	
+
 	// The tab label items (icon + label)
 	Gtk::HBox* stimLabelHBox = Gtk::manage(new Gtk::HBox(false, 0));
 	stimLabelHBox->pack_start(
 		*Gtk::manage(new Gtk::Image(
-			GlobalUIManager().getLocalPixbufWithMask(ICON_STIM + SUFFIX_EXTENSION))), 
+			GlobalUIManager().getLocalPixbufWithMask(ICON_STIM + SUFFIX_EXTENSION))),
     	false, false, 3
     );
 	stimLabelHBox->pack_start(*Gtk::manage(new Gtk::Label(_("Stims"))), false, false, 3);
-	
+
 	Gtk::HBox* responseLabelHBox = Gtk::manage(new Gtk::HBox(false, 0));
 	responseLabelHBox->pack_start(
 		*Gtk::manage(new Gtk::Image(
-			GlobalUIManager().getLocalPixbufWithMask(ICON_RESPONSE + SUFFIX_EXTENSION))), 
+			GlobalUIManager().getLocalPixbufWithMask(ICON_RESPONSE + SUFFIX_EXTENSION))),
     	false, false, 3
     );
 	responseLabelHBox->pack_start(*Gtk::manage(new Gtk::Label(_("Responses"))), false, false, 3);
@@ -134,7 +134,7 @@ void StimResponseEditor::populateWindow()
 	Gtk::HBox* customLabelHBox = Gtk::manage(new Gtk::HBox(false, 0));
 	customLabelHBox->pack_start(
 		*Gtk::manage(new Gtk::Image(
-			GlobalUIManager().getLocalPixbufWithMask(ICON_CUSTOM_STIM))), 
+			GlobalUIManager().getLocalPixbufWithMask(ICON_CUSTOM_STIM))),
     	false, false, 3
     );
 	customLabelHBox->pack_start(*Gtk::manage(new Gtk::Label(_("Custom Stims"))), false, false, 3);
@@ -143,7 +143,7 @@ void StimResponseEditor::populateWindow()
 	stimLabelHBox->show_all();
 	responseLabelHBox->show_all();
 	customLabelHBox->show_all();
-	
+
 	// Cast the helper class to a widget and add it to the notebook page
 	_stimPageNum = _notebook->append_page(*_stimEditor, *stimLabelHBox);
 	_responsePageNum = _notebook->append_page(*_responseEditor, *responseLabelHBox);
@@ -153,7 +153,7 @@ void StimResponseEditor::populateWindow()
 	{
 		_lastShownPage = _stimPageNum;
 	}
-	
+
 	// Pack in dialog buttons
 	_dialogVBox->pack_start(createButtons(), false, false, 0);
 }
@@ -162,18 +162,18 @@ void StimResponseEditor::populateWindow()
 Gtk::Widget& StimResponseEditor::createButtons()
 {
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-	
+
 	// Save button
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &StimResponseEditor::onSave));
-	
+
 	// Close Button
 	_closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	_closeButton->signal_clicked().connect(sigc::mem_fun(*this, &StimResponseEditor::onClose));
 
 	buttonHBox->pack_end(*okButton, true, true, 0);
 	buttonHBox->pack_end(*_closeButton, true, true, 0);
-	
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
@@ -186,31 +186,31 @@ void StimResponseEditor::rescanSelection()
 	_stimEditor->setEntity(_srEntity);
 	_responseEditor->setEntity(_srEntity);
 	_customStimEditor->setEntity(_srEntity);
-	
+
 	if (info.entityCount == 1 && info.totalCount == 1)
 	{
 		// Get the entity instance
 		const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
-		
+
 		_entity = Node_getEntity(node);
-		
+
 		_srEntity = SREntityPtr(new SREntity(_entity, _stimTypes));
 		_stimEditor->setEntity(_srEntity);
 		_responseEditor->setEntity(_srEntity);
 		_customStimEditor->setEntity(_srEntity);
 	}
-	
+
 	if (_entity != NULL)
 	{
 		std::string title = _(WINDOW_TITLE);
 		title += " (" + _entity->getKeyValue("name") + ")";
-		set_title(title); 
+		set_title(title);
 	}
 	else
 	{
 		set_title(_(WINDOW_TITLE));
 	}
-	
+
 	_dialogVBox->set_sensitive(_entity != NULL);
 	_closeButton->set_sensitive(true);
 }
@@ -218,13 +218,13 @@ void StimResponseEditor::rescanSelection()
 void StimResponseEditor::save()
 {
 	// Consistency check can go here
-	
+
 	// Scoped undo object
 	UndoableCommand command("editStimResponse");
-	
+
 	// Save the working set to the entity
 	_srEntity->save(_entity);
-	
+
 	// Save the custom stim types to the storage entity
 	_stimTypes.save();
 }
@@ -248,7 +248,7 @@ bool StimResponseEditor::onWindowKeyPress(GdkEventKey* ev)
 		// Catch this keyevent, don't propagate
 		return true;
 	}
-	
+
 	// Propagate further
 	return false;
 }

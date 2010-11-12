@@ -34,11 +34,11 @@ TexturePreviewCombo::TexturePreviewCombo() :
 {
 	_glWidget->set_size_request(128, 128);
 	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TexturePreviewCombo::_onExpose));
-	
+
 	Gtk::Frame* glFrame = Gtk::manage(new Gtk::Frame);
 	glFrame->add(*_glWidget);
 	pack_start(*glFrame, false, false, 0);
-	
+
 	// Set up the info table
 	_infoView->set_headers_visible(false);
 
@@ -47,7 +47,7 @@ TexturePreviewCombo::TexturePreviewCombo() :
 
 	// Pack into main widget
 	pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_infoView)), true, true, 0);
-	
+
 	// Construct the context menu
 	_contextMenu.addItem(
 		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::COPY, _("Copy shader name"))),
@@ -74,7 +74,7 @@ void TexturePreviewCombo::refreshInfoTable()
 	// Prepare the list
 	_infoStore->clear();
 
-	// Other properties require a valid shader name	
+	// Other properties require a valid shader name
 	if (_texName.empty())
 	{
 		return;
@@ -99,7 +99,7 @@ bool TexturePreviewCombo::_onExpose(GdkEventExpose* ev)
 {
 	// Grab the GLWidget with sentry
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
-	
+
 	// Get the viewport size from the GL widget
 	Gtk::Requisition req = _glWidget->size_request();
 	glViewport(0, 0, req.width, req.height);
@@ -124,7 +124,7 @@ bool TexturePreviewCombo::_onExpose(GdkEventExpose* ev)
 	TexturePtr tex = shader->getEditorImage();
 	if (tex != NULL) {
 		glBindTexture (GL_TEXTURE_2D, tex->getGLTexNum());
-		
+
 		// Calculate the correct aspect ratio for preview
 		float aspect = float(tex->getWidth()) / float(tex->getHeight());
 		float hfWidth, hfHeight;
@@ -136,18 +136,18 @@ bool TexturePreviewCombo::_onExpose(GdkEventExpose* ev)
 			hfHeight = 0.5*req.width;
 			hfWidth = 0.5*req.height * aspect;
 		}
-		
+
 		// Draw a quad to put the texture on
 		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 		glColor3f(1, 1, 1);
 		glBegin(GL_QUADS);
-		glTexCoord2i(0, 1); 
+		glTexCoord2i(0, 1);
 		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height - hfHeight);
-		glTexCoord2i(1, 1); 
+		glTexCoord2i(1, 1);
 		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height - hfHeight);
-		glTexCoord2i(1, 0); 
+		glTexCoord2i(1, 0);
 		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height + hfHeight);
-		glTexCoord2i(0, 0);	
+		glTexCoord2i(0, 0);
 		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height + hfHeight);
 		glEnd();
 	}

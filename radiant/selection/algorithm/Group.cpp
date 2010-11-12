@@ -18,12 +18,12 @@ namespace algorithm {
 
 void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
 {
-	UndoableCommand command("convertSelectedToFuncStatic");	
+	UndoableCommand command("convertSelectedToFuncStatic");
 
 	// Attempt to create a func_static entity
 	try
 	{
-		entity::createEntityFromSelection("func_static", Vector3(0,0,0));	
+		entity::createEntityFromSelection("func_static", Vector3(0,0,0));
 	}
 	catch (EntityCreationException& e)
 	{
@@ -53,13 +53,13 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 		return; // worldspawn not an entity?
 	}
 
-	for (GroupNodeCollector::GroupNodeList::const_iterator i = walker.getList().begin(); 
+	for (GroupNodeCollector::GroupNodeList::const_iterator i = walker.getList().begin();
 		 i != walker.getList().end(); ++i)
 	{
 		const scene::INodePtr& groupNode = *i;
 
 		Entity* parent = Node_getEntity(groupNode);
-	
+
 		if (parent == NULL) continue; // not an entity
 
 		ParentPrimitivesToEntityWalker reparentor(worldspawnNode);
@@ -74,7 +74,7 @@ void revertGroupToWorldSpawn(const cmd::ArgumentList& args)
 	}
 
 	// Flag the map as changed
-	GlobalMap().setModified(true);	
+	GlobalMap().setModified(true);
 }
 
 void ParentPrimitivesToEntityWalker::reparent()
@@ -85,11 +85,11 @@ void ParentPrimitivesToEntityWalker::reparent()
 		// Remove this path from the old parent
 		scene::removeNodeFromParent(*i);
 
-		// Insert the child node into the parent node 
+		// Insert the child node into the parent node
 		_parent->addChildNode(*i);
 	}
 
-	globalOutputStream() << "Reparented " << _childrenToReparent.size() 
+	globalOutputStream() << "Reparented " << _childrenToReparent.size()
 		<< " primitives." << std::endl;
 
 	// Update parent node/subgraph visibility after reparenting
@@ -130,7 +130,7 @@ void ParentPrimitivesToEntityWalker::selectReparentedPrimitives()
 		Node_setSelected(*i, true);
 	}
 }
-	
+
 void ParentPrimitivesToEntityWalker::visit(const scene::INodePtr& node) const
 {
 	// Don't reparent instances to themselves
@@ -236,13 +236,13 @@ void parentSelection(const cmd::ArgumentList& args)
 	{
 		gtkutil::errorDialog(_("Cannot reparent primitives to entity. "
 						 "Please select at least one brush/patch and exactly one entity."
-						 "(The entity has to be selected last.)"), 
+						 "(The entity has to be selected last.)"),
 						 GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
 	UndoableCommand undo("parentSelectedPrimitives");
-	
+
 	// Take the last selected item (this is an entity)
 	ParentPrimitivesToEntityWalker visitor(
 		GlobalSelectionSystem().ultimateSelected()
@@ -293,22 +293,22 @@ public:
 		if (!node->visible()) {
 			return;
 		}
-		
+
 		// Is this a selected groupnode?
-		if (Node_isSelected(node) && 
+		if (Node_isSelected(node) &&
 			Node_getGroupNode(node) != NULL)
 		{
 			// Marke the groupnode for de-selection
 			_groupNodes.push_back(node);
 		}
 	}
-	
+
 	bool pre(const scene::INodePtr& node) {
 		// Don't process starting point node or invisible nodes
 		if (node->visible()) {
 			Node_setSelected(node, true);
 		}
-		
+
 		return true;
 	}
 };
@@ -321,12 +321,12 @@ void selectChildren(const cmd::ArgumentList& args) {
 }
 
 /**
- * greebo: This walker traverses the entire subgraph, 
+ * greebo: This walker traverses the entire subgraph,
  *         searching for entities with selected child primitives.
  *         If such an entity is found, it is traversed and all
  *         child primitives are selected.
  */
-class ExpandSelectionToEntitiesWalker : 
+class ExpandSelectionToEntitiesWalker :
 	public scene::NodeVisitor
 {
 public:
@@ -370,7 +370,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 		GlobalSelectionSystem().foreachSelected(walker);
 
 		// Traverse all group nodes using a ParentPrimitivesToEntityWalker
-		for (GroupNodeCollector::GroupNodeList::const_iterator i = walker.getList().begin(); 
+		for (GroupNodeCollector::GroupNodeList::const_iterator i = walker.getList().begin();
 			 i != walker.getList().end(); ++i)
 		{
 			if (*i == newParent) continue;
@@ -387,7 +387,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 	{
 		gtkutil::errorDialog(_("Cannot merge entities, "
 							 "the selection must consist of func_* entities only.\n"
-							 "(The first selected entity will be preserved.)"), 
+							 "(The first selected entity will be preserved.)"),
 							 GlobalMainFrame().getTopLevelWindow());
 	}
 }

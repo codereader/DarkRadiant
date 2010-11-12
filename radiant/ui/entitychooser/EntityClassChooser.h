@@ -23,9 +23,9 @@ namespace ui
 class EntityClassChooser;
 typedef boost::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
 
-/** 
+/**
  * Dialog window displaying a tree of Entity Classes, allowing the selection
- * of a class to create at the current location. 
+ * of a class to create at the current location.
  */
 class EntityClassChooser :
 	public gtkutil::BlockingTransientWindow,
@@ -34,7 +34,7 @@ class EntityClassChooser :
 {
 public:
 	// Treemodel definition
-	struct TreeColumns : 
+	struct TreeColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		TreeColumns() { add(name); add(icon); add(isFolder); }
@@ -55,7 +55,7 @@ private:
 
 	// Tree model holding the classnames
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
-	
+
 	// GtkTreeSelection holding the currently-selected classname
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
@@ -116,8 +116,8 @@ public:
 
 	// Sets the tree selection to the given entity class
 	const std::string& getSelectedEntityClass() const;
-	
-	/** 
+
+	/**
 	 * Convenience function:
 	 * Display the dialog and block awaiting the selection of an entity class,
 	 * which is returned to the caller. If the dialog is cancelled or no

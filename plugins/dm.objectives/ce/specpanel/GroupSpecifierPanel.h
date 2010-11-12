@@ -15,13 +15,13 @@ namespace ce
  * It provides a text entry box with auto-completion functionality
  * for a few special cases like "loot_gold" etc.
  */
-class GroupSpecifierPanel : 
+class GroupSpecifierPanel :
 	public TextSpecifierPanel
 {
 private:
 	// Map registration
 	static struct RegHelper {
-		RegHelper() { 
+		RegHelper() {
 			SpecifierPanelFactory::registerType(
 				SpecifierType::SPEC_GROUP().getName(),
 				SpecifierPanelPtr(new GroupSpecifierPanel())

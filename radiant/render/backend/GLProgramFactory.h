@@ -60,13 +60,13 @@ public:
      * Get the GLProgramFactory instance;
      */
 	static GLProgramFactory& getInstance();
-	
+
 	/**
 	 * Static method to return the GLProgram instance corresponding to the given
 	 * text name.
 	 */
 	static GLProgramPtr getProgram(const std::string& name);
-	
+
     /**
      * \brief
      * Set the program factory to use GLSL programs instead of ARB programs.
@@ -78,12 +78,12 @@ public:
 	 * need to be initialised.
 	 */
 	static void realise();
-	
+
 	/**
 	 * Static unrealise method, called when the GLPrograms should be destroyed.
 	 */
 	static void unrealise();
-	
+
     /**
      * \brief
      * Create a GLSL shader object using the given source files.

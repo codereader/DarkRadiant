@@ -5,7 +5,7 @@
 
 namespace map
 {
-	
+
 class BrushDef3Parser :
 	public PrimitiveParser
 {

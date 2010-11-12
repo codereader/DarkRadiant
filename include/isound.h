@@ -48,11 +48,11 @@ class SoundRadii {
 		}
 	}
 
-	float getMin(bool inMetres = false) const { 
+	float getMin(bool inMetres = false) const {
 		return (inMetres) ? minRad * METERS_PER_UNIT : minRad;
 	}
 
-	float getMax(bool inMetres = false) const { 
+	float getMax(bool inMetres = false) const {
 		return (inMetres) ? maxRad * METERS_PER_UNIT : maxRad;
 	}
 };
@@ -73,8 +73,8 @@ public:
 	 * Get the min and max radii of the shader.
 	 */
 	virtual SoundRadii getRadii() = 0;
-	
-	/** greebo: Get the list of sound files associated to 
+
+	/** greebo: Get the list of sound files associated to
 	 * 			this shader.
 	 */
 	virtual SoundFileList getSoundFileList() = 0;
@@ -99,24 +99,24 @@ const std::string MODULE_SOUNDMANAGER("SoundManager");
 class ISoundManager :
 	public RegisterableModule
 {
-public:	
+public:
 	/**
 	 * Enumerate each of the sound shaders.
 	 */
 	virtual void forEachShader(SoundShaderVisitor& visitor) const = 0;
-	
+
 	/** greebo: Tries to lookup the SoundShader with the given name,
 	 * 			returns a soundshader with an empty name, if the lookup failed.
 	 */
 	virtual ISoundShaderPtr getSoundShader(const std::string& shaderName) = 0;
-	
+
 	/** greebo: Plays the given sound file (defined by its VFS path).
-	 * 
-	 * @returns: TRUE, if the sound file was found at the given VFS path, 
+	 *
+	 * @returns: TRUE, if the sound file was found at the given VFS path,
 	 * 			 FALSE otherwise
 	 */
-	virtual bool playSound(const std::string& fileName) = 0; 
-	
+	virtual bool playSound(const std::string& fileName) = 0;
+
 	/** greebo: Stops the currently played sound.
 	 */
 	virtual void stopSound() = 0;
@@ -130,7 +130,7 @@ inline ISoundManager& GlobalSoundManager() {
 			module::GlobalModuleRegistry().getModule(MODULE_SOUNDMANAGER)
 		)
 	);
-	return _soundManager;	
+	return _soundManager;
 }
 
 #endif /*ISOUND_H_*/

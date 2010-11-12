@@ -9,7 +9,7 @@ namespace Gtk
 	class CheckButton;
 }
 
-/** 
+/**
  * greebo: Dialog to query the user for the desired patch dimensions and
  * whether the selected brushes are to be removed after creation.
  */
@@ -28,7 +28,7 @@ protected:
 	void _postShow();
 
 public:
-	// Constructor 
+	// Constructor
 	PatchCreateDialog();
 
 	// Get the selected values, use these after calling run()

@@ -39,11 +39,11 @@ void GuiRenderer::render()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar 
-	glOrtho(_areaTopLeft[0], 	// left 
+	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar
+	glOrtho(_areaTopLeft[0], 	// left
 		_areaBottomRight[0], // right
-		_areaBottomRight[1], // bottom 
-		_areaTopLeft[1], 	// top 
+		_areaBottomRight[1], // bottom
+		_areaTopLeft[1], 	// top
 		-1, 1);
 
 	// Tell openGL to draw front and back of the polygons in textured mode
@@ -100,7 +100,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 			{
 				// Found the diffuse
 				tex = (*i)->getTexture();
-				break; 
+				break;
 			}
 		}
 
@@ -109,7 +109,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 			tex = window->backgroundShader->getEditorImage();
 		}
 
-		if (tex != NULL) 
+		if (tex != NULL)
 		{
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
@@ -156,7 +156,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 		{
 			glColor4d(window->forecolor[0], window->forecolor[1], window->forecolor[2], 1);
 		}
-		
+
 		window->getRenderableText().render();
 
 		glDisable(GL_TEXTURE_2D);
@@ -165,7 +165,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	}
 
 	// Push the translation before rendering the children, so that they
-	// can continue rendering in local coordinates, but the results appear relative to 
+	// can continue rendering in local coordinates, but the results appear relative to
 	// this parent windowDef
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();

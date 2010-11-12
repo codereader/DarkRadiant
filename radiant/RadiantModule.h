@@ -38,13 +38,13 @@ class RadiantModule :
 public:
 	void addEventListener(const RadiantEventListenerPtr& listener);
 	void removeEventListener(const RadiantEventListenerPtr& listener);
-	
+
 	// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
 	void broadcastShutdownEvent();
-	
+
 	// Broadcasts a "startup" event to all the listeners
 	void broadcastStartupEvent();
-	
+
 	// RegisterableModule implementation
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
@@ -54,7 +54,7 @@ public:
 typedef boost::shared_ptr<RadiantModule> RadiantModulePtr;
 
 /**
- * Return the global Radiant module (for use internally, not by other 
+ * Return the global Radiant module (for use internally, not by other
  * modules).
  */
 RadiantModulePtr getGlobalRadiant();

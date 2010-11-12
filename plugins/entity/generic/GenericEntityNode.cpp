@@ -67,7 +67,7 @@ void GenericEntityNode::_onTransformationChanged()
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();
-		
+
 		m_contained.translate(getTranslation());
 		m_contained.rotate(getRotation());
 
@@ -80,7 +80,7 @@ void GenericEntityNode::_applyTransformation()
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();
-		
+
 		m_contained.translate(getTranslation());
 		m_contained.rotate(getRotation());
 

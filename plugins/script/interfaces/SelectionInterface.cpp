@@ -48,14 +48,14 @@ void SelectionInterface::registerInterface(boost::python::object& nspace) {
 
 	// Add the module declaration to the given python namespace
 	nspace["GlobalSelectionSystem"] = boost::python::class_<SelectionInterface>("GlobalSelectionSystem")
-		.def("getSelectionInfo", &SelectionInterface::getSelectionInfo, 
+		.def("getSelectionInfo", &SelectionInterface::getSelectionInfo,
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
-		.def("foreachSelected", &SelectionInterface::foreachSelected) 
-		.def("foreachSelectedComponent", &SelectionInterface::foreachSelectedComponent) 
-		.def("setSelectedAll", &SelectionInterface::setSelectedAll) 
-		.def("setSelectedAllComponents", &SelectionInterface::setSelectedAllComponents) 
-		.def("ultimateSelected", &SelectionInterface::ultimateSelected) 
-		.def("penultimateSelected", &SelectionInterface::penultimateSelected) 
+		.def("foreachSelected", &SelectionInterface::foreachSelected)
+		.def("foreachSelectedComponent", &SelectionInterface::foreachSelectedComponent)
+		.def("setSelectedAll", &SelectionInterface::setSelectedAll)
+		.def("setSelectedAllComponents", &SelectionInterface::setSelectedAllComponents)
+		.def("ultimateSelected", &SelectionInterface::ultimateSelected)
+		.def("penultimateSelected", &SelectionInterface::penultimateSelected)
 	;
 
 	// Now point the Python variable "GlobalSelectionSystem" to this instance

@@ -30,22 +30,22 @@ public:
 
 	// destructor
 	virtual ~EffectArgumentItem() {}
-	
+
 	/** greebo: This retrieves the string representation of the
 	 * 			current value of this row. This has to be
 	 * 			implemented by the derived classes.
 	 */
 	virtual std::string getValue() = 0;
-	
+
 	// Retrieve the label widget
 	virtual Gtk::Widget& getLabelWidget();
-	
+
 	// Retrieve the edit widgets (abstract)
 	virtual Gtk::Widget& getEditWidget() = 0;
-	
+
 	// Retrieves the help widget (a question mark with a tooltip)
 	virtual Gtk::Widget& getHelpWidget();
-	
+
 	/** greebo: This saves the value to the according response effect.
 	 */
 	virtual void save();
@@ -61,7 +61,7 @@ protected:
 
 public:
 	StringArgument(ResponseEffect::Argument& arg);
-	
+
 	virtual Gtk::Widget& getEditWidget();
 	virtual std::string getValue();
 };
@@ -94,7 +94,7 @@ class BooleanArgument :
 	Gtk::CheckButton* _checkButton;
 public:
 	BooleanArgument(ResponseEffect::Argument& arg);
-	
+
 	virtual Gtk::Widget& getEditWidget();
 	virtual std::string getValue();
 };
@@ -108,10 +108,10 @@ class EntityArgument :
 	Gtk::ComboBoxEntry* _comboBox;
 public:
 	// Pass the entity liststore to this item so that the auto-completion
-	// of the entity combo box works correctly 
-	EntityArgument(ResponseEffect::Argument& arg, 
+	// of the entity combo box works correctly
+	EntityArgument(ResponseEffect::Argument& arg,
 				   const Glib::RefPtr<Gtk::ListStore>& entityStore);
-	
+
 	virtual Gtk::Widget& getEditWidget();
 	virtual std::string getValue();
 };
@@ -125,10 +125,10 @@ private:
 	const StimTypes& _stimTypes;
 	Gtk::ComboBox* _comboBox;
 public:
-	// Pass the reference to the StimType helper class  
-	StimTypeArgument(ResponseEffect::Argument& arg, 
+	// Pass the reference to the StimType helper class
+	StimTypeArgument(ResponseEffect::Argument& arg,
 				     const StimTypes& stimTypes);
-	
+
 	virtual Gtk::Widget& getEditWidget();
 	virtual std::string getValue();
 };

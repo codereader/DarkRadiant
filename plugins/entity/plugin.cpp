@@ -29,10 +29,10 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	registry.registerModule(entity::Doom3EntityCreatorPtr(
 			new entity::Doom3EntityCreator
 	));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

@@ -39,9 +39,9 @@ class Scalable {
 
 /* greebo: The following are specialised manipulatables that provide the methods as described in the ABC.
  * They basically prepare and constraing the transformations of the three base movements above (Translatable, etc.)
- * 
+ *
  * So, for example, the TranslateAxis class takes care that the Translatable is only moved in the axis directions.
- * The necessary device pointer >> translation vector calculations are performed within Transform()  
+ * The necessary device pointer >> translation vector calculations are performed within Transform()
  */
 
 class RotateFree : public ManipulatorComponent {
@@ -60,10 +60,10 @@ class RotateAxis : public ManipulatorComponent {
 public:
   RotateAxis(Rotatable& rotatable): _rotatable(rotatable) {}
   void Construct(const Matrix4& device2manip, const float x, const float y);
-  
+
   /// \brief Converts current position to a normalised vector orthogonal to axis.
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
-  
+
   void SetAxis(const Vector3& axis) {
     _axis = axis;
   }
@@ -75,9 +75,9 @@ class TranslateAxis : public ManipulatorComponent {
   Translatable& _translatable;
 public:
   TranslateAxis(Translatable& translatable): _translatable(translatable) {}
-  void Construct(const Matrix4& device2manip, const float x, const float y);  
+  void Construct(const Matrix4& device2manip, const float x, const float y);
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
-  
+
   void SetAxis(const Vector3& axis) {
     _axis = axis;
   }
@@ -103,7 +103,7 @@ public:
   ScaleAxis(Scalable& scalable): _scalable(scalable) {}
   void Construct(const Matrix4& device2manip, const float x, const float y);
   void Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y);
-  
+
   void SetAxis(const Vector3& axis) {
     _axis = axis;
   }

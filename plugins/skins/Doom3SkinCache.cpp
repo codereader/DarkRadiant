@@ -7,12 +7,12 @@
 #include <iostream>
 
 namespace skins {
-	
+
 namespace {
-	
+
 /* CONSTANTS */
 const char* SKINS_FOLDER = "skins/";
-	
+
 /**
  * Filesystem traversal functor to load .skin files from the skins/ directory.
  * The functor opens each file and passes the contents (as a string) back to
@@ -23,26 +23,26 @@ class SkinLoader :
 {
 	// Doom3SkinCache to parse files
 	Doom3SkinCache& _cache;
-	
+
 public:
 
 	// Required typedef
 	typedef const std::string& first_argument_type;
-	
+
 	// Constructor
 	SkinLoader(Doom3SkinCache& c)
 	: _cache(c)
 	{}
-	
+
 	// Functor operator
 	void visit(const std::string& fileName)
 	{
 		// Open the .skin file and get its contents as a std::string
-		ArchiveTextFilePtr file = 
+		ArchiveTextFilePtr file =
 			GlobalFileSystem().openTextFile(SKINS_FOLDER + fileName);
 		assert(file);
 		std::istream is(&(file->getInputStream()));
-	
+
 		try {
 			// Pass the contents back to the SkinCache module for parsing
 			_cache.parseFile(is, fileName);
@@ -51,18 +51,18 @@ public:
 			std::cout << "[skins]: in " << fileName << ": " << e.what() << std::endl;
 		}
 	}
-}; 
+};
 
 } // blank namespace
-	
+
 // Realise the skin cache
 void Doom3SkinCache::realise() {
 
 	// Return if already realised
 	if (_realised)
 		return;
-		
-	globalOutputStream() << "[skins] Loading skins." << std::endl; 
+
+	globalOutputStream() << "[skins] Loading skins." << std::endl;
 
 	// Use a functor to traverse the skins directory, catching any parse
 	// exceptions that may be thrown
@@ -75,31 +75,31 @@ void Doom3SkinCache::realise() {
 	{
 		std::cout << "[skins]: " << e.what() << std::endl;
 	}
-	
+
 	// Set the realised flag
 	_realised = true;
 }
 
 // Parse the contents of a .skin file
 void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filename) {
-	
+
 	// Construct a DefTokeniser to parse the file
 	parser::BasicDefTokeniser<std::istream> tok(contents);
-	
+
 	// Call the parseSkin() function for each skin decl
 	while (tok.hasMoreTokens()) {
 		try {
 			// Try to parse the skin
 			Doom3ModelSkinPtr modelSkin = parseSkin(tok);
 			std::string skinName = modelSkin->getName();
-			
+
 			modelSkin->setSkinFileName(filename);
-			
+
 			NamedSkinMap::iterator found = _namedSkins.find(skinName);
-			
+
 			// Is this already defined?
 			if (found != _namedSkins.end()) {
-				std::cout << "[skins] in " << filename << ": skin " + skinName + 
+				std::cout << "[skins] in " << filename << ": skin " + skinName +
 						     " previously defined in " +
 							 found->second->getSkinFileName() + "!\n";
 				// Don't insert the skin into the list
@@ -119,10 +119,10 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 
 // Parse an individual skin declaration
 Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
-	
-	// [ "skin" ] <name> "{" 
-	//			[ "model" <modelname> ] 
-	//			( <sourceTex> <destTex> )* 
+
+	// [ "skin" ] <name> "{"
+	//			[ "model" <modelname> ]
+	//			( <sourceTex> <destTex> )*
 	// "}"
 
 	// Parse the skin name, this is either the first token or the second token
@@ -130,37 +130,37 @@ Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) {
 	std::string skinName = tok.nextToken();
 	if (skinName == "skin")
 		skinName = tok.nextToken();
-	
+
 	tok.assertNextToken("{");
 
 	// Create the skin object
 	Doom3ModelSkinPtr skin(new Doom3ModelSkin(skinName));
-	
+
 	// Read key/value pairs until end of decl
 	std::string key = tok.nextToken();
 	while (key != "}") {
-		
+
 		// Read the value
 		std::string value = tok.nextToken();
-		
+
 		if (value == "}") {
-			std::cout << "[skins] Warning: '}' found where shader name expected in skin: " 
+			std::cout << "[skins] Warning: '}' found where shader name expected in skin: "
 					  << skinName << "\n";
 		}
-		
+
 		// If this is a model key, add to the model->skin map, otherwise assume
 		// this is a remap declaration
 		if (key == "model") {
-			_modelSkins[value].push_back(skinName);		
+			_modelSkins[value].push_back(skinName);
 		}
 		else {
 			skin->addRemap(key, value);
 		}
-			
+
 		// Get next key
 		key = tok.nextToken();
 	}
-	
+
 	return skin;
 }
 
@@ -189,7 +189,7 @@ void Doom3SkinCache::refresh() {
 
 void Doom3SkinCache::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Doom3SkinCache::initialiseModule called\n";
-	
+
 	realise();
 }
 

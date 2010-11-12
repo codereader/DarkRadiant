@@ -54,7 +54,7 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
     // greebo: Changed fallback behaviour when unknown entites are encountered to TRUE
     // so that brushes of unknown entites don't get lost (issue #240)
     Doom3EntityClassPtr e = Doom3EntityClass::create(lName, true);
-    
+
     // Try to insert the class
     return insertUnique(e);
 }
@@ -65,7 +65,7 @@ Doom3EntityClassPtr EClassManager::insertUnique(const Doom3EntityClassPtr& eclas
     std::pair<EntityClasses::iterator, bool> i = _entityClasses.insert(
     	EntityClasses::value_type(eclass->getName(), eclass)
     );
-    
+
     // Return the pointer to the inserted eclass
     return i.first->second;
 }
@@ -75,17 +75,17 @@ void EClassManager::resolveModelInheritance(const std::string& name, const Doom3
 	if (model->resolved == true) {
 		return; // inheritance already resolved
 	}
-	
+
 	model->resolved = true;
 
 	if (!model->parent.empty())
 	{
 		Models::iterator i = _models.find(model->parent);
-		
+
 		if (i == _models.end()) {
 			globalErrorStream() << "model " << name
 				<< " inherits unknown model " << model->parent << std::endl;
-		} 
+		}
 		else {
 			resolveModelInheritance(i->first, i->second);
 
@@ -123,12 +123,12 @@ void EClassManager::resolveInheritance()
     for (Models::iterator i = _models.begin(); i != _models.end(); ++i) {
     	resolveModelInheritance(i->first, i->second);
     }
-        
+
     // Resolve inheritance for the entities. At this stage the classes
     // will have the name of their parent, but not an actual pointer to
     // it
     for (EntityClasses::iterator i = _entityClasses.begin();
-         i != _entityClasses.end(); ++i) 
+         i != _entityClasses.end(); ++i)
 	{
 		// Tell the class to resolve its own inheritance using the given
 		// map as a source for parent lookup
@@ -148,10 +148,10 @@ void EClassManager::resolveInheritance()
 	// greebo: Override the eclass colours of two special entityclasses
     Vector3 worlspawnColour = ColourSchemes().getColour("default_brush");
     Vector3 lightColour = ColourSchemes().getColour("light_volumes");
-    
+
     IEntityClassPtr light = findOrInsert("light", true);
 	light->setColour(lightColour);
-	
+
 	IEntityClassPtr worldspawn = findOrInsert("worldspawn", true);
 	worldspawn->setColour(worlspawnColour);
 
@@ -186,8 +186,8 @@ IEntityClassPtr EClassManager::findClass(const std::string& className) const {
 // Visit each entity class
 void EClassManager::forEach(EntityClassVisitor& visitor)
 {
-	for(EntityClasses::iterator i = _entityClasses.begin(); 
-		i != _entityClasses.end(); 
+	for(EntityClasses::iterator i = _entityClasses.begin();
+		i != _entityClasses.end();
 		++i)
 	{
 		visitor.visit(i->second);
@@ -249,7 +249,7 @@ const StringSet& EClassManager::getDependencies() const {
 void EClassManager::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "EntityClassDoom3::initialiseModule called." << std::endl;
-	
+
 	GlobalFileSystem().addObserver(*this);
 	realise();
 }
@@ -289,7 +289,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
         if (blockType == "entitydef")
 		{
 			// Get the (lowercase) entity name
-			const std::string sName = 
+			const std::string sName =
     			boost::algorithm::to_lower_copy(tokeniser.nextToken());
 
 			// Ensure that an Entity class with this name already exists
@@ -300,7 +300,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
 			{
 				// Not existing yet, allocate a new class
         		Doom3EntityClassPtr entityClass(new eclass::Doom3EntityClass(sName));
-				
+
 				std::pair<EntityClasses::iterator, bool> result = _entityClasses.insert(
 					EntityClasses::value_type(sName, entityClass)
 				);
@@ -312,7 +312,7 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
 				// EntityDef already exists, compare the parse stamp
 				if (i->second->getParseStamp() == _curParseStamp)
 				{
-					globalWarningStream() << "[eclassmgr]: EntityDef " 
+					globalWarningStream() << "[eclassmgr]: EntityDef "
 						<< sName << " redefined" << std::endl;
 				}
 			}
@@ -354,11 +354,11 @@ void EClassManager::parse(TextInputStream& inStr, const std::string& modDir)
 				// Model already exists, compare the parse stamp
 				if (i->second->getParseStamp() == _curParseStamp)
 				{
-					globalWarningStream() << "[eclassmgr]: Model " 
+					globalWarningStream() << "[eclassmgr]: Model "
 						<< modelDefName << " redefined" << std::endl;
 				}
 			}
-			
+
 			// Model structure is allocated and in the map,
             // invoke the parser routine
 			i->second->setParseStamp(_curParseStamp);
@@ -374,7 +374,7 @@ void EClassManager::visit(const std::string& filename)
 	const std::string fullname = "def/" + filename;
 
 	ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(fullname);
-	
+
 	if (file == NULL) return;
 
 	try {
@@ -382,7 +382,7 @@ void EClassManager::visit(const std::string& filename)
 		parse(file->getInputStream(), file->getModName());
 	}
 		catch (parser::ParseException& e) {
-			globalErrorStream() << "[eclassmgr] failed to parse " << filename 
+			globalErrorStream() << "[eclassmgr] failed to parse " << filename
 					  << " (" << e.what() << ")" << std::endl;
 	}
 }

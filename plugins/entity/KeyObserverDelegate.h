@@ -12,7 +12,7 @@ typedef boost::function<void(const std::string&)> KeyObserverFunc;
 
 /**
  * greebo: A KeyObserver wrapping around a function object.
- * The function is called as soon as the onKeyValueChanged 
+ * The function is called as soon as the onKeyValueChanged
  * event is fired.
  */
 class KeyObserverDelegate :

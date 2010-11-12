@@ -31,24 +31,24 @@ void MenuManager::clear() {
 
 void MenuManager::loadFromRegistry() {
 	xml::NodeList menuNodes = GlobalRegistry().findXPath(RKEY_MENU_ROOT);
-	
+
 	if (!menuNodes.empty()) {
 		for (std::size_t i = 0; i < menuNodes.size(); i++) {
 			std::string name = menuNodes[i].getAttributeValue("name");
-		
+
 			// Allocate a new MenuItem with root as parent
 			MenuItemPtr menubar = MenuItemPtr(new MenuItem(_root));
 			menubar->setName(name);
-		
+
 			// Populate the root menuitem using the current node
 			menubar->parseNode(menuNodes[i], menubar);
-			
+
 			// Add the menubar as child of the root (child is already parented to _root)
 			_root->addChild(menubar);
 		}
 	}
 	else {
-		globalErrorStream() << "MenuManager: Could not find menu root in registry.\n"; 
+		globalErrorStream() << "MenuManager: Could not find menu root in registry.\n";
 	}
 }
 
@@ -57,7 +57,7 @@ void MenuManager::setVisibility(const std::string& path, bool visible) {
 	if (_root == NULL) return;
 
 	MenuItemPtr foundMenu = _root->find(path);
-	
+
 	if (foundMenu != NULL)
 	{
 		// Get the Widget* and set the visibility
@@ -81,7 +81,7 @@ Gtk::Widget* MenuManager::get(const std::string& path) {
 	if (_root == NULL) return NULL;
 
 	MenuItemPtr foundMenu = _root->find(path);
-	
+
 	if (foundMenu != NULL)
 	{
 		return foundMenu->getWidget();
@@ -96,7 +96,7 @@ Gtk::Widget* MenuManager::get(const std::string& path) {
 Gtk::Widget* MenuManager::add(const std::string& insertPath,
 							const std::string& name,
 					  		eMenuItemType type,
-			 		  		const std::string& caption, 
+			 		  		const std::string& caption,
 			 		  		const std::string& icon,
 					  		const std::string& eventName)
 {
@@ -109,13 +109,13 @@ Gtk::Widget* MenuManager::add(const std::string& insertPath,
 	{
 		// Allocate a new MenuItem
 		MenuItemPtr newItem = MenuItemPtr(new MenuItem(found));
-		
+
 		newItem->setName(name);
 		newItem->setCaption(caption);
 		newItem->setType(type);
 		newItem->setIcon(icon);
 		newItem->setEvent(eventName);
-		
+
 		// Get the parent widget
 		Gtk::Widget* parentItem = found->getWidget();
 		Gtk::MenuShell* parent = NULL;
@@ -124,7 +124,7 @@ Gtk::Widget* MenuManager::add(const std::string& insertPath,
 		{
 			parent = static_cast<Gtk::MenuShell*>(parentItem);
 		}
-		else 
+		else
 		{
 			// Retrieve the submenu widget from the item
 			Gtk::MenuItem* menuItem = dynamic_cast<Gtk::MenuItem*>(parentItem);
@@ -149,12 +149,12 @@ Gtk::Widget* MenuManager::add(const std::string& insertPath,
 		{
 			globalErrorStream() << "Cannot cast item to a Gtk::MenuItem*." << std::endl;
 		}
-		
-		// Add the child to the <found> parent, AFTER its GtkWidget* operator 
+
+		// Add the child to the <found> parent, AFTER its GtkWidget* operator
 		// was invoked, otherwise the parent tries to instantiate it before it's actually
 		// added.
 		found->addChild(newItem);
-		
+
 		return newItem->getWidget();
 	}
 	else if (insertPath.empty())
@@ -191,7 +191,7 @@ Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 	if (_root == NULL) return NULL;
 
 	MenuItemPtr found = _root->find(insertPath);
-	
+
 	if (found != NULL)
 	{
 		if (found->parent() != NULL)
@@ -201,7 +201,7 @@ Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 			// Allocate a new MenuItem
 			MenuItemPtr newItem = MenuItemPtr(new MenuItem(found->parent()));
 			found->parent()->addChild(newItem);
-			
+
 			// Load the properties into the new child
 			newItem->setName(name);
 			newItem->setType(type);
@@ -216,9 +216,9 @@ Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 				globalErrorStream() << "Cannot cast item to a Gtk::MenuItem*." << std::endl;
 				return NULL;
 			}
-			
+
 			Gtk::Widget* parentWidget = found->parent()->getWidget();
-			
+
 			// Insert it at the given position
 			if (found->parent()->getType() == menuBar)
 			{
@@ -239,7 +239,7 @@ Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 					globalErrorStream() << "Cannot cast parent item to a Gtk::MenuItem*." << std::endl;
 				}
 			}
-			
+
 			return newItem->getWidget();
 		}
 		else {
@@ -250,7 +250,7 @@ Gtk::Widget* MenuManager::insert(const std::string& insertPath,
 	}
 	else {
 		globalErrorStream() << "MenuManager: Could not find insertPath: " << insertPath << std::endl;
-		return NULL; 
+		return NULL;
 	}
 }
 

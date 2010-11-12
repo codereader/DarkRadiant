@@ -53,7 +53,7 @@ typedef boost::shared_ptr<ICamera> ICameraPtr;
 
 const std::string MODULE_CAMERA("Camera");
 
-// Accessor 
+// Accessor
 // (this is named CameraView to avoid name conflicts with the existing GlobalCamera() accessor)
 inline ICamera& GlobalCameraView() {
 	// Cache the reference locally

@@ -13,7 +13,7 @@
 #include <cstdio>
 
 void OpenGLShader::destroy() {
-	// Clear the shaderptr, so that the shared_ptr reference count is decreased 
+	// Clear the shaderptr, so that the shared_ptr reference count is decreased
     _material = MaterialPtr();
 
     for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
@@ -23,8 +23,8 @@ void OpenGLShader::destroy() {
     _shaderPasses.clear();
 }
 
-void OpenGLShader::addRenderable(const OpenGLRenderable& renderable, 
-					   			 const Matrix4& modelview, 
+void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
+					   			 const Matrix4& modelview,
 					   			 const LightList* lights)
 {
     // Iterate over the list of OpenGLStateBuckets, bumpmap and non-bumpmap
@@ -48,7 +48,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 
 void OpenGLShader::incrementUsed() {
     if(++m_used == 1 && _material != 0)
-    { 
+    {
       _material->SetInUse(true);
     }
 }
@@ -60,7 +60,7 @@ void OpenGLShader::decrementUsed() {
     }
 }
 
-void OpenGLShader::realise(const std::string& name) 
+void OpenGLShader::realise(const std::string& name)
 {
     // Construct the shader passes based on the name
     construct(name);
@@ -73,11 +73,11 @@ void OpenGLShader::realise(const std::string& name)
 			_material->SetInUse(true);
 		}
     }
-    
+
     // Insert all shader passes into the GL state manager
     for (Passes::iterator i = _shaderPasses.begin();
          i != _shaderPasses.end();
-          ++i) 
+          ++i)
     {
     	_glStateManager.insertSortedState(
             render::OpenGLStates::value_type(
@@ -89,7 +89,7 @@ void OpenGLShader::realise(const std::string& name)
     m_observers.realise();
 }
 
-void OpenGLShader::unrealise() 
+void OpenGLShader::unrealise()
 {
     m_observers.unrealise();
 
@@ -109,7 +109,7 @@ unsigned int OpenGLShader::getFlags() const {
 }
 
 // Append a default shader pass onto the back of the state list
-OpenGLState& OpenGLShader::appendDefaultPass() 
+OpenGLState& OpenGLShader::appendDefaultPass()
 {
     _shaderPasses.push_back(new OpenGLShaderPass);
     OpenGLState& state = _shaderPasses.back()->state();
@@ -170,12 +170,12 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     {
         // Create depth-buffer fill pass
         OpenGLState& state = appendDefaultPass();
-        state.renderFlags = RENDER_FILL 
-                        | RENDER_CULLFACE 
-                        | RENDER_TEXTURE_2D 
-                        | RENDER_DEPTHTEST 
-                        | RENDER_DEPTHWRITE 
-                        | RENDER_COLOURWRITE 
+        state.renderFlags = RENDER_FILL
+                        | RENDER_CULLFACE
+                        | RENDER_TEXTURE_2D
+                        | RENDER_DEPTHTEST
+                        | RENDER_DEPTHWRITE
+                        | RENDER_COLOURWRITE
                         | RENDER_PROGRAM;
 
         state.m_colour[0] = 0;
@@ -183,10 +183,10 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
         state.m_colour[2] = 0;
         state.m_colour[3] = 1;
         state.m_sort = OpenGLState::eSortOpaque;
-        
+
         state.glProgram = render::GLProgramFactory::getProgram("depthFill").get();
     }
-    
+
     // Add the DBS pass
     OpenGLState& dbsPass = appendDefaultPass();
 
@@ -204,7 +204,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
                         | RENDER_SMOOTH
                         | RENDER_BUMP
                         | RENDER_PROGRAM;
-    
+
     dbsPass.glProgram = render::GLProgramFactory::getProgram("bumpMap").get();
 
     // Set layer vertex colour mode and alphatest parameters
@@ -406,7 +406,7 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
     state.m_blend_dst = blendFunc.dest;
 
 	// Alpha-tested stages or one-over-zero blends should use the depth buffer
-    if (state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA || 
+    if (state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA ||
 		(state.m_blend_src == GL_ONE && state.m_blend_dst == GL_ZERO))
     {
 		state.renderFlags |= RENDER_DEPTHWRITE;
@@ -451,7 +451,7 @@ void OpenGLShader::constructNormalShader(const std::string& name)
 
     // Determine whether we can render this shader in lighting/bump-map mode,
     // and construct the appropriate shader passes
-    if (canUseLightingMode()) 
+    if (canUseLightingMode())
     {
         // Full lighting, DBS and blend modes
         constructLightingPassesFromMaterial();
@@ -468,7 +468,7 @@ void OpenGLShader::construct(const std::string& name)
 {
 	// Retrieve the highlight colour from the colourschemes (once)
 	static Vector3 highLightColour = ColourSchemes().getColour("selected_brush_camera");
-	
+
     // Check the first character of the name to see if this is a special built-in
     // shader
     switch(name[0])

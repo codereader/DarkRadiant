@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -38,10 +38,10 @@ cg_fragment2final main(in	cg_vertex2fragment IN,
 				uniform sampler2D colormap)
 {
 	cg_fragment2final OUT;
-	
+
 	OUT.color.w = tex2D(colormap, IN.tex0.xy).a;
-	
+
 	OUT.color.xyz = 0;
-    
+
 	return OUT;
 }

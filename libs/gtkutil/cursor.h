@@ -41,7 +41,7 @@ void Sys_SetCursorPos(GtkWindow* window, int x, int y);
 
 
 /* greebo: this class is used by the XYViews as some sort of "onMouseMotion" callback wrapper
- * I don't know why this exactly has to be used in such a way instead of 
+ * I don't know why this exactly has to be used in such a way instead of
  * calling the XYWindow methods directly, but as always: If it ain't broken, don't fix it.
  */
 class DeferredMotion {
@@ -58,9 +58,9 @@ class DeferredMotion {
 		self->m_function(self->m_x, self->m_y, self->m_state, self->m_data);
 		return FALSE;
 	}
-	
+
 public:
-	DeferredMotion(MotionFunction function, void* data) : 
+	DeferredMotion(MotionFunction function, void* data) :
 		m_handler(0),
 		m_function(function),
 		m_data(data)
@@ -72,7 +72,7 @@ public:
 			g_source_remove(m_handler);
 		}
 	}
-	
+
 	void motion(gdouble x, gdouble y, guint state) {
 		m_x = x;
 		m_y = y;
@@ -81,7 +81,7 @@ public:
 			m_handler = g_idle_add((GSourceFunc)deferred, this);
 		}
 	}
-	
+
 	// greebo: This is the actual callback method that gets connected via to the "motion_notify_event"
 	bool gtk_motion(GdkEventMotion* ev)
 	{
@@ -175,7 +175,7 @@ public:
     | GDK_VISIBILITY_NOTIFY_MASK);
 
     GdkCursor* cursor = create_blank_cursor();
-   //GdkGrabStatus status = 
+   //GdkGrabStatus status =
     gdk_pointer_grab(GTK_WIDGET(window)->window, TRUE, mask, 0, cursor, GDK_CURRENT_TIME);
     gdk_cursor_unref(cursor);
 

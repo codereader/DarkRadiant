@@ -24,11 +24,11 @@ AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(Entity* entity, const std::st
 {
 	_widget = Gtk::manage(new Gtk::HBox(false, 0));
 	_widget->set_border_width(6);
-	
+
 	// Horizontal box contains the browse button
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
 	hbx->set_border_width(3);
-	
+
 	// Browse button for models
 	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Select Vocal Set...")));
 
@@ -36,7 +36,7 @@ AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(Entity* entity, const std::st
 		*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf("icon_sound.png")))
 	);
 	browseButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetPropertyEditor::onChooseButton));
-	
+
 	hbx->pack_start(*browseButton, true, false, 0);
 
 	// Pack hbox into vbox (to limit vertical size), then edit frame
@@ -50,7 +50,7 @@ Gtk::Widget& AIVocalSetPropertyEditor::getWidget()
 	return *_widget;
 }
 
-IPropertyEditorPtr AIVocalSetPropertyEditor::createNew(Entity* entity, 
+IPropertyEditorPtr AIVocalSetPropertyEditor::createNew(Entity* entity,
 	const std::string& key, const std::string& options)
 {
 	return IPropertyEditorPtr(new AIVocalSetPropertyEditor(entity, key, options));

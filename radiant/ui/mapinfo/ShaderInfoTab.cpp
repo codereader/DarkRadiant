@@ -11,7 +11,7 @@
 #include <gtkmm/box.h>
 #include <gtkmm/table.h>
 
-namespace ui 
+namespace ui
 {
 	namespace
 	{
@@ -48,7 +48,7 @@ void ShaderInfoTab::populateTab()
 	// Set the outer space of the vbox
 	_widget->set_border_width(12);
 
-	// Create the list store that contains the eclass => count map 
+	// Create the list store that contains the eclass => count map
 	_listStore = Gtk::ListStore::create(_columns);
 
 	// Create the treeview and pack two columns into it
@@ -69,10 +69,10 @@ void ShaderInfoTab::populateTab()
 	_treeView->append_column(*patchCountCol);
 
     _widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
-    
+
     // Populate the liststore with the entity count information
-    for (map::ShaderBreakdown::Map::const_iterator i = _shaderBreakdown.begin(); 
-		 i != _shaderBreakdown.end(); 
+    for (map::ShaderBreakdown::Map::const_iterator i = _shaderBreakdown.begin();
+		 i != _shaderBreakdown.end();
 		 ++i)
 	{
 		Gtk::TreeModel::Row row = *_listStore->append();
@@ -85,20 +85,20 @@ void ShaderInfoTab::populateTab()
 	// The table containing the statistics
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(1, 2, false));
 	_widget->pack_start(*table, false, false, 0);
-	
+
 	_shaderCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 
 	Gtk::Label* shaderLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Shaders used:")));
-		
+
 	shaderLabel->set_size_request(100, -1);
-	
+
 	table->attach(*shaderLabel, 0, 1, 0, 1,
 				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
 
 	std::string sc = "<b>" + sizetToStr(_shaderBreakdown.getMap().size()) + "</b>";
 
 	_shaderCount->set_markup(sc);
-	
+
 	table->attach(*_shaderCount, 1, 2, 0, 1);
 }
 

@@ -6,7 +6,7 @@
 
 namespace script {
 
-void FileSystemInterface::forEachFile(const std::string& basedir, 
+void FileSystemInterface::forEachFile(const std::string& basedir,
 	const std::string& extension, VirtualFileSystem::Visitor& visitor, std::size_t depth)
 {
 	GlobalFileSystem().forEachFile(basedir, extension, visitor, depth);
@@ -51,7 +51,7 @@ std::string FileSystemInterface::findRoot(const std::string& name) {
 
 void FileSystemInterface::registerInterface(boost::python::object& nspace) {
 	// Expose the FileVisitor interface
-	nspace["FileVisitor"] = 
+	nspace["FileVisitor"] =
 		boost::python::class_<FileVisitorWrapper, boost::noncopyable>("FileVisitor")
 		.def("visit", boost::python::pure_virtual(&FileVisitorWrapper::visit))
 	;

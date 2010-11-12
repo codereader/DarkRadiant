@@ -11,10 +11,10 @@ void MapFormatManager::registerPrimitiveParser(const PrimitiveParserPtr& parser)
 	std::pair<ParserMap::iterator, bool> result = _parsers.insert(
 		ParserMap::value_type(parser->getKeyword(), parser)
 	);
-	
+
 	if (!result.second)
 	{
-		globalErrorStream() << "Could not register primitive parser for keyword " 
+		globalErrorStream() << "Could not register primitive parser for keyword "
 			<< parser->getKeyword() << ". The keyword is already associated." << std::endl;
 	}
 }

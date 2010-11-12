@@ -23,12 +23,12 @@ GuiView::GuiView() :
 
 	pack_start(*_glWidget, true, true, 0);
 
-	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | 
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK |
 		Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
 
 	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &GuiView::onGLDraw));
 
-	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is 
+	// greebo: The "size-allocate" event is needed to determine the window size, as expose-event is
 	// often called for subsets of the widget and the size info in there is therefore not reliable.
 	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &GuiView::onSizeAllocate));
 

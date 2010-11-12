@@ -21,18 +21,18 @@ namespace ui
 namespace
 {
 	const char* const LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
-	
-	/** greebo: Loads the prefixes from the registry and creates a 
+
+	/** greebo: Loads the prefixes from the registry and creates a
 	 * 			comma-separated list string
 	 */
 	inline std::string getPrefixList()
 	{
 		std::string prefixes;
-		
+
 		// Get the list of light texture prefixes from the registry
 		xml::NodeList prefList = GlobalRegistry().findXPath(LIGHT_PREFIX_XPATH);
-		
-		// Copy the Node contents into the prefix vector	
+
+		// Copy the Node contents into the prefix vector
 		for (xml::NodeList::iterator i = prefList.begin();
 			 i != prefList.end();
 			 ++i)
@@ -40,13 +40,13 @@ namespace
 			prefixes += (prefixes.empty()) ? "" : ",";
 			prefixes += i->getContent();
 		}
-		
+
 		return prefixes;
 	}
 }
 
 // Construct the dialog
-LightTextureChooser::LightTextureChooser() 
+LightTextureChooser::LightTextureChooser()
 :	gtkutil::BlockingTransientWindow(_("Choose texture"), GlobalMainFrame().getTopLevelWindow()),
 	_selector(Gtk::manage(new ShaderSelector(this, getPrefixList(), true))) // true >> render a light texture
 {
@@ -63,7 +63,7 @@ LightTextureChooser::LightTextureChooser()
 	}
 
 	set_default_size(static_cast<int>(rect.get_width()*0.6f), static_cast<int>(rect.get_height()*0.6f));
-	
+
 	// Construct main VBox, and pack in ShaderSelector and buttons panel
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 6));
 
@@ -81,10 +81,10 @@ Gtk::Widget& LightTextureChooser::createButtons()
 
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	
+
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &LightTextureChooser::callbackOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &LightTextureChooser::callbackCancel));
-	
+
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
@@ -96,13 +96,13 @@ std::string LightTextureChooser::chooseTexture()
 {
 	// Show all widgets and enter a recursive main loop
 	show();
-	
+
 	// Return the last selection
 	return _selectedTexture;
 }
 
 void LightTextureChooser::shaderSelectionChanged(
-	const std::string& shaderName, 
+	const std::string& shaderName,
 	const Glib::RefPtr<Gtk::ListStore>& listStore)
 {
 	// Get the shader, and its image map if possible
@@ -111,7 +111,7 @@ void LightTextureChooser::shaderSelectionChanged(
 	ShaderSelector::displayLightShaderInfo(shader, listStore);
 }
 
-void LightTextureChooser::callbackCancel() 
+void LightTextureChooser::callbackCancel()
 {
 	_selectedTexture.clear();
 	destroy();

@@ -18,7 +18,7 @@ namespace {
 	const char* PARTICLES_EXT = "prt";
 }
 
-class ParticlesManager : 
+class ParticlesManager :
 	public IParticlesManager
 {
 private:
@@ -28,7 +28,7 @@ private:
 
 	typedef std::set<IParticlesManager::Observer*> Observers;
 	Observers _observers;
-	
+
 public:
 	// IParticlesManager implementation. For documentation see iparticles.h
 	void addObserver(IParticlesManager::Observer* observer);
@@ -37,7 +37,7 @@ public:
 	IParticleDefPtr getParticle(const std::string& name);
 	IRenderableParticlePtr getRenderableParticle(const std::string& name);
 	void reloadParticleDefs();
-	
+
 	/**
 	 * Accept a stream containing particle definitions to parse and add to the
 	 * list.

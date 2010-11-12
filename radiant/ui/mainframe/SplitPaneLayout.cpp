@@ -85,14 +85,14 @@ void SplitPaneLayout::constructLayout()
 	_splitPane.posHPane.connect(_splitPane.horizPane.get());
 	_splitPane.posVPane1.connect(_splitPane.vertPane1);
 	_splitPane.posVPane2.connect(_splitPane.vertPane2);
-	
+
 	// Attempt to restore this layout's state, this will also construct the orthoviews
 	restoreStateFromPath(RKEY_SPLITPANE_ROOT);
 
 	// Distribute widgets among quadrants
 	distributeWidgets();
-	
-    {      
+
+    {
 		Gtk::Frame* textureBrowser = Gtk::manage(new gtkutil::FramedWidget(
 			*GlobalTextureBrowser().constructWindow(parent)
 		));
@@ -101,7 +101,7 @@ void SplitPaneLayout::constructLayout()
 		GlobalGroupDialog().addPage(
 	    	"textures",	// name
 	    	"Textures", // tab title
-	    	"icon_texture.png", // tab icon 
+	    	"icon_texture.png", // tab icon
 	    	*textureBrowser, // page widget
 	    	_("Texture Browser")
 	    );
@@ -109,7 +109,7 @@ void SplitPaneLayout::constructLayout()
 
 	GlobalGroupDialog().showDialogWindow();
 
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
+	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
 	// the position info from the Registry once again.
 	GlobalEntityInspector().restoreSettings();
 
@@ -129,18 +129,18 @@ void SplitPaneLayout::constructMenus()
 	GlobalEventManager().addToggle("CameraPositionTopRight", boost::bind(&SplitPaneLayout::setCameraTopRight, this, _1));
 	GlobalEventManager().addToggle("CameraPositionBottomLeft", boost::bind(&SplitPaneLayout::setCameraBottomLeft, this, _1));
 	GlobalEventManager().addToggle("CameraPositionBottomRight", boost::bind(&SplitPaneLayout::setCameraBottomRight, this, _1));
-	
+
 	// Add the corresponding menu items
-	menuManager.insert("main/view/camera", "cameraposition", 
+	menuManager.insert("main/view/camera", "cameraposition",
 					ui::menuFolder, _("Camera Position"), "", "");
 
-	menuManager.add("main/view/cameraposition", "camtopleft", 
+	menuManager.add("main/view/cameraposition", "camtopleft",
 					ui::menuItem, _("Top Left"), "", "CameraPositionTopLeft");
-	menuManager.add("main/view/cameraposition", "camtopright", 
+	menuManager.add("main/view/cameraposition", "camtopright",
 					ui::menuItem, _("Top Right"), "", "CameraPositionTopRight");
-	menuManager.add("main/view/cameraposition", "cambottomleft", 
+	menuManager.add("main/view/cameraposition", "cambottomleft",
 					ui::menuItem, _("Bottom Left"), "", "CameraPositionBottomLeft");
-	menuManager.add("main/view/cameraposition", "cambottomright", 
+	menuManager.add("main/view/cameraposition", "cambottomright",
 					ui::menuItem, _("Bottom Right"), "", "CameraPositionBottomRight");
 
 	updateCameraPositionToggles();
@@ -178,7 +178,7 @@ void SplitPaneLayout::deconstructLayout()
 	// Save camera position
 	saveCameraPositionToRegistry();
 
-	// Remove all previously saved pane information 
+	// Remove all previously saved pane information
 	GlobalRegistry().deleteXPath(RKEY_SPLITPANE_ROOT + "//pane");
 
 	// Save the pane info
@@ -230,13 +230,13 @@ void SplitPaneLayout::restoreStateFromPath(const std::string& path)
 		_splitPane.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
 		_splitPane.posHPane.applyPosition();
 	}
-	
+
 	if (GlobalRegistry().keyExists(path + "/pane[@name='vertical1']"))
 	{
 		_splitPane.posVPane1.loadFromPath(path + "/pane[@name='vertical1']");
 		_splitPane.posVPane1.applyPosition();
 	}
-	
+
 	if (GlobalRegistry().keyExists(path + "/pane[@name='vertical2']"))
 	{
 		_splitPane.posVPane2.loadFromPath(path + "/pane[@name='vertical2']");
@@ -290,7 +290,7 @@ void SplitPaneLayout::saveStateToPath(const std::string& path)
 {
 	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
 	_splitPane.posHPane.saveToPath(path + "/pane[@name='horizontal']");
-	
+
 	GlobalRegistry().createKeyWithName(path, "pane", "vertical1");
 	_splitPane.posVPane1.saveToPath(path + "/pane[@name='vertical1']");
 
@@ -350,7 +350,7 @@ void SplitPaneLayout::setCameraTopLeft(bool newState)
 	if (newState || _cameraPosition == QuadrantTopLeft)
 	{
 		_cameraPosition = QuadrantTopLeft;
-		
+
 		deconstructLayout();
 		constructLayout();
 
@@ -366,7 +366,7 @@ void SplitPaneLayout::setCameraTopRight(bool newState)
 	if (newState || _cameraPosition == QuadrantTopRight)
 	{
 		_cameraPosition = QuadrantTopRight;
-		
+
 		deconstructLayout();
 		constructLayout();
 
@@ -398,7 +398,7 @@ void SplitPaneLayout::setCameraBottomRight(bool newState)
 	if (newState || _cameraPosition == QuadrantBottomRight)
 	{
 		_cameraPosition = QuadrantBottomRight;
-		
+
 		deconstructLayout();
 		constructLayout();
 

@@ -18,7 +18,7 @@ namespace fs = boost::filesystem;
 namespace language
 {
 
-class UnknownLanguageException : 
+class UnknownLanguageException :
 	public std::runtime_error
 {
 public:
@@ -70,7 +70,7 @@ void LanguageManager::initialiseModule(const ApplicationContext& ctx)
 		int index = getLanguageIndex(_curLanguage);
 
 		// Get the offset into the array of available languages
-		LanguageList::iterator found = 
+		LanguageList::iterator found =
 			std::find(_availableLanguages.begin(), _availableLanguages.end(), index);
 
 		if (found != _availableLanguages.end())
@@ -153,7 +153,7 @@ void LanguageManager::findAvailableLanguages()
 			}
 			catch (UnknownLanguageException&)
 			{
-				globalWarningStream() << "Skipping unknown language: " 
+				globalWarningStream() << "Skipping unknown language: "
 					<< candidate.filename() << std::endl;
 				continue;
 			}
@@ -188,7 +188,7 @@ void LanguageManager::initFromContext(const ApplicationContext& ctx)
 	_i18nPath = os::standardPathWithSlash(
         ctx.getApplicationPath() + "i18n"
     );
-	
+
     // Set the LANG environment. As GLIB/GTK+ (in Win32) is using its own C
     // runtime, we need to call their GLIB setenv function for the environment
     // variable to take effect.

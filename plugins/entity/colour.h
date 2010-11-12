@@ -60,7 +60,7 @@ public:
 		strm >> m_colour.x();
 		strm >> m_colour.y();
 		strm >> m_colour.z();
-		
+
 		captureShader();
 	}
 

@@ -11,13 +11,13 @@
 // greebo: Return information about the given node
 inline std::string getNodeInfo(const scene::INodePtr& node) {
 	std::string returnValue;
-	
+
 	if (node == NULL) {
 		return "NULL";
 	}
-	
+
 	returnValue += (node->isRoot()) ? "root" : nodetype_get_name(node_get_nodetype(node));
-	
+
 	NameablePtr nameable = boost::dynamic_pointer_cast<Nameable>(node);
 	if (nameable != NULL) {
 		returnValue += " (" + nameable->name() + ")";
@@ -33,11 +33,11 @@ inline std::ostream& operator<<(std::ostream& st, const scene::INodePtr& node) {
 
 inline std::string getPathInfo(const scene::Path& path) {
 	std::string name;
-	
+
 	for (scene::Path::const_iterator i = path.begin(); i != path.end(); i++) {
 		// Cast the INode onto a scene::Node
 		scene::INodePtr node = *i;
-		
+
 		name += (name.empty()) ? "" : ", ";
 		name += getNodeInfo(node);
 	}

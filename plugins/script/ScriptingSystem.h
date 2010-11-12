@@ -87,7 +87,7 @@ public:
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
 
-private: 
+private:
 	bool interfaceExists(const std::string& name);
 
 	void reloadScripts();

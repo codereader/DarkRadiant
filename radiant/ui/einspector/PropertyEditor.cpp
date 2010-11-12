@@ -45,7 +45,7 @@ void PropertyEditor::setKeyValue(const std::string& key, const std::string& valu
 
 	UndoableCommand cmd("setProperty");
 
-	_entity->setKeyValue(key, value);	
+	_entity->setKeyValue(key, value);
 }
 
 } // namespace ui

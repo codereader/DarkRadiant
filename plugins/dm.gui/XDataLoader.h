@@ -35,12 +35,12 @@ class XDataLoader :
 public:
 	// Imports a MultiMap of XData-Pointers sorted by name from the specified File (just the name, not the path).
 	// Returns false if import failed. The import-breaking error-message is the last element of _errorList, which can
-	// be retrieved by calling getImportSummary() and also stores other errors and warnings. 
+	// be retrieved by calling getImportSummary() and also stores other errors and warnings.
 	//	-target: Key Value = definitionName, Mapped Value = XData object.
 	const bool import(const std::string& filename, XDataMap& target);
 
 	// Imports a single Definition from the specified file (filename) if defined or all duplicated definitions if only
-	// the definitionName is specified. Returns false if import failed. The import-breaking error-message is the last 
+	// the definitionName is specified. Returns false if import failed. The import-breaking error-message is the last
 	// element of _errorList, which can be retrieved by calling getImportSummary() and also stores other errors and warnings.
 	//	-target: Key Value = filepath INCLUDING ModPath(!!), Mapped Value = XData object.
 	const bool importDef(const std::string& definitionName, XDataMap& target, const std::string& filename = "");
@@ -56,17 +56,17 @@ public:
 	}
 
 //Getters:
-	// Returns StringVector with errors and warnings of the last import process 
+	// Returns StringVector with errors and warnings of the last import process
 	// as well as a brief summary in the last element of the vector.
 	const StringList& getImportSummary() const
-	{ 
+	{
 		return _errorList;
 	}
 
 	// Returns Map of duplicated definitions. (Data might be outdated, maybe use retrieveXdInfo() before)
 	// Key Value = DefinitionNames, Mapped Value = StringVector of corresponding filenames.
 	const StringVectorMap& getDuplicateDefinitions() const
-	{ 
+	{
 		if (_duplicatedDefs.empty())
 		{
 			throw std::runtime_error("No Data available. Call retrieveXdInfo() before.");
@@ -76,8 +76,8 @@ public:
 	}
 
 	// Returns StringSet of all .xd-files in the VFS. (Data might be outdated, maybe use retrieveXdInfo() before)
-	const StringSet& getXdFilenameList() const 
-	{ 
+	const StringSet& getXdFilenameList() const
+	{
 		if (_fileSet.empty())
 			throw std::runtime_error("No Data available. Call retrieveXdInfo() before.");
 		return _fileSet;
@@ -96,7 +96,7 @@ public:
 	void retrieveXdInfo();
 
 //FileVisitor-related:
-	// Functor operator: Adds all definitions found in the target file to the _defMap. 
+	// Functor operator: Adds all definitions found in the target file to the _defMap.
 	void visit(const std::string& filename);
 
 private:
@@ -110,10 +110,10 @@ private:
 
 	// Additionally to what the upper version of reportError(..) does, this method also tries to jump to the next definition by calling jumpOutOfBrackets.
 	const bool reportError(parser::DefTokeniser& tok, const std::string& ErrorMessage, std::size_t currentDepth = 1)
-	{ 
+	{
 		reportError(ErrorMessage);
 		jumpOutOfBrackets(tok, currentDepth);
-		return false; 
+		return false;
 	}
 
 	// Opens the file in which sourceDef is contained, while handling duplicate definitions.
@@ -126,7 +126,7 @@ private:
 	const bool getImportParameters(parser::DefTokeniser& tok, StringMap& statements, std::string& sourceDef, const std::string& defName);
 
 	// Checks where the content following in the tokenizer has to be stored. DefName is the name of the
-	// definition for whom content is parsed and is just used for error-messages. If tok is NULL, the string content is stored. This 
+	// definition for whom content is parsed and is just used for error-messages. If tok is NULL, the string content is stored. This
 	// is only induced by the import-directive, which on the contrary must have tok!= NULL.
 	const bool storeContent(const std::string& statement, parser::DefTokeniser* tok, const std::string& defName, const std::string& content = "");
 

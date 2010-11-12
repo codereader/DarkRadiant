@@ -17,7 +17,7 @@ class NodeImporter {
 
 	// The container which will hold the imported nodes
 	scene::INodePtr _root;
-	
+
 	std::istream& _inputStream;
 
 	// The size of the input file
@@ -70,7 +70,7 @@ private:
 	// Inserts the entity into the root (and performs a couple of checks beforehand)
 	void insertEntity(const scene::INodePtr& entity);
 
-	// Check if the given node is excluded based on entity class (debug code). 
+	// Check if the given node is excluded based on entity class (debug code).
 	// Return true if not excluded, false otherwise
 	bool checkEntityClass(const scene::INodePtr& entity);
 

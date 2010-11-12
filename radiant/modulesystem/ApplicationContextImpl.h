@@ -14,7 +14,7 @@ class ApplicationContextImpl :
 	std::string _homePath;
 	std::string _settingsPath;
 	std::string _bitmapsPath;
-	
+
 	// The path where the .map files are stored
 	std::string _mapsPath;
 
@@ -23,7 +23,7 @@ class ApplicationContextImpl :
 
 	// A function pointer to a global error handler, used for ASSERT_MESSAGE
 	ErrorHandlingFunction _errorHandler;
-	
+
 public:
 	/**
 	 * Initialises the context with the arguments given to main().
@@ -32,14 +32,14 @@ public:
 
 	// Initialises the function handling pointers for debug builds
 	void initErrorHandler();
-	
+
     /* ApplicationContext implementation */
 	std::string getApplicationPath() const;
     std::string getRuntimeDataPath() const;
 	std::string getSettingsPath() const;
 	std::string getBitmapsPath() const;
-	const ArgumentList& getCmdLineArgs() const;	
-	
+	const ArgumentList& getCmdLineArgs() const;
+
 	// Return the global stream references
 	virtual std::ostream& getOutputStream() const;
 	virtual std::ostream& getWarningStream() const;
@@ -49,7 +49,7 @@ public:
 	virtual void savePathsToRegistry() const;
 
 	virtual const ErrorHandlingFunction& getErrorHandlingFunction() const;
-	
+
 private:
 	// Sets up the bitmap path and settings path
 	void initPaths();

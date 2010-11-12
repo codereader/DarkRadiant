@@ -31,7 +31,7 @@ public:
 	// Indexed list of actors (by name)
 	typedef std::map<int, std::string> ActorMap;
 	ActorMap actors;
-		
+
 	// Constructor
 	Conversation() :
 		talkDistance(60),
@@ -50,7 +50,7 @@ public:
 		actors(other.actors)
 	{
 		// Copy all commands, one by one
-		for (CommandMap::const_iterator i = other.commands.begin(); 
+		for (CommandMap::const_iterator i = other.commands.begin();
 			 i != other.commands.end(); ++i)
 		{
 			// Copy-construct a new conversation command

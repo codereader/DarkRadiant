@@ -37,7 +37,7 @@ namespace scene
 		const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
 		const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
 		const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
-	} 
+	}
 
 int LayerSystem::createLayer(const std::string& name, int layerID) {
 	// Check if the ID already exists
@@ -64,7 +64,7 @@ int LayerSystem::createLayer(const std::string& name, int layerID) {
 
 	// Set the newly created layer to "visible"
 	_layerVisibility[result.first->first] = true;
-	
+
 	// Return the ID of the inserted layer
 	return result.first->first;
 }
@@ -74,7 +74,7 @@ int LayerSystem::createLayer(const std::string& name) {
 	int existingID = getLayerID(name);
 
 	if (existingID != -1) {
-		globalErrorStream() << "Could not create layer, name already exists: " 
+		globalErrorStream() << "Could not create layer, name already exists: "
 			<< name << std::endl;
 		return -1;
 	}
@@ -91,7 +91,7 @@ void LayerSystem::deleteLayer(const std::string& name) {
 	int layerID = getLayerID(name);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Could not delete layer, name doesn't exist: " 
+		globalErrorStream() << "Could not delete layer, name doesn't exist: "
 			<< name << std::endl;
 		return;
 	}
@@ -163,7 +163,7 @@ bool LayerSystem::layerIsVisible(const std::string& layerName) {
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Could not query layer visibility, name doesn't exist: " 
+		globalErrorStream() << "Could not query layer visibility, name doesn't exist: "
 			<< layerName << std::endl;
 		return false;
 	}
@@ -184,7 +184,7 @@ bool LayerSystem::layerIsVisible(int layerID) {
 void LayerSystem::setLayerVisibility(int layerID, bool visible) {
 	// Sanity check
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
-		globalOutputStream() << 
+		globalOutputStream() <<
 			"LayerSystem: Setting visibility of invalid layer ID: " <<
 			layerID << std::endl;
 		return;
@@ -202,7 +202,7 @@ void LayerSystem::setLayerVisibility(const std::string& layerName, bool visible)
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Could not set layer visibility, name doesn't exist: " 
+		globalErrorStream() << "Could not set layer visibility, name doesn't exist: "
 			<< layerName.c_str() << std::endl;
 		return;
 	}
@@ -245,7 +245,7 @@ void LayerSystem::addSelectionToLayer(const std::string& layerName) {
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Cannot add to layer, name doesn't exist: " 
+		globalErrorStream() << "Cannot add to layer, name doesn't exist: "
 			<< layerName << std::endl;
 		return;
 	}
@@ -259,7 +259,7 @@ void LayerSystem::moveSelectionToLayer(const std::string& layerName) {
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Cannot move to layer, name doesn't exist: " 
+		globalErrorStream() << "Cannot move to layer, name doesn't exist: "
 			<< layerName << std::endl;
 		return;
 	}
@@ -286,7 +286,7 @@ void LayerSystem::removeSelectionFromLayer(const std::string& layerName) {
 	int layerID = getLayerID(layerName);
 
 	if (layerID == -1) {
-		globalErrorStream() << "Cannot remove from layer, name doesn't exist: " 
+		globalErrorStream() << "Cannot remove from layer, name doesn't exist: "
 			<< layerName << std::endl;
 		return;
 	}
@@ -316,7 +316,7 @@ bool LayerSystem::updateNodeVisibility(const scene::INodePtr& node) {
 	// We start with the assumption that a node is hidden
 	node->enable(Node::eLayered);
 
-	// Cycle through the Node's layers, and show the node as soon as 
+	// Cycle through the Node's layers, and show the node as soon as
 	// a visible layer is found.
 	for (LayerList::const_iterator i = layers.begin(); i != layers.end(); i++) {
 		if (_layerVisibility[*i]) {
@@ -402,7 +402,7 @@ const StringSet& LayerSystem::getDependencies() const
 void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
-	
+
 	// Create the "master" layer with ID 0
 	createLayer(_(DEFAULT_LAYER_NAME));
 
@@ -414,10 +414,10 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	// Register the "create layer" command
-	GlobalCommandSystem().addCommand("CreateNewLayer", 
+	GlobalCommandSystem().addCommand("CreateNewLayer",
 		boost::bind(&LayerSystem::createLayerCmd, this, _1), cmd::ARGTYPE_STRING|cmd::ARGTYPE_OPTIONAL);
 	IEventPtr ev = GlobalEventManager().addCommand("CreateNewLayer", "CreateNewLayer");
-	
+
 	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", ui::LayerControlDialog::toggle);
 	GlobalEventManager().addCommand("ToggleLayerControlDialog", "ToggleLayerControlDialog");
 
@@ -464,8 +464,8 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 		if (layerName.empty()) {
 			try {
 				layerName = gtkutil::textEntryDialog(
-					_("Enter Name"), 
-					_("Enter Layer Name"), 
+					_("Enter Name"),
+					_("Enter Layer Name"),
 					"",
 					GlobalMainFrame().getTopLevelWindow()
 				);
@@ -492,7 +492,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 		else {
 			// Wrong name, let the user try again
 			gtkutil::errorDialog(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
-			continue; 
+			continue;
 		}
 	}
 }

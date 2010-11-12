@@ -52,7 +52,7 @@ void WaveFrontExporter::exportBrush(IBrush& brush)
 			faceBuf += " " + sizetToStr(i+1) + "/" + sizetToStr(i+1);
 		}
 	}
-    
+
     _output << vertexBuf << "\n";
     _output << texCoordBuf;
     _output << faceBuf << "\n";
@@ -90,12 +90,12 @@ void WaveFrontExporter::exportPatch(IPatch& patch)
 			// Starting from the second row, we're gathering the faces
 			if (h > 0 && w > 0)
 			{
-				// Gather the indices forming a quad	
+				// Gather the indices forming a quad
 				std::size_t v1 = 1 + firstVertex + h*mesh.width + w;
 				std::size_t v2 = 1 + firstVertex + (h-1)*mesh.width + w;
 				std::size_t v3 = 1 + firstVertex + (h-1)*mesh.width + (w-1);
 				std::size_t v4 = 1 + firstVertex + h*mesh.width + (w-1);
-				
+
 				// Construct the quad
 				faceBuf += "f";
 				faceBuf += " " + sizetToStr(v1) + "/" + sizetToStr(v1);

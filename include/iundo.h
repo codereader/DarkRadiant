@@ -30,10 +30,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /* greebo: An UndoMemento has to be allocated on the heap
  * and contains all the information that is needed to describe
- * the status of an Undoable. 
- * 
- * Mandatory interface method is release() which should free 
- * itself from the heap.  
+ * the status of an Undoable.
+ *
+ * Mandatory interface method is release() which should free
+ * itself from the heap.
  */
 class UndoMemento
 {
@@ -44,13 +44,13 @@ public:
 
 /* greebo: This is the abstract base class for an Undoable object.
  * Derive from this class if your instance/object should be Undoable.
- * 
+ *
  * The exportState method has to allocate a new UndoMemento with all
  * the necessary object data and return its pointer, so it can be
  * referenced to later.
- * 
+ *
  * The importState() method should re-import the values saved in the
- * UndoMemento (could be named restoreFromMemento() as well). 
+ * UndoMemento (could be named restoreFromMemento() as well).
  */
 class Undoable
 {
@@ -105,9 +105,9 @@ public:
 	// Adds/removes an observer, which gets called on certain events
 	virtual void addObserver(Observer* observer) = 0;
 	virtual void removeObserver(Observer* observer) = 0;
-	
+
 	// greebo: This finishes the current operation and removes
-	// it immediately from the stack, therefore it never existed. 
+	// it immediately from the stack, therefore it never existed.
 	virtual void cancel() = 0;
 
 	virtual void trackerAttach(UndoTracker& tracker) = 0;
@@ -130,8 +130,8 @@ class UndoableCommand
 	const std::string _command;
 public:
 
-	UndoableCommand(const std::string& command) : 
-		_command(command) 
+	UndoableCommand(const std::string& command) :
+		_command(command)
 	{
 		GlobalUndoSystem().start();
 	}

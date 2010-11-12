@@ -20,7 +20,7 @@ namespace
  * VFSPopulatorVisitor subclass to fill in column data for the model tree nodes
  * created by the VFS tree populator.
  */
-class ModelDataInserter : 
+class ModelDataInserter :
 	public gtkutil::VFSTreePopulator::Visitor
 {
 private:
@@ -41,7 +41,7 @@ public:
 
 	// Required visit function
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter, 
+			   const Gtk::TreeModel::iterator& iter,
 			   const std::string& path,
 			   bool isExplicit)
 	{
@@ -51,10 +51,10 @@ public:
 
 		// Pathname is the model VFS name for a model, and blank for a folder
 		std::string fullPath = isExplicit ? (MODELS_FOLDER + path) : "";
-					   
+
 		// Pixbuf depends on model type
 		Gtk::TreeModel::Row row = *iter;
-		
+
 		row[_columns.filename] = displayName;
 		row[_columns.vfspath] = fullPath;
 		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? MODEL_ICON : FOLDER_ICON);
@@ -66,20 +66,20 @@ public:
 		// Now check if there are any skins for this model, and add them as
 		// children if so
 		const StringList& skinList = GlobalModelSkinCache().getSkinsForModel(fullPath);
-			
+
 		for (StringList::const_iterator i = skinList.begin();
 			 i != skinList.end();
 			 ++i)
 		{
 			Gtk::TreeModel::Row skinRow = *store->append(iter->children());
-			
+
 			skinRow[_columns.filename] = *i;
 			skinRow[_columns.vfspath] = fullPath;
 			skinRow[_columns.icon] = GlobalUIManager().getLocalPixbuf(SKIN_ICON);
 			skinRow[_columns.skin] = *i;
 			skinRow[_columns.isFolder] = !isExplicit;
 		}
-	} 	
+	}
 };
 
 }

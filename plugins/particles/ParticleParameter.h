@@ -12,11 +12,11 @@ namespace particles
 {
 
 /**
- * greebo: A particle parameter represents a bounded member value 
+ * greebo: A particle parameter represents a bounded member value
  * of a particle stage (e.g. speed or size).
  *
  * Use the evaluate() method to retrieve a particular value.
- * 
+ *
  * It is modeled after the idParticleParam class in the D3 SDK.
  */
 class ParticleParameter :
@@ -82,11 +82,11 @@ public:
 		}
 		catch (boost::bad_lexical_cast&)
 		{
-			globalErrorStream() << "[particles] Bad lower value, token is '" << 
+			globalErrorStream() << "[particles] Bad lower value, token is '" <<
 				val << "'" << std::endl;
 		}
 
-		if (tok.peek() == "to")	
+		if (tok.peek() == "to")
 		{
 			// Upper value is there, parse it
 			tok.skipTokens(1); // skip the "to"
@@ -100,7 +100,7 @@ public:
 			}
 			catch (boost::bad_lexical_cast&)
 			{
-				globalErrorStream() << "[particles] Bad upper value, token is '" << 
+				globalErrorStream() << "[particles] Bad upper value, token is '" <<
 					val << "'" << std::endl;
 			}
 		}

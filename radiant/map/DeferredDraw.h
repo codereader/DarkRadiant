@@ -14,16 +14,16 @@ private:
 	bool m_defer;
 	bool m_deferred;
 public:
-	DeferredDraw(const DrawCallback& draw) : 
-		m_draw(draw), 
-		m_defer(false), 
+	DeferredDraw(const DrawCallback& draw) :
+		m_draw(draw),
+		m_defer(false),
 		m_deferred(false)
 	{}
-	
+
 	void defer() {
 		m_defer = true;
 	}
-	
+
 	void draw() {
 		if (m_defer) {
 			m_deferred = true;
@@ -32,7 +32,7 @@ public:
 			m_draw();
 		}
 	}
-	
+
 	void flush() {
 		if (m_defer && m_deferred) {
 			m_draw();

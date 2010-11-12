@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 
-PicoModel Library 
+PicoModel Library
 
 Copyright (c) 2002, Randy Reddig & seaw0lf
 All rights reserved.
@@ -17,7 +17,7 @@ other materials provided with the distribution.
 
 Neither the names of the copyright holders nor the names of its contributors may
 be used to endorse or promote products derived from this software without
-specific prior written permission. 
+specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -97,24 +97,24 @@ typedef struct picoModule_s		picoModule_t;
 struct picoSurface_s
 {
 	void						*data;
-	
+
 	picoModel_t					*model;		/* owner model */
-	
+
 	picoSurfaceType_t			type;
 	char					 	*name;		/* sea: surface name */
 	picoShader_t				*shader;	/* ydnar: changed to ptr */
-	
+
 	int							numVertexes, maxVertexes;
 	picoVec3_t					*xyz;
 	picoVec3_t					*normal;
 	picoIndex_t					*smoothingGroup;
-	
+
 	int							numSTArrays, maxSTArrays;
 	picoVec2_t					**st;
-	
+
 	int							numColorArrays, maxColorArrays;
 	picoColor_t					**color;
-	
+
 	int							numIndexes, maxIndexes;
 	picoIndex_t					*index;
 
@@ -151,10 +151,10 @@ struct picoModel_s
 
 	int							numShaders, maxShaders;
 	picoShader_t				**shader;
-	
+
 	int							numSurfaces, maxSurfaces;
 	picoSurface_t				**surface;
-	
+
 	const picoModule_t			*module;		/* sea */
 };
 

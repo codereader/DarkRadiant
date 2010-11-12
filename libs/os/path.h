@@ -226,28 +226,28 @@ inline MatchFileExtension<Functor> matchFileExtension(const char* extension, con
 /** General utility functions for OS-related tasks
  */
 namespace os {
- 
+
     /** Convert the slashes in a Doom 3 path to forward-slashes. Doom 3 accepts either
      * forward or backslashes in its definitions
      */
-       
+
     inline std::string standardPath(const std::string& inPath) {
         return boost::algorithm::replace_all_copy(inPath, "\\", "/");
     }
-    
+
     /** greebo: OS Folder names have forward slashes and a trailing slash
      * 			at the end by convention.
      */
     inline std::string standardPathWithSlash(const std::string& input) {
 		std::string output = standardPath(input);
-		
+
 		// Append a slash at the end, if there isn't already one
 		if (!boost::algorithm::ends_with(output, "/")) {
 			output += "/";
 		}
 		return output;
 	}
-		    
+
     /**
      * Return the path of fullPath relative to basePath, as long as fullPath
      * is contained within basePath. If not, fullPath is returned unchanged.
@@ -267,11 +267,11 @@ namespace os {
             return fullPath;
         }
     }
-    
+
     /**
-     * greebo: Get the filename contained in the given path (the part after the last slash). 
+     * greebo: Get the filename contained in the given path (the part after the last slash).
      * If there is no filename, an empty string is returned.
-     * 
+     *
      * Note: The input string is expected to be standardised (forward slashes).
      */
     inline std::string getFilename(const std::string& path) {
@@ -283,7 +283,7 @@ namespace os {
             return path.substr(slashPos + 1);
         }
     }
-    
+
     /**
      * Get the extension of the given filename. If there is no extension, an
      * empty string is returned.
@@ -297,14 +297,14 @@ namespace os {
             return path.substr(dotPos + 1);
         }
     }
-    
+
     /**
      * Get the containing folder of the specified object. This is calculated
      * as the directory before the rightmost slash (which will be the object
      * itself, if the pathname ends in a slash).
-     * 
+     *
      * If the path does not contain a slash, the empty string will be returned.
-     * 
+     *
      * E.g.
      * blah/bleh/file   -> "bleh"
      * blah/bloog/      -> "bloog"
@@ -318,7 +318,7 @@ namespace os {
         lastSlash = trimmed.rfind('/');
         return trimmed.substr(lastSlash + 1);
     }
-    
+
 }
 
 

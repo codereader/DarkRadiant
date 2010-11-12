@@ -42,7 +42,7 @@ std::string SerialisableAdjustmentWrapper::exportToString() const
 
 // Text entry
 
-SerialisableTextEntry::SerialisableTextEntry() : 
+SerialisableTextEntry::SerialisableTextEntry() :
 	Gtk::Entry()
 {}
 
@@ -62,7 +62,7 @@ SerialisableTextEntryWrapper::SerialisableTextEntryWrapper(Gtk::Entry* entry) :
 
 void SerialisableTextEntryWrapper::importFromString(const std::string& str)
 {
-	_entry->set_text(str);	
+	_entry->set_text(str);
 }
 
 std::string SerialisableTextEntryWrapper::exportToString() const
@@ -73,8 +73,8 @@ std::string SerialisableTextEntryWrapper::exportToString() const
 // Spin button
 
 SerialisableSpinButton::SerialisableSpinButton(double value,
-											   double min, 
-											   double max, 
+											   double min,
+											   double max,
 											   double step,
 											   guint digits)
 											   : Gtk::SpinButton()
@@ -109,7 +109,7 @@ std::string SerialisableSpinButtonWrapper::exportToString() const
 
 // Scale widget
 
-SerialisableScaleWidget::SerialisableScaleWidget() : 
+SerialisableScaleWidget::SerialisableScaleWidget() :
 	Gtk::Range()
 {}
 
@@ -221,7 +221,7 @@ void SerialisableComboBox_Index::importFromString(const std::string& str)
 	if (activeId != newId)
 	{
 		std::cerr << "SerialisableComboBox_Index::importFromString(): "
-				<< "warning: requested index " << activeId 
+				<< "warning: requested index " << activeId
 				<< " was not set, current index is " << newId << std::endl;
 	}
 }
@@ -245,7 +245,7 @@ void SerialisableComboBox_IndexWrapper::importFromString(const std::string& str)
 	if (activeId != newId)
 	{
 		std::cerr << "SerialisableComboBox_Index::importFromString(): "
-				<< "warning: requested index " << activeId 
+				<< "warning: requested index " << activeId
 				<< " was not set, current index is " << newId << std::endl;
 	}
 }
@@ -257,7 +257,7 @@ std::string SerialisableComboBox_IndexWrapper::exportToString() const
 
 // SerialisableComboBox_Text
 
-SerialisableComboBox_Text::SerialisableComboBox_Text() : 
+SerialisableComboBox_Text::SerialisableComboBox_Text() :
 	SerialisableComboBox()
 {}
 

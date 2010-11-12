@@ -56,11 +56,11 @@ public:
 	const char* c_str() const {
 		return _string.c_str();
 	}
-	
+
 	operator const std::string& () const {
 		return _string;
 	}
-	
+
 	/// \brief Appends the directory \p name.
 	void push(const std::string& name) {
 		_string += name;
@@ -74,13 +74,13 @@ public:
 		}
 		update();
 	}
-	
+
 	/// \brief Appends the filename \p name.
 	void push_filename(const std::string& name) {
 		_string += name;
 		_size = _string.size();
 	}
-	
+
 	/// \brief Removes the last directory or filename appended.
 	void pop() {
 		// Remove the trailing slash
@@ -88,7 +88,7 @@ public:
 			_string.erase(_size-1, 1);
 		}
 		// _size is considered invalid after this point
-		
+
 		std::size_t slashPos = _string.rfind("/");
 		if (slashPos != std::string::npos) {
 			// Erase everything after the slashpos
@@ -98,7 +98,7 @@ public:
 			// No slash at all, clear everything
 			_string.clear();
 		}
-		
+
 		_size = _string.size();
 	}
 };

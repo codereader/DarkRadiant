@@ -21,19 +21,19 @@ class MapInfoDialog :
 	EntityInfoTab _entityInfo;
 	ShaderInfoTab _shaderInfo;
 	ModelInfoTab _modelInfo;
-	
+
 	// The tabs of this dialog
 	Gtk::Notebook* _notebook;
-	
+
 public:
 	// Constructor
 	MapInfoDialog();
 
-	/** 
+	/**
 	 * greebo: Shows the dialog (allocates on heap, dialog self-destructs)
 	 */
 	static void showDialog(const cmd::ArgumentList& args);
-	
+
 private:
 	// This is called to create the widgets
 	void populateWindow();
@@ -45,7 +45,7 @@ private:
 	Gtk::Widget& createButtons();
 
 	Gtk::Widget& createTabLabel(const std::string& label, const std::string& iconName);
-	
+
 	// The callback for the buttons
 	void onClose();
 

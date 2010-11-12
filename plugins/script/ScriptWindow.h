@@ -29,7 +29,7 @@ public:
 	static void create();
 	static void destroy();
 
-	/** 
+	/**
 	 * greebo: Static command target for toggling the script window.
 	 */
 	static void toggle(const cmd::ArgumentList& args);

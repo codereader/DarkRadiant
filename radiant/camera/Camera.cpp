@@ -8,7 +8,7 @@
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
 
-Camera::Camera(View* view, const Callback& update) : 
+Camera::Camera(View* view, const Callback& update) :
 	_origin(_prevOrigin), // Use previous origin for camera position
 	_angles(_prevAngles),
 	width(0),
@@ -26,7 +26,7 @@ Camera::Camera(View* view, const Callback& update) :
 void Camera::keyControl(float dtime) {
 	int angleSpeed = getCameraSettings()->angleSpeed();
 	int movementSpeed = getCameraSettings()->movementSpeed();
-	
+
 	// Update angles
 	if (movementflags & MOVE_ROTLEFT)
 		_angles[CAMERA_YAW] += 15 * dtime* angleSpeed;
@@ -141,7 +141,7 @@ void Camera::mouseMove(int x, int y) {
 
 void Camera::freeMove(int dx, int dy) {
 	int angleSpeed = getCameraSettings()->angleSpeed();
-	
+
 	// free strafe mode, toggled by the keyboard modifiers
 	if (m_strafe) {
 		const float strafespeed = GlobalEventManager().MouseEvents().getCameraStrafeSpeed();
@@ -180,7 +180,7 @@ void Camera::freeMove(int dx, int dy) {
 
 void Camera::mouseControl(int x, int y) {
 	int movementSpeed = getCameraSettings()->movementSpeed();
-	
+
 	int   xl, xh;
 	int yl, yh;
 	float xf, yf;

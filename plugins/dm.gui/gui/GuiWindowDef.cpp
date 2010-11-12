@@ -54,7 +54,7 @@ std::string GuiWindowDef::getExpression(parser::DefTokeniser& tokeniser)
 	{
 		// Assemble token until closing brace found
 		std::size_t depth = 1;
-		
+
 		while (depth > 0 && tokeniser.hasMoreTokens())
 		{
 			std::string token = tokeniser.nextToken();
@@ -265,7 +265,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 			if (time == std::numeric_limits<std::size_t>::max())
 			{
-				globalWarningStream() << "Invalid time encountered in onTime event in " 
+				globalWarningStream() << "Invalid time encountered in onTime event in "
 					<< name << ": " << timeStr << std::endl;
 			}
 
@@ -363,7 +363,7 @@ RenderableText& GuiWindowDef::getRenderableText()
 
 void GuiWindowDef::update(const std::size_t timeStep, bool updateChildren)
 {
-	if (!notime) 
+	if (!notime)
 	{
 		std::size_t oldTime = time;
 

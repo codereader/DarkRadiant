@@ -15,8 +15,8 @@ namespace ce
 
 namespace {
 	const char* const DESCRIPTION = N_(
-		"A custom component requires no specifiers,\n" 
-		"the state of this component is manually controlled \n" 
+		"A custom component requires no specifiers,\n"
+		"the state of this component is manually controlled \n"
 		"(i.e. by scripts or triggers).");
 }
 

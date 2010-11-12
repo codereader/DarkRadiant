@@ -27,8 +27,8 @@ public:
 };
 
 // Wrap around the ISelectionSetManager::Visitor interface
-class SelectionSetVisitorWrapper : 
-	public selection::ISelectionSetManager::Visitor, 
+class SelectionSetVisitorWrapper :
+	public selection::ISelectionSetManager::Visitor,
 	public boost::python::wrapper<selection::ISelectionSetManager::Visitor>
 {
 public:

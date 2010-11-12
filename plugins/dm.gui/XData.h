@@ -43,7 +43,7 @@ enum ExporterCommand
 	Merge,
 	MergeOverwriteExisting,
 	Overwrite,
-	OverwriteMultDef		
+	OverwriteMultDef
 };
 enum Side
 {
@@ -73,16 +73,16 @@ public:
 	// Returns the PageLayout of the object: TwoSided or OneSided
 	virtual const PageLayout getPageLayout() const = 0;
 
-	// Exports the XData class formated properly into the File specified in 
+	// Exports the XData class formated properly into the File specified in
 	// Filename (absolute Filepath). If the file already exists this function can overwrite the
 	// file or merge. If the file cannot be opened, OpenFailed is returned.
 	// 	-Merge: If the definition already exists, DefinitionExists is returned (can also return OpenFailed).
-	// 	This definition	can be overwritten using the command MergeOverWriteExisting AFTER using Merge-cmd. 
+	// 	This definition	can be overwritten using the command MergeOverWriteExisting AFTER using Merge-cmd.
 	// 	Otherwise the definition is appended. MergeOverwriteExisting can fail and returns MergeFailed or OpenFailed.
 	// 	-Overwrite: Returns DefinitionMismatch if the definition in the target-file does not match
-	// 	the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch 
+	// 	the name of the current definition or returns MultipleDefinitions. If a DefinitionMatch
 	// 	is the case, the file is overwritten. Use the command OverwriteMultDef to overwrite the
-	// 	file no matter what. With both commands OpenFailed can be returned. 
+	// 	file no matter what. With both commands OpenFailed can be returned.
 	// 	If the target-file has Syntax errors, it is overwritten...
 	FileStatus xport(const std::string& filename, ExporterCommand cmd);
 
@@ -121,8 +121,8 @@ public:
 		return _guiPage[index];
 	}
 	void setGuiPage(const StringList& guiPage) { _guiPage = guiPage; }
-	void setGuiPage(const std::string& guiPage, std::size_t index) 
-	{ 
+	void setGuiPage(const std::string& guiPage, std::size_t index)
+	{
 		if (index >= _numPages)
 			throw std::runtime_error(_("GUI Page Index out of bounds."));
 		_guiPage[index] = guiPage;
@@ -141,7 +141,7 @@ private:
 	// Returns the length of the current definition. The get-pointer has to be at the beginning of that definition. Returns 0 on Syntax errors.
 	const std::size_t getDefLength(const std::string& def) const;
 
-	// Returns the definition-name found in the file or "" if multiple definitions where found. 
+	// Returns the definition-name found in the file or "" if multiple definitions where found.
 	// Used by the xport()-method in the overwrite-command for checking for a DefinitionMatch or MultipleDefinitions.
 	const std::string getDefinitionNameFromXD(boost::filesystem::ifstream& file) const;
 
@@ -176,7 +176,7 @@ private:
 //end of page contents
 	const std::string getContentDef() const;
 	void resizeVectors(std::size_t targetSize);
-public:		
+public:
 
 	void setPageContent(ContentType cc, std::size_t pageIndex, Side side, const std::string& content);
 
@@ -186,8 +186,8 @@ public:
 
 	void togglePageLayout(XDataPtr& target) const;
 
-	OneSidedXData(const std::string& name) 
-	{ 
+	OneSidedXData(const std::string& name)
+	{
 		_name = name;
 		setNumPages(MAX_PAGE_COUNT);
 	}
@@ -222,7 +222,7 @@ public:
 	void togglePageLayout(XDataPtr& target) const;
 
 	TwoSidedXData(const std::string& name)
-	{ 
+	{
 		_name=name;
 		setNumPages(MAX_PAGE_COUNT);
 	}

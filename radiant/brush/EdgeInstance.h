@@ -13,7 +13,7 @@ class EdgeInstance : public Selectable {
 		faceVertex = next_edge(m_edge->m_faces, faceVertex);
 		m_faceInstances[faceVertex.getFace()].select_edge(faceVertex.getVertex(), select);
 	}
-	
+
 	bool selected_edge() const {
 		FaceVertexId faceVertex = m_edge->m_faceVertex;
 		if (!m_faceInstances[faceVertex.getFace()].selected_edge(faceVertex.getVertex())) {
@@ -41,11 +41,11 @@ public:
 	void setSelected(bool select) {
 		select_edge(select);
 	}
-	
+
 	bool isSelected() const {
 		return selected_edge();
 	}
-	
+
 	void invertSelected() {
 		setSelected(!isSelected());
 	}

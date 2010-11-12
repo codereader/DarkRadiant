@@ -25,8 +25,8 @@ class Doom3GroupNode;
 /**
  * An entity that contains brushes or patches, such as func_static.
  */
-class Doom3Group 
-: public Bounded, 
+class Doom3Group
+: public Bounded,
   public Snappable
 {
 	Doom3GroupNode& _owner;
@@ -35,10 +35,10 @@ class Doom3Group
 	ModelKey m_model;
 	OriginKey m_originKey;
 	Vector3 m_origin;
-	
+
 	// A separate origin for the renderable pivot points
 	Vector3 m_nameOrigin;
-	 
+
 	RotationKey m_rotationKey;
 	Float9 m_rotation;
 
@@ -72,29 +72,29 @@ public:
 	 */
 	Doom3Group(Doom3GroupNode& owner,
 			   const Callback& boundsChanged);
-	
+
 	// Copy constructor
-	Doom3Group(const Doom3Group& other, 
+	Doom3Group(const Doom3Group& other,
 			   Doom3GroupNode& owner,
 			   const Callback& boundsChanged);
-	
+
 	~Doom3Group();
 
 	const AABB& localAABB() const;
-	
+
 	Vector3& getOrigin();
 
 	// Curve-related methods
 	void appendControlPoints(unsigned int numPoints);
 	void convertCurveType();
-	
+
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 
 	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
 
 	/** greebo: Translates this Doom3Group
-	 * 
+	 *
 	 * @translation: The translation vector
 	 * @rotation: TRUE, if the translation was due to a rotation
 	 * 			  (this inhibits the movement of the origin)
@@ -102,17 +102,17 @@ public:
 	void translate(const Vector3& translation, bool rotation = false);
 	void rotate(const Quaternion& rotation);
 	void snapto(float snap);
-	
+
 	void revertTransform();
 	void freezeTransform();
-	
+
 	// Translates the origin only (without the children)
 	void translateOrigin(const Vector3& translation);
 	// Snaps the origin to the grid
 	void snapOrigin(float snap);
-	
+
 	void translateChildren(const Vector3& childTranslation);
-	
+
 	// Returns TRUE if this D3Group is a model
 	bool isModel() const;
 

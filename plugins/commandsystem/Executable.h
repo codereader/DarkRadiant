@@ -14,7 +14,7 @@ public:
 	 */
 	virtual ~Executable() {}
 
-	/** 
+	/**
 	 * greebo: Execute this object with the given set of arguments.
 	 */
 	virtual void execute(const ArgumentList& args) = 0;

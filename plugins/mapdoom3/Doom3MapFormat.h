@@ -12,7 +12,7 @@ namespace map {
 		const char* const RKEY_GAME_MAP_VERSION = "/mapFormat/version";
 	}
 
-class Doom3MapFormat : 
+class Doom3MapFormat :
 	public MapFormat
 {
 public:
@@ -20,7 +20,7 @@ public:
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
-	
+
     /**
      * Read tokens from a map stream and create entities accordingly.
      */

@@ -8,7 +8,7 @@ namespace {
 	inline bool float_is_largest_absolute(double axis, double other) {
 		return fabs(axis) > fabs(other);
 	}
-	
+
 	/// \brief Returns the index of the component of \p v that has the largest absolute value.
 	inline int vector3_largest_absolute_component_index(const Vector3& v) {
 		return (float_is_largest_absolute(v[1], v[0]))
@@ -24,7 +24,7 @@ namespace {
 	inline DoubleLine plane3_intersect_plane3(const Plane3& plane, const Plane3& other) {
 		DoubleLine line;
 		line.direction = plane.normal().crossProduct(other.normal());
-		
+
 		switch (vector3_largest_absolute_component_index(line.direction)) {
 		case 0:
 			line.origin.x() = 0;
@@ -44,7 +44,7 @@ namespace {
 		default:
 			break;
 		}
-	
+
 		return line;
 	}
 }
@@ -53,7 +53,7 @@ void FixedWinding::writeToWinding(Winding& winding)
 {
 	// First, set the target winding to the same size as <self>
 	winding.resize(size());
-	
+
 	// Now copy stuff from this to the target winding
 	for (std::size_t i = 0; i < size(); ++i)
 	{
@@ -67,7 +67,7 @@ void FixedWinding::writeToWinding(Winding& winding)
 void FixedWinding::createInfinite(const Plane3& plane, double infinity) {
 	double max = -infinity;
 	int x = -1;
-	
+
 	for (int i = 0; i < 3; i++) {
 		double d = fabs(plane.normal()[i]);
 		if (d > max) {
@@ -75,7 +75,7 @@ void FixedWinding::createInfinite(const Plane3& plane, double infinity) {
 			max = d;
 		}
 	}
-	
+
 	if (x == -1) {
 		globalErrorStream() << "invalid plane\n";
 		return;
@@ -108,23 +108,23 @@ void FixedWinding::createInfinite(const Plane3& plane, double infinity) {
 	r1.origin = (org - vright) + vup;
 	r1.direction = vright.getNormalised();
 	push_back(FixedWindingVertex(r1.origin, r1, c_brush_maxFaces));
-	
+
 	r2.origin = org + vright + vup;
 	r2.direction = (-vup).getNormalised();
 	push_back(FixedWindingVertex(r2.origin, r2, c_brush_maxFaces));
-	
+
 	r3.origin = (org + vright) - vup;
 	r3.direction = (-vright).getNormalised();
 	push_back(FixedWindingVertex(r3.origin, r3, c_brush_maxFaces));
-	
+
 	r4.origin = (org - vright) - vup;
 	r4.direction = vup.getNormalised();
 	push_back(FixedWindingVertex(r4.origin, r4, c_brush_maxFaces));
 }
 
 /// \brief Clip \p winding which lies on \p plane by \p clipPlane, resulting in \p clipped.
-/// If \p winding is completely in front of the plane, \p clipped will be identical to \p winding.  
-/// If \p winding is completely in back of the plane, \p clipped will be empty.  
+/// If \p winding is completely in front of the plane, \p clipped will be identical to \p winding.
+/// If \p winding is completely in back of the plane, \p clipped will be empty.
 /// If \p winding intersects the plane, the edge of \p clipped which lies on \p clipPlane will store the value of \p adjacent.
 void FixedWinding::clip(const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped)
 {
@@ -134,10 +134,10 @@ void FixedWinding::clip(const Plane3& plane, const Plane3& clipPlane, std::size_
 
 	PlaneClassification classification = Winding::classifyDistance(clipPlane.distanceToPoint(back().vertex), ON_EPSILON);
 	PlaneClassification nextClassification;
-	
+
 	// for each edge
-	for (std::size_t next = 0, i = size() - 1; 
-		 next != size(); 
+	for (std::size_t next = 0, i = size() - 1;
+		 next != size();
 		 i = next, ++next, classification = nextClassification)
 	{
 		nextClassification = Winding::classifyDistance(clipPlane.distanceToPoint((*this)[next].vertex), ON_EPSILON);
@@ -163,7 +163,7 @@ void FixedWinding::clip(const Plane3& plane, const Plane3& clipPlane, std::size_
 			// add first vertex to output winding
 			clipped.push_back(vertex);
 		}
-		
+
 		// if second vertex of edge is ON
 		if (nextClassification == ePlaneOn) {
 			continue;

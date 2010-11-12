@@ -25,8 +25,8 @@ private:
 	Glib::RefPtr<Gtk::TextBuffer> _bfr;
 
 public:
-	TextViewInfoDialog(const std::string& title, const std::string& text, 
-					   const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(), 
+	TextViewInfoDialog(const std::string& title, const std::string& text,
+					   const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(),
 					   int win_width = 650, int win_height = 500) :
 		gtkutil::BlockingTransientWindow(title, parent ? parent : GlobalMainFrame().getTopLevelWindow())
 	{

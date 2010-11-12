@@ -7,18 +7,18 @@
 namespace applog {
 
 /**
- * greebo: A LogStream can be used to write stuff to the console, 
- *         the logfile and every other logging "device" attached to 
+ * greebo: A LogStream can be used to write stuff to the console,
+ *         the logfile and every other logging "device" attached to
  *         the LogWriter class.
  *
  * The LogStream uses a LogStreamBuf as buffer class, which itself
  * invokes the LogWriter class.
  */
-class LogStream : 
+class LogStream :
 	public std::ostream
 {
 public:
-	LogStream(ELogLevel logLevel) : 
+	LogStream(ELogLevel logLevel) :
 		std::ostream(new LogStreamBuf(logLevel))
 	{}
 

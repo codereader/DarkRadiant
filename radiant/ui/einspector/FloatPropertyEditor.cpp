@@ -36,13 +36,13 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
-	
+
 	// Split the options string to get min and max values
 	std::vector<std::string> values;
 	boost::algorithm::split(values, options, boost::algorithm::is_any_of(","));
 	if (values.size() != 2)
 		return;
-		
+
 	// Attempt to cast to min and max floats
 	float min, max;
 	try {
@@ -50,17 +50,17 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 		max = boost::lexical_cast<float>(values[1]);
 	}
 	catch (boost::bad_lexical_cast&) {
-		std::cerr 
+		std::cerr
 			<< "[radiant] FloatPropertyEditor failed to parse options string "
 			<< "\"" << options << "\"" << std::endl;
-		return;	
+		return;
 	}
-	
+
 	// Create the HScale and pack into widget
 	_scale = Gtk::manage(new Gtk::HScale(min, max, 1.0));
 
 	mainVBox->pack_start(*_scale, false, false, 0);
-	
+
 	// Set the initial value if the entity has one
 	float value = 0;
 	try
@@ -68,13 +68,13 @@ FloatPropertyEditor::FloatPropertyEditor(Entity* entity,
 		value = boost::lexical_cast<float>(_entity->getKeyValue(_key));
 	}
 	catch (boost::bad_lexical_cast&) { }
-	
+
 	_scale->set_value(value);
-	
+
 	// Create and pack in the Apply button
 	Gtk::Button* applyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
 	applyButton->signal_clicked().connect(sigc::mem_fun(*this, &FloatPropertyEditor::_onApply));
-	
+
 	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*applyButton)), false, false, 0);
 }
 

@@ -17,7 +17,7 @@
 #include "gtkutil/dialog.h"
 #include "map/Map.h"
 #include "ui/modelselector/ModelSelector.h"
-#include "settings/GameManager.h" 
+#include "settings/GameManager.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
 #include <boost/filesystem/path.hpp>
@@ -39,23 +39,23 @@ namespace selection {
 		const std::string RKEY_NODRAW_SHADER = "game/defaults/nodrawShader";
 		const std::string RKEY_VISPORTAL_SHADER = "game/defaults/visportalShader";
 		const std::string RKEY_MONSTERCLIP_SHADER = "game/defaults/monsterClipShader";
-		
-		const std::string ERRSTR_WRONG_SELECTION = 
+
+		const std::string ERRSTR_WRONG_SELECTION =
 				"Can't export, create and select a func_* entity\
 				 containing the collision hull primitives.";
-		
+
 		// Filesystem path typedef
 		typedef boost::filesystem::path Path;
 	}
 
-/** 
+/**
  * greebo: Traverses the selection and invokes the PrimitiveVisitor on
- *         each encountered primitive. This class implements several 
+ *         each encountered primitive. This class implements several
  *         interfaces to avoid having multiple walker classes.
  *
  * The SelectionWalker traverses the currently selected instances and
  * passes Brushes and Patches right to the PrimitiveVisitor. When
- * GroupNodes are encountered, the GroupNode itself is traversed 
+ * GroupNodes are encountered, the GroupNode itself is traversed
  * and all child primitives are passed to the PrimitiveVisitor as well.
  */
 class SelectionWalker :
@@ -65,10 +65,10 @@ class SelectionWalker :
 {
 	PrimitiveVisitor& _visitor;
 public:
-	SelectionWalker(PrimitiveVisitor& visitor) : 
-		_visitor(visitor) 
+	SelectionWalker(PrimitiveVisitor& visitor) :
+		_visitor(visitor)
 	{}
-	
+
 	// SelectionSystem::Visitor implementation
 	virtual void visit(const scene::INodePtr& node) const {
 		// Check if we have an entity
@@ -162,7 +162,7 @@ Patch& getLastSelectedPatch() {
 		const scene::INodePtr& node = GlobalSelectionSystem().ultimateSelected();
 		// Try to cast it onto a patch
 		Patch* patch = Node_getPatch(node);
-				
+
 		// Return or throw
 		if (patch != NULL) {
 			return *patch;
@@ -185,7 +185,7 @@ public:
 	SelectedPatchFinder(PatchPtrVector& targetVector) :
 		_vector(targetVector)
 	{}
-	
+
 	void visit(const scene::INodePtr& node) const {
 		PatchNodePtr patchNode = boost::dynamic_pointer_cast<PatchNode>(node);
 		if (patchNode != NULL) {
@@ -203,7 +203,7 @@ public:
 	SelectedBrushFinder(BrushPtrVector& targetVector) :
 		_vector(targetVector)
 	{}
-	
+
 	void visit(const scene::INodePtr& node) const {
 		BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(node);
 		if (brushNode != NULL) {
@@ -214,21 +214,21 @@ public:
 
 PatchPtrVector getSelectedPatches() {
 	PatchPtrVector returnVector;
-	
+
 	GlobalSelectionSystem().foreachSelected(
 		SelectedPatchFinder(returnVector)
 	);
-	
+
 	return returnVector;
 }
 
 BrushPtrVector getSelectedBrushes() {
 	BrushPtrVector returnVector;
-	
+
 	GlobalSelectionSystem().foreachSelected(
 		SelectedBrushFinder(returnVector)
 	);
-	
+
 	return returnVector;
 }
 
@@ -249,7 +249,7 @@ public:
 	FaceVectorPopulator(FacePtrVector& targetVector) :
 		_vector(targetVector)
 	{}
-	
+
 	void operator() (FaceInstance& faceInstance) {
 		_vector.push_back(&faceInstance.getFace());
 	}
@@ -257,11 +257,11 @@ public:
 
 FacePtrVector getSelectedFaces() {
 	FacePtrVector vector;
-	
-	// Cycle through all selected faces and fill the vector 
+
+	// Cycle through all selected faces and fill the vector
 	FaceVectorPopulator populator(vector);
 	g_SelectedFaceInstances.foreach(populator);
-	
+
 	return vector;
 }
 
@@ -269,61 +269,61 @@ FacePtrVector getSelectedFaces() {
 void createCMFromSelection(const cmd::ArgumentList& args) {
 	// Check the current selection state
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
+
 	if (info.totalCount == info.entityCount && info.totalCount == 1) {
 		// Retrieve the node, instance and entity
 		const scene::INodePtr& entityNode = GlobalSelectionSystem().ultimateSelected();
-		
+
 		// Try to retrieve the group node
 		scene::GroupNodePtr groupNode = Node_getGroupNode(entityNode);
-		
+
 		// Remove the entity origin from the brushes
 		if (groupNode != NULL) {
 			groupNode->removeOriginFromChildren();
-			
+
 			// Deselect the node
 			Node_setSelected(entityNode, false);
-			
+
 			// Select all the child nodes
 			NodeSelector visitor;
 			entityNode->traverse(visitor);
-			
+
 			BrushPtrVector brushes = algorithm::getSelectedBrushes();
-		
+
 			// Create a new collisionmodel on the heap using a shared_ptr
 			cmutil::CollisionModelPtr cm(new cmutil::CollisionModel());
-		
+
 			// Add all the brushes to the collision model
 			for (std::size_t i = 0; i < brushes.size(); i++) {
 				cm->addBrush(brushes[i]->getBrush());
 			}
-			
+
 			ui::ModelSelectorResult modelAndSkin = ui::ModelSelector::chooseModel("", false, false);
 			std::string basePath = GlobalGameManager().getModPath();
-			
+
 			std::string modelPath = basePath + modelAndSkin.model;
-			
+
 			std::string newExtension = "." + GlobalRegistry().get(RKEY_CM_EXT);
-			
+
 			// Set the model string to correctly associate the clipmodel
 			cm->setModel(modelAndSkin.model);
-			
+
 			try {
 				// create the new autosave filename by changing the extension
 				Path cmPath = boost::filesystem::change_extension(
-						Path(modelPath, boost::filesystem::native), 
+						Path(modelPath, boost::filesystem::native),
 						newExtension
 					);
-				
+
 				// Open the stream to the output file
 				std::ofstream outfile(cmPath.string().c_str());
-				
+
 				if (outfile.is_open()) {
 					// Insert the CollisionModel into the stream
 					outfile << *cm;
 					// Close the file
 					outfile.close();
-					
+
 					globalOutputStream() << "CollisionModel saved to " << cmPath.string() << std::endl;
 				}
 				else {
@@ -335,20 +335,20 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 			catch (boost::filesystem::filesystem_error f) {
 				globalErrorStream() << "CollisionModel: " << f.what() << std::endl;
 			}
-			
+
 			// De-select the child brushes
 			GlobalSelectionSystem().setSelectedAll(false);
-			
+
 			// Re-add the origin to the brushes
 			groupNode->addOriginToChildren();
-		
+
 			// Re-select the node
 			Node_setSelected(entityNode, true);
 		}
 	}
 	else {
 		gtkutil::errorDialog(
-			_(ERRSTR_WRONG_SELECTION.c_str()), 
+			_(ERRSTR_WRONG_SELECTION.c_str()),
 			GlobalMainFrame().getTopLevelWindow());
 	}
 }
@@ -359,28 +359,28 @@ namespace {
 	 * scene.
 	 */
 
-	class CountSelectedPrimitives : 
+	class CountSelectedPrimitives :
 		public scene::NodeVisitor
 	{
 		int _count;
 		std::size_t _depth;
 	public:
-		CountSelectedPrimitives() : 
-			_count(0), 
+		CountSelectedPrimitives() :
+			_count(0),
 			_depth(0)
 		{}
 
-		bool pre(const scene::INodePtr& node) 
+		bool pre(const scene::INodePtr& node)
 		{
 			if (++_depth != 1 && node->isRoot())
 			{
 				return false;
 			}
-		
+
 			if (Node_isSelected(node) && Node_isPrimitive(node)) {
 				++_count;
 			}
-	    
+
 			return true;
 		}
 
@@ -394,35 +394,35 @@ namespace {
 			return _count;
 		}
 	};
-	
+
 	/** greebo: Counts the selected brushes in the scenegraph
 	 */
-	class BrushCounter : 
+	class BrushCounter :
 		public scene::NodeVisitor
 	{
 		int _count;
 		std::size_t _depth;
 	public:
-		BrushCounter() : 
-			_count(0), 
+		BrushCounter() :
+			_count(0),
 			_depth(0)
 		{}
-		
+
 		bool pre(const scene::INodePtr& node)
 		{
 			if (++_depth != 1 && node->isRoot())
 			{
 				return false;
 			}
-			
-			if (Node_isSelected(node) && Node_isBrush(node)) 
+
+			if (Node_isSelected(node) && Node_isBrush(node))
 			{
 				++_count;
 			}
-			
+
 			return true;
 		}
-		
+
 		void post(const scene::INodePtr& node)
 		{
 			--_depth;
@@ -478,29 +478,29 @@ public:
 
 			// Create a new decal patch
 			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
-			
+
 			if (patchNode == NULL) {
 				gtkutil::errorDialog(_("Could not create patch."), GlobalMainFrame().getTopLevelWindow());
 				return;
 			}
-			
+
 			Patch* patch = Node_getPatch(patchNode);
 			assert(patch != NULL); // must not fail
-			
+
 			// Set the tesselation of that 3x3 patch
 			patch->setDims(3,3);
 			patch->setFixedSubdivisions(true, Subdivisions(1,1));
-			
+
 			// Set the coordinates
 			patch->ctrlAt(0,0).vertex = winding[0].vertex;
 			patch->ctrlAt(2,0).vertex = winding[1].vertex;
 			patch->ctrlAt(1,0).vertex = (patch->ctrlAt(0,0).vertex + patch->ctrlAt(2,0).vertex)/2;
-			
+
 			patch->ctrlAt(0,1).vertex = (winding[0].vertex + winding[3].vertex)/2;
 			patch->ctrlAt(2,1).vertex = (winding[1].vertex + winding[2].vertex)/2;
-			
+
 			patch->ctrlAt(1,1).vertex = (patch->ctrlAt(0,1).vertex + patch->ctrlAt(2,1).vertex)/2;
-			
+
 			patch->ctrlAt(2,2).vertex = winding[2].vertex;
 			patch->ctrlAt(0,2).vertex = winding[3].vertex;
 			patch->ctrlAt(1,2).vertex = (patch->ctrlAt(2,2).vertex + patch->ctrlAt(0,2).vertex)/2;
@@ -519,11 +519,11 @@ public:
 			// Fit the texture on it
 			patch->SetTextureRepeat(1,1);
 			patch->FlipTexture(1);
-			
+
 			// Insert the patch into worldspawn
 			scene::INodePtr worldSpawnNode = GlobalMap().getWorldspawn();
 			assert(worldSpawnNode != NULL); // This must be non-NULL, otherwise we won't have faces
-			
+
 			worldSpawnNode->addChildNode(patchNode);
 
 			// Deselect the face instance
@@ -553,28 +553,28 @@ public:
 };
 
 void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
-	// Sanity check	
+	// Sanity check
 	if (g_SelectedFaceInstances.empty()) {
 		gtkutil::errorDialog(_("No faces selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
-	
+
 	// Create a scoped undocmd object
 	UndoableCommand cmd("createDecalsForSelectedFaces");
-	
+
 	// greebo: For each face, create a patch with fixed tesselation
 	DecalPatchCreator creator;
 	g_SelectedFaceInstances.foreach(creator);
 
 	// Issue the command
 	creator.createDecals();
-	
+
 	// Check how many faces were not suitable
 	int unsuitableWindings = creator.getNumUnsuitableWindings();
 
 	if (unsuitableWindings > 0) {
 		gtkutil::errorDialog(
-			(boost::format(_("%d faces were not suitable (had more than 4 vertices).")) % unsuitableWindings).str(), 
+			(boost::format(_("%d faces were not suitable (had more than 4 vertices).")) % unsuitableWindings).str(),
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -625,7 +625,7 @@ void makeVisportal(const cmd::ArgumentList& args) {
 		gtkutil::errorDialog(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
-	
+
 	// Create a scoped undocmd object
 	UndoableCommand cmd("brushMakeVisportal");
 
@@ -634,22 +634,22 @@ void makeVisportal(const cmd::ArgumentList& args) {
 		Brush& brush = brushes[i]->getBrush();
 
 		// don't allow empty brushes
-		if (brush.getNumFaces() == 0) continue; 
-		
+		if (brush.getNumFaces() == 0) continue;
+
 		// Set all faces to nodraw first
 		brush.setShader(GlobalRegistry().get(RKEY_NODRAW_SHADER));
 
 		// Find the largest face (in terms of area)
 		LargestFaceFinder finder;
 		brush.forEachFace(finder);
-		
+
 		finder.getLargestFace().setShader(GlobalRegistry().get(RKEY_VISPORTAL_SHADER));
 	}
 }
 
 void surroundWithMonsterclip(const cmd::ArgumentList& args)
 {
-	UndoableCommand command("addMonsterclip");	
+	UndoableCommand command("addMonsterclip");
 
 	// create a ModelFinder and retrieve the modelList
 	selection::algorithm::ModelFinder visitor;
@@ -657,7 +657,7 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 
 	// Retrieve the list with all the found models from the visitor
 	selection::algorithm::ModelFinder::ModelList list = visitor.getList();
-	
+
 	selection::algorithm::ModelFinder::ModelList::iterator iter;
 	for (iter = list.begin(); iter != list.end(); ++iter)
 	{
@@ -672,7 +672,7 @@ void surroundWithMonsterclip(const cmd::ArgumentList& args)
 
 		if (brushNode != NULL) {
 			scene::addNodeToContainer(brushNode, GlobalMap().findOrInsertWorldspawn());
-			
+
 			Brush* theBrush = Node_getBrush(brushNode);
 
 			std::string clipShader = GlobalRegistry().get(RKEY_MONSTERCLIP_SHADER);

@@ -4,7 +4,7 @@
 
 namespace module {
 
-/** 
+/**
  * =============================== WIN32 ======================================
  */
 #if defined(WIN32)
@@ -16,7 +16,7 @@ const char* FormatGetLastError() {
 	static char buf[FORMAT_BUFSIZE];
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			buf, 
+			buf,
 			FORMAT_BUFSIZE, NULL);
 	return buf;
 }
@@ -44,13 +44,13 @@ bool DynamicLibrary::failed() {
 DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& symbol) {
 	// Try to lookup the symbol address
 	FunctionPointer address = GetProcAddress(_library, symbol.c_str());
-	
+
 	// Emit a warning if the lookup failed
 	if (address == 0) {
 		std::cerr << "GetProcAddress failed: '" << symbol << "'" << std::endl;
 		std::cerr << "GetLastError: " << FormatGetLastError();
 	}
-	
+
 	return address;
 }
 
@@ -58,7 +58,7 @@ std::string DynamicLibrary::getName() const {
 	return _name;
 }
 
-/** 
+/**
  * =============================== POSIX ======================================
  */
 #elif defined(POSIX)
@@ -84,14 +84,14 @@ DynamicLibrary::FunctionPointer DynamicLibrary::findSymbol(const std::string& sy
 	FunctionPointer p = reinterpret_cast<FunctionPointer>(
 		dlsym(_dlHandle, symbol.c_str())
 	);
-	
+
 	if (p == 0) {
 		const char* error = dlerror();
 		if (error != NULL) {
 			std::cerr << error << std::endl;
 		}
 	}
-	
+
 	return p;
 }
 

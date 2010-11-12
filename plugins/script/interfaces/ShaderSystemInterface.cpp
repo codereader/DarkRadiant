@@ -25,9 +25,9 @@ void ShaderSystemInterface::registerInterface(boost::python::object& nspace) {
 		.def("isFogLight", &ScriptShader::isFogLight)
 		.def("isNull", &ScriptShader::isNull)
 	;
-	
+
 	// Expose the ShaderVisitor interface
-	nspace["ShaderVisitor"] = 
+	nspace["ShaderVisitor"] =
 		boost::python::class_<ShaderVisitorWrapper, boost::noncopyable>("ShaderVisitor")
 		.def("visit", boost::python::pure_virtual(&ShaderVisitorWrapper::visit))
 	;

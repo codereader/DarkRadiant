@@ -41,7 +41,7 @@ struct RGBAPixel
  * dimensions. The memory for the actual pixelmap is allocated
  * and de-allocated automatically.
  */
-class RGBAImage : 
+class RGBAImage :
 	public Image,
 	public boost::noncopyable
 {
@@ -50,10 +50,10 @@ public:
 
 	std::size_t width;
 	std::size_t height;
-	
-	RGBAImage(std::size_t _width, std::size_t _height) : 
-		pixels(new RGBAPixel[_width * _height]), 
-		width(_width), 
+
+	RGBAImage(std::size_t _width, std::size_t _height) :
+		pixels(new RGBAPixel[_width * _height]),
+		width(_width),
 		height(_height)
 	{}
 
@@ -95,9 +95,9 @@ public:
 		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
 
 		// Download the image to OpenGL
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, 
-			static_cast<GLint>(getWidth(0)), static_cast<GLint>(getHeight(0)), 
-			GL_RGBA, GL_UNSIGNED_BYTE, 
+		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA,
+			static_cast<GLint>(getWidth(0)), static_cast<GLint>(getHeight(0)),
+			GL_RGBA, GL_UNSIGNED_BYTE,
 			getMipMapPixels(0)
 		);
 

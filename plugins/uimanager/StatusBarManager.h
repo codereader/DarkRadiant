@@ -6,7 +6,7 @@
 #include "gtkutil/event/SingleIdleCallback.h"
 
 namespace Gtk
-{ 
+{
 	class Table;
 	class Widget;
 	class Label;
@@ -21,7 +21,7 @@ class StatusBarManager :
 {
 	struct StatusBarElement
 	{
-		// The toplevel container 
+		// The toplevel container
 		Gtk::Widget* toplevel;
 
 		// If this status bar element is a label, this is not NULL
@@ -64,7 +64,7 @@ public:
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
 	 * which should be added and specify the position order.
-	 * 
+	 *
 	 * @name: the name of the element (can be used for later lookup).
 	 * @widget: the widget to pack.
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
@@ -74,7 +74,7 @@ public:
 
 	/**
 	 * Returns a named status bar widget, previously added by addElement().
-	 * 
+	 *
 	 * @returns: NULL if the named widget does not exist.
 	 */
 	Gtk::Widget* getElement(const std::string& name);

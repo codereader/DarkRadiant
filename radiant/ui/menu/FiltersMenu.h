@@ -4,7 +4,7 @@
 namespace ui
 {
 
-/** 
+/**
  * Utility class for generating the Filters top-level menu. This class
  * registers the relevant menuitems on demand.
  */

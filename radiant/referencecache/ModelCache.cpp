@@ -61,7 +61,7 @@ namespace {
 			{
 				_modelNames.insert(model->getIModel().getModelPath());
 
-				IEntityNodePtr ent = 
+				IEntityNodePtr ent =
 					boost::dynamic_pointer_cast<IEntityNode>(node->getParent());
 
 				if (ent != NULL)
@@ -100,7 +100,7 @@ ModelCache::ModelCache() :
 ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type) {
 	// Get the module name from the Filetype registry
 	std::string moduleName = GlobalFiletypes().findModuleName("model", type);
-	  
+
 	if (!moduleName.empty()) {
 		ModelLoaderPtr modelLoader = boost::static_pointer_cast<ModelLoader>(
 			module::GlobalModuleRegistry().getModule(moduleName)
@@ -131,7 +131,7 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath) {
 	}
 
 	// Get the extension of this model
-	std::string type = actualModelPath.substr(actualModelPath.rfind(".") + 1); 
+	std::string type = actualModelPath.substr(actualModelPath.rfind(".") + 1);
 
 	// Get a suitable model loader
 	ModelLoaderPtr modelLoader = getModelLoaderForType(type);
@@ -168,9 +168,9 @@ IModelPtr ModelCache::getModel(const std::string& modelPath) {
 
 	// The model is not cached, the weak pointer could not be locked
 	// or the cache is disabled, load afresh
-	
+
 	// Get the extension of this model
-	std::string type = modelPath.substr(modelPath.rfind(".") + 1); 
+	std::string type = modelPath.substr(modelPath.rfind(".") + 1);
 
 	// Find a suitable model loader
 	ModelLoaderPtr modelLoader = getModelLoaderForType(type);
@@ -183,7 +183,7 @@ IModelPtr ModelCache::getModel(const std::string& modelPath) {
 			ModelMap::value_type(modelPath, IModelWeakPtr(model))
 		);
 	}
-		
+
 	return model;
 }
 
@@ -191,9 +191,9 @@ void ModelCache::clear() {
 	// greebo: Disable the modelcache. During map::clear(), the nodes
 	// get cleared, which might trigger a loopback to insert().
 	_enabled = false;
-	
+
 	_modelMap.clear();
-	
+
 	// Allow usage of the modelnodemap again.
 	_enabled = true;
 }
@@ -202,14 +202,14 @@ void ModelCache::refreshModels(const cmd::ArgumentList& args)
 {
 	// Disable screen updates for the scope of this function
 	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Models"));
-	
+
 	// Clear the model cache
 	clear();
 
 	// Update all model nodes
 	ModelRefreshWalker walker;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-		
+
 	// greebo: Reload the modelselector too
 	ui::ModelSelector::refresh();
 }
@@ -218,7 +218,7 @@ void ModelCache::refreshSelectedModels(const cmd::ArgumentList& args)
 {
 	// Disable screen updates for the scope of this function
 	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Models"));
-	
+
 	// Find all models in the current selection
 	ModelFinder walker;
 	GlobalSelectionSystem().foreachSelected(walker);
@@ -271,11 +271,11 @@ void ModelCache::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "ModelCache::initialiseModule called.\n";
 
 	GlobalCommandSystem().addCommand(
-		"RefreshModels", 
+		"RefreshModels",
 		boost::bind(&ModelCache::refreshModels, this, _1)
 	);
 	GlobalCommandSystem().addCommand(
-		"RefreshSelectedModels", 
+		"RefreshSelectedModels",
 		boost::bind(&ModelCache::refreshSelectedModels, this, _1)
 	);
 	GlobalEventManager().addCommand("RefreshModels", "RefreshModels");
@@ -287,6 +287,6 @@ void ModelCache::shutdownModule() {
 }
 
 // The static module
-module::StaticModule<ModelCache> modelCacheModule; 
+module::StaticModule<ModelCache> modelCacheModule;
 
 } // namespace model

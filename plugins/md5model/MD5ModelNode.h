@@ -9,7 +9,7 @@
 
 namespace md5 {
 
-class MD5ModelNode : 
+class MD5ModelNode :
 	public scene::Node,
 	public model::ModelNode,
 	public Nameable,
@@ -29,13 +29,13 @@ class MD5ModelNode :
 		std::string name;
 		ShaderPtr shader;
 	};
-  
+
 	typedef std::vector<Remap> SurfaceRemaps;
 	SurfaceRemaps _surfaceRemaps;
 
 	// The name of this model's skin
 	std::string _skin;
-	
+
 public:
 	MD5ModelNode(const MD5ModelPtr& model);
 	virtual ~MD5ModelNode();

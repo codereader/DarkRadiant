@@ -20,7 +20,7 @@ typedef boost::shared_ptr<EntitySettings> EntitySettingsPtr;
 /**
  * greebo: A class managing the various settings for entities. It observes
  * the corresponding keyvalues in the registry and updates the internal
- * variables accordingly. This can be used as some sort of "cache" 
+ * variables accordingly. This can be used as some sort of "cache"
  * to avoid slow registry queries during rendering, for instance.
  */
 class EntitySettings :

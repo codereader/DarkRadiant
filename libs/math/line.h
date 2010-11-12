@@ -85,7 +85,7 @@ inline Segment segment_for_startend(const Vector3& start, const Vector3& end)
 inline unsigned int segment_classify_plane(const Segment& segment, const Plane3& plane)
 {
   double distance_origin = plane.normal().dot(segment.origin) + plane.dist();
-  
+
   if (fabs(distance_origin) < fabs(plane.normal().dot(segment.extents)))
   {
     return 1; // partially inside
@@ -110,13 +110,13 @@ public:
     origin(origin_), direction(direction_)
   {
   }
-  
-	/* greebo: this calculates the intersection point of two rays 
-	 * (copied from Radiant's Intersection code, there may be better ways) 
+
+	/* greebo: this calculates the intersection point of two rays
+	 * (copied from Radiant's Intersection code, there may be better ways)
 	 */
 	Vector3 getIntersection(Ray& other) {
 		Vector3 intersection = origin - other.origin;
-		
+
 		double dot = direction.dot(other.direction);
   		double d = direction.dot(intersection);
 		double e = other.direction.dot(intersection);

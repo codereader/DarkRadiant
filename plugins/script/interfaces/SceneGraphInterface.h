@@ -55,8 +55,8 @@ public:
 
 	ScriptSceneNode getParent() {
 		scene::INodePtr node = _node.lock();
-		return node != NULL 
-                    ? ScriptSceneNode(node->getParent()) 
+		return node != NULL
+                    ? ScriptSceneNode(node->getParent())
                     : ScriptSceneNode(scene::INodePtr());
 	}
 
@@ -105,8 +105,8 @@ public:
 };
 
 // Wrap around the scene::NodeVisitor interface
-class SceneNodeVisitorWrapper : 
-	public scene::NodeVisitor, 
+class SceneNodeVisitorWrapper :
+	public scene::NodeVisitor,
 	public boost::python::wrapper<scene::NodeVisitor>
 {
 public:
@@ -118,7 +118,7 @@ public:
 	void post(const scene::INodePtr& node) {
 		if (this->get_override("post")) {
 			// Call the overriden method
-            this->get_override("post")(ScriptSceneNode(node)); 
+            this->get_override("post")(ScriptSceneNode(node));
 		}
 		else {
 			// No override, call base class default
@@ -159,7 +159,7 @@ public:
 		;
 
 		// Expose the scene::NodeVisitor interface
-		nspace["SceneNodeVisitor"] = 
+		nspace["SceneNodeVisitor"] =
 			boost::python::class_<SceneNodeVisitorWrapper, boost::noncopyable>("SceneNodeVisitor")
 			.def("pre", boost::python::pure_virtual(&scene::NodeVisitor::pre))
 			.def("post", &scene::NodeVisitor::post, &SceneNodeVisitorWrapper::post_default) // respect default impl.

@@ -72,7 +72,7 @@ AC_SUBST([JPEG_LIBS])
 # GTK etc
 PKG_CHECK_MODULES([GLIB], [glib-2.0], [],
                   [AC_MSG_ERROR([GLIB not found])])
-PKG_CHECK_MODULES([GTK], [gtk+-2.0], [], 
+PKG_CHECK_MODULES([GTK], [gtk+-2.0], [],
                   [AC_MSG_FAILURE([GTK libraries not found.])])
 PKG_CHECK_MODULES([GTKMM], [gtkmm-2.4], [],
                   [AC_MSG_FAILURE([GTKMM libraries not found])])
@@ -88,7 +88,7 @@ AC_CHECK_LIB([GLEW], [main],
 AC_SUBST([GLEW_LIBS])
 
 # OpenGL and GLU
-AC_CHECK_LIB([GL], [main], 
+AC_CHECK_LIB([GL], [main],
              [GL_LIBS='-lGL'],
              [AC_MSG_ERROR([GL library not found.])])
 AC_CHECK_LIB([GLU], [gluBuild2DMipmaps],
@@ -149,7 +149,7 @@ then
     AC_SUBST([BOOST_PYTHON_LIBS])
 fi
 
-# GTKSourceView 
+# GTKSourceView
 PKG_CHECK_MODULES([GTKSOURCEVIEWMM], [gtksourceviewmm-2.0], [],
                   [script_module=''])
 
@@ -186,7 +186,7 @@ CPPFLAGS="$USER_CPPFLAGS -DPOSIX"
 LDFLAGS="$USER_LDFLAGS -Wl,-z,defs"
 
 # Debug/optimisation
-if test "$debug_build" != 'no' 
+if test "$debug_build" != 'no'
 then
     CPPFLAGS="-D_DEBUG $CPPFLAGS"
     CFLAGS="-g -O0 $CFLAGS"

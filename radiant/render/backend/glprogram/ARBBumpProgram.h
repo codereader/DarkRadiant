@@ -6,7 +6,7 @@
 
 namespace render {
 
-class ARBBumpProgram 
+class ARBBumpProgram
 : public GLProgram
 {
     // The value all lights should be scaled by, obtained from the game
@@ -33,10 +33,10 @@ public:
     void disable();
 
     // Set render pass parameters
-    void applyRenderParams(const Vector3& viewer, 
-                           const Matrix4& localToWorld, 
-                           const Vector3& origin, 
-                           const Vector3& colour, 
+    void applyRenderParams(const Vector3& viewer,
+                           const Matrix4& localToWorld,
+                           const Vector3& origin,
+                           const Vector3& colour,
                            const Matrix4& world2light,
                            float ambientFactor);
 };

@@ -15,9 +15,9 @@
 #include <boost/algorithm/string/split.hpp>
 
 	namespace {
-		// Needed for boost::algorithm::split		
+		// Needed for boost::algorithm::split
 		typedef std::vector<std::string> StringParts;
-		
+
 		const float DEFAULT_STRAFE_SPEED = 0.65f;
 		const int DEFAULT_MIN_SELECTION_COUNT = -1;
 
@@ -27,7 +27,7 @@
 		}
 	}
 
-MouseEventManager::MouseEventManager(Modifiers& modifiers) : 
+MouseEventManager::MouseEventManager(Modifiers& modifiers) :
 	_modifiers(modifiers),
 	_selectionSystem(NULL),
 	_activeFlags(0)
@@ -35,10 +35,10 @@ MouseEventManager::MouseEventManager(Modifiers& modifiers) :
 
 void MouseEventManager::initialise() {
 	loadButtonDefinitions();
-		
+
 	loadXYViewEventDefinitions();
 	loadObserverEventDefinitions();
-	
+
 	loadCameraEventDefinitions();
 	loadCameraStrafeDefinitions();
 }
@@ -62,38 +62,38 @@ MouseEventManager::ConditionStruc MouseEventManager::getCondition(xml::Node node
 	const std::string button = node.getAttributeValue("button");
 	const std::string modifiers = node.getAttributeValue("modifiers");
 	const std::string minSelectionCount = node.getAttributeValue("minSelectionCount");
-	
+
 	ConditionStruc returnValue;
-	
+
 	returnValue.buttonId = getButtonId(button);
 	returnValue.modifierFlags = _modifiers.getModifierFlags(modifiers);
-	
+
 	try {
 		returnValue.minSelectionCount = boost::lexical_cast<int>(minSelectionCount);
 	}
 	catch (boost::bad_lexical_cast e) {
 		returnValue.minSelectionCount = DEFAULT_MIN_SELECTION_COUNT;
 	}
-		
+
 	return returnValue;
 }
 
 void MouseEventManager::loadCameraStrafeDefinitions() {
 	// Find all the camera strafe definitions
 	xml::NodeList strafeList = GlobalRegistry().findXPath("user/ui/input/cameraview/strafemode");
-	
+
 	if (strafeList.size() > 0) {
 		// Get the strafe condition flags
 		_toggleStrafeCondition.modifierFlags = _modifiers.getModifierFlags(strafeList[0].getAttributeValue("toggle"));
 		_toggleForwardStrafeCondition.modifierFlags = _modifiers.getModifierFlags(strafeList[0].getAttributeValue("forward"));
-		
+
 		try {
 			_strafeSpeed = boost::lexical_cast<float>(strafeList[0].getAttributeValue("speed"));
 		}
 		catch (boost::bad_lexical_cast e) {
 			_strafeSpeed = DEFAULT_STRAFE_SPEED;
 		}
-		
+
 		try {
 			_forwardStrafeFactor = boost::lexical_cast<float>(strafeList[0].getAttributeValue("forwardFactor"));
 		}
@@ -109,19 +109,19 @@ void MouseEventManager::loadCameraStrafeDefinitions() {
 
 void MouseEventManager::loadCameraEventDefinitions() {
 	xml::NodeList camviews = GlobalRegistry().findXPath("user/ui/input//cameraview");
-	
+
 	if (camviews.size() > 0) {
-	
+
 		// Find all the camera definitions
 		xml::NodeList eventList = camviews[0].getNamedChildren("event");
-		
+
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Camera Definitions found: " 
+			globalOutputStream() << "MouseEventManager: Camera Definitions found: "
 								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
-				
+
 				// Check if any recognised event names are found and construct the according condition.
 				if (eventName == "EnableFreeLookMode") {
 					_cameraConditions[ui::camEnableFreeLookMode] = getCondition(eventList[i]);
@@ -147,19 +147,19 @@ void MouseEventManager::loadCameraEventDefinitions() {
 
 void MouseEventManager::loadObserverEventDefinitions() {
 	xml::NodeList observers = GlobalRegistry().findXPath("user/ui/input//observer");
-	
+
 	if (observers.size() > 0) {
-	
+
 		// Find all the observer definitions
 		xml::NodeList eventList = observers[0].getNamedChildren("event");
-		
+
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Observer Definitions found: " 
+			globalOutputStream() << "MouseEventManager: Observer Definitions found: "
 								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
-				
+
 				// Check if any recognised event names are found and construct the according condition.
 				if (eventName == "Manipulate") {
 					_observerConditions[ui::obsManipulate] = getCondition(eventList[i]);
@@ -217,21 +217,21 @@ void MouseEventManager::loadObserverEventDefinitions() {
 }
 
 void MouseEventManager::loadXYViewEventDefinitions() {
-	
+
 	xml::NodeList xyviews = GlobalRegistry().findXPath("user/ui/input//xyview");
-	
+
 	if (xyviews.size() > 0) {
-	
+
 		// Find all the xy view definitions
 		xml::NodeList eventList = xyviews[0].getNamedChildren("event");
-	
+
 		if (eventList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: XYView Definitions found: " 
+			globalOutputStream() << "MouseEventManager: XYView Definitions found: "
 								 << static_cast<int>(eventList.size()) << "\n";
 			for (unsigned int i = 0; i < eventList.size(); i++) {
 				// Get the event name
 				const std::string eventName = eventList[i].getAttributeValue("name");
-				
+
 				// Check if any recognised event names are found and construct the according condition.
 				if (eventName == "MoveView") {
 					_xyConditions[ui::xyMoveView] = getCondition(eventList[i]);
@@ -269,18 +269,18 @@ void MouseEventManager::loadXYViewEventDefinitions() {
 
 void MouseEventManager::loadButtonDefinitions() {
 	xml::NodeList buttons = GlobalRegistry().findXPath("user/ui/input//buttons");
-	
+
 	if (buttons.size() > 0) {
-	
+
 		// Find all the button definitions
 		xml::NodeList buttonList = buttons[0].getNamedChildren("button");
-	
+
 		if (buttonList.size() > 0) {
-			globalOutputStream() << "MouseEventManager: Buttons found: " 
+			globalOutputStream() << "MouseEventManager: Buttons found: "
 								 << static_cast<int>(buttonList.size()) << "\n";
 			for (unsigned int i = 0; i < buttonList.size(); i++) {
 				const std::string name = buttonList[i].getAttributeValue("name");
-				
+
 				unsigned int id;
 				try {
 					id = boost::lexical_cast<unsigned int>(buttonList[i].getAttributeValue("id"));
@@ -288,13 +288,13 @@ void MouseEventManager::loadButtonDefinitions() {
 				catch (boost::bad_lexical_cast e) {
 					id = 0;
 				}
-				
+
 				if (name != "" && id > 0) {
 					//std::cout << "MouseEventManager: Found button definition " << name.c_str() << " with ID " << id << "\n";
-					
+
 					// Save the button ID into the map
 					_buttonId[name] = id;
-				} 
+				}
 				else {
 					globalOutputStream() << "MouseEventManager: Warning: Invalid button definition found.\n";
 				}
@@ -311,7 +311,7 @@ void MouseEventManager::loadButtonDefinitions() {
 	}
 }
 
-// Retrieves the button from an GdkEventMotion state 
+// Retrieves the button from an GdkEventMotion state
 unsigned int MouseEventManager::getButtonFlags(const unsigned int state) {
 	if ((state & GDK_BUTTON1_MASK) != 0) return 1;
 	if ((state & GDK_BUTTON2_MASK) != 0) return 2;
@@ -323,18 +323,18 @@ unsigned int MouseEventManager::getButtonFlags(const unsigned int state) {
 }
 
 ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int button, const unsigned int modifierFlags) {
-	
+
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::camNothing;
 	}
-	
+
 	for (CameraConditionMap::iterator it = _cameraConditions.begin(); it != _cameraConditions.end(); it++) {
 		ui::CamViewEvent event = it->first;
 		ConditionStruc conditions = it->second;
-		
-		if (button == conditions.buttonId && modifierFlags == conditions.modifierFlags 
-			&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount) 
+
+		if (button == conditions.buttonId && modifierFlags == conditions.modifierFlags
+			&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount)
 		{
 			return event;
 		}
@@ -343,19 +343,19 @@ ui::CamViewEvent MouseEventManager::findCameraViewEvent(const unsigned int butto
 }
 
 ui::XYViewEvent MouseEventManager::findXYViewEvent(const unsigned int button, const unsigned int modifierFlags) {
-	
+
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::xyNothing;
 	}
-	
+
 	for (XYConditionMap::iterator it = _xyConditions.begin(); it != _xyConditions.end(); it++) {
 		ui::XYViewEvent event = it->first;
 		ConditionStruc conditions = it->second;
-		
-		if (button == conditions.buttonId 
-			&& modifierFlags == conditions.modifierFlags 
-			&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount) 
+
+		if (button == conditions.buttonId
+			&& modifierFlags == conditions.modifierFlags
+			&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount)
 		{
 			return event;
 		}
@@ -369,14 +369,14 @@ ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int button
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
 		return ui::obsNothing;
 	}
-	
+
 	for (ObserverConditionMap::iterator it = _observerConditions.begin(); it != _observerConditions.end(); it++) {
 		ui::ObserverEvent event = it->first;
 		ConditionStruc conditions = it->second;
-		
-		if (button == conditions.buttonId 
-			&& modifierFlags == conditions.modifierFlags 
-			&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount) 
+
+		if (button == conditions.buttonId
+			&& modifierFlags == conditions.modifierFlags
+			&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount)
 		{
 			return event;
 		}
@@ -387,14 +387,14 @@ ui::ObserverEvent MouseEventManager::findObserverEvent(const unsigned int button
 ui::CamViewEvent MouseEventManager::getCameraViewEvent(GdkEventButton* event) {
 	unsigned int button = event->button;
 	unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
-	
+
 	return findCameraViewEvent(button, modifierFlags);
 }
 
 ui::XYViewEvent MouseEventManager::getXYViewEvent(GdkEventButton* event) {
 	unsigned int button = event->button;
 	unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
-	
+
 	return findXYViewEvent(button, modifierFlags);
 }
 
@@ -402,26 +402,26 @@ ui::XYViewEvent MouseEventManager::getXYViewEvent(GdkEventButton* event) {
 ui::XYViewEvent MouseEventManager::getXYViewEvent(const unsigned int state) {
 	unsigned int button = getButtonFlags(state);
 	unsigned int modifierFlags = _modifiers.getKeyboardFlags(state);
-	
+
 	return findXYViewEvent(button, modifierFlags);
 }
 
-bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent, 
-										 const unsigned int button, 
-										 const unsigned int modifierFlags) 
+bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent,
+										 const unsigned int button,
+										 const unsigned int modifierFlags)
 {
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
 		return false;
 	}
-	
+
 	XYConditionMap::iterator it = _xyConditions.find(xyViewEvent);
    	if (it != _xyConditions.end()) {
    		// Load the condition
    		ConditionStruc conditions = it->second;
-   		
-		return (button == conditions.buttonId 
-				&& modifierFlags == conditions.modifierFlags 
+
+		return (button == conditions.buttonId
+				&& modifierFlags == conditions.modifierFlags
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
@@ -430,22 +430,22 @@ bool MouseEventManager::matchXYViewEvent(const ui::XYViewEvent& xyViewEvent,
    	}
 }
 
-bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEvent, 
-										   const unsigned int button, 
-										   const unsigned int modifierFlags) 
+bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEvent,
+										   const unsigned int button,
+										   const unsigned int modifierFlags)
 {
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
 		return false;
 	}
-	
+
 	ObserverConditionMap::iterator it = _observerConditions.find(observerEvent);
    	if (it != _observerConditions.end()) {
    		// Load the condition
    		ConditionStruc conditions = it->second;
-		
-		return (button == conditions.buttonId 
-				&& modifierFlags == conditions.modifierFlags 
+
+		return (button == conditions.buttonId
+				&& modifierFlags == conditions.modifierFlags
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
@@ -454,22 +454,22 @@ bool MouseEventManager::matchObserverEvent(const ui::ObserverEvent& observerEven
    	}
 }
 
-bool MouseEventManager::matchCameraViewEvent(const ui::CamViewEvent& camViewEvent, 
-											 const unsigned int button, 
-											 const unsigned int modifierFlags) 
+bool MouseEventManager::matchCameraViewEvent(const ui::CamViewEvent& camViewEvent,
+											 const unsigned int button,
+											 const unsigned int modifierFlags)
 {
 	if (_selectionSystem == NULL) {
 		globalErrorStream() << "MouseEventManager: No connection to SelectionSystem\n";
 		return false;
 	}
-	
+
 	CameraConditionMap::iterator it = _cameraConditions.find(camViewEvent);
    	if (it != _cameraConditions.end()) {
    		// Load the condition
    		ConditionStruc conditions = it->second;
-   		
-		return (button == conditions.buttonId 
-				&& modifierFlags == conditions.modifierFlags 
+
+		return (button == conditions.buttonId
+				&& modifierFlags == conditions.modifierFlags
 				&& static_cast<int>(_selectionSystem->countSelected()) >= conditions.minSelectionCount);
    	}
    	else {
@@ -498,19 +498,19 @@ bool MouseEventManager::stateMatchesCameraViewEvent(const ui::CamViewEvent& camV
 ui::ObserverEvent MouseEventManager::getObserverEvent(GdkEventButton* event) {
 	unsigned int button = event->button;
 	unsigned int modifierFlags = _modifiers.getKeyboardFlags(event->state);
-	
+
 	return findObserverEvent(button, modifierFlags);
 }
 
 ui::ObserverEvent MouseEventManager::getObserverEvent(const unsigned int state) {
 	unsigned int button = getButtonFlags(state);
 	unsigned int modifierFlags = _modifiers.getKeyboardFlags(state);
-	
+
 	return findObserverEvent(button, modifierFlags);
 }
 
 std::string MouseEventManager::printXYViewEvent(const ui::XYViewEvent& xyViewEvent) {
-	
+
 	switch (xyViewEvent) {
 		case ui::xyNothing: return makeBold(_("Nothing"));
 		case ui::xyMoveView: return makeBold(_("Move View"));
@@ -524,17 +524,17 @@ std::string MouseEventManager::printXYViewEvent(const ui::XYViewEvent& xyViewEve
 }
 
 std::string MouseEventManager::printObserverEvent(const ui::ObserverEvent& observerEvent) {
-	
+
 	switch (observerEvent) {
 		case ui::obsNothing: return makeBold(_("Nothing"));
 		case ui::obsManipulate: return makeBold(_("Manipulate"));
-		case ui::obsSelect: return makeBold(_("Select")); 
+		case ui::obsSelect: return makeBold(_("Select"));
 		case ui::obsToggle: return makeBold(_("Toggle Selection"));
 		case ui::obsToggleFace: return makeBold(_("Toggle Face Selection"));
 		case ui::obsReplace: return makeBold(_("Cycle Selection"));
 		case ui::obsReplaceFace: return makeBold(_("Cycle Face Selection"));
 		case ui::obsCopyTexture: return makeBold(_("Copy Texture"));
-		case ui::obsPasteTextureProjected: return makeBold(_("PasteTexture Projected"));		
+		case ui::obsPasteTextureProjected: return makeBold(_("PasteTexture Projected"));
 		case ui::obsPasteTextureNatural: return makeBold(_("PasteTexture Natural"));
 		case ui::obsPasteTextureCoordinates: return makeBold(_("PasteTexture Coordinates"));
 		case ui::obsPasteTextureToBrush: return makeBold(_("Paste Texture to all Brush Faces"));
@@ -577,30 +577,30 @@ std::string MouseEventManager::getShortButtonName(const std::string& longName) {
 	}
 	else {
 		return "";
-	} 
+	}
 }
 
 void MouseEventManager::updateStatusText(GdkEventKey* event)
 {
 	_activeFlags = _modifiers.getKeyboardFlags(event->state);
-	
+
 	std::string statusText("");
-	
+
 	if (_activeFlags != 0) {
 		for (ButtonIdMap::iterator it = _buttonId.begin(); it != _buttonId.end(); it++) {
-			// Look up an event with this button ID and the given modifier			
+			// Look up an event with this button ID and the given modifier
 			ui::XYViewEvent xyEvent = findXYViewEvent(it->second, _activeFlags);
-			
+
 			if (xyEvent != ui::xyNothing) {
 				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
 				statusText += getShortButtonName(it->first) + ": ";
 				statusText += printXYViewEvent(xyEvent);
 				statusText += " ";
 			}
-			
-			// Look up an event with this button ID and the given modifier			
+
+			// Look up an event with this button ID and the given modifier
 			ui::ObserverEvent obsEvent = findObserverEvent(it->second, _activeFlags);
-			
+
 			if (obsEvent != ui::obsNothing) {
 				statusText += _modifiers.getModifierStr(_activeFlags, true) + "-";
 				statusText += getShortButtonName(it->first) + ": ";
@@ -609,7 +609,7 @@ void MouseEventManager::updateStatusText(GdkEventKey* event)
 			}
 		}
 	}
-	
+
 	// Pass the call
 	GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
 }

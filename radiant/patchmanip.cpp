@@ -92,7 +92,7 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
   {
     scene::INodePtr cap(GlobalPatchCreator(DEF2).createPatch());
 	parent->addChildNode(cap);
-	
+
 	Patch* capPatch = Node_getPatch(cap);
 	assert(capPatch != NULL);
 
@@ -115,7 +115,7 @@ void Patch_makeCaps(Patch& patch, const scene::INodePtr& parent, EPatchCap type,
 
 	Patch* capPatch = Node_getPatch(cap);
 	assert(capPatch != NULL);
-    
+
     patch.MakeCap(capPatch, type, ROW, false);
     capPatch->setShader(shader);
 
@@ -152,7 +152,7 @@ void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
 {
 	if (GlobalSelectionSystem().getSelectionInfo().patchCount == 0)
 	{
-		gtkutil::errorDialog(_("Cannot create caps, no patches selected."), 
+		gtkutil::errorDialog(_("Cannot create caps, no patches selected."),
 			GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
@@ -166,7 +166,7 @@ void Scene_PatchDoCap_Selected(scene::Graph& graph, const std::string& shader)
 
 		NodeVector& patchNodes = collector.getPatchNodes();
 
-		for (NodeVector::const_iterator i = patchNodes.begin(); 
+		for (NodeVector::const_iterator i = patchNodes.begin();
 			 i != patchNodes.end(); ++i)
 		{
 			Patch_makeCaps(*Node_getPatch(*i), (*i)->getParent(), dialog.getSelectedCapType(), shader);
@@ -255,7 +255,7 @@ class PatchSelectByShader :
 {
 	std::string _name;
 public:
-	PatchSelectByShader(const std::string& name) : 
+	PatchSelectByShader(const std::string& name) :
 		_name(name)
 	{}
 
@@ -282,7 +282,7 @@ void Scene_PatchSelectByShader(scene::Graph& graph, const std::string& name) {
 AABB PatchCreator_getBounds()
 {
 	AABB aabb = GlobalSelectionSystem().getWorkZone().bounds;
- 
+
   float gridSize = GlobalGrid().getGridSize();
 
   if(aabb.extents[0] == 0)
@@ -417,11 +417,11 @@ class PatchRowColumnInserter
 	bool _columns;
 	bool _atBeginning;
 public:
-	PatchRowColumnInserter(bool columns, bool atBeginning) : 
-		_columns(columns), 
+	PatchRowColumnInserter(bool columns, bool atBeginning) :
+		_columns(columns),
 		_atBeginning(atBeginning)
 	{}
-	
+
 	void operator()(Patch& patch) const {
 		patch.InsertRemove(true, _columns, _atBeginning);
 	}
@@ -435,11 +435,11 @@ class PatchRowColumnRemover
 	bool _columns;
 	bool _fromBeginning;
 public:
-	PatchRowColumnRemover(bool columns, bool fromBeginning) : 
-		_columns(columns), 
+	PatchRowColumnRemover(bool columns, bool fromBeginning) :
+		_columns(columns),
 		_fromBeginning(fromBeginning)
 	{}
-	
+
 	void operator()(Patch& patch) const {
 		patch.InsertRemove(false, _columns, _fromBeginning);
 	}
@@ -453,11 +453,11 @@ class PatchRowColumnAppender
 	bool _columns;
 	bool _atBeginning;
 public:
-	PatchRowColumnAppender(bool columns, bool atBeginning) : 
-		_columns(columns), 
+	PatchRowColumnAppender(bool columns, bool atBeginning) :
+		_columns(columns),
 		_atBeginning(atBeginning)
 	{}
-	
+
 	void operator()(Patch& patch) const {
 		patch.appendPoints(_columns, _atBeginning);
 	}
@@ -533,7 +533,7 @@ void appendRowsAtEnd(const cmd::ArgumentList& args) {
 	Scene_forEachSelectedPatch(PatchRowColumnAppender(false, false));
 }
 
-void thickenPatch(const PatchNodePtr& sourcePatch, 
+void thickenPatch(const PatchNodePtr& sourcePatch,
 				  float thickness, bool createSeams, int axis)
 {
 	// Get a shortcut to the patchcreator
@@ -556,7 +556,7 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 
 	// Select the newly created patch
 	Node_setSelected(node, true);
-	
+
 	if (createSeams && thickness > 0.0f)
 	{
 		// Allocate four new patches
@@ -566,13 +566,13 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 			patchCreator.createPatch(),
 			patchCreator.createPatch()
 		};
-		
+
 		// Now create the four walls
 		for (int i = 0; i < 4; i++)
 		{
 			// Retrieve the contained patch from the node
 			Patch* wallPatch = Node_getPatch(nodes[i]);
-			
+
 			// Create the wall patch by passing i as wallIndex
 			wallPatch->createThickenedWall(sourcePatch->getPatchInternal(), *targetPatch, i);
 
@@ -590,27 +590,27 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 			}
 		}
 	}
-	
+
 	// Invert the target patch so that it faces the opposite direction
 	targetPatch->InvertMatrix();
 }
 
 /** greebo: This collects a list of all selected patches and thickens them
  * after querying the user for the thickness and the "createSeams" boolean.
- * 
+ *
  * Note: I chose to populate a list first, because otherwise the visitor
  * class would get stuck in a loop (as the newly created patches get selected,
- * and they are thickened as well, and again and again).  
+ * and they are thickened as well, and again and again).
  */
 void thickenSelectedPatches(const cmd::ArgumentList& args)
 {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
-	
+
 	if (patchList.size() > 0)
 	{
 		UndoableCommand undo("patchThicken");
-		
+
 		ui::PatchThickenDialog dialog;
 
 		if (dialog.run() == ui::IDialog::RESULT_OK)
@@ -631,24 +631,24 @@ void thickenSelectedPatches(const cmd::ArgumentList& args)
 void createSimplePatch(const cmd::ArgumentList& args)
 {
 	ui::PatchCreateDialog dialog;
-	
+
 	if (dialog.run() == ui::IDialog::RESULT_OK)
 	{
 		UndoableCommand undo("patchCreatePlane");
-		
-		// Retrieve the boundaries 
+
+		// Retrieve the boundaries
 		AABB bounds = PatchCreator_getBounds();
-		
+
 		if (dialog.getRemoveSelectedBrush())
 		{
 			// Delete the selection, the should be only one brush selected
 			selection::algorithm::deleteSelection();
 		}
-		
+
 		// Call the PatchConstruct routine (GtkRadiant legacy)
-		Scene_PatchConstructPrefab(bounds, 
-								   GlobalTextureBrowser().getSelectedShader(), 
-								   ePlane, GlobalXYWnd().getActiveViewType(), 
+		Scene_PatchConstructPrefab(bounds,
+								   GlobalTextureBrowser().getSelectedShader(),
+								   ePlane, GlobalXYWnd().getActiveViewType(),
 								   dialog.getSelectedWidth(), dialog.getSelectedHeight());
 	}
 }
@@ -656,30 +656,30 @@ void createSimplePatch(const cmd::ArgumentList& args)
 void stitchPatchTextures(const cmd::ArgumentList& args) {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();
-	
+
 	if (patchList.size() == 2) {
 		UndoableCommand undo("patchStitchTexture");
 
-		// Fetch the instances from the selectionsystem		
-		const scene::INodePtr& targetNode = 
+		// Fetch the instances from the selectionsystem
+		const scene::INodePtr& targetNode =
 			GlobalSelectionSystem().ultimateSelected();
-			
+
 		const scene::INodePtr& sourceNode =
 			GlobalSelectionSystem().penultimateSelected();
-		
+
 		// Cast the instances onto a patch
 		Patch* source = Node_getPatch(sourceNode);
 		Patch* target = Node_getPatch(targetNode);
-		
-		if (source != NULL && target != NULL) {		
-			// Stitch the texture leaving the source patch intact 
+
+		if (source != NULL && target != NULL) {
+			// Stitch the texture leaving the source patch intact
 			target->stitchTextureFrom(*source);
 		}
 		else {
 			gtkutil::errorDialog(_("Cannot stitch textures. \nCould not cast nodes to patches."),
 							 GlobalMainFrame().getTopLevelWindow());
 		}
-		
+
 		SceneChangeNotify();
 		// Update the Texture Tools
 		ui::SurfaceInspector::Instance().queueUpdate();

@@ -20,9 +20,9 @@ SpecifierEditCombo::SpecifierEditCombo(const SpecifierTypeSet& set) :
 	// Create the dropdown containing specifier types
 	_specifierCombo = Gtk::manage(new objectives::util::TwoColumnTextCombo);
 
-	Glib::RefPtr<Gtk::ListStore> ls = 
+	Glib::RefPtr<Gtk::ListStore> ls =
 		Glib::RefPtr<Gtk::ListStore>::cast_static(_specifierCombo->get_model());
-	
+
 	for (SpecifierTypeSet::const_iterator i = set.begin();
 		 i != set.end();
 		 ++i)
@@ -34,7 +34,7 @@ SpecifierEditCombo::SpecifierEditCombo(const SpecifierTypeSet& set) :
 	}
 
 	_specifierCombo->signal_changed().connect(sigc::mem_fun(*this, &SpecifierEditCombo::_onChange));
-	
+
 	// Main hbox
 	pack_start(*_specifierCombo, true, true, 0);
 
@@ -42,7 +42,7 @@ SpecifierEditCombo::SpecifierEditCombo(const SpecifierTypeSet& set) :
 }
 
 // Get the selected Specifier
-SpecifierPtr SpecifierEditCombo::getSpecifier() const 
+SpecifierPtr SpecifierEditCombo::getSpecifier() const
 {
     return SpecifierPtr(new Specifier(
         SpecifierType::getSpecifierType(getSpecName()),
@@ -64,7 +64,7 @@ void SpecifierEditCombo::setSpecifier(SpecifierPtr spec)
 
 	_specifierCombo->get_model()->foreach_iter(
 		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-	
+
     // SpecifierType name should be found in list
     // Get an iter and set the selected item
 	_specifierCombo->set_active(finder.getIter());

@@ -9,7 +9,7 @@ class BrushManipulator(SceneNodeVisitor) :
 		if not brush.isNull():
 			print('Brush information:')
 			print('Number of faces: ' + str(brush.getNumFaces()))
-			
+
 			i = 0
 			while i < brush.getNumFaces():
 				face = brush.getFace(i)
@@ -22,7 +22,7 @@ class BrushManipulator(SceneNodeVisitor) :
 				face.fitTexture(1,1)
 
 				i += 1
-			
+
 		return 1
 
 walker = BrushManipulator()

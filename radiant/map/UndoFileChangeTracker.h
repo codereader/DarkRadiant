@@ -6,8 +6,8 @@
 #include "itextstream.h"
 #include <boost/function.hpp>
 
-class UndoFileChangeTracker : 
-	public UndoTracker, 
+class UndoFileChangeTracker :
+	public UndoTracker,
 	public MapFile
 {
 	std::size_t m_size;
@@ -17,12 +17,12 @@ class UndoFileChangeTracker :
 	boost::function<void()> m_changed;
 
 public:
-	UndoFileChangeTracker() : 
-		m_size(0), 
-		m_saved(MAPFILE_MAX_CHANGES), 
+	UndoFileChangeTracker() :
+		m_size(0),
+		m_saved(MAPFILE_MAX_CHANGES),
 		m_pending(0)
 	{}
-	
+
 	void print() {
 		globalOutputStream() << "saved: " << m_saved << " size: " << m_size << "\n";
 	}
@@ -32,13 +32,13 @@ public:
 		m_changed();
 		//print();
 	}
-	
+
 	void pop() {
 		--m_size;
 		m_changed();
 		//print();
 	}
-	
+
 	void pushOperation() {
 		if (m_size < m_saved) {
 			// redo queue has been flushed.. it is now impossible to get back to the saved state via undo/redo
@@ -46,21 +46,21 @@ public:
 		}
 		push();
 	}
-	
+
 	void clear() {
 		m_size = 0;
 		m_changed();
 		//print();
 	}
-	
+
 	void begin() {
 		m_pending = Pending(&UndoFileChangeTracker::pushOperation);
 	}
-	
+
 	void undo() {
 		m_pending = Pending(&UndoFileChangeTracker::pop);
 	}
-	
+
 	void redo() {
 		m_pending = Pending(&UndoFileChangeTracker::push);
 	}
@@ -76,7 +76,7 @@ public:
 		m_saved = m_size;
 		m_changed();
 	}
-	
+
 	bool saved() const {
 		return m_saved == m_size;
 	}

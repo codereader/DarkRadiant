@@ -27,7 +27,7 @@ GlyphInfo::GlyphInfo(const q3font::Q3GlyphInfo& q3glyph)
 
 	// Cut off fonts/
 	boost::algorithm::replace_first(texture, "fonts/", "");
-	
+
 	// Cut off file extension
 	texture = texture.substr(0, texture.rfind('.'));
 }

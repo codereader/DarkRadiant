@@ -17,7 +17,7 @@ class SpawnClassSpecifierPanel :
 {
 	// Map registration
 	static struct RegHelper {
-		RegHelper() { 
+		RegHelper() {
 			SpecifierPanelFactory::registerType(
 				SpecifierType::SPEC_SPAWNCLASS().getName(),
 				SpecifierPanelPtr(new SpawnClassSpecifierPanel())

@@ -17,10 +17,10 @@ typedef std::set<ComponentType> ComponentTypeSet;
 
 /**
  * Enumeration of Component types.
- * 
+ *
  * This is a typesafe enum containing all of the available Component types,
  * such as COMP_KILL and COMP_KO. Named static instance functions are provided
- * for all of the types, and a std::map is also available to look up a 
+ * for all of the types, and a std::map is also available to look up a
  * ComponentType instance by name (as provided by a spawnarg).
  */
 class ComponentType
@@ -28,74 +28,74 @@ class ComponentType
 private:
 	// Static enum count
 	static int enumCount;
-	
+
 	// Static map of named ComponentType instances
 	typedef std::map<std::string, ComponentType> ComponentTypeMap;
 	static ComponentTypeMap& getMap();
-	
+
 	// Integer ID of this ComponentType
 	int _id;
-	
+
 	// Raw name of this type
 	std::string _name;
-	
+
 	// User-friendly display name
 	std::string _displayName;
-	
+
 private:
-	
+
 	// Construct a named ComponentType
 	ComponentType(const std::string& name, const std::string& displayName);
-	
+
 public:
-	
+
 	/**
 	 * Get the ComponentType identified by the given name.
-	 * 
+	 *
 	 * @param name
 	 * The text name of the ComponentType to retrieve, such as "kill" or "ko".
-	 * 
+	 *
 	 * @return
 	 * The identified ComponentType if it exists.
-	 * 
+	 *
 	 * @exception ObjectivesException
 	 * Thrown if the named ComponentType does not exist.
 	 */
 	static ComponentType getComponentType(const std::string& name);
-	
+
 	/**
 	 * Get the name of this ComponentType.
-	 * 
+	 *
 	 * This returns the "raw" name of the ComponentType as used in the entity
 	 * spawnargs, such as "ai_alert" or "ko".
 	 */
 	const std::string& getName() const {
 		return _name;
 	}
-	
+
 	/**
 	 * Get the display name of this ComponentType.
-	 * 
+	 *
 	 * This returns a user-friendly display name which is suitable for
 	 * identifying the ComponentType in a dialog, such as "AI is killed".
 	 */
 	const std::string& getDisplayName() const {
 		return _displayName;
 	}
-	
+
 	/**
 	 * Get the numeric ID of this ComponentType.
 	 */
 	int getId() const {
 		return _id;
 	}
-	
+
 	/**
 	 * @name ComponentType instances.
 	 */
-	
+
 	//@{
-	
+
 	static const ComponentType& COMP_KILL();			// AI is killed
 	static const ComponentType& COMP_KO();				// AI is knocked out.
 	static const ComponentType& COMP_AI_FIND_ITEM();	// AI finds an item.
@@ -112,24 +112,24 @@ public:
 	static const ComponentType& COMP_READABLE_OPENED();		// Readable is opened
 	static const ComponentType& COMP_READABLE_CLOSED();		// Readable is closed
 	static const ComponentType& COMP_READABLE_PAGE_REACHED();	// A page of a readable is viewed
-	
+
 	//@}
-	
+
 	/**
 	 * @name ComponentType convenience sets.
 	 */
-	
+
 	//@{
-	
+
 	/** All ComponentTypes. */
 	static const ComponentTypeSet& SET_ALL();
-	
+
 	//@}
 };
 
 /**
  * Operator less for ComponentType objects.
- * 
+ *
  * This is required to allow ComponentTypes to be placed in a map or set.
  */
 inline bool operator< (const ComponentType& first, const ComponentType& second)

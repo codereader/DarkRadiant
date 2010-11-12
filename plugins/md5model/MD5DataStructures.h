@@ -35,7 +35,7 @@ std::ostream& operator<< (std::ostream& os, const MD5Joint& jt) {
 #endif
 
 /**
- * Data structure containing MD5 Vertex information. Vertices do not contain 
+ * Data structure containing MD5 Vertex information. Vertices do not contain
  * their own positional information, but are instead attached to joints
  * according to one or more "weight" parameters.
  */

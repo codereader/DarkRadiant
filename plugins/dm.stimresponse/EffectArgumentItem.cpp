@@ -25,13 +25,13 @@ EffectArgumentItem::EffectArgumentItem(
 
 	_labelBox->add(*label);
 	_labelBox->set_tooltip_text(arg.desc);
-	
+
 	// Pack the description widget into a eventbox
 	_descBox = Gtk::manage(new Gtk::EventBox);
 	Gtk::Label* descLabel = Gtk::manage(new Gtk::Label);
 	descLabel->set_markup("<b>?</b>");
 	_descBox->add(*descLabel);
-	
+
 	_descBox->set_tooltip_text(arg.desc);
 }
 
@@ -48,7 +48,7 @@ Gtk::Widget& EffectArgumentItem::getHelpWidget()
 
 void EffectArgumentItem::save()
 {
-	// Save the value to the effect 
+	// Save the value to the effect
 	_arg.value = getValue();
 }
 
@@ -90,7 +90,7 @@ std::string BooleanArgument::getValue()
 
 // Entity Argument
 EntityArgument::EntityArgument(
-		ResponseEffect::Argument& arg, 
+		ResponseEffect::Argument& arg,
 		const Glib::RefPtr<Gtk::ListStore>& entityStore) :
 	EffectArgumentItem(arg),
 	_entityStore(entityStore)
@@ -112,10 +112,10 @@ EntityArgument::EntityArgument(
 	// Now select the entity passed in the argument
 	// Find the entity using a TreeModel traversor (search the column #0)
 	gtkutil::TreeModel::SelectionFinder finder(arg.value, 0);
-	
+
 	_entityStore->foreach_iter(
 		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-	
+
 	// Select the found treeiter, if the name was found in the liststore
 	if (finder.getIter())
 	{
@@ -140,7 +140,7 @@ StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimType
 {
 	// Cast the helper class onto a ListStore and create a new treeview
 	_comboBox = Gtk::manage(new Gtk::ComboBox(_stimTypes.getListStore()));
-	
+
 	// Add the cellrenderer for the name
 	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
 	Gtk::CellRendererPixbuf* iconRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
@@ -150,7 +150,7 @@ StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimType
 
 	_comboBox->add_attribute(iconRenderer->property_pixbuf(), _stimTypes.getColumns().icon);
 	_comboBox->add_attribute(nameRenderer->property_text(), _stimTypes.getColumns().captionPlusID);
-	
+
 	iconRenderer->set_fixed_size(26, -1);
 
 	// Now select the stimtype passed in the argument
@@ -159,7 +159,7 @@ StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimType
 
 	_stimTypes.getListStore()->foreach_iter(
 		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-	
+
 	// Select the found treeiter, if the name was found in the liststore
 	if (finder.getIter())
 	{

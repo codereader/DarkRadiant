@@ -47,7 +47,7 @@ Matrix4 Matrix4::getTranslation(const Vector3& translation)
 }
 
 // Get a rotation from 2 vectors (named constructor)
-Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b) 
+Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 {
 	double angle = a.angle(b);
 	Vector3 axis = b.crossProduct(a).getNormalised();
@@ -55,7 +55,7 @@ Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 	return getRotation(axis, angle);
 }
 
-Matrix4 Matrix4::getRotation(const Vector3& axis, const double angle) 
+Matrix4 Matrix4::getRotation(const Vector3& axis, const double angle)
 {
 	// Pre-calculate the terms
 	double cosPhi = cos(angle);
@@ -63,7 +63,7 @@ Matrix4 Matrix4::getRotation(const Vector3& axis, const double angle)
 	double oneMinusCosPhi = static_cast<double>(1) - cos(angle);
 	double x = axis.x();
 	double y = axis.y();
-	double z = axis.z(); 
+	double z = axis.z();
 	return Matrix4::byColumns(
 		cosPhi + oneMinusCosPhi*x*x, oneMinusCosPhi*x*y - sinPhi*z, oneMinusCosPhi*x*z + sinPhi*y, 0,
 		oneMinusCosPhi*y*x + sinPhi*z, cosPhi + oneMinusCosPhi*y*y, oneMinusCosPhi*y*z - sinPhi*x, 0,
@@ -157,7 +157,7 @@ Matrix4 Matrix4::getTransposed() const
 Matrix4 Matrix4::getInverse() const
 {
   Matrix4 result;
-  
+
   // determinant of rotation submatrix
   double det
     = _m[0] * ( _m[5]*_m[10] - _m[9]*_m[6] )
@@ -165,7 +165,7 @@ Matrix4 Matrix4::getInverse() const
     + _m[2] * ( _m[4]*_m[9] - _m[8]*_m[5] );
 
   // throw exception here if (det*det < 1e-25)
-  
+
   // invert rotation submatrix
   det = 1.0 / det;
 
@@ -209,20 +209,20 @@ Vector4 Matrix4::transform(const Vector4& vector4) const
 }
 
 // Transform a plane
-Plane3 Matrix4::transform(const Plane3& plane) const 
+Plane3 Matrix4::transform(const Plane3& plane) const
 {
     Plane3 transformed;
     transformed.normal().x() = _m[0] * plane.normal().x() + _m[4] * plane.normal().y() + _m[8] * plane.normal().z();
     transformed.normal().y() = _m[1] * plane.normal().x() + _m[5] * plane.normal().y() + _m[9] * plane.normal().z();
     transformed.normal().z() = _m[2] * plane.normal().x() + _m[6] * plane.normal().y() + _m[10] * plane.normal().z();
-    transformed.dist() = -(	(-plane.dist() * transformed.normal().x() + _m[12]) * transformed.normal().x() + 
-                        (-plane.dist() * transformed.normal().y() + _m[13]) * transformed.normal().y() + 
+    transformed.dist() = -(	(-plane.dist() * transformed.normal().x() + _m[12]) * transformed.normal().x() +
+                        (-plane.dist() * transformed.normal().y() + _m[13]) * transformed.normal().y() +
                         (-plane.dist() * transformed.normal().z() + _m[14]) * transformed.normal().z());
     return transformed;
 }
 
 // Inverse transform a plane
-Plane3 Matrix4::inverseTransform(const Plane3& plane) const 
+Plane3 Matrix4::inverseTransform(const Plane3& plane) const
 {
     return Plane3(
         _m[ 0] * plane.normal().x() + _m[ 1] * plane.normal().y() + _m[ 2] * plane.normal().z() + _m[ 3] * plane.dist(),

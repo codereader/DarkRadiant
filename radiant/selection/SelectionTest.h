@@ -25,7 +25,7 @@ public:
   const Vector3& getNear() const {
     return _near;
   }
-  
+
   const Vector3& getFar() const {
     return _far;
   }
@@ -78,7 +78,7 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
-// A Selector looking for worldspawn primitives only. 
+// A Selector looking for worldspawn primitives only.
 class PrimitiveSelector :
 	public SelectionTestWalker
 {
@@ -95,7 +95,7 @@ public:
 	bool visit(const scene::INodePtr& node);
 };
 
-// A Selector looking for child primitives of group nodes only, non-worldspawn parent 
+// A Selector looking for child primitives of group nodes only, non-worldspawn parent
 class GroupChildPrimitiveSelector :
 	public SelectionTestWalker
 {
@@ -143,10 +143,10 @@ private:
 	SelectionSystem::EComponentMode _mode;
 
 public:
-	ComponentSelector(Selector& selector, SelectionTest& test, 
+	ComponentSelector(Selector& selector, SelectionTest& test,
 					  SelectionSystem::EComponentMode mode) :
-		_selector(selector), 
-		_test(test), 
+		_selector(selector),
+		_test(test),
 		_mode(mode)
 	{}
 
@@ -159,7 +159,7 @@ public:
 
 inline void ConstructSelectionTest(View& view, const Rectangle& selection_box)
 {
-	view.EnableScissor(selection_box.min[0], selection_box.max[0], 
+	view.EnableScissor(selection_box.min[0], selection_box.max[0],
 					   selection_box.min[1], selection_box.max[1]);
 }
 

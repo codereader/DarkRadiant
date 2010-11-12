@@ -41,12 +41,12 @@ Vector2 FaceVertexItem::getTexCentroid()
 {
 	Vector2 texCentroid(0,0);
 
-	for (Winding::const_iterator i = _sourceFace.getWinding().begin(); 
+	for (Winding::const_iterator i = _sourceFace.getWinding().begin();
 		 i != _sourceFace.getWinding().end(); ++i)
 	{
 		texCentroid += i->texcoord;
 	}
-	
+
 	// Take the average value of all the winding texcoords to retrieve the centroid
 	texCentroid /= _sourceFace.getWinding().size();
 
@@ -57,12 +57,12 @@ AABB FaceVertexItem::getTexAABB()
 {
 	AABB aabb;
 
-	for (Winding::const_iterator i = _sourceFace.getWinding().begin(); 
+	for (Winding::const_iterator i = _sourceFace.getWinding().begin();
 		 i != _sourceFace.getWinding().end(); ++i)
 	{
 		aabb.includePoint(Vector3(i->texcoord.x(), i->texcoord.y(), 0));
 	}
-	
+
 	return aabb;
 }
 
@@ -73,11 +73,11 @@ void FaceVertexItem::transform(const Matrix4& matrix)
 
 	// Get the translated texture position
 	Vector2 newTexPosition = _windingVertex.texcoord + translation;
-	
+
 	// Construct the pivot
 	Vector2 pivot;
 
-	// Check if the pivot 
+	// Check if the pivot
 	if (GlobalRegistry().get(ui::RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID) == "1")
 	{
 		pivot = getTexCentroid();
@@ -143,7 +143,7 @@ void FaceVertexItem::snapSelectedToGrid(float grid)
 		}
 
 		Matrix4 matrix = Matrix4::getTranslation(Vector3(translation.x(), translation.y(), 0));
-		
+
 		// Do the transformation
 		_parent.transform(matrix);
 	}
@@ -171,5 +171,5 @@ void FaceVertexItem::render()
 	// Call the base class
 	TexToolItem::render();
 }
-	
+
 } // namespace textool

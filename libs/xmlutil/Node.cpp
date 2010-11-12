@@ -17,7 +17,7 @@ xmlNodePtr Node::getNodePtr() const
 	return _xmlNode;
 }
 
-// Return the name of a node 
+// Return the name of a node
 const std::string Node::getName() const
 {
 	if (_xmlNode) {
@@ -32,13 +32,13 @@ const std::string Node::getName() const
 NodeList Node::getChildren() const
 {
     NodeList retval;
-    
+
     // Iterate throught the list of children, adding each child node
     // to the return list if it matches the requested name
     for (xmlNodePtr child = _xmlNode->children; child != NULL; child = child->next) {
         retval.push_back(child);
     }
-    
+
     return retval;
 }
 
@@ -51,7 +51,7 @@ Node Node::createChild(const std::string& name)
 	xmlNodePtr newChild = xmlNewChild(_xmlNode,	NULL, nodeName, NULL);
 
 	xmlFree(nodeName);
-	
+
 	// Create a new xml::Node out of this pointer and return it
 	return Node(newChild);
 }
@@ -61,7 +61,7 @@ Node Node::createChild(const std::string& name)
 NodeList Node::getNamedChildren(const std::string& name) const
 {
     NodeList retval;
-    
+
     // Iterate throught the list of children, adding each child node
     // to the return list if it matches the requested name
     for (xmlNodePtr child = _xmlNode->children; child != NULL; child = child->next) {
@@ -69,7 +69,7 @@ NodeList Node::getNamedChildren(const std::string& name) const
             retval.push_back(child);
         }
     }
-    
+
     return retval;
 }
 
@@ -93,7 +93,7 @@ std::string Node::getAttributeValue(const std::string& key) const
     // Iterate through the chain of attributes to find the requested one.
     for (xmlAttrPtr attr = _xmlNode->properties; attr != NULL; attr = attr->next) {
         if (xmlStrcmp(attr->name, reinterpret_cast<const xmlChar*>(key.c_str())) == 0) {
-            return reinterpret_cast<const char*>(attr->children->content);   
+            return reinterpret_cast<const char*>(attr->children->content);
         }
     }
 
@@ -120,7 +120,7 @@ void Node::addText(const std::string& text)
 	xmlNodePtr whitespace = xmlNewText(
 		reinterpret_cast<const xmlChar*>(text.c_str())
 	);
-	
+
 	// Add the newly allocated text as sibling of this node
 	xmlAddSibling(_xmlNode, whitespace);
 }
@@ -129,7 +129,7 @@ void Node::erase()
 {
 	// unlink the node from the list first, otherwise: crashes ahead!
 	xmlUnlinkNode(_xmlNode);
-	
+
 	// All child nodes are freed recursively
 	xmlFreeNode(_xmlNode);
 }

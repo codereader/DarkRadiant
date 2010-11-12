@@ -14,7 +14,7 @@ NullModelNode::NullModelNode(const NullModelPtr& nullModel) :
 
 NullModelNodePtr NullModelNode::InstancePtr() {
 	static NullModelNodePtr _nullModelNode;
-	
+
 	if (_nullModelNode == NULL) {
 		// Not yet instantiated, create a new NullModel
 		_nullModelNode = NullModelNodePtr(new NullModelNode);

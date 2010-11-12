@@ -44,14 +44,14 @@ class EclassModel :
 	KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
 	KeyObserverDelegate _modelObserver;
-	
+
 public:
 	EclassModel(EclassModelNode& owner,
 				const Callback& transformChanged);
-	
+
 	// Copy Constructor
 	EclassModel(const EclassModel& other,
-				EclassModelNode& owner, 
+				EclassModelNode& owner,
 				const Callback& transformChanged);
 
 	~EclassModel();
@@ -65,7 +65,7 @@ public:
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 	void snapto(float snap);
-	
+
 	void revertTransform();
 	void freezeTransform();
 
@@ -78,11 +78,11 @@ public:
 	void updateTransform();
 
 	void originChanged();
-	
+
 	void angleChanged();
-	
+
 	void rotationChanged();
-	
+
 	void modelChanged(const std::string& value);
 };
 

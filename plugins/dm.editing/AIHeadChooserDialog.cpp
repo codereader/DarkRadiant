@@ -56,7 +56,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 
 	_headsView->get_selection()->signal_changed().connect(
 		sigc::mem_fun(*this, &AIHeadChooserDialog::onHeadSelectionChanged));
-	
+
 	// Head Name column
 	_headsView->append_column(*Gtk::manage(new gtkutil::TextColumn("", _columns.name)));
 
@@ -121,7 +121,7 @@ Gtk::Widget& AIHeadChooserDialog::createButtonPanel()
 
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &AIHeadChooserDialog::onCancel));
 	_okButton->signal_clicked().connect(sigc::mem_fun(*this, &AIHeadChooserDialog::onOK));
-	
+
 	hbx->pack_end(*_okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
@@ -132,14 +132,14 @@ Gtk::Widget& AIHeadChooserDialog::createDescriptionPanel()
 {
 	// Create a GtkTextView
 	_description = Gtk::manage(new Gtk::TextView);
-	
+
 	_description->set_wrap_mode(Gtk::WRAP_WORD);
 	_description->set_editable(false);
 
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*_description));
 }
 
-void AIHeadChooserDialog::onCancel() 
+void AIHeadChooserDialog::onCancel()
 {
 	_selectedHead = "";
 	_result = RESULT_CANCEL;
@@ -147,7 +147,7 @@ void AIHeadChooserDialog::onCancel()
 	destroy();
 }
 
-void AIHeadChooserDialog::onOK() 
+void AIHeadChooserDialog::onOK()
 {
 	_result = RESULT_OK;
 
@@ -177,9 +177,9 @@ void AIHeadChooserDialog::onHeadSelectionChanged()
 	Gtk::TreeModel::iterator iter = _headsView->get_selection()->get_selected();
 
 	// Add button is enabled if there is a selection and it is not a folder.
-	if (iter) 
+	if (iter)
 	{
-		// Make the OK button active 
+		// Make the OK button active
 		_okButton->set_sensitive(true);
 		_description->set_sensitive(true);
 
@@ -187,7 +187,7 @@ void AIHeadChooserDialog::onHeadSelectionChanged()
 		_selectedHead = Glib::ustring((*iter)[_columns.name]);
 
 		// Lookup the IEntityClass instance
-		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(_selectedHead);	
+		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(_selectedHead);
 
 		if (eclass != NULL)
 		{
@@ -196,7 +196,7 @@ void AIHeadChooserDialog::onHeadSelectionChanged()
 
 			// Update the usage panel
 			Glib::RefPtr<Gtk::TextBuffer> buf = _description->get_buffer();
-			
+
 			// Create the concatenated usage string
 			std::string usage = "";
 			EntityClassAttributeList usageAttrs = eclass->getAttributeList("editor_usage");
@@ -213,7 +213,7 @@ void AIHeadChooserDialog::onHeadSelectionChanged()
 						usage += i->value;
 				}
 			}
-			
+
 			buf->set_text(usage);
 		}
 	}
@@ -235,7 +235,7 @@ void AIHeadChooserDialog::populateHeadStore()
 	for (HeadList::const_iterator i = _availableHeads.begin(); i != _availableHeads.end(); ++i)
 	{
 		// Add the entity to the list
-		Gtk::TreeModel::Row row = *_headStore->append(); 
+		Gtk::TreeModel::Row row = *_headStore->append();
 		row[_columns.name] = *i;
 	}
 }

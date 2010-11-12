@@ -30,7 +30,7 @@ public:
      * Main constructor.
      */
     Specifier(
-        const SpecifierType& type = SpecifierType::SPEC_NONE(), 
+        const SpecifierType& type = SpecifierType::SPEC_NONE(),
         const std::string& value = ""
     )
     : _type(type), _value(value)

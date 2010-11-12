@@ -10,11 +10,11 @@
 /** greebo:  This file contains code from map.cpp concerning the lookup
  * 			 of map elements (primitives and entities) by number.
  *
- * 			 No refactoring done yet, I just copied and pasted the stuff here.  
+ * 			 No refactoring done yet, I just copied and pasted the stuff here.
  */
- 
- 
-class BrushFindByIndexWalker : 
+
+
+class BrushFindByIndexWalker :
 	public scene::NodeVisitor
 {
   mutable std::size_t m_index;
@@ -34,7 +34,7 @@ public:
   }
 };
 
-class EntityFindByIndexWalker : 
+class EntityFindByIndexWalker :
 	public scene::NodeVisitor
 {
   mutable std::size_t m_index;
@@ -80,9 +80,9 @@ void SelectBrush (int entitynum, int brushnum)
   if (path.size() == 3 || (path.size() == 2 && !Node_hasChildren(path.top())))
   {
 	  Node_setSelected(path.top(), true);
-    
+
     XYWndPtr xyView = GlobalXYWnd().getActiveXY();
-    
+
     if (xyView) {
     	xyView->positionView(path.top()->worldAABB().origin);
     }
@@ -90,14 +90,14 @@ void SelectBrush (int entitynum, int brushnum)
 }
 
 
-class PrimitiveFindIndexWalker : 
+class PrimitiveFindIndexWalker :
 	public scene::NodeVisitor
 {
 	scene::INodePtr _node;
 	std::size_t& _count;
 public:
-	PrimitiveFindIndexWalker(const scene::INodePtr& node, std::size_t& count) : 
-		_node(node), 
+	PrimitiveFindIndexWalker(const scene::INodePtr& node, std::size_t& count) :
+		_node(node),
 		_count(count)
 	{}
 
@@ -119,14 +119,14 @@ public:
 	}
 };
 
-class EntityFindIndexWalker : 
+class EntityFindIndexWalker :
 	public scene::NodeVisitor
 {
 	scene::INodePtr _node;
 	std::size_t& _count;
 public:
-	EntityFindIndexWalker(const scene::INodePtr& node, std::size_t& count) : 
-		_node(node), 
+	EntityFindIndexWalker(const scene::INodePtr& node, std::size_t& count) :
+		_node(node),
 		_count(count)
 	{}
 
@@ -183,12 +183,12 @@ void DoFind(const cmd::ArgumentList& args)
 
 	dialog->setElementValue(entityEntry, sizetToStr(ent));
 	dialog->setElementValue(brushEntry, sizetToStr(br));
-	
+
 	if (dialog->run() == ui::IDialog::RESULT_OK)
 	{
 		std::string entityValue = dialog->getElementValue(entityEntry);
 		std::string brushValue = dialog->getElementValue(brushEntry);
-		
+
 		SelectBrush(strToInt(entityValue), strToInt(brushValue));
 	}
 }

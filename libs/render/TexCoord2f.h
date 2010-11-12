@@ -22,7 +22,7 @@ public:
 	TexCoord2f(const TexCoord2f& other) :
 		Vector2(other.s(), other.t())
 	{}
-	
+
 	// Copy constructor from Vector2
 	TexCoord2f(const Vector2& other) :
 		Vector2(other.x(), other.y())
@@ -40,7 +40,7 @@ public:
 	const double& t() const {
 		return y();
 	}
-	
+
 	bool operator< (const TexCoord2f& other) const {
 		if (s() != other.s()) {
 			return s() < other.s();

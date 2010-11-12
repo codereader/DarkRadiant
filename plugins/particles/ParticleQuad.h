@@ -5,7 +5,7 @@ namespace particles
 {
 
 /**
- * Each particle stage consists of a bunch of quads. 
+ * Each particle stage consists of a bunch of quads.
  * A quad in turn consists of 4 vertices, each of them carrying
  * 3D coordinates, a normal vector, texture coords and a vertex colour.
  */
@@ -41,7 +41,7 @@ struct ParticleQuad
 	ParticleQuad()
 	{}
 
-	ParticleQuad(float size) 
+	ParticleQuad(float size)
 	{
 		verts[0] = Vertex(Vector3(-size, +size, 0), Vector2(0,0));
 		verts[1] = Vertex(Vector3(+size, +size, 0), Vector2(1,0));
@@ -52,15 +52,15 @@ struct ParticleQuad
 	/**
 	 * Create a new quad, using the given size and angle.
 	 * Specify an optional vertex colour which is assigned to all four corners.
-	 * 
+	 *
 	 * [Optional]: s0 and sWidth are used for particle animation frames.
 	 *
 	 * @aspect: scales the horizontal coords by this factor.
 	 * @s0: defines the horizontal frame start coordinate in texture space (s).
 	 * @sWidth: defines the width of this frame in texture space.
 	 */
-	ParticleQuad(float size, float aspect, float angle, const Vector4& colour = Vector4(1,1,1,1), 
-				 const Vector3& normal = Vector3(0,0,1), 
+	ParticleQuad(float size, float aspect, float angle, const Vector4& colour = Vector4(1,1,1,1),
+				 const Vector3& normal = Vector3(0,0,1),
 				 float s0 = 0.0f, float sWidth = 1.0f, float t0 = 0.0f, float tWidth = 1.0f)
 	{
 		double cosPhi = cos(degrees_to_radians(angle));

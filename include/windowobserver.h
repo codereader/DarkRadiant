@@ -31,7 +31,7 @@ typedef Vector2 WindowVector;
 typedef struct _GdkEventButton GdkEventButton;
 
 /* greebo: The abstract base class defining a window observer.
- * It has to handle all the mouseDown/Up/Move and keyboard events 
+ * It has to handle all the mouseDown/Up/Move and keyboard events
  * as well as window resizing.
  */
 class WindowObserver

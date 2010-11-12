@@ -16,7 +16,7 @@ void PatchParser::parseMatrix(parser::DefTokeniser& tok, IPatch& patch) const
 		tok.assertNextToken("(");
 
 		// For each column
-		for (std::size_t r=0; r < patch.getHeight(); r++) 
+		for (std::size_t r=0; r < patch.getHeight(); r++)
 		{
 			tok.assertNextToken("(");
 

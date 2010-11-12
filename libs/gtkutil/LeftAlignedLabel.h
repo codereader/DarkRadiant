@@ -18,7 +18,7 @@ public:
 	 */
 	LeftAlignedLabel(const std::string& text) :
 		Gtk::Label()
-	{ 
+	{
 		set_markup(text);
 		set_alignment(0.0f, 0.5f);
 	}

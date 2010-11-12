@@ -4,7 +4,7 @@
 #include "Curve.h"
 
 namespace entity {
-		
+
 	namespace {
 		const std::string curve_CatmullRomSpline = "curve_CatmullRomSpline";
 	}
@@ -14,7 +14,7 @@ class CurveCatmullRom :
 {
 public:
 	CurveCatmullRom(const Callback& callback);
-	
+
 	// Subdivides the segments between the control points
 	virtual void tesselate();
 
@@ -26,8 +26,8 @@ public:
 
 	// Removes the given list of control points
 	virtual void removeControlPoints(IteratorList iterators);
-	
-	// Inserts control points before the specified list of iterators.  
+
+	// Inserts control points before the specified list of iterators.
 	virtual void insertControlPointsAt(IteratorList iterators);
 
 private:

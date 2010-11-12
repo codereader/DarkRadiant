@@ -73,7 +73,7 @@ DistanceComponentEditor::DistanceComponentEditor(Component& component) :
 void DistanceComponentEditor::writeToComponent() const
 {
     assert(_component);
-    
+
 	_component->setArgument(0, _entity->get_text());
 	_component->setArgument(1, _location->get_text());
 	_component->setArgument(2, doubleToStr(_distance->get_value()));

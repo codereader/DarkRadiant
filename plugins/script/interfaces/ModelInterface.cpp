@@ -48,7 +48,7 @@ std::string ScriptModelNode::getFilename()
 {
 	model::ModelNodePtr modelNode = Node_getModel(*this);
 	if (modelNode == NULL) return "";
-	
+
 	return modelNode->getIModel().getFilename();
 }
 
@@ -56,7 +56,7 @@ std::string ScriptModelNode::getModelPath()
 {
 	model::ModelNodePtr modelNode = Node_getModel(*this);
 	if (modelNode == NULL) return "";
-	
+
 	return modelNode->getIModel().getModelPath();
 }
 
@@ -64,7 +64,7 @@ int ScriptModelNode::getSurfaceCount()
 {
 	model::ModelNodePtr modelNode = Node_getModel(*this);
 	if (modelNode == NULL) return -1;
-	
+
 	return modelNode->getIModel().getSurfaceCount();
 }
 
@@ -72,7 +72,7 @@ int ScriptModelNode::getVertexCount()
 {
 	model::ModelNodePtr modelNode = Node_getModel(*this);
 	if (modelNode == NULL) return -1;
-	
+
 	return modelNode->getIModel().getVertexCount();
 }
 
@@ -80,7 +80,7 @@ int ScriptModelNode::getPolyCount()
 {
 	model::ModelNodePtr modelNode = Node_getModel(*this);
 	if (modelNode == NULL) return -1;
-	
+
 	return modelNode->getIModel().getPolyCount();
 }
 
@@ -120,7 +120,7 @@ model::MaterialList ScriptModelNode::getActiveMaterials()
 			*i = remap;
 		}
 	}
-	
+
 	return materials;
 }
 
@@ -129,15 +129,15 @@ bool ScriptModelNode::isModel(const ScriptSceneNode& node) {
 	return Node_isModel(node);
 }
 
-// "Cast" service for Python, returns a ScriptModelNode. 
+// "Cast" service for Python, returns a ScriptModelNode.
 // The returned node is non-NULL if the cast succeeded
 ScriptModelNode ScriptModelNode::getModel(const ScriptSceneNode& node) {
 	// Try to cast the node onto a model
 	model::ModelNodePtr modelNode = Node_getModel(node);
-	
+
 	// Construct a modelNode (contained node is NULL if not a model)
-	return ScriptModelNode(modelNode != NULL 
-                           ? node 
+	return ScriptModelNode(modelNode != NULL
+                           ? node
                            : ScriptSceneNode(scene::INodePtr()));
 }
 
@@ -159,7 +159,7 @@ void ModelInterface::registerInterface(boost::python::object& nspace)
 	;
 
 	// Add the ModelSurface interface
-	nspace["ModelSurface"] = boost::python::class_<ScriptModelSurface>( 
+	nspace["ModelSurface"] = boost::python::class_<ScriptModelSurface>(
 		"ModelSurface", boost::python::init<const model::IModelSurface&>() )
 		.def("getNumVertices", &ScriptModelSurface::getNumVertices)
 		.def("getNumTriangles", &ScriptModelSurface::getNumTriangles)
@@ -171,7 +171,7 @@ void ModelInterface::registerInterface(boost::python::object& nspace)
 	;
 
 	// Add the ModelNode interface
-	nspace["ModelNode"] = boost::python::class_<ScriptModelNode, 
+	nspace["ModelNode"] = boost::python::class_<ScriptModelNode,
 		boost::python::bases<ScriptSceneNode> >("ModelNode", boost::python::init<const scene::INodePtr&>() )
 		.def("getFilename", &ScriptModelNode::getFilename)
 		.def("getModelPath", &ScriptModelNode::getModelPath)
@@ -185,10 +185,10 @@ void ModelInterface::registerInterface(boost::python::object& nspace)
 	// Add the "isModel" and "getModel" methods to all ScriptSceneNodes
 	boost::python::object sceneNode = nspace["SceneNode"];
 
-	boost::python::objects::add_to_namespace(sceneNode, 
+	boost::python::objects::add_to_namespace(sceneNode,
 		"isModel", boost::python::make_function(&ScriptModelNode::isModel));
 
-	boost::python::objects::add_to_namespace(sceneNode, 
+	boost::python::objects::add_to_namespace(sceneNode,
 		"getModel", boost::python::make_function(&ScriptModelNode::getModel));
 }
 

@@ -17,7 +17,7 @@ AIVocalSetPreview::AIVocalSetPreview() :
 	Gtk::HBox(false, 12)
 {
 	pack_start(createControlPanel(), true, true, 0);
-	
+
 	// Trigger the initial update of the widgets
 	update();
 
@@ -28,25 +28,25 @@ Gtk::Widget& AIVocalSetPreview::createControlPanel()
 {
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 	vbox->set_size_request(200, -1);
-	
+
 	// Create the playback button
 	_playButton = Gtk::manage(new Gtk::Button(Gtk::Stock::MEDIA_PLAY));
 	_stopButton = Gtk::manage(new Gtk::Button(Gtk::Stock::MEDIA_STOP));
 
 	_playButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetPreview::onPlay));
 	_stopButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetPreview::onStop));
-	
+
 	Gtk::HBox* btnHBox = Gtk::manage(new Gtk::HBox(true, 6));
 
 	btnHBox->pack_start(*_playButton, true, true, 0);
 	btnHBox->pack_start(*_stopButton, true, true, 0);
-	
+
 	vbox->pack_end(*btnHBox, false, false, 0);
-	
+
 	_statusLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	vbox->pack_end(*_statusLabel, false, false, 0);
-	
-	return *vbox; 
+
+	return *vbox;
 }
 
 void AIVocalSetPreview::setVocalSetEclass(const IEntityClassPtr& vocalSetDef)
@@ -98,7 +98,7 @@ void AIVocalSetPreview::onPlay()
 	_statusLabel->set_text("");
 
 	std::string file = getRandomSoundFile();
-	
+
 	if (!file.empty())
 	{
 		// Pass the call to the sound manager

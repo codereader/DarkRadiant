@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 class Matrix4;
 
-/* greebo: The texture definition structure, containing the scale, 
- * rotation and shift values of an applied texture. 
+/* greebo: The texture definition structure, containing the scale,
+ * rotation and shift values of an applied texture.
  * At some places this is referred to as "fake" texture coordinates.
  */
 class GenericTextureDefinition {

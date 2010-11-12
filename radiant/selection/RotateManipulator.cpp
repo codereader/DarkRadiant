@@ -75,11 +75,11 @@ void RotateManipulator::UpdateColours()
     _circleScreen.setColour(colourSelected(Manipulator::COLOUR_SCREEN(), _selectableScreen.isSelected()));
     _circleSphere.setColour(colourSelected(Manipulator::COLOUR_SPHERE(), false));
 }
-  
+
 void RotateManipulator::updateCircleTransforms()  {
     Vector3 localViewpoint(
     	matrix4_transformed_direction(
-    		_pivot._worldSpace.getTransposed(), 
+    		_pivot._worldSpace.getTransposed(),
     		_pivot._viewpointSpace.z().getVector3())
     );
 
@@ -88,7 +88,7 @@ void RotateManipulator::updateCircleTransforms()  {
     {
       _local2worldX = Matrix4::getIdentity();
       _local2worldX.y().getVector3() = g_vector3_axis_x.crossProduct(localViewpoint).getNormalised();
-      _local2worldX.z().getVector3() = _local2worldX.x().getVector3().crossProduct( 
+      _local2worldX.z().getVector3() = _local2worldX.x().getVector3().crossProduct(
         											_local2worldX.y().getVector3()).getNormalised();
       matrix4_premultiply_by_matrix4(_local2worldX, _pivot._worldSpace);
     }
@@ -98,7 +98,7 @@ void RotateManipulator::updateCircleTransforms()  {
     {
       _local2worldY = Matrix4::getIdentity();
       _local2worldY.z().getVector3() = g_vector3_axis_y.crossProduct(localViewpoint).getNormalised();
-      _local2worldY.x().getVector3() = _local2worldY.y().getVector3().crossProduct( 
+      _local2worldY.x().getVector3() = _local2worldY.y().getVector3().crossProduct(
       											 		_local2worldY.z().getVector3()).getNormalised();
       matrix4_premultiply_by_matrix4(_local2worldY, _pivot._worldSpace);
     }
@@ -108,7 +108,7 @@ void RotateManipulator::updateCircleTransforms()  {
     {
       _local2worldZ = Matrix4::getIdentity();
       _local2worldZ.x().getVector3() = g_vector3_axis_z.crossProduct(localViewpoint).getNormalised();
-      _local2worldZ.y().getVector3() = _local2worldZ.z().getVector3().crossProduct( 
+      _local2worldZ.y().getVector3() = _local2worldZ.z().getVector3().crossProduct(
       												_local2worldZ.x().getVector3()).getNormalised();
       matrix4_premultiply_by_matrix4(_local2worldZ, _pivot._worldSpace);
     }
@@ -179,13 +179,13 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
       {
         SelectionIntersection best;
         LineLoop_BestPoint(local2view, &_circleScreen.front(), _circleScreen.size(), best);
-        selector.addSelectable(best, &_selectableScreen); 
+        selector.addSelectable(best, &_selectableScreen);
       }
 
       {
         SelectionIntersection best;
         Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.front(), _circleSphere.size(), best);
-        selector.addSelectable(best, &_selectableSphere); 
+        selector.addSelectable(best, &_selectableSphere);
       }
     }
 

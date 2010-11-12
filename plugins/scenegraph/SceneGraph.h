@@ -32,20 +32,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 namespace scene
 {
 
-/** 
+/**
  * Implementing class for the scenegraph.
- * 
+ *
  * \ingroup scenegraph
  * \see scene::Graph
  */
-class SceneGraph : 
+class SceneGraph :
 	public Graph
 {
 	typedef std::list<Graph::Observer*> ObserverList;
 	ObserverList _sceneObservers;
 
 	Signal _boundsChanged;
-	
+
 	// The root-element, the scenegraph starts here
 	scene::INodePtr _root;
 
@@ -55,7 +55,7 @@ class SceneGraph :
 	std::size_t _visitedSPNodes;
 	std::size_t _skippedSPNodes;
 
-public:	
+public:
 	SceneGraph();
 
 	// RegisterableModule implementation
@@ -63,7 +63,7 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 	void shutdownModule();
-  
+
 	/** greebo: Adds/removes an observer from the scenegraph,
 	 * 			to get notified upon insertions/deletions
 	 */

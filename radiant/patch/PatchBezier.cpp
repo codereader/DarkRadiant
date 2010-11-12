@@ -7,7 +7,7 @@
 		const std::string RKEY_PATCH_SUBDIVIDE_THRESHOLD = "user/ui/patch/subdivideThreshold";
 	}
 
-/* greebo: These are a lot of helper functions related to bezier curves 
+/* greebo: These are a lot of helper functions related to bezier curves
  */
 
 void BezierInterpolate(BezierCurve *pCurve) {
@@ -21,7 +21,7 @@ bool BezierCurve::isCurved() const
 	// Calculate the deltas
 	Vector3 vTemp(right - left);
 	Vector3 v1(crd - left);
-	
+
 	if (v1 == g_vector3_identity || vTemp == v1) // return 0 if 1->2 == 0 or 1->2 == 1->3
 	{
 		return false;
@@ -40,7 +40,7 @@ bool BezierCurve::isCurved() const
 
 	Vector3 v3(vTemp);
 	const double width = v3.getLength();
-	
+
 	v3 *= 1.0 / width;
 
 	if (v1 == v3 && v2 == v3)
@@ -64,7 +64,7 @@ bool BezierCurve::isCurved() const
 }
 
 /**
- * greebo: The vertex interpolation works like this: 
+ * greebo: The vertex interpolation works like this:
  *
  * The original segment is LEFT >> CRD >> RIGHT, which will be sudivided into two segments: "left" and "right".
  *
@@ -73,11 +73,11 @@ bool BezierCurve::isCurved() const
  *
  * In the end, the two segments will still be using the LEFT and RIGHT vertices (which is important as these are the
  * "fixed" control points of the patch, but the CRD one will be disregarded.
- 
-   LEFT O 
-        |   
+
+   LEFT O
         |
-        | 
+        |
+        |
         |
         |
         |
@@ -97,7 +97,7 @@ void BezierCurve::interpolate(BezierCurve* leftCurve, BezierCurve* rightCurve) c
 	leftCurve->left = left;
 	rightCurve->right = right;
 
-	// The mid-point of the current curve 
+	// The mid-point of the current curve
 	leftCurve->crd = vector3_mid(left, crd);		// ip_left
 	rightCurve->crd = vector3_mid(crd, right);		// ip_right
 	leftCurve->right = rightCurve->left = vector3_mid(leftCurve->crd, rightCurve->crd); // ip_crd
@@ -131,7 +131,7 @@ void BezierCurveTree_FromCurveList(BezierCurveTree *pTree, GSList *pCurveList, s
 {
 	GSList* leftList = NULL;
 	GSList* rightList = NULL;
-	
+
 	bool listSplit = false;
 
 	// Traverse the list and interpolate all curves which satisfy the "isCurved" condition

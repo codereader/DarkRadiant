@@ -14,12 +14,12 @@
 namespace module {
 
 	namespace {
-		const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory 
+		const std::string PLUGINS_DIR = "plugins/"; ///< name of plugins directory
 		const std::string MODULES_DIR = "modules/"; ///< name of modules directory
 	}
 
 // Constructor sets platform-specific extension to match
-Loader::Loader(const std::string& path) : 
+Loader::Loader(const std::string& path) :
 	_path(path),
 #if defined(WIN32)
 	  _ext(".dll")
@@ -34,12 +34,12 @@ void Loader::operator() (const std::string& fileName) const {
 	if (boost::algorithm::iends_with(fileName, _ext)) {
 		std::string fullName = _path + fileName;
 		globalOutputStream() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
-		
+
 		// Create the encapsulator class
 		DynamicLibraryPtr library(new DynamicLibrary(fullName));
-		
+
 		// greebo: Invoke the library loader, which will add the library to the list
-		// on success. If the load fails, the shared pointer doesn't get added and 
+		// on success. If the load fails, the shared pointer doesn't get added and
 		// self-destructs at the end of this scope.
 		DynamicLibraryLoader(library, _dynamicLibraryList);
 	}
@@ -47,7 +47,7 @@ void Loader::operator() (const std::string& fileName) const {
 
 /** Load all of the modules in the DarkRadiant install directory. Modules
  * are loaded from modules/ and plugins/.
- * 
+ *
  * @root: The root directory to search.
  */
 void Loader::loadModules(const std::string& root) {
@@ -60,7 +60,7 @@ void Loader::loadModules(const std::string& root) {
     // Load modules and plugins
 	Loader modulesLoader(modulesPath);
 	Loader pluginsLoader(pluginsPath);
-	
+
 	Directory_forEach(modulesPath, modulesLoader);
 
     // Plugins are optional, so catch the exception
@@ -85,7 +85,7 @@ void Loader::unloadModules()
 	}
 }
 
-// Initialise the static DLL list 
+// Initialise the static DLL list
 DynamicLibraryList Loader::_dynamicLibraryList;
 
 } // namespace module

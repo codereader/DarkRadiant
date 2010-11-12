@@ -25,60 +25,60 @@ namespace ui {
 		const char* const WINDOW_TITLE = N_("Arbitrary Transformation");
 		const char* const LABEL_ROTATION = N_("Rotation");
 		const char* const LABEL_SCALE = N_("Scale");
-		
+
 		const char* const LABEL_ROTX = N_("X-Axis Rotate:");
 		const char* const LABEL_ROTY = N_("Y-Axis Rotate:");
 		const char* const LABEL_ROTZ = N_("Z-Axis Rotate:");
-		
+
 		const char* const LABEL_SCALEX = N_("X-Axis Scale:");
 		const char* const LABEL_SCALEY = N_("Y-Axis Scale:");
 		const char* const LABEL_SCALEZ = N_("Z-Axis Scale:");
-		
+
 		const char* const LABEL_STEP = N_("Step:");
-		
+
 		const std::string RKEY_ROOT = "user/ui/transformDialog/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 		const std::string RKEY_ROTX_STEP = RKEY_ROOT + "rotXStep";
 		const std::string RKEY_ROTY_STEP = RKEY_ROOT + "rotYStep";
 		const std::string RKEY_ROTZ_STEP = RKEY_ROOT + "rotZStep";
-		
+
 		const std::string RKEY_SCALEX_STEP = RKEY_ROOT + "scaleXStep";
 		const std::string RKEY_SCALEY_STEP = RKEY_ROOT + "scaleYStep";
 		const std::string RKEY_SCALEZ_STEP = RKEY_ROOT + "scaleZStep";
 	}
 
-TransformDialog::TransformDialog() 
+TransformDialog::TransformDialog()
 : gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-	
+
 	// Create all the widgets and pack them into the window
 	populateWindow();
-	
+
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(this);
-	
+
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
-	
+
 	// Update the widget sensitivity
 	update();
-	
+
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-	
+
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 }
 
 void TransformDialog::onRadiantShutdown() {
-	
+
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-	
+
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(this);
 
@@ -88,15 +88,15 @@ void TransformDialog::onRadiantShutdown() {
 
 TransformDialogPtr& TransformDialog::InstancePtr() {
 	static TransformDialogPtr _instancePtr;
-	
+
 	if (_instancePtr == NULL) {
 		// Not yet instantiated, do it now
 		_instancePtr = TransformDialogPtr(new TransformDialog);
-		
+
 		// Register this instance with GlobalRadiant() at once
 		GlobalRadiant().addEventListener(_instancePtr);
 	}
-	
+
 	return _instancePtr;
 }
 
@@ -105,7 +105,7 @@ TransformDialog& TransformDialog::Instance() {
 }
 
 // The command target
-void TransformDialog::toggle(const cmd::ArgumentList& args) 
+void TransformDialog::toggle(const cmd::ArgumentList& args)
 {
 	Instance().toggleVisibility();
 }
@@ -115,37 +115,37 @@ void TransformDialog::populateWindow()
 	// Create the overall vbox and add it to the window container
 	_dialogVBox = Gtk::manage(new Gtk::VBox(false, 6));
 	add(*_dialogVBox);
-	
+
 	// Create the rotation label (bold font)
 	_rotateLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_ROTATION) + "</span>"
     ));
 	_dialogVBox->pack_start(*_rotateLabel, false, false, 0);
-    
+
     // Setup the table with default spacings
 	_rotateTable = Gtk::manage(new Gtk::Table(3, 2, false));
 	_rotateTable->set_col_spacings(12);
 	_rotateTable->set_row_spacings(6);
-    
+
     // Pack it into an alignment so that it is indented
 	Gtk::Widget* rotAlignment = Gtk::manage(new gtkutil::LeftAlignment(*_rotateTable, 18, 1.0));
 	_dialogVBox->pack_start(*rotAlignment, false, false, 0);
-    
+
     _entries["rotateX"] = createEntryRow(_(LABEL_ROTX), *_rotateTable, 0, true, 0);
     _entries["rotateY"] = createEntryRow(_(LABEL_ROTY), *_rotateTable, 1, true, 1);
     _entries["rotateZ"] = createEntryRow(_(LABEL_ROTZ), *_rotateTable, 2, true, 2);
-    
+
     // Create the scale label (bold font)
 	_scaleLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_SCALE) + "</span>"
     ));
 	_dialogVBox->pack_start(*_scaleLabel, false, false, 0);
-    
+
     // Setup the table with default spacings
 	_scaleTable = Gtk::manage(new Gtk::Table(3, 2, false));
 	_scaleTable->set_col_spacings(12);
 	_scaleTable->set_row_spacings(6);
-    
+
     // Pack it into an alignment so that it is indented
 	Gtk::Widget* scaleAlignment = Gtk::manage(new gtkutil::LeftAlignment(*_scaleTable, 18, 1.0));
 	_dialogVBox->pack_start(*scaleAlignment, false, false, 0);
@@ -153,7 +153,7 @@ void TransformDialog::populateWindow()
 	_entries["scaleX"] = createEntryRow(_(LABEL_SCALEX), *_scaleTable, 0, false, 0);
     _entries["scaleY"] = createEntryRow(_(LABEL_SCALEY), *_scaleTable, 1, false, 1);
     _entries["scaleZ"] = createEntryRow(_(LABEL_SCALEZ), *_scaleTable, 2, false, 2);
-    
+
     // Connect the step values to the according registry values
    using namespace gtkutil;
 	_connector.addObject(
@@ -192,7 +192,7 @@ void TransformDialog::populateWindow()
          new SerialisableTextEntryWrapper(_entries["scaleZ"].step)
       )
    );
-    
+
     // Connect all the arrow buttons
     for (EntryRowMap::iterator i = _entries.begin(); i != _entries.end(); ++i)
 	{
@@ -205,58 +205,58 @@ void TransformDialog::populateWindow()
 }
 
 TransformDialog::EntryRow TransformDialog::createEntryRow(
-	const std::string& label, Gtk::Table& table, int row, bool isRotator, int axis) 
+	const std::string& label, Gtk::Table& table, int row, bool isRotator, int axis)
 {
 	EntryRow entryRow;
-	
+
 	entryRow.isRotator = isRotator;
 	entryRow.axis = axis;
-	
+
 	// greebo: The rotation direction is reversed for X and Z rotations
 	// This has no mathematical meaning, it's just for looking right.
 	entryRow.direction = (isRotator && axis != 1) ? -1 : 1;
-	
+
 	// Create the label
 	entryRow.label = Gtk::manage(new gtkutil::LeftAlignedLabel(label));
 	table.attach(*entryRow.label, 0, 1, row, row + 1);
-	
+
 	entryRow.hbox = Gtk::manage(new Gtk::HBox(false, 6));
-	
+
 	// Create the control buttons (zero spacing hbox)
 	{
 		Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 0));
-		
+
 		entryRow.smaller = ControlButtonPtr(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_left.png"))
 		);
 		entryRow.smaller->set_size_request(15, 24);
-		
+
 		hbox->pack_start(*entryRow.smaller, false, false, 0);
-		
+
 		entryRow.larger = ControlButtonPtr(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_right.png"))
 		);
 		entryRow.larger->set_size_request(15, 24);
 		hbox->pack_start(*entryRow.larger, false, false, 0);
-		
+
 		entryRow.hbox->pack_start(*hbox, false, false, 0);
 	}
-	
+
 	// Create the label
-	entryRow.stepLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_STEP))); 
+	entryRow.stepLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_STEP)));
 
 	entryRow.hbox->pack_start(*entryRow.stepLabel, false, false, 0);
-	
+
 	// Create the entry field
 	entryRow.step = Gtk::manage(new Gtk::Entry);
 	entryRow.step->set_width_chars(5);
 	entryRow.step->signal_changed().connect(sigc::mem_fun(*this, &TransformDialog::onStepChanged));
 
 	entryRow.hbox->pack_start(*entryRow.step, false, false, 0);
-	
+
 	// Pack the hbox into the table
 	table.attach(*entryRow.hbox, 1, 2, row, row + 1);
-	
+
 	// Return the filled structure
 	return entryRow;
 }
@@ -307,22 +307,22 @@ void TransformDialog::onStepChanged()
 {
 	// Save the contents into the registry
 	saveToRegistry();
-} 
+}
 
 void TransformDialog::onClickLarger(EntryRow& row)
 {
 	// Get the current step increment
 	float step = strToFloat(row.step->get_text());
-	
+
 	// Determine the action
 	if (row.isRotator)
 	{
 		// Do a rotation
 		Vector3 eulerXYZ;
-		
+
 		// Store the value into the right axis
 		eulerXYZ[row.axis] = step * row.direction;
-		
+
 		// Pass the call to the algorithm functions
 		selection::algorithm::rotateSelected(eulerXYZ);
 	}
@@ -330,10 +330,10 @@ void TransformDialog::onClickLarger(EntryRow& row)
 	{
 		// Do a scale
 		Vector3 scaleXYZ(1,1,1);
-		
+
 		// Store the value into the right axis
 		scaleXYZ[row.axis] = step;
-		
+
 		// Pass the call to the algorithm functions
 		selection::algorithm::scaleSelected(scaleXYZ);
 	}
@@ -343,16 +343,16 @@ void TransformDialog::onClickSmaller(EntryRow& row)
 {
 	// Get the current value and the step increment
 	float step = strToFloat(row.step->get_text());
-	
+
 	// Determine the action
 	if (row.isRotator)
 	{
 		// Do a rotation
 		Vector3 eulerXYZ;
-		
+
 		// Store the value into the right axis
 		eulerXYZ[row.axis] = -step * row.direction;
-		
+
 		// Pass the call to the algorithm functions
 		selection::algorithm::rotateSelected(eulerXYZ);
 	}
@@ -360,10 +360,10 @@ void TransformDialog::onClickSmaller(EntryRow& row)
 	{
 		// Do a scale
 		Vector3 scaleXYZ(1,1,1);
-		
+
 		// Store the value into the right axis
 		scaleXYZ[row.axis] = 1/step;
-		
+
 		// Pass the call to the algorithm functions
 		selection::algorithm::scaleSelected(scaleXYZ);
 	}

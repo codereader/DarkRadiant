@@ -23,7 +23,7 @@ public:
 		SECTION_USER = 100,
 	};
 
-	/** 
+	/**
 	 * Adds a new ortho context menu item in the given section.
 	 *
 	 * @section: an integer value referring to the Section enum above.

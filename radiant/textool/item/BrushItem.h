@@ -14,7 +14,7 @@ class BrushItem :
 
 public:
 	// Constructor, allocates all child FacItems
-	BrushItem(Brush& sourceBrush); 
+	BrushItem(Brush& sourceBrush);
 
     // destructor
 	virtual ~BrushItem() {}
@@ -29,7 +29,7 @@ public:
 	virtual void selectRelated();
 
 }; // class BrushItem
-	
+
 } // namespace TexTool
 
 #endif /*BRUSHITEM_H_*/

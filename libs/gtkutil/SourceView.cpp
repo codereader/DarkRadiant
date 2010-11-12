@@ -25,17 +25,17 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	std::vector<Glib::ustring> path;
 	path.push_back(langFilesDir);
 
-	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager = 
+	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager =
 		gtksourceview::SourceStyleSchemeManager::get_default();
 
 	styleSchemeManager->set_search_path(path);
 	styleSchemeManager->force_rescan();
-	
+
 	_langManager = gtksourceview::SourceLanguageManager::create();
 	_langManager->set_search_path(path);
-	
+
 	Glib::RefPtr<gtksourceview::SourceLanguage> lang = _langManager->get_language(language);
-	
+
 	if (!lang)
 	{
 		globalErrorStream() << "SourceView: Cannot find language " << language << " in " << langFilesDir << std::endl;
@@ -55,14 +55,14 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	}
 
 	_view = Gtk::manage(Gtk::manage(new gtksourceview::SourceView(_buffer)));
-	
+
 	_view->set_size_request(0, -1); // allow shrinking
 	_view->set_wrap_mode(Gtk::WRAP_WORD);
 	_view->set_editable(!readOnly);
-	
+
 	_view->set_show_line_numbers(true);
 	_view->set_auto_indent(true);
-	
+
 	// Use a fixed width font
 	PangoFontDescription* fontDesc = pango_font_description_from_string("Monospace");
 
@@ -73,7 +73,7 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 
 	// Use a tab size of 4
 	_view->set_tab_width(4);
-	
+
 	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_view->gobj()));
 
 	add(*_view);

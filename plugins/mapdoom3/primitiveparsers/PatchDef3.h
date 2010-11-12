@@ -5,7 +5,7 @@
 
 namespace map
 {
-	
+
 class PatchDef3Parser :
 	public PatchParser
 {

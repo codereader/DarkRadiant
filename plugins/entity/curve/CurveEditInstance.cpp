@@ -58,20 +58,20 @@ void CurveEditInstance::setSelected(bool selected) {
 
 unsigned int CurveEditInstance::numSelected() const {
 	unsigned int returnValue = 0;
-	
+
 	for (Selectables::const_iterator i = _selectables.begin(); i != _selectables.end(); ++i) {
 		if (i->isSelected()) {
 			returnValue++;
 		}
 	}
-	
+
     return returnValue;
 }
 
 Curve::IteratorList CurveEditInstance::getSelected() {
 	// This is the list of iterators to be removed
 	Curve::IteratorList iterators;
-	
+
 	ControlPoints::iterator p = _controlPointsTransformed.begin();
     for (Selectables::const_iterator i = _selectables.begin(); i != _selectables.end(); ++i, ++p)
     {
@@ -80,48 +80,48 @@ Curve::IteratorList CurveEditInstance::getSelected() {
     		iterators.push_back(p);
     	}
     }
-    
+
     return iterators;
 }
 
 void CurveEditInstance::removeSelectedControlPoints() {
 	unsigned int numPointsToRemove = numSelected();
-	
+
 	if (numPointsToRemove == 0) {
 		globalErrorStream() << "Can't remove any points, no control vertices selected.\n";
 		return;
 	}
-	
+
 	if (_controlPoints.size() - numPointsToRemove < 3) {
 		// Can't remove so many points
 		globalErrorStream() << "Can't remove so many points, curve would end up with less than 3 points.\n";
 		return;
 	}
-	
+
 	// This is the list of iterators to be removed
 	Curve::IteratorList iterators = getSelected();
-	
+
 	// De-select everything before removal
     setSelected(false);
-    
+
     // Now remove the points
     _curve.removeControlPoints(iterators);
 }
 
 void CurveEditInstance::insertControlPointsAtSelected() {
 	unsigned int numPointsToRemove = numSelected();
-	
+
 	if (numPointsToRemove == 0) {
 		globalErrorStream() << "Can't insert any points, no control vertices selected.\n";
 		return;
 	}
-	
+
 	// This is the list of insert points
 	Curve::IteratorList iterators = getSelected();
-    
+
     // De-select everything before removal
     setSelected(false);
-    
+
     // Now remove the points
     _curve.insertControlPointsAt(iterators);
 }
@@ -133,7 +133,7 @@ void CurveEditInstance::write(const std::string& key, Entity& entity) {
 
 void CurveEditInstance::transform(const Matrix4& matrix, bool selectedOnly) {
 	ControlPointTransformator transformator(matrix);
-	
+
   	if (selectedOnly) {
     	forEachSelected(transformator);
   	}
@@ -152,8 +152,8 @@ void CurveEditInstance::updateSelected() const {
     ControlPointAdder adder(m_selectedRender, colour_selected);
     forEachSelected(adder);
 }
-  
-void CurveEditInstance::renderComponents(RenderableCollector& collector, 
+
+void CurveEditInstance::renderComponents(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
     collector.SetState(_shaders.controlsShader, RenderableCollector::eWireframeOnly);
@@ -161,7 +161,7 @@ void CurveEditInstance::renderComponents(RenderableCollector& collector,
     collector.addRenderable(m_controlsRender, localToWorld);
 }
 
-void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector, 
+void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
     updateSelected();
@@ -190,8 +190,8 @@ void CurveEditInstance::forEachSelected(ControlPointFunctor& functor) {
 	ControlPoints::iterator transformed = _controlPointsTransformed.begin();
 	ControlPoints::const_iterator original = _controlPoints.begin();
 
-	for (Selectables::iterator i = _selectables.begin(); 
-		 i != _selectables.end(); 
+	for (Selectables::iterator i = _selectables.begin();
+		 i != _selectables.end();
 		 ++i, ++transformed, ++original)
 	{
 		if (i->isSelected()) {
@@ -205,8 +205,8 @@ void CurveEditInstance::forEachSelected(ControlPointConstFunctor& functor) const
 	ControlPoints::const_iterator transformed = _controlPointsTransformed.begin();
 	ControlPoints::const_iterator original = _controlPoints.begin();
 
-	for (Selectables::const_iterator i = _selectables.begin(); 
-		 i != _selectables.end(); 
+	for (Selectables::const_iterator i = _selectables.begin();
+		 i != _selectables.end();
 		 ++i, ++transformed, ++original)
 	{
 		if (i->isSelected()) {
@@ -217,8 +217,8 @@ void CurveEditInstance::forEachSelected(ControlPointConstFunctor& functor) const
 
 void CurveEditInstance::forEach(ControlPointFunctor& functor) {
 	ControlPoints::const_iterator original = _controlPoints.begin();
-	for (ControlPoints::iterator i = _controlPointsTransformed.begin(); 
-    	i != _controlPointsTransformed.end(); 
+	for (ControlPoints::iterator i = _controlPointsTransformed.begin();
+    	i != _controlPointsTransformed.end();
     	++i, ++original)
     {
 		functor(*i, *original);

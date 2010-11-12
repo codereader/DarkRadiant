@@ -162,10 +162,10 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 
 		// Skip the joint name
 		tok.skipTokens(1);
-		
+
 		// Index of parent joint
 		i->parent = strToInt(tok.nextToken());
-		
+
 		// Joint's position vector
 		i->position = parseVector3(tok);
 
@@ -179,7 +179,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	    if (isNaN(w)) {
 	    	w = 0;
 	    }
-	
+
 		// Set the Vector4 rotation on the joint
 	    i->rotation = Vector4(rawRotation, w);
 	}
@@ -194,7 +194,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 		// Start of datablock
 		tok.assertNextToken("mesh");
 		tok.assertNextToken("{");
-		
+
 		// Construct the surface for this mesh
 		MD5Surface& surface = newSurface();
 
@@ -206,7 +206,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 
 		// Read the vertex count
 		tok.assertNextToken("numverts");
-	    std::size_t numVerts = strToSizet(tok.nextToken());	
+	    std::size_t numVerts = strToSizet(tok.nextToken());
 
 		// Initialise the vertex vector
 		MD5Verts verts(numVerts);
@@ -216,7 +216,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 
 		// Populate each vertex struct with parsed values
 		for (MD5Verts::iterator vt = verts.begin(); vt != verts.end(); ++vt) {
-			
+
 			tok.assertNextToken("vert");
 
 			// Index of vert
@@ -231,11 +231,11 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 			// Weight index and count
 			vt->weight_index = strToSizet(tok.nextToken());
 			vt->weight_count = strToSizet(tok.nextToken());
-		
+
 		} // for each vertex
-	
+
 		// ------  TRIANGLES ------
-	
+
 		// Read the number of triangles
 		tok.assertNextToken("numtris");
 		std::size_t numTris = strToSizet(tok.nextToken());
@@ -282,9 +282,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 			w->v = parseVector3(tok);
 
 		} // for each weight
-		
+
 		// ----- END OF MESH DECL -----
-		
+
 		tok.assertNextToken("}");
 
 		// ------ CALCULATION ------
@@ -344,7 +344,7 @@ Vector3 MD5Model::parseVector3(parser::DefTokeniser& tok) {
 	double z = strToDouble(tok.nextToken());
 
 	tok.assertNextToken(")");
-	
+
 	return Vector3(x, y, z);
 }
 

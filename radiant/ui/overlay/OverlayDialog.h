@@ -27,7 +27,7 @@ typedef boost::shared_ptr<OverlayDialog> OverlayDialogPtr;
 class OverlayDialog :
 	public gtkutil::PersistentTransientWindow
 {
-	// Subwidgets, held in a map. This is just a named list of widgets, to 
+	// Subwidgets, held in a map. This is just a named list of widgets, to
 	// avoid adding new member variables for each widget.
 	typedef std::map<std::string, Gtk::Widget*> WidgetMap;
 	WidgetMap _subWidgets;
@@ -39,24 +39,24 @@ class OverlayDialog :
 	bool _callbackActive;
 
 private:
-	// Constructor creates GTK widgets	
+	// Constructor creates GTK widgets
 	OverlayDialog();
-	
+
 	// Widget construction helpers
 	Gtk::Widget& createWidgets();
 	Gtk::Widget& createButtons();
-	
+
 	/** greebo: Connects the widgets to the Registry
 	 */
 	void connectWidgets();
-	
+
 	// Get the overlay state from the registry, and set dialog widgets
 	// accordingly
 	void getStateFromRegistry();
-	
+
 	// Updates the sensitivity of the objects according to the registry state
 	void updateSensitivity();
-	
+
 	// gtkmm callbacks
 	void _onClose();
 	void _onFileSelection();

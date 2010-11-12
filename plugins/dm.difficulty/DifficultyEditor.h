@@ -23,7 +23,7 @@ namespace ui
 {
 
 /**
- * greebo: A Difficulty Editor provides the front-end for editing a 
+ * greebo: A Difficulty Editor provides the front-end for editing a
  * set of Difficulty Settings (e.g. "Easy" setting). The actual
  * data is stored in a DifficultySettings instance.
  */

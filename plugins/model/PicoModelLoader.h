@@ -7,14 +7,14 @@ typedef struct picoModule_s picoModule_t;
 
 namespace model {
 
-class PicoModelLoader : 
+class PicoModelLoader :
 	public ModelLoader
 {
 	const picoModule_t* _module;
-	
+
 	// Supported file extension in UPPERCASE (ASE, LWO, whatever)
 	std::string _extension;
-	
+
 	// The resulting name of the module (ModelLoaderASE, for instance)
 	std::string _moduleName;
 public:
@@ -22,7 +22,7 @@ public:
 
 	// Returns a new ModelNode for the given model name
 	virtual scene::INodePtr loadModel(const std::string& modelName);
-  
+
   	// Load the given model from the VFS path
 	IModelPtr loadModelFromPath(const std::string& name);
 

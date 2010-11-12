@@ -20,9 +20,9 @@ namespace ui
 {
 
 namespace
-{	
+{
 	const char* const SHADER_ICON = "icon_sound.png";
-	const char* const FOLDER_ICON = "folder16.png";	
+	const char* const FOLDER_ICON = "folder16.png";
 }
 
 // Constructor
@@ -34,7 +34,7 @@ SoundChooser::SoundChooser() :
 {
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-    
+
 	// Set the default size of the window
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 	set_default_size(rect.get_width() / 2, rect.get_height() / 2);
@@ -45,7 +45,7 @@ SoundChooser::SoundChooser() :
     vbx->pack_start(createTreeView(), true, true, 0);
     vbx->pack_start(*_preview, false, false, 0);
     vbx->pack_start(createButtons(), false, false, 0);
-    
+
     add(*vbx);
 }
 
@@ -69,9 +69,9 @@ public:
 		gtkutil::VFSTreePopulator(treeStore),
 		_columns(columns)
 	{}
-	
+
 	// Functor operator needed for the forEachShader() call
-	void visit(const ISoundShaderPtr& shader) 
+	void visit(const ISoundShaderPtr& shader)
 	{
 		// Construct a "path" into the sound shader tree,
 		// using the mod name as first folder level
@@ -80,7 +80,7 @@ public:
 
 	// Required visit function
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter, 
+			   const Gtk::TreeModel::iterator& iter,
 			   const std::string& path, bool isExplicit)
 	{
 		Gtk::TreeModel::Row row = *iter;
@@ -111,37 +111,37 @@ Gtk::Widget& SoundChooser::createTreeView()
 	_treeView->append_column(
 		*Gtk::manage(new gtkutil::IconTextColumn(_("Soundshader"), _columns.displayName, _columns.icon))
 	);
-	
+
 	_treeSelection = _treeView->get_selection();
 	_treeSelection->signal_changed().connect(sigc::mem_fun(*this, &SoundChooser::_onSelectionChange));
-	
+
 	// Populate the tree store with sound shaders, using a VFS tree populator
 	SoundShaderPopulator pop(_treeStore, _columns);
 
 	// Visit all sound shaders and collect them for later insertion
 	GlobalSoundManager().forEachShader(pop);
 
-	// Let the populator iterate over all collected elements 
+	// Let the populator iterate over all collected elements
 	// and insert them in the treestore
 	pop.forEachNode(pop);
 
-	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));	
+	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
 
 // Create buttons panel
 Gtk::Widget& SoundChooser::createButtons()
 {
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
-	
+
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &SoundChooser::_onOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &SoundChooser::_onCancel));
-	
-	hbx->pack_end(*okButton, false, false, 0);	
+
+	hbx->pack_end(*okButton, false, false, 0);
 	hbx->pack_end(*cancelButton, false, false, 0);
-					   
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
@@ -194,7 +194,7 @@ void SoundChooser::_onSelectionChange()
 		_selectedShader.clear();
 	}
 
-	// Notify the preview widget about the change 
+	// Notify the preview widget about the change
 	_preview->setSoundShader(_selectedShader);
 }
 

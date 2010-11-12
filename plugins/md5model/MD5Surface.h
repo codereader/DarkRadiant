@@ -13,21 +13,21 @@
 namespace md5
 {
 
-class MD5Surface : 
+class MD5Surface :
 	public model::IModelSurface,
 	public OpenGLRenderable
 {
 public:
 	typedef VertexBuffer<ArbitraryMeshVertex> vertices_t;
 	typedef IndexBuffer indices_t;
-  
+
 private:
 	AABB _aabb_local;
-  
+
 	// Shader name
 	std::string _shaderName;
 	std::string _originalShaderName;
-	
+
 	// Shader object
 	ShaderPtr _shader;
 
@@ -42,7 +42,7 @@ private:
 
 	// Capture the named shader
 	void captureShader();
-	
+
 	// Create the display lists
 	void createDisplayLists();
 
@@ -52,26 +52,26 @@ public:
 	 * Constructor.
 	 */
 	MD5Surface();
-	
+
 	/**
 	 * Destructor.
 	 */
 	~MD5Surface();
-	
+
 	vertices_t& vertices();
 	indices_t& indices();
 
 	// Set/get the shader name
 	void setShader(const std::string& name);
-	
+
 	/**
 	 * Get the Shader object.
 	 */
 	ShaderPtr getState() const;
-	
+
 	/**
 	 * Calculate the AABB and build the display lists for rendering.
-	 */ 
+	 */
 	void updateGeometry();
 
 	// Applies the given Skin to this surface.
@@ -86,8 +86,8 @@ public:
 	void render(RenderableCollector& collector, const Matrix4& localToWorld) const;
 
 	// Test for selection
-	void testSelect(Selector& selector, 
-					SelectionTest& test, 
+	void testSelect(Selector& selector,
+					SelectionTest& test,
 					const Matrix4& localToWorld);
 
 	// IModelSurface implementation

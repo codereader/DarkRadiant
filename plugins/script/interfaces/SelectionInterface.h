@@ -14,8 +14,8 @@ namespace script {
 // ========== Selection Handling ==========
 
 // Wrap around the SelectionSystem::Visitor interface
-class SelectionVisitorWrapper : 
-	public SelectionSystem::Visitor, 
+class SelectionVisitorWrapper :
+	public SelectionSystem::Visitor,
 	public boost::python::wrapper<SelectionSystem::Visitor>
 {
 public:

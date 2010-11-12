@@ -12,7 +12,7 @@ namespace ui {
  */
 class EntityPropertyEditor:
     public PropertyEditor
-{    	
+{
 protected:
 	// Keyvalue to set
 	std::string _key;
@@ -20,15 +20,15 @@ protected:
 public:
     // Construct a EntityPropertyEditor with an entity and key to edit
     EntityPropertyEditor(Entity* entity, const std::string& name);
-    
-    // Construct a blank EntityPropertyEditor for use in the 
+
+    // Construct a blank EntityPropertyEditor for use in the
     // PropertyEditorFactory
     EntityPropertyEditor();
 
     // Create a new EntityPropertyEditor
-    virtual IPropertyEditorPtr createNew(Entity* entity, 
-    									const std::string& name, 
-    									const std::string& options) 
+    virtual IPropertyEditorPtr createNew(Entity* entity,
+    									const std::string& name,
+    									const std::string& options)
 	{
         return PropertyEditorPtr(new EntityPropertyEditor(entity, name));
     }

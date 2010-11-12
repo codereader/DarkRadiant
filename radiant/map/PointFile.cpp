@@ -21,7 +21,7 @@ namespace map {
 
 // Constructor
 PointFile::PointFile() :
-	_curPos(_points.begin()), 
+	_curPos(_points.begin()),
 	_displayList(0)
 {
 	_renderstate = GlobalRenderSystem().capture("$POINTFILE");
@@ -49,7 +49,7 @@ bool PointFile::isVisible() const {
  * shown, the file is parsed automatically.
  */
 void PointFile::show(bool show) {
-	
+
 	// Update the status if required
 	if(show && _displayList == 0) {
 		// Parse the pointfile from disk
@@ -63,10 +63,10 @@ void PointFile::show(bool show) {
 		_displayList = 0;
 		_points.clear();
 	}
-	
+
 	// Regardless whether hide or show, we reset the current position
 	_curPos = _points.begin();
-	
+
 	// Redraw the scene
 	SceneChangeNotify();
 }
@@ -103,7 +103,7 @@ void PointFile::parse() {
 	// instead of .map
 	std::string mapName = GlobalMap().getMapName();
 	std::string pfName = mapName.substr(0, mapName.rfind(".")) + ".lin";
-	
+
 	// Open the pointfile and get its input stream if possible
 	std::ifstream inFile(pfName.c_str());
 	if (!inFile) {
@@ -118,7 +118,7 @@ void PointFile::parse() {
 	while (inFile.good()) {
 		float x, y, z;
 		inFile >> x; inFile >> y; inFile >> z;
-		_points.push_back(Vector3(x, y, z));			
+		_points.push_back(Vector3(x, y, z));
 	}
 }
 
@@ -137,7 +137,7 @@ void PointFile::generateDisplayList() {
 	}
 	glEnd();
 	glLineWidth (1);
-	
+
 	glEndList();
 }
 
@@ -164,7 +164,7 @@ void PointFile::advance(bool forward) {
 			globalOutputStream() << "Start of pointfile" << std::endl;
 			return;
 		}
-	
+
 		_curPos--;
 	}
 
@@ -181,7 +181,7 @@ void PointFile::advance(bool forward) {
 		angles[CAMERA_PITCH] = static_cast<double>(radians_to_degrees(asin(dir[2])));
 		camwnd.setCameraAngles(angles);
 	}
-	
+
 	// Redraw the scene
 	SceneChangeNotify();
 }

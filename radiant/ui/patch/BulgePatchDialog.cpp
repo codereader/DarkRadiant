@@ -8,7 +8,7 @@ namespace
 {
 	const char* WINDOW_TITLE = N_("Bulge Patch");
 	const char* LABEL_NOISE = N_("Noise:");
-	
+
 	const int NOISE = 16;
 }
 
@@ -33,10 +33,10 @@ bool BulgePatchDialog::queryPatchNoise(int& noise)
 	{
 		// Retrieve the maxValue
 		noise = strToFloat(dialog.getElementValue(dialog._noiseHandle));
-		
+
 		return true;
 	}
-	
+
 	return false; // cancelled
 }
 

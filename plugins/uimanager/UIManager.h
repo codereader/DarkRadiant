@@ -25,7 +25,7 @@ class UIManager :
 private:
 	// Local helper class taking care of the menu
 	MenuManager _menuManager;
-	
+
 	ToolbarManager _toolbarManager;
 
 	StatusBarManager _statusBarManager;
@@ -41,9 +41,9 @@ public:
 	/** greebo: Retrieves the helper class to manipulate the menu.
 	 */
 	IMenuManager& getMenuManager();
-	
+
 	IToolbarManager& getToolbarManager();
-	
+
 	IColourSchemeManager& getColourSchemeManager();
 
 	IGroupDialog& getGroupDialog();

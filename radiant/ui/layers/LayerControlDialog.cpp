@@ -40,14 +40,14 @@ LayerControlDialog::LayerControlDialog() :
 
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-	
+
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 }
 
 void LayerControlDialog::populateWindow()
 {
-	// Create the "master" vbox 
+	// Create the "master" vbox
 	Gtk::VBox* overallVBox = Gtk::manage(new Gtk::VBox(false, 6));
 	overallVBox->set_border_width(12);
 
@@ -72,7 +72,7 @@ Gtk::Widget& LayerControlDialog::createButtons()
 
 	_showAllLayers->signal_clicked().connect(sigc::mem_fun(*this, &LayerControlDialog::onShowAllLayers));
 	_hideAllLayers->signal_clicked().connect(sigc::mem_fun(*this, &LayerControlDialog::onHideAllLayers));
-	
+
 	hideShowBox->pack_start(*_showAllLayers, true, true, 0);
 	hideShowBox->pack_start(*_hideAllLayers, true, true, 0);
 
@@ -87,7 +87,7 @@ Gtk::Widget& LayerControlDialog::createButtons()
 	{
 		event->connectWidget(createButton);
 	}
-	
+
 	createButton->set_size_request(100, -1);
 	buttonVBox->pack_start(*createButton, false, false, 0);
 
@@ -97,7 +97,7 @@ Gtk::Widget& LayerControlDialog::createButtons()
 void LayerControlDialog::refresh()
 {
 	// Remove the widgets from the vbox first
-	for (LayerControls::iterator i = _layerControls.begin(); 
+	for (LayerControls::iterator i = _layerControls.begin();
 		 i != _layerControls.end(); ++i)
 	{
 		_controlContainer->remove((*i)->getToggle());
@@ -107,7 +107,7 @@ void LayerControlDialog::refresh()
 
 	// Remove all previously allocated layercontrols
 	_layerControls.clear();
-	
+
 	// Local helper class for populating the window
 	class LayerControlAccumulator :
 		public scene::LayerSystem::Visitor
@@ -128,12 +128,12 @@ void LayerControlDialog::refresh()
 			LayerControls returnValue;
 
 			// Copy the objects over to a linear vector
-			for (LayerControlMap::const_iterator i = _sortedLayerControls.begin(); 
+			for (LayerControlMap::const_iterator i = _sortedLayerControls.begin();
 				 i != _sortedLayerControls.end(); ++i)
 			{
 				returnValue.push_back(i->second);
 			}
-			
+
 			return returnValue;
 		}
 	} populator;
@@ -145,17 +145,17 @@ void LayerControlDialog::refresh()
 	_layerControls = populator.getVector();
 
 	_controlContainer->resize(static_cast<int>(_layerControls.size()), 3);
-	
+
 	int c = 0;
-	for (LayerControls::iterator i = _layerControls.begin(); 
+	for (LayerControls::iterator i = _layerControls.begin();
 		 i != _layerControls.end(); ++i, ++c)
 	{
-		_controlContainer->attach((*i)->getToggle(), 
+		_controlContainer->attach((*i)->getToggle(),
 			0, 1, c, c+1, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
 
 		_controlContainer->attach((*i)->getLabelButton(), 1, 2, c, c+1);
 
-		_controlContainer->attach((*i)->getButtons(), 
+		_controlContainer->attach((*i)->getButtons(),
 			2, 3, c, c+1, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
 	}
 
@@ -232,7 +232,7 @@ void LayerControlDialog::onRadiantShutdown()
 
 	// Write the visibility status to the registry
 	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", is_visible() ? "1" : "0");
-	
+
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	destroy();
 
@@ -254,7 +254,7 @@ LayerControlDialog& LayerControlDialog::Instance()
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new LayerControlDialog);
-		
+
 		// Register this instance with GlobalRadiant() at once
 		GlobalRadiant().addEventListener(instancePtr);
 	}

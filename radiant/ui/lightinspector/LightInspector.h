@@ -31,7 +31,7 @@ namespace ui
 class LightInspector;
 typedef boost::shared_ptr<LightInspector> LightInspectorPtr;
 
-class LightInspector 
+class LightInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
   public ShaderSelector::Client,
@@ -40,17 +40,17 @@ class LightInspector
 {
 	// The overall vbox
 	Gtk::VBox* _mainVBox;
-	
+
 	// Projected light flag
 	bool _isProjected;
 
 	// Light type toggle buttons
 	Gtk::ToggleButton* _pointLightToggle;
 	Gtk::ToggleButton* _projLightToggle;
-	
+
 	// Colour selection widget
 	Gtk::ColorButton* _colour;
-	
+
 	// Texture selection combo
 	ShaderSelector* _texSelector;
 
@@ -60,20 +60,20 @@ class LightInspector
 	// Options checkboxes
 	typedef std::map<std::string, Gtk::ToggleButton*> WidgetMap;
 	WidgetMap _options;
-	
+
 	// The light entity to edit
     typedef std::vector<Entity*> EntityList;
     EntityList _lightEntities;
-	
+
 	// Table of original value keys, to avoid replacing them with defaults
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _valueMap;
-	
+
 	gtkutil::WindowPosition _windowPosition;
-	
+
 	// Disables GTK callbacks if set to TRUE (during widget updates)
 	bool _updateActive;
-	
+
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static LightInspectorPtr& InstancePtr();
@@ -84,7 +84,7 @@ private:
 	// TransientWindow callbacks
 	virtual void _preShow();
 	virtual void _preHide();
-	
+
 	// Widget construction functions
 	Gtk::Widget& createPointLightPanel();
 	Gtk::Widget& createProjectedPanel();
@@ -93,15 +93,15 @@ private:
 	Gtk::Widget& createButtons();
 
 	// gtkmm CALLBACKS
-	void _onProjToggle();	
-	void _onPointToggle();	
+	void _onProjToggle();
+	void _onPointToggle();
 	void _onOK();
-	void _onColourChange(); 
+	void _onColourChange();
 	void _onOptionsToggle();
 
 	// Update the dialog widgets from keyvals on the first selected entity
 	void getValuesFromEntity();
-	
+
 	// Write the widget contents to the given entity
 	void setValuesOnEntity(Entity* entity);
 
@@ -110,12 +110,12 @@ private:
 
     // Set the given key/value pair on ALL entities in the list of lights
     void setKeyValueAllLights(const std::string& k, const std::string& v);
-	
+
 	/** greebo: Gets called when the shader selection gets changed, so that
 	 * 			the displayed texture info can be updated.
 	 */
 	void shaderSelectionChanged(const std::string& shader, const Glib::RefPtr<Gtk::ListStore>& listStore);
-	
+
 public:
 
 	// Gets called by the SelectionSystem when the selection is changed
@@ -124,21 +124,21 @@ public:
 	/** Toggle the visibility of the dialog instance, constructing it if necessary.
 	 */
 	static void toggleInspector(const cmd::ArgumentList& args);
-	
-	/** greebo: This is the actual home of the static instance 
+
+	/** greebo: This is the actual home of the static instance
 	 */
 	static LightInspector& Instance();
-	
+
 	// Update the sensitivity of the widgets
 	void update();
 
 	// UndoSystem::Observer implementation
 	void postUndo();
 	void postRedo();
-	
+
 	// Safely disconnects this dialog from all the systems
 	// and saves the window size/position to the registry
-	virtual void onRadiantShutdown(); 
+	virtual void onRadiantShutdown();
 };
 
 }

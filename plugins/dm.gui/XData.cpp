@@ -8,7 +8,7 @@ namespace XData
 {
 
 //XData implementations:
-//->export:	
+//->export:
 FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 {
 	boost::filesystem::path Path(filename);
@@ -58,8 +58,8 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 				file.close();
 				return AllOk;
 			}
-		case MergeOverwriteExisting: 
-			{	
+		case MergeOverwriteExisting:
+			{
 			//Find the old definition in the target file and delete it. Append the new definition.
 			//_definitionStart has been set in the first iteration of this method.
 				boost::filesystem::fstream file(Path, std::ios_base::in);
@@ -84,9 +84,9 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 				file.close();
 				return AllOk;
 			}
-		case Overwrite: 
+		case Overwrite:
 			{
-			//Warn if the target file contains multiple definitions: return MultipleDefinitions. 
+			//Warn if the target file contains multiple definitions: return MultipleDefinitions.
 			//Warn if the definition in the target file does not match the current definition: return DefinitionMisMatch
 			//else overwrite existing file.
 				std::string DefName;
@@ -94,7 +94,7 @@ FileStatus XData::xport( const std::string& filename, ExporterCommand cmd )
 				if (!file.is_open())
 					return OpenFailed;
 				try	{ DefName = getDefinitionNameFromXD(file); }
-				catch (...) 
+				catch (...)
 				{
 					std::cerr << "[XData::xport] Syntax error in file " << filename << ". Overwriting the file..." << std::endl;
 					break;

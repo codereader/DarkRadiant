@@ -10,7 +10,7 @@ namespace ui
 
 	namespace
 	{
-		const char* const LAYER_ICON = "layers.png";	
+		const char* const LAYER_ICON = "layers.png";
 	}
 
 LayerOrthoContextMenuItem::LayerOrthoContextMenuItem(const std::string& caption,

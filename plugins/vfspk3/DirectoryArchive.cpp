@@ -10,33 +10,33 @@
 
 namespace fs = boost::filesystem;
 
-DirectoryArchive::DirectoryArchive(const std::string& root) : 
+DirectoryArchive::DirectoryArchive(const std::string& root) :
 	_root(root)
 {}
 
 ArchiveFilePtr DirectoryArchive::openFile(const std::string& name) {
 	UnixPath path(_root);
 	path.push_filename(name);
-	
+
 	DirectoryArchiveFilePtr file(new DirectoryArchiveFile(name, path));
-	
+
 	if (!file->failed()) {
 		return file;
 	}
-	
+
 	return ArchiveFilePtr();
 }
 
 ArchiveTextFilePtr DirectoryArchive::openTextFile(const std::string& name) {
 	UnixPath path(_root);
 	path.push_filename(name);
-	
+
 	DirectoryArchiveTextFilePtr file(new DirectoryArchiveTextFile(name, _root, path));
-	
+
 	if (!file->failed()) {
 		return file;
 	}
-	
+
 	return ArchiveTextFilePtr();
 }
 

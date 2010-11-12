@@ -9,8 +9,8 @@ void CommandSystemInterface::execute(const std::string& buffer) {
 	GlobalCommandSystem().execute(buffer);
 }
 
-void CommandSystemInterface::addStatement(const std::string& statementName, 
-										  const std::string& str) 
+void CommandSystemInterface::addStatement(const std::string& statementName,
+										  const std::string& str)
 {
 	GlobalCommandSystem().addStatement(statementName, str);
 }
@@ -21,7 +21,7 @@ void CommandSystemInterface::removeCommand(const std::string& name) {
 
 void CommandSystemInterface::registerInterface(boost::python::object& nspace) {
 	// Define the CommandSystem interface
-	nspace["GlobalCommandSystem"] = 
+	nspace["GlobalCommandSystem"] =
 		boost::python::class_<CommandSystemInterface>("GlobalCommandSystem")
 		.def("execute", &CommandSystemInterface::execute)
 		.def("addStatement", &CommandSystemInterface::addStatement)

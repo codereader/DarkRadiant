@@ -24,13 +24,13 @@ private:
 
 	// The helper class counting the entities in the map
 	map::EntityBreakdown _entityBreakdown;
-	
+
 	Gtk::Label* _brushCount;
 	Gtk::Label* _patchCount;
 	Gtk::Label* _entityCount;
 
 	// Treemodel definition
-	struct ListColumns : 
+	struct ListColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListColumns() { add(eclass); add(count); }
@@ -40,11 +40,11 @@ private:
 	};
 
 	ListColumns _columns;
-	
+
 	// The treeview containing the above liststore
 	Glib::RefPtr<Gtk::ListStore> _listStore;
 	Gtk::TreeView* _treeView;
-	
+
 public:
 	// Constructor
 	EntityInfoTab();
@@ -54,7 +54,7 @@ public:
 
 	std::string getLabel();
 	std::string getIconName();
-	
+
 private:
 	// This is called to create the widgets
 	void populateTab();

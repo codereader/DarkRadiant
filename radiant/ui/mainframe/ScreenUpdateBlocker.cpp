@@ -29,7 +29,7 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	// Connect the realize signal to remove the window decorations
 	_realizeHandler = signal_realize().connect(
 		sigc::mem_fun(*this, &ScreenUpdateBlocker::onRealize));
-	
+
 	if (isActiveApp())
 	{
 		// Show this window immediately
@@ -85,7 +85,7 @@ bool ScreenUpdateBlocker::isActiveApp()
 {
 	// Iterate over all top-level windows and check if any of them has focus
 	std::vector<Gtk::Window*> toplevels = Gtk::Window::list_toplevels();
-	
+
 	for (std::size_t i = 0; i < toplevels.size(); ++i)
 	{
 		if (toplevels[i]->property_is_active())

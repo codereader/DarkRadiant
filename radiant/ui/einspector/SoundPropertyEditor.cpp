@@ -21,14 +21,14 @@ SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
 {
 	// Construct the main widget (will be managed by the base class)
 	Gtk::VBox* mainVBox = new Gtk::VBox(false, 0);
-	
+
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
-	
+
 	// Horizontal box contains browse button
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
 	hbx->set_border_width(3);
-	
+
 	// Create the browse button
 	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose sound...")));
 	browseButton->set_image(*Gtk::manage(new Gtk::Image(
@@ -36,13 +36,13 @@ SoundPropertyEditor::SoundPropertyEditor(Entity* entity,
 
 	browseButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &SoundPropertyEditor::_onBrowseButton));
-	
+
 	hbx->pack_start(*browseButton, true, false, 0);
-	
+
 	// Pack hbox into vbox (to limit vertical size), then edit frame
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
 	vbx->pack_start(*hbx, true, false, 0);
-	
+
 	mainVBox->pack_start(*vbx, true, true, 0);
 }
 
@@ -53,7 +53,7 @@ void SoundPropertyEditor::_onBrowseButton()
 	chooser.setSelectedShader(getKeyValue(_key));
 
 	chooser.show(); // blocks
-	
+
 	const std::string& selection = chooser.getSelectedShader();
 
 	// Selection will be empy if user clicked cancel or X

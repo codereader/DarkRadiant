@@ -32,7 +32,7 @@ public:
 	};
 
 private:
-	struct ListStoreColumns : 
+	struct ListStoreColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListStoreColumns() { add(name); }
@@ -46,7 +46,7 @@ private:
 
 	Gtk::Button* _okButton;
 	Gtk::TextView* _description;
-	
+
 	// The model preview
 	IModelPreviewPtr _preview;
 
@@ -73,7 +73,7 @@ private:
 	// Override base class _preDestroy
 	void _preDestroy();
 	void _postShow();
-	
+
 	void populateHeadStore();
 
 	Gtk::Widget& createButtonPanel();

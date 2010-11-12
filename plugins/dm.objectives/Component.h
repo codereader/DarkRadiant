@@ -14,9 +14,9 @@ namespace objectives
 {
 
 /**
- * A component of an objective. 
- * 
- * Each objective may have a number of components, which are combined using 
+ * A component of an objective.
+ *
+ * Each objective may have a number of components, which are combined using
  * boolean operations to determine whether the objective is satisfied or not.
  * A component is essentially a condition which needs to be met in order to
  * satisfy the overall objective.
@@ -26,20 +26,20 @@ class Component
 private:
 	// Completion state flag
 	bool _satisfied;
-	
+
 	// Inverted flag
 	bool _inverted;
-	
+
 	// Irreversible (latched) flag
 	bool _irreversible;
-	
+
 	// Player responsible flag
 	bool _playerResponsible;
 
 	// The clock interval in seconds (only applicable for clocked components)
 	// is negative if not used
 	float _clockInterval;
-	
+
 	// Component type
 	ComponentType _type;
 
@@ -51,19 +51,19 @@ private:
 	 */
 	typedef std::vector<std::string> ArgumentList;
 	ArgumentList _arguments;
-	
+
 public:
-	
+
 	/**
-	 * Construct a Component with default settings. 
-	 * 
+	 * Construct a Component with default settings.
+	 *
 	 * All flags are set to false, and the type is set to an arbitrary value.
 	 */
 	Component()
-	: _satisfied(false), 
-	  _inverted(false), 
-	  _irreversible(false), 
-	  _playerResponsible(false), 
+	: _satisfied(false),
+	  _inverted(false),
+	  _irreversible(false),
+	  _playerResponsible(false),
 	  _clockInterval(-1.0f),
 	  _type(ComponentType::COMP_KILL()), // arbitrary choice, no NONE option
       _specifiers(static_cast<std::size_t>(Specifier::MAX_SPECIFIERS))
@@ -75,51 +75,51 @@ public:
 	void setSatisfied(bool satisfied) {
 		_satisfied = satisfied;
 	}
-	
+
 	/**
 	 * Get the satisfied status flag.
 	 */
 	bool isSatisfied() const {
 		return _satisfied;
 	}
-	
+
 	/**
 	 * Set the flag to indicate that the sense of this component is inverted.
-	 * 
-	 * If true, this component is logically <b>NOT</b>ed, so when the conditions 
-	 * described by the type and specifiers are not met, the component state is 
+	 *
+	 * If true, this component is logically <b>NOT</b>ed, so when the conditions
+	 * described by the type and specifiers are not met, the component state is
 	 * true, and when they are met, it is false.
 	 */
 	void setInverted(bool inverted) {
 		_inverted = inverted;
 	}
-	
+
 	/**
 	 * Get the inverted status.
 	 */
 	bool isInverted() const {
 		return _inverted;
 	}
-	
+
 	/**
-	 * Set the flag to indicate that this component changes state once then 
+	 * Set the flag to indicate that this component changes state once then
 	 * latches, even if its in-game condition is no longer satisfied.
 	 */
 	void setIrreversible(bool irreversible) {
 		_irreversible = irreversible;
 	}
-	
+
 	/**
 	 * Get the irreversible status.
 	 */
 	bool isIrreversible() const {
 		return _irreversible;
 	}
-	
+
 	/**
-	 * Set the flag to indicate that the player must be responsible for 
+	 * Set the flag to indicate that the player must be responsible for
 	 * satisfying this component.
-	 * 
+	 *
 	 * If this flag is set, the component will not be satisfied by an event
 	 * which is not <i>directly</i> caused by the player. For example, if the
 	 * component requires the killing of an AI, it will not be satisfied if the
@@ -150,21 +150,21 @@ public:
 	float getClockInterval() const {
 		return _clockInterval;
 	}
-	
+
 	/**
 	 * Set the type of this component ("kill", "ko" etc).
 	 */
 	void setType(ComponentType type) {
 		_type = type;
 	}
-	
+
 	/**
 	 * Get the component type.
 	 */
 	ComponentType getType() const {
 		return _type;
 	}
-	
+
 	/**
 	 * Return a string description of this Component.
 	 */
@@ -176,7 +176,7 @@ public:
      * @param idx
      * The index of the specifier, starting from 1.
      */
-    void setSpecifier(Specifier::SpecifierNumber num, SpecifierPtr spec) 
+    void setSpecifier(Specifier::SpecifierNumber num, SpecifierPtr spec)
     {
         assert(
             _specifiers.size() == static_cast<std::size_t>(
@@ -192,7 +192,7 @@ public:
      * @param idx
      * The index of the specifier, starting from 1.
      */
-    SpecifierPtr getSpecifier(Specifier::SpecifierNumber num) const 
+    SpecifierPtr getSpecifier(Specifier::SpecifierNumber num) const
     {
         assert(
             _specifiers.size() == static_cast<std::size_t>(

@@ -15,8 +15,8 @@ EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	EntityNode(other),
 	Snappable(other),
-	m_contained(other.m_contained, 
-				*this, 
+	m_contained(other.m_contained,
+				*this,
 				Callback(boost::bind(&Node::transformChanged, this))),
 	_updateSkin(true),
 	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
@@ -108,7 +108,7 @@ void EclassModelNode::_onTransformationChanged()
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.revertTransform();
-		
+
 		m_contained.translate(getTranslation());
 		m_contained.rotate(getRotation());
 

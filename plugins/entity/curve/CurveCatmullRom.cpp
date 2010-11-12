@@ -13,7 +13,7 @@ void CurveCatmullRom::clearCurve() {
 void CurveCatmullRom::appendControlPoints(unsigned int numPoints) {
 	// Pass the call to the base class first
 	Curve::appendControlPoints(numPoints);
-	
+
 	// Recalculate tesselation and emit the signals
 	curveChanged();
 }
@@ -21,7 +21,7 @@ void CurveCatmullRom::appendControlPoints(unsigned int numPoints) {
 void CurveCatmullRom::removeControlPoints(IteratorList iterators) {
 	// Pass the call to the base class first
 	Curve::removeControlPoints(iterators);
-	
+
 	// Recalculate the tesselation and emit the signals
 	curveChanged();
 }
@@ -29,7 +29,7 @@ void CurveCatmullRom::removeControlPoints(IteratorList iterators) {
 void CurveCatmullRom::insertControlPointsAt(IteratorList iterators) {
 	// Pass the call to the base class first
 	Curve::insertControlPointsAt(iterators);
-	
+
 	// Recalculate tesselation and emit the signals
 	curveChanged();
 }
@@ -39,10 +39,10 @@ void CurveCatmullRom::tesselate() {
 		const std::size_t numSegments = (_controlPointsTransformed.size() - 1) * 16;
 		_renderCurve.m_vertices.resize(numSegments + 1);
 		_renderCurve.m_vertices[0].vertex = Vertex3f(_controlPointsTransformed[0]);
-		
+
 		for(std::size_t i = 1; i < numSegments; ++i) {
 			_renderCurve.m_vertices[i].vertex = Vertex3f(
-				CatmullRom_evaluate(_controlPointsTransformed, 
+				CatmullRom_evaluate(_controlPointsTransformed,
 									(1.0 / double(numSegments)) * double(i)
 				)
 			);

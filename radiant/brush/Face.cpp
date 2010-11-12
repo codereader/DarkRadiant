@@ -27,7 +27,7 @@ Face::Face(Brush& owner, FaceObserver* observer) :
 }
 
 Face::Face(
-    Brush& owner, 
+    Brush& owner,
 	const Vector3& p0,
 	const Vector3& p1,
 	const Vector3& p2,
@@ -62,7 +62,7 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 	planeChanged();
 }
 
-Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef, 
+Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 		   const std::string& shader, FaceObserver* observer) :
 	_owner(owner),
 	_faceShader(shader),
@@ -78,7 +78,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 	m_texdef.m_projection.m_brushprimit_texdef = BrushPrimitTexDef(texdef);
 	m_texdef.m_projectionInitialised = true;
 	m_texdef.m_scaleApplied = true;
-	
+
 	planeChanged();
 }
 
@@ -136,7 +136,7 @@ void Face::instanceDetach(MapFile* map) {
 }
 
 // Back-end render function
-void Face::render(const RenderInfo& info) const 
+void Face::render(const RenderInfo& info) const
 {
 	m_winding.render(info);
 }
@@ -145,7 +145,7 @@ void Face::undoSave() {
 	if (m_map != 0) {
 		m_map->changed();
 	}
-	
+
 	if (m_undoable_observer != 0) {
 		m_undoable_observer->save(this);
 	}
@@ -186,7 +186,7 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
 }
 
 void Face::submitRenderables(RenderableCollector& collector,
-                             const Matrix4& localToWorld) const 
+                             const Matrix4& localToWorld) const
 {
 	// We assume that the shader is visible when this method is called
 	assert(_faceShader.getGLShader()->getMaterial()->isVisible());
@@ -212,7 +212,7 @@ void Face::assign_planepts(const PlanePoints planepts) {
 	updateWinding();
 }
 
-/// \brief Reverts the transformable state of the brush to identity. 
+/// \brief Reverts the transformable state of the brush to identity.
 void Face::revertTransform() {
 	m_planeTransformed = m_plane;
 	planepts_assign(m_move_planeptsTransformed, m_move_planepts);
@@ -235,7 +235,7 @@ void Face::updateWinding() {
 void Face::update_move_planepts_vertex(std::size_t index, PlanePoints planePoints) {
 	std::size_t numpoints = getWinding().size();
 	ASSERT_MESSAGE(index < numpoints, "update_move_planepts_vertex: invalid index");
-	
+
 	std::size_t opposite = getWinding().opposite(index);
 	std::size_t adjacent = getWinding().wrap(opposite + numpoints - 1);
 	planePoints[0] = getWinding()[opposite].vertex;
@@ -277,7 +277,7 @@ void Face::shaderChanged()
 	SceneChangeNotify();
 }
 
-const std::string& Face::getShader() const 
+const std::string& Face::getShader() const
 {
 	return _faceShader.getMaterialName();
 }
@@ -313,8 +313,8 @@ void Face::SetTexdef(const TextureProjection& projection) {
 void Face::applyShaderFromFace(const Face& other) {
 	// Retrieve the textureprojection from the source face
 	TextureProjection projection;
-	other.GetTexdef(projection);	
-	
+	other.GetTexdef(projection);
+
 	setShader(other.getShader());
 	SetTexdef(projection);
 	SetFlags(other.getFaceShader().m_flags);
@@ -467,31 +467,31 @@ bool Face::is_bounded() const {
 
 void Face::normaliseTexture() {
 	undoSave();
-	
+
 	Winding::const_iterator nearest = m_winding.begin();
-		
-	// Find the vertex with the minimal distance to the origin  
+
+	// Find the vertex with the minimal distance to the origin
 	for (Winding::const_iterator i = m_winding.begin(); i != m_winding.end(); ++i) {
 		if (nearest->texcoord.getLength() > i->texcoord.getLength()) {
 			nearest = i;
 		}
 	}
-	
+
 	Vector2 texcoord = nearest->texcoord;
-	
+
 	// The floored values
 	Vector2 floored(floor(fabs(texcoord[0])), floor(fabs(texcoord[1])));
-	
+
 	// The signs of the original texcoords (needed to know which direction it should be shifted)
 	Vector2 sign(texcoord[0]/fabs(texcoord[0]), texcoord[1]/fabs(texcoord[1]));
-	
+
 	Vector2 shift;
 	shift[0] = (fabs(texcoord[0]) > 1.0E-4) ? -floored[0] * sign[0] * m_texdef.m_shader.width() : 0.0f;
 	shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * m_texdef.m_shader.height() : 0.0f;
-	
-	// Shift the texture (note the minus sign, the FaceTexDef negates it yet again). 
+
+	// Shift the texture (note the minus sign, the FaceTexDef negates it yet again).
 	m_texdef.shift(-shift[0], shift[1]);
-	
+
 	texdefChanged();
 }
 

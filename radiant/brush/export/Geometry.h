@@ -8,7 +8,7 @@
 
 /** greebo: This contains all the geometry subtypes of a Doom3 CollisionModel.
  **/
- 
+
 namespace cmutil {
 
 // A list of indexed ("named") vertices
@@ -21,35 +21,35 @@ struct Edge {
 	std::size_t from;	// The starting vertex index
 	std::size_t to;	// The end vertex index
 	std::size_t numVertices; // At least I think it's numVertices
-	
-	Edge(std::size_t num = 2) : 
-		from(0), 
-		to(0), 
-		numVertices(num) 
+
+	Edge(std::size_t num = 2) :
+		from(0),
+		to(0),
+		numVertices(num)
 	{}
 };
 
 // The indexed Edges (each consisting of a start/end vertex)
 typedef std::map<std::size_t, Edge> EdgeMap;
-// A vector of Edges defining a polygon (the sign indicates the direction) 
+// A vector of Edges defining a polygon (the sign indicates the direction)
 typedef std::vector<int> EdgeList;
 
 struct Polygon {
 	// The number of edges of this polygon
 	std::size_t numEdges;
-	
+
 	// The indices of the edges forming this polygon
 	EdgeList edges;
-	
+
 	// The plane (normal + distance)
 	Plane3 plane;
-	
+
 	// Two vertices defining the AABB
 	Vector3 min;
 	Vector3 max;
-	
-	// The shadername (this is textures/common/collision for 
-	// proper Doom3 hulls, but it can be different as well). 
+
+	// The shadername (this is textures/common/collision for
+	// proper Doom3 hulls, but it can be different as well).
 	std::string shader;
 };
 

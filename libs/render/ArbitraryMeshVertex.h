@@ -15,15 +15,15 @@ public:
 	Vertex3f	vertex;
 	Normal3f	tangent;
 	Normal3f	bitangent;
-	
+
 	// Vertex colour
 	Vector3		colour;
 
 	/**
 	 * Default constructor.
 	 */
-	ArbitraryMeshVertex() 
-	: tangent(0, 0, 0), 
+	ArbitraryMeshVertex()
+	: tangent(0, 0, 0),
 	  bitangent(0, 0, 0),
 	  colour(1.0, 1.0, 1.0)
 	{}
@@ -32,10 +32,10 @@ public:
 	 * Initialising constructor.
 	 */
 	ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t)
-    : texcoord(t), 
-      normal(n), 
-      vertex(v), 
-      tangent(0, 0, 0), 
+    : texcoord(t),
+      normal(n),
+      vertex(v),
+      tangent(0, 0, 0),
       bitangent(0, 0, 0),
       colour(1.0, 1.0, 1.0)
     {}
@@ -80,13 +80,13 @@ inline std::ostream& operator<< (std::ostream& os, const ArbitraryMeshVertex& v)
 	   << " vertex = " << v.vertex << ", normal = " << v.normal
 	   << ", texcoord = " << v.texcoord
 	   << " }";
-	
+
 	return os;
 }
 
 /// \brief Calculates the tangent vectors for a triangle \p a, \p b, \p c and stores the tangent in \p s and the bitangent in \p t.
-inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a, 
-   const ArbitraryMeshVertex& b, const ArbitraryMeshVertex& c, 
+inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a,
+   const ArbitraryMeshVertex& b, const ArbitraryMeshVertex& c,
    Vector3& s, Vector3& t)
 {
 	s = Vector3(0, 0, 0);

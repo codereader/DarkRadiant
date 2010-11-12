@@ -35,27 +35,27 @@ namespace ui
 namespace
 {
 	const char* LIGHTINSPECTOR_TITLE = N_("Light properties");
-	
+
 	const char* PARALLEL_TEXT = N_("Parallel");
 	const char* NOSHADOW_TEXT = N_("Do not cast shadows (fast)");
 	const char* NOSPECULAR_TEXT = N_("Skip specular lighting");
 	const char* NODIFFUSE_TEXT = N_("Skip diffuse lighting");
-	
+
 	const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
 	const std::string RKEY_INSTANT_APPLY = "user/ui/lightInspector/instantApply";
-	
+
 	const char* LIGHT_PREFIX_XPATH = "game/light/texture//prefix";
-		
-	/** greebo: Loads the prefixes from the registry and creates a 
+
+	/** greebo: Loads the prefixes from the registry and creates a
 	 * 			comma-separated list string
 	 */
 	inline std::string getPrefixList() {
 		std::string prefixes;
-		
+
 		// Get the list of light texture prefixes from the registry
 		xml::NodeList prefList = GlobalRegistry().findXPath(LIGHT_PREFIX_XPATH);
-		
-		// Copy the Node contents into the prefix vector	
+
+		// Copy the Node contents into the prefix vector
 		for (xml::NodeList::iterator i = prefList.begin();
 			 i != prefList.end();
 			 ++i)
@@ -63,20 +63,20 @@ namespace
 			prefixes += (prefixes.empty()) ? "" : ",";
 			prefixes += i->getContent();
 		}
-		
+
 		return prefixes;
 	}
 }
 
 // Private constructor creates GTK widgets
-LightInspector::LightInspector() 
+LightInspector::LightInspector()
 : gtkutil::PersistentTransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _isProjected(false),
   _texSelector(Gtk::manage(new ShaderSelector(this, getPrefixList(), true))),
   _updateActive(false)
 {
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-	
+
     // Window size
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 	set_default_size(static_cast<int>(rect.get_width()/2), -1);
@@ -101,7 +101,7 @@ LightInspector::LightInspector()
 	_colour = Gtk::manage(new Gtk::ColorButton);
 	_colour->signal_color_set().connect(sigc::mem_fun(*this, &LightInspector::_onColourChange));
 
-	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Colour") + "</b>")), 
+	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Colour") + "</b>")),
 					   false, false, 0);
 	panels->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_colour, 12, 0.0)),
 					   false, false, 0);
@@ -118,7 +118,7 @@ LightInspector::LightInspector()
 
 	_mainVBox = Gtk::manage(new Gtk::VBox(false, 12));
 	_mainVBox->pack_start(*hbx, true, true, 0);
-	
+
 	// Create an apply button, if instant-apply is disabled
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "0")
 	{
@@ -128,13 +128,13 @@ LightInspector::LightInspector()
 
 	set_border_width(12);
 	add(*_mainVBox);
-	
+
 	// Propagate shortcuts that are not processed by this window
 	GlobalEventManager().connectDialogWindow(this);
-	
+
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-	
+
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 }
@@ -155,10 +155,10 @@ void LightInspector::onRadiantShutdown()
 
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-	
+
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(this);
-	
+
 	// Destroy the window
 	destroy();
 
@@ -167,23 +167,23 @@ void LightInspector::onRadiantShutdown()
 }
 
 void LightInspector::shaderSelectionChanged(
-	const std::string& shader, 
-	const Glib::RefPtr<Gtk::ListStore>& listStore) 
+	const std::string& shader,
+	const Glib::RefPtr<Gtk::ListStore>& listStore)
 {
 	// Get the shader, and its image map if possible
 	MaterialPtr ishader = _texSelector->getSelectedShader();
 	// Pass the call to the static member of ShaderSelector
 	ShaderSelector::displayLightShaderInfo(ishader, listStore);
-	
+
 	// greebo: Do not write to the entities if this call resulted from an update()
 	if (_updateActive) return;
 
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1") 
+	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
     {
 		std::string commandStr("setLightTexture: ");
 		commandStr += _texSelector->getSelection();
 		UndoableCommand command(commandStr.c_str());
-	
+
 		// Write the texture key
 		setKeyValueAllLights("texture", _texSelector->getSelection());
 	}
@@ -202,7 +202,7 @@ Gtk::Widget& LightInspector::createPointLightPanel()
 	Gtk::VBox* buttonBox = Gtk::manage(new Gtk::VBox(false, 0));
 
 	buttonBox->pack_start(*_pointLightToggle, false, false, 0);
-	
+
 	return *buttonBox;
 }
 
@@ -218,7 +218,7 @@ Gtk::Widget& LightInspector::createProjectedPanel()
 	// Start/end checkbox
 	_useStartEnd = Gtk::manage(new Gtk::CheckButton(_("Use start/end")));
 	_useStartEnd->signal_toggled().connect(sigc::mem_fun(*this, &LightInspector::_onOptionsToggle));
-			
+
 	// VBox for panel
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
 
@@ -258,13 +258,13 @@ Gtk::Widget& LightInspector::createTextureWidgets()
 {
 	// VBox contains texture selection widgets
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
-	
+
 	vbx->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light Texture") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Light Texture") + "</b>")),
 		false, false, 0);
 
 	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*_texSelector, 12, 1.0)), true, true, 0);
-	
+
 	return *vbx;
 }
 
@@ -276,18 +276,18 @@ Gtk::Widget& LightInspector::createButtons()
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
 
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &LightInspector::_onOK));
-	
+
 	hbx->pack_end(*okButton, true, true, 0);
-	
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
 // Update dialog from map
-void LightInspector::update() 
+void LightInspector::update()
 {
 	// Clear the list of light entities
 	_lightEntities.clear();
-	
+
     // Find all selected objects which are lights, and add them to our list of
     // light entities
 
@@ -298,7 +298,7 @@ void LightInspector::update()
         EntityList& _entityList;
 
     public:
-        
+
         // Constructor initialises entity list
         LightEntityFinder(EntityList& list)
         : _entityList(list)
@@ -320,7 +320,7 @@ void LightInspector::update()
     // Find the selected lights
 	GlobalSelectionSystem().foreachSelected(lightFinder);
 
-	if (!_lightEntities.empty()) 
+	if (!_lightEntities.empty())
     {
         // Update the dialog with the correct values from the first entity
         getValuesFromEntity();
@@ -353,7 +353,7 @@ void LightInspector::_preHide()
 	// Remove as observer, an invisible inspector doesn't need to receive events
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalUndoSystem().removeObserver(this);
-	
+
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
 }
@@ -392,7 +392,7 @@ LightInspector& LightInspector::Instance()
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new LightInspector);
-		
+
 		// Register this instance with GlobalRadiant() at once
 		GlobalRadiant().addEventListener(instancePtr);
 	}
@@ -402,13 +402,13 @@ LightInspector& LightInspector::Instance()
 
 /* GTK CALLBACKS */
 
-void LightInspector::_onProjToggle() 
+void LightInspector::_onProjToggle()
 {
 	if (_updateActive) return; // avoid callback loops
-	
+
 	// Set the projected flag
 	_isProjected = _projLightToggle->get_active();
-	
+
 	// Set button state based on the value of the flag
 	_pointLightToggle->set_active(!_isProjected);
 	_useStartEnd->set_sensitive(_isProjected);
@@ -422,10 +422,10 @@ void LightInspector::_onProjToggle()
 void LightInspector::_onPointToggle()
 {
 	if (_updateActive) return; // avoid callback loops
-	
+
 	// Set the projected flag
 	_isProjected = !_pointLightToggle->get_active();
-	
+
 	// Set button state based on the value of the flag
 	_projLightToggle->set_active(_isProjected);
 	_useStartEnd->set_sensitive(_isProjected);
@@ -442,7 +442,7 @@ void LightInspector::_onOK()
 }
 
 // Get keyvals from entity and insert into text entries
-void LightInspector::getValuesFromEntity() 
+void LightInspector::getValuesFromEntity()
 {
 	// Disable unwanted callbacks
 	_updateActive = true;
@@ -473,13 +473,13 @@ void LightInspector::getValuesFromEntity()
 			i->second = val;
 	}
 
-	// Get the colour key from the entity to set the GtkColorButton. If the 
+	// Get the colour key from the entity to set the GtkColorButton. If the
 	// light has no colour key, use a default of white rather than the Vector3
 	// default of black (0, 0, 0).
 	std::string colString = entity->getKeyValue("_color");
 	if (colString.empty())
 		colString = "1.0 1.0 1.0";
-		 
+
 	Vector3 colour(colString);
 	Gdk::Color col;
 	col.set_rgb_p(colour.x(), colour.y(), colour.z());
@@ -487,16 +487,16 @@ void LightInspector::getValuesFromEntity()
 
 	// Set the texture selection from the "texture" key
 	_texSelector->setSelection(entity->getKeyValue("texture"));
-	
+
 	// Determine whether this is a projected light, and set the toggles
 	// appropriately
-	_isProjected = (!entity->getKeyValue("light_target").empty() && 
-					!entity->getKeyValue("light_right").empty() && 
+	_isProjected = (!entity->getKeyValue("light_target").empty() &&
+					!entity->getKeyValue("light_right").empty() &&
 					!entity->getKeyValue("light_up").empty());
 
 	_projLightToggle->set_active(_isProjected);
 	_pointLightToggle->set_active(!_isProjected);
-	
+
 	// If this entity has light_start and light_end keys, set the checkbox
 	if (!entity->getKeyValue("light_start").empty()
 		&& !entity->getKeyValue("light_end").empty())
@@ -507,13 +507,13 @@ void LightInspector::getValuesFromEntity()
 	{
 		_useStartEnd->set_active(false);
 	}
-	
+
 	// Set the options checkboxes
 	for (WidgetMap::iterator i = _options.begin(); i != _options.end(); ++i)
 	{
 		i->second->set_active(entity->getKeyValue(i->first) == "1");
 	}
-	
+
 	_updateActive = false;
 }
 
@@ -524,7 +524,7 @@ void LightInspector::writeToAllEntities()
          i != _lightEntities.end();
          ++i)
     {
-        setValuesOnEntity(*i); 
+        setValuesOnEntity(*i);
     }
 }
 
@@ -541,26 +541,26 @@ void LightInspector::setKeyValueAllLights(const std::string& key,
 }
 
 // Set the keyvalues on the entity from the dialog widgets
-void LightInspector::setValuesOnEntity(Entity* entity) 
+void LightInspector::setValuesOnEntity(Entity* entity)
 {
 	UndoableCommand command("setLightProperties");
-	
+
 	// Set the "_color" keyvalue
 	Gdk::Color col = _colour->get_color();
-	
-	entity->setKeyValue("_color", (boost::format("%.2f %.2f %.2f") 
+
+	entity->setKeyValue("_color", (boost::format("%.2f %.2f %.2f")
 						  	  		% (col.get_red_p())
 						  	  		% (col.get_green_p())
 						  	  		% (col.get_blue_p())).str());
-	
+
 	// Write out all vectors to the entity
 	for (StringMap::iterator i = _valueMap.begin();
 		 i != _valueMap.end();
-		 ++i) 
+		 ++i)
 	{
 		entity->setKeyValue(i->first, i->second);
 	}
-		 	
+
 	// Remove vector keys that should not exist, depending on the lightvolume
 	// options
 	if (_isProjected)
@@ -569,7 +569,7 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 		if (!_useStartEnd->get_active())
 		{
 			entity->setKeyValue("light_start", "");
-			entity->setKeyValue("light_end", "");	
+			entity->setKeyValue("light_end", "");
 		}
 
 		// Blank out pointlight values
@@ -596,10 +596,10 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	}
 }
 
-void LightInspector::_onOptionsToggle() 
+void LightInspector::_onOptionsToggle()
 {
 	if (_updateActive) return; // avoid callback loops
-	
+
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
 	{
 		writeToAllEntities();
@@ -609,7 +609,7 @@ void LightInspector::_onOptionsToggle()
 void LightInspector::_onColourChange()
 {
 	if (_updateActive) return; // avoid callback loops
-	
+
 	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
 	{
 		writeToAllEntities();

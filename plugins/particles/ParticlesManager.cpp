@@ -52,7 +52,7 @@ IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string
 {
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
 
-	if (found != _particleDefs.end()) 
+	if (found != _particleDefs.end())
 	{
 		return RenderableParticlePtr(new RenderableParticle(found->second));
 	}
@@ -85,7 +85,7 @@ void ParticlesManager::parseStream(std::istream& contents)
 {
 	// Usual ritual, get a parser::DefTokeniser and start tokenising the DEFs
 	parser::BasicDefTokeniser<std::istream> tok(contents);
-	
+
 	while (tok.hasMoreTokens())
 	{
 		parseParticleDef(tok);
@@ -125,7 +125,7 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 	// Valid particle declaration, go ahead parsing the name
 	std::string name = tok.nextToken();
 	tok.assertNextToken("{");
-	
+
 	ParticleDefPtr pdef = findOrInsertParticleDef(name);
 
 	// Let the particle construct itself from the token stream
@@ -155,7 +155,7 @@ const StringSet& ParticlesManager::getDependencies() const
 void ParticlesManager::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "ParticlesManager::initialiseModule called" << std::endl;
-	
+
 	// Load the .prt files
 	reloadParticleDefs();
 

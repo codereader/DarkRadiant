@@ -6,7 +6,7 @@
 
 namespace map {
 
-class MapMergeAll : 
+class MapMergeAll :
 	public scene::NodeVisitor
 {
   mutable scene::Path m_path;
@@ -23,13 +23,13 @@ public:
     return false;
   }
 
-  virtual void post(const scene::INodePtr& node) 
+  virtual void post(const scene::INodePtr& node)
   {
     m_path.pop();
   }
 };
 
-class MapMergeEntities : 
+class MapMergeEntities :
 	public scene::NodeVisitor
 {
 	// The target path (usually GlobalSceneGraph().root())
@@ -38,8 +38,8 @@ class MapMergeEntities :
 	scene::LayerList _targetLayers;
 
 public:
-	MapMergeEntities(const scene::Path& root) : 
-		m_path(root) 
+	MapMergeEntities(const scene::Path& root) :
+		m_path(root)
 	{
 		_targetLayers.insert(GlobalLayerSystem().getFirstVisibleLayer());
 	}
@@ -49,14 +49,14 @@ public:
 		if (node_is_worldspawn(node)) {
 			// Find the worldspawn of the target map
 			scene::INodePtr world_node = GlobalMap().findWorldspawn();
-			
+
 			if (world_node == NULL) {
 				// Set the worldspawn to the new node
 				GlobalMap().setWorldspawn(node);
-				
+
 				// Insert the visited node at the target path
 				m_path.top()->addChildNode(node);
-				
+
 				m_path.push(node);
 
 				// Select all the children of the visited node (these are primitives)
@@ -74,11 +74,11 @@ public:
 		}
 		else {
 			// This is an ordinary entity, not worldspawn
-			
-			// Insert this node at the target path 
+
+			// Insert this node at the target path
 			m_path.top()->addChildNode(node);
 			m_path.push(node);
-			
+
 			// greebo: commented this out, we don't want the child brushes to be selected
 			/*if (node_is_group(node)) {
 				Node_getTraversable(node)->traverse(SelectChildren(m_path));
@@ -86,7 +86,7 @@ public:
 			else {
 				selectPath(m_path, true);
 			}*/
-			
+
 			// Select the visited node
 			Node_setSelected(node, true);
 		}
@@ -94,7 +94,7 @@ public:
 		// Add the node to the target layer set
 		scene::AssignNodeToLayersWalker walker(_targetLayers);
 		Node_traverseSubgraph(node, walker);
-		
+
 		// Only traverse top-level entities, don't traverse the children
 		return false;
 	}

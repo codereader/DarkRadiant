@@ -10,7 +10,7 @@ namespace cmd {
 /**
  * Compare-functor to allow case-insensitive lookups of commands.
  */
-struct CaseInsensitiveCompare : 
+struct CaseInsensitiveCompare :
 	public std::binary_function<std::string, std::string, bool>
 {
 	bool operator()(const std::string &s1, const std::string &s2) const {

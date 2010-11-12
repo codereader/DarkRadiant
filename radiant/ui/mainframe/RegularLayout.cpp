@@ -86,13 +86,13 @@ void RegularLayout::activate() {
 	// Connect the pane position trackers
 	_regular.posHPane.connect(_regular.horizPane.get());
 	_regular.posTexCamPane.connect(_regular.texCamPane);
-	
+
 	// Now attempt to load the paned positions from the registry
 	restoreStateFromPath(RKEY_REGULAR_ROOT);
-	
+
     GlobalGroupDialog().showDialogWindow();
 
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
+	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
 	// the position info from the Registry once again.
 	GlobalEntityInspector().restoreSettings();
 
@@ -103,7 +103,7 @@ void RegularLayout::activate() {
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
 	// Hide the console/texture browser toggles for non-floating/non-split views
-	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
+	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);
 }
 
 void RegularLayout::deactivate()
@@ -112,9 +112,9 @@ void RegularLayout::deactivate()
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
 	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", true);
 
-	// Remove all previously stored pane information 
+	// Remove all previously stored pane information
 	GlobalRegistry().deleteXPath(RKEY_REGULAR_ROOT + "//pane");
-	
+
 	// Save pane info
 	saveStateToPath(RKEY_REGULAR_ROOT);
 
@@ -180,7 +180,7 @@ void RegularLayout::saveStateToPath(const std::string& path)
 {
 	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
 	_regular.posHPane.saveToPath(path + "/pane[@name='horizontal']");
-	
+
 	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
 	_regular.posTexCamPane.saveToPath(path + "/pane[@name='texcam']");
 }

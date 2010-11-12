@@ -20,23 +20,23 @@ class ParticleFileLoader :
 {
 	// ParticlesManager to populate
 	ParticlesManager& _manager;
-	
+
 public:
 	/**
 	 * Constructor. Set the ParticlesManager to populate.
 	 */
 	ParticleFileLoader(ParticlesManager& m)
-	: _manager(m) 
+	: _manager(m)
 	{ }
-	
+
 	// Functor operator
 	void visit(const std::string& filename)
 	{
 		// Attempt to open the file in text mode
-		ArchiveTextFilePtr file = 
+		ArchiveTextFilePtr file =
 			GlobalFileSystem().openTextFile(PARTICLES_DIR + filename);
-		
-		if (file != NULL) {		
+
+		if (file != NULL) {
 			// File is open, so parse the tokens
 			try {
 				std::istream is(&(file->getInputStream()));
@@ -49,7 +49,7 @@ public:
 		}
 		else {
 			std::cerr << "[particles] Unable to open " << filename << std::endl;
-		}	
+		}
 	}
 };
 

@@ -53,12 +53,12 @@ scene::INodePtr PatchDef2Parser::parse(parser::DefTokeniser& tok) const
 	std::size_t rows = strToSizet(tok.nextToken());
 
 	patch.setDims(cols, rows);
-	
+
 	// ignore contents/flags values
 	tok.skipTokens(3);
 
 	tok.assertNextToken(")");
-	
+
 	// Parse Patch Matrix
 	parseMatrix(tok, patch);
 

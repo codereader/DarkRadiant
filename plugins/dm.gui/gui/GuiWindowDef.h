@@ -131,7 +131,7 @@ public:
 	// Get the renderable text object containing the OpenGLRenderables
 	RenderableText& getRenderableText();
 
-	/** 
+	/**
 	 * greebo: This is some sort of "think" method, giving this windowDef
 	 * a chance to handle timed events.
 	 *

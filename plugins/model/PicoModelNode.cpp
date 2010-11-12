@@ -11,7 +11,7 @@
 
 namespace model {
 
-PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :  
+PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :
 	_picoModel(picoModel),
 	_name(picoModel->getFilename()),
 	_lightList(GlobalRenderSystem().attach(*this))
@@ -42,7 +42,7 @@ void PicoModelNode::testSelect(Selector& selector, SelectionTest& test) {
 std::string PicoModelNode::name() const {
   	return _picoModel->getFilename();
 }
-  
+
 const RenderablePicoModelPtr& PicoModelNode::getModel() const {
 	return _picoModel;
 }
@@ -55,12 +55,12 @@ void PicoModelNode::setModel(const RenderablePicoModelPtr& model) {
 bool PicoModelNode::testLight(const RendererLight& light) const {
 	return light.testAABB(worldAABB());
 }
-	
+
 // Add a light to this model instance
 void PicoModelNode::insertLight(const RendererLight& light) {
 	// Calculate transform from the superclass
 	const Matrix4& l2w = localToWorld();
-	
+
 	// If the light's AABB intersects the oriented AABB of this model instance,
 	// add the light to our light list
 	if (light.testAABB(aabb_for_oriented_aabb(_picoModel->localAABB(),
@@ -69,7 +69,7 @@ void PicoModelNode::insertLight(const RendererLight& light) {
 		_lights.addLight(light);
 	}
 }
-	
+
 // Clear all lights from this model instance
 void PicoModelNode::clearLights() {
 	_lights.clear();
@@ -86,17 +86,17 @@ void PicoModelNode::renderWireframe(RenderableCollector& collector, const Volume
 }
 
 // Renderable submission
-void PicoModelNode::submitRenderables(RenderableCollector& collector, 
-									  const VolumeTest& volume, 
+void PicoModelNode::submitRenderables(RenderableCollector& collector,
+									  const VolumeTest& volume,
 									  const Matrix4& localToWorld) const
 {
-	// Test the model's intersection volume, if it intersects pass on the 
+	// Test the model's intersection volume, if it intersects pass on the
 	// render call
-	if (volume.TestAABB(_picoModel->localAABB(), localToWorld) != VOLUME_OUTSIDE) 
+	if (volume.TestAABB(_picoModel->localAABB(), localToWorld) != VOLUME_OUTSIDE)
     {
 		// Submit the lights
 		collector.setLights(_lights);
-	
+
 		// If the surface cache is populated, then use this instead of the
 		// original model in order to get the skinned textures
 		if (!_mappedSurfs.empty()) {
@@ -107,11 +107,11 @@ void PicoModelNode::submitRenderables(RenderableCollector& collector,
 				// Submit the surface and shader to the collector, checking first
 				// to make sure the texture is not filtered
 				MaterialPtr surfaceShader = i->second->getMaterial();
-				if (surfaceShader->isVisible()) { 
+				if (surfaceShader->isVisible()) {
 					collector.SetState(i->second, RenderableCollector::eFullMaterials);
 					collector.addRenderable(*i->first, localToWorld);
 				}
-			}			
+			}
 		}
 		else {
 			// Submit the model's geometry
@@ -145,7 +145,7 @@ void PicoModelNode::skinChanged(const std::string& newSkinName) {
 		std::string mapped = skin.getRemap(material);
 		if (mapped.empty())
 			mapped = material; // use original material for remap
-		
+
 		// Add the surface and the mapped shader to our surface cache
 		_mappedSurfs.push_back(
 			std::make_pair(
@@ -154,7 +154,7 @@ void PicoModelNode::skinChanged(const std::string& newSkinName) {
 			)
 		);
 	}
-	
+
 	// Refresh the scene
 	GlobalSceneGraph().sceneChanged();
 }

@@ -243,9 +243,9 @@ public:
   virtual void TestLineLoop(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
   virtual void TestLineStrip(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
   virtual void TestLines(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
-  virtual void TestTriangles(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0; 
-  virtual void TestQuads(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0; 
-  virtual void TestQuadStrip(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0; 
+  virtual void TestTriangles(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;
+  virtual void TestQuads(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;
+  virtual void TestQuadStrip(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;
 };
 
 class Selectable;

@@ -10,11 +10,11 @@
 namespace ui
 {
 
-/** 
+/**
  * greebo: A LayerControl contains a set of widgets needed
  *         to control an associated layer.
  *
- * Multiple LayerControls can be packed as children into the 
+ * Multiple LayerControls can be packed as children into the
  * owning LayerControlDialog.
  */
 class LayerControl
@@ -28,7 +28,7 @@ private:
 	Gtk::Button* _deleteButton;
 	Gtk::Button* _renameButton;
 	Gtk::HBox* _buttonHBox;
-	
+
 	// Locks down the callbacks during widget update
 	bool _updateActive;
 

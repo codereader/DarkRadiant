@@ -16,8 +16,8 @@ inline Vector3 triangle_cross(const BasicVector3<Element>& x, const BasicVector3
 	return (y - x).crossProduct(z - x);
 }
 template<typename Element>
-inline bool triangles_same_winding(const BasicVector3<Element>& x1, const BasicVector3<Element> y1, const BasicVector3<Element>& z1, 
-								   const BasicVector3<Element>& x2, const BasicVector3<Element> y2, const BasicVector3<Element>& z2) 
+inline bool triangles_same_winding(const BasicVector3<Element>& x1, const BasicVector3<Element> y1, const BasicVector3<Element>& z1,
+								   const BasicVector3<Element>& x2, const BasicVector3<Element> y2, const BasicVector3<Element>& z2)
 {
 	return triangle_cross(x1, y1, z1).dot(triangle_cross(x2, y2, z2)) > 0;
 }
@@ -68,7 +68,7 @@ void FaceInstance::selectedChanged(const Selectable& selectable) {
 bool FaceInstance::selectedVertices() const {
 	return !m_vertexSelection.empty();
 }
-	
+
 bool FaceInstance::selectedEdges() const {
 	return !m_edgeSelection.empty();
 }
@@ -145,7 +145,7 @@ bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& loca
 // Submit renderable geometry
 void FaceInstance::submitRenderables(RenderableCollector& collector,
                                      const VolumeTest& volume,
-                                     const Matrix4& localToWorld) const 
+                                     const Matrix4& localToWorld) const
 {
 	if (m_face->contributes() && intersectVolume(volume, localToWorld))
 	{
@@ -209,7 +209,7 @@ void FaceInstance::transformComponents(const Matrix4& matrix) {
 	if (isSelected()) {
 		m_face->transform(matrix, false);
 	}
-	
+
 	if (selectedVertices()) {
 		if (m_vertexSelection.size() == 1) {
 				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[1]);
@@ -227,7 +227,7 @@ void FaceInstance::transformComponents(const Matrix4& matrix) {
 				m_face->assign_planepts(m_face->m_move_planeptsTransformed);
 			}
 	}
-	
+
 	if (selectedEdges()) {
 		if (m_edgeSelection.size() == 1) {
 				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[0]);
@@ -251,7 +251,7 @@ void FaceInstance::snapComponents(float snap) {
 	if (isSelected()) {
 		snapto(snap);
 	}
-		
+
 	if (selectedVertices()) {
 		vector3_snap(m_face->m_move_planepts[0], snap);
 		vector3_snap(m_face->m_move_planepts[1], snap);
@@ -260,7 +260,7 @@ void FaceInstance::snapComponents(float snap) {
 		planepts_assign(m_face->m_move_planeptsTransformed, m_face->m_move_planepts);
 		m_face->freezeTransform();
 	}
-	
+
 	if (selectedEdges()) {
 		vector3_snap(m_face->m_move_planepts[0], snap);
 		vector3_snap(m_face->m_move_planepts[1], snap);
@@ -403,14 +403,14 @@ void FaceInstance::connectivityChanged() {
 	m_selectableEdges.setSelected(false);
 }
 
-void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& light) 
+void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& light)
 {
 	const Plane3& facePlane = getFace().plane3();
-	
+
 	Plane3 tmp(localToWorld.transform(Plane3(facePlane.normal(), -facePlane.dist())));
-	
-	if (!plane3_test_point(tmp, light.worldOrigin())	
-        || !plane3_test_point(tmp, light.getLightOrigin())) 
+
+	if (!plane3_test_point(tmp, light.worldOrigin())
+        || !plane3_test_point(tmp, light.getLightOrigin()))
     {
 		m_lights.addLight(light);
 	}

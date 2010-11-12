@@ -9,7 +9,7 @@ namespace ui
 
 /** Utility class for generating the Filters top-level menu. This class
  * registers the relevant menuitems on demand.
- * 
+ *
  * Construct a FiltersMenu instance to generate a new Filter Menu which
  * can be packed into a parent container widget using the GtkWidget* operator.
  */

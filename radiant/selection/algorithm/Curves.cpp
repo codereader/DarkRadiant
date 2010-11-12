@@ -66,11 +66,11 @@ public:
 	}
 };
 
-/** greebo: This visits all selected curves and	calls 
- * 			the nominated Processor class using the 
- * 			CurveNode as argument.  
+/** greebo: This visits all selected curves and	calls
+ * 			the nominated Processor class using the
+ * 			CurveNode as argument.
  */
-class SelectedCurveVisitor : 
+class SelectedCurveVisitor :
 	public SelectionSystem::Visitor
 {
 	CurveNodeProcessor& _processor;
@@ -91,13 +91,13 @@ public:
 
 void appendCurveControlPoint(const cmd::ArgumentList& args) {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
+
 	if (info.entityCount > 0) {
 		UndoableCommand command("curveAppendControlPoint");
-		
-		// The functor object 
+
+		// The functor object
 		CurveControlPointAppender appender;
-		
+
 		// Traverse the selection applying the functor
 		GlobalSelectionSystem().foreachSelected(
 			SelectedCurveVisitor(appender)
@@ -105,7 +105,7 @@ void appendCurveControlPoint(const cmd::ArgumentList& args) {
 	}
 	else {
 		gtkutil::errorDialog(
-			_("Can't append curve point - no entities with curve selected."), 
+			_("Can't append curve point - no entities with curve selected."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -116,20 +116,20 @@ void removeCurveControlPoints(const cmd::ArgumentList& args) {
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
 		gtkutil::errorDialog(
-			_("Can't remove curve points - must be in vertex editing mode."), 
+			_("Can't remove curve points - must be in vertex editing mode."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
 		return;
 	}
-	
+
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
+
 	if (info.entityCount > 0) {
 		UndoableCommand command("curveRemoveControlPoints");
-		
-		// The functor object 
+
+		// The functor object
 		CurveControlPointRemover remover;
-		
+
 		// Traverse the selection applying the functor
 		GlobalSelectionSystem().foreachSelected(
 			SelectedCurveVisitor(remover)
@@ -137,7 +137,7 @@ void removeCurveControlPoints(const cmd::ArgumentList& args) {
 	}
 	else {
 		gtkutil::errorDialog(
-			_("Can't remove curve points - no entities with curves selected."), 
+			_("Can't remove curve points - no entities with curves selected."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -148,20 +148,20 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 		GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex)
 	{
 		gtkutil::errorDialog(
-			_("Can't insert curve points - must be in vertex editing mode."), 
+			_("Can't insert curve points - must be in vertex editing mode."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
 		return;
 	}
-	
+
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
+
 	if (info.entityCount > 0) {
 		UndoableCommand command("curveInsertControlPoints");
-		
-		// The functor object 
+
+		// The functor object
 		CurveControlPointInserter inserter;
-		
+
 		// Traverse the selection applying the functor
 		GlobalSelectionSystem().foreachSelected(
 			SelectedCurveVisitor(inserter)
@@ -169,7 +169,7 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 	}
 	else {
 		gtkutil::errorDialog(
-			_("Can't insert curve points - no entities with curves selected."), 
+			_("Can't insert curve points - no entities with curves selected."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
@@ -177,13 +177,13 @@ void insertCurveControlPoints(const cmd::ArgumentList& args) {
 
 void convertCurveTypes(const cmd::ArgumentList& args) {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
+
 	if (info.entityCount > 0) {
 		UndoableCommand command("curveConvertType");
-		
-		// The functor object 
+
+		// The functor object
 		CurveConverter converter;
-		
+
 		// Traverse the selection applying the functor
 		GlobalSelectionSystem().foreachSelected(
 			SelectedCurveVisitor(converter)
@@ -191,11 +191,11 @@ void convertCurveTypes(const cmd::ArgumentList& args) {
 	}
 	else {
 		gtkutil::errorDialog(
-			_("Can't convert curves - no entities with curves selected."), 
+			_("Can't convert curves - no entities with curves selected."),
 			GlobalMainFrame().getTopLevelWindow()
 		);
 	}
 }
-	
+
 	} // namespace algorithm
 } // namespace selection

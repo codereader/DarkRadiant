@@ -9,7 +9,7 @@ SelectionSet::SelectionSet(const std::string& name) :
 	_name(name)
 {}
 
-const std::string& SelectionSet::getName() 
+const std::string& SelectionSet::getName()
 {
 	return _name;
 }

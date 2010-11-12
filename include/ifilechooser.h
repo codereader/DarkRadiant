@@ -16,11 +16,11 @@ class IFileChooser
 {
 public:
 	/**
-	 * greebo: A Preview class can be attached to a FileChooser (in "open" mode), 
+	 * greebo: A Preview class can be attached to a FileChooser (in "open" mode),
 	 * to allow for adding and updating a preview widget to the dialog.
 	 * The Preview object must provide two methods, one for retrieving
 	 * the preview widget for addition to the dialog, and one
-	 * update method which gets called as soon as the dialog emits the 
+	 * update method which gets called as soon as the dialog emits the
 	 * selection change signal.
 	 */
 	class Preview

@@ -10,11 +10,11 @@ namespace filters {
  * Scenegraph walker to update filtered status of Instances based on the
  * status of their parent entity class.
  */
-class ShaderUpdateWalker : 
+class ShaderUpdateWalker :
 	public shaders::ShaderVisitor
 {
 public:
-	void visit(const MaterialPtr& shader) { 
+	void visit(const MaterialPtr& shader) {
 		// Set the shader's visibility based on the current filter settings
 		shader->setVisible(
 			GlobalFilterSystem().isVisible("texture", shader->getName())

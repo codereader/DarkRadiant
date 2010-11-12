@@ -45,12 +45,12 @@ public:
 	int getVertexCount();
 	int getPolyCount();
 	model::MaterialList getActiveMaterials();
-	ScriptModelSurface getSurface(int surfaceNum); 
+	ScriptModelSurface getSurface(int surfaceNum);
 
 	// Checks if the given SceneNode structure is a ModelNode
 	static bool isModel(const ScriptSceneNode& node);
 
-	// "Cast" service for Python, returns a ScriptModelNode. 
+	// "Cast" service for Python, returns a ScriptModelNode.
 	// The returned node is non-NULL if the cast succeeded
 	static ScriptModelNode getModel(const ScriptSceneNode& node);
 };

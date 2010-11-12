@@ -45,22 +45,22 @@ public:
     virtual ~IMenuManager() {}
 
 	/** greebo: Retrieves the menuitem widget specified by the path.
-	 * 
+	 *
 	 * Example: get("main/file/open") delivers the widget for the "Open..." command.
-	 * 
+	 *
 	 * @returns: the widget, or NULL, if no the path hasn't been found.
 	 */
 	virtual Gtk::Widget* get(const std::string& path) = 0;
-	
-	/** greebo: Shows/hides the menuitem under the given path. 
-	 * 
+
+	/** greebo: Shows/hides the menuitem under the given path.
+	 *
 	 * @path: the path to the item (e.g. "main/view/cameraview")
 	 * @visible: FALSE, if the widget should be hidden, TRUE otherwise
 	 */
 	virtual void setVisibility(const std::string& path, bool visible) = 0;
-	
+
 	/** greebo: Adds a new item as child under the given path.
-	 * 
+	 *
 	 * @insertPath: the path where to insert the item: "main/filters"
 	 * @name: the name of the new item
 	 * @type: the item type (usually menuFolder / menuItem)
@@ -70,20 +70,20 @@ public:
 	 */
 	virtual Gtk::Widget* add(const std::string& insertPath,
 						   const std::string& name,
-						   ui::eMenuItemType type, 
-						   const std::string& caption, 
+						   ui::eMenuItemType type,
+						   const std::string& caption,
 						   const std::string& icon,
 						   const std::string& eventName) = 0;
-			 
+
 	/** greebo: Inserts a new menuItem as sibling _before_ the given insertPath.
-	 * 
+	 *
 	 * @insertPath: the path where to insert the item: "main/filters"
 	 * @name: the name of the new menu item (no path, just the name)
 	 * @caption: the display string including mnemonic
 	 * @icon: the image file name relative to "bitmaps/", can be empty.
 	 * @eventName: the event name this item is associated with (can be empty).
-	 * 
-	 * @returns: the Gtk::Widget* 
+	 *
+	 * @returns: the Gtk::Widget*
 	 */
 	virtual Gtk::Widget* insert(const std::string& insertPath,
 							  const std::string& name,
@@ -96,7 +96,7 @@ public:
 	 * Removes an entire path from the menus.
  	 */
 	virtual void remove(const std::string& path) = 0;
-	
+
 	/** Recursively iterates over the menu items and updates
 	 *  the accelerator strings by requesting them from the EventManager.
 	 */
@@ -118,7 +118,7 @@ class IStatusBarManager
 public:
 
 	// Use these positions to place the status bar elements in between
-	// the default ones. A position of 31 would put a widget in between 
+	// the default ones. A position of 31 would put a widget in between
 	// POS_BRUSHCOUNT and POS_SHADERCLIPBOARD.
 	enum StandardPositions {
 		POS_FRONT			= 0,
@@ -143,7 +143,7 @@ public:
 	/**
 	 * greebo: This adds a named element to the status bar. Pass the widget
 	 * which should be added and specify the position order.
-	 * 
+	 *
 	 * @name: the name of the element (can be used for later lookup).
 	 * @widget: the widget to pack.
 	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
@@ -171,7 +171,7 @@ public:
 
 	/**
 	 * Returns a named status bar widget, previously added by addElement().
-	 * 
+	 *
 	 * @returns: NULL if the named widget does not exist.
 	 */
 	virtual Gtk::Widget* getElement(const std::string& name) = 0;
@@ -181,7 +181,7 @@ public:
 class IGroupDialog;		// see igroupdialog.h for definition
 
 namespace ui
-{ 
+{
 
 class IDialogManager;	// see idialogmanager.h for definition
 class IFilterMenu;		// see ifiltermenu.h for definition
@@ -201,9 +201,9 @@ typedef Glib::RefPtr<Gtk::Builder> GtkBuilderPtr;
 const std::string MODULE_UIMANAGER("UIManager");
 
 /** greebo: The UI Manager abstract base class.
- * 
+ *
  * The UIManager provides an interface to add UI items like menu commands
- * toolbar icons, update status bar texts and such. 
+ * toolbar icons, update status bar texts and such.
  */
 class IUIManager :
 	public RegisterableModule
@@ -232,7 +232,7 @@ public:
 
 	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
 	virtual ui::IFilterMenuPtr createFilterMenu() = 0;
-	
+
 	// Creates a new model preview (GL view with draggable viewpoint, zoom and filter functionality)
 	virtual ui::IModelPreviewPtr createModelPreview() = 0;
 

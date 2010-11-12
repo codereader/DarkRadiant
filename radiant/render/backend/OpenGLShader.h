@@ -14,7 +14,7 @@
 /**
  * Implementation of the Shader class.
  */
-class OpenGLShader 
+class OpenGLShader
 : public Shader
 {
 private:
@@ -90,11 +90,11 @@ private:
     bool canUseLightingMode() const;
 
 public:
-	
-	/** 
+
+	/**
 	 * Constructor.
 	 */
-	OpenGLShader(render::OpenGLStateManager& glStateManager) : 
+	OpenGLShader(render::OpenGLStateManager& glStateManager) :
 		_glStateManager(glStateManager),
 		m_used(0)
 	{ }
@@ -102,12 +102,12 @@ public:
 	/**
 	 * Add a renderable object to this shader.
 	 */
-	void addRenderable(const OpenGLRenderable& renderable, 
-					   const Matrix4& modelview, 
+	void addRenderable(const OpenGLRenderable& renderable,
+					   const Matrix4& modelview,
 					   const LightList* lights);
-  
+
 	void incrementUsed();
-  
+
 	void decrementUsed();
 
   bool realised() const
@@ -141,7 +141,7 @@ public:
 	void unrealise();
 
 	// Return the Material*
-	MaterialPtr getMaterial() const 
+	MaterialPtr getMaterial() const
     {
 		return _material;
 	}

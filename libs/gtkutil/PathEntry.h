@@ -13,10 +13,10 @@ namespace gtkutil
 
 /**
  * greebo: A PathEntry can be used to edit a path to a file or a directory.
- * It behaves like an ordinary text entry box, featuring a button to the right 
+ * It behaves like an ordinary text entry box, featuring a button to the right
  * which opens a FileChooser dialog when clicked.
  */
-class PathEntry : 
+class PathEntry :
 	public Gtk::Frame
 {
 protected:
@@ -27,9 +27,9 @@ protected:
 	Gtk::Entry* _entry;
 
 public:
-	/** 
+	/**
 	 * Construct a new Path Entry. Use the boolean
-	 * to specify whether this widget should be used to 
+	 * to specify whether this widget should be used to
 	 * browser for folders or files.
 	 */
 	PathEntry(bool foldersOnly = false);

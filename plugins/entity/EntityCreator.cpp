@@ -24,7 +24,7 @@
 #include "Doom3Entity.h"
 
 namespace entity {
-	
+
 	namespace {
 		inline NamespacedPtr Node_getNamespaced(scene::INodePtr node) {
 			return boost::dynamic_pointer_cast<Namespaced>(node);
@@ -32,15 +32,15 @@ namespace entity {
 	}
 
 scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& eclass) {
-	
+
 	// Null entityclass check
 	if (!eclass) {
 		throw std::runtime_error(
 			_("Doom3EntityCreator::getEntityForEClass(): "
 			"cannot create entity for NULL entityclass.")
-		); 
+		);
 	}
-	
+
 	// Otherwise create the correct entity subclass based on the entity class
 	// parameters.
 	scene::INodePtr returnValue;
@@ -88,20 +88,20 @@ scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass) 
 	assert(entity != NULL);
 
 	entity->setKeyValue("classname", eclass->getName());
-	
+
 	// If this is not a worldspawn or unrecognised entity, generate a unique
 	// name for it
 	const std::string& eclassName = eclass->getName();
 
-	if (!eclassName.empty() && 
-		eclassName != "worldspawn" && 
+	if (!eclassName.empty() &&
+		eclassName != "worldspawn" &&
 		eclassName != "UNKNOWN_CLASS")
 	{
 		/* Clean up the name of the entity that is about the created
-		 * so that nothing bad can happen (for example, the colon character 
+		 * so that nothing bad can happen (for example, the colon character
 		 * seems to be causing problems in Doom 3 Scripting)
 		 */
-		std::string entityName = 
+		std::string entityName =
 			boost::algorithm::replace_all_copy(eclassName, ":", "_") + "_1";
 
 		entity->setKeyValue("name", entityName);
@@ -174,7 +174,7 @@ const StringSet& Doom3EntityCreator::getDependencies() const {
 void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "Doom3EntityCreator::initialiseModule called." << std::endl;
-	
+
 	LightShader::m_defaultShader = GlobalRegistry().get("game/defaults/lightShader");
 
 	// Construct Doom3Group stuff
@@ -192,7 +192,7 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 void Doom3EntityCreator::shutdownModule()
 {
 	globalOutputStream() << "Doom3EntityCreator::shutdownModule called." << std::endl;
-	
+
 	GlobalRenderSystem().detachRenderable(RenderableTargetInstances::Instance());
 
 	// Destroy the settings instance

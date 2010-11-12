@@ -6,7 +6,7 @@
 #include "itextstream.h"
 #include "FontManager.h"
 
-namespace fonts 
+namespace fonts
 {
 
 void FontLoader::visit(const std::string& filename)
@@ -16,7 +16,7 @@ void FontLoader::visit(const std::string& filename)
 
 	boost::regex expr("^/?(.*)/.*_(\\d{2})\\.dat$", boost::regex::icase);
 	boost::smatch matches;
-	
+
 	if (boost::regex_match(filename, matches, expr))
 	{
 		// Get the font name and resolution from the match
@@ -57,4 +57,4 @@ void FontLoader::visit(const std::string& filename)
 	}
 }
 
-} // namespace fonts 
+} // namespace fonts

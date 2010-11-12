@@ -19,9 +19,9 @@ StimResponse::StimResponse(const StimResponse& other) :
 /** greebo: Gets the property value string or "" if not defined/empty
  */
 std::string StimResponse::get(const std::string& key) {
-	
+
 	PropertyMap::iterator i = _properties.find(key);
-	
+
 	if (i != _properties.end()) {
 		return _properties[key].value;
 	}
@@ -73,7 +73,7 @@ bool StimResponse::isOverridden(const std::string& key) {
 		return (_properties[key].value != _properties[key].origValue);
 	}
 	return false;
-} 
+}
 
 void StimResponse::setInherited(bool inherited) {
 	_inherited = inherited;
@@ -85,44 +85,44 @@ bool StimResponse::inherited() const {
 
 ResponseEffect& StimResponse::getResponseEffect(const unsigned int index) {
 	EffectMap::iterator found = _effects.find(index);
-	
+
 	if (found == _effects.end()) {
 		// ResponseEffect doesn't exist yet, create a new, empty one
 		 _effects[index] = ResponseEffect();
 		 _effects[index].setInherited(_inherited);
 	}
-	
+
 	return _effects[index];
 }
 
 void StimResponse::sortEffects() {
 	EffectMap newMap;
-	
+
 	// Re-index the effects to avoid gaps in the indexing
 	int newIndex = 1;
-	for (EffectMap::iterator i = _effects.begin(); 
-		 i != _effects.end(); 
-		 i++, newIndex++) 
+	for (EffectMap::iterator i = _effects.begin();
+		 i != _effects.end();
+		 i++, newIndex++)
 	{
 		// Copy the visited ResponseEffect to the new index
 		newMap[newIndex] = i->second;
 	}
-	
+
 	// Replace the old map with the sorted one
 	_effects = newMap;
 }
 
-void StimResponse::moveEffect(const unsigned int fromIndex, 
+void StimResponse::moveEffect(const unsigned int fromIndex,
 							  const unsigned int toIndex)
 {
 	EffectMap::iterator from = _effects.find(fromIndex);
 	EffectMap::iterator to = _effects.find(toIndex);
-	
+
 	if (from != _effects.end() && to != _effects.end()) {
 		// Copy the ResponseEffects from the map
 		ResponseEffect fromEffect = from->second;
 		ResponseEffect toEffect = to->second;
-		
+
 		// Write them back at the swapped locations
 		_effects[fromIndex] = toEffect;
 		_effects[toIndex] = fromEffect;
@@ -131,25 +131,25 @@ void StimResponse::moveEffect(const unsigned int fromIndex,
 
 unsigned int StimResponse::highestEffectIndex() {
 	unsigned int returnValue = 0;
-	
+
 	// Search for the highest index
 	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); i++) {
 		if (i->first > returnValue) {
 			returnValue = i->first;
 		}
 	}
-	
+
 	return returnValue;
 }
 
 void StimResponse::addEffect(const unsigned int index) {
 	// Resort the effects, it may be unsorted when loaded fresh from the entity
 	sortEffects();
-	
+
 	EffectMap::iterator found = _effects.find(index);
-	
+
 	if (found == _effects.end()) {
-		unsigned int newIndex = highestEffectIndex() + 1; 
+		unsigned int newIndex = highestEffectIndex() + 1;
 		// No item found (index could be -1), append to the end of the list
 		_effects[newIndex] = ResponseEffect();
 		_effects[newIndex].setInherited(_inherited);
@@ -159,12 +159,12 @@ void StimResponse::addEffect(const unsigned int index) {
 	}
 	else {
 		EffectMap newMap;
-	
-		// Traverse the current effect list from back to front and 
-		// increase all indices >= index and insert a new effect   
-		for (EffectMap::reverse_iterator i = _effects.rbegin(); 
-			 i != _effects.rend(); 
-			 i++) 
+
+		// Traverse the current effect list from back to front and
+		// increase all indices >= index and insert a new effect
+		for (EffectMap::reverse_iterator i = _effects.rbegin();
+			 i != _effects.rend();
+			 i++)
 		{
 			// Increase all indices >= index
 			if (i->first >= index) {
@@ -175,7 +175,7 @@ void StimResponse::addEffect(const unsigned int index) {
 				// All smaller indices get copied
 				newMap[i->first] = i->second;
 			}
-			
+
 			// If we are exactly at the insert point, insert the new effect
 			if (i->first == index) {
 				newMap[i->first] = ResponseEffect();
@@ -185,7 +185,7 @@ void StimResponse::addEffect(const unsigned int index) {
 				);
 			}
 		}
-		
+
 		// Replace the old map with the new one
 		_effects = newMap;
 	}
@@ -193,12 +193,12 @@ void StimResponse::addEffect(const unsigned int index) {
 
 void StimResponse::deleteEffect(const unsigned int index) {
 	EffectMap::iterator found = _effects.find(index);
-	
+
 	if (found != _effects.end()) {
 		// Remove the item from the map
 		_effects.erase(found);
 	}
-	
+
 	// Re-index the effects in the map
 	sortEffects();
 }
@@ -212,7 +212,7 @@ const Glib::RefPtr<Gtk::ListStore>& StimResponse::updateAndGetEffectStore()
 	const Columns& columns = getColumns();
 
 	_effectStore = Gtk::ListStore::create(columns);
-	
+
 	for (EffectMap::iterator i = _effects.begin(); i != _effects.end(); ++i)
 	{
 		Gtk::TreeModel::Row row = *_effectStore->append();
@@ -222,7 +222,7 @@ const Glib::RefPtr<Gtk::ListStore>& StimResponse::updateAndGetEffectStore()
 		row[columns.caption] = i->second.getCaption();
 		row[columns.arguments] = i->second.getArgumentStr();
 	}
-	
+
 	return _effectStore;
 }
 

@@ -39,18 +39,18 @@ ModelPreview::ModelPreview() :
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
-	
+
 	// Cast the GLWidget object to GtkWidget for further use
 	vbx->pack_start(*_glWidget, true, true, 0);
-	
+
 	// Connect up the signals
-	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | 
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
 						 Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
-	
+
 	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLDraw));
 	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLMotion));
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLScroll));
-	
+
 	// The HBox containing the toolbar and the menubar
 	Gtk::HBox* toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
 	vbx->pack_end(*toolHBox, false, false, 0);
@@ -59,15 +59,15 @@ ModelPreview::ModelPreview() :
 	Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
 	toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
 	toolHBox->pack_end(*toolbar, true, true, 0);
-		
+
 	// Draw bounding box toolbar button
 	_drawBBox = Gtk::manage(new Gtk::ToggleToolButton);
 	_drawBBox->signal_toggled().connect(sigc::mem_fun(*this, &ModelPreview::callbackToggleBBox));
-	
+
 	_drawBBox->set_icon_widget(*Gtk::manage(new Gtk::Image(
 		GlobalUIManager().getLocalPixbuf("iconDrawBBox.png"))));
 	toolbar->insert(*_drawBBox, 0);
-	
+
 	// Create the menu
 	toolHBox->pack_end(*_filtersMenu->getMenuBarWidget(), false, false, 0);
 
@@ -101,15 +101,15 @@ void ModelPreview::initialisePreview()
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClearDepth(100.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	// Set up the camera
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
-	
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-			
+
 	// Set up the lights
 	glEnable(GL_LIGHTING);
 
@@ -120,7 +120,7 @@ void ModelPreview::initialisePreview()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
 	glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
-	
+
 	glEnable(GL_LIGHT1);
 	GLfloat l1Dif[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat l1Pos[] = { 0.0, 0.0, 1.0, 0.0 };
@@ -164,9 +164,9 @@ void ModelPreview::setModel(const std::string& model)
 			modelToLoad = modelDef->mesh;
 			boost::algorithm::to_lower(ldrName);
 		}
-		
+
 		ModelLoaderPtr loader = GlobalModelCache().getModelLoaderForType(ldrName);
-		
+
 		if (loader != NULL) {
 			_model = loader->loadModelFromPath(modelToLoad);
 		}
@@ -186,9 +186,9 @@ void ModelPreview::setModel(const std::string& model)
 	if (_model && modelToLoad != _lastModel) {
 		// Reset the rotation
 		_rotation = Matrix4::getIdentity();
-		
+
 		// Calculate camera distance so model is appropriately zoomed
-		_camDist = -(_model->localAABB().getRadius() * 2.0); 
+		_camDist = -(_model->localAABB().getRadius() * 2.0);
 
 		_lastModel = modelToLoad;
 	}
@@ -200,14 +200,14 @@ void ModelPreview::setModel(const std::string& model)
 // Set the skin, this does NOT reset the camera
 
 void ModelPreview::setSkin(const std::string& skin) {
-	
+
 	// Load and apply the skin, checking first to make sure the model is valid
 	// and not null
 	if (_model != NULL) {
 		ModelSkin& mSkin = GlobalModelSkinCache().capture(skin);
 		_model->applySkin(mSkin);
 	}
-	
+
 	// Redraw
 	_glWidget->queueDraw();
 }
@@ -217,7 +217,7 @@ Gtk::Widget* ModelPreview::getWidget()
 	return this;
 }
 
-bool ModelPreview::callbackGLDraw(GdkEventExpose* ev) 
+bool ModelPreview::callbackGLDraw(GdkEventExpose* ev)
 {
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
@@ -231,7 +231,7 @@ bool ModelPreview::callbackGLDraw(GdkEventExpose* ev)
 	model::IModelPtr model = _model;
 	if (!model)
 		return false;
-		
+
 	AABB aabb(model->localAABB());
 
 	// Premultiply with the translations
@@ -273,13 +273,13 @@ bool ModelPreview::callbackGLMotion(GdkEventMotion* ev)
 						 0);
 		_lastX = ev->x;
 		_lastY = ev->y;
-		
+
 		// Calculate the axis of rotation. This is the mouse vector crossed with the Z axis,
 		// to give a rotation axis in the XY plane at right-angles to the mouse delta.
 		static Vector3 _zAxis(0, 0, 1);
 		Vector3 axisRot = deltaPos.crossProduct(_zAxis);
-		
-		// Grab the GL widget, and update the modelview matrix with the 
+
+		// Grab the GL widget, and update the modelview matrix with the
 		// additional rotation
 		if (gtkutil::GLWidget::makeCurrent(*_glWidget))
 		{

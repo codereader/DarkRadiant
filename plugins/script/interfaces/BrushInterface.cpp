@@ -27,31 +27,31 @@ public:
 		_face->undoSave();
 	}
 
-	const std::string& getShader() const 
+	const std::string& getShader() const
 	{
 		if (_face == NULL) return _emptyShader;
 		return _face->getShader();
 	}
 
-	void setShader(const std::string& name) 
+	void setShader(const std::string& name)
 	{
 		if (_face == NULL) return;
 		_face->setShader(name);
 	}
 
-	void shiftTexdef(float s, float t) 
+	void shiftTexdef(float s, float t)
 	{
 		if (_face == NULL) return;
 		_face->shiftTexdef(s, t);
 	}
 
-	void scaleTexdef(float s, float t) 
+	void scaleTexdef(float s, float t)
 	{
 		if (_face == NULL) return;
 		_face->scaleTexdef(s, t);
 	}
 
-	void rotateTexdef(float angle) 
+	void rotateTexdef(float angle)
 	{
 		if (_face == NULL) return;
 		_face->rotateTexdef(angle);
@@ -63,19 +63,19 @@ public:
 		_face->fitTexture(s_repeat, t_repeat);
 	}
 
-	void flipTexture(unsigned int flipAxis) 
+	void flipTexture(unsigned int flipAxis)
 	{
 		if (_face == NULL) return;
 		_face->flipTexture(flipAxis);
 	}
-	
-	void normaliseTexture() 
+
+	void normaliseTexture()
 	{
 		if (_face == NULL) return;
 		_face->normaliseTexture();
 	}
 
-	IWinding& getWinding() 
+	IWinding& getWinding()
 	{
 		if (_face == NULL) return _emptyWinding;
 		return _face->getWinding();
@@ -131,9 +131,9 @@ public:
 		return brushNode->getIBrush().hasContributingFaces();
 	}
 
-	// Removes faces that do not contribute to the brush. 
+	// Removes faces that do not contribute to the brush.
 	// This is useful for cleaning up after CSG operations on the brush.
-	// Note: removal of empty faces is not performed during direct brush manipulations, 
+	// Note: removal of empty faces is not performed during direct brush manipulations,
 	// because it would make a manipulation irreversible if it created an empty face.
 	void removeEmptyFaces()
 	{
@@ -171,7 +171,7 @@ public:
 
 	// Saves the current state to the undo stack.
 	// Call this before manipulating the brush to make your action undo-able.
-	void undoSave() 
+	void undoSave()
 	{
 		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(_node.lock());
 		if (brushNode == NULL) return;
@@ -184,14 +184,14 @@ public:
 		return Node_isBrush(node);
 	}
 
-	// "Cast" service for Python, returns a ScriptBrushNode. 
+	// "Cast" service for Python, returns a ScriptBrushNode.
 	// The returned node is non-NULL if the cast succeeded
 	static ScriptBrushNode getBrush(const ScriptSceneNode& node) {
 		// Try to cast the node onto a brush
 		IBrushNodePtr brushNode = boost::dynamic_pointer_cast<IBrushNode>(
 			static_cast<scene::INodePtr>(node)
 		);
-		
+
 		// Construct a brushnode (contained node may be NULL)
 		return (brushNode != NULL) ? ScriptBrushNode(node) : ScriptBrushNode(scene::INodePtr());
 	}
@@ -202,7 +202,7 @@ ScriptSceneNode BrushInterface::createBrush()
 	// Create a new brush and return the script scene node
 	scene::INodePtr node = GlobalBrushCreator().createBrush();
 
-	// Add the node to the buffer otherwise it will be deleted immediately, 
+	// Add the node to the buffer otherwise it will be deleted immediately,
 	// as ScriptSceneNodes are using weak_ptrs.
 	SceneNodeBuffer::Instance().push_back(node);
 
@@ -230,7 +230,7 @@ void BrushInterface::registerInterface(boost::python::object& nspace)
 	nspace["Face"] = boost::python::class_<ScriptFace>("Face", boost::python::init<>())
 		.def(boost::python::init<IFace&>())
 		.def("undoSave", &ScriptFace::undoSave)
-		.def("getShader", &ScriptFace::getShader, 
+		.def("getShader", &ScriptFace::getShader,
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
 		.def("setShader", &ScriptFace::setShader)
 		.def("shiftTexdef", &ScriptFace::shiftTexdef)
@@ -239,12 +239,12 @@ void BrushInterface::registerInterface(boost::python::object& nspace)
 		.def("fitTexture", &ScriptFace::fitTexture)
 		.def("flipTexture", &ScriptFace::flipTexture)
 		.def("normaliseTexture", &ScriptFace::normaliseTexture)
-		.def("getWinding", &ScriptFace::getWinding, 
+		.def("getWinding", &ScriptFace::getWinding,
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 	;
 
 	// Define a BrushNode interface
-	nspace["BrushNode"] = boost::python::class_<ScriptBrushNode, 
+	nspace["BrushNode"] = boost::python::class_<ScriptBrushNode,
 		boost::python::bases<ScriptSceneNode> >("BrushNode", boost::python::init<const scene::INodePtr&>() )
 		.def("getNumFaces", &ScriptBrushNode::getNumFaces)
 		.def("empty", &ScriptBrushNode::empty)
@@ -260,12 +260,12 @@ void BrushInterface::registerInterface(boost::python::object& nspace)
 	// Add the "isBrush" and "getBrush" method to all ScriptSceneNodes
 	boost::python::object sceneNode = nspace["SceneNode"];
 
-	boost::python::objects::add_to_namespace(sceneNode, 
+	boost::python::objects::add_to_namespace(sceneNode,
 		"isBrush", boost::python::make_function(&ScriptBrushNode::isBrush));
 
-	boost::python::objects::add_to_namespace(sceneNode, 
+	boost::python::objects::add_to_namespace(sceneNode,
 		"getBrush", boost::python::make_function(&ScriptBrushNode::getBrush));
-	
+
 	// Define the BrushCreator interface
 	nspace["GlobalBrushCreator"] = boost::python::class_<BrushInterface>("GlobalBrushCreator")
 		.def("createBrush", &BrushInterface::createBrush)

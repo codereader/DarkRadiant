@@ -22,28 +22,28 @@ class OpenGLShaderPass
 {
 	// The state applied to this bucket
 	OpenGLState _state;
-	
+
 	/*
-	 * Representation of a transformed-and-lit renderable object. Stores a 
+	 * Representation of a transformed-and-lit renderable object. Stores a
 	 * single object, with its transform matrix and illuminating light source.
 	 */
 	struct TransformedRenderable {
-    
+
     	// The renderable object
     	const OpenGLRenderable* renderable;
 
     	// The modelview transform for this renderable
     	const Matrix4* transform;
 
-		// The light falling on this obejct    	
+		// The light falling on this obejct
     	const RendererLight* light;
 
 		// Default constructor
-		TransformedRenderable(const OpenGLRenderable& r, 
-							  const Matrix4& t, 
+		TransformedRenderable(const OpenGLRenderable& r,
+							  const Matrix4& t,
 							  const RendererLight* l)
 		: renderable(&r),
-		  transform(&t),		   
+		  transform(&t),
 		  light(l)
 		{ }
 	};
@@ -62,7 +62,7 @@ private:
                     const Vector3& viewer);
 
 	// Render all of our contained TransformedRenderables
-	void renderAllContained(OpenGLState& current, 
+	void renderAllContained(OpenGLState& current,
 						    const Vector3& viewer);
 
     /* Helper functions to enable/disable particular GL states */
@@ -98,8 +98,8 @@ public:
 	 * Add a renderable to this state bucket with the given object transform
 	 * matrix and light.
 	 */
-	void addRenderable(const OpenGLRenderable& renderable, 
-					   const Matrix4& modelview, 
+	void addRenderable(const OpenGLRenderable& renderable,
+					   const Matrix4& modelview,
 					   const RendererLight* light = 0);
 
 	/**
@@ -128,8 +128,8 @@ public:
      * Viewer location in world space.
      *
      */
-	void render(OpenGLState& current, 
-				unsigned int flagsMask, 
+	void render(OpenGLState& current,
+				unsigned int flagsMask,
 				const Vector3& viewer);
 
 	/**

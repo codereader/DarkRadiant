@@ -8,9 +8,9 @@
 
 #if defined (_WIN64)
 
-// Only for SSE2 or x64 
+// Only for SSE2 or x64
 
-#include <emmintrin.h>  
+#include <emmintrin.h>
 
 // greebo: VC++ x64 doesn't support inline assembly, we have to use x64 intrinsics instead
 inline int lrint(const double x) {
@@ -22,14 +22,14 @@ inline int lrint(const double x) {
 	// Win32 target
 	inline int lrint (double flt) {
 		int i;
-		
+
 		_asm {
 			fld flt
 				fistp i
 		};
-		
+
 		return i;
-	} 
+	}
 #endif
 
 #elif defined(__FreeBSD__)

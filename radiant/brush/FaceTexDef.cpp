@@ -5,7 +5,7 @@ FaceTexdef::FaceTexdef(FaceShader& shader, const TextureProjection& projection, 
 	m_shader(shader),
 	m_projection(projection),
 	m_projectionInitialised(projectionInitialised),
-	m_scaleApplied(false) 
+	m_scaleApplied(false)
 {
 	m_shader.attachObserver(*this);
 }

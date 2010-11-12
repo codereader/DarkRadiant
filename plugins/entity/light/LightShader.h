@@ -7,20 +7,20 @@
 namespace entity {
 
 class LightShader {
-	
+
 	ShaderPtr m_shader;
-	
+
 	void setDefault() {
 		m_shader = GlobalRenderSystem().capture(m_defaultShader);
 	}
-	
+
 public:
 	static std::string m_defaultShader;
 
 	LightShader() {
 		setDefault();
 	}
-	
+
 	void valueChanged(const std::string& value) {
 		if (value.empty()) {
 			setDefault();

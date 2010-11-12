@@ -47,9 +47,9 @@ class Face :
 			FaceTexdef::SavedState m_texdefState;
 			FaceShader::SavedState m_shaderState;
 
-		SavedState(const Face& face) : 
-			m_planeState(face.getPlane()), 
-			m_texdefState(face.getTexdef()), 
+		SavedState(const Face& face) :
+			m_planeState(face.getPlane()),
+			m_texdefState(face.getTexdef()),
 			m_shaderState(face.getFaceShader())
 		{}
 
@@ -83,14 +83,14 @@ private:
 
 	FaceTexdef m_texdef;
 	TextureProjection m_texdefTransformed;
-	
+
 	Winding m_winding;
 	Vector3 m_centroid;
-	
+
 	FaceObserver* m_observer;
 	UndoObserver* m_undoable_observer;
 	MapFile* m_map;
-	
+
 public:
 
 	// Constructors
@@ -99,12 +99,12 @@ public:
 		const std::string& shader, const TextureProjection& projection, FaceObserver* observer);
 
 	Face(Brush& owner, const Plane3& plane, FaceObserver* observer);
-	Face(Brush& owner, const Plane3& plane, const Matrix4& texdef, 
+	Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 		 const std::string& shader, FaceObserver* observer);
-		
+
 	// Copy Constructor
 	Face(Brush& owner, const Face& other, FaceObserver* observer);
-	
+
 	// Destructor
 	virtual ~Face();
 
@@ -112,16 +112,16 @@ public:
 	Brush& getBrush();
 
 	void planeChanged();
-	
+
 	// greebo: Emits the updated normals to the Winding class.
 	void updateWinding();
-	
+
 	void realiseShader();
 	void unrealiseShader();
-	
+
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
-	
+
     /* OpenGLRenderable implementation */
 	void render(const RenderInfo& info) const;
 
@@ -146,7 +146,7 @@ public:
 
 	void assign_planepts(const PlanePoints planepts);
 
-	/// \brief Reverts the transformable state of the brush to identity. 
+	/// \brief Reverts the transformable state of the brush to identity.
 	void revertTransform();
 	void freezeTransform();
 
@@ -174,46 +174,46 @@ public:
 	 * between the faces are seamless.
 	 */
 	void applyShaderFromFace(const Face& other);
-	
+
 	void GetFlags(ContentsFlagsValue& flags) const;
 	void SetFlags(const ContentsFlagsValue& flags);
-	
+
 	void shiftTexdef(float s, float t);
 	void scaleTexdef(float s, float t);
 	void rotateTexdef(float angle);
 	void fitTexture(float s_repeat, float t_repeat);
 	void flipTexture(unsigned int flipAxis);
 	void alignTexture(EAlignType align);
-	
-	/** greebo: This translates the texture as much towards 
-	 * 	the origin as possible. The face appearance stays unchanged.  
+
+	/** greebo: This translates the texture as much towards
+	 * 	the origin as possible. The face appearance stays unchanged.
 	 */
 	void normaliseTexture();
 
 	void EmitTextureCoordinates();
 
 	const Vector3& centroid() const;
-	
+
 	void construct_centroid();
-	
+
 	const Winding& getWinding() const;
 	Winding& getWinding();
-	
+
 	const Plane3& plane3() const;
 
 	// Returns the Doom 3 plane
 	const Plane3& getPlane3() const;
-		
+
 	FacePlane& getPlane();
 	const FacePlane& getPlane() const;
-	
+
 	FaceTexdef& getTexdef();
 	const FaceTexdef& getTexdef() const;
 	Matrix4 getTexDefMatrix() const;
 
 	FaceShader& getFaceShader();
 	const FaceShader& getFaceShader() const;
-	
+
 	bool contributes() const;
 	bool is_bounded() const;
 

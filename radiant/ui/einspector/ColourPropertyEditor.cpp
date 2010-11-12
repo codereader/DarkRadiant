@@ -16,7 +16,7 @@ ColourPropertyEditor::ColourPropertyEditor() :
 {}
 
 // Main ctor
-ColourPropertyEditor::ColourPropertyEditor(Entity* entity, 
+ColourPropertyEditor::ColourPropertyEditor(Entity* entity,
 										   const std::string& name)
 : PropertyEditor(entity),
   _key(name)
@@ -32,9 +32,9 @@ ColourPropertyEditor::ColourPropertyEditor(Entity* entity,
 	_colorButton->signal_color_set().connect(sigc::mem_fun(*this, &ColourPropertyEditor::_onColorSet));
 
 	mainVBox->pack_start(*_colorButton, true, true, 0);
-	
+
 	// Set colour button's colour
-	setColourButton(_entity->getKeyValue(name)); 
+	setColourButton(_entity->getKeyValue(name));
 }
 
 // Set displayed colour from the keyvalue
@@ -42,16 +42,16 @@ void ColourPropertyEditor::setColourButton(const std::string& val)
 {
 	float r = 0.0, g = 0.0, b = 0.0;
 	std::stringstream str(val);
-	
+
 	// Stream the whitespace-separated string into floats
-	str >> r; 
+	str >> r;
 	str >> g;
 	str >> b;
 
 	// Construct the GdkColor and set the GtkColorButton from it
 	Gdk::Color col;
 	col.set_rgb_p(r, g, b);
-	
+
 	_colorButton->set_color(col);
 }
 
@@ -60,9 +60,9 @@ std::string ColourPropertyEditor::getSelectedColour()
 {
 	// Get colour from the button
 	Gdk::Color col = _colorButton->get_color();
-	
+
 	// Format the string value appropriately.
-	return (boost::format("%.2f %.2f %.2f") 
+	return (boost::format("%.2f %.2f %.2f")
 			% (col.get_red()/65535.0)
 			% (col.get_green()/65535.0)
 			% (col.get_blue()/65535.0)).str();
@@ -74,6 +74,6 @@ void ColourPropertyEditor::_onColorSet()
 	setKeyValue(_key, getSelectedColour());
 }
 
-	
+
 } // namespace ui
 

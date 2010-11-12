@@ -29,7 +29,7 @@ namespace {
 	}
 } // namespace
 
-PicoModelLoader::PicoModelLoader(const picoModule_t* module, const std::string& extension) : 
+PicoModelLoader::PicoModelLoader(const picoModule_t* module, const std::string& extension) :
 	_module(module),
 	_extension(extension),
 	_moduleName("ModelLoader" + extension) // e.g. ModelLoaderASE
@@ -57,7 +57,7 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
 	}
 
 	// The cached model should be an MD5Model, otherwise we're in the wrong movie
-	RenderablePicoModelPtr picoModel = 
+	RenderablePicoModelPtr picoModel =
 		boost::dynamic_pointer_cast<RenderablePicoModel>(model);
 
 	if (picoModel != NULL) {
@@ -87,13 +87,13 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name) {
 	std::string fExt = fName.substr(fName.size() - 3, 3);
 
 	picoModel_t* model = PicoModuleLoadModelStream(
-		_module, 
-		&file->getInputStream(), 
-		picoInputStreamReam, 
-		file->size(), 
+		_module,
+		&file->getInputStream(),
+		picoInputStreamReam,
+		file->size(),
 		0
 	);
-	
+
 	// greebo: Check if the model load was successful
 	if (model == NULL || model->numSurfaces == 0) {
 		// Model is either NULL or has no surfaces, this must've failed
@@ -106,7 +106,7 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name) {
 	// Set the filename
 	modelObj->setFilename(os::getFilename(file->getName()));
 	modelObj->setModelPath(name);
-	
+
 	PicoFreeModel(model);
 	return modelObj;
 }
@@ -129,12 +129,12 @@ const StringSet& PicoModelLoader::getDependencies() const {
 }
 
 void PicoModelLoader::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "PicoModelLoader: " << getName().c_str() << " initialised.\n"; 
+	globalOutputStream() << "PicoModelLoader: " << getName().c_str() << " initialised.\n";
 	std::string filter("*." + boost::to_lower_copy(_extension));
-	
+
 	// Register the model file extension in the FileTypRegistry
 	GlobalFiletypes().addType(
-		"model", getName(), 
+		"model", getName(),
     	FileTypePattern(_module->displayName, filter.c_str())
     );
 }

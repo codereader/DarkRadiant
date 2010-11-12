@@ -37,7 +37,7 @@ class Image;
 
 // Forward declaration
 namespace shaders {
-	
+
 class MapExpression;
 typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
 
@@ -164,7 +164,7 @@ public:
 	virtual std::string getDescription() const = 0;
 
 	/**
-	 * greebo: Returns TRUE if the shader is visible, FALSE if it 
+	 * greebo: Returns TRUE if the shader is visible, FALSE if it
 	 *         is filtered or disabled in any other way.
 	 */
 	virtual bool isVisible() const = 0;
@@ -217,7 +217,7 @@ const std::string MODULE_SHADERSYSTEM("MaterialManager");
  * The material manager parses all of the MTR declarations and provides access
  * to Material objects representing the loaded materials.
  */
-class MaterialManager 
+class MaterialManager
 : public RegisterableModule
 {
 public:
@@ -227,23 +227,23 @@ public:
   virtual void realise() = 0;
   virtual void unrealise() = 0;
   virtual void refresh() = 0;
-  
+
 	/** Determine whether the shader system is realised. This may be used
 	 * by components which need to ensure the shaders are realised before
 	 * they start trying to display them.
-	 * 
+	 *
 	 * @returns
 	 * true if the shader system is realised, false otherwise
 	 */
-	virtual bool isRealised() = 0;  
+	virtual bool isRealised() = 0;
 
-  
-	/** Activate the shader for a given name and return it. The default shader 
+
+	/** Activate the shader for a given name and return it. The default shader
 	 * will be returned if name is not found.
-	 * 
+	 *
 	 * @param name
 	 * The text name of the shader to load.
-	 * 
+	 *
 	 * @returns
 	 * MaterialPtr shared ptr corresponding to the named shader object.
 	 */
@@ -297,15 +297,15 @@ public:
      * The type of interaction layer whose default texture is required.
      */
     virtual TexturePtr getDefaultInteractionTexture(ShaderLayer::Type type) = 0;
-    
+
 	/**
 	 * greebo: This is a substitution for the "old" TexturesCache method
 	 * used to load an image from a file to graphics memory for arbitrary
 	 * use (e.g. the Overlay module).
-	 * 
+	 *
 	 * @param filename
 	 * The absolute filename.
-	 * 
+	 *
 	 * @param moduleNames
 	 * The space-separated list of image modules (default is "GDK").
 	 */

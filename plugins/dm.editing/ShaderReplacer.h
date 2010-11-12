@@ -36,7 +36,7 @@ public:
 		{
 			// Check for brush
 			IBrush* brush = Node_getIBrush(node);
-			
+
 			if (brush != NULL)
 			{
 				for (std::size_t i = 0; i < brush->getNumFaces(); ++i)

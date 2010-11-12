@@ -48,34 +48,34 @@ protected:
     char _buffer[BUFFER_SIZE];
 
 protected:
-	
+
     /* Implementations of stream-specific virtual functions on std::streambuf */
-    
+
     // Replenish the controlled buffer with characters from the underlying
     // input sequence.
     virtual int underflow() {
-        
+
         // Read next block of BUFFER_SIZE characters into the buffer from
         // the underlying TextInputStream.
         std::size_t charsRead = this->read(_buffer, BUFFER_SIZE);
-        
+
         // Set up the internal pointers correctly
         assert(charsRead <= BUFFER_SIZE);
         std::streambuf::setg(_buffer, _buffer, _buffer + charsRead);
-        
+
         // Return the next character, or EOF if there were no more characters
         if (charsRead > 0)
         	return static_cast<int>(_buffer[0]);
         else
         	return EOF;
     }
-    
+
 public:
 
 	/// \brief Attempts to read the next \p length characters from the stream to \p buffer.
 	/// Returns the number of characters actually stored in \p buffer.
 	virtual std::size_t read(char* buffer, std::size_t length) = 0;
-  
+
 };
 
 class NullOutputBuf :
@@ -88,7 +88,7 @@ protected:
 	}
 };
 
-class NullOutputStream : 
+class NullOutputStream :
 	public std::ostream
 {
 	NullOutputBuf _nullBuf;
@@ -108,7 +108,7 @@ class OutputStreamHolder
 	std::ostream* _outputStream;
 
 public:
-	OutputStreamHolder() : 
+	OutputStreamHolder() :
 		_outputStream(&_nullOutputStream)
 	{}
 

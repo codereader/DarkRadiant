@@ -29,26 +29,26 @@ public:
 	 */
     virtual ~IParticlePreview() {}
 
-	/** 
-	 * Set the pixel size of the IParticlePreview widget. The widget is always 
-	 * square. 
-	 * 
+	/**
+	 * Set the pixel size of the IParticlePreview widget. The widget is always
+	 * square.
+	 *
 	 * @param size
 	 * The pixel size of the square widget.
 	 */
 	virtual void setSize(int size) = 0;
 
-	/** 
-	 * Initialise the GL preview. This clears the window and sets up the 
+	/**
+	 * Initialise the GL preview. This clears the window and sets up the
 	 * initial matrices and lights.
 	 * Call this before showing the parent container.
 	 */
 	virtual void initialisePreview() = 0;
 
-	/** 
-	 * Set the widget to display the given particle. If the particle name is the 
+	/**
+	 * Set the widget to display the given particle. If the particle name is the
 	 * empty string, the widget will release the currently displayed one.
-	 * 
+	 *
 	 * @param
 	 * String name of the particle to display.
 	 */
@@ -57,7 +57,7 @@ public:
 	// Retrieve the widget to pack this element into a parent container
 	virtual Gtk::Widget* getWidget() = 0;
 
-	/** 
+	/**
 	 * Get the particle from the widget, in order to display properties about it.
 	 */
 	virtual particles::IParticleDefPtr getParticle() = 0;

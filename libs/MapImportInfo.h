@@ -8,7 +8,7 @@ namespace map {
 
 /**
  * greebo: A MapExportInfo structure contains all the information
- *         needed to export a map file. 
+ *         needed to export a map file.
  */
 class MapImportInfo
 {

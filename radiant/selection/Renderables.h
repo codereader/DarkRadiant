@@ -8,29 +8,29 @@
  */
 
 // helper class for rendering a circle
-class RenderableCircle : 
+class RenderableCircle :
 	public RenderablePointVector
 {
 public:
 	// Pass the amount of points to render
-	RenderableCircle(std::size_t size) : 
+	RenderableCircle(std::size_t size) :
 		RenderablePointVector(GL_LINE_LOOP, size)
 	{}
 };
 
 // helper class for rendering a semi-circle
-class RenderableSemiCircle : 
+class RenderableSemiCircle :
 	public RenderablePointVector
 {
 public:
 	// Pass the amount of points to render
-	RenderableSemiCircle(std::size_t size) : 
+	RenderableSemiCircle(std::size_t size) :
 		RenderablePointVector(GL_LINE_STRIP, size)
 	{}
 };
 
 // Helper class for rendering an arrow (only the line part)
-class RenderableArrowLine : 
+class RenderableArrowLine :
 	public RenderablePointVector
 {
 public:
@@ -39,9 +39,9 @@ public:
 		RenderablePointVector(GL_LINES, 2)
 	{}
 };
-  
+
 // Helper class for rendering an arrow (only the head part)
-class RenderableArrowHead : 
+class RenderableArrowHead :
 	public OpenGLRenderable
 {
 public:
@@ -51,7 +51,7 @@ public:
 	RenderableArrowHead(std::size_t size) :
 		_vertices(size)
 	{}
-    
+
 	void render(const RenderInfo& info) const
 	{
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(FlatShadedVertex), &_vertices.front().colour);
@@ -59,7 +59,7 @@ public:
 		glNormalPointer(GL_DOUBLE, sizeof(FlatShadedVertex), &_vertices.front().normal);
 		glDrawArrays(GL_TRIANGLES, 0, GLsizei(_vertices.size()));
 	}
-	
+
 	void setColour(const Colour4b& colour)
 	{
 		for (FlatShadedVertices::iterator i = _vertices.begin(); i != _vertices.end(); ++i)
@@ -70,7 +70,7 @@ public:
 };
 
 // Helper class for rendering a quadratic
-class RenderableQuad : 
+class RenderableQuad :
 	public RenderablePointVector
 {
 public:

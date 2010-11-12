@@ -33,21 +33,21 @@ public:
 	FaceInstance(const FaceInstance& other);
 
 	FaceInstance& operator=(const FaceInstance& other);
-	
+
 	Face& getFace();
-	
+
 	const Face& getFace() const;
-	
+
 	void selectedChanged(const Selectable& selectable);
-	 
+
 	bool selectedVertices() const;
 	bool selectedEdges() const;
-	
+
 	bool isSelected() const;
-	
+
 	bool selectedComponents() const;
 	bool selectedComponents(SelectionSystem::EComponentMode mode) const;
-	
+
 	void setSelected(SelectionSystem::EComponentMode mode, bool select);
 	void invertSelected();
 
@@ -60,7 +60,7 @@ public:
 				}
 		}
 	}
-	
+
 	template<typename Functor>
 	void SelectedEdges_foreach(Functor functor) const {
 		for (VertexSelection::const_iterator i = m_edgeSelection.begin(); i != m_edgeSelection.end(); ++i) {
@@ -72,7 +72,7 @@ public:
 				}
 		}
 	}
-	
+
 	template<typename Functor>
 	void SelectedFaces_foreach(Functor functor) const {
 		if (isSelected()) {
@@ -140,9 +140,9 @@ public:
 	const Vector3& centroid() const;
 
 	void connectivityChanged();
-	
+
 	void addLight(const Matrix4& localToWorld, const RendererLight& light);
-	
+
 }; // class FaceInstance
 
 // ===========================================================================================
@@ -171,11 +171,11 @@ public:
 	bool empty() const {
 		return m_faceInstances.empty();
 	}
-	
+
 	FaceInstance& last() const {
 		return m_faceInstances.back();
 	}
-	
+
 	std::size_t size() const {
 		return m_faceInstances.size();
 	}

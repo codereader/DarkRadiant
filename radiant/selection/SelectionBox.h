@@ -8,7 +8,7 @@ class Rectangle
 {
 public:
 	Vector2 min;
-	Vector2 max; 
+	Vector2 max;
 
 	Rectangle()
 	{}
@@ -40,7 +40,7 @@ public:
 		return Rectangle(point - epsilon, point + epsilon);
 	}
 
-	// greebo: Constructs a Rectangle from (start - delta) to (start + delta) and ensures 
+	// greebo: Constructs a Rectangle from (start - delta) to (start + delta) and ensures
 	// that the resulting Rectangle's min is smaller than its max, in case delta has negative components
 	static Rectangle ConstructFromArea(const Vector2& start, const Vector2& delta)
 	{
@@ -60,7 +60,7 @@ private:
 	Vector2 device2screen(const Vector2& coord, std::size_t width, std::size_t height)
 	{
 		return Vector2(
-			((coord.x() + 1.0) * 0.5) * width, 
+			((coord.x() + 1.0) * 0.5) * width,
 			((coord.y() + 1.0) * 0.5) * height
 		);
 	}

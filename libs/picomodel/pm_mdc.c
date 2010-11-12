@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 
-PicoModel Library 
+PicoModel Library
 
 Copyright (c) 2002, Randy Reddig & seaw0lf
 All rights reserved.
@@ -17,7 +17,7 @@ other materials provided with the distribution.
 
 Neither the names of the copyright holders nor the names of its contributors may
 be used to endorse or promote products derived from this software without
-specific prior written permission. 
+specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -418,26 +418,26 @@ by one structure only.
 static int _mdc_canload( PM_PARAMS_CANLOAD )
 {
 	mdc_t	*mdc;
-	
+
 
 	/* to keep the compiler happy */
 	*fileName = *fileName;
-	
+
 	/* sanity check */
 	if( bufSize < ( sizeof( *mdc ) * 2) )
 		return PICO_PMV_ERROR_SIZE;
-	
+
 	/* set as mdc */
 	mdc	= (mdc_t*) buffer;
-	
+
 	/* check mdc magic */
-	if( *((int*) mdc->magic) != *((int*) MDC_MAGIC) ) 
+	if( *((int*) mdc->magic) != *((int*) MDC_MAGIC) )
 		return PICO_PMV_ERROR_IDENT;
-	
+
 	/* check mdc version */
 	if( _pico_little_long( mdc->version ) != MDC_VERSION )
 		return PICO_PMV_ERROR_VERSION;
-	
+
 	/* file seems to be a valid mdc */
 	return PICO_PMV_OK;
 }
@@ -463,32 +463,32 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 	mdcXyzCompressed_t	*vertexComp;
 	short				*mdcShort, *mdcCompVert;
 	double				lat, lng;
-	
+
 	picoModel_t			*picoModel;
 	picoSurface_t		*picoSurface;
 	picoShader_t		*picoShader;
 	picoVec3_t			xyz, normal;
 	picoVec2_t			st;
 	picoColor_t			color;
-	
-	
+
+
 	/* -------------------------------------------------
 	mdc loading
 	------------------------------------------------- */
 	vertexComp = NULL;
 	mdcCompVert = NULL;
-	
+
 	/* set as mdc */
 	bb = (picoByte_t*) buffer;
 	mdc	= (mdc_t*) buffer;
-	
+
 	/* check ident and version */
 	if( *((int*) mdc->magic) != *((int*) MDC_MAGIC) || _pico_little_long( mdc->version ) != MDC_VERSION )
 	{
 		/* not an mdc file (todo: set error) */
 		return NULL;
 	}
-	
+
 	/* swap mdc */
 	mdc->version = _pico_little_long( mdc->version );
 	mdc->numFrames = _pico_little_long( mdc->numFrames );
@@ -500,20 +500,20 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 	mdc->ofsTagNames = _pico_little_long( mdc->ofsTagNames );
 	mdc->ofsSurfaces = _pico_little_long( mdc->ofsSurfaces );
 	mdc->ofsEnd = _pico_little_long( mdc->ofsEnd );
-	
+
 	/* do frame check */
 	if( mdc->numFrames < 1 )
 	{
 		_pico_printf( PICO_ERROR, "MDC with 0 frames" );
 		return NULL;
 	}
-	
+
 	if( frameNum < 0 || frameNum >= mdc->numFrames )
 	{
 		_pico_printf( PICO_ERROR, "Invalid or out-of-range MDC frame specified" );
 		return NULL;
 	}
-	
+
 	/* swap frames */
 	frame = (mdcFrame_t*) (bb + mdc->ofsFrames );
 	for( i = 0; i < mdc->numFrames; i++, frame++ )
@@ -526,7 +526,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 			frame->localOrigin[ j ] = _pico_little_float( frame->localOrigin[ j ] );
 		}
 	}
-	
+
 	/* swap surfaces */
 	surface = (mdcSurface_t*) (bb + mdc->ofsSurfaces);
 	for( i = 0; i < mdc->numSurfaces; i++ )
@@ -546,7 +546,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 		surface->ofsFrameBaseFrames = _pico_little_long( surface->ofsFrameBaseFrames );
 		surface->ofsFrameCompFrames = _pico_little_long( surface->ofsFrameCompFrames );
 		surface->ofsEnd = _pico_little_long( surface->ofsEnd );
-		
+
 		/* swap triangles */
 		triangle = (mdcTriangle_t*) ((picoByte_t*) surface + surface->ofsTriangles);
 		for( j = 0; j < surface->numTriangles; j++, triangle++ )
@@ -556,7 +556,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 			triangle->indexes[ 1 ] = _pico_little_long( triangle->indexes[ 1 ] );
 			triangle->indexes[ 2 ] = _pico_little_long( triangle->indexes[ 2 ] );
 		}
-		
+
 		/* swap st coords */
 		texCoord = (mdcTexCoord_t*) ((picoByte_t*) surface + surface->ofsSt);
 		for( j = 0; j < surface->numVerts; j++, texCoord++ )
@@ -564,7 +564,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 			texCoord->st[ 0 ] = _pico_little_float( texCoord->st[ 0 ] );
 			texCoord->st[ 1 ] = _pico_little_float( texCoord->st[ 1 ] );
 		}
-		
+
 		/* swap xyz/normals */
 		vertex = (mdcVertex_t*) ((picoByte_t*) surface + surface->ofsXyzNormals);
 		for( j = 0; j < (surface->numVerts * surface->numBaseFrames); j++, vertex++)
@@ -595,15 +595,15 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 		{
 			*mdcShort	= _pico_little_short( *mdcShort );
 		}
-		
+
 		/* get next surface */
 		surface = (mdcSurface_t*) ((picoByte_t*) surface + surface->ofsEnd);
 	}
-	
+
 	/* -------------------------------------------------
 	pico model creation
 	------------------------------------------------- */
-	
+
 	/* create new pico model */
 	picoModel = PicoNewModel();
 	if( picoModel == NULL )
@@ -611,16 +611,16 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 		_pico_printf( PICO_ERROR, "Unable to allocate a new model" );
 		return NULL;
 	}
-	
+
 	/* do model setup */
 	PicoSetModelFrameNum( picoModel, frameNum );
 	PicoSetModelNumFrames( picoModel, mdc->numFrames ); /* sea */
 	PicoSetModelName( picoModel, fileName );
 	PicoSetModelFileName( picoModel, fileName );
-	
+
 	/* mdc surfaces become picomodel surfaces */
 	surface = (mdcSurface_t*) (bb + mdc->ofsSurfaces);
-	
+
 	/* run through mdc surfaces */
 	for( i = 0; i < mdc->numSurfaces; i++ )
 	{
@@ -632,13 +632,13 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 			PicoFreeModel( picoModel ); /* sea */
 			return NULL;
 		}
-		
+
 		/* mdc model surfaces are all triangle meshes */
 		PicoSetSurfaceType( picoSurface, PICO_TRIANGLES );
-		
+
 		/* set surface name */
 		PicoSetSurfaceName( picoSurface, surface->name );
-		
+
 		/* create new pico shader -sea */
 		picoShader = PicoNewShader( picoModel );
 		if( picoShader == NULL )
@@ -647,26 +647,26 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 			PicoFreeModel( picoModel );
 			return NULL;
 		}
-		
+
 		/* detox and set shader name */
 		shader = (mdcShader_t*) ((picoByte_t*) surface + surface->ofsShaders);
 		_pico_setfext( shader->name, "" );
 		_pico_unixify( shader->name );
 		PicoSetShaderName( picoShader, shader->name );
-		
+
 		/* associate current surface with newly created shader */
 		PicoSetSurfaceShader( picoSurface, picoShader );
-		
+
 		/* copy indexes */
 		triangle = (mdcTriangle_t *) ((picoByte_t*) surface + surface->ofsTriangles);
-		
+
 		for( j = 0; j < surface->numTriangles; j++, triangle++ )
 		{
 			PicoSetSurfaceIndex( picoSurface, (j * 3 + 0), (picoIndex_t) triangle->indexes[ 0 ] );
 			PicoSetSurfaceIndex( picoSurface, (j * 3 + 1), (picoIndex_t) triangle->indexes[ 1 ] );
 			PicoSetSurfaceIndex( picoSurface, (j * 3 + 2), (picoIndex_t) triangle->indexes[ 2 ] );
 		}
-		
+
 		/* copy vertexes */
 		texCoord = (mdcTexCoord_t*) ((picoByte_t *) surface + surface->ofsSt);
     mdcShort = (short *) ((picoByte_t *) surface + surface->ofsXyzNormals) + ((int)*((short *) ((picoByte_t *) surface + surface->ofsFrameBaseFrames) + frameNum) * surface->numVerts * 4);
@@ -677,7 +677,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 				vertexComp = (mdcXyzCompressed_t *) ((picoByte_t *) surface + surface->ofsXyzCompressed) + (*mdcCompVert * surface->numVerts);
 		}
 		_pico_set_color( color, 255, 255, 255, 255 );
-		
+
 		for( j = 0; j < surface->numVerts; j++, texCoord++, mdcShort+=4 )
 		{
 			/* set vertex origin */
@@ -687,7 +687,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 
 			/* add compressed ofsVec */
 			if( surface->numCompFrames > 0 && *mdcCompVert >= 0 )
-			{		
+			{
 				xyz[ 0 ] += ((float) ((vertexComp->ofsVec) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE;
 				xyz[ 1 ] += ((float) ((vertexComp->ofsVec >> 8) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE;
 				xyz[ 2 ] += ((float) ((vertexComp->ofsVec >> 16) & 255) - MDC_MAX_OFS) * MDC_DIST_SCALE;
@@ -701,7 +701,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 				vertexComp++;
 			}
 			else
-			{			
+			{
 				PicoSetSurfaceXYZ( picoSurface, j, xyz );
 
 				/* decode lat/lng normal to 3 float normal */
@@ -714,7 +714,7 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 				normal[ 2 ] = (picoVec_t) cos( lng );
 				PicoSetSurfaceNormal( picoSurface, j, normal );
 			}
-			
+
 			/* set st coords */
 			st[ 0 ] = texCoord->st[ 0 ];
 			st[ 1 ] = texCoord->st[ 1 ];
@@ -723,11 +723,11 @@ static picoModel_t *_mdc_load( PM_PARAMS_LOAD )
 			/* set color */
 			PicoSetSurfaceColor( picoSurface, 0, j, color );
 		}
-		
+
 		/* get next surface */
 		surface = (mdcSurface_t*) ((picoByte_t*) surface + surface->ofsEnd);
 	}
-	
+
 	/* return the new pico model */
 	return picoModel;
 }

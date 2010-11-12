@@ -20,11 +20,11 @@ namespace {
 
 	const char* const DIALOG_TITLE = N_("Edit Mission Logic");
 
-	const char* const STANDARD_LOGIC_DESCR = 
+	const char* const STANDARD_LOGIC_DESCR =
 		N_("This is the standard logic for all difficulty levels");
 
 	const char* const DIFFICULTY_LOGIC_DESCR =
-		N_("These logics override the standard logic for the given difficulty level\n" 
+		N_("These logics override the standard logic for the given difficulty level\n"
 		   "if the logic string is non-empty.");
 
 	inline std::string makeBold(const std::string& input)
@@ -43,7 +43,7 @@ MissionLogicDialog::MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 
 	// Overall VBox for labels and alignments
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 12));
-	
+
 	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Default Logic")))), false, false, 0);
 
 	// Default Logic
@@ -52,7 +52,7 @@ MissionLogicDialog::MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 	defaultVBox->pack_start(*_logicEditors[-1], true, true, 0);
 
 	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*defaultVBox, 12, 1.0f)), true, true, 0);
-	
+
 	// Now add all difficulty-specific editors
 	vbx->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Difficulty-specific Logic"))), false, false, 0);
 
@@ -66,7 +66,7 @@ MissionLogicDialog::MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 		std::string logicStr = (boost::format(_("Logic for Difficulty Level %d")) % i->first).str();
 
 		diffVBox->pack_start(
-			*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(logicStr))), 
+			*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(logicStr))),
 			false, false, 0
 		);
 
@@ -77,7 +77,7 @@ MissionLogicDialog::MissionLogicDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 
 	vbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
 	vbx->pack_end(createButtons(), false, false, 0);
-	
+
 	// Populate the logic strings
 	populateLogicEditors();
 
@@ -90,7 +90,7 @@ void MissionLogicDialog::createLogicEditors()
 {
 	// Create the default logic editor
 	_logicEditors[-1] = Gtk::manage(new LogicEditor);
-	
+
 	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
 	// to find out how many difficulty levels there are (and what their names are)
 	_logicEditors[0] = Gtk::manage(new LogicEditor);
@@ -106,10 +106,10 @@ Gtk::Widget& MissionLogicDialog::createButtons()
 
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	
+
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &MissionLogicDialog::_onOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &MissionLogicDialog::_onCancel));
-	
+
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 

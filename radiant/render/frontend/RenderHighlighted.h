@@ -18,11 +18,11 @@ private:
 	const VolumeTest& _volume;
 
 public:
-	RenderHighlighted(RenderableCollector& collector, const VolumeTest& volume) : 
-		_collector(collector), 
+	RenderHighlighted(RenderableCollector& collector, const VolumeTest& volume) :
+		_collector(collector),
 		_volume(volume)
 	{}
-  
+
 	// Render function, instructs the Renderable object to submit its geometry
 	// to the contained RenderableCollector.
 	void render(const Renderable& renderable) const
@@ -35,14 +35,14 @@ public:
 	    case RenderableCollector::eWireframeOnly:
 			renderable.renderWireframe(_collector, _volume);
 			break;
-	    }      
+	    }
 	}
 
 	RenderableCallback getRenderableCallback()
 	{
 		return boost::bind(&RenderHighlighted::render, this, _1);
 	}
-  
+
 	// scene::Graph::Walker implementation, tells each node to submit its OpenGLRenderables
 	bool visit(const scene::INodePtr& node)
 	{
@@ -83,7 +83,7 @@ public:
 
 		if (renderable != NULL)
 		{
-			render(*renderable);    
+			render(*renderable);
 		}
 
 		_collector.PopState();

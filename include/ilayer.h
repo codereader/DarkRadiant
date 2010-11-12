@@ -13,7 +13,7 @@ typedef boost::shared_ptr<INode> INodePtr;
 // A list of named layers
 typedef std::set<int> LayerList;
 
-/** 
+/**
  * greebo: Interface of a Layered object.
  */
 class Layered
@@ -28,7 +28,7 @@ public:
     virtual void addToLayer(int layerId) = 0;
 
 	/**
-     * Moves this object to the layer. After this operation,the item is member 
+     * Moves this object to the layer. After this operation,the item is member
 	 * of this layer only, all other layer memberships are erased.
      */
     virtual void moveToLayer(int layerId) = 0;
@@ -57,7 +57,7 @@ public:
 
 	/**
 	 * greebo: Creates a new layer with the given name.
-	 * 
+	 *
 	 * @returns: the ID of the layer of -1 if the layer could not
 	 *           be created (e.g. due to a name conflict).
 	 */
@@ -65,7 +65,7 @@ public:
 
 	/**
 	 * greebo: Overload: Creates a new layer with the given name and the given ID.
-	 * 
+	 *
 	 * @returns: the ID of the layer of -1 if the layer could not
 	 *           be created (e.g. due to a name/ID conflict).
 	 */
@@ -144,17 +144,17 @@ public:
 	 * greebo: Updates the visibility of the given node based on the
 	 *         current layer visibility settings.
 	 *
-	 * @returns: TRUE if the node was set to "visible", FALSE if the 
-	 *           current layer settings resulted to "invisible" and the 
+	 * @returns: TRUE if the node was set to "visible", FALSE if the
+	 *           current layer settings resulted to "invisible" and the
 	 *           node was therefore hidden.
 	 */
 	virtual bool updateNodeVisibility(const scene::INodePtr& node) = 0;
 
 	/**
 	 * greebo: Sets the selection status of the entire layer.
-	 * 
+	 *
 	 * @layerID: the ID of the layer to be selected/deselected.
-	 * @selected: TRUE if the layer should be selected, FALSE if the members 
+	 * @selected: TRUE if the layer should be selected, FALSE if the members
 	 * should be de-selected.
 	 */
 	virtual void setSelected(int layerID, bool selected) = 0;

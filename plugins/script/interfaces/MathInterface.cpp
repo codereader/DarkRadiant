@@ -15,11 +15,11 @@ void MathInterface::registerInterface(boost::python::object& nspace) {
 	nspace["Vector3"] = boost::python::class_<Vector3>("Vector3", boost::python::init<double, double, double>())
 		.def(boost::python::init<const Vector3&>())
 		// greebo: Pick the correct overload - this is hard to read, but it is necessary
-		.def("x", static_cast<double& (Vector3::*)()>(&Vector3::x), 
+		.def("x", static_cast<double& (Vector3::*)()>(&Vector3::x),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-		.def("y", static_cast<double& (Vector3::*)()>(&Vector3::y), 
+		.def("y", static_cast<double& (Vector3::*)()>(&Vector3::y),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-		.def("z", static_cast<double& (Vector3::*)()>(&Vector3::z), 
+		.def("z", static_cast<double& (Vector3::*)()>(&Vector3::z),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 		.def("getLength", &Vector3::getLength)
 		.def("getLengthSquared", &Vector3::getLengthSquared)
@@ -41,7 +41,7 @@ void MathInterface::registerInterface(boost::python::object& nspace) {
 	;
 
 	// Register Vertex3f, which extends Vector3
-	nspace["Vertex3f"] = boost::python::class_<Vertex3f, 
+	nspace["Vertex3f"] = boost::python::class_<Vertex3f,
 		boost::python::bases<Vector3> >("Vertex3f", boost::python::init<>() )
 		.def(boost::python::init<const Vector3&>())
 		.def(boost::python::init<double, double, double>())
@@ -51,9 +51,9 @@ void MathInterface::registerInterface(boost::python::object& nspace) {
 	nspace["Vector2"] = boost::python::class_<Vector2>("Vector2", boost::python::init<double, double>())
 		.def(boost::python::init<const Vector2&>())
 		// greebo: Pick the correct overload - this is hard to read, but it is necessary
-		.def("x", static_cast<double& (Vector2::*)()>(&Vector2::x), 
+		.def("x", static_cast<double& (Vector2::*)()>(&Vector2::x),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-		.def("y", static_cast<double& (Vector2::*)()>(&Vector2::y), 
+		.def("y", static_cast<double& (Vector2::*)()>(&Vector2::y),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 		.def("getLength", &Vector2::getLength)
 		.def("getLengthSquared", &Vector2::getLengthSquared)
@@ -72,13 +72,13 @@ void MathInterface::registerInterface(boost::python::object& nspace) {
 
 	vector4Decl.def(boost::python::init<const Vector4&>())
 		// greebo: Pick the correct overload - this is hard to read, but it is necessary
-		.def("x", static_cast<double& (Vector4::*)()>(&Vector4::x), 
+		.def("x", static_cast<double& (Vector4::*)()>(&Vector4::x),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-		.def("y", static_cast<double& (Vector4::*)()>(&Vector4::y), 
+		.def("y", static_cast<double& (Vector4::*)()>(&Vector4::y),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-		.def("z", static_cast<double& (Vector4::*)()>(&Vector4::z), 
+		.def("z", static_cast<double& (Vector4::*)()>(&Vector4::z),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
-		.def("w", static_cast<double& (Vector4::*)()>(&Vector4::w), 
+		.def("w", static_cast<double& (Vector4::*)()>(&Vector4::w),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 		.def("getVector3", static_cast<Vector3& (Vector4::*)()>(&Vector4::getVector3),
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())

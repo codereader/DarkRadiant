@@ -147,12 +147,12 @@ void clipboard_copy(ClipboardCopyFunc copy)
 	// the clipboard copy function with the std::ostream as a parameter
 	std::ostringstream ostream;
 	copy(ostream);
-	
-	// Create a char buffer with the stream contents to pass to GTK's 
+
+	// Create a char buffer with the stream contents to pass to GTK's
 	// clipboard function
 	std::size_t length = ostream.str().size();
 	char* data = new char[length + sizeof(std::size_t)];
-	
+
 	// Set the first sizeof(std::size_t) elements to represent the
 	// buffer length.
 	*reinterpret_cast<std::size_t*>(data) = length;
@@ -168,7 +168,7 @@ ClipboardPasteFunc g_clipboardPasteFunc = 0;
 void clipboard_paste(ClipboardPasteFunc paste)
 {
   GtkClipboard* clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
-  
+
   g_clipboardPasteFunc = paste;
   gtk_clipboard_request_contents (clipboard, gdk_atom_intern(clipboard_targets[0].target, FALSE), clipboard_received, &g_clipboardPasteFunc);
 }

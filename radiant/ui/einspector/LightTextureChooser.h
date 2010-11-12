@@ -19,18 +19,18 @@ class LightTextureChooser :
 	public gtkutil::BlockingTransientWindow,
 	public ShaderSelector::Client
 {
-private:	
+private:
 	// The ShaderSelector widget group, that contains the actual selection
 	// tools (treeview etc.)
 	ShaderSelector* _selector;
-	
+
 	// The user's texture selection
 	std::string _selectedTexture;
-	
+
 private:
 	// Widget construction helpers
 	Gtk::Widget& createButtons();
-	
+
 	// gtkmm callbacks
 	void callbackCancel();
 	void callbackOK();
@@ -40,7 +40,7 @@ public:
 	 * Construct the dialog window and its contents.
 	 */
 	LightTextureChooser();
-	
+
 	/**
 	 * Display the dialog and block for a selection from the user.
 	 *
@@ -49,11 +49,11 @@ public:
 	 * was cancelled.
 	 */
 	std::string chooseTexture();
-	
+
 	/** greebo: Gets called upon selection change, updates the infostore
 	 * 			of the contained ShaderSelector helper class accordingly.
 	 */
-	void shaderSelectionChanged(const std::string& shaderName, 
+	void shaderSelectionChanged(const std::string& shaderName,
 								const Glib::RefPtr<Gtk::ListStore>& listStore);
 
 };

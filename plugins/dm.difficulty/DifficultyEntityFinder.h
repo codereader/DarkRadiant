@@ -41,7 +41,7 @@ public:
 			if (entity->getKeyValue("classname") == _entityClassName) {
 				_foundEntities.push_back(entity);
 			}
-			
+
 			// Don't traverse the children of entities
 			return false;
 		}

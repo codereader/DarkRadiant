@@ -34,7 +34,7 @@ class Doom3GroupNode :
 	CurveEditInstance m_curveNURBS;
 	CurveEditInstance m_curveCatmullRom;
 	mutable AABB m_aabb_component;
-	
+
 	VertexInstance _originInstance;
 
 	// TRUE if the skin needs updating
@@ -48,7 +48,7 @@ class Doom3GroupNode :
 public:
 	Doom3GroupNode(const IEntityClassPtr& eclass);
 	virtual ~Doom3GroupNode();
-	
+
 	void construct();
 
 	// EntityNode implementation
@@ -64,8 +64,8 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 
-	/** greebo: Tests the contained Doom3Group for selection. 
-	 * 
+	/** greebo: Tests the contained Doom3Group for selection.
+	 *
 	 * Note: This can be successful in vertex mode only, func_statics do not use this method.
 	 */
 	void testSelect(Selector& selector, SelectionTest& test);
@@ -93,7 +93,7 @@ public:
 	scene::INodePtr clone() const;
 
 	/** greebo: Call this right before map save to let the child
-	 * brushes have their origin recalculated. 
+	 * brushes have their origin recalculated.
 	 */
 	void addOriginToChildren();
 	void removeOriginFromChildren();

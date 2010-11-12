@@ -68,7 +68,7 @@ void toAngles( idVec3 &src, angles_t &dst ) {
 void angles_t::toVectors( idVec3 *forward, idVec3 *right, idVec3 *up ) {
 	float			angle;
 	static float	sr, sp, sy, cr, cp, cy; // static to help MS compiler fp bugs
-	
+
 	angle = yaw * ( M_PI * 2 / 360 );
 	sy = sin( angle );
 	cy = cos( angle );
@@ -97,7 +97,7 @@ void angles_t::toVectors( idVec3 *forward, idVec3 *right, idVec3 *up ) {
 idVec3 angles_t::toForward( void ) {
 	float			angle;
 	static float	sp, sy, cp, cy; // static to help MS compiler fp bugs
-	
+
 	angle = yaw * ( M_PI * 2 / 360 );
 	sy = sin( angle );
 	cy = cos( angle );
@@ -138,7 +138,7 @@ angles_t& angles_t::Normalize180( void ) {
 	if ( pitch > 180.0 ) {
 		pitch -= 360.0;
 	}
-	
+
 	if ( yaw > 180.0 ) {
 		yaw  -= 360.0;
 	}

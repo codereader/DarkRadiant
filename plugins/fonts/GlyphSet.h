@@ -32,16 +32,16 @@ private:
 	// each set has 256 glyphs
 	GlyphInfoPtr _glyphs[q3font::GLYPH_COUNT_PER_FONT];
 
-	// Private constructor, initialises this class using 
+	// Private constructor, initialises this class using
 	// the Q3-style info structure (as read in from the .DAT file)
-	GlyphSet(const q3font::Q3FontInfo& q3info, const std::string& fontname, 
+	GlyphSet(const q3font::Q3FontInfo& q3info, const std::string& fontname,
 		const std::string& language, Resolution resolution_);
 public:
 	// 12, 24, 48
 	Resolution resolution;
 
 	// Public named constructor
-	static GlyphSetPtr createFromDatFile(const std::string& vfsPath, 
+	static GlyphSetPtr createFromDatFile(const std::string& vfsPath,
 										 const std::string& fontname,
 										 const std::string& language,
 										 Resolution resolution);

@@ -11,7 +11,7 @@ namespace
 namespace gtkutil
 {
 
-PanedPosition::PanedPosition() : 
+PanedPosition::PanedPosition() :
 	_position(DEFAULT_POSITION),
 	_paned(NULL)
 {}
@@ -28,7 +28,7 @@ void PanedPosition::connect(Gtk::Paned* paned)
 {
 	_paned = paned;
 
-	_connection = _paned->connect_property_changed_with_return("position", 
+	_connection = _paned->connect_property_changed_with_return("position",
 		sigc::mem_fun(*this, &PanedPosition::onPositionChange));
 }
 
@@ -87,8 +87,8 @@ void PanedPosition::readPosition()
 
 void PanedPosition::onPositionChange()
 {
-	// Tell the object to read the new position from GTK	
+	// Tell the object to read the new position from GTK
 	readPosition();
 }
-	
+
 } // namespace gtkutil

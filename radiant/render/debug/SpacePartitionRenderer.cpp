@@ -26,19 +26,19 @@ void SpacePartitionRenderer::keyChanged(const std::string& changedKey, const std
 void SpacePartitionRenderer::toggle(const cmd::ArgumentList& args)
 {
 	GlobalRegistry().set(
-		RKEY_RENDER_SPACE_PARTITION, 
+		RKEY_RENDER_SPACE_PARTITION,
 		GlobalRegistry().get(RKEY_RENDER_SPACE_PARTITION) != "1" ? "1" : "0"
 	);
 }
 
-const std::string& SpacePartitionRenderer::getName() const 
+const std::string& SpacePartitionRenderer::getName() const
 {
 	static std::string _name("SpacePartitionRenderer");
 	return _name;
 }
 
 const StringSet& SpacePartitionRenderer::getDependencies() const
-{	
+{
 	static StringSet _dependencies;
 
 	if (_dependencies.empty())
@@ -52,7 +52,7 @@ const StringSet& SpacePartitionRenderer::getDependencies() const
 	return _dependencies;
 }
 
-void SpacePartitionRenderer::initialiseModule(const ApplicationContext& ctx) 
+void SpacePartitionRenderer::initialiseModule(const ApplicationContext& ctx)
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_RENDER_SPACE_PARTITION);
 

@@ -5,7 +5,7 @@ namespace shaders
 {
 
 // Map string blend functions to their GLenum equivalents
-GLenum glBlendFromString(const std::string& value) 
+GLenum glBlendFromString(const std::string& value)
 {
 	if (value == "gl_zero") {
 		return GL_ZERO;
@@ -45,7 +45,7 @@ GLenum glBlendFromString(const std::string& value)
 }
 
 // Convert a string pair describing a blend function into a BlendFunc object
-BlendFunc blendFuncFromStrings(const StringPair& blendFunc) 
+BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
 {
     // Handle predefined blend modes first: add, modulate, filter
     if (blendFunc.first == "add")

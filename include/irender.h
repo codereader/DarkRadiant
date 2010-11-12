@@ -245,7 +245,7 @@ public:
  * This interface is used by the render backend, after renderable objects have
  * first been submitted using the Renderable interface. The backend render()
  * function should contain the OpenGL calls necessary to submit vertex, normal
- * and texture-coordinate data. 
+ * and texture-coordinate data.
  *
  * No GL state changes should occur in render(), other than those specifically
  * allowed by the render flags (such as glColor() if RENDER_COLOURWRITE is set).
@@ -273,9 +273,9 @@ typedef boost::shared_ptr<Material> MaterialPtr;
 
 /**
  * A Shader represents a single material which can be rendered in OpenGL, which
- * may correspond to an actual material (Material), a raw colour or a special 
+ * may correspond to an actual material (Material), a raw colour or a special
  * GL shader.
- * 
+ *
  * Importantly, a Shader also maintains its own list of OpenGLRenderable objects
  * which use it -- the actual rendering is performed by traversing a list of
  * Shaders and rendering the geometry attached to each one.
@@ -284,38 +284,38 @@ class Shader
 {
 public:
     virtual ~Shader() {}
-	
+
 	/**
 	 * Attach a renderable object to this Shader, which will be rendered using
 	 * this Shader when the render backend is activated.
-	 * 
+	 *
 	 * @param renderable
 	 * The OpenGLRenderable object to add.
-	 * 
+	 *
 	 * @param modelview
 	 * The modelview transform for this object.
-	 * 
+	 *
 	 * @param lights
 	 * A LightList containing all of the lights which should illuminate this
 	 * object.
 	 */
-	virtual void addRenderable(const OpenGLRenderable& renderable, 
-							   const Matrix4& modelview, 
+	virtual void addRenderable(const OpenGLRenderable& renderable,
+							   const Matrix4& modelview,
 							   const LightList* lights = 0) = 0;
-  
+
   virtual void incrementUsed() = 0;
   virtual void decrementUsed() = 0;
   virtual void attach(ModuleObserver& observer) = 0;
   virtual void detach(ModuleObserver& observer) = 0;
-  
+
 	/** Retrieve the contained Material from this object.
-	 * 
+	 *
 	 * @returns
 	 * An Material subclass with information about the shader definition
 	 */
-	 
+
 	virtual MaterialPtr getMaterial() const = 0;
-  
+
   virtual unsigned int getFlags() const = 0;
 };
 
@@ -335,20 +335,20 @@ class RenderSystem
 {
 public:
 
-	/** 
+	/**
      * \brief
      * Capture the given shader, increasing its reference count and
 	 * returning a pointer to the Shader object.
      *
      * The object must be freed after use by calling release().
-	 * 
+	 *
 	 * @param name
 	 * The name of the shader to capture.
-	 * 
+	 *
 	 * @returns
 	 * Shader* object corresponding to the given material shader name.
 	 */
-	 
+
 	virtual ShaderPtr capture(const std::string& name) = 0;
 
     /**
@@ -385,12 +385,12 @@ public:
 	 * Test if lighting mode is supported, depending on OpenGL extensions.
 	 */
 	virtual bool lightingSupported() const = 0;
-	
+
 	/**
 	 * Test if lighting mode is ENABLED.
 	 */
 	virtual bool lightingEnabled() const = 0;
-	
+
 	// Enable/disable lighting mode
 	virtual void setLightingEnabled(bool enabled) = 0;
 
@@ -419,8 +419,8 @@ public:
   virtual void attachRenderable(const Renderable& renderable) = 0;
   virtual void detachRenderable(const Renderable& renderable) = 0;
   virtual void forEachRenderable(const RenderableCallback& callback) const = 0;
-  
-  	// Initialises the OpenGL extensions 
+
+  	// Initialises the OpenGL extensions
     virtual void extensionsInitialised() = 0;
 };
 typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
@@ -429,7 +429,7 @@ typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
  * \brief
  * Global accessor method for the RenderSystem instance.
  */
-inline RenderSystem& GlobalRenderSystem() 
+inline RenderSystem& GlobalRenderSystem()
 {
 	// Cache the reference locally
 	static RenderSystem& _instance(

@@ -9,9 +9,9 @@
 
 namespace map {
 
-/** 
+/**
  * greebo: This object traverses the scenegraph on construction
- * counting all occurrences of each model (plus skins). 
+ * counting all occurrences of each model (plus skins).
  */
 class ModelBreakdown :
 	public scene::NodeVisitor
@@ -24,8 +24,8 @@ public:
 
 		typedef std::map<std::string, std::size_t> SkinCountMap;
 		SkinCountMap skinCount;
-		
-		ModelCount() : 
+
+		ModelCount() :
 			count(0)
 		{}
 	};
@@ -41,7 +41,7 @@ public:
 		_map.clear();
 		GlobalSceneGraph().root()->traverse(*this);
 	}
-	
+
 	bool pre(const scene::INodePtr& node) {
 		// Check if this node is a model
 		model::ModelNodePtr modelNode = Node_getModel(node);
@@ -67,9 +67,9 @@ public:
 			// The iterator "found" is valid at this point
 			// Get a shortcut reference
 			ModelCount& modelCount = found->second;
-			
+
 			modelCount.count++;
-			
+
 			// Increase the skin count, check if we have a skinnable model
 			SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
 
@@ -79,7 +79,7 @@ public:
 				ModelCount::SkinCountMap::iterator foundSkin = modelCount.skinCount.find(skinName);
 
 				if (foundSkin == modelCount.skinCount.end()) {
-					std::pair<ModelCount::SkinCountMap::iterator, bool> result = 
+					std::pair<ModelCount::SkinCountMap::iterator, bool> result =
 						modelCount.skinCount.insert(ModelCount::SkinCountMap::value_type(skinName, 0));
 
 					foundSkin = result.first;
@@ -88,7 +88,7 @@ public:
 				foundSkin->second++;
 			}
 		}
-	
+
 		return true;
 	}
 
@@ -116,11 +116,11 @@ public:
 
 		return skinMap.size();
 	}
-	
+
 	Map::const_iterator begin() const {
 		return _map.begin();
 	}
-	
+
 	Map::const_iterator end() const {
 		return _map.end();
 	}

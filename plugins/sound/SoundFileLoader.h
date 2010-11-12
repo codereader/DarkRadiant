@@ -32,7 +32,7 @@ class SoundFileLoader :
 
     // Progress dialog
     gtkutil::ModalProgressDialog _progressDlg;
-	
+
 private:
 
 	std::string getShortened(const std::string& input, std::size_t maxLength)
@@ -42,7 +42,7 @@ private:
 			std::size_t diff = input.length() - maxLength + 3; // 3 chars for the ellipsis
 			std::size_t curLength = input.length();
 
-			return input.substr(0, (curLength - diff) / 2) + "..." + 
+			return input.substr(0, (curLength - diff) / 2) + "..." +
 				input.substr((curLength + diff) / 2);
 		}
 
@@ -67,13 +67,13 @@ private:
             std::pair<SoundManager::ShaderMap::iterator, bool> result;
             result = _shaders.insert(
                 SoundManager::ShaderMap::value_type(
-                    block.name, 
+                    block.name,
                     SoundShaderPtr(new SoundShader(block.name, block.contents, modName))
                 )
             );
 
             if (!result.second) {
-                globalErrorStream() << "[SoundManager]: SoundShader with name " 
+                globalErrorStream() << "[SoundManager]: SoundShader with name "
                     << block.name << " already exists." << std::endl;
             }
         }
@@ -87,7 +87,7 @@ public:
 	SoundFileLoader(SoundManager::ShaderMap& shaderMap)
 	: _shaders(shaderMap),
       _progressDlg(GlobalMainFrame().getTopLevelWindow(), "Loading sounds")
-	{ }	
+	{ }
 
 	/**
 	 * Functor operator.
@@ -95,15 +95,15 @@ public:
 	void visit(const std::string& filename)
 	{
 		// Open the .sndshd file and get its contents as a std::string
-		ArchiveTextFilePtr file = 
+		ArchiveTextFilePtr file =
 			GlobalFileSystem().openTextFile(SOUND_FOLDER + filename);
-		
+
 		// Parse contents of file if it was opened successfully
-		if (file) 
+		if (file)
         {
 			std::istream is(&(file->getInputStream()));
-	
-			try 
+
+			try
             {
 				parseShadersFromStream(is, file->getModName());
 			}
@@ -113,7 +113,7 @@ public:
 			}
 		}
 		else {
-			std::cerr << "[sound] Warning: unable to open \"" 
+			std::cerr << "[sound] Warning: unable to open \""
 					  << filename << "\"" << std::endl;
 		}
 	}

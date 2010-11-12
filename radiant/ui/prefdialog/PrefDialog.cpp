@@ -33,18 +33,18 @@ PrefDialog::PrefDialog() :
 {
 	set_modal(true);
 	set_position(Gtk::WIN_POS_CENTER);
-		
+
 	// Set the default border width in accordance to the HIG
 	set_border_width(8);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-	
+
 	// Create a treestore with a name and a pointer
 	_prefTree = Gtk::TreeStore::create(_treeColumns);
-	
+
 	// Create all the widgets
 	populateWindow();
-	
-	// Create the root element with the Notebook and Connector references 
+
+	// Create the root element with the Notebook and Connector references
 	_root = PrefPagePtr(new PrefPage("", "", _notebook, _registryConnector));
 
 	add(*_overallVBox);
@@ -54,38 +54,38 @@ void PrefDialog::populateWindow()
 {
 	// The overall dialog vbox
 	_overallVBox = Gtk::manage(new Gtk::VBox(false, 8));
-	
+
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 8));
-	
+
 	_treeView = Gtk::manage(new Gtk::TreeView(_prefTree));
-	
+
 	_selection = _treeView->get_selection();
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &PrefDialog::onPrefPageSelect));
-	
+
 	_treeView->set_headers_visible(false);
 	_treeView->append_column(_("Category"), _treeColumns.name);
-	
+
 	_treeView->set_size_request(170, -1);
 
 	Gtk::ScrolledWindow* scrolledFrame = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 	hbox->pack_start(*scrolledFrame, false, false, 0);
-	
+
 	_notebook = Gtk::manage(new Gtk::Notebook);
 	_notebook->set_show_tabs(false);
 	hbox->pack_start(*_notebook, true, true, 0);
-	
+
 	// Pack the notebook and the treeview into the overall dialog vbox
 	_overallVBox->pack_start(*hbox, true, true, 0);
-	
+
 	// Create the buttons
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(false, 0));
-	
+
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &PrefDialog::onOK));
-	
+
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &PrefDialog::onCancel));
-	
+
 	buttonHBox->pack_end(*okButton, false, false, 0);
 	buttonHBox->pack_end(*cancelButton, false, false, 6);
 
@@ -96,16 +96,16 @@ void PrefDialog::updateTreeStore()
 {
 	// Clear the tree before populating it
 	_prefTree->clear();
-	
+
 	// Instantiate a new populator class
 	gtkutil::VFSTreePopulator vfsTreePopulator(_prefTree);
-	
+
 	PrefTreePopulator visitor(vfsTreePopulator, *this);
-	
-	// Visit each page with the PrefTreePopulator 
+
+	// Visit each page with the PrefTreePopulator
 	// (which in turn is using the VFSTreePopulator helper)
 	_root->foreachPage(visitor);
-	
+
 	// All the GtkTreeIters are available, we should add the data now
 	// re-use the visitor, it provides both visit() methods
 	vfsTreePopulator.forEachNode(visitor);
@@ -151,26 +151,26 @@ void PrefDialog::toggleWindow(bool isModal)
 	}
 	else
 	{
-		// Import the registry keys 
+		// Import the registry keys
 		_registryConnector.importValues();
-		
+
 		// Rebuild the tree and expand it
 		updateTreeStore();
 		_treeView->expand_all();
-		
+
 		// Now show the dialog window again (triggers _preShow())
 		PersistentTransientWindow::show();
-		
+
 		// Is there a specific page display request?
 		if (!_requestedPage.empty())
 		{
 			showPage(_requestedPage);
 		}
-		
+
 		if (isModal)
 		{
 			_isModal = true;
-			
+
 			// Resize the window to fit the widgets exactly
 			set_size_request(-1, -1);
 
@@ -202,7 +202,7 @@ PrefDialog& PrefDialog::Instance()
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new PrefDialog);
-		
+
 		// Register this instance with GlobalRadiant() at once
 		GlobalRadiant().addEventListener(instancePtr);
 	}
@@ -232,10 +232,10 @@ void PrefDialog::selectPage()
 void PrefDialog::showPage(const std::string& path)
 {
 	PrefPagePtr page;
-	
+
 	PrefPageFinder finder(path, page);
 	_root->foreachPage(finder);
-	
+
 	if (page != NULL)
 	{
 		// Find the page number
@@ -249,7 +249,7 @@ void PrefDialog::showPage(const std::string& path)
 void PrefDialog::save()
 {
 	_registryConnector.exportValues();
-	
+
 	if (_isModal)
 	{
 		Gtk::Main::quit();
@@ -301,7 +301,7 @@ void PrefDialog::onOK()
 void PrefDialog::onCancel()
 {
 	cancel();
-} 
+}
 
 void PrefDialog::onPrefPageSelect()
 {
@@ -310,7 +310,7 @@ void PrefDialog::onPrefPageSelect()
 
 void PrefDialog::_onDeleteEvent()
 {
-	// Closing the dialog is equivalent to CANCEL 
+	// Closing the dialog is equivalent to CANCEL
 	cancel();
 
 	PersistentTransientWindow::_onDeleteEvent();

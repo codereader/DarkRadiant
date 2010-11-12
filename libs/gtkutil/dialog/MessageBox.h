@@ -24,8 +24,8 @@ protected:
 
 public:
 	// Constructs a new messageBox using the given title and text
-	MessageBox(const std::string& title, 
-			   const std::string& text, 
+	MessageBox(const std::string& title,
+			   const std::string& text,
 			   ui::IDialog::MessageType type,
 			   const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
 

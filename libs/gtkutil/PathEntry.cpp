@@ -20,11 +20,11 @@ namespace gtkutil
 PathEntry::PathEntry(bool foldersOnly)
 {
 	set_shadow_type(Gtk::SHADOW_IN);
-		
+
 	// path entry
 	_entry = Gtk::manage(new Gtk::Entry);
 	_entry->set_has_frame(false);
-	
+
 	// generate browse button image
 	std::string fullFileName = GlobalRegistry().get(RKEY_BITMAPS_PATH) + "ellipsis.png";
 	Gtk::Widget* image = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_file(fullFileName)));
@@ -107,7 +107,7 @@ void PathEntry::onBrowseFolders()
 
 	std::string curEntry = getValue();
 
-	if (!path_is_absolute(curEntry.c_str())) 
+	if (!path_is_absolute(curEntry.c_str()))
 	{
 		curEntry.clear();
 	}

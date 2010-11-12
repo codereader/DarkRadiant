@@ -12,8 +12,8 @@ ScriptDialog DialogManagerInterface::createDialog(const std::string& title)
 	return ScriptDialog(GlobalUIManager().getDialogManager().createDialog(title));
 }
 
-ScriptDialog DialogManagerInterface::createMessageBox(const std::string& title, 
-													  const std::string& text, 
+ScriptDialog DialogManagerInterface::createMessageBox(const std::string& title,
+													  const std::string& text,
 													  ui::IDialog::MessageType type)
 {
 	return ScriptDialog(GlobalUIManager().getDialogManager().createMessageBox(title, text, type));
@@ -32,7 +32,7 @@ void DialogManagerInterface::registerInterface(boost::python::object& nspace)
 	nspace["GlobalDialogManager"] = boost::python::ptr(this);
 
 	// Add the declaration for the IDialog class
-	boost::python::class_<ScriptDialog> dialog("Dialog", 
+	boost::python::class_<ScriptDialog> dialog("Dialog",
 		boost::python::init<const ui::IDialogPtr&>());
 
 	// Add the methods to the dialog object

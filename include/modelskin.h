@@ -35,7 +35,7 @@ public:
 	 */
 	virtual ~ModelSkin() {}
 
-	/** 
+	/**
 	 * greebo: Returns the name of this skin.
 	 */
 	virtual std::string getName() const = 0;
@@ -80,21 +80,21 @@ public:
 	 * object.
 	 */
 	virtual ModelSkin& capture(const std::string& name) = 0;
-	
-	/** 
+
+	/**
 	 * Return the skins associated with the given model.
-	 * 
+	 *
 	 * @param
-	 * The full pathname of the model, as given by the "model" key in the skin 
+	 * The full pathname of the model, as given by the "model" key in the skin
 	 * definition.
-	 * 
+	 *
 	 * @returns
-	 * A vector of strings, each identifying the name of a skin which is 
+	 * A vector of strings, each identifying the name of a skin which is
 	 * associated with the given model. The vector may be empty as a model does
 	 * not require any associated skins.
 	 */
 	virtual const StringList& getSkinsForModel(const std::string& model) = 0;
-	
+
 	/**
 	 * Return the complete list of available skins.
 	 */

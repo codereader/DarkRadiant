@@ -7,20 +7,20 @@ const unsigned int BRUSH_DETAIL_MASK = (1 << BRUSH_DETAIL_FLAG);
 class ContentsFlagsValue {
 public:
 	ContentsFlagsValue() {}
-	
+
 	ContentsFlagsValue(int surfaceFlags, int contentFlags, int value, bool specified) :
 		m_surfaceFlags(surfaceFlags),
 		m_contentFlags(contentFlags),
 		m_value(value),
 		m_specified(specified)
 	{}
-	
+
 	void assignMasked(const ContentsFlagsValue& other) {
-		
+
 		bool detail = (m_contentFlags & BRUSH_DETAIL_MASK) != 0;
-		
+
 		*this = other;
-		
+
 		if (detail) {
 		    m_contentFlags |= BRUSH_DETAIL_MASK;
 		}
@@ -28,7 +28,7 @@ public:
 			m_contentFlags &= ~BRUSH_DETAIL_MASK;
 		}
 	}
-	
+
 	int m_surfaceFlags;
 	int m_contentFlags;
 	int m_value;
@@ -37,7 +37,7 @@ public:
 
 /* greebo: this is the old assignMasked() function, I moved it into the ContentsFlagsValue class,
  * but left the old code here, in case there is a problem with the assignment and one needs the original code
- * 
+ *
  * inline void ContentsFlagsValue_assignMasked(ContentsFlagsValue& flags, const ContentsFlagsValue& other)
 {
   bool detail = bitfield_enabled(flags.m_contentFlags, BRUSH_DETAIL_MASK);

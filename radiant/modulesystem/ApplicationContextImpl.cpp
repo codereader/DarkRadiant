@@ -19,7 +19,7 @@ namespace module {
 /**
  * Return the application path of the current Radiant instance.
  */
-std::string ApplicationContextImpl::getApplicationPath() const 
+std::string ApplicationContextImpl::getApplicationPath() const
 {
 	return _appPath;
 }
@@ -33,7 +33,7 @@ std::string ApplicationContextImpl::getRuntimeDataPath() const
 #endif
 }
 
-std::string ApplicationContextImpl::getSettingsPath() const 
+std::string ApplicationContextImpl::getSettingsPath() const
 {
 	return _settingsPath;
 }
@@ -43,8 +43,8 @@ std::string ApplicationContextImpl::getBitmapsPath() const
 	return getRuntimeDataPath() + "bitmaps/";
 }
 
-const ApplicationContext::ArgumentList& 
-ApplicationContextImpl::getCmdLineArgs() const 
+const ApplicationContext::ArgumentList&
+ApplicationContextImpl::getCmdLineArgs() const
 {
 	return _cmdLineArgs;
 }
@@ -68,7 +68,7 @@ std::ostream& ApplicationContextImpl::getErrorStream() const {
 
 #include <stdlib.h>
 #include <pwd.h>
-#include <unistd.h> 
+#include <unistd.h>
 
 #include <glib/gutils.h>
 
@@ -115,9 +115,9 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 	char *loginname;
 	struct passwd *pw;
 	seteuid(getuid());
-	
-	if (geteuid() == 0 && 
-		(loginname = getlogin()) != 0 && 
+
+	if (geteuid() == 0 &&
+		(loginname = getlogin()) != 0 &&
 		(pw = getpwnam(loginname)) != 0)
 	{
 		setuid(pw->pw_uid);
@@ -135,7 +135,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 		_appPath = getexename(real, argv);
 		ASSERT_MESSAGE(!_appPath.empty(), "failed to deduce app path");
 	}
-	
+
 	// Initialise the relative paths
 	initPaths();
 }
@@ -144,7 +144,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 #elif defined(WIN32)
 
 void ApplicationContextImpl::initialise(int argc, char* argv[]) {
-	
+
 	initArgs(argc, argv);
 	{
 		const char* appData = getenv("APPDATA");
@@ -169,7 +169,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 		else {
 			filename[0] = '\0';
 		}
-		
+
 		// Make sure we have forward slashes
 		_appPath = os::standardPath(filename);
 	}
@@ -183,7 +183,7 @@ void ApplicationContextImpl::initialise(int argc, char* argv[]) {
 
 // ============== OS-Specific Implementations end ===================
 
-void ApplicationContextImpl::initArgs(int argc, char* argv[]) 
+void ApplicationContextImpl::initArgs(int argc, char* argv[])
 {
 	// Store the arguments locally, ignore the first one
 	for (int i = 1; i < argc; i++) {
@@ -196,7 +196,7 @@ void ApplicationContextImpl::initPaths()
 	// Ensure that the homepath ends with a slash
 	_homePath = os::standardPathWithSlash(_homePath);
 	_appPath = os::standardPathWithSlash(_appPath);
-	
+
 	// Make sure the home folder exists (attempt to create it)
 	os::makeDirectory(_homePath);
 

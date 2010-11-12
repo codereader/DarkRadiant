@@ -26,8 +26,8 @@ extern FaceInstanceSet g_SelectedFaceInstances;
 
 namespace selection {
 	namespace algorithm {
-	
-// Constants	
+
+// Constants
 namespace {
 	const std::string RKEY_DEFAULT_TEXTURE_SCALE = "user/ui/textures/defaultTextureScale";
 }
@@ -38,61 +38,61 @@ class AmbiguousShaderException:
 public:
 	// Constructor
 	AmbiguousShaderException(const std::string& what):
-		std::runtime_error(what) 
-	{}     
+		std::runtime_error(what)
+	{}
 };
 
-/** greebo: Cycles through all the Patches/Faces and throws as soon as 
+/** greebo: Cycles through all the Patches/Faces and throws as soon as
  * at least two different non-empty shader names are found.
- * 
+ *
  * @throws: AmbiguousShaderException
  */
 class UniqueShaderFinder
 {
 	// The string containing the result
 	mutable std::string& _shader;
-	
+
 public:
-	UniqueShaderFinder(std::string& shader) : 
+	UniqueShaderFinder(std::string& shader) :
 		_shader(shader)
 	{}
 
 	void operator()(FaceInstance& face) const {
-		
+
 		const std::string& foundShader = face.getFace().getShader();
-			
-		if (foundShader != "$NONE" && _shader != "$NONE" && 
-			_shader != foundShader) 
+
+		if (foundShader != "$NONE" && _shader != "$NONE" &&
+			_shader != foundShader)
 		{
 			throw AmbiguousShaderException(foundShader);
 		}
-		
+
 		_shader = foundShader;
 	}
-	
+
 	void operator()(Patch& patch) const {
-		
+
 		const std::string& foundShader = patch.getShader();
-			
-		if (foundShader != "$NONE" && _shader != "$NONE" && 
-			_shader != foundShader) 
+
+		if (foundShader != "$NONE" && _shader != "$NONE" &&
+			_shader != foundShader)
 		{
 			throw AmbiguousShaderException(foundShader);
 		}
-		
+
 		_shader = foundShader;
 	}
 };
 
 std::string getShaderFromSelection() {
 	std::string returnValue("");
-	
+
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
-	
+
 	if (selectionInfo.totalCount > 0) {
 		std::string faceShader("$NONE");
 		std::string patchShader("$NONE");
-		
+
 		// PATCHES
 		if (selectionInfo.patchCount > 0) {
 			// Try to get the unique shader from the selected patches
@@ -106,7 +106,7 @@ std::string getShaderFromSelection() {
 				patchShader = "";
 			}
 		}
-		
+
 		// BRUSHES
 		// If there are no FaceInstances selected, cycle through the brushes
 		if (g_SelectedFaceInstances.empty()) {
@@ -132,7 +132,7 @@ std::string getShaderFromSelection() {
 				faceShader = "";
 			}
 		}
-		
+
 		// Both faceShader and patchShader found?
 		if (faceShader != "$NONE" && patchShader != "$NONE") {
 			// Compare them and return one of them, if they are equal
@@ -147,7 +147,7 @@ std::string getShaderFromSelection() {
 			returnValue = patchShader;
 		}
 	}
-	
+
 	return returnValue;
 }
 
@@ -159,10 +159,10 @@ class ShaderApplicator :
 	std::string _shader;
 
 public:
-	ShaderApplicator(const std::string& shader) : 
+	ShaderApplicator(const std::string& shader) :
 		_shader(shader)
 	{}
-	
+
 	virtual void visit(Patch& patch) {
 		patch.setShader(_shader);
 	}
@@ -174,7 +174,7 @@ public:
 
 void applyShaderToSelection(const std::string& shaderName) {
 	UndoableCommand undo("setShader");
-	
+
 	// Construct an applicator class
 	ShaderApplicator applicator(shaderName);
 	// and traverse the selection using the applicator as walker
@@ -190,7 +190,7 @@ void applyShaderToSelection(const std::string& shaderName) {
 void applyClipboardFaceToFace(Face& target) {
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
-	
+
 	target.applyShaderFromFace(*(source.face));
 }
 
@@ -199,11 +199,11 @@ void applyClipboardFaceToFace(Face& target) {
 void applyClipboardPatchToFace(Face& target) {
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
-	
+
 	// Retrieve the textureprojection from the source face
 	TextureProjection projection;
 	projection.constructDefault();
-	
+
 	// Copy just the shader name, the rest is default value
 	target.setShader(source.patch->getShader());
 	target.SetTexdef(projection);
@@ -213,16 +213,16 @@ void applyClipboardPatchToFace(Face& target) {
 void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush) {
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
-	
+
 	// Check the basic conditions
 	if (!target.empty() && !source.empty()) {
 		// Do we have a Face to copy from?
 		if (source.isFace()) {
 			if (target.isFace() && entireBrush) {
 	  			// Copy Face >> Whole Brush
-	  			for (Brush::const_iterator i = target.brush->begin(); 
-					 i != target.brush->end(); 
-					 i++) 
+	  			for (Brush::const_iterator i = target.brush->begin();
+					 i != target.brush->end();
+					 i++)
 				{
 					applyClipboardFaceToFace(*(*i));
 				}
@@ -233,10 +233,10 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 			}
 			else if (target.isPatch() && !entireBrush) {
 				// Copy Face >> Patch
-				
+
 				// Set the shader name first
 			 	target.patch->setShader(source.face->getShader());
-			 	
+
 			 	// Either paste the texture projected or naturally
 			 	if (projected) {
 			 		target.patch->pasteTextureProjected(source.face);
@@ -250,9 +250,9 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 			// Source holds a patch
 			if (target.isFace() && entireBrush) {
 				// Copy patch >> whole brush
-				for (Brush::const_iterator i = target.brush->begin(); 
-					 i != target.brush->end(); 
-					 i++) 
+				for (Brush::const_iterator i = target.brush->begin();
+					 i != target.brush->end();
+					 i++)
 				{
 					applyClipboardPatchToFace(*(*i));
 				}
@@ -270,9 +270,9 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 		else if (source.isShader()) {
 			if (target.isFace() && entireBrush) {
 				// Copy patch >> whole brush
-				for (Brush::const_iterator i = target.brush->begin(); 
-					 i != target.brush->end(); 
-					 i++) 
+				for (Brush::const_iterator i = target.brush->begin();
+					 i != target.brush->end();
+					 i++)
 				{
 					(*i)->setShader(source.getShader());
 				}
@@ -292,16 +292,16 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	std::string command("pasteShader");
 	command += (projected ? "Projected" : "Natural");
 	command += (entireBrush ? "ToBrush" : "");
-	
+
 	UndoableCommand undo(command);
-	
+
 	// Initialise an empty Texturable structure
 	Texturable target;
-	
+
 	// Find a suitable target Texturable
 	ClosestTexturableFinder finder(test, target);
 	GlobalSceneGraph().root()->traverse(finder);
-	
+
 	if (target.isPatch() && entireBrush) {
 		gtkutil::errorDialog(
 			_("Can't paste shader to entire brush.\nTarget is not a brush."),
@@ -311,7 +311,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 		// Pass the call to the algorithm function taking care of all the IFs
 		applyClipboardToTexturable(target, projected, entireBrush);
 	}
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -319,22 +319,22 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 
 void pasteTextureCoords(SelectionTest& test) {
 	UndoableCommand undo("pasteTextureCoordinates");
-	
+
 	// Initialise an empty Texturable structure
 	Texturable target;
-	
+
 	// Find a suitable target Texturable
 	ClosestTexturableFinder finder(test, target);
 	GlobalSceneGraph().root()->traverse(finder);
-	
+
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = GlobalShaderClipboard().getSource();
-	
+
 	// Check the basic conditions
 	if (target.isPatch() && source.isPatch()) {
-		// Check if the dimensions match, emit an error otherwise 
-		if (target.patch->getWidth() == source.patch->getWidth() && 
-			target.patch->getHeight() == source.patch->getHeight()) 
+		// Check if the dimensions match, emit an error otherwise
+		if (target.patch->getWidth() == source.patch->getWidth() &&
+			target.patch->getHeight() == source.patch->getHeight())
 		{
 	 		target.patch->pasteTextureCoordinates(source.patch);
 		}
@@ -358,7 +358,7 @@ void pasteTextureCoords(SelectionTest& test) {
 				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -366,9 +366,9 @@ void pasteTextureCoords(SelectionTest& test) {
 
 void pickShaderFromSelection(const cmd::ArgumentList& args) {
 	GlobalShaderClipboard().clear();
-	
+
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
+
 	// Check for a single patch
 	if (info.totalCount == 1 && info.patchCount == 1) {
 		try {
@@ -434,13 +434,13 @@ void pasteShaderToSelection(const cmd::ArgumentList& args) {
 	if (GlobalShaderClipboard().getSource().empty()) {
 		return;
 	}
-	
+
 	// Start a new command
 	UndoableCommand command("pasteShaderToSelection");
-	
+
 	ClipboardShaderApplicator applicator;
 	forEachSelectedPrimitive(applicator);
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -450,10 +450,10 @@ void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
 	if (GlobalShaderClipboard().getSource().empty()) {
 		return;
 	}
-	
+
 	// Start a new command
 	UndoableCommand command("pasteShaderNaturalToSelection");
-	
+
 	// greebo: Construct a visitor and traverse the selection
 	ClipboardShaderApplicator applicator(true); // true == paste natural
 	forEachSelectedPrimitive(applicator);
@@ -465,27 +465,27 @@ void pasteShaderNaturalToSelection(const cmd::ArgumentList& args) {
 
 TextureProjection getSelectedTextureProjection() {
 	TextureProjection returnValue;
-	
+
 	if (selectedFaceCount() == 1) {
 		// Get the last selected face instance from the global
 		FaceInstance& faceInstance = g_SelectedFaceInstances.last();
 		faceInstance.getFace().GetTexdef(returnValue);
 	}
-	
+
 	return returnValue;
 }
 
 Vector2 getSelectedFaceShaderSize() {
 	Vector2 returnValue(0,0);
-	
+
 	if (selectedFaceCount() == 1) {
 		// Get the last selected face instance from the global
 		FaceInstance& faceInstance = g_SelectedFaceInstances.last();
-		
+
 		returnValue[0] = faceInstance.getFace().getFaceShader().width();
 		returnValue[1] = faceInstance.getFace().getFaceShader().height();
 	}
-	
+
 	return returnValue;
 }
 
@@ -496,8 +496,8 @@ class TextureFitter :
 {
 	float _repeatS, _repeatT;
 public:
-	TextureFitter(float repeatS, float repeatT) : 
-		_repeatS(repeatS), _repeatT(repeatT) 
+	TextureFitter(float repeatS, float repeatT) :
+		_repeatS(repeatS), _repeatT(repeatT)
 	{}
 
 	virtual void visit(Patch& patch) {
@@ -511,11 +511,11 @@ public:
 
 void fitTexture(const float& repeatS, const float& repeatT) {
 	UndoableCommand command("fitTexture");
-	
+
 	// Instantiate a walker and traverse the selection
 	TextureFitter fitter(repeatS, repeatT);
 	forEachSelectedPrimitive(fitter);
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -528,8 +528,8 @@ class TextureFlipper :
 {
 	unsigned int _flipAxis;
 public:
-	TextureFlipper(unsigned int flipAxis) : 
-		_flipAxis(flipAxis) 
+	TextureFlipper(unsigned int flipAxis) :
+		_flipAxis(flipAxis)
 	{}
 
 	virtual void visit(Patch& patch) {
@@ -543,12 +543,12 @@ public:
 
 void flipTexture(unsigned int flipAxis) {
 	UndoableCommand undo("flipTexture");
-	
+
 	// Instantiate the visitor class
 	TextureFlipper flipper(flipAxis);
 	// traverse the selection
 	forEachSelectedPrimitive(flipper);
-	
+
 	SceneChangeNotify();
 }
 
@@ -568,10 +568,10 @@ class FaceTextureProjectionSetter :
 {
 	TextureProjection& _projection;
 public:
-	FaceTextureProjectionSetter(TextureProjection& projection) : 
-		_projection(projection) 
+	FaceTextureProjectionSetter(TextureProjection& projection) :
+		_projection(projection)
 	{}
-	
+
 	virtual void visit(Face& face) {
 		face.SetTexdef(_projection);
 	}
@@ -587,17 +587,17 @@ public:
 
 void naturalTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("naturalTexture");
-	
+
 	// Patches
 	Scene_forEachSelectedPatch(PatchTextureNaturaliser());
-	
+
 	TextureProjection projection;
 	projection.constructDefault();
-	
+
 	// Instantiate a visitor and walk the selection
 	FaceTextureProjectionSetter projectionSetter(projection);
 	forEachSelectedPrimitive(projectionSetter);
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -605,7 +605,7 @@ void naturalTexture(const cmd::ArgumentList& args) {
 
 void applyTextureProjectionToFaces(TextureProjection& projection) {
 	UndoableCommand undo("textureProjectionSetSelected");
-	
+
 	// Instantiate a visitor and walk the selection
 	FaceTextureProjectionSetter projectionSetter(projection);
 	forEachSelectedPrimitive(projectionSetter);
@@ -623,8 +623,8 @@ class TextureShifter :
 {
 	const Vector2& _shift;
 public:
-	TextureShifter(const Vector2& shift) : 
-		_shift(shift) 
+	TextureShifter(const Vector2& shift) :
+		_shift(shift)
 	{}
 
 	virtual void visit(Patch& patch) {
@@ -639,14 +639,14 @@ public:
 void shiftTexture(const Vector2& shift) {
 	std::string command("shiftTexture: ");
 	command += "s=" + floatToStr(shift[0]) + ", t=" + floatToStr(shift[1]);
-	
+
 	UndoableCommand undo(command);
 
 	TextureShifter shifter(shift);
-	
+
 	// Visit each selected primitive instance using the TextureShifter object
 	forEachSelectedPrimitive(shifter);
-		
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -661,7 +661,7 @@ class TextureScaler :
 	const Vector2& _scale;
 	const Vector2& _patchScale;
 public:
-	TextureScaler(const Vector2& scale, const Vector2& patchScale) : 
+	TextureScaler(const Vector2& scale, const Vector2& patchScale) :
 		_scale(scale),
 		_patchScale(patchScale)
 	{}
@@ -680,10 +680,10 @@ void scaleTexture(const Vector2& scale) {
 	command += "sScale=" + floatToStr(scale[0]) + ", tScale=" + floatToStr(scale[1]);
 
 	UndoableCommand undo(command);
-	
+
 	// Prepare the according patch scale value (they are relatively scaled)
 	Vector2 patchScale;
-	
+
 	// We need to have 1.05 for a +0.05 scale
 	// and a 1/1.05 for a -0.05 scale
 	for (int i = 0; i < 2; i++) {
@@ -700,7 +700,7 @@ void scaleTexture(const Vector2& scale) {
 
 	// traverse the selection
 	forEachSelectedPrimitive(scaler);
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -714,10 +714,10 @@ class TextureRotator :
 {
 	const float& _angle;
 public:
-	TextureRotator(const float& angle) : 
-		_angle(angle) 
+	TextureRotator(const float& angle) :
+		_angle(angle)
 	{}
-	
+
 	virtual void visit(Patch& patch) {
 		patch.RotateTexture(_angle);
 	}
@@ -730,13 +730,13 @@ public:
 void rotateTexture(const float& angle) {
 	std::string command("rotateTexture: ");
 	command += "angle=" + floatToStr(angle);
-	
+
 	UndoableCommand undo(command);
-	
+
 	// Instantiate a rotator class and traverse the selection
 	TextureRotator rotator(angle);
 	forEachSelectedPrimitive(rotator);
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -802,16 +802,16 @@ void scaleTexture(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
 		globalOutputStream() << "Usage: TexScale 's t'" << std::endl;
 		globalOutputStream() << "       TexScale [up|down|left|right]" << std::endl;
-		globalOutputStream() << "Example: TexScale '0.05 0' performs" 
+		globalOutputStream() << "Example: TexScale '0.05 0' performs"
 			<< " a 105% scale in the s direction." << std::endl;
-		globalOutputStream() << "Example: TexScale up performs" 
-			<< " a vertical scale using the step value defined in the Surface Inspector." 
+		globalOutputStream() << "Example: TexScale up performs"
+			<< " a vertical scale using the step value defined in the Surface Inspector."
 			<< std::endl;
 		return;
 	}
 
 	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
-	
+
 	if (arg == "up") {
 		scaleTextureUp();
 	}
@@ -834,13 +834,13 @@ void shiftTextureCmd(const cmd::ArgumentList& args) {
 	if (args.size() != 1) {
 		globalOutputStream() << "Usage: TexShift 's t'" << std::endl
 			 << "       TexShift [up|down|left|right]" << std::endl
-			 << "[up|down|left|right| takes the step values " 
+			 << "[up|down|left|right| takes the step values "
 			 << "from the Surface Inspector." << std::endl;
 		return;
 	}
 
 	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
-	
+
 	if (arg == "up") {
 		shiftTextureUp();
 	}
@@ -859,7 +859,7 @@ void shiftTextureCmd(const cmd::ArgumentList& args) {
 	}
 }
 
-/** 
+/**
  * greebo: Aligns the texture of the visited faces/patches
  * to the given edge.
  */
@@ -868,10 +868,10 @@ class TextureAligner :
 {
 	const EAlignType _align;
 public:
-	TextureAligner(EAlignType align) : 
-		_align(align) 
+	TextureAligner(EAlignType align) :
+		_align(align)
 	{}
-	
+
 	void visit(Patch& patch)
 	{
 		patch.alignTexture(_align);
@@ -903,13 +903,13 @@ void alignTexture(EAlignType align)
 		command += "right";
 		break;
 	};
-	
+
 	UndoableCommand undo(command);
-	
+
 	// Instantiate an aligner class and traverse the selection
 	TextureAligner aligner(align);
 	forEachSelectedPrimitive(aligner);
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
@@ -924,7 +924,7 @@ void alignTextureCmd(const cmd::ArgumentList& args)
 	}
 
 	std::string arg = boost::algorithm::to_lower_copy(args[0].getString());
-	
+
 	if (arg == "top")
 	{
 		alignTexture(ALIGN_TOP);
@@ -964,17 +964,17 @@ public:
 
 void normaliseTexture(const cmd::ArgumentList& args) {
 	UndoableCommand undo("normaliseTexture");
-	
+
 	TextureNormaliser normaliser;
 	forEachSelectedPrimitive(normaliser);
-	
+
 	SceneChangeNotify();
 	// Update the Texture Tools
 	ui::SurfaceInspector::Instance().queueUpdate();
 }
 
 /** greebo: This replaces the shader of the visited face/patch with <replace>
- * 			if the face is textured with <find> and increases the given <counter>. 
+ * 			if the face is textured with <find> and increases the given <counter>.
  */
 class ShaderReplacer :
 	public BrushInstanceVisitor
@@ -983,8 +983,8 @@ class ShaderReplacer :
 	const std::string _replace;
 	mutable int _counter;
 public:
-	ShaderReplacer(const std::string& find, const std::string& replace) : 
-		_find(find), 
+	ShaderReplacer(const std::string& find, const std::string& replace) :
+		_find(find),
 		_replace(replace),
 		_counter(0)
 	{}
@@ -992,7 +992,7 @@ public:
 	int getReplacedCount() const {
 		return _counter;
 	}
-	
+
 	void operator()(Face& face) const {
 		if (face.getShader() == _find) {
 			face.setShader(_replace);
@@ -1007,7 +1007,7 @@ public:
 			_counter++;
 		}
 	}
-	
+
 	void operator()(Patch& patch) const {
 		if (patch.getShader() == _find) {
 			patch.setShader(_replace);
@@ -1016,13 +1016,13 @@ public:
 	}
 };
 
-int findAndReplaceShader(const std::string& find, 
+int findAndReplaceShader(const std::string& find,
 	const std::string& replace, bool selectedOnly)
 {
 	std::string command("textureFindReplace");
 	command += "-find " + find + " -replace " + replace;
 	UndoableCommand undo(command);
-	
+
 	// Construct a visitor class
 	ShaderReplacer replacer(find, replace);
 
@@ -1032,8 +1032,8 @@ int findAndReplaceShader(const std::string& find,
 			Scene_ForEachSelectedBrush_ForEachFace(GlobalSceneGraph(), replacer);
 			Scene_forEachSelectedPatch(replacer);
 		}
-		
-		// Search the single selected faces 
+
+		// Search the single selected faces
 		Scene_ForEachSelectedBrushFace(GlobalSceneGraph(), replacer);
 	}
 	else {
@@ -1041,7 +1041,7 @@ int findAndReplaceShader(const std::string& find,
 		// Search all patches
 		Scene_forEachVisiblePatch(replacer);
 	}
-	
+
 	return replacer.getReplacedCount();
 }
 

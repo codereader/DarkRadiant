@@ -58,7 +58,7 @@ scene::INodePtr PatchDef3Parser::parse(parser::DefTokeniser& tok) const
 	std::size_t subdivY = strToSizet(tok.nextToken());
 
 	patch.setFixedSubdivisions(true, Subdivisions(subdivX, subdivY));
-	
+
 	// ignore contents/flags values
 	tok.skipTokens(3);
 

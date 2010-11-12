@@ -16,8 +16,8 @@ namespace render
  * to rendered as efficiently as possible, reducing the number of unnecessary
  * context switches.
  */
-typedef std::map<OpenGLState*, 
-				 OpenGLShaderPass*, 
+typedef std::map<OpenGLState*,
+				 OpenGLShaderPass*,
 				 OpenGLStateLess> OpenGLStates;
 
 /**

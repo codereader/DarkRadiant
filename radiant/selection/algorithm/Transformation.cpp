@@ -20,7 +20,7 @@
 
 namespace selection {
 	namespace algorithm {
-		
+
 // greebo: see header for documentation
 void rotateSelected(const Vector3& eulerXYZ) {
 	std::string command("rotateSelectedEulerXYZ: ");
@@ -32,15 +32,15 @@ void rotateSelected(const Vector3& eulerXYZ) {
 
 // greebo: see header for documentation
 void scaleSelected(const Vector3& scaleXYZ) {
-	
-	if (fabs(scaleXYZ[0]) > 0.0001f && 
-		fabs(scaleXYZ[1]) > 0.0001f && 
-		fabs(scaleXYZ[2]) > 0.0001f) 
+
+	if (fabs(scaleXYZ[0]) > 0.0001f &&
+		fabs(scaleXYZ[1]) > 0.0001f &&
+		fabs(scaleXYZ[2]) > 0.0001f)
 	{
 		std::string command("scaleSelected: ");
 		command += scaleXYZ;
 		UndoableCommand undo(command.c_str());
-	
+
 		GlobalSelectionSystem().scaleSelected(scaleXYZ);
 	}
 	else {
@@ -57,13 +57,13 @@ void scaleSelected(const Vector3& scaleXYZ) {
  * 4) Import the nodes into the target namespace
  * 5) Move the nodes into the target scenegraph (using moveClonedNodes())
  */
-class SelectionCloner : 
+class SelectionCloner :
 	public scene::NodeVisitor
 {
 public:
 	// This maps cloned nodes to the parent nodes they should be inserted in
 	typedef std::map<scene::INodePtr, scene::INodePtr> Map;
-	
+
 private:
 	// The map which will associate the cloned nodes to their designated parents
 	mutable Map _cloned;
@@ -87,7 +87,7 @@ public:
 		{
 			return true;
 		}
-		
+
 		if (Node_isSelected(node))
 		{
 			// Don't traverse children of cloned nodes
@@ -97,7 +97,7 @@ public:
 		return true;
 	}
 
-	void post(const scene::INodePtr& node) 
+	void post(const scene::INodePtr& node)
 	{
 		if (node->isRoot())
 		{
@@ -108,8 +108,8 @@ public:
 		{
 			// Clone the current node
 			scene::INodePtr clone = map::Node_Clone(node);
-			
-			// Add the cloned node and its parent to the list 
+
+			// Add the cloned node and its parent to the list
 			_cloned.insert(Map::value_type(clone, node->getParent()));
 
 			// Insert this node in the root
@@ -147,10 +147,10 @@ void cloneSelected(const cmd::ArgumentList& args) {
 	}
 
 	UndoableCommand undo("cloneSelected");
-	
+
 	// Create the list that will take the cloned instances
 	SelectionCloner::Map cloned;
-	
+
 	SelectionCloner cloner;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), cloner);
 
@@ -193,9 +193,9 @@ struct AxisBase
 	Vector3 y;
 	Vector3 z;
 
-	AxisBase(const Vector3& x_, const Vector3& y_, const Vector3& z_) : 
-		x(x_), 
-		y(y_), 
+	AxisBase(const Vector3& x_, const Vector3& y_, const Vector3& z_) :
+		x(x_),
+		y(y_),
 		z(z_)
 	{}
 };

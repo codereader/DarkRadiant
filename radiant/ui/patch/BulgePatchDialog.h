@@ -3,8 +3,8 @@
 
 #include "gtkutil/dialog/Dialog.h"
 
-/** 
- * Jesps: Dialog to query the user for the maxValue  
+/**
+ * Jesps: Dialog to query the user for the maxValue
  */
 namespace ui
 {
@@ -17,9 +17,9 @@ private:
 	Handle _noiseHandle;
 
 public:
-	// Constructor 
+	// Constructor
 	BulgePatchDialog();
-	
+
 	// Shows the dialog, returns TRUE if the user selected OK.
 	// the given integer reference is then filled with the chosen value
 	static bool queryPatchNoise(int& noise);

@@ -6,9 +6,9 @@
 
 namespace model {
 
-NullModel::NullModel() : 
-	_aabbLocal(Vector3(0, 0, 0), Vector3(8, 8, 8)), 
-	_aabbSolid(_aabbLocal), 
+NullModel::NullModel() :
+	_aabbLocal(Vector3(0, 0, 0), Vector3(8, 8, 8)),
+	_aabbSolid(_aabbLocal),
 	_aabbWire(_aabbLocal)
 {
 	_state = GlobalRenderSystem().capture("");
@@ -22,14 +22,14 @@ const AABB& NullModel::localAABB() const {
 	return _aabbLocal;
 }
 
-void NullModel::renderSolid(RenderableCollector& collector, 
+void NullModel::renderSolid(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	collector.SetState(_state, RenderableCollector::eFullMaterials);
 	collector.addRenderable(_aabbSolid, localToWorld);
 }
 
-void NullModel::renderWireframe(RenderableCollector& collector, 
+void NullModel::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	collector.SetState(_state, RenderableCollector::eWireframeOnly);
@@ -90,11 +90,11 @@ const MaterialList& NullModel::getActiveMaterials() const {
 }
 
 void NullModel::render(const RenderInfo& info) const {
-	if (info.checkFlag(RENDER_TEXTURE_2D)) 
+	if (info.checkFlag(RENDER_TEXTURE_2D))
     {
 		aabb_draw_solid(_aabbLocal, info.getFlags());
 	}
-	else 
+	else
     {
 		aabb_draw_wire(_aabbLocal);
 	}

@@ -17,7 +17,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 
-class PreferenceSystem : 
+class PreferenceSystem :
 	public IPreferenceSystem
 {
 public:
@@ -25,7 +25,7 @@ public:
 	PreferencesPagePtr getPage(const std::string& path) {
 		return ui::PrefDialog::Instance().createOrFindPage(path);
 	}
-	
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const {
 		static std::string _name(MODULE_PREFERENCESYSTEM);
@@ -39,7 +39,7 @@ public:
 			_dependencies.insert(MODULE_XMLREGISTRY);
 			_dependencies.insert(MODULE_RADIANT);
 		}
-		
+
 		return _dependencies;
 	}
 

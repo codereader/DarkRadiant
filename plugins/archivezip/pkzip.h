@@ -31,14 +31,14 @@ class zip_magic
 public:
 	zip_magic()
 	{}
-	
+
 	zip_magic(char c0, char c1, char c2, char c3) {
 		m_value[0] = c0;
 		m_value[1] = c1;
 		m_value[2] = c2;
 		m_value[3] = c3;
 	}
-	
+
   bool operator==(const zip_magic& other) const
   {
     return m_value[0] == other.m_value[0]
@@ -58,28 +58,28 @@ inline void istream_read_zip_magic(InputStream& istream, zip_magic& magic)
   istream.read(reinterpret_cast<InputStream::byte_type*>(magic.m_value), 4);
 }
 
-struct zip_version 
-{ 
-  char version; 
-  char ostype; 
+struct zip_version
+{
+  char version;
+  char ostype;
 };
 
 inline void istream_read_zip_version(InputStream& istream, zip_version& version)
 {
-  version.version = istream_read_byte(istream); 
-  version.ostype = istream_read_byte(istream); 
+  version.version = istream_read_byte(istream);
+  version.ostype = istream_read_byte(istream);
 }
 
-struct zip_dostime 
-{ 
-  unsigned short time; 
-  unsigned short date; 
+struct zip_dostime
+{
+  unsigned short time;
+  unsigned short date;
 };
 
 inline void istream_read_zip_dostime(InputStream& istream, zip_dostime& dostime)
 {
-  dostime.time = istream_read_int16_le(istream); 
-  dostime.date = istream_read_int16_le(istream); 
+  dostime.time = istream_read_int16_le(istream);
+  dostime.date = istream_read_int16_le(istream);
 }
 
 const zip_magic zip_file_header_magic('P', 'K', 0x03, 0x04);
@@ -116,7 +116,7 @@ inline void istream_read_zip_file_header(SeekableInputStream& istream, zip_file_
   istream.seek(file_header.z_namlen + file_header.z_extras, SeekableInputStream::cur);
 };
 
-/* B. data descriptor 
+/* B. data descriptor
  * the data descriptor exists only if bit 3 of z_flags is set. It is byte aligned
  * and immediately follows the last byte of compressed data. It is only used if
  * the output media of the compressor was not seekable, eg. standard output.
@@ -141,10 +141,10 @@ inline void istream_read_zip_file_trailer(InputStream& istream, zip_file_trailer
 
 
 /* C. central directory structure:
-    [file header] . . . end of central dir record  
+    [file header] . . . end of central dir record
 */
 
-/* directory file header 
+/* directory file header
  * - a single entry including filename, extras and comment may not exceed 64k.
  */
 
@@ -171,7 +171,7 @@ struct zip_root_dirent
   /* followed by filename (of variable size) */
   /* followed by extra field (of variable size) */
   /* followed by file comment (of variable size) */
-}; 
+};
 
 inline void istream_read_zip_root_dirent(SeekableInputStream& istream, zip_root_dirent& root_dirent)
 {

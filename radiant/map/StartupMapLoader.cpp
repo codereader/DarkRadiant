@@ -11,7 +11,7 @@
 
 namespace map {
 
-void StartupMapLoader::onRadiantStartup() 
+void StartupMapLoader::onRadiantStartup()
 {
 	std::string mapToLoad = "";
 
@@ -20,8 +20,8 @@ void StartupMapLoader::onRadiantStartup()
     );
 
     for (ApplicationContext::ArgumentList::const_iterator i = args.begin();
-         i != args.end(); 
-         ++i) 
+         i != args.end();
+         ++i)
     {
 		// Investigate the i-th argument
 		std::string candidate = *i;
@@ -30,7 +30,7 @@ void StartupMapLoader::onRadiantStartup()
 
 		// We have a map file, check if it exists (and where)
 		boost::filesystem::path mapsPath = GlobalRegistry().get(RKEY_MAP_PATH);
-		
+
 		boost::filesystem::path fullMapPath = mapsPath / candidate;
 
 		// First, look in the regular maps path
@@ -38,7 +38,7 @@ void StartupMapLoader::onRadiantStartup()
 			mapToLoad = fullMapPath.file_string();
 			break;
 		}
-		
+
 		// Second, check for mod-relative paths
 		fullMapPath = mapsPath.remove_leaf().remove_leaf() / candidate;
 

@@ -4,10 +4,10 @@
 #include "iglrender.h"
 #include "math/matrix.h"
 
-namespace render 
+namespace render
 {
 
-class GLSLBumpProgram 
+class GLSLBumpProgram
 : public GLProgram
 {
 	// The value all lights should be scaled by, obtained from the game description
@@ -32,10 +32,10 @@ public:
     void disable();
 
     // Set render pass parameters
-    void applyRenderParams(const Vector3& viewer, 
-                           const Matrix4& localToWorld, 
-                           const Vector3& origin, 
-                           const Vector3& colour, 
+    void applyRenderParams(const Vector3& viewer,
+                           const Matrix4& localToWorld,
+                           const Vector3& origin,
+                           const Vector3& colour,
                            const Matrix4& world2light,
                            float ambientFactor);
 };

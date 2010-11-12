@@ -1,4 +1,4 @@
-#ifndef AI_HEADPROPERTYEDITOR_H_ 
+#ifndef AI_HEADPROPERTYEDITOR_H_
 #define AI_HEADPROPERTYEDITOR_H_
 
 #include "ientityinspector.h"
@@ -28,10 +28,10 @@ public:
 
 	Gtk::Widget& getWidget();
 
-	AIHeadPropertyEditor(Entity* entity, 
+	AIHeadPropertyEditor(Entity* entity,
 		const std::string& key, const std::string& options);
 
-	IPropertyEditorPtr createNew(Entity* entity, 
+	IPropertyEditorPtr createNew(Entity* entity,
 								const std::string& key,
 								const std::string& options);
 

@@ -8,7 +8,7 @@ namespace conversation
 {
 
 	// Treemodel definitions
-	struct CommandColumns : 
+	struct CommandColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		CommandColumns() { add(cmdNumber); add(caption); }
@@ -18,7 +18,7 @@ namespace conversation
 	};
 
 	namespace {
-		const std::string RKEY_CONVERSATION_COMMAND_INFO_PREFIX = 
+		const std::string RKEY_CONVERSATION_COMMAND_INFO_PREFIX =
 			"game/conversationSystem/conversationCommandPrefix";
 	}
 

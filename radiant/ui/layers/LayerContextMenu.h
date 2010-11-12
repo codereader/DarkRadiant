@@ -19,7 +19,7 @@ public:
 
 private:
 	OnSelectionFunc _onSelection;
-	
+
 	typedef std::map<std::string, int> SortedLayerMap;
 	SortedLayerMap _sortedLayers;
 

@@ -85,7 +85,7 @@ void CommandSystem::loadBinds() {
 			statement,
 			(node.getAttributeValue("readonly") == "1")
 		));
-		
+
 		std::pair<CommandMap::iterator, bool> result = _commands.insert(
 			CommandMap::value_type(name, st)
 		);
@@ -109,7 +109,7 @@ void CommandSystem::saveBinds() {
 		if (st == NULL || st->isReadonly()) continue; // not a statement or readonly
 
 		xml::Node node = GlobalRegistry().createKeyWithName(RKEY_COMMANDSYSTEM_BINDS, "bind", i->first);
-		
+
 		node.setAttributeValue("value", st->getValue());
 	}
 }
@@ -137,7 +137,7 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 	CommandMap::iterator found = _commands.find(args[0].getString());
 
 	if (found == _commands.end()) {
-		globalErrorStream() << "Cannot unbind: " << args[0].getString() 
+		globalErrorStream() << "Cannot unbind: " << args[0].getString()
 			<< ": no such command." << std::endl;
 		return;
 	}
@@ -150,7 +150,7 @@ void CommandSystem::unbindCmd(const ArgumentList& args) {
 		_commands.erase(found);
 	}
 	else {
-		globalErrorStream() << "Cannot unbind built-in command: " 
+		globalErrorStream() << "Cannot unbind built-in command: "
 			<< args[0].getString() << std::endl;
 		return;
 	}
@@ -160,7 +160,7 @@ void CommandSystem::listCmds(const ArgumentList& args) {
 	// Dump all commands
 	for (CommandMap::const_iterator i = _commands.begin(); i != _commands.end(); ++i) {
 		globalOutputStream() << i->first;
-		
+
 		StatementPtr st = boost::dynamic_pointer_cast<Statement>(i->second);
 		if (st != NULL) {
 			globalOutputStream() << " => " << st->getValue();
@@ -176,7 +176,7 @@ void CommandSystem::foreachCommand(Visitor& visitor) {
 	}
 }
 
-void CommandSystem::addCommand(const std::string& name, Function func, 
+void CommandSystem::addCommand(const std::string& name, Function func,
 	const Signature& signature)
 {
 	// Create a new command
@@ -187,7 +187,7 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 	);
 
 	if (!result.second) {
-		globalErrorStream() << "Cannot register command " << name 
+		globalErrorStream() << "Cannot register command " << name
 			<< ", this command is already registered." << std::endl;
 	}
 }
@@ -200,7 +200,7 @@ void CommandSystem::removeCommand(const std::string& name) {
 	}
 }
 
-void CommandSystem::addStatement(const std::string& statementName, 
+void CommandSystem::addStatement(const std::string& statementName,
 								 const std::string& str,
 								 bool saveStatementToRegistry)
 {
@@ -209,13 +209,13 @@ void CommandSystem::addStatement(const std::string& statementName,
 		boost::algorithm::trim_copy(str),
 		!saveStatementToRegistry // read-only if we should not save this statement
 	));
-	
+
 	std::pair<CommandMap::iterator, bool> result = _commands.insert(
 		CommandMap::value_type(statementName, st)
 	);
 
 	if (!result.second) {
-		globalErrorStream() << "Cannot register statement " << statementName 
+		globalErrorStream() << "Cannot register statement " << statementName
 			<< ", this statement is already registered." << std::endl;
 	}
 }
@@ -291,7 +291,7 @@ void CommandSystem::execute(const std::string& input) {
 	}
 
 	// Now execute the statements
-	for (std::vector<local::Statement>::iterator i = statements.begin(); 
+	for (std::vector<local::Statement>::iterator i = statements.begin();
 		 i != statements.end(); ++i)
 	{
 		// Attempt ordinary command execution
@@ -310,7 +310,7 @@ void CommandSystem::executeCommand(const std::string& name, const Argument& arg1
 	executeCommand(name, args);
 }
 
-void CommandSystem::executeCommand(const std::string& name, const Argument& arg1, 
+void CommandSystem::executeCommand(const std::string& name, const Argument& arg1,
 	const Argument& arg2)
 {
 	ArgumentList args(2);
@@ -320,8 +320,8 @@ void CommandSystem::executeCommand(const std::string& name, const Argument& arg1
 	executeCommand(name, args);
 }
 
-void CommandSystem::executeCommand(const std::string& name, 
-	const Argument& arg1, const Argument& arg2, 
+void CommandSystem::executeCommand(const std::string& name,
+	const Argument& arg1, const Argument& arg2,
 	const Argument& arg3)
 {
 	ArgumentList args(2);
@@ -363,10 +363,10 @@ AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefi
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(cmd::CommandSystemPtr(new cmd::CommandSystem));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

@@ -81,7 +81,7 @@ void ReloadSkins(const cmd::ArgumentList& args) {
 	GlobalModelSkinCache().refresh();
 	RefreshSkinWalker walker;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-	
+
 	// Refresh the ModelSelector too
 	ui::ModelSelector::refresh();
 }
@@ -112,10 +112,10 @@ AABB Doom3Light_getBounds(AABB aabb)
 namespace entity
 {
 
-/** 
+/**
  * Create an instance of the given entity at the given position, and return
  * the Node containing the new entity.
- * 
+ *
  * @returns: the scene::INodePtr referring to the new entity.
  */
 scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3& origin)
@@ -127,7 +127,7 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 
     // TODO: to be replaced by inheritance-based class detection
     bool isModel = (info.totalCount == 0 && name == "func_static");
-    
+
     // Some entities are based on the size of the currently-selected primitive(s)
     bool primitivesSelected = info.brushCount > 0 || info.patchCount > 0;
 
@@ -139,39 +139,39 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 
 	// Get the selection workzone bounds
 	AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
-    
+
     scene::INodePtr node(GlobalEntityCreator().createEntity(entityClass));
 	Entity* entity = Node_getEntity(node);
 
 	GlobalSceneGraph().root()->addChildNode(node);
-    
+
     if (entityClass->isFixedSize() || (isModel && !primitivesSelected)) {
 		selection::algorithm::deleteSelection();
-    
+
         ITransformablePtr transform = Node_getTransformable(node);
-    
+
         if (transform != 0) {
             transform->setType(TRANSFORM_PRIMITIVE);
             transform->setTranslation(origin);
             transform->freezeTransform();
         }
-    
+
         GlobalSelectionSystem().setSelectedAll(false);
 
 		// Move the item to the first visible layer
 		node->moveToLayer(GlobalLayerSystem().getFirstVisibleLayer());
-    
+
         Node_setSelected(node, true);
     }
     else // brush-based entity
-	{ 
+	{
 		// Add selected brushes as children of non-fixed entity
 		entity->setKeyValue("model", entity->getKeyValue("name"));
 
 		// Take the selection center as new origin
 		Vector3 newOrigin = selection::algorithm::getCurrentSelectionCenter();
 		entity->setKeyValue("origin", std::string(newOrigin));
-		
+
         // If there is an "editor_material" class attribute, apply this shader
         // to all of the selected primitives before parenting them
         std::string material = entity->getEntityClass()->getAttribute("editor_material").value;
@@ -179,7 +179,7 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
         if (!material.empty()) {
             selection::algorithm::applyShaderToSelection(material);
         }
-                
+
         // Parent the selected primitives to the new node
 		selection::algorithm::ParentPrimitivesToEntityWalker walker(node);
 		GlobalSelectionSystem().foreachSelected(walker);
@@ -189,16 +189,16 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 	    GlobalSelectionSystem().setSelectedAll(false);
 	    Node_setSelected(node, true);
     }
-	
+
     // Set the light radius and origin
 
     if (entityClass->isLight() && primitivesSelected)
 	{
-        AABB bounds(Doom3Light_getBounds(workzone));    
+        AABB bounds(Doom3Light_getBounds(workzone));
         entity->setKeyValue("origin", bounds.getOrigin());
         entity->setKeyValue("light_radius", bounds.getExtents());
     }
-    
+
     // Flag the map as unsaved after creating the entity
     GlobalMap().setModified(true);
 
@@ -214,55 +214,55 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 			entity->setKeyValue(key, i->value);
 		}
 	}
-    
+
 	// Return the new node
 	return node;
 }
 
 /** greebo: Creates a new entity with an attached curve
- * 
+ *
  * @key: The curve type: pass either "curve_CatmullRomSpline" or "curve_Nurbs".
  */
 void createCurve(const std::string& key) {
 	UndoableCommand undo(std::string("createCurve: ") + key);
-	
+
 	// De-select everything before we proceed
 	GlobalSelectionSystem().setSelectedAll(false);
 	GlobalSelectionSystem().setSelectedAllComponents(false);
-	
+
 	std::string curveEClass = GlobalRegistry().get(RKEY_DEFAULT_CURVE_ENTITY);
 	// Fallback to func_static, if nothing defined in the registry
 	if (curveEClass.empty()) {
-		curveEClass = "func_static"; 
+		curveEClass = "func_static";
 	}
-	
+
 	// Find the default curve entity
 	IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(
-		curveEClass, 
+		curveEClass,
 		true
 	);
-	
+
 	// Create a new entity node deriving from this entityclass
 	scene::INodePtr curve(GlobalEntityCreator().createEntity(entityClass));
-    
-    // Insert this new node into the scenegraph root 
+
+    // Insert this new node into the scenegraph root
     GlobalSceneGraph().root()->addChildNode(curve);
-    
+
     // Select this new curve node
     Node_setSelected(curve, true);
-    
+
 	Entity* entity = Node_getEntity(curve);
 	assert(entity); // this must be true
-	
+
 	// Set the model key to be the same as the name
 	entity->setKeyValue("model", entity->getKeyValue("name"));
-	
+
 	// Initialise the curve using three pre-defined points
 	entity->setKeyValue(
-		key, 
+		key,
 		"3 ( 0 0 0  50 50 0  50 100 0 )"
 	);
-	
+
 	ITransformablePtr transformable = Node_getTransformable(curve);
 	if (transformable != NULL) {
 		// Translate the entity to the center of the current workzone

@@ -30,8 +30,8 @@ private:
 	GLuint m_displayList;
 	int m_pixelHeight;
 public:
-	GLFont(GLuint displayList, int pixelHeight) : 
-		m_displayList(displayList), 
+	GLFont(GLuint displayList, int pixelHeight) :
+		m_displayList(displayList),
 		m_pixelHeight(pixelHeight)
 	{}
 

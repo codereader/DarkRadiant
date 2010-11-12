@@ -38,7 +38,7 @@ namespace ui
 class PatchInspector;
 typedef boost::shared_ptr<PatchInspector> PatchInspectorPtr;
 
-class PatchInspector 
+class PatchInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
   public RadiantEventListener,
@@ -58,7 +58,7 @@ class PatchInspector
 		Gtk::ComboBoxText* rowCombo;
 		Gtk::ComboBoxText* colCombo;
 	} _vertexChooser;
-	
+
 	struct CoordRow
 	{
 		Gtk::HBox* hbox;
@@ -69,14 +69,14 @@ class PatchInspector
 		Gtk::Entry* step;
 		Gtk::Label* steplabel;
 	};
-	
-	// This are the named manipulator rows (x, y, z, s, t) 
+
+	// This are the named manipulator rows (x, y, z, s, t)
 	typedef std::map<std::string, CoordRow> CoordMap;
 	CoordMap _coords;
-	
+
 	Gtk::Label* _coordsLabel;
 	Gtk::Table* _coordsTable;
-	
+
 	struct TesselationWidgets
 	{
 		Gtk::Label* title;
@@ -92,10 +92,10 @@ class PatchInspector
 
 	std::size_t _patchRows;
 	std::size_t _patchCols;
-	
+
 	// The pointer to the active patch node (only non-NULL if there is a single patch selected)
 	PatchNodeWeakPtr _patch;
-	
+
 	// If this is set to TRUE, the GTK callbacks will be disabled
 	bool _updateActive;
 
@@ -107,7 +107,7 @@ private:
 	// TransientWindow callbacks
 	void _preShow();
 	void _preHide();
-	
+
 	/** greebo: Saves the step values to the registry
 	 */
 	void saveToRegistry();
@@ -123,13 +123,13 @@ private:
 	/** greebo: Saves the current values of the entry fields to the active patch control
 	 */
 	void emitCoords();
-	
+
 	/** greebo: Writes the tesselation setting into the selected patch
 	 */
 	void emitTesselation();
 
 	/** greebo: Helper method to create an coord row (label+entry)
-	 * 
+	 *
 	 * @table: The GtkTable the widgets should be packed in
 	 * @row: the row index of _coordsTable to pack the row into.
 	 */
@@ -140,21 +140,21 @@ private:
 
 	// gtkmm callbacks
 	void onComboBoxChange();
-	
+
 	// Gets called if the spin buttons with the coordinates get changed
 	void onCoordChange();
 	void onStepChanged();
-	
+
 	void onClickSmaller(CoordRow& row);
 	void onClickLarger(CoordRow& row);
 
-	// Gets called when the "Fixed Tesselation" settings are changed 
+	// Gets called when the "Fixed Tesselation" settings are changed
 	void onFixedTessChange();
 	void onTessChange();
 
 public:
 	PatchInspector();
-	
+
 	/** greebo: Contains the static instance of this dialog.
 	 * Constructs the instance and calls toggle() when invoked.
 	 */
@@ -172,8 +172,8 @@ public:
 	// Request a deferred update of the UI elements (is performed when GTK is idle)
 	void queueUpdate();
 
-	/** 
-	 * greebo: Safely disconnects this dialog from all systems 
+	/**
+	 * greebo: Safely disconnects this dialog from all systems
 	 * (SelectionSystem, EventManager, ...)
 	 * Also saves the window state to the registry.
 	 */

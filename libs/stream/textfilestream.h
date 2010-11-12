@@ -33,7 +33,7 @@ public:
 	TextFileInputStream(const std::string& name) :
 		m_file(!name.empty() ? fopen(name.c_str(), "rt") : NULL)
 	{}
-  
+
   ~TextFileInputStream()
   {
     if(!failed())
@@ -51,8 +51,8 @@ public:
   }
 
 	// greebo: Override default std::streambuf::seekoff() method to provide buffer positioning capabilities
-	virtual std::streampos seekoff(std::streamoff off, 
-								   std::ios_base::seekdir way, 
+	virtual std::streampos seekoff(std::streamoff off,
+								   std::ios_base::seekdir way,
 								   std::ios_base::openmode which = std::ios_base::in | std::ios_base::out)
 	{
 		if (way == std::ios_base::beg)

@@ -27,7 +27,7 @@ QuerySidesDialog::QuerySidesDialog(int numSidesMin, int numSidesMax) :
 {
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-	
+
 	// Create all the widgets
 	populateWindow();
 }
@@ -71,7 +71,7 @@ Gtk::Widget& QuerySidesDialog::createButtons()
 
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &QuerySidesDialog::onCancel));
-	
+
 	hbox->pack_end(*okButton, false, false, 0);
 	hbox->pack_end(*cancelButton, false, false, 0);
 

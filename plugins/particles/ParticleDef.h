@@ -25,23 +25,23 @@ class ParticleDef
 
 	// Depth hack
 	float _depthHack;
-	
+
 	// Vector of stages
 	typedef std::vector<ParticleStage> StageList;
 	StageList _stages;
 
 	typedef std::set<IParticleDef::Observer*> Observers;
 	Observers _observers;
-	
+
 public:
-	
+
 	/**
 	 * Construct a named ParticleDef.
 	 */
 	ParticleDef(const std::string& name)
 	: _name(name)
 	{ }
-	
+
 	/**
 	 * Return the ParticleDef name.
 	 */
@@ -70,7 +70,7 @@ public:
 	/**
 	 * Returns the number of stages for this particle system.
 	 */
-	std::size_t getNumStages() 
+	std::size_t getNumStages()
 	{
 		return _stages.size();
 	}
@@ -86,11 +86,11 @@ public:
 	/**
 	 * Return a specific particle stage (non-const version)
 	 */
-	IParticleStage& getParticleStages(std::size_t stageNum) 
+	IParticleStage& getParticleStages(std::size_t stageNum)
 	{
 		return _stages[stageNum];
 	}
-	
+
 	/**
 	 * Append a particle stage.
 	 */
@@ -113,7 +113,7 @@ public:
 		// Clear out the particle def (except the name) before parsing
 		clear();
 
-		// Any global keywords will come first, after which we get a series of 
+		// Any global keywords will come first, after which we get a series of
 		// brace-delimited stages.
 		std::string token = tok.nextToken();
 
@@ -127,11 +127,11 @@ public:
 			{
 				// Construct/Parse the stage from the tokens
 				ParticleStage stage(tok);
-				
+
 				// Append to the ParticleDef
 				appendStage(stage);
 			}
-			
+
 			// Get next token
 			token = tok.nextToken();
 		}

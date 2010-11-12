@@ -16,7 +16,7 @@ void RenderableTargetInstances::detach(TargetableNode& node) {
 }
 
 void RenderableTargetInstances::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
-	for (TargetableNodes::const_iterator i = _nodes.begin(); 
+	for (TargetableNodes::const_iterator i = _nodes.begin();
 		 i != _nodes.end(); ++i)
 	{
 		(*i)->render(collector, volume);

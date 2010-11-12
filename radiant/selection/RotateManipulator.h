@@ -12,8 +12,8 @@
  * Draws circles for rotation around individual axes, plus a circle for free
  * rotation.
  */
-class RotateManipulator 
-: public Manipulator 
+class RotateManipulator
+: public Manipulator
 {
 private:
   RotateFree _rotateFree;
@@ -36,7 +36,7 @@ private:
   bool _circleX_visible;
   bool _circleY_visible;
   bool _circleZ_visible;
-  
+
 public:
   static ShaderPtr _stateOuter;
 
@@ -45,15 +45,15 @@ public:
 
   void UpdateColours();
   void updateCircleTransforms();
-  
+
   void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
-  
+
   void testSelect(const View& view, const Matrix4& pivot2world);
-  
+
   ManipulatorComponent* getActiveComponent();
-  
-  void setSelected(bool select);  
-  bool isSelected() const;  
+
+  void setSelected(bool select);
+  bool isSelected() const;
 };
 
 

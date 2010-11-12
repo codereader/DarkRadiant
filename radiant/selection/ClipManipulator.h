@@ -1,6 +1,6 @@
 #pragma once
 
-class ClipManipulator : public Manipulator 
+class ClipManipulator : public Manipulator
 {
 public:
   ManipulatorComponent* getActiveComponent() {

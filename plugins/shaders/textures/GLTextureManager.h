@@ -6,15 +6,15 @@
 #include "../MapExpression.h"
 #include "texturelib.h"
 
-namespace shaders 
+namespace shaders
 {
 
-class GLTextureManager 
+class GLTextureManager
 {
 	// The mapping between texturekeys and Texture instances
 	typedef std::map<std::string, TexturePtr> TextureMap;
 	TextureMap _textures;
-	
+
 	// The fallback textures in case a texture is empty or broken
 	TexturePtr _shaderNotFound;
 
@@ -30,10 +30,10 @@ public:
      * Construct a bound texture from a generic named bindable.
      */
 	TexturePtr getBinding(NamedBindablePtr bindable);
-	
+
 	/** greebo: This loads a texture directly from the disk using the
 	 * 			specified <fullPath>.
-	 * 
+	 *
 	 * @fullPath: The path to the file (no VFS paths).
 	 * @moduleNames: The module names used to invoke the correct imageloader.
 	 * 				 This defaults to "BMP".
@@ -48,9 +48,9 @@ public:
 	TexturePtr getShaderNotFound();
 
 	/* greebo: This is some sort of "cleanup" call, which causes
-	 * the TextureManager to go through the list of textures and 
-	 * remove the unused ones. 
-	 */ 
+	 * the TextureManager to go through the list of textures and
+	 * remove the unused ones.
+	 */
 	void checkBindings();
 
 };

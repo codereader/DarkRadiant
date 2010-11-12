@@ -8,13 +8,13 @@
 #include "math/matrix.h"
 #include "math/aabb.h"
 
-namespace render 
+namespace render
 {
 
 /**
  * greebo: This is a renderable helper object which can be used
  * to render any space partition system implementing the ISPacepartitionSystem interface.
- * 
+ *
  * Instantiate such a class and pass the Shader and the SpacePartition system to the
  * setShader() and setSpacePartition() methods to enable rendering.
  *
@@ -42,7 +42,7 @@ public:
 		_shader = shader;
 	}
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 	{
 		if (_shader != NULL)
 		{
@@ -51,7 +51,7 @@ public:
 		}
 	}
 
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 	{
 		if (_shader != NULL)
 		{

@@ -33,14 +33,14 @@ public:
 	// Checks if the given SceneNode structure is an EntityNode
 	static bool isEntity(const ScriptSceneNode& node);
 
-	// "Cast" service for Python, returns a ScriptEntityNode. 
+	// "Cast" service for Python, returns a ScriptEntityNode.
 	// The returned node is non-NULL if the cast succeeded
 	static ScriptEntityNode getEntity(const ScriptSceneNode& node);
 };
 
 // Wrap around the EntityClassVisitor interface
-class EntityVisitorWrapper : 
-	public Entity::Visitor, 
+class EntityVisitorWrapper :
+	public Entity::Visitor,
 	public boost::python::wrapper<Entity::Visitor>
 {
 public:

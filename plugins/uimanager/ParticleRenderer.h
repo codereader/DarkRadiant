@@ -40,7 +40,7 @@ public:
 			_stateStack.push_back(_stateStack.back());
 		}
 	}
-	
+
 	/**
 	 * Pop the topmost Shader off the internal stack. This discards the value
 	 * without returning it.
@@ -52,15 +52,15 @@ public:
 			_stateStack.pop_back();
 		}
 	}
-  
+
 	/**
 	 * Set the Shader to be used when rendering any subsequently-submitted
 	 * OpenGLRenderable object. This shader remains in effect until it is
 	 * changed with a subsequent call to SetState().
-	 * 
+	 *
 	 * @param state
 	 * The Shader to be used from now on.
-	 * 
+	 *
 	 * @param mode
 	 * The type of rendering (wireframe or shaded) that this shader should be
     * used for. Individual RenderableCollector subclasses may ignore this method
@@ -72,15 +72,15 @@ public:
 
 		_stateStack.back() = state;
 	}
-	
+
 	/**
 	 * Submit an OpenGLRenderable object for rendering when the backend render
 	 * pass is conducted. The object will be rendered using the Shader previous-
 	 * ly set with SetState().
-	 * 
+	 *
 	 * @param renderable
 	 * The renderable object to submit.
-	 * 
+	 *
 	 * @param world
 	 * The local to world transform that should be applied to this object when
 	 * it is rendered.
@@ -92,12 +92,12 @@ public:
 		_stateStack.back()->addRenderable(renderable, world);
 	}
 
-	const EStyle getStyle() const 
+	const EStyle getStyle() const
 	{
 		return eFullMaterials;
 	}
-	
-	void Highlight(EHighlightMode mode, bool bEnable = true) 
+
+	void Highlight(EHighlightMode mode, bool bEnable = true)
 	{
 		// Do nothing for now
 	}
@@ -127,7 +127,7 @@ public:
 
 	virtual bool fill() const { return true; }
 
-	virtual const Matrix4& GetViewport() const 
+	virtual const Matrix4& GetViewport() const
 	{
 		return _viewPort;
 	}

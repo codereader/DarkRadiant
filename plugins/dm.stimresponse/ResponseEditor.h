@@ -31,7 +31,7 @@ private:
 		Gtk::MenuItem* disable;
 		Gtk::MenuItem* duplicate;
 	} _contextMenu;
-	
+
 	struct EffectWidgets
 	{
 		Gtk::TreeView* view;
@@ -42,7 +42,7 @@ private:
 		Gtk::MenuItem* upMenuItem;
 		Gtk::MenuItem* downMenuItem;
 	} _effectWidgets;
-	
+
 	struct PropertyWidgets
 	{
 		Gtk::VBox* vbox;
@@ -52,9 +52,9 @@ private:
 		Gtk::CheckButton* randomEffectsToggle;
 		Gtk::Entry* randomEffectsEntry;
 	} _propertyWidgets;
-	
+
 	Glib::RefPtr<Gtk::Window> _parent;
-	
+
 public:
 	/** greebo: Constructor creates all the widgets
 	 */
@@ -64,7 +64,7 @@ public:
 	 */
 	virtual void setEntity(const SREntityPtr& entity);
 
-	/** greebo: Updates the widgets (e.g. after a selection change) 
+	/** greebo: Updates the widgets (e.g. after a selection change)
 	 */
 	void update();
 
@@ -81,14 +81,14 @@ private:
 	/** greebo: Removes the currently selected response effect
 	 */
 	void removeEffect();
-	
-	/** greebo: Edits the currently selected effect 
+
+	/** greebo: Edits the currently selected effect
 	 */
 	void editEffect();
-	
+
 	/** greebo: Moves the selected effect up or down (i.e. increasing
 	 * 			or decreasing its index).
-	 * 
+	 *
 	 * @direction: +1 for moving it down (increasing the index)
 	 * 			   -1 for moving it up (decreasing the index)
 	 */
@@ -103,8 +103,8 @@ private:
 	void selectEffectIndex(const unsigned int index);
 
 	/** greebo: Returns the ID of the currently selected response effect
-	 * 		
-	 * @returns: the index of the selected effect or -1 on failure 
+	 *
+	 * @returns: the index of the selected effect or -1 on failure
 	 */
 	int getEffectIdFromSelection();
 
@@ -116,16 +116,16 @@ private:
 	void createContextMenu();
 	Gtk::Widget& createEffectWidgets(); // Response effect list
 
-	/** greebo: Gets called when the response selection gets changed 
+	/** greebo: Gets called when the response selection gets changed
 	 */
 	virtual void selectionChanged();
-	
+
 	void openContextMenu(Gtk::TreeView* view);
 
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
-	
+
 	// Context menu GTK callbacks
 	void onContextMenuAdd();
 	void onContextMenuDelete();
@@ -138,10 +138,10 @@ private:
 	void onEffectMenuAdd();
 	void onEffectMenuEffectUp();
 	void onEffectMenuEffectDown();
-	
-	// To catch double-clicks in the response effect list 
+
+	// To catch double-clicks in the response effect list
 	bool onEffectsViewButtonPress(GdkEventButton*);
-	
+
 	// Callback for Stim/Response and effect selection changes
 	void onEffectSelectionChange();
 };

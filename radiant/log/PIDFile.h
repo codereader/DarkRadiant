@@ -28,7 +28,7 @@ public:
 		_filename = registry.getApplicationContext().getSettingsPath() + filename;
 
 		FILE* pid = fopen(_filename.c_str(), "r");
-		
+
 		// Check for an existing radiant.pid file
 		if (pid != NULL)
 		{

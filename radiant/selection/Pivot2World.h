@@ -3,7 +3,7 @@
 #include "Pivot2World.h"
 #include "pivot.h"
 
-struct Pivot2World 
+struct Pivot2World
 {
   Matrix4 _worldSpace;
   Matrix4 _viewpointSpace;

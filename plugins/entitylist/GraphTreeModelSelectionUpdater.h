@@ -19,15 +19,15 @@ public:
 		_model(model),
 		_selection(selection)
 	{}
-	
-	bool pre(const scene::INodePtr& node) 
+
+	bool pre(const scene::INodePtr& node)
 	{
 		const GraphTreeNodePtr& gtNode = _model.find(node);
-		
+
 		if (gtNode == NULL) {
 			return true;
 		}
-		
+
 		if (Node_isSelected(node))
 		{
 			_selection->select(gtNode->getIter());
@@ -36,7 +36,7 @@ public:
 		{
 			_selection->unselect(gtNode->getIter());
 		}
-		
+
 		return true;
 	}
 };

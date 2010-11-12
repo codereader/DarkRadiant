@@ -201,7 +201,7 @@ void Nudge(int nDim, float fNudge)
 {
   Vector3 translate(0, 0, 0);
   translate[nDim] = fNudge;
-  
+
   GlobalSelectionSystem().translateSelected(translate);
 }
 

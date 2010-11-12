@@ -20,7 +20,7 @@ public:
 	static ShaderPtr m_state;
 
 	RenderLightRadiiBox(const Vector3& origin) : m_origin(origin) {}
-	
+
 	void render(const RenderInfo& info) const;
 }; // class RenderLightRadiiBox
 
@@ -30,7 +30,7 @@ class RenderLightProjection : public OpenGLRenderable {
 	const Frustum& _frustum;
 public:
 	RenderLightProjection(const Vector3& origin, const Vector3& start, const Frustum& frustum);
-	
+
 	// greebo: Renders the light cone of a projected light (may also be a frustum, when light_start / light_end are set)
 	void render(const RenderInfo& info) const;
 }; // class RenderLightProjection

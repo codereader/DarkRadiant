@@ -10,11 +10,11 @@ namespace entity {
 /**
  * greebo: This is an abstract representation of a target.
  * In Doom3 maps, a Target can be any map entity, that's
- * why this object encapsulates a reference to an actual 
- * scene::INode. 
+ * why this object encapsulates a reference to an actual
+ * scene::INode.
  *
- * Note: Such a Target object can be empty. That's the case for 
- * entities referring to non-existing entities in their 
+ * Note: Such a Target object can be empty. That's the case for
+ * entities referring to non-existing entities in their
  * "target" spawnarg.
  *
  * All Targets are owned by the TargetManager class.

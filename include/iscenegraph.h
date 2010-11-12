@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /**
  * \defgroup scenegraph Scenegraph
- * 
+ *
  * \namespace scene
  * \ingroup scenegraph
  * Interfaces and types relating to the scene-graph.
@@ -47,7 +47,7 @@ namespace scene
 class ISpacePartitionSystem;
 typedef boost::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
 
-/** 
+/**
 * A scene-graph - a Directed Acyclic Graph (DAG).
 *
 * Each node may refer to zero or more 'child' nodes (directed).
@@ -59,9 +59,9 @@ class Graph :
 public:
 	typedef boost::function<void ()> BoundsChangedFunc;
 
-	/* greebo: Derive from this class to get notified on scene changes 
+	/* greebo: Derive from this class to get notified on scene changes
 	 */
-	class Observer 
+	class Observer
 	{
 	public:
 		// destructor
@@ -69,12 +69,12 @@ public:
 
 		// Gets called when anything in the scenegraph changes
 		virtual void onSceneGraphChange() {}
-		
+
 		// Gets called when a new <node> is inserted into the scenegraph
 		virtual void onSceneNodeInsert(const scene::INodePtr& node) {}
-		
+
 		// Gets called when <node> is removed from the scenegraph
-		virtual void onSceneNodeErase(const scene::INodePtr& node) {} 
+		virtual void onSceneNodeErase(const scene::INodePtr& node) {}
 	};
 
 	// Returns the root-node of the graph.

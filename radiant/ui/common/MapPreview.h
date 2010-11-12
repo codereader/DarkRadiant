@@ -31,17 +31,17 @@ typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
 class MapPreview :
 	public Gtk::Frame
 {
-private:	
+private:
 	// GL widget
 	gtkutil::GLWidget* _glWidget;
-	
+
 	// Current distance between camera and preview
 	GLfloat _camDist;
-	
+
 	// Current rotation matrix
 	Matrix4 _rotation;
 
-	// The filters menu 
+	// The filters menu
 	IFilterMenuPtr _filtersMenu;
 
 	// The root node of the scene to be rendered
@@ -52,26 +52,26 @@ private:
 
 	// The filter observer
 	MapPreviewFilterObserverPtr _filterObserver;
-	
+
 public:
 	MapPreview();
 
 	~MapPreview();
-	
-	/** 
-	 * Set the pixel size of the MapPreviewCam widget. The widget is always 
+
+	/**
+	 * Set the pixel size of the MapPreviewCam widget. The widget is always
 	 * square.
-	 * 
+	 *
 	 * @param size
 	 * The pixel size of the square widget.
 	 */
 	void setSize(int size);
-	
-	/** 
-	 * Initialise the GL preview. This clears the window and sets up the 
+
+	/**
+	 * Initialise the GL preview. This clears the window and sets up the
 	 * initial matrices and lights.
 	 */
-	void initialisePreview();	 
+	void initialisePreview();
 
 	// Get/set the map root to render
 	void setRootNode(const scene::INodePtr& root);

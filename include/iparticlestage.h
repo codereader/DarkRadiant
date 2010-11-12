@@ -10,11 +10,11 @@ namespace particles
 {
 
 /**
- * greebo: A particle parameter represents a bounded member value 
+ * greebo: A particle parameter represents a bounded member value
  * of a particle stage (e.g. speed or size).
  *
  * Use the evaluate() method to retrieve a particular value.
- * 
+ *
  * It is modeled after the idParticleParam class in the D3 SDK.
  */
 class IParticleParameter
@@ -86,22 +86,22 @@ public:
 	};
 
 public:
-	/** 
+	/**
 	 * Get the shader name.
 	 */
 	virtual const std::string& getMaterialName() const = 0;
 
-	/** 
+	/**
 	 * Set the shader name.
 	 */
 	virtual void setMaterialName(const std::string& material) = 0;
 
-	/** 
+	/**
 	 * Get the particle count.
 	 */
 	virtual int getCount() const = 0;
 
-	/** 
+	/**
 	 * Set the particle count.
 	 */
 	virtual void setCount(int count) = 0;
@@ -117,17 +117,17 @@ public:
 	virtual void setDuration(float duration) = 0;
 
 	/**
-	 * Returns ( duration + deadTime ) in msec. 
+	 * Returns ( duration + deadTime ) in msec.
 	 */
 	virtual int getCycleMsec() const = 0;
 
 	/**
-	 * Get the cycles value. 
+	 * Get the cycles value.
 	 */
 	virtual float getCycles() const = 0;
 
 	/**
-	 * Set the cycles value. 
+	 * Set the cycles value.
 	 */
 	virtual void setCycles(float cycles) = 0;
 
@@ -180,7 +180,7 @@ public:
 	 * Set the particle render colour.
 	 */
 	virtual void setFadeColour(const Vector4& colour) = 0;
-	
+
 	/**
 	 * Get the fade in fraction [0..1]
 	 */
@@ -211,82 +211,82 @@ public:
 	 */
 	virtual void setFadeIndexFraction(float fraction) = 0;
 
-	/** 
+	/**
 	 * Get the animation frames.
 	 */
 	virtual int getAnimationFrames() const = 0;
 
-	/** 
+	/**
 	 * Set the animation frames.
 	 */
 	virtual void setAnimationFrames(int animationFrames) = 0;
 
-	/** 
+	/**
 	 * Get the animation rate.
 	 */
 	virtual float getAnimationRate() const = 0;
 
-	/** 
+	/**
 	 * Set the animation frames.
 	 */
 	virtual void setAnimationRate(float animationRate) = 0;
 
-	/** 
+	/**
 	 * Get the initial angle.
 	 */
 	virtual float getInitialAngle() const = 0;
 
-	/** 
+	/**
 	 * Set the initial angle.
 	 */
 	virtual void setInitialAngle(float angle) = 0;
 
-	/** 
+	/**
 	 * Get the bounds expansion value.
 	 */
 	virtual float getBoundsExpansion() const = 0;
 
-	/** 
+	/**
 	 * Set the bounds expansion value.
 	 */
 	virtual void setBoundsExpansion(float value) = 0;
 
-	/** 
+	/**
 	 * Get the random distribution flag.
 	 */
 	virtual bool getRandomDistribution() const = 0;
 
-	/** 
+	/**
 	 * Set the random distribution flag.
 	 */
-	virtual void setRandomDistribution(bool value) = 0; 
+	virtual void setRandomDistribution(bool value) = 0;
 
-	/** 
+	/**
 	 * Get the "use entity colour" flag.
 	 */
 	virtual bool getUseEntityColour() const = 0;
 
-	/** 
+	/**
 	 * Set the "use entity colour" flag.
 	 */
 	virtual void setUseEntityColour(bool value) = 0;
 
-	/** 
+	/**
 	 * Get the gravity factor.
 	 */
 	virtual float getGravity() const = 0;
 
-	/** 
+	/**
 	 * Set the gravity factor.
 	 */
 	virtual void setGravity(float value) = 0;
 
-	/** 
+	/**
 	 * Get the "apply gravity in world space" flag.
 	 */
 	virtual bool getWorldGravityFlag() const = 0;
 
-	/** 
+	/**
 	 * Get the "apply gravity in world space" flag.
 	 */
 	virtual void setWorldGravityFlag(bool value) = 0;
@@ -354,7 +354,7 @@ public:
 	/**
 	 * Get the direction parameter with the given index [0..3]
 	 */
-	virtual float getDirectionParm(int parmNum) const = 0;  
+	virtual float getDirectionParm(int parmNum) const = 0;
 
 	/*
 	 * Set the direction parameter with the given index [0..3].

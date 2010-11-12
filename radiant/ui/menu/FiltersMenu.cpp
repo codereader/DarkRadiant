@@ -5,7 +5,7 @@
 #include "iuimanager.h"
 
 namespace ui {
-	
+
 	namespace {
 		// greebo: These are used for the DarkRadiant main menu
 		const std::string MENU_NAME = "main";
@@ -15,11 +15,11 @@ namespace ui {
 		const std::string MENU_ICON = "iconFilter16.png";
 
 		// Local visitor class to populate the filters menu
-		class MenuPopulatingVisitor : 
+		class MenuPopulatingVisitor :
 			public IFilterVisitor
 		{
 			// The path under which the items get added.
-			std::string _targetPath; 
+			std::string _targetPath;
 		public:
 			// Pass the target menu path to the constructor
 			MenuPopulatingVisitor(const std::string& targetPath) :
@@ -30,15 +30,15 @@ namespace ui {
 			void visit(const std::string& filterName) {
 				// Get the menu manager
 				IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-		
-				std::string eventName = 
+
+				std::string eventName =
 					GlobalFilterSystem().getFilterEventName(filterName);
 
 				// Create the menu item
-				menuManager.add(_targetPath, _targetPath + "_" + filterName, 
-								menuItem, filterName, 
+				menuManager.add(_targetPath, _targetPath + "_" + filterName,
+								menuItem, filterName,
 								MENU_ICON, eventName);
-			}	
+			}
 		};
 	}
 
@@ -52,9 +52,9 @@ void FiltersMenu::addItemsToMainMenu()
 	removeItemsFromMainMenu();
 
 	// Create the toplevel menu item
-	menuManager.insert(MENU_INSERT_BEFORE, MENU_FILTERS_NAME, 
+	menuManager.insert(MENU_INSERT_BEFORE, MENU_FILTERS_NAME,
 						ui::menuFolder, "Fi_lter", "", ""); // empty icon, empty event
-	
+
 	// Visit the filters in the FilterSystem to populate the menu
 	MenuPopulatingVisitor visitor(MENU_PATH);
 	GlobalFilterSystem().forEachFilter(visitor);

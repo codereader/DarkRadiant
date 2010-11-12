@@ -14,30 +14,30 @@ class DeflatedArchiveTextFile :
 	SubFileInputStream m_substream;
 	DeflatedInputStream m_zipstream;
 	BinaryToTextInputStream<DeflatedInputStream> m_textStream;
-  
+
     // Mod directory containing this file
     const std::string _modDir;
-    
+
 public:
-	    
+
 	typedef FileInputStream::size_type size_type;
 	typedef FileInputStream::position_type position_type;
 
     /**
      * Constructor.
-     * 
+     *
      * @param modDir
      * The name of the mod directory this file's archive is located in.
      */
-    DeflatedArchiveTextFile(const std::string& name, 
+    DeflatedArchiveTextFile(const std::string& name,
                             const std::string& archiveName,
                             const std::string& modDir,
-                            position_type position, 
+                            position_type position,
                             size_type stream_size)
-    : m_name(name), 
-      m_istream(archiveName), 
-      m_substream(m_istream, position, stream_size), 
-      m_zipstream(m_substream), 
+    : m_name(name),
+      m_istream(archiveName),
+      m_substream(m_istream, position, stream_size),
+      m_zipstream(m_substream),
       m_textStream(m_zipstream),
       _modDir(os::getContainingDir(modDir))
     {}
@@ -45,11 +45,11 @@ public:
 	TextInputStream& getInputStream() {
 		return m_textStream;
 	}
-	
+
 	const std::string& getName() const {
 		return m_name;
 	}
-  
+
     /**
      * Return mod directory of this file.
      */

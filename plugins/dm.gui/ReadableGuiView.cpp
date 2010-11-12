@@ -32,7 +32,7 @@ void ReadableGuiView::setGui(const GuiPtr& gui)
 	Vector2 topLeft(0, 0);
 	Vector2 bottomRight(640, 480);
 
-	if (_gui != NULL) 
+	if (_gui != NULL)
 	{
 		GuiWindowDefPtr bgWindowDef = _gui->findWindowDef("backgroundImage");
 		if (!bgWindowDef)

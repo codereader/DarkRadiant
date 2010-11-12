@@ -12,13 +12,13 @@
 namespace selection {
 	namespace algorithm {
 
-	typedef std::list<std::string> ClassnameList; 
+	typedef std::list<std::string> ClassnameList;
 
 	/**
 	 * greebo: This selects each visible entity in the subgraph whose classname matches
 	 *         the given list.
 	 */
-	class EntitySelectByClassnameWalker : 
+	class EntitySelectByClassnameWalker :
 		public scene::NodeVisitor
 	{
 		const ClassnameList& _classnames;
@@ -31,8 +31,8 @@ namespace selection {
 		bool entityMatches(Entity* entity) const;
 	};
 
-	/** 
-	 * greebo: "Select All of Type" expands the selection to all items 
+	/**
+	 * greebo: "Select All of Type" expands the selection to all items
 	 *         of similar type. The exact action depends on the current selection.
 	 *
 	 * For entities: all entities of the same classname as the selection are selected.
@@ -76,8 +76,8 @@ namespace selection {
 	void deleteSelectionCmd(const cmd::ArgumentList& args);
 
 	/**
-	 * greebo: Deletes all selected nodes including empty entities. 
-	 * 
+	 * greebo: Deletes all selected nodes including empty entities.
+	 *
 	 * Note: this command does not create an UndoableCommand, it only
 	 *       contains the deletion algorithm.
 	 */

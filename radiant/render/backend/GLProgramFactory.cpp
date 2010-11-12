@@ -28,11 +28,11 @@ GLProgramFactory& GLProgramFactory::getInstance() {
 }
 
 // Lookup a named program in the singleton instance
-GLProgramPtr GLProgramFactory::getProgram(const std::string& name) 
+GLProgramPtr GLProgramFactory::getProgram(const std::string& name)
 {
 	// Reference to static instance's map
 	ProgramMap& map = getInstance()._map;
-	
+
 	// Lookup the program, if not found throw an exception
 	ProgramMap::iterator i = map.find(name);
 	if (i != map.end())
@@ -51,18 +51,18 @@ void GLProgramFactory::setUsingGLSL(bool useGLSL)
     }
     else
     {
-        _map["depthFill"] = GLProgramPtr(new ARBDepthFillProgram()); 
+        _map["depthFill"] = GLProgramPtr(new ARBDepthFillProgram());
         _map["bumpMap"] = GLProgramPtr(new ARBBumpProgram());
     }
 }
 
 // Realise the program factory.
-void GLProgramFactory::realise() 
+void GLProgramFactory::realise()
 {
-	
+
 	// Get static map
 	ProgramMap& map = getInstance()._map;
-	
+
 	// Realise each GLProgram in the map
 	for (ProgramMap::iterator i = map.begin();
 		 i != map.end();
@@ -74,10 +74,10 @@ void GLProgramFactory::realise()
 
 // Unrealise the program factory.
 void GLProgramFactory::unrealise() {
-	
+
 	// Get static map
 	ProgramMap& map = getInstance()._map;
-	
+
 	// Destroy each GLProgram in the map
 	for (ProgramMap::iterator i = map.begin();
 		 i != map.end();
@@ -88,7 +88,7 @@ void GLProgramFactory::unrealise() {
 }
 
 // Get file as a char buffer
-GLProgramFactory::CharBufPtr 
+GLProgramFactory::CharBufPtr
 GLProgramFactory::getFileAsBuffer(const std::string& filename,
                                   bool nullTerminated)
 {
@@ -98,7 +98,7 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename,
     // Open the file
 	std::size_t size = file_size(absFileName.c_str());
 	std::ifstream file(absFileName.c_str());
-	
+
     // Throw an exception if the file could not be found
 	if (!file.is_open())
     {
@@ -107,7 +107,7 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename,
             + absFileName
         );
     }
-	
+
     // Read the file data into a buffer, adding a NULL terminator if required
     std::size_t bufSize = (nullTerminated ? size + 1 : size);
 	CharBufPtr buffer(new std::vector<char>(bufSize, 0));
@@ -183,7 +183,7 @@ void GLProgramFactory::assertProgramLinked(GLuint program)
     std::string validLog = getProgramInfoLog(program);
 
     // Output to console
-    std::cout << "[renderer] GLSL program " 
+    std::cout << "[renderer] GLSL program "
               << (validStatus == GL_TRUE ? "IS " : "IS NOT ") << "valid.\n";
     std::cout << "Info:\n" << validLog << std::endl;
 
@@ -236,7 +236,7 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 }
 
 GLuint GLProgramFactory::createARBProgram(const std::string& filename,
-                                          GLenum type) 
+                                          GLenum type)
 {
     // Get the file contents without NULL terminator
     CharBufPtr buffer = getFileAsBuffer(filename, false);
@@ -256,7 +256,7 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
     );
 
     // Check for GL errors and throw exception if there is a problem
-	if (GL_INVALID_OPERATION == glGetError()) 
+	if (GL_INVALID_OPERATION == glGetError())
     {
 		GLint errPos;
 		glGetIntegerv(GL_PROGRAM_ERROR_POSITION_ARB, &errPos);

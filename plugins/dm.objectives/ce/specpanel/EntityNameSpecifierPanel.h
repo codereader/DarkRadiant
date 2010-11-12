@@ -19,7 +19,7 @@ class EntityNameSpecifierPanel
 {
 	// Map registration
 	static struct RegHelper {
-		RegHelper() { 
+		RegHelper() {
 			SpecifierPanelFactory::registerType(
 				SpecifierType::SPEC_NAME().getName(),
 				SpecifierPanelPtr(new EntityNameSpecifierPanel())

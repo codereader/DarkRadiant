@@ -16,7 +16,7 @@ class Node :
 	public boost::enable_shared_from_this<Node>
 {
 public:
-	enum { 
+	enum {
 		eVisible = 0,
 		eHidden = 1 << 0,    // manually hidden by the user
 		eFiltered = 1 << 1,  // excluded due to filter settings
@@ -56,15 +56,15 @@ private:
 	LayerList _layers;
 
 public:
-	Node();	
+	Node();
 	Node(const Node& other);
-	
-	static void resetIds();	
+
+	static void resetIds();
 	static unsigned long getNewId();
-	
-	bool isRoot() const;	
+
+	bool isRoot() const;
 	void setIsRoot(bool isRoot);
-	
+
 	void enable(unsigned int state);
 	void disable(unsigned int state);
 
@@ -81,7 +81,7 @@ public:
 	virtual void addChildNode(const INodePtr& node);
 	virtual void removeChildNode(const INodePtr& node);
 	virtual bool hasChildNodes() const;
-	
+
 	virtual void traverse(NodeVisitor& visitor) const;
 
 	virtual void setParent(const INodePtr& parent);
@@ -99,7 +99,7 @@ public:
 	virtual bool isFiltered() const {
 		return (_state & eFiltered) != 0;
 	}
-	
+
 	/**
 	 * Set the filtered status of this Node. Setting filtered to true will
 	 * prevent the node from being rendered.

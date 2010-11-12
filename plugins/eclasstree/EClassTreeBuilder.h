@@ -24,16 +24,16 @@ private:
 	const EClassTreeColumns& _columns;
 
 	Glib::RefPtr<Gdk::Pixbuf> _entityIcon;
-	
+
 public:
 	EClassTreeBuilder(const Glib::RefPtr<Gtk::TreeStore>& targetStore,
 					  const EClassTreeColumns& columns);
-	
+
 	// Visitor implementation
 	virtual void visit(IEntityClassPtr eclass);
 
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter, 
+			   const Gtk::TreeModel::iterator& iter,
 			   const std::string& path,
 			   bool isExplicit);
 

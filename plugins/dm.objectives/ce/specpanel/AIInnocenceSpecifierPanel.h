@@ -11,12 +11,12 @@ namespace ce {
 /**
  * SpecifierPanel subclass for the SPEC_AI_INNOCENCE specifier type.
  */
-class AIInnocenceSpecifierPanel : 
+class AIInnocenceSpecifierPanel :
 	public TextSpecifierPanel
 {
 	// Map registration
 	static struct RegHelper {
-		RegHelper() { 
+		RegHelper() {
 			SpecifierPanelFactory::registerType(
 				SpecifierType::SPEC_AI_INNOCENCE().getName(),
 				SpecifierPanelPtr(new AIInnocenceSpecifierPanel())

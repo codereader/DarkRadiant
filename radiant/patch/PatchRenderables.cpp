@@ -1,7 +1,7 @@
 #include "PatchRenderables.h"
 
-RenderablePatchSolid::RenderablePatchSolid(PatchTesselation& tess) : 
-	m_tess(tess), 
+RenderablePatchSolid::RenderablePatchSolid(PatchTesselation& tess) :
+	m_tess(tess),
 	_vboData(0),
 	_vboIdx(0)
 {
@@ -55,7 +55,7 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 #ifdef PATCHES_USE_VBO
 	glBindBuffer(GL_ARRAY_BUFFER, _vboData);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vboIdx);
-	
+
 	glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(16));
 	glClientActiveTexture(GL_TEXTURE0);
 	glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(0));

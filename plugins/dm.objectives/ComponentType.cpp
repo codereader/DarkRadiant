@@ -134,7 +134,7 @@ const ComponentTypeSet& ComponentType::SET_ALL() {
 }
 
 // Construct a named ComponentType
-ComponentType::ComponentType(const std::string& name, 
+ComponentType::ComponentType(const std::string& name,
 							 const std::string& displayName)
 : _id(enumCount++),
   _name(name),
@@ -145,7 +145,7 @@ ComponentType::ComponentType(const std::string& name,
 }
 
 // Lookup a named type in map
-ComponentType ComponentType::getComponentType(const std::string& name) 
+ComponentType ComponentType::getComponentType(const std::string& name)
 {
 	ComponentTypeMap::const_iterator i = getMap().find(name);
 	if (i != getMap().end())

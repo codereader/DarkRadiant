@@ -55,7 +55,7 @@ public:
   FileInputStream(const std::string& name) :
 	  m_file(!name.empty() ? fopen(name.c_str(), "rb") : NULL)
   {}
-  
+
   ~FileInputStream()
   {
     if (!failed()) {

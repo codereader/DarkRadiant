@@ -7,7 +7,7 @@ class NamespaceFactory :
 	public INamespaceFactory
 {
 public:
-	/** 
+	/**
 	 * Creates and returns a new Namespace.
 	 */
 	virtual INamespacePtr createNamespace();

@@ -81,7 +81,7 @@ public:
 		setValueWidget(this); // this as SerialisableTextEntry
 	}
 
-	virtual std::string exportToString() const 
+	virtual std::string exportToString() const
 	{
 		return SerialisableTextEntry::exportToString();
 	}
@@ -106,7 +106,7 @@ public:
 		DialogElement::setValueWidget(this);
 	}
 
-	virtual std::string exportToString() const 
+	virtual std::string exportToString() const
 	{
 		return SerialisableSpinButton::exportToString();
 	}
@@ -131,8 +131,8 @@ public:
 		DialogElement::setValueWidget(this); // this as *PathEntry
 	}
 
-	// Implementation of StringSerialisable, wrapping to base class 
-	virtual std::string exportToString() const 
+	// Implementation of StringSerialisable, wrapping to base class
+	virtual std::string exportToString() const
 	{
 		return PathEntry::getValue();
 	}
@@ -157,7 +157,7 @@ public:
 		DialogElement::setValueWidget(this); // this as SerialisableCheckButton
 	}
 
-	virtual std::string exportToString() const 
+	virtual std::string exportToString() const
 	{
 		return SerialisableCheckButton::exportToString();
 	}
@@ -184,7 +184,7 @@ public:
 	}
 
 	// Implementation of StringSerialisable
-	virtual std::string exportToString() const 
+	virtual std::string exportToString() const
 	{
 		return get_text();
 	}
@@ -220,7 +220,7 @@ public:
 		}
 	}
 
-	virtual std::string exportToString() const 
+	virtual std::string exportToString() const
 	{
 		return SerialisableComboBox_Text::exportToString();
 	}

@@ -7,8 +7,8 @@
 
 namespace selection {
 	namespace algorithm {
-	
-	class ParentPrimitivesToEntityWalker : 
+
+	class ParentPrimitivesToEntityWalker :
 		public SelectionSystem::Visitor,
 		public scene::NodeVisitor
 	{
@@ -41,7 +41,7 @@ namespace selection {
 	};
 
 	// Collects all groupnodes
-	class GroupNodeCollector : 
+	class GroupNodeCollector :
 		public SelectionSystem::Visitor
 	{
 	public:
@@ -61,7 +61,7 @@ namespace selection {
 
 	// Checks the current selection to see whether it consists of
 	// group nodes only.
-	class GroupNodeChecker : 
+	class GroupNodeChecker :
 		public SelectionSystem::Visitor
 	{
 		mutable bool _onlyGroups;
@@ -83,23 +83,23 @@ namespace selection {
 		scene::INodePtr getFirstSelectedGroupNode() const;
 	};
 
-	/** 
+	/**
 	 * greebo: Takes the selected primitives and converts them to func_static.
 	 */
 	void convertSelectedToFuncStatic(const cmd::ArgumentList& args);
 
 	/** greebo: This reparents the child primitives of an entity container like func_static
-	 * back to worldspawn and deletes the entity thereafter.  
+	 * back to worldspawn and deletes the entity thereafter.
 	 */
 	void revertGroupToWorldSpawn(const cmd::ArgumentList& args);
 
-	/** 
-	 * Tests the current selection and returns true if the selection is suitable 
+	/**
+	 * Tests the current selection and returns true if the selection is suitable
 	 * for reparenting the selected primitives to the (last) selected entity.
-	 */ 
+	 */
 	bool curSelectionIsSuitableForReparent();
 
-	/** greebo: This re-parents the selected primitives to an entity. The entity has to 
+	/** greebo: This re-parents the selected primitives to an entity. The entity has to
 	 * 			be selected last. Emits an error message if the selection doesn't meet
 	 * 			the requirements
 	 */
@@ -110,28 +110,28 @@ namespace selection {
 	 * to the worldspawn entity.
 	 */
 	void parentSelectionToWorldspawn(const cmd::ArgumentList& args);
-	
+
 	/** greebo: Selects the children of the currently selected groupnodes.
-	 * 			This deselects the groupnodes entities, so that ONLY the children 
+	 * 			This deselects the groupnodes entities, so that ONLY the children
 	 * 			are highlighted.
 	 */
 	void selectChildren(const cmd::ArgumentList& args);
 
-	/** 
-	 * greebo: This selects all the children of an entity, given the case 
-	 *         that a child of this entity is already selected. For instance, 
-	 *         if a child brush of a func_static is selected, this command 
-	 *         expands the selection to all other children (but not the 
-	 *         func_static entity itself). Select a single primitive of 
-	 *         the worldspawn entity and this command will select every primitive 
-	 *         that is child of worldspawn. 
+	/**
+	 * greebo: This selects all the children of an entity, given the case
+	 *         that a child of this entity is already selected. For instance,
+	 *         if a child brush of a func_static is selected, this command
+	 *         expands the selection to all other children (but not the
+	 *         func_static entity itself). Select a single primitive of
+	 *         the worldspawn entity and this command will select every primitive
+	 *         that is child of worldspawn.
 	 */
 	void expandSelectionToEntities(const cmd::ArgumentList& args);
 
 	/**
-	 * greebo: Merges all selected group nodes (func_* entities). 
-	 * After this operation only the first group node is preserved 
-	 * and all child primitives are parented to it. 
+	 * greebo: Merges all selected group nodes (func_* entities).
+	 * After this operation only the first group node is preserved
+	 * and all child primitives are parented to it.
 	 * The other group nodes are removed from the scene.
 	 */
 	void mergeSelectedEntities(const cmd::ArgumentList& args);

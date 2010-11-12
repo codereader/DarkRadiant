@@ -62,17 +62,17 @@ bool ScriptEntityNode::isEntity(const ScriptSceneNode& node) {
 	return Node_isEntity(node);
 }
 
-// "Cast" service for Python, returns a ScriptEntityNode. 
+// "Cast" service for Python, returns a ScriptEntityNode.
 // The returned node is non-NULL if the cast succeeded
 ScriptEntityNode ScriptEntityNode::getEntity(const ScriptSceneNode& node) {
 	// Try to cast the node onto a brush
 	IEntityNodePtr entityNode = boost::dynamic_pointer_cast<IEntityNode>(
 		static_cast<scene::INodePtr>(node)
 	);
-	
+
 	// Construct a entityNode (contained node is NULL if not an entity)
-	return ScriptEntityNode(entityNode != NULL 
-                           ? node 
+	return ScriptEntityNode(entityNode != NULL
+                           ? node
                            : ScriptSceneNode(scene::INodePtr()));
 }
 
@@ -81,7 +81,7 @@ ScriptSceneNode EntityInterface::createEntity(const ScriptEntityClass& eclass)
 {
 	scene::INodePtr node = GlobalEntityCreator().createEntity(eclass);
 
-	// Add the node to the buffer otherwise it will be deleted immediately, 
+	// Add the node to the buffer otherwise it will be deleted immediately,
 	// as ScriptSceneNodes are using weak_ptrs.
 	SceneNodeBuffer::Instance().push_back(node);
 
@@ -100,7 +100,7 @@ ScriptSceneNode EntityInterface::createEntity(const std::string& eclassName) {
 
 	scene::INodePtr node = GlobalEntityCreator().createEntity(eclass);
 
-	// Add the node to the buffer otherwise it will be deleted immediately, 
+	// Add the node to the buffer otherwise it will be deleted immediately,
 	// as ScriptSceneNodes are using weak_ptrs.
 	SceneNodeBuffer::Instance().push_back(node);
 
@@ -109,7 +109,7 @@ ScriptSceneNode EntityInterface::createEntity(const std::string& eclassName) {
 
 void EntityInterface::registerInterface(boost::python::object& nspace) {
 	// Add the EntityNode interface
-	nspace["EntityNode"] = boost::python::class_<ScriptEntityNode, 
+	nspace["EntityNode"] = boost::python::class_<ScriptEntityNode,
 		boost::python::bases<ScriptSceneNode> >("EntityNode", boost::python::init<const scene::INodePtr&>() )
 		.def("getKeyValue", &ScriptEntityNode::getKeyValue)
 		.def("setKeyValue", &ScriptEntityNode::setKeyValue)
@@ -135,14 +135,14 @@ void EntityInterface::registerInterface(boost::python::object& nspace) {
 	// Add the "isEntity" and "getEntity" method to all ScriptSceneNodes
 	boost::python::object sceneNode = nspace["SceneNode"];
 
-	boost::python::objects::add_to_namespace(sceneNode, 
+	boost::python::objects::add_to_namespace(sceneNode,
 		"isEntity", boost::python::make_function(&ScriptEntityNode::isEntity));
 
-	boost::python::objects::add_to_namespace(sceneNode, 
+	boost::python::objects::add_to_namespace(sceneNode,
 		"getEntity", boost::python::make_function(&ScriptEntityNode::getEntity));
 
 	// Expose the Entity::Visitor interface
-	nspace["EntityVisitor"] = 
+	nspace["EntityVisitor"] =
 		boost::python::class_<EntityVisitorWrapper, boost::noncopyable>("EntityVisitor")
 		.def("visit", boost::python::pure_virtual(&EntityVisitorWrapper::visit))
 	;

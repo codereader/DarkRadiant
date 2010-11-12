@@ -14,29 +14,29 @@ ShaderLibrary::ShaderLibrary()
 {
 	_publicIterator = _shaders.begin();
 }
-	
+
 // Insert into the definitions map, if not already present
-bool ShaderLibrary::addDefinition(const std::string& name, 
-								  const ShaderDefinition& def) 
+bool ShaderLibrary::addDefinition(const std::string& name,
+								  const ShaderDefinition& def)
 {
 	std::pair<ShaderDefinitionMap::iterator, bool> result = _definitions.insert(
 		ShaderDefinitionMap::value_type(name, def)
 	);
-	
+
 	return result.second;
 }
 
-ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name) 
+ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 {
 	// Try to lookup the named definition
 	ShaderDefinitionMap::iterator i = _definitions.find(name);
-	
-	if (i != _definitions.end()) 
+
+	if (i != _definitions.end())
     {
 		// Return the definition
 		return i->second;
 	}
-	
+
 	// The shader definition hasn't been found, let's check if the name
 	// refers to a file in the VFS
 	ImagePtr img = ImageFileLoader::imageFromVFS(name);
@@ -65,39 +65,39 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 
 		// Create an empty template with this name
 		ShaderTemplatePtr shaderTemplate(new ShaderTemplate(name, ""));
-				
+
 		// Take this empty shadertemplate and create a ShaderDefinition
 		ShaderDefinition def(shaderTemplate, "");
-				
+
 		// Insert the shader definition and set the iterator to it
 		i = _definitions.insert(ShaderDefinitionMap::value_type(name, def)).first;
-		
+
 		return i->second;
 	}
 }
 
-CShaderPtr ShaderLibrary::findShader(const std::string& name) 
+CShaderPtr ShaderLibrary::findShader(const std::string& name)
 {
 	// Try to lookup the shader in the active shaders list
 	ShaderMap::iterator i = _shaders.find(name);
-	
-	if (i != _shaders.end()) 
+
+	if (i != _shaders.end())
     {
 		// A shader has been found, return its pointer
 		return i->second;
 	}
-	else 
+	else
     {
         // No shader has been found, retrieve its definition (may also be a
         // dummy def)
         ShaderDefinition& def = getDefinition(name);
-		
+
         // Construct a new shader object with this def and insert it into the
         // map
         CShaderPtr shader(new CShader(name, def));
-		
+
 		_shaders[name] = shader;
-		
+
 		return shader;
 	}
 }
@@ -129,17 +129,17 @@ ShaderLibrary::iterator ShaderLibrary::end() {
 	return _shaders.end();
 }
 
-void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback) {	
-	for (ShaderDefinitionMap::const_iterator i = _definitions.begin(); 
-		 i != _definitions.end(); 
-		 ++i) 
+void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback) {
+	for (ShaderDefinitionMap::const_iterator i = _definitions.begin();
+		 i != _definitions.end();
+		 ++i)
 	{
 		callback(i->first);
 	}
 }
 
 TexturePtr ShaderLibrary::loadTextureFromFile(const std::string& filename,
-                                                const std::string& moduleNames) 
+                                                const std::string& moduleNames)
 {
 	// Get the binding (i.e. load the texture)
 	TexturePtr texture = GetTextureManager().getBinding(filename, moduleNames);

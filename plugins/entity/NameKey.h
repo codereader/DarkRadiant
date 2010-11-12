@@ -40,7 +40,7 @@ private:
 	std::string _name;
 
 public:
-	NameKey(Doom3Entity& entity) : 
+	NameKey(Doom3Entity& entity) :
 		m_entity(entity)
 	{}
 
@@ -58,17 +58,17 @@ public:
 	}
 };
 
-class RenderableNameKey : 
+class RenderableNameKey :
 	public OpenGLRenderable
 {
 	const NameKey& _nameKey;
 
 	// The origin (local entity coordinates)
 	Vector3 _origin;
-	
+
 public:
-	RenderableNameKey(const NameKey& nameKey) : 
-		_nameKey(nameKey), 
+	RenderableNameKey(const NameKey& nameKey) :
+		_nameKey(nameKey),
 		_origin(0,0,0)
 	{}
 

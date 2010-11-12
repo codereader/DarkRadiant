@@ -4,7 +4,7 @@
 
 namespace render {
 
-class ARBDepthFillProgram : 
+class ARBDepthFillProgram :
 	public GLProgram
 {
     GLuint m_vertex_program;

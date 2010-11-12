@@ -24,20 +24,20 @@ public:
 	 */
 	virtual ~INamespace() {}
 
-	/** 
+	/**
 	 * greebo: Call this to put the given scene::Node and all its
 	 * children into this Namespace. This will search for Namespaced
 	 * items and tell them to add their relevant "names" to this space.
 	 */
 	virtual void connect(const scene::INodePtr& root) = 0;
 
-	/** 
+	/**
 	 * greebo: The counter-part of the connect() method above. This will
 	 * remove the given node and all its children from this namespace.
 	 */
 	virtual void disconnect(const scene::INodePtr& root) = 0;
 
-	/** 
+	/**
 	 * greebo: Returns true if the given name already exists in this namespace.
 	 */
 	virtual bool nameExists(const std::string& name) = 0;
@@ -85,8 +85,8 @@ public:
 	virtual void addNameObserver(const std::string& name, NameObserver& observer) = 0;
 	virtual void removeNameObserver(const std::string& name, NameObserver& observer) = 0;
 
-	/** 
-	 * greebo: Tells the namespace to notify the nameobservers about a name change. 
+	/**
+	 * greebo: Tells the namespace to notify the nameobservers about a name change.
 	 * This usually gets called by the entity itself, whose name has been altered.
 	 */
 	virtual void nameChanged(const std::string& oldName, const std::string& newName) = 0;
@@ -96,10 +96,10 @@ public:
 	 * this namespace. The routine will change all imported names to something
 	 * unique in this namespace, so that no duplicated names occur.
 	 *
-	 * The nodes below <root> should have been added to a different namespace 
+	 * The nodes below <root> should have been added to a different namespace
 	 * prior to this call, so that links are preserved during name changes.
 	 *
-	 * After this call, the imported nodes are renamed to fit into this 
+	 * After this call, the imported nodes are renamed to fit into this
 	 * namespace and can be safely connected to this Namespace.
 	 */
 	virtual void importNames(const scene::INodePtr& root) = 0;
@@ -111,10 +111,10 @@ typedef boost::shared_ptr<INamespace> INamespacePtr;
  * partner for the Namespace. This object provides methods
  * to connect/disconnect items from a map Namespace.
  *
- * Note: the standard implementation in D3 maps is 
+ * Note: the standard implementation in D3 maps is
  * the NamespaceManager class in the entity module.
  *
- * Note: I chose to use raw INamespace* pointers in the interface 
+ * Note: I chose to use raw INamespace* pointers in the interface
  * to allow the Namespace calling these functions without maintaining
  * weak_ptrs to itself. This can of course be changed in the
  * future, but I didn't want to bother with "self" weak_ptrs right now.
@@ -145,8 +145,8 @@ public:
 	// Counter-part of the registerNames() method above.
 	virtual void detachNames() = 0;
 
-	/** 
-	 * Tells the object to change its name. Invoked by the 
+	/**
+	 * Tells the object to change its name. Invoked by the
 	 * INamespace class itself during import.
 	 */
 	virtual void changeName(const std::string& newName) = 0;
@@ -167,7 +167,7 @@ class INamespaceFactory :
 	public RegisterableModule
 {
 public:
-	/** 
+	/**
 	 * Creates and returns a new Namespace.
 	 */
 	virtual INamespacePtr createNamespace() = 0;

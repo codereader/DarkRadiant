@@ -9,18 +9,18 @@
 #include <set>
 #include <boost/algorithm/string/case_conv.hpp>
 
-class FileVisitor 
+class FileVisitor
 : public Archive::Visitor
 {
 	// The VirtualFileSystem::Visitor to call for each located file
 	VirtualFileSystem::Visitor& _visitor;
-	
+
 	// Set of already-visited files
 	std::set<std::string>& _visitedFiles;
-	
+
 	// Directory to search within
 	std::string _directory;
-	
+
 	// Extension to match
 	std::string _extension;
 
@@ -32,22 +32,22 @@ class FileVisitor
 	std::size_t _extLength;
 
 public:
-	
+
 	// Constructor
-	FileVisitor(VirtualFileSystem::Visitor& visitor, 
-				const std::string& dir, 
+	FileVisitor(VirtualFileSystem::Visitor& visitor,
+				const std::string& dir,
 				const std::string& ext,
 				std::set<std::string>& visitedFiles)
-    : _visitor(visitor), 
+    : _visitor(visitor),
       _visitedFiles(visitedFiles),
-      _directory(dir), 
+      _directory(dir),
       _extension(ext),
 	  _dirPrefixLength(_directory.length()),
 	  _visitAll(_extension == "*"),
 	  _extLength(_extension.length())
     {}
-	
-	// Required visit function 
+
+	// Required visit function
 	void visit(const std::string& name)
 	{
 #ifdef OS_CASE_INSENSITIVE
@@ -62,7 +62,7 @@ public:
 		std::string subname = name.substr(_dirPrefixLength);
 
 		// Check for matching file extension
-		if (!_visitAll) 
+		if (!_visitAll)
 		{
 			// The dot must be at the right position
 			if (subname.length() <= _extLength ||
@@ -91,6 +91,6 @@ public:
 
    		_visitedFiles.insert(subname);
 	}
-}; 
+};
 
 #endif /*FILEVISITOR_H_*/

@@ -11,8 +11,8 @@
 namespace skins
 {
 
-/** 
- * A single instance of a Doom 3 model skin. This structure stores a set of 
+/**
+ * A single instance of a Doom 3 model skin. This structure stores a set of
  * maps between an existing texture and a new texture, and possibly the name of
  * the model that this skin is associated with.
  */
@@ -22,12 +22,12 @@ class Doom3ModelSkin
 	// Map of texture switches
 	typedef std::map<std::string, std::string> StringMap;
 	StringMap _remaps;
-	
+
 	std::string _name;
 	std::string _skinFileName;
-	
+
 public:
-	Doom3ModelSkin(const std::string& name) :	
+	Doom3ModelSkin(const std::string& name) :
 		_name(name)
 	{}
 
@@ -38,7 +38,7 @@ public:
 	void setSkinFileName(const std::string& fileName) {
 		_skinFileName = fileName;
 	}
-	
+
 	std::string getSkinFileName() const {
 		return _skinFileName;
 	}
@@ -53,12 +53,12 @@ public:
 			return "";
 		}
 	}
-  
+
 	// Add a remap pair to this skin
 	void addRemap(const std::string& src, const std::string& dst) {
 		_remaps.insert(StringMap::value_type(src, dst));
 	}
-  
+
 };
 typedef boost::shared_ptr<Doom3ModelSkin> Doom3ModelSkinPtr;
 

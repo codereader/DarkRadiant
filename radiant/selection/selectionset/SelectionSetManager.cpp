@@ -25,7 +25,7 @@ const std::string& SelectionSetManager::getName() const
 const StringSet& SelectionSetManager::getDependencies() const
 {
 	static StringSet _dependencies;
-	
+
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
@@ -33,18 +33,18 @@ const StringSet& SelectionSetManager::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_RADIANT);
 	}
-	
+
 	return _dependencies;
 }
 
 void SelectionSetManager::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
-	
+
 	// Register for the startup event
 	GlobalRadiant().addEventListener(shared_from_this());
 
-	GlobalCommandSystem().addCommand("DeleteAllSelectionSets", 
+	GlobalCommandSystem().addCommand("DeleteAllSelectionSets",
 		boost::bind(&SelectionSetManager::deleteAllSelectionSets, this, _1));
 
 	GlobalEventManager().addCommand("DeleteAllSelectionSets", "DeleteAllSelectionSets");

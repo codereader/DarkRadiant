@@ -17,7 +17,7 @@ const std::string& BrushDef3Parser::getKeyword() const
 	return _keyword;
 }
 
-/* 
+/*
 // Example Primitive
 {
 brushDef3
@@ -50,12 +50,12 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 		std::string token = tok.nextToken();
 
 		// Token should be either a "(" (start of face) or "}" (end of brush)
-		if (token == "}") 
+		if (token == "}")
 		{
 			break; // end of brush
 		}
 		else if (token == "(") // FACE
-		{ 
+		{
 			// Construct a plane and parse its values
 			Plane3 plane;
 

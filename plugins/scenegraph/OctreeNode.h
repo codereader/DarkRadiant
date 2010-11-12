@@ -21,20 +21,20 @@ typedef boost::shared_ptr<OctreeNode> OctreeNodePtr;
 
 /**
  * greebo: An OctreeNode is the atomic unit part of an Octree.
- * 
+ *
  * Each OctreeNode is axis-aligned and has valid bounds at all times,
  * and can have either 0 or exactly 8 children of equal size.
  *
  * The linkRecursively() method can be used to pass down scene::INodes and
  * add them as members to the one OctreeNode which is suiting them best.
- * 
+ *
  * The link/unlink events are communicated to the owning Octree such that
  * it has a chance to maintain its lookup table (the NodeMapping).
  *
  * Once a leaf OctreeNode exceeds a given amount of members (SUBDIVISION_THRESHOLD)
  * it will subdivide itself and re-link its members into its children.
  */
-class OctreeNode : 
+class OctreeNode :
 	public ISPNode,
 	public boost::enable_shared_from_this<OctreeNode>
 {
@@ -65,7 +65,7 @@ public:
 	}
 
 	// Construct a node using AABB components
-	OctreeNode(Octree& owner, const Vector3& origin, const Vector3& extents, 
+	OctreeNode(Octree& owner, const Vector3& origin, const Vector3& extents,
 			   const OctreeNodePtr& parent = OctreeNodePtr()) :
 		_owner(owner),
 		_bounds(origin, extents),
@@ -81,7 +81,7 @@ public:
 #endif
 
 	// Get the parent node (can be NULL for the root node)
-	ISPNodePtr getParent() const 
+	ISPNodePtr getParent() const
 	{
 		return _parent.lock();
 	}
@@ -91,21 +91,21 @@ public:
 	{
 		return _bounds;
 	}
-	
+
 	// The child nodes of this node (either 8 or 0)
-	const NodeList& getChildNodes() const 
+	const NodeList& getChildNodes() const
 	{
 		return _children;
 	}
 
 	// Get a list of members
-	const MemberList& getMembers() const 
+	const MemberList& getMembers() const
 	{
 		return _members;
 	}
 
 	// Returns true if no more child nodes are below this one
-	bool isLeaf() const 
+	bool isLeaf() const
 	{
 		return _children.empty();
 	}
@@ -196,7 +196,7 @@ public:
 		const AABB& bounds = sceneNode->worldAABB();
 
 		// If the AABB is not valid, just link it here
-		if (!bounds.isValid()) 
+		if (!bounds.isValid())
 		{
 			addMember(sceneNode);
 			return this;
@@ -218,8 +218,8 @@ public:
 		addMember(sceneNode);
 
 		// If this is a leaf, check if we exceeded the subdivision threshold and are large enough
-		if (isLeaf() && 
-			_members.size() >= SUBDIVISION_THRESHOLD && 
+		if (isLeaf() &&
+			_members.size() >= SUBDIVISION_THRESHOLD &&
 			_bounds.extents.x() > MIN_NODE_EXTENTS)
 		{
 			// This leaf has enough members to justify a further subdivision, create 8 child nodes
@@ -227,20 +227,20 @@ public:
 
 			// To avoid concurrent nodeBoundsChanged() calls during this operation, evaluate all
 			// child bounds before trying to re-distribute them over the new childnodes.
-			// Do this in a copy of the members list, it is not guaranteed for the iterators 
+			// Do this in a copy of the members list, it is not guaranteed for the iterators
 			// to stay valid during traversal.
 			{
 				ISPNode::MemberList temp = _members;
-			
-				for (ISPNode::MemberList::iterator i = temp.begin(); 
+
+				for (ISPNode::MemberList::iterator i = temp.begin();
 					 i != temp.end(); /* in-loop */)
 				{
 					(*i++)->worldAABB();
 				}
 			}
 
-			// At this point, all child bounds are calculated, some children might have re-located 
-			// themselves to a different node already, so it's possible that the number of members is 
+			// At this point, all child bounds are calculated, some children might have re-located
+			// themselves to a different node already, so it's possible that the number of members is
 			// below SUBDIVISION_THRESHOLD now. We cannot rely on this, so let's continue anyway.
 
 			// We cannot use the original _members vector in the loop below (iterator invalidation)...
@@ -255,7 +255,7 @@ public:
 				// Notify the owner about the re-link
 				_owner.notifyUnlink(*i, this);
 
-				// Call ourselves. The fact that we have 8 children now ensures that we won't be 
+				// Call ourselves. The fact that we have 8 children now ensures that we won't be
 				// going down the same code path here again
 				linkRecursively(*i);
 			}
@@ -267,14 +267,14 @@ public:
 	void unlink(const scene::INodePtr& sceneNode)
 	{
 		// Lookup the node in the members list (rather slow lookup)
-		ISPNode::MemberList::iterator found = 
+		ISPNode::MemberList::iterator found =
 			std::find(_members.begin(), _members.end(), sceneNode);
 
 		if (found != _members.end())
 		{
 			_members.erase(found);
 		}
-		
+
 		// Let the Octree know about this, regardless whether we found it or not (the Octree relies on this)
 		_owner.notifyUnlink(sceneNode, this);
 	}

@@ -46,14 +46,14 @@ public:
 		return result.first->first;
 	}
 
-	/** 
-	 * Removes the given callback from the list. 
+	/**
+	 * Removes the given callback from the list.
 	 * It is safe to call this when the signal is currently emitted.
 	 */
 	void disconnect(std::size_t handle)
 	{
 		BaseType::iterator found = BaseType::find(handle);
-		
+
 		// Force valid calls in debug builds
 		assert(found != BaseType::end());
 
@@ -104,14 +104,14 @@ public:
 		return result.first->first;
 	}
 
-	/** 
-	 * Removes the given callback from the list. 
+	/**
+	 * Removes the given callback from the list.
 	 * It is safe to call this when the signal is currently emitted.
 	 */
 	void disconnect(std::size_t handle)
 	{
 		typename BaseType::iterator found = BaseType::find(handle);
-		
+
 		// Force valid calls in debug builds
 		assert(found != BaseType::end());
 

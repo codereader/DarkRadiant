@@ -46,16 +46,16 @@ public:
 		selectedPoints.Clear();
 	};
 	virtual ~idPointListInterface() {};
-	
+
 	virtual int numPoints() {
 		return 0;
 	}
-	
+
 	virtual void addPoint(const float x, const float y, const float z) {}
 	virtual void addPoint(const idVec3 &v) {}
 	virtual void removePoint(int index) {}
 	virtual idVec3 *getPoint(int index) { return NULL; }
-	
+
 	int	selectPointByRay(float ox, float oy, float oz, float dx, float dy, float dz, bool single) {
 		idVec3 origin(ox, oy, oz);
 		idVec3 dir(dx, dy, dz);
@@ -102,7 +102,7 @@ public:
 		}
 		return -1;
 	}
-	
+
 	int selectPoint(int index, bool single) {
 		if (index >= 0 && index < numPoints()) {
 			if (single) {
@@ -116,7 +116,7 @@ public:
 		}
 		return -1;
 	}
-	
+
 	void selectAll() {
 		selectedPoints.Clear();
 		for (int i = 0; i < numPoints(); i++) {
@@ -129,12 +129,12 @@ public:
 	}
 
 	int numSelectedPoints();
-    
+
 	idVec3 *getSelectedPoint(int index) {
 		assert(index >= 0 && index < numSelectedPoints());
 		return getPoint(selectedPoints[index]);
 	}
-	
+
 	virtual void updateSelection(float x, float y, float z) {
 		idVec3 move(x, y, z);
 		updateSelection(move);
@@ -235,7 +235,7 @@ public:
 	void startEdit() {
 		editMode = true;
 	}
-		
+
 	void stopEdit() {
 		editMode = false;
 	}
@@ -345,7 +345,7 @@ protected:
 	friend class idCamera;
 };
 
-// time in milliseconds 
+// time in milliseconds
 // velocity where 1.0 equal rough walking speed
 struct idVelocity {
 	idVelocity(long start, long duration, float s) {
@@ -359,10 +359,10 @@ struct idVelocity {
 };
 
 // can either be a look at or origin position for a camera
-// 
+//
 class idCameraPosition : public idPointListInterface {
 public:
-	
+
 	virtual void clearVelocities() {
 		for (int i = 0; i < velocities.Num(); i++) {
 			delete velocities[i];
@@ -393,7 +393,7 @@ public:
 		clear();
 	}
 
-	
+
 	// this can be done with RTTI syntax but i like the derived classes setting a type
 	// makes serialization a bit easier to see
 	//
@@ -435,7 +435,7 @@ public:
 		velocities.Append(new idVelocity(start, duration, speed));
 	}
 
-	virtual const idVec3 *getPosition(long t) { 
+	virtual const idVec3 *getPosition(long t) {
 		assert(true);
 		return NULL;
 	}
@@ -491,11 +491,11 @@ public:
 		pos.Zero();
 		type = idCameraPosition::FIXED;
 	}
-	
+
 	idFixedPosition() : idCameraPosition() {
 		init();
 	}
-	
+
 	idFixedPosition(idVec3 p) : idCameraPosition() {
 		init();
 		pos = p;
@@ -504,7 +504,7 @@ public:
 	virtual void addPoint(const idVec3 &v) {
 		pos = v;
 	}
-	
+
 	virtual void addPoint(const float x, const float y, const float z) {
 		pos.set(x, y, z);
 	}
@@ -513,7 +513,7 @@ public:
 	~idFixedPosition() {
 	}
 
-	virtual const idVec3 *getPosition(long t) { 
+	virtual const idVec3 *getPosition(long t) {
 		return &pos;
 	}
 
@@ -548,11 +548,11 @@ public:
 		startPos.Zero();
 		endPos.Zero();
 	}
-	
+
 	idInterpolatedPosition() : idCameraPosition() {
 		init();
 	}
-	
+
 	idInterpolatedPosition(idVec3 start, idVec3 end, long time) : idCameraPosition(time) {
 		init();
 		startPos = start;
@@ -631,11 +631,11 @@ public:
 	void init() {
 		type = idCameraPosition::SPLINE;
 	}
-	
+
 	idSplinePosition() : idCameraPosition() {
 		init();
 	}
-	
+
 	idSplinePosition(long time) : idCameraPosition(time) {
 		init();
 	}
@@ -651,13 +651,13 @@ public:
 		calcVelocity(target.totalDistance());
 	}
 
-	//virtual const idVec3 *getPosition(long t) { 
+	//virtual const idVec3 *getPosition(long t) {
 	//	return target.getPosition(t);
 	//}
 	virtual const idVec3 *getPosition(long t);
 
 
-	//virtual const idVec3 *getPosition(long t) const { 
+	//virtual const idVec3 *getPosition(long t) const {
 
 	void addControlPoint(idVec3 &v) {
 		target.addPoint(v);
@@ -699,7 +699,7 @@ protected:
 
 class idCameraFOV {
 public:
-	
+
 	idCameraFOV() {
 		time = 0;
 		length = 0;
@@ -774,20 +774,20 @@ class idCameraEvent {
 public:						// parameters
 	enum eventType {
 		EVENT_NA = 0x00,
-		EVENT_WAIT,			// 
-		EVENT_TARGETWAIT,	// 
-		EVENT_SPEED,		// 
+		EVENT_WAIT,			//
+		EVENT_TARGETWAIT,	//
+		EVENT_SPEED,		//
 		EVENT_TARGET,		// char(name)
-		EVENT_SNAPTARGET,	// 
+		EVENT_SNAPTARGET,	//
 		EVENT_FOV,			// int(time), int(targetfov)
-		EVENT_CMD,			// 
-		EVENT_TRIGGER,		// 
-		EVENT_STOP,			// 
-		EVENT_CAMERA,		// 
+		EVENT_CMD,			//
+		EVENT_TRIGGER,		//
+		EVENT_STOP,			//
+		EVENT_CAMERA,		//
 		EVENT_FADEOUT,		// int(time)
 		EVENT_FADEIN,		// int(time)
-		EVENT_FEATHER,		// 
-		EVENT_COUNT			
+		EVENT_FEATHER,		//
+		EVENT_COUNT
 	};
 
 	static const char* eventStr[EVENT_COUNT];
@@ -979,7 +979,7 @@ public:
 	float getTotalTime() {
 		return totalTime;
 	}
-	
+
 	void startCamera(long t);
 	void stopCamera() {
 		cameraRunning = true;

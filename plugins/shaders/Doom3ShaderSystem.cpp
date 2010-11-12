@@ -20,7 +20,7 @@ namespace {
 	const char* MISSING_BASEPATH_NODE =
 		"Failed to find \"/game/filesystem/shaders/basepath\" node \
 in game descriptor";
-	 
+
 	const char* MISSING_EXTENSION_NODE =
 		"Failed to find \"/game/filesystem/shaders/extension\" node \
 in game descriptor";
@@ -28,7 +28,7 @@ in game descriptor";
 	// Default image maps for optional material stages
 	const std::string IMAGE_FLAT = "_flat.bmp";
 	const std::string IMAGE_BLACK = "_black.bmp";
-	
+
 }
 
 namespace shaders {
@@ -43,33 +43,33 @@ Doom3ShaderSystem::Doom3ShaderSystem() :
 void Doom3ShaderSystem::construct() {
 	_library = ShaderLibraryPtr(new ShaderLibrary());
 	_textureManager = GLTextureManagerPtr(new GLTextureManager());
-	
-	// Register this class as VFS observer 
+
+	// Register this class as VFS observer
 	GlobalFileSystem().addObserver(*this);
 }
 
 void Doom3ShaderSystem::destroy() {
 	// De-register this class as VFS Observer
 	GlobalFileSystem().removeObserver(*this);
-	
+
 	// Free the shaders if we're in realised state
 	if (_realised) {
 		freeShaders();
 	}
-	
+
 	// Don't destroy the GLTextureManager, it's called from
 	// the CShader destructors.
 }
 
-void Doom3ShaderSystem::loadMaterialFiles() 
+void Doom3ShaderSystem::loadMaterialFiles()
 {
 	// Get the shaders path and extension from the XML game file
-	xml::NodeList nlShaderPath = 
+	xml::NodeList nlShaderPath =
 		GlobalRegistry().findXPath("game/filesystem/shaders/basepath");
 	if (nlShaderPath.empty())
 		throw xml::MissingXMLNodeException(MISSING_BASEPATH_NODE);
 
-	xml::NodeList nlShaderExt = 
+	xml::NodeList nlShaderExt =
 		GlobalRegistry().findXPath("game/filesystem/shaders/extension");
 	if (nlShaderExt.empty())
 		throw xml::MissingXMLNodeException(MISSING_EXTENSION_NODE);
@@ -78,9 +78,9 @@ void Doom3ShaderSystem::loadMaterialFiles()
 	std::string sPath = nlShaderPath[0].getContent();
 	if (!boost::algorithm::ends_with(sPath, "/"))
 		sPath += "/";
-		
+
 	std::string extension = nlShaderExt[0].getContent();
-	
+
 	// Load each file from the global filesystem
 	ShaderFileLoader loader(sPath);
 	{
@@ -110,7 +110,7 @@ void Doom3ShaderSystem::unrealise() {
 void Doom3ShaderSystem::onFileSystemInitialise() {
 	realise();
 }
-	
+
 void Doom3ShaderSystem::onFileSystemShutdown() {
 	unrealise();
 }
@@ -132,7 +132,7 @@ bool Doom3ShaderSystem::isRealised() {
 }
 
 // Return a shader by name
-MaterialPtr Doom3ShaderSystem::getMaterialForName(const std::string& name) 
+MaterialPtr Doom3ShaderSystem::getMaterialForName(const std::string& name)
 {
 	CShaderPtr shader = _library->findShader(name);
 	return shader;
@@ -179,19 +179,19 @@ void Doom3ShaderSystem::detach(ModuleObserver& observer)
 void Doom3ShaderSystem::setLightingEnabled(bool enabled) {
 	if (CShader::m_lightingEnabled != enabled) {
 		// First unrealise the lighting of all shaders
-		for (ShaderLibrary::iterator i = _library->begin(); 
-			 i != _library->end(); 
+		for (ShaderLibrary::iterator i = _library->begin();
+			 i != _library->end();
 			 i++)
 		{
 			i->second->unrealiseLighting();
 		}
-		
-		// Set the global (greebo: Does this really need to be done this way?) 
+
+		// Set the global (greebo: Does this really need to be done this way?)
 		CShader::m_lightingEnabled = enabled;
-		
+
 		// Now realise the lighting of all shaders
-		for (ShaderLibrary::iterator i = _library->begin(); 
-			 i != _library->end(); 
+		for (ShaderLibrary::iterator i = _library->begin();
+			 i != _library->end();
 			 i++)
 		{
 			i->second->realiseLighting();
@@ -252,7 +252,7 @@ void Doom3ShaderSystem::activeShadersChangedNotify()
 {
 	if (_enableActiveUpdates)
 	{
-		for (Observers::const_iterator i = _activeShadersObservers.begin(); 
+		for (Observers::const_iterator i = _activeShadersObservers.begin();
 			 i != _activeShadersObservers.end(); )
 		{
 			(*i++)->onActiveShadersChanged();
@@ -269,7 +269,7 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename,
 {
 	// Remove any unused Textures before allocating new ones.
 	_textureManager->checkBindings();
-	
+
 	// Pass the call to the library
 	return _library->loadTextureFromFile(filename, moduleNames);
 }
@@ -293,14 +293,14 @@ const StringSet& Doom3ShaderSystem::getDependencies() const {
 
 void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Doom3ShaderSystem::initialiseModule called\n";
-	
+
 	construct();
 	realise();
 }
 
 void Doom3ShaderSystem::shutdownModule() {
 	globalOutputStream() << "Doom3ShaderSystem::shutdownModule called\n";
-	
+
 	destroy();
 	unrealise();
 }
@@ -311,7 +311,7 @@ void Doom3ShaderSystem::shutdownModule() {
 shaders::Doom3ShaderSystemPtr GetShaderSystem() {
 	// Acquire the moduleptr from the module registry
 	RegisterableModulePtr modulePtr(module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM));
-	
+
 	// static_cast it onto our shadersystem type
 	return boost::static_pointer_cast<shaders::Doom3ShaderSystem>(modulePtr);
 }

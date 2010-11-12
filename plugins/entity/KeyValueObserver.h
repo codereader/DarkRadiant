@@ -14,7 +14,7 @@ namespace entity {
  *
  * During an EntityKeyValue's lifetime, the value might be changed
  * to another entity's name. This case needs to be detected and an
- * observer relationship needs to be established between the KeyValue 
+ * observer relationship needs to be established between the KeyValue
  * and the Namespace, which is what this class takes care of.
  */
 class KeyValueObserver :

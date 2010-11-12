@@ -24,7 +24,7 @@ def execute():
 	# Now traverse the scenegraph, selecting all of the same names
 	class SceneWalker(SceneNodeVisitor) :
 		def pre(self, node):
-			
+
 			# Try to "cast" the node to an entity
 			entity = node.getEntity()
 
@@ -33,7 +33,7 @@ def execute():
 
 				if not modelName == '' and modelName in selectedModelNames:
 					# match, select this node
-					node.setSelected(1); 
+					node.setSelected(1);
 
 			return 0 # don't traverse this entity's children
 

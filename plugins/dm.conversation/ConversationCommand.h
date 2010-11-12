@@ -25,7 +25,7 @@ public:
 	// The numbered arguments
 	typedef std::map<int, std::string> ArgumentMap;
 	ArgumentMap arguments;
-	
+
 	// Constructor
 	ConversationCommand();
 

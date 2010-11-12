@@ -10,7 +10,7 @@ namespace sound {
 /**
  * Representation of a single sound shader.
  */
-class SoundShader : 
+class SoundShader :
 	public ISoundShader
 {
 	// Name of the shader
@@ -18,7 +18,7 @@ class SoundShader :
 
 	// The raw unparsed definition block
 	std::string _blockContents;
-	
+
 	SoundFileList _soundFiles;
 
 	// min and max radii of the shader
@@ -29,16 +29,16 @@ class SoundShader :
 
 	// The modname (ModResource implementation)
 	std::string _modName;
-	
+
 public:
 
 	/**
 	 * Constructor.
 	 */
-	SoundShader(const std::string& name, 
+	SoundShader(const std::string& name,
 				const std::string& blockContents,
 				const std::string& modName = "base")
-	:	_name(name), 
+	:	_name(name),
 		_blockContents(blockContents),
 		_parsed(false),
 		_modName(modName)
@@ -62,7 +62,7 @@ public:
 		return _name;
 	}
 
-	/** 
+	/**
 	 * greebo: Returns the list of soundfiles
 	 */
 	SoundFileList getSoundFileList() {

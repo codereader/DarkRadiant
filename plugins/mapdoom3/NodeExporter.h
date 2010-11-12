@@ -14,7 +14,7 @@ namespace map {
  * out to the token stream, including its member brushes.
  */
 
-class NodeExporter : 
+class NodeExporter :
 	public scene::NodeVisitor
 {
 	// Stack to hold the parent entity when writing a brush. Either
@@ -24,10 +24,10 @@ class NodeExporter :
 	// Output stream to write to
 	std::ostream& _mapStream;
 	std::ostream& _infoStream;
-  
+
 	// Number of entities written (map global)
 	std::size_t _entityCount;
-	
+
 	// Number of primitives written for the current entity (entity local)
 	std::size_t _primitiveCount;
 
@@ -36,17 +36,17 @@ class NodeExporter :
 
 	// Are we writing dummy brushes to brushless entities?
 	bool _writeDummyBrushes;
-	
+
 public:
 	// Constructor
 	NodeExporter(std::ostream& mapStream, std::ostream& infoStream);
 
 	// Destructor
 	virtual ~NodeExporter();
-	
+
 	// Pre-descent callback
 	virtual bool pre(const scene::INodePtr& node);
-  
+
 	// Post-descent callback
 	virtual void post(const scene::INodePtr& node);
 

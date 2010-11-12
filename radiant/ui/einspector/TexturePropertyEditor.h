@@ -5,7 +5,7 @@
 
 namespace ui
 {
-	
+
 /** PropertyEditor that allows selection of a valid texture. The property
  * editor will display an editable text field along with a "browse" button
  * which will pop up a Tree View where a texture can be selected.
@@ -17,29 +17,29 @@ class TexturePropertyEditor
 private:
 	// Texture prefixes we are interested in
 	const std::string _prefixes;
-	
+
 	// Keyval to set
 	std::string _key;
-	
+
 private:
-	
+
 	void _onBrowse();
 
 public:
 
 	// Construct a TexturePropertyEditor with an entity and key to edit
-	TexturePropertyEditor(Entity* entity, 
-						  const std::string& name, 
+	TexturePropertyEditor(Entity* entity,
+						  const std::string& name,
 						  const std::string& options);
-	
-	// Construct a blank TexturePropertyEditor for use in the 
+
+	// Construct a blank TexturePropertyEditor for use in the
 	// PropertyEditorFactory
 	TexturePropertyEditor() {}
 
 	// Create a new TexturePropertyEditor
-    virtual IPropertyEditorPtr createNew(Entity* entity, 
-    									const std::string& name, 
-    									const std::string& options) 
+    virtual IPropertyEditorPtr createNew(Entity* entity,
+    									const std::string& name,
+    									const std::string& options)
 	{
     	return PropertyEditorPtr(
     		new TexturePropertyEditor(entity, name, options)

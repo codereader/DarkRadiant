@@ -8,7 +8,7 @@ class CamRenderer: public RenderableCollector {
   {
     state_type() : m_highlight(0), m_lights(0)
     {
-    }  
+    }
     unsigned int m_highlight;
     ShaderPtr m_state;
     const LightList* m_lights;

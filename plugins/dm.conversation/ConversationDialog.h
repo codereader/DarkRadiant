@@ -61,20 +61,20 @@ private:
 	Gtk::Button* _editConvButton;
 	Gtk::Button* _delConvButton;
 	Gtk::Button* _clearConvButton;
-	
+
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
-	
+
 public:
 	ConversationDialog();
-	
+
 	// Command target to toggle the dialog
 	static void showDialog(const cmd::ArgumentList& args);
 
 private:
 	virtual void _preHide();
 	virtual void _preShow();
-	
+
 	// greebo: Saves the current working set to the entity
 	void save();
 
@@ -91,7 +91,7 @@ private:
 	Gtk::Widget& createEntitiesPanel();
 	Gtk::Widget& createConversationsPanel();
 	Gtk::Widget& createButtons(); 	// Dialog buttons
-	
+
 	// Button callbacks
 	void onSave();
 	void onClose();

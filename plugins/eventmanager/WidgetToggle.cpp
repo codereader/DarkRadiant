@@ -16,16 +16,16 @@ void WidgetToggle::connectWidget(Gtk::Widget* widget)
 {
 	// Call the base class method to connect GtkCheckMenuItems and GtkToggleButtons
 	Toggle::connectWidget(widget);
-	
+
 	// Any other widgets are added to the list
 	if (widget != NULL &&
-		dynamic_cast<Gtk::CheckMenuItem*>(widget) == NULL && 
-		dynamic_cast<Gtk::ToggleToolButton*>(widget) == NULL && 
+		dynamic_cast<Gtk::CheckMenuItem*>(widget) == NULL &&
+		dynamic_cast<Gtk::ToggleToolButton*>(widget) == NULL &&
 		dynamic_cast<Gtk::ToggleButton*>(widget) == NULL)
 	{
 		// No special widget, add it to the list
 		_widgets[widget] = widget->connect_property_changed_with_return(
-			"visible", 
+			"visible",
 			sigc::bind(sigc::mem_fun(*this, &WidgetToggle::onVisibilityChange), widget)
 		);
 	}
@@ -73,11 +73,11 @@ void WidgetToggle::updateWidgets()
 	{
 		hideWidgets();
 	}
-	
+
 	// Pass the call to the base class to do the rest
 	Toggle::updateWidgets();
 }
-	
+
 // Show all the connected widgets
 void WidgetToggle::showWidgets()
 {
@@ -88,7 +88,7 @@ void WidgetToggle::showWidgets()
 }
 
 // Hide all the connected widgets
-void WidgetToggle::hideWidgets() 
+void WidgetToggle::hideWidgets()
 {
 	for (WidgetMap::iterator i = _widgets.begin(); i != _widgets.end(); ++i)
 	{

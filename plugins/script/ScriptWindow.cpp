@@ -17,7 +17,7 @@
 namespace script
 {
 
-	namespace 
+	namespace
 	{
 		const std::string SCRIPT_LANGUAGE_ID("python");
 	}
@@ -81,7 +81,7 @@ void ScriptWindow::onRunScript()
 	std::string scriptString = _view->getContents();
 
 	if (scriptString.empty()) return;
-	
+
 	UndoableCommand cmd("runScript");
 
 	// Run the script

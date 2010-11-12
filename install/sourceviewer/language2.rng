@@ -59,9 +59,9 @@
                 <element name="author">
                     <text/>
                 </element>
-            </oneOrMore>        
+            </oneOrMore>
         </optional>
-    
+
         <optional>
             <ref name="metadata"/>
         </optional>

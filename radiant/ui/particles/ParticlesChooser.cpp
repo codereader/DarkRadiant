@@ -30,7 +30,7 @@ ParticlesChooser::ParticlesChooser() :
 	set_border_width(12);
 
 	// Set the default size of the window
-	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();	
+	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
 
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
 	int height = static_cast<int>(rect.get_height() * 0.6f);
@@ -57,7 +57,7 @@ ParticlesChooser::ParticlesChooser() :
 
 	vbox->pack_start(*hbox, true, true, 0);
 	vbox->pack_end(createButtons(), false, false, 0);
-	
+
 	// Add main vbox to dialog
 	add(*vbox);
 }
@@ -74,14 +74,14 @@ Gtk::Widget& ParticlesChooser::createTreeView()
 
 	// Apply full-text search to the column
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
-	
+
 	// Populate with particle names
 	populateParticleList();
-	
+
 	// Connect up the selection changed callback
 	_selection = _treeView->get_selection();
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &ParticlesChooser::_onSelChanged));
-	
+
 	// Pack into scrolled window and return
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 }
@@ -90,16 +90,16 @@ Gtk::Widget& ParticlesChooser::createTreeView()
 Gtk::Widget& ParticlesChooser::createButtons()
 {
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-	
+
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	
+
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlesChooser::_onOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ParticlesChooser::_onCancel));
-	
-	hbx->pack_end(*okButton, true, true, 0);	
+
+	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
-					   
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
@@ -181,7 +181,7 @@ void ParticlesChooser::setSelectedParticle(const std::string& particleName)
 		_treeView->expand_to_path(path);
 		// Highlight the target row
 		_treeView->set_cursor(path);
-		// Make the selected row visible 
+		// Make the selected row visible
 		_treeView->scroll_to_row(path, 0.3f);
     }
 }
@@ -193,7 +193,7 @@ void ParticlesChooser::showAndBlock(const std::string& current)
 
     // Highlight the current particle
     setSelectedParticle(current);
-    
+
     // Show and block
 	show();
 }
@@ -221,10 +221,10 @@ void ParticlesChooser::_onOK()
 }
 
 void ParticlesChooser::_onCancel()
-{	
+{
 	// Clear the selection before returning
 	_selectedParticle.clear();
-	
+
 	hide();
 }
 

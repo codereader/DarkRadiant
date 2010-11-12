@@ -25,8 +25,8 @@ namespace entity {
  * This OpenGLRenderable renders the two spherical radii of a speaker,
  * representing the s_min and s_max values.
  */
-class RenderableSpeakerRadii 
-: public OpenGLRenderable 
+class RenderableSpeakerRadii
+: public OpenGLRenderable
 {
 	const Vector3& m_origin;
 	AABB m_aabb_local;
@@ -41,7 +41,7 @@ public:
      * \brief
      * Construct a RenderableSpeakerRadii with the given origin.
      */
-	RenderableSpeakerRadii(const Vector3& origin, const SoundRadii& radii) : 
+	RenderableSpeakerRadii(const Vector3& origin, const SoundRadii& radii) :
 		m_origin(origin),
 		m_radii(radii)
     {}
@@ -61,7 +61,7 @@ public:
 	// Gets the minimum/maximum values to render
 	float getMin();
 	float getMax();
-	
+
 	void render(const RenderInfo& info) const;
 	const AABB& localAABB();
 

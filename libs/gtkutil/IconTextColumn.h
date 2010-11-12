@@ -6,9 +6,9 @@
 
 namespace gtkutil
 {
-	
+
 /**
- * A TreeViewColumn which contains an icon and a text value, the contents of 
+ * A TreeViewColumn which contains an icon and a text value, the contents of
  * which are both retrieved from specified columns in the tree model.
  */
 class IconTextColumn :
@@ -19,34 +19,34 @@ public:
 	/**
 	 * Construct an IconTextColumn with values retrieved from the specified
 	 * columns.
-	 * 
+	 *
 	 * @param title
 	 * The text title of the column.
-	 * 
+	 *
 	 * @param textCol
 	 * TreeModel column containing text to display.
-	 * 
+	 *
 	 * @param iconCol
 	 * TreeModel column containing the icon.
-	 * 
+	 *
 	 * @param useMarkup
 	 * Whether Pango markup should be used to set the text for the column.
 	 */
-	IconTextColumn(const std::string& title, 
-				     int textCol, 
-				     int iconCol, 
+	IconTextColumn(const std::string& title,
+				     int textCol,
+				     int iconCol,
 					 bool useMarkup = false) :
 		Gtk::TreeViewColumn(title)
 	{
 		set_spacing(3);
-		
+
 		// Add the renderers for icon and text
 		Gtk::CellRendererPixbuf* pixRend = Gtk::manage(new Gtk::CellRendererPixbuf);
 		Gtk::CellRendererText* textRend = Gtk::manage(new Gtk::CellRendererText);
 
 		pack_start(*pixRend, false);
 		pack_start(*textRend, false);
-		
+
 		add_attribute(*pixRend, "pixbuf", iconCol);
 		add_attribute(*textRend, useMarkup ? "markup" : "text", textCol);
 	}
@@ -54,27 +54,27 @@ public:
 	/**
 	 * Construct an IconTextColumn with values retrieved from the specified
 	 * columns.
-	 * 
+	 *
 	 * @param title
 	 * The text title of the column.
-	 * 
+	 *
 	 * @param textCol
 	 * TreeModel column with the text to display.
-	 * 
+	 *
 	 * @param iconCol
 	 * TreeModel column containing the icon.
-	 * 
+	 *
 	 * @param useMarkup
 	 * Whether Pango markup should be used to set the text for the column.
 	 */
-	IconTextColumn(const std::string& title, 
-				     const Gtk::TreeModelColumn<Glib::ustring>& textCol, 
+	IconTextColumn(const std::string& title,
+				     const Gtk::TreeModelColumn<Glib::ustring>& textCol,
 					 const Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> >& iconCol,
 					 bool useMarkup = false) :
 		Gtk::TreeViewColumn(title)
 	{
 		set_spacing(3);
-		
+
 		pack_start(iconCol, false);
 		pack_start(textCol, false);
 
@@ -101,27 +101,27 @@ public:
 	/**
 	 * Construct an IconTextColumn with values retrieved from the specified
 	 * columns.
-	 * 
+	 *
 	 * @param title
 	 * The text title of the column.
-	 * 
+	 *
 	 * @param textCol
 	 * TreeModel column with the text to display.
-	 * 
+	 *
 	 * @param iconCol
 	 * TreeModel column containing the icon.
-	 * 
+	 *
 	 * @param useMarkup
 	 * Whether Pango markup should be used to set the text for the column.
 	 */
-	IconTextColumn(const std::string& title, 
-				     const Gtk::TreeModelColumn<std::string>& textCol, 
+	IconTextColumn(const std::string& title,
+				     const Gtk::TreeModelColumn<std::string>& textCol,
 					 const Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> >& iconCol,
 					 bool useMarkup = false) :
 		Gtk::TreeViewColumn(title)
 	{
 		set_spacing(3);
-		
+
 		pack_start(iconCol, false);
 		pack_start(textCol, false);
 

@@ -9,12 +9,12 @@ namespace brush {
 namespace algorithm {
 
 BrushByPlaneClipper::BrushByPlaneClipper(
-	const Vector3& p0, const Vector3& p1, const Vector3& p2, 
-	const TextureProjection& projection, EBrushSplit split) : 
-		_p0(p0), 
-		_p1(p1), 
-		_p2(p2), 
-		_projection(projection), 
+	const Vector3& p0, const Vector3& p1, const Vector3& p2,
+	const TextureProjection& projection, EBrushSplit split) :
+		_p0(p0),
+		_p1(p1),
+		_p2(p2),
+		_projection(projection),
 		_split(split),
 		_useCaulk(GlobalClipper().useCaulkForNewFaces()),
 		_caulkShader(GlobalClipper().getCaulkShader())
@@ -22,7 +22,7 @@ BrushByPlaneClipper::BrushByPlaneClipper(
 
 BrushByPlaneClipper::~BrushByPlaneClipper()
 {
-	for (std::set<scene::INodePtr>::iterator i = _deleteList.begin(); 
+	for (std::set<scene::INodePtr>::iterator i = _deleteList.begin();
 		 i != _deleteList.end(); ++i)
 	{
 		// Remove the node from the scene

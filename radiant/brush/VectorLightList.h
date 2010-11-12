@@ -11,11 +11,11 @@ public:
 	void addLight(const RendererLight& light) {
 		m_lights.push_back(&light);
 	}
-	
+
 	void clear() {
 		m_lights.clear();
 	}
-	
+
 	void evaluateLights() const {
 	}
 

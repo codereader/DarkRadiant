@@ -5,10 +5,10 @@
 
 namespace gtkutil {
 
-DeferredAdjustment::DeferredAdjustment(ValueChangedFunction function, void* data) : 
-	m_value(0), 
-	m_handler(0), 
-	m_function(function), 
+DeferredAdjustment::DeferredAdjustment(ValueChangedFunction function, void* data) :
+	m_value(0),
+	m_handler(0),
+	m_function(function),
 	m_data(data)
 {}
 
@@ -29,7 +29,7 @@ void DeferredAdjustment::value_changed(gdouble value) {
 gboolean DeferredAdjustment::deferred_value_changed(gpointer data)
 {
 	DeferredAdjustment* self = reinterpret_cast<DeferredAdjustment*>(data);
-	
+
 	self->m_function(self->m_data, self->m_value);
 	self->m_handler = 0;
 	self->m_value = 0;

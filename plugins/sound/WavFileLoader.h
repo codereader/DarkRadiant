@@ -32,14 +32,14 @@ public:
 		byte temp[256];
 
 		int format = 0;
-		
+
 		// check magic
 		stream.read(reinterpret_cast<byte*>(magic), 4);
 
 		if (std::string(magic) != "RIFF") {
 			throw std::runtime_error("No wav file");
 		}
-		
+
 		// The next 4 bytes are the file size, we can skip this since we get the size from the DataStream
 		unsigned int size;
 		stream.read(reinterpret_cast<byte*>(&size), 4);
@@ -49,13 +49,13 @@ public:
 		if (std::string(magic) != "WAVE") {
 			throw std::runtime_error("Wrong wav file format");
 		}
-		
+
 		// check 'fmt ' sub chunk (1)
 		stream.read(reinterpret_cast<byte*>(magic), 4);
 		if (std::string(magic) != "fmt ") {
 			throw std::runtime_error("No 'fmt ' subchunk.");
 		}
-		
+
 		// read (1)'s size
 		unsigned int subChunk1Size(0);
 		stream.read(reinterpret_cast<byte*>(&subChunk1Size), 4);
@@ -67,7 +67,7 @@ public:
 		// check PCM audio format
 		unsigned short audioFormat(0);
 		stream.read(reinterpret_cast<byte*>(&audioFormat), 2);
-		
+
 		if (audioFormat != 1) {
 			throw std::runtime_error("Audio format is not PCM.");
 		}
@@ -75,7 +75,7 @@ public:
 		// read number of channels
 		unsigned short channels(0);
 		stream.read(reinterpret_cast<byte*>(&channels), 2);
-		
+
 		// read frequency (sample rate)
 		unsigned int freq = 0;
 		stream.read(reinterpret_cast<byte*>(&freq), 4);

@@ -37,7 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PM_ASE_C
 
 /* uncomment when debugging this module */
-//#define DEBUG_PM_ASE 
+//#define DEBUG_PM_ASE
 //#define DEBUG_PM_ASE_EX
 
 
@@ -61,14 +61,14 @@ typedef struct aseSubMaterial_s
 	struct aseSubMaterial_s* next;
 	int subMtlId;
 	picoShader_t* shader;
-	
+
 } aseSubMaterial_t;
 
 typedef struct aseMaterial_s
 {
 	struct aseMaterial_s* next;
 	struct aseSubMaterial_s* subMtls;
-	int mtlId;		
+	int mtlId;
 } aseMaterial_t;
 
 /* Material/SubMaterial management functions */
@@ -215,36 +215,36 @@ static void _ase_print_materials( aseMaterial_t *list )
 static int _ase_canload( PM_PARAMS_CANLOAD )
 {
 	picoParser_t *p;
-	
-	
+
+
 	/* quick data length validation */
 	if( bufSize < 80 )
 		return PICO_PMV_ERROR_SIZE;
-	
+
 	/* keep the friggin compiler happy */
 	*fileName = *fileName;
-	
+
 	/* create pico parser */
 	p = _pico_new_parser( (picoByte_t*) buffer, bufSize );
 	if( p == NULL )
 		return PICO_PMV_ERROR_MEMORY;
-	
+
 	/* get first token */
 	if( _pico_parse_first( p ) == NULL)
 	{
 		return PICO_PMV_ERROR_IDENT;
 	}
-	
+
 	/* check first token */
 	if( _pico_stricmp( p->token, "*3dsmax_asciiexport" ) )
 	{
 		_pico_free_parser( p );
 		return PICO_PMV_ERROR_IDENT;
 	}
-	
+
 	/* free the pico parser object */
 	_pico_free_parser( p );
-	
+
 	/* file seems to be a valid ase file */
 	return PICO_PMV_OK;
 }
@@ -287,7 +287,7 @@ picoSurface_t* PicoModelFindOrAddSurface( picoModel_t *model, picoShader_t* shad
 	{
 		picoSurface_t* workSurface = model->surface[i];
 		if ( workSurface->shader == shader )
-		{			
+		{
 			return workSurface;
 		}
 	}
@@ -480,7 +480,7 @@ static void _ase_submit_triangles( picoModel_t* model , aseMaterial_t* materials
 				xyz[j]    = &vertices[(*i).indices[j]].xyz;
 				normal[j] = &vertices[(*i).indices[j]].normal;
 				st[j]     = &texcoords[(*i).indices[j + 3]].texcoord;
-	 	 	
+
 				if( colors != NULL && (*i).indices[j + 6] >= 0 )
 				{
 					color[j] = &colors[(*i).indices[j + 6]].color;
@@ -491,7 +491,7 @@ static void _ase_submit_triangles( picoModel_t* model , aseMaterial_t* materials
 				}
 
 				smooth[j] = (vertices[(*i).indices[j]].id * (1 << 16)) + (*i).smoothingGroup; /* don't merge vertices */
-				
+
 			}
 
 			/* submit the triangle to the model */
@@ -610,7 +610,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			colors = NULL; /* OrbWeaver: reset all pointers to avoid double-free */
 			faces = NULL;
 			vertices = NULL;
-			texcoords = NULL; 
+			texcoords = NULL;
 		}
 		else if (!_pico_stricmp(p->token,"*mesh_numvertex"))
 		{
@@ -708,7 +708,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 		{
 			picoIndex_t indexes[3];
 			int index;
-			
+
 			if( numFaces == 0 )
 				_ase_error_return("Face parse error");
 
@@ -730,7 +730,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			_pico_parse( p,0 );
 			if (!_pico_parse_int( p,&indexes[2] ))
 				_ase_error_return("Face parse error");
-			
+
 			/* parse to the subMaterial ID */
 			while ( 1 )
 			{
@@ -747,7 +747,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					_pico_parse_int ( p , &faces[index].subMaterialId );
 				}
 			}
-			
+
 			faces[index].materialId = 0;
 			faces[index].indices[0] = indexes[2];
 			faces[index].indices[1] = indexes[1];
@@ -772,7 +772,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			/* get uv vertex t */
 			if (!_pico_parse_double( p,&texcoords[index].texcoord[1] ))
 				_ase_error_return("Texture vertex parse error");
-			
+
 			/* ydnar: invert t */
 			texcoords[index].texcoord[ 1 ] = 1.0f - texcoords[index].texcoord[ 1 ];
 		}
@@ -781,22 +781,22 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 		{
 			picoIndex_t indexes[3];
 			int			index;
-			
+
 			if( numFaces == 0 )
 				_ase_error_return("Texture face parse error");
-			
+
 			/* get face index */
 			if (!_pico_parse_int( p,&index ))
 				_ase_error_return("Texture face parse error");
-			
+
 			/* get 1st vertex index */
 			if (!_pico_parse_int( p,&indexes[0] ))
 				_ase_error_return("Texture face parse error");
-			
+
 			/* get 2nd vertex index */
 			if (!_pico_parse_int( p,&indexes[1] ))
 				_ase_error_return("Texture face parse error");
-			
+
 			/* get 3rd vertex index */
 			if (!_pico_parse_int( p,&indexes[2] ))
 				_ase_error_return("Texture face parse error");
@@ -832,7 +832,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			if (!_pico_parse_float( p,&colorInput ))
 				_ase_error_return("Color vertex parse error");
 			colors[index].color[2] = (picoByte_t)(colorInput * 255);
-			
+
 			/* leave alpha alone since we don't get any data from the ASE format */
 			colors[index].color[3] = 255;
 		}
@@ -879,15 +879,15 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 			picoColor_t			ambientColor, diffuseColor, specularColor;
 			char				*mapname = NULL;
 			int					subMtlId, subMaterialLevel = -1;
-			
-			
+
+
 			/* get material index */
 			_pico_parse_int( p,&index );
-			
+
 			/* check brace */
 			if (!_pico_parse_check(p,1,"{"))
 				_ase_error_return("Material missing opening brace");
-			
+
 			/* parse material block */
 			while( 1 )
 			{
@@ -934,7 +934,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 
 				/* parse submaterial index */
 				if (!_pico_stricmp(p->token,"*submaterial"))
-				{											
+				{
 					/* allocate new pico shader */
 					_pico_parse_int( p , &subMtlId );
 
@@ -943,7 +943,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					{
 						PicoFreeModel( model );
 						return NULL;
-					}			
+					}
 					subMaterialLevel = level;
 				}
 				/* parse material name */
@@ -952,7 +952,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					char* name = _pico_parse(p,0);
 					if ( name == NULL)
 						_ase_error_return("Missing material name");
-					
+
 					strcpy ( materialName , name );
 					/* skip rest and continue with next token */
 					_pico_parse_skip_rest( p );
@@ -1054,12 +1054,12 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 						/* get next token */
 						if (_pico_parse(p,1) == NULL) break;
 						if (!strlen(p->token)) continue;
-						
+
 						/* handle levels */
 						if (p->token[0] == '{') sublevel++;
 						if (p->token[0] == '}') sublevel--;
 						if (!sublevel) break;
-						
+
 						/* parse diffuse map bitmap */
 						if (!_pico_stricmp(p->token,"*bitmap"))
 						{
@@ -1166,7 +1166,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
         /* this is just a material with 1 submaterial */
 				subMaterial = _ase_add_submaterial( &materials, index, 0, shader );
 			}
-			
+
 			/* ydnar: free mapname */
 			if( mapname != NULL )
 				_pico_free( mapname );
@@ -1175,7 +1175,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 		/* skip unparsed rest of line and continue */
 		_pico_parse_skip_rest( p );
 	}
-	
+
 	/* ydnar: finish existing surface */
 	_ase_submit_triangles(model, materials, vertices, texcoords, colors, faces, numFaces);
 	_pico_free(faces);

@@ -23,7 +23,7 @@ namespace Gtk
 
 namespace ui
 {
-	
+
 class ParticlePreview :
 	public IParticlePreview,
 	public Gtk::Frame
@@ -41,17 +41,17 @@ private:
 	// The backend rendersystem instance
 	RenderSystemPtr _renderSystem;
 
-	// The front-end renderer, collecting the OpenGLRenderables 
+	// The front-end renderer, collecting the OpenGLRenderables
 	// from the particle system
 	ParticleRenderer _renderer;
 	ParticleVolumeTest _volumeTest;
-	
+
 	// Current particle to display
 	particles::IRenderableParticlePtr _particle;
 
 	// Current distance between camera and preview
 	GLfloat _camDist;
-	
+
 	// Current rotation matrix
 	Matrix4 _rotation;
 
@@ -82,47 +82,47 @@ private:
 	void onSizeAllocate(Gtk::Allocation& allocation);
 
 	static Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
-	
+
 public:
-	
+
 	/** Construct a ParticlePreview widget.
 	 */
 	ParticlePreview();
 
 	~ParticlePreview();
-	
-	/** 
-	 * Set the pixel size of the ParticlePreview widget. The widget is always 
+
+	/**
+	 * Set the pixel size of the ParticlePreview widget. The widget is always
 	 * square.
-	 * 
+	 *
 	 * @param size
 	 * The pixel size of the square widget.
 	 */
 	void setSize(int size);
-	
-	/** 
-	 * Initialise the GL preview. This clears the window and sets up the 
+
+	/**
+	 * Initialise the GL preview. This clears the window and sets up the
 	 * initial matrices and lights.
 	 */
-	void initialisePreview();	 
+	void initialisePreview();
 
-	/** 
-	 * Set the widget to display the given particle. If the particle name is the 
+	/**
+	 * Set the widget to display the given particle. If the particle name is the
 	 * empty string, the widget will release the currently displayed one.
-	 * 
+	 *
 	 * @param
 	 * String name of the particle to display.
 	 */
 	void setParticle(const std::string& particle);
 
 	Gtk::Widget* getWidget();
-	
-	/** 
+
+	/**
 	 * Get the model from the widget, in order to display properties about it.
 	 */
 	particles::IParticleDefPtr getParticle()
 	{
-		return _particle ? _particle->getParticleDef() : particles::IParticleDefPtr();	
+		return _particle ? _particle->getParticleDef() : particles::IParticleDefPtr();
 	}
 
 private:

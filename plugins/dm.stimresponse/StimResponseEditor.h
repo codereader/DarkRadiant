@@ -34,29 +34,29 @@ class StimResponseEditor :
 private:
 	// The overall dialog vbox (used to quickly disable the whole dialog)
 	Gtk::VBox* _dialogVBox;
-	
+
 	Gtk::Notebook* _notebook;
 
 	int _stimPageNum;
 	int _responsePageNum;
 	int _customStimPageNum;
 	static int _lastShownPage;
-	
+
 	// The close button to toggle the view
 	Gtk::Button* _closeButton;
-	
+
 	// The "extended" entity object managing the stims
 	SREntityPtr _srEntity;
-	
+
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
-	
+
 	// The entity we're editing
 	Entity* _entity;
-	
+
 	// The helper class managing the stims
 	StimTypes _stimTypes;
-	
+
 	// The helper classes for editing the stims/responses
 	StimEditor* _stimEditor;
 	ResponseEditor* _responseEditor;
@@ -64,14 +64,14 @@ private:
 
 public:
 	StimResponseEditor();
-	
+
 	// Command target to toggle the dialog
 	static void showDialog(const cmd::ArgumentList& args);
 
 private:
 	virtual void _preHide();
 	virtual void _preShow();
-	
+
 	/** greebo: Saves the current working set to the entity
 	 */
 	void save();
@@ -79,7 +79,7 @@ private:
 	/* WIDGET POPULATION */
 	void populateWindow(); 			// Main window
 	Gtk::Widget& createButtons(); 	// Dialog buttons
-	
+
 	/** greebo: Checks the selection for a single entity.
 	 */
 	void rescanSelection();

@@ -37,10 +37,10 @@ FaceShader::~FaceShader() {
 	releaseShader();
 }
 
-void FaceShader::setInUse(bool inUse) 
+void FaceShader::setInUse(bool inUse)
 {
 	_inUse = inUse;
-    
+
     // Update the shader's use count
     if (inUse)
         _glShader->incrementUsed();
@@ -48,7 +48,7 @@ void FaceShader::setInUse(bool inUse)
         _glShader->decrementUsed();
 }
 
-void FaceShader::captureShader() 
+void FaceShader::captureShader()
 {
 	_glShader = GlobalRenderSystem().capture(_materialName);
     assert(_glShader);
@@ -74,7 +74,7 @@ void FaceShader::unrealise()
 	ASSERT_MESSAGE(m_realised, "FaceTexdef::unrealise: already unrealised");
 
 	std::for_each(_observers.begin(), _observers.end(), FaceShaderObserverUnrealise());
-	
+
 	m_realised = false;
 }
 

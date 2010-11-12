@@ -8,7 +8,7 @@
 
 #include <boost/lexical_cast.hpp>
 
-CameraSettings::CameraSettings() : 
+CameraSettings::CameraSettings() :
 	_callbackActive(false),
 	_movementSpeed(GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED)),
 	_angleSpeed(GlobalRegistry().getInt(RKEY_ROTATION_SPEED)),
@@ -24,10 +24,10 @@ CameraSettings::CameraSettings() :
 	if (_cubicScale > MAX_CUBIC_SCALE) {
 		_cubicScale = MAX_CUBIC_SCALE;
 	}
-	
+
 	// Initialise the draw mode from the integer value stored in the registry
 	importDrawMode(GlobalRegistry().getInt(RKEY_DRAWMODE));
-	
+
 	// Connect self to the according registry keys
 	GlobalRegistry().addKeyObserver(this, RKEY_MOVEMENT_SPEED);
 	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_SPEED);
@@ -37,55 +37,55 @@ CameraSettings::CameraSettings() :
 	GlobalRegistry().addKeyObserver(this, RKEY_DRAWMODE);
 	GlobalRegistry().addKeyObserver(this, RKEY_SOLID_SELECTION_BOXES);
 	GlobalRegistry().addKeyObserver(this, RKEY_TOGGLE_FREE_MOVE);
-	
+
 	// greebo: Add the preference settings
 	constructPreferencePage();
 }
 
 void CameraSettings::constructPreferencePage() {
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Camera"));
-	
-	// Add the sliders for the movement and angle speed and connect them to the observer   
+
+	// Add the sliders for the movement and angle speed and connect them to the observer
     page->appendSlider(_("Movement Speed (game units)"), RKEY_MOVEMENT_SPEED, TRUE, 100, 1, MAX_CAMERA_SPEED, 1, 1, 1);
     page->appendSlider(_("Rotation Speed"), RKEY_ROTATION_SPEED, TRUE, 3, 1, 180, 1, 10, 10);
-    
-	// Add the checkboxes and connect them with the registry key and the according observer 
+
+	// Add the checkboxes and connect them with the registry key and the according observer
 	page->appendCheckBox("", _("Freelook mode can be toggled"), RKEY_TOGGLE_FREE_MOVE);
 	page->appendCheckBox("", _("Discrete movement (non-freelook mode)"), RKEY_DISCRETE_MOVEMENT);
 	page->appendCheckBox("", _("Enable far-clip plane (hides distant objects)"), RKEY_ENABLE_FARCLIP);
-	
+
 	// Add the "inverse mouse vertical axis in free-look mode" preference
 	page->appendCheckBox("", _("Invert mouse vertical axis (freelook mode)"), RKEY_INVERT_MOUSE_VERTICAL_AXIS);
-	
+
 	// States whether the selection boxes are stippled or not
 	page->appendCheckBox("", _("Solid selection boxes"), RKEY_SOLID_SELECTION_BOXES);
 
 	// Create the string list containing the render mode captions
 	std::list<std::string> renderModeDescriptions;
-	
+
 	renderModeDescriptions.push_back(_("WireFrame"));
 	renderModeDescriptions.push_back(_("Flatshade"));
 	renderModeDescriptions.push_back(_("Textured"));
 	renderModeDescriptions.push_back(_("Lighting"));
-	
+
 	page->appendCombo(_("Render Mode"), RKEY_DRAWMODE, renderModeDescriptions);
 }
 
 void CameraSettings::importDrawMode(const int mode) {
 	switch (mode) {
-		case 0: 
+		case 0:
 			_cameraDrawMode = drawWire;
 			break;
-		case 1: 
+		case 1:
 			_cameraDrawMode = drawSolid;
 			break;
-		case 2: 
+		case 2:
 			_cameraDrawMode = drawTexture;
 			break;
-		case 3: 
+		case 3:
 			_cameraDrawMode = drawLighting;
 			break;
-		default: 
+		default:
 			_cameraDrawMode = drawTexture;
 	}
 
@@ -93,7 +93,7 @@ void CameraSettings::importDrawMode(const int mode) {
 	GlobalRenderSystem().setLightingEnabled(_cameraDrawMode == drawLighting);
 }
 
-void CameraSettings::keyChanged(const std::string& key, const std::string& val) 
+void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 {
 	// Check for iterative loops
 	if (_callbackActive) {
@@ -101,7 +101,7 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 	}
 	else {
 		_callbackActive = true;
-		
+
 		// Load the values from the registry
 		_toggleFreelook = GlobalRegistry().get(RKEY_TOGGLE_FREE_MOVE) == "1";
 		_movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
@@ -109,12 +109,12 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 		_invertMouseVerticalAxis = (GlobalRegistry().get(RKEY_INVERT_MOUSE_VERTICAL_AXIS) == "1");
 		_farClipEnabled = (GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1");
 		_solidSelectionBoxes = (GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1");
-		
+
 		GlobalEventManager().setToggled("ToggleCubicClip", _farClipEnabled);
-		
+
 		// Determine the draw mode represented by the integer registry value
 		importDrawMode(GlobalRegistry().getInt(RKEY_DRAWMODE));
-		
+
 		// Check if a global camwindow is set
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 
@@ -123,23 +123,23 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 			if (cam->freeMoveEnabled()) {
 				cam->disableFreeMove();
 			}
-			
+
 			// Disconnect the handlers for the old state and re-connect after reading the registry value
 			cam->removeHandlersMove();
-		
+
 			// Check the value and take the according actions
 			_discreteMovement = (GlobalRegistry().get(RKEY_DISCRETE_MOVEMENT) == "1");
-			
+
 			// Reconnect the new handlers
 			cam->addHandlersMove();
-			
+
 			cam->getCamera().updateProjection();
-			
+
 			// Call the update method in case the render mode has changed
 			GlobalCamera().update();
 		}
 	}
-	_callbackActive = false; 
+	_callbackActive = false;
 }
 
 CameraDrawMode CameraSettings::getMode() const {
@@ -191,7 +191,7 @@ bool CameraSettings::discreteMovement() const {
 void CameraSettings::setCubicScale(const int& scale) {
 	// Update the internal value
 	_cubicScale = scale;
-	
+
 	std::string scaleStr;
 	try {
 		scaleStr = boost::lexical_cast<std::string>(_cubicScale);
@@ -199,14 +199,14 @@ void CameraSettings::setCubicScale(const int& scale) {
 	catch (boost::bad_lexical_cast e) {
 		scaleStr = "0";
 	}
-	
+
 	GlobalRegistry().set(RKEY_CUBIC_SCALE, scaleStr);
-	
+
 	// Constrain the value to [1..MAX_CUBIC_SCALE]
 	if (_cubicScale>MAX_CUBIC_SCALE) {
 		_cubicScale = MAX_CUBIC_SCALE;
 	}
-	
+
 	if (_cubicScale < 1) {
 		_cubicScale = 1;
 	}

@@ -14,15 +14,15 @@ namespace gtkutil
  * A function which creates and displays a BlockingTransientWindow will not
  * continue executing until the user has closed the dialog.
  */
-class BlockingTransientWindow 
+class BlockingTransientWindow
 : public TransientWindow
 {
 private:
 	// Is window shown? If so, we need to exit the main loop when destroyed
 	bool _isShown;
-	
+
 protected:
-	
+
 	// Called after the dialog is shown. Enter the recursive main loop.
 	virtual void _postShow()
 	{
@@ -49,9 +49,9 @@ protected:
 			_isShown = false;
 		}
 	}
-	
+
 public:
-	
+
 	/**
 	 * Construct a BlockingTransientDialog with the given title and parent.
 	 */
@@ -61,9 +61,9 @@ public:
 	{
 		set_modal(true);
 	}
-	
+
 	virtual ~BlockingTransientWindow() {}
-	
+
 };
 
 }

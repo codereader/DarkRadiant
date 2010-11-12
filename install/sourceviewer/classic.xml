@@ -44,8 +44,8 @@
   <style name="bracket-mismatch"            foreground="#white" background="#red" bold="true"/>
 
   <!-- Search Matching -->
-  <style name="search-match"                background="yellow"/>  
-  
+  <style name="search-match"                background="yellow"/>
+
   <!-- Comments -->
   <style name="def:comment"                 foreground="blue"/>
   <style name="def:shebang"                 foreground="blue" bold="true"/>

@@ -11,7 +11,7 @@ namespace Gtk
 	class RadioButton;
 }
 
-/** 
+/**
  * greebo: Dialog to query the user for the desired patch thickness and
  * if seams are to be created.
  */
@@ -24,16 +24,16 @@ class PatchThickenDialog :
 private:
 	Gtk::Entry* _thicknessEntry;
 	Gtk::CheckButton* _seamsCheckBox;
-	
+
 	Gtk::RadioButtonGroup _group;
-	
+
 	Gtk::RadioButton* _radNormals;
 	Gtk::RadioButton* _radX;
 	Gtk::RadioButton* _radY;
 	Gtk::RadioButton* _radZ;
 
 public:
-	// Constructor, instantiate this class by specifying the parent window 
+	// Constructor, instantiate this class by specifying the parent window
 	PatchThickenDialog();
 
 	// Retrieve the user selection, use these after run() returned RESULT_OK

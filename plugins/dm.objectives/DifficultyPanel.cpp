@@ -77,7 +77,7 @@ void DifficultyPanel::_onCheckBoxToggle(Gtk::CheckButton* button)
 
 	if (button == _allLevels)
 	{
-		// The "All levels" toggle has been changed, set the 1..N checkboxes 
+		// The "All levels" toggle has been changed, set the 1..N checkboxes
 		// to the inverse of the togglebutton's status
 		_levelHBox->set_sensitive(!_allLevels->get_active());
 	}
@@ -91,7 +91,7 @@ void DifficultyPanel::writeToObjective(Objective& obj)
 	if (!_allLevels->get_active())
 	{
 		// Not applicable to all difficulty levels, form the string
-		for (std::size_t i = 0; i < _toggles.size(); i++) 
+		for (std::size_t i = 0; i < _toggles.size(); i++)
 		{
 			// Check each toggle button
 			if (_toggles[i]->get_active())

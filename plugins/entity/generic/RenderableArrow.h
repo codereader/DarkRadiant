@@ -8,13 +8,13 @@
 
 namespace entity {
 
-class RenderableArrow : 
+class RenderableArrow :
 	public OpenGLRenderable
 {
 	const Ray& _ray;
 
 public:
-	RenderableArrow(const Ray& ray)	: 
+	RenderableArrow(const Ray& ray)	:
 		_ray(ray)
 	{}
 

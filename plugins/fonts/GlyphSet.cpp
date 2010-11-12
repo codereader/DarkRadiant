@@ -9,9 +9,9 @@ namespace fonts
 {
 
 // Construct a glyphset from Q3 info
-GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info, 
-				   const std::string& fontname, 
-				   const std::string& language, 
+GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info,
+				   const std::string& fontname,
+				   const std::string& language,
 				   Resolution resolution_) :
 	_glyphScale(q3info.glyphScale),
 	_maxGlyphWidth(0),
@@ -48,9 +48,9 @@ GlyphSet::GlyphSet(const q3font::Q3FontInfo& q3info,
 	}
 }
 
-GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath, 
+GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath,
 										const std::string& fontname,
-										const std::string& language, 
+										const std::string& language,
 										Resolution resolution)
 {
 	ArchiveFilePtr file = GlobalFileSystem().openFile(vfsPath);
@@ -58,7 +58,7 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath,
 	// Check file size
 	if (file->size() != sizeof(q3font::Q3FontInfo))
 	{
-		globalWarningStream() << "FontLoader: invalid file size of file " 
+		globalWarningStream() << "FontLoader: invalid file size of file "
 			<< vfsPath << ", expected " << sizeof(q3font::Q3FontInfo)
 			<< ", found " << file->size() << std::endl;
 		return GlyphSetPtr();
@@ -69,7 +69,7 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath,
 
 	InputStream& stream = file->getInputStream();
 	StreamBase::size_type bytesRead = stream.read(
-		reinterpret_cast<StreamBase::byte_type*>(buf.get()), 
+		reinterpret_cast<StreamBase::byte_type*>(buf.get()),
 		sizeof(q3font::Q3FontInfo)
 	);
 
@@ -77,7 +77,7 @@ GlyphSetPtr GlyphSet::createFromDatFile(const std::string& vfsPath,
 	GlyphSetPtr glyphSet(new GlyphSet(*buf, fontname, language, resolution));
 
 	globalOutputStream() << "FontLoader: "  << vfsPath << " loaded successfully." << std::endl;
-		
+
 	return glyphSet;
 }
 

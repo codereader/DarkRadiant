@@ -21,7 +21,7 @@ void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided) {
       Matrix4 screen2world(matrix4_full_inverse(_local2view));
 
       _near = matrix4_transformed_vector4( screen2world, Vector4(0, 0, -1, 1) ).getProjected();
-      
+
 
       _far = matrix4_transformed_vector4( screen2world, Vector4(0, 0, 1, 1) ).getProjected();
     }
@@ -203,7 +203,7 @@ void SelectionTestWalker::printNodeName(const scene::INodePtr& node)
 
 	if (node_get_nodetype(node) == eNodeEntity)
 	{
-		globalOutputStream() << " - " << Node_getEntity(node)->getKeyValue("name"); 
+		globalOutputStream() << " - " << Node_getEntity(node)->getKeyValue("name");
 	}
 
 	globalOutputStream() << std::endl;
@@ -361,7 +361,7 @@ bool AnySelector::visit(const scene::INodePtr& node)
 		if (parentEntity != NULL)
 		{
 			// If this node is a child of worldspawn, it can be directly selected
-			// Otherwise this node is a child primitve of a non-worldspawn entity, 
+			// Otherwise this node is a child primitve of a non-worldspawn entity,
 			// in which case we want to select the parent entity
 			candidate = (entityIsWorldspawn(parentEntity)) ? node : parentEntity;
 		}

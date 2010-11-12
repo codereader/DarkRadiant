@@ -10,9 +10,9 @@
 namespace {
 	static byte *row1 = NULL, *row2 = NULL;
 	static std::size_t rowsize = 0;
-	
+
 	const std::size_t MAX_TEXTURE_QUALITY = 3;
-	
+
 	const std::string RKEY_TEXTURES_QUALITY = "user/ui/textures/quality";
 	const std::string RKEY_TEXTURES_GAMMA = "user/ui/textures/gamma";
 }
@@ -26,9 +26,9 @@ TextureManipulator::TextureManipulator() :
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_GAMMA);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_QUALITY);
-	
+
 	calculateGammaTable();
-	
+
 	// greebo: Construct the preferences
 	constructPreferences();
 }
@@ -42,10 +42,10 @@ TextureManipulator& TextureManipulator::instance() {
 // RegistryKeyObserver implementation
 void TextureManipulator::keyChanged(const std::string& key, const std::string& val) {
 	_textureQuality = GlobalRegistry().getInt(RKEY_TEXTURES_QUALITY);
-	
+
 	float newGamma = GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA);
 
-	// Has the gamma actually changed? 
+	// Has the gamma actually changed?
 	if (_gamma != newGamma) {
 		_gamma = newGamma;
 		calculateGammaTable();
@@ -56,103 +56,103 @@ void TextureManipulator::keyChanged(const std::string& key, const std::string& v
 Colour3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
 	// Calculate the number of pixels in this image
 	std::size_t numPixels = input->getWidth(0) * input->getHeight(0);
-	
+
 	// Calculate the pixel step value, ensuring it is greater than 0
 	int incr = static_cast<int>(static_cast<float>(numPixels) / 20.0f);
 	if (incr < 1)
 		incr = 1;
-	
+
 	// Set the pixel pointer to the very first pixel
 	byte* pixels = input->getMipMapPixels(0);
-	
+
 	Colour3 returnValue;
 	int pixelCount = 0;
-	
+
 	// Go over all the pixels and change their value accordingly
 	for (std::size_t i = 0; i < (numPixels*4); i += incr*4, pixelCount++)
 	{
-		// Sum up the RGBA values 
+		// Sum up the RGBA values
 		returnValue[0] += pixels[i];
 		returnValue[1] += (pixels + 1)[i];
 		returnValue[2] += (pixels + 2)[i];
 	}
-	
+
 	// Take the average value of each RGB channel
 	returnValue /= pixelCount;
-	
+
 	// Normalise the colour to 1.0
 	returnValue /= 255;
-	
+
 	return returnValue;
 }
 
 ImagePtr TextureManipulator::getProcessedImage(const ImagePtr& input) {
-	
+
 	ImagePtr output;
-	
+
 	// Make the image dimensions match powers of two
 	output = getResized(input);
-	
+
 	// Apply the gamma
-	output = processGamma(output); 
-	
+	output = processGamma(output);
+
 	return output;
 }
 
 ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
-	
+
 	std::size_t width = input->getWidth(0);
 	std::size_t height = input->getHeight(0);
 	byte* sourcePixels = input->getMipMapPixels(0);
-	
+
 	ImagePtr output;
-	
+
 	// Determine the next larger power of two
 	std::size_t gl_width = 1;
 	while (gl_width < width)
 		gl_width <<= 1;
-	
+
 	std::size_t gl_height = 1;
 	while (gl_height < height)
 		gl_height <<= 1;
-	
+
 	// Check, if the image dimensions are already powers of two, if not, rescale it
 	if (!(gl_width == width && gl_height == height)) {
-		
+
 		// Create a new Image that hold the resampled texture
 		output.reset(new RGBAImage(gl_width, gl_height));
-		
+
 		// Resample the texture into the allocated image
-		resampleTexture(sourcePixels, width, height, 
+		resampleTexture(sourcePixels, width, height,
 						output->getMipMapPixels(0), gl_width, gl_height, 4);
 	}
 	else {
 		// Nothing to do, return the source image
 		output = input;
 	}
-	
+
 	// Now retrieve the maximum texture size opengl can handle
 	if (_maxTextureSize == 0)
 	{
 		int temp;
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &temp);
 		_maxTextureSize = temp;
-		
+
 		// If the value is still zero, fill it to some default value of 1024
 		if (_maxTextureSize == 0) {
 			_maxTextureSize = 1024;
 		}
 	}
-	
+
 	// Determine the target dimensions
 	std::size_t qualityReduction = MAX_TEXTURE_QUALITY - _textureQuality;
 	std::size_t targetWidth = std::min(gl_width >> qualityReduction, _maxTextureSize);
 	std::size_t targetHeight = std::min(gl_height >> qualityReduction, _maxTextureSize);
-	
+
 	// Reduce the image to the next smaller power of two until it fits the openGL max texture size
 	while (gl_width > targetWidth || gl_height > targetHeight)
 	{
-		mipReduce(output->getMipMapPixels(0), output->getMipMapPixels(0), 
+		mipReduce(output->getMipMapPixels(0), output->getMipMapPixels(0),
 				  gl_width, gl_height, targetWidth, targetHeight);
 
 		if (gl_width > targetWidth)
@@ -160,40 +160,40 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 		if (gl_height > targetHeight)
 			gl_height >>= 1;
 	}
-	
+
 	return output;
 }
 
 // resample texture gamma according to user settings
 ImagePtr TextureManipulator::processGamma(const ImagePtr& input) {
-	
+
 	// Don't do unnecessary work here...
 	if (_gamma == 1.0f) {
 		return input;
 	}
-	
+
 	// Calculate the number of pixels in this image
 	std::size_t numPixels = input->getWidth(0) * input->getHeight(0);
-	
+
 	// Set the pixel pointer to the very first pixel
 	byte* pixels = input->getMipMapPixels(0);
-	
+
 	// Go over all the pixels and change their value accordingly
 	for (std::size_t i = 0; i < (numPixels*4); i += 4)
 	{
-		// Change the current RGB pixel value to the one in the gamma table 
+		// Change the current RGB pixel value to the one in the gamma table
 		pixels[i] = _gammaTable[pixels[i]];
 		(pixels + 1)[i] = _gammaTable[(pixels + 1)[i]];
 		(pixels + 2)[i] = _gammaTable[(pixels + 2)[i]];
 	}
-	
+
 	return input;
 }
 
 // Recalculates the gamma table according to the given gamma value
 // This is called on first startup or if the user changes the value
 void TextureManipulator::calculateGammaTable() {
-	// Linear gamma, just fill the array linearly 
+	// Linear gamma, just fill the array linearly
 	if (_gamma == 1.0) {
 		for (int i = 0; i < 256; i++)
 			_gammaTable[i] = i;
@@ -202,11 +202,11 @@ void TextureManipulator::calculateGammaTable() {
 		// Calculate the gamma values
 		for (int i = 0; i < 256; i++) {
 			int inf = (int)(
-				255 * 
-				pow(static_cast<double>((i + 0.5) / 255.5), 
+				255 *
+				pow(static_cast<double>((i + 0.5) / 255.5),
 					static_cast<double>(_gamma)) + 0.5
 			);
-			
+
 			// Constrain the values to (0..255)
 			if (inf < 0) {
 				inf = 0;
@@ -214,14 +214,14 @@ void TextureManipulator::calculateGammaTable() {
 			else if (inf > 255) {
 				inf = 255;
 			}
-			
+
 			_gammaTable[i] = inf;
 		}
 	}
 }
 
-void TextureManipulator::resampleTextureLerpLine(const byte *in, byte *out, 
-							 std::size_t inwidth, std::size_t outwidth, int bytesperpixel) 
+void TextureManipulator::resampleTextureLerpLine(const byte *in, byte *out,
+							 std::size_t inwidth, std::size_t outwidth, int bytesperpixel)
 {
 	std::size_t j, xi, oldx = 0, f, lerp;
 #define LERPBYTE(i) out[i] = (byte) ((((row2[i] - row1[i]) * lerp) >> 16) + row1[i])
@@ -284,8 +284,8 @@ void TextureManipulator::resampleTextureLerpLine(const byte *in, byte *out,
 R_ResampleTexture
 ================
 */
-void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth, std::size_t inheight, 
-										 void *outdata,  std::size_t outwidth, std::size_t outheight, int bytesperpixel) 
+void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth, std::size_t inheight,
+										 void *outdata,  std::size_t outwidth, std::size_t outheight, int bytesperpixel)
 {
 	if (rowsize < outwidth * bytesperpixel) {
 		if (row1)
@@ -474,9 +474,9 @@ void TextureManipulator::resampleTexture(const void *indata, std::size_t inwidth
 }
 
 // in can be the same as out
-void TextureManipulator::mipReduce(byte *in, byte *out, 
-								   std::size_t width, std::size_t height, 
-								   std::size_t destwidth, std::size_t destheight) 
+void TextureManipulator::mipReduce(byte *in, byte *out,
+								   std::size_t width, std::size_t height,
+								   std::size_t destwidth, std::size_t destheight)
 {
 	std::size_t x, y, width2, height2, nextrow;
 	if (width > destwidth) {
@@ -539,17 +539,17 @@ void TextureManipulator::mipReduce(byte *in, byte *out,
  * according pages and elements to the preference dialog.*/
 void TextureManipulator::constructPreferences() {
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage("Settings/Textures");
-	
+
 	// Create the string list containing the quality captions
 	std::list<std::string> percentages;
-	
+
 	percentages.push_back("12.5%");
 	percentages.push_back("25%");
 	percentages.push_back("50%");
 	percentages.push_back("100%");
-	
+
 	page->appendCombo("Texture Quality", RKEY_TEXTURES_QUALITY, percentages);
-	
+
 	// Texture Gamma Settings
 	page->appendSpinner("Texture Gamma", RKEY_TEXTURES_GAMMA, 0.0f, 1.0f, 10);
 }

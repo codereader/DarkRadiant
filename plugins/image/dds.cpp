@@ -50,7 +50,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 
 	DDSImage::MipMapInfoList mipMapInfo;
 	mipMapInfo.resize(mipMapCount);
-	
+
 	// Calculate the total memory requirements (greebo: DXT1 has 8 bytes per block)
 	std::size_t blockBytes = (pixelFormat == DDS_PF_DXT1) ? 8 : 16;
 
@@ -76,7 +76,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
 		width = (width+1) >> 1;
 		height = (height+1) >> 1;
 	}
-	
+
 	// Allocate a new DDS image with that size
 	DDSImagePtr image(new DDSImage(size));
 

@@ -31,13 +31,13 @@ GLFont GLFont::create(const char* fontString)
 	int font_height = 0;
 
 	Pango::FontDescription fontDesc(fontString);
-	
+
 	Glib::RefPtr<Pango::Font> font = Gdk::GL::Font::use_pango_font(fontDesc, 0, 256, font_list_base);
 
 	if (font)
 	{
 		Pango::FontMetrics fontMetrics = font->get_metrics();
-		
+
 		font_height = fontMetrics.get_ascent() + fontMetrics.get_descent();
 		font_height = PANGO_PIXELS(font_height);
 	}

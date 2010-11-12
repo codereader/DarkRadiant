@@ -14,7 +14,7 @@ namespace ui
 /**
 * greebo: A helper class reloading all GUI definitions.
 */
-class ReadableReloader : 
+class ReadableReloader :
 	public gui::GuiManager::Visitor
 {
 private:
@@ -39,7 +39,7 @@ public:
 	{
 		_count++;
 
-		if (_evLimiter.readyForEvent()) 
+		if (_evLimiter.readyForEvent())
 		{
 			float fraction = static_cast<float>(_count) / _numGuis;
 			_progress.setTextAndFraction(guiPath.substr(guiPath.rfind('/') + 1), fraction);

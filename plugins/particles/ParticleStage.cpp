@@ -21,7 +21,7 @@ namespace
 		}
 		catch (boost::bad_lexical_cast&)
 		{
-			globalErrorStream() << "[particles] " << errorMsg << ", token is '" << 
+			globalErrorStream() << "[particles] " << errorMsg << ", token is '" <<
 				str << "'" << std::endl;
 			return 0;
 		}
@@ -43,12 +43,12 @@ ParticleStage::ParticleStage(parser::DefTokeniser& tok)
 	}
 	catch (parser::ParseException& p)
 	{
-		globalErrorStream() << "[particles]: Could not parse particle stage: " << 
+		globalErrorStream() << "[particles]: Could not parse particle stage: " <<
 			p.what() << std::endl;
 	}
 	catch (boost::bad_lexical_cast& e)
 	{
-		globalErrorStream() << "[particles]: Invalid cast when parsing particle stage: " << 
+		globalErrorStream() << "[particles]: Invalid cast when parsing particle stage: " <<
 			e.what() << std::endl;
 	}
 }
@@ -216,7 +216,7 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			catch (boost::bad_lexical_cast&)
 			{
-				globalErrorStream() << "[particles] Bad gravity value, token is '" << 
+				globalErrorStream() << "[particles] Bad gravity value, token is '" <<
 					token << "'" << std::endl;
 			}
 		}
@@ -266,9 +266,9 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else
 			{
-				globalErrorStream() << "[particles] Unknown orientation type: " << 
+				globalErrorStream() << "[particles] Unknown orientation type: " <<
 					orientationType << std::endl;
-			}	
+			}
 		}
 		else if (token == "distribution")
 		{
@@ -342,7 +342,7 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else
 			{
-				globalErrorStream() << "[particles] Unknown distribution type: " << 
+				globalErrorStream() << "[particles] Unknown distribution type: " <<
 					distrType << std::endl;
 			}
 		}
@@ -366,7 +366,7 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else
 			{
-				globalErrorStream() << "[particles] Unknown direction type: " << 
+				globalErrorStream() << "[particles] Unknown direction type: " <<
 					dirType << std::endl;
 			}
 		}
@@ -414,7 +414,7 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 			}
 			else
 			{
-				globalErrorStream() << "[particles] Unknown custom path type type: " << 
+				globalErrorStream() << "[particles] Unknown custom path type type: " <<
 					pathType << std::endl;
 			}
 		}

@@ -10,11 +10,11 @@ namespace ce
 SpecifierPanelFactory::PanelMap& SpecifierPanelFactory::getMap()
 {
 	static PanelMap _instance;
-	return _instance;	
+	return _instance;
 }
 
 // Register a panel map
-void SpecifierPanelFactory::registerType(const std::string& name, 
+void SpecifierPanelFactory::registerType(const std::string& name,
 										 SpecifierPanelPtr cls)
 {
 	getMap().insert(PanelMap::value_type(name, cls));

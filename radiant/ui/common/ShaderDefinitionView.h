@@ -7,7 +7,7 @@
 
 namespace Gtk { class Label; }
 
-namespace ui 
+namespace ui
 {
 
 class ShaderDefinitionView :

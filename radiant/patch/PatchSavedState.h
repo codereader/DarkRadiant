@@ -9,7 +9,7 @@
  */
 class SavedState : public UndoMemento {
 	public:
-	
+
 	// The members to store the state information
 	std::size_t m_width, m_height;
 	std::string m_shader;
@@ -17,7 +17,7 @@ class SavedState : public UndoMemento {
 	bool m_patchDef3;
 	std::size_t m_subdivisions_x;
 	std::size_t m_subdivisions_y;
-	
+
 	// Constructor
 	SavedState(
 		std::size_t width,

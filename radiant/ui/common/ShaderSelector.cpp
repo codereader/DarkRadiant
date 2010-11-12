@@ -47,7 +47,7 @@ ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes, bool
 {
 	// Split the given comma-separated list into the vector
 	boost::algorithm::split(_prefixes, prefixes, boost::algorithm::is_any_of(","));
-	
+
 	// Construct main VBox, and pack in TreeView and info panel
 	pack_start(createTreeView(), true, true, 0);
 	pack_start(createPreview(), false, false, 0);
@@ -91,7 +91,7 @@ void ShaderSelector::setSelection(const std::string& sel)
 namespace {
 
 	// VFSPopulatorVisitor to fill in column data for the populator tree nodes
-	class DataInserter : 
+	class DataInserter :
 		public gtkutil::VFSTreePopulator::Visitor
 	{
 	private:
@@ -106,7 +106,7 @@ namespace {
 
 		// Required visit function
 		void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-				   const Gtk::TreeModel::iterator& iter, 
+				   const Gtk::TreeModel::iterator& iter,
 				   const std::string& path,
 				   bool isExplicit)
 		{
@@ -114,7 +114,7 @@ namespace {
 			// Get the display name by stripping off everything before the last
 			// slash
 			std::string displayName = path.substr(path.rfind("/") + 1);
-			
+
 			// Pathname is the model VFS name for a model, and blank for a folder
 			std::string fullPath = isExplicit ? path : "";
 
@@ -127,7 +127,7 @@ namespace {
 		}
 	};
 
-	class ShaderNameFunctor 
+	class ShaderNameFunctor
 	{
 	public:
 		// Interesting texture prefixes
@@ -138,10 +138,10 @@ namespace {
 
 		// Constructor
 		ShaderNameFunctor(gtkutil::VFSTreePopulator& populator, ShaderSelector::PrefixList& prefixes) :
-			_prefixes(prefixes), 
+			_prefixes(prefixes),
 			_populator(populator)
 		{}
-		
+
 		void visit(const std::string& shaderName)
 		{
 			for (ShaderSelector::PrefixList::iterator i = _prefixes.begin();
@@ -163,19 +163,19 @@ namespace {
 Gtk::Widget& ShaderSelector::createTreeView()
 {
 	Glib::RefPtr<Gtk::TreeStore> treeStore = Gtk::TreeStore::create(_shaderTreeColumns);
-	// Set the tree store to sort on this column	
+	// Set the tree store to sort on this column
 	treeStore->set_sort_column(_shaderTreeColumns.displayName, Gtk::SORT_ASCENDING);
 
 	// Instantiate the helper class that populates the tree according to the paths
 	gtkutil::VFSTreePopulator populator(treeStore);
-	
+
 	ShaderNameFunctor func(populator, _prefixes);
 	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &func, _1));
-	
+
 	// Now visit the created iterators to load the actual data into the tree
 	DataInserter inserter(_shaderTreeColumns);
 	populator.forEachNode(inserter);
-	
+
 	// Tree view
 	_treeView = Gtk::manage(new Gtk::TreeView(treeStore));
 	_treeView->set_headers_visible(false);
@@ -186,7 +186,7 @@ Gtk::Widget& ShaderSelector::createTreeView()
 	);
 	// The name column should
 	col->set_sort_column(_shaderTreeColumns.displayName);
-	
+
 	_treeView->append_column(*col);
 
 	// Use the TreeModel's full string search function
@@ -215,11 +215,11 @@ Gtk::Widget& ShaderSelector::createPreview()
 	glFrame->add(*_glWidget);
 
 	hbx->pack_start(*glFrame, false, false, 0);
-	
+
 	// Attributes table
 	Gtk::TreeView* tree = Gtk::manage(new Gtk::TreeView(_infoStore));
 	tree->set_headers_visible(false);
-	
+
 	tree->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)));
 	tree->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Value"), _infoStoreColumns.value)));
 
@@ -230,7 +230,7 @@ Gtk::Widget& ShaderSelector::createPreview()
 
 // Get the selected shader
 MaterialPtr ShaderSelector::getSelectedShader() {
-	return GlobalMaterialManager().getMaterialForName(getSelection());	
+	return GlobalMaterialManager().getMaterialForName(getSelection());
 }
 
 // Update the attributes table
@@ -241,7 +241,7 @@ void ShaderSelector::updateInfoTable()
 	// Get the selected texture name. If nothing is selected, we just leave the
 	// infotable empty.
 	std::string selName = getSelection();
-	
+
 	// Notify the client of the change to give it a chance to update the infostore
 	if (_client != NULL && !selName.empty())
 	{
@@ -250,11 +250,11 @@ void ShaderSelector::updateInfoTable()
 }
 
 // Callback to redraw the GL widget
-bool ShaderSelector::_onExpose(GdkEventExpose* ev) 
+bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 {
 	// The scoped object making the GL widget the current one
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
-	
+
 	// Get the viewport size from the GL widget
 	Gtk::Requisition req = _glWidget->size_request();
 	glViewport(0, 0, req.width, req.height);
@@ -271,11 +271,11 @@ bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 	// Get the selected texture, and set up OpenGL to render it on
 	// the quad.
 	MaterialPtr shader = getSelectedShader();
-	
+
 	bool drawQuad = false;
 	TexturePtr tex;
-	
-	// Check what part of the shader we should display in the preview 
+
+	// Check what part of the shader we should display in the preview
 	if (_isLightTexture) {
 		// This is a light, take the first layer texture
 		const ShaderLayer* first = shader->firstLayer();
@@ -283,7 +283,7 @@ bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 			tex = shader->firstLayer()->getTexture();
 			glBindTexture (GL_TEXTURE_2D, tex->getGLTexNum());
 			drawQuad = true;
-		} 
+		}
 	}
 	else {
 		// This is an "ordinary" texture, take the editor image
@@ -293,10 +293,10 @@ bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 			drawQuad = true;
 		}
 	}
-	
-	if (drawQuad) 
+
+	if (drawQuad)
     {
-		// Calculate the correct aspect ratio for preview. 
+		// Calculate the correct aspect ratio for preview.
       float aspect = float(tex->getWidth()) / float(tex->getHeight());
 
 		float hfWidth, hfHeight;
@@ -308,18 +308,18 @@ bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 			hfHeight = 0.5*req.width;
 			hfWidth = 0.5*req.height * aspect;
 		}
-		
+
 		// Draw a quad to put the texture on
 		glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 		glColor3f(1, 1, 1);
 		glBegin(GL_QUADS);
-		glTexCoord2i(0, 1); 
+		glTexCoord2i(0, 1);
 		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height - hfHeight);
-		glTexCoord2i(1, 1); 
+		glTexCoord2i(1, 1);
 		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height - hfHeight);
-		glTexCoord2i(1, 0); 
+		glTexCoord2i(1, 0);
 		glVertex2f(0.5*req.width + hfWidth, 0.5*req.height + hfHeight);
-		glTexCoord2i(0, 0);	
+		glTexCoord2i(0, 0);
 		glVertex2f(0.5*req.width - hfWidth, 0.5*req.height + hfHeight);
 		glEnd();
 	}
@@ -327,7 +327,7 @@ bool ShaderSelector::_onExpose(GdkEventExpose* ev)
 	return false;
 }
 
-void ShaderSelector::displayShaderInfo(const MaterialPtr& shader, 
+void ShaderSelector::displayShaderInfo(const MaterialPtr& shader,
 									   const Glib::RefPtr<Gtk::ListStore>& listStore,
 									   int attrCol, int valueCol)
 {
@@ -341,14 +341,14 @@ void ShaderSelector::displayShaderInfo(const MaterialPtr& shader,
 	iter = listStore->append();
 	iter->set_value(attrCol, std::string("<b>") + _("Defined in") + "</b>");
 	iter->set_value(valueCol, Glib::ustring(shader->getShaderFileName()));
-	
+
 	// Description
 	iter = listStore->append();
 	iter->set_value(attrCol, std::string("<b>") + _("Description") + "</b>");
 	iter->set_value(valueCol, shader->getDescription());
 }
 
-void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader, 
+void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 											const Glib::RefPtr<Gtk::ListStore>& listStore,
 											int attrCol, int valueCol)
 {
@@ -379,7 +379,7 @@ void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 		lightType.append("fog");
 	if (lightType.size() == 0)
 		lightType.append("-");
-	
+
 	iter = listStore->append();
 	iter->set_value(attrCol, std::string("<b>") + _("Light flags") + "</b>");
 	iter->set_value(valueCol, lightType);

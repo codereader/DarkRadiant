@@ -5,7 +5,7 @@
 #include "icommandsystem.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
-/** 
+/**
  * greebo: The AboutDialog displays information about DarkRadiant and
  * the subsystems OpenGL and GTK+.
  */
@@ -19,11 +19,11 @@ private:
 	// Private constructor
 	AboutDialog();
 
-public:	
+public:
 	/** greebo: Shows the dialog (blocks, dialog self-destruct on close)
 	 */
 	static void showDialog(const cmd::ArgumentList& args);
-	
+
 private:
 	// The callback for the close button
 	void callbackClose();

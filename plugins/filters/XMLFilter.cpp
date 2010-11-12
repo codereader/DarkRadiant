@@ -6,7 +6,7 @@
 
 namespace filters {
 
-XMLFilter::XMLFilter(const std::string& name, bool readOnly) : 
+XMLFilter::XMLFilter(const std::string& name, bool readOnly) :
 	_name(name),
 	_readonly(readOnly)
 {
@@ -21,7 +21,7 @@ bool XMLFilter::isVisible(const std::string& item, const std::string& name) cons
 	// flag if there is a match.
 
 	bool visible = true; // default if unmodified by rules
-	
+
 	for (FilterRules::const_iterator ruleIter = _rules.begin();
 		 ruleIter != _rules.end();
 		 ++ruleIter)
@@ -29,16 +29,16 @@ bool XMLFilter::isVisible(const std::string& item, const std::string& name) cons
 		// Check the item type.
 		if (ruleIter->type != item)
 			continue;
-			
+
 		// If we have a rule for this item, use boost's regex to match the query name
 		// against the "match" parameter
 		boost::regex ex(ruleIter->match);
 		if (boost::regex_match(name, ex)) {
 			// Overwrite the visible flag with the value from the rule.
-			visible = ruleIter->show;	
+			visible = ruleIter->show;
 		}
 	}
-	
+
 	// Pass back the current visibility value
 	return visible;
 }

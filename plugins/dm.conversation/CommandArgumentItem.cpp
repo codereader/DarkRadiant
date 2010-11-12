@@ -18,10 +18,10 @@ CommandArgumentItem::CommandArgumentItem(
 	// Pack the label into an eventbox
 	_labelBox = Gtk::manage(new Gtk::EventBox);
 	_labelBox->set_tooltip_markup(argInfo.description);
-	
+
 	Gtk::Label* label = Gtk::manage(new gtkutil::LeftAlignedLabel(_argInfo.title + ":"));
 	_labelBox->add(*label);
-	
+
 	// Pack the description widget into an eventbox
 	_descBox = Gtk::manage(new Gtk::EventBox);
 	_descBox->set_tooltip_markup(argInfo.description);
@@ -48,7 +48,7 @@ StringArgument::StringArgument(
 	CommandArgumentItem(argInfo)
 {
 	_entry = Gtk::manage(new Gtk::Entry);
-	//gtk_entry_set_text(GTK_ENTRY(_entry), argInfo.value.c_str()); 
+	//gtk_entry_set_text(GTK_ENTRY(_entry), argInfo.value.c_str());
 }
 
 Gtk::Widget& StringArgument::getEditWidget()
@@ -91,7 +91,7 @@ void BooleanArgument::setValueFromString(const std::string& value)
 
 // Actor Argument
 ActorArgument::ActorArgument(
-		const conversation::ArgumentInfo& argInfo, 
+		const conversation::ArgumentInfo& argInfo,
 		const Glib::RefPtr<Gtk::ListStore>& actorStore,
 		const ActorColumns& actorColumns) :
 	CommandArgumentItem(argInfo),
@@ -100,10 +100,10 @@ ActorArgument::ActorArgument(
 {
 	// Cast the helper class onto a ListStore and create a new treeview
 	_comboBox = Gtk::manage(new Gtk::ComboBox(_actorStore));
-	
+
 	// Add the cellrenderer for the name
 	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
-	
+
 	_comboBox->pack_start(*nameRenderer, true);
 	_comboBox->add_attribute(nameRenderer->property_text(), _actorColumns.caption);
 }
@@ -117,7 +117,7 @@ std::string ActorArgument::getValue()
 		Gtk::TreeModel::Row row = *iter;
 		return intToStr(row[_actorColumns.actorNumber]);
 	}
-	
+
 	return "";
 }
 
@@ -125,7 +125,7 @@ void ActorArgument::setValueFromString(const std::string& value)
 {
 	// Convert the string to an actor ID
 	int actorId = strToInt(value, -1);
-	
+
 	if (actorId == -1) return; // invalid actor id
 
 	// Find the actor id in the liststore

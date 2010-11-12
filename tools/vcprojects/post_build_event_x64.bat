@@ -18,7 +18,7 @@ copy ..\..\w64deps\gtk2\bin\libatk-1.0-0.dll ..\..\install /Y
 copy ..\..\w64deps\gtk2\bin\libcairo-2.dll ..\..\install /Y
 copy ..\..\w64deps\gtk2\bin\libjpeg-62.dll ..\..\install /Y
 copy ..\..\w64deps\gtk2\bin\libpng12-0.dll ..\..\install /Y
-copy ..\..\w64deps\gtk2\bin\libtiff.dll ..\..\install /Y 
+copy ..\..\w64deps\gtk2\bin\libtiff.dll ..\..\install /Y
 copy ..\..\w64deps\gtk2\bin\libgio-2.0-0.dll ..\..\install /Y
 copy ..\..\w64deps\gtk2\bin\libgdk_pixbuf-2.0-0.dll ..\..\install /Y
 copy ..\..\w64deps\gtk2\bin\libgdk-win32-2.0-0.dll ..\..\install /Y

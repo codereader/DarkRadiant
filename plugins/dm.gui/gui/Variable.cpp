@@ -7,7 +7,7 @@
 namespace gui
 {
 
-WindowDefVariable::WindowDefVariable(GuiWindowDef& windowDef, 
+WindowDefVariable::WindowDefVariable(GuiWindowDef& windowDef,
 									 const std::string& name) :
 	_windowDef(windowDef),
 	_name(boost::algorithm::to_lower_copy(name))

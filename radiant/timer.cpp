@@ -47,7 +47,7 @@ MillisecondTime MillisecondTime::current()
       return m_base;
     }
   } cached;
-    
+
   if(cached.frequency() > 0)
   {
     LONGLONG count;

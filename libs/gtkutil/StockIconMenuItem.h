@@ -10,7 +10,7 @@
 namespace gtkutil
 {
 
-/** Utility class representing a menu item with an icon and text. The 
+/** Utility class representing a menu item with an icon and text. The
  * menu item consists of a stock icon from GTK, and a text label.
  */
 class StockIconMenuItem :

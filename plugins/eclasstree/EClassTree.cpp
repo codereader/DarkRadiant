@@ -31,16 +31,16 @@ EClassTree::EClassTree() :
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-		
+
 	// Create a new tree store for the entityclasses
 	_eclassStore = Gtk::TreeStore::create(_eclassColumns);
-	
+
 	// Construct an eclass visitor and traverse the entity classes
 	EClassTreeBuilder builder(_eclassStore, _eclassColumns);
-	
+
 	// Construct the window's widgets
 	populateWindow();
-	
+
 	// Enter main loop
 	show();
 }
@@ -50,19 +50,19 @@ void EClassTree::populateWindow()
 	// Create the overall vbox
 	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 12));
 	add(*dialogVBox);
-	
+
 	Gtk::HPaned* paned = Gtk::manage(new Gtk::HPaned);
 	dialogVBox->pack_start(*paned, true, true, 0);
-	
+
 	// Pack tree view
 	paned->add1(createEClassTreeView());
-	
+
 	// Pack spawnarg treeview
 	paned->add2(createPropertyTreeView());
-	
+
 	// Pack in dialog buttons
 	dialogVBox->pack_start(createButtons(), false, false, 0);
-	
+
 	// Set the default size of the window
 	const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
@@ -80,12 +80,12 @@ Gtk::Widget& EClassTree::createEClassTreeView()
 
 	// Use the TreeModel's full string search function
 	_eclassView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
-	
+
 	// Tree selection
 	_eclassSelection = _eclassView->get_selection();
 	_eclassSelection->set_mode(Gtk::SELECTION_BROWSE);
 	_eclassSelection->signal_changed().connect(sigc::mem_fun(*this, &EClassTree::onSelectionChanged));
-	
+
 	_eclassView->set_headers_visible(true);
 
 	// Pack the columns
@@ -94,9 +94,9 @@ Gtk::Widget& EClassTree::createEClassTreeView()
 		new gtkutil::IconTextColumn(_("Classname"), _eclassColumns.name, _eclassColumns.icon
 	));
 	col->set_sort_column(_eclassColumns.name);
-	
+
 	_eclassView->append_column(*col);
-	
+
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*_eclassView));
 }
 
@@ -104,7 +104,7 @@ Gtk::Widget& EClassTree::createPropertyTreeView()
 {
 	// Initialise the instance TreeStore
 	_propertyStore = Gtk::ListStore::create(_propertyColumns);
-    
+
     // Create the TreeView widget and link it to the model
 	_propertyView = Gtk::manage(new Gtk::TreeView(_propertyStore));
 
@@ -134,7 +134,7 @@ Gtk::Widget& EClassTree::createPropertyTreeView()
 
 	valCol->set_sort_column(_propertyColumns.value);
     _propertyView->append_column(*valCol);
-    
+
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*_propertyView));
 }
 
@@ -142,12 +142,12 @@ Gtk::Widget& EClassTree::createPropertyTreeView()
 Gtk::Widget& EClassTree::createButtons()
 {
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-	
+
 	// Close Button
 	Gtk::Button* closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLOSE));
 	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &EClassTree::onClose));
 	buttonHBox->pack_end(*closeButton, true, true, 0);
-	
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
@@ -155,12 +155,12 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
 {
 	// Clear the existing list
 	_propertyStore->clear();
-	
+
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
 	if (eclass == NULL) {
 		return;
 	}
-	
+
 	class ListStorePopulator :
 		public EntityClassAttributeVisitor
 	{
@@ -172,7 +172,7 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
 			_listStore(targetStore),
 			_columns(columns)
 		{}
-		
+
 		virtual void visit(const EntityClassAttribute& attr)
 		{
 			// Append the details to the treestore
@@ -184,7 +184,7 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
 			row[_columns.inherited] = attr.inherited ? "1" : "0";
 		}
 	};
-	
+
 	ListStorePopulator populator(_propertyStore, _propertyColumns);
 	eclass->forEachClassAttribute(populator, true);
 }
@@ -227,12 +227,12 @@ void EClassTree::onSelectionChanged()
 {
 	// Prepare to check for a selection
 	Gtk::TreeModel::iterator iter = _eclassSelection->get_selected();
-	
+
 	// Add button is enabled if there is a selection and it is not a folder.
-	if (iter) 
+	if (iter)
 	{
 		_propertyView->set_sensitive(true);
-		
+
 		// Set the panel text with the usage information
 		updatePropertyView(Glib::ustring((*iter)[_eclassColumns.name]));
 	}

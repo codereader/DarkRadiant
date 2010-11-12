@@ -2,9 +2,9 @@
 #define SORTEDFILENAMES_H_
 
 /**
- * greebo: SortedFilenames is based on a std::set 
+ * greebo: SortedFilenames is based on a std::set
  *         container with special sorting.
- * 
+ *
  * The list fills itself with filenames while traversing a directory.
  * The class acts as File functor for the Directory_Foreach method.
  */
@@ -23,7 +23,7 @@ public:
 		}
 		return c;
 	}
-	
+
 	/*!
 		This behaves identically to stricmp(a,b), except that ASCII chars
 		[\]^`_ come AFTER alphabet chars instead of before. This is because
@@ -33,7 +33,7 @@ public:
 	bool operator()(const std::string& self, const std::string& other) const {
 		const char* a = self.c_str();
 		const char* b = other.c_str();
-		
+
 		for (;;) {
 			int c1 = ascii_to_upper(*a++);
 			int c2 = ascii_to_upper(*b++);
@@ -57,7 +57,7 @@ public:
 /**
  * greebo: A container providing a File functor method to populate
  *         itself with the visited filenames.
- * 
+ *
  *         The inserted filenames get correctly sorted on insert, as
  *         this class is using the PakLess comparator.
  */

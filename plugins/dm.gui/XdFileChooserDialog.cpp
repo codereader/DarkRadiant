@@ -23,9 +23,9 @@ namespace
 	const char* const WINDOW_TITLE = N_("Choose a file...");
 }
 
-XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defName, 
-														XData::XDataPtr& newXData, 
-														std::string& filename, 
+XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defName,
+														XData::XDataPtr& newXData,
+														std::string& filename,
 														XData::XDataLoaderPtr& loader,
 														ReadableEditorDialog& editorDialog)
 {
@@ -60,7 +60,7 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 	return RESULT_IMPORT_FAILED;
 }
 
-XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog& editorDialog) : 
+XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData::XDataMap& xdMap, ReadableEditorDialog& editorDialog) :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), editorDialog.getRefPtr()),
 	_treeview(NULL),
 	_result(RESULT_CANCEL),
@@ -80,7 +80,7 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData
 
 	// Create the list of files:
 	_listStore = Gtk::ListStore::create(_columns);
-	
+
 	_treeview = Gtk::manage(new Gtk::TreeView(_listStore));
 	_treeview->append_column(*Gtk::manage(new gtkutil::TextColumn(_("File"), _columns.name, false)));
 
@@ -88,12 +88,12 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName, const XData
 	for (XData::XDataMap::const_iterator it = xdMap.begin(); it != xdMap.end(); ++it)
 	{
 		Gtk::TreeModel::Row row = *_listStore->append();
-		
+
 		row[_columns.name] = it->first;
 	}
 
 	_treeview->set_headers_visible(false);
-	
+
 	// Connect the selection change signal
 	Glib::RefPtr<Gtk::TreeSelection> select = _treeview->get_selection();
 	select->set_mode(Gtk::SELECTION_SINGLE);

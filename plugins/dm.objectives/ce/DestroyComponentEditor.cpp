@@ -45,7 +45,7 @@ void DestroyComponentEditor::writeToComponent() const
         Specifier::FIRST_SPECIFIER, _itemSpec->getSpecifier()
     );
 
-	_component->setArgument(0, 
+	_component->setArgument(0,
 		doubleToStr(_amount->get_value()));
 }
 

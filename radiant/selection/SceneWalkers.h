@@ -31,16 +31,16 @@ inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
 // ----------- The Walker Classes ------------------------------------------------
 
 // Sets the visited instance to <select> (true or false), this is used to select all instances in the graph
-class SelectAllWalker : 
+class SelectAllWalker :
 	public scene::NodeVisitor
 {
 	bool _select;
 
 public:
-	SelectAllWalker(bool select) : 
+	SelectAllWalker(bool select) :
 		_select(select)
 	{}
-  
+
 	bool pre(const scene::INodePtr& node)
 	{
 		Node_setSelected(node, _select);
@@ -49,15 +49,15 @@ public:
 };
 
 // Selects the visited component instances in the graph, according to the current component mode
-class SelectAllComponentWalker : 
+class SelectAllComponentWalker :
 	public scene::NodeVisitor
 {
 	bool _select;
 	SelectionSystem::EComponentMode _mode;
 
 public:
-	SelectAllComponentWalker(bool select, SelectionSystem::EComponentMode mode) : 
-		_select(select), 
+	SelectAllComponentWalker(bool select, SelectionSystem::EComponentMode mode) :
+		_select(select),
 		_mode(mode)
 	{}
 
@@ -76,7 +76,7 @@ public:
 
 // Traverses through the scenegraph and removes degenerated brushes from the selected.
 // greebo: The actual erasure is performed in the destructor to keep the scenegraph intact during traversal.
-class RemoveDegenerateBrushWalker : 
+class RemoveDegenerateBrushWalker :
 	public SelectionSystem::Visitor
 {
 	mutable std::list<scene::INodePtr> _eraseList;
@@ -113,16 +113,16 @@ public:
 };
 
 // As the name states, all visited instances have their transformations freezed
-class FreezeTransforms : 
+class FreezeTransforms :
 	public scene::NodeVisitor
 {
 public:
-	bool pre(const scene::INodePtr& node) 
+	bool pre(const scene::INodePtr& node)
 	{
 		ITransformablePtr transform = Node_getTransformable(node);
 		if (transform != 0)
 		{
-			transform->freezeTransform(); 
+			transform->freezeTransform();
 		}
 
 		return true;
@@ -130,36 +130,36 @@ public:
 };
 
 // As the name states, all visited instances have their transformations reverted
-class RevertTransforms : 
-	public scene::NodeVisitor 
+class RevertTransforms :
+	public scene::NodeVisitor
 {
 public:
-	bool pre(const scene::INodePtr& node) 
+	bool pre(const scene::INodePtr& node)
 	{
 		ITransformablePtr transform = Node_getTransformable(node);
 		if (transform != 0)
 		{
-			transform->revertTransform(); 
+			transform->revertTransform();
 		}
-		
+
 		return true;
 	}
 };
 
 // As the name states, all visited SELECTED instances have their transformations reverted
 // TODO: Remove this class, and use GlobalSelectionSystem().foreach instead
-class RevertTransformForSelected : 
-	public scene::NodeVisitor 
+class RevertTransformForSelected :
+	public scene::NodeVisitor
 {
 public:
-	bool pre(const scene::INodePtr& node) 
+	bool pre(const scene::INodePtr& node)
 	{
 		if (Node_isSelected(node))
 		{
 			ITransformablePtr transform = Node_getTransformable(node);
 			if (transform != NULL)
 			{
-				transform->revertTransform(); 
+				transform->revertTransform();
 			}
 		}
 
@@ -169,10 +169,10 @@ public:
 
 /**
  * greebo: Calculates the axis-aligned bounding box of the current selection.
- * Use this walker to traverse the current selection and use the getBounds() 
+ * Use this walker to traverse the current selection and use the getBounds()
  * method to retrieve the calculated bounds.
- */ 
-class BoundsAccumulator : 
+ */
+class BoundsAccumulator :
 	public SelectionSystem::Visitor
 {
 	mutable AABB _bounds;
@@ -188,24 +188,24 @@ public:
 
 // greebo: Calculates the axis-aligned bounding box of the selection components.
 // The constructor is called with a reference to an AABB variable that is updated during the walk
-class ComponentBoundsAccumulator : 
+class ComponentBoundsAccumulator :
 	public SelectionSystem::Visitor
 {
 	mutable AABB _bounds;
 public:
-	ComponentBoundsAccumulator() 
+	ComponentBoundsAccumulator()
 	{
 		_bounds = AABB();
 	}
 
-	virtual void visit(const scene::INodePtr& node) const 
+	virtual void visit(const scene::INodePtr& node) const
 	{
 		ComponentEditablePtr componentEditable = Node_getComponentEditable(node);
 
 		if (componentEditable != NULL)
 		{
 			_bounds.includeAABB(
-				aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(), 
+				aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(),
 											node->localToWorld()));
 		}
 	}

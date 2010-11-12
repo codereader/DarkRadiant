@@ -7,8 +7,8 @@ namespace entity {
 
 SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	_speaker(*this, 
-		Callback(boost::bind(&Node::transformChanged, this)), 
+	_speaker(*this,
+		Callback(boost::bind(&Node::transformChanged, this)),
 		Callback(boost::bind(&Node::boundsChanged, this))),
 	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
 {}
@@ -17,9 +17,9 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	SelectionTestable(other),
-	_speaker(other._speaker, 
-		*this, 
-		Callback(boost::bind(&Node::transformChanged, this)), 
+	_speaker(other._speaker,
+		*this,
+		Callback(boost::bind(&Node::transformChanged, this)),
 		Callback(boost::bind(&Node::boundsChanged, this))),
 	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
 {}
@@ -93,13 +93,13 @@ scene::INodePtr SpeakerNode::clone() const
 
 /* Renderable implementation */
 
-void SpeakerNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
+void SpeakerNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
 
 	_speaker.renderSolid(collector, volume, localToWorld(), isSelected());
 }
-void SpeakerNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
+void SpeakerNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
 
@@ -117,7 +117,7 @@ void SpeakerNode::evaluateTransform()
 	{
 		// This seems to be a drag operation
 		_dragPlanes.m_bounds = _speaker.localAABB();
-		
+
 		// Let the dragplanes helper resize our local AABB
 		AABB resizedAABB = _dragPlanes.evaluateResize(getTranslation(), Matrix4::getIdentity());
 

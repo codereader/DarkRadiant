@@ -51,7 +51,7 @@ ScriptingSystem::ScriptingSystem() :
 void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfacePtr& iface) {
 	// Check if exists
 	if (interfaceExists(name)) {
-		globalErrorStream() << "Cannot add script interface " << name 
+		globalErrorStream() << "Cannot add script interface " << name
 			<< ", this interface is already registered." << std::endl;
 		return;
 	}
@@ -60,7 +60,7 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 	_interfaces.push_back(
 		std::make_pair<std::string, IScriptInterfacePtr>(name, iface)
 	);
-	
+
 	if (_initialised) {
 		// Add the interface at once, all the others are already added
 		iface->registerInterface(_mainNamespace);
@@ -68,7 +68,7 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 }
 
 bool ScriptingSystem::interfaceExists(const std::string& name) {
-	// Traverse the interface list 
+	// Traverse the interface list
 	for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
 		if (i->first == name) {
 			return true;
@@ -89,7 +89,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename) {
 		);
 	}
 	catch (const boost::python::error_already_set&) {
-		globalErrorStream() << "Error while executing file: " 
+		globalErrorStream() << "Error while executing file: "
 					<< filename << ": " << std::endl;
 
 		// Dump the error to the console, this will invoke the PythonConsoleWriter
@@ -144,13 +144,13 @@ void ScriptingSystem::initialise()
 	try {
 		for (Interfaces::iterator i = _interfaces.begin(); i != _interfaces.end(); ++i) {
 			// Handle each interface in its own try/catch block
-			try 
+			try
 			{
 				i->second->registerInterface(_mainNamespace);
 			}
 			catch (const boost::python::error_already_set&)
 			{
-				globalErrorStream() << "Error while initialising interface " 
+				globalErrorStream() << "Error while initialising interface "
 					<< i->first << ": " << std::endl;
 
 				PyErr_Print();
@@ -179,7 +179,7 @@ void ScriptingSystem::initialise()
 
 	// Add the scripting widget to the groupdialog
 	GlobalGroupDialog().addPage(
-		"ScriptWindow", _("Script"), "icon_script.png", 
+		"ScriptWindow", _("Script"), "icon_script.png",
 		*ScriptWindow::InstancePtr().get(),
 		_("Script"), "console"
 	);
@@ -206,7 +206,7 @@ void ScriptingSystem::reloadScriptsCmd(const cmd::ArgumentList& args) {
 void ScriptingSystem::executeCommand(const std::string& name) {
 	// Sanity check
 	if (!_initialised) {
-		globalErrorStream() << "Cannot execute script command " << name 
+		globalErrorStream() << "Cannot execute script command " << name
 			<< ", ScriptingSystem not initialised yet." << std::endl;
 		return;
 	}
@@ -235,7 +235,7 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 
 		// Disable the flag for initialisation, just for sure
 		locals["__executeCommand__"] = false;
-		
+
 		// Attempt to run the specified script
 		boost::python::object ignored = boost::python::exec_file(
 			(_scriptPath + scriptFilename).c_str(),
@@ -243,16 +243,16 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 			locals	// pass the new dictionary for the locals
 		);
 
-		std::string cmdName; 
+		std::string cmdName;
 		std::string cmdDisplayName;
 
-		if (locals.has_key("__commandName__")) 
-		{ 
+		if (locals.has_key("__commandName__"))
+		{
 			cmdName = boost::python::extract<std::string>(locals["__commandName__"]);
 		}
 
-		if (locals.has_key("__commandDisplayName__")) 
-		{ 
+		if (locals.has_key("__commandDisplayName__"))
+		{
 			cmdDisplayName = boost::python::extract<std::string>(locals["__commandDisplayName__"]);
 		}
 
@@ -273,18 +273,18 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 
 			// Result.second is TRUE if the insert succeeded
 			if (result.second) {
-				globalOutputStream() << "Registered script file " << scriptFilename 
+				globalOutputStream() << "Registered script file " << scriptFilename
 					<< " as " << cmdName << std::endl;
 			}
 			else {
-				globalErrorStream() << "Error in " << scriptFilename << ": Script command " 
-					<< cmdName << " has already been registered in " 
+				globalErrorStream() << "Error in " << scriptFilename << ": Script command "
+					<< cmdName << " has already been registered in "
 					<< _commands[cmdName]->getFilename() << std::endl;
 			}
 		}
 	}
 	catch (const boost::python::error_already_set&) {
-		globalErrorStream() << "Script file " << scriptFilename 
+		globalErrorStream() << "Script file " << scriptFilename
 			<< " is not a valid command." << std::endl;
 
 		// Dump the error to the console, this will invoke the PythonConsoleWriter
@@ -309,7 +309,7 @@ void ScriptingSystem::reloadScripts()
 		return;
 	}
 
-	for (fs::recursive_directory_iterator it(start); 
+	for (fs::recursive_directory_iterator it(start);
 		 it != fs::recursive_directory_iterator(); ++it)
 	{
 		// Get the candidate
@@ -377,7 +377,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	// Initialise the boost::python objects
 	_mainModule = boost::python::import("__main__");
 	_mainNamespace = _mainModule.attr("__dict__");
-	
+
 	try {
 		// Construct the console writer interface
 		PythonConsoleWriterClass consoleWriter("PythonConsoleWriter", boost::python::init<bool, std::string&>());
@@ -385,7 +385,7 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 
 		// Declare the interface to python
 		_mainNamespace["PythonConsoleWriter"] = consoleWriter;
-		
+
 		// Redirect stdio output to our local ConsoleWriter instances
 		boost::python::import("sys").attr("stderr") = boost::python::ptr(&_errorWriter);
 		boost::python::import("sys").attr("stdout") = boost::python::ptr(&_outputWriter);
@@ -427,18 +427,18 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	addInterface("SelectionSetInterface", SelectionSetInterfacePtr(new SelectionSetInterface));
 
 	GlobalCommandSystem().addCommand(
-		"RunScript", 
+		"RunScript",
 		boost::bind(&ScriptingSystem::runScriptFile, this, _1),
 		cmd::ARGTYPE_STRING
 	);
 
 	GlobalCommandSystem().addCommand(
-		"ReloadScripts", 
+		"ReloadScripts",
 		boost::bind(&ScriptingSystem::reloadScriptsCmd, this, _1)
 	);
 
 	GlobalCommandSystem().addCommand(
-		"RunScriptCommand", 
+		"RunScriptCommand",
 		boost::bind(&ScriptingSystem::runScriptCommand, this, _1),
 		cmd::ARGTYPE_STRING
 	);

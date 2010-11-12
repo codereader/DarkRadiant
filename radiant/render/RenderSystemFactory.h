@@ -3,7 +3,7 @@
 
 #include "irendersystemfactory.h"
 
-namespace render 
+namespace render
 {
 
 class RenderSystemFactory :

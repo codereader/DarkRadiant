@@ -25,7 +25,7 @@ void WaveFrontModule::exportSelectionAsOBJ(const cmd::ArgumentList& args)
 		globalErrorStream() << "Nothing selected, cannot export." << std::endl;
 		return;
 	}
-	
+
 	// Query the filename from the user
 	ui::IFileChooserPtr chooser = GlobalDialogManager().createFileChooser(
 		_("Save as Obj"), false, false, "*.obj", ".obj"
@@ -54,7 +54,7 @@ const std::string& WaveFrontModule::getName() const
 
 const StringSet& WaveFrontModule::getDependencies() const
 {
-	static StringSet _dependencies; 
+	static StringSet _dependencies;
 
 	if (_dependencies.empty())
 	{
@@ -74,7 +74,7 @@ void WaveFrontModule::initialiseModule(const ApplicationContext& ctx)
 
 	// Register the command
 	GlobalCommandSystem().addCommand(
-		"ExportSelectedAsOBJ", 
+		"ExportSelectedAsOBJ",
 		boost::bind(&WaveFrontModule::exportSelectionAsOBJ, this, _1)
 	);
 

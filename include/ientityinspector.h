@@ -25,7 +25,7 @@ class IPropertyEditor
 public:
     virtual ~IPropertyEditor() {}
 
-	/** 
+	/**
 	 * greebo: Retrieve the widget for packing this into a parent container.
 	 */
 	virtual Gtk::Widget& getWidget() = 0;
@@ -34,17 +34,17 @@ public:
 	 * Clone method for virtual construction. This method must create a new
 	 * PropertyEditor of the same type as the derive class which is implementing
 	 * the method.
-	 * 
+	 *
 	 * @param entity
 	 * The Entity to edit.
-	 * 
+	 *
 	 * @param key
 	 * The key name which this PropertyEditor is displaying.
-	 * 
+	 *
 	 * @param options
 	 * PropertyEditor-specific options string, from the .game file.
 	 */
-	virtual IPropertyEditorPtr createNew(Entity* entity, 
+	virtual IPropertyEditorPtr createNew(Entity* entity,
 										const std::string& key,
 										const std::string& options) = 0;
 
@@ -54,7 +54,7 @@ class IEntityInspector :
 	public RegisterableModule
 {
 public:
-	/** 
+	/**
 	 * greebo: Retrieve the widget for packing this into a parent container.
 	 */
 	virtual Gtk::Widget& getWidget() = 0;
@@ -65,7 +65,7 @@ public:
 	 */
 	virtual void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor) = 0;
 
-	/** 
+	/**
 	 * Removes the property editor for the given key.
 	 */
 	virtual void unregisterPropertyEditor(const std::string& key) = 0;

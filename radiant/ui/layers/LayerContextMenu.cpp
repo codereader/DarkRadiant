@@ -21,7 +21,7 @@ LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
 
 	// Create the menu items
 	createMenuItems();
-	
+
 	// Show all the items
 	show_all();
 }
@@ -35,7 +35,7 @@ void LayerContextMenu::visit(int layerID, std::string layerName)
 
 void LayerContextMenu::createMenuItems()
 {
-	for (SortedLayerMap::const_iterator i = _sortedLayers.begin(); 
+	for (SortedLayerMap::const_iterator i = _sortedLayers.begin();
 		i != _sortedLayers.end(); ++i)
 	{
 		// Create a new menuitem
@@ -44,7 +44,7 @@ void LayerContextMenu::createMenuItems()
 
 		// Connect the "onclick" signal, bind the layer ID
 		menuItem->signal_activate().connect(sigc::bind(sigc::mem_fun(*this, &LayerContextMenu::onActivate), i->second));
-		
+
 		// Add it to the parent menu
 		append(*menuItem);
 	}

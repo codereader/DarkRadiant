@@ -13,7 +13,7 @@ namespace ui
 /**
  * greebo: A helper class sorting GUIs into two given TreePopulators.
  */
-class ReadablePopulator : 
+class ReadablePopulator :
 	public gui::GuiManager::Visitor
 {
 private:
@@ -43,7 +43,7 @@ public:
 	{
 		_count++;
 
-		if (_evLimiter.readyForEvent()) 
+		if (_evLimiter.readyForEvent())
 		{
 			float fraction = static_cast<float>(_count) / _numGuis;
 			_progress.setTextAndFraction(guiPath.substr(guiPath.rfind('/') + 1), fraction);

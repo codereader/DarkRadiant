@@ -67,7 +67,7 @@ void MRUMenuItem::hide()
 Gtk::Label* MRUMenuItem::findLabel(Gtk::Widget* widget)
 {
 	Gtk::Container* c = dynamic_cast<Gtk::Container*>(widget);
-	
+
 	if (c == NULL) return NULL;
 
 	Glib::ListHandle<Gtk::Widget*> children = c->get_children();
@@ -76,7 +76,7 @@ Gtk::Label* MRUMenuItem::findLabel(Gtk::Widget* widget)
 	{
 		Gtk::Container* container = dynamic_cast<Gtk::Container*>(*i);
 
-		if (container != NULL) 
+		if (container != NULL)
 		{
 			// Dive in depth-first
 			return findLabel(container);
@@ -98,10 +98,10 @@ void MRUMenuItem::setLabel(const std::string& label)
 {
 	// Update the internal storage
 	_label = label;
-	
+
 	// Add the number prefix to the widget label
 	const std::string widgetLabel = intToStr(_index) + " - " + gtkutil::IConv::localeToUTF8(_label);
-	
+
 	Gtk::Label* childLabel = findLabel(_widget);
 
 	if (childLabel != NULL)
@@ -129,5 +129,5 @@ int MRUMenuItem::getIndex() const
 {
 	return _index;
 }
-	
+
 } // namespace ui

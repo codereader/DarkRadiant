@@ -17,7 +17,7 @@ class GroupCycle :
 {
 	// The list of possible Selectable candidates
 	NodeVector _list;
-	
+
 	// The current index in the vector
 	int _index;
 
@@ -26,29 +26,29 @@ class GroupCycle :
 
 public:
 	GroupCycle();
-	
+
 	/** greebo: The callback that gets invoked upon selectionChange
 	 * by the RadiantSelectionSystem
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
-	
+
 	/** greebo: Rescans the current selection and populates the Vector of candidates
 	 */
 	void rescanSelection();
-	
-	/** greebo: Selects the currently active instance (where _index is pointing to) 
+
+	/** greebo: Selects the currently active instance (where _index is pointing to)
 	 */
 	void updateSelection();
-	
+
 	/** greebo: This actually performs the cycling
 	 */
 	void doCycleForward();
 	void doCycleBackward();
-	
-	// The targets for the according Events 
+
+	// The targets for the according Events
 	static void cycleBackward(const cmd::ArgumentList& args);
 	static void cycleForward(const cmd::ArgumentList& args);
-	
+
 	/** greebo: This contains the static instance of this class
 	 */
 	static GroupCycle& Instance();

@@ -7,7 +7,7 @@
 SelectObserver::SelectObserver() :
 	_start(0.0f, 0.0f),
 	_current(0.0f, 0.0f),
-	_unmovedReplaces(0) 
+	_unmovedReplaces(0)
 {}
 
 SelectionSystem::EModifier SelectObserver::getModifier() {

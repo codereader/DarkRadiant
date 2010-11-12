@@ -27,10 +27,10 @@ void SceneGraph::removeSceneObserver(Graph::Observer* observer) {
 	// Cycle through the list of observers and call the moved method
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		Graph::Observer* registered = *i;
-		
+
 		if (registered == observer) {
 			_sceneObservers.erase(i);
-			return; // Don't continue the loop, the iterator is obsolete 
+			return; // Don't continue the loop, the iterator is obsolete
 		}
 	}
 }
@@ -46,7 +46,7 @@ const INodePtr& SceneGraph::root() const
 {
 	return _root;
 }
-  
+
 void SceneGraph::setRoot(const INodePtr& newRoot)
 {
 	if (_root == newRoot)
@@ -73,7 +73,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 		Node_traverseSubgraph(_root, instanceWalker);
 	}
 }
-  
+
 void SceneGraph::boundsChanged()
 {
     _boundsChanged();
@@ -89,7 +89,7 @@ void SceneGraph::insert(const INodePtr& node)
 
 	// Call the onInsert event on the node
 	node->onInsertIntoScene();
-	
+
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		(*i)->onSceneNodeInsert(node);
 	}
@@ -104,7 +104,7 @@ void SceneGraph::erase(const INodePtr& node)
 
 	// Notify the graph tree model about the change
 	sceneChanged();
-	
+
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		(*i)->onSceneNodeErase(node);
 	}
@@ -170,7 +170,7 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 	// Visit all members
 	const ISPNode::MemberList& members = node.getMembers();
 
-	for (ISPNode::MemberList::const_iterator m = members.begin(); 
+	for (ISPNode::MemberList::const_iterator m = members.begin();
 		 m != members.end(); /* in-loop increment */)
 	{
 		// Skip hidden nodes, if specified
@@ -192,17 +192,17 @@ bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& vo
 
 	for (ISPNode::NodeList::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
-		if (volume.TestAABB((*i)->getBounds()) == VOLUME_OUTSIDE) 
+		if (volume.TestAABB((*i)->getBounds()) == VOLUME_OUTSIDE)
 		{
 			// Skip this node, not visible
 			_skippedSPNodes++;
 			continue;
 		}
-	
+
 		// Traverse all the children too, enter recursion
 		if (!foreachNodeInVolume_r(**i, volume, walker, visitHidden))
 		{
-			// The walker returned false somewhere in the recursion depths, propagate this message 
+			// The walker returned false somewhere in the recursion depths, propagate this message
 			return false;
 		}
 	}
@@ -243,7 +243,7 @@ void SceneGraph::shutdownModule()
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(scene::SceneGraphPtr(new scene::SceneGraph));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
 

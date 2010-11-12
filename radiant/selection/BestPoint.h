@@ -5,7 +5,7 @@
 #include "iselectable.h"
 #include "Manipulatables.h"
 
-/* greebo: These are functions that are needed for selection test (which points are nearest to what and something) 
+/* greebo: These are functions that are needed for selection test (which points are nearest to what and something)
  */
 
 enum clipcull_t
@@ -16,7 +16,7 @@ enum clipcull_t
 };
 
 class Segment3D {
-  	typedef Vector3 point_type;  
+  	typedef Vector3 point_type;
 public:
 	// Constructor
   	Segment3D(const point_type& _p0, const point_type& _p1): p0(_p0), p1(_p1) {}

@@ -51,7 +51,7 @@ public:
 
 	// The maximum bounds of this node
 	virtual const AABB& getBounds() const = 0;
-	
+
 	// The child nodes of this node (either 8 or 0)
 	virtual const NodeList& getChildNodes() const = 0;
 
@@ -65,15 +65,15 @@ typedef boost::shared_ptr<ISPNode> ISPNodePtr;
 
 /**
  * greebo: The SpacePartitionSystem interface is a simple one. All it needs
- * to do is to provide link/unlink methods for linking scene::INodes 
- * into the space partition system and to deliver the "entry point" for traversal, 
+ * to do is to provide link/unlink methods for linking scene::INodes
+ * into the space partition system and to deliver the "entry point" for traversal,
  * which is the root ISPNode.
  *
  * The link() method makes sure the given node is added as member to the ISPNode it fits best.
  * The unlink() method can be used to remove a node from the tree again.
  *
  * Note: It's not allowed to call link() for nodes which are already linked into the tree.
- * It's safe to call unlink() for any node at any time, even multiple times in a row. 
+ * It's safe to call unlink() for any node at any time, even multiple times in a row.
  * The unlink() method will return true if the node had been linked before.
  */
 class ISpacePartitionSystem
@@ -84,7 +84,7 @@ public:
 	// Links this node into the SP tree. Returns the node it ends up being associated with
 	virtual void link(const scene::INodePtr& sceneNode) = 0;
 
-	// Unlink this node from the SP tree, returns true if this was successful 
+	// Unlink this node from the SP tree, returns true if this was successful
 	// (node had been linked before)
 	virtual bool unlink(const scene::INodePtr& sceneNode) = 0;
 

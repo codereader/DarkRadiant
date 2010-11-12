@@ -46,7 +46,7 @@ void CommandEntry::ensureMaxHistorySize()
 	// Anything to do at all?
 	if (_history.size() <= _historySize)
 	{
-		return; 
+		return;
 	}
 
 	while (_history.size() > _historySize && _history.size() > 0)
@@ -68,7 +68,7 @@ std::string CommandEntry::getHistoricEntry(std::size_t historyIndex)
 	for (std::size_t i = 1; i < historyIndex; ++i, ++h)
 	{
 		// Check if we exceeded the limits
-		if (h == _history.end()) 
+		if (h == _history.end())
 		{
 			return "";
 		}
@@ -158,7 +158,7 @@ void CommandEntry::moveAutoCompletion(int direction)
 	// Cut off the selected part
 	int startpos = 0;
 	int endpos = 0;
-	
+
 	if (_entry->get_selection_bounds(startpos, endpos))
 	{
 		prefix = prefix.substr(0, startpos);

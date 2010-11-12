@@ -7,7 +7,7 @@ namespace game {
 
 class GameFileLoader
 {
-	// Reference to external map of Game objects 
+	// Reference to external map of Game objects
 	Manager::GameMap& _games;
 
 	// Path to the game file to be added

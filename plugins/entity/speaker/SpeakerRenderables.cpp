@@ -148,10 +148,10 @@ void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii& rad)
     sphereDrawFill(origin, rad.getMax(), 16);
 }
 
-namespace entity 
+namespace entity
 {
 
-void RenderableSpeakerRadii::render(const RenderInfo& info) const 
+void RenderableSpeakerRadii::render(const RenderInfo& info) const
 {
 	//draw the radii of speaker based on speaker shader/radii keys
 	if(info.checkFlag(RENDER_FILL)) {
@@ -162,7 +162,7 @@ void RenderableSpeakerRadii::render(const RenderInfo& info) const
 	}
 }
 
-const AABB& RenderableSpeakerRadii::localAABB() 
+const AABB& RenderableSpeakerRadii::localAABB()
 {
 	// create the AABB from the radii we have and
 	// make sure we take the biggest radius (even though the min radius doesn't make much sense)

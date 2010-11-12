@@ -205,7 +205,7 @@ void Sys_PumpEvents( void );
 #endif
 
 //=============================================================
-  
+
 typedef enum {qfalse, qtrue}	qboolean;
 
 typedef unsigned char 		byte;
@@ -333,7 +333,7 @@ MATHLIB
 class idVec3;						// for defining vectors
 typedef idVec3 &vec3_p;				// for passing vectors as function arguments
 typedef const idVec3 &vec3_c;		// for passing vectors as const function arguments
-									
+
 class angles_t;						// for defining angle vectors
 typedef angles_t &angles_p;			// for passing angles as function arguments
 typedef const angles_t &angles_c;	// for passing angles as const function arguments

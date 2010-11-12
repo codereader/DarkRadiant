@@ -33,19 +33,19 @@ public:
 	/** greebo: Returns true if the object can be selected at the given coords.
 	 */
 	virtual bool testSelect(const Rectangle& rectangle);
-	
+
 	/** greebo: Moves the selected patch items to the specified coords.
 	 */
 	virtual void moveSelectedTo(const Vector2& targetCoords);
 
-	/** greebo: Flips the control vertex (if selected) 
+	/** greebo: Flips the control vertex (if selected)
 	 * 			about the given axis in texture space.
-	 * 
-	 *  @axis:  0 = s-axis flip, 1 = t-axis flip 			
+	 *
+	 *  @axis:  0 = s-axis flip, 1 = t-axis flip
 	 */
 	virtual void flipSelected(const int& axis);
 };
-	
+
 } // namespace TexTool
 
 #endif /*PATCHVERTEXITEM_H_*/

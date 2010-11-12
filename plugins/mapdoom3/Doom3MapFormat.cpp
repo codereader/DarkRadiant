@@ -67,7 +67,7 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
 	GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
 	GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
-	
+
 	GlobalFiletypes().addType(
 		"map", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
 	GlobalFiletypes().addType(
@@ -85,7 +85,7 @@ bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const
 	{
 		// Run the post-process (layers and/or child primitive origins)
 		onMapParsed(importInfo);
-		
+
 		return true;
 	}
 	else
@@ -129,7 +129,7 @@ void Doom3MapFormat::addOriginToChildPrimitives(const scene::INodePtr& root) con
 	// Disable texture lock during this process
 	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
 	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
-	
+
 	// Local helper to add origins
 	class OriginAdder :
 		public scene::NodeVisitor
@@ -138,12 +138,12 @@ void Doom3MapFormat::addOriginToChildPrimitives(const scene::INodePtr& root) con
 		// NodeVisitor implementation
 		bool pre(const scene::INodePtr& node) {
 			Entity* entity = Node_getEntity(node);
-		
+
 			// Check for an entity
 			if (entity != NULL) {
 				// greebo: Check for a Doom3Group
 				scene::GroupNodePtr groupNode = Node_getGroupNode(node);
-				
+
 				// Don't handle the worldspawn children, they're safe&sound
 				if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
 					groupNode->addOriginToChildren();
@@ -164,20 +164,20 @@ void Doom3MapFormat::removeOriginFromChildPrimitives(const scene::INodePtr& root
 	// Disable texture lock during this process
 	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
 	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
-	
+
 	// Local helper to remove the origins
 	class OriginRemover :
-		public scene::NodeVisitor 
+		public scene::NodeVisitor
 	{
 	public:
 		bool pre(const scene::INodePtr& node) {
 			Entity* entity = Node_getEntity(node);
-			
+
 			// Check for an entity
 			if (entity != NULL) {
 				// greebo: Check for a Doom3Group
 				scene::GroupNodePtr groupNode = Node_getGroupNode(node);
-				
+
 				// Don't handle the worldspawn children, they're safe&sound
 				if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn") {
 					groupNode->removeOriginFromChildren();
@@ -185,7 +185,7 @@ void Doom3MapFormat::removeOriginFromChildPrimitives(const scene::INodePtr& root
 					return false;
 				}
 			}
-			
+
 			return true;
 		}
 	} remover;
@@ -209,13 +209,13 @@ void Doom3MapFormat::onMapParsed(const MapImportInfo& importInfo) const
 		// Create the layers according to the data found in the map information file
 		const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
 
-		for (InfoFile::LayerNameMap::const_iterator i = layers.begin(); 
+		for (InfoFile::LayerNameMap::const_iterator i = layers.begin();
 			 i != layers.end(); i++)
 		{
 			// Create the named layer with the saved ID
 			GlobalLayerSystem().createLayer(i->second, i->first);
 		}
-		
+
 		// Now that the graph is in place, assign the layers
 		AssignLayerMappingWalker walker(infoFile);
 		importInfo.root->traverse(walker);

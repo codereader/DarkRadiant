@@ -14,7 +14,7 @@ void TexToolItem::foreachItem(ItemVisitor& visitor) {
 	for (std::size_t i = 0; i < _children.size(); i++) {
 		// Visit the children
 		visitor.visit(_children[i]);
-		
+
 		// Propagate the visitor class down the hierarchy
 		_children[i]->foreachItem(visitor);
 	}
@@ -22,14 +22,14 @@ void TexToolItem::foreachItem(ItemVisitor& visitor) {
 
 TexToolItemVec TexToolItem::getSelectableChildren(const Rectangle& rectangle) {
 	TexToolItemVec returnVector;
-	
+
 	for (std::size_t i = 0; i < _children.size(); i++) {
 		// Add every children to the list
 		if (_children[i]->testSelect(rectangle)) {
 			returnVector.push_back(_children[i]);
 		}
 	}
-	
+
 	return returnVector;
 }
 
@@ -73,30 +73,30 @@ void TexToolItem::snapSelectedToGrid(float grid) {
 
 AABB TexToolItem::getExtents() {
 	AABB returnValue;
-	
+
 	// Cycle through all the children and include their AABB
 	for (std::size_t i = 0; i < _children.size(); i++) {
 		returnValue.includeAABB(_children[i]->getExtents());
 	}
-	
+
 	return returnValue;
 }
 
 AABB TexToolItem::getSelectedExtents() {
 	AABB returnValue;
-	
+
 	// Add <self> to the resulting AABB if <self> is selected
 	if (_selected) {
 		returnValue.includeAABB(getExtents());
 	}
-	
+
 	// Cycle through all the children and include their AABB
 	for (std::size_t i = 0; i < _children.size(); i++) {
 		if (_children[i]->isSelected()) {
 			returnValue.includeAABB(_children[i]->getExtents());
 		}
 	}
-	
+
 	return returnValue;
 }
 

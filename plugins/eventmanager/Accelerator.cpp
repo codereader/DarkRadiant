@@ -1,8 +1,8 @@
 #include "Accelerator.h"
 
 // Construct an accelerator out of the key/modifier plus a command
-Accelerator::Accelerator(const unsigned int key, 
-						 const unsigned int modifiers, 
+Accelerator::Accelerator(const unsigned int key,
+						 const unsigned int modifiers,
 						 const IEventPtr& event) :
 	_key(key),
 	_modifiers(modifiers),

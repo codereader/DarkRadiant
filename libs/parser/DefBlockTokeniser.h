@@ -11,8 +11,8 @@ namespace parser {
 
 /**
  * Abstract base class BlockTokeniser. This class inspects a given input block
- * or stream and returns definition blocks (including name). 
- * 
+ * or stream and returns definition blocks (including name).
+ *
  * C and C++-style comments are properly ignored.
  */
 class BlockTokeniser {
@@ -33,23 +33,23 @@ public:
 
     /** Destructor */
 	virtual ~BlockTokeniser() {}
-	
-    /** 
+
+    /**
      * Test if this DefTokeniser has more blocks to return.
-     * 
+     *
      * @returns
      * true if there are further blocks, false otherwise
      */
     virtual bool hasMoreBlocks() = 0;
 
-    /** 
+    /**
      * Return the next block in the sequence. This function consumes
      * the returned block and advances the internal state to the following
      * block.
-     * 
+     *
      * @returns
      * A named Block structure.
-     * 
+     *
      * @pre
      * hasMoreBlocks() must be true, otherwise an exception will be thrown.
      */
@@ -61,7 +61,7 @@ public:
  */
 
 class DefBlockTokeniserFunc {
-    
+
     // Enumeration of states
     enum State {
         SEARCHING_NAME,	  // haven't found anything yet
@@ -73,7 +73,7 @@ class DefBlockTokeniserFunc {
         COMMENT_DELIM,    // inside delimited comment (/*)
         STAR              // asterisk, possibly indicates end of comment (*/)
     } _state;
-       
+
 	const char* _delims;			// whitespace
 
 	const char _blockStartChar;	// "{"
@@ -93,7 +93,7 @@ class DefBlockTokeniserFunc {
 public:
 
     // Constructor
-    DefBlockTokeniserFunc(const char* delims, char blockStartChar, char blockEndChar) : 
+    DefBlockTokeniserFunc(const char* delims, char blockStartChar, char blockEndChar) :
 		_state(SEARCHING_NAME),
 		_delims(delims),
 		_blockStartChar(blockStartChar),
@@ -147,7 +147,7 @@ public:
                             _state = FORWARDSLASH;
                             ++next;
                             continue; // skip slash, will need to add it back if this is not a comment
-            
+
                         // General case. Token lasts until next delimiter.
                         default:
                             tok.name += ch;
@@ -175,7 +175,7 @@ public:
 						continue;
 					}
 					else {
-						// Not a delimiter, not an opening brace, must be 
+						// Not a delimiter, not an opening brace, must be
 						// an "extension" for the name
 						tok.name += ' ';
 						tok.name += ch;
@@ -218,29 +218,29 @@ public:
 					}
 
 				case FORWARDSLASH:
-                
+
                     // If we have a forward slash we may be entering a comment. The forward slash
                     // will NOT YET have been added to the token, so we must add it manually if
                     // this proves not to be a comment.
-                    
+
                     switch (ch) {
                         case '*':
                             _state = COMMENT_DELIM;
                             ++next;
                             continue;
-                            
+
                         case '/':
                             _state = COMMENT_EOL;
                             ++next;
                             continue;
-                            
+
                         default: // false alarm, add the slash and carry on
                             _state = TOKEN_STARTED;
                             tok.name += '/';
                             // Do not increment next here
                             continue;
                     }
-                    
+
                 case COMMENT_DELIM:
                     // Inside a delimited comment, we add nothing to the token but check for
                     // the "*/" sequence.
@@ -254,8 +254,8 @@ public:
                         continue; // ignore and carry on
                     }
 
-                case COMMENT_EOL:                
-                    // This comment lasts until the end of the line.                    
+                case COMMENT_EOL:
+                    // This comment lasts until the end of the line.
                     if (ch == '\r' || ch == '\n') {
 						// An EOL comment with non-empty name means searching for block
 						_state = (tok.name.empty()) ? SEARCHING_NAME : SEARCHING_BLOCK;
@@ -266,10 +266,10 @@ public:
                         ++next;
                         continue; // do nothing
                     }
-                    
+
                 case STAR:
-                    // The star may indicate the end of a delimited comment. 
-                    // This state will only be entered if we are inside a 
+                    // The star may indicate the end of a delimited comment.
+                    // This state will only be entered if we are inside a
                     // delimited comment.
                     if (ch == '/') {
                     	// End of comment
@@ -288,7 +288,7 @@ public:
                     	// No end of comment
                     	_state = COMMENT_DELIM;
                     	++next;
-                        continue; 
+                        continue;
                     }
 				}
 			}
@@ -299,27 +299,27 @@ public:
         else
             return false;
     }
-    
+
     // REQUIRED. Reset function to clear internal state
     void reset() {
         _state = SEARCHING_NAME;
     }
 };
 
-/** 
+/**
  * Tokenise a DEF file.
- * 
+ *
  * This class provides a similar interface to Java's StringTokenizer class. It accepts
- * an input stream and provides a simple interface to return the next block in the stream. 
+ * an input stream and provides a simple interface to return the next block in the stream.
  * It also protects quoted content and ignores both C and C++ style comments.
  */
 template<typename ContainerT>
-class BasicDefBlockTokeniser : 
+class BasicDefBlockTokeniser :
 	public BlockTokeniser
 {
     // Internal Boost tokenizer and its iterator
-	typedef boost::tokenizer<DefBlockTokeniserFunc, 
-							  std::string::const_iterator, 
+	typedef boost::tokenizer<DefBlockTokeniserFunc,
+							  std::string::const_iterator,
 							  BlockTokeniser::Block> Tokeniser;
 
     Tokeniser _tok;
@@ -327,22 +327,22 @@ class BasicDefBlockTokeniser :
 
 public:
 
-    /** 
+    /**
      * Construct a BasicDefBlockTokeniser with the given input type.
-     * 
+     *
      * @param str
      * The container to tokenise.
      */
     BasicDefBlockTokeniser(const ContainerT& str,
 						   const char* delims = " \t\n\v\r",
 						   const char blockStartChar = '{',
-						   const char blockEndChar = '}') : 
+						   const char blockEndChar = '}') :
 		_tok(str, DefBlockTokeniserFunc(delims, blockStartChar, blockEndChar)),
 		_tokIter(_tok.begin())
     {}
-        
+
     /** Test if this StringTokeniser has more blocks to return.
-     * 
+     *
      * @returns
      * true if there are further blocks, false otherwise
      */
@@ -353,10 +353,10 @@ public:
     /** Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
-     * 
+     *
      * @returns
      * std::string containing the next token in the sequence.
-     * 
+     *
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
@@ -375,12 +375,12 @@ public:
  * for it.
  */
 template<>
-class BasicDefBlockTokeniser<std::istream> : 
+class BasicDefBlockTokeniser<std::istream> :
 	public BlockTokeniser
 {
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
-    
+
     // Internal Boost tokenizer and its iterator
     typedef boost::tokenizer<DefBlockTokeniserFunc,
                              CharStreamIterator,
@@ -390,23 +390,23 @@ class BasicDefBlockTokeniser<std::istream> :
     Tokeniser::iterator _tokIter;
 
 private:
-	
+
 	// Helper function to set noskipws on the input stream.
 	static std::istream& setNoskipws(std::istream& is) {
 		is >> std::noskipws;
 		return is;
 	}
-    
+
 public:
 
-    /** 
+    /**
      * Construct a BasicDefBlockTokeniser with the given input stream.
-     * 
+     *
      * @param str
      * The std::istream to tokenise. This is a non-const parameter, since tokens
      * will be extracted from the stream.
      */
-	BasicDefBlockTokeniser(std::istream& str, 
+	BasicDefBlockTokeniser(std::istream& str,
 						   const char* delims = " \t\n\v\r",
 						   const char blockStartChar = '{',
 						   const char blockEndChar = '}') :
@@ -415,10 +415,10 @@ public:
 			 DefBlockTokeniserFunc(delims, blockStartChar, blockEndChar)),
 		_tokIter(_tok.begin())
 	{}
-        
-    /** 
+
+    /**
      * Test if this BlockTokeniser has more blocks to return.
-     * 
+     *
      * @returns
      * true if there are further blocks, false otherwise
      */
@@ -426,14 +426,14 @@ public:
         return _tokIter != _tok.end();
     }
 
-    /** 
+    /**
      * Return the next block in the sequence. This function consumes
      * the returned block and advances the internal state to the following
      * block.
-     * 
+     *
      * @returns
      * The named block.
-     * 
+     *
      * @pre
      * hasMoreBlocks() must be true, otherwise an exception will be thrown.
      */

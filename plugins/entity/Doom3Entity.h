@@ -6,11 +6,11 @@
 #include <boost/shared_ptr.hpp>
 
 /** greebo: This is the implementation of the class Entity.
- * 
+ *
  * A Doom3Entity basically just keeps track of all the
- * spawnargs and delivers them on request, taking the 
+ * spawnargs and delivers them on request, taking the
  * inheritance tree (EntityClasses) into account.
- * 
+ *
  * It's possible to attach observers to this entity to get
  * notified upon key/value changes.
  */
@@ -27,10 +27,10 @@ class Doom3Entity :
 	IEntityClassPtr _eclass;
 
 	typedef boost::shared_ptr<KeyValue> KeyValuePtr;
-	
+
 	// A key value pair using a dynamically allocated value
 	typedef std::pair<std::string, KeyValuePtr> KeyValuePair;
-	
+
 	// The unsorted list of KeyValue pairs
 	typedef std::vector<KeyValuePair> KeyValues;
 	KeyValues _keyValues;
@@ -48,7 +48,7 @@ class Doom3Entity :
 public:
 	// Constructor, pass the according entity class
 	Doom3Entity(const IEntityClassPtr& eclass);
-	
+
 	// Copy constructor
 	Doom3Entity(const Doom3Entity& other);
 
@@ -84,10 +84,10 @@ public:
 
 	bool isContainer() const;
 	void setIsContainer(bool isContainer);
-	
+
 	bool isModel() const;
 
-	// Returns the actual pointer to a KeyValue (or NULL if not found), 
+	// Returns the actual pointer to a KeyValue (or NULL if not found),
 	// not just the string like getKeyValue() does.
 	// Only returns non-NULL for non-inherited keyvalues.
 	EntityKeyValuePtr getEntityKeyValue(const std::string& key);
@@ -104,10 +104,10 @@ private:
 
 	void erase(const KeyValues::iterator& i);
 	void erase(const std::string& key);
-	
+
 	KeyValues::iterator find(const std::string& key);
 	KeyValues::const_iterator find(const std::string& key) const;
-	
+
 	void forEachKeyValue_instanceAttach(MapFile* map);
 	void forEachKeyValue_instanceDetach(MapFile* map);
 };

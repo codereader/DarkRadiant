@@ -34,13 +34,13 @@ void PopupMenu::addItem(Gtk::MenuItem* widget,
 void PopupMenu::addItem(const ui::IMenuItemPtr& item)
 {
 	_menuItems.push_back(item);
-	
+
 	// Add the GtkWidget to the GtkMenu
 	append(*item->getWidget());
 }
 
 // Show the menu
-void PopupMenu::show() 
+void PopupMenu::show()
 {
 	// Show all elements as first measure
 	show_all();
@@ -67,7 +67,7 @@ void PopupMenu::show()
 			item.getWidget()->hide();
 		}
 	}
-	
+
 	popup(1, gtk_get_current_event_time());
 }
 
@@ -75,7 +75,7 @@ void PopupMenu::show()
 bool PopupMenu::_onClick(GdkEventButton* e)
 {
 	if (e->button == 3) // right-click only
-	{ 
+	{
 		show();
 	}
 

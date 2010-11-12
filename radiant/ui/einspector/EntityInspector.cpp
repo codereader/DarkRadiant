@@ -54,7 +54,7 @@ namespace {
 	const std::string HELP_ICON_NAME = "helpicon.png";
 }
 
-EntityInspector::EntityInspector() : 
+EntityInspector::EntityInspector() :
 	_selectedEntity(NULL),
 	_mainWidget(NULL),
 	_editorFrame(NULL),
@@ -70,7 +70,7 @@ void EntityInspector::construct()
 {
 	_columns.reset(new ListStoreColumns);
 	_kvStore = Gtk::ListStore::create(*_columns);
-  
+
 	_keyValueTreeView = Gtk::manage(new Gtk::TreeView(_kvStore));
 
 	_paned = Gtk::manage(new Gtk::VPaned);
@@ -87,7 +87,7 @@ void EntityInspector::construct()
         _("Show inherited properties")
     ));
 	_showInheritedCheckbox->signal_toggled().connect(sigc::mem_fun(*this, &EntityInspector::_onToggleShowInherited));
-	
+
 	topHBox->pack_start(*_showInheritedCheckbox, false, false, 0);
 
 	_showHelpColumnCheckbox = Gtk::manage(new Gtk::CheckButton(_("Show help icons")));
@@ -120,7 +120,7 @@ void EntityInspector::construct()
     // changes.
     GlobalSelectionSystem().addObserver(this);
 
-	// Observe the Undo system for undo/redo operations, to refresh the 
+	// Observe the Undo system for undo/redo operations, to refresh the
 	// keyvalues when this happens
 	GlobalUndoSystem().addObserver(this);
 
@@ -128,7 +128,7 @@ void EntityInspector::construct()
 	loadPropertyMap();
 }
 
-void EntityInspector::restoreSettings() 
+void EntityInspector::restoreSettings()
 {
 	// Find the information stored in the registry
 	if (GlobalRegistry().keyExists(RKEY_PANE_STATE)) {
@@ -179,7 +179,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
 	const EntityClassAttribute& attr = eclass->getAttribute(key);
 
-    if (parms.type.empty()) 
+    if (parms.type.empty())
     {
         parms.type = attr.type;
     }
@@ -195,8 +195,8 @@ void EntityInspector::onKeyChange(const std::string& key,
 	row[_columns->icon] = PropertyEditorFactory::getPixbufFor(parms.type);
 	row[_columns->isInherited] = false;
 	row[_columns->hasHelpText] = hasDescription;
-	row[_columns->helpIcon] = hasDescription 
-                          ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME) 
+	row[_columns->helpIcon] = hasDescription
+                          ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
 						  : Glib::RefPtr<Gdk::Pixbuf>();
 
 	// Check if we should update the key/value entry boxes
@@ -229,13 +229,13 @@ void EntityInspector::onKeyErase(const std::string& key,
     }
     else
     {
-        std::cerr << "EntityInspector: warning: removed key '" << key 
+        std::cerr << "EntityInspector: warning: removed key '" << key
                   << "' not found in map." << std::endl;
     }
 }
 
 // Create the context menu
-void EntityInspector::createContextMenu() 
+void EntityInspector::createContextMenu()
 {
 	_contextMenu->addItem(
 		Gtk::manage(new gtkutil::StockIconMenuItem(Gtk::Stock::ADD, _("Add property..."))),
@@ -340,13 +340,13 @@ Gtk::Widget& EntityInspector::getWidget()
 }
 
 // Create the dialog pane
-Gtk::Widget& EntityInspector::createPropertyEditorPane() 
+Gtk::Widget& EntityInspector::createPropertyEditorPane()
 {
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 0));
-	
+
 	_editorFrame = Gtk::manage(new Gtk::Frame);
 	_editorFrame->set_shadow_type(Gtk::SHADOW_NONE);
-    
+
     hbx->pack_start(*_editorFrame, true, true, 0);
 
     return *hbx;
@@ -366,19 +366,19 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 	Gtk::CellRendererPixbuf* pixRenderer = Gtk::manage(new Gtk::CellRendererPixbuf);
 	nameCol->pack_start(*pixRenderer, false);
 	nameCol->add_attribute(pixRenderer->property_pixbuf(), _columns->icon);
-	
+
 	Gtk::CellRendererText* textRenderer = Gtk::manage(new Gtk::CellRendererText);
 	nameCol->pack_start(*textRenderer, false);
 	nameCol->add_attribute(textRenderer->property_text(), _columns->name);
 	nameCol->add_attribute(textRenderer->property_foreground(), _columns->colour);
     nameCol->set_sort_column(_columns->name);
-	
+
 	_keyValueTreeView->append_column(*nameCol);
 
 	// Create the value column
 	Gtk::TreeViewColumn* valCol = Gtk::manage(new Gtk::TreeViewColumn(_("Value")));
 	valCol->set_sizing(Gtk::TREE_VIEW_COLUMN_AUTOSIZE);
-	
+
 	Gtk::CellRendererText* valRenderer = Gtk::manage(new Gtk::CellRendererText);
 	valCol->pack_start(*valRenderer, true);
 	valCol->add_attribute(valRenderer->property_text(), _columns->value);
@@ -386,14 +386,14 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 	valCol->set_sort_column(_columns->value);
 
     _keyValueTreeView->append_column(*valCol);
-    
+
 	// Help column
 	_helpColumn = Gtk::manage(new Gtk::TreeViewColumn(_("?")));
 	_helpColumn->set_spacing(3);
 	_helpColumn->set_visible(false);
 
 	Glib::RefPtr<Gdk::Pixbuf> helpIcon = GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME);
-	
+
 	if (helpIcon != NULL)
 	{
 		_helpColumn->set_fixed_width(helpIcon->get_width());
@@ -405,20 +405,20 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 	_helpColumn->add_attribute(pixRend->property_pixbuf(), _columns->helpIcon);
 
 	_keyValueTreeView->append_column(*_helpColumn);
-	
+
 	// Connect the tooltip query signal to our custom routine
 	_keyValueTreeView->set_has_tooltip(true);
 	_keyValueTreeView->signal_query_tooltip().connect(sigc::mem_fun(*this, &EntityInspector::_onQueryTooltip));
-	
+
     // Set up the signals
 	Glib::RefPtr<Gtk::TreeSelection> selection = _keyValueTreeView->get_selection();
 	selection->signal_changed().connect(sigc::mem_fun(*this, &EntityInspector::treeSelectionChanged));
-    
+
     // Embed the TreeView in a scrolled viewport
 	Gtk::ScrolledWindow* scrollWin = Gtk::manage(new gtkutil::ScrolledFrame(*_keyValueTreeView));
-	
+
 	_keyValueTreeView->set_size_request(TREEVIEW_MIN_WIDTH, TREEVIEW_MIN_HEIGHT);
-    
+
 	vbx->pack_start(*scrollWin, true, true, 0);
 
 	// Pack in the key and value edit boxes
@@ -427,7 +427,7 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 
 	Gtk::Button* setButton = Gtk::manage(new Gtk::Button);
 	setButton->add(*Gtk::manage(new Gtk::Image(Gtk::Stock::APPLY, Gtk::ICON_SIZE_MENU)));
-	
+
 	Gtk::HBox* setButtonBox = Gtk::manage(new Gtk::HBox(false, 0));
 	setButtonBox->pack_start(*_valEntry, true, true, 0);
 	setButtonBox->pack_start(*setButton, false, false, 0);
@@ -440,13 +440,13 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 	setButton->signal_clicked().connect(sigc::mem_fun(*this, &EntityInspector::_onSetProperty));
 	_keyEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
 	_valEntry->signal_activate().connect(sigc::mem_fun(*this, &EntityInspector::_onEntryActivate));
-    
+
     return *vbx;
 }
 
 // Retrieve the selected string from the given property in the list store
 
-std::string EntityInspector::getListSelection(const Gtk::TreeModelColumn<Glib::ustring>& col) 
+std::string EntityInspector::getListSelection(const Gtk::TreeModelColumn<Glib::ustring>& col)
 {
 	Gtk::TreeModel::iterator iter = _keyValueTreeView->get_selection()->get_selected();
 
@@ -497,7 +497,7 @@ void EntityInspector::updateGUIElements()
 }
 
 // Selection changed callback
-void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent) 
+void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
 	updateGUIElements();
 }
@@ -677,7 +677,7 @@ void EntityInspector::_onDeleteKey()
 	}
 }
 
-bool EntityInspector::_testDeleteKey() 
+bool EntityInspector::_testDeleteKey()
 {
 	// Make sure the Delete item is only available for explicit
 	// (non-inherited) properties
@@ -744,7 +744,7 @@ void EntityInspector::_onPasteKey()
 	}
 }
 
-bool EntityInspector::_testPasteKey() 
+bool EntityInspector::_testPasteKey()
 {
 	if (GlobalSelectionSystem().getSelectionInfo().entityCount == 0)
 	{
@@ -771,13 +771,13 @@ void EntityInspector::_onEntryActivate()
 	_keyEntry->grab_focus();
 }
 
-void EntityInspector::_onToggleShowInherited() 
+void EntityInspector::_onToggleShowInherited()
 {
-	if (_showInheritedCheckbox->get_active()) 
+	if (_showInheritedCheckbox->get_active())
     {
 		addClassProperties();
 	}
-	else 
+	else
     {
 		removeClassProperties();
 	}
@@ -796,7 +796,7 @@ bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const
 	// greebo: Important: convert the widget coordinates to bin coordinates first
 	int binX, binY;
 	_keyValueTreeView->convert_widget_to_bin_window_coords(x, y, binX, binY);
-	
+
 	int cellx, celly;
 	Gtk::TreeViewColumn* column = NULL;
 	Gtk::TreeModel::Path path;
@@ -805,7 +805,7 @@ bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const
 	{
 		// Get the iter of the row pointed at
 		Gtk::TreeModel::iterator iter = _kvStore->get_iter(path);
-		
+
 		if (iter)
 		{
 			Gtk::TreeModel::Row row = *iter;
@@ -828,7 +828,7 @@ bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const
 					// Check the description of the focused item
 					_keyValueTreeView->set_tooltip_row(tooltip, path);
 					tooltip->set_markup(attr.description);
-					
+
 					return true; // show tooltip
 				}
 			}
@@ -903,9 +903,9 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
 		// Try to match the entity key against the regex (i->first)
 		boost::regex expr(i->first);
 		boost::smatch matches;
-		
+
 		if (!boost::regex_match(key, matches, expr)) continue;
-		
+
 		// We have a match
 		returnValue.type = i->second.type;
 		returnValue.options = i->second.options;
@@ -915,7 +915,7 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
 }
 
 // Append inherited (entityclass) properties
-void EntityInspector::addClassProperties() 
+void EntityInspector::addClassProperties()
 {
 	// Get the entityclass for the current entity
 	std::string className = _selectedEntity->getKeyValue("classname");
@@ -938,28 +938,28 @@ void EntityInspector::addClassProperties()
 		// Constructor
 		ClassPropertyVisitor(const Glib::RefPtr<Gtk::ListStore>& store,
 							 const EntityInspector::ListStoreColumns& columns)
-		: _store(store), 
+		: _store(store),
 		  _columns(columns)
 		{}
 
 		// Required visitor function
-		void visit(const EntityClassAttribute& a) 
+		void visit(const EntityClassAttribute& a)
         {
 			// Only add properties with values, we don't want the optional
 			// "editor_var xxx" properties here.
-			if (!a.value.empty()) 
+			if (!a.value.empty())
             {
 				bool hasDescription = !a.description.empty();
 
 				Gtk::TreeModel::Row row = *_store->append();
-				
+
 				row[_columns.name] = a.name;
 				row[_columns.value] = a.value;
 				row[_columns.colour] = "#707070";
 				row[_columns.icon] = Glib::RefPtr<Gdk::Pixbuf>();
 				row[_columns.isInherited] = true;
 				row[_columns.hasHelpText] = hasDescription;
-				row[_columns.helpIcon] = hasDescription 
+				row[_columns.helpIcon] = hasDescription
                                       ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
                                       : Glib::RefPtr<Gdk::Pixbuf>();
 			}
@@ -994,10 +994,10 @@ void EntityInspector::removeClassProperties()
 }
 
 // Update the selected Entity pointer from the selection system
-void EntityInspector::getEntityFromSelectionSystem() 
+void EntityInspector::getEntityFromSelectionSystem()
 {
 	// A single entity must be selected
-	if (GlobalSelectionSystem().countSelected() != 1) 
+	if (GlobalSelectionSystem().countSelected() != 1)
     {
         changeSelectedEntity(NULL);
 		return;
@@ -1007,7 +1007,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 
     // The root node must not be selected (this can happen if Invert Selection is
     // activated with an empty scene, or by direct selection in the entity list).
-	if (selectedNode->isRoot()) 
+	if (selectedNode->isRoot())
     {
         changeSelectedEntity(NULL);
 		return;
@@ -1062,7 +1062,7 @@ void EntityInspector::changeSelectedEntity(Entity* newEntity)
     }
 }
 
-void EntityInspector::toggle(const cmd::ArgumentList& args) 
+void EntityInspector::toggle(const cmd::ArgumentList& args)
 {
 	GlobalGroupDialog().togglePage("entity");
 }

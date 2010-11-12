@@ -5,15 +5,15 @@
 #include "PatchBezier.h"
 
 /**
- * greebo: This is the structure that represents the tesselation of a patch. 
+ * greebo: This is the structure that represents the tesselation of a patch.
  */
 struct PatchTesselation
 {
 public:
 	PatchTesselation() :
-		m_numStrips(0), 
-		m_lenStrips(0), 
-		m_nArrayWidth(0), 
+		m_numStrips(0),
+		m_lenStrips(0),
+		m_nArrayWidth(0),
 		m_nArrayHeight(0)
 	{}
 

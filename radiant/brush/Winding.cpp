@@ -36,10 +36,10 @@ namespace {
 		indexremap_t(std::size_t _x, std::size_t _y, std::size_t _z) :
 			x(_x), y(_y), z(_z)
 		{}
-		
+
 		std::size_t x, y, z;
 	};
-	
+
 	inline indexremap_t indexremap_for_projectionaxis(const ProjectionAxis axis) {
 		switch (axis) {
 			case eProjectionAxisX:
@@ -61,10 +61,10 @@ void Winding::drawWireframe() const
 	}
 }
 
-void Winding::render(const RenderInfo& info) const 
+void Winding::render(const RenderInfo& info) const
 {
     // Do not render if there are no points
-	if (empty()) 
+	if (empty())
     {
 		return;
 	}
@@ -72,7 +72,7 @@ void Winding::render(const RenderInfo& info) const
 	// A shortcut pointer to the first array element to avoid
 	// massive calls to std::vector<>::begin()
 	const WindingVertex& firstElement = front();
-	
+
 	// Set the vertex pointer first
 	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex);
 
@@ -86,7 +86,7 @@ void Winding::render(const RenderInfo& info) const
             3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex
         );
     }
-	else if (info.checkFlag(RENDER_BUMP)) 
+	else if (info.checkFlag(RENDER_BUMP))
     {
         // Lighting mode, submit normals, tangents and texcoords to the shader
         // program.
@@ -102,24 +102,24 @@ void Winding::render(const RenderInfo& info) const
 		glVertexAttribPointerARB(
             ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.bitangent
         );
-	} 
-	else 
+	}
+	else
     {
         // Submit normals in lighting mode
-		if (info.checkFlag(RENDER_LIGHTING)) 
+		if (info.checkFlag(RENDER_LIGHTING))
         {
 			glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
 		}
 
         // Set texture coordinates in 2D texture mode
-		if (info.checkFlag(RENDER_TEXTURE_2D)) 
+		if (info.checkFlag(RENDER_TEXTURE_2D))
         {
             glTexCoordPointer(
                 2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord
             );
 		}
 	}
-	
+
     // Submit all data to OpenGL
 	glDrawArrays(GL_POLYGON, 0, GLsizei(size()));
 }
@@ -143,19 +143,19 @@ void Winding::updateNormals(const Vector3& normal)
 AABB Winding::aabb() const
 {
 	AABB returnValue;
-	
+
 	for (const_iterator i = begin(); i != end(); ++i)
 	{
 		returnValue.includePoint(i->vertex);
 	}
-	
+
 	return returnValue;
 }
 
 bool Winding::testPlane(const Plane3& plane, bool flipped) const
 {
 	const int test = (flipped) ? ePlaneBack : ePlaneFront;
-	
+
 	for (const_iterator i = begin(); i != end(); ++i)
 	{
 		if (test == classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON))
@@ -170,12 +170,12 @@ bool Winding::testPlane(const Plane3& plane, bool flipped) const
 BrushSplitType Winding::classifyPlane(const Plane3& plane) const
 {
 	BrushSplitType split;
-	
+
 	for (const_iterator i = begin(); i != end(); ++i)
 	{
 		++split.counts[classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)];
 	}
-	
+
 	return split;
 }
 
@@ -184,11 +184,11 @@ PlaneClassification Winding::classifyDistance(const double distance, const doubl
 	if (distance > epsilon) {
 		return ePlaneFront;
 	}
-	
+
 	if (distance < -epsilon) {
 		return ePlaneBack;
 	}
-	
+
 	return ePlaneOn;
 }
 
@@ -207,14 +207,14 @@ std::size_t Winding::findAdjacent(std::size_t face) const
 			return i;
 		}
 	}
-	
+
 	return c_brush_maxFaces;
 }
 
 std::size_t Winding::opposite(const std::size_t index, const std::size_t other) const
 {
 	ASSERT_MESSAGE(index < size() && other < size(), "Winding::opposite: index out of range");
-	
+
 	double dist_best = 0;
 	std::size_t index_best = c_brush_maxFaces;
 
@@ -233,7 +233,7 @@ std::size_t Winding::opposite(const std::size_t index, const std::size_t other) 
 			index_best = i;
 		}
 	}
-	
+
 	return index_best;
 }
 
@@ -241,23 +241,23 @@ std::size_t Winding::opposite(std::size_t index) const
 {
 	return opposite(index, next(index));
 }
-	
+
 Vector3 Winding::centroid(const Plane3& plane) const
 {
 	Vector3 centroid(0,0,0);
-	
+
 	double area2 = 0, x_sum = 0, y_sum = 0;
 	const ProjectionAxis axis = projectionaxis_for_normal(plane.normal());
 	const indexremap_t remap = indexremap_for_projectionaxis(axis);
-	
+
 	for (std::size_t i = size() - 1, j = 0; j < size(); i = j, ++j)
 	{
 		const double ai = (*this)[i].vertex[remap.x]
 				* (*this)[j].vertex[remap.y] - (*this)[j].vertex[remap.x]
 				* (*this)[i].vertex[remap.y];
-		
+
 		area2 += ai;
-		
+
 		x_sum += ((*this)[j].vertex[remap.x] + (*this)[i].vertex[remap.x]) * ai;
 		y_sum += ((*this)[j].vertex[remap.y] + (*this)[i].vertex[remap.y]) * ai;
 	}
@@ -271,7 +271,7 @@ Vector3 Winding::centroid(const Plane3& plane) const
 		ray.direction[remap.z] = 1;
 		centroid[remap.z] = ray_distance_to_plane(ray, plane);
 	}
-	
+
 	return centroid;
 }
 

@@ -34,7 +34,7 @@ class LayerSystem :
 public:
 	/**
 	 * greebo: Creates a new layer with the given name.
-	 * 
+	 *
 	 * @returns: the ID of the layer of -1 if the layer could not
 	 *           be created (e.g. due to a name conflict).
 	 */
@@ -42,7 +42,7 @@ public:
 
 	/**
 	 * greebo: Overload: Creates a new layer with the given name and the given ID.
-	 * 
+	 *
 	 * @returns: the ID of the layer of -1 if the layer could not
 	 *           be created (e.g. due to a name/ID conflict).
 	 */

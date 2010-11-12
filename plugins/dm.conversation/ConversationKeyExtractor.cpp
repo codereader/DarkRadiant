@@ -17,17 +17,17 @@ namespace conversation {
 
 // Shortcut for boost::algorithm::split
 typedef std::vector<std::string> StringParts;
-	
+
 // Required entity visit function
 void ConversationKeyExtractor::visit(const std::string& key, const std::string& value) {
 	// Quick discard of any non-conversation keys
 	if (key.substr(0, 4) != "conv") return;
-		
+
 	// Extract the objective number
 	static const boost::regex reConvNum("conv_(\\d+)_(.*)");
 	boost::smatch results;
 	int iNum;
-	
+
 	if (!boost::regex_match(key, results, reConvNum)) {
 		// No match, abort
 		return;
@@ -39,10 +39,10 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 	// We now have the conversation number and the substring (everything after
 	// "conv_<n>_" which applies to this conversation.
 	std::string convSubString = results[2];
-	
+
 	// Switch on the substring
 	if (convSubString == "name") {
-		_convMap[iNum].name = value;			
+		_convMap[iNum].name = value;
 	}
 	else if (convSubString == "talk_distance") {
 		_convMap[iNum].talkDistance = strToFloat(value, 60);
@@ -71,7 +71,7 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 		// This is a conversation command, form a new regex
 		static const boost::regex reCommand("cmd_(\\d+)_(.*)");
 		boost::smatch results;
-		
+
 		if (!boost::regex_match(convSubString, results, reCommand)) {
 			return; // not matching
 		}
@@ -116,5 +116,5 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 		}
 	}
 }
-	
+
 } // namespace conversation

@@ -11,7 +11,7 @@
 
 namespace ui
 {
-	
+
 namespace
 {
 	const char* const SPLASH_FILENAME = "darksplash.png";
@@ -27,17 +27,17 @@ Splash::Splash() :
 	set_default_size(-1, -1);
 	set_position(Gtk::WIN_POS_CENTER);
 	set_border_width(0);
-	
+
 	const ApplicationContext& ctx = module::getRegistry().getApplicationContext();
 	std::string fullFileName(ctx.getBitmapsPath() + SPLASH_FILENAME);
 
 	Gtk::Image* image = Gtk::manage(new Gtk::Image(
 		Gdk::Pixbuf::create_from_file(fullFileName))
 	);
-	
+
 	_vbox = Gtk::manage(new Gtk::VBox(false, 0));
 	_vbox->pack_start(*image, true, true, 0);
-	
+
 	add(*_vbox);
 
 	set_size_request(-1, -1);
@@ -77,7 +77,7 @@ void Splash::setText(const std::string& text)
 	{
 		createProgressBar();
 	}
-	
+
 	_progressBar->set_text(text);
 	queueDraw();
 }
@@ -88,7 +88,7 @@ void Splash::setProgress(float fraction)
 	{
 		createProgressBar();
 	}
-	
+
 	_progressBar->set_fraction(fraction);
 	queueDraw();
 }
@@ -109,7 +109,7 @@ void Splash::queueDraw()
 {
 	// Trigger a (re)draw, just to make sure that it gets displayed
 	queue_draw();
-	
+
 	while (Gtk::Main::events_pending())
 	{
 		Gtk::Main::iteration();

@@ -33,7 +33,7 @@ class StimEditor :
 		Gtk::CheckButton* timeIntToggle;
 		Gtk::SpinButton* timeIntEntry;
 		Gtk::Label* timeUnitLabel;
-		
+
 		struct TimerWidgets
 		{
 			Gtk::CheckButton* toggle;
@@ -42,17 +42,17 @@ class StimEditor :
 			Gtk::SpinButton* minute;
 			Gtk::SpinButton* second;
 			Gtk::SpinButton* millisecond;
-			
+
 			Gtk::CheckButton* typeToggle;
-			
+
 			Gtk::HBox* reloadHBox;
 			Gtk::CheckButton* reloadToggle;
 			Gtk::SpinButton* reloadEntry;
 			Gtk::Label* reloadLabel;
-			
+
 			Gtk::CheckButton* waitToggle;
 		} timer;
-		
+
 		Gtk::CheckButton* durationToggle;
 		Gtk::SpinButton* durationEntry;
 		Gtk::Label* durationUnitLabel;
@@ -66,7 +66,7 @@ class StimEditor :
 		Gtk::SpinButton* chanceEntry;
 		Gtk::CheckButton* velocityToggle;
 		Gtk::Entry* velocityEntry;
-		
+
 		struct BoundsWidgets
 		{
 			Gtk::CheckButton* toggle;
@@ -77,7 +77,7 @@ class StimEditor :
 			Gtk::Entry* maxEntry;
 		} bounds;
 	} _propertyWidgets;
-	
+
 	struct ListContextMenu
 	{
 		boost::shared_ptr<Gtk::Menu> menu;
@@ -97,7 +97,7 @@ public:
 	 */
 	virtual void setEntity(const SREntityPtr& entity);
 
-	/** greebo: Updates the widgets (e.g. after a selection change) 
+	/** greebo: Updates the widgets (e.g. after a selection change)
 	 */
 	void update();
 
@@ -110,7 +110,7 @@ private:
 	 */
 	void addSR();
 
-	/** greebo: Gets called when a spinbutton changes, overrides the 
+	/** greebo: Gets called when a spinbutton changes, overrides the
 	 * 			method from the base class.
 	 */
 	void spinButtonChanged(Gtk::SpinButton* spinButton);
@@ -127,8 +127,8 @@ private:
 	/** greebo: Widget creation helper methods
 	 */
 	Gtk::Widget& createPropertyWidgets();
-	
-	/** greebo: Gets called when the stim selection gets changed 
+
+	/** greebo: Gets called when the stim selection gets changed
 	 */
 	virtual void selectionChanged();
 
@@ -137,7 +137,7 @@ private:
 	/** greebo: Creates all the widgets
 	 */
 	void populatePage();
-	
+
 	// Context menu GTK callbacks
 	void onContextMenuAdd();
 	void onContextMenuDelete();

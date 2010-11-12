@@ -18,7 +18,7 @@ SoundManager::SoundManager() :
 {}
 
 // Enumerate shaders
-void SoundManager::forEachShader(SoundShaderVisitor& visitor) const 
+void SoundManager::forEachShader(SoundShaderVisitor& visitor) const
 {
     if (!ensureShadersLoaded())
         return;
@@ -33,8 +33,8 @@ void SoundManager::forEachShader(SoundShaderVisitor& visitor) const
 
 bool SoundManager::playSound(const std::string& fileName) {
 	// Make a copy of the filename
-	std::string name = fileName; 
-	
+	std::string name = fileName;
+
 	// Try to open the file as it is
 	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
 	std::cout << "Trying: " << name << std::endl;
@@ -44,13 +44,13 @@ bool SoundManager::playSound(const std::string& fileName) {
 		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}
-	
+
 	std::string root = name;
 	// File not found, try to strip the extension
 	if (name.rfind(".") != std::string::npos) {
 		root = name.substr(0, name.rfind("."));
 	}
-	
+
 	// Try to open the .ogg variant
 	name = root + ".ogg";
 	std::cout << "Trying: " << name << std::endl;
@@ -60,7 +60,7 @@ bool SoundManager::playSound(const std::string& fileName) {
 		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}
-	
+
 	// Try to open the file with .wav extension
 	name = root + ".wav";
 	std::cout << "Trying: " << name << std::endl;
@@ -70,7 +70,7 @@ bool SoundManager::playSound(const std::string& fileName) {
 		if (_soundPlayer) _soundPlayer->play(*file);
 		return true;
 	}
-	
+
 	// File not found
 	return false;
 }
@@ -79,15 +79,15 @@ void SoundManager::stopSound() {
 	if (_soundPlayer) _soundPlayer->stop();
 }
 
-ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName) 
+ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName)
 {
     if (!ensureShadersLoaded())
         return ISoundShaderPtr();
 
 	ShaderMap::const_iterator found = _shaders.find(shaderName);
-	
+
     // If the name was found, return it, otherwise return an empty shader object
-	return (found != _shaders.end()) ? found->second : _emptyShader;    
+	return (found != _shaders.end()) ? found->second : _emptyShader;
 }
 
 const std::string& SoundManager::getName() const {
@@ -113,13 +113,13 @@ bool SoundManager::loadShadersFromFilesystem() const
     try
     {
         GlobalFileSystem().forEachFile(
-            SOUND_FOLDER,			// directory 
+            SOUND_FOLDER,			// directory
             "sndshd", 				// required extension
             loader,	// loader callback
             99						// max depth
         );
 
-        globalOutputStream() << _shaders.size() 
+        globalOutputStream() << _shaders.size()
                              << " sound shaders found." << std::endl;
 
         _shadersLoaded = true;
@@ -137,7 +137,7 @@ bool SoundManager::ensureShadersLoaded() const
     return (_shadersLoaded || loadShadersFromFilesystem());
 }
 
-void SoundManager::initialiseModule(const ApplicationContext& ctx) 
+void SoundManager::initialiseModule(const ApplicationContext& ctx)
 {
     // Create the SoundPlayer if sound is not disabled
     const ApplicationContext::ArgumentList& args = ctx.getCmdLineArgs();
@@ -152,7 +152,7 @@ void SoundManager::initialiseModule(const ApplicationContext& ctx)
     }
     else
     {
-        globalOutputStream() << "SoundManager: sound ouput disabled" 
+        globalOutputStream() << "SoundManager: sound ouput disabled"
                              << std::endl;
     }
 }

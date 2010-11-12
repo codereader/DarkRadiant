@@ -12,16 +12,16 @@ namespace ui
 {
 
 class CommandListPopulator :
-	public IEventVisitor 
+	public IEventVisitor
 {
 	// The list store the items should be added to
 	Glib::RefPtr<Gtk::ListStore> _listStore;
 
 	const CommandList::Columns& _columns;
-	
+
 public:
 	CommandListPopulator(const Glib::RefPtr<Gtk::ListStore>& listStore,
-						 const CommandList::Columns& columns) : 
+						 const CommandList::Columns& columns) :
 		_listStore(listStore),
 		_columns(columns)
 	{}
@@ -30,13 +30,13 @@ public:
 	{
 		// Allocate a new list store element
 		Gtk::TreeModel::Row row = *_listStore->append();
-		
+
 		row[_columns.command] = eventName;
 		row[_columns.key] = GlobalEventManager().getAcceleratorStr(ev, true);
 	}
-	
+
 }; // class CommandListPopulator
-	
+
 } // namespace ui
 
 #endif /*COMMANDLISTPOPULATOR_H_*/

@@ -12,7 +12,7 @@ namespace entity {
 	const double TARGET_MAX_ARROW_LENGTH = 10;
 
 /**
- * greebo: Small utility walker which populates the given pointvector 
+ * greebo: Small utility walker which populates the given pointvector
  *         with the target coordinates while visiting each target.
  */
 class TargetLinesPopulator :
@@ -27,11 +27,11 @@ class TargetLinesPopulator :
 	// The volume intersection test
 	const VolumeTest& _volume;
 public:
-	TargetLinesPopulator(RenderablePointVector& pointVector, 
-						 const Vector3& worldPosition, 
+	TargetLinesPopulator(RenderablePointVector& pointVector,
+						 const Vector3& worldPosition,
 						 const VolumeTest& volume) :
-		_pointVector(pointVector), 
-		_worldPosition(worldPosition), 
+		_pointVector(pointVector),
+		_worldPosition(worldPosition),
 		_volume(volume)
 	{}
 
@@ -97,7 +97,7 @@ public:
  *         instances. It provides a render() method.
  *
  * The render() method is invoked by the TargetableInstance during the
- * frontend render pass.  
+ * frontend render pass.
  */
 class RenderableTargetLines :
 	public RenderablePointVector
@@ -105,7 +105,7 @@ class RenderableTargetLines :
 	const TargetKeyCollection& _targetKeys;
 
 public:
-	RenderableTargetLines(const TargetKeyCollection& targetKeys) : 
+	RenderableTargetLines(const TargetKeyCollection& targetKeys) :
 		RenderablePointVector(GL_LINES),
 		_targetKeys(targetKeys)
 	{}

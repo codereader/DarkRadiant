@@ -18,12 +18,12 @@ namespace ui {
 IMainFrameLayoutPtr MainFrameLayoutManager::getLayout(const std::string& name) {
 	// Try to lookup that layout
 	LayoutMap::const_iterator found = _layouts.find(name);
-	
+
 	if (found == _layouts.end()) {
 		globalErrorStream() << "MainFrameLayoutManager: Could not find " << name << std::endl;
 		return IMainFrameLayoutPtr();
 	}
-	
+
 	// Call the creation function and retrieve the layout
 	IMainFrameLayoutPtr layout = found->second();
 	return layout;
@@ -39,7 +39,7 @@ void MainFrameLayoutManager::registerLayout(
 
 	// Check if the insertion was successful
 	if (!result.second) {
-		globalErrorStream() << "MainFrameLayoutManager: Layout " 
+		globalErrorStream() << "MainFrameLayoutManager: Layout "
 			<< name << " already registered." << std::endl;
 		return;
 	}

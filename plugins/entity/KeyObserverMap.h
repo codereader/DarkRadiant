@@ -33,7 +33,7 @@ namespace entity
 /**
  * Comaparator to allow for case-insensitive search in std::multimap
  */
-struct CaseInsensitiveKeyCompare : 
+struct CaseInsensitiveKeyCompare :
 	public std::binary_function<std::string, std::string, bool>
 {
 	bool operator()(const std::string &s1, const std::string &s2) const
@@ -42,7 +42,7 @@ struct CaseInsensitiveKeyCompare :
 	}
 };
 
-class KeyObserverMap : 
+class KeyObserverMap :
 	public Entity::Observer
 {
 	// A map using case-insensitive comparison
@@ -65,7 +65,7 @@ public:
 		_entity.detachObserver(this);
 	}
 
-	/** 
+	/**
 	 * greebo: This registers a key for observation. As soon as the key gets inserted in the
 	 * entity's spawnargs, the given observer is attached to the entity's keyvalue.
 	 */
@@ -88,14 +88,14 @@ public:
 
 	void erase(const std::string& key, KeyObserver& observer)
 	{
-		for (KeyObservers::iterator i = _keyObservers.find(key); 
-			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
+		for (KeyObservers::iterator i = _keyObservers.find(key);
+			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end();
 			 /* in-loop increment */)
 		{
 			if (i->second == &observer)
 			{
 				EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key);
-				
+
 				if (keyValue != NULL)
 				{
 					// Detach the observer from the actual keyvalue
@@ -113,30 +113,30 @@ public:
 
 	void refreshObservers()
 	{
-		for (KeyObservers::const_iterator i = _keyObservers.begin(); 
+		for (KeyObservers::const_iterator i = _keyObservers.begin();
 			i != _keyObservers.end(); ++i)
 		{
 			// Call the observer once again with the entity value
 			i->second->onKeyValueChanged(_entity.getKeyValue(i->first));
 		}
 	}
-	
+
 	// Entity::Observer implementation, gets called on key insert
 	void onKeyInsert(const std::string& key, EntityKeyValue& value)
 	{
-		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
-			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
+		for (KeyObservers::const_iterator i = _keyObservers.find(key);
+			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end();
 			 ++i)
 		{
 			value.attach(*i->second);
 		}
 	}
-	
-	// Entity::Observer implementation, gets called on Key erase	
+
+	// Entity::Observer implementation, gets called on Key erase
 	void onKeyErase(const std::string& key, EntityKeyValue& value)
 	{
-		for (KeyObservers::const_iterator i = _keyObservers.find(key); 
-			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end(); 
+		for (KeyObservers::const_iterator i = _keyObservers.find(key);
+			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end();
 			 ++i)
 		{
 			value.detach(*i->second);

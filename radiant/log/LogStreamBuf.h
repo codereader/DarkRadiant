@@ -10,7 +10,7 @@ namespace applog {
  * greebo: The LogStreamBuf adapts the std::streambuf to use to the
  *         LogWriter class for the actual logging.
  */
-class LogStreamBuf : 
+class LogStreamBuf :
 	public std::streambuf
 {
 	// Internal character buffer

@@ -20,14 +20,14 @@ class IconTextButton :
 public:
 	/** Construct an IconTextButton with the given label text and local icon
 	 * path.
-	 * 
+	 *
 	 * @param name
 	 * The text to display under the icon, can be empty.
-	 * 
+	 *
 	 * @param icon
 	 * The icon to pack into the button.
 	 */
-	IconTextButton(const std::string& name, 
+	IconTextButton(const std::string& name,
 				   const Glib::RefPtr<Gdk::Pixbuf>& icon)
 	{
 		// Create vbox containing image and label
@@ -41,7 +41,7 @@ public:
 			Gtk::Label* label = Gtk::manage(new Gtk::Label(name));
 			vbx->pack_end(*label, true, false, 0);
 		}
-				
+
 		add(*vbx);
 
 		// Set the button to standard size
@@ -54,14 +54,14 @@ class IconTextToggleButton :
 {
 public:
 	/** Construct an IconTextToggleButton with the given label text and icon.
-	 * 
+	 *
 	 * @param name
 	 * The text to display under the icon, can be empty.
-	 * 
+	 *
 	 * @param icon
 	 * The icon to pack into the button.
 	 */
-	IconTextToggleButton(const std::string& name, 
+	IconTextToggleButton(const std::string& name,
 						 const Glib::RefPtr<Gdk::Pixbuf>& icon)
 	{
 		// Create vbox containing image and label
@@ -75,7 +75,7 @@ public:
 			Gtk::Label* label = Gtk::manage(new Gtk::Label(name));
 			vbx->pack_end(*label, true, false, 0);
 		}
-				
+
 		add(*vbx);
 
 		// Set the button to standard size

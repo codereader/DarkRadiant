@@ -5,8 +5,8 @@
 
 namespace script {
 
-ScriptCommand::ScriptCommand(const std::string& name, 
-							 const std::string& displayName, 
+ScriptCommand::ScriptCommand(const std::string& name,
+							 const std::string& displayName,
 							 const std::string& scriptFilename) :
 	_name(name),
 	_displayName(displayName),

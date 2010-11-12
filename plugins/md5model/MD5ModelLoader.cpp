@@ -75,7 +75,7 @@ model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name) {
 		try {
 			std::istream is(&inputStream);
 			parser::BasicDefTokeniser<std::istream> tokeniser(is);
-					
+
 			// Invoke the parser routine (might throw)
 			model->parseFromTokens(tokeniser);
 		}
@@ -85,7 +85,7 @@ model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name) {
 			// Return an empty model on error
 			return model::IModelPtr();
 		}
-		
+
 		// Load was successful, return the model
 		return model;
 	}
@@ -115,7 +115,7 @@ const StringSet& MD5ModelLoader::getDependencies() const {
 
 void MD5ModelLoader::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "MD5Model::initialiseModule called.\n";
-	
+
 	GlobalFiletypes().addType(
 		"model", getName(),
 		FileTypePattern("md5 meshes", "*.md5mesh")

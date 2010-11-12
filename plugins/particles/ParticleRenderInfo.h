@@ -8,10 +8,10 @@
 namespace particles
 {
 
-/** 
- * A structure holding info about how to draw a certain particle, 
+/**
+ * A structure holding info about how to draw a certain particle,
  * including texcoords, fade colour, etc.
- * 
+ *
  * This info can apply to a single ParticleQuad or a whole quad group
  * if the particle stage is animated or aimed.
  */

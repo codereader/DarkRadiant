@@ -253,7 +253,7 @@ public:
     matrix4_pivoted_scale_by_vec3(matrix, scale, m_bounds.origin);
 
     return matrix;
-  }  
+  }
 };
 
 #endif

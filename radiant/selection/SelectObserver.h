@@ -22,15 +22,15 @@ public:
 	DeviceVector _start;		// This is set at mouseDown
 	DeviceVector _current;		// This is set during mouseMove
 	DeviceVector _epsilon;		// A small threshold value to "swallow" minimal mouse moves
-	
+
 	std::size_t _unmovedReplaces;
-	
+
 	const View* _view;
 	Rectangle::Callback _windowUpdate;
-	
+
 	GdkEventButton* _event;
 	unsigned int _state;
-	
+
 private:
 	/* Returns the current "selection mode" (eToggle, eReplace, etc.) according
 	* to the mouse buttons and modifiers
@@ -57,7 +57,7 @@ public:
 	 */
   	void testSelect(DeviceVector position);
 
-	// Returns true if the user is currently selecting something (i.e. if any modifieres are held) 
+	// Returns true if the user is currently selecting something (i.e. if any modifieres are held)
 	bool selecting() const;
 
 	// Called right before onMouseMotion to store the current GDK state (needed for draw_area)
@@ -66,9 +66,9 @@ public:
 	// onMouseDown: Save the current mouse position as start, the mouse operation is beginning now
   	void mouseDown(DeviceVector position);
 
-	// onMouseMove: store the current position, and call the area draw update 
+	// onMouseMove: store the current position, and call the area draw update
 	void mouseMoved(DeviceVector position);
-	
+
 	// The mouseUp callback: check what has to be done and unconnect self from the calbacks
   	void mouseUp(DeviceVector position);
 };

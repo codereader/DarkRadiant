@@ -6,14 +6,14 @@
 
 namespace entity {
 
-class Doom3EntityCreator : 
+class Doom3EntityCreator :
 	public EntityCreator
 {
 public:
 	/** greebo: Creates an entity for the given EntityClass
 	 */
 	scene::INodePtr createEntity(const IEntityClassPtr& eclass);
-	
+
 	/* Connect two entities using a "target" key.
 	 */
 	void connectEntities(const scene::INodePtr& source, const scene::INodePtr& target);
@@ -23,7 +23,7 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
-	
+
 private:
 	/** greebo: Creates the right entity for the entityclass.
 	 */

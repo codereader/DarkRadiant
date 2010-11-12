@@ -2,10 +2,10 @@
 
 #include "iglrender.h"
 
-namespace render 
+namespace render
 {
 
-class GLSLDepthFillProgram : 
+class GLSLDepthFillProgram :
 	public GLProgram
 {
     // Program object

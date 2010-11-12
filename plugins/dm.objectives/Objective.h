@@ -27,7 +27,7 @@ public:
 		FAILED,
 		INVALID
 	} state;
-	
+
 	// Boolean flags
 	bool mandatory;
 	bool visible;
@@ -50,16 +50,16 @@ public:
 	// These entities are triggered when this objective completes/fails
 	std::string completionTarget;
 	std::string failureTarget;
-	
+
 	// Map of indexed components
 	typedef std::map<int, Component> ComponentMap;
 	ComponentMap components;
-	
+
 	// Constructor
-	Objective()	: 
-		state(INCOMPLETE), 
-		mandatory(true), 
-		visible(true), 
+	Objective()	:
+		state(INCOMPLETE),
+		mandatory(true),
+		visible(true),
 		ongoing(false),
 		irreversible(false)
 	{}

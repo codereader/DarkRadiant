@@ -35,7 +35,7 @@ private:
 
 		Gtk::VPaned* vertPane1;
 		Gtk::VPaned* vertPane2;
-		
+
 		gtkutil::PanedPosition posHPane;
 		gtkutil::PanedPosition posVPane1;
 		gtkutil::PanedPosition posVPane2;
@@ -62,7 +62,7 @@ private:
 	struct QuadrantInfo
 	{
 		Gtk::Widget* widget;	// the widget to pack (framed widget)
-		
+
 		bool isCamera;		// true => is camera view
 		XYWndPtr xyWnd;		// the xywnd (NULL if isCamera == true)
 
@@ -110,7 +110,7 @@ private:
 	void constructMenus();
 	void deconstructMenus();
 	void deconstructLayout();
-	
+
 	void distributeWidgets();
 
 	// Saves the state of this window layout to the given XMLRegistry path (without trailing slash)

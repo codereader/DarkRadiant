@@ -22,7 +22,7 @@ EClassTreeBuilder::EClassTreeBuilder(const Glib::RefPtr<Gtk::TreeStore>& targetS
 {
 	// Travese the entity classes, this will call visit() for each eclass
 	GlobalEntityClassManager().forEach(*this);
-	
+
 	// Visit the tree populator in order to fill in the column data
 	_treePopulator.forEachNode(*this);
 }
@@ -30,22 +30,22 @@ EClassTreeBuilder::EClassTreeBuilder(const Glib::RefPtr<Gtk::TreeStore>& targetS
 void EClassTreeBuilder::visit(IEntityClassPtr eclass)
 {
 	std::string fullPath;
-	
+
 	// Prefix mod name
 	fullPath = eclass->getModName() + "/";
-	
+
 	// Prefix inheritance path (recursively)
 	fullPath += getInheritancePathRecursive(eclass);
-	
+
 	// The entityDef name itself
 	fullPath += eclass->getName();
-	
+
 	// Let the VFSTreePopulator do the insertion
 	_treePopulator.addPath(fullPath);
 }
 
 void EClassTreeBuilder::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-							  const Gtk::TreeModel::iterator& iter, 
+							  const Gtk::TreeModel::iterator& iter,
 							  const std::string& path,
 							  bool isExplicit)
 {
@@ -57,33 +57,33 @@ void EClassTreeBuilder::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
 
 std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr& eclass) {
 	std::string returnValue;
-	
+
 	try {
 		EntityClassAttribute attribute = eclass->getAttribute(INHERIT_KEY);
-		
+
 		// Don't use empty or derived "inherit" keys
 		if (!attribute.value.empty() && !attribute.inherited) {
-			
+
 			// Get the inherited eclass first and resolve the path
 			IEntityClassPtr parent = GlobalEntityClassManager().findClass(
 				attribute.value
 			);
-			
+
 			if (parent != NULL) {
 				returnValue += getInheritancePathRecursive(parent);
 			}
 			else {
-				globalErrorStream() << "EClassTreeBuilder: Cannot resolve inheritance path for " 
+				globalErrorStream() << "EClassTreeBuilder: Cannot resolve inheritance path for "
 					<< eclass->getName() << std::endl;
 			}
-			
+
 			returnValue += attribute.value + "/";
 		}
 	}
 	catch (std::runtime_error&) {
 		// no inherit key
 	}
-	
+
 	return returnValue;
 }
 

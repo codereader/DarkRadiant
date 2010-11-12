@@ -258,7 +258,7 @@ static int _obj_mtl_load( picoModel_t *model )
 	p = _pico_new_parser( mtlBuffer, mtlBufSize );
 	if (p == NULL)
 		_obj_mtl_error_return;
-	
+
 	/* doo teh .mtl parse */
 	while( 1 )
 	{

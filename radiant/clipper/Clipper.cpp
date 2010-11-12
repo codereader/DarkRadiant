@@ -30,7 +30,7 @@ Clipper::Clipper() :
 {}
 
 // Update the internally stored variables on registry key change
-void Clipper::keyChanged(const std::string& key, const std::string& val) 
+void Clipper::keyChanged(const std::string& key, const std::string& val)
 {
 	_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);
 	_useCaulk = (GlobalRegistry().get(RKEY_CLIPPER_USE_CAULK) == "1");
@@ -38,7 +38,7 @@ void Clipper::keyChanged(const std::string& key, const std::string& val)
 
 void Clipper::constructPreferences() {
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Clipper"));
-	
+
 	page->appendCheckBox("", _("Clipper tool uses caulk texture"), RKEY_CLIPPER_USE_CAULK);
 	page->appendEntry(_("Caulk shader name"), RKEY_CLIPPER_CAULK_SHADER);
 }
@@ -60,7 +60,7 @@ Vector3& Clipper::getMovingClipCoords() {
 	if (_movingClip != NULL) {
 		return _movingClip->_coords;
 	}
-	
+
 	// Return at least anything, i.e. the coordinates of the first clip point
 	return _clipPoints[0]._coords;
 }
@@ -82,13 +82,13 @@ const std::string& Clipper::getCaulkShader() const
 // greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
 ClipPoint* Clipper::find(const Vector3& point, EViewType viewtype, float scale) {
 	double bestDistance = FLT_MAX;
-	
+
 	ClipPoint* bestClip = NULL;
-	
+
 	for (unsigned int i = 0; i < NUM_CLIP_POINTS; i++) {
 		_clipPoints[i].testSelect(point, viewtype, scale, bestDistance, bestClip);
 	}
-	
+
 	return bestClip;
 }
 
@@ -107,14 +107,14 @@ void Clipper::draw(float scale) {
 
 void Clipper::getPlanePoints(Vector3 planepts[3], const AABB& bounds) const {
 	ASSERT_MESSAGE(valid(), "clipper points not initialised");
-	
+
 	planepts[0] = _clipPoints[0]._coords;
 	planepts[1] = _clipPoints[1]._coords;
 	planepts[2] = _clipPoints[2]._coords;
-	
+
 	Vector3 maxs(bounds.origin + bounds.extents);
 	Vector3 mins(bounds.origin - bounds.extents);
-	
+
 	if (!_clipPoints[2].isSet()) {
 		int n = (_viewType == XY) ? 2 : (_viewType == YZ) ? 0 : 1;
 		int x = (n == 0) ? 1 : 0;
@@ -138,12 +138,12 @@ void Clipper::getPlanePoints(Vector3 planepts[3], const AABB& bounds) const {
 	}
 }
 
-void Clipper::splitBrushes(const Vector3& p0, 
-	const Vector3& p1, const Vector3& p2, 
+void Clipper::splitBrushes(const Vector3& p0,
+	const Vector3& p1, const Vector3& p2,
 	EBrushSplit split)
 {
 	Vector3 planePoints[3] = {p0, p1, p2};
-	
+
 	brush::algorithm::splitBrushesByPlane(planePoints, split);
 	GlobalMainFrame().updateAllWindows();
 }
@@ -180,7 +180,7 @@ void Clipper::flipClip() {
 void Clipper::reset() {
 	for (unsigned int i = 0; i < NUM_CLIP_POINTS; i++) {
 		_clipPoints[i].reset();
-	}	
+	}
 }
 
 void Clipper::clip() {
@@ -188,9 +188,9 @@ void Clipper::clip() {
 		Vector3 planepts[3];
 		AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
 		getPlanePoints(planepts, bounds);
-		
+
 		splitBrushes(planepts[0], planepts[1], planepts[2], (!_switch) ? eFront : eBack);
-		
+
 		reset();
 		update();
 	}
@@ -201,9 +201,9 @@ void Clipper::splitClip() {
 		Vector3 planepts[3];
 		AABB bounds(Vector3(0, 0, 0), Vector3(64, 64, 64));
 		getPlanePoints(planepts, bounds);
-		
+
 		splitBrushes(planepts[0], planepts[1], planepts[2], eFrontAndBack);
-		
+
 		reset();
 		update();
 	}
@@ -216,12 +216,12 @@ bool Clipper::clipMode() const {
 void Clipper::onClipMode(bool enabled) {
 	// Revert all clip points to <0,0,0> values
 	reset();
-	
+
 	// Revert the _movingClip pointer, if clip mode to be disabled
 	if (!enabled && _movingClip) {
 		_movingClip = 0;
 	}
-	
+
 	update();
 }
 
@@ -270,12 +270,12 @@ const StringSet& Clipper::getDependencies() const {
 
 void Clipper::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Clipper::initialiseModule called\n";
-	
+
 	_useCaulk = (GlobalRegistry().get(RKEY_CLIPPER_USE_CAULK) == "1");
 	_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);
 	GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_USE_CAULK);
 	GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_CAULK_SHADER);
-	
+
 	constructPreferences();
 
 	// Register the clip commands

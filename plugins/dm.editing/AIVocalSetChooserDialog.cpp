@@ -58,7 +58,7 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 
 	_setView->get_selection()->signal_changed().connect(
 		sigc::mem_fun(*this, &AIVocalSetChooserDialog::onSetSelectionChanged));
-	
+
 	// Head Name column
 	_setView->append_column(*Gtk::manage(new gtkutil::TextColumn("", _columns.name)));
 
@@ -136,7 +136,7 @@ Gtk::Widget& AIVocalSetChooserDialog::createButtonPanel()
 
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetChooserDialog::onCancel));
 	_okButton->signal_clicked().connect(sigc::mem_fun(*this, &AIVocalSetChooserDialog::onOK));
-	
+
 	hbx->pack_end(*_okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
@@ -147,14 +147,14 @@ Gtk::Widget& AIVocalSetChooserDialog::createDescriptionPanel()
 {
 	// Create a GtkTextView
 	_description = Gtk::manage(new Gtk::TextView);
-	
+
 	_description->set_wrap_mode(Gtk::WRAP_WORD);
 	_description->set_editable(false);
 
 	return *Gtk::manage(new gtkutil::ScrolledFrame(*_description));
 }
 
-void AIVocalSetChooserDialog::onCancel() 
+void AIVocalSetChooserDialog::onCancel()
 {
 	_selectedSet = "";
 	_result = RESULT_CANCEL;
@@ -162,7 +162,7 @@ void AIVocalSetChooserDialog::onCancel()
 	destroy();
 }
 
-void AIVocalSetChooserDialog::onOK() 
+void AIVocalSetChooserDialog::onOK()
 {
 	_result = RESULT_OK;
 
@@ -176,9 +176,9 @@ void AIVocalSetChooserDialog::onSetSelectionChanged()
 	Gtk::TreeModel::iterator iter = _setView->get_selection()->get_selected();
 
 	// Add button is enabled if there is a selection and it is not a folder.
-	if (iter) 
+	if (iter)
 	{
-		// Make the OK button active 
+		// Make the OK button active
 		_okButton->set_sensitive(true);
 		_description->set_sensitive(true);
 
@@ -186,7 +186,7 @@ void AIVocalSetChooserDialog::onSetSelectionChanged()
 		_selectedSet = Glib::ustring((*iter)[_columns.name]);
 
 		// Lookup the IEntityClass instance
-		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(_selectedSet);	
+		IEntityClassPtr eclass = GlobalEntityClassManager().findClass(_selectedSet);
 
 		if (eclass != NULL)
 		{
@@ -216,7 +216,7 @@ void AIVocalSetChooserDialog::onSetSelectionChanged()
 						usage += i->value;
 				}
 			}
-			
+
 			buf->set_text(usage);
 		}
 	}

@@ -51,7 +51,7 @@
 
 namespace ui {
 
-MainFrame::MainFrame() : 
+MainFrame::MainFrame() :
 	_window(NULL),
 	_mainContainer(NULL),
 	_screenUpdatesEnabled(true)
@@ -67,7 +67,7 @@ const std::string& MainFrame::getName() const
 const StringSet& MainFrame::getDependencies() const
 {
 	static StringSet _dependencies;
-	
+
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_MAINFRAME_LAYOUT_MANAGER);
@@ -78,7 +78,7 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_UIMANAGER);
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
 	}
-	
+
 	return _dependencies;
 }
 
@@ -109,7 +109,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	page->appendCombo(_("Start DarkRadiant on monitor"), RKEY_MULTIMON_START_MONITOR, list);
 
 	// Add the toggle max/min command for floating windows
-	GlobalCommandSystem().addCommand("ToggleFullScreenCamera", 
+	GlobalCommandSystem().addCommand("ToggleFullScreenCamera",
 		boost::bind(&MainFrame::toggleFullscreenCameraView, this, _1)
 	);
 	GlobalEventManager().addCommand("ToggleFullScreenCamera", "ToggleFullScreenCamera");
@@ -119,7 +119,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 
 	if (lib != NULL)
 	{
-		void (WINAPI *dwmEnableComposition) (bool) = 
+		void (WINAPI *dwmEnableComposition) (bool) =
 			(void (WINAPI *) (bool)) GetProcAddress(lib, "DwmEnableComposition");
 
 		if (dwmEnableComposition)
@@ -127,12 +127,12 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 			// Add a page for Desktop Composition stuff
 			PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Compatibility"));
 
-			page->appendCheckBox("", _("Disable Windows Desktop Composition"), 
+			page->appendCheckBox("", _("Disable Windows Desktop Composition"),
 				RKEY_DISABLE_WIN_DESKTOP_COMP);
 
 			GlobalRegistry().addKeyObserver(this, RKEY_DISABLE_WIN_DESKTOP_COMP);
 		}
-		
+
 		FreeLibrary(lib);
 	}
 
@@ -163,14 +163,14 @@ void MainFrame::setDesktopCompositionEnabled(bool enabled)
 
 	if (lib != NULL)
 	{
-		void (WINAPI *dwmEnableComposition) (bool) = 
+		void (WINAPI *dwmEnableComposition) (bool) =
 			(void (WINAPI *) (bool)) GetProcAddress(lib, "DwmEnableComposition");
 
 		if (dwmEnableComposition)
 		{
 			dwmEnableComposition(enabled ? TRUE : FALSE);
 		}
-		
+
 		FreeLibrary(lib);
 	}
 }
@@ -213,7 +213,7 @@ void MainFrame::construct()
 
 	// register the commands
 	GlobalMainFrameLayoutManager().registerCommands();
-  
+
   	// Broadcast the startup event
     radiant::getGlobalRadiant()->broadcastStartupEvent();
 }
@@ -224,7 +224,7 @@ void MainFrame::removeLayout()
 	if (_currentLayout == NULL) return;
 
 	_currentLayout->deactivate();
-	_currentLayout = IMainFrameLayoutPtr();	
+	_currentLayout = IMainFrameLayoutPtr();
 }
 
 void MainFrame::destroy()
@@ -239,9 +239,9 @@ void MainFrame::destroy()
 
 		removeLayout();
 	}
-	
+
 	_window->hide(); // hide the Gtk::Window
-	
+
 	shutdown();
 
 	_window.reset(); // destroy the window
@@ -278,9 +278,9 @@ void MainFrame::createTopLevelWindow()
 
 #ifndef WIN32
 	{
-		// Set the default icon for non-Win32-systems 
+		// Set the default icon for non-Win32-systems
 		// (Win32 builds use the one embedded in the exe)
-		std::string icon = GlobalRegistry().get(RKEY_BITMAPS_PATH) + 
+		std::string icon = GlobalRegistry().get(RKEY_BITMAPS_PATH) +
   						   "darkradiant_icon_64x64.png";
 
 		Gtk::Window::set_default_icon_from_file(icon);
@@ -320,7 +320,7 @@ void MainFrame::restoreWindowPosition()
 		// Apply the position
 		_windowPosition.applyPosition();
 	}
-	
+
 	if (windowState & Gdk::WINDOW_STATE_MAXIMIZED)
 	{
 		_window->maximize();
@@ -336,7 +336,7 @@ Gtk::Widget* MainFrame::createMenuBar()
 {
 	// Create the Filter menu entries before adding the menu bar
     FiltersMenu::addItemsToMainMenu();
-    
+
     // Return the "main" menubar from the UIManager
 	return GlobalUIManager().getMenuManager().get("main");
 }
@@ -357,13 +357,13 @@ void MainFrame::create()
 	_window->add(*vbox);
 
     vbox->show();
-    
+
     // Retrieve the "main" menubar from the UIManager
 	vbox->pack_start(*createMenuBar(), false, false, 0);
-    
-    // Instantiate the ToolbarManager and retrieve the view toolbar widget 
+
+    // Instantiate the ToolbarManager and retrieve the view toolbar widget
 	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-	
+
 	Gtk::Toolbar* viewToolbar = tbCreator.getToolbar("view");
 
 	if (viewToolbar != NULL)
@@ -379,14 +379,14 @@ void MainFrame::create()
 	{
 		globalWarningStream() << "MainFrame: Cannot instantiate view toolbar!" << std::endl;
 	}
-	
+
 	// Create the main container (this is a hbox)
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
-	
+
 	hbox->show();
 	vbox->pack_start(*hbox, true, true, 0);
-    
-    // Get the edit toolbar widget 
+
+    // Get the edit toolbar widget
 	Gtk::Toolbar* editToolbar = tbCreator.getToolbar("edit");
 
 	if (editToolbar != NULL)
@@ -406,8 +406,8 @@ void MainFrame::create()
 	// Create the main container for layouts
 	_mainContainer = Gtk::manage(new Gtk::VBox(false, 0));
 	hbox->pack_start(*_mainContainer, true, true, 0);
-    
-    // Create and pack main statusbar 
+
+    // Create and pack main statusbar
 	Gtk::Widget* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
 
 	vbox->pack_end(*statusBar, false, false, 2);
@@ -420,7 +420,7 @@ void MainFrame::create()
     GlobalGroupDialog().addPage(
     	"entity",	// name
     	"Entity", // tab title
-    	"cmenu_add_entity.png", // tab icon 
+    	"cmenu_add_entity.png", // tab icon
     	GlobalEntityInspector().getWidget(), // page widget
     	_("Entity")
     );
@@ -429,17 +429,17 @@ void MainFrame::create()
 	GlobalGroupDialog().addPage(
     	"mediabrowser",	// name
     	"Media", // tab title
-    	"folder16.png", // tab icon 
+    	"folder16.png", // tab icon
     	*MediaBrowser::getInstance().getWidget(), // page widget
     	_("Media")
     );
-	
+
     // Add the console widget if using floating window mode, otherwise the
     // console is placed in the bottom-most split pane.
 	GlobalGroupDialog().addPage(
     	"console",	// name
     	"Console", // tab title
-    	"iconConsole16.png", // tab icon 
+    	"iconConsole16.png", // tab icon
 		Console::Instance(), // page widget
     	_("Console")
     );
@@ -452,9 +452,9 @@ void MainFrame::create()
 	// Create the camera instance
 	GlobalCamera().setParent(getTopLevelWindow());
 
-	// Start the autosave timer so that it can periodically check the map for changes 
+	// Start the autosave timer so that it can periodically check the map for changes
 	map::AutoSaver().startTimer();
-  
+
 	// Initialise the shaderclipboard
 	GlobalShaderClipboard().clear();
 
@@ -484,13 +484,13 @@ void MainFrame::shutdown()
 
 	// Shutdown the texturebrowser (before the GroupDialog gets shut down).
 	GlobalTextureBrowser().destroyWindow();
-	
+
 	// Broadcast shutdown event to RadiantListeners
 	radiant::getGlobalRadiant()->broadcastShutdownEvent();
 
 	// Destroy the Overlay instance
 	Overlay::destroyInstance();
-	
+
 	// Stop the AutoSaver class from being called
 	map::AutoSaver().stopTimer();
 }
@@ -518,7 +518,7 @@ void MainFrame::applyLayout(const std::string& name)
 	if (getCurrentLayout() == name)
 	{
 		// nothing to do
-		globalOutputStream() << "MainFrame: Won't activate layout " << name 
+		globalOutputStream() << "MainFrame: Won't activate layout " << name
 			<< ", is already active." << std::endl;
 		return;
 	}

@@ -41,13 +41,13 @@ public:
 	 * Destructor
 	 */
 	virtual ~GLProgram() {}
-	
+
 	/**
 	 * Create this program using glGenProgramsARB and siblings. This needs the
 	 * OpenGL system to be initialised so cannot happen in the constructor.
 	 */
 	virtual void create() = 0;
-	
+
 	/**
 	 * Destroy this program using GL calls.
 	 */
@@ -57,7 +57,7 @@ public:
 	 * Bind this program as the currently-operative shader.
 	 */
 	virtual void enable() = 0;
-  
+
   	/**
   	 * Unbind this program from OpenGL.
   	 */
@@ -70,31 +70,31 @@ public:
      * This method is invoked shortly before the renderable geometry is
      * submitted for rendering; the GLProgram must apply to the GL state any
      * parameters it uses.
-	 * 
+	 *
 	 * @param viewer
 	 * Location of the viewer in object space.
-	 * 
+	 *
 	 * @param localToWorld
 	 * Local to world transformation matrix.
-	 * 
+	 *
 	 * @param origin
 	 * Origin of the light in 3D space.
-	 * 
+	 *
 	 * @param colour
 	 * Colour of the light in 3D space.
-	 * 
+	 *
 	 * @param world2light
 	 * Transformation from world space into light space, based on the position
 	 * and transformations of the light volume.
-	 * 
+	 *
 	 * @param ambientFactor
 	 * 0.0 for a normal light, 1.0 for an ambient light. This affects whether
 	 * the lighting is directional or not.
 	 */
-	virtual void applyRenderParams(const Vector3& viewer, 
-  							       const Matrix4& localToWorld, 
-  							       const Vector3& origin, 
-  							       const Vector3& colour, 
+	virtual void applyRenderParams(const Vector3& viewer,
+  							       const Matrix4& localToWorld,
+  							       const Vector3& origin,
+  							       const Vector3& colour,
   							       const Matrix4& world2light,
   							       float ambientFactor) = 0;
 };
@@ -171,9 +171,9 @@ public:
      * Source blend mode.
      */
     GLenum m_blend_src;
-    
+
     /**
-     * \brief 
+     * \brief
      * Destination blend mode
      */
     GLenum m_blend_dst;
@@ -198,13 +198,13 @@ public:
     GLProgram* glProgram;
 
     /**
-     * \brief 
+     * \brief
      * The cube-map texgen mode for rendering.
      */
     ShaderLayer::CubeMapMode cubeMapMode;
 
 	// Default constructor
-	OpenGLState() 
+	OpenGLState()
 	: renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
       polygonOffset(0.0f),
 	  texture0(0),

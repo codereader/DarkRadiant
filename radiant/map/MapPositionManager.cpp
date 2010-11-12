@@ -10,11 +10,11 @@
 #include <boost/bind.hpp>
 
 namespace map {
-	
+
 	namespace {
 		const std::string SAVE_COMMAND_ROOT = "SavePosition";
 		const std::string LOAD_COMMAND_ROOT = "LoadPosition";
-		
+
 		unsigned int MAX_POSITIONS = 10;
 	}
 
@@ -27,7 +27,7 @@ void MapPositionManager::initialise() {
 	for (unsigned int i = 1; i <= MAX_POSITIONS; i++) {
 		// Allocate a new MapPosition object and store the shared_ptr
 		_positions[i] = MapPositionPtr(new MapPosition(i));
-					
+
 		// Add the load/save commands to the eventmanager and point it to the member
 		GlobalCommandSystem().addCommand(
 			SAVE_COMMAND_ROOT + intToStr(i),
@@ -42,7 +42,7 @@ void MapPositionManager::initialise() {
 			SAVE_COMMAND_ROOT + intToStr(i),
 			SAVE_COMMAND_ROOT + intToStr(i)
 		);
-		
+
 		GlobalEventManager().addCommand(
 			LOAD_COMMAND_ROOT + intToStr(i),
 			LOAD_COMMAND_ROOT + intToStr(i)
@@ -54,7 +54,7 @@ void MapPositionManager::initialise() {
 void MapPositionManager::loadPositions() {
 	// Find the worldspawn node
 	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
-	
+
 	if (worldspawn != NULL) {
 		for (unsigned int i = 1; i <= MAX_POSITIONS; i++) {
 			if (_positions[i] != NULL) {
@@ -70,7 +70,7 @@ void MapPositionManager::loadPositions() {
 void MapPositionManager::savePositions() {
 	// Find the worldspawn node
 	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
-	
+
 	for (unsigned int i = 1; i <= MAX_POSITIONS; i++) {
 		if (_positions[i] != NULL) {
 			_positions[i]->save(worldspawn);
@@ -81,7 +81,7 @@ void MapPositionManager::savePositions() {
 void MapPositionManager::removePositions() {
 	// Find the worldspawn node
 	Entity* worldspawn = Scene_FindEntityByClass("worldspawn");
-	
+
 	for (unsigned int i = 1; i <= MAX_POSITIONS; i++) {
 		if (_positions[i] != NULL) {
 			_positions[i]->remove(worldspawn);

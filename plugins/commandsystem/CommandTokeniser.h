@@ -14,10 +14,10 @@ class CommandTokeniserFunc
         DOUBLEQUOTE,      // inside double-quoted text, no tokenising
 		SINGLEQUOTE,	  // Inside single-quoted text, no tokenising
     } _state;
-        
+
     // List of delimiters to skip
     const char* _delims;
-    
+
     // Test if a character is a delimiter
     bool isDelim(char c) {
         const char* curDelim = _delims;
@@ -28,12 +28,12 @@ class CommandTokeniserFunc
         }
         return false;
     }
-    
+
 public:
 
     // Constructor
-    CommandTokeniserFunc(const char* delims) : 
-		_state(SEARCHING), 
+    CommandTokeniserFunc(const char* delims) :
+		_state(SEARCHING),
 		_delims(delims)
     {}
 
@@ -52,7 +52,7 @@ public:
         tok = "";
 
         while (next != end) {
-            
+
             switch (_state) {
 
                 case SEARCHING:
@@ -80,12 +80,12 @@ public:
                         return true;
                     }
 
-                    // Now next is pointing at a non-delimiter. Switch on this 
+                    // Now next is pointing at a non-delimiter. Switch on this
                     // character.
                     switch (*next) {
-                        
-                        // Found a quote, enter DOUBLEQUOTE state, or return the 
-                        // current token if we are in the process of building 
+
+                        // Found a quote, enter DOUBLEQUOTE state, or return the
+                        // current token if we are in the process of building
                         // one.
                         case '\"':
                             if (tok != "") {
@@ -96,9 +96,9 @@ public:
                                 ++next;
                                 continue; // skip the quote
                             }
-            
-                        // Found a quote, enter SINGLEQUOTE state, or return the 
-                        // current token if we are in the process of building 
+
+                        // Found a quote, enter SINGLEQUOTE state, or return the
+                        // current token if we are in the process of building
                         // one.
                         case '\'':
 							if (tok != "") {
@@ -109,16 +109,16 @@ public:
                                 ++next;
                                 continue; // skip the quote
                             }
-            
+
                         // General case. Token lasts until next delimiter.
                         default:
                             tok += *next;
                             ++next;
                             continue;
                     }
-                    
+
                 case DOUBLEQUOTE:
-					// In the quoted state, just advance until the closing 
+					// In the quoted state, just advance until the closing
                     // quote. No delimiter splitting is required.
                     if (*next == '\"') {
                         ++next;
@@ -131,7 +131,7 @@ public:
                     }
 
 				case SINGLEQUOTE:
-					// In the quoted state, just advance until the closing 
+					// In the quoted state, just advance until the closing
                     // quote. No delimiter splitting is required.
                     if (*next == '\'') {
                         ++next;
@@ -144,28 +144,28 @@ public:
                     }
             } // end of state switch
         } // end of for loop
-        
+
         // Return true if we have added anything to the token
         return (tok != "");
     }
-    
+
     // REQUIRED. Reset function to clear internal state
     void reset() {
         _state = SEARCHING;
     }
-    
+
 };
 
 /**
  * greebo: A Command Tokeniser splits the given input strings into
- * pieces, delimited by whitespace characters. The tokeniser is respecting 
+ * pieces, delimited by whitespace characters. The tokeniser is respecting
  * quoted content, which will be treated as one string token (excluding the actual quotes).
  */
 class CommandTokeniser :
 	public parser::StringTokeniser
 {
 	typedef boost::tokenizer<CommandTokeniserFunc> Tokeniser;
-    
+
     Tokeniser _tok;
     Tokeniser::iterator _tokIter;
 
@@ -193,7 +193,7 @@ public:
 	void assertNextToken(const std::string& val) {
         const std::string tok = nextToken();
         if (tok != val)
-            throw parser::ParseException("CommandTokeniser: Assertion failed: Required \"" 
+            throw parser::ParseException("CommandTokeniser: Assertion failed: Required \""
             					 + val + "\", found \"" + tok + "\"");
     }
 

@@ -28,7 +28,7 @@ void RegistryConnector::importRegistryValue(const StringSerialisablePtr& obj,
    obj->importFromString(GlobalRegistry().get(key));
 }
 
-void RegistryConnector::importValues() 
+void RegistryConnector::importValues()
 {
    for (ObjectMap::iterator i = _objects.begin();
         i != _objects.end();

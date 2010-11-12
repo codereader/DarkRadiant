@@ -25,7 +25,7 @@ namespace ui
 		const char* const WINDOW_TITLE_EDIT = N_("Edit Filter");
 		const char* const WINDOW_TITLE_VIEW = N_("View Filter");
 
-		const char* const RULE_HELP_TEXT = 
+		const char* const RULE_HELP_TEXT =
 			N_("Filter rules are applied in the shown order.\n" \
 			"<b>Match</b> is accepting regular expressions.\n" \
 			"<b>Object</b>-type filters can be used to match <b>patch</b> or <b>brush</b>.");
@@ -87,7 +87,7 @@ void FilterEditor::populateWindow()
 	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(*entry, 18, 1)), false, false, 0);
 
 	entry->signal_changed().connect(sigc::mem_fun(*this, &FilterEditor::onNameEdited));
-	
+
 	// And the rule treeview
 	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Rules") + "</b>")), false, false, 0);
@@ -124,7 +124,7 @@ void FilterEditor::update()
 
 		// Allocate a new list store element and store its pointer into <iter>
 		Gtk::TreeModel::Row row = *_ruleStore->append();
-		
+
 		row[_columns.index] = static_cast<int>(i);
 		row[_columns.type] = getTypeIndexForString(rule.type);
 		row[_columns.typeString] = rule.type;
@@ -146,7 +146,7 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 
 	// Create a new treeview
 	_ruleView = Gtk::manage(new Gtk::TreeView(_ruleStore));
-	
+
 	gtkutil::TextColumn* indexCol = Gtk::manage(new gtkutil::TextColumn(_("Index"), _columns.index));
 	gtkutil::TextColumn* regexCol = Gtk::manage(new gtkutil::TextColumn(_("Match"), _columns.regexMatch));
 
@@ -168,7 +168,7 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 	Gtk::CellRendererText* rend = regexCol->getCellRenderer();
 	rend->property_editable() = true;
 	rend->signal_edited().connect(sigc::mem_fun(*this, &FilterEditor::onRegexEdited));
-	
+
 	// Create the cell renderer for the type choice
 	Gtk::CellRendererCombo* typeComboRenderer = Gtk::manage(new Gtk::CellRendererCombo);
 
@@ -182,7 +182,7 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 	typeCol->add_attribute(typeComboRenderer->property_markup(), _columns.typeString);
 
 	typeComboRenderer->signal_edited().connect(sigc::mem_fun(*this, &FilterEditor::onTypeEdited));
-	
+
 	_ruleView->append_column(*indexCol);
 	_ruleView->append_column(*typeCol);
 	_ruleView->append_column(*regexCol);
@@ -226,7 +226,7 @@ const Glib::RefPtr<Gtk::ListStore>& FilterEditor::createTypeStore()
 	_typeStore = Gtk::ListStore::create(_typeStoreColumns);
 
 	int index = 0;
-	
+
 	Gtk::TreeModel::Row row = *_typeStore->append();
 	row[_typeStoreColumns.type] = index++;
 	row[_typeStoreColumns.typeString] = Glib::ustring("entityclass");
@@ -254,14 +254,14 @@ const Glib::RefPtr<Gtk::ListStore>& FilterEditor::createActionStore()
 	row = *_actionStore->append();
 	row[_actionStoreColumns.boolean] = false;
 	row[_actionStoreColumns.action] = Glib::ustring(_("hide"));
-	
+
 	return _actionStore;
 }
 
 Gtk::Widget& FilterEditor::createButtonPanel()
 {
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-	
+
 	if (_viewOnly)
 	{
 		// OK button
@@ -275,16 +275,16 @@ Gtk::Widget& FilterEditor::createButtonPanel()
 		// Save button
 		Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 		okButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onSave));
-		
+
 		buttonHBox->pack_end(*okButton, true, true, 0);
-				
+
 		// Cancel Button
 		Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 		cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterEditor::onCancel));
-		
+
 		buttonHBox->pack_end(*cancelButton, true, true, 0);
 	}
-	
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
@@ -300,7 +300,7 @@ int FilterEditor::getTypeIndexForString(const std::string& type)
 	else if (type == "object") {
 		return 2;
 	}
-	
+
 	return -1;
 }
 
@@ -421,7 +421,7 @@ void FilterEditor::onActionEdited(const Glib::ustring& path, const Glib::ustring
 
 		// Update the bool flag
 		_filter.rules[index].show = (new_text == _("show"));
-		
+
 		// Update the liststore item
 		row[_columns.showHide] = new_text;
 	}

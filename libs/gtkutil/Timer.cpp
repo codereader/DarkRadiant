@@ -11,12 +11,12 @@ Timer::Timer(const unsigned long timeout, TimerCallback callback, gpointer data)
 	_data(data)
 {}
 
-// Sets the timeout to the given value (in ms). The changes get 
+// Sets the timeout to the given value (in ms). The changes get
 // activate when enable() is called the next time.
 void Timer::setTimeout(const unsigned long timeout) {
 	// Stop the current timer, if there is one running
 	disable();
-	
+
 	// Store the new timeout value
 	_timeout = timeout;
 }
@@ -25,7 +25,7 @@ void Timer::setTimeout(const unsigned long timeout) {
 void Timer::setCallback(TimerCallback callback) {
 	// Stop the current timer, if there is one running
 	disable();
-	
+
 	// Store the new callback function internally
 	_callback = callback;
 }
@@ -34,7 +34,7 @@ void Timer::setCallback(TimerCallback callback) {
 void Timer::setCallbackData(gpointer data) {
 	// Stop the current timer, if there is one running
 	disable();
-	
+
 	// Store the new data pointer internally
 	_data = data;
 }

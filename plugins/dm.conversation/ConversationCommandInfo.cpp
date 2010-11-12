@@ -9,13 +9,13 @@ namespace conversation {
 int ConversationCommandInfo::_highestId = 0;
 
 void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass) {
-	
+
 	assert(eclass != NULL); // don't accept NULL pointers
 
 	name = eclass->getAttribute("editor_cmdName").value;
 	waitUntilFinishedAllowed = (eclass->getAttribute("editor_waitUntilFinishedAllowed").value == "1");
 	sentence = eclass->getAttribute("editor_sentence").value;
-	
+
 	// Read the arguments
 	// Find all attributes matching "argType", this spawnarg is mandatory
 	EntityClassAttributeList argTypes = eclass->getAttributeList("editor_argType");
@@ -56,8 +56,8 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 			info.type = ArgumentInfo::ARGTYPE_BOOL;
 		}
 		else {
-			globalErrorStream() << "Could not determine Conversation Command Argument type: " << 
-				argTypeStr << " on entityDef " << eclass->getName() << std::endl; 
+			globalErrorStream() << "Could not determine Conversation Command Argument type: " <<
+				argTypeStr << " on entityDef " << eclass->getName() << std::endl;
 		}
 
 		// add the argument to the local list

@@ -26,11 +26,11 @@ class XDataSelector :
 {
 private:
 	// Treestore enum
-	struct XdataTreeModelColumns : 
+	struct XdataTreeModelColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		XdataTreeModelColumns()
-		{ 
+		{
 			add(name);
 			add(fullName);
 			add(icon);
@@ -71,7 +71,7 @@ public:
 	static std::string run(const XData::StringVectorMap& files, ReadableEditorDialog& editorDialog);
 
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter, 
+			   const Gtk::TreeModel::iterator& iter,
 			   const std::string& path,
 			   bool isExplicit);
 

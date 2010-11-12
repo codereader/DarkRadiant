@@ -42,23 +42,23 @@ class DifficultyDialog :
 	difficulty::DifficultySettingsManager _settingsManager;
 
 	std::vector<DifficultyEditorPtr> _editors;
-	
+
 	// The close button to toggle the view
 	Gtk::Button* _closeButton;
-	
+
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
-	
+
 public:
 	DifficultyDialog();
-	
+
 	// Command target to toggle the dialog
 	static void showDialog(const cmd::ArgumentList& args);
 
 private:
 	virtual void _preHide();
 	virtual void _preShow();
-	
+
 	// greebo: Saves the current working set to the entity
 	void save();
 
@@ -66,7 +66,7 @@ private:
 	void populateWindow(); 			// Main window
 	void createDifficultyEditors();
 	Gtk::Widget& createButtons(); 	// Dialog buttons
-	
+
 	// Button callbacks
 	void onSave();
 	void onClose();

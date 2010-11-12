@@ -64,7 +64,7 @@ void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
 		OctreeNode& oldRoot = *_root;
 
 		// Re-link the members of the old root node
-		// Note: this might be inaccurate, as some members of the old root could be 
+		// Note: this might be inaccurate, as some members of the old root could be
 		// re-linked to some children of the new root. But we don't want to call
 		// link again, as this can lead to re-entering of the evaluateBounds() function
 		// in scene::Node in some cases.
@@ -72,7 +72,7 @@ void Octree::ensureRootSize(const scene::INodePtr& sceneNode)
 
 		// Now, subdivide the new root node, after we moved the members
 		newRoot.subdivide();
-		
+
 		// Check if the old root had children
 		if (!oldRoot.isLeaf())
 		{
@@ -116,7 +116,7 @@ bool Octree::unlink(const scene::INodePtr& sceneNode)
 		found->second->unlink(sceneNode);
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -128,7 +128,7 @@ ISPNodePtr Octree::getRoot() const
 
 void Octree::notifyLink(const scene::INodePtr& sceneNode, OctreeNode* node)
 {
-	std::pair<NodeMapping::iterator, bool> result = 
+	std::pair<NodeMapping::iterator, bool> result =
 		_nodeMapping.insert(NodeMapping::value_type(sceneNode, node));
 
 	assert(result.second);
@@ -140,7 +140,7 @@ void Octree::notifyUnlink(const scene::INodePtr& sceneNode, OctreeNode* node)
 	NodeMapping::iterator found = _nodeMapping.find(sceneNode);
 
 	assert(found != _nodeMapping.end());
-	
+
 	_nodeMapping.erase(found);
 }
 

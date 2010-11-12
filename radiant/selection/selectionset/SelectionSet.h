@@ -37,7 +37,7 @@ public:
 	void addNode(const scene::INodePtr& node);
 
 	// Clears this set and loads the currently selected nodes in the
-	// scene as new members into this set. 
+	// scene as new members into this set.
 	void assignFromCurrentScene();
 };
 typedef boost::shared_ptr<SelectionSet> SelectionSetPtr;

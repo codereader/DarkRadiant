@@ -72,7 +72,7 @@ class Walker(SelectionVisitor) :
 			print('Node is a patch')
 		else:
 			print('Node is not a patch')
-		
+
 		# Try to get a model from this node
 		model = node.getModel()
 
@@ -133,7 +133,7 @@ for path in vfsPaths:
 # Test FileSystem (VFS)
 #class TestFileVisitor(FileVisitor) :
 #	def visit(self, filename):
-#		print('Found file: ' + filename) 
+#		print('Found file: ' + filename)
 #
 #filevisitor = TestFileVisitor()
 #GlobalFileSystem.forEachFile('skins/', 'skin', filevisitor, 99)
@@ -171,13 +171,13 @@ class ModelFinder(SceneNodeVisitor) :
 			print('Surface count: ' + str(model.getSurfaceCount()))
 			print('Vertex count: ' + str(model.getVertexCount()))
 			print('Poly count: ' + str(model.getPolyCount()))
-			
+
 			materials = model.getActiveMaterials()
-			
+
 			print('Active Materials:')
 			for material in materials:
 				print(material)
-			
+
 			for i in range(0, model.getSurfaceCount()):
 				surface = model.getSurface(i)
 				print('Surface: ' + str(i))
@@ -185,13 +185,13 @@ class ModelFinder(SceneNodeVisitor) :
 				print('  Active Shader: ' + surface.getActiveMaterial())
 				print('  PolyCount: ' + str(surface.getNumTriangles()))
 				print('  Vertex Count: ' + str(surface.getNumVertices()))
-				
+
 				s = Vector3(0,0,0)
 				numverts = surface.getNumVertices()
 				for v in range(0, numverts):
 					meshvertex = surface.getVertex(v)
 					s += meshvertex.vertex
-				
+
 				print('  Sum of all vertices: ' + str(s.x()) + ',' + str(s.y()) + ',' + str(s.z()))
 
 		return 1
@@ -223,7 +223,7 @@ class PatchManipulator(SceneNodeVisitor) :
 		if not patch.isNull():
 			print('Patch information:')
 			print('Dimensions: ' + str(patch.getWidth()) + 'x' + str(patch.getHeight()))
-			
+
 			w = 0
 			while w < patch.getWidth():
 				h = 0
@@ -233,7 +233,7 @@ class PatchManipulator(SceneNodeVisitor) :
 					ctrl.vertex += Vector3(0,0,10*(h-w))
 					h += 1
 				w += 1
-			
+
 			patch.controlPointsChanged()
 
 		return 1

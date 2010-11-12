@@ -23,11 +23,11 @@ LogicEditor::LogicEditor() :
 	set_col_spacings(12);
 
 	int row = 0;
-	
+
 	// pack the success logic
 	attach(*successLogicLabel, 0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	attach(*_successLogic, 1, 2, row, row+1);
-	
+
 	row++;
 
 	// pack the failure logic

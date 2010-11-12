@@ -35,17 +35,17 @@ LayerControl::LayerControl(int layerID) :
 	// Create the label
 	_labelButton = Gtk::manage(new Gtk::Button);
 	_labelButton->signal_clicked().connect(sigc::mem_fun(*this, &LayerControl::onLayerSelect));
-	
+
 	_deleteButton = Gtk::manage(new Gtk::Button);
 	_deleteButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
 	_deleteButton->signal_clicked().connect(sigc::mem_fun(*this, &LayerControl::onDelete));
-	
+
 	_renameButton = Gtk::manage(new Gtk::Button);
 	_renameButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::EDIT, Gtk::ICON_SIZE_SMALL_TOOLBAR)));
 	_renameButton->signal_clicked().connect(sigc::mem_fun(*this, &LayerControl::onRename));
 
 	_buttonHBox = Gtk::manage(new Gtk::HBox(false, 6));
-	
+
 	_buttonHBox->pack_start(*_renameButton, false, false, 0);
 	_buttonHBox->pack_start(*_deleteButton, false, false, 0);
 
@@ -86,7 +86,7 @@ void LayerControl::update()
 
 	std::string imageName = layerIsVisible ? ICON_LAYER_VISIBLE : ICON_LAYER_HIDDEN;
 	_toggle->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask(imageName))));
-	
+
 	// Don't allow deleting or renaming layer 0
 	_deleteButton->set_sensitive(_layerID != 0);
 	_renameButton->set_sensitive(_layerID != 0);
@@ -133,8 +133,8 @@ void LayerControl::onRename()
 		try
 		{
 			newLayerName = gtkutil::textEntryDialog(
-				_("Rename Layer"), 
-				_("Enter new Layer Name"), 
+				_("Rename Layer"),
+				_("Enter new Layer Name"),
 				scene::getLayerSystem().getLayerName(_layerID),
 				Glib::RefPtr<Gtk::Window>()
 			);
@@ -157,7 +157,7 @@ void LayerControl::onRename()
 		{
 			// Wrong name, let the user try again
 			gtkutil::errorDialog(_("Could not rename layer, please try again."), Glib::RefPtr<Gtk::Window>());
-			continue; 
+			continue;
 		}
 	}
 }

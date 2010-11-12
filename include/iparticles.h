@@ -29,7 +29,7 @@ public:
 	public:
 		virtual ~Observer() {}
 
-		// Gets invoked after this particle def has been reloaded 
+		// Gets invoked after this particle def has been reloaded
 		// from the .prt files. RenderableParticles are monitoring
 		// this event to re-construct their render information
 		virtual void onParticleReload() {} // empty default impl.
@@ -39,7 +39,7 @@ public:
 	 * Destructor
 	 */
 	virtual ~IParticleDef() {}
-	
+
 	/**
 	 * Get the name of the particle system.
 	 */
@@ -86,7 +86,7 @@ public:
 	/**
 	 * Update the particle geometry using the given time in milliseconds.
 	 * The rendersystem is needed for acquiring the shaders.
-	 * 
+	 *
 	 * @rotation: the matrix to orient themselves to the viewer.
 	 */
 	virtual void update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation) = 0;
@@ -103,7 +103,7 @@ public:
 	virtual void setParticleDef(const IParticleDefPtr& def) = 0;
 
 	/**
-	 * greebo: Particles have a main direction, usually defined by the 
+	 * greebo: Particles have a main direction, usually defined by the
 	 * emitter's rotation. For a stand-alone particle (without emitter)
 	 * this direction defaults to <0,0,1>, but can be overridden here.
 	 */
@@ -111,7 +111,7 @@ public:
 
 	/**
 	 * Returns the bounding box taken by the entirety of quads in this particle.
-	 * Make sure to call this after the update() method, as getAABB() will 
+	 * Make sure to call this after the update() method, as getAABB() will
 	 * calculate and return the bounds at the time passed to update().
 	 */
 	virtual const AABB& getBounds() = 0;
@@ -157,17 +157,17 @@ public:
 	/**
 	 * Create a renderable particle, which is capable of compiling the
 	 * particle system into actual geometry usable for the backend rendersystem.
-	 * 
+	 *
 	 * @returns: the renderable particle instance or NULL if the named particle was not found.
 	 */
 	virtual IRenderableParticlePtr getRenderableParticle(const std::string& name) = 0;
 
 	/**
-	 * Reloads the definitions from the .prt files. Any existing references to IParticleDefs 
-	 * will remain valid, but their contents might change. Anything sensitive to these changes 
-	 * (like the renderable particles) should subscribe as Observer to this manager class to 
+	 * Reloads the definitions from the .prt files. Any existing references to IParticleDefs
+	 * will remain valid, but their contents might change. Anything sensitive to these changes
+	 * (like the renderable particles) should subscribe as Observer to this manager class to
 	 * get notified on changes/reloads.
-	 * 
+	 *
 	 * If particle defs are removed from the .prt files, the corresponding IParticleDef instance
 	 * will remain in memory, but will be empty after reload.
 	 */

@@ -22,16 +22,16 @@ namespace ui
 class EntityList;
 typedef boost::shared_ptr<EntityList> EntityListPtr;
 
-class EntityList : 
+class EntityList :
 	public gtkutil::PersistentTransientWindow,
 	public SelectionSystem::Observer,
 	public RadiantEventListener
 {
 	// The main tree view
 	Gtk::TreeView* _treeView;
-	
+
 	// The GraphTreeModel instance
-	GraphTreeModel _treeModel; 
+	GraphTreeModel _treeModel;
 
 	// The small checkbox in the lower half
 	Gtk::CheckButton* _focusOnSelectedEntityToggle;
@@ -47,7 +47,7 @@ private:
 	// TransientWindow callbacks
 	virtual void _preHide();
 	virtual void _preShow();
-	
+
 	/** greebo: Creates the widgets
 	 */
 	void populateWindow();
@@ -67,18 +67,18 @@ private:
 
 	// (private) Constructor, creates all the widgets
 	EntityList();
-		
+
 public:
 	/** greebo: Shuts down this dialog, safely disconnects it
 	 * 			from the EventManager and the SelectionSystem.
 	 * 			Saves the window information to the Registry.
 	 */
 	virtual void onRadiantShutdown();
-	
+
 	/** greebo: Toggles the window (command target).
 	 */
 	static void toggle(const cmd::ArgumentList& args);
-	
+
 	/** greebo: Contains the static instance. Use this
 	 * 			to access the other members
 	 */

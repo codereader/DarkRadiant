@@ -41,12 +41,12 @@ public:
 	public:
 		std::string _materialName;
 		ContentsFlagsValue m_flags;
-	
+
 		SavedState(const FaceShader& faceShader) {
 			_materialName = faceShader.getMaterialName();
 			m_flags = faceShader.m_flags;
 		}
-	
+
 		void exportState(FaceShader& faceShader) const {
 			faceShader.setMaterialName(_materialName);
 			faceShader.setFlags(m_flags);
@@ -68,10 +68,10 @@ public:
 
 	// Constructor
 	FaceShader(const std::string& shader, const ContentsFlagsValue& flags = ContentsFlagsValue(0, 0, 0, false));
-	
+
 	// Destructor
 	virtual ~FaceShader();
-	
+
     /**
      * \brief
      * Set whether this FaceShader is in use by a Face or not.
@@ -96,7 +96,7 @@ public:
      * Set the material name.
      */
 	void setMaterialName(const std::string& name);
-	
+
     /**
      * \brief
      * Return the Shader for rendering.
@@ -106,7 +106,7 @@ public:
 	ContentsFlagsValue getFlags() const;
 	void setFlags(const ContentsFlagsValue& flags);
 
-	// greebo: return the dimensions of the shader image 
+	// greebo: return the dimensions of the shader image
 	std::size_t width() const;
 	std::size_t height() const;
 

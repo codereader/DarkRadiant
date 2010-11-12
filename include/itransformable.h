@@ -3,7 +3,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-enum TransformModifierType 
+enum TransformModifierType
 {
 	TRANSFORM_PRIMITIVE,
 	TRANSFORM_COMPONENT,

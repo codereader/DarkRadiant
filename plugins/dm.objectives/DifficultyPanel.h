@@ -9,13 +9,13 @@ namespace Gtk
 	class CheckButton;
 }
 
-namespace objectives 
+namespace objectives
 {
 
 class Objective;
 
-/** 
- * greebo: This encapsulates the widgets needed to set the 
+/**
+ * greebo: This encapsulates the widgets needed to set the
  * difficulty levels an objective is applicable to.
  */
 class DifficultyPanel :

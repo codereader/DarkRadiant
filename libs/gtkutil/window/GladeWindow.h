@@ -38,7 +38,7 @@ public:
      * placed into this window. The childName must refer to a Gtk::Bin
      * subclass, which may contain only a single child widget.
      */
-    void addChildFromBuilder(Glib::RefPtr<Gtk::Builder> builder, 
+    void addChildFromBuilder(Glib::RefPtr<Gtk::Builder> builder,
                              const std::string& childName);
 
 protected:

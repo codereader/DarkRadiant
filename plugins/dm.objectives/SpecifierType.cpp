@@ -11,7 +11,7 @@ int SpecifierType::enumCount = 0;
 
 // SpecifierType types
 
-const SpecifierType& SpecifierType::SPEC_NONE() { 
+const SpecifierType& SpecifierType::SPEC_NONE() {
 	static SpecifierType _instance("none", _("No specifier"));
 	return _instance;
 }

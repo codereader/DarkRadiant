@@ -29,7 +29,7 @@ public:
 		return true;
 	}
 
-	/** 
+	/**
 	 * Inserts the given full name into this set. Returns TRUE if the insertion
 	 * was successful (i.e. the name didn't exist yet).
 	 */
@@ -51,7 +51,7 @@ public:
 		Names::iterator found = _names.find(name.getNameWithoutPostfix());
 
 		if (found == _names.end()) {
-			// The name is not yet in the list, insert it afresh 
+			// The name is not yet in the list, insert it afresh
 			std::pair<Names::iterator, bool> result = _names.insert(
 				Names::value_type(name.getNameWithoutPostfix(), PostfixSet())
 			);
@@ -81,7 +81,7 @@ public:
 		if (found == _names.end()) {
 			return false; // Not found!
 		}
-	
+
 		// The prefix has been found, remove the postfix from the set
 		PostfixSet& postfixSet = found->second;
 
@@ -161,7 +161,7 @@ public:
 		if (found != _names.end()) {
 			// We know the name "trunk", does the number exist?
 			const PostfixSet& postfixSet = found->second;
-			
+
 			// If we know the number too, the full name exists
 			return (postfixSet.find(name.getPostfixNumber()) != postfixSet.end());
 		}
@@ -171,9 +171,9 @@ public:
 		}
 	}
 
-	/** 
+	/**
 	 * Copies all names from the <other> UniqueNameSet into this one.
-	 * This class will contain the union of both sets afterwards. 
+	 * This class will contain the union of both sets afterwards.
 	 * Duplicate names will be ignored.
 	 */
 	void merge(const UniqueNameSet& other) {

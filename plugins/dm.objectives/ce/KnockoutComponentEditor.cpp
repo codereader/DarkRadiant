@@ -19,7 +19,7 @@ namespace ce
 KnockoutComponentEditor::RegHelper KnockoutComponentEditor::regHelper;
 
 // Constructor
-KnockoutComponentEditor::KnockoutComponentEditor(Component& component) : 
+KnockoutComponentEditor::KnockoutComponentEditor(Component& component) :
 	_component(&component),
 	_targetCombo(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_STANDARD_AI())))
 {

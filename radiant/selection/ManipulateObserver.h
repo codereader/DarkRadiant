@@ -19,14 +19,14 @@ public:
 	// Updates the internal event pointer
 	void setEvent(GdkEventButton* event);
 
-	// greebo: Handles the mouseDown event and checks whether a manipulator can be made active 
+	// greebo: Handles the mouseDown event and checks whether a manipulator can be made active
 	bool mouseDown(DeviceVector position);
 
 	/* greebo: Pass the mouse movement to the current selection.
-	 * This is connected to the according mouse events by the RadiantWindowObserver class 
+	 * This is connected to the according mouse events by the RadiantWindowObserver class
 	 */
   	void mouseMoved(DeviceVector position);
-  	
+
   	// The mouse operation is finished, update the selection and unconnect the callbacks
   	void mouseUp(DeviceVector position);
 };

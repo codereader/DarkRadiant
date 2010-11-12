@@ -11,7 +11,7 @@ namespace {
 	const unsigned int NUM_CLIP_POINTS = 3;
 }
 
-class Clipper : 
+class Clipper :
 	public IClipper,
 	public RegistryKeyObserver
 {
@@ -20,18 +20,18 @@ class Clipper :
 
 	// The array holding the three possible clip points
 	ClipPoint _clipPoints[NUM_CLIP_POINTS];
-	
+
 	// The pointer to the currently moved clip point
 	ClipPoint* _movingClip;
-	
+
 	bool _switch;
-	
+
 	// Whether to use the _caulkShader texture for new brush faces
 	bool _useCaulk;
-	
+
 	// The shader name used for new faces when _useCaulk is true
 	std::string _caulkShader;
-	
+
 public:
 	// Constructor
 	Clipper();
@@ -40,35 +40,35 @@ public:
 	void keyChanged(const std::string& key, const std::string& val);
 
 	void constructPreferences();
-	
+
 	EViewType getViewType() const;
 	void setViewType(EViewType viewType);
 	ClipPoint* getMovingClip();
-	
+
 	Vector3& getMovingClipCoords();
 	void setMovingClip(ClipPoint* clipPoint);
-	
+
 	bool useCaulkForNewFaces() const;
 	const std::string& getCaulkShader() const;
-	
+
 	// greebo: Cycles through the three possible clip points and returns the nearest to point (for selectiontest)
 	ClipPoint* find(const Vector3& point, EViewType viewtype, float scale);
-	
+
 	// Returns true if at least two clip points are set
 	bool valid() const;
 	void draw(float scale);
 	void getPlanePoints(Vector3 planepts[3], const AABB& bounds) const;
-	
-	void splitBrushes(const Vector3& p0, 
-					const Vector3& p1, const Vector3& p2, 
+
+	void splitBrushes(const Vector3& p0,
+					const Vector3& p1, const Vector3& p2,
 					EBrushSplit split);
 	void setClipPlane(const Plane3& plane);
-	
+
 	void update();
 	void flipClip();
 	void reset();
 	void clip();
-	
+
 	void splitClip();
 	bool clipMode() const;
 	void onClipMode(bool enabled);

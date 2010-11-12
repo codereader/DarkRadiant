@@ -6,7 +6,7 @@
 
 #include <gtkmm/table.h>
 
-namespace ui 
+namespace ui
 {
 
 ShaderDefinitionView::ShaderDefinitionView() :
@@ -15,7 +15,7 @@ ShaderDefinitionView::ShaderDefinitionView() :
 {
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 2, false));
 	pack_start(*table, false, false,  0);
-	
+
 	Gtk::Label* nameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Material:")));
 	Gtk::Label* materialFileLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Defined in:")));
 
@@ -27,7 +27,7 @@ ShaderDefinitionView::ShaderDefinitionView() :
 
 	table->attach(*nameLabel, 0, 1, 0, 1, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
 	table->attach(*materialFileLabel, 0, 1, 1, 2, Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
-	
+
 	table->attach(*_materialName, 1, 2, 0, 1);
 	table->attach(*_filename, 1, 2, 1, 2);
 
@@ -38,7 +38,7 @@ ShaderDefinitionView::ShaderDefinitionView() :
 void ShaderDefinitionView::setShader(const std::string& shader)
 {
 	_shader = shader;
-	
+
 	update();
 }
 
@@ -46,8 +46,8 @@ void ShaderDefinitionView::update()
 {
 	// Find the shader
 	MaterialPtr material = GlobalMaterialManager().getMaterialForName(_shader);
-	
-	if (material == NULL) 
+
+	if (material == NULL)
 	{
 		// Null-ify the contents
 		_materialName->set_markup("");
@@ -57,11 +57,11 @@ void ShaderDefinitionView::update()
 
 		return;
 	}
-	
-	// Add the shader and file name 
+
+	// Add the shader and file name
 	_materialName->set_markup("<b>" + material->getName() + "</b>");
 	_filename->set_markup(std::string("<b>") + material->getShaderFileName() + "</b>");
-	
+
 	_view->set_sensitive(true);
 
 	// Surround the definition with curly braces, these are not included

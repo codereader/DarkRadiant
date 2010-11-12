@@ -24,7 +24,7 @@ class ObjectFinder :
 {
 	scene::INodePtr _node;
 	SelectionTest& _selectionTest;
-	
+
 	// To store the best intersection candidate
 	SelectionIntersection _bestIntersection;
 public:
@@ -37,18 +37,18 @@ public:
 	const scene::INodePtr& getNode() const {
 		return _node;
 	}
-	
+
 	// The visitor function
 	bool pre(const scene::INodePtr& node) {
 		// Check if the node is filtered
 		if (node->visible()) {
 			SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-			
+
 			if (selectionTestable != NULL) {
 				bool occluded;
 				OccludeSelector selector(_bestIntersection, occluded);
 				selectionTestable->testSelect(selector, _selectionTest);
-				
+
 				if (occluded) {
 					_node = node;
 				}
@@ -57,7 +57,7 @@ public:
 		else {
 			return false; // don't traverse filtered nodes
 		}
-			
+
 		return true;
 	}
 };
@@ -68,7 +68,7 @@ inline WindowVector windowvector_for_widget_centre(Gtk::Widget& widget)
 	return WindowVector(static_cast<float>(alloc.get_width() / 2), static_cast<float>(alloc.get_height() / 2));
 }
 
-class FloorHeightWalker : 
+class FloorHeightWalker :
 	public scene::NodeVisitor
 {
 	float _current;
@@ -77,8 +77,8 @@ class FloorHeightWalker :
 
 public:
 	FloorHeightWalker(float current, float& bestUp, float& bestDown) :
-		_current(current), 
-		_bestUp(bestUp), 
+		_current(current),
+		_bestUp(bestUp),
 		_bestDown(bestDown)
 	{
 		_bestUp = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
@@ -88,7 +88,7 @@ public:
 	bool pre(const scene::INodePtr& node) {
 
 		if (!node->visible()) return false; // don't traverse hidden nodes
-		
+
 		if (Node_isBrush(node)) // this node is a floor
 		{
 			const AABB& aabb = node->worldAABB();
@@ -166,7 +166,7 @@ CamWnd::CamWnd() :
 
 	m_gl_widget->signal_scroll_event().connect(sigc::mem_fun(*this, &CamWnd::onMouseScroll));
 
-	// Subscribe to the global scene graph update 
+	// Subscribe to the global scene graph update
 	GlobalSceneGraph().addSceneObserver(this);
 
 	// Let the window observer connect its handlers to the GL widget first (before the eventmanager)
@@ -177,16 +177,16 @@ CamWnd::CamWnd() :
 
 CamWnd::~CamWnd()
 {
-	// Unsubscribe from the global scene graph update 
+	// Unsubscribe from the global scene graph update
 	GlobalSceneGraph().removeSceneObserver(this);
-	
+
 	m_window_observer->removeObservedWidget(m_gl_widget);
-	
+
 	// Disconnect self from EventManager
 	GlobalEventManager().disconnect(m_gl_widget);
 
 	GlobalMap().removeValidCallback(_mapValidHandle);
-	
+
 	if (m_bFreeMove) {
 		disableFreeMove();
 	}
@@ -214,7 +214,7 @@ void CamWnd::jumpToObject(SelectionTest& selectionTest) {
 	if (finder.getNode() != NULL) {
 		// A node has been found, get the bounding box
 		AABB found = finder.getNode()->worldAABB();
-		
+
 		// Focus the view at the center of the found AABB
 		map::Map::focusViews(found.origin, getCameraAngles());
 	}
@@ -262,7 +262,7 @@ void CamWnd::enableFreeMove()
 	m_Camera.clearMovementFlags(MOVE_ALL);
 
 	removeHandlersMove();
-	
+
 	m_selection_button_press_handler = m_gl_widget->signal_button_press_event().connect(
 		sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonPressFreemove), m_window_observer));
 
@@ -271,7 +271,7 @@ void CamWnd::enableFreeMove()
 
 	m_selection_motion_handler = m_gl_widget->signal_motion_notify_event().connect(
 		sigc::bind(sigc::mem_fun(*this,& CamWnd::selectionMotionFreemove), m_window_observer));
-	
+
 	if (getCameraSettings()->toggleFreelook())
 	{
 		m_freelook_button_press_handler = m_gl_widget->signal_button_press_event().connect(
@@ -287,9 +287,9 @@ void CamWnd::enableFreeMove()
 
 	// greebo: For entering free move, we need a valid parent window
 	assert(_parentWindow);
-	
+
 	_parentWindow->set_focus(*m_gl_widget);
-	
+
 	m_freemove_handle_focusout = m_gl_widget->signal_focus_out_event().connect(sigc::mem_fun(*this, &CamWnd::freeMoveFocusOut));
 	m_freezePointer.freeze_pointer(_parentWindow->gobj(), Camera_motionDelta, &m_Camera);
 
@@ -303,7 +303,7 @@ void CamWnd::disableFreeMove()
 	m_Camera.clearMovementFlags(MOVE_ALL);
 
 	disableFreeMoveEvents();
-	
+
 	m_selection_button_press_handler.disconnect();
 	m_selection_button_release_handler.disconnect();
 	m_selection_motion_handler.disconnect();
@@ -401,7 +401,7 @@ void CamWnd::Cam_Draw() {
                                      | RENDER_COLOURCHANGE;
 
     // Add mode-specific render flags
-	switch (getCameraSettings()->getMode()) 
+	switch (getCameraSettings()->getMode())
     {
 		case drawWire:
 			break;
@@ -455,21 +455,21 @@ void CamWnd::Cam_Draw() {
 
 		renderer.render(m_Camera.modelview, m_Camera.projection);
 	}
-	
+
 	// greebo: Draw the clipper's points (skipping the depth-test)
 	{
 		glDisable(GL_DEPTH_TEST);
-		
+
 		glColor4f(1, 1, 1, 1);
 		glPointSize(5);
-		
+
 		if (GlobalClipper().clipMode()) {
 			GlobalClipper().draw(1.0f);
 		}
-		
+
 		glPointSize(1);
 	}
-	
+
 	// prepare for 2d stuff
 	glColor4f(1, 1, 1, 1);
 
@@ -534,7 +534,7 @@ void CamWnd::Cam_Draw() {
 		glEnable(GL_BLEND);
 		glBlendColor(0, 0, 0, 0.2f);
 		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
-		
+
 		Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
 		glColor3dv(dragBoxColour);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -669,7 +669,7 @@ void CamWnd::addHandlersMove()
 
 	m_selection_button_release_handler = m_gl_widget->signal_button_release_event().connect(
 		sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonRelease), m_window_observer));
-	
+
 	m_selection_motion_handler = m_gl_widget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &DeferredMotion::gtk_motion));
 
 	m_freelook_button_press_handler = m_gl_widget->signal_button_press_event().connect(

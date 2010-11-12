@@ -18,7 +18,7 @@
 
 inline std::string RADIANT_APPNAME_FULL()
 {
-   return std::string(RADIANT_APPNAME) + " "  
-          + std::string(RADIANT_VERSION) + " " 
+   return std::string(RADIANT_APPNAME) + " "
+          + std::string(RADIANT_VERSION) + " "
           + std::string(RADIANT_PLATFORM) + " ";
 }

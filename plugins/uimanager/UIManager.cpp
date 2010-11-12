@@ -43,7 +43,7 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
 {
 	// Try to use a cached pixbuf first
 	PixBufMap::iterator i = _localPixBufs.find(fileName);
-	
+
 	if (i != _localPixBufs.end())
 	{
 		return i->second;
@@ -59,16 +59,16 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
 	try
 	{
 		pixbuf = Gdk::Pixbuf::create_from_file(fullFileName);
-		
+
 		if (pixbuf == NULL)
 		{
-			globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
+			globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl;
 		}
 	}
 	catch (Glib::FileError& err)
 	{
-		globalWarningStream() << "Couldn't load pixbuf " << fullFileName << std::endl; 
-		globalWarningStream() << err.what() << std::endl; 
+		globalWarningStream() << "Couldn't load pixbuf " << fullFileName << std::endl;
+		globalWarningStream() << err.what() << std::endl;
 	}
 
 	_localPixBufs.insert(PixBufMap::value_type(fileName, pixbuf));
@@ -80,7 +80,7 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& f
 
 	// Try to find a cached pixbuf before loading from disk
 	PixBufMap::iterator i = _localPixBufsWithMask.find(fileName);
-	
+
 	if (i != _localPixBufsWithMask.end())
 	{
 		return i->second;
@@ -95,7 +95,7 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& f
 	try
 	{
 		Glib::RefPtr<Gdk::Pixbuf> rgb = Gdk::Pixbuf::create_from_file(fullFileName);
-		
+
 		if (rgb != NULL)
 		{
 			// File load successful, add alpha channel
@@ -103,13 +103,13 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& f
 		}
 		else
 		{
-			globalErrorStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl; 
+			globalErrorStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl;
 		}
 	}
 	catch (Glib::FileError& err)
 	{
-		globalWarningStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl; 
-		globalWarningStream() << err.what() << std::endl; 
+		globalWarningStream() << "Couldn't load rgb pixbuf " << fullFileName << std::endl;
+		globalWarningStream() << err.what() << std::endl;
 	}
 
 	_localPixBufsWithMask.insert(PixBufMap::value_type(fileName, rgba));
@@ -117,7 +117,7 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& f
 	return rgba;
 }
 
-Glib::RefPtr<Gtk::Builder> 
+Glib::RefPtr<Gtk::Builder>
 UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
 {
     std::string fullPath = module::GlobalModuleRegistry()
@@ -205,7 +205,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 	_menuManager.loadFromRegistry();
 	_toolbarManager.initialise();
 	ColourSchemeManager::Instance().loadColourSchemes();
-	
+
 	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::editColourSchemes);
 	GlobalEventManager().addCommand("EditColourScheme", "EditColourScheme");
 
@@ -213,7 +213,7 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 
 	// Add the statusbar command text item
 	_statusBarManager.addTextElement(
-		STATUSBAR_COMMAND, 
+		STATUSBAR_COMMAND,
 		"",  // no icon
 		IStatusBarManager::POS_COMMAND
 	);
@@ -227,13 +227,13 @@ void UIManager::shutdownModule()
 
 } // namespace ui
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(ui::UIManagerPtr(new ui::UIManager));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

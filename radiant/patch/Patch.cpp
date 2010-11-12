@@ -28,11 +28,11 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
 inline const Colour4b colour_for_index(std::size_t i, std::size_t width) {
   static const Vector3 cornerColourVec = ColourSchemes().getColour("patch_vertex_corner");
   static const Vector3 insideColourVec = ColourSchemes().getColour("patch_vertex_inside");
-  const Colour4b colour_corner(int(cornerColourVec[0]*255), int(cornerColourVec[1]*255), 
+  const Colour4b colour_corner(int(cornerColourVec[0]*255), int(cornerColourVec[1]*255),
   							   int(cornerColourVec[2]*255), 255);
-  const Colour4b colour_inside(int(insideColourVec[0]*255), int(insideColourVec[1]*255), 
+  const Colour4b colour_inside(int(insideColourVec[0]*255), int(insideColourVec[1]*255),
   							   int(insideColourVec[2]*255), 255);
-  
+
   return (i%2 || (i/width)%2) ? colour_inside : colour_corner;
 }
 
@@ -95,7 +95,7 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	// Initalise the default values
 	construct();
 
-	// Copy over the definitions from the <other> patch  
+	// Copy over the definitions from the <other> patch
 	m_patchDef3 = other.m_patchDef3;
 	m_subdivisions_x = other.m_subdivisions_x;
 	m_subdivisions_y = other.m_subdivisions_y;
@@ -116,7 +116,7 @@ void Patch::construct() {
 
 	// Check, if the shader name is correct
 	check_shader();
-	
+
 	// Allocate the shader
 	captureShader();
 }
@@ -157,7 +157,7 @@ void Patch::setDims(std::size_t w, std::size_t h)
     w = MAX_PATCH_WIDTH;
   else if(w < MIN_PATCH_WIDTH)
     w = MIN_PATCH_WIDTH;
-  
+
   if((h%2)==0)
     m_height -= 1;
   ASSERT_MESSAGE(h <= MAX_PATCH_HEIGHT, "patch too tall");
@@ -184,9 +184,9 @@ void Patch::instanceAttach(MapFile* map) {
 	if (++m_instanceCounter.m_count == 1) {
 		// Notify the shader that one more instance is using this
 		m_state->incrementUsed();
-		
+
 		m_map = map;
-		
+
 		// Attach the UndoObserver to this patch
 		m_undoable_observer = GlobalUndoSystem().observer(this);
 	}
@@ -270,12 +270,12 @@ void Patch::testSelect(Selector& selector, SelectionTest& test)
 
 	SelectionIntersection best;
 	IndexPointer::index_type* pIndex = &m_tess.indices.front();
-	
+
 	for (std::size_t s=0; s<m_tess.m_numStrips; s++) {
 		test.TestQuadStrip(vertexpointer_arbitrarymeshvertex(&m_tess.vertices.front()), IndexPointer(pIndex, m_tess.m_lenStrips), best);
 		pIndex += m_tess.m_lenStrips;
 	}
-	
+
 	if (best.valid()) {
 		selector.addIntersection(best);
 	}
@@ -285,19 +285,19 @@ void Patch::testSelect(Selector& selector, SelectionTest& test)
 void Patch::transform(const Matrix4& matrix)
 {
 	// Cycle through all the patch control vertices and transform the points
-	for (PatchControlIter i = m_ctrlTransformed.begin(); 
-		 i != m_ctrlTransformed.end(); 
-		 ++i) 
+	for (PatchControlIter i = m_ctrlTransformed.begin();
+		 i != m_ctrlTransformed.end();
+		 ++i)
 	{
 		matrix4_transform_point(matrix, i->vertex);
 	}
-	
+
 	// Check the handedness of the matrix and invert it if needed
 	if(matrix4_handedness(matrix) == MATRIX4_LEFTHANDED)
 	{
 		PatchControlArray_invert(m_ctrlTransformed, m_width, m_height);
 	}
-	
+
 	// Mark this patch as changed
 	transformChanged();
 }
@@ -369,8 +369,8 @@ const std::string& Patch::getShader() const {
 }
 
 void Patch::setShader(const std::string& name)
-{  
-  	// return, if the shader is the same as the currently used 
+{
+  	// return, if the shader is the same as the currently used
 	if (shader_equal(m_shader, name)) return;
 
 	undoSave();
@@ -379,14 +379,14 @@ void Patch::setShader(const std::string& name)
 	if (m_instanceCounter.m_count != 0) {
 		m_state->decrementUsed();
 	}
-	
+
 	// release the shader
 	releaseShader();
-	
+
 	// Set the name of the shader and capture it
 	m_shader = name;
 	captureShader();
-	
+
 	// Increment the counter
 	if (m_instanceCounter.m_count != 0) {
 		m_state->incrementUsed();
@@ -415,7 +415,7 @@ PatchControl& Patch::ctrlAt(std::size_t row, std::size_t col) {
 	return m_ctrl[row*m_width+col];
 }
 
-// The same as above just for const 
+// The same as above just for const
 const PatchControl& Patch::ctrlAt(std::size_t row, std::size_t col) const {
 	return m_ctrl[row*m_width+col];
 }
@@ -426,7 +426,7 @@ void Patch::undoSave() {
 	if (m_map != 0) {
 		m_map->changed();
 	}
-	
+
 	// Notify the undo observer to save this patch state
 	if (m_undoable_observer != 0) {
 		m_undoable_observer->save(this);
@@ -470,7 +470,7 @@ void Patch::captureShader() {
 }
 
 void Patch::releaseShader() {
-	m_state = ShaderPtr(); 
+	m_state = ShaderPtr();
 }
 
 void Patch::check_shader() {
@@ -517,7 +517,7 @@ bool Patch::isValid() const
 }
 
 bool Patch::isDegenerate() const {
-	
+
 	if (!isValid()) {
 		// Invalid patches are also "degenerate"
 		return true;
@@ -525,10 +525,10 @@ bool Patch::isDegenerate() const {
 
 	Vector3 prev(0,0,0);
 
-	// Compare each control's 3D coordinates with the previous one and break out 
+	// Compare each control's 3D coordinates with the previous one and break out
 	// on the first non-equal one
 	for (PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
-		
+
 		// Skip the first comparison
 		if (i != m_ctrl.begin() && !vector3_equal_epsilon(i->vertex, prev, 0.0001)) {
 			return false;
@@ -696,7 +696,7 @@ void Patch::Redisperse(EMatrixMajor mt)
       p1 = p3;
     }
   }
-  
+
   controlPointsChanged();
 }
 
@@ -719,7 +719,7 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 			// Col/Row Removal
 			if (bColumn) {
 				// Column removal, pass TRUE
-				removePoints(true, bFirst ? 2 : m_width - 3);					
+				removePoints(true, bFirst ? 2 : m_width - 3);
 			}
 			else {
 				// Row removal, pass FALSE
@@ -736,70 +736,70 @@ void Patch::InsertRemove(bool bInsert, bool bColumn, bool bFirst) {
 
 void Patch::appendPoints(bool columns, bool beginning) {
 	bool rows = !columns; // Shortcut for readability
-	
+
 	if ((columns && m_width + 2 > MAX_PATCH_WIDTH) ||
 		(rows && m_height + 2 > MAX_PATCH_HEIGHT))
 	{
-		globalErrorStream() << "Patch::appendPoints() error: " << 
+		globalErrorStream() << "Patch::appendPoints() error: " <<
 							   "Cannot make patch any larger.\n";
 		return;
 	}
-	
+
 	// Sanity check passed, now start the action
 	undoSave();
-	
+
 	// Create a backup of the old control vertices
 	PatchControlArray oldCtrl = m_ctrl;
 	std::size_t oldHeight = m_height;
 	std::size_t oldWidth = m_width;
-	
+
 	// Resize this patch
 	setDims(columns ? oldWidth+2 : oldWidth, rows ? oldHeight+2 : oldHeight);
-	
+
 	// Specify the target row to copy the values to
 	std::size_t targetColStart = (columns && beginning) ? 2 : 0;
 	std::size_t targetRowStart = (rows && beginning) ? 2 : 0;
-	
+
 	// We're copying the old patch matrix into a sub-matrix of the new patch
 	// Fill in the control vertex values into the target area using this loop
-	for (std::size_t newRow = targetRowStart, oldRow = 0; 
-		 newRow < m_height && oldRow < oldHeight; 
+	for (std::size_t newRow = targetRowStart, oldRow = 0;
+		 newRow < m_height && oldRow < oldHeight;
 		 newRow++, oldRow++)
 	{
-		for (std::size_t newCol = targetColStart, oldCol = 0; 
-			 oldCol < oldWidth && newCol < m_width; 
-			 oldCol++, newCol++) 
+		for (std::size_t newCol = targetColStart, oldCol = 0;
+			 oldCol < oldWidth && newCol < m_width;
+			 oldCol++, newCol++)
 		{
 			// Copy the control vertex from the old patch to the new patch
-			ctrlAt(newRow, newCol).vertex = oldCtrl[oldRow*oldWidth + oldCol].vertex;		
+			ctrlAt(newRow, newCol).vertex = oldCtrl[oldRow*oldWidth + oldCol].vertex;
 			ctrlAt(newRow, newCol).texcoord = oldCtrl[oldRow*oldWidth + oldCol].texcoord;
 		}
 	}
-	
+
 	if (columns) {
 		// Extrapolate the vertex attributes of the columns
-		
+
 		// These are the indices of the new columns
 		std::size_t newCol1 = beginning ? 0 : m_width - 1; // The outermost column
 		std::size_t newCol2 = beginning ? 1 : m_width - 2; // The nearest column
-		
+
 		// This indicates the direction we are taking the base values from
-		// If we start at the beginning, we have to take the values on 
+		// If we start at the beginning, we have to take the values on
 		// the "right", hence the +1 index
 		int neighbour = beginning ? +1 : -1;
-		
+
 		for (std::size_t row = 0; row < m_height; row++) {
-			// The distance of the two neighbouring columns, 
+			// The distance of the two neighbouring columns,
 			// this is taken as extrapolation value
-			Vector3 vertexDiff = ctrlAt(row, newCol2 + neighbour).vertex - 
+			Vector3 vertexDiff = ctrlAt(row, newCol2 + neighbour).vertex -
 								 ctrlAt(row, newCol2 + 2*neighbour).vertex;
 			Vector2 texDiff = ctrlAt(row, newCol2 + neighbour).texcoord -
 							  ctrlAt(row, newCol2 + 2*neighbour).texcoord;
-			
+
 			// Extrapolate the values of the nearest column
 			ctrlAt(row, newCol2).vertex = ctrlAt(row, newCol2 + neighbour).vertex + vertexDiff;
 			ctrlAt(row, newCol2).texcoord = ctrlAt(row, newCol2 + neighbour).texcoord + texDiff;
-			
+
 			// Extrapolate once again linearly from the nearest column to the outermost column
 			ctrlAt(row, newCol1).vertex = ctrlAt(row, newCol2).vertex + vertexDiff;
 			ctrlAt(row, newCol1).texcoord = ctrlAt(row, newCol2).texcoord + texDiff;
@@ -807,34 +807,34 @@ void Patch::appendPoints(bool columns, bool beginning) {
 	}
 	else {
 		// Extrapolate the vertex attributes of the rows
-		
+
 		// These are the indices of the new rows
 		std::size_t newRow1 = beginning ? 0 : m_height - 1; // The outermost row
 		std::size_t newRow2 = beginning ? 1 : m_height - 2; // The nearest row
-		
+
 		// This indicates the direction we are taking the base values from
-		// If we start at the beginning, we have to take the values on 
+		// If we start at the beginning, we have to take the values on
 		// the "right", hence the +1 index
 		int neighbour = beginning ? +1 : -1;
-		
+
 		for (std::size_t col = 0; col < m_width; col++) {
-			// The distance of the two neighbouring rows, 
+			// The distance of the two neighbouring rows,
 			// this is taken as extrapolation value
-			Vector3 vertexDiff = ctrlAt(newRow2 + neighbour, col).vertex - 
+			Vector3 vertexDiff = ctrlAt(newRow2 + neighbour, col).vertex -
 								 ctrlAt(newRow2 + 2*neighbour, col).vertex;
 			Vector2 texDiff = ctrlAt(newRow2 + neighbour, col).texcoord -
 							  ctrlAt(newRow2 + 2*neighbour, col).texcoord;
-			
+
 			// Extrapolate the values of the nearest row
 			ctrlAt(newRow2, col).vertex = ctrlAt(newRow2 + neighbour, col).vertex + vertexDiff;
 			ctrlAt(newRow2, col).texcoord = ctrlAt(newRow2 + neighbour, col).texcoord + texDiff;
-			
+
 			// Extrapolate once again linearly from the nearest row to the outermost row
 			ctrlAt(newRow1, col).vertex = ctrlAt(newRow2, col).vertex + vertexDiff;
 			ctrlAt(newRow1, col).texcoord = ctrlAt(newRow2, col).texcoord + texDiff;
 		}
 	}
-	
+
 	controlPointsChanged();
 }
 
@@ -876,7 +876,7 @@ Patch* Patch::MakeCap(Patch* patch, EPatchCap eType, EMatrixMajor mt, bool bFirs
   }
 
   patch->ConstructSeam(eType, &p.front(), width);
-  
+
   // greebo: Apply natural texture to that patch, to fix the texcoord==1.#INF bug.
   patch->NaturalTexture();
   return patch;
@@ -890,7 +890,7 @@ void Patch::FlipTexture(int nAxis)
   {
     i->texcoord[nAxis] = -i->texcoord[nAxis];
   }
-  
+
   controlPointsChanged();
 }
 
@@ -912,7 +912,7 @@ void Patch::TranslateTexture(float s, float t)
     t = t / m_state->getMaterial()->getEditorImage()->getHeight();
 
 	translateTexCoords(Vector2(s,t));
-  
+
   controlPointsChanged();
 }
 
@@ -935,7 +935,7 @@ void Patch::RotateTexture(float angle)
 
   const double s = sin(degrees_to_radians(angle));
   const double c = cos(degrees_to_radians(angle));
-    
+
   for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
   {
     const double x = i->texcoord[0];
@@ -957,7 +957,7 @@ void Patch::SetTextureRepeat(float s, float t)
 	/* greebo: Calculate the texture width and height increment per control point.
 	 * If we have a 4x4 patch and want to tile it 3x3, the distance
 	 * from one control point to the next one has to cover 3/4 of a full texture,
-	 * hence texture_x_repeat/patch_width and texture_y_repeat/patch_height.*/ 
+	 * hence texture_x_repeat/patch_width and texture_y_repeat/patch_height.*/
 	float sIncr = s / static_cast<float>(m_width - 1);
 	float tIncr = t / static_cast<float>(m_height - 1);
 
@@ -972,8 +972,8 @@ void Patch::SetTextureRepeat(float s, float t)
 	{
 		float sc = 0;
 
-		// Cycle through the row points: reset sc to zero 
-		// and increment it by sIncr at each step. 
+		// Cycle through the row points: reset sc to zero
+		// and increment it by sIncr at each step.
 		for (std::size_t w = 0; w < m_width; w++, sc += sIncr)
 		{
 			// Set the texture coordinates
@@ -991,7 +991,7 @@ void Patch::SetTextureRepeat(float s, float t)
 inline int texture_axis(const Vector3& normal)
 {
   // axis dominance order: Z, X, Y
-  return (normal.x() >= normal.y()) ? (normal.x() > normal.z()) ? 0 : 2 : (normal.y() > normal.z()) ? 1 : 2; 
+  return (normal.x() >= normal.y()) ? (normal.x() > normal.z()) ? 0 : 2 : (normal.y() > normal.z()) ? 1 : 2;
 }
 
 void Patch::CapTexture() {
@@ -1022,14 +1022,14 @@ void Patch::CapTexture() {
 /* uses longest parallel chord to calculate texture coords for each row/col
  * greebo: The default texture scale is used when applying "Natural" texturing.
  * Note: all the comments in this method are by myself, so be careful... ;)
- * 
+ *
  * The applied texture is never stretched more than the default
  * texture scale. So if the default texture scale is 0.5, the texture coordinates
- * are set such that the scaling never exceeds this value. (Don't know why 
+ * are set such that the scaling never exceeds this value. (Don't know why
  * this is called "Natural" but so what...)
  */
 void Patch::NaturalTexture() {
-	
+
 	// Save the undo memento
 	undoSave();
 
@@ -1037,29 +1037,29 @@ void Patch::NaturalTexture() {
 	float defaultScale = GlobalRegistry().getFloat("user/ui/textures/defaultTextureScale");
 
 	/* In this next block, the routine cycles through all the patch columns and
-	 * measures the distances to the next column. 
-	 * 
-	 * During each column cycle, the longest distance from this column to the 
+	 * measures the distances to the next column.
+	 *
+	 * During each column cycle, the longest distance from this column to the
 	 * next is determined. The distance is added to tex and if the sum
 	 * is longer than texBest, the sum will be the new texBest.
-	 * 
+	 *
 	 * I'm not sure in which case the sum will ever by smaller than texBest,
-	 * as the distance to the next column is always >= 0 and hence the sum should 
+	 * as the distance to the next column is always >= 0 and hence the sum should
 	 * always be greater than texBest, but maybe there are some cases where
-	 * the next column is equal to the current one. 
-	 * 
+	 * the next column is equal to the current one.
+	 *
 	 * All the distances are converted into "texture lengths" (i.e. multiples of
 	 * the scaled texture size in pixels.
-	 */	
+	 */
 	{
 		float fSize = (float)m_state->getMaterial()->getEditorImage()->getWidth() * defaultScale;
-  
+
 		double texBest = 0;
 		double tex = 0;
-		
-		// Cycle through the patch width, 
+
+		// Cycle through the patch width,
 		for (std::size_t w=0; w<m_width; w++)
-		{		
+		{
 			// Apply the currently active <tex> value to the control point texture coordinates.
 			for (std::size_t h = 0; h < m_height; h++)
 			{
@@ -1079,15 +1079,15 @@ void Patch::NaturalTexture() {
 				{
 					// v is the vector pointing from one control point to the next neighbour
 					Vector3 v = ctrlAt(h, w).vertex - ctrlAt(h, w+1).vertex;
-					
-					// translate the distance in world coordinates into texture coords 
+
+					// translate the distance in world coordinates into texture coords
 					// (i.e. divide it by the scaled texture size) and add it to the
 					// current tex value
 					double length = tex + (v.getLength() / fSize);
-					
+
 					// Now compare this calculated "texture length"
 					// to the value stored in texBest. If the length is larger,
-					// replace texBest with it, so texBest contains the largest 
+					// replace texBest with it, so texBest contains the largest
 					// width found so far (in texture coordinates)
 					if (fabs(length) > texBest)
 					{
@@ -1095,7 +1095,7 @@ void Patch::NaturalTexture() {
 					}
 				}
 			}
-			
+
 			// texBest is stored in <tex>, it gets applied in the next column sweep
 			tex = texBest;
 		}
@@ -1106,10 +1106,10 @@ void Patch::NaturalTexture() {
 	// and apply them to the according texture coordinates.
 	{
 		float fSize = -(float)m_state->getMaterial()->getEditorImage()->getHeight() * defaultScale;
-		
+
 		double texBest = 0;
 		double tex = 0;
-		
+
 		// Each row is visited once
 		for (std::size_t h = 0; h < m_height; h++)
 		{
@@ -1118,10 +1118,10 @@ void Patch::NaturalTexture() {
 			{
 				ctrlAt(h, w).texcoord[1] = static_cast<float>(tex);
 			}
-	
+
 			if (h + 1 == m_height)
 				break;
-	
+
 			for (std::size_t w = 0; w < m_width; w++)
 			{
 				Vector3 v = ctrlAt(h, w).vertex - ctrlAt(h+1, w).vertex;
@@ -1155,7 +1155,7 @@ void Patch::updateAABB()
 	if (m_aabb_local != aabb)
 	{
 		m_aabb_local = aabb;
-		
+
 		m_boundsChanged();
 		_node.lightsChanged();
 	}
@@ -1164,27 +1164,27 @@ void Patch::updateAABB()
 // Inserts two columns before and after the column having the index <colIndex>
 void Patch::insertColumns(std::size_t colIndex) {
 	if (colIndex == 0 || colIndex == m_width) {
-		throw GenericPatchException("Patch::insertColumns: can't insert at this index."); 
+		throw GenericPatchException("Patch::insertColumns: can't insert at this index.");
 	}
-	
+
 	if (m_width + 2 > MAX_PATCH_WIDTH) {
 		throw GenericPatchException("Patch::insertColumns: patch has too many columns.");
 	}
-	
+
 	// Create a backup of the old control vertices
 	PatchControlArray oldCtrl = m_ctrl;
 	std::size_t oldHeight = m_height;
 	std::size_t oldWidth = m_width;
-	
+
 	// Resize this patch
 	setDims(oldWidth + 2, oldHeight);
-	
+
 	// Now fill in the control vertex values and interpolate
 	// before and after the insert point.
 	for (std::size_t row = 0; row < m_height; row++) {
-		
-		for (std::size_t newCol = 0, oldCol = 0; 
-			 newCol < m_width && oldCol < oldWidth; 
+
+		for (std::size_t newCol = 0, oldCol = 0;
+			 newCol < m_width && oldCol < oldWidth;
 			 newCol++, oldCol++)
 		{
 			// Is this the insert point?
@@ -1198,12 +1198,12 @@ void Patch::insertColumns(std::size_t colIndex) {
 					oldCtrl[row*oldWidth + oldCol - 1].texcoord,
 					oldCtrl[row*oldWidth + oldCol].texcoord
 				);
-				
+
 				// Set the newCol counter to the middle column
 				newCol++;
-				ctrlAt(row, newCol).vertex = oldCtrl[row*oldWidth + oldCol].vertex;		
+				ctrlAt(row, newCol).vertex = oldCtrl[row*oldWidth + oldCol].vertex;
 				ctrlAt(row, newCol).texcoord = oldCtrl[row*oldWidth + oldCol].texcoord;
-				
+
 				// Set newCol to the right column (to be interpolated)
 				newCol++;
 				ctrlAt(row, newCol).vertex = float_mid(
@@ -1217,37 +1217,37 @@ void Patch::insertColumns(std::size_t colIndex) {
 			}
 			else {
 				// No special column, just copy the control vertex
-				ctrlAt(row, newCol).vertex = oldCtrl[row*oldWidth + oldCol].vertex;		
+				ctrlAt(row, newCol).vertex = oldCtrl[row*oldWidth + oldCol].vertex;
 				ctrlAt(row, newCol).texcoord = oldCtrl[row*oldWidth + oldCol].texcoord;
 			}
 		}
-	} 
+	}
 }
 
 // Inserts two rows before and after the column having the index <colIndex>
 void Patch::insertRows(std::size_t rowIndex) {
 	if (rowIndex == 0 || rowIndex == m_height) {
-		throw GenericPatchException("Patch::insertRows: can't insert at this index."); 
+		throw GenericPatchException("Patch::insertRows: can't insert at this index.");
 	}
-	
+
 	if (m_height + 2 > MAX_PATCH_HEIGHT) {
 		throw GenericPatchException("Patch::insertRows: patch has too many rows.");
 	}
-	
+
 	// Create a backup of the old control vertices
 	PatchControlArray oldCtrl = m_ctrl;
 	std::size_t oldHeight = m_height;
 	std::size_t oldWidth = m_width;
-	
+
 	// Resize this patch
 	setDims(oldWidth, oldHeight + 2);
-	
+
 	// Now fill in the control vertex values and interpolate
 	// before and after the insert point.
 	for (std::size_t col = 0; col < m_width; col++) {
-		
-		for (std::size_t newRow = 0, oldRow = 0; 
-			 newRow < m_height && oldRow < oldHeight; 
+
+		for (std::size_t newRow = 0, oldRow = 0;
+			 newRow < m_height && oldRow < oldHeight;
 			 newRow++, oldRow++)
 		{
 			// Is this the insert point?
@@ -1261,12 +1261,12 @@ void Patch::insertRows(std::size_t rowIndex) {
 					oldCtrl[(oldRow-1)*oldWidth + col].texcoord,
 					oldCtrl[oldRow*oldWidth + col].texcoord
 				);
-				
+
 				// Set the newRow counter to the middle row
 				newRow++;
-				ctrlAt(newRow, col).vertex = oldCtrl[oldRow*oldWidth + col].vertex;		
+				ctrlAt(newRow, col).vertex = oldCtrl[oldRow*oldWidth + col].vertex;
 				ctrlAt(newRow, col).texcoord = oldCtrl[oldRow*oldWidth + col].texcoord;
-				
+
 				// Set newRow to the lower column (to be interpolated)
 				newRow++;
 				ctrlAt(newRow, col).vertex = float_mid(
@@ -1280,44 +1280,44 @@ void Patch::insertRows(std::size_t rowIndex) {
 			}
 			else {
 				// No special column, just copy the control vertex
-				ctrlAt(newRow, col).vertex = oldCtrl[oldRow*oldWidth + col].vertex;		
+				ctrlAt(newRow, col).vertex = oldCtrl[oldRow*oldWidth + col].vertex;
 				ctrlAt(newRow, col).texcoord = oldCtrl[oldRow*oldWidth + col].texcoord;
 			}
 		}
-	} 
+	}
 }
 
 // Removes the two rows before and after the column/row having the index <index>
 void Patch::removePoints(bool columns, std::size_t index) {
 	bool rows = !columns; // readability shortcut ;)
-	
-	if ((columns && m_width<5) || (!columns && m_height < 5)) 
+
+	if ((columns && m_width<5) || (!columns && m_height < 5))
     {
 		throw GenericPatchException("Patch::removePoints: can't remove any more rows/columns.");
 	}
-	
+
 	// Check column index bounds
 	if (columns && (index < 2 || index > m_width - 3)) {
 		throw GenericPatchException("Patch::removePoints: can't remove columns at this index.");
 	}
-	
+
 	// Check row index bounds
 	if (rows && (index < 2 || index > m_height - 3)) {
 		throw GenericPatchException("Patch::removePoints: can't remove rows at this index.");
-	} 
-	
+	}
+
 	// Create a backup of the old control vertices
 	PatchControlArray oldCtrl = m_ctrl;
 	std::size_t oldHeight = m_height;
 	std::size_t oldWidth = m_width;
-	
+
 	// Resize this patch
 	setDims(columns ? oldWidth - 2 : oldWidth, rows ? oldHeight - 2 : oldHeight);
-	
+
 	// Now fill in the control vertex values and skip
 	// the rows/cols before and after the remove point.
-	for (std::size_t newRow = 0, oldRow = 0; 
-		 newRow < m_height && oldRow < oldHeight; 
+	for (std::size_t newRow = 0, oldRow = 0;
+		 newRow < m_height && oldRow < oldHeight;
 		 newRow++, oldRow++)
 	{
 		// Skip the row before and after the removal point
@@ -1325,19 +1325,19 @@ void Patch::removePoints(bool columns, std::size_t index) {
 			// Increase the old row pointer by 1
 			oldRow++;
 		}
-		
-		for (std::size_t oldCol = 0, newCol = 0; 
-			 oldCol < oldWidth && newCol < m_width; 
-			 oldCol++, newCol++) 
+
+		for (std::size_t oldCol = 0, newCol = 0;
+			 oldCol < oldWidth && newCol < m_width;
+			 oldCol++, newCol++)
 		{
 			// Skip the column before and after the removal point
 			if (columns && (oldCol == index - 1 || oldCol == index + 1)) {
 				// Increase the old row pointer by 1
 				oldCol++;
 			}
-			
+
 			// Copy the control vertex from the old patch to the new patch
-			ctrlAt(newRow, newCol).vertex = oldCtrl[oldRow*oldWidth + oldCol].vertex;		
+			ctrlAt(newRow, newCol).vertex = oldCtrl[oldRow*oldWidth + oldCol].vertex;
 			ctrlAt(newRow, newCol).texcoord = oldCtrl[oldRow*oldWidth + oldCol].texcoord;
 		}
 	}
@@ -1421,7 +1421,7 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
       std::size_t newHeight = mid + (degenerate ? 2 : 1);
 
       setDims(3, newHeight);
- 
+
       if(degenerate)
       {
         ++mid;
@@ -1461,65 +1461,65 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
 // greebo: Calculates the nearest patch CORNER vertex from the given <point>
 // Note: if this routine returns end(), something's rotten with the patch
 PatchControlIter Patch::getClosestPatchControlToPoint(const Vector3& point) {
-	
+
 	PatchControlIter pBest = end();
-	
+
 	// Initialise with an illegal distance value
 	double closestDist = -1.0;
-	
+
 	PatchControlIter corners[4] = {
 		m_ctrl.begin(),
 		m_ctrl.begin() + (m_width-1),
 		m_ctrl.begin() + (m_width*(m_height-1)),
 		m_ctrl.begin() + (m_width*m_height - 1)
 	};
-	
+
 	// Cycle through all the control points with an iterator
 	//for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 	for (unsigned int i = 0; i < 4; i++) {
-		
+
 		// Calculate the distance of the current vertex
 		double candidateDist = (corners[i]->vertex - point).getLength();
-		
+
 		// Compare the distance to the currently closest one
 		if (candidateDist < closestDist || pBest == end()) {
 			// Store this distance as best value so far
 			closestDist = candidateDist;
-			
+
 			// Store the pointer in <best>
 			pBest = corners[i];
 		}
 	}
-	
+
 	return pBest;
 }
 
 /* greebo: This calculates the nearest patch control to the given brush <face>
- * 
+ *
  * @returns: a pointer to the nearest patch face. (Can technically be end(), but really should not happen).*/
 PatchControlIter Patch::getClosestPatchControlToPatch(const Patch& patch) {
-	
+
 	// A pointer to the patch vertex closest to the patch
 	PatchControlIter pBest = end();
 
 	// Initialise the best distance with an illegal value
 	double closestDist = -1.0;
-	
+
 	// Cycle through the winding vertices and calculate the distance to each patch vertex
 	for (PatchControlConstIter i = patch.begin(); i != patch.end(); ++i)
 	{
 		// Retrieve the vertex
 		const Vector3& patchVertex = i->vertex;
-		
+
 		// Get the nearest control point to the current otherpatch vertex
 		PatchControlIter candidate = getClosestPatchControlToPoint(patchVertex);
-		
+
 		if (candidate != end())
 		{
 			double candidateDist = (patchVertex - candidate->vertex).getLength();
-			
-			// If we haven't found a best patch control so far or 
-			// the candidate distance is even better, save it! 
+
+			// If we haven't found a best patch control so far or
+			// the candidate distance is even better, save it!
 			if (pBest == end() || candidateDist < closestDist)
 			{
 				// Memorise this patch control
@@ -1528,12 +1528,12 @@ PatchControlIter Patch::getClosestPatchControlToPatch(const Patch& patch) {
 			}
 		}
 	} // end for
-	
+
 	return pBest;
 }
 
 /* greebo: This calculates the nearest patch control to the given brush <face>
- * 
+ *
  * @returns: a pointer to the nearest patch face. (Can technically be end(), but really should not happen).*/
 PatchControlIter Patch::getClosestPatchControlToFace(const Face* face)
 {
@@ -1542,27 +1542,27 @@ PatchControlIter Patch::getClosestPatchControlToFace(const Face* face)
 
 	// Initialise the best distance with an illegal value
 	double closestDist = -1.0;
-	
+
 	// Check for NULL pointer, just to make sure
 	if (face != NULL)
 	{
 		// Retrieve the winding from the brush face
 		const Winding& winding = face->getWinding();
-		
+
 		// Cycle through the winding vertices and calculate the distance to each patch vertex
 		for (Winding::const_iterator i = winding.begin(); i != winding.end(); ++i) {
 			// Retrieve the vertex
 			const Vector3& faceVertex = i->vertex;
-			
+
 			// Get the nearest control point to the current face vertex
 			PatchControlIter candidate = getClosestPatchControlToPoint(faceVertex);
-			
+
 			if (candidate != end())
 			{
 				double candidateDist = (faceVertex - candidate->vertex).getLength();
-				
-				// If we haven't found a best patch control so far or 
-				// the candidate distance is even better, save it! 
+
+				// If we haven't found a best patch control so far or
+				// the candidate distance is even better, save it!
 				if (pBest == end() || candidateDist < closestDist)
 				{
 					// Memorise this patch control
@@ -1572,7 +1572,7 @@ PatchControlIter Patch::getClosestPatchControlToFace(const Face* face)
 			}
 		} // end for
 	}
-	
+
 	return pBest;
 }
 
@@ -1592,7 +1592,7 @@ Vector2 Patch::getPatchControlArrayIndices(const PatchControlIter& control)
 			return Vector2(col, row);
 		}
 	}
-	
+
 	return Vector2(0,0);
 }
 
@@ -1601,78 +1601,78 @@ Vector2 Patch::getPatchControlArrayIndices(const PatchControlIter& control)
 Vector2 getProjectedTextureCoords(const Vector3& vertex, const Plane3& plane, const Matrix4& worldToTexture) {
 	// Project the patch vertex onto the brush face plane
 	Vector3 projection = plane.getProjection(vertex);
-	
+
 	// Transform the projection coordinates into texture space
 	Vector3 texcoord = worldToTexture.transform(projection).getVector3();
-	
+
 	// Return the texture coordinates
 	return Vector2(texcoord[0], texcoord[1]);
 }
 
 /* greebo: This routine can be used to create seamless texture transitions from brushes to patches.
- * 
+ *
  * The idea is to flatten out the patch so that the distances between the patch control vertices
  * are preserved, but all of them lie flat in a plane. These points can then be projected onto
  * the brush faceplane and this way the texture coordinates can be easily calculated via the
  * world-to-texture-space transformations (the matrix is retrieved from the TexDef class).
- * 
+ *
  * The main problem that has to be tackled is not the "natural" texturing itself (the method
- * "natural" already takes care of that), but the goal that the patch/brush texture transition 
- * is seamless. 
- * 
+ * "natural" already takes care of that), but the goal that the patch/brush texture transition
+ * is seamless.
+ *
  * The starting point of the "flattening" is the nearest control vertex of the patch (the closest
  * patch vertex to any of the brush winding vertices. Once this point has been found, the patch is
- * systematically flattened into a "virtual" patch plane. From there the points are projected into 
- * the texture space and you're already there.  
- * 
+ * systematically flattened into a "virtual" patch plane. From there the points are projected into
+ * the texture space and you're already there.
+ *
  * Note: This took me quite a bit and it's entirely possible that there is a more clever solution
- * to this, but for this weekend I'm done with this (and it works ;)). 
- * 
+ * to this, but for this weekend I'm done with this (and it works ;)).
+ *
  * Note: The angle between patch and brush can also be 90 degrees, the algorithm catches this case
- * and calculates its own virtual patch directions. 
+ * and calculates its own virtual patch directions.
  */
 void Patch::pasteTextureNatural(const Face* face) {
 	// Check for NULL pointers
 	if (face != NULL) {
-		
+
 		// Convert the size_t stuff into int, because we need it for signed comparisons
 		int patchHeight = static_cast<int>(m_height);
 		int patchWidth = static_cast<int>(m_width);
-		
+
 		// Get the plane and its normalised normal vector of the face
 		Plane3 plane = face->getPlane().getPlane().getNormalised();
 		Vector3 faceNormal = plane.normal();
-		
+
 		// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
 		Matrix4 worldToTexture = face->getTexdef().m_projection.getWorldToTexture(faceNormal, Matrix4::getIdentity());
-		
+
 		// Calculate the nearest corner vertex of this patch (to the face's winding vertices)
 		PatchControlIter nearestControl = getClosestPatchControlToFace(face);
-		
+
 		// Determine the control array indices of the nearest control vertex
 		Vector2 indices = getPatchControlArrayIndices(nearestControl);
-		
+
 		// this is the point from where the patch is virtually flattened
 		int wStart = static_cast<int>(indices.x());
 		int hStart = static_cast<int>(indices.y());
-		
+
 		// Calculate the increments in the patch array, needed for the loops
 		int wIncr = (wStart == patchWidth-1) ? -1 : 1;
 		int wEnd = (wIncr<0) ? -1 : patchWidth;
-		
+
 		int hIncr = (hStart == patchHeight-1) ? -1 : 1;
 		int hEnd = (hIncr<0) ? -1 : patchHeight;
-		
+
 		PatchControl* startControl = &m_ctrl[(patchWidth*hStart) + wStart];
-		
+
 		// Calculate the base directions that are used to "flatten" the patch
 		// These have to be orthogonal to the facePlane normal, so that the texture coordinates
 		// can be retrieved by projection onto the facePlane.
-		
+
 		// Get the control points of the next column and the next row
 		PatchControl& nextColumn = m_ctrl[(patchWidth*(hStart + hIncr)) + wStart];
 		PatchControl& nextRow = m_ctrl[(patchWidth*hStart) + (wStart + wIncr)];
-		
+
 		// Calculate the world direction of these control points and extract a base
 		Vector3 widthVector = (nextRow.vertex - startControl->vertex);
 		Vector3 heightVector = (nextColumn.vertex - startControl->vertex);
@@ -1684,62 +1684,62 @@ void Patch::pasteTextureNatural(const Face* face) {
 			);
 			return;
 		}
-		
+
 		// Save the undo memento
 		undoSave();
 
-		// Calculate the base vectors of the virtual plane the patch is flattened in		
+		// Calculate the base vectors of the virtual plane the patch is flattened in
 		Vector3 widthBase, heightBase;
 		getVirtualPatchBase(widthVector, heightVector, faceNormal, widthBase, heightBase);
-		
-		// Now cycle (systematically) through all the patch vertices, flatten them out by 
+
+		// Now cycle (systematically) through all the patch vertices, flatten them out by
 		// calculating the 3D distances of each vertex and projecting them onto the facePlane.
-		
+
 		// Initialise the starting point
-		PatchControl* prevColumn = startControl; 
+		PatchControl* prevColumn = startControl;
 		Vector3 prevColumnVirtualVertex = prevColumn->vertex;
-		
+
 		for (int w = wStart; w != wEnd; w += wIncr) {
-			
+
 			// The first control in this row, calculate its virtual coords
 			PatchControl* curColumn = &m_ctrl[(patchWidth*hStart) + w];
-			
+
 			// The distance between the last column and this column
 			double xyzColDist = (curColumn->vertex - prevColumn->vertex).getLength();
-			
+
 			// The vector pointing to the next control point, if it *was* a completely planar patch
 			Vector3 curColumnVirtualVertex = prevColumnVirtualVertex + widthBase * xyzColDist;
 
-			// Store this value for the upcoming column cycle			
+			// Store this value for the upcoming column cycle
 			PatchControl* prevRow = curColumn;
 			Vector3 prevRowVirtualVertex = curColumnVirtualVertex;
-			
+
 			// Cycle through all the columns
 			for (int h = hStart; h != hEnd; h += hIncr) {
-				
+
 				// The current control
 				PatchControl* control = &m_ctrl[(patchWidth*h) + w];
-				
+
 				// The distance between the last and the current vertex
 				double xyzRowDist = (control->vertex - prevRow->vertex).getLength();
-			
+
 				// The vector pointing to the next control point, if it *was* a completely planar patch
 				Vector3 virtualControlVertex = prevRowVirtualVertex + heightBase * xyzRowDist;
-				
-				// Project the virtual vertex onto the brush faceplane and transform it into texture space 
+
+				// Project the virtual vertex onto the brush faceplane and transform it into texture space
 				control->texcoord = getProjectedTextureCoords(virtualControlVertex, plane, worldToTexture);
-				
+
 				// Update the variables for the next loop
 				prevRow = control;
 				prevRowVirtualVertex = virtualControlVertex;
 			}
-			
+
 			// Set the prevColumn control vertex to this one
 			prevColumn = curColumn;
 			prevColumnVirtualVertex = curColumnVirtualVertex;
 		}
 	}
-	
+
 	// Notify the patch about the change
 	controlPointsChanged();
 }
@@ -1747,25 +1747,25 @@ void Patch::pasteTextureNatural(const Face* face) {
 void Patch::pasteTextureNatural(Patch& sourcePatch) {
 	// Save the undo memento
 	undoSave();
-	
+
 	// Convert the size_t stuff into int, because we need it for signed comparisons
 	int patchHeight = static_cast<int>(m_height);
 	int patchWidth = static_cast<int>(m_width);
-	
+
 	// Calculate the nearest corner vertex of this patch (to the sourcepatch vertices)
 	PatchControlIter nearestControl = getClosestPatchControlToPatch(sourcePatch);
-	
+
 	PatchControlIter refControl = sourcePatch.getClosestPatchControlToPatch(*this);
-	
+
 	Vector2 texDiff = refControl->texcoord - nearestControl->texcoord;
-	
+
 	for (int col = 0; col < patchWidth; col++) {
 		for (int row = 0; row < patchHeight; row++) {
 			// Substract the texture coord difference from each control vertex
 			ctrlAt(row, col).texcoord += texDiff;
 		}
 	}
-	
+
 	// Notify the patch about the change
 	controlPointsChanged();
 }
@@ -1773,28 +1773,28 @@ void Patch::pasteTextureNatural(Patch& sourcePatch) {
 void Patch::pasteTextureProjected(const Face* face) {
 	// Save the undo memento
 	undoSave();
-	
+
 	/* greebo: If there is a face pointer being passed to this method,
 	 * the algorithm takes each vertex of the patch, projects it onto
 	 * the plane (defined by the brush face) and transforms the coordinates
 	 * into the texture space. */
-	
+
 	if (face != NULL) {
 		// Get the normal vector of the face
 		Plane3 plane = face->getPlane().getPlane().getNormalised();
-		
+
 		// Get the (already normalised) facePlane normal
 		Vector3 faceNormal = plane.normal();
-		
+
 		// Get the conversion matrix from the FaceTextureDef, the local2World argument is the identity matrix
 		Matrix4 worldToTexture = face->getTexdef().m_projection.getWorldToTexture(faceNormal, Matrix4::getIdentity());
-		
+
 		// Cycle through all the control points with an iterator
 		for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 			// Project the vertex onto the face plane and transform it into texture space
 			i->texcoord = getProjectedTextureCoords(i->vertex, plane, worldToTexture);
 		}
-	
+
 		// Notify the patch about the change
 		controlPointsChanged();
 	}
@@ -1805,22 +1805,22 @@ void Patch::pasteTextureProjected(const Face* face) {
  */
 void Patch::pasteTextureCoordinates(const Patch* otherPatch) {
 	undoSave();
-	
+
 	if (otherPatch != NULL) {
-		
+
 		if (otherPatch->getWidth() == m_width && otherPatch->getHeight() == m_height) {
-			
+
 			PatchControlConstIter other;
 			PatchControlIter self;
-			
+
 			// Clone the texture coordinates one by one
-			for (other = otherPatch->begin(), self = m_ctrl.begin(); 
-				 other != otherPatch->end(); 
-				 ++other, ++self) 
+			for (other = otherPatch->begin(), self = m_ctrl.begin();
+				 other != otherPatch->end();
+				 ++other, ++self)
 			{
 				self->texcoord = other->texcoord;
 			}
-			
+
 			// Notify the patch about the change
 			controlPointsChanged();
 		}
@@ -1831,15 +1831,15 @@ void Patch::pasteTextureCoordinates(const Patch* otherPatch) {
 }
 
 /* greebo: This gets called when clicking on the "CAP" button in the surface dialogs.
- * 
+ *
  * The texture is projected onto either the <x,y>, <y,z>, or <x,z> planes and the result
  * is not stretched in any direction, as the pure components of the vector are translated
  * into texture coordinates. Points on the x-axis that are near to each other get
  * texture coordinates that are "near" to each other.
- * 
+ *
  * The argument nAxis can be 0,1,2 and determines, which components are taken to
  * calculate the texture coordinates.
- * 
+ *
  * Note: the default texture scale is used to calculate the texture coordinates.
  */
 void Patch::ProjectTexture(int nAxis) {
@@ -1848,7 +1848,7 @@ void Patch::ProjectTexture(int nAxis) {
 
 	// Hold the component index of the vector (e.g. 0,1 = x,y or 1,2 = y,z)
 	int s, t;
-  
+
 	switch (nAxis) {
 		case 2:		// Projection onto <x,y> plane
 			s = 0;
@@ -1877,8 +1877,8 @@ void Patch::ProjectTexture(int nAxis) {
 
 	// Cycle through all the control points with an iterator
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
-		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument) 
-		// and apply the appropriate texture coordinate 
+		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument)
+		// and apply the appropriate texture coordinate
 		i->texcoord[0] = i->vertex[s] * fWidth;
 		i->texcoord[1] = i->vertex[t] * fHeight;
 	}
@@ -1938,10 +1938,10 @@ void Patch::alignTexture(EAlignType align)
 	std::size_t coordIndex = 0;
 	// The dimension to move (1 for top/bottom, 0 for left right)
 	std::size_t dim = 0;
-	
+
 	switch (align)
 	{
-	case ALIGN_TOP: 
+	case ALIGN_TOP:
 		coordIndex = topEdge;
 		dim = 1;
 		break;
@@ -1960,10 +1960,10 @@ void Patch::alignTexture(EAlignType align)
 	};
 
 	Vector2 snapped = texCoords[coordIndex];
-	
+
 	// Snap the dimension we're going to change only (s for left/right, t for top/bottom)
 	snapped[dim] = float_snapped(snapped[dim], 1.0);
-	
+
 	Vector2 delta = snapped - texCoords[coordIndex];
 
 	// Shift the texture such that we hit the snapped coordinate
@@ -2001,7 +2001,7 @@ PatchMesh Patch::getTesselatedPatchMesh() const
 
 		mesh.vertices.push_back(v);
 	}
-	
+
 	return mesh;
 }
 
@@ -2019,15 +2019,15 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
     ERROR_MESSAGE("invalid view-type");
     return;
   }
-  
+
   if(m_width < MIN_PATCH_WIDTH || m_width > MAX_PATCH_WIDTH) m_width = 3;
   if(m_height < MIN_PATCH_HEIGHT || m_height > MAX_PATCH_HEIGHT) m_height = 3;
-  
+
   Vector3 vStart;
   vStart[x] = aabb.origin[x] - aabb.extents[x];
   vStart[y] = aabb.origin[y] - aabb.extents[y];
   vStart[z] = aabb.origin[z];
-  
+
   float xAdj = fabsf((vStart[x] - (aabb.origin[x] + aabb.extents[x])) / (float)(m_width - 1));
   float yAdj = fabsf((vStart[y] - (aabb.origin[y] + aabb.extents[y])) / (float)(m_height - 1));
 
@@ -2075,7 +2075,7 @@ inline void assignDimsForViewType(EViewType viewType, std::size_t& dim1, std::si
 
 void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 {
-	Vector3 vPos[3] = 
+	Vector3 vPos[3] =
 	{
 		aabb.origin - aabb.extents,
 		aabb.origin,
@@ -2084,9 +2084,9 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 
 	std::size_t dim1, dim2, constDim;
 	assignDimsForViewType(viewType, dim1, dim2, constDim);
-		
-	std::size_t lowlowhigh[3] = { 0, 0, 2 }; 
-	std::size_t lowhighhigh[3] = { 0, 2, 2 }; 
+
+	std::size_t lowlowhigh[3] = { 0, 0, 2 };
+	std::size_t lowhighhigh[3] = { 0, 2, 2 };
 
 	setDims(3, 3);
 
@@ -2115,7 +2115,7 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
 
 void Patch::constructEndcap(const AABB& aabb, EViewType viewType)
 {
-	Vector3 vPos[3] = 
+	Vector3 vPos[3] =
 	{
 		aabb.origin - aabb.extents,
 		aabb.origin,
@@ -2171,11 +2171,11 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 	{
 		constructEndcap(aabb, viewType);
 	}
-	else if (eType == eSqCylinder || eType == eCylinder || 
-			 eType == eDenseCylinder || eType == eVeryDenseCylinder || 
+	else if (eType == eSqCylinder || eType == eCylinder ||
+			 eType == eDenseCylinder || eType == eVeryDenseCylinder ||
 			 eType == eCone || eType == eSphere)
 	{
-		Vector3 vPos[3] = 
+		Vector3 vPos[3] =
 		{
     		aabb.origin - aabb.extents,
 			aabb.origin,
@@ -2190,8 +2190,8 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 			setDims(9, 3);
 			pStart = m_ctrl.begin();
 			break;
-		case eDenseCylinder: 
-		case eVeryDenseCylinder: 
+		case eDenseCylinder:
+		case eVeryDenseCylinder:
 		case eCylinder:
 			setDims(9, 3);
 			pStart = m_ctrl.begin() + 1;
@@ -2271,7 +2271,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
 				}
 			}
 			break;
-		
+
 		case eDenseCylinder:
 		case eVeryDenseCylinder:
 		case eCylinder:
@@ -2409,7 +2409,7 @@ void RenderablePatchSolid::RenderNormals() const
         glVertex3dv(vNormal);
       }
       {
-        Vector3 vNormal(          
+        Vector3 vNormal(
             vertex.vertex + vertex.tangent.getNormalised() * 8
         );
         glVertex3dv(vertex.vertex);
@@ -2557,9 +2557,9 @@ inline void QuadraticBezier_evaluate(const PatchControl& a, const PatchControl& 
   point.texcoord = vector2_linear_interpolated(left.texcoord, right.texcoord, t);
 }
 
-void Patch::TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices, 
-									std::size_t strideX, std::size_t strideY, 
-									unsigned int nFlagsX, unsigned int nFlagsY, 
+void Patch::TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices,
+									std::size_t strideX, std::size_t strideY,
+									unsigned int nFlagsX, unsigned int nFlagsY,
 									PatchControlIter subMatrix[3][3])
 {
   double incrementU = 1.0 / m_subdivisions_x;
@@ -2629,7 +2629,7 @@ void Patch::TesselateSubMatrixFixed(ArbitraryMeshVertex* vertices,
         ArbitraryMeshTriangle_calcTangents(a, b, c, tangent, bitangent);
         tangent = tangent.getNormalised();
         bitangent = bitangent.getNormalised();
-       
+
         if(((nFlagsX & AVERAGE) != 0 && i == 0) || ((nFlagsY & AVERAGE) != 0  && j == 0))
         {
           p->normal = Normal3f(p->normal + normal.getNormalised());
@@ -2693,7 +2693,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
       m_tess.vertices[BX->index + BY->index].texcoord = texTmp;
     }
 
-  
+
 	if(!BX->left->isLeaf())
     {
       m_tess.vertices[BX->left->index + offStartY].texcoord = texcoord_0_0;
@@ -2745,7 +2745,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
       m_tess.vertices[BX->index + BY->index].vertex = tmp;
     }
 
-  
+
 	if(!BX->left->isLeaf())
     {
       m_tess.vertices[BX->left->index + offStartY].vertex = vertex_0_0;
@@ -2773,7 +2773,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
     {
       ArbitraryMeshVertex a, b, c;
       Vector3 tangentU;
- 
+
       if(!(nFlagsX & DEGEN_0a) || !(nFlagsX & DEGEN_0b))
       {
         tangentU = vertex_0_1 - vertex_0_0;
@@ -2813,7 +2813,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
         b.vertex = Vertex3f(tmp);//m_tess.vertices[BX->index + offStartY].vertex;
         b.texcoord = texTmp; //m_tess.vertices[BX->index + offStartY].texcoord;
       }
-  
+
 
       Vector3 normal, s, t;
       ArbitraryMeshVertex& v = m_tess.vertices[offStartY + BX->index];
@@ -2914,7 +2914,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
     }
   }
 
-  
+
   newFlagsX = newFlagsY = 0;
 
   if((nFlagsX & DEGEN_0a) && (nFlagsX & DEGEN_0b))
@@ -2945,13 +2945,13 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
     newFlagsY |= DEGEN_2b;
   }
 
-  
+
   //if((nFlagsX & DEGEN_0a) && (nFlagsX & DEGEN_1a) && (nFlagsX & DEGEN_2a)) { newFlagsX |= DEGEN_0a; newFlagsX |= DEGEN_1a; newFlagsX |= DEGEN_2a; }
   //if((nFlagsX & DEGEN_0b) && (nFlagsX & DEGEN_1b) && (nFlagsX & DEGEN_2b)) { newFlagsX |= DEGEN_0b; newFlagsX |= DEGEN_1b; newFlagsX |= DEGEN_2b; }
-  
+
   newFlagsX |= (nFlagsX & SPLIT);
   newFlagsX |= (nFlagsX & AVERAGE);
-      
+
   if(!BY->isLeaf())
   {
     {
@@ -2985,7 +2985,7 @@ void Patch::TesselateSubMatrix( const BezierCurveTree *BX, const BezierCurveTree
     }
 
     if((nFlagsY & DEGEN_2a) && (nFlagsY & DEGEN_2b)) { newFlagsY |= DEGEN_2a; newFlagsY |= DEGEN_2b; }
-    
+
     TesselateSubMatrix( BY, BX->right,
                         offStartY, BX->index,
                         offEndY, offEndX,
@@ -3094,7 +3094,7 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 						p1->vertex,					// left
 						(p1+(strideU<<1))->vertex	// right
 					);
-					
+
 					pCurveList = g_slist_prepend(pCurveList, pCurve);
 				}
 
@@ -3180,7 +3180,7 @@ inline void vertex_clear_normal(ArbitraryMeshVertex& vertex)
   vertex.tangent = Normal3f(0, 0, 0);
   vertex.bitangent = Normal3f(0, 0, 0);
 }
-      
+
 inline void tangents_remove_degenerate(Vector3 tangents[6], Vector2 textureTangents[6], unsigned int flags)
 {
   if(flags & DEGEN_0a)
@@ -3314,7 +3314,7 @@ void bestTangents01(unsigned int degenerateFlags, double dot, double length, std
     }
   }
 }
- 
+
 void bestTangents10(unsigned int degenerateFlags, double dot, double length, std::size_t& index0, std::size_t& index1)
 {
   if(fabs(dot - length) < 0.001) // same direction = degenerate
@@ -3438,7 +3438,7 @@ void Patch::BuildVertexArray()
   {
     m_tess.m_numStrips = m_tess.m_nArrayHeight-1;
     m_tess.m_lenStrips = m_tess.m_nArrayWidth*2;
-  
+
     for(std::size_t i=0; i<m_tess.m_nArrayWidth; i++)
     {
       for(std::size_t j=0; j<m_tess.m_numStrips; j++)
@@ -3465,7 +3465,7 @@ void Patch::BuildVertexArray()
         // reverse because radiant uses CULL_FRONT
         //m_tess.indices[(j*m_tess.m_lenStrips)+i*2+1] = RenderIndex(((m_tess.m_nArrayHeight-1)-i)*m_tess.m_nArrayWidth+j);
         //m_tess.indices[(j*m_tess.m_lenStrips)+i*2] = RenderIndex(((m_tess.m_nArrayHeight-1)-i)*m_tess.m_nArrayWidth+j+1);
-        
+
       }
     }
   }
@@ -3514,7 +3514,7 @@ void Patch::BuildVertexArray()
           vertex_clear_normal(m_tess.vertices[offStartX + offEndY]);
         }
         vertex_assign_ctrl(m_tess.vertices[offStartX + offEndY], *subMatrix[2][0]);
-      
+
         vertex_clear_normal(m_tess.vertices[offEndX + offEndY]);
         vertex_assign_ctrl(m_tess.vertices[offEndX + offEndY], *subMatrix[2][2]);
 
@@ -3704,8 +3704,8 @@ void Patch::BuildVertexArray()
         }
         // set flags to save evaluating shared edges twice
         nFlagsX |= SPLIT;
-        nFlagsY |= SPLIT;    
-      
+        nFlagsY |= SPLIT;
+
         // if the patch is curved.. tesselate recursively
         // use the relevant control curves for this sub-patch
         if(m_patchDef3)
@@ -3754,7 +3754,7 @@ Vector3 getAverageNormal(const Vector3& normal1, const Vector3& normal2, double 
 	// Get the angle bisector
 	Vector3 normal = (n1 + n2).getNormalised();
 
-	// Now calculate the length correction out of the angle 
+	// Now calculate the length correction out of the angle
 	// of the two normals
 	float factor = cos(n1.angle(n2) * 0.5);
 
@@ -3767,26 +3767,26 @@ Vector3 getAverageNormal(const Vector3& normal1, const Vector3& normal2, double 
 	{
 		normal /= factor;
 	}
-	
+
 	return normal;
 }
 
-void Patch::createThickenedOpposite(const Patch& sourcePatch, 
-									const float thickness, 
-									const int axis) 
+void Patch::createThickenedOpposite(const Patch& sourcePatch,
+									const float thickness,
+									const int axis)
 {
 	// Clone the dimensions from the other patch
 	setDims(sourcePatch.getWidth(), sourcePatch.getHeight());
 
 	// Also inherit the tesselation from the source patch
 	setFixedSubdivisions(sourcePatch.subdivionsFixed(), sourcePatch.getSubdivisions());
-	
+
 	// Copy the shader from the source patch
 	setShader(sourcePatch.getShader());
-	
+
 	// if extrudeAxis == 0,0,0 the patch is extruded along its vertex normals
 	Vector3 extrudeAxis(0,0,0);
-	
+
 	switch (axis) {
 		case 0: // X-Axis
 			extrudeAxis = Vector3(1,0,0);
@@ -3801,30 +3801,30 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 			// Default value already set during initialisation
 			break;
 	}
-	
+
 	for (std::size_t col = 0; col < m_width; col++)
 	{
 		for (std::size_t row = 0; row < m_height; row++)
-		{			
+		{
 			// The current control vertex on the other patch
 			const PatchControl& curCtrl = sourcePatch.ctrlAt(row, col);
-			
+
 			Vector3 normal;
-			
+
 			// Are we extruding along vertex normals (i.e. extrudeAxis == 0,0,0)?
 			if (extrudeAxis == Vector3(0,0,0))
 			{
 				// The col tangents (empty if 0,0,0)
 				Vector3 colTangent[2] = { Vector3(0,0,0), Vector3(0,0,0) };
-				
+
 				// Are we at the beginning/end of the column?
 				if (col == 0 || col == m_width - 1)
 				{
 					// Get the next row index
 					std::size_t nextCol = (col == m_width - 1) ? (col - 1) : (col + 1);
-					
+
 					const PatchControl& colNeighbour = sourcePatch.ctrlAt(row, nextCol);
-					
+
 					// One available tangent
 					colTangent[0] = colNeighbour.vertex - curCtrl.vertex;
 					// Reverse it if we're at the end of the column
@@ -3836,11 +3836,11 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 					// Take two neighbouring vertices that should form a line segment
 					const PatchControl& neighbour1 = sourcePatch.ctrlAt(row, col+1);
 					const PatchControl& neighbour2 = sourcePatch.ctrlAt(row, col-1);
-					
+
 					// Calculate both available tangents
 					colTangent[0] = neighbour1.vertex - curCtrl.vertex;
 					colTangent[1] = neighbour2.vertex - curCtrl.vertex;
-					
+
 					// Reverse the second one
 					colTangent[1] *= -1;
 
@@ -3853,16 +3853,16 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 
 				// Calculate the tangent vectors to the next row
 				Vector3 rowTangent[2] = { Vector3(0,0,0), Vector3(0,0,0) };
-				
-				// Are we at the beginning or the end? 
+
+				// Are we at the beginning or the end?
 				if (row == 0 || row == m_height - 1)
 				{
 					// Yes, only calculate one row tangent
 					// Get the next row index
 					std::size_t nextRow = (row == m_height - 1) ? (row - 1) : (row + 1);
-					
+
 					const PatchControl& rowNeighbour = sourcePatch.ctrlAt(nextRow, col);
-					
+
 					// First tangent
 					rowTangent[0] = rowNeighbour.vertex - curCtrl.vertex;
 					// Reverse it accordingly
@@ -3925,44 +3925,44 @@ void Patch::createThickenedOpposite(const Patch& sourcePatch,
 				// Take the predefined extrude direction instead
 				normal = extrudeAxis;
 			}
-			
+
 			// Store the new coordinates into this patch at the current coords
 			ctrlAt(row, col).vertex = curCtrl.vertex + normal*thickness;
-			
+
 			// Clone the texture cooordinates of the source patch
 			ctrlAt(row, col).texcoord = curCtrl.texcoord;
 		}
 	}
-	
+
 	// Notify the patch about the change
 	controlPointsChanged();
 }
 
-void Patch::createThickenedWall(const Patch& sourcePatch, 
-								const Patch& targetPatch, 
-								const int wallIndex) 
+void Patch::createThickenedWall(const Patch& sourcePatch,
+								const Patch& targetPatch,
+								const int wallIndex)
 {
 	// Copy the shader from the source patch
 	setShader(sourcePatch.getShader());
-	
+
 	// The start and end control vertex indices
 	int start = 0;
 	int end = 0;
 	// The increment (incr = 1 for the "long" edge, incr = width for the "short" edge)
 	int incr = 1;
-	
+
 	// These are the target dimensions of this wall
 	// The width is depending on which edge is "seamed".
 	int cols = 0;
 	int rows = 3;
-	
+
 	int sourceWidth = static_cast<int>(sourcePatch.getWidth());
 	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
 
 	bool sourceTesselationFixed = sourcePatch.subdivionsFixed();
 	Subdivisions sourceTesselationX(sourcePatch.getSubdivisions().x(), 1);
 	Subdivisions sourceTesselationY(sourcePatch.getSubdivisions().y(), 1);
-	
+
 	// Determine which of the four edges have to be connected
 	// and calculate the start, end & stepsize for the following loop
 	switch (wallIndex) {
@@ -3995,32 +3995,32 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 			setFixedSubdivisions(sourceTesselationFixed, sourceTesselationY);
 			break;
 	}
-	
+
 	setDims(cols, rows);
-	
+
 	const PatchControlArray& sourceCtrl = sourcePatch.getControlPoints();
-	const PatchControlArray& targetCtrl = targetPatch.getControlPoints(); 
-	
+	const PatchControlArray& targetCtrl = targetPatch.getControlPoints();
+
 	int col = 0;
-	// Now go through the control vertices with these calculated stepsize 
+	// Now go through the control vertices with these calculated stepsize
 	for (int idx = start; idx <= end; idx += incr, col++) {
 		Vector3 sourceCoord = sourceCtrl[idx].vertex;
 		Vector3 targetCoord = targetCtrl[idx].vertex;
 		Vector3 middleCoord = (sourceCoord + targetCoord) / 2;
-		
+
 		// Now assign the vertex coordinates
 		ctrlAt(0, col).vertex = sourceCoord;
 		ctrlAt(1, col).vertex = middleCoord;
 		ctrlAt(2, col).vertex = targetCoord;
 	}
-	
+
 	if (wallIndex == 0 || wallIndex == 3) {
 		InvertMatrix();
 	}
-	
+
 	// Notify the patch about the change
 	controlPointsChanged();
-	
+
 	// Texture the patch "naturally"
 	NaturalTexture();
 }
@@ -4028,52 +4028,52 @@ void Patch::createThickenedWall(const Patch& sourcePatch,
 void Patch::stitchTextureFrom(Patch& sourcePatch) {
 	// Save the undo memento
 	undoSave();
-	
+
 	// Convert the size_t stuff into int, because we need it for signed comparisons
 	int patchHeight = static_cast<int>(m_height);
 	int patchWidth = static_cast<int>(m_width);
-	
+
 	// Calculate the nearest corner vertex of this patch (to the sourcepatch vertices)
 	PatchControlIter nearestControl = getClosestPatchControlToPatch(sourcePatch);
-	
+
 	PatchControlIter refControl = sourcePatch.getClosestPatchControlToPatch(*this);
-	
+
 	// Get the distance in texture space
 	Vector2 texDiff = refControl->texcoord - nearestControl->texcoord;
-	
+
 	// The floored values
 	Vector2 floored(floor(fabs(texDiff[0])), floor(fabs(texDiff[1])));
-	
+
 	// Compute the shift applicable to all vertices
 	Vector2 shift;
 	shift[0] = (fabs(texDiff[0])>1.0E-4) ? -floored[0] * texDiff[0]/fabs(texDiff[0]) : 0.0f;
 	shift[1] = (fabs(texDiff[1])>1.0E-4) ? -floored[1] * texDiff[1]/fabs(texDiff[1]) : 0.0f;
-		
+
 	// Now shift all the texture vertices in the right direction, so that this patch
 	// is getting as close as possible to the origin in texture space.
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 		i->texcoord += shift;
 	}
-	
+
 	int sourceHeight = static_cast<int>(sourcePatch.getHeight());
 	int sourceWidth = static_cast<int>(sourcePatch.getWidth());
-	
+
 	// Go through all the 3D vertices and see if they are shared by the other patch
 	for (int col = 0; col < patchWidth; col++) {
 		for (int row = 0; row < patchHeight; row++) {
-			
-			// The control vertex that is to be manipulated			
+
+			// The control vertex that is to be manipulated
 			PatchControl& self = ctrlAt(row, col);
-			
+
 			// Check all the other patch controls for spatial coincidences
 			for (int srcCol = 0; srcCol < sourceWidth; srcCol++) {
 				for (int srcRow = 0; srcRow < sourceHeight; srcRow++) {
 					// Get the other control
 					const PatchControl& other = sourcePatch.ctrlAt(srcRow, srcCol);
-					
+
 					float dist = (other.vertex - self.vertex).getLength();
-					
-					// Allow the coords to be a _bit_ distant  
+
+					// Allow the coords to be a _bit_ distant
 					if (fabs(dist) < 0.005f) {
 						// Assimilate the texture coordinates
 						self.texcoord = other.texcoord;
@@ -4082,48 +4082,48 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
 			}
 		}
 	}
-	
+
 	// Notify the patch about the change
 	controlPointsChanged();
 }
 
 void Patch::normaliseTexture() {
 	// Find the nearest control vertex
-	
+
 	// Initialise the compare value
 	PatchControlIter nearestControl = m_ctrl.begin();
-	
+
 	// Cycle through all the control points with an iterator
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
-		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument) 
+		// Take the according value (e.g. s = x, t = y, depending on the nAxis argument)
 		// and apply the appropriate texture coordinate
 		if (i->texcoord.getLength() < nearestControl->texcoord.getLength()) {
 			nearestControl = i;
 		}
 	}
-	
+
 	// Get the nearest texcoord
 	Vector2 texcoord = nearestControl->texcoord;
-	
+
 	// The floored values
 	Vector2 floored(floor(fabs(texcoord[0])), floor(fabs(texcoord[1])));
-	
+
 	// Compute the shift applicable to all vertices
 	Vector2 shift;
 	shift[0] = (fabs(texcoord[0])>1.0E-4) ? -floored[0] * texcoord[0]/fabs(texcoord[0]) : 0.0f;
 	shift[1] = (fabs(texcoord[1])>1.0E-4) ? -floored[1] * texcoord[1]/fabs(texcoord[1]) : 0.0f;
 
-	// Is there anything to do at all?		
+	// Is there anything to do at all?
 	if (shift.getLength() > 0.0f) {
 		// Save the undo memento
 		undoSave();
-		
+
 		// Now shift all the texture vertices in the right direction, so that this patch
 		// is getting as close as possible to the origin in texture space.
 		for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 			i->texcoord += shift;
 		}
-		
+
 		// Notify the patch about the change
 		controlPointsChanged();
 	}
@@ -4135,25 +4135,25 @@ Subdivisions Patch::getSubdivisions() const {
 
 void Patch::setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) {
 	undoSave();
-		
+
 	m_patchDef3 = isFixed;
 	m_subdivisions_x = divisions.x();
 	m_subdivisions_y = divisions.y();
-	
+
 	if (m_subdivisions_x == 0) {
 		m_subdivisions_x = 4;
 	}
 	else if (m_subdivisions_x > MAX_PATCH_SUBDIVISIONS) {
 		m_subdivisions_x = MAX_PATCH_SUBDIVISIONS;
 	}
-	
+
 	if (m_subdivisions_y == 0) {
 		m_subdivisions_y = 4;
 	}
 	else if (m_subdivisions_y > MAX_PATCH_SUBDIVISIONS) {
 		m_subdivisions_y = MAX_PATCH_SUBDIVISIONS;
 	}
-	
+
 	SceneChangeNotify();
 	textureChanged();
 	controlPointsChanged();

@@ -35,11 +35,11 @@
 
 namespace ui
 {
-	
+
 namespace {
 
     /* CONSTANTS */
-    
+
     const char* LIGHT_CLASSNAME = "light";
     const char* MODEL_CLASSNAME = "func_static";
     const char* SPEAKER_CLASSNAME = "speaker";
@@ -124,7 +124,7 @@ void OrthoContextMenu::show(const Vector3& point)
 				// Visibility check failed, skip sensitivity check
 				item.getWidget()->hide();
 			}
-		}	
+		}
 	}
 
 	_widget->popup(1, gtk_get_current_event_time());
@@ -172,7 +172,7 @@ void OrthoContextMenu::analyseSelection()
 	// Check if a playerStart already exists
 	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-	
+
 	_selectionInfo.playerStartExists = walker.getEntity() != NULL;
 }
 
@@ -205,12 +205,12 @@ bool OrthoContextMenu::checkAddModel()
 	return info.totalCount == 0 || info.brushCount == 1;
 }
 
-bool OrthoContextMenu::checkAddPlayerStart() 
+bool OrthoContextMenu::checkAddPlayerStart()
 {
 	return !_selectionInfo.anythingSelected && !_selectionInfo.playerStartExists;
 }
 
-bool OrthoContextMenu::checkMovePlayerStart() 
+bool OrthoContextMenu::checkMovePlayerStart()
 {
 	return !_selectionInfo.anythingSelected && _selectionInfo.playerStartExists;
 }
@@ -261,15 +261,15 @@ std::string OrthoContextMenu::getRegistryKeyWithDefault(
         return value;
 }
 
-void OrthoContextMenu::callbackAddEntity() 
+void OrthoContextMenu::callbackAddEntity()
 {
 	UndoableCommand command("createEntity");
 
 	// Display the chooser to select an entity classname
 	std::string cName = EntityClassChooser::chooseEntityClass();
-	
+
 	if (!cName.empty()) {
-		// Create the entity. We might get an EntityCreationException if the 
+		// Create the entity. We might get an EntityCreationException if the
 		// wrong number of brushes is selected.
 		try {
 			entity::createEntityFromSelection(cName, _lastPoint);
@@ -280,11 +280,11 @@ void OrthoContextMenu::callbackAddEntity()
 	}
 }
 
-void OrthoContextMenu::callbackAddPlayerStart() 
+void OrthoContextMenu::callbackAddPlayerStart()
 {
-	UndoableCommand command("addPlayerStart");	
+	UndoableCommand command("addPlayerStart");
 
-	try 
+	try
     {
         // Create the player start entity
 		scene::INodePtr playerStartNode = entity::createEntityFromSelection(
@@ -303,12 +303,12 @@ void OrthoContextMenu::callbackAddPlayerStart()
 void OrthoContextMenu::callbackMovePlayerStart()
 {
 	UndoableCommand _cmd("movePlayerStart");
-	
+
 	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-	
+
 	Entity* playerStart = walker.getEntity();
-	
+
 	if (playerStart != NULL)
 	{
 		playerStart->setKeyValue("origin", _lastPoint);
@@ -317,7 +317,7 @@ void OrthoContextMenu::callbackMovePlayerStart()
 
 void OrthoContextMenu::callbackAddLight()
 {
-	UndoableCommand command("addLight");	
+	UndoableCommand command("addLight");
 
     try {
     	entity::createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
@@ -334,11 +334,11 @@ void OrthoContextMenu::callbackAddPrefab()
 	GlobalMap().loadPrefabAt(_lastPoint);
 }
 
-void OrthoContextMenu::callbackAddSpeaker() 
+void OrthoContextMenu::callbackAddSpeaker()
 {
     using boost::lexical_cast;
 
-	UndoableCommand command("addSpeaker");	
+	UndoableCommand command("addSpeaker");
 
     // Cancel all selection
     GlobalSelectionSystem().setSelectedAll(false);
@@ -346,11 +346,11 @@ void OrthoContextMenu::callbackAddSpeaker()
     // Create the speaker entity
     scene::INodePtr spkNode;
 
-    try 
+    try
     {
         spkNode = entity::createEntityFromSelection(
             SPEAKER_CLASSNAME, _lastPoint
-        );	
+        );
     }
     catch (EntityCreationException&) {
         gtkutil::errorDialog(_("Unable to create speaker, classname not found."),
@@ -379,14 +379,14 @@ void OrthoContextMenu::callbackAddSpeaker()
         // Set initial radii according to values in sound shader
         ISoundShaderPtr snd = GlobalSoundManager().getSoundShader(soundShader);
         assert(snd);
-        
+
         SoundRadii radii = snd->getRadii();
         entity->setKeyValue(
             "s_mindistance", lexical_cast<std::string>(radii.getMin(true))
         );
         entity->setKeyValue(
-            "s_maxdistance", 
-            (radii.getMax() > 0 
+            "s_maxdistance",
+            (radii.getMax() > 0
              ? lexical_cast<std
              ::string>(radii.getMax(true)) : "10")
         );
@@ -395,24 +395,24 @@ void OrthoContextMenu::callbackAddSpeaker()
 
 void OrthoContextMenu::callbackAddModel()
 {
-	UndoableCommand command("addModel");	
+	UndoableCommand command("addModel");
 
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	
+
 	// To create a model we need EITHER nothing selected OR exactly one brush selected.
 	if (info.totalCount == 0 || info.brushCount == 1)
 	{
 		// Display the model selector and block waiting for a selection (may be empty)
 		ModelSelectorResult ms = ui::ModelSelector::chooseModel("", true, true);
-		
+
 		// If a model was selected, create the entity and set its model key
 		if (!ms.model.empty()) {
 			try {
 				scene::INodePtr modelNode = entity::createEntityFromSelection(
-					MODEL_CLASSNAME, 
+					MODEL_CLASSNAME,
 					_lastPoint
 				);
-			
+
 				//Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
 				Node_getEntity(modelNode)->setKeyValue("model", ms.model);
 				Node_getEntity(modelNode)->setKeyValue("skin", ms.skin);
@@ -429,7 +429,7 @@ void OrthoContextMenu::callbackAddModel()
                                      GlobalMainFrame().getTopLevelWindow());
             }
 		}
-		
+
 	}
 	else
 	{
@@ -548,7 +548,7 @@ void OrthoContextMenu::registerDefaultItems()
 	addItem(addLight, SECTION_CREATE);
 	addItem(addSpeaker, SECTION_CREATE);
 	addItem(addPrefab, SECTION_CREATE);
-	
+
 	addItem(addPlayerStart, SECTION_ACTION);
 	addItem(movePlayerStart, SECTION_ACTION);
 	addItem(convertStatic, SECTION_ACTION);
@@ -594,7 +594,7 @@ void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
 	for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		_widget->append(*(*i)->getWidget());
-	}	
+	}
 }
 
 const std::string& OrthoContextMenu::getName() const

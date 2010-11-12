@@ -26,7 +26,7 @@ public:
 	 */
 	ObjectiveKeyExtractor(ObjectiveMap& map)
 	: _objMap(map)
-	{ 
+	{
 		assert(_objMap.empty());
 	}
 
@@ -34,14 +34,14 @@ public:
 	 * Required visit function.
 	 */
 	void visit(const std::string& key, const std::string& value);
-	
+
 private:
-	/** 
+	/**
 	 * Sanity-checks and converts the given integer specifier [1..N] number
 	 * to the enum range [FIRST_SPECIFIER..MAX_SPECIFIERS).
 	 *
 	 * @returns: MAX_SPECIFIERS if the given integer is invalid, the valid enum otherwise
-	 */ 
+	 */
 	Specifier::SpecifierNumber getSpecifierNumber(int specNum);
 };
 

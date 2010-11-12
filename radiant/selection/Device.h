@@ -18,9 +18,9 @@ inline DeviceVector window_to_normalised_device(WindowVector window, std::size_t
 
 /* greebo: This returns a number between -1 and +1
  * returns -1, if pos < -1
- * returns pos, if -1 < pos < +1 
+ * returns pos, if -1 < pos < +1
  * returns +1, if pos > +1
- * 
+ *
  * So this performs some kind of cut-off of the value <pos> at the [-1,+1] boundaries
  */
 inline float device_constrained(float pos) {

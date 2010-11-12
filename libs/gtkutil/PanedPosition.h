@@ -5,13 +5,13 @@
 #include <sigc++/connection.h>
 #include <string>
 
-/* greebo: A PanedPosition object keeps track of the divider position.  
- * 
+/* greebo: A PanedPosition object keeps track of the divider position.
+ *
  * Use the connect() method to connect a Gtk::Paned to this object.
- * 
+ *
  * Use the loadFromNode() and saveToNode() methods to save the internal
  * size info into the given xml::Node
- * 
+ *
  * This is used by the Splitpane view (mainframe) to store the size/position of the
  * paned views on shutdown.
  */
@@ -23,7 +23,7 @@ class PanedPosition
 private:
 	// The position of this object
 	int _position;
-	
+
 	// The connected paned container
 	Gtk::Paned* _paned;
 
@@ -45,19 +45,19 @@ public:
 
 	// Sets the position to the largest possible value and applies it
 	void applyMaxPosition();
-	
+
 	void saveToPath(const std::string& path);
 	void loadFromPath(const std::string& path);
-	
+
 	// Applies the internally stored size/position info to the GtkWindow
-	// The algorithm was adapted from original GtkRadiant code (window.h) 
+	// The algorithm was adapted from original GtkRadiant code (window.h)
 	void applyPosition();
 
 	// Reads the position from the GtkPaned and normalises it to the paned size
 	void readPosition();
-	
+
 private:
-	// The callback that gets invoked on position change 
+	// The callback that gets invoked on position change
 	void onPositionChange();
 };
 

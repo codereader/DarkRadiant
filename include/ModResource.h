@@ -16,7 +16,7 @@ public:
 	 * Destructor
 	 */
     virtual ~ModResource() {}
-    
+
     /**
      * Return the name of the mod which owns this resource object. Objects that
      * are not part of a separate mod are found in the base/ directory, and will
