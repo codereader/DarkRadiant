@@ -346,8 +346,8 @@ public:
 	template<typename OtherT>
 	Element dot(const BasicVector3<OtherT>& other) const {
 		return 	Element(_v[0] * other.x() +
-				 		_v[1] * other.y() +
-				 		_v[2] * other.z());
+						_v[1] * other.y() +
+						_v[2] * other.z());
 	}
 
 	/* Returns the angle between <self> and <other>

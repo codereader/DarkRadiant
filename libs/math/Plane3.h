@@ -129,7 +129,7 @@ public:
 	{
 		double distTransformed = -( (-_dist * _normal.x() + translation.x()) * _normal.x() +
 									(-_dist * _normal.y() + translation.y()) * _normal.y() +
-              	  					(-_dist * _normal.z() + translation.z()) * _normal.z() );
+              						(-_dist * _normal.z() + translation.z()) * _normal.z() );
 		return Plane3(_normal, distTransformed);
 	}
 

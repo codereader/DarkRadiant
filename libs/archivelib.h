@@ -115,14 +115,14 @@ public:
 	typedef FileInputStream::position_type position_type;
 
 	StoredArchiveFile(const std::string& name,
-	  				const std::string& archiveName,
-	  				position_type position,
-	  				size_type stream_size,
-	  				size_type file_size)
-	  	: m_name(name),
-	  	  m_filestream(archiveName),
-	  	  m_substream(m_filestream, position, stream_size),
-	  	  m_size(file_size)
+					const std::string& archiveName,
+					position_type position,
+					size_type stream_size,
+					size_type file_size)
+		: m_name(name),
+		  m_filestream(archiveName),
+		  m_substream(m_filestream, position, stream_size),
+		  m_size(file_size)
 	{}
 
 	size_type size() const {

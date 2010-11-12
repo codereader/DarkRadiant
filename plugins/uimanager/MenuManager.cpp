@@ -95,10 +95,10 @@ Gtk::Widget* MenuManager::get(const std::string& path) {
 
 Gtk::Widget* MenuManager::add(const std::string& insertPath,
 							const std::string& name,
-					  		eMenuItemType type,
-			 		  		const std::string& caption,
-			 		  		const std::string& icon,
-					  		const std::string& eventName)
+							eMenuItemType type,
+							const std::string& caption,
+							const std::string& icon,
+							const std::string& eventName)
 {
 	// Sanity check for empty menu
 	if (_root == NULL) return NULL;

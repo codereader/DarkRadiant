@@ -35,7 +35,7 @@ public:
 	// Clone method for virtual construction
 	IPropertyEditorPtr createNew(Entity* entity,
 								const std::string& name,
-							  	const std::string& options)
+								const std::string& options)
 	{
 		return PropertyEditorPtr(
 			new ModelPropertyEditor(entity, name, options)

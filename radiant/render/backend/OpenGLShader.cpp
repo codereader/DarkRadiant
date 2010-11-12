@@ -24,8 +24,8 @@ void OpenGLShader::destroy() {
 }
 
 void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
-					   			 const Matrix4& modelview,
-					   			 const LightList* lights)
+								 const Matrix4& modelview,
+								 const LightList* lights)
 {
     // Iterate over the list of OpenGLStateBuckets, bumpmap and non-bumpmap
     // buckets are handled differently.

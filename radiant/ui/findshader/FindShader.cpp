@@ -27,9 +27,9 @@ namespace ui
 		const int FINDDLG_DEFAULT_SIZE_X = 550;
 	    const int FINDDLG_DEFAULT_SIZE_Y = 100;
 
-	   	const char* const LABEL_FIND = N_("Find:");
-	   	const char* const LABEL_REPLACE = N_("Replace:");
-	   	const char* const LABEL_SELECTED_ONLY = N_("Search current selection only");
+		const char* const LABEL_FIND = N_("Find:");
+		const char* const LABEL_REPLACE = N_("Replace:");
+		const char* const LABEL_SELECTED_ONLY = N_("Search current selection only");
 
 		const std::string FOLDER_ICON = "folder16.png";
 

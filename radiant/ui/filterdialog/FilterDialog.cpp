@@ -25,7 +25,7 @@ namespace ui {
 	namespace {
 		const int DEFAULT_SIZE_X = 600;
 	    const int DEFAULT_SIZE_Y = 550;
-	   	const char* const WINDOW_TITLE = N_("Filter Settings");
+		const char* const WINDOW_TITLE = N_("Filter Settings");
 
 		enum {
 			WIDGET_ADD_FILTER_BUTTON,

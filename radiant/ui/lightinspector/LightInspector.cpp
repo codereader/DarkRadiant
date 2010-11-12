@@ -549,9 +549,9 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	Gdk::Color col = _colour->get_color();
 
 	entity->setKeyValue("_color", (boost::format("%.2f %.2f %.2f")
-						  	  		% (col.get_red_p())
-						  	  		% (col.get_green_p())
-						  	  		% (col.get_blue_p())).str());
+							  		% (col.get_red_p())
+							  		% (col.get_green_p())
+							  		% (col.get_blue_p())).str());
 
 	// Write out all vectors to the entity
 	for (StringMap::iterator i = _valueMap.begin();

@@ -219,31 +219,31 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 		// Do we have a Face to copy from?
 		if (source.isFace()) {
 			if (target.isFace() && entireBrush) {
-	  			// Copy Face >> Whole Brush
-	  			for (Brush::const_iterator i = target.brush->begin();
+				// Copy Face >> Whole Brush
+				for (Brush::const_iterator i = target.brush->begin();
 					 i != target.brush->end();
 					 i++)
 				{
 					applyClipboardFaceToFace(*(*i));
 				}
-	  		}
-	  		else if (target.isFace() && !entireBrush) {
-	  			// Copy Face >> Face
-			 	applyClipboardFaceToFace(*target.face);
+			}
+			else if (target.isFace() && !entireBrush) {
+				// Copy Face >> Face
+				applyClipboardFaceToFace(*target.face);
 			}
 			else if (target.isPatch() && !entireBrush) {
 				// Copy Face >> Patch
 
 				// Set the shader name first
-			 	target.patch->setShader(source.face->getShader());
+				target.patch->setShader(source.face->getShader());
 
-			 	// Either paste the texture projected or naturally
-			 	if (projected) {
-			 		target.patch->pasteTextureProjected(source.face);
-			 	}
-			 	else {
-			 		target.patch->pasteTextureNatural(source.face);
-			 	}
+				// Either paste the texture projected or naturally
+				if (projected) {
+					target.patch->pasteTextureProjected(source.face);
+				}
+				else {
+					target.patch->pasteTextureNatural(source.face);
+				}
 			}
 		}
 		else if (source.isPatch()) {
@@ -263,8 +263,8 @@ void applyClipboardToTexturable(Texturable& target, bool projected, bool entireB
 			}
 			else if (target.isPatch() && !entireBrush) {
 				// Copy patch >> patch
-			 	target.patch->setShader(source.patch->getShader());
-			 	target.patch->pasteTextureNatural(*source.patch);
+				target.patch->setShader(source.patch->getShader());
+				target.patch->pasteTextureNatural(*source.patch);
 			}
 		}
 		else if (source.isShader()) {
@@ -336,7 +336,7 @@ void pasteTextureCoords(SelectionTest& test) {
 		if (target.patch->getWidth() == source.patch->getWidth() &&
 			target.patch->getHeight() == source.patch->getHeight())
 		{
-	 		target.patch->pasteTextureCoordinates(source.patch);
+			target.patch->pasteTextureCoordinates(source.patch);
 		}
 		else {
 			gtkutil::errorDialog(
@@ -346,14 +346,14 @@ void pasteTextureCoords(SelectionTest& test) {
 	}
 	else {
 		if (source.isPatch()) {
-		 	// Nothing to do, this works for patches only
-		 	gtkutil::errorDialog(
+			// Nothing to do, this works for patches only
+			gtkutil::errorDialog(
 				_("Can't paste Texture Coordinates from patches to faces."),
 				GlobalMainFrame().getTopLevelWindow());
 		}
 		else {
 			// Nothing to do, this works for patches only
-		 	gtkutil::errorDialog(
+			gtkutil::errorDialog(
 				_("Can't paste Texture Coordinates from faces."),
 				GlobalMainFrame().getTopLevelWindow());
 		}
@@ -378,7 +378,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 		catch (InvalidSelectionException e) {
 			gtkutil::errorDialog(
 				_("Can't copy Shader. Couldn't retrieve patch."),
-		 		GlobalMainFrame().getTopLevelWindow());
+				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else if (selectedFaceCount() == 1) {
@@ -389,7 +389,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 		catch (InvalidSelectionException e) {
 			gtkutil::errorDialog(
 				_("Can't copy Shader. Couldn't retrieve face."),
-		 		GlobalMainFrame().getTopLevelWindow());
+				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
