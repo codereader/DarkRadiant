@@ -85,7 +85,9 @@ void GroupDialog::populateWindow()
 	add(*_notebook);
 
 	_notebook->set_tab_pos(Gtk::POS_TOP);
-	_notebook->signal_switch_page().connect(sigc::mem_fun(*this, &GroupDialog::onPageSwitch));
+	_notebook->signal_switch_page().connect(
+        sigc::mem_fun(*this, &GroupDialog::onPageSwitch)
+    );
 }
 
 Gtk::Widget* GroupDialog::getPage()
@@ -315,7 +317,12 @@ void GroupDialog::updatePageTitle(unsigned int pageNumber)
 
 void GroupDialog::onPageSwitch(GtkNotebookPage* notebookPage, guint pageNumber)
 {
-	updatePageTitle(pageNumber);
+    // Check if window is realised first, because we may be being called during
+    // widget destruction and the set_title call will crash if so.
+    if (get_realized())
+    {
+        updatePageTitle(pageNumber);
+    }
 }
 
 } // namespace ui
