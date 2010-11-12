@@ -152,7 +152,9 @@ void ObjectivesEditor::setupEntitiesPanel()
 void ObjectivesEditor::setupObjectivesPanel()
 {
     // Tree view
-    Gtk::TreeView* objList = getGladeWidget<Gtk::TreeView>("entitiesTreeView");
+    Gtk::TreeView* objList = getGladeWidget<Gtk::TreeView>(
+        "objectivesTreeView"
+    );
     objList->set_model(_objectiveList);
     objList->set_headers_visible(true);
 
@@ -234,10 +236,9 @@ void ObjectivesEditor::populateWidgets()
 
 	// Use an ObjectiveEntityFinder to walk the map and add any objective
 	// entities to the liststore and entity map
-	ObjectiveEntityFinder finder(_objectiveEntityList,
-								 _objEntityColumns,
-								 _entities,
-								 _objectiveEClasses);
+	ObjectiveEntityFinder finder(
+        _objectiveEntityList, _objEntityColumns, _entities, _objectiveEClasses
+    );
 	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
 
 	// Set the worldspawn entity and populate the active-at-start column
