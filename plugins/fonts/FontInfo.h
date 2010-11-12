@@ -16,7 +16,7 @@ class FontInfo :
 public:
 	std::string name;		// The name of the font, e.g. "carleton"
 	std::string language;	// The language of this font
-	
+
 	// Three sets of glyphs, one for each resolution
 	GlyphSetPtr glyphSets[NumResolutions];
 
@@ -25,19 +25,19 @@ public:
 		language(language_)
 	{}
 
-	const std::string& getName() const 
+	const std::string& getName() const
 	{
 		return name;
 	}
 
 	// The language of this font
-	const std::string& getLanguage() const 
+	const std::string& getLanguage() const
 	{
 		return language;
 	}
 
 	// Returns the glyphset for the specified resolution
-	IGlyphSetPtr getGlyphSet(Resolution resolution) 
+	IGlyphSetPtr getGlyphSet(Resolution resolution)
 	{
 		return glyphSets[resolution];
 	}

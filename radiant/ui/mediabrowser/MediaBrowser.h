@@ -32,11 +32,11 @@ class MediaBrowser :
 {
 public:
 	// Treemodel definition
-	struct TreeColumns : 
+	struct TreeColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		TreeColumns()
-		{ 
+		{
 			add(displayName);
 			add(fullName);
 			add(icon);
@@ -60,16 +60,16 @@ private:
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
 	Gtk::TreeView* _treeView;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
-	
+
 	// Context menu
 	gtkutil::PopupMenu _popupMenu;
-	
+
 	// Texture preview combo (GL widget and info table)
 	TexturePreviewCombo* _preview;
-	
+
 	// false, if the tree is not yet initialised.
 	bool _isPopulated;
-	
+
 private:
 
 	/* gtkutil::PopupMenu callbacks */
@@ -78,9 +78,9 @@ private:
 	void _onApplyToSel();
 	void _onLoadInTexView();
 	void _onShowShaderDefinition();
-	
+
 	/* GTK CALLBACKS */
-	
+
 	bool _onExpose(GdkEventExpose*);
 	void _onSelectionChanged();
 
@@ -88,21 +88,21 @@ private:
 	 * greebo: Custom tree sort function to list folders before textures
 	 */
 	int treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b);
-	
+
 	/* Tree selection query functions */
-	
+
 	bool isDirectorySelected(); // is a directory selected
 	std::string getSelectedName(); // return name of selection
-	
+
 	// Populates the treeview
 	void populate();
 
 	/** Return the singleton instance.
 	 */
 	static MediaBrowserPtr& getInstancePtr();
-	
+
 public:
-	
+
 	/** Return the singleton instance.
 	 */
 	static MediaBrowser& getInstance();
@@ -116,20 +116,20 @@ public:
 		_widget->show_all();
 		return _widget.get();
 	}
-	
+
 	/** Constructor creates GTK widgets.
 	 */
 	MediaBrowser();
-	
+
 	/** Set the given path as the current selection, highlighting it
 	 * in the tree view.
-	 * 
+	 *
 	 * @param selection
-	 * The fullname of the item to select, or the empty string if there 
+	 * The fullname of the item to select, or the empty string if there
 	 * should be no selection.
 	 */
 	void setSelection(const std::string& selection);
-	
+
 	/** greebo: Rebuilds the media tree from scratch (call this after
 	 * 			a "RefreshShaders" command.
 	 */
@@ -143,7 +143,7 @@ public:
 	// Radiant Event Listener
 	void onRadiantShutdown();
 
-	/** 
+	/**
 	 * greebo: Static command target for toggling the mediabrowser tab in the groupdialog.
 	 */
 	static void toggle(const cmd::ArgumentList& args);

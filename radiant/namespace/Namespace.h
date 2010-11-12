@@ -7,12 +7,12 @@
 #include "iscenegraph.h"
 #include "UniqueNameSet.h"
 
-class Namespace : 
+class Namespace :
 	public INamespace
 {
 	// The set of unique names in this namespace
 	UniqueNameSet _uniqueNames;
-	
+
 	// The mapping between full names and observers, multiple keys allowed
 	typedef std::multimap<std::string, NameObserver*> ObserverMap;
 	ObserverMap _observers;

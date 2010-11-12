@@ -20,7 +20,7 @@ MapFileChooserPreview::MapFileChooserPreview() :
 	_preview->setSize(400);
 
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
-	
+
 	vbox->pack_start(*_preview, false, false, 0);
 	vbox->pack_start(createUsagePanel(), true, true, 0);
 
@@ -58,7 +58,7 @@ void MapFileChooserPreview::onFileSelectionChanged(
 
 	_preview->initialisePreview();
 	_preview->queue_draw();
-	
+
 	// Always have the preview active
 	fileChooser.setPreviewActive(true);
 
@@ -67,7 +67,7 @@ void MapFileChooserPreview::onFileSelectionChanged(
 
 void MapFileChooserPreview::updateUsageInfo()
 {
-	// Get the underlying buffer object	
+	// Get the underlying buffer object
 	Glib::RefPtr<Gtk::TextBuffer> buf = _usageInfo->get_buffer();
 
 	std::string usage("");
@@ -106,7 +106,7 @@ bool MapFileChooserPreview::setMapName(const std::string& name)
 		return success;
 	}
 
-	// Suppress the map loading dialog to avoid user 
+	// Suppress the map loading dialog to avoid user
 	// getting stuck in the "drag filename" operation
 	std::string prevValue = GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG);
 	GlobalRegistry().set(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, "1");

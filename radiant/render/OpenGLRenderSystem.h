@@ -16,8 +16,8 @@ namespace render {
  * \brief
  * Implementation of RenderSystem.
  */
-class OpenGLRenderSystem 
-: public RenderSystem, 
+class OpenGLRenderSystem
+: public RenderSystem,
   public OpenGLStateManager,
   public ModuleObserver
 {
@@ -26,13 +26,13 @@ class OpenGLRenderSystem
 	typedef boost::weak_ptr<OpenGLShader> OpenGLShaderWeakPtr;
 	typedef std::map<std::string, OpenGLShaderWeakPtr> ShaderMap;
 	ShaderMap _shaders;
-	
+
 	// whether this module has been realised
 	bool _realised;
 
 	bool m_lightingEnabled;
 	bool m_lightingSupported;
-	
+
 	// Map of OpenGLState references, with access functions.
 	OpenGLStates _state_sorted;
 
@@ -40,7 +40,7 @@ private:
 
     // Set internal lighting-supported and lighting-enabled flags
 	void setLighting(bool supported, bool enabled);
-	
+
 public:
 
 	/**
@@ -49,7 +49,7 @@ public:
 	OpenGLRenderSystem();
 
 	virtual ~OpenGLRenderSystem();
-	
+
 	/* Capture the given shader.
 	 */
 	ShaderPtr capture(const std::string& name);
@@ -58,17 +58,17 @@ public:
   	 * Render all states in the ShaderCache along with their renderables. This
   	 * is where the actual OpenGL rendering starts.
   	 */
-	void render(RenderStateFlags globalstate, 
-				const Matrix4& modelview, 
-				const Matrix4& projection, 
+	void render(RenderStateFlags globalstate,
+				const Matrix4& modelview,
+				const Matrix4& projection,
 				const Vector3& viewer);
-	
+
 	void realise();
 	void unrealise();
 
 	bool lightingEnabled() const;
 	bool lightingSupported() const;
-	
+
 	void extensionsInitialised();
 	void setLightingEnabled(bool enabled);
 
@@ -82,7 +82,7 @@ public:
 	const LightList& attach(LightCullable& cullable);
 	void detach(LightCullable& cullable);
 	void changed(LightCullable& cullable);
-	
+
     // Attach and detach light sources
 	void attachLight(RendererLight& light);
 	void detachLight(RendererLight& light);
@@ -90,19 +90,19 @@ public:
 
 	void evaluateChanged();
 
-	typedef std::set<const Renderable*> Renderables; 
+	typedef std::set<const Renderable*> Renderables;
 	Renderables m_renderables;
 	mutable bool m_traverseRenderablesMutex;
 
     /* OpenGLStateManager implementation */
 	void insertSortedState(const OpenGLStates::value_type& val);
 	void eraseSortedState(const OpenGLStates::key_type& key);
-	
+
 	// renderables
 	void attachRenderable(const Renderable& renderable);
 	void detachRenderable(const Renderable& renderable);
 	void forEachRenderable(const RenderableCallback& callback) const;
-  
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;

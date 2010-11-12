@@ -13,7 +13,7 @@
 #include "AIVocalSetPropertyEditor.h"
 #include "FixupMapDialog.h"
 
-class EditingModule : 
+class EditingModule :
 	public RegisterableModule
 {
 public:
@@ -22,7 +22,7 @@ public:
 		static std::string _name("DarkMod Editing");
 		return _name;
 	}
-	
+
 	virtual const StringSet& getDependencies() const {
 		static StringSet _dependencies;
 
@@ -37,7 +37,7 @@ public:
 
 		return _dependencies;
 	}
-	
+
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
 		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
@@ -55,7 +55,7 @@ public:
 		GlobalEventManager().addCommand("FixupMapDialog", "FixupMapDialog");
 
 		GlobalUIManager().getMenuManager().add("main/map",
-			"FixupMapDialog", ui::menuItem, 
+			"FixupMapDialog", ui::menuItem,
 			_("Fixup Map..."), // caption
 			"", // icon
 			"FixupMapDialog"
@@ -74,10 +74,10 @@ typedef boost::shared_ptr<EditingModule> EditingModulePtr;
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(EditingModulePtr(new EditingModule));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

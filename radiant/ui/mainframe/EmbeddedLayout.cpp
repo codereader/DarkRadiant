@@ -56,12 +56,12 @@ void EmbeddedLayout::activate()
 
 	// First, pack the groupPane and the camera
 	_groupCamPane = Gtk::manage(new Gtk::VPaned);
-	
+
 	_groupCamPane->pack1(*camWindow, true, true);	// allow shrinking
 	_groupCamPane->pack2(*groupPane, true, false);	// no shrinking
 
 	_horizPane.reset(new Gtk::HPaned);
-	
+
 	_horizPane->pack1(*_groupCamPane, true, false);	// no shrinking
 	_horizPane->pack2(*xyView, true, true);			// allow shrinking
 
@@ -72,20 +72,20 @@ void EmbeddedLayout::activate()
 	// Set some default values for the width and height
 	_horizPane->set_position(500);
 	_groupCamPane->set_position(350);
-	
+
 	// Connect the pane position trackers
 	_posHPane.connect(_horizPane.get());
 	_posGroupCamPane.connect(_groupCamPane);
 
 	// Attempt to restore this layout's state
 	restoreStateFromPath(RKEY_EMBEDDED_ROOT);
-	
+
 	mainContainer->show_all();
 
 	// This is needed to fix a weirdness when re-parenting the entity inspector
 	GlobalGroupDialog().showDialogWindow();
 
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
+	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
 	// the position info from the Registry once again.
 	GlobalEntityInspector().restoreSettings();
 
@@ -104,7 +104,7 @@ void EmbeddedLayout::activate()
 	GlobalGroupDialog().addPage(
     	"textures",	// name
     	"Textures", // tab title
-    	"icon_texture.png", // tab icon 
+    	"icon_texture.png", // tab icon
     	*texWindow, // page widget
     	_("Texture Browser")
     );
@@ -112,7 +112,7 @@ void EmbeddedLayout::activate()
 	// Hide the camera toggle option for non-floating views
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
 	// Hide the console/texture browser toggles for non-floating/non-split views
-	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);	
+	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);
 }
 
 void EmbeddedLayout::deactivate()
@@ -121,9 +121,9 @@ void EmbeddedLayout::deactivate()
     GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
 	GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", true);
 
-	// Remove all previously stored pane information 
+	// Remove all previously stored pane information
 	GlobalRegistry().deleteXPath(RKEY_EMBEDDED_ROOT + "//pane");
-	
+
 	// Save pane info
 	saveStateToPath(RKEY_EMBEDDED_ROOT);
 
@@ -185,7 +185,7 @@ void EmbeddedLayout::saveStateToPath(const std::string& path)
 {
 	GlobalRegistry().createKeyWithName(path, "pane", "horizontal");
 	_posHPane.saveToPath(path + "/pane[@name='horizontal']");
-	
+
 	GlobalRegistry().createKeyWithName(path, "pane", "texcam");
 	_posGroupCamPane.saveToPath(path + "/pane[@name='texcam']");
 }

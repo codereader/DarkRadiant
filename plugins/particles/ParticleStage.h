@@ -25,13 +25,13 @@ class ParticleStage :
 public:
 private:
 	friend std::ostream& operator<< (std::ostream&, const ParticleStage&);
-	
+
 	// Number of particles
 	int _count;						// total number of particles, although some may be invisible at a given time
-	
+
 	// Material to render onto each quad
 	std::string _material;
-	
+
 	float _duration;				// Duration in seconds
 	float _cycles;					// allows things to oneShot ( 1 cycle ) or run for a set number of cycles
 									// on a per stage basis
@@ -47,19 +47,19 @@ private:
 
 	float _fadeInFraction;			// in 0.0 to 1.0 range
 	float _fadeOutFraction;			// in 0.0 to 1.0 range
-	float _fadeIndexFraction;		// in 0.0 to 1.0 range, causes later index smokes to be more faded 
+	float _fadeIndexFraction;		// in 0.0 to 1.0 range, causes later index smokes to be more faded
 
 	int	_animationFrames;			// if > 1, subdivide the texture S axis into frames and crossfade
 	float _animationRate;			// frames per second
-	
-	float _initialAngle;			// in degrees, random angle is used if zero ( default ) 
 
-	ParticleParameter _rotationSpeed; // half the particles will have negative rotation speeds, 
+	float _initialAngle;			// in degrees, random angle is used if zero ( default )
+
+	ParticleParameter _rotationSpeed; // half the particles will have negative rotation speeds,
 									  // this is measured in degrees/sec
 
 	float _boundsExpansion;			// user tweak to fix poorly calculated bounds
 
-	bool _randomDistribution;		// randomly orient the quad on emission ( defaults to true ) 
+	bool _randomDistribution;		// randomly orient the quad on emission ( defaults to true )
 	bool _entityColor;				// force color from render entity ( fadeColor is still valid )
 
 	float _gravity;					// can be negative to float up
@@ -88,7 +88,7 @@ private:
 	ParticleParameter _size;		// Size
 
 	ParticleParameter _aspect;		// greater than 1 makes the T axis longer
-	
+
 public:
 	// Create an empty particle stage with default values
 	ParticleStage();
@@ -99,22 +99,22 @@ public:
 	// Resets/clears all values to default. This is called by parseFromTokens().
 	void reset();
 
-	/** 
+	/**
 	 * Get the shader name.
 	 */
 	const std::string& getMaterialName() const { return _material; }
 
-	/** 
+	/**
 	 * Set the shader name.
 	 */
 	void setMaterialName(const std::string& material) { _material = material; }
 
-	/** 
+	/**
 	 * Get the particle count.
 	 */
 	int getCount() const { return _count; }
 
-	/** 
+	/**
 	 * Set the particle count.
 	 */
 	void setCount(int count) { _count = count; }
@@ -130,17 +130,17 @@ public:
 	void setDuration(float duration) { _duration = duration; recalculateCycleMsec(); }
 
 	/**
-	 * Returns ( duration + deadTime ) in msec. 
+	 * Returns ( duration + deadTime ) in msec.
 	 */
 	int getCycleMsec() const { return _cycleMsec; }
 
 	/**
-	 * Get the cycles value. 
+	 * Get the cycles value.
 	 */
 	float getCycles() const { return _cycles; }
 
 	/**
-	 * Set the cycles value. 
+	 * Set the cycles value.
 	 */
 	void setCycles(float cycles) { _cycles = clampZeroOrPositive(cycles); }
 
@@ -193,7 +193,7 @@ public:
 	 * Set the particle render colour.
 	 */
 	void setFadeColour(const Vector4& colour) { _fadeColour = colour; }
-	
+
 	/**
 	 * Get the fade in fraction [0..1]
 	 */
@@ -224,82 +224,82 @@ public:
 	 */
 	void setFadeIndexFraction(float fraction) { _fadeIndexFraction = clampOneZero(fraction); }
 
-	/** 
+	/**
 	 * Get the animation frames.
 	 */
 	int getAnimationFrames() const { return _animationFrames; }
 
-	/** 
+	/**
 	 * Set the animation frames.
 	 */
 	void setAnimationFrames(int animationFrames) { _animationFrames = animationFrames; }
 
-	/** 
+	/**
 	 * Get the animation rate.
 	 */
 	float getAnimationRate() const { return _animationRate; }
 
-	/** 
+	/**
 	 * Set the animation frames.
 	 */
 	void setAnimationRate(float animationRate) { _animationRate = animationRate; }
 
-	/** 
+	/**
 	 * Get the initial angle.
 	 */
 	float getInitialAngle() const { return _initialAngle; }
 
-	/** 
+	/**
 	 * Set the initial angle.
 	 */
 	void setInitialAngle(float angle) { _initialAngle = angle; }
 
-	/** 
+	/**
 	 * Get the bounds expansion value.
 	 */
 	float getBoundsExpansion() const { return _boundsExpansion; }
 
-	/** 
+	/**
 	 * Set the bounds expansion value.
 	 */
 	void setBoundsExpansion(float value) { _boundsExpansion = value; }
 
-	/** 
+	/**
 	 * Get the random distribution flag.
 	 */
 	bool getRandomDistribution() const { return _randomDistribution; }
 
-	/** 
+	/**
 	 * Set the random distribution flag.
 	 */
 	void setRandomDistribution(bool value) { _randomDistribution = value; }
 
-	/** 
+	/**
 	 * Get the "use entity colour" flag.
 	 */
 	bool getUseEntityColour() const { return _entityColor; }
 
-	/** 
+	/**
 	 * Set the "use entity colour" flag.
 	 */
 	void setUseEntityColour(bool value) { _entityColor = value; }
 
-	/** 
+	/**
 	 * Get the gravity factor.
 	 */
 	float getGravity() const { return _gravity; }
 
-	/** 
+	/**
 	 * Set the gravity factor.
 	 */
 	void setGravity(float value) { _gravity = value; }
 
-	/** 
+	/**
 	 * Get the "apply gravity in world space" flag.
 	 */
 	bool getWorldGravityFlag() const { return _applyWorldGravity; }
 
-	/** 
+	/**
 	 * Get the "apply gravity in world space" flag.
 	 */
 	void setWorldGravityFlag(bool value) { _applyWorldGravity = value; }
@@ -328,17 +328,17 @@ public:
 	 * Get the orientation parameter with the given index [0..3]
 	 */
 	float getOrientationParm(int parmNum) const
-	{ 
-		assert(parmNum >= 0 && parmNum < 4); 
-		return _orientationParms[parmNum]; 
+	{
+		assert(parmNum >= 0 && parmNum < 4);
+		return _orientationParms[parmNum];
 	}
 
 	/*
 	 * Set the orientation parameter with the given index [0..3].
 	 */
 	void setOrientationParm(int parmNum, float value)
-	{ 
-		assert(parmNum >= 0 && parmNum < 4); 
+	{
+		assert(parmNum >= 0 && parmNum < 4);
 		_orientationParms[parmNum] = value;
 	}
 
@@ -356,17 +356,17 @@ public:
 	 * Get the distribution parameter with the given index [0..3]
 	 */
 	float getDistributionParm(int parmNum) const
-	{ 
-		assert(parmNum >= 0 && parmNum < 4); 
-		return _distributionParms[parmNum]; 
+	{
+		assert(parmNum >= 0 && parmNum < 4);
+		return _distributionParms[parmNum];
 	}
 
 	/*
 	 * Set the distribution parameter with the given index [0..3].
 	 */
 	void setDistributionParm(int parmNum, float value)
-	{ 
-		assert(parmNum >= 0 && parmNum < 4); 
+	{
+		assert(parmNum >= 0 && parmNum < 4);
 		_distributionParms[parmNum] = value;
 	}
 
@@ -384,17 +384,17 @@ public:
 	 * Get the direction parameter with the given index [0..3]
 	 */
 	float getDirectionParm(int parmNum) const
-	{ 
-		assert(parmNum >= 0 && parmNum < 4); 
-		return _directionParms[parmNum]; 
+	{
+		assert(parmNum >= 0 && parmNum < 4);
+		return _directionParms[parmNum];
 	}
 
 	/*
 	 * Set the direction parameter with the given index [0..3].
 	 */
 	void setDirectionParm(int parmNum, float value)
-	{ 
-		assert(parmNum >= 0 && parmNum < 4); 
+	{
+		assert(parmNum >= 0 && parmNum < 4);
 		_directionParms[parmNum] = value;
 	}
 
@@ -412,17 +412,17 @@ public:
 	 * Get the custom path parameter with the given index [0..7]
 	 */
 	float getCustomPathParm(int parmNum) const
-	{ 
-		assert(parmNum >= 0 && parmNum < 8); 
-		return _customPathParms[parmNum]; 
+	{
+		assert(parmNum >= 0 && parmNum < 8);
+		return _customPathParms[parmNum];
 	}
 
 	/*
 	 * Set the custom path parameter with the given index [0..7].
 	 */
 	void setCustomPathParm(int parmNum, float value)
-	{ 
-		assert(parmNum >= 0 && parmNum < 8); 
+	{
+		assert(parmNum >= 0 && parmNum < 8);
 		_customPathParms[parmNum] = value;
 	}
 
@@ -485,7 +485,7 @@ private:
  */
 inline std::ostream& operator<< (std::ostream& os, const ParticleStage& stage) {
 	os << "ParticleStage { count = " << stage._count << ", "
-	   << "colour = " << stage._colour 
+	   << "colour = " << stage._colour
 	   << " }";
 	return os;
 }

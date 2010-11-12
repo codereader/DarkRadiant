@@ -11,8 +11,8 @@
 namespace {
 	const int MAX_CUBIC_SCALE = 23;
 	const int MAX_CAMERA_SPEED = 300;
-	
-	const std::string RKEY_CAMERA_ROOT = "user/ui/camera"; 
+
+	const std::string RKEY_CAMERA_ROOT = "user/ui/camera";
 	const std::string RKEY_MOVEMENT_SPEED = RKEY_CAMERA_ROOT + "/movementSpeed";
 	const std::string RKEY_ROTATION_SPEED = RKEY_CAMERA_ROOT + "/rotationSpeed";
 	const std::string RKEY_INVERT_MOUSE_VERTICAL_AXIS = RKEY_CAMERA_ROOT + "/invertMouseVerticalAxis";
@@ -32,47 +32,47 @@ enum CameraDrawMode {
 	drawLighting,
 };
 
-class CameraSettings : 
-	public RegistryKeyObserver 
+class CameraSettings :
+	public RegistryKeyObserver
 {
 	bool _callbackActive;
-	
+
 	int _movementSpeed;
 	int _angleSpeed;
-	
+
 	bool _invertMouseVerticalAxis;
 	bool _discreteMovement;
-	
+
 	CameraDrawMode _cameraDrawMode;
-	
+
 	int _cubicScale;
 	bool _farClipEnabled;
 	bool _solidSelectionBoxes;
-	// This is TRUE if the mousebutton must be held to stay in freelook mode 
+	// This is TRUE if the mousebutton must be held to stay in freelook mode
 	// instead of enabling it by clicking and clicking again to disable
 	bool _toggleFreelook;
-	
+
 public:
 	CameraSettings();
 
 	// The callback that gets called on registry key changes
 	void keyChanged(const std::string& key, const std::string& val);
-	
+
 	int movementSpeed() const;
 	int angleSpeed() const;
-	
+
 	// Returns true if cubic clipping is on
 	bool farClipEnabled() const;
 	bool invertMouseVerticalAxis() const;
 	bool discreteMovement() const;
 	bool solidSelectionBoxes() const;
 	bool toggleFreelook() const;
-	
+
 	// Sets/returns the draw mode (wireframe, solid, textured, lighting)
 	CameraDrawMode getMode() const;
 	void setMode(const CameraDrawMode& mode);
 	void toggleLightingMode();
-	
+
 	// Gets/Sets the cubic scale member variable (is automatically constrained [1..MAX_CUBIC_SCALE])
 	int cubicScale() const;
 	void setCubicScale(const int& scale);

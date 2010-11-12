@@ -24,10 +24,10 @@ MapInfoDialog::MapInfoDialog() :
 	set_default_size(MAPINFO_DEFAULT_SIZE_X, MAPINFO_DEFAULT_SIZE_Y);
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-	
+
 	// Create all the widgets
 	populateWindow();
-	
+
 	// Propagate shortcuts to the main window
 	GlobalEventManager().connectDialogWindow(this);
 }
@@ -48,22 +48,22 @@ void MapInfoDialog::populateWindow()
 
 	// Entity Info
 	_notebook->append_page(
-		_entityInfo.getWidget(), 
+		_entityInfo.getWidget(),
 		createTabLabel(_entityInfo.getLabel(), _entityInfo.getIconName())
 	);
 
 	// Shader Info
 	_notebook->append_page(
-		_shaderInfo.getWidget(), 
+		_shaderInfo.getWidget(),
 		createTabLabel(_shaderInfo.getLabel(), _shaderInfo.getIconName())
 	);
 
 	// Model Info
 	_notebook->append_page(
-		_modelInfo.getWidget(), 
+		_modelInfo.getWidget(),
 		createTabLabel(_modelInfo.getLabel(), _modelInfo.getIconName())
 	);
-	
+
 	// Add notebook plus buttons to vbox
 	dialogVBox->pack_start(*_notebook, true, true, 0);
 	dialogVBox->pack_start(createButtons(), false, false, 0);
@@ -76,7 +76,7 @@ Gtk::Widget& MapInfoDialog::createTabLabel(const std::string& label, const std::
 {
 	// The tab label items (icon + label)
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 3));
-	
+
 	hbox->pack_start(
 		*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask(iconName))),
     	false, false, 3
@@ -97,7 +97,7 @@ Gtk::Widget& MapInfoDialog::createButtons()
 	closeButton->signal_clicked().connect(sigc::mem_fun(*this, &MapInfoDialog::onClose));
 
 	hbox->pack_end(*closeButton, false, false, 0);
-	
+
 	return *hbox;
 }
 
@@ -110,7 +110,7 @@ void MapInfoDialog::onClose()
 
 void MapInfoDialog::showDialog(const cmd::ArgumentList& args)
 {
-	MapInfoDialog dialog; 
+	MapInfoDialog dialog;
 	dialog.show(); // blocks
 }
 

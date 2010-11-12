@@ -139,8 +139,8 @@ void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& v
 void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Submit renderable text name if required
-	if (collector.getStyle() == RenderableCollector::eWireframeOnly && 
-		EntitySettings::InstancePtr()->renderEntityNames()) 
+	if (collector.getStyle() == RenderableCollector::eWireframeOnly &&
+		EntitySettings::InstancePtr()->renderEntityNames())
     {
 		collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 		collector.addRenderable(_renderableName, localToWorld());

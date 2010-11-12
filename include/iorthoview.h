@@ -31,10 +31,10 @@ public:
 	// Sets the scale of all available views
 	virtual void setScale(float scale) = 0;
 
-	// Positions all available views 
+	// Positions all available views
 	virtual void positionAllViews(const Vector3& origin) = 0;
-	
-	// Positions the active views 
+
+	// Positions the active views
 	virtual void positionActiveView(const Vector3& origin) = 0;
 
 	// Returns the view type of the currently active view

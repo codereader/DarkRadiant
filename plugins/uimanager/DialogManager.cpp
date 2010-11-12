@@ -13,7 +13,7 @@ DialogManager::~DialogManager()
 {
 	if (!_dialogs.empty())
 	{
-		globalOutputStream() << "DialogManager: " << _dialogs.size() 
+		globalOutputStream() << "DialogManager: " << _dialogs.size()
 			<< " dialogs still in memory at shutdown." << std::endl;
 		_dialogs.clear();
 	}
@@ -33,9 +33,9 @@ IDialogPtr DialogManager::createDialog(const std::string& title, const Glib::Ref
 	return dialog;
 }
 
-IDialogPtr DialogManager::createMessageBox(const std::string& title, 
-										   const std::string& text, 
-										   IDialog::MessageType type, 
+IDialogPtr DialogManager::createMessageBox(const std::string& title,
+										   const std::string& text,
+										   IDialog::MessageType type,
 										   const Glib::RefPtr<Gtk::Window>& parent)
 {
 	cleanupOldDialogs();
@@ -51,7 +51,7 @@ IDialogPtr DialogManager::createMessageBox(const std::string& title,
 	return box;
 }
 
-IFileChooserPtr DialogManager::createFileChooser(const std::string& title, 
+IFileChooserPtr DialogManager::createFileChooser(const std::string& title,
 	bool open, bool browseFolders, const std::string& pattern, const std::string& defaultExt)
 {
 	return IFileChooserPtr(new gtkutil::FileChooser(

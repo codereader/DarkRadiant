@@ -12,8 +12,8 @@ namespace model {
 class NullModelNode;
 typedef boost::shared_ptr<NullModelNode> NullModelNodePtr;
 
-class NullModelNode : 
-	public scene::Node, 
+class NullModelNode :
+	public scene::Node,
 	public SelectionTestable,
 	public Renderable,
 	public ModelNode

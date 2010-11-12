@@ -49,7 +49,7 @@ void ray_intersect_ray(const Ray& ray, const Ray& other, Vector3& intersection) 
   }
   else {
     intersection = other.origin + other.direction*((e - dot*d) / D);
-  }    
+  }
 }
 
 const Vector3 g_origin(0, 0, 0);

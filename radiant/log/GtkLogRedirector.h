@@ -31,9 +31,9 @@ public:
 private:
 	static GtkLogRedirectorPtr& InstancePtr();
 
-	static void handleLogMessage(const gchar* log_domain, 
-								GLogLevelFlags log_level, 
-								const gchar* message, 
+	static void handleLogMessage(const gchar* log_domain,
+								GLogLevelFlags log_level,
+								const gchar* message,
 								gpointer user_data);
 };
 

@@ -36,7 +36,7 @@ class ModuleObservers
 {
 	typedef std::set<ModuleObserver*> Observers;
 	Observers m_observers;
-	
+
 	// greebo: Added this to make debugging easier, so that
 	// the warning in the destructor provides more information.
 	std::string _ownerName;
@@ -46,7 +46,7 @@ public:
 	ModuleObservers() :
 		_ownerName("Owner unknown.")
 	{}
-	
+
 	ModuleObservers(const std::string& ownerName) :
 		_ownerName(ownerName)
 	{}
@@ -56,15 +56,15 @@ public:
 	// replaces previous ASSERT.
 	~ModuleObservers() {
 		if (!m_observers.empty()) {
-			std::cout << "Warning: destroying ModuleObservers with " 
-				<< m_observers.size() << " observers attached." 
+			std::cout << "Warning: destroying ModuleObservers with "
+				<< m_observers.size() << " observers attached."
 				<< " (Owner: " << _ownerName << ")"
 				<< std::endl;
 		}
 	}
 #endif
-	
-	
+
+
   void attach(ModuleObserver& observer)
   {
     ASSERT_MESSAGE(m_observers.find(&observer) == m_observers.end(), "ModuleObservers::attach: cannot attach observer");

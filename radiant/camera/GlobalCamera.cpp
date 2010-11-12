@@ -33,9 +33,9 @@ void GlobalCameraManager::registerCommands()
 	// angua: increases and decreases the movement speed of the camera
 	GlobalCommandSystem().addCommand("CamIncreaseMoveSpeed", boost::bind(&GlobalCameraManager::increaseCameraSpeed, this, _1));
 	GlobalCommandSystem().addCommand("CamDecreaseMoveSpeed", boost::bind(&GlobalCameraManager::decreaseCameraSpeed, this, _1));
-	
+
 	GlobalCommandSystem().addCommand("TogglePreview", boost::bind(&GlobalCameraManager::toggleLightingMode, this, _1));
-	
+
 	// Insert movement commands
 	GlobalCommandSystem().addCommand("CameraForward", boost::bind(&GlobalCameraManager::moveForwardDiscrete, this, _1));
 	GlobalCommandSystem().addCommand("CameraBack", boost::bind(&GlobalCameraManager::moveBackDiscrete, this, _1));
@@ -68,9 +68,9 @@ void GlobalCameraManager::registerCommands()
 	// angua: increases and decreases the movement speed of the camera
 	GlobalEventManager().addCommand("CamIncreaseMoveSpeed", "CamIncreaseMoveSpeed");
 	GlobalEventManager().addCommand("CamDecreaseMoveSpeed", "CamDecreaseMoveSpeed");
-	
+
 	GlobalEventManager().addCommand("TogglePreview", "TogglePreview");
-	
+
 	// Insert movement commands
 	GlobalEventManager().addCommand("CameraForward", "CameraForward");
 	GlobalEventManager().addCommand("CameraBack", "CameraBack");
@@ -83,7 +83,7 @@ void GlobalCameraManager::registerCommands()
 	GlobalEventManager().addCommand("CameraDown", "CameraDown");
 	GlobalEventManager().addCommand("CameraAngleUp", "CameraAngleUp");
 	GlobalEventManager().addCommand("CameraAngleDown", "CameraAngleDown");
-	
+
 	GlobalEventManager().addKeyEvent("CameraFreeMoveForward", boost::bind(&GlobalCameraManager::onFreelookMoveForwardKey, this, _1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveBack", boost::bind(&GlobalCameraManager::onFreelookMoveBackKey, this, _1));
 	GlobalEventManager().addKeyEvent("CameraFreeMoveLeft", boost::bind(&GlobalCameraManager::onFreelookMoveLeftKey, this, _1));
@@ -183,11 +183,11 @@ void GlobalCameraManager::increaseCameraSpeed(const cmd::ArgumentList& args) {
 
 	int movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
 	movementSpeed *= 2;
-	
+
 	if (movementSpeed > MAX_CAMERA_SPEED){
 		movementSpeed = MAX_CAMERA_SPEED;
 	}
-	
+
 	GlobalRegistry().setInt(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
@@ -195,11 +195,11 @@ void GlobalCameraManager::decreaseCameraSpeed(const cmd::ArgumentList& args) {
 
 	int movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
 	movementSpeed /= 2;
-	
+
 	if (movementSpeed < 1){
 		movementSpeed = 1;
 	}
-	
+
 	GlobalRegistry().setInt(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
@@ -236,7 +236,7 @@ void GlobalCameraManager::changeFloorUp(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	// Pass the call to the currently active CamWnd 
+	// Pass the call to the currently active CamWnd
 	camWnd->changeFloor(true);
 }
 
@@ -244,7 +244,7 @@ void GlobalCameraManager::changeFloorDown(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	// Pass the call to the currently active CamWnd 
+	// Pass the call to the currently active CamWnd
 	camWnd->changeFloor(false);
 }
 
@@ -259,20 +259,20 @@ void GlobalCameraManager::removeCameraObserver(CameraObserver* observer) {
 	// Cycle through the list of observers and call the moved method
 	for (CameraObserverList::iterator i = _cameraObservers.begin(); i != _cameraObservers.end(); i++) {
 		CameraObserver* registered = *i;
-		
+
 		if (registered == observer) {
 			_cameraObservers.erase(i++);
-			return; // Don't continue the loop, the iterator is obsolete 
+			return; // Don't continue the loop, the iterator is obsolete
 		}
 	}
 }
 
 void GlobalCameraManager::movedNotify() {
-	
+
 	// Cycle through the list of observers and call the moved method
 	for (CameraObserverList::iterator i = _cameraObservers.begin(); i != _cameraObservers.end(); i++) {
 		CameraObserver* observer = *i;
-		
+
 		if (observer != NULL) {
 			observer->cameraMoved();
 		}
@@ -300,7 +300,7 @@ void GlobalCameraManager::cubicScaleOut(const cmd::ArgumentList& args) {
 void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angles) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
-	
+
 	camWnd->setCameraOrigin(point);
 	camWnd->setCameraAngles(angles);
 }
@@ -476,7 +476,7 @@ const std::string& GlobalCameraManager::getName() const {
 const StringSet& GlobalCameraManager::getDependencies() const
 {
 	static StringSet _dependencies;
-	
+
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
@@ -484,7 +484,7 @@ const StringSet& GlobalCameraManager::getDependencies() const
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
-	
+
 	return _dependencies;
 }
 
@@ -509,7 +509,7 @@ module::StaticModule<GlobalCameraManager> cameraModule;
 
 // ------------------------------------------------------------------------------------
 
-// The accessor function to the GlobalCameraManager instance 
+// The accessor function to the GlobalCameraManager instance
 GlobalCameraManager& GlobalCamera() {
 	return *cameraModule.getModule();
 }

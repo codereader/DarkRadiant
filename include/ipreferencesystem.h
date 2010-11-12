@@ -45,23 +45,23 @@ public:
     // destructor
 	virtual ~PreferencesPage() {}
 
-	/** greebo: Allows to set a custom title of this page. The default title 
-	 * 			upon construction is "guessed" by adding a " Settings" to 
-	 * 			the page name, "Settings/Patch" gets assigned 
+	/** greebo: Allows to set a custom title of this page. The default title
+	 * 			upon construction is "guessed" by adding a " Settings" to
+	 * 			the page name, "Settings/Patch" gets assigned
 	 * 			a "Patch Settings" as default title.
-	 * 			Use this method to change this to fit your needs. 
+	 * 			Use this method to change this to fit your needs.
 	 */
 	virtual void setTitle(const std::string& title) = 0;
 
 	// greebo: Use this to add a checkbox to the preference dialog that is connected to a registry value
 	virtual Gtk::Widget* appendCheckBox(const std::string& name, const std::string& flag, const std::string& registryKey) = 0;
-	
-	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects 
+
+	/* greebo: This adds a horizontal slider to the internally referenced VBox and connects
 	 * it to the given registryKey. */
-	virtual void appendSlider(const std::string& name, const std::string& registryKey, bool drawValue, 
-							  double value, double lower, double upper, 
+	virtual void appendSlider(const std::string& name, const std::string& registryKey, bool drawValue,
+							  double value, double lower, double upper,
 							  double step_increment, double page_increment, double page_size) = 0;
-	
+
    /**
     * \brief
     * Add a drop-down combo box to the preference page.
@@ -85,22 +85,22 @@ public:
                             const std::string& registryKey,
                             const ComboBoxValueList& valueList,
                             bool storeValueNotIndex = false) = 0;
-	
+
 	/* greebo: Appends an entry field with <name> as caption which is connected to the given registryKey
 	 */
 	virtual Gtk::Widget* appendEntry(const std::string& name, const std::string& registryKey) = 0;
-	
+
 	/* greebo: Appends an entry field with spinner buttons which retrieves its value from the given
 	 * RegistryKey. The lower and upper values have to be passed as well.
 	 */
-	virtual Gtk::Widget* appendSpinner(const std::string& name, const std::string& registryKey, 
+	virtual Gtk::Widget* appendSpinner(const std::string& name, const std::string& registryKey,
 									 double lower, double upper, int fraction) = 0;
-									
+
 	// greebo: Adds a PathEntry to choose files or directories (depending on the given boolean)
-	virtual Gtk::Widget* appendPathEntry(const std::string& name, 
-									   const std::string& registryKey, 
+	virtual Gtk::Widget* appendPathEntry(const std::string& name,
+									   const std::string& registryKey,
 									   bool browseDirectories) = 0;
-									   
+
 	// Appends a static label (to add some text to the preference page)
 	virtual Gtk::Widget* appendLabel(const std::string& caption) = 0;
 };
@@ -113,18 +113,18 @@ class IPreferenceSystem :
 {
 public:
 	/** greebo: Retrieves the page for the given path, for example:
-	 * 
-	 * 			"Settings/Patch Settings" 
+	 *
+	 * 			"Settings/Patch Settings"
 	 * 			(spaces are ok, slashes are treated as delimiters, don't use them)
-	 *  
-	 * 			Use the PreferencesPage interface to add widgets 
+	 *
+	 * 			Use the PreferencesPage interface to add widgets
 	 * 			and connect them to the registry.
-	 * 
+	 *
 	 * @path: The path to lookup
-	 * 
+	 *
 	 * @returns: the PreferencesPage pointer.
 	 */
-	virtual PreferencesPagePtr getPage(const std::string& path) = 0; 
+	virtual PreferencesPagePtr getPage(const std::string& path) = 0;
 };
 
 inline IPreferenceSystem& GlobalPreferenceSystem() {

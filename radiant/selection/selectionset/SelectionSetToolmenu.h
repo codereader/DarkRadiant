@@ -20,7 +20,7 @@ class SelectionSetToolmenu :
 	public Gtk::ToolItem
 {
 public:
-	struct ListStoreColumns : 
+	struct ListStoreColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListStoreColumns() { add(name); }

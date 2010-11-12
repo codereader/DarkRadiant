@@ -13,7 +13,7 @@ namespace gtkutil {
 
 /**
  * greebo: This is a wrapper class around the iconv functions.
- *         Many codeparts have been taken from the GLib::IConv 
+ *         Many codeparts have been taken from the GLib::IConv
  *         class in the glibmm 2.14.2 library.
  */
 class IConv
@@ -100,12 +100,12 @@ public:
 		return returnValue;
 	}
 
-	GIConv gobj() { 
+	GIConv gobj() {
 		return gobject_;
 	}
 
-	/** 
-	 * greebo: Converts the given string to UTF-8 encoding. 
+	/**
+	 * greebo: Converts the given string to UTF-8 encoding.
 	 * Returns an empty string if the conversion fails.
 	 */
 	static std::string localeToUTF8(const std::string& input) {
@@ -115,17 +115,17 @@ public:
 		char *const buf = g_locale_to_utf8(input.data(), static_cast<gssize>(input.size()), 0, &bytes_written, &gerror);
 
 		if (gerror) return "";
-		
+
 		std::string returnValue(buf, bytes_written);
 		g_free(buf);
 
 		return returnValue;
 	}
 
-	/** 
-	 * greebo: Converts the given string from UTF-8 to the current locale. 
+	/**
+	 * greebo: Converts the given string from UTF-8 to the current locale.
 	 * Returns an empty string if the conversion fails.
-	 */	
+	 */
 	static std::string localeFromUTF8(const std::string& input) {
 		gsize bytes_written = 0;
 		GError* gerror = 0;
@@ -133,15 +133,15 @@ public:
 		char *const buf = g_locale_from_utf8(input.data(), static_cast<gssize>(input.size()), 0, &bytes_written, &gerror);
 
 		if (gerror) return "";
-		
+
 		std::string returnValue(buf, bytes_written);
 		g_free(buf);
 
 		return returnValue;
 	}
 
-	/** 
-	 * greebo: Converts the given filename to UTF-8. 
+	/**
+	 * greebo: Converts the given filename to UTF-8.
 	 * Returns an empty string if the conversion fails.
 	 */
 	static std::string filenameToUTF8(const std::string& input)
@@ -152,7 +152,7 @@ public:
 		char *const buf = g_filename_to_utf8(input.data(), static_cast<gssize>(input.size()), 0, &bytes_written, &gerror);
 
 		if (gerror) return "";
-		
+
 		std::string returnValue(buf, bytes_written);
 		g_free(buf);
 

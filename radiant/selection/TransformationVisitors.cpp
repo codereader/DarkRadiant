@@ -15,8 +15,8 @@ Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld)
   );
 }
 
-void translation_for_pivoted_rotation(Vector3& parent_translation, const Quaternion& local_rotation, 
-									  const Vector3& world_pivot, const Matrix4& localToWorld, 
+void translation_for_pivoted_rotation(Vector3& parent_translation, const Quaternion& local_rotation,
+									  const Vector3& world_pivot, const Matrix4& localToWorld,
 									  const Matrix4& localToParent)
 {
   Vector3 local_pivot(get_local_pivot(world_pivot, localToWorld));
@@ -37,7 +37,7 @@ void translation_for_pivoted_rotation(Vector3& parent_translation, const Quatern
 }
 
 void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& local_scale,
-									const Vector3& world_pivot, const Matrix4& localToWorld, 
+									const Vector3& world_pivot, const Matrix4& localToWorld,
 									const Matrix4& localToParent)
 {
   Vector3 local_pivot(get_local_pivot(world_pivot, localToWorld));
@@ -68,17 +68,17 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 	if (transformNode != 0) {
 	  // Upcast the instance onto a Transformable
 	  ITransformablePtr transform = Node_getTransformable(node);
-	  
+
 	  if(transform != 0) {
 	  	// The object is not scaled or translated
 	  	transform->setType(TRANSFORM_PRIMITIVE);
 	    transform->setScale(c_scale_identity);
 	    transform->setTranslation(c_translation_identity);
-	
+
 		// Pass the rotation quaternion
 	    transform->setType(TRANSFORM_PRIMITIVE);
 	    transform->setRotation(m_rotate);
-	
+
 		/* greebo: As far as I understand this next part, this should calculate the translation
 		 * vector of this rotation. I can imagine that this comes into play when more than
 		 * one brush is selected, otherwise each brush would rotate around its own center point and
@@ -87,7 +87,7 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 	    {
 	      EditablePtr editable = Node_getEditable(node);
 	      const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : Matrix4::getIdentity();
-	
+
 	      Vector3 parent_translation;
 	      translation_for_pivoted_rotation(
 	        parent_translation,
@@ -96,10 +96,10 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 			matrix4_multiplied_by_matrix4(node->localToWorld(), localPivot),
 	        matrix4_multiplied_by_matrix4(transformNode->localToParent(), localPivot)
 	      );
-	
+
 		  transform->setTranslation(parent_translation);
 	    }
-	  } 
+	  }
 	}
 }
 
@@ -121,7 +121,7 @@ void ScaleSelected::visit(const scene::INodePtr& node) const {
         {
           EditablePtr editable = Node_getEditable(node);
           const Matrix4& localPivot = editable != 0 ? editable->getLocalPivot() : Matrix4::getIdentity();
-    
+
           Vector3 parent_translation;
           translation_for_pivoted_scale(
             parent_translation,
@@ -152,8 +152,8 @@ void RotateComponentSelected::visit(const scene::INodePtr& node) const {
     ITransformablePtr transform = Node_getTransformable(node);
     if(transform != 0) {
       Vector3 parent_translation;
-      translation_for_pivoted_rotation(parent_translation, m_rotate, m_world_pivot, 
-						node->localToWorld(), 
+      translation_for_pivoted_rotation(parent_translation, m_rotate, m_world_pivot,
+						node->localToWorld(),
       					Node_getTransformNode(node)->localToParent());
 
       transform->setType(TRANSFORM_COMPONENT);

@@ -8,7 +8,7 @@
 namespace scene
 {
 
-// An ObserverFunctor does something with the given owner and a given child <node> 
+// An ObserverFunctor does something with the given owner and a given child <node>
 struct ObserverFunctor {
     virtual ~ObserverFunctor() {}
 	virtual void operator() (Node& owner, const INodePtr& node) = 0;
@@ -42,14 +42,14 @@ public:
 	}
 };
 
-/** greebo: This iterator is required by the std::set_difference algorithm and 
- * is used to call	owning node's onChildAdded() or onChildRemoved() 
+/** greebo: This iterator is required by the std::set_difference algorithm and
+ * is used to call	owning node's onChildAdded() or onChildRemoved()
  * as soon as the assignment operator is invoked by the set_difference algorithm.
- * 
+ *
  * Note: The operator++ is apparently necessary, but is not doing anything, as this iterator
- * is only "fake" and is only used to trigger the observer call. 
+ * is only "fake" and is only used to trigger the observer call.
  */
-class ObserverOutputIterator 
+class ObserverOutputIterator
 {
 protected:
 	Node& _owner;
@@ -61,25 +61,25 @@ public:
 	typedef void pointer;
 	typedef void reference;
 
-	ObserverOutputIterator(Node& owner, ObserverFunctor& functor) : 
+	ObserverOutputIterator(Node& owner, ObserverFunctor& functor) :
 		_owner(owner),
 		_functor(functor)
 	{}
-	
+
 	// This function is invoked by the std::set_difference algorithm
 	ObserverOutputIterator& operator=(const INodePtr& node) {
 		// Pass the call to the functor
-		_functor(_owner, node); 
+		_functor(_owner, node);
 		return *this;
 	}
-	
+
 	ObserverOutputIterator& operator*() { return *this; }
 	ObserverOutputIterator& operator++() { return *this; }
 	ObserverOutputIterator& operator++(int) { return *this; }
 };
 
 // Default constructor, creates an empty set
-TraversableNodeSet::TraversableNodeSet(Node& owner) : 
+TraversableNodeSet::TraversableNodeSet(Node& owner) :
 	_owner(owner),
 	_undoObserver(NULL),
 	_map(NULL)
@@ -103,11 +103,11 @@ void TraversableNodeSet::insert(const INodePtr& node)
 	_owner.onChildAdded(node);
 }
 
-void TraversableNodeSet::erase(const INodePtr& node) 
+void TraversableNodeSet::erase(const INodePtr& node)
 {
 	undoSave();
 
-	// Notify the Observer before actually removing the node 
+	// Notify the Observer before actually removing the node
 	_owner.onChildRemoved(node);
 
 	// Lookup the node and remove it from the list
@@ -196,26 +196,26 @@ void TraversableNodeSet::importState(const UndoMemento* state)
 	// The owning node needs to know about all nodes which are removed in <after>, these are
 	// instantly removed from the scenegraph
 	ObserverEraseFunctor eraseFunctor;
-	
-	// greebo: Now find all the nodes that exist in <_children>, but not in <other> and 
-	// call the EraseFunctor for each of them (the iterator calls onChildRemoved() on the owning node). 
+
+	// greebo: Now find all the nodes that exist in <_children>, but not in <other> and
+	// call the EraseFunctor for each of them (the iterator calls onChildRemoved() on the owning node).
 	std::set_difference(
-		before_sorted.begin(), before_sorted.end(), 
-		after_sorted.begin(), after_sorted.end(), 
+		before_sorted.begin(), before_sorted.end(),
+		after_sorted.begin(), after_sorted.end(),
 		ObserverOutputIterator(_owner, eraseFunctor)
 	);
 
 	// A special treatment is necessary for insertions of new nodes, as calling onChildAdded
-	// right away might lead to double-insertions into the scenegraph (in case the same node 
+	// right away might lead to double-insertions into the scenegraph (in case the same node
 	// has not been removed from another node yet - a race condition during undo).
 	// Therefore, collect all nodes that need to be added and process them in postUndo/postRedo.
 	CollectNodesFunctor collectFunctor(_undoInsertBuffer);
-	
-	// greebo: Next step is to find all nodes existing in <other>, but not in <_children>, 
-	// these have to be added, that's why the onChildAdded() method is called for each of them  
+
+	// greebo: Next step is to find all nodes existing in <other>, but not in <_children>,
+	// these have to be added, that's why the onChildAdded() method is called for each of them
 	std::set_difference(
-		after_sorted.begin(), after_sorted.end(), 
-		before_sorted.begin(), before_sorted.end(), 
+		after_sorted.begin(), after_sorted.end(),
+		before_sorted.begin(), before_sorted.end(),
 		ObserverOutputIterator(_owner, collectFunctor)
 	);
 
@@ -240,7 +240,7 @@ void TraversableNodeSet::postRedo()
 
 void TraversableNodeSet::processInsertBuffer()
 {
-	for (NodeList::const_iterator i = _undoInsertBuffer.begin(); 
+	for (NodeList::const_iterator i = _undoInsertBuffer.begin();
 		 i != _undoInsertBuffer.end(); ++i)
 	{
 		_owner.onChildAdded(*i);

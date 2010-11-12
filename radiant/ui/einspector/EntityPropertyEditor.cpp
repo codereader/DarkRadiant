@@ -35,17 +35,17 @@ EntityPropertyEditor::EntityPropertyEditor(Entity* entity, const std::string& na
 	// Horizontal box contains the browse button
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 3));
 	hbx->set_border_width(3);
-	
+
 	// Browse button
 	Gtk::Button* browseButton = Gtk::manage(new Gtk::Button(_("Choose target entity...")));
 	browseButton->set_image(*Gtk::manage(new Gtk::Image(
 		PropertyEditorFactory::getPixbufFor("entity"))));
-	
+
 	browseButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &EntityPropertyEditor::_onBrowseButton));
-	
+
 	hbx->pack_start(*browseButton, true, false, 0);
-	
+
 	// Pack hbox into vbox (to limit vertical size), then edit frame
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
 	vbx->pack_start(*hbx, true, false, 0);

@@ -25,10 +25,10 @@ EntitySelectByClassnameWalker::EntitySelectByClassnameWalker(const ClassnameList
 
 bool EntitySelectByClassnameWalker::pre(const scene::INodePtr& node) {
 	// don't traverse invisible nodes
-	if (!node->visible()) return false; 
+	if (!node->visible()) return false;
 
 	Entity* entity = Node_getEntity(node);
-	
+
 	if (entity != NULL) {
 
 		if (entityMatches(entity)) {
@@ -45,7 +45,7 @@ bool EntitySelectByClassnameWalker::pre(const scene::INodePtr& node) {
 }
 
 bool EntitySelectByClassnameWalker::entityMatches(Entity* entity) const {
-	for (ClassnameList::const_iterator i = _classnames.begin(); 
+	for (ClassnameList::const_iterator i = _classnames.begin();
 		 i != _classnames.end(); ++i)
 	{
 		if (entity->getKeyValue("classname") == *i) {
@@ -57,10 +57,10 @@ bool EntitySelectByClassnameWalker::entityMatches(Entity* entity) const {
 }
 
 /**
- * greebo: Traverse the scene and collect all classnames of 
+ * greebo: Traverse the scene and collect all classnames of
  *         selected entities.
  */
-class EntityGetSelectedClassnamesWalker : 
+class EntityGetSelectedClassnamesWalker :
 	public SelectionSystem::Visitor
 {
 	mutable ClassnameList _classnames;
@@ -114,7 +114,7 @@ void selectAllOfType(const cmd::ArgumentList& args) {
 	SceneChangeNotify();
 }
 
-class HideSubgraphWalker : 
+class HideSubgraphWalker :
 	public scene::NodeVisitor
 {
 public:
@@ -125,7 +125,7 @@ public:
 	}
 };
 
-class ShowSubgraphWalker : 
+class ShowSubgraphWalker :
 	public scene::NodeVisitor
 {
 public:
@@ -163,12 +163,12 @@ inline void hideNode(const scene::INodePtr& node, bool hide)
 }
 
 // This walker hides all selected nodes
-class HideSelectedWalker : 
+class HideSelectedWalker :
 	public SelectionSystem::Visitor
 {
 	bool _hide;
 public:
-	HideSelectedWalker(bool hide) : 
+	HideSelectedWalker(bool hide) :
 		_hide(hide)
 	{}
 
@@ -189,14 +189,14 @@ void hideSelected(const cmd::ArgumentList& args) {
 }
 
 // Hides all nodes that are not selected
-class HideDeselectedWalker : 
+class HideDeselectedWalker :
 	public scene::NodeVisitor
 {
 	bool _hide;
 
 	std::stack<bool> _stack;
 public:
-	HideDeselectedWalker(bool hide) : 
+	HideDeselectedWalker(bool hide) :
 		_hide(hide)
 	{}
 
@@ -208,7 +208,7 @@ public:
 		// greebo: Don't check root nodes for selected state
 		if (!node->isRoot() && isSelected)
 		{
-			// We have a selected instance, "remember" this by setting the parent 
+			// We have a selected instance, "remember" this by setting the parent
 			// stack element to TRUE
 			if (!_stack.empty())
 			{
@@ -226,8 +226,8 @@ public:
 	void post(const scene::INodePtr& node)
 	{
 		// greebo: We've traversed this subtree, now check if we had selected children
-		if (!node->isRoot() && 
-			!_stack.empty() && _stack.top() == false && 
+		if (!node->isRoot() &&
+			!_stack.empty() && _stack.top() == false &&
 			!Node_isSelected(node))
 		{
 			// No selected child nodes, hide this node
@@ -249,12 +249,12 @@ void hideDeselected(const cmd::ArgumentList& args) {
 	SceneChangeNotify();
 }
 
-class HideAllWalker : 
+class HideAllWalker :
 	public scene::NodeVisitor
 {
 	bool _hide;
 public:
-	HideAllWalker(bool hide) : 
+	HideAllWalker(bool hide) :
 		_hide(hide)
 	{}
 
@@ -270,16 +270,16 @@ void showAllHidden(const cmd::ArgumentList& args) {
 	SceneChangeNotify();
 }
 
-class InvertSelectionWalker : 
+class InvertSelectionWalker :
 	public scene::NodeVisitor
 {
 	SelectionSystem::EMode _mode;
 	SelectablePtr _selectable;
 public:
-	InvertSelectionWalker(SelectionSystem::EMode mode) : 
+	InvertSelectionWalker(SelectionSystem::EMode mode) :
 		_mode(mode)
 	{}
-	
+
 	bool pre(const scene::INodePtr& node)
 	{
 		// Ignore hidden nodes
@@ -305,7 +305,7 @@ public:
 					break;
 				case SelectionSystem::eComponent:
 					// Check if we have a componentselectiontestable instance
-					ComponentSelectionTestablePtr compSelTestable = 
+					ComponentSelectionTestablePtr compSelTestable =
 						Node_getComponentSelectionTestable(node);
 
 					// Only add it to the list if the instance has components and is already selected
@@ -316,10 +316,10 @@ public:
 					break;
 			}
 		}
-		
+
 		// Do we have a groupnode? If yes, don't traverse the children
-		if (entity != NULL && node_is_group(node) && 
-			entity->getKeyValue("classname") != "worldspawn") 
+		if (entity != NULL && node_is_group(node) &&
+			entity->getKeyValue("classname") != "worldspawn")
 		{
 			// Don't traverse the children of this groupnode
 			return false;
@@ -327,7 +327,7 @@ public:
 
 		return true;
 	}
-	
+
 	void post(const scene::INodePtr& node)
 	{
 		if (_selectable != NULL)
@@ -363,7 +363,7 @@ public:
     {
         for (std::set<scene::INodePtr>::iterator i = _eraseList.begin();
              i != _eraseList.end();
-             ++i) 
+             ++i)
         {
 			scene::INodePtr parent = (*i)->getParent();
 
@@ -378,10 +378,10 @@ public:
 	}
 
     /* SelectionSystem::Visitor implementation */
-	void visit(const scene::INodePtr& node) const 
+	void visit(const scene::INodePtr& node) const
     {
 		// Check for selected nodes whose parent is not NULL and are not root
-		if (node->getParent() != NULL && !node->isRoot()) 
+		if (node->getParent() != NULL && !node->isRoot())
         {
 			// Found a candidate
 			_eraseList.insert(node);
@@ -389,13 +389,13 @@ public:
 	}
 };
 
-void deleteSelection() 
+void deleteSelection()
 {
 	// Traverse the scene, deleting all selected nodes
 	DeleteSelectedVisitor walker;
 	GlobalSelectionSystem().foreachSelected(walker);
     walker.performDeletion();
-	
+
 	SceneChangeNotify();
 }
 
@@ -409,7 +409,7 @@ void deleteSelectionCmd(const cmd::ArgumentList& args) {
   Loops over all selected brushes and stores their
   world AABBs in the specified array.
 */
-class CollectSelectedBrushesBounds : 
+class CollectSelectedBrushesBounds :
 	public SelectionSystem::Visitor
 {
 	AABB* _bounds;				// array of AABBs
@@ -417,7 +417,7 @@ class CollectSelectedBrushesBounds :
 	mutable std::size_t _count;// count of valid AABBs stored in array
 
 public:
-	CollectSelectedBrushesBounds(AABB* bounds, std::size_t max) : 
+	CollectSelectedBrushesBounds(AABB* bounds, std::size_t max) :
 		_bounds(bounds),
 		_max(max),
 		_count(0)
@@ -448,7 +448,7 @@ public:
  * which must implement an evalute() method taking an AABB and the scene::INodePtr.
  */
 template<class TSelectionPolicy>
-class SelectByBounds : 
+class SelectByBounds :
 	public scene::NodeVisitor
 {
 	AABB* _aabbs;				// selection aabbs
@@ -456,7 +456,7 @@ class SelectByBounds :
 	TSelectionPolicy policy;	// type that contains a custom intersection method aabb<->aabb
 
 public:
-	SelectByBounds(AABB* aabbs, std::size_t count) : 
+	SelectByBounds(AABB* aabbs, std::size_t count) :
 		_aabbs(aabbs),
         _count(count)
 	{}
@@ -466,7 +466,7 @@ public:
 		if (!node->visible()) {
 			return false;
 		}
-		
+
 		SelectablePtr selectable = Node_getSelectable(node);
 
 		// ignore worldspawn
@@ -476,9 +476,9 @@ public:
 				return true;
 			}
 		}
-    
+
     	bool selected = false;
-    
+
 		if (selectable != NULL && node->getParent() != NULL && !node->isRoot()) {
 			for (std::size_t i = 0; i < _count; ++i) {
 				// Check if the selectable passes the AABB test
@@ -489,7 +489,7 @@ public:
 				}
 			}
 		}
-	
+
 		// Only traverse the children of this node, if the node itself couldn't be selected
 		return !selected;
 	}
@@ -508,7 +508,7 @@ public:
 		// we may not need all AABBs since not all selected objects have to be brushes
 		const std::size_t max = GlobalSelectionSystem().countSelected();
 		AABB* aabbs = new AABB[max];
-            
+
 		CollectSelectedBrushesBounds collector(aabbs, max);
 		GlobalSelectionSystem().foreachSelected(collector);
 
@@ -519,7 +519,7 @@ public:
 			delete[] aabbs;
 			return;
 		}
-      
+
 		// delete selected objects?
 		if (deleteBoundsSrc) {
 			UndoableCommand undo("deleteSelected");
@@ -529,7 +529,7 @@ public:
 		// Instantiate a "self" object SelectByBounds and use it as visitor
 		SelectByBounds<TSelectionPolicy> walker(aabbs, count);
 		Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-		
+
 		SceneChangeNotify();
 		delete[] aabbs;
 	}

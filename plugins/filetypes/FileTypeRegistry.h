@@ -7,7 +7,7 @@
 /**
  * Implementation of the file type registry.
  */
-class RadiantFileTypeRegistry : 
+class RadiantFileTypeRegistry :
 	public IFileTypeRegistry
 {
 	// Map of named ModuleTypeListPtrs. Each ModuleTypeList is a list of structs
@@ -21,23 +21,23 @@ public:
 	 * Constructor, adds the All Files type.
 	 */
 	RadiantFileTypeRegistry();
-	
+
 	/*
 	 * Add a type.
 	 */
-	void addType(const std::string& moduleType, 
-				 const std::string& moduleName, 
+	void addType(const std::string& moduleType,
+				 const std::string& moduleName,
 				 const FileTypePattern& type);
-  
+
 	/*
 	 * Return list of types for an associated module type.
 	 */
 	ModuleTypeListPtr getTypesFor(const std::string& moduleType);
-	
+
 	// Look for a module which loads the given extension, by searching under the
 	// given type category
 	virtual std::string findModuleName(const std::string& moduleType, const std::string& extension);
-	
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;

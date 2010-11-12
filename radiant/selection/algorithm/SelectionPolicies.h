@@ -7,7 +7,7 @@
 
 /**
   SelectionPolicy for SelectByBounds
-  Returns true if 
+  Returns true if
 */
 class SelectionPolicy_Complete_Tall
 {
@@ -15,20 +15,20 @@ public:
 	bool evaluate(const AABB& box, const scene::INodePtr& node) const {
 		// Get the AABB of the visited instance
 		AABB other = node->worldAABB();
-		
+
 		// greebo: Perform a special selection test for lights
-		// as the small diamond should be tested against selection only 
+		// as the small diamond should be tested against selection only
 		scene::SelectableLightPtr light = Node_getLight(node);
 		if (light != NULL) {
 			other = light->getSelectAABB();
 		}
-		
+
 		// Determine the viewtype
 		EViewType viewType = GlobalXYWndManager().getActiveViewType();
-		
+
 		unsigned int axis1 = 0;
 		unsigned int axis2 = 1;
-		
+
 		// Determine which axes have to be compared
 		switch (viewType) {
 			case XY:
@@ -44,11 +44,11 @@ public:
 				axis2 = 2;
 			break;
 		};
-		
-		// Check if the AABB is contained 
+
+		// Check if the AABB is contained
 		float dist1 = fabs(other.origin[axis1] - box.origin[axis1]) + fabs(other.extents[axis1]);
 		float dist2 = fabs(other.origin[axis2] - box.origin[axis2]) + fabs(other.extents[axis2]);
-		
+
 		return (dist1 < fabs(box.extents[axis1]) && dist2 < fabs(box.extents[axis2]));
 	}
 };
@@ -82,14 +82,14 @@ class SelectionPolicy_Inside
 public:
 	bool evaluate(const AABB& box, const scene::INodePtr& node) const {
 		AABB other = node->worldAABB();
-    
+
 		// greebo: Perform a special selection test for lights
-		// as the small diamond should be tested against selection only 
+		// as the small diamond should be tested against selection only
 		scene::SelectableLightPtr light = Node_getLight(node);
 		if (light != NULL) {
 			other = light->getSelectAABB();
 		}
-	    
+
 		for (unsigned int i = 0; i < 3; ++i) {
 			if (fabsf(box.origin[i] - other.origin[i]) > (box.extents[i] - other.extents[i])) {
 				return false;

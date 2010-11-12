@@ -6,11 +6,11 @@
 
 namespace map {
 
-/** 
+/**
  * greebo: This is a temporary container (node) used during map object import.
  * It possesses its own Namespace which all inserted child nodes get connected to.
  */
-class BasicContainer : 
+class BasicContainer :
 	public scene::Node
 {
 private:

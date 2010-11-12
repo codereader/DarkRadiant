@@ -23,7 +23,7 @@ void Doom3PrefabFormat::initialiseModule(const ApplicationContext& ctx)
 	// Add one more "map" type, with the pfb extension
 	GlobalFiletypes().addType(
 		"map", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));
-	
+
 	// Add the filepatterns for the prefab (different order)
 	GlobalFiletypes().addType(
 		"prefab", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));

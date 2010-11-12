@@ -14,7 +14,7 @@
 namespace gtkutil {
 
 // Main constructor
-ModalProgressDialog::ModalProgressDialog(const Glib::RefPtr<Gtk::Window>& parent, const std::string& title) 
+ModalProgressDialog::ModalProgressDialog(const Glib::RefPtr<Gtk::Window>& parent, const std::string& title)
 : gtkutil::TransientWindow(title, GlobalMainFrame().getTopLevelWindow()),
   _label(Gtk::manage(new Gtk::Label)),
   _progressBar(Gtk::manage(new Gtk::ProgressBar)),
@@ -41,7 +41,7 @@ ModalProgressDialog::ModalProgressDialog(const Glib::RefPtr<Gtk::Window>& parent
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ModalProgressDialog::_onCancel));
 
 	vbx->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*cancelButton)), false, false, 0);
-	
+
 	// Connect the realize signal to remove the window decorations
 	signal_realize().connect(sigc::mem_fun(*this, &ModalProgressDialog::_onRealize));
 
@@ -72,10 +72,10 @@ void ModalProgressDialog::setText(const std::string& text)
 
 	// Set the text
 	_label->set_markup(text);
-	
+
 	// Pulse the progress bar
 	_progressBar->pulse();
-	
+
 	// Handle GTK events to make changes visible
 	handleEvents();
 }
@@ -91,10 +91,10 @@ void ModalProgressDialog::setTextAndFraction(const std::string& text, double fra
 
 	// Set the text
 	_label->set_markup(text);
-	
+
 	// Pulse the progress bar
 	_progressBar->set_fraction(fraction);
-	
+
 	// Handle GTK events to make changes visible
 	handleEvents();
 }

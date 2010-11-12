@@ -35,7 +35,7 @@ class ParticlesChooser :
 {
 public:
 	// Treemodel definition
-	struct ListColumns : 
+	struct ListColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListColumns() { add(name); }
@@ -53,38 +53,38 @@ private:
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
 	Gtk::TreeView* _treeView;
-	
+
 	// Last selected particle
 	std::string _selectedParticle;
-	
+
 	// Map of particle names -> GtkTreeIter* for quick selection
 	IterMap _iterMap;
 
 	// The preview widget
 	IParticlePreviewPtr _preview;
-	
+
 private:
-	
+
 	// gtkmm callbacks
 	void _onOK();
 	void _onCancel();
 	void _onSelChanged();
-	
+
 	// Constructor creates GTK elements
 	ParticlesChooser();
-	
+
 	/* WIDGET CONSTRUCTION */
 	Gtk::Widget& createTreeView();
 	Gtk::Widget& createButtons();
-	
+
 	// Static instance owner
 	static ParticlesChooser& getInstance();
 
 	static ParticlesChooserPtr& getInstancePtr();
-	
+
 	// Show the widgets and enter recursive main loop
 	void showAndBlock(const std::string& current);
-	
+
 	// Populate the list of particles
 	void populateParticleList();
 
@@ -98,16 +98,16 @@ protected:
 	void _postShow();
 
 public:
-	
+
 	/**
-	 * Display the singleton dialog and return the name of the selected 
+	 * Display the singleton dialog and return the name of the selected
 	 * particle system, or the empty string if none was selected.
-	 * 
+	 *
 	 * @param currentParticle
 	 * The particle name which should be highlighted in the list when the dialog
 	 * is first displayed. If this value is left at the default value of "", no
 	 * particle will be selected.
-	 * 
+	 *
 	 * @returns
 	 * The name of the particle selected by the user, or an empty string if the
 	 * choice was cancelled or invalid.

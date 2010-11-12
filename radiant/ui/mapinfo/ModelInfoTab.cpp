@@ -45,7 +45,7 @@ void ModelInfoTab::populateTab()
 	// Set the outer space of the vbox
 	_widget->set_border_width(12);
 
-	// Create the list store that contains the eclass => count map 
+	// Create the list store that contains the eclass => count map
 	_listStore = Gtk::ListStore::create(_columns);
 
 	// Create the treeview and pack two columns into it
@@ -63,17 +63,17 @@ void ModelInfoTab::populateTab()
 
 	Gtk::TreeViewColumn* skinCountCol = Gtk::manage(new gtkutil::TextColumn(_("Skins"), _columns.skincount));
 	skinCountCol->set_sort_column(_columns.skincount);
-	
+
 	_treeView->append_column(*modelCol);
 	_treeView->append_column(*polyCountCol);
 	_treeView->append_column(*modelCountCol);
 	_treeView->append_column(*skinCountCol);
-	
+
     _widget->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
-    
+
     // Populate the liststore with the entity count information
-    for (map::ModelBreakdown::Map::const_iterator i = _modelBreakdown.begin(); 
-		 i != _modelBreakdown.end(); 
+    for (map::ModelBreakdown::Map::const_iterator i = _modelBreakdown.begin();
+		 i != _modelBreakdown.end();
 		 ++i)
 	{
 		Gtk::TreeModel::Row row = *_listStore->append();
@@ -87,16 +87,16 @@ void ModelInfoTab::populateTab()
 	// The table containing the statistics
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 2, false));
 	_widget->pack_start(*table, false, false, 0);
-	
+
 	_modelCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
 	_skinCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-	
+
 	Gtk::Label* modelsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Models used:")));
 	Gtk::Label* skinsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Named Skins used:")));
-		
+
 	modelsLabel->set_size_request(120, -1);
 	skinsLabel->set_size_request(120, -1);
-	
+
 	table->attach(*modelsLabel, 0, 1, 0, 1,
 				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
 
@@ -105,10 +105,10 @@ void ModelInfoTab::populateTab()
 
 	std::string mc = "<b>" + sizetToStr(_modelBreakdown.getMap().size()) + "</b>";
 	std::string sc = "<b>" + sizetToStr(_modelBreakdown.getNumSkins()) + "</b>";
-		
+
 	_modelCount->set_markup(mc);
 	_skinCount->set_markup(sc);
-	
+
 	table->attach(*_modelCount, 1, 2, 0, 1);
 	table->attach(*_skinCount, 1, 2, 1, 2);
 }

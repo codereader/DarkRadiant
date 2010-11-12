@@ -18,7 +18,7 @@ namespace ui {
  * greebo: This class encapsulates a Command entry field, which can be used
  * to issue statements to DarkRadiant's command system.
  *
- * The entry field supports a basic "command history" functionality to retrieve 
+ * The entry field supports a basic "command history" functionality to retrieve
  * previously typed commands. The buffer is of variable size, default is 100 commands.
  */
 class CommandEntry :
@@ -38,7 +38,7 @@ private:
 	// The actual entry box
 	Gtk::Entry* _entry;
 
-	// The current history cursor, 
+	// The current history cursor,
 	// 0 is the currently edited command,
 	// 1 is the most recently entered one, larger values are further in the past
 	std::size_t _curHistoryIndex;

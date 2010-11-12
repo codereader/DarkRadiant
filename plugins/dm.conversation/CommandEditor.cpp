@@ -74,7 +74,7 @@ void CommandEditor::updateWidgets()
 	gtkutil::TreeModel::SelectionFinder finder(_command.actor, _actorColumns.actorNumber.index());
 
 	_actorStore->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
-	
+
 	const Gtk::TreeModel::iterator iter = finder.getIter();
 
 	// Select the found treeiter, if the name was found in the liststore
@@ -87,7 +87,7 @@ void CommandEditor::updateWidgets()
 	gtkutil::TreeModel::SelectionFinder cmdFinder(_command.type, _commandColumns.cmdNumber.index());
 
 	_commandStore->foreach_iter(sigc::mem_fun(cmdFinder, &gtkutil::TreeModel::SelectionFinder::forEach));
-	
+
 	const Gtk::TreeModel::iterator cmdIter = cmdFinder.getIter();
 
 	// Select the found treeiter, if the name was found in the liststore
@@ -116,7 +116,7 @@ void CommandEditor::updateWidgets()
 		_argumentItems[argIndex - 1]->setValueFromString(i->second);
 	}
 
-	// Update the "wait until finished" flag 
+	// Update the "wait until finished" flag
 	_waitUntilFinished->set_active(_command.waitUntilFinished);
 
 	// Update the sensitivity of the correct flag
@@ -155,7 +155,7 @@ void CommandEditor::save()
 	// Get the value of the "wait until finished" flag
 	try
 	{
-		const conversation::ConversationCommandInfo& cmdInfo = 
+		const conversation::ConversationCommandInfo& cmdInfo =
 			conversation::ConversationCommandLibrary::Instance().findCommandInfo(_command.type);
 
 		if (cmdInfo.waitUntilFinishedAllowed)
@@ -184,7 +184,7 @@ void CommandEditor::populateWindow()
 
 	// Actor
 	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Actor") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Actor") + "</b>")),
 		false, false, 0);
 
 	// Create the actor dropdown box
@@ -192,7 +192,7 @@ void CommandEditor::populateWindow()
 
 	// Add the cellrenderer for the name
 	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
-	
+
 	_actorDropDown->pack_start(*nameRenderer, true);
 	_actorDropDown->add_attribute(nameRenderer->property_text(), _actorColumns.caption);
 
@@ -200,7 +200,7 @@ void CommandEditor::populateWindow()
 
 	// Command Type
 	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command") + "</b>")),
 		false, false, 0);
 
 	_commandDropDown = Gtk::manage(new Gtk::ComboBox(_commandStore));
@@ -210,7 +210,7 @@ void CommandEditor::populateWindow()
 
 	// Add the cellrenderer for the name
 	Gtk::CellRendererText* cmdNameRenderer = Gtk::manage(new Gtk::CellRendererText);
-	
+
 	_commandDropDown->pack_start(*cmdNameRenderer, true);
 	_commandDropDown->add_attribute(cmdNameRenderer->property_text(), _commandColumns.caption);
 
@@ -218,7 +218,7 @@ void CommandEditor::populateWindow()
 
 	// Command Arguments
 	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Arguments") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Arguments") + "</b>")),
 		false, false, 0);
 
 	// Create the alignment container that hold the (exchangable) widget table
@@ -229,7 +229,7 @@ void CommandEditor::populateWindow()
 
 	// Wait until finished
 	vbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Properties") + "</b>")), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command Properties") + "</b>")),
 		false, false, 0);
 
 	_waitUntilFinished = Gtk::manage(new Gtk::CheckButton(_("Wait until finished")));
@@ -244,10 +244,10 @@ void CommandEditor::populateWindow()
 void CommandEditor::commandTypeChanged()
 {
 	int newCommandTypeID = -1;
-	
+
 	// Get the currently selected effect name from the combo box
 	Gtk::TreeModel::iterator iter = _commandDropDown->get_active();
-	
+
 	if (iter)
 	{
 		newCommandTypeID = (*iter)[_commandColumns.cmdNumber];
@@ -265,7 +265,7 @@ void CommandEditor::upateWaitUntilFinished(int commandTypeID)
 	// Update the sensitivity of the correct flag
 	try
 	{
-		const conversation::ConversationCommandInfo& cmdInfo = 
+		const conversation::ConversationCommandInfo& cmdInfo =
 			conversation::ConversationCommandLibrary::Instance().findCommandInfo(commandTypeID);
 
 		_waitUntilFinished->set_sensitive(cmdInfo.waitUntilFinishedAllowed);
@@ -280,7 +280,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 {
 	try
 	{
-		const conversation::ConversationCommandInfo& cmdInfo = 
+		const conversation::ConversationCommandInfo& cmdInfo =
 			conversation::ConversationCommandLibrary::Instance().findCommandInfo(commandTypeID);
 
 		// Remove all possible previous items from the list
@@ -311,7 +311,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 
 			return;
 		}
-		
+
 		// Setup the table with default spacings
 		_argTable = Gtk::manage(new Gtk::Table(static_cast<guint>(cmdInfo.arguments.size()), 3, false));
 		_argTable->set_col_spacings(12);
@@ -324,13 +324,13 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 
 		int index = 1;
 
-		for (ArgumentIter i = cmdInfo.arguments.begin(); 
+		for (ArgumentIter i = cmdInfo.arguments.begin();
 			 i != cmdInfo.arguments.end(); ++i, ++index)
 		{
 			const conversation::ArgumentInfo& argInfo = *i;
 
 			CommandArgumentItemPtr item;
-			
+
 			switch (argInfo.type)
 			{
 			case conversation::ArgumentInfo::ARGTYPE_BOOL:
@@ -364,7 +364,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 			if (item != NULL)
 			{
 				_argumentItems.push_back(item);
-				
+
 				if (argInfo.type != conversation::ArgumentInfo::ARGTYPE_BOOL)
 				{
 					// The label
@@ -373,14 +373,14 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 						0, 1, index-1, index, // index starts with 1, hence the -1
 						Gtk::FILL, Gtk::AttachOptions(0), 0, 0
 					);
-					
+
 					// The edit widgets
 					_argTable->attach(
 						item->getEditWidget(),
 						1, 2, index-1, index // index starts with 1, hence the -1
 					);
 				}
-				else 
+				else
 				{
 					// This is a checkbutton - should be spanned over two columns
 					_argTable->attach(
@@ -389,7 +389,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 						Gtk::FILL, Gtk::AttachOptions(0), 0, 0
 					);
 				}
-				
+
 				// The help widgets
 				_argTable->attach(
 					item->getHelpWidget(),
@@ -398,7 +398,7 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 				);
 			}
 		}
-		
+
 		// Show the table and all subwidgets
 		_argTable->show_all();
 	}
@@ -411,12 +411,12 @@ void CommandEditor::createArgumentWidgets(int commandTypeID)
 Gtk::Widget& CommandEditor::createButtonPanel()
 {
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-	
+
 	// Save button
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandEditor::onSave));
 	buttonHBox->pack_end(*okButton, true, true, 0);
-	
+
 	// Cancel Button
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &CommandEditor::onCancel));
@@ -430,7 +430,7 @@ void CommandEditor::onSave()
 	// First, save to the command object
 	_result = RESULT_OK;
 	save();
-	
+
 	// Then close the window
 	destroy();
 }

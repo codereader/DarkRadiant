@@ -1,19 +1,19 @@
-# ***** BEGIN GPL LICENSE BLOCK ***** 
-# 
-# This program is free software; you can redistribute it and/or 
-# modify it under the terms of the GNU General Public License 
-# as published by the Free Software Foundation; either version 2 
-# of the License, or (at your option) any later version. 
-# 
-# This program is distributed in the hope that it will be useful, 
-# but WITHOUT ANY WARRANTY; without even the implied warranty of 
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-# GNU General Public License for more details. 
-# 
-# You should have received a copy of the GNU General Public License 
-# along with this program; if not, write to the Free Software Foundation, 
-# Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA. 
-# 
+# ***** BEGIN GPL LICENSE BLOCK *****
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#
 # ***** END GPL LICENCE BLOCK *****
 
 #TODO:
@@ -42,15 +42,15 @@ def execute():
     geomlist = []
 
     # simple linear triangulation of n-sided poly
-    
+
     def triangulate(pointset):
         tris = []
         for count in range(1, len(pointset) - 1):
             tris.append([pointset[0], pointset[count], pointset[count + 1]])
         return tris
-    
+
     # skin patch matrix with tris
-    
+
     def skinmatrix(pointset, width, height):
         tris = []
         for h in range(height-1):
@@ -121,7 +121,7 @@ def execute():
 
     class dataCollector(SelectionVisitor):
         def visit(self, scenenode):
-            
+
             if scenenode.getNodeType() == 'primitive':
                 processPrimitive(scenenode)
             elif scenenode.isEntity():
@@ -131,17 +131,17 @@ def execute():
                 scenenode.traverse(nodewalker)
             else:
                 print('WARNING: unsupported node type selected. Skipping: ' + scenenode.getNodeType())
-            
+
     walker = dataCollector()
     GlobalSelectionSystem.foreachSelected(walker)
 
     # Dialog
     dialog = GlobalDialogManager.createDialog(script + 'v' + version)
-    
+
     # Add an entry box and remember the handle
     fileHandle = dialog.addEntryBox("Filename:")
     dialog.setElementValue(fileHandle, GlobalRegistry.get('user/scripts/aseExport/recentFilename'))
-        
+
     # Add an entry box and remember the handle
     pathHandle = dialog.addPathEntry("Save path:", True)
     dialog.setElementValue(pathHandle, GlobalRegistry.get('user/scripts/aseExport/recentPath'))
@@ -149,12 +149,12 @@ def execute():
     # Add a checkbox
     centerObjectsHandle = dialog.addCheckbox("Center objects at 0,0,0 origin")
     dialog.setElementValue(centerObjectsHandle, GlobalRegistry.get('user/scripts/aseExport/centerObjects'))
-    
+
     if dialog.run() == Dialog.OK:
         fullpath = dialog.getElementValue(pathHandle) + '/' + dialog.getElementValue(fileHandle)
         if not fullpath.endswith('.ase'):
             fullpath = fullpath + '.ase'
-        
+
         # Save the path for later use
         GlobalRegistry.set('user/scripts/aseExport/recentFilename', dialog.getElementValue(fileHandle))
         GlobalRegistry.set('user/scripts/aseExport/recentPath', dialog.getElementValue(pathHandle))
@@ -226,7 +226,7 @@ def execute():
 \t*SCENE_TICKSPERFRAME 160
 \t*SCENE_BACKGROUND_STATIC 0.0000\t0.0000\t0.0000
 \t*SCENE_AMBIENT_STATIC 0.0000\t0.0000\t0.0000'''.format(GlobalMap.getMapName())
-    
+
             materials = str()
             for x in shaderlist:
                 materials = materials + '''\t*MATERIAL {0} {{
@@ -266,7 +266,7 @@ def execute():
 \t\t}}
 \t}}
 '''.format(shaderlist.index(x), x, x.replace('/','\\'))
-    
+
             geomobjects = str()
 
             for x in geomlist:
@@ -360,7 +360,7 @@ def execute():
         cfacelist, \
         normals, \
         x[1][0][3]) # material reference from first face
-    
+
                 data = '''*3DSMAX_ASCIIEXPORT\t200
 *COMMENT "{0} v{1}"
 *SCENE {{
@@ -378,4 +378,4 @@ def execute():
 
 # __executeCommand__ evaluates to true after DarkRadiant has successfully initialised
 if __executeCommand__:
-    execute()       
+    execute()

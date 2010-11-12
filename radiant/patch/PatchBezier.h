@@ -24,14 +24,14 @@ struct BezierCurve
 	// This is determined by comparing the directions of the various deltas
 	bool isCurved() const;
 
-	// Interpolates the curve values and writes them to <leftCurve> and <rightCurve> 
+	// Interpolates the curve values and writes them to <leftCurve> and <rightCurve>
 	// which will form two new (connected) segments interpolating the current one.
 	void interpolate(BezierCurve* leftCurve, BezierCurve* rightCurve) const;
 };
 
 const std::size_t BEZIERCURVETREE_MAX_INDEX = std::numeric_limits<std::size_t>::max();
 
-/** 
+/**
  * greebo: A BezierCurveTree represents a node in the binary subdivision tree.
  * If left and right are both NULL, this node is a leaf and no further subdivisions
  * are available for this part of the patch. The index variable holds the depth of this node.

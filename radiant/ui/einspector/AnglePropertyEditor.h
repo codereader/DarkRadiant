@@ -10,7 +10,7 @@ namespace ui
 /**
  * \brief
  * Property editor for editing "angle" keys, for setting the direction an entity
- * faces. 
+ * faces.
  *
  * This property editor provides 8 direction arrow buttons to set the common
  * directions.
@@ -48,7 +48,7 @@ public:
     AnglePropertyEditor(Entity* entity, const std::string& key);
 
     /* PropertyEditor implementation */
-    IPropertyEditorPtr createNew(Entity* entity, 
+    IPropertyEditorPtr createNew(Entity* entity,
                                 const std::string& key,
                                 const std::string& options)
     {

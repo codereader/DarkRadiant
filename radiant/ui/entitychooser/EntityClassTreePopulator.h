@@ -15,10 +15,10 @@ namespace ui
  * EntityClassVisitor which populates a Gtk::TreeStore with entity classnames
  * taking account of display folders and mod names.
  */
-class EntityClassTreePopulator : 
+class EntityClassTreePopulator :
 	public gtkutil::VFSTreePopulator,
 	public gtkutil::VFSTreePopulator::Visitor,
-	public EntityClassVisitor 
+	public EntityClassVisitor
 {
 private:
     // TreeStore to populate
@@ -26,7 +26,7 @@ private:
 
 	// Column definition
 	const EntityClassChooser::TreeColumns& _columns;
-    
+
     // Key that specifies the display folder
     std::string _folderKey;
 
@@ -43,7 +43,7 @@ public:
 
 	// VFSTreePopulator::Visitor implementation
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter, 
+			   const Gtk::TreeModel::iterator& iter,
 			   const std::string& path,
 			   bool isExplicit);
 };

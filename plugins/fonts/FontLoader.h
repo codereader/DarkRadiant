@@ -19,7 +19,7 @@ private:
 
 public:
 	// Constructor. Set the base path of the search.
-	FontLoader(const std::string& path, FontManager& manager) : 
+	FontLoader(const std::string& path, FontManager& manager) :
 		_basePath(path),
 		_manager(manager)
 	{}

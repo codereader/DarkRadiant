@@ -7,13 +7,13 @@
 #include "imagelib.h"
 #include <boost/noncopyable.hpp>
 
-class DDSImage : 
+class DDSImage :
 	public Image,
 	public boost::noncopyable
 {
 public:
 
-	struct MipMapInfo 
+	struct MipMapInfo
 	{
 		std::size_t width;	// pixel width
 		std::size_t height; // pixel height
@@ -48,7 +48,7 @@ public:
 	unsigned int width, height;
 
 	// Pass the required memory size to the constructor
-	DDSImage(std::size_t size) : 
+	DDSImage(std::size_t size) :
 		_pixelData(NULL),
 		_memSize(size)
 	{
@@ -59,7 +59,7 @@ public:
 		releaseMemory();
 	}
 
-	void setFormat(GLuint format) 
+	void setFormat(GLuint format)
     {
 		_format = format;
 	}
@@ -77,7 +77,7 @@ public:
 	 * Allocates the memory as declared in the constructor.
 	 * This will release any previously allocated memory.
 	 */
-	void allocateMemory() 
+	void allocateMemory()
     {
 		// Release memory first
 		releaseMemory();

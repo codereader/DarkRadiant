@@ -4,8 +4,8 @@
 
 namespace entity {
 
-KeyValue::KeyValue(const std::string& value, const std::string& empty) : 
-	_value(value), 
+KeyValue::KeyValue(const std::string& value, const std::string& empty) :
+	_value(value),
 	_emptyValue(empty),
 	_undo(_value, boost::bind(&KeyValue::importState, this, _1))
 {
@@ -27,7 +27,7 @@ void KeyValue::instanceDetach(MapFile* map) {
 void KeyValue::attach(KeyObserver& observer) {
 	// Store the observer
 	_observers.push_back(&observer);
-	
+
 	// Notify the newly inserted observer with the existing value
 	observer.onKeyValueChanged(get());
 }
@@ -35,7 +35,7 @@ void KeyValue::attach(KeyObserver& observer) {
 void KeyValue::detach(KeyObserver& observer)
 {
 	observer.onKeyValueChanged(_emptyValue);
-	
+
 	KeyObservers::iterator found = std::find(_observers.begin(), _observers.end(), &observer);
 	if (found != _observers.end()) {
 		_observers.erase(found);
@@ -55,7 +55,7 @@ void KeyValue::assign(const std::string& other) {
 	}
 }
 
-void KeyValue::notify() 
+void KeyValue::notify()
 {
 	// Store the name locally, to avoid string-copy operations in the loop below
 	const std::string& value = get();

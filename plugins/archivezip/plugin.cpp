@@ -37,12 +37,12 @@ public:
 	virtual ArchivePtr openArchive(const std::string& name) {
 		return ZipArchivePtr(new ZipArchive(name));
 	}
-		
+
 	virtual const std::string& getExtension() {
 		static std::string _ext("PK4");
 		return _ext;
 	}
-  
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const {
 		static std::string _name("ArchivePK4");
@@ -62,10 +62,10 @@ typedef boost::shared_ptr<ArchivePK4API> ArchivePK4APIPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(ArchivePK4APIPtr(new ArchivePK4API));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

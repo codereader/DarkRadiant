@@ -6,7 +6,7 @@
 #include <gtksourceviewmm/sourceview.h>
 #include <gtksourceviewmm/sourcelanguagemanager.h>
 
-namespace gtkutil 
+namespace gtkutil
 {
 
 class SourceView :

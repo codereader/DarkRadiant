@@ -10,8 +10,8 @@
 // Constructor
 BrushNode::BrushNode() :
 	m_lightList(&GlobalRenderSystem().attach(*this)),
-	m_brush(*this, 
-			Callback(boost::bind(&BrushNode::evaluateTransform, this)), 
+	m_brush(*this,
+			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))),
 	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
@@ -42,8 +42,8 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Renderable(other),
 	Transformable(other),
 	m_lightList(&GlobalRenderSystem().attach(*this)),
-	m_brush(*this, other.m_brush, 
-			Callback(boost::bind(&BrushNode::evaluateTransform, this)), 
+	m_brush(*this, other.m_brush,
+			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))),
 	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
@@ -268,7 +268,7 @@ void BrushNode::constructStatic() {
 }
 
 void BrushNode::destroyStatic() {
-	m_state_selpoint = ShaderPtr(); 
+	m_state_selpoint = ShaderPtr();
 }
 
 void BrushNode::clear() {
@@ -395,12 +395,12 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 	std::size_t* visibleFaceIter = visibleFaceIndices;
 	std::size_t curFaceIndex = 0;
 
-	for (FaceInstances::const_iterator i = m_faceInstances.begin(); 
-		 i != m_faceInstances.end(); 
+	for (FaceInstances::const_iterator i = m_faceInstances.begin();
+		 i != m_faceInstances.end();
 		 ++i, ++j, ++curFaceIndex)
 	{
 		// Check if face is filtered before adding to visibility matrix
-		if (i->getFace().getFaceShader().getGLShader()->getMaterial()->isVisible() && 
+		if (i->getFace().getFaceShader().getGLShader()->getMaterial()->isVisible() &&
 			i->intersectVolume(volume, localToWorld))
 		{
 			*j = true;
@@ -421,14 +421,14 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 
 void BrushNode::renderSolid(RenderableCollector& collector,
                             const VolumeTest& volume,
-                            const Matrix4& localToWorld) const 
+                            const Matrix4& localToWorld) const
 {
 	m_lightList->evaluateLights();
 
     // Submit the lights and renderable geometry for each face
 	for (FaceInstances::const_iterator i = m_faceInstances.begin();
          i != m_faceInstances.end();
-         ++i) 
+         ++i)
     {
 		// Skip invisible faces before traversing further
 		if (!i->getFace().getFaceShader().getGLShader()->getMaterial()->isVisible()) continue;

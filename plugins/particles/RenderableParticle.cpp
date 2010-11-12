@@ -24,7 +24,7 @@ void RenderableParticle::update(std::size_t time, RenderSystem& renderSystem, co
 	// Invalidate our bounds information
 	_bounds = AABB();
 
-	// Make sure all shaders are constructed		
+	// Make sure all shaders are constructed
 	ensureShaders(renderSystem);
 
 	// greebo: Use the inverse matrix of the incoming matrix, this is enough to compensate
@@ -43,7 +43,7 @@ void RenderableParticle::update(std::size_t time, RenderSystem& renderSystem, co
 }
 
 // Front-end render methods
-void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
+void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
 	{
@@ -59,7 +59,7 @@ void RenderableParticle::renderSolid(RenderableCollector& collector, const Volum
 	}
 }
 
-void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
+void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Does the same thing as renderSolid
 	renderSolid(collector, volume);
@@ -70,7 +70,7 @@ const IParticleDefPtr& RenderableParticle::getParticleDef() const
 	return _particleDef;
 }
 
-void RenderableParticle::setParticleDef(const IParticleDefPtr& def) 
+void RenderableParticle::setParticleDef(const IParticleDefPtr& def)
 {
 	if (_particleDef != NULL)
 	{
@@ -98,7 +98,7 @@ void RenderableParticle::setMainDirection(const Vector3& direction)
 }
 
 // Updates bounds from stages and returns the value
-const AABB& RenderableParticle::getBounds() 
+const AABB& RenderableParticle::getBounds()
 {
 	if (!_bounds.isValid())
 	{

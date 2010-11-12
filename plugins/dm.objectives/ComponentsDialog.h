@@ -32,13 +32,13 @@ namespace objectives
  * Dialog for displaying and editing the properties and components (conditions)
  * attached to a particular objective.
  */
-class ComponentsDialog : 
+class ComponentsDialog :
 	public gtkutil::BlockingTransientWindow
 {
 private:
 	// The objective we are editing
 	Objective& _objective;
-	
+
 	struct ComponentListColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
@@ -51,10 +51,10 @@ private:
 	// List store for the components
 	ComponentListColumns _columns;
 	Glib::RefPtr<Gtk::ListStore> _componentList;
-	
+
 	// Currently-active ComponentEditor (if any)
 	ce::ComponentEditorPtr _componentEditor;
-	
+
 	// The widgets needed for editing the difficulty levels
 	DifficultyPanel* _diffPanel;
 
@@ -94,7 +94,7 @@ private:
 	Gtk::CheckButton* _playerResponsibleFlag;
 
 	Gtk::Frame* _compEditorPanel;
-	
+
 private:
 	// Construction helpers
 	Gtk::Widget& createObjectiveEditPanel();
@@ -109,13 +109,13 @@ private:
 
 	// Updates the list store contents without removing any components
 	void updateComponents();
-	
+
 	// Populate the edit panel widgets with the specified component number
 	void populateEditPanel(int index);
 
 	// Populate the objective properties
 	void populateObjectiveEditPanel();
-	
+
 	// Get the index of the selected Component, or -1 if there is no selection
 	int getSelectedIndex();
 
@@ -127,7 +127,7 @@ private:
 
 	// Writes the data from the widgets to the data structures
 	void save();
-	
+
 	// gtkmm callbacks
 	void _onOK();
 	void _onCancel();
@@ -138,20 +138,20 @@ private:
 
 	void _onAddComponent();
 	void _onDeleteComponent();
-	
+
 	void _onTypeChanged();
     void _onApplyComponentChanges();
 
 	static gboolean _onIntervalReached(gpointer data);
-	
+
 public:
-	
+
 	/**
 	 * Constructor creates widgets.
-	 * 
+	 *
 	 * @param parent
 	 * The parent window for which this dialog should be a transient.
-	 * 
+	 *
 	 * @param objective
 	 * The Objective object for which conditions should be displayed and edited.
 	 */

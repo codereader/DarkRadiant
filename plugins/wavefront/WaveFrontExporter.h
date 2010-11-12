@@ -21,7 +21,7 @@ class WaveFrontExporter :
 	std::size_t _vertexCount;
 
 public:
-	WaveFrontExporter(const std::string& outputPath);	
+	WaveFrontExporter(const std::string& outputPath);
 
 	// Start the export process
 	void exportSelection();

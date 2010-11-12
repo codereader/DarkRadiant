@@ -8,9 +8,9 @@
 
 /**
  * Manipulator for performing axis-aligned translations.
- */ 
-class TranslateManipulator 
-: public Manipulator 
+ */
+class TranslateManipulator
+: public Manipulator
 {
 private:
   TranslateFree _translateFree;
@@ -36,12 +36,12 @@ public:
 
   void UpdateColours();
   bool manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis);
-  
+
   void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
   void testSelect(const View& view, const Matrix4& pivot2world);
   ManipulatorComponent* getActiveComponent();
-  
+
   void setSelected(bool select);
-  bool isSelected() const;  
+  bool isSelected() const;
 }; // class TranslateManipulator
 

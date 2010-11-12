@@ -29,10 +29,10 @@ inFile = open(sys.argv[1])
 
 # Read and unpack the header
 rawData = inFile.read(32)
-(	sMagic, 
-	dwSize, 
-	dwFlags, 
-	dwHeight, 
+(	sMagic,
+	dwSize,
+	dwFlags,
+	dwHeight,
 	dwWidth,
 	dwPitchOrLinearSize,
 	dwDepth,

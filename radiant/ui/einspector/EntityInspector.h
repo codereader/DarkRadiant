@@ -58,7 +58,7 @@ public:
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListStoreColumns()
-		{ 
+		{
 			add(name);
 			add(value);
 			add(colour);
@@ -79,7 +79,7 @@ public:
 	typedef boost::shared_ptr<ListStoreColumns> ListStoreColumnsPtr;
 
 private:
-	struct StringCompareFunctorNoCase : 
+	struct StringCompareFunctorNoCase :
 		public std::binary_function<std::string, std::string, bool>
 	{
 		bool operator()(const std::string& s1, const std::string& s2) const
@@ -110,7 +110,7 @@ private:
 
 	Gtk::TreeViewColumn* _helpColumn;
 
-    // Cache of Gtk::TreeModel::iterators pointing to keyvalue rows, 
+    // Cache of Gtk::TreeModel::iterators pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values
 	typedef std::map<std::string, Gtk::TreeModel::iterator, StringCompareFunctorNoCase> TreeIterMap;
     TreeIterMap _keyValueIterMap;
@@ -187,7 +187,7 @@ private:
 	void _onToggleShowInherited();
 	void _onToggleShowHelpIcons();
 	bool _onQueryTooltip(int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
-	
+
     static std::string  cleanInputString( const std::string& );
 
     // Add and remove inherited properties from the entity class

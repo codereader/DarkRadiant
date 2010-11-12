@@ -29,8 +29,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 #include <boost/bind.hpp>
 
-/** greebo: A structure containing information about the current 
- * Selection. An instance of this is maintained by the 
+/** greebo: A structure containing information about the current
+ * Selection. An instance of this is maintained by the
  * RadiantSelectionSystem, and a const reference can be
  * retrieved via the according getSelectionInfo() method.
  */
@@ -41,7 +41,7 @@ public:
 	int brushCount; 	// -- " -- brushes
 	int entityCount; 	// -- " -- entities
 	int componentCount;	// -- " -- components (faces, edges, vertices)
-	
+
 	SelectionInfo() :
 		totalCount(0),
 		patchCount(0),
@@ -49,7 +49,7 @@ public:
 		entityCount(0),
 		componentCount(0)
 	{}
-	
+
 	// Zeroes all the counters
 	void clear() {
 		totalCount = 0;
@@ -63,9 +63,9 @@ public:
 namespace selection
 {
 
-/** 
- * The selection "WorkZone" defines the bounds of the most 
- * recent selection. On each selection, the workzone is 
+/**
+ * The selection "WorkZone" defines the bounds of the most
+ * recent selection. On each selection, the workzone is
  * recalculated, nothing happens on deselection.
  */
 struct WorkZone
@@ -112,7 +112,7 @@ public:
  * Implementation of the Selectable interface which invokes a user-specified
  * callback function when the selection state is changed.
  */
-class ObservedSelectable 
+class ObservedSelectable
 : public Selectable
 {
     // Callback to invoke on selection changed
@@ -127,7 +127,7 @@ public:
      * \brief
      * Construct an ObservedSelectable with the given callback function.
      */
-    ObservedSelectable(const SelectionChangeCallback& onchanged) 
+    ObservedSelectable(const SelectionChangeCallback& onchanged)
     : m_onchanged(onchanged), m_selected(false)
     { }
 
@@ -135,7 +135,7 @@ public:
      * \brief
      * Copy constructor.
      */
-    ObservedSelectable(const ObservedSelectable& other) 
+    ObservedSelectable(const ObservedSelectable& other)
     : Selectable(other), m_onchanged(other.m_onchanged), m_selected(false)
     {
         setSelected(other.isSelected());
@@ -184,16 +184,16 @@ class OccludeSelector : public Selector
 	SelectionIntersection& _bestIntersection;
 	bool& _occluded;
 public:
-	OccludeSelector(SelectionIntersection& bestIntersection, bool& occluded) : 
-		_bestIntersection(bestIntersection), 
-		_occluded(occluded) 
+	OccludeSelector(SelectionIntersection& bestIntersection, bool& occluded) :
+		_bestIntersection(bestIntersection),
+		_occluded(occluded)
 	{
 		_occluded = false;
 	}
-	
+
 	void pushSelectable(Selectable& selectable) {}
 	void popSelectable() {}
-	
+
 	void addIntersection(const SelectionIntersection& intersection) {
 		if (SelectionIntersection_closer(intersection, _bestIntersection)) {
 			_bestIntersection = intersection;
@@ -208,7 +208,7 @@ public:
  *
  * The GlobalSelectionSystem will be notified of selection changes.
  */
-class SelectableNode : 
+class SelectableNode :
 	public scene::Node,
 	public Selectable
 {
@@ -240,7 +240,7 @@ public:
      * \brief
      * Callback invoked by the ObservedSelectable when the selection changes.
      */
-	void selectedChanged(const Selectable& selectable) 
+	void selectedChanged(const Selectable& selectable)
     {
 		GlobalSelectionSystem().onSelectedChanged(
             shared_from_this(), selectable
@@ -251,11 +251,11 @@ public:
 	virtual void setSelected(bool select) {
 		_selectable.setSelected(select);
 	}
-	
+
 	virtual bool isSelected() const {
 		return _selectable.isSelected();
 	}
-	
+
 	virtual void invertSelected() {
 		_selectable.invertSelected();
 	}

@@ -11,14 +11,14 @@ struct EdgeRenderIndices
 	EdgeRenderIndices()
 		: first(0), second(0)
 	{}
-	
+
 	EdgeRenderIndices(const RenderIndex _first, const RenderIndex _second)
 		: first(_first), second(_second)
 	{}
 };
 
-class RenderableWireframe : 
-	public OpenGLRenderable 
+class RenderableWireframe :
+	public OpenGLRenderable
 {
 public:
 	void render(const RenderInfo& info) const

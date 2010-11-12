@@ -22,7 +22,7 @@ std::string ConversationCommand::getArgument(int index) const {
 std::string ConversationCommand::getSentence() const {
 	// Get the command description for this type
 	try {
-		const ConversationCommandInfo& cmdInfo = 
+		const ConversationCommandInfo& cmdInfo =
 			ConversationCommandLibrary::Instance().findCommandInfo(type);
 
 		// Get the sentence and fill in the placeholders, if any
@@ -35,13 +35,13 @@ std::string ConversationCommand::getSentence() const {
 		{
 			std::string needle = "[arg" + intToStr(counter) + "]";
 			std::string replacement = getArgument(counter);
-			
+
 			// Check for a bool
 			/*if (i->second.type == "b") {
 				replacement = (i->second.value.empty()) ? "no" : "yes";
 			}*/
-			
-			boost::algorithm::replace_all(sentence, needle, replacement); 
+
+			boost::algorithm::replace_all(sentence, needle, replacement);
 		}
 
 		return sentence;

@@ -20,15 +20,15 @@ public:
 	virtual ~DialogManager();
 
 	// Create a new dialog
-	IDialogPtr createDialog(const std::string& title, 
+	IDialogPtr createDialog(const std::string& title,
 							const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
 
-	IDialogPtr createMessageBox(const std::string& title, 
-								const std::string& text, 
-								IDialog::MessageType type, 
+	IDialogPtr createMessageBox(const std::string& title,
+								const std::string& text,
+								IDialog::MessageType type,
 								const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>());
 
-	IFileChooserPtr createFileChooser(const std::string& title, bool open, bool browseFolders, 
+	IFileChooserPtr createFileChooser(const std::string& title, bool open, bool browseFolders,
 									  const std::string& pattern, const std::string& defaultExt);
 
 private:

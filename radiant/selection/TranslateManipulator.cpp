@@ -88,7 +88,7 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
       collector.addRenderable(_arrowHeadZ, _pivot._worldSpace);
     }
 }
-  
+
 void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
     _pivot.update(pivot2world, view.GetModelview(), view.GetProjection(), view.GetViewport());
 
@@ -150,17 +150,17 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
       (*selector.begin()).second->setSelected(true);
     } else {
     	Selectable* selectable = NULL;
-    	
+
     	if (GlobalRegistry().get(RKEY_TRANSLATE_CONSTRAINED) == "1") {
 	    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence
 	    	Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
-	
-	    	// Get the (relative?) distance from the mouse pointer to the manipulator 
+
+	    	// Get the (relative?) distance from the mouse pointer to the manipulator
 	    	Vector3 delta = local2view.t().getProjected();
-	    	
+
 	    	// Get the precedence (which axis has the absolute largest value in it)
 	    	bool xGreaterY = (fabs(delta.x()) > fabs(delta.y()));
-	    	
+
 	    	// The precedence has to be interpreted according to which axes are visible
 	    	if (show_z) {
 	    		// Either XZ or YZ
@@ -182,7 +182,7 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
     		// Don't constrain to axis, choose the freemove translator
     		selectable = &_selectableScreen;
     	}
-    	
+
 		// If everything went ok, there is a selectable available, add it
     	if (selectable != NULL) {
     		selector.addSelectable(SelectionIntersection(0,0), selectable);

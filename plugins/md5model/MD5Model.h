@@ -25,7 +25,7 @@ class MD5Model :
 
 	// The list of shader names for this model (for ModelSelector)
 	std::vector<std::string> _surfaceNames;
-	
+
 	// The filename of this model
 	std::string _filename;
 
@@ -54,20 +54,20 @@ public:
 
 	// Sets the filename this model was loaded from
 	void setFilename(const std::string& name);
-	
+
 	// IModel implementation
 	virtual std::string getFilename() const;
 
 	virtual std::string getModelPath() const;
 	void setModelPath(const std::string& modelPath);
-	
+
 	virtual void applySkin(const ModelSkin& skin);
 
 	/** Return the number of material surfaces on this model. Each material
 	 * surface consists of a set of polygons sharing the same material.
 	 */
 	virtual int getSurfaceCount() const;
-	
+
 	/** Return the number of vertices in this model, equal to the sum of the
 	 * vertex count from each surface.
 	 */
@@ -77,7 +77,7 @@ public:
 	 * triangle count from each surface.
 	 */
 	virtual int getPolyCount() const;
-	
+
 	/** Return a vector of strings listing the active materials used in this
 	 * model, after any skin remaps. The list is owned by the model instance.
 	 */
@@ -90,12 +90,12 @@ public:
 
 private:
 	/**
-	 * Helper: Parse an MD5 vector, which consists of three separated numbers 
+	 * Helper: Parse an MD5 vector, which consists of three separated numbers
 	 * enclosed with parentheses.
 	 */
 	Vector3 parseVector3(parser::DefTokeniser& tok);
 
-	// Creates a new MD5Surface, adds it to the local list and returns the reference  
+	// Creates a new MD5Surface, adds it to the local list and returns the reference
 	MD5Surface& newSurface();
 
 	// Re-populates the list of active shader names

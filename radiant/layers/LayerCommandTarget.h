@@ -6,7 +6,7 @@
 
 namespace scene {
 
-/** 
+/**
  * greebo: This objects is associated with a given Layer ID
  *         and provides methods compatible with the event system.
  *

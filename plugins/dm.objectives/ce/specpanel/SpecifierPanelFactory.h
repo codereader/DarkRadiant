@@ -21,32 +21,32 @@ class SpecifierPanelFactory
 	// Static map instance
 	typedef std::map<std::string, SpecifierPanelPtr> PanelMap;
 	static PanelMap& getMap();
-	
+
 public:
-	
+
 	/**
 	 * Register a SpecifierPanel subclass.
-	 * 
+	 *
 	 * This method is invoked by SpecifierPanel subclasses to register
 	 * themselves for virtual construction. Once a SpecifierPanel is registered
 	 * it can be created and returned by the SpecifierPanelFactory::create()
 	 * method based on its SpecifierType type.
-	 * 
+	 *
 	 * @param name
 	 * Name of the SpecifierType type that this panel will edit.
-	 * 
+	 *
 	 * @param cls
 	 * The SpecifierPanel subclass to register.
 	 */
-	static void registerType(const std::string& name, 
+	static void registerType(const std::string& name,
 							 SpecifierPanelPtr cls);
 
 	/**
 	 * Create a SpecifierPanel to edit the given SpecifierType type.
-	 * 
+	 *
 	 * @param name
 	 * Name of the SpecifierType type for which a SpecifierPanel must be created.
-	 * 
+	 *
 	 * @return
 	 * Shared pointer to a SpecifierPanel which contains widgets to edit this
 	 * SpecifierType type. If no SpecifierPanl has been registered for this type,

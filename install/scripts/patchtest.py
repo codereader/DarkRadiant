@@ -7,7 +7,7 @@ class PatchManipulator(SceneNodeVisitor) :
 		if not patch.isNull():
 			print('Patch information:')
 			print('Dimensions: ' + str(patch.getWidth()) + 'x' + str(patch.getHeight()))
-			
+
 			mesh = patch.getTesselatedPatchMesh()
 
 			print('Mesh dimension: w=' + str(mesh.width) + ', h=' + str(mesh.height))

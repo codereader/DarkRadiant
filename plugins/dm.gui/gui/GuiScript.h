@@ -58,7 +58,7 @@ private:
 	// The owning windowDef
 	GuiWindowDef& _owner;
 
-	// The compiled "code" consists of a series of statements 
+	// The compiled "code" consists of a series of statements
 	typedef std::vector<StatementPtr> StatementList;
 	StatementList _statements;
 
@@ -71,7 +71,7 @@ private:
 public:
 	GuiScript(GuiWindowDef& owner);
 
-	// Construct this script from a token stream. 
+	// Construct this script from a token stream.
 	// It expects the initial opening brace as first token.
 	void constructFromTokens(parser::DefTokeniser& tokeniser);
 

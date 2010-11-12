@@ -121,7 +121,7 @@ void *_pico_calloc( size_t num, size_t size )
 void *_pico_realloc( void **ptr, size_t oldSize, size_t newSize )
 {
 	void *ptr2;
-	
+
 	/* sanity checks */
 	if( ptr == NULL )
 		return NULL;
@@ -141,7 +141,7 @@ void *_pico_realloc( void **ptr, size_t oldSize, size_t newSize )
 		memcpy( ptr2, *ptr, oldSize );
 		_pico_free( *ptr );
 	}
-	
+
 	/* fix up and return */
 	*ptr = ptr2;
 	return *ptr;
@@ -412,7 +412,7 @@ void _pico_copy_vec4( picoVec4_t src, picoVec4_t dest )
 picoVec_t _pico_normalize_vec( picoVec3_t vec )
 {
 	double	len, ilen;
-	
+
 	len = sqrt( vec[ 0 ] * vec[ 0 ] + vec[ 1 ] * vec[ 1 ] + vec[ 2 ] * vec[ 2 ] );
 	if( len == 0.0 ) return 0.0;
 	ilen = 1.0 / len;
@@ -526,7 +526,7 @@ float _pico_little_float( float src )
 int   _pico_little_long ( int   src ) { return src; }
 short _pico_little_short( short src ) { return src; }
 float _pico_little_float( float src ) { return src; }
-	
+
 int _pico_big_long( int src )
 {
 	return ((src & 0xFF000000) >> 24) |
@@ -534,13 +534,13 @@ int _pico_big_long( int src )
 		   ((src & 0x0000FF00) << 8) |
 		   ((src & 0x000000FF) << 24);
 }
-	
+
 short _pico_big_short( short src )
 {
 	return ((src & 0xFF00) >> 8) |
 		   ((src & 0x00FF) << 8);
 }
-	
+
 float _pico_big_float( float src )
 {
 	floatSwapUnion in,out;
@@ -742,11 +742,11 @@ void _pico_parse_skip_white( picoParser_t *p, int *hasLFs )
 picoParser_t *_pico_new_parser( picoByte_t *buffer, int bufSize )
 {
 	picoParser_t *p;
-	
+
 	/* sanity check */
 	if( buffer == NULL || bufSize <= 0 )
 		return NULL;
-	
+
 	/* allocate reader */
 	p = _pico_alloc( sizeof(picoParser_t) );
 	if (p == NULL) return NULL;
@@ -1258,11 +1258,11 @@ int _pico_parse_vec4_def( picoParser_t *p, picoVec4_t out, picoVec4_t def )
 picoMemStream_t *_pico_new_memstream( picoByte_t *buffer, int bufSize )
 {
 	picoMemStream_t *s;
-	
+
 	/* sanity check */
 	if( buffer == NULL || bufSize <= 0 )
 		return NULL;
-	
+
 	/* allocate stream */
 	s = _pico_alloc( sizeof(picoMemStream_t) );
 	if (s == NULL) return NULL;

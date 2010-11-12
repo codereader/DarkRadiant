@@ -11,21 +11,21 @@ class BasicTexture2D
 {
 	// The GL bind number for use in OpenGL calls
 	GLuint texture_number;
-	
+
 	// Texture Dimensions
 	std::size_t _width, _height;
 
    // Texture name
    std::string _name;
-	
+
 public:
 
 	// Constructor
-	BasicTexture2D(GLuint texNum = 0, const std::string& name = "") 
+	BasicTexture2D(GLuint texNum = 0, const std::string& name = "")
    : texture_number(texNum),
      _name(name)
 	{}
-	
+
 	~BasicTexture2D() {
 		if (texture_number != 0) {
 			// Remove this texture from openGL if it's still loaded
@@ -78,7 +78,7 @@ public:
         return _height;
     }
 
-}; // class Texture 
+}; // class Texture
 
 typedef boost::shared_ptr<BasicTexture2D> BasicTexture2DPtr;
 

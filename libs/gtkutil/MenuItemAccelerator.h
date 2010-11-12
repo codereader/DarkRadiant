@@ -15,33 +15,33 @@ namespace Gtk
 namespace gtkutil
 {
 
-class TextMenuItemBase 
+class TextMenuItemBase
 {
 protected:
 	Gtk::HBox* _hbox;
 
 	// The corresponding widget
 	Gtk::Label* _label;
-	
+
 	// The corresponding widget
 	Gtk::Label* _accel;
-	
+
 	// The corresponding image widget
 	Gtk::Image* _iconImage;
 
-	TextMenuItemBase(const std::string& label, 
+	TextMenuItemBase(const std::string& label,
 					 const std::string& accelLabel,
 					 const Glib::RefPtr<Gdk::Pixbuf>& icon);
 public:
 	// destructor
 	virtual ~TextMenuItemBase() {}
 
-	// Changes the label text of the given menu item 
+	// Changes the label text of the given menu item
 	void setLabel(const std::string& newLabel);
-	
+
 	// Changes the accelerator text of this menutem
 	void setAccelerator(const std::string& newAccel);
-	
+
 	// Change the icon
 	void setIcon(const Glib::RefPtr<Gdk::Pixbuf>& icon);
 };
@@ -55,7 +55,7 @@ public:
 	 * Construct a menu item with the given label, accelerator and icon. The
 	 * icon may be the empty string if no icon is required.
 	 */
-	TextMenuItemAccelerator(const std::string& label, 
+	TextMenuItemAccelerator(const std::string& label,
 							const std::string& accelLabel,
 							const Glib::RefPtr<Gdk::Pixbuf>& icon);
 
@@ -72,7 +72,7 @@ public:
 	 * Construct a menu item with the given label, accelerator and icon. The
 	 * icon may be the empty string if no icon is required.
 	 */
-	TextToggleMenuItemAccelerator(const std::string& label, 
+	TextToggleMenuItemAccelerator(const std::string& label,
 								  const std::string& accelLabel,
 								  const Glib::RefPtr<Gdk::Pixbuf>& icon);
 

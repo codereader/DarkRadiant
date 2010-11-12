@@ -29,11 +29,11 @@ class GuiSelector :
 {
 public:
 	// Treestore enum
-	struct GuiTreeModelColumns : 
+	struct GuiTreeModelColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		GuiTreeModelColumns()
-		{ 
+		{
 			add(name);
 			add(fullName);
 			add(icon);
@@ -76,7 +76,7 @@ public:
 	static std::string run(bool twoSided, ReadableEditorDialog& editorDialog);
 
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-			   const Gtk::TreeModel::iterator& iter, 
+			   const Gtk::TreeModel::iterator& iter,
 			   const std::string& path,
 			   bool isExplicit);
 

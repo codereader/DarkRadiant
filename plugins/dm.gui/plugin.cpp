@@ -27,7 +27,7 @@
 #include "iarchive.h"
 
 
-class GuiModule : 
+class GuiModule :
 	public RegisterableModule,
 	public RadiantEventListener,
 	public boost::enable_shared_from_this<GuiModule>
@@ -39,7 +39,7 @@ public:
 		static std::string _name("GUI Editing");
 		return _name;
 	}
-	
+
 	virtual const StringSet& getDependencies() const {
 		static StringSet _dependencies;
 
@@ -63,7 +63,7 @@ public:
 
 		return _dependencies;
 	}
-	
+
 	virtual void initialiseModule(const ApplicationContext& ctx)
 	{
 		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
@@ -89,14 +89,14 @@ public:
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
 
 		mm.add("main/entity",
-			"ReadableEditorDialog", ui::menuItem, 
+			"ReadableEditorDialog", ui::menuItem,
 			_("Readable Editor"), // caption
 			"book.png", // icon
 			"ReadableEditorDialog"
 		);
 
 		mm.insert("main/file/refreshShaders",
-			"ReloadReadables", ui::menuItem, 
+			"ReloadReadables", ui::menuItem,
 			_("Reload Readable Guis"), // caption
 			"book.png", // icon
 			"ReloadReadables"
@@ -130,10 +130,10 @@ typedef boost::shared_ptr<GuiModule> GuiModulePtr;
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(GuiModulePtr(new GuiModule));
-	
+
 	// Initialize the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

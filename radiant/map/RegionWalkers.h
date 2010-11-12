@@ -6,7 +6,7 @@
 namespace map {
 
 /** greebo: Sets the "excluded" bit in the Node according to the given boolean.
- * 
+ *
  * @exclude: set to TRUE if you want to exclude the node.
  */
 inline void excludeNode(scene::INodePtr node, bool exclude) {
@@ -20,15 +20,15 @@ inline void excludeNode(scene::INodePtr node, bool exclude) {
 
 /** greebo: Sets/resets the exclude bit on the visited node
  */
-class ExcludeAllWalker : 
+class ExcludeAllWalker :
 	public scene::NodeVisitor
 {
 	bool _exclude;
 public:
-	ExcludeAllWalker(bool exclude) : 
-		_exclude(exclude) 
+	ExcludeAllWalker(bool exclude) :
+		_exclude(exclude)
 	{}
-	
+
 	bool pre(const scene::INodePtr& node)
 	{
 		excludeNode(node, _exclude);
@@ -38,10 +38,10 @@ public:
 };
 
 /** greebo: Sets the exclusion status of all the objects WITHIN the bounds.
- * 
+ *
  * All the objects outside the bounds get their status set to the opposite.
  */
-class ExcludeRegionedWalker : 
+class ExcludeRegionedWalker :
 	public scene::NodeVisitor
 {
 	bool _exclude;
@@ -49,11 +49,11 @@ class ExcludeRegionedWalker :
 	AABB& _regionAABB;
 
 public:
-	ExcludeRegionedWalker(bool exclude, AABB& regionAABB) : 
+	ExcludeRegionedWalker(bool exclude, AABB& regionAABB) :
 		_exclude(exclude),
 		_regionAABB(regionAABB)
 	{}
-	
+
 	bool pre(const scene::INodePtr& node)
 	{
 		// Check whether the instance is within the region
@@ -61,7 +61,7 @@ public:
 			node->worldAABB(),
 			_regionAABB
 		);
-		
+
 		if (contained) {
 			// The contained stuff is set according to the _exclude parameter
 			excludeNode(node, _exclude);
@@ -71,32 +71,32 @@ public:
 			// as the _exclude should apply to the objects within.
 			excludeNode(node, !_exclude);
 		}
-		
+
 		// Traverse the children as well
 		return true;
 	}
 };
 
 /** greebo: This class is used indirectly by the map saving walker to save the region.
- * 
+ *
  * The map saving walker calls a function RegionManager::traverseRegion() which
- * traverses the given node with this walker. 
- * 
+ * traverses the given node with this walker.
+ *
  * This ExcludeNonRegionedWalker again invokes the map saving walker, if the
  * visited items are regioned only, of course.
  */
-class ExcludeNonRegionedWalker : 
+class ExcludeNonRegionedWalker :
 	public scene::NodeVisitor
 {
 	scene::NodeVisitor& _walker;
 	mutable bool _skip;
 
 public:
-	ExcludeNonRegionedWalker(scene::NodeVisitor& walker) : 
-		_walker(walker), 
-		_skip(false) 
+	ExcludeNonRegionedWalker(scene::NodeVisitor& walker) :
+		_walker(walker),
+		_skip(false)
 	{}
-	
+
 	virtual bool pre(const scene::INodePtr& node) {
 		// Don't save excluded nodes or the Scenegraph root
 		if (node->excluded() || node->isRoot()) {
@@ -116,7 +116,7 @@ public:
 			_skip = false;
 		}
 		else {
-			// The node passed the check in pre(), we have to call post() as well. 
+			// The node passed the check in pre(), we have to call post() as well.
 			_walker.post(node);
 		}
 	}

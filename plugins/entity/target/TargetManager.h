@@ -9,13 +9,13 @@ namespace entity {
 
 /**
  * greebo: This singleton TargetManager keeps track of all
- *         Target objects in the current scene. 
+ *         Target objects in the current scene.
  *
- * TargetKey classes acquire a named TargetPtr by calling getTarget(). This 
- * always succeeds - if the named Target is not found, a new, empty one 
+ * TargetKey classes acquire a named TargetPtr by calling getTarget(). This
+ * always succeeds - if the named Target is not found, a new, empty one
  * is created.
  *
- * The TargetableInstances report to this manager as soon as 
+ * The TargetableInstances report to this manager as soon as
  * their name is changed or set. This will associate an empty Target object
  * with an actual scene::Node.
  *
@@ -45,7 +45,7 @@ public:
 
 	/**
 	 * greebo: Returns the Target with the given name.
-	 *         
+	 *
 	 * This never returns NULL, a Target is created if it doesn't exist yet.
 	 */
 	TargetPtr getTarget(const std::string name);

@@ -63,15 +63,15 @@ void InfoFile::parse() {
 		}
 	}
 	catch (parser::ParseException& e) {
-        globalErrorStream() 
-            << "[mapdoom3] Unable to parse info file header: " 
+        globalErrorStream()
+            << "[mapdoom3] Unable to parse info file header: "
 			<< e.what() << std::endl;
 		_isValid = false;
         return;
     }
     catch (boost::bad_lexical_cast& e) {
-        globalErrorStream() 
-            << "[mapdoom3] Unable to parse info file version: " 
+        globalErrorStream()
+            << "[mapdoom3] Unable to parse info file version: "
 			<< e.what() << std::endl;
 		_isValid = false;
         return;
@@ -79,7 +79,7 @@ void InfoFile::parse() {
 
 	// The opening brace of the master block
 	_tok.assertNextToken("{");
-	
+
 	parseInfoFileBody();
 
 	// Set the layer mapping iterator to the beginning
@@ -109,7 +109,7 @@ void InfoFile::parseInfoFileBody() {
 void InfoFile::parseLayerNames() {
 	// The opening brace
 	_tok.assertNextToken("{");
-	
+
 	while (_tok.hasMoreTokens()) {
 		std::string token = _tok.nextToken();
 
@@ -129,7 +129,7 @@ void InfoFile::parseLayerNames() {
 				token = _tok.nextToken();
 			}
 
-			globalOutputStream() << "[InfoFile]: Parsed layer #" 
+			globalOutputStream() << "[InfoFile]: Parsed layer #"
 				<< layerID << " with name " << name << std::endl;
 
 			_layerNames.insert(LayerNameMap::value_type(layerID, name));

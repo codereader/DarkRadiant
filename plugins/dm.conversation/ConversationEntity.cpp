@@ -19,7 +19,7 @@ ConversationEntity::ConversationEntity(scene::INodePtr node) :
 {
 	Entity* entity = Node_getEntity(node);
 	assert(entity != NULL);
-	
+
 	// Use an conversationKeyExtractor to populate the ConversationMap from the keys
 	// on the entity
 	ConversationKeyExtractor extractor(_conversations);
@@ -43,7 +43,7 @@ void ConversationEntity::addConversation() {
 	while (_conversations.find(index) != _conversations.end()) {
 		++index;
 	}
-		
+
 	// Insert a new conversation at this ID.
 	Conversation o;
 	o.name = _("New Conversation");
@@ -55,13 +55,13 @@ void ConversationEntity::deleteConversation(int index) {
 	ConversationMap::iterator i = _conversations.find(index);
 
 	if (i == _conversations.end()) {
-		// not found, nothing to do 
-		return; 
+		// not found, nothing to do
+		return;
 	}
 
 	// Delete the found element
 	_conversations.erase(i++);
-	
+
 	// Then iterate all the way to the highest index
 	while (i != _conversations.end()) {
 		// Decrease the index of this conversation
@@ -80,7 +80,7 @@ void ConversationEntity::deleteConversation(int index) {
 }
 
 // Populate a list store with conversations
-void ConversationEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store, 
+void ConversationEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
 										   const ConversationColumns& columns) const
 {
 	for (ConversationMap::const_iterator i = _conversations.begin();
@@ -88,7 +88,7 @@ void ConversationEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& s
 		 ++i)
 	{
 		Gtk::TreeModel::Row row = *store->append();
-		
+
 		row[columns.index] = i->first;
 		row[columns.name] = i->second.name;
 	}
@@ -111,27 +111,27 @@ void ConversationEntity::writeToEntity() {
 	// Try to convert the weak_ptr reference to a shared_ptr
 	Entity* entity = Node_getEntity(_entityNode.lock());
 	assert(entity != NULL);
-	
+
 	// greebo: Remove all conversation-related spawnargs first
 	clearEntity(entity);
 
 	for (ConversationMap::const_iterator i = _conversations.begin();
 		 i != _conversations.end();
-		 ++i) 
+		 ++i)
 	{
 		// Obtain the conversation and construct the key prefix from the index
 		const Conversation& conv = i->second;
 		std::string prefix = "conv_" + intToStr(i->first) + "_";
-		
+
 		// Set the entity keyvalues
 		entity->setKeyValue(prefix + "name", conv.name);
-		entity->setKeyValue(prefix + "actors_must_be_within_talkdistance", 
+		entity->setKeyValue(prefix + "actors_must_be_within_talkdistance",
 			conv.actorsMustBeWithinTalkdistance ? "1" : "0");
 		entity->setKeyValue(prefix + "talk_distance", floatToStr(conv.talkDistance));
-		entity->setKeyValue(prefix + "actors_always_face_each_other_while_talking", 
+		entity->setKeyValue(prefix + "actors_always_face_each_other_while_talking",
 			conv.actorsAlwaysFaceEachOther ? "1" : "0");
 		entity->setKeyValue(prefix + "max_play_count", intToStr(conv.maxPlayCount));
-		
+
 		// Write the actor list
 		for (Conversation::ActorMap::const_iterator a = conv.actors.begin();
 			 a != conv.actors.end(); ++a)
@@ -147,9 +147,9 @@ void ConversationEntity::writeToEntity() {
 			std::string cmdPrefix = prefix + "cmd_" + intToStr(c->first) + "_";
 
 			try {
-				const ConversationCommandInfo& cmdInfo = 
+				const ConversationCommandInfo& cmdInfo =
 					ConversationCommandLibrary::Instance().findCommandInfo(c->second->type);
-				
+
 				entity->setKeyValue(cmdPrefix + "type", cmdInfo.name);
 				entity->setKeyValue(cmdPrefix + "actor", intToStr(c->second->actor));
 				entity->setKeyValue(cmdPrefix + "wait_until_finished", c->second->waitUntilFinished ? "1" : "0");

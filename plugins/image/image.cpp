@@ -45,10 +45,10 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
 	registry.registerModule(BMPLoaderPtr(new BMPLoader));
 	registry.registerModule(DDSLoaderPtr(new DDSLoader));
 	registry.registerModule(GDKLoaderPtr(new GDKLoader));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

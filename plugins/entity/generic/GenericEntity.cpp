@@ -24,7 +24,7 @@ GenericEntity::GenericEntity(GenericEntityNode& node) :
 	_allow3Drotations(m_entity.getKeyValue("editor_rotatable") == "1")
 {}
 
-GenericEntity::GenericEntity(const GenericEntity& other, 
+GenericEntity::GenericEntity(const GenericEntity& other,
 		GenericEntityNode& node) :
 	_owner(node),
 	m_entity(node._entity),
@@ -48,7 +48,7 @@ const AABB& GenericEntity::localAABB() const {
 	return m_aabb_local;
 }
 
-void GenericEntity::renderArrow(RenderableCollector& collector, 
+void GenericEntity::renderArrow(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	if (GlobalRegistry().get("user/ui/xyview/showEntityAngles") == "1") {
@@ -56,7 +56,7 @@ void GenericEntity::renderArrow(RenderableCollector& collector,
 	}
 }
 
-void GenericEntity::renderSolid(RenderableCollector& collector, 
+void GenericEntity::renderSolid(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	collector.SetState(m_entity.getEntityClass()->getFillShader(), RenderableCollector::eFullMaterials);
@@ -64,7 +64,7 @@ void GenericEntity::renderSolid(RenderableCollector& collector,
 	renderArrow(collector, volume, localToWorld);
 }
 
-void GenericEntity::renderWireframe(RenderableCollector& collector, 
+void GenericEntity::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
@@ -72,7 +72,7 @@ void GenericEntity::renderWireframe(RenderableCollector& collector,
 	renderArrow(collector, volume, localToWorld);
 }
 
-void GenericEntity::testSelect(Selector& selector, 
+void GenericEntity::testSelect(Selector& selector,
 	SelectionTest& test, const Matrix4& localToWorld)
 {
 	test.BeginMesh(localToWorld);
@@ -95,9 +95,9 @@ void GenericEntity::rotate(const Quaternion& rotation)
 	{
 		// greebo: Pre-multiply the incoming matrix on the existing one
 		// Don't use m_rotation.rotate(), which performs a post-multiplication
-		m_rotation.setFromMatrix4( 
+		m_rotation.setFromMatrix4(
 			matrix4_premultiplied_by_matrix4(
-				m_rotation.getMatrix4(), 
+				m_rotation.getMatrix4(),
 				matrix4_rotation_for_quaternion_quantised(rotation)
 			)
 		);

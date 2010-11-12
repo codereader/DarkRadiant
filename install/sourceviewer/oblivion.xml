@@ -68,7 +68,7 @@
 
   <!-- Right Margin -->
   <style name="right-margin"                foreground="aluminium1" background="aluminium4"/>
-  
+
   <!-- Search Matching -->
   <style name="search-match"                foreground="aluminium1" background="chameleon3"/>
 
@@ -91,7 +91,7 @@
   <style name="def:statement"               foreground="#white" bold="true"/>
 
   <!-- Types -->
-  <style name="def:type"                    foreground="chameleon1" bold="true"/> 
+  <style name="def:type"                    foreground="chameleon1" bold="true"/>
 
   <!-- Others -->
   <style name="def:preprocessor"            foreground="plum1"/>
@@ -103,8 +103,8 @@
   <style name="diff:added-line"             foreground="butter2"/>
   <style name="diff:removed-line"           foreground="skyblue1"/>
   <style name="diff:changed-line"           foreground="plum1"/>
-  <style name="diff:diff-file"              foreground="chameleon1" bold="true"/> 
-  <style name="diff:location"               foreground="chameleon1"/> 
+  <style name="diff:diff-file"              foreground="chameleon1" bold="true"/>
+  <style name="diff:location"               foreground="chameleon1"/>
   <style name="diff:special-case"           foreground="#white" bold="true"/>
 
 </style-scheme>

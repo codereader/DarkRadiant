@@ -36,7 +36,7 @@ namespace {
 /**
  * Main constructor.
  */
-OpenGLRenderSystem::OpenGLRenderSystem() : 
+OpenGLRenderSystem::OpenGLRenderSystem() :
 	_realised(false),
 	m_lightingEnabled(true),
 	m_lightingSupported(false),
@@ -78,12 +78,12 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name) {
 	// and insert into the cache.
 	OpenGLShaderPtr shd(new OpenGLShader(*this));
 	_shaders[name] = shd;
-		
+
 	// Realise the shader if the cache is realised
 	if (_realised) {
 		shd->realise(name);
 	}
-		
+
 	// Return the new shader
 	return shd;
 }
@@ -93,8 +93,8 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name) {
  * is where the actual OpenGL rendering starts.
  */
 void OpenGLRenderSystem::render(RenderStateFlags globalstate,
-                               const Matrix4& modelview, 
-                               const Matrix4& projection, 
+                               const Matrix4& modelview,
+                               const Matrix4& projection,
                                const Vector3& viewer)
 {
 	// Set the projection and modelview matrices
@@ -103,7 +103,7 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixd(modelview);
- 
+
 	// global settings that are not set in renderstates
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
@@ -137,7 +137,7 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	current.m_sort = OpenGLState::eSortFirst;
 
     // default renderstate settings
-    glLineStipple(current.m_linestipple_factor, 
+    glLineStipple(current.m_linestipple_factor,
     			  current.m_linestipple_pattern);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDisable(GL_LIGHTING);
@@ -171,8 +171,8 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	// OpenGLStateBuckets (containing the renderable geometry), and render
 	// the contents of each bucket. Each state bucket is passed a reference
 	// to the "current" state, which it can change.
-	for (OpenGLStates::iterator i = _state_sorted.begin(); 
-		i != _state_sorted.end(); 
+	for (OpenGLStates::iterator i = _state_sorted.begin();
+		i != _state_sorted.end();
 		++i)
 	{
 		// Check if the render pass is applicable before calling the render() method
@@ -185,21 +185,21 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 		i->second->render(current, globalstate, viewer);
 	}
 }
-	
+
 void OpenGLRenderSystem::realise() {
     if (_realised) {
     	return; // already realised
     }
-    
+
     _realised = true;
-	
+
 	if (lightingSupported() && lightingEnabled()) {
 		// Realise the GLPrograms
 		GLProgramFactory::realise();
 	}
 
 	// Realise the OpenGLShader objects
-	for (ShaderMap::iterator i = _shaders.begin(); 
+	for (ShaderMap::iterator i = _shaders.begin();
 		 i != _shaders.end(); ++i)
 	{
 		OpenGLShaderPtr sp = i->second.lock();
@@ -208,17 +208,17 @@ void OpenGLRenderSystem::realise() {
 		}
 	}
 }
-	
+
 void OpenGLRenderSystem::unrealise() {
     if (!_realised) {
     	return;
     }
-    
+
     _realised = false;
-    
+
 	// Unrealise the OpenGLShader objects
-	for (ShaderMap::iterator i = _shaders.begin(); 
-		 i != _shaders.end(); 
+	for (ShaderMap::iterator i = _shaders.begin();
+		 i != _shaders.end();
 		 ++i)
 	{
 		OpenGLShaderPtr sp = i->second.lock();
@@ -226,7 +226,7 @@ void OpenGLRenderSystem::unrealise() {
 			sp->unrealise();
 		}
     }
-	
+
 	if(GlobalOpenGL().contextValid && lightingSupported() && lightingEnabled()) {
 		// Unrealise the GLPrograms
 		render::GLProgramFactory::unrealise();
@@ -236,12 +236,12 @@ void OpenGLRenderSystem::unrealise() {
 bool OpenGLRenderSystem::lightingEnabled() const {
 	return m_lightingEnabled;
 }
-	
+
 bool OpenGLRenderSystem::lightingSupported() const {
 	return m_lightingSupported;
 }
-	
-void OpenGLRenderSystem::setLighting(bool supported, bool enabled) 
+
+void OpenGLRenderSystem::setLighting(bool supported, bool enabled)
 {
 	bool refresh = (m_lightingSupported && m_lightingEnabled) != (supported && enabled);
 
@@ -257,8 +257,8 @@ void OpenGLRenderSystem::setLighting(bool supported, bool enabled)
 		realise();
 	}
 }
-	
-void OpenGLRenderSystem::extensionsInitialised() 
+
+void OpenGLRenderSystem::extensionsInitialised()
 {
     // Determine if lighting is available based on GL extensions
 	bool glslLightingAvailable = GLEW_VERSION_2_0 ? true : false;
@@ -290,27 +290,27 @@ void OpenGLRenderSystem::extensionsInitialised()
     );
 
     // Inform the user of missing extensions
-    if (!lightingSupported()) 
+    if (!lightingSupported())
     {
 		globalOutputStream() << "Lighting mode requires OpenGL features not"
                              << " supported by your graphics drivers:\n";
-		
+
 		if (!GLEW_VERSION_2_0) {
 			globalOutputStream() << "  GL version 2.0 or better\n";
 		}
-		
+
 		if (!GLEW_ARB_shader_objects) {
 			globalOutputStream() << "  GL_ARB_shader_objects\n";
 		}
-		
+
 		if (!GLEW_ARB_vertex_shader) {
 			globalOutputStream() << "  GL_ARB_vertex_shader\n";
 		}
-		
+
 		if (!GLEW_ARB_fragment_shader) {
 			globalOutputStream() << "  GL_ARB_fragment_shader\n";
 		}
-		
+
 		if (!GLEW_ARB_shading_language_100) {
 			globalOutputStream() << "  GL_ARB_shading_language_100\n";
 		}
@@ -318,7 +318,7 @@ void OpenGLRenderSystem::extensionsInitialised()
 		if (!GLEW_ARB_vertex_program) {
 			globalOutputStream() << "  GL_ARB_vertex_program\n";
 		}
-		
+
 		if (!GLEW_ARB_fragment_program) {
 			globalOutputStream() << "  GL_ARB_fragment_program\n";
 		}
@@ -334,7 +334,7 @@ const LightList& OpenGLRenderSystem::attach(LightCullable& cullable)
 {
 	return m_lightLists.insert(
 		LightLists::value_type(
-			&cullable, 
+			&cullable,
 			LinearLightList(cullable, m_lights, boost::bind(&OpenGLRenderSystem::evaluateChanged, this)))
 		).first->second;
 }
@@ -349,21 +349,21 @@ void OpenGLRenderSystem::changed(LightCullable& cullable) {
 	i->second.lightsChanged();
 }
 
-void OpenGLRenderSystem::attachLight(RendererLight& light) 
+void OpenGLRenderSystem::attachLight(RendererLight& light)
 {
     ASSERT_MESSAGE(m_lights.find(&light) == m_lights.end(), "light could not be attached");
     m_lights.insert(&light);
     lightChanged(light);
 }
 
-void OpenGLRenderSystem::detachLight(RendererLight& light) 
+void OpenGLRenderSystem::detachLight(RendererLight& light)
 {
     ASSERT_MESSAGE(m_lights.find(&light) != m_lights.end(), "light could not be detached");
     m_lights.erase(&light);
     lightChanged(light);
 }
 
-void OpenGLRenderSystem::lightChanged(RendererLight& light) 
+void OpenGLRenderSystem::lightChanged(RendererLight& light)
 {
     m_lightsChanged = true;
 }
@@ -378,7 +378,7 @@ void OpenGLRenderSystem::evaluateChanged() {
 }
 
 void OpenGLRenderSystem::insertSortedState(const OpenGLStates::value_type& val) {
-	_state_sorted.insert(val);	
+	_state_sorted.insert(val);
 }
 
 void OpenGLRenderSystem::eraseSortedState(const OpenGLStates::key_type& key) {
@@ -406,14 +406,14 @@ void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) c
 	}
 	m_traverseRenderablesMutex = false;
 }
-  
+
 // RegisterableModule implementation
 const std::string& OpenGLRenderSystem::getName() const {
 	static std::string _name(MODULE_RENDERSYSTEM);
 	return _name;
 }
 
-const StringSet& OpenGLRenderSystem::getDependencies() const 
+const StringSet& OpenGLRenderSystem::getDependencies() const
 {
 	static StringSet _dependencies;
 
@@ -428,16 +428,16 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "ShaderCache::initialiseModule called.\n";
-	
+
 	GlobalMaterialManager().attach(*this);
-	
+
 	capture("$OVERBRIGHT");
-	
+
 	// greebo: Don't realise the module yet, this must wait
-	// until the shared GL context has been created (this 
+	// until the shared GL context has been created (this
 	// happens as soon as the first GL widget has been realised).
 }
-	
+
 void OpenGLRenderSystem::shutdownModule()
 {
 }

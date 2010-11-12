@@ -17,7 +17,7 @@ namespace parser
 
 // Code tokeniser function, with special treatment for #define statements
 class CodeTokeniserFunc
-{   
+{
     // Enumeration of states
     enum
 	{
@@ -35,13 +35,13 @@ class CodeTokeniserFunc
         COMMENT_DELIM,  // inside delimited comment (/*)
         STAR            // asterisk, possibly indicates end of comment (*/)
     } _state;
-        
+
     // List of delimiters to skip
     const char* _delims;
-    
+
     // List of delimiters to keep
     const char* _keptDelims;
-    
+
     // Test if a character is a delimiter
     bool isDelim(char c) {
         const char* curDelim = _delims;
@@ -52,7 +52,7 @@ class CodeTokeniserFunc
         }
         return false;
     }
-    
+
     // Test if a character is a kept delimiter
     bool isKeptDelim(char c) {
         const char* curDelim = _keptDelims;
@@ -63,14 +63,14 @@ class CodeTokeniserFunc
         }
         return false;
     }
-    
-    
+
+
 public:
 
     // Constructor
-    CodeTokeniserFunc(const char* delims, const char* keptDelims) : 
-		_state(SEARCHING), 
-		_delims(delims), 
+    CodeTokeniserFunc(const char* delims, const char* keptDelims) :
+		_state(SEARCHING),
+		_delims(delims),
 		_keptDelims(keptDelims)
     {}
 
@@ -89,7 +89,7 @@ public:
         tok = "";
 
         while (next != end) {
-            
+
             switch (_state) {
 
                 case SEARCHING:
@@ -125,12 +125,12 @@ public:
                         return true;
                     }
 
-                    // Now next is pointing at a non-delimiter. Switch on this 
+                    // Now next is pointing at a non-delimiter. Switch on this
                     // character.
                     switch (*next) {
-                        
-                        // Found a quote, enter QUOTED state, or return the 
-                        // current token if we are in the process of building 
+
+                        // Found a quote, enter QUOTED state, or return the
+                        // current token if we are in the process of building
                         // one.
                         case '\"':
                             if (tok != "") {
@@ -141,13 +141,13 @@ public:
                                 ++next;
                                 continue; // skip the quote
                             }
-            
+
                         // Found a slash, possibly start of comment
                         case '/':
                             _state = FORWARDSLASH;
                             ++next;
                             continue; // skip slash, will need to add it back if this is not a comment
-            
+
                         // General case. Token lasts until next delimiter.
                         default:
                             tok += *next;
@@ -163,7 +163,7 @@ public:
                         ++next;
                         return true;
                     }
-					else if (*next == '\\') 
+					else if (*next == '\\')
 					{
 						// Found a backslash, this can be used to connect lines
 						_state = AFTER_DEFINE_BACKSLASH;
@@ -194,7 +194,7 @@ public:
 						++next;
 						continue;
 					}
-					
+
 					// Skip delimiters until next line break
 					_state = AFTER_DEFINE_SEARCHING_FOR_EOL;
 
@@ -207,7 +207,7 @@ public:
 						tok += '\n'; // add the line break to the token
 						_state = AFTER_DEFINE;
 					}
-					
+
 					++next;
 					continue;
 
@@ -235,10 +235,10 @@ public:
 						_state = AFTER_DEFINE;
 						continue;
 					}
-                    
+
                 case QUOTED:
-        
-                    // In the quoted state, just advance until the closing 
+
+                    // In the quoted state, just advance until the closing
                     // quote. No delimiter splitting is required.
                     if (*next == '\"') {
                         ++next;
@@ -313,7 +313,7 @@ public:
 
 				case SEARCHING_FOR_QUOTE:
 					// We have found a backslash after a closing quote, search for an opening quote
-					
+
 					// Step over delimiters
 					if (isDelim(*next)) {
                         ++next;
@@ -329,37 +329,37 @@ public:
 
 					// Everything except delimiters or opening quotes indicates an error
 					throw ParseException("Could not find opening double quote after backslash.");
-                        
+
                 case FORWARDSLASH:
-                
+
                     // If we have a forward slash we may be entering a comment. The forward slash
                     // will NOT YET have been added to the token, so we must add it manually if
                     // this proves not to be a comment.
-                    
+
                     switch (*next) {
-                        
+
                         case '*':
                             _state = COMMENT_DELIM;
                             ++next;
                             continue;
-                            
+
                         case '/':
                             _state = COMMENT_EOL;
                             ++next;
                             continue;
-                            
+
                         default: // false alarm, add the slash and carry on
                             _state = SEARCHING;
                             tok += "/";
                             // Do not increment next here
                             continue;
                     }
-                    
+
                 case COMMENT_DELIM:
-                
+
                     // Inside a delimited comment, we add nothing to the token but check for
                     // the "*/" sequence.
-                    
+
                     if (*next == '*') {
                         _state = STAR;
                         ++next;
@@ -371,9 +371,9 @@ public:
                     }
 
                 case COMMENT_EOL:
-                
+
                     // This comment lasts until the end of the line.
-                    
+
                     if (*next == '\r' || *next == '\n') {
                         _state = SEARCHING;
                         ++next;
@@ -392,13 +392,13 @@ public:
                         ++next;
                         continue; // do nothing
                     }
-                    
+
                 case STAR:
-                
-                    // The star may indicate the end of a delimited comment. 
-                    // This state will only be entered if we are inside a 
+
+                    // The star may indicate the end of a delimited comment.
+                    // This state will only be entered if we are inside a
                     // delimited comment.
-                    
+
                     if (*next == '/') {
                     	// End of comment
                         _state = SEARCHING;
@@ -416,31 +416,31 @@ public:
                     	// No end of comment
                     	_state = COMMENT_DELIM;
                     	++next;
-                        continue; 
+                        continue;
                     }
 
             } // end of state switch
         } // end of for loop
-        
+
         // Return true if we have added anything to the token
         if (tok != "")
             return true;
         else
             return false;
     }
-    
+
     // REQUIRED. Reset function to clear internal state
     void reset() {
         _state = SEARCHING;
-    }  
+    }
 };
 
-class SingleCodeFileTokeniser : 
+class SingleCodeFileTokeniser :
 	public DefTokeniser
 {
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
-    
+
     // Internal Boost tokenizer and its iterator
     typedef boost::tokenizer<CodeTokeniserFunc,
                              CharStreamIterator,
@@ -449,42 +449,42 @@ class SingleCodeFileTokeniser :
     CharTokeniser::iterator _tokIter;
 
 private:
-	
+
 	// Helper function to set noskipws on the input stream.
 	static std::istream& setNoskipws(std::istream& is) {
 		is >> std::noskipws;
 		return is;
 	}
-    
+
 public:
 
-    /** 
+    /**
      * Construct a SingleCodeFileTokeniser with the given input stream, and optionally
      * a list of separators.
-     * 
+     *
      * @param str
      * The std::istream to tokenise. This is a non-const parameter, since tokens
      * will be extracted from the stream.
-     * 
+     *
      * @param delims
      * The list of characters to use as delimiters.
-     * 
+     *
      * @param keptDelims
      * String of characters to treat as delimiters but return as tokens in their
      * own right.
      */
-    SingleCodeFileTokeniser(std::istream& str, 
-                      const char* delims = WHITESPACE, 
+    SingleCodeFileTokeniser(std::istream& str,
+                      const char* delims = WHITESPACE,
                       const char* keptDelims = "{}(),")
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
            CodeTokeniserFunc(delims, keptDelims)),
       _tokIter(_tok.begin())
     { }
-        
-    /** 
+
+    /**
      * Test if this StringTokeniser has more tokens to return.
-     * 
+     *
      * @returns
      * true if there are further tokens, false otherwise
      */
@@ -493,14 +493,14 @@ public:
         return _tokIter != _tok.end();
     }
 
-    /** 
+    /**
      * Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
-     * 
+     *
      * @returns
      * std::string containing the next token in the sequence.
-     * 
+     *
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
@@ -510,7 +510,7 @@ public:
         else
             throw ParseException("DefTokeniser: no more tokens");
     }
-    
+
 	std::string peek() const
 	{
 		if (hasMoreTokens())
@@ -521,18 +521,18 @@ public:
 		{
 			throw ParseException("DefTokeniser: no more tokens");
 		}
-	}    
+	}
 };
 
 /**
  * High-level tokeniser taking a specific VFS file as input.
- * It is able to handle preprocessor statements like #include 
+ * It is able to handle preprocessor statements like #include
  * by maintaining several child tokenisers. This can be used
  * to parse code-like files as Doom 3 Scripts or GUIs.
  *
  * Note: Don't expect this tokeniser to be particularly fast.
  */
-class CodeTokeniser : 
+class CodeTokeniser :
 	public DefTokeniser
 {
 private:
@@ -551,7 +551,7 @@ private:
 		{}
 	};
 	typedef boost::shared_ptr<ParseNode> ParseNodePtr;
-	
+
 	// The stack of child tokenisers
 	typedef std::list<ParseNodePtr> NodeList;
 	NodeList _nodes;
@@ -577,11 +577,11 @@ private:
 
 public:
 
-    /** 
+    /**
      * Construct a CodeTokeniser with the given text file from the VFS.
      */
 	CodeTokeniser(const ArchiveTextFilePtr& file,
-				  const char* delims = " \t\n\v\r", 
+				  const char* delims = " \t\n\v\r",
 				  const char* keptDelims = "{}(),;") :
 		_delims(delims),
 		_keptDelims(keptDelims)
@@ -593,7 +593,7 @@ public:
 
 		fillTokenBuffer();
 	}
-        
+
     bool hasMoreTokens() const
 	{
 		return !_tokenBuffer.empty();
@@ -627,7 +627,7 @@ public:
 
 		return _tokenBuffer.front();
     }
-    
+
 private:
 	void fillTokenBuffer()
 	{
@@ -643,8 +643,8 @@ private:
 			std::string token = (*_curNode)->tokeniser.nextToken();
 
 			// Don't treat #strNNNN as preprocessor tokens
-			if (!token.empty() && 
-				token[0] == '#' && 
+			if (!token.empty() &&
+				token[0] == '#' &&
 				!boost::algorithm::starts_with(token, "#str"))
 			{
 				// A pre-processor token is ahead
@@ -709,19 +709,19 @@ private:
 					_fileStack.push_back(file->getName());
 
 					_curNode = _nodes.insert(
-						_curNode, 
+						_curNode,
 						ParseNodePtr(new ParseNode(file, _delims, _keptDelims))
 					);
 				}
 				else
 				{
-					globalErrorStream() << "Caught infinite loop on parsing #include token: " 
+					globalErrorStream() << "Caught infinite loop on parsing #include token: "
 						<< includeFile << " in " << (*_curNode)->archive->getName() << std::endl;
 				}
 			}
 			else
 			{
-				globalWarningStream() << "Couldn't find include file: " 
+				globalWarningStream() << "Couldn't find include file: "
 					<< includeFile << " in " << (*_curNode)->archive->getName() << std::endl;
 			}
 		}
@@ -731,7 +731,7 @@ private:
 
 			if (defineToken.length() <= 7)
 			{
-				globalWarningStream() << "Invalid #define statement: " 
+				globalWarningStream() << "Invalid #define statement: "
 					<< " in " << (*_curNode)->archive->getName() << std::endl;
 				return;
 			}
@@ -756,7 +756,7 @@ private:
 
 			if (!result.second)
 			{
-				globalWarningStream() << "Redefinition of " << key 
+				globalWarningStream() << "Redefinition of " << key
 					<< " in " << (*_curNode)->archive->getName() << std::endl;
 
 				result.first->second.clear();

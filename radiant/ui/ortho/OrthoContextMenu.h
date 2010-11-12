@@ -29,7 +29,7 @@ class OrthoContextMenu :
 {
 	// The GtkWidget representing the menu
 	boost::shared_ptr<Gtk::Menu> _widget;
-	
+
 	// Last provided 3D point for action
 	Vector3 _lastPoint;
 
@@ -66,13 +66,13 @@ public:
 
 	/** Display the menu at the current mouse position, and act on the
 	 * choice.
-	 * 
+	 *
 	 * @param point
 	 * The point in 3D space at which the chosen operation should take
 	 * place.
 	 */
 	void show(const Vector3& point);
-	
+
 	// Retrieve the singleton instance
 	static OrthoContextMenu& Instance();
 
@@ -107,7 +107,7 @@ private:
 	bool checkAddMonsterclip();
 	bool checkAddEntity();
 	bool checkAddModel();
-	
+
 	void callbackAddEntity();
 	void callbackAddPlayerStart();
 	void callbackMovePlayerStart();

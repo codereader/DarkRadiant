@@ -23,32 +23,32 @@
 <!--
   This file describes the XML format used for syntax highlight
   descriptions for the GtkSourceView 1.x library.
-  
+
   .lang files are XML files which describe how to highlight syntax;
   this RNG is used for validation purposes.
-  
-  .lang files should be located in $PREFIX/gtksourceview-1.0/language-specs/, 
+
+  .lang files should be located in $PREFIX/gtksourceview-1.0/language-specs/,
   or in ~./gnome2/gtksourceview-1.0/language-specs/
-  
+
   To check if a .lang file is valid, run
-  
+
   $ xmllint FILENAME - -relaxng language.rng
-  
+
   If you create a new .lang file or modify an existing one, please note
   that it will be (re)loaded by the application only after it is
   restarted.
 -->
 <!--
   Boolean type
-  
+
   Attributes that are of type boolean allow the following values:
-  
+
   - 'true', 'TRUE' and '1' 	all meaning true
   - 'false', FALSE' and '0' 	all meaning false
-  
+
   It is encouraged to use 'TRUE' and 'FALSE' instead of the alternatives.
 -->
-<grammar xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0" 
+<grammar xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
          xmlns="http://relaxng.org/ns/structure/1.0"
          datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <define name="boolean">
@@ -63,12 +63,12 @@
   </define>
   <!--
     Attributes required by all element representing a syntax or pattern tag.
-    
+
     - name		the name of the tag (it can appear in the UI)
-    
+
     - style		the style used to highlight the tag. Recognized values
     		are (from gtksourcestylescheme.h):
-    
+
     		- Base-N Integer	used for values with a base
     					other than 10
     		- Character		used for single characters
@@ -84,7 +84,7 @@
     		- Others (DEPRECATED, replaced by "Data Type")
     		- Others 2		used for 'other' things
     		- Others 3		used for 'other' things
-    
+
     The "name" attribute can be prefixed with "_" to be marked for
     translation.
   -->
@@ -103,25 +103,25 @@
   </define>
   <!--
     The root of the definition file is the element "language".
-    
+
     Required attributes:
-    
+
     - name		the name of the language (it can appear in menus and
     		dialog boxes)
-    
+
     - section	the category the language belongs to (e.g. "Sources",
     		"Scripts", etc.)
-    
+
     - version	version of the .lang file format (1.0)
-    
+
     - mimetypes	a list of mime-types that identifies the types of file
     		that must be highlighted using the .lang file
-    
+
     Optional attributes:
-    
+
     - translation-domain
     		the translation domain used by the file
-    
+
     The "name" and "section" attributes can be prefixed with
     "_" to be marked for translation.
   -->
@@ -143,7 +143,7 @@
       </oneOrMore>
     </element>
   </define>
-  
+
   <define name="attlist.language" combine="interleave">
     <choice>
       <attribute name="_name">
@@ -218,9 +218,9 @@
     the string.
     The "end-regex" subelement defines the regex matching the end of
     the string.
-    
+
     Optional attributes:
-    
+
     - end-at-line-end	whether the string end at the end of line
   -->
   <define name="string">
@@ -273,23 +273,23 @@
     one or more "keyword" subelements each one representing a keyword.
     A "keyword" subelement defines the regex matching a keyword of the
     language.
-    
+
     Optional attributes:
-    
+
     - case-sensitive	whether the keywords are case sensitive
-    
+
     - match-empty-string-at-beginning:
     			whether the empty string (\b) should be matched
     			at the beginning of the keywords
-    
+
     - match-empty-string-at-end
     			whether the empty string (\b) should be matched
     			at the end of the keywords
-    
+
     - beginning-regex	if all keywords start with a regex, you can
     			specify	it here to avoid doing it for
     			every single keyword
-    
+
     - end-regex		if all keywords end with a regex, you can
     			specify	it here to avoid doing it for
     			every single keyword
@@ -363,7 +363,7 @@
   <define name="attlist.end-regex" combine="interleave">
     <empty/>
   </define>
-  
+
   <start>
     <choice>
       <ref name="language"/>

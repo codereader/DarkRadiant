@@ -16,7 +16,7 @@ namespace ui
 class EClassTree;
 typedef boost::shared_ptr<EClassTree> EClassTreePtr;
 
-struct EClassTreeColumns : 
+struct EClassTreeColumns :
 	public Gtk::TreeModel::ColumnRecord
 {
 	EClassTreeColumns() { add(name); add(icon); }
@@ -34,13 +34,13 @@ private:
 	Gtk::TreeView* _eclassView;
 	Glib::RefPtr<Gtk::TreeStore> _eclassStore;
 	Glib::RefPtr<Gtk::TreeSelection> _eclassSelection;
-	
-	struct PropertyListColumns : 
+
+	struct PropertyListColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		PropertyListColumns()
-		{ 
-			add(name); 
+		{
+			add(name);
 			add(value);
 			add(colour);
 			add(inherited);
@@ -56,27 +56,27 @@ private:
 	PropertyListColumns _propertyColumns;
 	Gtk::TreeView* _propertyView;
 	Glib::RefPtr<Gtk::ListStore> _propertyStore;
-	
+
 	// Private constructor, traverses the entity classes
 	EClassTree();
 
 public:
 	// Shows the singleton class (static command target)
 	static void showWindow(const cmd::ArgumentList& args);
-	
+
 private:
 	virtual void _preShow();
 
 	// Constructs and adds all the dialog widgets
 	void populateWindow();
-	
+
 	Gtk::Widget& createButtons(); 	// Dialog buttons
 	Gtk::Widget& createEClassTreeView(); // EClass Tree
 	Gtk::Widget& createPropertyTreeView(); // Property Tree
-	
+
 	// Loads the spawnargs into the right treeview
 	void updatePropertyView(const std::string& eclassName);
-	
+
 	// GTKmm callbacks
 	void onClose();
 	void onSelectionChanged();

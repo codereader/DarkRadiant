@@ -122,18 +122,18 @@ extern FaceInstanceSet g_SelectedFaceInstances;
 	}
 
 // This is called from main() to start up the Radiant stuff.
-void Radiant_Initialise() 
+void Radiant_Initialise()
 {
 	// Create the empty Settings node and set the title to empty.
 	ui::PrefDialog::Instance().createOrFindPage(_("Game"));
 	ui::PrefPagePtr settingsPage = ui::PrefDialog::Instance().createOrFindPage(_("Settings"));
 	settingsPage->setTitle("");
-	
+
 	ui::Splash::Instance().setProgressAndText(_("Constructing Menu"), 0.89f);
-	
+
 	// Construct the MRU commands and menu structure
 	GlobalMRU().constructMenu();
-	
+
 	// Initialise the most recently used files list
 	GlobalMRU().loadRecentFiles();
 
@@ -191,15 +191,15 @@ void PasteToCamera(const cmd::ArgumentList& args)
 	if (camWnd == NULL) return;
 
   GlobalSelectionSystem().setSelectedAll(false);
-  
+
   UndoableCommand undo("pasteToCamera");
-  
+
   Selection_Paste();
-  
+
   // Work out the delta
   Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
   Vector3 delta = vector3_snapped(camWnd->getCameraOrigin(), GlobalGrid().getGridSize()) - mid;
-  
+
   // Move to camera
   GlobalSelectionSystem().translateSelected(delta);
 }
@@ -389,7 +389,7 @@ void Selection_Deselect(const cmd::ArgumentList& args)
   }
 }
 
-void ToolChanged() {  
+void ToolChanged() {
 	GlobalEventManager().setToggled("ToggleClipper", GlobalClipper().clipMode());
 	GlobalEventManager().setToggled("MouseTranslate", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eTranslate);
 	GlobalEventManager().setToggled("MouseRotate", GlobalSelectionSystem().ManipulatorMode() == SelectionSystem::eRotate);
@@ -492,12 +492,12 @@ void ClipperMode(bool newState) {
 	}
 }
 
-class SnappableSnapToGridSelected : 
+class SnappableSnapToGridSelected :
 	public SelectionSystem::Visitor
 {
 	float _snap;
 public:
-	SnappableSnapToGridSelected(float snap) : 
+	SnappableSnapToGridSelected(float snap) :
 		_snap(snap)
 	{}
 
@@ -514,25 +514,25 @@ public:
 };
 
 /* greebo: This is the visitor class to snap all components of a selected instance to the grid
- * While visiting all the instances, it checks if the instance derives from ComponentSnappable 
+ * While visiting all the instances, it checks if the instance derives from ComponentSnappable
  */
-class ComponentSnappableSnapToGridSelected : 
+class ComponentSnappableSnapToGridSelected :
 	public SelectionSystem::Visitor
 {
 	float _snap;
 public:
 	// Constructor: expects the grid size that should be snapped to
-	ComponentSnappableSnapToGridSelected(float snap) : 
+	ComponentSnappableSnapToGridSelected(float snap) :
 		_snap(snap)
 	{}
-  
+
 	void visit(const scene::INodePtr& node) const {
 		// Don't do anything with hidden nodes
 	    if (!node->visible()) return;
 
     	// Check if the visited instance is componentSnappable
 		ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
-		
+
 		if (componentSnappable != NULL) {
 			componentSnappable->snapComponents(_snap);
 		}
@@ -566,20 +566,20 @@ void ClipperChangeNotify() {
 	GlobalMainFrame().updateAllWindows();
 }
 
-// The "Flush & Reload Shaders" command target 
+// The "Flush & Reload Shaders" command target
 void RefreshShaders(const cmd::ArgumentList& args) {
 	// Disable screen updates for the scope of this function
 	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading Shaders"));
-	
+
 	// Destroy all the OpenGLShader objects
 	GlobalRenderSystem().unrealise();
-	
+
 	// Reload the Shadersystem
 	GlobalMaterialManager().refresh();
-	
+
 	// Now realise the OpenGLShader objects again
 	GlobalRenderSystem().realise();
-	
+
 	ui::MediaBrowser::getInstance().reloadMedia();
 	GlobalMainFrame().updateAllWindows();
 }
@@ -590,14 +590,14 @@ void RefreshShaders(const cmd::ArgumentList& args) {
 void BenchmarkPatches(const cmd::ArgumentList& args) {
 	// Disable screen updates for the scope of this function
 	ui::ScreenUpdateBlocker blocker("Processing...", "Performing Patch Benchmark");
-	
+
 	scene::INodePtr node = GlobalPatchCreator(DEF2).createPatch();
 	Patch* patch = Node_getPatch(node);
 	GlobalMap().findOrInsertWorldspawn()->addChildNode(node);
 
 	patch->setDims(15, 15);
 
-	// Retrieve the boundaries 
+	// Retrieve the boundaries
 	AABB bounds(Vector3(-512, -512, 0), Vector3(512, 512, 0));
 	patch->ConstructPrefab(bounds, ePlane, GlobalXYWnd().getActiveViewType(), 15, 15);
 
@@ -636,7 +636,7 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("Paste", Paste);
 	GlobalCommandSystem().addCommand("PasteToCamera", PasteToCamera);
 
-	GlobalCommandSystem().addCommand("CloneSelection", selection::algorithm::cloneSelected); 
+	GlobalCommandSystem().addCommand("CloneSelection", selection::algorithm::cloneSelected);
 	GlobalCommandSystem().addCommand("DeleteSelection", selection::algorithm::deleteSelectionCmd);
 	GlobalCommandSystem().addCommand("ParentSelection", selection::algorithm::parentSelection);
 	GlobalCommandSystem().addCommand("ParentSelectionToWorldspawn", selection::algorithm::parentSelectionToWorldspawn);
@@ -683,13 +683,13 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("CSGRoom", brush::algorithm::makeRoomForSelectedBrushes);
 
 	GlobalCommandSystem().addCommand("RefreshShaders", RefreshShaders);
-	
+
 	GlobalCommandSystem().addCommand("SnapToGrid", Selection_SnapToGrid);
-	
+
 	GlobalCommandSystem().addCommand("SelectAllOfType", selection::algorithm::selectAllOfType);
 	GlobalCommandSystem().addCommand("GroupCycleForward", selection::GroupCycle::cycleForward);
 	GlobalCommandSystem().addCommand("GroupCycleBackward", selection::GroupCycle::cycleBackward);
-	
+
 	GlobalCommandSystem().addCommand("TexRotate", selection::algorithm::rotateTexture, cmd::ARGTYPE_INT|cmd::ARGTYPE_STRING);
 	GlobalCommandSystem().addCommand("TexScale", selection::algorithm::scaleTexture, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
 	GlobalCommandSystem().addCommand("TexShift", selection::algorithm::shiftTextureCmd, cmd::ARGTYPE_VECTOR2|cmd::ARGTYPE_STRING);
@@ -704,20 +704,20 @@ void MainFrame_Construct()
 	GlobalCommandSystem().addCommand("CopyShader", selection::algorithm::pickShaderFromSelection);
 	GlobalCommandSystem().addCommand("PasteShader", selection::algorithm::pasteShaderToSelection);
 	GlobalCommandSystem().addCommand("PasteShaderNatural", selection::algorithm::pasteShaderNaturalToSelection);
-  
+
 	GlobalCommandSystem().addCommand("FlipTextureX", selection::algorithm::flipTextureS);
 	GlobalCommandSystem().addCommand("FlipTextureY", selection::algorithm::flipTextureT);
-	
+
 	GlobalCommandSystem().addCommand("MoveSelectionDOWN", Selection_MoveDown);
 	GlobalCommandSystem().addCommand("MoveSelectionUP", Selection_MoveUp);
-	
+
 	GlobalCommandSystem().addCommand("CurveAppendControlPoint", selection::algorithm::appendCurveControlPoint);
 	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", selection::algorithm::removeCurveControlPoints);
 	GlobalCommandSystem().addCommand("CurveInsertControlPoint", selection::algorithm::insertCurveControlPoints);
 	GlobalCommandSystem().addCommand("CurveConvertType", selection::algorithm::convertCurveTypes);
 
 	GlobalCommandSystem().addCommand("BrushExportCM", selection::algorithm::createCMFromSelection);
-	
+
 	GlobalCommandSystem().addCommand("CreateDecalsForFaces", selection::algorithm::createDecalsForSelectedFaces);
 
 	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::showDialog);
@@ -730,7 +730,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ReloadSkins", "ReloadSkins");
 	GlobalEventManager().addCommand("ReloadDefs", "ReloadDefs");
 	GlobalEventManager().addCommand("ProjectSettings", "ProjectSettings");
-	
+
 	GlobalEventManager().addCommand("Copy", "Copy");
 	GlobalEventManager().addCommand("Paste", "Paste");
 	GlobalEventManager().addCommand("PasteToCamera", "PasteToCamera");
@@ -751,9 +751,9 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("SelectChildren", "SelectChildren");
 
 	GlobalEventManager().addCommand("Preferences", "Preferences");
-	
+
 	GlobalEventManager().addCommand("ToggleConsole", "ToggleConsole");
-	
+
 	GlobalEventManager().addCommand("ToggleMediaBrowser", "ToggleMediaBrowser");
 	GlobalEventManager().addCommand("ToggleLightInspector",	"ToggleLightInspector");
 	GlobalEventManager().addCommand("SurfaceInspector", "SurfaceInspector");
@@ -764,7 +764,7 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("ShowHidden", "ShowHidden");
 	GlobalEventManager().addCommand("HideSelected", "HideSelected");
 	GlobalEventManager().addCommand("HideDeselected", "HideDeselected");
-	
+
 	GlobalEventManager().addToggle("DragVertices", ToggleVertexMode);
 	GlobalEventManager().addToggle("DragEdges", ToggleEdgeMode);
 	GlobalEventManager().addToggle("DragFaces", ToggleFaceMode);
@@ -772,43 +772,43 @@ void MainFrame_Construct()
 	GlobalEventManager().addToggle("SelectionModeGroupPart", ToggleGroupPartMode);
 	GlobalEventManager().setToggled("DragVertices", false);
 	GlobalEventManager().setToggled("DragEdges", false);
-	GlobalEventManager().setToggled("DragFaces", false); 
+	GlobalEventManager().setToggled("DragFaces", false);
 	GlobalEventManager().setToggled("DragEntities", false);
 	GlobalEventManager().setToggled("SelectionModeGroupPart", false);
-	
+
 	GlobalEventManager().addCommand("MirrorSelectionX", "MirrorSelectionX");
 	GlobalEventManager().addCommand("RotateSelectionX", "RotateSelectionX");
 	GlobalEventManager().addCommand("MirrorSelectionY", "MirrorSelectionY");
 	GlobalEventManager().addCommand("RotateSelectionY", "RotateSelectionY");
 	GlobalEventManager().addCommand("MirrorSelectionZ", "MirrorSelectionZ");
 	GlobalEventManager().addCommand("RotateSelectionZ", "RotateSelectionZ");
-	
+
 	GlobalEventManager().addCommand("FindBrush", "FindBrush");
 	GlobalEventManager().addCommand("ConvertSelectedToFuncStatic", "ConvertSelectedToFuncStatic");
 	GlobalEventManager().addCommand("RevertToWorldspawn", "RevertToWorldspawn");
 	GlobalEventManager().addCommand("MapInfo", "MapInfo");
 	GlobalEventManager().addCommand("EditFiltersDialog", "EditFiltersDialog");
-	
+
 	GlobalEventManager().addToggle("ToggleClipper", ClipperMode);
-	
+
 	GlobalEventManager().addToggle("MouseTranslate", TranslateMode);
 	GlobalEventManager().addToggle("MouseRotate", RotateMode);
 	//GlobalEventManager().addToggle("MouseScale", FreeCaller<ScaleMode>());
 	GlobalEventManager().addToggle("MouseDrag", DragMode);
-	
+
 	GlobalEventManager().addCommand("CSGSubtract", "CSGSubtract");
 	GlobalEventManager().addCommand("CSGMerge", "CSGMerge");
 	GlobalEventManager().addCommand("CSGHollow", "CSGHollow");
 	GlobalEventManager().addCommand("CSGRoom", "CSGRoom");
-	
+
 	GlobalEventManager().addCommand("RefreshShaders", "RefreshShaders");
-	
+
 	GlobalEventManager().addCommand("SnapToGrid", "SnapToGrid");
-	
+
 	GlobalEventManager().addCommand("SelectAllOfType", "SelectAllOfType");
 	GlobalEventManager().addCommand("GroupCycleForward", "GroupCycleForward");
 	GlobalEventManager().addCommand("GroupCycleBackward", "GroupCycleBackward");
-	
+
 	GlobalEventManager().addCommand("TexRotateClock", "TexRotateClock");
 	GlobalEventManager().addCommand("TexRotateCounter", "TexRotateCounter");
 	GlobalEventManager().addCommand("TexScaleUp", "TexScaleUp");
@@ -829,13 +829,13 @@ void MainFrame_Construct()
 	GlobalEventManager().addCommand("CopyShader", "CopyShader");
 	GlobalEventManager().addCommand("PasteShader", "PasteShader");
 	GlobalEventManager().addCommand("PasteShaderNatural", "PasteShaderNatural");
-  
+
 	GlobalEventManager().addCommand("FlipTextureX", "FlipTextureX");
 	GlobalEventManager().addCommand("FlipTextureY", "FlipTextureY");
-	
+
 	GlobalEventManager().addCommand("MoveSelectionDOWN", "MoveSelectionDOWN");
 	GlobalEventManager().addCommand("MoveSelectionUP", "MoveSelectionUP");
-	
+
 	GlobalEventManager().addCommand("SelectNudgeLeft", "SelectNudgeLeft");
 	GlobalEventManager().addCommand("SelectNudgeRight", "SelectNudgeRight");
 	GlobalEventManager().addCommand("SelectNudgeUp", "SelectNudgeUp");
@@ -843,14 +843,14 @@ void MainFrame_Construct()
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");
 	GlobalEventManager().addRegistryToggle("ToggleOffsetClones", selection::algorithm::RKEY_OFFSET_CLONED_OBJECTS);
-	
+
 	GlobalEventManager().addCommand("CurveAppendControlPoint", "CurveAppendControlPoint");
 	GlobalEventManager().addCommand("CurveRemoveControlPoint", "CurveRemoveControlPoint");
 	GlobalEventManager().addCommand("CurveInsertControlPoint", "CurveInsertControlPoint");
 	GlobalEventManager().addCommand("CurveConvertType", "CurveConvertType");
-	
+
 	GlobalEventManager().addCommand("BrushExportCM", "BrushExportCM");
-	
+
 	GlobalEventManager().addCommand("CreateDecalsForFaces", "CreateDecalsForFaces");
 
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");

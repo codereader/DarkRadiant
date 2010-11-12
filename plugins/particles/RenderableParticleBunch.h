@@ -58,7 +58,7 @@ private:
 
 public:
 	// Each bunch has a defined zero-based index
-	RenderableParticleBunch(std::size_t index, 
+	RenderableParticleBunch(std::size_t index,
 							int randSeed,
 							const IParticleStage& stage,
 							const Matrix4& viewRotation,
@@ -80,7 +80,7 @@ public:
 		return _index;
 	}
 
-	// Update the particle geometry and render information. 
+	// Update the particle geometry and render information.
 	// Time is specified in stage time without offset,in msecs.
 	void update(std::size_t time);
 
@@ -119,7 +119,7 @@ private:
 	// Handles aimed particles
 	void pushAimedParticles(ParticleRenderInfo& particle, std::size_t stageDurationMsec);
 
-	// Generates a new quad using the given struct as data source. 
+	// Generates a new quad using the given struct as data source.
 	// colour, s0 and sWidth override the values in info
 	void pushQuad(ParticleRenderInfo& particle, const Vector4& colour, float s0 = 0.0f, float sWidth = 1.0f);
 

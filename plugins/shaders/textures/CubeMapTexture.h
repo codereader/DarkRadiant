@@ -29,7 +29,7 @@ public:
     { }
 
     /* Texture implementation */
-    
+
     std::string getName() const
     {
         return _name;

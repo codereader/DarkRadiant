@@ -26,7 +26,7 @@ ConsoleView::ConsoleView() :
 	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_textView->gobj())); // TODO
 
 	_textView->signal_populate_popup().connect(sigc::mem_fun(*this, &ConsoleView::onPopulatePopup));
-	
+
 	set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	set_shadow_type(Gtk::SHADOW_ETCHED_IN);
 	add(*_textView);
@@ -34,7 +34,7 @@ ConsoleView::ConsoleView() :
 	unset_focus_chain();
 
 	// Initialise tags
-	Gdk::Color yellow; 
+	Gdk::Color yellow;
 	yellow.set_rgb(0xb0ff, 0xb0ff, 0x0000);
 
 	Gdk::Color red;
@@ -76,7 +76,7 @@ void ConsoleView::appendText(const std::string& text, ETextMode mode)
 		_end = Gtk::TextMark::create("end", false);
 		_buffer->add_mark(_end, _buffer->end());
 	}
-	
+
 	// GTK expects UTF8 characters, so convert the incoming string
 	std::string converted = gtkutil::IConv::localeToUTF8(text);
 
@@ -85,7 +85,7 @@ void ConsoleView::appendText(const std::string& text, ETextMode mode)
 
 	// Insert at the end of the text buffer
 	_buffer->insert_with_tag(_buffer->end(), converted, tag);
-	
+
 	_buffer->move_mark(_end, _buffer->end());
 	_textView->scroll_mark_onscreen(_end);
 }
@@ -103,7 +103,7 @@ void ConsoleView::onClearConsole()
 void ConsoleView::onPopulatePopup(Gtk::Menu* menu)
 {
 	menu->add(*Gtk::manage(new Gtk::SeparatorMenuItem));
-	
+
 	Gtk::MenuItem* item = Gtk::manage(new Gtk::MenuItem(_("Clear")));
 	item->signal_activate().connect(sigc::mem_fun(*this, &ConsoleView::onClearConsole));
 

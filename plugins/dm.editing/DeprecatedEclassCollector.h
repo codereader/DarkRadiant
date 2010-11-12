@@ -20,7 +20,7 @@ public:
 	{
 		const EntityClassAttribute& attr = eclass->getAttribute("editor_replacement");
 
-		if (attr.value.empty()) 
+		if (attr.value.empty())
 		{
 			return;
 		}

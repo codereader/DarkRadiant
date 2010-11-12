@@ -47,12 +47,12 @@ void EClassManagerInterface::registerInterface(boost::python::object& nspace) {
 	nspace["EntityClass"] = boost::python::class_<ScriptEntityClass>(
 		"EntityClass", boost::python::init<const IEntityClassPtr&>())
 		.def("isNull", &ScriptEntityClass::isNull)
-		.def("getAttribute", &ScriptEntityClass::getAttribute, 
+		.def("getAttribute", &ScriptEntityClass::getAttribute,
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
 	;
 
 	// Expose the entityclass visitor interface
-	nspace["EntityClassVisitor"] = 
+	nspace["EntityClassVisitor"] =
 		boost::python::class_<EntityClassVisitorWrapper, boost::noncopyable>("EntityClassVisitor")
 		.def("visit", boost::python::pure_virtual(&EntityClassVisitor::visit))
 	;

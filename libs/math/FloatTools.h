@@ -1,9 +1,9 @@
 #ifndef FLOATTOOLS_H_
 #define FLOATTOOLS_H_
 
-/*	greebo: this contains some handy (?) functions for manipulating float variables 
+/*	greebo: this contains some handy (?) functions for manipulating float variables
  */
- 
+
  #include <iostream>
 #include "lrint.h"
 
@@ -17,7 +17,7 @@
     fld flt
 		fistp i
   	};
-			
+
 	return i;
 } */
 
@@ -107,7 +107,7 @@ inline bool isNaN(Element x) {
 template <typename Element>
 inline bool isValid(Element x) {
 	// Check for infinity and NaN
-	return !isNaN(x) && !(std::numeric_limits<Element>::has_infinity && 
+	return !isNaN(x) && !(std::numeric_limits<Element>::has_infinity &&
 			  			   fabs(x) == std::numeric_limits<Element>::infinity());
 }
 

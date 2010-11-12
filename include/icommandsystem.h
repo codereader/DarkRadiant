@@ -167,7 +167,7 @@ private:
 		}
 		catch (boost::bad_lexical_cast) {}
 	}
-	
+
 	void tryVectorConversion() {
 		// Use a stringstream to parse the string
         std::stringstream strm(_strValue);
@@ -207,7 +207,7 @@ typedef boost::function<void (const ArgumentList&)> Function;
 
 // A command signature consists just of arguments, no return types
 class Signature :
-	public std::vector<std::size_t> 
+	public std::vector<std::size_t>
 {
 public:
 	Signature()
@@ -265,7 +265,7 @@ public:
 		virtual void visit(const std::string& commandName) = 0;
 	};
 
-	/** 
+	/**
 	 * Visit each command/bind using the given walker class.
 	 */
 	virtual void foreachCommand(Visitor& visitor) = 0;
@@ -273,10 +273,10 @@ public:
 	/**
 	 * greebo: Declares a new command with the given signature.
 	 */
-	virtual void addCommand(const std::string& name, Function func, 
+	virtual void addCommand(const std::string& name, Function func,
 							const Signature& signature = Signature()) = 0;
 
-	/** 
+	/**
 	 * Remove a named command.
 	 */
 	virtual void removeCommand(const std::string& name) = 0;
@@ -293,7 +293,7 @@ public:
 	 * is saved to the registry at program shutdown. Pass FALSE if you
 	 * don't want to let this statement persist between sessions.
 	 */
-	virtual void addStatement(const std::string& statementName, 
+	virtual void addStatement(const std::string& statementName,
 							  const std::string& string,
 							  bool saveStatementToRegistry = true) = 0;
 
@@ -328,7 +328,7 @@ public:
 	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2, const Argument& arg3) = 0;
 
 	// For more than 3 arguments, use this method to pass a vector of arguments
-	virtual void executeCommand(const std::string& name, 
+	virtual void executeCommand(const std::string& name,
 								 const ArgumentList& args) = 0;
 
 	/**

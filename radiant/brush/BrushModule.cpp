@@ -42,7 +42,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void BrushModuleClass::constructPreferences() {
 	// Add a page to the given group
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Primitives"));
-	
+
 	// Add the default texture scale preference and connect it to the according registryKey
 	// Note: this should be moved somewhere else, I think
 	page->appendEntry(_("Default texture scale"), "user/ui/textures/defaultTextureScale");
@@ -53,17 +53,17 @@ void BrushModuleClass::constructPreferences() {
 
 void BrushModuleClass::construct() {
 	Brush_registerCommands();
-	
+
 	BrushClipPlane::constructStatic();
 	BrushNode::constructStatic();
 	Brush::constructStatic();
-	
+
 	Brush::m_maxWorldCoord = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
 }
 
 void BrushModuleClass::destroy() {
 	Brush::m_maxWorldCoord = 0;
-	
+
 	Brush::destroyStatic();
 	BrushNode::destroyStatic();
 	BrushClipPlane::destroyStatic();
@@ -101,12 +101,12 @@ scene::INodePtr BrushModuleClass::createBrush()
 	if (layer != -1)
 	{
 		scene::INodePtr node(new BrushNode);
-		
+
 		// Move it to the first visible layer
 		node->moveToLayer(layer);
 		return node;
 	}
-	
+
 	return scene::INodePtr();
 }
 
@@ -133,13 +133,13 @@ const StringSet& BrushModuleClass::getDependencies() const {
 
 void BrushModuleClass::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "BrushModuleClass::initialiseModule called." << std::endl;
-	
+
 	construct();
-	
+
 	_textureLockEnabled = (GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1");
-	
+
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
-	
+
 	// add the preference settings
 	constructPreferences();
 }
@@ -151,7 +151,7 @@ void BrushModuleClass::shutdownModule() {
 
 // -------------------------------------------------------------------------------------
 
-// Define a static BrushModule 
+// Define a static BrushModule
 module::StaticModule<BrushModuleClass> staticBrushModule;
 
 ShaderPtr BrushClipPlane::m_state;

@@ -33,7 +33,7 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 
 	// Pack Label
 	hbox->pack_start(
-		*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Selection Set: "))), 
+		*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Selection Set: "))),
 		false, false, 0);
 
 	// Pack Combo Box
@@ -48,7 +48,7 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 		image->show();
 
 		_clearSetsButton = Gtk::manage(new Gtk::ToolButton(*image, _("Clear Selection Sets")));
-		
+
 		// Set tooltip
 		_clearSetsButton->set_tooltip_text(_("Clear Selection Sets"));
 
@@ -98,7 +98,7 @@ void SelectionSetToolmenu::update()
 
 		bool _hasItems;
 	public:
-		Visitor(const Glib::RefPtr<Gtk::ListStore>& store, 
+		Visitor(const Glib::RefPtr<Gtk::ListStore>& store,
 				const SelectionSetToolmenu::ListStoreColumns& columns) :
 			_columns(columns),
 			_store(store),
@@ -135,15 +135,15 @@ void SelectionSetToolmenu::onEntryActivated()
 	if (name.empty()) return;
 
 	// don't create empty sets
-	if (GlobalSelectionSystem().countSelected() == 0) 
+	if (GlobalSelectionSystem().countSelected() == 0)
 	{
 		ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(
-			_("Cannot create selection set"), 
-			_("Cannot create a selection set, there is nothing selected in the current scene."), 
+			_("Cannot create selection set"),
+			_("Cannot create a selection set, there is nothing selected in the current scene."),
 			ui::IDialog::MESSAGE_CONFIRM);
 
 		dialog->run();
-		return; 
+		return;
 	}
 
 	ISelectionSetPtr set = GlobalSelectionSetManager().createSelectionSet(name);
@@ -179,11 +179,11 @@ void SelectionSetToolmenu::onSelectionChanged()
 	_entry->get_entry()->set_text("");
 }
 
-void SelectionSetToolmenu::onDeleteAllSetsClicked() 
+void SelectionSetToolmenu::onDeleteAllSetsClicked()
 {
 	ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(
-		_("Delete all selection sets?"), 
-		_("This will delete all set definitions. The actual map objects will not be affected by this step.\n\nContinue with that operation?"), 
+		_("Delete all selection sets?"),
+		_("This will delete all set definitions. The actual map objects will not be affected by this step.\n\nContinue with that operation?"),
 		ui::IDialog::MESSAGE_ASK);
 
 	ui::IDialog::Result result = dialog->run();

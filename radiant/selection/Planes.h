@@ -7,15 +7,15 @@
 #include "scenelib.h"
 
 // Considers all front planes of selected planeselectables
-class PlaneSelectableSelectPlanes : 
+class PlaneSelectableSelectPlanes :
 	public SelectionSystem::Visitor
 {
 	Selector& _selector;
 	SelectionTest& _test;
 	PlaneCallback _selectedPlaneCallback;
 public:
-	PlaneSelectableSelectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) : 
-		_selector(selector), 
+	PlaneSelectableSelectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) :
+		_selector(selector),
 		_test(test),
 		_selectedPlaneCallback(selectedPlaneCallback)
 	{}
@@ -24,14 +24,14 @@ public:
 };
 
 // Considers all back planes of selected planeselectables
-class PlaneSelectableSelectReversedPlanes : 
+class PlaneSelectableSelectReversedPlanes :
 	public SelectionSystem::Visitor
 {
 	Selector& _selector;
 	const SelectedPlanes& _selectedPlanes;
 public:
-	PlaneSelectableSelectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) : 
-		_selector(selector), 
+	PlaneSelectableSelectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes) :
+		_selector(selector),
 		_selectedPlanes(selectedPlanes)
 	{}
 
@@ -55,7 +55,7 @@ public:
     if(other.normal().y() < plane.normal().y()) {
       return false;
     }
-    
+
     if(plane.normal().z() < other.normal().z()) {
       return true;
     }
@@ -66,7 +66,7 @@ public:
     if(plane.dist() < other.dist()) {
       return true;
     }
-    
+
     if(other.dist() < plane.dist()) {
       return false;
     }

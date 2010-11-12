@@ -30,26 +30,26 @@ public:
 	 */
     virtual ~IModelPreview() {}
 
-	/** 
-	 * Set the pixel size of the IModelPreview widget. The widget is always 
-	 * square. 
-	 * 
+	/**
+	 * Set the pixel size of the IModelPreview widget. The widget is always
+	 * square.
+	 *
 	 * @param size
 	 * The pixel size of the square widget.
 	 */
 	virtual void setSize(int size) = 0;
 
-	/** 
-	 * Initialise the GL preview. This clears the window and sets up the 
+	/**
+	 * Initialise the GL preview. This clears the window and sets up the
 	 * initial matrices and lights.
 	 * Call this before showing the parent container.
 	 */
 	virtual void initialisePreview() = 0;
 
-	/** 
-	 * Set the widget to display the given model. If the model name is the 
+	/**
+	 * Set the widget to display the given model. If the model name is the
 	 * empty string, the widget will release the currently displayed model.
-	 * 
+	 *
 	 * @param
 	 * String name of the model to display.
 	 */
@@ -57,7 +57,7 @@ public:
 
 	/**
 	 * Set the skin to apply on the currently-displayed model.
-	 * 
+	 *
 	 * @param
 	 * Name of the skin to apply.
 	 */
@@ -66,7 +66,7 @@ public:
 	// Retrieve the widget to pack this element into a parent container
 	virtual Gtk::Widget* getWidget() = 0;
 
-	/** 
+	/**
 	 * Get the model from the widget, in order to display properties about it.
 	 */
 	virtual model::IModelPtr getModel() = 0;

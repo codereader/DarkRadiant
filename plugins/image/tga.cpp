@@ -390,19 +390,19 @@ RGBAImagePtr LoadTGABuff(const byte* buffer)
     return Targa_decodeImageData(targa_header, istream, Flip00());
   }
 
-  if((targa_header.attributes & TGA_FLIP_HORIZONTAL) == 0 && 
+  if((targa_header.attributes & TGA_FLIP_HORIZONTAL) == 0 &&
 	 (targa_header.attributes & TGA_FLIP_VERTICAL) != 0)
   {
     return Targa_decodeImageData(targa_header, istream, Flip01());
   }
 
-  if ((targa_header.attributes & TGA_FLIP_HORIZONTAL) != 0 && 
+  if ((targa_header.attributes & TGA_FLIP_HORIZONTAL) != 0 &&
 	  (targa_header.attributes & TGA_FLIP_VERTICAL) == 0)
   {
     return Targa_decodeImageData(targa_header, istream, Flip10());
   }
 
-  if ((targa_header.attributes & TGA_FLIP_HORIZONTAL) != 0 && 
+  if ((targa_header.attributes & TGA_FLIP_HORIZONTAL) != 0 &&
 	  (targa_header.attributes & TGA_FLIP_VERTICAL) != 0)
   {
     return Targa_decodeImageData(targa_header, istream, Flip11());

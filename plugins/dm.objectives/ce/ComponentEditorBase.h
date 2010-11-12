@@ -12,7 +12,7 @@ namespace ce
 
 /**
  * greebo: Common base class for all component editor implementations.
- * Most component editors pack their widgets into a VBox, which is what 
+ * Most component editors pack their widgets into a VBox, which is what
  * this class derives from (privately). This base class implements the required
  * getWidget() method, return "this".
  */

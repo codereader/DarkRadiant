@@ -6,9 +6,9 @@
 namespace gtkutil
 {
 
-bool TreeModel::equalFuncStringContains(const Glib::RefPtr<Gtk::TreeModel>& model, 
-										int column, 
-										const Glib::ustring& key, 
+bool TreeModel::equalFuncStringContains(const Glib::RefPtr<Gtk::TreeModel>& model,
+										int column,
+										const Glib::ustring& key,
 										const Gtk::TreeModel::iterator& iter)
 {
 	// Retrieve the string from the model
@@ -22,14 +22,14 @@ bool TreeModel::equalFuncStringContains(const Glib::RefPtr<Gtk::TreeModel>& mode
 	return (!range.empty()) ? false : true;
 }
 
-TreeModel::SelectionFinder::SelectionFinder(const std::string& selection, int column) : 
+TreeModel::SelectionFinder::SelectionFinder(const std::string& selection, int column) :
 	_selection(selection),
 	_needle(0),
 	_column(column),
 	_searchForInt(false)
 {}
 
-TreeModel::SelectionFinder::SelectionFinder(int needle, int column) : 
+TreeModel::SelectionFinder::SelectionFinder(int needle, int column) :
 	_selection(""),
 	_needle(needle),
 	_column(column),
@@ -48,7 +48,7 @@ bool TreeModel::SelectionFinder::forEach(const Gtk::TreeModel::iterator& iter)
 	{
 		int value;
 		iter->get_value(_column, value);
-		
+
 		if (value == _needle)
 		{
 			_foundIter = iter;
@@ -91,7 +91,7 @@ bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& need
 		view->expand_to_path(path);
 		// Highlight the target row
 		view->set_cursor(path);
-		// Make the selected row visible 
+		// Make the selected row visible
 		view->scroll_to_row(path, 0.3f);
 
 		return true; // found
@@ -114,7 +114,7 @@ bool TreeModel::findAndSelectInteger(Gtk::TreeView* view, int needle, int column
 		view->expand_to_path(path);
 		// Highlight the target row
 		view->set_cursor(path);
-		// Make the selected row visible 
+		// Make the selected row visible
 		view->scroll_to_row(path, 0.3f);
 
 		return true; // found
@@ -123,26 +123,26 @@ bool TreeModel::findAndSelectInteger(Gtk::TreeView* view, int needle, int column
 	return false; // not found
 }
 
-bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle, 
+bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle,
 									const Gtk::TreeModelColumn<Glib::ustring>& column)
 {
 	return findAndSelectString(view, needle, column.index());
 }
 
-bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle, 
+bool TreeModel::findAndSelectString(Gtk::TreeView* view, const std::string& needle,
 									const Gtk::TreeModelColumn<std::string>& column)
 {
 	return findAndSelectString(view, needle, column.index());
 }
 
-bool TreeModel::findAndSelectInteger(Gtk::TreeView* view, int needle, 
+bool TreeModel::findAndSelectInteger(Gtk::TreeView* view, int needle,
 									const Gtk::TreeModelColumn<int>& column)
 {
 	return findAndSelectInteger(view, needle, column.index());
 }
 
-int TreeModel::sortFuncFoldersFirstStd(const Gtk::TreeModel::iterator& a, 
-									const Gtk::TreeModel::iterator& b, 
+int TreeModel::sortFuncFoldersFirstStd(const Gtk::TreeModel::iterator& a,
+									const Gtk::TreeModel::iterator& b,
 									const Gtk::TreeModelColumn<std::string>& nameColumn,
 									const Gtk::TreeModelColumn<bool>& isFolderColumn)
 {
@@ -185,7 +185,7 @@ int TreeModel::sortFuncFoldersFirstStd(const Gtk::TreeModel::iterator& a,
 	}
 }
 
-void TreeModel::applyFoldersFirstSortFunc(const Glib::RefPtr<Gtk::TreeSortable>& model, 
+void TreeModel::applyFoldersFirstSortFunc(const Glib::RefPtr<Gtk::TreeSortable>& model,
 										  const Gtk::TreeModelColumn<std::string>& nameColumn,
 										  const Gtk::TreeModelColumn<bool>& isFolderColumn)
 {
@@ -196,8 +196,8 @@ void TreeModel::applyFoldersFirstSortFunc(const Glib::RefPtr<Gtk::TreeSortable>&
 	model->set_sort_func(nameColumn, sigc::bind(sigc::ptr_fun(sortFuncFoldersFirstStd), nameColumn, isFolderColumn));
 }
 
-int TreeModel::sortFuncFoldersFirst(const Gtk::TreeModel::iterator& a, 
-									  const Gtk::TreeModel::iterator& b, 
+int TreeModel::sortFuncFoldersFirst(const Gtk::TreeModel::iterator& a,
+									  const Gtk::TreeModel::iterator& b,
 									  const Gtk::TreeModelColumn<Glib::ustring>& nameColumn,
 									  const Gtk::TreeModelColumn<bool>& isFolderColumn)
 {
@@ -240,7 +240,7 @@ int TreeModel::sortFuncFoldersFirst(const Gtk::TreeModel::iterator& a,
 	}
 }
 
-void TreeModel::applyFoldersFirstSortFunc(const Glib::RefPtr<Gtk::TreeSortable>& model, 
+void TreeModel::applyFoldersFirstSortFunc(const Glib::RefPtr<Gtk::TreeSortable>& model,
 										  const Gtk::TreeModelColumn<Glib::ustring>& nameColumn,
 										  const Gtk::TreeModelColumn<bool>& isFolderColumn)
 {

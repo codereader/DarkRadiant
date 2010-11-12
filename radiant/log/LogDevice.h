@@ -6,7 +6,7 @@
 
 namespace applog {
 
-/** 
+/**
  * greebo: A LogDevice is a class which is able to take log output.
  *
  * Examples of LogDevices are the Console and the DarkRadiant logfile.
@@ -19,7 +19,7 @@ public:
 	 */
 	virtual ~LogDevice() {}
 	/**
-	 * greebo: This method gets called by the Writer with 
+	 * greebo: This method gets called by the Writer with
 	 * a logging string as argument.
 	 */
 	virtual void writeLog(const std::string& outputStr, ELogLevel level) = 0;

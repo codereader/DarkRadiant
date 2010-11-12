@@ -170,7 +170,7 @@ void idSplineList::addToRenderer() {
 	idVec3 yellow(1.0, 1.0, 0);
 	idVec3 white(1.0, 1.0, 1.0);
         int i;
-        
+
 	for(i = 0; i < controlPoints.Num(); i++) {
 		VectorCopy(*controlPoints[i], mins);
 		VectorCopy(mins, maxs);
@@ -184,12 +184,12 @@ void idSplineList::addToRenderer() {
 		debugLine( yellow, maxs[0], mins[1], mins[2], maxs[0], maxs[1], mins[2]);
 		debugLine( yellow, maxs[0], maxs[1], mins[2], mins[0], maxs[1], mins[2]);
 		debugLine( yellow, mins[0], maxs[1], mins[2], mins[0], mins[1], mins[2]);
-		
+
 		debugLine( yellow, mins[0], mins[1], maxs[2], maxs[0], mins[1], maxs[2]);
 		debugLine( yellow, maxs[0], mins[1], maxs[2], maxs[0], maxs[1], maxs[2]);
 		debugLine( yellow, maxs[0], maxs[1], maxs[2], mins[0], maxs[1], maxs[2]);
 		debugLine( yellow, mins[0], maxs[1], maxs[2], mins[0], mins[1], maxs[2]);
-	    
+
 	}
 
 	int step = 0;
@@ -242,7 +242,7 @@ void idSplineList::buildSpline() {
 void idSplineList::draw(bool editMode) {
 	int i;
 	idVec4 yellow(1, 1, 0, 1);
-        
+
 	if (controlPoints.Num() == 0) {
 		return;
 	}
@@ -254,13 +254,13 @@ void idSplineList::draw(bool editMode) {
 
   glColor3fv(controlColor);
   glPointSize(5);
-	
+
   glBegin(GL_POINTS);
 	for (i = 0; i < controlPoints.Num(); i++) {
 	  glVertex3fv(*controlPoints[i]);
 	}
   glEnd();
-	
+
 	if (editMode) {
 		for(i = 0; i < controlPoints.Num(); i++) {
 			glBox(activeColor, *controlPoints[i], 4);
@@ -298,7 +298,7 @@ void idSplineList::draw(bool editMode) {
 float idSplineList::totalDistance() {
 
 	// FIXME: save dist and return
-	// 
+	//
 	if (controlPoints.Num() == 0) {
 		return 0.0;
 	}
@@ -403,7 +403,7 @@ const idVec3 *idSplineList::getPosition(long t) {
 			if (activeSegment > 0 && activeSegment < count - 1) {
 				double timeHi = splineTime[activeSegment + 1];
 				double timeLo = splineTime[activeSegment - 1];
-				double percent = (timeHi - t) / (timeHi - timeLo); 
+				double percent = (timeHi - t) / (timeHi - timeLo);
 				// pick two bounding points
 				idVec3 v1 = *splinePoints[activeSegment-1];
 				idVec3 v2 = *splinePoints[activeSegment+1];
@@ -426,7 +426,7 @@ void idSplineList::parse(const char *(*text)  ) {
 	//Com_MatchToken( text, "{" );
 	do {
 		token = Com_Parse( text );
-	
+
 		if ( !token[0] ) {
 			break;
 		}
@@ -462,7 +462,7 @@ void idSplineList::parse(const char *(*text)  ) {
 		Com_Parse1DMatrix( text, 3, point );
 		addPoint(point.x, point.y, point.z);
 	} while (1);
- 
+
 	//Com_UngetToken();
 	//Com_MatchToken( text, "}" );
 	dirty = true;
@@ -498,7 +498,7 @@ void idCameraDef::getActiveSegmentInfo(int segment, idVec3 &origin, idVec3 &dire
 		buildCamera();
 	}
 	origin = *cameraSpline.getSegmentPoint(segment);
-	
+
 
 	idVec3 temp;
 
@@ -551,7 +551,7 @@ bool idCameraDef::getCameraInfo(long time, idVec3 &origin, idVec3 &direction, fl
 				const char *param2 = strtok(NULL, " \t,\0");
 				float len = (param2) ? atof(param2) : 0;
 				float newfov = (param1) ? atof(param1) : 90;
-				fov.reset(fov.getFOV(time), newfov, time, len); 
+				fov.reset(fov.getFOV(time), newfov, time, len);
 				//*fv = fov = atof(events[i]->getParam());
 			} else if (events[i]->getType() == idCameraEvent::EVENT_FADEIN) {
 				float time = atof(events[i]->getParam());
@@ -582,7 +582,7 @@ bool idCameraDef::getCameraInfo(long time, idVec3 &origin, idVec3 &direction, fl
 	}
 
 	origin = *cameraPosition->getPosition(time);
-	
+
 	*fv = fov.getFOV(time);
 
 	idVec3 temp = origin;
@@ -606,7 +606,7 @@ bool idCameraDef::getCameraInfo(long time, idVec3 &origin, idVec3 &direction, fl
 		  temp = *getActiveTarget()->getPosition(time);
     }
 	}
-	
+
 	temp -= origin;
 	temp.Normalize();
 	direction = temp;
@@ -677,7 +677,7 @@ void idCameraDef::buildCamera() {
 				waits.Append(atof(events[i]->getParam()));
 
 				//FIXME: this is quite hacky for Wolf E3, accel and decel needs
-				// do be parameter based etc.. 
+				// do be parameter based etc..
 				long startTime = events[i]->getTime() - 1000;
 				if (startTime < 0) {
 					startTime = 0;
@@ -722,7 +722,7 @@ void idCameraDef::buildCamera() {
 
 				// multiply that by the adjustment
 				double newTotal = total * adjust;
-				// what is the difference.. 
+				// what is the difference..
 				newTotal -= total;
 				totalTime += newTotal / 1000;
 
@@ -746,7 +746,7 @@ void idCameraDef::buildCamera() {
 		totalTime += waits[i];
 	}
 
-	// on a new target switch, we need to take time to this point ( since last target switch ) 
+	// on a new target switch, we need to take time to this point ( since last target switch )
 	// and allocate it across the active target, then reset time to this point
 	long timeSoFar = 0;
 	long total = (long)(totalTime * 1000);
@@ -763,7 +763,7 @@ void idCameraDef::buildCamera() {
 		timeSoFar += t;
 	}
 
-	
+
 }
 
 void idCameraDef::startCamera(long t) {
@@ -784,7 +784,7 @@ void idCameraDef::parse(const char *(*text)  ) {
 	const char	*token;
 	do {
 		token = Com_Parse( text );
-	
+
 		if ( !token[0] ) {
 			break;
 		}
@@ -867,7 +867,7 @@ void idCameraDef::save(const char *filename) {
 	fileHandle_t file = FS_FOpenFileWrite(filename);
 	if (file) {
 		int i;
-		idStr s = "cameraPathDef { \n"; 
+		idStr s = "cameraPathDef { \n";
 		FS_Write(s.c_str(), s.length(), file);
 		s = va("\ttime %f\n", baseTime);
 		FS_Write(s.c_str(), s.length(), file);
@@ -900,7 +900,7 @@ int idCameraDef::sortEvents(const void *p1, const void *p2) {
 	if (ev1->getTime() < ev2->getTime()) {
 		return 1;
 	}
-	return 0; 
+	return 0;
 }
 
 void idCameraDef::addEvent(idCameraEvent *event) {
@@ -941,7 +941,7 @@ void idCameraEvent::parse(const char *(*text)  ) {
 	Com_MatchToken( text, "{" );
 	do {
 		token = Com_Parse( text );
-	
+
 		if ( !token[0] ) {
 			break;
 		}
@@ -975,7 +975,7 @@ void idCameraEvent::parse(const char *(*text)  ) {
 		}
 
 	} while (1);
- 
+
 	Com_UngetToken();
 	Com_MatchToken( text, "}" );
 }
@@ -1002,14 +1002,14 @@ const char *idCameraPosition::positionStr[] = {
 
 
 
-const idVec3 *idInterpolatedPosition::getPosition(long t) { 
+const idVec3 *idInterpolatedPosition::getPosition(long t) {
 	static idVec3 interpolatedPos;
 
 	float velocity = getVelocity(t);
 	float timePassed = t - lastTime;
 	lastTime = t;
 
-	// convert to seconds	
+	// convert to seconds
 	timePassed /= 1000;
 
 	float distToTravel = timePassed * velocity;
@@ -1045,7 +1045,7 @@ void idCameraFOV::parse(const char *(*text)  ) {
 	Com_MatchToken( text, "{" );
 	do {
 		token = Com_Parse( text );
-	
+
 		if ( !token[0] ) {
 			break;
 		}
@@ -1081,7 +1081,7 @@ void idCameraFOV::parse(const char *(*text)  ) {
 		}
 
 	} while (1);
- 
+
 	Com_UngetToken();
 	Com_MatchToken( text, "}" );
 }
@@ -1123,7 +1123,7 @@ void idFixedPosition::parse(const char *(*text)  ) {
 	Com_MatchToken( text, "{" );
 	do {
 		token = Com_Parse( text );
-	
+
 		if ( !token[0] ) {
 			break;
 		}
@@ -1140,14 +1140,14 @@ void idFixedPosition::parse(const char *(*text)  ) {
 
 			Com_UngetToken();
 			idStr key = Com_ParseOnLine(text);
-			
+
 			const char *token = Com_Parse(text);
 			if (Q_stricmp(key.c_str(), "pos") == 0) {
 				Com_UngetToken();
 				Com_Parse1DMatrix( text, 3, pos );
 			} else {
 				Com_UngetToken();
-				idCameraPosition::parseToken(key.c_str(), text);	
+				idCameraPosition::parseToken(key.c_str(), text);
 			}
 			token = Com_Parse(text);
 
@@ -1158,7 +1158,7 @@ void idFixedPosition::parse(const char *(*text)  ) {
 		}
 
 	} while (1);
- 
+
 	Com_UngetToken();
 	Com_MatchToken( text, "}" );
 }
@@ -1168,7 +1168,7 @@ void idInterpolatedPosition::parse(const char *(*text)  ) {
 	Com_MatchToken( text, "{" );
 	do {
 		token = Com_Parse( text );
-	
+
 		if ( !token[0] ) {
 			break;
 		}
@@ -1185,7 +1185,7 @@ void idInterpolatedPosition::parse(const char *(*text)  ) {
 
 			Com_UngetToken();
 			idStr key = Com_ParseOnLine(text);
-			
+
 			const char *token = Com_Parse(text);
 			if (Q_stricmp(key.c_str(), "startPos") == 0) {
 				Com_UngetToken();
@@ -1195,7 +1195,7 @@ void idInterpolatedPosition::parse(const char *(*text)  ) {
 				Com_Parse1DMatrix( text, 3, endPos );
 			} else {
 				Com_UngetToken();
-				idCameraPosition::parseToken(key.c_str(), text);	
+				idCameraPosition::parseToken(key.c_str(), text);
 			}
 			token = Com_Parse(text);
 
@@ -1206,7 +1206,7 @@ void idInterpolatedPosition::parse(const char *(*text)  ) {
 		}
 
 	} while (1);
- 
+
 	Com_UngetToken();
 	Com_MatchToken( text, "}" );
 }
@@ -1217,7 +1217,7 @@ void idSplinePosition::parse(const char *(*text)  ) {
 	Com_MatchToken( text, "{" );
 	do {
 		token = Com_Parse( text );
-	
+
 		if ( !token[0] ) {
 			break;
 		}
@@ -1234,13 +1234,13 @@ void idSplinePosition::parse(const char *(*text)  ) {
 
 			Com_UngetToken();
 			idStr key = Com_ParseOnLine(text);
-			
+
 			const char *token = Com_Parse(text);
 			if (Q_stricmp(key.c_str(), "target") == 0) {
 				target.parse(text);
 			} else {
 				Com_UngetToken();
-				idCameraPosition::parseToken(key.c_str(), text);	
+				idCameraPosition::parseToken(key.c_str(), text);
 			}
 			token = Com_Parse(text);
 
@@ -1251,7 +1251,7 @@ void idSplinePosition::parse(const char *(*text)  ) {
 		}
 
 	} while (1);
- 
+
 	Com_UngetToken();
 	Com_MatchToken( text, "}" );
 }
@@ -1261,7 +1261,7 @@ void idSplinePosition::parse(const char *(*text)  ) {
 void idCameraFOV::write(fileHandle_t file, const char *p) {
 	idStr s = va("\t%s {\n", p);
 	FS_Write(s.c_str(), s.length(), file);
-	
+
 	s = va("\t\tfov %f\n", fov);
 	FS_Write(s.c_str(), s.length(), file);
 
@@ -1280,7 +1280,7 @@ void idCameraFOV::write(fileHandle_t file, const char *p) {
 
 
 void idCameraPosition::write(fileHandle_t file, const char *p) {
-	
+
 	idStr s = va("\t\ttime %i\n", time);
 	FS_Write(s.c_str(), s.length(), file);
 
@@ -1352,7 +1352,7 @@ const idVec3 *idSplinePosition::getPosition(long t) {
 	float timePassed = t - lastTime;
 	lastTime = t;
 
-	// convert to seconds	
+	// convert to seconds
 	timePassed /= 1000;
 
 	float distToTravel = timePassed * velocity;
@@ -1390,7 +1390,7 @@ const idVec3 *idSplinePosition::getPosition(long t) {
 #if 0
 		double timeHi = target.getSegmentTime(i + 1);
 		double timeLo = target.getSegmentTime(i - 1);
-		double percent = (timeHi - t) / (timeHi - timeLo); 
+		double percent = (timeHi - t) / (timeHi - timeLo);
 		idVec3 v1 = *target.getSegmentPoint(i - 1);
 		idVec3 v2 = *target.getSegmentPoint(i + 1);
 		v2 *= (1.0 - percent);
@@ -1406,7 +1406,7 @@ const idVec3 *idSplinePosition::getPosition(long t) {
 
 		idVec3 v1 = *target.getSegmentPoint(i - 1);
 		idVec3 v2 = *target.getSegmentPoint(i);
-		double percent = (lastDistance2 - targetDistance) / (lastDistance2 - lastDistance1); 
+		double percent = (lastDistance2 - targetDistance) / (lastDistance2 - lastDistance1);
 		v2 *= (1.0 - percent);
 		v1 *= percent;
 		v2 += v1;

@@ -33,7 +33,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 			if (i->first == "Example") continue; // skip the example script
 
 			menuManager.add(
-				SCRIPT_MENU_PATH, 
+				SCRIPT_MENU_PATH,
 				"script" + i->first,
 				menuItem,
 				i->second->getDisplayName(),
@@ -45,7 +45,7 @@ ScriptMenu::ScriptMenu(const script::ScriptCommandMap& commands)
 	else
 	{
 		menuManager.add(
-			SCRIPT_MENU_PATH, 
+			SCRIPT_MENU_PATH,
 			"noscriptsavailable",
 			menuItem,
 			_("No scripts available"),

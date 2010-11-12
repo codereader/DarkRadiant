@@ -17,10 +17,10 @@
 namespace ui {
 
 	namespace {
-		const std::string RKEY_CAMERA_ROOT = "user/ui/camera"; 
+		const std::string RKEY_CAMERA_ROOT = "user/ui/camera";
 		const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
-		const std::string RKEY_FLOATING_ROOT = "user/ui/mainFrame/floating"; 
-		const std::string RKEY_GROUPDIALOG_VISIBLE = RKEY_FLOATING_ROOT + "/groupDialogVisible"; 
+		const std::string RKEY_FLOATING_ROOT = "user/ui/mainFrame/floating";
+		const std::string RKEY_GROUPDIALOG_VISIBLE = RKEY_FLOATING_ROOT + "/groupDialogVisible";
 	}
 
 std::string FloatingLayout::getName() {
@@ -38,7 +38,7 @@ void FloatingLayout::activate() {
 		_camWndPosition.loadFromPath(RKEY_CAMERA_WINDOW_STATE);
 		_camWndPosition.connect(_floatingCamWnd.get());
 	}
-	  
+
 	_floatingCamWnd->show();
 
 	// Connect up the toggle camera event
@@ -61,7 +61,7 @@ void FloatingLayout::activate() {
 	GlobalGroupDialog().addPage(
     	"textures",	// name
     	"Textures", // tab title
-    	"icon_texture.png", // tab icon 
+    	"icon_texture.png", // tab icon
     	*page, // page widget
     	_("Texture Browser")
     );
@@ -71,7 +71,7 @@ void FloatingLayout::activate() {
 		GlobalGroupDialog().showDialogWindow();
 	}
 
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload 
+	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
 	// the position info from the Registry once again.
 	GlobalEntityInspector().restoreSettings();
 
@@ -89,7 +89,7 @@ void FloatingLayout::deactivate()
 	GlobalXYWndManager().destroyViews();
 
 	// Save groupdialog state
-	GlobalRegistry().set(RKEY_GROUPDIALOG_VISIBLE, 
+	GlobalRegistry().set(RKEY_GROUPDIALOG_VISIBLE,
 		GlobalGroupDialog().getDialogWindow()->is_visible() ? "1" : "0");
 
 	// Hide the group dialog

@@ -76,8 +76,8 @@ Gtk::Widget& MessageBox::createButtons()
 {
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 6));
 
-	if (   _type == MESSAGE_CONFIRM 
-        || _type == MESSAGE_WARNING 
+	if (   _type == MESSAGE_CONFIRM
+        || _type == MESSAGE_WARNING
         || _type == MESSAGE_ERROR)
 	{
 		// Add an OK button
@@ -98,7 +98,7 @@ Gtk::Widget& MessageBox::createButtons()
 
 		mapKeyToButton(GDK_Y, *yesButton);
 		mapKeyToButton(GDK_Return, *yesButton);
-		
+
 		// NO button
 		Gtk::Button* noButton = Gtk::manage(new Gtk::Button(Gtk::Stock::NO));
 		noButton->signal_clicked().connect(sigc::mem_fun(*this, &MessageBox::onNo));
@@ -107,7 +107,7 @@ Gtk::Widget& MessageBox::createButtons()
 		mapKeyToButton(GDK_N, *noButton);
 		mapKeyToButton(GDK_Escape, *noButton);
 	}
-	else if (   _type == MESSAGE_YESNOCANCEL 
+	else if (   _type == MESSAGE_YESNOCANCEL
              || _type == MESSAGE_SAVECONFIRMATION)
 	{
         bool isYesNo = (_type == MESSAGE_YESNOCANCEL);
@@ -160,7 +160,7 @@ Gtk::Widget& MessageBox::createButtons()
 	{
 		globalErrorStream() << "Invalid message type encountered: " << _type << std::endl;
 	}
-	
+
 	return *Gtk::manage(new RightAlignment(*buttonHBox));
 }
 

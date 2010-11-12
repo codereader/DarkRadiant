@@ -95,9 +95,9 @@ int DifficultySettings::save(int id, const SettingPtr& setting) {
 			return overrule->id;
 		}
 		else {
-			// TODO: Check, if there is another, existing setting which we 
+			// TODO: Check, if there is another, existing setting which we
 			// override with this one and whether they are the same
-			
+
 			// Copy the settings over to the existing setting
 			*existing = *setting;
 			return existing->id;
@@ -202,7 +202,7 @@ std::string DifficultySettings::getParentClass(const std::string& className) {
 	// Get the parent eclass
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(className);
 
-	if (eclass == NULL) { 
+	if (eclass == NULL) {
 		return ""; // Invalid!
 	}
 
@@ -270,12 +270,12 @@ std::string DifficultySettings::getInheritanceKey(const std::string& className)
 	// Get the eclass
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(className);
 	// Get the inheritance chain of this class
-	const IEntityClass::InheritanceChain& chain = eclass->getInheritanceChain(); 
+	const IEntityClass::InheritanceChain& chain = eclass->getInheritanceChain();
 
 	// Build the inheritance key
 	std::string inheritanceKey;
 	for (IEntityClass::InheritanceChain::const_iterator c = chain.begin();
-		 c != chain.end(); c++) 
+		 c != chain.end(); c++)
 	{
 		inheritanceKey += (inheritanceKey.empty()) ? "" : "_";
 		inheritanceKey += *c;
@@ -318,7 +318,7 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def)
 
 		const EntityClassAttribute& classAttr = def->getAttribute(diffPrefix + "class_" + indexStr);
 		const EntityClassAttribute& argAttr = def->getAttribute(diffPrefix + "arg_" + indexStr);
-		
+
 		SettingPtr setting = createSetting(classAttr.value);
 		setting->spawnArg = attr.value;
 		setting->argument = argAttr.value;

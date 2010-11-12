@@ -37,20 +37,20 @@ namespace ui {
 ColourSchemeEditor::ColourSchemeEditor() :
 	BlockingTransientWindow(_(EDITOR_WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_listStore(Gtk::ListStore::create(_columns))
-{	
+{
 	set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
 	set_border_width(12);
 
 	add(constructWindow());
-	
+
 	// Load all the list items
   	populateTree();
-  	
+
 	// Highlight the currently selected scheme
 	selectActiveScheme();
 	updateColourSelectors();
-	
-	// Connect the signal AFTER selecting the active scheme	
+
+	// Connect the signal AFTER selecting the active scheme
 	_treeView->get_selection()->signal_changed().connect(
 		sigc::mem_fun(*this, &ColourSchemeEditor::callbackSelChanged));
 }
@@ -63,14 +63,14 @@ void ColourSchemeEditor::_onDeleteEvent()
 	// Proceed with regular destruction
 	BlockingTransientWindow::_onDeleteEvent();
 }
-	
+
 /*	Loads all the scheme items into the list
  */
 void ColourSchemeEditor::populateTree()
 {
 	ColourSchemeMap allSchemes = ColourSchemeManager::Instance().getSchemeList();
-  
-	for (ColourSchemeMap::iterator scheme = allSchemes.begin(); 
+
+	for (ColourSchemeMap::iterator scheme = allSchemes.begin();
 		 scheme != allSchemes.end(); ++scheme)
 	{
 		Gtk::TreeModel::Row row = *_listStore->append();
@@ -84,8 +84,8 @@ void ColourSchemeEditor::createTreeView()
 	// Create the treeView
 	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
 	_treeView->set_size_request(200, -1);
-	
-	// Create a new column and set its parameters  
+
+	// Create a new column and set its parameters
 	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumn("Colour", _columns.name, false)));
 
    	_treeView->set_headers_visible(false);
@@ -104,7 +104,7 @@ Gtk::Widget& ColourSchemeEditor::constructButtons()
 
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackCancel));
-	
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*buttonBox));
 }
 
@@ -112,16 +112,16 @@ Gtk::Widget& ColourSchemeEditor::constructButtons()
 Gtk::Widget& ColourSchemeEditor::constructTreeviewButtons()
 {
 	Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 6));
-	
+
 	_deleteButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
 	Gtk::Button* copyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::COPY));
-	
+
 	buttonBox->pack_start(*copyButton, true, true, 0);
 	buttonBox->pack_start(*_deleteButton, true, true, 0);
-	
+
 	copyButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackCopy));
 	_deleteButton->signal_clicked().connect(sigc::mem_fun(*this, &ColourSchemeEditor::callbackDelete));
-	
+
 	return *buttonBox;
 }
 
@@ -145,7 +145,7 @@ Gtk::Widget& ColourSchemeEditor::constructWindow()
 	// The Box containing the Colour, pack it into the right half of the hbox
 	_colourFrame = Gtk::manage(new Gtk::Frame);
 	_colourBox = Gtk::manage(new Gtk::HBox(false, 5));
-	
+
 	_colourFrame->add(*_colourBox);
 
 	// This is the divider for the treeview and the whole rest
@@ -156,7 +156,7 @@ Gtk::Widget& ColourSchemeEditor::constructWindow()
 	paned->add2(*_colourFrame);
 
 	vbox->pack_start(*paned, true, true, 0);
-	
+
 	return *vbox;
 }
 
@@ -172,12 +172,12 @@ void ColourSchemeEditor::selectActiveScheme()
 		if (ColourSchemeManager::Instance().isActive(name))
 		{
 			_treeView->get_selection()->select(i);
-			
+
 			// Set the button sensitivity correctly for read-only schemes
 			_deleteButton->set_sensitive(
 				!ColourSchemeManager::Instance().getScheme(name).isReadOnly()
 			);
-			
+
 			return;
 		}
 	}
@@ -211,7 +211,7 @@ Gtk::Widget& ColourSchemeEditor::constructColourSelector(ColourItem& colour, con
 
 	// Give gettext a chance to translate the colour description
 	description = _(description.c_str());
-	
+
 	// Create a new colour button
 	Gdk::Color tempColour;
 	Vector3 tempColourVector = colour;
@@ -219,7 +219,7 @@ Gtk::Widget& ColourSchemeEditor::constructColourSelector(ColourItem& colour, con
 	tempColour.set_green(static_cast<guint16>(FULL_INTENSITY * tempColourVector[1]));
 	tempColour.set_blue(static_cast<guint16>(FULL_INTENSITY * tempColourVector[2]));
 
-	// Create the colour button 
+	// Create the colour button
 	Gtk::ColorButton* button = Gtk::manage(new Gtk::ColorButton(tempColour));
 
 	button->set_title(description);
@@ -228,7 +228,7 @@ Gtk::Widget& ColourSchemeEditor::constructColourSelector(ColourItem& colour, con
 	button->signal_color_set().connect(
 		sigc::bind(sigc::mem_fun(*this, &ColourSchemeEditor::callbackColorChanged), button, &colour)
 	);
-	
+
 	button->show();
 
 	// Create the description label
@@ -236,10 +236,10 @@ Gtk::Widget& ColourSchemeEditor::constructColourSelector(ColourItem& colour, con
 
 	// Create a new horizontal divider
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 10));
-	
+
 	hbox->pack_start(*button, false, false, 0);
 	hbox->pack_start(*label, false, false, 0);
-	  
+
 	return *hbox;
 }
 
@@ -248,30 +248,30 @@ void ColourSchemeEditor::updateColourSelectors()
 	// Destroy the current _colourBox instance
 	_colourBox = NULL;
 	_colourFrame->remove();
-	
+
 	// Create a new column container
 	_colourBox = Gtk::manage(new Gtk::HBox(false, 12));
 	_colourFrame->add(*_colourBox);
-		
+
 	// Get the selected scheme
 	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(getSelectedScheme());
-	
+
 	// Retrieve the list with all the ColourItems of this scheme
 	ColourItemMap& colourMap = scheme.getColourMap();
 
 	// A temporary vbox for each column
 	Gtk::VBox* curVbox = Gtk::manage(new Gtk::VBox(false, 5));
-	
+
 	ColourItemMap::iterator it;
 	unsigned int i = 1;
-	// Cycle through all the ColourItems and save them into the registry	
-	for (it = colourMap.begin(), i = 1; 
+	// Cycle through all the ColourItems and save them into the registry
+	for (it = colourMap.begin(), i = 1;
 		 it != colourMap.end();
-		 it++, i++) 
+		 it++, i++)
 	{
 		Gtk::Widget& colourSelector = constructColourSelector(it->second, it->first);
 		curVbox->pack_start(colourSelector, false, false, 5);
-		
+
 		// Have we reached the maximum number of colours per column?
 		if (i % COLOURS_PER_COLUMN == 0)
 		{
@@ -280,10 +280,10 @@ void ColourSchemeEditor::updateColourSelectors()
 			curVbox = Gtk::manage(new Gtk::VBox(false, 5));
 		}
 	}
-	
+
 	// Pack the remaining items into the last column
 	_colourBox->pack_start(*curVbox, false, false, 0);
-	
+
 	_colourBox->show_all();
 }
 
@@ -298,17 +298,17 @@ void ColourSchemeEditor::updateWindows()
 void ColourSchemeEditor::selectionChanged()
 {
 	std::string activeScheme = getSelectedScheme();
-	
+
 	// Update the colour selectors to reflect the newly selected scheme
 	updateColourSelectors();
-	
+
 	// Check, if the currently selected scheme is read-only
 	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(activeScheme);
 	_deleteButton->set_sensitive(!scheme.isReadOnly());
-	
+
 	// Set the active Scheme, so that the views are updated accordingly
 	ColourSchemeManager::Instance().setActive(activeScheme);
-	
+
 	updateWindows();
 }
 
@@ -317,12 +317,12 @@ void ColourSchemeEditor::deleteScheme()
 	std::string name = getSelectedScheme();
 	// Get the selected scheme
 	ColourScheme& scheme = ColourSchemeManager::Instance().getScheme(name);
-	
+
 	if (!scheme.isReadOnly())
 	{
-		// Remove the actual scheme from the ColourSchemeManager 
+		// Remove the actual scheme from the ColourSchemeManager
 		ColourSchemeManager::Instance().deleteScheme(name);
-		
+
 		// Remove the selected item from the GtkListStore
 		deleteSchemeFromList();
 	}
@@ -349,7 +349,7 @@ void ColourSchemeEditor::copyScheme()
 {
 	std::string name = getSelectedScheme();
 	std::string newName = inputDialog(_("Copy Colour Scheme"), _("Enter a name for the new scheme:"));
-	
+
 	if (newName.empty())
 	{
 		return; // empty name
@@ -365,11 +365,11 @@ void ColourSchemeEditor::copyScheme()
 	// Copy the scheme
 	ColourSchemeManager::Instance().copyScheme(name, newName);
 	ColourSchemeManager::Instance().setActive(newName);
-	
+
 	// Add the new list item to the ListStore
 	Gtk::TreeModel::Row row = *_listStore->append();
 	row[_columns.name] = newName;
-	
+
 	// Highlight the copied scheme
 	selectActiveScheme();
 }
@@ -405,7 +405,7 @@ void ColourSchemeEditor::callbackOK()
 {
 	ColourSchemeManager::Instance().setActive(getSelectedScheme());
 	ColourSchemeManager::Instance().saveColourSchemes();
-	
+
 	destroy();
 }
 
@@ -414,7 +414,7 @@ void ColourSchemeEditor::doCancel()
 {
 	// Restore all the colour settings from the XMLRegistry, changes get lost
 	ColourSchemeManager::Instance().restoreColourSchemes();
-	
+
 	// Call the update, so all restored colours are displayed
 	updateWindows();
 }

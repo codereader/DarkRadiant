@@ -1,19 +1,19 @@
 /*
 Copyright (C) 2001-2006, William Joseph.
 All Rights Reserved.
- 
+
 This file is part of GtkRadiant.
- 
+
 GtkRadiant is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 GtkRadiant is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -270,11 +270,11 @@ struct Colour4b {
 
 	Colour4b() {}
 
-	Colour4b(unsigned char _r, unsigned char _g, 
+	Colour4b(unsigned char _r, unsigned char _g,
 			 unsigned char _b, unsigned char _a) :
 		r(_r), g(_g), b(_b), a(_a)
 	{}
-	
+
 	bool operator<(const Colour4b& other) const {
 		if (r != other.r) {
 			return r < other.r;
@@ -290,7 +290,7 @@ struct Colour4b {
 		}
 		return false;
 	}
-	
+
 	bool operator==(const Colour4b& other) const {
 		return r == other.r && g == other.g && b == other.b && a == other.a;
 	}
@@ -450,11 +450,11 @@ struct spherical_t {
 {
   theta = 2pi * U;
   phi = acos((2 * V) - 1);
- 
+
   U = theta / 2pi;
   V = (cos(phi) + 1) / 2;
 }
- 
+
 longitude = atan(y / x);
 latitude = acos(z);
 */
@@ -542,13 +542,13 @@ public:
 	PointVertex()
 	{}
 
-	PointVertex(const Vertex3f& _vertex) : 
-		colour(Colour4b(255, 255, 255, 255)), 
+	PointVertex(const Vertex3f& _vertex) :
+		colour(Colour4b(255, 255, 255, 255)),
 		vertex(_vertex)
 	{}
 
-	PointVertex(const Vertex3f& _vertex, const Colour4b& _colour) : 
-		colour(_colour), 
+	PointVertex(const Vertex3f& _vertex, const Colour4b& _colour) :
+		colour(_colour),
 		vertex(_vertex)
 	{}
 
@@ -613,7 +613,7 @@ inline void pointvertex_gl_array(const PointVertex* array) {
 	glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &array->vertex);
 }
 
-class RenderablePointVector : 
+class RenderablePointVector :
 	public OpenGLRenderable
 {
 protected:
@@ -622,11 +622,11 @@ protected:
 	const GLenum _mode;
 
 public:
-	RenderablePointVector(GLenum mode) : 
+	RenderablePointVector(GLenum mode) :
 		_mode(mode)
 	{}
 
-	RenderablePointVector(GLenum mode, std::size_t initialSize) : 
+	RenderablePointVector(GLenum mode, std::size_t initialSize) :
 		_vector(initialSize),
 		_mode(mode)
 	{}
@@ -663,7 +663,7 @@ public:
 		return _vector.front();
 	}
 
-	const PointVertex& front() const 
+	const PointVertex& front() const
 	{
 		return _vector.front();
 	}

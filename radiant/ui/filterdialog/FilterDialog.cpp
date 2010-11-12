@@ -138,7 +138,7 @@ void FilterDialog::update()
 		const Filter& filter = *(i->second);
 
 		Gtk::TreeModel::Row row = *_filterStore->append();
-		
+
 		row[_columns.name] = i->first;
 		row[_columns.state] = filter.state ? std::string(_("enabled")) : std::string(_("disabled"));
 		row[_columns.colour] = filter.readOnly ? std::string("#707070") : std::string("black");
@@ -154,7 +154,7 @@ void FilterDialog::populateWindow()
 	// Create the dialog vbox
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 
-	// Create the "Filters" label	
+	// Create the "Filters" label
 	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(
 		std::string("<b>") + _("Filters") + "</b>")), false, false, 0);
 
@@ -174,7 +174,7 @@ Gtk::Widget& FilterDialog::createFiltersPanel()
 
 	// Create a new treeview
 	_filterView = Gtk::manage(new Gtk::TreeView(_filterStore));
-	
+
 	Gtk::TreeViewColumn* filterCol = Gtk::manage(
 		new gtkutil::ColouredTextColumn(_("Name"), _columns.name, _columns.colour)
 	);
@@ -198,7 +198,7 @@ Gtk::Widget& FilterDialog::createFiltersPanel()
 	_widgets[WIDGET_ADD_FILTER_BUTTON] = addFilterButton;
 	_widgets[WIDGET_EDIT_FILTER_BUTTON] = editFilterButton;
 	_widgets[WIDGET_VIEW_FILTER_BUTTON] = viewFilterButton;
-		
+
 	_widgets[WIDGET_DELETE_FILTER_BUTTON] = deleteFilterButton;
 
 	addFilterButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onAddFilter));
@@ -222,16 +222,16 @@ Gtk::Widget& FilterDialog::createFiltersPanel()
 Gtk::Widget& FilterDialog::createButtonPanel()
 {
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-	
+
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onSave));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &FilterDialog::onCancel));
-	
+
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
-		   
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
@@ -285,7 +285,7 @@ void FilterDialog::onSave()
 {
 	// Save changes
 	save();
-	
+
 	// Close the dialog
 	destroy();
 }
@@ -338,7 +338,7 @@ void FilterDialog::onViewFilter()
 	FilterMap::iterator f = _filters.find(_selectedFilter);
 
 	if (f == _filters.end()) {
-		return; // not found 
+		return; // not found
 	}
 
 	// Construct a new filter

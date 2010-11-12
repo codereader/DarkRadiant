@@ -6,17 +6,17 @@
 
 namespace xml
 {
-	
-/** 
- * Exception thrown by modules if the values it needs 
+
+/**
+ * Exception thrown by modules if the values it needs
  * from the registry cannot be found.
  */
-class MissingXMLNodeException : 
+class MissingXMLNodeException :
 	public std::runtime_error
 {
 public:
 	// Constructor
-	MissingXMLNodeException(const std::string& what) : 
+	MissingXMLNodeException(const std::string& what) :
 		std::runtime_error(what)
 	{}
 };

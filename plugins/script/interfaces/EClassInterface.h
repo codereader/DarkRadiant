@@ -40,8 +40,8 @@ public:
 };
 
 // Wrap around the EntityClassVisitor interface
-class EntityClassVisitorWrapper : 
-	public EntityClassVisitor, 
+class EntityClassVisitorWrapper :
+	public EntityClassVisitor,
 	public boost::python::wrapper<EntityClassVisitor>
 {
 public:

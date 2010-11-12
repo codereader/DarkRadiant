@@ -18,7 +18,7 @@ class TargetableNode;
  * This object is also a Renderable which is always attached to the
  * GlobalRenderSystem() during the entire module lifetime.
  */
-class RenderableTargetInstances : 
+class RenderableTargetInstances :
 	public Renderable
 {
 	typedef std::set<TargetableNode*> TargetableNodes;

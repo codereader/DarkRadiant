@@ -29,7 +29,7 @@ private:
 
 	boost::shared_ptr<Gtk::HPaned> _horizPane;
 	Gtk::VPaned* _groupCamPane;
-		
+
 	gtkutil::PanedPosition _posHPane;
 	gtkutil::PanedPosition _posGroupCamPane;
 

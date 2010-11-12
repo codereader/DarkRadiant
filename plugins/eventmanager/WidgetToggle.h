@@ -8,13 +8,13 @@
 #include <map>
 namespace Gtk { class Widget; }
 
-/* greebo: A WidgetToggle can be connected to one or more widgets and shows/hides them 
+/* greebo: A WidgetToggle can be connected to one or more widgets and shows/hides them
  * upon toggle (e.g. like the Camera Window).
- * 
- * Note: GtkCheckMenuItems and GtkToggleToolButtons can not be hidden/shown by 
+ *
+ * Note: GtkCheckMenuItems and GtkToggleToolButtons can not be hidden/shown by
  * this class as they are the "native" GtkWidgets of the Toggle class which are
- * used in the menus and toolbars. 
- * 
+ * used in the menus and toolbars.
+ *
  * Therefore the connectWidget() method is overridden by this subclass and checks
  * for these items before adding them to the internal list.
  */
@@ -35,9 +35,9 @@ public:
 	 * widgets are added to the show/hide list */
 	virtual void connectWidget(Gtk::Widget* widget);
 	virtual void disconnectWidget(Gtk::Widget* widget);
-	
+
 	virtual void updateWidgets();
-	
+
 private:
 	void doNothing(bool) {}
 

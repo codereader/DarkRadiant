@@ -21,13 +21,13 @@ class FilterDialog :
 {
 private:
 	// Treemodel definition
-	struct TreeColumns : 
+	struct TreeColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		TreeColumns()
-		{ 
-			add(name); 
-			add(state); 
+		{
+			add(name);
+			add(state);
 			add(colour);
 			add(readonly);
 		}
@@ -44,7 +44,7 @@ private:
 
 	// The treeview listing all the filters
 	Gtk::TreeView* _filterView;
-	
+
 	std::map<int, Gtk::Widget*> _widgets;
 
 	// Holds the name of the currently selected filter (or "" if none selected)
@@ -61,7 +61,7 @@ private:
 	FilterDialog();
 
 public:
-	/** 
+	/**
 	 * greebo: Shows the dialog (command target)
 	 */
 	static void showDialog(const cmd::ArgumentList& args);

@@ -18,7 +18,7 @@ class ObjectiveEntity;
  * Dialog for displaying and editing the mission success/failure logic
  * which can optionally be different for each difficulty setting.
  */
-class MissionLogicDialog : 
+class MissionLogicDialog :
 	public gtkutil::BlockingTransientWindow
 {
 private:
@@ -28,14 +28,14 @@ private:
 
 	// The objective entity we're working on
 	ObjectiveEntity& _objectiveEnt;
-	
+
 public:
 	/**
 	 * Constructor creates widgets.
-	 * 
+	 *
 	 * @param parent
 	 * The parent window for which this dialog should be a transient.
-	 * 
+	 *
 	 * @param objectiveEnt
 	 * The Objective Entity object for which the logic should be edited.
 	 */

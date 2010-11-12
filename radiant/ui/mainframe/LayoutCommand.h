@@ -21,7 +21,7 @@ namespace ui {
 	}
 
 /**
- * This little class represents a "command target", providing 
+ * This little class represents a "command target", providing
  * a callback for activating a certain layout. The class
  * registers itself with the EventManager on construction.
  */
@@ -32,7 +32,7 @@ class LayoutCommand
 	std::string _activateCommand;
 public:
 	LayoutCommand(const std::string& layoutName) :
-		_layoutName(layoutName) 
+		_layoutName(layoutName)
 	{
 		_activateCommand = "ActivateLayout" + _layoutName;
 		GlobalCommandSystem().addCommand(
@@ -47,11 +47,11 @@ public:
 		// Add a new folder, if not existing yet
 		if (menuManager.get(MENU_LAYOUTS_PATH) == NULL) {
 			menuManager.insert(
-				MENU_LAYOUTS_INSERT_BEFORE, 
-				MENU_LAYOUTS, 
-				menuFolder, _("Window Layout"), 
+				MENU_LAYOUTS_INSERT_BEFORE,
+				MENU_LAYOUTS,
+				menuFolder, _("Window Layout"),
 				"", "" // no icon, no event
-			);	
+			);
 		}
 
 		// Add the item

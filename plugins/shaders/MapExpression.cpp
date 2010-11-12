@@ -17,7 +17,7 @@
 
 /* CONSTANTS */
 namespace {
-	
+
 	// Default image maps for optional material stages
 	const std::string IMAGE_BLACK = "_black.bmp";
 	const std::string IMAGE_CUBICLIGHT = "_cubiclight.bmp";
@@ -93,12 +93,12 @@ ImagePtr MapExpression::getResampled(const ImagePtr& input, std::size_t width, s
 	if (width != input->getWidth(0) || height != input->getHeight(0)) {
 		// Allocate a new image buffer
 		ImagePtr resampled (new RGBAImage(width, height));
-	
+
 		// Resample the texture to match the dimensions of the first image
 		TextureManipulator::instance().resampleTexture(
-			input->getMipMapPixels(0), 
-			input->getWidth(0), input->getHeight(0), 
-			resampled->getMipMapPixels(0), 
+			input->getMipMapPixels(0),
+			input->getWidth(0), input->getHeight(0),
+			resampled->getMipMapPixels(0),
 			width, height, 4
 		);
 		return resampled;
@@ -120,7 +120,7 @@ HeightMapExpression::HeightMapExpression (DefTokeniser& token) {
 ImagePtr HeightMapExpression::getImage() const {
 	// Get the heightmap from the contained expression
 	ImagePtr heightMap = heightMapExp->getImage();
-	
+
 	if (heightMap == NULL) return ImagePtr();
 
 	// Don't process precompressed images
@@ -128,7 +128,7 @@ ImagePtr HeightMapExpression::getImage() const {
 		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return heightMap;
 	}
-	
+
 	// Convert the heightmap into a normalmap
 	ImagePtr normalMap = createNormalmapFromHeightmap(heightMap, scale);
 	return normalMap;
@@ -150,7 +150,7 @@ AddNormalsExpression::AddNormalsExpression (DefTokeniser& token) {
 
 ImagePtr AddNormalsExpression::getImage() const {
     ImagePtr imgOne = mapExpOne->getImage();
-    
+
     if (imgOne == NULL) return ImagePtr();
 
     std::size_t width = imgOne->getWidth(0);
@@ -165,8 +165,8 @@ ImagePtr AddNormalsExpression::getImage() const {
 		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return imgOne;
 	}
-    
-	// The image must match the dimensions of the first 
+
+	// The image must match the dimensions of the first
 	imgTwo = getResampled(imgTwo, width, height);
 
     ImagePtr result (new RGBAImage(width, height));
@@ -182,13 +182,13 @@ ImagePtr AddNormalsExpression::getImage() const {
 		{
 			// create the two vectors
 			Vector3 vectorOne(
-    			static_cast<double>(pixOne[0]), 
-    			static_cast<double>(pixOne[1]), 
+    			static_cast<double>(pixOne[0]),
+    			static_cast<double>(pixOne[1]),
     			static_cast<double>(pixOne[2])
 			);
 			Vector3 vectorTwo(
-    			static_cast<double>(pixTwo[0]), 
-    			static_cast<double>(pixTwo[1]), 
+    			static_cast<double>(pixTwo[0]),
+    			static_cast<double>(pixTwo[1]),
     			static_cast<double>(pixTwo[2])
 			);
 			// Take the mean value of the two vectors
@@ -223,7 +223,7 @@ SmoothNormalsExpression::SmoothNormalsExpression (DefTokeniser& token) {
 ImagePtr SmoothNormalsExpression::getImage() const {
 
 	ImagePtr normalMap = mapExp->getImage();
-	
+
 	if (normalMap == NULL) return ImagePtr();
 
 	// Don't process precompressed images
@@ -231,12 +231,12 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return normalMap;
 	}
-	 
+
 	std::size_t width = normalMap->getWidth(0);
 	std::size_t height = normalMap->getHeight(0);
-	 
+
 	ImagePtr result (new RGBAImage(width, height));
- 
+
 	byte* in = normalMap->getMipMapPixels(0);
 	byte* out = result->getMipMapPixels(0);
 
@@ -275,14 +275,14 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 				smoothVector += temp;
 			}
 
-			// Take the average normal vector as result 
+			// Take the average normal vector as result
 			smoothVector *= perKernelSize;
-			
+
 			out[0] = float_to_integer(smoothVector.x());
 			out[1] = float_to_integer(smoothVector.y());
 			out[2] = float_to_integer(smoothVector.z());
 			out[3] = 255;
-			
+
 			// advance the pixel pointer
 			out += 4;
 	    }
@@ -306,14 +306,14 @@ AddExpression::AddExpression (DefTokeniser& token) {
 
 ImagePtr AddExpression::getImage() const {
     ImagePtr imgOne = mapExpOne->getImage();
-    
+
     if (imgOne == NULL) return ImagePtr();
 
     std::size_t width = imgOne->getWidth(0);
     std::size_t height = imgOne->getHeight(0);
 
 	ImagePtr imgTwo = mapExpTwo->getImage();
-	
+
 	if (imgTwo == NULL) return ImagePtr();
 
 	// Don't process precompressed images
@@ -321,7 +321,7 @@ ImagePtr AddExpression::getImage() const {
 		globalWarningStream() << "Cannot evaluate map expression with precompressed texture." << std::endl;
 		return imgOne;
 	}
-	
+
 	// Resize the image to match the dimensions of the first
     imgTwo = getResampled(imgTwo, width, height);
 
@@ -379,7 +379,7 @@ ScaleExpression::ScaleExpression (DefTokeniser& token) : scaleGreen(0),scaleBlue
 
 ImagePtr ScaleExpression::getImage() const {
     ImagePtr img = mapExp->getImage();
-    
+
     if (img == NULL) return ImagePtr();
 
 	// Don't process precompressed images
@@ -390,14 +390,14 @@ ImagePtr ScaleExpression::getImage() const {
 
     std::size_t width = img->getWidth(0);
     std::size_t height = img->getHeight(0);
-    
+
     if (scaleRed < 0 || scaleGreen < 0 || scaleBlue < 0 || scaleAlpha < 0) {
 		std::cout << "[shaders] ScaleExpression: Invalid scale values found.\n";
-		return img; 
+		return img;
 	}
-	 
+
     ImagePtr result (new RGBAImage(width, height));
- 
+
     byte* in = img->getMipMapPixels(0);
     byte* out = result->getMipMapPixels(0);
 
@@ -441,7 +441,7 @@ InvertAlphaExpression::InvertAlphaExpression (DefTokeniser& token) {
 
 ImagePtr InvertAlphaExpression::getImage() const {
 	ImagePtr img = mapExp->getImage();
-	
+
 	if (img == NULL) return ImagePtr();
 
 	// Don't process precompressed images
@@ -491,7 +491,7 @@ InvertColorExpression::InvertColorExpression (DefTokeniser& token) {
 
 ImagePtr InvertColorExpression::getImage() const {
 	ImagePtr img = mapExp->getImage();
-	
+
 	if (img == NULL) return ImagePtr();
 
 	// Don't process precompressed images
@@ -504,7 +504,7 @@ ImagePtr InvertColorExpression::getImage() const {
 	std::size_t height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
- 
+
 	byte* in = img->getMipMapPixels(0);
 	byte* out = result->getMipMapPixels(0);
 
@@ -539,7 +539,7 @@ MakeIntensityExpression::MakeIntensityExpression (DefTokeniser& token) {
 
 ImagePtr MakeIntensityExpression::getImage() const {
 	ImagePtr img = mapExp->getImage();
-	
+
 	if (img == NULL) return ImagePtr();
 
 	// Don't process precompressed images
@@ -552,10 +552,10 @@ ImagePtr MakeIntensityExpression::getImage() const {
 	std::size_t height = img->getHeight(0);
 
 	ImagePtr result (new RGBAImage(width, height));
- 
+
 	byte* in = img->getMipMapPixels(0);
 	byte* out = result->getMipMapPixels(0);
-	
+
 	// iterate through the pixels
 	for( std::size_t y = 0; y < height; ++y)
 	{
@@ -589,7 +589,7 @@ MakeAlphaExpression::MakeAlphaExpression (DefTokeniser& token) {
 
 ImagePtr MakeAlphaExpression::getImage() const {
 	ImagePtr img = mapExp->getImage();
-	
+
 	if (img == NULL) return ImagePtr();
 
 	// Don't process precompressed images
@@ -635,13 +635,13 @@ std::string MakeAlphaExpression::getIdentifier() const {
 
 ImageExpression::ImageExpression(const std::string& imgName)
 {
-	// Replace backslashes with forward slashes and strip of 
-	// the file extension of the provided token, and store 
+	// Replace backslashes with forward slashes and strip of
+	// the file extension of the provided token, and store
 	// the result in the provided string.
 	_imgName = os::standardPath(imgName).substr(0, imgName.rfind("."));
 }
 
-ImagePtr ImageExpression::getImage() const 
+ImagePtr ImageExpression::getImage() const
 {
 	// Check for some image keywords and load the correct file
 	if (_imgName == "_black") {
@@ -714,14 +714,14 @@ ImagePtr ImageExpression::getImage() const
             GlobalRegistry().get("user/paths/bitmapsPath") + IMAGE_WHITE
         );
 	}
-	else 
+	else
     {
         // this is a normal material image, so we load the image from VFS
 		return ImageFileLoader::imageFromVFS(_imgName);
 	}
 }
 
-std::string ImageExpression::getIdentifier() const 
+std::string ImageExpression::getIdentifier() const
 {
 	return _imgName;
 }

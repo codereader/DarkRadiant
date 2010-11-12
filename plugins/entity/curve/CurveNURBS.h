@@ -4,7 +4,7 @@
 #include "Curve.h"
 
 namespace entity {
-	
+
 	namespace {
 		const std::string curve_Nurbs = "curve_Nurbs";
 	}
@@ -16,7 +16,7 @@ class CurveNURBS :
 	Knots _knots;
 public:
 	CurveNURBS(const Callback& callback);
-	
+
 	// Subdivides the segments between the control points
 	virtual void tesselate();
 
@@ -28,17 +28,17 @@ public:
 
 	// Removes the given list of control points
 	virtual void removeControlPoints(IteratorList iterators);
-	
-	// Inserts control points before the specified list of iterators.  
+
+	// Inserts control points before the specified list of iterators.
 	virtual void insertControlPointsAt(IteratorList iterators);
 
 private:
 	// Clears the control points, weights and knots
 	virtual void clearCurve();
-	
+
 	// Overrides the derived parseCurve method, to do the weighting
 	virtual bool parseCurve(const std::string& value);
-	
+
 	// Helper method, performs the weighting
 	void doWeighting();
 };

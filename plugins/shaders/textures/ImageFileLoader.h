@@ -4,7 +4,7 @@
 #include "iimage.h"
 #include "ImageLoaderManager.h"
 
-namespace shaders 
+namespace shaders
 {
 
 /**
@@ -18,9 +18,9 @@ private:
 
 	// Get the list of ImageLoaders associated with the .game file formats
 	static const ImageLoaderList& getImageLoaders();
-	
+
 public:
-	
+
     /**
      * \brief
      * Load an image from a VFS path.

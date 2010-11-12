@@ -9,13 +9,13 @@ namespace module {
  * greebo: This is a small helper class that takes a DynamicLibrary,
  *         tries to lookup the entry point symbol and registers it with
  *         the ModuleRegistry on success.
- * 
+ *
  *         Pass the library candidate to the constructor.
  */
 class DynamicLibraryLoader {
 public:
 	/** greebo: The constructor takes the candidate dynamic library and a list
-	 *          where the library pointer is added to on success. 
+	 *          where the library pointer is added to on success.
 	 */
 	DynamicLibraryLoader(DynamicLibraryPtr library, DynamicLibraryList& targetList);
 };

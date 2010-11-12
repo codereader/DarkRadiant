@@ -38,10 +38,10 @@ namespace ui
 		const char* const LABEL_SUBDIVISION_X = N_("Horizontal:");
 		const char* const LABEL_SUBDIVISION_Y = N_("Vertical:");
 		const char* const LABEL_STEP = N_("Step:");
-		
+
 		const float TESS_MIN = 1.0f;
 		const float TESS_MAX = 32.0f;
-		
+
 		const std::string RKEY_ROOT = "user/ui/patch/patchInspector/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 		const std::string RKEY_X_STEP = RKEY_ROOT + "xCoordStep";
@@ -51,7 +51,7 @@ namespace ui
 		const std::string RKEY_T_STEP = RKEY_ROOT + "tCoordStep";
 	}
 
-PatchInspector::PatchInspector() 
+PatchInspector::PatchInspector()
 : gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
   _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
   _patchRows(0),
@@ -61,19 +61,19 @@ PatchInspector::PatchInspector()
 	// Set the default border width in accordance to the HIG
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
-	
+
 	// Create all the widgets and pack them into the window
 	populateWindow();
-	
+
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(this);
-	
+
 	// Update the widget status
 	rescanSelection();
-	
+
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-	
+
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 }
@@ -95,10 +95,10 @@ void PatchInspector::onRadiantShutdown()
 
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
-	
+
 	GlobalSelectionSystem().removeObserver(this);
 	GlobalEventManager().disconnectDialogWindow(this);
-	
+
 	// Destroy the transient window
 	destroy();
 
@@ -126,7 +126,7 @@ PatchInspector& PatchInspector::Instance()
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new PatchInspector);
-		
+
 		// Register this instance with GlobalRadiant() at once
 		GlobalRadiant().addEventListener(instancePtr);
 	}
@@ -139,61 +139,61 @@ void PatchInspector::populateWindow()
 	// Create the overall vbox
 	Gtk::VBox* dialogVBox = Gtk::manage(new Gtk::VBox(false, 6));
 	add(*dialogVBox);
-	
+
 	// Create the title label (bold font)
 	_vertexChooser.title = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_CONTROL_VERTICES) + "</span>"
     ));
 	dialogVBox->pack_start(*_vertexChooser.title, false, false, 0);
-    
+
     // Setup the table with default spacings
 	_vertexChooser.table = Gtk::manage(new Gtk::Table(2, 2, false));
     _vertexChooser.table->set_col_spacings(12);
     _vertexChooser.table->set_row_spacings(6);
-    
+
     // Pack it into an alignment so that it is indented
-	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*_vertexChooser.table, 18, 1.0)); 
+	Gtk::Alignment* alignment = Gtk::manage(new gtkutil::LeftAlignment(*_vertexChooser.table, 18, 1.0));
 	dialogVBox->pack_start(*alignment, false, false, 0);
-	
+
 	// The vertex col and row chooser
 	_vertexChooser.rowLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_ROW)));
 	_vertexChooser.table->attach(*_vertexChooser.rowLabel, 0, 1, 0, 1);
-		
+
 	_vertexChooser.rowCombo = Gtk::manage(new Gtk::ComboBoxText);
 	_vertexChooser.rowCombo->set_size_request(100, -1);
 	_vertexChooser.rowCombo->signal_changed().connect(sigc::mem_fun(*this, &PatchInspector::onComboBoxChange));
 	_vertexChooser.table->attach(*_vertexChooser.rowCombo, 1, 2, 0, 1);
-		
+
 	_vertexChooser.colLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_COL)));
 	_vertexChooser.table->attach(*_vertexChooser.colLabel, 0, 1, 1, 2);
-	
+
 	_vertexChooser.colCombo = Gtk::manage(new Gtk::ComboBoxText);
 	_vertexChooser.colCombo->set_size_request(100, -1);
 	_vertexChooser.colCombo->signal_changed().connect(sigc::mem_fun(*this, &PatchInspector::onComboBoxChange));
 	_vertexChooser.table->attach(*_vertexChooser.colCombo, 1, 2, 1, 2);
-	
+
 	// Create the title label (bold font)
 	_coordsLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_COORDS) + "</span>"
     ));
     _coordsLabel->set_padding(0, 2);
 	dialogVBox->pack_start(*_coordsLabel, false, false, 0);
-	
+
 	// Setup the table with default spacings
 	_coordsTable = Gtk::manage(new Gtk::Table(5, 2, false));
     _coordsTable->set_col_spacings(12);
     _coordsTable->set_row_spacings(6);
-    
+
     // Pack it into an alignment so that it is indented
 	Gtk::Alignment* coordAlignment = Gtk::manage(new gtkutil::LeftAlignment(*_coordsTable, 18, 1.0));
 	dialogVBox->pack_start(*coordAlignment, false, false, 0);
-    
+
     _coords["x"] = createCoordRow("X:", *_coordsTable, 0);
     _coords["y"] = createCoordRow("Y:", *_coordsTable, 1);
     _coords["z"] = createCoordRow("Z:", *_coordsTable, 2);
     _coords["s"] = createCoordRow("S:", *_coordsTable, 3);
     _coords["t"] = createCoordRow("T:", *_coordsTable, 4);
-    
+
     // Connect the step values to the according registry values
 	using namespace gtkutil;
 
@@ -217,38 +217,38 @@ void PatchInspector::populateWindow()
 		RKEY_T_STEP,
 		StringSerialisablePtr(new SerialisableTextEntryWrapper(_coords["t"].step))
 	);
-    
+
     // Connect all the arrow buttons
     for (CoordMap::iterator i = _coords.begin(); i != _coords.end(); ++i)
 	{
     	CoordRow& row = i->second;
-    	
+
     	// Pass a CoordRow ref to the callback, that's all it will need to update
 		row.smaller->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickSmaller), row));
 		row.larger->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickLarger), row));
     }
-    
+
     // Create the title label (bold font)
 	_tesselation.title = Gtk::manage(new gtkutil::LeftAlignedLabel(
     	std::string("<span weight=\"bold\">") + _(LABEL_TESSELATION) + "</span>"
     ));
     _tesselation.title->set_padding(0, 2);
 	dialogVBox->pack_start(*_tesselation.title, false, false, 0);
-    
+
     // Setup the table with default spacings
 	_tesselation.table = Gtk::manage(new Gtk::Table(3, 2, false));
     _tesselation.table->set_col_spacings(12);
     _tesselation.table->set_row_spacings(6);
-    
+
     // Pack it into an alignment so that it is indented
 	Gtk::Alignment* tessAlignment = Gtk::manage(new gtkutil::LeftAlignment(*_tesselation.table, 18, 1.0));
 	dialogVBox->pack_start(*tessAlignment, false, false, 0);
-	
+
 	// Tesselation checkbox
 	_tesselation.fixed = Gtk::manage(new Gtk::CheckButton(_(LABEL_FIXED)));
 	_tesselation.fixed->signal_toggled().connect(sigc::mem_fun(*this, &PatchInspector::onFixedTessChange));
 	_tesselation.table->attach(*_tesselation.fixed, 0, 2, 0, 1);
-	
+
 	// Tesselation entry fields
 	_tesselation.horiz = Gtk::manage(new Gtk::SpinButton);
 	_tesselation.vert = Gtk::manage(new Gtk::SpinButton);
@@ -258,76 +258,76 @@ void PatchInspector::populateWindow()
 
 	_tesselation.horiz->set_increments(1.0f, 2.0f);
 	_tesselation.vert->set_increments(1.0f, 2.0f);
-	
+
 	_tesselation.horiz->set_digits(0);
 	_tesselation.vert->set_digits(0);
-	
+
 	_tesselation.horiz->signal_value_changed().connect(sigc::mem_fun(*this, &PatchInspector::onTessChange));
 	_tesselation.vert->signal_value_changed().connect(sigc::mem_fun(*this, &PatchInspector::onTessChange));
-	
+
 	_tesselation.horiz->set_size_request(100, -1);
 	_tesselation.vert->set_size_request(100, -1);
-	
+
 	_tesselation.horizLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_SUBDIVISION_X)));
 	_tesselation.vertLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_SUBDIVISION_Y)));
-	
+
 	_tesselation.table->attach(*_tesselation.horizLabel, 0, 1, 1, 2);
 	_tesselation.table->attach(*_tesselation.horiz, 1, 2, 1, 2);
-	
+
 	_tesselation.table->attach(*_tesselation.vertLabel, 0, 1, 2, 3);
 	_tesselation.table->attach(*_tesselation.vert, 1, 2, 2, 3);
 }
 
 PatchInspector::CoordRow PatchInspector::createCoordRow(
-	const std::string& label, Gtk::Table& table, int row) 
+	const std::string& label, Gtk::Table& table, int row)
 {
 	CoordRow coordRow;
-	
+
 	coordRow.hbox = Gtk::manage(new Gtk::HBox(false, 6));
-		
+
 	// Create the label
 	coordRow.label = Gtk::manage(new gtkutil::LeftAlignedLabel(label));
 	table.attach(*coordRow.label, 0, 1, row, row + 1);
-		
+
 	// Create the entry field
 	coordRow.value = Gtk::manage(new Gtk::Entry);
 	coordRow.value->set_width_chars(7);
 	coordRow.value->signal_changed().connect(sigc::mem_fun(*this, &PatchInspector::onCoordChange));
-	
+
 	coordRow.hbox->pack_start(*coordRow.value, true, true, 0);
-	
+
 	{
 		Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(true, 0));
-		
+
 		coordRow.smaller = Gtk::manage(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_left.png"))
 		);
 		coordRow.smaller->set_size_request(15, 24);
 		hbox->pack_start(*coordRow.smaller, false, false, 0);
-		
+
 		coordRow.larger = Gtk::manage(
 			new gtkutil::ControlButton(GlobalUIManager().getLocalPixbuf("arrow_right.png"))
 		);
 		coordRow.larger->set_size_request(15, 24);
-		hbox->pack_start(*coordRow.larger, false, false, 0); 
-		
+		hbox->pack_start(*coordRow.larger, false, false, 0);
+
 		coordRow.hbox->pack_start(*hbox, false, false, 0);
 	}
-	
+
 	// Create the label
 	coordRow.steplabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_STEP)));
 	coordRow.hbox->pack_start(*coordRow.steplabel, false, false, 0);
-	
+
 	// Create the entry field
 	coordRow.step = Gtk::manage(new Gtk::Entry);
 	coordRow.step->set_width_chars(5);
 	coordRow.step->signal_changed().connect(sigc::mem_fun(*this, &PatchInspector::onStepChanged));
-	
+
 	coordRow.hbox->pack_start(*coordRow.step, false, false, 0);
-		
+
 	// Pack the hbox into the table
 	table.attach(*coordRow.hbox, 1, 2, row, row + 1);
-	
+
 	// Return the filled structure
 	return coordRow;
 }
@@ -347,7 +347,7 @@ void PatchInspector::queueUpdate()
 void PatchInspector::update()
 {
 	_updateActive = true;
-	
+
 	PatchNodePtr patch = _patch.lock();
 
 	if (patch != NULL)
@@ -364,7 +364,7 @@ void PatchInspector::update()
 		// Load the data from the currently selected vertex
 		loadControlVertex();
 	}
-	
+
 	_updateActive = false;
 }
 
@@ -376,18 +376,18 @@ void PatchInspector::loadControlVertex()
 	{
 		int row = strToInt(_vertexChooser.rowCombo->get_active_text());
 		int col = strToInt(_vertexChooser.colCombo->get_active_text());
-		
+
 		// Retrieve the controlvertex
 		const PatchControl& ctrl = patch->getPatch().ctrlAt(row, col);
-		
+
 		_updateActive = true;
-		
+
 		_coords["x"].value->set_text(floatToStr(ctrl.vertex[0]));
 		_coords["y"].value->set_text(floatToStr(ctrl.vertex[1]));
 		_coords["z"].value->set_text(floatToStr(ctrl.vertex[2]));
 		_coords["s"].value->set_text(floatToStr(ctrl.texcoord[0]));
 		_coords["t"].value->set_text(floatToStr(ctrl.texcoord[1]));
-		
+
 		_updateActive = false;
 	}
 }
@@ -401,7 +401,7 @@ void PatchInspector::_preHide()
 	// A hidden PatchInspector doesn't need to listen for events
 	GlobalUndoSystem().removeObserver(this);
 	GlobalSelectionSystem().removeObserver(this);
-	
+
 	// Save the window position, to make sure
 	_windowPosition.readPosition();
 }
@@ -431,11 +431,11 @@ void PatchInspector::selectionChanged(const scene::INodePtr& node, bool isCompon
 void PatchInspector::clearVertexChooser()
 {
 	_updateActive = true;
-	
+
 	// Remove all the items from the combo boxes
 	_vertexChooser.rowCombo->clear_items();
 	_vertexChooser.colCombo->clear_items();
-	
+
 	_updateActive = false;
 }
 
@@ -444,7 +444,7 @@ void PatchInspector::setPatch(const PatchNodePtr& newPatch)
 	// Detach if we had a previous patch
 	PatchNodePtr patch = _patch.lock();
 
-	if (patch != NULL) 
+	if (patch != NULL)
 	{
 		patch->getPatch().detachObserver(this);
 	}
@@ -478,11 +478,11 @@ void PatchInspector::rescanSelection()
 
 	_vertexChooser.table->set_sensitive(sensitive);
 	_vertexChooser.title->set_sensitive(sensitive);
-	
+
 	// Tesselation is always sensitive when one or more patches are selected
 	_tesselation.title->set_sensitive(_selectionInfo.patchCount > 0);
 	_tesselation.table->set_sensitive(_selectionInfo.patchCount > 0);
-	
+
 	_coordsLabel->set_sensitive(sensitive);
 	_coordsTable->set_sensitive(sensitive);
 
@@ -499,11 +499,11 @@ void PatchInspector::rescanSelection()
 		bool tessIsSame = false;
 
 		// Try to find a pair of same tesselation values
-		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i) 
+		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i)
         {
 			IPatch& p = (*i)->getPatch();
 
-			if (tess.x() == UINT_MAX) 
+			if (tess.x() == UINT_MAX)
             {
 				// Not initialised yet, take these values for starters
 				tessIsSame = true;
@@ -517,7 +517,7 @@ void PatchInspector::rescanSelection()
 
 				if (tessIsFixed != p.subdivionsFixed() || otherTess != tess)
 				{
-					// Our journey ends here, we cannot find a pair of tesselations 
+					// Our journey ends here, we cannot find a pair of tesselations
 					// for all selected patches or the same fixed/variable status
 					tessIsSame = false;
 					tessIsFixed = false;
@@ -530,15 +530,15 @@ void PatchInspector::rescanSelection()
 
 		// Load the "fixed tesselation" value
 		_tesselation.fixed->set_active(tessIsFixed);
-		
+
 		_tesselation.horiz->set_value(tess[0]);
 		_tesselation.vert->set_value(tess[1]);
-		
+
 		_tesselation.horiz->set_sensitive(tessIsFixed);
 		_tesselation.vert->set_sensitive(tessIsFixed);
 		_tesselation.vertLabel->set_sensitive(tessIsFixed);
 		_tesselation.horizLabel->set_sensitive(tessIsFixed);
-		
+
 		if (_selectionInfo.patchCount == 1)
 		{
 			setPatch(list[0]);
@@ -546,7 +546,7 @@ void PatchInspector::rescanSelection()
 
 		_updateActive = false;
 	}
-	
+
 	update();
 }
 
@@ -584,17 +584,17 @@ void PatchInspector::emitCoords()
 
 	int row = strToInt(_vertexChooser.rowCombo->get_active_text());
 	int col = strToInt(_vertexChooser.colCombo->get_active_text());
-	
+
 	// Retrieve the controlvertex
 	PatchControl& ctrl = patch->getPatchInternal().ctrlAt(row, col);
-	
+
 	ctrl.vertex[0] = strToFloat(_coords["x"].value->get_text());
 	ctrl.vertex[1] = strToFloat(_coords["y"].value->get_text());
 	ctrl.vertex[2] = strToFloat(_coords["z"].value->get_text());
-	
+
 	ctrl.texcoord[0] = strToFloat(_coords["s"].value->get_text());
 	ctrl.texcoord[1] = strToFloat(_coords["t"].value->get_text());
-	
+
 	patch->getPatchInternal().controlPointsChanged();
 
 	GlobalMainFrame().updateAllWindows();
@@ -613,7 +613,7 @@ void PatchInspector::emitTesselation()
 
 	// Save the setting into the selected patch(es)
 	selection::algorithm::PatchTesselationUpdater updater(fixed, tess);
-	GlobalSelectionSystem().foreachSelected(updater);	
+	GlobalSelectionSystem().foreachSelected(updater);
 
 	_tesselation.horiz->set_sensitive(fixed);
 	_tesselation.vert->set_sensitive(fixed);
@@ -640,7 +640,7 @@ void PatchInspector::onStepChanged()
 {
 	// Save contents to the registry
 	saveToRegistry();
-} 
+}
 
 void PatchInspector::onTessChange()
 {
@@ -669,7 +669,7 @@ void PatchInspector::onClickLarger(CoordRow& row)
 	// Get the current value and the step increment
 	float value = strToFloat(row.value->get_text());
 	float step = strToFloat(row.step->get_text());
-	
+
 	// This triggers the onCoordChange callback method
 	row.value->set_text(floatToStr(value + step));
 }
@@ -679,7 +679,7 @@ void PatchInspector::onClickSmaller(CoordRow& row)
 	// Get the current value and the step increment
 	float value = strToFloat(row.value->get_text());
 	float step = strToFloat(row.step->get_text());
-	
+
 	// This triggers the onCoordChange callback method
 	row.value->set_text(floatToStr(value - step));
 }

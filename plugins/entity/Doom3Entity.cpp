@@ -26,8 +26,8 @@ Doom3Entity::Doom3Entity(const Doom3Entity& other) :
 	_observerMutex(false),
 	_isContainer(other._isContainer)
 {
-	for (KeyValues::const_iterator i = other._keyValues.begin(); 
-		 i != other._keyValues.end(); 
+	for (KeyValues::const_iterator i = other._keyValues.begin();
+		 i != other._keyValues.end();
 		 ++i)
 	{
 		insert(i->first, i->second->get());
@@ -39,8 +39,8 @@ bool Doom3Entity::isModel() const
 	std::string name = getKeyValue("name");
 	std::string model = getKeyValue("model");
 	std::string classname = getKeyValue("classname");
-	
-	return (classname == "func_static" && !name.empty() && name != model); 
+
+	return (classname == "func_static" && !name.empty() && name != model);
 }
 
 void Doom3Entity::importState(const KeyValues& keyValues)
@@ -50,7 +50,7 @@ void Doom3Entity::importState(const KeyValues& keyValues)
 	{
 		erase(_keyValues.begin());
 	}
-	
+
 	/* greebo: This code somehow doesn't delete all the keys (only every second one)
 	for(KeyValues::iterator i = _keyValues.begin(); i != _keyValues.end();) {
 		erase(i++);
@@ -62,24 +62,24 @@ void Doom3Entity::importState(const KeyValues& keyValues)
 	}
 }
 
-void Doom3Entity::attachObserver(Observer* observer) 
+void Doom3Entity::attachObserver(Observer* observer)
 {
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be attached during iteration");
-	
+
 	// Add the observer to the internal list
 	_observers.insert(observer);
-	
+
 	// Now notify the observer about all the existing keys
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) 
+	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
     {
 		observer->onKeyInsert(i->first, *i->second);
 	}
 }
 
-void Doom3Entity::detachObserver(Observer* observer) 
+void Doom3Entity::detachObserver(Observer* observer)
 {
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be detached during iteration");
-	
+
 	// Remove the observer from the list, if it can be found
 	Observers::iterator found = _observers.find(observer);
 
@@ -91,9 +91,9 @@ void Doom3Entity::detachObserver(Observer* observer)
 
 	// Remove the observer
 	_observers.erase(found);
-	
+
 	// Call onKeyErase() for every spawnarg, so that the observer gets cleanly shut down
-	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i) 
+	for(KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
     {
 		observer->onKeyErase(i->first, *i->second);
 	}
@@ -118,7 +118,7 @@ void Doom3Entity::forEachKeyValue_instanceDetach(MapFile* map)
 void Doom3Entity::instanceAttach(MapFile* map)
 {
 	GlobalCounters().getCounter(counterEntities).increment();
-	
+
 	_instanced = true;
 	forEachKeyValue_instanceAttach(map);
 	_undo.instanceAttach(map);
@@ -158,7 +158,7 @@ void Doom3Entity::forEachKeyValue(KeyValueVisitor& visitor)
 
 /** Set a keyvalue on the entity.
  */
-void Doom3Entity::setKeyValue(const std::string& key, const std::string& value) 
+void Doom3Entity::setKeyValue(const std::string& key, const std::string& value)
 {
 	if (value.empty())
 	{
@@ -239,13 +239,13 @@ void Doom3Entity::notifyInsert(const std::string& key, KeyValue& value)
 {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
-	
+
 	// Notify all the Observers about the new keyvalue
 	for (Observers::iterator i = _observers.begin(); i != _observers.end(); ++i)
 	{
 		(*i)->onKeyInsert(key, value);
 	}
-	
+
 	_observerMutex = false;
 }
 
@@ -255,7 +255,7 @@ void Doom3Entity::notifyChange(const std::string& k, const std::string& v)
 
     for (Observers::iterator i = _observers.begin();
          i != _observers.end();
-         ++i) 
+         ++i)
     {
 		(*i)->onKeyChange(k, v);
 	}
@@ -267,12 +267,12 @@ void Doom3Entity::notifyErase(const std::string& key, KeyValue& value)
 {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
-	
+
 	for(Observers::iterator i = _observers.begin(); i != _observers.end(); ++i)
 	{
 		(*i)->onKeyErase(key, value);
 	}
-	
+
 	_observerMutex = false;
 }
 
@@ -280,7 +280,7 @@ void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
 {
 	// Insert the new key at the end of the list
 	KeyValues::iterator i = _keyValues.insert(
-		_keyValues.end(), 
+		_keyValues.end(),
 		KeyValuePair(key, keyValue)
 	);
 
@@ -293,11 +293,11 @@ void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
 	}
 }
 
-void Doom3Entity::insert(const std::string& key, const std::string& value) 
+void Doom3Entity::insert(const std::string& key, const std::string& value)
 {
 	// Try to lookup the key in the map
 	KeyValues::iterator i = find(key);
-	
+
 	if (i != _keyValues.end())
     {
 		// Key has been found
@@ -314,7 +314,7 @@ void Doom3Entity::insert(const std::string& key, const std::string& value)
 
 		// Allocate a new KeyValue object and insert it into the map
 		insert(
-			key, 
+			key,
 			KeyValuePtr(new KeyValue(value, _eclass->getAttribute(key).value))
 		);
 	}
@@ -333,7 +333,7 @@ void Doom3Entity::erase(const KeyValues::iterator& i)
 
 	// Actually delete the object from the list
 	_keyValues.erase(i);
-	
+
 	// Notify about the deletion
 	notifyErase(key, *value);
 
@@ -345,7 +345,7 @@ void Doom3Entity::erase(const std::string& key)
 {
 	// Try to lookup the key
 	KeyValues::iterator i = find(key);
-	
+
 	if (i != _keyValues.end())
 	{
 		_undo.save();
@@ -355,8 +355,8 @@ void Doom3Entity::erase(const std::string& key)
 
 Doom3Entity::KeyValues::const_iterator Doom3Entity::find(const std::string& key) const
 {
-	for (KeyValues::const_iterator i = _keyValues.begin(); 
-		 i != _keyValues.end(); 
+	for (KeyValues::const_iterator i = _keyValues.begin();
+		 i != _keyValues.end();
 		 ++i)
 	{
 		if (boost::iequals(i->first, key))
@@ -371,8 +371,8 @@ Doom3Entity::KeyValues::const_iterator Doom3Entity::find(const std::string& key)
 
 Doom3Entity::KeyValues::iterator Doom3Entity::find(const std::string& key)
 {
-	for (KeyValues::iterator i = _keyValues.begin(); 
-		 i != _keyValues.end(); 
+	for (KeyValues::iterator i = _keyValues.begin();
+		 i != _keyValues.end();
 		 ++i)
 	{
 		if (boost::iequals(i->first, key))

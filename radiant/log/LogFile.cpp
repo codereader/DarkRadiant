@@ -13,7 +13,7 @@ namespace applog {
 
 LogFile::LogFile(const std::string& filename) :
 	_logFilename(
-		module::ModuleRegistry::Instance().getApplicationContext().getSettingsPath() + 
+		module::ModuleRegistry::Instance().getApplicationContext().getSettingsPath() +
 		filename
 	),
 	_logStream(_logFilename.c_str())
@@ -32,7 +32,7 @@ LogFile::~LogFile() {
 	time(&localtime);
 
 	globalOutputStream() << "Closing log file at " << ctime(&localtime) << std::endl;
-	
+
 	_logStream.flush();
 	_logStream.close();
 
@@ -56,12 +56,12 @@ void LogFile::create(const std::string& filename) {
 
 		time_t localtime;
 		time(&localtime);
-		globalOutputStream() << "Today is: " << ctime(&localtime) 
+		globalOutputStream() << "Today is: " << ctime(&localtime)
 			                 << "This is " << RADIANT_APPNAME_FULL() << std::endl;
-        
+
 		// Output the gtkmm version to the logfile
-        std::string gtkVersion = intToStr(GTKMM_MAJOR_VERSION) + "."; 
-		gtkVersion += intToStr(GTKMM_MINOR_VERSION) + "."; 
+        std::string gtkVersion = intToStr(GTKMM_MAJOR_VERSION) + ".";
+		gtkVersion += intToStr(GTKMM_MINOR_VERSION) + ".";
 		gtkVersion += intToStr(GTKMM_MICRO_VERSION);
 
         globalOutputStream() << "gtkmm Version: " << gtkVersion << std::endl;

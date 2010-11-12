@@ -40,14 +40,14 @@
 
 namespace ui
 {
-	
+
 /* CONSTANTS */
 
 namespace {
 
 	const char* FOLDER_ICON = "folder16.png";
 	const char* TEXTURE_ICON = "icon_texture.png";
-	
+
 	const char* LOAD_TEXTURE_TEXT = N_("Load in Textures view");
 	const char* LOAD_TEXTURE_ICON = "textureLoadInTexWindow16.png";
 
@@ -86,7 +86,7 @@ MediaBrowser::MediaBrowser()
 
 	// Use the TreeModel's full string search function
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
-	
+
 	// Pack the treeview into a scrollwindow, frame and then into the vbox
 	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
 
@@ -94,33 +94,33 @@ MediaBrowser::MediaBrowser()
 	frame->add(*scroll);
 
 	_widget->pack_start(*frame, true, true, 0);
-	
+
 	// Connect up the selection changed callback
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &MediaBrowser::_onSelectionChanged));
-	
+
 	// Construct the popup context menu
 	_popupMenu.addItem(
 		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON), 
+			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON),
 			_(LOAD_TEXTURE_TEXT)
 		)),
-		boost::bind(&MediaBrowser::_onLoadInTexView, this), 
+		boost::bind(&MediaBrowser::_onLoadInTexView, this),
 		boost::bind(&MediaBrowser::_testLoadInTexView, this)
 	);
 	_popupMenu.addItem(
 		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON), 
+			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON),
 			_(APPLY_TEXTURE_TEXT)
 		)),
-		boost::bind(&MediaBrowser::_onApplyToSel, this), 
+		boost::bind(&MediaBrowser::_onApplyToSel, this),
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
 	_popupMenu.addItem(
 		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON), 
+			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON),
 			_(SHOW_SHADER_DEF_TEXT)
 		)),
-		boost::bind(&MediaBrowser::_onShowShaderDefinition, this), 
+		boost::bind(&MediaBrowser::_onShowShaderDefinition, this),
 		boost::bind(&MediaBrowser::_testSingleTexSel, this)
 	);
 
@@ -133,7 +133,7 @@ MediaBrowser::MediaBrowser()
 namespace
 {
 
-struct ShaderNameCompareFunctor : 
+struct ShaderNameCompareFunctor :
 	public std::binary_function<std::string, std::string, bool>
 {
 	bool operator()(const std::string& s1, const std::string& s2) const
@@ -148,12 +148,12 @@ struct ShaderNameFunctor
 	// TreeStore to populate
 	const MediaBrowser::TreeColumns& _columns;
 	Glib::RefPtr<Gtk::TreeStore> _store;
-	
+
 	std::string _otherMaterialsPath;
 
 	// Toplevel node to add children under
 	Gtk::TreeModel::iterator _topLevel;
-	
+
 	// Maps of names to corresponding treemodel iterators, for both intermediate
 	// paths and explicitly presented paths
 	typedef std::map<std::string, Gtk::TreeModel::iterator, ShaderNameCompareFunctor> NamedIterMap;
@@ -170,29 +170,29 @@ struct ShaderNameFunctor
 		_folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
 		_textureIcon(GlobalUIManager().getLocalPixbuf(TEXTURE_ICON))
 	{}
-	
+
 	// Recursive add function
 	Gtk::TreeModel::iterator& addRecursive(const std::string& path)
 	{
-		// Look up candidate in the map and return it if found	
+		// Look up candidate in the map and return it if found
 		NamedIterMap::iterator it = _iters.find(path);
 
 		if (it != _iters.end())
 		{
 			return it->second;
 		}
-		
+
 		/* Otherwise, split the path on its rightmost slash, call recursively on the
 		 * first half in order to add the parent node, then add the second half as
 		 * a child. Recursive bottom-out is when there is no slash (top-level node).
 		 */
-		 
+
 		// Find rightmost slash
 		std::size_t slashPos = path.rfind("/");
-		
+
 		// Call recursively to get parent iter, leaving it at the toplevel if
 		// there is no slash
-		const Gtk::TreeModel::iterator& parIter = 
+		const Gtk::TreeModel::iterator& parIter =
 			slashPos != std::string::npos ? addRecursive(path.substr(0, slashPos)) : _topLevel;
 
 		// Append a node to the tree view for this child
@@ -205,20 +205,20 @@ struct ShaderNameFunctor
 		row[_columns.icon] = _folderIcon;
 		row[_columns.isFolder] = true;
 		row[_columns.isOtherMaterialsFolder] = path.length() == _otherMaterialsPath.length() && path == _otherMaterialsPath;
-		
+
 		// Add a copy of the Gtk::TreeModel::iterator to our hashmap and return it
 		std::pair<NamedIterMap::iterator, bool> result = _iters.insert(
 			NamedIterMap::value_type(path, iter));
-		
+
 		return result.first->second;
 	}
-	
+
 	void visit(const std::string& name)
 	{
 		// If the name starts with "textures/", add it to the treestore.
-		Gtk::TreeModel::iterator& iter = 
+		Gtk::TreeModel::iterator& iter =
 			boost::algorithm::istarts_with(name, "textures/") ? addRecursive(name) : addRecursive(_otherMaterialsPath + "/" + name);
-		
+
 		// Check the position of the last slash
 		std::size_t slashPos = name.rfind("/");
 
@@ -231,7 +231,7 @@ struct ShaderNameFunctor
 		row[_columns.isOtherMaterialsFolder] = false;
 	}
 };
-	
+
 } // namespace
 
 /* Tree query functions */
@@ -305,7 +305,7 @@ void MediaBrowser::setSelection(const std::string& selection)
 	if (!_isPopulated) {
 		populate();
 	}
-	
+
 	// If the selection string is empty, collapse the treeview and return with
 	// no selection
 	if (selection.empty())
@@ -323,10 +323,10 @@ void MediaBrowser::reloadMedia()
 	// Remove all items and clear the "isPopulated" flag
 	_treeStore->clear();
 	_isPopulated = false;
-	
+
 	// Trigger an "expose" event
 	_widget->queue_draw();
-} 
+}
 
 void MediaBrowser::init()
 {
@@ -345,7 +345,7 @@ void MediaBrowser::populate()
 	//ScopedDebugTimer timer("MediaBrowserPopulation");
 
 	ShaderNameFunctor functor(_treeStore, _columns);
-	
+
 	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 }
 
@@ -353,7 +353,7 @@ void MediaBrowser::populate()
 
 void MediaBrowser::_onLoadInTexView()
 {
-	// Use a TextureDirectoryLoader functor to search the directory. This 
+	// Use a TextureDirectoryLoader functor to search the directory. This
 	// may throw an exception if cancelled by user.
 	TextureDirectoryLoader loader(getSelectedName());
 
@@ -363,7 +363,7 @@ void MediaBrowser::_onLoadInTexView()
 	}
 	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
 	{
-		// Ignore the error and return from the function normally	
+		// Ignore the error and return from the function normally
 	}
 }
 
@@ -404,7 +404,7 @@ void MediaBrowser::_onShowShaderDefinition()
 
 	dialog.add_button(Gtk::Stock::CLOSE, Gtk::RESPONSE_OK);
 	dialog.set_border_width(12);
-	
+
 	dialog.get_vbox()->add(*view);
 
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
@@ -506,7 +506,7 @@ void MediaBrowser::registerPreferences()
 {
 	// Add a page to the given group
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Media Browser"));
-	
+
 	page->appendCheckBox("", _("Load media tree at startup"), RKEY_MEDIA_BROWSER_PRELOAD);
 }
 

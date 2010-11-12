@@ -11,7 +11,7 @@ FloatingCamWnd::FloatingCamWnd(const Glib::RefPtr<Gtk::Window>& parent) :
 	CamWnd::setContainer(getRefPtr());
 
 	add(*Gtk::manage(new gtkutil::FramedWidget(*CamWnd::getWidget())));
-	
+
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_NORMAL);
 }
 

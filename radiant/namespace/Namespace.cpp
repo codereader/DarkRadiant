@@ -5,7 +5,7 @@
 #include "itextstream.h"
 #include "modulesystem/StaticModule.h"
 
-class ConnectNamespacedWalker : 
+class ConnectNamespacedWalker :
 	public scene::NodeVisitor
 {
 	Namespace* _nspace;
@@ -89,7 +89,7 @@ public:
 };
 
 // A walker importing all names into this namespace
-class GatherNamespacedWalker : 
+class GatherNamespacedWalker :
 	public scene::NodeVisitor
 {
 	// The set of imported names to keep track of what got imported already
@@ -177,7 +177,7 @@ void Namespace::addNameObserver(const std::string& name, NameObserver& observer)
 
 void Namespace::removeNameObserver(const std::string& name, NameObserver& observer) {
 	// Lookup the iterator boundaries and find the observer
-	for (ObserverMap::iterator i = _observers.lower_bound(name), upperBound = _observers.upper_bound(name); 
+	for (ObserverMap::iterator i = _observers.lower_bound(name), upperBound = _observers.upper_bound(name);
 		 i != _observers.end() && i != upperBound; i++)
 	{
 		if (i->second == &observer) {
@@ -209,9 +209,9 @@ void Namespace::nameChanged(const std::string& oldName, const std::string& newNa
 	// *after* the new upper_bound(), and the wrong observer gets called.
 	// Performance should not be a problem as this only gets executed on name changes, and there
 	// is a finite number of observers watching a single name anyway.
-	
-	for (ObserverMap::iterator i = _observers.lower_bound(oldName); 
-		 i != _observers.end() && i != _observers.upper_bound(oldName) && i->first == oldName; 
+
+	for (ObserverMap::iterator i = _observers.lower_bound(oldName);
+		 i != _observers.end() && i != _observers.upper_bound(oldName) && i->first == oldName;
 		 /* in-loop increment */)
 	{
 		assert(i->second != NULL);
@@ -232,8 +232,8 @@ void Namespace::nameChanged(const std::string& oldName, const std::string& newNa
 
 	// Now go through that list again, and rename all remaining observers which
 	// point at the old name (ideally, there are none left at this point)
-	for (ObserverMap::iterator i = _observers.lower_bound(oldName); 
-		 i != _observers.end() && i != _observers.upper_bound(oldName); 
+	for (ObserverMap::iterator i = _observers.lower_bound(oldName);
+		 i != _observers.end() && i != _observers.upper_bound(oldName);
 		 /* in-loop increment */)
 	{
 		temp.push_back(i->second);
@@ -253,7 +253,7 @@ void Namespace::importNames(const scene::INodePtr& root) {
 
 	// Move all nodes below (and including) root into this temporary namespace
 	foreignNamespace.connect(root);
-	
+
 	// Collect all namespaced items from the foreign root
 	std::set<NamespacedPtr> importNodes;
 
@@ -269,9 +269,9 @@ void Namespace::importNames(const scene::INodePtr& root) {
 	// are unique in *both* namespaces
 	combinedNameSet.merge(foreignNamespace._uniqueNames);
 
-	// Now ensure that all import candidates are renamed to fit into 
+	// Now ensure that all import candidates are renamed to fit into
 	// this Namespace without conflicts
-	for (std::set<NamespacedPtr>::iterator i = importNodes.begin(); 
+	for (std::set<NamespacedPtr>::iterator i = importNodes.begin();
 		 i != importNodes.end(); i++)
 	{
 		Namespaced& namespaced = *(*i);
@@ -284,7 +284,7 @@ void Namespace::importNames(const scene::INodePtr& root) {
 			// Name exists in the target namespace, get a new name
 			combinedNameSet.makeUniqueAndInsert(importComplexName);
 
-			globalOutputStream() << "Name: " << importName << " already exists in this namespace. Rename it to " 
+			globalOutputStream() << "Name: " << importName << " already exists in this namespace. Rename it to "
 				<< importComplexName.getFullname() << "\n";
 
 			// Change the name of the imported node, this should
@@ -299,7 +299,7 @@ void Namespace::importNames(const scene::INodePtr& root) {
 		}
 	}
 
-	// at this point, all names in the foreign namespace have been converted to 
+	// at this point, all names in the foreign namespace have been converted to
 	// something unique in this namespace. The calling code can now move the
 	// nodes into this namespace without name conflicts
 

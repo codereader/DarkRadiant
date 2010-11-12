@@ -19,7 +19,7 @@ Document::Document(const std::string& filename) :
 {}
 
 Document::Document(const Document& other) :
-	_xmlDoc(other._xmlDoc) 
+	_xmlDoc(other._xmlDoc)
 {}
 
 Document::~Document() {
@@ -52,13 +52,13 @@ void Document::addTopLevelNode(const std::string& name) {
 	xmlNodePtr root = xmlNewDocNode(_xmlDoc, NULL, nameStr, emptyStr);
 	xmlNodePtr oldRoot = xmlDocSetRootElement(_xmlDoc, root);
 
-	if (oldRoot != NULL) 
+	if (oldRoot != NULL)
     {
 		// Old root element, remove it
 		xmlUnlinkNode(oldRoot);
 		xmlFreeNode(oldRoot);
 	}
-	
+
 	xmlFree(nameStr);
 	xmlFree(emptyStr);
 }
@@ -75,7 +75,7 @@ Node Document::getTopLevelNode() const {
 void Document::importDocument(Document& other, Node& importNode) {
 	// Locate the top-level node(s) of the other document
 	xml::NodeList topLevelNodes = other.findXPath("/*");
-	
+
 	xmlNodePtr targetNode = importNode.getNodePtr();
 
 	if (targetNode->children == NULL || targetNode->name == NULL) {
@@ -85,7 +85,7 @@ void Document::importDocument(Document& other, Node& importNode) {
 
 	// Add each of the imported nodes to the target importNode
 	for (std::size_t i = 0; i < topLevelNodes.size(); i++) {
-		xmlAddPrevSibling(targetNode->children, 
+		xmlAddPrevSibling(targetNode->children,
 						  topLevelNodes[i].getNodePtr());
 	}
 }
@@ -119,8 +119,8 @@ NodeList Document::findXPath(const std::string& path) const
                   << "when searching for " << path << std::endl;
         throw XPathException("Failed to create XPath context");
     }
-    
-    // Evaluate the expression  
+
+    // Evaluate the expression
     const xmlChar* xpath = reinterpret_cast<const xmlChar*>(path.c_str());
     xmlXPathObjectPtr result = xmlXPathEvalExpression(xpath, context);
     xmlXPathFreeContext(context);
@@ -130,7 +130,7 @@ NodeList Document::findXPath(const std::string& path) const
                   << path << std::endl;
         throw XPathException("Failed to evaluate XPath expression");
     }
-    
+
     // Construct the return vector. This may be empty if the provided XPath
     // expression does not identify any nodes.
     NodeList retval;

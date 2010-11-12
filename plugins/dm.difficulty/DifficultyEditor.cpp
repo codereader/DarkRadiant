@@ -30,7 +30,7 @@ namespace ui {
 		const int TREE_VIEW_MIN_WIDTH = 320;
 	}
 
-DifficultyEditor::DifficultyEditor(const std::string& label, 
+DifficultyEditor::DifficultyEditor(const std::string& label,
 								   const difficulty::DifficultySettingsPtr& settings) :
 	_settings(settings),
 	_updateActive(false)
@@ -108,18 +108,18 @@ Gtk::Widget& DifficultyEditor::createTreeView()
 	settingCol->add_attribute(textRenderer->property_strikethrough(), _settings->getColumns().isOverridden);
 
 	Gtk::ScrolledWindow* frame = Gtk::manage(new gtkutil::ScrolledFrame(*_settingsView));
-	
+
 	// Create the action buttons
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(false, 6));
-	
+
 	// Create button
 	_createSettingButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
 	_createSettingButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onSettingCreate));
-	
+
 	// Delete button
 	_deleteSettingButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
 	_deleteSettingButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onSettingDelete));
-	
+
 	_refreshButton = Gtk::manage(new Gtk::Button(Gtk::Stock::REFRESH));
 	_refreshButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onRefresh));
 
@@ -186,13 +186,13 @@ Gtk::Widget& DifficultyEditor::createEditingWidgets()
 	// The appType chooser
 	_appTypeCombo = Gtk::manage(new Gtk::ComboBox(difficulty::Setting::getAppTypeStore()));
 	_appTypeCombo->signal_changed().connect(sigc::mem_fun(*this, &DifficultyEditor::onAppTypeChange));
-	
+
 	// Add the cellrenderer for the apptype text
 	Gtk::CellRendererText* appTypeRenderer = Gtk::manage(new Gtk::CellRendererText);
 
 	_appTypeCombo->pack_start(*appTypeRenderer, false);
 	_appTypeCombo->add_attribute(appTypeRenderer->property_text(), difficulty::Setting::getTreeModelColumns().name);
-	
+
 	// Pack the argument entry and the appType dropdown field together
 	Gtk::HBox* argHBox = Gtk::manage(new Gtk::HBox(false, 6));
 	argHBox->pack_start(*_argumentEntry, true, true, 0);
@@ -206,7 +206,7 @@ Gtk::Widget& DifficultyEditor::createEditingWidgets()
 
 	_saveSettingButton = Gtk::manage(new Gtk::Button(Gtk::Stock::SAVE));
 	_saveSettingButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyEditor::onSettingSave));
-	
+
 	buttonHbox->pack_start(*_saveSettingButton, false, false, 0);
 	_editorPane->pack_start(*Gtk::manage(new gtkutil::RightAlignment(*buttonHbox)), false, false, 0);
 
@@ -221,11 +221,11 @@ Gtk::Widget& DifficultyEditor::createEditingWidgets()
 int DifficultyEditor::getSelectedSettingId()
 {
 	Gtk::TreeModel::iterator iter = _settingsView->get_selection()->get_selected();
-	
+
 	return (iter) ? (*iter)[_settings->getColumns().settingId] : -1;
 }
 
-void DifficultyEditor::updateEditorWidgets() 
+void DifficultyEditor::updateEditorWidgets()
 {
 	_updateActive = true;
 
@@ -263,7 +263,7 @@ void DifficultyEditor::updateEditorWidgets()
 			ClassNameStore::Instance().getModel()->foreach_iter(
 				sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach)
 			);
-			
+
 			// Select the found treeiter, if the name was found in the liststore
 			if (finder.getIter())
 			{
@@ -272,7 +272,7 @@ void DifficultyEditor::updateEditorWidgets()
 
 			// Select the appType in the dropdown combo box (search the second column)
 			gtkutil::TreeModel::SelectionFinder appTypeFinder(
-				setting->appType, 
+				setting->appType,
 				difficulty::Setting::getTreeModelColumns().type.index()
 			);
 
@@ -286,7 +286,7 @@ void DifficultyEditor::updateEditorWidgets()
 				_appTypeCombo->set_active(appTypeFinder.getIter());
 			}
 
-			// Set the sensitivity of the argument entry box		
+			// Set the sensitivity of the argument entry box
 			_argumentEntry->set_sensitive(
 				(setting->appType == difficulty::Setting::EIgnore) ? false : true
 			);
@@ -301,7 +301,7 @@ void DifficultyEditor::updateEditorWidgets()
 	}
 	else
 	{
-		// Nothing selected, disable deletion 
+		// Nothing selected, disable deletion
 		_deleteSettingButton->set_sensitive(false);
 		_saveSettingButton->set_sensitive(false);
 	}
@@ -319,8 +319,8 @@ void DifficultyEditor::createSetting()
 {
 	// Unselect everything
 	_settingsView->get_selection()->unselect_all();
-	
-	// Unlock editing widgets 
+
+	// Unlock editing widgets
 	_editorPane->set_sensitive(true);
 
 	// Unlock class combo

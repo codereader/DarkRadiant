@@ -41,7 +41,7 @@ void initialiseLogStreams() {
 	StringLogDevice::InstancePtr() = StringLogDevicePtr(new StringLogDevice);
 }
 
-void shutdownStreams() 
+void shutdownStreams()
 {
 	// Stop redirecting GTK/GLIB errors and warnings
 	GtkLogRedirector::destroy();

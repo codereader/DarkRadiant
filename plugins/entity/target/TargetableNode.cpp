@@ -36,7 +36,7 @@ void TargetableNode::onKeyValueChanged(const std::string& name)
 		// Tell the Manager to disassociate us from the target
 		TargetManager::Instance().clearTarget(_targetName, _node);
 	}
-	
+
 	// Store the new name, in any case
 	_targetName = name;
 

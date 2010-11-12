@@ -38,19 +38,19 @@ void PicoPrintFunc( int level, const char *str )
 		case PICO_NORMAL:
 			globalOutputStream() << str << "\n";
 			break;
-		
+
 		case PICO_VERBOSE:
 			//globalOutputStream() << "PICO_VERBOSE: " << str << "\n";
 			break;
-		
+
 		case PICO_WARNING:
 			globalErrorStream() << "PICO_WARNING: " << str << "\n";
 			break;
-		
+
 		case PICO_ERROR:
 			globalErrorStream() << "PICO_ERROR: " << str << "\n";
 			break;
-		
+
 		case PICO_FATAL:
 			globalErrorStream() << "PICO_FATAL: " << str << "\n";
 			break;
@@ -79,30 +79,30 @@ void pico_initialise()
 
 // DarkRadiant module entry point
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	
+
 	pico_initialise();
 
 	const picoModule_t** modules = PicoModuleList( 0 );
-	
+
 	while (*modules != 0) {
 		const picoModule_t* module = *modules++;
-		
+
 		if (module->canload && module->load)	{
 			for (char*const* ext = module->defaultExts; *ext != 0; ++ext) {
 				// greebo: File extension is expected to be UPPERCASE
 				std::string extension(*ext);
 				boost::algorithm::to_upper(extension);
-				
+
 				registry.registerModule(
 					model::PicoModelLoaderPtr(new model::PicoModelLoader(module, extension))
 				);
 			}
 		}
 	}
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

@@ -136,14 +136,14 @@ void RenderableParticleBunch::update(std::size_t time)
 }
 
 void RenderableParticleBunch::render(const RenderInfo& info) const
-{ 
+{
 	if (_quads.empty()) return;
 
 	glVertexPointer(3, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].vertex));
 	glTexCoordPointer(2, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].texcoord));
 	glNormalPointer(GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].normal));
 	glColorPointer(4, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].colour));
-	
+
 	glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_quads.size())*4);
 }
 
@@ -173,7 +173,7 @@ Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
 
 	// Project the view vector onto the plane defined by the velocity vector
 	Vector3 viewProj = view - vel * view.dot(vel);
-	
+
 	// This is the particle normal in object space (after being oriented such that y || velocity)
 	Vector3 z = object2Vel.z().getVector3();
 
@@ -243,7 +243,7 @@ void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 		// Calculate how much we should be faded already
 		float startFrac = 1.0f - fadeIndexFraction;
 		float frac = (startFrac - pIdx) / (startFrac - 1.0f);
-		
+
 		// Ignore negative fraction values, this also takes care that only
 		// those particles with time >= fadeIndexFraction get faded.
 		if (frac > 0)
@@ -256,7 +256,7 @@ void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 
 	if (fadeInFraction > 0 && particle.timeFraction <= fadeInFraction)
 	{
-		particle.colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), particle.timeFraction / fadeInFraction); 
+		particle.colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), particle.timeFraction / fadeInFraction);
 	}
 
 	float fadeOutFraction = _stage.getFadeOutFraction();
@@ -285,7 +285,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 
 			// Calculate particle direction, pass distribution offset (this is needed for DIRECTION_OUTWARD)
 			Vector3 particleDirection = getDirection(particle, _direction, distributionOffset);
-			
+
 			// Consider speed
 			particle.origin += particleDirection * integrate(_stage.getSpeed(), particle.timeSecs);
 		}
@@ -456,8 +456,8 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleRenderInfo& parti
 
 			// If random distribution is off, particles get spawned at <sizex, sizey, sizez>
 
-			return Vector3(randX * _stage.getDistributionParm(0), 
-						   randY * _stage.getDistributionParm(1), 
+			return Vector3(randX * _stage.getDistributionParm(0),
+						   randY * _stage.getDistributionParm(1),
 						   randZ * _stage.getDistributionParm(2));
 		}
 
@@ -471,10 +471,10 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleRenderInfo& parti
 
 			// greebo: Some tests showed that for the cylinder type
 			// the fourth parameter ("ringfraction") is only effective if >1,
-			// it effectively scales the elliptic shape by that factor. 
+			// it effectively scales the elliptic shape by that factor.
 			// Values < 1.0 didn't have any effect (?) Someone could double-check that.
 			// Interestingly, the built-in particle editor doesn't really allow editing that parameter.
-			if (ringFrac > 1.0f) 
+			if (ringFrac > 1.0f)
 			{
 				sizeX *= ringFrac;
 				sizeY *= ringFrac;
@@ -557,8 +557,8 @@ void RenderableParticleBunch::pushAimedParticles(ParticleRenderInfo& particle, s
 {
 	int trails = static_cast<int>(_stage.getOrientationParm(0)); // trails
 	float aimedTime = _stage.getOrientationParm(1);	// time
-	
-	if (trails < 0) 
+
+	if (trails < 0)
 	{
 		trails = 0;
 	}
@@ -576,7 +576,7 @@ void RenderableParticleBunch::pushAimedParticles(ParticleRenderInfo& particle, s
 	float timeStep = aimedTime / numQuads;
 
 	Vector3 lastOrigin = particle.origin;
-	
+
 	for (int i = 1; i <= numQuads; ++i)
 	{
 		// Copy over the info of the incoming particle (contains anim info, colour, etc.)
@@ -589,7 +589,7 @@ void RenderableParticleBunch::pushAimedParticles(ParticleRenderInfo& particle, s
 		// Get origin and velocity at that time
 		calculateOrigin(aimedParticle);
 
-		// Gotcha: don't bother calculating the actual velocity at the given time, just use the 
+		// Gotcha: don't bother calculating the actual velocity at the given time, just use the
 		// difference vector of the two origins, this is enough to receive the "aimed" direction
 		Vector3 velocity = lastOrigin - aimedParticle.origin;
 
@@ -612,7 +612,7 @@ void RenderableParticleBunch::pushAimedParticles(ParticleRenderInfo& particle, s
 			const Vector3& normal = local2aimed.z().getVector3();
 
 			// Ignore the angle for aimed orientation
-			ParticleQuad curQuad(aimedParticle.size, aimedParticle.aspect, 0, 
+			ParticleQuad curQuad(aimedParticle.size, aimedParticle.aspect, 0,
 								 aimedParticle.colour, normal, 0, 1, aimedParticle.t0, aimedParticle.tWidth);
 
 			// Apply a slight origin correction before rotating them, particles are not centered around 0,0,0 here

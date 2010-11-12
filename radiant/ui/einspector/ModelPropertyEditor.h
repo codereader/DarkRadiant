@@ -16,19 +16,19 @@ class ModelPropertyEditor
 private:
 	// Keyvalue to set
 	std::string _key;
-	
+
 private:
 
 	void _onModelButton();
 	void _onParticleButton();
-	
+
 public:
 
 	// Default constructor for the map
 	ModelPropertyEditor();
-	
+
 	// Main constructor
-	ModelPropertyEditor(Entity* entity, 
+	ModelPropertyEditor(Entity* entity,
 					    const std::string& name,
 					    const std::string& options);
 

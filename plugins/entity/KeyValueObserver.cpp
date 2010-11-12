@@ -25,13 +25,13 @@ void KeyValueObserver::onKeyValueChanged(const std::string& newValue)
 	assert(_namespace != NULL);
 
 	if (_observing) {
-		// The key value was already observing as a NameObserver, 
+		// The key value was already observing as a NameObserver,
 		// so let's unregister first. It's likely that the new value
 		// will not point to a name anymore
 		_namespace->removeNameObserver(_observedValue, _keyValue);
 		_observing = false;
 	}
-	
+
 	// Check if the new value is a name
 	if (_namespace->nameExists(newValue)) {
 		// Gotcha, the new value is pointing to a name

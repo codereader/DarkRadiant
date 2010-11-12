@@ -38,31 +38,31 @@ class GLWidget :
 	public Gtk::GL::DrawingArea
 {
 private:
-	// TRUE, if this GL widget has depth-buffering enabled 
+	// TRUE, if this GL widget has depth-buffering enabled
 	bool _zBuffer;
-	
+
 public:
 
 	// Constructor, pass TRUE to enable depth-buffering
     GLWidget(bool zBuffer, const std::string& debugName = std::string());
 
 	~GLWidget();
-	
+
 	// Switches the GL context to the given widget
 	static bool makeCurrent(Gtk::Widget& widget);
 	static void swapBuffers(Gtk::Widget& widget);
 
 	void queueDraw();
-	
+
 private:
 	// As soon as the widget is packed into a parent, this callback is invoked
 	// and enables the GL drawing for this widget
 	void onHierarchyChanged(Gtk::Widget* previous_toplevel);
-	
-	// Called when the GTK drawing area is realised/unrealised 
+
+	// Called when the GTK drawing area is realised/unrealised
 	void onRealise();
 	void onUnRealise();
-	
+
 	// Acquires a GDK GL config structure with or without depth
 	static Glib::RefPtr<Gdk::GL::Config> createGLConfigWithDepth();
 	static Glib::RefPtr<Gdk::GL::Config> createGLConfig();

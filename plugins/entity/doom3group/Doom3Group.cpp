@@ -15,8 +15,8 @@ namespace entity {
 		const char* RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
 	}
 
-inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count, 
-	SelectionTest& test, SelectionIntersection& best) 
+inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
+	SelectionTest& test, SelectionIntersection& best)
 {
 	test.TestLineStrip(
 	    VertexPointer(&first->vertex, sizeof(PointVertex)),
@@ -42,7 +42,7 @@ Doom3Group::Doom3Group(
 	// construct() is called by the Doom3GroupNode
 }
 
-Doom3Group::Doom3Group(const Doom3Group& other, 
+Doom3Group::Doom3Group(const Doom3Group& other,
 		Doom3GroupNode& owner,
 		const Callback& boundsChanged) :
 	_owner(owner),
@@ -74,18 +74,18 @@ const AABB& Doom3Group::localAABB() const {
 	if (m_curveBounds.isValid() || !m_isModel)
 	{
 		// Include the origin as well, it might be offset
-		// Only do this, if the curve has valid bounds OR we have a non-Model, 
+		// Only do this, if the curve has valid bounds OR we have a non-Model,
 		// otherwise we include the origin for models
 		// and this AABB gets added to the children's
 		// AABB in Instance::evaluateBounds(), which is wrong.
 		m_curveBounds.includePoint(m_origin);
 	}
-	
+
 	return m_curveBounds;
 }
 
-void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
-	const Matrix4& localToWorld, bool selected) const 
+void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
+	const Matrix4& localToWorld, bool selected) const
 {
 	if (selected) {
 		m_renderOrigin.render(collector, volume, localToWorld);
@@ -99,7 +99,7 @@ void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& v
 		// Always render curves relative to map origin
 		m_curveNURBS.renderSolid(collector, volume, Matrix4::getIdentity());
 	}
-	
+
 	if (!m_curveCatmullRom.isEmpty())
 	{
 		// Always render curves relative to map origin
@@ -107,8 +107,8 @@ void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& v
 	}
 }
 
-void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
-	const Matrix4& localToWorld, bool selected) const 
+void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
+	const Matrix4& localToWorld, bool selected) const
 {
 	renderSolid(collector, volume, localToWorld, selected);
 }
@@ -146,18 +146,18 @@ void Doom3Group::translateOrigin(const Vector3& translation)
 }
 
 void Doom3Group::translate(const Vector3& translation, bool rotation) {
-	
+
 	bool freeModelRotation = GlobalRegistry().get(RKEY_FREE_MODEL_ROTATION) == "1";
-	
-	// greebo: If the translation does not originate from 
+
+	// greebo: If the translation does not originate from
 	// a pivoted rotation, translate the origin as well (this is a bit hacky)
-	// This also applies for models, which should always have the 
+	// This also applies for models, which should always have the
 	// rotation-translation applied (except for freeModelRotation set to TRUE)
 	if (!rotation || (isModel() && !freeModelRotation))
 	{
 		m_origin = m_originKey.m_origin + translation;
 	}
-	
+
 	// Only non-models should have their rendered origin different than <0,0,0>
 	if (!isModel()) {
 		m_nameOrigin = m_origin;
@@ -183,7 +183,7 @@ void Doom3Group::snapto(float snap) {
 
 void Doom3Group::revertTransform() {
 	m_origin = m_originKey.m_origin;
-	
+
 	// Only non-models should have their origin different than <0,0,0>
 	if (!isModel()) {
 		m_nameOrigin = m_origin;
@@ -191,7 +191,7 @@ void Doom3Group::revertTransform() {
 	else {
 		m_rotation = m_rotationKey.m_rotation;
 	}
-	
+
 	m_renderOrigin.updatePivot();
 	m_curveNURBS.revertTransform();
 	m_curveCatmullRom.revertTransform();
@@ -200,7 +200,7 @@ void Doom3Group::revertTransform() {
 void Doom3Group::freezeTransform() {
 	m_originKey.m_origin = m_origin;
 	m_originKey.write(&_entity);
-	
+
 	if (!isModel()) {
 		ChildTransformFreezer freezer;
 		_owner.traverse(freezer);
@@ -211,7 +211,7 @@ void Doom3Group::freezeTransform() {
 	}
 	m_curveNURBS.freezeTransform();
 	m_curveNURBS.saveToEntity(_entity);
-	
+
 	m_curveCatmullRom.freezeTransform();
 	m_curveCatmullRom.saveToEntity(_entity);
 }
@@ -344,8 +344,8 @@ void Doom3Group::updateTransform()
 		_owner.localToParent().translateBy(m_origin);
 		_owner.localToParent().multiplyBy(m_rotation.getMatrix4());
 	}
-	
-	// Notify the Node about this transformation change	to update the local2World matrix 
+
+	// Notify the Node about this transformation change	to update the local2World matrix
 	_owner.transformChanged();
 }
 

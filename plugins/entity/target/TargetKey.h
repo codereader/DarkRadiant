@@ -8,16 +8,16 @@
 namespace entity {
 
 /**
- * greebo: A TargetKey represents a "targetN" key of a given entity. 
- * It acts as Observer for this key and maintains a reference to 
+ * greebo: A TargetKey represents a "targetN" key of a given entity.
+ * It acts as Observer for this key and maintains a reference to
  * the named Target.
  *
- * Note: An Entity can have multiple "targetN" keys, hence it can hold 
- * multiple instances of this TargetKey class. They are stored in and 
+ * Note: An Entity can have multiple "targetN" keys, hence it can hold
+ * multiple instances of this TargetKey class. They are stored in and
  * maintainted by the TargetKeyCollection container.
  *
  * Note: Each TargetKey instance can only refer to one Target.
- */ 
+ */
 class TargetKey :
 	public KeyObserver
 {

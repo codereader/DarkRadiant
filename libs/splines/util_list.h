@@ -325,7 +325,7 @@ inline bool idList<type>::Remove( type const & obj ) {
 	if ( Find( obj, &index ) ) {
 		return RemoveIndex( index );
 	}
-	
+
 	return false;
 }
 

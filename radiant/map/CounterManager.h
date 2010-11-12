@@ -9,35 +9,35 @@
 
 namespace map {
 
-class Counter : 
+class Counter :
 	public ICounter
 {
 	Observer* _observer;
 	std::size_t _count;
 public:
 	Counter(Observer* observer = NULL) :
-		_observer(observer), 
+		_observer(observer),
 		_count(0)
 	{}
 
 	virtual ~Counter() {}
-	
+
 	void increment() {
 		++_count;
-		
+
 		if (_observer != NULL) {
 			_observer->countChanged();
 		}
 	}
-	
+
 	void decrement() {
 		--_count;
-		
+
 		if (_observer != NULL) {
 			_observer->countChanged();
 		}
 	}
-	
+
 	std::size_t get() const {
 		return _count;
 	}
@@ -55,7 +55,7 @@ public:
 	CounterManager();
 
 	virtual ~CounterManager() {}
-	
+
 	ICounter& getCounter(CounterType counter);
 
 	// ICounter::Observer implementation

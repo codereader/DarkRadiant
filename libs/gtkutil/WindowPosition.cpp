@@ -14,7 +14,7 @@ namespace {
 namespace gtkutil
 {
 
-WindowPosition::WindowPosition() : 
+WindowPosition::WindowPosition() :
 	_position(DEFAULT_POSITION_X, DEFAULT_POSITION_Y),
 	_size(DEFAULT_SIZE_X, DEFAULT_SIZE_Y)
 {}
@@ -68,7 +68,7 @@ void WindowPosition::loadFromPath(const std::string& path)
 }
 
 // Applies the internally stored size/position info to the GtkWindow
-// The algorithm was adapted from original GtkRadiant code (window.h) 
+// The algorithm was adapted from original GtkRadiant code (window.h)
 void WindowPosition::applyPosition()
 {
 	if (_window != NULL)
@@ -77,10 +77,10 @@ void WindowPosition::applyPosition()
 
 		// TODO: What about multi-monitor setups with overlapping windows?
 		Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
-		
+
 		// Sanity check of the window position
-		if (_position[0] < 0 || _position[1] < 0 || 
-			_position[0] > screen->get_width() || 
+		if (_position[0] < 0 || _position[1] < 0 ||
+			_position[0] > screen->get_width() ||
 			_position[1] > screen->get_height())
 		{
 			_window->set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
@@ -107,7 +107,7 @@ void WindowPosition::fitToScreen(float xfraction, float yfraction)
 	if (_window == NULL) return;
 
 	Gdk::Rectangle geom = MultiMonitor::getMonitorForWindow(*_window);
-	
+
 	// Pass the call
 	fitToScreen(geom, xfraction, yfraction);
 }

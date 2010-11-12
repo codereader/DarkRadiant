@@ -44,7 +44,7 @@ void SoundManagerInterface::registerInterface(boost::python::object& nspace)
 	;
 
 	// Expose the SoundShaderVisitor interface
-	nspace["SoundShaderVisitor"] = 
+	nspace["SoundShaderVisitor"] =
 		boost::python::class_<SoundShaderVisitorWrapper, boost::noncopyable>("SoundShaderVisitor")
 		.def("visit", boost::python::pure_virtual(&SoundShaderVisitor::visit))
 	;

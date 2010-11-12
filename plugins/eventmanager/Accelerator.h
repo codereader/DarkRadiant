@@ -8,10 +8,10 @@
 #include <iostream>
 
 /* greebo: An Accelerator consists of a key/modifier combination plus a connected Event object.
- * 
+ *
  * Use the match() method to test if the accelerator matches a certain key/modifier combination.
- * Use the connectCommand() method to assign a command to this accelerator. 
- * Use the keyUp()/keyDown() methods to trigger the keyup/keydown command callbacks. 
+ * Use the connectCommand() method to assign a command to this accelerator.
+ * Use the keyUp()/keyDown() methods to trigger the keyup/keydown command callbacks.
  */
 
 class Accelerator :
@@ -20,14 +20,14 @@ class Accelerator :
 	// The internally stored key/modifier combination
 	unsigned int _key;
 	unsigned int _modifiers;
-	
+
 	// The connected event
 	IEventPtr _event;
 
 public:
 	// Construct an accelerator out of the key/modifier plus a command
 	Accelerator(const unsigned int key, const unsigned int modifiers, const IEventPtr& event);
-	
+
 	// Copy Constructor
 	Accelerator(const Accelerator& other);
 
@@ -36,7 +36,7 @@ public:
 
 	// Returns true if the key/modifier combination matches this accelerator
 	bool match(const unsigned int key, const unsigned int modifiers) const;
-	
+
 	// Returns true if the event is attached to this Accelerator
 	bool match(const IEventPtr& event) const;
 
@@ -50,10 +50,10 @@ public:
 
 	// Connect this modifier to the specified command
 	void connectEvent(const IEventPtr& event);
-	
+
 	// Retrieve the contained event pointer
 	IEventPtr getEvent();
-	
+
 	// Call the connected event keyup/keydown callbacks
 	void keyUp();
 	void keyDown();

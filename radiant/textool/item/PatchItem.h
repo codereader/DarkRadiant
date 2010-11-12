@@ -14,24 +14,24 @@ class PatchItem :
 	Patch& _sourcePatch;
 
 public:
-	PatchItem(Patch& sourcePatch); 
+	PatchItem(Patch& sourcePatch);
 
 	// Renders this object's visual representation.
 	virtual void render();
 
 	/** greebo: Saves the undoMemento for later undo.
-	 */	
+	 */
 	virtual void beginTransformation();
 
 	/** greebo: Calls Patch::controlPointsChanged()
 	 */
 	virtual void update();
-	
+
 	/** greebo: Selects all patch vertices if on of them is selected.
 	 */
 	virtual void selectRelated();
 };
-	
+
 } // namespace TexTool
 
 #endif /*PATCHITEM_H_*/

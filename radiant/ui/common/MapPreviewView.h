@@ -12,7 +12,7 @@ namespace ui {
  * Most routines just return TRUE or positive, so this class
  * won't do any culling.
  */
-class MapPreviewView : 
+class MapPreviewView :
 	public VolumeTest
 {
 public:

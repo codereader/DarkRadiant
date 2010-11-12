@@ -76,14 +76,14 @@ private:
 	void restoreWindowPosition();
 
 	void shutdown();
-	
+
 	// Creates the topmost application window
 	void createTopLevelWindow();
 	Gtk::Widget* createMenuBar();
 
 	// Signal callback
 	bool onDeleteEvent(GdkEventAny* ev);
-	
+
 #ifdef WIN32
 	// Enables or disabled desktop composition, Windows-specific
 	void setDesktopCompositionEnabled(bool enabled);

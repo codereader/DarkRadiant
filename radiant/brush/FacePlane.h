@@ -34,7 +34,7 @@ public:
 	void reverse();
 
 	void transform(const Matrix4& matrix, bool mirror);
-	
+
 	void offset(float offset);
 
 	void setPlane(const Plane3& plane);

@@ -8,11 +8,11 @@
 #include "texturelib.h"
 
 namespace {
-	
+
 // Bind the given texture to the texture unit, if it is different from the
 // current state, then set the current state to the new texture.
-inline void setTextureState(GLint& current, 
-							const GLint& texture, 
+inline void setTextureState(GLint& current,
+							const GLint& texture,
 							GLenum textureUnit,
                             GLenum textureMode)
 {
@@ -40,9 +40,9 @@ inline void setTextureState(GLint& current,
 }
 
 // Utility function to toggle an OpenGL state flag
-inline void setState(unsigned int state, 
-					 unsigned int delta, 
-					 unsigned int flag, 
+inline void setState(unsigned int state,
+					 unsigned int delta,
+					 unsigned int flag,
 					 GLenum glflag)
 {
   if(delta & state & flag)
@@ -208,21 +208,21 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
   {
     globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
   }
-  
+
     // Apply the global state mask to our own desired render flags to determine
     // the final set of flags that must bet set
 	const unsigned int requiredState = _state.renderFlags & globalStateMask;
-	
+
     // Construct a mask containing all the flags that will be changing between
     // the current state and the required state. This avoids performing
     // unnecessary GL calls to set the state to its existing value.
 	const unsigned int changingBitsMask = requiredState ^ current.renderFlags;
 
     // Set the GLProgram if required
-	GLProgram* program = (requiredState & RENDER_PROGRAM) != 0 
-						  ? _state.glProgram 
+	GLProgram* program = (requiredState & RENDER_PROGRAM) != 0
+						  ? _state.glProgram
 						  : 0;
-						  
+
     if(program != current.glProgram)
     {
         if(current.glProgram != 0)
@@ -242,7 +242,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     // State changes. Only perform these if changingBitsMask > 0, since if there are
     // no changes required we don't want a whole load of unnecessary bit
     // operations.
-    if (changingBitsMask != 0) 
+    if (changingBitsMask != 0)
     {
         if(changingBitsMask & requiredState & RENDER_FILL)
         {
@@ -274,31 +274,31 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
         // RENDER_TEXTURE_2D
         if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
-        { 
+        {
             enableTexture2D();
         }
         else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
-        { 
+        {
             disableTexture2D();
         }
 
         // RENDER_TEXTURE_CUBEMAP
         if(changingBitsMask & requiredState & RENDER_TEXTURE_CUBEMAP)
-        { 
+        {
             enableTextureCubeMap();
         }
         else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_CUBEMAP)
-        { 
+        {
             disableTextureCubeMap();
         }
 
         // RENDER_BLEND
         if(changingBitsMask & requiredState & RENDER_BLEND)
-        { 
+        {
             enableRenderBlend();
         }
         else if(changingBitsMask & ~requiredState & RENDER_BLEND)
-        { 
+        {
             disableRenderBlend();
         }
 
@@ -392,7 +392,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     // Set up the alpha test parameters
     if (requiredState & RENDER_ALPHATEST
         && ( _state.alphaFunc != current.alphaFunc
-            || _state.alphaThreshold != current.alphaThreshold) 
+            || _state.alphaThreshold != current.alphaThreshold)
     )
     {
         // Set alpha function in GL
@@ -464,22 +464,22 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
   GlobalOpenGL().assertNoErrors();
 }
 
-// DEBUG: Stream insertion for RendererLight 
+// DEBUG: Stream insertion for RendererLight
 
 #include "math/aabb.h"
 
-inline 
+inline
 std::ostream& operator<< (std::ostream& os, const RendererLight& light) {
 	os << "RendererLight { origin = " << light.worldOrigin()
-	   << ", lightOrigin = " << light.getLightOrigin() 
+	   << ", lightOrigin = " << light.getLightOrigin()
        << ", colour = " << light.colour()
 	   << " }";
 	return os;
 }
 
 // Add a Renderable to this bucket
-void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable, 
-									  const Matrix4& modelview, 
+void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
+									  const Matrix4& modelview,
 									  const RendererLight* light)
 {
 	_renderables.push_back(TransformedRenderable(renderable, modelview, light));
@@ -487,8 +487,8 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 
 
 // Render the bucket contents
-void OpenGLShaderPass::render(OpenGLState& current, 
-                              unsigned int flagsMask, 
+void OpenGLShaderPass::render(OpenGLState& current,
+                              unsigned int flagsMask,
                               const Vector3& viewer)
 {
     // Reset the texture matrix
@@ -498,7 +498,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
 
 	// Apply our state to the current state object
 	applyState(current, flagsMask, viewer);
-	
+
     // If RENDER_SCREEN is set, just render a quad, otherwise render all
     // objects.
     if ((flagsMask & _state.renderFlags & RENDER_SCREEN) != 0)
@@ -506,25 +506,25 @@ void OpenGLShaderPass::render(OpenGLState& current,
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadMatrixd(Matrix4::getIdentity());
-        
+
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadMatrixd(Matrix4::getIdentity());
-        
+
         glBegin(GL_QUADS);
         glVertex3f(-1, -1, 0);
         glVertex3f(1, -1, 0);
         glVertex3f(1, 1, 0);
         glVertex3f(-1, 1, 0);
         glEnd();
-        
+
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
-        
+
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
     }
-	else if(!_renderables.empty()) 
+	else if(!_renderables.empty())
     {
 		renderAllContained(current, viewer);
 	}
@@ -541,7 +541,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     // Get the light shader and examine its first (and only valid) layer
     MaterialPtr lightShader = light->getShader()->getMaterial();
 
-    if (lightShader->firstLayer() != 0) 
+    if (lightShader->firstLayer() != 0)
     {
         // Calculate viewer location in object space
         Matrix4 inverseObjTransform = objTransform.getInverse();
@@ -550,9 +550,9 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
         );
 
         // Get the XY and Z falloff texture numbers.
-        GLuint attenuation_xy = 
+        GLuint attenuation_xy =
             lightShader->firstLayer()->getTexture()->getGLTexNum();
-        GLuint attenuation_z = 
+        GLuint attenuation_z =
             lightShader->lightFalloffImage()->getGLTexNum();
 
         // Bind the falloff textures
@@ -598,16 +598,16 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 	const Matrix4* transform = 0;
 
 	glPushMatrix();
-	
+
 	// Iterate over each transformed renderable in the vector
-	for(OpenGLShaderPass::Renderables::const_iterator i = _renderables.begin(); 
-  	  	i != _renderables.end(); 
+	for(OpenGLShaderPass::Renderables::const_iterator i = _renderables.begin();
+  	  	i != _renderables.end();
   	  	++i)
 	{
 		// If the current iteration's transform matrix was different from the
 		// last, apply it and store for the next iteration
-	    if (!transform 
-	    	|| (transform != i->transform 
+	    if (!transform
+	    	|| (transform != i->transform
 	    		&& !matrix4_affine_equal(*transform, *(*i).transform)))
 		{
 			transform = i->transform;
@@ -621,7 +621,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
       		{
       			glFrontFace(GL_CW);
       		}
-      		else 
+      		else
       		{
       			glFrontFace(GL_CCW);
       		}
@@ -630,7 +630,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 		// If we are using a lighting program and this renderable is lit, set
 		// up the lighting calculation
 		const RendererLight* light = i->light;
-		if (current.glProgram != 0 && light != NULL) 
+		if (current.glProgram != 0 && light != NULL)
         {
             setUpLightingCalculation(current, light, viewer, *transform);
         }

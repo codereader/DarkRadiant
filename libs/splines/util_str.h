@@ -38,7 +38,7 @@ class strdata
    {
    public:
       strdata () : len( 0 ), refcount ( 0 ), data ( NULL ), alloced ( 0 ) {}
-      ~strdata () 
+      ~strdata ()
          {
          if ( data )
             delete [] data;
@@ -53,7 +53,7 @@ class strdata
             delete this;
             return true;
             }
-         
+
          return false;
          }
 
@@ -203,7 +203,7 @@ inline idStr::idStr
 
 inline idStr::idStr
 	(
-	const idStr text, 
+	const idStr text,
 	int start,
 	int end
    ) : m_data ( NULL )
@@ -355,7 +355,7 @@ inline void idStr::append
 inline char idStr::operator[]( int index ) const
 	{
    assert ( m_data );
-   
+
    if ( !m_data )
       return 0;
 
@@ -446,7 +446,7 @@ inline void idStr::operator=
    if ( text == m_data->data )
       return; // Copying same thing.  Punt.
 
-   // If we alias and I don't do this, I could corrupt other strings...  This 
+   // If we alias and I don't do this, I could corrupt other strings...  This
    // will get called with EnsureAlloced anyway
    EnsureDataWritable ();
 
@@ -460,7 +460,7 @@ inline void idStr::operator=
       int i;
 
       assert ( strlen ( text ) < (unsigned) m_data->len );
-      
+
       for ( i = 0; text[i]; i++ )
          {
          m_data->data[i] = text[i];
@@ -667,7 +667,7 @@ inline bool operator!=
 
 inline int idStr::icmpn
    (
-   const char *text, 
+   const char *text,
    int n
    ) const
 
@@ -680,7 +680,7 @@ inline int idStr::icmpn
 
 inline int idStr::icmpn
    (
-   const idStr& text, 
+   const idStr& text,
    int n
    ) const
 
@@ -741,7 +741,7 @@ inline int idStr::cmp
 
 inline int idStr::cmpn
    (
-   const char *text, 
+   const char *text,
    int n
    ) const
 
@@ -754,7 +754,7 @@ inline int idStr::cmpn
 
 inline int idStr::cmpn
    (
-   const idStr& text, 
+   const idStr& text,
    int n
    ) const
 

@@ -57,7 +57,7 @@ Gtk::Button* AnglePropertyEditor::constructAngleButton(
 	w->signal_clicked().connect(
 		sigc::bind(sigc::mem_fun(*this, &AnglePropertyEditor::_onButtonClick), angleValue)
 	);
-	
+
 	return w;
 }
 

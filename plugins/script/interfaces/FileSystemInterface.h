@@ -35,7 +35,7 @@ public:
 	std::string readTextFile(const std::string& filename);
 
 	// Wrapped methods, see "ifilesystem.h" for documentation
-	void forEachFile(const std::string& basedir, const std::string& extension, 
+	void forEachFile(const std::string& basedir, const std::string& extension,
 					  VirtualFileSystem::Visitor& visitor, std::size_t depth);
 
 	int getFileCount(const std::string& filename);

@@ -9,7 +9,7 @@
 #include "gtkutil/FramedWidget.h"
 
 /**
- * A floating version of the XYWnd. These are created by the XYWndManager and 
+ * A floating version of the XYWnd. These are created by the XYWndManager and
  * notify the manager when they are destroyed.
  */
 class FloatingOrthoView
@@ -20,13 +20,13 @@ public:
 	/**
 	 * Construct a floating XY window with the given numeric ID (assigned by
 	 * the XYWndManager).
-	 * 
+	 *
 	 * @param id
 	 * Unique ID assigned to this window.
-	 * 
+	 *
 	 * @param title
 	 * The displayed title for this window (e.g. "XY Front").
-	 * 
+	 *
 	 * @param parent
 	 * The parent window for which this should be a transient (normally the
 	 * mainframe).
@@ -39,10 +39,10 @@ public:
 		// floating window
 		Gtk::Frame* framedWidget = Gtk::manage(new gtkutil::FramedWidget(*XYWnd::getWidget()));
 		add(*framedWidget);
-		
+
 		// Set the parent window for XYWnd
 		XYWnd::setParent(getRefPtr());
-		
+
 		set_type_hint(Gdk::WINDOW_TYPE_HINT_NORMAL);
 
 		signal_focus_in_event().connect(sigc::mem_fun(*this, &FloatingOrthoView::onFocus));
@@ -55,13 +55,13 @@ public:
 	{
 		// Invoke the base class method first
 		XYWnd::setViewType(viewType);
-		
+
 		// Get the title string and write it to the window
 		set_title(getViewTypeTitle(viewType));
 	}
 
 protected:
-	
+
 	// Post-destroy callback, initiate destruction of this XYWnd
 	virtual void _postDestroy()
 	{

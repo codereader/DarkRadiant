@@ -39,7 +39,7 @@ Bounds	boundsZero;
 
 float idVec3::toYaw( void ) {
 	float yaw;
-	
+
 	if ( ( y == 0 ) && ( x == 0 ) ) {
 		yaw = 0;
 	} else {
@@ -55,7 +55,7 @@ float idVec3::toYaw( void ) {
 float idVec3::toPitch( void ) {
 	float	forward;
 	float	pitch;
-	
+
 	if ( ( x == 0 ) && ( y == 0 ) ) {
 		if ( z > 0 ) {
 			pitch = 90;
@@ -78,7 +78,7 @@ angles_t idVec3::toAngles( void ) {
 	float forward;
 	float yaw;
 	float pitch;
-	
+
 	if ( ( x == 0 ) && ( y == 0 ) ) {
 		yaw = 0;
 		if ( z > 0 ) {

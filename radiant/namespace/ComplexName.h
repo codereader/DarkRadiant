@@ -21,7 +21,7 @@ public:
 			fullname, boost::algorithm::is_any_of("1234567890")
 		);
 
-		// Get the trimmed part and take it as postfix 
+		// Get the trimmed part and take it as postfix
 		_postfix = fullname.substr(_name.size());
 
 		// Convert this to a number
@@ -31,7 +31,7 @@ public:
 	std::string getFullname() const {
 		return _name + _postfix;
 	}
-	
+
 	const std::string& getNameWithoutPostfix() const {
 		return _name;
 	}

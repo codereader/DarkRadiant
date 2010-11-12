@@ -16,7 +16,7 @@ def invokeXGettext(targetfile):
 	norm_filename = os.path.normpath(targetfile);
 
 	if os.path.exists(pot_file):
-		cmdline = xgettext_cmd + xgettext_options + " -j " + norm_filename 
+		cmdline = xgettext_cmd + xgettext_options + " -j " + norm_filename
 	else:
 		cmdline = xgettext_cmd + xgettext_options + norm_filename
 
@@ -61,7 +61,7 @@ def processXmlFile(path, nodeXPath, attributes):
 	if len(found_values) > 0:
 
 		dummy_file = "xml_file_content.cpp"
-	
+
 		file = open(dummy_file, "w")
 
 		for value in found_values:

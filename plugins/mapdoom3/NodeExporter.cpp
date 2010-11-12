@@ -16,8 +16,8 @@
 
 namespace map {
 
-NodeExporter::NodeExporter(std::ostream& mapStream, std::ostream& infoStream) : 
-	_mapStream(mapStream), 
+NodeExporter::NodeExporter(std::ostream& mapStream, std::ostream& infoStream) :
+	_mapStream(mapStream),
 	_infoStream(infoStream),
 	_entityCount(0),
 	_primitiveCount(0),
@@ -60,7 +60,7 @@ bool NodeExporter::pre(const scene::INodePtr& node) {
 		writeNodeLayerInfo(node);
 	}
 
-	// Check whether we are have a brush or an entity. We might get 
+	// Check whether we are have a brush or an entity. We might get
 	// called at either level.
     Entity* entity = Node_getEntity(node);
 
@@ -78,7 +78,7 @@ bool NodeExporter::pre(const scene::INodePtr& node) {
 		// Entity key values
 		exportEntity(*entity);
 
-		// Reset the primitive count 
+		// Reset the primitive count
 		_primitiveCount = 0;
 
 		return true; // traverse deeper
@@ -118,7 +118,7 @@ bool NodeExporter::pre(const scene::INodePtr& node) {
 
     return true;
 }
-  
+
 // Post-descent callback
 void NodeExporter::post(const scene::INodePtr& node)
 {
@@ -128,10 +128,10 @@ void NodeExporter::post(const scene::INodePtr& node)
 	if (ent != NULL) {
 		// If the brush count is 0 and we are adding dummy brushes to please
 		// the Doom 3 editor, do so here.
-		/*if (_writeDummyBrushes 
+		/*if (_writeDummyBrushes
 			&& _brushCount == 0
 			&& ent->getEntityClass()->isFixedSize()
-			&& !ent->getEntityClass()->isLight()) 
+			&& !ent->getEntityClass()->isLight())
 		{
 			_mapStream << DUMMY_BRUSH;
 		}*/
@@ -146,13 +146,13 @@ void NodeExporter::post(const scene::INodePtr& node)
 
 void NodeExporter::exportEntity(const Entity& entity) {
 	// Create a local Entity visitor class to export the keyvalues
-	// to the output stream	
+	// to the output stream
 	class WriteKeyValue : public Entity::Visitor
 	{
 		// Stream to write to
 		std::ostream& _os;
 	public:
-	
+
 		// Constructor
 		WriteKeyValue(std::ostream& os)
 	    : _os(os)
@@ -194,14 +194,14 @@ void NodeExporter::writeLayerNames() {
 	_infoStream << "\t{\n";
 
 	// Local helper to traverse the layers
-	class LayerNameExporter : 
+	class LayerNameExporter :
 		public scene::ILayerSystem::Visitor
 	{
 		// Stream to write to
 		std::ostream& _os;
 	public:
 		// Constructor
-		LayerNameExporter(std::ostream& os) : 
+		LayerNameExporter(std::ostream& os) :
 			_os(os)
 	    {}
 

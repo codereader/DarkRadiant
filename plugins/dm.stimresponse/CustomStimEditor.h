@@ -18,7 +18,7 @@ namespace Gtk
 }
 
 namespace ui {
-	
+
 class CustomStimEditor :
 	public Gtk::HBox
 {
@@ -28,7 +28,7 @@ class CustomStimEditor :
 		Gtk::Label* nameLabel;
 		Gtk::Entry* nameEntry;
 	} _propertyWidgets;
-	
+
 	struct ListContextMenu {
 		Gtk::Menu* menu;
 		Gtk::MenuItem* remove;
@@ -40,19 +40,19 @@ class CustomStimEditor :
 		Gtk::Button* add;
 		Gtk::Button* remove;
 	} _listButtons;
-	
+
 	// The filtered liststore (a GtkTreeModelFilter)
 	Glib::RefPtr<Gtk::TreeModelFilter> _customStimStore;
-	
+
 	// The treeview and its selection
 	Gtk::TreeView* _list;
-	
+
 	// Reference to the helper object (owned by StimResponseEditor)
 	StimTypes& _stimTypes;
-	
+
 	// To avoid GTK callback loops
 	bool _updatesDisabled;
-	
+
 	// The entity we're working on
 	SREntityPtr _entity;
 
@@ -64,7 +64,7 @@ public:
 	/** greebo: Sets the new entity (is called by the subclasses)
 	 */
 	void setEntity(const SREntityPtr& entity);
-	
+
 private:
 	/** greebo: Updates the property widgets on selection change
 	 */
@@ -76,8 +76,8 @@ private:
 	void entryChanged(Gtk::Entry* editable);
 
 	/** greebo: Returns the ID of the currently selected stim type
-	 * 		
-	 * @returns: the id (number) of the selected stim or -1 on failure 
+	 *
+	 * @returns: the id (number) of the selected stim or -1 on failure
 	 */
 	int getIdFromSelection();
 
@@ -104,7 +104,7 @@ private:
 	void onRemoveStimType();
 	void onEntryChanged();
 	void onSelectionChange();
-	
+
 	// Context menu
 	// Release-event opens the context menu for right clicks
 	bool onTreeViewButtonRelease(GdkEventButton* ev);

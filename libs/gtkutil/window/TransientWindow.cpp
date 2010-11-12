@@ -5,8 +5,8 @@
 namespace gtkutil
 {
 
-TransientWindow::TransientWindow(const std::string& title, 
-                                 const Glib::RefPtr<Gtk::Window>& parent, 
+TransientWindow::TransientWindow(const std::string& title,
+                                 const Glib::RefPtr<Gtk::Window>& parent,
                                  bool hideOnDelete)
 : _hideOnDelete(hideOnDelete)
 {
@@ -22,7 +22,7 @@ TransientWindow::TransientWindow(const std::string& title,
     set_skip_taskbar_hint(true);
 #endif
     set_skip_pager_hint(true);
-    
+
     // Connect up the destroy signal (close box)
     signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
 }
@@ -39,7 +39,7 @@ void TransientWindow::_onDeleteEvent()
     }
 }
 
-bool TransientWindow::_onDelete(GdkEventAny* ev) 
+bool TransientWindow::_onDelete(GdkEventAny* ev)
 {
     // Invoke the virtual function
     _onDeleteEvent();
@@ -103,7 +103,7 @@ void TransientWindow::destroy()
     {
         TransientWindow::hide();
     }
-    
+
     // Invoke destroy callbacks and destroy the Gtk widget
     _preDestroy();
 
@@ -139,7 +139,7 @@ void TransientWindow::toggleFullscreen()
 bool TransientWindow::isFullscreen()
 {
     intptr_t val = reinterpret_cast<intptr_t>(get_data("dr-fullscreen"));
-    
+
     return val != 0;
 }
 

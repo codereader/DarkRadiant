@@ -6,24 +6,24 @@
 namespace shaders {
 
 // Helper function, wraps around at the borders to prevent buffer overflows
-// Note: the <pixels> argument MUST point to the beginning of the buffer 
+// Note: the <pixels> argument MUST point to the beginning of the buffer
 inline byte* getPixel(byte* pixels, std::size_t width, std::size_t height, std::size_t x, std::size_t y) {
   return pixels + (((((y + height) % height) * width) + ((x + width) % width)) * 4);
 }
 
 /** greebo: This creates a normalmap for the given heightmap
- * 	
+ *
  * Note: The source image is NOT released from memory, this is the
  * 		 responsibility of the calling method.
  */
 ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 	assert(heightMap);
-	 
+
 	std::size_t width = heightMap->getWidth(0);
 	std::size_t height = heightMap->getHeight(0);
-	 
+
 	ImagePtr normalMap (new RGBAImage(width, height));
- 
+
 	byte* in = heightMap->getMipMapPixels(0);
 	byte* out = normalMap->getMipMapPixels(0);
 
@@ -83,7 +83,7 @@ ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 			float ny = -dv * scale;
 			float nz = 1.0;
 
-			// Normalize      
+			// Normalize
 			float norm = 1.0f/sqrt(nx*nx + ny*ny + nz*nz);
 			out[0] = float_to_integer(((nx * norm) + 1) * 127.5);
 			out[1] = float_to_integer(((ny * norm) + 1) * 127.5);
@@ -95,7 +95,7 @@ ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 		}
 		y++;
 	}
-	
+
 	return normalMap;
 }
 

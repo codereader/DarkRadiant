@@ -24,7 +24,7 @@ void GLSLBumpProgram::create()
 	// Initialise the lightScale value
     game::IGamePtr currentGame = GlobalGameManager().currentGame();
     xml::NodeList scaleList = currentGame->getLocalXPath(LOCAL_RKEY_LIGHTSCALE);
-	if (!scaleList.empty()) 
+	if (!scaleList.empty())
     {
 		_lightScale = strToDouble(scaleList[0].getContent());
 	}
@@ -59,7 +59,7 @@ void GLSLBumpProgram::create()
     // Texture 2 - specular
     // Texture 3 - XY attenuation map
     // Texture 4 - Z attenuation map
-    
+
     glUseProgram(_programObj);
     GlobalOpenGL().assertNoErrors();
 
@@ -89,7 +89,7 @@ void GLSLBumpProgram::create()
 void GLSLBumpProgram::destroy()
 {
     glDeleteProgram(_programObj);
-    
+
     GlobalOpenGL().assertNoErrors();
 }
 
@@ -117,10 +117,10 @@ void GLSLBumpProgram::disable()
     GlobalOpenGL().assertNoErrors();
 }
 
-void GLSLBumpProgram::applyRenderParams(const Vector3& viewer, 
-                                       const Matrix4& objectToWorld, 
-                                       const Vector3& origin, 
-                                       const Vector3& colour, 
+void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
+                                       const Matrix4& objectToWorld,
+                                       const Vector3& origin,
+                                       const Vector3& colour,
                                        const Matrix4& world2light,
                                        float ambientFactor)
 {

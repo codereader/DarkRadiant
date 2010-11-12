@@ -42,7 +42,7 @@ inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2
     matrix4_transformed_vector4(
         screen2world,
         Vector4(0, 0, -1, 1)
-      ).getProjected()    
+      ).getProjected()
   );
 
   Vector3 far_(
@@ -169,7 +169,7 @@ inline void ConstructDevice2Manip(Matrix4& device2manip, const Matrix4& object2w
 inline void Pivot2World_worldSpace(Matrix4& manip2world, const Matrix4& pivot2world, const Matrix4& modelview, const Matrix4& projection, const Matrix4& viewport)
 {
   manip2world = pivot2world;
-  
+
   Matrix4 pivot2screen;
   ConstructObject2Screen(pivot2screen, pivot2world, modelview, projection, viewport);
 
@@ -225,7 +225,7 @@ const Colour4b g_colour_x(255, 0, 0, 255);
 const Colour4b g_colour_y(0, 255, 0, 255);
 const Colour4b g_colour_z(0, 0, 255, 255);
 
-class RenderablePivot : 
+class RenderablePivot :
 	public OpenGLRenderable
 {
 	VertexBuffer<PointVertex> _vertices;
@@ -255,12 +255,12 @@ public:
 		_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
 	}
 
-	/** greebo: Updates the renderable vertex array to the given pivot point 
+	/** greebo: Updates the renderable vertex array to the given pivot point
 	 */
 	void updatePivot()
 	{
 		_vertices.clear();
-		
+
 		_vertices.push_back(PointVertex(_pivot, g_colour_x));
 		_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
 

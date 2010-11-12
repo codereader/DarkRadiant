@@ -13,7 +13,7 @@ namespace parser {
  */
 
 class DefTokeniserFunc {
-    
+
     // Enumeration of states
     enum {
         SEARCHING,        // haven't found anything yet
@@ -26,13 +26,13 @@ class DefTokeniserFunc {
         COMMENT_DELIM,  // inside delimited comment (/*)
         STAR            // asterisk, possibly indicates end of comment (*/)
     } _state;
-        
+
     // List of delimiters to skip
     const char* _delims;
-    
+
     // List of delimiters to keep
     const char* _keptDelims;
-    
+
     // Test if a character is a delimiter
     bool isDelim(char c) {
         const char* curDelim = _delims;
@@ -43,7 +43,7 @@ class DefTokeniserFunc {
         }
         return false;
     }
-    
+
     // Test if a character is a kept delimiter
     bool isKeptDelim(char c) {
         const char* curDelim = _keptDelims;
@@ -54,8 +54,8 @@ class DefTokeniserFunc {
         }
         return false;
     }
-    
-    
+
+
 public:
 
     // Constructor
@@ -78,7 +78,7 @@ public:
         tok = "";
 
         while (next != end) {
-            
+
             switch (_state) {
 
                 case SEARCHING:
@@ -106,12 +106,12 @@ public:
                         return true;
                     }
 
-                    // Now next is pointing at a non-delimiter. Switch on this 
+                    // Now next is pointing at a non-delimiter. Switch on this
                     // character.
                     switch (*next) {
-                        
-                        // Found a quote, enter QUOTED state, or return the 
-                        // current token if we are in the process of building 
+
+                        // Found a quote, enter QUOTED state, or return the
+                        // current token if we are in the process of building
                         // one.
                         case '\"':
                             if (tok != "") {
@@ -122,23 +122,23 @@ public:
                                 ++next;
                                 continue; // skip the quote
                             }
-            
+
                         // Found a slash, possibly start of comment
                         case '/':
                             _state = FORWARDSLASH;
                             ++next;
                             continue; // skip slash, will need to add it back if this is not a comment
-            
+
                         // General case. Token lasts until next delimiter.
                         default:
                             tok += *next;
                             ++next;
                             continue;
                     }
-                    
+
                 case QUOTED:
-        
-                    // In the quoted state, just advance until the closing 
+
+                    // In the quoted state, just advance until the closing
                     // quote. No delimiter splitting is required.
                     if (*next == '\"') {
                         ++next;
@@ -213,7 +213,7 @@ public:
 
 				case SEARCHING_FOR_QUOTE:
 					// We have found a backslash after a closing quote, search for an opening quote
-					
+
 					// Step over delimiters
 					if (isDelim(*next)) {
                         ++next;
@@ -229,37 +229,37 @@ public:
 
 					// Everything except delimiters or opening quotes indicates an error
 					throw ParseException("Could not find opening double quote after backslash.");
-                        
+
                 case FORWARDSLASH:
-                
+
                     // If we have a forward slash we may be entering a comment. The forward slash
                     // will NOT YET have been added to the token, so we must add it manually if
                     // this proves not to be a comment.
-                    
+
                     switch (*next) {
-                        
+
                         case '*':
                             _state = COMMENT_DELIM;
                             ++next;
                             continue;
-                            
+
                         case '/':
                             _state = COMMENT_EOL;
                             ++next;
                             continue;
-                            
+
                         default: // false alarm, add the slash and carry on
                             _state = SEARCHING;
                             tok += "/";
                             // Do not increment next here
                             continue;
                     }
-                    
+
                 case COMMENT_DELIM:
-                
+
                     // Inside a delimited comment, we add nothing to the token but check for
                     // the "*/" sequence.
-                    
+
                     if (*next == '*') {
                         _state = STAR;
                         ++next;
@@ -271,9 +271,9 @@ public:
                     }
 
                 case COMMENT_EOL:
-                
+
                     // This comment lasts until the end of the line.
-                    
+
                     if (*next == '\r' || *next == '\n') {
                         _state = SEARCHING;
                         ++next;
@@ -283,13 +283,13 @@ public:
                         ++next;
                         continue; // do nothing
                     }
-                    
+
                 case STAR:
-                
-                    // The star may indicate the end of a delimited comment. 
-                    // This state will only be entered if we are inside a 
+
+                    // The star may indicate the end of a delimited comment.
+                    // This state will only be entered if we are inside a
                     // delimited comment.
-                    
+
                     if (*next == '/') {
                     	// End of comment
                         _state = SEARCHING;
@@ -307,24 +307,24 @@ public:
                     	// No end of comment
                     	_state = COMMENT_DELIM;
                     	++next;
-                        continue; 
+                        continue;
                     }
 
             } // end of state switch
         } // end of for loop
-        
+
         // Return true if we have added anything to the token
         if (tok != "")
             return true;
         else
             return false;
     }
-    
+
     // REQUIRED. Reset function to clear internal state
     void reset() {
         _state = SEARCHING;
     }
-    
+
 };
 
 const char* const WHITESPACE = " \t\n\v\r";
@@ -334,9 +334,9 @@ const char* const WHITESPACE = " \t\n\v\r";
  * DefTokeniser subclasses, so that calling code can retrieve a stream of tokens
  * without needing knowledge of the underlying container type (std::string,
  * std::istream etc).
- * 
+ *
  * Each subclass MUST implement hasMoreTokens() and nextToken() appropriately,
- * while default implementations of assertNextToken() and skipTokens() are 
+ * while default implementations of assertNextToken() and skipTokens() are
  * provided that make use of the former two methods.
  */
 class DefTokeniser
@@ -346,46 +346,46 @@ public:
 	 * Destructor
 	 */
 	virtual ~DefTokeniser() {}
-	
-    /** 
+
+    /**
      * Test if this DefTokeniser has more tokens to return.
-     * 
+     *
      * @returns
      * true if there are further tokens, false otherwise
      */
     virtual bool hasMoreTokens() const = 0;
 
-    /** 
+    /**
      * Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
-     * 
+     *
      * @returns
      * std::string containing the next token in the sequence.
-     * 
+     *
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
      virtual std::string nextToken() = 0;
-    
-    /** 
+
+    /**
      * Assert that the next token in the sequence must be equal to the provided
      * value. A ParseException is thrown if the assert fails.
-     * 
+     *
      * @param val
      * The expected value of the token.
      */
     virtual void assertNextToken(const std::string& val) {
         const std::string tok = nextToken();
         if (tok != val)
-            throw ParseException("DefTokeniser: Assertion failed: Required \"" 
+            throw ParseException("DefTokeniser: Assertion failed: Required \""
             					 + val + "\", found \"" + tok + "\"");
-    }   
-    
-    /** 
+    }
+
+    /**
      * Skip the next n tokens. This method provides a convenient way to dispose
      * of a number of tokens without returning them.
-     * 
+     *
      * @param n
      * The number of tokens to consume.
      */
@@ -395,17 +395,17 @@ public:
         }
     }
 
-	/** 
+	/**
 	 * Returns the next token without incrementing the internal
-	 * iterator. Use this if you want to take a look at what is coming 
+	 * iterator. Use this if you want to take a look at what is coming
 	 * next without actually changing the tokeniser's state.
 	 */
 	virtual std::string peek() const = 0;
 };
 
-/** 
+/**
  * Tokenise a DEF file.
- * 
+ *
  * This class provides a similar interface to Java's StringTokenizer class. It accepts
  * and std::string and a list of separators, and provides a simple interface to return
  * the next token in the string. It also protects quoted content and ignores both C and
@@ -422,29 +422,29 @@ class BasicDefTokeniser
 
 public:
 
-    /** 
+    /**
      * Construct a DefTokeniser with the given input type, and optionally
      * a list of separators.
-     * 
+     *
      * @param str
      * The container to tokenise.
-     * 
+     *
      * @param delims
      * The list of characters to use as delimiters.
-     * 
+     *
      * @param keptDelims
      * String of characters to treat as delimiters but return as tokens in their
      * own right.
      */
-    BasicDefTokeniser(const ContainerT& str, 
-                      const char* delims = WHITESPACE, 
+    BasicDefTokeniser(const ContainerT& str,
+                      const char* delims = WHITESPACE,
                       const char* keptDelims = "{}()")
     : _tok(str, DefTokeniserFunc(delims, keptDelims)),
       _tokIter(_tok.begin())
     { }
-        
+
     /** Test if this StringTokeniser has more tokens to return.
-     * 
+     *
      * @returns
      * true if there are further tokens, false otherwise
      */
@@ -455,10 +455,10 @@ public:
     /** Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
-     * 
+     *
      * @returns
      * std::string containing the next token in the sequence.
-     * 
+     *
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
@@ -469,9 +469,9 @@ public:
             throw ParseException("DefTokeniser: no more tokens");
     }
 
-	/** 
+	/**
 	 * Returns the next token without incrementing the internal
-	 * iterator. Use this if you want to take a look at what is coming 
+	 * iterator. Use this if you want to take a look at what is coming
 	 * next without actually changing the tokeniser's state.
 	 */
 	std::string peek() const
@@ -499,7 +499,7 @@ class BasicDefTokeniser<std::istream>
 {
     // Istream iterator type
     typedef std::istream_iterator<char> CharStreamIterator;
-    
+
     // Internal Boost tokenizer and its iterator
     typedef boost::tokenizer<DefTokeniserFunc,
                              CharStreamIterator,
@@ -508,42 +508,42 @@ class BasicDefTokeniser<std::istream>
     CharTokeniser::iterator _tokIter;
 
 private:
-	
+
 	// Helper function to set noskipws on the input stream.
 	static std::istream& setNoskipws(std::istream& is) {
 		is >> std::noskipws;
 		return is;
 	}
-    
+
 public:
 
-    /** 
+    /**
      * Construct a DefTokeniser with the given input stream, and optionally
      * a list of separators.
-     * 
+     *
      * @param str
      * The std::istream to tokenise. This is a non-const parameter, since tokens
      * will be extracted from the stream.
-     * 
+     *
      * @param delims
      * The list of characters to use as delimiters.
-     * 
+     *
      * @param keptDelims
      * String of characters to treat as delimiters but return as tokens in their
      * own right.
      */
-    BasicDefTokeniser(std::istream& str, 
-                      const char* delims = WHITESPACE, 
+    BasicDefTokeniser(std::istream& str,
+                      const char* delims = WHITESPACE,
                       const char* keptDelims = "{}()")
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
            DefTokeniserFunc(delims, keptDelims)),
       _tokIter(_tok.begin())
     { }
-        
-    /** 
+
+    /**
      * Test if this StringTokeniser has more tokens to return.
-     * 
+     *
      * @returns
      * true if there are further tokens, false otherwise
      */
@@ -551,14 +551,14 @@ public:
         return _tokIter != _tok.end();
     }
 
-    /** 
+    /**
      * Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
-     * 
+     *
      * @returns
      * std::string containing the next token in the sequence.
-     * 
+     *
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
@@ -569,9 +569,9 @@ public:
             throw ParseException("DefTokeniser: no more tokens");
     }
 
-	/** 
+	/**
 	 * Returns the next token without incrementing the internal
-	 * iterator. Use this if you want to take a look at what is coming 
+	 * iterator. Use this if you want to take a look at what is coming
 	 * next without actually changing the tokeniser's state.
 	 */
 	std::string peek() const
@@ -584,7 +584,7 @@ public:
 		{
 			throw ParseException("DefTokeniser: no more tokens");
 		}
-	}    
+	}
 };
 
 

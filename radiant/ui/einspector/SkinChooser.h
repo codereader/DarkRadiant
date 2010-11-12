@@ -33,13 +33,13 @@ class SkinChooser :
 {
 public:
 	// Treemodel definition
-	struct TreeColumns : 
+	struct TreeColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		TreeColumns()
-		{ 
-			add(displayName); 
-			add(fullName); 
+		{
+			add(displayName);
+			add(fullName);
 			add(icon);
 			add(isFolder);
 		}
@@ -57,10 +57,10 @@ private:
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
 	Gtk::TreeView* _treeView;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
-	
+
 	// The model name to use for skin matching
 	std::string _model;
-	
+
 	// The last skin selected, and the original (previous) skin
 	std::string _lastSkin;
 	std::string _prevSkin;
@@ -71,23 +71,23 @@ private:
 private:
 	// Constructor creates GTK widgets
 	SkinChooser();
-	
+
 	// Widget creation functions
 	Gtk::Widget& createTreeView(int width);
 	Gtk::Widget& createPreview(int size);
 	Gtk::Widget& createButtons();
-	
+
 	// Show the dialog and block until selection is made
 	std::string showAndBlock(const std::string& model, const std::string& prev);
-	
+
 	// Populate the tree with skins
 	void populateSkins();
-	
+
 	// GTK callbacks
 	void _onOK();
 	void _onCancel();
 	void _onSelChanged();
-	
+
 	// Contains the static instance
 	static SkinChooser& Instance();
 
@@ -110,12 +110,12 @@ public:
 	void onRadiantShutdown();
 
 	/** Display the dialog and return the skin chosen by the user, or an empty
-	 * string if no selection was made. This static method enters are recursive 
+	 * string if no selection was made. This static method enters are recursive
 	 * GTK main loop during skin selection.
-	 * 
+	 *
 	 * @param model
 	 * The full VFS path of the model for which matching skins should be found.
-	 * 
+	 *
 	 * @param prevSkin
 	 * The current skin set on the model, so that the original can be returned
 	 * if the dialog is cancelled.

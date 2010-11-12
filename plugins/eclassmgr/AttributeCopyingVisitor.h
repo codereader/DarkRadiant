@@ -16,7 +16,7 @@ class AttributeCopyingVisitor
 {
 	// Target entity to copy values onto
 	IEntityClass& _target;
-	
+
 public:
 
 	// Constructor sets target
@@ -32,7 +32,7 @@ public:
 		// greebo: Add the attribute with "inherited" set to true
 		EntityClassAttribute copiedAttr(attr);
 		copiedAttr.inherited = true;
-		
+
 		_target.addAttribute(copiedAttr);
 	}
 };

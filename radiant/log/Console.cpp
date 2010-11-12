@@ -33,11 +33,11 @@ Console::Console() :
 	{
 		applog::StringLogDevice& logger = *applog::StringLogDevice::InstancePtr();
 
-		for (int level = applog::SYS_VERBOSE; 
-			 level < applog::SYS_NUM_LOGLEVELS; 
+		for (int level = applog::SYS_VERBOSE;
+			 level < applog::SYS_NUM_LOGLEVELS;
 			 level++)
 		{
-			writeLog(logger.getString(static_cast<applog::ELogLevel>(level)) + "\n", 
+			writeLog(logger.getString(static_cast<applog::ELogLevel>(level)) + "\n",
 				static_cast<applog::ELogLevel>(level));
 		}
 	}
@@ -55,7 +55,7 @@ void Console::clearCmd(const cmd::ArgumentList& args)
 
 void Console::toggle(const cmd::ArgumentList& args)
 {
-	GlobalGroupDialog().togglePage("console");  
+	GlobalGroupDialog().togglePage("console");
 }
 
 void Console::writeLog(const std::string& outputStr, applog::ELogLevel level)

@@ -30,10 +30,10 @@ AABB AABB::createFromMinMax(const Vector3& min, const Vector3& max) {
 
 	// Origin is the midpoint of the two vectors
 	Vector3 origin = (min + max) * 0.5;
-	
+
 	// Extents is the vector from the origin to the max point
 	Vector3 extents = max - origin;
-	
+
 	// Construct and return the resulting AABB;
 	return AABB(origin, extents);
 }
@@ -70,9 +70,9 @@ void AABB::includePoint(const Vector3& point) {
 		// Extend each axis separately
 		for (int i = 0; i < 3; ++i) {
 			// Axis displacement from origin to point
-			double axisDisp = point[i] - origin[i]; 
+			double axisDisp = point[i] - origin[i];
 			// Half of extent increase needed (maybe negative if point inside)
-			double halfDif = 0.5 * (std::abs(axisDisp) - extents[i]); 
+			double halfDif = 0.5 * (std::abs(axisDisp) - extents[i]);
 			if (halfDif > 0) {
 				origin[i] += (axisDisp > 0) ? halfDif : -halfDif;
 				extents[i] += halfDif;
@@ -83,7 +83,7 @@ void AABB::includePoint(const Vector3& point) {
 
 // Expand this AABB to include another AABB
 void AABB::includeAABB(const AABB& other) {
-	
+
 	// Validity check. If both this and other are valid, use the extension
 	// algorithm. If only the other AABB is valid, set this AABB equal to it.
 	// If neither are valid we do nothing.
@@ -111,6 +111,6 @@ void AABB::includeAABB(const AABB& other) {
 	}
 	else if (other.isValid()) {
 		origin = other.origin;
-		extents = other.extents;	
+		extents = other.extents;
 	}
 }

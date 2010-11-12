@@ -17,7 +17,7 @@ namespace Gtk
 namespace ui
 {
 
-/** 
+/**
  * PropertyEditor shared pointer type.
  */
 class PropertyEditor;
@@ -31,7 +31,7 @@ typedef boost::shared_ptr<PropertyEditor> PropertyEditorPtr;
  * to this base class. The Glib::RefPtr<Gtk::Widget> reference is then
  * held by the base class and destroyed along with the base class.
  */
-class PropertyEditor : 
+class PropertyEditor :
 	public IPropertyEditor
 {
 private:

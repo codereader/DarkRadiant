@@ -32,24 +32,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct FilterRule {
 
 	// "texture", "entityclass" or "object"
-	std::string type; 	
+	std::string type;
 
 	// the match expression regex
-	std::string match; 	
+	std::string match;
 
 	// true for action="show", false for action="hide"
-	bool show;			
-	
+	bool show;
+
 	// Constructor
-	FilterRule(const std::string t, const std::string m, bool s) : 
-		type(t), 
-		match(m), 
-		show(s) 
+	FilterRule(const std::string t, const std::string m, bool s) :
+		type(t),
+		match(m),
+		show(s)
 	{}
 };
 typedef std::vector<FilterRule> FilterRules;
 
-/** Visitor interface for evaluating the available filters in the 
+/** Visitor interface for evaluating the available filters in the
  * FilterSystem.
  */
 struct IFilterVisitor {
@@ -80,9 +80,9 @@ public:
 	virtual void removeObserver(const ObserverPtr& observer) = 0;
 
 	/**
-	 * greebo: Updates all the "Filtered" status of all Instances 
-	 *         in the scenegraph based on the current filter settings.         
-	 */ 
+	 * greebo: Updates all the "Filtered" status of all Instances
+	 *         in the scenegraph based on the current filter settings.
+	 */
 	virtual void update() = 0;
 
 	/**
@@ -93,24 +93,24 @@ public:
 
 	/** Visit the available filters, passing each filter's text
 	 * name to the visitor.
-	 * 
+	 *
 	 * @param visitor
 	 * Visitor class implementing the IFilterVisitor interface.
 	 */
 	virtual void forEachFilter(IFilterVisitor& visitor) = 0;
-	
+
 	/** Set the state of the named filter.
-	 * 
+	 *
 	 * @param filter
 	 * The filter to toggle.
-	 * 
+	 *
 	 * @param state
 	 * true if the filter should be active, false otherwise.
 	 */
 	virtual void setFilterState(const std::string& filter, bool state) = 0;
 
 	/** greebo: Returns the state of the given filter.
-	 * 
+	 *
 	 * @returns: true or false, depending on the filter state.
 	 */
 	virtual bool getFilterState(const std::string& filter) = 0;
@@ -122,13 +122,13 @@ public:
 
 	/** Test if a given item should be visible or not, based on the currently-
 	 * active filters.
-	 * 
+	 *
 	 * @param item
 	 * The item to query - "texture", "entityclass" or "object"
-	 * 
+	 *
 	 * @param text
 	 * String name of the item to query.
-	 * 
+	 *
 	 * @returns
 	 * true if the item is visible, false otherwise.
 	 */

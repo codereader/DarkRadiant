@@ -63,7 +63,7 @@ public:
 		if (_dialog != NULL) _dialog->setElementValue(handle, value);
 	}
 
-	std::string getElementValue(const ui::IDialog::Handle& handle) 
+	std::string getElementValue(const ui::IDialog::Handle& handle)
 	{
 		return (_dialog != NULL) ? _dialog->getElementValue(handle) : "";
 	}

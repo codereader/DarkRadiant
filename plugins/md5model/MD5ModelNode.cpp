@@ -7,7 +7,7 @@
 namespace md5 {
 
 // Local helper
-inline void Surface_addLight(const MD5Surface& surface, 
+inline void Surface_addLight(const MD5Surface& surface,
 								 VectorLightList& lights,
 								 const Matrix4& localToWorld,
 								 const RendererLight& light)
@@ -19,7 +19,7 @@ inline void Surface_addLight(const MD5Surface& surface,
 
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
 	_model(model),
-	_surfaceLightLists(_model->size()), 
+	_surfaceLightLists(_model->size()),
 	_surfaceRemaps(_model->size())
 {
 	_lightList = &GlobalRenderSystem().attach(*this);
@@ -79,7 +79,7 @@ void MD5ModelNode::insertLight(const RendererLight& light) {
 }
 
 void MD5ModelNode::clearLights() {
-	for (SurfaceLightLists::iterator i = _surfaceLightLists.begin(); 
+	for (SurfaceLightLists::iterator i = _surfaceLightLists.begin();
 		 i != _surfaceLightLists.end(); ++i)
 	{
 		i->clear();
@@ -111,8 +111,8 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 	SurfaceRemaps::const_iterator k = _surfaceRemaps.begin();
 
 	// greebo: Iterate over all MD5 surfaces and render them
-	for (MD5Model::const_iterator i = _model->begin(); 
-		 i != _model->end(); 
+	for (MD5Model::const_iterator i = _model->begin();
+		 i != _model->end();
 		 ++i, ++j, ++k)
 	{
 		collector.setLights(*j);

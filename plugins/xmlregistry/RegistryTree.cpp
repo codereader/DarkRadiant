@@ -8,7 +8,7 @@
 #include "gtkutil/IConv.h"
 
 	namespace {
-		// Needed for boost::algorithm::split		
+		// Needed for boost::algorithm::split
 		typedef std::vector<std::string> StringParts;
 	}
 
@@ -45,14 +45,14 @@ xml::NodeList RegistryTree::findXPath(const std::string& xPath) {
  */
 bool RegistryTree::keyExists(const std::string& key) {
 	std::string fullKey = prepareKey(key);
-	
+
 	xml::NodeList result = _tree.findXPath(fullKey);
 	return (result.size() > 0);
 }
 
-/* Deletes this key and all its children, 
- * this includes multiple instances nodes matching this key 
- */ 
+/* Deletes this key and all its children,
+ * this includes multiple instances nodes matching this key
+ */
 void RegistryTree::deleteXPath(const std::string& path) {
 	// Add the toplevel node to the path if required
 	std::string fullPath = prepareKey(path);
@@ -64,17 +64,17 @@ void RegistryTree::deleteXPath(const std::string& path) {
 	}
 }
 
-/*	Adds a key <key> as child to <path> to the XMLRegistry (with the name attribute set to <name>)       
+/*	Adds a key <key> as child to <path> to the XMLRegistry (with the name attribute set to <name>)
  */
-xml::Node RegistryTree::createKeyWithName(const std::string& path, 
-										  const std::string& key, 
-										  const std::string& name) 
+xml::Node RegistryTree::createKeyWithName(const std::string& path,
+										  const std::string& key,
+										  const std::string& name)
 {
 	// Add the toplevel node to the path if required
 	std::string fullPath = prepareKey(path);
-	
+
 	xml::Node insertPoint(NULL);
-	
+
 	// Check if the insert point <path> exists, create it otherwise
 	if (!keyExists(fullPath)) {
 		insertPoint = createKey(fullPath);
@@ -83,10 +83,10 @@ xml::Node RegistryTree::createKeyWithName(const std::string& path,
 		xml::NodeList nodeList = _tree.findXPath(fullPath);
 		insertPoint = nodeList[0];
 	}
-	
+
 	// Add the <key> to the insert point <path>
 	xml::Node createdNode = insertPoint.createChild(key);
-	
+
 	// Set the "name" attribute and return
 	createdNode.setAttributeValue("name", name);
 
@@ -94,40 +94,40 @@ xml::Node RegistryTree::createKeyWithName(const std::string& path,
 }
 
 /*	Adds a key to the XMLRegistry (without value, just the node)
- *  All required parent nodes are created automatically, if they don't exist     
+ *  All required parent nodes are created automatically, if they don't exist
  */
 xml::Node RegistryTree::createKey(const std::string& key) {
 	// Add the toplevel node to the path if required
 	std::string fullKey = prepareKey(key);
-	
+
 	StringParts parts;
 	boost::algorithm::split(parts, fullKey, boost::algorithm::is_any_of("/"));
-	
+
 	//globalOutputStream() << "XMLRegistry: Inserting key: " << key.c_str() << "\n";
-	
+
 	// Are there any slashes in the path at all? If not, exit, we've no use for this
 	if (parts.size() > 0) {
 		xml::Node createdNode(NULL);
-		
+
 		// The temporary path variable for walking through the hierarchy
 		std::string path("");
-		
+
 		// Start at the root node
 		xml::Node insertPoint = _tree.getTopLevelNode();
-		
+
 		for (std::size_t i = 0; i < parts.size(); i++) {
 			if (parts[i] == "") continue;
-			
+
 			// Construct the new path to be searched for
 			path += "/" + parts[i];
-			
+
 			// Check if the path exists
 			xml::NodeList nodeList = _tree.findXPath(path);
 
 			if (nodeList.size() > 0) {
-				// node exists, set the insertPoint to this node and continue 
+				// node exists, set the insertPoint to this node and continue
 				insertPoint = nodeList[0];
-				// Set the createdNode to this point, in case this is the node to be created 
+				// Set the createdNode to this point, in case this is the node to be created
 				createdNode = insertPoint;
 			}
 			else {
@@ -137,7 +137,7 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 				createdNode.addText(" ");
 			}
 		}
-		
+
 		// return the pointer to the deepest, newly created node
 		return createdNode;
 	}
@@ -148,17 +148,17 @@ xml::Node RegistryTree::createKey(const std::string& key) {
 }
 
 /* Gets a key from the registry, /darkradiant is automatically added by prepareKey()
- * if relative paths are used 
+ * if relative paths are used
  */
 std::string RegistryTree::get(const std::string& key) {
 	// Add the toplevel node to the path if required
 	std::string fullKey = prepareKey(key);
-	
+
 	//globalOutputStream() << "XMLRegistry: Querying key: " << fullKey.c_str() << "\n";
-	
+
 	// Try to load the node, return an empty string if nothing is found
 	xml::NodeList nodeList = _tree.findXPath(fullKey);
-	
+
 	// Does it even exist?
 	// There is the theoretical case that this returns two nodes that match the key criteria
 	// This function always uses the first one, but this may be changed if this turns out to be problematic
@@ -172,20 +172,20 @@ std::string RegistryTree::get(const std::string& key) {
 	}
 }
 
-// Sets the value of a key from the registry, 
+// Sets the value of a key from the registry,
 // "/darkradiant" is automatically added if relative paths are used
 void RegistryTree::set(const std::string& key, const std::string& value) {
 	// Add the toplevel node to the path if required
 	std::string fullKey = prepareKey(key);
-	
+
 	// If the key doesn't exist, we have to create an empty one
 	if (!keyExists(fullKey)) {
 		createKey(fullKey);
 	}
-	
-	// Try to find the node	
+
+	// Try to find the node
 	xml::NodeList nodeList = _tree.findXPath(fullKey);
-	
+
 	if (!nodeList.empty()) {
 		// Set the value
 		nodeList[0].setAttributeValue("value", value);
@@ -196,20 +196,20 @@ void RegistryTree::set(const std::string& key, const std::string& value) {
 	}
 }
 
-void RegistryTree::setAttribute(const std::string& path, 
+void RegistryTree::setAttribute(const std::string& path,
 		const std::string& attrName, const std::string& attrValue)
 {
 	// Add the toplevel node to the path if required
 	std::string fullKey = prepareKey(path);
-	
+
 	// If the key doesn't exist, we have to create an empty one
 	if (!keyExists(fullKey)) {
 		createKey(fullKey);
 	}
 
-	// Try to find the node	
+	// Try to find the node
 	xml::NodeList nodeList = _tree.findXPath(fullKey);
-	
+
 	if (!nodeList.empty()) {
 		// Set the value
 		nodeList[0].setAttributeValue(attrName, attrValue);
@@ -221,39 +221,39 @@ void RegistryTree::setAttribute(const std::string& path,
 }
 
 /* Appends a whole (external) XML file to the XMLRegistry. The toplevel nodes of this file
- * are appended to _topLevelNode (e.g. <darkradiant>) if parentKey is set to the empty string "", 
+ * are appended to _topLevelNode (e.g. <darkradiant>) if parentKey is set to the empty string "",
  * otherwise they are imported as a child of the specified parentKey
  */
-void RegistryTree::importFromFile(const std::string& importFilePath, 
-								  const std::string& parentKey) 
+void RegistryTree::importFromFile(const std::string& importFilePath,
+								  const std::string& parentKey)
 {
 	std::string importKey = parentKey;
-	
+
 	// If an empty parentKey was passed, set it to the default import node
 	if (importKey.empty()) {
 		importKey = _defaultImportNode;
 	}
-	
-	// Check if the importKey exists - if not: create it 
+
+	// Check if the importKey exists - if not: create it
   	std::string fullImportKey = prepareKey(importKey);
-  	
+
   	if (!keyExists(fullImportKey)) {
-  		createKey(fullImportKey);	
+  		createKey(fullImportKey);
   	}
-  	
+
   	// Lookup the mount point by using findXPath(), it must exist by now
   	xml::NodeList importNodeList = _tree.findXPath(fullImportKey);
-	
+
   	if (importNodeList.empty()) {
   		globalOutputStream() << "XMLRegistry: Critical: ImportNode could not be found.\n";
 		return;
   	}
- 
+
 	globalOutputStream() << "XMLRegistry: Importing XML file: " << importFilePath << std::endl;
-  	
+
   	// Load the file
 	xml::Document importDoc(importFilePath);
-	  	
+
   	if (importDoc.isValid()) {
 		// Import the document into our XML tree
 		_tree.importDocument(importDoc, importNodeList[0]);
@@ -268,31 +268,31 @@ void RegistryTree::importFromFile(const std::string& importFilePath,
  */
 void RegistryTree::exportToFile(const std::string& key, const std::string& filename) {
 	if (key.empty()) return;
-	
+
 	// Add the toplevel node to the key if required
 	std::string fullKey = prepareKey(key);
-	
+
 	// Try to find the specified node
 	xml::NodeList result = _tree.findXPath(fullKey);
-	
+
 	if (result.size() > 0) {
 		// Create a new xml::Document
 		xml::Document targetDoc = xml::Document::create();
-		
+
 		std::string keyName = fullKey.substr(fullKey.rfind("/") + 1);
-		
+
 		// Add an empty toplevel node with the given key (leaf) name
 		targetDoc.addTopLevelNode(keyName);
 
 		// Select all the child nodes of the export key
 		xml::NodeList children = _tree.findXPath(fullKey + "/*");
-		
+
 		// Copy the child nodes into this document
 		targetDoc.copyNodes(children);
 
 		// Save the whole document to the specified filename
 		targetDoc.saveToFile(filename);
-		
+
 		globalOutputStream() << "XMLRegistry: Saved " << key << " to " << filename << std::endl;
 	}
 	else {

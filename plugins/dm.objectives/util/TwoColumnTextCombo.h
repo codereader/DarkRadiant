@@ -13,13 +13,13 @@ namespace util
 /**
  * \namespace objectives::util
  * Helper classes for the Objectives Editor plugin.
- * 
+ *
  * \ingroup objectives
  */
 
 /**
  * Helper class to create a Gtk::ComboBox containing two text columns.
- * 
+ *
  * This class provides a convenient mechanism to create a Gtk::ComboBox backed
  * by a Gtk::ListStore containing two text columns. The first text column (column
  * 0) contains a text string which will be displayed in the Gtk::ComboBox itself,
@@ -52,10 +52,10 @@ public:
 		Glib::RefPtr<Gtk::ListStore> ls = Gtk::ListStore::create(columns);
 
 		set_model(ls);
-		
+
 		// Add a text cell renderer for column 0
 		Gtk::CellRendererText* rend = Gtk::manage(new Gtk::CellRendererText);
-		
+
 		pack_start(*rend, false);
 		add_attribute(rend->property_text(), columns.first);
 	}

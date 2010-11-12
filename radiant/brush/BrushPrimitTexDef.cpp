@@ -53,28 +53,28 @@ void BrushPrimitTexDef::shift(double s, double t) {
 void BrushPrimitTexDef::scale(double s, double t) {
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
-	
+
 	double newXScale = texdef._scale[0] + s;
 	double newYScale = texdef._scale[1] + t;
-	
+
 	// Don't allow zero (or almost zero) scale values
-	if (float_equal_epsilon(newXScale, 0, 1e-5) || 
-		float_equal_epsilon(newYScale, 0, 1e-5)) 
+	if (float_equal_epsilon(newXScale, 0, 1e-5) ||
+		float_equal_epsilon(newYScale, 0, 1e-5))
 	{
 		return;
 	}
-	
+
 	// Don't allow sign changes
-	if ((newXScale*texdef._scale[0]) < 0.0f || 
+	if ((newXScale*texdef._scale[0]) < 0.0f ||
 		(newYScale*texdef._scale[1]) < 0.0f)
 	{
 		return;
 	}
-	
+
 	// update
 	texdef._scale[0] = newXScale;
 	texdef._scale[1] = newYScale;
-	
+
 	// compute new normalized texture matrix
 	*this = BrushPrimitTexDef(texdef);
 }
@@ -83,10 +83,10 @@ void BrushPrimitTexDef::scale(double s, double t) {
 void BrushPrimitTexDef::rotate(double angle) {
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
-	
+
 	// update
 	texdef._rotate += angle;
-	
+
 	// compute new normalized texture matrix
 	*this = BrushPrimitTexDef(texdef);
 }
@@ -94,7 +94,7 @@ void BrushPrimitTexDef::rotate(double angle) {
 /* greebo: This removes the texture scaling from the
  * coordinates. The resulting coordinates are absolute
  * values within the shader image.
- * 
+ *
  * An 128x256 texture with scaled coordinates 0.5,0.5
  * would be translated into the coordinates 64,128,
  * pointing to a defined pixel within the texture image.
@@ -129,15 +129,15 @@ TexDef BrushPrimitTexDef::getFakeTexCoords() const
 
 	texdef._scale[0] = 1.0 / Vector2(coords[0][0], coords[1][0]).getLength();
 	texdef._scale[1] = 1.0 / Vector2(coords[0][1], coords[1][1]).getLength();
-	
+
 	texdef._rotate = -radians_to_degrees(arctangent_yx(coords[1][0], coords[0][0]));
-	
+
 	texdef._shift[0] = -coords[0][2];
 	texdef._shift[1] = coords[1][2];
-	
+
 	// determine whether or not an axis is flipped using a 2d cross-product
 	double cross = Vector2(coords[0][0], coords[0][1]).crossProduct(Vector2(coords[1][0], coords[1][1]));
-	
+
 	if (cross < 0)
 	{
 		// This is a bit of a compromise when using BPs--since we don't know *which* axis was flipped,
@@ -153,7 +153,7 @@ TexDef BrushPrimitTexDef::getFakeTexCoords() const
 		      texdef._scale[1] = -texdef._scale[1];
 		}
 	}
-	
+
 	return texdef;
 }
 
@@ -171,7 +171,7 @@ void BrushPrimitTexDef::normalise(double width, double height) {
 Matrix4 BrushPrimitTexDef::getTransform() const {
 	// Initialise the return value with the identity matrix
 	Matrix4 transform = Matrix4::getIdentity();
-	
+
 	// Just copy the member variables to the according matrix components
 	transform.xx() = coords[0][0];
 	transform.yx() = coords[0][1];
@@ -179,6 +179,6 @@ Matrix4 BrushPrimitTexDef::getTransform() const {
 	transform.xy() = coords[1][0];
 	transform.yy() = coords[1][1];
 	transform.ty() = coords[1][2];
-	
+
 	return transform;
 }

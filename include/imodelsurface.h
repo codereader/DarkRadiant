@@ -32,7 +32,7 @@ public:
 	 * greebo: Returns a specific polygon from this model surface.
 	 * Don't expect this to be fast as things are returned by value.
 	 * This is merely to provide read access to the model polygons
-	 * for scripts and plugins. 
+	 * for scripts and plugins.
 	 */
 	virtual ModelPolygon getPolygon(int polygonIndex) const = 0;
 

@@ -17,7 +17,7 @@ class ClassnameSpecifierPanel :
 {
 	// Map registration
 	static struct RegHelper {
-		RegHelper() { 
+		RegHelper() {
 			SpecifierPanelFactory::registerType(
 				SpecifierType::SPEC_CLASSNAME().getName(),
 				SpecifierPanelPtr(new ClassnameSpecifierPanel())

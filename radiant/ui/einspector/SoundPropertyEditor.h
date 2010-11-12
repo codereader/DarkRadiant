@@ -15,18 +15,18 @@ class SoundPropertyEditor
 private:
 	// Keyvalue to set
 	std::string _key;
-	
+
 private:
 
 	void _onBrowseButton();
-	
+
 public:
 
 	// Default constructor for the map
 	SoundPropertyEditor() { }
-	
+
 	// Main constructor
-	SoundPropertyEditor(Entity* entity, 
+	SoundPropertyEditor(Entity* entity,
 					    const std::string& name,
 					    const std::string& options);
 

@@ -15,9 +15,9 @@ namespace ui
 class Console;
 typedef boost::shared_ptr<Console> ConsolePtr;
 
-/** 
- * greebo: The Console class encapsulates a GtkTextView and represents 
- *         the "device", which the LogWriter is writing its output to. 
+/**
+ * greebo: The Console class encapsulates a GtkTextView and represents
+ *         the "device", which the LogWriter is writing its output to.
  *
  *         The Console is a singleton which needs to be constructed and packed
  *         during mainframe construction.
@@ -36,7 +36,7 @@ private:
 	Console();
 
 public:
-	/** 
+	/**
 	 * greebo: Static command target for toggling the console.
 	 */
 	static void toggle(const cmd::ArgumentList& args);
@@ -53,7 +53,7 @@ public:
 
 	/**
 	 * greebo: Detaches itself from the LogWriter
-	 */ 
+	 */
 	static void destroy();
 
 	// Accessor to the static singleton instance.

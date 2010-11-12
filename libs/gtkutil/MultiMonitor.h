@@ -10,12 +10,12 @@
 namespace gtkutil
 {
 
-/** 
+/**
  * greebo: This class acts as container for several
  * multi-monitor-related functions. Use the getMonitor() method
  * to acquire the screen dimensions of the given screen.
  */
-class MultiMonitor 
+class MultiMonitor
 {
 public:
 	/**
@@ -25,12 +25,12 @@ public:
 	{
 		// Acquire the default screen reference
 		Glib::RefPtr<Gdk::Screen> screen = Gdk::Display::get_default()->get_default_screen();
-		
+
 		// Get and return the number of monitors
 		return screen->get_n_monitors();;
 	}
 
-	/** 
+	/**
 	 * Returns the screen rectangle of the screen with the given index.
 	 * The first screen is always present and has the index 0.
 	 */
@@ -44,8 +44,8 @@ public:
 		return geom;
 	}
 
-	/** 
-	 * greebo: Returns the rectangle (width/height) for the monitor 
+	/**
+	 * greebo: Returns the rectangle (width/height) for the monitor
 	 * which the given window is displayed on.
 	 */
 	static Gdk::Rectangle getMonitorForWindow(const Glib::RefPtr<Gtk::Window>& window)
@@ -59,8 +59,8 @@ public:
 		return getMonitor(monitorNum);
 	}
 
-	/** 
-	 * greebo: Returns the rectangle (width/height) for the monitor 
+	/**
+	 * greebo: Returns the rectangle (width/height) for the monitor
 	 * which the given window is displayed on.
 	 */
 	static Gdk::Rectangle getMonitorForWindow(Gtk::Window& window)
@@ -83,7 +83,7 @@ public:
 		{
 			Gdk::Rectangle geom = getMonitor(j);
 
-			globalOutputStream() << "Monitor " << j << " geometry: " 
+			globalOutputStream() << "Monitor " << j << " geometry: "
 				<< geom.get_width() << "x" << geom.get_height() << " at "
 				<< geom.get_x() << ", " << geom.get_y() << std::endl;
 		}

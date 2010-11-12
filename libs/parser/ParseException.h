@@ -11,11 +11,11 @@ namespace parser
  */
 
 class ParseException
-: public std::runtime_error 
+: public std::runtime_error
 {
 public:
     ParseException(const std::string& what)
-    : std::runtime_error(what) 
+    : std::runtime_error(what)
     {}
 };
 

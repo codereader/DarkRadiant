@@ -12,7 +12,7 @@ class WaveFrontModule :
 {
 public:
 	void exportSelectionAsOBJ(const cmd::ArgumentList& args);
- 
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
@@ -20,6 +20,6 @@ public:
 };
 typedef boost::shared_ptr<WaveFrontModule> WaveFrontModulePtr;
 
-} 
+}
 
 #endif /* _WAVEFRONT_MODULE_H_ */

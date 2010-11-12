@@ -106,7 +106,7 @@ inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3
 	Vector3 first = from;
 	Vector3 second = to;
 
-	if ((from.dot(plane.normal()) > 0) == (to.dot(plane.normal()) > 0)) 
+	if ((from.dot(plane.normal()) > 0) == (to.dot(plane.normal()) > 0))
     {
 		first = -first;
 		second = -second;
@@ -124,13 +124,13 @@ inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3
 #endif
 
 	Matrix4 swap = matrix4_swap_axes(first, second);
-	
+
 	Matrix4 tmp = matrix4_reflection_for_plane(plane);
-	
+
 	swap.tx() = -(-2 * plane.normal().x() * plane.dist());
 	swap.ty() = -(-2 * plane.normal().y() * plane.dist());
 	swap.tz() = -(-2 * plane.normal().z() * plane.dist());
-	
+
 	return swap;
 }
 
@@ -162,11 +162,11 @@ inline void Normal_GetTransform(const Vector3& normal, Matrix4& transform) {
 			transform[0]  =  1;
 			transform[1]  =  0;
 			transform[2]  =  0;
-			    
+
 			transform[4]  =  0;
 			transform[5]  =  1;
 			transform[6]  =  0;
-			    
+
 			transform[8]  =  0;
 			transform[9]  =  0;
 			transform[10] =  1;
@@ -175,11 +175,11 @@ inline void Normal_GetTransform(const Vector3& normal, Matrix4& transform) {
 			transform[0]  =  1;
 			transform[1]  =  0;
 			transform[2]  =  0;
-			    
+
 			transform[4]  =  0;
 			transform[5]  =  0;
 			transform[6]  = -1;
-			    
+
 			transform[8]  =  0;
 			transform[9]  =  1;
 			transform[10] =  0;
@@ -188,11 +188,11 @@ inline void Normal_GetTransform(const Vector3& normal, Matrix4& transform) {
 			transform[0]  =  0;
 			transform[1]  =  0;
 			transform[2]  =  1;
-			    
+
 			transform[4]  =  1;
 			transform[5]  =  0;
 			transform[6]  =  0;
-			    
+
 			transform[8]  =  0;
 			transform[9]  =  1;
 			transform[10] =  0;
@@ -203,18 +203,18 @@ inline void Normal_GetTransform(const Vector3& normal, Matrix4& transform) {
 }
 
 /* greebo: This method calculates the normalised basis vectors of the texture plane as defined by <normal>
- * 
- * If the normal vector points to the z-direction, the basis vectors are part 
+ *
+ * If the normal vector points to the z-direction, the basis vectors are part
  * of the xy-plane: texS = <0,1,0> and texT = <1,0,0>
- * 
+ *
  * If normal vector points to the negative z-direction, the above case applies, but with
  * the x-direction inversed: texS = <0,1,0> and texT = <-1,0,0> (note the minus)
- * 
+ *
  * If none of the two above cases apply, the basis is calculated via cross products
  * that result in vectors perpendicular to <normal>. These lie within the plane
  * that is defined by the normal vector itself.
- * 
- * Note: the vector <normal> MUST be normalised for this to function correctly.  
+ *
+ * Note: the vector <normal> MUST be normalised for this to function correctly.
  */
 inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT) {
 	const Vector3 up(0, 0, 1);
@@ -238,33 +238,33 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
 /* greebo: this is used to calculate the directions the patch is "flattened" in.
  * If one of the patch bases is parallel or anti-parallel to the <faceNormal> it cannot
  * be projected onto the facePlane, so a new orthogonal vector is taken as direction instead.
- * 
+ *
  * This prevents the patch from disappearing and the texture from being infinetly stretched in such cases.
- * 
+ *
  * @returns: This returns two normalised vectors that are orthogonal to the face plane normal and point
  * into the direction of the patch orientation. */
-inline void getVirtualPatchBase(const Vector3& widthVector, const Vector3& heightVector, 
-								const Vector3& faceNormal, Vector3& widthBase, Vector3& heightBase) 
+inline void getVirtualPatchBase(const Vector3& widthVector, const Vector3& heightVector,
+								const Vector3& faceNormal, Vector3& widthBase, Vector3& heightBase)
 {
 	bool widthVectorIsParallel = widthVector.isParallel(faceNormal);
 	bool heightVectorIsParallel = heightVector.isParallel(faceNormal);
-	
+
 	if (widthVectorIsParallel) {
 		// Calculate a orthogonal width vector
 		widthBase = faceNormal.crossProduct(heightVector).getNormalised();
 	}
 	else {
 		// Project the vector onto the faceplane (this is the width direction)
-		widthBase = (widthVector - faceNormal*(faceNormal*widthVector)).getNormalised(); 
+		widthBase = (widthVector - faceNormal*(faceNormal*widthVector)).getNormalised();
 	}
-	
+
 	if (heightVectorIsParallel) {
 		// Calculate a orthogonal height vector
 		heightBase = faceNormal.crossProduct(widthVector).getNormalised();
 	}
 	else {
 		// Project the vector onto the faceplane (this is the height direction)
-		heightBase = (heightVector - faceNormal*(faceNormal*heightVector)).getNormalised(); 
+		heightBase = (heightVector - faceNormal*(faceNormal*heightVector)).getNormalised();
 	}
 }
 
@@ -292,12 +292,12 @@ inline std::size_t findBestEdgeForDirection(const Vector2& direction, const std:
 		double dot = direction.dot(edges[i]);
 
 		if (dot <= best) continue;
-		
+
 		// Found a new best edge
 		bestIndex = i;
 		best = dot;
 	}
-	
+
 	return bestIndex;
 }
 

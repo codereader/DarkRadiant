@@ -10,7 +10,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU Lesser General Public License for more details.
 
@@ -26,10 +26,10 @@ void	main()
 {
 	// transform vertex position into homogenous clip-space
 	gl_Position = ftransform();
-	
+
 	// transform texcoords
 	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
-	
+
 	// assign color
 	gl_FrontColor = gl_Color;
 }

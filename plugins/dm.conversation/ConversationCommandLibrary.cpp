@@ -15,19 +15,19 @@ class ConversationCommandInfoLoader :
 {
 	// The target map to populate
 	ConversationCommandInfoMap& _map;
-	
+
 	// The entityDef prefix (e.g. "atdm:conversation_command_")
 	std::string _prefix;
 
 public:
-	/** 
-	 * greebo: Pass the target map where all the eclassptrs should be stored into. 
+	/**
+	 * greebo: Pass the target map where all the eclassptrs should be stored into.
 	 */
 	ConversationCommandInfoLoader(ConversationCommandInfoMap& map) :
 		_map(map),
 		_prefix(GlobalRegistry().get(RKEY_CONVERSATION_COMMAND_INFO_PREFIX))
 	{}
-	
+
 	void visit(IEntityClassPtr eclass) {
 		if (boost::algorithm::starts_with(eclass->getName(), _prefix)) {
 			// We have a match, create a new structure
@@ -57,9 +57,9 @@ const ConversationCommandInfo& ConversationCommandLibrary::findCommandInfo(const
 }
 
 const ConversationCommandInfo& ConversationCommandLibrary::findCommandInfo(int id) {
-	
-	for (ConversationCommandInfoMap::const_iterator i = _commandInfo.begin(); 
-		 i != _commandInfo.end(); 
+
+	for (ConversationCommandInfoMap::const_iterator i = _commandInfo.begin();
+		 i != _commandInfo.end();
 		 ++i)
 	{
 		if (i->second->id == id) {
@@ -77,16 +77,16 @@ void ConversationCommandLibrary::loadConversationCommands()
 	GlobalEntityClassManager().forEach(loader);
 }
 
-void ConversationCommandLibrary::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store, 
+void ConversationCommandLibrary::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
 												   const CommandColumns& columns)
 {
 	// Iterate over everything and push the data into the liststore
-	for (ConversationCommandInfoMap::const_iterator i = _commandInfo.begin(); 
-		 i != _commandInfo.end(); 
+	for (ConversationCommandInfoMap::const_iterator i = _commandInfo.begin();
+		 i != _commandInfo.end();
 		 ++i)
 	{
 		Gtk::TreeModel::Row row = *store->append();
-		
+
 		row[columns.cmdNumber] = i->second->id;
 		row[columns.caption] = i->second->name;
 	}

@@ -10,18 +10,18 @@
 
 /* CONSTANTS */
 namespace {
-	
+
 	// Registry path for default light shader
-	const std::string DEFAULT_LIGHT_PATH = "game/defaults/lightShader";	
-	
+	const std::string DEFAULT_LIGHT_PATH = "game/defaults/lightShader";
+
 }
 
-namespace shaders 
+namespace shaders
 {
 
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
-CShader::CShader(const std::string& name, const ShaderDefinition& definition) : 
+CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 	_template(definition.shaderTemplate),
 	_fileName(definition.filename),
 	_name(name),
@@ -47,16 +47,16 @@ float CShader::getPolygonOffset() const
     return _template->getPolygonOffset();
 }
 
-TexturePtr CShader::getEditorImage() 
+TexturePtr CShader::getEditorImage()
 {
-    if (!_editorTexture) 
+    if (!_editorTexture)
     {
-        // Pass the call to the GLTextureManager to realise this image 
+        // Pass the call to the GLTextureManager to realise this image
         _editorTexture = GetTextureManager().getBinding(
             _template->getEditorTexture()
         );
     }
-	
+
     return _editorTexture;
 }
 
@@ -87,11 +87,11 @@ TexturePtr CShader::lightFalloffImage() {
 
 			// Cast to a CShader so we can call getFalloffName().
 			CShaderPtr cshaderPtr = boost::static_pointer_cast<CShader>(defLightShader);
-			
+
 			// create the image
 			_texLightFalloff = GetTextureManager().getBinding(cshaderPtr->_template->getLightFalloff());
 		}
-	
+
 	}
 	// Return the texture
 	return _texLightFalloff;
@@ -102,7 +102,7 @@ TexturePtr CShader::lightFalloffImage() {
 /*
  * Return name of shader.
  */
-std::string CShader::getName() const 
+std::string CShader::getName() const
 {
 	return _name;
 }
@@ -156,7 +156,7 @@ void CShader::unrealise() {
 }
 
 // Parse and load image maps for this shader
-void CShader::realiseLighting() 
+void CShader::realiseLighting()
 {
     // Only realises extra layers (no diffuse/bump/specular)
 	for (ShaderTemplate::Layers::const_iterator i = _template->getLayers().begin();
@@ -167,7 +167,7 @@ void CShader::realiseLighting()
 	}
 }
 
-void CShader::unrealiseLighting() 
+void CShader::unrealiseLighting()
 {
 	_layers.clear();
 }

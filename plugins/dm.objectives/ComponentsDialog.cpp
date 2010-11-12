@@ -40,7 +40,7 @@ namespace {
 	{
 		return "<b>" + input + "</b>";
 	}
-	
+
 } // namespace
 
 // Main constructor
@@ -68,7 +68,7 @@ ComponentsDialog::ComponentsDialog(const Glib::RefPtr<Gtk::Window>& parent, Obje
 
 	vbx->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
 	vbx->pack_end(createButtons(), false, false, 0);
-	
+
 	// Populate the list of components
 	populateObjectiveEditPanel();
 	populateComponents();
@@ -92,14 +92,14 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	table->set_col_spacings(12);
 
 	int row = 0;
-	
+
 	// Objective description
 	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Description")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	_objDescriptionEntry = Gtk::manage(new Gtk::Entry);
 	table->attach(*_objDescriptionEntry, 1, 2, row, row+1);
-	
+
 	row++;
 
 	// Difficulty Selection
@@ -122,34 +122,34 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	_objStateCombo->append_text("COMPLETE");
 	_objStateCombo->append_text("FAILED");
 	_objStateCombo->append_text("INVALID");
-	
+
 	row++;
 
 	// Options checkboxes.
 	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Flags")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(createObjectiveFlagsTable(), 1, 2, row, row+1);
-	
+
 	row++;
 
 	// Enabling objectives
 	_enablingObjs = Gtk::manage(new Gtk::Entry);
-	
+
 	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Enabling Objectives")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*_enablingObjs, 1, 2, row, row+1);
-	
+
 	row++;
 
 	// Logic
 	Gtk::HBox* logicHBox = Gtk::manage(new Gtk::HBox(false, 6));
-		
+
 	// Success Logic
 	_successLogic = Gtk::manage(new Gtk::Entry);
 
 	// Failure Logic
 	_failureLogic = Gtk::manage(new Gtk::Entry);
-	
+
 	logicHBox->pack_start(*_successLogic, true, true, 0);
 	logicHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Failure Logic")))), false, false, 0);
 	logicHBox->pack_start(*_failureLogic, true, true, 0);
@@ -162,7 +162,7 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 
 	// Completion/failure scripts
 	Gtk::HBox* scriptHBox = Gtk::manage(new Gtk::HBox(false, 6));
-		
+
 	// Completion Script
 	_completionScript = Gtk::manage(new Gtk::Entry);
 
@@ -176,12 +176,12 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Completion Script")))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 	table->attach(*scriptHBox, 1, 2, row, row+1);
-	
+
 	row++;
 
 	// Completion/failure targets
 	Gtk::HBox* targetHBox = Gtk::manage(new Gtk::HBox(false, 6));
-		
+
 	// Completion Target
 	_completionTarget = Gtk::manage(new Gtk::Entry);
 
@@ -223,9 +223,9 @@ Gtk::Widget& ComponentsDialog::createObjectiveFlagsTable()
 // Create list view
 Gtk::Widget& ComponentsDialog::createListView()
 {
-	// Create tree view and connect selection changed callback	
+	// Create tree view and connect selection changed callback
 	_componentView = Gtk::manage(new Gtk::TreeView(_componentList));
-	
+
 	_componentView->get_selection()->signal_changed().connect(
 		sigc::mem_fun(*this, &ComponentsDialog::_onSelectionChanged));
 
@@ -239,11 +239,11 @@ Gtk::Widget& ComponentsDialog::createListView()
 
 	addButton->signal_clicked().connect(sigc::mem_fun(*this, &ComponentsDialog::_onAddComponent));
 	delButton->signal_clicked().connect(sigc::mem_fun(*this, &ComponentsDialog::_onDeleteComponent));
-	
+
 	Gtk::VBox* buttonsBox = Gtk::manage(new Gtk::VBox(false, 6));
 	buttonsBox->pack_start(*addButton, true, true, 0);
 	buttonsBox->pack_start(*delButton, true, true, 0);
-	
+
 	// Put the buttons box next to the list view
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
 	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_componentView)), true, true, 0);
@@ -260,7 +260,7 @@ Gtk::Widget& ComponentsDialog::createEditPanel()
 	_editPanel->set_row_spacings(12);
 	_editPanel->set_col_spacings(12);
 	_editPanel->set_sensitive(false); // disabled until selection
-	
+
 	// Component type dropdown
 	_typeCombo = Gtk::manage(new util::TwoColumnTextCombo);
 	_typeCombo->signal_changed().connect(sigc::mem_fun(*this, &ComponentsDialog::_onTypeChanged));
@@ -268,15 +268,15 @@ Gtk::Widget& ComponentsDialog::createEditPanel()
 	// Pack dropdown into table
 	_editPanel->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Type")))),
 					   0, 1, 0, 1, Gtk::FILL, Gtk::FILL, 0, 0);
-	
+
 	_editPanel->attach(*_typeCombo, 1, 2, 0, 1);
-							  
+
 	// Populate the combo box. The set is in ID order.
 	for (ComponentTypeSet::const_iterator i = ComponentType::SET_ALL().begin();
 		 i != ComponentType::SET_ALL().end();
 		 ++i)
 	{
-		Glib::RefPtr<Gtk::ListStore> ls = 
+		Glib::RefPtr<Gtk::ListStore> ls =
 			Glib::RefPtr<Gtk::ListStore>::cast_static(_typeCombo->get_model());
 
 		Gtk::TreeModel::Row row = *ls->append();
@@ -284,11 +284,11 @@ Gtk::Widget& ComponentsDialog::createEditPanel()
 		row.set_value(0, i->getDisplayName());
 		row.set_value(1, i->getName());
 	}
-	
+
 	// Flags hbox
 	_stateFlag = Gtk::manage(new Gtk::CheckButton(_("Satisfied at start")));
-	_irreversibleFlag = Gtk::manage(new Gtk::CheckButton(_("Irreversible")));  
-	_invertedFlag = Gtk::manage(new Gtk::CheckButton(_("Boolean NOT")));  
+	_irreversibleFlag = Gtk::manage(new Gtk::CheckButton(_("Irreversible")));
+	_invertedFlag = Gtk::manage(new Gtk::CheckButton(_("Boolean NOT")));
 	_playerResponsibleFlag = Gtk::manage(new Gtk::CheckButton(_("Player responsible")));
 
 	_stateFlag->signal_toggled().connect(
@@ -305,11 +305,11 @@ Gtk::Widget& ComponentsDialog::createEditPanel()
 	flagsBox->pack_start(*_irreversibleFlag, false, false, 0);
 	flagsBox->pack_start(*_invertedFlag, false, false, 0);
 	flagsBox->pack_start(*_playerResponsibleFlag, false, false, 0);
-	
+
 	_editPanel->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Flags")))),
 					 0, 1, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
 	_editPanel->attach(*flagsBox, 1, 2, 1, 2, Gtk::FILL, Gtk::FILL, 0, 0);
-	
+
 	return *_editPanel;
 }
 
@@ -320,8 +320,8 @@ Gtk::Widget& ComponentsDialog::createComponentEditorPanel()
 	_compEditorPanel = Gtk::manage(new Gtk::Frame);
 	_compEditorPanel->set_shadow_type(Gtk::SHADOW_NONE);
     _compEditorPanel->set_border_width(6);
-    
-    // Visible frame 
+
+    // Visible frame
 	Gtk::Frame* borderFrame = Gtk::manage(new Gtk::Frame);
     borderFrame->add(*_compEditorPanel);
 
@@ -336,10 +336,10 @@ Gtk::Widget& ComponentsDialog::createButtons()
 
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
-	
+
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ComponentsDialog::_onOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ComponentsDialog::_onCancel));
-	
+
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
@@ -351,14 +351,14 @@ void ComponentsDialog::populateComponents()
 {
 	// Clear the list store
 	_componentList->clear();
-	
+
 	// Add components from the Objective to the list store
 	for (Objective::ComponentMap::iterator i = _components.begin();
 		 i != _components.end();
 		 ++i)
 	{
 		Gtk::TreeModel::Row row = *_componentList->append();
-		
+
 		row[_columns.index] = i->first;
 		row[_columns.description] = i->second.getString();
 	}
@@ -381,7 +381,7 @@ void ComponentsDialog::updateComponents()
 		if (finder.getIter())
 		{
 			Gtk::TreeModel::Row row = *finder.getIter();
-			
+
 			row[_columns.index] = i->first;
 			row[_columns.description] = i->second.getString();
 		}
@@ -393,7 +393,7 @@ void ComponentsDialog::populateEditPanel(int index)
 {
 	// Get the component
 	Component& comp = _components[index];
-	
+
 	// Set the flags
 	_stateFlag->set_active(comp.isSatisfied());
 	_irreversibleFlag->set_active(comp.isIrreversible());
@@ -409,7 +409,7 @@ void ComponentsDialog::populateEditPanel(int index)
         // ComponentEditor panel)
 		_typeCombo->set_active(comp.getType().getId());
     }
-    else 
+    else
     {
         // Update the ComponentEditor ourselves, since the new Component has the
         // same type but we still want to refresh the panel with the new
@@ -426,22 +426,22 @@ void ComponentsDialog::populateObjectiveEditPanel()
 
 	// Get the objective
 	const Objective& obj = _objective;
-	
+
 	// Set description text
 	_objDescriptionEntry->set_text(obj.description);
-				
+
 	// Update the difficulty panel
 	_diffPanel->populateFromObjective(obj);
 
 	// Set initial state enum
 	_objStateCombo->set_active(static_cast<int>(obj.state));
-					   
+
 	// Set flags
 	_objIrreversibleFlag->set_active(obj.irreversible);
 	_objOngoingFlag->set_active(obj.ongoing);
 	_objMandatoryFlag->set_active(obj.mandatory);
 	_objVisibleFlag->set_active(obj.visible);
-		
+
 	_enablingObjs->set_text(obj.enablingObjs);
 
 	_successLogic->set_text(obj.logic.successLogic);
@@ -461,7 +461,7 @@ int ComponentsDialog::getSelectedIndex()
 {
 	// Get the selection if valid
 	Gtk::TreeModel::iterator iter = _componentView->get_selection()->get_selected();
-	
+
 	if (iter)
 	{
 		// Valid selection, return the contents of the index column
@@ -500,7 +500,7 @@ void ComponentsDialog::checkWriteComponent()
 	}
 }
 
-void ComponentsDialog::save() 
+void ComponentsDialog::save()
 {
 	// Write the objective properties
 	_objective.description = _objDescriptionEntry->get_text();
@@ -593,7 +593,7 @@ void ComponentsDialog::_onSelectionChanged()
 
 	// Get the selection if valid
 	Gtk::TreeModel::iterator iter = _componentView->get_selection()->get_selected();
-	
+
 	if (!iter)
     {
 		// Disable the edit panel and remove the ComponentEditor
@@ -607,7 +607,7 @@ void ComponentsDialog::_onSelectionChanged()
 	{
 		// Otherwise populate edit panel with the current component index
 		int component = (*iter)[_columns.index];
-		
+
 		populateEditPanel(component);
 
 		// Enable the edit panel
@@ -620,10 +620,10 @@ void ComponentsDialog::_onSelectionChanged()
 }
 
 // Add a new component
-void ComponentsDialog::_onAddComponent() 
+void ComponentsDialog::_onAddComponent()
 {
 	Objective::ComponentMap& components = _components;
-	
+
 	// Find an unused component number (starting from 1)
 	for (int idx = 1; idx < INT_MAX; ++idx)
 	{
@@ -634,18 +634,18 @@ void ComponentsDialog::_onAddComponent()
 			break;
 		}
 	}
-	
+
 	// Refresh the component list
 	populateComponents();
 }
 
 // Remove a component
-void ComponentsDialog::_onDeleteComponent() 
+void ComponentsDialog::_onDeleteComponent()
 {
 	// Delete the selected component
 	int idx = getSelectedIndex();
 
-	if (idx != -1) 
+	if (idx != -1)
     {
         // Remove the selection first, so our selection-changed callback does not
         // attempt to writeToComponent() after the Component has already been deleted
@@ -654,13 +654,13 @@ void ComponentsDialog::_onDeleteComponent()
         // Erase the actual component
 		_components.erase(idx);
 	}
-	
+
 	// Refresh the list
-	populateComponents();		
+	populateComponents();
 }
 
 // Type combo changed
-void ComponentsDialog::_onTypeChanged() 
+void ComponentsDialog::_onTypeChanged()
 {
 	// Get the current selection
 	Gtk::TreeModel::iterator iter = _typeCombo->get_active();
@@ -671,7 +671,7 @@ void ComponentsDialog::_onTypeChanged()
 	{
 		iter->get_value(1, selectedText); // get the string from the first column
 	}
-		
+
 	// Update the Objective object. The selected index must be valid, since the
 	// edit panel is only sensitive if a component is selected
 	int idx = getSelectedIndex();
@@ -681,13 +681,13 @@ void ComponentsDialog::_onTypeChanged()
 
     // Store the newly-selected type in the Component
 	comp.setType(ComponentType::getComponentType(selectedText));
-	
+
     // Change the ComponentEditor
     changeComponentEditor(comp);
 
 	// Update the components list with the new display string
 	Gtk::TreeModel::iterator compIter = _componentView->get_selection()->get_selected();
-	
+
 	(*compIter)[_columns.description] = comp.getString();
 }
 

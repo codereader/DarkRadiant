@@ -85,7 +85,7 @@ void GuiManager::findGuis()
 	// Traverse the file system, using this class as callback
 	GlobalFileSystem().forEachFile(GUI_DIR, GUI_EXT, *this, 99);
 
-	globalOutputStream() << "[GuiManager]: Found " << _guis.size() 
+	globalOutputStream() << "[GuiManager]: Found " << _guis.size()
 		<< " guis." << std::endl;
 }
 

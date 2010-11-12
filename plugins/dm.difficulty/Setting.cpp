@@ -20,10 +20,10 @@ std::string Setting::getArgumentKeyValue() const {
 
 	switch (appType) {
 		case EAssign: break;
-		case EAdd: 
-			returnValue = "+" + returnValue; 
+		case EAdd:
+			returnValue = "+" + returnValue;
 			break;
-		case EMultiply: 
+		case EMultiply:
 			returnValue = "*" + returnValue;
 			break;
 		case EIgnore:
@@ -40,13 +40,13 @@ std::string Setting::getDescString() const {
 	std::string returnValue(argument);
 
 	switch (appType) {
-		case EAssign: 
+		case EAssign:
 			returnValue = " = " + returnValue;
 			break;
-		case EAdd: 
-			returnValue = " += " + returnValue; 
+		case EAdd:
+			returnValue = " += " + returnValue;
 			break;
-		case EMultiply: 
+		case EMultiply:
 			returnValue = " *= " + returnValue;
 			break;
 		case EIgnore:
@@ -61,7 +61,7 @@ std::string Setting::getDescString() const {
 }
 
 bool Setting::operator==(const Setting& rhs) const {
-	return className == rhs.className && 
+	return className == rhs.className &&
 			spawnArg == rhs.spawnArg &&
 			argument == rhs.argument &&
 			appType == rhs.appType;

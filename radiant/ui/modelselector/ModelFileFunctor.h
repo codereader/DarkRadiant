@@ -40,11 +40,11 @@ class ModelFileFunctor :
     EventRateLimiter _evLimiter;
 
 	std::set<std::string> _allowedExtensions;
-	
+
 public:
-	
+
 	// Constructor sets the populator
-	ModelFileFunctor(gtkutil::VFSTreePopulator& pop, gtkutil::VFSTreePopulator& pop2) : 
+	ModelFileFunctor(gtkutil::VFSTreePopulator& pop, gtkutil::VFSTreePopulator& pop2) :
 		_populator(pop),
 		_populator2(pop2),
 		_progress(GlobalMainFrame().getTopLevelWindow(), _("Loading models")),
@@ -72,8 +72,8 @@ public:
 
 			_populator.addPath(file);
 			_populator2.addPath(file);
-			
-			if (_evLimiter.readyForEvent()) 
+
+			if (_evLimiter.readyForEvent())
             {
 				_progress.setText(
 					(boost::format(_("%d models loaded")) % _count).str()

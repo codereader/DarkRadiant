@@ -20,19 +20,19 @@ protected:
 
 	// The buffer containing the currently played audio data
 	ALuint _buffer;
-	
+
 	// The source playing the buffer
 	ALuint _source;
-	
+
 	// The timer object to check whether the sound is done playing
 	// to destroy the buffer afterwards
 	gtkutil::Timer _timer;
-	
+
 public:
 	// Constructor
 	SoundPlayer();
-	
-	/** 
+
+	/**
 	 * greebo: Destroys the alut context
 	 */
 	virtual ~SoundPlayer();
@@ -41,7 +41,7 @@ public:
 	 * 			the file to be played.
 	 */
 	virtual void play(ArchiveFile& file);
-	
+
 	/** greebo: Stops the playback immediately.
 	 */
 	virtual void stop();

@@ -24,7 +24,7 @@
 
 namespace ui
 {
-	
+
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Choose a Gui Definition...");
@@ -54,7 +54,7 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog& editorDialog) :
 	// Set the current page and connect the switch-page signal afterwards.
 	_notebook->set_current_page(twoSided ? 1 : 0);
 	_notebook->signal_switch_page().connect(sigc::mem_fun(*this, &GuiSelector::onPageSwitch));
-	
+
 	// We start with an empty selection, so de-sensitise the OK button
 	_okButton->set_sensitive(false);
 }
@@ -85,7 +85,7 @@ std::string GuiSelector::run(bool twoSided, ReadableEditorDialog& editorDialog)
 }
 
 void GuiSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-						const Gtk::TreeModel::iterator& iter, 
+						const Gtk::TreeModel::iterator& iter,
 						const std::string& path,
 						bool isExplicit)
 {
@@ -110,7 +110,7 @@ void GuiSelector::fillTrees()
 
 	ReadablePopulator walker(popOne, popTwo, _editorDialog.getRefPtr());
 	gui::GuiManager::Instance().foreachGui(walker);
-	
+
 	popOne.forEachNode(*this);
 	popTwo.forEachNode(*this);
 }
@@ -148,7 +148,7 @@ Gtk::Widget& GuiSelector::createButtons()
 
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &GuiSelector::onCancel));
-	
+
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
 
 	hbox->pack_start(*_okButton, false, false, 0);
@@ -168,7 +168,7 @@ Gtk::TreeView* GuiSelector::createTreeView(const Glib::RefPtr<Gtk::TreeStore>& s
 	Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
 	selection->set_mode(Gtk::SELECTION_SINGLE);
 	selection->signal_changed().connect(sigc::bind(sigc::mem_fun(*this, &GuiSelector::onSelectionChanged), treeView));
-	
+
 	// Single visible column, containing the directory/model name and the icon
 	Gtk::TreeViewColumn* nameCol = Gtk::manage(new gtkutil::IconTextColumn(
 		_("Gui Path"), _columns.name, _columns.icon
@@ -231,7 +231,7 @@ void GuiSelector::onPageSwitch(GtkNotebookPage* page, guint page_num)
 void GuiSelector::onSelectionChanged(Gtk::TreeView* view)
 {
 	Gtk::TreeModel::iterator iter = view->get_selection()->get_selected();
-	
+
 	if (iter && !(*iter)[_columns.isFolder])
 	{
 		_name = Glib::ustring((*iter)[_columns.fullName]);

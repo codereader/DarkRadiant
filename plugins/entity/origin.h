@@ -45,7 +45,7 @@ public:
 	Vector3 m_origin;
 
 	OriginKey(const boost::function<void()>& originChanged) :
-		_originChanged(originChanged), 
+		_originChanged(originChanged),
 		m_origin(ORIGINKEY_IDENTITY)
 	{}
 

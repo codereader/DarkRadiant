@@ -2,7 +2,7 @@
 
 namespace gtkutil {
 
-PersistentTransientWindow::PersistentTransientWindow(const std::string& title, 
+PersistentTransientWindow::PersistentTransientWindow(const std::string& title,
 													 const Glib::RefPtr<Gtk::Window>& parent,
 													 bool hideOnDelete)
 : TransientWindow(title, parent, hideOnDelete)
@@ -60,9 +60,9 @@ void PersistentTransientWindow::activateParent()
 	// Only activate if this window is active already
 	if (gobj()->is_active)
 	{
-		Gtk::Container* toplevel = get_toplevel(); 
-		
-		if (toplevel != NULL && toplevel->is_toplevel() && 
+		Gtk::Container* toplevel = get_toplevel();
+
+		if (toplevel != NULL && toplevel->is_toplevel() &&
 			toplevel->is_visible() && dynamic_cast<Gtk::Window*>(toplevel) != NULL)
 		{
 			static_cast<Gtk::Window*>(toplevel)->present();

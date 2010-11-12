@@ -16,7 +16,7 @@ class CommandSystem :
 	CommandMap _commands;
 
 public:
-	/** 
+	/**
 	 * Visit each command/bind using the given walker class.
 	 */
 	void foreachCommand(Visitor& visitor);

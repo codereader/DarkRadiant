@@ -25,7 +25,7 @@ public:
 	virtual void clear() = 0;
 
 	// Clears this set and loads the currently selected nodes in the
-	// scene as new members into this set. 
+	// scene as new members into this set.
 	virtual void assignFromCurrentScene() = 0;
 };
 typedef boost::shared_ptr<ISelectionSet> ISelectionSetPtr;
@@ -52,7 +52,7 @@ public:
 	};
 
 	/**
-	 * greebo: Traverses the list of selection sets using 
+	 * greebo: Traverses the list of selection sets using
 	 * the given visitor class.
 	 */
 	virtual void foreachSelectionSet(Visitor& visitor) = 0;
@@ -65,12 +65,12 @@ public:
 	virtual ISelectionSetPtr createSelectionSet(const std::string& name) = 0;
 
 	/**
-	 * Removes the named selection set. If the named set is 
+	 * Removes the named selection set. If the named set is
 	 * not existing, nothing happens.
 	 */
 	virtual void deleteSelectionSet(const std::string& name) = 0;
 
-	/** 
+	/**
 	 * Deletes all sets.
 	 */
 	virtual void deleteAllSelectionSets() = 0;

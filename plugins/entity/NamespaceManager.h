@@ -14,16 +14,16 @@
 
 namespace entity {
 
-class NamespaceManager : 
+class NamespaceManager :
 	public Entity::Observer,
 	public Namespaced,
 	public boost::noncopyable
 {
 	INamespace* _namespace;
-	
+
 	// The attached entity
 	Doom3Entity& _entity;
-	
+
 	// All the observed key values of the entity get remembered
 	// This prevents having to traverse all the keyvalues again when changing namespaces
 	typedef std::map<std::string, EntityKeyValue*> KeyValues;
@@ -59,27 +59,27 @@ public:
 	// Changes the name of this entity
 	void changeName(const std::string& newName);
 
-	/** 
+	/**
 	 * greebo: This gets called as soon as a new entity key/value gets added
 	 * to the attached entity.
-	 * 
-	 * The routine saves all relevant keyvalues and attaches the 
+	 *
+	 * The routine saves all relevant keyvalues and attaches the
 	 * "name keys" to the Namespace.
-	 * 
+	 *
 	 * Note: Entity::Observer implementation
 	 */
 	void onKeyInsert(const std::string& key, EntityKeyValue& value);
-	
-	/** 
+
+	/**
 	 * greebo: Gets called by the observed Entity when a value is erased from
 	 * the list of spawnargs.
-	 * 
+	 *
 	 * Note: Entity::Observer implementation
 	 */
 	void onKeyErase(const std::string& key, EntityKeyValue& value);
 
-	/** 
-	 * greebo: returns TRUE if the given key is recognised as "name" for the 
+	/**
+	 * greebo: returns TRUE if the given key is recognised as "name" for the
 	 * selected game type.
 	 */
 	static bool keyIsName(const std::string& key);

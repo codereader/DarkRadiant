@@ -5,7 +5,7 @@
 #define MIN_PATCH_WIDTH 3
 #define MIN_PATCH_HEIGHT 3
 
-// greebo: Maximum patch width and height, Doom 3 has 99 as limit (at least this was defined with 99 in GtkRadiant) 
+// greebo: Maximum patch width and height, Doom 3 has 99 as limit (at least this was defined with 99 in GtkRadiant)
 const std::size_t MAX_PATCH_WIDTH = 99;
 const std::size_t MAX_PATCH_HEIGHT = 99;
 

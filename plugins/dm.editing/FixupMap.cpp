@@ -76,7 +76,7 @@ FixupMap::Result FixupMap::perform()
 void FixupMap::performFixup(const std::string& line)
 {
 	// Skip empty lines and comments
-	if (line.empty() || 
+	if (line.empty() ||
 		boost::algorithm::starts_with(line, "#") ||
 		boost::algorithm::starts_with(line, "//"))
 	{
@@ -85,7 +85,7 @@ void FixupMap::performFixup(const std::string& line)
 
 	boost::regex expr("^" + MATERIAL_PREFIX + "(.*)\\s=>\\s(.*)$");
 	boost::smatch matches;
-	
+
 	if (boost::regex_match(line, matches, expr))
 	{
 		// Fixup a specific shader
@@ -97,7 +97,7 @@ void FixupMap::performFixup(const std::string& line)
 	}
 
 	expr = boost::regex("^" + ENTITYDEF_PREFIX + "(.*)\\s=>\\s(.*)$");
-	
+
 	if (boost::regex_match(line, matches, expr))
 	{
 		// Fixup a specific entitydef
@@ -108,10 +108,10 @@ void FixupMap::performFixup(const std::string& line)
 		replaceSpawnarg(oldDef, newDef);
 		return;
 	}
-	
+
 	// No specific prefix, this can be everything: spawnarg or texture
 	expr = boost::regex("^(.*)\\s=>\\s(.*)$");
-	
+
 	if (boost::regex_match(line, matches, expr))
 	{
 		std::string oldStr = matches[1];
@@ -152,7 +152,7 @@ void FixupMap::loadFixupFile()
 	// Sanity-check the file
 	if (!file_exists(_filename.c_str()) || !file_readable(_filename.c_str()))
 	{
-		gtkutil::MessageBox box(_("File not readable"), 
+		gtkutil::MessageBox box(_("File not readable"),
 			_("The specified file doesn't exist."), ui::IDialog::MESSAGE_ERROR);
 		box.run();
 		return;
@@ -164,7 +164,7 @@ void FixupMap::loadFixupFile()
 
 	if (!input)
 	{
-		gtkutil::MessageBox box(_("File not readable"), 
+		gtkutil::MessageBox box(_("File not readable"),
 			_("The specified file can't be opened."), ui::IDialog::MESSAGE_ERROR);
 		box.run();
 		return;

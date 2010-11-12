@@ -65,13 +65,13 @@ class Speaker :
 public:
 	// Constructor
 	Speaker(SpeakerNode& node,
-			const Callback& transformChanged, 
+			const Callback& transformChanged,
 			const Callback& boundsChanged);
-	
+
 	// Copy constructor
-	Speaker(const Speaker& other, 
-			SpeakerNode& node, 
-			const Callback& transformChanged, 
+	Speaker(const Speaker& other,
+			SpeakerNode& node,
+			const Callback& transformChanged,
 			const Callback& boundsChanged);
 
 	~Speaker();
@@ -92,9 +92,9 @@ public:
 
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
-	
+
 	void snapto(float snap);
-	
+
 	void revertTransform();
 	void freezeTransform();
 
@@ -111,7 +111,7 @@ public:
 	void updateAABB();
 
 	void updateTransform();
-	
+
 	void originChanged();
 
 	void sShaderChanged(const std::string& value);

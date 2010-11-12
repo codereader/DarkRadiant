@@ -75,7 +75,7 @@ inline void ByteStream_readPCXRLEPacket(PointerInputStream& inputStream, PCXRLEP
   if((d & 0xC0) == 0xC0)
   {
     packet.length = d & 0x3F;
-    inputStream.read(&packet.data, 1); 
+    inputStream.read(&packet.data, 1);
   }
   else
   {
@@ -95,7 +95,7 @@ void LoadPCXBuff(byte* buffer, std::size_t len, byte **pic, byte **palette, int 
   /* parse the PCX file */
 
   PointerInputStream inputStream(buffer);
-  
+
   pcx.manufacturer = istream_read_byte(inputStream);
   pcx.version = istream_read_byte(inputStream);
   pcx.encoding = istream_read_byte(inputStream);
@@ -113,7 +113,7 @@ void LoadPCXBuff(byte* buffer, std::size_t len, byte **pic, byte **palette, int 
   pcx.palette_type = istream_read_int16_le(inputStream);
   inputStream.read(pcx.filler, 58);
 
-  
+
   if (pcx.manufacturer != 0x0a
     || pcx.version != 5
     || pcx.encoding != 1
@@ -132,10 +132,10 @@ void LoadPCXBuff(byte* buffer, std::size_t len, byte **pic, byte **palette, int 
 
   *pic = out;
   pix = out;
-	
+
   /* RR2DO2: pcx fix  */
   lsize = pcx.color_planes * pcx.bytes_per_line;
-	
+
   /* go scanline by scanline */
   for( y = 0; y <= pcx.ymax; y++, pix += pcx.xmax + 1 )
   {
@@ -145,7 +145,7 @@ void LoadPCXBuff(byte* buffer, std::size_t len, byte **pic, byte **palette, int 
       /* RR2DO2 */
       PCXRLEPacket packet;
       ByteStream_readPCXRLEPacket(inputStream, packet);
-      
+
       while(packet.length-- > 0)
       {
         pix[ x++ ] = packet.data;
@@ -164,7 +164,7 @@ void LoadPCXBuff(byte* buffer, std::size_t len, byte **pic, byte **palette, int 
       x++;
     }
   }
-	
+
   /* validity check */
   if( std::size_t(inputStream.get() - buffer) > len)
   {

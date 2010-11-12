@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 
-PicoModel Library 
+PicoModel Library
 
 Copyright (c) 2002, Randy Reddig & seaw0lf
 All rights reserved.
@@ -17,7 +17,7 @@ other materials provided with the distribution.
 
 Neither the names of the copyright holders nor the names of its contributors may
 be used to endorse or promote products derived from this software without
-specific prior written permission. 
+specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -164,7 +164,7 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 	/* -------------------------------------------------
 	pico model creation
 	------------------------------------------------- */
-	
+
 	/* create a new pico model */
 	picoModel = PicoNewModel();
 	if (picoModel == NULL)
@@ -200,7 +200,7 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 		float min = layer->bbox[ i ];
 		float max = layer->bbox[ i + 3 ];
 		float size = max - min;
-		
+
 		if (size > st[ 0 ])
 		{
 			defaultSTAxis[ 1 ] = defaultSTAxis[ 0 ];
@@ -416,7 +416,7 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 		/* free the hashtable */
 		PicoFreeVertexCombinationHashTable( hashTable );
 
-		/* get next surface */		
+		/* get next surface */
 		surface = surface->next;
 	}
 

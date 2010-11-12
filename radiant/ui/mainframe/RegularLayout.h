@@ -31,7 +31,7 @@ class RegularLayout :
 	{
 		boost::shared_ptr<Gtk::HPaned> horizPane;
 		Gtk::VPaned* texCamPane;
-		
+
 		gtkutil::PanedPosition posHPane;
 		gtkutil::PanedPosition posTexCamPane;
 	} _regular;

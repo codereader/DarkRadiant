@@ -11,9 +11,9 @@
 
 namespace map {
 
-/** 
+/**
  * greebo: This object traverses the scenegraph on construction
- * counting all occurrences of each shader. 
+ * counting all occurrences of each shader.
  */
 class ShaderBreakdown :
 	public scene::NodeVisitor,
@@ -25,8 +25,8 @@ public:
 		std::size_t faceCount;
 		std::size_t patchCount;
 
-		ShaderCount() : 
-			faceCount(0), 
+		ShaderCount() :
+			faceCount(0),
 			patchCount(0)
 		{}
 	};
@@ -41,7 +41,7 @@ public:
 		_map.clear();
 		GlobalSceneGraph().root()->traverse(*this);
 	}
-	
+
 	bool pre(const scene::INodePtr& node) {
 
 		// Check if this node is a patch
@@ -71,11 +71,11 @@ public:
 	const Map& getMap() const {
 		return _map;
 	}
-	
+
 	Map::const_iterator begin() const {
 		return _map.begin();
 	}
-	
+
 	Map::const_iterator end() const {
 		return _map.end();
 	}

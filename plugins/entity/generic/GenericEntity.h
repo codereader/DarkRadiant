@@ -51,7 +51,7 @@ private:
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
 
-	// TRUE if this entity's arrow can be rotated in all directions, 
+	// TRUE if this entity's arrow can be rotated in all directions,
 	// FALSE if the arrow is caught in the xy plane
 	bool _allow3Drotations;
 
@@ -61,9 +61,9 @@ private:
 public:
 	// Constructor
 	GenericEntity(GenericEntityNode& node);
-	
+
 	// Copy constructor
-	GenericEntity(const GenericEntity& other, 
+	GenericEntity(const GenericEntity& other,
 				  GenericEntityNode& node);
 
 	~GenericEntity();
@@ -78,9 +78,9 @@ public:
 
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
-	
+
 	void snapto(float snap);
-	
+
 	void revertTransform();
 	void freezeTransform();
 
@@ -90,7 +90,7 @@ public:
 	void destroy();
 
 	void updateTransform();
-	
+
 	void originChanged();
 	void angleChanged();
 	void rotationChanged();

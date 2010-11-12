@@ -54,7 +54,7 @@ class GenericFileSystem
     std::string m_path;
     unsigned int m_depth;
   public:
-	Path(const std::string& path) : 
+	Path(const std::string& path) :
 		m_path(path),
 		m_depth(path_get_depth(m_path.c_str()))
 	{}
@@ -63,7 +63,7 @@ class GenericFileSystem
 		m_path(start, length),
 		m_depth(path_get_depth(m_path.c_str()))
 	{}
-    
+
     bool operator<(const Path& other) const
     {
       return string_less_nocase(c_str(), other.c_str());

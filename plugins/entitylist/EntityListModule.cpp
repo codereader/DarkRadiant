@@ -29,20 +29,20 @@ const std::string& EntityListModule::getName() const
 const StringSet& EntityListModule::getDependencies() const
 {
 	static StringSet _dependencies;
-	
+
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
-	
+
 	return _dependencies;
 }
 
 void EntityListModule::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "EntityListModule::initialiseModule called" << std::endl;
-	
+
 	GlobalCommandSystem().addCommand("EntityList", ui::EntityList::toggle);
 	GlobalEventManager().addCommand("EntityList", "EntityList");
 }
@@ -53,10 +53,10 @@ void EntityListModule::shutdownModule()
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(EntityListModulePtr(new EntityListModule));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

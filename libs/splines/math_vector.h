@@ -65,7 +65,7 @@ float Q_fabs( float f );
 
 #ifndef ID_INLINE
 #ifdef _WIN32
-#define ID_INLINE __inline 
+#define ID_INLINE __inline
 #else
 #define ID_INLINE inline
 #endif
@@ -80,12 +80,12 @@ float Q_fabs( float f );
 
 class angles_t;
 #ifdef __ppc__
-// Vanilla PPC code, but since PPC has a reciprocal square root estimate instruction, 
-// runs *much* faster than calling sqrt(). We'll use two Newton-Raphson 
-// refinement steps to get bunch more precision in the 1/sqrt() value for very little cost. 
-// We'll then multiply 1/sqrt times the original value to get the sqrt. 
-// This is about 12.4 times faster than sqrt() and according to my testing (not exhaustive) 
-// it returns fairly accurate results (error below 1.0e-5 up to 100000.0 in 0.1 increments). 
+// Vanilla PPC code, but since PPC has a reciprocal square root estimate instruction,
+// runs *much* faster than calling sqrt(). We'll use two Newton-Raphson
+// refinement steps to get bunch more precision in the 1/sqrt() value for very little cost.
+// We'll then multiply 1/sqrt times the original value to get the sqrt.
+// This is about 12.4 times faster than sqrt() and according to my testing (not exhaustive)
+// it returns fairly accurate results (error below 1.0e-5 up to 100000.0 in 0.1 increments).
 
 static inline float idSqrt(float x) {
     const float half = 0.5;
@@ -96,21 +96,21 @@ static inline float idSqrt(float x) {
     if (fabs(x) == 0.0)
         return x;
     B = x;
-    
+
 #ifdef __GNUC__
     asm("frsqrte %0,%1" : "=f" (y0) : "f" (B));
 #else
     y0 = __frsqrte(B);
 #endif
     /* First refinement step */
-    
+
     y1 = y0 + half*y0*(one - B*y0*y0);
-    
+
     /* Second refinement step -- copy the output of the last step to the input of this step */
-    
+
     y0 = y1;
     y1 = y0 + half*y0*(one - B*y0*y0);
-    
+
     /* Get sqrt(x) from x * 1/sqrt(x) */
     return x * y1;
 }
@@ -123,7 +123,7 @@ static inline double idSqrt(double x) {
 
 //class idVec3  : public idHeap<idVec3> {
 class idVec3 {
-public:	
+public:
 #ifndef	FAT_VEC3
 	    float x,y,z;
 #else
@@ -154,7 +154,7 @@ public:
 
 	idVec3			operator+( const idVec3 &a ) const;
 	idVec3			operator-( const idVec3 &a ) const;
-	
+
 	idVec3			&operator+=( const idVec3 &a );
 	idVec3			&operator-=( const idVec3 &a );
 	idVec3			&operator*=( const float a );
@@ -206,12 +206,12 @@ ID_INLINE idVec3::operator float *( void ) {
 ID_INLINE idVec3 idVec3::operator-() const {
 	return idVec3( -x, -y, -z );
 }
-	
-ID_INLINE idVec3 &idVec3::operator=( const idVec3 &a ) { 
+
+ID_INLINE idVec3 &idVec3::operator=( const idVec3 &a ) {
 	x = a.x;
 	y = a.y;
 	z = a.z;
-	
+
 	return *this;
 }
 
@@ -269,7 +269,7 @@ ID_INLINE int idVec3::operator==( const idVec3 &a ) const {
 	if ( Q_fabs( x - a.x ) > EQUAL_EPSILON ) {
 		return false;
 	}
-			
+
 	if ( Q_fabs( y - a.y ) > EQUAL_EPSILON ) {
 		return false;
 	}
@@ -285,7 +285,7 @@ ID_INLINE int idVec3::operator!=( const idVec3 &a ) const {
 	if ( Q_fabs( x - a.x ) > EQUAL_EPSILON ) {
 		return true;
 	}
-			
+
 	if ( Q_fabs( y - a.y ) > EQUAL_EPSILON ) {
 		return true;
 	}
@@ -311,7 +311,7 @@ ID_INLINE idVec3 &idVec3::Cross( const idVec3 &a, const idVec3 &b ) {
 
 ID_INLINE float idVec3::Length( void ) const {
 	float length;
-	
+
 	length = x * x + y * y + z * z;
 	return ( float )idSqrt( length );
 }
@@ -327,7 +327,7 @@ ID_INLINE float idVec3::Normalize( void ) {
 		y *= ilength;
 		z *= ilength;
 	}
-		
+
 	return length;
 }
 
@@ -349,7 +349,7 @@ SnapTowards
 
 Round a vector to integers for more efficient network
 transmission, but make sure that it rounds towards a given point
-rather than blindly truncating.  This prevents it from truncating 
+rather than blindly truncating.  This prevents it from truncating
 into a wall.
 ======================
 */
@@ -531,7 +531,7 @@ public:
 #endif
 	idVec4();
 	~idVec4() {};
-	
+
 	idVec4( float x, float y, float z, float dist );
 	float			operator[]( int index ) const;
 	float			&operator[]( int index );

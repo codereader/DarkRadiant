@@ -18,26 +18,26 @@ namespace ce {
 
 /**
  * ComponentEditor subclass for COMP_DISTANCE component type.
- * 
+ *
  * An COMP_DISTANCE component usually uses a two specifiers.
  */
-class DistanceComponentEditor : 
+class DistanceComponentEditor :
 	public ComponentEditorBase
 {
 	// Registration class
-	static struct RegHelper 
+	static struct RegHelper
 	{
 		RegHelper() {
 			ComponentEditorFactory::registerType(
-				objectives::ComponentType::COMP_DISTANCE().getName(), 
+				objectives::ComponentType::COMP_DISTANCE().getName(),
 				ComponentEditorPtr(new DistanceComponentEditor())
 			);
 		}
 	} regHelper;
-	
+
 	// Component to edit
-	Component* _component;	
-	
+	Component* _component;
+
 	// Name of the entity in question
 	Gtk::Entry* _entity;
 
@@ -49,35 +49,35 @@ class DistanceComponentEditor :
 
 	// The evaluation interval in seconds
 	Gtk::SpinButton* _interval;
-	
+
 public:
 
 	/**
 	 * Construct a default DistanceComponentEditor.
 	 */
-	DistanceComponentEditor() : 
+	DistanceComponentEditor() :
 		_component(NULL),
 		_entity(NULL),
 		_location(NULL),
 		_distance(NULL),
 		_interval(NULL)
 	{}
-	
+
 	/**
 	 * Construct a DistanceComponentEditor with a Component object to display and
 	 * edit.
-	 * 
+	 *
 	 * @param component
 	 * The Component to edit.
 	 */
 	DistanceComponentEditor(Component& component);
-	
+
 	/* ComponentEditor implementation */
-	
+
 	ComponentEditorPtr clone(Component& component) const {
 		return ComponentEditorPtr(new DistanceComponentEditor(component));
 	}
-	
+
     void writeToComponent() const;
 };
 

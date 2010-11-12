@@ -23,12 +23,12 @@ namespace difficulty {
 class DifficultySettings
 {
 public:
-	struct TreeModelColumns : 
+	struct TreeModelColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		TreeModelColumns()
-		{ 
-			add(description); 
+		{
+			add(description);
 			add(colour);
 			add(classname);
 			add(settingId);
@@ -72,7 +72,7 @@ public:
 	// Get the treestore pointer for packing into a treeview
 	const Glib::RefPtr<Gtk::TreeStore>& getTreeStore() const;
 
-	// Returns the Setting associated with the given className 
+	// Returns the Setting associated with the given className
 	// and carrying the given ID (returned pointer might be NULL)
 	SettingPtr getSettingById(int id) const;
 
@@ -83,7 +83,7 @@ public:
 	void clear();
 
 	/**
-	 * greebo: Saves the given setting. The ID specifices the setting currently 
+	 * greebo: Saves the given setting. The ID specifices the setting currently
 	 *         highlighted in the editor (pass -1 if nothing is selected).
 	 *
 	 * @returns: the ID of the saved Setting, can be used to select it.
@@ -139,7 +139,7 @@ private:
 	 * given <parent> iter as insertion point. If <parent> is invalid,
 	 * the entry is inserted at root level.
 	 */
-	Gtk::TreeModel::iterator insertClassName(const std::string& className, 
+	Gtk::TreeModel::iterator insertClassName(const std::string& className,
 											 Gtk::TreeModel::iterator parent = Gtk::TreeModel::iterator());
 
 	// returns the parent eclass name for the given <className> or "" if no parent

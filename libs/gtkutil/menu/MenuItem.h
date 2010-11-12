@@ -21,12 +21,12 @@ protected:
 	sigc::connection _conn;
 
 public:
-	MenuItem(Gtk::MenuItem* w, 
-			 const ui::IMenu::Callback& c, 
+	MenuItem(Gtk::MenuItem* w,
+			 const ui::IMenu::Callback& c,
 			 const ui::IMenu::SensitivityTest& s = AlwaysSensitive,
 			 const ui::IMenu::VisibilityTest& v = AlwaysVisible)
-	: _widget(w), 
-	  _callback(c), 
+	: _widget(w),
+	  _callback(c),
 	  _sensitivityTest(s),
 	  _visibilityTest(v)
 	{
@@ -46,7 +46,7 @@ public:
 
 	virtual void execute()
 	{
-		_callback(); 
+		_callback();
 	}
 
 	virtual bool isVisible()

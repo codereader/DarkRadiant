@@ -11,7 +11,7 @@
 namespace gtkutil
 {
 
-/** 
+/**
  * Utility class representing a menu item with an icon and text. The local
  * icon image name and the label text are passed to the constructor, which
  * creates the required Widgets.

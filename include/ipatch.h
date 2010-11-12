@@ -36,7 +36,7 @@ class GenericPatchException :
 public:
 	// Constructor
 	GenericPatchException(const std::string& what):
-		std::runtime_error(what) 
+		std::runtime_error(what)
 	{}
 };
 
@@ -51,7 +51,7 @@ struct PatchControl
 
 /**
  * A structure representing the fully tesselated patch
- * Can be acquired through the IPatch interface for 
+ * Can be acquired through the IPatch interface for
  * exporting the geometry to an external app.
  */
 struct PatchMesh
@@ -71,7 +71,7 @@ struct PatchMesh
 
 	std::size_t width;	// width of this mesh
 	std::size_t height; // height of this mesh
-	
+
 	std::vector<PatchMesh::Vertex> vertices;	// the actual geometry
 };
 
@@ -111,7 +111,7 @@ public:
 
 	// Resizes the patch to the given dimensions
 	virtual void setDims(std::size_t width, std::size_t height) = 0;
-	
+
 	// Get the patch dimensions
 	virtual std::size_t getWidth() const = 0;
 	virtual std::size_t getHeight() const = 0;
@@ -123,25 +123,25 @@ public:
 	// Returns a copy of the fully tesselated patch geometry (slow!)
 	virtual PatchMesh getTesselatedPatchMesh() const = 0;
 
-	/** 
+	/**
 	 * greebo: Inserts two columns before and after the column with index <colIndex>.
  	 * Throws an GenericPatchException if an error occurs.
  	 */
  	virtual void insertColumns(std::size_t colIndex) = 0;
- 	
- 	/** 
+
+ 	/**
 	 * greebo: Inserts two rows before and after the row with index <rowIndex>.
  	 * Throws an GenericPatchException if an error occurs.
  	 */
  	virtual void insertRows(std::size_t rowIndex) = 0;
 
-	/** 
-	 * greebo: Removes columns or rows right before and after the col/row 
+	/**
+	 * greebo: Removes columns or rows right before and after the col/row
  	 * with the given index, reducing the according dimension by 2.
  	 */
  	virtual void removePoints(bool columns, std::size_t index) = 0;
- 	
- 	/** 
+
+ 	/**
 	 * greebo: Appends two rows or columns at the beginning or the end.
  	 */
  	virtual void appendPoints(bool columns, bool beginning) = 0;
@@ -162,17 +162,17 @@ public:
 	// greebo: returns true if the patch's shader is visible, false otherwise
 	virtual bool hasVisibleMaterial() const = 0;
 
-	/** 
+	/**
 	 * greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
 	 */
 	virtual bool subdivionsFixed() const = 0;
-	
+
 	/** greebo: Returns the x,y subdivision values (for tesselation)
 	 */
 	virtual Subdivisions getSubdivisions() const = 0;
-	
+
 	/** greebo: Sets the subdivision of this patch
-	 * 
+	 *
 	 * @isFixed: TRUE, if this patch should be a patchDef3 (fixed tesselation)
 	 * @divisions: a two-component vector containing the desired subdivisions
 	 */
@@ -180,13 +180,13 @@ public:
 };
 
 /* greebo: the abstract base class for a patch-creating class.
- * At the moment, the CommonPatchCreator, Doom3PatchCreator and Doom3PatchDef2Creator derive from this base class.   
+ * At the moment, the CommonPatchCreator, Doom3PatchCreator and Doom3PatchDef2Creator derive from this base class.
  */
 class PatchCreator :
 	public RegisterableModule
 {
 public:
-	// Create a patch and return the sceneNode 
+	// Create a patch and return the sceneNode
 	virtual scene::INodePtr createPatch() = 0;
 };
 
@@ -196,7 +196,7 @@ class IPatchNode
 public:
     virtual ~IPatchNode() {}
 
-	/** 
+	/**
 	 * greebo: Retrieves the actual patch from a PatchNode, only works from within the main module.
 	 */
 	virtual Patch& getPatchInternal() = 0;

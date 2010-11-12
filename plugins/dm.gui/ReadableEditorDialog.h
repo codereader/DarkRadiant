@@ -133,9 +133,9 @@ public:
 	// Uses the current data in the readable editor for updating or imports XData/guis by the passed strings.
 	// This Method can create error-messages. For that reason a parent window can be specified. If Null the Readable
 	// Editor Dialog is parent.
-	void updateGuiView(const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(), 
-					   const std::string& guiPath = "", 
-					   const std::string& xDataName = "", 
+	void updateGuiView(const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>(),
+					   const std::string& guiPath = "",
+					   const std::string& xDataName = "",
 					   const std::string& xDataPath = "");
 
 protected:
@@ -228,7 +228,7 @@ private:
 	void onDeleteLeft();
 	void onDeleteRight();
 
-	
+
 	// Callback methods for Events:
 	bool onOneSided(GdkEventButton* ev);
 	bool onTwoSided(GdkEventButton* ev);

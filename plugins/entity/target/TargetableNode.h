@@ -12,7 +12,7 @@
 namespace entity {
 
 /**
- * greebo: Each targetable entity (D3Group, Speaker, Lights, etc.) derives from 
+ * greebo: Each targetable entity (D3Group, Speaker, Lights, etc.) derives from
  *         this class.
  *
  * This registers itself with the contained Doom3Entity and observes its keys.
@@ -47,7 +47,7 @@ public:
 
 	// Entity::Observer implementation, gets called on key insert
 	void onKeyInsert(const std::string& key, EntityKeyValue& value);
-	
+
 	// Entity::Observer implementation, gets called on key erase
 	void onKeyErase(const std::string& key, EntityKeyValue& value);
 

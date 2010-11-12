@@ -12,16 +12,16 @@
 namespace map {
 
 /** greebo: This is the root node of the map, it gets inserted as
- * 			the top node into the scenegraph. Each entity node is 
+ * 			the top node into the scenegraph. Each entity node is
  * 			inserted as child node to this.
- * 
+ *
  * Note:	Inserting a child node to this MapRoot automatically
  * 			triggers an instantiation of this child node.
- * 
+ *
  * 			The contained InstanceSet functions as Traversable::Observer
  * 			and instantiates the node as soon as it gets notified about it.
  */
-class RootNode : 
+class RootNode :
 	public scene::Node,
 	public IMapRootNode,
 	public Nameable,
@@ -32,7 +32,7 @@ class RootNode :
 
 	// The actual name of the map
 	std::string _name;
-	
+
 	UndoFileChangeTracker m_changeTracker;
 
 	// The namespace this node belongs to
@@ -48,10 +48,10 @@ public:
 
 	// Returns the reference to the Namespace of this rootnode
 	INamespacePtr getNamespace();
-	
+
 	// TransformNode implementation
 	virtual const Matrix4& localToParent() const;
-  
+
 	// MapFile implementation
 	virtual void save();
 	virtual bool saved() const;
@@ -61,9 +61,9 @@ public:
 
 	// Nameable implementation
 	std::string name() const;
-	
+
 	void setName(const std::string& name);
-  
+
 	InstanceCounter m_instanceCounter;
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);

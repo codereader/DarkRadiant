@@ -15,7 +15,7 @@ namespace difficulty
 class Setting
 {
 public:
-	struct ListStoreColumns : 
+	struct ListStoreColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListStoreColumns() { add(name); add(type); }
@@ -40,7 +40,7 @@ public:
 
 	// The target spawnarg to be changed
 	std::string spawnArg;
-	
+
 	// The parsed argument (the specifier (+/*) has already been removed)
 	std::string argument;
 

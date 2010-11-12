@@ -18,14 +18,14 @@ class LogWriter
 	LogDevices _devices;
 
 public:
-	/** 
-	 * greebo: Writes the given buffer p with the given length to the 
+	/**
+	 * greebo: Writes the given buffer p with the given length to the
 	 *         various output devices (i.e. Console and Log file).
 	 */
 	void write(const char* p, std::size_t length, ELogLevel level);
 
 	/**
-	 * greebo: Use these methods to attach/detach a log device from the 
+	 * greebo: Use these methods to attach/detach a log device from the
 	 *         writer class. After attaching a device, all log output
 	 *         will be written to it.
 	 */

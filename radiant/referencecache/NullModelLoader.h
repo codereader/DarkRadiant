@@ -22,7 +22,7 @@ namespace {
 class NullModelLoader;
 typedef boost::shared_ptr<NullModelLoader> NullModelLoaderPtr;
 
-class NullModelLoader : 
+class NullModelLoader :
 	public ModelLoader
 {
 public:
@@ -32,7 +32,7 @@ public:
 		std::string name = os::getRelativePath(modelName, path);
 
 		// Try to load the model from the given VFS path
-		NullModelPtr model = 
+		NullModelPtr model =
 			boost::static_pointer_cast<NullModel>(loadModelFromPath(name));
 
 		model->setModelPath(modelName);
@@ -41,33 +41,33 @@ public:
 		// Construct a NullModelNode using this resource
 		return NullModelNodePtr(new NullModelNode(model));
 	}
-  
+
   	// Required function, not implemented.
 	IModelPtr loadModelFromPath(const std::string& name) {
 		NullModelPtr model(new NullModel);
 		model->setModelPath(name);
 		return model;
 	}
-  
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const {
 		static std::string _name(MODULE_MODELLOADER + "NULL");
 		return _name;
 	}
-	
+
 	virtual const StringSet& getDependencies() const {
 		static StringSet _dependencies; // no dependencies
 		return _dependencies;
 	}
-	
+
 	virtual void initialiseModule(const ApplicationContext& ctx) {
 		globalOutputStream() << getName().c_str() << "::initialiseModule called.\n";
 	}
-	
+
 	static NullModelLoader& Instance() {
 		return *InstancePtr();
 	}
-	
+
 	static NullModelLoaderPtr& InstancePtr() {
 		static NullModelLoaderPtr _instancePtr(new NullModelLoader);
 		return _instancePtr;

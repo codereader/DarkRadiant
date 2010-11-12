@@ -2,7 +2,7 @@
 
 namespace map {
 
-RootNode::RootNode(const std::string& name) : 
+RootNode::RootNode(const std::string& name) :
 	_name(name)
 {
 	// Apply root status to this node
@@ -18,7 +18,7 @@ RootNode::RootNode(const std::string& name) :
 RootNode::~RootNode() {
 	// Override the default release() method
 	GlobalUndoSystem().trackerDetach(m_changeTracker);
-	
+
 	// Remove all child nodes to trigger their destruction
 	removeAllChildNodes();
 }

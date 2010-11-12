@@ -23,15 +23,15 @@ inline scene::INodePtr cloneSingleNode(const scene::INodePtr& node)
 	return (cloneable != NULL) ? cloneable->clone() : scene::INodePtr();
 }
 
-class CloneAll : 
+class CloneAll :
 	public scene::NodeVisitor
 {
 	scene::Path _path;
 public:
-	CloneAll(const scene::INodePtr& root) : 
+	CloneAll(const scene::INodePtr& root) :
 		_path(root)
 	{}
-	
+
 	bool pre(const scene::INodePtr& node)
 	{
 		if (node->isRoot()) {
@@ -39,7 +39,7 @@ public:
 		}
 
 		// Insert the cloned node or NULL if not cloneable
-		_path.push(cloneSingleNode(node)); 
+		_path.push(cloneSingleNode(node));
 
 		return true;
 	}
@@ -70,7 +70,7 @@ inline scene::INodePtr Node_Clone(const scene::INodePtr& node)
 
 	CloneAll visitor(clone);
 	node->traverse(visitor);
-  
+
 	return clone;
 }
 

@@ -78,7 +78,7 @@ public:
 		{
 			totalWidth += i->getWidth();
 		}
-		
+
 		return totalWidth;
 	}
 

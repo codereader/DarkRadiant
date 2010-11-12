@@ -19,12 +19,12 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-    
+
 #include "radiant_jpeglib.h"
 #include "jerror.h"
 #include <memory.h>
 
-GLOBAL int LoadJPGBuff(unsigned char *fbuffer, int bufsize, unsigned char **pic, int *width, int *height ) 
+GLOBAL int LoadJPGBuff(unsigned char *fbuffer, int bufsize, unsigned char **pic, int *width, int *height )
 {
 
   /* This struct contains the JPEG decompression parameters and pointers to
@@ -97,7 +97,7 @@ GLOBAL int LoadJPGBuff(unsigned char *fbuffer, int bufsize, unsigned char **pic,
   /* We can ignore the return value since suspension is not possible
    * with the stdio data source.
    */
-  
+
   /* ydnar: radiant only handles RGB, non-progressive format jpegs */
   if( cinfo.output_components != 4 )
   {
@@ -109,21 +109,21 @@ GLOBAL int LoadJPGBuff(unsigned char *fbuffer, int bufsize, unsigned char **pic,
     *pic = const_cast<unsigned char*>(reinterpret_cast<const unsigned char*>("Progressive JPEG encountered (unsupported)"));
     return -1;
   }
-  
+
   /* We may need to do some setup of our own at this point before reading
    * the data.  After jpeg_start_decompress() we have the correct scaled
    * output image dimensions available, as well as the output colormap
    * if we asked for color quantization.
    * In this example, we need to make an output work buffer of the right size.
-   */ 
-  
+   */
+
   /* JSAMPLEs per row in output buffer */
   row_stride = cinfo.output_width * cinfo.output_components;
   nSize = cinfo.output_width*cinfo.output_height*cinfo.output_components;
-  
+
   out = reinterpret_cast<unsigned char*>( malloc( nSize+ 1 ) );
   memset( out, 255, nSize + 1 );
-  
+
   *pic = out;
   *width = cinfo.output_width;
   *height = cinfo.output_height;

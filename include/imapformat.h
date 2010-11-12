@@ -21,7 +21,7 @@ namespace map
 {
 
 // The MapExport/MapImport information structures, needed by the MapFormat::write() and
-// MapFormat::read() methods. The actual definition of this structure is stored in the 
+// MapFormat::read() methods. The actual definition of this structure is stored in the
 // files libs/MapExportInfo.h and libs/MapImportInfo.h.
 class MapExportInfo;
 class MapImportInfo;
@@ -33,7 +33,7 @@ class MapImportInfo;
  *
  * Such a class should not change its "state" during the parse() calls - the map parser
  * is calling the same instance of this PrimitiveParser over and over, one call for each
- * primitive, so when returning from the parse() method the class should be ready 
+ * primitive, so when returning from the parse() method the class should be ready
  * to process the next primitive.
  */
 class PrimitiveParser
@@ -55,7 +55,7 @@ public:
 };
 typedef boost::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
 
-/** 
+/**
  * Map Format interface. Each map format is able to traverse the scene graph and write
  * the contents into a mapfile, or to load a mapfile and populate a scene graph.
  */
@@ -73,7 +73,7 @@ public:
 	virtual bool readGraph(const MapImportInfo& importInfo) const = 0;
 
 	/** Traverse the scene graph and write contents into the provided output stream.
-	 * 
+	 *
 	 * @param exportInfo
 	 * The MapExportInfo structure, which contains the ostream references and such.
 	 */
@@ -82,7 +82,7 @@ public:
 typedef boost::shared_ptr<MapFormat> MapFormatPtr;
 
 /**
- * greebo: This is the global map format manager. Use this class to 
+ * greebo: This is the global map format manager. Use this class to
  * register any parsers.
  */
 class IMapFormatManager :

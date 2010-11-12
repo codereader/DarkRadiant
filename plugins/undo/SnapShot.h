@@ -3,25 +3,25 @@
 
 #include "iundo.h"
 
-/* greebo: Basically, this class can contain a whole list of Undoables and all their UndoMementos, 
+/* greebo: Basically, this class can contain a whole list of Undoables and all their UndoMementos,
  * as there can be multiple Undoables whose states have to be saved in a Snapshot.
- * 
+ *
  * What happens on save(): The Undable is queried for its UndoMemento (the actual data)
  * whose pointer is stored along with the Undable* itself into a list.
- * 
+ *
  * Upon request (restore() or release()) the UndoMementos are restored back to their according
- * Undoables or released from memory, resp.  
+ * Undoables or released from memory, resp.
  */
 
 namespace undo {
- 
-class Snapshot 
+
+class Snapshot
 {
 	/* greebo: A StateApplicator applies the saved state to
 	 * an Undoable. The pointers to the Undables and their
 	 * UndoMementos are stored internally.
 	 */
-	class StateApplicator 
+	class StateApplicator
 	{
 	public:
 		Undoable* _undoable;
@@ -29,10 +29,10 @@ class Snapshot
 		UndoMemento* _data;
 	public:
 		// Constructor
-		StateApplicator(Undoable* undoable, UndoMemento* data) : 
-			_undoable(undoable), _data(data) 
+		StateApplicator(Undoable* undoable, UndoMemento* data) :
+			_undoable(undoable), _data(data)
 		{}
-				
+
 		void restore() {
 			_undoable->importState(_data);
 		}

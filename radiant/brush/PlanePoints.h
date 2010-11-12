@@ -4,8 +4,8 @@
 #include "math/Vector3.h"
 
 /* greebo: Three points in space (Vector3) define a plane, hence PlanePoints
- * 
- * Note: should probably be moved into libs/math/ 
+ *
+ * Note: should probably be moved into libs/math/
  */
 
 typedef Vector3 PlanePoints[3];
@@ -28,7 +28,7 @@ inline void planepts_quantise(PlanePoints planepts, double snap) {
 
 inline void edge_snap(Vector3& edge, double snap) {
 	double scale = ceil(fabs(snap / edge.max()));
-	
+
 	if (scale > 0.0f) {
 		edge *= scale;
 	}

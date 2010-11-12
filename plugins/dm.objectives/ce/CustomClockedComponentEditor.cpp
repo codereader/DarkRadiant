@@ -25,7 +25,7 @@ CustomClockedComponentEditor::CustomClockedComponentEditor(Component& component)
 	_interval = Gtk::manage(new Gtk::SpinButton(
 		*Gtk::manage(new Gtk::Adjustment(1, 0, 65535, 0.1)), 0, 2)
 	);
-	
+
 	pack_start(
 		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Script Function:") + "</b>")),
         false, false, 0
@@ -55,7 +55,7 @@ CustomClockedComponentEditor::CustomClockedComponentEditor(Component& component)
 void CustomClockedComponentEditor::writeToComponent() const
 {
     assert(_component);
-	
+
 	_component->setArgument(0, _scriptFunction->get_text());
 	_component->setClockInterval(static_cast<float>(_interval->get_value()));
 }

@@ -50,7 +50,7 @@ void toQuat( mat3_t &src, quat_t &dst ) {
 		s = ( float )sqrt( trace + 1.0f );
 		dst.w = s * 0.5f;
 		s = 0.5f / s;
-    
+
 		dst.x = ( src[ 2 ][ 1 ] - src[ 1 ][ 2 ] ) * s;
 		dst.y = ( src[ 0 ][ 2 ] - src[ 2 ][ 0 ] ) * s;
 		dst.z = ( src[ 1 ][ 0 ] - src[ 0 ][ 1 ] ) * s;
@@ -63,14 +63,14 @@ void toQuat( mat3_t &src, quat_t &dst ) {
 			i = 2;
 		}
 
-		j = next[ i ];  
+		j = next[ i ];
 		k = next[ j ];
-    
+
 		s = ( float )sqrt( ( src[ i ][ i ] - ( src[ j ][ j ] + src[ k ][ k ] ) ) + 1.0f );
 		dst[ i ] = s * 0.5f;
-    
+
 		s = 0.5f / s;
-    
+
 		dst.w		= ( src[ k ][ j ] - src[ j ][ k ] ) * s;
 		dst[ j ]	= ( src[ j ][ i ] + src[ i ][ j ] ) * s;
 		dst[ k ]	= ( src[ k ][ i ] + src[ i ][ k ] ) * s;

@@ -6,11 +6,11 @@
 
 /** greebo: An EventListener gets notified by the Radiant module
  *          on global events like shutdown, startup and such.
- * 
+ *
  *          EventListener classes must register themselves using
  *          the GlobalRadiant().addEventListener() method in order
  *          to get notified about the events.
- * 
+ *
  * Note: Default implementations are empty, deriving classes are
  *       supposed to pick the events they want to listen to.
  */
@@ -23,7 +23,7 @@ public:
 	/** This gets called AFTER the MainFrame window has been constructed.
 	 */
 	virtual void onRadiantStartup() {}
-	
+
 	/** Gets called when BEFORE the MainFrame window is destroyed.
 	 *  Note: After this call, the EventListeners are deregistered from the
 	 *        Radiant module, all the internally held shared_ptrs are cleared.

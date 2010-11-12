@@ -33,7 +33,7 @@ void ARBBumpProgram::create()
 	// Initialise the lightScale value
     game::IGamePtr currentGame = GlobalGameManager().currentGame();
     xml::NodeList scaleList = currentGame->getLocalXPath(LOCAL_RKEY_LIGHTSCALE);
-	if (!scaleList.empty()) 
+	if (!scaleList.empty())
     {
 		_lightScale = strToDouble(scaleList[0].getContent());
 	}
@@ -52,7 +52,7 @@ void ARBBumpProgram::create()
     // Create the fragment program
     m_fragment_program = GLProgramFactory::createARBProgram(
         BUMP_FP_FILENAME, GL_FRAGMENT_PROGRAM_ARB
-    );    
+    );
 
     glDisable(GL_VERTEX_PROGRAM_ARB);
     glDisable(GL_FRAGMENT_PROGRAM_ARB);
@@ -103,10 +103,10 @@ void ARBBumpProgram::disable()
     GlobalOpenGL().assertNoErrors();
 }
 
-void ARBBumpProgram::applyRenderParams(const Vector3& viewer, 
-                                       const Matrix4& objectToWorld, 
-                                       const Vector3& origin, 
-                                       const Vector3& colour, 
+void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
+                                       const Matrix4& objectToWorld,
+                                       const Vector3& origin,
+                                       const Vector3& colour,
                                        const Matrix4& world2light,
                                        float ambientFactor)
 {

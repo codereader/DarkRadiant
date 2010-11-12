@@ -13,7 +13,7 @@ namespace Gtk
 	class RadioButton;
 }
 
-/** 
+/**
  * Query the user which type of cap should be created
  */
 namespace ui
@@ -31,9 +31,9 @@ private:
 	Gtk::RadioButtonGroup _group;
 
 public:
-	// Constructor 
+	// Constructor
 	PatchCapDialog();
-	
+
 	// Returns the selected cap type (only valid if dialog result == OK)
 	EPatchCap getSelectedCapType();
 

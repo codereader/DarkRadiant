@@ -70,10 +70,10 @@ void ResponseEffect::setName(const std::string& name, bool inherited) {
 		_effectName = name;
 		_origName = name;
 	}
-	
+
 	// Update the entityclass pointer
 	_eclass = ResponseEffectTypes::Instance().getEClassForName(_effectName);
-	
+
 	// Build the argument list, if it hasn't been built up till now
 	if (!_argumentListBuilt) {
 		_argumentListBuilt = true;
@@ -83,14 +83,14 @@ void ResponseEffect::setName(const std::string& name, bool inherited) {
 
 std::string ResponseEffect::getArgument(unsigned int index) const {
 	ArgumentList::const_iterator i = _args.find(index);
-	
+
 	// Return "" if the argument was not found
 	return (i != _args.end()) ? i->second.value : "";
 }
 
 bool ResponseEffect::argIsOverridden(unsigned int index) {
 	ArgumentList::const_iterator i = _args.find(index);
-	
+
 	if (i != _args.end()) {
 		return (i->second.value != i->second.origValue);
 	}
@@ -99,7 +99,7 @@ bool ResponseEffect::argIsOverridden(unsigned int index) {
 
 void ResponseEffect::setArgument(unsigned int index, const std::string& value, bool inherited) {
 	ArgumentList::const_iterator i = _args.find(index);
-	
+
 	if (_inherited && !inherited) {
 		// This is an override operation
 		if (i != _args.end()) {
@@ -112,7 +112,7 @@ void ResponseEffect::setArgument(unsigned int index, const std::string& value, b
 			Argument newArgument;
 			newArgument.value = value;
 			newArgument.origValue = "";
-			
+
 			// Store the argument in the map
 			_args[index] = newArgument;
 		}
@@ -128,7 +128,7 @@ void ResponseEffect::setArgument(unsigned int index, const std::string& value, b
 			Argument newArgument;
 			newArgument.value = value;
 			newArgument.origValue = value;
-			
+
 			// Store the argument in the map
 			_args[index] = newArgument;
 		}
@@ -136,9 +136,9 @@ void ResponseEffect::setArgument(unsigned int index, const std::string& value, b
 }
 
 std::string ResponseEffect::getCaption() const {
-	return (_eclass != NULL) 
-		   ? _eclass->getAttribute("editor_caption").value 
-		   : ""; 
+	return (_eclass != NULL)
+		   ? _eclass->getAttribute("editor_caption").value
+		   : "";
 }
 
 IEntityClassPtr ResponseEffect::getEClass() const {
@@ -151,13 +151,13 @@ ResponseEffect::ArgumentList& ResponseEffect::getArguments() {
 
 void ResponseEffect::buildArgumentList() {
 	if (_eclass == NULL) return;
-	
+
 	for (int i = 1; i < 1000; i++) {
 		std::string argType = _eclass->getAttribute("editor_argType" + intToStr(i)).value;
 		std::string argDesc = _eclass->getAttribute("editor_argDesc" + intToStr(i)).value;
 		std::string argTitle = _eclass->getAttribute("editor_argTitle" + intToStr(i)).value;
 		std::string optional = _eclass->getAttribute("editor_argOptional" + intToStr(i)).value;
-		
+
 		if (argType != "") {
 			// Check if the argument exists
 			ArgumentList::iterator found = _args.find(i);
@@ -165,7 +165,7 @@ void ResponseEffect::buildArgumentList() {
 				Argument newArgument;
 				_args[i] = newArgument;
 			}
-			
+
 			// Load the values into the structure
 			_args[i].type = argType;
 			_args[i].desc = argDesc;
@@ -185,20 +185,20 @@ void ResponseEffect::clearArgumentList() {
 
 std::string ResponseEffect::getArgumentStr() {
 	if (_eclass == NULL) return _("Error: eclass pointer invalid.");
-	
+
 	std::string returnValue = _eclass->getAttribute("editor_argString").value;
-	
+
 	for (ArgumentList::iterator i = _args.begin(); i != _args.end(); i++) {
 		std::string needle = "[arg" + intToStr(i->first) + "]";
 		std::string replacement = i->second.value;
-		
+
 		// Check for a bool
 		if (i->second.type == "b") {
 			replacement = (i->second.value.empty()) ? _("no") : _("yes");
 		}
-		
-		boost::algorithm::replace_all(returnValue, needle, replacement); 
+
+		boost::algorithm::replace_all(returnValue, needle, replacement);
 	}
-	
+
 	return returnValue;
 }

@@ -24,7 +24,7 @@ public:
     GLenum dest;
 
     // Constructor
-    BlendFunc(GLenum s, GLenum d) 
+    BlendFunc(GLenum s, GLenum d)
     : src(s), dest(d)
     { }
 };
@@ -36,7 +36,7 @@ public:
  * Each shader layer contains an image texture, a blend mode (e.g. add,
  * modulate) and various other data.
  */
-class ShaderLayer 
+class ShaderLayer
 {
 public:
 
@@ -95,7 +95,7 @@ public:
         VERTEX_COLOUR_MULTIPLY, // "vertexColor"
         VERTEX_COLOUR_INVERSE_MULTIPLY // "inverseVertexColor"
     };
-    
+
     /**
      * \brief
      * Get the vertex colour mode for this layer.

@@ -44,7 +44,7 @@ public:
 	friend void		toQuat( mat3_t &src, quat_t &dst );
 
 	float			*vec4( void );
-			
+
 	float			operator[]( int index ) const;
 	float			&operator[]( int index );
 
@@ -162,7 +162,7 @@ inline int operator!=( quat_t a, quat_t b ) {
 
 inline float quat_t::Length( void ) {
 	float length;
-	
+
 	length = x * x + y * y + z * z + w * w;
 	return ( float )sqrt( length );
 }
@@ -179,7 +179,7 @@ inline quat_t& quat_t::Normalize( void ) {
 		z *= ilength;
 		w *= ilength;
 	}
-		
+
 	return *this;
 }
 

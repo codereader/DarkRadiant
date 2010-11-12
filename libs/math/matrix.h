@@ -55,32 +55,32 @@ public:
     Matrix4() { }
 
     /* NAMED CONSTRUCTORS FOR SPECIFIC MATRICES */
-	
+
     /**
      * \brief
      * Obtain the identity matrix.
      */
     static const Matrix4& getIdentity();
-	
-	/** 
+
+	/**
      * \brief
      * Get a matrix representing the given 3D translation.
-	 * 
+	 *
 	 * @param translation
 	 * Vector3 representing the translation in 3D space.
 	 */
 	static Matrix4 getTranslation(const Vector3& translation);
-	
-	/** 
-	 * greebo: Returns the rotation matrix defined by two three-component 
+
+	/**
+	 * greebo: Returns the rotation matrix defined by two three-component
 	 * vectors.
-	 * The rotational axis is defined by the normalised cross product of those 
+	 * The rotational axis is defined by the normalised cross product of those
 	 * two vectors, the angle can be retrieved from the dot product.
 	 */
 	static Matrix4 getRotation(const Vector3& a, const Vector3& b);
 
 	/**
-	 * greebo: Returns the rotation matrix defined by an arbitrary axis 
+	 * greebo: Returns the rotation matrix defined by an arbitrary axis
 	 * and an angle.
 	 *
 	 * Important: the axis vector must be normalised.
@@ -216,15 +216,15 @@ public:
     return _m[(r << 2) + c];
   }
 
-	/** 
+	/**
      * Cast to double* for use with GL functions that accept a double
 	 * array, also provides operator[].
 	 */
 	operator double* () {
-		return _m;	
+		return _m;
 	}
 
-	/** 
+	/**
      * Cast to const double* to provide operator[] for const objects.
 	 */
 	operator const double* () const {
@@ -236,7 +236,7 @@ public:
      * Transpose this matrix in-place.
      */
 	void transpose();
-	
+
 	/**
      * \brief
      * Return a transposed copy of this matrix.
@@ -249,45 +249,45 @@ public:
      */
     Matrix4 getInverse() const;
 
-	/** 
+	/**
      * \brief
      * Use this matrix to transform the provided vector and return a new vector
      * containing the result.
-	 * 
+	 *
 	 * \param vector4
 	 * The 4-element vector to transform.
 	 */
 	Vector4 transform(const Vector4& vector4) const;
-	
-	/** 
+
+	/**
      * \brief
      * Use this matrix to transform the provided 3-element vector, automatically
      * converting the vector to a 4-element homogeneous vector with w=1.
-	 * 
+	 *
 	 * \param vector3
 	 * The Vector3 to transform.
-	 * 
+	 *
 	 * \returns
 	 * A 4-element vector containing the result.
 	 */
 	Vector4 transform(const Vector3& vector3) const {
 		return transform(Vector4(vector3, 1));
 	}
-	
+
 	/** Use this matrix to transform the provided plane
-	 * 
+	 *
 	 * @param plane: The Plane to transform.
-	 * 
+	 *
 	 * @returns: the transformed plane.
 	 */
 	Plane3 transform(const Plane3& plane) const;
-	
+
     /**
      * \brief
      * Inverse transform a plane.
      */
 	Plane3 inverseTransform(const Plane3& plane) const;
-	
+
     /**
      * \brief
      * Return the result of this matrix post-multiplied by another matrix.
@@ -789,7 +789,7 @@ clockwise rotation around X, Y, Z, facing along axis
 
 rows of Z by cols of Y
  cy*cz -sy*cz+sz -sy*sz+cz
--sz*cy -sz*sy+cz 
+-sz*cy -sz*sy+cz
 
   .. or something like that..
 
@@ -1125,7 +1125,7 @@ inline Vector3 matrix4_get_rotation_euler_yxz(const Matrix4& self)
   else // Gimbal lock has occurred
   {
     return Vector3(
-      a,  
+      a,
       atan2(self[8], self[0]),
       0
     );
@@ -1156,7 +1156,7 @@ inline Vector3 matrix4_get_rotation_euler_zxy(const Matrix4& self)
   else // Gimbal lock has occurred
   {
     return Vector3(
-      a,  
+      a,
       0,
       atan2(-self[4], self[0])
     );
@@ -1249,7 +1249,7 @@ inline void matrix4_pivoted_transform_by_euler_xyz_degrees(Matrix4& self, const 
 
 /** Stream insertion operator for Matrix4.
  */
-inline std::ostream& operator<<(std::ostream& st, const Matrix4& m) 
+inline std::ostream& operator<<(std::ostream& st, const Matrix4& m)
 {
 	st << "|" << m[0] << ", " << m[4] << ", " << m[8] << ", " << m[12] << "|\n";
 	st << "|" << m[1] << ", " << m[5] << ", " << m[9] << ", " << m[13] << "|\n";

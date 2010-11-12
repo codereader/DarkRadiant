@@ -43,7 +43,7 @@ char *idStr::tolower
    (
    char *s1
    )
-   
+
    {
    char *s;
 
@@ -53,7 +53,7 @@ char *idStr::tolower
       *s = ::tolower( *s );
 		s++;
 	   }
-   
+
    return s1;
    }
 
@@ -66,7 +66,7 @@ char *idStr::toupper
    (
    char *s1
    )
-   
+
    {
    char *s;
 
@@ -76,22 +76,22 @@ char *idStr::toupper
       *s = ::toupper( *s );
 		s++;
 	   }
-   
+
    return s1;
    }
 
 int idStr::icmpn
    (
-   const char *s1, 
-   const char *s2, 
+   const char *s1,
+   const char *s2,
    int n
    )
-   
+
    {
 	int c1;
    int c2;
-	
-	do 
+
+	do
       {
 		c1 = *s1++;
 		c2 = *s2++;
@@ -101,7 +101,7 @@ int idStr::icmpn
          // idStrings are equal until end point
 			return 0;
 		   }
-		
+
 		if ( c1 != c2 )
          {
 			if ( c1 >= 'a' && c1 <= 'z' )
@@ -119,15 +119,15 @@ int idStr::icmpn
             // strings less than
 				return -1;
 			   }
-         else if ( c1 > c2 ) 
+         else if ( c1 > c2 )
             {
             // strings greater than
             return 1;
             }
 		   }
-	   } 
+	   }
    while( c1 );
-	
+
    // strings are equal
 	return 0;
    }
@@ -137,12 +137,12 @@ int idStr::icmp
    const char *s1,
    const char *s2
    )
-   
+
    {
 	int c1;
    int c2;
-	
-	do 
+
+	do
       {
 		c1 = *s1++;
 		c2 = *s2++;
@@ -164,31 +164,31 @@ int idStr::icmp
             // strings less than
 				return -1;
 			   }
-         else if ( c1 > c2 ) 
+         else if ( c1 > c2 )
             {
             // strings greater than
             return 1;
             }
 		   }
-	   } 
+	   }
    while( c1 );
-	
+
    // strings are equal
 	return 0;
    }
 
 int idStr::cmpn
    (
-   const char *s1, 
-   const char *s2, 
+   const char *s1,
+   const char *s2,
    int n
    )
-   
+
    {
 	int c1;
    int c2;
-	
-	do 
+
+	do
       {
 		c1 = *s1++;
 		c2 = *s2++;
@@ -198,35 +198,35 @@ int idStr::cmpn
          // strings are equal until end point
 			return 0;
 		   }
-		
+
 		if ( c1 < c2 )
          {
          // strings less than
 			return -1;
 			}
-      else if ( c1 > c2 ) 
+      else if ( c1 > c2 )
          {
          // strings greater than
          return 1;
          }
-	   } 
+	   }
    while( c1 );
-	
+
    // strings are equal
 	return 0;
    }
 
 int idStr::cmp
    (
-   const char *s1, 
+   const char *s1,
    const char *s2
    )
-   
+
    {
 	int c1;
    int c2;
-	
-	do 
+
+	do
       {
 		c1 = *s1++;
 		c2 = *s2++;
@@ -236,14 +236,14 @@ int idStr::cmp
          // strings less than
 			return -1;
 			}
-      else if ( c1 > c2 ) 
+      else if ( c1 > c2 )
          {
          // strings greater than
          return 1;
          }
-	   } 
+	   }
    while( c1 );
-	
+
    // strings are equal
 	return 0;
    }
@@ -381,14 +381,14 @@ idStr& idStr::operator+=
    return *this;
 	}
 
-void idStr::CapLength 
+void idStr::CapLength
    (
-   int newlen 
+   int newlen
    )
 
    {
    assert ( m_data );
-   
+
    if ( length() <= newlen )
       return;
 
@@ -398,7 +398,7 @@ void idStr::CapLength
    m_data->len = newlen;
    }
 
-void idStr::EnsureDataWritable 
+void idStr::EnsureDataWritable
    (
    void
    )
@@ -428,7 +428,7 @@ void idStr::EnsureAlloced (int amount, bool keepold) {
 	if ( !m_data ) {
       m_data = new strdata();
 	}
-   
+
 	// Now, let's make sure it's writable
 	EnsureDataWritable ();
 
@@ -481,11 +481,11 @@ void idStr::BackSlashesToSlashes
       }
    }
 
-void idStr::snprintf 
+void idStr::snprintf
    (
    char *dst,
    int size,
-   const char *fmt, 
+   const char *fmt,
    ...
    )
 
@@ -497,7 +497,7 @@ void idStr::snprintf
 	va_start (argptr,fmt);
 	len = vsprintf (buffer,fmt,argptr);
 	va_end (argptr);
-	
+
    assert ( len < size );
 
    strncpy (dst, buffer, size-1);
@@ -520,7 +520,7 @@ any possible bounds violation and NULL data tests.
 */
 void TestStringClass
 	(
-	void 
+	void
 	)
 
 	{
@@ -530,7 +530,7 @@ void TestStringClass
 	idStr	b;								// b.len == 0, b.data == "\0"
 	idStr	c( "test" );				// c.len == 4, c.data == "test\0"
 	idStr	d( c );						// d.len == 4, d.data == "test\0"
-	idStr	e( reinterpret_cast<const char *>(NULL) );					
+	idStr	e( reinterpret_cast<const char *>(NULL) );
                                  // e.len == 0, e.data == "\0"					ASSERT!
 	int	i;								// i == ?
 

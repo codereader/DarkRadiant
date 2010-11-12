@@ -21,7 +21,7 @@ public:
 	 */
 	virtual void increment() = 0;
 	virtual void decrement() = 0;
-	
+
 	/** greebo: Returns the current count.
 	 */
 	virtual std::size_t get() const = 0;

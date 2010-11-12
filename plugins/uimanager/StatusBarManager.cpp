@@ -44,7 +44,7 @@ Gtk::Widget* StatusBarManager::getElement(const std::string& name)
 {
 	// Look up the key
 	ElementMap::const_iterator found = _elements.find(name);
-	
+
 	// return NULL if not found
 	return (found != _elements.end()) ? found->second->toplevel : NULL;
 }
@@ -80,7 +80,7 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 {
 	// Look up the key
 	ElementMap::const_iterator found = _elements.find(name);
-	
+
 	// return NULL if not found
 	if (found != _elements.end() && found->second->label != NULL)
 	{
@@ -92,7 +92,7 @@ void StatusBarManager::setText(const std::string& name, const std::string& text)
 	}
 	else
 	{
-		globalErrorStream() << "Could not find text status bar element with the name " 
+		globalErrorStream() << "Could not find text status bar element with the name "
 			<< name << std::endl;
 	}
 }
@@ -107,7 +107,7 @@ void StatusBarManager::onGtkIdle()
 
 		// Skip non-labels
 		if (element.label == NULL) continue;
-		
+
 		element.label->set_markup(element.text);
 	}
 }
@@ -115,7 +115,7 @@ void StatusBarManager::onGtkIdle()
 int StatusBarManager::getFreePosition(int desiredPosition)
 {
 	// Do we have an easy job?
-	if (_positions.empty()) 
+	if (_positions.empty())
 	{
 		// nothing to calculate
 		return desiredPosition;
@@ -147,7 +147,7 @@ int StatusBarManager::getFreePosition(int desiredPosition)
 void StatusBarManager::rebuildStatusBar()
 {
 	// Prevent child widgets from destruction before clearing the container
-	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i) 
+	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
 	{
 		// Grab a reference of the widgets (a new widget will be "floating")
 		i->second->toplevel->reference();
@@ -176,7 +176,7 @@ void StatusBarManager::rebuildStatusBar()
 	_statusBar->show_all();
 }
 
-void StatusBarManager::_removeChildWidgets(Gtk::Widget& child) 
+void StatusBarManager::_removeChildWidgets(Gtk::Widget& child)
 {
 	// Remove the visited child
 	_statusBar->remove(child);

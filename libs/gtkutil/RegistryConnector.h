@@ -18,14 +18,14 @@ namespace gtkutil
  * a registry key which its value should be written to and read from when the
  * appropriate method is called.
  */
-class RegistryConnector 
+class RegistryConnector
 {
    // Association of registry keys with StringSerialisable objects
    typedef std::map<std::string, StringSerialisablePtr> ObjectMap;
    ObjectMap _objects;
 
 public:
-   
+
    /**
     * \brief
     * Insert a serialisable object to be associated with the given registry
@@ -43,7 +43,7 @@ public:
 
 	// Loads all the values from the registry into the connected GtkObjects
 	void importValues();
-	
+
 	// Reads the values from the GtkObjects and writes them into the XMLRegistry
 	void exportValues();
 

@@ -30,7 +30,7 @@ struct ArgumentInfo
 };
 
 /**
- * greebo: This structure holds information about a certain 
+ * greebo: This structure holds information about a certain
  * Conversation Command Type (e.g. "WaitSeconds") and its arguments.
  *
  * As the number and type of arguments varies, the CommandEditor GUI

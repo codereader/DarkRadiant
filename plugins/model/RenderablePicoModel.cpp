@@ -12,36 +12,36 @@
 namespace model {
 
 // Constructor
-RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, 
-										 const std::string& fExt) 
+RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
+										 const std::string& fExt)
 {
 	// Get the number of surfaces to create
 	int nSurf = PicoGetModelNumSurfaces(mod);
-	
+
 	// Create a RenderablePicoSurface for each surface in the structure
 	for (int n = 0; n < nSurf; ++n) {
-	
+
 		// Retrieve the surface, discarding it if it is null or non-triangulated (?)
 		picoSurface_t* surf = PicoGetModelSurface(mod, n);
 		if (surf == 0 || PicoGetSurfaceType(surf) != PICO_TRIANGLES)
 			continue;
-			
+
 		// Fix the normals of the surface (?)
 		PicoFixSurfaceNormals(surf);
-		
+
 		// Create the RenderablePicoSurface object and add it to the vector
 		boost::shared_ptr<RenderablePicoSurface> rSurf(
 			new RenderablePicoSurface(surf, fExt));
 		_surfVec.push_back(rSurf);
-		
+
 		// Extend the model AABB to include the surface's AABB
 		_localAABB.includeAABB(rSurf->getAABB());
 	}
-	
+
 }
 
 // Front end renderable submission
-void RenderablePicoModel::submitRenderables(RenderableCollector& rend, 
+void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
 											const Matrix4& localToWorld)
 {
 	// Submit renderables from each surface
@@ -52,7 +52,7 @@ void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
 		// Check if the surface's shader is filtered, if not then submit it for
 		// rendering
 		MaterialPtr surfaceShader = (*i)->getShader()->getMaterial();
-		if (surfaceShader->isVisible()) {		
+		if (surfaceShader->isVisible()) {
 			(*i)->submitRenderables(rend, localToWorld);
 		}
 	}
@@ -60,13 +60,13 @@ void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
 
 // OpenGL (back-end) render function
 void RenderablePicoModel::render(const RenderInfo& info) const {
-	
+
 	// Render options
 	if (info.checkFlag(RENDER_TEXTURE_2D))
 		glEnable(GL_TEXTURE_2D);
 	if (info.checkFlag(RENDER_SMOOTH))
 		glShadeModel(GL_SMOOTH);
-	
+
 	// Iterate over the surfaces, calling the render function on each one
 	for (SurfaceList::const_iterator i = _surfVec.begin();
 		 i != _surfVec.end();
@@ -90,7 +90,7 @@ std::string RenderablePicoModel::getFilename() const {
 void RenderablePicoModel::setFilename(const std::string& name) {
 	_filename = name;
 }
-	
+
 // Return vertex count of this model
 int RenderablePicoModel::getVertexCount() const {
 	int sum = 0;
@@ -123,7 +123,7 @@ const IModelSurface& RenderablePicoModel::getSurface(int surfaceNum) const
 	assert(surfaceNum >= 0 && surfaceNum < _surfVec.size());
 	return *_surfVec[surfaceNum];
 }
-	
+
 // Apply the given skin to this model
 void RenderablePicoModel::applySkin(const ModelSkin& skin)
 {
@@ -159,7 +159,7 @@ const MaterialList& RenderablePicoModel::getActiveMaterials() const {
 	// Return the list
 	return _materialList;
 }
-	
+
 // Perform selection test
 void RenderablePicoModel::testSelect(Selector& selector,
 									 SelectionTest& test,
@@ -168,8 +168,8 @@ void RenderablePicoModel::testSelect(Selector& selector,
 	// Perform a volume intersection (AABB) check on each surface. For those
 	// that intersect, call the surface's own testSelection method to perform
 	// a proper selection test.
-    for (SurfaceList::iterator i = _surfVec.begin(); 
-    	 i != _surfVec.end(); 
+    for (SurfaceList::iterator i = _surfVec.begin();
+    	 i != _surfVec.end();
     	 ++i)
 	{
 		// Check volume intersection
@@ -188,5 +188,5 @@ std::string RenderablePicoModel::getModelPath() const {
 void RenderablePicoModel::setModelPath(const std::string& modelPath) {
 	_modelPath = modelPath;
 }
-	
+
 }

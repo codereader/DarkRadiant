@@ -218,7 +218,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 	picoVec3_t	xyz, normal;
 	picoVec2_t	st;
 	picoColor_t	color;
-	
+
 
 	bb = (picoByte_t*) buffer;
 
@@ -327,7 +327,7 @@ static picoModel_t *_fm_load( PM_PARAMS_LOAD )
 		_pico_printf( PICO_ERROR, "%s has 0 frames!", fileName );
 		return NULL;
 	}
-	
+
 	if( frameNum < 0 || frameNum >= fm_head->numFrames )
 	{
 		_pico_printf( PICO_ERROR, "Invalid or out-of-range FM frame specified" );

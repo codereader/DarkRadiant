@@ -12,7 +12,7 @@
 namespace brush {
 namespace algorithm {
 
-class BrushByPlaneClipper : 
+class BrushByPlaneClipper :
 	public SelectionSystem::Visitor
 {
 private:
@@ -24,7 +24,7 @@ private:
 
 	// Whether to use the _caulkShader texture for new brush faces
 	bool _useCaulk;
-	
+
 	// The shader name used for new faces when _useCaulk is true
 	std::string _caulkShader;
 
@@ -37,7 +37,7 @@ private:
 	mutable InsertMap _insertList;
 
 public:
-	BrushByPlaneClipper(const Vector3& p0, const Vector3& p1, const Vector3& p2, 
+	BrushByPlaneClipper(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 						const TextureProjection& projection, EBrushSplit split);
 
 	// The destructor performs the node deletions and insertions
@@ -51,6 +51,6 @@ private:
 };
 
 } // namespace algorithm
-} // namespace brush 
+} // namespace brush
 
 #endif /* BRUSH_BY_PLANE_CLIPPER_H_ */

@@ -19,7 +19,7 @@
 
 namespace ui
 {
-	
+
 	namespace {
 		typedef std::vector<std::string> StringVector;
 	}
@@ -69,7 +69,7 @@ MenuItemPtr MenuItem::parent() const {
 void MenuItem::setParent(const MenuItemPtr& parent) {
 	_parent = parent;
 }
-	
+
 void MenuItem::setCaption(const std::string& caption) {
 	_caption = caption;
 }
@@ -130,24 +130,24 @@ int MenuItem::getMenuPosition(const MenuItemPtr& child)
 	{
 		construct();
 	}
-	
+
 	// Check if this is the right item type for this operation
 	if (_type == menuFolder || _type == menuBar)
 	{
 		Gtk::Container* container = dynamic_cast<Gtk::Container*>(_widget);
-		
+
 		// A menufolder is a menuitem with a contained submenu, retrieve it
 		if (_type == menuFolder)
 		{
 			container = static_cast<Gtk::MenuItem*>(_widget)->get_submenu();
 		}
-		
+
 		// Get the list of child widgets
 		std::vector<Gtk::Widget*> children = container->get_children();
 
 		// The child Widget for comparison
 		Gtk::Widget* childWidget = child->getWidget();
-		
+
 		for (std::size_t i = 0; i < children.size(); ++i)
 		{
 			// Get the widget pointer from the current list item
@@ -168,7 +168,7 @@ Gtk::Widget* MenuItem::getWidget()
 	{
 		construct();
 	}
-	
+
 	return _widget;
 }
 
@@ -177,11 +177,11 @@ MenuItemPtr MenuItem::find(const std::string& menuPath)
 	// Split the path and analyse it
 	StringVector parts;
 	boost::algorithm::split(parts, menuPath, boost::algorithm::is_any_of("/"));
-	
+
 	// Any path items at all?
 	if (!parts.empty()) {
 		MenuItemPtr child;
-		
+
 		// Path is not empty, try to find the first item among the item's children
 		for (std::size_t i = 0; i < _children.size(); i++) {
 			if (_children[i]->getName() == parts[0]) {
@@ -189,7 +189,7 @@ MenuItemPtr MenuItem::find(const std::string& menuPath)
 				break;
 			}
 		}
-		
+
 		// The topmost name seems to be part of the children, pass the call
 		if (child != NULL) {
 			// Is this the end of the path (no more items)?
@@ -208,19 +208,19 @@ MenuItemPtr MenuItem::find(const std::string& menuPath)
 			}
 		}
 	}
-	
+
 	// Nothing found, return NULL pointer
 	return MenuItemPtr();
 }
 
 void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 	std::string nodeName = node.getName();
-	
+
 	setName(node.getAttributeValue("name"));
 
 	// Put the caption through gettext before passing it to setCaption
 	setCaption(_(node.getAttributeValue("caption").c_str()));
-	
+
 	if (nodeName == "menuItem") {
 		_type = menuItem;
 		// Get the EventPtr according to the event
@@ -232,7 +232,7 @@ void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 	}
 	else if (nodeName == "subMenu") {
 		_type = menuFolder;
-		
+
 		xml::NodeList subNodes = node.getChildren();
 		for (std::size_t i = 0; i < subNodes.size(); i++) {
 			if (subNodes[i].getName() != "text" && subNodes[i].getName() != "comment") {
@@ -240,7 +240,7 @@ void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 				MenuItemPtr newChild = MenuItemPtr(new MenuItem(thisItem));
 				// Let the child parse the subnode
 				newChild->parseNode(subNodes[i], newChild);
-				
+
 				// Add the child to the list
 				_children.push_back(newChild);
 			}
@@ -248,7 +248,7 @@ void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 	}
 	else if (nodeName == "menu") {
 		_type = menuBar;
-		
+
 		xml::NodeList subNodes = node.getChildren();
 		for (std::size_t i = 0; i < subNodes.size(); i++) {
 			if (subNodes[i].getName() != "text" && subNodes[i].getName() != "comment") {
@@ -256,15 +256,15 @@ void MenuItem::parseNode(xml::Node& node, const MenuItemPtr& thisItem) {
 				MenuItemPtr newChild = MenuItemPtr(new MenuItem(thisItem));
 				// Let the child parse the subnode
 				newChild->parseNode(subNodes[i], newChild);
-				
+
 				// Add the child to the list
 				_children.push_back(newChild);
 			}
 		}
-	} 
+	}
 	else {
 		_type = menuNothing;
-		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName << std::endl; 
+		globalErrorStream() << "MenuItem: Unknown node found: " << nodeName << std::endl;
 	}
 }
 
@@ -286,7 +286,7 @@ void MenuItem::construct()
 			}
 			else
 			{
-				globalErrorStream() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl; 
+				globalErrorStream() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl;
 			}
 		}
 	}
@@ -318,7 +318,7 @@ void MenuItem::construct()
 			}
 			else
 			{
-				globalErrorStream() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl; 
+				globalErrorStream() << "MenuItem::construct: Cannot cast child to Gtk::MenuItem" << std::endl;
 			}
 		}
 	}
@@ -328,12 +328,12 @@ void MenuItem::construct()
 		{
 			// Try to lookup the event name
 			IEventPtr event = GlobalEventManager().findEvent(_event);
-		
+
 			if (!event->empty()) {
 				// Retrieve an accelerator string formatted for a menu
-				const std::string accelText = 
+				const std::string accelText =
 					GlobalEventManager().getAcceleratorStr(event, true);
-			 
+
 				// Create a new menuitem
 				if (event->isToggle())
 				{
@@ -357,7 +357,7 @@ void MenuItem::construct()
 					_menuItem = menuItem;
 					_widget = menuItem;
 				}
-				
+
 				_widget->show_all();
 
 				// Connect the widget to the event
@@ -365,7 +365,7 @@ void MenuItem::construct()
 			}
 			else
 			{
-				std::cout << "MenuItem: Cannot find associated event: " << _event << std::endl; 
+				std::cout << "MenuItem: Cannot find associated event: " << _event << std::endl;
 			}
 		}
 		else
@@ -379,12 +379,12 @@ void MenuItem::construct()
 	{
 		// Cannot instantiate root MenuItem, ignore
 	}
-	
+
 	if (_widget != NULL)
 	{
 		_widget->show_all();
 	}
-	
+
 	_constructed = true;
 }
 
@@ -393,22 +393,22 @@ void MenuItem::updateAcceleratorRecursive()
 	if (!_constructed) {
 		construct();
 	}
-	
+
 	if (_type == menuItem && _menuItem != NULL)
 	{
 		// Try to lookup the event name
 		IEventPtr event = GlobalEventManager().findEvent(_event);
-					
+
 		if (!_event.empty() && event != NULL) {
 			// Retrieve an accelerator string formatted for a menu
-			const std::string accelText = 
+			const std::string accelText =
 				GlobalEventManager().getAcceleratorStr(event, true);
-			
+
 			// Update the accelerator text on the existing menuitem
 			_menuItem->setAccelerator(accelText);
 		}
 	}
-	
+
 	// Iterate over all the children and pass the call
 	for (std::size_t i = 0; i < _children.size(); ++i)
 	{

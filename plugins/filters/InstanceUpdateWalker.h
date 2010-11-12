@@ -44,7 +44,7 @@ public:
  * Scenegraph walker to update filtered status of Instances based on the
  * status of their parent entity class.
  */
-class InstanceUpdateWalker : 
+class InstanceUpdateWalker :
 	public scene::NodeVisitor
 {
 private:
@@ -77,14 +77,14 @@ public:
 			bool entityClassVisible = GlobalFilterSystem().isVisible("entityclass", eclass->getName());
 
 			Node_traverseSubgraph(
-				node, 
+				node,
 				entityClassVisible ? _showWalker : _hideWalker
 			);
 
 			// If the entity class is hidden, don't traverse the child nodes
 			return entityClassVisible;
 		}
-		
+
 		// greebo: Update visibility of Patches
 		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
 

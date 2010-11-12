@@ -41,17 +41,17 @@ MapPreview::MapPreview() :
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
-	
+
 	vbx->pack_start(*_glWidget, true, true, 0);
-	
+
 	// Connect up the signals
-	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | 
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
 						 Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
 
 	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &MapPreview::onExpose));
 	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &MapPreview::onMouseMotion));
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &MapPreview::onMouseScroll));
-	
+
 	// The HBox containing the toolbar and the menubar
 	Gtk::HBox* toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
 	vbx->pack_end(*toolHBox, false, false, 0);
@@ -90,7 +90,7 @@ void MapPreview::setRootNode(const scene::INodePtr& root)
 		GlobalFilterSystem().updateSubgraph(_root);
 
 		// Calculate camera distance so map is appropriately zoomed
-		_camDist = -(_root->worldAABB().getRadius() * 2.0); 
+		_camDist = -(_root->worldAABB().getRadius() * 2.0);
 	}
 }
 
@@ -119,15 +119,15 @@ void MapPreview::initialisePreview()
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClearDepth(100.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	// Set up the camera
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(PREVIEW_FOV, 1, 0.1, 10000);
-	
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-			
+
 	// Set up the lights
 	glEnable(GL_LIGHTING);
 
@@ -138,7 +138,7 @@ void MapPreview::initialisePreview()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
 	glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
-	
+
 	glEnable(GL_LIGHT1);
 	GLfloat l1Dif[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat l1Pos[] = { 0.0, 0.0, 1.0, 0.0 };
@@ -147,9 +147,9 @@ void MapPreview::initialisePreview()
 
 	// Reset the rotation
 	_rotation = Matrix4::getIdentity();
-	
+
 	// Calculate camera distance so model is appropriately zoomed
-	_camDist = -(20 * 2.0); 
+	_camDist = -(20 * 2.0);
 
 	_stateSelect1 = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
 	_stateSelect2 = GlobalRenderSystem().capture("$CAM_OVERLAY");
@@ -179,13 +179,13 @@ void MapPreview::draw()
 	glTranslatef(-aabb.origin.x(), -aabb.origin.y(), -aabb.origin.z()); // model translation
 
 	// Start rendering
-	unsigned int globalstate = 
+	unsigned int globalstate =
 		RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|
 		RENDER_ALPHATEST|RENDER_BLEND|RENDER_CULLFACE|RENDER_COLOURARRAY|
 		RENDER_OFFSETLINE|RENDER_POLYGONSMOOTH|RENDER_LINESMOOTH|
 		RENDER_COLOURCHANGE;
 
-	globalstate |=	RENDER_FILL | RENDER_LIGHTING | RENDER_TEXTURE_2D | 
+	globalstate |=	RENDER_FILL | RENDER_LIGHTING | RENDER_TEXTURE_2D |
 					RENDER_SMOOTH | RENDER_SCALED | RENDER_BUMP | RENDER_PROGRAM | RENDER_SCREEN;
 
 	CamRenderer renderer(globalstate, _stateSelect1, _stateSelect2, Vector3(0,0,_camDist));
@@ -217,7 +217,7 @@ void MapPreview::draw()
 
 	// Submit renderables from this map root
 	Node_traverseSubgraph(_root, adaptor);
-	
+
 	// Submit renderables directly attached to the ShaderCache
 	RenderHighlighted walker(renderer, view);
 	GlobalRenderSystem().forEachRenderable(walker.getRenderableCallback());
@@ -226,7 +226,7 @@ void MapPreview::draw()
 }
 
 bool MapPreview::onExpose(GdkEventExpose*)
-{ 
+{
 	draw();
 
 	return false;
@@ -235,7 +235,7 @@ bool MapPreview::onExpose(GdkEventExpose*)
 bool MapPreview::onMouseMotion(GdkEventMotion* ev)
 {
 	if (ev->state & GDK_BUTTON1_MASK)
-	{ 
+	{
 		// dragging with mouse button
 		static gdouble _lastX = ev->x;
 		static gdouble _lastY = ev->y;
@@ -247,13 +247,13 @@ bool MapPreview::onMouseMotion(GdkEventMotion* ev)
 						 0);
 		_lastX = ev->x;
 		_lastY = ev->y;
-		
+
 		// Calculate the axis of rotation. This is the mouse vector crossed with the Z axis,
 		// to give a rotation axis in the XY plane at right-angles to the mouse delta.
 		static Vector3 _zAxis(0, 0, 1);
 		Vector3 axisRot = deltaPos.crossProduct(_zAxis);
-		
-		// Grab the GL widget, and update the modelview matrix with the 
+
+		// Grab the GL widget, and update the modelview matrix with the
 		// additional rotation
 		if (gtkutil::GLWidget::makeCurrent(*_glWidget))
 		{

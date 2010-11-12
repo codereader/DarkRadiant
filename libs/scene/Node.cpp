@@ -10,27 +10,27 @@ namespace scene {
 		/**
 		 * greebo: This walker is used to traverse the children of
 		 *         a given node and accumulate their values of worldAABB().
-		 * 
+		 *
 		 * Note: This walker's pre() method always returns false, so only
 		 *       the first order children are visited.
 		 */
-		class AABBAccumulateWalker : 
+		class AABBAccumulateWalker :
 			public scene::NodeVisitor
 		{
 			AABB& _aabb;
 		public:
-			AABBAccumulateWalker(AABB& aabb) : 
+			AABBAccumulateWalker(AABB& aabb) :
 				_aabb(aabb)
 			{}
-			
+
 			virtual bool pre(const INodePtr& node) {
 				_aabb.includeAABB(node->worldAABB());
 				// Don't traverse the children
-				return false; 
+				return false;
 			}
 		};
 
-		class TransformChangedWalker : 
+		class TransformChangedWalker :
 			public NodeVisitor
 		{
 		public:
@@ -153,15 +153,15 @@ LayerList Node::getLayers() const
 
 void Node::addChildNode(const INodePtr& node)
 {
-	// Add the node to the TraversableNodeSet, this triggers an 
-	// Node::onChildAdded() event, where the parent of the new 
+	// Add the node to the TraversableNodeSet, this triggers an
+	// Node::onChildAdded() event, where the parent of the new
 	// child is set, among other things
 	_children.insert(node);
 }
 
 void Node::removeChildNode(const INodePtr& node)
 {
-	// Remove the node from the TraversableNodeSet, this triggers an 
+	// Remove the node from the TraversableNodeSet, this triggers an
 	// Node::onChildRemoved() event
 	_children.erase(node);
 
@@ -207,10 +207,10 @@ void Node::onChildAdded(const INodePtr& child)
 void Node::onChildRemoved(const INodePtr& child)
 {
 	// Don't change the parent node of the new child on erase
-		
+
 	// greebo: The bounds are likely to change when child nodes are removed
 	boundsChanged();
-	
+
 	if (!_instantiated) return;
 
 	UninstanceSubgraphWalker visitor;
@@ -320,7 +320,7 @@ void Node::evaluateChildBounds() const {
 
 		// greebo: traverse the children of this node
 		traverse(accumulator);
-		
+
 		_childBoundsMutex = false;
 		_childBoundsChanged = false;
 	}
@@ -390,7 +390,7 @@ void Node::transformChanged() {
 	// Next, traverse the children and notify them
 	TransformChangedWalker walker;
 	traverse(walker);
-	
+
 	boundsChanged();
 }
 

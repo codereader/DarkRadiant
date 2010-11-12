@@ -27,17 +27,17 @@
 
 namespace ui
 {
-	
+
 namespace
 {
 	// CONSTANTS
 	const char* const ADDPROPERTY_TITLE = N_("Add property");
 	const char* const PROPERTIES_XPATH = "/entityInspector//property";
 	const char* const FOLDER_ICON = "folder16.png";
-	
+
 	const char* const CUSTOM_PROPERTY_TEXT = N_("Custom properties defined for this "
 												"entity class, if any");
-	
+
 }
 
 // Constructor creates GTK widgets
@@ -53,7 +53,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 		GlobalMainFrame().getTopLevelWindow()
 	);
 	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(rect.get_height()*2/3));
-    
+
     // Create components
     addChildFromBuilder(
         GlobalUIManager().getGtkBuilderFromFile("AddPropertyDialog.glade"),
@@ -67,7 +67,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &AddPropertyDialog::_onCancel)
     );
-    
+
     // Populate the tree view with properties
     setupTreeView();
     populateTreeView();
@@ -92,10 +92,10 @@ void AddPropertyDialog::setupTreeView()
 	_selection->signal_changed().connect(
 		sigc::mem_fun(*this, &AddPropertyDialog::_onSelectionChanged)
     );
-	
+
 	// Allow multiple selections
 	_selection->set_mode(Gtk::SELECTION_MULTIPLE);
-	
+
 	// Display name column with icon
 	treeView->append_column(*Gtk::manage(
 		new gtkutil::IconTextColumn("", _columns.displayName, _columns.icon, true))
@@ -110,8 +110,8 @@ void AddPropertyDialog::setupTreeView()
 namespace
 {
 
-/* EntityClassAttributeVisitor instance to obtain custom properties from an 
- * entityclass and add them into the provided GtkTreeStore under the provided 
+/* EntityClassAttributeVisitor instance to obtain custom properties from an
+ * entityclass and add them into the provided GtkTreeStore under the provided
  * parent iter.
  */
 class CustomPropertyAdder
@@ -122,7 +122,7 @@ private:
 	Glib::RefPtr<Gtk::TreeStore> _store;
 
 	const AddPropertyDialog::TreeColumns& _columns;
-	
+
 	// Parent iter
 	Gtk::TreeModel::iterator _parent;
 
@@ -132,13 +132,13 @@ private:
 public:
 
 	// Constructor sets tree stuff
-	CustomPropertyAdder(Entity* entity, 
-						const Glib::RefPtr<Gtk::TreeStore>& store, 
+	CustomPropertyAdder(Entity* entity,
+						const Glib::RefPtr<Gtk::TreeStore>& store,
 						const AddPropertyDialog::TreeColumns& columns,
-						Gtk::TreeModel::iterator parent) : 
+						Gtk::TreeModel::iterator parent) :
 		_store(store),
 		_columns(columns),
-		_parent(parent), 
+		_parent(parent),
 		_entity(entity)
 	{ }
 
@@ -159,7 +159,7 @@ public:
 
 		// Escape any Pango markup in the attribute name (e.g. "<" or ">")
 		Glib::ustring escName = Glib::Markup::escape_text(attr.name);
-		
+
 		Gtk::TreeModel::Row row = *_store->append(_parent->children());
 
 		row[_columns.displayName] = escName;
@@ -167,28 +167,28 @@ public:
 		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(attr.type);
 		row[_columns.description] = attr.description;
 	}
-};	
-	
+};
+
 } // namespace
 
 // Populate tree view
-void AddPropertyDialog::populateTreeView() 
+void AddPropertyDialog::populateTreeView()
 {
 	/* DEF-DEFINED PROPERTIES */
 	{
 		// First add a top-level category named after the entity class, and populate
 		// it with custom keyvals defined in the DEF for that class
-		std::string cName = "<b><span foreground=\"blue\">" 
+		std::string cName = "<b><span foreground=\"blue\">"
 							+ _entity->getEntityClass()->getName() + "</span></b>";
-		
+
 		Gtk::TreeModel::iterator cn = _treeStore->append();
 		Gtk::TreeModel::Row row = *cn;
-		
+
 		row[_columns.displayName] = cName;
 		row[_columns.propertyName] = "";
 		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
 		row[_columns.description] = _(CUSTOM_PROPERTY_TEXT);
-		
+
 		// Use a CustomPropertyAdder class to visit the entityclass and add all
 		// custom properties from it
 		CustomPropertyAdder adder(_entity, _treeStore, _columns, cn);
@@ -200,12 +200,12 @@ void AddPropertyDialog::populateTreeView()
 	// Ask the XML registry for the list of properties
     game::IGamePtr currentGame = GlobalGameManager().currentGame();
     xml::NodeList propNodes = currentGame->getLocalXPath(PROPERTIES_XPATH);
-	
+
 	// Cache of property categories to GtkTreeIters, to allow properties
 	// to be parented to top-level categories
 	typedef std::map<std::string, Gtk::TreeModel::iterator> CategoryMap;
 	CategoryMap categories;
-	
+
 	// Add each .game-specified property to the tree view
 	for (xml::NodeList::const_iterator iter = propNodes.begin();
 		 iter != propNodes.end();
@@ -226,7 +226,7 @@ void AddPropertyDialog::populateTreeView()
 		if (!category.empty())
 		{
 			CategoryMap::iterator mIter = categories.find(category);
-			
+
 			if (mIter == categories.end())
 			{
 				// Not found, add to treestore
@@ -238,11 +238,11 @@ void AddPropertyDialog::populateTreeView()
 				row[_columns.propertyName] = "";
 				row[_columns.icon] = GlobalUIManager().getLocalPixbuf(FOLDER_ICON);
 				row[_columns.description] = "";
-				
+
 				// Add to map
 				mIter = categories.insert(CategoryMap::value_type(category, catIter)).first;
 			}
-			
+
 			// Category sorted, add this property below it
 			t = _treeStore->append(mIter->second->children());
 		}
@@ -251,14 +251,14 @@ void AddPropertyDialog::populateTreeView()
 			// No category, add at toplevel
 			t = _treeStore->append();
 		}
-		
+
 		// Obtain information from the XML node and add it to the treeview
 		std::string name = iter->getAttributeValue("match");
 		std::string type = iter->getAttributeValue("type");
 		std::string description = iter->getContent();
 
 		Gtk::TreeModel::Row row = *t;
-		
+
 		row[_columns.displayName] = name;
 		row[_columns.propertyName] = name;
 		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(type);
@@ -282,7 +282,7 @@ AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity
 	AddPropertyDialog dialog(entity);
 
 	dialog.show(); // and block
-	
+
 	// Return the last selection to calling process
 	return dialog._selectedProperties;
 }
@@ -328,7 +328,7 @@ void AddPropertyDialog::_onCancel()
 	destroy();
 }
 
-void AddPropertyDialog::_onSelectionChanged() 
+void AddPropertyDialog::_onSelectionChanged()
 {
 	_selectedProperties.clear();
 

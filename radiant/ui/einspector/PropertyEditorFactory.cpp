@@ -2,7 +2,7 @@
 
 #include "isound.h"
 #include "iuimanager.h"
-#include "itextstream.h" 
+#include "itextstream.h"
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
 #include "EntityPropertyEditor.h"
@@ -77,7 +77,7 @@ void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
 IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 											  	Entity* entity,
 											  	const std::string& key,
-											  	const std::string& options) 
+											  	const std::string& options)
 {
     // Register the PropertyEditors if the map is empty
     if (_peMap.empty()) {
@@ -93,9 +93,9 @@ IPropertyEditorPtr PropertyEditorFactory::create(const std::string& className,
 		// Try to match the entity key against the regex (i->first)
 		boost::regex expr(i->first);
 		boost::smatch matches;
-		
+
 		if (!boost::regex_match(key, matches, expr)) continue;
-		
+
 		// We have a match
 		return i->second->createNew(entity, key, options);
 	}

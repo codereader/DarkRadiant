@@ -19,7 +19,7 @@ public:
 
   ManipulatorComponent* getActiveComponent();
   void testSelect(const View& view, const Matrix4& pivot2world);
-  
+
   void setSelected(bool select);
   bool isSelected() const;
 }; // class DragManipulator

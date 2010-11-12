@@ -35,11 +35,11 @@ Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
 	{
 		// Instantiate the toolbar with buttons
 		globalOutputStream() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
-						
+
 		// Build the path into the registry, where the toolbar should be found
 		std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
 		xml::NodeList toolbarList = GlobalRegistry().findXPath(toolbarPath);
-			
+
 		if (!toolbarList.empty())
 		{
 			return createToolbar(toolbarList[0]);
@@ -48,7 +48,7 @@ Gtk::Toolbar* ToolbarManager::getToolbar(const std::string& toolbarName)
 			globalErrorStream() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
 			return NULL;
 		}
-	} 
+	}
 	else
 	{
 		globalErrorStream() << "ToolbarManager: Critical: Named toolbar doesn't exist: " << toolbarName << std::endl;
@@ -61,7 +61,7 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 	const std::string nodeName = node.getName();
 
 	Gtk::ToolItem* toolItem = NULL;
-	
+
 	if (nodeName == "separator")
 	{
 		toolItem = Gtk::manage(new Gtk::SeparatorToolItem);
@@ -75,7 +75,7 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 		const std::string action 	= node.getAttributeValue("action");
 
 		Gtk::ToolButton* toolButton = NULL;
-		
+
 		if (nodeName == "toolbutton")
 		{
 			// Create a new GtkToolButton and assign the right callback
@@ -88,7 +88,7 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 		}
 
 		IEventPtr ev = GlobalEventManager().findEvent(action);
-			
+
 		if (!ev->empty())
 		{
 			ev->connectWidget(toolButton);
@@ -100,13 +100,13 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 		{
 			globalErrorStream() << "ToolbarManager: Failed to lookup command " << action << std::endl;
 		}
-		
+
 		// Set the tooltip, if not empty
 		if (!tooltip.empty())
 		{
 			toolButton->set_tooltip_text(tooltip);
 		}
-		
+
 		// Load and assign the icon, if specified
 		if (!icon.empty())
 		{
@@ -121,33 +121,33 @@ Gtk::ToolItem* ToolbarManager::createToolItem(xml::Node& node)
 	{
 		return NULL;
 	}
-	
+
 	toolItem->show();
 	return toolItem;
 }
 
 Gtk::Toolbar* ToolbarManager::createToolbar(xml::Node& node)
 {
-	// Get all action children elements 
+	// Get all action children elements
 	xml::NodeList toolItemList = node.getChildren();
 	Gtk::Toolbar* toolbar = NULL;
-		
+
 	if (!toolItemList.empty())
 	{
 		// Create a new toolbar
 		toolbar = Gtk::manage(new Gtk::Toolbar);
 		toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
-		
+
 		// Try to set the alignment, if the attribute is properly set
 		std::string align = node.getAttributeValue("align");
 
 		toolbar->set_orientation(align == "vertical" ? Gtk::ORIENTATION_VERTICAL : Gtk::ORIENTATION_HORIZONTAL);
-		
+
 		for (std::size_t i = 0; i < toolItemList.size(); ++i)
 		{
 			// Create and get the toolItem with the parsing
 			Gtk::ToolItem* toolItem = createToolItem(toolItemList[i]);
-			
+
 			// It is possible that no toolItem is returned, only add it if it's safe to do so
 			if (toolItem != NULL)
 			{
@@ -159,7 +159,7 @@ Gtk::Toolbar* ToolbarManager::createToolbar(xml::Node& node)
 	{
 		throw std::runtime_error("No elements in toolbar.");
 	}
-	
+
 	return toolbar;
 }
 
@@ -171,21 +171,21 @@ bool ToolbarManager::toolbarExists(const std::string& toolbarName)
 void ToolbarManager::loadToolbars()
 {
 	xml::NodeList toolbarList = GlobalRegistry().findXPath("//ui//toolbar");
-	
+
 	if (!toolbarList.empty())
 	{
 		for (std::size_t i = 0; i < toolbarList.size(); ++i)
 		{
 			std::string toolbarName = toolbarList[i].getAttributeValue("name");
-			
+
 			if (toolbarExists(toolbarName))
 			{
 				//globalOutputStream() << "This toolbar already exists: ";
 				continue;
 			}
-			
+
 			globalOutputStream() << "Found toolbar: " << toolbarName << std::endl;
-			
+
 			_toolbars.insert(toolbarName);
 		}
 	}
@@ -194,5 +194,5 @@ void ToolbarManager::loadToolbars()
 		throw std::runtime_error("No toolbars found.");
 	}
 }
-	
+
 } // namespace ui

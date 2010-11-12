@@ -47,7 +47,7 @@ void RenderableText::render()
 void RenderableText::recompile()
 {
 	_charBatches.clear();
-	
+
 	ensureFont();
 
 	if (_font == NULL) return; // Rendering not possible
@@ -83,7 +83,7 @@ void RenderableText::recompile()
 			double curYPos = lineHeight * lines.size() + startingBaseLine;
 			if (curYPos > _owner.rect[3]) break;
 		}
-		
+
 		// Split the paragraphs into words
 		std::list<std::string> words;
 		boost::algorithm::split(words, paragraphs[p], boost::algorithm::is_any_of(" \t"));
@@ -94,7 +94,7 @@ void RenderableText::recompile()
 		while (!words.empty())
 		{
 			// Empty words are stemming from an extra space character, re-add that
-			if (words.front().empty()) 
+			if (words.front().empty())
 			{
 				curLine->addChar(' ', glyphSet, true);
 				words.pop_front();
@@ -113,7 +113,7 @@ void RenderableText::recompile()
 					// Add a space after each word (noclipped) if more words are following
 					curLine->addChar(' ', glyphSet, true);
 				}
-				
+
 				continue;
 			}
 
@@ -148,10 +148,10 @@ void RenderableText::recompile()
 					words.push_front(word);
 				}
 			}
-			
+
 			// Trim any extra space from the end of the line
 			curLine->removeTrailingSpace();
-			
+
 			// Line finished, consider alignment and vertical offset
 			curLine->offset(Vector2(
 				getAlignmentCorrection(curLine->getWidth()) + _owner.textalignx, // horizontal correction
@@ -182,7 +182,7 @@ void RenderableText::recompile()
 			// Add that line we started, even if it's an empty one
 			curLine->offset(
 				Vector2(
-					getAlignmentCorrection(curLine->getWidth()) + _owner.textalignx, 
+					getAlignmentCorrection(curLine->getWidth()) + _owner.textalignx,
 					lineHeight * lines.size() +  + startingBaseLine
 				)
 			);
@@ -232,7 +232,7 @@ double RenderableText::getAlignmentCorrection(double lineWidth)
 	{
 	case 0: // left
 		// Somehow D3 adds a 2 pixel offset to the left
-		xoffset = 2; 
+		xoffset = 2;
 		break;
 	case 1: // center
 		// Somehow D3 adds a 1 pixel offset to the left
@@ -256,7 +256,7 @@ void RenderableText::ensureFont()
 
 	if (_font == NULL)
 	{
-		globalWarningStream() << "Cannot find font " << _owner.font 
+		globalWarningStream() << "Cannot find font " << _owner.font
 			<< " in windowDef " << _owner.name << std::endl;
 		return;
 	}
@@ -270,7 +270,7 @@ void RenderableText::ensureFont()
 	{
 		_resolution = fonts::Resolution24;
 	}
-	else 
+	else
 	{
 		_resolution = fonts::Resolution48;
 	}

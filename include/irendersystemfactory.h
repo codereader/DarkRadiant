@@ -13,7 +13,7 @@ namespace render
 /**
  * greebo: The rendersystem factory can be used to generate
  * new instances of DarkRadiant's backend renderer.
- * 
+ *
  * The backend renderer provides access to named Shader objects
  * which can be filled with OpenGLRenderable objects.
  */
@@ -32,7 +32,7 @@ public:
 const char* const MODULE_RENDERSYSTEMFACTORY = "RenderSystemFactory";
 
 // Global accessor to the rendersystem factory module
-inline render::IRenderSystemFactory& GlobalRenderSystemFactory() 
+inline render::IRenderSystemFactory& GlobalRenderSystemFactory()
 {
 	// Cache the reference locally
 	static render::IRenderSystemFactory& _instance(

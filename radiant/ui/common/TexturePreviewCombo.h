@@ -18,7 +18,7 @@ namespace Gtk
 
 namespace ui
 {
-	
+
 /** An HBox containing an OpenGL preview widget displaying a texture, and
  * a List View showing information about that texture.
  */
@@ -27,7 +27,7 @@ class TexturePreviewCombo :
 	public Gtk::HBox
 {
 private:
-	struct InfoStoreColumns : 
+	struct InfoStoreColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		InfoStoreColumns() { add(attribute); add(value); }
@@ -40,17 +40,17 @@ private:
 
 	// The OpenGL preview widget
 	gtkutil::GLWidget* _glWidget;
-	
+
 	// The texture to preview
 	std::string _texName;
-	
+
 	// Info table list store and view
 	Glib::RefPtr<Gtk::ListStore> _infoStore;
 	Gtk::TreeView* _infoView;
-	
+
 	// Context menu
 	gtkutil::PopupMenu _contextMenu;
-	
+
 public:
 
 	/** Constructor creates GTK widgets.
@@ -58,9 +58,9 @@ public:
 	TexturePreviewCombo();
 
 	~TexturePreviewCombo();
-	
+
 	/** Set the texture to preview.
-	 * 
+	 *
 	 * @param tex
 	 * String name of the texture to preview (e.g. "textures/common/caulk")
 	 */
@@ -69,10 +69,10 @@ public:
 private:
 	/* gtkutil::PopupMenu callbacks */
 	void _onCopyTexName();
-	
+
 	// gtkmm callback
 	bool _onExpose(GdkEventExpose*);
-	
+
 	// Refresh info table utility function
 	void refreshInfoTable();
 };

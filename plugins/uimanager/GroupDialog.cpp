@@ -20,27 +20,27 @@ namespace ui
 	{
 		const std::string RKEY_ROOT = "user/ui/groupDialog/";
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-		
+
 		const char* const WINDOW_TITLE = N_("Entity");
 	}
 
-GroupDialog::GroupDialog() : 
+GroupDialog::GroupDialog() :
 	gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
 	_currentPage(0)
 {
 	// Create all the widgets and pack them into the window
 	populateWindow();
-	
+
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
-	
+
 	// greebo: Disabled this, because the EntityInspector was propagating keystrokes back to the main
 	//         main window, even when the cursor was focused on entry fields.
 	// greebo: Enabled this again, it seems to annoy users (issue #458)
 	GlobalEventManager().connectDialogWindow(this);
-	
+
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-		
+
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 }
@@ -130,7 +130,7 @@ void GroupDialog::setPage(const std::string& name)
 			{
 				show();
 			}
-			
+
 			// Don't continue the loop, we've found the page
 			break;
 		}
@@ -199,7 +199,7 @@ void GroupDialog::_preHide()
 		// Save the window position, to make sure
 		_windowPosition.readPosition();
 	}
-	
+
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 }
@@ -214,7 +214,7 @@ void GroupDialog::_preShow()
 // Post-show callback from TransientWindow
 void GroupDialog::_postShow()
 {
-	// Unset the focus widget for this window to avoid the cursor 
+	// Unset the focus widget for this window to avoid the cursor
 	// from jumping into any entry fields
 	unset_focus();
 }
@@ -222,7 +222,7 @@ void GroupDialog::_postShow()
 void GroupDialog::onRadiantShutdown()
 {
 	hide();
-	
+
 	GlobalEventManager().disconnectDialogWindow(this);
 
 	// Call the PersistentTransientWindow::destroy chain
@@ -232,28 +232,28 @@ void GroupDialog::onRadiantShutdown()
 }
 
 Gtk::Widget* GroupDialog::addPage(const std::string& name,
-								const std::string& tabLabel, 
-								const std::string& tabIcon, 
-								Gtk::Widget& page, 
+								const std::string& tabLabel,
+								const std::string& tabIcon,
+								Gtk::Widget& page,
 								const std::string& windowLabel,
-								const std::string& insertBefore) 
+								const std::string& insertBefore)
 {
 	// Make sure the notebook is visible before adding pages
 	_notebook->show();
-	
+
 	// Create the icon GtkImage and tab label
 	Gtk::Image* icon = Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf(tabIcon)));
 	Gtk::Label* label = Gtk::manage(new Gtk::Label(tabLabel));
 
-	// Pack into an hbox to create the title widget	
+	// Pack into an hbox to create the title widget
 	Gtk::HBox* titleWidget = Gtk::manage(new Gtk::HBox(false, 3));
 	titleWidget->pack_start(*icon, false, false, 0);
 	titleWidget->pack_start(*label, false, false, 0);
 	titleWidget->show_all();
-	
+
 	// Show the child page before adding it to the notebook (GTK recommendation)
 	page.show();
-	
+
 	// Create the notebook page
 	gint position = -1;
 	Pages::iterator insertIter = _pages.end();
@@ -261,7 +261,7 @@ Gtk::Widget* GroupDialog::addPage(const std::string& name,
 	if (!insertBefore.empty())
 	{
 		// Find the page with that name
-		for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i) 
+		for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i)
         {
 			// Skip the wrong ones
 			if (i->name != insertBefore) continue;
@@ -276,13 +276,13 @@ Gtk::Widget* GroupDialog::addPage(const std::string& name,
 	Gtk::Widget* notebookPage = _notebook->get_nth_page(
 		_notebook->insert_page(page, *titleWidget, position)
 	);
-	
+
 	// Add this page to the local list
 	Page newPage;
 	newPage.name = name;
 	newPage.page = notebookPage;
 	newPage.title = windowLabel;
-	
+
 	_pages.insert(insertIter, newPage);
 
 	return notebookPage;

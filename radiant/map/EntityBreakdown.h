@@ -10,7 +10,7 @@
 namespace map {
 
 /** greebo: This object traverses the scenegraph on construction
- * 			counting all occurrences of each entity class. 
+ * 			counting all occurrences of each entity class.
  */
 class EntityBreakdown :
 	public scene::NodeVisitor
@@ -26,7 +26,7 @@ public:
 		_map.clear();
 		Node_traverseSubgraph(GlobalSceneGraph().root(), *this);
 	}
-	
+
 	bool pre(const scene::INodePtr& node) {
 		// Is this node an entity?
 		Entity* entity = Node_getEntity(node);
@@ -34,7 +34,7 @@ public:
 		if (entity != NULL) {
 			IEntityClassConstPtr eclass = entity->getEntityClass();
 			std::string ecName = eclass->getName();
-      
+
 			Map::iterator found = _map.find(ecName);
 			if (found == _map.end()) {
 				// Entity class not yet registered, create new entry
@@ -45,19 +45,19 @@ public:
 				found->second++;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 	// Accessor method to retrieve the entity breakdown map
 	Map getMap() {
 		return _map;
 	}
-	
+
 	Map::const_iterator begin() const {
 		return _map.begin();
 	}
-	
+
 	Map::const_iterator end() const {
 		return _map.end();
 	}

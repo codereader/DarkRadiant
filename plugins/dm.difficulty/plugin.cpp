@@ -17,7 +17,7 @@
 /**
  * Module to register the menu commands for the Difficulty Editor class.
  */
-class DifficultyEditorModule : 
+class DifficultyEditorModule :
 	public RegisterableModule
 {
 public:
@@ -27,7 +27,7 @@ public:
 		static std::string _name("DifficultyEditor");
 		return _name;
 	}
-	
+
 	const StringSet& getDependencies() const
 	{
 		static StringSet _dependencies;
@@ -41,15 +41,15 @@ public:
 
 		return _dependencies;
 	}
-	
+
 	void initialiseModule(const ApplicationContext& ctx)
 	{
 		globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
-		
+
 		// Add the callback event
 		GlobalCommandSystem().addCommand("DifficultyEditor",  ui::DifficultyDialog::showDialog);
 		GlobalEventManager().addCommand("DifficultyEditor", "DifficultyEditor");
-	
+
 		// Add the menu item
 		IMenuManager& mm = GlobalUIManager().getMenuManager();
 		mm.add("main/map", 	// menu location path
@@ -70,10 +70,10 @@ typedef boost::shared_ptr<DifficultyEditorModule> DifficultyEditorModulePtr;
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(DifficultyEditorModulePtr(new DifficultyEditorModule));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

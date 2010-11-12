@@ -40,13 +40,13 @@ private:
 	std::map<int, Gtk::Widget*> _widgets;
 
 	// Treemodel definition
-	struct ListColumns : 
+	struct ListColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListColumns()
 		{
-			add(index); 
-			add(type); 
+			add(index);
+			add(type);
 			add(typeString);
 			add(regexMatch);
 			add(showHide);
@@ -59,13 +59,13 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> showHide;
 	};
 
-	ListColumns _columns; 
+	ListColumns _columns;
 
 	Glib::RefPtr<Gtk::ListStore> _ruleStore;
 	Gtk::TreeView* _ruleView;
 
 	// Treemodel definition
-	struct TypeStoreColumns : 
+	struct TypeStoreColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		TypeStoreColumns() { add(type); add(typeString); }
@@ -78,7 +78,7 @@ private:
 	Glib::RefPtr<Gtk::ListStore> _typeStore;
 
 	// Treemodel definition
-	struct ActionStoreColumns : 
+	struct ActionStoreColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ActionStoreColumns() { add(boolean); add(action); }

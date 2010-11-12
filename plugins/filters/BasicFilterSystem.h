@@ -17,13 +17,13 @@ namespace filters
 /** FilterSystem implementation class.
  */
 
-class BasicFilterSystem 
+class BasicFilterSystem
 : public FilterSystem
 {
 	// Hashtable of available filters, indexed by name
 	typedef std::map<std::string, XMLFilter> FilterTable;
 	FilterTable _availableFilters;
-	
+
 	// Second table containing just the active filters
 	FilterTable _activeFilters;
 
@@ -36,7 +36,7 @@ class BasicFilterSystem
 	ObserverList _observers;
 
 private:
-	
+
 	// Perform a traversal of the scenegraph, setting or clearing the filtered
 	// flag on Nodes depending on their entity class
 	void updateScene();
@@ -49,7 +49,7 @@ private:
 
 	// Notifies all observers about a change
 	void notifyObservers();
-	
+
 public:
     virtual ~BasicFilterSystem() {}
 
@@ -64,13 +64,13 @@ public:
 
 	// Filter system visit function
 	void forEachFilter(IFilterVisitor& visitor);
-	
+
 	std::string getFilterEventName(const std::string& filter);
-	
+
 	bool getFilterState(const std::string& filter) {
 		return (_activeFilters.find(filter) != _activeFilters.end());
 	}
-	
+
 	// Set the state of a filter
 	void setFilterState(const std::string& filter, bool state);
 
@@ -94,7 +94,7 @@ public:
 
 	// Applies the ruleset and replaces the previous one for a given filter.
 	bool setFilterRules(const std::string& filter, const FilterRules& ruleSet);
-	
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;

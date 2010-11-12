@@ -5,7 +5,7 @@
 
 namespace selection {
 	namespace algorithm {
-	
+
 ModelFinder::ModelFinder() :
 	_onlyModels(true)
 {}
@@ -32,6 +32,6 @@ bool ModelFinder::empty() const {
 bool ModelFinder::onlyModels() const {
 	return _onlyModels;
 }
-		
+
 	} // namespace algorithm
-} // namespace selection 
+} // namespace selection

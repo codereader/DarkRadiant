@@ -73,7 +73,7 @@ class SelectionSystem :
 {
 public:
   enum EModifier {
-	eManipulator,	// greebo: This is the standard case (drag, click without modifiers) 
+	eManipulator,	// greebo: This is the standard case (drag, click without modifiers)
 	eToggle,	// This is for Shift-Clicks to toggle the selection of an instance
 	eReplace,	// This is active if the mouse is moved to a NEW location and Alt-Shift is held
 	eCycle,		// This is active if the mouse STAYS at the same position and Alt-Shift is held
@@ -89,7 +89,7 @@ public:
 
 	// The possible modes when in "component manipulation mode"
 	enum EComponentMode {
-		eDefault,	
+		eDefault,
 		eVertex,
 		eEdge,
 		eFace,
@@ -107,18 +107,18 @@ public:
 	/** greebo: An SelectionSystem::Observer gets notified
 	 * as soon as the selection is changed.
 	 */
-	class Observer 
+	class Observer
 	{
 	public:
 		virtual ~Observer() {}
 		/** greebo: This gets called upon selection change.
-		 * 	
+		 *
 		 * @instance: The instance that got affected (this may also be the parent brush of a FaceInstance).
 		 * @isComponent: is TRUE if the changed selectable is a component (like a FaceInstance, VertexInstance).
 		 */
 		virtual void selectionChanged(const scene::INodePtr& node, bool isComponent) = 0;
 	};
-	
+
 	virtual void addObserver(Observer* observer) = 0;
 	virtual void removeObserver(Observer* observer) = 0;
 
@@ -193,11 +193,11 @@ public:
   virtual void scaleSelected(const Vector3& scaling) = 0;
 
   virtual void pivotChanged() const = 0;
-  
+
   virtual bool SelectManipulator(const View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon) = 0;
   virtual void SelectPoint(const View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;
   virtual void SelectArea(const View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;
-  
+
   virtual void MoveSelected(const View& view, const Vector2& devicePoint) = 0;
   virtual void endMove() = 0;
   virtual void cancelMove() = 0;

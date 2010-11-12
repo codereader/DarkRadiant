@@ -4,8 +4,8 @@ namespace particles
 {
 
 RenderableParticleStage::RenderableParticleStage(
-		const IParticleStage& stage, 
-		boost::rand48& random, 
+		const IParticleStage& stage,
+		boost::rand48& random,
 		const Vector3& direction) :
 	_stage(stage),
 	_numSeeds(32),
@@ -29,14 +29,14 @@ void RenderableParticleStage::render(const RenderInfo& info) const
 	{
 		_bunches[0]->render(info);
 	}
-	
+
 	if (_bunches[1])
 	{
 		_bunches[1]->render(info);
 	}
 }
 
-// Generate particle geometry, time is absolute in msecs 
+// Generate particle geometry, time is absolute in msecs
 void RenderableParticleStage::update(std::size_t time, const Matrix4& viewRotation)
 {
 	// Invalidate our bounds information
@@ -193,7 +193,7 @@ int RenderableParticleStage::getSeed(std::size_t cycleIndex)
 	return _seeds[cycleIndex % _seeds.size()];
 }
 
-RenderableParticleBunchPtr RenderableParticleStage::getExistingBunchByIndex(std::size_t index)	
+RenderableParticleBunchPtr RenderableParticleStage::getExistingBunchByIndex(std::size_t index)
 {
 	if (_bunches[0] != NULL && _bunches[0]->getIndex() == index)
 	{
@@ -203,7 +203,7 @@ RenderableParticleBunchPtr RenderableParticleStage::getExistingBunchByIndex(std:
 	{
 		return _bunches[1];
 	}
-	
+
 	return RenderableParticleBunchPtr();
 }
 

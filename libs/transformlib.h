@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/quaternion.h"
 
 /// \brief A transform node which has no effect.
-class IdentityTransform : 
+class IdentityTransform :
 	public TransformNode
 {
 public:
@@ -40,12 +40,12 @@ public:
 };
 
 /// \brief A transform node which stores a generic transformation matrix.
-class MatrixTransform : 
+class MatrixTransform :
 	public TransformNode
 {
 	Matrix4 _localToParent;
 public:
-	MatrixTransform() : 
+	MatrixTransform() :
 		_localToParent(Matrix4::getIdentity())
 	{}
 
@@ -77,7 +77,7 @@ const Vector3 c_translation_identity(0, 0, 0);
 const Quaternion c_rotation_identity(c_quaternion_identity);
 const Vector3 c_scale_identity(1, 1, 1);
 
-class Transformable : 
+class Transformable :
 	public ITransformable
 {
 	Vector3 _translation;
@@ -93,7 +93,7 @@ public:
 		_scale(c_scale_identity),
 		_type(TRANSFORM_PRIMITIVE)
 	{}
-    
+
 	void setType(TransformModifierType type)
 	{
 		_type = type;
@@ -127,8 +127,8 @@ public:
 
 	void freezeTransform()
 	{
-		if (_translation != c_translation_identity || 
-			_rotation != c_rotation_identity || 
+		if (_translation != c_translation_identity ||
+			_rotation != c_rotation_identity ||
 			_scale != c_scale_identity)
 		{
 			_applyTransformation();
@@ -140,7 +140,7 @@ public:
 			_onTransformationChanged();
 		}
 	}
-  
+
 	/* greebo: This reverts the currently active transformation
 	* by setting the scale/rotation/translation to identity and
 	* calling apply()
@@ -155,7 +155,7 @@ public:
 
 		_onTransformationChanged();
 	}
-  
+
 	const Vector3& getTranslation() const
 	{
 		return _translation;

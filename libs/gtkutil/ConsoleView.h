@@ -15,7 +15,7 @@ namespace gtkutil
 /**
  * greebo: A console view provides a scrolled textview with a backend
  * GtkTextBuffer plus some convenient methods to write additional text
- * to that buffer. The ConsoleView will take care that the new text is 
+ * to that buffer. The ConsoleView will take care that the new text is
  * always "on screen".
  *
  * There are three "modes" available for writing text: STD, WARNING, ERROR
@@ -51,7 +51,7 @@ public:
 
 	// Appends new text to the end of the buffer
 	void appendText(const std::string& text, ETextMode mode);
-	
+
 	// Clears the text buffer
 	void clear();
 

@@ -17,7 +17,7 @@ namespace skins
 /**
  * Implementation of ModelSkinCache interface for Doom 3 skin management.
  */
-class Doom3SkinCache : 
+class Doom3SkinCache :
 	public ModelSkinCache
 {
 	// Table of named skin objects
@@ -26,7 +26,7 @@ class Doom3SkinCache :
 
 	// List of all skins
 	StringList _allSkins;
-	
+
 	// Map between model paths and a vector of names of the associated skins,
 	// which are contained in the main NamedSkinMap.
 	typedef std::map<std::string, std::vector<std::string> > ModelSkinMap;
@@ -46,14 +46,14 @@ private:
 	// Function may be called more than once, will do nothing if already
 	// realised.
 	void realise();
-	
+
 	// Parse an individual skin declaration and add return the skin object
 	Doom3ModelSkinPtr parseSkin(parser::DefTokeniser& tokeniser);
 
 public:
 	/* Constructor.
 	 */
-	Doom3SkinCache() : 
+	Doom3SkinCache() :
 		_realised(false),
 		_nullSkin("")
 	{}
@@ -69,14 +69,14 @@ public:
 		else
 			return _nullSkin;
 	}
-  
+
 	/* Get the vector of skin names corresponding to the given model.
 	 */
 	const StringList& getSkinsForModel(const std::string& model) {
 		realise();
 		return _modelSkins[model];
 	}
-	
+
 	/* Return a complete list of skins.
 	 */
 	const StringList& getAllSkins() {
@@ -88,20 +88,20 @@ public:
 	 * greebo: Clears and reloads all skins.
 	 */
 	void refresh();
-	
+
 	/* Parse the provided istream as a .skin file, and add all skins found within
 	 * to the internal data structures.
-	 * 
+	 *
 	 * @filename: This is for informational purposes only (error message display).
 	 */
-	void parseFile(std::istream& contents, const std::string& filename);	
+	void parseFile(std::istream& contents, const std::string& filename);
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 };
-typedef boost::shared_ptr<Doom3SkinCache> Doom3SkinCachePtr; 
+typedef boost::shared_ptr<Doom3SkinCache> Doom3SkinCachePtr;
 
 } // namespace skins
 

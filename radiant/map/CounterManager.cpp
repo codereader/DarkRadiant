@@ -13,7 +13,7 @@ CounterManager::CounterManager()
 	// Create the counter objects
 	_counters[counterBrushes] = CounterPtr(new Counter(this));
 	_counters[counterPatches] = CounterPtr(new Counter(this));
-	_counters[counterEntities] = CounterPtr(new Counter(this));	
+	_counters[counterEntities] = CounterPtr(new Counter(this));
 }
 
 ICounter& CounterManager::getCounter(CounterType counter)
@@ -26,12 +26,12 @@ ICounter& CounterManager::getCounter(CounterType counter)
 
 void CounterManager::countChanged()
 {
-	std::string text = 
+	std::string text =
 		(boost::format(_("Brushes: %lu Patches: %lu Entities: %lu")) %
-		_counters[counterBrushes]->get() % 
+		_counters[counterBrushes]->get() %
 		_counters[counterPatches]->get() %
 		_counters[counterEntities]->get()).str();
-	
+
 	GlobalUIManager().getStatusBarManager().setText("MapCounters", text);
 }
 
@@ -58,7 +58,7 @@ void CounterManager::initialiseModule(const ApplicationContext& ctx)
 {
 	// Add the statusbar command text item
 	GlobalUIManager().getStatusBarManager().addTextElement(
-		"MapCounters", 
+		"MapCounters",
 		"",  // no icon
 		IStatusBarManager::POS_BRUSHCOUNT
 	);

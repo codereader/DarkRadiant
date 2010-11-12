@@ -40,13 +40,13 @@ public:
 	/// \brief Is true if the global shared OpenGL context is valid.
 	bool contextValid;
 
-	OpenGLBinding() : 
+	OpenGLBinding() :
 		contextValid(false)
 	{}
 
 	/// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
 	virtual void assertNoErrors() = 0;
-	
+
 	// Returns the shared context widget holding the GL context
 	virtual Gtk::Widget* getGLContextWidget() = 0;
 

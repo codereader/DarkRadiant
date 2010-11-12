@@ -59,7 +59,7 @@ void DifficultySettingsManager::loadMapSettings() {
 	const DifficultyEntityFinder::EntityList& found = finder.getEntities();
 
 	// Pop all entities into each difficulty setting
-	for (DifficultyEntityFinder::EntityList::const_iterator ent = found.begin(); 
+	for (DifficultyEntityFinder::EntityList::const_iterator ent = found.begin();
 		 ent != found.end(); ent++)
 	{
 		for (std::size_t i = 0; i < _settings.size(); i++) {
@@ -76,7 +76,7 @@ void DifficultySettingsManager::loadDifficultyNames() {
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(
 		GlobalRegistry().get(RKEY_DIFFICULTY_ENTITYDEF_MENU)
 	);
-	
+
 	// greebo: Setup the default difficulty levels using the found entityDef
 	int numLevels = GlobalRegistry().getInt(RKEY_DIFFICULTY_LEVELS);
 	for (int i = 0; i < numLevels; i++) {
@@ -125,7 +125,7 @@ void DifficultySettingsManager::saveSettings() {
 			return;
 		}
 
-		// Create and insert a new entity node into the scenegraph root 
+		// Create and insert a new entity node into the scenegraph root
 		scene::INodePtr entNode = GlobalEntityCreator().createEntity(diffEclass);
 		GlobalSceneGraph().root()->addChildNode(entNode);
 
@@ -150,7 +150,7 @@ void DifficultySettingsManager::saveSettings() {
 		// Clear the difficulty-related spawnargs from the entity
 		diffEnt.clear();
 	}
-	
+
 	// Take the first entity
 	DifficultyEntity diffEnt(*entities.begin());
 

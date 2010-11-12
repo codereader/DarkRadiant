@@ -61,7 +61,7 @@ void toMatrix( quat_t const &src, mat3_t &dst ) {
 void toMatrix( angles_t const &src, mat3_t &dst ) {
 	float			angle;
 	static float	sr, sp, sy, cr, cp, cy; // static to help MS compiler fp bugs
-		
+
 	angle = src.yaw * ( M_PI * 2.0f / 360.0f );
 	sy = sin( angle );
 	cy = cos( angle );
@@ -97,7 +97,7 @@ void mat3_t::UnprojectVector( const idVec3 &src, idVec3 &dst ) const {
 void mat3_t::Transpose( mat3_t &matrix ) {
 	int	i;
 	int	j;
-   
+
 	for( i = 0; i < 3; i++ ) {
 		for( j = 0; j < 3; j++ ) {
 			matrix[ i ][ j ] = mat[ j ][ i ];
@@ -109,7 +109,7 @@ void mat3_t::Transpose( void ) {
 	float	temp;
 	int		i;
 	int		j;
-   
+
 	for( i = 0; i < 3; i++ ) {
 		for( j = i + 1; j < 3; j++ ) {
 			temp = mat[ i ][ j ];

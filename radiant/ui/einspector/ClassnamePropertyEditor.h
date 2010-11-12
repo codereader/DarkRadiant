@@ -18,19 +18,19 @@ class ClassnamePropertyEditor
 private:
 	// Keyvalue to set
 	std::string _key;
-	
+
 private:
 
 	void _onBrowseButton();
-	
+
 public:
 
 	// Default constructor for the map
 	ClassnamePropertyEditor()
 	{}
-	
+
 	// Main constructor
-	ClassnamePropertyEditor(Entity* entity, 
+	ClassnamePropertyEditor(Entity* entity,
 					    	const std::string& name,
 					    	const std::string& options);
 

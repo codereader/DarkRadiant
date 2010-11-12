@@ -31,17 +31,17 @@ class CamWnd :
 	static int _maxId;
 
 	View m_view;
-	
+
 	// The contained camera
 	Camera m_Camera;
-	
+
 	RadiantCameraView m_cameraview;
 
 	sigc::connection m_freemove_handle_focusout;
-	
+
 	static ShaderPtr m_state_select1;
 	static ShaderPtr m_state_select2;
-	
+
 	FreezePointer m_freezePointer;
 
 	// Is true during an active drawing process
@@ -79,7 +79,7 @@ public:
 	void queueDraw();
 	void draw();
 	void update();
-	
+
 	// The callback when the scene gets changed
 	void onSceneGraphChange();
 
@@ -87,24 +87,24 @@ public:
 	static void releaseStates();
 
 	Camera& getCamera();
-	
+
 	void updateSelectionBox(const Rectangle& area);
-	
+
 	Vector3 getCameraOrigin() const;
 	void setCameraOrigin(const Vector3& origin);
-	
+
 	Vector3 getCameraAngles() const;
 	void setCameraAngles(const Vector3& angles);
 
 	// greebo: This measures the rendering time during a 360° turn of the camera.
 	void benchmark();
-	
+
 	// This tries to find brushes above/below the current camera position and moves the view upwards/downwards
 	void changeFloor(const bool up);
 
 	Gtk::Widget* getWidget() const;
 	const Glib::RefPtr<Gtk::Window>& getParent() const;
-	
+
 	/**
 	 * Set the immediate parent window of this CamWnd.
 	 */
@@ -126,11 +126,11 @@ public:
 	void enableFreeMoveEvents();
 	void disableDiscreteMoveEvents();
 	void disableFreeMoveEvents();
-	
+
 	// Increases/decreases the far clip plane distance
 	void cubicScaleIn();
 	void cubicScaleOut();
-	
+
 private:
 	void Cam_Draw();
 

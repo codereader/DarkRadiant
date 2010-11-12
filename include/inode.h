@@ -48,7 +48,7 @@ class INode;
 typedef boost::shared_ptr<INode> INodePtr;
 typedef boost::weak_ptr<INode> INodeWeakPtr;
 
-class NodeVisitor 
+class NodeVisitor
 {
 public:
     /**
@@ -64,7 +64,7 @@ public:
 
 	/**
 	 * greebo: Optional post-traverse call, gets invoked after the children
-	 *         of this node have been traversed. 
+	 *         of this node have been traversed.
 	 */
 	virtual void post(const INodePtr& node) {}
 };
@@ -87,22 +87,22 @@ public:
 	 * 			of the scenegraph.
 	 */
 	virtual bool isRoot() const = 0;
-	
-	/** greebo: Sets the "isRoot" flag of this node.  
+
+	/** greebo: Sets the "isRoot" flag of this node.
 	 */
 	virtual void setIsRoot(bool isRoot) = 0;
-	
+
 	/** greebo: State bit accessor methods. This enables/disables
 	 * 			the bit of the state flag (e.g. hidden, excluded)
 	 */
 	virtual void enable(unsigned int state) = 0;
 	virtual void disable(unsigned int state) = 0;
 
-	/** greebo: Returns true, if the node is not hidden by 
+	/** greebo: Returns true, if the node is not hidden by
 	 * 			exclusion, filtering or anything else.
 	 */
 	virtual bool visible() const = 0;
-	
+
 	/** greebo: Returns true, if the node is excluded (eExcluded flag set)
 	 */
 	virtual bool excluded() const = 0;
@@ -132,8 +132,8 @@ public:
 	virtual void onInsertIntoScene() = 0;
 
 	/**
-	 * greebo: This gets called by the SceneGraph before the Node is actually 
-	 * removed from the scene. This gives the node the opportunity to 
+	 * greebo: This gets called by the SceneGraph before the Node is actually
+	 * removed from the scene. This gives the node the opportunity to
 	 * change its "selected" status or anything else.
 	 */
 	virtual void onRemoveFromScene() = 0;

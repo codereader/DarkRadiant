@@ -39,14 +39,14 @@ public:
 		setIdentity();
 	}
 
-	/** 
+	/**
      * Cast to float*, also enables operator[].
 	 */
 	operator float* () {
-		return rotation;	
+		return rotation;
 	}
 
-	/** 
+	/**
      * Cast to const float* to provide operator[] for const objects.
 	 */
 	operator const float* () const {
@@ -86,14 +86,14 @@ public:
 
 	void writeToEntity(Entity* entity, const std::string& key = "rotation") const
 	{
-		if (rotation[0] == 1 && 
-			rotation[1] == 0 && 
-			rotation[2] == 0 && 
-			rotation[3] == 0 && 
-			rotation[4] == 1 && 
-			rotation[5] == 0 && 
-			rotation[6] == 0 && 
-			rotation[7] == 0 && 
+		if (rotation[0] == 1 &&
+			rotation[1] == 0 &&
+			rotation[2] == 0 &&
+			rotation[3] == 0 &&
+			rotation[4] == 1 &&
+			rotation[5] == 0 &&
+			rotation[6] == 0 &&
+			rotation[7] == 0 &&
 			rotation[8] == 1)
 		{
 			entity->setKeyValue(key, "");
@@ -201,7 +201,7 @@ public:
 	Float9 m_rotation;
 
 
-	RotationKey(const boost::function<void()>& rotationChanged) : 
+	RotationKey(const boost::function<void()>& rotationChanged) :
 		m_rotationChanged(rotationChanged)
 	{}
 

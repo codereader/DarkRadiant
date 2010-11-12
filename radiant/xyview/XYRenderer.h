@@ -3,39 +3,39 @@
 
 #include "irenderable.h"
 
-class XYRenderer : 
+class XYRenderer :
 	public RenderableCollector
 {
 	// State type structure
 	struct state_type
 	{
 		unsigned int _highlight;
-		
+
 		// The actual shader. This is a raw pointer for performance, since we
 		// know that the Shader will exist for the lifetime of this render
 		// operation.
 		Shader* _state;
 
 		// Constructor
-		state_type() 
-		: _highlight(0), _state(NULL) 
+		state_type()
+		: _highlight(0), _state(NULL)
 		{}
 	};
-	
+
 	std::vector<state_type> _stateStack;
 	RenderStateFlags _globalstate;
-	
+
 	// Shader to use for highlighted objects
 	Shader* _selectedShader;
 
 public:
 	XYRenderer(RenderStateFlags globalstate, Shader* selected) :
 			_globalstate(globalstate),
-			_selectedShader(selected) 
+			_selectedShader(selected)
 	{
 		// Reserve space in the vector to avoid reallocation delays
 		_stateStack.reserve(8);
-		
+
 		_stateStack.push_back(state_type());
 	}
 
@@ -47,23 +47,23 @@ public:
 			_stateStack.back()._state = state.get();
 		}
 	}
-	
+
 	const EStyle getStyle() const {
 		return eWireframeOnly;
 	}
-	
+
 	void PushState() {
 		// Duplicate the most recent state
 		_stateStack.push_back(_stateStack.back());
 	}
-	
+
 	void PopState() {
 		_stateStack.pop_back();
 	}
-	
+
 	void Highlight(EHighlightMode mode, bool bEnable = true)
 	{
-		if (bEnable) 
+		if (bEnable)
 		{
 			_stateStack.back()._highlight |= mode;
 		}
@@ -72,9 +72,9 @@ public:
 			_stateStack.back()._highlight &= ~mode;
 		}
 	}
-	
-	void addRenderable(const OpenGLRenderable& renderable, 
-					   const Matrix4& localToWorld) 
+
+	void addRenderable(const OpenGLRenderable& renderable,
+					   const Matrix4& localToWorld)
 	{
 		if (_stateStack.back()._highlight & ePrimitive) {
 			_selectedShader->addRenderable(renderable, localToWorld);

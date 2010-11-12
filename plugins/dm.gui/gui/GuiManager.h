@@ -32,7 +32,7 @@ class Gui;
 typedef boost::shared_ptr<Gui> GuiPtr;
 
 /**
- * greebo: This manager keeps track of all the loaded GUIs, 
+ * greebo: This manager keeps track of all the loaded GUIs,
  * including parsing the .gui files on demand.
  */
 class GuiManager :
@@ -55,10 +55,10 @@ private:
 	struct GuiInfo
 	{
 		// The type of this Gui (NOT_LOADED_YET by default)
-		GuiType type;	
+		GuiType type;
 
 		// the cached GUI pointer, can be NULL if load failed
-		GuiPtr gui;		
+		GuiPtr gui;
 
 		GuiInfo() :
 			type(NOT_LOADED_YET)
@@ -102,7 +102,7 @@ public:
 
 	// Provides access to the singleton
 	static GuiManager& Instance();
-	
+
 	// Searches the VFS for all available GUI definitions
 	void findGuis();
 

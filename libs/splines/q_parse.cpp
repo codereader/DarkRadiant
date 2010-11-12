@@ -249,7 +249,7 @@ static char *Com_ParseExt( const char *(*data_p), qboolean allowLineBreaks ) {
 
 	// check for a number
 	// is this parsing of negative numbers going to cause expression problems
-	if ( ( c >= '0' && c <= '9' ) || ( c == '-' && data[ 1 ] >= '0' && data[ 1 ] <= '9' ) || 
+	if ( ( c >= '0' && c <= '9' ) || ( c == '-' && data[ 1 ] >= '0' && data[ 1 ] <= '9' ) ||
 		( c == '.' && data[ 1 ] >= '0' && data[ 1 ] <= '9' ) ) {
 		do  {
 
@@ -312,7 +312,7 @@ static char *Com_ParseExt( const char *(*data_p), qboolean allowLineBreaks ) {
 			data++;
 
 			c = *data;
-		} while ( ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) || c == '_' 
+		} while ( ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) || c == '_'
 			|| ( c >= '0' && c <= '9' ) || c == '/' || c == '\\' || c == ':' || c == '.' );
 
 		if (len == MAX_TOKEN_CHARS) {

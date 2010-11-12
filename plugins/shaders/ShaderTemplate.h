@@ -25,10 +25,10 @@ class ShaderTemplate
 {
 	// Template name
 	std::string _name;
-  
+
 	// Temporary current layer (used by the parsing functions)
 	Doom3ShaderLayerPtr _currentLayer;
-  
+
 public:
 
   	// Vector of LayerTemplates representing each stage in the material
@@ -43,7 +43,7 @@ private:
 	// Map expressions
 	shaders::MapExpressionPtr _lightFalloff;
 
-	/* Light type booleans */	
+	/* Light type booleans */
 	bool fogLight;
 	bool ambientLight;
 	bool blendLight;
@@ -73,7 +73,7 @@ public:
      * \brief
      * Construct a ShaderTemplate.
      */
-	ShaderTemplate(const std::string& name, const std::string& blockContents) 
+	ShaderTemplate(const std::string& name, const std::string& blockContents)
 	: _name(name),
       _currentLayer(new Doom3ShaderLayer),
       fogLight(false),
@@ -93,7 +93,7 @@ public:
 	std::string getName() const {
     	return _name;
 	}
-	
+
 	/**
 	 * Set the name of this shader template.
 	 */
@@ -178,7 +178,7 @@ private:
 
 	/**
 	 * Parse a Doom 3 material decl. This is the master parse function, it
-	 * returns no value but exceptions may be thrown at any stage of the 
+	 * returns no value but exceptions may be thrown at any stage of the
 	 * parsing.
 	 */
 	void parseDefinition();
@@ -193,7 +193,7 @@ private:
     void parseStageModifiers(parser::DefTokeniser&, const std::string&);
 
 	bool saveLayer();
-  
+
 };
 
 /* TYPEDEFS */

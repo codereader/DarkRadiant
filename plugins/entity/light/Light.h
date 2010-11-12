@@ -26,16 +26,16 @@ namespace entity {
 
 /* greebo: This is the actual light class. It contains the information about the geometry
  * of the light and the actual render functions.
- * 
+ *
  * This class owns all the keyObserver callbacks, that get invoked as soon as the entity key/values get
  * changed by the user.
- * 
+ *
  * The subclass Doom3LightRadius contains some variables like the light radius and light center coordinates,
  * and there are some "onChanged" callbacks for the light radius and light center.
- * 
+ *
  * Note: All the selection stuff is handled by the LightInstance class. This is just the bare bone light.
  */
- 
+
 void light_vertices(const AABB& aabb_light, Vector3 points[6]);
 void light_draw(const AABB& aabb_light, RenderStateFlags state);
 
@@ -86,10 +86,10 @@ class Light :
 
 	RenderableLightTarget _rCentre;
 	RenderableLightTarget _rTarget;
-	
+
 	RenderableLightRelative _rUp;
 	RenderableLightRelative _rRight;
-	
+
 	RenderableLightTarget _rStart;
 	RenderableLightTarget _rEnd;
 
@@ -102,20 +102,20 @@ class Light :
 	Vector3 _lightRight;
 	Vector3 _lightStart;
 	Vector3 _lightEnd;
-	
+
 	// The "temporary" vectors, that get changed during a transform operation
 	Vector3 _lightTargetTransformed;
 	Vector3 _lightUpTransformed;
 	Vector3 _lightRightTransformed;
 	Vector3 _lightStartTransformed;
 	Vector3 _lightEndTransformed;
-	
+
 	Vector3 _colourLightTarget;
 	Vector3 _colourLightUp;
 	Vector3 _colourLightRight;
 	Vector3 _colourLightStart;
 	Vector3 _colourLightEnd;
-	
+
 	bool m_useLightTarget;
 	bool m_useLightUp;
 	bool m_useLightRight;
@@ -194,7 +194,7 @@ public:
           const Callback& transformChanged,
           const Callback& boundsChanged,
 		  const Callback& lightRadiusChanged);
-	
+
 	/**
      * \brief
      * Copy constructor.
@@ -207,7 +207,7 @@ public:
 		  const Callback& lightRadiusChanged);
 
 	~Light();
-	
+
 	void render(const RenderInfo& info) const;
 
 	const AABB& localAABB() const;
@@ -217,9 +217,9 @@ public:
 	mutable Matrix4 m_projectionOrientation;
 
 	// Renderable submission functions
-	void renderWireframe(RenderableCollector& collector, 
-						 const VolumeTest& volume, 
-						 const Matrix4& localToWorld, 
+	void renderWireframe(RenderableCollector& collector,
+						 const VolumeTest& volume,
+						 const Matrix4& localToWorld,
 						 bool selected) const;
 
 	// Adds the light centre renderable to the given collector
@@ -230,20 +230,20 @@ public:
 	Doom3LightRadius& getDoom3Radius();
 
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
-  
+
 	void translate(const Vector3& translation);
 	void translateLightTarget(const Vector3& translation);
 	void translateLightStart(const Vector3& translation);
-	
+
 	void rotate(const Quaternion& rotation);
-	
+
 	// This snaps the light as a whole to the grid (basically the light origin)
 	void snapto(float snap);
 	void setLightRadius(const AABB& aabb);
 	void transformLightRadius(const Matrix4& transform);
 	void revertTransform();
 	void freezeTransform();
-	
+
 	// note: move this
 	mutable Matrix4 m_localPivot;
 	const Matrix4& getLocalPivot() const;
@@ -266,7 +266,7 @@ public:
 	Vector3 getLightOrigin() const;
 	const Vector3& colour() const;
 	ShaderPtr getShader() const;
-	
+
 	Vector3& target();
 	Vector3& targetTransformed();
 	Vector3& up();
@@ -277,15 +277,15 @@ public:
 	Vector3& startTransformed();
 	Vector3& end();
 	Vector3& endTransformed();
-	
+
 	Vector3& colourLightTarget();
 	Vector3& colourLightRight();
 	Vector3& colourLightUp();
 	Vector3& colourLightStart();
 	Vector3& colourLightEnd();
-	
+
 	bool useStartEnd() const;
-	
+
 }; // class Light
 
 } // namespace entity

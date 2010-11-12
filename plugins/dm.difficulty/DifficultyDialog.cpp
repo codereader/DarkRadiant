@@ -23,7 +23,7 @@ namespace ui
 namespace
 {
 	const char* const WINDOW_TITLE = N_("Difficulty Editor");
-	
+
 	const std::string RKEY_ROOT = "user/ui/difficultyDialog/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
@@ -38,15 +38,15 @@ DifficultyDialog::DifficultyDialog() :
 	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	set_modal(true);
-	
+
 	signal_key_press_event().connect(sigc::mem_fun(*this, &DifficultyDialog::onWindowKeyPress), false);
-	
+
 	// Create the widgets
 	populateWindow();
 
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-	
+
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 }
@@ -87,7 +87,7 @@ void DifficultyDialog::createDifficultyEditors()
 		DifficultyEditor& editor = *_editors[i];
 
 		Gtk::Widget& label = editor.getNotebookLabel();
-		// Show the widgets before using them as label, they won't appear otherwise	
+		// Show the widgets before using them as label, they won't appear otherwise
 		label.show_all();
 
 		_notebook->append_page(editor.getEditor(), label);
@@ -99,11 +99,11 @@ void DifficultyDialog::populateWindow()
 	// Create the overall vbox
 	_dialogVBox = Gtk::manage(new Gtk::VBox(false, 12));
 	add(*_dialogVBox);
-	
+
 	// Create the notebook and add it to the vbox
 	_notebook = Gtk::manage(new Gtk::Notebook);
 	_dialogVBox->pack_start(*_notebook, true, true, 0);
-	
+
 	// Create and pack the editors
 	createDifficultyEditors();
 
@@ -115,27 +115,27 @@ void DifficultyDialog::populateWindow()
 Gtk::Widget& DifficultyDialog::createButtons()
 {
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-	
+
 	// Save button
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyDialog::onSave));
 	buttonHBox->pack_end(*okButton, true, true, 0);
-	
+
 	// Close Button
 	_closeButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	_closeButton->signal_clicked().connect(sigc::mem_fun(*this, &DifficultyDialog::onClose));
 	buttonHBox->pack_end(*_closeButton, true, true, 0);
-	
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
 void DifficultyDialog::save()
 {
 	// Consistency check can go here
-	
+
 	// Scoped undo object
 	UndoableCommand command("editDifficulty");
-	
+
 	// Save the working set to the entity
 	_settingsManager.saveSettings();
 }
@@ -159,7 +159,7 @@ bool DifficultyDialog::onWindowKeyPress(GdkEventKey* ev)
 		// Catch this keyevent, don't propagate
 		return true;
 	}
-	
+
 	// Propagate further
 	return false;
 }

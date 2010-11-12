@@ -29,7 +29,7 @@ namespace
 			// Is infinity or NaN, write 0
 			os << "0";
 		}
-	} 
+	}
 }
 
 class BrushDef3Exporter

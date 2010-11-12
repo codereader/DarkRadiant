@@ -17,7 +17,7 @@ namespace ce {
 AlertComponentEditor::RegHelper AlertComponentEditor::regHelper;
 
 // Constructor
-AlertComponentEditor::AlertComponentEditor(Component& component) : 
+AlertComponentEditor::AlertComponentEditor(Component& component) :
 	_component(&component),
 	_targetCombo(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_STANDARD_AI())))
 {

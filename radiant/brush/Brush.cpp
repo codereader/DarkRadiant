@@ -74,7 +74,7 @@ IFace& Brush::addFace(const Plane3& plane)
 	return *m_faces.back();
 }
 
-IFace& Brush::addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader) 
+IFace& Brush::addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader)
 {
 	// Allocate a new Face
 	undoSave();
@@ -290,7 +290,7 @@ void Brush::undoSave() {
 	if (m_map != 0) {
 		m_map->changed();
 	}
-	
+
 	if (m_undoable_observer != 0) {
 		m_undoable_observer->save(this);
 	}
@@ -369,11 +369,11 @@ void Brush::reserve(std::size_t count) {
 
 void Brush::push_back(Faces::value_type face) {
 	m_faces.push_back(face);
-	
+
 	if (m_instanceCounter.m_count != 0) {
 		m_faces.back()->instanceAttach(m_map);
 	}
-	
+
 	for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
 		(*i)->push_back(*face);
 		(*i)->DEBUG_verify();
@@ -384,7 +384,7 @@ void Brush::pop_back() {
 	if (m_instanceCounter.m_count != 0) {
 		m_faces.back()->instanceDetach(m_map);
 	}
-	
+
 	m_faces.pop_back();
 	for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
 		(*i)->pop_back();
@@ -396,7 +396,7 @@ void Brush::erase(std::size_t index) {
 	if (m_instanceCounter.m_count != 0) {
 		m_faces[index]->instanceDetach(m_map);
 	}
-	
+
 	m_faces.erase(m_faces.begin() + index);
 	for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
 		(*i)->erase(index);
@@ -415,9 +415,9 @@ void Brush::clear() {
 	if (m_instanceCounter.m_count != 0) {
 		forEachFace_instanceDetach(m_map);
 	}
-	
+
 	m_faces.clear();
-	
+
 	for(Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
 		(*i)->clear();
 		(*i)->DEBUG_verify();
@@ -473,7 +473,7 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
 		for (std::size_t i = 0;  i < m_faces.size(); ++i) {
 			const Face& clip = *m_faces[i];
 
-			if (clip.plane3() == plane 
+			if (clip.plane3() == plane
 				|| !clip.plane3().isValid() || !plane_unique(i)
 				|| plane == -clip.plane3())
 			{
@@ -510,8 +510,8 @@ void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visibl
 	}
 }
 
-void Brush::update_faces_wireframe(RenderablePointVector& wire, 
-								   const std::size_t* visibleFaceIndices, 
+void Brush::update_faces_wireframe(RenderablePointVector& wire,
+								   const std::size_t* visibleFaceIndices,
 								   std::size_t numVisibleFaces) const
 {
 	assert(numVisibleFaces <= _faceCentroidPoints.size());
@@ -520,7 +520,7 @@ void Brush::update_faces_wireframe(RenderablePointVector& wire,
 	wire.resize(numVisibleFaces);
 
 	const std::size_t* visibleFaceIter = visibleFaceIndices;
-	
+
 	// Pick all the visible face centroids from the vector
 	for (std::size_t i = 0; i < numVisibleFaces; ++i)
 	{
@@ -579,18 +579,18 @@ bool Brush::plane_unique(std::size_t index) const {
 void Brush::removeDegenerateEdges() {
 	for (std::size_t i = 0;  i < m_faces.size(); ++i) {
 		Winding& winding = m_faces[i]->getWinding();
-		
+
 		for (std::size_t index = 0; index < winding.size();) {
 			//std::size_t index = std::distance(winding.begin(), j);
 			std::size_t next = winding.next(index);
-			
+
 			if (Edge_isDegenerate(winding[index].vertex, winding[next].vertex)) {
 				Winding& other = m_faces[winding[index].adjacent]->getWinding();
 				std::size_t adjacent = other.findAdjacent(i);
 				if (adjacent != c_brush_maxFaces) {
 					other.erase(other.begin() + adjacent);
 				}
-				
+
 				// Delete and leave index where it is
 				winding.erase(winding.begin() + index);
 			}
@@ -606,11 +606,11 @@ void Brush::removeDegenerateFaces() {
 	// save adjacency info for degenerate faces
 	for (std::size_t i = 0;  i < m_faces.size(); ++i) {
 		Winding& degen = m_faces[i]->getWinding();
-  
+
 		if (degen.size() == 2) {
-			/*std::cout << "Removed degenerate face: " << Vector3(m_faces[i]->getPlane().plane3().normal()) 
+			/*std::cout << "Removed degenerate face: " << Vector3(m_faces[i]->getPlane().plane3().normal())
 								<< " - " << float(m_faces[i]->getPlane().plane3().dist()) << "\n";*/
-			
+
 			// this is an "edge" face, where the plane touches the edge of the brush
 			{
 				Winding& winding = m_faces[degen[0].adjacent]->getWinding();
@@ -623,7 +623,7 @@ void Brush::removeDegenerateFaces() {
 			{
 				Winding& winding = m_faces[degen[1].adjacent]->getWinding();
 				std::size_t index = winding.findAdjacent(i);
-				
+
 				if (index != c_brush_maxFaces) {
 					winding[index].adjacent = degen[0].adjacent;
 				}
@@ -719,7 +719,7 @@ bool Brush::buildWindings() {
 
 				// update brush bounds
 				const Winding& winding = f.getWinding();
-				
+
 				for (Winding::const_iterator i = winding.begin(); i != winding.end(); ++i) {
 					m_aabb_local.includePoint(i->vertex);
 				}
@@ -727,7 +727,7 @@ bool Brush::buildWindings() {
 				// update texture coordinates
 				f.EmitTextureCoordinates();
 			}
-			
+
 			// greebo: Update the winding, now that it's constructed
 			f.updateWinding();
 		}
@@ -765,11 +765,11 @@ public:
 		}
 		return false;
 	}
-	
+
 	bool operator==(const ProximalVertex& other) const {
 		const SListNode* v = m_vertices;
 		std::size_t DEBUG_LOOP = 0;
-		
+
 		do {
 			if (v == other.m_vertices)
 				return true;
@@ -780,7 +780,7 @@ public:
 			}
 			++DEBUG_LOOP;
 		} while(v != m_vertices);
-		
+
 		return false;
 	}
 };
@@ -795,7 +795,7 @@ void Brush::buildBRep() {
   bool degenerate = buildWindings();
 
   Vector3 colourVertexVec = ColourSchemes().getColour("brush_vertices");
-  const Colour4b colour_vertex(int(colourVertexVec[0]*255), int(colourVertexVec[1]*255), 
+  const Colour4b colour_vertex(int(colourVertexVec[0]*255), int(colourVertexVec[1]*255),
   							   int(colourVertexVec[2]*255), 255);
 
   std::size_t faces_size = 0;
@@ -900,7 +900,7 @@ void Brush::buildBRep() {
         }
 
       }
-    
+
 
       IndexBuffer uniqueVertexIndices;
       typedef VertexBuffer<ProximalVertex> UniqueVertices;
@@ -930,7 +930,7 @@ void Brush::buildBRep() {
 
         {
           vertex_clear();
-          m_select_vertices.reserve(uniqueVertices.size());  
+          m_select_vertices.reserve(uniqueVertices.size());
           for(UniqueVertices::iterator i = uniqueVertices.begin(); i != uniqueVertices.end(); ++i)
           {
             vertex_push_back(faceVertices[ProximalVertexArray_index(vertexRings, (*i))]);

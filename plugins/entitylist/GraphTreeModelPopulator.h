@@ -10,7 +10,7 @@ namespace ui {
 /**
  * greebo: The purpose of this class is to traverse the entire scenegraph and
  *         push all the found nodes into the given GraphTreeModel.
- * 
+ *
  * This is used by the GraphTreeModel itself to update its status on show.
  */
 class GraphTreeModelPopulator :
@@ -26,12 +26,12 @@ public:
 		// Clear out the model before traversal
 		_model.clear();
 	}
-	
+
 	// NodeVisitor implementation
 	bool pre(const scene::INodePtr& node) {
 		// Insert this node into the GraphTreeModel
 		_model.insert(node);
-		
+
 		Entity* ent = Node_getEntity(node);
 
 		if (ent != NULL && ent->getKeyValue("classname") == "worldspawn") {

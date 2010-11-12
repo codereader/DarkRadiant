@@ -10,7 +10,7 @@ namespace applog {
 class StringLogDevice;
 typedef boost::shared_ptr<StringLogDevice> StringLogDevicePtr;
 
-/** 
+/**
  * greebo: A StringLogDevice is a class which logs into a local string buffer.
  */
 class StringLogDevice :
@@ -24,7 +24,7 @@ public:
 	~StringLogDevice();
 
 	/**
-	 * greebo: This method gets called by the Writer with 
+	 * greebo: This method gets called by the Writer with
 	 * a logging string as argument.
 	 */
 	void writeLog(const std::string& outputStr, ELogLevel level);

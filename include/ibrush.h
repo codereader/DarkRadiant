@@ -18,7 +18,7 @@ class BrushCreator :
 {
 public:
 	virtual scene::INodePtr createBrush() = 0;
-	
+
 	// Call this when the clip plane colours should be updated.
 	virtual void clipperColourChanged() = 0;
 };
@@ -33,7 +33,7 @@ struct WindingVertex
 	Vector3 normal;			// The normals
 	std::size_t adjacent;	// The index of the adjacent WindingVertex
 
-	// greebo: This operator is needed to enable scripting support 
+	// greebo: This operator is needed to enable scripting support
 	// using boost::python's vector_indexing_suite.
 	bool operator==(const WindingVertex& other) const
 	{
@@ -43,7 +43,7 @@ struct WindingVertex
 	}
 };
 
-// A Winding consists of several connected WindingVertex objects, 
+// A Winding consists of several connected WindingVertex objects,
 // each of which holding information about a single corner point.
 typedef std::vector<WindingVertex> IWinding;
 
@@ -75,7 +75,7 @@ public:
 
 	// Flips the texture by the given flipAxis (0 == x-axis, 1 == y-axis)
 	virtual void flipTexture(unsigned int flipAxis) = 0;
-	
+
 	// This translates the texture as much towards the origin in texture space as possible without changing the world appearance.
 	virtual void normaliseTexture() = 0;
 
@@ -87,7 +87,7 @@ public:
 
 	/**
 	 * Returns the 3x3 texture matrix for this face, containing shift, scale and rotation.
-	 * 
+	 *
 	 * xx, yx, xy and yy hold the scale and rotation
 	 * tx and ty hold the shift
 	 */
@@ -118,9 +118,9 @@ public:
 	// Returns true if any face of the brush contributes to the final B-Rep.
 	virtual bool hasContributingFaces() const = 0;
 
-	// Removes faces that do not contribute to the brush. 
+	// Removes faces that do not contribute to the brush.
 	// This is useful for cleaning up after CSG operations on the brush.
-	// Note: removal of empty faces is not performed during direct brush manipulations, 
+	// Note: removal of empty faces is not performed during direct brush manipulations,
 	// because it would make a manipulation irreversible if it created an empty face.
 	virtual void removeEmptyFaces() = 0;
 

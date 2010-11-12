@@ -6,7 +6,7 @@
 
 namespace entity {
 
-class TargetKeyCollection : 
+class TargetKeyCollection :
 	public Entity::Observer
 {
 public:

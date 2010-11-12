@@ -81,13 +81,13 @@ public:
 				stream << "( ";
 				writePatchDouble(patch.ctrlAt(r,c).vertex[0], stream);
 				stream << " ";
-				writePatchDouble(patch.ctrlAt(r,c).vertex[1], stream); 
+				writePatchDouble(patch.ctrlAt(r,c).vertex[1], stream);
 				stream << " ";
-				writePatchDouble(patch.ctrlAt(r,c).vertex[2], stream); 
+				writePatchDouble(patch.ctrlAt(r,c).vertex[2], stream);
 				stream << " ";
-				writePatchDouble(patch.ctrlAt(r,c).texcoord[0], stream); 
+				writePatchDouble(patch.ctrlAt(r,c).texcoord[0], stream);
 				stream << " ";
-				writePatchDouble(patch.ctrlAt(r,c).texcoord[1], stream); 
+				writePatchDouble(patch.ctrlAt(r,c).texcoord[1], stream);
 				stream << " ) ";
 			}
 

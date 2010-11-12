@@ -49,7 +49,7 @@ EntityClassChooser& EntityClassChooser::Instance()
     {
         // Not yet instantiated, do it now
         instancePtr.reset(new EntityClassChooser);
-        
+
         // Register this instance with GlobalRadiant() at once
         GlobalRadiant().addEventListener(instancePtr);
     }
@@ -84,7 +84,7 @@ void EntityClassChooser::onEClassReload()
 // Constructor. Creates GTK widgets.
 
 EntityClassChooser::EntityClassChooser()
-: gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE), 
+: gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE),
                                    GlobalMainFrame().getTopLevelWindow()),
   _treeStore(Gtk::TreeStore::create(_columns)),
   _selection(NULL),
@@ -93,10 +93,10 @@ EntityClassChooser::EntityClassChooser()
   _result(RESULT_CANCELLED)
 {
     // Set the default size of the window
-    const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();    
+    const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
     Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
     set_default_size(
-        static_cast<int>(rect.get_width() * 0.7f), 
+        static_cast<int>(rect.get_width() * 0.7f),
         static_cast<int>(rect.get_height() * 0.6f)
     );
 
@@ -119,7 +119,7 @@ EntityClassChooser::EntityClassChooser()
     getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &EntityClassChooser::callbackCancel)
     );
-    
+
     hbox->pack_end(*_modelPreview->getWidget(), false, false, 0);
 
     // Register to the eclass manager
@@ -161,7 +161,7 @@ void EntityClassChooser::_onDeleteEvent()
 {
     _result = RESULT_CANCELLED;
 
-    // greebo: Clear the selected name on hide, we don't want to create another entity when 
+    // greebo: Clear the selected name on hide, we don't want to create another entity when
     // the user clicks on the X in the upper right corner.
     _selectedName.clear();
 
@@ -227,12 +227,12 @@ void EntityClassChooser::setupTreeView()
 void EntityClassChooser::updateUsageInfo(const std::string& eclass)
 {
     // Lookup the IEntityClass instance
-    IEntityClassPtr e = GlobalEntityClassManager().findOrInsert(eclass, true);  
+    IEntityClassPtr e = GlobalEntityClassManager().findOrInsert(eclass, true);
 
     // Set the usage panel to the IEntityClass' usage information string
     Gtk::TextView* usageText = getGladeWidget<Gtk::TextView>("usageTextView");
     Glib::RefPtr<Gtk::TextBuffer> buf = usageText->get_buffer();
-    
+
     // Create the concatenated usage string
     std::string usage = "";
     EntityClassAttributeList usageAttrs = e->getAttributeList("editor_usage");
@@ -250,7 +250,7 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
                 usage += i->value;
         }
     }
-    
+
     buf->set_text(usage);
 }
 
@@ -264,7 +264,7 @@ void EntityClassChooser::updateSelection()
 
         if (!row[_columns.isFolder])
         {
-            // Make the OK button active 
+            // Make the OK button active
             getGladeWidget<Gtk::Widget>("okButton")->set_sensitive(true);
 
             // Set the panel text with the usage information
@@ -272,7 +272,7 @@ void EntityClassChooser::updateSelection()
             updateUsageInfo(selName);
 
             // Lookup the IEntityClass instance
-            IEntityClassPtr eclass = GlobalEntityClassManager().findClass(selName); 
+            IEntityClassPtr eclass = GlobalEntityClassManager().findClass(selName);
 
             if (eclass != NULL)
             {
@@ -294,22 +294,22 @@ void EntityClassChooser::updateSelection()
     getGladeWidget<Gtk::Widget>("okButton")->set_sensitive(false);
 }
 
-void EntityClassChooser::callbackCancel() 
+void EntityClassChooser::callbackCancel()
 {
     _result = RESULT_CANCELLED;
     _selectedName.clear();
-    
+
     hide(); // breaks main loop
 }
 
-void EntityClassChooser::callbackOK() 
+void EntityClassChooser::callbackOK()
 {
     _result = RESULT_OK;
 
     hide(); // breaks main loop
 }
 
-void EntityClassChooser::callbackSelectionChanged() 
+void EntityClassChooser::callbackSelectionChanged()
 {
     updateSelection();
 }

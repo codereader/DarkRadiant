@@ -68,7 +68,7 @@ public:
 	angles_t		&operator*=( float a );
 
 	friend int		operator==(	angles_t &a, angles_t &b );
-					
+
 	friend int		operator!=(	angles_t &a, angles_t &b );
 
 	void			toVectors( idVec3 *forward, idVec3 *right = NULL, idVec3 *up = NULL );

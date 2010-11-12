@@ -10,7 +10,7 @@ const std::string RKEY_NAME_KEY("game/defaults/nameKey");
 
 NamespaceManager::NamespaceManager(Doom3Entity& entity) :
 	_namespace(NULL),
-	_entity(entity), 
+	_entity(entity),
 	_updateMutex(false)
 {
 	// Attach <self> to the observed entity
@@ -48,21 +48,21 @@ void NamespaceManager::attachNames() {
 
 void NamespaceManager::detachNames() {
 	if (_namespace == NULL) return;
-	
+
 	// Detach all names of the observed D3Entity
 	detachNameKeys();
 }
 
 void NamespaceManager::connectNameObservers() {
 	if (_namespace == NULL) return;
-	
+
 	// Setup the keyobservers
 	attachKeyObservers();
 }
 
 void NamespaceManager::disconnectNameObservers() {
 	if (_namespace == NULL) return;
-	
+
 	// Remove all keyobservers
 	detachKeyObservers();
 
@@ -95,7 +95,7 @@ void NamespaceManager::onKeyInsert(const std::string& key, EntityKeyValue& value
 		// Now, register this key in the namespace, if we have one
 		attachKeyToNamespace(key, value);
 	}
-	
+
 	// Now setup the keyobservers
 	attachKeyObserver(key, value);
 }
@@ -112,7 +112,7 @@ void NamespaceManager::onKeyErase(const std::string& key, EntityKeyValue& value)
 		// Remove they key from the map
 		_nameKeys.erase(key);
 	}
-	
+
 	// Remove the keyobserver from this key
 	detachKeyObserver(key, value);
 }
@@ -203,7 +203,7 @@ void NamespaceManager::attachKeyObservers() {
 		NamespaceManager& _self;
 
 	public:
-		Attacher(NamespaceManager& self) : 
+		Attacher(NamespaceManager& self) :
 			_self(self)
 		{}
 
@@ -241,7 +241,7 @@ void NamespaceManager::detachKeyObservers() {
 		NamespaceManager& _self;
 
 	public:
-		Detacher(NamespaceManager& self) : 
+		Detacher(NamespaceManager& self) :
 			_self(self)
 		{}
 

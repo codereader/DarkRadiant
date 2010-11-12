@@ -7,14 +7,14 @@
 namespace gtkutil
 {
 
-/** 
+/**
  * Container widget which packs its child into a GtkScrolledWindow.
  */
 class ScrolledFrame :
 	public Gtk::ScrolledWindow
 {
 public:
-	/** 
+	/**
 	 * Construct a ScrolledFrame around the provided child widget.
 	 * @useViewPort: use this to add "non-scrollable" widgets to this container.
 	 */

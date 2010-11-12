@@ -9,7 +9,7 @@ namespace parser {
 
 /**
  * greebo: Abstract type of a StringTokeniser, which splits a given
- * input string into pieces. It must provide a basic set of methods 
+ * input string into pieces. It must provide a basic set of methods
  * to retrieve the tokens one by one.
  */
 class StringTokeniser
@@ -21,7 +21,7 @@ public:
 	virtual ~StringTokeniser() {}
 
 	/** Test if this StringTokeniser has more tokens to return.
-     * 
+     *
      * @returns
      * true if there are further tokens, false otherwise
      */
@@ -30,26 +30,26 @@ public:
     /** Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
-     * 
+     *
      * @returns
      * std::string containing the next token in the sequence.
-     * 
+     *
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
     virtual std::string nextToken() = 0;
-    
+
     /** Assert that the next token in the sequence must be equal to the provided
      * value. A ParseException is thrown if the assert fails.
-     * 
+     *
      * @param val
      * The expected value of the token.
      */
 	virtual void assertNextToken(const std::string& val) = 0;
-    
+
     /** Skip the next n tokens. This method provides a convenient way to dispose
      * of a number of tokens without returning them.
-     * 
+     *
      * @param n
      * The number of tokens to consume.
      */
@@ -57,7 +57,7 @@ public:
 };
 
 /** Base class of a tokeniser wrapping around a boost::tokeniser
- * 
+ *
  *  Standard delimiters are initialised to whitespace: " \t\n\v\r"
  */
 class BasicStringTokeniser
@@ -65,7 +65,7 @@ class BasicStringTokeniser
     // Internal Boost tokenizer and its iterator
     typedef boost::char_separator<char> CharSeparator;
     typedef boost::tokenizer<CharSeparator> CharTokeniser;
-    
+
     CharSeparator _separator;
     CharTokeniser _tok;
     CharTokeniser::iterator _tokIter;
@@ -73,25 +73,25 @@ class BasicStringTokeniser
 public:
     /** Construct a Tokeniser with the given input string, and optionally
      * a list of separators.
-     * 
+     *
      * @param str
      * The string to tokenise.
-     * 
+     *
      * @param delims
      * The list of characters to use as delimiters.
-     * 
+     *
      * @param keptDelims
      * The list of delimiters to keep
      */
-    BasicStringTokeniser(const std::string& str, 
+    BasicStringTokeniser(const std::string& str,
 						 const char* delimiters = " \t\n\v\r") :
     	_separator(delimiters),
 		_tok(str, _separator),
-		_tokIter(_tok.begin()) 
+		_tokIter(_tok.begin())
     {}
-        
+
     /** Test if this StringTokeniser has more tokens to return.
-     * 
+     *
      * @returns
      * true if there are further tokens, false otherwise
      */
@@ -102,10 +102,10 @@ public:
     /** Return the next token in the sequence. This function consumes
      * the returned token and advances the internal state to the following
      * token.
-     * 
+     *
      * @returns
      * std::string containing the next token in the sequence.
-     * 
+     *
      * @pre
      * hasMoreTokens() must be true, otherwise an exception will be thrown.
      */
@@ -115,23 +115,23 @@ public:
         else
             throw ParseException("Tokeniser: no more tokens");
     }
-    
+
     /** Assert that the next token in the sequence must be equal to the provided
      * value. A ParseException is thrown if the assert fails.
-     * 
+     *
      * @param val
      * The expected value of the token.
      */
 	void assertNextToken(const std::string& val) {
         const std::string tok = nextToken();
         if (tok != val)
-            throw ParseException("Tokeniser: Assertion failed: Required \"" 
+            throw ParseException("Tokeniser: Assertion failed: Required \""
             					 + val + "\", found \"" + tok + "\"");
-    }   
-    
+    }
+
     /** Skip the next n tokens. This method provides a convenient way to dispose
      * of a number of tokens without returning them.
-     * 
+     *
      * @param n
      * The number of tokens to consume.
      */
@@ -146,7 +146,7 @@ public:
         }
     }
 }; // class BasicStringTokeniser
-	
+
 } // namespace parser
 
 #endif /* TOKENISER_H_ */

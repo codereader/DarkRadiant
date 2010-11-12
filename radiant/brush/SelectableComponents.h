@@ -16,7 +16,7 @@ public:
 	std::size_t getFace() const {
 		return m_face;
 	}
-	
+
 	std::size_t getVertex() const {
 		return m_vertex;
 	}

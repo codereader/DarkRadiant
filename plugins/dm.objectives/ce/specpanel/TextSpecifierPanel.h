@@ -19,7 +19,7 @@ namespace ce
  * but should be used as a parent class for individual type-based
  * SpecifierPanels which register themselves correctly for a given SPEC_* type.
  */
-class TextSpecifierPanel : 
+class TextSpecifierPanel :
 	public SpecifierPanel,
 	protected Gtk::Entry
 {
@@ -32,7 +32,7 @@ public:
 
 	virtual Gtk::Widget* getWidget();
     void setValue(const std::string& value);
-    std::string getValue() const; 
+    std::string getValue() const;
 };
 
 }

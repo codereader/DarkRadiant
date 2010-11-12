@@ -11,7 +11,7 @@
 
 using parser::DefTokeniser;
 
-namespace shaders 
+namespace shaders
 {
 
 class MapExpression;
@@ -24,7 +24,7 @@ typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
  * Map expression are recursive expressions that generate an image, such as
  * "heightmap(addnormals(blah, bleh), 1).
  */
-class MapExpression 
+class MapExpression
 : public NamedBindable
 {
 public: /* INTERFACE METHODS */
@@ -71,14 +71,14 @@ public: /* STATIC CONSTRUCTION METHODS */
 protected:
 
 	/** greebo: Assures that the image is matching the desired dimensions.
-	 * 
+	 *
 	 * @input: The image to be rescaled. If it doesn't match <width x height>
 	 * 			it is rescaled and the resampled image is returned.
-	 * 			
+	 *
 	 * Note: The input image is removed from the heap after resampling
 	 * 		 and a new one is allocated and returned.
-	 *  
-	 * @returns: the resampled image, this might as well be input.  
+	 *
+	 * @returns: the resampled image, this might as well be input.
 	 */
 	static ImagePtr getResampled(const ImagePtr& input, std::size_t width, std::size_t height);
 };
@@ -165,12 +165,12 @@ public:
 
 /**
  * \brief
- * MapExpression consisting of a single image name. 
+ * MapExpression consisting of a single image name.
  *
  * This is the base for all map expressions.
  */
-class ImageExpression 
-: public MapExpression 
+class ImageExpression
+: public MapExpression
 {
 	std::string _imgName;
 

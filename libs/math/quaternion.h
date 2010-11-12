@@ -161,7 +161,7 @@ inline Matrix4 matrix4_rotation_for_quaternion(const Quaternion& quaternion)
 
 #else
   const double x2 = quaternion[0] + quaternion[0];
-  const double y2 = quaternion[1] + quaternion[1]; 
+  const double y2 = quaternion[1] + quaternion[1];
   const double z2 = quaternion[2] + quaternion[2];
   const double xx = quaternion[0] * x2;
   const double xy = quaternion[0] * y2;
@@ -259,7 +259,7 @@ inline Quaternion quaternion_for_matrix4_rotation(const Matrix4& matrix4)
       (transposed[6] + transposed[9]) / S
     );
   }
-  
+
   if(transposed[5] >= transposed[0] && transposed[5] >= transposed[10])
   {
     double S = 2.0 * sqrt(1.0 + transposed[5] - transposed[0] - transposed[10]);

@@ -25,10 +25,10 @@ namespace objectives {
 // Constructor
 ObjectiveEntity::ObjectiveEntity(scene::INodePtr node) :
 	_entityNode(node)
-{ 
+{
 	Entity* entity = Node_getEntity(node);
 	assert(entity != NULL);
-	
+
 	// Use an ObjectiveKeyExtractor to populate the ObjectiveMap from the keys
 	// on the entity
 	ObjectiveKeyExtractor extractor(_objectives);
@@ -45,7 +45,7 @@ void ObjectiveEntity::readMissionLogic(Entity* ent) {
 	for (Entity::KeyValuePairs::const_iterator kv = successLogics.begin();
 		 kv != successLogics.end(); kv++)
 	{
-		std::string postfix = kv->first.substr(KV_SUCCESS_LOGIC.size());	
+		std::string postfix = kv->first.substr(KV_SUCCESS_LOGIC.size());
 
 		if (postfix.empty()) {
 			// Empty postfix means that we've found the default logic
@@ -73,7 +73,7 @@ void ObjectiveEntity::readMissionLogic(Entity* ent) {
 	for (Entity::KeyValuePairs::const_iterator kv = failureLogics.begin();
 		 kv != failureLogics.end(); kv++)
 	{
-		std::string postfix = kv->first.substr(KV_FAILURE_LOGIC.size());	
+		std::string postfix = kv->first.substr(KV_FAILURE_LOGIC.size());
 
 		if (postfix.empty()) {
 			// Empty postfix means that we've found the default logic
@@ -129,7 +129,7 @@ void ObjectiveEntity::addObjective() {
 	int index = 1;
 	while (_objectives.find(index) != _objectives.end())
 		++index;
-		
+
 	// Insert a new Objective at this ID.
 	Objective o;
 	o.description = (boost::format(_("New objective %d")) % index).str();
@@ -139,7 +139,7 @@ void ObjectiveEntity::addObjective() {
 void ObjectiveEntity::moveObjective(int index, int delta) {
 	// Calculate the target index
 	int targetIndex = index + delta;
-	
+
 	if (targetIndex < getLowestObjIndex()) {
 		targetIndex = getLowestObjIndex() -1;
 	}
@@ -183,13 +183,13 @@ void ObjectiveEntity::deleteObjective(int index) {
 	ObjectiveMap::iterator i = _objectives.find(index);
 
 	if (i == _objectives.end()) {
-		// not found, nothing to do 
-		return; 
+		// not found, nothing to do
+		return;
 	}
 
 	// Delete the found element
 	_objectives.erase(i++);
-	
+
 	// Then iterate all the way to the highest index
 	while (i != _objectives.end()) {
 		// Decrease the index of this objective
@@ -255,13 +255,13 @@ void ObjectiveEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& stor
 				diffStr += intToStr(strToInt(parts[d]) + 1);
 			}
 		}
-		
+
 		Gtk::TreeModel::Row row = *store->append();
-		
+
 		row[columns.objNumber] = i->first;
 		row[columns.description] = i->second.description;
 		row[columns.difficultyLevel] = diffStr;
-	}	
+	}
 }
 
 // Write the Components from a single Objective to the underlying entity
@@ -287,7 +287,7 @@ void ObjectiveEntity::writeComponents(Entity* entity,
         entity->setKeyValue(prefix + "player_responsible", c.isPlayerResponsible() ? "1" : "0");
         entity->setKeyValue(prefix + "type", c.getType().getName());
 
-		entity->setKeyValue(prefix + "clock_interval", 
+		entity->setKeyValue(prefix + "clock_interval",
 			c.getClockInterval() > 0 ? floatToStr(c.getClockInterval()) : "");
 
         // Write out Specifier keyvals
@@ -329,24 +329,24 @@ void ObjectiveEntity::writeToEntity()
 	// Try to convert the weak_ptr reference to a shared_ptr
 	Entity* entity = Node_getEntity(_entityNode.lock());
 	assert(entity != NULL);
-	
+
 	// greebo: Remove all objective-related spawnargs first
 	clearEntity(entity);
 
 	for (ObjectiveMap::const_iterator i = _objectives.begin();
 		 i != _objectives.end();
-		 ++i) 
+		 ++i)
 	{
 		// Obtain the Objective and construct the key prefix from the index
 		const Objective& o = i->second;
 		std::string prefix = "obj" + intToStr(i->first) + "_";
-		
+
 		// Set the entity keyvalues
 		entity->setKeyValue(prefix + "desc", o.description);
 		entity->setKeyValue(prefix + "ongoing", o.ongoing ? "1" : "0");
 		entity->setKeyValue(prefix + "visible", o.visible ? "1" : "0");
 		entity->setKeyValue(prefix + "mandatory", o.mandatory ? "1" : "0");
-		entity->setKeyValue(prefix + "irreversible", 
+		entity->setKeyValue(prefix + "irreversible",
 							 o.irreversible ? "1" : "0");
 		entity->setKeyValue(prefix + "state", intToStr(o.state));
 
@@ -366,7 +366,7 @@ void ObjectiveEntity::writeToEntity()
 
         // Write the Components for this Objective
         writeComponents(entity, prefix, o);
-	}	
+	}
 
 	// Export the mission success/failure logic
 	writeMissionLogic(entity);

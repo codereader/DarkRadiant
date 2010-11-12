@@ -8,7 +8,7 @@ class ArchiveFile;
 
 namespace md5 {
 
-class MD5ModelLoader : 
+class MD5ModelLoader :
 	public ModelLoader
 {
 public:
@@ -18,7 +18,7 @@ public:
 
 	// Documentation: See imodel.h
 	model::IModelPtr loadModelFromPath(const std::string& name);
-	
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;

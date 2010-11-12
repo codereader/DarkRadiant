@@ -17,15 +17,15 @@ void FacePlane::transform(const Matrix4& matrix, bool mirror)
 {
 	// Prepare the plane to be transformed (negate the distance)
 	m_plane.dist() = -m_plane.dist();
-	
+
 	// Transform the plane
 	m_plane = matrix.transform(m_plane);
-	
+
 	// Re-negate the distance
 	m_plane.dist() = -m_plane.dist();
-	
+
 	// Now normalise the plane, otherwise the next transformation will screw up
-	m_plane.normalise(); 
+	m_plane.normalise();
 }
 
 void FacePlane::offset(float offset)

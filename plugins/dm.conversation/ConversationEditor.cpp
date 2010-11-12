@@ -68,7 +68,7 @@ void ConversationEditor::populateWindow()
 	// Actors
 	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Actors")))), false, false, 0);
 	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createActorPanel(), 18, 1)), false, false, 0);
-	
+
 	// Commands
 	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(makeBold(_("Commands")))), false, false, 0);
 	vbox->pack_start(*Gtk::manage(new gtkutil::LeftAlignment(createCommandPanel(), 18, 1)), true, true, 0);
@@ -91,32 +91,32 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 	vbox->pack_start(*table, false, false, 0);
 
 	int row = 0;
-	
+
 	// Conversation name
 	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Name"))),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	_convNameEntry = Gtk::manage(new Gtk::Entry);
 	table->attach(*_convNameEntry, 1, 2, row, row+1);
-	
+
 	row++;
 
 	// Actors within talk distance
 	_convActorsWithinTalkDistance = Gtk::manage(new Gtk::CheckButton);
 	table->attach(*Gtk::manage(new gtkutil::RightAlignment(*_convActorsWithinTalkDistance)),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors must be within talk distance"))), 
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors must be within talk distance"))),
 				  1, 2, row, row+1);
-	
+
 	row++;
 
 	// Actors always face each other while talking
 	_convActorsAlwaysFace = Gtk::manage(new Gtk::CheckButton);
 	table->attach(*Gtk::manage(new gtkutil::RightAlignment(*_convActorsAlwaysFace)),
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
-	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors always face each other while talking"))), 
+	table->attach(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("Actors always face each other while talking"))),
 				  1, 2, row, row+1);
-	
+
 	row++;
 
 	// Max play count
@@ -127,7 +127,7 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 				  0, 1, row, row+1, Gtk::FILL, Gtk::FILL, 0, 0);
 
 	_maxPlayCountHBox = Gtk::manage(new Gtk::HBox(false, 6));
-	
+
 	Gtk::Adjustment* adj = Gtk::manage(new Gtk::Adjustment(-1, -1, 9999));
 	_maxPlayCount = Gtk::manage(new Gtk::SpinButton(*adj, 1, 0));
 	_maxPlayCount->set_size_request(60, -1);
@@ -137,35 +137,35 @@ Gtk::Widget& ConversationEditor::createPropertyPane()
 	_maxPlayCountHBox->pack_start(*Gtk::manage(new gtkutil::LeftAlignedLabel(_("times at maximum"))), false, false, 0);
 
 	table->attach(*_maxPlayCountHBox, 1, 2, row, row+1);
-	
+
 	row++;
 
 	return *vbox;
 }
 
-Gtk::Widget& ConversationEditor::createActorPanel() 
+Gtk::Widget& ConversationEditor::createActorPanel()
 {
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-	
+
 	// Tree view
 	_actorView = Gtk::manage(new Gtk::TreeView(_actorStore));
 	_actorView->set_size_request(-1, MIN_HEIGHT_ACTORS_TREEVIEW);
 	_actorView->set_headers_visible(true);
 	_actorView->get_selection()->signal_changed().connect(sigc::mem_fun(*this, &ConversationEditor::onActorSelectionChanged));
-	
+
 	// Key and value text columns
 	_actorView->append_column(*Gtk::manage(new gtkutil::TextColumn("#", _actorColumns.actorNumber, false)));
 
 	// Construct a new editable text column
 	gtkutil::TextColumn* actorColumn = Gtk::manage(new gtkutil::TextColumn(_("Actor (click to edit)"), _actorColumns.displayName, false));
-	
+
 	Gtk::CellRendererText* rend = actorColumn->getCellRenderer();
 	rend->property_editable() = true;
 	rend->signal_edited().connect(sigc::mem_fun(*this, &ConversationEditor::onActorEdited));
 
 	// Cast the column object to a GtkTreeViewColumn* and append it
 	_actorView->append_column(*actorColumn);
-		
+
 	// Action buttons
 	_addActorButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
 	_delActorButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
@@ -180,14 +180,14 @@ Gtk::Widget& ConversationEditor::createActorPanel()
 	// Actors treeview goes left, actionbuttons go right
 	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_actorView)), true, true, 0);
 	hbox->pack_start(*actionVBox, false, false, 0);
-		
+
 	return *hbox;
 }
 
 Gtk::Widget& ConversationEditor::createCommandPanel()
 {
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 6));
-	
+
 	// Tree view
 	_commandView = Gtk::manage(new Gtk::TreeView(_commandStore));
 	_commandView->set_size_request(300, MIN_HEIGHT_COMMAND_TREEVIEW);
@@ -199,7 +199,7 @@ Gtk::Widget& ConversationEditor::createCommandPanel()
 	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Actor"), _commandColumns.actorName)));
 	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Command"), _commandColumns.sentence)));
 	_commandView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Wait"), _commandColumns.wait)));
-	
+
 	// Action buttons
 	_addCmdButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
 	_editCmdButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT));
@@ -224,28 +224,28 @@ Gtk::Widget& ConversationEditor::createCommandPanel()
 	// Command treeview goes left, action buttons go right
 	hbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_commandView)), true, true, 0);
 	hbox->pack_start(*actionVBox, false, false, 0);
-		
+
 	return *hbox;
 }
 
 Gtk::Widget& ConversationEditor::createButtonPanel()
 {
 	Gtk::HBox* buttonHBox = Gtk::manage(new Gtk::HBox(true, 12));
-	
+
 	// Save button
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onSave));
 	buttonHBox->pack_end(*okButton, true, true, 0);
-	
+
 	// Cancel Button
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ConversationEditor::onCancel));
 	buttonHBox->pack_end(*cancelButton, true, true, 0);
-	
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
-void ConversationEditor::updateWidgets() 
+void ConversationEditor::updateWidgets()
 {
 	_updateInProgress = true;
 
@@ -286,7 +286,7 @@ void ConversationEditor::updateWidgets()
 		 i != _conversation.actors.end(); ++i)
 	{
 		Gtk::TreeModel::Row row = *_actorStore->append();
-		
+
 		row[_actorColumns.actorNumber] = i->first;
 		row[_actorColumns.displayName] = i->second;
 	}
@@ -298,7 +298,7 @@ void ConversationEditor::updateWidgets()
 		const conversation::ConversationCommand& cmd = *(i->second);
 
 		Gtk::TreeModel::Row row = *_commandStore->append();
-		
+
 		row[_commandColumns.cmdNumber] = i->first;
 		row[_commandColumns.actorName] = (boost::format(_("Actor %d")) % cmd.actor).str();
 		row[_commandColumns.sentence] = cmd.getSentence();
@@ -320,7 +320,7 @@ void ConversationEditor::moveSelectedCommand(int delta)
 	int index = (*_currentCommand)[_commandColumns.cmdNumber];
 
 	int targetIndex = index + delta;
-	
+
 	if (targetIndex <= 0) {
 		return; // can't move any more upwards
 	}
@@ -342,7 +342,7 @@ void ConversationEditor::moveSelectedCommand(int delta)
 	}
 }
 
-void ConversationEditor::save() 
+void ConversationEditor::save()
 {
 	// Name
 	_conversation.name = _convNameEntry->get_text();
@@ -363,7 +363,7 @@ void ConversationEditor::save()
 	_targetConversation = _conversation;
 }
 
-void ConversationEditor::onSave() 
+void ConversationEditor::onSave()
 {
 	// First, save to the conversation object
 	save();
@@ -489,20 +489,20 @@ void ConversationEditor::onDeleteActor()
 
 		index++;
 	}
-	
+
 	// Update the widgets
 	updateWidgets();
 }
 
-void ConversationEditor::onActorEdited(const Glib::ustring& path, const Glib::ustring& new_text) 
+void ConversationEditor::onActorEdited(const Glib::ustring& path, const Glib::ustring& new_text)
 {
 	Gtk::TreeModel::iterator iter = _actorStore->get_iter(path);
-	
+
 	if (iter)
 	{
 		// The iter points to the edited cell now, get the actor number
 		int actorNum = (*iter)[_actorColumns.actorNumber];
-		
+
 		// Update the conversation
 		_conversation.actors[actorNum] = new_text;
 
@@ -596,7 +596,7 @@ void ConversationEditor::onDeleteCommand()
 
 		index++;
 	}
-	
+
 	// Update the widgets
 	updateWidgets();
 }

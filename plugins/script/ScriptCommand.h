@@ -22,7 +22,7 @@ class ScriptCommand
 	std::string _scriptFilename;
 
 public:
-	ScriptCommand(const std::string& name, 
+	ScriptCommand(const std::string& name,
 				  const std::string& displayName,
 				  const std::string& scriptFilename);
 

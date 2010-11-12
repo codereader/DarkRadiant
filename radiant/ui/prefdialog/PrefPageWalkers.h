@@ -10,24 +10,24 @@ namespace ui {
 		// The treestore enumeration for the preference tree
 		enum {
 			NAME_COL,		// The column with the caption (for lookups)
-			PREFPAGE_COL,	// The pointer to the preference page 
+			PREFPAGE_COL,	// The pointer to the preference page
 		};
 	}
 
 /** greebo: A hybrid walker that is used twice:
  * 			First time to add each PrefPage to the TreeStore using a VFSTreePopulator
- * 			Second time as VFSTreeVisitor to store the data into the treestore	
+ * 			Second time as VFSTreeVisitor to store the data into the treestore
  */
 class PrefTreePopulator :
 	public PrefPage::Visitor,
-	public gtkutil::VFSTreePopulator::Visitor 
+	public gtkutil::VFSTreePopulator::Visitor
 {
 private:
 	// The helper class creating the GtkTreeIter
 	gtkutil::VFSTreePopulator& _vfsPopulator;
-	
+
 	PrefDialog& _dialog;
-	
+
 public:
 	PrefTreePopulator(gtkutil::VFSTreePopulator& vfsPopulator, PrefDialog& dialog) :
 		_vfsPopulator(vfsPopulator),
@@ -43,7 +43,7 @@ public:
 			_vfsPopulator.addPath(prefPage->getPath());
 		}
 	}
-	
+
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
 			   const Gtk::TreeModel::iterator& iter,
 			   const std::string& path, bool isExplicit)
@@ -53,10 +53,10 @@ public:
 		{
 			// Get the leaf name (truncate the path)
 			std::string leafName = path.substr(path.rfind("/")+1);
-			
+
 			// Get a reference to the page defined by this path
 			PrefPagePtr page = _dialog.createOrFindPage(path);
-			
+
 			if (page != NULL)
 			{
 				// Add the caption to the liststore
@@ -71,11 +71,11 @@ public:
  * 			The result is stored in the passed PrefPagePtr&
  */
 class PrefPageFinder :
-	public PrefPage::Visitor 
+	public PrefPage::Visitor
 {
 	// The helper class creating the GtkTreeIter
 	PrefPagePtr& _page;
-	
+
 	// The path to look up
 	std::string _path;
 public:

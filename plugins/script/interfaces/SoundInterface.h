@@ -35,12 +35,12 @@ public:
 	}
 
 	float getMin(bool inMetres) const
-	{ 
+	{
 		return _radii.getMin(inMetres);
 	}
 
 	float getMax(bool inMetres) const
-	{ 
+	{
 		return _radii.getMax(inMetres);
 	}
 };
@@ -71,7 +71,7 @@ public:
 		return (_shader != NULL) ? ScriptSoundRadii(_shader->getRadii()) : ScriptSoundRadii();
 	}
 
-	SoundFileList getSoundFileList() 
+	SoundFileList getSoundFileList()
 	{
 		return (_shader != NULL) ? _shader->getSoundFileList() : SoundFileList();
 	}
@@ -82,8 +82,8 @@ public:
 };
 
 // Wrap around the SoundShaderVisitor interface
-class SoundShaderVisitorWrapper : 
-	public SoundShaderVisitor, 
+class SoundShaderVisitorWrapper :
+	public SoundShaderVisitor,
 	public boost::python::wrapper<SoundShaderVisitor>
 {
 public:

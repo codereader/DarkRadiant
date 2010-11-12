@@ -13,21 +13,21 @@ class AttributeSuffixComparator
 {
 	// Starting position to convert to a number
 	std::size_t _startPos;
-	
+
 public:
-	
+
 	/**
 	 * Constructor. Initialise the start position.
 	 */
 	AttributeSuffixComparator(std::size_t startPos)
 	: _startPos(startPos)
 	{ }
-	
+
 	/**
 	 * Functor operator.
 	 */
-	bool operator() (const EntityClassAttribute& x, 
-					 const EntityClassAttribute& y) const 
+	bool operator() (const EntityClassAttribute& x,
+					 const EntityClassAttribute& y) const
 	{
 		// Get both substrings. An empty suffix comes first.
 		std::string sx = x.name.substr(_startPos);
@@ -36,8 +36,8 @@ public:
 			return true;
 		else if (sy.empty())
 			return false;
-		
-		// Extract both integers and compare them. If one or other cannot be 
+
+		// Extract both integers and compare them. If one or other cannot be
 		// converted to an integer, return false anyway.
 		try {
 			int ix = boost::lexical_cast<int>(sx);
@@ -51,7 +51,7 @@ public:
 			// greebo: Non-numeric operands, use ordinary string comparison
 			return sx < sy;
 		}
-		
+
 	}
 };
 

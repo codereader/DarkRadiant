@@ -44,13 +44,13 @@ class ModuleObserver;
 const std::string MODULE_VIRTUALFILESYSTEM("VirtualFileSystem");
 
 /**
- * Main interface for the virtual filesystem. 
- * 
- * The virtual filesystem provides a unified view of the contents of Doom 3's 
+ * Main interface for the virtual filesystem.
+ *
+ * The virtual filesystem provides a unified view of the contents of Doom 3's
  * base and mod subdirectories, including the contents of PK4 files. Assets can
  * be retrieved using a single unique path, without needing to know whereabouts
  * in the physical filesystem the asset is located.
- * 
+ *
  * \ingroup vfs
  */
 class VirtualFileSystem :
@@ -65,56 +65,56 @@ public:
 	{
 	public:
 		virtual ~Visitor() {}
-		
+
 		/**
 		 * Required visit method. Takes the filename is relative
 		 * to the base path passed to the GlobalFileSystem().foreachFile method.
 		 */
 		virtual void visit(const std::string& filename) = 0;
 	};
-	
+
 	/**
 	 * Interface for VFS observers.
-	 * 
+	 *
 	 * A VFS observer is automatically notified of events relating to the
 	 * VFS, including startup and shutdown.
-	 */ 
+	 */
 	class Observer {
 	public:
 	    virtual ~Observer() {}
-		
+
 		/**
 		 * Notification of VFS initialisation.
-		 * 
+		 *
 		 * This method is invoked for all VFS observers when the VFS is
 		 * initialised. An empty default implementation is provided.
 		 */
 		virtual void onFileSystemInitialise() {}
-		
+
 		/**
 		 * Notification of VFS shutdown.
-		 * 
+		 *
 		 * This method is invoked for all VFS observers when the VFS is shut
 		 * down. An empty default implementation is provided.
 		 */
 		virtual void onFileSystemShutdown() {}
 	};
-	
+
 	/// \brief Adds a root search \p path.
 	/// Called before \c initialise.
 	virtual void initDirectory(const std::string& path) = 0;
-	
+
 	/// \brief Initialises the filesystem.
 	/// Called after all root search paths have been added.
 	virtual void initialise() = 0;
-	
+
 	/// \brief Shuts down the filesystem.
 	virtual void shutdown() = 0;
-	
+
 	// greebo: Adds/removes observers to/from the VFS
 	virtual void addObserver(Observer& observer) = 0;
 	virtual void removeObserver(Observer& observer) = 0;
-	
+
 	// Returns the number of files in the VFS matching the given filename
 	virtual int getFileCount(const std::string& filename) = 0;
 
@@ -122,7 +122,7 @@ public:
 	/// The caller must \c release() the file returned if it is not 0.
 	// greebo: Note: expects the filename to be normalised (forward slashes, trailing slash).
 	virtual ArchiveFilePtr openFile(const std::string& filename) = 0;
-  
+
 	/// \brief Returns the file identified by \p filename opened in text mode, or 0 if not found.
 	/// The caller must \c release() the file returned if it is not 0.
 	virtual ArchiveTextFilePtr openTextFile(const std::string& filename) = 0;
@@ -138,9 +138,9 @@ public:
 
 	/// \brief Calls \p callback for each file under \p basedir matching \p extension.
 	/// Use "*" as \p extension to match all file extensions.
-	virtual void forEachFile(const std::string& basedir, 
-							 const std::string& extension, 
-							 Visitor& visitor, 
+	virtual void forEachFile(const std::string& basedir,
+							 const std::string& extension,
+							 Visitor& visitor,
 							 std::size_t depth = 1) = 0;
 
 	/// \brief Returns the absolute filename for a relative \p name, or "" if not found.

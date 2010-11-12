@@ -19,7 +19,7 @@ const std::string RKEY_BIND_KEY("game/defaults/bindKey");
  * greebo: This walker traverses a subgraph and changes the classname
  *         of all selected entities to the one passed to the constructor.
  */
-class EntitySetClassnameSelected : 
+class EntitySetClassnameSelected :
 	public SelectionSystem::Visitor
 {
 	std::string _classname;

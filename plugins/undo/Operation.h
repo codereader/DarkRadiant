@@ -3,20 +3,20 @@
 
 namespace undo {
 
-class Operation 
+class Operation
 {
 public:
 	// The Snapshot that (i.e. the list of Undoables and all their UndoMementos)
 	Snapshot _snapshot;
-	
+
 	// The name of the UndoOperaton
 	std::string _command;
 
 	// Constructor
-	Operation(const std::string& command) : 
-		_command(command) 
+	Operation(const std::string& command) :
+		_command(command)
 	{}
-	
+
 	// Destructor
 	~Operation() {
 		// Tell the snapshot to release all the memory of its UndoStates

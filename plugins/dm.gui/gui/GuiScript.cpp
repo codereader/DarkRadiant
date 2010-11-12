@@ -276,7 +276,7 @@ void GuiScript::switchOnToken(const std::string& token, parser::DefTokeniser& to
 	{
 		// A single semicolon is also a valid statement, do nothing
 	}
-	else 
+	else
 	{
 		globalWarningStream() << "Unknown token " << token << " in GUI script in "
 			<< _owner.name << std::endl;
@@ -328,7 +328,7 @@ std::string GuiScript::getIfExpression(parser::DefTokeniser& tokeniser)
 	std::string rv;
 
 	std::size_t level = 1;
-	
+
 	while (tokeniser.hasMoreTokens() && level > 0)
 	{
 		std::string token = tokeniser.nextToken();
@@ -364,11 +364,11 @@ VariablePtr GuiScript::getVariableFromExpression(const std::string& expr)
 	{
 		// Is a GUI state variable
 		return VariablePtr(new GuiStateVariable(
-			_owner.getGui(), 
+			_owner.getGui(),
 			expr.substr(5)
 		));
 	}
-	
+
 	// Not a gui:: variable, check if a namespace has been specified
 	std::size_t ddPos = expr.find("::");
 
@@ -432,10 +432,10 @@ void GuiScript::execute()
 				VariablePtr var = getVariableFromExpression(st.args[0]);
 
 				std::string value = getValueFromExpression(st.args[1]);
-				
+
 				if (var == NULL || !var->assignValueFromString(value))
 				{
-					globalWarningStream() << "Cannot assign value " << 
+					globalWarningStream() << "Cannot assign value " <<
 						st.args[1] << " to variable " << st.args[1] << std::endl;
 				}
 			}

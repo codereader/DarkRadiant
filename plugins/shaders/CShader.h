@@ -10,11 +10,11 @@ namespace shaders {
  * \brief
  * Implementation class for Material.
  */
-class CShader 
-: public Material 
+class CShader
+: public Material
 {
 	ShaderTemplatePtr _template;
-	
+
 	// The shader file name (i.e. the file where this one is defined)
 	std::string _fileName;
 
@@ -35,7 +35,7 @@ class CShader
 
 public:
 	static bool m_lightingEnabled;
-	
+
 	/*
 	 * Constructor. Sets the name and the ShaderDefinition to use.
 	 */
@@ -48,7 +48,7 @@ public:
     SortRequest getSortRequest() const;
     float getPolygonOffset() const;
 	TexturePtr getEditorImage();
-	
+
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage();
 
@@ -65,18 +65,18 @@ public:
 	std::string getName() const;
 
 	bool IsInUse() const;
-	
+
 	void SetInUse(bool bInUse);
-	
+
 	// get the shader flags
 	int getFlags() const;
-	
+
 	// test if it's a true shader, or a default shader created to wrap around a texture
 	bool IsDefault() const;
-	
+
 	// get the cull type
 	ECull getCull();
-	
+
 	// get shader file name (ie the file where this one is defined)
 	const char* getShaderFileName() const;
 
@@ -85,7 +85,7 @@ public:
 
 	// returns the raw definition block
 	std::string getDefinition();
-	
+
 	// -----------------------------------------
 
 	void realise();

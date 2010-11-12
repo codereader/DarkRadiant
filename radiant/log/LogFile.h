@@ -30,7 +30,7 @@ public:
 
 	virtual ~LogFile();
 
-	/** 
+	/**
 	 * Use this to write a string to the logfile. This usually gets
 	 * called by the LogWriter class, but it can be called independently.
 	 */

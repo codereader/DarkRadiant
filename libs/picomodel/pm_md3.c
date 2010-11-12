@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 
-PicoModel Library 
+PicoModel Library
 
 Copyright (c) 2002, Randy Reddig & seaw0lf
 All rights reserved.
@@ -17,7 +17,7 @@ other materials provided with the distribution.
 
 Neither the names of the copyright holders nor the names of its contributors may
 be used to endorse or promote products derived from this software without
-specific prior written permission. 
+specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -146,26 +146,26 @@ by one structure only.
 static int _md3_canload( PM_PARAMS_CANLOAD )
 {
 	md3_t	*md3;
-	
+
 
 	/* to keep the compiler happy */
 	*fileName = *fileName;
-	
+
 	/* sanity check */
 	if( bufSize < ( sizeof( *md3 ) * 2) )
 		return PICO_PMV_ERROR_SIZE;
-	
+
 	/* set as md3 */
 	md3	= (md3_t*) buffer;
-	
+
 	/* check md3 magic */
-	if( *((int*) md3->magic) != *((int*) MD3_MAGIC) ) 
+	if( *((int*) md3->magic) != *((int*) MD3_MAGIC) )
 		return PICO_PMV_ERROR_IDENT;
-	
+
 	/* check md3 version */
 	if( _pico_little_long( md3->version ) != MD3_VERSION )
 		return PICO_PMV_ERROR_VERSION;
-	
+
 	/* file seems to be a valid md3 */
 	return PICO_PMV_OK;
 }
@@ -189,15 +189,15 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 	md3Triangle_t	*triangle;
 	md3Vertex_t		*vertex;
 	double			lat, lng;
-	
+
 	picoModel_t		*picoModel;
 	picoSurface_t	*picoSurface;
 	picoShader_t	*picoShader;
 	picoVec3_t		xyz, normal;
 	picoVec2_t		st;
 	picoColor_t		color;
-	
-	
+
+
 	/* -------------------------------------------------
 	md3 loading
 	------------------------------------------------- */
@@ -206,14 +206,14 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 	/* set as md3 */
 	bb = (picoByte_t*) buffer;
 	md3	= (md3_t*) buffer;
-	
+
 	/* check ident and version */
 	if( *((int*) md3->magic) != *((int*) MD3_MAGIC) || _pico_little_long( md3->version ) != MD3_VERSION )
 	{
 		/* not an md3 file (todo: set error) */
 		return NULL;
 	}
-	
+
 	/* swap md3; sea: swaps fixed */
 	md3->version = _pico_little_long( md3->version );
 	md3->numFrames = _pico_little_long( md3->numFrames );
@@ -224,20 +224,20 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 	md3->ofsTags = _pico_little_long( md3->ofsTags );
 	md3->ofsSurfaces = _pico_little_long( md3->ofsSurfaces );
 	md3->ofsEnd = _pico_little_long( md3->ofsEnd );
-	
+
 	/* do frame check */
 	if( md3->numFrames < 1 )
 	{
 		_pico_printf( PICO_ERROR, "MD3 with 0 frames" );
 		return NULL;
 	}
-	
+
 	if( frameNum < 0 || frameNum >= md3->numFrames )
 	{
 		_pico_printf( PICO_ERROR, "Invalid or out-of-range MD3 frame specified" );
 		return NULL;
 	}
-	
+
 	/* swap frames */
 	frame = (md3Frame_t*) (bb + md3->ofsFrames );
 	for( i = 0; i < md3->numFrames; i++, frame++ )
@@ -250,7 +250,7 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			frame->localOrigin[ j ] = _pico_little_float( frame->localOrigin[ j ] );
 		}
 	}
-	
+
 	/* swap surfaces */
 	surface = (md3Surface_t*) (bb + md3->ofsSurfaces);
 	for( i = 0; i < md3->numSurfaces; i++ )
@@ -266,7 +266,7 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 		surface->ofsSt = _pico_little_long( surface->ofsSt );
 		surface->ofsVertexes = _pico_little_long( surface->ofsVertexes );
 		surface->ofsEnd = _pico_little_long( surface->ofsEnd );
-		
+
 		/* swap triangles */
 		triangle = (md3Triangle_t*) ((picoByte_t*) surface + surface->ofsTriangles);
 		for( j = 0; j < surface->numTriangles; j++, triangle++ )
@@ -276,7 +276,7 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			triangle->indexes[ 1 ] = _pico_little_long( triangle->indexes[ 1 ] );
 			triangle->indexes[ 2 ] = _pico_little_long( triangle->indexes[ 2 ] );
 		}
-		
+
 		/* swap st coords */
 		texCoord = (md3TexCoord_t*) ((picoByte_t*) surface + surface->ofsSt);
 		for( j = 0; j < surface->numVerts; j++, texCoord++ )
@@ -284,7 +284,7 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			texCoord->st[ 0 ] = _pico_little_float( texCoord->st[ 0 ] );
 			texCoord->st[ 1 ] = _pico_little_float( texCoord->st[ 1 ] );
 		}
-		
+
 		/* swap xyz/normals */
 		vertex = (md3Vertex_t*) ((picoByte_t*) surface + surface->ofsVertexes);
 		for( j = 0; j < (surface->numVerts * surface->numFrames); j++, vertex++)
@@ -294,15 +294,15 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			vertex->xyz[ 2 ] = _pico_little_short( vertex->xyz[ 2 ] );
 			vertex->normal	 = _pico_little_short( vertex->normal );
 		}
-		
+
 		/* get next surface */
 		surface = (md3Surface_t*) ((picoByte_t*) surface + surface->ofsEnd);
 	}
-	
+
 	/* -------------------------------------------------
 	pico model creation
 	------------------------------------------------- */
-	
+
 	/* create new pico model */
 	picoModel = PicoNewModel();
 	if( picoModel == NULL )
@@ -310,16 +310,16 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 		_pico_printf( PICO_ERROR, "Unable to allocate a new model" );
 		return NULL;
 	}
-	
+
 	/* do model setup */
 	PicoSetModelFrameNum( picoModel, frameNum );
 	PicoSetModelNumFrames( picoModel, md3->numFrames ); /* sea */
 	PicoSetModelName( picoModel, fileName );
 	PicoSetModelFileName( picoModel, fileName );
-	
+
 	/* md3 surfaces become picomodel surfaces */
 	surface = (md3Surface_t*) (bb + md3->ofsSurfaces);
-	
+
 	/* run through md3 surfaces */
 	for( i = 0; i < md3->numSurfaces; i++ )
 	{
@@ -331,13 +331,13 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			PicoFreeModel( picoModel ); /* sea */
 			return NULL;
 		}
-		
+
 		/* md3 model surfaces are all triangle meshes */
 		PicoSetSurfaceType( picoSurface, PICO_TRIANGLES );
-		
+
 		/* set surface name */
 		PicoSetSurfaceName( picoSurface, surface->name );
-		
+
 		/* create new pico shader -sea */
 		picoShader = PicoNewShader( picoModel );
 		if( picoShader == NULL )
@@ -346,31 +346,31 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			PicoFreeModel( picoModel );
 			return NULL;
 		}
-		
+
 		/* detox and set shader name */
 		shader = (md3Shader_t*) ((picoByte_t*) surface + surface->ofsShaders);
 		_pico_setfext( shader->name, "" );
 		_pico_unixify( shader->name );
 		PicoSetShaderName( picoShader, shader->name );
-		
+
 		/* associate current surface with newly created shader */
 		PicoSetSurfaceShader( picoSurface, picoShader );
-		
+
 		/* copy indexes */
 		triangle = (md3Triangle_t *) ((picoByte_t*) surface + surface->ofsTriangles);
-		
+
 		for( j = 0; j < surface->numTriangles; j++, triangle++ )
 		{
 			PicoSetSurfaceIndex( picoSurface, (j * 3 + 0), (picoIndex_t) triangle->indexes[ 0 ] );
 			PicoSetSurfaceIndex( picoSurface, (j * 3 + 1), (picoIndex_t) triangle->indexes[ 1 ] );
 			PicoSetSurfaceIndex( picoSurface, (j * 3 + 2), (picoIndex_t) triangle->indexes[ 2 ] );
 		}
-		
+
 		/* copy vertexes */
 		texCoord = (md3TexCoord_t*) ((picoByte_t *) surface + surface->ofsSt);
 		vertex = (md3Vertex_t*) ((picoByte_t*) surface + surface->ofsVertexes + surface->numVerts * frameNum * sizeof( md3Vertex_t ) );
 		_pico_set_color( color, 255, 255, 255, 255 );
-		
+
 		for( j = 0; j < surface->numVerts; j++, texCoord++, vertex++ )
 		{
 			/* set vertex origin */
@@ -378,7 +378,7 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			xyz[ 1 ] = MD3_SCALE * vertex->xyz[ 1 ];
 			xyz[ 2 ] = MD3_SCALE * vertex->xyz[ 2 ];
 			PicoSetSurfaceXYZ( picoSurface, j, xyz );
-			
+
 			/* decode lat/lng normal to 3 float normal */
 			lat = (float) ((vertex->normal >> 8) & 0xff);
 			lng = (float) (vertex->normal & 0xff);
@@ -388,7 +388,7 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			normal[ 1 ] = (picoVec_t) sin( lat ) * (picoVec_t) sin( lng );
 			normal[ 2 ] = (picoVec_t) cos( lng );
 			PicoSetSurfaceNormal( picoSurface, j, normal );
-			
+
 			/* set st coords */
 			st[ 0 ] = texCoord->st[ 0 ];
 			st[ 1 ] = texCoord->st[ 1 ];
@@ -397,11 +397,11 @@ static picoModel_t *_md3_load( PM_PARAMS_LOAD )
 			/* set color */
 			PicoSetSurfaceColor( picoSurface, 0, j, color );
 		}
-		
+
 		/* get next surface */
 		surface = (md3Surface_t*) ((picoByte_t*) surface + surface->ofsEnd);
 	}
-	
+
 	/* return the new pico model */
 	return picoModel;
 }

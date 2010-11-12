@@ -12,8 +12,8 @@ namespace entity {
 		const Colour4b colour_selected(0, 0, 255, 255);
 	}
 
-/** greebo: This class is wrapped around a Curve class to manage 
- * 			all the selection and transformation operations. 
+/** greebo: This class is wrapped around a Curve class to manage
+ * 			all the selection and transformation operations.
  */
 class CurveEditInstance
 {
@@ -24,14 +24,14 @@ public:
 	    virtual ~ControlPointFunctor() {}
 		virtual void operator()(Vector3& point, const Vector3& original) = 0;
 	};
-	
+
 	class ControlPointConstFunctor
 	{
 	public:
 	    virtual ~ControlPointConstFunctor() {}
 		virtual void operator()(const Vector3& point, const Vector3& original) = 0;
 	};
-	
+
 private:
 	// The associated curve
 	Curve& _curve;
@@ -64,7 +64,7 @@ public:
 	void forEach(ControlPointFunctor& functor);
 	void forEachSelected(ControlPointFunctor& functor);
 	void forEachSelected(ControlPointConstFunctor& functor) const;
-	
+
 	void testSelect(Selector& selector, SelectionTest& test);
 
 	bool isSelected() const;
@@ -75,28 +75,28 @@ public:
 
 	// Transforms the (selected) control points
 	void transform(const Matrix4& matrix, bool selectedOnly = true);
-	
+
 	// Snaps the selected control points to the grid
 	void snapto(float snap);
 
 	void updateSelected() const;
-  
+
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void curveChanged();
-	
+
 	// As the name states, removes the selected control points
 	void removeSelectedControlPoints();
-	
+
 	/** greebo: This inserts a control point BEFORE each
 	 * 			selected control point of the curve.
 	 * 			Naturally, this doesn't work if the first vertex
 	 * 			is selected.
 	 */
 	void insertControlPointsAtSelected();
-	
+
 private:
 	// Returns a list with the iterators to the selected control points.
 	// This is based on the "transformed" working set.

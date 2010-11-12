@@ -10,7 +10,7 @@
 #include "DeflatedArchiveTextFile.h"
 
 ZipArchive::ZipArchive(const std::string& name) :
-	m_name(name), 
+	m_name(name),
 	m_istream(name)
 {
 	if (!m_istream.failed()) {
@@ -21,7 +21,7 @@ ZipArchive::ZipArchive(const std::string& name) :
 }
 
 ZipArchive::~ZipArchive() {
-	for (ZipFileSystem::iterator i = m_filesystem.begin(); 
+	for (ZipFileSystem::iterator i = m_filesystem.begin();
 		 i != m_filesystem.end(); ++i)
 	{
 		delete i->second.file();
@@ -40,7 +40,7 @@ ArchiveFilePtr ZipArchive::openFile(const std::string& name) {
 		m_istream.seek(file->m_position);
 		zip_file_header file_header;
 		istream_read_zip_file_header(m_istream, file_header);
-		
+
 		if (file_header.z_magic != zip_file_header_magic) {
 			globalErrorStream() << "error reading zip file " << m_name.c_str();
 			return ArchiveFilePtr();
@@ -64,7 +64,7 @@ ArchiveTextFilePtr ZipArchive::openTextFile(const std::string& name) {
 		m_istream.seek(file->m_position);
 		zip_file_header file_header;
 		istream_read_zip_file_header(m_istream, file_header);
-		
+
 		if (file_header.z_magic != zip_file_header_magic) {
 			globalErrorStream() << "error reading zip file " << m_name.c_str();
 			return ArchiveTextFilePtr();
@@ -100,7 +100,7 @@ void ZipArchive::forEachFile(VisitorFunc visitor, const std::string& root) {
 bool ZipArchive::read_record() {
 	zip_magic magic;
 	istream_read_zip_magic(m_istream, magic);
-	
+
 	if (!(magic == zip_root_dirent_magic)) {
 		return false;
 	}
@@ -108,7 +108,7 @@ bool ZipArchive::read_record() {
 	istream_read_zip_version(m_istream, version_encoder);
 	zip_version version_extract;
 	istream_read_zip_version(m_istream, version_extract);
-	//unsigned short flags = 
+	//unsigned short flags =
 	istream_read_int16_le(m_istream);
 	unsigned short compression_mode = istream_read_int16_le(m_istream);
 
@@ -119,7 +119,7 @@ bool ZipArchive::read_record() {
 	zip_dostime dostime;
 	istream_read_zip_dostime(m_istream, dostime);
 
-	//unsigned int crc32 = 
+	//unsigned int crc32 =
 	istream_read_int32_le(m_istream);
 
 	unsigned int compressed_size = istream_read_uint32_le(m_istream);
@@ -130,7 +130,7 @@ bool ZipArchive::read_record() {
 
 	//unsigned short diskstart =
 	istream_read_int16_le(m_istream);
-	//unsigned short filetype = 
+	//unsigned short filetype =
 	istream_read_int16_le(m_istream);
 	//unsigned int filemode =
 	istream_read_int32_le(m_istream);
@@ -139,8 +139,8 @@ bool ZipArchive::read_record() {
 
 	// greebo: Read the filename directly into a newly constructed std::string.
 
-	// I'm not entirely happy about this brute-force casting, but I wanted to 
-	// avoid reading the filename into a temporary char[] array 
+	// I'm not entirely happy about this brute-force casting, but I wanted to
+	// avoid reading the filename into a temporary char[] array
 	// only to let its contents end up being copied by the std::string anyway.
 	// Alternative: use a static boost::shared_array here, resized to fit?
 
@@ -154,18 +154,18 @@ bool ZipArchive::read_record() {
 
 	if (path_is_directory(path.c_str())) {
 		m_filesystem[path] = 0;
-	} 
+	}
 	else {
 		ZipFileSystem::entry_type& file = m_filesystem[path];
 		if (!file.is_directory()) {
 			globalOutputStream() << "Warning: zip archive "
 				<< m_name << " contains duplicated file: "
 				<< path << std::endl;
-		} 
+		}
 		else {
-			file = new ZipRecord(position, 
+			file = new ZipRecord(position,
 								 compressed_size,
-								 uncompressed_size, 
+								 uncompressed_size,
 								 (compression_mode == Z_DEFLATED) ? ZipRecord::eDeflated : ZipRecord::eStored);
 		}
 	}
@@ -177,22 +177,22 @@ bool ZipArchive::read_pkzip() {
 	SeekableStream::position_type pos = pkzip_find_disk_trailer(m_istream);
 	if (pos != 0) {
 		zip_disk_trailer disk_trailer;
-		
+
 		m_istream.seek(pos);
 		istream_read_zip_disk_trailer(m_istream, disk_trailer);
-		
+
 		if (!(disk_trailer.z_magic == zip_disk_trailer_magic)) {
 			return false;
 		}
 
 		m_istream.seek(disk_trailer.z_rootseek);
-		
+
 		for (unsigned int i = 0; i < disk_trailer.z_entries; ++i) {
 			if (!read_record()) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 	return false;

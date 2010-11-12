@@ -20,7 +20,7 @@ namespace ce
 KillComponentEditor::RegHelper KillComponentEditor::regHelper;
 
 // Constructor
-KillComponentEditor::KillComponentEditor(Component& component) : 
+KillComponentEditor::KillComponentEditor(Component& component) :
 	_component(&component),
 	_targetCombo(Gtk::manage(new SpecifierEditCombo(SpecifierType::SET_STANDARD_AI())))
 {

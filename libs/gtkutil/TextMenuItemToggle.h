@@ -19,7 +19,7 @@ public:
 	TextMenuItemToggle(const std::string& text)
 		: TextMenuItemMnemonic(text)
 	{}
-	
+
 	// Operator cast to GtkWidget* for packing into a menu
 	virtual operator GtkWidget* () {
 		GtkWidget* menuItem = gtk_check_menu_item_new_with_mnemonic(_label.c_str());

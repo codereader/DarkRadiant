@@ -39,13 +39,13 @@ private:
 public:
 	// Constructor
 	QuerySidesDialog(int numSidesMin, int numSidesMax);
-	
-	/** 
+
+	/**
 	 * greebo: Shows the dialog, returns the number of sides as selected by the user.
 	 * Returns -1 on failure.
 	 */
 	int queryNumberOfSides();
-	
+
 private:
 	// This is called to initialise the dialog window / create the widgets
 	void populateWindow();

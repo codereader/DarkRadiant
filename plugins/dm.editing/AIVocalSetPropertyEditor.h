@@ -1,4 +1,4 @@
-#ifndef AI_VOCAL_SET_PROPERTYEDITOR_H_ 
+#ifndef AI_VOCAL_SET_PROPERTYEDITOR_H_
 #define AI_VOCAL_SET_PROPERTYEDITOR_H_
 
 #include "ientityinspector.h"
@@ -25,13 +25,13 @@ private:
 public:
 	// Default constructor
 	AIVocalSetPropertyEditor();
-	
-	AIVocalSetPropertyEditor(Entity* entity, 
+
+	AIVocalSetPropertyEditor(Entity* entity,
 		const std::string& key, const std::string& options);
 
 	Gtk::Widget& getWidget();
-	
-	IPropertyEditorPtr createNew(Entity* entity, 
+
+	IPropertyEditorPtr createNew(Entity* entity,
 								 const std::string& key,
 								 const std::string& options);
 

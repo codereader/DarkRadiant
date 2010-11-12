@@ -12,20 +12,20 @@ namespace entity {
 ///
 /// - Notifies observers when value changes - value changes to "" on destruction.
 /// - Provides undo support through the global undo system.
-class KeyValue : 
+class KeyValue :
 	public EntityKeyValue,
 	public UndoSystem::Observer
 {
 	typedef std::vector<KeyObserver*> KeyObservers;
 	KeyObservers _observers;
-	
+
 	std::string _value;
 	std::string _emptyValue;
 	ObservedUndoableObject<std::string> _undo;
 
 public:
 	KeyValue(const std::string& value, const std::string& empty);
-	
+
 	~KeyValue();
 
 	void instanceAttach(MapFile* map);
@@ -33,10 +33,10 @@ public:
 
 	void attach(KeyObserver& observer);
 	void detach(KeyObserver& observer);
-	
+
 	// Accessor method, retrieve the actual value
 	const std::string& get() const;
-	
+
 	void assign(const std::string& other);
 
 	void notify();

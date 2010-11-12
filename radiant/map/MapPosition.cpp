@@ -27,7 +27,7 @@ void MapPosition::load(Entity* entity) {
 	// Sanity check
 	if (entity != NULL) {
 		const std::string savedPos = entity->getKeyValue(_posKey);
-				
+
 		if (savedPos != "") {
 			// Construct the vectors out of the std::string
 			_position = Vector3(savedPos);
@@ -71,11 +71,11 @@ bool MapPosition::empty() const {
 void MapPosition::store(const cmd::ArgumentList& args) {
 	globalOutputStream() << "Storing map position #" << _index << std::endl;
 	CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
-	
+
 	if (camwnd != NULL) {
 		_position = camwnd->getCameraOrigin();
 		_angle = camwnd->getCameraAngles();
-		
+
 		// Tag the map as modified
 		GlobalMap().setModified(true);
 	}

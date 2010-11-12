@@ -18,7 +18,7 @@ namespace
 	const char* MISSING_BASEPATH_NODE =
 		"Failed to find \"/game/filesystem/fonts/basepath\" node \
 in game descriptor";
-	 
+
 	const char* MISSING_EXTENSION_NODE =
 		"Failed to find \"/game/filesystem/fonts/extension\" node \
 in game descriptor";
@@ -100,14 +100,14 @@ void FontManager::reloadFonts()
 IFontInfoPtr FontManager::findFontInfo(const std::string& name)
 {
 	FontMap::const_iterator found = _fonts.find(name);
-	
+
 	return (found != _fonts.end()) ? found->second: FontInfoPtr();
 }
 
 FontInfoPtr FontManager::findOrCreateFontInfo(const std::string& name)
 {
 	FontMap::iterator i = _fonts.find(name);
-	
+
 	if (i == _fonts.end())
 	{
 		FontInfoPtr font(new FontInfo(name, _curLanguage));

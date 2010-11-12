@@ -36,7 +36,7 @@ namespace ui
 
 // CONSTANTS
 namespace
-{	
+{
 	const char* const MODELSELECTOR_TITLE = N_("Choose Model");
 	const char* const RKEY_PREVIEW_SIZE_FACTOR = "user/ui/ModelSelector/previewSizeFactor";
 }
@@ -80,22 +80,22 @@ ModelSelector::ModelSelector()
 	// Main window contains a VBox. On the top goes the widgets, the bottom
 	// contains the button panel
 	_vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	
+
 	// Pack the tree view into a VBox above the info panel
 	Gtk::VBox* leftVbx = Gtk::manage(new Gtk::VBox(false, 6));
 	leftVbx->pack_start(createTreeView(), true, true, 0);
 	leftVbx->pack_start(createInfoPanel(), true, true, 0);
-	
+
 	// Pack the left Vbox into an HBox next to the preview widget on the right
 	// The preview gets a Vbox of its own, to stop it from expanding vertically
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
 	hbx->pack_start(*leftVbx, true, true, 0);
-	
+
 	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
 	previewBox->pack_start(*_modelPreview->getWidget(), false, false, 0);
-	
+
 	hbx->pack_start(*previewBox, false, false, 0);
-	
+
 	// Pack widgets into main Vbox above the buttons
 	_vbox->pack_start(*hbx, true, true, 0);
 
@@ -119,7 +119,7 @@ ModelSelector& ModelSelector::Instance()
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new ModelSelector);
-		
+
 		// Register this instance with GlobalRadiant() at once
 		GlobalRadiant().addEventListener(instancePtr);
 	}
@@ -161,11 +161,11 @@ void ModelSelector::_postShow()
 // Show the dialog and enter recursive main loop
 ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
                                                 bool showOptions,
-                                                bool showSkins) 
+                                                bool showSkins)
 {
 	if (!_populated)
 	{
-		// Attempt to construct the static instance. This could throw an 
+		// Attempt to construct the static instance. This could throw an
 		// exception if the population of models is aborted by the user.
 		try
 		{
@@ -178,7 +178,7 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 			return ModelSelectorResult("", "", false);
 		}
 	}
-	
+
 	// Choose the model based on the "showSkins" setting
 	_treeView->set_model(showSkins ? _treeStoreWithSkins : _treeStore);
 
@@ -189,8 +189,8 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 	{
 		// Lookup the model path in the treemodel
 		gtkutil::TreeModel::findAndSelectString(
-			_treeView, 
-			previouslySelected, 
+			_treeView,
+			previouslySelected,
 			_columns.vfspath
 		);
 	}
@@ -200,20 +200,20 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 	_showOptions = showOptions;
 
 	// show and enter recursive main loop. This will block until the dialog is hidden in some way.
-	show(); 
+	show();
 
 	// Reset the preview model to release resources
 	_modelPreview->clear();
 
 	// Construct the model/skin combo and return it
 	return ModelSelectorResult(
-		_lastModel, 
-		_lastSkin, 
+		_lastModel,
+		_lastSkin,
 		_clipCheckButton->get_active()
 	);
 }
 
-// Static function to display the instance, and return the selected model to the 
+// Static function to display the instance, and return the selected model to the
 // calling function
 ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel, bool showOptions, bool showSkins)
 {
@@ -228,7 +228,7 @@ void ModelSelector::refresh()
 }
 
 // Helper function to create the TreeView
-Gtk::Widget& ModelSelector::createTreeView() 
+Gtk::Widget& ModelSelector::createTreeView()
 {
 	// Create the treeview
 	_treeView = Gtk::manage(new Gtk::TreeView(_treeStore));
@@ -236,8 +236,8 @@ Gtk::Widget& ModelSelector::createTreeView()
 
 	// Single visible column, containing the directory/model name and the icon
 	_treeView->append_column(*Gtk::manage(
-		new gtkutil::IconTextColumn(_("Model Path"), _columns.filename, _columns.icon))); 
-	
+		new gtkutil::IconTextColumn(_("Model Path"), _columns.filename, _columns.icon)));
+
 	// Use the TreeModel's full string search function
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
@@ -250,7 +250,7 @@ Gtk::Widget& ModelSelector::createTreeView()
 }
 
 // Populate the tree view with models
-void ModelSelector::populateModels() 
+void ModelSelector::populateModels()
 {
 	// Clear the treestore first
 	_treeStore->clear();
@@ -259,14 +259,14 @@ void ModelSelector::populateModels()
 	// Create a VFSTreePopulator for the treestore
 	gtkutil::VFSTreePopulator pop(_treeStore);
 	gtkutil::VFSTreePopulator popSkins(_treeStoreWithSkins);
-	
+
 	// Use a ModelFileFunctor to add paths to the populator
 	ModelFileFunctor functor(pop, popSkins);
-	GlobalFileSystem().forEachFile(MODELS_FOLDER, 
-								   "*", 
+	GlobalFileSystem().forEachFile(MODELS_FOLDER,
+								   "*",
 								   functor,
 								   0);
-	
+
 	// Fill in the column data (TRUE = including skins)
 	ModelDataInserter inserterSkins(_columns, true);
 	popSkins.forEachNode(inserterSkins);
@@ -274,8 +274,8 @@ void ModelSelector::populateModels()
 	// Insert data into second model (FALSE = without skins)
 	ModelDataInserter inserter(_columns, false);
 	pop.forEachNode(inserter);
-	
-	// Set the flag, we're done	
+
+	// Set the flag, we're done
 	_populated = true;
 }
 
@@ -283,16 +283,16 @@ void ModelSelector::populateModels()
 Gtk::Widget& ModelSelector::createButtons()
 {
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(true, 6));
-	
+
 	Gtk::Button* okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ModelSelector::callbackOK));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ModelSelector::callbackCancel));
-	
+
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
-					   
+
 	return *Gtk::manage(new gtkutil::RightAlignment(*hbx));
 }
 
@@ -300,7 +300,7 @@ Gtk::Widget& ModelSelector::createButtons()
 Gtk::Widget& ModelSelector::createAdvancedButtons()
 {
 	_advancedOptions = Gtk::manage(new Gtk::Expander(_("Advanced")));
-	
+
 	_clipCheckButton = Gtk::manage(new Gtk::CheckButton(_("Create MonsterClip Brush")));
 
 	_advancedOptions->add(*_clipCheckButton);
@@ -314,7 +314,7 @@ Gtk::Widget& ModelSelector::createInfoPanel()
 	// Info table. Has key and value columns.
 	Gtk::TreeView* infTreeView = Gtk::manage(new Gtk::TreeView(_infoStore));
 	infTreeView->set_headers_visible(false);
-	
+
 	infTreeView->append_column(*Gtk::manage(
 		new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)
 	));
@@ -346,13 +346,13 @@ void ModelSelector::updateSelected()
 {
 	// Prepare to populate the info table
 	_infoStore->clear();
-	
+
 	// Get the model name, if this is blank we are looking at a directory,
 	// so leave the table empty
 	std::string mName = getSelectedValue(_columns.vfspath.index());
 	if (mName.empty())
 		return;
-	
+
 	// Get the skin if set
 	std::string skinName = getSelectedValue(_columns.skin.index());
 
@@ -360,13 +360,13 @@ void ModelSelector::updateSelected()
 	_modelPreview->setModel(mName);
 	_modelPreview->setSkin(skinName);
 
-	// Check that the model is actually valid by querying the IModelPtr 
+	// Check that the model is actually valid by querying the IModelPtr
 	// returned from the preview widget.
 	model::IModelPtr mdl = _modelPreview->getModel();
 	if (!mdl) {
 		return; // no valid model
 	}
-	
+
 	// Update the text in the info table
 	Gtk::TreeModel::Row row = *_infoStore->append();
 
@@ -376,7 +376,7 @@ void ModelSelector::updateSelected()
 	row = *_infoStore->append();
 	row[_infoStoreColumns.attribute] = std::string(_("Skin name"));
 	row[_infoStoreColumns.value] = skinName;
-				   
+
 	row = *_infoStore->append();
 	row[_infoStoreColumns.attribute] = std::string(_("Total vertices"));
 	row[_infoStoreColumns.value] = intToStr(mdl->getVertexCount());
@@ -391,7 +391,7 @@ void ModelSelector::updateSelected()
 
 	// Add the list of active materials
 	const model::MaterialList& matList(mdl->getActiveMaterials());
-	
+
 	if (!matList.empty())
 	{
 		model::MaterialList::const_iterator i = matList.begin();

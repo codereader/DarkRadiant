@@ -2,7 +2,7 @@
 #define IGRID_H_
 
 /* greebo: The interface of the grid system
- * 
+ *
  * Use these methods to set/get the grid size of the xyviews
  */
 
@@ -32,12 +32,12 @@ class IGridManager :
 public:
 	virtual void setGridSize(GridSize gridSize) = 0;
 	virtual float getGridSize() const = 0;
-	
+
 	virtual int getGridPower() const = 0;
-	
+
 	virtual void gridDown() = 0;
 	virtual void gridUp() = 0;
-	
+
 	typedef boost::function<void()> GridChangedFunc;
 	virtual std::size_t addGridChangeCallback(const GridChangedFunc& callback) = 0;
 }; // class IGridManager

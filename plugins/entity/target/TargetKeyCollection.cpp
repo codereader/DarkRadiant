@@ -5,7 +5,7 @@
 namespace entity {
 
 void TargetKeyCollection::forEachTarget(Visitor& visitor) const {
-	for (TargetKeyMap::const_iterator i = _targetKeys.begin(); 
+	for (TargetKeyMap::const_iterator i = _targetKeys.begin();
 		 i != _targetKeys.end(); i++)
 	{
 		visitor.visit(i->second.getTarget());
@@ -25,13 +25,13 @@ bool TargetKeyCollection::isTargetKey(const std::string& key) {
 void TargetKeyCollection::onKeyInsert(const std::string& key, EntityKeyValue& value) {
 	// ignore non-target keys
 	if (!isTargetKey(key)) {
-		return; 
+		return;
 	}
 
 	TargetKeyMap::iterator i = _targetKeys.insert(
 		TargetKeyMap::value_type(key, entity::TargetKey())
 	).first;
-	
+
 	i->second.attachToKeyValue(value);
 }
 
@@ -39,11 +39,11 @@ void TargetKeyCollection::onKeyInsert(const std::string& key, EntityKeyValue& va
 void TargetKeyCollection::onKeyErase(const std::string& key, EntityKeyValue& value) {
 	// ignore non-target keys
 	if (!isTargetKey(key)) {
-		return; 
+		return;
 	}
 
 	TargetKeyMap::iterator i = _targetKeys.find(key);
-	
+
 	// This must be found
 	assert(i != _targetKeys.end());
 

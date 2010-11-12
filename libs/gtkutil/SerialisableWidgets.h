@@ -82,14 +82,14 @@ typedef boost::shared_ptr<SerialisableTextEntryWrapper> SerialisableTextEntryWra
 /**
  * Gtk::SpinButton object which implements StringSerialisable.
  */
-class SerialisableSpinButton : 
+class SerialisableSpinButton :
 	public Gtk::SpinButton,
 	public StringSerialisable
 {
 public:
 	// Main constructor
-	SerialisableSpinButton(double value, 
-						   double min, double max, 
+	SerialisableSpinButton(double value,
+						   double min, double max,
 						   double step, guint digits);
 
 	/* StringSerialisable implementation */
@@ -216,7 +216,7 @@ public:
 typedef boost::shared_ptr<SerialisableCheckButtonWrapper> SerialisableCheckButtonWrapperPtr;
 
 // Base class for serialisable combo boxes (text or index)
-class SerialisableComboBox : 
+class SerialisableComboBox :
 	public Gtk::ComboBoxText,
 	public StringSerialisable
 {
@@ -229,10 +229,10 @@ typedef boost::shared_ptr<SerialisableComboBox> SerialisableComboBoxPtr;
 
 /**
  * \brief
- * StringSerialisable combo box (text values) which saves the 
+ * StringSerialisable combo box (text values) which saves the
  * selected value as a numeric index.
  */
-class SerialisableComboBox_Index : 
+class SerialisableComboBox_Index :
 	public SerialisableComboBox
 {
 public:
@@ -265,7 +265,7 @@ typedef boost::shared_ptr<SerialisableComboBox_IndexWrapper> SerialisableComboBo
  * \brief
  * Serialisable combo box which saves the selected value as a text string.
  */
-class SerialisableComboBox_Text : 
+class SerialisableComboBox_Text :
 	public SerialisableComboBox
 {
 public:

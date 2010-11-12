@@ -9,11 +9,11 @@ public:
 	static double& x(Triple& triple) {
 		return triple.x();
 	}
-	
+
 	static double& y(Triple& triple) {
 		return triple.y();
 	}
-	
+
 	static double& z(Triple& triple) {
 		return triple.z();
 	}
@@ -25,11 +25,11 @@ public:
 	static double& x(Triple& triple) {
 		return triple.y();
 	}
-	
+
 	static double& y(Triple& triple) {
 		return triple.z();
 	}
-	
+
 	static double& z(Triple& triple) {
 		return triple.x();
 	}
@@ -45,7 +45,7 @@ public:
 	static double& y(Triple& triple) {
 		return triple.x();
 	}
-	
+
 	static double& z(Triple& triple) {
 		return triple.y();
 	}

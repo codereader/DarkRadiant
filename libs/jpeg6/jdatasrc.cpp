@@ -83,7 +83,7 @@ fill_input_buffer (j_decompress_ptr cinfo)
 {
   my_src_ptr src = (my_src_ptr) cinfo->src;
   size_t nbytes;
- 
+
   if (src->src_size > INPUT_BUF_SIZE)
     nbytes = INPUT_BUF_SIZE;
   else

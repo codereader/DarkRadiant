@@ -25,22 +25,22 @@ public:
 	enum MessageType
 	{
         /// Just a plain message with an OK button
-		MESSAGE_CONFIRM,		
+		MESSAGE_CONFIRM,
 
         // Queries Yes//No from the user
-		MESSAGE_ASK,			
+		MESSAGE_ASK,
 
         /// Displays a warning message
-		MESSAGE_WARNING,		
+		MESSAGE_WARNING,
 
         /// Displays an error message
-		MESSAGE_ERROR,			
+		MESSAGE_ERROR,
 
         /// Has three options: Yes, No or Cancel
-		MESSAGE_YESNOCANCEL,	
+		MESSAGE_YESNOCANCEL,
 
         /// Save confirmation as per HIG 2.32/3.4.6.1
-        MESSAGE_SAVECONFIRMATION 
+        MESSAGE_SAVECONFIRMATION
 	};
 
 	// Sets the dialog title
@@ -94,7 +94,7 @@ public:
 
 	/**
 	 * Create a new dialog. Note that the DialogManager will hold a reference
-	 * to this dialog internally to allow scripts to reference the Dialog class 
+	 * to this dialog internally to allow scripts to reference the Dialog class
 	 * without holding the shared_ptr on their own or using wrapper classes doing so.
 	 *
 	 * Every dialog features an OK and a Cancel button by default.
@@ -104,7 +104,7 @@ public:
 	 * @parent: optional top-level widget this dialog should be parented to, defaults to
 	 *			GlobalMainFrame().getMainWindow().
 	 */
-	virtual IDialogPtr createDialog(const std::string& title, 
+	virtual IDialogPtr createDialog(const std::string& title,
 									const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
 
 	/**
@@ -119,8 +119,8 @@ public:
 	 *			GlobalMainFrame().getMainWindow().
 	 */
 	virtual IDialogPtr createMessageBox(const std::string& title,
-                                        const std::string& text, 
-										IDialog::MessageType type, 
+                                        const std::string& text,
+										IDialog::MessageType type,
 										const Glib::RefPtr<Gtk::Window>& parent = Glib::RefPtr<Gtk::Window>()) = 0;
 
 	/**
@@ -130,11 +130,11 @@ public:
 	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
 	 * @browseFolders: if TRUE this is asking for folders, not files.
 	 * @pattern: the type "map", "prefab", this determines the file extensions.
-	 * @defaultExt: The default extension appended when the user enters 
+	 * @defaultExt: The default extension appended when the user enters
 	 *              filenames without extension.
  	 */
-	virtual ui::IFileChooserPtr createFileChooser(const std::string& title, 
-												bool open, bool browseFolders, 
+	virtual ui::IFileChooserPtr createFileChooser(const std::string& title,
+												bool open, bool browseFolders,
 												const std::string& pattern = "",
 												const std::string& defaultExt = "") = 0;
 };

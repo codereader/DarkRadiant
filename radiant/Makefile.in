@@ -38,7 +38,14 @@ bin_PROGRAMS = darkradiant$(EXEEXT)
 subdir = radiant
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/m4/po.m4 $(top_srcdir)/m4/progtest.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -452,7 +459,7 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -I$(libsdir) \
               $(GTKMM_CFLAGS) $(GTKGLEXTMM_CFLAGS) $(XML_CFLAGS) $(GTKSOURCEVIEWMM_CFLAGS)
 
-darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
+darkradiant_CPPFLAGS = $(AM_CPPFLAGS)
 darkradiant_LDFLAGS = $(GTKMM_LIBS) \
                       $(GTKGLEXTMM_LIBS) \
                       $(XML_LIBS) \
@@ -665,7 +672,7 @@ darkradiant_SOURCES = main.cpp \
                       log/LogFile.cpp \
                       referencecache/ModelCache.cpp \
                       referencecache/NullModel.cpp \
-                      referencecache/NullModelNode.cpp 
+                      referencecache/NullModelNode.cpp
 
 all: all-am
 
@@ -680,9 +687,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign radiant/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu radiant/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign radiant/Makefile
+	  $(AUTOMAKE) --gnu radiant/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -744,7 +751,7 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-darkradiant$(EXEEXT): $(darkradiant_OBJECTS) $(darkradiant_DEPENDENCIES) 
+darkradiant$(EXEEXT): $(darkradiant_OBJECTS) $(darkradiant_DEPENDENCIES)
 	@rm -f darkradiant$(EXEEXT)
 	$(AM_V_CXXLD)$(darkradiant_LINK) $(darkradiant_OBJECTS) $(darkradiant_LDADD) $(LIBS)
 

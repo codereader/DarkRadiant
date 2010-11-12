@@ -5,7 +5,7 @@
 #include "PatchTesselation.h"
 
 /* greebo: These are the renderables that are used in the PatchNode/Patch class to
- * draw the patch onto the screen. 
+ * draw the patch onto the screen.
  */
 
 class RenderablePatchWireframe : public OpenGLRenderable
@@ -39,7 +39,7 @@ public:
 		}
 
         n += (m_tess.arrayHeight[i]*m_tess.m_nArrayWidth);
-      
+
       }
     }
 
@@ -89,7 +89,7 @@ public:
 
 //#define PATCHES_USE_VBO
 
-class RenderablePatchSolid : 
+class RenderablePatchSolid :
 	public OpenGLRenderable
 {
 	PatchTesselation& m_tess;

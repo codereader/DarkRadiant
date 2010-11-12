@@ -16,7 +16,7 @@ class ClassNameStore :
 	private EntityClassVisitor
 {
 public:
-	struct ListStoreColumns : 
+	struct ListStoreColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListStoreColumns() { add(classname); }

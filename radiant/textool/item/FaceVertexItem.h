@@ -22,12 +22,12 @@ class FaceVertexItem :
 
 public:
 	// Constructor, allocates all child FacItems
-	FaceVertexItem(Face& sourceFace, WindingVertex& windingVertex, FaceItem& parent); 
+	FaceVertexItem(Face& sourceFace, WindingVertex& windingVertex, FaceItem& parent);
 
     // destructor
 	virtual ~FaceVertexItem() {}
 
-	/** 
+	/**
 	 * greebo: Saves the undoMemento of this face,
 	 * so that the operation can be undone later.
 	 */
@@ -47,8 +47,8 @@ private:
 
 	// Returns the bounds in UV space of the whole winding
 	AABB getTexAABB();
-}; 
-	
+};
+
 } // namespace textool
 
 #endif /* FACE_VERTEX_ITEM_H_ */

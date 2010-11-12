@@ -92,39 +92,39 @@ bool ClosestTexturableFinder::pre(const scene::INodePtr& node) {
 		return false;
 	}
 
-	// Check if this node is an entity	
+	// Check if this node is an entity
 	bool isEntity = Node_isEntity(node);
-	
+
 	// Check if the node is an entity
 	if (!isEntity) {
 		// Test the instance for a brush
 		Brush* brush = Node_getBrush(node);
-		
+
 		if (brush != NULL) {
 			// Construct the selectiontest
 			_selectionTest.BeginMesh(node->localToWorld());
-			
+
 			// Cycle through all the faces
-			for (Brush::const_iterator i = brush->begin(); 
-				 i != brush->end(); 
-				 ++i) 
+			for (Brush::const_iterator i = brush->begin();
+				 i != brush->end();
+				 ++i)
 			{
 				// Check for filtered faces, don't select them
 				if (!GlobalFilterSystem().isVisible("texture", (*i)->getShader())) {
 					continue;
 				}
-				
+
 				// Test the face for selection
 				SelectionIntersection intersection;
 				(*i)->testSelect(_selectionTest, intersection);
-				
+
 				// Any intersection found / is it better than the previous one?
-				if (intersection.valid() && 
-					SelectionIntersection_closer(intersection, _bestIntersection)) 
+				if (intersection.valid() &&
+					SelectionIntersection_closer(intersection, _bestIntersection))
 				{
 					// Yes, store this as new best intersection
 					_bestIntersection = intersection;
-					
+
 					// Save the face and the parent brush
 					_texturable.face = (*i).get();
 					_texturable.brush = brush;
@@ -136,15 +136,15 @@ bool ClosestTexturableFinder::pre(const scene::INodePtr& node) {
 		else {
 			// No brush, test for a patch
 			SelectionTestablePtr selectionTestable = Node_getSelectionTestable(node);
-			
+
 			if (selectionTestable != NULL) {
 				bool occluded;
 				OccludeSelector selector(_bestIntersection, occluded);
 				selectionTestable->testSelect(selector, _selectionTest);
-				
+
 				if (occluded) {
 					_texturable = Texturable();
-					
+
 					Patch* patch = Node_getPatch(node);
 					if (patch != NULL) {
 						// Check for filtered patches
@@ -163,10 +163,10 @@ bool ClosestTexturableFinder::pre(const scene::INodePtr& node) {
 		// Is an entity, don't traverse it, if it isn't a group node
 		return node_is_group(node);
 	}
-	
+
 	// Return TRUE, traverse this subgraph
 	return true;
 }
-		
+
 } // namespace algorithm
 } // namespace selection

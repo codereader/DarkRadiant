@@ -18,13 +18,13 @@ namespace ui {
 		{
 			return boost::dynamic_pointer_cast<Nameable>(node);
 		}
-		
+
 		inline std::string node_get_name(const scene::INodePtr& node)
 		{
 			NameablePtr nameable = Node_getNameable(node);
 			return (nameable != NULL) ? nameable->name() : "node";
 		}
-	
+
 		// Checks for NULL references and returns "" if node is NULL
 		inline std::string node_get_name_safe(const scene::INodePtr& node)
 		{
@@ -57,7 +57,7 @@ const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node)
 {
 	// Create a new GraphTreeNode
 	GraphTreeNodePtr gtNode(new GraphTreeNode(node));
-	
+
 	// Insert this iterator below a possible parent iterator
 	Gtk::TreeModel::iterator parentIter = findParentIter(node);
 
@@ -68,12 +68,12 @@ const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node)
 
 	row[_columns.node] = node.get();
 	row[_columns.name] = getNodeCaption(node);
-	
+
 	// Insert this iterator into the node map to facilitate lookups
 	std::pair<NodeMap::iterator, bool> result = _nodemap.insert(
 		NodeMap::value_type(scene::INodeWeakPtr(node), gtNode)
 	);
-	
+
 	// Return the GraphTreeNode reference
 	return result.first->second;
 }
@@ -81,12 +81,12 @@ const GraphTreeNodePtr& GraphTreeModel::insert(const scene::INodePtr& node)
 void GraphTreeModel::erase(const scene::INodePtr& node)
 {
 	NodeMap::iterator found = _nodemap.find(scene::INodeWeakPtr(node));
-	
-	if (found != _nodemap.end()) 
+
+	if (found != _nodemap.end())
 	{
 		// Remove this from the GtkTreeStore...
 		_model->erase(found->second->getIter());
-		
+
 		// ...and from our lookup table
 		_nodemap.erase(found);
 	}
@@ -122,19 +122,19 @@ void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection
 void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node)
 {
 	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(node));
-	
+
 	if (found != _nodemap.end())
 	{
 		if (Node_isSelected(node))
 		{
 			// Select the row in the TreeView
 			selection->select(found->second->getIter());
-		
+
 			// Scroll to the row
 			Gtk::TreeView* tv = selection->get_tree_view();
-			
+
 			Gtk::TreeModel::Path selectedPath(found->second->getIter());
-			
+
 			tv->expand_to_path(selectedPath);
 			tv->scroll_to_row(selectedPath, 0.3f);
 		}
@@ -148,16 +148,16 @@ void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection
 const GraphTreeNodePtr& GraphTreeModel::findParentNode(const scene::INodePtr& node) const
 {
 	scene::INodePtr parent = node->getParent();
-		
+
 	if (parent == NULL)
 	{
 		// No parent, return the NULL pointer
 		return _nullTreeNode;
 	}
-	
+
 	// Try to find the node
 	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(parent));
-	
+
 	// Return NULL (empty shared_ptr) if not found
 	return (found != _nodemap.end()) ? found->second : _nullTreeNode;
 }

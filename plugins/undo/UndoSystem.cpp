@@ -2,9 +2,9 @@
 
 /* greebo: The RadiantUndoSystem (interface: iundo.h) is maintaining an internal
  * stack of UndoCommands that contains the pointers to the Undoables as well as
- * to their UndoMementos. 
- * 
- * On undo, the Undoables are called to re-import the states stored in the UndoMementos.  
+ * to their UndoMementos.
+ *
+ * On undo, the Undoables are called to re-import the states stored in the UndoMementos.
  */
 #include "imodule.h"
 #include "i18n.h"
@@ -33,7 +33,7 @@ namespace {
 	const std::string RKEY_UNDO_QUEUE_SIZE = "user/ui/undo/queueSize";
 }
 
-class RadiantUndoSystem : 
+class RadiantUndoSystem :
 	public UndoSystem,
 	public RegistryKeyObserver
 {
@@ -50,7 +50,7 @@ class RadiantUndoSystem :
 
 	typedef std::map<Undoable*, UndoStackFiller> UndoablesMap;
 	UndoablesMap _undoables;
-	
+
 	std::size_t _undoLevels;
 
 	typedef std::set<UndoTracker*> Trackers;
@@ -58,8 +58,8 @@ class RadiantUndoSystem :
 
 public:
 	// Constructor
-	RadiantUndoSystem() : 
-		_undoLevels(64) 
+	RadiantUndoSystem() :
+		_undoLevels(64)
 	{}
 
 	virtual ~RadiantUndoSystem() {
@@ -203,7 +203,7 @@ public:
 		_redoStack.clear();
 		trackersClear();
 
-		// greebo: This is called on map shutdown, so don't clear the observers, 
+		// greebo: This is called on map shutdown, so don't clear the observers,
 		// there are some "persistent" observers like EntityInspector and ShaderClipboard
 	}
 
@@ -211,7 +211,7 @@ public:
 	{
 		// Ensure no observer is added twice
 		assert(std::find(_observers.begin(), _observers.end(), observer) == _observers.end());
-		
+
 		// Observers are added to the end of the list
 		_observers.push_back(observer);
 	}
@@ -262,7 +262,7 @@ public:
 			(*i)->redo();
 		}
 	}
-	
+
 	// Gets called by the PreferenceSystem as request to create the according settings page
 	void constructPreferences() {
 		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
@@ -302,10 +302,10 @@ public:
 		GlobalEventManager().addCommand("Redo", "Redo");
 
 		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
-		
+
 		// Add self to the key observers to get notified on change
 		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);
-		
+
 		// add the preference settings
 		constructPreferences();
 	}
@@ -338,10 +338,10 @@ typedef boost::shared_ptr<RadiantUndoSystem> RadiantUndoSystemPtr;
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
 	registry.registerModule(undo::RadiantUndoSystemPtr(new undo::RadiantUndoSystem));
-	
+
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
-	
+
 	// Remember the reference to the ModuleRegistry
 	module::RegistryReference::Instance().setRegistry(registry);
 

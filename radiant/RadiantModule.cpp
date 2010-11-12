@@ -54,7 +54,7 @@ void RadiantModule::addEventListener(const RadiantEventListenerPtr& listener)
 {
 	_eventListeners.insert(RadiantEventListenerWeakPtr(listener));
 }
-	
+
 void RadiantModule::removeEventListener(const RadiantEventListenerPtr& listener)
 {
 	EventListenerList::iterator found = _eventListeners.find(
@@ -65,7 +65,7 @@ void RadiantModule::removeEventListener(const RadiantEventListenerPtr& listener)
 		_eventListeners.erase(found);
 	}
 }
-	
+
 // Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
 void RadiantModule::broadcastShutdownEvent()
 {
@@ -121,7 +121,7 @@ const std::string& RadiantModule::getName() const
 const StringSet& RadiantModule::getDependencies() const
 {
 	static StringSet _dependencies;
-	
+
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
@@ -131,17 +131,17 @@ const StringSet& RadiantModule::getDependencies() const
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_CLIPPER);
 	}
-	
+
 	return _dependencies;
 }
 
 void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "RadiantModule::initialiseModule called." << std::endl;
-	
+
 	// Reset the node id count
   	scene::Node::resetIds();
-  	
+
     map::PointFile::Instance().registerCommands();
     MainFrame_Construct();
 	ui::MediaBrowser::registerPreferences();
@@ -153,14 +153,14 @@ void RadiantModule::initialiseModule(const ApplicationContext& ctx)
 void RadiantModule::shutdownModule()
 {
 	globalOutputStream() << "RadiantModule::shutdownModule called." << std::endl;
-	
+
 	GlobalFileSystem().shutdown();
 
 	map::PointFile::Instance().destroy();
 	ui::OverlayDialog::destroy();
 	ui::TextureBrowser::destroy();
-    
-    // Remove all the event listeners, otherwise the shared_ptrs 
+
+    // Remove all the event listeners, otherwise the shared_ptrs
     // lock the instances. This is just for safety, usually all
 	// EventListeners get cleared upon OnRadiantShutdown anyway.
     _eventListeners.clear();

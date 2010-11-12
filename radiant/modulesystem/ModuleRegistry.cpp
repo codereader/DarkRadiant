@@ -18,16 +18,16 @@ namespace {
 	// Stream insertion operator for the set of dependencies
 	std::ostream& operator<<(std::ostream& st, const StringSet& set) {
 		st << "(";
-		
+
 		std::string output("");
-		
+
 		for (StringSet::const_iterator i = set.begin(); i != set.end(); i++) {
 			output += (!output.empty()) ? ", " : ""; // delimiter
 			output += *i;
 		}
-		
+
 		st << output;
-		
+
 		st << ")";
 		return st;
 	}
@@ -44,38 +44,38 @@ ModuleRegistry::ModuleRegistry() :
 void ModuleRegistry::unloadModules() {
 	_uninitialisedModules.clear();
 	_initialisedModules.clear();
-	
+
 	Loader::unloadModules();
 }
 
 void ModuleRegistry::registerModule(RegisterableModulePtr module) {
 	assert(module); // don't take NULL module pointers
-	
+
 	if (_modulesInitialised) {
 		// The train has left, this module is registered too late
 		throw std::logic_error(
-			"ModuleRegistry: module " + module->getName() + 
+			"ModuleRegistry: module " + module->getName() +
 			" registered after initialisation."
 		);
 	}
-	
-	// Add this module to the list of uninitialised ones 
+
+	// Add this module to the list of uninitialised ones
 	std::pair<ModulesMap::iterator, bool> result = _uninitialisedModules.insert(
 		ModulesMap::value_type(module->getName(), module)
 	);
 
-	// Don't allow modules with the same name being added twice 
+	// Don't allow modules with the same name being added twice
 	if (!result.second) {
 		throw std::logic_error(
 			"ModuleRegistry: multiple modules named " + module->getName()
 		);
 	}
-	
+
 	globalOutputStream() << "Module registered: " << module->getName() << std::endl;
 }
 
 // Initialise the module (including dependencies, if necessary)
-void ModuleRegistry::initialiseModuleRecursive(const std::string& name) 
+void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 {
 	// Check if the module exists at all
 	if (_uninitialisedModules.find(name) == _uninitialisedModules.end()) {
@@ -83,43 +83,43 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 			"ModuleRegistry: Module doesn't exist: " + name + "\n"
 		);
 	}
-	
+
 	// Check if the module is already initialised
 	if (_initialisedModules.find(name) != _initialisedModules.end()) {
 		//std::cout << "Module " << name << " already initialised.\n";
 		return;
 	}
-	
+
 	// Tag this module as "ready" by inserting it into the initialised list.
 	_initialisedModules.insert(
 		ModulesMap::value_type(name, _uninitialisedModules[name])
 	);
-	
+
 	globalOutputStream() << "ModuleRegistry: "
-                         << "preparing to initialise module: " 
+                         << "preparing to initialise module: "
                          << name << std::endl;
-	
+
 	// Create a shortcut to the module
 	RegisterableModulePtr module = _uninitialisedModules[name];
 	const StringSet& dependencies = module->getDependencies();
 
     // Debug builds should ensure that the dependencies don't reference the
-    // module itself directly 
+    // module itself directly
     assert(dependencies.find(name) == dependencies.end());
-	
+
 	// Initialise the dependencies first
-	for (StringSet::const_iterator i = dependencies.begin(); 
+	for (StringSet::const_iterator i = dependencies.begin();
 		 i != dependencies.end(); ++i)
 	{
-        globalOutputStream() << "   " << name << " needs dependency " 
+        globalOutputStream() << "   " << name << " needs dependency "
                              << *i << std::endl;
 		initialiseModuleRecursive(*i);
 	}
 
 	_progress = 0.1f + (static_cast<float>(_initialisedModules.size())/_uninitialisedModules.size())*0.65f;
-	
+
 	ui::Splash::Instance().setProgressAndText(
-		(boost::format(_("Initialising Module: %s")) % name).str(), 
+		(boost::format(_("Initialising Module: %s")) % name).str(),
 		_progress);
 
     globalOutputStream() << "ModuleRegistry: dependencies satisfied, "
@@ -127,7 +127,7 @@ void ModuleRegistry::initialiseModuleRecursive(const std::string& name)
 
 	// Initialise the module itself, now that the dependencies are ready
 	module->initialiseModule(_context);
-	
+
 	globalOutputStream() << "=> Module " << name << " initialised." << std::endl;
 }
 
@@ -147,7 +147,7 @@ void ModuleRegistry::initialiseModules() {
 		// (this will return immediately if the module is already initialised).
 		initialiseModuleRecursive(i->first);
 	}
-	
+
 	// Make sure this isn't called again
 	_modulesInitialised = true;
 }
@@ -156,14 +156,14 @@ void ModuleRegistry::shutdownModules() {
 	if (_modulesShutdown) {
 		throw std::logic_error("ModuleRegistry: shutdownModules called twice.");
 	}
-	
+
 	for (ModulesMap::iterator i = _initialisedModules.begin();
 		 i != _initialisedModules.end(); i++)
 	{
 		//std::cout << "Shutting down module: " << i->first << "\n";
 		i->second->shutdownModule();
 	}
-	
+
 	// Free all the shared ptrs
 	unloadModules();
 
@@ -178,21 +178,21 @@ bool ModuleRegistry::moduleExists(const std::string& name) const {
 
 // Get the module
 RegisterableModulePtr ModuleRegistry::getModule(const std::string& name) const {
-	
+
 	// The return value (NULL) by default
 	RegisterableModulePtr returnValue;
-	
+
 	// Try to find the module
 	ModulesMap::const_iterator found = _initialisedModules.find(name);
 	if (found != _initialisedModules.end()) {
 		returnValue = found->second;
 	}
-	
+
 	if (returnValue == NULL) {
-		std::cerr << "ModuleRegistry: Warning! Module with name " 
+		std::cerr << "ModuleRegistry: Warning! Module with name "
 		          << name << " requested but not found!" << std::endl;
 	}
-	
+
 	return returnValue;
 }
 
@@ -211,14 +211,14 @@ void ModuleRegistry::initErrorHandler()
 
 std::string ModuleRegistry::getModuleList(const std::string& separator) {
 	std::string returnValue;
-	
-	for (ModulesMap::const_iterator i = _initialisedModules.begin(); 
+
+	for (ModulesMap::const_iterator i = _initialisedModules.begin();
 		 i != _initialisedModules.end(); i++)
 	{
 		returnValue += (returnValue.empty()) ? "" : separator;
 		returnValue += i->first;
 	}
-	
+
 	return returnValue;
 }
 

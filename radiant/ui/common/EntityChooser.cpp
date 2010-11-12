@@ -53,7 +53,7 @@ EntityChooser::EntityChooser() :
 
 	_selection = treeView->get_selection();
 	_selection->signal_changed().connect(sigc::mem_fun(*this, &EntityChooser::onSelectionChanged));
-	
+
 	// Scrolled Frame
 	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*treeView)), true, true, 0);
 
@@ -98,7 +98,7 @@ std::string EntityChooser::ChooseEntity(const std::string& preSelectedEntity)
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 
 	dlg.set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
-	
+
 	// Instantiate a new chooser class
 	EntityChooserPtr chooser(new EntityChooser);
 	chooser->setSelectedEntity(preSelectedEntity);
@@ -119,21 +119,21 @@ std::string EntityChooser::ChooseEntity(const std::string& preSelectedEntity)
 
 void EntityChooser::populateEntityList()
 {
-	struct EntityFinder: 
+	struct EntityFinder:
 		public scene::NodeVisitor
 	{
         // List store to add to
         Glib::RefPtr<Gtk::ListStore> _store;
 
 		EntityChooserColumns& _columns;
-        
+
         // Constructor
 		EntityFinder(const Glib::RefPtr<Gtk::ListStore>& store,
 					 EntityChooserColumns& columns) :
 			_store(store),
 			_columns(columns)
 		{}
-            
+
         // Visit function
         bool pre(const scene::INodePtr& node)
 		{
@@ -147,10 +147,10 @@ void EntityChooser::populateEntityList()
 
 				// Append the name to the list store
 				Gtk::TreeModel::Row row = *_store->append();
-                
+
 				row[_columns.name] = entName;
             }
-            
+
             return false; // don't traverse deeper, we're traversing root children
         }
     } finder(_entityStore, _listColumns);

@@ -44,14 +44,14 @@ private:
 	ObjectivesListColumns _objectiveColumns;
 	Glib::RefPtr<Gtk::ListStore> _objectiveList;
 	Gtk::TreeView* _objList;
-	
+
 	// Pointer to the worldspawn entity
 	Entity* _worldSpawn;
-	
-	// Map of ObjectiveEntity objectives, indexed by the name of the world 
+
+	// Map of ObjectiveEntity objectives, indexed by the name of the world
 	// entity
 	ObjectiveEntityMap _entities;
-	
+
 	// Iterators for current entity and current objective
 	ObjectiveEntityMap::iterator _curEntity;
 	Gtk::TreeModel::iterator _curObjective;
@@ -74,16 +74,16 @@ private:
 
 private:
 
-	// Constructor creates widgets	
+	// Constructor creates widgets
 	ObjectivesEditor();
-	
+
 	// Widget construction helpers
 	Gtk::Widget& createEntitiesPanel();
 	Gtk::Widget& createObjectivesPanel();
 	Gtk::Widget& createObjectiveEditPanel();
 	Gtk::Widget& createLogicPanel();
-	Gtk::Widget& createButtons();	
-	
+	Gtk::Widget& createButtons();
+
 	// gtkmm callbacks
 	void _onCancel();
 	void _onOK();
@@ -99,11 +99,11 @@ private:
 	void _onDeleteObjective();
 	void _onClearObjectives();
 	void _onEditLogic();
-	
+
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
 	void populateActiveAtStart();
-	
+
 	// Refresh the objectives list from the currently-selected ObjectiveEntity
 	void refreshObjectivesList();
 
@@ -115,9 +115,9 @@ private:
 
 	virtual void _preHide();
 	virtual void _preShow();
-	
+
 public:
-	
+
 	/**
 	 * Static method to display the Objectives Editor dialog.
 	 */

@@ -11,7 +11,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	_light(_entity,
 		   *this,
-		   Callback(boost::bind(&scene::Node::transformChanged, this)), 
+		   Callback(boost::bind(&scene::Node::transformChanged, this)),
 		   Callback(boost::bind(&scene::Node::boundsChanged, this)),
 		   Callback(boost::bind(&LightNode::lightChanged, this))),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1))),
@@ -29,7 +29,7 @@ LightNode::LightNode(const LightNode& other) :
 	_light(other._light,
 		   *this,
            _entity,
-           Callback(boost::bind(&Node::transformChanged, this)), 
+           Callback(boost::bind(&Node::transformChanged, this)),
 		   Callback(boost::bind(&Node::boundsChanged, this)),
 		   Callback(boost::bind(&LightNode::lightChanged, this))),
 	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1))),
@@ -61,16 +61,16 @@ void LightNode::snapto(float snap) {
 
 AABB LightNode::getSelectAABB() {
 	AABB returnValue = _light.lightAABB();
-	
+
 	default_extents(returnValue.extents);
-	
+
 	return returnValue;
 }
 
 /*greebo: This is a callback function that gets connected in the constructor
 * Don't know exactly what it does, but it seems to notify the shader cache that the light has moved or
 * something like that.
-*/ 
+*/
 void LightNode::lightChanged() {
 	GlobalRenderSystem().lightChanged(*this);
 }
@@ -122,7 +122,7 @@ void LightNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	if (mode == SelectionSystem::eFace) {
 		m_dragPlanes.setSelected(false);
 	}
-    
+
 	if (mode == SelectionSystem::eVertex) {
 		_lightCenterInstance.setSelected(false);
 		_lightTargetInstance.setSelected(false);
@@ -136,11 +136,11 @@ void LightNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
 	// Get the Origin of the Light Volume AABB (NOT the localAABB() which includes the light center)
 	Vector3 lightOrigin = _light.lightAABB().origin;
-  	
+
 	Matrix4 local2World = Matrix4::getTranslation(lightOrigin);
-  	
+
 	test.BeginMesh(local2World);
-  	
+
 	if (mode == SelectionSystem::eVertex) {
 		if (_light.isProjected()) {
 			// Test the projection components for selection
@@ -151,7 +151,7 @@ void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, Se
 			_lightEndInstance.testSelect(selector, test);
 		}
 		else {
-			// Test if the light center is hit by the click 
+			// Test if the light center is hit by the click
 			_lightCenterInstance.testSelect(selector, test);
 		}
 	}
@@ -190,12 +190,12 @@ void LightNode::snapComponents(float snap) {
 			if (_lightUpInstance.isSelected()) {
 				vector3_snap(_light.upTransformed(), snap);
 			}
-			
+
 			if (_light.useStartEnd()) {
 				if (_lightEndInstance.isSelected()) {
 					vector3_snap(_light.endTransformed(), snap);
 				}
-				
+
 				if (_lightStartInstance.isSelected()) {
 					vector3_snap(_light.startTransformed(), snap);
 				}
@@ -206,7 +206,7 @@ void LightNode::snapComponents(float snap) {
 			vector3_snap(_light.targetTransformed(), snap);
 			vector3_snap(_light.rightTransformed(), snap);
 			vector3_snap(_light.upTransformed(), snap);
-			
+
 			if (_light.useStartEnd()) {
 				vector3_snap(_light.endTransformed(), snap);
 				vector3_snap(_light.startTransformed(), snap);
@@ -214,7 +214,7 @@ void LightNode::snapComponents(float snap) {
 		}
 	}
 	else {
-		// There is only one vertex for point lights, namely the light_center, always snap it 
+		// There is only one vertex for point lights, namely the light_center, always snap it
 		vector3_snap(_light.getDoom3Radius().m_centerTransformed, snap);
 	}
 
@@ -247,8 +247,8 @@ void LightNode::selectedChangedComponent(const Selectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
-/* greebo: This is the method that gets called by renderer.h. It passes the call 
- * on to the Light class render methods. 
+/* greebo: This is the method that gets called by renderer.h. It passes the call
+ * on to the Light class render methods.
  */
 void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
@@ -257,7 +257,7 @@ void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	// Pass through to wireframe render
 	renderWireframe(collector, volume);
 }
-  
+
 void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
@@ -266,11 +266,11 @@ void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 	_light.renderWireframe(
 		collector, volume, localToWorld(), lightIsSelected
 	);
-	
+
 	renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
-// Renders the components of this light instance 
+// Renders the components of this light instance
 void LightNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const {
 	// Render the components (light center) as selected/deselected, if we are in the according mode
 	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
@@ -281,22 +281,22 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 			Vector3 colourStartEndDeselected = ColourSchemes().getColour("light_startend_deselected");
 			Vector3 colourVertexSelected = ColourSchemes().getColour("light_vertex_selected");
 			Vector3 colourVertexDeselected = ColourSchemes().getColour("light_vertex_deselected");
-			
+
 			// Update the colour of the light center dot
 			const_cast<Light&>(_light).colourLightTarget() = (_lightTargetInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
 			const_cast<Light&>(_light).colourLightRight() = (_lightRightInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
 			const_cast<Light&>(_light).colourLightUp() = (_lightUpInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
-				
+
 			const_cast<Light&>(_light).colourLightStart() = (_lightStartInstance.isSelected()) ? colourStartEndSelected : colourStartEndDeselected;
 			const_cast<Light&>(_light).colourLightEnd() = (_lightEndInstance.isSelected()) ? colourStartEndSelected : colourStartEndDeselected;
-			
+
 			// Render the projection points
 			_light.renderProjectionPoints(collector, volume, localToWorld());
 		}
 		else {
 			// A point light
-			
-			// Update the colour of the light center dot 
+
+			// Update the colour of the light center dot
 			if (_lightCenterInstance.isSelected()) {
 				const_cast<Light&>(_light).getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_selected"));
 				_light.renderLightCentre(collector, volume, localToWorld());
@@ -311,9 +311,9 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 
 void LightNode::renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const
 {
-	// greebo: We are not in component selection mode (and the light is still selected), 
+	// greebo: We are not in component selection mode (and the light is still selected),
 	// check if we should draw the center of the light anyway
-	if (selected 
+	if (selected
 		&& GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex
 		&& EntitySettings::InstancePtr()->alwaysShowLightVertices())
 	{
@@ -322,16 +322,16 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 			// Cache registry values to reduce number of queries
 			Vector3 colourStartEndInactive = ColourSchemes().getColour("light_startend_deselected");
 			Vector3 colourVertexInactive = ColourSchemes().getColour("light_vertex_normal");
-			
+
 			const_cast<Light&>(_light).colourLightStart() = colourStartEndInactive;
 			const_cast<Light&>(_light).colourLightEnd() = colourStartEndInactive;
 			const_cast<Light&>(_light).colourLightTarget() = colourVertexInactive;
 			const_cast<Light&>(_light).colourLightRight() = colourVertexInactive;
 			const_cast<Light&>(_light).colourLightUp() = colourVertexInactive;
-			
+
 			// Render the projection points
 			_light.renderProjectionPoints(collector, volume, localToWorld());
-		} 
+		}
 		else
 		{
 			const_cast<Light&>(_light).getDoom3Radius().setCenterColour(ColourSchemes().getColour("light_vertex_normal"));
@@ -346,45 +346,45 @@ void LightNode::evaluateTransform() {
 		_light.rotate(getRotation());
 	}
 	else {
-		// Check if the light center is selected, if yes, transform it, if not, it's a drag plane operation 
+		// Check if the light center is selected, if yes, transform it, if not, it's a drag plane operation
 		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
 			if (_lightCenterInstance.isSelected()) {
 				// Retrieve the translation and apply it to the temporary light center variable
-				// This adds the translation vector to the previous light origin 
-				_light.getDoom3Radius().m_centerTransformed = 
+				// This adds the translation vector to the previous light origin
+				_light.getDoom3Radius().m_centerTransformed =
 										_light.getDoom3Radius().m_center + getTranslation();
 			}
-			
+
 			if (_lightTargetInstance.isSelected()) {
 				// Delegate the work to the Light class
 				_light.translateLightTarget(getTranslation());
 			}
-			
+
 			if (_lightRightInstance.isSelected()) {
 				// Save the new light_right vector
 				_light.rightTransformed() = _light.right() + getTranslation();
 			}
-			
+
 			if (_lightUpInstance.isSelected()) {
 				// Save the new light_up vector
 				_light.upTransformed() = _light.up() + getTranslation();
 			}
-			
+
 			if (_lightStartInstance.isSelected()) {
 				// Delegate the work to the Light class (including boundary checks)
 				_light.translateLightStart(getTranslation());
 			}
-			
+
 			if (_lightEndInstance.isSelected()) {
 				// Save the new light_up vector
 				_light.endTransformed() = _light.end() + getTranslation();
 			}
-			
+
 			// If this is a projected light, then it is likely for the according vertices to have changed, so update the projection
 			if (_light.isProjected()) {
 				// Call projection changed, so that the recalculation can be triggered (call for projection() would be ignored otherwise)
 				_light.projectionChanged();
-				
+
 				// Recalculate the frustum
 				_light.projection();
 			}

@@ -14,7 +14,7 @@ BooleanPropertyEditor::BooleanPropertyEditor() :
 {}
 
 // Constructor. Create the GTK widgets here
-BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity, 
+BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity,
 											 const std::string& name)
 : PropertyEditor(entity),
   _checkBox(NULL),
@@ -25,7 +25,7 @@ BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity,
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
-	
+
 	Gtk::HBox* editBox = Gtk::manage(new Gtk::HBox(false, 3));
 	editBox->set_border_width(3);
 
@@ -34,7 +34,7 @@ BooleanPropertyEditor::BooleanPropertyEditor(Entity* entity,
 	_checkBox = Gtk::manage(new Gtk::CheckButton(name));
 	_checkBox->set_active(_entity->getKeyValue(_key) == "1");
 	_checkBox->signal_toggled().connect(sigc::mem_fun(*this, &BooleanPropertyEditor::_onToggle));
-	
+
 	editBox->pack_start(*_checkBox, true, false, 0);
 	mainVBox->pack_start(*editBox, true, true, 0);
 }

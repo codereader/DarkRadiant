@@ -23,11 +23,11 @@ private:
 
 	// The helper class counting the shaders in the map
 	map::ShaderBreakdown _shaderBreakdown;
-	
+
 	Gtk::Label* _shaderCount;
-	
+
 	// Treemodel definition
-	struct ListColumns : 
+	struct ListColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListColumns() { add(shader); add(faceCount); add(patchCount); }
@@ -38,7 +38,7 @@ private:
 	};
 
 	ListColumns _columns;
-	
+
 	// The treeview containing the above liststore
 	Glib::RefPtr<Gtk::ListStore> _listStore;
 	Gtk::TreeView* _treeView;
@@ -52,7 +52,7 @@ public:
 
 	std::string getLabel();
 	std::string getIconName();
-	
+
 private:
 	// This is called to create the widgets
 	void populateTab();

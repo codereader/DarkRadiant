@@ -128,7 +128,7 @@ namespace os {
 
 // returns true if succeeded in creating directory
 inline bool makeDirectory(const std::string& name) {
-	return _mkdir(name.c_str()) != -1; 
+	return _mkdir(name.c_str()) != -1;
 }
 
 } // namespace os
@@ -141,7 +141,7 @@ namespace os {
 
 // returns true if succeeded in creating directory
 inline bool makeDirectory(const std::string& name) {
-	return mkdir(name.c_str(), access_rwxrwxr_x) != -1; 
+	return mkdir(name.c_str(), access_rwxrwxr_x) != -1;
 }
 
 } // namespace os

@@ -37,15 +37,15 @@
 namespace objectives
 {
 
-// CONSTANTS 
+// CONSTANTS
 namespace {
 
 	const char* const DIALOG_TITLE = N_("Mission Objectives");
-	
+
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	const std::string RKEY_OBJECTIVE_ENTS = "game/objectivesEditor//objectivesEClass";
-	
+
 	inline std::string makeBold(const std::string& input)
 	{
 		return "<b>" + input + "</b>";
@@ -61,7 +61,7 @@ ObjectivesEditor::ObjectivesEditor() :
 	// Window properties
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 	set_border_width(12);
-    
+
     // Window size
 	Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
 
@@ -89,7 +89,7 @@ ObjectivesEditor::ObjectivesEditor() :
 
 	// Connect the window position tracker
 	_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-	
+
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
 
@@ -108,7 +108,7 @@ Gtk::Widget& ObjectivesEditor::createEntitiesPanel()
 {
 	// Hbox containing the entity list and the buttons vbox
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
-	
+
 	// Tree view listing the target_addobjectives entities
 	_entityList = Gtk::manage(new Gtk::TreeView(_objectiveEntityList));
 
@@ -116,34 +116,34 @@ Gtk::Widget& ObjectivesEditor::createEntitiesPanel()
 
 	_entityList->get_selection()->signal_changed().connect(
 		sigc::mem_fun(*this, &ObjectivesEditor::_onEntitySelectionChanged));
-	
+
 	// Active-at-start column (checkbox)
 	Gtk::CellRendererToggle* startToggle = Gtk::manage(new Gtk::CellRendererToggle);
 	startToggle->signal_toggled().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onStartActiveCellToggled));
-	
+
 	Gtk::TreeViewColumn* startCol = Gtk::manage(new Gtk::TreeViewColumn(_("Start")));
 	startCol->add_attribute(startToggle->property_active(), _objEntityColumns.startActive);
-	
+
 	_entityList->append_column(*startCol);
-	
+
 	// Name column
 	_entityList->append_column(*Gtk::manage(new gtkutil::TextColumn("", _objEntityColumns.displayName)));
-	
+
 	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_entityList)), true, true, 0);
-					   
+
 	// Vbox for the buttons
 	Gtk::VBox* buttonBox = Gtk::manage(new Gtk::VBox(false, 6));
-	
+
 	Gtk::Button* addButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
 	addButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onAddEntity));
 
 	_delEntityButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
 	_delEntityButton->set_sensitive(false); // disabled at start
 	_delEntityButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onDeleteEntity));
-	
+
 	buttonBox->pack_start(*addButton, true, true, 0);
 	buttonBox->pack_start(*_delEntityButton, true, true, 0);
-					   
+
 	hbx->pack_start(*buttonBox, false, false, 0);
 
 	return *hbx;
@@ -158,7 +158,7 @@ Gtk::Widget& ObjectivesEditor::createObjectivesPanel()
 
 	_objList->get_selection()->signal_changed().connect(
 		sigc::mem_fun(*this, &ObjectivesEditor::_onObjectiveSelectionChanged));
-	
+
 	// Key and value text columns
 	_objList->append_column(*Gtk::manage(
 		new gtkutil::TextColumn("#", _objectiveColumns.objNumber, false)));
@@ -166,37 +166,37 @@ Gtk::Widget& ObjectivesEditor::createObjectivesPanel()
 		new gtkutil::TextColumn(_("Description"), _objectiveColumns.description, false)));
 	_objList->append_column(*Gtk::manage(
 		new gtkutil::TextColumn(_("Diff."), _objectiveColumns.difficultyLevel, false)));
-	
+
 	// Beside the list is an vbox containing add, edit, delete and clear buttons
 	_objButtonPanel = Gtk::manage(new Gtk::VBox(false, 6));
-    
+
     // Buttons panel box is disabled by default, enabled once an Entity is
     // selected.
     _objButtonPanel->set_sensitive(false);
 
-	Gtk::Button* addButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD)); 
+	Gtk::Button* addButton = Gtk::manage(new Gtk::Button(Gtk::Stock::ADD));
 	addButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onAddObjective));
 
-	_editObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT)); 
-	_editObjButton->set_sensitive(false); // not enabled without selection 
+	_editObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::EDIT));
+	_editObjButton->set_sensitive(false); // not enabled without selection
 	_editObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onEditObjective));
 
 	_moveUpObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::GO_UP));
-	_moveUpObjButton->set_sensitive(false); // not enabled without selection 
+	_moveUpObjButton->set_sensitive(false); // not enabled without selection
 	_moveUpObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onMoveUpObjective));
 
 	_moveDownObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::GO_DOWN));
-	_moveDownObjButton->set_sensitive(false); // not enabled without selection 
+	_moveDownObjButton->set_sensitive(false); // not enabled without selection
 	_moveDownObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onMoveDownObjective));
 
 	_delObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::DELETE));
-	_delObjButton->set_sensitive(false); // not enabled without selection 
+	_delObjButton->set_sensitive(false); // not enabled without selection
 	_delObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onDeleteObjective));
-	
+
 	_clearObjButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CLEAR));
 	_clearObjButton->set_sensitive(false); // requires >0 objectives
 	_clearObjButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onClearObjectives));
-	
+
 	_objButtonPanel->pack_start(*addButton, false, false, 0);
 	_objButtonPanel->pack_start(*_editObjButton, false, false, 0);
 	_objButtonPanel->pack_start(*_moveUpObjButton, false, false, 0);
@@ -206,10 +206,10 @@ Gtk::Widget& ObjectivesEditor::createObjectivesPanel()
 
 	// Pack the list and the buttons into an hbox
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
-	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_objList)), true, true, 0); 
+	hbx->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_objList)), true, true, 0);
 	hbx->pack_start(*_objButtonPanel, false, false, 0);
 
-	return *hbx; 
+	return *hbx;
 }
 
 Gtk::Widget& ObjectivesEditor::createLogicPanel()
@@ -217,7 +217,7 @@ Gtk::Widget& ObjectivesEditor::createLogicPanel()
 	_logicPanel = Gtk::manage(new Gtk::HBox(false, 6));
 	_logicPanel->set_sensitive(false);
 
-	Gtk::Button* editLogicButton = Gtk::manage(new Gtk::Button(_("Edit mission success/failure logic..."))); 
+	Gtk::Button* editLogicButton = Gtk::manage(new Gtk::Button(_("Edit mission success/failure logic...")));
 	editLogicButton->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::EDIT, Gtk::ICON_SIZE_BUTTON)));
 
 	editLogicButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onEditLogic));
@@ -236,7 +236,7 @@ Gtk::Widget& ObjectivesEditor::createButtons()
 
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onCancel));
 	okButton->signal_clicked().connect(sigc::mem_fun(*this, &ObjectivesEditor::_onOK));
-	
+
 	hbx->pack_end(*okButton, true, true, 0);
 	hbx->pack_end(*cancelButton, true, true, 0);
 
@@ -265,10 +265,10 @@ void ObjectivesEditor::populateWidgets()
 	// entities to the liststore and entity map
 	ObjectiveEntityFinder finder(_objectiveEntityList,
 								 _objEntityColumns,
-								 _entities, 
+								 _entities,
 								 _objectiveEClasses);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
-	
+
 	// Set the worldspawn entity and populate the active-at-start column
 	_worldSpawn = finder.getWorldSpawn();
 	if (_worldSpawn != NULL)
@@ -282,7 +282,7 @@ void ObjectivesEditor::populateActiveAtStart()
 {
 	// Construct the list of entities targeted by the worldspawn
 	TargetList targets(_worldSpawn);
-	
+
 	// Iterate through each row in the entity list. For each Entity*, get its
 	// name and check if the worldspawn entity has a "target" key for this
 	// entity name. This indicates that the objective entity will be active at
@@ -294,7 +294,7 @@ void ObjectivesEditor::populateActiveAtStart()
 		std::string name = Glib::ustring((*i)[_objEntityColumns.entityName]);
 
 		ObjectiveEntityPtr obj = _entities[name];
-		
+
 		// Test if the worldspawn is targeting this entity by passing the
 		// target list to the objective entity.
 		if (obj->isOnTargetList(targets))
@@ -322,11 +322,11 @@ void ObjectivesEditor::_preShow()
 }
 
 // Static method to display dialog
-void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args) 
+void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args)
 {
 	// Create a new dialog instance
 	ObjectivesEditor _instance;
-	
+
 	try {
 		// Show the instance
 		_instance.show();
@@ -334,7 +334,7 @@ void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args)
 	catch (ObjectivesException& e)
 	{
 		gtkutil::errorDialog(
-			std::string(_("Exception occurred: ")) + e.what(), 
+			std::string(_("Exception occurred: ")) + e.what(),
 			GlobalMainFrame().getTopLevelWindow()
 		);
 
@@ -346,12 +346,12 @@ void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args)
 }
 
 // Refresh the objectives list from the ObjectiveEntity
-void ObjectivesEditor::refreshObjectivesList() 
+void ObjectivesEditor::refreshObjectivesList()
 {
 	// Clear and refresh the objective list
 	_objectiveList->clear();
 	_curEntity->second->populateListStore(_objectiveList, _objectiveColumns);
-	
+
 	// If there is at least one objective, make the Clear button available
 	if (_curEntity->second->isEmpty())
 	{
@@ -387,9 +387,9 @@ void ObjectivesEditor::_onOK()
 		 i != _entities.end();
 		 ++i)
 	{
-		i->second->writeToEntity();		
-	} 
-	
+		i->second->writeToEntity();
+	}
+
 	// Close the window
 	destroy();
 }
@@ -399,7 +399,7 @@ void ObjectivesEditor::_onStartActiveCellToggled(const Glib::ustring& path)
 {
 	// Get the relevant row
 	Gtk::TreeModel::iterator iter = _objectiveEntityList->get_iter(path);
-	
+
 	// Toggle the state of the column
 	bool current = (*iter)[_objEntityColumns.startActive];
 	(*iter)[_objEntityColumns.startActive] = !current;
@@ -410,26 +410,26 @@ void ObjectivesEditor::_onEntitySelectionChanged()
 {
 	// Clear the objectives list
 	_objectiveList->clear();
-	
+
 	// Get the selection
 	Gtk::TreeModel::iterator iter = _entityList->get_selection()->get_selected();
-	
-	if (iter) 
+
+	if (iter)
     {
 		// Get name of the entity and find the corresponding ObjectiveEntity in
 		// the map
 		std::string name = Glib::ustring((*iter)[_objEntityColumns.entityName]);
-		
+
 		// Save the current selection and refresh the objectives list
 		_curEntity = _entities.find(name);
 		refreshObjectivesList();
-		
+
 		// Enable the delete button and objectives panel
 		_delEntityButton->set_sensitive(true);
 		_logicPanel->set_sensitive(true);
         _objButtonPanel->set_sensitive(true);
 	}
-	else 
+	else
     {
 		// No selection, disable the delete button and clear the objective
 		// panel
@@ -445,7 +445,7 @@ void ObjectivesEditor::_onObjectiveSelectionChanged()
 	// Get the selection
 	_curObjective = _objList->get_selection()->get_selected();
 
-	if (_curObjective) 
+	if (_curObjective)
     {
 		// Enable the edit and delete buttons
 		_editObjButton->set_sensitive(true);
@@ -463,7 +463,7 @@ void ObjectivesEditor::_onObjectiveSelectionChanged()
 		_moveUpObjButton->set_sensitive(hasPrev);
 		_moveDownObjButton->set_sensitive(hasNext);
 	}
-	else 
+	else
     {
 		// Disable the edit, delete and move buttons
 		_editObjButton->set_sensitive(false);
@@ -489,25 +489,25 @@ void ObjectivesEditor::_onAddEntity()
 	const std::string& objEClass = _objectiveEClasses.front();
 
 	// Obtain the entity class object
-	IEntityClassPtr eclass = 
+	IEntityClassPtr eclass =
 		GlobalEntityClassManager().findClass(objEClass);
-		
-    if (eclass) 
+
+    if (eclass)
     {
         // Construct a Node of this entity type
         scene::INodePtr node(GlobalEntityCreator().createEntity(eclass));
-        
+
         // Create a random offset
         Node_getEntity(node)->setKeyValue("origin", RandomOrigin::generate(128));
-        
+
         // Insert the node into the scene graph
         assert(GlobalSceneGraph().root());
         GlobalSceneGraph().root()->addChildNode(node);
-        
+
         // Refresh the widgets
         populateWidgets();
     }
-    else 
+    else
     {
         // Objective entityclass was not found
         gtkutil::errorDialog(
@@ -522,8 +522,8 @@ void ObjectivesEditor::_onDeleteEntity()
 {
 	// Get the selection
 	Gtk::TreeModel::iterator iter = _entityList->get_selection()->get_selected();
-	
-	if (iter) 
+
+	if (iter)
 	{
 		// Get the name of the selected entity
 		std::string name = Glib::ustring((*iter)[_objEntityColumns.entityName]);
@@ -543,7 +543,7 @@ void ObjectivesEditor::_onAddObjective()
 {
 	// Add a new objective to the ObjectiveEntity and refresh the list store
 	_curEntity->second->addObjective();
-	refreshObjectivesList();	
+	refreshObjectivesList();
 }
 
 // Edit an existing objective
@@ -565,7 +565,7 @@ void ObjectivesEditor::_onMoveUpObjective()
 	// Pass the call to the general method
 	_curEntity->second->moveObjective(index, -1);
 
-	refreshObjectivesList();	
+	refreshObjectivesList();
 }
 
 void ObjectivesEditor::_onMoveDownObjective()
@@ -584,10 +584,10 @@ void ObjectivesEditor::_onDeleteObjective()
 {
 	// Get the index of the current objective
 	int index = (*_curObjective)[_objectiveColumns.objNumber];
-					   
+
 	// Tell the ObjectiveEntity to delete this objective
 	_curEntity->second->deleteObjective(index);
-	
+
 	// Repopulate the objective list
 	refreshObjectivesList();
 }

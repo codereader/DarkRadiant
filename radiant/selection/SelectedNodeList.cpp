@@ -4,17 +4,17 @@ const scene::INodePtr& SelectedNodeList::ultimate() {
 	if (size() == 0) {
 		return end()->first; // return invalid iterator
 	}
-	
+
 	std::size_t latestTime(0);
 	iterator latest;
-	
+
 	for (iterator i = begin(); i != end(); i++) {
 		if (i->second > latestTime) {
 			latestTime = i->second;
 			latest = i;
 		}
 	}
-	
+
 	return latest->first;
 }
 
@@ -22,17 +22,17 @@ const scene::INodePtr& SelectedNodeList::ultimate() const {
 	if (size() == 0) {
 		return end()->first; // return invalid iterator
 	}
-	
+
 	std::size_t latestTime(0);
 	const_iterator latest;
-	
+
 	for (const_iterator i = begin(); i != end(); i++) {
 		if (i->second > latestTime) {
 			latestTime = i->second;
 			latest = i;
 		}
 	}
-	
+
 	return latest->first;
 }
 
@@ -40,17 +40,17 @@ const scene::INodePtr& SelectedNodeList::penultimate() const {
 	if (size() <= 1) {
 		return end()->first; // return invalid iterator
 	}
-	
+
 	std::size_t ultimateTime(0);
 	std::size_t penUltimateTime(0);
 	const_iterator ultimate;
 	const_iterator penUltimate;
-	
+
 	for (const_iterator i = begin(); i != end(); i++) {
 		if (i->second > ultimateTime) {
 			penUltimateTime = ultimateTime;
 			penUltimate = ultimate;
-			
+
 			ultimateTime = i->second;
 			ultimate = i;
 		}
@@ -59,7 +59,7 @@ const scene::INodePtr& SelectedNodeList::penultimate() const {
 			penUltimate = i;
 		}
 	}
-	
+
 	return penUltimate->first;
 }
 
@@ -67,17 +67,17 @@ const scene::INodePtr& SelectedNodeList::penultimate() {
 	if (size() <= 1) {
 		return end()->first; // return invalid iterator
 	}
-	
+
 	std::size_t ultimateTime(0);
 	std::size_t penUltimateTime(0);
 	iterator ultimate;
 	iterator penUltimate;
-	
+
 	for (iterator i = begin(); i != end(); i++) {
 		if (i->second > ultimateTime) {
 			penUltimateTime = ultimateTime;
 			penUltimate = ultimate;
-			
+
 			ultimateTime = i->second;
 			ultimate = i;
 		}
@@ -86,7 +86,7 @@ const scene::INodePtr& SelectedNodeList::penultimate() {
 			penUltimate = i;
 		}
 	}
-	
+
 	return penUltimate->first;
 }
 
@@ -98,7 +98,7 @@ void SelectedNodeList::append(const scene::INodePtr& selected) {
 void SelectedNodeList::erase(const scene::INodePtr& selected) {
 	iterator last;
 	std::size_t lastTime(0);
-	
+
 	// Lookup the instance selected last
 	for (iterator it = MapType::find(selected);
 		 it != upper_bound(selected) && it != end();
@@ -109,9 +109,9 @@ void SelectedNodeList::erase(const scene::INodePtr& selected) {
 			lastTime = it->second;
 		}
 	}
-	
+
 	assert(last != end());
-	
+
 	// Remove the element selected last, leave the others
 	MapType::erase(last);
 }

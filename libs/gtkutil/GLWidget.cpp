@@ -91,7 +91,7 @@ int config_rgba_depth[] = {
   Gdk::GL::ATTRIB_LIST_NONE,
 };
 
-const config_t configs_with_depth[] = 
+const config_t configs_with_depth[] =
 {
   {
     "colour-buffer = 32bpp, depth-buffer = 32bpp",
@@ -125,7 +125,7 @@ GLWidget::GLWidget(bool zBuffer, const std::string& debugName) :
 	_zBuffer(zBuffer)
 {
 #ifdef DEBUG_GL_WIDGETS
-    std::cout << "GLWidget: constructed with name '" << debugName << "'" 
+    std::cout << "GLWidget: constructed with name '" << debugName << "'"
               << std::endl;
 #endif
 
@@ -152,12 +152,12 @@ void GLWidget::queueDraw()
 Glib::RefPtr<Gdk::GL::Config> GLWidget::createGLConfigWithDepth()
 {
 	Glib::RefPtr<Gdk::GL::Config> glconfig;
-	
-	for (configs_iterator i = configs_with_depth, end = configs_with_depth + 6; 
+
+	for (configs_iterator i = configs_with_depth, end = configs_with_depth + 6;
 		 i != end; ++i)
 	{
 		glconfig = Gdk::GL::Config::create(i->attribs);
-		
+
 		if (glconfig)
 		{
 			globalOutputStream() << "OpenGL window configuration: " << i->name << std::endl;
@@ -176,7 +176,7 @@ Glib::RefPtr<Gdk::GL::Config>GLWidget::createGLConfig()
 	for (configs_iterator i = configs, end = configs + 2; i != end; ++i)
 	{
 		glconfig = Gdk::GL::Config::create(i->attribs);
-		
+
 		if (glconfig)
 		{
 			globalOutputStream() << "OpenGL window configuration: " << i->name << std::endl;
@@ -188,7 +188,7 @@ Glib::RefPtr<Gdk::GL::Config>GLWidget::createGLConfig()
 	return Gdk::GL::Config::create(Gdk::GL::MODE_RGBA | Gdk::GL::MODE_DOUBLE);
 }
 
-bool GLWidget::makeCurrent(Gtk::Widget& widget) 
+bool GLWidget::makeCurrent(Gtk::Widget& widget)
 {
 #ifdef DEBUG_GL_WIDGETS
     std::cout << "GLWidget: widget '" << widget.get_name()
@@ -200,7 +200,7 @@ bool GLWidget::makeCurrent(Gtk::Widget& widget)
 	return gldrawable->gl_begin(glcontext);
 }
 
-void GLWidget::swapBuffers(Gtk::Widget& widget) 
+void GLWidget::swapBuffers(Gtk::Widget& widget)
 {
 #ifdef DEBUG_GL_WIDGETS
     std::cout << "GLWidget: widget '" << gtk_widget_get_name(widget)
@@ -232,7 +232,7 @@ void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
 	}
 }
 
-void GLWidget::onRealise() 
+void GLWidget::onRealise()
 {
 	GlobalOpenGL().registerGLWidget(this);
 }

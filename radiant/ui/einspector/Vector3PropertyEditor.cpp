@@ -22,7 +22,7 @@ namespace ui
 Vector3PropertyEditor::Vector3PropertyEditor() {}
 
 // Constructor. Create the GTK widgets here
-Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity, 
+Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity,
 											 const std::string& name)
 : PropertyEditor(entity),
   _key(name)
@@ -48,7 +48,7 @@ Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity,
     // Add the spin buttons to the HBox with labels
 	editBox->pack_start(*Gtk::manage(new Gtk::Label(_("X: "))), false, false, 0);
 	editBox->pack_start(*_xValue, true, true, 0);
-	
+
     editBox->pack_start(*Gtk::manage(new Gtk::Label(_(" Y: "))), false, false, 0);
     editBox->pack_start(*_yValue, true, true, 0);
 
@@ -62,10 +62,10 @@ Vector3PropertyEditor::Vector3PropertyEditor(Entity* entity,
 	Gtk::Button* applyButton = Gtk::manage(new Gtk::Button(Gtk::Stock::APPLY));
 	applyButton->signal_clicked().connect(
 		sigc::mem_fun(*this, &Vector3PropertyEditor::_onApply));
-	
+
 	mainVBox->pack_end(*Gtk::manage(new gtkutil::RightAlignment(*applyButton)),
 					   false, false, 0);
-					   
+
 	// Populate the spin boxes from the keyvalue
 	setWidgetsFromKey(_entity->getKeyValue(name));
 }
@@ -77,32 +77,32 @@ void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)
     std::stringstream stream(val);
     std::vector<float> values;
     float buf;
-    
+
     while (stream >> buf)
         values.push_back(buf);
-    
+
     // Set the Gtk widgets
     if (values.size() == 3)
 	{
 		_xValue->set_value(values[0]);
 		_yValue->set_value(values[1]);
 		_zValue->set_value(values[2]);
-    }        
+    }
 }
 
 void Vector3PropertyEditor::_onApply()
 {
 	using boost::lexical_cast;
 	using std::string;
-	
+
 	// Construct a text value out of the vector components
 	std::string value =
-		lexical_cast<string>(_xValue->get_value()) 
+		lexical_cast<string>(_xValue->get_value())
 		+ " "
-		+ lexical_cast<string>(_yValue->get_value())  
+		+ lexical_cast<string>(_yValue->get_value())
 		+ " "
 		+ lexical_cast<string>(_zValue->get_value());
-	
+
 	// Set the key on the entity
 	setKeyValue(_key, value);
 }

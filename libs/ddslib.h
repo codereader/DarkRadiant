@@ -1,6 +1,6 @@
 /* -----------------------------------------------------------------------------
 
-DDS Library 
+DDS Library
 
 Based on code from Nvidia's DDS example:
 http://www.nvidia.com/object/dxtc_decompression_code.html
@@ -20,7 +20,7 @@ other materials provided with the distribution.
 
 Neither the names of the copyright holders nor the names of its contributors may
 be used to endorse or promote products derived from this software without
-specific prior written permission. 
+specific prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -102,7 +102,7 @@ typedef struct ddsColorKey_s
 {
 	unsigned int		colorSpaceLowValue;
 	unsigned int		colorSpaceHighValue;
-} 
+}
 ddsColorKey_t;
 
 
@@ -112,7 +112,7 @@ typedef struct ddsCaps_s
 	unsigned int		caps2;
 	unsigned int		caps3;
 	unsigned int		caps4;
-} 
+}
 ddsCaps_t;
 
 
@@ -175,25 +175,25 @@ typedef struct ddsPixelFormat_s
 ddsPixelFormat_t;
 
 //  DDS header flags
-#define DDSD_CAPS         0x00000001 
-#define DDSD_HEIGHT       0x00000002 
-#define DDSD_WIDTH        0x00000004 
-#define DDSD_PITCH        0x00000008 
-#define DDSD_PIXELFORMAT  0x00001000 
-#define DDSD_MIPMAPCOUNT  0x00020000 
-#define DDSD_LINEARSIZE   0x00080000 
-#define DDSD_DEPTH        0x00800000 
+#define DDSD_CAPS         0x00000001
+#define DDSD_HEIGHT       0x00000002
+#define DDSD_WIDTH        0x00000004
+#define DDSD_PITCH        0x00000008
+#define DDSD_PIXELFORMAT  0x00001000
+#define DDSD_MIPMAPCOUNT  0x00020000
+#define DDSD_LINEARSIZE   0x00080000
+#define DDSD_DEPTH        0x00800000
 
 struct DDSHeader
 {
 	/* magic: 'dds ' */
 	char				magic[ 4 ];
-	
+
 	/* directdraw surface */
 	unsigned int		size;
 	unsigned int		flags;
 	unsigned int		height;
-	unsigned int		width; 
+	unsigned int		width;
 	union
 	{
 		int				pitch;
@@ -211,12 +211,12 @@ struct DDSHeader
 	unsigned int		surface;	// greebo: Changed this to unsigned int for 64-bit compatibility (should be 32 bits wide)
 	union
 	{
-		ddsColorKey_t	ckDestOverlay;   
+		ddsColorKey_t	ckDestOverlay;
 		unsigned int	emptyFaceColor;
 	};
 	ddsColorKey_t		ckDestBlt;
-	ddsColorKey_t		ckSrcOverlay;    
-	ddsColorKey_t		ckSrcBlt;     
+	ddsColorKey_t		ckSrcOverlay;
+	ddsColorKey_t		ckSrcBlt;
 	ddsPixelFormat_t	pixelFormat;
 	ddsCaps_t			ddsCaps;
 	unsigned int		textureStage;
@@ -225,14 +225,14 @@ struct DDSHeader
 typedef struct ddsBuffer_s
 {
 	DDSHeader			header;
-	
+
 	/* data (Varying size) */
 	unsigned char		data[ 4 ];
 }
 ddsBuffer_t;
 
 /** greebo: This represents a 64 bit DDS block containing
- * 			either the alpha or the colour data. 
+ * 			either the alpha or the colour data.
  */
 typedef struct ddsColorBlock_s
 {

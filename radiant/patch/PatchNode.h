@@ -42,8 +42,8 @@ class PatchNode :
 	const LightList* m_lightList;
 
 	Patch m_patch;
-	
-	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable) 
+
+	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable)
 	mutable AABB m_aabb_component;
 
 	static ShaderPtr m_state_selpoint;
@@ -51,7 +51,7 @@ class PatchNode :
 public:
 	// Construct a PatchNode with no arguments
 	PatchNode(bool patchDef3 = false);
-  
+
 	// Copy Constructor
 	PatchNode(const PatchNode& other);
 
@@ -59,7 +59,7 @@ public:
 
 	// Patch::Observer implementation
 	void allocate(std::size_t size);
-	
+
 	// Nameable implementation
 	std::string name() const;
 
@@ -78,7 +78,7 @@ public:
 	// Test the Patch instance for selection (SelectionTestable)
 	void testSelect(Selector& selector, SelectionTest& test);
 
-	// Check if the drag planes pass the given selection test (and select them of course and call the callback) 
+	// Check if the drag planes pass the given selection test (and select them of course and call the callback)
 	void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback);
   	void selectReversedPlanes(Selector& selector, const SelectedPlanes& selectedPlanes);
 
@@ -86,7 +86,7 @@ public:
 	bool isSelectedComponents() const;
 	// Set the components (control points or dragplanes) selection to <select>
 	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode);
-	// Tests the patch components on selection using the passed SelectionTest 
+	// Tests the patch components on selection using the passed SelectionTest
 	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode);
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
@@ -110,7 +110,7 @@ public:
 
 	// Returns true if any of the Control Vertices is selected
 	bool selectedVertices();
-	
+
 	// Clones this node, allocates a new Node on the heap and passes itself to the constructor of the new node
 	scene::INodePtr clone() const;
 
@@ -122,7 +122,7 @@ public:
 	// The callback function that gets called when the attached selectable gets changed
 	void selectedChanged(const Selectable& selectable);
 
-	// greebo: This gets called by the ObservedSelectable as soon as its selection state changes 
+	// greebo: This gets called by the ObservedSelectable as soon as its selection state changes
 	// (see ObservedSelectable and PatchControlInstance)
 	void selectedChangedComponent(const Selectable& selectable);
 
@@ -139,7 +139,7 @@ public:
 	// to the contained patch <m_patch>
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	// Renders the components of this patch instance, makes use of the Patch::render_component() method 
+	// Renders the components of this patch instance, makes use of the Patch::render_component() method
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	void evaluateTransform();

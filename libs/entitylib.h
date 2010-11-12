@@ -52,7 +52,7 @@ inline void drawPyramid(const Vector3 points[5]) {
     1, 2, // first to second
     2, 3, // second to third
     3, 4, // third to second
-    4, 1, // fourth to first 
+    4, 1, // fourth to first
   };
   glVertexPointer(3, GL_DOUBLE, 0, points);
   glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);
@@ -69,12 +69,12 @@ inline void drawFrustum(const Vector3 points[8]) {
   	1, 5, // top down right to bottom down right
   	2, 6, // top down left to bottom down left
   	3, 7, // top up left to bottom up left
-  	
+
   	0, 1, // top up right to top down right
   	1, 2, // top down right to top down left
   	2, 3, // top down left to top up left
   	3, 0, // top up left to top up right
-  	
+
   	4, 5, // bottom up right to bottom down right
   	5, 6, // bottom down right to bottom down left
   	6, 7, // bottom down left to bottom up left
@@ -352,26 +352,26 @@ inline std::ostream& operator<< (std::ostream& os, const Entity& entity) {
 	os << "Entity { name=\"" << entity.getKeyValue("name") << "\", "
 	   << "classname=\"" << entity.getKeyValue("classname") << "\", "
 	   << "origin=\"" << entity.getKeyValue("origin") << "\" }";
-	
-	return os;	
+
+	return os;
 }
 
-class EntityNodeFindByClassnameWalker : 
+class EntityNodeFindByClassnameWalker :
 	public scene::NodeVisitor
 {
 protected:
 	// Name to search for
 	std::string _name;
-	
+
 	// The search result
 	scene::INodePtr _entityNode;
-	
+
 public:
 	// Constructor
-	EntityNodeFindByClassnameWalker(const std::string& name) : 
+	EntityNodeFindByClassnameWalker(const std::string& name) :
 		_name(name)
 	{}
-	
+
 	scene::INodePtr getEntityNode() {
 		return _entityNode;
 	}
@@ -379,13 +379,13 @@ public:
 	Entity* getEntity() {
 		return _entityNode != NULL ? Node_getEntity(_entityNode) : NULL;
 	}
-	
+
 	// Pre-descent callback
 	bool pre(const scene::INodePtr& node) {
 		if (_entityNode == NULL) {
 			// Entity not found yet
 			Entity* entity = Node_getEntity(node);
-			
+
 			if (entity != NULL) {
 				// Got an entity, let's see if the name matches
 				if (entity->getKeyValue("classname") == _name) {
@@ -411,10 +411,10 @@ public:
 inline Entity* Scene_FindEntityByClass(const std::string& className) {
 	// Instantiate a walker to find the entity
 	EntityNodeFindByClassnameWalker walker(className);
-	
+
 	// Walk the scenegraph
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-	
+
 	return walker.getEntity();
 }
 
@@ -433,22 +433,22 @@ inline bool node_is_worldspawn(const scene::INodePtr& node) {
  *
  * @node: The entity node to change the classname of.
  * @classname: The new classname.
- * 
+ *
  * @returns: The new entity node.
  */
 inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const std::string& classname)
 {
 	// Make a copy of this node first
-	scene::INodePtr oldNode(node); 
+	scene::INodePtr oldNode(node);
 
 	// greebo: First, get the eclass
 	IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
-		classname, 
+		classname,
 		node_is_group(oldNode) // whether this entity has child primitives
 	);
 
 	// must not fail, findOrInsert always returns non-NULL
-	assert(eclass != NULL); 
+	assert(eclass != NULL);
 
 	// Create a new entity with the given class
 	scene::INodePtr newNode(GlobalEntityCreator().createEntity(eclass));
@@ -465,7 +465,7 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const 
 	// The old node must not be the root node (size of path >= 2)
 	scene::INodePtr parent = oldNode->getParent();
 	assert(parent != NULL);
-	
+
 	// Remove the old entity node from the parent
 	scene::removeNodeFromParent(oldNode);
 

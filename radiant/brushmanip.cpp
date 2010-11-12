@@ -147,7 +147,7 @@ void Brush_ConstructPrism(Brush& brush, const AABB& bounds, std::size_t sides, i
   planepts[2][axis] = mins[axis];
 
   brush.addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
- 
+
   for (std::size_t i=0 ; i<sides ; ++i)
   {
     double sv = sin (i*3.14159265*2/sides);
@@ -351,9 +351,9 @@ void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mi
     {
       Vector3 maxs(region_maxs[0]+THICKNESS, region_maxs[1]+THICKNESS, region_maxs[2]+THICKNESS);
       maxs[i] = region_mins[i];
-      Brush_ConstructCuboid(*Node_getBrush(brushes[i]), 
+      Brush_ConstructCuboid(*Node_getBrush(brushes[i]),
       						AABB::createFromMinMax(mins, maxs),
-      						texdef_name_default(), 
+      						texdef_name_default(),
       						TextureProjection());
     }
   }
@@ -367,7 +367,7 @@ void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mi
     {
       Vector3 mins(region_mins[0]-THICKNESS, region_mins[1]-THICKNESS, region_mins[2]-THICKNESS);
       mins[i] = region_maxs[i];
-      Brush_ConstructCuboid(*Node_getBrush(brushes[i+3]), 
+      Brush_ConstructCuboid(*Node_getBrush(brushes[i+3]),
       						AABB::createFromMinMax(mins, maxs),
       						texdef_name_default(),
       						TextureProjection());
@@ -380,7 +380,7 @@ class FaceSetShader
   const std::string& m_name;
 public:
   FaceSetShader(const std::string& name) : m_name(name) {}
-  
+
   void operator()(Face& face) const {
     face.setShader(m_name);
   }
@@ -446,7 +446,7 @@ void Scene_BrushResize(Brush& brush, const AABB& bounds, const std::string& shad
  * Selects all visible brushes which carry the shader name as passed
  * to the constructor.
  */
-class BrushSelectByShaderWalker : 
+class BrushSelectByShaderWalker :
 	public scene::NodeVisitor
 {
 	std::string _name;
@@ -504,10 +504,10 @@ class FaceTextureFlipper
 {
 	unsigned int _flipAxis;
 public:
-	FaceTextureFlipper(unsigned int flipAxis) : 
-		_flipAxis(flipAxis) 
+	FaceTextureFlipper(unsigned int flipAxis) :
+		_flipAxis(flipAxis)
 	{}
-	
+
 	void operator()(Face& face) const {
 		face.flipTexture(_flipAxis);
 	}
@@ -647,7 +647,7 @@ public:
     test_normal(normalise(1, 1, 0));
     test_normal(normalise(1, 0, 1));
     test_normal(normalise(0, 1, 1));
-    
+
     test_normal(normalise(10000, 10000, 10000));
     test_normal(normalise(10000, 10000, 10001));
     test_normal(normalise(10000, 10000, 10002));
@@ -699,7 +699,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount != 1)
 	{
-		// Display a modal error dialog	
+		// Display a modal error dialog
 		gtkutil::errorDialog(_("Exactly one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
@@ -731,7 +731,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 			maxSides = c_brushCone_maxSides;
 			break;
 
-		case eBrushSphere: 
+		case eBrushSphere:
 			minSides = c_brushSphere_minSides;
 			maxSides = c_brushSphere_maxSides;
 			break;
@@ -749,7 +749,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		}
 	}
 	else {
-		globalErrorStream() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl 
+		globalErrorStream() << "BrushMakePrefab: invalid prefab type. Allowed types are: " << std::endl
 			<< eBrushCuboid << " = cuboid " << std::endl
 			<< eBrushPrism  << " = prism " << std::endl
 			<< eBrushCone  << " = cone " << std::endl

@@ -18,7 +18,7 @@ namespace Glib { template<class T>class RefPtr; }
 namespace Gtk { class Widget; }
 
 // Abstract base class of the SelectionSystem Observer extending the WindowObserver interface
-class SelectionSystemWindowObserver : 
+class SelectionSystemWindowObserver :
 	public WindowObserver
 {
 public:
@@ -33,14 +33,14 @@ public:
 
 // ====================================================================================
 
-/* greebo: This is the hub class that observes a view, the implementation of the abstract base class above. 
- * It basically checks all "incoming" mouse clicks and passes them to the according 
- * subclasses like Selector_ and ManipulateObserver, these in turn pass them to the RadiantSelectionSystem 
- * 
+/* greebo: This is the hub class that observes a view, the implementation of the abstract base class above.
+ * It basically checks all "incoming" mouse clicks and passes them to the according
+ * subclasses like Selector_ and ManipulateObserver, these in turn pass them to the RadiantSelectionSystem
+ *
  * Note that some calls for button/modifiers could be catched in the XYView / Camview callback methods, so that
- * they never reach the WindowObserver (examples may be a Clipper command). 
+ * they never reach the WindowObserver (examples may be a Clipper command).
  */
-class RadiantWindowObserver : 
+class RadiantWindowObserver :
 	public SelectionSystemWindowObserver
 {
 	// The tolerance when it comes to the construction of selection boxes
@@ -60,10 +60,10 @@ class RadiantWindowObserver :
 
 	typedef std::map<Gtk::Widget*, sigc::connection> KeyHandlerMap;
 	typedef std::map<Glib::RefPtr<Gtk::Widget>, sigc::connection> RefPtrKeyHandlerMap;
-	
+
 	RefPtrKeyHandlerMap _refKeyHandlers;
 	KeyHandlerMap _keyHandlers;
-  	
+
   	// A "third-party" event to be called when the mouse moved and/or button is released
 	// Usually points to the Manipulate or Select Observer classes.
 	MouseEventCallback _mouseMotionCallback;
@@ -83,45 +83,45 @@ public:
 		delete this;
 	}
 
-	// Pass the view reference to the handler subclasses 
+	// Pass the view reference to the handler subclasses
 	void setView(const View& view);
-	
+
 	// Tells the observer which GtkWidget it is actually observing
 	void addObservedWidget(Gtk::Widget* observed);
 	void removeObservedWidget(Gtk::Widget* observed);
 
 	void addObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
 	void removeObservedWidget(const Glib::RefPtr<Gtk::Widget>& observed);
-	
+
 	// Pass the rectangle callback function to the selector subclass
 	void setRectangleDrawCallback(const Rectangle::Callback& callback);
-	
+
 	// greebo: This is called if the window size changes (camera, orthoview)
 	void onSizeChanged(int width, int height);
-  
+
 	// Handles the mouseDown event, basically determines which action should be performed (select or manipulate)
 	void onMouseDown(const WindowVector& position, GdkEventButton* ev);
-	
+
   	/* greebo: Handle the mouse movement. This notifies the registered mouseMove callback
-  	 * and resets the cycle selection counter 
+  	 * and resets the cycle selection counter
   	 */
 	void onMouseMotion(const WindowVector& position, unsigned int state);
-	
+
 	/* greebo: Handle the mouseUp event. Usually, this means the end of an operation, so
 	 * this has to check, if there are any callbacks connected, and call them if this is the case
 	 */
   	void onMouseUp(const WindowVector& position, GdkEventButton* ev);
-  	
+
 	// Cancels the current operation and disconnects the mouse handlers
 	void cancelOperation();
 
 private:
-	// The callback for catching the cancel-event (ESC-key) 
+	// The callback for catching the cancel-event (ESC-key)
   	bool onKeyPress(GdkEventKey* ev);
 
 }; // class RadiantWindowObserver
 
-// Allocates a new Observer on the heap and returns the pointer 
+// Allocates a new Observer on the heap and returns the pointer
 SelectionSystemWindowObserver* NewWindowObserver();
 
 #endif /*RADIANTWINDOWOBSERVER_H_*/

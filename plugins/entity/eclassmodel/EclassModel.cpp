@@ -7,7 +7,7 @@
 
 namespace entity {
 
-EclassModel::EclassModel(EclassModelNode& owner, 
+EclassModel::EclassModel(EclassModelNode& owner,
 						 const Callback& transformChanged)
 :	_owner(owner),
 	m_entity(owner._entity),
@@ -21,10 +21,10 @@ EclassModel::EclassModel(EclassModelNode& owner,
 	m_transformChanged(transformChanged)
 {}
 
-EclassModel::EclassModel(const EclassModel& other, 
+EclassModel::EclassModel(const EclassModel& other,
 						 EclassModelNode& owner,
 						 const Callback& transformChanged)
-:	_owner(owner),	
+:	_owner(owner),
 	m_entity(owner._entity),
 	m_originKey(boost::bind(&EclassModel::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
@@ -90,7 +90,7 @@ void EclassModel::rotationChanged() {
 	updateTransform();
 }
 
-void EclassModel::renderSolid(RenderableCollector& collector, 
+void EclassModel::renderSolid(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
 	if(selected) {
@@ -99,7 +99,7 @@ void EclassModel::renderSolid(RenderableCollector& collector,
 
 	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 }
-void EclassModel::renderWireframe(RenderableCollector& collector, 
+void EclassModel::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
 	renderSolid(collector, volume, localToWorld, selected);

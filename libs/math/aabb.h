@@ -25,9 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/matrix.h"
 #include "math/Plane3.h"
 
-/** An Axis Aligned Bounding Box is a simple cuboid which encloses a given set 
- * of points, such as the vertices of a model. It is defined by an origin, 
- * located at the centre of the AABB, and symmetrical extents in 3 dimension 
+/** An Axis Aligned Bounding Box is a simple cuboid which encloses a given set
+ * of points, such as the vertices of a model. It is defined by an origin,
+ * located at the centre of the AABB, and symmetrical extents in 3 dimension
  * which determine its size.
  */
 class AABB
@@ -35,21 +35,21 @@ class AABB
 public:
   	/// The origin of the AABB, which is always located at the centre.
   	Vector3 origin;
-  	
+
   	/// The symmetrical extents in 3 dimensions.
   	Vector3 extents;
 
 	/** Construct an AABB with default origin and invalid extents.
 	 */
-	AABB() 
+	AABB()
 	: origin(0, 0, 0), extents(-1,-1,-1) {}
 
 	/** Construct an AABB with the provided origin and extents
 	 * vectors.
 	 */
-	AABB(const Vector3& origin_, const Vector3& extents_) 
+	AABB(const Vector3& origin_, const Vector3& extents_)
 	: origin(origin_), extents(extents_) {}
-  
+
 	/** Static named constructor to create an AABB that encloses the provided
 	 * minimum and maximum points.
 	 */
@@ -70,16 +70,16 @@ public:
 	bool isValid() const;
 
 	/** Get the origin of this AABB.
-	 * 
+	 *
 	 * @returns
 	 * A const reference to a Vector3 containing the AABB's origin.
 	 */
 	const Vector3& getOrigin() const {
 		return origin;
 	}
-	
+
 	/** Get the extents of this AABB.
-	 * 
+	 *
 	 * @returns
 	 * A const reference to a Vector3 containing the AABB's extents.
 	 */
@@ -91,27 +91,27 @@ public:
 	 * bounding box.
 	 */
 	double getRadius() const {
-		return extents.getLength(); // Pythagorean length of extents vector	
+		return extents.getLength(); // Pythagorean length of extents vector
 	}
 
 	/** Expand this AABB in-place to include the given point in
 	 * world space.
-	 * 
+	 *
 	 * @param point
 	 * Vector3 representing the point to include.
 	 */
-	void includePoint(const Vector3& point);	 
+	void includePoint(const Vector3& point);
 
 	/** Expand this AABB in-place to include the given AABB in
 	 * world space.
-	 * 
+	 *
 	 * @param other
 	 * The other AABB to include.
 	 */
 	void includeAABB(const AABB& other);
 
 	// Returns true if this AABB contains the other AABB (all dimensions)
-	bool contains(const AABB& other) const 
+	bool contains(const AABB& other) const
 	{
 		// Return true if all coordinates of <other> are contained within these bounds
 		return (origin[0] + extents[0] >= other.origin[0] + other.extents[0]) &&
@@ -126,9 +126,9 @@ public:
 /**
  * Stream insertion for AABB class.
  */
-inline 
+inline
 std::ostream& operator<< (std::ostream& os, const AABB& aabb) {
-	os << "AABB { origin=" << aabb.getOrigin() 
+	os << "AABB { origin=" << aabb.getOrigin()
 	   << ", extents=" << aabb.getExtents() << " }";
 	return os;
 }
@@ -145,7 +145,7 @@ public:
     m_aabb.includePoint(point);
   }
 };
-  
+
 inline void aabb_extend_by_vec3(AABB& aabb, const Vector3& extension)
 {
   aabb.extents += extension;
@@ -183,7 +183,7 @@ inline bool aabb_intersects_aabb(const AABB& aabb, const AABB& other)
 inline unsigned int aabb_classify_plane(const AABB& aabb, const Plane3& plane)
 {
   double distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
-  
+
   if(fabs(distance_origin) < (fabs(plane.normal().x() * aabb.extents[0])
     + fabs(plane.normal().y() * aabb.extents[1])
     + fabs(plane.normal().z() * aabb.extents[2])))
@@ -288,14 +288,14 @@ inline AABB aabb_for_oriented_aabb(const AABB& aabb, const Matrix4& transform)
   return AABB(
     matrix4_transformed_point(transform, aabb.origin),
     Vector3(
-      fabs(transform[0]  * aabb.extents[0]) + 
-      	fabs(transform[4]  * aabb.extents[1]) + 
+      fabs(transform[0]  * aabb.extents[0]) +
+      	fabs(transform[4]  * aabb.extents[1]) +
       	fabs(transform[8]  * aabb.extents[2]),
-      fabs(transform[1]  * aabb.extents[0]) + 
-      	fabs(transform[5]  * aabb.extents[1]) + 
+      fabs(transform[1]  * aabb.extents[0]) +
+      	fabs(transform[5]  * aabb.extents[1]) +
       	fabs(transform[9]  * aabb.extents[2]),
-      fabs(transform[2]  * aabb.extents[0]) + 
-      	fabs(transform[6]  * aabb.extents[1]) + 
+      fabs(transform[2]  * aabb.extents[0]) +
+      	fabs(transform[6]  * aabb.extents[1]) +
       	fabs(transform[10] * aabb.extents[2])
     )
   );

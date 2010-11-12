@@ -22,21 +22,21 @@ std::string Component::getString() {
 	if (componentId == ComponentType::COMP_KILL().getId()) {
 		// First add the verb
 		sentence += "kill";
-		
+
 		// Add the Specifier details, if any
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
 	}
 	else if (componentId == ComponentType::COMP_KO().getId()) {
 		// First add the verb
 		sentence += "knockout";
-				
+
 		// Add the Specifier details, if any
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
 	}
 	else if (componentId == ComponentType::COMP_AI_FIND_ITEM().getId()) {
 		// First add the verb
 		sentence += "let AI find item:";
-		
+
 		// Add the Specifier details, if any
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
 	}
@@ -77,7 +77,7 @@ std::string Component::getString() {
 	}
 	else if (componentId == ComponentType::COMP_LOCATION().getId()) {
 		sentence += "let the target";
-		
+
 		// Add the Specifier details, if any
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
 
@@ -86,7 +86,7 @@ std::string Component::getString() {
 	}
 	else if (componentId == ComponentType::COMP_INFO_LOCATION().getId()) {
 		sentence += "let the target";
-		
+
 		// Add the Specifier details, if any
 		sentence += (sp1) ? (" " + sp1->getSentence(*this)) : "";
 
@@ -138,7 +138,7 @@ std::string Component::getString() {
 
 	// Replace all double-space characters with one single space
 	boost::algorithm::replace_all(sentence, "  ", " ");
-    
+
     return sentence;
 }
 

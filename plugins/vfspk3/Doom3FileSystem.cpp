@@ -2,30 +2,30 @@
 Copyright (c) 2001, Loki software, inc.
 All rights reserved.
 
-Redistribution and use in source and binary forms, with or without modification, 
+Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-Redistributions of source code must retain the above copyright notice, this list 
+Redistributions of source code must retain the above copyright notice, this list
 of conditions and the following disclaimer.
 
 Redistributions in binary form must reproduce the above copyright notice, this
 list of conditions and the following disclaimer in the documentation and/or
 other materials provided with the distribution.
 
-Neither the name of Loki software nor the names of its contributors may be used 
-to endorse or promote products derived from this software without specific prior 
-written permission. 
+Neither the name of Loki software nor the names of its contributors may be used
+to endorse or promote products derived from this software without specific prior
+written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS'' 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
-DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY 
-DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS IS''
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT,INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 //
@@ -82,7 +82,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
 	const std::string& path = _directories[_numDirectories];
 
 	_numDirectories++;
-	
+
 	{
 		ArchiveDescriptor entry;
 		entry.name = path;
@@ -90,28 +90,28 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
 		entry.is_pakfile = false;
 		_archives.push_back(entry);
 	}
-	
+
 	// Instantiate a new sorting container for the filenames
 	SortedFilenames filenameList;
-	
+
 	// Traverse the directory using the filename list as functor
     try {
         Directory_forEach(path, filenameList);
     }
     catch (DirectoryNotFoundException& e) {
-        std::cout << "[vfs] Directory '" << path << "' not found." 
+        std::cout << "[vfs] Directory '" << path << "' not found."
                   << std::endl;
     }
-	
+
 	if (filenameList.size() == 0) {
 		return; // nothing found
 	}
-	
+
 	globalOutputStream() << "[vfs] searched directory: " << path << std::endl;
-	
+
 	// Get the ArchiveLoader and try to load each file
-	ArchiveLoader& archiveModule = GlobalArchive("PK4");  
-	
+	ArchiveLoader& archiveModule = GlobalArchive("PK4");
+
 	// add the entries to the vfs
 	for (SortedFilenames::iterator i = filenameList.begin(); i != filenameList.end(); ++i) {
 		// Assemble the filename and try to load the archive
@@ -124,16 +124,16 @@ void Doom3FileSystem::initialise()
 	globalOutputStream() << "filesystem initialised" << std::endl;
 
 	// Get the VFS search paths from the game manager
-	const game::IGameManager::PathList& paths = 
+	const game::IGameManager::PathList& paths =
 		GlobalGameManager().getVFSSearchPaths();
-	
+
 	// Initialise the paths, in the given order
 	for (game::IGameManager::PathList::const_iterator i = paths.begin();
 		 i != paths.end(); i++)
 	{
 		initDirectory(*i);
 	}
-    
+
     for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i)
 	{
     	(*i)->onFileSystemInitialise();
@@ -145,9 +145,9 @@ void Doom3FileSystem::shutdown() {
 	{
     	(*i)->onFileSystemShutdown();
     }
-	
+
 	globalOutputStream() << "filesystem shutdown" << std::endl;
-	
+
 	_archives.clear();
 	_numDirectories = 0;
 }
@@ -178,14 +178,14 @@ ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename) {
 		globalErrorStream() << "Filename contains backslash: " << filename << std::endl;
 		return ArchiveFilePtr();
 	}
-	
+
 	for (ArchiveList::iterator i = _archives.begin(); i != _archives.end(); ++i) {
 		ArchiveFilePtr file = i->archive->openFile(filename);
 		if (file != NULL) {
 			return file;
 		}
 	}
-	
+
 	// not found
 	return ArchiveFilePtr();
 }
@@ -209,15 +209,15 @@ std::size_t Doom3FileSystem::loadFile(const std::string& filename, void **buffer
 	if (file != NULL) {
 		// Allocate one byte more for the trailing zero
 		*buffer = malloc(file->size()+1);
-		
+
 		// we need to end the buffer with a 0
 		((char*) (*buffer))[file->size()] = 0;
 
 		std::size_t length = file->getInputStream().read(
-			reinterpret_cast<InputStream::byte_type*>(*buffer), 
+			reinterpret_cast<InputStream::byte_type*>(*buffer),
 			file->size()
 		);
-		
+
 		return length;
 	}
 
@@ -231,21 +231,21 @@ void Doom3FileSystem::freeFile(void *p) {
 
 // Call the specified callback function for each file matching extension
 // inside basedir.
-void Doom3FileSystem::forEachFile(const std::string& basedir, 
+void Doom3FileSystem::forEachFile(const std::string& basedir,
 				const std::string& extension,
-				Visitor& visitor, 
+				Visitor& visitor,
 				std::size_t depth)
 {
 	// Set of visited files, to avoid name conflicts
 	std::set<std::string> visitedFiles;
-	
+
 	// Wrap around the passed visitor
 	FileVisitor visitor2(visitor, basedir, extension, visitedFiles);
 
 	// Visit each Archive, applying the FileVisitor to each one (which in
 	// turn calls the callback for each matching file.
-	for (ArchiveList::iterator i = _archives.begin(); 
-		 i != _archives.end(); 
+	for (ArchiveList::iterator i = _archives.begin();
+		 i != _archives.end();
 		 ++i)
     {
 		i->archive->forEachFile(
@@ -277,16 +277,16 @@ std::string Doom3FileSystem::findRoot(const std::string& name) {
 void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename) {
 	std::string fileExt(os::getExtension(filename));
 	boost::to_upper(fileExt);
-	
+
 	// matching extension?
 	if (fileExt == archiveModule.getExtension()) {
 		ArchiveDescriptor entry;
-		
+
 		entry.name = filename;
 		entry.archive = archiveModule.openArchive(filename);
 		entry.is_pakfile = true;
 		_archives.push_back(entry);
-		
+
 		globalOutputStream() << "[vfs] pak file: " << filename << std::endl;
 	}
 }
@@ -311,6 +311,6 @@ const StringSet& Doom3FileSystem::getDependencies() const {
 void Doom3FileSystem::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "VFS::initialiseModule called" << std::endl;
-	
+
 	initialise();
 }

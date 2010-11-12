@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace gtkutil
 {
-	
+
 // Display a Gtk Error dialog
 
 void errorDialog(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame)
@@ -43,10 +43,10 @@ void fatalErrorDialog(const std::string& errorText, const Glib::RefPtr<Gtk::Wind
 }
 
 // Display a text entry dialog
-const std::string textEntryDialog(const std::string& title, 
+const std::string textEntryDialog(const std::string& title,
 								  const std::string& prompt,
 								  const std::string& defaultText,
-								  const Glib::RefPtr<Gtk::Window>& mainFrame) 
+								  const Glib::RefPtr<Gtk::Window>& mainFrame)
 {
 	Dialog dialog(title, mainFrame);
 
@@ -63,5 +63,5 @@ const std::string textEntryDialog(const std::string& title,
         throw EntryAbortedException("textEntryDialog(): dialog cancelled");
 	}
 }
-    
+
 } // namespace gtkutil

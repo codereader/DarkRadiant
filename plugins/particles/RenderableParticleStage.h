@@ -9,7 +9,7 @@ namespace particles
 /**
  * greebo: Each particle stage generates its geometry in one or more cycles.
  * Each cycle comes as a bunch of quads with a defined lifespan. It's possible
- * for quads of one cycle to exist during the lifetime of the next cycle (if bunching 
+ * for quads of one cycle to exist during the lifetime of the next cycle (if bunching
  * is set to values below 1), but there can always be 2 bunches active at the same time.
  */
 class RenderableParticleStage :
@@ -41,7 +41,7 @@ public:
 
 	void render(const RenderInfo& info) const;
 
-	// Generate particle geometry, time is absolute in msecs 
+	// Generate particle geometry, time is absolute in msecs
 	void update(std::size_t time, const Matrix4& viewRotation);
 
 	const AABB& getBounds();

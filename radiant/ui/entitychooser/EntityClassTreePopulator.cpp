@@ -37,14 +37,14 @@ void EntityClassTreePopulator::visit(IEntityClassPtr eclass)
 	{
         folderPath = "/" + folderPath;
 	}
-    
+
 	// Create the folder to put this EntityClass in, depending on the value
 	// of the DISPLAY_FOLDER_KEY.
     addPath(eclass->getModName() + folderPath + "/" + eclass->getName());
 }
 
 void EntityClassTreePopulator::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-									 const Gtk::TreeModel::iterator& iter, 
+									 const Gtk::TreeModel::iterator& iter,
 									 const std::string& path,
 									 bool isExplicit)
 {

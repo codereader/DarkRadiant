@@ -11,7 +11,7 @@
 #include <boost/noncopyable.hpp>
 #include "selection/algorithm/Shader.h"
 
-class FaceTexdef : 
+class FaceTexdef :
 	public FaceShader::Observer,
 	public boost::noncopyable
 {
@@ -20,11 +20,11 @@ public:
 	{
 	public:
 		TextureProjection m_projection;
-	
+
 		SavedState(const FaceTexdef& faceTexdef) {
 			m_projection = faceTexdef.m_projection;
 		}
-	
+
 		void exportState(FaceTexdef& faceTexdef) const {
 			faceTexdef.m_projection.assign(m_projection);
 		}
@@ -37,7 +37,7 @@ public:
 
 	// Constructor
 	FaceTexdef(FaceShader& shader, const TextureProjection& projection, bool projectionInitialised = true);
-	
+
 	// Destructor
 	virtual ~FaceTexdef();
 
@@ -47,9 +47,9 @@ public:
 
 	void realiseShader();
 	void unrealiseShader();
-	
+
 	void setTexdef(const TextureProjection& projection);
-	
+
 	void shift(float s, float t);
 	void scale(float s, float t);
 	void rotate(float angle);
@@ -68,7 +68,7 @@ public:
 	void transform(const Plane3& plane, const Matrix4& matrix);
 
 	TextureProjection normalised() const;
-	
+
 	void setBasis(const Vector3& normal);
 
 }; // class FaceTexDef

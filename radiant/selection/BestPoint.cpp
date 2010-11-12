@@ -53,7 +53,7 @@ void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersection& bes
   }
 
   if(cull != eClipCullNone && count > 2)
-  {      
+  {
     double signed_area = triangle_signed_area_XY(normalised[0], normalised[1], normalised[2]);
 
     if((cull == eClipCullCW && signed_area > 0)
@@ -89,7 +89,7 @@ void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersection& bes
       static_cast<float>(ray_distance_to_plane(
           Ray(Vector3(0, 0, 0), Vector3(0, 0, 1)),
           Plane3(normalised[0], normalised[1], normalised[2])
-        )), 
+        )),
         0
       )
     );

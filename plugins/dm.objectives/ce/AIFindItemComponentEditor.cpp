@@ -23,7 +23,7 @@ AIFindItemComponentEditor::AIFindItemComponentEditor(Component& component) :
 		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Item:") + "</b>")),
         false, false, 0
     );
-	
+
 	// TODO
 }
 

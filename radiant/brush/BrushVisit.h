@@ -8,7 +8,7 @@
 extern FaceInstanceSet g_SelectedFaceInstances;
 
 template<typename Functor>
-class BrushSelectedVisitor : 
+class BrushSelectedVisitor :
 	public SelectionSystem::Visitor
 {
 	const Functor& m_functor;
@@ -31,12 +31,12 @@ inline const Functor& Scene_forEachSelectedBrush(const Functor& functor) {
 }
 
 template<typename Functor>
-class BrushVisibleSelectedVisitor : 
+class BrushVisibleSelectedVisitor :
 	public SelectionSystem::Visitor
 {
 	const Functor& m_functor;
 public:
-	BrushVisibleSelectedVisitor(const Functor& functor) : 
+	BrushVisibleSelectedVisitor(const Functor& functor) :
 		m_functor(functor)
 	{}
 
@@ -58,7 +58,7 @@ inline const Functor& Scene_forEachVisibleSelectedBrush(const Functor& functor) 
 class BrushForEachFace {
 	const BrushInstanceVisitor& m_visitor;
 public:
-	BrushForEachFace(const BrushInstanceVisitor& visitor) : 
+	BrushForEachFace(const BrushInstanceVisitor& visitor) :
 		m_visitor(visitor)
 	{}
 

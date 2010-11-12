@@ -16,13 +16,13 @@ struct ShaderDefinition
 {
 	// The shader template
 	ShaderTemplatePtr shaderTemplate;
-	
+
 	// Filename from which the shader was parsed
 	std::string filename;
 
 	/* Constructor
 	 */
-	ShaderDefinition(const ShaderTemplatePtr& templ, const std::string& fname) : 
+	ShaderDefinition(const ShaderTemplatePtr& templ, const std::string& fname) :
 		shaderTemplate(templ),
 		filename(fname)
 	{}

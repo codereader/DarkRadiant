@@ -7,7 +7,7 @@ namespace map
 {
 
 /**
- * The prefab format is a specialised Doom3 Map Format, mainly to 
+ * The prefab format is a specialised Doom3 Map Format, mainly to
  * ensure that no layer information is saved and loaded.
  */
 class Doom3PrefabFormat :

@@ -29,7 +29,7 @@ public:
 		// Check arguments
 		if (_signature.size() < args.size()) {
 			// Too many arguments, that's for sure
-			globalErrorStream() << "Cannot execute command: Too many arguments. " 
+			globalErrorStream() << "Cannot execute command: Too many arguments. "
 				<< "(max. " << _signature.size() << " arguments required)" << std::endl;
 			return;
 		}
@@ -53,7 +53,7 @@ public:
 				// We have incoming arguments to match our signature
 				if ((curFlags & arg->getType()) == 0) {
 					// Type mismatch
-					globalErrorStream() << "Cannot execute command: Type mismatch at argument: " 
+					globalErrorStream() << "Cannot execute command: Type mismatch at argument: "
 						<< arg->getString() << std::endl;
 					return;
 				}

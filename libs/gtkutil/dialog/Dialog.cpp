@@ -41,7 +41,7 @@ void Dialog::createAndPackElementsTable()
 
 	_elementsTable->set_col_spacings(12);
 	_elementsTable->set_row_spacings(6);
-	
+
 	_vbox->pack_start(*_elementsTable, true, true, 0);
 }
 
@@ -70,7 +70,7 @@ ui::IDialog::Handle Dialog::addElement(const DialogElementPtr& element)
 
 	// Acquire a new handle
 	Handle handle = ++_highestUsedHandle;
-	
+
 	// Store this element in the map
 	_elements[handle] = element;
 
@@ -206,7 +206,7 @@ Gtk::Widget& Dialog::createButtons()
 
 	buttonHBox->pack_end(*okButton, false, false, 0);
 	buttonHBox->pack_end(*cancelButton, false, false, 0);
-	
+
 	return *buttonHBox;
 }
 

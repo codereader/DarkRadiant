@@ -16,26 +16,26 @@ class GLWidgetSentry
 private:
 	// The GL widget
 	Gtk::Widget& _widget;
-	
+
 	// Whether the context could be successfully switched
 	bool _success;
-	
+
 public:
 
 	/** Constructor calls glwidget_make_current().
 	 */
-	GLWidgetSentry(Gtk::Widget& widget) : 
+	GLWidgetSentry(Gtk::Widget& widget) :
 		_widget(widget)
 	{
 		_success = GLWidget::makeCurrent(_widget);
 	}
-	
+
 	// Returns TRUE if the context could not be switched
 	bool failed() const
 	{
 		return !_success;
 	}
-		
+
 	/* Destructor swaps the buffers with glwidget_swap_buffers().
 	 */
 	~GLWidgetSentry()

@@ -17,7 +17,7 @@
 namespace
 {
 	const std::string RKEY_XYVIEW_ROOT = "user/ui/xyview";
-	
+
 	const std::string RKEY_CHASE_MOUSE = RKEY_XYVIEW_ROOT + "/chaseMouse";
 	const std::string RKEY_CAMERA_XY_UPDATE = RKEY_XYVIEW_ROOT + "/camXYUpdate";
 	const std::string RKEY_SHOW_CROSSHAIRS = RKEY_XYVIEW_ROOT + "/showCrossHairs";
@@ -40,39 +40,39 @@ XYWndManager::XYWndManager()
 {}
 
 /* greebo: This method restores all xy views from the information stored in the registry.
- * 
+ *
  * Note: The window creation code looks very unelegant (in fact it is), but this is required
  * to restore the exact position of the windows (at least on my WinXP/GTK2+ system).
- * 
+ *
  * The position of the TransientWindow has to be set IMMEDIATELY after creation, before
  * any widgets are added to this container. When trying to apply the position restore
  * on the fully "fabricated" xyview widget, the position tends to be some 20 pixels below
  * the original position. I have no full explanation for this and it is nasty, but the code
- * below seems to work.    
+ * below seems to work.
  */
 void XYWndManager::restoreState()
 {
 	xml::NodeList views = GlobalRegistry().findXPath(RKEY_XYVIEW_ROOT + "//views");
-	
+
 	if (!views.empty())
 	{
 		// Find all <view> tags under the first found <views> tag
 		xml::NodeList viewList = views[0].getNamedChildren("view");
-	
-		for (xml::NodeList::const_iterator i = viewList.begin(); 
+
+		for (xml::NodeList::const_iterator i = viewList.begin();
 			 i != viewList.end();
-			 ++i) 
+			 ++i)
 		{
 			// Assemble the XPath for the viewstate
-			std::string path = RKEY_XYVIEW_ROOT + 
-				"/views/view[@name='" + i->getAttributeValue("name") + "']"; 
+			std::string path = RKEY_XYVIEW_ROOT +
+				"/views/view[@name='" + i->getAttributeValue("name") + "']";
 
 			// Create the view and restore the size
 			XYWndPtr newWnd = createFloatingOrthoView(XY);
 			newWnd->readStateFromPath(path);
-			
+
 			const std::string typeStr = i->getAttributeValue("type");
-	
+
 			if (typeStr == "YZ") {
 				newWnd->setViewType(YZ);
 			}
@@ -85,9 +85,9 @@ void XYWndManager::restoreState()
 		}
 	}
 	else {
-		// Create at least one XYView, if no view info is found 
+		// Create at least one XYView, if no view info is found
 		globalOutputStream() << "XYWndManager: No xywindow information found in XMLRegistry, creating default view.\n";
-		
+
 		// Create a default OrthoView
 		createFloatingOrthoView(XY);
 	}
@@ -95,12 +95,12 @@ void XYWndManager::restoreState()
 
 void XYWndManager::saveState()
 {
-	// Delete all the current window states from the registry  
+	// Delete all the current window states from the registry
 	GlobalRegistry().deleteXPath(RKEY_XYVIEW_ROOT + "//views");
-	
+
 	// Create a new node
 	std::string rootNodePath(RKEY_XYVIEW_ROOT + "/views");
-	
+
 	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); ++i)
 	{
 		// Save each XYView state to the registry
@@ -152,7 +152,7 @@ void XYWndManager::registerCommands() {
 	GlobalEventManager().addCommand("CenterXYViews", "CenterXYViews");
 	GlobalEventManager().addCommand("CenterXYView", "CenterXYView");
 	GlobalEventManager().addCommand("Zoom100", "Zoom100");
-	
+
 	GlobalEventManager().addRegistryToggle("ToggleCrosshairs", RKEY_SHOW_CROSSHAIRS);
 	GlobalEventManager().addRegistryToggle("ToggleGrid", RKEY_SHOW_GRID);
 	GlobalEventManager().addRegistryToggle("ShowAngles", RKEY_SHOW_ENTITY_ANGLES);
@@ -168,7 +168,7 @@ void XYWndManager::registerCommands() {
 void XYWndManager::constructPreferences()
 {
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Orthoview"));
-	
+
 	page->appendCheckBox("", _("View chases Mouse Cursor during Drags"), RKEY_CHASE_MOUSE);
 	page->appendCheckBox("", _("Update Views on Camera Movement"), RKEY_CAMERA_XY_UPDATE);
 	page->appendCheckBox("", _("Show Crosshairs"), RKEY_SHOW_CROSSHAIRS);
@@ -186,7 +186,7 @@ void XYWndManager::constructPreferences()
 }
 
 // Load/Reload the values from the registry
-void XYWndManager::keyChanged(const std::string& key, const std::string& val) 
+void XYWndManager::keyChanged(const std::string& key, const std::string& val)
 {
 	_chaseMouse = (GlobalRegistry().get(RKEY_CHASE_MOUSE) == "1");
 	_camXYUpdate = (GlobalRegistry().get(RKEY_CAMERA_XY_UPDATE) == "1");
@@ -251,9 +251,9 @@ bool XYWndManager::showSizeInfo() const {
 }
 
 void XYWndManager::updateAllViews() {
-	for (XYWndMap::iterator i = _xyWnds.begin(); 
-		 i != _xyWnds.end(); 
-		 ++i) 
+	for (XYWndMap::iterator i = _xyWnds.begin();
+		 i != _xyWnds.end();
+		 ++i)
 	{
 		i->second->queueDraw();
 	}
@@ -276,28 +276,28 @@ XYWndPtr XYWndManager::getActiveXY() const {
 }
 
 void XYWndManager::setOrigin(const Vector3& origin) {
-	// Cycle through the list of views and set the origin 
-	for (XYWndMap::iterator i = _xyWnds.begin(); 
-		 i != _xyWnds.end(); 
-		 ++i) 
+	// Cycle through the list of views and set the origin
+	for (XYWndMap::iterator i = _xyWnds.begin();
+		 i != _xyWnds.end();
+		 ++i)
 	{
 		i->second->setOrigin(origin);
 	}
 }
 
 void XYWndManager::setScale(float scale) {
-	for (XYWndMap::iterator i = _xyWnds.begin(); 
-		 i != _xyWnds.end(); 
-		 ++i) 
+	for (XYWndMap::iterator i = _xyWnds.begin();
+		 i != _xyWnds.end();
+		 ++i)
 	{
 		i->second->setScale(scale);
 	}
 }
 
 void XYWndManager::positionAllViews(const Vector3& origin) {
-	for (XYWndMap::iterator i = _xyWnds.begin(); 
-		 i != _xyWnds.end(); 
-		 ++i) 
+	for (XYWndMap::iterator i = _xyWnds.begin();
+		 i != _xyWnds.end();
+		 ++i)
 	{
 		i->second->positionView(origin);
 	}
@@ -334,7 +334,7 @@ void XYWndManager::toggleActiveView(const cmd::ArgumentList& args) {
 		else {
 			_activeXY->setViewType(XY);
 		}
-		
+
 		positionActiveView(getFocusPosition());
 	}
 }
@@ -368,10 +368,10 @@ void XYWndManager::focusActiveView(const cmd::ArgumentList& args) {
 
 XYWndPtr XYWndManager::getView(EViewType viewType)
 {
-	// Cycle through the list of views and get the one matching the type 
-	for (XYWndMap::iterator i = _xyWnds.begin(); 
-		 i != _xyWnds.end(); 
-		 ++i) 
+	// Cycle through the list of views and get the one matching the type
+	for (XYWndMap::iterator i = _xyWnds.begin();
+		 i != _xyWnds.end();
+		 ++i)
 	{
 		// If the view matches, return the pointer
 		if (i->second->getViewType() == viewType) {
@@ -390,7 +390,7 @@ void XYWndManager::setActiveXY(int index) {
 	{
 		_activeXY->setActive(false);
 	}
-	
+
 	// Find the ID in the map and update the active pointer
 	XYWndMap::const_iterator it = _xyWnds.find(index);
 
@@ -405,7 +405,7 @@ void XYWndManager::setActiveXY(int index) {
 			+ " ID not found in map."
 		);
 	}
-	
+
 	// Notify the new active XYView about its activation
 	if (_activeXY != NULL)
 	{
@@ -469,13 +469,13 @@ XYWndPtr XYWndManager::createEmbeddedOrthoView()
 
 	// Ensure that the insertion is successful
 	assert(result.second == true);
-	
+
 	// Tag the new view as active, if there is no active view yet
 	if (_activeXY == NULL)
 	{
 		_activeXY = newWnd;
 	}
-	
+
 	return newWnd;
 }
 
@@ -487,8 +487,8 @@ XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType)
 
 	FloatingOrthoViewPtr newWnd(
 		new FloatingOrthoView(
-			uniqueId, 
-			XYWnd::getViewTypeTitle(viewType), 
+			uniqueId,
+			XYWnd::getViewTypeTitle(viewType),
 			_globalParentWindow
 		)
 	);
@@ -498,7 +498,7 @@ XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType)
 
 	// Ensure that the insertion is successful
 	assert(result.second == true);
-	
+
 	// Tag the new view as active, if there is no active view yet
 	if (_activeXY == NULL)
 	{
@@ -508,7 +508,7 @@ XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType)
 	// Set the viewtype and show the window
 	newWnd->setViewType(viewType);
 	newWnd->show();
-	
+
 	return newWnd;
 }
 
@@ -525,7 +525,7 @@ void XYWndManager::createXYFloatingOrthoView(const cmd::ArgumentList& args)
 Vector3 XYWndManager::getFocusPosition()
 {
 	Vector3 position(0,0,0);
-	
+
 	if (GlobalSelectionSystem().countSelected() != 0) {
 		position = selection::algorithm::getCurrentSelectionCenter();
 	}
@@ -536,7 +536,7 @@ Vector3 XYWndManager::getFocusPosition()
 			position = cam->getCameraOrigin();
 		}
 	}
-	
+
 	return position;
 }
 
@@ -549,7 +549,7 @@ const std::string& XYWndManager::getName() const
 const StringSet& XYWndManager::getDependencies() const
 {
 	static StringSet _dependencies;
-	
+
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
@@ -559,7 +559,7 @@ const StringSet& XYWndManager::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
 	}
-	
+
 	return _dependencies;
 }
 
@@ -581,18 +581,18 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_AXES);
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_WORKZONE);
 	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_BLOCKSIZE);
-	
+
 	// Trigger loading the values of the observed registry keys
 	keyChanged("", "");
-	
+
 	// Construct the preference settings widgets
 	constructPreferences();
-	
+
 	// Add the commands to the EventManager
 	registerCommands();
 
 	GlobalUIManager().getStatusBarManager().addTextElement(
-		"XYZPos", 
+		"XYZPos",
 		"",  // no icon
 		IStatusBarManager::POS_POSITION
 	);

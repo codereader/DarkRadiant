@@ -15,7 +15,7 @@ namespace ui
 /**
  * An abstract MenuItem needs to provide a getWidget() method
  * which will be packed into a parent GTK container, plus
- * various callbacks for determining the visibility/sensitivity of 
+ * various callbacks for determining the visibility/sensitivity of
  * this item (these are invoked before the menu is showing itself).
  *
  * An utility implementation of this class can be found in
@@ -68,13 +68,13 @@ class IMenu
 {
 public:
 	/* PUBLIC TYPES */
-	
+
 	/**
 	 * Function callback. Each menu item is associated with one of these, which
 	 * is invoked when the menu item is activated.
 	 */
 	typedef boost::function<void (void)> Callback;
-	
+
 	/**
 	 * Sensitivity callback. This function object returns a true or false value,
 	 * indicating whether the associated menu item should be clickable or not.

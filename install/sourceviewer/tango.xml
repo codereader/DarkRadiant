@@ -64,9 +64,9 @@
 
   <!-- Right Margin -->
   <style name="right-margin"                foreground="aluminium5" background="aluminium4"/>
-  
+
   <!-- Search Matching -->
-  <style name="search-match"                background="butter1"/>  
+  <style name="search-match"                background="butter1"/>
 
   <!-- Comments -->
   <style name="def:comment"                 foreground="skyblue3"/>

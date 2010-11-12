@@ -33,7 +33,7 @@ public:
 	// Use this to disable camera and xyview draw updates until enableScreenUpdates is called.
 	virtual void disableScreenUpdates() = 0;
 
-	/** 
+	/**
 	 * Returns the main application window widget. Returns NULL if no window
 	 * has been constructed yet.
 	 */
@@ -53,8 +53,8 @@ public:
 		TOOLBAR_VERTICAL,	// the "edit" toolbar (on the left)
 	};
 
-	/** 
-	 * greebo: Returns a toolbar widget, as specified by the 
+	/**
+	 * greebo: Returns a toolbar widget, as specified by the
 	 * passed enum value.
 	 */
 	virtual Gtk::Toolbar* getToolbar(Toolbar type) = 0;

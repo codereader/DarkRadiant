@@ -60,7 +60,7 @@ void OpenGLModule::sharedContextCreated()
 	GLenum err = glewInit();
 	if (err != GLEW_OK)	{
 		// glewInit failed
-		globalErrorStream() << "GLEW error: " << 
+		globalErrorStream() << "GLEW error: " <<
 			reinterpret_cast<const char*>(glewGetErrorString(err));
 	}
 
@@ -71,7 +71,7 @@ void OpenGLModule::sharedContextCreated()
 	m_font = _font.getDisplayList();
 	m_fontHeight = _font.getPixelHeight();
 }
-	
+
 void OpenGLModule::sharedContextDestroyed()
 {
 	GlobalRenderSystem().unrealise();
@@ -91,7 +91,7 @@ Gtk::Widget* OpenGLModule::registerGLWidget(Gtk::Widget* widget)
 		// First non-duplicated widget registered, take this as context
 		_sharedContext = widget;
 		_sharedContext->reference();
-		
+
 		// Create a context
 		gtkutil::GLWidget::makeCurrent(*_sharedContext);
         assertNoErrors();

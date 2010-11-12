@@ -69,7 +69,7 @@ double ClipPoint::intersect(const Vector3& point, EViewType viewtype, float scal
 void ClipPoint::testSelect(const Vector3& point, EViewType viewtype, float scale, double& bestDistance, ClipPoint*& bestClip) {
 	if (isSet()) {
 		double distance = intersect(point, viewtype, scale);
-		
+
 		if (distance < bestDistance) {
 			bestDistance = distance;
 			bestClip = this;

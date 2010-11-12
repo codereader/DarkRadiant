@@ -5,7 +5,7 @@
 
 namespace textool {
 
-PatchItem::PatchItem(Patch& sourcePatch) : 
+PatchItem::PatchItem(Patch& sourcePatch) :
 	_sourcePatch(sourcePatch)
 {
 	// Add all the patch control vertices as children to this class
@@ -14,7 +14,7 @@ PatchItem::PatchItem(Patch& sourcePatch) :
 		TexToolItemPtr patchVertexItem(
 			new PatchVertexItem(*i)
 		);
-		
+
 		// Add it to the children of this patch
 		_children.push_back(patchVertexItem);
 	}
@@ -24,14 +24,14 @@ void PatchItem::render() {
 	glEnable(GL_BLEND);
 	glBlendColor(0,0,0, 0.3f);
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
-	
+
 	glColor3f(1, 1, 1);
-	
+
 	// Get the tesselation and the first
 	PatchTesselation& tess = _sourcePatch.getTesselation();
-	
+
 	const RenderIndex* strip_indices = &tess.indices.front();
-	
+
 	for (std::size_t i = 0; i < tess.m_numStrips; i++, strip_indices += tess.m_lenStrips)
 	{
 		glBegin(GL_QUAD_STRIP);
@@ -45,9 +45,9 @@ void PatchItem::render() {
 
 		glEnd();
 	}
-	
+
 	glDisable(GL_BLEND);
-	
+
 	// Now invoke the default render method (calls render() on all children)
 	TexToolItem::render();
 }
@@ -62,14 +62,14 @@ void PatchItem::beginTransformation() {
 void PatchItem::update() {
 	// Call the default routine
 	TexToolItem::update();
-	// Notify the sourcepatch what's happened 
+	// Notify the sourcepatch what's happened
 	_sourcePatch.controlPointsChanged();
 }
 
 void PatchItem::selectRelated() {
 	// Call the default routine
 	TexToolItem::selectRelated();
-	
+
 	// Now have a look at the patch vertices, select all if one is selected
 	for (std::size_t i = 0; i < _children.size(); i++) {
 		if (_children[i]->isSelected()) {

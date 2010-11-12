@@ -24,11 +24,11 @@ class SoundChooser :
 {
 public:
 	// Treemodel definition
-	struct TreeColumns : 
+	struct TreeColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		TreeColumns()
-		{ 
+		{
 			add(displayName);
 			add(shaderName);
 			add(isFolder);
@@ -48,13 +48,13 @@ private:
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
 	Gtk::TreeView* _treeView;
 	Glib::RefPtr<Gtk::TreeSelection> _treeSelection;
-	
+
 	// The preview widget group
 	SoundShaderPreview* _preview;
-	
+
 	// Last selected shader
 	std::string _selectedShader;
-	
+
 private:
 
 	// Widget construction
@@ -65,12 +65,12 @@ private:
 	void _onOK();
 	void _onCancel();
 	void _onSelectionChange();
-	
+
 	// Implement custom action on window delete
 	void _onDeleteEvent();
 
 public:
-	
+
 	/**
 	 * Constructor creates widgets.
 	 */

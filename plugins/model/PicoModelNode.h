@@ -12,8 +12,8 @@
 
 namespace model {
 
-class PicoModelNode : 
-	public scene::Node, 
+class PicoModelNode :
+	public scene::Node,
 	public ModelNode,
 	public Nameable,
 	public SelectionTestable,
@@ -33,7 +33,7 @@ class PicoModelNode :
 	// The light list from the shader cache when we attach
 	const LightList& _lightList;
 
-	// Cache of RenderablePicoSurfaces along with their shaders. This is 
+	// Cache of RenderablePicoSurfaces along with their shaders. This is
 	// necessary to allow each Instance to have its own skin.
 	typedef std::pair< boost::shared_ptr<RenderablePicoSurface>,
 					   ShaderPtr> MappedSurface;
@@ -71,7 +71,7 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test);
 
 	virtual std::string name() const;
-  
+
 	const RenderablePicoModelPtr& getModel() const;
 	void setModel(const RenderablePicoModelPtr& model);
 
@@ -82,14 +82,14 @@ public:
 	// Clear all lights from this model instance
 	void clearLights();
 
-	// Renderable implementation	
+	// Renderable implementation
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
 private:
-	// Instance render function 
-	void submitRenderables(RenderableCollector& collector, 
-						   const VolumeTest& volume, 
+	// Instance render function
+	void submitRenderables(RenderableCollector& collector,
+						   const VolumeTest& volume,
 						   const Matrix4& localToWorld) const;
 };
 typedef boost::shared_ptr<PicoModelNode> PicoModelNodePtr;

@@ -7,15 +7,15 @@
 
 // Visits each visible patch with the given functor
 template<typename Functor>
-class PatchForEachWalker : 
+class PatchForEachWalker :
 	public scene::NodeVisitor
 {
 	const Functor& _functor;
 public:
-	PatchForEachWalker(const Functor& functor) : 
+	PatchForEachWalker(const Functor& functor) :
 		_functor(functor)
 	{}
-	
+
 	bool pre(const scene::INodePtr& node) {
 		// Skip hidden paths
 		if (!node->visible()) return false;
@@ -26,7 +26,7 @@ public:
 			_functor(*patch);
 			return false;
 		}
-		
+
 		return true;
 	}
 };
@@ -34,12 +34,12 @@ public:
 // ------------------------------------------------------------------------------------
 
 template<typename Functor>
-class PatchSelectedVisitor : 
+class PatchSelectedVisitor :
 	public SelectionSystem::Visitor
 {
 	const Functor& _functor;
 public:
-	PatchSelectedVisitor(const Functor& functor) : 
+	PatchSelectedVisitor(const Functor& functor) :
 		_functor(functor)
 	{}
 
@@ -54,7 +54,7 @@ public:
 	}
 };
 
-/** 
+/**
  * Scene traversor methods for patches: visible, visible selected and visible selected instance
  */
 template<typename Functor>

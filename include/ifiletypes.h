@@ -33,7 +33,7 @@ struct FileTypePattern
 {
 	// The user-friendly name
 	std::string name;
-	
+
 	// The mask pattern
 	std::string pattern;
 
@@ -50,10 +50,10 @@ struct ModuleFileType
 {
 	// Module name
 	std::string moduleName;
-	
+
 	// File type pattern
 	FileTypePattern filePattern;
-	
+
 	// Initialising constructor
 	ModuleFileType(const std::string& n, const FileTypePattern& p)
 	: moduleName(n), filePattern(p)
@@ -78,29 +78,29 @@ class IFileTypeRegistry :
 public:
 	/**
 	 * Add a type to the registry.
-	 * 
+	 *
 	 * @param moduleType
 	 * The type of the module, e.g. "map".
-	 * 
+	 *
 	 * @param moduleName
 	 * Name of the module.
-	 * 
+	 *
 	 * @param type
 	 * The FileTypePattern to associate with this module name.
 	 */
-	virtual void addType(const std::string& moduleType, 
-						 const std::string& moduleName, 
+	virtual void addType(const std::string& moduleType,
+						 const std::string& moduleName,
 						 const FileTypePattern& type) = 0;
-						 
+
 	/**
 	 * Get a list of ModuleFileTypes associated with the given module type. If
 	 * the moduleType is not found, returns an empty list.
-	 * 
+	 *
 	 * @param moduleType
 	 * The module category for which a list of types should be retrieved.
 	 */
 	virtual ModuleTypeListPtr getTypesFor(const std::string& moduleType) = 0;
-	
+
 	/**
 	 * Find the name of the module which loads the given extension.
 	 */

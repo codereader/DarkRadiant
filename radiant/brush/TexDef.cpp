@@ -67,30 +67,30 @@ void TexDef::normalise(double width, double height) {
 	_shift[0] = float_mod(_shift[0], width);
 	_shift[1] = float_mod(_shift[1], height);
 }
-	
+
 /* Construct a transform in ST space from the texdef.
- * Transforms constructed from quake's texdef format 
+ * Transforms constructed from quake's texdef format
  * are (-shift)*(1/scale)*(-rotate) with x translation sign flipped.
  * This would really make more sense if it was inverseof(shift*rotate*scale).. oh well.*/
 Matrix4 TexDef::getTransform(double width, double height) const {
 	Matrix4 transform;
 	double inverse_scale[2];
-  
+
 		// transform to texdef shift/scale/rotate
 	inverse_scale[0] = 1 / (_scale[0] * width);
 	inverse_scale[1] = 1 / (_scale[1] * -height);
 	transform[12] = _shift[0] / width;
 	transform[13] = -_shift[1] / -height;
-	
+
 	double c = cos(degrees_to_radians(-_rotate));
 	double s = sin(degrees_to_radians(-_rotate));
-	
+
 	transform[0] = c * inverse_scale[0];
 	transform[1] = s * inverse_scale[1];
 	transform[4] = -s * inverse_scale[0];
 	transform[5] = c * inverse_scale[1];
 	transform[2] = transform[3] = transform[6] = transform[7] = transform[8] = transform[9] = transform[11] = transform[14] = 0;
 	transform[10] = transform[15] = 1;
-	
+
 	return transform;
 }

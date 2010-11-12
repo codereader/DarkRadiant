@@ -31,7 +31,7 @@ public:
 	{
 		_outputBuffer.append(msg);
 
-		// Python doesn't send entire lines, it may send single characters, 
+		// Python doesn't send entire lines, it may send single characters,
 		// so don't add std::endl each time
 		if (_isErrorLogger) {
 			globalErrorStream() << msg;

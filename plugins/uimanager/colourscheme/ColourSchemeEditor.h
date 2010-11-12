@@ -27,7 +27,7 @@ class ColourSchemeEditor :
 private:
 	// The treeview and its selection pointer
 	Gtk::TreeView* _treeView;
-		
+
 	struct Columns :
 		public Gtk::TreeModel::ColumnRecord
 	{
@@ -36,14 +36,14 @@ private:
 		Gtk::TreeModelColumn<Glib::ustring> name;
 	};
 
-	// The list store containing the list of ColourSchemes		
+	// The list store containing the list of ColourSchemes
 	Columns _columns;
 	Glib::RefPtr<Gtk::ListStore> _listStore;
-	
+
 	// The vbox containing the colour buttons and its frame
 	Gtk::HBox* _colourBox;
 	Gtk::Frame* _colourFrame;
-	
+
 	// The "delete scheme" button
 	Gtk::Button* _deleteButton;
 
@@ -53,7 +53,7 @@ public:
 
 	// Command target
 	static void editColourSchemes(const cmd::ArgumentList& args);
-	
+
 protected:
 	// Override TransientWindow's delete event
 	virtual void _onDeleteEvent();
@@ -67,27 +67,27 @@ private:
 	Gtk::Widget& constructTreeviewButtons();
 	Gtk::Widget& constructColourSelector(ColourItem& colour, const std::string& name);
 	void 		updateColourSelectors();
-	
+
 	// Queries the user for a string and returns it
 	// Returns "" if the user aborts or nothing is entered
 	std::string inputDialog(const std::string& title, const std::string& label);
-	
+
 	// Puts the cursor on the currently active scheme
 	void 		selectActiveScheme();
-	
+
 	// Updates the colour selectors after a selection change
 	void 		selectionChanged();
-	
+
 	// Returns the name of the currently selected scheme
 	std::string	getSelectedScheme();
-	
+
 	// Deletes or copies a scheme
 	void 		deleteScheme();
 	void 		copyScheme();
-	
+
 	// Deletes a scheme from the list store (called from deleteScheme())
 	void 		deleteSchemeFromList();
-	
+
 	// gtkmm Callbacks
 	void callbackSelChanged();
 	void callbackOK();
@@ -95,11 +95,11 @@ private:
 	void callbackColorChanged(Gtk::ColorButton* widget, ColourItem* colour);
 	void callbackDelete();
 	void callbackCopy();
-	
+
 	// Destroy window and delete self, called by both Cancel and window
 	// delete callbacks
 	void doCancel();
-	
+
 	// Updates the windows after a colour change
 	static void updateWindows();
 };

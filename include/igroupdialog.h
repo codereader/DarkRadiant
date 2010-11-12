@@ -13,7 +13,7 @@ namespace Gtk { class Widget; class Window; }
  *
  * Use the addPage() method to add a new tab to the GroupDialog.
  */
-class IGroupDialog 
+class IGroupDialog
 {
 public:
     /**
@@ -22,21 +22,21 @@ public:
 	virtual ~IGroupDialog() {}
 
 	/** Adds a page to the group dialog.
-	 * 
+	 *
 	 * @name: The name of this window (unique, can be used to show the page)
 	 * @tabLabel: The label string to be displayed on the tab
 	 * @tabIcon: The image to be displayed in the tab
 	 * @page: the actual page to be added
-	 * @windowLabel: the title string for the groupdialog window 
+	 * @windowLabel: the title string for the groupdialog window
 	 * 				 displayed when this tab is active
 	 * @insertBefore: specify the name of an already added page to let this page
 	 * be inserted at a specific point in the tab bar.
-	 * 
+	 *
 	 * @returns: the notebook page widget
 	 */
-	virtual Gtk::Widget* addPage(const std::string& name, 
-							   const std::string& tabLabel, const std::string& tabIcon, 
-							   Gtk::Widget& page, const std::string& windowLabel, 
+	virtual Gtk::Widget* addPage(const std::string& name,
+							   const std::string& tabLabel, const std::string& tabIcon,
+							   Gtk::Widget& page, const std::string& windowLabel,
 							   const std::string& insertBefore = "") = 0;
 
 	/**
@@ -46,12 +46,12 @@ public:
 	virtual void removePage(const std::string& name) = 0;
 
 	/** greebo: Sets the active tab to the given widget.
-	 * 
+	 *
 	 * @page: The widget that should be displayed, must have been added
 	 * 		  using addPage() beforehand.
 	 */
 	virtual void setPage(Gtk::Widget* page) = 0;
-	
+
 	/** greebo: Activated the named page. The <name> parameter
 	 * 			refers to the name string passed to the addPage() method.
 	 * This also shows the GroupDialog, should it be hidden before the call.
@@ -68,7 +68,7 @@ public:
 	 * the dialog is hidden.
 	 */
 	virtual void togglePage(const std::string& name) = 0;
-	
+
 	/** greebo: Returns the widget of the currently visible page.
 	 */
 	virtual Gtk::Widget* getPage() = 0;
@@ -95,7 +95,7 @@ public:
 	 */
 	virtual void reparentNotebook(Gtk::Widget* newParent) = 0;
 
-	/** 
+	/**
 	 * Reparents the groupdialog notebook back to the GroupDialog itself.
 	 */
 	virtual void reparentNotebookToSelf() = 0;

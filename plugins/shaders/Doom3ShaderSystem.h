@@ -17,56 +17,56 @@ namespace shaders {
  * \brief
  * Implementation of the MaterialManager for Doom 3 .
  */
-class Doom3ShaderSystem 
-: public MaterialManager, 
+class Doom3ShaderSystem
+: public MaterialManager,
   public VirtualFileSystem::Observer
 {
-	// The shaderlibrary stores all the known shaderdefinitions 
+	// The shaderlibrary stores all the known shaderdefinitions
 	// as well as the active shaders
 	ShaderLibraryPtr _library;
-	
-	// The manager that handles the texture caching. 
+
+	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
-	
+
 	// A list of observers with regards to the active shaders list
 	typedef std::set<ActiveShadersObserverPtr> Observers;
 	Observers _activeShadersObservers;
-	
+
 	// Flag to indicate whether the active shaders callback should be invoked
 	bool _enableActiveUpdates;
-	
+
 	// TRUE if the material files have been parsed
 	bool _realised;
-	
+
 	// The observers that are attached to this system. These get
 	// notified upon realisation of this class.
 	ModuleObservers _observers;
-	
+
 public:
 
 	// Constructor, allocates the library
 	Doom3ShaderSystem();
-	
+
 	// This attaches this class as ModuleObserver to the Filesystem
 	void construct();
 	void destroy();
 
 	// Gets called on initialise
 	virtual void onFileSystemInitialise();
-	
+
 	// Gets called on shutdown
 	virtual void onFileSystemShutdown();
-	
-	// greebo: This parses the material files and calls realise() on any 
+
+	// greebo: This parses the material files and calls realise() on any
 	// attached moduleobservers
 	void realise();
-	
-	// greebo: Unrealises the attached ModuleObservers and frees the shaders 
+
+	// greebo: Unrealises the attached ModuleObservers and frees the shaders
 	void unrealise();
-	
+
 	// Flushes the shaders from memory and reloads the material files
 	void refresh();
-	
+
 	// Is the shader system realised
 	bool isRealised();
 
@@ -79,14 +79,14 @@ public:
 	bool endActiveShadersIterator();
 	MaterialPtr dereferenceActiveShadersIterator();
 	void incrementActiveShadersIterator();
-	
+
 	void activeShadersChangedNotify();
-	
+
 	// Enable or disable the active shaders callback
 	void setActiveShaderUpdates(bool v) {
 		_enableActiveUpdates = v;
 	}
-	
+
 	void attach(ModuleObserver& observer);
 	void detach(ModuleObserver& observer);
 
@@ -98,7 +98,7 @@ public:
 	 * greebo: Traverse all shaders using the given visitor class.
 	 */
 	void foreachShader(ShaderVisitor& visitor);
-	
+
 	/* greebo: Loads an image from disk and creates a basic shader
 	 * object out of it (i.e. only diffuse and editor image are non-empty).
 	 */
@@ -113,13 +113,13 @@ public:
 
 public:
 
-	/** Load the shader definitions from the MTR files 
+	/** Load the shader definitions from the MTR files
 	 * (doesn't load any textures yet).	*/
 	void loadMaterialFiles();
 
 	// Unloads all the existing shaders and calls activeShadersChangedNotify()
 	void freeShaders();
-	
+
 	void addActiveShadersObserver(const ActiveShadersObserverPtr& observer);
 	void removeActiveShadersObserver(const ActiveShadersObserverPtr& observer);
 

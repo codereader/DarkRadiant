@@ -52,11 +52,11 @@ public:
 	/** greebo: Retrieves the actual value of this key
 	 */
 	virtual const std::string& get() const = 0;
-	
+
 	/** greebo: Sets the value of this key
 	 */
 	virtual void assign(const std::string& other) = 0;
-	
+
 	/** greebo: Attaches/detaches a callback to get notified about
 	 * 			the key change.
 	 */
@@ -68,20 +68,20 @@ typedef boost::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
 /**
  * Interface for a map entity. The Entity is the main building block of a
  * map, and the uppermost layer in the scenegraph under the root node. Each
- * entity contains a arbitrary dictionary of strings ("properties" or 
+ * entity contains a arbitrary dictionary of strings ("properties" or
  * "spawnargs") containing information about this entity which is used by the
  * game engine to modify its behaviour, and may additionally contain child
  * primitives (brushes and patches) depending on its type.
- * 
- * At the minimum, each Entity must contain three properties: "name" which 
- * contains a map-unique string identifier, "classname" which identifies the
- * entity class to the game, and "origin" which stores the location of the 
- * entity in 3-dimensional world space.
- * 
- * A valid <b>Id Tech 4</b> map must contain at least one entity: the
- * "worldspawn" which is the parent of all map geometry primitives. 
  *
- * greebo: Note that keys are treated case-insensitively in Doom 3, so 
+ * At the minimum, each Entity must contain three properties: "name" which
+ * contains a map-unique string identifier, "classname" which identifies the
+ * entity class to the game, and "origin" which stores the location of the
+ * entity in 3-dimensional world space.
+ *
+ * A valid <b>Id Tech 4</b> map must contain at least one entity: the
+ * "worldspawn" which is the parent of all map geometry primitives.
+ *
+ * greebo: Note that keys are treated case-insensitively in Doom 3, so
  * the Entity class will return the same result for "MYKeY" as for "mykey".
  */
 class Entity
@@ -108,7 +108,7 @@ public:
          */
 		virtual void onKeyInsert(const std::string& key, EntityKeyValue& value)
         { }
-		
+
         /**
          * \brief
          * Notification that a key value has changed on the entity.
@@ -130,19 +130,19 @@ public:
 	 * visitor's visit() method will be invoked for each keyvalue on the
 	 * Entity.
 	 */
-	struct Visitor 
+	struct Visitor
 	{
 		virtual ~Visitor() {}
 		/**
 		 * The visit function which must be implemented by subclasses.
-		 * 
+		 *
 		 * @param key
 		 * The current key being visited.
-		 * 
+		 *
 		 * @param value
 		 * The value associated with the current key.
 		 */
-    	virtual void visit(const std::string& key, 
+    	virtual void visit(const std::string& key,
     					   const std::string& value) = 0;
 	};
 
@@ -151,19 +151,19 @@ public:
 	 * to an Entity via the Entity::forEachKeyValue() method, after which the
 	 * visitor's visit() method will be invoked for each keyvalue on the Entity.
 	 */
-	struct KeyValueVisitor 
+	struct KeyValueVisitor
 	{
 		virtual ~KeyValueVisitor() {}
 		/**
 		 * The visit function which must be implemented by subclasses.
-		 * 
+		 *
 		 * @param key
 		 * The current key being visited.
-		 * 
+		 *
 		 * @param value
 		 * The actual keyvalue object associated with the current key.
 		 */
-    	virtual void visit(const std::string& key, 
+    	virtual void visit(const std::string& key,
     					   EntityKeyValue& value) = 0;
 	};
 
@@ -173,7 +173,7 @@ public:
 	 * Return the entity class object for this entity.
 	 */
 	virtual IEntityClassPtr getEntityClass() const = 0;
-  
+
 	/**
 	 * Enumerate key values on this entity using a Entity::Visitor class.
 	 */
@@ -184,23 +184,23 @@ public:
 
 	/** Set a key value on this entity. Setting the value to "" will
 	 * remove the key.
-	 * 
+	 *
 	 * @param key
 	 * The key to set.
-	 * 
+	 *
 	 * @param value
 	 * Value to give the key, or the empty string to remove the key.
 	 */
-	virtual void setKeyValue(const std::string& key, 
+	virtual void setKeyValue(const std::string& key,
 							 const std::string& value) = 0;
 
 	/* Retrieve a key value from the entity.
-	 * 
+	 *
 	 * @param key
 	 * The key to retrieve.
-	 * 
+	 *
 	 * @returns
-	 * The current value for this key, or the empty string if it does not 
+	 * The current value for this key, or the empty string if it does not
 	 * exist.
 	 */
 	virtual std::string getKeyValue(const std::string& key) const = 0;
@@ -208,38 +208,38 @@ public:
 	/**
 	 * greebo: Checks whether the given key is inherited or not.
 	 *
-	 * @returns: TRUE if the value is inherited, 
+	 * @returns: TRUE if the value is inherited,
 	 *           FALSE when it is not or when the key doesn't exist at all.
 	 */
 	virtual bool isInherited(const std::string& key) const = 0;
 
 	/**
 	 * Return the list of Key/Value pairs matching the given prefix, case ignored.
-	 * 
+	 *
 	 * This method performs a search for all spawnargs whose key
-	 * matches the given prefix, with a suffix consisting of zero or more 
+	 * matches the given prefix, with a suffix consisting of zero or more
 	 * arbitrary characters. For example, if "target" were specified as the
 	 * prefix, the list would include "target", "target0", "target127" etc.
-	 * 
+	 *
 	 * This operation may not have high performance, due to the need to scan
 	 * for matching names, therefore should not be used in performance-critical
 	 * code.
-	 * 
+	 *
 	 * @param prefix
 	 * The prefix to search for, interpreted case-insensitively.
-	 * 
+	 *
 	 * @return
 	 * A list of KeyValue pairs matching the provided prefix. This
 	 * list will be empty if there were no matches.
 	 */
 	virtual KeyValuePairs getKeyValuePairs(const std::string& prefix) const = 0;
-	
-	/** greebo: Returns true if the entity is a model. For Doom3, this is 
+
+	/** greebo: Returns true if the entity is a model. For Doom3, this is
 	 * 			usually true when the classname == "func_static" and
 	 * 			the non-empty spawnarg "model" != "name".
 	 */
 	virtual bool isModel() const = 0;
-	
+
   virtual bool isContainer() const = 0;
 
     /**
@@ -260,7 +260,7 @@ class IEntityNode
 public:
     virtual ~IEntityNode() {}
 	/** greebo: Temporary workaround for entity-containing nodes.
-	 * 			This is only used by Node_getEntity to retrieve the 
+	 * 			This is only used by Node_getEntity to retrieve the
 	 * 			contained entity from a node.
 	 */
 	virtual Entity& getEntity() = 0;
@@ -272,7 +272,7 @@ public:
 	 */
 	virtual void refreshModel() = 0;
 };
-typedef boost::shared_ptr<IEntityNode> IEntityNodePtr; 
+typedef boost::shared_ptr<IEntityNode> IEntityNodePtr;
 
 inline Entity* Node_getEntity(const scene::INodePtr& node)
 {
@@ -293,19 +293,19 @@ inline bool Node_isEntity(const scene::INodePtr& node)
 /**
  * greebo: This is a visitor class copying all visited spawnargs to
  *         the target entity passed to the constructor (except classname).
- */ 
-class EntityCopyingVisitor : 
+ */
+class EntityCopyingVisitor :
 	public Entity::Visitor
 {
 	// the target entity
-	Entity& _entity; 
+	Entity& _entity;
 public:
-	EntityCopyingVisitor(Entity& entity) : 
+	EntityCopyingVisitor(Entity& entity) :
 		_entity(entity)
 	{}
 
 	virtual ~EntityCopyingVisitor() {}
-	
+
 	// Required visit function, copies keyvalues (except classname) between
 	// entities
 	void visit(const std::string& key, const std::string& value) {

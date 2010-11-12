@@ -11,7 +11,7 @@ of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 See the GNU General Public License for more details.
 
@@ -38,12 +38,12 @@ struct cg_vertex2fragment
 cg_vertex2fragment main(cg_app2vertex IN)
 {
 	cg_vertex2fragment OUT;
-	
+
 	// transform vertex position into homogenous clip-space
 	OUT.position = mul(glstate.matrix.mvp, IN.position);
-	
+
 	// transform texcoords into 1st texture space
 	OUT.tex0 = mul(glstate.matrix.texture[0], IN.texcoord0);
-    
+
 	return OUT;
 }

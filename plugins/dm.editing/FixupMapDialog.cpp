@@ -11,7 +11,7 @@
 namespace ui
 {
 
-namespace 
+namespace
 {
 	const char* const WINDOW_TITLE = N_("Fixup Map");
 	const char* const FIXUP_FILE_LABEL = N_("Fixup File");
@@ -56,7 +56,7 @@ void FixupMapDialog::RunDialog(const cmd::ArgumentList& args)
 		msg += (boost::format(_("<b>%d</b> entities replaced.")) % result.replacedEntities).str() + "\n";
 		msg += (boost::format(_("<b>%d</b> models replaced.")) % result.replacedModels).str() + "\n";
 		msg += (boost::format(_("<b>%d</b> spawnargs replaced.")) % result.replacedMisc).str() + "\n";
-		
+
 		if (!result.errors.empty())
 		{
 			msg += "\n\n";

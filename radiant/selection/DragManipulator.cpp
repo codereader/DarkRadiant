@@ -25,7 +25,7 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
 		EntitySelector selectionTester(entitySelector, test);
 		GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
 
-    	// Find all primitives that are selectable 
+    	// Find all primitives that are selectable
 		BooleanSelector booleanSelector;
 
 		PrimitiveSelector primitiveTester(booleanSelector, test);
@@ -49,7 +49,7 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
     else if(GlobalSelectionSystem().Mode() == SelectionSystem::eEntity) {
     	// Create a boolean selection pool (can have exactly one selectable or none)
 		BooleanSelector booleanSelector;
-	
+
 		// Find the visible entities
 		EntitySelector selectionTester(booleanSelector, test);
 		GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
@@ -67,7 +67,7 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
 		ComponentSelector selectionTester(bestSelector, test, GlobalSelectionSystem().ComponentMode());
 		GlobalSelectionSystem().foreachSelected(selectionTester);
 
-		for (std::list<Selectable*>::iterator i = bestSelector.best().begin(); 
+		for (std::list<Selectable*>::iterator i = bestSelector.best().begin();
 			 i != bestSelector.best().end(); ++i)
 		{
 			// greebo: Disabled this, it caused the currently selected patch vertices being deselected.
@@ -78,7 +78,7 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
 					GlobalSelectionSystem().setSelectedAllComponents(false);
 				}
 			}
-		
+
 			_selected = false;
 			selector.addSelectable(SelectionIntersection(0, 0), (*i));
 			_dragSelectable.setSelected(true);

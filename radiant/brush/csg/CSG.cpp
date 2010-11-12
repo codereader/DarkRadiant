@@ -39,9 +39,9 @@ private:
 
 public:
 
-	FaceMakeBrush(const BrushNodePtr& brush, float offset, bool makeRoom = false) : 
-		_brush(brush), 
-		_offset(offset), 
+	FaceMakeBrush(const BrushNodePtr& brush, float offset, bool makeRoom = false) :
+		_brush(brush),
+		_offset(offset),
 		_makeRoom(makeRoom)
 	{}
 
@@ -76,7 +76,7 @@ public:
 			newFace->flipWinding();
 			newFace->getPlane().offset(_offset);
 			newFace->planeChanged();
-	  
+
 			if (_makeRoom)
 			{
 				// Retrieve the normal vector of the "source" face
@@ -133,7 +133,7 @@ void makeRoomForSelectedBrushes(const cmd::ArgumentList& args) {
 
 BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane) {
 	brush.evaluateBRep();
-	
+
 	BrushSplitType split;
 	for (Brush::const_iterator i(brush.begin()); i != brush.end(); ++i) {
 		if ((*i)->contributes()) {
@@ -161,7 +161,7 @@ bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVecto
 			if (!face.contributes()) continue;
 
 			BrushSplitType split = Brush_classifyPlane(back->getBrush(), face.plane3());
-			
+
 			if (split.counts[ePlaneFront] != 0 && split.counts[ePlaneBack] != 0)
 			{
 				fragments.push_back(boost::static_pointer_cast<BrushNode>(back->clone()));
@@ -188,7 +188,7 @@ bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVecto
 	return false;
 }
 
-class SubtractBrushesFromUnselected : 
+class SubtractBrushesFromUnselected :
 	public scene::NodeVisitor
 {
 	const BrushPtrVector& _brushlist;
@@ -197,9 +197,9 @@ class SubtractBrushesFromUnselected :
 
 	std::list<scene::INodePtr> _deleteList;
 public:
-	SubtractBrushesFromUnselected(const BrushPtrVector& brushlist, std::size_t& before, std::size_t& after) : 
-		_brushlist(brushlist), 
-		_before(before), 
+	SubtractBrushesFromUnselected(const BrushPtrVector& brushlist, std::size_t& before, std::size_t& after) :
+		_brushlist(brushlist),
+		_before(before),
 		_after(after)
 	{}
 
@@ -221,7 +221,7 @@ public:
 		}
 
 		Brush* brush = Node_getBrush(node);
-		
+
 		if (brush != NULL && !Node_isSelected(node))
 		{
 			BrushNodePtr brushNode = boost::static_pointer_cast<BrushNode>(node);
@@ -234,22 +234,22 @@ public:
 			std::size_t swap = 0;
 
 			BrushNodePtr original = boost::static_pointer_cast<BrushNode>(brushNode->clone());
-			
+
 			//Brush* original = new Brush(*brush);
 			buffer[swap].push_back(original);
 
 			// Iterate over all selected brushes
 			for (BrushPtrVector::const_iterator i(_brushlist.begin()); i != _brushlist.end(); ++i)
 			{
-				for (BrushPtrVector::iterator j(buffer[swap].begin()); 
+				for (BrushPtrVector::iterator j(buffer[swap].begin());
 					 j != buffer[swap].end(); ++j)
 				{
 					if (Brush_subtract(*j, (*i)->getBrush(), buffer[1 - swap]))
 					{
 						// greebo: Delete not necessary, nodes get deleted automatically by clear() below
-						// delete (*j); 
+						// delete (*j);
 					}
-					else 
+					else
 					{
 						buffer[1 - swap].push_back(*j);
 					}
@@ -273,7 +273,7 @@ public:
 				for (BrushPtrVector::const_iterator i = out.begin(); i != out.end(); ++i)
 				{
 					_after++;
-					
+
 					scene::INodePtr newBrush = GlobalBrushCreator().createBrush();
 
 					// Move the new Brush to the same layers as the source node
@@ -298,12 +298,12 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 {
 	if (GlobalRegistry().get(RKEY_EMIT_CSG_SUBTRACT_WARNING) == "1")
 	{
-		gtkutil::MessageBox box(_("This Is Not Dromed Warning"), 
+		gtkutil::MessageBox box(_("This Is Not Dromed Warning"),
 			_("Note: be careful when using the CSG tool, as you might end up\n"
 			"with a unnecessary number of tiny brushes and/or leaks.\n"
 			"This popup will not be shown again."), ui::IDialog::MESSAGE_CONFIRM,
 			GlobalMainFrame().getTopLevelWindow());
-		
+
 		box.run();
 
 		// Disable this warning
@@ -312,7 +312,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 
 	// Collect all selected brushes
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
-	
+
 	if (brushes.empty()) {
 		globalOutputStream() << _("CSG Subtract: No brushes selected.") << std::endl;
 		gtkutil::errorDialog(_("CSG Subtract: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
@@ -342,7 +342,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 
 // greebo: TODO: Make this a member method of the Brush class
 bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
-	// gather potential outer faces 
+	// gather potential outer faces
 	typedef std::vector<const Face*> Faces;
 	Faces faces;
 
@@ -385,11 +385,11 @@ bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
 					if (!onlyshape && !shader_equal(
                             face1.getFaceShader().getMaterialName(),
                             face2.getFaceShader().getMaterialName()
-                        )) 
+                        ))
                     {
 						return false;
 					}
-				
+
 					// skip duplicate planes
 					skip = true;
 					break;
@@ -447,11 +447,11 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args) {
 
 	// Move the new brush to the same layers as the merged one
 	scene::assignNodeToLayers(node, merged->getLayers());
-		
+
 	// Get the contained brush
 	Brush* brush = Node_getBrush(node);
 
-	// Attempt to merge the selected brushes into the new one 
+	// Attempt to merge the selected brushes into the new one
 	if (!Brush_merge(*brush, brushes, true)) {
 		globalOutputStream() << "CSG Merge: Failed - result would not be convex.\n";
 	}
@@ -471,18 +471,18 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args) {
 
 		// Select the new brush
 		Node_setSelected(node, true);
-		
+
 		globalOutputStream() << "CSG Merge: Succeeded.\n";
 		SceneChangeNotify();
 	}
 }
 
-class BrushSetClipPlane : 
+class BrushSetClipPlane :
 	public SelectionSystem::Visitor
 {
 	Plane3 _plane;
 public:
-	BrushSetClipPlane(const Plane3& plane) : 
+	BrushSetClipPlane(const Plane3& plane) :
 		_plane(plane)
 	{}
 
@@ -515,10 +515,10 @@ void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split) {
 	{
 		// Instantiate a scoped walker
 		BrushByPlaneClipper walker(
-			planePoints[0], 
-			planePoints[1], 
-			planePoints[2], 
-			projection, 
+			planePoints[0],
+			planePoints[1],
+			planePoints[2],
+			projection,
 			split
 		);
 		GlobalSelectionSystem().foreachSelected(walker);

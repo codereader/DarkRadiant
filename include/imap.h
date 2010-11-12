@@ -43,8 +43,8 @@ class IMapRootNode
 {
 public:
     virtual ~IMapRootNode() {}
-	/** 
-	 * greebo: Returns the namespace of this root. 
+	/**
+	 * greebo: Returns the namespace of this root.
 	 */
 	virtual INamespacePtr getNamespace() = 0;
 };

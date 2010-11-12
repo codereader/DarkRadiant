@@ -16,7 +16,7 @@ class DeferredAdjustment
 
 public:
 	DeferredAdjustment(ValueChangedFunction function, void* data);
-	
+
 	void flush();
 	void value_changed(gdouble value);
 

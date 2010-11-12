@@ -73,19 +73,19 @@ ParticlePreview::ParticlePreview() :
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
-	
+
 	// Cast the GLWidget object to GtkWidget for further use
 	vbx->pack_start(*_glWidget, true, true, 0);
-	
+
 	// Connect up the signals
-	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | 
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
 						 Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
-	
+
 	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ParticlePreview::callbackGLDraw));
 	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &ParticlePreview::callbackGLMotion));
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &ParticlePreview::callbackGLScroll));
 	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &ParticlePreview::onSizeAllocate));
-	
+
 	// The HBox containing the toolbar and the menubar
 	Gtk::HBox* toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
 	vbx->pack_end(*toolHBox, false, false, 0);
@@ -148,10 +148,10 @@ ParticlePreview::ParticlePreview() :
 	toolbar2->insert(*_showAxesButton, 0);
 	toolbar2->insert(*_showWireFrameButton, 0);
 	toolbar2->insert(*reloadButton, 0);
-	
+
 	toolHBox->pack_start(*toolbar, true, true, 0);
 	toolHBox->pack_start(*toolbar2, true, true, 0);
-		
+
 	// Pack into a frame and return
 	add(*vbx);
 }
@@ -184,7 +184,7 @@ void ParticlePreview::initialisePreview()
 	glClearColor(0.0, 0.0, 0.0, 0);
 	glClearDepth(100.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	// Set up the camera
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -192,7 +192,7 @@ void ParticlePreview::initialisePreview()
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-			
+
 	// Set up the lights
 	glEnable(GL_LIGHTING);
 
@@ -203,7 +203,7 @@ void ParticlePreview::initialisePreview()
 	glLightfv(GL_LIGHT0, GL_AMBIENT, l0Amb);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, l0Dif);
 	glLightfv(GL_LIGHT0, GL_POSITION, l0Pos);
-	
+
 	glEnable(GL_LIGHT1);
 	GLfloat l1Dif[] = { 1.0, 1.0, 1.0, 1.0 };
 	GLfloat l1Pos[] = { 0.0, 0.0, 1.0, 0.0 };
@@ -220,7 +220,7 @@ void ParticlePreview::setParticle(const std::string& name)
 {
 	std::string nameClean = name;
 
-	if (boost::algorithm::ends_with(nameClean, ".prt")) 
+	if (boost::algorithm::ends_with(nameClean, ".prt"))
 	{
 		nameClean = nameClean.substr(0, nameClean.length() - 4);
 	}
@@ -234,7 +234,7 @@ void ParticlePreview::setParticle(const std::string& name)
 	}
 
 	_particle = GlobalParticlesManager().getRenderableParticle(nameClean);
-			
+
 	if (_particle != NULL && _lastParticle != nameClean)
 	{
 		// Reset preview time
@@ -243,7 +243,7 @@ void ParticlePreview::setParticle(const std::string& name)
 		// Reset the rotation to the default one
 		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3,1));
 		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
-		
+
 		// Call update(0) once to enable the bounds calculation
 		_particle->update(_previewTimeMsec, *_renderSystem, _rotation);
 
@@ -337,7 +337,7 @@ void ParticlePreview::callbackStepForward()
 	{
 		_timer.disable();
 	}
-	
+
 	_previewTimeMsec += MSEC_PER_FRAME;
 	_glWidget->queue_draw();
 }
@@ -351,7 +351,7 @@ void ParticlePreview::callbackStepBack()
 	{
 		_timer.disable();
 	}
-	
+
 	if (_previewTimeMsec > 0)
 	{
 		_previewTimeMsec -= MSEC_PER_FRAME;
@@ -386,7 +386,7 @@ Matrix4 ParticlePreview::getProjectionMatrix(float near_z, float far_z, float fi
 	);
 }
 
-bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev) 
+bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 {
 	if (_renderingInProgress) return false; // avoid double-entering this method
 
@@ -401,7 +401,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (_particle == NULL) 
+	if (_particle == NULL)
 	{
 		drawTime();
 		return false; // nothing to do
@@ -599,13 +599,13 @@ bool ParticlePreview::callbackGLMotion(GdkEventMotion* ev)
 						 0);
 		_lastX = ev->x;
 		_lastY = ev->y;
-		
+
 		// Calculate the axis of rotation. This is the mouse vector crossed with the Z axis,
 		// to give a rotation axis in the XY plane at right-angles to the mouse delta.
 		static Vector3 _zAxis(0, 0, 1);
 		Vector3 axisRot = deltaPos.crossProduct(_zAxis);
-		
-		// Grab the GL widget, and update the modelview matrix with the 
+
+		// Grab the GL widget, and update the modelview matrix with the
 		// additional rotation
 		if (gtkutil::GLWidget::makeCurrent(*_glWidget))
 		{

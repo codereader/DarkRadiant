@@ -82,11 +82,11 @@ class BrushNode :
 	BrushClipPlane m_clipPlane;
 
 	static ShaderPtr m_state_selpoint;
-	
+
 public:
 	// Constructor
 	BrushNode();
-	
+
 	// Copy Constructor
 	BrushNode(const BrushNode& other);
 
@@ -95,7 +95,7 @@ public:
 	// IBrushNode implementtation
 	virtual Brush& getBrush();
 	virtual IBrush& getIBrush();
-	
+
 	std::string name() const {
 		return "Brush";
 	}
@@ -148,7 +148,7 @@ public:
 
 	static void constructStatic();
 	static void destroyStatic();
-	
+
 	// BrushObserver implementation
 	void clear();
 	void reserve(std::size_t size);
@@ -199,7 +199,7 @@ private:
 
 	void renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const;
 	void evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const;
-	
+
 }; // class BrushNode
 typedef boost::shared_ptr<BrushNode> BrushNodePtr;
 

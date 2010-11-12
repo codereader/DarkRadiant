@@ -11,15 +11,15 @@ PatchNode::PatchNode(bool patchDef3) :
 	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attach(*this)),
-	m_patch(*this, 
-			Callback(boost::bind(&PatchNode::evaluateTransform, this)), 
+	m_patch(*this,
+			Callback(boost::bind(&PatchNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))) // create the m_patch member with the node parameters
 {
 	m_patch.m_patchDef3 = patchDef3;
 
 	Node::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
 }
-  
+
 // Copy Constructor
 PatchNode::PatchNode(const PatchNode& other) :
 	scene::Node(other),
@@ -40,9 +40,9 @@ PatchNode::PatchNode(const PatchNode& other) :
 	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	m_lightList(&GlobalRenderSystem().attach(*this)),
-	m_patch(other.m_patch, 
-			*this, 
-			Callback(boost::bind(&PatchNode::evaluateTransform, this)), 
+	m_patch(other.m_patch,
+			*this,
+			Callback(boost::bind(&PatchNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))) // create the patch out of the <other> one
 {
 	Node::setTransformChangedCallback(Callback(boost::bind(&PatchNode::lightsChanged, this)));
@@ -57,10 +57,10 @@ void PatchNode::allocate(std::size_t size) {
 	// Clear the control instance vector and reserve <size> memory
 	m_ctrl_instances.clear();
 	m_ctrl_instances.reserve(size);
-	
+
 	// greebo: Cycle through the patch's control vertices and add them as PatchControlInstance to the vector
 	// The PatchControlInstance constructor takes a pointer to a PatchControl and the SelectionChanged callback
-	// The passed callback points back to this class (the member method selectedChangedComponent() is called).  
+	// The passed callback points back to this class (the member method selectedChangedComponent() is called).
 	for(PatchControlIter i = m_patch.begin(); i != m_patch.end(); ++i)
 	{
 		m_ctrl_instances.push_back(
@@ -109,7 +109,7 @@ void PatchNode::snapComponents(float snap) {
 	if (selectedVertices()) {
 		// Tell the patch to save the current undo state
 		m_patch.undoSave();
-		
+
 		// Cycle through all the selected control instances and snap them to the grid
 		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
 			if(i->m_selectable.isSelected()) {
@@ -126,7 +126,7 @@ void PatchNode::testSelect(Selector& selector, SelectionTest& test) {
 	// Do not select patch if it is filtered
 	if (!isVisible())
 		return;
-	
+
     test.BeginMesh(localToWorld(), true);
     // Pass the selection test call to the patch
     m_patch.testSelect(selector, test);
@@ -135,7 +135,7 @@ void PatchNode::testSelect(Selector& selector, SelectionTest& test) {
 void PatchNode::selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) {
 	test.BeginMesh(localToWorld());
 
-	// Check if the drag planes pass the selection test 	
+	// Check if the drag planes pass the selection test
 	m_dragPlanes.selectPlanes(m_patch.localAABB(), selector, test, selectedPlaneCallback);
 }
 
@@ -145,7 +145,7 @@ void PatchNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& s
 }
 
 void PatchNode::selectCtrl(bool selected) {
-	// Cycle through all ControlInstances and set them to <select> 
+	// Cycle through all ControlInstances and set them to <select>
 	for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
 		i->m_selectable.setSelected(selected);
 	}
@@ -166,7 +166,7 @@ void PatchNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	if (mode == SelectionSystem::eVertex) {
 		selectCtrl(select);
 	}
-	// If we are in vertex edit mode, set the dragplanes to <select> 
+	// If we are in vertex edit mode, set the dragplanes to <select>
 	else if (mode == SelectionSystem::eFace) {
 		m_dragPlanes.setSelected(select);
 	}
@@ -225,7 +225,7 @@ void PatchNode::invertSelected() {
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
 		// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
 		PatchControlIter ctrl = m_patch.getControlPointsTransformed().begin();
-		
+
 		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl)
 		{
 			i->m_selectable.invertSelected();
@@ -245,7 +245,7 @@ void PatchNode::selectedChanged(const Selectable& selectable) {
 
 void PatchNode::selectedChangedComponent(const Selectable& selectable) {
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
-	// this to its internal list of selected nodes. 
+	// this to its internal list of selected nodes.
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
@@ -296,7 +296,7 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	collector.setLights(*m_lightList);
-	
+
 	// Pass the call to the patch instance, it adds the renderable
 	m_patch.render_solid(collector, volume, localToWorld());
 
@@ -310,15 +310,15 @@ void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 	if (!m_patch.getState()->getMaterial()->isVisible()) return;
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
-	
+
 	// Pass the call to the patch instance, it adds the renderable
 	m_patch.render_wireframe(collector, volume, localToWorld());
-	
+
 	// Render the selected components
 	renderComponentsSelected(collector, volume);
 }
 
-// Renders the components of this patch instance, makes use of the Patch::render_component() method 
+// Renders the components of this patch instance, makes use of the Patch::render_component() method
 void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
@@ -326,7 +326,7 @@ void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTes
 
 	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
-		
+
 	// Only render the components, if we are in the according ComponentMode
 	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
 		// Call the method of the patch itself
@@ -337,11 +337,11 @@ void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTes
 void PatchNode::update_selected() const {
 	// Clear the renderable point vector that represents the selection
 	m_render_selected.clear();
-	
+
 	// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
 	PatchControlConstIter ctrl = m_patch.getControlPointsTransformed().begin();
-	
-	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin(); 
+
+	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin();
 		 i != m_ctrl_instances.end(); ++i, ++ctrl)
 	{
 		if (i->m_selectable.isSelected()) {
@@ -356,11 +356,11 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 {
 	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
-	
+
 	// Rebuild the array of selected control vertices
 	update_selected();
-	
-	// If there are any selected components, add them to the collector 
+
+	// If there are any selected components, add them to the collector
 	if (!m_render_selected.empty()) {
 		collector.Highlight(RenderableCollector::ePrimitive, false);
 		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
@@ -391,12 +391,12 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 	// Are there any selected vertices?
 	if (selectedVertices())
 	{
-		// Set the iterator to the start of the (transformed) control points array 
+		// Set the iterator to the start of the (transformed) control points array
 		PatchControlIter ctrl = m_patch.getControlPointsTransformed().begin();
-		
+
 		// Cycle through the patch control instances and transform the selected ones
-		// greebo: Have to investigate this further, why there are actually two iterators needed  
-		for (PatchNode::PatchControlInstances::iterator i = m_ctrl_instances.begin(); 
+		// greebo: Have to investigate this further, why there are actually two iterators needed
+		for (PatchNode::PatchControlInstances::iterator i = m_ctrl_instances.begin();
 			 i != m_ctrl_instances.end(); ++i, ++ctrl)
 		{
 			if (i->m_selectable.isSelected())
@@ -412,7 +412,7 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 	// Also, check if there are any drag planes selected
 	// this should only be true when the transform is a pure translation.
 	if (m_dragPlanes.isSelected())
-	{ 
+	{
 		m_patch.transform(m_dragPlanes.evaluateTransform(matrix.t().getVector3()));
 	}
 }

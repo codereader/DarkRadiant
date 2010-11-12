@@ -62,8 +62,8 @@ public:
 };
 
 // Wrap around the EntityClassVisitor interface
-class ShaderVisitorWrapper : 
-	public shaders::ShaderVisitor, 
+class ShaderVisitorWrapper :
+	public shaders::ShaderVisitor,
 	public boost::python::wrapper<shaders::ShaderVisitor>
 {
 public:

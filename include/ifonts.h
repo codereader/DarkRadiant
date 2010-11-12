@@ -34,7 +34,7 @@ public:
 	float t2;
 	std::string texture; // the texture name without extension, e.g. carleton_1_24
 
-	// The shader this glyph is associated with 
+	// The shader this glyph is associated with
 	// this is NULL until the font is actually used
 	ShaderPtr shader;
 };
@@ -86,10 +86,10 @@ public:
 
 	// The name of the font, e.g. "carleton"
 	virtual const std::string& getName() const = 0;
-	
+
 	// The language of this font
 	virtual const std::string& getLanguage() const = 0;
-	
+
 	// Returns the glyphset for the specified resolution
 	virtual IGlyphSetPtr getGlyphSet(Resolution resolution) = 0;
 };

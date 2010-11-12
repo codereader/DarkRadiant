@@ -66,7 +66,7 @@ std::string XDataSelector::run(const XData::StringVectorMap& files, ReadableEdit
 }
 
 void XDataSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
-						  const Gtk::TreeModel::iterator& iter, 
+						  const Gtk::TreeModel::iterator& iter,
 						  const std::string& path,
 						  bool isExplicit)
 {
@@ -77,7 +77,7 @@ void XDataSelector::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
 	row[_columns.fullName] = path;
 	row[_columns.icon] = GlobalUIManager().getLocalPixbuf(isExplicit ? XDATA_ICON : FOLDER_ICON);
 	row[_columns.isFolder] = !isExplicit;
-} 
+}
 
 void XDataSelector::fillTree()
 {
@@ -103,7 +103,7 @@ Gtk::Widget& XDataSelector::createTreeView()
 	Glib::RefPtr<Gtk::TreeSelection> selection = treeView->get_selection();
 	selection->set_mode(Gtk::SELECTION_SINGLE);
 	selection->signal_changed().connect(sigc::bind(sigc::mem_fun(*this, &XDataSelector::onSelectionChanged), treeView));
-	
+
 	// Single visible column, containing the directory/model name and the icon
 	Gtk::TreeViewColumn* nameCol = Gtk::manage(new gtkutil::IconTextColumn(
 		_("Xdata Path"), _columns.name, _columns.icon
@@ -125,7 +125,7 @@ Gtk::Widget& XDataSelector::createButtons()
 {
 	_okButton = Gtk::manage(new Gtk::Button(Gtk::Stock::OK));
 	_okButton->signal_clicked().connect(sigc::mem_fun(*this, &XDataSelector::onOk));
-	
+
 	Gtk::Button* cancelButton = Gtk::manage(new Gtk::Button(Gtk::Stock::CANCEL));
 	cancelButton->signal_clicked().connect(sigc::mem_fun(*this, &XDataSelector::onCancel));
 
@@ -153,7 +153,7 @@ void XDataSelector::onOk()
 void XDataSelector::onSelectionChanged(Gtk::TreeView* view)
 {
 	Gtk::TreeModel::iterator iter = view->get_selection()->get_selected();
-	
+
 	if (iter && !(*iter)[_columns.isFolder])
 	{
 		_selection = Glib::ustring((*iter)[_columns.fullName]);

@@ -59,7 +59,7 @@ LogStreamBuf::int_type LogStreamBuf::sync() {
 
 void LogStreamBuf::writeToBuffer() {
 	int_type charsToWrite = pptr() - pbase();
-	
+
 	if (pbase() != pptr()) {
 		// Write the given characters to the GtkTextBuffer
 		LogWriter::Instance().write(_reserve, static_cast<std::size_t>(charsToWrite), _level);

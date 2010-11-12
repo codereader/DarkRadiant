@@ -93,14 +93,14 @@ XYWnd::XYWnd(int id) :
 
 	m_window_observer->setRectangleDrawCallback(boost::bind(&XYWnd::updateSelectionBox, this, _1));
 	m_window_observer->setView(m_view);
-		
-	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | 
+
+	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
 						  Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::KEY_PRESS_MASK);
 
 	_glWidget->set_flags(Gtk::CAN_FOCUS);
 	_glWidget->set_size_request(XYWND_MINSIZE_X, XYWND_MINSIZE_Y);
 	_glWidget->property_can_focus() = true;
-	
+
 	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &XYWnd::callbackSizeAllocate));
 	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &XYWnd::callbackExpose));
 
@@ -118,7 +118,7 @@ XYWnd::XYWnd(int id) :
 
 	// Add self to the scenechange callbacks
 	GlobalSceneGraph().addSceneObserver(this);
-	
+
 	// greebo: Connect <self> as CameraObserver to the CamWindow. This way this class gets notified on camera change
 	GlobalCamera().addCameraObserver(this);
 
@@ -151,10 +151,10 @@ void XYWnd::destroyXYView()
 {
 	// Remove <self> from the scene change callback list
 	GlobalSceneGraph().removeSceneObserver(this);
-	
+
 	// greebo: Remove <self> as CameraObserver from the CamWindow.
 	GlobalCamera().removeCameraObserver(this);
-	
+
 	if (_glWidget != NULL)
 	{
 		if (m_window_observer != NULL)
@@ -201,12 +201,12 @@ void XYWnd::setParent(const Glib::RefPtr<Gtk::Window>& parent)
 	}
 
 	_parent = parent;
-	
+
 	// Connect the position observer to the new parent
 	assert(dynamic_cast<Gtk::Window*>(_parent->get_toplevel()) != NULL);
 	_windowPosition.connect(static_cast<Gtk::Window*>(_parent->get_toplevel()));
 	_windowPosition.applyPosition();
-	
+
 	m_window_observer->addObservedWidget(_parent);
 }
 
@@ -290,7 +290,7 @@ void XYWnd::scroll(int x, int y) {
 }
 
 /* greebo: This gets repeatedly called during a mouse chase operation.
- * The method is making use of a timer to determine the amount of time that has 
+ * The method is making use of a timer to determine the amount of time that has
  * passed since the chaseMouse has been started
  */
 void XYWnd::chaseMouse() {
@@ -300,7 +300,7 @@ void XYWnd::chaseMouse() {
 	//globalOutputStream() << "chasemouse: multiplier=" << multiplier << " x=" << m_chasemouse_delta_x << " y=" << m_chasemouse_delta_y << '\n';
 
 	mouseMoved(m_chasemouse_current_x, m_chasemouse_current_y , _eventState);
-  
+
 	// greebo: Restart the timer
 	_chaseMouseTimer.start();
 }
@@ -308,7 +308,7 @@ void XYWnd::chaseMouse() {
 /* greebo: This handles the "chase mouse" behaviour, if the user drags something
  * beyond the XY window boundaries. If the chaseMouse option (currently a global)
  * is set true, the view origin gets relocated along with the mouse movements.
- * 
+ *
  * @returns: true, if the mousechase has been performed, false if no mouse chase was necessary
  */
 bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) {
@@ -321,7 +321,7 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 	bool isAllowedEvent = mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state)
 						  || mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state);
 
-	// greebo: The mouse chase is only active when the according global is set to true and if we 
+	// greebo: The mouse chase is only active when the according global is set to true and if we
 	// are in the right state
 	if (GlobalXYWnd().chaseMouse() && isAllowedEvent) {
 		const int epsilon = 16;
@@ -344,16 +344,16 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 
 		// If any of the deltas is uneqal to zero the mouse chase is to be performed
 		if (m_chasemouse_delta_y != 0 || m_chasemouse_delta_x != 0) {
-			
+
 			//globalOutputStream() << "chasemouse motion: x=" << pointx << " y=" << pointy << "... ";
 			m_chasemouse_current_x = pointx;
 			m_chasemouse_current_y = pointy;
-			
+
 			// Start the timer, if there isn't one already connected
 			if (_chaseMouseHandler == 0) {
 				//globalOutputStream() << "chasemouse timer start... ";
 				_chaseMouseTimer.start();
-				
+
 				// Add the chase mouse handler to the idle callbacks, so it gets called as
 				// soon as there is nothing more important to do. The callback queries the timer
 				// and takes the according window movement actions
@@ -380,7 +380,7 @@ bool XYWnd::chaseMouseMotion(int pointx, int pointy, const unsigned int& state) 
 			_chaseMouseHandler = 0;
 		}
 	}
-	
+
 	// No mouse chasing has been performed, return false
 	return false;
 }
@@ -402,11 +402,11 @@ void XYWnd::DropClipPoint(int pointx, int pointy) {
 void XYWnd::Clipper_OnLButtonDown(int x, int y) {
 	Vector3 mousePosition;
 	convertXYToWorld(x, y , mousePosition);
-	
+
 	ClipPoint* foundClipPoint = GlobalClipper().find(mousePosition, (EViewType)m_viewType, m_fScale);
-	
+
 	GlobalClipper().setMovingClip(foundClipPoint);
-	
+
 	if (foundClipPoint == NULL) {
 		DropClipPoint(x, y);
 	}
@@ -418,7 +418,7 @@ void XYWnd::Clipper_OnLButtonUp(int x, int y) {
 
 void XYWnd::Clipper_OnMouseMoved(int x, int y) {
 	ClipPoint* movingClip = GlobalClipper().getMovingClip();
-	
+
 	if (movingClip != NULL) {
 		convertXYToWorld(x, y , GlobalClipper().getMovingClipCoords());
 		snapToGrid(GlobalClipper().getMovingClipCoords());
@@ -537,7 +537,7 @@ void XYWnd::NewBrushDrag(int x, int y) {
 			Node_setSelected(brushNode, true);
 
 			// Remember the node
-			m_NewBrushDrag = brushNode;	
+			m_NewBrushDrag = brushNode;
 		}
 	}
 
@@ -622,33 +622,33 @@ void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 		beginMove();
     	EntityCreate_MouseDown(x, y);
 	}
-	
+
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyZoom, event)) {
 		beginZoom();
 	}
-	
+
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, event)) {
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
 			positionCamera(x, y, *cam);
 		}
 	}
-	
+
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, event)) {
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
 			orientCamera(x, y, *cam);
 		}
 	}
-	
+
 	// Only start a NewBrushDrag operation, if not other elements are selected
-	if (GlobalSelectionSystem().countSelected() == 0 && 
-		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, event)) 
+	if (GlobalSelectionSystem().countSelected() == 0 &&
+		mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, event))
 	{
 		NewBrushDrag_Begin(x, y);
 		return; // Prevent the call from being passed to the windowobserver
 	}
-	
+
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, event)) {
 		// There are two possibilites for the "select" click: Clip or Select
 		if (GlobalClipper().clipMode()) {
@@ -656,36 +656,36 @@ void XYWnd::mouseDown(int x, int y, GdkEventButton* event) {
 			return; // Prevent the call from being passed to the windowobserver
 		}
 	}
-	
+
 	// Pass the call to the window observer
 	m_window_observer->onMouseDown(WindowVector(x, y), event);
 }
 
-// This gets called by either the GTK Callback or the method that is triggered by the mousechase timer 
+// This gets called by either the GTK Callback or the method that is triggered by the mousechase timer
 void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
-	
+
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-	
+
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraMove, state)) {
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
 			positionCamera(x, y, *cam);
 		}
 	}
-	
+
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xyCameraAngle, state)) {
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 		if (cam != NULL) {
 			orientCamera(x, y, *cam);
 		}
 	}
-	
+
 	// Check, if we are in a NewBrushDrag operation and continue it
 	if (m_bNewBrushDrag && mouseEvents.stateMatchesXYViewEvent(ui::xyNewBrushDrag, state)) {
 		NewBrushDrag(x, y);
 		return; // Prevent the call from being passed to the windowobserver
 	}
-	
+
 	if (mouseEvents.stateMatchesXYViewEvent(ui::xySelect, state)) {
 		// Check, if we have a clip point operation running
 		if (GlobalClipper().clipMode() && GlobalClipper().getMovingClip() != 0) {
@@ -693,7 +693,7 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 			return; // Prevent the call from being passed to the windowobserver
 		}
 	}
-	
+
 	// default windowobserver::mouseMotion call, if no other clauses called "return" till now
 	m_window_observer->onMouseMotion(WindowVector(x, y), state);
 
@@ -702,10 +702,10 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 	snapToGrid(m_mousePosition);
 
 	GlobalUIManager().getStatusBarManager().setText(
-		"XYZPos", 
-		(boost::format(_("x: %6.1lf y: %6.1lf z: %6.1lf")) 
-			% m_mousePosition[0] 
-			% m_mousePosition[1] 
+		"XYZPos",
+		(boost::format(_("x: %6.1lf y: %6.1lf z: %6.1lf"))
+			% m_mousePosition[0]
+			% m_mousePosition[1]
 			% m_mousePosition[2]).str()
 	);
 
@@ -718,20 +718,20 @@ void XYWnd::mouseMoved(int x, int y, const unsigned int& state) {
 
 // greebo: The mouseUp method gets called by the GTK callback above
 void XYWnd::mouseUp(int x, int y, GdkEventButton* event) {
-	
+
 	IMouseEvents& mouseEvents = GlobalEventManager().MouseEvents();
-	
+
 	// End move
 	if (_moveStarted) {
 		endMove();
 		EntityCreate_MouseUp(x, y);
 	}
-	
+
 	// End zoom
 	if (_zoomStarted) {
 		endZoom();
 	}
-	
+
 	// Finish any pending NewBrushDrag operations
 	if (m_bNewBrushDrag) {
 		// End the NewBrushDrag operation
@@ -739,13 +739,13 @@ void XYWnd::mouseUp(int x, int y, GdkEventButton* event) {
 		NewBrushDrag_End(x, y);
 		return; // Prevent the call from being passed to the windowobserver
 	}
-	
+
 	if (GlobalClipper().clipMode() && mouseEvents.stateMatchesXYViewEvent(ui::xySelect, event)) {
 		// End the clip operation
 		Clipper_OnLButtonUp(x, y);
 		return; // Prevent the call from being passed to the windowobserver
 	}
-	
+
 	// Pass the call to the window observer
 	m_window_observer->onMouseUp(WindowVector(x, y), event);
 }
@@ -767,7 +767,7 @@ void XYWnd::EntityCreate_MouseUp(int x, int y) {
 		m_entityCreate = false;
 		onContextMenu();
 
-		// Tell the other window observers to cancel their operation, 
+		// Tell the other window observers to cancel their operation,
 		// the context menu will be stealing focus.
 		m_window_observer->cancelOperation();
 	}
@@ -777,15 +777,15 @@ void XYWnd::EntityCreate_MouseUp(int x, int y) {
 void XYWnd::convertXYToWorld(int x, int y, Vector3& point) {
 	float normalised2world_scale_x = _width / 2 / m_fScale;
 	float normalised2world_scale_y = _height / 2 / m_fScale;
-	
+
 	if (m_viewType == XY) {
 		point[0] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x);
 		point[1] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[1], normalised2world_scale_y);
-	} 
+	}
 	else if (m_viewType == YZ) {
 		point[1] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[1], normalised2world_scale_x);
 		point[2] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y);
-	} 
+	}
 	else {
 		point[0] = normalised_to_world(screen_normalised(x, _width), m_vOrigin[0], normalised2world_scale_x);
 		point[2] = normalised_to_world(-screen_normalised(y, _height), m_vOrigin[2], normalised2world_scale_y);
@@ -808,13 +808,13 @@ void XYWnd::snapToGrid(Vector3& point) {
 }
 
 /* greebo: This calculates the coordinates of the xy view window corners.
- * 
+ *
  * @returns: Vector4( xbegin, xend, ybegin, yend);
  */
 Vector4 XYWnd::getWindowCoordinates() {
 	int nDim1 = (m_viewType == YZ) ? 1 : 0;
 	int nDim2 = (m_viewType == XY) ? 1 : 2;
-	
+
 	double w = (_width / 2 / m_fScale);
 	double h = (_height / 2 / m_fScale);
 
@@ -842,7 +842,7 @@ Vector4 XYWnd::getWindowCoordinates() {
 	// Constrain this value to the region maximum
 	if (ye > regionMax[nDim2])
 		ye = regionMax[nDim2];
-	
+
 	return Vector4(xb, xe, yb, ye);
 }
 
@@ -871,7 +871,7 @@ void XYWnd::drawGrid() {
 	mask = (1 << (power - minor_power)) - 1;
 	while ((stepx * m_fScale) <= 32.0f) // text step x must be at least 32
 		stepx *= 2;
-	
+
 	while ((stepy * m_fScale) <= 32.0f) // text step y must be at least 32
 		stepy *= 2;
 
@@ -895,7 +895,7 @@ void XYWnd::drawGrid() {
 		Vector3 colourGridBack = ColourSchemes().getColour("grid_background");
 		Vector3 colourGridMinor = ColourSchemes().getColour("grid_minor");
 		Vector3 colourGridMajor = ColourSchemes().getColour("grid_major");
-		
+
 		// draw minor blocks
 		if (colourGridMinor != colourGridBack) {
 			glColor3dv(colourGridMinor);
@@ -943,7 +943,7 @@ void XYWnd::drawGrid() {
 		glColor3dv(ColourSchemes().getColour("grid_text"));
 		double offx = m_vOrigin[nDim2] + h - 12 / m_fScale;
 		double offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
-		
+
 		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx) {
 			glRasterPos2d (x, offx);
 			sprintf (text, "%g", x);
@@ -1016,7 +1016,7 @@ void XYWnd::drawGrid() {
 		{
 			glColor3dv( ColourSchemes().getColour("workzone") );
 			glBegin( GL_LINES );
-					
+
 			glVertex2f( xb, wz.min[nDim2] );
 			glVertex2f( xe, wz.min[nDim2] );
 			glVertex2f( xb, wz.max[nDim2] );
@@ -1035,7 +1035,7 @@ void XYWnd::drawBlockGrid() {
 		return;
 	}
 	// Set a default blocksize of 1024
-	int blockSize = GlobalXYWnd().defaultBlockSize(); 
+	int blockSize = GlobalXYWnd().defaultBlockSize();
 
 	// Check the worldspawn for a custom blocksize
 	Entity* worldSpawn = Node_getEntity(GlobalMap().getWorldspawn());
@@ -1060,7 +1060,7 @@ void XYWnd::drawBlockGrid() {
 	h = (_height / 2 / m_fScale);
 
 	Vector4 windowCoords = getWindowCoordinates();
-		
+
 	xb = static_cast<float>(blockSize * floor (windowCoords[0]/blockSize));
 	xe = static_cast<float>(blockSize * ceil (windowCoords[1]/blockSize));
 	yb = static_cast<float>(blockSize * floor (windowCoords[2]/blockSize));
@@ -1143,7 +1143,7 @@ void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
 	glEnd();
 }
 
-// can be greatly simplified but per usual i am in a hurry 
+// can be greatly simplified but per usual i am in a hurry
 // which is not an excuse, just a fact
 void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds)
 {
@@ -1172,14 +1172,14 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
     glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale, 0.0f);
     glVertex3d(vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale, 0.0f);
-  
+
 
     glVertex3d(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
     glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
 
     glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2], 0.0f);
     glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
-  
+
     glVertex3d(vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
     glVertex3d(vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2], 0.0f);
 
@@ -1189,7 +1189,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
-    
+
     glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
     GlobalOpenGL().drawString(dimensions.str());
@@ -1211,14 +1211,14 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
     glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 6.0f  / m_fScale);
     glVertex3f(vMaxBounds[nDim1], 0,vMinBounds[nDim2] - 10.0f / m_fScale);
-  
+
 
     glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMinBounds[nDim2]);
     glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
 
     glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMinBounds[nDim2]);
     glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
-  
+
     glVertex3f(vMaxBounds[nDim1] + 6.0f  / m_fScale, 0,vMaxBounds[nDim2]);
     glVertex3f(vMaxBounds[nDim1] + 10.0f  / m_fScale, 0,vMaxBounds[nDim2]);
 
@@ -1228,7 +1228,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
-    
+
     glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / m_fScale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
     GlobalOpenGL().drawString(dimensions.str());
@@ -1250,14 +1250,14 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
     glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 6.0f  / m_fScale);
     glVertex3f(0, vMaxBounds[nDim1], vMinBounds[nDim2] - 10.0f / m_fScale);
-  
+
 
     glVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMinBounds[nDim2]);
     glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
 
     glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMinBounds[nDim2]);
     glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
-  
+
     glVertex3f(0, vMaxBounds[nDim1] + 6.0f  / m_fScale, vMaxBounds[nDim2]);
     glVertex3f(0, vMaxBounds[nDim1] + 10.0f  / m_fScale, vMaxBounds[nDim2]);
 
@@ -1267,7 +1267,7 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
     GlobalOpenGL().drawString(dimensions.str());
     dimensions.str("");
-    
+
     glRasterPos3f (0, vMaxBounds[nDim1] + 16.0f  / m_fScale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
     GlobalOpenGL().drawString(dimensions.str());
@@ -1379,9 +1379,9 @@ void XYWnd::draw()
 	// Call the image overlay draw method with the window coordinates
 	Vector4 windowCoords = getWindowCoordinates();
 	ui::Overlay::Instance().draw(
-		windowCoords[0], windowCoords[1], windowCoords[2], windowCoords[3], 
+		windowCoords[0], windowCoords[1], windowCoords[2], windowCoords[3],
 		m_fScale);
-	
+
 	glDisable (GL_LINE_STIPPLE);
 	glLineWidth(1);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1411,7 +1411,7 @@ void XYWnd::draw()
 
 		// First pass (scenegraph traversal)
 		render::collectRenderablesInScene(renderer, m_view);
-		
+
 		// Second pass (GL calls)
 		renderer.render(m_modelview, m_projection);
 	}
@@ -1486,11 +1486,11 @@ void XYWnd::draw()
 	{
 		glColor3dv(ColourSchemes().getColour("clipper"));
 		glPointSize(4);
-		
+
 		if (GlobalClipper().clipMode()) {
 			GlobalClipper().draw(m_fScale);
 		}
-		
+
 		glPointSize(1);
 	}
 
@@ -1521,7 +1521,7 @@ void XYWnd::draw()
 		glEnable(GL_BLEND);
 		glBlendColor(0, 0, 0, 0.2f);
 		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
-		
+
 		Vector3 dragBoxColour = ColourSchemes().getColour("drag_selection");
 		glColor3dv(dragBoxColour);
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -1529,7 +1529,7 @@ void XYWnd::draw()
 		// The transparent fill rectangle
 		glBegin(GL_QUADS);
 		glVertex2f(_dragRectangle.min.x(), _dragRectangle.min.y());
-		glVertex2f(_dragRectangle.max.x(), _dragRectangle.min.y()); 
+		glVertex2f(_dragRectangle.max.x(), _dragRectangle.min.y());
 		glVertex2f(_dragRectangle.max.x(), _dragRectangle.max.y());
 		glVertex2f(_dragRectangle.min.x(), _dragRectangle.max.y());
 		glEnd();
@@ -1538,7 +1538,7 @@ void XYWnd::draw()
 		glBlendColor(0, 0, 0, 0.8f);
 		glBegin(GL_LINE_LOOP);
 		glVertex2f(_dragRectangle.min.x(), _dragRectangle.min.y());
-		glVertex2f(_dragRectangle.max.x(), _dragRectangle.min.y()); 
+		glVertex2f(_dragRectangle.max.x(), _dragRectangle.min.y());
 		glVertex2f(_dragRectangle.max.x(), _dragRectangle.max.y());
 		glVertex2f(_dragRectangle.min.x(), _dragRectangle.max.y());
 		glEnd();
@@ -1623,7 +1623,7 @@ void XYWnd::zoomOut() {
 void XYWnd::zoomIn() {
 	float max_scale = 64;
 	float scale = getScale() * 5.0f / 4.0f;
-	
+
 	if (scale > max_scale) {
 		if (getScale() != max_scale) {
 			setScale(max_scale);
@@ -1648,7 +1648,7 @@ void XYWnd::saveStateToPath(const std::string& rootPath)
 	// Remove any previously existing nodes with the same name
 	GlobalRegistry().deleteXPath(viewNodePath);
 	GlobalRegistry().createKeyWithName(rootPath, "view", intToStr(_id));
-	
+
 	_windowPosition.readPosition();
 	_windowPosition.saveToPath(viewNodePath);
 	GlobalRegistry().setAttribute(viewNodePath, "type", getViewTypeStr(m_viewType));
@@ -1664,7 +1664,7 @@ void XYWnd::readStateFromPath(const std::string& path)
 // ================ gtkmm CALLBACKS ======================================
 
 /* greebo: This is the callback for the mouse_press event that is invoked by GTK
- * it checks for the correct event type and passes the call to the according xy view window. 
+ * it checks for the correct event type and passes the call to the according xy view window.
  */
 bool XYWnd::callbackButtonPress(GdkEventButton* ev)
 {
@@ -1678,7 +1678,7 @@ bool XYWnd::callbackButtonPress(GdkEventButton* ev)
 
 		//xywnd->ButtonState_onMouseDown(buttons_for_event_button(event));
 		_eventState = ev->state;
-		
+
 		// Pass the GdkEventButton* to the XYWnd class, the boolean <true> is passed but never used
 		mouseDown(static_cast<int>(ev->x), static_cast<int>(ev->y), ev);
 	}
@@ -1686,7 +1686,7 @@ bool XYWnd::callbackButtonPress(GdkEventButton* ev)
 	return false;
 }
 
-// greebo: This is the GTK callback for mouseUp. 
+// greebo: This is the GTK callback for mouseUp.
 bool XYWnd::callbackButtonRelease(GdkEventButton* ev)
 {
 	// greebo: Check for the correct event type (redundant?)
@@ -1704,15 +1704,15 @@ bool XYWnd::callbackButtonRelease(GdkEventButton* ev)
 
 /* greebo: This is the GTK callback for mouse movement. */
 void XYWnd::callbackMouseMotion(gdouble x, gdouble y, guint state, void* data) {
-	
+
 	// Convert the passed pointer into a XYWnd pointer
 	XYWnd* self = reinterpret_cast<XYWnd*>(data);
-	
+
 	// Call the chaseMouse method
 	if (self->chaseMouseMotion(static_cast<int>(x), static_cast<int>(y), state)) {
 		return;
 	}
-	
+
 	// This gets executed, if the above chaseMouse call returned false, i.e. no mouse chase has been performed
 	self->mouseMoved(static_cast<int>(x), static_cast<int>(y), state);
 }
@@ -1730,7 +1730,7 @@ bool XYWnd::callbackMouseWheelScroll(GdkEventScroll* ev)
 	return false;
 }
 
-void XYWnd::callbackSizeAllocate(Gtk::Allocation& allocation) 
+void XYWnd::callbackSizeAllocate(Gtk::Allocation& allocation)
 {
 	_width = allocation.get_width();
 	_height = allocation.get_height();
@@ -1738,10 +1738,10 @@ void XYWnd::callbackSizeAllocate(Gtk::Allocation& allocation)
 	m_window_observer->onSizeChanged(getWidth(), getHeight());
 }
 
-bool XYWnd::callbackExpose(GdkEventExpose* ev) 
+bool XYWnd::callbackExpose(GdkEventExpose* ev)
 {
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
-	
+
     GlobalOpenGL().assertNoErrors();
 
 	if (GlobalMap().isValid() && GlobalMainFrame().screenUpdatesEnabled())
@@ -1755,7 +1755,7 @@ bool XYWnd::callbackExpose(GdkEventExpose* ev)
 }
 
 // This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
-// It passes te call on to the XYWnd::chaseMouse() method. 
+// It passes te call on to the XYWnd::chaseMouse() method.
 gboolean XYWnd::callbackChaseMouse(gpointer data) {
 	// Convert the pointer <data> in and XYWnd* pointer and call the method
 	reinterpret_cast<XYWnd*>(data)->chaseMouse();
@@ -1776,7 +1776,7 @@ bool XYWnd::callbackMoveFocusOut(GdkEventFocus* ev)
 
 void XYWnd::callbackZoomDelta(int x, int y, unsigned int state, void* data) {
 	XYWnd* self = reinterpret_cast<XYWnd*>(data);
-	
+
 	if (y != 0) {
 		self->dragZoom() += y;
 
@@ -1795,7 +1795,7 @@ void XYWnd::callbackZoomDelta(int x, int y, unsigned int state, void* data) {
 
 void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
 	XYWnd* self = reinterpret_cast<XYWnd*>(data);
-	
+
 	self->EntityCreate_MouseMove(x, y);
 	self->scroll(-x, y);
 }

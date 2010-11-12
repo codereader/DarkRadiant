@@ -7,27 +7,27 @@
 namespace scene
 {
 
-/** 
- * greebo: This Walker instantiates the visited nodes. 
- * The whole subgraph is traversed and GlobalSceneGraph().insert() is 
+/**
+ * greebo: This Walker instantiates the visited nodes.
+ * The whole subgraph is traversed and GlobalSceneGraph().insert() is
  * called on each node.
  */
-class InstanceSubgraphWalker : 
+class InstanceSubgraphWalker :
 	public scene::NodeVisitor
 {
 private:
 	std::stack<INodePtr> _nodeStack;
 public:
 	bool pre(const INodePtr& node);
-	void post(const INodePtr& node); 
+	void post(const INodePtr& node);
 };
 
-/** 
- * greebo: This Walker un-instantiates the visited nodes 
- * The whole subgraph is traversed and erase() is 
+/**
+ * greebo: This Walker un-instantiates the visited nodes
+ * The whole subgraph is traversed and erase() is
  * called on each nodes, AFTER it has been traversed.
  */
-class UninstanceSubgraphWalker : 
+class UninstanceSubgraphWalker :
 	public scene::NodeVisitor
 {
 public:

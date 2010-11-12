@@ -8,8 +8,8 @@ namespace applog {
 GtkLogRedirector::GtkLogRedirector()
 {
 	// Define the flags
-	GLogLevelFlags flags = (GLogLevelFlags) (G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL | 
-		G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO | 
+	GLogLevelFlags flags = (GLogLevelFlags) (G_LOG_LEVEL_ERROR | G_LOG_LEVEL_CRITICAL |
+		G_LOG_LEVEL_WARNING | G_LOG_LEVEL_MESSAGE | G_LOG_LEVEL_INFO |
 		G_LOG_LEVEL_DEBUG | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION);
 
 	_handles["Gdk"] = g_log_set_handler("Gdk", flags, handleLogMessage, this);
@@ -48,9 +48,9 @@ void GtkLogRedirector::destroy()
 	InstancePtr() = GtkLogRedirectorPtr();
 }
 
-void GtkLogRedirector::handleLogMessage(const gchar* log_domain, 
-										GLogLevelFlags log_level, 
-										const gchar* message, 
+void GtkLogRedirector::handleLogMessage(const gchar* log_domain,
+										GLogLevelFlags log_level,
+										const gchar* message,
 										gpointer user_data)
 {
 	if (log_level & (G_LOG_LEVEL_ERROR|G_LOG_LEVEL_CRITICAL))
@@ -61,7 +61,7 @@ void GtkLogRedirector::handleLogMessage(const gchar* log_domain,
 	{
 		globalWarningStream() << message << std::endl;
 	}
-	else 
+	else
 	{
 		globalOutputStream() << message << std::endl;
 	}

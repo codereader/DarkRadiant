@@ -29,13 +29,13 @@ FilterMenu::FilterMenu()
 	// Menu not yet constructed, do it now
 	// Create the menu bar first
 	_menu = menuManager.add("", _path, menuBar, _("Filters"), "", "");
-	
+
 	// Create the folder as child of the bar
-	menuManager.add(_path, FILTERS_MENU_FOLDER, 
+	menuManager.add(_path, FILTERS_MENU_FOLDER,
 					menuFolder, _(FILTERS_MENU_CAPTION), "", "");
 
 	_targetPath = _path + "/" + FILTERS_MENU_FOLDER;
-	
+
 	// Visit the filters in the FilterSystem to populate the menu
 	GlobalFilterSystem().forEachFilter(*this);
 }
@@ -54,8 +54,8 @@ void FilterMenu::visit(const std::string& filterName)
 	std::string eventName = GlobalFilterSystem().getFilterEventName(filterName);
 
 	// Create the menu item
-	menuManager.add(_targetPath, _targetPath + "_" + filterName, 
-					menuItem, filterName, 
+	menuManager.add(_targetPath, _targetPath + "_" + filterName,
+					menuItem, filterName,
 					MENU_ICON, eventName);
 }
 

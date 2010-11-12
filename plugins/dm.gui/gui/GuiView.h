@@ -51,8 +51,8 @@ public:
 	// Returns the current GUI (can be NULL)
 	const GuiPtr& getGui();
 
-	/** 
-	 * Initialise the GL view. This clears the window and sets up the 
+	/**
+	 * Initialise the GL view. This clears the window and sets up the
 	 * initial matrices.
 	 */
 	void initialiseView();

@@ -24,7 +24,7 @@ class ConversationEditor :
 	public gtkutil::BlockingTransientWindow
 {
 private:
-	struct ActorListColumns : 
+	struct ActorListColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ActorListColumns() { add(actorNumber); add(displayName); }
@@ -37,11 +37,11 @@ private:
 	Glib::RefPtr<Gtk::ListStore> _actorStore;
 	Gtk::TreeView* _actorView;
 
-	struct CommandListColumns : 
+	struct CommandListColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		CommandListColumns()
-		{ 
+		{
 			add(cmdNumber);
 			add(actorName);
 			add(sentence);
@@ -104,7 +104,7 @@ private:
 	Gtk::Widget& createActorPanel();
 	Gtk::Widget& createCommandPanel();
 
-	// Move the currently selected command about the given delta 
+	// Move the currently selected command about the given delta
 	// (-1 is one upwards, +1 is one position downards)
 	void moveSelectedCommand(int delta);
 

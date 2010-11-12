@@ -17,8 +17,8 @@ ShaderClipboard::ShaderClipboard() :
 	_updatesDisabled(false)
 {
 	GlobalUIManager().getStatusBarManager().addTextElement(
-		"ShaderClipBoard", 
-		"icon_texture.png", 
+		"ShaderClipBoard",
+		"icon_texture.png",
 		IStatusBarManager::POS_SHADERCLIPBOARD
 	);
 
@@ -27,12 +27,12 @@ ShaderClipboard::ShaderClipboard() :
 
 void ShaderClipboard::clear() {
 	_source.clear();
-	
+
 	_updatesDisabled = true;
-	
+
 	// Update the status bar information
 	updateStatusText();
-	
+
 	_updatesDisabled = false;
 }
 
@@ -57,24 +57,24 @@ void ShaderClipboard::postRedo()
 Texturable ShaderClipboard::getTexturable(SelectionTest& test) {
 	// Initialise an empty Texturable structure
 	Texturable returnValue;
-	
+
 	algorithm::ClosestTexturableFinder finder(test, returnValue);
 	GlobalSceneGraph().root()->traverse(finder);
-	
+
 	return returnValue;
 }
 
 void ShaderClipboard::updateMediaBrowsers() {
 	// Avoid nasty loopbacks
 	_updatesDisabled = true;
-	
+
 	// Set the active shader in the Texture window as well
 	GlobalTextureBrowser().setSelectedShader(_source.getShader());
 	std::string sourceShader = _source.getShader();
 	ui::MediaBrowser::getInstance().setSelection(sourceShader);
-	
+
 	_updatesDisabled = false;
-	
+
 	updateStatusText();
 }
 
@@ -84,7 +84,7 @@ void ShaderClipboard::updateStatusText() {
 
 	if (!_source.empty()) {
 		statusText = (boost::format(_("ShaderClipboard: %s")) % _source.getShader()).str();
-	
+
 		if (_source.isFace()) {
 			statusText += std::string(" (") + _("Face") + ")";
 		}
@@ -104,40 +104,40 @@ void ShaderClipboard::updateStatusText() {
 
 void ShaderClipboard::setSource(SelectionTest& test) {
 	if (_updatesDisabled) return; // loopback guard
-	
+
 	_source = getTexturable(test);
-	
+
 	updateMediaBrowsers();
 }
 
 void ShaderClipboard::setSource(std::string shader) {
 	if (_updatesDisabled) return; // loopback guard
-	
+
 	_source.clear();
 	_source.shader = shader;
-	
-	// Don't update the media browser without loopback guards 
+
+	// Don't update the media browser without loopback guards
 	// if this is desired, one will have to implement them
-	updateStatusText(); 
+	updateStatusText();
 }
 
 void ShaderClipboard::setSource(Patch& sourcePatch) {
 	if (_updatesDisabled) return; // loopback guard
-	
+
 	_source.clear();
 	_source.patch = &sourcePatch;
 	_source.node = sourcePatch.getPatchNode().shared_from_this();
-	
+
 	updateMediaBrowsers();
 }
 
 void ShaderClipboard::setSource(Face& sourceFace) {
 	if (_updatesDisabled) return; // loopback guard
-	
+
 	_source.clear();
 	_source.face = &sourceFace;
 	_source.node = sourceFace.getBrush().getBrushNode().shared_from_this();
-	
+
 	updateMediaBrowsers();
 }
 
@@ -150,6 +150,6 @@ Texturable& ShaderClipboard::getSource() {
 // global accessor function
 selection::ShaderClipboard& GlobalShaderClipboard() {
 	static selection::ShaderClipboard _instance;
-	
+
 	return _instance;
 }

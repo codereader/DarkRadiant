@@ -166,8 +166,8 @@ TMsKeyframe;
 static int _ms3d_canload( PM_PARAMS_CANLOAD )
 {
 	TMsHeader *hdr;
-	
-	
+
+
 	/* to keep the compiler happy */
 	*fileName = *fileName;
 
@@ -197,7 +197,7 @@ static unsigned char *GetWord( unsigned char *bufptr, int *out )
 {
 	if (bufptr == NULL)
 	{
-		*out = 0; 
+		*out = 0;
 		return NULL;
 	}
 

@@ -37,7 +37,7 @@ void RenderableCharacterBatch::compile()
 #ifdef RENDERABLE_CHARACTER_BATCH_USE_VBO
 	// Space needed for geometry
 	std::size_t dataSize = sizeof(Vertex2D) * _verts.size();
-	
+
 	// Initialise the vertex buffer
 	glBindBuffer(GL_ARRAY_BUFFER, _vboData);
 
@@ -62,11 +62,11 @@ void RenderableCharacterBatch::render() const
 #ifdef RENDERABLE_CHARACTER_BATCH_USE_VBO
 	// Bind the VBO buffer and submit the draw call
 	glBindBuffer(GL_ARRAY_BUFFER, _vboData);
-	
+
 	glClientActiveTexture(GL_TEXTURE0);
 	glTexCoordPointer(2, GL_DOUBLE, sizeof(Vertex2D), BUFFER_OFFSET(sizeof(double)*2));
 	glVertexPointer(2, GL_DOUBLE, sizeof(Vertex2D), BUFFER_OFFSET(0));
-		
+
 	glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_verts.size()));
 
 	GlobalOpenGL().assertNoErrors();

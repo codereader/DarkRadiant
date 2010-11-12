@@ -17,7 +17,7 @@ public:
     // Constructor. Must initialise the parent.
     XPathException(const std::string& what):
         std::runtime_error(what) {}
-        
+
 };
 
 }

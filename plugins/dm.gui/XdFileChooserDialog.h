@@ -16,7 +16,7 @@ namespace ui
 class ReadableEditorDialog;
 
 ///////////////////////////// XdFileChooserDialog:
-// Imports a given definition. If the definition has been found in multiple files, 
+// Imports a given definition. If the definition has been found in multiple files,
 // the dialog shows up asking which file to use.
 class XdFileChooserDialog :
 	public gtkutil::BlockingTransientWindow
@@ -32,7 +32,7 @@ public:
 
 private:
 	// Treestore enum
-	struct ListStoreColumns : 
+	struct ListStoreColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		ListStoreColumns() { add(name); }

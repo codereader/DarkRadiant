@@ -56,7 +56,7 @@ PatchCapDialog::PatchCapDialog() :
 void PatchCapDialog::addItemToTable(Gtk::Table& table, const std::string& image, int row, EPatchCap type)
 {
 	Gtk::Image* img = Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbuf(image)));
-	
+
 	table.attach(*img, 0, 1, row, row+1, Gtk::FILL, Gtk::AttachOptions(0), 0, 0);
 
 	// Create a new radio button for this cap type
@@ -73,7 +73,7 @@ EPatchCap PatchCapDialog::getSelectedCapType()
 {
 	if (_result != RESULT_OK) return eNumCapTypes;
 
-	for (RadioButtons::const_iterator i = _radioButtons.begin(); 
+	for (RadioButtons::const_iterator i = _radioButtons.begin();
 		 i != _radioButtons.end(); ++i)
 	{
 		if (i->second->get_active())

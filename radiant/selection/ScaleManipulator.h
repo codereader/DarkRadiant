@@ -9,9 +9,9 @@
 
 /**
  * The Manipulator for scale operations
- */ 
-class ScaleManipulator 
-: public Manipulator 
+ */
+class ScaleManipulator
+: public Manipulator
 {
 private:
   ScaleFree _scaleFree;
@@ -25,7 +25,7 @@ private:
   SelectableBool _selectableZ;
   SelectableBool _selectableScreen;
   Pivot2World _pivot;
-  
+
 public:
   // Constructor
   ScaleManipulator(Scalable& scalable, std::size_t segments, float length);
@@ -35,13 +35,13 @@ public:
   }
 
   void UpdateColours();
-  
+
   void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& pivot2world);
   void testSelect(const View& view, const Matrix4& pivot2world);
   ManipulatorComponent* getActiveComponent();
-  
+
   void setSelected(bool select);
   bool isSelected() const;
-  
+
 }; // class ScaleManipulator
 

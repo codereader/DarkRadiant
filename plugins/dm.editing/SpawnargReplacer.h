@@ -21,7 +21,7 @@ class SpawnargReplacer :
 	EntityKeyMap _entityMap;
 
 	KeyList _curKeys;
-	
+
 public:
 	SpawnargReplacer(const std::string& oldVal, const std::string& newVal) :
 		_oldVal(oldVal),
@@ -35,7 +35,7 @@ public:
 	{
 		Entity* ent = Node_getEntity(node);
 
-		if (ent != NULL) 
+		if (ent != NULL)
 		{
 			_curKeys.clear();
 

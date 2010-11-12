@@ -38,7 +38,7 @@ typedef BasicVector3<double> Vector3;
 /** Exception thrown when the incorrect number of brushes is selected when
  * creating an entity.
  */
- 
+
 class EntityCreationException
 : public std::runtime_error
 {
@@ -50,11 +50,11 @@ public:
 namespace entity
 {
 
-/** 
+/**
  * Create an instance of the given entity at the given position, and return
  * the Node containing the new entity. If the incorrect number of brushes
  * is selected, an EntityCreationException will be thrown.
- * 
+ *
  * @returns
  * A scene::INodePtr containing the new entity.
  */

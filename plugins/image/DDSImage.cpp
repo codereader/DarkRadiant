@@ -22,11 +22,11 @@ TexturePtr DDSImage::bindTexture(const std::string& name) const
         glCompressedTexImage2D(
             GL_TEXTURE_2D,
             static_cast<GLint>(i),
-            _format, 
-            static_cast<GLsizei>(mipMap.width), 
-            static_cast<GLsizei>(mipMap.height), 
-            0, 
-            static_cast<GLsizei>(mipMap.size), 
+            _format,
+            static_cast<GLsizei>(mipMap.width),
+            static_cast<GLsizei>(mipMap.height),
+            0,
+            static_cast<GLsizei>(mipMap.size),
             _pixelData + mipMap.offset
         );
 

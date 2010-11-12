@@ -47,9 +47,9 @@ public:
 
 	// Constructor
 	Doom3ShaderLayer(ShaderLayer::Type type = ShaderLayer::BLEND,
-                     NamedBindablePtr btex = NamedBindablePtr()) 
+                     NamedBindablePtr btex = NamedBindablePtr())
 	: _bindableTex(btex),
-	  _type(type), 
+	  _type(type),
 	  _blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
       _colour(1, 1, 1),
       _vertexColourMode(VERTEX_COLOUR_NONE),

@@ -16,9 +16,9 @@
 namespace gtkutil
 {
 
-FileChooser::FileChooser(const std::string& title, 
-						 bool open, 
-						 bool browseFolders, 
+FileChooser::FileChooser(const std::string& title,
+						 bool open,
+						 bool browseFolders,
 						 const std::string& pattern,
 						 const std::string& defaultExt) :
 	Gtk::FileChooserDialog(title, getActionType(browseFolders, open)),
@@ -31,10 +31,10 @@ FileChooser::FileChooser(const std::string& title,
 	construct();
 }
 
-FileChooser::FileChooser(const Glib::RefPtr<Gtk::Window>& parentWindow, 
-						 const std::string& title, 
-						 bool open, 
-						 bool browseFolders, 
+FileChooser::FileChooser(const Glib::RefPtr<Gtk::Window>& parentWindow,
+						 const std::string& title,
+						 bool open,
+						 bool browseFolders,
 						 const std::string& pattern,
 						 const std::string& defaultExt) :
 	Gtk::FileChooserDialog(title, getActionType(browseFolders, open)),
@@ -71,7 +71,7 @@ void FileChooser::construct()
 	{
 		set_parent_window(_parent->get_window());
 	}
-	
+
 	set_position(Gtk::WIN_POS_CENTER);
 
 	// Add cancel button
@@ -89,7 +89,7 @@ void FileChooser::construct()
 
 	// Set the Enter key to activate the default response
 	set_default_response(Gtk::RESPONSE_ACCEPT);
-	
+
 	// Set position and modality of the dialog
 	set_modal(true);
 
@@ -97,7 +97,7 @@ void FileChooser::construct()
 	Gdk::Rectangle rect = _parent != NULL ? MultiMonitor::getMonitorForWindow(_parent) : MultiMonitor::getMonitor(0);
 
 	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
-	
+
 	// Add the filetype masks
 	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(_pattern);
 
@@ -202,7 +202,7 @@ std::string FileChooser::display()
 			fileName = getSelectedFileName();
 		}
 
-		// Always return the fileName for "open" and empty filenames, otherwise check file existence 
+		// Always return the fileName for "open" and empty filenames, otherwise check file existence
 		if (_open || fileName.empty())
 		{
 			return fileName;

@@ -48,7 +48,7 @@
         <element name="author">
           <text/>
         </element>
-      </oneOrMore>        
+      </oneOrMore>
     </optional>
 
     <optional>

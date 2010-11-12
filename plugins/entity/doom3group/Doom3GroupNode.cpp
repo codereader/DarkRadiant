@@ -13,7 +13,7 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
 				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
-	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
+	m_curveCatmullRom(m_contained.m_curveCatmullRom,
 					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
 	_updateSkin(true),
@@ -36,7 +36,7 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	),
 	m_curveNURBS(m_contained.m_curveNURBS,
 				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
-	m_curveCatmullRom(m_contained.m_curveCatmullRom, 
+	m_curveCatmullRom(m_contained.m_curveCatmullRom,
 					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
 	_updateSkin(true),
@@ -70,7 +70,7 @@ void Doom3GroupNode::construct()
 }
 
 bool Doom3GroupNode::hasEmptyCurve() {
-	return m_contained.m_curveNURBS.isEmpty() && 
+	return m_contained.m_curveNURBS.isEmpty() &&
 		   m_contained.m_curveCatmullRom.isEmpty();
 }
 
@@ -143,7 +143,7 @@ void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& tes
 	if (mode == SelectionSystem::eVertex)
 	{
 		test.BeginMesh(localToWorld());
-				
+
 		_originInstance.testSelect(selector, test);
 
 		m_curveNURBS.testSelect(selector, test);
@@ -153,11 +153,11 @@ void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& tes
 
 const AABB& Doom3GroupNode::getSelectedComponentsBounds() const {
 	m_aabb_component = AABB();
-	
+
 	ControlPointBoundsAdder boundsAdder(m_aabb_component);
 	m_curveNURBS.forEachSelected(boundsAdder);
 	m_curveCatmullRom.forEachSelected(boundsAdder);
-	
+
 	if (_originInstance.isSelected()) {
 		m_aabb_component.includePoint(_originInstance.getVertex());
 	}
@@ -263,7 +263,7 @@ void Doom3GroupNode::renderComponents(RenderableCollector& collector, const Volu
 		m_curveNURBS.renderComponents(collector, volume, Matrix4::getIdentity());
 
 		m_curveCatmullRom.renderComponents(collector, volume, Matrix4::getIdentity());
-		
+
 		// Register the renderable with OpenGL
 		if (!m_contained.isModel()) {
 			_originInstance.render(collector, volume, localToWorld());
@@ -276,8 +276,8 @@ void Doom3GroupNode::evaluateTransform()
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
 		m_contained.translate(
-			getTranslation(), 
-			getRotation() != c_quaternion_identity // FALSE for identity rotations 
+			getTranslation(),
+			getRotation() != c_quaternion_identity // FALSE for identity rotations
 		);
 		m_contained.rotate(getRotation());
 
@@ -305,7 +305,7 @@ void Doom3GroupNode::transformComponents(const Matrix4& matrix) {
 	}
 
 	if (_originInstance.isSelected()) {
-		m_contained.translateOrigin(getTranslation()); 
+		m_contained.translateOrigin(getTranslation());
 	}
 }
 

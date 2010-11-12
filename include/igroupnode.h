@@ -7,8 +7,8 @@ namespace scene {
 
 /** greebo: This is used to identify group entities right before
  * and after map save/load.
- * 
- * It provides methods to add/substract the origin to/from 
+ *
+ * It provides methods to add/substract the origin to/from
  * their child primitives.
  */
 class GroupNode {
@@ -26,7 +26,7 @@ typedef boost::shared_ptr<GroupNode> GroupNodePtr;
 } // namespace scene
 
 /** greebo: Cast a node onto a GroupNode pointer
- * 
+ *
  * @returns: NULL, if failed, the pointer to the class otherwise.
  */
 inline scene::GroupNodePtr Node_getGroupNode(scene::INodePtr node) {

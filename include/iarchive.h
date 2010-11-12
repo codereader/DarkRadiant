@@ -64,13 +64,13 @@ typedef boost::shared_ptr<ArchiveFile> ArchiveFilePtr;
  * A file opened in text mode.
  * \ingroup vfs
  */
-class ArchiveTextFile : 
+class ArchiveTextFile :
 	public ModResource
 {
 public:
 	/// \brief Returns the path to this file (relative to the filesystem root)
 	virtual const std::string& getName() const = 0;
-		
+
 	/// \brief Returns the stream associated with this file.
 	/// Subsequent calls return the same stream.
 	/// The stream may be read forwards until it is exhausted.
@@ -83,7 +83,7 @@ class CustomArchiveVisitor;
 
 /**
  * Representation of a ZIP archive.
- * 
+ *
  * \ingroup vfs
  */
 class Archive
@@ -113,11 +113,11 @@ public:
 	/// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
 	/// Name comparisons are case-insensitive.
 	virtual ArchiveFilePtr openFile(const std::string& name) = 0;
-	
+
 	/// \brief Returns a new object associated with the file identified by \p name, or 0 if the file cannot be opened.
 	/// Name comparisons are case-insensitive.
 	virtual ArchiveTextFilePtr openTextFile(const std::string& name) = 0;
-	
+
 	/// Returns true if the file identified by \p name can be opened.
 	/// Name comparisons are case-insensitive.
 	virtual bool containsFile(const std::string& name) = 0;
@@ -164,7 +164,7 @@ const std::string MODULE_ARCHIVE("Archive");
 
 /**
  * Loader module for ZIP archives.
- * 
+ *
  * \ingroup vfs
  */
 class ArchiveLoader :
@@ -180,7 +180,7 @@ public:
 
 /**
  * Return an ArchiveLoader module for the specified filetype.
- * 
+ *
  * \ingroup vfs
  */
 inline ArchiveLoader& GlobalArchive(const std::string& fileType) {

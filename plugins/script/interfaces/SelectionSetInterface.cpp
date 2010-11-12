@@ -75,9 +75,9 @@ void SelectionSetInterface::registerInterface(boost::python::object& nspace)
 	;
 
 	// Add SelectionSet declaration
-	nspace["SelectionSet"] = boost::python::class_<ScriptSelectionSet>("SelectionSet", 
+	nspace["SelectionSet"] = boost::python::class_<ScriptSelectionSet>("SelectionSet",
 		boost::python::init<const selection::ISelectionSetPtr&>())
-		.def("getName", &ScriptSelectionSet::getName, 
+		.def("getName", &ScriptSelectionSet::getName,
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
 		.def("empty", &ScriptSelectionSet::empty)
 		.def("clear", &ScriptSelectionSet::clear)

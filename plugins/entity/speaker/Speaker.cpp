@@ -11,15 +11,15 @@
 
 namespace entity {
 
-	namespace 
+	namespace
 	{
 		const std::string KEY_S_MAXDISTANCE("s_maxdistance");
 		const std::string KEY_S_MINDISTANCE("s_mindistance");
 		const std::string KEY_S_SHADER("s_shader");
 	}
 
-Speaker::Speaker(SpeakerNode& node, 
-		const Callback& transformChanged, 
+Speaker::Speaker(SpeakerNode& node,
+		const Callback& transformChanged,
 		const Callback& boundsChanged) :
 	_owner(node),
 	m_entity(node._entity),
@@ -38,9 +38,9 @@ Speaker::Speaker(SpeakerNode& node,
 	_shaderObserver(boost::bind(&Speaker::sShaderChanged, this, _1))
 {}
 
-Speaker::Speaker(const Speaker& other, 
-		SpeakerNode& node, 
-		const Callback& transformChanged, 
+Speaker::Speaker(const Speaker& other,
+		SpeakerNode& node,
+		const Callback& transformChanged,
 		const Callback& boundsChanged) :
 	_owner(node),
 	m_entity(node._entity),
@@ -69,7 +69,7 @@ const AABB& Speaker::localAABB() const {
 }
 
 // Submit renderables for solid mode
-void Speaker::renderSolid(RenderableCollector& collector, 
+void Speaker::renderSolid(RenderableCollector& collector,
                           const VolumeTest& volume,
                           const Matrix4& localToWorld,
                           bool isSelected) const
@@ -86,7 +86,7 @@ void Speaker::renderSolid(RenderableCollector& collector,
 }
 
 // Submit renderables for wireframe mode
-void Speaker::renderWireframe(RenderableCollector& collector, 
+void Speaker::renderWireframe(RenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld,
                               bool isSelected) const
@@ -102,7 +102,7 @@ void Speaker::renderWireframe(RenderableCollector& collector,
     }
 }
 
-void Speaker::testSelect(Selector& selector, 
+void Speaker::testSelect(Selector& selector,
 	SelectionTest& test, const Matrix4& localToWorld)
 {
 	test.BeginMesh(localToWorld);
@@ -225,7 +225,7 @@ void Speaker::construct()
 {
 	m_aabb_local = m_entity.getEntityClass()->getBounds();
 	m_aabb_border = m_aabb_local;
-	
+
 	_owner.addKeyObserver("origin", m_originKey);
 	_owner.addKeyObserver(KEY_S_SHADER, _shaderObserver);
 	_owner.addKeyObserver(KEY_S_MINDISTANCE, _radiusMinObserver);
@@ -290,7 +290,7 @@ void Speaker::sShaderChanged(const std::string& value)
 		_radii.setMin(_defaultRadii.getMin());
 	}
 
-	if (!m_maxIsSet) 
+	if (!m_maxIsSet)
 	{
 		_radii.setMax(_defaultRadii.getMax());
 	}
@@ -311,7 +311,7 @@ void Speaker::sMinChanged(const std::string& value)
 		// we need to parse in metres
 		_radii.setMin(strToFloat(value), true);
 	}
-	else 
+	else
 	{
 		_radii.setMin(_defaultRadii.getMin());
 	}
@@ -331,7 +331,7 @@ void Speaker::sMaxChanged(const std::string& value)
 		// we need to parse in metres
 		_radii.setMax(strToFloat(value), true);
 	}
-	else 
+	else
 	{
 		_radii.setMax(_defaultRadii.getMax());
 	}

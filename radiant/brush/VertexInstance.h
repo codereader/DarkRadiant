@@ -5,7 +5,7 @@
 
 namespace brush {
 
-class VertexInstance : 
+class VertexInstance :
 	public Selectable
 {
 	FaceInstances& m_faceInstances;
@@ -19,7 +19,7 @@ class VertexInstance :
 		}
 		while (faceVertex.getFace() != m_vertex->m_faceVertex.getFace());
 	}
-	
+
 	bool selected_vertex() const {
 		FaceVertexId faceVertex = m_vertex->m_faceVertex;
 		do {
@@ -44,11 +44,11 @@ public:
 	void setSelected(bool select) {
 		select_vertex(select);
 	}
-	
+
 	bool isSelected() const {
 		return selected_vertex();
 	}
-	
+
 	void invertSelected() {
 		setSelected(!isSelected());
 	}

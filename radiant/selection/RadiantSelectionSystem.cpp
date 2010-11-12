@@ -60,7 +60,7 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
 	_componentMode(eDefault),
 	_countPrimitive(0),
 	_countComponent(0),
-	_translateManipulator(*this, 2, 64),	// initialise the Manipulators with a pointer to self 
+	_translateManipulator(*this, 2, 64),	// initialise the Manipulators with a pointer to self
 	_rotateManipulator(*this, 8, 64),
 	_scaleManipulator(*this, 0, 64),
 	_pivotChanged(false),
@@ -82,28 +82,28 @@ void RadiantSelectionSystem::removeObserver(Observer* observer) {
 	// Cycle through the list of observers and call the moved method
 	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i) {
 		Observer* registered = *i;
-		
+
 		if (registered == observer) {
 			_observers.erase(i);
-			return; // Don't continue the loop, the iterator is obsolete 
+			return; // Don't continue the loop, the iterator is obsolete
 		}
 	}
 }
 
 void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool isComponent) {
-	
+
 	// Cycle through the list of observers and call the moved method
 	for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); ++i) {
 		Observer* observer = *i;
-		
+
 		if (observer != NULL) {
 			observer->selectionChanged(node, isComponent);
 		}
 	}
 }
 
-void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test, 
-											 const View& view, SelectionSystem::EMode mode, 
+void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
+											 const View& view, SelectionSystem::EMode mode,
 											 SelectionSystem::EComponentMode componentMode)
 {
 	// The (temporary) storage pool
@@ -142,16 +142,16 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 				EntitySelector entityTester(selector, test);
 				GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
 
-				// Now retrieve all the selectable primitives 
+				// Now retrieve all the selectable primitives
 				PrimitiveSelector primitiveTester(sel2, test);
 				GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
 			}
-		
+
 			// Add the first selection crop to the target vector
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i) {
 				targetList.push_back(i->second);
 			}
-			
+
 			// Add the secondary crop to the vector (if it has any entries)
 			for (SelectionPool::iterator i = sel2.begin(); i != sel2.end(); ++i) {
 				// Check for duplicates
@@ -172,7 +172,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 			// Retrieve all the selectable primitives of group nodes
 			GroupChildPrimitiveSelector primitiveTester(selector, test);
 			GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
-			
+
 			// Add the selection crop to the target vector
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
 			{
@@ -195,11 +195,11 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 	} // switch
 }
 
-/* greebo: This is true if nothing is selected (either in component mode or in primitive mode)  
+/* greebo: This is true if nothing is selected (either in component mode or in primitive mode)
  */
 bool RadiantSelectionSystem::nothingSelected() const
 {
-    return (Mode() == eComponent && _countComponent == 0) || 
+    return (Mode() == eComponent && _countComponent == 0) ||
 		   (Mode() == ePrimitive && _countPrimitive == 0) ||
 		   (Mode() == eGroupPart && _countPrimitive == 0);
 }
@@ -267,16 +267,16 @@ std::size_t RadiantSelectionSystem::countSelectedComponents() const {
 
 // This is called if the selection changes, so that the local list of selected nodes can be updated
 void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable) {
-	
+
 	// Cache the selection state
 	bool isSelected = selectable.isSelected();
 	int delta = isSelected ? +1 : -1;
-	
+
 	_countPrimitive += delta;
 	_selectionChangedSignal(selectable);
-	
+
 	_selectionInfo.totalCount += delta;
-	
+
 	if (Node_getPatch(node) != NULL) {
 		_selectionInfo.patchCount += delta;
 	}
@@ -287,14 +287,14 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 		_selectionInfo.entityCount += delta;
 	}
 
-	// If the selectable is selected, add it to the local selection list, otherwise remove it 
+	// If the selectable is selected, add it to the local selection list, otherwise remove it
 	if (isSelected) {
 		_selection.append(node);
 	}
 	else {
 		_selection.erase(node);
 	}
-	
+
 	// Notify observers, FALSE = primitive selection change
 	notifyObservers(node, false);
 
@@ -311,12 +311,12 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 // greebo: This should be called "onComponentSelectionChanged", as it is a similar function of the above one
 // Updates the internal list of component nodes if the component selection gets changed
 void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, const Selectable& selectable) {
-	
+
 	int delta = selectable.isSelected() ? +1 : -1;
 
 	_countComponent += delta;
 	_selectionChangedSignal(selectable);
-	
+
 	_selectionInfo.totalCount += delta;
 	_selectionInfo.componentCount += delta;
 
@@ -327,11 +327,11 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
     else {
 		_componentSelection.erase(node);
 	}
-	
+
 	// Notify observers, TRUE => this is a component selection change
 	notifyObservers(node, true);
 
-	// Check if the number of selected components in the list matches the value of the selection counter 
+	// Check if the number of selected components in the list matches the value of the selection counter
 	ASSERT_MESSAGE(_componentSelection.size() == _countComponent, "component selection-tracking error");
 
 	// Schedule an idle callback
@@ -380,10 +380,10 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected) {
 }
 
 // Traverse the current selection and visit them with the given visitor class
-void RadiantSelectionSystem::foreachSelected(const Visitor& visitor) 
+void RadiantSelectionSystem::foreachSelected(const Visitor& visitor)
 {
-	for (SelectionListType::const_iterator i = _selection.begin(); 
-		 i != _selection.end(); 
+	for (SelectionListType::const_iterator i = _selection.begin();
+		 i != _selection.end();
 		 /* in-loop increment */)
 	{
 		visitor.visit((i++)->first);
@@ -391,10 +391,10 @@ void RadiantSelectionSystem::foreachSelected(const Visitor& visitor)
 }
 
 // Traverse the current selection components and visit them with the given visitor class
-void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor) 
+void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 {
-	for (SelectionListType::const_iterator i = _componentSelection.begin(); 
-		 i != _componentSelection.end(); 
+	for (SelectionListType::const_iterator i = _componentSelection.begin();
+		 i != _componentSelection.end();
 		 /* in-loop increment */)
 	{
 		visitor.visit((i++)->first);
@@ -427,17 +427,17 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const Vector2& 
 		{
 			View scissored(view);
 			ConstructSelectionTest(scissored, Rectangle::ConstructFromPoint(device_point, device_epsilon));
-			
+
 			// The manipulator class checks on its own, if any of its components can be selected
 			_manipulator->testSelect(scissored, GetPivot2World());
 		}
 
 		// Save the pivot2world matrix
 		startMove();
-		
+
 		// This is true, if a manipulator could be selected
 		_pivotMoving = _manipulator->isSelected();
-		
+
 		// is a manipulator selected / the pivot moving?
 		if (_pivotMoving) {
 			Pivot2World pivot;
@@ -448,9 +448,9 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const Vector2& 
 			Matrix4 device2manip;
 			ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
 			_manipulator->getActiveComponent()->Construct(device2manip, device_point[0], device_point[1]);
-			
+
 			_deviceStart = Vector2(device_point[0], device_point[1]);
-			
+
 			_undoBegun = false;
 		}
 
@@ -474,11 +474,11 @@ void RadiantSelectionSystem::deselectAll() {
  * It checks for any possible targets (in the "line of click") and takes the actions according
  * to the modifiers that are held down (Alt-Shift, etc.)
  */
-void RadiantSelectionSystem::SelectPoint(const View& view, 
-										 const Vector2& device_point, 
-										 const Vector2& device_epsilon, 
-										 SelectionSystem::EModifier modifier, 
-										 bool face) 
+void RadiantSelectionSystem::SelectPoint(const View& view,
+										 const Vector2& device_point,
+										 const Vector2& device_epsilon,
+										 SelectionSystem::EModifier modifier,
+										 bool face)
 {
 	ASSERT_MESSAGE(fabs(device_point[0]) <= 1.0f && fabs(device_point[1]) <= 1.0f, "point-selection error");
 	// If the user is holding the replace modifiers (default: Alt-Shift), deselect the current selection
@@ -507,7 +507,7 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 
 			ComponentSelector selectionTester(selector, volume, eFace);
 			GlobalSceneGraph().foreachVisibleNodeInVolume(scissored, selectionTester);
-			
+
 			// Load them all into the vector
 			for (SelectionPool::iterator i = selector.begin(); i != selector.end(); ++i)
 			{
@@ -517,7 +517,7 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 		else {
 			testSelectScene(candidates, volume, scissored, Mode(), ComponentMode());
 		}
-		
+
 		// Was the selection test successful (have we found anything to select)?
 		if (candidates.size() > 0) {
 			// Yes, now determine how we should interpret the click
@@ -546,12 +546,12 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 				case SelectionSystem::eCycle: {
 					// Cycle through the selection pool and activate the item right after the currently selected
 					SelectablesList::iterator i = candidates.begin();
-					
+
 					while (i != candidates.end()) {
 						if ((*i)->isSelected()) {
 							// unselect the currently selected one
 							(*i)->setSelected(false);
-							// check if there is a "next" item in the list, if not: select the first item 
+							// check if there is a "next" item in the list, if not: select the first item
 							++i;
 							if (i != candidates.end()) {
 								(*i)->setSelected(true);
@@ -562,9 +562,9 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 							break;
 						}
 						++i;
-					} // while 
+					} // while
 				} // case
-				break;				
+				break;
 				default:
 				break;
 			} // switch
@@ -572,13 +572,13 @@ void RadiantSelectionSystem::SelectPoint(const View& view,
 	}
 }
 
-/* greebo: This gets called by the SelectObserver if the user drags a box and holds down 
+/* greebo: This gets called by the SelectObserver if the user drags a box and holds down
  * any of the selection modifiers. Possible selection candidates are determined and selected/deselected
  */
-void RadiantSelectionSystem::SelectArea(const View& view, 
-										const Vector2& device_point, 
-										const Vector2& device_delta, 
-										SelectionSystem::EModifier modifier, bool face) 
+void RadiantSelectionSystem::SelectArea(const View& view,
+										const Vector2& device_point,
+										const Vector2& device_delta,
+										SelectionSystem::EModifier modifier, bool face)
 {
 	// If we are in replace mode, deselect all the components or previous selections
 	if (modifier == SelectionSystem::eReplace) {
@@ -594,13 +594,13 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 		// Construct the selection test according to the area the user covered with his drag
 		View scissored(view);
 		ConstructSelectionTest(scissored, Rectangle::ConstructFromArea(device_point, device_delta));
-		
+
 		SelectionVolume volume(scissored);
 		// The posssible candidates go here
 		SelectionPool pool;
-		
+
 		SelectablesList candidates;
-		
+
 		if (face)
 		{
 			ComponentSelector selectionTester(pool, volume, eFace);
@@ -615,7 +615,7 @@ void RadiantSelectionSystem::SelectArea(const View& view,
 		else {
 			testSelectScene(candidates, volume, scissored, Mode(), ComponentMode());
 		}
-		
+
 		// Cycle through the selection pool and toggle the candidates, but only if we are in toggle mode
 		for (SelectablesList::iterator i = candidates.begin(); i != candidates.end(); i++) {
 			(*i)->setSelected(!(modifier == SelectionSystem::eToggle && (*i)->isSelected()));
@@ -633,7 +633,7 @@ void RadiantSelectionSystem::translate(const Vector3& translation) {
 		// Get the current pivot matrix and multiply it by the translation matrix defined by <translation>.
 		_pivot2world = _pivot2worldStart;
 		_pivot2world.translateBy(translation);
-		
+
 		// Call the according scene graph traversors and pass the translation vector
 		if (Mode() == eComponent) {
 			Scene_Translate_Component_Selected(GlobalSceneGraph(), _translation);
@@ -653,7 +653,7 @@ void RadiantSelectionSystem::rotate(const Quaternion& rotation) {
 	if (!nothingSelected()) {
 		// Store the quaternion internally
 		_rotation = rotation;
-		
+
 		// Perform the rotation according to the current mode
 		if (Mode() == eComponent) {
 			Scene_Rotate_Component_Selected(GlobalSceneGraph(), _rotation, _pivot2world.t().getVector3());
@@ -678,7 +678,7 @@ void RadiantSelectionSystem::scale(const Vector3& scaling) {
 		// Store the scaling vector internally
 		_scale = scaling;
 
-		// Pass the scale to the according traversor 
+		// Pass the scale to the according traversor
 		if (Mode() == eComponent) {
 			Scene_Scale_Component_Selected(GlobalSceneGraph(), _scale, _pivot2world.t().getVector3());
 		}
@@ -743,15 +743,15 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const Vector2& devic
 
 		Matrix4 device2manip;
 		ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());
-		
+
 		Vector2 constrainedDevicePoint(devicePoint);
-		
+
 		// Constrain the movement to the axes, if the modifier is held
 		if ((GlobalEventManager().getModifierState() & GDK_SHIFT_MASK) != 0)
 		{
 			// Get the movement delta relative to the start point
 			Vector2 delta = devicePoint - _deviceStart;
-			
+
 			// Set the "minor" value of the movement to zero
 			if (fabs(delta[0]) > fabs(delta[1])) {
 				// X axis is major, reset the y-value to the start
@@ -761,13 +761,13 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const Vector2& devic
 				// Y axis is major, reset the x-value to the start
 				delta[0] = 0;
 			}
-			
-			// Add the modified delta to the start point, constrained to one axis 
+
+			// Add the modified delta to the start point, constrained to one axis
 			constrainedDevicePoint = _deviceStart + delta;
 		}
-		
+
 		// Get the manipulatable from the currently active manipulator (done by selection test)
-		// and call the Transform method (can be anything) 
+		// and call the Transform method (can be anything)
 		_manipulator->getActiveComponent()->Transform(_manip2pivotStart, device2manip, constrainedDevicePoint[0], constrainedDevicePoint[1]);
 
 		_requestWorkZoneRecalculation = true;
@@ -780,8 +780,8 @@ void RadiantSelectionSystem::MoveSelected(const View& view, const Vector2& devic
 /// \todo Support view-dependent nudge.
 void RadiantSelectionSystem::NudgeManipulator(const Vector3& nudge, const Vector3& view)
 {
-	if (ManipulatorMode() == eTranslate || 
-		ManipulatorMode() == eDrag || 
+	if (ManipulatorMode() == eTranslate ||
+		ManipulatorMode() == eDrag ||
 		ManipulatorMode() == eClip)
 	{
 		translateSelected(nudge);
@@ -794,12 +794,12 @@ void RadiantSelectionSystem::NudgeManipulator(const Vector3& nudge, const Vector
 	}
 }
 
-// greebo: This just passes the call on to renderSolid, the manipulators are wireframes anyway 
+// greebo: This just passes the call on to renderSolid, the manipulators are wireframes anyway
 void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
 	renderSolid(collector, volume);
 }
 
-// Lets the ConstructPivot() method do the work and returns the result that is stored in the member variable 
+// Lets the ConstructPivot() method do the work and returns the result that is stored in the member variable
 const Matrix4& RadiantSelectionSystem::GetPivot2World() const
 {
 	// Questionable const design - almost everything needs to be declared const here...
@@ -830,23 +830,23 @@ void RadiantSelectionSystem::cancelMove() {
 	// Tell all the scene objects to revert their transformations
 	RevertTransformForSelected walker;
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-	
+
 	_pivotMoving = false;
 	pivotChanged();
-	
+
 	// greebo: Deselect all faces if we are in brush and drag mode
 	if (Mode() == ePrimitive && ManipulatorMode() == eDrag)
 	{
 		SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
 		Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
 	}
-	
+
 	if (_undoBegun) {
-		// Cancel the undo operation, if one has been begun 
+		// Cancel the undo operation, if one has been begun
 		GlobalUndoSystem().cancel();
 		_undoBegun = false;
 	}
-	
+
 	// Update the views
 	SceneChangeNotify();
 }
@@ -875,7 +875,7 @@ void RadiantSelectionSystem::endMove() {
 		SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
 		Node_traverseSubgraph(GlobalSceneGraph().root(), faceSelector);
 	}
-	
+
 	// Remove all degenerated brushes from the scene graph (should emit a warning)
 	foreachSelected(RemoveDegenerateBrushWalker());
 
@@ -884,8 +884,8 @@ void RadiantSelectionSystem::endMove() {
 
 	// Update the views
 	SceneChangeNotify();
-	
-	// If we started an undoable operation, end it now and tell the console what happened 
+
+	// If we started an undoable operation, end it now and tell the console what happened
 	if (_undoBegun)
 	{
 		std::ostringstream command;
@@ -921,7 +921,7 @@ const selection::WorkZone& RadiantSelectionSystem::getWorkZone()
 	return _workZone;
 }
 
-void RadiantSelectionSystem::keyChanged(const std::string& key, const std::string& val) 
+void RadiantSelectionSystem::keyChanged(const std::string& key, const std::string& val)
 {
 	if (!nothingSelected()) {
 		pivotChanged();
@@ -939,19 +939,19 @@ void RadiantSelectionSystem::ConstructPivot()
 {
 	if (!_pivotChanged || _pivotMoving)
 		return;
-		
+
 	_pivotChanged = false;
 
 	Vector3 objectPivot;
 
 	if (!nothingSelected()) {
 		if (_selectionInfo.entityCount == 1 && _selectionInfo.totalCount == 1 &&
-			GlobalRegistry().get(RKEY_ROTATION_PIVOT) == "1") 
+			GlobalRegistry().get(RKEY_ROTATION_PIVOT) == "1")
 		{
 			// Test, if a single entity is selected
 			scene::INodePtr node = ultimateSelected();
 			Entity* entity = Node_getEntity(node);
-			
+
 			if (entity != NULL) {
 				objectPivot = entity->getKeyValue("origin");
 			}
@@ -959,7 +959,7 @@ void RadiantSelectionSystem::ConstructPivot()
 		else {
 	    	// Create a local variable where the aabb information is stored
 			AABB bounds;
-			
+
 			// Traverse through the selection and update the <bounds> variable
 			if (Mode() == eComponent)
 			{
@@ -981,11 +981,11 @@ void RadiantSelectionSystem::ConstructPivot()
 
 		// Snap the pivot point to the grid (greebo: disabled this (issue #231))
 		//vector3_snap(objectPivot, GlobalGrid().getGridSize());
-		
-		// The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot  
+
+		// The pivot2world matrix is just a translation from the world origin (0,0,0) to the object pivot
 		_pivot2world = Matrix4::getTranslation(objectPivot);
 
-		// Only rotation and scaling need further calculations  
+		// Only rotation and scaling need further calculations
 		switch (_manipulatorMode) {
 			case eTranslate:
 				break;
@@ -1010,7 +1010,7 @@ void RadiantSelectionSystem::ConstructPivot()
 		} // switch
 	}
 }
-/* greebo: Renders the currently active manipulator by setting the render state and 
+/* greebo: Renders the currently active manipulator by setting the render state and
  * calling the manipulator's render method
  */
 void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
@@ -1042,7 +1042,7 @@ const std::string& RadiantSelectionSystem::getName() const {
 
 const StringSet& RadiantSelectionSystem::getDependencies() const {
 	static StringSet _dependencies;
-	
+
 	if (_dependencies.empty()) {
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
@@ -1050,26 +1050,26 @@ const StringSet& RadiantSelectionSystem::getDependencies() const {
 		_dependencies.insert(MODULE_GRID);
 		_dependencies.insert(MODULE_SCENEGRAPH);
 	}
-	
+
 	return _dependencies;
 }
 
 void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "RadiantSelectionSystem::initialiseModule called.\n";
-	
+
 	constructStatic();
-	
+
 	SetManipulatorMode(eTranslate);
 	pivotChanged();
 	addSelectionChangeCallback(boost::bind(&RadiantSelectionSystem::pivotChangedSelection, this, _1));
 	GlobalGrid().addGridChangeCallback(boost::bind(&RadiantSelectionSystem::pivotChanged, this));
-	
+
 	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_PIVOT);
-	
-	// Pass a reference to self to the global event manager 
+
+	// Pass a reference to self to the global event manager
 	GlobalEventManager().connectSelectionSystem(this);
-	
-	// Connect the bounds changed caller 
+
+	// Connect the bounds changed caller
 	_boundsChangedHandler =	GlobalSceneGraph().addBoundsChangedCallback(
 		boost::bind(&RadiantSelectionSystem::onSceneBoundsChanged, this)
 	);
@@ -1078,7 +1078,7 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 }
 
 void RadiantSelectionSystem::shutdownModule() {
-	// greebo: Unselect everything so that no references to scene::Nodes 
+	// greebo: Unselect everything so that no references to scene::Nodes
 	// are kept after shutdown, causing destruction issues.
 	setSelectedAll(false);
 	setSelectedAllComponents(false);

@@ -20,7 +20,7 @@ class ShaderFileLoader :
 private:
 	// The base path for the shaders (e.g. "materials/")
 	std::string _basePath;
-	
+
 private:
 
 	// Parse a shader file with the given contents and filename
@@ -28,13 +28,13 @@ private:
 
 	// Parse a "table" definition in a shader file
 	void parseShaderTable(parser::DefTokeniser& tokeniser);
-	
+
 public:
 	// Constructor. Set the basepath to prepend onto shader filenames.
 	ShaderFileLoader(const std::string& path)
 	: _basePath(path)
 	{}
-	
+
 	// FileVisitor implementation
 	void visit(const std::string& filename);
 };

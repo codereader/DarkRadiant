@@ -10,7 +10,7 @@ namespace objectives {
 
 namespace {
 
-inline std::string getPlural(int count, 
+inline std::string getPlural(int count,
 	const std::string& singular, const std::string& plural)
 {
 	return (count == 1) ? singular : plural;
@@ -21,7 +21,7 @@ inline std::string printEntity(int count) {
 }
 
 inline std::string printEntityAmount(const std::string& amountStr) {
-	if (amountStr.empty()) { 
+	if (amountStr.empty()) {
 		return printEntity(1);
 	}
 	else {
@@ -38,7 +38,7 @@ std::string Specifier::getSentence(Component& component) {
 
 	std::string amountStr = component.getArgument(0);
 	int amount = strToInt(amountStr);
-	
+
 	if (id == SpecifierType::SPEC_NONE().getId()) {
 		result += _("<not specified>");
 	}
@@ -84,7 +84,7 @@ std::string Specifier::getSentence(Component& component) {
 	else {
 		globalErrorStream() << "Unknown specifier ID " << id << "found!" << std::endl;
 	}
-	
+
 	return result;
 }
 

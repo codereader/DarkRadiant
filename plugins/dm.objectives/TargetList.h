@@ -21,9 +21,9 @@ class TargetList
 {
 	// Source entity
 	const Entity* _src;
-	
+
 	// The set of targeted entities, by name
-	typedef std::set<std::string> StringSet; 
+	typedef std::set<std::string> StringSet;
 	StringSet _set;
 
 public:
@@ -32,7 +32,7 @@ public:
 	 * Construct a TargetList with the given source entity. The source entity
 	 * is immediately scanned for <b>target</b> keyvalues that refer to other
 	 * entities.
-	 * 
+	 *
 	 * @param src
 	 * The source Entity to query for targets.
 	 */
@@ -49,15 +49,15 @@ public:
 	void visit(const std::string& key, const std::string& value) {
 		// If the key starts with "target", add the value to the set
 		if (boost::algorithm::istarts_with(key, "target"))
-			_set.insert(value); 
-	}				
-		
+			_set.insert(value);
+	}
+
 	/**
 	 * Query whether the supplied entity is targeted by the source entity.
-	 * 
+	 *
 	 * @param qtarget
 	 * The destination entity.
-	 * 
+	 *
 	 * @return
 	 * true if the destination Entity appears in the list of targets for the
 	 * source Entity, false otherwise.

@@ -14,7 +14,7 @@ class EntityChooser :
 	public gtkutil::DialogElement
 {
 private:
-	struct EntityChooserColumns : 
+	struct EntityChooserColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
 		EntityChooserColumns() { add(name); }
@@ -40,9 +40,9 @@ public:
 	virtual std::string exportToString() const;
 	virtual void importFromString(const std::string& str);
 
-	/** 
+	/**
 	 * Static convenience method. Constructs a dialog with an EntityChooser
-	 * and returns the selection. 
+	 * and returns the selection.
 	 *
 	 * @preSelectedEntity: The entity name which should be selected by default.
 	 * @returns: The name of the entity or an empty string if the user cancelled the dialog.

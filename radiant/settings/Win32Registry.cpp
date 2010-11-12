@@ -31,7 +31,7 @@ std::string Win32Registry::getKeyValue(const std::string& key, const std::string
 	BYTE buffer[1024];		// The target buffer
 	DWORD bufferSize = sizeof(buffer);
 
-	retVal = RegQueryValueEx(hkey, 				 // the previously opened HKEY 
+	retVal = RegQueryValueEx(hkey, 				 // the previously opened HKEY
 							 value.c_str(),		 // The value
 							 NULL, 				 // Reserved, must be NULL
 							 &type, 			 // type = SZ
@@ -47,14 +47,14 @@ std::string Win32Registry::getKeyValue(const std::string& key, const std::string
 		std::cout << "Win32Registry: Could not query value: " << value << "\n";
 		return "";
 	}
-	
+
 	// NULL-Terminate the returned string and return the value
 	if (bufferSize < sizeof(buffer)) {
 		buffer[bufferSize] = '\0';
 		std::string result = (char*)&buffer;
 		return result;
 	}
-	
+
 	// Boundary check not passed, return an empty string
 	return "";
 }

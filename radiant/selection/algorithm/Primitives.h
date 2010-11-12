@@ -16,7 +16,7 @@ class PatchNode;
 class BrushNode;
 typedef boost::shared_ptr<BrushNode> BrushNodePtr;
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
-typedef std::vector<PatchNodePtr> PatchPtrVector; 
+typedef std::vector<PatchNodePtr> PatchPtrVector;
 typedef std::vector<BrushNodePtr> BrushPtrVector;
 typedef std::vector<Face*> FacePtrVector;
 
@@ -28,7 +28,7 @@ namespace selection {
 	 * ForEachSelectedPrimitive() to traverse all
 	 * selected Faces/Brushes/Patches in the map,
 	 * including child primitives of selected entities.
-	 */ 
+	 */
 	class PrimitiveVisitor {
 	public:
 	    virtual ~PrimitiveVisitor() {}
@@ -46,10 +46,10 @@ namespace selection {
 	public:
 		// Constructor
 		InvalidSelectionException(const std::string& what):
-			std::runtime_error(what) 
-		{}     
+			std::runtime_error(what)
+		{}
 	};
-	
+
 	namespace algorithm {
 
 	class PatchTesselationUpdater :
@@ -83,74 +83,74 @@ namespace selection {
 	int selectedFaceCount();
 
 	/** greebo: Retrieves the reference to the last selected face.
-	 * 
+	 *
 	 * Throws an selection::InvalidSelectionException on failure.
-	 * 
+	 *
 	 * @returns: the Face& reference of the last element.
 	 */
 	Face& getLastSelectedFace();
-	
+
 	/** greebo: Retrieves the first selected patch.
-	 * 
+	 *
 	 * Throws an selection::InvalidSelectionException on failure.
-	 * 
+	 *
 	 * @returns: a reference to the patch.
 	 */
 	Patch& getLastSelectedPatch();
-	
+
 	/** greebo: Retrieves a list of selected Patches, populated
 	 * by a scene walker.
 	 *
 	 * @returns: the vector with the selected patch pointers.
 	 */
 	PatchPtrVector getSelectedPatches();
-	
+
 	/** greebo: Retrieves a list of selected Brushes, populated
 	 * by a scene walker.
 	 *
 	 * @returns: the vector with the selected brush pointers.
 	 */
 	BrushPtrVector getSelectedBrushes();
-	
+
 	/** greebo: Retrieves a list of selected Faces (those selected
 	 * 			with Ctrl-Shift-LMB by default).
 	 *
 	 * @returns: the vector with the selected face pointers.
 	 */
 	FacePtrVector getSelectedFaces();
-	
+
 	/** greebo: Tries to create a collision model from the current
-	 * 			selection. The basic check for a single selected 
+	 * 			selection. The basic check for a single selected
 	 * 			func_clipmodel is done here and the CM object is created.
 	 */
 	void createCMFromSelection(const cmd::ArgumentList& args);
-	
+
 	/** Count the number of selected primitives in the current map.
-	 * 
+	 *
 	 * @returns
 	 * The number of selected primitives.
 	 */
-	 
+
 	int countSelectedPrimitives();
-	
+
 	/** Count the number of selected brushes in the current map.
-	 * 
+	 *
 	 * @returns
 	 * The number of selected brushes.
 	 */
-	 
+
 	int countSelectedBrushes();
-	
+
 	/** greebo: Creates a coplanar patch for each selected face instance.
 	 */
 	void createDecalsForSelectedFaces(const cmd::ArgumentList& args);
 
-	/** 
+	/**
 	 * greebo: Applies the visportal/nodraw texture combo to the selected brushes.
 	 */
 	void makeVisportal(const cmd::ArgumentList& args);
 
-	/** 
+	/**
 	 * greebo: Surrounds the current model selection with a monsterclip brush.
 	 */
 	void surroundWithMonsterclip(const cmd::ArgumentList& args);

@@ -5,35 +5,35 @@
 
 namespace textool {
 
-PatchVertexItem::PatchVertexItem(PatchControl& patchControl) : 
+PatchVertexItem::PatchVertexItem(PatchControl& patchControl) :
 	_patchControl(patchControl)
 {}
 
 AABB PatchVertexItem::getExtents() {
 	AABB returnValue;
-	
+
 	returnValue.origin = Vector3(
 		_patchControl.texcoord[0], _patchControl.texcoord[1], 0
 	);
 	returnValue.extents = Vector3(0.001f, 0.001f, 0);
-	
+
 	return returnValue;
 }
 
 void PatchVertexItem::render() {
 	glPointSize(5);
 	glBegin(GL_POINTS);
-	
+
 	if (_selected) {
 		glColor3f(1, 0.5f, 0);
 	}
 	else {
 		glColor3f(1, 1, 1);
 	}
-	
+
 	// Draw one single point at the given coords
 	glVertex2f(_patchControl.texcoord[0], _patchControl.texcoord[1]);
-	
+
 	glEnd();
 }
 

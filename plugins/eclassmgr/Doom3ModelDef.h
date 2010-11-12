@@ -48,12 +48,12 @@ public:
 	// Reads the data from the given tokens into the member variables
 	void parseFromTokens(parser::DefTokeniser& tokeniser)
 	{
-		clear();		
-	    
+		clear();
+
 	    tokeniser.assertNextToken("{");
 
 	    // State enum
-	    enum { 
+	    enum {
 	        NONE,   // usual state
 	        ANIM    // parsed anim, may get a { ... } block with further info
 	    } state = NONE;
@@ -65,7 +65,7 @@ public:
 	        if (parameter == "}") {
 	            break;
 	        }
-	            
+
 	        if (parameter == "inherit") {
 	            parent = tokeniser.nextToken();
 	        }
@@ -87,7 +87,7 @@ public:
 	            // SYNTAX: "anim" <name> <md5file> [ "{" <blah> [ <blah> ... ] "}" ]
 	            std::string name = tokeniser.nextToken();
 	            std::string file = tokeniser.nextToken();
-	            
+
 	            anims.insert(Anims::value_type(name, file));
 	            state = ANIM; // check for the braces on the next iteration
 	        }

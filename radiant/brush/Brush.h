@@ -32,7 +32,7 @@ inline FaceVertexId next_edge(const Faces& faces, FaceVertexId faceVertex) {
 	std::size_t adjacent_vertex = faces[adjacent_face]->getWinding().findAdjacent(faceVertex.getFace());
 
 	ASSERT_MESSAGE(adjacent_vertex != c_brush_maxFaces, "connectivity data invalid");
-	
+
 	if (adjacent_vertex == c_brush_maxFaces) {
 		return faceVertex;
 	}
@@ -69,13 +69,13 @@ public:
 	virtual void pop_back() = 0;
 	virtual void erase(std::size_t index) = 0;
 	virtual void connectivityChanged() = 0;
-	
+
 	virtual void edge_clear() = 0;
 	virtual void edge_push_back(SelectableEdge& edge) = 0;
-	
+
 	virtual void vertex_clear() = 0;
 	virtual void vertex_push_back(SelectableVertex& vertex) = 0;
-	
+
 	virtual void DEBUG_verify() = 0;
 };
 
@@ -103,11 +103,11 @@ private:
 	Observers m_observers;
 	UndoObserver* m_undoable_observer;
 	MapFile* m_map;
-	
+
 	// state
 	Faces m_faces;
 	// ----
-	
+
 	// cached data compiled from state
 	RenderablePointVector _faceCentroidPoints;
 	RenderablePointVector _uniqueVertexPoints;
@@ -115,50 +115,50 @@ private:
 
 	typedef std::vector<SelectableVertex> SelectableVertices;
 	SelectableVertices m_select_vertices;
-	
+
 	typedef std::vector<SelectableEdge> SelectableEdges;
 	SelectableEdges m_select_edges;
-	
+
 	// A list of all edge render indices, one for each unique edge
 	std::vector<EdgeRenderIndices> _edgeIndices;
 
 	// A list of face indices, one for each unique edge
 	std::vector<EdgeFaces> _edgeFaces;
-	
+
 	AABB m_aabb_local;
 	// ----
-	
+
 	Callback m_evaluateTransform;
 	Callback m_boundsChanged;
-	
+
 	mutable bool m_planeChanged; // b-rep evaluation required
 	mutable bool m_transformChanged; // transform evaluation required
 	// ----
 
-public:  
+public:
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
 	class BrushUndoMemento : public UndoMemento {
 	public:
 		BrushUndoMemento(const Faces& faces) : m_faces(faces) {}
 		virtual ~BrushUndoMemento() {}
-		
+
 		void release() {
 			delete this;
 		}
-	
+
 		Faces m_faces;
 	};
-	
+
 	// static data
 	static ShaderPtr m_state_point;
 	// ----
-	
+
 	static double m_maxWorldCoord;
-	
+
 	// Constructors
 	Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged);
 	Brush(BrushNode& owner, const Brush& other, const Callback& evaluateTransform, const Callback& boundsChanged);
-	
+
 	// Destructor
 	virtual ~Brush();
 
@@ -169,30 +169,30 @@ public:
 
 	IFace& addFace(const Plane3& plane);
 	IFace& addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader);
-	
+
 	/** greebo: This translates the brush about the given translation vector,
 	 * this is used by the Doom3Group entity to add/substract the origin from
 	 * their child brushes. The translation is TextureLock-sensitive.
 	 */
 	void translateDoom3Brush(const Vector3& translation);
-	
+
 	void attach(BrushObserver& observer);
 	void detach(BrushObserver& observer);
-	
+
 	void forEachFace(const BrushVisitor& visitor) const;
-	
+
 	void forEachFace_instanceAttach(MapFile* map) const;
 	void forEachFace_instanceDetach(MapFile* map) const;
-	
+
 	InstanceCounter m_instanceCounter;
-	
+
 	void instanceAttach(MapFile* map);
 	void instanceDetach(MapFile* map);
-	
+
 	// observer
 	void planeChanged();
 	void shaderChanged();
-	
+
 	// Sets the shader of all faces to the given name
 	void setShader(const std::string& newShader);
 
@@ -203,38 +203,38 @@ public:
 	bool hasVisibleMaterial() const;
 
 	void evaluateBRep() const;
-	
+
 	void transformChanged();
 	void evaluateTransform();
-	
+
 	void aabbChanged();
-	
+
 	const AABB& localAABB() const;
-	
+
 	void renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	
+
 	void transform(const Matrix4& matrix);
-	
+
 	void snapto(float snap);
-	
+
 	void revertTransform();
 	void freezeTransform();
-	
+
 	/// \brief Returns the absolute index of the \p faceVertex.
 	std::size_t absoluteIndex(FaceVertexId faceVertex);
-	
+
 	void appendFaces(const Faces& other);
 
 	void undoSave();
 	UndoMemento* exportState() const;
 	void importState(const UndoMemento* state);
-	
+
 	/// \brief Appends a copy of \p face to the end of the face list.
 	FacePtr addFace(const Face& face);
 
 	/// \brief Appends a new face constructed from the parameters to the end of the face list.
 	FacePtr addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection);
-	
+
 	static void constructStatic();
 	static void destroyStatic();
 
@@ -247,20 +247,20 @@ public:
 
 	FacePtr back();
 	const FacePtr back() const;
-	
+
 	void reserve(std::size_t count);
-	
+
 	void push_back(Faces::value_type face);
-	
+
 	void pop_back();
 	void erase(std::size_t index);
-	
+
 	void connectivityChanged();
 
 	void clear();
-	
+
 	std::size_t getNumFaces() const;
-	
+
 	bool empty() const;
 
 	/// \brief Returns true if any face of the brush contributes to the final B-Rep.
@@ -275,8 +275,8 @@ public:
 
 	void update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const;
 
-	void update_faces_wireframe(RenderablePointVector& wire, 
-								const std::size_t* visibleFaceIndices, 
+	void update_faces_wireframe(RenderablePointVector& wire,
+								const std::size_t* visibleFaceIndices,
 								std::size_t numVisibleFaces) const;
 
 	/// \brief Makes this brush a deep-copy of the \p other.
@@ -284,11 +284,11 @@ public:
 
 private:
 	void edge_push_back(FaceVertexId faceVertex);
-	
+
 	void edge_clear();
-	
+
 	void vertex_push_back(FaceVertexId faceVertex);
-	
+
 	void vertex_clear();
 
 	/// \brief Returns true if the face identified by \p index is preceded by another plane that takes priority over it.

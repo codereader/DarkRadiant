@@ -48,7 +48,7 @@ private:
 	ActorColumns _actorColumns;
 	Glib::RefPtr<Gtk::ListStore> _actorStore;
 	Gtk::ComboBox* _actorDropDown;
-	
+
 	// All available commands
 	conversation::CommandColumns _commandColumns;
 	Glib::RefPtr<Gtk::ListStore> _commandStore;
