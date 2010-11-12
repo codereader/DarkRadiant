@@ -40,6 +40,7 @@ dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
                      ce/specpanel/TextSpecifierPanel.cpp \
                      ObjectiveEntity.cpp \
                      ObjectiveKeyExtractor.cpp \
+                     ObjectiveEntityFinder.cpp \
                      Component.cpp \
                      ComponentsDialog.cpp \
                      ComponentType.cpp \
