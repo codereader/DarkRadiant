@@ -61,12 +61,8 @@ ObjectivesEditor::ObjectivesEditor() :
 {
     // Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
+    set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
     
-    // Window size
-    Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(GlobalMainFrame().getTopLevelWindow());
-
-    set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
-
     // Add vbox to dialog
     ui::GtkBuilderPtr builder = GlobalUIManager().getGtkBuilderFromFile(
         "ObjectivesEditor.glade"
