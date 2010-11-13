@@ -136,6 +136,9 @@ public:
 	void cubicScaleOut();
 
 private:
+
+    void constructGUIComponents();
+
 	void Cam_Draw();
 
 	void onSizeAllocate(Gtk::Allocation& allocation);

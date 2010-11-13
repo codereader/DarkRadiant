@@ -19,6 +19,8 @@
 
 #include <boost/bind.hpp>
 
+#include <gtkmm/image.h>
+
 class ObjectFinder :
 	public scene::NodeVisitor
 {
@@ -150,12 +152,53 @@ CamWnd::CamWnd() :
     );
 	m_window_observer->setView(m_view);
 
-    // Set up GUI components
+    constructGUIComponents();
+
+	_mapValidHandle = GlobalMap().addValidCallback(boost::bind(&DeferredDraw::onMapValidChanged, &m_deferredDraw));
+
+	// Deactivate all commands, just to make sure
+	disableDiscreteMoveEvents();
+	disableFreeMoveEvents();
+
+	// Now add the handlers for the non-freelook mode, the events are activated by this
+	addHandlersMove();
+
+	_camGLWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &CamWnd::onMouseScroll));
+
+	// Subscribe to the global scene graph update
+	GlobalSceneGraph().addSceneObserver(this);
+
+    // Let the window observer connect its handlers to the GL widget first
+    // (before the eventmanager)
+	m_window_observer->addObservedWidget(_camGLWidget);
+
+	GlobalEventManager().connect(_camGLWidget);
+}
+
+void CamWnd::constructGUIComponents()
+{
+    // Get main container from Glade
     ui::GtkBuilderPtr builder = GlobalUIManager().getGtkBuilderFromFile(
         "CamWnd.glade"
     );
     builder->get_widget("mainVbox", _mainWidget);
     g_assert(_mainWidget);
+
+    // Set button images
+    Gtk::Container *previewModeButton, *lightingModeButton;
+    builder->get_widget("previewModeButton", previewModeButton);
+    builder->get_widget("lightingModeButton", lightingModeButton);
+
+    previewModeButton->add(
+        *Gtk::manage(
+            new Gtk::Image(GlobalUIManager().getLocalPixbuf("previewMode.png"))
+        )
+    );
+    lightingModeButton->add(
+        *Gtk::manage(
+            new Gtk::Image(GlobalUIManager().getLocalPixbuf("lightingMode.png"))
+        )
+    );
 
     // Set up GL widget
 	_camGLWidget->set_events(  Gdk::EXPOSURE_MASK 
@@ -178,25 +221,6 @@ CamWnd::CamWnd() :
     Gtk::Container* glWidgetFrame;
     builder->get_widget("glWidgetFrame", glWidgetFrame);
     glWidgetFrame->add(*_camGLWidget);
-
-	_mapValidHandle = GlobalMap().addValidCallback(boost::bind(&DeferredDraw::onMapValidChanged, &m_deferredDraw));
-
-	// Deactivate all commands, just to make sure
-	disableDiscreteMoveEvents();
-	disableFreeMoveEvents();
-
-	// Now add the handlers for the non-freelook mode, the events are activated by this
-	addHandlersMove();
-
-	_camGLWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &CamWnd::onMouseScroll));
-
-	// Subscribe to the global scene graph update
-	GlobalSceneGraph().addSceneObserver(this);
-
-	// Let the window observer connect its handlers to the GL widget first (before the eventmanager)
-	m_window_observer->addObservedWidget(_camGLWidget);
-
-	GlobalEventManager().connect(_camGLWidget);
 }
 
 CamWnd::~CamWnd()
