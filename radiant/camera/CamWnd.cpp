@@ -20,6 +20,7 @@
 #include <boost/bind.hpp>
 
 #include <gtkmm/image.h>
+#include <gtkmm/togglebutton.h>
 
 class ObjectFinder :
 	public scene::NodeVisitor
@@ -135,13 +136,17 @@ void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd() :
+    gtkutil::GladeWidgetPopulator(
+        _mainWidget,
+        GlobalUIManager().getGtkBuilderFromFile("CamWnd.glade"),
+        "mainVbox"
+    ),
 	_id(++_maxId),
 	m_view(true),
 	m_Camera(&m_view, Callback(boost::bind(&CamWnd::queueDraw, this))),
 	m_cameraview(m_Camera, &m_view, Callback(boost::bind(&CamWnd::update, this))),
 	m_drawing(false),
 	m_bFreeMove(false),
-    _mainWidget(NULL),
 	_camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
 	m_window_observer(NewWindowObserver()),
 	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, _camGLWidget)),
@@ -177,17 +182,14 @@ CamWnd::CamWnd() :
 
 void CamWnd::constructGUIComponents()
 {
-    // Get main container from Glade
-    ui::GtkBuilderPtr builder = GlobalUIManager().getGtkBuilderFromFile(
-        "CamWnd.glade"
-    );
-    builder->get_widget("mainVbox", _mainWidget);
-    g_assert(_mainWidget);
-
     // Set button images
-    Gtk::Container *previewModeButton, *lightingModeButton;
-    builder->get_widget("previewModeButton", previewModeButton);
-    builder->get_widget("lightingModeButton", lightingModeButton);
+    Gtk::ToggleButton *previewModeButton, *lightingModeButton;
+    previewModeButton = getGladeWidget<Gtk::ToggleButton>(
+        "previewModeButton"
+    );
+    lightingModeButton = getGladeWidget<Gtk::ToggleButton>(
+        "lightingModeButton"
+    );
 
     previewModeButton->add(
         *Gtk::manage(
@@ -198,6 +200,14 @@ void CamWnd::constructGUIComponents()
         *Gtk::manage(
             new Gtk::Image(GlobalUIManager().getLocalPixbuf("lightingMode.png"))
         )
+    );
+
+    // Connect button signals
+    previewModeButton->signal_toggled().connect(
+        sigc::mem_fun(*this, &CamWnd::onPreviewButtonToggled)
+    );
+    lightingModeButton->signal_toggled().connect(
+        sigc::mem_fun(*this, &CamWnd::onLightingButtonToggled)
     );
 
     // Set up GL widget
@@ -218,8 +228,9 @@ void CamWnd::constructGUIComponents()
     );
 
     // Pack GL widget into outer widget
-    Gtk::Container* glWidgetFrame;
-    builder->get_widget("glWidgetFrame", glWidgetFrame);
+    Gtk::Container* glWidgetFrame = getGladeWidget<Gtk::Container>(
+        "glWidgetFrame"
+    );
     glWidgetFrame->add(*_camGLWidget);
 }
 
@@ -248,6 +259,16 @@ CamWnd::~CamWnd()
 
 	// Notify the camera manager about our destruction
 	GlobalCamera().removeCamWnd(_id);
+}
+
+void CamWnd::onPreviewButtonToggled()
+{
+
+}
+
+void CamWnd::onLightingButtonToggled()
+{
+
 }
 
 int CamWnd::getId() {
