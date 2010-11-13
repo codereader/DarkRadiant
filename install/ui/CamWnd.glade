@@ -8,12 +8,15 @@
       <object class="GtkHBox" id="buttonsHbox">
         <property name="visible">True</property>
         <property name="border_width">3</property>
+        <property name="spacing">3</property>
         <child>
           <object class="GtkButton" id="previewModeButton">
-            <property name="label" translatable="yes">Preview</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <child>
+              <placeholder/>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -22,10 +25,12 @@
         </child>
         <child>
           <object class="GtkButton" id="lightingModeButton">
-            <property name="label" translatable="yes">Lighting</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <child>
+              <placeholder/>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
