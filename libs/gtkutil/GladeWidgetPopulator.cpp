@@ -1,29 +1,29 @@
-#include "GladeWindow.h"
+#include "GladeWidgetPopulator.h"
 
-#include <cassert>
+#include <gtkmm/bin.h>
 
 namespace gtkutil
 {
 
-void GladeWindow::addChildFromBuilder(
+void GladeWidgetPopulator::addChildFromBuilder(
     Glib::RefPtr<Gtk::Builder> builder, const std::string& childName
 )
 {
-    assert(builder);
+    g_assert(builder);
 
     Gtk::Bin* bin = NULL;
     builder->get_widget(childName, bin);
-    assert(bin);
+    g_assert(bin);
 
     // Store the builder for derived classes to use
     _builder = builder;
 
-    // Get the child from the bin, and add it to ourselves as a child
+    // Get the child from the bin, and add it to the target container as a child
     Gtk::Widget* child = bin->get_child();
-    assert(child);
+    g_assert(child);
 
     child->show_all();
-    child->reparent(*this);
+    child->reparent(*_container);
 }
 
 }

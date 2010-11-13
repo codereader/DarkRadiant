@@ -5,6 +5,7 @@
 #include "irender.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/GladeWidgetPopulator.h"
 #include "selection/RadiantWindowObserver.h"
 
 #include "view.h"
@@ -23,7 +24,8 @@ class SelectionTest;
 
 class CamWnd :
 	public scene::Graph::Observer,
-	public boost::noncopyable
+	public boost::noncopyable,
+    private gtkutil::GladeWidgetPopulator
 {
 	// The ID of this window
 	int _id;
@@ -50,7 +52,7 @@ class CamWnd :
 	bool m_bFreeMove;
 
     // Outer GUI widget (containing toolbar and GL widget)
-    Gtk::Widget* _mainWidget;
+    Gtk::Container* _mainWidget;
 
     // The GL widget
 	gtkutil::GLWidget* _camGLWidget;
@@ -138,6 +140,10 @@ public:
 private:
 
     void constructGUIComponents();
+
+    // Toggle button callbacks
+    void onPreviewButtonToggled();
+    void onLightingButtonToggled();
 
 	void Cam_Draw();
 

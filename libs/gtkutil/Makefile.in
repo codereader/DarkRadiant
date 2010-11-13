@@ -76,14 +76,15 @@ am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libgtkutil_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
-am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
-	VFSTreePopulator.lo Timer.lo WindowPosition.lo GladeWindow.lo \
-	PersistentTransientWindow.lo TransientWindow.lo Dialog.lo \
-	MessageBox.lo dialog_legacy.lo glfont.lo \
-	MenuItemAccelerator.lo cursor.lo DeferredAdjustment.lo \
-	PopupMenu.lo widget.lo RegistryConnector.lo PathEntry.lo \
-	TreeModel.lo ModalProgressDialog.lo SerialisableWidgets.lo \
-	SourceView.lo clipboard.lo FileChooser.lo
+am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo \
+	GladeWidgetPopulator.lo PanedPosition.lo VFSTreePopulator.lo \
+	Timer.lo WindowPosition.lo PersistentTransientWindow.lo \
+	TransientWindow.lo Dialog.lo MessageBox.lo dialog_legacy.lo \
+	glfont.lo MenuItemAccelerator.lo cursor.lo \
+	DeferredAdjustment.lo PopupMenu.lo widget.lo \
+	RegistryConnector.lo PathEntry.lo TreeModel.lo \
+	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
+	clipboard.lo FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -315,11 +316,11 @@ libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLWidget.cpp \
+                        GladeWidgetPopulator.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
 						Timer.cpp \
 						WindowPosition.cpp \
-                        window/GladeWindow.cpp \
 						window/PersistentTransientWindow.cpp \
                         window/TransientWindow.cpp \
 						dialog/Dialog.cpp \
@@ -405,7 +406,7 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libgtkutil.la: $(libgtkutil_la_OBJECTS) $(libgtkutil_la_DEPENDENCIES)
+libgtkutil.la: $(libgtkutil_la_OBJECTS) $(libgtkutil_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libgtkutil_la_LINK) -rpath $(pkglibdir) $(libgtkutil_la_OBJECTS) $(libgtkutil_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
@@ -419,7 +420,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Dialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileChooser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLWidget.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GladeWindow.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GladeWidgetPopulator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItemAccelerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MessageBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@
@@ -464,14 +465,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
-
-GladeWindow.lo: window/GladeWindow.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT GladeWindow.lo -MD -MP -MF $(DEPDIR)/GladeWindow.Tpo -c -o GladeWindow.lo `test -f 'window/GladeWindow.cpp' || echo '$(srcdir)/'`window/GladeWindow.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/GladeWindow.Tpo $(DEPDIR)/GladeWindow.Plo
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='window/GladeWindow.cpp' object='GladeWindow.lo' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o GladeWindow.lo `test -f 'window/GladeWindow.cpp' || echo '$(srcdir)/'`window/GladeWindow.cpp
 
 PersistentTransientWindow.lo: window/PersistentTransientWindow.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PersistentTransientWindow.lo -MD -MP -MF $(DEPDIR)/PersistentTransientWindow.Tpo -c -o PersistentTransientWindow.lo `test -f 'window/PersistentTransientWindow.cpp' || echo '$(srcdir)/'`window/PersistentTransientWindow.cpp
