@@ -266,6 +266,10 @@ void OpenGLRenderSystem::extensionsInitialised()
                                  && GLEW_ARB_vertex_program
                                  && GLEW_ARB_fragment_program;
 
+#if defined(DEBUG_NO_LIGHTING)
+    glslLightingAvailable = arbLightingAvailable = false;
+#endif
+
     std::cout << "[OpenGLRenderSystem] GLSL lighting "
               << (glslLightingAvailable ? "IS" : "IS NOT" ) << " available."
               << std::endl;
