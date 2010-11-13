@@ -5,18 +5,15 @@
 namespace gtkutil
 {
 
-void GladeWidgetPopulator::addChildFromBuilder(
-    Glib::RefPtr<Gtk::Builder> builder, const std::string& childName
+void GladeWidgetPopulator::reparentChildFromBuilder(
+    const std::string& childName
 )
 {
-    g_assert(builder);
+    g_assert(_builder);
 
     Gtk::Bin* bin = NULL;
-    builder->get_widget(childName, bin);
+    _builder->get_widget(childName, bin);
     g_assert(bin);
-
-    // Store the builder for derived classes to use
-    _builder = builder;
 
     // Get the child from the bin, and add it to the target container as a child
     Gtk::Widget* child = bin->get_child();

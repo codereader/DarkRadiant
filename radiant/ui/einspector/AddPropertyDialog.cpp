@@ -55,11 +55,11 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(rect.get_height()*2/3));
 
     // Create components
-    addChildFromBuilder(
-        GlobalUIManager().getGtkBuilderFromFile("AddPropertyDialog.glade"),
-        "addPropertyDialog"
+    setBuilder(
+        GlobalUIManager().getGtkBuilderFromFile("AddPropertyDialog.glade")
     );
-    assert(get_child() != 0);
+    reparentChildFromBuilder("addPropertyDialog");
+    g_assert(get_child() != 0);
 
 	getGladeWidget<Gtk::Button>("addButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &AddPropertyDialog::_onOK)
