@@ -142,8 +142,7 @@ private:
     void constructGUIComponents();
 
     // Toggle button callbacks
-    void onPreviewButtonToggled();
-    void onLightingButtonToggled();
+    void onRenderModeButtonsChanged();
 
 	void Cam_Draw();
 

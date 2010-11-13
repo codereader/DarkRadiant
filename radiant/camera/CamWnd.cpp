@@ -202,12 +202,19 @@ void CamWnd::constructGUIComponents()
         )
     );
 
+    // If lighting is not available, grey out the render mode buttons
+    if (!GlobalRenderSystem().lightingSupported())
+    {
+        previewModeButton->set_sensitive(false);
+        lightingModeButton->set_sensitive(false);
+    }
+
     // Connect button signals
     previewModeButton->signal_toggled().connect(
-        sigc::mem_fun(*this, &CamWnd::onPreviewButtonToggled)
+        sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
     lightingModeButton->signal_toggled().connect(
-        sigc::mem_fun(*this, &CamWnd::onLightingButtonToggled)
+        sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
 
     // Set up GL widget
@@ -261,14 +268,16 @@ CamWnd::~CamWnd()
 	GlobalCamera().removeCamWnd(_id);
 }
 
-void CamWnd::onPreviewButtonToggled()
+void CamWnd::onRenderModeButtonsChanged()
 {
-
-}
-
-void CamWnd::onLightingButtonToggled()
-{
-
+    if (getGladeWidget<Gtk::ToggleButton>("previewModeButton")->get_active())
+    {
+        GlobalRenderSystem().setLightingEnabled(false);
+    }
+    else
+    {
+        GlobalRenderSystem().setLightingEnabled(true);
+    }
 }
 
 int CamWnd::getId() {
