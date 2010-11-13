@@ -49,7 +49,11 @@ class CamWnd :
 
 	bool m_bFreeMove;
 
-	gtkutil::GLWidget* m_gl_widget;
+    // Outer GUI widget (containing toolbar and GL widget)
+    Gtk::Widget* _mainWidget;
+
+    // The GL widget
+	gtkutil::GLWidget* _camGLWidget;
 	Glib::RefPtr<Gtk::Window> _parentWindow;
 
 	std::size_t _mapValidHandle;
