@@ -103,11 +103,11 @@ EntityClassChooser::EntityClassChooser()
     _modelPreview->setSize(static_cast<int>(rect.get_width() * 0.3f));
 
     // Create GUI elements and pack into main VBox
-    addChildFromBuilder(
-        GlobalUIManager().getGtkBuilderFromFile("EntityClassChooser.glade"),
-        "entityClassChooser"
+    setBuilder(
+        GlobalUIManager().getGtkBuilderFromFile("EntityClassChooser.glade")
     );
-    assert(get_child() != NULL);
+    reparentChildFromBuilder("entityClassChooser");
+    g_assert(get_child() != NULL);
 
     Gtk::HBox* hbox = getGladeWidget<Gtk::HBox>("mainHbox");
     assert(hbox == get_child());

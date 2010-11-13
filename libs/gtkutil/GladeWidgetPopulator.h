@@ -63,18 +63,25 @@ public:
 
     /**
      * \brief
-     * Reparent a child widget from a Gtk::Builder object.
+     * Set the builder to use.
      *
-     * \param builder
-     * The Gtk::Builder containing the child widget hierarchy.
+     * For subclasses which cannot use the auto-populating constructor.
+     */
+    void setBuilder(Glib::RefPtr<Gtk::Builder> builder)
+    {
+        _builder = builder;
+    }
+
+    /**
+     * \brief
+     * Reparent a child widget from a Gtk::Builder object.
      *
      * \param childName
      * The name of the widget within the Gtk::Builder whose child should be
      * placed into the target container. The childName must refer to a Gtk::Bin
      * subclass, which may contain only a single child widget.
      */
-    void addChildFromBuilder(Glib::RefPtr<Gtk::Builder> builder,
-                             const std::string& childName);
+    void reparentChildFromBuilder(const std::string& childName);
 
 };
 

@@ -64,10 +64,10 @@ ObjectivesEditor::ObjectivesEditor() :
     set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
     
     // Add vbox to dialog
-    ui::GtkBuilderPtr builder = GlobalUIManager().getGtkBuilderFromFile(
-        "ObjectivesEditor.glade"
+    setBuilder(
+        GlobalUIManager().getGtkBuilderFromFile("ObjectivesEditor.glade")
     );
-    addChildFromBuilder(builder, "objectivesEditor");
+    reparentChildFromBuilder("objectivesEditor");
 
     // Setup signals and tree views
     setupEntitiesPanel();
