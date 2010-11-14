@@ -197,3 +197,7 @@ plugins/uimanager/MenuItem.cpp
 plugins/undo/UndoSystem.cpp
 plugins/grid/Grid.cpp
 plugins/wavefront/WaveFrontModule.cpp
+install/ui/ObjectivesEditor.glade
+install/ui/EntityClassChooser.glade
+install/ui/CamWnd.glade
+install/ui/AddPropertyDialog.glade
