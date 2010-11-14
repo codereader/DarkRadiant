@@ -76,15 +76,14 @@ am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libgtkutil_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
-am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo \
-	GladeWidgetPopulator.lo PanedPosition.lo VFSTreePopulator.lo \
-	Timer.lo WindowPosition.lo PersistentTransientWindow.lo \
-	TransientWindow.lo Dialog.lo MessageBox.lo dialog_legacy.lo \
-	glfont.lo MenuItemAccelerator.lo cursor.lo \
-	DeferredAdjustment.lo PopupMenu.lo widget.lo \
-	RegistryConnector.lo PathEntry.lo TreeModel.lo \
-	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
-	clipboard.lo FileChooser.lo
+am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
+	VFSTreePopulator.lo Timer.lo WindowPosition.lo \
+	PersistentTransientWindow.lo TransientWindow.lo Dialog.lo \
+	MessageBox.lo dialog_legacy.lo glfont.lo \
+	MenuItemAccelerator.lo cursor.lo DeferredAdjustment.lo \
+	PopupMenu.lo widget.lo RegistryConnector.lo PathEntry.lo \
+	TreeModel.lo ModalProgressDialog.lo SerialisableWidgets.lo \
+	SourceView.lo clipboard.lo FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -316,7 +315,6 @@ libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLWidget.cpp \
-                        GladeWidgetPopulator.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
 						Timer.cpp \
@@ -420,7 +418,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Dialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileChooser.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLWidget.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GladeWidgetPopulator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItemAccelerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MessageBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@

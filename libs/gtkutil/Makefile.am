@@ -15,7 +15,6 @@ libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLWidget.cpp \
-                        GladeWidgetPopulator.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
 						Timer.cpp \

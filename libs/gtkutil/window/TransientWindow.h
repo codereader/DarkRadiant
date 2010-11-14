@@ -1,9 +1,8 @@
 #pragma once
 
-#include "GladeWindow.h"
+#include <gtkmm/window.h>
 
 #include <string>
-#include <iostream>
 
 namespace gtkutil
 {
@@ -11,8 +10,8 @@ namespace gtkutil
 /**
  * A basic GtkWindow that is transient for the given parent window.
  */
-class TransientWindow :
-	public GladeWindow
+class TransientWindow
+: public Gtk::Window
 {
 private:
 

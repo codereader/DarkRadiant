@@ -7,6 +7,7 @@
 #include "icommandsystem.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/GladeWidgetHolder.h"
 
 #include "ObjectiveEntityFinder.h"
 
@@ -32,7 +33,8 @@ namespace objectives
  * Dialog for adding and manipulating mission objectives in Dark Mod missions.
  */
 class ObjectivesEditor :
-	public gtkutil::BlockingTransientWindow
+	public gtkutil::BlockingTransientWindow,
+    private gtkutil::GladeWidgetHolder
 {
 private:
 	// List of target_addobjectives entities

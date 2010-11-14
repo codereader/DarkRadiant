@@ -26,6 +26,52 @@ namespace ui
         const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
     }
 
+EntityClassChooser::EntityClassChooser()
+: gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE),
+                                   GlobalMainFrame().getTopLevelWindow()),
+  gtkutil::GladeWidgetHolder(
+        GlobalUIManager().getGtkBuilderFromFile("EntityClassChooser.glade")
+  ),
+  _treeStore(Gtk::TreeStore::create(_columns)),
+  _selection(NULL),
+  _selectedName(""),
+  _modelPreview(GlobalUIManager().createModelPreview()),
+  _result(RESULT_CANCELLED)
+{
+    // Set the default size of the window
+    const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
+    Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
+    set_default_size(
+        static_cast<int>(rect.get_width() * 0.7f),
+        static_cast<int>(rect.get_height() * 0.6f)
+    );
+
+    _modelPreview->setSize(static_cast<int>(rect.get_width() * 0.3f));
+
+    // Create GUI elements and pack into main VBox
+    add(*getGladeWidget<Gtk::Widget>("mainHbox"));
+    g_assert(get_child() != NULL);
+
+    Gtk::HBox* hbox = getGladeWidget<Gtk::HBox>("mainHbox");
+    assert(hbox == get_child());
+
+    // Connect button signals
+    getGladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &EntityClassChooser::callbackOK)
+    );
+    getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &EntityClassChooser::callbackCancel)
+    );
+
+    hbox->pack_end(*_modelPreview->getWidget(), false, false, 0);
+
+    // Register to the eclass manager
+    GlobalEntityClassManager().addObserver(this);
+
+    // Populate the model and setup the tree view
+    setupTreeView();
+    loadEntityClasses();
+}
 // Display the singleton instance
 std::string EntityClassChooser::chooseEntityClass()
 {
@@ -81,54 +127,6 @@ void EntityClassChooser::onEClassReload()
     loadEntityClasses();
 }
 
-// Constructor. Creates GTK widgets.
-
-EntityClassChooser::EntityClassChooser()
-: gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE),
-                                   GlobalMainFrame().getTopLevelWindow()),
-  _treeStore(Gtk::TreeStore::create(_columns)),
-  _selection(NULL),
-  _selectedName(""),
-  _modelPreview(GlobalUIManager().createModelPreview()),
-  _result(RESULT_CANCELLED)
-{
-    // Set the default size of the window
-    const Glib::RefPtr<Gtk::Window>& mainWindow = GlobalMainFrame().getTopLevelWindow();
-    Gdk::Rectangle rect = gtkutil::MultiMonitor::getMonitorForWindow(mainWindow);
-    set_default_size(
-        static_cast<int>(rect.get_width() * 0.7f),
-        static_cast<int>(rect.get_height() * 0.6f)
-    );
-
-    _modelPreview->setSize(static_cast<int>(rect.get_width() * 0.3f));
-
-    // Create GUI elements and pack into main VBox
-    setBuilder(
-        GlobalUIManager().getGtkBuilderFromFile("EntityClassChooser.glade")
-    );
-    reparentChildFromBuilder("entityClassChooser");
-    g_assert(get_child() != NULL);
-
-    Gtk::HBox* hbox = getGladeWidget<Gtk::HBox>("mainHbox");
-    assert(hbox == get_child());
-
-    // Connect button signals
-    getGladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &EntityClassChooser::callbackOK)
-    );
-    getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &EntityClassChooser::callbackCancel)
-    );
-
-    hbox->pack_end(*_modelPreview->getWidget(), false, false, 0);
-
-    // Register to the eclass manager
-    GlobalEntityClassManager().addObserver(this);
-
-    // Populate the model and setup the tree view
-    setupTreeView();
-    loadEntityClasses();
-}
 
 EntityClassChooser::Result EntityClassChooser::getResult()
 {

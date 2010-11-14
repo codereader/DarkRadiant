@@ -55,7 +55,12 @@ namespace {
 
 // Constructor creates widgets
 ObjectivesEditor::ObjectivesEditor() :
-	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow()),
+	gtkutil::BlockingTransientWindow(
+        _(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow()
+    ),
+    gtkutil::GladeWidgetHolder(
+        GlobalUIManager().getGtkBuilderFromFile("ObjectivesEditor.glade")
+    ),
 	_objectiveEntityList(Gtk::ListStore::create(_objEntityColumns)),
 	_objectiveList(Gtk::ListStore::create(_objectiveColumns))
 {
@@ -64,10 +69,8 @@ ObjectivesEditor::ObjectivesEditor() :
     set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
     
     // Add vbox to dialog
-    setBuilder(
-        GlobalUIManager().getGtkBuilderFromFile("ObjectivesEditor.glade")
-    );
-    reparentChildFromBuilder("objectivesEditor");
+    add(*getGladeWidget<Gtk::Widget>("mainVbox"));
+    g_assert(get_child() != NULL);
 
     // Setup signals and tree views
     setupEntitiesPanel();

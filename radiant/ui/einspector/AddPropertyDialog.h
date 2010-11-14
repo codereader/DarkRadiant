@@ -2,6 +2,7 @@
 #define ADDPROPERTYDIALOG_H_
 
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/GladeWidgetHolder.h"
 
 #include <string>
 #include "ientity.h"
@@ -24,7 +25,8 @@ namespace ui
  * made, and then returns the string property that was selected.
  */
 class AddPropertyDialog :
-	public gtkutil::BlockingTransientWindow
+	public gtkutil::BlockingTransientWindow,
+    private gtkutil::GladeWidgetHolder
 {
 public:
 	typedef std::vector<std::string> PropertyList;
