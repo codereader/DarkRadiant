@@ -74,9 +74,10 @@ public:
 	// Toggles between lighting and solid rendering mode (passes the call to the CameraSettings class)
 	void toggleLightingMode(const cmd::ArgumentList& args);
 
-	// Increases/decreases the far clip plane distance (passes the call to CamWnd)
-	void cubicScaleIn(const cmd::ArgumentList& args);
-	void cubicScaleOut(const cmd::ArgumentList& args);
+    // Increases/decreases the far clip plane distance (passes the call to
+    // CamWnd)
+	void farClipPlaneIn(const cmd::ArgumentList& args);
+	void farClipPlaneOut(const cmd::ArgumentList& args);
 
 	// Change the floor up/down, passes the call on to the CamWnd class
 	void changeFloorUp(const cmd::ArgumentList& args);

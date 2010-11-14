@@ -226,6 +226,12 @@ void CamWnd::constructGUIComponents()
     lightingModeButton->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
+    getGladeWidget<Gtk::Button>("clipPlaneInButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &CamWnd::farClipPlaneIn)
+    );
+    getGladeWidget<Gtk::Button>("clipPlaneOutButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &CamWnd::farClipPlaneOut)
+    );
 
     // Set up GL widget
 	_camGLWidget->set_events(  Gdk::EXPOSURE_MASK 
@@ -820,10 +826,6 @@ void CamWnd::queueDraw() {
 	m_deferredDraw.draw();
 }
 
-CameraView* CamWnd::getCameraView() {
-	return &m_cameraview;
-}
-
 Gtk::Widget* CamWnd::getWidget() const
 {
 	return _mainWidget;
@@ -881,14 +883,16 @@ void CamWnd::setCameraAngles(const Vector3& angles) {
 	m_Camera.setAngles(angles);
 }
 
-void CamWnd::cubicScaleOut() {
+void CamWnd::farClipPlaneOut() 
+{
 	getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() + 1 );
 
 	m_Camera.updateProjection();
 	update();
 }
 
-void CamWnd::cubicScaleIn() {
+void CamWnd::farClipPlaneIn() 
+{
 	getCameraSettings()->setCubicScale( getCameraSettings()->cubicScale() - 1 );
 
 	m_Camera.updateProjection();

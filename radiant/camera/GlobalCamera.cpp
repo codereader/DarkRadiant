@@ -24,8 +24,8 @@ GlobalCameraManager::GlobalCameraManager() :
 void GlobalCameraManager::registerCommands()
 {
 	GlobalCommandSystem().addCommand("CenterView", boost::bind(&GlobalCameraManager::resetCameraAngles, this, _1));
-	GlobalCommandSystem().addCommand("CubicClipZoomIn", boost::bind(&GlobalCameraManager::cubicScaleIn, this, _1));
-	GlobalCommandSystem().addCommand("CubicClipZoomOut", boost::bind(&GlobalCameraManager::cubicScaleOut, this, _1));
+	GlobalCommandSystem().addCommand("CubicClipZoomIn", boost::bind(&GlobalCameraManager::farClipPlaneIn, this, _1));
+	GlobalCommandSystem().addCommand("CubicClipZoomOut", boost::bind(&GlobalCameraManager::farClipPlaneOut, this, _1));
 
 	GlobalCommandSystem().addCommand("UpFloor", boost::bind(&GlobalCameraManager::changeFloorUp, this, _1));
 	GlobalCommandSystem().addCommand("DownFloor", boost::bind(&GlobalCameraManager::changeFloorDown, this, _1));
@@ -283,18 +283,18 @@ void GlobalCameraManager::toggleLightingMode(const cmd::ArgumentList& args) {
 	getCameraSettings()->toggleLightingMode();
 }
 
-void GlobalCameraManager::cubicScaleIn(const cmd::ArgumentList& args) {
+void GlobalCameraManager::farClipPlaneIn(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	camWnd->cubicScaleIn();
+	camWnd->farClipPlaneIn();
 }
 
-void GlobalCameraManager::cubicScaleOut(const cmd::ArgumentList& args) {
+void GlobalCameraManager::farClipPlaneOut(const cmd::ArgumentList& args) {
 	CamWndPtr camWnd = getActiveCamWnd();
 	if (camWnd == NULL) return;
 
-	camWnd->cubicScaleOut();
+	camWnd->farClipPlaneOut();
 }
 
 void GlobalCameraManager::focusCamera(const Vector3& point, const Vector3& angles) {
