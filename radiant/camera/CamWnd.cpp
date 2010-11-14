@@ -190,6 +190,16 @@ void CamWnd::constructGUIComponents()
     lightingModeButton = getGladeWidget<Gtk::ToggleButton>(
         "lightingModeButton"
     );
+    getGladeWidget<Gtk::Container>("clipPlaneInButton")->add(
+        *Gtk::manage(
+            new Gtk::Image(GlobalUIManager().getLocalPixbuf("farClipIn.png"))
+        )
+    );
+    getGladeWidget<Gtk::Container>("clipPlaneOutButton")->add(
+        *Gtk::manage(
+            new Gtk::Image(GlobalUIManager().getLocalPixbuf("farClipOut.png"))
+        )
+    );
 
     previewModeButton->add(
         *Gtk::manage(
