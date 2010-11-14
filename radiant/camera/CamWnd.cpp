@@ -136,11 +136,10 @@ void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd() :
-    gtkutil::GladeWidgetPopulator(
-        _mainWidget,
-        GlobalUIManager().getGtkBuilderFromFile("CamWnd.glade"),
-        "mainVbox"
+    gtkutil::GladeWidgetHolder(
+        GlobalUIManager().getGtkBuilderFromFile("CamWnd.glade")
     ),
+    _mainWidget(getGladeWidget<Gtk::Container>("mainVbox")),
 	_id(++_maxId),
 	m_view(true),
 	m_Camera(&m_view, Callback(boost::bind(&CamWnd::queueDraw, this))),

@@ -46,6 +46,9 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	gtkutil::BlockingTransientWindow(
         _(ADDPROPERTY_TITLE), GlobalMainFrame().getTopLevelWindow()
     ),
+    gtkutil::GladeWidgetHolder(
+        GlobalUIManager().getGtkBuilderFromFile("AddPropertyDialog.glade")
+    ),
 	_entity(entity)
 {
     // Set size of dialog
@@ -55,10 +58,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(rect.get_height()*2/3));
 
     // Create components
-    setBuilder(
-        GlobalUIManager().getGtkBuilderFromFile("AddPropertyDialog.glade")
-    );
-    reparentChildFromBuilder("addPropertyDialog");
+    add(*getGladeWidget<Gtk::Widget>("mainVbox"));
     g_assert(get_child() != 0);
 
 	getGladeWidget<Gtk::Button>("addButton")->signal_clicked().connect(

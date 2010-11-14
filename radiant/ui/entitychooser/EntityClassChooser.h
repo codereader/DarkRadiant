@@ -5,6 +5,7 @@
 #include "ieclass.h"
 #include "imodelpreview.h"
 
+#include "gtkutil/GladeWidgetHolder.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
 #include <gtkmm/treestore.h>
@@ -30,7 +31,8 @@ typedef boost::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
 class EntityClassChooser :
 	public gtkutil::BlockingTransientWindow,
 	public RadiantEventListener,
-	public IEntityClassManager::Observer
+	public IEntityClassManager::Observer,
+    private gtkutil::GladeWidgetHolder
 {
 public:
 	// Treemodel definition
