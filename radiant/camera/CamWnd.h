@@ -122,8 +122,6 @@ public:
 
 	void jumpToObject(SelectionTest& selectionTest);
 
-	CameraView* getCameraView();
-
 	// Enables/disables the (ordinary) camera movement (non-freelook)
 	void addHandlersMove();
 	void removeHandlersMove();
@@ -134,8 +132,8 @@ public:
 	void disableFreeMoveEvents();
 
 	// Increases/decreases the far clip plane distance
-	void cubicScaleIn();
-	void cubicScaleOut();
+	void farClipPlaneIn();
+	void farClipPlaneOut();
 
 private:
 
