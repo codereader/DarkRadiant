@@ -16,12 +16,10 @@
             <property name="receives_default">False</property>
             <property name="has_tooltip">True</property>
             <property name="tooltip_text" translatable="yes">Render in unshaded preview mode</property>
+            <property name="image">imgPreviewMode</property>
             <property name="relief">none</property>
             <property name="active">True</property>
             <property name="draw_indicator">False</property>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -36,13 +34,11 @@
             <property name="receives_default">False</property>
             <property name="has_tooltip">True</property>
             <property name="tooltip_text" translatable="yes">Render in lighting mode</property>
+            <property name="image">imgLightingMode</property>
             <property name="relief">none</property>
             <property name="active">True</property>
             <property name="draw_indicator">False</property>
             <property name="group">previewModeButton</property>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -57,10 +53,8 @@
             <property name="receives_default">True</property>
             <property name="has_tooltip">True</property>
             <property name="tooltip_text" translatable="yes">Move the far clip plane towards the camera</property>
+            <property name="image">imgClipPlaneIn</property>
             <property name="relief">none</property>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -76,10 +70,8 @@
             <property name="receives_default">True</property>
             <property name="has_tooltip">True</property>
             <property name="tooltip_text" translatable="yes">Move the far clip plane away from the camera</property>
+            <property name="image">imgClipPlaneOut</property>
             <property name="relief">none</property>
-            <child>
-              <placeholder/>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -110,5 +102,21 @@
         <property name="position">1</property>
       </packing>
     </child>
+  </object>
+  <object class="GtkImage" id="imgPreviewMode">
+    <property name="visible">True</property>
+    <property name="stock">darkradiant:previewMode</property>
+  </object>
+  <object class="GtkImage" id="imgLightingMode">
+    <property name="visible">True</property>
+    <property name="stock">darkradiant:lightingMode</property>
+  </object>
+  <object class="GtkImage" id="imgClipPlaneIn">
+    <property name="visible">True</property>
+    <property name="stock">darkradiant:farClipIn</property>
+  </object>
+  <object class="GtkImage" id="imgClipPlaneOut">
+    <property name="visible">True</property>
+    <property name="stock">darkradiant:farClipOut</property>
   </object>
 </interface>
