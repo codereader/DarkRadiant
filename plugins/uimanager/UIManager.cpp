@@ -12,6 +12,8 @@
 #include "ModelPreview.h"
 #include "ParticlePreview.h"
 
+#include <gtkmm/iconfactory.h>
+
 namespace ui {
 
 IDialogManager& UIManager::getDialogManager()
@@ -37,6 +39,42 @@ IGroupDialog& UIManager::getGroupDialog() {
 
 IStatusBarManager& UIManager::getStatusBarManager() {
 	return _statusBarManager;
+}
+
+void UIManager::addLocalBitmapsAsIconFactory()
+{
+    // Destination Gtk::IconFactory
+    _iconFactory = Gtk::IconFactory::create();
+
+    // Iterate over each file in the bitmaps dir
+    std::string bitmapsPath = GlobalRegistry().get(RKEY_BITMAPS_PATH) + "/";
+
+    Glib::Dir bitmapsDir(bitmapsPath);
+    for (Glib::DirIterator i = bitmapsDir.begin();
+         i != bitmapsDir.end();
+         ++i)
+    {
+        Glib::ustring filename = *i;
+
+        // Load the pixbuf into an IconSet
+        Gtk::IconSet is(
+            Gdk::Pixbuf::create_from_file(bitmapsPath + filename)
+        );
+
+        // Add IconSet to Factory with "darkradiant:" stock prefix
+        Glib::ustring filenameWithoutExtension = filename.substr(
+            0, filename.rfind(".")
+        );
+        Gtk::StockID stockID(
+            Glib::ustring::compose(
+                "darkradiant:%1", filenameWithoutExtension
+            )
+        );
+        _iconFactory->add(stockID, is);
+    }
+
+    // Add the IconFactory to the default factory list
+    _iconFactory->add_default();
 }
 
 Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
@@ -217,6 +255,8 @@ void UIManager::initialiseModule(const ApplicationContext& ctx)
 		"",  // no icon
 		IStatusBarManager::POS_COMMAND
 	);
+
+    addLocalBitmapsAsIconFactory();
 }
 
 void UIManager::shutdownModule()

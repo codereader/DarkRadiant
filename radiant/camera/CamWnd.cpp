@@ -189,27 +189,6 @@ void CamWnd::constructGUIComponents()
     lightingModeButton = getGladeWidget<Gtk::ToggleButton>(
         "lightingModeButton"
     );
-    getGladeWidget<Gtk::Container>("clipPlaneInButton")->add(
-        *Gtk::manage(
-            new Gtk::Image(GlobalUIManager().getLocalPixbuf("farClipIn.png"))
-        )
-    );
-    getGladeWidget<Gtk::Container>("clipPlaneOutButton")->add(
-        *Gtk::manage(
-            new Gtk::Image(GlobalUIManager().getLocalPixbuf("farClipOut.png"))
-        )
-    );
-
-    previewModeButton->add(
-        *Gtk::manage(
-            new Gtk::Image(GlobalUIManager().getLocalPixbuf("previewMode.png"))
-        )
-    );
-    lightingModeButton->add(
-        *Gtk::manage(
-            new Gtk::Image(GlobalUIManager().getLocalPixbuf("lightingMode.png"))
-        )
-    );
 
     // If lighting is not available, grey out the render mode buttons
     if (!GlobalRenderSystem().lightingSupported())

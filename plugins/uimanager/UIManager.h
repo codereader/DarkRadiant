@@ -11,9 +11,10 @@
 #include "StatusBarManager.h"
 #include "DialogManager.h"
 #include "colourscheme/ColourSchemeManager.h"
-#include <iostream>
 #include <map>
 #include <boost/enable_shared_from_this.hpp>
+
+#include <gtkmm/iconfactory.h>
 
 namespace ui {
 
@@ -35,6 +36,12 @@ private:
 	typedef std::map<std::string, Glib::RefPtr<Gdk::Pixbuf> > PixBufMap;
 	PixBufMap _localPixBufs;
 	PixBufMap _localPixBufsWithMask;
+
+    // IconFactory for local icons
+    Glib::RefPtr<Gtk::IconFactory> _iconFactory;
+
+private:
+    void addLocalBitmapsAsIconFactory();
 
 public:
 
