@@ -478,6 +478,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\dm.objectives\ObjectiveEntityFinder.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\dm.objectives\ObjectiveEntityFinder.h"
 				>
 			</File>
