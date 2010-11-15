@@ -319,7 +319,7 @@ void GroupDialog::onPageSwitch(GtkNotebookPage* notebookPage, guint pageNumber)
 {
     // Check if window is realised first, because we may be being called during
     // widget destruction and the set_title call will crash if so.
-    if (get_realized())
+	if (is_realized())
     {
         updatePageTitle(pageNumber);
     }
