@@ -266,11 +266,11 @@ void CamWnd::onRenderModeButtonsChanged()
 {
     if (getGladeWidget<Gtk::ToggleButton>("previewModeButton")->get_active())
     {
-        GlobalRenderSystem().setLightingEnabled(false);
+        getCameraSettings()->setRenderMode(RENDER_MODE_TEXTURED);
     }
     else
     {
-        GlobalRenderSystem().setLightingEnabled(true);
+        getCameraSettings()->setRenderMode(RENDER_MODE_LIGHTING);
     }
 }
 
@@ -411,7 +411,8 @@ void CamWnd::Cam_Draw() {
 
 	Vector3 clearColour(0, 0, 0);
 
-	if (getCameraSettings()->getMode() != drawLighting) {
+	if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING) 
+    {
 		clearColour = ColourSchemes().getColour("camera_background");
 	}
 
@@ -473,12 +474,12 @@ void CamWnd::Cam_Draw() {
                                      | RENDER_COLOURCHANGE;
 
     // Add mode-specific render flags
-	switch (getCameraSettings()->getMode())
+	switch (getCameraSettings()->getRenderMode())
     {
-		case drawWire:
+		case RENDER_MODE_WIREFRAME:
 			break;
 
-		case drawSolid:
+		case RENDER_MODE_SOLID:
 			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_SMOOTH
@@ -486,7 +487,7 @@ void CamWnd::Cam_Draw() {
 
 			break;
 
-		case drawTexture:
+		case RENDER_MODE_TEXTURED:
 			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE_2D
@@ -495,7 +496,7 @@ void CamWnd::Cam_Draw() {
 
 			break;
 
-		case drawLighting:
+		case RENDER_MODE_LIGHTING:
 			allowedRenderFlags |= RENDER_FILL
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE_2D
