@@ -14,7 +14,9 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip_text" translatable="yes">Render wireframes only</property>
             <property name="image">imgWireframe</property>
+            <property name="relief">none</property>
             <property name="active">True</property>
             <property name="draw_indicator">False</property>
             <property name="group">texturedBtn</property>
@@ -30,7 +32,9 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
+            <property name="tooltip_text" translatable="yes">Render in flat-shaded untextured mode</property>
             <property name="image">imgFlatshade</property>
+            <property name="relief">none</property>
             <property name="active">True</property>
             <property name="draw_indicator">False</property>
             <property name="group">texturedBtn</property>
@@ -47,8 +51,8 @@
             <property name="can_focus">True</property>
             <property name="receives_default">False</property>
             <property name="has_tooltip">True</property>
-            <property name="tooltip_text" translatable="yes">Render in unshaded preview mode</property>
-            <property name="image">imgPreviewMode</property>
+            <property name="tooltip_text" translatable="yes">Render in full-bright textured mode</property>
+            <property name="image">imgTextureMode</property>
             <property name="relief">none</property>
             <property name="active">True</property>
             <property name="draw_indicator">False</property>
@@ -135,9 +139,9 @@
       </packing>
     </child>
   </object>
-  <object class="GtkImage" id="imgPreviewMode">
+  <object class="GtkImage" id="imgTextureMode">
     <property name="visible">True</property>
-    <property name="stock">darkradiant:previewMode</property>
+    <property name="stock">darkradiant:textureMode16</property>
   </object>
   <object class="GtkImage" id="imgLightingMode">
     <property name="visible">True</property>
@@ -153,10 +157,10 @@
   </object>
   <object class="GtkImage" id="imgWireframe">
     <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
+    <property name="stock">darkradiant:wireframeMode16</property>
   </object>
   <object class="GtkImage" id="imgFlatshade">
     <property name="visible">True</property>
-    <property name="stock">gtk-missing-image</property>
+    <property name="stock">darkradiant:solidMode16</property>
   </object>
 </interface>
