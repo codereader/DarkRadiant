@@ -181,29 +181,29 @@ CamWnd::CamWnd() :
 
 void CamWnd::constructGUIComponents()
 {
-    // Set button images
-    Gtk::ToggleButton *previewModeButton, *lightingModeButton;
-    previewModeButton = getGladeWidget<Gtk::ToggleButton>(
-        "previewModeButton"
+    // If lighting is not available, grey out the lighting button
+    Gtk::ToggleButton* lightingBtn = getGladeWidget<Gtk::ToggleButton>(
+        "lightingBtn"
     );
-    lightingModeButton = getGladeWidget<Gtk::ToggleButton>(
-        "lightingModeButton"
-    );
-
-    // If lighting is not available, grey out the render mode buttons
     if (!GlobalRenderSystem().lightingSupported())
     {
-        previewModeButton->set_sensitive(false);
-        lightingModeButton->set_sensitive(false);
+        lightingBtn->set_sensitive(false);
     }
 
     // Connect button signals
-    previewModeButton->signal_toggled().connect(
+    getGladeWidget<Gtk::ToggleButton>("texturedBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
-    lightingModeButton->signal_toggled().connect(
+    lightingBtn->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
+    getGladeWidget<Gtk::ToggleButton>("flatShadeBtn")->signal_toggled().connect(
+        sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
+    );
+    getGladeWidget<Gtk::ToggleButton>("wireframeBtn")->signal_toggled().connect(
+        sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
+    );
+
     getGladeWidget<Gtk::Button>("clipPlaneInButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneIn)
     );
@@ -264,9 +264,17 @@ CamWnd::~CamWnd()
 
 void CamWnd::onRenderModeButtonsChanged()
 {
-    if (getGladeWidget<Gtk::ToggleButton>("previewModeButton")->get_active())
+    if (getGladeWidget<Gtk::ToggleButton>("texturedBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_TEXTURED);
+    }
+    else if (getGladeWidget<Gtk::ToggleButton>("wireframeBtn")->get_active())
+    {
+        getCameraSettings()->setRenderMode(RENDER_MODE_WIREFRAME);
+    }
+    else if (getGladeWidget<Gtk::ToggleButton>("flatShadeBtn")->get_active())
+    {
+        getCameraSettings()->setRenderMode(RENDER_MODE_SOLID);
     }
     else
     {
