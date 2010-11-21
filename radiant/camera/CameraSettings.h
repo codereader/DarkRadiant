@@ -26,10 +26,10 @@ namespace {
 }
 
 enum CameraDrawMode {
-	drawWire,
-	drawSolid,
-	drawTexture,
-	drawLighting,
+	RENDER_MODE_WIREFRAME,
+	RENDER_MODE_SOLID,
+    RENDER_MODE_TEXTURED,
+    RENDER_MODE_LIGHTING
 };
 
 class CameraSettings :
@@ -69,8 +69,8 @@ public:
 	bool toggleFreelook() const;
 
 	// Sets/returns the draw mode (wireframe, solid, textured, lighting)
-	CameraDrawMode getMode() const;
-	void setMode(const CameraDrawMode& mode);
+	CameraDrawMode getRenderMode() const;
+	void setRenderMode(const CameraDrawMode& mode);
 	void toggleLightingMode();
 
 	// Gets/Sets the cubic scale member variable (is automatically constrained [1..MAX_CUBIC_SCALE])

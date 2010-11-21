@@ -14,7 +14,7 @@ CameraSettings::CameraSettings() :
 	_angleSpeed(GlobalRegistry().getInt(RKEY_ROTATION_SPEED)),
 	_invertMouseVerticalAxis(GlobalRegistry().get(RKEY_INVERT_MOUSE_VERTICAL_AXIS) == "1"),
 	_discreteMovement(GlobalRegistry().get(RKEY_DISCRETE_MOVEMENT) == "1"),
-	_cameraDrawMode(drawTexture),
+	_cameraDrawMode(RENDER_MODE_TEXTURED),
 	_cubicScale(GlobalRegistry().getInt(RKEY_CUBIC_SCALE)),
 	_farClipEnabled(GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1"),
 	_solidSelectionBoxes(GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1"),
@@ -74,23 +74,23 @@ void CameraSettings::constructPreferencePage() {
 void CameraSettings::importDrawMode(const int mode) {
 	switch (mode) {
 		case 0:
-			_cameraDrawMode = drawWire;
+			_cameraDrawMode = RENDER_MODE_WIREFRAME;
 			break;
 		case 1:
-			_cameraDrawMode = drawSolid;
+			_cameraDrawMode = RENDER_MODE_SOLID;
 			break;
 		case 2:
-			_cameraDrawMode = drawTexture;
+			_cameraDrawMode = RENDER_MODE_TEXTURED;
 			break;
 		case 3:
-			_cameraDrawMode = drawLighting;
+			_cameraDrawMode = RENDER_MODE_LIGHTING;
 			break;
 		default:
-			_cameraDrawMode = drawTexture;
+			_cameraDrawMode = RENDER_MODE_TEXTURED;
 	}
 
 	// Notify the shadercache that the lighting mode is enabled/disabled
-	GlobalRenderSystem().setLightingEnabled(_cameraDrawMode == drawLighting);
+	GlobalRenderSystem().setLightingEnabled(_cameraDrawMode == RENDER_MODE_LIGHTING);
 }
 
 void CameraSettings::keyChanged(const std::string& key, const std::string& val)
@@ -142,18 +142,26 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 	_callbackActive = false;
 }
 
-CameraDrawMode CameraSettings::getMode() const {
+CameraDrawMode CameraSettings::getRenderMode() const 
+{
 	return _cameraDrawMode;
 }
 
-void CameraSettings::setMode(const CameraDrawMode& mode) {
-	// Write the value into the registry, this should trigger the keyChanged() callback that in turn calls the update functions
+void CameraSettings::setRenderMode(const CameraDrawMode& mode) 
+{
+    // Write the value into the registry, this should trigger the keyChanged()
+    // callback that in turn calls the update functions
 	GlobalRegistry().setInt(RKEY_DRAWMODE, static_cast<int>(mode));
 }
 
-void CameraSettings::toggleLightingMode() {
+void CameraSettings::toggleLightingMode() 
+{
 	// switch between textured and lighting mode
-	setMode((_cameraDrawMode == drawLighting) ? drawTexture : drawLighting);
+	setRenderMode(
+        (_cameraDrawMode == RENDER_MODE_LIGHTING) 
+        ? RENDER_MODE_TEXTURED 
+        : RENDER_MODE_LIGHTING
+    );
 }
 
 bool CameraSettings::toggleFreelook() const {
