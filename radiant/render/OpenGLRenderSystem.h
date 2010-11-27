@@ -30,16 +30,14 @@ class OpenGLRenderSystem
 	// whether this module has been realised
 	bool _realised;
 
-	bool m_lightingEnabled;
-	bool m_lightingSupported;
+    // OpenGL shader programs available/unavailable
+	bool _shadersAvailable;
+
+    // Current shader program in use
+    ShaderProgram _currentShaderProgram;
 
 	// Map of OpenGLState references, with access functions.
 	OpenGLStates _state_sorted;
-
-private:
-
-    // Set internal lighting-supported and lighting-enabled flags
-	void setLighting(bool supported, bool enabled);
 
 public:
 
