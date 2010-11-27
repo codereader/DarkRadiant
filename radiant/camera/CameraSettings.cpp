@@ -95,6 +95,8 @@ void CameraSettings::importDrawMode(const int mode)
         ? RenderSystem::SHADER_PROGRAM_INTERACTION
         : RenderSystem::SHADER_PROGRAM_NONE
     );
+
+    _sigRenderModeChanged.emit();
 }
 
 void CameraSettings::keyChanged(const std::string& key, const std::string& val)
