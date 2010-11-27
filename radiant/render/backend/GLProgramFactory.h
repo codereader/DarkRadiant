@@ -55,34 +55,25 @@ private:
 
 public:
 
-    /**
-     * \brief
-     * Get the GLProgramFactory instance;
-     */
-	static GLProgramFactory& getInstance();
-
-	/**
-	 * Static method to return the GLProgram instance corresponding to the given
-	 * text name.
-	 */
-	static GLProgramPtr getProgram(const std::string& name);
+    /// Get the static factory instance
+	static GLProgramFactory& instance();
 
     /**
-     * \brief
-     * Set the program factory to use GLSL programs instead of ARB programs.
+     * Get the named GL program.
+     *
+     * Returns a raw pointer which is owned by the GLProgramFactory and should
+     * never be deleted.
      */
+	GLProgram* getProgram(const std::string& name);
+
+    /// Set whether to use GLSL or ARB programs
     void setUsingGLSL(bool useGLSL);
 
-	/**
-	 * Static realise method, called by the ShaderCache when the GLPrograms
-	 * need to be initialised.
-	 */
-	static void realise();
+    /// Construct and initialise the GLPrograms
+	void realise();
 
-	/**
-	 * Static unrealise method, called when the GLPrograms should be destroyed.
-	 */
-	static void unrealise();
+    /// Release and destroy GLProgram resources
+	void unrealise();
 
     /**
      * \brief

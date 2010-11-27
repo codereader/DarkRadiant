@@ -21,22 +21,18 @@ GLProgramFactory::GLProgramFactory()
     setUsingGLSL(false);
 }
 
-// Return static GLProgramFactory instance
-GLProgramFactory& GLProgramFactory::getInstance() {
+GLProgramFactory& GLProgramFactory::instance() 
+{
 	static GLProgramFactory _instance;
 	return _instance;
 }
 
-// Lookup a named program in the singleton instance
-GLProgramPtr GLProgramFactory::getProgram(const std::string& name)
+GLProgram* GLProgramFactory::getProgram(const std::string& name)
 {
-	// Reference to static instance's map
-	ProgramMap& map = getInstance()._map;
-
 	// Lookup the program, if not found throw an exception
-	ProgramMap::iterator i = map.find(name);
-	if (i != map.end())
-		return i->second;
+	ProgramMap::iterator i = _map.find(name);
+	if (i != _map.end())
+		return i->second.get();
 	else
 		throw std::runtime_error("GLProgramFactory: failed to find program "
 								 + name);
@@ -59,13 +55,9 @@ void GLProgramFactory::setUsingGLSL(bool useGLSL)
 // Realise the program factory.
 void GLProgramFactory::realise()
 {
-
-	// Get static map
-	ProgramMap& map = getInstance()._map;
-
 	// Realise each GLProgram in the map
-	for (ProgramMap::iterator i = map.begin();
-		 i != map.end();
+	for (ProgramMap::iterator i = _map.begin();
+		 i != _map.end();
 		 ++i)
 	{
 		i->second->create();
@@ -73,14 +65,11 @@ void GLProgramFactory::realise()
 }
 
 // Unrealise the program factory.
-void GLProgramFactory::unrealise() {
-
-	// Get static map
-	ProgramMap& map = getInstance()._map;
-
+void GLProgramFactory::unrealise() 
+{
 	// Destroy each GLProgram in the map
-	for (ProgramMap::iterator i = map.begin();
-		 i != map.end();
+	for (ProgramMap::iterator i = _map.begin();
+		 i != _map.end();
 		 ++i)
 	{
 		i->second->destroy();

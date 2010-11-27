@@ -12,6 +12,9 @@
 #include <boost/bind.hpp>
 #include <cstdio>
 
+namespace render
+{
+
 void OpenGLShader::destroy() {
 	// Clear the shaderptr, so that the shared_ptr reference count is decreased
     _material = MaterialPtr();
@@ -80,7 +83,7 @@ void OpenGLShader::realise(const std::string& name)
           ++i)
     {
     	_glStateManager.insertSortedState(
-            render::OpenGLStates::value_type(
+            OpenGLStates::value_type(
                 (*i)->statePtr(), *i
             )
         );
@@ -170,22 +173,22 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     if (triplet.needDepthFill)
     {
         // Create depth-buffer fill pass
-        OpenGLState& state = appendDefaultPass();
-        state.renderFlags = RENDER_FILL
-                        | RENDER_CULLFACE
-                        | RENDER_TEXTURE_2D
-                        | RENDER_DEPTHTEST
-                        | RENDER_DEPTHWRITE
-                        | RENDER_COLOURWRITE
-                        | RENDER_PROGRAM;
+        OpenGLState& zPass = appendDefaultPass();
+        zPass.renderFlags = RENDER_FILL
+                                | RENDER_CULLFACE
+                                | RENDER_TEXTURE_2D
+                                | RENDER_DEPTHTEST
+                                | RENDER_DEPTHWRITE
+                                | RENDER_COLOURWRITE
+                                | RENDER_PROGRAM;
 
-        state.m_colour[0] = 0;
-        state.m_colour[1] = 0;
-        state.m_colour[2] = 0;
-        state.m_colour[3] = 1;
-        state.m_sort = OpenGLState::eSortOpaque;
+        zPass.m_colour[0] = 0;
+        zPass.m_colour[1] = 0;
+        zPass.m_colour[2] = 0;
+        zPass.m_colour[3] = 1;
+        zPass.m_sort = OpenGLState::eSortOpaque;
 
-        state.glProgram = render::GLProgramFactory::getProgram("depthFill").get();
+        zPass.glProgram = GLProgramFactory::instance().getProgram("depthFill");
     }
 
     // Add the DBS pass
@@ -206,7 +209,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
                         | RENDER_BUMP
                         | RENDER_PROGRAM;
 
-    dbsPass.glProgram = render::GLProgramFactory::getProgram("bumpMap").get();
+    dbsPass.glProgram = GLProgramFactory::instance().getProgram("bumpMap");
 
     // Set layer vertex colour mode and alphatest parameters
     ShaderLayer::VertexColourMode vcolMode = ShaderLayer::VERTEX_COLOUR_NONE;
@@ -706,5 +709,7 @@ void OpenGLShader::construct(const std::string& name)
         }
 
     } // switch
+}
+
 }
 
