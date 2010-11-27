@@ -198,7 +198,7 @@ void OpenGLRenderSystem::realise()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
 		// Realise the GLPrograms
-		GLProgramFactory::realise();
+		GLProgramFactory::instance().realise();
 	}
 
 	// Realise the OpenGLShader objects
@@ -236,7 +236,7 @@ void OpenGLRenderSystem::unrealise()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
 		// Unrealise the GLPrograms
-		render::GLProgramFactory::unrealise();
+		GLProgramFactory::instance().unrealise();
 	}
 }
 
@@ -292,11 +292,11 @@ void OpenGLRenderSystem::extensionsInitialised()
     // Tell the GLProgramFactory which to use
     if (glslLightingAvailable)
     {
-        GLProgramFactory::getInstance().setUsingGLSL(true);
+        GLProgramFactory::instance().setUsingGLSL(true);
     }
     else
     {
-        GLProgramFactory::getInstance().setUsingGLSL(false);
+        GLProgramFactory::instance().setUsingGLSL(false);
     }
 
     // Set internal flags

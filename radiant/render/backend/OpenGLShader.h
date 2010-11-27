@@ -1,5 +1,4 @@
-#ifndef OPENGLSHADER_H_
-#define OPENGLSHADER_H_
+#pragma once
 
 #include "OpenGLShaderPass.h"
 #include "OpenGLStateManager.h"
@@ -10,6 +9,9 @@
 #include "string/string.h"
 
 #include <list>
+
+namespace render
+{
 
 /**
  * Implementation of the Shader class.
@@ -150,6 +152,5 @@ public:
 
 };
 
+}
 
-
-#endif /*OPENGLSHADER_H_*/
