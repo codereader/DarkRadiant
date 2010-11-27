@@ -30,11 +30,11 @@ class OpenGLRenderSystem
 	// whether this module has been realised
 	bool _realised;
 
-    // OpenGL shader programs available/unavailable
-	bool _shadersAvailable;
-
     // Current shader program in use
     ShaderProgram _currentShaderProgram;
+
+    // OpenGL shader programs available/unavailable
+	bool _shadersAvailable;
 
 	// Map of OpenGLState references, with access functions.
 	OpenGLStates _state_sorted;

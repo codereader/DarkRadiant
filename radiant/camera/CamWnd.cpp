@@ -190,6 +190,13 @@ void CamWnd::constructGUIComponents()
         lightingBtn->set_sensitive(false);
     }
 
+    // Listen for render-mode changes, and set the correct active button to
+    // start with.
+    getCameraSettings()->signalRenderModeChanged().connect(
+        sigc::mem_fun(this, &CamWnd::updateActiveRenderModeButton)
+    );
+    updateActiveRenderModeButton();
+
     // Connect button signals
     getGladeWidget<Gtk::ToggleButton>("texturedBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
@@ -279,6 +286,27 @@ void CamWnd::onRenderModeButtonsChanged()
     else
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_LIGHTING);
+    }
+}
+
+void CamWnd::updateActiveRenderModeButton()
+{
+    switch (getCameraSettings()->getRenderMode())
+    {
+    case RENDER_MODE_WIREFRAME:
+        getGladeWidget<Gtk::ToggleButton>("wireframeBtn")->set_active(true);
+        break;
+    case RENDER_MODE_SOLID:
+        getGladeWidget<Gtk::ToggleButton>("flatShadeBtn")->set_active(true);
+        break;
+    case RENDER_MODE_TEXTURED:
+        getGladeWidget<Gtk::ToggleButton>("texturedBtn")->set_active(true);
+        break;
+    case RENDER_MODE_LIGHTING:
+        getGladeWidget<Gtk::ToggleButton>("lightingBtn")->set_active(true);
+        break;
+    default:
+        g_assert(false);
     }
 }
 

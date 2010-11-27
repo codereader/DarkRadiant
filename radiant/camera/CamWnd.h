@@ -25,6 +25,7 @@ class SelectionTest;
 class CamWnd :
 	public scene::Graph::Observer,
 	public boost::noncopyable,
+    public sigc::trackable,
     private gtkutil::GladeWidgetHolder
 {
     // Outer GUI widget (containing toolbar and GL widget)
@@ -136,11 +137,9 @@ public:
 	void farClipPlaneOut();
 
 private:
-
     void constructGUIComponents();
-
-    // Toggle button callbacks
     void onRenderModeButtonsChanged();
+    void updateActiveRenderModeButton();
 
 	void Cam_Draw();
 

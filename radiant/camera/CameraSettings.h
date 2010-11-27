@@ -4,6 +4,8 @@
 #include <string>
 #include "iregistry.h"
 
+#include <sigc++/signal.h>
+
 /* greebo: This is the home of all the camera settings. As this class derives
  * from a RegistryKeyObserver, it can be connected to the according registry keys
  * and gets notified if any of the observed keys are changed.*/
@@ -25,7 +27,8 @@ namespace {
 	const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
 }
 
-enum CameraDrawMode {
+enum CameraDrawMode 
+{
 	RENDER_MODE_WIREFRAME,
 	RENDER_MODE_SOLID,
     RENDER_MODE_TEXTURED,
@@ -52,10 +55,13 @@ class CameraSettings :
 	// instead of enabling it by clicking and clicking again to disable
 	bool _toggleFreelook;
 
+    // Signals
+    sigc::signal<void> _sigRenderModeChanged;
+
 public:
 	CameraSettings();
 
-	// The callback that gets called on registry key changes
+    // RegistryKeyObserver implementation
 	void keyChanged(const std::string& key, const std::string& val);
 
 	int movementSpeed() const;
@@ -83,6 +89,14 @@ public:
 
 	// Adds the elements to the "camera" preference page
 	void constructPreferencePage();
+
+    /* SIGNALS */
+
+    /// Emitted when the render mode is changed, e.g. by the F3 key.
+    sigc::signal<void> signalRenderModeChanged()
+    {
+        return _sigRenderModeChanged;
+    }
 
 private:
 	void importDrawMode(const int mode);
