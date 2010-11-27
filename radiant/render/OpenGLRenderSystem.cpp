@@ -38,8 +38,8 @@ namespace {
  */
 OpenGLRenderSystem::OpenGLRenderSystem() :
 	_realised(false),
-	m_lightingEnabled(true),
-	m_lightingSupported(false),
+	_currentShaderProgram(SHADER_PROGRAM_NONE),
+	_shadersAvailable(false),
 	m_lightsChanged(true),
 	m_traverseRenderablesMutex(false)
 {
@@ -186,7 +186,7 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	}
 }
 
-void OpenGLRenderSystem::realise() 
+void OpenGLRenderSystem::realise()
 {
     if (_realised) {
     	return; // already realised
@@ -194,8 +194,8 @@ void OpenGLRenderSystem::realise()
 
     _realised = true;
 
-	if (shaderProgramsAvailable() 
-        && getCurrentShaderProgram() != SHADER_PROGRAM_NONE) 
+	if (shaderProgramsAvailable()
+        && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
 		// Realise the GLPrograms
 		GLProgramFactory::realise();
@@ -212,7 +212,7 @@ void OpenGLRenderSystem::realise()
 	}
 }
 
-void OpenGLRenderSystem::unrealise() 
+void OpenGLRenderSystem::unrealise()
 {
     if (!_realised) {
     	return;
@@ -231,9 +231,9 @@ void OpenGLRenderSystem::unrealise()
 		}
     }
 
-	if (GlobalOpenGL().contextValid 
-        && shaderProgramsAvailable() 
-        && getCurrentShaderProgram() != SHADER_PROGRAM_NONE) 
+	if (GlobalOpenGL().contextValid
+        && shaderProgramsAvailable()
+        && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
 		// Unrealise the GLPrograms
 		render::GLProgramFactory::unrealise();
@@ -242,36 +242,32 @@ void OpenGLRenderSystem::unrealise()
 
 RenderSystem::ShaderProgram OpenGLRenderSystem::getCurrentShaderProgram() const
 {
-	return (
-       m_lightingEnabled ? SHADER_PROGRAM_INTERACTION : SHADER_PROGRAM_NONE
-    );
+	return _currentShaderProgram;
 }
 
-bool OpenGLRenderSystem::shaderProgramsAvailable() const 
+bool OpenGLRenderSystem::shaderProgramsAvailable() const
 {
-	return m_lightingSupported;
+	return _shadersAvailable;
 }
 
-void OpenGLRenderSystem::setShaderProgram(RenderSystem::ShaderProgram prog) 
+void OpenGLRenderSystem::setShaderProgram(RenderSystem::ShaderProgram newProg)
 {
-	setLighting(m_lightingSupported, (prog == SHADER_PROGRAM_INTERACTION));
-}
+    ShaderProgram oldProgram = _currentShaderProgram;
 
-void OpenGLRenderSystem::setLighting(bool supported, bool enabled)
-{
-	bool refresh = (m_lightingSupported && m_lightingEnabled) != (supported && enabled);
-
-	if (refresh) {
+    if (oldProgram != newProg)
+    {
 		unrealise();
-		GlobalMaterialManager().setLightingEnabled(supported && enabled);
-	}
+		GlobalMaterialManager().setLightingEnabled(
+            newProg == SHADER_PROGRAM_INTERACTION
+        );
+    }
 
-	m_lightingSupported = supported;
-	m_lightingEnabled = enabled;
+    _currentShaderProgram = newProg;
 
-	if (refresh) {
-		realise();
-	}
+    if (oldProgram != newProg)
+    {
+        realise();
+    }
 }
 
 void OpenGLRenderSystem::extensionsInitialised()
@@ -304,10 +300,7 @@ void OpenGLRenderSystem::extensionsInitialised()
     }
 
     // Set internal flags
-	setLighting(
-        glslLightingAvailable || arbLightingAvailable,
-         m_lightingEnabled
-    );
+    _shadersAvailable = glslLightingAvailable || arbLightingAvailable;
 
     // Inform the user of missing extensions
     if (!shaderProgramsAvailable())
