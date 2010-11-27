@@ -185,7 +185,7 @@ void CamWnd::constructGUIComponents()
     Gtk::ToggleButton* lightingBtn = getGladeWidget<Gtk::ToggleButton>(
         "lightingBtn"
     );
-    if (!GlobalRenderSystem().lightingSupported())
+    if (!GlobalRenderSystem().shaderProgramsAvailable())
     {
         lightingBtn->set_sensitive(false);
     }

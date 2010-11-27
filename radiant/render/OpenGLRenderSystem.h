@@ -50,27 +50,20 @@ public:
 
 	virtual ~OpenGLRenderSystem();
 
-	/* Capture the given shader.
-	 */
-	ShaderPtr capture(const std::string& name);
+    /* RenderSystem implementation */
 
-  	/*
-  	 * Render all states in the ShaderCache along with their renderables. This
-  	 * is where the actual OpenGL rendering starts.
-  	 */
+	ShaderPtr capture(const std::string& name);
 	void render(RenderStateFlags globalstate,
 				const Matrix4& modelview,
 				const Matrix4& projection,
 				const Vector3& viewer);
-
 	void realise();
 	void unrealise();
-
-	bool lightingEnabled() const;
-	bool lightingSupported() const;
+    bool shaderProgramsAvailable() const;
+    ShaderProgram getCurrentShaderProgram() const;
+    void setShaderProgram(ShaderProgram prog);
 
 	void extensionsInitialised();
-	void setLightingEnabled(bool enabled);
 
 	// light culling
 

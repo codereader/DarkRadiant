@@ -186,14 +186,17 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	}
 }
 
-void OpenGLRenderSystem::realise() {
+void OpenGLRenderSystem::realise() 
+{
     if (_realised) {
     	return; // already realised
     }
 
     _realised = true;
 
-	if (lightingSupported() && lightingEnabled()) {
+	if (shaderProgramsAvailable() 
+        && getCurrentShaderProgram() != SHADER_PROGRAM_NONE) 
+    {
 		// Realise the GLPrograms
 		GLProgramFactory::realise();
 	}
@@ -209,7 +212,8 @@ void OpenGLRenderSystem::realise() {
 	}
 }
 
-void OpenGLRenderSystem::unrealise() {
+void OpenGLRenderSystem::unrealise() 
+{
     if (!_realised) {
     	return;
     }
@@ -227,18 +231,30 @@ void OpenGLRenderSystem::unrealise() {
 		}
     }
 
-	if(GlobalOpenGL().contextValid && lightingSupported() && lightingEnabled()) {
+	if (GlobalOpenGL().contextValid 
+        && shaderProgramsAvailable() 
+        && getCurrentShaderProgram() != SHADER_PROGRAM_NONE) 
+    {
 		// Unrealise the GLPrograms
 		render::GLProgramFactory::unrealise();
 	}
 }
 
-bool OpenGLRenderSystem::lightingEnabled() const {
-	return m_lightingEnabled;
+RenderSystem::ShaderProgram OpenGLRenderSystem::getCurrentShaderProgram() const
+{
+	return (
+       m_lightingEnabled ? SHADER_PROGRAM_INTERACTION : SHADER_PROGRAM_NONE
+    );
 }
 
-bool OpenGLRenderSystem::lightingSupported() const {
+bool OpenGLRenderSystem::shaderProgramsAvailable() const 
+{
 	return m_lightingSupported;
+}
+
+void OpenGLRenderSystem::setShaderProgram(RenderSystem::ShaderProgram prog) 
+{
+	setLighting(m_lightingSupported, (prog == SHADER_PROGRAM_INTERACTION));
 }
 
 void OpenGLRenderSystem::setLighting(bool supported, bool enabled)
@@ -270,10 +286,10 @@ void OpenGLRenderSystem::extensionsInitialised()
     glslLightingAvailable = arbLightingAvailable = false;
 #endif
 
-    std::cout << "[OpenGLRenderSystem] GLSL lighting "
+    std::cout << "[OpenGLRenderSystem] GLSL shading "
               << (glslLightingAvailable ? "IS" : "IS NOT" ) << " available."
               << std::endl;
-    std::cout << "[OpenGLRenderSystem] ARB lighting "
+    std::cout << "[OpenGLRenderSystem] ARB shading "
               << (arbLightingAvailable ? "IS" : "IS NOT" ) << " available."
               << std::endl;
 
@@ -294,9 +310,9 @@ void OpenGLRenderSystem::extensionsInitialised()
     );
 
     // Inform the user of missing extensions
-    if (!lightingSupported())
+    if (!shaderProgramsAvailable())
     {
-		globalOutputStream() << "Lighting mode requires OpenGL features not"
+		globalOutputStream() << "GL shading requires OpenGL features not"
                              << " supported by your graphics drivers:\n";
 
 		if (!GLEW_VERSION_2_0) {
@@ -328,10 +344,6 @@ void OpenGLRenderSystem::extensionsInitialised()
 		}
 
 	}
-}
-
-void OpenGLRenderSystem::setLightingEnabled(bool enabled) {
-	setLighting(m_lightingSupported, enabled);
 }
 
 const LightList& OpenGLRenderSystem::attach(LightCullable& cullable)
