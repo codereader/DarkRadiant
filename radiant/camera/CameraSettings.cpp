@@ -71,7 +71,8 @@ void CameraSettings::constructPreferencePage() {
 	page->appendCombo(_("Render Mode"), RKEY_DRAWMODE, renderModeDescriptions);
 }
 
-void CameraSettings::importDrawMode(const int mode) {
+void CameraSettings::importDrawMode(const int mode) 
+{
 	switch (mode) {
 		case 0:
 			_cameraDrawMode = RENDER_MODE_WIREFRAME;
@@ -89,8 +90,11 @@ void CameraSettings::importDrawMode(const int mode) {
 			_cameraDrawMode = RENDER_MODE_TEXTURED;
 	}
 
-	// Notify the shadercache that the lighting mode is enabled/disabled
-	GlobalRenderSystem().setLightingEnabled(_cameraDrawMode == RENDER_MODE_LIGHTING);
+	GlobalRenderSystem().setShaderProgram(
+        _cameraDrawMode == RENDER_MODE_LIGHTING 
+        ? RenderSystem::SHADER_PROGRAM_INTERACTION
+        : RenderSystem::SHADER_PROGRAM_NONE
+    );
 }
 
 void CameraSettings::keyChanged(const std::string& key, const std::string& val)

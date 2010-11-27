@@ -378,25 +378,35 @@ public:
                         const Matrix4& projection,
                         const Vector3& viewer = Vector3(0, 0, 0)) = 0;
 
-  virtual void realise() = 0;
-  virtual void unrealise() = 0;
+    virtual void realise() = 0;
+    virtual void unrealise() = 0;
 
-	/**
-	 * Test if lighting mode is supported, depending on OpenGL extensions.
-	 */
-	virtual bool lightingSupported() const = 0;
+    /* SHADER PROGRAMS */
 
-	/**
-	 * Test if lighting mode is ENABLED.
-	 */
-	virtual bool lightingEnabled() const = 0;
+    /// Available GL programs used for backend rendering.
+    enum ShaderProgram
+    {
+        /// No shader program (normal GL fixed-function pipeline)
+        SHADER_PROGRAM_NONE,
 
-	// Enable/disable lighting mode
-	virtual void setLightingEnabled(bool enabled) = 0;
+        /// Lighting interaction shader
+        SHADER_PROGRAM_INTERACTION
+    };
 
-  virtual const LightList& attach(LightCullable& cullable) = 0;
-  virtual void detach(LightCullable& cullable) = 0;
-  virtual void changed(LightCullable& cullable) = 0;
+    /// Test if shader programs are available on the current system.
+    virtual bool shaderProgramsAvailable() const = 0;
+
+    /// Get the current shader program in use.
+    virtual ShaderProgram getCurrentShaderProgram() const = 0;
+
+    /// Set the shader program to use.
+    virtual void setShaderProgram(ShaderProgram prog) = 0;
+
+    /* LIGHT MANAGEMENT */
+
+    virtual const LightList& attach(LightCullable& cullable) = 0;
+    virtual void detach(LightCullable& cullable) = 0;
+    virtual void changed(LightCullable& cullable) = 0;
 
     /**
      * \brief
