@@ -107,6 +107,12 @@ ReadableEditorDialog::ReadableEditorDialog(Entity* entity) :
 	add(*vbox);
 }
 
+ReadableEditorDialog::~ReadableEditorDialog()
+{
+	// greebo: Disconnect the focus out event, this can get called even after this dialog has been destroyed
+	_xDataNameFocusOut.disconnect();
+}
+
 void ReadableEditorDialog::_postShow()
 {
 	// Load the initial values from the entity
@@ -186,8 +192,11 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 
 	// XData Name
 	_xDataNameEntry = Gtk::manage(new Gtk::Entry);
-	_xDataNameEntry->signal_key_press_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _xDataNameEntry), false);
-	_xDataNameEntry->signal_focus_out_event().connect(sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onFocusOut), _xDataNameEntry), true);
+	_xDataNameEntry->signal_key_press_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onKeyPress), _xDataNameEntry), false);
+
+	_xDataNameFocusOut = _xDataNameEntry->signal_focus_out_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &ReadableEditorDialog::onFocusOut), _xDataNameEntry), true);
 
 	Gtk::Label* xDataNameLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("XData Name:")));
 
