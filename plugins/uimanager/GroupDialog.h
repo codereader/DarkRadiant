@@ -50,6 +50,7 @@ class GroupDialog
 
 	// The tab widget
 	Gtk::Notebook* _notebook;
+	sigc::connection _notebookSwitchEvent;
 
 	// The page number of the currently active page widget
 	int _currentPage;
@@ -59,11 +60,13 @@ private:
 	GroupDialog();
 
 	// TransientWindow events. These deal with window position tracking.
-	virtual void _preShow();
-	virtual void _postShow();
-	virtual void _preHide();
+	void _preShow();
+	void _postShow();
+	void _preHide();
 
 public:
+	~GroupDialog();
+
 	/**
 	 * Static method to construct the GroupDialog instance.
 	 */
