@@ -61,7 +61,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iundo.h"
 #include "igrid.h"
 #include "ifilter.h"
-#include "itoolbar.h"
 #include "editable.h"
 #include "ientity.h"
 #include "iuimanager.h"
