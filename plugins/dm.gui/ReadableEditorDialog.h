@@ -92,6 +92,8 @@ private:
 	Gtk::HPaned* _paned;
 	Gtk::Entry* _nameEntry;
 	Gtk::Entry* _xDataNameEntry;
+	sigc::connection _xDataNameFocusOut;
+
 	Gtk::SpinButton* _numPages;
 
 	Gtk::RadioButton* _oneSidedButton;
@@ -122,6 +124,8 @@ private:
 public:
 	// Pass the working entity to the constructor
 	ReadableEditorDialog(Entity* entity);
+
+	~ReadableEditorDialog();
 
 	static void RunDialog(const cmd::ArgumentList& args);
 
