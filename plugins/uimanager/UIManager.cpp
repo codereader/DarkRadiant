@@ -56,21 +56,37 @@ void UIManager::addLocalBitmapsAsIconFactory()
     {
         Glib::ustring filename = *i;
 
-        // Load the pixbuf into an IconSet
-        Gtk::IconSet is(
-            Gdk::Pixbuf::create_from_file(bitmapsPath + filename)
-        );
+		// Skip directories
+		if (Glib::file_test(bitmapsPath + filename, Glib::FILE_TEST_IS_DIR))
+		{
+			continue;
+		}
 
-        // Add IconSet to Factory with "darkradiant:" stock prefix
-        Glib::ustring filenameWithoutExtension = filename.substr(
-            0, filename.rfind(".")
-        );
-        Gtk::StockID stockID(
-            Glib::ustring::compose(
-                "darkradiant:%1", filenameWithoutExtension
-            )
-        );
-        _iconFactory->add(stockID, is);
+        // Load the pixbuf into an IconSet
+		try
+		{
+			Gtk::IconSet is(
+				Gdk::Pixbuf::create_from_file(bitmapsPath + filename)
+			);
+
+			// Add IconSet to Factory with "darkradiant:" stock prefix
+			Glib::ustring filenameWithoutExtension = filename.substr(
+				0, filename.rfind(".")
+			);
+
+			Gtk::StockID stockID(
+				Glib::ustring::compose(
+					"darkradiant:%1", filenameWithoutExtension
+				)
+			);
+
+			_iconFactory->add(stockID, is);
+		}
+		catch (Glib::FileError& ex)
+		{
+			globalErrorStream() << "Could not load pixbuf file: " <<
+				filename << ": " << ex.what() << std::endl;
+		}
     }
 
     // Add the IconFactory to the default factory list
