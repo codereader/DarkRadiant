@@ -372,10 +372,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\itoolbar.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\itransformable.h"
 			>
 		</File>
