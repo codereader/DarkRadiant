@@ -40,7 +40,7 @@ copy ..\..\w32deps\gtk2\bin\libpng12-0.dll ..\..\install /Y
 copy ..\..\w32deps\gtk2\bin\libtiff3.dll ..\..\install /Y
 copy ..\..\w32deps\gtk2\bin\zlib1.dll ..\..\install /Y
 
-copy ..\..\w32deps\python\bin\python26.dll ..\..\install /Y
+copy ..\..\w32deps\python\bin\python27.dll ..\..\install /Y
 
 @rem Copy gtkmm libraries (32 bit)
 IF "%1" == "Debug" GOTO GTKMM_DEBUG
