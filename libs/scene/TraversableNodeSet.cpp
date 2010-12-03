@@ -52,7 +52,7 @@ public:
 class ObserverOutputIterator
 {
 protected:
-	Node& _owner;
+	Node* _owner;
 	ObserverFunctor& _functor;
 public:
 	typedef std::output_iterator_tag iterator_category;
@@ -62,14 +62,24 @@ public:
 	typedef void reference;
 
 	ObserverOutputIterator(Node& owner, ObserverFunctor& functor) :
-		_owner(owner),
+		_owner(&owner),
 		_functor(functor)
 	{}
 
 	// This function is invoked by the std::set_difference algorithm
-	ObserverOutputIterator& operator=(const INodePtr& node) {
+	ObserverOutputIterator& operator=(const INodePtr& node)
+	{
 		// Pass the call to the functor
-		_functor(_owner, node);
+		_functor(*_owner, node);
+		return *this;
+	}
+
+	// Assignment operator, as needed by VC++ 2010's STL implementation
+	ObserverOutputIterator& operator=(const ObserverOutputIterator& other)
+	{
+		// Pass the call to the functor
+		_owner = other._owner;
+		_functor = other._functor;
 		return *this;
 	}
 
