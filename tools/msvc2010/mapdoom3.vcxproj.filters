@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\primitiveparsers">
+      <UniqueIdentifier>{66d4f984-b444-44df-afe9-a1636e14882b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\primitivewriters">
+      <UniqueIdentifier>{76e389ef-7864-4fbf-aa1f-d2afd91ba985}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\mapdoom3\AssignLayerMappingWalker.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapFormat.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\InfoFile.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\NodeExporter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\NodeImporter.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Tokens.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\Patch.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef2.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef3.h">
+      <Filter>src\primitiveparsers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\BrushDef3Exporter.h">
+      <Filter>src\primitivewriters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\PatchDefExporter.h">
+      <Filter>src\primitivewriters</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\InfoFile.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\mapdoom3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\NodeExporter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\NodeImporter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\Patch.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef2.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef3.cpp">
+      <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\plugins\mapdoom3\mapdoom3.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>

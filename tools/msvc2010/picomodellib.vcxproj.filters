@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lwo">
+      <UniqueIdentifier>{4f369ece-29ca-4975-925b-ad6d6cee4092}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\libs\picomodel\lwo\clip.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\envelope.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\list.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\lwio.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\lwo2.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\lwob.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\pntspols.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\surface.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\vecmath.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\lwo\vmap.c">
+      <Filter>lwo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\picomodel\picointernal.c" />
+    <ClCompile Include="..\..\libs\picomodel\picomodel.c" />
+    <ClCompile Include="..\..\libs\picomodel\picomodules.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_3ds.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_ase.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_fm.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_lwo.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_md2.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_md3.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_mdc.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_ms3d.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_obj.c" />
+    <ClCompile Include="..\..\libs\picomodel\pm_terrain.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libs\picomodel\lwo\lwo2.h">
+      <Filter>lwo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\picomodel\picointernal.h" />
+    <ClInclude Include="..\..\libs\picomodel\pm_fm.h" />
+  </ItemGroup>
+</Project>
