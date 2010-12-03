@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\plugins\vfspk3\DirectoryArchive.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\vfspk3\Doom3FileSystem.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\vfspk3\vfspk3.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\vfspk3\DirectoryArchive.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vfspk3\Doom3FileSystem.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vfspk3\FileVisitor.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vfspk3\SortedFilenames.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vfspk3\UnixPath.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vfspk3\vfspk3.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\plugins\vfspk3\vfspk3.def">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+</Project>
