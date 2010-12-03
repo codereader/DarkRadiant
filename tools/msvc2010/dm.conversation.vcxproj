@@ -119,7 +119,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc90-d-2_4.lib;sigc-vc90-d-2_0.lib;glibmm-vc90-d-2_4.lib;atkmm-vc90-d-1_6.lib;gdkmm-vc90-d-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc100-d-2_4.lib;sigc-vc100-d-2_0.lib;glibmm-vc100-d-2_4.lib;atkmm-vc100-d-1_6.lib;gdkmm-vc100-d-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w32deps/gtk2\lib;$(SolutionDir)\..\..\w32deps/boost\lib;$(SolutionDir)\..\..\w32deps\gtkmm\lib;$(SolutionDir)\..\..\w32deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -172,7 +172,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc90-d-2_4.lib;sigc-vc90-d-2_0.lib;glibmm-vc90-d-2_4.lib;atkmm-vc90-d-1_6.lib;gdkmm-vc90-d-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc100-d-2_4.lib;sigc-vc100-d-2_0.lib;glibmm-vc100-d-2_4.lib;atkmm-vc100-d-1_6.lib;gdkmm-vc100-d-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ShowProgress>NotSet</ShowProgress>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -222,7 +222,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc90-2_4.lib;sigc-vc90-2_0.lib;glibmm-vc90-2_4.lib;atkmm-vc90-1_6.lib;gdkmm-vc90-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc100-2_4.lib;sigc-vc100-2_0.lib;glibmm-vc100-2_4.lib;atkmm-vc100-1_6.lib;gdkmm-vc100-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w32deps/gtk2\lib;$(SolutionDir)\..\..\w32deps/boost\lib;$(SolutionDir)\..\..\w32deps\gtkmm\lib;$(SolutionDir)\..\..\w32deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -278,7 +278,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc90-2_4.lib;sigc-vc90-2_0.lib;glibmm-vc90-2_4.lib;atkmm-vc90-1_6.lib;gdkmm-vc90-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc100-2_4.lib;sigc-vc100-2_0.lib;glibmm-vc100-2_4.lib;atkmm-vc100-1_6.lib;gdkmm-vc100-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w64deps/gtk2\lib;$(SolutionDir)\..\..\w64deps/boost\lib;$(SolutionDir)\..\..\w64deps\gtkmm\lib;$(SolutionDir)\..\..\w64deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

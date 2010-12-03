@@ -35,40 +35,40 @@ copy ..\..\w64deps\gtk2\bin\libintl-8.dll ..\..\install /Y
 
 copy ..\..\w64deps\glew\lib\glew32.dll ..\..\install /Y
 
-copy ..\..\w64deps\python\bin\python26.dll ..\..\install /Y
+copy ..\..\w64deps\python\bin\python27.dll ..\..\install /Y
 
 @rem Copy gtkmm libraries (64 bit)
 IF "%1" == "Debug" GOTO GTKMM_DEBUG
 
 :GTKMM_RELEASE
 	@echo Copying GTKmm release binaries
-	copy ..\..\w64deps\gtkmm\bin\atkmm-vc90-1_6.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\cairomm-vc90-1_0.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\gdkmm-vc90-2_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\giomm-vc90-2_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\glibmm-vc90-2_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\gtkmm-vc90-2_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\pangomm-vc90-1_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\sigc-vc90-2_0.dll ..\..\install /Y
-	copy ..\..\w64deps\gtksourceviewmm\bin\gtksourceviewmm-vc90-2_2.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkglextmm\bin\gdkglextmm-vc90-1_2.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkglextmm\bin\gtkglextmm-vc90-1_2.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\atkmm-vc100-1_6.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\cairomm-vc100-1_0.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\gdkmm-vc100-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\giomm-vc100-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\glibmm-vc100-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\gtkmm-vc100-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\pangomm-vc100-1_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\sigc-vc100-2_0.dll ..\..\install /Y
+	copy ..\..\w64deps\gtksourceviewmm\bin\gtksourceviewmm-vc100-2_2.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkglextmm\bin\gdkglextmm-vc100-1_2.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkglextmm\bin\gtkglextmm-vc100-1_2.dll ..\..\install /Y
 
 GOTO GTKMM_END
 
 :GTKMM_DEBUG
 	@echo Copying GTKmm debug binaries
-	copy ..\..\w64deps\gtkmm\bin\atkmm-vc90-d-1_6.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\cairomm-vc90-d-1_0.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\gdkmm-vc90-d-2_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\giomm-vc90-d-2_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\glibmm-vc90-d-2_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\gtkmm-vc90-d-2_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\pangomm-vc90-d-1_4.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkmm\bin\sigc-vc90-d-2_0.dll ..\..\install /Y
-	copy ..\..\w64deps\gtksourceviewmm\bin\gtksourceviewmm-vc90-d-2_2.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkglextmm\bin\gdkglextmm-vc90-d-1_2.dll ..\..\install /Y
-	copy ..\..\w64deps\gtkglextmm\bin\gtkglextmm-vc90-d-1_2.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\atkmm-vc100-d-1_6.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\cairomm-vc100-d-1_0.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\gdkmm-vc100-d-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\giomm-vc100-d-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\glibmm-vc100-d-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\gtkmm-vc100-d-2_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\pangomm-vc100-d-1_4.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkmm\bin\sigc-vc100-d-2_0.dll ..\..\install /Y
+	copy ..\..\w64deps\gtksourceviewmm\bin\gtksourceviewmm-vc100-d-2_2.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkglextmm\bin\gdkglextmm-vc100-d-1_2.dll ..\..\install /Y
+	copy ..\..\w64deps\gtkglextmm\bin\gtkglextmm-vc100-d-1_2.dll ..\..\install /Y
 
 :GTKMM_END
 
