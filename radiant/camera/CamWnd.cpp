@@ -20,7 +20,7 @@
 #include <boost/bind.hpp>
 
 #include <gtkmm/image.h>
-#include <gtkmm/togglebutton.h>
+#include <gtkmm/radiotoolbutton.h>
 
 class ObjectFinder :
 	public scene::NodeVisitor
@@ -182,7 +182,7 @@ CamWnd::CamWnd() :
 void CamWnd::constructGUIComponents()
 {
     // If lighting is not available, grey out the lighting button
-    Gtk::ToggleButton* lightingBtn = getGladeWidget<Gtk::ToggleButton>(
+    Gtk::ToggleToolButton* lightingBtn = getGladeWidget<Gtk::ToggleToolButton>(
         "lightingBtn"
     );
     if (!GlobalRenderSystem().shaderProgramsAvailable())
@@ -198,23 +198,23 @@ void CamWnd::constructGUIComponents()
     updateActiveRenderModeButton();
 
     // Connect button signals
-    getGladeWidget<Gtk::ToggleButton>("texturedBtn")->signal_toggled().connect(
+    getGladeWidget<Gtk::ToggleToolButton>("texturedBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
     lightingBtn->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
-    getGladeWidget<Gtk::ToggleButton>("flatShadeBtn")->signal_toggled().connect(
+    getGladeWidget<Gtk::ToggleToolButton>("flatShadeBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
-    getGladeWidget<Gtk::ToggleButton>("wireframeBtn")->signal_toggled().connect(
+    getGladeWidget<Gtk::ToggleToolButton>("wireframeBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
 
-    getGladeWidget<Gtk::Button>("clipPlaneInButton")->signal_clicked().connect(
+    getGladeWidget<Gtk::ToolButton>("clipPlaneInButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneIn)
     );
-    getGladeWidget<Gtk::Button>("clipPlaneOutButton")->signal_clicked().connect(
+    getGladeWidget<Gtk::ToolButton>("clipPlaneOutButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneOut)
     );
 
@@ -271,19 +271,23 @@ CamWnd::~CamWnd()
 
 void CamWnd::onRenderModeButtonsChanged()
 {
-    if (getGladeWidget<Gtk::ToggleButton>("texturedBtn")->get_active())
+    using Gtk::ToggleToolButton;
+
+    // This function will be called twice, once for the inactivating button and
+    // once for the activating button
+    if (getGladeWidget<ToggleToolButton>("texturedBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_TEXTURED);
     }
-    else if (getGladeWidget<Gtk::ToggleButton>("wireframeBtn")->get_active())
+    else if (getGladeWidget<ToggleToolButton>("wireframeBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_WIREFRAME);
     }
-    else if (getGladeWidget<Gtk::ToggleButton>("flatShadeBtn")->get_active())
+    else if (getGladeWidget<ToggleToolButton>("flatShadeBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_SOLID);
     }
-    else
+    else if (getGladeWidget<ToggleToolButton>("lightingBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_LIGHTING);
     }
@@ -294,16 +298,16 @@ void CamWnd::updateActiveRenderModeButton()
     switch (getCameraSettings()->getRenderMode())
     {
     case RENDER_MODE_WIREFRAME:
-        getGladeWidget<Gtk::ToggleButton>("wireframeBtn")->set_active(true);
+        getGladeWidget<Gtk::ToggleToolButton>("wireframeBtn")->set_active(true);
         break;
     case RENDER_MODE_SOLID:
-        getGladeWidget<Gtk::ToggleButton>("flatShadeBtn")->set_active(true);
+        getGladeWidget<Gtk::ToggleToolButton>("flatShadeBtn")->set_active(true);
         break;
     case RENDER_MODE_TEXTURED:
-        getGladeWidget<Gtk::ToggleButton>("texturedBtn")->set_active(true);
+        getGladeWidget<Gtk::ToggleToolButton>("texturedBtn")->set_active(true);
         break;
     case RENDER_MODE_LIGHTING:
-        getGladeWidget<Gtk::ToggleButton>("lightingBtn")->set_active(true);
+        getGladeWidget<Gtk::ToggleToolButton>("lightingBtn")->set_active(true);
         break;
     default:
         g_assert(false);
