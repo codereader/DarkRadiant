@@ -22,8 +22,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "filters", "filters.vcxproj"
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grid", "grid.vcxproj", "{859C6FA8-FA3A-47D4-A64C-9B3D4282FCA8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "image", "image.vcxproj", "{002AEFE8-2CA3-43CA-84CA-CF74FF9F1E8E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jpeglib", "jpeglib.vcxproj", "{4286E605-5358-462F-AC57-44FCC697585B}"
 EndProject
@@ -109,6 +115,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.gui", "dm.gui.vcxproj", "{586DBC32-C9D4-4720-B246-1E3D7D8C02B3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fonts", "fonts.vcxproj", "{6AC36DFF-0208-4770-B09D-3174FB433C51}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
