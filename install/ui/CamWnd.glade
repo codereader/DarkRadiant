@@ -5,115 +5,94 @@
   <object class="GtkVBox" id="mainVbox">
     <property name="visible">True</property>
     <child>
-      <object class="GtkHBox" id="buttonsHbox">
+      <object class="GtkToolbar" id="camToolbar">
         <property name="visible">True</property>
-        <property name="border_width">3</property>
-        <property name="spacing">3</property>
+        <property name="toolbar_style">icons</property>
+        <property name="icon_size">2</property>
         <child>
-          <object class="GtkRadioButton" id="wireframeBtn">
+          <object class="GtkRadioToolButton" id="wireframeBtn">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip_text" translatable="yes">Render wireframes only</property>
-            <property name="image">imgWireframe</property>
-            <property name="relief">none</property>
+            <property name="label" translatable="yes">Wireframe</property>
+            <property name="use_underline">True</property>
+            <property name="stock_id">darkradiant:wireframeMode16</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="homogeneous">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioToolButton" id="flatShadeBtn">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Flat shaded</property>
+            <property name="use_underline">True</property>
+            <property name="stock_id">darkradiant:solidMode16</property>
+            <property name="group">wireframeBtn</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="homogeneous">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkRadioToolButton" id="texturedBtn">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Textured</property>
+            <property name="use_underline">True</property>
+            <property name="stock_id">darkradiant:textureMode16</property>
             <property name="active">True</property>
-            <property name="draw_indicator">False</property>
-            <property name="group">texturedBtn</property>
+            <property name="group">wireframeBtn</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
+            <property name="homogeneous">True</property>
           </packing>
         </child>
         <child>
-          <object class="GtkRadioButton" id="flatShadeBtn">
+          <object class="GtkRadioToolButton" id="lightingBtn">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="tooltip_text" translatable="yes">Render in flat-shaded untextured mode</property>
-            <property name="image">imgFlatshade</property>
-            <property name="relief">none</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">False</property>
-            <property name="group">texturedBtn</property>
+            <property name="label" translatable="yes">Lighting</property>
+            <property name="use_underline">True</property>
+            <property name="stock_id">darkradiant:lightingMode</property>
+            <property name="group">wireframeBtn</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">1</property>
+            <property name="homogeneous">True</property>
           </packing>
         </child>
         <child>
-          <object class="GtkRadioButton" id="texturedBtn">
+          <object class="GtkSeparatorToolItem" id="separator">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="has_tooltip">True</property>
-            <property name="tooltip_text" translatable="yes">Render in full-bright textured mode</property>
-            <property name="image">imgTextureMode</property>
-            <property name="relief">none</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">False</property>
+            <property name="draw">False</property>
           </object>
           <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">2</property>
+            <property name="expand">True</property>
+            <property name="homogeneous">True</property>
           </packing>
         </child>
         <child>
-          <object class="GtkRadioButton" id="lightingBtn">
+          <object class="GtkToolButton" id="clipPlaneInButton">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="has_tooltip">True</property>
-            <property name="tooltip_text" translatable="yes">Render in lighting mode</property>
-            <property name="image">imgLightingMode</property>
-            <property name="relief">none</property>
-            <property name="active">True</property>
-            <property name="draw_indicator">False</property>
-            <property name="group">texturedBtn</property>
+            <property name="label" translatable="yes">Clip plane in</property>
+            <property name="use_underline">True</property>
+            <property name="stock_id">darkradiant:farClipIn</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">3</property>
+            <property name="homogeneous">True</property>
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="clipPlaneInButton">
+          <object class="GtkToolButton" id="clipPlaneOutButton">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="has_tooltip">True</property>
-            <property name="tooltip_text" translatable="yes">Move the far clip plane towards the camera</property>
-            <property name="image">imgClipPlaneIn</property>
-            <property name="relief">none</property>
+            <property name="label" translatable="yes">Clip plane out</property>
+            <property name="use_underline">True</property>
+            <property name="stock_id">darkradiant:farClipOut</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">5</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkButton" id="clipPlaneOutButton">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-            <property name="has_tooltip">True</property>
-            <property name="tooltip_text" translatable="yes">Move the far clip plane away from the camera</property>
-            <property name="image">imgClipPlaneOut</property>
-            <property name="relief">none</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">4</property>
+            <property name="homogeneous">True</property>
           </packing>
         </child>
       </object>
@@ -138,29 +117,5 @@
         <property name="position">1</property>
       </packing>
     </child>
-  </object>
-  <object class="GtkImage" id="imgTextureMode">
-    <property name="visible">True</property>
-    <property name="stock">darkradiant:textureMode16</property>
-  </object>
-  <object class="GtkImage" id="imgLightingMode">
-    <property name="visible">True</property>
-    <property name="stock">darkradiant:lightingMode</property>
-  </object>
-  <object class="GtkImage" id="imgClipPlaneIn">
-    <property name="visible">True</property>
-    <property name="stock">darkradiant:farClipIn</property>
-  </object>
-  <object class="GtkImage" id="imgClipPlaneOut">
-    <property name="visible">True</property>
-    <property name="stock">darkradiant:farClipOut</property>
-  </object>
-  <object class="GtkImage" id="imgWireframe">
-    <property name="visible">True</property>
-    <property name="stock">darkradiant:wireframeMode16</property>
-  </object>
-  <object class="GtkImage" id="imgFlatshade">
-    <property name="visible">True</property>
-    <property name="stock">darkradiant:solidMode16</property>
   </object>
 </interface>
