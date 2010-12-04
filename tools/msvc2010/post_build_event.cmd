@@ -78,7 +78,19 @@ GOTO GTKMM_END
 :GTKMM_END
 
 @rem Copy the compiled GtkSourceView x86 DLLs to install
-copy ..\..\w32deps\gtksourceview-2.0\bin\libgtksourceview.dll ..\..\install /Y
+IF "%1" == "Debug" GOTO GTKSOURCEVIEW_DEBUG
+
+:GTKSOURCEVIEW_RELEASE
+	@echo Copying gtksourceview release binaries
+	copy ..\..\w32deps\gtksourceview-2.0\bin\libgtksourceview-vc100-2_0.dll ..\..\install /Y
+
+GOTO GTKSOURCEVIEW_END
+
+:GTKSOURCEVIEW_DEBUG
+	@echo Copying gtksourceview debug binaries
+	copy ..\..\w32deps\gtksourceview-2.0\bin\libgtksourceview-vc100-d-2_0.dll ..\..\install /Y
+
+:GTKSOURCEVIEW_END
 
 @rem Copy the GTKGlext x86 DLLs to install
 copy ..\..\w32deps\gtkglext\bin\libgdkglext.dll ..\..\install /Y
