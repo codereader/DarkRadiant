@@ -85,4 +85,16 @@ copy ..\..\w32deps\gtkglext\bin\libgdkglext.dll ..\..\install /Y
 copy ..\..\w32deps\gtkglext\bin\libgtkglext.dll ..\..\install /Y
 
 @rem Copy the libxml2 x86 DLL to install
-copy ..\..\w32deps\libxml2\bin\libxml2.dll ..\..\install /Y
+IF "%1" == "Debug" GOTO LIBXML2_DEBUG
+
+:LIBXML2_RELEASE
+	@echo Copying libxml2 release binaries
+	copy ..\..\w32deps\libxml2\bin\libxml2-vc100.dll ..\..\install /Y
+
+GOTO LIBXML2_END
+
+:LIBXML2_DEBUG
+	@echo Copying libxml2 debug binaries
+	copy ..\..\w32deps\libxml2\bin\libxml2-d-vc100.dll ..\..\install /Y
+
+:LIBXML2_END
