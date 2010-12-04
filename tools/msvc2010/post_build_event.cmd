@@ -93,8 +93,21 @@ GOTO GTKSOURCEVIEW_END
 :GTKSOURCEVIEW_END
 
 @rem Copy the GTKGlext x86 DLLs to install
-copy ..\..\w32deps\gtkglext\bin\libgdkglext.dll ..\..\install /Y
-copy ..\..\w32deps\gtkglext\bin\libgtkglext.dll ..\..\install /Y
+IF "%1" == "Debug" GOTO GTKGLEXT_DEBUG
+
+:GTKGLEXT_RELEASE
+	@echo Copying GTKGlext release binaries
+	copy ..\..\w32deps\gtkglext\bin\libgdkglext-vc100-1_2.dll ..\..\install /Y
+	copy ..\..\w32deps\gtkglext\bin\libgtkglext-vc100-1_2.dll ..\..\install /Y
+
+GOTO GTKGLEXT_END
+
+:GTKGLEXT_DEBUG
+	@echo Copying GTKGlext debug binaries
+	copy ..\..\w32deps\gtkglext\bin\libgdkglext-vc100-d-1_2.dll ..\..\install /Y
+	copy ..\..\w32deps\gtkglext\bin\libgtkglext-vc100-d-1_2.dll ..\..\install /Y
+
+:GTKGLEXT_END
 
 @rem Copy the libxml2 x86 DLL to install
 IF "%1" == "Debug" GOTO LIBXML2_DEBUG
