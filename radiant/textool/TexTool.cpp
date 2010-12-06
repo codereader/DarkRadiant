@@ -97,11 +97,6 @@ void TexTool::keyChanged(const std::string& key, const std::string& val)
 
 void TexTool::populateWindow()
 {
-	// Load the texture toolbar from the registry
-    IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-	Gtk::Toolbar* textoolbar = tbCreator.getToolbar("textool");
-	textoolbar->unset_flags(Gtk::CAN_FOCUS);
-
 	// Create the GL widget
 	Gtk::Frame* frame = Gtk::manage(new gtkutil::FramedWidget(*_glWidget));
 
@@ -126,8 +121,13 @@ void TexTool::populateWindow()
 	// Create a top-level vbox, pack it and add it to the window
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
 
+	// Load the texture toolbar from the registry
+    IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+	Gtk::Toolbar* textoolbar = tbCreator.getToolbar("textool");
+
 	if (textoolbar != NULL)
 	{
+		textoolbar->unset_flags(Gtk::CAN_FOCUS);
     	vbox->pack_start(*textoolbar, false, false, 0);
     }
 
