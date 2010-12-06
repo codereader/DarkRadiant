@@ -82,9 +82,14 @@ void UIManager::addLocalBitmapsAsIconFactory()
 
 			_iconFactory->add(stockID, is);
 		}
+		catch (Gdk::PixbufError& ex)
+		{
+			globalWarningStream() << "Could not load pixbuf from file: " <<
+				filename << ": " << ex.what() << std::endl;
+		}
 		catch (Glib::FileError& ex)
 		{
-			globalErrorStream() << "Could not load pixbuf file: " <<
+			globalWarningStream() << "Could not load pixbuf from file: " <<
 				filename << ": " << ex.what() << std::endl;
 		}
     }
