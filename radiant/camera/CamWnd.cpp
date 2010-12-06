@@ -218,6 +218,14 @@ void CamWnd::constructGUIComponents()
         sigc::mem_fun(*this, &CamWnd::farClipPlaneOut)
     );
 
+    // Hide the toolbar if requested
+    if (!getCameraSettings()->showCameraToolbar())
+    {
+        Gtk::Widget* toolbar = getGladeWidget<Gtk::Widget>("camToolbar");
+        toolbar->hide();
+        toolbar->set_no_show_all(true);
+    }
+
     // Set up GL widget
 	_camGLWidget->set_events(  Gdk::EXPOSURE_MASK 
                              | Gdk::BUTTON_PRESS_MASK 

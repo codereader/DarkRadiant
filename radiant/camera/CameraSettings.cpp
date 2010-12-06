@@ -42,7 +42,8 @@ CameraSettings::CameraSettings() :
 	constructPreferencePage();
 }
 
-void CameraSettings::constructPreferencePage() {
+void CameraSettings::constructPreferencePage() 
+{
 	PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Camera"));
 
 	// Add the sliders for the movement and angle speed and connect them to the observer
@@ -60,15 +61,29 @@ void CameraSettings::constructPreferencePage() {
 	// States whether the selection boxes are stippled or not
 	page->appendCheckBox("", _("Solid selection boxes"), RKEY_SOLID_SELECTION_BOXES);
 
-	// Create the string list containing the render mode captions
-	std::list<std::string> renderModeDescriptions;
+    // Whether to show the toolbar (to please the screenspace addicts)
+    page->appendCheckBox(
+        "", _("Show camera toolbar"), RKEY_SHOW_CAMERA_TOOLBAR
+    );
+}
 
-	renderModeDescriptions.push_back(_("WireFrame"));
-	renderModeDescriptions.push_back(_("Flatshade"));
-	renderModeDescriptions.push_back(_("Textured"));
-	renderModeDescriptions.push_back(_("Lighting"));
-
-	page->appendCombo(_("Render Mode"), RKEY_DRAWMODE, renderModeDescriptions);
+bool CameraSettings::showCameraToolbar() const
+{
+    // TODO: There must be a less verbose way of introducing a new RKEY with a
+    // default behaviour if unset.
+    if (GlobalRegistry().get(RKEY_SHOW_CAMERA_TOOLBAR) == "0")
+    {
+        return false;
+    }
+    else if (GlobalRegistry().get(RKEY_SHOW_CAMERA_TOOLBAR) == "1")
+    {
+        return true;
+    }
+    else // unset
+    {
+        GlobalRegistry().set(RKEY_SHOW_CAMERA_TOOLBAR, "1");
+        return true;
+    }
 }
 
 void CameraSettings::importDrawMode(const int mode) 
