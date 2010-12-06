@@ -10,7 +10,8 @@
  * from a RegistryKeyObserver, it can be connected to the according registry keys
  * and gets notified if any of the observed keys are changed.*/
 
-namespace {
+namespace 
+{
 	const int MAX_CUBIC_SCALE = 23;
 	const int MAX_CAMERA_SPEED = 300;
 
@@ -25,6 +26,7 @@ namespace {
 	const std::string RKEY_SOLID_SELECTION_BOXES = "user/ui/xyview/solidSelectionBoxes";
 	const std::string RKEY_TOGGLE_FREE_MOVE = RKEY_CAMERA_ROOT + "/toggleFreeMove";
 	const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
+    const std::string RKEY_SHOW_CAMERA_TOOLBAR = RKEY_CAMERA_ROOT + "/showToolbar";
 }
 
 enum CameraDrawMode 
@@ -73,6 +75,9 @@ public:
 	bool discreteMovement() const;
 	bool solidSelectionBoxes() const;
 	bool toggleFreelook() const;
+
+    /// Whether to show the camera toolbar
+    bool showCameraToolbar() const;
 
 	// Sets/returns the draw mode (wireframe, solid, textured, lighting)
 	CameraDrawMode getRenderMode() const;
