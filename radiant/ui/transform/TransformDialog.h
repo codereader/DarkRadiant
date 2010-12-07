@@ -104,8 +104,8 @@ private:
 							int row, bool isRotator, int axis);
 
 	// Callbacks to catch the scale/rotation button clicks
-	void onClickSmaller(EntryRow& row);
-	void onClickLarger(EntryRow& row);
+	void onClickSmaller(EntryRow* row);
+	void onClickLarger(EntryRow* row);
 
 	// The callback ensuring that the step changes are written to the registry
 	void onStepChanged();

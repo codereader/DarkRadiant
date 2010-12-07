@@ -84,6 +84,8 @@ void TransformDialog::onRadiantShutdown() {
 
 	// Destroy the dialog
 	destroy();
+
+	InstancePtr().reset();
 }
 
 TransformDialogPtr& TransformDialog::InstancePtr() {
@@ -199,8 +201,8 @@ void TransformDialog::populateWindow()
     	EntryRow& row = i->second;
 
 		// Pass a EntryRow pointer to the callback, that's all it will need to update
-		row.smaller->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &TransformDialog::onClickSmaller), row));
-		row.larger->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &TransformDialog::onClickLarger), row));
+		row.smaller->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &TransformDialog::onClickSmaller), &row));
+		row.larger->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &TransformDialog::onClickLarger), &row));
     }
 }
 
@@ -309,19 +311,19 @@ void TransformDialog::onStepChanged()
 	saveToRegistry();
 }
 
-void TransformDialog::onClickLarger(EntryRow& row)
+void TransformDialog::onClickLarger(EntryRow* row)
 {
 	// Get the current step increment
-	float step = strToFloat(row.step->get_text());
+	float step = strToFloat(row->step->get_text());
 
 	// Determine the action
-	if (row.isRotator)
+	if (row->isRotator)
 	{
 		// Do a rotation
 		Vector3 eulerXYZ;
 
 		// Store the value into the right axis
-		eulerXYZ[row.axis] = step * row.direction;
+		eulerXYZ[row->axis] = step * row->direction;
 
 		// Pass the call to the algorithm functions
 		selection::algorithm::rotateSelected(eulerXYZ);
@@ -332,26 +334,26 @@ void TransformDialog::onClickLarger(EntryRow& row)
 		Vector3 scaleXYZ(1,1,1);
 
 		// Store the value into the right axis
-		scaleXYZ[row.axis] = step;
+		scaleXYZ[row->axis] = step;
 
 		// Pass the call to the algorithm functions
 		selection::algorithm::scaleSelected(scaleXYZ);
 	}
 }
 
-void TransformDialog::onClickSmaller(EntryRow& row)
+void TransformDialog::onClickSmaller(EntryRow* row)
 {
 	// Get the current value and the step increment
-	float step = strToFloat(row.step->get_text());
+	float step = strToFloat(row->step->get_text());
 
 	// Determine the action
-	if (row.isRotator)
+	if (row->isRotator)
 	{
 		// Do a rotation
 		Vector3 eulerXYZ;
 
 		// Store the value into the right axis
-		eulerXYZ[row.axis] = -step * row.direction;
+		eulerXYZ[row->axis] = -step * row->direction;
 
 		// Pass the call to the algorithm functions
 		selection::algorithm::rotateSelected(eulerXYZ);
@@ -362,7 +364,7 @@ void TransformDialog::onClickSmaller(EntryRow& row)
 		Vector3 scaleXYZ(1,1,1);
 
 		// Store the value into the right axis
-		scaleXYZ[row.axis] = 1/step;
+		scaleXYZ[row->axis] = 1/step;
 
 		// Pass the call to the algorithm functions
 		selection::algorithm::scaleSelected(scaleXYZ);
