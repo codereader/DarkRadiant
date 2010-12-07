@@ -224,8 +224,8 @@ void PatchInspector::populateWindow()
     	CoordRow& row = i->second;
 
     	// Pass a CoordRow ref to the callback, that's all it will need to update
-		row.smaller->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickSmaller), row));
-		row.larger->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickLarger), row));
+		row.smaller->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickSmaller), &row));
+		row.larger->signal_clicked().connect(sigc::bind(sigc::mem_fun(*this, &PatchInspector::onClickLarger), &row));
     }
 
     // Create the title label (bold font)
@@ -664,24 +664,24 @@ void PatchInspector::onComboBoxChange()
 	loadControlVertex();
 }
 
-void PatchInspector::onClickLarger(CoordRow& row)
+void PatchInspector::onClickLarger(CoordRow* row)
 {
 	// Get the current value and the step increment
-	float value = strToFloat(row.value->get_text());
-	float step = strToFloat(row.step->get_text());
+	float value = strToFloat(row->value->get_text());
+	float step = strToFloat(row->step->get_text());
 
 	// This triggers the onCoordChange callback method
-	row.value->set_text(floatToStr(value + step));
+	row->value->set_text(floatToStr(value + step));
 }
 
-void PatchInspector::onClickSmaller(CoordRow& row)
+void PatchInspector::onClickSmaller(CoordRow* row)
 {
 	// Get the current value and the step increment
-	float value = strToFloat(row.value->get_text());
-	float step = strToFloat(row.step->get_text());
+	float value = strToFloat(row->value->get_text());
+	float step = strToFloat(row->step->get_text());
 
 	// This triggers the onCoordChange callback method
-	row.value->set_text(floatToStr(value - step));
+	row->value->set_text(floatToStr(value - step));
 }
 
 // static command target

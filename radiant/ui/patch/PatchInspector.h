@@ -145,8 +145,8 @@ private:
 	void onCoordChange();
 	void onStepChanged();
 
-	void onClickSmaller(CoordRow& row);
-	void onClickLarger(CoordRow& row);
+	void onClickSmaller(CoordRow* row);
+	void onClickLarger(CoordRow* row);
 
 	// Gets called when the "Fixed Tesselation" settings are changed
 	void onFixedTessChange();
