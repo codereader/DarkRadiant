@@ -185,6 +185,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -293,7 +295,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs 
 AM_CFLAGS = -fPIC
 pkglib_LTLIBRARIES = libpicomodel.la
 libpicomodel_la_LDFLAGS = -release @PACKAGE_VERSION@ -lm
@@ -334,9 +336,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libs/picomodel/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign libs/picomodel/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libs/picomodel/Makefile
+	  $(AUTOMAKE) --foreign libs/picomodel/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -386,7 +388,7 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libpicomodel.la: $(libpicomodel_la_OBJECTS) $(libpicomodel_la_DEPENDENCIES)
+libpicomodel.la: $(libpicomodel_la_OBJECTS) $(libpicomodel_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libpicomodel_la_LINK) -rpath $(pkglibdir) $(libpicomodel_la_OBJECTS) $(libpicomodel_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:

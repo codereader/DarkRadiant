@@ -74,8 +74,10 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
+am__DEPENDENCIES_1 =
 commandsystem_la_DEPENDENCIES =  \
-	$(top_builddir)/libs/xmlutil/libxmlutil.la
+	$(top_builddir)/libs/xmlutil/libxmlutil.la \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_commandsystem_la_OBJECTS = CommandSystem.lo
 commandsystem_la_OBJECTS = $(am_commandsystem_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
@@ -182,6 +184,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -291,12 +295,15 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
-			  $(XML_CFLAGS)
+			  $(XML_CFLAGS) $(LIBSIGC_CFLAGS)
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = commandsystem.la
-commandsystem_la_LDFLAGS = -module -avoid-version
-commandsystem_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
+commandsystem_la_LDFLAGS = -module -avoid-version 
+commandsystem_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
+                          $(XML_LIBS) \
+                          $(LIBSIGC_LIBS)
+
 commandsystem_la_SOURCES = CommandSystem.cpp
 all: all-am
 
@@ -311,9 +318,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu plugins/commandsystem/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign plugins/commandsystem/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu plugins/commandsystem/Makefile
+	  $(AUTOMAKE) --foreign plugins/commandsystem/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -363,7 +370,7 @@ clean-modulesLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-commandsystem.la: $(commandsystem_la_OBJECTS) $(commandsystem_la_DEPENDENCIES)
+commandsystem.la: $(commandsystem_la_OBJECTS) $(commandsystem_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(commandsystem_la_LINK) -rpath $(modulesdir) $(commandsystem_la_OBJECTS) $(commandsystem_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:

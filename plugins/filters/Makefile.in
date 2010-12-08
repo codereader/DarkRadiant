@@ -180,6 +180,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -288,11 +290,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
+              $(XML_CFLAGS) $(LIBSIGC_CFLAGS)
+
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = filters.la
 filters_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
-filters_la_LDFLAGS = -module -avoid-version $(REGEX_LIBS) $(XML_LIBS)
+filters_la_LDFLAGS = -module -avoid-version \
+                     $(REGEX_LIBS) $(XML_LIBS) $(LIBSIGC_LIBS)
+
 filters_la_SOURCES = XMLFilter.cpp BasicFilterSystem.cpp filters.cpp
 all: all-am
 
@@ -307,9 +313,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu plugins/filters/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign plugins/filters/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu plugins/filters/Makefile
+	  $(AUTOMAKE) --foreign plugins/filters/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -359,7 +365,7 @@ clean-modulesLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-filters.la: $(filters_la_OBJECTS) $(filters_la_DEPENDENCIES)
+filters.la: $(filters_la_OBJECTS) $(filters_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(filters_la_LINK) -rpath $(modulesdir) $(filters_la_OBJECTS) $(filters_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
