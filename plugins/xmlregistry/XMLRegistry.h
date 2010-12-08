@@ -34,13 +34,20 @@ class XMLRegistry :
 	// The map of RegistryKeyObservers. The same observer can observe several keys, and
 	// the same key can be observed by several observers, hence the multimap.
 	typedef std::multimap<const std::string, RegistryKeyObserver*> KeyObserverMap;
+	KeyObserverMap _keyObservers;
+
+    // Boolean key observers (using two separate callbacks)
+    struct TrueFalseCallbacks
+    {
+        sigc::slot<void> trueCallback;
+        sigc::slot<void> falseCallback;
+    };
+    typedef std::multimap<std::string, TrueFalseCallbacks> BooleanKeyObservers;
+    BooleanKeyObservers _boolKeyObservers;
 
 private:
 	// The default import node and toplevel node
 	std::string _topLevelNode;
-
-	// The map with all the keyobservers that are currently connected
-	KeyObserverMap _keyObservers;
 
 	// The "install" tree, is basically treated as read-only
 	RegistryTree _standardTree;
@@ -129,8 +136,10 @@ public:
 	 */
 	void exportToFile(const std::string& key, const std::string& filename);
 
-	// Add an observer watching the <observedKey> to the internal list of observers.
-	void addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey);
+	void addKeyObserver(RegistryKeyObserver*, const std::string&);
+    void addBooleanKeyObserver(
+       const std::string& key, sigc::slot<void>, sigc::slot<void>
+    );
 
 	// Removes an observer watching the <observedKey> from the internal list of observers.
 	void removeKeyObserver(RegistryKeyObserver* observer);

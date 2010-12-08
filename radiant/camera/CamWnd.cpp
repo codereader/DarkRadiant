@@ -179,7 +179,7 @@ CamWnd::CamWnd() :
 	GlobalEventManager().connect(_camGLWidget);
 }
 
-void CamWnd::constructGUIComponents()
+void CamWnd::constructToolbar()
 {
     // If lighting is not available, grey out the lighting button
     Gtk::ToggleToolButton* lightingBtn = getGladeWidget<Gtk::ToggleToolButton>(
@@ -218,13 +218,26 @@ void CamWnd::constructGUIComponents()
         sigc::mem_fun(*this, &CamWnd::farClipPlaneOut)
     );
 
+    Gtk::Widget* toolbar = getGladeWidget<Gtk::Widget>("camToolbar");
+
     // Hide the toolbar if requested
     if (!getCameraSettings()->showCameraToolbar())
     {
-        Gtk::Widget* toolbar = getGladeWidget<Gtk::Widget>("camToolbar");
         toolbar->hide();
         toolbar->set_no_show_all(true);
     }
+
+    // Connect to show/hide registry key
+    GlobalRegistry().addBooleanKeyObserver(
+       RKEY_SHOW_CAMERA_TOOLBAR,
+       sigc::mem_fun(toolbar, &Gtk::Widget::show),
+       sigc::mem_fun(toolbar, &Gtk::Widget::hide)
+    );
+}
+
+void CamWnd::constructGUIComponents()
+{
+    constructToolbar();
 
     // Set up GL widget
 	_camGLWidget->set_events(  Gdk::EXPOSURE_MASK 

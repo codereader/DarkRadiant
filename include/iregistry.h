@@ -5,6 +5,8 @@
 #include "xmlutil/Document.h"
 #include "xmlutil/Node.h"
 
+#include <sigc++/slot.h>
+
 namespace {
 	const std::string RKEY_SKIP_REGISTRY_SAVE = "user/skipRegistrySaveOnShutdown";
 }
@@ -150,7 +152,19 @@ public:
      * The registry key for which the RegistryKeyObserver should be notified.
      */
 	virtual void addKeyObserver(RegistryKeyObserver* observer,
-                               const std::string& observedKey) = 0;
+                                const std::string& observedKey) = 0;
+
+    /**
+     * \brief
+     * Observe a boolean key, invoking sigc::slots when its value is set to true
+     * or false.
+     *
+     * May be used to hide or show a GTKmm widget when a key is toggled, for
+     * example.
+     */
+    virtual void addBooleanKeyObserver(const std::string& key,
+                                       sigc::slot<void> trueCallback,
+                                       sigc::slot<void> falseCallback) = 0;
 
     /**
      * \brief Remove the given RegistryKeyObserver from the list of notifiable

@@ -182,6 +182,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -308,9 +310,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu plugins/archivezip/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign plugins/archivezip/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu plugins/archivezip/Makefile
+	  $(AUTOMAKE) --foreign plugins/archivezip/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -360,7 +362,7 @@ clean-modulesLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-archivezip.la: $(archivezip_la_OBJECTS) $(archivezip_la_DEPENDENCIES)
+archivezip.la: $(archivezip_la_OBJECTS) $(archivezip_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(archivezip_la_LINK) -rpath $(modulesdir) $(archivezip_la_OBJECTS) $(archivezip_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:

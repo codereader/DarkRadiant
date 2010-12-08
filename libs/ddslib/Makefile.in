@@ -180,6 +180,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -288,7 +290,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs 
 AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libdds.la
 libdds_la_LDFLAGS = -release @PACKAGE_VERSION@
@@ -306,9 +308,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libs/ddslib/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign libs/ddslib/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libs/ddslib/Makefile
+	  $(AUTOMAKE) --foreign libs/ddslib/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -358,7 +360,7 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libdds.la: $(libdds_la_OBJECTS) $(libdds_la_DEPENDENCIES)
+libdds.la: $(libdds_la_OBJECTS) $(libdds_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libdds_la_LINK) -rpath $(pkglibdir) $(libdds_la_OBJECTS) $(libdds_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:

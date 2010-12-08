@@ -181,6 +181,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -306,9 +308,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu libs/xmlutil/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign libs/xmlutil/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu libs/xmlutil/Makefile
+	  $(AUTOMAKE) --foreign libs/xmlutil/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -358,7 +360,7 @@ clean-pkglibLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-libxmlutil.la: $(libxmlutil_la_OBJECTS) $(libxmlutil_la_DEPENDENCIES)
+libxmlutil.la: $(libxmlutil_la_OBJECTS) $(libxmlutil_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(libxmlutil_la_LINK) -rpath $(pkglibdir) $(libxmlutil_la_OBJECTS) $(libxmlutil_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:

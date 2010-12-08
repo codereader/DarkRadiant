@@ -138,6 +138,7 @@ public:
 
 private:
     void constructGUIComponents();
+    void constructToolbar();
     void onRenderModeButtonsChanged();
     void updateActiveRenderModeButton();
 

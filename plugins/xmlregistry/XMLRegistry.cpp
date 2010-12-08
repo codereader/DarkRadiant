@@ -91,8 +91,20 @@ void XMLRegistry::exportToFile(const std::string& key, const std::string& filena
 	_userTree.exportToFile(key, filename);
 }
 
-void XMLRegistry::addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey) {
+void XMLRegistry::addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey) 
+{
 	_keyObservers.insert( std::make_pair(observedKey, observer) );
+}
+
+void XMLRegistry::addBooleanKeyObserver(const std::string& key,
+                                        sigc::slot<void> trueCallback,
+                                        sigc::slot<void> falseCallback)
+{
+    TrueFalseCallbacks cbs;
+    cbs.trueCallback = trueCallback;
+    cbs.falseCallback = falseCallback;
+
+    _boolKeyObservers.insert(std::make_pair(key, cbs));
 }
 
 // Removes an observer watching the <observedKey> from the internal list of observers.
@@ -241,6 +253,21 @@ void XMLRegistry::notifyKeyObservers(const std::string& changedKey, const std::s
 			keyObserver->keyChanged(changedKey, newVal);
 		}
 	}
+
+    // Notify any BooleanKeyObservers as well
+    if (newVal == "0" || newVal == "1")
+    {
+        BooleanKeyObservers::iterator i = _boolKeyObservers.find(changedKey);
+        while (i != _boolKeyObservers.end() && i->first == changedKey)
+        {
+            if (newVal == "0")
+                i->second.falseCallback();
+            else if (newVal == "1")
+                i->second.trueCallback();
+
+            ++i;
+        }
+    }
 }
 
 // RegisterableModule implementation

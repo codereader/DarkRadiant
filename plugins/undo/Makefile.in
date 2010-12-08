@@ -180,6 +180,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -288,7 +290,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(XML_CFLAGS) $(GLIB_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
+              $(XML_CFLAGS) $(GLIB_CFLAGS) $(LIBSIGC_CFLAGS)
+
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = undo.la
 undo_la_LDFLAGS = -module -avoid-version $(GTKMM_LIBS)
@@ -306,9 +310,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu plugins/undo/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign plugins/undo/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu plugins/undo/Makefile
+	  $(AUTOMAKE) --foreign plugins/undo/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -358,7 +362,7 @@ clean-modulesLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-undo.la: $(undo_la_OBJECTS) $(undo_la_DEPENDENCIES)
+undo.la: $(undo_la_OBJECTS) $(undo_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(undo_la_LINK) -rpath $(modulesdir) $(undo_la_OBJECTS) $(undo_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:

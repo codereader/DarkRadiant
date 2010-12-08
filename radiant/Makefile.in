@@ -343,6 +343,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -459,7 +461,7 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               -I$(libsdir) \
               $(GTKMM_CFLAGS) $(GTKGLEXTMM_CFLAGS) $(XML_CFLAGS) $(GTKSOURCEVIEWMM_CFLAGS)
 
-darkradiant_CPPFLAGS = $(AM_CPPFLAGS)
+darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
 darkradiant_LDFLAGS = $(GTKMM_LIBS) \
                       $(GTKGLEXTMM_LIBS) \
                       $(XML_LIBS) \
@@ -672,7 +674,7 @@ darkradiant_SOURCES = main.cpp \
                       log/LogFile.cpp \
                       referencecache/ModelCache.cpp \
                       referencecache/NullModel.cpp \
-                      referencecache/NullModelNode.cpp
+                      referencecache/NullModelNode.cpp 
 
 all: all-am
 
@@ -687,9 +689,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu radiant/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign radiant/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu radiant/Makefile
+	  $(AUTOMAKE) --foreign radiant/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -751,7 +753,7 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
-darkradiant$(EXEEXT): $(darkradiant_OBJECTS) $(darkradiant_DEPENDENCIES)
+darkradiant$(EXEEXT): $(darkradiant_OBJECTS) $(darkradiant_DEPENDENCIES) 
 	@rm -f darkradiant$(EXEEXT)
 	$(AM_V_CXXLD)$(darkradiant_LINK) $(darkradiant_OBJECTS) $(darkradiant_LDADD) $(LIBS)
 

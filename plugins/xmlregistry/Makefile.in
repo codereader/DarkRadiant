@@ -183,6 +183,8 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
+LIBSIGC_CFLAGS = @LIBSIGC_CFLAGS@
+LIBSIGC_LIBS = @LIBSIGC_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -293,12 +295,14 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -DPKGDATADIR='"$(pkgdatadir)"' \
 			  -I$(top_srcdir)/include -I$(top_srcdir)/libs \
-			  $(XML_CFLAGS) $(GLIB_CFLAGS)
+			  $(XML_CFLAGS) $(GLIB_CFLAGS) $(LIBSIGC_CFLAGS)
 
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = xmlregistry.la
 xmlregistry_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
-xmlregistry_la_LDFLAGS = -module -avoid-version $(XML_LIBS) $(GLIB_LIBS)
+xmlregistry_la_LDFLAGS = -module -avoid-version \
+                         $(XML_LIBS) $(GLIB_LIBS) $(LIBSIGC_LIBS)
+
 xmlregistry_la_SOURCES = RegistryTree.cpp XMLRegistry.cpp XMLRegistryModule.cpp
 all: all-am
 
@@ -313,9 +317,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu plugins/xmlregistry/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign plugins/xmlregistry/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu plugins/xmlregistry/Makefile
+	  $(AUTOMAKE) --foreign plugins/xmlregistry/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -365,7 +369,7 @@ clean-modulesLTLIBRARIES:
 	  echo "rm -f \"$${dir}/so_locations\""; \
 	  rm -f "$${dir}/so_locations"; \
 	done
-xmlregistry.la: $(xmlregistry_la_OBJECTS) $(xmlregistry_la_DEPENDENCIES)
+xmlregistry.la: $(xmlregistry_la_OBJECTS) $(xmlregistry_la_DEPENDENCIES) 
 	$(AM_V_CXXLD)$(xmlregistry_la_LINK) -rpath $(modulesdir) $(xmlregistry_la_OBJECTS) $(xmlregistry_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
