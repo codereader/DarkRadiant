@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-08-25 13:31+0200\n"
-"PO-Revision-Date: 2010-08-25 13:33+0100\n"
+"POT-Creation-Date: 2010-12-09 08:45+0100\n"
+"PO-Revision-Date: 2010-12-09 08:50+0100\n"
 "Last-Translator: MB <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -53,80 +53,64 @@ msgstr "CSG Zusammenfügen: Keine Brushes ausgewählt."
 msgid "Exactly one brush must be selected for this operation."
 msgstr "Für diese Operation muss genau ein Brush ausgewählt sein."
 
-#: ..\..\radiant\camera\CameraSettings.cpp:46
+#: ..\..\radiant\camera\CameraSettings.cpp:47
 msgid "Settings/Camera"
 msgstr "Einstellungen/Kamera"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:49
+#: ..\..\radiant\camera\CameraSettings.cpp:50
 msgid "Movement Speed (game units)"
 msgstr "Bewegungsgeschwindigkeit (in Spieleinheiten)"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:50
+#: ..\..\radiant\camera\CameraSettings.cpp:51
 msgid "Rotation Speed"
 msgstr "Rotationsgeschwindigkeit"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:53
+#: ..\..\radiant\camera\CameraSettings.cpp:54
 msgid "Freelook mode can be toggled"
 msgstr "Umschalten von/zu Umsichtsmodus erlauben"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:54
+#: ..\..\radiant\camera\CameraSettings.cpp:55
 msgid "Discrete movement (non-freelook mode)"
 msgstr "Schrittweise Bewegung (freier Umsichtsmodus aus)"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:55
+#: ..\..\radiant\camera\CameraSettings.cpp:56
 msgid "Enable far-clip plane (hides distant objects)"
 msgstr "Aktiviere hintere Clip-Ebene (ferne Objekte werden nicht angezeigt)"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:58
+#: ..\..\radiant\camera\CameraSettings.cpp:59
 msgid "Invert mouse vertical axis (freelook mode)"
 msgstr "Invertiere vertikale Mausachse (freier Umsichtsmodus)"
 
-#: ..\..\radiant\camera\CameraSettings.cpp:61
+#: ..\..\radiant\camera\CameraSettings.cpp:62
 msgid "Solid selection boxes"
 msgstr "Feste Auswahlrahmen"
 
 #: ..\..\radiant\camera\CameraSettings.cpp:66
-msgid "WireFrame"
-msgstr "Drahtgitter"
-
-#: ..\..\radiant\camera\CameraSettings.cpp:67
-msgid "Flatshade"
-msgstr "Schattiert"
-
-#: ..\..\radiant\camera\CameraSettings.cpp:68
-msgid "Textured"
-msgstr "Texturiert"
-
-#: ..\..\radiant\camera\CameraSettings.cpp:69
-msgid "Lighting"
-msgstr "Beleuchtet"
-
-#: ..\..\radiant\camera\CameraSettings.cpp:71
-msgid "Render Mode"
-msgstr "Darstellungsmodus"
+msgid "Show camera toolbar"
+msgstr "Zeige Toolbar im Kamera-Fenster"
 
 #: ..\..\radiant\camera\FloatingCamWnd.cpp:9
-#: xml_file_content.cpp:58
+#: xml_file_content.cpp:59
 msgid "Camera"
 msgstr "Kamera"
 
-#: ..\..\radiant\clipper\Clipper.cpp:39
+#: ..\..\radiant\clipper\Clipper.cpp:40
 msgid "Settings/Clipper"
 msgstr "Einstellungen/Clipper"
 
-#: ..\..\radiant\clipper\Clipper.cpp:41
+#: ..\..\radiant\clipper\Clipper.cpp:42
 msgid "Clipper tool uses caulk texture"
 msgstr "Clipper verwendet Caulk-Textur für neu erzeugte Faces."
 
-#: ..\..\radiant\clipper\Clipper.cpp:42
+#: ..\..\radiant\clipper\Clipper.cpp:43
 msgid "Caulk shader name"
 msgstr "Name des Caulk Shaders"
 
 #: ..\..\radiant\entity.cpp:93
-#: ..\..\radiant\mainframe_old.cpp:572
-#: ..\..\radiant\map\Map.cpp:478
-#: ..\..\radiant\map\Map.cpp:574
-#: ..\..\radiant\map\Map.cpp:594
+#: ..\..\radiant\mainframe_old.cpp:571
+#: ..\..\radiant\map\Map.cpp:484
+#: ..\..\radiant\map\Map.cpp:581
+#: ..\..\radiant\map\Map.cpp:601
 #: ..\..\radiant\referencecache\ModelCache.cpp:204
 #: ..\..\radiant\referencecache\ModelCache.cpp:220
 msgid "Processing..."
@@ -177,48 +161,48 @@ msgstr "Es ist nicht möglich eine Ebene ohne Namen zu erstellen."
 msgid "This name already exists."
 msgstr "Dieser Name existiert bereits"
 
-#: ..\..\radiant\main.cpp:94
+#: ..\..\radiant\main.cpp:117
 msgid "Searching for Modules"
 msgstr "Suche nach Modulen"
 
-#: ..\..\radiant\main.cpp:107
+#: ..\..\radiant\main.cpp:130
 msgid "Creating Preference Dialog"
 msgstr "Erzeuge Einstellungsdialog"
 
-#: ..\..\radiant\main.cpp:112
+#: ..\..\radiant\main.cpp:135
 msgid "Initialising MediaBrowser"
 msgstr "Initialisiere Medienbrowser"
 
-#: ..\..\radiant\main.cpp:115
+#: ..\..\radiant\main.cpp:138
 msgid "Starting MainFrame"
 msgstr "Starte Mainframe"
 
-#: ..\..\radiant\main.cpp:126
+#: ..\..\radiant\main.cpp:149
 msgid "DarkRadiant Startup Complete"
 msgstr "DarkRadiant Startphase abgeschlossen"
 
-#: ..\..\radiant\mainframe_old.cpp:128
-#: ..\..\radiant\settings\GameManager.cpp:96
-#: ..\..\radiant\settings\GameManager.cpp:276
-#: ..\..\radiant\settings\GameManager.cpp:320
+#: ..\..\radiant\mainframe_old.cpp:127
+#: ..\..\radiant\settings\GameManager.cpp:89
+#: ..\..\radiant\settings\GameManager.cpp:270
+#: ..\..\radiant\settings\GameManager.cpp:314
 #: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:293
 msgid "Game"
 msgstr "Spiel"
 
-#: ..\..\radiant\mainframe_old.cpp:129
+#: ..\..\radiant\mainframe_old.cpp:128
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: ..\..\radiant\mainframe_old.cpp:132
+#: ..\..\radiant\mainframe_old.cpp:131
 msgid "Constructing Menu"
 msgstr "Erzeuge Menü"
 
-#: ..\..\radiant\mainframe_old.cpp:144
+#: ..\..\radiant\mainframe_old.cpp:143
 #: ..\..\radiant\ui\mainframe\MainFrame.cpp:559
 msgid "Exit Radiant"
 msgstr "Verlasse Radiant"
 
-#: ..\..\radiant\mainframe_old.cpp:572
+#: ..\..\radiant\mainframe_old.cpp:571
 msgid "Loading Shaders"
 msgstr "Lade Shader"
 
@@ -269,53 +253,66 @@ msgstr "Brushnummer:"
 msgid "unnamed.map"
 msgstr "unbenannt.map"
 
-#: ..\..\radiant\map\Map.cpp:478
+#: ..\..\radiant\map\Map.cpp:484
 msgid "Saving Map"
 msgstr "Speichere Map"
 
-#  Map oder Karte?
 #: ..\..\radiant\map\Map.cpp:620
 msgid ""
-"The current map has changed since it was last saved.\n"
-"Do you want to save the current map before continuing?"
+"Save changes to map \"%1\"\n"
+"before closing?"
 msgstr ""
-"Die aktuelle Map wurde seit dem letzten Speichern geändert.\n"
-"Möchten Sie sie abspeichern bevor Sie fortfahren? "
+"Sollen die Änderungen an der Map \"%1\"\n"
+"vor dem Schließen gespeichert werden?"
 
-#: ..\..\radiant\map\Map.cpp:653
+#: ..\..\radiant\map\Map.cpp:630
+msgid "%1 minutes"
+msgstr "%1 Minuten"
+
+#: ..\..\radiant\map\Map.cpp:636
+msgid "%1 seconds"
+msgstr "%1 Sekunden"
+
+#: ..\..\radiant\map\Map.cpp:641
+msgid ""
+"If you don't save, changes from the last %1\n"
+"will be lost."
+msgstr "Wenn Du nicht sicherst, gehen die Änderungen der letzten %1 verloren."
+
+#: ..\..\radiant\map\Map.cpp:699
 msgid "Save Map"
 msgstr "Map speichern"
 
-#: ..\..\radiant\map\Map.cpp:687
+#: ..\..\radiant\map\Map.cpp:733
 msgid "Save Copy As..."
 msgstr "Speichere Kopie als..."
 
-#: ..\..\radiant\map\Map.cpp:702
+#: ..\..\radiant\map\Map.cpp:748
 msgid "Load Prefab"
 msgstr "Prefab laden"
 
-#: ..\..\radiant\map\Map.cpp:753
+#: ..\..\radiant\map\Map.cpp:799
 msgid "New Map"
 msgstr "Neue Map"
 
-#: ..\..\radiant\map\Map.cpp:763
+#: ..\..\radiant\map\Map.cpp:809
 #: ..\..\radiant\ui\mru\MRU.cpp:91
 msgid "Open Map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:768
+#: ..\..\radiant\map\Map.cpp:814
 msgid "Open map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:780
+#: ..\..\radiant\map\Map.cpp:826
 msgid "Import map"
 msgstr "Map importieren"
 
-#: ..\..\radiant\map\Map.cpp:804
+#: ..\..\radiant\map\Map.cpp:850
 msgid "Export selection"
 msgstr "Auswahl exportieren"
 
-#: ..\..\radiant\map\Map.cpp:817
+#: ..\..\radiant\map\Map.cpp:863
 msgid "Save selected as Prefab"
 msgstr "Auswahl als Prefab speichern"
 
@@ -393,11 +390,11 @@ msgstr "Patch-Tesselierungsgrenzwert"
 msgid "Cannot create caps, no patches selected."
 msgstr "Kann keine Caps erzeugen, da keine Patches ausgewählt sind."
 
-#: ..\..\radiant\patchmanip.cpp:619
+#: ..\..\radiant\patchmanip.cpp:626
 msgid "Cannot thicken patch. Nothing selected."
 msgstr "Nichts ausgewählt: kann Patch nicht extrudieren."
 
-#: ..\..\radiant\patchmanip.cpp:672
+#: ..\..\radiant\patchmanip.cpp:679
 msgid ""
 "Cannot stitch textures. \n"
 "Could not cast nodes to patches."
@@ -405,13 +402,13 @@ msgstr ""
 "Kann Texturen nicht zusammenheften.\n"
 "Konnte Nodes nicht casten."
 
-#: ..\..\radiant\patchmanip.cpp:681
+#: ..\..\radiant\patchmanip.cpp:688
 msgid ""
 "Cannot stitch patch textures. \n"
 "Exactly 2 patches must be selected."
 msgstr "Kann Texturen nicht zusammenheften, für diese Operation müssten genau 2 Patches ausgewählt sein."
 
-#: ..\..\radiant\patchmanip.cpp:715
+#: ..\..\radiant\patchmanip.cpp:722
 msgid "Cannot bulge patch. No patches selected."
 msgstr "Kann Patch nicht auswölben: keine Patches ausgewählt."
 
@@ -457,11 +454,11 @@ msgstr "Kritischer Fehler: kann ausgewählte Entities nicht finden."
 msgid "Exactly two entities must be selected for this operation."
 msgstr "Für diese Operation müssen genau zwei Entities ausgewählt sein."
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:227
+#: ..\..\radiant\selection\algorithm\Group.cpp:237
 msgid "Cannot reparent primitives to entity. Please select at least one brush/patch and exactly one entity.(The entity has to be selected last.)"
 msgstr "Kann die ausgewählten Primitive nicht neu zuordnen. Bitte zumindest einen Brush/Patch sowie eine Entity auswählen. (Die Entity muss als letztes ausgewählt worden sein.)"
 
-#: ..\..\radiant\selection\algorithm\Group.cpp:367
+#: ..\..\radiant\selection\algorithm\Group.cpp:388
 msgid ""
 "Cannot merge entities, the selection must consist of func_* entities only.\n"
 "(The first selected entity will be preserved.)"
@@ -596,55 +593,55 @@ msgstr "Shader"
 msgid "ShaderClipboard is empty."
 msgstr "Shader-Zwischenablage ist leer."
 
-#: ..\..\radiant\settings\GameManager.cpp:88
+#: ..\..\radiant\settings\GameManager.cpp:81
 msgid "GameManager: No game type selected, can't continue."
 msgstr "GameManager: kein Spieltyp ausgewählt, kann daher nicht fortfahren."
 
-#: ..\..\radiant\settings\GameManager.cpp:103
+#: ..\..\radiant\settings\GameManager.cpp:96
 msgid "Select a Game:"
 msgstr "Spiel auswählen:"
 
-#: ..\..\radiant\settings\GameManager.cpp:104
+#: ..\..\radiant\settings\GameManager.cpp:97
 msgid "Engine Path"
 msgstr "Pfad zur Engine"
 
-#: ..\..\radiant\settings\GameManager.cpp:105
+#: ..\..\radiant\settings\GameManager.cpp:98
 msgid "Mod (fs_game)"
 msgstr "Mod (fs_game)"
 
-#: ..\..\radiant\settings\GameManager.cpp:106
+#: ..\..\radiant\settings\GameManager.cpp:99
 msgid "Mod Base (fs_game_base, optional)"
 msgstr "Mod Base (fs_game_base, optional)"
 
-#: ..\..\radiant\settings\GameManager.cpp:122
+#: ..\..\radiant\settings\GameManager.cpp:115
 msgid "GameManager: No valid game files found, can't continue."
 msgstr "GameManager: keine gültigen Spieldateien (.game) gefunden, kann nicht fortfahren."
 
-#: ..\..\radiant\settings\GameManager.cpp:152
+#: ..\..\radiant\settings\GameManager.cpp:145
 msgid "No game type selected."
 msgstr "Kein Spieltyp ausgewählt."
 
-#: ..\..\radiant\settings\GameManager.cpp:286
+#: ..\..\radiant\settings\GameManager.cpp:280
 msgid "Engine path does not exist."
 msgstr "Engine-Pfad existiert nicht."
 
-#: ..\..\radiant\settings\GameManager.cpp:291
+#: ..\..\radiant\settings\GameManager.cpp:285
 msgid "The fs_game folder does not exist."
 msgstr "Das fs_game-Verzeichnis existiert nicht."
 
-#: ..\..\radiant\settings\GameManager.cpp:296
+#: ..\..\radiant\settings\GameManager.cpp:290
 msgid "The fs_game_base folder does not exist."
 msgstr "Das fs_game_base-Verzeichnis existiert nicht."
 
-#: ..\..\radiant\settings\GameManager.cpp:300
+#: ..\..\radiant\settings\GameManager.cpp:294
 msgid "Do you want to correct these settings?"
 msgstr "Möchtest Du diese Einstellungen korrigieren?"
 
-#: ..\..\radiant\settings\GameManager.cpp:302
+#: ..\..\radiant\settings\GameManager.cpp:296
 msgid "Invalid Settings"
 msgstr "Ungültige Einstellungen"
 
-#: ..\..\radiant\settings\GameManager.cpp:321
+#: ..\..\radiant\settings\GameManager.cpp:315
 msgid "<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect."
 msgstr "<b>Hinweis</b>: Du musst DarkRadiant neu starten, damit die Änderungen wirksam werden."
 
@@ -660,725 +657,725 @@ msgstr "Sprache"
 msgid "<b>Note:</b> You'll need to restart DarkRadiant after changing the language setting."
 msgstr "<b>Hinweis</b>: Du musst DarkRadiant neu starten, damit die neue Spracheinstellung aktiv wird."
 
-#: ..\..\radiant\settings\LanguageManager.cpp:234
-#: ..\..\radiant\settings\LanguageManager.cpp:271
+#: ..\..\radiant\settings\LanguageManager.cpp:235
+#: ..\..\radiant\settings\LanguageManager.cpp:272
 msgid "English"
 msgstr "Englisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:235
+#: ..\..\radiant\settings\LanguageManager.cpp:236
 msgid "Abkhazian"
 msgstr "Abchasisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:236
+#: ..\..\radiant\settings\LanguageManager.cpp:237
 msgid "Avestan"
 msgstr "Avestisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:237
+#: ..\..\radiant\settings\LanguageManager.cpp:238
 msgid "Afrikaans"
 msgstr "Afrikaans"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:238
+#: ..\..\radiant\settings\LanguageManager.cpp:239
 msgid "Akan"
 msgstr "Akan"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:239
+#: ..\..\radiant\settings\LanguageManager.cpp:240
 msgid "Amharic"
 msgstr "Amharisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:240
+#: ..\..\radiant\settings\LanguageManager.cpp:241
 msgid "Aragonese"
 msgstr "Aragonesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:241
+#: ..\..\radiant\settings\LanguageManager.cpp:242
 msgid "Arabic"
 msgstr "Arabisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:242
+#: ..\..\radiant\settings\LanguageManager.cpp:243
 msgid "Assamese"
 msgstr "Assamesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:243
+#: ..\..\radiant\settings\LanguageManager.cpp:244
 msgid "Avaric"
 msgstr "Awarisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:244
+#: ..\..\radiant\settings\LanguageManager.cpp:245
 msgid "Aymara"
 msgstr "Aymara"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:245
+#: ..\..\radiant\settings\LanguageManager.cpp:246
 msgid "Azerbaijani"
 msgstr "Aserbaidschanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:246
+#: ..\..\radiant\settings\LanguageManager.cpp:247
 msgid "Bashkir"
 msgstr "Baschkirisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:247
+#: ..\..\radiant\settings\LanguageManager.cpp:248
 msgid "Belarusian"
 msgstr "Belarussisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:248
+#: ..\..\radiant\settings\LanguageManager.cpp:249
 msgid "Bulgarian"
 msgstr "Bulgarisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:249
+#: ..\..\radiant\settings\LanguageManager.cpp:250
 msgid "Bihari languages"
 msgstr "Bihari"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:250
+#: ..\..\radiant\settings\LanguageManager.cpp:251
 msgid "Bislama"
 msgstr "Bislama"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:251
+#: ..\..\radiant\settings\LanguageManager.cpp:252
 msgid "Bambara"
 msgstr "Bambara"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:252
+#: ..\..\radiant\settings\LanguageManager.cpp:253
 msgid "Bengali"
 msgstr "Bengalisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:253
+#: ..\..\radiant\settings\LanguageManager.cpp:254
 msgid "Tibetan"
 msgstr "Tibetanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:254
+#: ..\..\radiant\settings\LanguageManager.cpp:255
 msgid "Breton"
 msgstr "Bretonisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:255
+#: ..\..\radiant\settings\LanguageManager.cpp:256
 msgid "Bosnian"
 msgstr "Bosnisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:256
+#: ..\..\radiant\settings\LanguageManager.cpp:257
 msgid "Catalan"
 msgstr "Katalanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:257
+#: ..\..\radiant\settings\LanguageManager.cpp:258
 msgid "Chechen"
 msgstr "Tschetschenisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:258
+#: ..\..\radiant\settings\LanguageManager.cpp:259
 msgid "Chamorro"
 msgstr "Chamorro"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:259
+#: ..\..\radiant\settings\LanguageManager.cpp:260
 msgid "Corsican"
 msgstr "Korsisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:260
+#: ..\..\radiant\settings\LanguageManager.cpp:261
 msgid "Cree"
 msgstr "Cree"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:261
+#: ..\..\radiant\settings\LanguageManager.cpp:262
 msgid "Czech"
 msgstr "Tschechisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:262
+#: ..\..\radiant\settings\LanguageManager.cpp:263
 msgid "Chuvash"
 msgstr "Tschuwaschisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:263
 #: ..\..\radiant\settings\LanguageManager.cpp:264
+#: ..\..\radiant\settings\LanguageManager.cpp:265
 msgid "Welsh"
 msgstr "Walisisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:265
+#: ..\..\radiant\settings\LanguageManager.cpp:266
 msgid "Danish"
 msgstr "Dänisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:266
+#: ..\..\radiant\settings\LanguageManager.cpp:267
 msgid "German"
 msgstr "Deutsch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:267
+#: ..\..\radiant\settings\LanguageManager.cpp:268
 msgid "Divehi"
 msgstr "Dhivehi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:268
+#: ..\..\radiant\settings\LanguageManager.cpp:269
 msgid "Dzongkha"
 msgstr "Dzongkha"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:269
+#: ..\..\radiant\settings\LanguageManager.cpp:270
 msgid "Ewe"
 msgstr "Ewe"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:270
+#: ..\..\radiant\settings\LanguageManager.cpp:271
 msgid "Greek"
 msgstr "Griechisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:272
+#: ..\..\radiant\settings\LanguageManager.cpp:273
 msgid "Esperanto"
 msgstr "Esperanto"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:273
+#: ..\..\radiant\settings\LanguageManager.cpp:274
 msgid "Spanish"
 msgstr "Spanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:274
+#: ..\..\radiant\settings\LanguageManager.cpp:275
 msgid "Estonian"
 msgstr "Estnisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:275
+#: ..\..\radiant\settings\LanguageManager.cpp:276
 msgid "Basque"
 msgstr "Baskisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:276
+#: ..\..\radiant\settings\LanguageManager.cpp:277
 msgid "Persian"
 msgstr "Persisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:277
+#: ..\..\radiant\settings\LanguageManager.cpp:278
 msgid "Fulah"
 msgstr "Fulah"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:278
+#: ..\..\radiant\settings\LanguageManager.cpp:279
 msgid "Finnish"
 msgstr "Finnisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:279
+#: ..\..\radiant\settings\LanguageManager.cpp:280
 msgid "Fijian"
 msgstr "Fidschi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:280
+#: ..\..\radiant\settings\LanguageManager.cpp:281
 msgid "Faroese"
 msgstr "Färöisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:281
+#: ..\..\radiant\settings\LanguageManager.cpp:282
 msgid "French"
 msgstr "Französisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:282
+#: ..\..\radiant\settings\LanguageManager.cpp:283
 msgid "Western Frisian"
 msgstr "Westfriesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:283
+#: ..\..\radiant\settings\LanguageManager.cpp:284
 msgid "Irish"
 msgstr "Irisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:284
+#: ..\..\radiant\settings\LanguageManager.cpp:285
 msgid "Gaelic; Scottish Gaelic"
 msgstr "Gälisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:285
+#: ..\..\radiant\settings\LanguageManager.cpp:286
 msgid "Galician"
 msgstr "Galicische"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:286
+#: ..\..\radiant\settings\LanguageManager.cpp:287
 msgid "Guarani"
 msgstr "Guaraní"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:287
+#: ..\..\radiant\settings\LanguageManager.cpp:288
 msgid "Gujarati"
 msgstr "Gujarati"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:288
+#: ..\..\radiant\settings\LanguageManager.cpp:289
 msgid "Manx"
 msgstr "Manx-Gälisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:289
+#: ..\..\radiant\settings\LanguageManager.cpp:290
 msgid "Hausa"
 msgstr "Hausa"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:290
+#: ..\..\radiant\settings\LanguageManager.cpp:291
 msgid "Hebrew"
 msgstr "Hebräisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:291
+#: ..\..\radiant\settings\LanguageManager.cpp:292
 msgid "Hindi"
 msgstr "Hindi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:292
+#: ..\..\radiant\settings\LanguageManager.cpp:293
 msgid "Hiri Motu"
 msgstr "Hiri Motu"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:293
+#: ..\..\radiant\settings\LanguageManager.cpp:294
 msgid "Croatian"
 msgstr "Kroatisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:294
+#: ..\..\radiant\settings\LanguageManager.cpp:295
 msgid "Haitian"
 msgstr "Haitianisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:295
+#: ..\..\radiant\settings\LanguageManager.cpp:296
 msgid "Hungarian"
 msgstr "Ungarisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:296
+#: ..\..\radiant\settings\LanguageManager.cpp:297
 msgid "Armenian"
 msgstr "Armenisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:297
+#: ..\..\radiant\settings\LanguageManager.cpp:298
 msgid "Herero"
 msgstr "Herero"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:298
+#: ..\..\radiant\settings\LanguageManager.cpp:299
 msgid "Interlingua"
 msgstr "Interlingua"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:299
+#: ..\..\radiant\settings\LanguageManager.cpp:300
 msgid "Indonesian"
 msgstr "Indonesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:300
+#: ..\..\radiant\settings\LanguageManager.cpp:301
 msgid "Interlingue; Occidental"
 msgstr "Occidental-Interlingue"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:301
+#: ..\..\radiant\settings\LanguageManager.cpp:302
 msgid "Igbo"
 msgstr "Igbo"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:302
+#: ..\..\radiant\settings\LanguageManager.cpp:303
 msgid "Sichuan Yi; Nuosu"
 msgstr "Yi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:303
+#: ..\..\radiant\settings\LanguageManager.cpp:304
 msgid "Inupiaq"
 msgstr "Inupiaq"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:304
+#: ..\..\radiant\settings\LanguageManager.cpp:305
 msgid "Ido"
 msgstr "Ido"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:305
+#: ..\..\radiant\settings\LanguageManager.cpp:306
 msgid "Icelandic"
 msgstr "Isländisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:306
+#: ..\..\radiant\settings\LanguageManager.cpp:307
 msgid "Italian"
 msgstr "Italienisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:307
+#: ..\..\radiant\settings\LanguageManager.cpp:308
 msgid "Inuktitut"
 msgstr "Inuktitut"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:308
+#: ..\..\radiant\settings\LanguageManager.cpp:309
 msgid "Japanese"
 msgstr "Japanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:309
+#: ..\..\radiant\settings\LanguageManager.cpp:310
 msgid "Javanese"
 msgstr "Javanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:310
+#: ..\..\radiant\settings\LanguageManager.cpp:311
 msgid "Georgian"
 msgstr "Georgisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:311
+#: ..\..\radiant\settings\LanguageManager.cpp:312
 msgid "Kongo"
 msgstr "Kongo"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:312
+#: ..\..\radiant\settings\LanguageManager.cpp:313
 msgid "Kikuyu"
 msgstr "Kikuyu"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:313
+#: ..\..\radiant\settings\LanguageManager.cpp:314
 msgid "Kuanyama"
 msgstr "Kwanyama"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:314
+#: ..\..\radiant\settings\LanguageManager.cpp:315
 msgid "Kazakh"
 msgstr "Kasachisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:315
+#: ..\..\radiant\settings\LanguageManager.cpp:316
 msgid "Kalaallisut; Greenlandic"
 msgstr "Grönländisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:316
+#: ..\..\radiant\settings\LanguageManager.cpp:317
 msgid "Central Khmer"
 msgstr "Khmer"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:317
+#: ..\..\radiant\settings\LanguageManager.cpp:318
 msgid "Kannada"
 msgstr "Kanaresisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:318
+#: ..\..\radiant\settings\LanguageManager.cpp:319
 msgid "Korean"
 msgstr "Koreanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:319
+#: ..\..\radiant\settings\LanguageManager.cpp:320
 msgid "Kanuri"
 msgstr "Kanuri"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:320
+#: ..\..\radiant\settings\LanguageManager.cpp:321
 msgid "Kashmiri"
 msgstr "Kashmiri"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:321
+#: ..\..\radiant\settings\LanguageManager.cpp:322
 msgid "Kurdish"
 msgstr "Kurdisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:322
+#: ..\..\radiant\settings\LanguageManager.cpp:323
 msgid "Komi"
 msgstr "Komi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:323
+#: ..\..\radiant\settings\LanguageManager.cpp:324
 msgid "Cornish"
 msgstr "Kornisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:324
+#: ..\..\radiant\settings\LanguageManager.cpp:325
 msgid "Kirghiz"
 msgstr "Kirgisisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:325
+#: ..\..\radiant\settings\LanguageManager.cpp:326
 msgid "Latin"
 msgstr "Lateinisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:326
+#: ..\..\radiant\settings\LanguageManager.cpp:327
 msgid "Luxembourgish"
 msgstr "Luxemburgisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:327
+#: ..\..\radiant\settings\LanguageManager.cpp:328
 msgid "Ganda"
 msgstr "Luganda"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:328
+#: ..\..\radiant\settings\LanguageManager.cpp:329
 msgid "Limburgan"
 msgstr "Limburgisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:329
+#: ..\..\radiant\settings\LanguageManager.cpp:330
 msgid "Lingala"
 msgstr "Lingála"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:330
+#: ..\..\radiant\settings\LanguageManager.cpp:331
 msgid "Lao"
 msgstr "Lao"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:331
+#: ..\..\radiant\settings\LanguageManager.cpp:332
 msgid "Lithuanian"
 msgstr "Litauisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:332
+#: ..\..\radiant\settings\LanguageManager.cpp:333
 msgid "Luba-Katanga"
 msgstr "Luba-Katanga"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:333
+#: ..\..\radiant\settings\LanguageManager.cpp:334
 msgid "Latvian"
 msgstr "Lettisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:334
+#: ..\..\radiant\settings\LanguageManager.cpp:335
 msgid "Malagasy"
 msgstr "Malagasy"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:335
+#: ..\..\radiant\settings\LanguageManager.cpp:336
 msgid "Marshallese"
 msgstr "Marshallesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:336
+#: ..\..\radiant\settings\LanguageManager.cpp:337
 msgid "Maori"
 msgstr "Maori"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:337
+#: ..\..\radiant\settings\LanguageManager.cpp:338
 msgid "Macedonian"
 msgstr "Mazedonisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:338
+#: ..\..\radiant\settings\LanguageManager.cpp:339
 msgid "Malayalam"
 msgstr "Malayalam"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:339
+#: ..\..\radiant\settings\LanguageManager.cpp:340
 msgid "Mongolian"
 msgstr "Mongolisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:340
+#: ..\..\radiant\settings\LanguageManager.cpp:341
 msgid "Marathi"
 msgstr "Marathi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:341
+#: ..\..\radiant\settings\LanguageManager.cpp:342
 msgid "Malay"
 msgstr "Malaiisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:342
+#: ..\..\radiant\settings\LanguageManager.cpp:343
 msgid "Maltese"
 msgstr "Maltesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:343
+#: ..\..\radiant\settings\LanguageManager.cpp:344
 msgid "Burmese"
 msgstr "Burmesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:344
+#: ..\..\radiant\settings\LanguageManager.cpp:345
 msgid "Nauru"
 msgstr "Nauruisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:345
+#: ..\..\radiant\settings\LanguageManager.cpp:346
 msgid "Ndebele, North"
 msgstr "IsiNdebele"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:346
+#: ..\..\radiant\settings\LanguageManager.cpp:347
 msgid "Nepali"
 msgstr "Nepalesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:347
+#: ..\..\radiant\settings\LanguageManager.cpp:348
 msgid "Ndonga"
 msgstr "Ndonga"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:348
+#: ..\..\radiant\settings\LanguageManager.cpp:349
 msgid "Dutch"
 msgstr "Dänisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:349
+#: ..\..\radiant\settings\LanguageManager.cpp:350
 msgid "Norwegian"
 msgstr "Norwegisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:350
+#: ..\..\radiant\settings\LanguageManager.cpp:351
 msgid "Ndebele, South"
 msgstr "Süd-Ndebele"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:351
+#: ..\..\radiant\settings\LanguageManager.cpp:352
 msgid "Navajo"
 msgstr "Navajo"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:352
+#: ..\..\radiant\settings\LanguageManager.cpp:353
 msgid "Chichewa"
 msgstr "Chichewa"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:353
+#: ..\..\radiant\settings\LanguageManager.cpp:354
 msgid "Occitan"
 msgstr "Okzitanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:354
+#: ..\..\radiant\settings\LanguageManager.cpp:355
 msgid "Ojibwa"
 msgstr "Ojibwe"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:355
+#: ..\..\radiant\settings\LanguageManager.cpp:356
 msgid "Oromo"
 msgstr "Oromo"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:356
+#: ..\..\radiant\settings\LanguageManager.cpp:357
 msgid "Oriya"
 msgstr "Oriya"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:357
+#: ..\..\radiant\settings\LanguageManager.cpp:358
 msgid "Ossetian"
 msgstr "Ossetisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:358
+#: ..\..\radiant\settings\LanguageManager.cpp:359
 msgid "Panjabi"
 msgstr "Panjabi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:359
+#: ..\..\radiant\settings\LanguageManager.cpp:360
 msgid "Pali"
 msgstr "Pali"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:360
+#: ..\..\radiant\settings\LanguageManager.cpp:361
 msgid "Polish"
 msgstr "Polnisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:361
+#: ..\..\radiant\settings\LanguageManager.cpp:362
 msgid "Pushto"
 msgstr "Paschtunisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:362
+#: ..\..\radiant\settings\LanguageManager.cpp:363
 msgid "Portuguese"
 msgstr "Portugiesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:363
+#: ..\..\radiant\settings\LanguageManager.cpp:364
 msgid "Quechua"
 msgstr "Quechua"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:364
+#: ..\..\radiant\settings\LanguageManager.cpp:365
 msgid "Romansh"
 msgstr "Rätoromanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:365
+#: ..\..\radiant\settings\LanguageManager.cpp:366
 msgid "Rundi"
 msgstr "Kirundi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:366
+#: ..\..\radiant\settings\LanguageManager.cpp:367
 msgid "Romanian"
 msgstr "Rumänisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:367
+#: ..\..\radiant\settings\LanguageManager.cpp:368
 msgid "Russian"
 msgstr "Russisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:368
+#: ..\..\radiant\settings\LanguageManager.cpp:369
 msgid "Kinyarwanda"
 msgstr "Kinyarwanda"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:369
+#: ..\..\radiant\settings\LanguageManager.cpp:370
 msgid "Sanskrit"
 msgstr "Sanskrit"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:370
+#: ..\..\radiant\settings\LanguageManager.cpp:371
 msgid "Sardinian"
 msgstr "Sardisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:371
+#: ..\..\radiant\settings\LanguageManager.cpp:372
 msgid "Sindhi"
 msgstr "Sindhi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:372
+#: ..\..\radiant\settings\LanguageManager.cpp:373
 msgid "Northern Sami"
 msgstr "Nordsamisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:373
+#: ..\..\radiant\settings\LanguageManager.cpp:374
 msgid "Sango"
 msgstr "Sango"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:374
+#: ..\..\radiant\settings\LanguageManager.cpp:375
 msgid "Sinhala"
 msgstr "Singhalesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:375
+#: ..\..\radiant\settings\LanguageManager.cpp:376
 msgid "Slovak"
 msgstr "Slowakisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:376
+#: ..\..\radiant\settings\LanguageManager.cpp:377
 msgid "Slovenian"
 msgstr "Slowenisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:377
+#: ..\..\radiant\settings\LanguageManager.cpp:378
 msgid "Samoan"
 msgstr "Samoisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:378
+#: ..\..\radiant\settings\LanguageManager.cpp:379
 msgid "Shona"
 msgstr "Shona"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:379
+#: ..\..\radiant\settings\LanguageManager.cpp:380
 msgid "Somali"
 msgstr "Somali"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:380
+#: ..\..\radiant\settings\LanguageManager.cpp:381
 msgid "Albanian"
 msgstr "Albanisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:381
+#: ..\..\radiant\settings\LanguageManager.cpp:382
 msgid "Serbian"
 msgstr "Serbisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:382
+#: ..\..\radiant\settings\LanguageManager.cpp:383
 msgid "Swati"
 msgstr "Siswati"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:383
+#: ..\..\radiant\settings\LanguageManager.cpp:384
 msgid "Sotho, Southern"
 msgstr "Süd-Sotho"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:384
+#: ..\..\radiant\settings\LanguageManager.cpp:385
 msgid "Sundanese"
 msgstr "Sundanesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:385
+#: ..\..\radiant\settings\LanguageManager.cpp:386
 msgid "Swedish"
 msgstr "Schwedisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:386
+#: ..\..\radiant\settings\LanguageManager.cpp:387
 msgid "Swahili"
 msgstr "Swahili"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:387
+#: ..\..\radiant\settings\LanguageManager.cpp:388
 msgid "Tamil"
 msgstr "Tamilisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:388
+#: ..\..\radiant\settings\LanguageManager.cpp:389
 msgid "Telugu"
 msgstr "Telugu"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:389
+#: ..\..\radiant\settings\LanguageManager.cpp:390
 msgid "Tajik"
 msgstr "Tadschikisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:390
+#: ..\..\radiant\settings\LanguageManager.cpp:391
 msgid "Thai"
 msgstr "Thailändisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:391
+#: ..\..\radiant\settings\LanguageManager.cpp:392
 msgid "Tigrinya"
 msgstr "Tigrinya"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:392
+#: ..\..\radiant\settings\LanguageManager.cpp:393
 msgid "Turkmen"
 msgstr "Turkmenisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:393
+#: ..\..\radiant\settings\LanguageManager.cpp:394
 msgid "Tagalog"
 msgstr "Tagalog"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:394
+#: ..\..\radiant\settings\LanguageManager.cpp:395
 msgid "Tswana"
 msgstr "Tswana"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:395
+#: ..\..\radiant\settings\LanguageManager.cpp:396
 msgid "Tonga"
 msgstr "Tonga"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:396
+#: ..\..\radiant\settings\LanguageManager.cpp:397
 msgid "Turkish"
 msgstr "Türkisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:397
+#: ..\..\radiant\settings\LanguageManager.cpp:398
 msgid "Tsonga"
 msgstr "Tsonga"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:398
+#: ..\..\radiant\settings\LanguageManager.cpp:399
 msgid "Tatar"
 msgstr "Tatarisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:399
+#: ..\..\radiant\settings\LanguageManager.cpp:400
 msgid "Twi"
 msgstr "Twi"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:400
+#: ..\..\radiant\settings\LanguageManager.cpp:401
 msgid "Tahitian"
 msgstr "Tahitianisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:401
+#: ..\..\radiant\settings\LanguageManager.cpp:402
 msgid "Uighur"
 msgstr "Uigurisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:402
+#: ..\..\radiant\settings\LanguageManager.cpp:403
 msgid "Ukrainian"
 msgstr "Ukrainisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:403
+#: ..\..\radiant\settings\LanguageManager.cpp:404
 msgid "Urdu"
 msgstr "Urdu"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:404
+#: ..\..\radiant\settings\LanguageManager.cpp:405
 msgid "Uzbek"
 msgstr "Usbekisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:405
+#: ..\..\radiant\settings\LanguageManager.cpp:406
 msgid "Venda"
 msgstr "Venda"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:406
+#: ..\..\radiant\settings\LanguageManager.cpp:407
 msgid "Vietnamese"
 msgstr "Vietnamesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:407
+#: ..\..\radiant\settings\LanguageManager.cpp:408
 msgid "Volapuek"
 msgstr "Volapük"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:408
+#: ..\..\radiant\settings\LanguageManager.cpp:409
 msgid "Walloon"
 msgstr "Wallonisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:409
+#: ..\..\radiant\settings\LanguageManager.cpp:410
 msgid "Wolof"
 msgstr "Wolof"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:410
+#: ..\..\radiant\settings\LanguageManager.cpp:411
 msgid "Xhosa"
 msgstr "Xhosa"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:411
+#: ..\..\radiant\settings\LanguageManager.cpp:412
 msgid "Yiddish"
 msgstr "Yiddisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:412
+#: ..\..\radiant\settings\LanguageManager.cpp:413
 msgid "Yoruba"
 msgstr "Yoruba"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:413
+#: ..\..\radiant\settings\LanguageManager.cpp:414
 msgid "Zhuang"
 msgstr "Zhuang"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:414
+#: ..\..\radiant\settings\LanguageManager.cpp:415
 msgid "Chinese"
 msgstr "Chinesisch"
 
-#: ..\..\radiant\settings\LanguageManager.cpp:415
+#: ..\..\radiant\settings\LanguageManager.cpp:416
 msgid "Zulu"
 msgstr "Zulu"
 
@@ -1551,8 +1548,9 @@ msgid "Defined in"
 msgstr "Definiert in"
 
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:347
+#: ..\..\radiant\ui\common\ShaderSelector.cpp:389
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:97
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:166
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:167
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -1704,7 +1702,7 @@ msgstr "Z:"
 msgid "Create entity"
 msgstr "Neue Entity"
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:186
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:215
 #: ..\..\plugins\eclasstree\EClassTree.cpp:94
 msgid "Classname"
 msgstr "Klassenname"
@@ -1878,7 +1876,7 @@ msgid "Could not rename layer, please try again."
 msgstr "Konnte Ebene nicht umbenennen, bitte nochmals versuchen."
 
 #: ..\..\radiant\ui\layers\LayerControlDialog.cpp:28
-#: xml_file_content.cpp:48
+#: xml_file_content.cpp:49
 msgid "Layers"
 msgstr "Ebenen"
 
@@ -1942,7 +1940,7 @@ msgstr "Lichttextur"
 #: ..\..\radiant\ui\mainframe\EmbeddedLayout.cpp:109
 #: ..\..\radiant\ui\mainframe\FloatingLayout.cpp:66
 #: ..\..\radiant\ui\mainframe\SplitPaneLayout.cpp:106
-#: xml_file_content.cpp:50
+#: xml_file_content.cpp:51
 msgid "Texture Browser"
 msgstr "Texturbrowser"
 
@@ -2215,35 +2213,39 @@ msgid "Convert to func_static"
 msgstr "In func_static umwandeln"
 
 #: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:73
+msgid "Reparent primitives"
+msgstr "Primitive neu zuordnen"
+
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:74
 msgid "Revert to worldspawn"
 msgstr "Zu Worldspawn umwandeln"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:74
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:75
 msgid "Revert part to worldspawn"
 msgstr "Teil zu Worldspawn umwandeln"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:77
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:78
 msgid "Merge Entities"
 msgstr "Entities zusammenführen"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:78
-#: xml_file_content.cpp:151
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:79
+#: xml_file_content.cpp:152
 msgid "Make Visportal"
 msgstr "Erzeuge Visportal"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:320
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:326
 msgid "Unable to create light, classname not found."
 msgstr "Kann Licht nicht erzeugen, Klassenname nicht gefunden."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:350
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:356
 msgid "Unable to create speaker, classname not found."
 msgstr "Kann Speaker nicht erzeugen, Klassenname nicht gefunden."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:422
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:428
 msgid "Unable to create model, classname not found."
 msgstr "Kann Modell nicht erzeugen, Klassenname nicht gefunden."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:431
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:437
 msgid "Either nothing or exactly one brush must be selected for model creation"
 msgstr "Für diese Operation muss genau eine oder gar keine Brush ausgewählt sein."
 
@@ -2291,11 +2293,11 @@ msgstr "Bild zusammen mit 2D-Ansicht zoomen"
 msgid "Pan image with viewport"
 msgstr "Bild zusammen mit 2D-Ansicht verschieben"
 
-#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:23
+#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:25
 msgid "Choose particles"
 msgstr "Partikel auswählen"
 
-#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:52
+#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:73
 msgid "Particle"
 msgstr "Partikel"
 
@@ -2336,7 +2338,7 @@ msgid "Create Flat Patch Mesh"
 msgstr "Neuer flacher Patch"
 
 #: ..\..\radiant\ui\patch\PatchCreateDialog.cpp:19
-#: xml_file_content.cpp:153
+#: xml_file_content.cpp:154
 msgid "Create Simple Patch Mesh"
 msgstr "Neuer einfacher Patch"
 
@@ -2491,12 +2493,12 @@ msgid "Bottom"
 msgstr "Unten"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:64
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:346
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:356
 msgid "Right"
 msgstr "Rechts"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:65
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:343
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:353
 msgid "Left"
 msgstr "Links"
 
@@ -2533,7 +2535,7 @@ msgstr "Standardskalierung:"
 msgid "Texture Lock"
 msgstr "Textur-Lock"
 
-#: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:712
+#: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:704
 msgid "Both fit values must be > 0."
 msgstr "Beide Fit-Werte müssen größer als 0 sein."
 
@@ -2651,7 +2653,7 @@ msgid "Show Entity Names"
 msgstr "Zeige Namen der Entities"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:179
-#: xml_file_content.cpp:77
+#: xml_file_content.cpp:78
 msgid "Show Blocks"
 msgstr "Zeige Blöcke"
 
@@ -2660,17 +2662,17 @@ msgid "Show Coordinates"
 msgstr "Zeige Koordinaten"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:181
-#: xml_file_content.cpp:80
+#: xml_file_content.cpp:81
 msgid "Show Axes"
 msgstr "Zeige Achsen"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:182
-#: xml_file_content.cpp:79
+#: xml_file_content.cpp:80
 msgid "Show Window Outline"
 msgstr "Zeige Fensterumrandung"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:183
-#: xml_file_content.cpp:81
+#: xml_file_content.cpp:82
 msgid "Show Workzone"
 msgstr "Zeige Arbeitsbereich"
 
@@ -2682,19 +2684,19 @@ msgstr "Translationen sind immer achsengebunden"
 msgid "Higher Selection Priority for Entities"
 msgstr "Höhere Auswahlpriorität für Entities"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:225
+#: ..\..\radiant\xyview\XYWnd.cpp:228
 msgid "XY Top"
 msgstr "XY Oben"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:228
+#: ..\..\radiant\xyview\XYWnd.cpp:231
 msgid "XZ Front"
 msgstr "XZ Vorne"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:231
+#: ..\..\radiant\xyview\XYWnd.cpp:234
 msgid "YZ Side"
 msgstr "YZ Seite"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:703
+#: ..\..\radiant\xyview\XYWnd.cpp:706
 #, c-format
 msgid "x: %6.1lf y: %6.1lf z: %6.1lf"
 msgstr "x: %6.1lf y: %6.1lf z: %6.1lf"
@@ -2806,7 +2808,7 @@ msgid "New Conversation"
 msgstr "Neue Konversation"
 
 #: ..\..\plugins\dm.conversation\ConversationEntityFinder.h:81
-#: ..\..\plugins\dm.objectives\ObjectiveEntityFinder.h:132
+#: ..\..\plugins\dm.objectives\ObjectiveEntityFinder.cpp:34
 #, c-format
 msgid "<b>%s</b> at [ %s ]"
 msgstr "<b>%s</b> bei [ %s ]"
@@ -2979,7 +2981,7 @@ msgstr "GUI Pfad"
 
 #: ..\..\plugins\dm.gui\plugin.cpp:93
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:55
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:716
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:726
 msgid "Readable Editor"
 msgstr "Schriftstück-Editor"
 
@@ -3024,276 +3026,272 @@ msgstr "Textbearbeitung"
 msgid "General Properties:"
 msgstr "Allgemeine Eigenschaften:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:180
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:186
 msgid "Inventory Name:"
 msgstr "Name im Inventory:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:192
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:201
 msgid "XData Name:"
 msgstr "XData-Name:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:218
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:227
 msgid "Number of Pages:"
 msgstr "Anzahl der Seiten:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:221
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:230
 msgid "Layout:"
 msgstr "Layout:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:223
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:232
 msgid "One-sided"
 msgstr "Einseitig"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:227
-msgid "Two-sided"
-msgstr "Doppelseitig"
-
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:246
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:256
 msgid "Pageturn Sound:"
 msgstr "Sound beim Umblättern:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:265
-#: xml_file_content.cpp:162
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:275
+#: xml_file_content.cpp:164
 msgid "Insert"
 msgstr "Einfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:270
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:280
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:60
 #: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:365
 #: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:384
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:511
-#: xml_file_content.cpp:172
+#: xml_file_content.cpp:174
 msgid "Delete"
 msgstr "Löschen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:291
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:301
 msgid "Current Page:"
 msgstr "Aktuelle Seite:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:309
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:319
 msgid "Gui Definition:"
 msgstr "GUI-Definition:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:355
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:365
 msgid "Title:"
 msgstr "Titel:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:374
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:384
 #: ..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp:27
 msgid "Body:"
 msgstr "Text:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:398
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:408
 msgid "Insert whole Page"
 msgstr "Ganze Seite einfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:403
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:413
 msgid "Insert on left Side"
 msgstr "Links einfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:408
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:418
 msgid "Insert on right Side"
 msgstr "Rechts einfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:418
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:428
 msgid "Delete whole Page"
 msgstr "Ganze Seite löschen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:423
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:433
 msgid "Delete on left Side"
 msgstr "Links löschen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:428
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:438
 msgid "Delete on right Side"
 msgstr "Rechts löschen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:438
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:448
 msgid "Append Page"
 msgstr "Seite anfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:447
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:457
 msgid "Prepend Page"
 msgstr "Seite voranstellen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:456
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:466
 msgid "Show last XData import summary"
 msgstr "Zeige Zusammenfassung des letzten XData-Imports"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:461
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:471
 msgid "Show duplicated definitions"
 msgstr "Zeige doppelte Definitionen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:466
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:476
 msgid "Show Gui import summary"
 msgstr "Zeige Zusammenfassung des letzten GUI-Imports"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:484
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:494
 msgid "Save & Close"
 msgstr "Speichern & Schließen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:488
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:498
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:520
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:530
 msgid "<Name_Here>"
 msgstr "<Hier_Namen_Eingeben>"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:536
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:818
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1534
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:546
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:828
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1546
 #, c-format
 msgid "Failed to import %s."
 msgstr "Import von %s fehlgeschlagen."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:538
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:548
 msgid "Creating a new XData definition..."
 msgstr "Erzeuge eine neue XData-Definition..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:540
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:820
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:840
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:896
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1536
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:550
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:830
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:850
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:908
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1548
 msgid "Do you want to open the import summary?"
 msgstr "Willst Du die Import-Zusammenfassung anzeigen?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:542
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:822
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:842
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:898
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1538
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:552
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:832
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:852
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:910
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1550
 msgid "Import failed"
 msgstr "Import fehlgeschlagen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:596
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:606
 msgid "You have imported an XData definition that is contained in a PK4, which can't be accessed for saving."
 msgstr "Du hast eine XData-Definition importiert, die in einem PK4-File gespeichert ist."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:598
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:608
 msgid "Please rename your XData definition, so that it is stored under a different filename."
 msgstr "Bitte benenne Deine XData-Definition um, so dass sie unter einem neuen Namen gespeichert wird."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:615
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:636
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:625
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:646
 #, c-format
 msgid "Failed to open %s for saving."
 msgstr "Konnte %s nicht zum Speichern öffnen."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:622
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:632
 msgid "Merging failed, because the length of the definition to be overwritten could not be retrieved."
 msgstr "Fehler beim Zusammenführen. Die Länge der zu überschreibenden Definition konnte nicht abgerufen werden."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:659
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:669
 msgid "Mod path not defined. Using Base path..."
 msgstr "Mod-Pfad nicht definiert, verwende Base-Pfad..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:672
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:691
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:682
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:701
 msgid "Mod Base path not defined, neither is Mod path. Using Engine path..."
 msgstr "Mod-Base-Pfad nicht definiert, Mod-Pfad auch nicht, verwende Base-Pfad..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:678
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:696
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:688
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:706
 msgid "Mod Base path not defined. Using Mod path..."
 msgstr "Mod-Base-Pfad nicht definiert, verwende Mod-Pfad..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:838
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:894
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:848
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:906
 #, c-format
 msgid "Failed to load gui definition %s."
 msgstr "Laden der GUI-Definition %s fehlgeschlagen."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:997
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1009
 msgid "Import definition?"
 msgstr "Definition importieren?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:998
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1010
 #, c-format
 msgid "The definition %s already exists. Should it be imported?"
 msgstr "Die Definition %s existiert bereits, soll sie importiert werden?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1011
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1023
 msgid "Import failed:"
 msgstr "Import fehlgeschlagen:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1014
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1026
 msgid "Consult the import summary for further information."
 msgstr "Bitte sieh in der Import-Zusammenfassung nach, um weitere Informationen zu erhalten."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1045
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1057
 #, c-format
 msgid "To avoid duplicated XData definitions the current definition has been renamed to %s."
 msgstr "Die aktuelle Definition wurde in %s umbenannt, um doppelte XData-Definitionen zu vermeiden."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1049
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1061
 msgid "XData has been renamed."
 msgstr "XData wurde umbenannt."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1315
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1327
 msgid "The specified gui definition is not a readable."
 msgstr "Die angegebene GUI-Definition ist kein Schriftstück."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1320
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1332
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1344
 msgid "The specified gui definition is not suitable for the currently chosen page-layout."
 msgstr "Die angegebene GUI-Definition ist für das momentan gewählte Seitenlayout nicht geeignet."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1342
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1354
 msgid "Failure during import."
 msgstr "Fehler beim Import."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1345
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1357
 msgid "The specified Definition does not exist."
 msgstr "Die angegebene Definition existiert nicht."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1353
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1365
 msgid "Not a suitable Gui Definition!"
 msgstr "Keine geeignete GUI-Definition!"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1354
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1366
 msgid "Start the Gui Browser?"
 msgstr "GUI-Browser öffnen?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1388
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1400
 msgid "Switching to default Gui..."
 msgstr "Schalte zu Standard-GUI um..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1389
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1401
 msgid "You didn't choose a Gui. Using the default Gui now."
 msgstr "Du hast keine GUI ausgewählt. Es wird die Standard-GUI verwendet."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1407
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1419
 msgid "No import summary available. An XData definition has to be imported first..."
 msgstr "Die Importzusammenfassung ist erst nach dem Import einer XData-Definition verfügbar."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1419
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1431
 msgid "XData import summary"
 msgstr "XData Importzusammenfassung"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1428
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1440
 msgid "No import summary available. Browse Gui Definitions first."
 msgstr "Die Importzusammenfassung ist erst nach dem Öffnen des GUI-Browsers verfügbar."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1439
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1451
 msgid "Gui import summary"
 msgstr "GUI Importzusammenfassung"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1491
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1511
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1503
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1523
 msgid "Please specify an XData name first!"
 msgstr "Bitte zuerst einen XData-Namen angeben!"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1717
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1745
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1729
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1757
 msgid "Duplicated XData definitions"
 msgstr "Mehrfach vorkommende XData-Definitionen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1718
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1730
 msgid "There are no duplicated definitions!"
 msgstr "Es gibt keine mehrfachen XData-Definitionen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1739
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1751
 #, c-format
 msgid "%s has been defined in:"
 msgstr "%s ist definiert in:"
@@ -3429,7 +3427,7 @@ msgid "Edit Objective"
 msgstr "Ziel editieren:"
 
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:60
-#: xml_file_content.cpp:95
+#: xml_file_content.cpp:96
 msgid "Components"
 msgstr "Komponenten"
 
@@ -3620,7 +3618,7 @@ msgstr "Logik für bestimmte Schwierigkeitsstufe"
 msgid "Logic for Difficulty Level %d"
 msgstr "Logik für Schwierigkeitsstufe %d"
 
-#: ..\..\plugins\dm.objectives\ObjectiveEntity.cpp:134
+#: ..\..\plugins\dm.objectives\ObjectiveEntity.cpp:135
 #, c-format
 msgid "New objective %d"
 msgstr "Neues Ziel %d"
@@ -3629,43 +3627,27 @@ msgstr "Neues Ziel %d"
 msgid "Objectives..."
 msgstr "Missionsziele..."
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:43
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:44
 msgid "Mission Objectives"
 msgstr "Missionsziele"
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:72
-msgid "Objectives entities"
-msgstr "Ziel-Entities"
-
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:76
-msgid "Objectives"
-msgstr "Missionsziele"
-
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:80
-msgid "Success/Failure Logic"
-msgstr "Erfolgs-/Fehlschlagslogik"
-
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:124
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:128
 msgid "Start"
 msgstr "Start"
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:168
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:169
 msgid "Diff."
 msgstr "Schw."
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:220
-msgid "Edit mission success/failure logic..."
-msgstr "Missions-Logik (Erfolg/Fehlschlag) bearbeiten..."
-
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:337
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:307
 msgid "Exception occurred: "
 msgstr "Ausnahmefehler:"
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:483
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:475
 msgid "Unable to create Objective Entity: classes not defined in registry."
 msgstr "Kann Ziel-Entity nicht erzeugen: die Entityklassen sind nicht in der Registierung definiert."
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:514
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:505
 #, c-format
 msgid "Unable to create Objective Entity: class '%s' not found."
 msgstr "Kann Ziel-Entity nicht erzeugen: EntityKlasse '%s' nicht gefunden."
@@ -4009,7 +3991,7 @@ msgid "Doom3EntityCreator::getEntityForEClass(): cannot create entity for NULL e
 msgstr "Doom3EntityCreator::getEntityForEClass(): Entity für Entity-Klasse NULL kann nicht erstellt werden."
 
 #: ..\..\plugins\entitylist\EntityList.cpp:24
-#: xml_file_content.cpp:57
+#: xml_file_content.cpp:58
 msgid "Entity List"
 msgstr "Entity-Liste"
 
@@ -4120,12 +4102,12 @@ msgstr "Einstellungen/Raster"
 msgid "Default Grid Size"
 msgstr "Standard-Rastergröße"
 
-#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:70
+#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:72
 #: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:31
 msgid "Doom 3 map"
 msgstr "Doom 3 Map"
 
-#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:72
+#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:74
 #: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:33
 msgid "Doom 3 region"
 msgstr "Doom 3 Region"
@@ -4139,31 +4121,31 @@ msgstr "Doom 3 Prefab"
 msgid "Map Info File Version invalid"
 msgstr "Ungültige Map Info File Verson"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:46
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:47
 msgid "Loading map"
 msgstr "Lade Map"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:68
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:225
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:69
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:233
 #, c-format
 msgid "Loading entity %d"
 msgstr "Lade Entity %d"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:74
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:75
 msgid "Map loading cancelled"
 msgstr "Ladevorgang abgebrochen"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:93
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:94
 #, c-format
 msgid "Failed on entity %d"
 msgstr "Fehler bei Entity %d"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:176
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:184
 #, c-format
 msgid "Primitive #%d: parse error"
 msgstr "Primitiv #%d: Parserfehler"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:268
+#: ..\..\plugins\mapdoom3\NodeImporter.cpp:276
 #, c-format
 msgid "Parsed invalid value '%s' for key '%s'"
 msgstr "Ungültigen Wert '%s' für Schlüssel '%s' eingelesen"
@@ -4223,6 +4205,38 @@ msgstr "Es existiert bereits ein Schema mit diesem Namen."
 msgid "_Filters"
 msgstr "_Filter"
 
+#: ..\..\plugins\uimanager\ParticlePreview.cpp:100
+msgid "Start time"
+msgstr "Zeit starten"
+
+#: ..\..\plugins\uimanager\ParticlePreview.cpp:105
+msgid "Pause time"
+msgstr "Zeit anhalten"
+
+#: ..\..\plugins\uimanager\ParticlePreview.cpp:110
+msgid "Stop time"
+msgstr "Zeit stoppen"
+
+#: ..\..\plugins\uimanager\ParticlePreview.cpp:115
+msgid "Next frame"
+msgstr "Nächster Frame"
+
+#: ..\..\plugins\uimanager\ParticlePreview.cpp:120
+msgid "Previous frame"
+msgstr "Vorheriger Frame"
+
+#: ..\..\plugins\uimanager\ParticlePreview.cpp:135
+msgid "Show coordinate axes"
+msgstr "Zeige Koordinatenachsen"
+
+#: ..\..\plugins\uimanager\ParticlePreview.cpp:139
+msgid "Reload Particle Defs"
+msgstr "Partikel-Definitionen neu laden"
+
+#: ..\..\plugins\uimanager\ParticlePreview.cpp:146
+msgid "Show wireframe"
+msgstr "Zeige Wireframe"
+
 #: ..\..\plugins\undo\UndoSystem.cpp:268
 msgid "Settings/Undo System"
 msgstr "Einstellungen/Undo"
@@ -4242,6 +4256,10 @@ msgstr "Auswahl als OBJ exportieren..."
 #: ..\..\libs\gtkutil\ConsoleView.cpp:107
 msgid "Clear"
 msgstr "Löschen"
+
+#: ..\..\libs\gtkutil\dialog\MessageBox.cpp:130
+msgid "Close without saving"
+msgstr "Schließen ohne zu speichern"
 
 #: ..\..\libs\gtkutil\FileChooser.cpp:67
 msgid "Open File"
@@ -4341,669 +4359,677 @@ msgid "Reload Defs"
 msgstr "Defs neu laden"
 
 #: xml_file_content.cpp:18
+msgid "Reload Particles"
+msgstr "Partikel neu laden"
+
+#: xml_file_content.cpp:19
 msgid "Select _Game..."
 msgstr "Spiel auswählen..."
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:20
 msgid "_Pointfile"
 msgstr "_Pointfile"
 
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:21
 msgid "E_xit"
 msgstr "B_eenden"
 
-#: xml_file_content.cpp:21
+#: xml_file_content.cpp:22
 msgid "_Edit"
 msgstr "_Bearbeiten"
 
-#: xml_file_content.cpp:22
+#: xml_file_content.cpp:23
 msgid "_Undo"
 msgstr "R_ückgängig"
 
-#: xml_file_content.cpp:23
+#: xml_file_content.cpp:24
 msgid "_Redo"
 msgstr "Wiede_rherstellen"
 
-#: xml_file_content.cpp:24
+#: xml_file_content.cpp:25
 msgid "_Copy"
 msgstr "_Kopieren"
 
-#: xml_file_content.cpp:25
+#: xml_file_content.cpp:26
 msgid "_Paste"
 msgstr "_Einfügen"
 
-#: xml_file_content.cpp:26
+#: xml_file_content.cpp:27
 msgid "Paste to Camera"
 msgstr "Bei Kameraposition einfügen"
 
-#: xml_file_content.cpp:27
+#: xml_file_content.cpp:28
 msgid "_Duplicate"
 msgstr "_Duplizieren"
 
-#: xml_file_content.cpp:28
+#: xml_file_content.cpp:29
 msgid "D_elete"
 msgstr "Lösch_en"
 
-#: xml_file_content.cpp:29
+#: xml_file_content.cpp:30
 msgid "Rep_arent Primitives"
 msgstr "Primitive neu zuordnen (Elternknoten ändern)"
 
-#: xml_file_content.cpp:30
+#: xml_file_content.cpp:31
 msgid "Reparent Primitives to _Worldspawn"
 msgstr "Primitive Worldspawn zuordnen"
 
-#: xml_file_content.cpp:31
+#: xml_file_content.cpp:32
 msgid "Merge selected Entities"
 msgstr "Ausgewählte Entities zusammenführen"
 
-#: xml_file_content.cpp:32
+#: xml_file_content.cpp:33
 msgid "Copy Shader"
 msgstr "Shader kopieren"
 
-#: xml_file_content.cpp:33
+#: xml_file_content.cpp:34
 msgid "Paste Shader"
 msgstr "Shader einfügen"
 
-#: xml_file_content.cpp:34
+#: xml_file_content.cpp:35
 msgid "Paste Shader (Natural)"
 msgstr "Shader einfügen (Natürliche Skalierung)"
 
-#: xml_file_content.cpp:35
+#: xml_file_content.cpp:36
 msgid "C_lear selection"
 msgstr "Auswah_l aufheben"
 
-#: xml_file_content.cpp:36
+#: xml_file_content.cpp:37
 msgid "_Invert selection"
 msgstr "Auswahl _umkehren"
 
-#: xml_file_content.cpp:37
+#: xml_file_content.cpp:38
 msgid "Select complete t_all"
 msgstr "Inneres auswählen (Projektion)"
 
-#: xml_file_content.cpp:38
+#: xml_file_content.cpp:39
 msgid "Select i_nside"
 msgstr "Inneres auswählen"
 
-#: xml_file_content.cpp:39
+#: xml_file_content.cpp:40
 msgid "Select _touching"
 msgstr "Berührtes auswählen"
 
-#: xml_file_content.cpp:40
+#: xml_file_content.cpp:41
 msgid "Select Children"
 msgstr "Kinder auswählen"
 
-#: xml_file_content.cpp:41
+#: xml_file_content.cpp:42
 msgid "Expand selection to all Siblings"
 msgstr "Auswahl auf Geschwister ausweiten"
 
-#: xml_file_content.cpp:42
+#: xml_file_content.cpp:43
 msgid "Select all of type"
 msgstr "Alles vom selben Typ auswählen"
 
-#: xml_file_content.cpp:43
+#: xml_file_content.cpp:44
 msgid "Keyboard Shortcuts"
 msgstr "Tastenkombinationen"
 
-#: xml_file_content.cpp:44
+#: xml_file_content.cpp:45
 msgid "Pre_ferences"
 msgstr "Einstellungen"
 
-#: xml_file_content.cpp:45
+#: xml_file_content.cpp:46
 msgid "V_iew"
 msgstr "Ans_icht"
 
-#: xml_file_content.cpp:46
+#: xml_file_content.cpp:47
 msgid "New XY view"
 msgstr "Neue XY-Ansicht"
 
-#: xml_file_content.cpp:47
+#: xml_file_content.cpp:48
 msgid "Camera View"
 msgstr "Kamera"
 
-#: xml_file_content.cpp:49
+#: xml_file_content.cpp:50
 msgid "Console View"
 msgstr "Konsole"
 
-#: xml_file_content.cpp:51
+#: xml_file_content.cpp:52
 msgid "Media Browser"
 msgstr "Mediabrowser"
 
-#: xml_file_content.cpp:52
+#: xml_file_content.cpp:53
 msgid "Entity Inspector"
 msgstr "Entity Inspector"
 
-#: xml_file_content.cpp:53
+#: xml_file_content.cpp:54
 msgid "_Light Inspector"
 msgstr "_Light Inspector"
 
-#: xml_file_content.cpp:54
+#: xml_file_content.cpp:55
 msgid "_Surface Inspector"
 msgstr "_Surface Inspector"
 
-#: xml_file_content.cpp:55
+#: xml_file_content.cpp:56
 msgid "_Patch Inspector"
 msgstr "_Patch Inspector"
 
-#: xml_file_content.cpp:56
+#: xml_file_content.cpp:57
 msgid "_Texture Tool"
 msgstr "_Textur-Werkzeug"
 
-#: xml_file_content.cpp:59
+#: xml_file_content.cpp:60
 msgid "_Center"
 msgstr "_Zentrieren"
 
-#: xml_file_content.cpp:60
+#: xml_file_content.cpp:61
 msgid "_Up Floor"
 msgstr "Ein Stockwerk höher"
 
-#: xml_file_content.cpp:61
+#: xml_file_content.cpp:62
 msgid "_Down Floor"
 msgstr "Ein Stockwerk tiefer"
 
-#: xml_file_content.cpp:62
+#: xml_file_content.cpp:63
 msgid "Far Clip Plane In"
 msgstr "Entfernte Clip-Ebene heran"
 
-#: xml_file_content.cpp:63
+#: xml_file_content.cpp:64
 msgid "Far Clip Plane Out"
 msgstr "Entfernte Clip-Ebene hinaus"
 
-#: xml_file_content.cpp:64
+#: xml_file_content.cpp:65
 msgid "Next leak spot"
 msgstr "Nächster Leak-Spot"
 
-#: xml_file_content.cpp:65
+#: xml_file_content.cpp:66
 msgid "Previous leak spot"
 msgstr "Vorheriger Leak-Spot"
 
-#: xml_file_content.cpp:66
+#: xml_file_content.cpp:67
 msgid "Orthographic"
 msgstr "2D-Ansicht"
 
-#: xml_file_content.cpp:67
+#: xml_file_content.cpp:68
 msgid "Next (XY, XZ, YZ)"
 msgstr "Nächste Ansicht (XY, XZ, YZ)"
 
-#: xml_file_content.cpp:68
+#: xml_file_content.cpp:69
 msgid "XY (Top)"
 msgstr "XY (Oben)"
 
-#: xml_file_content.cpp:69
+#: xml_file_content.cpp:70
 msgid "YZ"
 msgstr "YZ"
 
-#: xml_file_content.cpp:70
+#: xml_file_content.cpp:71
 msgid "XZ"
 msgstr "XZ"
 
-#: xml_file_content.cpp:71
+#: xml_file_content.cpp:72
 msgid "_XY 100%"
 msgstr "_XY 100%"
 
-#: xml_file_content.cpp:72
+#: xml_file_content.cpp:73
 msgid "_XY Zoom In"
 msgstr "_XY Einzoomen"
 
-#: xml_file_content.cpp:73
+#: xml_file_content.cpp:74
 msgid "_XY Zoom Out"
 msgstr "_XY Auszoomen"
 
-#: xml_file_content.cpp:74
+#: xml_file_content.cpp:75
 msgid "Show"
 msgstr "Zeigen"
 
-#: xml_file_content.cpp:75
+#: xml_file_content.cpp:76
 msgid "Show _Angles"
 msgstr "Zeige Winkel"
 
-#: xml_file_content.cpp:76
+#: xml_file_content.cpp:77
 msgid "Show _Names"
 msgstr "Zeige Namen"
 
-#: xml_file_content.cpp:78
+#: xml_file_content.cpp:79
 msgid "Show C_oordinates"
 msgstr "Zeige Koordinaten"
 
-#: xml_file_content.cpp:82
+#: xml_file_content.cpp:83
 msgid "Show size info"
 msgstr "Zeige Größeninformation"
 
-#: xml_file_content.cpp:83
+#: xml_file_content.cpp:84
 msgid "Hide/Show"
 msgstr "Verbergen/Zeigen"
 
-#: xml_file_content.cpp:84
+#: xml_file_content.cpp:85
 msgid "Hide Selected"
 msgstr "Auswahl verbergen"
 
-#: xml_file_content.cpp:85
+#: xml_file_content.cpp:86
 msgid "Hide Deselected"
 msgstr "Nicht ausgewähltes verbergen"
 
-#: xml_file_content.cpp:86
+#: xml_file_content.cpp:87
 msgid "Show hidden"
 msgstr "Zeige Verborgenes"
 
-#: xml_file_content.cpp:87
+#: xml_file_content.cpp:88
 msgid "Region"
 msgstr "Region"
 
-#: xml_file_content.cpp:88
+#: xml_file_content.cpp:89
 msgid "_Switch off"
 msgstr "Au_sschalten"
 
-#: xml_file_content.cpp:89
+#: xml_file_content.cpp:90
 msgid "Set from _XY view"
 msgstr "Über _XY-Ansicht festlegen"
 
-#: xml_file_content.cpp:90
+#: xml_file_content.cpp:91
 msgid "Set from _Brush"
 msgstr "Über _Brush festlegen"
 
-#: xml_file_content.cpp:91
+#: xml_file_content.cpp:92
 msgid "Set from Se_lection"
 msgstr "Über Auswah_l festlegen"
 
-#: xml_file_content.cpp:92
+#: xml_file_content.cpp:93
 msgid "Colours..."
 msgstr "Farben..."
 
-#: xml_file_content.cpp:93
+#: xml_file_content.cpp:94
 msgid "Background Image..."
 msgstr "Hintergrundbild..."
 
-#: xml_file_content.cpp:94
+#: xml_file_content.cpp:95
 msgid "Mo_dify"
 msgstr "Komponentenmodus"
 
-#: xml_file_content.cpp:96
+#: xml_file_content.cpp:97
 msgid "_Edges"
 msgstr "_Edges"
 
-#: xml_file_content.cpp:97
+#: xml_file_content.cpp:98
 msgid "_Vertices"
 msgstr "_Vertices"
 
-#: xml_file_content.cpp:98
+#: xml_file_content.cpp:99
 msgid "_Faces"
 msgstr "_Faces"
 
-#: xml_file_content.cpp:99
+#: xml_file_content.cpp:100
 msgid "En_tities"
 msgstr "En_tities"
 
-#: xml_file_content.cpp:100
+#: xml_file_content.cpp:101
 msgid "Nudge"
 msgstr "Verschieben"
 
-#: xml_file_content.cpp:101
+#: xml_file_content.cpp:102
 msgid "Nudge Left"
 msgstr "Verschiebe nach links"
 
-#: xml_file_content.cpp:102
+#: xml_file_content.cpp:103
 msgid "Nudge Right"
 msgstr "Verschiebe nach rechts"
 
-#: xml_file_content.cpp:103
+#: xml_file_content.cpp:104
 msgid "Nudge Up"
 msgstr "Verschiebe nach oben"
 
-#: xml_file_content.cpp:104
+#: xml_file_content.cpp:105
 msgid "Nudge Down"
 msgstr "Verschiebe nach unten"
 
-#: xml_file_content.cpp:105
+#: xml_file_content.cpp:106
 #: xml_file_content.cpp:15
 msgid "Rotate"
 msgstr "Drehen"
 
-#: xml_file_content.cpp:106
+#: xml_file_content.cpp:107
 msgid "Rotate X"
 msgstr "Drehe um X-Achse"
 
-#: xml_file_content.cpp:107
+#: xml_file_content.cpp:108
 msgid "Rotate Y"
 msgstr "Drehe um Y-Achse"
 
-#: xml_file_content.cpp:108
+#: xml_file_content.cpp:109
 msgid "Rotate Z"
 msgstr "Drehe um Z-Achse"
 
-#: xml_file_content.cpp:109
+#: xml_file_content.cpp:110
 msgid "Mirror"
 msgstr "Spiegeln"
 
-#: xml_file_content.cpp:110
+#: xml_file_content.cpp:111
 msgid "Mirror _X"
 msgstr "Spiegeln um X-Achse"
 
-#: xml_file_content.cpp:111
+#: xml_file_content.cpp:112
 msgid "Mirror _Y"
 msgstr "Spiegeln um Y-Achse"
 
-#: xml_file_content.cpp:112
+#: xml_file_content.cpp:113
 msgid "Mirror _Z"
 msgstr "Spiegeln um Z-Achse"
 
-#: xml_file_content.cpp:113
+#: xml_file_content.cpp:114
 msgid "Free Model Rotation"
 msgstr "Freie Modelldrehung"
 
-#: xml_file_content.cpp:114
+#: xml_file_content.cpp:115
 msgid "Rotate and scale..."
 msgstr "Drehen und skalieren..."
 
-#: xml_file_content.cpp:115
+#: xml_file_content.cpp:116
 msgid "_Grid"
 msgstr "_Raster"
 
-#: xml_file_content.cpp:116
+#: xml_file_content.cpp:117
 msgid "Snap selected to grid"
 msgstr "Auswahl am Raster ausrichten"
 
-#: xml_file_content.cpp:117
+#: xml_file_content.cpp:118
 msgid "Grid0.125"
 msgstr "Grid0.125"
 
-#: xml_file_content.cpp:118
+#: xml_file_content.cpp:119
 msgid "Grid0.25"
 msgstr "Grid0.25"
 
-#: xml_file_content.cpp:119
+#: xml_file_content.cpp:120
 msgid "Grid0.5"
 msgstr "Grid0.5"
 
-#: xml_file_content.cpp:120
+#: xml_file_content.cpp:121
 msgid "Grid1"
 msgstr "Grid1"
 
-#: xml_file_content.cpp:121
+#: xml_file_content.cpp:122
 msgid "Grid2"
 msgstr "Grid2"
 
-#: xml_file_content.cpp:122
+#: xml_file_content.cpp:123
 msgid "Grid4"
 msgstr "Grid4"
 
-#: xml_file_content.cpp:123
+#: xml_file_content.cpp:124
 msgid "Grid8"
 msgstr "Grid8"
 
-#: xml_file_content.cpp:124
+#: xml_file_content.cpp:125
 msgid "Grid16"
 msgstr "Grid16"
 
-#: xml_file_content.cpp:125
+#: xml_file_content.cpp:126
 msgid "Grid32"
 msgstr "Grid32"
 
-#: xml_file_content.cpp:126
+#: xml_file_content.cpp:127
 msgid "Grid64"
 msgstr "Grid64"
 
-#: xml_file_content.cpp:127
+#: xml_file_content.cpp:128
 msgid "Grid128"
 msgstr "Grid128"
 
-#: xml_file_content.cpp:128
+#: xml_file_content.cpp:129
 msgid "Grid256"
 msgstr "Grid256"
 
-#: xml_file_content.cpp:129
+#: xml_file_content.cpp:130
 msgid "M_ap"
 msgstr "K_arte"
 
-#: xml_file_content.cpp:130
+#: xml_file_content.cpp:131
 msgid "Find brush..."
 msgstr "Brush suchen..."
 
-#: xml_file_content.cpp:131
+#: xml_file_content.cpp:132
 msgid "Map info..."
 msgstr "Map-Information"
 
-#: xml_file_content.cpp:132
+#: xml_file_content.cpp:133
 msgid "E_ntity"
 msgstr "E_ntity"
 
-#: xml_file_content.cpp:133
+#: xml_file_content.cpp:134
 msgid "_Revert group to worldspawn"
 msgstr "G_ruppe zu Worldspawn umwandeln"
 
-#: xml_file_content.cpp:134
+#: xml_file_content.cpp:135
 msgid "_Connect selected entities"
 msgstr "Ausgewählte Entities verbinden"
 
-#: xml_file_content.cpp:135
+#: xml_file_content.cpp:136
 msgid "_Bind selected entities"
 msgstr "Ausgewählte Entities verknüpfen"
 
-#: xml_file_content.cpp:136
+#: xml_file_content.cpp:137
 msgid "B_rush"
 msgstr "B_rush"
 
-#: xml_file_content.cpp:137
+#: xml_file_content.cpp:138
 msgid "Prism..."
 msgstr "Prisma..."
 
-#: xml_file_content.cpp:138
+#: xml_file_content.cpp:139
 msgid "Cone..."
 msgstr "Kegel..."
 
-#: xml_file_content.cpp:139
+#: xml_file_content.cpp:140
 msgid "Sphere..."
 msgstr "Kugel..."
 
-#: xml_file_content.cpp:140
+#: xml_file_content.cpp:141
 msgid "CSG"
 msgstr "CSG"
 
-#: xml_file_content.cpp:141
+#: xml_file_content.cpp:142
 msgid "Make _Hollow"
 msgstr "Aus_höhlen"
 
-#: xml_file_content.cpp:142
+#: xml_file_content.cpp:143
 msgid "Make _Room"
 msgstr "Raum erstellen"
 
-#: xml_file_content.cpp:143
+#: xml_file_content.cpp:144
 msgid "CSG _Subtract"
 msgstr "CSG _Subtraktion"
 
-#: xml_file_content.cpp:144
+#: xml_file_content.cpp:145
 msgid "CSG _Merge"
 msgstr "CSG _Zusammenfügen"
 
-#: xml_file_content.cpp:145
+#: xml_file_content.cpp:146
 #: xml_file_content.cpp:12
 #: xml_file_content.cpp:17
 msgid "Clipper"
 msgstr "Clipper"
 
-#: xml_file_content.cpp:146
+#: xml_file_content.cpp:147
 msgid "Clip Selection"
 msgstr "Auswahl clippen"
 
-#: xml_file_content.cpp:147
+#: xml_file_content.cpp:148
 msgid "Split Selection"
 msgstr "Auswahl splitten"
 
-#: xml_file_content.cpp:148
+#: xml_file_content.cpp:149
 msgid "Flip Clip Orientation"
 msgstr "Clip-Orientierung umkehren"
 
-#: xml_file_content.cpp:149
+#: xml_file_content.cpp:150
 msgid "Texture lock"
 msgstr "Textur-Lock"
 
-#: xml_file_content.cpp:150
+#: xml_file_content.cpp:151
 msgid "Create Decal Patches"
 msgstr "Decal-Patches erstellen"
 
-#: xml_file_content.cpp:152
+#: xml_file_content.cpp:153
 msgid "_Patch"
 msgstr "_Patch"
 
-#: xml_file_content.cpp:154
+#: xml_file_content.cpp:155
 msgid "Create End cap"
 msgstr "Endcap erstellen"
 
-#: xml_file_content.cpp:155
+#: xml_file_content.cpp:156
 msgid "Create Bevel"
 msgstr "Bogen erstellen"
 
-#: xml_file_content.cpp:156
+#: xml_file_content.cpp:157
 msgid "Create Cone"
 msgstr "Kegel erstellen"
 
-#: xml_file_content.cpp:157
+#: xml_file_content.cpp:158
 msgid "Create Cylinder"
 msgstr "Zylinder erstellen"
 
-#: xml_file_content.cpp:158
+#: xml_file_content.cpp:159
+msgid "Create Sphere"
+msgstr "Kugel erzeugen"
+
+#: xml_file_content.cpp:160
 msgid "More cylinders"
 msgstr "Mehr Zylinderarten"
 
-#: xml_file_content.cpp:159
+#: xml_file_content.cpp:161
 msgid "Create Dense Cylinder"
 msgstr "Erstelle \"dichten\" Zylinder"
 
-#: xml_file_content.cpp:160
+#: xml_file_content.cpp:162
 msgid "Create Very Dense Cylinder"
 msgstr "Erstelle \"sehr dichten\" Zylinder"
 
-#: xml_file_content.cpp:161
+#: xml_file_content.cpp:163
 msgid "Create Square Cylinder"
 msgstr "Erstelle quadratischen Zylinder"
 
-#: xml_file_content.cpp:163
+#: xml_file_content.cpp:165
 msgid "Insert 2 Columns at the beginning"
 msgstr "Zwei Spalten am Anfang einfügen"
 
-#: xml_file_content.cpp:164
+#: xml_file_content.cpp:166
 msgid "Insert 2 Columns at the end"
 msgstr "Zwei Spalten am Ende einfügen"
 
-#: xml_file_content.cpp:165
+#: xml_file_content.cpp:167
 msgid "Insert 2 Rows at the beginning"
 msgstr "Zwei Zeilen am Anfang einfügen"
 
-#: xml_file_content.cpp:166
+#: xml_file_content.cpp:168
 msgid "Insert 2 Rows at the end"
 msgstr "Zwei Zeilen am Ende einfügen"
 
-#: xml_file_content.cpp:167
+#: xml_file_content.cpp:169
 msgid "Append"
 msgstr "Anfügen"
 
-#: xml_file_content.cpp:168
+#: xml_file_content.cpp:170
 msgid "Append 2 columns at the beginning"
 msgstr "Zwei Spalten am Anfang anfügen"
 
-#: xml_file_content.cpp:169
+#: xml_file_content.cpp:171
 msgid "Append 2 columns at the end"
 msgstr "Zwei Spalten am Ende anfügen"
 
-#: xml_file_content.cpp:170
+#: xml_file_content.cpp:172
 msgid "Append 2 rows at the beginning"
 msgstr "Zwei Zeilen am Anfang anfügen"
 
-#: xml_file_content.cpp:171
+#: xml_file_content.cpp:173
 msgid "Append 2 rows at the end"
 msgstr "Zwei Zeilen am Ende anfügen"
 
-#: xml_file_content.cpp:173
+#: xml_file_content.cpp:175
 msgid "Delete 2 columns from the beginning"
 msgstr "Zwei Spalten am Anfang löschen"
 
-#: xml_file_content.cpp:174
+#: xml_file_content.cpp:176
 msgid "Delete 2 columns from the end"
 msgstr "Zwei Spalten am Ende löschen"
 
-#: xml_file_content.cpp:175
+#: xml_file_content.cpp:177
 msgid "Delete 2 rows from the beginning"
 msgstr "Zwei Zeilen am Anfang löschen"
 
-#: xml_file_content.cpp:176
+#: xml_file_content.cpp:178
 msgid "Delete 2 rows from the end"
 msgstr "Zwei Spalten am Ende löschen"
 
-#: xml_file_content.cpp:177
+#: xml_file_content.cpp:179
 msgid "Matrix"
 msgstr "Matrix"
 
-#: xml_file_content.cpp:178
+#: xml_file_content.cpp:180
 msgid "Invert"
 msgstr "Invertieren"
 
-#: xml_file_content.cpp:179
+#: xml_file_content.cpp:181
 msgid "Re-disperse"
 msgstr "Neu verteilen"
 
-#: xml_file_content.cpp:180
+#: xml_file_content.cpp:182
 msgid "Rows"
 msgstr "Zeilen"
 
-#: xml_file_content.cpp:181
+#: xml_file_content.cpp:183
 msgid "Columns"
 msgstr "Spalten"
 
-#: xml_file_content.cpp:182
+#: xml_file_content.cpp:184
 msgid "Transpose"
 msgstr "Transponieren"
 
-#: xml_file_content.cpp:183
+#: xml_file_content.cpp:185
 msgid "Thicken Selected Patches"
 msgstr "Ausgewählte Patches extrudieren"
 
-#: xml_file_content.cpp:184
+#: xml_file_content.cpp:186
 msgid "Cap Selection"
 msgstr "Cap für Auswahl erstellen"
 
-#: xml_file_content.cpp:185
+#: xml_file_content.cpp:187
 msgid "Cycle Cap Texture"
 msgstr "Cap-Textur durchrotieren"
 
-#: xml_file_content.cpp:186
+#: xml_file_content.cpp:188
 msgid "Stitch Patch Textures"
 msgstr "Patch-Texturen zusammenfügen"
 
-#: xml_file_content.cpp:187
+#: xml_file_content.cpp:189
 msgid "Bulge patch"
 msgstr "Patch auswölben"
 
-#: xml_file_content.cpp:188
+#: xml_file_content.cpp:190
 msgid "_Curve"
 msgstr "_Kurve"
 
-#: xml_file_content.cpp:189
+#: xml_file_content.cpp:191
 msgid "Create NURBS Curve"
 msgstr "NURBS-Kurve erstellen"
 
-#: xml_file_content.cpp:190
+#: xml_file_content.cpp:192
 msgid "Create CatmullRom Curve"
 msgstr "CatmullRom-Kurve erstellen"
 
-#: xml_file_content.cpp:191
+#: xml_file_content.cpp:193
 msgid "Convert NURBS <-> CatmullRom"
 msgstr "Konversion NURBS <-> CatmullRom"
 
-#: xml_file_content.cpp:192
+#: xml_file_content.cpp:194
 msgid "Append Curve Control Point"
 msgstr "Kurvenkontrollpunkt anfügen"
 
-#: xml_file_content.cpp:193
+#: xml_file_content.cpp:195
 msgid "Insert Curve Control Points"
 msgstr "Kurvenkontrollpunkt einfügen"
 
-#: xml_file_content.cpp:194
+#: xml_file_content.cpp:196
 msgid "Remove Curve Control Points"
 msgstr "Kurvenkontrollpunkt entfernen"
 
-#: xml_file_content.cpp:195
+#: xml_file_content.cpp:197
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: xml_file_content.cpp:196
+#: xml_file_content.cpp:198
 msgid "_About"
 msgstr "_Über DarkRadiant"
 
@@ -5323,8 +5349,17 @@ msgstr "Raster anzeigen/verbergen"
 msgid "Center Pivot when scaling faces"
 msgstr "Pivotpunkt beim Skalieren von Faces zentrieren"
 
-#~ msgid "Startup Complete"
-#~ msgstr "Startup komplett"
+#~ msgid "WireFrame"
+#~ msgstr "Drahtgitter"
 
-#~ msgid "Flags>"
-#~ msgstr "Flags"
+#~ msgid "Flatshade"
+#~ msgstr "Schattiert"
+
+#~ msgid "Textured"
+#~ msgstr "Texturiert"
+
+#~ msgid "Lighting"
+#~ msgstr "Beleuchtet"
+
+#~ msgid "Render Mode"
+#~ msgstr "Darstellungsmodus"
