@@ -31,6 +31,9 @@
     <ClCompile Include="..\..\plugins\image\tga.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\image\png.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\image\bmp.h">
@@ -55,6 +58,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\image\tga.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\image\png.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

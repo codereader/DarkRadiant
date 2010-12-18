@@ -13,5 +13,7 @@ image_la_SOURCES = dds.cpp \
                    DDSImage.cpp \
                    ImageGDK.cpp \
                    pcx.cpp \
-                   tga.cpp
+                   tga.cpp \
+                   png.cpp
+
 
