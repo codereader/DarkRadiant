@@ -148,12 +148,20 @@ SpecifierType::SpecifierTypeMap& SpecifierType::getMap()
 }
 
 // Map lookup function
-const SpecifierType& SpecifierType::getSpecifierType(const std::string& name) {
-	SpecifierTypeMap::const_iterator i = getMap().find(name);
+const SpecifierType& SpecifierType::getSpecifierType(const std::string& name)
+{
+	std::string specName = name.empty() ? "none" : name;
+
+	SpecifierTypeMap::const_iterator i = getMap().find(specName);
+
 	if (i != getMap().end())
+	{
 		return i->second;
+	}
 	else
+	{
 		throw ObjectivesException("SpecifierType " + name + " not found.");
+	}
 }
 
 // Construct a named SpecifierType object, incrementing the count
