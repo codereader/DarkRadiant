@@ -702,13 +702,45 @@ textures to surface channels and shaders to surfaces.
 
 static int compare_textures( lwTexture *a, lwTexture *b )
 {
-   return strcmp( a->ord, b->ord );
+	if (a->ord != NULL && b->ord != NULL)
+	{
+		return strcmp( a->ord, b->ord );
+	}
+	else if (a->ord != NULL)
+	{
+		return 1;
+	}
+	else if (b->ord != NULL)
+	{
+		return -1;
+	}
+	else
+	{
+		// Both strings are NULL
+		return 0;
+	}
 }
 
 
 static int compare_shaders( lwPlugin *a, lwPlugin *b )
 {
-   return strcmp( a->ord, b->ord );
+	if (a->ord != NULL && b->ord != NULL)
+	{
+		return strcmp( a->ord, b->ord );
+	}
+	else if (a->ord != NULL)
+	{
+		return 1;
+	}
+	else if (b->ord != NULL)
+	{
+		return -1;
+	}
+	else
+	{
+		// Both strings are NULL
+		return 0;
+	}
 }
 
 
