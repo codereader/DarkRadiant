@@ -133,15 +133,15 @@ SpecifierType::SpecifierTypeMap& SpecifierType::getMap()
 	if (_instance.empty())
 	{
 		// greebo: Make sure all default specifiers are in the map
-		SPEC_NONE();
-		SPEC_NAME();
-		SPEC_OVERALL();
-		SPEC_GROUP();
-		SPEC_CLASSNAME();
-		SPEC_SPAWNCLASS();
-		SPEC_AI_TYPE();
-		SPEC_AI_TEAM();
-		SPEC_AI_INNOCENCE();
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_NONE().getName(), SPEC_NONE()));
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_NAME().getName(), SPEC_NAME()));
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_OVERALL().getName(), SPEC_OVERALL()));
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_GROUP().getName(), SPEC_GROUP()));
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_CLASSNAME().getName(), SPEC_CLASSNAME()));
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_SPAWNCLASS().getName(), SPEC_SPAWNCLASS()));
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_AI_TYPE().getName(), SPEC_AI_TYPE()));
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_AI_TEAM().getName(), SPEC_AI_TEAM()));
+		_instance.insert(SpecifierTypeMap::value_type(SPEC_AI_INNOCENCE().getName(), SPEC_AI_INNOCENCE()));
 	}
 
 	return _instance;
