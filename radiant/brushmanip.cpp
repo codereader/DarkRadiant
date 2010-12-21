@@ -46,39 +46,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 FaceInstanceSet g_SelectedFaceInstances;
 
-void Brush_ConstructCuboid(Brush& brush, const AABB& bounds, const std::string& shader, const TextureProjection& projection)
-{
-  const unsigned char box[3][2] = { { 0, 1 }, { 2, 0 }, { 1, 2 } };
-  Vector3 mins(bounds.origin - bounds.extents);
-  Vector3 maxs(bounds.origin + bounds.extents);
-
-  brush.clear();
-  brush.reserve(6);
-
-  {
-    for(int i=0; i < 3; ++i)
-    {
-      Vector3 planepts1(maxs);
-      Vector3 planepts2(maxs);
-      planepts2[box[i][0]] = mins[box[i][0]];
-      planepts1[box[i][1]] = mins[box[i][1]];
-
-      brush.addPlane(maxs, planepts1, planepts2, shader, projection);
-    }
-  }
-  {
-    for(int i=0; i < 3; ++i)
-    {
-      Vector3 planepts1(mins);
-      Vector3 planepts2(mins);
-      planepts1[box[i][0]] = maxs[box[i][0]];
-      planepts2[box[i][1]] = maxs[box[i][1]];
-
-      brush.addPlane(mins, planepts1, planepts2, shader, projection);
-    }
-  }
-}
-
 inline float max_extent(const Vector3& extents)
 {
   return std::max(std::max(extents[0], extents[1]), extents[2]);
@@ -301,7 +268,7 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
     {
       UndoableCommand undo("brushCuboid");
 
-      Brush_ConstructCuboid(brush, bounds, shader, projection);
+      brush.constructCuboid(bounds, shader, projection);
     }
     break;
   case eBrushPrism:
@@ -351,8 +318,9 @@ void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mi
     {
       Vector3 maxs(region_maxs[0]+THICKNESS, region_maxs[1]+THICKNESS, region_maxs[2]+THICKNESS);
       maxs[i] = region_mins[i];
-      Brush_ConstructCuboid(*Node_getBrush(brushes[i]),
-      						AABB::createFromMinMax(mins, maxs),
+
+	  Brush& brush = *Node_getBrush(brushes[i]);
+	  brush.constructCuboid(AABB::createFromMinMax(mins, maxs),
       						texdef_name_default(),
       						TextureProjection());
     }
@@ -367,8 +335,9 @@ void ConstructRegionBrushes(scene::INodePtr brushes[6], const Vector3& region_mi
     {
       Vector3 mins(region_mins[0]-THICKNESS, region_mins[1]-THICKNESS, region_mins[2]-THICKNESS);
       mins[i] = region_maxs[i];
-      Brush_ConstructCuboid(*Node_getBrush(brushes[i+3]),
-      						AABB::createFromMinMax(mins, maxs),
+      Brush& brush = *Node_getBrush(brushes[i+3]);
+	  
+	  brush.constructCuboid(AABB::createFromMinMax(mins, maxs),
       						texdef_name_default(),
       						TextureProjection());
     }
@@ -430,16 +399,16 @@ void Scene_BrushResize_Selected(scene::Graph& graph, const AABB& bounds, const s
     Brush* brush = Node_getBrush(node);
     if(brush != 0)
     {
-      Brush_ConstructCuboid(*brush, bounds, shader, TextureTransform_getDefault());
-      SceneChangeNotify();
+		brush->constructCuboid(bounds, shader, TextureTransform_getDefault());
+		SceneChangeNotify();
     }
   }
 }
 
 void Scene_BrushResize(Brush& brush, const AABB& bounds, const std::string& shader)
 {
-      Brush_ConstructCuboid(brush, bounds, shader, TextureTransform_getDefault());
-      SceneChangeNotify();
+	brush.constructCuboid(bounds, shader, TextureTransform_getDefault());
+	SceneChangeNotify();
 }
 
 /**

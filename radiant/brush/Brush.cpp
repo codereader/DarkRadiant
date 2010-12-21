@@ -536,6 +536,40 @@ void Brush::copy(const Brush& other) {
 	planeChanged();
 }
 
+void Brush::constructCuboid(const AABB& bounds, const std::string& shader, const TextureProjection& projection)
+{
+	const unsigned char box[3][2] = { { 0, 1 }, { 2, 0 }, { 1, 2 } };
+
+	Vector3 mins(bounds.origin - bounds.extents);
+	Vector3 maxs(bounds.origin + bounds.extents);
+
+	clear();
+	reserve(6);
+
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			Vector3 planepts1(maxs);
+			Vector3 planepts2(maxs);
+			planepts2[box[i][0]] = mins[box[i][0]];
+			planepts1[box[i][1]] = mins[box[i][1]];
+
+			addPlane(maxs, planepts1, planepts2, shader, projection);
+		}
+	}
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			Vector3 planepts1(mins);
+			Vector3 planepts2(mins);
+			planepts1[box[i][0]] = maxs[box[i][0]];
+			planepts2[box[i][1]] = maxs[box[i][1]];
+
+			addPlane(mins, planepts1, planepts2, shader, projection);
+		}
+	}
+}
+
 void Brush::edge_push_back(FaceVertexId faceVertex) {
 	m_select_edges.push_back(SelectableEdge(m_faces, faceVertex));
 	for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {

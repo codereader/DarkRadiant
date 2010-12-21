@@ -282,6 +282,8 @@ public:
 	/// \brief Makes this brush a deep-copy of the \p other.
 	void copy(const Brush& other);
 
+	void constructCuboid(const AABB& bounds, const std::string& shader, const TextureProjection& projection);
+
 private:
 	void edge_push_back(FaceVertexId faceVertex);
 
