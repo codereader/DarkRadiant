@@ -139,6 +139,12 @@ public:
 	static const std::size_t PRISM_MIN_SIDES;
 	static const std::size_t PRISM_MAX_SIDES;
 
+	static const std::size_t CONE_MIN_SIDES;
+	static const std::size_t CONE_MAX_SIDES;
+
+	static const std::size_t SPHERE_MIN_SIDES;
+	static const std::size_t SPHERE_MAX_SIDES;
+
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
 	class BrushUndoMemento : public UndoMemento {
 	public:
@@ -290,6 +296,12 @@ public:
 
 	// Construct an n-sided prism using the given bounds. The axis parameter will determine the orientation (which side is face up)
 	void constructPrism(const AABB& bounds, std::size_t sides, int axis, const std::string& shader, const TextureProjection& projection);
+
+	// Construct an n-sided cone using the given bounds
+	void constructCone(const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection);
+
+	// Constructs an sphere approximated by n sides
+	void constructSphere(const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection);
 
 private:
 	void edge_push_back(FaceVertexId faceVertex);

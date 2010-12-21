@@ -28,10 +28,21 @@ namespace {
 			default: return std::max(extents[0], extents[1]);
 		}
 	}
+
+	inline float max_extent(const Vector3& extents)
+	{
+		return std::max(std::max(extents[0], extents[1]), extents[2]);
+	}
 }
 
 const std::size_t Brush::PRISM_MIN_SIDES = 3;
 const std::size_t Brush::PRISM_MAX_SIDES = c_brush_maxFaces - 2;
+
+const std::size_t Brush::CONE_MIN_SIDES = 3;
+const std::size_t Brush::CONE_MAX_SIDES = 32;
+
+const std::size_t Brush::SPHERE_MIN_SIDES = 3;
+const std::size_t Brush::SPHERE_MAX_SIDES = 7;
 
 Brush::Brush(BrushNode& owner, const Callback& evaluateTransform, const Callback& boundsChanged) :
 	_owner(owner),
@@ -650,6 +661,113 @@ void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis,
 		planepts[2][axis] = maxs[axis];
 
 		addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
+	}
+}
+
+void Brush::constructCone(const AABB& bounds, std::size_t sides, 
+						  const std::string& shader, const TextureProjection& projection)
+{
+	if (sides < CONE_MIN_SIDES)
+	{
+		globalErrorStream() << "brushCone: sides " << sides << ": too few sides, minimum is " << CONE_MIN_SIDES << std::endl;
+		return;
+	}
+
+	if (sides > CONE_MAX_SIDES)
+	{
+		globalErrorStream() << "brushCone: sides " << sides << ": too many sides, maximum is " << CONE_MAX_SIDES << std::endl;
+		return;
+	}
+
+	clear();
+	reserve(sides+1);
+
+	Vector3 mins(bounds.origin - bounds.extents);
+	Vector3 maxs(bounds.origin + bounds.extents);
+
+	float radius = max_extent(bounds.extents);
+	const Vector3& mid = bounds.origin;
+	Vector3 planepts[3];
+
+	planepts[0][0] = mins[0];planepts[0][1] = mins[1];planepts[0][2] = mins[2];
+	planepts[1][0] = maxs[0];planepts[1][1] = mins[1];planepts[1][2] = mins[2];
+	planepts[2][0] = maxs[0];planepts[2][1] = maxs[1];planepts[2][2] = mins[2];
+
+	addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
+
+	for (std::size_t i = 0 ; i < sides ; ++i)
+	{
+		double sv = sin (i*c_pi*2/sides);
+		double cv = cos (i*c_pi*2/sides);
+
+		planepts[0][0] = static_cast<float>(floor(mid[0]+radius*cv+0.5));
+		planepts[0][1] = static_cast<float>(floor(mid[1]+radius*sv+0.5));
+		planepts[0][2] = mins[2];
+
+		planepts[1][0] = mid[0];
+		planepts[1][1] = mid[1];
+		planepts[1][2] = maxs[2];
+
+		planepts[2][0] = static_cast<float>(floor(planepts[0][0] - radius * sv + 0.5));
+		planepts[2][1] = static_cast<float>(floor(planepts[0][1] + radius * cv + 0.5));
+		planepts[2][2] = maxs[2];
+
+		addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
+	}
+}
+
+void Brush::constructSphere(const AABB& bounds, std::size_t sides, 
+							const std::string& shader, const TextureProjection& projection)
+{
+	if (sides < SPHERE_MIN_SIDES)
+	{
+		globalErrorStream() << "brushSphere: sides " << sides << ": too few sides, minimum is " << SPHERE_MIN_SIDES << std::endl;
+		return;
+	}
+	if (sides > SPHERE_MAX_SIDES)
+	{
+		globalErrorStream() << "brushSphere: sides " << sides << ": too many sides, maximum is " << SPHERE_MAX_SIDES << std::endl;
+		return;
+	}
+
+	clear();
+	reserve(sides*sides);
+
+	float radius = max_extent(bounds.extents);
+	const Vector3& mid = bounds.origin;
+	Vector3 planepts[3];
+
+	double dt = 2 * c_pi / sides;
+	double dp = c_pi / sides;
+
+	for (std::size_t i = 0; i < sides; i++)
+	{
+		for (std::size_t j = 0; j < sides - 1; j++)
+		{
+			double t = i * dt;
+			double p = float(j * dp - c_pi / 2);
+
+			planepts[0] = mid + vector3_for_spherical(t, p)*radius;
+			planepts[1] = mid + vector3_for_spherical(t, p + dp)*radius;
+			planepts[2] = mid + vector3_for_spherical(t + dt, p + dp)*radius;
+
+			addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
+		}
+	}
+
+	{
+		double p = (sides - 1) * dp - c_pi / 2;
+
+		for (std::size_t i = 0; i < sides; i++)
+		{
+			double t = i * dt;
+
+			planepts[0] = mid + vector3_for_spherical(t, p)*radius;
+			planepts[1] = mid + vector3_for_spherical(t + dt, p + dp)*radius;
+			planepts[2] = mid + vector3_for_spherical(t + dt, p)*radius;
+
+			addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
+		}
 	}
 }
 
