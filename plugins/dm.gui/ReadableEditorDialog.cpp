@@ -1806,7 +1806,7 @@ bool ReadableEditorDialog::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
 {
 	bool xdWidget = (widget == _xDataNameEntry);
 
-	if (xdWidget || widget == _nameEntry)
+	if (xdWidget)
 	{
 		switch (ev->keyval)
 		{
@@ -1835,6 +1835,17 @@ bool ReadableEditorDialog::onKeyPress(GdkEventKey* ev, Gtk::Widget* widget)
 					checkXDataUniqueness();
 				}
 				return false;
+			default:
+				return false;
+		}
+	}
+	else if (widget == _nameEntry)
+	{
+		switch (ev->keyval)
+		{
+			// Forbidden key check
+			case GDK_Tab:
+				return true; // forbid the tab
 			default:
 				return false;
 		}
