@@ -482,10 +482,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\radiant\resource.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\radiant\select.cpp"
 				>
 			</File>
