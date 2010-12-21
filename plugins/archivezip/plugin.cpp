@@ -39,7 +39,7 @@ public:
 	}
 
 	virtual const std::string& getExtension() {
-		static std::string _ext("PK4");
+		static std::string _ext("pk4");
 		return _ext;
 	}
 

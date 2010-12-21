@@ -52,6 +52,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "iradiant.h"
 #include "idatastream.h"
 #include "ifilesystem.h"
+#include "iregistry.h"
 #include "igame.h"
 
 #include "string/string.h"
@@ -61,6 +62,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 #include "DirectoryArchive.h"
 #include "SortedFilenames.h"
@@ -95,15 +98,18 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
 	SortedFilenames filenameList;
 
 	// Traverse the directory using the filename list as functor
-    try {
+    try
+	{
         Directory_forEach(path, filenameList);
     }
-    catch (DirectoryNotFoundException& e) {
+    catch (DirectoryNotFoundException&)
+	{
         std::cout << "[vfs] Directory '" << path << "' not found."
                   << std::endl;
     }
 
-	if (filenameList.size() == 0) {
+	if (filenameList.empty())
+	{
 		return; // nothing found
 	}
 
@@ -122,6 +128,9 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
 void Doom3FileSystem::initialise()
 {
 	globalOutputStream() << "filesystem initialised" << std::endl;
+
+	std::string extensions = GlobalGameManager().currentGame()->getKeyValue("archivetypes");
+	boost::algorithm::split(_allowedExtensions, extensions, boost::algorithm::is_any_of(" "));
 
 	// Get the VFS search paths from the game manager
 	const game::IGameManager::PathList& paths =
@@ -276,10 +285,10 @@ std::string Doom3FileSystem::findRoot(const std::string& name) {
 
 void Doom3FileSystem::initPakFile(ArchiveLoader& archiveModule, const std::string& filename) {
 	std::string fileExt(os::getExtension(filename));
-	boost::to_upper(fileExt);
+	boost::to_lower(fileExt);
 
 	// matching extension?
-	if (fileExt == archiveModule.getExtension()) {
+	if (_allowedExtensions.find(fileExt) != _allowedExtensions.end()) {
 		ArchiveDescriptor entry;
 
 		entry.name = filename;
@@ -302,6 +311,7 @@ const StringSet& Doom3FileSystem::getDependencies() const {
 
 	if (_dependencies.empty()) {
 		_dependencies.insert("ArchivePK4");
+		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_GAMEMANAGER);
 	}
 

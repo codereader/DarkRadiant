@@ -99,7 +99,7 @@
     <ClCompile>
       <AdditionalOptions>/EHs /MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/win_iconv/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/win_iconv/include;$(SolutionDir)/../../w32deps/gtkmm/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -153,7 +153,7 @@
     <ClCompile>
       <AdditionalOptions>/EHs /MP %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/win_iconv/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/win_iconv/include;$(SolutionDir)/../../w32deps/gtkmm/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -205,7 +205,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/win_iconv/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/win_iconv/include;$(SolutionDir)/../../w32deps/gtkmm/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -261,7 +261,7 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/win_iconv/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/win_iconv/include;$(SolutionDir)/../../w32deps/gtkmm/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
