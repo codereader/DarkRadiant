@@ -51,91 +51,6 @@ inline float max_extent(const Vector3& extents)
   return std::max(std::max(extents[0], extents[1]), extents[2]);
 }
 
-inline float max_extent_2d(const Vector3& extents, int axis)
-{
-  switch(axis)
-  {
-  case 0:
-    return std::max(extents[1], extents[2]);
-  case 1:
-    return std::max(extents[0], extents[2]);
-  default:
-    return std::max(extents[0], extents[1]);
-  }
-}
-
-const std::size_t c_brushPrism_minSides = 3;
-const std::size_t c_brushPrism_maxSides = c_brush_maxFaces - 2;
-const char* const c_brushPrism_name = "brushPrism";
-
-void Brush_ConstructPrism(Brush& brush, const AABB& bounds, std::size_t sides, int axis, const std::string& shader, const TextureProjection& projection)
-{
-  if(sides < c_brushPrism_minSides)
-  {
-    globalErrorStream() << c_brushPrism_name << ": sides " << sides << ": too few sides, minimum is " << c_brushPrism_minSides << "\n";
-    return;
-  }
-  if(sides > c_brushPrism_maxSides)
-  {
-    globalErrorStream() << c_brushPrism_name << ": sides " << sides << ": too many sides, maximum is " << c_brushPrism_maxSides << "\n";
-    return;
-  }
-
-  brush.clear();
-  brush.reserve(sides+2);
-
-  Vector3 mins(bounds.origin - bounds.extents);
-  Vector3 maxs(bounds.origin + bounds.extents);
-
-  float radius = max_extent_2d(bounds.extents, axis);
-  const Vector3& mid = bounds.origin;
-  Vector3 planepts[3];
-
-  planepts[2][(axis+1)%3] = mins[(axis+1)%3];
-  planepts[2][(axis+2)%3] = mins[(axis+2)%3];
-  planepts[2][axis] = maxs[axis];
-  planepts[1][(axis+1)%3] = maxs[(axis+1)%3];
-  planepts[1][(axis+2)%3] = mins[(axis+2)%3];
-  planepts[1][axis] = maxs[axis];
-  planepts[0][(axis+1)%3] = maxs[(axis+1)%3];
-  planepts[0][(axis+2)%3] = maxs[(axis+2)%3];
-  planepts[0][axis] = maxs[axis];
-
-  brush.addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
-
-  planepts[0][(axis+1)%3] = mins[(axis+1)%3];
-  planepts[0][(axis+2)%3] = mins[(axis+2)%3];
-  planepts[0][axis] = mins[axis];
-  planepts[1][(axis+1)%3] = maxs[(axis+1)%3];
-  planepts[1][(axis+2)%3] = mins[(axis+2)%3];
-  planepts[1][axis] = mins[axis];
-  planepts[2][(axis+1)%3] = maxs[(axis+1)%3];
-  planepts[2][(axis+2)%3] = maxs[(axis+2)%3];
-  planepts[2][axis] = mins[axis];
-
-  brush.addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
-
-  for (std::size_t i=0 ; i<sides ; ++i)
-  {
-    double sv = sin (i*3.14159265*2/sides);
-    double cv = cos (i*3.14159265*2/sides);
-
-    planepts[0][(axis+1)%3] = static_cast<float>(floor(mid[(axis+1)%3]+radius*cv+0.5));
-    planepts[0][(axis+2)%3] = static_cast<float>(floor(mid[(axis+2)%3]+radius*sv+0.5));
-    planepts[0][axis] = mins[axis];
-
-    planepts[1][(axis+1)%3] = planepts[0][(axis+1)%3];
-    planepts[1][(axis+2)%3] = planepts[0][(axis+2)%3];
-    planepts[1][axis] = maxs[axis];
-
-    planepts[2][(axis+1)%3] = static_cast<float>(floor(planepts[0][(axis+1)%3] - radius*sv + 0.5));
-    planepts[2][(axis+2)%3] = static_cast<float>(floor(planepts[0][(axis+2)%3] + radius*cv + 0.5));
-    planepts[2][axis] = maxs[axis];
-
-    brush.addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
-  }
-}
-
 const std::size_t c_brushCone_minSides = 3;
 const std::size_t c_brushCone_maxSides = 32;
 const char* const c_brushCone_name = "brushCone";
@@ -275,10 +190,10 @@ void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, 
     {
       int axis = GetViewAxis();
 	  std::ostringstream command;
-      command << c_brushPrism_name << " -sides " << sides << " -axis " << axis;
+      command << "brushPrism -sides " << sides << " -axis " << axis;
       UndoableCommand undo(command.str());
 
-      Brush_ConstructPrism(brush, bounds, sides, axis, shader, projection);
+      brush.constructPrism(bounds, sides, axis, shader, projection);
     }
     break;
   case eBrushCone:
@@ -681,7 +596,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		EBrushPrefab type = static_cast<EBrushPrefab>(input);
 
 		int minSides = 3;
-		int maxSides = c_brushPrism_maxSides;
+		int maxSides = Brush::PRISM_MAX_SIDES;
 
 		switch (type)
 		{
@@ -691,8 +606,8 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 			return;
 
 		case eBrushPrism:
-			minSides = c_brushPrism_minSides;
-			maxSides = c_brushPrism_maxSides;
+			minSides = Brush::PRISM_MIN_SIDES;
+			maxSides = Brush::PRISM_MAX_SIDES;
 			break;
 
 		case eBrushCone:
