@@ -22,13 +22,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define png_infopp_NULL (png_infopp)NULL
 #define int_p_NULL (int*)NULL
 
-#include "png.h"
+#include "PNGLoader.h"
+#include "ifilesystem.h"
+#include "imagelib.h"
 
 #include <png.h>
 
-#include "ifilesystem.h"
-
-#include "imagelib.h"
 
 typedef unsigned char byte;
 
