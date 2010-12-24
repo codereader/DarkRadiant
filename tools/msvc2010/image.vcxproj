@@ -323,7 +323,7 @@
     <ClInclude Include="..\..\plugins\image\ImageGDK.h" />
     <ClInclude Include="..\..\plugins\image\jpeg.h" />
     <ClInclude Include="..\..\plugins\image\pcx.h" />
-    <ClInclude Include="..\..\plugins\image\png.h" />
+    <ClInclude Include="..\..\plugins\image\PNGLoader.h" />
     <ClInclude Include="..\..\plugins\image\tga.h" />
   </ItemGroup>
   <ItemGroup>

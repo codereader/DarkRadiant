@@ -476,7 +476,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\plugins\image\png.h"
+				RelativePath="..\..\plugins\image\PNGLoader.h"
 				>
 			</File>
 			<File

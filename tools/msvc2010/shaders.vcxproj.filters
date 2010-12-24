@@ -43,9 +43,6 @@
     <ClCompile Include="..\..\plugins\shaders\textures\ImageFileLoader.cpp">
       <Filter>src\textures</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\shaders\textures\ImageLoaderManager.cpp">
-      <Filter>src\textures</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\shaders\textures\TextureManipulator.cpp">
       <Filter>src\textures</Filter>
     </ClCompile>
@@ -97,9 +94,6 @@
       <Filter>src\textures</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\shaders\textures\ImageFileLoader.h">
-      <Filter>src\textures</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\shaders\textures\ImageLoaderManager.h">
       <Filter>src\textures</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\shaders\textures\TextureManipulator.h">

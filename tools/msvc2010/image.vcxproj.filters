@@ -60,7 +60,7 @@
     <ClInclude Include="..\..\plugins\image\tga.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\image\png.h">
+    <ClInclude Include="..\..\plugins\image\PNGLoader.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
