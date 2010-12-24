@@ -314,7 +314,6 @@
     <ClCompile Include="..\..\plugins\shaders\ShaderTemplate.cpp" />
     <ClCompile Include="..\..\plugins\shaders\textures\GLTextureManager.cpp" />
     <ClCompile Include="..\..\plugins\shaders\textures\ImageFileLoader.cpp" />
-    <ClCompile Include="..\..\plugins\shaders\textures\ImageLoaderManager.cpp" />
     <ClCompile Include="..\..\plugins\shaders\textures\TextureManipulator.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -334,7 +333,6 @@
     <ClInclude Include="..\..\plugins\shaders\textures\GLTextureManager.h" />
     <ClInclude Include="..\..\plugins\shaders\textures\HeightmapCreator.h" />
     <ClInclude Include="..\..\plugins\shaders\textures\ImageFileLoader.h" />
-    <ClInclude Include="..\..\plugins\shaders\textures\ImageLoaderManager.h" />
     <ClInclude Include="..\..\plugins\shaders\textures\TextureManipulator.h" />
   </ItemGroup>
   <ItemGroup>

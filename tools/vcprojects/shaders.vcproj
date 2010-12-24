@@ -525,14 +525,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\plugins\shaders\textures\ImageLoaderManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\plugins\shaders\textures\ImageLoaderManager.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\plugins\shaders\textures\TextureManipulator.cpp"
 					>
 				</File>
