@@ -7,7 +7,6 @@
 
 #include "NamedBindable.h"
 #include "parser/DefTokeniser.h"
-#include "textures/ImageLoaderManager.h"
 
 using parser::DefTokeniser;
 

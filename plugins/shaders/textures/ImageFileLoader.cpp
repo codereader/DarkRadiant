@@ -1,5 +1,4 @@
 #include "ImageFileLoader.h"
-#include "ImageLoaderManager.h"
 
 #include "ifilesystem.h"
 #include "iarchive.h"
@@ -7,6 +6,8 @@
 #include "iregistry.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 namespace shaders
 {
@@ -18,7 +19,8 @@ namespace
 }
 
 // Static accessor for the list of .game-defined ImageLoaders
-const ImageLoaderList& ImageFileLoader::getImageLoaders()
+const ImageFileLoader::ImageLoaderList& 
+ImageFileLoader::getGameFileImageLoaders()
 {
 	static ImageLoaderList _imageLoaders;
 
@@ -50,7 +52,7 @@ ImagePtr ImageFileLoader::imageFromVFS(const std::string& name)
 {
 	ImagePtr returnValue;
 
-	const ImageLoaderList& loaders = getImageLoaders();
+	const ImageLoaderList& loaders = getGameFileImageLoaders();
 	for (ImageLoaderList::const_iterator i = loaders.begin();
 		 i != loaders.end();
 		 ++i)
@@ -76,28 +78,58 @@ ImagePtr ImageFileLoader::imageFromVFS(const std::string& name)
 
 	return returnValue;
 }
+
 ImagePtr ImageFileLoader::imageFromFile(const std::string& filename,
                                         const std::string& modules)
 {
-	ImagePtr image;
+    ImagePtr image;
+    ImageLoaderList imageLoaders = getNamedLoaders(modules);
 
-    ImageLoaderList imageLoaders(ImageLoaderManager::getLoaders(modules));
-	for (unsigned int i = 0; i < imageLoaders.size(); i++)
+    for (ImageLoaderList::const_iterator i = imageLoaders.begin();
+         i != imageLoaders.end();
+         ++i)
     {
-		// Construct a DirectoryArchiveFile out of the filename
-		DirectoryArchiveFilePtr file(
+        // Construct a DirectoryArchiveFile out of the filename
+        DirectoryArchiveFilePtr file(
             new DirectoryArchiveFile(filename, filename)
         );
 
-		if (!file->failed())
+        if (!file->failed())
         {
-			// Try to invoke the imageloader with a reference to an ArchiveFile
-			image = imageLoaders[i]->load(*file);
-			break;
-		}
-	}
+            // Try to invoke the imageloader with a reference to an ArchiveFile
+            image = (*i)->load(*file);
+            break;
+        }
+    }
 
-	return image;
+    return image;
 }
+
+ImageFileLoader::ImageLoaderList 
+ImageFileLoader::getNamedLoaders(const std::string& names) 
+{
+    ImageLoaderList list;
+
+    // Split string into loader names
+    std::list<std::string> parts;
+    boost::algorithm::split(parts, names, boost::algorithm::is_any_of(" "));
+
+    for (std::list<std::string>::const_iterator i = parts.begin();
+         i != parts.end();
+         ++i) 
+    {
+        std::string fileExt = boost::to_upper_copy(*i);
+
+        // Acquire the module using the given fileExt
+        ImageLoaderPtr loader = GlobalImageLoader(fileExt);
+        if (loader) 
+        {
+            list.push_back(loader);
+        }
+    }
+
+    return list;
+}
+
 
 } // namespace shaders
