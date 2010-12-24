@@ -2,7 +2,6 @@
 #define FILELODER_H_
 
 #include "iimage.h"
-#include "ImageLoaderManager.h"
 
 namespace shaders
 {
@@ -16,8 +15,13 @@ class ImageFileLoader
 {
 private:
 
+    typedef std::vector<ImageLoaderPtr> ImageLoaderList;
+
 	// Get the list of ImageLoaders associated with the .game file formats
-	static const ImageLoaderList& getImageLoaders();
+	static const ImageLoaderList& getGameFileImageLoaders();
+
+    // Get image loaders from module names
+    static ImageLoaderList getNamedLoaders(const std::string& names);
 
 public:
 
