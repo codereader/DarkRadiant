@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "jpeg.h"
 #include "tga.h"
-#include "png.h"
+#include "PNGLoader.h"
 #include "bmp.h"
 #include "pcx.h"
 #include "dds.h"
@@ -40,7 +40,8 @@ typedef boost::shared_ptr<BMPLoader> BMPLoaderPtr;
 typedef boost::shared_ptr<DDSLoader> DDSLoaderPtr;
 typedef boost::shared_ptr<GDKLoader> GDKLoaderPtr;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
 	registry.registerModule(TGALoaderPtr(new TGALoader));
 	registry.registerModule(JPGLoaderPtr(new JPGLoader));
 	registry.registerModule(PNGLoaderPtr(new PNGLoader));

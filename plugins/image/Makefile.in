@@ -76,7 +76,7 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 image_la_DEPENDENCIES = $(top_builddir)/libs/ddslib/libdds.la
 am_image_la_OBJECTS = dds.lo image.lo bmp.lo jpeg.lo DDSImage.lo \
-	ImageGDK.lo pcx.lo tga.lo
+	ImageGDK.lo pcx.lo tga.lo png.lo
 image_la_OBJECTS = $(am_image_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -389,6 +389,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/image.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jpeg.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pcx.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/png.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tga.Plo@am__quote@
 
 .cpp.o:

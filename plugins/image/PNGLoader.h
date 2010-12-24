@@ -1,3 +1,5 @@
+#pragma once
+
 /*
 Copyright (C) 1999-2006 Id Software, Inc. and contributors.
 For a list of contributors, see the accompanying CONTRIBUTORS file.
@@ -18,9 +20,6 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined (INCLUDED_PNG_H)
-#define INCLUDED_PNG_H
 
 #include "ifilesystem.h"
 #include "iimage.h"
@@ -71,7 +70,4 @@ public:
 		globalOutputStream() << "ImageLoaderPNG::initialiseModule called.\n";
 	}
 };
-
-#endif
-
 
