@@ -60,6 +60,11 @@ TexturePtr CShader::getEditorImage()
     return _editorTexture;
 }
 
+bool CShader::isEditorImageNoTex()
+{
+	return (getEditorImage() == GetTextureManager().getShaderNotFound());
+}
+
 // Return the falloff texture name
 std::string CShader::getFalloffName() const {
 	return _template->getLightFalloff()->getIdentifier();

@@ -71,6 +71,8 @@ private:
     GLuint compileProgramList(ShaderLayer::VertexColourMode);
 	void createDisplayLists();
 
+	std::string cleanupShaderName(std::string mapName);
+
 public:
 	/**
 	 * Constructor. Accepts a picoSurface_t struct and the file extension to determine

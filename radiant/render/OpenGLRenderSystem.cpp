@@ -59,6 +59,39 @@ OpenGLRenderSystem::~OpenGLRenderSystem()
 	}
 }
 
+/* Test if the this can capture the given shader.
+ */
+bool OpenGLRenderSystem::canCapture(const std::string& name) {
+	ShaderMap::const_iterator i = _shaders.find(name);
+	MaterialPtr mtr;
+
+	if(i != _shaders.end()) {
+		// Try to lock pointer, which will fail if the object has been
+		// deleted
+		OpenGLShaderPtr sp = i->second.lock();
+		if (sp) {
+			mtr = sp->getMaterial();
+		} else {
+			return false;
+		}
+	} else {
+		// Either the shader was not found, or the weak pointer failed to lock
+		// because the shader had been deleted. Either way, create a new shader
+		// and insert into the cache.
+		OpenGLShaderPtr shd(new OpenGLShader(*this));
+		_shaders[name] = shd;
+
+		// Realise the shader if the cache is realised
+		if (_realised) {
+			shd->realise(name);
+		}
+		mtr = shd->getMaterial();
+	}
+
+	// True if the editor image is not no tex
+	return (!mtr->isEditorImageNoTex());
+}
+
 /* Capture the given shader.
  */
 ShaderPtr OpenGLRenderSystem::capture(const std::string& name) {
