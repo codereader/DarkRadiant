@@ -22,46 +22,37 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	// Get the shader from the picomodel struct. If this is a LWO model, use
 	// the material name to select the shader, while for an ASE model the
 	// bitmap path should be used.
-    picoShader_t* shader = PicoGetSurfaceShader(surf);
-    if (shader != 0) {
+	picoShader_t* shader = PicoGetSurfaceShader(surf);
+	std::string rawName = "";
+
+	if (shader != 0)
+	{
 		if (fExt == "lwo")
-        {
-	    	_originalShaderName = PicoGetShaderName(shader);
+		{
+			_originalShaderName = PicoGetShaderName(shader);
 		}
 		else if (fExt == "ase")
-        {
+		{
+			rawName = PicoGetShaderName(shader);
 			std::string rawMapName = PicoGetShaderMapName(shader);
-			boost::algorithm::replace_all(rawMapName, "\\", "/");
-
-			// Take off the everything before "base/", and everything after
-			// the first period if it exists (i.e. strip off ".tga")
-			std::size_t basePos = rawMapName.find("base");
-
-			if (basePos != std::string::npos && basePos > 0)
-			{
-				std::size_t dotPos = rawMapName.find(".");
-
-				if (dotPos != std::string::npos)
-				{
-					_originalShaderName = rawMapName.substr(basePos + 5,
-															dotPos - basePos - 5);
-				}
-				else
-				{
-					_originalShaderName = rawMapName.substr(basePos + 5);
-				}
-			}
-			else {
-				// Unrecognised shader path
-				_originalShaderName = "";
-			}
+			_originalShaderName = cleanupShaderName(rawMapName);
 		}
-    }
+	}
 
-    _mappedShaderName = _originalShaderName; // no skin at this time
+	// If shader not found, fallback to alternative if available
+	// _originalShaderName is empty if the ase material has no BITMAP
+	// canCapture is false if _originalShaderName is not a valid shader
+	if((_originalShaderName.empty() ||
+		!GlobalRenderSystem().canCapture(_originalShaderName)) &&
+		!rawName.empty())
+	{
+		_originalShaderName = cleanupShaderName(rawName);
+	}
 
-    // Capture the shader
-    _shader = GlobalRenderSystem().capture(_originalShaderName);
+	_mappedShaderName = _originalShaderName;
+
+	// Capture the shader
+	_shader = GlobalRenderSystem().capture(_mappedShaderName);
 
     // Get the number of vertices and indices, and reserve capacity in our
     // vectors in advance by populating them with empty structs.
@@ -97,6 +88,48 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 
 	// Construct the DLs
 	createDisplayLists();
+}
+
+std::string RenderablePicoSurface::cleanupShaderName(std::string mapName)
+{
+	const std::string baseFolder = "base";	//FIXME: should be from game.xml
+	std::size_t basePos;
+
+	boost::algorithm::replace_all(mapName, "\\", "/");
+
+	// for paths given relative, start from the beginning
+	if(mapName.substr(0,6) == "models" || mapName.substr(0,8) == "textures")
+	{
+		basePos = 0;
+	}
+	else
+	{
+		// Take off the everything before "base/", and everything after
+		// the first period if it exists (i.e. strip off ".tga")
+		basePos = mapName.find(baseFolder);
+		if (basePos == std::string::npos)
+		{
+			// Unrecognised shader path, no base folder.
+			// Try the original incase it was already given relative.
+			basePos = 0;
+		}
+		else
+		{
+			// Increment for for the length of "base/", the / is the +1
+			basePos += (baseFolder.size() + 1);
+		}
+	}
+
+	std::size_t dotPos = mapName.find(".");
+
+	if (dotPos != std::string::npos)
+	{
+		return mapName.substr(basePos, dotPos - basePos);
+	}
+	else
+	{
+		return mapName.substr(basePos);
+	}
 }
 
 // Destructor. Release the GL display lists.
@@ -330,13 +363,13 @@ int RenderablePicoSurface::getNumTriangles() const
 
 const ArbitraryMeshVertex& RenderablePicoSurface::getVertex(int vertexIndex) const
 {
-	assert(vertexIndex >= 0 && vertexIndex < _vertices.size());
+	assert(vertexIndex >= 0 && vertexIndex < static_cast<int>(_vertices.size()));
 	return _vertices[vertexIndex];
 }
 
 ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
 {
-	assert(polygonIndex >= 0 && polygonIndex*3 < _indices.size());
+	assert(polygonIndex >= 0 && polygonIndex*3 < static_cast<int>(_indices.size()));
 
 	ModelPolygon poly;
 

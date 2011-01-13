@@ -337,6 +337,19 @@ public:
 
 	/**
      * \brief
+     * Test if the the given shader is able to be captured.
+	 * Return true if the given shader is available.
+	 *
+	 * @param name
+	 * The name of the shader to test capture.
+	 *
+	 * @returns
+	 * bool, true if the shader is available.
+	 */
+	virtual bool canCapture(const std::string& name) = 0;
+
+	/**
+     * \brief
      * Capture the given shader, increasing its reference count and
 	 * returning a pointer to the Shader object.
      *

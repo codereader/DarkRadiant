@@ -48,6 +48,7 @@ public:
     SortRequest getSortRequest() const;
     float getPolygonOffset() const;
 	TexturePtr getEditorImage();
+	bool isEditorImageNoTex();
 
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage();

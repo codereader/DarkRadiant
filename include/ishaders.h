@@ -100,6 +100,12 @@ public:
 
     /**
      * \brief
+     * Return true if the editor image is no tex for this shader.
+     */
+    virtual bool isEditorImageNoTex() = 0;
+
+    /**
+     * \brief
      * Get the string name of this shader.
      */
     virtual std::string getName() const = 0;
