@@ -60,6 +60,12 @@ public:
 
 	static void writeFace(std::ostream& stream, const IFace& face)
 	{
+		// greebo: Don't export faces with degenerate or empty windings (they are "non-contributing")
+		if (face.getWinding().size() <= 2)
+		{
+			return;
+		}
+
 		// Write the plane equation
 		const Plane3& plane = face.getPlane3();
 
