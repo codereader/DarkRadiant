@@ -136,7 +136,7 @@ Gtk::Widget& GuiSelector::createInterface()
 	Gtk::Widget &twoSidedTreeView = createTwoSidedTreeView();
 	_notebook->append_page(twoSidedTreeView, *labelTwo);
 
-	// Make all the contents of _notebook show
+	// Make all the contents of _notebook show, so that set_current_page() works.
 	oneSidedTreeView.show();
 	twoSidedTreeView.show();
 
@@ -222,13 +222,16 @@ void GuiSelector::onOk()
 {
 	_result = RESULT_OK;
 
+	// Delete the notebook to prevent it from switching pages when destroying the window
+	delete(_notebook);
+
 	// Everything done. Destroy the window!
 	destroy();
 }
 
 void GuiSelector::onPageSwitch(GtkNotebookPage* page, guint page_num)
 {
-	if (page_num == 0)
+	if ((page_num == 0))
 		_editorDialog.useOneSidedEditing();
 	else
 		_editorDialog.useTwoSidedEditing();
