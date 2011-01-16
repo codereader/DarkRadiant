@@ -132,7 +132,8 @@ const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::stri
 	try	{ tok.assertNextToken("{"); }
 	catch (...)
 	{
-		while (tok.nextToken() != "{") {}
+		while (tok.hasMoreTokens() && (tok.nextToken() != "{")) {}
+		jumpOutOfBrackets(tok);
 		return reportError(tok, "[XDataLoader::import] Syntaxerror in definition: " + _name + ". '{' expected. Undefined behavior!\n\tTrying to Jump to next XData definition. Might lead to furthers errors.\n");
 	}
 
@@ -462,6 +463,7 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 	}
 
 	_newXData.reset();
+	jumpOutOfBrackets(*tok);
 	return false;
 }
 
