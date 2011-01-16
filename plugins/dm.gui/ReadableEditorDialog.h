@@ -231,11 +231,11 @@ private:
 	void onDeleteWhole();
 	void onDeleteLeft();
 	void onDeleteRight();
+	void onOneSided();
+	void onTwoSided();
 
 
 	// Callback methods for Events:
-	bool onOneSided(GdkEventButton* ev);
-	bool onTwoSided(GdkEventButton* ev);
 	bool onFocusOut(GdkEventFocus* ev, Gtk::Widget* widget); // widget is manually bound
 	bool onKeyPress(GdkEventKey* ev, Gtk::Widget* widget); // widget is manually bound
 	void onTextChanged();
