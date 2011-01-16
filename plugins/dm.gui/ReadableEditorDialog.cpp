@@ -230,13 +230,11 @@ Gtk::Widget& ReadableEditorDialog::createGeneralPropertiesInterface()
 	Gtk::Label* pageLayoutLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Layout:")));
 
 	_oneSidedButton = Gtk::manage(new Gtk::RadioButton(_("One-sided")));
-	_oneSidedButton->add_events(Gdk::BUTTON_PRESS_MASK);
-	_oneSidedButton->signal_button_press_event().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onOneSided));
+	_oneSidedButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onOneSided));
 
     Gtk::RadioButtonGroup group = _oneSidedButton->get_group();
 	_twoSidedButton = Gtk::manage(new Gtk::RadioButton(group, "Two-sided"));
-	_twoSidedButton->add_events(Gdk::BUTTON_PRESS_MASK);
-	_twoSidedButton->signal_button_press_event().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTwoSided));
+	_twoSidedButton->signal_clicked().connect(sigc::mem_fun(*this, &ReadableEditorDialog::onTwoSided));
 
 	// Add the radiobuttons to an hbox
 	Gtk::HBox* hboxPL = Gtk::manage(new Gtk::HBox(false, 6));
@@ -1758,21 +1756,21 @@ void ReadableEditorDialog::onDupDef()
 	dialog.show();
 }
 
+void ReadableEditorDialog::onOneSided()
+{
+	if ((_oneSidedButton->get_active()))
+		useOneSidedEditing();
+}
+
+void ReadableEditorDialog::onTwoSided()
+{
+	if ((_twoSidedButton->get_active()))
+		useTwoSidedEditing();
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // Callback Methods for Events:
 
-bool ReadableEditorDialog::onOneSided(GdkEventButton* ev)
-{
-	useOneSidedEditing();
-	return false;
-}
-
-bool ReadableEditorDialog::onTwoSided(GdkEventButton* ev)
-{
-	useTwoSidedEditing();
-	return false;
-}
 
 bool ReadableEditorDialog::onFocusOut(GdkEventFocus* ev, Gtk::Widget* widget)
 {
