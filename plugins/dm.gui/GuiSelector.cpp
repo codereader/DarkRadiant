@@ -126,13 +126,19 @@ Gtk::Widget& GuiSelector::createInterface()
 	Gtk::Label* labelOne = Gtk::manage(new Gtk::Label(_("One-Sided Readable Guis")));
 	labelOne->show_all();
 
-	_notebook->append_page(createOneSidedTreeView(), *labelOne);
+	Gtk::Widget &oneSidedTreeView = createOneSidedTreeView();
+	_notebook->append_page(oneSidedTreeView, *labelOne);
 
 	// Two-Sided Readables Tab
 	Gtk::Label* labelTwo = Gtk::manage(new Gtk::Label(_("Two-Sided Readable Guis")));
 	labelTwo->show_all();
 
-	_notebook->append_page(createTwoSidedTreeView(), *labelTwo);
+	Gtk::Widget &twoSidedTreeView = createTwoSidedTreeView();
+	_notebook->append_page(twoSidedTreeView, *labelTwo);
+
+	// Make all the contents of _notebook show
+	oneSidedTreeView.show();
+	twoSidedTreeView.show();
 
 	// Packing
 	vbox->pack_start(*_notebook, true, true, 0);
