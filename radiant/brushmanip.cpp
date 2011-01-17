@@ -62,47 +62,50 @@ int GetViewAxis()
 
 void Brush_ConstructPrefab(Brush& brush, EBrushPrefab type, const AABB& bounds, std::size_t sides, const std::string& shader, const TextureProjection& projection)
 {
-  switch(type)
-  {
-  case eBrushCuboid:
-    {
-      UndoableCommand undo("brushCuboid");
+	switch(type)
+	{
+	case eBrushCuboid:
+	{
+		UndoableCommand undo("brushCuboid");
 
-      brush.constructCuboid(bounds, shader, projection);
-    }
-    break;
-  case eBrushPrism:
-    {
-      int axis = GetViewAxis();
-	  std::ostringstream command;
-      command << "brushPrism -sides " << sides << " -axis " << axis;
-      UndoableCommand undo(command.str());
+		brush.constructCuboid(bounds, shader, projection);
+	}
+	break;
 
-      brush.constructPrism(bounds, sides, axis, shader, projection);
-    }
-    break;
-  case eBrushCone:
-    {
-      std::ostringstream command;
-      command << "brushCone -sides " << sides;
-      UndoableCommand undo(command.str());
+	case eBrushPrism:
+	{
+		int axis = GetViewAxis();
+		std::ostringstream command;
+		command << "brushPrism -sides " << sides << " -axis " << axis;
+		UndoableCommand undo(command.str());
 
-      brush.constructCone(bounds, sides, shader, projection);
-    }
-    break;
-  case eBrushSphere:
-    {
-      std::ostringstream command;
-      command << "brushSphere -sides " << sides;
-      UndoableCommand undo(command.str());
+		brush.constructPrism(bounds, sides, axis, shader, projection);
+	}
+	break;
 
-      brush.constructSphere(bounds, sides, shader, projection);
-    }
-    break;
+	case eBrushCone:
+	{
+		std::ostringstream command;
+		command << "brushCone -sides " << sides;
+		UndoableCommand undo(command.str());
 
-    default:
-        break;
-  }
+		brush.constructCone(bounds, sides, shader, projection);
+	}
+	break;
+
+	case eBrushSphere:
+	{
+		std::ostringstream command;
+		command << "brushSphere -sides " << sides;
+		UndoableCommand undo(command.str());
+
+		brush.constructSphere(bounds, sides, shader, projection);
+	}
+	break;
+
+	default:
+		break;
+	}
 }
 
 
