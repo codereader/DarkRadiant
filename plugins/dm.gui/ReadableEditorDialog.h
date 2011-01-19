@@ -142,6 +142,9 @@ public:
 					   const std::string& xDataName = "",
 					   const std::string& xDataPath = "");
 
+	// shows the XData import Summary
+	void showXdImportSummary();
+
 protected:
 	virtual void _postShow();
 
@@ -160,9 +163,6 @@ private:
 
 	// _show_ TwoSided editing-interface.
 	void toggleTwoSidedEditingInterface(bool show);
-
-	// shows the XData import Summary
-	void showXdImportSummary();
 
 	// shows the gui import Summary
 	void showGuiImportSummary();

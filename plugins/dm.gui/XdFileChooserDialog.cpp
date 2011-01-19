@@ -15,6 +15,8 @@
 #include <gtkmm/stock.h>
 #include <gtkmm/treeview.h>
 
+#include "idialogmanager.h"
+
 namespace ui
 {
 
@@ -52,6 +54,22 @@ XdFileChooserDialog::Result XdFileChooserDialog::import(const std::string& defNa
 		{
 			filename = xdMap.begin()->first;
 			newXData = xdMap.begin()->second;
+			if (loader->getImportSummary().size() > 1)
+			{
+				std::string msg = (boost::format(_("%s successfully imported.")) % defName).str();
+				msg += "\n\nHowever, there were some problems.\n\n";
+				msg += _("Do you want to open the import summary?");
+
+				ui::IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Problems during import"),
+					msg,
+					ui::IDialog::MESSAGE_ASK,
+					editorDialog.getRefPtr()
+					);
+				if (dialog->run() == ui::IDialog::RESULT_YES)
+				{
+					editorDialog.showXdImportSummary();
+				}
+			}
 		}
 		return RESULT_OK;
 	}

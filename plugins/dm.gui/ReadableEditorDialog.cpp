@@ -531,6 +531,7 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	// Load xdata
 	if (!_entity->getKeyValue("xdata_contents").empty())
 	{
+		_xdNameSpecified = true;
 		XdFileChooserDialog::Result result = XdFileChooserDialog::import(
 			_entity->getKeyValue("xdata_contents"), _xData, _xdFilename, _xdLoader, *this
 		);
@@ -559,7 +560,6 @@ bool ReadableEditorDialog::initControlsFromEntity()
 				break;
 			}
 			default:	//Import success
-				_xdNameSpecified = true;
 				_useDefaultFilename = false;
 				refreshWindowTitle();
 				return true;
@@ -569,15 +569,22 @@ bool ReadableEditorDialog::initControlsFromEntity()
 	//No Xdata definition was defined or failed to import. Use default filename and create a OneSidedXData-object
 	if (_entity->getKeyValue("name").find("book") == std::string::npos)
 	{
-		_xData.reset(new XData::OneSidedXData(defaultXdName));
+		if (!_xdNameSpecified)
+			_xData.reset(new XData::OneSidedXData(defaultXdName));
+		else
+			_xData.reset(new XData::OneSidedXData(_entity->getKeyValue("xdata_contents")));
 	}
 	else
 	{
-		_xData.reset(new XData::TwoSidedXData(defaultXdName));
+		if (!_xdNameSpecified)
+			_xData.reset(new XData::TwoSidedXData(defaultXdName));
+		else
+			_xData.reset(new XData::OneSidedXData(_entity->getKeyValue("xdata_contents")));
 	}
 	_xData->setNumPages(1);
 
 	refreshWindowTitle();
+
 	return true;
 }
 
