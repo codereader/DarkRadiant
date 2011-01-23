@@ -189,7 +189,7 @@ $(srcdir)/$(DOMAIN).pot:
 
 # This target rebuilds a PO file if $(DOMAIN).pot has changed.
 # Note that a PO file is not touched if it doesn't need to be changed.
-$(POFILES): $(srcdir)/$(DOMAIN).pot
+$(POFILES): $(srcdir)/$(DOMAIN).pot gather-po-files
 	@lang=`echo $@ | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
 	if test -f "$(srcdir)/$${lang}.po"; then \
 	  test "$(srcdir)" = . && cdcmd="" || cdcmd="cd $(srcdir) && "; \
