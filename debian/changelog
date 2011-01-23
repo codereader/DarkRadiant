@@ -1,3 +1,9 @@
+darkradiant (1.5.0svn6271~maverick1) maverick; urgency=low
+
+  * New upstream release.
+
+ -- Matthew Mott <matthew.mott@gmail.com>  Sun, 23 Jan 2011 13:54:29 +0000
+
 darkradiant (1.4.0svn5702~maverick1) maverick; urgency=low
 
   * Build ~maverick1 version for Maverick section in PPA.
