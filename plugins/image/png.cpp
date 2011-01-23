@@ -112,8 +112,11 @@ static RGBAImagePtr LoadPNGBuff (unsigned char* fbuffer)
 
 	if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
 	{
+#if PNG_LIBPNG_VER < 10400
 		png_set_gray_1_2_4_to_8(png_ptr);
-		//png_set_expand_gray_1_2_4_to_8(png_ptr);
+#else
+		png_set_expand_gray_1_2_4_to_8(png_ptr);
+#endif 
 	}
 
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
