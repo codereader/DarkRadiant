@@ -5,7 +5,22 @@
 #include <map>
 
 /**
- * Implementation of the file type registry.
+ * Implementation of the file type registry. The registry is associating file types
+ * with ModuleTypeLists, the latter of which are modules => named file patterns.
+ *
+ * <type> => [ <modulename> => <patternDescription>, ... ]
+ *
+ * "map" => [	"Doom3MapLoader" => "*.map",
+ *				"Doom3MapLoader" => "*.reg",
+ *				"Doom3PrefabLoader" => "*.pfb" ]
+ *
+ * "model" => [ "ModelLoaderASE" => "*.ase",
+ *				"ModelLoaderLWO" => "*.lwo",
+ *				... ]
+ *
+ * This mapping can be used to retrieve a list of modules capable of
+ * loading a file with a given extension. Furthermore it is used by the
+ * gtkutil::FileChooser to populate the file type dropdown list.
  */
 class RadiantFileTypeRegistry :
 	public IFileTypeRegistry

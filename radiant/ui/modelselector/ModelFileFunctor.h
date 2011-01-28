@@ -6,6 +6,7 @@
 #include "imainframe.h"
 #include "ifilesystem.h"
 #include "iregistry.h"
+#include "igame.h"
 #include "EventRateLimiter.h"
 
 #include "i18n.h"
@@ -54,7 +55,7 @@ public:
 		_progress.setText(_("Searching"));
 
 		// Load the allowed extensions
-		std::string extensions = GlobalRegistry().getAttribute("game", "modeltypes");
+		std::string extensions = GlobalGameManager().currentGame()->getKeyValue("modeltypes");
 		boost::algorithm::split(_allowedExtensions, extensions, boost::algorithm::is_any_of(" "));
 	}
 

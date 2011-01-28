@@ -73,10 +73,10 @@ const std::string& Manager::getModBasePath() const
 	return _modBasePath;
 }
 
-/** greebo: Returns the current Game.
- */
-IGamePtr Manager::currentGame() {
-	if (_currentGameName.empty()) {
+IGamePtr Manager::currentGame()
+{
+	if (_currentGameName.empty())
+	{
 		// No game type selected, bail out, the program will crash anyway on module load
 		gtkutil::fatalErrorDialog(_("GameManager: No game type selected, can't continue."), Glib::RefPtr<Gtk::Window>());
 	}
@@ -89,8 +89,8 @@ void Manager::constructPreferences()
 	PreferencesPagePtr page = GetPreferenceSystem().getPage(_("Game"));
 
 	ComboBoxValueList gameList;
-	for (GameMap::iterator i = _games.begin(); i != _games.end(); i++)
-   {
+	for (GameMap::iterator i = _games.begin(); i != _games.end(); ++i)
+	{
 		gameList.push_back(i->second->getKeyValue("name"));
 	}
 	page->appendCombo(_("Select a Game:"), RKEY_GAME_TYPE, gameList, true);
@@ -99,10 +99,6 @@ void Manager::constructPreferences()
 	page->appendEntry(_("Mod Base (fs_game_base, optional)"), RKEY_FS_GAME_BASE);
 }
 
-/** greebo: Loads the game files and the saved settings.
- * 			If no saved game setting is found, the user
- * 			is asked to enter the relevant information in a Dialog.
- */
 void Manager::initialise(const std::string& appPath)
 {
 	// Scan the <applicationpath>/games folder for .game files
@@ -337,7 +333,6 @@ bool Manager::settingsValid() const {
 	return false;
 }
 
-// Callback when a registry key is changed
 void Manager::keyChanged(const std::string& key, const std::string& val)
 {
 	// call the engine path setter, fs_game is updated there as well
@@ -491,8 +486,6 @@ const std::string& Manager::getEnginePath() const {
 	return _enginePath;
 }
 
-/** greebo: Scans the "games/" subfolder for .game description foles.
- */
 void Manager::loadGameFiles(const std::string& appPath)
 {
 	std::string gamePath = appPath + "games/";
