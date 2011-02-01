@@ -50,7 +50,7 @@ public:
 class UniqueShaderFinder
 {
 	// The string containing the result
-	mutable std::string& _shader;
+	std::string& _shader;
 
 public:
 	UniqueShaderFinder(std::string& shader) :
