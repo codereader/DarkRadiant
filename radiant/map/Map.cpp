@@ -20,7 +20,6 @@
 #include "entitylib.h"
 #include "os/path.h"
 #include "MapImportInfo.h"
-#include "MapExportInfo.h"
 #include "gtkutil/IConv.h"
 
 #include "brush/BrushModule.h"
@@ -37,6 +36,7 @@
 #include "map/algorithm/Clone.h"
 #include "map/algorithm/Merge.h"
 #include "map/algorithm/Traverse.h"
+#include "map/algorithm/MapExporter.h"
 #include "ui/mru/MRU.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/layers/LayerControlDialog.h"
@@ -919,16 +919,17 @@ void Map::importSelected(TextInputStream& in) {
 	MergeMap(root);
 }
 
-void Map::exportSelected(std::ostream& out) {
+void Map::exportSelected(std::ostream& out)
+{
 	const MapFormat& format = getFormat();
 
-	std::ostringstream dummyStream;
+	IMapWriterPtr writer = format.getMapWriter();
 
-	map::MapExportInfo exportInfo(out, dummyStream);
-	exportInfo.traverse = map::traverseSelected;
-	exportInfo.root = GlobalSceneGraph().root();
+	// Create our main MapExporter walker for traversal
+	MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
 
-	format.writeGraph(exportInfo);
+	// Use the traverseSelected function to start writing selected nodes
+	traverseSelected(GlobalSceneGraph().root(), exporter);
 }
 
 // RegisterableModule implementation

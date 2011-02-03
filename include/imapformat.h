@@ -25,8 +25,7 @@ namespace map
 
 // The MapExport/MapImport information structures, needed by the MapFormat::write() and
 // MapFormat::read() methods. The actual definition of this structure is stored in the
-// files libs/MapExportInfo.h and libs/MapImportInfo.h. TODO: DEPRECATED
-class MapExportInfo;
+// file libs/MapImportInfo.h. TODO: DEPRECATED
 class MapImportInfo;
 
 /**
@@ -156,14 +155,6 @@ public:
 	 * @DEPRECATED
 	 */
 	virtual bool readGraph(const MapImportInfo& importInfo) const = 0;
-
-	/** Traverse the scene graph and write contents into the provided output stream.
-	 *
-	 * @param exportInfo
-	 * The MapExportInfo structure, which contains the ostream references and such.
-	 * @DEPRECATED
-	 */
-	virtual void writeGraph(const MapExportInfo& exportInfo) const = 0;
 };
 typedef boost::shared_ptr<MapFormat> MapFormatPtr;
 

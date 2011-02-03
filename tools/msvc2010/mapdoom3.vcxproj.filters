@@ -25,9 +25,6 @@
     <ClInclude Include="..\..\plugins\mapdoom3\InfoFile.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\NodeExporter.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\mapdoom3\NodeImporter.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -70,9 +67,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\mapdoom3.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\NodeExporter.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\NodeImporter.cpp">

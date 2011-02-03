@@ -29,9 +29,6 @@ public:
      */
     virtual bool readGraph(const MapImportInfo& importInfo) const;
 
-	// Write scene graph to an ostream
-	virtual void writeGraph(const MapExportInfo& exportInfo) const;
-
 protected:
 	// Helper functions to handle child brushes of func_statics which have to
 	// be saved relative to their parent's origin
