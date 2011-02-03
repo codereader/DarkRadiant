@@ -111,8 +111,10 @@ void LayerSystem::deleteLayer(const std::string& name) {
 	onLayerVisibilityChanged();
 }
 
-void LayerSystem::foreachLayer(Visitor& visitor) {
-	for (LayerMap::iterator i = _layers.begin(); i != _layers.end(); i++) {
+void LayerSystem::foreachLayer(Visitor& visitor)
+{
+	for (LayerMap::iterator i = _layers.begin(); i != _layers.end(); ++i)
+	{
 		visitor.visit(i->first, i->second);
 	}
 }
