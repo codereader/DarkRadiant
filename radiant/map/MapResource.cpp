@@ -20,11 +20,12 @@
 #include "map/algorithm/Traverse.h"
 #include "stream/textfilestream.h"
 #include "referencecache/NullModelNode.h"
-#include "MapExportInfo.h"
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
+#include "MapExportInfo.h"
 
 #include "algorithm/MapExporter.h"
+#include "algorithm/InfoFileExporter.h"
 
 namespace map {
 
@@ -411,7 +412,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	auxFilename = auxFilename.substr(0, auxFilename.rfind('.'));
 	auxFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
 
-	globalOutputStream() << "and auxiliary file " << auxFilename << " for write...";
+	globalOutputStream() << "and auxiliary file " << auxFilename << " for writing...";
 
 	if (file_exists(auxFilename.c_str()) && !file_writeable(auxFilename.c_str())) {
 		// File is write-protected
@@ -440,19 +441,16 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 		// Use the traversal function to start pushing relevant nodes
 		// to the MapExporter
 		traverse(root, exporter);
-		
+
 		// Now traverse the scene again and write the .darkradiant file,
 		// provided the MapFormat doesn't disallow layer saving.
-		// TODO
-				
-		/*map::MapExportInfo exportInfo(outfile, auxfile);
-		exportInfo.traverse = traverse;
-		exportInfo.root = root;
+		if (format.allowInfoFileCreation())
+		{
+			InfoFileExporter infoExporter(root, auxfile);
+			traverse(root, infoExporter);
+		}
 
-		// Let the map exporter module do its job
-	    format.writeGraph(exportInfo);*/
-
-	    outfile.close();
+		outfile.close();
 		auxfile.close();
 	    return true;
 	}

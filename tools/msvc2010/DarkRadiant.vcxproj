@@ -303,6 +303,7 @@
     <ClCompile Include="..\..\radiant\entity.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\mainframe_old.cpp" />
+    <ClCompile Include="..\..\radiant\map\algorithm\InfoFileExporter.cpp" />
     <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiant\patchmanip.cpp" />
     <ClCompile Include="..\..\radiant\Profile.cpp" />
@@ -544,6 +545,7 @@
     <ClInclude Include="..\..\radiant\entity.h" />
     <ClInclude Include="..\..\radiant\main.h" />
     <ClInclude Include="..\..\radiant\mainframe_old.h" />
+    <ClInclude Include="..\..\radiant\map\algorithm\InfoFileExporter.h" />
     <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiant\patchmanip.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />

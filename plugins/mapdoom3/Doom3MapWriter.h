@@ -5,6 +5,11 @@
 namespace map
 {
 
+/**
+ * Standard implementation of a Doom 3 Map file writer (Map Version 2)
+ *
+ * Creates a plaintext file with brushDef3/patchDef2/patchDef3 primitives.
+ */
 class Doom3MapWriter :
 	public IMapWriter
 {
