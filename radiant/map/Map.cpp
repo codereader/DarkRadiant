@@ -693,10 +693,12 @@ bool Map::askForSave(const std::string& title)
 	return true;
 }
 
-bool Map::saveAs() {
+bool Map::saveAs()
+{
 	if (_saveInProgress) return false; // safeguard
 
-	std::string filename = MapFileManager::getMapFilename(false, _("Save Map"), "map", getMapName());
+	std::string filename = 
+		MapFileManager::getMapFilename(false, _("Save Map"), "map", getMapName());
 
 	if (!filename.empty()) {
 		// Remember the old name, we might need to revert
@@ -724,13 +726,15 @@ bool Map::saveAs() {
 	}
 }
 
-bool Map::saveCopyAs() {
+bool Map::saveCopyAs()
+{
 	// Let's see if we can remember a
 	if (_lastCopyMapName.empty()) {
 		_lastCopyMapName = getMapName();
 	}
 
-	std::string filename = MapFileManager::getMapFilename(false, _("Save Copy As..."), "map", _lastCopyMapName);
+	std::string filename = 
+		MapFileManager::getMapFilename(false, _("Save Copy As..."), "map", _lastCopyMapName);
 
 	if (!filename.empty()) {
 		// Remember the last name
@@ -744,8 +748,10 @@ bool Map::saveCopyAs() {
 	return false;
 }
 
-void Map::loadPrefabAt(const Vector3& targetCoords) {
-	std::string filename = MapFileManager::getMapFilename(true, _("Load Prefab"), "prefab");
+void Map::loadPrefabAt(const Vector3& targetCoords)
+{
+	std::string filename = 
+		MapFileManager::getMapFilename(true, _("Load Prefab"), "prefab");
 
 	if (!filename.empty()) {
 		UndoableCommand undo("loadPrefabAt");
@@ -772,7 +778,8 @@ void Map::saveMapCopyAs(const cmd::ArgumentList& args) {
 	GlobalMap().saveCopyAs();
 }
 
-void Map::registerCommands() {
+void Map::registerCommands()
+{
 	GlobalCommandSystem().addCommand("NewMap", Map::newMap);
 	GlobalCommandSystem().addCommand("OpenMap", Map::openMap);
 	GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
@@ -810,8 +817,7 @@ void Map::openMap(const cmd::ArgumentList& args) {
 		return;
 
 	// Get the map file name to load
-	std::string filename = map::MapFileManager::getMapFilename(true,
-															   _("Open map"));
+	std::string filename = MapFileManager::getMapFilename(true, _("Open map"));
 
 	if (!filename.empty()) {
 		GlobalMRU().insert(filename);
@@ -821,11 +827,13 @@ void Map::openMap(const cmd::ArgumentList& args) {
 	}
 }
 
-void Map::importMap(const cmd::ArgumentList& args) {
-	std::string filename = map::MapFileManager::getMapFilename(true,
-															   _("Import map"));
+void Map::importMap(const cmd::ArgumentList& args)
+{
+	std::string filename = 
+		MapFileManager::getMapFilename(true, _("Import map"));
 
-	if (!filename.empty()) {
+	if (!filename.empty())
+	{
 	    UndoableCommand undo("mapImport");
 	    GlobalMap().import(filename);
 	}
@@ -835,19 +843,23 @@ void Map::saveMapAs(const cmd::ArgumentList& args) {
 	GlobalMap().saveAs();
 }
 
-void Map::saveMap(const cmd::ArgumentList& args) {
-	if (GlobalMap().isUnnamed()) {
+void Map::saveMap(const cmd::ArgumentList& args)
+{
+	if (GlobalMap().isUnnamed())
+	{
 		GlobalMap().saveAs();
 	}
 	// greebo: Always let the map be saved, regardless of the modified status.
-	else /*if(GlobalMap().isModified())*/ {
+	else /*if(GlobalMap().isModified())*/
+	{
 		GlobalMap().save();
 	}
 }
 
-void Map::exportMap(const cmd::ArgumentList& args) {
-	std::string filename = map::MapFileManager::getMapFilename(
-								false, _("Export selection"));
+void Map::exportMap(const cmd::ArgumentList& args)
+{
+	std::string filename = 
+		MapFileManager::getMapFilename(false, _("Export selection"));
 
 	if (!filename.empty()) {
 	    GlobalMap().saveSelected(filename);
@@ -858,11 +870,13 @@ void Map::loadPrefab(const cmd::ArgumentList& args) {
 	GlobalMap().loadPrefabAt(Vector3(0,0,0));
 }
 
-void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args) {
+void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args)
+{
 	std::string filename =
-		map::MapFileManager::getMapFilename(false, _("Save selected as Prefab"), "prefab");
+		MapFileManager::getMapFilename(false, _("Save selected as Prefab"), "prefab");
 
-	if (!filename.empty()) {
+	if (!filename.empty())
+	{
 	    GlobalMap().saveSelected(filename);
   	}
 }

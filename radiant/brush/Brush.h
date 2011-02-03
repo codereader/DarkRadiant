@@ -175,6 +175,7 @@ public:
 	BrushNode& getBrushNode();
 
 	IFace& getFace(std::size_t index);
+	const IFace& getFace(std::size_t index) const;
 
 	IFace& addFace(const Plane3& plane);
 	IFace& addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader);

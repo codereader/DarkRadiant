@@ -89,6 +89,12 @@ IFace& Brush::getFace(std::size_t index)
 	return *m_faces[index];
 }
 
+const IFace& Brush::getFace(std::size_t index) const
+{
+	assert(index < m_faces.size());
+	return *m_faces[index];
+}
+
 IFace& Brush::addFace(const Plane3& plane)
 {
 	// Allocate a new Face

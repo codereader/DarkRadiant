@@ -55,6 +55,9 @@
     <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\PatchDefExporter.h">
       <Filter>src\primitivewriters</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapWriter.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
@@ -89,6 +92,9 @@
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\PatchDef3.cpp">
       <Filter>src\primitiveparsers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapWriter.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
