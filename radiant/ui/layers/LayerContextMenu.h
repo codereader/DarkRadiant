@@ -27,7 +27,7 @@ public:
 	LayerContextMenu(OnSelectionFunc& onSelection);
 
 	// scene::LayerSystem::Visitor implementation
-	void visit(int layerID, std::string layerName);
+	void visit(int layerID, const std::string& layerName);
 
 private:
 	// Creates the menu items

@@ -26,7 +26,7 @@ LayerContextMenu::LayerContextMenu(OnSelectionFunc& onSelection) :
 	show_all();
 }
 
-void LayerContextMenu::visit(int layerID, std::string layerName)
+void LayerContextMenu::visit(int layerID, const std::string& layerName)
 {
 	_sortedLayers.insert(
 		SortedLayerMap::value_type(layerName, layerID)

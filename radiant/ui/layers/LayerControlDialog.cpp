@@ -115,7 +115,7 @@ void LayerControlDialog::refresh()
 		typedef std::map<std::string, LayerControlPtr> LayerControlMap;
 		LayerControlMap _sortedLayerControls;
 	public:
-		void visit(int layerID, std::string layerName)
+		void visit(int layerID, const std::string& layerName)
 		{
 			// Create a new layercontrol for each visited layer
 			// Store the object in a sorted container
@@ -188,7 +188,7 @@ void LayerControlDialog::update()
 			numHidden(0)
 		{}
 
-		void visit(int layerID, std::string layerName)
+		void visit(int layerID, const std::string& layerName)
 		{
 			if (GlobalLayerSystem().layerIsVisible(layerID)) {
 				numVisible++;
@@ -284,7 +284,7 @@ void LayerControlDialog::onShowAllLayers()
 		public scene::ILayerSystem::Visitor
 	{
 	public:
-		void visit(int layerID, std::string layerName)
+		void visit(int layerID, const std::string& layerName)
 		{
 			GlobalLayerSystem().setLayerVisibility(layerID, true);
 		}
@@ -301,7 +301,7 @@ void LayerControlDialog::onHideAllLayers()
 		public scene::ILayerSystem::Visitor
 	{
 	public:
-		void visit(int layerID, std::string layerName)
+		void visit(int layerID, const std::string& layerName)
 		{
 			GlobalLayerSystem().setLayerVisibility(layerID, false);
 		}

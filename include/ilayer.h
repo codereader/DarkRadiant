@@ -49,17 +49,19 @@ class ILayerSystem :
 {
 public:
 	// Visitor class for use with the foreachLayer() method
-	class Visitor {
+	class Visitor
+	{
 	public:
 	    virtual ~Visitor() {}
-		virtual void visit(int layerID, std::string layerName) = 0;
+
+		virtual void visit(int layerID, const std::string& layerName) = 0;
 	};
 
 	/**
 	 * greebo: Creates a new layer with the given name.
 	 *
 	 * @returns: the ID of the layer of -1 if the layer could not
-	 *           be created (e.g. due to a name conflict).
+	 * be created (e.g. due to a name conflict).
 	 */
 	virtual int createLayer(const std::string& name) = 0;
 
@@ -67,19 +69,19 @@ public:
 	 * greebo: Overload: Creates a new layer with the given name and the given ID.
 	 *
 	 * @returns: the ID of the layer of -1 if the layer could not
-	 *           be created (e.g. due to a name/ID conflict).
+	 * be created (e.g. due to a name/ID conflict).
 	 */
 	virtual int createLayer(const std::string& name, int layerID) = 0;
 
 	/**
 	 * greebo: Deletes the named layer. All nodes are removed
-	 *         from this layer before deletion.
+	 * from this layer before deletion.
 	 */
 	virtual void deleteLayer(const std::string& name) = 0;
 
 	/**
 	 * greebo: Resets the layer system into its ground state. Deletes all
-	 *         layers except for layer #0 which is renamed to "Default".
+	 * layers except for layer #0 which is renamed to "Default".
 	 */
 	virtual void reset() = 0;
 
@@ -142,11 +144,11 @@ public:
 
 	/**
 	 * greebo: Updates the visibility of the given node based on the
-	 *         current layer visibility settings.
+	 * current layer visibility settings.
 	 *
 	 * @returns: TRUE if the node was set to "visible", FALSE if the
-	 *           current layer settings resulted to "invisible" and the
-	 *           node was therefore hidden.
+	 * current layer settings resulted to "invisible" and the
+	 * node was therefore hidden.
 	 */
 	virtual bool updateNodeVisibility(const scene::INodePtr& node) = 0;
 
@@ -164,7 +166,8 @@ public:
 
 const std::string MODULE_LAYERSYSTEM("LayerSystem");
 
-inline scene::ILayerSystem& GlobalLayerSystem() {
+inline scene::ILayerSystem& GlobalLayerSystem()
+{
 	// Cache the reference locally
 	static scene::ILayerSystem& _layerSystem(
 		*boost::static_pointer_cast<scene::ILayerSystem>(
