@@ -81,6 +81,12 @@ IMapWriterPtr Doom3MapFormat::getMapWriter() const
 	return IMapWriterPtr(new Doom3MapWriter);
 }
 
+bool Doom3MapFormat::allowInfoFileCreation() const
+{
+	// allow .darkradiant files to be saved
+	return true;
+}
+
 bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const
 {
 	assert(importInfo.root != NULL);

@@ -22,6 +22,8 @@ public:
 
 	virtual IMapWriterPtr getMapWriter() const;
 
+	virtual bool allowInfoFileCreation() const;
+
     /**
      * Read tokens from a map stream and create entities accordingly.
      */

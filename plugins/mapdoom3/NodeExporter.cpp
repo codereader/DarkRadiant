@@ -206,7 +206,7 @@ void NodeExporter::writeLayerNames() {
 	    {}
 
 		// Required visit function
-    	void visit(int layerID, std::string layerName) {
+    	void visit(int layerID, const std::string& layerName) {
 			_os << "\t\t" << LAYER << " " << layerID << " { " << layerName << " }\n";
 		}
 	};

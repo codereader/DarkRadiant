@@ -142,6 +142,13 @@ public:
 	virtual IMapWriterPtr getMapWriter() const = 0;
 
 	/**
+	 * Returns true if this map format allows the .darkradiant file
+     * to be saved along the actual .map file. Some exporter modules
+	 * might want to disable that (i.e. the prefab exporter)
+	 */
+	virtual bool allowInfoFileCreation() const = 0;
+
+	/**
 	 * Read the contents of the given streams (which are contained in MapImportInfo)
 	 * and add them as children to the given root node (also in MapImportInfo).
 	 *
