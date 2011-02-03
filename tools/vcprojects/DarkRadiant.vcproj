@@ -960,6 +960,22 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\map\algorithm\InfoFileExporter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\map\algorithm\InfoFileExporter.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\map\algorithm\MapExporter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\map\algorithm\MapExporter.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\map\algorithm\Merge.h"
 						>
 					</File>
