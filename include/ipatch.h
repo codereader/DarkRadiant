@@ -211,6 +211,18 @@ inline bool Node_isPatch(const scene::INodePtr& node)
 	return boost::dynamic_pointer_cast<IPatchNode>(node) != NULL;
 }
 
+inline IPatch* Node_getIPatch(const scene::INodePtr& node)
+{
+	IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(node);
+
+	if (patchNode != NULL)
+	{
+		return &patchNode->getPatch();
+	}
+
+	return NULL;
+}
+
 // Casts a node onto a patch
 inline Patch* Node_getPatch(const scene::INodePtr& node)
 {
@@ -218,7 +230,7 @@ inline Patch* Node_getPatch(const scene::INodePtr& node)
 
 	if (patchNode != NULL)
 	{
-		return &patchNode->getPatchInternal();;
+		return &patchNode->getPatchInternal();
 	}
 
 	return NULL;

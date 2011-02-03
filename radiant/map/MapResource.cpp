@@ -24,6 +24,8 @@
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
 
+#include "algorithm/MapExporter.h"
+
 namespace map {
 
 namespace {
@@ -407,7 +409,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	// Open the auxiliary file too
 	std::string auxFilename(filename);
 	auxFilename = auxFilename.substr(0, auxFilename.rfind('.'));
-	auxFilename += GlobalRegistry().get(map::RKEY_INFO_FILE_EXTENSION);
+	auxFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
 
 	globalOutputStream() << "and auxiliary file " << auxFilename << " for write...";
 
@@ -422,15 +424,33 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 
 	std::ofstream auxfile(auxFilename.c_str());
 
-	if (outfile.is_open() && auxfile.is_open()) {
+	if (outfile.is_open() && auxfile.is_open())
+	{
 		globalOutputStream() << "success" << std::endl;
 
-		map::MapExportInfo exportInfo(outfile, auxfile);
+		// Acquire the MapWriter from the MapFormat class
+		IMapWriterPtr mapWriter = format.getMapWriter();
+
+		// Create our main MapExporter walker, and pass the desired 
+		// writer to it. The constructor will prepare the scene
+		// and the destructor will clean it up afterwards. That way
+		// we ensure a nice and tidy scene when exceptions are thrown.
+		MapExporter exporter(*mapWriter, root, outfile);
+
+		// Use the traversal function to start pushing relevant nodes
+		// to the MapExporter
+		traverse(root, exporter);
+		
+		// Now traverse the scene again and write the .darkradiant file,
+		// provided the MapFormat doesn't disallow layer saving.
+		// TODO
+				
+		/*map::MapExportInfo exportInfo(outfile, auxfile);
 		exportInfo.traverse = traverse;
 		exportInfo.root = root;
 
 		// Let the map exporter module do its job
-	    format.writeGraph(exportInfo);
+	    format.writeGraph(exportInfo);*/
 
 	    outfile.close();
 		auxfile.close();

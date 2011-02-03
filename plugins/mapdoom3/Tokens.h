@@ -13,9 +13,10 @@ const std::string LAYERS = "Layers";
 const std::string NODE = "Node";
 
 // Doom 3 Map File Tokens --------------------------------------------------
-const std::string VERSION = "Version";
+const char* const VERSION = "Version";
 
-const std::string DUMMY_BRUSH =
+// greebo: TODO: This shouldn't be necessary anymore?
+const char* const DUMMY_BRUSH =
 	"// dummy brush 0\n\
 	{\n\
 	brushDef3\n\

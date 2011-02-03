@@ -1,5 +1,4 @@
-#ifndef DOOM3MAPFORMAT_H_
-#define DOOM3MAPFORMAT_H_
+#pragma once
 
 #include "imapformat.h"
 
@@ -21,6 +20,8 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 
+	virtual IMapWriterPtr getMapWriter() const;
+
     /**
      * Read tokens from a map stream and create entities accordingly.
      */
@@ -41,5 +42,3 @@ protected:
 typedef boost::shared_ptr<Doom3MapFormat> Doom3MapFormatPtr;
 
 } // namespace map
-
-#endif /* DOOM3MAPFORMAT_H_ */

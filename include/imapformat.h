@@ -1,5 +1,4 @@
-#ifndef _imapformat_h__
-#define _imapformat_h__
+#pragma once 
 
 #include "imodule.h"
 
@@ -12,6 +11,10 @@ typedef boost::shared_ptr<INode> INodePtr;
 
 namespace parser { class DefTokeniser; }
 
+class Entity;
+class IBrush;
+class IPatch;
+
 /** Callback function to control how the Walker traverses the scene graph. This function
  * will be provided to the map export module by the Radiant map code.
  */
@@ -22,7 +25,7 @@ namespace map
 
 // The MapExport/MapImport information structures, needed by the MapFormat::write() and
 // MapFormat::read() methods. The actual definition of this structure is stored in the
-// files libs/MapExportInfo.h and libs/MapImportInfo.h.
+// files libs/MapExportInfo.h and libs/MapImportInfo.h. TODO: DEPRECATED
 class MapExportInfo;
 class MapImportInfo;
 
@@ -56,6 +59,74 @@ public:
 typedef boost::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
 
 /**
+ * An abstract map writer class used to write any map elements
+ * as string to the given output stream. 
+ *
+ * The IMapWriter interface defines beginWrite/endWrite pairs for 
+ * each scene element (Entity, primitives and the Map itself). 
+ * These are called by the map saving algorithm when traversing 
+ * the scene-depth-first. The usual call order will look like this:
+ *
+ * beginWriteMap
+ *    beginWriteEntity
+ *        beginWriteBrush
+ *        endWriteBrush
+ *        beginWritePatch
+ *        endWritePatch
+ *        ....
+ *    endWriteEntity
+ *    ...
+ * endWriteMap
+ *
+ * Failure Handling: when the IMapWriter implementation encounters
+ * errors during write (e.g. a visited node is not exportable) a
+ * IMapWriter::FailureException will be thrown. The calling code
+ * is designed to catch this exception.
+ */
+class IMapWriter 
+{
+public:
+	// The generic exception type which is to be thrown by the 
+	// IMapWriter methods
+	class FailureException :
+		public std::runtime_error
+	{
+	public:
+		FailureException(const std::string& what) :
+			std::runtime_error(what)
+		{}
+	};
+
+	// Destructor
+	virtual ~IMapWriter() {}
+	
+	/**
+	 * This is called before writing any nodes, to give an opportunity
+	 * to write a map header and version info.
+	 */
+	virtual void beginWriteMap(std::ostream& stream) = 0;
+
+	/**
+	 * Called after all nodes have been visited. Note that this method
+	 * should NOT attempt to close the given stream.
+	 */
+	virtual void endWriteMap(std::ostream& stream) = 0;
+
+	// Entity export methods
+	virtual void beginWriteEntity(const Entity& entity, std::ostream& stream) = 0;
+	virtual void endWriteEntity(const Entity& entity, std::ostream& stream) = 0;
+
+	// Brush export methods
+	virtual void beginWriteBrush(const IBrush& brush, std::ostream& stream) = 0;
+	virtual void endWriteBrush(const IBrush& brush, std::ostream& stream) = 0;
+
+	// Patch export methods
+	virtual void beginWritePatch(const IPatch& patch, std::ostream& stream) = 0;
+	virtual void endWritePatch(const IPatch& patch, std::ostream& stream) = 0;
+};
+typedef boost::shared_ptr<IMapWriter> IMapWriterPtr;
+
+/**
  * Map Format interface. Each map format is able to traverse the scene graph and write
  * the contents into a mapfile, or to load a mapfile and populate a scene graph.
  */
@@ -64,11 +135,18 @@ class MapFormat :
 {
 public:
     virtual ~MapFormat() {}
+
+	/**
+	 * Acquire a map writer instance, for exporting nodes to a stream.
+	 */
+	virtual IMapWriterPtr getMapWriter() const = 0;
+
 	/**
 	 * Read the contents of the given streams (which are contained in MapImportInfo)
 	 * and add them as children to the given root node (also in MapImportInfo).
 	 *
 	 * @returns: TRUE on success, FALSE if parsing errors occurred.
+	 * @DEPRECATED
 	 */
 	virtual bool readGraph(const MapImportInfo& importInfo) const = 0;
 
@@ -76,6 +154,7 @@ public:
 	 *
 	 * @param exportInfo
 	 * The MapExportInfo structure, which contains the ostream references and such.
+	 * @DEPRECATED
 	 */
 	virtual void writeGraph(const MapExportInfo& exportInfo) const = 0;
 };
@@ -117,5 +196,3 @@ inline map::IMapFormatManager& GlobalMapFormatManager()
 	);
 	return _mapFormatManager;
 }
-
-#endif /* _imapformat_h__ */

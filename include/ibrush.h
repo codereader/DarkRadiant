@@ -106,6 +106,9 @@ public:
 	// Get a reference to the face by index in [0..getNumFaces).
 	virtual IFace& getFace(std::size_t index) = 0;
 
+	// Const variant of the above
+	virtual const IFace& getFace(std::size_t index) const = 0;
+
 	// Add a new face to this brush, using the given plane object, returns a reference to the new face
 	virtual IFace& addFace(const Plane3& plane) = 0;
 

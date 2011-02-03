@@ -769,6 +769,9 @@
     <ClCompile Include="..\..\radiant\log\StringLogDevice.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\MapExporter.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\brushmanip.h">
@@ -1601,6 +1604,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\StringLogDevice.h">
       <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\MapExporter.h">
+      <Filter>src\map\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

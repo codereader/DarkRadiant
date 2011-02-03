@@ -29,6 +29,8 @@
 #include <boost/lexical_cast.hpp>
 #include "primitiveparsers/BrushDef.h"
 
+#include "Doom3MapWriter.h"
+
 namespace map {
 
 	namespace {
@@ -72,6 +74,11 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 		"map", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
 	GlobalFiletypes().addType(
 		"map", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
+}
+
+IMapWriterPtr Doom3MapFormat::getMapWriter() const
+{
+	return IMapWriterPtr(new Doom3MapWriter);
 }
 
 bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const
@@ -125,7 +132,8 @@ void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {
 	addOriginToChildPrimitives(exportInfo.root);
 }
 
-void Doom3MapFormat::addOriginToChildPrimitives(const scene::INodePtr& root) const {
+void Doom3MapFormat::addOriginToChildPrimitives(const scene::INodePtr& root) const
+{
 	// Disable texture lock during this process
 	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
 	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
@@ -160,7 +168,8 @@ void Doom3MapFormat::addOriginToChildPrimitives(const scene::INodePtr& root) con
 	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
 }
 
-void Doom3MapFormat::removeOriginFromChildPrimitives(const scene::INodePtr& root) const {
+void Doom3MapFormat::removeOriginFromChildPrimitives(const scene::INodePtr& root) const
+{
 	// Disable texture lock during this process
 	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
 	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
@@ -195,7 +204,6 @@ void Doom3MapFormat::removeOriginFromChildPrimitives(const scene::INodePtr& root
 	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
 }
 
-
 void Doom3MapFormat::onMapParsed(const MapImportInfo& importInfo) const
 {
 	// Read the infofile
@@ -210,7 +218,7 @@ void Doom3MapFormat::onMapParsed(const MapImportInfo& importInfo) const
 		const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
 
 		for (InfoFile::LayerNameMap::const_iterator i = layers.begin();
-			 i != layers.end(); i++)
+			 i != layers.end(); ++i)
 		{
 			// Create the named layer with the saved ID
 			GlobalLayerSystem().createLayer(i->second, i->first);
