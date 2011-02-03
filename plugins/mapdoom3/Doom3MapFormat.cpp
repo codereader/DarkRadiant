@@ -11,13 +11,11 @@
 #include "parser/DefTokeniser.h"
 
 #include "NodeImporter.h"
-#include "NodeExporter.h"
 #include "scenelib.h"
 
 #include "i18n.h"
 #include "Tokens.h"
 #include "MapImportInfo.h"
-#include "MapExportInfo.h"
 #include "InfoFile.h"
 #include "AssignLayerMappingWalker.h"
 #include "string/string.h"
@@ -106,36 +104,6 @@ bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const
 		// Importer return FALSE, propagate this failure
 		return false;
 	}
-}
-
-void Doom3MapFormat::writeGraph(const MapExportInfo& exportInfo) const {
-
-	// Prepare the func_statics contained in the subgraph
-	removeOriginFromChildPrimitives(exportInfo.root);
-
-	game::IGamePtr curGame = GlobalGameManager().currentGame();
-	assert(curGame != NULL);
-
-	xml::NodeList nodes = curGame->getLocalXPath(RKEY_GAME_MAP_VERSION);
-	assert(!nodes.empty());
-
-	std::string mapVersion = nodes[0].getAttributeValue("value");
-
-	nodes = curGame->getLocalXPath(RKEY_FLOAT_PRECISION);
-	assert(!nodes.empty());
-
-	int precision = strToInt(nodes[0].getAttributeValue("value"));
-	exportInfo.mapStream.precision(precision);
-
-	// Write the version tag first
-    exportInfo.mapStream << VERSION << " " << mapVersion << std::endl;
-
-	// Instantiate a NodeExporter class and call the traverse function
-	NodeExporter exporter(exportInfo.mapStream, exportInfo.infoStream);
-	exportInfo.traverse(exportInfo.root, exporter);
-
-	// Add the origin to the primitives again
-	addOriginToChildPrimitives(exportInfo.root);
 }
 
 void Doom3MapFormat::addOriginToChildPrimitives(const scene::INodePtr& root) const

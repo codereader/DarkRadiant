@@ -22,7 +22,6 @@
 #include "referencecache/NullModelNode.h"
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
-#include "MapExportInfo.h"
 
 #include "algorithm/MapExporter.h"
 #include "algorithm/InfoFileExporter.h"

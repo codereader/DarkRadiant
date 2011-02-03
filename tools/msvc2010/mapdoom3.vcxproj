@@ -308,7 +308,6 @@
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapWriter.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\InfoFile.h" />
-    <ClInclude Include="..\..\plugins\mapdoom3\NodeExporter.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\NodeImporter.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Tokens.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.h" />
@@ -325,7 +324,6 @@
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\InfoFile.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\mapdoom3.cpp" />
-    <ClCompile Include="..\..\plugins\mapdoom3\NodeExporter.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\NodeImporter.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp" />
