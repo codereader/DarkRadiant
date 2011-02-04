@@ -28,13 +28,40 @@
 
 namespace map {
 
-namespace {
+namespace
+{
 	// name may be absolute or relative
 	inline std::string rootPath(const std::string& name) {
 		return GlobalFileSystem().findRoot(
 			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
 		);
 	}
+
+	class NodeCounter :
+		public scene::NodeVisitor
+	{
+	private:
+		std::size_t _count;
+	public:
+		NodeCounter() :
+			_count(0)
+		{}
+
+		bool pre(const scene::INodePtr& node)
+		{
+			if (Node_isPrimitive(node) || Node_isEntity(node))
+			{
+				_count++;
+			}
+			
+			return true;
+		}
+
+		std::size_t getCount() const
+		{
+			return _count;
+		}
+	};
 }
 
 // Constructor
@@ -428,6 +455,10 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	{
 		globalOutputStream() << "success" << std::endl;
 
+		// Check the total count of nodes to traverse
+		NodeCounter counter;
+		traverse(root, counter);
+		
 		// Acquire the MapWriter from the MapFormat class
 		IMapWriterPtr mapWriter = format.getMapWriter();
 
@@ -435,18 +466,28 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 		// writer to it. The constructor will prepare the scene
 		// and the destructor will clean it up afterwards. That way
 		// we ensure a nice and tidy scene when exceptions are thrown.
-		MapExporter exporter(*mapWriter, root, outfile);
+		MapExporter exporter(*mapWriter, root, outfile, counter.getCount());
 
-		// Use the traversal function to start pushing relevant nodes
-		// to the MapExporter
-		traverse(root, exporter);
-
-		// Now traverse the scene again and write the .darkradiant file,
-		// provided the MapFormat doesn't disallow layer saving.
-		if (format.allowInfoFileCreation())
+		try
 		{
-			InfoFileExporter infoExporter(root, auxfile);
-			traverse(root, infoExporter);
+			// Use the traversal function to start pushing relevant nodes
+			// to the MapExporter
+			traverse(root, exporter);
+
+			// Now traverse the scene again and write the .darkradiant file,
+			// provided the MapFormat doesn't disallow layer saving.
+			if (format.allowInfoFileCreation())
+			{
+				InfoFileExporter infoExporter(root, auxfile);
+				traverse(root, infoExporter);
+			}
+		}
+		catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
+		{
+			gtkutil::errorDialog(
+				_("Map writing cancelled"),
+				GlobalMainFrame().getTopLevelWindow()
+			);
 		}
 
 		outfile.close();

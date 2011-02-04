@@ -1,12 +1,15 @@
 #include "MapExporter.h"
 
 #include <ostream>
+#include "i18n.h"
 #include "itextstream.h"
 #include "iregistry.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ientity.h"
 #include "igroupnode.h"
+#include "imainframe.h"
+
 #include "scenelib.h"
 #include "string/string.h"
 
@@ -16,13 +19,22 @@ namespace map
 	namespace
 	{
 		const char* const RKEY_FLOAT_PRECISION = "/mapFormat/floatPrecision";
+		const char* const RKEY_MAP_SAVE_STATUS_INTERLEAVE = "user/ui/map/saveStatusInterleave";
 	}
 
-MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::ostream& mapStream) :
+MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::ostream& mapStream, std::size_t nodeCount) :
 	_writer(writer),
 	_mapStream(mapStream),
-	_root(root)
+	_root(root),
+	_dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
+	_totalNodeCount(nodeCount),
+	_curNodeCount(0)
 {
+	if (_totalNodeCount > 0)
+	{
+		enableProgressDialog();
+	}
+
 	// Prepare the output stream
 	game::IGamePtr curGame = GlobalGameManager().currentGame();
 	assert(curGame != NULL);
@@ -60,17 +72,33 @@ MapExporter::~MapExporter()
 	finishScene();
 }
 
+void MapExporter::enableProgressDialog()
+{
+	_dialog = gtkutil::ModalProgressDialogPtr(
+		new gtkutil::ModalProgressDialog(
+			GlobalMainFrame().getTopLevelWindow(), _("Writing map")
+		)
+	);
+}
+
+void MapExporter::disableProgressDialog()
+{
+	_dialog.reset();
+}
+
 bool MapExporter::pre(const scene::INodePtr& node)
 {
 	try
 	{
-		// TODO: Manage Progress dialog
-
 		Entity* entity = Node_getEntity(node);
 
 		if (entity != NULL)
 		{
+			// Progress dialog handling
+			onNodeProgress();
+			
 			_writer.beginWriteEntity(*entity, _mapStream);
+
 			return true;
 		}
 
@@ -78,6 +106,9 @@ bool MapExporter::pre(const scene::INodePtr& node)
 
 		if (brush != NULL)
 		{
+			// Progress dialog handling
+			onNodeProgress();
+
 			_writer.beginWriteBrush(*brush, _mapStream);
 			return true;
 		}
@@ -86,6 +117,9 @@ bool MapExporter::pre(const scene::INodePtr& node)
 
 		if (patch != NULL)
 		{
+			// Progress dialog handling
+			onNodeProgress();
+
 			_writer.beginWritePatch(*patch, _mapStream);
 			return true;
 		}
@@ -129,6 +163,22 @@ void MapExporter::post(const scene::INodePtr& node)
 	catch (IMapWriter::FailureException& ex)
 	{
 		globalErrorStream() << "Failure exporting a node (post): " << ex.what() << std::endl;
+	}
+}
+
+void MapExporter::onNodeProgress()
+{
+	_curNodeCount++;
+
+	// Update the dialog text. This will throw an exception if the cancel
+	// button is clicked, which we must catch and handle.
+	if (_dialog && _dialogEventLimiter.readyForEvent())
+	{
+		std::string text = (boost::format(_("Writing node %d")) % _curNodeCount).str();
+		_dialog->setTextAndFraction(
+			text, 
+			static_cast<double>(_curNodeCount) / static_cast<double>(_totalNodeCount)
+		);
 	}
 }
 
