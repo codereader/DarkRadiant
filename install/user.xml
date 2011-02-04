@@ -26,6 +26,7 @@
 		<snapshotFolder value="snapshots/" />
 		<maxSnapshotFolderSize value="100" />
 		<loadStatusInterleave value="50" />
+		<saveStatusInterleave value="50" />
 	</map>
 	<undo>
 		<queueSize value="64" />
