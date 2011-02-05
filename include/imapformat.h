@@ -148,6 +148,13 @@ public:
 	virtual bool allowInfoFileCreation() const = 0;
 
 	/**
+	 * greebo: Returns true if this map format is able to load
+	 * the contents of this file. Usually this includes a version
+	 * check of the file header.
+	 */
+	virtual bool canLoad(std::istream& stream) const = 0;
+
+	/**
 	 * Read the contents of the given streams (which are contained in MapImportInfo)
 	 * and add them as children to the given root node (also in MapImportInfo).
 	 *
@@ -166,6 +173,22 @@ class IMapFormatManager :
 	public RegisterableModule
 {
 public:
+	/**
+	 * Each MapFormat module should register itself here on startup.
+	 */
+	virtual void registerMapFormat(const std::string& extension, const MapFormatPtr& mapFormat) = 0;
+
+	/**
+	 * Proper MapFormat modules should unregister themselves at shutdown. This includes
+	 * removal from all mapped extensions if the format was registered multiple times.
+	 */
+	virtual void unregisterMapFormat(const MapFormatPtr& mapFormat) = 0;
+
+	/**
+	 * Returns the list of registered map formats.
+	 */
+	virtual std::set<MapFormatPtr> getMapFormatList(const std::string& extension) = 0;
+
 	/**
 	 * Registers a primitive parser. The "primitive type" variable
 	 * refers to the keyword encountered when parsing a map, like brushDef3.

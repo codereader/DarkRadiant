@@ -17,6 +17,7 @@ public:
 	// Override some RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
+	virtual void shutdownModule();
 
 protected:
 	virtual void onMapParsed(const MapImportInfo& importInfo) const;

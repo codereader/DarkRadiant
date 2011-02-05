@@ -1,5 +1,4 @@
-#ifndef _MapFormatManager_h__
-#define _MapFormatManager_h__
+#pragma once
 
 #include "imapformat.h"
 #include <map>
@@ -11,11 +10,21 @@ class MapFormatManager :
 	public IMapFormatManager
 {
 private:
+	// A mapping between extensions and format modules
+	// Multiple modules can register themselves for a single extension
+	typedef std::multimap<std::string, MapFormatPtr> MapFormatModules;
+	MapFormatModules _mapFormats;
+
 	// A map associating keywords with primitive parser instances
 	typedef std::map<std::string, PrimitiveParserPtr> ParserMap;
 	ParserMap _parsers;
 
 public:
+	void registerMapFormat(const std::string& extension, const MapFormatPtr& mapFormat);
+	void unregisterMapFormat(const MapFormatPtr& mapFormat);
+
+	std::set<MapFormatPtr> getMapFormatList(const std::string& extension);
+
 	void registerPrimitiveParser(const PrimitiveParserPtr& parser);
 
 	// Returns a parser for the given keyword or NULL if none associated
@@ -28,5 +37,3 @@ public:
 };
 
 }
-
-#endif // _MapFormatManager_h__
