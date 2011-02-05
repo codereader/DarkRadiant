@@ -1,5 +1,4 @@
-#ifndef _DOOM3_PREFAB_FORMAT_H_
-#define _DOOM3_PREFAB_FORMAT_H_
+#pragma once
 
 #include "Doom3MapFormat.h"
 
@@ -19,11 +18,11 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 
+	virtual bool allowInfoFileCreation() const;
+
 protected:
 	virtual void onMapParsed(const MapImportInfo& importInfo) const;
 };
 typedef boost::shared_ptr<Doom3PrefabFormat> Doom3PrefabFormatPtr;
 
 } // namespace
-
-#endif /* _DOOM3_PREFAB_FORMAT_H_ */
