@@ -42,6 +42,11 @@ void Doom3PrefabFormat::shutdownModule()
 	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
 }
 
+bool Doom3PrefabFormat::allowInfoFileCreation() const
+{
+	return false;
+}
+
 void Doom3PrefabFormat::onMapParsed(const MapImportInfo& importInfo) const
 {
 	// Ignore any layer information (do not attempt to load it)
