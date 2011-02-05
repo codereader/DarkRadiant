@@ -1,54 +1,37 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_STREAM_TEXTFILESTREAM_H)
-#define INCLUDED_STREAM_TEXTFILESTREAM_H
+#pragma once
 
 #include "itextstream.h"
 #include <stdio.h>
 
-/// \brief A wrapper around a file input stream opened for reading in text mode. Similar to std::ifstream.
-class TextFileInputStream : public TextInputStream
+// A wrapper around a file input stream opened for reading in text mode. Similar to std::ifstream.
+class TextFileInputStream : 
+	public TextInputStream
 {
-  FILE* m_file;
+private:
+	FILE* _file;
+
 public:
 	TextFileInputStream(const std::string& name) :
-		m_file(!name.empty() ? fopen(name.c_str(), "rt") : NULL)
+		_file(!name.empty() ? fopen(name.c_str(), "rt") : NULL)
 	{}
 
-  ~TextFileInputStream()
-  {
-    if(!failed())
-      fclose(m_file);
-  }
+	virtual ~TextFileInputStream()
+	{
+		if (!failed())
+		{
+			fclose(_file);
+		}
+	}
 
-  bool failed() const
-  {
-    return m_file == 0;
-  }
+	bool failed() const
+	{
+		return _file == 0;
+	}
 
-  std::size_t read(char* buffer, std::size_t length)
-  {
-    return fread(buffer, 1, length, m_file);
-  }
+	std::size_t read(char* buffer, std::size_t length)
+	{
+		return fread(buffer, 1, length, _file);
+	}
 
 	// greebo: Override default std::streambuf::seekoff() method to provide buffer positioning capabilities
 	virtual std::streampos seekoff(std::streamoff off,
@@ -57,28 +40,40 @@ public:
 	{
 		if (way == std::ios_base::beg)
 		{
-			if (fseek(m_file, static_cast<long>(off), SEEK_SET))
+			// Invalidate the buffer of our base class to force an underflow
+			setg(_buffer, _buffer, _buffer);
+
+			if (fseek(_file, static_cast<long>(off), SEEK_SET))
 			{
 				return std::streampos(-1); // error
 			}
 		}
 		else if (way == std::ios_base::cur)
 		{
-			if (fseek(m_file, static_cast<long>(off), SEEK_CUR))
+			if (fseek(_file, static_cast<long>(off), SEEK_CUR))
 			{
 				return std::streampos(-1); // error
+			}
+			else
+			{
+				// success, check if we need to invalidate our controlled input sequence
+				if (gptr() + off > egptr() || gptr() + off < eback())
+				{
+					setg(_buffer, _buffer, _buffer);
+				}
 			}
 		}
 		else if (way == std::ios_base::end)
 		{
-			if (fseek(m_file, static_cast<long>(off), SEEK_END))
+			// Invalidate the buffer of our base class to force an underflow
+			setg(_buffer, _buffer, _buffer);
+
+			if (fseek(_file, static_cast<long>(off), SEEK_END))
 			{
 				return std::streampos(-1); // error
 			}
 		}
-
-		return std::streampos(ftell(m_file));
+		
+		return std::streampos(ftell(_file));
 	}
 };
-
-#endif

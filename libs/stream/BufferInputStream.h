@@ -41,6 +41,9 @@ public:
 		{
 			const char* newPos = _begin + off;
 
+			// Force streambuf underflow
+			setg(_buffer, _buffer, _buffer);
+
 			if (newPos > _end || newPos < _begin)
 			{
 				return std::streampos(-1); // error
@@ -56,12 +59,23 @@ public:
 			{
 				return std::streampos(-1); // error
 			}
+			else
+			{
+				// success, check if we need to invalidate our controlled input sequence
+				if (gptr() + off > egptr() || gptr() + off < eback())
+				{
+					setg(_buffer, _buffer, _buffer);
+				}
+			}
 
 			_read = newPos;
 		}
 		else if (way == std::ios_base::end)
 		{
 			const char* newPos = _end + off;
+
+			// Force streambuf underflow
+			setg(_buffer, _buffer, _buffer);
 
 			if (newPos > _end || newPos < _begin)
 			{
