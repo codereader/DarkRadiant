@@ -283,51 +283,10 @@ bool MapResource::isModified() const {
 			|| !path_equal(rootPath(_originalName).c_str(), _path.c_str()); // OR absolute vfs-root changed
 }
 
-void MapResource::reload() {
+void MapResource::reload()
+{
     unrealise();
 	realise();
-}
-
-MapFormatPtr MapResource::getMapFormat()
-{
-	// Get a loader module name for this type, if possible. If none is
-	// found, try again with the "map" type, since we might be loading a
-	// map with a different extension
-    std::string moduleName = GlobalFiletypes().findModuleName("map", _type);
-
-	// If empty, try again with "map" type
-	if (moduleName.empty()) {
-		moduleName = GlobalFiletypes().findModuleName("map", "map");
-	}
-
-	// If we have a module, use it to load the map if possible, otherwise
-	// return an error
-    if (!moduleName.empty()) {
-		MapFormatPtr format = boost::dynamic_pointer_cast<MapFormat>(
-			module::GlobalModuleRegistry().getModule(moduleName)
-		);
-
-		if (format != NULL) {
-			// valid MapFormat, return
-			return format;
-		}
-		else {
-			globalErrorStream() << "ERROR: Map type incorrectly registered: \""
-				<< moduleName << "\"" << std::endl;
-			return MapFormatPtr();
-		}
-	}
-    else
-	{
-		globalErrorStream() << "Map loader module not found." << std::endl;
-
-		if (!_type.empty())
-		{
-			globalErrorStream() << "Type is not supported: \""
-				<< _name << "\"" << std::endl;
-		}
-		return MapFormatPtr();
-	}
 }
 
 MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
@@ -393,18 +352,9 @@ scene::INodePtr MapResource::loadMapNode()
 
 			return model::NullModelNode::InstancePtr();
 		}
-
-		char chars[200];
-		mapStream.read(chars, 200);
-
+		
 		// Map format valid, rewind the stream
 		mapStream.seekg(0, std::ios_base::beg);
-
-		mapStream.read(chars, 200);
-
-		mapStream.seekg(0, std::ios_base::beg);
-
-		mapStream.read(chars, 200);
 
 		// Create a new map root node
 		scene::INodePtr root(NewMapRoot(_name));
@@ -424,38 +374,6 @@ scene::INodePtr MapResource::loadMapNode()
 	{
 		globalErrorStream() << "map path is not fully qualified: " << fullpath << std::endl;
 	}
-
-	/*// Get the mapformat
-	MapFormatPtr format = getMapFormat();
-
-	if (format == NULL)
-	{
-		return model::NullModelNode::InstancePtr();
-		// error message already printed in getMapFormat();
-	}
-
-	// At this point, we have a valid mapformat
-	// Create a new map root node
-	scene::INodePtr root(NewMapRoot(_name));
-
-  	std::string fullpath = _path + _name;
-
-	if (path_is_absolute(fullpath.c_str())) {
-
-		if (loadFile(*format, root, fullpath))
-		{
-			return root;
-		}
-		else
-		{
-			gtkutil::errorDialog(
-				(boost::format(_("Failure reading read map file:\n%s")) % fullpath).str(),
-				GlobalMainFrame().getTopLevelWindow());
-		}
-	}
-	else {
-		globalErrorStream() << "map path is not fully qualified: " << fullpath << std::endl;
-	}*/
 
 	// Return the NULL node on failure
 	return model::NullModelNode::InstancePtr();

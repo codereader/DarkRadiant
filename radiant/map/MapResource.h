@@ -87,7 +87,6 @@ private:
 
 	void connectMap();
 
-	MapFormatPtr getMapFormat();
 	MapFormatPtr determineMapFormat(std::istream& stream);
 
 	bool loadFile(std::istream& mapStream, const MapFormat& format, 
