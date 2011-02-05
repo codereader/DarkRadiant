@@ -3,15 +3,19 @@
 #include "itextstream.h"
 #include "string/string.h"
 
-#include "Doom3MapFormat.h"
-#include "Tokens.h"
-
 #include "i18n.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/lexical_cast.hpp>
 
-namespace map {
+namespace map
+{
+
+const char* const InfoFile::HEADER_SEQUENCE = "DarkRadiant Map Information File Version";
+const char* const InfoFile::NODE_TO_LAYER_MAPPING = "NodeToLayerMapping";
+const char* const InfoFile::LAYER = "Layer";
+const char* const InfoFile::LAYERS = "Layers";
+const char* const InfoFile::NODE = "Node";
 
 // Pass the input stream to the constructor
 InfoFile::InfoFile(std::istream& infoStream) :
@@ -44,7 +48,8 @@ const scene::LayerList& InfoFile::getNextLayerMapping() {
 	return *(_layerMappingIterator++);
 }
 
-void InfoFile::parse() {
+void InfoFile::parse()
+{
 	// parse the header
 	try {
 		std::vector<std::string> parts;
@@ -64,14 +69,14 @@ void InfoFile::parse() {
 	}
 	catch (parser::ParseException& e) {
         globalErrorStream()
-            << "[mapdoom3] Unable to parse info file header: "
+            << "[InfoFile] Unable to parse info file header: "
 			<< e.what() << std::endl;
 		_isValid = false;
         return;
     }
     catch (boost::bad_lexical_cast& e) {
         globalErrorStream()
-            << "[mapdoom3] Unable to parse info file version: "
+            << "[InfoFile] Unable to parse info file version: "
 			<< e.what() << std::endl;
 		_isValid = false;
         return;

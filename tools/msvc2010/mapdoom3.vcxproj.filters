@@ -22,9 +22,6 @@
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\InfoFile.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\mapdoom3\NodeImporter.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -61,9 +58,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\mapdoom3\InfoFile.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\mapdoom3.cpp">

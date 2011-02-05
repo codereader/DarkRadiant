@@ -16,8 +16,6 @@
 #include "i18n.h"
 #include "Tokens.h"
 #include "MapImportInfo.h"
-#include "InfoFile.h"
-#include "AssignLayerMappingWalker.h"
 #include "string/string.h"
 
 #include "primitiveparsers/BrushDef3.h"
@@ -217,7 +215,7 @@ void Doom3MapFormat::removeOriginFromChildPrimitives(const scene::INodePtr& root
 
 void Doom3MapFormat::onMapParsed(const MapImportInfo& importInfo) const
 {
-	// Read the infofile
+	/*// Read the infofile
 	InfoFile infoFile(importInfo.infoStream);
 
 	try
@@ -242,7 +240,7 @@ void Doom3MapFormat::onMapParsed(const MapImportInfo& importInfo) const
 	catch (parser::ParseException& e)
 	{
 		globalErrorStream() << "[mapdoom3] Unable to parse info file: " << e.what() << std::endl;
-    }
+    }*/
 
 	// Also process the func_static child primitives
 	addOriginToChildPrimitives(importInfo.root);

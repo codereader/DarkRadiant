@@ -1,14 +1,26 @@
-#ifndef INFO_FILE_H_
-#define INFO_FILE_H_
+#pragma once
 
 #include <map>
 #include "ilayer.h"
 #include "parser/DefTokeniser.h"
 
-namespace map {
+namespace map
+{
 
-class InfoFile {
+class InfoFile
+{
 public:
+	// Tokens / Constants
+	// The version of the map info file
+	static const int MAP_INFO_VERSION = 2;
+
+	// InfoFile tokens --------------------------------------------------
+	static const char* const HEADER_SEQUENCE;
+	static const char* const NODE_TO_LAYER_MAPPING;
+	static const char* const LAYER;
+	static const char* const LAYERS;
+	static const char* const NODE;
+
 	typedef std::map<int, std::string> LayerNameMap;
 
 private:
@@ -57,5 +69,3 @@ private:
 };
 
 } // namespace map
-
-#endif /* INFO_FILE_H_ */

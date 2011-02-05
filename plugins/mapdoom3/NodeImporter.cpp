@@ -14,7 +14,6 @@
 
 #include "Tokens.h"
 #include "Doom3MapFormat.h"
-#include "InfoFile.h"
 
 #include "i18n.h"
 #include <boost/format.hpp>

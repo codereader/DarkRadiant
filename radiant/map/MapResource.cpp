@@ -22,9 +22,11 @@
 #include "referencecache/NullModelNode.h"
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
+#include "InfoFile.h"
 
 #include "algorithm/MapExporter.h"
 #include "algorithm/InfoFileExporter.h"
+#include "algorithm/AssignLayerMappingWalker.h"
 
 namespace map {
 
@@ -381,6 +383,70 @@ scene::INodePtr MapResource::loadMapNode()
 
 bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, const scene::INodePtr& root, const std::string& filename)
 {
+	// Load the map file using the given format
+	MapImportInfo importInfo(mapStream);
+	importInfo.root = root;
+
+	bool success = format.readGraph(importInfo);
+
+	if (success)
+	{
+		if (!format.allowInfoFileCreation())
+		{
+			// No info file handling, just return the result
+			return success;
+		}
+
+		// Check for an additional info file
+		std::string infoFilename(filename.substr(0, filename.rfind('.')));
+		infoFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
+
+		std::ifstream infoFileStream(infoFilename.c_str());
+
+		if (infoFileStream.is_open())
+		{
+			globalOutputStream() << " found information file... ";
+		}
+
+		globalOutputStream() << "success" << std::endl;
+
+		// Read the infofile
+		InfoFile infoFile(infoFileStream);
+
+		try
+		{
+			// Start parsing, this will throw if any errors occur
+			infoFile.parse();
+
+			// Create the layers according to the data found in the map information file
+			const InfoFile::LayerNameMap& layers = infoFile.getLayerNames();
+
+			for (InfoFile::LayerNameMap::const_iterator i = layers.begin();
+				 i != layers.end(); ++i)
+			{
+				// Create the named layer with the saved ID
+				GlobalLayerSystem().createLayer(i->second, i->first);
+			}
+
+			// Now that the graph is in place, assign the layers
+			AssignLayerMappingWalker walker(infoFile);
+			importInfo.root->traverse(walker);
+		}
+		catch (parser::ParseException& e)
+		{
+			globalErrorStream() << "[MapResource] Unable to parse info file: " << e.what() << std::endl;
+		}
+
+		return true;
+	}
+	else
+	{
+		// Map load failed
+		return false;
+	}
+
+	/*
+
 	std::string infoFilename(filename.substr(0, filename.rfind('.')));
 	infoFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
 
@@ -409,7 +475,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 		importInfo.root = root;
 
 		return format.readGraph(importInfo);
-	}
+	}*/
 }
 
 bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
