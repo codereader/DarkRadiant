@@ -414,10 +414,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\plugins\mapdoom3\AssignLayerMappingWalker.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\plugins\mapdoom3\Doom3MapFormat.cpp"
 				>
 			</File>
@@ -439,14 +435,6 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\mapdoom3\Doom3PrefabFormat.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\mapdoom3\InfoFile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\mapdoom3\InfoFile.h"
 				>
 			</File>
 			<File

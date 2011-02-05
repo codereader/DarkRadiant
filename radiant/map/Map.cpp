@@ -895,11 +895,9 @@ void Map::rename(const std::string& filename) {
 void Map::importSelected(TextInputStream& in) {
 	BasicContainerPtr root(new BasicContainer);
 
-	// Pass an empty stringstream to the importer
 	std::istream str(&in);
 
-	std::istringstream dummyStream;
-	MapImportInfo importInfo(str, dummyStream);
+	MapImportInfo importInfo(str);
 	importInfo.root = root;
 
 	const MapFormat& format = getFormat();

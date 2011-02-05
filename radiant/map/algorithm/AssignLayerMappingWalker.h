@@ -1,15 +1,19 @@
-#ifndef ASSIGN_LAYER_MAPPING_WALKER_H_
-#define ASSIGN_LAYER_MAPPING_WALKER_H_
+#pragma once
 
 #include "scenelib.h"
 #include "imodel.h"
 
-namespace map {
+#include "../InfoFile.h"
+
+namespace map
+{
 
 class AssignLayerMappingWalker :
 	public scene::NodeVisitor
 {
+private:
 	InfoFile& _infoFile;
+
 public:
 	AssignLayerMappingWalker(InfoFile& infoFile) :
 		_infoFile(infoFile)
@@ -17,13 +21,18 @@ public:
 
 	virtual ~AssignLayerMappingWalker() {}
 
-	bool pre(const scene::INodePtr& node) {
-		if (Node_isModel(node)) {
+	bool pre(const scene::INodePtr& node)
+	{
+		if (Node_isModel(node))
+		{
 			// We have a model, assign the layers of the parent
 			scene::INodePtr parent = node->getParent();
-			if (parent != NULL) {
+
+			if (parent != NULL)
+			{
 				assignNodeToLayers(node, parent->getLayers());
 			}
+
 			return true;
 		}
 
@@ -33,6 +42,4 @@ public:
 	}
 };
 
-} // namespace map
-
-#endif /* ASSIGN_LAYER_MAPPING_WALKER_H_ */
+} // namespace

@@ -190,6 +190,7 @@ darkradiant_SOURCES = main.cpp \
                       map/RootNode.cpp \
                       map/MapPosition.cpp \
                       map/FindMapElements.cpp \
+					  map/InfoFile.cpp \
                       map/MapFileManager.cpp \
                       map/MapFileChooserPreview.cpp \
                       map/algorithm/Traverse.cpp \

@@ -24,11 +24,11 @@ public:
 
 	// An auxiliary stream, where additional meta-data (like layer assignments, etc.)
 	// can be read from.
-	std::istream& infoStream;
+	//std::istream& infoStream;
 
-	MapImportInfo(std::istream& istr, std::istream& infoStr) :
-		inputStream(istr),
-		infoStream(infoStr)
+	MapImportInfo(std::istream& istr/*, std::istream& infoStr*/) :
+		inputStream(istr)/*,
+		infoStream(infoStr)*/
 	{
 		// Get the file size
 		inputStream.seekg(0, std::ios::end);

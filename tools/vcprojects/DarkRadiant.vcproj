@@ -841,6 +841,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\radiant\map\InfoFile.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\radiant\map\InfoFile.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\radiant\map\Map.cpp"
 					>
 				</File>
@@ -955,6 +963,10 @@
 				<Filter
 					Name="algorithm"
 					>
+					<File
+						RelativePath="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h"
+						>
+					</File>
 					<File
 						RelativePath="..\..\radiant\map\algorithm\Clone.h"
 						>

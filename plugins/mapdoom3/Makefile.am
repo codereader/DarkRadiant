@@ -10,7 +10,6 @@ mapdoom3_la_LDFLAGS = -module -avoid-version $(GTKMM_LIBS) $(XML_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                  Doom3PrefabFormat.cpp \
                       NodeImporter.cpp \
-                      InfoFile.cpp \
                       mapdoom3.cpp \
 					  Doom3MapWriter.cpp \
                  primitiveparsers/BrushDef.cpp \

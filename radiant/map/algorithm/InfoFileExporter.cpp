@@ -2,23 +2,10 @@
 
 #include "imodel.h"
 #include "itextstream.h"
+#include "../InfoFile.h"
 
 namespace map
 {
-
-// Tokens / Constants
-namespace
-{
-	// The version of the map info file
-	const int MAP_INFO_VERSION = 2;
-
-	// InfoFile tokens --------------------------------------------------
-	const char* const HEADER_SEQUENCE = "DarkRadiant Map Information File Version";
-	const char* const NODE_TO_LAYER_MAPPING = "NodeToLayerMapping";
-	const char* const LAYER = "Layer";
-	const char* const LAYERS = "Layers";
-	const char* const NODE = "Node";
-}
 
 InfoFileExporter::InfoFileExporter(const scene::INodePtr& root, std::ostream& stream) :
 	_stream(stream),
@@ -26,14 +13,14 @@ InfoFileExporter::InfoFileExporter(const scene::INodePtr& root, std::ostream& st
 	_layerInfoCount(0)
 {
 	// Write the information file header
-	_stream << HEADER_SEQUENCE << " " << MAP_INFO_VERSION << std::endl;
+	_stream << InfoFile::HEADER_SEQUENCE << " " << InfoFile::MAP_INFO_VERSION << std::endl;
 	_stream << "{" << std::endl;
 
 	// Export the names of the layers
 	writeLayerNames();
 
 	// Write the NodeToLayerMapping header
-	_stream << "\t" << NODE_TO_LAYER_MAPPING << std::endl;
+	_stream << "\t" << InfoFile::NODE_TO_LAYER_MAPPING << std::endl;
 	_stream << "\t{" << std::endl;
 }
 
@@ -58,7 +45,7 @@ bool InfoFileExporter::pre(const scene::INodePtr& node)
 	}
 
 	// Open a Node block
-	_stream << "\t\t" << NODE << " { ";
+	_stream << "\t\t" << InfoFile::NODE << " { ";
 
 	if (node != NULL)
 	{
@@ -82,7 +69,7 @@ bool InfoFileExporter::pre(const scene::INodePtr& node)
 void InfoFileExporter::writeLayerNames()
 {
 	// Open a "Layers" block
-	_stream << "\t" << LAYERS << std::endl;
+	_stream << "\t" << InfoFile::LAYERS << std::endl;
 	_stream << "\t{" << std::endl;
 
 	// Local helper to traverse the layers
@@ -101,7 +88,7 @@ void InfoFileExporter::writeLayerNames()
 		// Required visit function
     	void visit(int layerID, const std::string& layerName)
 		{
-			_os << "\t\t" << LAYER << " " << layerID << " { " << layerName << " }" << std::endl;
+			_os << "\t\t" << InfoFile::LAYER << " " << layerID << " { " << layerName << " }" << std::endl;
 		}
 	};
 
