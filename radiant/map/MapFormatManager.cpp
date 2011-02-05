@@ -3,8 +3,45 @@
 #include "itextstream.h"
 #include "modulesystem/StaticModule.h"
 
+#include <boost/algorithm/string/case_conv.hpp>
+
 namespace map
 {
+
+void MapFormatManager::registerMapFormat(const std::string& extension, const MapFormatPtr& mapFormat)
+{
+	_mapFormats.insert(MapFormatModules::value_type(boost::algorithm::to_lower_copy(extension), mapFormat));
+}
+
+void MapFormatManager::unregisterMapFormat(const MapFormatPtr& mapFormat)
+{
+	for (MapFormatModules::iterator i = _mapFormats.begin(); i != _mapFormats.end(); )
+	{
+		if (i->second == mapFormat)
+		{
+			_mapFormats.erase(i++);
+		}
+		else
+		{
+			++i;
+		}
+	}
+}
+
+std::set<MapFormatPtr> MapFormatManager::getMapFormatList(const std::string& extension)
+{
+	std::set<MapFormatPtr> list;
+	std::string extLower = boost::algorithm::to_lower_copy(extension);
+
+	for (MapFormatModules::iterator it = _mapFormats.find(extLower);
+		 it != _mapFormats.upper_bound(extLower) && it != _mapFormats.end();
+		 ++it)
+	{
+		list.insert(it->second);
+	}
+
+	return list;
+}
 
 void MapFormatManager::registerPrimitiveParser(const PrimitiveParserPtr& parser)
 {

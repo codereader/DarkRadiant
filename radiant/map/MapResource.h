@@ -88,8 +88,10 @@ private:
 	void connectMap();
 
 	MapFormatPtr getMapFormat();
+	MapFormatPtr determineMapFormat(std::istream& stream);
 
-	bool loadFile(const MapFormat& format, const scene::INodePtr& root, const std::string& filename);
+	bool loadFile(std::istream& mapStream, const MapFormat& format, 
+				  const scene::INodePtr& root, const std::string& filename);
 };
 // Resource pointer types
 typedef boost::shared_ptr<MapResource> MapResourcePtr;

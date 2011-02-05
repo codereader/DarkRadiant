@@ -62,6 +62,10 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
 
+	// Register ourselves as map format for maps and regions
+	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
+	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
+
 	// Add our primitive parsers to the global format registry
 	GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserPtr(new BrushDef3Parser));
 	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
@@ -74,6 +78,12 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 		"map", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
 }
 
+void Doom3MapFormat::shutdownModule()
+{
+	// Unregister now that we're shutting down
+	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
+}
+
 IMapWriterPtr Doom3MapFormat::getMapWriter() const
 {
 	return IMapWriterPtr(new Doom3MapWriter);
@@ -83,6 +93,33 @@ bool Doom3MapFormat::allowInfoFileCreation() const
 {
 	// allow .darkradiant files to be saved
 	return true;
+}
+
+bool Doom3MapFormat::canLoad(std::istream& stream) const
+{
+	// Load the required version from the .game file
+	xml::NodeList nodes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_GAME_MAP_VERSION);
+	assert(!nodes.empty());
+
+	float requiredVersion = strToFloat(nodes[0].getAttributeValue("value"));
+
+	// Instantiate a tokeniser to read the first few tokens
+	parser::BasicDefTokeniser<std::istream> tok(stream);
+
+	try
+	{
+		// Require a "Version" token
+		tok.assertNextToken(VERSION);
+
+		// Require specific version, return true on success 
+		return (boost::lexical_cast<float>(tok.nextToken()) == requiredVersion);
+	}
+	catch (parser::ParseException&)
+	{}
+	catch (boost::bad_lexical_cast&)
+	{}
+
+	return false;
 }
 
 bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const

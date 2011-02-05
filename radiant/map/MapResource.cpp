@@ -330,17 +330,106 @@ MapFormatPtr MapResource::getMapFormat()
 	}
 }
 
-scene::INodePtr MapResource::loadMapNode() {
+MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
+{
+	// Get all registered map formats
+	std::set<MapFormatPtr> availableFormats = GlobalMapFormatManager().getMapFormatList(_type);
+
+	for (std::set<MapFormatPtr>::const_iterator f = availableFormats.begin(); f != availableFormats.end(); ++f)
+	{
+		// Rewind the stream before passing it to the format for testing
+		// Map format valid, rewind the stream
+		stream.seekg(0, std::ios_base::beg);
+
+		if ((*f)->canLoad(stream))
+		{
+			return *f;
+		}
+	}
+
+	return MapFormatPtr();
+}
+
+scene::INodePtr MapResource::loadMapNode()
+{
 	// greebo: Check if we have valid settings
 	// The _path might be empty if we're loading from a folder outside the mod
-	if (_name.empty() && _type.empty()) {
+	if (_name.empty() && _type.empty())
+	{
 		return model::NullModelNode::InstancePtr();
 	}
 
-	// Get the mapformat
+	// Build the map path
+	std::string fullpath = _path + _name;
+
+	if (path_is_absolute(fullpath.c_str()))
+	{
+		globalOutputStream() << "Open file " << fullpath << " for determining the map format...";
+
+		TextFileInputStream file(fullpath);
+		std::istream mapStream(&file);
+
+		if (file.failed())
+		{
+			globalErrorStream() << "failure" << std::endl;
+
+			gtkutil::errorDialog(
+				(boost::format(_("Failure opening map file:\n%s")) % fullpath).str(),
+				GlobalMainFrame().getTopLevelWindow());
+
+			return model::NullModelNode::InstancePtr();
+		}
+
+		globalOutputStream() << "success" << std::endl;
+
+		// Get the mapformat
+		MapFormatPtr format = determineMapFormat(mapStream);
+
+		if (format == NULL)
+		{
+			gtkutil::errorDialog(
+				(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str(),
+				GlobalMainFrame().getTopLevelWindow());
+
+			return model::NullModelNode::InstancePtr();
+		}
+
+		char chars[200];
+		mapStream.read(chars, 200);
+
+		// Map format valid, rewind the stream
+		mapStream.seekg(0, std::ios_base::beg);
+
+		mapStream.read(chars, 200);
+
+		mapStream.seekg(0, std::ios_base::beg);
+
+		mapStream.read(chars, 200);
+
+		// Create a new map root node
+		scene::INodePtr root(NewMapRoot(_name));
+
+		if (loadFile(mapStream, *format, root, fullpath))
+		{
+			return root;
+		}
+		else
+		{
+			gtkutil::errorDialog(
+				(boost::format(_("Failure reading read map file:\n%s")) % fullpath).str(),
+				GlobalMainFrame().getTopLevelWindow());
+		}
+	}
+	else 
+	{
+		globalErrorStream() << "map path is not fully qualified: " << fullpath << std::endl;
+	}
+
+	/*// Get the mapformat
 	MapFormatPtr format = getMapFormat();
 
-	if (format == NULL) {
+	if (format == NULL)
+	{
 		return model::NullModelNode::InstancePtr();
 		// error message already printed in getMapFormat();
 	}
@@ -366,19 +455,14 @@ scene::INodePtr MapResource::loadMapNode() {
 	}
 	else {
 		globalErrorStream() << "map path is not fully qualified: " << fullpath << std::endl;
-	}
+	}*/
 
 	// Return the NULL node on failure
 	return model::NullModelNode::InstancePtr();
 }
 
-bool MapResource::loadFile(const MapFormat& format, const scene::INodePtr& root, const std::string& filename)
+bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, const scene::INodePtr& root, const std::string& filename)
 {
-	globalOutputStream() << "Open file " << filename << " for read...";
-
-	TextFileInputStream file(filename);
-	std::istream mapStream(&file);
-
 	std::string infoFilename(filename.substr(0, filename.rfind('.')));
 	infoFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
 
@@ -388,30 +472,25 @@ bool MapResource::loadFile(const MapFormat& format, const scene::INodePtr& root,
 		globalOutputStream() << " found information file... ";
 	}
 
-	if (!file.failed()) {
-		globalOutputStream() << "success" << std::endl;
+	globalOutputStream() << "success" << std::endl;
 
-		// Create an import information structure
-		if (infoFileStream.is_open()) {
-			// Infostream is open, call the MapFormat
-			MapImportInfo importInfo(mapStream, infoFileStream);
-			importInfo.root = root;
+	// Create an import information structure
+	if (infoFileStream.is_open())
+	{
+		// Infostream is open, call the MapFormat
+		MapImportInfo importInfo(mapStream, infoFileStream);
+		importInfo.root = root;
 
-			return format.readGraph(importInfo);
-		}
-		else {
-			// No active infostream, pass a dummy stream
-			std::istringstream emptyStream;
-			MapImportInfo importInfo(mapStream, emptyStream);
-			importInfo.root = root;
-
-			return format.readGraph(importInfo);
-		}
+		return format.readGraph(importInfo);
 	}
 	else
 	{
-		globalErrorStream() << "failure" << std::endl;
-		return false;
+		// No active infostream, pass a dummy stream
+		std::istringstream emptyStream;
+		MapImportInfo importInfo(mapStream, emptyStream);
+		importInfo.root = root;
+
+		return format.readGraph(importInfo);
 	}
 }
 

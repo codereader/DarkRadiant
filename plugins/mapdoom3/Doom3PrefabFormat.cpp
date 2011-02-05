@@ -20,6 +20,9 @@ void Doom3PrefabFormat::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
 
+	// Register ourselves as map format
+	GlobalMapFormatManager().registerMapFormat("pfb", shared_from_this());
+
 	// Add one more "map" type, with the pfb extension
 	GlobalFiletypes().addType(
 		"map", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));
@@ -31,6 +34,12 @@ void Doom3PrefabFormat::initialiseModule(const ApplicationContext& ctx)
 		"prefab", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
 	GlobalFiletypes().addType(
 		"prefab", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
+}
+
+void Doom3PrefabFormat::shutdownModule()
+{
+	// Unregister now that we're shutting down
+	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
 }
 
 void Doom3PrefabFormat::onMapParsed(const MapImportInfo& importInfo) const
