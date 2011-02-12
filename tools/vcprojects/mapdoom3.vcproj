@@ -450,6 +450,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\mapdoom3\Quake4MapFormat.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\mapdoom3\Quake4MapFormat.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\mapdoom3\Tokens.h"
 				>
 			</File>
