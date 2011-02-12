@@ -60,26 +60,32 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
 
-	// Register ourselves as map format for maps and regions
-	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
-	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
+	if (GlobalGameManager().currentGame()->getKeyValue("type") == "doom3")
+	{
+		// Register ourselves as map format for maps and regions
+		GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
+		GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
 
-	// Add our primitive parsers to the global format registry
-	GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserPtr(new BrushDef3Parser));
-	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
-	GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
-	GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
+		// Add our primitive parsers to the global format registry
+		GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserPtr(new BrushDef3Parser));
+		GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
+		GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
+		GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
 
-	GlobalFiletypes().addType(
-		"map", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
-	GlobalFiletypes().addType(
-		"map", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
+		GlobalFiletypes().addType(
+			"map", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
+		GlobalFiletypes().addType(
+			"map", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
+	}
 }
 
 void Doom3MapFormat::shutdownModule()
 {
-	// Unregister now that we're shutting down
-	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
+	if (GlobalGameManager().currentGame()->getKeyValue("type") == "doom3")
+	{
+		// Unregister now that we're shutting down
+		GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
+	}
 }
 
 IMapReaderPtr Doom3MapFormat::getMapReader(IMapImportFilter& filter) const

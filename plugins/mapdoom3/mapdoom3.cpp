@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "Doom3MapFormat.h"
 #include "Doom3PrefabFormat.h"
+#include "Quake4MapFormat.h"
 
 #include "imapformat.h"
 #include "itextstream.h"
@@ -29,8 +30,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
 	registry.registerModule(map::Doom3MapFormatPtr(new map::Doom3MapFormat));
+	registry.registerModule(map::Quake4MapFormatPtr(new map::Quake4MapFormat));
 	registry.registerModule(map::Doom3PrefabFormatPtr(new map::Doom3PrefabFormat));
-
+	
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());
 
