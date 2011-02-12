@@ -19,7 +19,6 @@
 #include "stream/textfilestream.h"
 #include "entitylib.h"
 #include "os/path.h"
-#include "MapImportInfo.h"
 #include "gtkutil/IConv.h"
 #include "gtkutil/dialog.h"
 
