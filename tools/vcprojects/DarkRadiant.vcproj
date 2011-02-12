@@ -968,6 +968,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\..\radiant\map\algorithm\ChildPrimitives.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\map\algorithm\ChildPrimitives.h"
+						>
+					</File>
+					<File
 						RelativePath="..\..\radiant\map\algorithm\Clone.h"
 						>
 					</File>
@@ -985,6 +993,14 @@
 					</File>
 					<File
 						RelativePath="..\..\radiant\map\algorithm\MapExporter.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\map\algorithm\MapImporter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\radiant\map\algorithm\MapImporter.h"
 						>
 					</File>
 					<File
