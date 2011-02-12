@@ -422,6 +422,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\mapdoom3\Doom3MapReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\mapdoom3\Doom3MapReader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\mapdoom3\Doom3MapWriter.cpp"
 				>
 			</File>
@@ -439,14 +447,6 @@
 			</File>
 			<File
 				RelativePath="..\..\plugins\mapdoom3\mapdoom3.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\mapdoom3\NodeImporter.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\plugins\mapdoom3\NodeImporter.h"
 				>
 			</File>
 			<File
