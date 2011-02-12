@@ -37,7 +37,7 @@ class BrushDef3Exporter
 public:
 
 	// Writes a brushDef3 definition from the given brush to the given stream
-	static void exportBrush(std::ostream& stream, const IBrush& brush)
+	static void exportBrush(std::ostream& stream, const IBrush& brush, bool writeContentsFlags = true)
 	{
 		if (!brush.hasContributingFaces()) {
 			return;
@@ -51,14 +51,16 @@ public:
 		// Iterate over each brush face, exporting the tokens from all faces
 		for (std::size_t i = 0; i < brush.getNumFaces(); ++i)
 		{
-			writeFace(stream, brush.getFace(i));
+			writeFace(stream, brush.getFace(i), writeContentsFlags);
 		}
 
 		// Close brush contents and header
 		stream << "}" << std::endl << "}" << std::endl;
 	}
 
-	static void writeFace(std::ostream& stream, const IFace& face)
+private:
+
+	static void writeFace(std::ostream& stream, const IFace& face, bool writeContentsFlags)
 	{
 		// greebo: Don't export faces with degenerate or empty windings (they are "non-contributing")
 		if (face.getWinding().size() <= 2)
@@ -113,7 +115,10 @@ public:
 		}
 
 		// Export (dummy) contents/flags
-		stream << "0 0 0" << std::endl;
+		if (writeContentsFlags)
+		{
+			stream << "0 0 0" << std::endl;
+		}
 	}
 };
 
