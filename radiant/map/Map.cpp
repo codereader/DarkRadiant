@@ -21,6 +21,7 @@
 #include "os/path.h"
 #include "MapImportInfo.h"
 #include "gtkutil/IConv.h"
+#include "gtkutil/dialog.h"
 
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"
@@ -44,6 +45,8 @@
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "modulesystem/StaticModule.h"
+
+#include "algorithm/ChildPrimitives.h"
 
 namespace map {
 
@@ -892,29 +895,79 @@ void Map::rename(const std::string& filename) {
   	}
 }
 
-void Map::importSelected(TextInputStream& in) {
+void Map::importSelected(TextInputStream& in)
+{
 	BasicContainerPtr root(new BasicContainer);
 
 	std::istream str(&in);
 
-	MapImportInfo importInfo(str);
-	importInfo.root = root;
+	// Instantiate the default import filter
+	class MapImportFilter :
+		public IMapImportFilter
+	{
+	private:
+		scene::INodePtr _root;
+	public:
+		MapImportFilter(const scene::INodePtr& root) :
+			_root(root)
+		{}
+
+		bool addEntity(const scene::INodePtr& entityNode)
+		{
+			_root->addChildNode(entityNode);
+			return true;
+		}
+
+		bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
+		{
+			if (Node_getEntity(entity)->isContainer())
+			{
+				entity->addChildNode(primitive);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	} importFilter(root);
 
 	const MapFormat& format = getFormat();
-	format.readGraph(importInfo);
 
-	// Adjust all new names to fit into the existing map namespace,
-	// this routine will be changing a lot of names in the importNamespace
-	INamespacePtr nspace = getRoot()->getNamespace();
+	IMapReaderPtr reader = format.getMapReader(importFilter);
+	
+	try
+	{
+		// Start parsing
+		reader->readFromStream(str);
 
-	if (nspace != NULL) {
-		// Prepare all names
-		nspace->importNames(root);
-		// Now add the cloned names to the local namespace
-		nspace->connect(root);
+		// Prepare child primitives
+		addOriginToChildPrimitives(root);
+
+		// Adjust all new names to fit into the existing map namespace,
+		// this routine will be changing a lot of names in the importNamespace
+		INamespacePtr nspace = getRoot()->getNamespace();
+
+		if (nspace != NULL)
+		{
+			// Prepare all names
+			nspace->importNames(root);
+			// Now add the cloned names to the local namespace
+			nspace->connect(root);
+		}
+
+		MergeMap(root);
 	}
+	catch (IMapReader::FailureException& e)
+	{
+		gtkutil::errorDialog(
+			(boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str(),
+			GlobalMainFrame().getTopLevelWindow());
 
-	MergeMap(root);
+		// Clear out the root node, otherwise we end up with half a map
+		scene::NodeRemover remover;
+		root->traverse(remover);
+	}
 }
 
 void Map::exportSelected(std::ostream& out)

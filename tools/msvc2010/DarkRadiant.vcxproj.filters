@@ -778,6 +778,9 @@
     <ClCompile Include="..\..\radiant\map\InfoFile.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\map\algorithm\ChildPrimitives.cpp">
+      <Filter>src\map\algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\brushmanip.h">
@@ -1621,6 +1624,9 @@
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\algorithm\AssignLayerMappingWalker.h">
+      <Filter>src\map\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\algorithm\ChildPrimitives.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
   </ItemGroup>

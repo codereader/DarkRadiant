@@ -1,5 +1,6 @@
-#include "NodeImporter.h"
+#include "Doom3MapReader.h"
 
+#include "itextstream.h"
 #include "imap.h"
 #include "iradiant.h"
 #include "imainframe.h"
@@ -8,8 +9,8 @@
 #include "igame.h"
 #include "string/string.h"
 
-#include "gtkutil/dialog.h"
-#include "MapImportInfo.h"
+//#include "gtkutil/dialog.h"
+//#include "MapImportInfo.h"
 #include "scenelib.h"
 
 #include "Tokens.h"
@@ -21,23 +22,21 @@
 
 namespace map {
 
-	namespace {
+	/*namespace
+	{
 		const std::string RKEY_MAP_LOAD_STATUS_INTERLEAVE = "user/ui/map/loadStatusInterleave";
-	}
+	}*/
 
 // Constructor
-NodeImporter::NodeImporter(const MapImportInfo& importInfo)
-: _root(importInfo.root),
-  _inputStream(importInfo.inputStream),
-  _fileSize(importInfo.inputStreamSize),
-  _tok(_inputStream),
-  _entityCount(0),
-  _primitiveCount(0),
-  _layerInfoCount(0),
-  _dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
-  _debug(GlobalRegistry().get("user/debug") == "1")
+Doom3MapReader::Doom3MapReader(IMapImportFilter& importFilter) : 
+	_importFilter(importFilter),
+  //_fileSize(importInfo.inputStreamSize),
+	_entityCount(0),
+	_primitiveCount(0),
+  //_dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
+	_debug(GlobalRegistry().get("user/debug") == "1")
 {
-	bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
+	/*bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
 
 	if (showProgressDialog)
 	{
@@ -46,22 +45,23 @@ NodeImporter::NodeImporter(const MapImportInfo& importInfo)
 				GlobalMainFrame().getTopLevelWindow(), _("Loading map")
 			)
 		);
-	}
+	}*/
 }
 
-bool NodeImporter::parse() {
-	// Try to parse the map version
-	if (!parseMapVersion()) {
-		// Failed => quit
-		return false;
-	}
+void Doom3MapReader::readFromStream(std::istream& stream)
+{
+	// The tokeniser used to split the stream into pieces
+	parser::BasicDefTokeniser<std::istream> tok(stream);
+
+	// Try to parse the map version (throws on failure)
+	parseMapVersion(tok);
 
 	// Read each entity in the map, until EOF is reached
-	while (_tok.hasMoreTokens())
-   {
+	while (tok.hasMoreTokens())
+	{
 		// Update the dialog text. This will throw an exception if the cancel
 		// button is clicked, which we must catch and handle.
-		if (_dialog && _dialogEventLimiter.readyForEvent())
+		/*if (_dialog && _dialogEventLimiter.readyForEvent())
 		{
 			try
 			{
@@ -81,57 +81,65 @@ bool NodeImporter::parse() {
 
 				return false;
 			}
-		}
+		}*/
 
 		// Create an entity node by parsing from the stream. If there is an
 		// exception, display it and return
-		try {
-			parseEntity();
-		}
-		catch (std::runtime_error& e)
+		try
 		{
-			std::string text = (boost::format(_("Failed on entity %d")) % _entityCount).str();
-			gtkutil::errorDialog(
+			parseEntity(tok);
+		}
+		catch (FailureException& e)
+		{
+			std::string text = (boost::format(_("Failed parsing entity %d:\n%s")) % _entityCount % e.what()).str();
+
+			/*gtkutil::errorDialog(
 				text + "\n\n" + e.what(),
 				GlobalMainFrame().getTopLevelWindow()
 			);
 
 			// Clear out the root node, otherwise we end up with half a map
 			scene::NodeRemover remover;
-			_root->traverse(remover);
+			_root->traverse(remover);*/
 
-			return false;
+			//return false;
+
+			// Re-throw with more text
+			throw FailureException(text);
 		}
 
 		_entityCount++;
 	}
 
-	// EOF reached, return success
-	return true;
+	// EOF reached, success
 }
 
-bool NodeImporter::parseMapVersion()
+void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
 {
 	// Parse the map version
     float version = 0;
 
-    try {
-        _tok.assertNextToken(VERSION);
-        version = boost::lexical_cast<float>(_tok.nextToken());
+    try
+	{
+        tok.assertNextToken(VERSION);
+        version = boost::lexical_cast<float>(tok.nextToken());
     }
     catch (parser::ParseException& e)
 	{
-        globalErrorStream()
+		// failed => quit
+		globalErrorStream()
             << "[mapdoom3] Unable to parse map version: "
             << e.what() << std::endl;
-        return false;
+
+		throw FailureException(_("Unable to parse map version (parse exception)."));
     }
     catch (boost::bad_lexical_cast& e)
 	{
         globalErrorStream()
             << "[mapdoom3] Unable to parse map version: "
             << e.what() << std::endl;
-        return false;
+
+		throw FailureException(_("Could not recognise map version number format."));
     }
 
 	// Load the required version from the .game file
@@ -143,60 +151,72 @@ bool NodeImporter::parseMapVersion()
     // Check we have the correct version for this module
     if (version != requiredVersion)
 	{
-        globalErrorStream()
-            << "Incorrect map version: required " << requiredVersion
-			<< ", found " << version << std::endl;
-        return false;
+		std::string errMsg = (boost::format(_("Incorrect map version: required %f, found %f")) % requiredVersion % version).str();
+
+        globalErrorStream() << errMsg << std::endl;
+
+		throw FailureException(errMsg);
     }
 
-	return true;
+	// success
 }
 
-void NodeImporter::parsePrimitive(const scene::INodePtr& parentEntity)
+void Doom3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INodePtr& parentEntity)
 {
     // Update the dialog
-    if (_dialog && _dialogEventLimiter.readyForEvent())
+    /*if (_dialog && _dialogEventLimiter.readyForEvent())
     {
         _dialog->setTextAndFraction(
             _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount),
 			getProgressFraction()
         );
-    }
+    }*/
 
     _primitiveCount++;
 
-	std::string primitiveKeyword = _tok.nextToken();
+	std::string primitiveKeyword = tok.nextToken();
 
 	// Get a parser for this keyword
 	PrimitiveParserPtr parser = GlobalMapFormatManager().getPrimitiveParser(primitiveKeyword);
 
 	if (parser == NULL)
 	{
-		throw parser::ParseException("Unknown primitive type: " + primitiveKeyword);
+		throw FailureException("Unknown primitive type: " + primitiveKeyword);
 	}
 
 	// Try to parse the primitive, throwing exception if failed
-    scene::INodePtr primitive = parser->parse(_tok);
-
-    if (!primitive)
+	try
 	{
-		std::string text = (boost::format(_("Primitive #%d: parse error")) % _primitiveCount).str();
-        throw std::runtime_error(text + "\n");
-    }
+		scene::INodePtr primitive = parser->parse(tok);
 
-    // Now add the primitive as a child of the entity
-    if (Node_getEntity(parentEntity)->isContainer())
+		if (!primitive)
+		{
+			std::string text = (boost::format(_("Primitive #%d: parse error")) % _primitiveCount).str();
+			throw FailureException(text);
+		}
+
+		// Now add the primitive as a child of the entity
+		_importFilter.addPrimitiveToEntity(primitive, parentEntity); 
+	}
+	catch (parser::ParseException& e)
+	{
+		// Translate ParseExceptions to FailureExceptions
+		std::string text = (boost::format(_("Primitive #%d: parse exception %s")) % _primitiveCount % e.what()).str();
+		throw FailureException(text);
+	}
+
+    /*if (Node_getEntity(parentEntity)->isContainer())
 	{
         parentEntity->addChildNode(primitive);
-    }
+    }*/
 }
 
-scene::INodePtr NodeImporter::createEntity(const EntityKeyValues& keyValues) {
+scene::INodePtr Doom3MapReader::createEntity(const EntityKeyValues& keyValues) {
     // Get the classname from the EntityKeyValues
     EntityKeyValues::const_iterator found = keyValues.find("classname");
 
     if (found == keyValues.end()) {
-		throw std::runtime_error("NodeImporter::createEntity(): could not find classname.");
+		throw std::runtime_error("Doom3MapReader::createEntity(): could not find classname.");
     }
 
     // Otherwise create the entity and add all of the properties
@@ -227,9 +247,10 @@ scene::INodePtr NodeImporter::createEntity(const EntityKeyValues& keyValues) {
     return entity;
 }
 
-void NodeImporter::parseEntity() {
+void Doom3MapReader::parseEntity(parser::DefTokeniser& tok)
+{
 	// Set up the progress dialog text
-	_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
+	//_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
 
     // Map of keyvalues for this entity
     EntityKeyValues keyValues;
@@ -239,41 +260,48 @@ void NodeImporter::parseEntity() {
     scene::INodePtr entity;
 
 	// Start parsing, first token must be an open brace
-	_tok.assertNextToken("{");
+	tok.assertNextToken("{");
 
-	std::string token = _tok.nextToken();
+	std::string token = tok.nextToken();
 
 	// Reset the primitive counter, we're starting a new entity
 	_primitiveCount = 0;
 
-	while (true) {
+	while (true)
+	{
 	    // Token must be either a key, a "{" to indicate the start of a
 	    // primitive, or a "}" to indicate the end of the entity
 
-	    if (token == "{") { // PRIMITIVE
+	    if (token == "{") // PRIMITIVE
+		{ 
 			// Create the entity right now, if not yet done
-			if (entity == NULL) {
+			if (entity == NULL)
+			{
 				entity = createEntity(keyValues);
 			}
 
 			// Parse the primitive block, and pass the parent entity
-			parsePrimitive(entity);
+			parsePrimitive(tok, entity);
 	    }
-	    else if (token == "}") { // END OF ENTITY
+	    else if (token == "}") // END OF ENTITY
+		{
             // Create the entity if necessary and return it
-	        if (entity == NULL) {
+	        if (entity == NULL)
+			{
 	            entity = createEntity(keyValues);
 	        }
+
 			break;
 	    }
-	    else { // KEY
-	        std::string value = _tok.nextToken();
+	    else // KEY
+		{ 
+	        std::string value = tok.nextToken();
 
 	        // Sanity check (invalid number of tokens will get us out of sync)
 	        if (value == "{" || value == "}")
 			{
 				std::string text = (boost::format(_("Parsed invalid value '%s' for key '%s'")) % value % token).str();
-	            throw std::runtime_error(text);
+	            throw FailureException(text);
 	        }
 
 	        // Otherwise add the keyvalue pair to our map
@@ -281,14 +309,15 @@ void NodeImporter::parseEntity() {
 	    }
 
 	    // Get the next token
-	    token = _tok.nextToken();
+	    token = tok.nextToken();
 	}
 
 	// Insert the entity
-	insertEntity(entity);
+	_importFilter.addEntity(entity);
 }
 
-bool NodeImporter::checkEntityClass(const scene::INodePtr& entity) {
+#if 0
+bool Doom3MapReader::checkEntityClass(const scene::INodePtr& entity) {
 	// Obtain list of entityclasses to skip
 	static xml::NodeList skipLst =
 		GlobalRegistry().findXPath("debug/mapdoom3//discardEntityClass");
@@ -312,7 +341,7 @@ bool NodeImporter::checkEntityClass(const scene::INodePtr& entity) {
 	return true;
 }
 
-bool NodeImporter::checkEntityNum() {
+bool Doom3MapReader::checkEntityNum() {
 	// Entity range XPath
 	static xml::NodeList entityRange =
 					GlobalRegistry().findXPath("debug/mapdoom3/entityRange");
@@ -332,7 +361,7 @@ bool NodeImporter::checkEntityNum() {
 	return true;
 }
 
-void NodeImporter::insertEntity(const scene::INodePtr& entity) {
+void Doom3MapReader::insertEntity(const scene::INodePtr& entity) {
 	// Abort if any of the tests fail
 	if (_debug && (!checkEntityClass(entity) || !checkEntityNum())) {
 		return;
@@ -342,10 +371,10 @@ void NodeImporter::insertEntity(const scene::INodePtr& entity) {
 	_root->addChildNode(entity);
 }
 
-double NodeImporter::getProgressFraction()
+double Doom3MapReader::getProgressFraction()
 {
 	long readBytes = static_cast<long>(_inputStream.tellg());
 	return static_cast<double>(readBytes) / _fileSize;
 }
-
+#endif
 } // namespace map

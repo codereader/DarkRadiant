@@ -1,5 +1,6 @@
 #include "Doom3MapFormat.h"
 
+#include "itextstream.h"
 #include "ifiletypes.h"
 #include "ieclass.h"
 #include "ibrush.h"
@@ -10,7 +11,6 @@
 
 #include "parser/DefTokeniser.h"
 
-#include "NodeImporter.h"
 #include "scenelib.h"
 
 #include "i18n.h"
@@ -25,6 +25,7 @@
 #include <boost/lexical_cast.hpp>
 #include "primitiveparsers/BrushDef.h"
 
+#include "Doom3MapReader.h"
 #include "Doom3MapWriter.h"
 
 namespace map {
@@ -82,6 +83,11 @@ void Doom3MapFormat::shutdownModule()
 	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
 }
 
+IMapReaderPtr Doom3MapFormat::getMapReader(IMapImportFilter& filter) const
+{
+	return IMapReaderPtr(new Doom3MapReader(filter));
+}
+
 IMapWriterPtr Doom3MapFormat::getMapWriter() const
 {
 	return IMapWriterPtr(new Doom3MapWriter);
@@ -120,24 +126,25 @@ bool Doom3MapFormat::canLoad(std::istream& stream) const
 	return false;
 }
 
-bool Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const
+#if 0
+void Doom3MapFormat::readGraph(const MapImportInfo& importInfo) const
 {
 	assert(importInfo.root != NULL);
 
 	// Construct a MapImporter that will do the map parsing
-	NodeImporter importer(importInfo);
+	Doom3MapReader importer(importInfo);
 
 	if (importer.parse())
 	{
 		// Run the post-process (layers and/or child primitive origins)
 		onMapParsed(importInfo);
 
-		return true;
+		return;
 	}
 	else
 	{
 		// Importer return FALSE, propagate this failure
-		return false;
+		throw FailureException("General parser failure.");
 	}
 }
 
@@ -245,5 +252,6 @@ void Doom3MapFormat::onMapParsed(const MapImportInfo& importInfo) const
 	// Also process the func_static child primitives
 	addOriginToChildPrimitives(importInfo.root);
 }
+#endif
 
 } // namespace map

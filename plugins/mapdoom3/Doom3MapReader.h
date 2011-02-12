@@ -5,26 +5,19 @@
 #include "inode.h"
 #include "imapformat.h"
 #include "parser/DefTokeniser.h"
-#include "gtkutil/ModalProgressDialog.h"
-#include "EventRateLimiter.h"
 
 namespace map {
 
-class NodeImporter {
+class Doom3MapReader :
+	public IMapReader
+{
+	IMapImportFilter& _importFilter;
 
 	// The map type for one entity's keyvalues (spawnargs)
 	typedef std::map<std::string, std::string> EntityKeyValues;
 
-	// The container which will hold the imported nodes
-	scene::INodePtr _root;
-
-	std::istream& _inputStream;
-
 	// The size of the input file
-	long _fileSize;
-
-	// The tokeniser used to split the stream into pieces
-	parser::BasicDefTokeniser<std::istream> _tok;
+	//long _fileSize;
 
 	// The number of entities found in this map file so far
 	std::size_t _entityCount;
@@ -32,41 +25,38 @@ class NodeImporter {
 	// The number of primitives of the currently parsed entity
 	std::size_t _primitiveCount;
 
-	// The number of layer sets written to the file
-	std::size_t _layerInfoCount;
-
-	// The progress dialog
+/*	// The progress dialog
 	gtkutil::ModalProgressDialogPtr _dialog;
 
 	// The progress dialog text for the current entity
 	std::string _dlgEntityText;
 
     // Event rate limiter for the progress dialog
-    EventRateLimiter _dialogEventLimiter;
+    EventRateLimiter _dialogEventLimiter;*/
 
 	// TRUE if we're in debugging parse mode
 	bool _debug;
 
 public:
-	NodeImporter(const MapImportInfo& importInfo);
+	Doom3MapReader(IMapImportFilter& importFilter);
 
-	// Start parsing, this should not "leak" any exceptions
-	// Returns TRUE if the parsing succeeded without errors or exceptions.
-	bool parse();
+	// IMapReader implementation
+	void readFromStream(std::istream& stream);
 
 private:
-	// Parse the version tag at the beginning, returns TRUE on success
-	bool parseMapVersion();
+	// Parse the version tag at the beginning, throws on failure
+	void parseMapVersion(parser::DefTokeniser& tok);
 
-	// Parses an entity plus all child primitives
-	void parseEntity();
+	// Parses an entity plus all child primitives, throws on failure
+	void parseEntity(parser::DefTokeniser& tok);
 
 	// Parse the primitive block and insert the child into the given parent
-	void parsePrimitive(const scene::INodePtr& parentEntity);
+	void parsePrimitive(parser::DefTokeniser& tok, const scene::INodePtr& parentEntity);
 
 	// Create an entity with the given properties and layers
 	scene::INodePtr createEntity(const EntityKeyValues& keyValues);
 
+#if 0
 	// Inserts the entity into the root (and performs a couple of checks beforehand)
 	void insertEntity(const scene::INodePtr& entity);
 
@@ -80,6 +70,7 @@ private:
 private:
 	// Gets the ratio of read bytes vs. total bytes in the input stream
 	double getProgressFraction();
+#endif
 };
 
 } // namespace map

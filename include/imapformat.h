@@ -64,7 +64,7 @@ typedef boost::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
  * The IMapWriter interface defines beginWrite/endWrite pairs for 
  * each scene element (Entity, primitives and the Map itself). 
  * These are called by the map saving algorithm when traversing 
- * the scene-depth-first. The usual call order will look like this:
+ * the scene depth-first. The usual call order will look like this:
  *
  * beginWriteMap
  *    beginWriteEntity
@@ -85,8 +85,7 @@ typedef boost::shared_ptr<PrimitiveParser> PrimitiveParserPtr;
 class IMapWriter 
 {
 public:
-	// The generic exception type which is to be thrown by the 
-	// IMapWriter methods
+	// The generic exception type which is thrown by the IMapWriter methods
 	class FailureException :
 		public std::runtime_error
 	{
@@ -126,6 +125,56 @@ public:
 typedef boost::shared_ptr<IMapWriter> IMapWriterPtr;
 
 /**
+ * An abstract map reader class used to parse map elements
+ * from the given input (string) stream. The map reader instance
+ * is usually associated with an MapImportFilter class where the
+ * parsed elements are sent to.
+ */
+class IMapReader
+{
+public:
+	// The generic exception type which is thrown by a map reader
+	class FailureException :
+	public std::runtime_error
+	{
+	public:
+		FailureException(const std::string& what) :
+			std::runtime_error(what)
+		{}
+	};
+
+	 /**
+	 * Read the contents of the given stream and send them through the given MapImportFilter.
+	 * Whether the nodes are actually added to the map or not is something the 
+	 * ImportFilter can decide.
+	 *
+	 * throws: FailureException on any error.
+	 */
+	virtual void readFromStream(std::istream& stream) = 0;
+};
+
+class IMapImportFilter
+{
+public:
+	/**
+	 * Send an entity node to the import filter. In idTech4 maps all entities
+	 * are immediate children of the root node in the scene, so this is where
+     * they usually end up after being added (unless they're filtered out).
+	 *
+	 * @returns: true if the entity got added, false otherwise.
+	 */
+	virtual bool addEntity(const scene::INodePtr& entity) = 0;
+
+	/**
+	 * Add an primitive node to the given entity.
+	 *
+	 * @returns: true if the primitive got added, false otherwise.
+	 */
+	virtual bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity) = 0;
+};
+typedef boost::shared_ptr<IMapReader> IMapReaderPtr;
+
+/**
  * Map Format interface. Each map format is able to traverse the scene graph and write
  * the contents into a mapfile, or to load a mapfile and populate a scene graph.
  */
@@ -133,7 +182,13 @@ class MapFormat :
 	public RegisterableModule
 {
 public:
-    virtual ~MapFormat() {}
+	virtual ~MapFormat() {}
+
+	/**
+	 * Instantiate a new map reader, using the given ImportFilter 
+	 * which will be fed with nodes during the import.
+	 */
+	virtual IMapReaderPtr getMapReader(IMapImportFilter& filter) const = 0; 
 
 	/**
 	 * Acquire a map writer instance, for exporting nodes to a stream.
@@ -153,15 +208,6 @@ public:
 	 * check of the file header.
 	 */
 	virtual bool canLoad(std::istream& stream) const = 0;
-
-	/**
-	 * Read the contents of the given streams (which are contained in MapImportInfo)
-	 * and add them as children to the given root node (also in MapImportInfo).
-	 *
-	 * @returns: TRUE on success, FALSE if parsing errors occurred.
-	 * @DEPRECATED
-	 */
-	virtual bool readGraph(const MapImportInfo& importInfo) const = 0;
 };
 typedef boost::shared_ptr<MapFormat> MapFormatPtr;
 
