@@ -24,25 +24,21 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 
+	virtual IMapReaderPtr getMapReader(IMapImportFilter& filter) const;
 	virtual IMapWriterPtr getMapWriter() const;
 
 	virtual bool allowInfoFileCreation() const;
 
 	virtual bool canLoad(std::istream& stream) const;
 
-    /**
-     * Read tokens from a map stream and create entities accordingly.
-     */
-    virtual bool readGraph(const MapImportInfo& importInfo) const;
-
-protected:
+/*protected:
 	// Helper functions to handle child brushes of func_statics which have to
 	// be saved relative to their parent's origin
 	void addOriginToChildPrimitives(const scene::INodePtr& root) const;
 	void removeOriginFromChildPrimitives(const scene::INodePtr& root) const;
 
 	// Post-process the imported map, loading layers and moving child primitives
-	virtual void onMapParsed(const MapImportInfo& importInfo) const;
+	virtual void onMapParsed(const MapImportInfo& importInfo) const;*/
 };
 typedef boost::shared_ptr<Doom3MapFormat> Doom3MapFormatPtr;
 

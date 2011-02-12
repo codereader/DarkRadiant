@@ -13,6 +13,8 @@
 #include "scenelib.h"
 #include "string/string.h"
 
+#include "ChildPrimitives.h"
+
 namespace map
 {
 
@@ -184,80 +186,12 @@ void MapExporter::onNodeProgress()
 
 void MapExporter::prepareScene()
 {
-	// Disable texture lock during this process
-	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
-
-	// Local helper to remove the origins
-	class OriginRemover :
-		public scene::NodeVisitor
-	{
-	public:
-		bool pre(const scene::INodePtr& node)
-		{
-			Entity* entity = Node_getEntity(node);
-
-			// Check for an entity
-			if (entity != NULL)
-			{
-				// greebo: Check for a Doom3Group
-				scene::GroupNodePtr groupNode = Node_getGroupNode(node);
-
-				// Don't handle the worldspawn children, they're safe&sound
-				if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn")
-				{
-					groupNode->removeOriginFromChildren();
-					// Don't traverse the children
-					return false;
-				}
-			}
-
-			return true;
-		}
-	} remover;
-
-	Node_traverseSubgraph(_root, remover);
-
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
+	removeOriginFromChildPrimitives(_root);
 }
 
 void MapExporter::finishScene()
 {
-	// Disable texture lock during this process
-	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
-
-	// Local helper to add origins
-	class OriginAdder :
-		public scene::NodeVisitor
-	{
-	public:
-		// NodeVisitor implementation
-		bool pre(const scene::INodePtr& node)
-		{
-			Entity* entity = Node_getEntity(node);
-
-			// Check for an entity
-			if (entity != NULL)
-			{
-				// greebo: Check for a Doom3Group
-				scene::GroupNodePtr groupNode = Node_getGroupNode(node);
-
-				// Don't handle the worldspawn children, they're safe&sound
-				if (groupNode != NULL && entity->getKeyValue("classname") != "worldspawn")
-				{
-					groupNode->addOriginToChildren();
-					// Don't traverse the children
-					return false;
-				}
-			}
-			return true;
-		}
-	} adder;
-
-	Node_traverseSubgraph(_root, adder);
-
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
+	addOriginToChildPrimitives(_root);
 }
 
 } // namespace

@@ -20,8 +20,8 @@ public:
 
 	virtual bool allowInfoFileCreation() const;
 
-protected:
-	virtual void onMapParsed(const MapImportInfo& importInfo) const;
+/*protected:
+	virtual void onMapParsed(const MapImportInfo& importInfo) const;*/
 };
 typedef boost::shared_ptr<Doom3PrefabFormat> Doom3PrefabFormatPtr;
 

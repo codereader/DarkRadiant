@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include "ifiletypes.h"
+#include "igroupnode.h"
 #include "ifilesystem.h"
 #include "imainframe.h"
 #include "iregistry.h"
@@ -27,8 +28,10 @@
 #include "algorithm/MapExporter.h"
 #include "algorithm/InfoFileExporter.h"
 #include "algorithm/AssignLayerMappingWalker.h"
+#include "algorithm/ChildPrimitives.h"
 
-namespace map {
+namespace map
+{
 
 namespace
 {
@@ -365,12 +368,6 @@ scene::INodePtr MapResource::loadMapNode()
 		{
 			return root;
 		}
-		else
-		{
-			gtkutil::errorDialog(
-				(boost::format(_("Failure reading read map file:\n%s")) % fullpath).str(),
-				GlobalMainFrame().getTopLevelWindow());
-		}
 	}
 	else 
 	{
@@ -383,18 +380,56 @@ scene::INodePtr MapResource::loadMapNode()
 
 bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, const scene::INodePtr& root, const std::string& filename)
 {
-	// Load the map file using the given format
-	MapImportInfo importInfo(mapStream);
-	importInfo.root = root;
-
-	bool success = format.readGraph(importInfo);
-
-	if (success)
+	// Instantiate the default import filter
+	class MapImportFilter :
+		public IMapImportFilter
 	{
+	private:
+		scene::INodePtr _root;
+	public:
+		MapImportFilter(const scene::INodePtr& root) :
+			_root(root)
+		{}
+
+		bool addEntity(const scene::INodePtr& entityNode)
+		{
+			_root->addChildNode(entityNode);
+
+			// TODO: Handle progress
+
+			return true;
+		}
+
+		bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
+		{
+			// TODO: Handle progress
+
+			if (Node_getEntity(entity)->isContainer())
+			{
+				entity->addChildNode(primitive);
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+	} importFilter(root);
+
+	IMapReaderPtr reader = format.getMapReader(importFilter);
+
+	try
+	{
+		// Start parsing
+		reader->readFromStream(mapStream);
+
+		// Prepare child primitives
+		addOriginToChildPrimitives(root);
+
 		if (!format.allowInfoFileCreation())
 		{
-			// No info file handling, just return the result
-			return success;
+			// No info file handling, just return success
+			return true;
 		}
 
 		// Check for an additional info file
@@ -430,7 +465,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 			// Now that the graph is in place, assign the layers
 			AssignLayerMappingWalker walker(infoFile);
-			importInfo.root->traverse(walker);
+			root->traverse(walker);
 		}
 		catch (parser::ParseException& e)
 		{
@@ -439,43 +474,18 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		return true;
 	}
-	else
+	catch (IMapReader::FailureException& e)
 	{
-		// Map load failed
+		gtkutil::errorDialog(
+				(boost::format(_("Failure reading map file:\n%s\n\n%s")) % filename % e.what()).str(),
+				GlobalMainFrame().getTopLevelWindow());
+
+		// Clear out the root node, otherwise we end up with half a map
+		scene::NodeRemover remover;
+		root->traverse(remover);
+
 		return false;
 	}
-
-	/*
-
-	std::string infoFilename(filename.substr(0, filename.rfind('.')));
-	infoFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
-
-	std::ifstream infoFileStream(infoFilename.c_str());
-
-	if (infoFileStream.is_open()) {
-		globalOutputStream() << " found information file... ";
-	}
-
-	globalOutputStream() << "success" << std::endl;
-
-	// Create an import information structure
-	if (infoFileStream.is_open())
-	{
-		// Infostream is open, call the MapFormat
-		MapImportInfo importInfo(mapStream, infoFileStream);
-		importInfo.root = root;
-
-		return format.readGraph(importInfo);
-	}
-	else
-	{
-		// No active infostream, pass a dummy stream
-		std::istringstream emptyStream;
-		MapImportInfo importInfo(mapStream, emptyStream);
-		importInfo.root = root;
-
-		return format.readGraph(importInfo);
-	}*/
 }
 
 bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,

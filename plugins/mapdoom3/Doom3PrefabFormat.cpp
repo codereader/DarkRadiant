@@ -46,7 +46,7 @@ bool Doom3PrefabFormat::allowInfoFileCreation() const
 {
 	return false;
 }
-
+/*
 void Doom3PrefabFormat::onMapParsed(const MapImportInfo& importInfo) const
 {
 	// Ignore any layer information (do not attempt to load it)
@@ -54,5 +54,5 @@ void Doom3PrefabFormat::onMapParsed(const MapImportInfo& importInfo) const
 	// Just process the func_static child primitives
 	addOriginToChildPrimitives(importInfo.root);
 }
-
+*/
 } // namespace
