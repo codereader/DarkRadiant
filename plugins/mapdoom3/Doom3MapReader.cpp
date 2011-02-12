@@ -6,7 +6,6 @@
 #include "ientity.h"
 #include "string/string.h"
 
-#include "Tokens.h"
 #include "Doom3MapFormat.h"
 
 #include "i18n.h"

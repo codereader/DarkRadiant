@@ -14,7 +14,6 @@
 #include "scenelib.h"
 
 #include "i18n.h"
-#include "Tokens.h"
 #include "string/string.h"
 
 #include "primitiveparsers/BrushDef3.h"

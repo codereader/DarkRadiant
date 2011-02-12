@@ -19,9 +19,6 @@
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\mapdoom3\Tokens.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.h">
       <Filter>src\primitiveparsers</Filter>
     </ClInclude>

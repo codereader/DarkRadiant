@@ -14,7 +14,6 @@
 #include "scenelib.h"
 
 #include "i18n.h"
-#include "Tokens.h"
 #include "string/string.h"
 
 #include "primitiveparsers/BrushDef3.h"
@@ -27,13 +26,14 @@
 #include "Doom3MapReader.h"
 #include "Quake4MapWriter.h"
 
+#include "Doom3MapFormat.h"
+
 namespace map
 {
 
 	namespace
 	{
 		const std::string RKEY_FLOAT_PRECISION = "/mapFormat/floatPrecision";
-		const char* const RKEY_GAME_MAP_VERSION = "/mapFormat/version";
 	}
 
 // RegisterableModule implementation

@@ -9,6 +9,7 @@ namespace map
 	namespace
 	{
 		const char* const RKEY_GAME_MAP_VERSION = "/mapFormat/version";
+		const char* const VERSION = "Version";
 	}
 
 class Doom3MapFormat :
