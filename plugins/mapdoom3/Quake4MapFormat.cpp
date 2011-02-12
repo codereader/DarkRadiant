@@ -25,7 +25,7 @@
 #include "primitiveparsers/BrushDef.h"
 
 #include "Doom3MapReader.h"
-#include "Doom3MapWriter.h"
+#include "Quake4MapWriter.h"
 
 namespace map
 {
@@ -102,7 +102,7 @@ IMapReaderPtr Quake4MapFormat::getMapReader(IMapImportFilter& filter) const
 
 IMapWriterPtr Quake4MapFormat::getMapWriter() const
 {
-	return IMapWriterPtr(new Doom3MapWriter);
+	return IMapWriterPtr(new Quake4MapWriter);
 }
 
 bool Quake4MapFormat::allowInfoFileCreation() const
