@@ -17,7 +17,6 @@
 #include "debugging/debugging.h"
 #include "os/path.h"
 #include "os/file.h"
-#include "MapImportInfo.h"
 #include "map/algorithm/Traverse.h"
 #include "stream/textfilestream.h"
 #include "referencecache/NullModelNode.h"
@@ -25,6 +24,7 @@
 #include <boost/format.hpp>
 #include "InfoFile.h"
 
+#include "algorithm/MapImporter.h"
 #include "algorithm/MapExporter.h"
 #include "algorithm/InfoFileExporter.h"
 #include "algorithm/AssignLayerMappingWalker.h"
@@ -380,42 +380,10 @@ scene::INodePtr MapResource::loadMapNode()
 
 bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, const scene::INodePtr& root, const std::string& filename)
 {
-	// Instantiate the default import filter
-	class MapImportFilter :
-		public IMapImportFilter
-	{
-	private:
-		scene::INodePtr _root;
-	public:
-		MapImportFilter(const scene::INodePtr& root) :
-			_root(root)
-		{}
+	// Our importer taking care of scene insertion
+	MapImporter importFilter(root, mapStream);
 
-		bool addEntity(const scene::INodePtr& entityNode)
-		{
-			_root->addChildNode(entityNode);
-
-			// TODO: Handle progress
-
-			return true;
-		}
-
-		bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
-		{
-			// TODO: Handle progress
-
-			if (Node_getEntity(entity)->isContainer())
-			{
-				entity->addChildNode(primitive);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	} importFilter(root);
-
+	// Acquire a map reader/parser
 	IMapReaderPtr reader = format.getMapReader(importFilter);
 
 	try
@@ -473,6 +441,19 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 		}
 
 		return true;
+	}
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException& p)
+	{
+		gtkutil::errorDialog(
+			_("Map loading cancelled"),
+			GlobalMainFrame().getTopLevelWindow()
+		);
+
+		// Clear out the root node, otherwise we end up with half a map
+		scene::NodeRemover remover;
+		root->traverse(remover);
+
+		return false;
 	}
 	catch (IMapReader::FailureException& e)
 	{

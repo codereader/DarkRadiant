@@ -1,17 +1,10 @@
 #include "Doom3MapReader.h"
 
 #include "itextstream.h"
-#include "imap.h"
-#include "iradiant.h"
-#include "imainframe.h"
-#include "iregistry.h"
 #include "ieclass.h"
 #include "igame.h"
+#include "ientity.h"
 #include "string/string.h"
-
-//#include "gtkutil/dialog.h"
-//#include "MapImportInfo.h"
-#include "scenelib.h"
 
 #include "Tokens.h"
 #include "Doom3MapFormat.h"
@@ -22,31 +15,11 @@
 
 namespace map {
 
-	/*namespace
-	{
-		const std::string RKEY_MAP_LOAD_STATUS_INTERLEAVE = "user/ui/map/loadStatusInterleave";
-	}*/
-
-// Constructor
 Doom3MapReader::Doom3MapReader(IMapImportFilter& importFilter) : 
 	_importFilter(importFilter),
-  //_fileSize(importInfo.inputStreamSize),
 	_entityCount(0),
-	_primitiveCount(0),
-  //_dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
-	_debug(GlobalRegistry().get("user/debug") == "1")
-{
-	/*bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
-
-	if (showProgressDialog)
-	{
-		_dialog = gtkutil::ModalProgressDialogPtr(
-			new gtkutil::ModalProgressDialog(
-				GlobalMainFrame().getTopLevelWindow(), _("Loading map")
-			)
-		);
-	}*/
-}
+	_primitiveCount(0)
+{}
 
 void Doom3MapReader::readFromStream(std::istream& stream)
 {
@@ -59,30 +32,6 @@ void Doom3MapReader::readFromStream(std::istream& stream)
 	// Read each entity in the map, until EOF is reached
 	while (tok.hasMoreTokens())
 	{
-		// Update the dialog text. This will throw an exception if the cancel
-		// button is clicked, which we must catch and handle.
-		/*if (_dialog && _dialogEventLimiter.readyForEvent())
-		{
-			try
-			{
-				std::string text = (boost::format(_("Loading entity %d")) % _entityCount).str();
-				_dialog->setTextAndFraction(text, getProgressFraction());
-			}
-			catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
-			{
-				gtkutil::errorDialog(
-					_("Map loading cancelled"),
-					GlobalMainFrame().getTopLevelWindow()
-				);
-
-				// Clear out the root node, otherwise we end up with half a map
-				scene::NodeRemover remover;
-				_root->traverse(remover);
-
-				return false;
-			}
-		}*/
-
 		// Create an entity node by parsing from the stream. If there is an
 		// exception, display it and return
 		try
@@ -92,17 +41,6 @@ void Doom3MapReader::readFromStream(std::istream& stream)
 		catch (FailureException& e)
 		{
 			std::string text = (boost::format(_("Failed parsing entity %d:\n%s")) % _entityCount % e.what()).str();
-
-			/*gtkutil::errorDialog(
-				text + "\n\n" + e.what(),
-				GlobalMainFrame().getTopLevelWindow()
-			);
-
-			// Clear out the root node, otherwise we end up with half a map
-			scene::NodeRemover remover;
-			_root->traverse(remover);*/
-
-			//return false;
 
 			// Re-throw with more text
 			throw FailureException(text);
@@ -163,15 +101,6 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
 
 void Doom3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INodePtr& parentEntity)
 {
-    // Update the dialog
-    /*if (_dialog && _dialogEventLimiter.readyForEvent())
-    {
-        _dialog->setTextAndFraction(
-            _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount),
-			getProgressFraction()
-        );
-    }*/
-
     _primitiveCount++;
 
 	std::string primitiveKeyword = tok.nextToken();
@@ -204,26 +133,24 @@ void Doom3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INod
 		std::string text = (boost::format(_("Primitive #%d: parse exception %s")) % _primitiveCount % e.what()).str();
 		throw FailureException(text);
 	}
-
-    /*if (Node_getEntity(parentEntity)->isContainer())
-	{
-        parentEntity->addChildNode(primitive);
-    }*/
 }
 
-scene::INodePtr Doom3MapReader::createEntity(const EntityKeyValues& keyValues) {
+scene::INodePtr Doom3MapReader::createEntity(const EntityKeyValues& keyValues)
+{
     // Get the classname from the EntityKeyValues
     EntityKeyValues::const_iterator found = keyValues.find("classname");
 
-    if (found == keyValues.end()) {
-		throw std::runtime_error("Doom3MapReader::createEntity(): could not find classname.");
+    if (found == keyValues.end())
+	{
+		throw FailureException("Doom3MapReader::createEntity(): could not find classname.");
     }
 
     // Otherwise create the entity and add all of the properties
     std::string className = found->second;
 	IEntityClassPtr classPtr = GlobalEntityClassManager().findClass(className);
 
-	if (classPtr == NULL) {
+	if (classPtr == NULL)
+	{
 		globalErrorStream() << "[mapdoom3]: Could not find entity class: "
 			<< className << std::endl;
 
@@ -249,9 +176,6 @@ scene::INodePtr Doom3MapReader::createEntity(const EntityKeyValues& keyValues) {
 
 void Doom3MapReader::parseEntity(parser::DefTokeniser& tok)
 {
-	// Set up the progress dialog text
-	//_dlgEntityText = (boost::format(_("Loading entity %d")) % _entityCount).str();
-
     // Map of keyvalues for this entity
     EntityKeyValues keyValues;
 
@@ -316,65 +240,4 @@ void Doom3MapReader::parseEntity(parser::DefTokeniser& tok)
 	_importFilter.addEntity(entity);
 }
 
-#if 0
-bool Doom3MapReader::checkEntityClass(const scene::INodePtr& entity) {
-	// Obtain list of entityclasses to skip
-	static xml::NodeList skipLst =
-		GlobalRegistry().findXPath("debug/mapdoom3//discardEntityClass");
-
-	// Obtain the entity class of this node
-	IEntityClassConstPtr entityClass =
-			Node_getEntity(entity)->getEntityClass();
-
-	// Skip this entity class if it is in the list
-	for (xml::NodeList::const_iterator i = skipLst.begin();
-		 i != skipLst.end();
-		 ++i)
-	{
-		if (i->getAttributeValue("value") == entityClass->getName()) {
-			std::cout << "DEBUG: discarding entity class "
-					  << entityClass->getName() << std::endl;
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool Doom3MapReader::checkEntityNum() {
-	// Entity range XPath
-	static xml::NodeList entityRange =
-					GlobalRegistry().findXPath("debug/mapdoom3/entityRange");
-	static xml::NodeList::iterator i = entityRange.begin();
-
-	// Test the entity number is in the range
-	if (i != entityRange.end()) {
-		static std::size_t lower = strToSizet(i->getAttributeValue("start"));
-		static std::size_t upper = strToSizet(i->getAttributeValue("end"));
-
-		if (_entityCount < lower || _entityCount > upper) {
-			std::cout << "DEBUG: Discarding entity " << _entityCount << ", out of range"
-					  << std::endl;
-			return false;
-		}
-	}
-	return true;
-}
-
-void Doom3MapReader::insertEntity(const scene::INodePtr& entity) {
-	// Abort if any of the tests fail
-	if (_debug && (!checkEntityClass(entity) || !checkEntityNum())) {
-		return;
-	}
-
-	// Insert the node into the given root
-	_root->addChildNode(entity);
-}
-
-double Doom3MapReader::getProgressFraction()
-{
-	long readBytes = static_cast<long>(_inputStream.tellg());
-	return static_cast<double>(readBytes) / _fileSize;
-}
-#endif
 } // namespace map

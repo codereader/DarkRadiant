@@ -4,8 +4,6 @@
 #include "itextstream.h"
 #include "ifiletypes.h"
 
-#include "MapImportInfo.h"
-
 namespace map
 {
 
@@ -46,13 +44,5 @@ bool Doom3PrefabFormat::allowInfoFileCreation() const
 {
 	return false;
 }
-/*
-void Doom3PrefabFormat::onMapParsed(const MapImportInfo& importInfo) const
-{
-	// Ignore any layer information (do not attempt to load it)
 
-	// Just process the func_static child primitives
-	addOriginToChildPrimitives(importInfo.root);
-}
-*/
 } // namespace

@@ -6,10 +6,8 @@
 namespace map
 {
 
-	namespace {
-		// The version of the map info file
-		const int MAP_INFO_VERSION = 2;
-
+	namespace
+	{
 		const char* const RKEY_GAME_MAP_VERSION = "/mapFormat/version";
 	}
 
@@ -30,15 +28,6 @@ public:
 	virtual bool allowInfoFileCreation() const;
 
 	virtual bool canLoad(std::istream& stream) const;
-
-/*protected:
-	// Helper functions to handle child brushes of func_statics which have to
-	// be saved relative to their parent's origin
-	void addOriginToChildPrimitives(const scene::INodePtr& root) const;
-	void removeOriginFromChildPrimitives(const scene::INodePtr& root) const;
-
-	// Post-process the imported map, loading layers and moving child primitives
-	virtual void onMapParsed(const MapImportInfo& importInfo) const;*/
 };
 typedef boost::shared_ptr<Doom3MapFormat> Doom3MapFormatPtr;
 
