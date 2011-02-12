@@ -461,10 +461,6 @@
 				RelativePath="..\..\plugins\mapdoom3\Quake4MapWriter.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\plugins\mapdoom3\Tokens.h"
-				>
-			</File>
 			<Filter
 				Name="primitiveparsers"
 				>
