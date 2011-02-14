@@ -2,12 +2,19 @@
 #define GTKUTIL_SOURCEVIEW_H_
 
 #include <string>
+#include <vector>
 #include <gtkmm/scrolledwindow.h>
 #include <gtksourceviewmm/sourceview.h>
 #include <gtksourceviewmm/sourcelanguagemanager.h>
+#include <gtksourceviewmm/sourcestyleschememanager.h>
 
 namespace gtkutil
 {
+
+namespace
+{
+	const char* const RKEY_SOURCEVIEW_STYLE = "user/ui/sourceView/style";
+}
 
 class SourceView :
 	public Gtk::ScrolledWindow
@@ -36,6 +43,15 @@ public:
 
 	// Clears the contents of the buffer
 	void clear();
+
+	// Utility method to retrieve a list of all available style scheme names.
+	static std::list<std::string> getAvailableStyleSchemeIds();
+
+private:
+	// Utility method to retrieve a style scheme manager, readily set up with the correct paths
+	static Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> getStyleSchemeManager();
+
+	static std::string getSourceViewDataPath();
 };
 
 } // namespace gtkutil

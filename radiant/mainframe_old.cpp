@@ -89,6 +89,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/widget.h"
 #include "gtkutil/FramedWidget.h"
 #include "gtkutil/dialog.h"
+#include "gtkutil/SourceView.h"
 
 #include "map/AutoSaver.h"
 #include "brushmanip.h"
@@ -137,6 +138,12 @@ void Radiant_Initialise()
 	GlobalMRU().loadRecentFiles();
 
 	gtkutil::MultiMonitor::printMonitorInfo();
+
+	// Add GtkSourceView styles to preferences
+	ui::PrefPagePtr page = ui::PrefDialog::Instance().createOrFindPage(_("Settings/Source View"));
+
+	std::list<std::string> schemeNames = gtkutil::SourceView::getAvailableStyleSchemeIds();
+	page->appendCombo("Style Scheme", gtkutil::RKEY_SOURCEVIEW_STYLE, schemeNames, true);
 }
 
 void Exit(const cmd::ArgumentList& args) {

@@ -17,19 +17,13 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	set_shadow_type(Gtk::SHADOW_ETCHED_IN);
 
-	// Set the search path to the language and style files
-	std::string langFilesDir = module::GlobalModuleRegistry()
-                               .getApplicationContext()
-                               .getRuntimeDataPath() + "sourceviewer/";
+	// Set up the style scheme manager
+	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager = getStyleSchemeManager();
 
+	// Set the search path to the language files
 	std::vector<Glib::ustring> path;
+	std::string langFilesDir = getSourceViewDataPath();
 	path.push_back(langFilesDir);
-
-	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager =
-		gtksourceview::SourceStyleSchemeManager::get_default();
-
-	styleSchemeManager->set_search_path(path);
-	styleSchemeManager->force_rescan();
 
 	_langManager = gtksourceview::SourceLanguageManager::create();
 	_langManager->set_search_path(path);
@@ -46,6 +40,20 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	{
 		_buffer = gtksourceview::SourceBuffer::create(lang);
 		_buffer->set_highlight_syntax(true);
+
+		std::string styleName = GlobalRegistry().get(RKEY_SOURCEVIEW_STYLE);
+
+		if (styleName.empty())
+		{
+			styleName = "classic";
+		}
+
+		Glib::RefPtr<gtksourceview::SourceStyleScheme> scheme = styleSchemeManager->get_scheme(styleName);
+
+		if (scheme)
+		{
+			_buffer->set_style_scheme(scheme);
+		}
 	}
 	else
 	{
@@ -96,6 +104,39 @@ std::string SourceView::getContents()
 void SourceView::clear()
 {
 	setContents("");
+}
+
+std::list<std::string> SourceView::getAvailableStyleSchemeIds()
+{
+	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager = getStyleSchemeManager();
+	return styleSchemeManager->get_scheme_ids();
+}
+
+std::string SourceView::getSourceViewDataPath()
+{
+	// Set the search path to the language and style files
+	IModuleRegistry& registry = module::GlobalModuleRegistry();
+	std::string dataPath = registry.getApplicationContext().getRuntimeDataPath();
+	dataPath += "sourceviewer/";
+
+	return dataPath;
+}
+
+Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> SourceView::getStyleSchemeManager()
+{
+	// Set the search path to the language and style files
+	std::string langFileDir = getSourceViewDataPath();
+
+	std::vector<Glib::ustring> path;
+	path.push_back(langFileDir);
+
+	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager =
+		gtksourceview::SourceStyleSchemeManager::get_default();
+
+	styleSchemeManager->set_search_path(path);
+	styleSchemeManager->force_rescan();
+	
+	return styleSchemeManager;
 }
 
 } // namespace gtkutil
