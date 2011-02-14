@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include "iregistry.h"
+
 #include <gtkmm/scrolledwindow.h>
 #include <gtksourceviewmm/sourceview.h>
 #include <gtksourceviewmm/sourcelanguagemanager.h>
@@ -17,7 +19,8 @@ namespace
 }
 
 class SourceView :
-	public Gtk::ScrolledWindow
+	public Gtk::ScrolledWindow,
+	public RegistryKeyObserver
 {
 private:
 	gtksourceview::SourceView* _view;
@@ -44,6 +47,8 @@ public:
 	// Clears the contents of the buffer
 	void clear();
 
+	void keyChanged(const std::string& changedKey, const std::string& newValue);
+
 	// Utility method to retrieve a list of all available style scheme names.
 	static std::list<std::string> getAvailableStyleSchemeIds();
 
@@ -52,6 +57,8 @@ private:
 	static Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> getStyleSchemeManager();
 
 	static std::string getSourceViewDataPath();
+
+	void setStyleSchemeFromRegistry();
 };
 
 } // namespace gtkutil

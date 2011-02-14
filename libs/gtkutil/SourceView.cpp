@@ -17,9 +17,6 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	set_shadow_type(Gtk::SHADOW_ETCHED_IN);
 
-	// Set up the style scheme manager
-	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager = getStyleSchemeManager();
-
 	// Set the search path to the language files
 	std::vector<Glib::ustring> path;
 	std::string langFilesDir = getSourceViewDataPath();
@@ -41,19 +38,7 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 		_buffer = gtksourceview::SourceBuffer::create(lang);
 		_buffer->set_highlight_syntax(true);
 
-		std::string styleName = GlobalRegistry().get(RKEY_SOURCEVIEW_STYLE);
-
-		if (styleName.empty())
-		{
-			styleName = "classic";
-		}
-
-		Glib::RefPtr<gtksourceview::SourceStyleScheme> scheme = styleSchemeManager->get_scheme(styleName);
-
-		if (scheme)
-		{
-			_buffer->set_style_scheme(scheme);
-		}
+		setStyleSchemeFromRegistry();
 	}
 	else
 	{
@@ -85,10 +70,15 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	widget_connect_escape_clear_focus_widget(GTK_WIDGET(_view->gobj()));
 
 	add(*_view);
+
+	// Subscribe for style scheme changes
+	GlobalRegistry().addKeyObserver(this, RKEY_SOURCEVIEW_STYLE);
 }
 
 SourceView::~SourceView()
-{}
+{
+	GlobalRegistry().removeKeyObserver(this);
+}
 
 void SourceView::setContents(const std::string& newContents)
 {
@@ -104,6 +94,11 @@ std::string SourceView::getContents()
 void SourceView::clear()
 {
 	setContents("");
+}
+
+void SourceView::keyChanged(const std::string& changedKey, const std::string& newValue)
+{
+	setStyleSchemeFromRegistry();
 }
 
 std::list<std::string> SourceView::getAvailableStyleSchemeIds()
@@ -137,6 +132,24 @@ Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> SourceView::getStyleScheme
 	styleSchemeManager->force_rescan();
 	
 	return styleSchemeManager;
+}
+
+void SourceView::setStyleSchemeFromRegistry()
+{
+	std::string styleName = GlobalRegistry().get(RKEY_SOURCEVIEW_STYLE);
+
+	if (styleName.empty())
+	{
+		styleName = "classic";
+	}
+
+	Glib::RefPtr<gtksourceview::SourceStyleSchemeManager> styleSchemeManager = getStyleSchemeManager();
+	Glib::RefPtr<gtksourceview::SourceStyleScheme> scheme = styleSchemeManager->get_scheme(styleName);
+
+	if (scheme)
+	{
+		_buffer->set_style_scheme(scheme);
+	}
 }
 
 } // namespace gtkutil
