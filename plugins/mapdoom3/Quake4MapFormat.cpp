@@ -16,12 +16,7 @@
 #include "i18n.h"
 #include "string/string.h"
 
-#include "primitiveparsers/BrushDef3.h"
-#include "primitiveparsers/PatchDef2.h"
-#include "primitiveparsers/PatchDef3.h"
-
 #include <boost/lexical_cast.hpp>
-#include "primitiveparsers/BrushDef.h"
 
 #include "Quake4MapReader.h"
 #include "Quake4MapWriter.h"
@@ -66,12 +61,6 @@ void Quake4MapFormat::initialiseModule(const ApplicationContext& ctx)
 	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
 	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
 	GlobalMapFormatManager().registerMapFormat("pfb", shared_from_this());
-
-	// Add our primitive parsers to the global format registry
-	GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserQuake4Ptr(new BrushDef3ParserQuake4));
-	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
-	GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
-	GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
 
 	// Register the map file extension in the FileTypeRegistry
 	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Quake 4 map"), "map", "*.map"));

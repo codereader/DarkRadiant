@@ -11,7 +11,7 @@ namespace map {
 class Doom3MapReader :
 	public IMapReader
 {
-private:
+protected:
 	IMapImportFilter& _importFilter;
 
 	// The map type for one entity's keyvalues (spawnargs)
@@ -23,6 +23,10 @@ private:
 	// The number of primitives of the currently parsed entity
 	std::size_t _primitiveCount;
 
+	// Our list of primitive parsers
+	typedef std::map<std::string, PrimitiveParserPtr> PrimitiveParsers;
+	PrimitiveParsers _primitiveParsers;
+
 public:
 	Doom3MapReader(IMapImportFilter& importFilter);
 
@@ -30,6 +34,12 @@ public:
 	virtual void readFromStream(std::istream& stream);
 
 protected:
+	// Set up our set of primitive parsers
+	virtual void initPrimitiveParsers();
+
+	// Adds a specific primitive parser
+	virtual void addPrimitiveParser(const PrimitiveParserPtr& parser);
+
 	// Parse the version tag at the beginning, throws on failure
 	virtual void parseMapVersion(parser::DefTokeniser& tok);
 

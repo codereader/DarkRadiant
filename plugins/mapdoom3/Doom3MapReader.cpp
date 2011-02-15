@@ -12,6 +12,11 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
+#include "primitiveparsers/BrushDef.h"
+#include "primitiveparsers/BrushDef3.h"
+#include "primitiveparsers/PatchDef2.h"
+#include "primitiveparsers/PatchDef3.h"
+
 namespace map {
 
 Doom3MapReader::Doom3MapReader(IMapImportFilter& importFilter) : 
@@ -22,6 +27,9 @@ Doom3MapReader::Doom3MapReader(IMapImportFilter& importFilter) :
 
 void Doom3MapReader::readFromStream(std::istream& stream)
 {
+	// Call the virtual method to initialise the primitve parser map (if not done yet)
+	initPrimitiveParsers();
+
 	// The tokeniser used to split the stream into pieces
 	parser::BasicDefTokeniser<std::istream> tok(stream);
 
@@ -49,6 +57,22 @@ void Doom3MapReader::readFromStream(std::istream& stream)
 	}
 
 	// EOF reached, success
+}
+
+void Doom3MapReader::initPrimitiveParsers()
+{
+	if (_primitiveParsers.empty())
+	{
+		addPrimitiveParser(PrimitiveParserPtr(new BrushDefParser));
+		addPrimitiveParser(PrimitiveParserPtr(new BrushDef3Parser));
+		addPrimitiveParser(PrimitiveParserPtr(new PatchDef2Parser));
+		addPrimitiveParser(PrimitiveParserPtr(new PatchDef3Parser));
+	}
+}
+
+void Doom3MapReader::addPrimitiveParser(const PrimitiveParserPtr& parser)
+{
+	_primitiveParsers.insert(PrimitiveParsers::value_type(parser->getKeyword(), parser));
 }
 
 void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
@@ -101,12 +125,14 @@ void Doom3MapReader::parsePrimitive(parser::DefTokeniser& tok, const scene::INod
 	std::string primitiveKeyword = tok.nextToken();
 
 	// Get a parser for this keyword
-	PrimitiveParserPtr parser = GlobalMapFormatManager().getPrimitiveParser(primitiveKeyword);
+	PrimitiveParsers::const_iterator p = _primitiveParsers.find(primitiveKeyword);
 
-	if (parser == NULL)
+	if (p == _primitiveParsers.end())
 	{
 		throw FailureException("Unknown primitive type: " + primitiveKeyword);
 	}
+
+	const PrimitiveParserPtr& parser = p->second;
 
 	// Try to parse the primitive, throwing exception if failed
 	try

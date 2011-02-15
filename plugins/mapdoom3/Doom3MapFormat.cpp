@@ -16,21 +16,13 @@
 #include "i18n.h"
 #include "string/string.h"
 
-#include "primitiveparsers/BrushDef3.h"
-#include "primitiveparsers/PatchDef2.h"
-#include "primitiveparsers/PatchDef3.h"
-
 #include <boost/lexical_cast.hpp>
-#include "primitiveparsers/BrushDef.h"
 
 #include "Doom3MapReader.h"
 #include "Doom3MapWriter.h"
 
-namespace map {
-
-	namespace {
-		const std::string RKEY_FLOAT_PRECISION = "/mapFormat/floatPrecision";
-	}
+namespace map
+{
 
 // RegisterableModule implementation
 const std::string& Doom3MapFormat::getName() const {
@@ -38,10 +30,12 @@ const std::string& Doom3MapFormat::getName() const {
 	return _name;
 }
 
-const StringSet& Doom3MapFormat::getDependencies() const {
+const StringSet& Doom3MapFormat::getDependencies() const
+{
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_ECLASSMANAGER);
 		_dependencies.insert(MODULE_LAYERSYSTEM);
@@ -62,12 +56,6 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 	// Register ourselves as map format for maps and regions
 	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
 	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
-
-	// Add our primitive parsers to the global format registry
-	GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserPtr(new BrushDef3Parser));
-	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
-	GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
-	GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
 
 	// Register the map file extension in the FileTypeRegistry
 	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Doom 3 map"), "map", "*.map"));
