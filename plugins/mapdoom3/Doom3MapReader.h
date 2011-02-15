@@ -27,17 +27,17 @@ public:
 	Doom3MapReader(IMapImportFilter& importFilter);
 
 	// IMapReader implementation
-	void readFromStream(std::istream& stream);
+	virtual void readFromStream(std::istream& stream);
 
-private:
+protected:
 	// Parse the version tag at the beginning, throws on failure
-	void parseMapVersion(parser::DefTokeniser& tok);
+	virtual void parseMapVersion(parser::DefTokeniser& tok);
 
 	// Parses an entity plus all child primitives, throws on failure
-	void parseEntity(parser::DefTokeniser& tok);
+	virtual void parseEntity(parser::DefTokeniser& tok);
 
 	// Parse the primitive block and insert the child into the given parent
-	void parsePrimitive(parser::DefTokeniser& tok, const scene::INodePtr& parentEntity);
+	virtual void parsePrimitive(parser::DefTokeniser& tok, const scene::INodePtr& parentEntity);
 
 	// Create an entity with the given properties and layers
 	scene::INodePtr createEntity(const EntityKeyValues& keyValues);

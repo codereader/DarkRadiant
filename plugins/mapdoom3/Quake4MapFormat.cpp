@@ -23,7 +23,7 @@
 #include <boost/lexical_cast.hpp>
 #include "primitiveparsers/BrushDef.h"
 
-#include "Doom3MapReader.h"
+#include "Quake4MapReader.h"
 #include "Quake4MapWriter.h"
 
 #include "Doom3MapFormat.h"
@@ -93,7 +93,7 @@ const std::string& Quake4MapFormat::getGameType() const
 
 IMapReaderPtr Quake4MapFormat::getMapReader(IMapImportFilter& filter) const
 {
-	return IMapReaderPtr(new Doom3MapReader(filter));
+	return IMapReaderPtr(new Quake4MapReader(filter));
 }
 
 IMapWriterPtr Quake4MapFormat::getMapWriter() const

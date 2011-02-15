@@ -308,6 +308,7 @@
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapWriter.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3PrefabFormat.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Quake4MapFormat.h" />
+    <ClInclude Include="..\..\plugins\mapdoom3\Quake4MapReader.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Quake4MapWriter.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.h" />
