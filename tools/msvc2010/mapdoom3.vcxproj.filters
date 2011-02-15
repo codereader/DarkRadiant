@@ -90,6 +90,9 @@
     <ClCompile Include="..\..\plugins\mapdoom3\Quake4MapFormat.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\Quake4MapReader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\mapdoom3\mapdoom3.def">

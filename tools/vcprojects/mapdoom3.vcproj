@@ -458,6 +458,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\plugins\mapdoom3\Quake4MapReader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\mapdoom3\Quake4MapReader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\plugins\mapdoom3\Quake4MapWriter.h"
 				>
 			</File>

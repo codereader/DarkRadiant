@@ -243,17 +243,6 @@ public:
 	 * Returns the list of registered map formats.
 	 */
 	virtual std::set<MapFormatPtr> getMapFormatList(const std::string& extension) = 0;
-
-	/**
-	 * Registers a primitive parser. The "primitive type" variable
-	 * refers to the keyword encountered when parsing a map, like brushDef3.
-	 */
-	virtual void registerPrimitiveParser(const PrimitiveParserPtr& parser) = 0;
-
-	/**
-	 * Returns a primitive parser for the given keyword, returns NULL if none found.
-	 */
-	virtual PrimitiveParserPtr getPrimitiveParser(const std::string& keyword) = 0;
 };
 typedef boost::shared_ptr<IMapFormatManager> IMapFormatManagerPtr;
 
