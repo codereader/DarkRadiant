@@ -8,91 +8,160 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
-RadiantFileTypeRegistry::RadiantFileTypeRegistry() {
-	addType("*", "*", FileTypePattern(_("All Files"), "*.*"));
-}
-
-void RadiantFileTypeRegistry::addType(const std::string& moduleType,
-			 const std::string& moduleName,
-			 const FileTypePattern& type)
+FileTypeRegistry::FileTypeRegistry()
 {
-	// Create the association between module name and file type pattern
-	ModuleFileType fileType(moduleName, type);
-
-	// If there is already a list for this type, add our new type to the
-	// back of it
-	TypeListMap::iterator i = _typeLists.find(moduleType);
-	if (i != _typeLists.end()) {
-		i->second->push_back(fileType);
-	}
-	else {
-		// Otherwise create a new type list and add it to our map
-		ModuleTypeListPtr newList(new ModuleTypeList());
-		newList->push_back(fileType);
-
-		_typeLists.insert(TypeListMap::value_type(moduleType, newList));
-	}
+	registerPattern("*", FileTypePattern(_("All Files"), "*", "*.*"));
 }
 
-ModuleTypeListPtr RadiantFileTypeRegistry::getTypesFor(const std::string& moduleType) {
-
-	// Try to find the type list in the map
-	TypeListMap::iterator i = _typeLists.find(moduleType);
-	if (i != _typeLists.end()) {
-		return i->second;
-	}
-	else {
-		// Create a pointer to an empty ModuleTypeList and return this
-		// instead of a null shared_ptr
-		return ModuleTypeListPtr(new ModuleTypeList());
-	}
-}
-
-// Look for a module which loads the given extension, by searching under the
-// given type category
-std::string RadiantFileTypeRegistry::findModuleName(
-	const std::string& moduleType, const std::string& extension)
+void FileTypeRegistry::registerPattern(const std::string& fileType, 
+									   const FileTypePattern& pattern)
 {
 	// Convert the file extension to lowercase
-	std::string ext = boost::algorithm::to_lower_copy(extension);
+	std::string fileTypeLower = boost::algorithm::to_lower_copy(fileType);
 
-	// Get the list of types for the type category
-	ModuleTypeListPtr list = GlobalFiletypes().getTypesFor(moduleType);
+	// Find or insert the fileType into the map
+	FileTypes::iterator i = _fileTypes.find(fileTypeLower);
 
-	// Search in the list for the given extension
-	for (ModuleTypeList::const_iterator i = list->begin();
-		 i != list->end();
-		 ++i)
+	if (i == _fileTypes.end())
 	{
-		std::string patternExt = os::getExtension(i->filePattern.pattern);
-		if (patternExt == ext) {
-			// Match
-			return i->moduleName;
+		// Not found yet, insert an empty pattern list
+		i = _fileTypes.insert(FileTypes::value_type(fileTypeLower, FileTypePatterns())).first;
+	}
+
+	// At this point we have a valid iterator
+	FileTypePatterns& patternList = i->second;
+
+	// Ensure the pattern contains a lowercase extension
+	FileTypePattern patternLocal = pattern;
+	boost::algorithm::to_lower(patternLocal.extension);
+	boost::algorithm::to_lower(patternLocal.pattern);
+
+	// Don't accept pre-filled module association
+	patternLocal.associatedModule.clear();
+
+	// Check if the pattern is already associated
+	for (FileTypePatterns::const_iterator p = patternList.begin(); p != patternList.end(); ++p)
+	{
+		if (p->extension == patternLocal.extension)
+		{
+			// Ignore this pattern
+			return;
 		}
 	}
 
-	// Not found, return empty string
-	return "";
+	// Insert the pattern at the end of the list
+	patternList.push_back(patternLocal);
 }
 
-// RegisterableModule implementation
-const std::string& RadiantFileTypeRegistry::getName() const {
+FileTypePatterns FileTypeRegistry::getPatternsForType(const std::string& fileType)
+{
+	// Convert the file extension to lowercase and try to find the matching list
+	FileTypes::iterator i = _fileTypes.find(boost::algorithm::to_lower_copy(fileType));
+
+	return i != _fileTypes.end() ? i->second : FileTypePatterns();
+}
+
+bool FileTypeRegistry::registerModule(const std::string& fileType, 
+									  const std::string& extension,
+									  const std::string& moduleName)
+{
+	// Convert the file extension to lowercase and try to find the matching list
+	FileTypes::iterator i = _fileTypes.find(boost::algorithm::to_lower_copy(fileType));
+
+	if (i == _fileTypes.end())
+	{
+		return false;
+	}
+
+	FileTypePatterns& patterns = i->second;
+
+	std::string extLower = boost::algorithm::to_lower_copy(extension);
+
+	// Check if the pattern is already associated with a module
+	for (FileTypePatterns::iterator p = patterns.begin(); p != patterns.end(); ++p)
+	{
+		if (p->extension == extLower)
+		{
+			if (p->associatedModule.empty())
+			{
+				// Found module, and it's not associated yet, go ahead
+				p->associatedModule = moduleName;
+				return true;
+			}
+			else
+			{
+				// Already associated, return false
+				return false;
+			}
+		}
+	}
+
+	return false; // extension not found
+}
+
+void FileTypeRegistry::unregisterModule(const std::string& moduleName)
+{
+	// Iterate over all file types and patterns and remove any matching module associations
+	for (FileTypes::iterator i = _fileTypes.begin(); i != _fileTypes.end(); ++i)
+	{
+		for (FileTypePatterns::iterator p = i->second.begin(); p != i->second.end(); ++p)
+		{
+			if (p->associatedModule == moduleName)
+			{
+				p->associatedModule.clear();
+			}
+		}
+	}
+}
+
+std::string FileTypeRegistry::findModule(const std::string& fileType, 
+										 const std::string& extension)
+{
+	// Convert the file extension to lowercase and try to find the matching list
+	FileTypes::iterator i = _fileTypes.find(boost::algorithm::to_lower_copy(fileType));
+
+	if (i == _fileTypes.end())
+	{
+		return "";
+	}
+
+	std::string extLower = boost::algorithm::to_lower_copy(extension);
+
+	FileTypePatterns& patterns = i->second;
+	
+	for (FileTypePatterns::const_iterator p = patterns.begin(); p != patterns.end(); ++p)
+	{
+		if (p->extension == extLower)
+		{
+			// Extension matches, return module name (even if it's empty)
+			return p->associatedModule;
+		}
+	}
+
+	return ""; // nothing found
+}
+
+const std::string& FileTypeRegistry::getName() const
+{
 	static std::string _name(MODULE_FILETYPES);
 	return _name;
 }
 
-const StringSet& RadiantFileTypeRegistry::getDependencies() const {
+const StringSet& FileTypeRegistry::getDependencies() const
+{
 	static StringSet _dependencies; // no dependencies
 	return _dependencies;
 }
 
-void RadiantFileTypeRegistry::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "FileTypeRegistry::initialiseModule called.\n";
+void FileTypeRegistry::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
 }
 
 // This will be called by the DarkRadiant main binary's ModuleRegistry
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
-	registry.registerModule(RadiantFileTypeRegistryPtr(new RadiantFileTypeRegistry));
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
+	registry.registerModule(FileTypeRegistryPtr(new FileTypeRegistry));
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

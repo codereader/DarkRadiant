@@ -58,7 +58,7 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
 
     try
 	{
-        tok.assertNextToken(VERSION);
+        tok.assertNextToken("Version");
         version = boost::lexical_cast<float>(tok.nextToken());
     }
     catch (parser::ParseException& e)
@@ -79,11 +79,7 @@ void Doom3MapReader::parseMapVersion(parser::DefTokeniser& tok)
 		throw FailureException(_("Could not recognise map version number format."));
     }
 
-	// Load the required version from the .game file
-	xml::NodeList nodes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_GAME_MAP_VERSION);
-	assert(!nodes.empty());
-
-	float requiredVersion = strToFloat(nodes[0].getAttributeValue("value"));
+	float requiredVersion = MAP_VERSION_D3;
 
     // Check we have the correct version for this module
     if (version != requiredVersion)

@@ -25,7 +25,7 @@ class MapResource :
 	std::string _path;
 	std::string _name;
 
-	// Type of resource (map, lwo etc)
+	// Type of resource "map"
 	std::string _type;
 
 	typedef std::set<IMapResource::Observer*> ResourceObserverList;
@@ -87,6 +87,8 @@ private:
 
 	void connectMap();
 
+	// Returns the map format capable of loading the given stream
+	// The stream pointer is guaranteed to be positioned back to the beginning
 	MapFormatPtr determineMapFormat(std::istream& stream);
 
 	bool loadFile(std::istream& mapStream, const MapFormat& format, 

@@ -21,17 +21,13 @@ void Doom3PrefabFormat::initialiseModule(const ApplicationContext& ctx)
 	// Register ourselves as map format
 	GlobalMapFormatManager().registerMapFormat("pfb", shared_from_this());
 
-	// Add one more "map" type, with the pfb extension
-	GlobalFiletypes().addType(
-		"map", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));
+	// Register the prefab file extension for the "map" filetype
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Doom 3 prefab"), "pfb", "*.pfb"));
 
-	// Add the filepatterns for the prefab (different order)
-	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern(_("Doom 3 prefab"), "*.pfb"));
-	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
-	GlobalFiletypes().addType(
-		"prefab", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
+	// Register the prefab file extensions for the "prefab" filetype
+	GlobalFiletypes().registerPattern("prefab", FileTypePattern(_("Doom 3 prefab"), "pfb", "*.pfb"));
+	GlobalFiletypes().registerPattern("prefab", FileTypePattern(_("Doom 3 map"), "map", "*.map"));
+	GlobalFiletypes().registerPattern("prefab", FileTypePattern(_("Doom 3 region"), "reg", "*.reg"));
 }
 
 void Doom3PrefabFormat::shutdownModule()

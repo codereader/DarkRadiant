@@ -19,11 +19,11 @@ namespace gtkutil
 FileChooser::FileChooser(const std::string& title,
 						 bool open,
 						 bool browseFolders,
-						 const std::string& pattern,
+						 const std::string& fileType,
 						 const std::string& defaultExt) :
 	Gtk::FileChooserDialog(title, getActionType(browseFolders, open)),
 	_title(title),
-	_pattern(pattern),
+	_fileType(fileType),
 	_defaultExt(defaultExt),
 	_open(open),
 	_browseFolders(browseFolders)
@@ -35,12 +35,12 @@ FileChooser::FileChooser(const Glib::RefPtr<Gtk::Window>& parentWindow,
 						 const std::string& title,
 						 bool open,
 						 bool browseFolders,
-						 const std::string& pattern,
+						 const std::string& fileType,
 						 const std::string& defaultExt) :
 	Gtk::FileChooserDialog(title, getActionType(browseFolders, open)),
 	_parent(parentWindow),
 	_title(title),
-	_pattern(pattern),
+	_fileType(fileType),
 	_defaultExt(defaultExt),
 	_open(open),
 	_browseFolders(browseFolders)
@@ -55,10 +55,10 @@ FileChooser::~FileChooser()
 
 void FileChooser::construct()
 {
-	// Sanity-check the pattern
-	if (_pattern.empty())
+	// Sanity-check the filetype
+	if (_fileType.empty())
 	{
-		_pattern = "*";
+		_fileType = "*";
 	}
 
 	// Set a meaningful title if empty
@@ -98,17 +98,15 @@ void FileChooser::construct()
 
 	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
 
-	// Add the filetype masks
-	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(_pattern);
+	// Add the filetype
+	FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(_fileType);
 
-	for (ModuleTypeList::iterator i = typeList->begin();
-		 i != typeList->end();
-		 ++i)
+	for (FileTypePatterns::const_iterator i = patterns.begin(); i != patterns.end(); ++i)
 	{
 		// Create a GTK file filter and add it to the chooser dialog
 		Gtk::FileFilter* filter = Gtk::manage(new Gtk::FileFilter);
-		filter->add_pattern(i->filePattern.pattern);
-		filter->set_name(i->filePattern.name + " (" + i->filePattern.pattern + ")");
+		filter->add_pattern(i->pattern);
+		filter->set_name(i->name + " (" + i->pattern + ")");
 
 		add_filter(*filter);
 	}

@@ -73,7 +73,7 @@ namespace
 MapResource::MapResource(const std::string& name) :
 	_mapRoot(model::NullModelNode::InstancePtr()),
 	_originalName(name),
-	_type(name.substr(name.rfind(".") + 1)),
+	_type(os::getExtension(name)),
 	_modified(0),
 	_realised(false)
 {
@@ -120,47 +120,50 @@ bool MapResource::load() {
  * @returns
  * true if the resource was saved, false otherwise.
  */
-bool MapResource::save() {
-	std::string moduleName = GlobalFiletypes().findModuleName("map", _type);
+bool MapResource::save()
+{
+	// For saving, take the default map format for this game type
+	MapFormatPtr format = GlobalMapFormatManager().getMapFormatForGameType(
+		GlobalGameManager().currentGame()->getKeyValue("type"), _type
+	);
 
-	if (!moduleName.empty()) {
-		MapFormatPtr format = boost::dynamic_pointer_cast<MapFormat>(
-			module::GlobalModuleRegistry().getModule(moduleName)
-		);
+	if (format == NULL)
+	{
+		globalErrorStream() << "Could not locate map format module." << std::endl;
+		return false;
+	}
+	
+	std::string fullpath = _path + _name;
 
-		if (format == NULL) {
-			globalErrorStream() << "Could not locate map loader module." << std::endl;
-			return false;
-		}
-
-		std::string fullpath = _path + _name;
-
-		// Save a backup of the existing file (rename it to .bak) if it exists in the first place
-		if (file_exists(fullpath.c_str())) {
-			if (!saveBackup()) {
-				// angua: if backup creation is not possible, still save the map
-				// but create message in the console
-				globalErrorStream() << "Could not create backup (Map is possibly open in Doom3)" << std::endl;
-				// return false;
-			}
-		}
-
-		bool success = false;
-
-		if (path_is_absolute(fullpath.c_str()))
+	// Save a backup of the existing file (rename it to .bak) if it exists in the first place
+	if (file_exists(fullpath.c_str()))
+	{
+		if (!saveBackup())
 		{
-			// Save the actual file
-			success = saveFile(*format, _mapRoot, map::traverse, fullpath);
+			// angua: if backup creation is not possible, still save the map
+			// but create message in the console
+			globalErrorStream() << "Could not create backup (Map is possibly open in Doom3)" << std::endl;
+			// return false;
 		}
-		else {
-			globalErrorStream() << "Map path is not absolute: " << fullpath << std::endl;
-			success = false;
-		}
+	}
 
-		if (success) {
-  			mapSave();
-  			return true;
-		}
+	bool success = false;
+
+	if (path_is_absolute(fullpath.c_str()))
+	{
+		// Save the actual file
+		success = saveFile(*format, _mapRoot, map::traverse, fullpath);
+	}
+	else
+	{
+		globalErrorStream() << "Map path is not absolute: " << fullpath << std::endl;
+		success = false;
+	}
+
+	if (success)
+	{
+  		mapSave();
+  		return true;
 	}
 
 	return false;
@@ -299,6 +302,8 @@ MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
 	// Get all registered map formats
 	std::set<MapFormatPtr> availableFormats = GlobalMapFormatManager().getMapFormatList(_type);
 
+	MapFormatPtr format;
+
 	for (std::set<MapFormatPtr>::const_iterator f = availableFormats.begin(); f != availableFormats.end(); ++f)
 	{
 		// Rewind the stream before passing it to the format for testing
@@ -307,11 +312,15 @@ MapFormatPtr MapResource::determineMapFormat(std::istream& stream)
 
 		if ((*f)->canLoad(stream))
 		{
-			return *f;
+			format = *f;
+			break;
 		}
 	}
 
-	return MapFormatPtr();
+	// Rewind the stream when we're done
+	stream.seekg(0, std::ios_base::beg);
+
+	return format;
 }
 
 scene::INodePtr MapResource::loadMapNode()
@@ -442,7 +451,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 
 		return true;
 	}
-	catch (gtkutil::ModalProgressDialog::OperationAbortedException& p)
+	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
 	{
 		gtkutil::errorDialog(
 			_("Map loading cancelled"),

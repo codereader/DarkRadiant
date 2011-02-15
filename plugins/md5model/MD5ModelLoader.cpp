@@ -113,13 +113,16 @@ const StringSet& MD5ModelLoader::getDependencies() const {
 	return _dependencies;
 }
 
-void MD5ModelLoader::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "MD5Model::initialiseModule called.\n";
+void MD5ModelLoader::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << "MD5Model::initialiseModule called." << std::endl;
 
-	GlobalFiletypes().addType(
-		"model", getName(),
-		FileTypePattern("md5 meshes", "*.md5mesh")
-	);
+	std::string extLower = "md5mesh";
+	std::string filter = "*." + extLower;
+
+	// Register the model file extension in the FileTypRegistry
+	GlobalFiletypes().registerPattern("model", FileTypePattern("MD5 Meshes", extLower, filter));
+	GlobalFiletypes().registerModule("model", extLower, getName());
 }
 
 } // namespace md5

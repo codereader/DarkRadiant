@@ -18,17 +18,8 @@ Doom3MapWriter::Doom3MapWriter() :
 
 void Doom3MapWriter::beginWriteMap(std::ostream& stream)
 {
-	// Get the map version from the game def
-	game::IGamePtr curGame = GlobalGameManager().currentGame();
-	assert(curGame != NULL);
-
-	xml::NodeList nodes = curGame->getLocalXPath(RKEY_GAME_MAP_VERSION);
-	assert(!nodes.empty());
-
-	std::string mapVersion = nodes[0].getAttributeValue("value");
-
 	// Write the version tag
-    stream << VERSION << " " << mapVersion << std::endl;
+    stream << "Version " << MAP_VERSION_D3 << std::endl;
 }
 
 void Doom3MapWriter::endWriteMap(std::ostream& stream)

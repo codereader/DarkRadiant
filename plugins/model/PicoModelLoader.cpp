@@ -128,15 +128,16 @@ const StringSet& PicoModelLoader::getDependencies() const {
 	return _dependencies;
 }
 
-void PicoModelLoader::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "PicoModelLoader: " << getName().c_str() << " initialised.\n";
-	std::string filter("*." + boost::to_lower_copy(_extension));
+void PicoModelLoader::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << "PicoModelLoader: " << getName().c_str() << " initialised." << std::endl;
+
+	std::string extLower = boost::to_lower_copy(_extension);
+	std::string filter("*." + extLower);
 
 	// Register the model file extension in the FileTypRegistry
-	GlobalFiletypes().addType(
-		"model", getName(),
-    	FileTypePattern(_module->displayName, filter.c_str())
-    );
+	GlobalFiletypes().registerPattern("model", FileTypePattern(_module->displayName, extLower, filter));
+	GlobalFiletypes().registerModule("model", extLower, getName());
 }
 
 } // namespace model

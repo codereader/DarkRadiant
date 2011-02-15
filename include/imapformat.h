@@ -23,11 +23,6 @@ typedef void (*GraphTraversalFunc) (scene::INodePtr root, scene::NodeVisitor& no
 namespace map
 {
 
-// The MapExport/MapImport information structures, needed by the MapFormat::write() and
-// MapFormat::read() methods. The actual definition of this structure is stored in the
-// file libs/MapImportInfo.h. TODO: DEPRECATED
-class MapImportInfo;
-
 /**
  * A Primitive parser is able to create a primitive (brush, patch) from a given token stream.
  * The initial token, e.g. "brushDef3" is already parsed when the stream is passed to the
@@ -185,6 +180,13 @@ public:
 	virtual ~MapFormat() {}
 
 	/**
+	 * Each MapFormat can have a certain game type it is designed for,
+	 * a value which conincides with the type attribute in the game tag
+	 * found in the .game file, e.g. "doom3" or "quake4".
+	 */
+	virtual const std::string& getGameType() const = 0;
+
+	/**
 	 * Instantiate a new map reader, using the given ImportFilter 
 	 * which will be fed with nodes during the import.
 	 */
@@ -229,6 +231,13 @@ public:
 	 * removal from all mapped extensions if the format was registered multiple times.
 	 */
 	virtual void unregisterMapFormat(const MapFormatPtr& mapFormat) = 0;
+
+	/**
+	 * Tries to look up the default map format for the given game type (e.g. "doom3")
+	 * associated with the given file extension.
+	 */
+	virtual MapFormatPtr getMapFormatForGameType(const std::string& gameType, 
+												 const std::string& extension) = 0;
 
 	/**
 	 * Returns the list of registered map formats.

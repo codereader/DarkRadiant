@@ -59,32 +59,31 @@ void Doom3MapFormat::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
 
-	if (GlobalGameManager().currentGame()->getKeyValue("type") == "doom3")
-	{
-		// Register ourselves as map format for maps and regions
-		GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
-		GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
+	// Register ourselves as map format for maps and regions
+	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
+	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
 
-		// Add our primitive parsers to the global format registry
-		GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserPtr(new BrushDef3Parser));
-		GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
-		GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
-		GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
+	// Add our primitive parsers to the global format registry
+	GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserPtr(new BrushDef3Parser));
+	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
+	GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
+	GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
 
-		GlobalFiletypes().addType(
-			"map", getName(), FileTypePattern(_("Doom 3 map"), "*.map"));
-		GlobalFiletypes().addType(
-			"map", getName(), FileTypePattern(_("Doom 3 region"), "*.reg"));
-	}
+	// Register the map file extension in the FileTypeRegistry
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Doom 3 map"), "map", "*.map"));
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Doom 3 region"), "reg", "*.reg"));
 }
 
 void Doom3MapFormat::shutdownModule()
 {
-	if (GlobalGameManager().currentGame()->getKeyValue("type") == "doom3")
-	{
-		// Unregister now that we're shutting down
-		GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
-	}
+	// Unregister now that we're shutting down
+	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
+}
+
+const std::string& Doom3MapFormat::getGameType() const
+{
+	static std::string _gameType = "doom3";
+	return _gameType;
 }
 
 IMapReaderPtr Doom3MapFormat::getMapReader(IMapImportFilter& filter) const
@@ -105,22 +104,16 @@ bool Doom3MapFormat::allowInfoFileCreation() const
 
 bool Doom3MapFormat::canLoad(std::istream& stream) const
 {
-	// Load the required version from the .game file
-	xml::NodeList nodes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_GAME_MAP_VERSION);
-	assert(!nodes.empty());
-
-	float requiredVersion = strToFloat(nodes[0].getAttributeValue("value"));
-
 	// Instantiate a tokeniser to read the first few tokens
 	parser::BasicDefTokeniser<std::istream> tok(stream);
 
 	try
 	{
 		// Require a "Version" token
-		tok.assertNextToken(VERSION);
+		tok.assertNextToken("Version");
 
 		// Require specific version, return true on success 
-		return (boost::lexical_cast<float>(tok.nextToken()) == requiredVersion);
+		return (boost::lexical_cast<float>(tok.nextToken()) == MAP_VERSION_D3);
 	}
 	catch (parser::ParseException&)
 	{}

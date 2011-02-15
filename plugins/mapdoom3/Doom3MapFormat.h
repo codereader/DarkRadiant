@@ -6,11 +6,10 @@
 namespace map
 {
 
-	namespace
-	{
-		const char* const RKEY_GAME_MAP_VERSION = "/mapFormat/version";
-		const char* const VERSION = "Version";
-	}
+namespace
+{
+	const float MAP_VERSION_D3 = 2;
+}
 
 class Doom3MapFormat :
 	public MapFormat,
@@ -23,6 +22,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 
+	virtual const std::string& getGameType() const;
 	virtual IMapReaderPtr getMapReader(IMapImportFilter& filter) const;
 	virtual IMapWriterPtr getMapWriter() const;
 

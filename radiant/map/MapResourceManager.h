@@ -1,8 +1,10 @@
-#ifndef RADIANTREFERENCECACHE_H_
-#define RADIANTREFERENCECACHE_H_
+#pragma once
 
 #include "imapresource.h"
 #include "map/MapResource.h"
+
+namespace map
+{
 
 class MapResourceManager :
 	public IMapResourceManager
@@ -17,4 +19,4 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 };
 
-#endif /*RADIANTREFERENCECACHE_H_*/
+}

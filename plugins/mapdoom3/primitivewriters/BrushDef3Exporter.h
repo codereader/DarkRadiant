@@ -117,8 +117,10 @@ private:
 		// Export (dummy) contents/flags
 		if (writeContentsFlags)
 		{
-			stream << "0 0 0" << std::endl;
+			stream << "0 0 0";
 		}
+
+		stream << std::endl;
 	}
 };
 
