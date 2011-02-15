@@ -210,9 +210,14 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-RootNode.$(OBJEXT) \
 	darkradiant-MapPosition.$(OBJEXT) \
 	darkradiant-FindMapElements.$(OBJEXT) \
+	darkradiant-InfoFile.$(OBJEXT) \
 	darkradiant-MapFileManager.$(OBJEXT) \
 	darkradiant-MapFileChooserPreview.$(OBJEXT) \
+	darkradiant-ChildPrimitives.$(OBJEXT) \
 	darkradiant-Traverse.$(OBJEXT) \
+	darkradiant-MapExporter.$(OBJEXT) \
+	darkradiant-MapImporter.$(OBJEXT) \
+	darkradiant-InfoFileExporter.$(OBJEXT) \
 	darkradiant-CounterManager.$(OBJEXT) \
 	darkradiant-RegionManager.$(OBJEXT) \
 	darkradiant-PointFile.$(OBJEXT) \
@@ -646,9 +651,14 @@ darkradiant_SOURCES = main.cpp \
                       map/RootNode.cpp \
                       map/MapPosition.cpp \
                       map/FindMapElements.cpp \
+					  map/InfoFile.cpp \
                       map/MapFileManager.cpp \
                       map/MapFileChooserPreview.cpp \
+					  map/algorithm/ChildPrimitives.cpp \
                       map/algorithm/Traverse.cpp \
+					  map/algorithm/MapExporter.cpp \
+                      map/algorithm/MapImporter.cpp \
+					  map/algorithm/InfoFileExporter.cpp \
                       map/CounterManager.cpp \
                       map/RegionManager.cpp \
                       map/PointFile.cpp \
@@ -785,6 +795,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Camera.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CameraSettings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CapDialog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ChildPrimitives.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ClassnamePropertyEditor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ClipPoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Clipper.Po@am__quote@
@@ -834,6 +845,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-GroupCycle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-GtkLogRedirector.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-InfoFile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-InfoFileExporter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Intersection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerCommandTarget.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerContextMenu.Po@am__quote@
@@ -855,9 +868,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ManipulateObserver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Manipulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Map.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapExporter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFileChooserPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFileManager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapFormatManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapImporter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapInfoDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPosition.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPositionManager.Po@am__quote@
@@ -3724,6 +3739,22 @@ darkradiant-FindMapElements.obj: map/FindMapElements.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-FindMapElements.obj `if test -f 'map/FindMapElements.cpp'; then $(CYGPATH_W) 'map/FindMapElements.cpp'; else $(CYGPATH_W) '$(srcdir)/map/FindMapElements.cpp'; fi`
 
+darkradiant-InfoFile.o: map/InfoFile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-InfoFile.o -MD -MP -MF $(DEPDIR)/darkradiant-InfoFile.Tpo -c -o darkradiant-InfoFile.o `test -f 'map/InfoFile.cpp' || echo '$(srcdir)/'`map/InfoFile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-InfoFile.Tpo $(DEPDIR)/darkradiant-InfoFile.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/InfoFile.cpp' object='darkradiant-InfoFile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-InfoFile.o `test -f 'map/InfoFile.cpp' || echo '$(srcdir)/'`map/InfoFile.cpp
+
+darkradiant-InfoFile.obj: map/InfoFile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-InfoFile.obj -MD -MP -MF $(DEPDIR)/darkradiant-InfoFile.Tpo -c -o darkradiant-InfoFile.obj `if test -f 'map/InfoFile.cpp'; then $(CYGPATH_W) 'map/InfoFile.cpp'; else $(CYGPATH_W) '$(srcdir)/map/InfoFile.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-InfoFile.Tpo $(DEPDIR)/darkradiant-InfoFile.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/InfoFile.cpp' object='darkradiant-InfoFile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-InfoFile.obj `if test -f 'map/InfoFile.cpp'; then $(CYGPATH_W) 'map/InfoFile.cpp'; else $(CYGPATH_W) '$(srcdir)/map/InfoFile.cpp'; fi`
+
 darkradiant-MapFileManager.o: map/MapFileManager.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapFileManager.o -MD -MP -MF $(DEPDIR)/darkradiant-MapFileManager.Tpo -c -o darkradiant-MapFileManager.o `test -f 'map/MapFileManager.cpp' || echo '$(srcdir)/'`map/MapFileManager.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MapFileManager.Tpo $(DEPDIR)/darkradiant-MapFileManager.Po
@@ -3756,6 +3787,22 @@ darkradiant-MapFileChooserPreview.obj: map/MapFileChooserPreview.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapFileChooserPreview.obj `if test -f 'map/MapFileChooserPreview.cpp'; then $(CYGPATH_W) 'map/MapFileChooserPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/map/MapFileChooserPreview.cpp'; fi`
 
+darkradiant-ChildPrimitives.o: map/algorithm/ChildPrimitives.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ChildPrimitives.o -MD -MP -MF $(DEPDIR)/darkradiant-ChildPrimitives.Tpo -c -o darkradiant-ChildPrimitives.o `test -f 'map/algorithm/ChildPrimitives.cpp' || echo '$(srcdir)/'`map/algorithm/ChildPrimitives.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-ChildPrimitives.Tpo $(DEPDIR)/darkradiant-ChildPrimitives.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/ChildPrimitives.cpp' object='darkradiant-ChildPrimitives.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ChildPrimitives.o `test -f 'map/algorithm/ChildPrimitives.cpp' || echo '$(srcdir)/'`map/algorithm/ChildPrimitives.cpp
+
+darkradiant-ChildPrimitives.obj: map/algorithm/ChildPrimitives.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ChildPrimitives.obj -MD -MP -MF $(DEPDIR)/darkradiant-ChildPrimitives.Tpo -c -o darkradiant-ChildPrimitives.obj `if test -f 'map/algorithm/ChildPrimitives.cpp'; then $(CYGPATH_W) 'map/algorithm/ChildPrimitives.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/ChildPrimitives.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-ChildPrimitives.Tpo $(DEPDIR)/darkradiant-ChildPrimitives.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/ChildPrimitives.cpp' object='darkradiant-ChildPrimitives.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ChildPrimitives.obj `if test -f 'map/algorithm/ChildPrimitives.cpp'; then $(CYGPATH_W) 'map/algorithm/ChildPrimitives.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/ChildPrimitives.cpp'; fi`
+
 darkradiant-Traverse.o: map/algorithm/Traverse.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-Traverse.o -MD -MP -MF $(DEPDIR)/darkradiant-Traverse.Tpo -c -o darkradiant-Traverse.o `test -f 'map/algorithm/Traverse.cpp' || echo '$(srcdir)/'`map/algorithm/Traverse.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-Traverse.Tpo $(DEPDIR)/darkradiant-Traverse.Po
@@ -3771,6 +3818,54 @@ darkradiant-Traverse.obj: map/algorithm/Traverse.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/Traverse.cpp' object='darkradiant-Traverse.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-Traverse.obj `if test -f 'map/algorithm/Traverse.cpp'; then $(CYGPATH_W) 'map/algorithm/Traverse.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/Traverse.cpp'; fi`
+
+darkradiant-MapExporter.o: map/algorithm/MapExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapExporter.o -MD -MP -MF $(DEPDIR)/darkradiant-MapExporter.Tpo -c -o darkradiant-MapExporter.o `test -f 'map/algorithm/MapExporter.cpp' || echo '$(srcdir)/'`map/algorithm/MapExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MapExporter.Tpo $(DEPDIR)/darkradiant-MapExporter.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/MapExporter.cpp' object='darkradiant-MapExporter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapExporter.o `test -f 'map/algorithm/MapExporter.cpp' || echo '$(srcdir)/'`map/algorithm/MapExporter.cpp
+
+darkradiant-MapExporter.obj: map/algorithm/MapExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapExporter.obj -MD -MP -MF $(DEPDIR)/darkradiant-MapExporter.Tpo -c -o darkradiant-MapExporter.obj `if test -f 'map/algorithm/MapExporter.cpp'; then $(CYGPATH_W) 'map/algorithm/MapExporter.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/MapExporter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MapExporter.Tpo $(DEPDIR)/darkradiant-MapExporter.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/MapExporter.cpp' object='darkradiant-MapExporter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapExporter.obj `if test -f 'map/algorithm/MapExporter.cpp'; then $(CYGPATH_W) 'map/algorithm/MapExporter.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/MapExporter.cpp'; fi`
+
+darkradiant-MapImporter.o: map/algorithm/MapImporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapImporter.o -MD -MP -MF $(DEPDIR)/darkradiant-MapImporter.Tpo -c -o darkradiant-MapImporter.o `test -f 'map/algorithm/MapImporter.cpp' || echo '$(srcdir)/'`map/algorithm/MapImporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MapImporter.Tpo $(DEPDIR)/darkradiant-MapImporter.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/MapImporter.cpp' object='darkradiant-MapImporter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapImporter.o `test -f 'map/algorithm/MapImporter.cpp' || echo '$(srcdir)/'`map/algorithm/MapImporter.cpp
+
+darkradiant-MapImporter.obj: map/algorithm/MapImporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MapImporter.obj -MD -MP -MF $(DEPDIR)/darkradiant-MapImporter.Tpo -c -o darkradiant-MapImporter.obj `if test -f 'map/algorithm/MapImporter.cpp'; then $(CYGPATH_W) 'map/algorithm/MapImporter.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/MapImporter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MapImporter.Tpo $(DEPDIR)/darkradiant-MapImporter.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/MapImporter.cpp' object='darkradiant-MapImporter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MapImporter.obj `if test -f 'map/algorithm/MapImporter.cpp'; then $(CYGPATH_W) 'map/algorithm/MapImporter.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/MapImporter.cpp'; fi`
+
+darkradiant-InfoFileExporter.o: map/algorithm/InfoFileExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-InfoFileExporter.o -MD -MP -MF $(DEPDIR)/darkradiant-InfoFileExporter.Tpo -c -o darkradiant-InfoFileExporter.o `test -f 'map/algorithm/InfoFileExporter.cpp' || echo '$(srcdir)/'`map/algorithm/InfoFileExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-InfoFileExporter.Tpo $(DEPDIR)/darkradiant-InfoFileExporter.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/InfoFileExporter.cpp' object='darkradiant-InfoFileExporter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-InfoFileExporter.o `test -f 'map/algorithm/InfoFileExporter.cpp' || echo '$(srcdir)/'`map/algorithm/InfoFileExporter.cpp
+
+darkradiant-InfoFileExporter.obj: map/algorithm/InfoFileExporter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-InfoFileExporter.obj -MD -MP -MF $(DEPDIR)/darkradiant-InfoFileExporter.Tpo -c -o darkradiant-InfoFileExporter.obj `if test -f 'map/algorithm/InfoFileExporter.cpp'; then $(CYGPATH_W) 'map/algorithm/InfoFileExporter.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/InfoFileExporter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-InfoFileExporter.Tpo $(DEPDIR)/darkradiant-InfoFileExporter.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='map/algorithm/InfoFileExporter.cpp' object='darkradiant-InfoFileExporter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-InfoFileExporter.obj `if test -f 'map/algorithm/InfoFileExporter.cpp'; then $(CYGPATH_W) 'map/algorithm/InfoFileExporter.cpp'; else $(CYGPATH_W) '$(srcdir)/map/algorithm/InfoFileExporter.cpp'; fi`
 
 darkradiant-CounterManager.o: map/CounterManager.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CounterManager.o -MD -MP -MF $(DEPDIR)/darkradiant-CounterManager.Tpo -c -o darkradiant-CounterManager.o `test -f 'map/CounterManager.cpp' || echo '$(srcdir)/'`map/CounterManager.cpp
