@@ -196,6 +196,7 @@ darkradiant_SOURCES = main.cpp \
 					  map/algorithm/ChildPrimitives.cpp \
                       map/algorithm/Traverse.cpp \
 					  map/algorithm/MapExporter.cpp \
+                      map/algorithm/MapImporter.cpp \
 					  map/algorithm/InfoFileExporter.cpp \
                       map/CounterManager.cpp \
                       map/RegionManager.cpp \
