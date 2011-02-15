@@ -1,65 +1,56 @@
-#ifndef FILETYPEREGISTRY_H_
-#define FILETYPEREGISTRY_H_
+#pragma once
 
 #include "ifiletypes.h"
 #include <map>
 
 /**
  * Implementation of the file type registry. The registry is associating file types
- * with ModuleTypeLists, the latter of which are modules => named file patterns.
+ * with FileTypePatterns. Each FileTypePattern can have a single associated module,
+ * which is used to associated ModelLoaders with patterns.
  *
- * <type> => [ <modulename> => <patternDescription>, ... ]
+ * <type> => [ <pattern>, <pattern> ]
  *
- * "map" => [	"Doom3MapLoader" => "*.map",
- *				"Doom3MapLoader" => "*.reg",
- *				"Doom3PrefabLoader" => "*.pfb" ]
+ * "map" => [	("Doom 3 Map", "*.map", "map", ""),
+ *				("Doom 3 Region", "*.reg", "reg", ""),
+ *				("Doom 3 Prefab", "*.pfb", "pfb", "") ]
  *
- * "model" => [ "ModelLoaderASE" => "*.ase",
- *				"ModelLoaderLWO" => "*.lwo",
+ * "model" => [ ("ASE", "*.ase", "ase", "ModelLoaderASE"),
+ *				("LWO", "*.lwo", "lwo", "ModelLoaderLWO"),
  *				... ]
  *
  * This mapping can be used to retrieve a list of modules capable of
  * loading a file with a given extension. Furthermore it is used by the
  * gtkutil::FileChooser to populate the file type dropdown list.
  */
-class RadiantFileTypeRegistry :
+class FileTypeRegistry :
 	public IFileTypeRegistry
 {
-	// Map of named ModuleTypeListPtrs. Each ModuleTypeList is a list of structs
-	// associating a module name with a filetype pattern
-	typedef std::map<std::string, ModuleTypeListPtr> TypeListMap;
-	TypeListMap _typeLists;
+private:
+	typedef std::map<std::string, FileTypePatterns> FileTypes;
+	FileTypes _fileTypes;
 
 public:
-
 	/*
 	 * Constructor, adds the All Files type.
 	 */
-	RadiantFileTypeRegistry();
+	FileTypeRegistry();
+	
+	// IFileTypeRegistry implementation
+	void registerPattern(const std::string& fileType, const FileTypePattern& pattern);
 
-	/*
-	 * Add a type.
-	 */
-	void addType(const std::string& moduleType,
-				 const std::string& moduleName,
-				 const FileTypePattern& type);
+	FileTypePatterns getPatternsForType(const std::string& fileType);
 
-	/*
-	 * Return list of types for an associated module type.
-	 */
-	ModuleTypeListPtr getTypesFor(const std::string& moduleType);
+	bool registerModule(const std::string& fileType, 
+						const std::string& extension,
+						const std::string& moduleName);
 
-	// Look for a module which loads the given extension, by searching under the
-	// given type category
-	virtual std::string findModuleName(const std::string& moduleType, const std::string& extension);
+	void unregisterModule(const std::string& moduleName);
+	
+	std::string findModule(const std::string& fileType, const std::string& extension);
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
-
-}; // class FileTypeRegistry
-
-typedef boost::shared_ptr<RadiantFileTypeRegistry> RadiantFileTypeRegistryPtr;
-
-#endif /*FILETYPEREGISTRY_H_*/
+};
+typedef boost::shared_ptr<FileTypeRegistry> FileTypeRegistryPtr;

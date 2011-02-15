@@ -31,11 +31,6 @@
 namespace map
 {
 
-	namespace
-	{
-		const std::string RKEY_FLOAT_PRECISION = "/mapFormat/floatPrecision";
-	}
-
 // RegisterableModule implementation
 const std::string& Quake4MapFormat::getName() const
 {
@@ -47,7 +42,8 @@ const StringSet& Quake4MapFormat::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_ECLASSMANAGER);
 		_dependencies.insert(MODULE_LAYERSYSTEM);
@@ -66,33 +62,33 @@ void Quake4MapFormat::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
 
-	// Query game file - only register if the game type is q4
-	if (GlobalGameManager().currentGame()->getKeyValue("type") == "quake4")
-	{
-		// Register ourselves as map format for maps and regions
-		GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
-		GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
+	// Register ourselves as map format for maps and regions
+	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
+	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());
+	GlobalMapFormatManager().registerMapFormat("pfb", shared_from_this());
 
-		// Add our primitive parsers to the global format registry
-		GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserQuake4Ptr(new BrushDef3ParserQuake4));
-		GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
-		GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
-		GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
+	// Add our primitive parsers to the global format registry
+	GlobalMapFormatManager().registerPrimitiveParser(BrushDef3ParserQuake4Ptr(new BrushDef3ParserQuake4));
+	GlobalMapFormatManager().registerPrimitiveParser(PatchDef2ParserPtr(new PatchDef2Parser));
+	GlobalMapFormatManager().registerPrimitiveParser(PatchDef3ParserPtr(new PatchDef3Parser));
+	GlobalMapFormatManager().registerPrimitiveParser(BrushDefParserPtr(new BrushDefParser));
 
-		GlobalFiletypes().addType(
-			"map", getName(), FileTypePattern(_("Quake 4 map"), "*.map"));
-		GlobalFiletypes().addType(
-			"map", getName(), FileTypePattern(_("Quake 4 region"), "*.reg"));
-	}
+	// Register the map file extension in the FileTypeRegistry
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Quake 4 map"), "map", "*.map"));
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Quake 4 region"), "reg", "*.reg"));
+	GlobalFiletypes().registerPattern("map", FileTypePattern(_("Quake 4 prefab"), "pfb", "*.pfb"));
 }
 
 void Quake4MapFormat::shutdownModule()
 {
-	if (GlobalGameManager().currentGame()->getKeyValue("type") == "quake4")
-	{
-		// Unregister now that we're shutting down
-		GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
-	}
+	// Unregister now that we're shutting down
+	GlobalMapFormatManager().unregisterMapFormat(shared_from_this());
+}
+
+const std::string& Quake4MapFormat::getGameType() const
+{
+	static std::string _gameType = "quake4";
+	return _gameType;
 }
 
 IMapReaderPtr Quake4MapFormat::getMapReader(IMapImportFilter& filter) const
@@ -113,22 +109,16 @@ bool Quake4MapFormat::allowInfoFileCreation() const
 
 bool Quake4MapFormat::canLoad(std::istream& stream) const
 {
-	// Load the required version from the .game file
-	xml::NodeList nodes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_GAME_MAP_VERSION);
-	assert(!nodes.empty());
-
-	float requiredVersion = strToFloat(nodes[0].getAttributeValue("value"));
-
 	// Instantiate a tokeniser to read the first few tokens
 	parser::BasicDefTokeniser<std::istream> tok(stream);
 
 	try
 	{
 		// Require a "Version" token
-		tok.assertNextToken(VERSION);
+		tok.assertNextToken("Version");
 
 		// Require specific version, return true on success 
-		return (boost::lexical_cast<float>(tok.nextToken()) == requiredVersion);
+		return (boost::lexical_cast<float>(tok.nextToken()) == MAP_VERSION_Q4);
 	}
 	catch (parser::ParseException&)
 	{}

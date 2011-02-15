@@ -183,11 +183,11 @@ public:
 
 	/** greebo: Returns the map format for this map
 	 */
-	const MapFormat& getFormat();
+	MapFormatPtr getFormat();
 
 	/** greebo: Returns the map format for the given filename
 	 */
-	static const MapFormat& getFormatForFile(const std::string& filename);
+	static MapFormatPtr getFormatForFile(const std::string& filename);
 
 	/** greebo: Removes or saves the camera position (into worldspawn)
 	 */

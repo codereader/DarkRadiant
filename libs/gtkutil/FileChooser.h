@@ -26,7 +26,7 @@ private:
 	std::string _path;
 	std::string _file;
 
-	std::string _pattern;
+	std::string _fileType;
 
 	std::string _defaultExt;
 
@@ -46,14 +46,14 @@ public:
 	 * @title: The dialog title.
 	 * @open: if TRUE this is asking for "Open" files, FALSE generates a "Save" dialog.
 	 * @browseFolders: if TRUE the dialog is asking the user for directories only.
-	 * @pattern: the type "map", "prefab", this determines the file extensions.
+	 * @fileType: the type "map", "prefab", this determines the file extensions.
 	 * @defaultExt: The default extension appended when the user enters
 	 *              filenames without extension.
  	 */
 	FileChooser(const std::string& title,
 				bool open,
 				bool browseFolders,
-				const std::string& pattern = "",
+				const std::string& fileType = "",
 				const std::string& defaultExt = "");
 
 	/**
@@ -71,7 +71,7 @@ public:
 				const std::string& title,
 				bool open,
 				bool browseFolders,
-				const std::string& pattern = "",
+				const std::string& fileType = "",
 				const std::string& defaultExt = "");
 
 	virtual ~FileChooser();

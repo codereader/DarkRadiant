@@ -97,11 +97,13 @@ ModelCache::ModelCache() :
 	_enabled(true)
 {}
 
-ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type) {
+ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type)
+{
 	// Get the module name from the Filetype registry
-	std::string moduleName = GlobalFiletypes().findModuleName("model", type);
+	std::string moduleName = GlobalFiletypes().findModule("model", type);
 
-	if (!moduleName.empty()) {
+	if (!moduleName.empty())
+	{
 		ModelLoaderPtr modelLoader = boost::static_pointer_cast<ModelLoader>(
 			module::GlobalModuleRegistry().getModule(moduleName)
 		);

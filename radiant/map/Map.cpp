@@ -255,19 +255,21 @@ IMapRootNodePtr Map::getRoot() {
 	return IMapRootNodePtr();
 }
 
-const MapFormat& Map::getFormatForFile(const std::string& filename) {
+MapFormatPtr Map::getFormatForFile(const std::string& filename)
+{
 	// Look up the module name which loads the given extension
-	std::string moduleName = GlobalFiletypes().findModuleName("map",
-											path_get_extension(filename.c_str()));
+	std::string gameType = GlobalGameManager().currentGame()->getKeyValue("type");
 
-	// Acquire the module from the ModuleRegistry
-	RegisterableModulePtr mapLoader = module::GlobalModuleRegistry().getModule(moduleName);
+	MapFormatPtr mapFormat = GlobalMapFormatManager().getMapFormatForGameType(
+		gameType, path_get_extension(filename.c_str()));
 
-	ASSERT_MESSAGE(mapLoader != NULL, "map format not found for file " + filename);
-	return *static_cast<MapFormat*>(mapLoader.get());
+	ASSERT_MESSAGE(mapFormat != NULL, "map format not found for file " + filename);
+
+	return mapFormat;
 }
 
-const MapFormat& Map::getFormat() {
+MapFormatPtr Map::getFormat()
+{
 	return getFormatForFile(_mapName);
 }
 
@@ -585,7 +587,7 @@ bool Map::saveDirect(const std::string& filename) {
 	_saveInProgress = true;
 
 	bool result = MapResource::saveFile(
-		getFormatForFile(filename),
+		*getFormatForFile(filename),
 		GlobalSceneGraph().root(),
 		map::traverse, // TraversalFunc
 		filename
@@ -605,7 +607,7 @@ bool Map::saveSelected(const std::string& filename) {
 	_saveInProgress = true;
 
 	bool success = MapResource::saveFile(
-		Map::getFormatForFile(filename),
+		*getFormatForFile(filename),
 		GlobalSceneGraph().root(),
 		map::traverseSelected, // TraversalFunc
 		filename
@@ -931,9 +933,9 @@ void Map::importSelected(TextInputStream& in)
 		}
 	} importFilter(root);
 
-	const MapFormat& format = getFormat();
+	MapFormatPtr format = getFormat();
 
-	IMapReaderPtr reader = format.getMapReader(importFilter);
+	IMapReaderPtr reader = format->getMapReader(importFilter);
 	
 	try
 	{
@@ -971,9 +973,9 @@ void Map::importSelected(TextInputStream& in)
 
 void Map::exportSelected(std::ostream& out)
 {
-	const MapFormat& format = getFormat();
+	MapFormatPtr format = getFormat();
 
-	IMapWriterPtr writer = format.getMapWriter();
+	IMapWriterPtr writer = format->getMapWriter();
 
 	// Create our main MapExporter walker for traversal
 	MapExporter exporter(*writer, GlobalSceneGraph().root(), out);

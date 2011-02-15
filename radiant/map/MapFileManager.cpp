@@ -33,16 +33,21 @@ std::string MapFileManager::selectFile(bool open,
 {
 	// Check, if the lastdir contains at least anything and load
 	// the default map path if it's empty
-	if (_lastDirs.find(type) == _lastDirs.end()) {
+	if (_lastDirs.find(type) == _lastDirs.end())
+	{
 		// Default to the map path, if the type is not yet associated
 		_lastDirs[type] = GlobalRegistry().get(RKEY_MAP_PATH);
 	}
 
 	// Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
-	ModuleTypeListPtr typeList = GlobalFiletypes().getTypesFor(type);
-	std::string defaultExt = typeList->begin()->filePattern.pattern;
-	// remove the * from the pattern "*.pfb" >>> ".pfb"
-	boost::algorithm::erase_all(defaultExt, "*");
+	FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(type);
+
+	std::string defaultExt = "";
+
+	if (!patterns.empty())
+	{
+		defaultExt = "." + patterns.begin()->extension; // ".map"
+	}
 
 	// Display a file chooser dialog to get a new path
 	gtkutil::FileChooser fileChooser(GlobalMainFrame().getTopLevelWindow(),
@@ -52,7 +57,8 @@ std::string MapFileManager::selectFile(bool open,
 	fileChooser.setCurrentPath(_lastDirs[type]);
 
 	// For prefabs, add a preview widget
-	if (open && type == "prefab") {
+	if (open && type == "prefab")
+	{
 		// Instantiate a new preview object
 		MapFileChooserPreviewPtr preview(new MapFileChooserPreview());
 
@@ -63,7 +69,8 @@ std::string MapFileManager::selectFile(bool open,
 	std::string filePath = fileChooser.display();
 
 	// If a filename was chosen, update the last path
-	if (!filePath.empty()) {
+	if (!filePath.empty())
+	{
 		_lastDirs[type] = filePath.substr(0, filePath.rfind("/"));
 	}
 

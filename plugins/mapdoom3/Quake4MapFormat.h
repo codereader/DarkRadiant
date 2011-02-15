@@ -6,6 +6,11 @@
 namespace map
 {
 
+namespace
+{
+	const float MAP_VERSION_Q4 = 3;
+}
+
 class Quake4MapFormat :
 	public MapFormat,
 	public boost::enable_shared_from_this<Quake4MapFormat>
@@ -17,6 +22,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
 
+	virtual const std::string& getGameType() const;
 	virtual IMapReaderPtr getMapReader(IMapImportFilter& filter) const;
 	virtual IMapWriterPtr getMapWriter() const;
 

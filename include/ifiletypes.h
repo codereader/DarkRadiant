@@ -1,72 +1,44 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IFILETYPES_H)
-#define INCLUDED_IFILETYPES_H
+#pragma once
 
 #include <list>
+#include <string>
 #include "imodule.h"
 
 /**
- * Simple structure to store a file pattern (e.g. "*.map") along with its name
- * (e.g. "Map files").
+ * Simple structure to store a file pattern (e.g. "*.map") 
+ * along with its name (e.g. "Map files") and extension.
+ *
+ * If a module has been registering itself for a certain
+ * filetype/extension combo, its name is in associatedModule.
  */
 struct FileTypePattern
 {
-	// The user-friendly name
+	// The user-friendly name ("Doom 3 Map")
 	std::string name;
 
-	// The mask pattern
+	// The extension in lowercase ("map")
+	std::string extension;
+
+	// The mask pattern ("*.map")
 	std::string pattern;
 
+	// The module associated with this specific extension
+	// This is initially empty, will be filled when
+	// GlobalFiletypes().registerModule() is called.
+	std::string associatedModule;
+
 	// Constructor with optional initialisation parameters
-	FileTypePattern(const std::string& n = "", const std::string& p = "")
-    : name(n), pattern(p)
-	{ }
+	FileTypePattern(const std::string& name_ = "", 
+					const std::string& extension_ = "", 
+					const std::string& pattern_ = "") : 
+		name(name_),
+		extension(extension_),
+		pattern(pattern_)
+	{}
 };
+typedef std::list<FileTypePattern> FileTypePatterns;
 
-/**
- * Structure associating a module name with a FileTypePattern.
- */
-struct ModuleFileType
-{
-	// Module name
-	std::string moduleName;
-
-	// File type pattern
-	FileTypePattern filePattern;
-
-	// Initialising constructor
-	ModuleFileType(const std::string& n, const FileTypePattern& p)
-	: moduleName(n), filePattern(p)
-	{ }
-};
-
-/**
- * List of ModuleFileType objects.
- */
-typedef std::list<ModuleFileType> ModuleTypeList;
-typedef boost::shared_ptr<ModuleTypeList> ModuleTypeListPtr;
-
-const std::string MODULE_FILETYPES("FileTypes");
+const char* const MODULE_FILETYPES = "FileTypes";
 
 /**
  * Interface for the FileType registry module. This module retains a list of
@@ -77,37 +49,68 @@ class IFileTypeRegistry :
 {
 public:
 	/**
-	 * Add a type to the registry.
+	 * greebo: Registers an extension (e.g. "map") for a certain file type ("prefab").
+	 * Common file types are "map", "prefab" and "model", each of them can have one 
+	 * or more extensions associated in a certain order ("prefab" => "pfb", "map", "reg",
+	 * or "map" => "map", "reg", "pfb"). The order is important e.g. for the file 
+	 * filters in the Map Open dialog.
 	 *
-	 * @param moduleType
-	 * The type of the module, e.g. "map".
+	 * The pattern argument is a structure containing the lowercase extensions as well
+	 * as the display name and the filter pattern used in the file chooser dialogs.
 	 *
-	 * @param moduleName
-	 * Name of the module.
+	 * If an extension is already associated with the given filetype, it is ignored.
+	 * New extensions are added to the end of the list.
 	 *
-	 * @param type
-	 * The FileTypePattern to associate with this module name.
+	 * @param fileType: the file type which an extension should be associated to.
+	 * @param pattern: the extension as well as the display name and a pattern ("*.map")
 	 */
-	virtual void addType(const std::string& moduleType,
-						 const std::string& moduleName,
-						 const FileTypePattern& type) = 0;
+	virtual void registerPattern(const std::string& fileType, 
+								 const FileTypePattern& pattern) = 0;
 
 	/**
-	 * Get a list of ModuleFileTypes associated with the given module type. If
-	 * the moduleType is not found, returns an empty list.
+	 * Retrieve a list of patterns for the given file type (e.g. "prefab" or "map").
 	 *
-	 * @param moduleType
-	 * The module category for which a list of types should be retrieved.
+	 * @returns: a list of FileTypePatterns containing extension, display name, etc.
 	 */
-	virtual ModuleTypeListPtr getTypesFor(const std::string& moduleType) = 0;
+	virtual FileTypePatterns getPatternsForType(const std::string& fileType) = 0;
 
 	/**
-	 * Find the name of the module which loads the given extension.
+	 * Registers the named module with the extension for the given fileType.
+	 *
+	 * Example: Associate the module "ModelLoaderASE" with the "ase" extension 
+	 * for the "model" filetype.
+	 *
+	 * Only a single module can be registered for a file type/extension combo 
+	 * at any time.
+	 *
+	 * @returns: TRUE if the module could be registered, FALSE if the filetype/extension
+	 * combination is already "in use" or the file type is not registered at all.
 	 */
-	virtual std::string findModuleName(const std::string& moduleType, const std::string& extension) = 0;
+	virtual bool registerModule(const std::string& fileType, 
+								const std::string& extension,
+								const std::string& moduleName) = 0;
+
+	/**
+	 * Removes the module from all filetypes - usually done at module shutdown.
+	 */
+	virtual void unregisterModule(const std::string& moduleName) = 0;
+
+	/**
+	 * Find the name of the module which is able to handle the given extension.
+	 *
+	 * Note that Map Loader Modules are handled slightly differently - they don't
+	 * add themselves directly to a specific extension, but register in the 
+	 * GlobalMapFormatManager(). The Map loading algorithm is querying the format
+	 * manager for any module that is capable of loading the map, so findModule() 
+	 * isn't necessary here. The main purpose of findModule() is to deliver
+	 * a ModelLoader for a specific model file extension, e.g. "ase" or "lwo".
+	 */
+	virtual std::string findModule(const std::string& fileType, 
+								   const std::string& extension) = 0;
 };
 
-inline IFileTypeRegistry& GlobalFiletypes() {
+inline IFileTypeRegistry& GlobalFiletypes()
+{
 	// Cache the reference locally
 	static IFileTypeRegistry& _fileTypes(
 		*boost::static_pointer_cast<IFileTypeRegistry>(
@@ -116,5 +119,3 @@ inline IFileTypeRegistry& GlobalFiletypes() {
 	);
 	return _fileTypes;
 }
-
-#endif
