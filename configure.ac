@@ -80,6 +80,7 @@ PKG_CHECK_MODULES([GTKGLEXT], [gtkglext-1.0])
 PKG_CHECK_MODULES([GTKGLEXTMM], [gtkglextmm-1.2])
 PKG_CHECK_MODULES([XML], [libxml-2.0])
 PKG_CHECK_MODULES([LIBSIGC], [sigc++-2.0])
+PKG_CHECK_MODULES([PNG], [libpng])
 
 # GLEW
 AC_CHECK_HEADER([GL/glew.h], [], [AC_MSG_ERROR([GLEW not found])])
