@@ -4,7 +4,12 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = image.la
 
 image_la_LDFLAGS = -module -avoid-version \
-                   $(GTKMM_LIBS) $(JPEG_LIBS) $(GLEW_LIBS) $(GLU_LIBS) $(GL_LIBS)
+                   $(GTKMM_LIBS) \
+                   $(JPEG_LIBS) \
+                   $(GLEW_LIBS) \
+                   $(GLU_LIBS) \
+                   $(GL_LIBS) \
+                   $(PNG_LIBS)
 image_la_LIBADD = $(top_builddir)/libs/ddslib/libdds.la
 image_la_SOURCES = dds.cpp \
                    image.cpp \
