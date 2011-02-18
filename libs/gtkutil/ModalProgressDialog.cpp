@@ -92,6 +92,15 @@ void ModalProgressDialog::setTextAndFraction(const std::string& text, double fra
 	// Set the text
 	_label->set_markup(text);
 
+	if (fraction < 0) 
+	{
+		fraction = 0.0;
+	}
+	else if (fraction > 1.0)
+	{
+		fraction = 1.0;
+	}
+
 	// Pulse the progress bar
 	_progressBar->set_fraction(fraction);
 
