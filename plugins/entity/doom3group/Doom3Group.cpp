@@ -145,15 +145,16 @@ void Doom3Group::translateOrigin(const Vector3& translation)
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3Group::translate(const Vector3& translation, bool rotation) {
-
+void Doom3Group::translate(const Vector3& translation, bool rotation, bool scale)
+{
+	// TODO! No direct registry lookups, move this to EntitySettings
 	bool freeModelRotation = GlobalRegistry().get(RKEY_FREE_MODEL_ROTATION) == "1";
 
-	// greebo: If the translation does not originate from
-	// a pivoted rotation, translate the origin as well (this is a bit hacky)
+	// greebo: If the translation does not originate from a pivoted 
+	// rotation or scale, translate the origin as well (this is a bit hacky)
 	// This also applies for models, which should always have the
 	// rotation-translation applied (except for freeModelRotation set to TRUE)
-	if (!rotation || (isModel() && !freeModelRotation))
+	if ((!scale && !rotation) || (isModel() && !freeModelRotation))
 	{
 		m_origin = m_originKey.m_origin + translation;
 	}
@@ -173,6 +174,15 @@ void Doom3Group::rotate(const Quaternion& rotation) {
 	}
 	else {
 		m_rotation.rotate(rotation);
+	}
+}
+
+void Doom3Group::scale(const Vector3& scale)
+{
+	if (!isModel())
+	{
+		ChildScaler scaler(scale);
+		_owner.traverse(scaler);
 	}
 }
 

@@ -418,6 +418,29 @@ public:
 	}
 };
 
+class ChildScaler :
+	public scene::NodeVisitor
+{
+private:
+	Vector3 _scale;
+public:
+	ChildScaler(const Vector3& scale) :
+		_scale(scale)
+	{}
+
+	virtual bool pre(const scene::INodePtr& node)
+	{
+		ITransformablePtr transformable = Node_getTransformable(node);
+
+		if (transformable != NULL)
+		{
+			transformable->setType(TRANSFORM_PRIMITIVE);
+			transformable->setScale(_scale);
+		}
+		return true;
+	}
+};
+
 inline void translateDoom3Brush(scene::INodePtr node, const Vector3& translation) {
 	// Check for BrushDoom3
 	BrushDoom3Ptr brush = Node_getBrushDoom3(node);
