@@ -275,11 +275,16 @@ void Doom3GroupNode::evaluateTransform()
 {
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
+		const Quaternion& rotation = getRotation();
+		const Vector3& scale = getScale();
+
 		m_contained.translate(
 			getTranslation(),
-			getRotation() != c_quaternion_identity // FALSE for identity rotations
+			rotation != c_quaternion_identity, // FALSE for identity rotations
+			scale != c_scale_identity // FALSE for identity scales
 		);
-		m_contained.rotate(getRotation());
+		m_contained.rotate(rotation);
+		m_contained.scale(scale);
 
 		// Transform curve control points in primitive mode
 		Matrix4 transformation = calculateTransform();
