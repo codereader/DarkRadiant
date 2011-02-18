@@ -4,6 +4,7 @@
 #include "iarchive.h"
 #include "archivelib.h"
 #include "iregistry.h"
+#include "igame.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -15,7 +16,7 @@ namespace shaders
 namespace
 {
 	// Registry key holding texture types
-    const char* RKEY_IMAGE_TYPES = "game/filetypes/texture//extension";
+    const char* RKEY_IMAGE_TYPES = "/filetypes/texture//extension";
 }
 
 // Static accessor for the list of .game-defined ImageLoaders
@@ -27,7 +28,8 @@ ImageFileLoader::getGameFileImageLoaders()
 	if (_imageLoaders.empty())
 	{
 		// Load the texture types from the .game file
-		xml::NodeList texTypes = GlobalRegistry().findXPath(RKEY_IMAGE_TYPES);
+		xml::NodeList texTypes = GlobalGameManager().currentGame()->getLocalXPath(RKEY_IMAGE_TYPES);
+
 		for (xml::NodeList::const_iterator i = texTypes.begin();
 			 i != texTypes.end();
 			 ++i)
