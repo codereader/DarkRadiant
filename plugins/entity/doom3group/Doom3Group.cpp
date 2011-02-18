@@ -9,11 +9,8 @@
 #include "Doom3GroupNode.h"
 #include <boost/bind.hpp>
 
-namespace entity {
-
-	namespace {
-		const char* RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
-	}
+namespace entity 
+{
 
 inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
 	SelectionTest& test, SelectionIntersection& best)
@@ -147,8 +144,7 @@ void Doom3Group::translateOrigin(const Vector3& translation)
 
 void Doom3Group::translate(const Vector3& translation, bool rotation, bool scale)
 {
-	// TODO! No direct registry lookups, move this to EntitySettings
-	bool freeModelRotation = GlobalRegistry().get(RKEY_FREE_MODEL_ROTATION) == "1";
+	bool freeModelRotation = EntitySettings::InstancePtr()->freeModelRotation();
 
 	// greebo: If the translation does not originate from a pivoted 
 	// rotation or scale, translate the origin as well (this is a bit hacky)
@@ -160,9 +156,11 @@ void Doom3Group::translate(const Vector3& translation, bool rotation, bool scale
 	}
 
 	// Only non-models should have their rendered origin different than <0,0,0>
-	if (!isModel()) {
+	if (!isModel())
+	{
 		m_nameOrigin = m_origin;
 	}
+
 	m_renderOrigin.updatePivot();
 	translateChildren(translation);
 }
