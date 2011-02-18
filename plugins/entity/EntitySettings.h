@@ -6,12 +6,14 @@
 
 namespace entity {
 
-namespace {
-	const std::string RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
-	const std::string RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
-	const std::string RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
-	const std::string RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
-	const std::string RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
+namespace
+{
+	const char* const RKEY_SHOW_ENTITY_NAMES("user/ui/xyview/showEntityNames");
+	const char* const RKEY_SHOW_ALL_SPEAKER_RADII = "user/ui/showAllSpeakerRadii";
+	const char* const RKEY_SHOW_ALL_LIGHT_RADII = "user/ui/showAllLightRadii";
+	const char* const RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
+	const char* const RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
+	const char* const RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
 }
 
 class EntitySettings;
@@ -41,6 +43,8 @@ class EntitySettings :
 	// TRUE if lights should always render their components
 	bool _alwaysShowLightVertices;
 
+	bool _freeModelRotation;
+
 	// Private constructor
 	EntitySettings();
 public:
@@ -67,6 +71,11 @@ public:
 
 	bool alwaysShowLightVertices() {
 		return _alwaysShowLightVertices;
+	}
+
+	bool freeModelRotation()
+	{
+		return _freeModelRotation;
 	}
 
 	// Container for the singleton (ptr)

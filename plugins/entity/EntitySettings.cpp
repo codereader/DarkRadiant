@@ -5,11 +5,12 @@
 namespace entity {
 
 EntitySettings::EntitySettings() :
-	_renderEntityNames(GlobalRegistry().get(RKEY_SHOW_ENTITY_NAMES) == "1"),
-	_showAllSpeakerRadii(GlobalRegistry().get(RKEY_SHOW_ALL_SPEAKER_RADII) == "1"),
-	_showAllLightRadii(GlobalRegistry().get(RKEY_SHOW_ALL_LIGHT_RADII) == "1"),
-	_dragResizeEntitiesSymmetrically(GlobalRegistry().get(RKEY_DRAG_RESIZE_SYMMETRICALLY) == "1"),
-	_alwaysShowLightVertices(GlobalRegistry().get(RKEY_ALWAYS_SHOW_LIGHT_VERTICES) == "1")
+	_renderEntityNames(GlobalRegistry().getBool(RKEY_SHOW_ENTITY_NAMES)),
+	_showAllSpeakerRadii(GlobalRegistry().getBool(RKEY_SHOW_ALL_SPEAKER_RADII)),
+	_showAllLightRadii(GlobalRegistry().getBool(RKEY_SHOW_ALL_LIGHT_RADII)),
+	_dragResizeEntitiesSymmetrically(GlobalRegistry().getBool(RKEY_DRAG_RESIZE_SYMMETRICALLY)),
+	_alwaysShowLightVertices(GlobalRegistry().getBool(RKEY_ALWAYS_SHOW_LIGHT_VERTICES)),
+	_freeModelRotation(GlobalRegistry().getBool(RKEY_FREE_MODEL_ROTATION))
 {
 	// Register this class as keyobserver
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
@@ -17,13 +18,16 @@ EntitySettings::EntitySettings() :
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ALL_LIGHT_RADII);
 	GlobalRegistry().addKeyObserver(this, RKEY_DRAG_RESIZE_SYMMETRICALLY);
 	GlobalRegistry().addKeyObserver(this, RKEY_ALWAYS_SHOW_LIGHT_VERTICES);
+	GlobalRegistry().addKeyObserver(this, RKEY_FREE_MODEL_ROTATION);
 }
 
-EntitySettings::~EntitySettings() {
+EntitySettings::~EntitySettings() 
+{
 	GlobalRegistry().removeKeyObserver(this);
 }
 
-EntitySettingsPtr& EntitySettings::InstancePtr() {
+EntitySettingsPtr& EntitySettings::InstancePtr()
+{
 	static EntitySettingsPtr _entitySettingsInstancePtr(new EntitySettings);
 
 	// Put an assertion here to catch calls after shutdown
@@ -32,7 +36,8 @@ EntitySettingsPtr& EntitySettings::InstancePtr() {
 	return _entitySettingsInstancePtr;
 }
 
-void EntitySettings::destroy() {
+void EntitySettings::destroy()
+{
 	// free the instance
 	InstancePtr() = EntitySettingsPtr();
 }
@@ -41,21 +46,29 @@ void EntitySettings::destroy() {
 void EntitySettings::keyChanged(const std::string& key, const std::string& value)
 {
 	// Update the internal value
-	if (key == RKEY_SHOW_ENTITY_NAMES) {
+	if (key == RKEY_SHOW_ENTITY_NAMES)
+	{
         _renderEntityNames = (value == "1");
 	}
-	else if (key == RKEY_SHOW_ALL_SPEAKER_RADII) {
+	else if (key == RKEY_SHOW_ALL_SPEAKER_RADII)
+	{
 		_showAllSpeakerRadii = (value == "1");
 	}
-	else if (key == RKEY_SHOW_ALL_LIGHT_RADII) {
+	else if (key == RKEY_SHOW_ALL_LIGHT_RADII)
+	{
 		_showAllLightRadii = (value == "1");
 	}
-	else if (key == RKEY_DRAG_RESIZE_SYMMETRICALLY) {
+	else if (key == RKEY_DRAG_RESIZE_SYMMETRICALLY)
+	{
 		_dragResizeEntitiesSymmetrically = (value == "1");
 	}
 	else if (key == RKEY_ALWAYS_SHOW_LIGHT_VERTICES)
 	{
 		_alwaysShowLightVertices = (value == "1");
+	}
+	else if (key == RKEY_FREE_MODEL_ROTATION)
+	{
+		_freeModelRotation = (value == "1");
 	}
 
 	// Redraw the scene
