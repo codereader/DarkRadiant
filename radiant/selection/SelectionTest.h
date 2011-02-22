@@ -3,7 +3,7 @@
 
 #include "math/matrix.h"
 #include "math/Vector3.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 
 #include "view.h"
 #include "BestPoint.h"

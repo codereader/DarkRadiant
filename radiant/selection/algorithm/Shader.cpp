@@ -5,7 +5,7 @@
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "igroupnode.h"
 #include "selectionlib.h"
 #include "gtkutil/dialog.h"

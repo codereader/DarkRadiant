@@ -2,7 +2,7 @@
 
 #include "modelskin.h"
 #include "math/frustum.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "irenderable.h"
 
 #include <boost/algorithm/string/replace.hpp>

@@ -5,6 +5,7 @@
 #include "iuimanager.h"
 #include "iregistry.h"
 #include "iselection.h"
+#include "iselectiontest.h"
 #include "math/Vector3.h"
 
 class VertexInstance :

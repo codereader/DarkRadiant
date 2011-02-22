@@ -132,7 +132,7 @@
     <ClInclude Include="..\..\include\irendersystemfactory.h" />
     <ClInclude Include="..\..\include\iscenegraph.h" />
     <ClInclude Include="..\..\include\iscript.h" />
-    <ClInclude Include="..\..\include\iselectable.h" />
+    <ClInclude Include="..\..\include\iselectiontest.h" />
     <ClInclude Include="..\..\include\iselection.h" />
     <ClInclude Include="..\..\include\iselectionset.h" />
     <ClInclude Include="..\..\include\ishaders.h" />

@@ -9,7 +9,7 @@
 #include <time.h>
 #include <boost/format.hpp>
 
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "selectionlib.h"
 #include "map/Map.h"
 #include "CamRenderer.h"

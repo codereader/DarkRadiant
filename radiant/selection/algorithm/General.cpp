@@ -4,7 +4,7 @@
 #include "iselection.h"
 #include "iundo.h"
 #include "scenelib.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 
 #include "brushmanip.h"
 #include "patchmanip.h"

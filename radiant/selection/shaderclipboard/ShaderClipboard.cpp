@@ -1,7 +1,7 @@
 #include "ShaderClipboard.h"
 
 #include "i18n.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "iscenegraph.h"
 #include "iuimanager.h"
 #include "ui/mediabrowser/MediaBrowser.h"

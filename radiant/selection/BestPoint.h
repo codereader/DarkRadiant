@@ -2,7 +2,7 @@
 #define BESTPOINT_H_
 
 #include "math/Vector3.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "Manipulatables.h"
 
 /* greebo: These are functions that are needed for selection test (which points are nearest to what and something)
