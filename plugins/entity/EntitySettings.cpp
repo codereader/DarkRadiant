@@ -10,7 +10,8 @@ EntitySettings::EntitySettings() :
 	_showAllLightRadii(GlobalRegistry().getBool(RKEY_SHOW_ALL_LIGHT_RADII)),
 	_dragResizeEntitiesSymmetrically(GlobalRegistry().getBool(RKEY_DRAG_RESIZE_SYMMETRICALLY)),
 	_alwaysShowLightVertices(GlobalRegistry().getBool(RKEY_ALWAYS_SHOW_LIGHT_VERTICES)),
-	_freeModelRotation(GlobalRegistry().getBool(RKEY_FREE_MODEL_ROTATION))
+	_freeModelRotation(GlobalRegistry().getBool(RKEY_FREE_MODEL_ROTATION)),
+	_showEntityAngles(GlobalRegistry().getBool(RKEY_SHOW_ENTITY_ANGLES))
 {
 	// Register this class as keyobserver
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
@@ -19,6 +20,7 @@ EntitySettings::EntitySettings() :
 	GlobalRegistry().addKeyObserver(this, RKEY_DRAG_RESIZE_SYMMETRICALLY);
 	GlobalRegistry().addKeyObserver(this, RKEY_ALWAYS_SHOW_LIGHT_VERTICES);
 	GlobalRegistry().addKeyObserver(this, RKEY_FREE_MODEL_ROTATION);
+	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_ANGLES);
 }
 
 EntitySettings::~EntitySettings() 
@@ -69,6 +71,10 @@ void EntitySettings::keyChanged(const std::string& key, const std::string& value
 	else if (key == RKEY_FREE_MODEL_ROTATION)
 	{
 		_freeModelRotation = (value == "1");
+	}
+	else if (key == RKEY_SHOW_ENTITY_ANGLES)
+	{
+		_showEntityAngles = (value == "1");
 	}
 
 	// Redraw the scene

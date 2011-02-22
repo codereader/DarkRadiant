@@ -14,6 +14,7 @@ namespace
 	const char* const RKEY_DRAG_RESIZE_SYMMETRICALLY = "user/ui/dragResizeEntitiesSymmetrically";
 	const char* const RKEY_ALWAYS_SHOW_LIGHT_VERTICES = "user/ui/alwaysShowLightVertices";
 	const char* const RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+	const char* const RKEY_SHOW_ENTITY_ANGLES = "user/ui/xyview/showEntityAngles";
 }
 
 class EntitySettings;
@@ -44,6 +45,9 @@ class EntitySettings :
 	bool _alwaysShowLightVertices;
 
 	bool _freeModelRotation;
+
+	// true if GenericEntities should render their direction arrows
+	bool _showEntityAngles;
 
 	// Private constructor
 	EntitySettings();
@@ -76,6 +80,11 @@ public:
 	bool freeModelRotation()
 	{
 		return _freeModelRotation;
+	}
+
+	bool showEntityAngles()
+	{
+		return _showEntityAngles;
 	}
 
 	// Container for the singleton (ptr)
