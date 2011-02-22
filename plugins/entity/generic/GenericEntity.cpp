@@ -51,7 +51,8 @@ const AABB& GenericEntity::localAABB() const {
 void GenericEntity::renderArrow(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	if (GlobalRegistry().get("user/ui/xyview/showEntityAngles") == "1") {
+	if (EntitySettings::InstancePtr()->showEntityAngles())
+	{
 		collector.addRenderable(m_arrow, localToWorld);
 	}
 }
