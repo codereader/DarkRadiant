@@ -7,7 +7,7 @@
 #include "shaderlib.h"
 #include "irenderable.h"
 #include "itextstream.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "math/frustum.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"

@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define INCLUDED_SELECTIONLIB_H
 
 #include "iselection.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "scenelib.h"
 #include <stdlib.h>
 #include <list>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "scenelib.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "nameable.h"
 #include "irender.h"
 #include "modelskin.h"

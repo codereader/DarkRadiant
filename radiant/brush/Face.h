@@ -4,7 +4,7 @@
 #include "irender.h"
 #include "iundo.h"
 #include "mapfile.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 
 #include "math/Vector3.h"
 #include "math/matrix.h"

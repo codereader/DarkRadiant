@@ -2,7 +2,7 @@
 #define TEXTURABLE_H_
 
 #include <string>
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "scenelib.h"
 class Face;
 class Brush;

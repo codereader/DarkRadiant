@@ -6,7 +6,7 @@
 #include "itransformnode.h"
 #include "itextstream.h"
 #include "scenelib.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "editable.h"
 #include "brush/BrushNode.h"
 

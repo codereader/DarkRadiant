@@ -340,15 +340,15 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\include\iselectable.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\include\iselection.h"
 			>
 		</File>
 		<File
 			RelativePath="..\..\include\iselectionset.h"
+			>
+		</File>
+		<File
+			RelativePath="..\..\include\iselectiontest.h"
 			>
 		</File>
 		<File

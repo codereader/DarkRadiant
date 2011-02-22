@@ -2,7 +2,7 @@
 #include "RenderablePicoSurface.h"
 
 #include "ivolumetest.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "texturelib.h"
 #include "ishaders.h"
 #include "ifilter.h"

@@ -3,7 +3,7 @@
 
 #include <map>
 #include <set>
-#include "iselectable.h"
+#include "iselectiontest.h"
 
 typedef std::multimap<SelectionIntersection, Selectable*> SelectableSortedSet;
 

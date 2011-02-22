@@ -6,7 +6,7 @@
 #include "irenderable.h"
 #include "math/aabb.h"
 #include "math/frustum.h"
-#include "iselectable.h"
+#include "iselectiontest.h"
 #include "modelskin.h"
 #include "imodelsurface.h"
 
