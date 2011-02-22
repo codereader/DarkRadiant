@@ -146,6 +146,11 @@ void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTes
 	}
 }
 
+bool EntityNode::isHighlighted() const
+{
+	return isSelected();
+}
+
 void EntityNode::OnEClassReload()
 {
 	// Let the keyobservers reload their values

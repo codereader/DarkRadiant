@@ -60,6 +60,11 @@ public:
 		}
 	}
 
+	bool isHighlighted() const
+	{
+		return false; // never highlighted
+	}
+
 	void renderNode(const scene::ISPNodePtr& node) const
 	{
 		const scene::ISPNode::MemberList& members = node->getMembers();

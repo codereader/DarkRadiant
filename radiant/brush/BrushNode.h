@@ -149,6 +149,7 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void viewChanged() const;
+	bool isHighlighted() const;
 
 	void evaluateTransform();
 

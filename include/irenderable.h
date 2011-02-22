@@ -170,6 +170,12 @@ public:
 
 	virtual void viewChanged() const
 	{ }
+
+	/**
+	 * Method to determine whether this node should be rendered as highlighted.
+	 * This is usually true for selected nodes.
+	 */
+	virtual bool isHighlighted() const = 0;
 };
 typedef boost::shared_ptr<Renderable> RenderablePtr;
 
