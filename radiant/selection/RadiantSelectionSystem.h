@@ -209,6 +209,11 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
+	bool isHighlighted() const
+	{
+		return false; // never highlighted
+	}
+
 	const Matrix4& GetPivot2World() const;
 
 	static void constructStatic();

@@ -368,6 +368,11 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	}
 }
 
+bool PatchNode::isHighlighted() const
+{
+	return isSelected();
+}
+
 void PatchNode::evaluateTransform()
 {
 	Matrix4 matrix = calculateTransform();

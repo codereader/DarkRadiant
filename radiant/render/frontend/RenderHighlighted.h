@@ -60,8 +60,8 @@ public:
 		}
 
 		node->viewChanged();
-
-		if (Node_isSelected(node) || Node_isSelected(parent))
+		
+		if (node->isHighlighted() || (parent != NULL && parent->isHighlighted()))
 		{
 			if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
 			{

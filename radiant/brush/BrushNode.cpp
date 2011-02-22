@@ -375,6 +375,11 @@ void BrushNode::viewChanged() const {
 	m_viewChanged = true;
 }
 
+bool BrushNode::isHighlighted() const
+{
+	return isSelected();
+}
+
 void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	if (!m_viewChanged) return;

@@ -141,6 +141,7 @@ public:
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	void evaluateTransform();
+	bool isHighlighted() const;
 
 protected:
 	// Gets called by the Transformable implementation whenever

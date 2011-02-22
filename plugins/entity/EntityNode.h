@@ -84,6 +84,7 @@ public:
 	// Renderable implementation, can be overridden by subclasses
 	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	virtual bool isHighlighted() const;
 
 	// Adds/removes the keyobserver to/from the KeyObserverMap
 	void addKeyObserver(const std::string& key, KeyObserver& observer);

@@ -65,6 +65,11 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
+	bool isHighlighted() const
+	{
+		return false; // models are never highlighted themselves
+	}
+
 	// Returns the name of the currently active skin
 	virtual std::string getSkin() const;
 	void skinChanged(const std::string& newSkinName);

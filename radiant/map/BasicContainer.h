@@ -27,6 +27,11 @@ public:
 
 	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 	{}
+
+	bool isHighlighted() const
+	{
+		return false; // never highlighted
+	}
 };
 typedef boost::shared_ptr<BasicContainer> BasicContainerPtr;
 

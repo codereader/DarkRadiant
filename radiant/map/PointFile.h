@@ -65,6 +65,11 @@ public:
 	 */
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
+	bool isHighlighted() const
+	{
+		return false; // never highlighted
+	}
+
 	/** greebo: This sets the camera position to the next/prev leak spot.
 	 *
 	 * @forward: pass true to set to the next leak spot, false for the previous

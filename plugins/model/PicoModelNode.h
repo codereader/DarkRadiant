@@ -84,6 +84,11 @@ public:
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
+	bool isHighlighted() const
+	{
+		return false; // models are never highlighted themselves
+	}
+
 private:
 	// Instance render function
 	void submitRenderables(RenderableCollector& collector,
