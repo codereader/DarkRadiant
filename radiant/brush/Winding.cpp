@@ -121,7 +121,7 @@ void Winding::render(const RenderInfo& info) const
 	}
 
     // Submit all data to OpenGL
-	glDrawArrays(GL_TRIANGLE_FAN, 0, GLsizei(size()));
+	glDrawArrays(GL_POLYGON, 0, GLsizei(size()));
 }
 
 void Winding::testSelect(SelectionTest& test, SelectionIntersection& best)
