@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "ifilesystem.h"
 #include "ipreferencesystem.h"
+#include "icommandsystem.h"
 
 #include "xmlutil/Node.h"
 #include "xmlutil/MissingXMLNodeException.h"
@@ -286,16 +287,49 @@ const StringSet& Doom3ShaderSystem::getDependencies() const {
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;
 }
+
+#if 1
+
+class EditorImageChecker :
+	public ShaderVisitor
+{
+public:
+	static void foreachShader(const std::string& name)
+	{
+		CShaderPtr shader = GetShaderLibrary().findShader(name);
+
+		if (shader->isEditorImageNoTex())
+		{
+			globalOutputStream() << "Editor image is 'shader not found': " << shader->getName() << std::endl;
+		}
+
+		shader.reset();
+
+		GetShaderSystem()->getTextureManager().checkBindings();
+	}
+};
+
+void CheckShadersForMissingEditorImages(const cmd::ArgumentList& args)
+{
+	GetShaderLibrary().foreachShaderName(EditorImageChecker::foreachShader);
+}
+
+#endif
 
 void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Doom3ShaderSystem::initialiseModule called\n";
 
 	construct();
 	realise();
+
+#if 1
+	GlobalCommandSystem().addCommand("CheckShadersForMissingEditorImages", CheckShadersForMissingEditorImages);
+#endif
 }
 
 void Doom3ShaderSystem::shutdownModule() {

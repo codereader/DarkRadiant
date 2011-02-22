@@ -34,7 +34,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	ComponentSnappable(other),
 	PlaneSelectable(other),
 	LightCullable(other),
-	Renderable(other),
 	Transformable(other),
 	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
 	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),

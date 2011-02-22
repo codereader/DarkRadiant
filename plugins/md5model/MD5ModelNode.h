@@ -1,5 +1,4 @@
-#ifndef MD5MODELNODE_H_
-#define MD5MODELNODE_H_
+#pragma once
 
 #include "scenelib.h"
 #include "nameable.h"
@@ -15,7 +14,6 @@ class MD5ModelNode :
 	public Nameable,
 	public SelectionTestable,
 	public LightCullable,
-	public Renderable,
 	public SkinnedModel
 {
 	MD5ModelPtr _model;
@@ -80,5 +78,3 @@ private:
 typedef boost::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
 
 } // namespace md5
-
-#endif /*MD5MODELNODE_H_*/

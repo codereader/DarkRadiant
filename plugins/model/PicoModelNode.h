@@ -1,5 +1,4 @@
-#ifndef PICOMODELNODE_H_
-#define PICOMODELNODE_H_
+#pragma once
 
 #include "scenelib.h"
 #include "iselectable.h"
@@ -18,7 +17,6 @@ class PicoModelNode :
 	public Nameable,
 	public SelectionTestable,
 	public LightCullable,
-	public Renderable,
 	public SkinnedModel
 {
 	// The actual model
@@ -95,5 +93,3 @@ private:
 typedef boost::shared_ptr<PicoModelNode> PicoModelNodePtr;
 
 } // namespace model
-
-#endif /* PICOMODELNODE_H_ */

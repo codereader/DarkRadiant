@@ -1,5 +1,4 @@
-#ifndef RENDERHIGHLIGHTED_H_
-#define RENDERHIGHLIGHTED_H_
+#pragma once
 
 #include "ientity.h"
 #include "ieclass.h"
@@ -60,12 +59,7 @@ public:
 			_collector.SetState(entity->getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
 		}
 
-		RenderablePtr renderable = getRenderable(node);
-
-		if (renderable != NULL)
-		{
-			renderable->viewChanged();
-		}
+		node->viewChanged();
 
 		if (Node_isSelected(node) || Node_isSelected(parent))
 		{
@@ -73,29 +67,18 @@ public:
 			{
 				_collector.Highlight(RenderableCollector::eFace);
 			}
-			else if (renderable != NULL)
+			else
 			{
-				renderable->renderComponents(_collector, _volume);
+				node->renderComponents(_collector, _volume);
 			}
 
 			_collector.Highlight(RenderableCollector::ePrimitive);
 		}
 
-		if (renderable != NULL)
-		{
-			render(*renderable);
-		}
+		render(*node);
 
 		_collector.PopState();
 
 		return true;
 	}
-
-private:
-	RenderablePtr getRenderable(const scene::INodePtr& node)
-	{
-		return boost::dynamic_pointer_cast<Renderable>(node);
-	}
 };
-
-#endif /*RENDERHIGHLIGHTED_H_*/

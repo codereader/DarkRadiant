@@ -1,5 +1,4 @@
-#ifndef PATCHNODE_H_
-#define PATCHNODE_H_
+#pragma once
 
 #include "irenderable.h"
 #include "scenelib.h"
@@ -24,7 +23,6 @@ class PatchNode :
 	public ComponentSnappable,
 	public PlaneSelectable,
 	public LightCullable,
-	public Renderable,
 	public Transformable
 {
 	DragPlanes m_dragPlanes;
@@ -166,5 +164,3 @@ private:
 };
 typedef boost::shared_ptr<PatchNode> PatchNodePtr;
 typedef boost::weak_ptr<PatchNode> PatchNodeWeakPtr;
-
-#endif /*PATCHNODE_H_*/

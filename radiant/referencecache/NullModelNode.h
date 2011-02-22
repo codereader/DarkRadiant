@@ -1,5 +1,4 @@
-#ifndef _NULLMODELNODE_H_
-#define _NULLMODELNODE_H_
+#pragma once
 
 #include "scenelib.h"
 #include "Bounded.h"
@@ -15,9 +14,9 @@ typedef boost::shared_ptr<NullModelNode> NullModelNodePtr;
 class NullModelNode :
 	public scene::Node,
 	public SelectionTestable,
-	public Renderable,
 	public ModelNode
 {
+private:
 	NullModelPtr _nullModel;
 public:
 	// Default constructor, allocates a new NullModel
@@ -41,5 +40,3 @@ public:
 };
 
 } // namespace model
-
-#endif /* _NULLMODELNODE_H_ */

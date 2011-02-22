@@ -1,8 +1,8 @@
-#ifndef INODE_H_
-#define INODE_H_
+#pragma once
 
 #include "Bounded.h"
 #include "ilayer.h"
+#include "irenderable.h"
 
 #include <set>
 #include <string>
@@ -69,13 +69,16 @@ public:
 	virtual void post(const INodePtr& node) {}
 };
 
-/** greebo: Abstract definition of a Node, a basic element
- * 			of the scenegraph.
+/** 
+ * greebo: Abstract definition of a Node, a basic element
+ * of the scenegraph. All nodes share a certain set of 
+ * functionality, like Layer functionality or being a Renderable.
  */
 class INode :
 	public Layered,
 	public Filterable,
-	public Bounded
+	public Bounded,
+	public Renderable
 {
 public:
     /**
@@ -156,5 +159,3 @@ public:
 };
 
 } // namespace scene
-
-#endif /*INODE_H_*/

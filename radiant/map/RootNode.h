@@ -1,5 +1,4 @@
-#ifndef MAPROOTNODE_H_
-#define MAPROOTNODE_H_
+#pragma once
 
 #include "nameable.h"
 #include "inamespace.h"
@@ -59,6 +58,13 @@ public:
 	virtual void setChangedCallback(const boost::function<void()>& changed);
 	virtual std::size_t changes() const;
 
+	// Renderable implementation (empty)
+	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+	{}
+
+	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+	{}
+
 	// Nameable implementation
 	std::string name() const;
 
@@ -90,5 +96,3 @@ typedef boost::shared_ptr<RootNode> RootNodePtr;
 inline scene::INodePtr NewMapRoot(const std::string& name) {
 	return scene::INodePtr(new map::RootNode(name));
 }
-
-#endif /*MAPROOTNODE_H_*/
