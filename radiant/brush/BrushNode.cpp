@@ -39,7 +39,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	ComponentSnappable(other),
 	PlaneSelectable(other),
 	LightCullable(other),
-	Renderable(other),
 	Transformable(other),
 	m_lightList(&GlobalRenderSystem().attach(*this)),
 	m_brush(*this, other.m_brush,

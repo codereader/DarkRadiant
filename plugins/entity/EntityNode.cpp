@@ -22,7 +22,6 @@ EntityNode::EntityNode(const EntityNode& other) :
 	SelectableNode(other),
 	Namespaced(other),
 	TargetableNode(_entity, *this),
-	Renderable(other),
 	Nameable(other),
 	Transformable(other),
 	MatrixTransform(other),

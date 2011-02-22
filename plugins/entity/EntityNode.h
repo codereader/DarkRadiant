@@ -24,7 +24,6 @@ class EntityNode :
 	public SelectableNode, // derives from scene::Node
 	public Namespaced,
 	public TargetableNode,
-	public Renderable,
 	public Nameable,
 	public Transformable,
 	public MatrixTransform,	// influences local2world of child nodes
