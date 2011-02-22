@@ -2,32 +2,20 @@
 
 #include <cstddef>
 #include "imodule.h"
-#include "inode.h"
+#include <boost/shared_ptr.hpp>
 #include <boost/function/function_fwd.hpp>
 
 class RenderableCollector;
 class View;
 
-/**
- * greebo: A Selectable is everything that can be highlighted
- *         by the user in the scene (e.g. by interaction with the mouse).
- */
-class Selectable
+class Selectable;
+
+
+namespace scene
 {
-public:
-    // destructor
-	virtual ~Selectable() {}
-
-	// Set the selection status of this object
-	virtual void setSelected(bool select) = 0;
-
-	// Check the selection status of this object (TRUE == selected)
-	virtual bool isSelected() const = 0;
-
-	// Toggle the selection status
-	virtual void invertSelected() = 0;
-};
-typedef boost::shared_ptr<Selectable> SelectablePtr;
+	class INode;
+	typedef boost::shared_ptr<INode> INodePtr;
+}
 
 template<typename Element> class BasicVector2;
 typedef BasicVector2<double> Vector2;

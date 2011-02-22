@@ -3,6 +3,7 @@
 
 #include "icommandsystem.h"
 #include "iselection.h"
+#include "inode.h"
 #include <list>
 
 namespace selection {

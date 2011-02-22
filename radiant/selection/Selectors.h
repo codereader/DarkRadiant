@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include "iselectiontest.h"
+#include "iselectable.h"
 
 typedef std::multimap<SelectionIntersection, Selectable*> SelectableSortedSet;
 
