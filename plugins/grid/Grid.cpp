@@ -20,6 +20,8 @@
 
 	namespace {
 		const std::string RKEY_DEFAULT_GRID_SIZE = "user/ui/grid/defaultGridPower";
+		const std::string RKEY_GRID_LOOK_MAJOR = "user/ui/grid/majorGridLook";
+		const std::string RKEY_GRID_LOOK_MINOR = "user/ui/grid/minorGridLook";
 	}
 
 class GridManager :
@@ -150,6 +152,19 @@ public:
 		PreferencesPagePtr page = GlobalPreferenceSystem().getPage(_("Settings/Grid"));
 
 		page->appendCombo(_("Default Grid Size"), RKEY_DEFAULT_GRID_SIZE, getGridList());
+
+		ComboBoxValueList looks;
+
+		looks.push_back(_("Lines"));
+		looks.push_back(_("Dotted Lines"));
+		looks.push_back(_("More Dotted Lines"));
+		looks.push_back(_("Crosses"));
+		looks.push_back(_("Dots"));
+		looks.push_back(_("Big Dots"));
+		looks.push_back(_("Squares"));
+
+		page->appendCombo(_("Major Grid Style"), RKEY_GRID_LOOK_MAJOR, looks);
+		page->appendCombo(_("Minor Grid Style"), RKEY_GRID_LOOK_MINOR, looks);
 	}
 
 	std::size_t addGridChangeCallback(const GridChangedFunc& callback)
@@ -217,6 +232,24 @@ public:
 		gridChangeNotify();
 
 		GlobalMainFrame().updateAllWindows();
+	}
+
+	static GridLook getLookFromNumber(int i)
+	{
+		if (i >= GRIDLOOK_LINES && i <= GRIDLOOK_SQUARES)
+		{
+			return static_cast<GridLook>(i);
+		}
+
+		return GRIDLOOK_LINES;
+	}
+
+	GridLook getMajorLook() const {
+		return getLookFromNumber( GlobalRegistry().getInt(RKEY_GRID_LOOK_MAJOR) );
+	}
+
+	GridLook getMinorLook() const {
+		return getLookFromNumber( GlobalRegistry().getInt(RKEY_GRID_LOOK_MINOR) );
 	}
 
 }; // class GridManager
