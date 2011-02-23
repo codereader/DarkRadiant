@@ -138,11 +138,35 @@ void FaceInstance::iterate_selected(RenderablePointVector& points) const {
 	SelectedComponents_foreach(RenderablePointVectorPushBack(points));
 }
 
-bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const {
+bool FaceInstance::intersectVolume(const VolumeTest& volume) const
+{
+	return m_face->intersectVolume(volume);
+}
+
+bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const
+{
 	return m_face->intersectVolume(volume, localToWorld);
 }
 
 // Submit renderable geometry
+void FaceInstance::submitRenderables(RenderableCollector& collector,
+                                     const VolumeTest& volume) const
+{
+	if (m_face->contributes() && intersectVolume(volume))
+	{
+		collector.PushState();
+
+		if (selectedComponents())
+		{
+			collector.Highlight(RenderableCollector::eFace);
+		}
+
+		m_face->submitRenderables(collector, Matrix4::getIdentity());
+		collector.PopState();
+	}
+}
+
+// Submit renderable geometry (with transform)
 void FaceInstance::submitRenderables(RenderableCollector& collector,
                                      const VolumeTest& volume,
                                      const Matrix4& localToWorld) const

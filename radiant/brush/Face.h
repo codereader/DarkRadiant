@@ -133,6 +133,7 @@ public:
 
 	void flipWinding();
 
+	bool intersectVolume(const VolumeTest& volume) const;
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
     /**

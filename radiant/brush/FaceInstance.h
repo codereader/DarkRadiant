@@ -101,11 +101,19 @@ public:
 
 	void iterate_selected(RenderablePointVector& points) const;
 
+	bool intersectVolume(const VolumeTest& volume) const;
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
+
+	/**
+     * \brief
+     * Submit renderable geometry to a RenderableCollector (without l2w transform).
+     */
+	void submitRenderables(RenderableCollector& collector,
+                           const VolumeTest& volume) const;
 
     /**
      * \brief
-     * Submit renderable geometry to a RenderableCollector.
+     * Submit renderable geometry to a RenderableCollector (with l2w transform).
      */
 	void submitRenderables(RenderableCollector& collector,
                            const VolumeTest& volume,
