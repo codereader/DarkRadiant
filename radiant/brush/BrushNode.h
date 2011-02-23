@@ -60,6 +60,9 @@ class BrushNode :
 
 	static ShaderPtr m_state_selpoint;
 
+	// TRUE if any of the FaceInstance's component selection got changed or transformed
+	mutable bool _renderableComponentsNeedUpdate;
+
 public:
 	// Constructor
 	BrushNode();
