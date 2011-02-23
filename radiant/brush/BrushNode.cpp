@@ -438,7 +438,9 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 		if (!i->getFace().getFaceShader().getGLShader()->getMaterial()->isVisible()) continue;
 
         collector.setLights(i->m_lights);
-        i->submitRenderables(collector, volume, localToWorld);
+
+		// greebo: BrushNodes have always an identity l2w, don't do any transforms
+		i->submitRenderables(collector, volume);
     }
 
 	renderComponentsSelected(collector, volume, localToWorld);
