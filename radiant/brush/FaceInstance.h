@@ -16,7 +16,9 @@ typedef const Plane3* PlanePointer;
 typedef PlanePointer* PlanesIterator;
 class RenderableCollector;
 
-class FaceInstance {
+class FaceInstance
+{
+private:
 	Face* m_face;
 	ObservedSelectable m_selectable;
 	ObservedSelectable m_selectableVertices;
@@ -25,6 +27,9 @@ class FaceInstance {
 
 	VertexSelection m_vertexSelection;
 	VertexSelection m_edgeSelection;
+
+	// Cached visibility flag, queried during front end rendering
+	bool _faceIsVisible;
 
 public:
 	mutable VectorLightList m_lights;
@@ -150,6 +155,13 @@ public:
 	void connectivityChanged();
 
 	void addLight(const Matrix4& localToWorld, const RendererLight& light);
+
+	bool faceIsVisible() const
+	{
+		return _faceIsVisible;
+	}
+
+	void updateFaceVisibility();
 
 }; // class FaceInstance
 

@@ -156,6 +156,9 @@ public:
 
 	void evaluateTransform();
 
+	// Update call, issued by the FilterSystem on potential shader visibility changes
+	void updateFaceVisibility();
+
 	void setClipPlane(const Plane3& plane);
 
 	const BrushInstanceVisitor& forEachFaceInstance(const BrushInstanceVisitor& visitor);

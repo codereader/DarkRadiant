@@ -122,8 +122,10 @@ void BrushNode::testSelect(Selector& selector, SelectionTest& test) {
 	test.BeginMesh(localToWorld());
 
 	SelectionIntersection best;
-	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		if (i->getFace().getFaceShader().getGLShader()->getMaterial()->isVisible()) {
+	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i)
+	{
+		if (i->faceIsVisible())
+		{
 			i->testSelect(test, best);
 		}
 	}
@@ -409,8 +411,8 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 		 ++i, ++j, ++curFaceIndex)
 	{
 		// Check if face is filtered before adding to visibility matrix
-		if (i->getFace().getFaceShader().getGLShader()->getMaterial()->isVisible() &&
-			i->intersectVolume(volume, localToWorld))
+		// greebo: Removed localToWorld transformation here, brushes don't have a non-identity l2w
+		if (i->faceIsVisible() && i->intersectVolume(volume))
 		{
 			*j = true;
 
@@ -440,7 +442,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
          ++i)
     {
 		// Skip invisible faces before traversing further
-		if (!i->getFace().getFaceShader().getGLShader()->getMaterial()->isVisible()) continue;
+		if (!i->faceIsVisible()) continue;
 
         collector.setLights(i->m_lights);
 
@@ -499,6 +501,14 @@ void BrushNode::evaluateTransform() {
 	}
 	else {
 		transformComponents(matrix);
+	}
+}
+
+void BrushNode::updateFaceVisibility()
+{
+	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i)
+	{
+		i->updateFaceVisibility();
 	}
 }
 

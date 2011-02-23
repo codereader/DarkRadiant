@@ -212,6 +212,9 @@ public:
 	// Returns TRUE if any face materials are visible
 	bool hasVisibleMaterial() const;
 
+	// Update call issued by the filter system
+	void updateFaceVisibility();
+
 	void evaluateBRep() const;
 
 	void transformChanged();

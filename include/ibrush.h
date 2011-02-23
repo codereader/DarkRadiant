@@ -136,6 +136,13 @@ public:
 	// Returns TRUE if any of the brush's faces has a visible material, FALSE if all faces are effectively hidden
 	virtual bool hasVisibleMaterial() const = 0;
 
+	/**
+	 * greebo: This is used by the filter system (for example) to trigger
+	 * an update of the cached visibility flags. This enables a brush
+	 * to quickly cull its hidden faces without issuing lots of internal calls.
+	 */
+	virtual void updateFaceVisibility() = 0;
+
 	// Saves the current state to the undo stack.
 	// Call this before manipulating the brush to make your action undo-able.
 	virtual void undoSave() = 0;

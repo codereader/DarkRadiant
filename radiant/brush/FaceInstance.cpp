@@ -25,18 +25,22 @@ inline bool triangles_same_winding(const BasicVector3<Element>& x1, const BasicV
 // -------------- FaceInstance implementation ---------------------------------------
 
 FaceInstance::FaceInstance(Face& face, const SelectionChangeCallback& observer) :
-		m_face(&face),
-		m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
-		m_selectableVertices(observer),
-		m_selectableEdges(observer),
-		m_selectionChanged(observer) {}
+	m_face(&face),
+	m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
+	m_selectableVertices(observer),
+	m_selectableEdges(observer),
+	m_selectionChanged(observer),
+	_faceIsVisible(true)
+{}
 
 FaceInstance::FaceInstance(const FaceInstance& other) :
-		m_face(other.m_face),
-		m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
-		m_selectableVertices(other.m_selectableVertices),
-		m_selectableEdges(other.m_selectableEdges),
-		m_selectionChanged(other.m_selectionChanged) {}
+	m_face(other.m_face),
+	m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
+	m_selectableVertices(other.m_selectableVertices),
+	m_selectableEdges(other.m_selectableEdges),
+	m_selectionChanged(other.m_selectionChanged),
+	_faceIsVisible(other._faceIsVisible)
+{}
 
 FaceInstance& FaceInstance::operator=(const FaceInstance& other) {
 	m_face = other.m_face;
@@ -77,8 +81,9 @@ bool FaceInstance::isSelected() const {
 	return m_selectable.isSelected();
 }
 
-bool FaceInstance::selectedComponents() const {
-	return selectedVertices() || selectedEdges() || isSelected();
+bool FaceInstance::selectedComponents() const
+{
+	return !m_vertexSelection.empty() || !m_edgeSelection.empty() || m_selectable.isSelected();
 }
 
 bool FaceInstance::selectedComponents(SelectionSystem::EComponentMode mode) const {
@@ -152,7 +157,7 @@ bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& loca
 void FaceInstance::submitRenderables(RenderableCollector& collector,
                                      const VolumeTest& volume) const
 {
-	if (m_face->contributes() && intersectVolume(volume))
+	if (m_face->intersectVolume(volume))
 	{
 		collector.PushState();
 
@@ -171,7 +176,7 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
                                      const VolumeTest& volume,
                                      const Matrix4& localToWorld) const
 {
-	if (m_face->contributes() && intersectVolume(volume, localToWorld))
+	if (m_face->intersectVolume(volume, localToWorld))
 	{
 		collector.PushState();
 
@@ -438,5 +443,10 @@ void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& li
     {
 		m_lights.addLight(light);
 	}
+}
+
+void FaceInstance::updateFaceVisibility()
+{
+	_faceIsVisible = getFace().contributes() && getFace().getFaceShader().getGLShader()->getMaterial()->isVisible();
 }
 
