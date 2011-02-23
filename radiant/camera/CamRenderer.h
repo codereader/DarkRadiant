@@ -3,16 +3,26 @@
 
 #include "renderer.h"
 
-class CamRenderer: public RenderableCollector {
-  struct state_type
-  {
-    state_type() : m_highlight(0), m_lights(0)
-    {
-    }
-    unsigned int m_highlight;
-    ShaderPtr m_state;
-    const LightList* m_lights;
-  };
+class CamRenderer :
+	public RenderableCollector
+{
+private:
+
+	struct state_type
+	{
+		state_type() : 
+			highlight(0), 
+			state(NULL), 
+			lights(0)
+		{}
+
+		unsigned int highlight;
+
+		// use raw pointers, this gets assigned very, very often
+		Shader* state;	
+
+		const LightList* lights;
+	};
 
   std::vector<state_type> m_state_stack;
   RenderStateFlags m_globalstate;
@@ -29,6 +39,10 @@ public:
   {
     ASSERT_NOTNULL(select0);
     ASSERT_NOTNULL(select1);
+
+	// avoid reallocations
+	m_state_stack.reserve(10);
+
     m_state_stack.push_back(state_type());
   }
 
@@ -37,7 +51,7 @@ public:
     if(style == eFullMaterials)
     {
 		ASSERT_NOTNULL(state);
-		m_state_stack.back().m_state = state;
+		m_state_stack.back().state = state.get();
     }
   }
   const EStyle getStyle() const
@@ -56,25 +70,25 @@ public:
   void Highlight(EHighlightMode mode, bool bEnable = true)
   {
     (bEnable)
-      ? m_state_stack.back().m_highlight |= mode
-      : m_state_stack.back().m_highlight &= ~mode;
+      ? m_state_stack.back().highlight |= mode
+      : m_state_stack.back().highlight &= ~mode;
   }
   void setLights(const LightList& lights)
   {
-    m_state_stack.back().m_lights = &lights;
+    m_state_stack.back().lights = &lights;
   }
   void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world)
   {
-    if(m_state_stack.back().m_highlight & ePrimitive)
+    if(m_state_stack.back().highlight & ePrimitive)
     {
-      m_state_select0->addRenderable(renderable, world, m_state_stack.back().m_lights);
+      m_state_select0->addRenderable(renderable, world, m_state_stack.back().lights);
     }
-    if(m_state_stack.back().m_highlight & eFace)
+    if(m_state_stack.back().highlight & eFace)
     {
-      m_state_select1->addRenderable(renderable, world, m_state_stack.back().m_lights);
+      m_state_select1->addRenderable(renderable, world, m_state_stack.back().lights);
     }
 
-    m_state_stack.back().m_state->addRenderable(renderable, world, m_state_stack.back().m_lights);
+    m_state_stack.back().state->addRenderable(renderable, world, m_state_stack.back().lights);
   }
 
   void render(const Matrix4& modelview, const Matrix4& projection)
