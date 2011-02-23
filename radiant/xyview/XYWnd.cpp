@@ -896,42 +896,117 @@ void XYWnd::drawGrid() {
 		Vector3 colourGridMinor = ColourSchemes().getColour("grid_minor");
 		Vector3 colourGridMajor = ColourSchemes().getColour("grid_major");
 
-		// draw minor blocks
-		if (colourGridMinor != colourGridBack) {
-			glColor3dv(colourGridMinor);
+		// run grid rendering twice, first run is minor grid, then major
+		// NOTE: with a bit more work, we can have variable number of grids
+		for (int gf = 0 ; gf < 2 ; ++gf ) {
+			double cur_step, density, sizeFactor;
+			GridLook look;
 
-			glBegin (GL_LINES);
-			int i = 0;
-			for (x = xb ; x < xe ; x += minor_step, ++i) {
-				if ((i & mask) != 0) {
-					glVertex2d (x, yb);
-					glVertex2d (x, ye);
-				}
-			}
-			i = 0;
-			for (y = yb ; y < ye ; y += minor_step, ++i) {
-				if ((i & mask) != 0) {
-					glVertex2d (xb, y);
-					glVertex2d (xe, y);
-				}
-			}
-			glEnd();
-		}
+			if (gf) {
+				// major grid
+				if (colourGridMajor == colourGridBack)
+					continue;
 
-		// draw major blocks
-		if (colourGridMajor != colourGridBack) {
-			glColor3dv(colourGridMajor);
+				glColor3dv(colourGridMajor);
+				look = GlobalGrid().getMajorLook();
+				cur_step = step;
+				density = 4;
+				// slightly bigger crosses
+				sizeFactor = 1.95;
+			} else {
+				// minor grid (rendered first)
+				if (colourGridMinor == colourGridBack)
+					continue;
+				glColor3dv(colourGridMinor);
+				look = GlobalGrid().getMinorLook();
+				cur_step = minor_step;
+				density = 4;
+				sizeFactor = 0.95;
+			}
 
-			glBegin (GL_LINES);
-			for (x=xb ; x<=xe ; x+=step) {
-				glVertex2d (x, yb);
-				glVertex2d (x, ye);
+			switch (look) {
+				case GRIDLOOK_DOTS:
+					glBegin (GL_POINTS);
+					for (x = xb ; x < xe ; x += cur_step) {
+						for (y = yb ; y < ye ; y += cur_step) {
+							glVertex2d (x, y);
+						}
+					}
+					glEnd();
+					break;
+				case GRIDLOOK_BIGDOTS:
+					glPointSize(3);
+					glEnable(GL_POINT_SMOOTH);
+					glBegin (GL_POINTS);
+					for (x = xb ; x < xe ; x += cur_step) {
+						for (y = yb ; y < ye ; y += cur_step) {
+							glVertex2d (x, y);
+						}
+					}
+					glEnd();
+					glDisable(GL_POINT_SMOOTH);
+					glPointSize(1);
+					break;
+				case GRIDLOOK_SQUARES:
+					glPointSize(3);
+					glBegin (GL_POINTS);
+					for (x = xb ; x < xe ; x += cur_step) {
+						for (y = yb ; y < ye ; y += cur_step) {
+							glVertex2d (x, y);
+						}
+					}
+					glEnd();
+					glPointSize(1);
+					break;
+				case GRIDLOOK_MOREDOTLINES:
+					density = 8;
+				case GRIDLOOK_DOTLINES:
+					glBegin (GL_POINTS);
+					for (x = xb ; x < xe ; x += cur_step) {
+						for (y = yb ; y < ye ; y += minor_step / density) {
+							glVertex2d (x, y);
+						}
+					}
+
+					for (y = yb ; y < ye ; y += cur_step) {
+						for (x = xb ; x < xe ; x += minor_step / density) {
+							glVertex2d (x, y);
+						}
+					}
+					glEnd();
+					break;
+				case GRIDLOOK_CROSSES:
+					glBegin (GL_LINES);
+					for (x=xb ; x<=xe ; x+=cur_step) {
+						for (y=yb ; y<=ye ; y+=cur_step) {
+							glVertex2d (x - sizeFactor / m_fScale, y);
+							glVertex2d (x + sizeFactor / m_fScale, y);
+							glVertex2d (x, y - sizeFactor / m_fScale);
+							glVertex2d (x, y + sizeFactor / m_fScale);
+						}
+					}
+					glEnd();
+					break;
+				case GRIDLOOK_LINES:
+				default:
+					glBegin (GL_LINES);
+					int i = 0;
+					for (x = xb ; x < xe ; x += cur_step, ++i) {
+						if ((i & mask) != 0) {
+							glVertex2d (x, yb);
+							glVertex2d (x, ye);
+						}
+					}
+					i = 0;
+					for (y = yb ; y < ye ; y += cur_step, ++i) {
+						if ((i & mask) != 0) {
+							glVertex2d (xb, y);
+							glVertex2d (xe, y);
+						}
+					}
+					glEnd();
+					break;
 			}
-			for (y=yb ; y<=ye ; y+=step) {
-				glVertex2d (xb, y);
-				glVertex2d (xe, y);
-			}
-			glEnd();
 		}
 	}
 

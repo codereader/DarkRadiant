@@ -24,6 +24,18 @@ enum GridSize {
 	GRID_256 = 8,
 };
 
+
+// grid renderings
+enum GridLook {
+	GRIDLOOK_LINES,
+	GRIDLOOK_DOTLINES,
+	GRIDLOOK_MOREDOTLINES,
+	GRIDLOOK_CROSSES,
+	GRIDLOOK_DOTS,
+	GRIDLOOK_BIGDOTS,
+	GRIDLOOK_SQUARES,
+};
+
 const std::string MODULE_GRID("Grid");
 
 class IGridManager :
@@ -37,6 +49,9 @@ public:
 
 	virtual void gridDown() = 0;
 	virtual void gridUp() = 0;
+
+	virtual GridLook getMajorLook() const = 0;
+	virtual GridLook getMinorLook() const = 0;
 
 	typedef boost::function<void()> GridChangedFunc;
 	virtual std::size_t addGridChangeCallback(const GridChangedFunc& callback) = 0;
