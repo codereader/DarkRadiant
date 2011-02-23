@@ -314,7 +314,7 @@ public:
 	 * An Material subclass with information about the shader definition
 	 */
 
-	virtual MaterialPtr getMaterial() const = 0;
+	virtual const MaterialPtr& getMaterial() const = 0;
 
   virtual unsigned int getFlags() const = 0;
 };
