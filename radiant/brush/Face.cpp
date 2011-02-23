@@ -174,9 +174,10 @@ void Face::flipWinding() {
 
 bool Face::intersectVolume(const VolumeTest& volume) const
 {
-	if (m_winding.size() > 0)
+	if (!m_winding.empty())
 	{
-		return volume.TestPlane(Plane3(plane3().normal(), -plane3().dist()));
+		const Plane3& plane = m_planeTransformed.getPlane();
+		return volume.TestPlane(Plane3(plane.normal(), -plane.dist()));
 	}
 	else
 	{
