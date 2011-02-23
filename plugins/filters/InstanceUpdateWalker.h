@@ -103,6 +103,12 @@ public:
 			bool isVisible = _brushesAreVisible && brush->hasVisibleMaterial();
 
 			Node_traverseSubgraph(node, isVisible ? _showWalker : _hideWalker);
+
+			// In case the brush has at least one visible material trigger a fine-grained update
+			if (isVisible)
+			{
+				brush->updateFaceVisibility();
+			}
 		}
 
 		if (!node->visible())

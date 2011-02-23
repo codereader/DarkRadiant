@@ -229,6 +229,11 @@ bool Brush::hasVisibleMaterial() const
 	return false;
 }
 
+void Brush::updateFaceVisibility()
+{
+	_owner.updateFaceVisibility();
+}
+
 void Brush::evaluateBRep() const {
 	if(m_planeChanged) {
 		m_planeChanged = false;
