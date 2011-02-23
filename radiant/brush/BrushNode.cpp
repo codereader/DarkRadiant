@@ -16,7 +16,8 @@ BrushNode::BrushNode() :
 	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
-	m_viewChanged(false)
+	m_viewChanged(false),
+	_renderableComponentsNeedUpdate(true)
 {
 	m_brush.attach(*this); // BrushObserver
 
@@ -47,7 +48,8 @@ BrushNode::BrushNode(const BrushNode& other) :
 	_selectable(boost::bind(&BrushNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
-	m_viewChanged(false)
+	m_viewChanged(false),
+	_renderableComponentsNeedUpdate(true)
 {
 	m_brush.attach(*this); // BrushObserver
 }
@@ -217,7 +219,10 @@ void BrushNode::selectedChanged(const Selectable& selectable) {
 	// TODO? instance->selectedChanged();
 }
 
-void BrushNode::selectedChangedComponent(const Selectable& selectable) {
+void BrushNode::selectedChangedComponent(const Selectable& selectable)
+{
+	_renderableComponentsNeedUpdate = true;
+
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
@@ -458,7 +463,12 @@ void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 	renderComponentsSelected(collector, volume, localToWorld);
 }
 
-void BrushNode::update_selected() const {
+void BrushNode::update_selected() const
+{
+	if (!_renderableComponentsNeedUpdate) return;
+
+	_renderableComponentsNeedUpdate = false;
+
 	m_render_selected.clear();
 
 	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
@@ -512,6 +522,8 @@ const BrushInstanceVisitor& BrushNode::forEachFaceInstance(const BrushInstanceVi
 void BrushNode::_onTransformationChanged()
 {
 	m_brush.transformChanged();
+
+	_renderableComponentsNeedUpdate = true;
 }
 
 void BrushNode::_applyTransformation()
