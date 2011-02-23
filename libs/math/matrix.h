@@ -317,16 +317,25 @@ public:
      */
     void scaleBy(const Vector3& scale);
 
-};
+	/**
+	 * Equality operator, Returns true if this and the other are exactly element-wise equal.
+	 */
+	bool operator==(const Matrix4& other) const
+	{
+	  return xx() == other.xx() && xy() == other.xy() && xz() == other.xz() && xw() == other.xw()
+		&& yx() == other.yx() && yy() == other.yy() && yz() == other.yz() && yw() == other.yw()
+		&& zx() == other.zx() && zy() == other.zy() && zz() == other.zz() && zw() == other.zw()
+		&& tx() == other.tx() && ty() == other.ty() && tz() == other.tz() && tw() == other.tw();
+	}
 
-/// \brief Returns true if \p self and \p other are exactly element-wise equal.
-inline bool operator==(const Matrix4& self, const Matrix4& other)
-{
-  return self.xx() == other.xx() && self.xy() == other.xy() && self.xz() == other.xz() && self.xw() == other.xw()
-    && self.yx() == other.yx() && self.yy() == other.yy() && self.yz() == other.yz() && self.yw() == other.yw()
-    && self.zx() == other.zx() && self.zy() == other.zy() && self.zz() == other.zz() && self.zw() == other.zw()
-    && self.tx() == other.tx() && self.ty() == other.ty() && self.tz() == other.tz() && self.tw() == other.tw();
-}
+	/** 
+	 * Inequality operator.
+	 */
+	bool operator!=(const Matrix4& other) const
+	{
+		return !operator==(other);
+	}
+};
 
 /// \brief Returns true if \p self and \p other are element-wise equal within \p epsilon.
 inline bool matrix4_equal_epsilon(const Matrix4& self, const Matrix4& other, double epsilon)
