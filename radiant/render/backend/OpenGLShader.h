@@ -143,7 +143,7 @@ public:
 	void unrealise();
 
 	// Return the Material*
-	MaterialPtr getMaterial() const
+	const MaterialPtr& getMaterial() const
     {
 		return _material;
 	}
