@@ -326,9 +326,9 @@ public:
 	// Returns a vector with the reciprocal values of each component
 	BasicVector3<Element> getInversed() {
   		return BasicVector3<Element>(
-			1.0 / _v[0],
-			1.0 / _v[1],
-			1.0 / _v[2]
+			1.0f / _v[0],
+			1.0f / _v[1],
+			1.0f / _v[2]
 		);
 	}
 

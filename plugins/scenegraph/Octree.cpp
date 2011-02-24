@@ -9,8 +9,8 @@ namespace scene
 
 namespace
 {
-	const double START_SIZE = 512.0;
-	const double MAX_WORLD_COORD = 65536;
+	const float START_SIZE = 512.0f;
+	const float MAX_WORLD_COORD = 65536;
 
 	const AABB START_AABB(Vector3(0,0,0), Vector3(START_SIZE, START_SIZE, START_SIZE));
 }

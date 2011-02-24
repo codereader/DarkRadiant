@@ -96,7 +96,7 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 			tok.skipTokens(3);
 
 			// Finally, add the new face to the brush
-			IFace& face = brush.addFace(plane, texdef, shader);
+			/*IFace& face = */brush.addFace(plane, texdef, shader);
 		}
 		else
 		{

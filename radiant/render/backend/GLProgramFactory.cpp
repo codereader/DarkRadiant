@@ -121,7 +121,7 @@ void GLProgramFactory::assertShaderCompiled(GLuint shader)
 
         // Get log chars in buffer
         std::vector<char> logBuf(logLength + 1, 0);
-        glGetShaderInfoLog(shader, logBuf.size(), NULL, &logBuf.front());
+        glGetShaderInfoLog(shader, static_cast<GLsizei>(logBuf.size()), NULL, &logBuf.front());
 
         // Convert to string and throw exception
         std::string logStr = std::string(&logBuf.front());
@@ -140,7 +140,7 @@ std::string GLProgramFactory::getProgramInfoLog(GLuint program)
 
     // Get log chars in buffer
     std::vector<char> logBuf(logLength + 1, 0);
-    glGetProgramInfoLog(program, logBuf.size(), NULL, &logBuf.front());
+    glGetProgramInfoLog(program, static_cast<GLsizei>(logBuf.size()), NULL, &logBuf.front());
 
     // Convert to string and return
     std::string logStr = std::string(&logBuf.front());

@@ -188,7 +188,7 @@ void ModelPreview::setModel(const std::string& model)
 		_rotation = Matrix4::getIdentity();
 
 		// Calculate camera distance so model is appropriately zoomed
-		_camDist = -(_model->localAABB().getRadius() * 2.0);
+		_camDist = -(_model->localAABB().getRadius() * 2.0f);
 
 		_lastModel = modelToLoad;
 	}
@@ -268,8 +268,8 @@ bool ModelPreview::callbackGLMotion(GdkEventMotion* ev)
 
 		// Calculate the mouse delta as a vector in the XY plane, and store the
 		// current position for the next event.
-		Vector3 deltaPos(ev->x - _lastX,
-						 _lastY - ev->y,
+		Vector3 deltaPos(static_cast<float>(ev->x - _lastX),
+						 static_cast<float>(_lastY - ev->y),
 						 0);
 		_lastX = ev->x;
 		_lastY = ev->y;
@@ -305,7 +305,7 @@ bool ModelPreview::callbackGLScroll(GdkEventScroll* ev)
 {
 	if (_model == NULL) return false;
 
-	float inc = _model->localAABB().getRadius() * 0.1; // Scroll increment is a fraction of the AABB radius
+	float inc = _model->localAABB().getRadius() * 0.1f; // Scroll increment is a fraction of the AABB radius
 	if (ev->direction == GDK_SCROLL_UP)
 		_camDist += inc;
 	else if (ev->direction == GDK_SCROLL_DOWN)

@@ -30,7 +30,7 @@ public:
 		int z = int(maxDist * (float(std::rand()) / float(RAND_MAX)));
 
 		// Construct a vector and return the formatted string
-		return Vector3(x, y, z);
+		return Vector3(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z));
 	}
 };
 
