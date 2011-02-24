@@ -105,7 +105,7 @@ Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 		throw parser::ParseException("Couldn't parse Vector4, not enough components found.");
 	}
 
-	return Vector4(strToDouble(comp[0]), strToDouble(comp[1]), strToDouble(comp[2]), strToDouble(comp[3]));
+	return Vector4(strToFloat(comp[0]), strToFloat(comp[1]), strToFloat(comp[2]), strToFloat(comp[3]));
 }
 
 float GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)

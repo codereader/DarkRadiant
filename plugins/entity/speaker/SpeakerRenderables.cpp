@@ -7,16 +7,16 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
   if (radius <= 0)
     return;
 
-  const double dt = c_2pi / static_cast<double>(sides);
-  const double dp = c_pi / static_cast<double>(sides);
+  const float dt = static_cast<float>(c_2pi) / static_cast<float>(sides);
+  const float dp = static_cast<float>(c_pi) / static_cast<float>(sides);
 
   glBegin(GL_TRIANGLES);
   for (int i = 0; i <= sides - 1; ++i)
   {
     for (int j = 0; j <= sides - 2; ++j)
     {
-      const double t = i * dt;
-      const double p = (j * dp) - (c_pi / 2.0);
+      const float t = i * dt;
+      const float p = (j * dp) - (c_pi / 2.0);
 
       {
         Vector3 v(origin + vector3_for_spherical(t, p) * radius);
@@ -51,10 +51,10 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
   }
 
   {
-    const double p = (sides - 1) * dp - (c_pi / 2.0);
+    const float p = (sides - 1) * dp - (static_cast<float>(c_pi) / 2.0f);
     for (int i = 0; i <= sides - 1; ++i)
     {
-      const double t = i * dt;
+      const float t = i * dt;
 
       {
         Vector3 v(origin + vector3_for_spherical(t, p) * radius);
@@ -82,12 +82,12 @@ void sphereDrawWire(const Vector3& origin, float radius, int sides)
 
     for (int i = 0; i <= sides; i++)
     {
-      double ds = sin((i * 2 * c_pi) / sides);
-      double dc = cos((i * 2 * c_pi) / sides);
+      float ds = sin((i * 2 * static_cast<float>(c_pi)) / sides);
+      float dc = cos((i * 2 * static_cast<float>(c_pi)) / sides);
 
       glVertex3d(
-        static_cast<float>(origin[0] + radius * dc),
-        static_cast<float>(origin[1] + radius * ds),
+        origin[0] + radius * dc,
+        origin[1] + radius * ds,
         origin[2]
       );
     }
@@ -100,13 +100,13 @@ void sphereDrawWire(const Vector3& origin, float radius, int sides)
 
     for (int i = 0; i <= sides; i++)
     {
-      double ds = sin((i * 2 * c_pi) / sides);
-      double dc = cos((i * 2 * c_pi) / sides);
+      float ds = sin((i * 2 * static_cast<float>(c_pi)) / sides);
+      float dc = cos((i * 2 * static_cast<float>(c_pi)) / sides);
 
       glVertex3d(
-        static_cast<float>(origin[0] + radius * dc),
+        origin[0] + radius * dc,
         origin[1],
-        static_cast<float>(origin[2] + radius * ds)
+        origin[2] + radius * ds
       );
     }
 
@@ -118,13 +118,13 @@ void sphereDrawWire(const Vector3& origin, float radius, int sides)
 
     for (int i = 0; i <= sides; i++)
     {
-      double ds = sin((i * 2 * c_pi) / sides);
-      double dc = cos((i * 2 * c_pi) / sides);
+      float ds = sin((i * 2 * static_cast<float>(c_pi)) / sides);
+      float dc = cos((i * 2 * static_cast<float>(c_pi)) / sides);
 
       glVertex3d(
         origin[0],
-        static_cast<float>(origin[1] + radius * dc),
-        static_cast<float>(origin[2] + radius * ds)
+        origin[1] + radius * dc,
+        origin[2] + radius * ds
       );
     }
 

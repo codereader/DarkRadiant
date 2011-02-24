@@ -19,7 +19,7 @@
 
 const double GRID_MIN = 0.125;
 
-typedef double (*QuantiseFunc)(double f);
+typedef float (*QuantiseFunc)(float f);
 
 class Face;
 typedef boost::shared_ptr<Face> FacePtr;

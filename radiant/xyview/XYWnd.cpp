@@ -1180,7 +1180,7 @@ void XYWnd::drawBlockGrid() {
 void XYWnd::drawCameraIcon(const Vector3& origin, const Vector3& angles)
 {
 	float	x, y, fov, box;
-	double a;
+	float a;
 
 	fov = 48 / m_fScale;
 	box = 16 / m_fScale;

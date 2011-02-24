@@ -144,10 +144,10 @@ RenderablePicoSurface::~RenderablePicoSurface()
 // Convert byte pointers to colour vector
 Vector3 RenderablePicoSurface::getColourVector(unsigned char* array) {
 	if (array) {
-		return Vector3(array[0] / 255.0, array[1] / 255.0, array[2] / 255.0);
+		return Vector3(array[0] / 255.0f, array[1] / 255.0f, array[2] / 255.0f);
 	}
 	else {
-		return Vector3(1.0, 1.0, 1.0); // white
+		return Vector3(1.0f, 1.0f, 1.0f); // white
 	}
 }
 
