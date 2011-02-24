@@ -100,7 +100,7 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			tok.skipTokens(3);
 
 			// Finally, add the new face to the brush
-			IFace& face = brush.addFace(plane, texdef, shader);
+			/*IFace& face = */brush.addFace(plane, texdef, shader);
 		}
 		else {
 			std::string text = (boost::format(_("BrushDef3Parser: invalid token '%s'")) % token).str();
@@ -171,7 +171,7 @@ scene::INodePtr BrushDef3ParserQuake4::parse(parser::DefTokeniser& tok) const
 			std::string shader = tok.nextToken();
 
 			// Finally, add the new face to the brush
-			IFace& face = brush.addFace(plane, texdef, shader);
+			/*IFace& face = */brush.addFace(plane, texdef, shader);
 		}
 		else {
 			std::string text = (boost::format(_("BrushDef3ParserQuake4: invalid token '%s'")) % token).str();

@@ -153,7 +153,7 @@ int MenuItem::getMenuPosition(const MenuItemPtr& child)
 			// Get the widget pointer from the current list item
 			if (children[i] == childWidget)
 			{
-				return i;
+				return static_cast<int>(i);
 			}
 		}
 	}

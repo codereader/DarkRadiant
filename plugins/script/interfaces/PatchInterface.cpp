@@ -47,7 +47,7 @@ public:
 	std::size_t getWidth() const
 	{
 		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return -1;
+		if (patchNode == NULL) return 0;
 
 		return patchNode->getPatch().getWidth();
 	}
@@ -55,7 +55,7 @@ public:
 	std::size_t getHeight() const
 	{
 		IPatchNodePtr patchNode = boost::dynamic_pointer_cast<IPatchNode>(_node.lock());
-		if (patchNode == NULL) return -1;
+		if (patchNode == NULL) return 0;
 
 		return patchNode->getPatch().getHeight();
 	}

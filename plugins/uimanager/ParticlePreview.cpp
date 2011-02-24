@@ -245,7 +245,7 @@ void ParticlePreview::setParticle(const std::string& name)
 		stopPlayback();
 
 		// Reset the rotation to the default one
-		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3,1));
+		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
 		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
 
 		// Call update(0) once to enable the bounds calculation
@@ -377,7 +377,7 @@ void ParticlePreview::onSizeAllocate(Gtk::Allocation& allocation)
 
 Matrix4 ParticlePreview::getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height)
 {
-	const float half_width = static_cast<float>(near_z * tan(degrees_to_radians(fieldOfView * 0.5)));
+	const float half_width = static_cast<float>(near_z * tan(degrees_to_radians(fieldOfView * 0.5f)));
 	const float half_height = half_width * (static_cast<float>(height) / static_cast<float>(width));
 
 	return matrix4_frustum(
@@ -598,8 +598,8 @@ bool ParticlePreview::callbackGLMotion(GdkEventMotion* ev)
 
 		// Calculate the mouse delta as a vector in the XY plane, and store the
 		// current position for the next event.
-		Vector3 deltaPos(ev->x - _lastX,
-						 _lastY - ev->y,
+		Vector3 deltaPos(static_cast<float>(ev->x - _lastX),
+						 static_cast<float>(_lastY - ev->y),
 						 0);
 		_lastX = ev->x;
 		_lastY = ev->y;

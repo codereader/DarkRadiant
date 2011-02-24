@@ -268,12 +268,6 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 		_colourTransparent = true;
 	}
 
-	if (getName() == "path_corner")
-	{
-		int i = 7;
-		getName() + "a";
-	}
-
 	// (Re)set the colour
 	const EntityClassAttribute& colourAttr = getAttribute("editor_color");
 

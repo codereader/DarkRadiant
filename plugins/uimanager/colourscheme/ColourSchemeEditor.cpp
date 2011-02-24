@@ -389,7 +389,9 @@ void ColourSchemeEditor::callbackColorChanged(Gtk::ColorButton* widget, ColourIt
 	Gdk::Color colour = widget->get_color();
 
 	// Update the colourItem class
-	colourItem->set(colour.get_red_p(), colour.get_green_p(), colour.get_blue_p());
+	colourItem->set(static_cast<float>(colour.get_red_p()), 
+					static_cast<float>(colour.get_green_p()), 
+					static_cast<float>(colour.get_blue_p()));
 
 	// Call the update, so all colours can be previewed
 	updateWindows();

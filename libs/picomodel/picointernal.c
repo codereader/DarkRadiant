@@ -415,7 +415,7 @@ picoVec_t _pico_normalize_vec( picoVec3_t vec )
 
 	len = sqrt( vec[ 0 ] * vec[ 0 ] + vec[ 1 ] * vec[ 1 ] + vec[ 2 ] * vec[ 2 ] );
 	if( len == 0.0 ) return 0.0f;
-	ilen = 1.0 / len;
+	ilen = 1.0f / len;
 	vec[ 0 ] *= (picoVec_t) ilen;
 	vec[ 1 ] *= (picoVec_t) ilen;
 	vec[ 2 ] *= (picoVec_t) ilen;
