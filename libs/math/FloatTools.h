@@ -94,7 +94,7 @@ inline Element float_mod_range(const Element& self, const ModulusElement& modulu
 template<typename Element, typename ModulusElement>
 inline Element float_mod(const Element& self, const ModulusElement& modulus)
 {
-  return float_mod_range(Element(fmod(static_cast<double>(self), static_cast<double>(modulus))), modulus);
+  return float_mod_range(Element(fmod(static_cast<float>(self), static_cast<float>(modulus))), modulus);
 }
 
 template<typename Element>

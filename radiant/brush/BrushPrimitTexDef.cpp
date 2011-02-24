@@ -26,11 +26,11 @@ BrushPrimitTexDef::BrushPrimitTexDef(const Matrix4& transform) {
 
 // Construct a BrushPrimitTexDef out of "fake" shift scale rot definitions
 BrushPrimitTexDef::BrushPrimitTexDef(const TexDef& texdef) {
-	double r = degrees_to_radians(-texdef._rotate);
-	double c = cos(r);
-	double s = sin(r);
-	double x = 1.0f / texdef._scale[0];
-	double y = 1.0f / texdef._scale[1];
+	float r = degrees_to_radians(-texdef._rotate);
+	float c = cos(r);
+	float s = sin(r);
+	float x = 1.0f / texdef._scale[0];
+	float y = 1.0f / texdef._scale[1];
 	coords[0][0] = x * c;
 	coords[1][0] = x * s;
 	coords[0][1] = y * -s;
@@ -40,7 +40,7 @@ BrushPrimitTexDef::BrushPrimitTexDef(const TexDef& texdef) {
 }
 
 // shift a texture (texture adjustments) along it's current texture axes
-void BrushPrimitTexDef::shift(double s, double t) {
+void BrushPrimitTexDef::shift(float s, float t) {
 	// x and y are geometric values, which we must compute as ST increments
 	// this depends on the texture size and the pixel/texel ratio
 	// as a ratio against texture size
@@ -50,16 +50,16 @@ void BrushPrimitTexDef::shift(double s, double t) {
 }
 
 // apply same scale as the spinner button of the surface inspector
-void BrushPrimitTexDef::scale(double s, double t) {
+void BrushPrimitTexDef::scale(float s, float t) {
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
 
-	double newXScale = texdef._scale[0] + s;
-	double newYScale = texdef._scale[1] + t;
+	float newXScale = texdef._scale[0] + s;
+	float newYScale = texdef._scale[1] + t;
 
 	// Don't allow zero (or almost zero) scale values
-	if (float_equal_epsilon(newXScale, 0, 1e-5) ||
-		float_equal_epsilon(newYScale, 0, 1e-5))
+	if (float_equal_epsilon(newXScale, 0, 1e-5f) ||
+		float_equal_epsilon(newYScale, 0, 1e-5f))
 	{
 		return;
 	}
@@ -80,7 +80,7 @@ void BrushPrimitTexDef::scale(double s, double t) {
 }
 
 // apply same rotation as the spinner button of the surface inspector
-void BrushPrimitTexDef::rotate(double angle) {
+void BrushPrimitTexDef::rotate(float angle) {
 	// compute fake shift scale rot
 	TexDef texdef = getFakeTexCoords();
 
@@ -136,7 +136,7 @@ TexDef BrushPrimitTexDef::getFakeTexCoords() const
 	texdef._shift[1] = coords[1][2];
 
 	// determine whether or not an axis is flipped using a 2d cross-product
-	double cross = Vector2(coords[0][0], coords[0][1]).crossProduct(Vector2(coords[1][0], coords[1][1]));
+	float cross = Vector2(coords[0][0], coords[0][1]).crossProduct(Vector2(coords[1][0], coords[1][1]));
 
 	if (cross < 0)
 	{
@@ -159,7 +159,7 @@ TexDef BrushPrimitTexDef::getFakeTexCoords() const
 
 // All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
 // This function normalises shift values to the smallest positive congruent values.
-void BrushPrimitTexDef::normalise(double width, double height) {
+void BrushPrimitTexDef::normalise(float width, float height) {
 	coords[0][2] = float_mod(coords[0][2], width);
 	coords[1][2] = float_mod(coords[1][2], height);
 }

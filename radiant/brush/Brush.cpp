@@ -656,19 +656,19 @@ void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis,
 
 	for (std::size_t i = 0 ; i < sides ; ++i)
 	{
-		double sv = sin(i*c_pi*2/sides);
-		double cv = cos(i*c_pi*2/sides);
+		float sv = sin(i*static_cast<float>(c_pi)*2/sides);
+		float cv = cos(i*static_cast<float>(c_pi)*2/sides);
 
-		planepts[0][(axis+1)%3] = static_cast<float>(floor(mid[(axis+1)%3]+radius*cv+0.5));
-		planepts[0][(axis+2)%3] = static_cast<float>(floor(mid[(axis+2)%3]+radius*sv+0.5));
+		planepts[0][(axis+1)%3] = floor(mid[(axis+1) % 3] + radius*cv  + 0.5f);
+		planepts[0][(axis+2)%3] = floor(mid[(axis+2) % 3] + radius*sv  + 0.5f);
 		planepts[0][axis] = mins[axis];
 
 		planepts[1][(axis+1)%3] = planepts[0][(axis+1)%3];
 		planepts[1][(axis+2)%3] = planepts[0][(axis+2)%3];
 		planepts[1][axis] = maxs[axis];
 
-		planepts[2][(axis+1)%3] = static_cast<float>(floor(planepts[0][(axis+1)%3] - radius*sv + 0.5));
-		planepts[2][(axis+2)%3] = static_cast<float>(floor(planepts[0][(axis+2)%3] + radius*cv + 0.5));
+		planepts[2][(axis+1)%3] = floor(planepts[0][(axis+1)%3] - radius*sv + 0.5f);
+		planepts[2][(axis+2)%3] = floor(planepts[0][(axis+2)%3] + radius*cv + 0.5f);
 		planepts[2][axis] = maxs[axis];
 
 		addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
@@ -708,19 +708,19 @@ void Brush::constructCone(const AABB& bounds, std::size_t sides,
 
 	for (std::size_t i = 0 ; i < sides ; ++i)
 	{
-		double sv = sin (i*c_pi*2/sides);
-		double cv = cos (i*c_pi*2/sides);
+		float sv = sin (i*static_cast<float>(c_pi)*2/sides);
+		float cv = cos (i*static_cast<float>(c_pi)*2/sides);
 
-		planepts[0][0] = static_cast<float>(floor(mid[0]+radius*cv+0.5));
-		planepts[0][1] = static_cast<float>(floor(mid[1]+radius*sv+0.5));
+		planepts[0][0] = floor(mid[0] + radius*cv + 0.5f);
+		planepts[0][1] = floor(mid[1] + radius*sv + 0.5f);
 		planepts[0][2] = mins[2];
 
 		planepts[1][0] = mid[0];
 		planepts[1][1] = mid[1];
 		planepts[1][2] = maxs[2];
 
-		planepts[2][0] = static_cast<float>(floor(planepts[0][0] - radius * sv + 0.5));
-		planepts[2][1] = static_cast<float>(floor(planepts[0][1] + radius * cv + 0.5));
+		planepts[2][0] = floor(planepts[0][0] - radius*sv + 0.5f);
+		planepts[2][1] = floor(planepts[0][1] + radius*cv + 0.5f);
 		planepts[2][2] = maxs[2];
 
 		addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
@@ -748,15 +748,15 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides,
 	const Vector3& mid = bounds.origin;
 	Vector3 planepts[3];
 
-	double dt = 2 * c_pi / sides;
-	double dp = c_pi / sides;
+	float dt = 2 * static_cast<float>(c_pi) / sides;
+	float dp = static_cast<float>(c_pi) / sides;
 
 	for (std::size_t i = 0; i < sides; i++)
 	{
 		for (std::size_t j = 0; j < sides - 1; j++)
 		{
-			double t = i * dt;
-			double p = float(j * dp - c_pi / 2);
+			float t = i * dt;
+			float p = static_cast<float>(j * dp - c_pi / 2);
 
 			planepts[0] = mid + vector3_for_spherical(t, p)*radius;
 			planepts[1] = mid + vector3_for_spherical(t, p + dp)*radius;
@@ -767,11 +767,11 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides,
 	}
 
 	{
-		double p = (sides - 1) * dp - c_pi / 2;
+		float p = (sides - 1) * dp - static_cast<float>(c_pi) / 2;
 
 		for (std::size_t i = 0; i < sides; i++)
 		{
-			double t = i * dt;
+			float t = i * dt;
 
 			planepts[0] = mid + vector3_for_spherical(t, p)*radius;
 			planepts[1] = mid + vector3_for_spherical(t + dt, p + dp)*radius;

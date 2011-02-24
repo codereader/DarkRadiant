@@ -80,7 +80,7 @@ public:
 	// Returns the classification for the given plane
 	BrushSplitType classifyPlane(const Plane3& plane) const;
 
-	static PlaneClassification classifyDistance(const double distance, const double epsilon);
+	static PlaneClassification classifyDistance(const float distance, const float epsilon);
 
 	/// \brief Returns true if
 	/// !flipped && winding is completely BACK or ON

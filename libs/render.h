@@ -423,7 +423,7 @@ inline Normal3f normal3f_folded_quantised(const Normal3f& folded) {
 	unsigned int ybits = static_cast<unsigned int>(folded.y() * scale);
 
 	// decompress
-	Normal3f normal(static_cast<float>(c_quantise_normal) - zbits - ybits, ybits, zbits);
+	Normal3f normal(static_cast<float>(c_quantise_normal) - zbits - ybits, static_cast<float>(ybits), static_cast<float>(zbits));
 	return Normal3f(normal.getNormalised());
 }
 
@@ -467,20 +467,26 @@ struct uniformspherical_t {
 ;
 
 
-inline spherical_t spherical_from_normal3f(const Normal3f& normal) {
-	return spherical_t(normal.x() == 0 ? c_pi / 2 : normal.x() > 0 ? atan(normal.y() / normal.x()) : atan(normal.y() / normal.x()) + c_pi, acos(normal.z()));
+inline spherical_t spherical_from_normal3f(const Normal3f& normal)
+{
+	return spherical_t(
+		normal.x() == 0 ? static_cast<float>(c_half_pi) : 
+			normal.x() > 0 ? atan(normal.y() / normal.x()) : 
+				atan(normal.y() / normal.x()) + static_cast<float>(c_pi), acos(normal.z()));
 }
 
-inline Normal3f normal3f_from_spherical(const spherical_t& spherical) {
+inline Normal3f normal3f_from_spherical(const spherical_t& spherical)
+{
 	return Normal3f(
-	           cos(spherical.longditude) * sin(spherical.latitude),
-	           sin(spherical.longditude) * sin(spherical.latitude),
-	           cos(spherical.latitude)
-	       );
+	    cos(spherical.longditude) * sin(spherical.latitude),
+	    sin(spherical.longditude) * sin(spherical.latitude),
+	    cos(spherical.latitude)
+	);
 }
 
-inline uniformspherical_t uniformspherical_from_spherical(const spherical_t& spherical) {
-	return uniformspherical_t(spherical.longditude * c_inv_2pi, (cos(spherical.latitude) + 1) * 0.5f);
+inline uniformspherical_t uniformspherical_from_spherical(const spherical_t& spherical)
+{
+	return uniformspherical_t(spherical.longditude * static_cast<float>(c_inv_2pi), (cos(spherical.latitude) + 1) * 0.5f);
 }
 
 inline spherical_t spherical_from_uniformspherical(const uniformspherical_t& uniformspherical) {

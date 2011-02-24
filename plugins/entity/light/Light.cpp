@@ -647,7 +647,7 @@ void Light::translateLightStart(const Vector3& translation) {
 	Vector3 normal = (candidate - assumedEnd).getNormalised();
 
 	// Calculate the distance to the plane going through the origin, hence the minus sign
-	double dist = normal.dot(candidate);
+	float dist = normal.dot(candidate);
 
 	if (dist > 0) {
 		// Light_Start is too "high", project it back onto the origin plane
@@ -664,7 +664,7 @@ void Light::translateLightTarget(const Vector3& translation) {
 	Vector3 oldTarget = _lightTarget;
 	Vector3 newTarget = oldTarget + translation;
 
-	double angle = oldTarget.angle(newTarget);
+	float angle = oldTarget.angle(newTarget);
 
 	// If we are at roughly 0 or 180 degrees, don't rotate anything, this is probably a pure translation
 	if (std::abs(angle) > 0.01 && std::abs(c_pi-angle) > 0.01) {
@@ -907,13 +907,13 @@ const Matrix4& Light::projection() const
 
 	Plane3 lightProject[4];
 
-	double rLen = _lightRightTransformed.getLength();
+	float rLen = _lightRightTransformed.getLength();
 	Vector3 right = _lightRightTransformed / rLen;
-	double uLen = _lightUpTransformed.getLength();
+	float uLen = _lightUpTransformed.getLength();
 	Vector3 up = _lightUpTransformed / uLen;
 	Vector3 normal = up.crossProduct(right).getNormalised();
 
-	double dist = _lightTargetTransformed.dot(normal);
+	float dist = _lightTargetTransformed.dot(normal);
 	if ( dist < 0 ) {
 		dist = -dist;
 		normal = -normal;
@@ -929,15 +929,15 @@ const Matrix4& Light::projection() const
 	// now offset to center
 	Vector4 targetGlobal(_lightTargetTransformed, 1);
     {
-		double a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
-		double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
-		double ofs = 0.5 - a / b;
+		float a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
+		float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
+		float ofs = 0.5f - a / b;
 		plane3_to_vector4(lightProject[0]) += plane3_to_vector4(lightProject[2]) * ofs;
 	}
 	{
-		double a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
-		double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
-		double ofs = 0.5 - a / b;
+		float a = targetGlobal.dot(plane3_to_vector4(lightProject[1]));
+		float b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
+		float ofs = 0.5f - a / b;
 		plane3_to_vector4(lightProject[1]) += plane3_to_vector4(lightProject[2]) * ofs;
 	}
 
@@ -955,7 +955,7 @@ const Matrix4& Light::projection() const
 
 	// Calculate the falloff vector
 	Vector3 falloff = stop - start;
-	double length = falloff.getLength();
+	float length = falloff.getLength();
 	falloff /= length;
 	if ( length <= 0 ) {
 		length = 1;
