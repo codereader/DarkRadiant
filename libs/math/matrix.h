@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_MATH_MATRIX_H)
-#define INCLUDED_MATH_MATRIX_H
+#pragma once
 
 /// \file
 /// \brief Matrix data types and related operations.
@@ -29,21 +7,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Vector4.h"
 #include "math/Plane3.h"
 
-/// \brief A 4x4 matrix stored in double-precision floating-point.
+/// \brief A 4x4 matrix stored in single-precision floating-point.
 class Matrix4
 {
     // Elements of the 4x4 matrix. These appear to be treated COLUMNWISE, i.e.
     // elements [0] through [3] are the first column, [4] through [7] are the
     // second column, etc.
-    double _m[16];
+    float _m[16];
 
 private:
 
     // Initialising constructor
-    Matrix4(double xx_, double xy_, double xz_, double xw_,
-            double yx_, double yy_, double yz_, double yw_,
-            double zx_, double zy_, double zz_, double zw_,
-            double tx_, double ty_, double tz_, double tw_);
+    Matrix4(float xx_, float xy_, float xz_, float xw_,
+            float yx_, float yy_, float yz_, float yw_,
+            float zx_, float zy_, float zz_, float zw_,
+            float tx_, float ty_, float tz_, float tw_);
 public:
 
     /**
@@ -85,7 +63,7 @@ public:
 	 *
 	 * Important: the axis vector must be normalised.
 	 */
-	static Matrix4 getRotation(const Vector3& axis, const double angle);
+	static Matrix4 getRotation(const Vector3& axis, const float angle);
 
     /**
      * \brief
@@ -103,10 +81,10 @@ public:
      * The elements are specified column-wise, starting with the left-most
      * column.
      */
-    static Matrix4 byColumns(double xx, double xy, double xz, double xw,
-                             double yx, double yy, double yz, double yw,
-                             double zx, double zy, double zz, double zw,
-                             double tx, double ty, double tz, double tw);
+    static Matrix4 byColumns(float xx, float xy, float xz, float xw,
+                             float yx, float yy, float yz, float yw,
+                             float zx, float zy, float zz, float zw,
+                             float tx, float ty, float tz, float tw);
 
     /**
      * \brief
@@ -114,47 +92,47 @@ public:
      *
      * The elements are specified row-wise, starting with the top row.
      */
-    static Matrix4 byRows(double xx, double yx, double zx, double tx,
-                          double xy, double yy, double zy, double ty,
-                          double xz, double yz, double zz, double tz,
-                          double xw, double yw, double zw, double tw);
+    static Matrix4 byRows(float xx, float yx, float zx, float tx,
+                          float xy, float yy, float zy, float ty,
+                          float xz, float yz, float zz, float tz,
+                          float xw, float yw, float zw, float tw);
 
     /**
      * Return matrix elements
      * \{
      */
-    double& xx()             { return _m[0]; }
-    const double& xx() const { return _m[0]; }
-    double& xy()             { return _m[1]; }
-    const double& xy() const { return _m[1]; }
-    double& xz()             { return _m[2]; }
-    const double& xz() const { return _m[2]; }
-    double& xw()             { return _m[3]; }
-    const double& xw() const { return _m[3]; }
-    double& yx()             { return _m[4]; }
-    const double& yx() const { return _m[4]; }
-    double& yy()             { return _m[5]; }
-    const double& yy() const { return _m[5]; }
-    double& yz()             { return _m[6]; }
-    const double& yz() const { return _m[6]; }
-    double& yw()             { return _m[7]; }
-    const double& yw() const { return _m[7]; }
-    double& zx()             { return _m[8]; }
-    const double& zx() const { return _m[8]; }
-    double& zy()             { return _m[9]; }
-    const double& zy() const { return _m[9]; }
-    double& zz()             { return _m[10]; }
-    const double& zz() const { return _m[10]; }
-    double& zw()             { return _m[11]; }
-    const double& zw() const { return _m[11]; }
-    double& tx()             { return _m[12]; }
-    const double& tx() const { return _m[12]; }
-    double& ty()             { return _m[13]; }
-    const double& ty() const { return _m[13]; }
-    double& tz()             { return _m[14]; }
-    const double& tz() const { return _m[14]; }
-    double& tw()             { return _m[15]; }
-    const double& tw() const { return _m[15]; }
+    float& xx()             { return _m[0]; }
+    const float& xx() const { return _m[0]; }
+    float& xy()             { return _m[1]; }
+    const float& xy() const { return _m[1]; }
+    float& xz()             { return _m[2]; }
+    const float& xz() const { return _m[2]; }
+    float& xw()             { return _m[3]; }
+    const float& xw() const { return _m[3]; }
+    float& yx()             { return _m[4]; }
+    const float& yx() const { return _m[4]; }
+    float& yy()             { return _m[5]; }
+    const float& yy() const { return _m[5]; }
+    float& yz()             { return _m[6]; }
+    const float& yz() const { return _m[6]; }
+    float& yw()             { return _m[7]; }
+    const float& yw() const { return _m[7]; }
+    float& zx()             { return _m[8]; }
+    const float& zx() const { return _m[8]; }
+    float& zy()             { return _m[9]; }
+    const float& zy() const { return _m[9]; }
+    float& zz()             { return _m[10]; }
+    const float& zz() const { return _m[10]; }
+    float& zw()             { return _m[11]; }
+    const float& zw() const { return _m[11]; }
+    float& tx()             { return _m[12]; }
+    const float& tx() const { return _m[12]; }
+    float& ty()             { return _m[13]; }
+    const float& ty() const { return _m[13]; }
+    float& tz()             { return _m[14]; }
+    const float& tz() const { return _m[14]; }
+    float& tw()             { return _m[15]; }
+    const float& tw() const { return _m[15]; }
     /**
      * \}
      */
@@ -199,35 +177,35 @@ public:
      * \}
      */
 
-  const double& index(std::size_t i) const
+  const float& index(std::size_t i) const
   {
     return _m[i];
   }
-  double& index(std::size_t i)
+  float& index(std::size_t i)
   {
     return _m[i];
   }
-  const double& index(std::size_t r, std::size_t c) const
+  const float& index(std::size_t r, std::size_t c) const
   {
     return _m[(r << 2) + c];
   }
-  double& index(std::size_t r, std::size_t c)
+  float& index(std::size_t r, std::size_t c)
   {
     return _m[(r << 2) + c];
   }
 
 	/**
-     * Cast to double* for use with GL functions that accept a double
+     * Cast to float* for use with GL functions that accept a float
 	 * array, also provides operator[].
 	 */
-	operator double* () {
+	operator float* () {
 		return _m;
 	}
 
 	/**
-     * Cast to const double* to provide operator[] for const objects.
+     * Cast to const float* to provide operator[] for const objects.
 	 */
-	operator const double* () const {
+	operator const float* () const {
 		return _m;
 	}
 
@@ -338,7 +316,7 @@ public:
 };
 
 /// \brief Returns true if \p self and \p other are element-wise equal within \p epsilon.
-inline bool matrix4_equal_epsilon(const Matrix4& self, const Matrix4& other, double epsilon)
+inline bool matrix4_equal_epsilon(const Matrix4& self, const Matrix4& other, float epsilon)
 {
   return float_equal_epsilon(self.xx(), other.xx(), epsilon)
     && float_equal_epsilon(self.xy(), other.xy(), epsilon)
@@ -614,7 +592,7 @@ public:
   typedef typename Matrix4Index<typename Row::z, typename Col::x>::i zx;
   typedef typename Matrix4Index<typename Row::z, typename Col::y>::i zy;
   typedef typename Matrix4Index<typename Row::z, typename Col::z>::i zz;
-  static double apply(const Matrix4& self)
+  static float apply(const Matrix4& self)
   {
     return self[xx::VALUE] * ( self[yy::VALUE]*self[zz::VALUE] - self[zy::VALUE]*self[yz::VALUE] )
       - self[xy::VALUE] * ( self[yx::VALUE]*self[zz::VALUE] - self[zx::VALUE]*self[yz::VALUE] )
@@ -634,7 +612,7 @@ public:
 };
 
 /// \brief Returns the determinant of \p self.
-inline double matrix4_determinant(const Matrix4& self)
+inline float matrix4_determinant(const Matrix4& self)
 {
   return self.xx() * Matrix4Cofactor< Cofactor4<0>, Cofactor4<0> >::apply(self)
     - self.xy() * Matrix4Cofactor< Cofactor4<0>, Cofactor4<1> >::apply(self)
@@ -646,25 +624,25 @@ inline double matrix4_determinant(const Matrix4& self)
 /// \todo Throw an exception if the determinant is zero.
 inline Matrix4 matrix4_full_inverse(const Matrix4& self)
 {
-  double determinant = 1.0 / matrix4_determinant(self);
+  float determinant = 1.0f / matrix4_determinant(self);
 
   return Matrix4::byColumns(
-    static_cast<double>( Matrix4Cofactor< Cofactor4<0>, Cofactor4<0> >::apply(self) * determinant),
-    static_cast<double>(-Matrix4Cofactor< Cofactor4<1>, Cofactor4<0> >::apply(self) * determinant),
-    static_cast<double>( Matrix4Cofactor< Cofactor4<2>, Cofactor4<0> >::apply(self) * determinant),
-    static_cast<double>(-Matrix4Cofactor< Cofactor4<3>, Cofactor4<0> >::apply(self) * determinant),
-    static_cast<double>(-Matrix4Cofactor< Cofactor4<0>, Cofactor4<1> >::apply(self) * determinant),
-    static_cast<double>( Matrix4Cofactor< Cofactor4<1>, Cofactor4<1> >::apply(self) * determinant),
-    static_cast<double>(-Matrix4Cofactor< Cofactor4<2>, Cofactor4<1> >::apply(self) * determinant),
-    static_cast<double>( Matrix4Cofactor< Cofactor4<3>, Cofactor4<1> >::apply(self) * determinant),
-    static_cast<double>( Matrix4Cofactor< Cofactor4<0>, Cofactor4<2> >::apply(self) * determinant),
-    static_cast<double>(-Matrix4Cofactor< Cofactor4<1>, Cofactor4<2> >::apply(self) * determinant),
-    static_cast<double>( Matrix4Cofactor< Cofactor4<2>, Cofactor4<2> >::apply(self) * determinant),
-    static_cast<double>(-Matrix4Cofactor< Cofactor4<3>, Cofactor4<2> >::apply(self) * determinant),
-    static_cast<double>(-Matrix4Cofactor< Cofactor4<0>, Cofactor4<3> >::apply(self) * determinant),
-    static_cast<double>( Matrix4Cofactor< Cofactor4<1>, Cofactor4<3> >::apply(self) * determinant),
-    static_cast<double>(-Matrix4Cofactor< Cofactor4<2>, Cofactor4<3> >::apply(self) * determinant),
-    static_cast<double>( Matrix4Cofactor< Cofactor4<3>, Cofactor4<3> >::apply(self) * determinant)
+    static_cast<float>( Matrix4Cofactor< Cofactor4<0>, Cofactor4<0> >::apply(self) * determinant),
+    static_cast<float>(-Matrix4Cofactor< Cofactor4<1>, Cofactor4<0> >::apply(self) * determinant),
+    static_cast<float>( Matrix4Cofactor< Cofactor4<2>, Cofactor4<0> >::apply(self) * determinant),
+    static_cast<float>(-Matrix4Cofactor< Cofactor4<3>, Cofactor4<0> >::apply(self) * determinant),
+    static_cast<float>(-Matrix4Cofactor< Cofactor4<0>, Cofactor4<1> >::apply(self) * determinant),
+    static_cast<float>( Matrix4Cofactor< Cofactor4<1>, Cofactor4<1> >::apply(self) * determinant),
+    static_cast<float>(-Matrix4Cofactor< Cofactor4<2>, Cofactor4<1> >::apply(self) * determinant),
+    static_cast<float>( Matrix4Cofactor< Cofactor4<3>, Cofactor4<1> >::apply(self) * determinant),
+    static_cast<float>( Matrix4Cofactor< Cofactor4<0>, Cofactor4<2> >::apply(self) * determinant),
+    static_cast<float>(-Matrix4Cofactor< Cofactor4<1>, Cofactor4<2> >::apply(self) * determinant),
+    static_cast<float>( Matrix4Cofactor< Cofactor4<2>, Cofactor4<2> >::apply(self) * determinant),
+    static_cast<float>(-Matrix4Cofactor< Cofactor4<3>, Cofactor4<2> >::apply(self) * determinant),
+    static_cast<float>(-Matrix4Cofactor< Cofactor4<0>, Cofactor4<3> >::apply(self) * determinant),
+    static_cast<float>( Matrix4Cofactor< Cofactor4<1>, Cofactor4<3> >::apply(self) * determinant),
+    static_cast<float>(-Matrix4Cofactor< Cofactor4<2>, Cofactor4<3> >::apply(self) * determinant),
+    static_cast<float>( Matrix4Cofactor< Cofactor4<3>, Cofactor4<3> >::apply(self) * determinant)
   );
 }
 
@@ -693,18 +671,18 @@ inline Matrix4 matrix4_translated_by_vec3(const Matrix4& self, const Vector3& tr
 
 /// \brief Returns \p angle modulated by the range [0, 360).
 /// \p angle must be in the range [-360, 360).
-inline double angle_modulate_degrees_range(double angle)
+inline float angle_modulate_degrees_range(float angle)
 {
-  return static_cast<double>(float_mod_range(angle, 360.0));
+  return static_cast<float>(float_mod_range(angle, 360.0));
 }
 
 /// \brief Returns \p euler angles converted from radians to degrees.
 inline Vector3 euler_radians_to_degrees(const Vector3& euler)
 {
   return Vector3(
-    static_cast<double>(radians_to_degrees(euler.x())),
-    static_cast<double>(radians_to_degrees(euler.y())),
-    static_cast<double>(radians_to_degrees(euler.z()))
+    static_cast<float>(radians_to_degrees(euler.x())),
+    static_cast<float>(radians_to_degrees(euler.y())),
+    static_cast<float>(radians_to_degrees(euler.z()))
   );
 }
 
@@ -712,16 +690,16 @@ inline Vector3 euler_radians_to_degrees(const Vector3& euler)
 inline Vector3 euler_degrees_to_radians(const Vector3& euler)
 {
   return Vector3(
-    static_cast<double>(degrees_to_radians(euler.x())),
-    static_cast<double>(degrees_to_radians(euler.y())),
-    static_cast<double>(degrees_to_radians(euler.z()))
+    static_cast<float>(degrees_to_radians(euler.x())),
+    static_cast<float>(degrees_to_radians(euler.y())),
+    static_cast<float>(degrees_to_radians(euler.z()))
   );
 }
 
 
 
 /// \brief Constructs a pure-rotation matrix about the x axis from sin \p s and cosine \p c of an angle.
-inline Matrix4 matrix4_rotation_for_sincos_x(double s, double c)
+inline Matrix4 matrix4_rotation_for_sincos_x(float s, float c)
 {
   return Matrix4::byColumns(
     1, 0, 0, 0,
@@ -732,19 +710,19 @@ inline Matrix4 matrix4_rotation_for_sincos_x(double s, double c)
 }
 
 /// \brief Constructs a pure-rotation matrix about the x axis from an angle in radians.
-inline Matrix4 matrix4_rotation_for_x(double x)
+inline Matrix4 matrix4_rotation_for_x(float x)
 {
   return matrix4_rotation_for_sincos_x(sin(x), cos(x));
 }
 
 /// \brief Constructs a pure-rotation matrix about the x axis from an angle in degrees.
-inline Matrix4 matrix4_rotation_for_x_degrees(double x)
+inline Matrix4 matrix4_rotation_for_x_degrees(float x)
 {
   return matrix4_rotation_for_x(degrees_to_radians(x));
 }
 
 /// \brief Constructs a pure-rotation matrix about the y axis from sin \p s and cosine \p c of an angle.
-inline Matrix4 matrix4_rotation_for_sincos_y(double s, double c)
+inline Matrix4 matrix4_rotation_for_sincos_y(float s, float c)
 {
   return Matrix4::byColumns(
     c, 0,-s, 0,
@@ -755,19 +733,19 @@ inline Matrix4 matrix4_rotation_for_sincos_y(double s, double c)
 }
 
 /// \brief Constructs a pure-rotation matrix about the y axis from an angle in radians.
-inline Matrix4 matrix4_rotation_for_y(double y)
+inline Matrix4 matrix4_rotation_for_y(float y)
 {
   return matrix4_rotation_for_sincos_y(sin(y), cos(y));
 }
 
 /// \brief Constructs a pure-rotation matrix about the y axis from an angle in degrees.
-inline Matrix4 matrix4_rotation_for_y_degrees(double y)
+inline Matrix4 matrix4_rotation_for_y_degrees(float y)
 {
   return matrix4_rotation_for_y(degrees_to_radians(y));
 }
 
 /// \brief Constructs a pure-rotation matrix about the z axis from sin \p s and cosine \p c of an angle.
-inline Matrix4 matrix4_rotation_for_sincos_z(double s, double c)
+inline Matrix4 matrix4_rotation_for_sincos_z(float s, float c)
 {
   return Matrix4::byColumns(
     c, s, 0, 0,
@@ -778,13 +756,13 @@ inline Matrix4 matrix4_rotation_for_sincos_z(double s, double c)
 }
 
 /// \brief Constructs a pure-rotation matrix about the z axis from an angle in radians.
-inline Matrix4 matrix4_rotation_for_z(double z)
+inline Matrix4 matrix4_rotation_for_z(float z)
 {
   return matrix4_rotation_for_sincos_z(sin(z), cos(z));
 }
 
 /// \brief Constructs a pure-rotation matrix about the z axis from an angle in degrees.
-inline Matrix4 matrix4_rotation_for_z_degrees(double z)
+inline Matrix4 matrix4_rotation_for_z_degrees(float z)
 {
   return matrix4_rotation_for_z(degrees_to_radians(z));
 }
@@ -816,12 +794,12 @@ inline Matrix4 matrix4_rotation_for_euler_xyz(const Vector3& euler)
 {
 #if 1
 
-  double cx = cos(euler[0]);
-  double sx = sin(euler[0]);
-  double cy = cos(euler[1]);
-  double sy = sin(euler[1]);
-  double cz = cos(euler[2]);
-  double sz = sin(euler[2]);
+  float cx = cos(euler[0]);
+  float sx = sin(euler[0]);
+  float cy = cos(euler[1]);
+  float sy = sin(euler[1]);
+  float cz = cos(euler[2]);
+  float sz = sin(euler[2]);
 
   return Matrix4::byColumns(
     cy*cz,
@@ -915,12 +893,12 @@ inline Matrix4 matrix4_rotation_for_euler_yxz(const Vector3& euler)
 {
 #if 1
 
-  double cx = cos(euler[0]);
-  double sx = sin(euler[0]);
-  double cy = cos(euler[1]);
-  double sy = sin(euler[1]);
-  double cz = cos(euler[2]);
-  double sz = sin(euler[2]);
+  float cx = cos(euler[0]);
+  float sx = sin(euler[0]);
+  float cy = cos(euler[1]);
+  float sy = sin(euler[1]);
+  float cz = cos(euler[2]);
+  float sz = sin(euler[2]);
 
   return Matrix4::byColumns(
     cy*cz + sx*sy*-sz,
@@ -986,12 +964,12 @@ inline Matrix4 matrix4_rotation_for_euler_zxy(const Vector3& euler)
     matrix4_rotation_for_y(euler[1])
   );
 #else
-  double cx = cos(euler[0]);
-  double sx = sin(euler[0]);
-  double cy = cos(euler[1]);
-  double sy = sin(euler[1]);
-  double cz = cos(euler[2]);
-  double sz = sin(euler[2]);
+  float cx = cos(euler[0]);
+  float sx = sin(euler[0]);
+  float cy = cos(euler[1]);
+  float sy = sin(euler[1]);
+  float cz = cos(euler[2]);
+  float sz = sin(euler[2]);
 
   return Matrix4::byColumns(
     cz * cy + sz * sx * sy,
@@ -1039,12 +1017,12 @@ inline Matrix4 matrix4_rotation_for_euler_zyx(const Vector3& euler)
 {
 #if 1
 
-  double cx = cos(euler[0]);
-  double sx = sin(euler[0]);
-  double cy = cos(euler[1]);
-  double sy = sin(euler[1]);
-  double cz = cos(euler[2]);
-  double sz = sin(euler[2]);
+  float cx = cos(euler[0]);
+  float sx = sin(euler[0]);
+  float cy = cos(euler[1]);
+  float sy = sin(euler[1]);
+  float cz = cos(euler[2]);
+  float sz = sin(euler[2]);
 
   return Matrix4::byColumns(
     cy*cz,
@@ -1089,8 +1067,8 @@ inline Matrix4 matrix4_rotation_for_euler_zyx_degrees(const Vector3& euler)
 /// \p self must be affine and orthonormal (unscaled) to produce a meaningful result.
 inline Vector3 matrix4_get_rotation_euler_xyz(const Matrix4& self)
 {
-  double a = asin(-self[2]);
-  double ca = cos(a);
+  float a = asin(-self[2]);
+  float ca = cos(a);
 
   if (fabs(ca) > 0.005) // Gimbal lock?
   {
@@ -1120,8 +1098,8 @@ inline Vector3 matrix4_get_rotation_euler_xyz_degrees(const Matrix4& self)
 /// \p self must be affine and orthonormal (unscaled) to produce a meaningful result.
 inline Vector3 matrix4_get_rotation_euler_yxz(const Matrix4& self)
 {
-  double a = asin(self[6]);
-  double ca = cos(a);
+  float a = asin(self[6]);
+  float ca = cos(a);
 
   if (fabs(ca) > 0.005) // Gimbal lock?
   {
@@ -1151,8 +1129,8 @@ inline Vector3 matrix4_get_rotation_euler_yxz_degrees(const Matrix4& self)
 /// \p self must be affine and orthonormal (unscaled) to produce a meaningful result.
 inline Vector3 matrix4_get_rotation_euler_zxy(const Matrix4& self)
 {
-  double a = asin(-self[9]);
-  double ca = cos(a);
+  float a = asin(-self[9]);
+  float ca = cos(a);
 
   if (fabs(ca) > 0.005) // Gimbal lock?
   {
@@ -1182,8 +1160,8 @@ inline Vector3 matrix4_get_rotation_euler_zxy_degrees(const Matrix4& self)
 /// \p self must be affine and orthonormal (unscaled) to produce a meaningful result.
 inline Vector3 matrix4_get_rotation_euler_zyx(const Matrix4& self)
 {
-  double a = asin(self[8]);
-  double ca = cos(a);
+  float a = asin(self[8]);
+  float ca = cos(a);
 
   if (fabs(ca) > 0.005) // Gimbal lock?
   {
@@ -1266,5 +1244,3 @@ inline std::ostream& operator<<(std::ostream& st, const Matrix4& m)
 	st << "|" << m[3] << ", " << m[7] << ", " << m[11] << ", " << m[15] << "|\n";
 	return st;
 }
-
-#endif

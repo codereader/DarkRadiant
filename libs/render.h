@@ -418,12 +418,12 @@ const unsigned int c_quantise_normal = 1 << 6;
 /// \brief All the components of \p folded must be positive and sorted so that x > y > z.
 inline Normal3f normal3f_folded_quantised(const Normal3f& folded) {
 	// compress
-	double scale = static_cast<double>(c_quantise_normal) / (folded.x() + folded.y() + folded.z());
+	float scale = static_cast<float>(c_quantise_normal) / (folded.x() + folded.y() + folded.z());
 	unsigned int zbits = static_cast<unsigned int>(folded.z() * scale);
 	unsigned int ybits = static_cast<unsigned int>(folded.y() * scale);
 
 	// decompress
-	Normal3f normal(c_quantise_normal - zbits - ybits, ybits, zbits);
+	Normal3f normal(static_cast<float>(c_quantise_normal) - zbits - ybits, ybits, zbits);
 	return Normal3f(normal.getNormalised());
 }
 
@@ -439,9 +439,9 @@ inline Normal3f normal3f_quantised_custom(const Normal3f& normal) {
 
 
 struct spherical_t {
-	double longditude, latitude;
+	float longditude, latitude;
 
-	spherical_t(double _longditude, double _latitude)
+	spherical_t(float _longditude, float _latitude)
 			: longditude(_longditude), latitude(_latitude) {}
 }
 ;
@@ -459,9 +459,9 @@ longitude = atan(y / x);
 latitude = acos(z);
 */
 struct uniformspherical_t {
-	double U, V;
+	float U, V;
 
-	uniformspherical_t(double U_, double V_)
+	uniformspherical_t(float U_, float V_)
 			: U(U_), V(V_) {}
 }
 ;
@@ -480,11 +480,11 @@ inline Normal3f normal3f_from_spherical(const spherical_t& spherical) {
 }
 
 inline uniformspherical_t uniformspherical_from_spherical(const spherical_t& spherical) {
-	return uniformspherical_t(spherical.longditude * c_inv_2pi, (cos(spherical.latitude) + 1) * 0.5);
+	return uniformspherical_t(spherical.longditude * c_inv_2pi, (cos(spherical.latitude) + 1) * 0.5f);
 }
 
 inline spherical_t spherical_from_uniformspherical(const uniformspherical_t& uniformspherical) {
-	return spherical_t(c_2pi * uniformspherical.U, acos((2 * uniformspherical.V) - 1));
+	return spherical_t(static_cast<float>(c_2pi) * uniformspherical.U, acos((2 * uniformspherical.V) - 1));
 }
 
 inline uniformspherical_t uniformspherical_from_normal3f(const Normal3f& normal) {
@@ -497,7 +497,7 @@ inline Normal3f normal3f_from_uniformspherical(const uniformspherical_t& uniform
 }
 
 /// \brief Returns a single-precision \p component quantised to \p precision.
-inline double float_quantise(double component, double precision) {
+inline float float_quantise(float component, float precision) {
 	return float_snapped(component, precision);
 }
 
@@ -507,15 +507,15 @@ inline double double_quantise(double component, double precision) {
 }
 
 inline spherical_t spherical_quantised(const spherical_t& spherical, float snap) {
-	return spherical_t(double_quantise(spherical.longditude, snap), double_quantise(spherical.latitude, snap));
+	return spherical_t(float_quantise(spherical.longditude, snap), float_quantise(spherical.latitude, snap));
 }
 
 inline uniformspherical_t uniformspherical_quantised(const uniformspherical_t& uniformspherical, float snap) {
-	return uniformspherical_t(double_quantise(uniformspherical.U, snap), double_quantise(uniformspherical.V, snap));
+	return uniformspherical_t(float_quantise(uniformspherical.U, snap), float_quantise(uniformspherical.V, snap));
 }
 
 /// \brief Returns a \p vertex quantised to \p precision.
-inline Vertex3f vertex3f_quantised(const Vertex3f& vertex, double precision) {
+inline Vertex3f vertex3f_quantised(const Vertex3f& vertex, float precision) {
 	return Vertex3f(float_quantise(vertex.x(), precision), float_quantise(vertex.y(), precision), float_quantise(vertex.z(), precision));
 }
 
@@ -528,7 +528,7 @@ inline Normal3f normal3f_quantised(const Normal3f& normal) {
 }
 
 /// \brief Returns a \p texcoord quantised to \p precision.
-inline TexCoord2f texcoord2f_quantised(const TexCoord2f& texcoord, double precision) {
+inline TexCoord2f texcoord2f_quantised(const TexCoord2f& texcoord, float precision) {
 	return TexCoord2f(float_quantise(texcoord.s(), precision), float_quantise(texcoord.t(), precision));
 }
 
@@ -610,7 +610,7 @@ inline ArbitraryMeshVertex arbitrarymeshvertex_quantised(const ArbitraryMeshVert
 /// \brief Sets up the OpenGL colour and vertex arrays for \p array.
 inline void pointvertex_gl_array(const PointVertex* array) {
 	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &array->colour);
-	glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &array->vertex);
+	glVertexPointer(3, GL_FLOAT, sizeof(PointVertex), &array->vertex);
 }
 
 class RenderablePointVector :
@@ -725,12 +725,12 @@ public:
 		if(state & RENDER_COLOURARRAY != 0) {
 			for(std::size_t i = 0; i < m_indices.size(); ++i) {
 				glColor4ubv(&m_vertices[m_indices[i]].colour.r);
-				glVertex3dv(m_vertices[m_indices[i]].vertex);
+				glVertex3fv(m_vertices[m_indices[i]].vertex);
 			}
 		}
 		else {
 			for(std::size_t i = 0; i < m_indices.size(); ++i) {
-				glVertex3dv(m_vertices[m_indices[i]].vertex);
+				glVertex3fv(m_vertices[m_indices[i]].vertex);
 			}
 		}
 		glEnd();

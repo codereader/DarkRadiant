@@ -1,5 +1,4 @@
-#ifndef TEXCOORD2F_H_
-#define TEXCOORD2F_H_
+#pragma once
 
 #include "math/Vector2.h"
 
@@ -14,7 +13,7 @@ public:
 	{}
 
 	// constructor
-	TexCoord2f(double s, double t) :
+	TexCoord2f(float s, float t) :
 		Vector2(s, t)
 	{}
 
@@ -28,16 +27,16 @@ public:
 		Vector2(other.x(), other.y())
 	{}
 
-	double& s() {
+	float& s() {
 		return x();
 	}
-	const double& s() const {
+	const float& s() const {
 		return x();
 	}
-	double& t() {
+	float& t() {
 		return y();
 	}
-	const double& t() const {
+	const float& t() const {
 		return y();
 	}
 
@@ -51,5 +50,3 @@ public:
 		return false;
 	}
 };
-
-#endif /*TEXCOORD2F_H_*/

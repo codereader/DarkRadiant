@@ -47,11 +47,11 @@ inline Vector3 line_closest_point(const Line& line, const Vector3& point)
   Vector3 v = line.end - line.start;
   Vector3 w = point - line.start;
 
-  double c1 = w.dot(v);
+  float c1 = w.dot(v);
   if ( c1 <= 0 )
     return line.start;
 
-  double c2 = v.dot(v);
+  float c2 = v.dot(v);
   if ( c2 <= c1 )
     return line.end;
 
@@ -84,7 +84,7 @@ inline Segment segment_for_startend(const Vector3& start, const Vector3& end)
 
 inline unsigned int segment_classify_plane(const Segment& segment, const Plane3& plane)
 {
-  double distance_origin = plane.normal().dot(segment.origin) + plane.dist();
+  float distance_origin = plane.normal().dot(segment.origin) + plane.dist();
 
   if (fabs(distance_origin) < fabs(plane.normal().dot(segment.extents)))
   {
@@ -117,10 +117,10 @@ public:
 	Vector3 getIntersection(Ray& other) {
 		Vector3 intersection = origin - other.origin;
 
-		double dot = direction.dot(other.direction);
-  		double d = direction.dot(intersection);
-		double e = other.direction.dot(intersection);
-		double D = 1 - dot*dot;       // always >= 0
+		float dot = direction.dot(other.direction);
+  		float d = direction.dot(intersection);
+		float e = other.direction.dot(intersection);
+		float D = 1 - dot*dot;       // always >= 0
 
 		if (D < 0.000001) {
 			// the lines are almost parallel
@@ -144,12 +144,12 @@ inline void ray_transform(Ray& ray, const Matrix4& matrix)
 }
 
 // closest-point-on-line
-inline double ray_squared_distance_to_point(const Ray& ray, const Vector3& point)
+inline float ray_squared_distance_to_point(const Ray& ray, const Vector3& point)
 {
   return (point - (ray.origin + ray.direction * (point - ray.origin).dot(ray.direction))).getLengthSquared();
 }
 
-inline double ray_distance_to_plane(const Ray& ray, const Plane3& plane)
+inline float ray_distance_to_plane(const Ray& ray, const Plane3& plane)
 {
   return -(plane.normal().dot(ray.origin) - plane.dist()) / ray.direction.dot(plane.normal());
 }

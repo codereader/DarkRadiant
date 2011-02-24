@@ -174,8 +174,8 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 
 	    // Calculate the W value. If it is NaN (due to underflow in the sqrt),
 	    // set it to 0.
-	    double lSq = rawRotation.getLengthSquared();
-	    double w = -sqrt(1.0 - lSq);
+	    float lSq = rawRotation.getLengthSquared();
+	    float w = -sqrt(1.0f - lSq);
 	    if (isNaN(w)) {
 	    	w = 0;
 	    }
@@ -339,9 +339,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 Vector3 MD5Model::parseVector3(parser::DefTokeniser& tok) {
 	tok.assertNextToken("(");
 
-	double x = strToDouble(tok.nextToken());
-	double y = strToDouble(tok.nextToken());
-	double z = strToDouble(tok.nextToken());
+	float x = strToFloat(tok.nextToken());
+	float y = strToFloat(tok.nextToken());
+	float z = strToFloat(tok.nextToken());
 
 	tok.assertNextToken(")");
 

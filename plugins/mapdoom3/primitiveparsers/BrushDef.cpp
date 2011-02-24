@@ -57,15 +57,15 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 		else if (token == "(") // FACE
 		{
 			// Parse three 3D points to construct a plane
-			Vector3 p1(strToDouble(tok.nextToken()), strToDouble(tok.nextToken()), strToDouble(tok.nextToken()));
+			Vector3 p1(strToFloat(tok.nextToken()), strToFloat(tok.nextToken()), strToFloat(tok.nextToken()));
 			tok.assertNextToken(")");
 			tok.assertNextToken("(");
 
-			Vector3 p2(strToDouble(tok.nextToken()), strToDouble(tok.nextToken()), strToDouble(tok.nextToken()));
+			Vector3 p2(strToFloat(tok.nextToken()), strToFloat(tok.nextToken()), strToFloat(tok.nextToken()));
 			tok.assertNextToken(")");
 			tok.assertNextToken("(");
 
-			Vector3 p3(strToDouble(tok.nextToken()), strToDouble(tok.nextToken()), strToDouble(tok.nextToken()));
+			Vector3 p3(strToFloat(tok.nextToken()), strToFloat(tok.nextToken()), strToFloat(tok.nextToken()));
 			tok.assertNextToken(")");
 
 			// Construct the plane from the three points
@@ -76,15 +76,15 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 			tok.assertNextToken("(");
 
 			tok.assertNextToken("(");
-			texdef.xx() = strToDouble(tok.nextToken());
-			texdef.yx() = strToDouble(tok.nextToken());
-			texdef.tx() = strToDouble(tok.nextToken());
+			texdef.xx() = strToFloat(tok.nextToken());
+			texdef.yx() = strToFloat(tok.nextToken());
+			texdef.tx() = strToFloat(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken("(");
-			texdef.xy() = strToDouble(tok.nextToken());
-			texdef.yy() = strToDouble(tok.nextToken());
-			texdef.ty() = strToDouble(tok.nextToken());
+			texdef.xy() = strToFloat(tok.nextToken());
+			texdef.yy() = strToFloat(tok.nextToken());
+			texdef.ty() = strToFloat(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken(")");

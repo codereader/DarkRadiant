@@ -164,7 +164,7 @@ void FaceVertexItem::render()
 		glColor3f(1, 1, 1);
 	}
 
-	glVertex2dv(_windingVertex.texcoord);
+	glVertex2fv(_windingVertex.texcoord);
 
 	glEnd();
 

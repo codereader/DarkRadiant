@@ -56,7 +56,7 @@ void Winding::drawWireframe() const
 {
 	if (!empty())
 	{
-		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &front().vertex);
+		glVertexPointer(3, GL_FLOAT, sizeof(WindingVertex), &front().vertex);
 		glDrawArrays(GL_LINE_LOOP, 0, GLsizei(size()));
 	}
 }
@@ -74,7 +74,7 @@ void Winding::render(const RenderInfo& info) const
 	const WindingVertex& firstElement = front();
 
 	// Set the vertex pointer first
-	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex);
+	glVertexPointer(3, GL_FLOAT, sizeof(WindingVertex), &firstElement.vertex);
 
     // Check render flags. Multiple flags may be set, so the order matters.
     if (info.checkFlag(RENDER_TEXTURE_CUBEMAP))
@@ -83,7 +83,7 @@ void Winding::render(const RenderInfo& info) const
         // coordinate. The RenderSystem will set the appropriate texture matrix
         // etc.
         glTexCoordPointer(
-            3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex
+            3, GL_FLOAT, sizeof(WindingVertex), &firstElement.vertex
         );
     }
 	else if (info.checkFlag(RENDER_BUMP))
@@ -91,16 +91,16 @@ void Winding::render(const RenderInfo& info) const
         // Lighting mode, submit normals, tangents and texcoords to the shader
         // program.
 		glVertexAttribPointerARB(
-            ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.normal
+            ATTR_NORMAL, 3, GL_FLOAT, 0, sizeof(WindingVertex), &firstElement.normal
         );
 		glVertexAttribPointerARB(
-            ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.texcoord
+            ATTR_TEXCOORD, 2, GL_FLOAT, 0, sizeof(WindingVertex), &firstElement.texcoord
         );
 		glVertexAttribPointerARB(
-            ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.tangent
+            ATTR_TANGENT, 3, GL_FLOAT, 0, sizeof(WindingVertex), &firstElement.tangent
         );
 		glVertexAttribPointerARB(
-            ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.bitangent
+            ATTR_BITANGENT, 3, GL_FLOAT, 0, sizeof(WindingVertex), &firstElement.bitangent
         );
 	}
 	else
@@ -108,14 +108,14 @@ void Winding::render(const RenderInfo& info) const
         // Submit normals in lighting mode
 		if (info.checkFlag(RENDER_LIGHTING))
         {
-			glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
+			glNormalPointer(GL_FLOAT, sizeof(WindingVertex), &firstElement.normal);
 		}
 
         // Set texture coordinates in 2D texture mode
 		if (info.checkFlag(RENDER_TEXTURE_2D))
         {
             glTexCoordPointer(
-                2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord
+                2, GL_FLOAT, sizeof(WindingVertex), &firstElement.texcoord
             );
 		}
 	}

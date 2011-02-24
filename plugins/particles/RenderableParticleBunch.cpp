@@ -139,10 +139,10 @@ void RenderableParticleBunch::render(const RenderInfo& info) const
 {
 	if (_quads.empty()) return;
 
-	glVertexPointer(3, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].vertex));
-	glTexCoordPointer(2, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].texcoord));
-	glNormalPointer(GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].normal));
-	glColorPointer(4, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].colour));
+	glVertexPointer(3, GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].vertex));
+	glTexCoordPointer(2, GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].texcoord));
+	glNormalPointer(GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].normal));
+	glColorPointer(4, GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].colour));
 
 	glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_quads.size())*4);
 }
@@ -178,7 +178,7 @@ Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
 	Vector3 z = object2Vel.z().getVector3();
 
 	// The particle needs to be rotated by this angle around the velocity axis
-	double aimedAngle = z.angle(-viewProj);
+	float aimedAngle = z.angle(-viewProj);
 
 	// Use the cross to check whether to rotate in negative or positive direction
 	if (z.crossProduct(-viewProj).dot(vel) > 0)

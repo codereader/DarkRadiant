@@ -55,8 +55,8 @@ public:
 	void render(const RenderInfo& info) const
 	{
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(FlatShadedVertex), &_vertices.front().colour);
-		glVertexPointer(3, GL_DOUBLE, sizeof(FlatShadedVertex), &_vertices.front().vertex);
-		glNormalPointer(GL_DOUBLE, sizeof(FlatShadedVertex), &_vertices.front().normal);
+		glVertexPointer(3, GL_FLOAT, sizeof(FlatShadedVertex), &_vertices.front().vertex);
+		glNormalPointer(GL_FLOAT, sizeof(FlatShadedVertex), &_vertices.front().normal);
 		glDrawArrays(GL_TRIANGLES, 0, GLsizei(_vertices.size()));
 	}
 

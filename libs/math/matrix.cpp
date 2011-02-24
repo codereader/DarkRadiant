@@ -49,21 +49,21 @@ Matrix4 Matrix4::getTranslation(const Vector3& translation)
 // Get a rotation from 2 vectors (named constructor)
 Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 {
-	double angle = a.angle(b);
+	float angle = a.angle(b);
 	Vector3 axis = b.crossProduct(a).getNormalised();
 
 	return getRotation(axis, angle);
 }
 
-Matrix4 Matrix4::getRotation(const Vector3& axis, const double angle)
+Matrix4 Matrix4::getRotation(const Vector3& axis, const float angle)
 {
 	// Pre-calculate the terms
-	double cosPhi = cos(angle);
-	double sinPhi = sin(angle);
-	double oneMinusCosPhi = static_cast<double>(1) - cos(angle);
-	double x = axis.x();
-	double y = axis.y();
-	double z = axis.z();
+	float cosPhi = cos(angle);
+	float sinPhi = sin(angle);
+	float oneMinusCosPhi = static_cast<float>(1) - cos(angle);
+	float x = axis.x();
+	float y = axis.y();
+	float z = axis.z();
 	return Matrix4::byColumns(
 		cosPhi + oneMinusCosPhi*x*x, oneMinusCosPhi*x*y - sinPhi*z, oneMinusCosPhi*x*z + sinPhi*y, 0,
 		oneMinusCosPhi*y*x + sinPhi*z, cosPhi + oneMinusCosPhi*y*y, oneMinusCosPhi*y*z - sinPhi*x, 0,
@@ -84,10 +84,10 @@ Matrix4 Matrix4::getScale(const Vector3& scale)
 }
 
 // Main explicit constructor (private)
-Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
-                 double yx_, double yy_, double yz_, double yw_,
-                 double zx_, double zy_, double zz_, double zw_,
-                 double tx_, double ty_, double tz_, double tw_)
+Matrix4::Matrix4(float xx_, float xy_, float xz_, float xw_,
+                 float yx_, float yy_, float yz_, float yw_,
+                 float zx_, float zy_, float zz_, float zw_,
+                 float tx_, float ty_, float tz_, float tw_)
 {
     xx() = xx_;
     xy() = xy_;
@@ -108,10 +108,10 @@ Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
 }
 
 // Construct a matrix with given column elements
-Matrix4 Matrix4::byColumns(double xx, double xy, double xz, double xw,
-                           double yx, double yy, double yz, double yw,
-                           double zx, double zy, double zz, double zw,
-                           double tx, double ty, double tz, double tw)
+Matrix4 Matrix4::byColumns(float xx, float xy, float xz, float xw,
+                           float yx, float yy, float yz, float yw,
+                           float zx, float zy, float zz, float zw,
+                           float tx, float ty, float tz, float tw)
 {
     return Matrix4(xx, xy, xz, xw,
                    yx, yy, yz, yw,
@@ -120,10 +120,10 @@ Matrix4 Matrix4::byColumns(double xx, double xy, double xz, double xw,
 }
 
 // Construct a matrix with given row elements
-Matrix4 Matrix4::byRows(double xx, double yx, double zx, double tx,
-                        double xy, double yy, double zy, double ty,
-                        double xz, double yz, double zz, double tz,
-                        double xw, double yw, double zw, double tw)
+Matrix4 Matrix4::byRows(float xx, float yx, float zx, float tx,
+                        float xy, float yy, float zy, float ty,
+                        float xz, float yz, float zz, float tz,
+                        float xw, float yw, float zw, float tw)
 {
     return Matrix4(xx, xy, xz, xw,
                    yx, yy, yz, yw,
@@ -159,7 +159,7 @@ Matrix4 Matrix4::getInverse() const
   Matrix4 result;
 
   // determinant of rotation submatrix
-  double det
+  float det
     = _m[0] * ( _m[5]*_m[10] - _m[9]*_m[6] )
     - _m[1] * ( _m[4]*_m[10] - _m[8]*_m[6] )
     + _m[2] * ( _m[4]*_m[9] - _m[8]*_m[5] );

@@ -18,11 +18,11 @@ namespace scene
 }
 
 template<typename Element> class BasicVector2;
-typedef BasicVector2<double> Vector2;
+typedef BasicVector2<float> Vector2;
 template<typename Element> class BasicVector3;
-typedef BasicVector3<double> Vector3;
+typedef BasicVector3<float> Vector3;
 template<typename Element> class BasicVector4;
-typedef BasicVector4<double> Vector4;
+typedef BasicVector4<float> Vector4;
 class Matrix4;
 typedef Vector4 Quaternion;
 

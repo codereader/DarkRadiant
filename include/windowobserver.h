@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 template<typename Element>
 class BasicVector2;
-typedef BasicVector2<double> Vector2;
+typedef BasicVector2<float> Vector2;
 typedef Vector2 WindowVector;
 typedef struct _GdkEventButton GdkEventButton;
 

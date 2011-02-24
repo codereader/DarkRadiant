@@ -150,7 +150,7 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
     glClientActiveTexture(GL_TEXTURE3);
 
     glMatrixMode(GL_TEXTURE);
-    glLoadMatrixd(local2light);
+    glLoadMatrixf(local2light);
     glMatrixMode(GL_MODELVIEW);
 
     GlobalOpenGL().assertNoErrors();

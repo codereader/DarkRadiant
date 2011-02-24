@@ -21,13 +21,13 @@ void PatchParser::parseMatrix(parser::DefTokeniser& tok, IPatch& patch) const
 			tok.assertNextToken("(");
 
 			// Parse vertex coordinates
-			patch.ctrlAt(r, c).vertex[0] = strToDouble(tok.nextToken());
-			patch.ctrlAt(r, c).vertex[1] = strToDouble(tok.nextToken());
-			patch.ctrlAt(r, c).vertex[2] = strToDouble(tok.nextToken());
+			patch.ctrlAt(r, c).vertex[0] = strToFloat(tok.nextToken());
+			patch.ctrlAt(r, c).vertex[1] = strToFloat(tok.nextToken());
+			patch.ctrlAt(r, c).vertex[2] = strToFloat(tok.nextToken());
 
 			// Parse texture coordinates
-			patch.ctrlAt(r, c).texcoord[0] = strToDouble(tok.nextToken());
-			patch.ctrlAt(r, c).texcoord[1] = strToDouble(tok.nextToken());
+			patch.ctrlAt(r, c).texcoord[0] = strToFloat(tok.nextToken());
+			patch.ctrlAt(r, c).texcoord[1] = strToFloat(tok.nextToken());
 
 			tok.assertNextToken(")");
 		}

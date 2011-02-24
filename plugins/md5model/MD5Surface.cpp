@@ -90,12 +90,12 @@ void MD5Surface::createDisplayLists()
 		// Submit the vertex attributes and coordinate
 		if (GLEW_ARB_vertex_program) {
 			// Submit the vertex attributes and coordinate
-			glVertexAttrib2dvARB(ATTR_TEXCOORD, v.texcoord);
-			glVertexAttrib3dvARB(ATTR_TANGENT, v.tangent);
-			glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
-			glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);
+			glVertexAttrib2fvARB(ATTR_TEXCOORD, v.texcoord);
+			glVertexAttrib3fvARB(ATTR_TANGENT, v.tangent);
+			glVertexAttrib3fvARB(ATTR_BITANGENT, v.bitangent);
+			glVertexAttrib3fvARB(ATTR_NORMAL, v.normal);
 		}
-		glVertex3dv(v.vertex);
+		glVertex3fv(v.vertex);
 	}
 	glEnd();
 
@@ -114,9 +114,9 @@ void MD5Surface::createDisplayLists()
 		ArbitraryMeshVertex& v = _vertices[*i];
 
 		// Submit attributes
-		glNormal3dv(v.normal);
-		glTexCoord2dv(v.texcoord);
-		glVertex3dv(v.vertex);
+		glNormal3fv(v.normal);
+		glTexCoord2fv(v.texcoord);
+		glVertex3fv(v.vertex);
 	}
 	glEnd();
 
