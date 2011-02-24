@@ -90,7 +90,7 @@ public:
 	/** Get the radius of the smallest sphere which encloses this
 	 * bounding box.
 	 */
-	double getRadius() const {
+	float getRadius() const {
 		return extents.getLength(); // Pythagorean length of extents vector
 	}
 
@@ -182,7 +182,7 @@ inline bool aabb_intersects_aabb(const AABB& aabb, const AABB& other)
 
 inline unsigned int aabb_classify_plane(const AABB& aabb, const Plane3& plane)
 {
-  double distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
+  float distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
 
   if(fabs(distance_origin) < (fabs(plane.normal().x() * aabb.extents[0])
     + fabs(plane.normal().y() * aabb.extents[1])
@@ -199,7 +199,7 @@ inline unsigned int aabb_classify_plane(const AABB& aabb, const Plane3& plane)
 
 inline unsigned int aabb_oriented_classify_plane(const AABB& aabb, const Matrix4& transform, const Plane3& plane)
 {
-  double distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
+  float distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
 
   if(fabs(distance_origin) < (fabs(aabb.extents[0] * plane.normal().dot(transform.x().getVector3()) )
     + fabs(aabb.extents[1] * plane.normal().dot(transform.y().getVector3()))
@@ -256,9 +256,9 @@ inline void aabb_planes(const AABB& aabb, Plane3 planes[6])
 
 inline void aabb_planes_oriented(const AABB& aabb, const Matrix4& rotation, Plane3 planes[6])
 {
-  double x = rotation.x().getVector3().dot(aabb.origin);
-  double y = rotation.y().getVector3().dot(aabb.origin);
-  double z = rotation.z().getVector3().dot(aabb.origin);
+  float x = rotation.x().getVector3().dot(aabb.origin);
+  float y = rotation.y().getVector3().dot(aabb.origin);
+  float z = rotation.z().getVector3().dot(aabb.origin);
 
   planes[0] = Plane3(rotation.x().getVector3(), x + aabb.extents[0]);
   planes[1] = Plane3(-rotation.x().getVector3(), -(x - aabb.extents[0]));
@@ -277,10 +277,10 @@ const Vector3 aabb_normals[6] = {
   Vector3( 0, 0,-1 ),
 };
 
-const double aabb_texcoord_topleft[2] = { 0, 0 };
-const double aabb_texcoord_topright[2] = { 1, 0 };
-const double aabb_texcoord_botleft[2] = { 0, 1 };
-const double aabb_texcoord_botright[2] = { 1, 1 };
+const float aabb_texcoord_topleft[2] = { 0, 0 };
+const float aabb_texcoord_topright[2] = { 1, 0 };
+const float aabb_texcoord_botleft[2] = { 0, 1 };
+const float aabb_texcoord_botright[2] = { 1, 1 };
 
 
 inline AABB aabb_for_oriented_aabb(const AABB& aabb, const Matrix4& transform)
@@ -312,7 +312,7 @@ inline AABB aabb_for_oriented_aabb_safe(const AABB& aabb, const Matrix4& transfo
 
 inline AABB aabb_infinite()
 {
-  return AABB(Vector3(0, 0, 0), Vector3(DBL_MAX, DBL_MAX, DBL_MAX));
+  return AABB(Vector3(0, 0, 0), Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
 }
 
 #endif

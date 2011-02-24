@@ -220,11 +220,11 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
 	const Vector3 up(0, 0, 1);
 	const Vector3 down(0, 0, -1);
 
-	if(vector3_equal_epsilon(normal, up, double(1e-6))) {
+	if(vector3_equal_epsilon(normal, up, float(1e-6))) {
 		texS = Vector3(0, 1, 0);
 		texT = Vector3(1, 0, 0);
 	}
-	else if(vector3_equal_epsilon(normal, down, double(1e-6))) {
+	else if(vector3_equal_epsilon(normal, down, float(1e-6))) {
 		texS = Vector3(0, 1, 0);
 		texT = Vector3(-1, 0, 0);
 	}

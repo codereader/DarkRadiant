@@ -9,7 +9,7 @@
 class RenderSystem;
 class Matrix4;
 template<typename Element> class BasicVector3;
-typedef BasicVector3<double> Vector3;
+typedef BasicVector3<float> Vector3;
 class AABB;
 
 namespace particles

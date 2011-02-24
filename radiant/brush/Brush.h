@@ -19,7 +19,7 @@ inline double quantiseFloating(double f) {
 
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
 inline bool plane3_inside(const Plane3& self, const Plane3& other) {
-	if (vector3_equal_epsilon(self.normal(), other.normal(), 0.001)) {
+	if (vector3_equal_epsilon(self.normal(), other.normal(), 0.001f)) {
 		return self.dist() < other.dist();
 	}
 	return true;

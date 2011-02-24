@@ -351,7 +351,7 @@ void _pico_expand_bounds( picoVec3_t p, picoVec3_t mins, picoVec3_t maxs )
 	int i;
 	for (i=0; i<3; i++)
 	{
-		double value = p[i];
+		float value = p[i];
 		if (value < mins[i]) mins[i] = value;
 		if (value > maxs[i]) maxs[i] = value;
 	}
@@ -372,14 +372,14 @@ void _pico_zero_vec4( picoVec4_t vec )
 	vec[ 0 ] = vec[ 1 ] = vec[ 2 ] = vec[ 3 ] = 0;
 }
 
-void _pico_set_vec( picoVec3_t v, double a, double b, double c )
+void _pico_set_vec( picoVec3_t v, float a, float b, float c )
 {
 	v[ 0 ] = a;
 	v[ 1 ] = b;
 	v[ 2 ] = c;
 }
 
-void _pico_set_vec4( picoVec4_t v, double a, double b, double c, double d )
+void _pico_set_vec4( picoVec4_t v, float a, float b, float c, float d )
 {
 	v[ 0 ] = a;
 	v[ 1 ] = b;
@@ -411,10 +411,10 @@ void _pico_copy_vec4( picoVec4_t src, picoVec4_t dest )
 /* ydnar */
 picoVec_t _pico_normalize_vec( picoVec3_t vec )
 {
-	double	len, ilen;
+	float	len, ilen;
 
 	len = sqrt( vec[ 0 ] * vec[ 0 ] + vec[ 1 ] * vec[ 1 ] + vec[ 2 ] * vec[ 2 ] );
-	if( len == 0.0 ) return 0.0;
+	if( len == 0.0 ) return 0.0f;
 	ilen = 1.0 / len;
 	vec[ 0 ] *= (picoVec_t) ilen;
 	vec[ 1 ] *= (picoVec_t) ilen;
@@ -1111,7 +1111,7 @@ int _pico_parse_vec( picoParser_t *p, picoVec3_t out )
 			_pico_zero_vec( out );
 			return 0;
 		}
-		out[ i ] = (double) strtod( token, NULL );
+		out[ i ] = (float) atof( token );
 	}
 	/* success */
 	return 1;
@@ -1138,7 +1138,7 @@ int _pico_parse_vec_def( picoParser_t *p, picoVec3_t out, picoVec3_t def )
 			_pico_copy_vec( def,out );
 			return 0;
 		}
-		out[ i ] = (double) strtod( token, NULL );
+		out[ i ] = (float) atof( token );
 	}
 	/* success */
 	return 1;
@@ -1165,7 +1165,7 @@ int _pico_parse_vec2( picoParser_t *p, picoVec2_t out )
 			_pico_zero_vec2( out );
 			return 0;
 		}
-		out[ i ] = (double) strtod( token, NULL );
+		out[ i ] = (float) atof( token );
 	}
 	/* success */
 	return 1;
@@ -1192,7 +1192,7 @@ int _pico_parse_vec2_def( picoParser_t *p, picoVec2_t out, picoVec2_t def )
 			_pico_copy_vec2( def,out );
 			return 0;
 		}
-		out[ i ] = (double) strtod( token, NULL );
+		out[ i ] = (float) atof( token );
 	}
 	/* success */
 	return 1;
@@ -1219,7 +1219,7 @@ int _pico_parse_vec4( picoParser_t *p, picoVec4_t out )
 			_pico_zero_vec4( out );
 			return 0;
 		}
-		out[ i ] = (double) strtod( token, NULL );
+		out[ i ] = (float) atof( token );
 	}
 	/* success */
 	return 1;
@@ -1246,7 +1246,7 @@ int _pico_parse_vec4_def( picoParser_t *p, picoVec4_t out, picoVec4_t def )
 			_pico_copy_vec4( def,out );
 			return 0;
 		}
-		out[ i ] = (double) strtod( token, NULL );
+		out[ i ] = (float) atof( token );
 	}
 	/* success */
 	return 1;

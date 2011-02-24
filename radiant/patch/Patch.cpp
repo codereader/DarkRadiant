@@ -530,7 +530,7 @@ bool Patch::isDegenerate() const {
 	for (PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 
 		// Skip the first comparison
-		if (i != m_ctrl.begin() && !vector3_equal_epsilon(i->vertex, prev, 0.0001)) {
+		if (i != m_ctrl.begin() && !vector3_equal_epsilon(i->vertex, prev, 0.0001f)) {
 			return false;
 		}
 
@@ -2382,9 +2382,9 @@ void Patch::RenderDebug(RenderStateFlags state) const
     glBegin(GL_QUAD_STRIP);
     for (std::size_t j = 0; j<m_tess.m_lenStrips; j++)
     {
-      glNormal3dv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].normal);
-      glTexCoord2dv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].texcoord);
-	  glVertex3dv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].vertex);
+      glNormal3fv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].normal);
+      glTexCoord2fv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].texcoord);
+	  glVertex3fv(m_tess.vertices[m_tess.indices[i*m_tess.m_lenStrips+j]].vertex);
     }
     glEnd();
   }
@@ -2405,22 +2405,22 @@ void RenderablePatchSolid::RenderNormals() const
         Vector3 vNormal(
             vertex.vertex + vertex.normal.getNormalised() * 8
         );
-        glVertex3dv(vertex.vertex);
-        glVertex3dv(vNormal);
+        glVertex3fv(vertex.vertex);
+        glVertex3fv(vNormal);
       }
       {
         Vector3 vNormal(
             vertex.vertex + vertex.tangent.getNormalised() * 8
         );
-        glVertex3dv(vertex.vertex);
-        glVertex3dv(vNormal);
+        glVertex3fv(vertex.vertex);
+        glVertex3fv(vNormal);
       }
       {
         Vector3 vNormal(
             vertex.vertex + vertex.bitangent.getNormalised() * 8
         );
-        glVertex3dv(vertex.vertex);
-        glVertex3dv(vNormal);
+        glVertex3fv(vertex.vertex);
+        glVertex3fv(vNormal);
       }
     }
   }

@@ -6,15 +6,15 @@
 template<typename Triple>
 class TripleRemapXYZ {
 public:
-	static double& x(Triple& triple) {
+	static float& x(Triple& triple) {
 		return triple.x();
 	}
 
-	static double& y(Triple& triple) {
+	static float& y(Triple& triple) {
 		return triple.y();
 	}
 
-	static double& z(Triple& triple) {
+	static float& z(Triple& triple) {
 		return triple.z();
 	}
 };
@@ -22,15 +22,15 @@ public:
 template<typename Triple>
 class TripleRemapYZX {
 public:
-	static double& x(Triple& triple) {
+	static float& x(Triple& triple) {
 		return triple.y();
 	}
 
-	static double& y(Triple& triple) {
+	static float& y(Triple& triple) {
 		return triple.z();
 	}
 
-	static double& z(Triple& triple) {
+	static float& z(Triple& triple) {
 		return triple.x();
 	}
 };
@@ -38,15 +38,15 @@ public:
 template<typename Triple>
 class TripleRemapZXY {
 public:
-	static double& x(Triple& triple) {
+	static float& x(Triple& triple) {
 		return triple.z();
 	}
 
-	static double& y(Triple& triple) {
+	static float& y(Triple& triple) {
 		return triple.x();
 	}
 
-	static double& z(Triple& triple) {
+	static float& z(Triple& triple) {
 		return triple.y();
 	}
 };

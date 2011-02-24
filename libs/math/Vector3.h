@@ -1,5 +1,4 @@
-#ifndef VECTOR3_H_
-#define VECTOR3_H_
+#pragma once
 
 /* greebo: This file contains the templated class definition of the three-component vector
  *
@@ -7,7 +6,7 @@
  *
  * The BasicVector3 is equipped with the most important operators like *, *= and so on.
  *
- * Note: The most commonly used Vector3 is a BasicVector3<double>, this is also defined in this file
+ * Note: The most commonly used Vector3 is a BasicVector3<float>, this is also defined in this file
  *
  * Note: that the multiplication of a Vector3 with another one (Vector3*Vector3) does NOT
  * result in an inner product but in a component-wise scaling. Use the .dot() method to
@@ -292,17 +291,17 @@ public:
      * @returns
      * The Pythagorean length of this vector.
      */
-	double getLength() const {
-		double lenSquared = getLengthSquared();
+	float getLength() const {
+		float lenSquared = getLengthSquared();
 		return sqrt(lenSquared);
 	}
 
 	/** Return the squared length of this vector.
      */
-	double getLengthSquared() const {
-		double lenSquared = double(_v[0]) * double(_v[0]) +
-							double(_v[1]) * double(_v[1]) +
-							double(_v[2]) * double(_v[2]);
+	float getLengthSquared() const {
+		float lenSquared = float(_v[0]) * float(_v[0]) +
+							float(_v[1]) * float(_v[1]) +
+							float(_v[2]) * float(_v[2]);
 		return lenSquared;
 	}
 
@@ -318,7 +317,7 @@ public:
 	 * Normalise this vector in-place by scaling by the inverse of its size.
 	 */
 	void normalise() {
-		double inverseLength = 1/getLength();
+		float inverseLength = 1/getLength();
 		_v[0] *= inverseLength;
 		_v[1] *= inverseLength;
 		_v[2] *= inverseLength;
@@ -391,7 +390,7 @@ public:
 
 	/** Implicit cast to C-style array. This allows a Vector3 to be
 	 * passed directly to GL functions that expect an array (e.g.
-	 * glFloat3dv()). These functions implicitly provide operator[]
+	 * glFloat3fv()). These functions implicitly provide operator[]
 	 * as well, since the C-style array provides this function.
 	 */
 
@@ -415,8 +414,8 @@ public:
 
 	template<typename OtherT>
 	bool isParallel(const BasicVector3<OtherT>& other) const {
-		return (float_equal_epsilon(angle(other), double(0.0f), double(0.001f))
-			 || float_equal_epsilon(angle(other), c_pi, double(0.001f)));
+		return (float_equal_epsilon(angle(other), float(0.0f), float(0.001f))
+			 || float_equal_epsilon(angle(other), c_pi, float(0.001f)));
 	}
 };
 
@@ -431,8 +430,8 @@ std::ostream& operator<<(std::ostream& st, BasicVector3<T> vec) {
 
 // ==========================================================================================
 
-// A 3-element vector stored in double-precision floating-point.
-typedef BasicVector3<double> Vector3;
+// A 3-element vector stored in single-precision floating-point.
+typedef BasicVector3<float> Vector3;
 
 // =============== Common Vector3 Methods ==================================================
 
@@ -500,13 +499,10 @@ inline void vector3_snap(BasicVector3<Element>& self, const OtherElement& snap) 
   self = vector3_snapped(self, snap);
 }
 
-inline Vector3 vector3_for_spherical(double theta, double phi) {
+inline Vector3 vector3_for_spherical(float theta, float phi) {
   return Vector3(
     cos(theta) * cos(phi),
     sin(theta) * cos(phi),
     sin(phi)
   );
 }
-
-
-#endif /*VECTOR3_H_*/

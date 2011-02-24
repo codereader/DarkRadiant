@@ -132,10 +132,10 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 {
 	// Set the projection and modelview matrices
 	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixd(projection);
+	glLoadMatrixf(projection);
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixd(modelview);
+	glLoadMatrixf(modelview);
 
 	// global settings that are not set in renderstates
     glFrontFace(GL_CW);

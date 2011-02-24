@@ -194,7 +194,7 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
 
         // Apply to the texture matrix
         glMatrixMode(GL_TEXTURE);
-        glLoadMatrixd(transform);
+        glLoadMatrixf(transform);
         glMatrixMode(GL_MODELVIEW);
     }
 }
@@ -228,7 +228,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         if(current.glProgram != 0)
         {
           current.glProgram->disable();
-          glColor4dv(current.m_colour);
+          glColor4fv(current.m_colour);
         }
 
         current.glProgram = program;
@@ -353,13 +353,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         else if(changingBitsMask & ~requiredState & RENDER_COLOURARRAY)
         {
             glDisableClientState(GL_COLOR_ARRAY);
-            glColor4dv(_state.m_colour);
+            glColor4fv(_state.m_colour);
             GlobalOpenGL().assertNoErrors();
         }
 
         if(changingBitsMask & ~requiredState & RENDER_COLOURCHANGE)
         {
-            glColor4dv(_state.m_colour);
+            glColor4fv(_state.m_colour);
             GlobalOpenGL().assertNoErrors();
         }
 
@@ -426,7 +426,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     // Set the GL colour if it isn't set already
     if (_state.m_colour != current.m_colour)
     {
-        glColor4dv(_state.m_colour);
+        glColor4fv(_state.m_colour);
         current.m_colour = _state.m_colour;
         GlobalOpenGL().assertNoErrors();
     }
@@ -493,7 +493,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
 {
     // Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
-    glLoadMatrixd(Matrix4::getIdentity());
+    glLoadMatrixf(Matrix4::getIdentity());
     glMatrixMode(GL_MODELVIEW);
 
 	// Apply our state to the current state object
@@ -505,11 +505,11 @@ void OpenGLShaderPass::render(OpenGLState& current,
     {
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
-        glLoadMatrixd(Matrix4::getIdentity());
+        glLoadMatrixf(Matrix4::getIdentity());
 
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
-        glLoadMatrixd(Matrix4::getIdentity());
+        glLoadMatrixf(Matrix4::getIdentity());
 
         glBegin(GL_QUADS);
         glVertex3f(-1, -1, 0);
@@ -613,7 +613,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 			transform = i->transform;
       		glPopMatrix();
       		glPushMatrix();
-      		glMultMatrixd(*transform);
+      		glMultMatrixf(*transform);
 
       		// Determine the face direction
       		if ((current.renderFlags & RENDER_CULLFACE) != 0

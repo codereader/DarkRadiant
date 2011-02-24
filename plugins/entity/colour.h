@@ -73,7 +73,7 @@ private:
 
 	void captureShader()
 	{
-		std::string wireCol = (boost::format("<%g %g %g>") % m_colour[0] % m_colour[1] % m_colour[2]).str();
+		std::string wireCol = (boost::format("<%f %f %f>") % m_colour[0] % m_colour[1] % m_colour[2]).str();
 		_wireShader = GlobalRenderSystem().capture(wireCol);
 	}
 };

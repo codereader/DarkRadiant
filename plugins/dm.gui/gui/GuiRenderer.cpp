@@ -69,7 +69,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 
 	if (window->backcolor[3] > 0)
 	{
-		glColor4dv(window->backcolor);
+		glColor4fv(window->backcolor);
 
 		// Background quad
 		glBegin(GL_QUADS);
@@ -114,7 +114,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
 			// Draw the textured quad
-			glColor4dv(window->matcolor);
+			glColor4fv(window->matcolor);
 
 			// Render background image as opaque if _ignoreVisibility is set to true
 			if (_ignoreVisibility && window->matcolor[3] <= 0)
@@ -149,7 +149,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
 		glEnable(GL_TEXTURE_2D);
-		glColor4dv(window->forecolor);
+		glColor4fv(window->forecolor);
 
 		// Render text as opaque if _ignoreVisibility is set to true
 		if (_ignoreVisibility && window->forecolor[3] <= 0)
@@ -169,7 +169,7 @@ void GuiRenderer::render(const GuiWindowDefPtr& window)
 	// this parent windowDef
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
-	glTranslated(window->rect[0], window->rect[1], 0);
+	glTranslatef(window->rect[0], window->rect[1], 0);
 
 	for (GuiWindowDef::ChildWindows::const_iterator i = window->children.begin();
 		 i != window->children.end(); ++i)

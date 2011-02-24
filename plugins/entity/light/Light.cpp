@@ -57,7 +57,7 @@ void light_draw(const AABB& aabb_light, RenderStateFlags state)
       1, 4, 3,
       1, 3, 2
     };
-    glVertexPointer(3, GL_DOUBLE, 0, points);
+    glVertexPointer(3, GL_FLOAT, 0, points);
     glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(index_t), RenderIndexTypeID, indices);
 }
 
@@ -431,9 +431,9 @@ void Light::setLightRadius(const AABB& aabb)
 		// Constrain the values to barely non-zero limits (issue #1969)
 		for (int i = 0; i < 3; ++i)
 		{
-			if (m_doom3Radius.m_radiusTransformed[i] < 0.01)
+			if (m_doom3Radius.m_radiusTransformed[i] < 0.01f)
 			{
-				m_doom3Radius.m_radiusTransformed[i] = 0.01;
+				m_doom3Radius.m_radiusTransformed[i] = 0.01f;
 			}
 		}
 	}
@@ -813,13 +813,13 @@ bool Light::testAABB(const AABB& other) const
         returnVal = aabb_intersects_aabb(other, AABB(
             bounds.origin,
             Vector3(
-                static_cast<double>(fabs(m_rotation[0] * bounds.extents[0])
+                static_cast<float>(fabs(m_rotation[0] * bounds.extents[0])
                                     + fabs(m_rotation[3] * bounds.extents[1])
                                     + fabs(m_rotation[6] * bounds.extents[2])),
-                static_cast<double>(fabs(m_rotation[1] * bounds.extents[0])
+                static_cast<float>(fabs(m_rotation[1] * bounds.extents[0])
                                     + fabs(m_rotation[4] * bounds.extents[1])
                                     + fabs(m_rotation[7] * bounds.extents[2])),
-                static_cast<double>(fabs(m_rotation[2] * bounds.extents[0])
+                static_cast<float>(fabs(m_rotation[2] * bounds.extents[0])
                                     + fabs(m_rotation[5] * bounds.extents[1])
                                     + fabs(m_rotation[8] * bounds.extents[2]))
             )

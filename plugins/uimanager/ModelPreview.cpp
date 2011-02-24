@@ -237,7 +237,7 @@ bool ModelPreview::callbackGLDraw(GdkEventExpose* ev)
 	// Premultiply with the translations
 	glLoadIdentity();
 	glTranslatef(0, 0, _camDist); // camera translation
-	glMultMatrixd(_rotation); // post multiply with rotations
+	glMultMatrixf(_rotation); // post multiply with rotations
 	glRotatef(90, -1, 0, 0); // axis rotation (y-up (GL) -> z-up (model))
 
 	// Render the bounding box if the toggle is active
@@ -288,11 +288,11 @@ bool ModelPreview::callbackGLMotion(GdkEventMotion* ev)
 			// space. At this stage we are only calculating and storing the
 			// matrix for the GLDraw callback to use.
 			glLoadIdentity();
-			glRotated(-2, axisRot.x(), axisRot.y(), axisRot.z());
-			glMultMatrixd(_rotation);
+			glRotatef(-2, axisRot.x(), axisRot.y(), axisRot.z());
+			glMultMatrixf(_rotation);
 
 			// Save the new GL matrix for GL draw
-			glGetDoublev(GL_MODELVIEW_MATRIX, _rotation);
+			glGetFloatv(GL_MODELVIEW_MATRIX, _rotation);
 
 			_glWidget->queueDraw(); // trigger the GLDraw method to draw the actual model
 		}

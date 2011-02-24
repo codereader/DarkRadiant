@@ -186,10 +186,10 @@ void Doom3EntityClass::captureColour()
 
 	// Capture fill and wire versions of the entity colour
 	std::string fillCol = _colourTransparent ?
-		(boost::format("[%g %g %g]") % _colour[0] % _colour[1] % _colour[2]).str() :
-		(boost::format("(%g %g %g)") % _colour[0] % _colour[1] % _colour[2]).str();
+		(boost::format("[%f %f %f]") % _colour[0] % _colour[1] % _colour[2]).str() :
+		(boost::format("(%f %f %f)") % _colour[0] % _colour[1] % _colour[2]).str();
 
-	std::string wireCol = (boost::format("<%g %g %g>") % _colour[0] % _colour[1] % _colour[2]).str();
+	std::string wireCol = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
 
 	_fillShader = GlobalRenderSystem().capture(fillCol);
 	_wireShader = GlobalRenderSystem().capture(wireCol);
@@ -266,6 +266,12 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 	if (getAttribute("editor_transparent").value == "1")
 	{
 		_colourTransparent = true;
+	}
+
+	if (getName() == "path_corner")
+	{
+		int i = 7;
+		getName() + "a";
 	}
 
 	// (Re)set the colour

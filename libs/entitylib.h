@@ -54,7 +54,7 @@ inline void drawPyramid(const Vector3 points[5]) {
     3, 4, // third to second
     4, 1, // fourth to first
   };
-  glVertexPointer(3, GL_DOUBLE, 0, points);
+  glVertexPointer(3, GL_FLOAT, 0, points);
   glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);
 }
 
@@ -80,7 +80,7 @@ inline void drawFrustum(const Vector3 points[8]) {
   	6, 7, // bottom down left to bottom up left
   	7, 4, // bottom up left to bottom up right
   };
-  glVertexPointer(3, GL_DOUBLE, 0, points);
+  glVertexPointer(3, GL_FLOAT, 0, points);
   glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);
 }
 
@@ -98,32 +98,32 @@ inline void arrow_draw(const Vector3& origin, const Vector3& direction)
 
   glBegin (GL_LINES);
 
-  glVertex3dv(origin);
-  glVertex3dv(endpoint);
+  glVertex3fv(origin);
+  glVertex3fv(endpoint);
 
-  glVertex3dv(endpoint);
-  glVertex3dv(tip1);
+  glVertex3fv(endpoint);
+  glVertex3fv(tip1);
 
-  glVertex3dv(endpoint);
-  glVertex3dv(tip2);
+  glVertex3fv(endpoint);
+  glVertex3fv(tip2);
 
-  glVertex3dv(endpoint);
-  glVertex3dv(tip3);
+  glVertex3fv(endpoint);
+  glVertex3fv(tip3);
 
-  glVertex3dv(endpoint);
-  glVertex3dv(tip4);
+  glVertex3fv(endpoint);
+  glVertex3fv(tip4);
 
-  glVertex3dv(tip1);
-  glVertex3dv(tip3);
+  glVertex3fv(tip1);
+  glVertex3fv(tip3);
 
-  glVertex3dv(tip3);
-  glVertex3dv(tip2);
+  glVertex3fv(tip3);
+  glVertex3fv(tip2);
 
-  glVertex3dv(tip2);
-  glVertex3dv(tip4);
+  glVertex3fv(tip2);
+  glVertex3fv(tip4);
 
-  glVertex3dv(tip4);
-  glVertex3dv(tip1);
+  glVertex3fv(tip4);
+  glVertex3fv(tip1);
 
   glEnd();
 }
@@ -156,13 +156,13 @@ inline void aabb_draw_wire(const Vector3 points[8])
     0, 4, 1, 5, 2, 6, 3, 7,
   };
 #if 1
-  glVertexPointer(3, GL_DOUBLE, 0, points);
+  glVertexPointer(3, GL_FLOAT, 0, points);
   glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);
 #else
   glBegin(GL_LINES);
   for(std::size_t i = 0; i < sizeof(indices)/sizeof(index_t); ++i)
   {
-    glVertex3dv(points[indices[i]]);
+    glVertex3fv(points[indices[i]]);
   }
   glEnd();
 #endif
@@ -172,41 +172,41 @@ inline void aabb_draw_flatshade(const Vector3 points[8])
 {
   glBegin(GL_QUADS);
 
-  glNormal3dv(aabb_normals[0]);
-  glVertex3dv(points[2]);
-  glVertex3dv(points[1]);
-  glVertex3dv(points[5]);
-  glVertex3dv(points[6]);
+  glNormal3fv(aabb_normals[0]);
+  glVertex3fv(points[2]);
+  glVertex3fv(points[1]);
+  glVertex3fv(points[5]);
+  glVertex3fv(points[6]);
 
-  glNormal3dv(aabb_normals[1]);
-  glVertex3dv(points[1]);
-  glVertex3dv(points[0]);
-  glVertex3dv(points[4]);
-  glVertex3dv(points[5]);
+  glNormal3fv(aabb_normals[1]);
+  glVertex3fv(points[1]);
+  glVertex3fv(points[0]);
+  glVertex3fv(points[4]);
+  glVertex3fv(points[5]);
 
-  glNormal3dv(aabb_normals[2]);
-  glVertex3dv(points[0]);
-  glVertex3dv(points[1]);
-  glVertex3dv(points[2]);
-  glVertex3dv(points[3]);
+  glNormal3fv(aabb_normals[2]);
+  glVertex3fv(points[0]);
+  glVertex3fv(points[1]);
+  glVertex3fv(points[2]);
+  glVertex3fv(points[3]);
 
-  glNormal3dv(aabb_normals[3]);
-  glVertex3dv(points[0]);
-  glVertex3dv(points[3]);
-  glVertex3dv(points[7]);
-  glVertex3dv(points[4]);
+  glNormal3fv(aabb_normals[3]);
+  glVertex3fv(points[0]);
+  glVertex3fv(points[3]);
+  glVertex3fv(points[7]);
+  glVertex3fv(points[4]);
 
-  glNormal3dv(aabb_normals[4]);
-  glVertex3dv(points[3]);
-  glVertex3dv(points[2]);
-  glVertex3dv(points[6]);
-  glVertex3dv(points[7]);
+  glNormal3fv(aabb_normals[4]);
+  glVertex3fv(points[3]);
+  glVertex3fv(points[2]);
+  glVertex3fv(points[6]);
+  glVertex3fv(points[7]);
 
-  glNormal3dv(aabb_normals[5]);
-  glVertex3dv(points[7]);
-  glVertex3dv(points[6]);
-  glVertex3dv(points[5]);
-  glVertex3dv(points[4]);
+  glNormal3fv(aabb_normals[5]);
+  glVertex3fv(points[7]);
+  glVertex3fv(points[6]);
+  glVertex3fv(points[5]);
+  glVertex3fv(points[4]);
 
   glEnd();
 }
@@ -232,65 +232,65 @@ inline void aabb_draw_textured(const AABB& aabb)
 
   glBegin(GL_QUADS);
 
-  glNormal3dv(aabb_normals[0]);
-  glTexCoord2dv(aabb_texcoord_topleft);
-  glVertex3dv(points[2]);
-  glTexCoord2dv(aabb_texcoord_topright);
-  glVertex3dv(points[1]);
-  glTexCoord2dv(aabb_texcoord_botright);
-  glVertex3dv(points[5]);
-  glTexCoord2dv(aabb_texcoord_botleft);
-  glVertex3dv(points[6]);
+  glNormal3fv(aabb_normals[0]);
+  glTexCoord2fv(aabb_texcoord_topleft);
+  glVertex3fv(points[2]);
+  glTexCoord2fv(aabb_texcoord_topright);
+  glVertex3fv(points[1]);
+  glTexCoord2fv(aabb_texcoord_botright);
+  glVertex3fv(points[5]);
+  glTexCoord2fv(aabb_texcoord_botleft);
+  glVertex3fv(points[6]);
 
-  glNormal3dv(aabb_normals[1]);
-  glTexCoord2dv(aabb_texcoord_topleft);
-  glVertex3dv(points[1]);
-  glTexCoord2dv(aabb_texcoord_topright);
-  glVertex3dv(points[0]);
-  glTexCoord2dv(aabb_texcoord_botright);
-  glVertex3dv(points[4]);
-  glTexCoord2dv(aabb_texcoord_botleft);
-  glVertex3dv(points[5]);
+  glNormal3fv(aabb_normals[1]);
+  glTexCoord2fv(aabb_texcoord_topleft);
+  glVertex3fv(points[1]);
+  glTexCoord2fv(aabb_texcoord_topright);
+  glVertex3fv(points[0]);
+  glTexCoord2fv(aabb_texcoord_botright);
+  glVertex3fv(points[4]);
+  glTexCoord2fv(aabb_texcoord_botleft);
+  glVertex3fv(points[5]);
 
-  glNormal3dv(aabb_normals[2]);
-  glTexCoord2dv(aabb_texcoord_topleft);
-  glVertex3dv(points[0]);
-  glTexCoord2dv(aabb_texcoord_topright);
-  glVertex3dv(points[1]);
-  glTexCoord2dv(aabb_texcoord_botright);
-  glVertex3dv(points[2]);
-  glTexCoord2dv(aabb_texcoord_botleft);
-  glVertex3dv(points[3]);
+  glNormal3fv(aabb_normals[2]);
+  glTexCoord2fv(aabb_texcoord_topleft);
+  glVertex3fv(points[0]);
+  glTexCoord2fv(aabb_texcoord_topright);
+  glVertex3fv(points[1]);
+  glTexCoord2fv(aabb_texcoord_botright);
+  glVertex3fv(points[2]);
+  glTexCoord2fv(aabb_texcoord_botleft);
+  glVertex3fv(points[3]);
 
-  glNormal3dv(aabb_normals[3]);
-  glTexCoord2dv(aabb_texcoord_topleft);
-  glVertex3dv(points[0]);
-  glTexCoord2dv(aabb_texcoord_topright);
-  glVertex3dv(points[3]);
-  glTexCoord2dv(aabb_texcoord_botright);
-  glVertex3dv(points[7]);
-  glTexCoord2dv(aabb_texcoord_botleft);
-  glVertex3dv(points[4]);
+  glNormal3fv(aabb_normals[3]);
+  glTexCoord2fv(aabb_texcoord_topleft);
+  glVertex3fv(points[0]);
+  glTexCoord2fv(aabb_texcoord_topright);
+  glVertex3fv(points[3]);
+  glTexCoord2fv(aabb_texcoord_botright);
+  glVertex3fv(points[7]);
+  glTexCoord2fv(aabb_texcoord_botleft);
+  glVertex3fv(points[4]);
 
-  glNormal3dv(aabb_normals[4]);
-  glTexCoord2dv(aabb_texcoord_topleft);
-  glVertex3dv(points[3]);
-  glTexCoord2dv(aabb_texcoord_topright);
-  glVertex3dv(points[2]);
-  glTexCoord2dv(aabb_texcoord_botright);
-  glVertex3dv(points[6]);
-  glTexCoord2dv(aabb_texcoord_botleft);
-  glVertex3dv(points[7]);
+  glNormal3fv(aabb_normals[4]);
+  glTexCoord2fv(aabb_texcoord_topleft);
+  glVertex3fv(points[3]);
+  glTexCoord2fv(aabb_texcoord_topright);
+  glVertex3fv(points[2]);
+  glTexCoord2fv(aabb_texcoord_botright);
+  glVertex3fv(points[6]);
+  glTexCoord2fv(aabb_texcoord_botleft);
+  glVertex3fv(points[7]);
 
-  glNormal3dv(aabb_normals[5]);
-  glTexCoord2dv(aabb_texcoord_topleft);
-  glVertex3dv(points[7]);
-  glTexCoord2dv(aabb_texcoord_topright);
-  glVertex3dv(points[6]);
-  glTexCoord2dv(aabb_texcoord_botright);
-  glVertex3dv(points[5]);
-  glTexCoord2dv(aabb_texcoord_botleft);
-  glVertex3dv(points[4]);
+  glNormal3fv(aabb_normals[5]);
+  glTexCoord2fv(aabb_texcoord_topleft);
+  glVertex3fv(points[7]);
+  glTexCoord2fv(aabb_texcoord_topright);
+  glVertex3fv(points[6]);
+  glTexCoord2fv(aabb_texcoord_botright);
+  glVertex3fv(points[5]);
+  glTexCoord2fv(aabb_texcoord_botleft);
+  glVertex3fv(points[4]);
 
   glEnd();
 }

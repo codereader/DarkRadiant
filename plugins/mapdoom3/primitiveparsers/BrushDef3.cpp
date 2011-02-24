@@ -68,10 +68,10 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			// Construct a plane and parse its values
 			Plane3 plane;
 
-			plane.normal().x() = strToDouble(tok.nextToken());
-			plane.normal().y() = strToDouble(tok.nextToken());
-			plane.normal().z() = strToDouble(tok.nextToken());
-			plane.dist() = -strToDouble(tok.nextToken()); // negate d
+			plane.normal().x() = strToFloat(tok.nextToken());
+			plane.normal().y() = strToFloat(tok.nextToken());
+			plane.normal().z() = strToFloat(tok.nextToken());
+			plane.dist() = -strToFloat(tok.nextToken()); // negate d
 
 			tok.assertNextToken(")");
 
@@ -80,15 +80,15 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			tok.assertNextToken("(");
 
 			tok.assertNextToken("(");
-			texdef.xx() = strToDouble(tok.nextToken());
-			texdef.yx() = strToDouble(tok.nextToken());
-			texdef.tx() = strToDouble(tok.nextToken());
+			texdef.xx() = strToFloat(tok.nextToken());
+			texdef.yx() = strToFloat(tok.nextToken());
+			texdef.tx() = strToFloat(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken("(");
-			texdef.xy() = strToDouble(tok.nextToken());
-			texdef.yy() = strToDouble(tok.nextToken());
-			texdef.ty() = strToDouble(tok.nextToken());
+			texdef.xy() = strToFloat(tok.nextToken());
+			texdef.yy() = strToFloat(tok.nextToken());
+			texdef.ty() = strToFloat(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken(")");
@@ -142,10 +142,10 @@ scene::INodePtr BrushDef3ParserQuake4::parse(parser::DefTokeniser& tok) const
 			// Construct a plane and parse its values
 			Plane3 plane;
 
-			plane.normal().x() = strToDouble(tok.nextToken());
-			plane.normal().y() = strToDouble(tok.nextToken());
-			plane.normal().z() = strToDouble(tok.nextToken());
-			plane.dist() = -strToDouble(tok.nextToken()); // negate d
+			plane.normal().x() = strToFloat(tok.nextToken());
+			plane.normal().y() = strToFloat(tok.nextToken());
+			plane.normal().z() = strToFloat(tok.nextToken());
+			plane.dist() = -strToFloat(tok.nextToken()); // negate d
 
 			tok.assertNextToken(")");
 
@@ -154,15 +154,15 @@ scene::INodePtr BrushDef3ParserQuake4::parse(parser::DefTokeniser& tok) const
 			tok.assertNextToken("(");
 
 			tok.assertNextToken("(");
-			texdef.xx() = strToDouble(tok.nextToken());
-			texdef.yx() = strToDouble(tok.nextToken());
-			texdef.tx() = strToDouble(tok.nextToken());
+			texdef.xx() = strToFloat(tok.nextToken());
+			texdef.yx() = strToFloat(tok.nextToken());
+			texdef.tx() = strToFloat(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken("(");
-			texdef.xy() = strToDouble(tok.nextToken());
-			texdef.yy() = strToDouble(tok.nextToken());
-			texdef.ty() = strToDouble(tok.nextToken());
+			texdef.xy() = strToFloat(tok.nextToken());
+			texdef.yy() = strToFloat(tok.nextToken());
+			texdef.ty() = strToFloat(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken(")");

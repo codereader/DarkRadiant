@@ -74,7 +74,7 @@ public:
   {
     return self[Index::VALUE] < self[3];
   }
-  static double scale(const Vector4& self, const Vector4& other)
+  static float scale(const Vector4& self, const Vector4& other)
   {
     return (self[Index::VALUE] - self[3]) / (other[3] - other[Index::VALUE]);
   }
@@ -88,7 +88,7 @@ public:
   {
     return self[Index::VALUE] > -self[3];
   }
-  static double scale(const Vector4& self, const Vector4& other)
+  static float scale(const Vector4& self, const Vector4& other)
   {
     return (self[Index::VALUE] + self[3]) / (-other[3] - other[Index::VALUE]);
   }
@@ -113,7 +113,7 @@ public:
       {
         *out = *next - *i;
 
-        double scale = ClipPlane::scale(*i, *out);
+        float scale = ClipPlane::scale(*i, *out);
 
         (*out)[0] = (*i)[0] + scale*((*out)[0]);
         (*out)[1] = (*i)[1] + scale*((*out)[1]);
@@ -231,7 +231,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     {
       Vector4 clip(p1 - p0);
 
-      double scale = (p0[0] - p0[3]) / (clip[3] - clip[0]);
+      float scale = (p0[0] - p0[3]) / (clip[3] - clip[0]);
 
       clip[0] = static_cast<float>(p0[0] + scale * clip[0]);
       clip[1] = static_cast<float>(p0[1] + scale * clip[1]);
@@ -250,7 +250,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     {
       Vector4 clip(p1 - p0);
 
-      double scale = (p0[0] + p0[3]) / (-clip[3] - clip[0]);
+      float scale = (p0[0] + p0[3]) / (-clip[3] - clip[0]);
 
       clip[0] = static_cast<float>(p0[0] + scale * clip[0]);
       clip[1] = static_cast<float>(p0[1] + scale * clip[1]);
@@ -269,7 +269,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     {
       Vector4 clip(p1 - p0);
 
-      double scale = (p0[1] - p0[3]) / (clip[3] - clip[1]);
+      float scale = (p0[1] - p0[3]) / (clip[3] - clip[1]);
 
       clip[0] = static_cast<float>(p0[0] + scale * clip[0]);
       clip[1] = static_cast<float>(p0[1] + scale * clip[1]);
@@ -288,7 +288,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     {
       Vector4 clip(p1 - p0);
 
-      double scale = (p0[1] + p0[3]) / (-clip[3] - clip[1]);
+      float scale = (p0[1] + p0[3]) / (-clip[3] - clip[1]);
 
       clip[0] = static_cast<float>(p0[0] + scale * clip[0]);
       clip[1] = static_cast<float>(p0[1] + scale * clip[1]);
@@ -307,7 +307,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     {
       Vector4 clip(p1 - p0);
 
-      double scale = (p0[2] - p0[3]) / (clip[3] - clip[2]);
+      float scale = (p0[2] - p0[3]) / (clip[3] - clip[2]);
 
       clip[0] = static_cast<float>(p0[0] + scale * clip[0]);
       clip[1] = static_cast<float>(p0[1] + scale * clip[1]);
@@ -326,7 +326,7 @@ inline std::size_t homogenous_clip_line(Vector4 clipped[2])
     {
       Vector4 clip(p1 - p0);
 
-      double scale = (p0[2] + p0[3]) / (-clip[3] - clip[2]);
+      float scale = (p0[2] + p0[3]) / (-clip[3] - clip[2]);
 
       clip[0] = static_cast<float>(p0[0] + scale * clip[0]);
       clip[1] = static_cast<float>(p0[1] + scale * clip[1]);
@@ -454,12 +454,12 @@ inline Frustum frustum_from_viewproj(const Matrix4& viewproj)
   );
 }
 
-inline double plane_distance_to_point(const Plane3& plane, const Vector3& point)
+inline float plane_distance_to_point(const Plane3& plane, const Vector3& point)
 {
   return plane.normal().dot(point) + plane.dist();
 }
 
-inline double plane_distance_to_oriented_extents(const Plane3& plane, const Vector3& extents, const Matrix4& orientation)
+inline float plane_distance_to_oriented_extents(const Plane3& plane, const Vector3& extents, const Matrix4& orientation)
 {
   return fabs(extents[0] * plane.normal().dot(orientation.x().getVector3()))
     + fabs(extents[1] * plane.normal().dot(orientation.y().getVector3()))
@@ -469,7 +469,7 @@ inline double plane_distance_to_oriented_extents(const Plane3& plane, const Vect
 /// \brief Return false if \p aabb with \p orientation is partially or completely outside \p plane.
 inline bool plane_contains_oriented_aabb(const Plane3& plane, const AABB& aabb, const Matrix4& orientation)
 {
-  double dot = plane_distance_to_point(plane, aabb.origin);
+  float dot = plane_distance_to_point(plane, aabb.origin);
   return !(dot > 0 || -dot < plane_distance_to_oriented_extents(plane, aabb.extents, orientation));
 }
 
