@@ -312,7 +312,7 @@ const bool XDataLoader::storeContent(const std::string& statement, parser::DefTo
 	else if (statement.substr(0,8) == "gui_page")
 	{
 		//Acquire gui_page number:
-		std::string number = statement.substr(statement.length()-1,1);
+		std::string number = statement.substr(8);
 		std::size_t guiNumber;
 		try	{ guiNumber = boost::lexical_cast<int>(number)-1; }
 		catch (...)
