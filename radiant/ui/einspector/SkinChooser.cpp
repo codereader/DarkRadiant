@@ -106,7 +106,7 @@ Gtk::Widget& SkinChooser::createTreeView(int width)
 // Create the model preview
 Gtk::Widget& SkinChooser::createPreview(int size)
 {
-	_preview->setSize(size);
+	_preview->setSize(size, size);
 
 	return *_preview->getWidget();
 }

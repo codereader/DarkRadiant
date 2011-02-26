@@ -46,7 +46,8 @@ EntityClassChooser::EntityClassChooser()
         static_cast<int>(rect.get_height() * 0.6f)
     );
 
-    _modelPreview->setSize(static_cast<int>(rect.get_width() * 0.3f));
+	// Set the model preview height to something significantly smaller than the window's height to allow shrinking
+    _modelPreview->setSize(static_cast<int>(rect.get_width() * 0.4f), static_cast<int>(rect.get_height() * 0.2f));
 
     // Create GUI elements and pack into main VBox
     add(*getGladeWidget<Gtk::Widget>("mainHbox"));
@@ -63,7 +64,7 @@ EntityClassChooser::EntityClassChooser()
         sigc::mem_fun(*this, &EntityClassChooser::callbackCancel)
     );
 
-    hbox->pack_end(*_modelPreview->getWidget(), false, false, 0);
+    hbox->pack_end(*_modelPreview->getWidget(), true, true, 0);
 
     // Register to the eclass manager
     GlobalEntityClassManager().addObserver(this);

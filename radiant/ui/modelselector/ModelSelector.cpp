@@ -27,6 +27,7 @@
 #include <gtkmm/button.h>
 #include <gtkmm/stock.h>
 #include <gtkmm/expander.h>
+#include <gtkmm/paned.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
@@ -38,7 +39,6 @@ namespace ui
 namespace
 {
 	const char* const MODELSELECTOR_TITLE = N_("Choose Model");
-	const char* const RKEY_PREVIEW_SIZE_FACTOR = "user/ui/ModelSelector/previewSizeFactor";
 }
 
 // Constructor.
@@ -64,15 +64,13 @@ ModelSelector::ModelSelector()
 
 	_position.connect(this);
 
-	// Size the model preview widget
-	float previewHeightFactor = GlobalRegistry().getFloat(RKEY_PREVIEW_SIZE_FACTOR);
-
 	// Set the default size of the window
 	_position.readPosition();
-	_position.fitToScreen(0.8f, previewHeightFactor);
+	_position.fitToScreen(0.8f, 0.8f);
 	_position.applyPosition();
 
-	_modelPreview->setSize(_position.getSize()[1]);
+	// The model preview is half the width and 20% of the parent's height (to allow vertical shrinking)
+	_modelPreview->setSize(static_cast<int>(_position.getSize()[0]*0.4f), static_cast<int>(_position.getSize()[1]*0.2f));
 
 	// Re-center the window
 	set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
@@ -88,16 +86,13 @@ ModelSelector::ModelSelector()
 
 	// Pack the left Vbox into an HBox next to the preview widget on the right
 	// The preview gets a Vbox of its own, to stop it from expanding vertically
-	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
-	hbx->pack_start(*leftVbx, true, true, 0);
+	Gtk::HPaned* paned = Gtk::manage(new Gtk::HPaned);
 
-	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
-	previewBox->pack_start(*_modelPreview->getWidget(), false, false, 0);
-
-	hbx->pack_start(*previewBox, false, false, 0);
+	paned->pack1(*leftVbx, true, true);
+	paned->pack2(*_modelPreview->getWidget(), true, true);
 
 	// Pack widgets into main Vbox above the buttons
-	_vbox->pack_start(*hbx, true, true, 0);
+	_vbox->pack_start(*paned, true, true, 0);
 
 	// Create the buttons below everything
 	_vbox->pack_end(createButtons(), false, false, 0);
@@ -233,6 +228,9 @@ Gtk::Widget& ModelSelector::createTreeView()
 	// Create the treeview
 	_treeView = Gtk::manage(new Gtk::TreeView(_treeStore));
 	_treeView->set_headers_visible(false);
+
+	// at least 200 pixels for the treeview
+	_treeView->set_size_request(200, -1);
 
 	// Single visible column, containing the directory/model name and the icon
 	_treeView->append_column(*Gtk::manage(

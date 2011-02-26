@@ -58,6 +58,9 @@ private:
 	// The filters menu
 	IFilterMenuPtr _filtersMenu;
 
+	int _previewWidth;
+	int _previewHeight;
+
 private:
 
 	// gtkmm callbacks
@@ -65,6 +68,9 @@ private:
 	bool callbackGLMotion(GdkEventMotion*);
 	bool callbackGLScroll(GdkEventScroll*);
 	void callbackToggleBBox();
+	void onSizeAllocate(Gtk::Allocation& allocation);
+
+	static Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
 
 public:
 
@@ -73,13 +79,12 @@ public:
 	ModelPreview();
 
 	/**
-	 * Set the pixel size of the ModelPreview widget. The widget is always
-	 * square.
+	 * Set the pixel size of the ModelPreview widget. 
 	 *
 	 * @param size
-	 * The pixel size of the square widget.
+	 * The pixel size of the widget.
 	 */
-	void setSize(int size);
+	void setSize(int xsize, int ysize);
 
 	/**
 	 * Initialise the GL preview. This clears the window and sets up the
