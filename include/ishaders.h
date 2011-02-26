@@ -255,6 +255,12 @@ public:
 	 */
 	virtual MaterialPtr getMaterialForName(const std::string& name) = 0;
 
+	/**
+	 * greebo: Returns true if the named material is existing, false otherwise.
+	 * In the latter case getMaterialForName() would return a default "shader not found".
+	 */
+	virtual bool materialExists(const std::string& name) = 0;
+
 	virtual void foreachShaderName(const ShaderNameCallback& callback) = 0;
 
 	/**

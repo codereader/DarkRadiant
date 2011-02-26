@@ -35,10 +35,14 @@ public:
 	bool addDefinition(const std::string& name, const ShaderDefinition& def);
 
 	/* greebo: Trys to lookup the named shader definition and returns
-	 * its reference. Throws a MissingShaderDefException, if the
-	 * name is not found in the map.
+	 * its reference. Always returns a valid reference.
 	 */
 	ShaderDefinition& getDefinition(const std::string& name);
+
+	/** 
+	 * Returns true if the given shader definition exists.
+	 */
+	bool definitionExists(const std::string& name) const;
 
 	/* greebo: Clears out the stored shader definitions
 	 */

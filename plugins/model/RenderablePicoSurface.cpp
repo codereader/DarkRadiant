@@ -41,9 +41,8 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 
 	// If shader not found, fallback to alternative if available
 	// _originalShaderName is empty if the ase material has no BITMAP
-	// canCapture is false if _originalShaderName is not a valid shader
-	if((_originalShaderName.empty() ||
-		!GlobalRenderSystem().canCapture(_originalShaderName)) &&
+	// materialIsValid is false if _originalShaderName is not an existing shader
+	if ((_originalShaderName.empty() || !GlobalMaterialManager().materialExists(_originalShaderName)) &&
 		!rawName.empty())
 	{
 		_originalShaderName = cleanupShaderName(rawName);
@@ -90,15 +89,15 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	createDisplayLists();
 }
 
-std::string RenderablePicoSurface::cleanupShaderName(std::string mapName)
+std::string RenderablePicoSurface::cleanupShaderName(const std::string& inName)
 {
 	const std::string baseFolder = "base";	//FIXME: should be from game.xml
 	std::size_t basePos;
 
-	boost::algorithm::replace_all(mapName, "\\", "/");
+	std::string mapName = boost::algorithm::replace_all_copy(inName, "\\", "/");
 
 	// for paths given relative, start from the beginning
-	if(mapName.substr(0,6) == "models" || mapName.substr(0,8) == "textures")
+	if (mapName.substr(0,6) == "models" || mapName.substr(0,8) == "textures")
 	{
 		basePos = 0;
 	}

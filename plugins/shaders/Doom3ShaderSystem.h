@@ -73,6 +73,8 @@ public:
 	// Return a shader by name
 	MaterialPtr getMaterialForName(const std::string& name);
 
+	bool materialExists(const std::string& name);
+
 	void foreachShaderName(const ShaderNameCallback& callback);
 
 	void beginActiveShadersIterator();

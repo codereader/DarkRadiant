@@ -50,7 +50,6 @@ public:
 
     /* RenderSystem implementation */
 
-	bool canCapture(const std::string& name);
 	ShaderPtr capture(const std::string& name);
 	void render(RenderStateFlags globalstate,
 				const Matrix4& modelview,
