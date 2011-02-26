@@ -377,7 +377,7 @@ void ParticlePreview::onSizeAllocate(Gtk::Allocation& allocation)
 
 Matrix4 ParticlePreview::getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height)
 {
-	const float half_width = static_cast<float>(near_z * tan(degrees_to_radians(fieldOfView * 0.5f)));
+	const float half_width = near_z * tan(degrees_to_radians(fieldOfView * 0.5f));
 	const float half_height = half_width * (static_cast<float>(height) / static_cast<float>(width));
 
 	return matrix4_frustum(

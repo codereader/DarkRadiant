@@ -48,7 +48,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	_preview = GlobalUIManager().createModelPreview();
 	assert(_preview != NULL);
 
-	_preview->setSize(static_cast<int>(rect.get_width() * 0.3f));
+	_preview->setSize(static_cast<int>(rect.get_width() * 0.4f), static_cast<int>(rect.get_height() * 0.2f));
 
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
 

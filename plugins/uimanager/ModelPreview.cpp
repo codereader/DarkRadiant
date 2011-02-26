@@ -6,6 +6,7 @@
 #include "ieclass.h"
 #include "os/path.h"
 #include "math/aabb.h"
+#include "math/frustum.h"
 #include "modelskin.h"
 #include "entitylib.h"
 
@@ -35,7 +36,9 @@ ModelPreview::ModelPreview() :
 	Gtk::Frame(),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ModelPreview"))),
 	_lastModel(""),
-	_filtersMenu(GlobalUIManager().createFilterMenu())
+	_filtersMenu(GlobalUIManager().createFilterMenu()),
+	_previewWidth(0),
+	_previewHeight(0)
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
@@ -50,6 +53,7 @@ ModelPreview::ModelPreview() :
 	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLDraw));
 	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLMotion));
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &ModelPreview::callbackGLScroll));
+	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &ModelPreview::onSizeAllocate));
 
 	// The HBox containing the toolbar and the menubar
 	Gtk::HBox* toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
@@ -77,9 +81,9 @@ ModelPreview::ModelPreview() :
 
 // Set the size request for the widget
 
-void ModelPreview::setSize(int size)
+void ModelPreview::setSize(int xsize, int ysize)
 {
-	_glWidget->set_size_request(size, size);
+	_glWidget->set_size_request(xsize, ysize);
 }
 
 void ModelPreview::clear()
@@ -188,7 +192,7 @@ void ModelPreview::setModel(const std::string& model)
 		_rotation = Matrix4::getIdentity();
 
 		// Calculate camera distance so model is appropriately zoomed
-		_camDist = -(_model->localAABB().getRadius() * 2.0f);
+		_camDist = -(_model->localAABB().getRadius() * 2.7f);
 
 		_lastModel = modelToLoad;
 	}
@@ -217,10 +221,33 @@ Gtk::Widget* ModelPreview::getWidget()
 	return this;
 }
 
+void ModelPreview::onSizeAllocate(Gtk::Allocation& allocation)
+{
+	_previewWidth = allocation.get_width();
+	_previewHeight = allocation.get_height();
+}
+
+Matrix4 ModelPreview::getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height)
+{
+	const float half_width = near_z * tan(degrees_to_radians(fieldOfView * 0.5f));
+	const float half_height = half_width * (static_cast<float>(height) / static_cast<float>(width));
+
+	return matrix4_frustum(
+		-half_width,
+		half_width,
+		-half_height,
+		half_height,
+		near_z,
+		far_z
+	);
+}
+
 bool ModelPreview::callbackGLDraw(GdkEventExpose* ev)
 {
 	// Create scoped sentry object to swap the GLWidget's buffers
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
+
+	glViewport(0, 0, _previewWidth, _previewHeight);
 
 	// Set up the render
 	glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
@@ -234,6 +261,15 @@ bool ModelPreview::callbackGLDraw(GdkEventExpose* ev)
 
 	AABB aabb(model->localAABB());
 
+	// Set up the camera
+	Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(projection);
+
+	// Premultiply with the translations
+	glMatrixMode(GL_MODELVIEW);
+	
 	// Premultiply with the translations
 	glLoadIdentity();
 	glTranslatef(0, 0, _camDist); // camera translation

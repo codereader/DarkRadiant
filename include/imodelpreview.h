@@ -31,13 +31,12 @@ public:
     virtual ~IModelPreview() {}
 
 	/**
-	 * Set the pixel size of the IModelPreview widget. The widget is always
-	 * square.
+	 * Set the pixel size of the IModelPreview widget. 
 	 *
 	 * @param size
-	 * The pixel size of the square widget.
+	 * The pixel size of the widget.
 	 */
-	virtual void setSize(int size) = 0;
+	virtual void setSize(int xsize, int ysize) = 0;
 
 	/**
 	 * Initialise the GL preview. This clears the window and sets up the
