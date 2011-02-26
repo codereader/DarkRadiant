@@ -76,6 +76,13 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 	}
 }
 
+bool ShaderLibrary::definitionExists(const std::string& name) const
+{
+	ShaderDefinitionMap::const_iterator i = _definitions.find(name);
+
+	return i != _definitions.end();
+}
+
 CShaderPtr ShaderLibrary::findShader(const std::string& name)
 {
 	// Try to lookup the shader in the active shaders list

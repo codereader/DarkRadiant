@@ -138,6 +138,11 @@ MaterialPtr Doom3ShaderSystem::getMaterialForName(const std::string& name)
 	return shader;
 }
 
+bool Doom3ShaderSystem::materialExists(const std::string& name)
+{
+	return _library->definitionExists(name);
+}
+
 void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
 	// Pass the call to the Library
 	_library->foreachShaderName(callback);

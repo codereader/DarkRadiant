@@ -71,7 +71,7 @@ private:
     GLuint compileProgramList(ShaderLayer::VertexColourMode);
 	void createDisplayLists();
 
-	std::string cleanupShaderName(std::string mapName);
+	std::string cleanupShaderName(const std::string& mapName);
 
 public:
 	/**
