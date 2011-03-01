@@ -157,18 +157,28 @@ void MainFrame::keyChanged(const std::string& changedKey, const std::string& new
 }
 
 #ifdef WIN32
+
+// Pulled those defs from Dwmapi.h
+#define DWM_EC_DISABLECOMPOSITION         0
+#define DWM_EC_ENABLECOMPOSITION          1
+
 void MainFrame::setDesktopCompositionEnabled(bool enabled)
 {
 	HMODULE lib = LoadLibrary("dwmapi.dll");
 
 	if (lib != NULL)
 	{
-		void (WINAPI *dwmEnableComposition) (bool) =
-			(void (WINAPI *) (bool)) GetProcAddress(lib, "DwmEnableComposition");
+		HRESULT (WINAPI *dwmEnableComposition) (UINT) =
+			(HRESULT (WINAPI *) (UINT)) GetProcAddress(lib, "DwmEnableComposition");
 
 		if (dwmEnableComposition)
 		{
-			dwmEnableComposition(enabled ? TRUE : FALSE);
+			HRESULT result = dwmEnableComposition(enabled ? DWM_EC_ENABLECOMPOSITION : DWM_EC_DISABLECOMPOSITION);
+
+			if (!SUCCEEDED(result))
+			{
+				globalErrorStream() << "Could not disable desktop composition" << std::endl;
+			}
 		}
 
 		FreeLibrary(lib);
