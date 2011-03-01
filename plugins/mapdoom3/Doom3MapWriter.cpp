@@ -71,6 +71,9 @@ void Doom3MapWriter::endWriteEntity(const Entity& entity, std::ostream& stream)
 {
 	// Write the closing brace for the entity
 	stream << "}" << std::endl;
+
+	// Reset the primitive count again
+	_primitiveCount = 0;
 }
 
 void Doom3MapWriter::beginWriteBrush(const IBrush& brush, std::ostream& stream)
