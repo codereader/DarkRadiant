@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2010-12-09 08:45+0100\n"
-"PO-Revision-Date: 2010-12-09 08:50+0100\n"
-"Last-Translator: MB <greebo@angua.at>\n"
+"POT-Creation-Date: 2011-03-12 09:05+0100\n"
+"PO-Revision-Date: 2011-03-12 09:11+0100\n"
+"Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -49,7 +49,7 @@ msgstr "CSG Subtraktion: Keine Brushes ausgewählt."
 msgid "CSG Merge: No brushes selected."
 msgstr "CSG Zusammenfügen: Keine Brushes ausgewählt."
 
-#: ..\..\radiant\brushmanip.cpp:703
+#: ..\..\radiant\brushmanip.cpp:475
 msgid "Exactly one brush must be selected for this operation."
 msgstr "Für diese Operation muss genau ein Brush ausgewählt sein."
 
@@ -107,12 +107,12 @@ msgid "Caulk shader name"
 msgstr "Name des Caulk Shaders"
 
 #: ..\..\radiant\entity.cpp:93
-#: ..\..\radiant\mainframe_old.cpp:571
-#: ..\..\radiant\map\Map.cpp:484
-#: ..\..\radiant\map\Map.cpp:581
-#: ..\..\radiant\map\Map.cpp:601
-#: ..\..\radiant\referencecache\ModelCache.cpp:204
-#: ..\..\radiant\referencecache\ModelCache.cpp:220
+#: ..\..\radiant\mainframe_old.cpp:578
+#: ..\..\radiant\map\Map.cpp:488
+#: ..\..\radiant\map\Map.cpp:585
+#: ..\..\radiant\map\Map.cpp:605
+#: ..\..\radiant\referencecache\ModelCache.cpp:206
+#: ..\..\radiant\referencecache\ModelCache.cpp:222
 msgid "Processing..."
 msgstr "Vorgang läuft..."
 
@@ -145,19 +145,19 @@ msgstr "Nach Layer verschieben..."
 msgid "Remove from Layer..."
 msgstr "Von Layer entfernen..."
 
-#: ..\..\radiant\layers\LayerSystem.cpp:467
+#: ..\..\radiant\layers\LayerSystem.cpp:469
 msgid "Enter Name"
 msgstr "Namen eingeben"
 
-#: ..\..\radiant\layers\LayerSystem.cpp:468
+#: ..\..\radiant\layers\LayerSystem.cpp:470
 msgid "Enter Layer Name"
 msgstr "Ebenennamen eingeben"
 
-#: ..\..\radiant\layers\LayerSystem.cpp:480
+#: ..\..\radiant\layers\LayerSystem.cpp:482
 msgid "Cannot create layer with empty name."
 msgstr "Es ist nicht möglich eine Ebene ohne Namen zu erstellen."
 
-#: ..\..\radiant\layers\LayerSystem.cpp:494
+#: ..\..\radiant\layers\LayerSystem.cpp:496
 msgid "This name already exists."
 msgstr "Dieser Name existiert bereits"
 
@@ -181,30 +181,53 @@ msgstr "Starte Mainframe"
 msgid "DarkRadiant Startup Complete"
 msgstr "DarkRadiant Startphase abgeschlossen"
 
-#: ..\..\radiant\mainframe_old.cpp:127
+#: ..\..\radiant\mainframe_old.cpp:128
 #: ..\..\radiant\settings\GameManager.cpp:89
-#: ..\..\radiant\settings\GameManager.cpp:270
-#: ..\..\radiant\settings\GameManager.cpp:314
+#: ..\..\radiant\settings\GameManager.cpp:266
+#: ..\..\radiant\settings\GameManager.cpp:310
 #: ..\..\radiant\ui\prefdialog\PrefDialog.cpp:293
 msgid "Game"
 msgstr "Spiel"
 
-#: ..\..\radiant\mainframe_old.cpp:128
+#: ..\..\radiant\mainframe_old.cpp:129
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: ..\..\radiant\mainframe_old.cpp:131
+#: ..\..\radiant\mainframe_old.cpp:132
 msgid "Constructing Menu"
 msgstr "Erzeuge Menü"
 
 #: ..\..\radiant\mainframe_old.cpp:143
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:559
+msgid "Settings/Source View"
+msgstr "Einstellungen/Quellansicht"
+
+#: ..\..\radiant\mainframe_old.cpp:150
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:569
 msgid "Exit Radiant"
 msgstr "Verlasse Radiant"
 
-#: ..\..\radiant\mainframe_old.cpp:571
+#: ..\..\radiant\mainframe_old.cpp:578
 msgid "Loading Shaders"
 msgstr "Lade Shader"
+
+#: ..\..\radiant\map\algorithm\MapExporter.cpp:81
+msgid "Writing map"
+msgstr "Schreibe Map"
+
+#: ..\..\radiant\map\algorithm\MapExporter.cpp:179
+#, c-format
+msgid "Writing node %d"
+msgstr "Schreibe Knoten %d"
+
+#: ..\..\radiant\map\algorithm\MapImporter.cpp:42
+msgid "Loading map"
+msgstr "Lade Map"
+
+#: ..\..\radiant\map\algorithm\MapImporter.cpp:47
+#: ..\..\radiant\map\algorithm\MapImporter.cpp:58
+#, c-format
+msgid "Loading entity %d"
+msgstr "Lade Entity %d"
 
 #: ..\..\radiant\map\AutoSaver.cpp:266
 msgid "Settings/Autosave"
@@ -249,15 +272,19 @@ msgstr "Entitynummer:"
 msgid "Brush Number:"
 msgstr "Brushnummer:"
 
-#: ..\..\radiant\map\Map.cpp:51
+#: ..\..\radiant\map\InfoFile.cpp:67
+msgid "Map Info File Version invalid"
+msgstr "Ungültige Map Info File Verson"
+
+#: ..\..\radiant\map\Map.cpp:53
 msgid "unnamed.map"
 msgstr "unbenannt.map"
 
-#: ..\..\radiant\map\Map.cpp:484
+#: ..\..\radiant\map\Map.cpp:488
 msgid "Saving Map"
 msgstr "Speichere Map"
 
-#: ..\..\radiant\map\Map.cpp:620
+#: ..\..\radiant\map\Map.cpp:624
 msgid ""
 "Save changes to map \"%1\"\n"
 "before closing?"
@@ -265,76 +292,113 @@ msgstr ""
 "Sollen die Änderungen an der Map \"%1\"\n"
 "vor dem Schließen gespeichert werden?"
 
-#: ..\..\radiant\map\Map.cpp:630
+#: ..\..\radiant\map\Map.cpp:634
 msgid "%1 minutes"
 msgstr "%1 Minuten"
 
-#: ..\..\radiant\map\Map.cpp:636
+#: ..\..\radiant\map\Map.cpp:640
 msgid "%1 seconds"
 msgstr "%1 Sekunden"
 
-#: ..\..\radiant\map\Map.cpp:641
+#: ..\..\radiant\map\Map.cpp:645
 msgid ""
 "If you don't save, changes from the last %1\n"
 "will be lost."
 msgstr "Wenn Du nicht sicherst, gehen die Änderungen der letzten %1 verloren."
 
-#: ..\..\radiant\map\Map.cpp:699
+#: ..\..\radiant\map\Map.cpp:705
 msgid "Save Map"
 msgstr "Map speichern"
 
-#: ..\..\radiant\map\Map.cpp:733
+#: ..\..\radiant\map\Map.cpp:741
 msgid "Save Copy As..."
 msgstr "Speichere Kopie als..."
 
-#: ..\..\radiant\map\Map.cpp:748
+#: ..\..\radiant\map\Map.cpp:758
 msgid "Load Prefab"
 msgstr "Prefab laden"
 
-#: ..\..\radiant\map\Map.cpp:799
+#: ..\..\radiant\map\Map.cpp:810
 msgid "New Map"
 msgstr "Neue Map"
 
-#: ..\..\radiant\map\Map.cpp:809
+#: ..\..\radiant\map\Map.cpp:820
 #: ..\..\radiant\ui\mru\MRU.cpp:91
 msgid "Open Map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:814
+#: ..\..\radiant\map\Map.cpp:824
 msgid "Open map"
 msgstr "Map öffnen"
 
-#: ..\..\radiant\map\Map.cpp:826
+#: ..\..\radiant\map\Map.cpp:837
 msgid "Import map"
 msgstr "Map importieren"
 
-#: ..\..\radiant\map\Map.cpp:850
+#: ..\..\radiant\map\Map.cpp:866
 msgid "Export selection"
 msgstr "Auswahl exportieren"
 
-#: ..\..\radiant\map\Map.cpp:863
+#: ..\..\radiant\map\Map.cpp:880
 msgid "Save selected as Prefab"
 msgstr "Auswahl als Prefab speichern"
+
+#: ..\..\radiant\map\Map.cpp:965
+#, c-format
+msgid ""
+"Failure reading map from clipboard:\n"
+"%s"
+msgstr ""
+"Fehler beim Lesen der Mapdatei aus der Zwischenablage:\n"
+"%s"
 
 #: ..\..\radiant\map\MapFileChooserPreview.cpp:88
 msgid "<no description>"
 msgstr "<keine Beschreibung>"
 
-#: ..\..\radiant\map\MapResource.cpp:157
-#: ..\..\radiant\map\MapResource.cpp:399
-#: ..\..\radiant\map\MapResource.cpp:418
+#: ..\..\radiant\map\MapResource.cpp:194
+#: ..\..\radiant\map\MapResource.cpp:491
+#: ..\..\radiant\map\MapResource.cpp:510
 #, c-format
 msgid "File is write-protected: %s"
 msgstr "Datei ist schreibgeschützt: %s"
 
-#: ..\..\radiant\map\MapResource.cpp:334
+#: ..\..\radiant\map\MapResource.cpp:350
 #, c-format
 msgid ""
-"Failure reading read map file:\n"
+"Failure opening map file:\n"
+"%s"
+msgstr ""
+"Fehler beim Öffnen der Mapdatei:\n"
+"%s"
+
+#: ..\..\radiant\map\MapResource.cpp:364
+#, c-format
+msgid ""
+"Could not determine map format of file:\n"
+"%s"
+msgstr "Konnte das Format der Mapdatei nicht bestimmen: %s"
+
+#: ..\..\radiant\map\MapResource.cpp:457
+msgid "Map loading cancelled"
+msgstr "Ladevorgang abgebrochen"
+
+#: ..\..\radiant\map\MapResource.cpp:470
+#, c-format
+msgid ""
+"Failure reading map file:\n"
+"%s\n"
+"\n"
 "%s"
 msgstr ""
 "Fehler beim Lesen der Mapdatei:\n"
+"%s\n"
+"\n"
 "%s"
+
+#: ..\..\radiant\map\MapResource.cpp:551
+msgid "Map writing cancelled"
+msgstr "Schreibvorgang abgebrochen"
 
 #: ..\..\radiant\map\PointFile.cpp:111
 #, c-format
@@ -412,8 +476,8 @@ msgstr "Kann Texturen nicht zusammenheften, für diese Operation müssten genau 
 msgid "Cannot bulge patch. No patches selected."
 msgstr "Kann Patch nicht auswölben: keine Patches ausgewählt."
 
-#: ..\..\radiant\referencecache\ModelCache.cpp:204
-#: ..\..\radiant\referencecache\ModelCache.cpp:220
+#: ..\..\radiant\referencecache\ModelCache.cpp:206
+#: ..\..\radiant\referencecache\ModelCache.cpp:222
 msgid "Reloading Models"
 msgstr "Neuladen der Modelle"
 
@@ -613,35 +677,35 @@ msgstr "Mod (fs_game)"
 msgid "Mod Base (fs_game_base, optional)"
 msgstr "Mod Base (fs_game_base, optional)"
 
-#: ..\..\radiant\settings\GameManager.cpp:115
+#: ..\..\radiant\settings\GameManager.cpp:111
 msgid "GameManager: No valid game files found, can't continue."
 msgstr "GameManager: keine gültigen Spieldateien (.game) gefunden, kann nicht fortfahren."
 
-#: ..\..\radiant\settings\GameManager.cpp:145
+#: ..\..\radiant\settings\GameManager.cpp:141
 msgid "No game type selected."
 msgstr "Kein Spieltyp ausgewählt."
 
-#: ..\..\radiant\settings\GameManager.cpp:280
+#: ..\..\radiant\settings\GameManager.cpp:276
 msgid "Engine path does not exist."
 msgstr "Engine-Pfad existiert nicht."
 
-#: ..\..\radiant\settings\GameManager.cpp:285
+#: ..\..\radiant\settings\GameManager.cpp:281
 msgid "The fs_game folder does not exist."
 msgstr "Das fs_game-Verzeichnis existiert nicht."
 
-#: ..\..\radiant\settings\GameManager.cpp:290
+#: ..\..\radiant\settings\GameManager.cpp:286
 msgid "The fs_game_base folder does not exist."
 msgstr "Das fs_game_base-Verzeichnis existiert nicht."
 
-#: ..\..\radiant\settings\GameManager.cpp:294
+#: ..\..\radiant\settings\GameManager.cpp:290
 msgid "Do you want to correct these settings?"
 msgstr "Möchtest Du diese Einstellungen korrigieren?"
 
-#: ..\..\radiant\settings\GameManager.cpp:296
+#: ..\..\radiant\settings\GameManager.cpp:292
 msgid "Invalid Settings"
 msgstr "Ungültige Einstellungen"
 
-#: ..\..\radiant\settings\GameManager.cpp:315
+#: ..\..\radiant\settings\GameManager.cpp:311
 msgid "<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect."
 msgstr "<b>Hinweis</b>: Du musst DarkRadiant neu starten, damit die Änderungen wirksam werden."
 
@@ -1531,14 +1595,14 @@ msgstr "Definition"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:224
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:46
 #: ..\..\radiant\ui\einspector\EntityInspector.cpp:379
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:323
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:321
 #: ..\..\plugins\eclasstree\EClassTree.cpp:127
 msgid "Value"
 msgstr "Wert"
 
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:223
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:45
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:319
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:317
 msgid "Attribute"
 msgstr "Attribut"
 
@@ -1702,7 +1766,7 @@ msgstr "Z:"
 msgid "Create entity"
 msgstr "Neue Entity"
 
-#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:215
+#: ..\..\radiant\ui\entitychooser\EntityClassChooser.cpp:216
 #: ..\..\plugins\eclasstree\EClassTree.cpp:94
 msgid "Classname"
 msgstr "Klassenname"
@@ -1964,16 +2028,16 @@ msgstr "Einstellungen/Kompatibilität"
 msgid "Disable Windows Desktop Composition"
 msgstr "Desktopgestaltung deaktivieren"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:425
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:435
 #: ..\..\plugins\uimanager\GroupDialog.cpp:24
 msgid "Entity"
 msgstr "Entity"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:434
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:444
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:444
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:454
 msgid "Console"
 msgstr "Konsole"
 
@@ -2102,56 +2166,56 @@ msgstr "Lade Texturen"
 msgid "Edit Filters..."
 msgstr "Filter bearbeiten..."
 
-#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:50
+#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:51
 msgid "Loading models"
 msgstr "Lade Modelle"
 
-#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:54
+#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:55
 msgid "Searching"
 msgstr "Durchsuchen"
 
-#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:79
+#: ..\..\radiant\ui\modelselector\ModelFileFunctor.h:80
 #, c-format
 msgid "%d models loaded"
 msgstr "%d Modelle geladen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:40
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:41
 msgid "Choose Model"
 msgstr "Modell auswählen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:239
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:237
 msgid "Model Path"
 msgstr "Modell-Pfad"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:302
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:300
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:304
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:302
 msgid "Create MonsterClip Brush"
 msgstr "Erzeuge Monsterclip-Brush"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:373
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:371
 msgid "Model name"
 msgstr "Modellname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:377
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:375
 msgid "Skin name"
 msgstr "Skinname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:381
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:379
 msgid "Total vertices"
 msgstr "Gesamte Vertices"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:385
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:383
 msgid "Total polys"
 msgstr "Gesamte Polygone"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:389
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:387
 msgid "Material surfaces"
 msgstr "Anzahl Oberflächen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:401
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:399
 msgid "Active materials"
 msgstr "Aktive Shader"
 
@@ -2493,12 +2557,12 @@ msgid "Bottom"
 msgstr "Unten"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:64
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:356
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:354
 msgid "Right"
 msgstr "Rechts"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:65
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:353
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:351
 msgid "Left"
 msgstr "Links"
 
@@ -2971,17 +3035,17 @@ msgstr "GUI-Definition auswählen..."
 msgid "One-Sided Readable Guis"
 msgstr "Einseitige Schriftstück-GUIs"
 
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:132
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:133
 msgid "Two-Sided Readable Guis"
 msgstr "Zweiseitige Schriftstück-GUIs"
 
-#: ..\..\plugins\dm.gui\GuiSelector.cpp:174
+#: ..\..\plugins\dm.gui\GuiSelector.cpp:180
 msgid "Gui Path"
 msgstr "GUI Pfad"
 
 #: ..\..\plugins\dm.gui\plugin.cpp:93
 #: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:55
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:726
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:731
 msgid "Readable Editor"
 msgstr "Schriftstück-Editor"
 
@@ -3046,16 +3110,16 @@ msgstr "Layout:"
 msgid "One-sided"
 msgstr "Einseitig"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:256
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:254
 msgid "Pageturn Sound:"
 msgstr "Sound beim Umblättern:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:275
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:273
 #: xml_file_content.cpp:164
 msgid "Insert"
 msgstr "Einfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:280
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:278
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:60
 #: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:365
 #: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:384
@@ -3064,234 +3128,235 @@ msgstr "Einfügen"
 msgid "Delete"
 msgstr "Löschen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:301
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:299
 msgid "Current Page:"
 msgstr "Aktuelle Seite:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:319
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:317
 msgid "Gui Definition:"
 msgstr "GUI-Definition:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:365
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:363
 msgid "Title:"
 msgstr "Titel:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:384
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:382
 #: ..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp:27
 msgid "Body:"
 msgstr "Text:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:408
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:406
 msgid "Insert whole Page"
 msgstr "Ganze Seite einfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:413
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:411
 msgid "Insert on left Side"
 msgstr "Links einfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:418
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:416
 msgid "Insert on right Side"
 msgstr "Rechts einfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:428
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:426
 msgid "Delete whole Page"
 msgstr "Ganze Seite löschen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:433
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:431
 msgid "Delete on left Side"
 msgstr "Links löschen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:438
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:436
 msgid "Delete on right Side"
 msgstr "Rechts löschen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:448
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:446
 msgid "Append Page"
 msgstr "Seite anfügen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:457
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:455
 msgid "Prepend Page"
 msgstr "Seite voranstellen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:466
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:464
 msgid "Show last XData import summary"
 msgstr "Zeige Zusammenfassung des letzten XData-Imports"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:471
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:469
 msgid "Show duplicated definitions"
 msgstr "Zeige doppelte Definitionen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:476
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:474
 msgid "Show Gui import summary"
 msgstr "Zeige Zusammenfassung des letzten GUI-Imports"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:494
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:492
 msgid "Save & Close"
 msgstr "Speichern & Schließen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:498
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:496
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:530
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:528
 msgid "<Name_Here>"
 msgstr "<Hier_Namen_Eingeben>"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:546
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:828
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1546
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:545
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:833
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1551
 #, c-format
 msgid "Failed to import %s."
 msgstr "Import von %s fehlgeschlagen."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:548
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:547
 msgid "Creating a new XData definition..."
 msgstr "Erzeuge eine neue XData-Definition..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:550
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:830
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:850
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:908
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1548
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:549
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:835
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:855
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:913
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1553
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:61
 msgid "Do you want to open the import summary?"
 msgstr "Willst Du die Import-Zusammenfassung anzeigen?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:552
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:832
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:852
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:910
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1550
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:551
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:837
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:857
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:915
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1555
 msgid "Import failed"
 msgstr "Import fehlgeschlagen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:606
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:611
 msgid "You have imported an XData definition that is contained in a PK4, which can't be accessed for saving."
 msgstr "Du hast eine XData-Definition importiert, die in einem PK4-File gespeichert ist."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:608
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:613
 msgid "Please rename your XData definition, so that it is stored under a different filename."
 msgstr "Bitte benenne Deine XData-Definition um, so dass sie unter einem neuen Namen gespeichert wird."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:625
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:646
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:630
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:651
 #, c-format
 msgid "Failed to open %s for saving."
 msgstr "Konnte %s nicht zum Speichern öffnen."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:632
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:637
 msgid "Merging failed, because the length of the definition to be overwritten could not be retrieved."
 msgstr "Fehler beim Zusammenführen. Die Länge der zu überschreibenden Definition konnte nicht abgerufen werden."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:669
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:674
 msgid "Mod path not defined. Using Base path..."
 msgstr "Mod-Pfad nicht definiert, verwende Base-Pfad..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:682
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:701
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:687
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:706
 msgid "Mod Base path not defined, neither is Mod path. Using Engine path..."
 msgstr "Mod-Base-Pfad nicht definiert, Mod-Pfad auch nicht, verwende Base-Pfad..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:688
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:706
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:693
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:711
 msgid "Mod Base path not defined. Using Mod path..."
 msgstr "Mod-Base-Pfad nicht definiert, verwende Mod-Pfad..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:848
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:906
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:853
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:911
 #, c-format
 msgid "Failed to load gui definition %s."
 msgstr "Laden der GUI-Definition %s fehlgeschlagen."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1009
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1014
 msgid "Import definition?"
 msgstr "Definition importieren?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1010
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1015
 #, c-format
 msgid "The definition %s already exists. Should it be imported?"
 msgstr "Die Definition %s existiert bereits, soll sie importiert werden?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1023
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1028
 msgid "Import failed:"
 msgstr "Import fehlgeschlagen:"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1026
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1031
 msgid "Consult the import summary for further information."
 msgstr "Bitte sieh in der Import-Zusammenfassung nach, um weitere Informationen zu erhalten."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1057
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1062
 #, c-format
 msgid "To avoid duplicated XData definitions the current definition has been renamed to %s."
 msgstr "Die aktuelle Definition wurde in %s umbenannt, um doppelte XData-Definitionen zu vermeiden."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1061
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1066
 msgid "XData has been renamed."
 msgstr "XData wurde umbenannt."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1327
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1332
 msgid "The specified gui definition is not a readable."
 msgstr "Die angegebene GUI-Definition ist kein Schriftstück."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1332
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1344
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1337
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1349
 msgid "The specified gui definition is not suitable for the currently chosen page-layout."
 msgstr "Die angegebene GUI-Definition ist für das momentan gewählte Seitenlayout nicht geeignet."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1354
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1359
 msgid "Failure during import."
 msgstr "Fehler beim Import."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1357
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1362
 msgid "The specified Definition does not exist."
 msgstr "Die angegebene Definition existiert nicht."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1365
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1370
 msgid "Not a suitable Gui Definition!"
 msgstr "Keine geeignete GUI-Definition!"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1366
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1371
 msgid "Start the Gui Browser?"
 msgstr "GUI-Browser öffnen?"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1400
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1405
 msgid "Switching to default Gui..."
 msgstr "Schalte zu Standard-GUI um..."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1401
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1406
 msgid "You didn't choose a Gui. Using the default Gui now."
 msgstr "Du hast keine GUI ausgewählt. Es wird die Standard-GUI verwendet."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1419
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1424
 msgid "No import summary available. An XData definition has to be imported first..."
 msgstr "Die Importzusammenfassung ist erst nach dem Import einer XData-Definition verfügbar."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1431
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1436
 msgid "XData import summary"
 msgstr "XData Importzusammenfassung"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1440
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1445
 msgid "No import summary available. Browse Gui Definitions first."
 msgstr "Die Importzusammenfassung ist erst nach dem Öffnen des GUI-Browsers verfügbar."
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1451
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1456
 msgid "Gui import summary"
 msgstr "GUI Importzusammenfassung"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1503
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1523
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1508
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1528
 msgid "Please specify an XData name first!"
 msgstr "Bitte zuerst einen XData-Namen angeben!"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1729
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1757
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1734
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1762
 msgid "Duplicated XData definitions"
 msgstr "Mehrfach vorkommende XData-Definitionen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1730
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1735
 msgid "There are no duplicated definitions!"
 msgstr "Es gibt keine mehrfachen XData-Definitionen"
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1751
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1756
 #, c-format
 msgid "%s has been defined in:"
 msgstr "%s ist definiert in:"
@@ -3324,15 +3389,24 @@ msgstr "XData-Definition auswählen..."
 msgid "Xdata Path"
 msgstr "Xdata-Pfad"
 
-#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:23
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:25
 msgid "Choose a file..."
 msgstr "Datei auswählen..."
 
-#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:79
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:59
+#, c-format
+msgid "%s successfully imported."
+msgstr "%s erfolgreich importiert"
+
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:63
+msgid "Problems during import"
+msgstr "Fehler beim Import."
+
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:97
 msgid "The requested definition has been found in multiple Files. Choose the file:"
 msgstr "Die angeforderte Definition wurde in mehreren Dateien gefunden, bitte die genaue Datei auswählen:"
 
-#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:85
+#: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:103
 msgid "File"
 msgstr "Datei"
 
@@ -4090,75 +4164,133 @@ msgstr "Textur einfügen (gesamter Brush)"
 msgid "Jump to Object"
 msgstr "Zu Objekt springen"
 
-#: ..\..\plugins\filetypes\FileTypeRegistry.cpp:12
+#: ..\..\plugins\filetypes\FileTypeRegistry.cpp:13
 msgid "All Files"
 msgstr "Alle Dateien"
 
-#: ..\..\plugins\grid\Grid.cpp:150
+#: ..\..\plugins\grid\Grid.cpp:152
 msgid "Settings/Grid"
 msgstr "Einstellungen/Raster"
 
-#: ..\..\plugins\grid\Grid.cpp:152
+#: ..\..\plugins\grid\Grid.cpp:154
 msgid "Default Grid Size"
 msgstr "Standard-Rastergröße"
 
-#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:72
-#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:31
+#: ..\..\plugins\grid\Grid.cpp:158
+msgid "Lines"
+msgstr "Linien"
+
+#: ..\..\plugins\grid\Grid.cpp:159
+msgid "Dotted Lines"
+msgstr "Gepunktete Linien"
+
+#: ..\..\plugins\grid\Grid.cpp:160
+msgid "More Dotted Lines"
+msgstr "Stärker gepunktete Linien"
+
+#: ..\..\plugins\grid\Grid.cpp:161
+msgid "Crosses"
+msgstr "Kreuze"
+
+#: ..\..\plugins\grid\Grid.cpp:162
+msgid "Dots"
+msgstr "Punkte"
+
+#: ..\..\plugins\grid\Grid.cpp:163
+msgid "Big Dots"
+msgstr "Große Punkte"
+
+#: ..\..\plugins\grid\Grid.cpp:164
+msgid "Squares"
+msgstr "Quadrate"
+
+#: ..\..\plugins\grid\Grid.cpp:166
+msgid "Major Grid Style"
+msgstr "Hauptgitter-Stil"
+
+#: ..\..\plugins\grid\Grid.cpp:167
+msgid "Minor Grid Style"
+msgstr "Nebengitter-Stil"
+
+#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:61
+#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:29
 msgid "Doom 3 map"
 msgstr "Doom 3 Map"
 
-#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:74
-#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:33
+#: ..\..\plugins\mapdoom3\Doom3MapFormat.cpp:62
+#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:30
 msgid "Doom 3 region"
 msgstr "Doom 3 Region"
 
-#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:25
-#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:29
-msgid "Doom 3 prefab"
-msgstr "Doom 3 Prefab"
-
-#: ..\..\plugins\mapdoom3\InfoFile.cpp:62
-msgid "Map Info File Version invalid"
-msgstr "Ungültige Map Info File Verson"
-
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:47
-msgid "Loading map"
-msgstr "Lade Map"
-
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:69
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:233
+#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:50
 #, c-format
-msgid "Loading entity %d"
-msgstr "Lade Entity %d"
+msgid ""
+"Failed parsing entity %d:\n"
+"%s"
+msgstr "Fehler beim Parsen der Entity %d"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:75
-msgid "Map loading cancelled"
-msgstr "Ladevorgang abgebrochen"
+#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:95
+#: ..\..\plugins\mapdoom3\Quake4MapReader.cpp:49
+msgid "Unable to parse map version (parse exception)."
+msgstr "Konnte Map-Version nicht parsen (Parse-Exception)"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:94
+#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:103
+#: ..\..\plugins\mapdoom3\Quake4MapReader.cpp:57
+msgid "Could not recognise map version number format."
+msgstr "Nicht erkennbares Versionsnummernformat"
+
+#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:111
+#: ..\..\plugins\mapdoom3\Quake4MapReader.cpp:65
 #, c-format
-msgid "Failed on entity %d"
-msgstr "Fehler bei Entity %d"
+msgid "Incorrect map version: required %f, found %f"
+msgstr "Ungültige Map-Version: erwartet: %f, gefunden: %f"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:184
+#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:144
 #, c-format
 msgid "Primitive #%d: parse error"
 msgstr "Primitiv #%d: Parserfehler"
 
-#: ..\..\plugins\mapdoom3\NodeImporter.cpp:276
+#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:154
+#, c-format
+msgid "Primitive #%d: parse exception %s"
+msgstr "Primitiv #%d: Parserfehler %s"
+
+#: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:248
 #, c-format
 msgid "Parsed invalid value '%s' for key '%s'"
 msgstr "Ungültigen Wert '%s' für Schlüssel '%s' eingelesen"
+
+#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:25
+#: ..\..\plugins\mapdoom3\Doom3PrefabFormat.cpp:28
+msgid "Doom 3 prefab"
+msgstr "Doom 3 Prefab"
 
 #: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp:103
 #, c-format
 msgid "BrushDefParser: invalid token '%s'"
 msgstr "BrushDefParser: Ungültiges Token '%s'"
 
-#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:97
+#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:106
 #, c-format
 msgid "BrushDef3Parser: invalid token '%s'"
 msgstr "BrushDef3Parser: ungültiges Token '%s'"
+
+#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:177
+#, c-format
+msgid "BrushDef3ParserQuake4: invalid token '%s'"
+msgstr "BrushDef3ParserQuake4: ungültiges Token '%s'"
+
+#: ..\..\plugins\mapdoom3\Quake4MapFormat.cpp:66
+msgid "Quake 4 map"
+msgstr "Quake 4 Map"
+
+#: ..\..\plugins\mapdoom3\Quake4MapFormat.cpp:67
+msgid "Quake 4 region"
+msgstr "Quake 4 Region"
+
+#: ..\..\plugins\mapdoom3\Quake4MapFormat.cpp:68
+msgid "Quake 4 prefab"
+msgstr "Quake 4 Prefab"
 
 #: ..\..\plugins\script\ScriptingSystem.cpp:182
 #: ..\..\plugins\script\ScriptingSystem.cpp:184
@@ -4269,11 +4401,11 @@ msgstr "Datei öffnen"
 msgid "Save File"
 msgstr "Datei speichern"
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:120
+#: ..\..\libs\gtkutil\FileChooser.cpp:118
 msgid "All Files (*.*)"
 msgstr "Alle Dateien (*.*)"
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:222
+#: ..\..\libs\gtkutil\FileChooser.cpp:220
 msgid "Do you want to replace it?"
 msgstr "Willst Du sie ersetzen?"
 
