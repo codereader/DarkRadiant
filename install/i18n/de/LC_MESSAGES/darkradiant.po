@@ -4227,7 +4227,9 @@ msgstr "Doom 3 Region"
 msgid ""
 "Failed parsing entity %d:\n"
 "%s"
-msgstr "Fehler beim Parsen der Entity %d"
+msgstr ""
+"Fehler beim Parsen der Entity %d\n"
+"%s"
 
 #: ..\..\plugins\mapdoom3\Doom3MapReader.cpp:95
 #: ..\..\plugins\mapdoom3\Quake4MapReader.cpp:49
