@@ -275,7 +275,7 @@ public:
 	{
 		if(_vertices.size() == 0) return;
 
-		glVertexPointer(3, GL_DOUBLE, sizeof(PointVertex), &_vertices.data()->vertex);
+		glVertexPointer(3, GL_FLOAT, sizeof(PointVertex), &_vertices.data()->vertex);
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_vertices.data()->colour);
 		glDrawArrays(GL_LINES, 0, _vertices.size());
 	}
