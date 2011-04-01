@@ -120,14 +120,14 @@ def execute():
             return 1
 
     class dataCollector(SelectionVisitor):
-        def visit(self, scenenode):
+        fs_origin = Vector3(0,0,0)
+        fs = 0
 
+        def visit(self, scenenode):
             if scenenode.getNodeType() == 'primitive':
                 processPrimitive(scenenode)
             elif scenenode.isEntity():
                 import re
-                global found_func_static_origin
-                global found_func_static
 
                 # greebo: Found an entity, this could be a func_static or similar
                 # Traverse children of this entity using a new walker
@@ -139,20 +139,17 @@ def execute():
                 if not entitynode.getKeyValue("origin") == '':
                     origin = entitynode.getKeyValue("origin");
                     coords = re.findall(r'([\-\d.]+)', origin)
-                    found_func_static_origin = Vector3(float(coords[0]), float(coords[1]), float(coords[2]))
-                    found_func_static = scenenode
+                    self.fs_origin = Vector3(float(coords[0]), float(coords[1]), float(coords[2]))
+                    self.fs = scenenode
 
             else:
                 print('WARNING: unsupported node type selected. Skipping: ' + scenenode.getNodeType())
 
-    global found_func_static_origin
-    found_func_static_origin = Vector3(0,0,0)
-
-    global found_func_static
-    found_func_static = 0
-
     walker = dataCollector()
     GlobalSelectionSystem.foreachSelected(walker)
+
+    found_func_static_origin = walker.fs_origin
+    found_func_static = walker.fs
 
     # Dialog
     dialog = GlobalDialogManager.createDialog(script + 'v' + version)
@@ -312,7 +309,7 @@ def execute():
                 if len(x[1]) == 0:
                     continue
 
-            geomobjects = geomobjects + '''*GEOMOBJECT {{
+                geomobjects = geomobjects + '''*GEOMOBJECT {{
 \t*NODE_NAME "{0}"
 \t*NODE_TM {{
 \t\t*NODE_NAME "{0}"
