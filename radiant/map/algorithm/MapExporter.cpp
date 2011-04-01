@@ -32,7 +32,7 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::o
 	_totalNodeCount(nodeCount),
 	_curNodeCount(0)
 {
-	if (_totalNodeCount > 0)
+	if (_totalNodeCount > 0 && GlobalMainFrame().isActiveApp())
 	{
 		enableProgressDialog();
 	}

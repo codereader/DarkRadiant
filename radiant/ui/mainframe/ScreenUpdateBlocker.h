@@ -21,13 +21,6 @@ public:
 	~ScreenUpdateBlocker();
 
 private:
-	/**
-	 * Returns true if any of DarkRadiant's toplevel windows is "active",
-	 * i.e. has focus. This is to prevent showing the UpdateBlocker window
-	 * when DarkRadiant isn't the active application.
-	 */
-	bool isActiveApp();
-
 	// Called whenever the main window is changing its "active" state property.
 	void onMainWindowFocus();
 

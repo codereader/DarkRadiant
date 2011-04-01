@@ -40,6 +40,11 @@ public:
 	virtual const Glib::RefPtr<Gtk::Window>& getTopLevelWindow() = 0;
 
 	/**
+	 * Returns TRUE if DarkRadiant is currently "in focus", i.e. the app in the foreground.
+	 */
+	virtual bool isActiveApp() = 0;
+
+	/**
 	 * greebo: Returns the main container widget (a vbox), where layouts
 	 * can start packing widgets into. This resembles the large grey area
 	 * in the main window.
