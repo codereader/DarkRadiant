@@ -262,6 +262,22 @@ const Glib::RefPtr<Gtk::Window>& MainFrame::getTopLevelWindow()
 	return _window;
 }
 
+bool MainFrame::isActiveApp()
+{
+	// Iterate over all top-level windows and check if any of them has focus
+	std::vector<Gtk::Window*> toplevels = Gtk::Window::list_toplevels();
+
+	for (std::size_t i = 0; i < toplevels.size(); ++i)
+	{
+		if (toplevels[i]->property_is_active())
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 Gtk::Container* MainFrame::getMainContainer()
 {
 	return _mainContainer;
