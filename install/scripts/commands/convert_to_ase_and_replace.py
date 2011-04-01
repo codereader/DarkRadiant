@@ -38,6 +38,16 @@ def execute():
         errMsg.run()
         return
 
+    if selectionInfo.entityCount != 1:
+        errMsg = GlobalDialogManager.createMessageBox('Wrong selection', 'Please select exactly one func_static.', Dialog.ERROR)
+        errMsg.run()
+        return
+
+    if not GlobalRegistry.get('user/scripts/aseExport/initialUserWarning') == '1':
+        GlobalRegistry.set('user/scripts/aseExport/initialUserWarning', '1')
+        warningMsg = GlobalDialogManager.createMessageBox('Careful', 'This option will export the selected func_static to ASE and replace your entity with the newly created model.\nThe currently selected func_static will be DELETED. You can undo this operation, but know what you''re doing!', Dialog.WARNING)
+        warningMsg.run()
+
     shaderlist = []
     geomlist = []
 
