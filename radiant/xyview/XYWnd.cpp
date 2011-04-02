@@ -991,15 +991,19 @@ void XYWnd::drawGrid() {
 				default:
 					glBegin (GL_LINES);
 					int i = 0;
-					for (x = xb ; x < xe ; x += cur_step, ++i) {
-						if ((i & mask) != 0) {
+					for (x = xb ; x < xe ; x += cur_step, ++i)
+					{
+						if (gf == 1 || (i & mask) != 0) // greebo: No mask check for major grid
+						{
 							glVertex2d (x, yb);
 							glVertex2d (x, ye);
 						}
 					}
 					i = 0;
-					for (y = yb ; y < ye ; y += cur_step, ++i) {
-						if ((i & mask) != 0) {
+					for (y = yb ; y < ye ; y += cur_step, ++i)
+					{
+						if (gf == 1 || (i & mask) != 0) // greebo: No mask check for major grid
+						{
 							glVertex2d (xb, y);
 							glVertex2d (xe, y);
 						}
