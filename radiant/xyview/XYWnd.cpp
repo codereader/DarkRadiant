@@ -846,34 +846,38 @@ Vector4 XYWnd::getWindowCoordinates() {
 	return Vector4(xb, xe, yb, ye);
 }
 
-void XYWnd::drawGrid() {
-	double	x, y, xb, xe, yb, ye;
-	double	w, h;
-	char	text[32];
-	double	step, minor_step, stepx, stepy;
-
+void XYWnd::drawGrid()
+{
+	double step, minor_step, stepx, stepy;
 	step = minor_step = stepx = stepy = GlobalGrid().getGridSize();
 
 	int minor_power = GlobalGrid().getGridPower();
-	int mask;
 
-	while ((minor_step * m_fScale) <= 4.0f) // make sure minor grid spacing is at least 4 pixels on the screen
+	while (minor_step * m_fScale <= 4.0f) // make sure minor grid spacing is at least 4 pixels on the screen
 	{
 		++minor_power;
 		minor_step *= 2;
 	}
+
 	int power = minor_power;
-	while ((power % 3) != 0 || (step * m_fScale) <= 32.0f) // make sure major grid spacing is at least 32 pixels on the screen
+
+	while (power % 3 != 0 || step * m_fScale <= 32.0f) // make sure major grid spacing is at least 32 pixels on the screen
 	{
 		++power;
 		step = double(two_to_the_power(power));
 	}
-	mask = (1 << (power - minor_power)) - 1;
-	while ((stepx * m_fScale) <= 32.0f) // text step x must be at least 32
-		stepx *= 2;
 
-	while ((stepy * m_fScale) <= 32.0f) // text step y must be at least 32
+	int mask = (1 << (power - minor_power)) - 1;
+
+	while (stepx * m_fScale <= 32.0f) // text step x must be at least 32
+	{
+		stepx *= 2;
+	}
+
+	while (stepy * m_fScale <= 32.0f) // text step y must be at least 32
+	{
 		stepy *= 2;
+	}
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_TEXTURE_1D);
@@ -881,31 +885,36 @@ void XYWnd::drawGrid() {
 	glDisable(GL_BLEND);
 	glLineWidth(1);
 
-	w = (_width / 2 / m_fScale);
-	h = (_height / 2 / m_fScale);
+	double w = _width / 2 / m_fScale;
+	double h = _height / 2 / m_fScale;
 
 	Vector4 windowCoords = getWindowCoordinates();
 
-	xb = step * floor (windowCoords[0]/step);
-	xe = step * ceil (windowCoords[1]/step);
-	yb = step * floor (windowCoords[2]/step);
-	ye = step * ceil (windowCoords[3]/step);
+	double xb = step * floor(windowCoords[0]/step);
+	double xe = step * ceil(windowCoords[1]/step);
+	double yb = step * floor(windowCoords[2]/step);
+	double ye = step * ceil(windowCoords[3]/step);
 
-	if (GlobalXYWnd().showGrid()) {
+	if (GlobalXYWnd().showGrid())
+	{
 		Vector3 colourGridBack = ColourSchemes().getColour("grid_background");
 		Vector3 colourGridMinor = ColourSchemes().getColour("grid_minor");
 		Vector3 colourGridMajor = ColourSchemes().getColour("grid_major");
 
 		// run grid rendering twice, first run is minor grid, then major
 		// NOTE: with a bit more work, we can have variable number of grids
-		for (int gf = 0 ; gf < 2 ; ++gf ) {
+		for (int gf = 0 ; gf < 2 ; ++gf)
+		{
 			double cur_step, density, sizeFactor;
 			GridLook look;
 
-			if (gf) {
+			if (gf)
+			{
 				// major grid
 				if (colourGridMajor == colourGridBack)
+				{
 					continue;
+				}
 
 				glColor3fv(colourGridMajor);
 				look = GlobalGrid().getMajorLook();
@@ -913,10 +922,15 @@ void XYWnd::drawGrid() {
 				density = 4;
 				// slightly bigger crosses
 				sizeFactor = 1.95;
-			} else {
+			} 
+			else 
+			{
 				// minor grid (rendered first)
 				if (colourGridMinor == colourGridBack)
+				{
 					continue;
+				}
+
 				glColor3fv(colourGridMinor);
 				look = GlobalGrid().getMinorLook();
 				cur_step = minor_step;
@@ -924,22 +938,28 @@ void XYWnd::drawGrid() {
 				sizeFactor = 0.95;
 			}
 
-			switch (look) {
+			switch (look)
+			{
 				case GRIDLOOK_DOTS:
 					glBegin (GL_POINTS);
-					for (x = xb ; x < xe ; x += cur_step) {
-						for (y = yb ; y < ye ; y += cur_step) {
+					for (double x = xb ; x < xe ; x += cur_step)
+					{
+						for (double y = yb ; y < ye ; y += cur_step)
+						{
 							glVertex2d (x, y);
 						}
 					}
 					glEnd();
 					break;
+
 				case GRIDLOOK_BIGDOTS:
 					glPointSize(3);
 					glEnable(GL_POINT_SMOOTH);
 					glBegin (GL_POINTS);
-					for (x = xb ; x < xe ; x += cur_step) {
-						for (y = yb ; y < ye ; y += cur_step) {
+					for (double x = xb ; x < xe ; x += cur_step)
+					{
+						for (double y = yb ; y < ye ; y += cur_step)
+						{
 							glVertex2d (x, y);
 						}
 					}
@@ -947,38 +967,50 @@ void XYWnd::drawGrid() {
 					glDisable(GL_POINT_SMOOTH);
 					glPointSize(1);
 					break;
+
 				case GRIDLOOK_SQUARES:
 					glPointSize(3);
 					glBegin (GL_POINTS);
-					for (x = xb ; x < xe ; x += cur_step) {
-						for (y = yb ; y < ye ; y += cur_step) {
+					for (double x = xb ; x < xe ; x += cur_step)
+					{
+						for (double y = yb ; y < ye ; y += cur_step)
+						{
 							glVertex2d (x, y);
 						}
 					}
 					glEnd();
 					glPointSize(1);
 					break;
+
 				case GRIDLOOK_MOREDOTLINES:
 					density = 8;
+
 				case GRIDLOOK_DOTLINES:
 					glBegin (GL_POINTS);
-					for (x = xb ; x < xe ; x += cur_step) {
-						for (y = yb ; y < ye ; y += minor_step / density) {
+					for (double x = xb ; x < xe ; x += cur_step)
+					{
+						for (double y = yb ; y < ye ; y += minor_step / density)
+						{
 							glVertex2d (x, y);
 						}
 					}
 
-					for (y = yb ; y < ye ; y += cur_step) {
-						for (x = xb ; x < xe ; x += minor_step / density) {
+					for (double y = yb ; y < ye ; y += cur_step)
+					{
+						for (double x = xb ; x < xe ; x += minor_step / density)
+						{
 							glVertex2d (x, y);
 						}
 					}
 					glEnd();
 					break;
+
 				case GRIDLOOK_CROSSES:
 					glBegin (GL_LINES);
-					for (x=xb ; x<=xe ; x+=cur_step) {
-						for (y=yb ; y<=ye ; y+=cur_step) {
+					for (double x = xb ; x <= xe ; x += cur_step)
+					{
+						for (double y = yb ; y <= ye ; y += cur_step)
+						{
 							glVertex2d (x - sizeFactor / m_fScale, y);
 							glVertex2d (x + sizeFactor / m_fScale, y);
 							glVertex2d (x, y - sizeFactor / m_fScale);
@@ -987,11 +1019,12 @@ void XYWnd::drawGrid() {
 					}
 					glEnd();
 					break;
+
 				case GRIDLOOK_LINES:
 				default:
 					glBegin (GL_LINES);
 					int i = 0;
-					for (x = xb ; x < xe ; x += cur_step, ++i)
+					for (double x = xb ; x < xe ; x += cur_step, ++i)
 					{
 						if (gf == 1 || (i & mask) != 0) // greebo: No mask check for major grid
 						{
@@ -999,8 +1032,10 @@ void XYWnd::drawGrid() {
 							glVertex2d (x, ye);
 						}
 					}
+
 					i = 0;
-					for (y = yb ; y < ye ; y += cur_step, ++i)
+
+					for (double y = yb ; y < ye ; y += cur_step, ++i)
 					{
 						if (gf == 1 || (i & mask) != 0) // greebo: No mask check for major grid
 						{
@@ -1008,6 +1043,7 @@ void XYWnd::drawGrid() {
 							glVertex2d (xe, y);
 						}
 					}
+
 					glEnd();
 					break;
 			}
@@ -1018,37 +1054,46 @@ void XYWnd::drawGrid() {
 	int nDim2 = (m_viewType == XY) ? 1 : 2;
 
 	// draw coordinate text if needed
-	if (GlobalXYWnd().showCoordinates()) {
+	if (GlobalXYWnd().showCoordinates())
+	{
+		char text[32];
+
 		glColor3fv(ColourSchemes().getColour("grid_text"));
+
 		double offx = m_vOrigin[nDim2] + h - 12 / m_fScale;
 		double offy = m_vOrigin[nDim1] - w + 1 / m_fScale;
 
-		for (x = xb - fmod(xb, stepx); x <= xe ; x += stepx) {
+		for (double x = xb - fmod(xb, stepx); x <= xe ; x += stepx)
+		{
 			glRasterPos2d (x, offx);
-			sprintf (text, "%g", x);
+			sprintf(text, "%g", x);
 			GlobalOpenGL().drawString(text);
 		}
-		for (y = yb - fmod(yb, stepy); y <= ye ; y += stepy) {
+
+		for (double y = yb - fmod(yb, stepy); y <= ye ; y += stepy)
+		{
 			glRasterPos2f (offy, y);
 			sprintf (text, "%g", y);
 			GlobalOpenGL().drawString(text);
 		}
 
-		if (isActive()) {
+		if (isActive())
+		{
 			glColor3fv(ColourSchemes().getColour("active_view_name"));
 		}
 
 		// we do this part (the old way) only if show_axis is disabled
-		if (!GlobalXYWnd().showAxes()) {
-			glRasterPos2d ( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
+		if (!GlobalXYWnd().showAxes())
+		{
+			glRasterPos2d( m_vOrigin[nDim1] - w + 35 / m_fScale, m_vOrigin[nDim2] + h - 20 / m_fScale );
 
 			GlobalOpenGL().drawString(getViewTypeTitle(m_viewType));
 		}
 	}
 
-	if (GlobalXYWnd().showAxes()) {
-		const char g_AxisName[3] = { 'X', 'Y', 'Z'
-		                           };
+	if (GlobalXYWnd().showAxes()) 
+	{
+		const char g_AxisName[3] = { 'X', 'Y', 'Z' };
 
 		const std::string colourNameX = (m_viewType == YZ) ? "axis_y" : "axis_x";
 		const std::string colourNameY = (m_viewType == XY) ? "axis_y" : "axis_z";
