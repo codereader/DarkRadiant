@@ -243,6 +243,14 @@ void FileChooser::onUpdatePreview()
 
 	previewFilename = os::standardPath(previewFilename);
 
+	// Check the file type
+	Glib::RefPtr<Gio::File> file = get_preview_file();
+
+	if (file && file->query_file_type() == Gio::FILE_TYPE_DIRECTORY)
+	{
+		return; // don't preview folders
+	}
+
 	// Emit the signal
 	_preview->onFileSelectionChanged(previewFilename, *this);
 }
