@@ -120,7 +120,7 @@ void MissionLogicDialog::populateLogicEditors()
 {
 	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
 	// to find out how many difficulty levels there are
-	for (int i = -1; i < 2; i++)
+	for (int i = -1; i <= 2; i++)
 	{
 		LogicPtr logic = _objectiveEnt.getMissionLogic(i);
 
@@ -134,7 +134,7 @@ void MissionLogicDialog::save()
 {
 	// TODO: Connect this plugin to the difficulty plugin (which can be optional)
 	// to find out how many difficulty levels there are
-	for (int i = -1; i < 2; i++)
+	for (int i = -1; i <= 2; i++)
 	{
 		LogicPtr logic = _objectiveEnt.getMissionLogic(i);
 
