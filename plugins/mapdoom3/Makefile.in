@@ -77,9 +77,9 @@ LTLIBRARIES = $(modules_LTLIBRARIES)
 mapdoom3_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.la \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
 am_mapdoom3_la_OBJECTS = Doom3MapFormat.lo Doom3PrefabFormat.lo \
-	Quake4MapFormat.lo Doom3MapReader.lo mapdoom3.lo \
-	Doom3MapWriter.lo BrushDef.lo BrushDef3.lo Patch.lo \
-	PatchDef2.lo PatchDef3.lo
+	Quake4MapFormat.lo Quake4MapReader.lo Doom3MapReader.lo \
+	mapdoom3.lo Doom3MapWriter.lo BrushDef.lo BrushDef3.lo \
+	Patch.lo PatchDef2.lo PatchDef3.lo
 mapdoom3_la_OBJECTS = $(am_mapdoom3_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -308,6 +308,7 @@ mapdoom3_la_LDFLAGS = -module -avoid-version $(GTKMM_LIBS) $(XML_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                  Doom3PrefabFormat.cpp \
 				 Quake4MapFormat.cpp \
+				 Quake4MapReader.cpp \
                       Doom3MapReader.cpp \
                       mapdoom3.cpp \
 					  Doom3MapWriter.cpp \
@@ -401,6 +402,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchDef2.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PatchDef3.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Quake4MapFormat.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Quake4MapReader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapdoom3.Plo@am__quote@
 
 .cpp.o:
