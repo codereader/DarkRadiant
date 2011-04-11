@@ -506,6 +506,9 @@ void BrushNode::evaluateTransform() {
 
 void BrushNode::updateFaceVisibility()
 {
+	// Trigger an update, the brush might not have any faces calculated so far
+	m_brush.evaluateBRep();
+
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i)
 	{
 		i->updateFaceVisibility();
