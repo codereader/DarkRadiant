@@ -3,6 +3,7 @@
 #include "imodelcache.h"
 #include "ifiletypes.h"
 #include "scenelib.h"
+#include "ifilter.h"
 #include <boost/algorithm/string/replace.hpp>
 
 ModelKey::ModelKey(scene::INode& parentNode) :
@@ -44,11 +45,25 @@ void ModelKey::modelChanged(const std::string& value)
 	_modelNode = GlobalModelCache().getModelNode(_modelPath);
 
 	// The model loader should not return NULL, but a sanity check is always ok
-	if (_modelNode != NULL) {
+	if (_modelNode != NULL)
+	{
 		// Add the model node as child of the entity node
 		_parentNode.addChildNode(_modelNode);
 
 		// Assign the model node to the same layers as the parent entity
 		scene::assignNodeToLayers(_modelNode, _parentNode.getLayers());
+
+		// Inherit the parent node's visibility. This should do the trick to resolve #2709
+		// but is not as heavy on performance as letting the Filtersystem check the whole subgraph
+
+		// The sophisticated check would be like this
+		// GlobalFilterSystem().updateSubgraph(_parentNode.getSelf());
+		
+		_modelNode->setFiltered(_parentNode.isFiltered());
+
+		if (_parentNode.excluded())
+		{
+			_modelNode->enable(scene::Node::eExcluded);
+		}
 	}
 }
