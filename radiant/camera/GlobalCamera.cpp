@@ -492,6 +492,16 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
 
+	// greebo: If at startup time the render mode is set to LIGHTING, fall back
+	// to textured. During startup the openGL contexts are not realised yet and the
+	// openGL module is tricked into believing there are no GLSL shader programs supported.
+	// Later on, when switching back to TEXTURED the rendersystem will attempt to destroy
+	// program objects it never created.
+	if (GlobalRegistry().getInt(RKEY_DRAWMODE) == RENDER_MODE_LIGHTING)
+	{
+		GlobalRegistry().setInt(RKEY_DRAWMODE, RENDER_MODE_TEXTURED);
+	}
+
 	registerCommands();
 
 	CamWnd::captureStates();
