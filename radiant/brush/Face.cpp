@@ -18,12 +18,14 @@ Face::Face(Brush& owner, FaceObserver* observer) :
 	m_texdef(_faceShader, TextureProjection(), false),
 	m_observer(observer),
 	m_undoable_observer(0),
-	m_map(0)
+	m_map(0),
+	_faceIsVisible(true)
 {
 	_faceShader.attachObserver(*this);
 	m_plane.copy(Vector3(0, 0, 0), Vector3(64, 0, 0), Vector3(0, 64, 0));
 	m_texdef.setBasis(m_plane.getPlane().normal());
 	planeChanged();
+	shaderChanged();
 }
 
 Face::Face(
@@ -40,12 +42,14 @@ Face::Face(
 	m_texdef(_faceShader, projection),
 	m_observer(observer),
 	m_undoable_observer(0),
-	m_map(0)
+	m_map(0),
+	_faceIsVisible(true)
 {
 	_faceShader.attachObserver(*this);
 	m_plane.copy(p0, p1, p2);
 	m_texdef.setBasis(m_plane.getPlane().normal());
 	planeChanged();
+	shaderChanged();
 }
 
 Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
@@ -54,12 +58,14 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 	m_texdef(_faceShader, TextureProjection()),
 	m_observer(observer),
 	m_undoable_observer(NULL),
-	m_map(NULL)
+	m_map(NULL),
+	_faceIsVisible(true)
 {
 	_faceShader.attachObserver(*this);
 	m_plane.setPlane(plane);
 	m_texdef.setBasis(m_plane.getPlane().normal());
 	planeChanged();
+	shaderChanged();
 }
 
 Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
@@ -69,7 +75,8 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 	m_texdef(_faceShader, TextureProjection()),
 	m_observer(observer),
 	m_undoable_observer(NULL),
-	m_map(NULL)
+	m_map(NULL),
+	_faceIsVisible(true)
 {
 	_faceShader.attachObserver(*this);
 	m_plane.setPlane(plane);
@@ -80,6 +87,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 	m_texdef.m_scaleApplied = true;
 
 	planeChanged();
+	shaderChanged();
 }
 
 Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
@@ -92,7 +100,8 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
 	m_texdef(_faceShader, other.getTexdef().normalised()),
 	m_observer(observer),
 	m_undoable_observer(0),
-	m_map(0)
+	m_map(0),
+	_faceIsVisible(other._faceIsVisible)
 {
 	_faceShader.attachObserver(*this);
 	m_plane.copy(other.m_plane);
@@ -202,9 +211,6 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
 void Face::submitRenderables(RenderableCollector& collector,
                              const Matrix4& localToWorld) const
 {
-	// We assume that the shader is visible when this method is called
-	assert(_faceShader.getGLShader()->getMaterial()->isVisible());
-
 	collector.SetState(_faceShader.getGLShader(), RenderableCollector::eFullMaterials);
 	collector.addRenderable(*this, localToWorld);
 }
@@ -287,6 +293,10 @@ void Face::shaderChanged()
 {
 	EmitTextureCoordinates();
 	m_observer->shaderChanged();
+
+	// Update the visibility flag, but leave out the contributes() check
+	_faceIsVisible = getFaceShader().getGLShader()->getMaterial()->isVisible();
+
 	planeChanged();
 	SceneChangeNotify();
 }
@@ -507,6 +517,11 @@ void Face::normaliseTexture() {
 	m_texdef.shift(-shift[0], shift[1]);
 
 	texdefChanged();
+}
+
+void Face::updateFaceVisibility()
+{
+	_faceIsVisible = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();
 }
 
 // ---------------------------------------------------------------------------------------

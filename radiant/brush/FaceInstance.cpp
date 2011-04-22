@@ -29,8 +29,7 @@ FaceInstance::FaceInstance(Face& face, const SelectionChangeCallback& observer) 
 	m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
 	m_selectableVertices(observer),
 	m_selectableEdges(observer),
-	m_selectionChanged(observer),
-	_faceIsVisible(true)
+	m_selectionChanged(observer)
 {}
 
 FaceInstance::FaceInstance(const FaceInstance& other) :
@@ -38,8 +37,7 @@ FaceInstance::FaceInstance(const FaceInstance& other) :
 	m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
 	m_selectableVertices(other.m_selectableVertices),
 	m_selectableEdges(other.m_selectableEdges),
-	m_selectionChanged(other.m_selectionChanged),
-	_faceIsVisible(other._faceIsVisible)
+	m_selectionChanged(other.m_selectionChanged)
 {}
 
 FaceInstance& FaceInstance::operator=(const FaceInstance& other) {
@@ -447,6 +445,6 @@ void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& li
 
 void FaceInstance::updateFaceVisibility()
 {
-	_faceIsVisible = getFace().contributes() && getFace().getFaceShader().getGLShader()->getMaterial()->isVisible();
+	getFace().updateFaceVisibility();
 }
 

@@ -91,6 +91,9 @@ private:
 	UndoObserver* m_undoable_observer;
 	MapFile* m_map;
 
+	// Cached visibility flag, queried during front end rendering
+	bool _faceIsVisible;
+
 public:
 
 	// Constructors
@@ -217,6 +220,13 @@ public:
 
 	bool contributes() const;
 	bool is_bounded() const;
+
+	bool faceIsVisible() const
+	{
+		return _faceIsVisible;
+	}
+
+	void updateFaceVisibility();
 
 }; // class Face
 
