@@ -946,6 +946,9 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 void TextureBrowser::destroyWindow()
 {
 	GlobalMaterialManager().removeActiveShadersObserver(shared_from_this());
+
+	// Remove the parent reference
+	_parent.reset();
 }
 
 void TextureBrowser::registerPreferencesPage()
