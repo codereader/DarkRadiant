@@ -491,19 +491,58 @@ public:
 			patch->setDims(3,3);
 			patch->setFixedSubdivisions(true, Subdivisions(1,1));
 
-			// Set the coordinates
-			patch->ctrlAt(0,0).vertex = winding[0].vertex;
-			patch->ctrlAt(2,0).vertex = winding[1].vertex;
-			patch->ctrlAt(1,0).vertex = (patch->ctrlAt(0,0).vertex + patch->ctrlAt(2,0).vertex)/2;
+			if (winding.size() == 4)
+			{
+				// Rectangular face, set the coordinates
+				patch->ctrlAt(0,0).vertex = winding[0].vertex;
+				patch->ctrlAt(2,0).vertex = winding[1].vertex;
+				patch->ctrlAt(1,0).vertex = (patch->ctrlAt(0,0).vertex + patch->ctrlAt(2,0).vertex)/2;
 
-			patch->ctrlAt(0,1).vertex = (winding[0].vertex + winding[3].vertex)/2;
-			patch->ctrlAt(2,1).vertex = (winding[1].vertex + winding[2].vertex)/2;
+				patch->ctrlAt(0,1).vertex = (winding[0].vertex + winding[3].vertex)/2;
+				patch->ctrlAt(2,1).vertex = (winding[1].vertex + winding[2].vertex)/2;
 
-			patch->ctrlAt(1,1).vertex = (patch->ctrlAt(0,1).vertex + patch->ctrlAt(2,1).vertex)/2;
+				patch->ctrlAt(1,1).vertex = (patch->ctrlAt(0,1).vertex + patch->ctrlAt(2,1).vertex)/2;
 
-			patch->ctrlAt(2,2).vertex = winding[2].vertex;
-			patch->ctrlAt(0,2).vertex = winding[3].vertex;
-			patch->ctrlAt(1,2).vertex = (patch->ctrlAt(2,2).vertex + patch->ctrlAt(0,2).vertex)/2;
+				patch->ctrlAt(2,2).vertex = winding[2].vertex;
+				patch->ctrlAt(0,2).vertex = winding[3].vertex;
+				patch->ctrlAt(1,2).vertex = (patch->ctrlAt(2,2).vertex + patch->ctrlAt(0,2).vertex)/2;
+			}
+			else
+			{
+				// Non-rectangular face, try to find 4 vertices co-planar with the face
+
+				// We have at least 3 points, so use them
+				Vector3 points[4] = {
+					winding[0].vertex,
+					winding[1].vertex,
+					winding[2].vertex,
+					Vector3(0,0,0) // to be calculated
+				};
+
+				// Triangular patches are supported, collapse the fourth point with the third one
+				if (winding.size() == 3)
+				{
+					points[3] = points[2];
+				}
+				else
+				{
+					// Generic polygon, just assume a fourth point in the same plane
+					points[3] = points[1] + (points[0] - points[1]) + (points[2] - points[1]);
+				}
+
+				patch->ctrlAt(0,0).vertex = points[0];
+				patch->ctrlAt(2,0).vertex = points[1];
+				patch->ctrlAt(1,0).vertex = (patch->ctrlAt(0,0).vertex + patch->ctrlAt(2,0).vertex)/2;
+
+				patch->ctrlAt(0,1).vertex = (points[0] + points[3])/2;
+				patch->ctrlAt(2,1).vertex = (points[1] + points[2])/2;
+
+				patch->ctrlAt(1,1).vertex = (patch->ctrlAt(0,1).vertex + patch->ctrlAt(2,1).vertex)/2;
+
+				patch->ctrlAt(2,2).vertex = points[2];
+				patch->ctrlAt(0,2).vertex = points[3];
+				patch->ctrlAt(1,2).vertex = (patch->ctrlAt(2,2).vertex + patch->ctrlAt(0,2).vertex)/2;
+			}
 
 			// Use the texture in the clipboard, if it's a decal texture
 			Texturable& clipboard = GlobalShaderClipboard().getSource();
@@ -534,20 +573,23 @@ public:
 		}
 	}
 
-	void operator() (FaceInstance& faceInstance) {
-		// Get the winding
-		const Winding& winding = faceInstance.getFace().getWinding();
-
-		// For now, only windings with four edges are supported
-		if (winding.size() == 4) {
+	void operator() (FaceInstance& faceInstance)
+	{
+		// Skip non-contributing faces
+		if (faceInstance.getFace().contributes())
+		{
 			_faceInstances.push_back(&faceInstance);
 		}
-		else {
+		else
+		{
+			// Fail on this winding, de-select and skip
+			faceInstance.setSelected(SelectionSystem::eFace, false);
 			_unsuitableWindings++;
 		}
 	}
 
-	int getNumUnsuitableWindings() const {
+	int getNumUnsuitableWindings() const
+	{
 		return _unsuitableWindings;
 	}
 };
