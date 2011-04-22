@@ -28,9 +28,6 @@ private:
 	VertexSelection m_vertexSelection;
 	VertexSelection m_edgeSelection;
 
-	// Cached visibility flag, queried during front end rendering
-	bool _faceIsVisible;
-
 public:
 	mutable VectorLightList m_lights;
 
@@ -158,7 +155,7 @@ public:
 
 	bool faceIsVisible() const
 	{
-		return _faceIsVisible;
+		return m_face->faceIsVisible();
 	}
 
 	void updateFaceVisibility();
