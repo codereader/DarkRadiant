@@ -180,6 +180,8 @@ void Overlay::draw(float xbegin, float xend, float ybegin, float yend,
 	glEnable(GL_BLEND);
 	glEnable(GL_TEXTURE_2D);
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	// Define the blend function for transparency
 	glBlendColor(0,0,0, _transparency);
 	glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
