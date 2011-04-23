@@ -1,3 +1,9 @@
+darkradiant (1.6.1~maverick1) maverick; urgency=low
+
+  * New bugfix release.
+
+ -- Matthew Mott <matthew.mott@gmail.com>  Sat, 23 Apr 2011 18:16:58 +0100
+
 darkradiant (1.6.0svn6346~maverick1) maverick; urgency=low
 
   * New upstream release.
