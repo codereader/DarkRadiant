@@ -1,47 +1,46 @@
-#ifndef OBJECTIVESEDITOR_H_
-#define OBJECTIVESEDITOR_H_
+#pragma once
 
-#include "Objective.h"
-#include "ObjectiveEntity.h"
-
-#include "icommandsystem.h"
-#include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/GladeWidgetHolder.h"
 
-#include "ObjectiveEntityFinder.h"
-
-#include <map>
-#include <string>
 #include <gtkmm/liststore.h>
 
-namespace Gtk
-{
-	class VBox;
-	class HBox;
-	class TreeView;
-	class Button;
-}
-
-/* FORWARD DECLS */
-class Entity;
+#include "ObjectiveCondition.h"
 
 namespace objectives
 {
 
+class ObjectiveEntity;
+
 /**
- * Dialog for adding and manipulating mission objectives in Dark Mod missions.
+ * Dialog for editing objective conditions (for use in TDM campaigns).
  */
-class ObjectivesEditor :
+class ObjectiveConditionsDialog :
 	public gtkutil::BlockingTransientWindow,
     private gtkutil::GladeWidgetHolder
 {
 private:
-	// List of target_addobjectives entities
-	ObjectiveEntityListColumns _objEntityColumns;
-	Glib::RefPtr<Gtk::ListStore> _objectiveEntityList;
+	// The objective entity we're working on
+	ObjectiveEntity& _objectiveEnt;
 
-	// List of actual objectives associated with the selected entity
+	struct ObjectiveConditionListColumns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		ObjectiveConditionListColumns()
+		{
+			add(conditionNumber);
+			add(description);
+		}
+
+		Gtk::TreeModelColumn<int> conditionNumber;
+		Gtk::TreeModelColumn<Glib::ustring> description;
+	};
+
+	// List of target_addobjectives entities
+	ObjectiveConditionListColumns _objConditionColumns;
+	Glib::RefPtr<Gtk::ListStore> _objectiveConditionList;
+
+	/*// List of actual objectives associated with the selected entity
 	ObjectivesListColumns _objectiveColumns;
 	Glib::RefPtr<Gtk::ListStore> _objectiveList;
 	
@@ -60,23 +59,25 @@ private:
 	gtkutil::WindowPosition _windowPosition;
 
 	// The list of objective eclasses (defined in the registry)
-	std::vector<std::string> _objectiveEClasses;
+	std::vector<std::string> _objectiveEClasses;*/
 
-private:
+public:
 
 	// Constructor creates widgets
-	ObjectivesEditor();
+	ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Window>& parent, ObjectiveEntity& objectiveEnt);
 
 	// Widget construction helpers
-	void setupEntitiesPanel();
+	/*void setupEntitiesPanel();
 	void setupObjectivesPanel();
 	Gtk::Widget& createObjectiveEditPanel();
 	Gtk::Widget& createLogicPanel();
 	Gtk::Widget& createButtons();
-
+	*/
 	// gtkmm callbacks
 	void _onCancel();
 	void _onOK();
+
+	/*
 	void _onStartActiveCellToggled(const Glib::ustring& path);
 	void _onEntitySelectionChanged();
 	void _onObjectiveSelectionChanged();
@@ -89,7 +90,6 @@ private:
 	void _onDeleteObjective();
 	void _onClearObjectives();
 	void _onEditLogic();
-	void _onEditObjConditions();
 
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
@@ -105,16 +105,7 @@ private:
 	void clear();
 
 	virtual void _preHide();
-	virtual void _preShow();
-
-public:
-
-	/**
-	 * Static method to display the Objectives Editor dialog.
-	 */
-	static void displayDialog(const cmd::ArgumentList& args);
+	virtual void _preShow();*/
 };
 
 }
-
-#endif /*OBJECTIVESEDITOR_H_*/

@@ -309,6 +309,7 @@
     <ClCompile Include="..\..\plugins\dm.objectives\DifficultyPanel.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\LogicEditor.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\MissionLogicDialog.cpp" />
+    <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveEntity.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveEntityFinder.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.cpp" />
@@ -353,6 +354,8 @@
     <ClInclude Include="..\..\plugins\dm.objectives\LogicEditor.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\MissionLogicDialog.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\Objective.h" />
+    <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveCondition.h" />
+    <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveConditionsDialog.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveEntity.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveEntityFinder.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.h" />

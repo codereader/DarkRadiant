@@ -4,6 +4,7 @@
 #include "TargetList.h"
 #include "ComponentsDialog.h"
 #include "MissionLogicDialog.h"
+#include "ObjectiveConditionsDialog.h"
 #include "util/ObjectivesException.h"
 
 #include "i18n.h"
@@ -83,6 +84,13 @@ ObjectivesEditor::ObjectivesEditor() :
     logicButton->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onEditLogic)
     );
+	Gtk::Button* conditionsButton = getGladeWidget<Gtk::Button>(
+        "editObjectiveConditionsButton"
+    );
+    conditionsButton->signal_clicked().connect(
+        sigc::mem_fun(*this, &ObjectivesEditor::_onEditObjConditions)
+    );
+
     getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onCancel)
     );
@@ -414,6 +422,11 @@ void ObjectivesEditor::_onEntitySelectionChanged()
         getGladeWidget<Gtk::Widget>(
             "editSuccessLogicButton"
         )->set_sensitive(true);
+
+		// Enable obj condition button
+        getGladeWidget<Gtk::Widget>(
+            "editObjectiveConditionsButton"
+        )->set_sensitive(true);
 	}
 	else
     {
@@ -425,6 +438,11 @@ void ObjectivesEditor::_onEntitySelectionChanged()
         // Disable mission logic button
         getGladeWidget<Gtk::Widget>(
             "editSuccessLogicButton"
+        )->set_sensitive(false);
+
+		// Disable obj condition button
+        getGladeWidget<Gtk::Widget>(
+            "editObjectiveConditionsButton"
         )->set_sensitive(false);
 	}
 }
@@ -597,6 +615,14 @@ void ObjectivesEditor::_onClearObjectives()
 void ObjectivesEditor::_onEditLogic()
 {
 	MissionLogicDialog _dialog(getRefPtr(), *_curEntity->second);
+	_dialog.show();
+
+	refreshObjectivesList();
+}
+
+void ObjectivesEditor::_onEditObjConditions()
+{
+	ObjectiveConditionsDialog _dialog(getRefPtr(), *_curEntity->second);
 	_dialog.show();
 
 	refreshObjectivesList();

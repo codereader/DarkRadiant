@@ -3,6 +3,7 @@
 
 #include "Objective.h"
 #include "Logic.h"
+#include "ObjectiveCondition.h"
 
 #include "inode.h"
 #include <boost/shared_ptr.hpp>
@@ -59,13 +60,20 @@ class ObjectiveEntity
 	typedef std::map<int, LogicPtr> LogicMap;
 	LogicMap _logics;
 
+	typedef std::vector<ObjectiveConditionPtr> ObjectiveConditions;
+	ObjectiveConditions _objConditions;
+
 private:
 
 	// Read the mission success/failure logic from the entity
-	void readMissionLogic(Entity* ent);
+	void readMissionLogic(Entity& ent);
 
 	// Store the mission logic to the entity
-	void writeMissionLogic(Entity* ent);
+	void writeMissionLogic(Entity& ent);
+
+	// Read/save objective conditions from/to entity
+	void readObjectiveConditions(Entity& ent);
+	void writeObjectiveConditions(Entity& ent);
 
     // Write the Components to the underlying entity
     void writeComponents(
@@ -80,7 +88,7 @@ public:
 	/**
 	 * Construct an ObjectiveEntity wrapper around the given Node.
 	 */
-	ObjectiveEntity(scene::INodePtr node);
+	ObjectiveEntity(const scene::INodePtr& node);
 
 	/**
 	 * Return an Objective reference by numeric index.
@@ -163,6 +171,18 @@ public:
 	 * it isn't already existing, but the logic structure would be empty in that case.
 	 */
 	LogicPtr getMissionLogic(int difficultyLevel);
+
+	// Returns the number of objective conditions present on this entity
+	std::size_t getNumObjectiveConditions() const;
+
+	// Returns the given objective condition, will throw if the index is out of bounds
+	const ObjectiveConditionPtr& getObjectiveCondition(std::size_t index);
+
+	// Remove all objective conditions from this entitiy
+	void clearObjectiveConditions();
+
+	// Appends a new objective condition at the end of the list and returns a reference to it
+	const ObjectiveConditionPtr& appendObjectiveCondition();
 
 	/**
 	 * Populate the given list store with the objectives from this entity.
