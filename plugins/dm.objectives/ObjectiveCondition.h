@@ -2,6 +2,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include "Objective.h"
+#include <gtkmm/treemodel.h>
 
 namespace objectives
 {
@@ -57,5 +58,19 @@ public:
 	}
 };
 typedef boost::shared_ptr<ObjectiveCondition> ObjectiveConditionPtr;
+
+// UI struct defining an objective condition list entry
+struct ObjectiveConditionListColumns :
+	public Gtk::TreeModel::ColumnRecord
+{
+	ObjectiveConditionListColumns()
+	{
+		add(conditionNumber);
+		add(description);
+	}
+
+	Gtk::TreeModelColumn<int> conditionNumber;
+	Gtk::TreeModelColumn<Glib::ustring> description;
+};
 
 } // namespace

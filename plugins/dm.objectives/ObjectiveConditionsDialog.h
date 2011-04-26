@@ -2,15 +2,15 @@
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/GladeWidgetHolder.h"
+#include "gtkutil/WindowPosition.h"
 
 #include <gtkmm/liststore.h>
 
 #include "ObjectiveCondition.h"
+#include "ObjectiveEntity.h"
 
 namespace objectives
 {
-
-class ObjectiveEntity;
 
 /**
  * Dialog for editing objective conditions (for use in TDM campaigns).
@@ -23,52 +23,28 @@ private:
 	// The objective entity we're working on
 	ObjectiveEntity& _objectiveEnt;
 
-	struct ObjectiveConditionListColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		ObjectiveConditionListColumns()
-		{
-			add(conditionNumber);
-			add(description);
-		}
-
-		Gtk::TreeModelColumn<int> conditionNumber;
-		Gtk::TreeModelColumn<Glib::ustring> description;
-	};
-
 	// List of target_addobjectives entities
 	ObjectiveConditionListColumns _objConditionColumns;
 	Glib::RefPtr<Gtk::ListStore> _objectiveConditionList;
 
-	/*// List of actual objectives associated with the selected entity
-	ObjectivesListColumns _objectiveColumns;
-	Glib::RefPtr<Gtk::ListStore> _objectiveList;
-	
-	// Pointer to the worldspawn entity
-	Entity* _worldSpawn;
-
-	// Map of ObjectiveEntity objectives, indexed by the name of the world
-	// entity
-	ObjectiveEntityMap _entities;
-
-	// Iterators for current entity and current objective
-	ObjectiveEntityMap::iterator _curEntity;
-	Gtk::TreeModel::iterator _curObjective;
+	// Iterators for current objective condition
+	Gtk::TreeModel::iterator _curCondition;
 
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
 
-	// The list of objective eclasses (defined in the registry)
-	std::vector<std::string> _objectiveEClasses;*/
+	// The working set of conditions, will be written to the ObjEntity on save
+	ObjectiveEntity::ConditionMap _objConditions;
 
 public:
 
 	// Constructor creates widgets
 	ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Window>& parent, ObjectiveEntity& objectiveEnt);
 
+private:
 	// Widget construction helpers
-	/*void setupEntitiesPanel();
-	void setupObjectivesPanel();
+	void setupConditionsPanel();
+	/*void setupObjectivesPanel();
 	Gtk::Widget& createObjectiveEditPanel();
 	Gtk::Widget& createLogicPanel();
 	Gtk::Widget& createButtons();
@@ -78,34 +54,28 @@ public:
 	void _onOK();
 
 	/*
-	void _onStartActiveCellToggled(const Glib::ustring& path);
-	void _onEntitySelectionChanged();
-	void _onObjectiveSelectionChanged();
-	void _onAddEntity();
-	void _onDeleteEntity();
-	void _onAddObjective();
-	void _onEditObjective();
-	void _onMoveUpObjective();
-	void _onMoveDownObjective();
-	void _onDeleteObjective();
-	void _onClearObjectives();
-	void _onEditLogic();
+	void _onStartActiveCellToggled(const Glib::ustring& path);*/
+	void _onConditionSelectionChanged();
+	void _onAddObjCondition();
+	void _onDelObjCondition();
 
-	// Populate the dialog widgets with appropriate state from the map
+	// Populate the dialog widgets with appropriate state from the objective entity
 	void populateWidgets();
-	void populateActiveAtStart();
 
-	// Refresh the objectives list from the currently-selected ObjectiveEntity
+/*	// Refresh the objectives list from the currently-selected ObjectiveEntity
 	void refreshObjectivesList();
 
 	// Return the currently-selected objective
-	Objective& getCurrentObjective();
+	Objective& getCurrentObjective();*/
 
 	// Clears the internal containers
 	void clear();
 
 	virtual void _preHide();
-	virtual void _preShow();*/
+	virtual void _preShow();
+
+	// Save changes to objectives entity
+	void save();
 };
 
 }

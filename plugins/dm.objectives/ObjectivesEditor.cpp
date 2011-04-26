@@ -47,11 +47,6 @@ namespace {
 	const std::string RKEY_ROOT = "user/ui/objectivesEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	const std::string RKEY_OBJECTIVE_ENTS = "game/objectivesEditor//objectivesEClass";
-
-	inline std::string makeBold(const std::string& input)
-	{
-		return "<b>" + input + "</b>";
-	}
 }
 
 // Constructor creates widgets
