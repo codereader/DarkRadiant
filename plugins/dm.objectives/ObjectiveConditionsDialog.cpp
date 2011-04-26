@@ -30,7 +30,8 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
     gtkutil::GladeWidgetHolder(
         GlobalUIManager().getGtkBuilderFromFile("ObjectiveConditionsDialog.glade")
     ),
-	_objectiveEnt(objectiveEnt)
+	_objectiveEnt(objectiveEnt),
+	_objectiveConditionList(Gtk::ListStore::create(_objConditionColumns))
 {
 	// Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -52,6 +53,9 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
     _windowPosition.connect(this);
     _windowPosition.applyPosition();
+
+	// Copy the objective conditions to our working set
+	_objConditions = _objectiveEnt.getObjectiveConditions();
 
 	setupConditionsPanel();
 }
@@ -86,6 +90,20 @@ void ObjectiveConditionsDialog::setupConditionsPanel()
     );
 }
 
+ObjectiveCondition& ObjectiveConditionsDialog::getCurrentObjectiveCondition()
+{
+	int index = (*_curCondition)[_objConditionColumns.conditionNumber];
+
+	return *_objConditions[index];
+}
+
+void ObjectiveConditionsDialog::refreshConditionPanel()
+{
+	ObjectiveCondition& cond = getCurrentObjectiveCondition();
+
+	// TODO
+}
+
 void ObjectiveConditionsDialog::_onConditionSelectionChanged()
 {
 	Gtk::Button* delObjCondButton = getGladeWidget<Gtk::Button>("delObjCondButton");
@@ -93,15 +111,15 @@ void ObjectiveConditionsDialog::_onConditionSelectionChanged()
 	// Get the selection
     Gtk::TreeView* condView = getGladeWidget<Gtk::TreeView>("conditionsTreeView");
 
-	Gtk::TreeModel::iterator iter = condView->get_selection()->get_selected();
+	_curCondition = condView->get_selection()->get_selected();
 
-	if (iter) 
+	if (_curCondition) 
     {
 		delObjCondButton->set_sensitive(true);
 
-		_curCondition = iter;
+		refreshConditionPanel();
 
-        // Enable details controls
+		// Enable details controls
         getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(true);
 	}
 	else
@@ -139,6 +157,8 @@ void ObjectiveConditionsDialog::_onAddObjCondition()
 
 void ObjectiveConditionsDialog::_onDelObjCondition()
 {
+	assert(_curCondition);
+
 	// Get the index of the current objective condition
 	int index = (*_curCondition)[_objConditionColumns.conditionNumber];
 
@@ -167,9 +187,6 @@ void ObjectiveConditionsDialog::populateWidgets()
 {
 	// Clear internal data first
 	clear();
-
-	// Copy the objective conditions to our local list
-	_objConditions = _objectiveEnt.getObjectiveConditions();
 
 	for (ObjectiveEntity::ConditionMap::const_iterator i = _objConditions.begin();
 		 i != _objConditions.end(); ++i)
