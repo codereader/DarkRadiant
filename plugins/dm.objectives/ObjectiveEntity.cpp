@@ -16,14 +16,15 @@
 
 namespace objectives {
 
-	namespace {
+	namespace
+	{
 		const std::string KV_SUCCESS_LOGIC("mission_logic_success");
 		const std::string KV_FAILURE_LOGIC("mission_logic_failure");
 		const int INVALID_LEVEL_INDEX = -9999;
 	}
 
 // Constructor
-ObjectiveEntity::ObjectiveEntity(scene::INodePtr node) :
+ObjectiveEntity::ObjectiveEntity(const scene::INodePtr& node) :
 	_entityNode(node)
 {
 	Entity* entity = Node_getEntity(node);
@@ -35,12 +36,25 @@ ObjectiveEntity::ObjectiveEntity(scene::INodePtr node) :
 	entity->forEachKeyValue(extractor);
 
 	// Parse the logic strings from the entity
-	readMissionLogic(entity);
+	readMissionLogic(*entity);
+
+	readObjectiveConditions(*entity);
 }
 
-void ObjectiveEntity::readMissionLogic(Entity* ent) {
+void ObjectiveEntity::readObjectiveConditions(Entity& ent)
+{
+	// TODO
+}
+
+void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
+{
+	// TODO
+}
+
+void ObjectiveEntity::readMissionLogic(Entity& ent)
+{
 	// Find the success logic strings
-	Entity::KeyValuePairs successLogics = ent->getKeyValuePairs(KV_SUCCESS_LOGIC);
+	Entity::KeyValuePairs successLogics = ent.getKeyValuePairs(KV_SUCCESS_LOGIC);
 
 	for (Entity::KeyValuePairs::const_iterator kv = successLogics.begin();
 		 kv != successLogics.end(); kv++)
@@ -68,7 +82,7 @@ void ObjectiveEntity::readMissionLogic(Entity* ent) {
 	}
 
 	// Find the failure logic strings
-	Entity::KeyValuePairs failureLogics = ent->getKeyValuePairs(KV_FAILURE_LOGIC);
+	Entity::KeyValuePairs failureLogics = ent.getKeyValuePairs(KV_FAILURE_LOGIC);
 
 	for (Entity::KeyValuePairs::const_iterator kv = failureLogics.begin();
 		 kv != failureLogics.end(); kv++)
@@ -96,19 +110,20 @@ void ObjectiveEntity::readMissionLogic(Entity* ent) {
 	}
 }
 
-void ObjectiveEntity::writeMissionLogic(Entity* ent) {
+void ObjectiveEntity::writeMissionLogic(Entity& ent)
+{
 	for (LogicMap::iterator i = _logics.begin(); i != _logics.end(); i++) {
 		int index = i->first;
 
 		if (index == -1) {
 			// Default logic
-			ent->setKeyValue(KV_SUCCESS_LOGIC, i->second->successLogic);
-			ent->setKeyValue(KV_FAILURE_LOGIC, i->second->failureLogic);
+			ent.setKeyValue(KV_SUCCESS_LOGIC, i->second->successLogic);
+			ent.setKeyValue(KV_FAILURE_LOGIC, i->second->failureLogic);
 		}
 		else {
 			// Difficulty-specific logic
-			ent->setKeyValue(KV_SUCCESS_LOGIC + "_diff_" + intToStr(index), i->second->successLogic);
-			ent->setKeyValue(KV_FAILURE_LOGIC + "_diff_" + intToStr(index), i->second->failureLogic);
+			ent.setKeyValue(KV_SUCCESS_LOGIC + "_diff_" + intToStr(index), i->second->successLogic);
+			ent.setKeyValue(KV_FAILURE_LOGIC + "_diff_" + intToStr(index), i->second->failureLogic);
 		}
 	}
 }
@@ -230,6 +245,28 @@ LogicPtr ObjectiveEntity::getMissionLogic(int difficultyLevel) {
 
 	// At this point, the iterator is pointing to something valid
 	return i->second;
+}
+
+std::size_t ObjectiveEntity::getNumObjectiveConditions() const
+{
+	return _objConditions.size();
+}
+
+const ObjectiveConditionPtr& ObjectiveEntity::getObjectiveCondition(std::size_t index)
+{
+	return _objConditions[index];
+}
+
+void ObjectiveEntity::clearObjectiveConditions()
+{
+	_objConditions.clear();
+}
+
+const ObjectiveConditionPtr& ObjectiveEntity::appendObjectiveCondition()
+{
+	_objConditions.push_back(ObjectiveConditionPtr(new ObjectiveCondition));
+
+	return _objConditions.back();
 }
 
 // Populate a list store with objectives
@@ -369,7 +406,10 @@ void ObjectiveEntity::writeToEntity()
 	}
 
 	// Export the mission success/failure logic
-	writeMissionLogic(entity);
+	writeMissionLogic(*entity);
+
+	// Export objective conditions
+	writeObjectiveConditions(*entity);
 }
 
 } // namespace objectives
