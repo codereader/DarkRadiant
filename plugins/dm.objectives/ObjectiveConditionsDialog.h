@@ -54,6 +54,12 @@ private:
 	// Source objective state choice
 	Gtk::ComboBoxText* _srcObjState;
 
+	// The action type
+	Gtk::ComboBoxText* _type;
+
+	// The action value
+	Gtk::ComboBoxText* _value;
+
 	// The target objective choice field, complete with model
 	ObjectivesListColumns _objectiveColumns;
 	Glib::RefPtr<Gtk::ListStore> _objectives;
@@ -74,17 +80,18 @@ private:
 	void _onCancel();
 	void _onOK();
 
-	/*
-	void _onStartActiveCellToggled(const Glib::ustring& path);*/
 	void _onConditionSelectionChanged();
 	void _onAddObjCondition();
 	void _onDelObjCondition();
+
+	void _onTypeChanged();
 
 	// Populate the dialog widgets with appropriate state from the objective entity
 	void populateWidgets();
 
 	// Refresh the condition editing panel
 	void refreshConditionPanel();
+	void refreshPossibleValues();
 
 	// Return the currently-selected objective condition
 	ObjectiveCondition& getCurrentObjectiveCondition();

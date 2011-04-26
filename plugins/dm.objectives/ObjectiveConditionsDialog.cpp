@@ -3,8 +3,10 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "i18n.h"
+#include "itextstream.h"
 
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtkmm/button.h>
 #include <gtkmm/spinbutton.h>
@@ -128,6 +130,25 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_targetObj->add_attribute(nameRenderer->property_text(), _objectiveColumns.description);
 	
 	placeholder->pack_start(*_targetObj);
+
+	placeholder = getGladeWidget<Gtk::VBox>("TypePlaceholder");
+
+	_type = Gtk::manage(new Gtk::ComboBoxText);
+
+	_type->append_text(_("Change Objective State"));	// 0
+	_type->append_text(_("Change Visibility"));			// 1
+	_type->append_text(_("Change Mandatory Flag"));		// 2
+
+	placeholder->pack_start(*_type);
+
+	placeholder = getGladeWidget<Gtk::VBox>("ValuePlaceholder");
+
+	_value = Gtk::manage(new Gtk::ComboBoxText);
+
+	// Will be populated later on, just wire up the signal
+	_value->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onTypeChanged));
+
+	placeholder->pack_start(*_value);
 }
 
 ObjectiveCondition& ObjectiveConditionsDialog::getCurrentObjectiveCondition()
@@ -153,14 +174,77 @@ void ObjectiveConditionsDialog::refreshConditionPanel()
 	_srcObjState->set_active(cond.sourceState);
 
 	// Load objectives from objective entity into dropdown list
+	gtkutil::TreeModel::SelectionFinder finder(cond.targetObjective, _objectiveColumns.objNumber.index());
+	_objectives->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 
-	// TODO: Load target objective selection
+	if (finder.getIter())
+	{
+		_targetObj->set_active(finder.getIter());
+	}
 
-	// TODO: Set condition type
+	// Set condition type and load possible value types
+	switch (cond.type)
+	{
+	case ObjectiveCondition::CHANGE_STATE:
+		_type->set_active(0);
+		break;
 
-	// TODO: Load value options based on condition type into dropdown list
+	case ObjectiveCondition::CHANGE_VISIBILITY:
+		_type->set_active(1);
+		break;
 
-	// TODO: Load value
+	case ObjectiveCondition::CHANGE_MANDATORY:
+		_type->set_active(2);
+		break;
+
+	default:
+		globalWarningStream() << "Unknown type encountered while refreshing condition edit panel." << std::endl;
+		_type->set_active(0);
+		break;
+	};
+
+	refreshPossibleValues();
+}
+
+void ObjectiveConditionsDialog::refreshPossibleValues()
+{
+	ObjectiveCondition& cond = getCurrentObjectiveCondition();
+
+	// Remove all items from the dropdown
+	_value->clear_items();
+
+	// Set condition type and load possible value types
+	switch (cond.type)
+	{
+	case ObjectiveCondition::CHANGE_STATE:
+		_value->append_text(_("Set to INCOMPLETE"));
+		_value->append_text(_("Set to COMPLETE"));
+		_value->append_text(_("Set to FAILED"));
+		_value->append_text(_("Set to INVALID"));
+
+		_value->set_active(cond.value);
+		break;
+
+	case ObjectiveCondition::CHANGE_VISIBILITY:
+		_value->append_text(_("Set Invisible"));
+		_value->append_text(_("Set Visible"));
+
+		_value->set_active(cond.value);
+
+		break;
+
+	case ObjectiveCondition::CHANGE_MANDATORY:
+		_value->append_text(_("Clear mandatory flag"));
+		_value->append_text(_("Set mandatory flag"));
+
+		_value->set_active(cond.value);
+
+		break;
+
+	default:
+		globalWarningStream() << "Unknown type encountered while refreshing condition edit panel." << std::endl;
+		break;
+	};
 }
 
 void ObjectiveConditionsDialog::_onConditionSelectionChanged()
@@ -225,6 +309,11 @@ void ObjectiveConditionsDialog::_onDelObjCondition()
 
 	// Repopulate the dialog
 	populateWidgets();
+}
+
+void ObjectiveConditionsDialog::_onTypeChanged()
+{
+	refreshPossibleValues();
 }
 
 void ObjectiveConditionsDialog::clear()
