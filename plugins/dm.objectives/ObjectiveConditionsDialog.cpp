@@ -28,9 +28,7 @@ namespace
 
 ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 	ObjectiveEntity& objectiveEnt) :
-	gtkutil::BlockingTransientWindow(
-        _(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow()
-    ),
+	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), parent),
     gtkutil::GladeWidgetHolder(
         GlobalUIManager().getGtkBuilderFromFile("ObjectiveConditionsDialog.glade")
     ),
@@ -63,7 +61,7 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
 	_objConditions = _objectiveEnt.getObjectiveConditions();
 
 	setupConditionsPanel();
-	setupConditionEditPanel();	
+	setupConditionEditPanel();
 }
 
 void ObjectiveConditionsDialog::setupConditionsPanel()
@@ -98,6 +96,16 @@ void ObjectiveConditionsDialog::setupConditionsPanel()
 
 void ObjectiveConditionsDialog::setupConditionEditPanel()
 {
+	// Initially everything is insensitive
+	getGladeWidget<Gtk::Button>("delObjCondButton")->set_sensitive(false);
+
+	// Disable details controls
+    getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
+
+	// Set ranges for spin buttons
+	getGladeWidget<Gtk::SpinButton>("SourceMission")->set_range(1, 99);
+	getGladeWidget<Gtk::SpinButton>("SourceObjective")->set_range(1, 999);
+
 	// Create the state dropdown, Glade is from the last century and doesn't support GtkComboBoxText, hmpf
 	Gtk::VBox* placeholder = getGladeWidget<Gtk::VBox>("SourceStatePlaceholder");
 
@@ -139,14 +147,15 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_type->append_text(_("Change Visibility"));			// 1
 	_type->append_text(_("Change Mandatory Flag"));		// 2
 
+	_type->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onTypeChanged));
+
 	placeholder->pack_start(*_type);
 
 	placeholder = getGladeWidget<Gtk::VBox>("ValuePlaceholder");
 
 	_value = Gtk::manage(new Gtk::ComboBoxText);
 
-	// Will be populated later on, just wire up the signal
-	_value->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onTypeChanged));
+	// Will be populated later on
 
 	placeholder->pack_start(*_value);
 }
