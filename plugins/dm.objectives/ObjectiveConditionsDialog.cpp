@@ -54,11 +54,6 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
     _windowPosition.applyPosition();
 
 	setupConditionsPanel();
-
-	// TODO
-
-	//ObjectiveConditionListColumns _objConditionColumns;
-	//Glib::RefPtr<Gtk::ListStore> _objectiveConditionList;
 }
 
 void ObjectiveConditionsDialog::setupConditionsPanel()
@@ -93,7 +88,30 @@ void ObjectiveConditionsDialog::setupConditionsPanel()
 
 void ObjectiveConditionsDialog::_onConditionSelectionChanged()
 {
-	// TODO
+	Gtk::Button* delObjCondButton = getGladeWidget<Gtk::Button>("delObjCondButton");
+    
+	// Get the selection
+    Gtk::TreeView* condView = getGladeWidget<Gtk::TreeView>("conditionsTreeView");
+
+	Gtk::TreeModel::iterator iter = condView->get_selection()->get_selected();
+
+	if (iter) 
+    {
+		delObjCondButton->set_sensitive(true);
+
+		_curCondition = iter;
+
+        // Enable details controls
+        getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(true);
+	}
+	else
+    {
+		// No selection, disable the delete button 
+		delObjCondButton->set_sensitive(false);
+
+		// Disable details controls
+        getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
+	}
 }
 
 void ObjectiveConditionsDialog::_onAddObjCondition()
@@ -121,7 +139,13 @@ void ObjectiveConditionsDialog::_onAddObjCondition()
 
 void ObjectiveConditionsDialog::_onDelObjCondition()
 {
-	// TODO
+	// Get the index of the current objective condition
+	int index = (*_curCondition)[_objConditionColumns.conditionNumber];
+
+	_objConditions.erase(index);
+
+	// Repopulate the dialog
+	populateWidgets();
 }
 
 void ObjectiveConditionsDialog::clear()

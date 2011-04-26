@@ -42,7 +42,7 @@
                     <property name="label_xalign">0</property>
                     <property name="shadow_type">in</property>
                     <child>
-                      <object class="GtkTreeView" id="entitiesTreeView">
+                      <object class="GtkTreeView" id="conditionsTreeView">
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                       </object>
@@ -62,7 +62,7 @@
                 <property name="visible">True</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkButton" id="createEntityButton">
+                  <object class="GtkButton" id="addObjCondButton">
                     <property name="label">gtk-new</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -76,7 +76,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="deleteEntityButton">
+                  <object class="GtkButton" id="delObjCondButton">
                     <property name="label">gtk-delete</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
