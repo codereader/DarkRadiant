@@ -7,9 +7,9 @@
 #include "gtkutil/TextColumn.h"
 
 #include <gtkmm/button.h>
-#include <gtkmm/comboboxtext.h>
 #include <gtkmm/spinbutton.h>
 #include <gtkmm/treeview.h>
+#include <gtkmm/box.h>
 
 #include "ObjectiveEntity.h"
 
@@ -33,7 +33,8 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
         GlobalUIManager().getGtkBuilderFromFile("ObjectiveConditionsDialog.glade")
     ),
 	_objectiveEnt(objectiveEnt),
-	_objectiveConditionList(Gtk::ListStore::create(_objConditionColumns))
+	_objectiveConditionList(Gtk::ListStore::create(_objConditionColumns)),
+	_objectives(Gtk::ListStore::create(_objectiveColumns))
 {
 	// Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -60,15 +61,7 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
 	_objConditions = _objectiveEnt.getObjectiveConditions();
 
 	setupConditionsPanel();
-
-	Gtk::ComboBox* srcState = getGladeWidget<Gtk::ComboBox>("SourceObjState");
-	
-	// Populate the list of states. This must be done in order to match the
-	// values in the enum, since the index will be used when writing to entity
-	srcState->append_text("INCOMPLETE");
-	srcState->append_text("COMPLETE");
-	srcState->append_text("FAILED");
-	srcState->append_text("INVALID");
+	setupConditionEditPanel();	
 }
 
 void ObjectiveConditionsDialog::setupConditionsPanel()
@@ -101,6 +94,42 @@ void ObjectiveConditionsDialog::setupConditionsPanel()
     );
 }
 
+void ObjectiveConditionsDialog::setupConditionEditPanel()
+{
+	// Create the state dropdown, Glade is from the last century and doesn't support GtkComboBoxText, hmpf
+	Gtk::VBox* placeholder = getGladeWidget<Gtk::VBox>("SourceStatePlaceholder");
+
+	_srcObjState = Gtk::manage(new Gtk::ComboBoxText);
+
+	// Populate the list of states. This must be done in order to match the
+	// values in the enum, since the index will be used when writing to entity
+	_srcObjState->append_text("INCOMPLETE");
+	_srcObjState->append_text("COMPLETE");
+	_srcObjState->append_text("FAILED");
+	_srcObjState->append_text("INVALID");
+
+	placeholder->pack_start(*_srcObjState);
+
+	// Create the objectives dropdown, populate from objective entity
+	placeholder = getGladeWidget<Gtk::VBox>("TargetObjectivePlaceholder");
+
+	// Populate the liststore
+	_objectiveEnt.populateListStore(_objectives, _objectiveColumns);
+
+	// Set up the dropdown
+	_targetObj = Gtk::manage(new Gtk::ComboBox(_objectives));
+
+	Gtk::CellRendererText* indexRenderer = Gtk::manage(new Gtk::CellRendererText);
+	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
+	
+	_targetObj->pack_start(*indexRenderer, false);
+	_targetObj->pack_start(*nameRenderer, true);
+	_targetObj->add_attribute(indexRenderer->property_text(), _objectiveColumns.objNumber);
+	_targetObj->add_attribute(nameRenderer->property_text(), _objectiveColumns.description);
+	
+	placeholder->pack_start(*_targetObj);
+}
+
 ObjectiveCondition& ObjectiveConditionsDialog::getCurrentObjectiveCondition()
 {
 	int index = (*_curCondition)[_objConditionColumns.conditionNumber];
@@ -112,17 +141,18 @@ void ObjectiveConditionsDialog::refreshConditionPanel()
 {
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
+	// Source mission number
 	Gtk::SpinButton* srcMission = getGladeWidget<Gtk::SpinButton>("SourceMission");
 	srcMission->set_value(cond.sourceMission);
 
+	// Source objective number
 	Gtk::SpinButton* srcObj = getGladeWidget<Gtk::SpinButton>("SourceObjective");
 	srcObj->set_value(cond.sourceObjective);
 
-	// Load source objective states
-	Gtk::ComboBox* srcState = getGladeWidget<Gtk::ComboBox>("SourceObjState");
-	srcState->set_active(cond.sourceState);
+	// Source objective state
+	_srcObjState->set_active(cond.sourceState);
 
-	// TODO: Load objectives from objective entity into dropdown list
+	// Load objectives from objective entity into dropdown list
 
 	// TODO: Load target objective selection
 
