@@ -65,6 +65,8 @@ def processXmlFile(path, nodeXPath, attributes):
 		file = open(dummy_file, "w")
 
 		for value in found_values:
+			value = value.replace("\n", "\\n")
+			value = value.replace("\"", "\\\"")
 			file.write('_("' + value + '")' + "\n")
 
 		file.close()
@@ -87,14 +89,19 @@ print("------- Scanning XML Files ----------------");
 xml_directory = "install"
 
 # Add menu captions
-processXmlFile(os.path.join(build_root, xml_directory, "menu.xml"), "//*", ["caption"])
+processXmlFile(os.path.join(build_root, xml_directory, "menu.xml"), ".//*", ["caption"])
 
 # Add colour scheme names
-processXmlFile(os.path.join(build_root, xml_directory, "colours.xml"), "//descriptions/*", ["value"])
+processXmlFile(os.path.join(build_root, xml_directory, "colours.xml"), ".//descriptions/*", ["value"])
 
 # Add toolbar tooltips
-processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), "//toolbutton", ["tooltip"])
-processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), "//toggletoolbutton", ["tooltip"])
+processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), ".//toolbutton", ["tooltip"])
+processXmlFile(os.path.join(build_root, xml_directory, "user.xml"), ".//toggletoolbutton", ["tooltip"])
+
+# Check UI files for translatable strings
+for current_file in glob.glob( os.path.join(build_root, xml_directory, "ui", '*.glade') ):
+    empty = []
+    processXmlFile(current_file, ".//*[@translatable='yes']", empty)
 
 # Copy the POT file to the install folder
 shutil.copy(pot_file, os.path.join(build_root, "install", "i18n"))
