@@ -131,11 +131,14 @@ void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 {
 	// No need to clear previous set of obj_condition_ spawnargs, 
 	// as they've been removed by clearEntity() already
+
+	// Spawnargs are numbered starting with 1 as first index
 	std::size_t index = 1;
 
 	// Go through all the conditions and save them. Skip invalid ones such that the
 	// set of conditions will be "compressed" in terms of their indices.
-	for (ObjectiveConditions::const_iterator i = _objConditions.begin(); i != _objConditions.end(); ++i)
+	for (ObjectiveEntity::ConditionMap::const_iterator i = _objConditions.begin(); 
+		 i != _objConditions.end(); ++i)
 	{
 		const ObjectiveCondition& cond = *i->second;
 
@@ -146,7 +149,31 @@ void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 
 		std::string prefix = (boost::format(OBJ_COND_PREFIX + "%d_") % index).str();
 
-		// TODO
+		ent.setKeyValue(prefix + "src_mission", intToStr(cond.sourceMission));
+		ent.setKeyValue(prefix + "src_obj", intToStr(cond.sourceObjective));
+		ent.setKeyValue(prefix + "src_state", intToStr(cond.sourceState));
+		ent.setKeyValue(prefix + "target_obj", intToStr(cond.targetObjective));
+
+		std::string typeKey = prefix + "type";
+
+		switch (cond.type)
+		{
+		case ObjectiveCondition::CHANGE_STATE:
+			ent.setKeyValue(typeKey, "changestate");
+			break;
+		case ObjectiveCondition::CHANGE_VISIBILITY:
+			ent.setKeyValue(typeKey, "changevisibility");
+			break;
+		case ObjectiveCondition::CHANGE_MANDATORY:
+			ent.setKeyValue(typeKey, "changemandatory");
+			break;
+		default:
+			ent.setKeyValue(typeKey, ""); // empty value to be sure
+			globalWarningStream() << "Invalid objective condition type encountered on saving." << std::endl;
+			break;
+		};
+
+		ent.setKeyValue(prefix + "value", intToStr(cond.value));
 
 		++index; // next index
 	}
@@ -348,6 +375,18 @@ LogicPtr ObjectiveEntity::getMissionLogic(int difficultyLevel) {
 	return i->second;
 }
 
+// Returns the full list of objective conditions by value
+ObjectiveEntity::ConditionMap ObjectiveEntity::getObjectiveConditions() const
+{
+	return _objConditions;
+}
+
+// Replaces the existing set of objective conditions with this new one
+void ObjectiveEntity::setObjectiveConditions(const ObjectiveEntity::ConditionMap& conditions)
+{
+	_objConditions = conditions;
+}
+
 std::size_t ObjectiveEntity::getNumObjectiveConditions() const
 {
 	return _objConditions.size();
@@ -355,19 +394,19 @@ std::size_t ObjectiveEntity::getNumObjectiveConditions() const
 
 const ObjectiveConditionPtr& ObjectiveEntity::getOrCreateObjectiveCondition(int index)
 {
-	ObjectiveConditions::iterator i = _objConditions.find(index);
+	ConditionMap::iterator i = _objConditions.find(index);
 
 	if (i == _objConditions.end())
 	{
 		// Insert and get iterator to new object
-		i = _objConditions.insert(ObjectiveConditions::value_type(
+		i = _objConditions.insert(ConditionMap::value_type(
 			index, ObjectiveConditionPtr(new ObjectiveCondition))).first;
 	}
 
 	return i->second;
 }
 
-const ObjectiveConditionPtr& ObjectiveEntity::createObjectiveCondition()
+/*const ObjectiveConditionPtr& ObjectiveEntity::createObjectiveCondition()
 {
 	for (int i = 1; i < INT_MAX; ++i)
 	{
@@ -381,14 +420,13 @@ const ObjectiveConditionPtr& ObjectiveEntity::createObjectiveCondition()
 	}
 
 	throw std::runtime_error("Ran out of free objective condition indices.");
-}
+}*/
 
 void ObjectiveEntity::clearObjectiveConditions()
 {
 	_objConditions.clear();
 }
 
-// Populate a list store with objectives
 void ObjectiveEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,
 										const ObjectivesListColumns& columns) const
 {

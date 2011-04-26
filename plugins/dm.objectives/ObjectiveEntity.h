@@ -49,6 +49,11 @@ struct ObjectivesListColumns :
  */
 class ObjectiveEntity
 {
+public:
+	// Public typedef
+	typedef std::map<int, ObjectiveConditionPtr> ConditionMap;
+
+private:
 	// The actual entity's world node and entity pointer
 	scene::INodeWeakPtr _entityNode;
 
@@ -61,8 +66,7 @@ class ObjectiveEntity
 	LogicMap _logics;
 
 	// Each objective condition has a certain index
-	typedef std::map<int, ObjectiveConditionPtr> ObjectiveConditions;
-	ObjectiveConditions _objConditions;
+	ConditionMap _objConditions;
 
 private:
 
@@ -173,14 +177,17 @@ public:
 	 */
 	LogicPtr getMissionLogic(int difficultyLevel);
 
+	// Returns the full list of objective conditions by value
+	ConditionMap getObjectiveConditions() const;
+
+	// Replaces the existing set of objective conditions with this new one
+	void setObjectiveConditions(const ConditionMap& conditions);
+	
 	// Returns the number of objective conditions present on this entity
 	std::size_t getNumObjectiveConditions() const;
 
 	// Returns the given objective condition, will create if not existing yet
 	const ObjectiveConditionPtr& getOrCreateObjectiveCondition(int index);
-
-	// Creates a new objective condition, will use the first empty index
-	const ObjectiveConditionPtr& createObjectiveCondition();
 
 	// Remove all objective conditions from this entitiy
 	void clearObjectiveConditions();
