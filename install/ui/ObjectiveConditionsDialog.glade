@@ -209,17 +209,6 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="TargetAction">
-                    <property name="visible">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                    <property name="top_attach">4</property>
-                    <property name="bottom_attach">5</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkLabel" id="TargetActionValueLabel">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
@@ -269,6 +258,20 @@
                     <property name="bottom_attach">4</property>
                   </packing>
                 </child>
+                <child>
+                  <object class="GtkVBox" id="TypePlaceholder">
+                    <property name="visible">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="right_attach">2</property>
+                    <property name="top_attach">4</property>
+                    <property name="bottom_attach">5</property>
+                  </packing>
+                </child>
               </object>
             </child>
           </object>
@@ -304,7 +307,7 @@
               <object class="GtkLabel" id="Sentence">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">If Objective 1 in Mission 3 has the state "failed", perform the following:
+                <property name="label">If Objective 1 in Mission 3 has the state "failed", perform the following:
 Activate Mandatory Flag on Objective 3.</property>
               </object>
             </child>
