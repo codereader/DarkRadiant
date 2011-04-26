@@ -60,7 +60,8 @@ class ObjectiveEntity
 	typedef std::map<int, LogicPtr> LogicMap;
 	LogicMap _logics;
 
-	typedef std::vector<ObjectiveConditionPtr> ObjectiveConditions;
+	// Each objective condition has a certain index
+	typedef std::map<int, ObjectiveConditionPtr> ObjectiveConditions;
 	ObjectiveConditions _objConditions;
 
 private:
@@ -175,14 +176,14 @@ public:
 	// Returns the number of objective conditions present on this entity
 	std::size_t getNumObjectiveConditions() const;
 
-	// Returns the given objective condition, will throw if the index is out of bounds
-	const ObjectiveConditionPtr& getObjectiveCondition(std::size_t index);
+	// Returns the given objective condition, will create if not existing yet
+	const ObjectiveConditionPtr& getOrCreateObjectiveCondition(int index);
+
+	// Creates a new objective condition, will use the first empty index
+	const ObjectiveConditionPtr& createObjectiveCondition();
 
 	// Remove all objective conditions from this entitiy
 	void clearObjectiveConditions();
-
-	// Appends a new objective condition at the end of the list and returns a reference to it
-	const ObjectiveConditionPtr& appendObjectiveCondition();
 
 	/**
 	 * Populate the given list store with the objectives from this entity.
