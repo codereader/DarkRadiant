@@ -13,6 +13,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/format.hpp>
+#include <boost/regex.hpp>
 
 namespace objectives {
 
@@ -21,6 +22,8 @@ namespace objectives {
 		const std::string KV_SUCCESS_LOGIC("mission_logic_success");
 		const std::string KV_FAILURE_LOGIC("mission_logic_failure");
 		const int INVALID_LEVEL_INDEX = -9999;
+
+		const std::string OBJ_COND_PREFIX("obj_condition_");
 	}
 
 // Constructor
@@ -43,12 +46,110 @@ ObjectiveEntity::ObjectiveEntity(const scene::INodePtr& node) :
 
 void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 {
-	// TODO
+	_objConditions.clear(); // remove any previously parsed conditions
+
+	Entity::KeyValuePairs condSpawnargs = ent.getKeyValuePairs(OBJ_COND_PREFIX);
+
+	static const boost::regex objCondExpr(OBJ_COND_PREFIX + "_(\\d+)_(.*)");
+
+	for (Entity::KeyValuePairs::const_iterator kv = condSpawnargs.begin();
+		 kv != condSpawnargs.end(); kv++)
+	{
+		boost::smatch results;
+
+		if (!boost::regex_match(kv->first, results, objCondExpr))
+		{
+			continue; // No match, abort
+		}
+
+		int index = strToInt(results[1]);
+
+		// Valid indices are [1..infinity)
+		if (index < 1) 
+		{
+			continue; // invalid index, continue
+		}
+
+		const ObjectiveConditionPtr& cond = getOrCreateObjectiveCondition(index);
+
+		std::string postfix = results[2];
+
+		if (postfix == "src_mission")
+		{
+			cond->sourceMission = strToInt(kv->second);
+		}
+		else if (postfix == "src_obj")
+		{
+			cond->sourceObjective = strToInt(kv->second);
+		}
+		else if (postfix == "src_state")
+		{
+			int val = strToInt(kv->second);
+
+			if (val >= Objective::INCOMPLETE && val < Objective::INVALID)
+			{
+				cond->sourceState = static_cast<Objective::State>(val);
+			}
+			else
+			{
+				globalWarningStream() << "Unsupported objective condition source state encountered: " 
+					<< kv->second << std::endl;
+			}
+		}
+		else if (postfix == "target_obj")
+		{
+			cond->targetObjective = strToInt(kv->second);
+		}
+		else if (postfix == "type")
+		{
+			if (kv->second == "changestate")
+			{
+				cond->type = ObjectiveCondition::CHANGE_STATE;
+			}
+			else if (kv->second == "changevisibility")
+			{
+				cond->type = ObjectiveCondition::CHANGE_VISIBILITY;
+			}
+			else if (kv->second == "changemandatory")
+			{
+				cond->type = ObjectiveCondition::CHANGE_MANDATORY;
+			}
+			else
+			{
+				globalWarningStream() << "Unsupported objective condition type encountered: " 
+					<< kv->second << std::endl;
+			}
+		}
+		else if (postfix == "value")
+		{
+			cond->value = strToInt(kv->second);
+		}
+	}
 }
 
 void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 {
-	// TODO
+	// No need to clear previous set of obj_condition_ spawnargs, 
+	// as they've been removed by clearEntity() already
+	std::size_t index = 1;
+
+	// Go through all the conditions and save them. Skip invalid ones such that the
+	// set of conditions will be "compressed" in terms of their indices.
+	for (ObjectiveConditions::const_iterator i = _objConditions.begin(); i != _objConditions.end(); ++i)
+	{
+		const ObjectiveCondition& cond = *i->second;
+
+		if (!cond.isValid())
+		{
+			continue; // skip invalid conditions without increasing the index
+		}
+
+		std::string prefix = (boost::format(OBJ_COND_PREFIX + "%d_") % index).str();
+
+		// TODO
+
+		++index; // next index
+	}
 }
 
 void ObjectiveEntity::readMissionLogic(Entity& ent)
@@ -252,21 +353,39 @@ std::size_t ObjectiveEntity::getNumObjectiveConditions() const
 	return _objConditions.size();
 }
 
-const ObjectiveConditionPtr& ObjectiveEntity::getObjectiveCondition(std::size_t index)
+const ObjectiveConditionPtr& ObjectiveEntity::getOrCreateObjectiveCondition(int index)
 {
-	return _objConditions[index];
+	ObjectiveConditions::iterator i = _objConditions.find(index);
+
+	if (i == _objConditions.end())
+	{
+		// Insert and get iterator to new object
+		i = _objConditions.insert(ObjectiveConditions::value_type(
+			index, ObjectiveConditionPtr(new ObjectiveCondition))).first;
+	}
+
+	return i->second;
+}
+
+const ObjectiveConditionPtr& ObjectiveEntity::createObjectiveCondition()
+{
+	for (int i = 1; i < INT_MAX; ++i)
+	{
+		ObjectiveConditions::iterator found = _objConditions.find(i);
+
+		if (found == _objConditions.end())
+		{
+			return _objConditions.insert(ObjectiveConditions::value_type(
+				i, ObjectiveConditionPtr(new ObjectiveCondition))).first->second;
+		}
+	}
+
+	throw std::runtime_error("Ran out of free objective condition indices.");
 }
 
 void ObjectiveEntity::clearObjectiveConditions()
 {
 	_objConditions.clear();
-}
-
-const ObjectiveConditionPtr& ObjectiveEntity::appendObjectiveCondition()
-{
-	_objConditions.push_back(ObjectiveConditionPtr(new ObjectiveCondition));
-
-	return _objConditions.back();
 }
 
 // Populate a list store with objectives
