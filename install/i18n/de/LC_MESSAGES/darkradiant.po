@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-03-12 09:05+0100\n"
-"PO-Revision-Date: 2011-03-12 09:11+0100\n"
+"POT-Creation-Date: 2011-04-26 19:47+0200\n"
+"PO-Revision-Date: 2011-04-26 19:47+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -202,7 +202,7 @@ msgid "Settings/Source View"
 msgstr "Einstellungen/Quellansicht"
 
 #: ..\..\radiant\mainframe_old.cpp:150
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:569
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:585
 msgid "Exit Radiant"
 msgstr "Verlasse Radiant"
 
@@ -539,16 +539,16 @@ msgstr "Keine Patches ausgewählt."
 msgid "Could not create patch."
 msgstr "Konnte Patch nicht erzeugen."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:558
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:600
 msgid "No faces selected."
 msgstr "Keine Faces ausgewählt."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:577
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:619
 #, c-format
 msgid "%d faces were not suitable (had more than 4 vertices)."
 msgstr "%d ungeeignete Faces wurden nicht bearbeitet (Faces mit mehr als 4 Eckpunkten)."
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:625
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:667
 msgid "No brushes selected."
 msgstr "Keine Brushes ausgewählt."
 
@@ -1614,7 +1614,7 @@ msgstr "Definiert in"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:347
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:389
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:97
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:167
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:170
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -2028,16 +2028,16 @@ msgstr "Einstellungen/Kompatibilität"
 msgid "Disable Windows Desktop Composition"
 msgstr "Desktopgestaltung deaktivieren"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:435
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:451
 #: ..\..\plugins\uimanager\GroupDialog.cpp:24
 msgid "Entity"
 msgstr "Entity"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:444
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:460
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:454
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:470
 msgid "Console"
 msgstr "Konsole"
 
@@ -2620,31 +2620,31 @@ msgstr "Textur-Vorschaubilder mit fixer Größe anzeigen"
 msgid "Constant size"
 msgstr "Fixe Größe"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:954
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:957
 msgid "Settings/Texture Browser"
 msgstr "Einstellungen/Texturbrowser"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:965
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:968
 msgid "Texture Thumbnail Scale"
 msgstr "Skalierung der Texturvorschaubilder"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:967
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:970
 msgid "Uniform texture thumbnail size (pixels)"
 msgstr "Einheitliche Größe der Texturvorschaubilder (in Pixel)"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:968
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:971
 msgid "Texture scrollbar"
 msgstr "Texturbrowser-Scrollbalken"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:969
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:972
 msgid "Mousewheel Increment"
 msgstr "Bildlaufgeschwindgkeit beim Scrollen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:970
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:973
 msgid "Max shadername length"
 msgstr "Maximal dargestellte Länge für Shadernamen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:972
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:975
 msgid "Show Texture Filter"
 msgstr "Zeige Textur-Filter"
 
@@ -3692,7 +3692,23 @@ msgstr "Logik für bestimmte Schwierigkeitsstufe"
 msgid "Logic for Difficulty Level %d"
 msgstr "Logik für Schwierigkeitsstufe %d"
 
-#: ..\..\plugins\dm.objectives\ObjectiveEntity.cpp:135
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:23
+msgid "Edit Objective Conditions"
+msgstr "Missionsziel-Bedingungen bearbeiten"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:138
+msgid "Change Objective State"
+msgstr "Setze Status eines Missionsziels"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:139
+msgid "Change Visibility"
+msgstr "Setze Misionsziel auf sichtbar/unsichtbar"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:140
+msgid "Change Mandatory Flag"
+msgstr "Setze die 'obligatorisch'-Eigenschaft"
+
+#: ..\..\plugins\dm.objectives\ObjectiveEntity.cpp:278
 #, c-format
 msgid "New objective %d"
 msgstr "Neues Ziel %d"
@@ -3701,27 +3717,27 @@ msgstr "Neues Ziel %d"
 msgid "Objectives..."
 msgstr "Missionsziele..."
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:44
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:45
 msgid "Mission Objectives"
 msgstr "Missionsziele"
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:128
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:131
 msgid "Start"
 msgstr "Start"
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:169
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:172
 msgid "Diff."
 msgstr "Schw."
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:307
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:310
 msgid "Exception occurred: "
 msgstr "Ausnahmefehler:"
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:475
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:488
 msgid "Unable to create Objective Entity: classes not defined in registry."
 msgstr "Kann Ziel-Entity nicht erzeugen: die Entityklassen sind nicht in der Registierung definiert."
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:505
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:518
 #, c-format
 msgid "Unable to create Objective Entity: class '%s' not found."
 msgstr "Kann Ziel-Entity nicht erzeugen: EntityKlasse '%s' nicht gefunden."
@@ -5483,17 +5499,85 @@ msgstr "Raster anzeigen/verbergen"
 msgid "Center Pivot when scaling faces"
 msgstr "Pivotpunkt beim Skalieren von Faces zentrieren"
 
-#~ msgid "WireFrame"
-#~ msgstr "Drahtgitter"
+#: xml_file_content.cpp:1
+msgid "Wireframe"
+msgstr "Drahtgitter"
 
-#~ msgid "Flatshade"
-#~ msgstr "Schattiert"
+#: xml_file_content.cpp:2
+msgid "Flat shaded"
+msgstr "Schattiert"
 
-#~ msgid "Textured"
-#~ msgstr "Texturiert"
+#: xml_file_content.cpp:3
+msgid "Textured"
+msgstr "Texturiert"
 
-#~ msgid "Lighting"
-#~ msgstr "Beleuchtet"
+#: xml_file_content.cpp:4
+msgid "Lighting"
+msgstr "Beleuchtet"
+
+#: xml_file_content.cpp:5
+msgid "Clip plane in"
+msgstr "Entfernte Clip-Ebene heran"
+
+#: xml_file_content.cpp:6
+msgid "Clip plane out"
+msgstr "Entfernte Clip-Ebene hinaus"
+
+#: xml_file_content.cpp:1
+msgid "Objective Conditions"
+msgstr "Missionsziel-Bedingungen"
+
+#: xml_file_content.cpp:2
+msgid "Condition"
+msgstr "Bedingung"
+
+#: xml_file_content.cpp:3
+msgid "Source Mission:"
+msgstr "Quellmission:"
+
+#: xml_file_content.cpp:4
+msgid "Source Objective:"
+msgstr "Quell-Missionsziel:"
+
+#: xml_file_content.cpp:5
+msgid "Source Objective State:"
+msgstr "Status des Quell-Missionsziels:"
+
+#: xml_file_content.cpp:6
+msgid "Target Objective:"
+msgstr "Missionsziel:"
+
+#: xml_file_content.cpp:7
+msgid "Action:"
+msgstr "Aktion:"
+
+#: xml_file_content.cpp:8
+msgid "Action Value:"
+msgstr "Wert:"
+
+#: xml_file_content.cpp:9
+msgid "<b>Sentence</b>"
+msgstr "<b>In Worten</b>"
+
+#: xml_file_content.cpp:1
+msgid "Objectives entities"
+msgstr "Missionsziel-Entities"
+
+#: xml_file_content.cpp:2
+msgid "Objectives"
+msgstr "Missionsziele"
+
+#: xml_file_content.cpp:3
+msgid "Success logic"
+msgstr "Logik für Erfüllung"
+
+#: xml_file_content.cpp:4
+msgid "Edit mission success logic"
+msgstr "Logik für Erfüllung bearbeiten"
+
+#: xml_file_content.cpp:5
+msgid "Edit objective conditions"
+msgstr "Missionsziel-Bedingung bearbeiten"
 
 #~ msgid "Render Mode"
 #~ msgstr "Darstellungsmodus"
