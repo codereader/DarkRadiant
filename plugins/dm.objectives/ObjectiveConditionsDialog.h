@@ -62,11 +62,11 @@ private:
 	// Populate the dialog widgets with appropriate state from the objective entity
 	void populateWidgets();
 
-/*	// Refresh the objectives list from the currently-selected ObjectiveEntity
-	void refreshObjectivesList();
+	// Refresh the condition editing panel
+	void refreshConditionPanel();
 
-	// Return the currently-selected objective
-	Objective& getCurrentObjective();*/
+	// Return the currently-selected objective condition
+	ObjectiveCondition& getCurrentObjectiveCondition();
 
 	// Clears the internal containers
 	void clear();
