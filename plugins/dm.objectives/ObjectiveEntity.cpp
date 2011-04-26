@@ -406,22 +406,6 @@ const ObjectiveConditionPtr& ObjectiveEntity::getOrCreateObjectiveCondition(int 
 	return i->second;
 }
 
-/*const ObjectiveConditionPtr& ObjectiveEntity::createObjectiveCondition()
-{
-	for (int i = 1; i < INT_MAX; ++i)
-	{
-		ObjectiveConditions::iterator found = _objConditions.find(i);
-
-		if (found == _objConditions.end())
-		{
-			return _objConditions.insert(ObjectiveConditions::value_type(
-				i, ObjectiveConditionPtr(new ObjectiveCondition))).first->second;
-		}
-	}
-
-	throw std::runtime_error("Ran out of free objective condition indices.");
-}*/
-
 void ObjectiveEntity::clearObjectiveConditions()
 {
 	_objConditions.clear();
