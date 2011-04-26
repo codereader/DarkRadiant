@@ -106,6 +106,7 @@
     <child>
       <object class="GtkVBox" id="ConditionVBox">
         <property name="visible">True</property>
+        <property name="spacing">6</property>
         <child>
           <object class="GtkLabel" id="label2">
             <property name="visible">True</property>
@@ -129,6 +130,8 @@
                 <property name="visible">True</property>
                 <property name="n_rows">6</property>
                 <property name="n_columns">2</property>
+                <property name="column_spacing">6</property>
+                <property name="row_spacing">6</property>
                 <child>
                   <object class="GtkLabel" id="SourceMissionLabel">
                     <property name="visible">True</property>
@@ -291,6 +294,7 @@
     <child>
       <object class="GtkVBox" id="SentenceVBox">
         <property name="visible">True</property>
+        <property name="spacing">6</property>
         <child>
           <object class="GtkLabel" id="SentenceLabel">
             <property name="visible">True</property>
