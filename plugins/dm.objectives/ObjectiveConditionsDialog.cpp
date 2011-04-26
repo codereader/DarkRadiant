@@ -7,6 +7,8 @@
 #include "gtkutil/TextColumn.h"
 
 #include <gtkmm/button.h>
+#include <gtkmm/comboboxtext.h>
+#include <gtkmm/spinbutton.h>
 #include <gtkmm/treeview.h>
 
 #include "ObjectiveEntity.h"
@@ -58,6 +60,15 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
 	_objConditions = _objectiveEnt.getObjectiveConditions();
 
 	setupConditionsPanel();
+
+	Gtk::ComboBox* srcState = getGladeWidget<Gtk::ComboBox>("SourceObjState");
+	
+	// Populate the list of states. This must be done in order to match the
+	// values in the enum, since the index will be used when writing to entity
+	srcState->append_text("INCOMPLETE");
+	srcState->append_text("COMPLETE");
+	srcState->append_text("FAILED");
+	srcState->append_text("INVALID");
 }
 
 void ObjectiveConditionsDialog::setupConditionsPanel()
@@ -101,7 +112,25 @@ void ObjectiveConditionsDialog::refreshConditionPanel()
 {
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	// TODO
+	Gtk::SpinButton* srcMission = getGladeWidget<Gtk::SpinButton>("SourceMission");
+	srcMission->set_value(cond.sourceMission);
+
+	Gtk::SpinButton* srcObj = getGladeWidget<Gtk::SpinButton>("SourceObjective");
+	srcObj->set_value(cond.sourceObjective);
+
+	// Load source objective states
+	Gtk::ComboBox* srcState = getGladeWidget<Gtk::ComboBox>("SourceObjState");
+	srcState->set_active(cond.sourceState);
+
+	// TODO: Load objectives from objective entity into dropdown list
+
+	// TODO: Load target objective selection
+
+	// TODO: Set condition type
+
+	// TODO: Load value options based on condition type into dropdown list
+
+	// TODO: Load value
 }
 
 void ObjectiveConditionsDialog::_onConditionSelectionChanged()
