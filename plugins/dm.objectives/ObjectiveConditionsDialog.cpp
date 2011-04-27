@@ -66,6 +66,8 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
 
 	setupConditionsPanel();
 	setupConditionEditPanel();
+
+	updateSentence();
 }
 
 void ObjectiveConditionsDialog::setupConditionsPanel()
@@ -108,11 +110,11 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 
 	// Set ranges for spin buttons
 	Gtk::SpinButton* srcMission = getGladeWidget<Gtk::SpinButton>("SourceMission");
-	srcMission->set_range(1, 99);
+	srcMission->set_adjustment(*Gtk::manage(new Gtk::Adjustment(1, 1, 99)));
 	srcMission->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcMissionChanged));
 
 	Gtk::SpinButton* srcObj = getGladeWidget<Gtk::SpinButton>("SourceObjective");
-	srcObj->set_range(1, 999);
+	srcObj->set_adjustment(*Gtk::manage(new Gtk::Adjustment(1, 1, 999)));
 	srcObj->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcObjChanged));
 
 	// Create the state dropdown, Glade is from the last century and doesn't support GtkComboBoxText, hmpf
@@ -126,6 +128,8 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_srcObjState->append_text("COMPLETE");
 	_srcObjState->append_text("FAILED");
 	_srcObjState->append_text("INVALID");
+
+	_srcObjState->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcStateChanged)); 
 
 	placeholder->pack_start(*_srcObjState);
 
@@ -185,11 +189,11 @@ void ObjectiveConditionsDialog::refreshConditionPanel()
 
 	// Source mission number
 	Gtk::SpinButton* srcMission = getGladeWidget<Gtk::SpinButton>("SourceMission");
-	srcMission->set_value(cond.sourceMission);
+	srcMission->set_value(cond.sourceMission + 1); // +1 since user-visible values are 1-based
 
 	// Source objective number
 	Gtk::SpinButton* srcObj = getGladeWidget<Gtk::SpinButton>("SourceObjective");
-	srcObj->set_value(cond.sourceObjective);
+	srcObj->set_value(cond.sourceObjective + 1); // +1 since user-visible values are 1-based
 
 	// Source objective state
 	_srcObjState->set_active(cond.sourceState);
@@ -243,12 +247,22 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 		_value->append_text(_("Set to FAILED"));
 		_value->append_text(_("Set to INVALID"));
 
+		if (cond.value > 3)
+		{
+			cond.value = 3;
+		}
+
 		_value->set_active(cond.value);
 		break;
 
 	case ObjectiveCondition::CHANGE_VISIBILITY:
 		_value->append_text(_("Set Invisible"));
 		_value->append_text(_("Set Visible"));
+
+		if (cond.value > 1)
+		{
+			cond.value = 1;
+		}
 
 		_value->set_active(cond.value);
 
@@ -257,6 +271,11 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 	case ObjectiveCondition::CHANGE_MANDATORY:
 		_value->append_text(_("Clear mandatory flag"));
 		_value->append_text(_("Set mandatory flag"));
+
+		if (cond.value > 1)
+		{
+			cond.value = 1;
+		}
 
 		_value->set_active(cond.value);
 
@@ -307,6 +326,9 @@ void ObjectiveConditionsDialog::_onAddObjCondition()
 			// Create a new condition
 			_objConditions[i] = ObjectiveConditionPtr(new ObjectiveCondition);
 
+			_objConditions[i]->sourceMission = 1;
+			_objConditions[i]->sourceObjective = 1;
+
 			// TODO: Select the new condition
 
 			// Refresh the dialog
@@ -334,39 +356,75 @@ void ObjectiveConditionsDialog::_onDelObjCondition()
 
 void ObjectiveConditionsDialog::_onTypeChanged()
 {
+	if (!isConditionSelected()) return;
+
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	cond.type = static_cast<ObjectiveCondition::Type>(_type->get_active_row_number());
 
 	refreshPossibleValues();
+
+	updateSentence();
 }
 
 void ObjectiveConditionsDialog::_onSrcMissionChanged()
 {
+	if (!isConditionSelected()) return;
+
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	cond.sourceMission = getGladeWidget<Gtk::SpinButton>("SourceMission")->get_value_as_int();
+	// Subtract 1 from the source mission, we need 0-based values
+	cond.sourceMission = getGladeWidget<Gtk::SpinButton>("SourceMission")->get_value_as_int() - 1;
+
+	updateSentence();
 }
 
 void ObjectiveConditionsDialog::_onSrcObjChanged()
 {
+	if (!isConditionSelected()) return;
+
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	cond.sourceObjective = getGladeWidget<Gtk::SpinButton>("SourceObjective")->get_value_as_int();
+	// Subtract 1 from the source objective, we need 0-based values
+	cond.sourceObjective = getGladeWidget<Gtk::SpinButton>("SourceObjective")->get_value_as_int() - 1;
+
+	updateSentence();
+}
+
+void ObjectiveConditionsDialog::_onSrcStateChanged()
+{
+	if (!isConditionSelected()) return;
+
+	ObjectiveCondition& cond = getCurrentObjectiveCondition();
+
+	int selectedRow = _srcObjState->get_active_row_number();
+
+	assert(selectedRow >= Objective::INCOMPLETE && selectedRow <= Objective::INVALID);
+	cond.sourceState = static_cast<Objective::State>(selectedRow);
+
+	updateSentence();
 }
 
 void ObjectiveConditionsDialog::_onTargetObjChanged()
 {
+	if (!isConditionSelected()) return;
+
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	cond.targetObjective = _targetObj->get_active_row_number();
+
+	updateSentence();
 }
 
 void ObjectiveConditionsDialog::_onValueChanged()
 {
+	if (!isConditionSelected()) return;
+
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	cond.value = _value->get_active_row_number();
+
+	updateSentence();
 }
 
 void ObjectiveConditionsDialog::clear()
@@ -395,8 +453,13 @@ void ObjectiveConditionsDialog::populateWidgets()
 		Gtk::TreeModel::Row row = *_objectiveConditionList->append();
 
 		row[_objConditionColumns.conditionNumber] = i->first;
-		row[_objConditionColumns.description] = "empty description";
+		row[_objConditionColumns.description] = getDescription(*i->second);
 	}
+}
+
+std::string ObjectiveConditionsDialog::getDescription(const ObjectiveCondition& cond)
+{
+	return "empty description";
 }
 
 void ObjectiveConditionsDialog::_preShow()
@@ -421,6 +484,42 @@ void ObjectiveConditionsDialog::_onOK()
 {
 	save();
 	destroy();
+}
+
+bool ObjectiveConditionsDialog::isConditionSelected()
+{
+	return getGladeWidget<Gtk::TreeView>("conditionsTreeView")->get_selection()->get_selected();
+}
+
+std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& cond)
+{
+	std::string str = "";
+
+	if (cond.isValid())
+	{
+		str = "This condition is valid.";
+		// If Objective 1 in Mission 3 has the state "failed", perform the following: Activate Mandatory Flag on Objective 3.
+	}
+	else
+	{
+		str = _("This condition is not valid or complete yet.");
+	}
+
+	return str;
+}
+
+void ObjectiveConditionsDialog::updateSentence()
+{
+	Gtk::Label* label = getGladeWidget<Gtk::Label>("Sentence");
+
+	if (isConditionSelected())
+	{
+		label->set_markup(getSentence(getCurrentObjectiveCondition()));
+	}
+	else
+	{
+		label->set_markup("");
+	}
 }
 
 } // namespace
