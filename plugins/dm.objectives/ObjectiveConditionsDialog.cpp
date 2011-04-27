@@ -38,7 +38,8 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
 	_type(NULL),
 	_value(NULL),
 	_objectives(Gtk::ListStore::create(_objectiveColumns)),
-	_targetObj(NULL)
+	_targetObj(NULL),
+	_updateActive(false)
 {
 	// Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -127,7 +128,7 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_srcObjState->append_text("INCOMPLETE");
 	_srcObjState->append_text("COMPLETE");
 	_srcObjState->append_text("FAILED");
-	_srcObjState->append_text("INVALID");
+	//_srcObjState->append_text("INVALID"); // don't allow setting to INVALID
 
 	_srcObjState->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcStateChanged)); 
 
@@ -183,8 +184,10 @@ ObjectiveCondition& ObjectiveConditionsDialog::getCurrentObjectiveCondition()
 	return *_objConditions[index];
 }
 
-void ObjectiveConditionsDialog::refreshConditionPanel()
+void ObjectiveConditionsDialog::loadValuesFromCondition()
 {
+	_updateActive = true;
+
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	// Source mission number
@@ -229,6 +232,10 @@ void ObjectiveConditionsDialog::refreshConditionPanel()
 	};
 
 	refreshPossibleValues();
+
+	updateSentence();
+
+	_updateActive = false;
 }
 
 void ObjectiveConditionsDialog::refreshPossibleValues()
@@ -238,18 +245,17 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 	// Remove all items from the dropdown
 	_value->clear_items();
 
-	// Set condition type and load possible value types
+	// Load possible value selections based on the selected type
 	switch (cond.type)
 	{
 	case ObjectiveCondition::CHANGE_STATE:
 		_value->append_text(_("Set to INCOMPLETE"));
 		_value->append_text(_("Set to COMPLETE"));
 		_value->append_text(_("Set to FAILED"));
-		_value->append_text(_("Set to INVALID"));
 
-		if (cond.value > 3)
+		if (cond.value > 2)
 		{
-			cond.value = 3;
+			cond.value = 2;
 		}
 
 		_value->set_active(cond.value);
@@ -300,7 +306,7 @@ void ObjectiveConditionsDialog::_onConditionSelectionChanged()
     {
 		delObjCondButton->set_sensitive(true);
 
-		refreshConditionPanel();
+		loadValuesFromCondition();
 
 		// Enable details controls
         getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(true);
@@ -324,15 +330,28 @@ void ObjectiveConditionsDialog::_onAddObjCondition()
 		if (found == _objConditions.end())
 		{
 			// Create a new condition
-			_objConditions[i] = ObjectiveConditionPtr(new ObjectiveCondition);
+			ObjectiveConditionPtr cond(new ObjectiveCondition);
+			_objConditions[i] = cond;
 
-			_objConditions[i]->sourceMission = 1;
-			_objConditions[i]->sourceObjective = 1;
-
-			// TODO: Select the new condition
+			// Set some default values, such that it doesn't end up invalid
+			cond->sourceMission = 0;
+			cond->sourceObjective = 0;
+			cond->sourceState = Objective::INCOMPLETE;
+			cond->targetObjective = 0;
+			cond->type = ObjectiveCondition::CHANGE_STATE;
+			cond->value = 0;
 
 			// Refresh the dialog
 			populateWidgets();
+
+			// Select the new condition
+			gtkutil::TreeModel::SelectionFinder finder(i, _objConditionColumns.conditionNumber.index());
+			_objectiveConditionList->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
+
+			if (finder.getIter())
+			{
+				getGladeWidget<Gtk::TreeView>("conditionsTreeView")->get_selection()->select(finder.getIter());
+			}
 
 			return;
 		}
@@ -356,7 +375,7 @@ void ObjectiveConditionsDialog::_onDelObjCondition()
 
 void ObjectiveConditionsDialog::_onTypeChanged()
 {
-	if (!isConditionSelected()) return;
+	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
@@ -369,7 +388,7 @@ void ObjectiveConditionsDialog::_onTypeChanged()
 
 void ObjectiveConditionsDialog::_onSrcMissionChanged()
 {
-	if (!isConditionSelected()) return;
+	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
@@ -381,7 +400,7 @@ void ObjectiveConditionsDialog::_onSrcMissionChanged()
 
 void ObjectiveConditionsDialog::_onSrcObjChanged()
 {
-	if (!isConditionSelected()) return;
+	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
@@ -393,13 +412,13 @@ void ObjectiveConditionsDialog::_onSrcObjChanged()
 
 void ObjectiveConditionsDialog::_onSrcStateChanged()
 {
-	if (!isConditionSelected()) return;
+	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	int selectedRow = _srcObjState->get_active_row_number();
 
-	assert(selectedRow >= Objective::INCOMPLETE && selectedRow <= Objective::INVALID);
+	assert(selectedRow >= Objective::INCOMPLETE && selectedRow < Objective::INVALID);
 	cond.sourceState = static_cast<Objective::State>(selectedRow);
 
 	updateSentence();
@@ -407,7 +426,7 @@ void ObjectiveConditionsDialog::_onSrcStateChanged()
 
 void ObjectiveConditionsDialog::_onTargetObjChanged()
 {
-	if (!isConditionSelected()) return;
+	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
@@ -418,7 +437,7 @@ void ObjectiveConditionsDialog::_onTargetObjChanged()
 
 void ObjectiveConditionsDialog::_onValueChanged()
 {
-	if (!isConditionSelected()) return;
+	if (_updateActive || !isConditionSelected()) return;
 
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
