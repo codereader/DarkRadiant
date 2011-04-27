@@ -125,9 +125,9 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 
 	// Populate the list of states. This must be done in order to match the
 	// values in the enum, since the index will be used when writing to entity
-	_srcObjState->append_text("INCOMPLETE");
-	_srcObjState->append_text("COMPLETE");
-	_srcObjState->append_text("FAILED");
+	_srcObjState->append_text(Objective::getStateText(Objective::INCOMPLETE));
+	_srcObjState->append_text(Objective::getStateText(Objective::COMPLETE));
+	_srcObjState->append_text(Objective::getStateText(Objective::FAILED));
 	//_srcObjState->append_text("INVALID"); // don't allow setting to INVALID
 
 	_srcObjState->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcStateChanged)); 
@@ -249,9 +249,9 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 	switch (cond.type)
 	{
 	case ObjectiveCondition::CHANGE_STATE:
-		_value->append_text(_("Set to INCOMPLETE"));
-		_value->append_text(_("Set to COMPLETE"));
-		_value->append_text(_("Set to FAILED"));
+		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::INCOMPLETE)).str());
+		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::COMPLETE)).str());
+		_value->append_text((boost::format(_("Set state to %s")) % Objective::getStateText(Objective::FAILED)).str());
 
 		if (cond.value > 2)
 		{
@@ -521,8 +521,14 @@ std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& con
 
 	if (cond.isValid())
 	{
-		str = "This condition is valid.";
-		// If Objective 1 in Mission 3 has the state "failed", perform the following: Activate Mandatory Flag on Objective 3.
+		str = (boost::format(_("If Objective %d in Mission %d has the state '%s', perform the following:")) % 
+			(cond.sourceObjective+1) % (cond.sourceMission+1) % Objective::getStateText(cond.sourceState)).str();
+		str += "\n";
+		str += (boost::format(_("%s on objective %d")) % "set" % (cond.targetObjective+1)).str();
+		str += "\n";
+
+		std::string objStr = "objective description goes here";
+		str += (boost::format("(%s)") % objStr).str();
 	}
 	else
 	{
