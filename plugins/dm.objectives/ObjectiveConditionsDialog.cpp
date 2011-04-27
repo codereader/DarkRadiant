@@ -34,7 +34,11 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
     ),
 	_objectiveEnt(objectiveEnt),
 	_objectiveConditionList(Gtk::ListStore::create(_objConditionColumns)),
-	_objectives(Gtk::ListStore::create(_objectiveColumns))
+	_srcObjState(NULL),
+	_type(NULL),
+	_value(NULL),
+	_objectives(Gtk::ListStore::create(_objectiveColumns)),
+	_targetObj(NULL)
 {
 	// Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -103,8 +107,13 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
     getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
 
 	// Set ranges for spin buttons
-	getGladeWidget<Gtk::SpinButton>("SourceMission")->set_range(1, 99);
-	getGladeWidget<Gtk::SpinButton>("SourceObjective")->set_range(1, 999);
+	Gtk::SpinButton* srcMission = getGladeWidget<Gtk::SpinButton>("SourceMission");
+	srcMission->set_range(1, 99);
+	srcMission->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcMissionChanged));
+
+	Gtk::SpinButton* srcObj = getGladeWidget<Gtk::SpinButton>("SourceObjective");
+	srcObj->set_range(1, 999);
+	srcObj->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcObjChanged));
 
 	// Create the state dropdown, Glade is from the last century and doesn't support GtkComboBoxText, hmpf
 	Gtk::VBox* placeholder = getGladeWidget<Gtk::VBox>("SourceStatePlaceholder");
@@ -137,6 +146,8 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_targetObj->add_attribute(indexRenderer->property_text(), _objectiveColumns.objNumber);
 	_targetObj->add_attribute(nameRenderer->property_text(), _objectiveColumns.description);
 	
+	_targetObj->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onTargetObjChanged));
+
 	placeholder->pack_start(*_targetObj);
 
 	placeholder = getGladeWidget<Gtk::VBox>("TypePlaceholder");
@@ -156,7 +167,8 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_value = Gtk::manage(new Gtk::ComboBoxText);
 
 	// Will be populated later on
-
+	_value->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onValueChanged));
+	
 	placeholder->pack_start(*_value);
 }
 
@@ -322,7 +334,39 @@ void ObjectiveConditionsDialog::_onDelObjCondition()
 
 void ObjectiveConditionsDialog::_onTypeChanged()
 {
+	ObjectiveCondition& cond = getCurrentObjectiveCondition();
+
+	cond.type = static_cast<ObjectiveCondition::Type>(_type->get_active_row_number());
+
 	refreshPossibleValues();
+}
+
+void ObjectiveConditionsDialog::_onSrcMissionChanged()
+{
+	ObjectiveCondition& cond = getCurrentObjectiveCondition();
+
+	cond.sourceMission = getGladeWidget<Gtk::SpinButton>("SourceMission")->get_value_as_int();
+}
+
+void ObjectiveConditionsDialog::_onSrcObjChanged()
+{
+	ObjectiveCondition& cond = getCurrentObjectiveCondition();
+
+	cond.sourceObjective = getGladeWidget<Gtk::SpinButton>("SourceObjective")->get_value_as_int();
+}
+
+void ObjectiveConditionsDialog::_onTargetObjChanged()
+{
+	ObjectiveCondition& cond = getCurrentObjectiveCondition();
+
+	cond.targetObjective = _targetObj->get_active_row_number();
+}
+
+void ObjectiveConditionsDialog::_onValueChanged()
+{
+	ObjectiveCondition& cond = getCurrentObjectiveCondition();
+
+	cond.value = _value->get_active_row_number();
 }
 
 void ObjectiveConditionsDialog::clear()

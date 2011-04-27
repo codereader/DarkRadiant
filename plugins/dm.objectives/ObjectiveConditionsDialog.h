@@ -85,6 +85,10 @@ private:
 	void _onDelObjCondition();
 
 	void _onTypeChanged();
+	void _onSrcMissionChanged();
+	void _onSrcObjChanged();
+	void _onTargetObjChanged();
+	void _onValueChanged();
 
 	// Populate the dialog widgets with appropriate state from the objective entity
 	void populateWidgets();
