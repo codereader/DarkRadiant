@@ -50,7 +50,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 
 	Entity::KeyValuePairs condSpawnargs = ent.getKeyValuePairs(OBJ_COND_PREFIX);
 
-	static const boost::regex objCondExpr(OBJ_COND_PREFIX + "_(\\d+)_(.*)");
+	static const boost::regex objCondExpr(OBJ_COND_PREFIX + "(\\d+)_(.*)");
 
 	for (Entity::KeyValuePairs::const_iterator kv = condSpawnargs.begin();
 		 kv != condSpawnargs.end(); kv++)
