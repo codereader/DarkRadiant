@@ -381,7 +381,12 @@ void ObjectiveConditionsDialog::_onTypeChanged()
 
 	cond.type = static_cast<ObjectiveCondition::Type>(_type->get_active_row_number());
 
+	// Inhibit _onValueChanged calls
+	_updateActive = true;
+
 	refreshPossibleValues();
+
+	_updateActive = false;
 
 	updateSentence();
 }
