@@ -87,8 +87,14 @@ private:
 	void _onTypeChanged();
 	void _onSrcMissionChanged();
 	void _onSrcObjChanged();
+	void _onSrcStateChanged();
 	void _onTargetObjChanged();
 	void _onValueChanged();
+
+	void updateSentence();
+
+	// returns true if there is a condition highlighted
+	bool isConditionSelected();
 
 	// Populate the dialog widgets with appropriate state from the objective entity
 	void populateWidgets();
@@ -99,6 +105,12 @@ private:
 
 	// Return the currently-selected objective condition
 	ObjectiveCondition& getCurrentObjectiveCondition();
+
+	// Helper method to get a brief description of the given condition
+	static std::string getDescription(const ObjectiveCondition& cond);
+
+	// Helper to get a human-readable sentence what the given condition is doing
+	static std::string getSentence(const ObjectiveCondition& cond);
 
 	// Clears the internal containers
 	void clear();
