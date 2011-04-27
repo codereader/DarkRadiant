@@ -66,6 +66,9 @@ private:
 
 	Gtk::ComboBox* _targetObj;
 
+	// Flag to block callbacks
+	bool _updateActive;
+
 public:
 
 	// Constructor creates widgets
@@ -99,8 +102,9 @@ private:
 	// Populate the dialog widgets with appropriate state from the objective entity
 	void populateWidgets();
 
-	// Refresh the condition editing panel
-	void refreshConditionPanel();
+	// Refresh the condition editing panel from the selected condition
+	void loadValuesFromCondition();
+
 	void refreshPossibleValues();
 
 	// Return the currently-selected objective condition
