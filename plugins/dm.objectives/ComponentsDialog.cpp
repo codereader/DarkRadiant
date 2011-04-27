@@ -118,10 +118,10 @@ Gtk::Widget& ComponentsDialog::createObjectiveEditPanel()
 
 	// Populate the list of states. This must be done in order to match the
 	// values in the enum, since the index will be used when writing to entity
-	_objStateCombo->append_text("INCOMPLETE");
-	_objStateCombo->append_text("COMPLETE");
-	_objStateCombo->append_text("FAILED");
-	_objStateCombo->append_text("INVALID");
+	_objStateCombo->append_text(Objective::getStateText(Objective::INCOMPLETE));
+	_objStateCombo->append_text(Objective::getStateText(Objective::COMPLETE));
+	_objStateCombo->append_text(Objective::getStateText(Objective::FAILED));
+	_objStateCombo->append_text(Objective::getStateText(Objective::INVALID));
 
 	row++;
 

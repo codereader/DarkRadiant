@@ -4,6 +4,7 @@
 #include "Component.h"
 #include "Logic.h"
 
+#include "i18n.h"
 #include <string>
 #include <map>
 #include <list>
@@ -63,6 +64,18 @@ public:
 		ongoing(false),
 		irreversible(false)
 	{}
+
+	static std::string getStateText(State state)
+	{
+		switch (state)
+		{
+			case INCOMPLETE: return _("INCOMPLETE");
+			case COMPLETE: return _("COMPLETE");
+			case FAILED: return _("FAILED");
+			case INVALID: return _("INVALID");
+			default: return "-";
+		};
+	}
 };
 
 /**
