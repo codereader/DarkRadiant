@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-04-26 19:47+0200\n"
+"POT-Creation-Date: 2011-04-28 16:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3647,20 +3647,98 @@ msgstr ""
 msgid "Logic for Difficulty Level %d"
 msgstr ""
 
+#: ..\..\plugins\dm.objectives\Objective.h:72
+msgid "INCOMPLETE"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\Objective.h:73
+msgid "COMPLETE"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\Objective.h:74
+msgid "FAILED"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\Objective.h:75
+msgid "INVALID"
+msgstr ""
+
 #: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:23
 msgid "Edit Objective Conditions"
 msgstr ""
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:138
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:162
 msgid "Change Objective State"
 msgstr ""
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:139
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:163
 msgid "Change Visibility"
 msgstr ""
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:140
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:164
 msgid "Change Mandatory Flag"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:252
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:253
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:254
+#, c-format
+msgid "Set state to %s"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:265
+msgid "Set Invisible"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:266
+msgid "Set Visible"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:278
+msgid "Clear mandatory flag"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:279
+msgid "Set mandatory flag"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:493
+#, c-format
+msgid "Condition affecting objective %d"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:531
+#, c-format
+msgid "If Objective %d in Mission %d is in state '%s' do the following: "
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:542
+#, c-format
+msgid "Set State on Objective %d to %s"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:549
+#, c-format
+msgid "Make Objective %d visible"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:553
+#, c-format
+msgid "Make Objective %d invisible"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:560
+#, c-format
+msgid "Make Objective %d mandatory"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:564
+#, c-format
+msgid "Make Objective %d not mandatory"
+msgstr ""
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:571
+msgid "This condition is not valid or complete yet."
 msgstr ""
 
 #: ..\..\plugins\dm.objectives\ObjectiveEntity.cpp:278

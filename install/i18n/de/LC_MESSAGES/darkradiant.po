@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-04-26 19:47+0200\n"
-"PO-Revision-Date: 2011-04-26 19:47+0100\n"
+"POT-Creation-Date: 2011-04-28 16:58+0200\n"
+"PO-Revision-Date: 2011-04-28 18:42+0100\n"
 "Last-Translator: greebo <greebo@angua.at>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -3692,21 +3692,99 @@ msgstr "Logik für bestimmte Schwierigkeitsstufe"
 msgid "Logic for Difficulty Level %d"
 msgstr "Logik für Schwierigkeitsstufe %d"
 
+#: ..\..\plugins\dm.objectives\Objective.h:72
+msgid "INCOMPLETE"
+msgstr "NICHT ERFÜLLT"
+
+#: ..\..\plugins\dm.objectives\Objective.h:73
+msgid "COMPLETE"
+msgstr "ERFÜLLT"
+
+#: ..\..\plugins\dm.objectives\Objective.h:74
+msgid "FAILED"
+msgstr "FEHLGESCHLAGEN"
+
+#: ..\..\plugins\dm.objectives\Objective.h:75
+msgid "INVALID"
+msgstr "UNGÜLTIG"
+
 #: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:23
 msgid "Edit Objective Conditions"
 msgstr "Missionsziel-Bedingungen bearbeiten"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:138
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:162
 msgid "Change Objective State"
 msgstr "Setze Status eines Missionsziels"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:139
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:163
 msgid "Change Visibility"
 msgstr "Setze Misionsziel auf sichtbar/unsichtbar"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:140
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:164
 msgid "Change Mandatory Flag"
 msgstr "Setze die 'obligatorisch'-Eigenschaft"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:252
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:253
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:254
+#, c-format
+msgid "Set state to %s"
+msgstr "Setze Status auf %s"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:265
+msgid "Set Invisible"
+msgstr "Unsichtbar machen"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:266
+msgid "Set Visible"
+msgstr "Sichtbar machen"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:278
+msgid "Clear mandatory flag"
+msgstr "Nicht obligatorisch machen"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:279
+msgid "Set mandatory flag"
+msgstr "Obligatorisch machen"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:493
+#, c-format
+msgid "Condition affecting objective %d"
+msgstr "Bedingung betreffend Missionsziel %d"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:531
+#, c-format
+msgid "If Objective %d in Mission %d is in state '%s' do the following: "
+msgstr "Wenn das Missionsziel %d in Mission Nr. %d den Status '%s' hat:"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:542
+#, c-format
+msgid "Set State on Objective %d to %s"
+msgstr "Setze den Status von Missionsziel %d auf %s"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:549
+#, c-format
+msgid "Make Objective %d visible"
+msgstr "Missionsziel %d sichtbar machen"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:553
+#, c-format
+msgid "Make Objective %d invisible"
+msgstr "Missionsziel %d unsichtbar machen"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:560
+#, c-format
+msgid "Make Objective %d mandatory"
+msgstr "Missionsziel %d obligatorisch machen"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:564
+#, c-format
+msgid "Make Objective %d not mandatory"
+msgstr "Missionsziel %d nicht obligatorisch machen"
+
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:571
+msgid "This condition is not valid or complete yet."
+msgstr "Diese Bedingung ist noch nicht gültig oder vollständig."
 
 #: ..\..\plugins\dm.objectives\ObjectiveEntity.cpp:278
 #, c-format
