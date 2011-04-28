@@ -565,6 +565,8 @@ std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& con
 			}
 			break;
 		};
+
+		str += actionStr;
 	}
 	else
 	{
