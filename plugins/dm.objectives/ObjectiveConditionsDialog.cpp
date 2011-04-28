@@ -150,6 +150,7 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_targetObj->pack_start(*nameRenderer, true);
 	_targetObj->add_attribute(indexRenderer->property_text(), _objectiveColumns.objNumber);
 	_targetObj->add_attribute(nameRenderer->property_text(), _objectiveColumns.description);
+	nameRenderer->set_property("width-chars", 30);
 	
 	_targetObj->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onTargetObjChanged));
 
