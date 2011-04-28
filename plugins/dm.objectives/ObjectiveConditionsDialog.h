@@ -114,7 +114,7 @@ private:
 	static std::string getDescription(const ObjectiveCondition& cond);
 
 	// Helper to get a human-readable sentence what the given condition is doing
-	static std::string getSentence(const ObjectiveCondition& cond);
+	std::string getSentence(const ObjectiveCondition& cond);
 
 	// Clears the internal containers
 	void clear();

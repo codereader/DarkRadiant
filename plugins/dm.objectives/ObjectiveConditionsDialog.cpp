@@ -201,8 +201,8 @@ void ObjectiveConditionsDialog::loadValuesFromCondition()
 	// Source objective state
 	_srcObjState->set_active(cond.sourceState);
 
-	// Load objectives from objective entity into dropdown list
-	gtkutil::TreeModel::SelectionFinder finder(cond.targetObjective, _objectiveColumns.objNumber.index());
+	// Find objective in dropdown list (stored objective numbers are 1-based)
+	gtkutil::TreeModel::SelectionFinder finder(cond.targetObjective+1, _objectiveColumns.objNumber.index());
 	_objectives->foreach_iter(sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
 
 	if (finder.getIter())
@@ -433,9 +433,16 @@ void ObjectiveConditionsDialog::_onTargetObjChanged()
 {
 	if (_updateActive || !isConditionSelected()) return;
 
+	if (!_targetObj->get_active())
+	{
+		return;
+	}
+
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
-	cond.targetObjective = _targetObj->get_active_row_number();
+	int objNum = (*_targetObj->get_active())[_objectiveColumns.objNumber];
+	 
+	cond.targetObjective = objNum - 1; // reduce by one, liststore has 1-based numbers
 
 	updateSentence();
 }
@@ -483,7 +490,7 @@ void ObjectiveConditionsDialog::populateWidgets()
 
 std::string ObjectiveConditionsDialog::getDescription(const ObjectiveCondition& cond)
 {
-	return "empty description";
+	return (boost::format(_("Condition affecting objective %d")) % (cond.targetObjective+1)).str();
 }
 
 void ObjectiveConditionsDialog::_preShow()
@@ -521,14 +528,43 @@ std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& con
 
 	if (cond.isValid())
 	{
-		str = (boost::format(_("If Objective %d in Mission %d has the state '%s', perform the following:")) % 
+		str = (boost::format(_("If Objective %d in Mission %d is in state '%s' do the following: ")) % 
 			(cond.sourceObjective+1) % (cond.sourceMission+1) % Objective::getStateText(cond.sourceState)).str();
-		str += "\n";
-		str += (boost::format(_("%s on objective %d")) % "set" % (cond.targetObjective+1)).str();
+
 		str += "\n";
 
-		std::string objStr = "objective description goes here";
-		str += (boost::format("(%s)") % objStr).str();
+		std::string actionStr = "";
+		int objNum = cond.targetObjective + 1; // the user-visible objectives are numbered differently
+
+		switch (cond.type)
+		{
+		case ObjectiveCondition::CHANGE_STATE:
+			actionStr = (boost::format(_("Set State on Objective %d to %s")) % 
+				objNum % Objective::getStateText(static_cast<Objective::State>(cond.value))).str();
+			break;
+
+		case ObjectiveCondition::CHANGE_VISIBILITY:
+			if (cond.value != 0)
+			{
+				actionStr = (boost::format(_("Make Objective %d visible")) % objNum).str();
+			}
+			else
+			{
+				actionStr = (boost::format(_("Make Objective %d invisible")) % objNum).str();
+			}
+			break;
+
+		case ObjectiveCondition::CHANGE_MANDATORY:
+			if (cond.value != 0)
+			{
+				actionStr = (boost::format(_("Make Objective %d mandatory")) % objNum).str();
+			}
+			else
+			{
+				actionStr = (boost::format(_("Make Objective %d not mandatory")) % objNum).str();
+			}
+			break;
+		};
 	}
 	else
 	{
