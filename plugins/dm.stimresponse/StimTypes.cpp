@@ -255,7 +255,7 @@ const StimTypes::Columns& StimTypes::getColumns() const
 	return _columns;
 }
 
-const Glib::RefPtr<Gtk::ListStore>& StimTypes::getListStore() const
+Glib::RefPtr<Gtk::TreeModel> StimTypes::getListStore() const
 {
 	return _listStore;
 }
