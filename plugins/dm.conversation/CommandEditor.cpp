@@ -188,7 +188,7 @@ void CommandEditor::populateWindow()
 		false, false, 0);
 
 	// Create the actor dropdown box
-	_actorDropDown = Gtk::manage(new Gtk::ComboBox(_actorStore));
+	_actorDropDown = Gtk::manage(new Gtk::ComboBox(Glib::RefPtr<Gtk::TreeModel>::cast_static(_actorStore)));
 
 	// Add the cellrenderer for the name
 	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
@@ -203,7 +203,7 @@ void CommandEditor::populateWindow()
 		*Gtk::manage(new gtkutil::LeftAlignedLabel(std::string("<b>") + _("Command") + "</b>")),
 		false, false, 0);
 
-	_commandDropDown = Gtk::manage(new Gtk::ComboBox(_commandStore));
+	_commandDropDown = Gtk::manage(new Gtk::ComboBox(Glib::RefPtr<Gtk::TreeModel>::cast_static(_commandStore)));
 
 	// Connect the signal to get notified of further changes
 	_commandDropDown->signal_changed().connect(sigc::mem_fun(*this, &CommandEditor::onCommandTypeChange));

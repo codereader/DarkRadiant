@@ -141,7 +141,7 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	_objectiveEnt.populateListStore(_objectives, _objectiveColumns);
 
 	// Set up the dropdown
-	_targetObj = Gtk::manage(new Gtk::ComboBox(_objectives));
+	_targetObj = Gtk::manage(new Gtk::ComboBox(Glib::RefPtr<Gtk::TreeModel>::cast_static(_objectives)));
 
 	Gtk::CellRendererText* indexRenderer = Gtk::manage(new Gtk::CellRendererText);
 	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);

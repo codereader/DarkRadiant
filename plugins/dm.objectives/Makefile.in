@@ -86,10 +86,11 @@ am_dm_objectives_la_OBJECTS = ObjectivesEditor.lo objectives.lo \
 	SpawnClassSpecifierPanel.lo ClassnameSpecifierPanel.lo \
 	AITeamSpecifierPanel.lo GroupSpecifierPanel.lo \
 	SpecifierPanelFactory.lo EntityNameSpecifierPanel.lo \
-	TextSpecifierPanel.lo ObjectiveEntity.lo \
-	ObjectiveKeyExtractor.lo ObjectiveEntityFinder.lo Component.lo \
-	ComponentsDialog.lo ComponentType.lo DifficultyPanel.lo \
-	LogicEditor.lo MissionLogicDialog.lo Specifier.lo
+	TextSpecifierPanel.lo ObjectiveConditionsDialog.lo \
+	ObjectiveEntity.lo ObjectiveKeyExtractor.lo \
+	ObjectiveEntityFinder.lo Component.lo ComponentsDialog.lo \
+	ComponentType.lo DifficultyPanel.lo LogicEditor.lo \
+	MissionLogicDialog.lo Specifier.lo
 dm_objectives_la_OBJECTS = $(am_dm_objectives_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -348,6 +349,7 @@ dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
                      ce/specpanel/SpecifierPanelFactory.cpp \
                      ce/specpanel/EntityNameSpecifierPanel.cpp \
                      ce/specpanel/TextSpecifierPanel.cpp \
+                     ObjectiveConditionsDialog.cpp \
                      ObjectiveEntity.cpp \
                      ObjectiveKeyExtractor.cpp \
                      ObjectiveEntityFinder.cpp \
@@ -458,6 +460,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LocationComponentEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LogicEditor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MissionLogicDialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveConditionsDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveEntity.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveEntityFinder.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ObjectiveKeyExtractor.Plo@am__quote@

@@ -99,7 +99,7 @@ ActorArgument::ActorArgument(
 	_actorStore(actorStore)
 {
 	// Cast the helper class onto a ListStore and create a new treeview
-	_comboBox = Gtk::manage(new Gtk::ComboBox(_actorStore));
+	_comboBox = Gtk::manage(new Gtk::ComboBox(Glib::RefPtr<Gtk::TreeModel>::cast_static(_actorStore)));
 
 	// Add the cellrenderer for the name
 	Gtk::CellRendererText* nameRenderer = Gtk::manage(new Gtk::CellRendererText);
