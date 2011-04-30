@@ -105,7 +105,7 @@ void EffectEditor::populateWindow()
 
 	Gtk::HBox* effectHBox = Gtk::manage(new Gtk::HBox(false, 0));
 
-	_effectTypeCombo = Gtk::manage(new Gtk::ComboBox(_effectStore));
+	_effectTypeCombo = Gtk::manage(new Gtk::ComboBox(static_cast<const Glib::RefPtr<Gtk::TreeModel>&>(_effectStore)));
 
 	// Add the cellrenderer for the caption
 	Gtk::CellRendererText* captionRenderer = Gtk::manage(new Gtk::CellRendererText);
@@ -300,8 +300,8 @@ void EffectEditor::populateEntityListStore()
 	public:
 		// Constructor
 		EntityFinder(const Glib::RefPtr<Gtk::ListStore>& store, const EntityColumns& columns) :
-			_store(store),
-			_columns(columns)
+			_columns(columns),
+			_store(store)
 		{}
 
 		// Visit function

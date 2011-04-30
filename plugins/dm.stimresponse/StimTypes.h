@@ -91,7 +91,7 @@ public:
 
 	// Get the liststore for use in combo boxes and treeviews
 	const Columns& getColumns() const;
-	const Glib::RefPtr<Gtk::ListStore>& getListStore() const;
+	Glib::RefPtr<Gtk::TreeModel> getListStore() const;
 
 	/** greebo: Entity::Visitor implementation. This parses the keyvalues
 	 * 			for custom stim definitions.
