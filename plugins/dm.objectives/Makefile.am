@@ -38,6 +38,7 @@ dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
                      ce/specpanel/SpecifierPanelFactory.cpp \
                      ce/specpanel/EntityNameSpecifierPanel.cpp \
                      ce/specpanel/TextSpecifierPanel.cpp \
+                     ObjectiveConditionsDialog.cpp \
                      ObjectiveEntity.cpp \
                      ObjectiveKeyExtractor.cpp \
                      ObjectiveEntityFinder.cpp \

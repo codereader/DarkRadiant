@@ -75,7 +75,7 @@ public:
 	static const ListStoreColumns& getTreeModelColumns();
 
 	// Creates a new GtkListStore instance for packing into a treeview
-	static Glib::RefPtr<Gtk::ListStore> getAppTypeStore();
+	static Glib::RefPtr<Gtk::TreeModel> getAppTypeStore();
 
 private:
 	static int _highestId;

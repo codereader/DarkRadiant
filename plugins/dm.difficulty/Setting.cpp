@@ -119,7 +119,7 @@ const Setting::ListStoreColumns& Setting::getTreeModelColumns()
 	return cols;
 }
 
-Glib::RefPtr<Gtk::ListStore> Setting::getAppTypeStore()
+Glib::RefPtr<Gtk::TreeModel> Setting::getAppTypeStore()
 {
 	const ListStoreColumns& columns = getTreeModelColumns();
 	Glib::RefPtr<Gtk::ListStore> store = Gtk::ListStore::create(columns);
