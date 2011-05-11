@@ -47,7 +47,7 @@ public:
 	void visit(const scene::INodePtr& node) const;
 
 private:
-	void getMostUsedTexturing(const Brush* brush) const;
+	void getMostUsedTexturing(const Brush& brush) const;
 };
 
 } // namespace algorithm

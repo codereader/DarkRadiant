@@ -508,20 +508,21 @@ void setBrushClipPlane(const Plane3& plane) {
 /**
  * greebo: Splits the selected brushes by the given plane.
  */
-void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split) {
+void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split)
+{
 	TextureProjection projection;
 	projection.constructDefault();
 
 	{
 		// Instantiate a scoped walker
-		BrushByPlaneClipper walker(
+		BrushByPlaneClipper splitter(
 			planePoints[0],
 			planePoints[1],
 			planePoints[2],
 			projection,
 			split
 		);
-		GlobalSelectionSystem().foreachSelected(walker);
+		GlobalSelectionSystem().foreachSelected(splitter);
 	}
 
 	SceneChangeNotify();

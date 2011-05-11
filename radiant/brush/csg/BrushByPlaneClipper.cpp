@@ -43,7 +43,8 @@ BrushByPlaneClipper::~BrushByPlaneClipper()
 void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
 {
 	// Don't clip invisible nodes
-	if (!node->visible()) {
+	if (!node->visible())
+	{
 		return;
 	}
 
@@ -51,34 +52,43 @@ void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
 	Brush* brush = Node_getBrush(node);
 
 	// Return if not brush
-	if (brush == NULL) {
+	if (brush == NULL)
+	{
 		return;
 	}
 
 	Plane3 plane(_p0, _p1, _p2);
-	if (!plane.isValid()) {
+
+	if (!plane.isValid())
+	{
 		return;
 	}
 
 	// greebo: Analyse the brush to find out which shader is the most used one
-	getMostUsedTexturing(brush);
+	getMostUsedTexturing(*brush);
 
 	BrushSplitType split = Brush_classifyPlane(*brush, _split == eFront ? -plane : plane);
 
-	if (split.counts[ePlaneBack] && split.counts[ePlaneFront]) {
+	if (split.counts[ePlaneBack] && split.counts[ePlaneFront])
+	{
 		// the plane intersects this brush
-		if (_split == eFrontAndBack) {
-			scene::INodePtr brushNode = GlobalBrushCreator().createBrush();
+		if (_split == eFrontAndBack)
+		{
+			scene::INodePtr fragmentNode = GlobalBrushCreator().createBrush();
 
-			assert(brushNode != NULL);
+			assert(fragmentNode != NULL);
 
-			Brush* fragment = Node_getBrush(brushNode);
+			Brush* fragment = Node_getBrush(fragmentNode);
 			assert(fragment != NULL);
 			fragment->copy(*brush);
 
+			// Put the fragment in the same layer as the brush it was clipped from
+			scene::assignNodeToLayers(fragmentNode, node->getLayers());
+
 			FacePtr newFace = fragment->addPlane(_p0, _p1, _p2, _mostUsedShader, _mostUsedProjection);
 
-			if (newFace != NULL && _split != eFront) {
+			if (newFace != NULL && _split != eFront)
+			{
 				newFace->flipWinding();
 			}
 
@@ -86,7 +96,7 @@ void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
 			ASSERT_MESSAGE(!fragment->empty(), "brush left with no faces after split");
 
 			// Mark this brush for insertion
-			_insertList.insert(InsertMap::value_type(brushNode, node->getParent()));
+			_insertList.insert(InsertMap::value_type(fragmentNode, node->getParent()));
 		}
 
 		FacePtr newFace = brush->addPlane(_p0, _p1, _p2, _mostUsedShader, _mostUsedProjection);
@@ -99,13 +109,14 @@ void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
 		ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after split");
 	}
 	// the plane does not intersect this brush
-	else if (_split != eFrontAndBack && split.counts[ePlaneBack] != 0) {
+	else if (_split != eFrontAndBack && split.counts[ePlaneBack] != 0)
+	{
 		// the brush is "behind" the plane
 		_deleteList.insert(node);
 	}
 }
 
-void BrushByPlaneClipper::getMostUsedTexturing(const Brush* brush) const
+void BrushByPlaneClipper::getMostUsedTexturing(const Brush& brush) const
 {
 	// Intercept this call to apply caulk to all faces when the registry key is set
 	if (_useCaulk)
@@ -120,7 +131,7 @@ void BrushByPlaneClipper::getMostUsedTexturing(const Brush* brush) const
 	_mostUsedProjection = TextureProjection();
 
 	// greebo: Get the most used shader of this brush
-	for (Brush::const_iterator i = brush->begin(); i != brush->end(); ++i)
+	for (Brush::const_iterator i = brush.begin(); i != brush.end(); ++i)
 	{
 		// Get the shadername
 		const std::string& shader = (*i)->getShader();
