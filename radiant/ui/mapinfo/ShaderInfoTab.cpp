@@ -10,6 +10,9 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/box.h>
 #include <gtkmm/table.h>
+#include <boost/bind.hpp>
+
+#include "selection/algorithm/Shader.h"
 
 namespace ui
 {
@@ -17,13 +20,30 @@ namespace ui
 	{
 		const char* const TAB_NAME = N_("Shaders");
 		const std::string TAB_ICON("icon_texture.png");
+		const char* const SELECT_ITEMS = N_("Select elements using this shader");
+		const char* const DESELECT_ITEMS = N_("Deselect elements using this shader");
 	}
 
 ShaderInfoTab::ShaderInfoTab() :
-	_widget(NULL)
+	_widget(Gtk::manage(new Gtk::VBox(false, 6))),
+	_shaderCount(Gtk::manage(new gtkutil::LeftAlignedLabel(""))),
+	_listStore(Gtk::ListStore::create(_columns)),
+	_treeView(Gtk::manage(new Gtk::TreeView(_listStore))),
+	_popupMenu(_treeView)
 {
 	// Create all the widgets
-	populateTab();
+	construct();
+
+	_popupMenu.addItem(
+		Gtk::manage(new Gtk::MenuItem(_(SELECT_ITEMS))),
+		boost::bind(&ShaderInfoTab::_onSelectItems, this, true),
+		boost::bind(&ShaderInfoTab::_testSelectItems, this)
+	);
+	_popupMenu.addItem(
+		Gtk::manage(new Gtk::MenuItem(_(DESELECT_ITEMS))),
+		boost::bind(&ShaderInfoTab::_onSelectItems, this, false),
+		boost::bind(&ShaderInfoTab::_testSelectItems, this)
+	);
 }
 
 Gtk::Widget& ShaderInfoTab::getWidget()
@@ -41,18 +61,12 @@ std::string ShaderInfoTab::getIconName()
 	return TAB_ICON;
 }
 
-void ShaderInfoTab::populateTab()
+void ShaderInfoTab::construct()
 {
-	_widget = Gtk::manage(new Gtk::VBox(false, 6));
-
-	// Set the outer space of the vbox
+	// Setup the outer space of the vbox
 	_widget->set_border_width(12);
 
-	// Create the list store that contains the eclass => count map
-	_listStore = Gtk::ListStore::create(_columns);
-
-	// Create the treeview and pack two columns into it
-	_treeView = Gtk::manage(new Gtk::TreeView(_listStore));
+	// Setup the treeview and pack two columns into it
 	_treeView->set_headers_clickable(true);
 
 	Gtk::TreeViewColumn* shaderCol = Gtk::manage(new gtkutil::TextColumn(_("Shader"), _columns.shader));
@@ -86,8 +100,6 @@ void ShaderInfoTab::populateTab()
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(1, 2, false));
 	_widget->pack_start(*table, false, false, 0);
 
-	_shaderCount = Gtk::manage(new gtkutil::LeftAlignedLabel(""));
-
 	Gtk::Label* shaderLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_("Shaders used:")));
 
 	shaderLabel->set_size_request(100, -1);
@@ -101,5 +113,28 @@ void ShaderInfoTab::populateTab()
 
 	table->attach(*_shaderCount, 1, 2, 0, 1);
 }
+
+void ShaderInfoTab::_onSelectItems(bool select)
+{
+	Gtk::TreeModel::iterator iter = _treeView->get_selection()->get_selected();
+
+	Glib::ustring shader = (*iter)[_columns.shader];
+
+	if (select)
+	{
+		selection::algorithm::selectItemsByShader(shader);
+	}
+	else
+	{
+		selection::algorithm::deselectItemsByShader(shader);
+	}
+}
+
+bool ShaderInfoTab::_testSelectItems()
+{
+	// Return positive if there is a selection
+	return _treeView->get_selection()->get_selected();
+}
+
 
 } // namespace ui
