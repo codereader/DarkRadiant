@@ -1045,5 +1045,83 @@ int findAndReplaceShader(const std::string& find,
 	return replacer.getReplacedCount();
 }
 
+class ByShaderSelector :
+	public scene::NodeVisitor
+{
+private:
+	std::string _shaderName;
+
+	bool _select;
+
+public:
+	ByShaderSelector(const std::string& shaderName, bool select = true) :
+		_shaderName(shaderName),
+		_select(select)
+	{}
+
+	bool pre(const scene::INodePtr& node)
+	{
+		Brush* brush = Node_getBrush(node);
+
+		if (brush != NULL)
+		{
+			if (brush->hasShader(_shaderName))
+			{
+				Node_setSelected(node, _select);
+			}
+
+			return false; // don't traverse primitives
+		}
+
+		Patch* patch = Node_getPatch(node);
+
+		if (patch != NULL)
+		{
+			if (patch->getShader() == _shaderName)
+			{
+				Node_setSelected(node, _select);
+			}
+
+			return false; // don't traverse primitives
+		}
+
+		return true;
+	}
+};
+
+void selectItemsByShader(const std::string& shaderName)
+{
+	ByShaderSelector selector(shaderName, true);
+	GlobalSceneGraph().root()->traverse(selector);
+}
+
+void deselectItemsByShader(const std::string& shaderName)
+{
+	ByShaderSelector selector(shaderName, false);
+	GlobalSceneGraph().root()->traverse(selector);
+}
+
+void selectItemsByShader(const cmd::ArgumentList& args)
+{
+	if (args.size() < 1)
+	{
+		globalOutputStream() << "Usage: selectItemsByShader <SHADERNAME>" << std::endl;
+		return;
+	}
+
+	selectItemsByShader(args[0].getString());
+}
+
+void deselectItemsByShader(const cmd::ArgumentList& args)
+{
+	if (args.size() < 1)
+	{
+		globalOutputStream() << "Usage: selectItemsByShader <SHADERNAME>" << std::endl;
+		return;
+	}
+
+	deselectItemsByShader(args[0].getString());
+}
+
 	} // namespace algorithm
 } // namespace selection

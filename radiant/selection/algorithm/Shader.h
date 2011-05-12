@@ -182,6 +182,16 @@ namespace selection {
 							 const std::string& replace,
 							 bool selectedOnly);
 
+	/**
+	 * greebo: (De-)selects all map nodes that match the given shaderName.
+	 */
+	void selectItemsByShader(const std::string& shaderName);
+	void deselectItemsByShader(const std::string& shaderName);
+
+	// Command target to (de-)select items by shader name
+	void selectItemsByShader(const cmd::ArgumentList& args);
+	void deselectItemsByShader(const cmd::ArgumentList& args);
+
 	} // namespace algorithm
 } // namespace selection
 

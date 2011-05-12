@@ -3,6 +3,7 @@
 
 #include "map/ShaderBreakdown.h"
 
+#include "gtkutil/menu/PopupMenu.h"
 #include <gtkmm/liststore.h>
 
 namespace Gtk
@@ -43,6 +44,9 @@ private:
 	Glib::RefPtr<Gtk::ListStore> _listStore;
 	Gtk::TreeView* _treeView;
 
+	// Context menu
+	gtkutil::PopupMenu _popupMenu;
+
 public:
 	// Constructor
 	ShaderInfoTab();
@@ -54,8 +58,11 @@ public:
 	std::string getIconName();
 
 private:
-	// This is called to create the widgets
-	void populateTab();
+	// This is called to setup the widgets
+	void construct();
+
+	void _onSelectItems(bool select);
+	bool _testSelectItems();
 
 }; // class ShaderInfoTab
 
