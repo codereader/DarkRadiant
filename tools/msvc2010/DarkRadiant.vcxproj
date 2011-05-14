@@ -329,16 +329,7 @@
     <ClCompile Include="..\..\radiant\brush\Winding.cpp" />
     <ClCompile Include="..\..\radiant\brush\export\CollisionModel.cpp" />
     <ClCompile Include="..\..\radiant\brush\csg\BrushByPlaneClipper.cpp" />
-    <ClCompile Include="..\..\radiant\brush\csg\CSG.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.obj</ObjectFileName>
-      <XMLDocumentationFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)%(Filename)1.xdc</XMLDocumentationFileName>
-    </ClCompile>
+    <ClCompile Include="..\..\radiant\brush\csg\CSG.cpp" />
     <ClCompile Include="..\..\radiant\camera\Camera.cpp" />
     <ClCompile Include="..\..\radiant\camera\CameraSettings.cpp" />
     <ClCompile Include="..\..\radiant\camera\CamWnd.cpp" />
