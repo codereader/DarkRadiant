@@ -51,6 +51,18 @@ public:
 	}
 };
 
+// Wrap around the EntityClassVisitor interface
+class ModelDefVisitorWrapper :
+	public ModelDefVisitor,
+	public boost::python::wrapper<ModelDefVisitor>
+{
+public:
+    void visit(const IModelDefPtr& modelDef) {
+		// Wrap this method to python
+		this->get_override("visit")(*modelDef);
+	}
+};
+
 /**
  * greebo: This class provides the script interface for the GlobalEntityClassManager module.
  */
@@ -64,7 +76,8 @@ public:
 
 	IModelDef findModel(const std::string& name);
 
-	void forEach(EntityClassVisitor& visitor);
+	void forEachEntityClass(EntityClassVisitor& visitor);
+	void forEachModelDef(ModelDefVisitor& visitor);
 
 	// IScriptInterface implementation
 	void registerInterface(boost::python::object& nspace);
