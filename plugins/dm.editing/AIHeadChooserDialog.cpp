@@ -253,7 +253,7 @@ public:
 		_list(list)
 	{}
 
-	void visit(IEntityClassPtr eclass)
+	void visit(const IEntityClassPtr& eclass)
 	{
 		if (eclass->getAttribute("editor_head").value == "1")
 		{
@@ -273,7 +273,7 @@ void AIHeadChooserDialog::findAvailableHeads()
 
 	// Instantiate a finder class and traverse all eclasses
 	HeadEClassFinder visitor(_availableHeads);
-	GlobalEntityClassManager().forEach(visitor);
+	GlobalEntityClassManager().forEachEntityClass(visitor);
 }
 
 // Init static class member

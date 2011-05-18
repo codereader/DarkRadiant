@@ -25,8 +25,10 @@ public:
 		_prefix = GlobalRegistry().get(RKEY_RESPONSE_EFFECT_PREFIX);
 	}
 
-	void visit(IEntityClassPtr eclass) {
-		if (boost::algorithm::starts_with(eclass->getName(), _prefix)) {
+	void visit(const IEntityClassPtr& eclass)
+	{
+		if (boost::algorithm::starts_with(eclass->getName(), _prefix))
+		{
 			// We have a match, store the eclassptr
 			_map[eclass->getName()] = eclass;
 		}
@@ -36,7 +38,7 @@ public:
 ResponseEffectTypes::ResponseEffectTypes() {
 	// Load the possible effect types
 	ResponseEffectLoader loader(_effectTypes);
-	GlobalEntityClassManager().forEach(loader);
+	GlobalEntityClassManager().forEachEntityClass(loader);
 }
 
 // Static accessor

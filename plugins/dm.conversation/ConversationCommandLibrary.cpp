@@ -28,8 +28,10 @@ public:
 		_prefix(GlobalRegistry().get(RKEY_CONVERSATION_COMMAND_INFO_PREFIX))
 	{}
 
-	void visit(IEntityClassPtr eclass) {
-		if (boost::algorithm::starts_with(eclass->getName(), _prefix)) {
+	void visit(const IEntityClassPtr& eclass)
+	{
+		if (boost::algorithm::starts_with(eclass->getName(), _prefix))
+		{
 			// We have a match, create a new structure
 			ConversationCommandInfoPtr commandInfo(new ConversationCommandInfo);
 
@@ -74,7 +76,7 @@ void ConversationCommandLibrary::loadConversationCommands()
 {
 	// Load the possible command types
 	ConversationCommandInfoLoader loader(_commandInfo);
-	GlobalEntityClassManager().forEach(loader);
+	GlobalEntityClassManager().forEachEntityClass(loader);
 }
 
 void ConversationCommandLibrary::populateListStore(const Glib::RefPtr<Gtk::ListStore>& store,

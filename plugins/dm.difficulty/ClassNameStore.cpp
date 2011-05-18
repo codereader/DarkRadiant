@@ -43,7 +43,7 @@ const Glib::RefPtr<Gtk::ListStore>& ClassNameStore::getModel() const
 }
 
 // EntityClassVisitor implementation
-void ClassNameStore::visit(IEntityClassPtr eclass)
+void ClassNameStore::visit(const IEntityClassPtr& eclass)
 {
 	Gtk::TreeModel::Row row = *_store->append();
 
@@ -55,7 +55,7 @@ void ClassNameStore::populateListStore()
 	_store->clear();
 
 	// Visit each entity class using <this> as visitor
-	GlobalEntityClassManager().forEach(*this);
+	GlobalEntityClassManager().forEachEntityClass(*this);
 }
 
 } // namespace ui

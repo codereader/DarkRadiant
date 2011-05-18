@@ -39,7 +39,7 @@ public:
 							 const EntityClassChooser::TreeColumns& columns);
 
     // Required visit function
-	void visit(IEntityClassPtr eclass);
+	void visit(const IEntityClassPtr& eclass);
 
 	// VFSTreePopulator::Visitor implementation
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,

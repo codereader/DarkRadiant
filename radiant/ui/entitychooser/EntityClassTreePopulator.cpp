@@ -29,7 +29,7 @@ EntityClassTreePopulator::EntityClassTreePopulator(const Glib::RefPtr<Gtk::TreeS
 {}
 
 // Required visit function
-void EntityClassTreePopulator::visit(IEntityClassPtr eclass)
+void EntityClassTreePopulator::visit(const IEntityClassPtr& eclass)
 {
 	std::string folderPath = eclass->getAttribute(_folderKey).value;
 

@@ -47,7 +47,7 @@ private:
 	static ClassNameStorePtr& InstancePtr();
 
 	// EntityClassVisitor implementation
-	virtual void visit(IEntityClassPtr eclass);
+	virtual void visit(const IEntityClassPtr& eclass);
 
 	// Traverses all entities and fills the store
 	void populateListStore();
