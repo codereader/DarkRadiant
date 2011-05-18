@@ -32,7 +32,15 @@ print('ModelDef mesh for builderforger = ' + modelDef.mesh)
 #		print eclass.getAttribute('editor_usage').value
 
 #eclassVisitor = TestVisitor()
-#GlobalEntityClassManager.forEach(eclassVisitor)
+#GlobalEntityClassManager.forEachEntityClass(eclassVisitor)
+
+# Test implementing a model def visitor interface
+#class TestModelDefVisitor(ModelDefVisitor) :
+#	def visit(self, modelDef):
+#		print(modelDef.mesh)
+#
+#modelDefVisitor = TestModelDefVisitor()
+#GlobalEntityClassManager.forEachModelDef(modelDefVisitor)
 
 # Test traversing the scenegraph
 class SceneWalker(SceneNodeVisitor) :

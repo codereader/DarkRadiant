@@ -14,9 +14,14 @@ IModelDef EClassManagerInterface::findModel(const std::string& name) {
 	return (modelDef != NULL) ? *modelDef : _emptyModelDef;
 }
 
-void EClassManagerInterface::forEach(EntityClassVisitor& visitor)
+void EClassManagerInterface::forEachEntityClass(EntityClassVisitor& visitor)
 {
 	GlobalEntityClassManager().forEachEntityClass(visitor);
+}
+
+void EClassManagerInterface::forEachModelDef(ModelDefVisitor& visitor)
+{
+	GlobalEntityClassManager().forEachModelDef(visitor);
 }
 
 // IScriptInterface implementation
@@ -58,11 +63,18 @@ void EClassManagerInterface::registerInterface(boost::python::object& nspace) {
 		.def("visit", boost::python::pure_virtual(&EntityClassVisitor::visit))
 	;
 
+	// Expose the model def visitor interface
+	nspace["ModelDefVisitor"] =
+		boost::python::class_<ModelDefVisitorWrapper, boost::noncopyable>("ModelDefVisitor")
+		.def("visit", boost::python::pure_virtual(&ModelDefVisitor::visit))
+	;
+
 	// Add the module declaration to the given python namespace
 	nspace["GlobalEntityClassManager"] = boost::python::class_<EClassManagerInterface>("GlobalEntityClassManager")
 		.def("findClass", &EClassManagerInterface::findClass)
-		.def("forEach", &EClassManagerInterface::forEach)
+		.def("forEachEntityClass", &EClassManagerInterface::forEachEntityClass)
 		.def("findModel", &EClassManagerInterface::findModel)
+		.def("forEachModelDef", &EClassManagerInterface::forEachModelDef)
 	;
 
 	// Now point the Python variable "GlobalEntityClassManager" to this instance
