@@ -184,9 +184,9 @@ IEntityClassPtr EClassManager::findClass(const std::string& className) const {
 }
 
 // Visit each entity class
-void EClassManager::forEach(EntityClassVisitor& visitor)
+void EClassManager::forEachEntityClass(EntityClassVisitor& visitor)
 {
-	for(EntityClasses::iterator i = _entityClasses.begin();
+	for (EntityClasses::iterator i = _entityClasses.begin();
 		i != _entityClasses.end();
 		++i)
 	{
@@ -203,9 +203,18 @@ void EClassManager::unrealise()
     }
 }
 
-IModelDefPtr EClassManager::findModel(const std::string& name) const {
+IModelDefPtr EClassManager::findModel(const std::string& name) const
+{
 	Models::const_iterator found = _models.find(name);
 	return (found != _models.end()) ? found->second : Doom3ModelDefPtr();
+}
+
+void EClassManager::forEachModelDef(ModelDefVisitor& visitor)
+{
+	for (Models::const_iterator i = _models.begin(); i != _models.end(); ++i)
+	{
+		visitor.visit(i->second);
+	}
 }
 
 void EClassManager::reloadDefs()

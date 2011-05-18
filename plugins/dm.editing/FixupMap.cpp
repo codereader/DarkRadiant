@@ -184,7 +184,7 @@ void FixupMap::loadDeprecatedEntities()
 {
 	// Traverse all eclasses and collect replacements
 	DeprecatedEclassCollector collector;
-	GlobalEntityClassManager().forEach(collector);
+	GlobalEntityClassManager().forEachEntityClass(collector);
 
 	_contents += "\n";
 	_contents += collector.getFixupCode();

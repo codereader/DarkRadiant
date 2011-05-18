@@ -21,13 +21,13 @@ EClassTreeBuilder::EClassTreeBuilder(const Glib::RefPtr<Gtk::TreeStore>& targetS
 	_entityIcon(GlobalUIManager().getLocalPixbuf(ENTITY_ICON))
 {
 	// Travese the entity classes, this will call visit() for each eclass
-	GlobalEntityClassManager().forEach(*this);
+	GlobalEntityClassManager().forEachEntityClass(*this);
 
 	// Visit the tree populator in order to fill in the column data
 	_treePopulator.forEachNode(*this);
 }
 
-void EClassTreeBuilder::visit(IEntityClassPtr eclass)
+void EClassTreeBuilder::visit(const IEntityClassPtr& eclass)
 {
 	std::string fullPath;
 

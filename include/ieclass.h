@@ -355,10 +355,22 @@ class EntityClassVisitor
 {
 public:
     virtual ~EntityClassVisitor() {}
-	virtual void visit(IEntityClassPtr eclass) = 0;
+	virtual void visit(const IEntityClassPtr& eclass) = 0;
 };
 
-const std::string MODULE_ECLASSMANAGER("EntityClassManager");
+/**
+ * ModelDef visitor interface.
+ *
+ * \ingroup eclass
+ */
+class ModelDefVisitor
+{
+public:
+    virtual ~ModelDefVisitor() {}
+	virtual void visit(const IModelDefPtr& modelDef) = 0;
+};
+
+const char* const MODULE_ECLASSMANAGER("EntityClassManager");
 
 /**
  * EntityClassManager interface. The entity class manager is responsible for
@@ -404,7 +416,10 @@ public:
      */
     virtual IEntityClassPtr findClass(const std::string& name) const = 0;
 
- 	virtual void forEach(EntityClassVisitor& visitor) = 0;
+	/**
+	 * Iterate over all entity defs using the given visitor.
+	 */
+ 	virtual void forEachEntityClass(EntityClassVisitor& visitor) = 0;
 
 	virtual void realise() = 0;
 	virtual void unrealise() = 0;
@@ -418,9 +433,15 @@ public:
 	 */
 	virtual void reloadDefs() = 0;
 
-	/** greebo: Finds the model def with the given name. Might return NULL if not found.
+	/** 
+	 * greebo: Finds the model def with the given name. Might return NULL if not found.
 	 */
 	virtual IModelDefPtr findModel(const std::string& name) const = 0;
+
+	/**
+	 * Iterate over each ModelDef using the given visitor class.
+	 */
+	virtual void forEachModelDef(ModelDefVisitor& visitor) = 0;
 };
 
 /**

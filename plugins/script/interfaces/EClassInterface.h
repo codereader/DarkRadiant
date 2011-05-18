@@ -45,7 +45,7 @@ class EntityClassVisitorWrapper :
 	public boost::python::wrapper<EntityClassVisitor>
 {
 public:
-    void visit(IEntityClassPtr eclass) {
+    void visit(const IEntityClassPtr& eclass) {
 		// Wrap this method to python
 		this->get_override("visit")(ScriptEntityClass(eclass));
 	}

@@ -14,8 +14,9 @@ IModelDef EClassManagerInterface::findModel(const std::string& name) {
 	return (modelDef != NULL) ? *modelDef : _emptyModelDef;
 }
 
-void EClassManagerInterface::forEach(EntityClassVisitor& visitor) {
-	GlobalEntityClassManager().forEach(visitor);
+void EClassManagerInterface::forEach(EntityClassVisitor& visitor)
+{
+	GlobalEntityClassManager().forEachEntityClass(visitor);
 }
 
 // IScriptInterface implementation

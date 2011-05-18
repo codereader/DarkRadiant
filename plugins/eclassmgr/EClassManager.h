@@ -67,7 +67,7 @@ public:
     IEntityClassPtr findClass(const std::string& className) const;
 
     // Visit each entity class
-	virtual void forEach(EntityClassVisitor& visitor);
+	virtual void forEachEntityClass(EntityClassVisitor& visitor);
 
 	void realise();
     void unrealise();
@@ -78,6 +78,7 @@ public:
 
     // Find the modeldef with the given name
     virtual IModelDefPtr findModel(const std::string& name) const;
+	virtual void forEachModelDef(ModelDefVisitor& visitor);
 
 	// Reloads all entityDefs/modelDefs
 	void reloadDefs();

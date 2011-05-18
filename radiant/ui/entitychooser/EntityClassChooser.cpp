@@ -190,7 +190,7 @@ void EntityClassChooser::loadEntityClasses()
     // Populate it with the list of entity
     // classes by using a visitor class.
     EntityClassTreePopulator visitor(_treeStore, _columns);
-    GlobalEntityClassManager().forEach(visitor);
+    GlobalEntityClassManager().forEachEntityClass(visitor);
 
     // insert the data, using the same walker class as Visitor
     visitor.forEachNode(visitor);

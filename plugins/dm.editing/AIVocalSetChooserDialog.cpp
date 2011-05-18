@@ -261,7 +261,7 @@ public:
 		_list(list)
 	{}
 
-	void visit(IEntityClassPtr eclass)
+	void visit(const IEntityClassPtr& eclass)
 	{
 		if (eclass->getAttribute("editor_vocal_set").value == "1")
 		{
@@ -281,7 +281,7 @@ void AIVocalSetChooserDialog::findAvailableSets()
 
 	// Instantiate a finder class and traverse all eclasses
 	VocalSetEClassFinder visitor(_availableSets);
-	GlobalEntityClassManager().forEach(visitor);
+	GlobalEntityClassManager().forEachEntityClass(visitor);
 }
 
 // Init static class member

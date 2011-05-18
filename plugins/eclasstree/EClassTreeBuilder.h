@@ -30,7 +30,7 @@ public:
 					  const EClassTreeColumns& columns);
 
 	// Visitor implementation
-	virtual void visit(IEntityClassPtr eclass);
+	virtual void visit(const IEntityClassPtr& eclass);
 
 	void visit(const Glib::RefPtr<Gtk::TreeStore>& store,
 			   const Gtk::TreeModel::iterator& iter,
