@@ -180,12 +180,24 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
             selection::algorithm::applyShaderToSelection(material);
         }
 
+		// If we had primitives to reparent, the new entity should inherit the layer info from them
+		if (primitivesSelected)
+		{
+			scene::INodePtr primitive = GlobalSelectionSystem().ultimateSelected();
+			scene::assignNodeToLayers(node, primitive->getLayers());
+		}
+		else
+		{
+			// Otherwise move the item to the first visible layer
+			node->moveToLayer(GlobalLayerSystem().getFirstVisibleLayer());
+		}
+
         // Parent the selected primitives to the new node
 		selection::algorithm::ParentPrimitivesToEntityWalker walker(node);
 		GlobalSelectionSystem().foreachSelected(walker);
 		walker.reparent();
 
-	    // De-select the children and select the newly created parent entity
+		// De-select the children and select the newly created parent entity
 	    GlobalSelectionSystem().setSelectedAll(false);
 	    Node_setSelected(node, true);
     }
