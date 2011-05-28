@@ -14,7 +14,13 @@ SelectionSystemWindowObserver* NewWindowObserver() {
   return new RadiantWindowObserver;
 }
 
+namespace
+{
+	const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+}
+
 RadiantWindowObserver::RadiantWindowObserver() :
+	_selectEpsilon(GlobalRegistry().getFloat(RKEY_SELECT_EPSILON)),
 	_mouseDown(false),
 	_listenForCancelEvents(false)
 {}
@@ -89,7 +95,7 @@ void RadiantWindowObserver::onSizeChanged(int width, int height)
 	_height = height;
 
 	// Rescale the epsilon accordingly...
-	DeviceVector epsilon(SELECT_EPSILON / static_cast<float>(_width), SELECT_EPSILON / static_cast<float>(_height));
+	DeviceVector epsilon(_selectEpsilon / _width, _selectEpsilon / _height);
 	// ...and pass it to the helper classes
 	_selectObserver._epsilon = epsilon;
 	_manipulateObserver._epsilon = epsilon;

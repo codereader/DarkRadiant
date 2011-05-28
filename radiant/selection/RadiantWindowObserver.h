@@ -1,5 +1,4 @@
-#ifndef RADIANTWINDOWOBSERVER_H_
-#define RADIANTWINDOWOBSERVER_H_
+#pragma once
 
 #include "view.h"
 
@@ -43,10 +42,9 @@ public:
 class RadiantWindowObserver :
 	public SelectionSystemWindowObserver
 {
+private:
 	// The tolerance when it comes to the construction of selection boxes
-	enum {
-		SELECT_EPSILON = 8,
-  	};
+	float _selectEpsilon;
 
 	// The window dimensions
 	int _width;
@@ -123,5 +121,3 @@ private:
 
 // Allocates a new Observer on the heap and returns the pointer
 SelectionSystemWindowObserver* NewWindowObserver();
-
-#endif /*RADIANTWINDOWOBSERVER_H_*/
