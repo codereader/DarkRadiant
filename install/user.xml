@@ -49,6 +49,7 @@
 	<alwaysShowLightVertices value="1"/>
 	<freeModelRotation value="0" />
 	<rotationPivotIsOrigin value="0" />
+	<selectionEpsilon value="8.0" />
 	<dragResizeEntitiesSymmetrically value="1" />
 	<transientComponentSelection value="1" />
 	<offsetClonedObjects value="1" />
