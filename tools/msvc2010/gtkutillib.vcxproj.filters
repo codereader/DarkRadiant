@@ -84,6 +84,7 @@
     <ClInclude Include="..\..\libs\gtkutil\VFSTreePopulator.h" />
     <ClInclude Include="..\..\libs\gtkutil\widget.h" />
     <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
+    <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">

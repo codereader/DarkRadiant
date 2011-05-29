@@ -61,7 +61,7 @@ XYWnd::XYWnd(int id) :
 	_id(id),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
 	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, _glWidget)),
-	m_deferred_motion(callbackMouseMotion, this),
+	m_deferred_motion(boost::bind(&XYWnd::callbackMouseMotion, this, _1, _2, _3)),
 	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
 	_maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
 	_moveStarted(false),
@@ -106,7 +106,7 @@ XYWnd::XYWnd(int id) :
 
 	_glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &XYWnd::callbackButtonPress));
 	_glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &XYWnd::callbackButtonRelease));
-	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &DeferredMotion::gtk_motion));
+	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &gtkutil::DeferredMotion::onMouseMotion));
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMouseWheelScroll));
 
 	_validCallbackHandle = GlobalMap().addValidCallback(
@@ -1827,18 +1827,16 @@ bool XYWnd::callbackButtonRelease(GdkEventButton* ev)
 }
 
 /* greebo: This is the GTK callback for mouse movement. */
-void XYWnd::callbackMouseMotion(gdouble x, gdouble y, guint state, void* data) {
-
-	// Convert the passed pointer into a XYWnd pointer
-	XYWnd* self = reinterpret_cast<XYWnd*>(data);
-
+void XYWnd::callbackMouseMotion(gdouble x, gdouble y, guint state)
+{
 	// Call the chaseMouse method
-	if (self->chaseMouseMotion(static_cast<int>(x), static_cast<int>(y), state)) {
+	if (chaseMouseMotion(static_cast<int>(x), static_cast<int>(y), state))
+	{
 		return;
 	}
 
 	// This gets executed, if the above chaseMouse call returned false, i.e. no mouse chase has been performed
-	self->mouseMoved(static_cast<int>(x), static_cast<int>(y), state);
+	mouseMoved(static_cast<int>(x), static_cast<int>(y), state);
 }
 
 // This is the onWheelScroll event, that is used to Zoom in/out in the xyview
