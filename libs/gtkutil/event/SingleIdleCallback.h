@@ -1,5 +1,4 @@
-#ifndef SINGLEIDLECALLBACK_H_
-#define SINGLEIDLECALLBACK_H_
+#pragma once
 
 #include <glib/gmain.h>
 
@@ -18,23 +17,22 @@ namespace gtkutil
  */
 class SingleIdleCallback
 {
+private:
 	// ID of the registered callback (for subsequent removal)
 	guint _id;
-
-	// some sort of "resource lock" to avoid duplicate callback registrations
-	bool _callbacksPending;
 
 private:
 
 	// Actual GTK idle callback static function, which invokes the child class'
 	// implementing method
-	static gboolean _onIdle(gpointer self) {
+	static gboolean _onIdle(gpointer self)
+	{
 		SingleIdleCallback* cb = reinterpret_cast<SingleIdleCallback*>(self);
 
 		// Call the virtual function
 		cb->onGtkIdle();
 
-		cb->_callbacksPending = false;
+		cb->_id = 0;
 
 		return FALSE; // automatically deregister callback
 	}
@@ -42,10 +40,10 @@ private:
 	// Remove the callback
 	void deregisterCallback()
 	{
-		if (_callbacksPending)
+		if (_id != 0)
 		{
 			g_source_remove(_id);
-			_callbacksPending = false;
+			_id = 0;
 		}
 	}
 
@@ -57,9 +55,7 @@ protected:
 	 */
 	void requestIdleCallback()
 	{
-		if (_callbacksPending) return; // avoid duplicate registrations
-
-		_callbacksPending = true;
+		if (_id != 0) return; // avoid duplicate registrations
 
 		_id = g_idle_add(_onIdle, this);
 	}
@@ -67,13 +63,13 @@ protected:
 	// TRUE if an idle callback is pending
 	bool callbacksPending() const
 	{
-		return _callbacksPending;
+		return _id != 0;
 	}
 
 	// Flushes any pending events, forces a call to onGtkIdle, if necessary
 	void flushIdleCallback()
 	{
-		if (_callbacksPending)
+		if (_id != 0)
 		{
 			// Cancel the event and force an onGtkIdle() call
 			deregisterCallback();
@@ -92,19 +88,17 @@ protected:
 public:
 
 	SingleIdleCallback() :
-		_id(0),
-		_callbacksPending(false)
+		_id(0)
 	{}
 
 	/**
 	 * Destructor. De-registers the callback from GTK, so that the method will
 	 * not be invoked after the object is destroyed.
 	 */
-	virtual ~SingleIdleCallback() {
+	virtual ~SingleIdleCallback()
+	{
 		deregisterCallback();
 	}
 };
 
 }
-
-#endif /*SINGLEIDLECALLBACK_H_*/
