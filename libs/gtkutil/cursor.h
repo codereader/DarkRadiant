@@ -39,57 +39,6 @@ void default_cursor(GtkWidget* widget);
 void Sys_GetCursorPos(GtkWindow* window, int *x, int *y);
 void Sys_SetCursorPos(GtkWindow* window, int x, int y);
 
-
-/* greebo: this class is used by the XYViews as some sort of "onMouseMotion" callback wrapper
- * I don't know why this exactly has to be used in such a way instead of
- * calling the XYWindow methods directly, but as always: If it ain't broken, don't fix it.
- */
-class DeferredMotion {
-	guint m_handler;
-	typedef void(*MotionFunction)(gdouble x, gdouble y, guint state, void* data);
-	MotionFunction m_function;
-	void* m_data;
-	gdouble m_x;
-	gdouble m_y;
-	guint m_state;
-
-	static gboolean deferred(DeferredMotion* self) {
-		self->m_handler = 0;
-		self->m_function(self->m_x, self->m_y, self->m_state, self->m_data);
-		return FALSE;
-	}
-
-public:
-	DeferredMotion(MotionFunction function, void* data) :
-		m_handler(0),
-		m_function(function),
-		m_data(data)
-	{}
-
-	~DeferredMotion() {
-		// Check if we have an active motion handler
-		if (m_handler != 0) {
-			g_source_remove(m_handler);
-		}
-	}
-
-	void motion(gdouble x, gdouble y, guint state) {
-		m_x = x;
-		m_y = y;
-		m_state = state;
-		if (m_handler == 0) {
-			m_handler = g_idle_add((GSourceFunc)deferred, this);
-		}
-	}
-
-	// greebo: This is the actual callback method that gets connected via to the "motion_notify_event"
-	bool gtk_motion(GdkEventMotion* ev)
-	{
-		motion(ev->x, ev->y, ev->state);
-		return false;
-	}
-};
-
 class DeferredMotionDelta
 {
   int m_delta_x;

@@ -115,11 +115,6 @@ public:
 
 // --------------- Callbacks ---------------------------------------------------------
 
-void selection_motion(gdouble x, gdouble y, guint state, void* data)
-{
-	reinterpret_cast<WindowObserver*>(data)->onMouseMotion(WindowVector(x, y), state);
-}
-
 void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
 	Camera* cam = reinterpret_cast<Camera*>(data);
 
@@ -149,7 +144,7 @@ CamWnd::CamWnd() :
 	_camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
 	m_window_observer(NewWindowObserver()),
 	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, _camGLWidget)),
-	m_deferred_motion(selection_motion, m_window_observer)
+	m_deferred_motion(boost::bind(&CamWnd::_onDeferredMouseMotion, this, _1, _2, _3))
 {
 	m_window_observer->setRectangleDrawCallback(
         boost::bind(&CamWnd::updateSelectionBox, this, _1)
@@ -804,7 +799,7 @@ void CamWnd::addHandlersMove()
 	m_selection_button_release_handler = _camGLWidget->signal_button_release_event().connect(
 		sigc::bind(sigc::mem_fun(*this, &CamWnd::selectionButtonRelease), m_window_observer));
 
-	m_selection_motion_handler = _camGLWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &DeferredMotion::gtk_motion));
+	m_selection_motion_handler = _camGLWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &gtkutil::DeferredMotion::onMouseMotion));
 
 	m_freelook_button_press_handler = _camGLWidget->signal_button_press_event().connect(
 		sigc::mem_fun(*this, &CamWnd::enableFreelookButtonPress));
@@ -1076,6 +1071,11 @@ bool CamWnd::freeMoveFocusOut(GdkEventFocus* ev)
 	// Disable free look mode when focus is lost
 	disableFreeMove();
 	return false;
+}
+
+void CamWnd::_onDeferredMouseMotion(gdouble x, gdouble y, guint state)
+{
+	m_window_observer->onMouseMotion(WindowVector(x, y), state);
 }
 
 // -------------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 #include "iscenegraph.h"
 #include "irender.h"
 #include "gtkutil/GLWidget.h"
+#include "gtkutil/DeferredMotion.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/GladeWidgetHolder.h"
 #include "selection/RadiantWindowObserver.h"
@@ -67,7 +68,7 @@ public:
 	SelectionSystemWindowObserver* m_window_observer;
 
 	DeferredDraw m_deferredDraw;
-	DeferredMotion m_deferred_motion;
+	gtkutil::DeferredMotion m_deferred_motion;
 
 	sigc::connection m_selection_button_press_handler;
 	sigc::connection m_selection_button_release_handler;
@@ -161,6 +162,8 @@ private:
 	bool selectionButtonPressFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
 	bool selectionButtonReleaseFreemove(GdkEventButton* ev, SelectionSystemWindowObserver* observer);
 	bool selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer);
+
+	void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
 };
 
 /**

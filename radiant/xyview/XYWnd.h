@@ -8,6 +8,7 @@
 #include "math/matrix.h"
 #include "math/Vector4.h"
 #include "gtkutil/cursor.h"
+#include "gtkutil/DeferredMotion.h"
 #include "gtkutil/WindowPosition.h"
 #include "xmlutil/Node.h"
 #include "timer.h"
@@ -33,7 +34,7 @@ protected:
 	gtkutil::GLWidget* _glWidget;
 
 	DeferredDraw m_deferredDraw;
-	DeferredMotion m_deferred_motion;
+	gtkutil::DeferredMotion m_deferred_motion;
 
 	// The maximum/minimum values of a coordinate
 	double _minWorldCoord;
@@ -221,7 +222,7 @@ private:
 	// gtkmm Callbacks
 	bool callbackButtonPress(GdkEventButton* ev);
 	bool callbackButtonRelease(GdkEventButton* ev);
-	static void 	callbackMouseMotion(gdouble x, gdouble y, guint state, void* data);
+	void callbackMouseMotion(gdouble x, gdouble y, guint state);
 	bool callbackMouseWheelScroll(GdkEventScroll* ev);
 	void callbackSizeAllocate(Gtk::Allocation& allocation);
 	bool callbackExpose(GdkEventExpose* ev);
