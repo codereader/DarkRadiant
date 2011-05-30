@@ -212,7 +212,7 @@ int TextureBrowser::getTextureHeight(const TexturePtr& tex)
 
 int TextureBrowser::getFontHeight()
 {
-	return GlobalOpenGL().m_fontHeight;
+	return GlobalOpenGL().getFontHeight();
 }
 
 const std::string& TextureBrowser::getSelectedShader() const

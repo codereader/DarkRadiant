@@ -27,6 +27,7 @@ public:
 
 	virtual void drawString(const std::string& string) const;
 	virtual void drawChar(char character) const;
+	virtual int getFontHeight();
 
 	// GtkGLext context management
 	virtual Gtk::Widget* getGLContextWidget();

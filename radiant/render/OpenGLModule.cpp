@@ -68,8 +68,6 @@ void OpenGLModule::sharedContextCreated()
 	GlobalRenderSystem().realise();
 
 	_font = GLFont::create("Sans 8");
-	m_font = _font.getDisplayList();
-	m_fontHeight = _font.getPixelHeight();
 }
 
 void OpenGLModule::sharedContextDestroyed()
@@ -140,14 +138,21 @@ void OpenGLModule::unregisterGLWidget(Gtk::Widget* widget)
 	}
 }
 
-void OpenGLModule::drawString(const std::string& string) const {
-	glListBase(m_font);
+void OpenGLModule::drawString(const std::string& string) const
+{
+	glListBase(_font.getDisplayList());
 	glCallLists(GLsizei(string.size()), GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(string.c_str()));
 }
 
-void OpenGLModule::drawChar(char character) const {
-	glListBase(m_font);
+void OpenGLModule::drawChar(char character) const
+{
+	glListBase(_font.getDisplayList());
 	glCallLists(1, GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(&character));
+}
+
+int OpenGLModule::getFontHeight() 
+{
+	return _font.getPixelHeight();
 }
 
 // RegisterableModule implementation
