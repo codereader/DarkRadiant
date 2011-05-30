@@ -86,7 +86,7 @@
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\Cursor.h" />
-    <ClInclude Include="..\..\libs\gtkutil\cursor_old.h" />
+    <ClInclude Include="..\..\libs\gtkutil\DeferredMotionDelta.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">
