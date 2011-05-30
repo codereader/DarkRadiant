@@ -113,21 +113,6 @@ public:
 	}
 };
 
-// --------------- Callbacks ---------------------------------------------------------
-
-void Camera_motionDelta(int x, int y, unsigned int state, void* data) {
-	Camera* cam = reinterpret_cast<Camera*>(data);
-
-	cam->m_mouseMove.motion_delta(x, y, state);
-	cam->m_strafe = GlobalEventManager().MouseEvents().strafeActive(state);
-
-	if (cam->m_strafe) {
-		cam->m_strafe_forward = GlobalEventManager().MouseEvents().strafeForwardActive(state);
-	} else {
-		cam->m_strafe_forward = false;
-	}
-}
-
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd() :
@@ -419,7 +404,7 @@ void CamWnd::enableFreeMove()
 	_parentWindow->set_focus(*_camGLWidget);
 
 	m_freemove_handle_focusout = _camGLWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &CamWnd::freeMoveFocusOut));
-	m_freezePointer.freeze_pointer(_parentWindow->gobj(), Camera_motionDelta, &m_Camera);
+	_freezePointer.freeze(_parentWindow, sigc::mem_fun(*this, &CamWnd::_onFreelookMotion));
 
 	update();
 }
@@ -448,7 +433,7 @@ void CamWnd::disableFreeMove()
 	addHandlersMove();
 
 	assert(_parentWindow);
-	m_freezePointer.unfreeze_pointer(_parentWindow->gobj());
+	_freezePointer.unfreeze(_parentWindow);
 
 	m_freemove_handle_focusout.disconnect();
 
@@ -1076,6 +1061,21 @@ bool CamWnd::freeMoveFocusOut(GdkEventFocus* ev)
 void CamWnd::_onDeferredMouseMotion(gdouble x, gdouble y, guint state)
 {
 	m_window_observer->onMouseMotion(WindowVector(x, y), state);
+}
+
+void CamWnd::_onFreelookMotion(int x, int y, guint state)
+{
+	m_Camera.m_mouseMove.motion_delta(x, y, state);
+	m_Camera.m_strafe = GlobalEventManager().MouseEvents().strafeActive(state);
+
+	if (m_Camera.m_strafe)
+	{
+		m_Camera.m_strafe_forward = GlobalEventManager().MouseEvents().strafeForwardActive(state);
+	}
+	else
+	{
+		m_Camera.m_strafe_forward = false;
+	}
 }
 
 // -------------------------------------------------------------------------------

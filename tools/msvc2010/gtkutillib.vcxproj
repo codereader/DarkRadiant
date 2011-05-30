@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
+    <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\PersistentTransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\TransientWindow.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\TransientWindow.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\menu\PopupMenu.cpp" />

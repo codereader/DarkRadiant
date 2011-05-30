@@ -5,6 +5,7 @@
 #include "irender.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/DeferredMotion.h"
+#include "gtkutil/FreezePointer.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/GladeWidgetHolder.h"
 #include "selection/RadiantWindowObserver.h"
@@ -49,7 +50,7 @@ class CamWnd :
 	static ShaderPtr m_state_select1;
 	static ShaderPtr m_state_select2;
 
-	FreezePointer m_freezePointer;
+	gtkutil::FreezePointer _freezePointer;
 
 	// Is true during an active drawing process
 	bool m_drawing;
@@ -164,6 +165,7 @@ private:
 	bool selectionMotionFreemove(GdkEventMotion* ev, SelectionSystemWindowObserver* observer);
 
 	void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
+	void _onFreelookMotion(int x, int y, guint state);
 };
 
 /**
