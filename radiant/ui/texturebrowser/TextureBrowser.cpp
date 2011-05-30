@@ -464,29 +464,6 @@ void TextureBrowser::selectTextureAt(int mx, int my)
 	}
 }
 
-/*
-============================================================================
-
-  MOUSE ACTIONS
-
-============================================================================
-*/
-void TextureBrowser::trackingDelta(int x, int y, unsigned int state, void* data)
-{
-	TextureBrowser& self = *reinterpret_cast<TextureBrowser*>(data);
-
-	if (y != 0) {
-		int scale = 1;
-
-		if (state & GDK_SHIFT_MASK)
-			scale = 4;
-
-		int originy = self.getOriginY();
-		originy += y * scale;
-		self.setOriginY(originy);
-	}
-}
-
 void TextureBrowser::draw()
 {
   int originy = getOriginY();
@@ -718,7 +695,7 @@ bool TextureBrowser::onButtonPress(GdkEventButton* ev)
 	{
 		if (ev->button == 3)
 		{
-			m_freezePointer.freeze_pointer(_parent->gobj(), trackingDelta, this);
+			_freezePointer.freeze(_parent, sigc::mem_fun(*this, &TextureBrowser::onFrozenMouseMotion));
 
 			// Store the coords of the mouse pointer for later reference
 			_popupX = static_cast<int>(ev->x);
@@ -743,7 +720,7 @@ bool TextureBrowser::onButtonRelease(GdkEventButton* ev)
 	{
 		if (ev->button == 3)
 		{
-			m_freezePointer.unfreeze_pointer(_parent->gobj());
+			_freezePointer.unfreeze(_parent);
 
 			// See how much we've been scrolling since mouseDown
 			int delta = abs(originy - _startOrigin);
@@ -760,11 +737,6 @@ bool TextureBrowser::onButtonRelease(GdkEventButton* ev)
 	return false;
 }
 
-bool TextureBrowser::onMouseMotion(GdkEventMotion* ev)
-{
-	return false;
-}
-
 bool TextureBrowser::onMouseScroll(GdkEventScroll* ev)
 {
 	if (ev->direction == GDK_SCROLL_UP)
@@ -777,6 +749,24 @@ bool TextureBrowser::onMouseScroll(GdkEventScroll* ev)
 	}
 
 	return false;
+}
+
+void TextureBrowser::onFrozenMouseMotion(int x, int y, guint state)
+{
+	if (y != 0)
+	{
+		int scale = 1;
+
+		if (state & GDK_SHIFT_MASK)
+		{
+			scale = 4;
+		}
+
+		int originy = getOriginY();
+		originy += y * scale;
+
+		setOriginY(originy);
+	}
 }
 
 void TextureBrowser::scrollChanged(void* data, gdouble value)
@@ -932,7 +922,6 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 			_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &TextureBrowser::onExpose));
 			_glWidget->signal_button_press_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonPress));
 			_glWidget->signal_button_release_event().connect(sigc::mem_fun(*this, &TextureBrowser::onButtonRelease));
-			_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &TextureBrowser::onMouseMotion));
 			_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &TextureBrowser::onMouseScroll));
 		}
 	}

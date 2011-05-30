@@ -14,6 +14,7 @@ libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 						$(GTKSOURCEVIEWMM_LIBS)
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
+						FreezePointer.cpp \
 						GLWidget.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \

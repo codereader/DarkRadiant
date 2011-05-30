@@ -8,6 +8,7 @@
 #include "math/matrix.h"
 #include "math/Vector4.h"
 #include "gtkutil/cursor.h"
+#include "gtkutil/FreezePointer.h"
 #include "gtkutil/DeferredMotion.h"
 #include "gtkutil/WindowPosition.h"
 #include "xmlutil/Node.h"
@@ -43,7 +44,7 @@ protected:
 	// The timer used for chase mouse xyview movements
 	Timer _chaseMouseTimer;
 
-	FreezePointer _freezePointer;
+	gtkutil::FreezePointer _freezePointer;
 
 	bool _moveStarted;
 	bool _zoomStarted;
@@ -226,11 +227,11 @@ private:
 	bool callbackMouseWheelScroll(GdkEventScroll* ev);
 	void callbackSizeAllocate(Gtk::Allocation& allocation);
 	bool callbackExpose(GdkEventExpose* ev);
-	static void 	callbackMoveDelta(int x, int y, unsigned int state, void* data);
+	void callbackMoveDelta(int x, int y, guint state);
 	bool callbackMoveFocusOut(GdkEventFocus* ev);
 	static gboolean	callbackChaseMouse(gpointer data);
 	bool callbackZoomFocusOut(GdkEventFocus* ev);
-	static void		callbackZoomDelta(int x, int y, unsigned int state, void* data);
+	void callbackZoomDelta(int x, int y, guint state);
 
 }; // class XYWnd
 

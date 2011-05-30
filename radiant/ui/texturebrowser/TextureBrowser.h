@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/cursor.h"
+#include "gtkutil/FreezePointer.h"
 #include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"
 #include "gtkutil/menu/PopupMenu.h"
@@ -102,7 +103,7 @@ private:
   bool m_originInvalid;
 
   gtkutil::DeferredAdjustment m_scrollAdjustment;
-  FreezePointer m_freezePointer;
+  gtkutil::FreezePointer _freezePointer;
 
   // the increment step we use against the wheel mouse
   std::size_t m_mouseWheelScrollIncrement;
@@ -148,9 +149,6 @@ public:
 
 	// Legacy function needed for DeferredAdjustment (TODO!)
 	static void scrollChanged(void* data, gdouble value);
-
-	// Another legacy function needed for FreezePointer (TODO)
-	static void trackingDelta(int x, int y, unsigned int state, void* data);
 
 	/** greebo: Returns the currently selected shader
 	 */
@@ -266,8 +264,10 @@ private:
 	// gtkmm Mouse Event Callbacks
 	bool onButtonPress(GdkEventButton* ev);
 	bool onButtonRelease(GdkEventButton* ev);
-	bool onMouseMotion(GdkEventMotion* ev);
 	bool onMouseScroll(GdkEventScroll* ev);
+
+	// Called when moving the mouse with the RMB held down (used for scrolling)
+	void onFrozenMouseMotion(int x, int y, guint state);
 };
 
 } // namespace ui

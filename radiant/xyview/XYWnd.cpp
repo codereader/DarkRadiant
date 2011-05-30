@@ -560,16 +560,16 @@ void XYWnd::beginMove()
 		endMove();
 	}
 	_moveStarted = true;
-	_freezePointer.freeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj(), callbackMoveDelta, this);
+	_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(), 
+		sigc::mem_fun(*this, &XYWnd::callbackMoveDelta));
 
 	m_move_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMoveFocusOut));
 }
 
-
 void XYWnd::endMove()
 {
 	_moveStarted = false;
-	_freezePointer.unfreeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj());
+	_freezePointer.unfreeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow());
 	m_move_focusOut.disconnect();
 }
 
@@ -580,13 +580,14 @@ void XYWnd::beginZoom()
 	}
 	_zoomStarted = true;
 	_dragZoom = 0;
-	_freezePointer.freeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj(), callbackZoomDelta, this);
+	_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(), 
+		sigc::mem_fun(*this, &XYWnd::callbackZoomDelta));
 	m_zoom_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackZoomFocusOut));
 }
 
 void XYWnd::endZoom() {
 	_zoomStarted = false;
-	_freezePointer.unfreeze_pointer(_parent ? _parent->gobj() : GlobalMainFrame().getTopLevelWindow()->gobj());
+	_freezePointer.unfreeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow());
 	m_zoom_focusOut.disconnect();
 }
 
@@ -1896,30 +1897,32 @@ bool XYWnd::callbackMoveFocusOut(GdkEventFocus* ev)
 	return false;
 }
 
-void XYWnd::callbackZoomDelta(int x, int y, unsigned int state, void* data) {
-	XYWnd* self = reinterpret_cast<XYWnd*>(data);
+void XYWnd::callbackZoomDelta(int x, int y, guint state)
+{
+	if (y != 0)
+	{
+		dragZoom() += y;
 
-	if (y != 0) {
-		self->dragZoom() += y;
-
-		while (abs(self->dragZoom()) > 8) {
-			if (self->dragZoom() > 0) {
-				self->zoomOut();
-				self->dragZoom() -= 8;
+		while (abs(dragZoom()) > 8)
+		{
+			if (dragZoom() > 0)
+			{
+				zoomOut();
+				dragZoom() -= 8;
 			}
-			else {
-				self->zoomIn();
-				self->dragZoom() += 8;
+			else
+			{
+				zoomIn();
+				dragZoom() += 8;
 			}
 		}
 	}
 }
 
-void XYWnd::callbackMoveDelta(int x, int y, unsigned int state, void* data) {
-	XYWnd* self = reinterpret_cast<XYWnd*>(data);
-
-	self->EntityCreate_MouseMove(x, y);
-	self->scroll(-x, y);
+void XYWnd::callbackMoveDelta(int x, int y, guint state)
+{
+	EntityCreate_MouseMove(x, y);
+	scroll(-x, y);
 }
 
 /* STATICS */
