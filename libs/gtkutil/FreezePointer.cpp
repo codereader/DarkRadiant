@@ -1,6 +1,5 @@
 #include "FreezePointer.h"
 
-#include "cursor_old.h"
 #include "Cursor.h"
 #include "debugging/debugging.h"
 
@@ -20,8 +19,8 @@ void FreezePointer::freeze(const Glib::RefPtr<Gtk::Window>& window, const Motion
 
 	window->get_window()->pointer_grab(true, mask, cursor, GDK_CURRENT_TIME);
 
-	Sys_GetCursorPos(window->gobj(), &_freezePosX, &_freezePosY);
-	Sys_SetCursorPos(window->gobj(), _freezePosX, _freezePosY);
+	Cursor::ReadPosition(window, _freezePosX, _freezePosY);
+	Cursor::SetPosition(window, _freezePosX,_freezePosY);
 		
 	_function = function;
 
@@ -34,22 +33,22 @@ void FreezePointer::unfreeze(const Glib::RefPtr<Gtk::Window>& window)
 	_motionHandler.disconnect();
 	_function = MotionDeltaFunction();
 
-	Sys_SetCursorPos(window->gobj(), _freezePosX, _freezePosY);
-
+	Cursor::SetPosition(window, _freezePosX,_freezePosY);
+	
 	Gdk::Window::pointer_ungrab(GDK_CURRENT_TIME);
 }
 
 bool FreezePointer::_onMouseMotion(GdkEventMotion* ev, const Glib::RefPtr<Gtk::Window>& window)
 {
 	int current_x, current_y;
-	Sys_GetCursorPos(GTK_WINDOW(window->gobj()), &current_x, &current_y);
-
+	Cursor::ReadPosition(window, current_x, current_y);
+		
 	int dx = current_x - _freezePosX;
 	int dy = current_y - _freezePosY;
 
 	if (dx != 0 || dy != 0)
 	{
-		Sys_SetCursorPos(GTK_WINDOW(window->gobj()), _freezePosX, _freezePosY);
+		Cursor::SetPosition(window, _freezePosX, _freezePosY);
 
 		if (_function)
 		{

@@ -85,8 +85,8 @@
     <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
-    <ClInclude Include="..\..\libs\gtkutil\cursor_old.h" />
     <ClInclude Include="..\..\libs\gtkutil\Cursor.h" />
+    <ClInclude Include="..\..\libs\gtkutil\cursor_old.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">
@@ -124,6 +124,6 @@
     <ClCompile Include="..\..\libs\gtkutil\widget.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\cursor_old.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
   </ItemGroup>
 </Project>

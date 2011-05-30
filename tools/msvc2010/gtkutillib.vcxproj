@@ -142,6 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\gtkutil\Cursor.h" />
+    <ClInclude Include="..\..\libs\gtkutil\cursor_old.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h" />
@@ -157,7 +158,6 @@
     <ClInclude Include="..\..\libs\gtkutil\clipboard.h" />
     <ClInclude Include="..\..\libs\gtkutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\gtkutil\ControlButton.h" />
-    <ClInclude Include="..\..\libs\gtkutil\cursor_old.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredAdjustment.h" />
     <ClInclude Include="..\..\libs\gtkutil\dialog.h" />
     <ClInclude Include="..\..\libs\gtkutil\EntryAbortedException.h" />
@@ -195,6 +195,7 @@
     <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\TransientWindow.cpp" />
@@ -203,7 +204,6 @@
     <ClCompile Include="..\..\libs\gtkutil\dialog\MessageBox.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\clipboard.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\ConsoleView.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\cursor_old.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\DeferredAdjustment.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\dialog_legacy.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FileChooser.cpp" />
