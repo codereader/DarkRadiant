@@ -7,7 +7,7 @@
 #include "math/Vector3.h"
 #include "math/matrix.h"
 #include "math/Vector4.h"
-#include "gtkutil/cursor.h"
+#include "gtkutil/cursor_old.h"
 #include "gtkutil/FreezePointer.h"
 #include "gtkutil/DeferredMotion.h"
 #include "gtkutil/WindowPosition.h"
