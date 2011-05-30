@@ -61,7 +61,6 @@
     <ClInclude Include="..\..\libs\gtkutil\IconTextColumn.h" />
     <ClInclude Include="..\..\libs\gtkutil\IconTextMenuItem.h" />
     <ClInclude Include="..\..\libs\gtkutil\IConv.h" />
-    <ClInclude Include="..\..\libs\gtkutil\idledraw.h" />
     <ClInclude Include="..\..\libs\gtkutil\LeftAlignedLabel.h" />
     <ClInclude Include="..\..\libs\gtkutil\LeftAlignment.h" />
     <ClInclude Include="..\..\libs\gtkutil\MenuItemAccelerator.h" />
