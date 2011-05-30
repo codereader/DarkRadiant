@@ -14,7 +14,8 @@
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
 	_font(0, 0),
-	_sharedContext(NULL)
+	_sharedContext(NULL),
+	_contextValid(false)
 {}
 
 void OpenGLModule::assertNoErrors()
@@ -107,7 +108,7 @@ Gtk::Widget* OpenGLModule::registerGLWidget(Gtk::Widget* widget)
         }
 #endif
 
-		contextValid = true;
+		_contextValid = true;
 
 		sharedContextCreated();
 	}
@@ -126,7 +127,7 @@ void OpenGLModule::unregisterGLWidget(Gtk::Widget* widget)
 		if (_glWidgets.size() == 1)
 		{
 			// This was the last active GL widget
-			contextValid = false;
+			_contextValid = false;
 
 			sharedContextDestroyed();
 
@@ -136,6 +137,11 @@ void OpenGLModule::unregisterGLWidget(Gtk::Widget* widget)
 
 		_glWidgets.erase(found);
 	}
+}
+
+bool OpenGLModule::contextValid() const
+{
+	return _contextValid;
 }
 
 void OpenGLModule::drawString(const std::string& string) const
