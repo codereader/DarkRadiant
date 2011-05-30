@@ -29,13 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "debugging/debugging.h"
 
-typedef struct _GdkCursor GdkCursor;
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkWindow GtkWindow;
 
-GdkCursor* create_blank_cursor();
-void blank_cursor(GtkWidget* widget);
-void default_cursor(GtkWidget* widget);
 void Sys_GetCursorPos(GtkWindow* window, int *x, int *y);
 void Sys_SetCursorPos(GtkWindow* window, int x, int y);
 
