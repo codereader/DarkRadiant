@@ -20,6 +20,8 @@ private:
 	typedef std::set<Gtk::Widget*> GLWidgets;
 	GLWidgets _glWidgets;
 
+	bool _contextValid;
+
 public:
 	OpenGLModule();
 
@@ -33,6 +35,7 @@ public:
 	virtual Gtk::Widget* getGLContextWidget();
 	virtual Gtk::Widget* registerGLWidget(Gtk::Widget* widget);
 	virtual void unregisterGLWidget(Gtk::Widget* widget);
+	virtual bool contextValid() const;
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

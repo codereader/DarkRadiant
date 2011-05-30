@@ -34,15 +34,7 @@ class OpenGLBinding :
 	public RegisterableModule
 {
 public:
-	/// \brief OpenGL version, extracted from the GL_VERSION string.
-	int major_version, minor_version;
-
-	/// \brief Is true if the global shared OpenGL context is valid.
-	bool contextValid;
-
-	OpenGLBinding() :
-		contextValid(false)
-	{}
+	virtual ~OpenGLBinding() {}
 
 	/// \brief Asserts that there no OpenGL errors have occurred since the last call to glGetError.
 	virtual void assertNoErrors() = 0;
@@ -60,6 +52,9 @@ public:
 
 	// Notifies the GL module that a GLWidget has been destroyed
 	virtual void unregisterGLWidget(Gtk::Widget* widget) = 0;
+
+	/// \brief Is true if the global shared OpenGL context is valid.
+	virtual bool contextValid() const = 0;
 
 	virtual int getFontHeight() = 0;
 

@@ -237,7 +237,7 @@ void OpenGLRenderSystem::unrealise()
 		}
     }
 
-	if (GlobalOpenGL().contextValid
+	if (GlobalOpenGL().contextValid()
         && shaderProgramsAvailable()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
