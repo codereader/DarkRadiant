@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gdkmm/cursor.h>
+#include <gtkmm/window.h>
 
 namespace gtkutil
 {
@@ -8,25 +9,20 @@ namespace gtkutil
 class Cursor
 {
 public:
-	static Gdk::Cursor createBlank()
-	{
-		char buffer[(32 * 32)/8];
-		memset(buffer, 0, (32 * 32)/8);
-		
-		Gdk::Color white; 
-		white.set_rgb(0xffff, 0xffff, 0xffff);
+	/**
+	 * Creates a blank GDK cursor, 32x32x1.
+	 */
+	static Gdk::Cursor createBlank();
 
-		Gdk::Color black;
-		black.set_rgb(0x0000, 0x0000, 0x0000);
+	/**
+	 * Reads the cursor position of the given window and writes the result to x,y.
+	 */
+	static void ReadPosition(const Glib::RefPtr<Gtk::Window>& window, int& x, int& y);
 
-		Glib::RefPtr<Gdk::Pixmap> pixmap = Gdk::Pixmap::create_from_data(
-			Glib::RefPtr<Gdk::Drawable>(), buffer, 32, 32, 1, white, black);
-
-		Glib::RefPtr<Gdk::Pixmap> mask = Gdk::Pixmap::create_from_data(
-			Glib::RefPtr<Gdk::Drawable>(), buffer, 32, 32, 1, white, black);
-
-		return Gdk::Cursor(pixmap, mask, white, black, 1, 1);
-	}
+	/**
+	 * Sets the cursor position of the given window to x,y.
+	 */
+	static void SetPosition(const Glib::RefPtr<Gtk::Window>& window, int x, int y);
 };
 
 } // namespace

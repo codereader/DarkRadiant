@@ -27,14 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <gtk/gtkwidget.h>
 #include <gtk/gtkwindow.h>
 
-#include "debugging/debugging.h"
-
-typedef struct _GtkWidget GtkWidget;
-typedef struct _GtkWindow GtkWindow;
-
-void Sys_GetCursorPos(GtkWindow* window, int *x, int *y);
-void Sys_SetCursorPos(GtkWindow* window, int x, int y);
-
 class DeferredMotionDelta
 {
   int m_delta_x;

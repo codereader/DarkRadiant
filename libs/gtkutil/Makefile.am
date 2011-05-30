@@ -27,7 +27,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						dialog_legacy.cpp \
 						glfont.cpp \
 						MenuItemAccelerator.cpp \
-						cursor_old.cpp \
+						Cursor.cpp \
 						DeferredAdjustment.cpp \
 						menu/PopupMenu.cpp \
 						widget.cpp \
