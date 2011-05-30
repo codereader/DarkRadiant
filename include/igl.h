@@ -61,8 +61,7 @@ public:
 	// Notifies the GL module that a GLWidget has been destroyed
 	virtual void unregisterGLWidget(Gtk::Widget* widget) = 0;
 
-	GLuint m_font;
-	int m_fontHeight;
+	virtual int getFontHeight() = 0;
 
 	/// \brief Renders \p string at the current raster-position of the current context.
 	virtual void drawString(const std::string& string) const = 0;
