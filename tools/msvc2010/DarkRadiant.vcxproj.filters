@@ -1635,6 +1635,9 @@
     <ClInclude Include="..\..\radiant\map\algorithm\MapImporter.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\Profile.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
