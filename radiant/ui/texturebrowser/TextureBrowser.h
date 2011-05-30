@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "icommandsystem.h"
 #include "gtkutil/nonmodal.h"
 #include "gtkutil/GLWidget.h"
-#include "gtkutil/cursor_old.h"
 #include "gtkutil/FreezePointer.h"
 #include "gtkutil/DeferredAdjustment.h"
 #include "texturelib.h"
