@@ -4,7 +4,7 @@
 #include "math/Vector3.h"
 #include "math/matrix.h"
 #include "timer.h"
-#include "gtkutil/cursor.h"
+#include "gtkutil/cursor_old.h"
 #include "generic/callback.h"
 #include "view.h"
 

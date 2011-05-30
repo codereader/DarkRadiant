@@ -1,6 +1,7 @@
 #include "FreezePointer.h"
 
-#include "cursor.h"
+#include "cursor_old.h"
+#include "Cursor.h"
 #include "debugging/debugging.h"
 
 namespace gtkutil
@@ -10,21 +11,14 @@ void FreezePointer::freeze(const Glib::RefPtr<Gtk::Window>& window, const Motion
 {
 	ASSERT_MESSAGE(!_function, "can't freeze pointer");
 	
-	const GdkEventMask mask = static_cast<GdkEventMask>(GDK_POINTER_MOTION_MASK
-		| GDK_POINTER_MOTION_HINT_MASK
-		| GDK_BUTTON_MOTION_MASK
-		| GDK_BUTTON1_MOTION_MASK
-		| GDK_BUTTON2_MOTION_MASK
-		| GDK_BUTTON3_MOTION_MASK
-		| GDK_BUTTON_PRESS_MASK
-		| GDK_BUTTON_RELEASE_MASK
-		| GDK_VISIBILITY_NOTIFY_MASK);
+	const Gdk::EventMask mask = 
+		Gdk::POINTER_MOTION_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::BUTTON_MOTION_MASK | 
+		Gdk::BUTTON1_MOTION_MASK | Gdk::BUTTON2_MOTION_MASK | Gdk::BUTTON3_MOTION_MASK |
+		Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::VISIBILITY_NOTIFY_MASK;
 
-	GdkCursor* cursor = create_blank_cursor();
+	Gdk::Cursor cursor = Cursor::createBlank();
 
-	//GdkGrabStatus status =
-	gdk_pointer_grab(GTK_WIDGET(window->gobj())->window, TRUE, mask, 0, cursor, GDK_CURRENT_TIME);
-	gdk_cursor_unref(cursor);
+	window->get_window()->pointer_grab(true, mask, cursor, GDK_CURRENT_TIME);
 
 	Sys_GetCursorPos(window->gobj(), &_freezePosX, &_freezePosY);
 	Sys_SetCursorPos(window->gobj(), _freezePosX, _freezePosY);
@@ -42,7 +36,7 @@ void FreezePointer::unfreeze(const Glib::RefPtr<Gtk::Window>& window)
 
 	Sys_SetCursorPos(window->gobj(), _freezePosX, _freezePosY);
 
-	gdk_pointer_ungrab(GDK_CURRENT_TIME);
+	Gdk::Window::pointer_ungrab(GDK_CURRENT_TIME);
 }
 
 bool FreezePointer::_onMouseMotion(GdkEventMotion* ev, const Glib::RefPtr<Gtk::Window>& window)
