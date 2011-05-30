@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "GlobalCamera.h"
 #include "CameraSettings.h"
+#include <boost/bind.hpp>
 
 Vector3 Camera::_prevOrigin(0,0,0);
 Vector3 Camera::_prevAngles(0,0,0);
@@ -18,7 +19,7 @@ Camera::Camera(View* view, const Callback& update) :
 	movementflags(0),
 	m_keymove_handler(0),
 	fieldOfView(75.0f),
-	m_mouseMove(motionDelta, this),
+	m_mouseMove(boost::bind(&Camera::onMotionDelta, this, _1, _2)),
 	m_view(view),
 	m_update(update)
 {}
@@ -264,9 +265,9 @@ void Camera::updateProjection() {
 	m_view->Construct(projection, modelview, width, height);
 }
 
-void Camera::motionDelta(int x, int y, void* data) {
-	Camera* self = reinterpret_cast<Camera*>(data);
-	self->mouseMove(x, y);
+void Camera::onMotionDelta(int x, int y)
+{
+	mouseMove(x, y);
 }
 
 void Camera::pitchUpDiscrete() {

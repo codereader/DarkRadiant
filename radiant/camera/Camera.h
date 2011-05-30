@@ -4,7 +4,7 @@
 #include "math/Vector3.h"
 #include "math/matrix.h"
 #include "timer.h"
-#include "gtkutil/cursor_old.h"
+#include "gtkutil/DeferredMotionDelta.h"
 #include "generic/callback.h"
 #include "view.h"
 
@@ -55,9 +55,11 @@ public:
 
 	float fieldOfView;
 
-	DeferredMotionDelta m_mouseMove;
+	gtkutil::DeferredMotionDelta m_mouseMove;
 
-	static void motionDelta(int x, int y, void* data);
+	// Gets called with the accumulated delta values, as buffered by gtkutil::DeferredMotionDelta
+	void onMotionDelta(int x, int y);
+
 	static gboolean camera_keymove(gpointer data);
 
 	View* m_view;

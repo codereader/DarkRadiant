@@ -1065,7 +1065,7 @@ void CamWnd::_onDeferredMouseMotion(gdouble x, gdouble y, guint state)
 
 void CamWnd::_onFreelookMotion(int x, int y, guint state)
 {
-	m_Camera.m_mouseMove.motion_delta(x, y, state);
+	m_Camera.m_mouseMove.onMouseMotionDelta(x, y, state);
 	m_Camera.m_strafe = GlobalEventManager().MouseEvents().strafeActive(state);
 
 	if (m_Camera.m_strafe)
