@@ -12,7 +12,7 @@ class OpenGLModule :
 private:
 	const std::string _unknownError;
 
-	GLFont _font;
+	gtkutil::GLFontPtr _font;
 
 	// The (singleton) widget holding the context
 	Gtk::Widget* _sharedContext;

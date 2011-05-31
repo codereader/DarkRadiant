@@ -1,58 +1,36 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+#pragma once
 
-This file is part of GtkRadiant.
+#include <boost/shared_ptr.hpp>
 
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_GTKUTIL_GLFONT_H)
-#define INCLUDED_GTKUTIL_GLFONT_H
+namespace gtkutil
+{
 
 typedef unsigned int GLuint;
 
 class GLFont
 {
 private:
-	GLuint m_displayList;
-	int m_pixelHeight;
+	GLuint _displayList;
+	int _pixelHeight;
+
 public:
-	GLFont(GLuint displayList, int pixelHeight) :
-		m_displayList(displayList),
-		m_pixelHeight(pixelHeight)
-	{}
+	// Construct a font using the Pango font name
+	// the constructor will allocate the GL display lists
+	GLFont(const char* fontName);
+
+	// Destructor frees the GL display list again
+	~GLFont();
 
 	GLuint getDisplayList() const
 	{
-		return m_displayList;
+		return _displayList;
 	}
 
 	int getPixelHeight() const
 	{
-		return m_pixelHeight;
+		return _pixelHeight;
 	}
-
-	void clear()
-	{
-		m_displayList = 0;
-		m_pixelHeight = 0;
-	}
-
-	static GLFont create(const char* fontString);
-	static void release(GLFont& font);
 };
+typedef boost::shared_ptr<GLFont> GLFontPtr;
 
-#endif
+} // namespace
