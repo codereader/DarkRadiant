@@ -54,7 +54,6 @@
     <ClInclude Include="..\..\libs\gtkutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\gtkutil\FramedWidget.h" />
     <ClInclude Include="..\..\libs\gtkutil\GladeWidgetHolder.h" />
-    <ClInclude Include="..\..\libs\gtkutil\glfont.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLWidgetSentry.h" />
     <ClInclude Include="..\..\libs\gtkutil\IconTextButton.h" />
@@ -86,6 +85,7 @@
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\Cursor.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotionDelta.h" />
+    <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">
@@ -108,7 +108,6 @@
     <ClCompile Include="..\..\libs\gtkutil\DeferredAdjustment.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\dialog_legacy.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FileChooser.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\glfont.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLWidget.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\MenuItemAccelerator.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\ModalProgressDialog.cpp" />
@@ -124,5 +123,6 @@
     <ClCompile Include="..\..\libs\gtkutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
   </ItemGroup>
 </Project>
