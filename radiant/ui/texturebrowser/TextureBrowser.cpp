@@ -54,8 +54,7 @@ TextureBrowser::TextureBrowser() :
 	_startOrigin(-1),
 	_epsilon(GlobalRegistry().getFloat(RKEY_TEXTURE_CONTEXTMENU_EPSILON)),
 	_popupMenu(new gtkutil::PopupMenu),
-	_filter(0),
-	_filterEntry(Callback(boost::bind(&TextureBrowser::queueDraw, this)), Callback(boost::bind(&TextureBrowser::clearFilter, this))),
+	_filter(NULL),
 	_glWidget(NULL),
 	_textureScrollbar(NULL),
 	m_heightChanged(true),
@@ -221,7 +220,7 @@ const std::string& TextureBrowser::getSelectedShader() const
 
 std::string TextureBrowser::getFilter()
 {
-	return m_showTextureFilter ? _filter->get_text() : "";
+	return _filter->get_text();
 }
 
 void TextureBrowser::setSelectedShader(const std::string& newShader)
@@ -893,7 +892,10 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 		}
 
 		{
-			_filter = Gtk::manage(new Gtk::Entry);
+			_filter = Gtk::manage(new gtkutil::NonModalEntry(
+				boost::bind(&TextureBrowser::queueDraw, this),
+				boost::bind(&TextureBrowser::clearFilter, this))
+			);
 
 			texbox->pack_start(*_filter, false, false, 0);
 
@@ -905,8 +907,6 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 			{
 				_filter->hide();
 			}
-
-			_filterEntry.connect(_filter->gobj());
 		}
 
 		{
