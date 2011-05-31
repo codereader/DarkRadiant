@@ -7,7 +7,6 @@
 #include "iradiant.h"
 #include "ipreferencesystem.h"
 
-#include "gtkutil/widget.h"
 #include "gtkutil/GLWidgetSentry.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/LeftAlignedLabel.h"
