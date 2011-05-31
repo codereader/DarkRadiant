@@ -4,7 +4,7 @@
 #include "igl.h"
 #include <map>
 #include <string>
-#include "gtkutil/glfont.h"
+#include "gtkutil/GLFont.h"
 
 class OpenGLModule :
 	public OpenGLBinding
