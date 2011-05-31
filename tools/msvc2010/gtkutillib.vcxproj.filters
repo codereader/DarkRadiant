@@ -79,7 +79,6 @@
     <ClInclude Include="..\..\libs\gtkutil\Timer.h" />
     <ClInclude Include="..\..\libs\gtkutil\TreeModel.h" />
     <ClInclude Include="..\..\libs\gtkutil\VFSTreePopulator.h" />
-    <ClInclude Include="..\..\libs\gtkutil\widget.h" />
     <ClInclude Include="..\..\libs\gtkutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
@@ -119,7 +118,6 @@
     <ClCompile Include="..\..\libs\gtkutil\Timer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\TreeModel.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\VFSTreePopulator.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\widget.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
