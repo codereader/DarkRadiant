@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iregistry.h"
 #include "icommandsystem.h"
-#include "gtkutil/nonmodal.h"
+#include "gtkutil/NonModalEntry.h"
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/FreezePointer.h"
 #include "gtkutil/DeferredAdjustment.h"
@@ -87,8 +87,7 @@ private:
 	Gtk::MenuItem* _seekInMediaBrowser;
 	Gtk::MenuItem* _shaderLabel;
 
-	Gtk::Entry* _filter;
-	NonModalEntry _filterEntry;
+	gtkutil::NonModalEntry* _filter;
 
 	Glib::RefPtr<Gtk::Window> _parent;
 	gtkutil::GLWidget* _glWidget;

@@ -22,15 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_GTKUTIL_NONMODAL_H)
 #define INCLUDED_GTKUTIL_NONMODAL_H
 
-#include <gtk/gtkwindow.h>
-#include <gtk/gtkspinbutton.h>
-#include <gtk/gtkradiobutton.h>
-#include <gdk/gdkkeysyms.h>
-
-#include "generic/callback.h"
-
-typedef struct _GtkEntry GtkEntry;
-
+#include <gtk/gtkwidget.h>
 
 inline gboolean escape_clear_focus_widget(GtkWidget* widget, GdkEventKey* event, gpointer data)
 {
@@ -46,72 +38,5 @@ inline void widget_connect_escape_clear_focus_widget(GtkWidget* widget)
 {
   g_signal_connect(G_OBJECT(widget), "key_press_event", G_CALLBACK(escape_clear_focus_widget), 0);
 }
-
-
-class NonModalEntry
-{
-  bool m_editing;
-  Callback m_apply;
-  Callback m_cancel;
-
-  static gboolean focus_in(GtkEntry* entry, GdkEventFocus *event, NonModalEntry* self)
-  {
-    self->m_editing = false;
-    return FALSE;
-  }
-
-  static gboolean focus_out(GtkEntry* entry, GdkEventFocus *event, NonModalEntry* self)
-  {
-    if(self->m_editing && GTK_WIDGET_VISIBLE(entry))
-    {
-      self->m_apply();
-    }
-    self->m_editing = false;
-    return FALSE;
-  }
-
-  static gboolean changed(GtkEntry* entry, NonModalEntry* self)
-  {
-    self->m_editing = true;
-    return FALSE;
-  }
-
-  static gboolean enter(GtkEntry* entry, GdkEventKey* event, NonModalEntry* self)
-  {
-    if(event->keyval == GDK_Return)
-    {
-      self->m_apply();
-      self->m_editing = false;
-      gtk_window_set_focus(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(entry))), NULL);
-      return TRUE;
-    }
-    return FALSE;
-  }
-
-  static gboolean escape(GtkEntry* entry, GdkEventKey* event, NonModalEntry* self)
-  {
-    if(event->keyval == GDK_Escape)
-    {
-      self->m_cancel();
-      self->m_editing = false;
-      gtk_window_set_focus(GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(entry))), NULL);
-      return TRUE;
-    }
-    return FALSE;
-  }
-
-public:
-  NonModalEntry(const Callback& apply, const Callback& cancel) : m_editing(false), m_apply(apply), m_cancel(cancel)
-  {
-  }
-  void connect(GtkEntry* entry)
-  {
-    g_signal_connect(G_OBJECT(entry), "focus_in_event", G_CALLBACK(focus_in), this);
-    g_signal_connect(G_OBJECT(entry), "focus_out_event", G_CALLBACK(focus_out), this);
-    g_signal_connect(G_OBJECT(entry), "key_press_event", G_CALLBACK(enter), this);
-    g_signal_connect(G_OBJECT(entry), "key_press_event", G_CALLBACK(escape), this);
-    g_signal_connect(G_OBJECT(entry), "changed", G_CALLBACK(changed), this);
-  }
-};
 
 #endif
