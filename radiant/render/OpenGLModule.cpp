@@ -13,7 +13,6 @@
 
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
-	_font(0, 0),
 	_sharedContext(NULL),
 	_contextValid(false)
 {}
@@ -50,16 +49,18 @@ void OpenGLModule::sharedContextCreated()
 {
 	// report OpenGL information
 	globalOutputStream() << "GL_VENDOR: "
-		<< reinterpret_cast<const char*>(glGetString(GL_VENDOR)) << "\n";
+		<< reinterpret_cast<const char*>(glGetString(GL_VENDOR)) << std::endl;
 	globalOutputStream() << "GL_RENDERER: "
-		<< reinterpret_cast<const char*>(glGetString(GL_RENDERER)) << "\n";
+		<< reinterpret_cast<const char*>(glGetString(GL_RENDERER)) << std::endl;
 	globalOutputStream() << "GL_VERSION: "
-		<< reinterpret_cast<const char*>(glGetString(GL_VERSION)) << "\n";
+		<< reinterpret_cast<const char*>(glGetString(GL_VERSION)) << std::endl;
 	globalOutputStream() << "GL_EXTENSIONS: "
-		<< reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)) << "\n";
+		<< reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)) << std::endl;
 
 	GLenum err = glewInit();
-	if (err != GLEW_OK)	{
+
+	if (err != GLEW_OK)
+	{
 		// glewInit failed
 		globalErrorStream() << "GLEW error: " <<
 			reinterpret_cast<const char*>(glewGetErrorString(err));
@@ -68,11 +69,12 @@ void OpenGLModule::sharedContextCreated()
 	GlobalRenderSystem().extensionsInitialised();
 	GlobalRenderSystem().realise();
 
-	_font = GLFont::create("Sans 8");
+	_font.reset(new gtkutil::GLFont("Sans 8"));
 }
 
 void OpenGLModule::sharedContextDestroyed()
 {
+	_font.reset();
 	GlobalRenderSystem().unrealise();
 }
 
@@ -146,19 +148,19 @@ bool OpenGLModule::contextValid() const
 
 void OpenGLModule::drawString(const std::string& string) const
 {
-	glListBase(_font.getDisplayList());
+	glListBase(_font->getDisplayList());
 	glCallLists(GLsizei(string.size()), GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(string.c_str()));
 }
 
 void OpenGLModule::drawChar(char character) const
 {
-	glListBase(_font.getDisplayList());
+	glListBase(_font->getDisplayList());
 	glCallLists(1, GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(&character));
 }
 
 int OpenGLModule::getFontHeight() 
 {
-	return _font.getPixelHeight();
+	return _font->getPixelHeight();
 }
 
 // RegisterableModule implementation
