@@ -615,8 +615,8 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
       		glMultMatrixf(*transform);
 
       		// Determine the face direction
-      		if ((current.renderFlags & RENDER_CULLFACE) != 0
-      			&& matrix4_handedness(*transform) == MATRIX4_RIGHTHANDED)
+      		if ((current.renderFlags & RENDER_CULLFACE) != 0 && 
+				transform->getHandedness() == Matrix4::RIGHTHANDED)
       		{
       			glFrontFace(GL_CW);
       		}

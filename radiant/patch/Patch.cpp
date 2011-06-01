@@ -293,7 +293,7 @@ void Patch::transform(const Matrix4& matrix)
 	}
 
 	// Check the handedness of the matrix and invert it if needed
-	if(matrix4_handedness(matrix) == MATRIX4_LEFTHANDED)
+	if(matrix.getHandedness() == Matrix4::LEFTHANDED)
 	{
 		PatchControlArray_invert(m_ctrlTransformed, m_width, m_height);
 	}

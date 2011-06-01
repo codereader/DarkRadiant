@@ -10,6 +10,7 @@
 /// \brief A 4x4 matrix stored in single-precision floating-point.
 class Matrix4
 {
+private:
     // Elements of the 4x4 matrix. These appear to be treated COLUMNWISE, i.e.
     // elements [0] through [3] are the first column, [4] through [7] are the
     // second column, etc.
@@ -96,6 +97,12 @@ public:
                           float xy, float yy, float zy, float ty,
                           float xz, float yz, float zz, float tz,
                           float xw, float yw, float zw, float tw);
+
+	enum Handedness
+	{
+		RIGHTHANDED = 0,
+		LEFTHANDED = 1,
+	};
 
     /**
      * Return matrix elements
@@ -354,25 +361,15 @@ public:
 			   ty() == other.ty() && 
 			   tz() == other.tz();
 	}
+
+	/**
+	 * Returns RIGHTHANDED if this is right-handed, else returns LEFTHANDED.
+	 */
+	Handedness getHandedness() const
+	{
+		return (x().getVector3().crossProduct(y().getVector3()).dot(z().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
+	}
 };
-
-enum Matrix4Handedness
-{
-  MATRIX4_RIGHTHANDED = 0,
-  MATRIX4_LEFTHANDED = 1,
-};
-
-/// \brief Returns MATRIX4_RIGHTHANDED if \p self is right-handed, else returns MATRIX4_LEFTHANDED.
-inline Matrix4Handedness matrix4_handedness(const Matrix4& self)
-{
-  return (
-    self.x().getVector3().crossProduct(self.y().getVector3()).dot(self.z().getVector3()) < 0.0
-  ) ? MATRIX4_LEFTHANDED : MATRIX4_RIGHTHANDED;
-}
-
-
-
-
 
 /// \brief Returns \p self post-multiplied by \p other.
 inline Matrix4 matrix4_multiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
