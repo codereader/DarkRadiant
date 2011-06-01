@@ -13,7 +13,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/FramedWidget.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/StockIconMenuItem.h"
@@ -153,7 +153,7 @@ void ReadableEditorDialog::RunDialog(const cmd::ArgumentList& args)
 	}
 
 	// Exactly one redable entity must be selected.
-	gtkutil::errorDialog(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
+	gtkutil::MessageBox::ShowError(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -607,7 +607,7 @@ bool ReadableEditorDialog::save()
 	if (!_useDefaultFilename && !boost::filesystem::exists(storagePath))
 	{
 		// The file does not exist, so we have imported a definition contained inside a PK4.
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			_("You have imported an XData definition that is contained in a PK4, which can't be accessed for saving.") +
 			std::string("\n\n") +
 			_("Please rename your XData definition, so that it is stored under a different filename."),
@@ -626,14 +626,14 @@ bool ReadableEditorDialog::save()
 		switch (_xData->xport( storagePath, XData::MergeOverwriteExisting))
 		{
 		case XData::OpenFailed:
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
 				getRefPtr()
 			);
 			_saveInProgress = false;
 			return false;
 		case XData::MergeFailed:
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				_("Merging failed, because the length of the definition to be overwritten could not be retrieved."),
 				getRefPtr()
 			);
@@ -647,7 +647,7 @@ bool ReadableEditorDialog::save()
 	}
 	else if (fst == XData::OpenFailed)
 	{
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			(boost::format(_("Failed to open %s for saving.")) % _xdFilename).str(),
 			getRefPtr()
 		);
@@ -671,7 +671,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 				{
 					// Mod path not defined. Use base Path
 					storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-					gtkutil::errorDialog(_("Mod path not defined. Using Base path..."), getRefPtr());
+					gtkutil::MessageBox::ShowError(_("Mod path not defined. Using Base path..."), getRefPtr());
 				}
 				storagePath += XData::XDATA_DIR + _mapBasedFilename;
 				break;
@@ -684,13 +684,13 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::errorDialog(_("Mod Base path not defined, neither is Mod path. Using Engine path..."),
+						gtkutil::MessageBox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."),
 							getRefPtr());
 						storagePath += XData::XDATA_DIR + _mapBasedFilename;
 						break;
 					}
 
-					gtkutil::errorDialog(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
+					gtkutil::MessageBox::ShowError(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
 				}
 				storagePath += XData::XDATA_DIR + _mapBasedFilename;
 				break;
@@ -703,12 +703,12 @@ std::string ReadableEditorDialog::constructStoragePath()
 					if (storagePath.empty())
 					{
 						storagePath = GlobalRegistry().get(RKEY_ENGINE_PATH) + "base/";
-						gtkutil::errorDialog(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), getRefPtr());
+						gtkutil::MessageBox::ShowError(_("Mod Base path not defined, neither is Mod path. Using Engine path..."), getRefPtr());
 						storagePath += XData::XDATA_DIR + _mapBasedFilename;
 						break;
 					}
 					storagePath += XData::XDATA_DIR + _mapBasedFilename;
-					gtkutil::errorDialog(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
+					gtkutil::MessageBox::ShowError(_("Mod Base path not defined. Using Mod path..."), getRefPtr());
 					break;
 				}
 				storagePath += "/" + _mapBasedFilename;
@@ -1421,7 +1421,7 @@ void ReadableEditorDialog::showXdImportSummary()
 
 	if (summary.empty())
 	{
-		gtkutil::errorDialog(_("No import summary available. An XData definition has to be imported first..."),
+		gtkutil::MessageBox::ShowError(_("No import summary available. An XData definition has to be imported first..."),
 			getRefPtr() );
 		return;
 	}
@@ -1442,7 +1442,7 @@ void ReadableEditorDialog::showGuiImportSummary()
 	XData::StringList errors = gui::GuiManager::Instance().getErrorList();
 	if (errors.empty())
 	{
-		gtkutil::errorDialog(_("No import summary available. Browse Gui Definitions first."), getRefPtr() );
+		gtkutil::MessageBox::ShowError(_("No import summary available. Browse Gui Definitions first."), getRefPtr() );
 		return;
 	}
 
@@ -1505,7 +1505,7 @@ void ReadableEditorDialog::onSave()
 	}
 	else
 	{
-		gtkutil::errorDialog(_("Please specify an XData name first!"), getRefPtr());
+		gtkutil::MessageBox::ShowError(_("Please specify an XData name first!"), getRefPtr());
 	}
 }
 
@@ -1525,7 +1525,7 @@ void ReadableEditorDialog::onSaveClose()
 		}
 		else
 		{
-			gtkutil::errorDialog(_("Please specify an XData name first!"), getRefPtr());
+			gtkutil::MessageBox::ShowError(_("Please specify an XData name first!"), getRefPtr());
 		}
 	}
 }

@@ -4,7 +4,7 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "idialogmanager.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/EntryAbortedException.h"
 
@@ -132,7 +132,7 @@ void LayerControl::onRename()
 
 		try
 		{
-			newLayerName = gtkutil::textEntryDialog(
+			newLayerName = gtkutil::Dialog::TextEntryDialog(
 				_("Rename Layer"),
 				_("Enter new Layer Name"),
 				scene::getLayerSystem().getLayerName(_layerID),
@@ -156,7 +156,7 @@ void LayerControl::onRename()
 		else
 		{
 			// Wrong name, let the user try again
-			gtkutil::errorDialog(_("Could not rename layer, please try again."), Glib::RefPtr<Gtk::Window>());
+			gtkutil::MessageBox::ShowError(_("Could not rename layer, please try again."), Glib::RefPtr<Gtk::Window>());
 			continue;
 		}
 	}

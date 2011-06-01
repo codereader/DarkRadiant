@@ -20,7 +20,7 @@
 #include "entitylib.h"
 #include "os/path.h"
 #include "gtkutil/IConv.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include "brush/BrushModule.h"
 #include "xyview/GlobalXYWnd.h"
@@ -961,7 +961,7 @@ void Map::importSelected(TextInputStream& in)
 	}
 	catch (IMapReader::FailureException& e)
 	{
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			(boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str(),
 			GlobalMainFrame().getTopLevelWindow());
 

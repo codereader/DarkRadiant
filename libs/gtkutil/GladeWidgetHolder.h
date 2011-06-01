@@ -11,6 +11,7 @@ namespace gtkutil
  */
 class GladeWidgetHolder
 {
+private:
     // The Gtk::Builder used to load the .glade file
     Glib::RefPtr<Gtk::Builder> _builder;
 
@@ -35,12 +36,12 @@ protected:
     /**
      * Initialise a GladeWidgetHolder with the given Gtk::Builder.
      */
-    GladeWidgetHolder(Glib::RefPtr<Gtk::Builder> builder)
+    GladeWidgetHolder(const Glib::RefPtr<Gtk::Builder>& builder)
     : _builder(builder)
     { }
 
     /// Set the builder to use.
-    void setBuilder(Glib::RefPtr<Gtk::Builder> builder)
+    void setBuilder(const Glib::RefPtr<Gtk::Builder>& builder)
     {
         _builder = builder;
     }

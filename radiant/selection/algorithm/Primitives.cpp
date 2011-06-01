@@ -14,7 +14,7 @@
 #include "patch/PatchNode.h"
 #include "string/string.h"
 #include "brush/export/CollisionModel.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "map/Map.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "settings/GameManager.h"
@@ -327,7 +327,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 					globalOutputStream() << "CollisionModel saved to " << cmPath.string() << std::endl;
 				}
 				else {
-					gtkutil::errorDialog(
+					gtkutil::MessageBox::ShowError(
 						(boost::format("Couldn't save to file: %s") % cmPath.string()).str(),
 						 GlobalMainFrame().getTopLevelWindow());
 				}
@@ -347,7 +347,7 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 		}
 	}
 	else {
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			_(ERRSTR_WRONG_SELECTION.c_str()),
 			GlobalMainFrame().getTopLevelWindow());
 	}
@@ -480,7 +480,7 @@ public:
 			scene::INodePtr patchNode = GlobalPatchCreator(DEF3).createPatch();
 
 			if (patchNode == NULL) {
-				gtkutil::errorDialog(_("Could not create patch."), GlobalMainFrame().getTopLevelWindow());
+				gtkutil::MessageBox::ShowError(_("Could not create patch."), GlobalMainFrame().getTopLevelWindow());
 				return;
 			}
 
@@ -597,7 +597,7 @@ public:
 void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	// Sanity check
 	if (g_SelectedFaceInstances.empty()) {
-		gtkutil::errorDialog(_("No faces selected."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(_("No faces selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
@@ -615,7 +615,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args) {
 	int unsuitableWindings = creator.getNumUnsuitableWindings();
 
 	if (unsuitableWindings > 0) {
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			(boost::format(_("%d faces were not suitable (had more than 4 vertices).")) % unsuitableWindings).str(),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -664,7 +664,7 @@ void makeVisportal(const cmd::ArgumentList& args) {
 	BrushPtrVector brushes = getSelectedBrushes();
 
 	if (brushes.size() <= 0) {
-		gtkutil::errorDialog(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(_("No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 

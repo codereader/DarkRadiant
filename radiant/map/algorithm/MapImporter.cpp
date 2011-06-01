@@ -8,7 +8,7 @@
 
 #include <boost/format.hpp>
 #include "string/string.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 namespace map
 {

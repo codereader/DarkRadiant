@@ -15,7 +15,7 @@
 #include "map/Map.h"
 #include "modulesystem/ModuleRegistry.h"
 
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/menu/CommandMenuItem.h"
 
@@ -275,7 +275,7 @@ void OrthoContextMenu::callbackAddEntity()
 			entity::createEntityFromSelection(cName, _lastPoint);
 		}
 		catch (EntityCreationException& e) {
-			gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
+			gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 }
@@ -296,7 +296,7 @@ void OrthoContextMenu::callbackAddPlayerStart()
         playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
 	}
 	catch (EntityCreationException& e) {
-		gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 
@@ -323,7 +323,7 @@ void OrthoContextMenu::callbackAddLight()
     	entity::createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
     }
     catch (EntityCreationException&) {
-        gtkutil::errorDialog(_("Unable to create light, classname not found."),
+        gtkutil::MessageBox::ShowError(_("Unable to create light, classname not found."),
                              GlobalMainFrame().getTopLevelWindow());
     }
 }
@@ -353,7 +353,7 @@ void OrthoContextMenu::callbackAddSpeaker()
         );
     }
     catch (EntityCreationException&) {
-        gtkutil::errorDialog(_("Unable to create speaker, classname not found."),
+        gtkutil::MessageBox::ShowError(_("Unable to create speaker, classname not found."),
                              GlobalMainFrame().getTopLevelWindow());
         return;
     }
@@ -425,7 +425,7 @@ void OrthoContextMenu::callbackAddModel()
             }
             catch (EntityCreationException&)
 			{
-                gtkutil::errorDialog(_("Unable to create model, classname not found."),
+                gtkutil::MessageBox::ShowError(_("Unable to create model, classname not found."),
                                      GlobalMainFrame().getTopLevelWindow());
             }
 		}
@@ -433,7 +433,7 @@ void OrthoContextMenu::callbackAddModel()
 	}
 	else
 	{
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
             _("Either nothing or exactly one brush must be selected for model creation"),
 			GlobalMainFrame().getTopLevelWindow()
         );

@@ -15,7 +15,7 @@
 #include "RemoveFromLayerWalker.h"
 #include "SetLayerSelectedWalker.h"
 
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/EntryAbortedException.h"
 #include "gtkutil/menu/CommandMenuItem.h"
@@ -465,7 +465,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 
 		if (layerName.empty()) {
 			try {
-				layerName = gtkutil::textEntryDialog(
+				layerName = gtkutil::Dialog::TextEntryDialog(
 					_("Enter Name"),
 					_("Enter Layer Name"),
 					"",
@@ -479,7 +479,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 
 		if (layerName.empty()) {
 			// Wrong name, let the user try again
-			gtkutil::errorDialog(_("Cannot create layer with empty name."), GlobalMainFrame().getTopLevelWindow());
+			gtkutil::MessageBox::ShowError(_("Cannot create layer with empty name."), GlobalMainFrame().getTopLevelWindow());
 			continue;
 		}
 
@@ -493,7 +493,7 @@ void LayerSystem::createLayerCmd(const cmd::ArgumentList& args)
 		}
 		else {
 			// Wrong name, let the user try again
-			gtkutil::errorDialog(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
+			gtkutil::MessageBox::ShowError(_("This name already exists."), GlobalMainFrame().getTopLevelWindow());
 			continue;
 		}
 	}

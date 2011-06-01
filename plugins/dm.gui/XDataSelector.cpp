@@ -9,7 +9,7 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/VFSTreePopulator.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include <gtkmm/button.h>
 #include <gtkmm/box.h>

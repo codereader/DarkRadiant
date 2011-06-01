@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "shaderlib.h"
 #include "scenelib.h"
 
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "brushmanip.h"
 #include "patchmanip.h"
 #include "ui/texturebrowser/TextureBrowser.h"

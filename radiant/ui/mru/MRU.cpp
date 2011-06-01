@@ -9,7 +9,7 @@
 #include "string/string.h"
 #include "os/file.h"
 
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include "map/Map.h"
 
@@ -103,7 +103,7 @@ void MRU::loadMap(const std::string& fileName)
 		}
 		else
 		{
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				(boost::format(_("Could not read map file: %s")) % fileName).str(),
 				GlobalMainFrame().getTopLevelWindow());
 		}

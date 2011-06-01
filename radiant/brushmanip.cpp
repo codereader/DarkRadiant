@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "icommandsystem.h"
 #include "ieventmanager.h"
 
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "brush/BrushNode.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/brush/QuerySidesDialog.h"
@@ -471,7 +471,7 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 	if (GlobalSelectionSystem().getSelectionInfo().brushCount != 1)
 	{
 		// Display a modal error dialog
-		gtkutil::errorDialog(_("Exactly one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(_("Exactly one brush must be selected for this operation."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 

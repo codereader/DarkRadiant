@@ -12,7 +12,7 @@
 #include "map/Map.h"
 #include "map/RootNode.h"
 #include "mapfile.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "referencecache/NullModelLoader.h"
 #include "debugging/debugging.h"
 #include "os/path.h"
@@ -190,7 +190,7 @@ bool MapResource::saveBackup() {
 		else {
 			globalErrorStream() << "map path is not writeable: " << fullpath << std::endl;
 			// File is write-protected
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				(boost::format(_("File is write-protected: %s")) % fullpath).str(),
 				GlobalMainFrame().getTopLevelWindow());
 			return false;
@@ -346,7 +346,7 @@ scene::INodePtr MapResource::loadMapNode()
 		{
 			globalErrorStream() << "failure" << std::endl;
 
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				(boost::format(_("Failure opening map file:\n%s")) % fullpath).str(),
 				GlobalMainFrame().getTopLevelWindow());
 
@@ -360,7 +360,7 @@ scene::INodePtr MapResource::loadMapNode()
 
 		if (format == NULL)
 		{
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				(boost::format(_("Could not determine map format of file:\n%s")) % fullpath).str(),
 				GlobalMainFrame().getTopLevelWindow());
 
@@ -453,7 +453,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 	}
 	catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
 	{
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			_("Map loading cancelled"),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -466,7 +466,7 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 	}
 	catch (IMapReader::FailureException& e)
 	{
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 				(boost::format(_("Failure reading map file:\n%s\n\n%s")) % filename % e.what()).str(),
 				GlobalMainFrame().getTopLevelWindow());
 
@@ -487,7 +487,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	{
 		// File is write-protected
 		globalErrorStream() << "failure, file is write-protected." << std::endl;
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			(boost::format(_("File is write-protected: %s")) % filename).str(),
 			GlobalMainFrame().getTopLevelWindow());
 		return false;
@@ -506,7 +506,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	if (file_exists(auxFilename.c_str()) && !file_writeable(auxFilename.c_str())) {
 		// File is write-protected
 		globalErrorStream() << "failure, file is write-protected." << std::endl;
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			(boost::format(_("File is write-protected: %s")) % auxFilename).str(),
 			GlobalMainFrame().getTopLevelWindow());
 		return false;
@@ -547,7 +547,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 		}
 		catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
 		{
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				_("Map writing cancelled"),
 				GlobalMainFrame().getTopLevelWindow()
 			);

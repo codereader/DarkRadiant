@@ -8,6 +8,7 @@
 #include "itextstream.h"
 
 #include "DialogElements.h"
+#include "../EntryAbortedException.h"
 
 namespace gtkutil
 {
@@ -231,6 +232,27 @@ void Dialog::onOK()
 {
 	_result = ui::IDialog::RESULT_OK;
 	hide(); // breaks gtk_main()
+}
+
+std::string Dialog::TextEntryDialog(const std::string& title,
+								    const std::string& prompt,
+								    const std::string& defaultText,
+								    const Glib::RefPtr<Gtk::Window>& mainFrame)
+{
+	Dialog dialog(title, mainFrame);
+
+	Dialog::Handle entryHandle = dialog.addEntryBox(prompt);
+
+	Dialog::Result result = dialog.run();
+
+	if (result == Dialog::RESULT_OK)
+	{
+		return dialog.getElementValue(entryHandle);
+	}
+    else
+	{
+        throw EntryAbortedException("textEntryDialog(): dialog cancelled");
+	}
 }
 
 } // namespace gtkutil

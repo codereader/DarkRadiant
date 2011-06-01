@@ -8,7 +8,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "math/matrix.h"
 #include "math/Vector3.h"
 #include "map/Map.h"
@@ -107,7 +107,7 @@ void PointFile::parse() {
 	// Open the pointfile and get its input stream if possible
 	std::ifstream inFile(pfName.c_str());
 	if (!inFile) {
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			(boost::format(_("Could not open pointfile: %s")) % pfName).str(),
 			GlobalMainFrame().getTopLevelWindow());
 		return;
