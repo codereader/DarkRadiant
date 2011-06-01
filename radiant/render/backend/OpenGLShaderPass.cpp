@@ -606,9 +606,8 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 	{
 		// If the current iteration's transform matrix was different from the
 		// last, apply it and store for the next iteration
-	    if (!transform
-	    	|| (transform != i->transform
-	    		&& !matrix4_affine_equal(*transform, *(*i).transform)))
+	    if (transform == NULL || 
+			(transform != i->transform && !transform->isAffineEqual(*i->transform)))
 		{
 			transform = i->transform;
       		glPopMatrix();

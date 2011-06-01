@@ -313,46 +313,48 @@ public:
 	{
 		return !operator==(other);
 	}
+
+	// Returns true if self and other are element-wise equal within epsilon.
+	bool isEqual(const Matrix4& other, float epsilon) const
+	{
+		return float_equal_epsilon(xx(), other.xx(), epsilon)
+			&& float_equal_epsilon(xy(), other.xy(), epsilon)
+			&& float_equal_epsilon(xz(), other.xz(), epsilon)
+			&& float_equal_epsilon(xw(), other.xw(), epsilon)
+			&& float_equal_epsilon(yx(), other.yx(), epsilon)
+			&& float_equal_epsilon(yy(), other.yy(), epsilon)
+			&& float_equal_epsilon(yz(), other.yz(), epsilon)
+			&& float_equal_epsilon(yw(), other.yw(), epsilon)
+			&& float_equal_epsilon(zx(), other.zx(), epsilon)
+			&& float_equal_epsilon(zy(), other.zy(), epsilon)
+			&& float_equal_epsilon(zz(), other.zz(), epsilon)
+			&& float_equal_epsilon(zw(), other.zw(), epsilon)
+			&& float_equal_epsilon(tx(), other.tx(), epsilon)
+			&& float_equal_epsilon(ty(), other.ty(), epsilon)
+			&& float_equal_epsilon(tz(), other.tz(), epsilon)
+			&& float_equal_epsilon(tw(), other.tw(), epsilon);
+	}
+
+	/**
+	 * Returns true if this and the given matrix are exactly element-wise equal.
+	 * This and the other matrix must be affine.
+	 */
+	bool isAffineEqual(const Matrix4& other) const
+	{
+		return xx() == other.xx() && 
+			   xy() == other.xy() && 
+			   xz() == other.xz() && 
+			   yx() == other.yx() && 
+			   yy() == other.yy() && 
+			   yz() == other.yz() && 
+			   zx() == other.zx() && 
+			   zy() == other.zy() && 
+			   zz() == other.zz() && 
+			   tx() == other.tx() && 
+			   ty() == other.ty() && 
+			   tz() == other.tz();
+	}
 };
-
-/// \brief Returns true if \p self and \p other are element-wise equal within \p epsilon.
-inline bool matrix4_equal_epsilon(const Matrix4& self, const Matrix4& other, float epsilon)
-{
-  return float_equal_epsilon(self.xx(), other.xx(), epsilon)
-    && float_equal_epsilon(self.xy(), other.xy(), epsilon)
-    && float_equal_epsilon(self.xz(), other.xz(), epsilon)
-    && float_equal_epsilon(self.xw(), other.xw(), epsilon)
-    && float_equal_epsilon(self.yx(), other.yx(), epsilon)
-    && float_equal_epsilon(self.yy(), other.yy(), epsilon)
-    && float_equal_epsilon(self.yz(), other.yz(), epsilon)
-    && float_equal_epsilon(self.yw(), other.yw(), epsilon)
-    && float_equal_epsilon(self.zx(), other.zx(), epsilon)
-    && float_equal_epsilon(self.zy(), other.zy(), epsilon)
-    && float_equal_epsilon(self.zz(), other.zz(), epsilon)
-    && float_equal_epsilon(self.zw(), other.zw(), epsilon)
-    && float_equal_epsilon(self.tx(), other.tx(), epsilon)
-    && float_equal_epsilon(self.ty(), other.ty(), epsilon)
-    && float_equal_epsilon(self.tz(), other.tz(), epsilon)
-    && float_equal_epsilon(self.tw(), other.tw(), epsilon);
-}
-
-/// \brief Returns true if \p self and \p other are exactly element-wise equal.
-/// \p self and \p other must be affine.
-inline bool matrix4_affine_equal(const Matrix4& self, const Matrix4& other)
-{
-  return self[0] == other[0]
-    && self[1] == other[1]
-    && self[2] == other[2]
-    && self[4] == other[4]
-    && self[5] == other[5]
-    && self[6] == other[6]
-    && self[8] == other[8]
-    && self[9] == other[9]
-    && self[10] == other[10]
-    && self[12] == other[12]
-    && self[13] == other[13]
-    && self[14] == other[14];
-}
 
 enum Matrix4Handedness
 {
