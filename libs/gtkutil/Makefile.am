@@ -24,7 +24,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
                         window/TransientWindow.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
-						dialog_legacy.cpp \
 						GLFont.cpp \
 						MenuItemAccelerator.cpp \
 						Cursor.cpp \

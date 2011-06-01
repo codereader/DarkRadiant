@@ -24,7 +24,7 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/TreeModel.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include <gtkmm/treeview.h>
 #include <gtkmm/button.h>
@@ -306,7 +306,7 @@ void ObjectivesEditor::displayDialog(const cmd::ArgumentList& args)
 	}
 	catch (ObjectivesException& e)
 	{
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			std::string(_("Exception occurred: ")) + e.what(),
 			GlobalMainFrame().getTopLevelWindow()
 		);
@@ -484,7 +484,7 @@ void ObjectivesEditor::_onAddEntity()
 	if (_objectiveEClasses.empty())
 	{
 		// Objective entityclass(es) not defined
-        gtkutil::errorDialog(
+        gtkutil::MessageBox::ShowError(
             _("Unable to create Objective Entity: classes not defined in registry."),
             GlobalMainFrame().getTopLevelWindow()
         );
@@ -514,7 +514,7 @@ void ObjectivesEditor::_onAddEntity()
     else
     {
         // Objective entityclass was not found
-        gtkutil::errorDialog(
+        gtkutil::MessageBox::ShowError(
 			(boost::format(_("Unable to create Objective Entity: class '%s' not found.")) % objEClass).str(),
             GlobalMainFrame().getTopLevelWindow()
         );

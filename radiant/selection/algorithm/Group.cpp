@@ -9,7 +9,7 @@
 #include "scenelib.h"
 #include "entitylib.h"
 #include "map/Map.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "../../entity.h"
 
 namespace selection {
@@ -27,7 +27,7 @@ void convertSelectedToFuncStatic(const cmd::ArgumentList& args)
 	}
 	catch (EntityCreationException& e)
 	{
-		gtkutil::errorDialog(e.what(), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 
@@ -234,7 +234,7 @@ void parentSelection(const cmd::ArgumentList& args)
 	// Retrieve the selection information structure
 	if (!curSelectionIsSuitableForReparent())
 	{
-		gtkutil::errorDialog(_("Cannot reparent primitives to entity. "
+		gtkutil::MessageBox::ShowError(_("Cannot reparent primitives to entity. "
 						 "Please select at least one brush/patch and exactly one entity."
 						 "(The entity has to be selected last.)"),
 						 GlobalMainFrame().getTopLevelWindow());
@@ -385,7 +385,7 @@ void mergeSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::errorDialog(_("Cannot merge entities, "
+		gtkutil::MessageBox::ShowError(_("Cannot merge entities, "
 							 "the selection must consist of func_* entities only.\n"
 							 "(The first selected entity will be preserved.)"),
 							 GlobalMainFrame().getTopLevelWindow());

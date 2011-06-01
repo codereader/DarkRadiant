@@ -42,6 +42,19 @@ protected:
 	// gtkmm Callbacks, additional to the ones defined in the base class
 	void onYes();
 	void onNo();
+
+public:
+	// Static methods to display pre-fabricated dialogs
+
+	/**
+	 * Display a modal error dialog
+	 */
+	static void ShowError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame);
+
+	/**
+	 * Display a modal error dialog and quit immediately
+	 */
+	static void ShowFatalError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame);
 };
 typedef boost::shared_ptr<MessageBox> MessageBoxPtr;
 

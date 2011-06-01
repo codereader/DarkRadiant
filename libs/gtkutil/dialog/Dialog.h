@@ -97,6 +97,21 @@ protected:
 	// gtkmm button Callbacks
 	void onOK();
 	void onCancel();
+
+public:
+	// Static methods to display pre-fabricated dialogs
+
+	/**
+	 * Display a text entry dialog with the given title and prompt text. Returns a
+	 * std::string with the entered value, or throws EntryAbortedException if the
+	 * dialog was cancelled. The text entry will be filled with the given defaultText
+	 * at start.
+	 */
+	static std::string TextEntryDialog(const std::string& title,
+									   const std::string& prompt,
+									   const std::string& defaultText,
+									   const Glib::RefPtr<Gtk::Window>& mainFrame);
+
 };
 typedef boost::shared_ptr<Dialog> DialogPtr;
 

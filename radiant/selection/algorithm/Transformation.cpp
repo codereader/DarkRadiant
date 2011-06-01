@@ -11,7 +11,7 @@
 #include "iselection.h"
 #include "imainframe.h"
 #include "scenelib.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"
 #include "map/algorithm/Clone.h"
 #include "map/BasicContainer.h"
@@ -44,7 +44,7 @@ void scaleSelected(const Vector3& scaleXYZ) {
 		GlobalSelectionSystem().scaleSelected(scaleXYZ);
 	}
 	else {
-		gtkutil::errorDialog(_("Cannot scale by zero value."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(_("Cannot scale by zero value."), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

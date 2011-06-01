@@ -176,4 +176,16 @@ void MessageBox::onNo()
 	hide(); // breaks gtk_main()
 }
 
+void MessageBox::ShowError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame)
+{
+	MessageBox msg("Error", errorText, MessageBox::MESSAGE_ERROR, mainFrame);
+	msg.run();
+}
+
+void MessageBox::ShowFatalError(const std::string& errorText, const Glib::RefPtr<Gtk::Window>& mainFrame)
+{
+	ShowError(errorText, mainFrame);
+	abort();
+}
+
 } // namespace gtkutil

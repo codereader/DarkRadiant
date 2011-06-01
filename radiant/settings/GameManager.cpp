@@ -11,7 +11,7 @@
 #include "os/dir.h"
 #include "os/path.h"
 #include "GameFileLoader.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "Win32Registry.h"
 #include "modulesystem/StaticModule.h"
@@ -78,7 +78,7 @@ IGamePtr Manager::currentGame()
 	if (_currentGameName.empty())
 	{
 		// No game type selected, bail out, the program will crash anyway on module load
-		gtkutil::fatalErrorDialog(_("GameManager: No game type selected, can't continue."), Glib::RefPtr<Gtk::Window>());
+		gtkutil::MessageBox::ShowFatalError(_("GameManager: No game type selected, can't continue."), Glib::RefPtr<Gtk::Window>());
 	}
 
 	return _games[_currentGameName];
@@ -107,7 +107,7 @@ void Manager::initialise(const std::string& appPath)
    {
       // No game types available, bail out, the program would crash anyway on
       // module load
-      gtkutil::fatalErrorDialog(
+      gtkutil::MessageBox::ShowFatalError(
 		  _("GameManager: No valid game files found, can't continue."), Glib::RefPtr<Gtk::Window>()
       );
    }
@@ -138,7 +138,7 @@ void Manager::initialise(const std::string& appPath)
 	}
 	else {
 		// No game type selected, bail out, the program would crash anyway on module load
-		gtkutil::fatalErrorDialog(_("No game type selected."), Glib::RefPtr<Gtk::Window>());
+		gtkutil::MessageBox::ShowFatalError(_("No game type selected."), Glib::RefPtr<Gtk::Window>());
 	}
 }
 

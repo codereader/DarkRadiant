@@ -15,7 +15,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/LeftAlignment.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/MultiMonitor.h"
 
 #include "ui/common/ShaderChooser.h" // for static displayLightInfo() function

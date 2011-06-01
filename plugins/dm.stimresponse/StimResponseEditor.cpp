@@ -20,7 +20,7 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/ScrolledFrame.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "string/string.h"
 
 #include <gtkmm/notebook.h>
@@ -265,7 +265,7 @@ void StimResponseEditor::showDialog(const cmd::ArgumentList& args) {
 	else
 	{
 		// Exactly one entity must be selected.
-		gtkutil::errorDialog(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(_(NO_ENTITY_ERROR), GlobalMainFrame().getTopLevelWindow());
 	}
 }
 

@@ -6,7 +6,7 @@
 #include "iregistry.h"
 #include "itextstream.h"
 #include "entitylib.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include "../../entity.h"
 
@@ -52,7 +52,7 @@ public:
 				_entities.insert(node);
 			}
 			else {
-				gtkutil::errorDialog(
+				gtkutil::MessageBox::ShowError(
 					_("Cannot change classname of worldspawn entity."),
 					GlobalMainFrame().getTopLevelWindow());
 			}
@@ -95,13 +95,13 @@ void bindEntities(const cmd::ArgumentList& args) {
 			second->setKeyValue(bindKey, first->getKeyValue("name"));
 		}
 		else {
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				_("Critical: Cannot find selected entities."),
 				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			_("Exactly two entities must be selected for this operation."),
 			GlobalMainFrame().getTopLevelWindow());
 	}
@@ -118,7 +118,7 @@ void connectSelectedEntities(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			_("Exactly two entities must be selected for this operation."),
 			GlobalMainFrame().getTopLevelWindow());
 	}

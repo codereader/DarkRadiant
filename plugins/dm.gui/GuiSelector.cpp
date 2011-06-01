@@ -10,7 +10,7 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "gui/GuiManager.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include "ReadablePopulator.h"
 #include "ReadableEditorDialog.h"

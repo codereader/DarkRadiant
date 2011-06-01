@@ -14,7 +14,7 @@
 #include "modulesystem/StaticModule.h"
 #include "selectionlib.h"
 #include "scenelib.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -602,7 +602,7 @@ void EntityInspector::applyKeyValueToSelection(const std::string& key, const std
 			if (nspace != NULL && nspace->nameExists(val))
             {
 				// name exists, cancel the change
-				gtkutil::errorDialog(
+				gtkutil::MessageBox::ShowError(
 					(boost::format(_("The name %s already exists in this map!")) % val).str(),
 					GlobalMainFrame().getTopLevelWindow());
 				return;

@@ -16,7 +16,7 @@
 
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/PathEntry.h"
 #include "gtkutil/SerialisableWidgets.h"
 

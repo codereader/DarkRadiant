@@ -20,7 +20,7 @@
 #include "gtkutil/RightAlignment.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/dialog/Dialog.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 namespace ui {
 
@@ -358,7 +358,7 @@ void ColourSchemeEditor::copyScheme()
 	// greebo: Check if the new name is already existing
 	if (ColourSchemeManager::Instance().schemeExists(newName))
 	{
-		gtkutil::errorDialog(_("A Scheme with that name already exists."), getRefPtr());
+		gtkutil::MessageBox::ShowError(_("A Scheme with that name already exists."), getRefPtr());
 		return;
 	}
 

@@ -49,7 +49,6 @@
     <ClInclude Include="..\..\libs\gtkutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\gtkutil\ControlButton.h" />
     <ClInclude Include="..\..\libs\gtkutil\DeferredAdjustment.h" />
-    <ClInclude Include="..\..\libs\gtkutil\dialog.h" />
     <ClInclude Include="..\..\libs\gtkutil\EntryAbortedException.h" />
     <ClInclude Include="..\..\libs\gtkutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\gtkutil\FramedWidget.h" />
@@ -105,7 +104,6 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\gtkutil\clipboard.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\ConsoleView.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\dialog_legacy.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FileChooser.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLWidget.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\MenuItemAccelerator.cpp" />

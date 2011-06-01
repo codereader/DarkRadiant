@@ -19,7 +19,7 @@
 #include "brush/BrushVisit.h"
 #include "selection/algorithm/Primitives.h"
 
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/dialog/MessageBox.h"
 
 #include "BrushByPlaneClipper.h"
@@ -315,7 +315,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 
 	if (brushes.empty()) {
 		globalOutputStream() << _("CSG Subtract: No brushes selected.") << std::endl;
-		gtkutil::errorDialog(_("CSG Subtract: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(_("CSG Subtract: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
@@ -425,13 +425,13 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args) {
 
 	if (brushes.empty()) {
 		globalOutputStream() << _("CSG Merge: No brushes selected.") << std::endl;
-		gtkutil::errorDialog(_("CSG Merge: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError(_("CSG Merge: No brushes selected."), GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 
 	if (brushes.size() < 2) {
 		globalOutputStream() << "CSG Merge: At least two brushes have to be selected.\n";
-		gtkutil::errorDialog("CSG Merge: At least two brushes have to be selected.", GlobalMainFrame().getTopLevelWindow());
+		gtkutil::MessageBox::ShowError("CSG Merge: At least two brushes have to be selected.", GlobalMainFrame().getTopLevelWindow());
 		return;
 	}
 

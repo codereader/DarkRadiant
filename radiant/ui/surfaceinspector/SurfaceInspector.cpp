@@ -19,7 +19,7 @@
 #include "gtkutil/ControlButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/SerialisableWidgets.h"
 
 #include "selectionlib.h"
@@ -701,7 +701,7 @@ void SurfaceInspector::fitTexture()
 	else
 	{
 		// Invalid repeatX && repeatY values
-		gtkutil::errorDialog(_("Both fit values must be > 0."), getRefPtr());
+		gtkutil::MessageBox::ShowError(_("Both fit values must be > 0."), getRefPtr());
 	}
 }
 

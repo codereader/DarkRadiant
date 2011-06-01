@@ -307,7 +307,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 	}
 	catch (std::runtime_error& e) {
 		std::cerr << "XML registry population failed:\n\n" << e.what() << "\n";
-		/*gtkutil::fatalErrorDialog("XML registry population failed:\n\n"
+		/*gtkutil::MessageBox::ShowFatalError("XML registry population failed:\n\n"
 								  + std::string(e.what()),
 								  MainFrame_getWindow());*/
 	}

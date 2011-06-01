@@ -8,7 +8,7 @@
 #include "iselectiontest.h"
 #include "igroupnode.h"
 #include "selectionlib.h"
-#include "gtkutil/dialog.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include "string/string.h"
 #include "brush/FaceInstance.h"
 #include "brush/BrushVisit.h"
@@ -303,7 +303,7 @@ void pasteShader(SelectionTest& test, bool projected, bool entireBrush) {
 	GlobalSceneGraph().root()->traverse(finder);
 
 	if (target.isPatch() && entireBrush) {
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			_("Can't paste shader to entire brush.\nTarget is not a brush."),
 			GlobalMainFrame().getTopLevelWindow());
 	}
@@ -339,7 +339,7 @@ void pasteTextureCoords(SelectionTest& test) {
 			target.patch->pasteTextureCoordinates(source.patch);
 		}
 		else {
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				_("Can't paste Texture Coordinates.\nTarget patch dimensions must match."),
 				GlobalMainFrame().getTopLevelWindow());
 		}
@@ -347,13 +347,13 @@ void pasteTextureCoords(SelectionTest& test) {
 	else {
 		if (source.isPatch()) {
 			// Nothing to do, this works for patches only
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				_("Can't paste Texture Coordinates from patches to faces."),
 				GlobalMainFrame().getTopLevelWindow());
 		}
 		else {
 			// Nothing to do, this works for patches only
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				_("Can't paste Texture Coordinates from faces."),
 				GlobalMainFrame().getTopLevelWindow());
 		}
@@ -376,7 +376,7 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			GlobalShaderClipboard().setSource(sourcePatch);
 		}
 		catch (InvalidSelectionException e) {
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				_("Can't copy Shader. Couldn't retrieve patch."),
 				GlobalMainFrame().getTopLevelWindow());
 		}
@@ -387,14 +387,14 @@ void pickShaderFromSelection(const cmd::ArgumentList& args) {
 			GlobalShaderClipboard().setSource(sourceFace);
 		}
 		catch (InvalidSelectionException e) {
-			gtkutil::errorDialog(
+			gtkutil::MessageBox::ShowError(
 				_("Can't copy Shader. Couldn't retrieve face."),
 				GlobalMainFrame().getTopLevelWindow());
 		}
 	}
 	else {
 		// Nothing to do, this works for patches only
-		gtkutil::errorDialog(
+		gtkutil::MessageBox::ShowError(
 			_("Can't copy Shader. Please select a single face or patch."),
 			 GlobalMainFrame().getTopLevelWindow());
 	}
