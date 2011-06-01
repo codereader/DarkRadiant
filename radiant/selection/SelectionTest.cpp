@@ -15,7 +15,7 @@ void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided) {
 
     // Cull back-facing polygons based on winding being clockwise or counter-clockwise.
     // Don't cull if the view is wireframe and the polygons are two-sided.
-    _cull = twoSided && !_view.fill() ? eClipCullNone : (matrix4_handedness(localToWorld) == MATRIX4_RIGHTHANDED) ? eClipCullCW : eClipCullCCW;
+    _cull = twoSided && !_view.fill() ? eClipCullNone : (localToWorld.getHandedness() == Matrix4::RIGHTHANDED) ? eClipCullCW : eClipCullCCW;
 
     {
       Matrix4 screen2world(matrix4_full_inverse(_local2view));
