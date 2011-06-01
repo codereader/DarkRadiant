@@ -1,29 +1,36 @@
-#ifndef DEFERREDADJUSTMENT_H_
-#define DEFERREDADJUSTMENT_H_
+#pragma once
 
-#include <glib/gtypes.h>
-typedef struct _GtkAdjustment GtkAdjustment;
+#include <gtkmm/adjustment.h>
+#include <boost/function.hpp>
 
-namespace gtkutil {
+#include "event/SingleIdleCallback.h"
 
-class DeferredAdjustment
+namespace gtkutil
 {
-	gdouble m_value;
-	guint m_handler;
-	typedef void (*ValueChangedFunction)(void* data, gdouble value);
-	ValueChangedFunction m_function;
-	void* m_data;
 
+class DeferredAdjustment :
+	public Gtk::Adjustment,
+	protected SingleIdleCallback
+{
 public:
-	DeferredAdjustment(ValueChangedFunction function, void* data);
-
-	void flush();
-	void value_changed(gdouble value);
+	typedef boost::function<void(double)> ValueChangedFunction;
 
 private:
-	static gboolean deferred_value_changed(gpointer data);
+	double _value;
+	ValueChangedFunction _function;
+
+public:
+	DeferredAdjustment(const ValueChangedFunction& function, 
+					   double value, double lower, double upper, double step_increment = 1.0,
+					   double page_increment = 10.0, double page_size = 0.0);
+
+	void flush();
+
+protected:
+	void onGtkIdle();
+
+	// gtkmm signal handler
+	void on_value_changed();
 };
 
 } // namespace gtkutil
-
-#endif /*DEFERREDADJUSTMENT_H_*/

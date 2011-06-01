@@ -5,36 +5,27 @@
 
 namespace gtkutil {
 
-DeferredAdjustment::DeferredAdjustment(ValueChangedFunction function, void* data) :
-	m_value(0),
-	m_handler(0),
-	m_function(function),
-	m_data(data)
+DeferredAdjustment::DeferredAdjustment(const ValueChangedFunction& function, 
+					   double value, double lower, double upper, double step_increment,
+					   double page_increment, double page_size) :
+	Gtk::Adjustment(value, lower, upper, step_increment, page_increment, page_size),
+	_function(function)
 {}
 
-void DeferredAdjustment::flush() {
-	if (m_handler != 0) {
-		g_source_remove(m_handler);
-		deferred_value_changed(this);
-	}
-}
-
-void DeferredAdjustment::value_changed(gdouble value) {
-	m_value = value;
-	if (m_handler == 0) {
-		m_handler = g_idle_add(deferred_value_changed, this);
-	}
-}
-
-gboolean DeferredAdjustment::deferred_value_changed(gpointer data)
+void DeferredAdjustment::flush()
 {
-	DeferredAdjustment* self = reinterpret_cast<DeferredAdjustment*>(data);
+	flushIdleCallback();
+}
 
-	self->m_function(self->m_data, self->m_value);
-	self->m_handler = 0;
-	self->m_value = 0;
+void DeferredAdjustment::onGtkIdle()
+{
+	_function(_value);
+}
 
-	return FALSE;
+void DeferredAdjustment::on_value_changed()
+{
+	_value = get_value();
+	requestIdleCallback();
 }
 
 } // namespace gtkutil

@@ -59,7 +59,6 @@ TextureBrowser::TextureBrowser() :
 	_textureScrollbar(NULL),
 	m_heightChanged(true),
 	m_originInvalid(true),
-	m_scrollAdjustment(scrollChanged, this),
 	m_mouseWheelScrollIncrement(GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
 	m_textureScale(50),
 	m_showTextureFilter(GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1"),
@@ -767,14 +766,9 @@ void TextureBrowser::onFrozenMouseMotion(int x, int y, guint state)
 	}
 }
 
-void TextureBrowser::scrollChanged(void* data, gdouble value)
+void TextureBrowser::scrollChanged(double value)
 {
-	reinterpret_cast<TextureBrowser*>(data)->setOriginY(-(int)value);
-}
-
-void TextureBrowser::onVerticalScroll()
-{
-	m_scrollAdjustment.value_changed(_vadjustment->get_value());
+	setOriginY(-static_cast<int>(value));
 }
 
 void TextureBrowser::updateScroll()
@@ -837,9 +831,9 @@ Gtk::Widget* TextureBrowser::constructWindow(const Glib::RefPtr<Gtk::Window>& pa
 	Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox(false, 0));
 
 	{
-		_vadjustment = Gtk::manage(new Gtk::Adjustment(0, 0, 0, 1, 1, 1));
-		_vadjustment->signal_value_changed().connect(sigc::mem_fun(*this, &TextureBrowser::onVerticalScroll));
-
+		_vadjustment = Gtk::manage(new gtkutil::DeferredAdjustment(
+			boost::bind(&TextureBrowser::scrollChanged, this, _1), 0, 0, 0, 1, 1, 1));
+		
 		_textureScrollbar = Gtk::manage(new Gtk::VScrollbar);
 		_textureScrollbar->set_adjustment(*_vadjustment);
 		_textureScrollbar->show();

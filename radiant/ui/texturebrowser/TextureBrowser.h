@@ -93,14 +93,13 @@ private:
 	gtkutil::GLWidget* _glWidget;
 
 	Gtk::VScrollbar* _textureScrollbar;
-	Gtk::Adjustment* _vadjustment;
+	gtkutil::DeferredAdjustment* _vadjustment;
 
 	Gtk::ToggleToolButton* _sizeToggle;
 
   bool m_heightChanged;
   bool m_originInvalid;
 
-  gtkutil::DeferredAdjustment m_scrollAdjustment;
   gtkutil::FreezePointer _freezePointer;
 
   // the increment step we use against the wheel mouse
@@ -145,8 +144,8 @@ public:
 
 	void queueDraw();
 
-	// Legacy function needed for DeferredAdjustment (TODO!)
-	static void scrollChanged(void* data, gdouble value);
+	// Callback needed for DeferredAdjustment
+	void scrollChanged(double value);
 
 	/** greebo: Returns the currently selected shader
 	 */
@@ -255,10 +254,7 @@ private:
 	bool onExpose(GdkEventExpose* ev);
 	void onSizeAllocate(Gtk::Allocation& allocation);
 	void onResizeToggle();
-
-	// Called on scrollbar change
-	void onVerticalScroll();
-
+	
 	// gtkmm Mouse Event Callbacks
 	bool onButtonPress(GdkEventButton* ev);
 	bool onButtonRelease(GdkEventButton* ev);
