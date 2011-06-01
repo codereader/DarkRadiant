@@ -105,7 +105,6 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\gtkutil\clipboard.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\ConsoleView.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\DeferredAdjustment.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\dialog_legacy.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FileChooser.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLWidget.cpp" />

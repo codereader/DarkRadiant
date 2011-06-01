@@ -28,7 +28,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						GLFont.cpp \
 						MenuItemAccelerator.cpp \
 						Cursor.cpp \
-						DeferredAdjustment.cpp \
 						menu/PopupMenu.cpp \
 						RegistryConnector.cpp \
 						PathEntry.cpp \
