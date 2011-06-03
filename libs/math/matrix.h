@@ -358,6 +358,17 @@ public:
 	 * Returns RIGHTHANDED if this is right-handed, else returns LEFTHANDED.
 	 */
 	Handedness getHandedness() const;
+
+	/**
+	 * Returns true if this matrix is affine.
+	 */
+	bool isAffine() const;
+
+	/**
+	 * Returns this matrix post-multiplied by the other.
+	 * This and the other matrix must be affine.
+	 */
+	Matrix4 getAffineMultipliedBy(const Matrix4& other) const;
 };
 
 // =========================================================================================
@@ -499,35 +510,36 @@ inline void Matrix4::premultiplyBy(const Matrix4& other)
 	*this = getPremultipliedBy(other);
 }
 
-/// \brief returns true if \p transform is affine.
-inline bool matrix4_is_affine(const Matrix4& transform)
+inline bool Matrix4::isAffine() const
 {
-  return transform[3] == 0 && transform[7] == 0 && transform[11] == 0 && transform[15] == 1;
+	return xw() == 0 && yw() == 0 && zw() == 0 && tw() == 1;
 }
 
-/// \brief Returns \p self post-multiplied by \p other.
-/// \p self and \p other must be affine.
-inline Matrix4 matrix4_affine_multiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
+inline Matrix4 Matrix4::getAffineMultipliedBy(const Matrix4& other) const
 {
-  return Matrix4::byColumns(
-    other[0] * self[0] + other[1] * self[4] + other[2] * self[8],
-    other[0] * self[1] + other[1] * self[5] + other[2] * self[9],
-    other[0] * self[2] + other[1] * self[6] + other[2] * self[10],
-    0,
-    other[4] * self[0] + other[5] * self[4] + other[6] * self[8],
-    other[4] * self[1] + other[5] * self[5] + other[6] * self[9],
-    other[4] * self[2] + other[5] * self[6] + other[6] * self[10],
-    0,
-     other[8] * self[0] + other[9] * self[4] + other[10]* self[8],
-    other[8] * self[1] + other[9] * self[5] + other[10]* self[9],
-    other[8] * self[2] + other[9] * self[6] + other[10]* self[10],
-    0,
-    other[12]* self[0] + other[13]* self[4] + other[14]* self[8] + self[12],
-    other[12]* self[1] + other[13]* self[5] + other[14]* self[9] + self[13],
-    other[12]* self[2] + other[13]* self[6] + other[14]* self[10]+ self[14],
-    1
-  );
+	return Matrix4::byColumns(
+		other.xx() * xx() + other.xy() * yx() + other.xz() * zx(),
+		other.xx() * xy() + other.xy() * yy() + other.xz() * zy(),
+		other.xx() * xz() + other.xy() * yz() + other.xz() * zz(),
+		0,
+		other.yx() * xx() + other.yy() * yx() + other.yz() * zx(),
+		other.yx() * xy() + other.yy() * yy() + other.yz() * zy(),
+		other.yx() * xz() + other.yy() * yz() + other.yz() * zz(),
+		0,
+		other.zx() * xx() + other.zy() * yx() + other.zz()* zx(),
+		other.zx() * xy() + other.zy() * yy() + other.zz()* zy(),
+		other.zx() * xz() + other.zy() * yz() + other.zz()* zz(),
+		0,
+		other.tx()* xx() + other.ty()* yx() + other.tz()* zx() + tx(),
+		other.tx()* xy() + other.ty()* yy() + other.tz()* zy() + ty(),
+		other.tx()* xz() + other.ty()* yz() + other.tz()* zz()+ tz(),
+		1
+	);
 }
+
+
+
+// --------------------------------------------
 
 /// \brief Post-multiplies \p self by \p other in-place.
 /// \p self and \p other must be affine.
