@@ -200,35 +200,40 @@ public:
      * \}
      */
 
-  const float& index(std::size_t i) const
-  {
-    return _m[i];
-  }
-  float& index(std::size_t i)
-  {
-    return _m[i];
-  }
-  const float& index(std::size_t r, std::size_t c) const
-  {
-    return _m[(r << 2) + c];
-  }
-  float& index(std::size_t r, std::size_t c)
-  {
-    return _m[(r << 2) + c];
-  }
+	const float& index(std::size_t i) const
+	{
+		return _m[i];
+	}
+
+	float& index(std::size_t i)
+	{
+		return _m[i];
+	}
+
+	const float& index(std::size_t r, std::size_t c) const
+	{
+		return _m[(r << 2) + c];
+	}
+
+	float& index(std::size_t r, std::size_t c)
+	{
+		return _m[(r << 2) + c];
+	}
 
 	/**
      * Cast to float* for use with GL functions that accept a float
 	 * array, also provides operator[].
 	 */
-	operator float* () {
+	operator float* ()
+	{
 		return _m;
 	}
 
 	/**
      * Cast to const float* to provide operator[] for const objects.
 	 */
-	operator const float* () const {
+	operator const float* () const
+	{
 		return _m;
 	}
 
@@ -302,6 +307,11 @@ public:
     void multiplyBy(const Matrix4& other);
 
     /**
+     * Returns this matrix pre-multiplied by the other
+     */
+    Matrix4 getPremultipliedBy(const Matrix4& other) const;
+
+    /**
      * \brief
      * Add a translation component to the transformation represented by this
      * matrix.
@@ -321,70 +331,28 @@ public:
 	/**
 	 * Equality operator, Returns true if this and the other are exactly element-wise equal.
 	 */
-	bool operator==(const Matrix4& other) const
-	{
-	  return xx() == other.xx() && xy() == other.xy() && xz() == other.xz() && xw() == other.xw()
-		&& yx() == other.yx() && yy() == other.yy() && yz() == other.yz() && yw() == other.yw()
-		&& zx() == other.zx() && zy() == other.zy() && zz() == other.zz() && zw() == other.zw()
-		&& tx() == other.tx() && ty() == other.ty() && tz() == other.tz() && tw() == other.tw();
-	}
+	bool operator==(const Matrix4& other) const;
 
 	/** 
 	 * Inequality operator.
 	 */
-	bool operator!=(const Matrix4& other) const
-	{
-		return !operator==(other);
-	}
+	bool operator!=(const Matrix4& other) const;
 
-	// Returns true if self and other are element-wise equal within epsilon.
-	bool isEqual(const Matrix4& other, float epsilon) const
-	{
-		return float_equal_epsilon(xx(), other.xx(), epsilon)
-			&& float_equal_epsilon(xy(), other.xy(), epsilon)
-			&& float_equal_epsilon(xz(), other.xz(), epsilon)
-			&& float_equal_epsilon(xw(), other.xw(), epsilon)
-			&& float_equal_epsilon(yx(), other.yx(), epsilon)
-			&& float_equal_epsilon(yy(), other.yy(), epsilon)
-			&& float_equal_epsilon(yz(), other.yz(), epsilon)
-			&& float_equal_epsilon(yw(), other.yw(), epsilon)
-			&& float_equal_epsilon(zx(), other.zx(), epsilon)
-			&& float_equal_epsilon(zy(), other.zy(), epsilon)
-			&& float_equal_epsilon(zz(), other.zz(), epsilon)
-			&& float_equal_epsilon(zw(), other.zw(), epsilon)
-			&& float_equal_epsilon(tx(), other.tx(), epsilon)
-			&& float_equal_epsilon(ty(), other.ty(), epsilon)
-			&& float_equal_epsilon(tz(), other.tz(), epsilon)
-			&& float_equal_epsilon(tw(), other.tw(), epsilon);
-	}
+	/**
+	 * Returns true if self and other are element-wise equal within epsilon.
+	 */
+	bool isEqual(const Matrix4& other, float epsilon) const;
 
 	/**
 	 * Returns true if this and the given matrix are exactly element-wise equal.
 	 * This and the other matrix must be affine.
 	 */
-	bool isAffineEqual(const Matrix4& other) const
-	{
-		return xx() == other.xx() && 
-			   xy() == other.xy() && 
-			   xz() == other.xz() && 
-			   yx() == other.yx() && 
-			   yy() == other.yy() && 
-			   yz() == other.yz() && 
-			   zx() == other.zx() && 
-			   zy() == other.zy() && 
-			   zz() == other.zz() && 
-			   tx() == other.tx() && 
-			   ty() == other.ty() && 
-			   tz() == other.tz();
-	}
+	bool isAffineEqual(const Matrix4& other) const;
 
 	/**
 	 * Returns RIGHTHANDED if this is right-handed, else returns LEFTHANDED.
 	 */
-	Handedness getHandedness() const
-	{
-		return (x().getVector3().crossProduct(y().getVector3()).dot(z().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
-	}
+	Handedness getHandedness() const;
 };
 
 // =========================================================================================
@@ -462,37 +430,69 @@ inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
     );
 }
 
-/// \brief Returns \p self pre-multiplied by \p other.
-inline Matrix4 matrix4_premultiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
+inline Matrix4 Matrix4::getPremultipliedBy(const Matrix4& other) const
 {
-#if 1
-	return other.getMultipliedBy(self);//matrix4_multiplied_by_matrix4(other, self);
-#else
-  return Matrix4::byColumns(
-    self[0] * other[0] + self[1] * other[4] + self[2] * other[8] + self[3] * other[12],
-    self[0] * other[1] + self[1] * other[5] + self[2] * other[9] + self[3] * other[13],
-    self[0] * other[2] + self[1] * other[6] + self[2] * other[10]+ self[3] * other[14],
-    self[0] * other[3] + self[1] * other[7] + self[2] * other[11]+ self[3] * other[15],
-    self[4] * other[0] + self[5] * other[4] + self[6] * other[8] + self[7] * other[12],
-    self[4] * other[1] + self[5] * other[5] + self[6] * other[9] + self[7] * other[13],
-    self[4] * other[2] + self[5] * other[6] + self[6] * other[10]+ self[7] * other[14],
-    self[4] * other[3] + self[5] * other[7] + self[6] * other[11]+ self[7] * other[15],
-    self[8] * other[0] + self[9] * other[4] + self[10]* other[8] + self[11]* other[12],
-    self[8] * other[1] + self[9] * other[5] + self[10]* other[9] + self[11]* other[13],
-    self[8] * other[2] + self[9] * other[6] + self[10]* other[10]+ self[11]* other[14],
-    self[8] * other[3] + self[9] * other[7] + self[10]* other[11]+ self[11]* other[15],
-    self[12]* other[0] + self[13]* other[4] + self[14]* other[8] + self[15]* other[12],
-    self[12]* other[1] + self[13]* other[5] + self[14]* other[9] + self[15]* other[13],
-    self[12]* other[2] + self[13]* other[6] + self[14]* other[10]+ self[15]* other[14],
-    self[12]* other[3] + self[13]* other[7] + self[14]* other[11]+ self[15]* other[15]
-  );
-#endif
+    return other.getMultipliedBy(*this);
+}
+
+inline bool Matrix4::operator==(const Matrix4& other) const
+{
+	return xx() == other.xx() && xy() == other.xy() && xz() == other.xz() && xw() == other.xw()
+		&& yx() == other.yx() && yy() == other.yy() && yz() == other.yz() && yw() == other.yw()
+		&& zx() == other.zx() && zy() == other.zy() && zz() == other.zz() && zw() == other.zw()
+		&& tx() == other.tx() && ty() == other.ty() && tz() == other.tz() && tw() == other.tw();
+}
+
+inline bool Matrix4::operator!=(const Matrix4& other) const
+{
+	return !operator==(other);
+}
+
+inline bool Matrix4::isEqual(const Matrix4& other, float epsilon) const
+{
+	return float_equal_epsilon(xx(), other.xx(), epsilon)
+		&& float_equal_epsilon(xy(), other.xy(), epsilon)
+		&& float_equal_epsilon(xz(), other.xz(), epsilon)
+		&& float_equal_epsilon(xw(), other.xw(), epsilon)
+		&& float_equal_epsilon(yx(), other.yx(), epsilon)
+		&& float_equal_epsilon(yy(), other.yy(), epsilon)
+		&& float_equal_epsilon(yz(), other.yz(), epsilon)
+		&& float_equal_epsilon(yw(), other.yw(), epsilon)
+		&& float_equal_epsilon(zx(), other.zx(), epsilon)
+		&& float_equal_epsilon(zy(), other.zy(), epsilon)
+		&& float_equal_epsilon(zz(), other.zz(), epsilon)
+		&& float_equal_epsilon(zw(), other.zw(), epsilon)
+		&& float_equal_epsilon(tx(), other.tx(), epsilon)
+		&& float_equal_epsilon(ty(), other.ty(), epsilon)
+		&& float_equal_epsilon(tz(), other.tz(), epsilon)
+		&& float_equal_epsilon(tw(), other.tw(), epsilon);
+}
+
+inline bool Matrix4::isAffineEqual(const Matrix4& other) const
+{
+	return xx() == other.xx() && 
+			xy() == other.xy() && 
+			xz() == other.xz() && 
+			yx() == other.yx() && 
+			yy() == other.yy() && 
+			yz() == other.yz() && 
+			zx() == other.zx() && 
+			zy() == other.zy() && 
+			zz() == other.zz() && 
+			tx() == other.tx() && 
+			ty() == other.ty() && 
+			tz() == other.tz();
+}
+
+inline Matrix4::Handedness Matrix4::getHandedness() const
+{
+	return (x().getVector3().crossProduct(y().getVector3()).dot(z().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
 /// \brief Pre-multiplies \p self by \p other in-place.
 inline void matrix4_premultiply_by_matrix4(Matrix4& self, const Matrix4& other)
 {
-  self = matrix4_premultiplied_by_matrix4(self, other);
+	self = self.getPremultipliedBy(other);
 }
 
 /// \brief returns true if \p transform is affine.
@@ -917,13 +917,9 @@ inline void matrix4_rotate_by_euler_xyz_degrees(Matrix4& self, const Vector3& eu
 /// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, z, x).
 inline Matrix4 matrix4_rotation_for_euler_yzx(const Vector3& euler)
 {
-  return matrix4_premultiplied_by_matrix4(
-    matrix4_premultiplied_by_matrix4(
-      matrix4_rotation_for_y(euler[1]),
-      matrix4_rotation_for_z(euler[2])
-    ),
-    matrix4_rotation_for_x(euler[0])
-  );
+	return matrix4_rotation_for_y(euler[1]).getPremultipliedBy(
+		matrix4_rotation_for_z(euler[2])).getPremultipliedBy(matrix4_rotation_for_x(euler[0])
+	);
 }
 
 /// \brief Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, z, x).
@@ -935,13 +931,9 @@ inline Matrix4 matrix4_rotation_for_euler_yzx_degrees(const Vector3& euler)
 /// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, z, y).
 inline Matrix4 matrix4_rotation_for_euler_xzy(const Vector3& euler)
 {
-  return matrix4_premultiplied_by_matrix4(
-    matrix4_premultiplied_by_matrix4(
-      matrix4_rotation_for_x(euler[0]),
-      matrix4_rotation_for_z(euler[2])
-    ),
-    matrix4_rotation_for_y(euler[1])
-  );
+	return matrix4_rotation_for_x(euler[0]).getPremultipliedBy(
+		matrix4_rotation_for_z(euler[2])).getPremultipliedBy(matrix4_rotation_for_y(euler[1])
+	);
 }
 
 /// \brief Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (x, z, y).
@@ -1023,13 +1015,9 @@ inline void matrix4_rotate_by_euler_yxz_degrees(Matrix4& self, const Vector3& eu
 inline Matrix4 matrix4_rotation_for_euler_zxy(const Vector3& euler)
 {
 #if 1
-  return matrix4_premultiplied_by_matrix4(
-    matrix4_premultiplied_by_matrix4(
-      matrix4_rotation_for_z(euler[2]),
-      matrix4_rotation_for_x(euler[0])
-    ),
-    matrix4_rotation_for_y(euler[1])
-  );
+	return matrix4_rotation_for_z(euler[2]).getPremultipliedBy(
+		matrix4_rotation_for_x(euler[0])).getPremultipliedBy(matrix4_rotation_for_y(euler[1])
+	);
 #else
   float cx = cos(euler[0]);
   float sx = sin(euler[0]);

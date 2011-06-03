@@ -83,6 +83,9 @@ void MathTest::testMultiplication()
 	REQUIRE_TRUE(c.ty() == 13224, "Matrix multiplication failed");
 	REQUIRE_TRUE(c.tz() == 15312, "Matrix multiplication failed");
 	REQUIRE_TRUE(c.tw() == 17618, "Matrix multiplication failed");
+
+	// Test Pre-Multiplication
+	REQUIRE_TRUE(b.getMultipliedBy(a) == a.getPremultipliedBy(b), "Matrix pre-multiplication mismatch");
 }
 
 // Initialise the static registrar object

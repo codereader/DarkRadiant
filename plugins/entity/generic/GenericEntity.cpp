@@ -97,10 +97,7 @@ void GenericEntity::rotate(const Quaternion& rotation)
 		// greebo: Pre-multiply the incoming matrix on the existing one
 		// Don't use m_rotation.rotate(), which performs a post-multiplication
 		m_rotation.setFromMatrix4(
-			matrix4_premultiplied_by_matrix4(
-				m_rotation.getMatrix4(),
-				matrix4_rotation_for_quaternion_quantised(rotation)
-			)
+			m_rotation.getMatrix4().getPremultipliedBy(matrix4_rotation_for_quaternion_quantised(rotation))
 		);
 	}
 	else
