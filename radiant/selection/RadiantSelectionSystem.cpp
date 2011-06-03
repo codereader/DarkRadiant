@@ -43,7 +43,7 @@ void matrix4_assign_rotation_for_pivot(Matrix4& matrix, const scene::INodePtr& n
 	EditablePtr editable = Node_getEditable(node);
 	// If the instance is editable, take the localpivot point into account, otherwise just apply the rotation
 	if (editable != 0) {
-		matrix4_assign_rotation(matrix, matrix4_multiplied_by_matrix4(node->localToWorld(), editable->getLocalPivot()));
+		matrix4_assign_rotation(matrix, node->localToWorld().getMultipliedBy(editable->getLocalPivot()));
 	}
 	else {
 		matrix4_assign_rotation(matrix, node->localToWorld());
@@ -443,7 +443,7 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const Vector2& 
 			Pivot2World pivot;
 			pivot.update(GetPivot2World(), view.GetModelview(), view.GetProjection(), view.GetViewport());
 
-			_manip2pivotStart = matrix4_multiplied_by_matrix4(matrix4_full_inverse(_pivot2worldStart), pivot._worldSpace);
+			_manip2pivotStart = matrix4_full_inverse(_pivot2worldStart).getMultipliedBy(pivot._worldSpace);
 
 			Matrix4 device2manip;
 			ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());

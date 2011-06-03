@@ -18,7 +18,7 @@ inline AABB Node_getPivotBounds(const scene::INodePtr& node) {
 	{
 		EditablePtr editable = Node_getEditable(node);
 		if (editable != NULL) {
-			return AABB(matrix4_multiplied_by_matrix4(node->localToWorld(), editable->getLocalPivot()).t().getVector3(), Vector3(0, 0, 0));
+			return AABB(node->localToWorld().getMultipliedBy(editable->getLocalPivot()).t().getVector3(), Vector3(0, 0, 0));
 		}
 		else {
 			return node->worldAABB();

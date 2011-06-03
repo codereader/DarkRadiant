@@ -284,7 +284,7 @@ inline Quaternion quaternion_for_matrix4_rotation(const Matrix4& matrix4)
 /// The concatenated rotation occurs before \p self.
 inline Matrix4 matrix4_rotated_by_quaternion(const Matrix4& self, const Quaternion& rotation)
 {
-  return matrix4_multiplied_by_matrix4(self, matrix4_rotation_for_quaternion(rotation));
+	return self.getMultipliedBy(matrix4_rotation_for_quaternion(rotation));
 }
 
 /// \brief Concatenates \p self with the rotation transform produced by \p rotation.
