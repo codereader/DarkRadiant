@@ -86,6 +86,16 @@ void MathTest::testMultiplication()
 
 	// Test Pre-Multiplication
 	REQUIRE_TRUE(b.getMultipliedBy(a) == a.getPremultipliedBy(b), "Matrix pre-multiplication mismatch");
+
+	// Create an affine matrix
+	Matrix4 affineA = a;
+
+	affineA.xw() = 0;
+	affineA.yw() = 0;
+	affineA.zw() = 0;
+	affineA.tw() = 1;
+
+	REQUIRE_TRUE(affineA.isAffine(), "Affine check failed");
 }
 
 // Initialise the static registrar object
