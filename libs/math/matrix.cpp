@@ -83,54 +83,6 @@ Matrix4 Matrix4::getScale(const Vector3& scale)
     );
 }
 
-// Main explicit constructor (private)
-Matrix4::Matrix4(float xx_, float xy_, float xz_, float xw_,
-                 float yx_, float yy_, float yz_, float yw_,
-                 float zx_, float zy_, float zz_, float zw_,
-                 float tx_, float ty_, float tz_, float tw_)
-{
-    xx() = xx_;
-    xy() = xy_;
-    xz() = xz_;
-    xw() = xw_;
-    yx() = yx_;
-    yy() = yy_;
-    yz() = yz_;
-    yw() = yw_;
-    zx() = zx_;
-    zy() = zy_;
-    zz() = zz_;
-    zw() = zw_;
-    tx() = tx_;
-    ty() = ty_;
-    tz() = tz_;
-    tw() = tw_;
-}
-
-// Construct a matrix with given column elements
-Matrix4 Matrix4::byColumns(float xx, float xy, float xz, float xw,
-                           float yx, float yy, float yz, float yw,
-                           float zx, float zy, float zz, float zw,
-                           float tx, float ty, float tz, float tw)
-{
-    return Matrix4(xx, xy, xz, xw,
-                   yx, yy, yz, yw,
-                   zx, zy, zz, zw,
-                   tx, ty, tz, tw);
-}
-
-// Construct a matrix with given row elements
-Matrix4 Matrix4::byRows(float xx, float yx, float zx, float tx,
-                        float xy, float yy, float zy, float ty,
-                        float xz, float yz, float zz, float tz,
-                        float xw, float yw, float zw, float tw)
-{
-    return Matrix4(xx, xy, xz, xw,
-                   yx, yy, yz, yw,
-                   zx, zy, zz, zw,
-                   tx, ty, tz, tw);
-}
-
 // Transpose the matrix in-place
 void Matrix4::transpose()
 {
@@ -167,7 +119,7 @@ Matrix4 Matrix4::getInverse() const
   // throw exception here if (det*det < 1e-25)
 
   // invert rotation submatrix
-  det = 1.0 / det;
+  det = 1.0f / det;
 
   result[0] = (  (_m[5]*_m[10]- _m[6]*_m[9] )*det);
   result[1] = (- (_m[1]*_m[10]- _m[2]*_m[9] )*det);
@@ -229,29 +181,6 @@ Plane3 Matrix4::inverseTransform(const Plane3& plane) const
         _m[ 4] * plane.normal().x() + _m[ 5] * plane.normal().y() + _m[ 6] * plane.normal().z() + _m[ 7] * plane.dist(),
         _m[ 8] * plane.normal().x() + _m[ 9] * plane.normal().y() + _m[10] * plane.normal().z() + _m[11] * plane.dist(),
         _m[12] * plane.normal().x() + _m[13] * plane.normal().y() + _m[14] * plane.normal().z() + _m[15] * plane.dist()
-    );
-}
-
-// Return matrix product
-Matrix4 Matrix4::getMultipliedBy(const Matrix4& rhs) const
-{
-    return Matrix4::byColumns(
-        rhs[0] * _m[0] + rhs[1] * _m[4] + rhs[2] * _m[8] + rhs[3] * _m[12],
-        rhs[0] * _m[1] + rhs[1] * _m[5] + rhs[2] * _m[9] + rhs[3] * _m[13],
-        rhs[0] * _m[2] + rhs[1] * _m[6] + rhs[2] * _m[10]+ rhs[3] * _m[14],
-        rhs[0] * _m[3] + rhs[1] * _m[7] + rhs[2] * _m[11]+ rhs[3] * _m[15],
-        rhs[4] * _m[0] + rhs[5] * _m[4] + rhs[6] * _m[8] + rhs[7] * _m[12],
-        rhs[4] * _m[1] + rhs[5] * _m[5] + rhs[6] * _m[9] + rhs[7] * _m[13],
-        rhs[4] * _m[2] + rhs[5] * _m[6] + rhs[6] * _m[10]+ rhs[7] * _m[14],
-        rhs[4] * _m[3] + rhs[5] * _m[7] + rhs[6] * _m[11]+ rhs[7] * _m[15],
-        rhs[8] * _m[0] + rhs[9] * _m[4] + rhs[10]* _m[8] + rhs[11]* _m[12],
-        rhs[8] * _m[1] + rhs[9] * _m[5] + rhs[10]* _m[9] + rhs[11]* _m[13],
-        rhs[8] * _m[2] + rhs[9] * _m[6] + rhs[10]* _m[10]+ rhs[11]* _m[14],
-        rhs[8] * _m[3] + rhs[9] * _m[7] + rhs[10]* _m[11]+ rhs[11]* _m[15],
-        rhs[12]* _m[0] + rhs[13]* _m[4] + rhs[14]* _m[8] + rhs[15]* _m[12],
-        rhs[12]* _m[1] + rhs[13]* _m[5] + rhs[14]* _m[9] + rhs[15]* _m[13],
-        rhs[12]* _m[2] + rhs[13]* _m[6] + rhs[14]* _m[10]+ rhs[15]* _m[14],
-        rhs[12]* _m[3] + rhs[13]* _m[7] + rhs[14]* _m[11]+ rhs[15]* _m[15]
     );
 }
 

@@ -387,6 +387,81 @@ public:
 	}
 };
 
+// =========================================================================================
+// Inlined member definitions 
+// =========================================================================================
+
+// Main explicit constructor (private)
+inline Matrix4::Matrix4(float xx_, float xy_, float xz_, float xw_,
+						float yx_, float yy_, float yz_, float yw_,
+						float zx_, float zy_, float zz_, float zw_,
+						float tx_, float ty_, float tz_, float tw_)
+{
+    xx() = xx_;
+    xy() = xy_;
+    xz() = xz_;
+    xw() = xw_;
+    yx() = yx_;
+    yy() = yy_;
+    yz() = yz_;
+    yw() = yw_;
+    zx() = zx_;
+    zy() = zy_;
+    zz() = zz_;
+    zw() = zw_;
+    tx() = tx_;
+    ty() = ty_;
+    tz() = tz_;
+    tw() = tw_;
+}
+
+// Construct a matrix with given column elements
+inline Matrix4 Matrix4::byColumns(float xx, float xy, float xz, float xw,
+								  float yx, float yy, float yz, float yw,
+								  float zx, float zy, float zz, float zw,
+								  float tx, float ty, float tz, float tw)
+{
+    return Matrix4(xx, xy, xz, xw,
+                   yx, yy, yz, yw,
+                   zx, zy, zz, zw,
+                   tx, ty, tz, tw);
+}
+
+// Construct a matrix with given row elements
+inline Matrix4 Matrix4::byRows(float xx, float yx, float zx, float tx,
+							   float xy, float yy, float zy, float ty,
+							   float xz, float yz, float zz, float tz,
+							   float xw, float yw, float zw, float tw)
+{
+    return Matrix4(xx, xy, xz, xw,
+                   yx, yy, yz, yw,
+                   zx, zy, zz, zw,
+                   tx, ty, tz, tw);
+}
+
+// Post-multiply this with other
+inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
+{
+	return Matrix4::byColumns(
+        other[0] * _m[0] + other[1] * _m[4] + other[2] * _m[8] + other[3] * _m[12],
+        other[0] * _m[1] + other[1] * _m[5] + other[2] * _m[9] + other[3] * _m[13],
+        other[0] * _m[2] + other[1] * _m[6] + other[2] * _m[10]+ other[3] * _m[14],
+        other[0] * _m[3] + other[1] * _m[7] + other[2] * _m[11]+ other[3] * _m[15],
+        other[4] * _m[0] + other[5] * _m[4] + other[6] * _m[8] + other[7] * _m[12],
+        other[4] * _m[1] + other[5] * _m[5] + other[6] * _m[9] + other[7] * _m[13],
+        other[4] * _m[2] + other[5] * _m[6] + other[6] * _m[10]+ other[7] * _m[14],
+        other[4] * _m[3] + other[5] * _m[7] + other[6] * _m[11]+ other[7] * _m[15],
+        other[8] * _m[0] + other[9] * _m[4] + other[10]* _m[8] + other[11]* _m[12],
+        other[8] * _m[1] + other[9] * _m[5] + other[10]* _m[9] + other[11]* _m[13],
+        other[8] * _m[2] + other[9] * _m[6] + other[10]* _m[10]+ other[11]* _m[14],
+        other[8] * _m[3] + other[9] * _m[7] + other[10]* _m[11]+ other[11]* _m[15],
+        other[12]* _m[0] + other[13]* _m[4] + other[14]* _m[8] + other[15]* _m[12],
+        other[12]* _m[1] + other[13]* _m[5] + other[14]* _m[9] + other[15]* _m[13],
+        other[12]* _m[2] + other[13]* _m[6] + other[14]* _m[10]+ other[15]* _m[14],
+        other[12]* _m[3] + other[13]* _m[7] + other[14]* _m[11]+ other[15]* _m[15]
+    );
+}
+
 /// \brief Returns \p self pre-multiplied by \p other.
 inline Matrix4 matrix4_premultiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
 {
