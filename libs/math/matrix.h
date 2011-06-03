@@ -311,6 +311,11 @@ public:
      */
     Matrix4 getPremultipliedBy(const Matrix4& other) const;
 
+	/**
+	 * Pre-multiplies this matrix by other in-place.
+	 */
+	void premultiplyBy(const Matrix4& other);
+
     /**
      * \brief
      * Add a translation component to the transformation represented by this
@@ -489,10 +494,9 @@ inline Matrix4::Handedness Matrix4::getHandedness() const
 	return (x().getVector3().crossProduct(y().getVector3()).dot(z().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
-/// \brief Pre-multiplies \p self by \p other in-place.
-inline void matrix4_premultiply_by_matrix4(Matrix4& self, const Matrix4& other)
+inline void Matrix4::premultiplyBy(const Matrix4& other)
 {
-	self = self.getPremultipliedBy(other);
+	*this = getPremultipliedBy(other);
 }
 
 /// \brief returns true if \p transform is affine.
