@@ -149,7 +149,7 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
 
     {
       {
-        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldX));
+        Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldX));
 
         SelectionIntersection best;
         LineStrip_BestPoint(local2view, &_circleX.front(), _circleX.size(), best);
@@ -157,7 +157,7 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
       }
 
       {
-        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldY));
+		  Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldY));
 
         SelectionIntersection best;
         LineStrip_BestPoint(local2view, &_circleY.front(), _circleY.size(), best);
@@ -165,7 +165,7 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
       }
 
       {
-        Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _local2worldZ));
+		  Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_local2worldZ));
 
         SelectionIntersection best;
         LineStrip_BestPoint(local2view, &_circleZ.front(), _circleZ.size(), best);
@@ -174,7 +174,7 @@ void RotateManipulator::testSelect(const View& view, const Matrix4& pivot2world)
     }
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._viewpointSpace));
+		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._viewpointSpace));
 
       {
         SelectionIntersection best;

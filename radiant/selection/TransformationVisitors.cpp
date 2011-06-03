@@ -93,8 +93,8 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 	        parent_translation,
 	        m_rotate,
 	        m_world_pivot,
-			matrix4_multiplied_by_matrix4(node->localToWorld(), localPivot),
-	        matrix4_multiplied_by_matrix4(transformNode->localToParent(), localPivot)
+			node->localToWorld().getMultipliedBy(localPivot),
+			transformNode->localToParent().getMultipliedBy(localPivot)
 	      );
 
 		  transform->setTranslation(parent_translation);
@@ -127,8 +127,8 @@ void ScaleSelected::visit(const scene::INodePtr& node) const {
             parent_translation,
             m_scale,
             m_world_pivot,
-			matrix4_multiplied_by_matrix4(node->localToWorld(), localPivot),
-            matrix4_multiplied_by_matrix4(transformNode->localToParent(), localPivot)
+			node->localToWorld().getMultipliedBy(localPivot),
+			transformNode->localToParent().getMultipliedBy(localPivot)
           );
 
           transform->setTranslation(parent_translation);

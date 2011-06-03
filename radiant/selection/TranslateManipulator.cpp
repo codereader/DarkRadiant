@@ -104,7 +104,7 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
     bool show_z = manipulator_show_axis(_pivot, z);
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._viewpointSpace));
+		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._viewpointSpace));
 
       {
         SelectionIntersection best;
@@ -118,7 +118,7 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
     }
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
+		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._worldSpace));
 
       if(show_x)
       {
@@ -153,7 +153,7 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
 
     	if (GlobalRegistry().get(RKEY_TRANSLATE_CONSTRAINED) == "1") {
 	    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence
-	    	Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
+	    	Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._worldSpace));
 
 	    	// Get the (relative?) distance from the mouse pointer to the manipulator
 	    	Vector3 delta = local2view.t().getProjected();

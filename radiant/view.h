@@ -102,7 +102,7 @@ class View : public VolumeTest
 
   void construct()
   {
-    m_viewproj = matrix4_multiplied_by_matrix4(matrix4_multiplied_by_matrix4(m_scissor, m_projection), m_modelview);
+	  m_viewproj = m_scissor.getMultipliedBy(m_projection).getMultipliedBy(m_modelview);
 
     m_frustum = frustum_from_viewproj(m_viewproj);
     m_viewer = viewer_from_viewproj(m_viewproj);

@@ -31,10 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 inline Vector3 translation_to_local(const Vector3& translation, const Matrix4& local)
 {
   return matrix4_get_translation_vec3(
-    matrix4_multiplied_by_matrix4(
-      matrix4_translated_by_vec3(local.getTransposed(), translation),
-      local
-    )
+    matrix4_translated_by_vec3(local.getTransposed(), translation).getMultipliedBy(local)
   );
 }
 
@@ -42,10 +39,7 @@ inline Vector3 translation_to_local(const Vector3& translation, const Matrix4& l
 inline Vector3 translation_from_local(const Vector3& translation, const Matrix4& local)
 {
   return matrix4_get_translation_vec3(
-    matrix4_multiplied_by_matrix4(
-      matrix4_translated_by_vec3(local, translation),
-      local.getTransposed()
-    )
+	matrix4_translated_by_vec3(local, translation).getMultipliedBy(local.getTransposed())
   );
 }
 

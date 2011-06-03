@@ -10,8 +10,9 @@ inline SelectionIntersection select_point_from_clipped(Vector4& clipped) {
   return SelectionIntersection(clipped[2] / clipped[3], static_cast<float>(Vector3(clipped[0] / clipped[3], clipped[1] / clipped[3], 0).getLengthSquared()));
 }
 
-void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided) {
-    _local2view = matrix4_multiplied_by_matrix4(_view.GetViewMatrix(), localToWorld);
+void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided)
+{
+    _local2view = _view.GetViewMatrix().getMultipliedBy(localToWorld);
 
     // Cull back-facing polygons based on winding being clockwise or counter-clockwise.
     // Don't cull if the view is wireframe and the polygons are two-sided.

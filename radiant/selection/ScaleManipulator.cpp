@@ -41,7 +41,7 @@ void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) 
     SelectionPool selector;
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._worldSpace));
+      Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._worldSpace));
 
     {
         SelectionIntersection best;
@@ -63,7 +63,7 @@ void ScaleManipulator::testSelect(const View& view, const Matrix4& pivot2world) 
     }
 
     {
-      Matrix4 local2view(matrix4_multiplied_by_matrix4(view.GetViewMatrix(), _pivot._viewpointSpace));
+		Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._viewpointSpace));
 
       {
         SelectionIntersection best;

@@ -7,7 +7,23 @@
 #include "math/Vector4.h"
 #include "math/Plane3.h"
 
-/// \brief A 4x4 matrix stored in single-precision floating-point.
+/**
+ * A 4x4 matrix stored in single-precision floating-point.
+ *
+ * The elements of this matrix are stored columnwise in memory:
+ *
+ * |  0    4    8   12 |
+ * |  1    5    9   13 |
+ * |  2    6   10   14 |
+ * |  3    7   11   15 |
+ *
+ * or, alternatively, as the 4 columns are regarded as 4 vectors named x, y, z, t:
+ *
+ * | xx   yx   zx   tx |
+ * | xy   yy   zy   ty |
+ * | xz   yz   zz   tz |
+ * | xw   yw   zw   tw |
+ */
 class Matrix4
 {
 private:
@@ -18,7 +34,7 @@ private:
 
 private:
 
-    // Initialising constructor
+    // Initialising constructor, elements are passed in column-wise order
     Matrix4(float xx_, float xy_, float xz_, float xw_,
             float yx_, float yy_, float yz_, float yw_,
             float zx_, float zy_, float zz_, float zw_,
@@ -371,34 +387,11 @@ public:
 	}
 };
 
-/// \brief Returns \p self post-multiplied by \p other.
-inline Matrix4 matrix4_multiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
-{
-  return Matrix4::byColumns(
-    other[0] * self[0] + other[1] * self[4] + other[2] * self[8] + other[3] * self[12],
-    other[0] * self[1] + other[1] * self[5] + other[2] * self[9] + other[3] * self[13],
-    other[0] * self[2] + other[1] * self[6] + other[2] * self[10]+ other[3] * self[14],
-    other[0] * self[3] + other[1] * self[7] + other[2] * self[11]+ other[3] * self[15],
-    other[4] * self[0] + other[5] * self[4] + other[6] * self[8] + other[7] * self[12],
-    other[4] * self[1] + other[5] * self[5] + other[6] * self[9] + other[7] * self[13],
-    other[4] * self[2] + other[5] * self[6] + other[6] * self[10]+ other[7] * self[14],
-    other[4] * self[3] + other[5] * self[7] + other[6] * self[11]+ other[7] * self[15],
-    other[8] * self[0] + other[9] * self[4] + other[10]* self[8] + other[11]* self[12],
-    other[8] * self[1] + other[9] * self[5] + other[10]* self[9] + other[11]* self[13],
-    other[8] * self[2] + other[9] * self[6] + other[10]* self[10]+ other[11]* self[14],
-    other[8] * self[3] + other[9] * self[7] + other[10]* self[11]+ other[11]* self[15],
-    other[12]* self[0] + other[13]* self[4] + other[14]* self[8] + other[15]* self[12],
-    other[12]* self[1] + other[13]* self[5] + other[14]* self[9] + other[15]* self[13],
-    other[12]* self[2] + other[13]* self[6] + other[14]* self[10]+ other[15]* self[14],
-    other[12]* self[3] + other[13]* self[7] + other[14]* self[11]+ other[15]* self[15]
-  );
-}
-
 /// \brief Returns \p self pre-multiplied by \p other.
 inline Matrix4 matrix4_premultiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
 {
 #if 1
-  return matrix4_multiplied_by_matrix4(other, self);
+	return other.getMultipliedBy(self);//matrix4_multiplied_by_matrix4(other, self);
 #else
   return Matrix4::byColumns(
     self[0] * other[0] + self[1] * other[4] + self[2] * other[8] + self[3] * other[12],
@@ -662,7 +655,7 @@ inline Vector3 matrix4_get_translation_vec3(const Matrix4& self)
 /// The concatenated translation occurs before \p self.
 inline Matrix4 matrix4_translated_by_vec3(const Matrix4& self, const Vector3& translation)
 {
-  return matrix4_multiplied_by_matrix4(self, Matrix4::getTranslation(translation));
+	return self.getMultipliedBy(Matrix4::getTranslation(translation));
 }
 
 
@@ -941,7 +934,7 @@ inline Matrix4 matrix4_rotation_for_euler_yxz_degrees(const Vector3& euler)
 /// The concatenated rotation occurs before \p self.
 inline Matrix4 matrix4_rotated_by_euler_yxz_degrees(const Matrix4& self, const Vector3& euler)
 {
-  return matrix4_multiplied_by_matrix4(self, matrix4_rotation_for_euler_yxz_degrees(euler));
+	return self.getMultipliedBy(matrix4_rotation_for_euler_yxz_degrees(euler));
 }
 
 /// \brief Concatenates \p self with the rotation transform produced by \p euler angles (degrees) in the order (y, x, z).
@@ -1001,7 +994,7 @@ inline Matrix4 matrix4_rotation_for_euler_zxy_degrees(const Vector3& euler)
 /// The concatenated rotation occurs before \p self.
 inline Matrix4 matrix4_rotated_by_euler_zxy_degrees(const Matrix4& self, const Vector3& euler)
 {
-  return matrix4_multiplied_by_matrix4(self, matrix4_rotation_for_euler_zxy_degrees(euler));
+	return self.getMultipliedBy(matrix4_rotation_for_euler_zxy_degrees(euler));
 }
 
 /// \brief Concatenates \p self with the rotation transform produced by \p euler angles (degrees) in the order (z, x, y).

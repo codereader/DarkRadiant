@@ -104,9 +104,7 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 	Matrix4 transformed2stTransformed = getBasisForNormal(normalTransformed);
 
 	Matrix4 stTransformed2identity(
-        matrix4_multiplied_by_matrix4(
-            transformed2stTransformed, identity2transformed
-        ).getInverse()
+		transformed2stTransformed.getMultipliedBy(identity2transformed).getInverse()
     );
 
 	Vector3 originalProjectionAxis(
@@ -116,7 +114,7 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 	Vector3 transformedProjectionAxis(stTransformed2identity.z().getVector3());
 
 	Matrix4 stIdentity2stOriginal = getTransform();
-	Matrix4 identity2stOriginal(matrix4_multiplied_by_matrix4(stIdentity2stOriginal, identity2stIdentity));
+	Matrix4 identity2stOriginal = stIdentity2stOriginal.getMultipliedBy(identity2stIdentity);
 
 	//globalOutputStream() << "originalProj: " << originalProjectionAxis << "\n";
 	//globalOutputStream() << "transformedProj: " << transformedProjectionAxis << "\n";
@@ -140,10 +138,10 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 
 			Matrix4 identityCorrected = matrix4_reflection_for_plane45(plane, originalProjectionAxis, transformedProjectionAxis);
 
-			identity2stOriginal = matrix4_multiplied_by_matrix4(identity2stOriginal, identityCorrected);
+			identity2stOriginal = identity2stOriginal.getMultipliedBy(identityCorrected);
 		}
 
-		Matrix4 stTransformed2stOriginal = matrix4_multiplied_by_matrix4(identity2stOriginal, stTransformed2identity);
+		Matrix4 stTransformed2stOriginal = identity2stOriginal.getMultipliedBy(stTransformed2identity);
 
 		setTransform((float)width, (float)height, stTransformed2stOriginal);
 		normalise((float)width, (float)height);
