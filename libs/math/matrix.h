@@ -369,6 +369,12 @@ public:
 	 * This and the other matrix must be affine.
 	 */
 	Matrix4 getAffineMultipliedBy(const Matrix4& other) const;
+
+	/**
+	 * Post-multiplies this matrix by the other in-place.
+	 * This and the other matrix must be affine.
+	 */
+	void affineMultiplyBy(const Matrix4& other);
 };
 
 // =========================================================================================
@@ -537,23 +543,19 @@ inline Matrix4 Matrix4::getAffineMultipliedBy(const Matrix4& other) const
 	);
 }
 
-
+inline void Matrix4::affineMultiplyBy(const Matrix4& other)
+{
+	*this = getAffineMultipliedBy(other);
+}
 
 // --------------------------------------------
-
-/// \brief Post-multiplies \p self by \p other in-place.
-/// \p self and \p other must be affine.
-inline void matrix4_affine_multiply_by_matrix4(Matrix4& self, const Matrix4& other)
-{
-  self = matrix4_affine_multiplied_by_matrix4(self, other);
-}
 
 /// \brief Returns \p self pre-multiplied by \p other.
 /// \p self and \p other must be affine.
 inline Matrix4 matrix4_affine_premultiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
 {
 #if 1
-  return matrix4_affine_multiplied_by_matrix4(other, self);
+	return other.getAffineMultipliedBy(self);
 #else
   return Matrix4::byColumns(
     self[0] * other[0] + self[1] * other[4] + self[2] * other[8],
