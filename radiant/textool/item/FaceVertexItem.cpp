@@ -115,9 +115,9 @@ void FaceVertexItem::transform(const Matrix4& matrix)
 	// Apply the matrices to the current texture transform, pre-multiplied in the correct order
 	Matrix4 texTransform = _sourceFace.getTexdef().m_projection.getTransform();
 
-	matrix4_premultiply_by_matrix4(texTransform, pivotToOrigin);
-	matrix4_premultiply_by_matrix4(texTransform, scale);
-	matrix4_premultiply_by_matrix4(texTransform, originToPivot);
+	texTransform.premultiplyBy(pivotToOrigin);
+	texTransform.premultiplyBy(scale);
+	texTransform.premultiplyBy(originToPivot);
 
 	// Save it back to the face
 	_sourceFace.getTexdef().m_projection.setTransform(1, 1, texTransform);
