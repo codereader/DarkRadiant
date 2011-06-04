@@ -19,4 +19,5 @@ public:
 private:
 	void testIdentity();
 	void testMultiplication();
+	void testTransformation();
 };

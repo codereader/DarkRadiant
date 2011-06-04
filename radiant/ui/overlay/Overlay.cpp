@@ -168,8 +168,8 @@ void Overlay::draw(float xbegin, float xend, float ybegin, float yend,
 	}
 
 	// Apply the transformations onto the window corners
-	windowUpperLeft = scaleTranslation.transform(windowUpperLeft).getProjected();
-	windowLowerRight = scaleTranslation.transform(windowLowerRight).getProjected();
+	windowUpperLeft = scaleTranslation.transform(windowUpperLeft);
+	windowLowerRight = scaleTranslation.transform(windowLowerRight);
 
 	if (!_panWithXYView) {
 		windowUpperLeft += windowOrigin;

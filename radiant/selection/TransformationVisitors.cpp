@@ -6,13 +6,9 @@
 
 // greebo: The implementation of those geometric helper functions
 
-Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld) {
-  return Vector3(
-    matrix4_transformed_point(
-      matrix4_full_inverse(localToWorld),
-      world_pivot
-    )
-  );
+Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld)
+{
+	return matrix4_full_inverse(localToWorld).transform(world_pivot);
 }
 
 void translation_for_pivoted_rotation(Vector3& parent_translation, const Quaternion& local_rotation,
@@ -23,10 +19,7 @@ void translation_for_pivoted_rotation(Vector3& parent_translation, const Quatern
 
   Vector3 translation(
       local_pivot +
-      matrix4_transformed_point(
-        matrix4_rotation_for_quaternion_quantised(local_rotation),
-        -local_pivot
-    )
+      matrix4_rotation_for_quaternion_quantised(local_rotation).transform(-local_pivot)
   );
 
   //globalOutputStream() << "translation: " << translation << "\n";
