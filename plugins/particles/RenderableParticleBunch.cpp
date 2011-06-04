@@ -169,7 +169,7 @@ Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
 	Matrix4 object2Vel = Matrix4::getRotation(Vector3(0,1,0), vel);
 
 	// Transform the view (-z) vector into object space
-	Vector3 view = camera2Object.transform(Vector3(0,0,-1));
+	Vector3 view = camera2Object.transformPoint(Vector3(0,0,-1));
 
 	// Project the view vector onto the plane defined by the velocity vector
 	Vector3 viewProj = view - vel * view.dot(vel);
@@ -414,7 +414,7 @@ Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, cons
 				Matrix4 rotation = Matrix4::getRotation(z, dir);
 
 				// Rotate the vector into the particle's main direction
-				endPoint = rotation.transform(endPoint);
+				endPoint = rotation.transformPoint(endPoint);
 			}
 
 			return endPoint.getNormalised();
