@@ -438,7 +438,7 @@ inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
 
 inline bool viewproj_test_transformed_point(const Matrix4& viewproj, const Vector3& point, const Matrix4& localToWorld)
 {
-  return viewproj_test_point(viewproj, localToWorld.transform(point));
+  return viewproj_test_point(viewproj, localToWorld.transformPoint(point));
 }
 
 inline Frustum frustum_from_viewproj(const Matrix4& viewproj)
@@ -476,7 +476,7 @@ inline bool plane_contains_oriented_aabb(const Plane3& plane, const AABB& aabb, 
 inline VolumeIntersectionValue frustum_intersects_transformed_aabb(const Frustum& frustum, const AABB& aabb, const Matrix4& localToWorld)
 {
   AABB aabb_world(aabb);
-  aabb_world.origin = localToWorld.transform(aabb_world.origin);
+  aabb_world.origin = localToWorld.transformPoint(aabb_world.origin);
 
   if(plane_contains_oriented_aabb(frustum.right, aabb_world, localToWorld)
     || plane_contains_oriented_aabb(frustum.left, aabb_world, localToWorld)
@@ -542,14 +542,14 @@ inline bool viewer_test_triangle(const Vector4& viewer, const Vector3& p0, const
 
 inline Vector4 viewer_from_transformed_viewer(const Vector4& viewer, const Matrix4& transform)
 {
-  if(viewer[3] == 0)
-  {
-    return Vector4(matrix4_transformed_direction(transform, viewer.getVector3()), 0);
-  }
-  else
-  {
-    return Vector4(transform.transform(viewer.getVector3()), viewer[3]);
-  }
+	if(viewer[3] == 0)
+	{
+		return Vector4(transform.transformDirection(viewer.getVector3()), 0);
+	}
+	else
+	{
+		return Vector4(transform.transformPoint(viewer.getVector3()), viewer[3]);
+	}
 }
 
 inline bool viewer_test_transformed_plane(const Vector4& viewer, const Plane3& plane, const Matrix4& localToWorld)

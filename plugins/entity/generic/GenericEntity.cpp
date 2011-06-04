@@ -192,11 +192,11 @@ void GenericEntity::updateTransform()
 	if (_allow3Drotations)
 	{
 		// greebo: Use the z-direction as base for rotations
-		m_ray.direction = matrix4_transformed_direction(m_rotation.getMatrix4(), Vector3(0,0,1));
+		m_ray.direction = m_rotation.getMatrix4().transformDirection(Vector3(0,0,1));
 	}
 	else
 	{
-		m_ray.direction = matrix4_transformed_direction(matrix4_rotation_for_z(degrees_to_radians(m_angle)), Vector3(1, 0, 0));
+		m_ray.direction = matrix4_rotation_for_z(degrees_to_radians(m_angle)).transformDirection(Vector3(1, 0, 0));
 	}
 
 	_owner.transformChanged();

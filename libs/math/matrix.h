@@ -259,7 +259,15 @@ public:
 	 * Returns the given 3-component point transformed by this matrix.
 	 */
 	template<typename Element>
-	BasicVector3<Element> transform(const BasicVector3<Element>& point) const;
+	BasicVector3<Element> transformPoint(const BasicVector3<Element>& point) const;
+
+	/** 
+	 * Returns the given 3-component direction transformed by this matrix.
+	 * The given vector is treated as direction so it won't receive a translation, just like
+	 * a 4-component vector with its w-component set to 0 would be transformed.
+	 */
+	template<typename Element>
+	BasicVector3<Element> transformDirection(const BasicVector3<Element>& direction) const;
 
 	/**
      * \brief
@@ -562,7 +570,7 @@ inline void Matrix4::affinePremultiplyBy(const Matrix4& other)
 }
 
 template<typename Element>
-BasicVector3<Element> Matrix4::transform(const BasicVector3<Element>& point) const
+BasicVector3<Element> Matrix4::transformPoint(const BasicVector3<Element>& point) const
 {
 	return BasicVector3<Element>(
 		static_cast<Element>(xx() * point[0] + yx() * point[1] + zx() * point[2] + tx()),
@@ -571,25 +579,22 @@ BasicVector3<Element> Matrix4::transform(const BasicVector3<Element>& point) con
 	);
 }
 
-
-
-
-/// \brief Returns \p direction transformed by \p self.
 template<typename Element>
-inline BasicVector3<Element> matrix4_transformed_direction(const Matrix4& self, const BasicVector3<Element>& direction)
+BasicVector3<Element> Matrix4::transformDirection(const BasicVector3<Element>& direction) const
 {
-  return BasicVector3<Element>(
-    static_cast<Element>(self[0]  * direction[0] + self[4]  * direction[1] + self[8]  * direction[2]),
-    static_cast<Element>(self[1]  * direction[0] + self[5]  * direction[1] + self[9]  * direction[2]),
-    static_cast<Element>(self[2]  * direction[0] + self[6]  * direction[1] + self[10] * direction[2])
-  );
+	return BasicVector3<Element>(
+		static_cast<Element>(xx() * direction[0] + yx() * direction[1] + zx() * direction[2]),
+		static_cast<Element>(xy() * direction[0] + yy() * direction[1] + zy() * direction[2]),
+		static_cast<Element>(xz() * direction[0] + yz() * direction[1] + zz() * direction[2])
+	);
 }
+
 
 /// \brief Transforms \p direction by \p self in-place.
 template<typename Element>
 inline void matrix4_transform_direction(const Matrix4& self, BasicVector3<Element>& normal)
 {
-  normal = matrix4_transformed_direction(self, normal);
+  normal = self.transformDirection(normal);
 }
 
 /// \brief Returns \p vector4 transformed by \p self.

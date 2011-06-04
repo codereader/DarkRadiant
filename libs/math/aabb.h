@@ -286,7 +286,7 @@ const float aabb_texcoord_botright[2] = { 1, 1 };
 inline AABB aabb_for_oriented_aabb(const AABB& aabb, const Matrix4& transform)
 {
   return AABB(
-    transform.transform(aabb.origin),
+    transform.transformPoint(aabb.origin),
     Vector3(
       fabs(transform[0]  * aabb.extents[0]) +
       	fabs(transform[4]  * aabb.extents[1]) +
