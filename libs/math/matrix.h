@@ -392,6 +392,11 @@ public:
 	 * This and the other matrix must be affine.
 	 */
 	void affinePremultiplyBy(const Matrix4& other);
+
+	/**
+	 * Returns the determinant of this 4x4 matrix
+	 */
+	float getDeterminant() const;
 };
 
 // =========================================================================================
@@ -611,6 +616,32 @@ inline void Matrix4::invert()
 	*this = getInverse();
 }
 
+inline float Matrix4::getDeterminant() const
+{
+	// greebo: This is following Laplace's formula by expanding it along the first column
+	// It needs a couple of 2x2 minors (which are re-used two times each) and four 3x3 minors
+	
+	// The expanded formula is like this: det A = a11*M11 - a21*M21 + a31*M31 + a41*M41
+	// where aij is a matrix element, and Mij is the minor leaving out the i-th row and j-th column
+
+	// Six 2x2 minors, each is used two times
+	float minor1 = zz() * tw() - zw() * tz();
+	float minor2 = zy() * tw() - zw() * ty();
+	float minor3 = zx() * tw() - zw() * tx();
+	float minor4 = zy() * tz() - zz() * ty();
+	float minor5 = zx() * tz() - zz() * tx();
+	float minor6 = zx() * ty() - zy() * tx();
+
+	// Four 3x3 minors
+	float minor11 = yy() * minor1 - yz() * minor2 + yw() * minor4;
+	float minor21 = yx() * minor1 - yz() * minor3 + yw() * minor5;
+	float minor31 = yx() * minor2 - yy() * minor3 + yw() * minor6;
+	float minor41 = yx() * minor4 - yy() * minor5 + yz() * minor6;
+	
+	// Assemble and return final determinant
+	return xx() * minor11 - xy() * minor21 + xz() * minor31 - xw() * minor41;
+}
+
 
 /// \brief A compile-time-constant integer.
 template<int VALUE_>
@@ -664,20 +695,11 @@ public:
   typedef IntegralConstant<(Element <= 2) ? 3 : 2> z;
 };
 
-/// \brief Returns the determinant of \p self.
-inline float matrix4_determinant(const Matrix4& self)
-{
-  return self.xx() * Matrix4Cofactor< Cofactor4<0>, Cofactor4<0> >::apply(self)
-    - self.xy() * Matrix4Cofactor< Cofactor4<0>, Cofactor4<1> >::apply(self)
-    + self.xz() * Matrix4Cofactor< Cofactor4<0>, Cofactor4<2> >::apply(self)
-    - self.xw() * Matrix4Cofactor< Cofactor4<0>, Cofactor4<3> >::apply(self);
-}
-
 /// \brief Returns the inverse of \p self using the Adjoint method.
 /// \todo Throw an exception if the determinant is zero.
 inline Matrix4 matrix4_full_inverse(const Matrix4& self)
 {
-  float determinant = 1.0f / matrix4_determinant(self);
+	float determinant = 1.0f / self.getDeterminant();
 
   return Matrix4::byColumns(
     static_cast<float>( Matrix4Cofactor< Cofactor4<0>, Cofactor4<0> >::apply(self) * determinant),
