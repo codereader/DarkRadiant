@@ -6,6 +6,8 @@ void MathTest::run()
 {
 	testIdentity();
 	testMultiplication();
+	testTransformation();
+	testMatrixDeterminant();
 }
 
 void MathTest::testIdentity()
@@ -123,10 +125,17 @@ void MathTest::testTransformation()
 		Vector4 transformed = a.transform(vector);
 
 		REQUIRE_TRUE(transformed.x() == 8562, "Vector4 transformation failed");
-		REQUIRE_TRUE(transformed.y() == 9084, "Vector4 transformation failed");
+		REQUIRE_TRUE(transformed.y() == 9682, "Vector4 transformation failed");
 		REQUIRE_TRUE(transformed.z() == 11214, "Vector4 transformation failed");
 		REQUIRE_TRUE(transformed.w() == 12896, "Vector4 transformation failed");
 	}
+}
+
+void MathTest::testMatrixDeterminant()
+{
+	Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
+
+	std::cout << matrix4_determinant(a) << std::endl;
 }
 
 // Initialise the static registrar object
