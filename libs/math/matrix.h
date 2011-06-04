@@ -571,25 +571,8 @@ BasicVector3<Element> Matrix4::transform(const BasicVector3<Element>& point) con
 	);
 }
 
-#if 0
-/// \brief Returns \p point transformed by \p self.
-template<typename Element>
-inline BasicVector3<Element> matrix4_transformed_point(const Matrix4& self, const BasicVector3<Element>& point)
-{
-  return BasicVector3<Element>(
-    static_cast<Element>(self[0]  * point[0] + self[4]  * point[1] + self[8]  * point[2] + self[12]),
-    static_cast<Element>(self[1]  * point[0] + self[5]  * point[1] + self[9]  * point[2] + self[13]),
-    static_cast<Element>(self[2]  * point[0] + self[6]  * point[1] + self[10] * point[2] + self[14])
-  );
-}
-#endif
 
-/// \brief Transforms \p point by \p self in-place.
-template<typename Element>
-inline void matrix4_transform_point(const Matrix4& self, BasicVector3<Element>& point)
-{
-  point = self.transform(point);
-}
+
 
 /// \brief Returns \p direction transformed by \p self.
 template<typename Element>

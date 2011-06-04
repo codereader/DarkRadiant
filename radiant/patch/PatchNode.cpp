@@ -405,7 +405,7 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 		{
 			if (i->m_selectable.isSelected())
 			{
-				matrix4_transform_point(matrix, ctrl->vertex);
+				ctrl->vertex = matrix.transform(ctrl->vertex);
 			}
 		}
 

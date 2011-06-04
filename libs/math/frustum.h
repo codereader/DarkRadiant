@@ -476,7 +476,7 @@ inline bool plane_contains_oriented_aabb(const Plane3& plane, const AABB& aabb, 
 inline VolumeIntersectionValue frustum_intersects_transformed_aabb(const Frustum& frustum, const AABB& aabb, const Matrix4& localToWorld)
 {
   AABB aabb_world(aabb);
-  matrix4_transform_point(localToWorld, aabb_world.origin);
+  aabb_world.origin = localToWorld.transform(aabb_world.origin);
 
   if(plane_contains_oriented_aabb(frustum.right, aabb_world, localToWorld)
     || plane_contains_oriented_aabb(frustum.left, aabb_world, localToWorld)

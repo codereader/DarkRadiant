@@ -114,9 +114,8 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
     matrix4_affine_invert(worldToObject);
 
     // Calculate the light origin in object space
-    Vector3 localLight(origin);
-    matrix4_transform_point(worldToObject, localLight);
-
+    Vector3 localLight = worldToObject.transform(origin);
+    
     Matrix4 local2light(world2light);
     local2light.multiplyBy(objectToWorld); // local->world->light
 
