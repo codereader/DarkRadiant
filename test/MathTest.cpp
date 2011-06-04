@@ -135,7 +135,7 @@ void MathTest::testMatrixDeterminant()
 {
 	Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
 
-	std::cout << matrix4_determinant(a) << std::endl;
+	REQUIRE_TRUE(a.getDeterminant() == -448, "Matrix determinant calculation failed");
 }
 
 // Initialise the static registrar object
