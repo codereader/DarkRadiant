@@ -428,7 +428,8 @@ inline std::ostream& operator<< (std::ostream& os, const Frustum& frustum)
 
 inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
 {
-  Vector4 hpoint(matrix4_transformed_vector4(viewproj, Vector4(point, 1.0f)));
+	Vector4 hpoint = viewproj.transform(Vector4(point, 1.0f));
+
   if(fabs(hpoint[0]) < fabs(hpoint[3])
     && fabs(hpoint[1]) < fabs(hpoint[3])
     && fabs(hpoint[2]) < fabs(hpoint[3]))
@@ -563,8 +564,9 @@ inline bool viewer_test_transformed_plane(const Vector4& viewer, const Plane3& p
 
 inline Vector4 viewer_from_viewproj(const Matrix4& viewproj)
 {
-  // get viewer pos in object coords
-  Vector4 viewer(matrix4_transformed_vector4(matrix4_full_inverse(viewproj), Vector4(0, 0, -1, 0)));
+	// get viewer pos in object coords
+	Vector4 viewer(matrix4_full_inverse(viewproj).transform(Vector4(0, 0, -1, 0)));
+
   if(viewer[3] != 0) // non-affine matrix
   {
     viewer[0] /= viewer[3];

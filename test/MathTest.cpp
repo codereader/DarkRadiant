@@ -101,19 +101,32 @@ void MathTest::testMultiplication()
 void MathTest::testTransformation()
 {
 	Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
-	Vector3 v(61, 67, 71);
 
-	Vector3 transformed = a.transformPoint(v);
+	{
+		Vector3 v(61, 67, 71);
 
-	REQUIRE_TRUE(transformed.x() == 3156, "Vector3 transformation failed");
-	REQUIRE_TRUE(transformed.y() == 3692, "Vector3 transformation failed");
-	REQUIRE_TRUE(transformed.z() == 4380, "Vector3 transformation failed");
+		Vector3 transformed = a.transformPoint(v);
 
-	Vector3 transformedDir = a.transformDirection(v);
+		REQUIRE_TRUE(transformed.x() == 3156, "Vector3 transformation failed");
+		REQUIRE_TRUE(transformed.y() == 3692, "Vector3 transformation failed");
+		REQUIRE_TRUE(transformed.z() == 4380, "Vector3 transformation failed");
 
-	REQUIRE_TRUE(transformedDir.x() == 3113, "Vector3 direction transformation failed");
-	REQUIRE_TRUE(transformedDir.y() == 3645, "Vector3 direction transformation failed");
-	REQUIRE_TRUE(transformedDir.z() == 4327, "Vector3 direction transformation failed");
+		Vector3 transformedDir = a.transformDirection(v);
+
+		REQUIRE_TRUE(transformedDir.x() == 3113, "Vector3 direction transformation failed");
+		REQUIRE_TRUE(transformedDir.y() == 3645, "Vector3 direction transformation failed");
+		REQUIRE_TRUE(transformedDir.z() == 4327, "Vector3 direction transformation failed");
+	}
+
+	{
+		Vector4 vector(83, 89, 97, 101);
+		Vector4 transformed = a.transform(vector);
+
+		REQUIRE_TRUE(transformed.x() == 8562, "Vector4 transformation failed");
+		REQUIRE_TRUE(transformed.y() == 9084, "Vector4 transformation failed");
+		REQUIRE_TRUE(transformed.z() == 11214, "Vector4 transformation failed");
+		REQUIRE_TRUE(transformed.w() == 12896, "Vector4 transformation failed");
+	}
 }
 
 // Initialise the static registrar object

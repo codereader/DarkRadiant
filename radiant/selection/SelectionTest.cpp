@@ -21,10 +21,8 @@ void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided)
     {
       Matrix4 screen2world(matrix4_full_inverse(_local2view));
 
-      _near = matrix4_transformed_vector4( screen2world, Vector4(0, 0, -1, 1) ).getProjected();
-
-
-      _far = matrix4_transformed_vector4( screen2world, Vector4(0, 0, 1, 1) ).getProjected();
+      _near = screen2world.transformPoint(Vector3(0, 0, -1));
+	  _far = screen2world.transformPoint(Vector3(0, 0, 1));
     }
 }
 

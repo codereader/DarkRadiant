@@ -277,7 +277,8 @@ public:
 	 * \param vector4
 	 * The 4-element vector to transform.
 	 */
-	Vector4 transform(const Vector4& vector4) const;
+	template<typename Element>
+	BasicVector4<Element> transform(const BasicVector4<Element>& vector4) const;
 
 	/** Use this matrix to transform the provided plane
 	 *
@@ -589,29 +590,22 @@ BasicVector3<Element> Matrix4::transformDirection(const BasicVector3<Element>& d
 	);
 }
 
-
-/// \brief Transforms \p direction by \p self in-place.
 template<typename Element>
-inline void matrix4_transform_direction(const Matrix4& self, BasicVector3<Element>& normal)
+BasicVector4<Element> Matrix4::transform(const BasicVector4<Element>& vector4) const
 {
-  normal = self.transformDirection(normal);
+	return BasicVector4<Element>(
+        static_cast<Element>(_m[0] * vector4[0] + _m[4] * vector4[1] + _m[8]  * vector4[2] + _m[12] * vector4[3]),
+        static_cast<Element>(_m[1] * vector4[0] + _m[5] * vector4[1] + _m[9]  * vector4[2] + _m[13] * vector4[3]),
+        static_cast<Element>(_m[2] * vector4[0] + _m[6] * vector4[1] + _m[10] * vector4[2] + _m[14] * vector4[3]),
+        static_cast<Element>(_m[3] * vector4[0] + _m[7] * vector4[1] + _m[11] * vector4[2] + _m[15] * vector4[3])
+    );
 }
 
-/// \brief Returns \p vector4 transformed by \p self.
-inline Vector4 matrix4_transformed_vector4(const Matrix4& self, const Vector4& vector4)
-{
-  return Vector4(
-    self[0]  * vector4[0] + self[4]  * vector4[1] + self[8]  * vector4[2] + self[12] * vector4[3],
-    self[1]  * vector4[0] + self[5]  * vector4[1] + self[9]  * vector4[2] + self[13] * vector4[3],
-    self[2]  * vector4[0] + self[6]  * vector4[1] + self[10] * vector4[2] + self[14] * vector4[3],
-    self[3]  * vector4[0] + self[7]  * vector4[1] + self[11] * vector4[2] + self[15] * vector4[3]
-  );
-}
 
 /// \brief Transforms \p vector4 by \p self in-place.
 inline void matrix4_transform_vector4(const Matrix4& self, Vector4& vector4)
 {
-  vector4 = matrix4_transformed_vector4(self, vector4);
+  vector4 = self.transform(vector4);
 }
 
 inline void matrix4_affine_invert(Matrix4& self)
