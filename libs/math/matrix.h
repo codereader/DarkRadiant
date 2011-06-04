@@ -260,6 +260,17 @@ public:
 	 */
 	void invert();
 
+	/**
+     * \brief
+     * Return the full inverse of this matrix.
+     */
+    Matrix4 getFullInverse() const;
+
+	/**
+	 * Invert this matrix in-place.
+	 */
+	void invertFull();
+
 	/** 
 	 * Returns the given 3-component point transformed by this matrix.
 	 */
@@ -616,6 +627,11 @@ inline void Matrix4::invert()
 	*this = getInverse();
 }
 
+inline void Matrix4::invertFull()
+{
+	*this = getFullInverse();
+}
+
 inline float Matrix4::getDeterminant() const
 {
 	// greebo: This is following Laplace's formula by expanding it along the first column
@@ -643,6 +659,7 @@ inline float Matrix4::getDeterminant() const
 }
 
 
+
 /// \brief A compile-time-constant integer.
 template<int VALUE_>
 struct IntegralConstant
@@ -650,6 +667,7 @@ struct IntegralConstant
   enum unnamed_{ VALUE = VALUE_ };
 };
 
+#if 0
 /// \brief A compile-time-constant row/column index into a 4x4 matrix.
 template<typename Row, typename Col>
 class Matrix4Index
@@ -726,7 +744,7 @@ inline void matrix4_full_invert(Matrix4& self)
 {
   self = matrix4_full_inverse(self);
 }
-
+#endif
 
 /// \brief Returns the translation part of \p self.
 inline Vector3 matrix4_get_translation_vec3(const Matrix4& self)

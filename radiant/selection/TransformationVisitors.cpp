@@ -8,7 +8,7 @@
 
 Vector3 get_local_pivot(const Vector3& world_pivot, const Matrix4& localToWorld)
 {
-	return matrix4_full_inverse(localToWorld).transformPoint(world_pivot);
+	return localToWorld.getFullInverse().transformPoint(world_pivot);
 }
 
 void translation_for_pivoted_rotation(Vector3& parent_translation, const Quaternion& local_rotation,

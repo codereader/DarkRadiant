@@ -21,4 +21,5 @@ private:
 	void testMultiplication();
 	void testTransformation();
 	void testMatrixDeterminant();
+	void testMatrixInversion();
 };

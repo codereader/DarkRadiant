@@ -149,6 +149,65 @@ Matrix4 Matrix4::getInverse() const
   return result;
 }
 
+Matrix4 Matrix4::getFullInverse() const
+{
+	// The inverse is generated through the adjugate matrix
+
+	// 2x2 minors (re-usable for the determinant)
+	float minor01 = zz() * tw() - zw() * tz();
+	float minor02 = zy() * tw() - zw() * ty();
+	float minor03 = zx() * tw() - zw() * tx();
+	float minor04 = zy() * tz() - zz() * ty();
+	float minor05 = zx() * tz() - zz() * tx();
+	float minor06 = zx() * ty() - zy() * tx();
+
+	// 2x2 minors (not usable for the determinant)
+	float minor07 = yz() * tw() - yw() * tz();
+	float minor08 = yy() * tw() - yw() * ty();
+	float minor09 = yy() * tz() - yz() * ty();
+	float minor10 = yx() * tw() - yw() * tx();
+	float minor11 = yx() * tz() - yz() * tx();
+	float minor12 = yx() * ty() - yy() * tx();
+	float minor13 = yz() * zw() - yw() * zz();
+	float minor14 = yy() * zw() - yw() * zy();
+	float minor15 = yy() * zz() - yz() * zy();
+	float minor16 = yx() * zw() - yw() * zx();
+	float minor17 = yx() * zz() - yz() * zx();
+	float minor18 = yx() * zy() - yy() * zx();
+
+	// 3x3 minors (re-usable for the determinant)
+	float minor3x3_11 = yy() * minor01 - yz() * minor02 + yw() * minor04;
+	float minor3x3_21 = yx() * minor01 - yz() * minor03 + yw() * minor05;
+	float minor3x3_31 = yx() * minor02 - yy() * minor03 + yw() * minor06;
+	float minor3x3_41 = yx() * minor04 - yy() * minor05 + yz() * minor06;
+	
+	// 3x3 minors (not usable for the determinant)
+	float minor3x3_12 = xy() * minor01 - xz() * minor02 + xw() * minor04;
+	float minor3x3_22 = xx() * minor01 - xz() * minor03 + xw() * minor05;
+	float minor3x3_32 = xx() * minor02 - xy() * minor03 + xw() * minor06;
+	float minor3x3_42 = xx() * minor04 - xy() * minor05 + xz() * minor06;
+	
+	float minor3x3_13 = xy() * minor07 - xz() * minor08 + xw() * minor09;
+	float minor3x3_23 = xx() * minor07 - xz() * minor10 + xw() * minor11;
+	float minor3x3_33 = xx() * minor08 - xy() * minor10 + xw() * minor12;
+	float minor3x3_43 = xx() * minor09 - xy() * minor11 + xz() * minor12;
+
+	float minor3x3_14 = xy() * minor13 - xz() * minor14 + xw() * minor15;
+	float minor3x3_24 = xx() * minor13 - xz() * minor16 + xw() * minor17;
+	float minor3x3_34 = xx() * minor14 - xy() * minor16 + xw() * minor18;
+	float minor3x3_44 = xx() * minor15 - xy() * minor17 + xz() * minor18;
+
+	float determinant = xx() * minor3x3_11 - xy() * minor3x3_21 + xz() * minor3x3_31 - xw() * minor3x3_41;
+	float invDet = 1.0f / determinant;
+
+	return Matrix4::byColumns(
+		+minor3x3_11 * invDet, -minor3x3_12 * invDet, +minor3x3_13 * invDet, -minor3x3_14 * invDet,
+		-minor3x3_21 * invDet, +minor3x3_22 * invDet, -minor3x3_23 * invDet, +minor3x3_24 * invDet,
+		+minor3x3_31 * invDet, -minor3x3_32 * invDet, +minor3x3_33 * invDet, -minor3x3_34 * invDet,
+		-minor3x3_41 * invDet, +minor3x3_42 * invDet, -minor3x3_43 * invDet, +minor3x3_44 * invDet
+	);
+}
+
 // Transform a plane
 Plane3 Matrix4::transform(const Plane3& plane) const
 {

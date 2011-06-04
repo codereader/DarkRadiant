@@ -443,7 +443,7 @@ bool RadiantSelectionSystem::SelectManipulator(const View& view, const Vector2& 
 			Pivot2World pivot;
 			pivot.update(GetPivot2World(), view.GetModelview(), view.GetProjection(), view.GetViewport());
 
-			_manip2pivotStart = matrix4_full_inverse(_pivot2worldStart).getMultipliedBy(pivot._worldSpace);
+			_manip2pivotStart = _pivot2worldStart.getFullInverse().getMultipliedBy(pivot._worldSpace);
 
 			Matrix4 device2manip;
 			ConstructDevice2Manip(device2manip, _pivot2worldStart, view.GetModelview(), view.GetProjection(), view.GetViewport());

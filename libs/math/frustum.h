@@ -565,7 +565,7 @@ inline bool viewer_test_transformed_plane(const Vector4& viewer, const Plane3& p
 inline Vector4 viewer_from_viewproj(const Matrix4& viewproj)
 {
 	// get viewer pos in object coords
-	Vector4 viewer(matrix4_full_inverse(viewproj).transform(Vector4(0, 0, -1, 0)));
+	Vector4 viewer(viewproj.getFullInverse().transform(Vector4(0, 0, -1, 0)));
 
   if(viewer[3] != 0) // non-affine matrix
   {
