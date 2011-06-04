@@ -70,7 +70,7 @@ void point_on_axis(Vector3& point, const Vector3& axis, const Matrix4& device2ob
 
 void point_on_plane(Vector3& point, const Matrix4& device2object, const float x, const float y)
 {
-	Matrix4 object2device(matrix4_full_inverse(device2object));
+	Matrix4 object2device(device2object.getFullInverse());
 	point = device2object.transformPoint(Vector3(x, y, object2device[14] / object2device[15]));
 }
 

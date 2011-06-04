@@ -137,11 +137,11 @@ public:
   void EnableScissor(float min_x, float max_x, float min_y, float max_y)
   {
     m_scissor = Matrix4::getIdentity();
-    m_scissor[0] = static_cast<float>((max_x - min_x) * 0.5);
-    m_scissor[5] = static_cast<float>((max_y - min_y) * 0.5);
-    m_scissor[12] = static_cast<float>((min_x + max_x) * 0.5);
-    m_scissor[13] = static_cast<float>((min_y + max_y) * 0.5);
-    matrix4_full_invert(m_scissor);
+    m_scissor[0] = (max_x - min_x) * 0.5f;
+    m_scissor[5] = (max_y - min_y) * 0.5f;
+    m_scissor[12] = (min_x + max_x) * 0.5f;
+    m_scissor[13] = (min_y + max_y) * 0.5f;
+    m_scissor.invertFull();
 
     construct();
   }

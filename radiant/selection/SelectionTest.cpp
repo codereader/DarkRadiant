@@ -19,7 +19,7 @@ void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided)
     _cull = twoSided && !_view.fill() ? eClipCullNone : (localToWorld.getHandedness() == Matrix4::RIGHTHANDED) ? eClipCullCW : eClipCullCCW;
 
     {
-      Matrix4 screen2world(matrix4_full_inverse(_local2view));
+      Matrix4 screen2world(_local2view.getFullInverse());
 
       _near = screen2world.transformPoint(Vector3(0, 0, -1));
 	  _far = screen2world.transformPoint(Vector3(0, 0, 1));

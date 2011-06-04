@@ -8,6 +8,7 @@ void MathTest::run()
 	testMultiplication();
 	testTransformation();
 	testMatrixDeterminant();
+	testMatrixInversion();
 }
 
 void MathTest::testIdentity()
@@ -136,6 +137,35 @@ void MathTest::testMatrixDeterminant()
 	Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
 
 	REQUIRE_TRUE(a.getDeterminant() == -448, "Matrix determinant calculation failed");
+}
+
+void MathTest::testMatrixInversion()
+{
+	Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
+
+	Matrix4 inv = a.getFullInverse();
+
+	float EPSILON = 0.00001f;
+
+	REQUIRE_TRUE(float_equal_epsilon(inv.xx(), 0.392857f, EPSILON), "Matrix inversion failed on xx");
+	REQUIRE_TRUE(float_equal_epsilon(inv.xy(), -0.714286f, EPSILON), "Matrix inversion failed on xy");
+	REQUIRE_TRUE(float_equal_epsilon(inv.xz(), -0.321429f, EPSILON), "Matrix inversion failed on xz");
+	REQUIRE_TRUE(float_equal_epsilon(inv.xw(), 0.428571f, EPSILON), "Matrix inversion failed on xw");
+
+	REQUIRE_TRUE(float_equal_epsilon(inv.yx(), -0.276786f, EPSILON), "Matrix inversion failed on yx");
+	REQUIRE_TRUE(float_equal_epsilon(inv.yy(), 0.446429f, EPSILON), "Matrix inversion failed on yy");
+	REQUIRE_TRUE(float_equal_epsilon(inv.yz(), -0.330357f, EPSILON), "Matrix inversion failed on yz");
+	REQUIRE_TRUE(float_equal_epsilon(inv.yw(), 0.107143f, EPSILON), "Matrix inversion failed on yw");
+
+	REQUIRE_TRUE(float_equal_epsilon(inv.zx(), -0.669643f, EPSILON), "Matrix inversion failed on zx");
+	REQUIRE_TRUE(float_equal_epsilon(inv.zy(), 0.660714f, EPSILON), "Matrix inversion failed on zy");
+	REQUIRE_TRUE(float_equal_epsilon(inv.zz(), 0.991071f, EPSILON), "Matrix inversion failed on zz");
+	REQUIRE_TRUE(float_equal_epsilon(inv.zw(), -0.821429f, EPSILON), "Matrix inversion failed on zw");
+
+	REQUIRE_TRUE(float_equal_epsilon(inv.tx(), 0.535714f, EPSILON), "Matrix inversion failed on tx");
+	REQUIRE_TRUE(float_equal_epsilon(inv.ty(), -0.428571f, EPSILON), "Matrix inversion failed on ty");
+	REQUIRE_TRUE(float_equal_epsilon(inv.tz(), -0.392857f, EPSILON), "Matrix inversion failed on tz");
+	REQUIRE_TRUE(float_equal_epsilon(inv.tw(), 0.357143f, EPSILON), "Matrix inversion failed on tw");
 }
 
 // Initialise the static registrar object

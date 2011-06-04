@@ -69,7 +69,7 @@ inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2
 
 inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2screen)
 {
-  Matrix4 screen2world(matrix4_full_inverse(world2screen));
+  Matrix4 screen2world(world2screen.getFullInverse());
 
 #if 1
   rotation = Matrix4::getIdentity();
@@ -126,7 +126,7 @@ inline void ConstructObject2Device(Matrix4& object2screen, const Matrix4& object
 inline void ConstructDevice2Object(Matrix4& device2object, const Matrix4& object2world, const Matrix4& world2view, const Matrix4& view2device)
 {
   ConstructObject2Device(device2object, object2world, world2view, view2device);
-  matrix4_full_invert(device2object);
+  device2object.invertFull();
 }
 
 //! S =  ( Inverse(Object2Screen *post ScaleOf(Object2Screen) ) *post Object2Screen
@@ -139,7 +139,7 @@ inline void pivot_scale(Matrix4& scale, const Matrix4& pivot2screen)
 
   scale = pivot2screen;
   scale.multiplyBy(pre_scale);
-  matrix4_full_invert(scale);
+  scale.invertFull();
   scale.multiplyBy(pivot2screen);
 }
 
@@ -163,7 +163,7 @@ inline void ConstructDevice2Manip(Matrix4& device2manip, const Matrix4& object2w
   pivot_perspective(scale, pivot2screen);
   device2manip.multiplyBy(scale);
 
-  matrix4_full_invert(device2manip);
+  device2manip.invertFull();
 }
 
 inline void Pivot2World_worldSpace(Matrix4& manip2world, const Matrix4& pivot2world, const Matrix4& modelview, const Matrix4& projection, const Matrix4& viewport)
