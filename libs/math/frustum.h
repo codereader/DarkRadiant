@@ -166,7 +166,7 @@ inline ClipResult matrix4_clip_point(const Matrix4& self, const Vector3& point, 
   clipped[1] = point[1];
   clipped[2] = point[2];
   clipped[3] = 1;
-  matrix4_transform_vector4(self, clipped);
+  clipped = self.transform(clipped);
   return homogenous_clip_point(clipped);
 }
 
@@ -201,9 +201,9 @@ inline std::size_t matrix4_clip_triangle(const Matrix4& self, const Vector3& p0,
   clipped[2][2] = p2[2];
   clipped[2][3] = 1;
 
-  matrix4_transform_vector4(self, clipped[0]);
-  matrix4_transform_vector4(self, clipped[1]);
-  matrix4_transform_vector4(self, clipped[2]);
+  clipped[0] = self.transform(clipped[0]);
+  clipped[1] = self.transform(clipped[1]);
+  clipped[2] = self.transform(clipped[2]);
 
   return homogenous_clip_triangle(clipped);
 }
@@ -356,8 +356,8 @@ inline std::size_t matrix4_clip_line(const Matrix4& self, const Vector3& p0, con
   clipped[1][2] = p1[2];
   clipped[1][3] = 1;
 
-  matrix4_transform_vector4(self, clipped[0]);
-  matrix4_transform_vector4(self, clipped[1]);
+  clipped[0] = self.transform(clipped[0]);
+  clipped[1] = self.transform(clipped[1]);
 
   return homogenous_clip_line(clipped);
 }

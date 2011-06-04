@@ -53,7 +53,7 @@ public:
   {
     m_camera.modelview = modelview;
     m_camera.modelview.multiplyBy(g_radiant2opengl);
-    matrix4_affine_invert(m_camera.modelview);
+    m_camera.modelview.invert();
     m_camera.updateVectors();
     update();
   }

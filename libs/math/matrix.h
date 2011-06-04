@@ -255,6 +255,11 @@ public:
      */
     Matrix4 getInverse() const;
 
+	/**
+	 * Affine invert this matrix in-place.
+	 */
+	void invert();
+
 	/** 
 	 * Returns the given 3-component point transformed by this matrix.
 	 */
@@ -601,17 +606,11 @@ BasicVector4<Element> Matrix4::transform(const BasicVector4<Element>& vector4) c
     );
 }
 
-
-/// \brief Transforms \p vector4 by \p self in-place.
-inline void matrix4_transform_vector4(const Matrix4& self, Vector4& vector4)
+inline void Matrix4::invert()
 {
-  vector4 = self.transform(vector4);
+	*this = getInverse();
 }
 
-inline void matrix4_affine_invert(Matrix4& self)
-{
-  self = self.getInverse();
-}
 
 /// \brief A compile-time-constant integer.
 template<int VALUE_>
