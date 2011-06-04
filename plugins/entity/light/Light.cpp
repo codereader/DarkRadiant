@@ -447,8 +447,9 @@ void Light::setLightRadius(const AABB& aabb)
 	}
 }
 
-void Light::transformLightRadius(const Matrix4& transform) {
-	matrix4_transform_point(transform, _originTransformed);
+void Light::transformLightRadius(const Matrix4& transform)
+{
+	_originTransformed = transform.transformPoint(_originTransformed);
 }
 
 void Light::revertTransform()
@@ -670,12 +671,12 @@ void Light::translateLightTarget(const Vector3& translation) {
 	if (std::abs(angle) > 0.01 && std::abs(c_pi-angle) > 0.01) {
 		// Calculate the transformation matrix defined by the two vectors
 		Matrix4 rotationMatrix = Matrix4::getRotation(oldTarget, newTarget);
-		_lightRightTransformed = rotationMatrix.transform(_lightRight).getProjected();
-		_lightUpTransformed = rotationMatrix.transform(_lightUp).getProjected();
+		_lightRightTransformed = rotationMatrix.transformPoint(_lightRight);
+		_lightUpTransformed = rotationMatrix.transformPoint(_lightUp);
 
 		if (m_useLightStart && m_useLightEnd) {
-			_lightStartTransformed = rotationMatrix.transform(_lightStart).getProjected();
-			_lightEndTransformed = rotationMatrix.transform(_lightEnd).getProjected();
+			_lightStartTransformed = rotationMatrix.transformPoint(_lightStart);
+			_lightEndTransformed = rotationMatrix.transformPoint(_lightEnd);
 
 			vector3_snap(_lightStartTransformed, GlobalGrid().getGridSize());
 			vector3_snap(_lightEndTransformed, GlobalGrid().getGridSize());
@@ -707,11 +708,11 @@ void Light::rotate(const Quaternion& rotation) {
 		Matrix4 rotationMatrix = matrix4_rotation_for_quaternion(rotation);
 
 		// ... and apply it to all the vertices defining the projection
-		_lightTargetTransformed = rotationMatrix.transform(_lightTarget).getProjected();
-		_lightRightTransformed = rotationMatrix.transform(_lightRight).getProjected();
-		_lightUpTransformed = rotationMatrix.transform(_lightUp).getProjected();
-		_lightStartTransformed = rotationMatrix.transform(_lightStart).getProjected();
-		_lightEndTransformed = rotationMatrix.transform(_lightEnd).getProjected();
+		_lightTargetTransformed = rotationMatrix.transformPoint(_lightTarget);
+		_lightRightTransformed = rotationMatrix.transformPoint(_lightRight);
+		_lightUpTransformed = rotationMatrix.transformPoint(_lightUp);
+		_lightStartTransformed = rotationMatrix.transformPoint(_lightStart);
+		_lightEndTransformed = rotationMatrix.transformPoint(_lightEnd);
 	}
 	else {
 		m_rotation.rotate(rotation);

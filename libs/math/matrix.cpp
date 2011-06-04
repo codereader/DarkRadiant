@@ -149,17 +149,6 @@ Matrix4 Matrix4::getInverse() const
   return result;
 }
 
-// Transform a vector
-Vector4 Matrix4::transform(const Vector4& vector4) const
-{
-    return Vector4(
-        _m[0] * vector4[0] + _m[4] * vector4[1] + _m[8]  * vector4[2] + _m[12] * vector4[3],
-        _m[1] * vector4[0] + _m[5] * vector4[1] + _m[9]  * vector4[2] + _m[13] * vector4[3],
-        _m[2] * vector4[0] + _m[6] * vector4[1] + _m[10] * vector4[2] + _m[14] * vector4[3],
-        _m[3] * vector4[0] + _m[7] * vector4[1] + _m[11] * vector4[2] + _m[15] * vector4[3]
-    );
-}
-
 // Transform a plane
 Plane3 Matrix4::transform(const Plane3& plane) const
 {

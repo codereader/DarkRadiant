@@ -86,7 +86,7 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 
 	//globalOutputStream() << "plane.normal(): " << plane.normal() << "\n";
 
-	Vector3 normalTransformed(matrix4_transformed_direction(identity2transformed, plane.normal()));
+	Vector3 normalTransformed(identity2transformed.transformDirection(plane.normal()));
 
   //globalOutputStream() << "normalTransformed: " << normalTransformed << "\n";
 
@@ -166,7 +166,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
 	// the bounds of the current texture transform
 	AABB bounds;
 	for (Winding::const_iterator i = w.begin(); i != w.end(); ++i) {
-		Vector3 texcoord = matrix4_transformed_point(local2tex, i->vertex);
+		Vector3 texcoord = local2tex.transformPoint(i->vertex);
 		bounds.includePoint(texcoord);
 	}
 	bounds.origin.z() = 0;
@@ -181,7 +181,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
 	matrix4_affine_invert(matrix);
 
 	// apply the difference to the current texture transform
-	matrix4_premultiply_by_matrix4(st2tex, matrix);
+	st2tex.premultiplyBy(matrix);
 
 	setTransform((float)width, (float)height, st2tex);
 	normalise((float)width, (float)height);
@@ -290,7 +290,7 @@ Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix
 		// we don't care if it's not normalised...
 
 		// Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
-		Matrix4 xyz2st = getBasisForNormal(matrix4_transformed_direction(localToWorld, normal));
+		Matrix4 xyz2st = getBasisForNormal(localToWorld.transformDirection(normal));
 
 		// Transform the basis vectors with the according texture scale, rotate and shift operations
 		// These are contained in the local2tex matrix, so the matrices have to be multiplied.
@@ -328,7 +328,7 @@ void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal
 		// we don't care if it's not normalised...
 
 		// Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
-		Matrix4 xyz2st = getBasisForNormal(matrix4_transformed_direction(localToWorld, normal));
+		Matrix4 xyz2st = getBasisForNormal(localToWorld.transformDirection(normal));
 
 		// Transform the basis vectors with the according texture scale, rotate and shift operations
 		// These are contained in the local2tex matrix, so the matrices have to be multiplied.
@@ -345,8 +345,9 @@ void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal
 
 	// Cycle through the winding vertices and apply the texture transformation matrix
 	// onto each of them.
-	for (Winding::iterator i = w.begin(); i != w.end(); ++i) {
-		Vector3 texcoord = local2tex.transform(i->vertex).getVector3();
+	for (Winding::iterator i = w.begin(); i != w.end(); ++i)
+	{
+		Vector3 texcoord = local2tex.transformPoint(i->vertex);
 
 		// Store the s,t coordinates into the winding texcoord vector
 		i->texcoord[0] = texcoord[0];
