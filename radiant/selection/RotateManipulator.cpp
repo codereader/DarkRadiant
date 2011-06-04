@@ -76,11 +76,10 @@ void RotateManipulator::UpdateColours()
     _circleSphere.setColour(colourSelected(Manipulator::COLOUR_SPHERE(), false));
 }
 
-void RotateManipulator::updateCircleTransforms()  {
+void RotateManipulator::updateCircleTransforms()
+{
     Vector3 localViewpoint(
-    	matrix4_transformed_direction(
-    		_pivot._worldSpace.getTransposed(),
-    		_pivot._viewpointSpace.z().getVector3())
+		_pivot._worldSpace.getTransposed().transformDirection(_pivot._viewpointSpace.z().getVector3())
     );
 
     _circleX_visible = !vector3_equal_epsilon(g_vector3_axis_x, localViewpoint, 1e-6f);

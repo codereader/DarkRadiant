@@ -103,11 +103,17 @@ void MathTest::testTransformation()
 	Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
 	Vector3 v(61, 67, 71);
 
-	Vector3 transformed = a.transform(v);
+	Vector3 transformed = a.transformPoint(v);
 
 	REQUIRE_TRUE(transformed.x() == 3156, "Vector3 transformation failed");
 	REQUIRE_TRUE(transformed.y() == 3692, "Vector3 transformation failed");
 	REQUIRE_TRUE(transformed.z() == 4380, "Vector3 transformation failed");
+
+	Vector3 transformedDir = a.transformDirection(v);
+
+	REQUIRE_TRUE(transformedDir.x() == 3113, "Vector3 direction transformation failed");
+	REQUIRE_TRUE(transformedDir.y() == 3645, "Vector3 direction transformation failed");
+	REQUIRE_TRUE(transformedDir.z() == 4327, "Vector3 direction transformation failed");
 }
 
 // Initialise the static registrar object

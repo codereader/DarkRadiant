@@ -289,7 +289,7 @@ void Patch::transform(const Matrix4& matrix)
 		 i != m_ctrlTransformed.end();
 		 ++i)
 	{
-		i->vertex = matrix.transform(i->vertex);
+		i->vertex = matrix.transformPoint(i->vertex);
 	}
 
 	// Check the handedness of the matrix and invert it if needed
@@ -1603,7 +1603,7 @@ Vector2 getProjectedTextureCoords(const Vector3& vertex, const Plane3& plane, co
 	Vector3 projection = plane.getProjection(vertex);
 
 	// Transform the projection coordinates into texture space
-	Vector3 texcoord = worldToTexture.transform(projection);
+	Vector3 texcoord = worldToTexture.transformPoint(projection);
 
 	// Return the texture coordinates
 	return Vector2(texcoord[0], texcoord[1]);

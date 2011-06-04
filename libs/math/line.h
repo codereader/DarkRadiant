@@ -139,7 +139,7 @@ inline Ray ray_for_points(const Vector3& origin, const Vector3& p2)
 
 inline void ray_transform(Ray& ray, const Matrix4& matrix)
 {
-	ray.origin = matrix.transform(ray.origin);
+	ray.origin = matrix.transformPoint(ray.origin);
   matrix4_transform_direction(matrix, ray.direction);
 }
 
