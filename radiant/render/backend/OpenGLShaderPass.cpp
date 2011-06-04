@@ -545,9 +545,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     {
         // Calculate viewer location in object space
         Matrix4 inverseObjTransform = objTransform.getInverse();
-        Vector3 osViewer = matrix4_transformed_point(
-                inverseObjTransform, viewer
-        );
+        Vector3 osViewer = inverseObjTransform.transform(viewer);
 
         // Get the XY and Z falloff texture numbers.
         GLuint attenuation_xy =

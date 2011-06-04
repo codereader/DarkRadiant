@@ -438,7 +438,7 @@ inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
 
 inline bool viewproj_test_transformed_point(const Matrix4& viewproj, const Vector3& point, const Matrix4& localToWorld)
 {
-  return viewproj_test_point(viewproj, matrix4_transformed_point(localToWorld, point));
+  return viewproj_test_point(viewproj, localToWorld.transform(point));
 }
 
 inline Frustum frustum_from_viewproj(const Matrix4& viewproj)
@@ -548,7 +548,7 @@ inline Vector4 viewer_from_transformed_viewer(const Vector4& viewer, const Matri
   }
   else
   {
-    return Vector4(matrix4_transformed_point(transform, viewer.getVector3()), viewer[3]);
+    return Vector4(transform.transform(viewer.getVector3()), viewer[3]);
   }
 }
 

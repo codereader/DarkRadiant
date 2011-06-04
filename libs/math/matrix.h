@@ -255,6 +255,12 @@ public:
      */
     Matrix4 getInverse() const;
 
+	/** 
+	 * Returns the given 3-component point transformed by this matrix.
+	 */
+	template<typename Element>
+	BasicVector3<Element> transform(const BasicVector3<Element>& point) const;
+
 	/**
      * \brief
      * Use this matrix to transform the provided vector and return a new vector
@@ -264,21 +270,6 @@ public:
 	 * The 4-element vector to transform.
 	 */
 	Vector4 transform(const Vector4& vector4) const;
-
-	/**
-     * \brief
-     * Use this matrix to transform the provided 3-element vector, automatically
-     * converting the vector to a 4-element homogeneous vector with w=1.
-	 *
-	 * \param vector3
-	 * The Vector3 to transform.
-	 *
-	 * \returns
-	 * A 4-element vector containing the result.
-	 */
-	Vector4 transform(const Vector3& vector3) const {
-		return transform(Vector4(vector3, 1));
-	}
 
 	/** Use this matrix to transform the provided plane
 	 *
@@ -375,6 +366,18 @@ public:
 	 * This and the other matrix must be affine.
 	 */
 	void affineMultiplyBy(const Matrix4& other);
+
+	/**
+	 * Returns this matrix pre-multiplied by the other.
+	 * This matrix and the other must be affine.
+	 */
+	Matrix4 getAffinePremultipliedBy(const Matrix4& other) const;
+
+	/**
+	 * Pre-multiplies this matrix by the other in-place.
+	 * This and the other matrix must be affine.
+	 */
+	void affinePremultiplyBy(const Matrix4& other);
 };
 
 // =========================================================================================
@@ -548,44 +551,27 @@ inline void Matrix4::affineMultiplyBy(const Matrix4& other)
 	*this = getAffineMultipliedBy(other);
 }
 
-// --------------------------------------------
-
-/// \brief Returns \p self pre-multiplied by \p other.
-/// \p self and \p other must be affine.
-inline Matrix4 matrix4_affine_premultiplied_by_matrix4(const Matrix4& self, const Matrix4& other)
+inline Matrix4 Matrix4::getAffinePremultipliedBy(const Matrix4& other) const
 {
-#if 1
-	return other.getAffineMultipliedBy(self);
-#else
-  return Matrix4::byColumns(
-    self[0] * other[0] + self[1] * other[4] + self[2] * other[8],
-    self[0] * other[1] + self[1] * other[5] + self[2] * other[9],
-    self[0] * other[2] + self[1] * other[6] + self[2] * other[10],
-    0,
-    self[4] * other[0] + self[5] * other[4] + self[6] * other[8],
-    self[4] * other[1] + self[5] * other[5] + self[6] * other[9],
-    self[4] * other[2] + self[5] * other[6] + self[6] * other[10],
-    0,
-    self[8] * other[0] + self[9] * other[4] + self[10]* other[8],
-    self[8] * other[1] + self[9] * other[5] + self[10]* other[9],
-    self[8] * other[2] + self[9] * other[6] + self[10]* other[10],
-    0,
-    self[12]* other[0] + self[13]* other[4] + self[14]* other[8] + other[12],
-    self[12]* other[1] + self[13]* other[5] + self[14]* other[9] + other[13],
-    self[12]* other[2] + self[13]* other[6] + self[14]* other[10]+ other[14],
-    1
-    )
-  );
-#endif
+	return other.getAffineMultipliedBy(*this);
 }
 
-/// \brief Pre-multiplies \p self by \p other in-place.
-/// \p self and \p other must be affine.
-inline void matrix4_affine_premultiply_by_matrix4(Matrix4& self, const Matrix4& other)
+inline void Matrix4::affinePremultiplyBy(const Matrix4& other)
 {
-  self = matrix4_affine_premultiplied_by_matrix4(self, other);
+	*this = getAffinePremultipliedBy(other);
 }
 
+template<typename Element>
+BasicVector3<Element> Matrix4::transform(const BasicVector3<Element>& point) const
+{
+	return BasicVector3<Element>(
+		static_cast<Element>(xx() * point[0] + yx() * point[1] + zx() * point[2] + tx()),
+		static_cast<Element>(xy() * point[0] + yy() * point[1] + zy() * point[2] + ty()),
+		static_cast<Element>(xz() * point[0] + yz() * point[1] + zz() * point[2] + tz())
+	);
+}
+
+#if 0
 /// \brief Returns \p point transformed by \p self.
 template<typename Element>
 inline BasicVector3<Element> matrix4_transformed_point(const Matrix4& self, const BasicVector3<Element>& point)
@@ -596,12 +582,13 @@ inline BasicVector3<Element> matrix4_transformed_point(const Matrix4& self, cons
     static_cast<Element>(self[2]  * point[0] + self[6]  * point[1] + self[10] * point[2] + self[14])
   );
 }
+#endif
 
 /// \brief Transforms \p point by \p self in-place.
 template<typename Element>
 inline void matrix4_transform_point(const Matrix4& self, BasicVector3<Element>& point)
 {
-  point = matrix4_transformed_point(self, point);
+  point = self.transform(point);
 }
 
 /// \brief Returns \p direction transformed by \p self.

@@ -30,7 +30,7 @@ public:
 
 	void operator()(Vector3& point, const Vector3& original) {
 		// Take the original (untransformed) point and use this as basis
-		point = _matrix.transform(original).getProjected();
+		point = _matrix.transform(original);
 	}
 };
 

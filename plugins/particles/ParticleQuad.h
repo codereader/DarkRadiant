@@ -71,10 +71,10 @@ struct ParticleQuad
 			0, 0, 1, 0,
 			0, 0, 0, 1);
 
-		verts[0] = Vertex(rotation.transform(Vector3(-size*aspect, +size, 0)).getVector3(), Vector2(s0,t0), colour, normal);
-		verts[1] = Vertex(rotation.transform(Vector3(+size*aspect, +size, 0)).getVector3(), Vector2(s0 + sWidth,t0), colour, normal);
-		verts[2] = Vertex(rotation.transform(Vector3(+size*aspect, -size, 0)).getVector3(), Vector2(s0 + sWidth,t0 + tWidth), colour, normal);
-		verts[3] = Vertex(rotation.transform(Vector3(-size*aspect, -size, 0)).getVector3(), Vector2(s0,t0 + tWidth), colour, normal);
+		verts[0] = Vertex(rotation.transform(Vector3(-size*aspect, +size, 0)), Vector2(s0,t0), colour, normal);
+		verts[1] = Vertex(rotation.transform(Vector3(+size*aspect, +size, 0)), Vector2(s0 + sWidth,t0), colour, normal);
+		verts[2] = Vertex(rotation.transform(Vector3(+size*aspect, -size, 0)), Vector2(s0 + sWidth,t0 + tWidth), colour, normal);
+		verts[3] = Vertex(rotation.transform(Vector3(-size*aspect, -size, 0)), Vector2(s0,t0 + tWidth), colour, normal);
 	}
 
 	void translate(const Vector3& offset)
@@ -87,10 +87,10 @@ struct ParticleQuad
 
 	void transform(const Matrix4& mat)
 	{
-		verts[0].vertex = mat.transform(verts[0].vertex).getVector3();
-		verts[1].vertex = mat.transform(verts[1].vertex).getVector3();
-		verts[2].vertex = mat.transform(verts[2].vertex).getVector3();
-		verts[3].vertex = mat.transform(verts[3].vertex).getVector3();
+		verts[0].vertex = mat.transform(verts[0].vertex);
+		verts[1].vertex = mat.transform(verts[1].vertex);
+		verts[2].vertex = mat.transform(verts[2].vertex);
+		verts[3].vertex = mat.transform(verts[3].vertex);
 	}
 
 	void assignColour(const Vector4& colour)

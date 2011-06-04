@@ -1603,7 +1603,7 @@ Vector2 getProjectedTextureCoords(const Vector3& vertex, const Plane3& plane, co
 	Vector3 projection = plane.getProjection(vertex);
 
 	// Transform the projection coordinates into texture space
-	Vector3 texcoord = worldToTexture.transform(projection).getVector3();
+	Vector3 texcoord = worldToTexture.transform(projection);
 
 	// Return the texture coordinates
 	return Vector2(texcoord[0], texcoord[1]);
