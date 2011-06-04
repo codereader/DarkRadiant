@@ -408,6 +408,11 @@ public:
 	 * Returns the determinant of this 4x4 matrix
 	 */
 	float getDeterminant() const;
+
+	/** 
+	 * Return the 3-component translation
+	 */
+	const Vector3& getTranslation() const;
 };
 
 // =========================================================================================
@@ -658,6 +663,16 @@ inline float Matrix4::getDeterminant() const
 	return xx() * minor11 - xy() * minor21 + xz() * minor31 - xw() * minor41;
 }
 
+inline const Vector3& Matrix4::getTranslation() const
+{
+	return t().getVector3();
+}
+
+
+
+
+
+
 
 
 /// \brief A compile-time-constant integer.
@@ -667,90 +682,6 @@ struct IntegralConstant
   enum unnamed_{ VALUE = VALUE_ };
 };
 
-#if 0
-/// \brief A compile-time-constant row/column index into a 4x4 matrix.
-template<typename Row, typename Col>
-class Matrix4Index
-{
-public:
-  typedef IntegralConstant<Row::VALUE> r;
-  typedef IntegralConstant<Col::VALUE> c;
-  typedef IntegralConstant<(r::VALUE * 4) + c::VALUE> i;
-};
-
-/// \brief A functor which returns the cofactor of a 3x3 submatrix obtained by ignoring a given row and column of a 4x4 matrix.
-/// \param Row Defines the compile-time-constant integers x, y and z with values corresponding to the indices of the three rows to use.
-/// \param Col Defines the compile-time-constant integers x, y and z with values corresponding to the indices of the three columns to use.
-template<typename Row, typename Col>
-class Matrix4Cofactor
-{
-public:
-  typedef typename Matrix4Index<typename Row::x, typename Col::x>::i xx;
-  typedef typename Matrix4Index<typename Row::x, typename Col::y>::i xy;
-  typedef typename Matrix4Index<typename Row::x, typename Col::z>::i xz;
-  typedef typename Matrix4Index<typename Row::y, typename Col::x>::i yx;
-  typedef typename Matrix4Index<typename Row::y, typename Col::y>::i yy;
-  typedef typename Matrix4Index<typename Row::y, typename Col::z>::i yz;
-  typedef typename Matrix4Index<typename Row::z, typename Col::x>::i zx;
-  typedef typename Matrix4Index<typename Row::z, typename Col::y>::i zy;
-  typedef typename Matrix4Index<typename Row::z, typename Col::z>::i zz;
-  static float apply(const Matrix4& self)
-  {
-    return self[xx::VALUE] * ( self[yy::VALUE]*self[zz::VALUE] - self[zy::VALUE]*self[yz::VALUE] )
-      - self[xy::VALUE] * ( self[yx::VALUE]*self[zz::VALUE] - self[zx::VALUE]*self[yz::VALUE] )
-      + self[xz::VALUE] * ( self[yx::VALUE]*self[zy::VALUE] - self[zx::VALUE]*self[yy::VALUE] );
-  }
-};
-
-/// \brief The cofactor element indices for a 4x4 matrix row or column.
-/// \param Element The index of the element to ignore.
-template<int Element>
-class Cofactor4
-{
-public:
-  typedef IntegralConstant<(Element <= 0) ? 1 : 0> x;
-  typedef IntegralConstant<(Element <= 1) ? 2 : 1> y;
-  typedef IntegralConstant<(Element <= 2) ? 3 : 2> z;
-};
-
-/// \brief Returns the inverse of \p self using the Adjoint method.
-/// \todo Throw an exception if the determinant is zero.
-inline Matrix4 matrix4_full_inverse(const Matrix4& self)
-{
-	float determinant = 1.0f / self.getDeterminant();
-
-  return Matrix4::byColumns(
-    static_cast<float>( Matrix4Cofactor< Cofactor4<0>, Cofactor4<0> >::apply(self) * determinant),
-    static_cast<float>(-Matrix4Cofactor< Cofactor4<1>, Cofactor4<0> >::apply(self) * determinant),
-    static_cast<float>( Matrix4Cofactor< Cofactor4<2>, Cofactor4<0> >::apply(self) * determinant),
-    static_cast<float>(-Matrix4Cofactor< Cofactor4<3>, Cofactor4<0> >::apply(self) * determinant),
-    static_cast<float>(-Matrix4Cofactor< Cofactor4<0>, Cofactor4<1> >::apply(self) * determinant),
-    static_cast<float>( Matrix4Cofactor< Cofactor4<1>, Cofactor4<1> >::apply(self) * determinant),
-    static_cast<float>(-Matrix4Cofactor< Cofactor4<2>, Cofactor4<1> >::apply(self) * determinant),
-    static_cast<float>( Matrix4Cofactor< Cofactor4<3>, Cofactor4<1> >::apply(self) * determinant),
-    static_cast<float>( Matrix4Cofactor< Cofactor4<0>, Cofactor4<2> >::apply(self) * determinant),
-    static_cast<float>(-Matrix4Cofactor< Cofactor4<1>, Cofactor4<2> >::apply(self) * determinant),
-    static_cast<float>( Matrix4Cofactor< Cofactor4<2>, Cofactor4<2> >::apply(self) * determinant),
-    static_cast<float>(-Matrix4Cofactor< Cofactor4<3>, Cofactor4<2> >::apply(self) * determinant),
-    static_cast<float>(-Matrix4Cofactor< Cofactor4<0>, Cofactor4<3> >::apply(self) * determinant),
-    static_cast<float>( Matrix4Cofactor< Cofactor4<1>, Cofactor4<3> >::apply(self) * determinant),
-    static_cast<float>(-Matrix4Cofactor< Cofactor4<2>, Cofactor4<3> >::apply(self) * determinant),
-    static_cast<float>( Matrix4Cofactor< Cofactor4<3>, Cofactor4<3> >::apply(self) * determinant)
-  );
-}
-
-/// \brief Inverts \p self in-place using the Adjoint method.
-inline void matrix4_full_invert(Matrix4& self)
-{
-  self = matrix4_full_inverse(self);
-}
-#endif
-
-/// \brief Returns the translation part of \p self.
-inline Vector3 matrix4_get_translation_vec3(const Matrix4& self)
-{
-  return self.t().getVector3();
-}
 
 /// \brief Returns \p self Concatenated with \p translation.
 /// The concatenated translation occurs before \p self.
