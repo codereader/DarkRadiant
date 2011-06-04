@@ -237,36 +237,43 @@ void FaceInstance::transformComponents(const Matrix4& matrix) {
 		m_face->transform(matrix, false);
 	}
 
-	if (selectedVertices()) {
-		if (m_vertexSelection.size() == 1) {
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[1]);
-				m_face->assign_planepts(m_face->m_move_planeptsTransformed);
-			}
-		else if (m_vertexSelection.size() == 2) {
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[1]);
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[2]);
-				m_face->assign_planepts(m_face->m_move_planeptsTransformed);
-			}
-		else if (m_vertexSelection.size() >= 3) {
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[0]);
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[1]);
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[2]);
-				m_face->assign_planepts(m_face->m_move_planeptsTransformed);
-			}
+	if (selectedVertices())
+	{
+		if (m_vertexSelection.size() == 1)
+		{
+			m_face->m_move_planeptsTransformed[1] = matrix.transform(m_face->m_move_planeptsTransformed[1]);
+			m_face->assign_planepts(m_face->m_move_planeptsTransformed);
+		}
+		else if (m_vertexSelection.size() == 2)
+		{
+			m_face->m_move_planeptsTransformed[1] = matrix.transform(m_face->m_move_planeptsTransformed[1]);
+			m_face->m_move_planeptsTransformed[2] = matrix.transform(m_face->m_move_planeptsTransformed[2]);
+			m_face->assign_planepts(m_face->m_move_planeptsTransformed);
+		}
+		else if (m_vertexSelection.size() >= 3)
+		{
+			m_face->m_move_planeptsTransformed[0] = matrix.transform(m_face->m_move_planeptsTransformed[0]);
+			m_face->m_move_planeptsTransformed[1] = matrix.transform(m_face->m_move_planeptsTransformed[1]);
+			m_face->m_move_planeptsTransformed[2] = matrix.transform(m_face->m_move_planeptsTransformed[2]);
+			m_face->assign_planepts(m_face->m_move_planeptsTransformed);
+		}
 	}
 
-	if (selectedEdges()) {
-		if (m_edgeSelection.size() == 1) {
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[0]);
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[1]);
-				m_face->assign_planepts(m_face->m_move_planeptsTransformed);
-			}
-		else if (m_edgeSelection.size() >= 2) {
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[0]);
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[1]);
-				matrix4_transform_point(matrix, m_face->m_move_planeptsTransformed[2]);
-				m_face->assign_planepts(m_face->m_move_planeptsTransformed);
-			}
+	if (selectedEdges())
+	{
+		if (m_edgeSelection.size() == 1)
+		{
+			m_face->m_move_planeptsTransformed[0] = matrix.transform(m_face->m_move_planeptsTransformed[0]);
+			m_face->m_move_planeptsTransformed[1] = matrix.transform(m_face->m_move_planeptsTransformed[1]);
+			m_face->assign_planepts(m_face->m_move_planeptsTransformed);
+		}
+		else if (m_edgeSelection.size() >= 2)
+		{
+			m_face->m_move_planeptsTransformed[0] = matrix.transform(m_face->m_move_planeptsTransformed[0]);
+			m_face->m_move_planeptsTransformed[1] = matrix.transform(m_face->m_move_planeptsTransformed[1]);
+			m_face->m_move_planeptsTransformed[2] = matrix.transform(m_face->m_move_planeptsTransformed[2]);
+			m_face->assign_planepts(m_face->m_move_planeptsTransformed);
+		}
 	}
 }
 

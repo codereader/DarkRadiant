@@ -289,7 +289,7 @@ void Patch::transform(const Matrix4& matrix)
 		 i != m_ctrlTransformed.end();
 		 ++i)
 	{
-		matrix4_transform_point(matrix, i->vertex);
+		i->vertex = matrix.transform(i->vertex);
 	}
 
 	// Check the handedness of the matrix and invert it if needed
