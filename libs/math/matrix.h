@@ -127,6 +127,66 @@ public:
 	 */
 	static Matrix4 getRotationAboutZDegrees(float angle);
 
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, y, z).
+	 */
+	static Matrix4 getRotationForEulerXYZ(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (x, y, z).
+	 */
+	static Matrix4 getRotationForEulerXYZDegrees(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, z, x).
+	 */
+	static Matrix4 getRotationForEulerYZX(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, z, x).
+	 */
+	static Matrix4 getRotationForEulerYZXDegrees(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, z, y).
+	 */
+	static Matrix4 getRotationForEulerXZY(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (x, z, y).
+	 */
+	static Matrix4 getRotationForEulerXZYDegrees(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, x, z).
+	 */
+	static Matrix4 getRotationForEulerYXZ(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, x, z).
+	 */
+	static Matrix4 getRotationForEulerYXZDegrees(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (z, x, y).
+	 */
+	static Matrix4 getRotationForEulerZXY(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (z, x, y).
+	 */
+	static Matrix4 getRotationForEulerZXYDegrees(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (z, y, x).
+	 */
+	static Matrix4 getRotationForEulerZYX(const Vector3& euler);
+
+	/**
+	 * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (z, y, x).
+	 */
+	static Matrix4 getRotationForEulerZYXDegrees(const Vector3& euler);
+
     /**
      * \brief
      * Get a matrix representing the given scale in 3D space.
@@ -468,7 +528,38 @@ public:
 	 */
 	const Vector3& getTranslation() const;
 
+	/**
+	 * Concatenates this with the rotation transform produced 
+	 * by euler angles (degrees) in the order (x, y, z).
+	 * The concatenated rotation occurs before self.
+	 */
+	void rotateByEulerXYZDegrees(const Vector3& euler);
 
+	/**
+	 * Returns this matrix concatenated with the rotation transform produced by the given
+	 * euler angles (degrees) in the order (y, x, z). The concatenated rotation occurs before this matrix.
+	 */
+	Matrix4 getRotatedByEulerYXZDegrees(const Vector3& euler) const;
+
+	/**
+	 * Concatenates this with the rotation transform produced 
+	 * by euler angles (degrees) in the order (y, x, z).
+	 * The concatenated rotation occurs before self.
+	 */
+	void rotateByEulerYXZDegrees(const Vector3& euler);
+
+	/**
+	 * Returns this matrix concatenated with the rotation transform produced by the given
+	 * euler angles (degrees) in the order (z, x, y). The concatenated rotation occurs before this matrix.
+	 */
+	Matrix4 getRotatedByEulerZXYDegrees(const Vector3& euler) const;
+
+	/**
+	 * Concatenates this with the rotation transform produced 
+	 * by euler angles (degrees) in the order (z, x, y).
+	 * The concatenated rotation occurs before self.
+	 */
+	void rotateByEulerZXYDegrees(const Vector3& euler);
 };
 
 // =========================================================================================
@@ -759,7 +850,32 @@ inline Matrix4 Matrix4::getTranslatedBy(const Vector3& translation) const
 	return getMultipliedBy(Matrix4::getTranslation(translation));
 }
 
+inline void Matrix4::rotateByEulerXYZDegrees(const Vector3& euler)
+{
+	multiplyBy(getRotationForEulerXYZDegrees(euler));
+}
 
+inline Matrix4 Matrix4::getRotatedByEulerYXZDegrees(const Vector3& euler) const
+{
+	return getMultipliedBy(getRotationForEulerYXZDegrees(euler));
+}
+
+/// \brief Concatenates \p self with the rotation transform produced by \p euler angles (degrees) in the order (y, x, z).
+/// The concatenated rotation occurs before \p self.
+inline void Matrix4::rotateByEulerYXZDegrees(const Vector3& euler)
+{
+	*this = getRotatedByEulerYXZDegrees(euler);
+}
+
+inline Matrix4 Matrix4::getRotatedByEulerZXYDegrees(const Vector3& euler) const
+{
+	return getMultipliedBy(getRotationForEulerZXYDegrees(euler));
+}
+
+inline void Matrix4::rotateByEulerZXYDegrees(const Vector3& euler)
+{
+	*this = getRotatedByEulerZXYDegrees(euler);
+}
 
 
 
@@ -782,298 +898,9 @@ inline Vector3 euler_radians_to_degrees(const Vector3& euler)
   );
 }
 
-/// \brief Returns \p euler angles converted from degrees to radians.
-inline Vector3 euler_degrees_to_radians(const Vector3& euler)
-{
-  return Vector3(
-    static_cast<float>(degrees_to_radians(euler.x())),
-    static_cast<float>(degrees_to_radians(euler.y())),
-    static_cast<float>(degrees_to_radians(euler.z()))
-  );
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, y, z).
-/*! \verbatim
-clockwise rotation around X, Y, Z, facing along axis
- 1  0   0    cy 0 -sy   cz  sz 0
- 0  cx  sx   0  1  0   -sz  cz 0
- 0 -sx  cx   sy 0  cy   0   0  1
-
-rows of Z by cols of Y
- cy*cz -sy*cz+sz -sy*sz+cz
--sz*cy -sz*sy+cz
-
-  .. or something like that..
-
-final rotation is Z * Y * X
- cy*cz -sx*-sy*cz+cx*sz  cx*-sy*sz+sx*cz
--cy*sz  sx*sy*sz+cx*cz  -cx*-sy*sz+sx*cz
- sy    -sx*cy            cx*cy
-
-transposed
-cy.cz + 0.sz + sy.0            cy.-sz + 0 .cz +  sy.0          cy.0  + 0 .0  +   sy.1       |
-sx.sy.cz + cx.sz + -sx.cy.0    sx.sy.-sz + cx.cz + -sx.cy.0    sx.sy.0  + cx.0  + -sx.cy.1  |
--cx.sy.cz + sx.sz +  cx.cy.0   -cx.sy.-sz + sx.cz +  cx.cy.0   -cx.sy.0  + 0 .0  +  cx.cy.1  |
-\endverbatim */
-inline Matrix4 matrix4_rotation_for_euler_xyz(const Vector3& euler)
-{
-#if 1
-
-  float cx = cos(euler[0]);
-  float sx = sin(euler[0]);
-  float cy = cos(euler[1]);
-  float sy = sin(euler[1]);
-  float cz = cos(euler[2]);
-  float sz = sin(euler[2]);
-
-  return Matrix4::byColumns(
-    cy*cz,
-    cy*sz,
-    -sy,
-    0,
-    sx*sy*cz + cx*-sz,
-    sx*sy*sz + cx*cz,
-    sx*cy,
-    0,
-    cx*sy*cz + sx*sz,
-    cx*sy*sz + -sx*cz,
-    cx*cy,
-    0,
-    0,
-    0,
-    0,
-    1
-  );
-
-#else
-
-  return matrix4_premultiply_by_matrix4(
-    matrix4_premultiply_by_matrix4(
-      matrix4_rotation_for_x(euler[0]),
-      matrix4_rotation_for_y(euler[1])
-    ),
-    matrix4_rotation_for_z(euler[2])
-  );
-
-#endif
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (x, y, z).
-inline Matrix4 matrix4_rotation_for_euler_xyz_degrees(const Vector3& euler)
-{
-  return matrix4_rotation_for_euler_xyz(euler_degrees_to_radians(euler));
-}
-
-/// \brief Concatenates \p self with the rotation transform produced by \p euler angles (degrees) in the order (x, y, z).
-/// The concatenated rotation occurs before \p self.
-inline void matrix4_rotate_by_euler_xyz_degrees(Matrix4& self, const Vector3& euler)
-{
-  self.multiplyBy(matrix4_rotation_for_euler_xyz_degrees(euler));
-}
 
 
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, z, x).
-inline Matrix4 matrix4_rotation_for_euler_yzx(const Vector3& euler)
-{
-	return Matrix4::getRotationAboutY(euler[1]).getPremultipliedBy(
-		Matrix4::getRotationAboutZ(euler[2])).getPremultipliedBy(Matrix4::getRotationAboutX(euler[0])
-	);
-}
 
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, z, x).
-inline Matrix4 matrix4_rotation_for_euler_yzx_degrees(const Vector3& euler)
-{
-  return matrix4_rotation_for_euler_yzx(euler_degrees_to_radians(euler));
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, z, y).
-inline Matrix4 matrix4_rotation_for_euler_xzy(const Vector3& euler)
-{
-	return Matrix4::getRotationAboutX(euler[0]).getPremultipliedBy(
-		Matrix4::getRotationAboutZ(euler[2])).getPremultipliedBy(Matrix4::getRotationAboutY(euler[1])
-	);
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (x, z, y).
-inline Matrix4 matrix4_rotation_for_euler_xzy_degrees(const Vector3& euler)
-{
-  return matrix4_rotation_for_euler_xzy(euler_degrees_to_radians(euler));
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, x, z).
-/*! \verbatim
-|  cy.cz + sx.sy.-sz + -cx.sy.0   0.cz + cx.-sz + sx.0   sy.cz + -sx.cy.-sz + cx.cy.0 |
-|  cy.sz + sx.sy.cz + -cx.sy.0    0.sz + cx.cz + sx.0    sy.sz + -sx.cy.cz + cx.cy.0  |
-|  cy.0 + sx.sy.0 + -cx.sy.1      0.0 + cx.0 + sx.1      sy.0 + -sx.cy.0 + cx.cy.1    |
-\endverbatim */
-inline Matrix4 matrix4_rotation_for_euler_yxz(const Vector3& euler)
-{
-#if 1
-
-  float cx = cos(euler[0]);
-  float sx = sin(euler[0]);
-  float cy = cos(euler[1]);
-  float sy = sin(euler[1]);
-  float cz = cos(euler[2]);
-  float sz = sin(euler[2]);
-
-  return Matrix4::byColumns(
-    cy*cz + sx*sy*-sz,
-    cy*sz + sx*sy*cz,
-    -cx*sy,
-    0,
-    cx*-sz,
-    cx*cz,
-    sx,
-    0,
-    sy*cz + -sx*cy*-sz,
-    sy*sz + -sx*cy*cz,
-    cx*cy,
-    0,
-    0,
-    0,
-    0,
-    1
-  );
-
-#else
-
-  return matrix4_premultiply_by_matrix4(
-    matrix4_premultiply_by_matrix4(
-      matrix4_rotation_for_y(euler[1]),
-      matrix4_rotation_for_x(euler[0])
-    ),
-    matrix4_rotation_for_z(euler[2])
-  );
-
-#endif
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, x, z).
-inline Matrix4 matrix4_rotation_for_euler_yxz_degrees(const Vector3& euler)
-{
-  return matrix4_rotation_for_euler_yxz(euler_degrees_to_radians(euler));
-}
-
-/// \brief Returns \p self concatenated with the rotation transform produced by \p euler angles (degrees) in the order (y, x, z).
-/// The concatenated rotation occurs before \p self.
-inline Matrix4 matrix4_rotated_by_euler_yxz_degrees(const Matrix4& self, const Vector3& euler)
-{
-	return self.getMultipliedBy(matrix4_rotation_for_euler_yxz_degrees(euler));
-}
-
-/// \brief Concatenates \p self with the rotation transform produced by \p euler angles (degrees) in the order (y, x, z).
-/// The concatenated rotation occurs before \p self.
-inline void matrix4_rotate_by_euler_yxz_degrees(Matrix4& self, const Vector3& euler)
-{
-  self = matrix4_rotated_by_euler_yxz_degrees(self, euler);
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (z, x, y).
-inline Matrix4 matrix4_rotation_for_euler_zxy(const Vector3& euler)
-{
-#if 1
-	return Matrix4::getRotationAboutZ(euler[2]).getPremultipliedBy(
-		Matrix4::getRotationAboutX(euler[0])).getPremultipliedBy(Matrix4::getRotationAboutY(euler[1])
-	);
-#else
-  float cx = cos(euler[0]);
-  float sx = sin(euler[0]);
-  float cy = cos(euler[1]);
-  float sy = sin(euler[1]);
-  float cz = cos(euler[2]);
-  float sz = sin(euler[2]);
-
-  return Matrix4::byColumns(
-    cz * cy + sz * sx * sy,
-    sz * cx,
-    cz * -sy + sz * sx * cy,
-    0,
-    -sz * cy + cz * sx * sy,
-    cz * cx,
-    -sz * -sy + cz * cx * cy,
-    0,
-    cx* sy,
-    -sx,
-    cx* cy,
-    0,
-    0,
-    0,
-    0,
-    1
-  );
-#endif
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (degres=es) in the order (z, x, y).
-inline Matrix4 matrix4_rotation_for_euler_zxy_degrees(const Vector3& euler)
-{
-  return matrix4_rotation_for_euler_zxy(euler_degrees_to_radians(euler));
-}
-
-/// \brief Returns \p self concatenated with the rotation transform produced by \p euler angles (degrees) in the order (z, x, y).
-/// The concatenated rotation occurs before \p self.
-inline Matrix4 matrix4_rotated_by_euler_zxy_degrees(const Matrix4& self, const Vector3& euler)
-{
-	return self.getMultipliedBy(matrix4_rotation_for_euler_zxy_degrees(euler));
-}
-
-/// \brief Concatenates \p self with the rotation transform produced by \p euler angles (degrees) in the order (z, x, y).
-/// The concatenated rotation occurs before \p self.
-inline void matrix4_rotate_by_euler_zxy_degrees(Matrix4& self, const Vector3& euler)
-{
-  self = matrix4_rotated_by_euler_zxy_degrees(self, euler);
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (z, y, x).
-inline Matrix4 matrix4_rotation_for_euler_zyx(const Vector3& euler)
-{
-#if 1
-
-  float cx = cos(euler[0]);
-  float sx = sin(euler[0]);
-  float cy = cos(euler[1]);
-  float sy = sin(euler[1]);
-  float cz = cos(euler[2]);
-  float sz = sin(euler[2]);
-
-  return Matrix4::byColumns(
-    cy*cz,
-    sx*sy*cz + cx*sz,
-    cx*-sy*cz + sx*sz,
-    0,
-    cy*-sz,
-    sx*sy*-sz + cx*cz,
-    cx*-sy*-sz + sx*cz,
-    0,
-    sy,
-    -sx*cy,
-    cx*cy,
-    0,
-    0,
-    0,
-    0,
-    1
-  );
-
-#else
-
-  return matrix4_premultiply_by_matrix4(
-    matrix4_premultiply_by_matrix4(
-      matrix4_rotation_for_z(euler[2]),
-      matrix4_rotation_for_y(euler[1])
-    ),
-    matrix4_rotation_for_x(euler[0])
-  );
-
-#endif
-}
-
-/// \brief Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (z, y, x).
-inline Matrix4 matrix4_rotation_for_euler_zyx_degrees(const Vector3& euler)
-{
-  return matrix4_rotation_for_euler_zyx(euler_degrees_to_radians(euler));
-}
 
 
 /// \brief Calculates and returns a set of euler angles that produce the rotation component of \p self when applied in the order (x, y, z).
@@ -1205,7 +1032,7 @@ inline Vector3 matrix4_get_rotation_euler_zyx_degrees(const Matrix4& self)
 inline void matrix4_pivoted_rotate_by_euler_xyz_degrees(Matrix4& self, const Vector3& euler, const Vector3& pivotpoint)
 {
   self.translateBy(pivotpoint);
-  matrix4_rotate_by_euler_xyz_degrees(self, euler);
+  self.rotateByEulerXYZDegrees(euler);
   self.translateBy(-pivotpoint);
 }
 
@@ -1234,15 +1061,15 @@ inline void matrix4_pivoted_scale_by_vec3(Matrix4& self, const Vector3& scale, c
 inline void matrix4_transform_by_euler_xyz_degrees(Matrix4& self, const Vector3& translation, const Vector3& euler, const Vector3& scale)
 {
   self.translateBy(translation);
-  matrix4_rotate_by_euler_xyz_degrees(self, euler);
+  self.rotateByEulerXYZDegrees(euler);
   self.scaleBy(scale);
 }
 
-/// \brief Transforms \p self by \p translation, \p euler and \p scale, using \p pivotpoint.
+/// \brief Transforms \p self by \p translation, \p euler (degrees) and \p scale, using \p pivotpoint.
 inline void matrix4_pivoted_transform_by_euler_xyz_degrees(Matrix4& self, const Vector3& translation, const Vector3& euler, const Vector3& scale, const Vector3& pivotpoint)
 {
   self.translateBy(pivotpoint + translation);
-  matrix4_rotate_by_euler_xyz_degrees(self, euler);
+  self.rotateByEulerXYZDegrees(euler);
   self.scaleBy(scale);
   self.translateBy(-pivotpoint);
 }
