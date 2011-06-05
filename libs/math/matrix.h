@@ -82,6 +82,51 @@ public:
 	 */
 	static Matrix4 getRotation(const Vector3& axis, const float angle);
 
+	/**
+	 * Constructs a pure-rotation matrix about the x axis from sin and cosine of an angle.
+	 */
+	static Matrix4 getRotationAboutXForSinCos(float s, float c);
+
+	/**
+	 * Constructs a pure-rotation matrix about the x axis from an angle in radians
+	 */
+	static Matrix4 getRotationAboutX(float angle);
+
+	/**
+	 * Constructs a pure-rotation matrix about the x axis from an angle in degrees.
+	 */
+	static Matrix4 getRotationAboutXDegrees(float angle);
+
+	/**
+	 * Constructs a pure-rotation matrix about the y axis from sin and cosine of an angle.
+	 */
+	static Matrix4 getRotationAboutYForSinCos(float s, float c);
+
+	/**
+	 * Constructs a pure-rotation matrix about the y axis from an angle in radians
+	 */
+	static Matrix4 getRotationAboutY(float angle);
+
+	/**
+	 * Constructs a pure-rotation matrix about the y axis from an angle in degrees.
+	 */
+	static Matrix4 getRotationAboutYDegrees(float angle);
+
+	/**
+	 * Constructs a pure-rotation matrix about the z axis from sin and cosine of an angle.
+	 */
+	static Matrix4 getRotationAboutZForSinCos(float s, float c);
+
+	/**
+	 * Constructs a pure-rotation matrix about the z axis from an angle in radians
+	 */
+	static Matrix4 getRotationAboutZ(float angle);
+
+	/**
+	 * Constructs a pure-rotation matrix about the z axis from an angle in degrees.
+	 */
+	static Matrix4 getRotationAboutZDegrees(float angle);
+
     /**
      * \brief
      * Get a matrix representing the given scale in 3D space.
@@ -341,6 +386,15 @@ public:
      */
     void translateBy(const Vector3& translation);
 
+	/**
+     * \brief
+     * Add a translation component to the transformation represented by this
+     * matrix.
+     *
+     * Equivalent to getMultipliedBy(Matrix4::getTranslation(translation));
+     */
+    Matrix4 getTranslatedBy(const Vector3& translation) const;
+
     /**
      * \brief
      * Add a scale component to the transformation represented by this matrix.
@@ -413,6 +467,8 @@ public:
 	 * Return the 3-component translation
 	 */
 	const Vector3& getTranslation() const;
+
+
 };
 
 // =========================================================================================
@@ -493,6 +549,36 @@ inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
 inline Matrix4 Matrix4::getPremultipliedBy(const Matrix4& other) const
 {
     return other.getMultipliedBy(*this);
+}
+
+inline Matrix4 Matrix4::getRotationAboutX(float angle)
+{
+	return getRotationAboutXForSinCos(sin(angle), cos(angle));
+}
+
+inline Matrix4 Matrix4::getRotationAboutXDegrees(float angle)
+{
+	return getRotationAboutX(degrees_to_radians(angle));
+}
+
+inline Matrix4 Matrix4::getRotationAboutY(float angle)
+{
+	return getRotationAboutYForSinCos(sin(angle), cos(angle));
+}
+
+inline Matrix4 Matrix4::getRotationAboutYDegrees(float angle)
+{
+	return getRotationAboutY(degrees_to_radians(angle));
+}
+
+inline Matrix4 Matrix4::getRotationAboutZ(float angle)
+{
+	return getRotationAboutZForSinCos(sin(angle), cos(angle));
+}
+
+inline Matrix4 Matrix4::getRotationAboutZDegrees(float angle)
+{
+	return getRotationAboutZ(degrees_to_radians(angle));
 }
 
 inline bool Matrix4::operator==(const Matrix4& other) const
@@ -668,27 +754,13 @@ inline const Vector3& Matrix4::getTranslation() const
 	return t().getVector3();
 }
 
-
-
-
-
-
-
-
-/// \brief A compile-time-constant integer.
-template<int VALUE_>
-struct IntegralConstant
+inline Matrix4 Matrix4::getTranslatedBy(const Vector3& translation) const
 {
-  enum unnamed_{ VALUE = VALUE_ };
-};
-
-
-/// \brief Returns \p self Concatenated with \p translation.
-/// The concatenated translation occurs before \p self.
-inline Matrix4 matrix4_translated_by_vec3(const Matrix4& self, const Vector3& translation)
-{
-	return self.getMultipliedBy(Matrix4::getTranslation(translation));
+	return getMultipliedBy(Matrix4::getTranslation(translation));
 }
+
+
+
 
 
 #include "math/pi.h"
@@ -718,77 +790,6 @@ inline Vector3 euler_degrees_to_radians(const Vector3& euler)
     static_cast<float>(degrees_to_radians(euler.y())),
     static_cast<float>(degrees_to_radians(euler.z()))
   );
-}
-
-
-
-/// \brief Constructs a pure-rotation matrix about the x axis from sin \p s and cosine \p c of an angle.
-inline Matrix4 matrix4_rotation_for_sincos_x(float s, float c)
-{
-  return Matrix4::byColumns(
-    1, 0, 0, 0,
-    0, c, s, 0,
-    0,-s, c, 0,
-    0, 0, 0, 1
-  );
-}
-
-/// \brief Constructs a pure-rotation matrix about the x axis from an angle in radians.
-inline Matrix4 matrix4_rotation_for_x(float x)
-{
-  return matrix4_rotation_for_sincos_x(sin(x), cos(x));
-}
-
-/// \brief Constructs a pure-rotation matrix about the x axis from an angle in degrees.
-inline Matrix4 matrix4_rotation_for_x_degrees(float x)
-{
-  return matrix4_rotation_for_x(degrees_to_radians(x));
-}
-
-/// \brief Constructs a pure-rotation matrix about the y axis from sin \p s and cosine \p c of an angle.
-inline Matrix4 matrix4_rotation_for_sincos_y(float s, float c)
-{
-  return Matrix4::byColumns(
-    c, 0,-s, 0,
-    0, 1, 0, 0,
-    s, 0, c, 0,
-    0, 0, 0, 1
-  );
-}
-
-/// \brief Constructs a pure-rotation matrix about the y axis from an angle in radians.
-inline Matrix4 matrix4_rotation_for_y(float y)
-{
-  return matrix4_rotation_for_sincos_y(sin(y), cos(y));
-}
-
-/// \brief Constructs a pure-rotation matrix about the y axis from an angle in degrees.
-inline Matrix4 matrix4_rotation_for_y_degrees(float y)
-{
-  return matrix4_rotation_for_y(degrees_to_radians(y));
-}
-
-/// \brief Constructs a pure-rotation matrix about the z axis from sin \p s and cosine \p c of an angle.
-inline Matrix4 matrix4_rotation_for_sincos_z(float s, float c)
-{
-  return Matrix4::byColumns(
-    c, s, 0, 0,
-   -s, c, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1
-  );
-}
-
-/// \brief Constructs a pure-rotation matrix about the z axis from an angle in radians.
-inline Matrix4 matrix4_rotation_for_z(float z)
-{
-  return matrix4_rotation_for_sincos_z(sin(z), cos(z));
-}
-
-/// \brief Constructs a pure-rotation matrix about the z axis from an angle in degrees.
-inline Matrix4 matrix4_rotation_for_z_degrees(float z)
-{
-  return matrix4_rotation_for_z(degrees_to_radians(z));
 }
 
 /// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, y, z).
@@ -874,8 +875,8 @@ inline void matrix4_rotate_by_euler_xyz_degrees(Matrix4& self, const Vector3& eu
 /// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, z, x).
 inline Matrix4 matrix4_rotation_for_euler_yzx(const Vector3& euler)
 {
-	return matrix4_rotation_for_y(euler[1]).getPremultipliedBy(
-		matrix4_rotation_for_z(euler[2])).getPremultipliedBy(matrix4_rotation_for_x(euler[0])
+	return Matrix4::getRotationAboutY(euler[1]).getPremultipliedBy(
+		Matrix4::getRotationAboutZ(euler[2])).getPremultipliedBy(Matrix4::getRotationAboutX(euler[0])
 	);
 }
 
@@ -888,8 +889,8 @@ inline Matrix4 matrix4_rotation_for_euler_yzx_degrees(const Vector3& euler)
 /// \brief Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, z, y).
 inline Matrix4 matrix4_rotation_for_euler_xzy(const Vector3& euler)
 {
-	return matrix4_rotation_for_x(euler[0]).getPremultipliedBy(
-		matrix4_rotation_for_z(euler[2])).getPremultipliedBy(matrix4_rotation_for_y(euler[1])
+	return Matrix4::getRotationAboutX(euler[0]).getPremultipliedBy(
+		Matrix4::getRotationAboutZ(euler[2])).getPremultipliedBy(Matrix4::getRotationAboutY(euler[1])
 	);
 }
 
@@ -972,8 +973,8 @@ inline void matrix4_rotate_by_euler_yxz_degrees(Matrix4& self, const Vector3& eu
 inline Matrix4 matrix4_rotation_for_euler_zxy(const Vector3& euler)
 {
 #if 1
-	return matrix4_rotation_for_z(euler[2]).getPremultipliedBy(
-		matrix4_rotation_for_x(euler[0])).getPremultipliedBy(matrix4_rotation_for_y(euler[1])
+	return Matrix4::getRotationAboutZ(euler[2]).getPremultipliedBy(
+		Matrix4::getRotationAboutX(euler[0])).getPremultipliedBy(Matrix4::getRotationAboutY(euler[1])
 	);
 #else
   float cx = cos(euler[0]);

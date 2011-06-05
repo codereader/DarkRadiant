@@ -210,7 +210,7 @@ inline Matrix4 matrix4_rotation_for_quaternion_quantised(const Quaternion& quate
     && quaternion_component_is_90(quaternion.x())
     && quaternion_component_is_90(quaternion.w()))
   {
-    return matrix4_rotation_for_sincos_x((quaternion.x() > 0) ? 1.f : -1.f, 0);
+    return Matrix4::getRotationAboutXForSinCos((quaternion.x() > 0) ? 1.f : -1.f, 0);
   }
 
   if(quaternion.x() == 0
@@ -218,7 +218,7 @@ inline Matrix4 matrix4_rotation_for_quaternion_quantised(const Quaternion& quate
     && quaternion_component_is_90(quaternion.y())
     && quaternion_component_is_90(quaternion.w()))
   {
-    return matrix4_rotation_for_sincos_y((quaternion.y() > 0) ? 1.f : -1.f, 0);
+	  return Matrix4::getRotationAboutYForSinCos((quaternion.y() > 0) ? 1.f : -1.f, 0);
   }
 
   if(quaternion.x() == 0
@@ -226,7 +226,7 @@ inline Matrix4 matrix4_rotation_for_quaternion_quantised(const Quaternion& quate
     && quaternion_component_is_90(quaternion.z())
     && quaternion_component_is_90(quaternion.w()))
   {
-    return matrix4_rotation_for_sincos_z((quaternion.z() > 0) ? 1.f : -1.f, 0);
+	  return Matrix4::getRotationAboutZForSinCos((quaternion.z() > 0) ? 1.f : -1.f, 0);
   }
 
   return matrix4_rotation_for_quaternion(quaternion);

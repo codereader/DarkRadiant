@@ -72,6 +72,36 @@ Matrix4 Matrix4::getRotation(const Vector3& axis, const float angle)
 	);
 }
 
+Matrix4 Matrix4::getRotationAboutXForSinCos(float s, float c)
+{
+	return Matrix4::byColumns(
+		1, 0, 0, 0,
+		0, c, s, 0,
+		0,-s, c, 0,
+		0, 0, 0, 1
+	);
+}
+
+Matrix4 Matrix4::getRotationAboutYForSinCos(float s, float c)
+{
+	return Matrix4::byColumns(
+		c, 0,-s, 0,
+		0, 1, 0, 0,
+		s, 0, c, 0,
+		0, 0, 0, 1
+	);
+}
+
+Matrix4 Matrix4::getRotationAboutZForSinCos(float s, float c)
+{
+	return Matrix4::byColumns(
+		c, s, 0, 0,
+		-s, c, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1
+	);
+}
+
 // Get a scale matrix
 Matrix4 Matrix4::getScale(const Vector3& scale)
 {

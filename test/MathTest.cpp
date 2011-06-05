@@ -5,6 +5,7 @@
 void MathTest::run()
 {
 	testIdentity();
+	testRotationMatrices();
 	testMultiplication();
 	testTransformation();
 	testMatrixDeterminant();
@@ -58,6 +59,84 @@ void MathTest::testIdentity()
 	identity2.tw() = 1;
 
 	REQUIRE_TRUE(identity == identity2, "Explicitly constructed identity not equal to Matrix4::getIdentity()");
+}
+
+void MathTest::testRotationMatrices()
+{
+	float angle = 30.0;
+
+	float cosAngle = cos(degrees_to_radians(angle));
+	float sinAngle = sin(degrees_to_radians(angle));
+	float EPSILON = 0.000001f;
+
+	// Test X rotation
+	Matrix4 xRot = Matrix4::getRotationAboutXDegrees(angle);
+
+	REQUIRE_TRUE(float_equal_epsilon(xRot.xx(), 1, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.xy(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.xz(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.xw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(xRot.yx(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.yy(), cosAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.yz(), sinAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.yw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(xRot.zx(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.zy(), -sinAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.zz(), cosAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.zw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(xRot.tx(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.ty(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.tz(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(xRot.tw(), 1, EPSILON), "Matrix rotation constructor failed");
+
+	// Test Y rotation
+	Matrix4 yRot = Matrix4::getRotationAboutYDegrees(angle);
+
+	REQUIRE_TRUE(float_equal_epsilon(yRot.xx(), cosAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.xy(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.xz(), -sinAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.xw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(yRot.yx(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.yy(), 1, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.yz(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.yw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(yRot.zx(), sinAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.zy(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.zz(), cosAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.zw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(yRot.tx(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.ty(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.tz(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(yRot.tw(), 1, EPSILON), "Matrix rotation constructor failed");
+
+	// Test Z rotation
+	Matrix4 zRot = Matrix4::getRotationAboutZDegrees(angle);
+
+	REQUIRE_TRUE(float_equal_epsilon(zRot.xx(), cosAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.xy(), sinAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.xz(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.xw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(zRot.yx(), -sinAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.yy(), cosAngle, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.yz(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.yw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(zRot.zx(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.zy(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.zz(), 1, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.zw(), 0, EPSILON), "Matrix rotation constructor failed");
+
+	REQUIRE_TRUE(float_equal_epsilon(zRot.tx(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.ty(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.tz(), 0, EPSILON), "Matrix rotation constructor failed");
+	REQUIRE_TRUE(float_equal_epsilon(zRot.tw(), 1, EPSILON), "Matrix rotation constructor failed");
 }
 
 void MathTest::testMultiplication()

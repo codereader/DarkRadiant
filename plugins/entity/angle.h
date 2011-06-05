@@ -72,7 +72,7 @@ public:
 inline float angle_rotated(float angle, const Quaternion& rotation)
 {
   return static_cast<float>(matrix4_get_rotation_euler_xyz_degrees(
-	matrix4_rotation_for_z_degrees(angle).getMultipliedBy(matrix4_rotation_for_quaternion_quantised(rotation))
+	  Matrix4::getRotationAboutZDegrees(angle).getMultipliedBy(matrix4_rotation_for_quaternion_quantised(rotation))
   ).z());
 }
 

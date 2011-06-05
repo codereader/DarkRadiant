@@ -69,29 +69,29 @@ inline Matrix4 matrix4_rotation_for_axis90(axis_t axis, sign_t sign)
   case eAxisX:
     if(sign == eSignPositive)
     {
-      return matrix4_rotation_for_sincos_x(1, 0);
+		return Matrix4::getRotationAboutXForSinCos(1, 0);
     }
     else
     {
-      return matrix4_rotation_for_sincos_x(-1, 0);
+		return Matrix4::getRotationAboutXForSinCos(-1, 0);
     }
   case eAxisY:
     if(sign == eSignPositive)
     {
-      return matrix4_rotation_for_sincos_y(1, 0);
+		return Matrix4::getRotationAboutYForSinCos(1, 0);
     }
     else
     {
-      return matrix4_rotation_for_sincos_y(-1, 0);
+		return Matrix4::getRotationAboutYForSinCos(-1, 0);
     }
   default://case eAxisZ:
     if(sign == eSignPositive)
     {
-      return matrix4_rotation_for_sincos_z(1, 0);
+		return Matrix4::getRotationAboutZForSinCos(1, 0);
     }
     else
     {
-      return matrix4_rotation_for_sincos_z(-1, 0);
+		return Matrix4::getRotationAboutZForSinCos(-1, 0);
     }
   }
 }
@@ -145,13 +145,13 @@ void Select_RotateAxis (int axis, float deg)
     switch(axis)
     {
     case 0:
-      GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(matrix4_rotation_for_x_degrees(deg)));
+		GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(Matrix4::getRotationAboutXDegrees(deg)));
       break;
     case 1:
-      GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(matrix4_rotation_for_y_degrees(deg)));
+		GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(Matrix4::getRotationAboutYDegrees(deg)));
       break;
     case 2:
-      GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(matrix4_rotation_for_z_degrees(deg)));
+		GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(Matrix4::getRotationAboutZDegrees(deg)));
       break;
     }
   }
