@@ -137,6 +137,168 @@ void MathTest::testRotationMatrices()
 	REQUIRE_TRUE(float_equal_epsilon(zRot.ty(), 0, EPSILON), "Matrix rotation constructor failed");
 	REQUIRE_TRUE(float_equal_epsilon(zRot.tz(), 0, EPSILON), "Matrix rotation constructor failed");
 	REQUIRE_TRUE(float_equal_epsilon(zRot.tw(), 1, EPSILON), "Matrix rotation constructor failed");
+
+	// Test euler angle constructors
+	Vector3 euler(30, -55, 75);
+	
+	// Convert degrees to radians
+	float pi = 3.141592653589793238462643383f;
+	float cx = cos(euler[0] * c_pi / 180.0f);
+	float sx = sin(euler[0] * c_pi / 180.0f);
+	float cy = cos(euler[1] * c_pi / 180.0f);
+	float sy = sin(euler[1] * c_pi / 180.0f);
+	float cz = cos(euler[2] * c_pi / 180.0f);
+	float sz = sin(euler[2] * c_pi / 180.0f);
+
+	// XYZ
+	{
+		Matrix4 eulerXYZ = Matrix4::getRotationForEulerXYZDegrees(euler);
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.xx(), cy*cz, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.xy(), cy*sz, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.xz(), -sy, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.xw(), 0, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.yx(), sx*sy*cz - cx*sz, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.yy(), sx*sy*sz + cx*cz, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.yz(), sx*cy, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.yw(), 0, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.zx(), cx*sy*cz + sx*sz, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.zy(), cx*sy*sz - sx*cz, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.zz(), cx*cy, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.zw(), 0, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.tx(), 0, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.ty(), 0, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.tz(), 0, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXYZ.tw(), 1, EPSILON), "Matrix getRotationForEulerXYZDegrees failed");
+	}
+
+	// YZX
+	{
+		Matrix4 eulerYZX = Matrix4::getRotationForEulerYZXDegrees(euler);
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.xx(), cy*cz, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.xy(), cx*cy*sz + sx*sy, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.xz(), sx*cy*sz - cx*sy, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.xw(), 0, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.yx(), -sz, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.yy(), cx*cz, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.yz(), sx*cz, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.yw(), 0, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.zx(), sy*cz, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.zy(), cx*sy*sz - sx*cy, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.zz(), sx*sy*sz + cx*cy, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.zw(), 0, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.tx(), 0, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.ty(), 0, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.tz(), 0, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYZX.tw(), 1, EPSILON), "Matrix getRotationForEulerYZXDegrees failed");
+	}
+
+	// XZY
+	{
+		Matrix4 eulerXZY = Matrix4::getRotationForEulerXZYDegrees(euler);
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.xx(), cy*cz, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.xy(), sz, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.xz(), -sy*cz, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.xw(), 0, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.yx(), sx*sy - cx*cy*sz, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.yy(), cx*cz, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.yz(), cx*sy*sz + sx*cy, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.yw(), 0, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.zx(), sx*cy*sz + cx*sy, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.zy(), -sx*cz, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.zz(), cx*cy - sx*sy*sz, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.zw(), 0, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.tx(), 0, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.ty(), 0, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.tz(), 0, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerXZY.tw(), 1, EPSILON), "Matrix getRotationForEulerXZYDegrees failed");
+	}
+
+	// YXZ
+	{
+		Matrix4 eulerYXZ = Matrix4::getRotationForEulerYXZDegrees(euler);
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.xx(), cy*cz - sx*sy*sz, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.xy(), cy*sz + sx*sy*cz, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.xz(), -cx*sy, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.xw(), 0, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.yx(), -cx*sz, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.yy(), cx*cz, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.yz(), sx, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.yw(), 0, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.zx(), sy*cz + sx*cy*sz, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.zy(), sy*sz - sx*cy*cz, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.zz(), cx*cy, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.zw(), 0, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.tx(), 0, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.ty(), 0, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.tz(), 0, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerYXZ.tw(), 1, EPSILON), "Matrix getRotationForEulerYXZDegrees failed");
+	}
+
+	// ZXY
+	{
+		Matrix4 eulerZXY = Matrix4::getRotationForEulerZXYDegrees(euler);
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.xx(), cy*cz + sx*sy*sz, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.xy(), cx*sz, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.xz(), sx*cy*sz - sy*cz, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.xw(), 0, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.yx(), sx*sy*cz - cy*sz, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.yy(), cx*cz, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.yz(), sx*cy*cz + sy*sz, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.yw(), 0, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.zx(), cx*sy, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.zy(), -sx, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.zz(), cx*cy, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.zw(), 0, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.tx(), 0, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.ty(), 0, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.tz(), 0, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZXY.tw(), 1, EPSILON), "Matrix getRotationForEulerZXYDegrees failed");
+	}
+
+	// ZYX
+	{
+		Matrix4 eulerZYX = Matrix4::getRotationForEulerZYXDegrees(euler);
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.xx(), cy*cz, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.xy(), cx*sz + sx*sy*cz, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.xz(), sx*sz - cx*sy*cz, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.xw(), 0, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.yx(), -cy*sz, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.yy(), cx*cz - sx*sy*sz, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.yz(), sx*cz + cx*sy*sz, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.yw(), 0, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.zx(), sy, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.zy(), -sx*cy, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.zz(), cx*cy, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.zw(), 0, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.tx(), 0, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.ty(), 0, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.tz(), 0, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.tw(), 1, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+	}
 }
 
 void MathTest::testMultiplication()

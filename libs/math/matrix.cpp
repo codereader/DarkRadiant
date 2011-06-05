@@ -1,25 +1,17 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
 #include "matrix.h"
+
+namespace
+{
+	/// \brief Returns \p euler angles converted from degrees to radians.
+	inline Vector3 euler_degrees_to_radians(const Vector3& euler)
+	{
+		return Vector3(
+			degrees_to_radians(euler.x()),
+			degrees_to_radians(euler.y()),
+			degrees_to_radians(euler.z())
+		);
+	}
+}
 
 // Named constructors
 
@@ -100,6 +92,232 @@ Matrix4 Matrix4::getRotationAboutZForSinCos(float s, float c)
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	);
+}
+
+/*! \verbatim
+clockwise rotation around X, Y, Z, facing along axis
+ 1  0   0    cy 0 -sy   cz  sz 0
+ 0  cx  sx   0  1  0   -sz  cz 0
+ 0 -sx  cx   sy 0  cy   0   0  1
+
+rows of Z by cols of Y
+ cy*cz -sy*cz+sz -sy*sz+cz
+-sz*cy -sz*sy+cz
+
+  .. or something like that..
+
+final rotation is Z * Y * X
+ cy*cz -sx*-sy*cz+cx*sz  cx*-sy*sz+sx*cz
+-cy*sz  sx*sy*sz+cx*cz  -cx*-sy*sz+sx*cz
+ sy    -sx*cy            cx*cy
+
+transposed
+cy.cz + 0.sz + sy.0            cy.-sz + 0 .cz +  sy.0          cy.0  + 0 .0  +   sy.1       |
+sx.sy.cz + cx.sz + -sx.cy.0    sx.sy.-sz + cx.cz + -sx.cy.0    sx.sy.0  + cx.0  + -sx.cy.1  |
+-cx.sy.cz + sx.sz +  cx.cy.0   -cx.sy.-sz + sx.cz +  cx.cy.0   -cx.sy.0  + 0 .0  +  cx.cy.1  |
+\endverbatim */
+Matrix4 Matrix4::getRotationForEulerXYZ(const Vector3& euler)
+{
+	float cx = cos(euler[0]);
+	float sx = sin(euler[0]);
+	float cy = cos(euler[1]);
+	float sy = sin(euler[1]);
+	float cz = cos(euler[2]);
+	float sz = sin(euler[2]);
+
+	return Matrix4::byColumns(
+		cy*cz,
+		cy*sz,
+		-sy,
+		0,
+		sx*sy*cz + cx*-sz,
+		sx*sy*sz + cx*cz,
+		sx*cy,
+		0,
+		cx*sy*cz + sx*sz,
+		cx*sy*sz + -sx*cz,
+		cx*cy,
+		0,
+		0,
+		0,
+		0,
+		1
+	);
+}
+
+Matrix4 Matrix4::getRotationForEulerXYZDegrees(const Vector3& euler)
+{
+	return getRotationForEulerXYZ(euler_degrees_to_radians(euler));
+}
+
+Matrix4 Matrix4::getRotationForEulerYZX(const Vector3& euler)
+{
+	float cx = cos(euler[0]);
+	float sx = sin(euler[0]);
+	float cy = cos(euler[1]);
+	float sy = sin(euler[1]);
+	float cz = cos(euler[2]);
+	float sz = sin(euler[2]);
+
+	return Matrix4::byColumns(
+		cy*cz,
+		cx*cy*sz + sx*sy,
+		sx*cy*sz - cx*sy,
+		0,
+		-sz,
+		cx*cz,
+		sx*cz,
+		0,
+		sy*cz,
+		cx*sy*sz - sx*cy,
+		sx*sy*sz + cx*cy,
+		0,
+		0,
+		0,
+		0,
+		1
+	);
+}
+
+Matrix4 Matrix4::getRotationForEulerYZXDegrees(const Vector3& euler)
+{
+	return getRotationForEulerYZX(euler_degrees_to_radians(euler));
+}
+
+Matrix4 Matrix4::getRotationForEulerXZY(const Vector3& euler)
+{
+	float cx = cos(euler[0]);
+	float sx = sin(euler[0]);
+	float cy = cos(euler[1]);
+	float sy = sin(euler[1]);
+	float cz = cos(euler[2]);
+	float sz = sin(euler[2]);
+
+	return Matrix4::byColumns(
+		cy*cz,
+		sz,
+		-sy*cz,
+		0,
+		sx*sy - cx*cy*sz,
+		cx*cz,
+		cx*sy*sz + sx*cy,
+		0,
+		sx*cy*sz + cx*sy,
+		-sx*cz,
+		cx*cy - sx*sy*sz,
+		0,
+		0,
+		0,
+		0,
+		1
+	);
+}
+
+Matrix4 Matrix4::getRotationForEulerXZYDegrees(const Vector3& euler)
+{
+	return getRotationForEulerXZY(euler_degrees_to_radians(euler));
+}
+
+Matrix4 Matrix4::getRotationForEulerYXZ(const Vector3& euler)
+{
+	float cx = cos(euler[0]);
+	float sx = sin(euler[0]);
+	float cy = cos(euler[1]);
+	float sy = sin(euler[1]);
+	float cz = cos(euler[2]);
+	float sz = sin(euler[2]);
+
+	return Matrix4::byColumns(
+		cy*cz - sx*sy*sz,
+		cy*sz + sx*sy*cz,
+		-cx*sy,
+		0,
+		-cx*sz,
+		cx*cz,
+		sx,
+		0,
+		sy*cz + sx*cy*sz,
+		sy*sz - sx*cy*cz,
+		cx*cy,
+		0,
+		0,
+		0,
+		0,
+		1
+	);
+}
+
+Matrix4 Matrix4::getRotationForEulerYXZDegrees(const Vector3& euler)
+{
+	return getRotationForEulerYXZ(euler_degrees_to_radians(euler));
+}
+
+Matrix4 Matrix4::getRotationForEulerZXY(const Vector3& euler)
+{
+	float cx = cos(euler[0]);
+	float sx = sin(euler[0]);
+	float cy = cos(euler[1]);
+	float sy = sin(euler[1]);
+	float cz = cos(euler[2]);
+	float sz = sin(euler[2]);
+
+	return Matrix4::byColumns(
+		cy*cz + sx*sy*sz,
+		cx*sz,
+		sx*cy*sz - sy*cz,
+		0,
+		sx*sy*cz - cy*sz,
+		cx*cz,
+		sy*sz + sx*cy*cz,
+		0,
+		cx*sy,
+		-sx,
+		cx*cy,
+		0,
+		0,
+		0,
+		0,
+		1
+	);
+}
+
+Matrix4 Matrix4::getRotationForEulerZXYDegrees(const Vector3& euler)
+{
+	return getRotationForEulerZXY(euler_degrees_to_radians(euler));
+}
+
+Matrix4 Matrix4::getRotationForEulerZYX(const Vector3& euler)
+{
+	float cx = cos(euler[0]);
+	float sx = sin(euler[0]);
+	float cy = cos(euler[1]);
+	float sy = sin(euler[1]);
+	float cz = cos(euler[2]);
+	float sz = sin(euler[2]);
+
+	return Matrix4::byColumns(
+		cy*cz,
+		cx*sz + sx*sy*cz,
+		sx*sz - cx*sy*cz,
+		0,
+		-cy*sz,
+		cx*cz - sx*sy*sz,
+		sx*cz + cx*sy*sz,
+		0,
+		sy,
+		-sx*cy,
+		cx*cy,
+		0,
+		0,
+		0,
+		0,
+		1
+	);
+}
+
+Matrix4 Matrix4::getRotationForEulerZYXDegrees(const Vector3& euler)
+{
+	return getRotationForEulerZYX(euler_degrees_to_radians(euler));
 }
 
 // Get a scale matrix
