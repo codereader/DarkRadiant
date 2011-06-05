@@ -180,7 +180,7 @@ public:
 			float angle = boost::lexical_cast<float>(value);
 
 			// Cast succeeded
-			setFromMatrix4(matrix4_rotation_for_z_degrees(angle));
+			setFromMatrix4(Matrix4::getRotationAboutZDegrees(angle));
 		}
 		catch (boost::bad_lexical_cast&)
 		{

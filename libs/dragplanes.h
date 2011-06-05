@@ -30,13 +30,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // local must be a pure rotation
 inline Vector3 translation_to_local(const Vector3& translation, const Matrix4& local)
 {
-	return matrix4_translated_by_vec3(local.getTransposed(), translation).getMultipliedBy(local).getTranslation();
+	return local.getTransposed().getTranslatedBy(translation).getMultipliedBy(local).getTranslation();
 }
 
 // local must be a pure rotation
 inline Vector3 translation_from_local(const Vector3& translation, const Matrix4& local)
 {
-	return matrix4_translated_by_vec3(local, translation).getMultipliedBy(local.getTransposed()).getTranslation();
+	return local.getTranslatedBy(translation).getMultipliedBy(local.getTransposed()).getTranslation();
 }
 
 class DragPlanes

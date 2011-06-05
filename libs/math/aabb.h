@@ -151,7 +151,12 @@ inline void aabb_extend_by_vec3(AABB& aabb, const Vector3& extension)
   aabb.extents += extension;
 }
 
-
+/// \brief A compile-time-constant integer.
+template<int VALUE_>
+struct IntegralConstant
+{
+  enum unnamed_{ VALUE = VALUE_ };
+};
 
 
 template<typename Index>

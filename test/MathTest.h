@@ -18,6 +18,7 @@ public:
 
 private:
 	void testIdentity();
+	void testRotationMatrices();
 	void testMultiplication();
 	void testTransformation();
 	void testMatrixDeterminant();
