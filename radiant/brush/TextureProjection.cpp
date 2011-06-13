@@ -177,7 +177,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height, const 
 
 	// the difference between the current texture transform and the perfectly fitted transform
 	Matrix4 matrix = Matrix4::getTranslation(bounds.origin - perfect.origin);
-	matrix4_pivoted_scale_by_vec3(matrix, bounds.extents / perfect.extents, perfect.origin);
+	matrix.scaleBy(bounds.extents / perfect.extents, perfect.origin);
 	matrix.invert();
 
 	// apply the difference to the current texture transform

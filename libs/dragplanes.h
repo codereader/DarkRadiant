@@ -240,7 +240,7 @@ public:
     );
 
     Matrix4 matrix = Matrix4::getTranslation(aabb.origin - m_bounds.origin);
-    matrix4_pivoted_scale_by_vec3(matrix, scale, m_bounds.origin);
+	matrix.scaleBy(scale, m_bounds.origin);
 
     return matrix;
   }
