@@ -196,7 +196,7 @@ void GenericEntity::updateTransform()
 	}
 	else
 	{
-		m_ray.direction = matrix4_rotation_for_z(degrees_to_radians(m_angle)).transformDirection(Vector3(1, 0, 0));
+		m_ray.direction = Matrix4::getRotationAboutZDegrees(m_angle).transformDirection(Vector3(1, 0, 0));
 	}
 
 	_owner.transformChanged();
