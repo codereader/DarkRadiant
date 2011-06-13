@@ -6,6 +6,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Plane3.h"
+#include "math/pi.h"
 
 /**
  * A 4x4 matrix stored in single-precision floating-point.
@@ -560,6 +561,68 @@ public:
 	 * The concatenated rotation occurs before self.
 	 */
 	void rotateByEulerZXYDegrees(const Vector3& euler);
+
+	/**
+	 * Calculates and returns a set of euler angles in radians that produce 
+	 * the rotation component of this matrix when applied in the order (x, y, z). 
+	 * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
+	 */
+	Vector3 getEulerAnglesXYZ() const;
+
+	/**
+	 * Calculates and returns a set of euler angles in degrees that produce
+	 * the rotation component of this matrix when applied in the order (x, y, z). 
+	 * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
+	 */
+	Vector3 getEulerAnglesXYZDegrees() const;
+
+	/**
+	 * Calculates and returns a set of euler angles in radians that produce 
+	 * the rotation component of this matrix when applied in the order (y, x, z). 
+	 * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
+	 */
+	Vector3 getEulerAnglesYXZ() const;
+
+	/**
+	 * Calculates and returns a set of euler angles in degrees that produce
+	 * the rotation component of this matrix when applied in the order (y, x, z). 
+	 * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
+	 */
+	Vector3 getEulerAnglesYXZDegrees() const;
+
+	/**
+	 * Calculates and returns a set of euler angles in radians that produce 
+	 * the rotation component of this matrix when applied in the order (z, x, y). 
+	 * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
+	 */
+	Vector3 getEulerAnglesZXY() const;
+
+	/**
+	 * Calculates and returns a set of euler angles in degrees that produce
+	 * the rotation component of this matrix when applied in the order (z, x, y). 
+	 * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
+	 */
+	Vector3 getEulerAnglesZXYDegrees() const;
+
+	/**
+	 * Calculates and returns a set of euler angles in radians that produce 
+	 * the rotation component of this matrix when applied in the order (z, y, x). 
+	 * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
+	 */
+	Vector3 getEulerAnglesZYX() const;
+
+	/**
+	 * Calculates and returns a set of euler angles in degrees that produce
+	 * the rotation component of this matrix when applied in the order (z, y, x). 
+	 * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
+	 */
+	Vector3 getEulerAnglesZYXDegrees() const;
+
+	/**
+	 * Calculates and returns the (x, y, z) scale values that produce the scale component of this matrix.
+	 * This matrix must be affine and orthogonal to produce a meaningful result.
+	 */
+	Vector3 getScale() const;
 };
 
 // =========================================================================================
@@ -877,155 +940,131 @@ inline void Matrix4::rotateByEulerZXYDegrees(const Vector3& euler)
 	*this = getRotatedByEulerZXYDegrees(euler);
 }
 
-
-
-#include "math/pi.h"
-
-/// \brief Returns \p angle modulated by the range [0, 360).
-/// \p angle must be in the range [-360, 360).
-inline float angle_modulate_degrees_range(float angle)
+inline Vector3 Matrix4::getEulerAnglesXYZ() const
 {
-  return static_cast<float>(float_mod_range(angle, 360.0));
+	float a = asin(-xz());
+	float ca = cos(a);
+
+	if (fabs(ca) > 0.005f) // Gimbal lock?
+	{
+		return Vector3(
+			atan2(yz() / ca, zz() / ca),
+			a,
+			atan2(xy() / ca, xx() / ca)
+		);
+	}
+	else // Gimbal lock has occurred
+	{
+		return Vector3(
+			atan2(-zy(), yy()),
+			a,
+			0
+		);
+	}
 }
 
-/// \brief Returns \p euler angles converted from radians to degrees.
-inline Vector3 euler_radians_to_degrees(const Vector3& euler)
+inline Vector3 Matrix4::getEulerAnglesXYZDegrees() const
 {
-  return Vector3(
-    static_cast<float>(radians_to_degrees(euler.x())),
-    static_cast<float>(radians_to_degrees(euler.y())),
-    static_cast<float>(radians_to_degrees(euler.z()))
-  );
+	Vector3 eulerRad = getEulerAnglesXYZ();
+	return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
 }
 
-
-
-
-
-
-/// \brief Calculates and returns a set of euler angles that produce the rotation component of \p self when applied in the order (x, y, z).
-/// \p self must be affine and orthonormal (unscaled) to produce a meaningful result.
-inline Vector3 matrix4_get_rotation_euler_xyz(const Matrix4& self)
+inline Vector3 Matrix4::getEulerAnglesYXZ() const
 {
-  float a = asin(-self[2]);
-  float ca = cos(a);
+	float a = asin(yz());
+	float ca = cos(a);
 
-  if (fabs(ca) > 0.005) // Gimbal lock?
-  {
-    return Vector3(
-      atan2(self[6] / ca, self[10] / ca),
-      a,
-      atan2(self[1] / ca, self[0]/ ca)
-    );
-  }
-  else // Gimbal lock has occurred
-  {
-    return Vector3(
-      atan2(-self[9], self[5]),
-      a,
-      0
-    );
-  }
+	if (fabs(ca) > 0.005f) // Gimbal lock?
+	{
+		return Vector3(
+			a,
+			atan2(-xz() / ca, zz() / ca),
+			atan2(-yx() / ca, yy() / ca)
+		);
+	}
+	else // Gimbal lock has occurred
+	{
+		return Vector3(
+			a,
+			atan2(zx(), xx()),
+			0
+		);
+	}
 }
 
-/// \brief \copydoc matrix4_get_rotation_euler_xyz(const Matrix4&)
-inline Vector3 matrix4_get_rotation_euler_xyz_degrees(const Matrix4& self)
+inline Vector3 Matrix4::getEulerAnglesYXZDegrees() const
 {
-  return euler_radians_to_degrees(matrix4_get_rotation_euler_xyz(self));
+	Vector3 eulerRad = getEulerAnglesYXZ();
+	return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
 }
 
-/// \brief Calculates and returns a set of euler angles that produce the rotation component of \p self when applied in the order (y, x, z).
-/// \p self must be affine and orthonormal (unscaled) to produce a meaningful result.
-inline Vector3 matrix4_get_rotation_euler_yxz(const Matrix4& self)
+inline Vector3 Matrix4::getEulerAnglesZXY() const
 {
-  float a = asin(self[6]);
-  float ca = cos(a);
+	float a = asin(-zy());
+	float ca = cos(a);
 
-  if (fabs(ca) > 0.005) // Gimbal lock?
-  {
-    return Vector3(
-      a,
-      atan2(-self[2] / ca, self[10]/ ca),
-      atan2(-self[4] / ca, self[5] / ca)
-    );
-  }
-  else // Gimbal lock has occurred
-  {
-    return Vector3(
-      a,
-      atan2(self[8], self[0]),
-      0
-    );
-  }
+	if (fabs(ca) > 0.005f) // Gimbal lock?
+	{
+		return Vector3(
+			a,
+			atan2(zx() / ca, zz() / ca),
+			atan2(xy() / ca, yy()/ ca)
+		);
+	}
+	else // Gimbal lock has occurred
+	{
+		return Vector3(
+			a,
+			0,
+			atan2(-yx(), xx())
+		);
+	}
 }
 
-/// \brief \copydoc matrix4_get_rotation_euler_yxz(const Matrix4&)
-inline Vector3 matrix4_get_rotation_euler_yxz_degrees(const Matrix4& self)
+inline Vector3 Matrix4::getEulerAnglesZXYDegrees() const
 {
-  return euler_radians_to_degrees(matrix4_get_rotation_euler_yxz(self));
+	Vector3 eulerRad = getEulerAnglesZXY();
+	return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
 }
 
-/// \brief Calculates and returns a set of euler angles that produce the rotation component of \p self when applied in the order (z, x, y).
-/// \p self must be affine and orthonormal (unscaled) to produce a meaningful result.
-inline Vector3 matrix4_get_rotation_euler_zxy(const Matrix4& self)
+inline Vector3 Matrix4::getEulerAnglesZYX() const
 {
-  float a = asin(-self[9]);
-  float ca = cos(a);
+	float a = asin(zx());
+	float ca = cos(a);
 
-  if (fabs(ca) > 0.005) // Gimbal lock?
-  {
-    return Vector3(
-      a,
-      atan2(self[8] / ca, self[10] / ca),
-      atan2(self[1] / ca, self[5]/ ca)
-    );
-  }
-  else // Gimbal lock has occurred
-  {
-    return Vector3(
-      a,
-      0,
-      atan2(-self[4], self[0])
-    );
-  }
+	if (fabs(ca) > 0.005f) // Gimbal lock?
+	{
+		return Vector3(
+			atan2(-zy() / ca, zz()/ ca),
+			a,
+			atan2(-yx() / ca, xx() / ca)
+		);
+	}
+	else // Gimbal lock has occurred
+	{
+		return Vector3(
+			0,
+			a,
+			atan2(xy(), yy())
+		);
+	}
 }
 
-/// \brief \copydoc matrix4_get_rotation_euler_zxy(const Matrix4&)
-inline Vector3 matrix4_get_rotation_euler_zxy_degrees(const Matrix4& self)
+inline Vector3 Matrix4::getEulerAnglesZYXDegrees() const
 {
-  return euler_radians_to_degrees(matrix4_get_rotation_euler_zxy(self));
+	Vector3 eulerRad = getEulerAnglesZYX();
+	return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
 }
 
-/// \brief Calculates and returns a set of euler angles that produce the rotation component of \p self when applied in the order (z, y, x).
-/// \p self must be affine and orthonormal (unscaled) to produce a meaningful result.
-inline Vector3 matrix4_get_rotation_euler_zyx(const Matrix4& self)
+inline Vector3 Matrix4::getScale() const
 {
-  float a = asin(self[8]);
-  float ca = cos(a);
-
-  if (fabs(ca) > 0.005) // Gimbal lock?
-  {
-    return Vector3(
-      atan2(-self[9] / ca, self[10]/ ca),
-      a,
-      atan2(-self[4] / ca, self[0] / ca)
-    );
-  }
-  else // Gimbal lock has occurred
-  {
-    return Vector3(
-      0,
-      a,
-      atan2(self[1], self[5])
-    );
-  }
+	return Vector3(
+		x().getVector3().getLength(),
+		y().getVector3().getLength(),
+		z().getVector3().getLength()
+	);
 }
 
-/// \brief \copydoc matrix4_get_rotation_euler_zyx(const Matrix4&)
-inline Vector3 matrix4_get_rotation_euler_zyx_degrees(const Matrix4& self)
-{
-  return euler_radians_to_degrees(matrix4_get_rotation_euler_zyx(self));
-}
 
 
 /// \brief Rotate \p self by \p euler angles (degrees) applied in the order (x, y, z), using \p pivotpoint.
@@ -1036,6 +1075,7 @@ inline void matrix4_pivoted_rotate_by_euler_xyz_degrees(Matrix4& self, const Vec
   self.translateBy(-pivotpoint);
 }
 
+#if 0
 /// \brief Calculates and returns the (x, y, z) scale values that produce the scale component of \p self.
 /// \p self must be affine and orthogonal to produce a meaningful result.
 inline Vector3 matrix4_get_scale_vec3(const Matrix4& self)
@@ -1046,6 +1086,7 @@ inline Vector3 matrix4_get_scale_vec3(const Matrix4& self)
     self.z().getVector3().getLength()
   );
 }
+#endif
 
 /// \brief Scales \p self by \p scale, using \p pivotpoint.
 inline void matrix4_pivoted_scale_by_vec3(Matrix4& self, const Vector3& scale, const Vector3& pivotpoint)

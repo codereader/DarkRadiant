@@ -67,7 +67,7 @@ void MathTest::testRotationMatrices()
 
 	float cosAngle = cos(degrees_to_radians(angle));
 	float sinAngle = sin(degrees_to_radians(angle));
-	float EPSILON = 0.000001f;
+	float EPSILON = 0.00001f;
 
 	// Test X rotation
 	Matrix4 xRot = Matrix4::getRotationAboutXDegrees(angle);
@@ -298,6 +298,50 @@ void MathTest::testRotationMatrices()
 		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.ty(), 0, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
 		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.tz(), 0, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
 		REQUIRE_TRUE(float_equal_epsilon(eulerZYX.tw(), 1, EPSILON), "Matrix getRotationForEulerZYXDegrees failed");
+	}
+
+	// Test Euler Angle retrieval (XYZ)
+	{
+		Matrix4 eulerXYZ = Matrix4::getRotationForEulerXYZDegrees(euler);
+
+		Vector3 testEuler = eulerXYZ.getEulerAnglesXYZDegrees();
+
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.x(), euler.x(), EPSILON), "getEulerAnglesXYZDegrees fault at x()");
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.y(), euler.y(), EPSILON), "getEulerAnglesXYZDegrees fault at y()");
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.z(), euler.z(), EPSILON), "getEulerAnglesXYZDegrees fault at z()");
+	}
+
+	// Test Euler Angle retrieval (YXZ)
+	{
+		Matrix4 eulerYXZ = Matrix4::getRotationForEulerYXZDegrees(euler);
+
+		Vector3 testEuler = eulerYXZ.getEulerAnglesYXZDegrees();
+
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.x(), euler.x(), EPSILON), "getEulerAnglesYXZDegrees fault at x()");
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.y(), euler.y(), EPSILON), "getEulerAnglesYXZDegrees fault at y()");
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.z(), euler.z(), EPSILON), "getEulerAnglesYXZDegrees fault at z()");
+	}
+
+	// Test Euler Angle retrieval (ZXY)
+	{
+		Matrix4 eulerZXY = Matrix4::getRotationForEulerZXYDegrees(euler);
+
+		Vector3 testEuler = eulerZXY.getEulerAnglesZXYDegrees();
+
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.x(), euler.x(), EPSILON), "getEulerAnglesZXYDegrees fault at x()");
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.y(), euler.y(), EPSILON), "getEulerAnglesZXYDegrees fault at y()");
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.z(), euler.z(), EPSILON), "getEulerAnglesZXYDegrees fault at z()");
+	}
+
+	// Test Euler Angle retrieval (ZYX)
+	{
+		Matrix4 eulerZYX = Matrix4::getRotationForEulerZYXDegrees(euler);
+
+		Vector3 testEuler = eulerZYX.getEulerAnglesZYXDegrees();
+		
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.x(), euler.x(), EPSILON), "getEulerAnglesZYXDegrees fault at x()");
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.y(), euler.y(), EPSILON), "getEulerAnglesZYXDegrees fault at y()");
+		REQUIRE_TRUE(float_equal_epsilon(testEuler.z(), euler.z(), EPSILON), "getEulerAnglesZYXDegrees fault at z()");
 	}
 }
 

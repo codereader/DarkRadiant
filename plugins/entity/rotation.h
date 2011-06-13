@@ -216,7 +216,7 @@ public:
 
 	void write(Entity* entity, bool isModel = false) const
 	{
-		Vector3 euler = matrix4_get_rotation_euler_xyz_degrees(m_rotation.getMatrix4());
+		Vector3 euler = m_rotation.getMatrix4().getEulerAnglesXYZDegrees();
 		// greebo: Prevent the "angle" key from being used for models, they should always
 		// have a rotation matrix written to their spawnargs. This should fix
 		// the models hopping around after transforms
