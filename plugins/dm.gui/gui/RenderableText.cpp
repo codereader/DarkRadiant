@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include <vector>
 #include <list>
 #include <boost/algorithm/string/split.hpp>

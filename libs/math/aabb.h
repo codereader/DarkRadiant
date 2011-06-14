@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_MATH_AABB_H)
 #define INCLUDED_MATH_AABB_H
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "math/Plane3.h"
 
 /** An Axis Aligned Bounding Box is a simple cuboid which encloses a given set

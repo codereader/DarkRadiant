@@ -1,7 +1,7 @@
 #include "GuiView.h"
 
 #include "igl.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include <gtk/gtkhbox.h>
 #include "gtkutil/GLWidgetSentry.h"
 

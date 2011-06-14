@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief View-frustum data types and related operations.
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "math/Plane3.h"
 #include "math/aabb.h"
 #include "math/line.h"

@@ -1,5 +1,7 @@
 #include "FacePlane.h"
 
+#include "math/Matrix4.h"
+
 // Constructor and copy constructor
 FacePlane::FacePlane()
 {}

@@ -2,7 +2,7 @@
 
 #include "GLProgramAttributes.h"
 #include "iglrender.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 namespace render {
 

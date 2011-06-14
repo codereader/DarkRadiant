@@ -7,7 +7,6 @@
 #include "iselectiontest.h"
 
 #include "math/Vector3.h"
-#include "math/matrix.h"
 
 #include "FaceTexDef.h"
 #include "FaceShader.h"

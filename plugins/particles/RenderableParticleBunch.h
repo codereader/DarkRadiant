@@ -7,7 +7,7 @@
 #include "math/aabb.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 #include <boost/random/linear_congruential.hpp>
 

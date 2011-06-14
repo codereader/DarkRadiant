@@ -5,7 +5,7 @@
 #include "iparticlepreview.h"
 #include "irendersystemfactory.h"
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 #include <string>
 #include <map>

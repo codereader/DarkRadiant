@@ -3,7 +3,7 @@
 #include "imap.h"
 #include "ibrush.h"
 #include "parser/DefTokeniser.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "shaderlib.h"
 #include "i18n.h"
 #include <boost/format.hpp>

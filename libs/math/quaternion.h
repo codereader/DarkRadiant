@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief Quaternion data types and related operations.
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 /// \brief A quaternion stored in single-precision floating-point.
 typedef Vector4 Quaternion;

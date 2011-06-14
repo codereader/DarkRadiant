@@ -1,7 +1,7 @@
 #ifndef _MAP_PREVIEW_VIEW_H_
 #define _MAP_PREVIEW_VIEW_H_
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 namespace ui {
 

@@ -2,7 +2,7 @@
 
 #include "ishaders.h"
 #include "itextstream.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "modulesystem/StaticModule.h"
 #include "backend/GLProgramFactory.h"
 

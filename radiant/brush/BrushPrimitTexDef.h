@@ -1,8 +1,9 @@
 #ifndef BRUSHTEXTUREDEFINTION_H_
 #define BRUSHTEXTUREDEFINTION_H_
 
-#include "math/matrix.h"
 #include "TexDef.h"
+
+class Matrix4;
 
 struct BrushPrimitTexDef {
 	float coords[2][3];

@@ -2,7 +2,6 @@
 #define FACETEXDEF_H_
 
 #include "Winding.h"
-#include "math/matrix.h"
 #include "math/Vector3.h"
 #include "math/Plane3.h"
 
@@ -10,6 +9,8 @@
 #include "TextureProjection.h"
 #include <boost/noncopyable.hpp>
 #include "selection/algorithm/Shader.h"
+
+class Matrix4;
 
 class FaceTexdef :
 	public FaceShader::Observer,

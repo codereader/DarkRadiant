@@ -3,7 +3,7 @@
 
 #include "ifiltermenu.h"
 #include "gtkutil/GLWidget.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "igl.h"
 #include "irender.h"
 #include "inode.h"

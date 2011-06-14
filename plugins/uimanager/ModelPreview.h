@@ -4,7 +4,7 @@
 #include "ifiltermenu.h"
 #include "imodel.h"
 #include "imodelpreview.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 #include <GL/glew.h>
 #include <string>

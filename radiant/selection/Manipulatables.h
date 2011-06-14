@@ -2,7 +2,7 @@
 #define MANIPULATABLES_H_
 
 #include "math/Vector3.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "math/quaternion.h"
 
 #include "render.h"

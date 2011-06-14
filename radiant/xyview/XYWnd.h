@@ -5,7 +5,7 @@
 #include "iscenegraph.h"
 
 #include "math/Vector3.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "math/Vector4.h"
 #include "gtkutil/FreezePointer.h"
 #include "gtkutil/DeferredMotion.h"

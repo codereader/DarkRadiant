@@ -5,7 +5,7 @@
 #include "irenderable.h"
 #include "iselection.h"
 #include "selectionlib.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "gtkutil/event/SingleIdleCallback.h"
 #include "signal/signal.h"
 #include "Manipulator.h"
