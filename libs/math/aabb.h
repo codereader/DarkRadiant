@@ -1,31 +1,10 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_MATH_AABB_H)
-#define INCLUDED_MATH_AABB_H
+#pragma once
 
 #include "math/Matrix4.h"
 #include "math/Plane3.h"
 
-/** An Axis Aligned Bounding Box is a simple cuboid which encloses a given set
+/** 
+ * An Axis Aligned Bounding Box is a simple cuboid which encloses a given set
  * of points, such as the vertices of a model. It is defined by an origin,
  * located at the centre of the AABB, and symmetrical extents in 3 dimension
  * which determine its size.
@@ -41,31 +20,37 @@ public:
 
 	/** Construct an AABB with default origin and invalid extents.
 	 */
-	AABB()
-	: origin(0, 0, 0), extents(-1,-1,-1) {}
+	AABB() : 
+		origin(0, 0, 0), 
+		extents(-1,-1,-1)
+	{}
 
 	/** Construct an AABB with the provided origin and extents
 	 * vectors.
 	 */
-	AABB(const Vector3& origin_, const Vector3& extents_)
-	: origin(origin_), extents(extents_) {}
+	AABB(const Vector3& origin_, const Vector3& extents_) : 
+		origin(origin_), 
+		extents(extents_)
+	{}
 
-	/** Static named constructor to create an AABB that encloses the provided
+	/** 
+	 * Static named constructor to create an AABB that encloses the provided
 	 * minimum and maximum points.
 	 */
 	static AABB createFromMinMax(const Vector3& min, const Vector3& max);
 
-	bool operator==(const AABB& other) const
-	{
-		return (origin == other.origin && extents == other.extents);
-	}
+	/**
+	 * Equality operator, returns true if both origina nd extents are exactly the same
+	 */
+	bool operator==(const AABB& other) const;
 
-	bool operator!=(const AABB& other) const
-	{
-		return !operator==(other);
-	}
+	/**
+	 * Inequality operator, using this is equivalent to calling !(operator==)
+	 */
+	bool operator!=(const AABB& other) const;
 
-	/** Determine whether this AABB is valid.
+	/**
+	 * Check whether the AABB is valid, or if the extents are still uninitialised
 	 */
 	bool isValid() const;
 
@@ -74,25 +59,19 @@ public:
 	 * @returns
 	 * A const reference to a Vector3 containing the AABB's origin.
 	 */
-	const Vector3& getOrigin() const {
-		return origin;
-	}
+	const Vector3& getOrigin() const;
 
 	/** Get the extents of this AABB.
 	 *
 	 * @returns
 	 * A const reference to a Vector3 containing the AABB's extents.
 	 */
-	const Vector3& getExtents() const {
-		return extents;
-	}
+	const Vector3& getExtents() const;
 
 	/** Get the radius of the smallest sphere which encloses this
 	 * bounding box.
 	 */
-	float getRadius() const {
-		return extents.getLength(); // Pythagorean length of extents vector
-	}
+	float getRadius() const;
 
 	/** Expand this AABB in-place to include the given point in
 	 * world space.
@@ -110,26 +89,121 @@ public:
 	 */
 	void includeAABB(const AABB& other);
 
-	// Returns true if this AABB contains the other AABB (all dimensions)
-	bool contains(const AABB& other) const
-	{
-		// Return true if all coordinates of <other> are contained within these bounds
-		return (origin[0] + extents[0] >= other.origin[0] + other.extents[0]) &&
-			   (origin[0] - extents[0] <= other.origin[0] - other.extents[0]) &&
-			   (origin[1] + extents[1] >= other.origin[1] + other.extents[1]) &&
-			   (origin[1] - extents[1] <= other.origin[1] - other.extents[1]) &&
-			   (origin[2] + extents[2] >= other.origin[2] + other.extents[2]) &&
-			   (origin[2] - extents[2] <= other.origin[2] - other.extents[2]);
-	}
+	/**
+	 * Extends this AABB by the given vector's length.
+	 * Equivalent to aabb.extents += extension
+	 */
+	void extendBy(const Vector3& extension);
+
+	/**
+	 * Returns true if this AABB contains the other AABB (all dimensions)
+	 */
+	bool contains(const AABB& other) const;
+
+	/**
+	 * Classifies the position of this AABB with respect to the given plane.
+	 *
+	 * TODO: Better documentation. TODO: Use enum as return value
+	 * 
+	 * @returns: 0 = totally outside, 1 = partially inside, 2 = totally inside
+	 */
+	unsigned int classifyPlane(const Plane3& plane) const;
 };
+
+inline AABB AABB::createFromMinMax(const Vector3& min, const Vector3& max)
+{
+	// Origin is the midpoint of the two vectors
+	Vector3 origin = (min + max) * 0.5f;
+
+	// Extents is the vector from the origin to the max point
+	Vector3 extents = max - origin;
+
+	// Construct and return the resulting AABB;
+	return AABB(origin, extents);
+}
+
+inline bool AABB::operator==(const AABB& other) const
+{
+	return (origin == other.origin && extents == other.extents);
+}
+
+inline bool AABB::operator!=(const AABB& other) const
+{
+	return !operator==(other);
+}
+
+inline bool AABB::isValid() const
+{
+	// Check each origin and extents value. The origins must be between
+	// +/- FLT_MAX, and the extents between 0 and FLT_MAX.
+	for (int i = 0; i < 3; ++i)
+	{
+		if (origin[i] < -FLT_MAX || origin[i] > FLT_MAX || 
+			extents[i] < 0 || extents[i] > FLT_MAX)
+		{
+			return false;
+		}
+	}
+
+	return true; // all checks passed
+}
+
+inline const Vector3& AABB::getOrigin() const
+{
+	return origin;
+}
+
+inline const Vector3& AABB::getExtents() const
+{
+	return extents;
+}
+
+inline float AABB::getRadius() const
+{
+	return extents.getLength(); // Pythagorean length of extents vector
+}
+
+inline bool AABB::contains(const AABB& other) const
+{
+	// Return true if all coordinates of <other> are contained within these bounds
+	return (origin[0] + extents[0] >= other.origin[0] + other.extents[0]) &&
+			(origin[0] - extents[0] <= other.origin[0] - other.extents[0]) &&
+			(origin[1] + extents[1] >= other.origin[1] + other.extents[1]) &&
+			(origin[1] - extents[1] <= other.origin[1] - other.extents[1]) &&
+			(origin[2] + extents[2] >= other.origin[2] + other.extents[2]) &&
+			(origin[2] - extents[2] <= other.origin[2] - other.extents[2]);
+}
+
+inline void AABB::extendBy(const Vector3& extension)
+{
+	extents += extension;
+}
+
+inline unsigned int AABB::classifyPlane(const Plane3& plane) const
+{
+	float distance_origin = plane.normal().dot(origin) + plane.dist();
+
+	if (fabs(distance_origin) < (fabs(plane.normal().x() * extents[0]) + 
+								 fabs(plane.normal().y() * extents[1]) + 
+								 fabs(plane.normal().z() * extents[2])))
+	{
+		return 1; // partially inside
+	}
+	else if (distance_origin < 0)
+	{
+		return 2; // totally inside
+	}
+
+	return 0; // totally outside
+}
 
 /**
  * Stream insertion for AABB class.
  */
-inline
-std::ostream& operator<< (std::ostream& os, const AABB& aabb) {
-	os << "AABB { origin=" << aabb.getOrigin()
-	   << ", extents=" << aabb.getExtents() << " }";
+inline std::ostream& operator<< (std::ostream& os, const AABB& aabb)
+{
+	os << "AABB { origin=" << aabb.getOrigin() << ", extents=" << aabb.getExtents() << " }";
+
 	return os;
 }
 
@@ -145,11 +219,6 @@ public:
     m_aabb.includePoint(point);
   }
 };
-
-inline void aabb_extend_by_vec3(AABB& aabb, const Vector3& extension)
-{
-  aabb.extents += extension;
-}
 
 /// \brief A compile-time-constant integer.
 template<int VALUE_>
@@ -183,23 +252,6 @@ inline bool aabb_intersects_aabb(const AABB& aabb, const AABB& other)
   return aabb_intersects_aabb_dimension< IntegralConstant<0> >(aabb, other)
     && aabb_intersects_aabb_dimension< IntegralConstant<1> >(aabb, other)
     && aabb_intersects_aabb_dimension< IntegralConstant<2> >(aabb, other);
-}
-
-inline unsigned int aabb_classify_plane(const AABB& aabb, const Plane3& plane)
-{
-  float distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
-
-  if(fabs(distance_origin) < (fabs(plane.normal().x() * aabb.extents[0])
-    + fabs(plane.normal().y() * aabb.extents[1])
-    + fabs(plane.normal().z() * aabb.extents[2])))
-  {
-    return 1; // partially inside
-  }
-  else if (distance_origin < 0)
-  {
-    return 2; // totally inside
-  }
-  return 0; // totally outside
 }
 
 inline unsigned int aabb_oriented_classify_plane(const AABB& aabb, const Matrix4& transform, const Plane3& plane)
@@ -319,5 +371,3 @@ inline AABB aabb_infinite()
 {
   return AABB(Vector3(0, 0, 0), Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
 }
-
-#endif

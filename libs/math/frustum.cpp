@@ -56,7 +56,7 @@ VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
 {
     VolumeIntersectionValue result = VOLUME_INSIDE;
 
-    switch(aabb_classify_plane(aabb, right))
+	switch (aabb.classifyPlane(right))
     {
     case 2:
       return VOLUME_OUTSIDE;
@@ -64,7 +64,7 @@ VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
       result = VOLUME_PARTIAL;
     }
 
-    switch(aabb_classify_plane(aabb, left))
+	switch (aabb.classifyPlane(left))
     {
     case 2:
       return VOLUME_OUTSIDE;
@@ -72,7 +72,7 @@ VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
       result = VOLUME_PARTIAL;
     }
 
-    switch(aabb_classify_plane(aabb, bottom))
+	switch (aabb.classifyPlane(bottom))
     {
     case 2:
       return VOLUME_OUTSIDE;
@@ -80,7 +80,7 @@ VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
       result = VOLUME_PARTIAL;
     }
 
-    switch(aabb_classify_plane(aabb, top))
+	switch (aabb.classifyPlane(top))
     {
     case 2:
       return VOLUME_OUTSIDE;
@@ -88,7 +88,7 @@ VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
       result = VOLUME_PARTIAL;
     }
 
-    switch(aabb_classify_plane(aabb, back))
+	switch (aabb.classifyPlane(back))
     {
     case 2:
       return VOLUME_OUTSIDE;
@@ -96,7 +96,7 @@ VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
       result = VOLUME_PARTIAL;
     }
 
-    switch(aabb_classify_plane(aabb, front))
+	switch (aabb.classifyPlane(front))
     {
     case 2:
       return VOLUME_OUTSIDE;
