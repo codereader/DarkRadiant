@@ -2,7 +2,9 @@
 #define TEXDEF_H_
 
 #include "itexdef.h"
-#include "math/matrix.h"
+#include <iostream>
+
+class Matrix4;
 
 class TexDef : public GenericTextureDefinition {
 public:

@@ -3,7 +3,6 @@
 
 #include "math/Vector3.h"
 #include "math/Vector4.h"
-#include "math/matrix.h"
 #include "math/line.h"
 #include "math/frustum.h"
 #include "entitylib.h"

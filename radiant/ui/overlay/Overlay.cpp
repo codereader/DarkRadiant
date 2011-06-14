@@ -1,7 +1,7 @@
 #include "Overlay.h"
 
 #include "math/Vector3.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "texturelib.h"
 
 #include "OverlayRegistryKeys.h"

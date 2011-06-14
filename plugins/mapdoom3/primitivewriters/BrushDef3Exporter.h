@@ -3,7 +3,7 @@
 
 #include "ibrush.h"
 #include "math/Plane3.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 namespace map
 {

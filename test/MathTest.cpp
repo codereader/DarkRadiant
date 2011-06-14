@@ -1,6 +1,6 @@
 #include "MathTest.h"
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 void MathTest::run()
 {

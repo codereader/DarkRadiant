@@ -9,7 +9,7 @@
 #include <iostream>
 
 #include "gtkutil/dialog/MessageBox.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "map/Map.h"
 #include "camera/GlobalCamera.h"

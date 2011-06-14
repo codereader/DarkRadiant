@@ -3,8 +3,9 @@
 
 #include "math/Plane3.h"
 #include "math/Vector3.h"
-#include "math/matrix.h"
 #include "PlanePoints.h"
+
+class Matrix4;
 
 class FacePlane
 {

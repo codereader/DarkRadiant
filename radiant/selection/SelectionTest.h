@@ -1,7 +1,7 @@
 #ifndef SELECTIONTEST_H_
 #define SELECTIONTEST_H_
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "iselectiontest.h"
 

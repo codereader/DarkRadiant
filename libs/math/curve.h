@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \brief Curve data types and related operations.
 
 #include <vector>
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 
 template<typename I, typename Degree>

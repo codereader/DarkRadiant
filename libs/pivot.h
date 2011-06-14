@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if !defined(INCLUDED_PIVOT_H)
 #define INCLUDED_PIVOT_H
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2screen)
 {

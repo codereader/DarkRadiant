@@ -1,7 +1,7 @@
 #include "OpenGLShaderPass.h"
 #include "OpenGLShader.h"
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "math/aabb.h"
 #include "irender.h"
 #include "ishaders.h"

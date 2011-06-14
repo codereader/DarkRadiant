@@ -3,7 +3,7 @@ AM_CXXFLAGS = -fPIC
 
 pkglib_LTLIBRARIES = libmath.la
 libmath_la_LDFLAGS = -release @PACKAGE_VERSION@
-libmath_la_SOURCES = matrix.cpp \
+libmath_la_SOURCES = Matrix4.cpp \
                      frustum.cpp \
                      aabb.cpp \
                      quaternion.cpp

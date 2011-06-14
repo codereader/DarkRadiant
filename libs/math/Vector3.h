@@ -19,6 +19,7 @@
 #include <float.h>
 #include "math/pi.h"
 #include "lrint.h"
+#include "FloatTools.h"
 
 #include <boost/format.hpp>
 

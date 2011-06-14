@@ -124,7 +124,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\libs\math\aabb.cpp" />
     <ClCompile Include="..\..\libs\math\frustum.cpp" />
-    <ClCompile Include="..\..\libs\math\matrix.cpp" />
+    <ClCompile Include="..\..\libs\math\Matrix4.cpp" />
     <ClCompile Include="..\..\libs\math\quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -134,7 +134,7 @@
     <ClInclude Include="..\..\libs\math\frustum.h" />
     <ClInclude Include="..\..\libs\math\line.h" />
     <ClInclude Include="..\..\libs\math\lrint.h" />
-    <ClInclude Include="..\..\libs\math\matrix.h" />
+    <ClInclude Include="..\..\libs\math\Matrix4.h" />
     <ClInclude Include="..\..\libs\math\pi.h" />
     <ClInclude Include="..\..\libs\math\Plane3.h" />
     <ClInclude Include="..\..\libs\math\quaternion.h" />

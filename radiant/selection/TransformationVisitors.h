@@ -5,7 +5,7 @@
 #include "scenelib.h"
 
 #include "math/Vector3.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "math/quaternion.h"
 
 /* greebo: These are the visitor classes that apply the actual transformations to

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 /**
  * Part of a Manipulator which can be operated upon by the user.

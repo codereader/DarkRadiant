@@ -2,7 +2,7 @@
 #define CAMERA_H_
 
 #include "math/Vector3.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 #include "timer.h"
 #include "gtkutil/DeferredMotionDelta.h"
 #include "generic/callback.h"

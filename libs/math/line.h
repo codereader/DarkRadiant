@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \brief Line data types and related operations.
 
 #include "math/Plane3.h"
-#include "math/matrix.h"
+#include "math/Matrix4.h"
 
 /// \brief A line segment defined by a start point and and end point.
 class Line
