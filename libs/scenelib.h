@@ -19,6 +19,7 @@
 
 #include "debugging/debugging.h"
 #include "math/aabb.h"
+#include "math/quaternion.h"
 #include "generic/callback.h"
 #include <boost/shared_ptr.hpp>
 
@@ -29,7 +30,7 @@ template<typename Element>
 class BasicVector4;
 typedef BasicVector4<float> Vector4;
 class Matrix4;
-typedef Vector4 Quaternion;
+class Quaternion;
 class AABB;
 
 /** greebo: This is used to identify child brushes of entities.

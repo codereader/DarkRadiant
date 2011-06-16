@@ -280,7 +280,7 @@ void Doom3GroupNode::evaluateTransform()
 
 		m_contained.translate(
 			getTranslation(),
-			rotation != c_quaternion_identity, // FALSE for identity rotations
+			rotation != Quaternion::Identity(), // FALSE for identity rotations
 			scale != c_scale_identity // FALSE for identity scales
 		);
 		m_contained.rotate(rotation);

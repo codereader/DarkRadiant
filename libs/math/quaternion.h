@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_MATH_QUATERNION_H)
-#define INCLUDED_MATH_QUATERNION_H
+#pragma once
 
 /// \file
 /// \brief Quaternion data types and related operations.
@@ -28,9 +6,48 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Matrix4.h"
 
 /// \brief A quaternion stored in single-precision floating-point.
-typedef Vector4 Quaternion;
+class Quaternion :
+	public Vector4
+{
+public:
+	Quaternion() :
+		Vector4()
+	{}
 
-const Quaternion c_quaternion_identity(0, 0, 0, 1);
+	Quaternion(const Vector4& vector) :
+		Vector4(vector)
+	{}
+
+	// Construct a Quaternion out of the 4 arguments
+	Quaternion(ElementType x_, ElementType y_, ElementType z_, ElementType w_) :
+		Vector4(x_, y_, z_, w_)
+	{}
+
+	// Construct a Quaternion out of a Vector3 plus a fourth argument
+  	Quaternion(const Vector3& other, ElementType w_) :
+		Vector4(other, w_)
+	{}
+
+	/**
+  	 * Construct a Quaternion by parsing the space-separated string.
+  	 */
+  	Quaternion(const std::string& str) :
+		Vector4(str)
+	{}
+
+	/**
+	 * Returns the identity quaternion (named constructor)
+	 */
+	static const Quaternion& Identity();
+};
+
+inline const Quaternion& Quaternion::Identity()
+{
+	static Quaternion _identity(0, 0, 0, 1);
+	return _identity;
+}
+
+
 
 inline Quaternion quaternion_multiplied_by_quaternion(const Quaternion& quaternion, const Quaternion& other)
 {
@@ -342,6 +359,3 @@ inline void matrix4_pivoted_rotate_by_axisangle(Matrix4& self, const Vector3& ax
   matrix4_rotate_by_axisangle(self, axis, angle);
   self.translateBy(-pivotpoint);
 }
-
-
-#endif

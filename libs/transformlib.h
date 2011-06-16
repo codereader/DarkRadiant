@@ -74,7 +74,7 @@ inline Matrix4 matrix4_transform_for_components(const Vector3& translation, cons
 }
 
 const Vector3 c_translation_identity(0, 0, 0);
-const Quaternion c_rotation_identity(c_quaternion_identity);
+const Quaternion c_rotation_identity(Quaternion::Identity());
 const Vector3 c_scale_identity(1, 1, 1);
 
 class Transformable :
@@ -89,7 +89,7 @@ public:
 
 	Transformable() :
 		_translation(c_translation_identity),
-		_rotation(c_quaternion_identity),
+		_rotation(Quaternion::Identity()),
 		_scale(c_scale_identity),
 		_type(TRANSFORM_PRIMITIVE)
 	{}
