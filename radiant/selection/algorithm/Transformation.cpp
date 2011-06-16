@@ -27,7 +27,7 @@ void rotateSelected(const Vector3& eulerXYZ) {
 	command += eulerXYZ;
 	UndoableCommand undo(command.c_str());
 
-	GlobalSelectionSystem().rotateSelected(quaternion_for_euler_xyz_degrees(eulerXYZ));
+	GlobalSelectionSystem().rotateSelected(Quaternion::createForEulerXYZDegrees(eulerXYZ));
 }
 
 // greebo: see header for documentation

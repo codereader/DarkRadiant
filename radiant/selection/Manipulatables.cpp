@@ -28,7 +28,7 @@ void RotateFree::Transform(const Matrix4& manip2object, const Matrix4& device2ma
     vector3_normalise(current);
 
 	// call the Rotatable with its transform method
-    _rotatable.rotate(quaternion_for_unit_vectors(_start, current));
+    _rotatable.rotate(Quaternion::createForUnitVectors(_start, current));
 }
 
 // ===============================================================================================
@@ -44,7 +44,7 @@ void RotateAxis::Transform(const Matrix4& manip2object, const Matrix4& device2ma
     point_on_sphere(current, device2manip, x, y);
     constrain_to_axis(current, _axis);
 
-    _rotatable.rotate(quaternion_for_axisangle(_axis, angle_for_axis(_start, current, _axis)));
+	_rotatable.rotate(Quaternion::createForAxisAngle(_axis, angle_for_axis(_start, current, _axis)));
 }
 
 // ===============================================================================================

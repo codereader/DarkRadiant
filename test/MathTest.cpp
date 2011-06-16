@@ -463,6 +463,7 @@ void MathTest::testQuaternions()
 {
 	Quaternion q1(3, 5, 7, 11);
 	Quaternion q2(13, 17, 19, 23);
+	const float EPSILON = 0.0001f;
 
 	Quaternion product = q1.getMultipliedBy(q2);
 
@@ -470,6 +471,28 @@ void MathTest::testQuaternions()
 	REQUIRE_TRUE(product.y() == 336, "Quaternion multiplication failed on y");
 	REQUIRE_TRUE(product.z() == 356, "Quaternion multiplication failed on z");
 	REQUIRE_TRUE(product.w() == -4, "Quaternion multiplication failed on w");
+
+	Quaternion q1multiplied = q1;
+	q1multiplied.multiplyBy(q2);
+
+	REQUIRE_TRUE(q1multiplied.x() == 188, "Quaternion in-place multiplication failed on x");
+	REQUIRE_TRUE(q1multiplied.y() == 336, "Quaternion in-place multiplication failed on y");
+	REQUIRE_TRUE(q1multiplied.z() == 356, "Quaternion in-place multiplication failed on z");
+	REQUIRE_TRUE(q1multiplied.w() == -4, "Quaternion in-place multiplication failed on w");
+
+	Quaternion q1inverted = q1.getInverse();
+
+	REQUIRE_TRUE(q1inverted.x() == -3, "Quaternion inversion failed on x");
+	REQUIRE_TRUE(q1inverted.y() == -5, "Quaternion inversion failed on y");
+	REQUIRE_TRUE(q1inverted.z() == -7, "Quaternion inversion failed on z");
+	REQUIRE_TRUE(q1inverted.w() == 11, "Quaternion inversion failed on w");
+
+	Quaternion normalised = q1.getNormalised();
+
+	REQUIRE_TRUE(float_equal_epsilon(normalised.x(), 0.01470588f, EPSILON), "Quaternion normalisation failed on x");
+	REQUIRE_TRUE(float_equal_epsilon(normalised.y(), 0.02450980f, EPSILON), "Quaternion normalisation failed on y");
+	REQUIRE_TRUE(float_equal_epsilon(normalised.z(), 0.03431372f, EPSILON), "Quaternion normalisation failed on z");
+	REQUIRE_TRUE(float_equal_epsilon(normalised.w(), 0.05392156f, EPSILON), "Quaternion normalisation failed on w");
 }
 
 // Initialise the static registrar object

@@ -8,6 +8,8 @@
 #include "math/Plane3.h"
 #include "math/pi.h"
 
+class Quaternion;
+
 /**
  * A 4x4 matrix stored in single-precision floating-point.
  *
@@ -82,6 +84,16 @@ public:
 	 * Important: the axis vector must be normalised.
 	 */
 	static Matrix4 getRotation(const Vector3& axis, const float angle);
+
+	/**
+	 * Constructs a pure-rotation matrix from the given quaternion.
+	 */
+	static Matrix4 getRotation(const Quaternion& quaternion);
+
+	/**
+	 * Constructs a pure-rotation matrix from the given quaternion, quantised.
+	 */
+	static Matrix4 getRotationQuantised(const Quaternion& quaternion);
 
 	/**
 	 * Constructs a pure-rotation matrix about the x axis from sin and cosine of an angle.

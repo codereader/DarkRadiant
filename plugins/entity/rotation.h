@@ -169,7 +169,7 @@ public:
 	void rotate(const Quaternion& rotate)
 	{
 		setFromMatrix4(
-			getMatrix4().getMultipliedBy(matrix4_rotation_for_quaternion_quantised(rotate))
+			getMatrix4().getMultipliedBy(Matrix4::getRotationQuantised(rotate))
 		);
 	}
 

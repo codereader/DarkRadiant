@@ -63,7 +63,7 @@ public:
 
 inline Matrix4 matrix4_transform_for_components(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 {
-	Matrix4 result(matrix4_rotation_for_quaternion_quantised(rotation));
+	Matrix4 result(Matrix4::getRotationQuantised(rotation));
 	result.x().getVector3() *= scale.x();
 	result.y().getVector3() *= scale.y();
 	result.z().getVector3() *= scale.z();
