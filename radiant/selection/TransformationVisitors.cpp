@@ -19,7 +19,7 @@ void translation_for_pivoted_rotation(Vector3& parent_translation, const Quatern
 
   Vector3 translation(
       local_pivot +
-      matrix4_rotation_for_quaternion_quantised(local_rotation).transformPoint(-local_pivot)
+      Matrix4::getRotationQuantised(local_rotation).transformPoint(-local_pivot)
   );
 
   //globalOutputStream() << "translation: " << translation << "\n";

@@ -703,7 +703,7 @@ void Light::translateLightTarget(const Vector3& translation) {
 void Light::rotate(const Quaternion& rotation) {
 	if (isProjected()) {
 		// Retrieve the rotation matrix...
-		Matrix4 rotationMatrix = matrix4_rotation_for_quaternion(rotation);
+		Matrix4 rotationMatrix = Matrix4::getRotation(rotation);
 
 		// ... and apply it to all the vertices defining the projection
 		_lightTargetTransformed = rotationMatrix.transformPoint(_lightTarget);

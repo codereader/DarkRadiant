@@ -1,5 +1,7 @@
 #include "Matrix4.h"
 
+#include "quaternion.h"
+
 namespace
 {
 	/// \brief Returns \p euler angles converted from degrees to radians.
@@ -10,6 +12,11 @@ namespace
 			degrees_to_radians(euler.y()),
 			degrees_to_radians(euler.z())
 		);
+	}
+
+	inline bool quaternion_component_is_90(float component)
+	{
+		return (fabs(component) - c_half_sqrt2f) < 0.001f;
 	}
 }
 
@@ -62,6 +69,61 @@ Matrix4 Matrix4::getRotation(const Vector3& axis, const float angle)
 		oneMinusCosPhi*z*x - sinPhi*y, oneMinusCosPhi*z*y + sinPhi*x, cosPhi + oneMinusCosPhi*z*z, 0,
 		0, 0, 0, 1
 	);
+}
+
+Matrix4 Matrix4::getRotation(const Quaternion& quaternion)
+{
+	const float x2 = quaternion[0] + quaternion[0];
+	const float y2 = quaternion[1] + quaternion[1];
+	const float z2 = quaternion[2] + quaternion[2];
+	const float xx = quaternion[0] * x2;
+	const float xy = quaternion[0] * y2;
+	const float xz = quaternion[0] * z2;
+	const float yy = quaternion[1] * y2;
+	const float yz = quaternion[1] * z2;
+	const float zz = quaternion[2] * z2;
+	const float wx = quaternion[3] * x2;
+	const float wy = quaternion[3] * y2;
+	const float wz = quaternion[3] * z2;
+
+	return Matrix4::byColumns(
+		1.0f - (yy + zz),
+		xy + wz,
+		xz - wy,
+		0,
+		xy - wz,
+		1.0f - (xx + zz),
+		yz + wx,
+		0,
+		xz + wy,
+		yz - wx,
+		1.0f - (xx + yy),
+		0,
+		0,
+		0,
+		0,
+		1
+	);
+}
+
+Matrix4 Matrix4::getRotationQuantised(const Quaternion& quaternion)
+{
+	if (quaternion.y() == 0 && quaternion.z() == 0 && quaternion_component_is_90(quaternion.x()) && quaternion_component_is_90(quaternion.w()))
+	{
+		return Matrix4::getRotationAboutXForSinCos((quaternion.x() > 0) ? 1.0f : -1.0f, 0);
+	}
+
+	if (quaternion.x() == 0 && quaternion.z() == 0 && quaternion_component_is_90(quaternion.y()) && quaternion_component_is_90(quaternion.w()))
+	{
+		return Matrix4::getRotationAboutYForSinCos((quaternion.y() > 0) ? 1.0f : -1.0f, 0);
+	}
+
+	if (quaternion.x() == 0	&& quaternion.y() == 0 && quaternion_component_is_90(quaternion.z()) && quaternion_component_is_90(quaternion.w()))
+	{
+		return Matrix4::getRotationAboutZForSinCos((quaternion.z() > 0) ? 1.0f : -1.0f, 0);
+	}
+
+	return getRotation(quaternion);
 }
 
 Matrix4 Matrix4::getRotationAboutXForSinCos(float s, float c)
