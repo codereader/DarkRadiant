@@ -809,7 +809,7 @@ bool Light::testAABB(const AABB& other) const
         AABB bounds = localAABB();
 		bounds.origin += worldOrigin();
 
-        returnVal = aabb_intersects_aabb(other, AABB(
+        returnVal = other.intersects(AABB(
             bounds.origin,
             Vector3(
                 static_cast<float>(fabs(m_rotation[0] * bounds.extents[0])

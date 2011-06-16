@@ -147,7 +147,7 @@ BrushSplitType Brush_classifyPlane(const Brush& brush, const Plane3& plane) {
 // Returns true if fragments have been inserted into the given ret_fragments list
 bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVector& ret_fragments)
 {
-	if (aabb_intersects_aabb(brush->getBrush().localAABB(), other.localAABB()))
+	if (brush->getBrush().localAABB().intersects(other.localAABB()))
 	{
 		BrushPtrVector fragments;
 		fragments.reserve(other.getNumFaces());
