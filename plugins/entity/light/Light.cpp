@@ -400,10 +400,8 @@ void Light::updateRenderableRadius() const
 #endif
 
 	// greebo: Don't rotate the light radius box, that's done via local2world
-	aabb_corners(
-        AABB(_lightBox.origin, m_doom3Radius.m_radiusTransformed),
-        _renderableRadius.m_points
-    );
+	AABB lightbox(_lightBox.origin, m_doom3Radius.m_radiusTransformed);
+	lightbox.getCorners(_renderableRadius.m_points);
 }
 
 /* greebo: Snaps the current light origin to the grid.

@@ -81,10 +81,10 @@ public:
   {
     Line line(test.getNear(), test.getFar());
     Vector3 corners[8];
-    aabb_corners_oriented(aabb, rotation, corners);
+	aabb.getCorners(corners, rotation);
 
     Plane3 planes[6];
-    aabb_planes_oriented(aabb, rotation, planes);
+	aabb.getPlanes(planes, rotation);
 
     for(Vector3* i = corners; i != corners + 8; ++i)
     {
@@ -151,7 +151,7 @@ public:
   void selectReversedPlanes(const AABB& aabb, Selector& selector, const SelectedPlanes& selectedPlanes, const Matrix4& rotation = Matrix4::getIdentity())
   {
     Plane3 planes[6];
-    aabb_planes_oriented(aabb, rotation, planes);
+	aabb.getPlanes(planes, rotation);
 
     if(selectedPlanes.contains(-planes[0]))
     {

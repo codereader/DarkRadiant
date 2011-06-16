@@ -40,6 +40,23 @@ public:
 	static AABB createFromMinMax(const Vector3& min, const Vector3& max);
 
 	/**
+	 * Static named constructor to create an AABB that encloses the given AABB rotated
+	 * by the given transformation matrix.
+	 */
+	static AABB createFromOrientedAABB(const AABB& aabb, const Matrix4& transform);
+
+	/**
+	 * Static named constructor to create an AABB that encloses the given AABB rotated
+	 * by the given transformation matrix. If the given AABB is not valid, it is returned as it is.
+	 */
+	static AABB createFromOrientedAABBSafe(const AABB& aabb, const Matrix4& transform);
+
+	/**
+	 * Create an AABB that is as large as possible (extents are filled with FLT_MAX)
+	 */
+	static AABB createInfinite();
+
+	/**
 	 * Equality operator, returns true if both origina nd extents are exactly the same
 	 */
 	bool operator==(const AABB& other) const;
@@ -108,6 +125,38 @@ public:
 	 * @returns: 0 = totally outside, 1 = partially inside, 2 = totally inside
 	 */
 	unsigned int classifyPlane(const Plane3& plane) const;
+
+	/**
+	 * Like classifyPlane, but uses the given matrix to transform the plane.
+	 *
+	 * TODO: Better documentation. TODO: Use enum as return value
+	 * 
+	 * @returns: 0 = totally outside, 1 = partially inside, 2 = totally inside
+	 */
+	unsigned int classifyOrientedPlane(const Matrix4& transform, const Plane3& plane) const;
+
+	/**
+	 * Stores the 3D coordinates of the AABB corner points into the given array.
+	 */
+	void getCorners(Vector3 corners[8]) const;
+
+	/**
+	 * Stores the 3D coordinates of the rotated AABB corner points into the given array.
+	 * The rotation is performed using the given transformation matrix.
+	 */
+	void getCorners(Vector3 corners[8], const Matrix4& rotation) const;
+
+	/**
+	 * Writes the 6 Plane3 objects into the given array, corresponding to the
+	 * six sides of this AABB.
+	 */
+	void getPlanes(Plane3 planes[6]) const;
+
+	/**
+	 * Writes the 6 Plane3 objects into the given array, corresponding to the
+	 * six rotated sides of this AABB. The given matrix is used to rotate this AABB.
+	 */
+	void getPlanes(Plane3 planes[6], const Matrix4& rotation) const;
 };
 
 inline AABB AABB::createFromMinMax(const Vector3& min, const Vector3& max)
@@ -120,6 +169,16 @@ inline AABB AABB::createFromMinMax(const Vector3& min, const Vector3& max)
 
 	// Construct and return the resulting AABB;
 	return AABB(origin, extents);
+}
+
+inline AABB AABB::createFromOrientedAABBSafe(const AABB& aabb, const Matrix4& transform)
+{
+	return aabb.isValid() ? createFromOrientedAABB(aabb, transform) : aabb;
+}
+
+inline AABB AABB::createInfinite()
+{
+	return AABB(Vector3(0, 0, 0), Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
 }
 
 inline bool AABB::operator==(const AABB& other) const
@@ -197,6 +256,31 @@ inline unsigned int AABB::classifyPlane(const Plane3& plane) const
 	return 0; // totally outside
 }
 
+inline void AABB::getCorners(Vector3 corners[8]) const
+{
+	Vector3 min(origin - extents);
+	Vector3 max(origin + extents);
+
+	corners[0] = Vector3(min[0], max[1], max[2]);
+	corners[1] = Vector3(max[0], max[1], max[2]);
+	corners[2] = Vector3(max[0], min[1], max[2]);
+	corners[3] = Vector3(min[0], min[1], max[2]);
+	corners[4] = Vector3(min[0], max[1], min[2]);
+	corners[5] = Vector3(max[0], max[1], min[2]);
+	corners[6] = Vector3(max[0], min[1], min[2]);
+	corners[7] = Vector3(min[0], min[1], min[2]);
+}
+
+inline void AABB::getPlanes(Plane3 planes[6]) const
+{
+	planes[0] = Plane3( g_vector3_axes[0], origin[0] + extents[0]);
+	planes[1] = Plane3(-g_vector3_axes[0], -(origin[0] - extents[0]));
+	planes[2] = Plane3( g_vector3_axes[1], origin[1] + extents[1]);
+	planes[3] = Plane3(-g_vector3_axes[1], -(origin[1] - extents[1]));
+	planes[4] = Plane3( g_vector3_axes[2], origin[2] + extents[2]);
+	planes[5] = Plane3(-g_vector3_axes[2], -(origin[2] - extents[2]));
+}
+
 /**
  * Stream insertion for AABB class.
  */
@@ -254,23 +338,7 @@ inline bool aabb_intersects_aabb(const AABB& aabb, const AABB& other)
     && aabb_intersects_aabb_dimension< IntegralConstant<2> >(aabb, other);
 }
 
-inline unsigned int aabb_oriented_classify_plane(const AABB& aabb, const Matrix4& transform, const Plane3& plane)
-{
-  float distance_origin = plane.normal().dot(aabb.origin) + plane.dist();
-
-  if(fabs(distance_origin) < (fabs(aabb.extents[0] * plane.normal().dot(transform.x().getVector3()) )
-    + fabs(aabb.extents[1] * plane.normal().dot(transform.y().getVector3()))
-    + fabs(aabb.extents[2] * plane.normal().dot(transform.z().getVector3()))))
-  {
-    return 1; // partially inside
-  }
-  else if (distance_origin < 0)
-  {
-    return 2; // totally inside
-  }
-  return 0; // totally outside
-}
-
+#if 0
 inline void aabb_corners(const AABB& aabb, Vector3 corners[8])
 {
   Vector3 min(aabb.origin - aabb.extents);
@@ -284,6 +352,7 @@ inline void aabb_corners(const AABB& aabb, Vector3 corners[8])
   corners[6] = Vector3(max[0], min[1], min[2]);
   corners[7] = Vector3(min[0], min[1], min[2]);
 }
+
 
 inline void aabb_corners_oriented(const AABB& aabb, const Matrix4& rotation, Vector3 corners[8])
 {
@@ -301,6 +370,7 @@ inline void aabb_corners_oriented(const AABB& aabb, const Matrix4& rotation, Vec
   corners[7] = aabb.origin + -x + -y + -z;
 }
 
+
 inline void aabb_planes(const AABB& aabb, Plane3 planes[6])
 {
   planes[0] = Plane3(g_vector3_axes[0], aabb.origin[0] + aabb.extents[0]);
@@ -310,6 +380,7 @@ inline void aabb_planes(const AABB& aabb, Plane3 planes[6])
   planes[4] = Plane3(g_vector3_axes[2], aabb.origin[2] + aabb.extents[2]);
   planes[5] = Plane3(-g_vector3_axes[2], -(aabb.origin[2] - aabb.extents[2]));
 }
+
 
 inline void aabb_planes_oriented(const AABB& aabb, const Matrix4& rotation, Plane3 planes[6])
 {
@@ -324,6 +395,7 @@ inline void aabb_planes_oriented(const AABB& aabb, const Matrix4& rotation, Plan
   planes[4] = Plane3(rotation.z().getVector3(), z + aabb.extents[2]);
   planes[5] = Plane3(-rotation.z().getVector3(), -(z - aabb.extents[2]));
 }
+#endif
 
 const Vector3 aabb_normals[6] = {
   Vector3( 1, 0, 0 ),
@@ -339,7 +411,7 @@ const float aabb_texcoord_topright[2] = { 1, 0 };
 const float aabb_texcoord_botleft[2] = { 0, 1 };
 const float aabb_texcoord_botright[2] = { 1, 1 };
 
-
+#if 0
 inline AABB aabb_for_oriented_aabb(const AABB& aabb, const Matrix4& transform)
 {
   return AABB(
@@ -367,7 +439,9 @@ inline AABB aabb_for_oriented_aabb_safe(const AABB& aabb, const Matrix4& transfo
   return aabb;
 }
 
+
 inline AABB aabb_infinite()
 {
   return AABB(Vector3(0, 0, 0), Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
 }
+#endif

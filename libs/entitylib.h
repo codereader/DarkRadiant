@@ -142,7 +142,7 @@ inline void aabb_testselect(const AABB& aabb, SelectionTest& test, SelectionInte
   };
 
   Vector3 points[8];
-  aabb_corners(aabb, points);
+  aabb.getCorners(points);
   VertexPointer pointer(points, sizeof(Vector3));
   test.TestQuads(pointer, IndexPointer(indices, 24), best);
 }
@@ -213,22 +213,22 @@ inline void aabb_draw_flatshade(const Vector3 points[8])
 
 inline void aabb_draw_wire(const AABB& aabb)
 {
-  Vector3 points[8];
-	aabb_corners(aabb, points);
-  aabb_draw_wire(points);
+	Vector3 points[8];
+	aabb.getCorners(points);
+	aabb_draw_wire(points);
 }
 
 inline void aabb_draw_flatshade(const AABB& aabb)
 {
-  Vector3 points[8];
-	aabb_corners(aabb, points);
-  aabb_draw_flatshade(points);
+	Vector3 points[8];
+	aabb.getCorners(points);
+	aabb_draw_flatshade(points);
 }
 
 inline void aabb_draw_textured(const AABB& aabb)
 {
-  Vector3 points[8];
-	aabb_corners(aabb, points);
+	Vector3 points[8];
+	aabb.getCorners(points);
 
   glBegin(GL_QUADS);
 
