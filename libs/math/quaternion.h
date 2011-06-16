@@ -39,6 +39,11 @@ public:
 	 * Returns the identity quaternion (named constructor)
 	 */
 	static const Quaternion& Identity();
+
+	/**
+	 * Returns this quaternion multiplied by the other one.
+	 */
+	Quaternion getMultipliedBy(const Quaternion& other) const;
 };
 
 inline const Quaternion& Quaternion::Identity()
@@ -47,7 +52,15 @@ inline const Quaternion& Quaternion::Identity()
 	return _identity;
 }
 
-
+inline Quaternion Quaternion::getMultipliedBy(const Quaternion& other) const
+{
+	return Quaternion(
+		w() * other.x() + x() * other.w() + y() * other.z() - z() * other.y(),
+		w() * other.y() + y() * other.w() + z() * other.x() - x() * other.z(),
+		w() * other.z() + z() * other.w() + x() * other.y() - y() * other.x(),
+		w() * other.w() - x() * other.x() - y() * other.y() - z() * other.z()
+	);
+}
 
 inline Quaternion quaternion_multiplied_by_quaternion(const Quaternion& quaternion, const Quaternion& other)
 {
