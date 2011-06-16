@@ -12,7 +12,7 @@ inline void Surface_addLight(const MD5Surface& surface,
 								 const Matrix4& localToWorld,
 								 const RendererLight& light)
 {
-	if (light.testAABB(aabb_for_oriented_aabb(surface.localAABB(), localToWorld))) {
+	if (light.testAABB(AABB::createFromOrientedAABB(surface.localAABB(), localToWorld))) {
 		lights.addLight(light);
 	}
 }

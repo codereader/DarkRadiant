@@ -63,8 +63,7 @@ void PicoModelNode::insertLight(const RendererLight& light) {
 
 	// If the light's AABB intersects the oriented AABB of this model instance,
 	// add the light to our light list
-	if (light.testAABB(aabb_for_oriented_aabb(_picoModel->localAABB(),
-											  l2w)))
+	if (light.testAABB(AABB::createFromOrientedAABB(_picoModel->localAABB(), l2w)))
 	{
 		_lights.addLight(light);
 	}

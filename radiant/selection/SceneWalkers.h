@@ -205,7 +205,7 @@ public:
 		if (componentEditable != NULL)
 		{
 			_bounds.includeAABB(
-				aabb_for_oriented_aabb_safe(componentEditable->getSelectedComponentsBounds(),
+				AABB::createFromOrientedAABBSafe(componentEditable->getSelectedComponentsBounds(),
 											node->localToWorld()));
 		}
 	}

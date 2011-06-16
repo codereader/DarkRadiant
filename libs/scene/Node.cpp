@@ -292,7 +292,7 @@ void Node::evaluateBounds() const
 		_bounds = childBounds();
 
 		_bounds.includeAABB(
-		    aabb_for_oriented_aabb_safe(localAABB(), localToWorld())
+			AABB::createFromOrientedAABBSafe(localAABB(), localToWorld())
 		);
 
 		_boundsMutex = false;

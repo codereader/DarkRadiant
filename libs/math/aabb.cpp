@@ -92,3 +92,69 @@ void AABB::includeAABB(const AABB& other)
 		extents = other.extents;
 	}
 }
+
+unsigned int AABB::classifyOrientedPlane(const Matrix4& transform, const Plane3& plane) const
+{
+	float distance_origin = plane.normal().dot(origin) + plane.dist();
+
+	if (fabs(distance_origin) < (fabs(extents[0] * plane.normal().dot(transform.x().getVector3())) + 
+								 fabs(extents[1] * plane.normal().dot(transform.y().getVector3())) + 
+								 fabs(extents[2] * plane.normal().dot(transform.z().getVector3()))))
+	{
+		return 1; // partially inside
+	}
+	else if (distance_origin < 0)
+	{
+		return 2; // totally inside
+	}
+	
+	return 0; // totally outside
+}
+
+void AABB::getCorners(Vector3 corners[8], const Matrix4& rotation) const
+{
+	Vector3 x = rotation.x().getVector3() * extents.x();
+	Vector3 y = rotation.y().getVector3() * extents.y();
+	Vector3 z = rotation.z().getVector3() * extents.z();
+
+	corners[0] = origin - x + y + z;
+	corners[1] = origin + x + y + z;
+	corners[2] = origin + x - y + z;
+	corners[3] = origin - x - y + z;
+	corners[4] = origin - x + y - z;
+	corners[5] = origin + x + y - z;
+	corners[6] = origin + x - y - z;
+	corners[7] = origin - x - y - z;
+}
+
+void AABB::getPlanes(Plane3 planes[6], const Matrix4& rotation) const
+{
+	float x = rotation.x().getVector3().dot(origin);
+	float y = rotation.y().getVector3().dot(origin);
+	float z = rotation.z().getVector3().dot(origin);
+
+	planes[0] = Plane3( rotation.x().getVector3(), x + extents[0]);
+	planes[1] = Plane3(-rotation.x().getVector3(), -(x - extents[0]));
+	planes[2] = Plane3( rotation.y().getVector3(), y + extents[1]);
+	planes[3] = Plane3(-rotation.y().getVector3(), -(y - extents[1]));
+	planes[4] = Plane3( rotation.z().getVector3(), z + extents[2]);
+	planes[5] = Plane3(-rotation.z().getVector3(), -(z - extents[2]));
+}
+
+AABB AABB::createFromOrientedAABB(const AABB& aabb, const Matrix4& transform)
+{
+	return AABB(
+		transform.transformPoint(aabb.origin),
+		Vector3(
+			fabs(transform[0]  * aabb.extents[0]) +
+			fabs(transform[4]  * aabb.extents[1]) +
+			fabs(transform[8]  * aabb.extents[2]),
+			fabs(transform[1]  * aabb.extents[0]) +
+			fabs(transform[5]  * aabb.extents[1]) +
+			fabs(transform[9]  * aabb.extents[2]),
+			fabs(transform[2]  * aabb.extents[0]) +
+			fabs(transform[6]  * aabb.extents[1]) +
+			fabs(transform[10] * aabb.extents[2])
+		)
+	);
+}
