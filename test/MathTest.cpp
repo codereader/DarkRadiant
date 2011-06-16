@@ -1,6 +1,7 @@
 #include "MathTest.h"
 
 #include "math/Matrix4.h"
+#include "math/quaternion.h"
 
 void MathTest::run()
 {
@@ -10,6 +11,7 @@ void MathTest::run()
 	testTransformation();
 	testMatrixDeterminant();
 	testMatrixInversion();
+	testQuaternions();
 }
 
 void MathTest::testIdentity()
@@ -455,6 +457,19 @@ void MathTest::testMatrixInversion()
 	REQUIRE_TRUE(float_equal_epsilon(inv.ty(), -0.428571f, EPSILON), "Matrix inversion failed on ty");
 	REQUIRE_TRUE(float_equal_epsilon(inv.tz(), -0.392857f, EPSILON), "Matrix inversion failed on tz");
 	REQUIRE_TRUE(float_equal_epsilon(inv.tw(), 0.357143f, EPSILON), "Matrix inversion failed on tw");
+}
+
+void MathTest::testQuaternions()
+{
+	Quaternion q1(3, 5, 7, 11);
+	Quaternion q2(13, 17, 19, 23);
+
+	Quaternion product = q1.getMultipliedBy(q2);
+
+	REQUIRE_TRUE(product.x() == 188, "Quaternion multiplication failed on x");
+	REQUIRE_TRUE(product.y() == 336, "Quaternion multiplication failed on y");
+	REQUIRE_TRUE(product.z() == 356, "Quaternion multiplication failed on z");
+	REQUIRE_TRUE(product.w() == -4, "Quaternion multiplication failed on w");
 }
 
 // Initialise the static registrar object
