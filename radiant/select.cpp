@@ -130,7 +130,7 @@ inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
     }
   }
 #else
-  quaternion_for_matrix4_rotation(matrix4_rotation_for_axis90((axis_t)axis, (deg > 0) ? eSignPositive : eSignNegative));
+  Quaternion::createForMatrix(matrix4_rotation_for_axis90((axis_t)axis, (deg > 0) ? eSignPositive : eSignNegative));
 #endif
 }
 
@@ -145,13 +145,13 @@ void Select_RotateAxis (int axis, float deg)
     switch(axis)
     {
     case 0:
-		GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(Matrix4::getRotationAboutXDegrees(deg)));
+		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
       break;
     case 1:
-		GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(Matrix4::getRotationAboutYDegrees(deg)));
+		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
       break;
     case 2:
-		GlobalSelectionSystem().rotateSelected(quaternion_for_matrix4_rotation(Matrix4::getRotationAboutZDegrees(deg)));
+		GlobalSelectionSystem().rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
       break;
     }
   }
