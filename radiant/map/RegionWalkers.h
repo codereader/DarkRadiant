@@ -57,10 +57,7 @@ public:
 	bool pre(const scene::INodePtr& node)
 	{
 		// Check whether the instance is within the region
-		bool contained = aabb_intersects_aabb(
-			node->worldAABB(),
-			_regionAABB
-		);
+		bool contained = node->worldAABB().intersects(_regionAABB);
 
 		if (contained) {
 			// The contained stuff is set according to the _exclude parameter

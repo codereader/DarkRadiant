@@ -38,11 +38,18 @@ struct BernsteinPolynomial
   }
 };
 
-typedef IntegralConstant<0> Zero;
-typedef IntegralConstant<1> One;
-typedef IntegralConstant<2> Two;
-typedef IntegralConstant<3> Three;
-typedef IntegralConstant<4> Four;
+/// \brief A compile-time-constant integer.
+template<int VALUE_>
+struct IntegralConstantC
+{
+  enum unnamed_{ VALUE = VALUE_ };
+};
+
+typedef IntegralConstantC<0> Zero;
+typedef IntegralConstantC<1> One;
+typedef IntegralConstantC<2> Two;
+typedef IntegralConstantC<3> Three;
+typedef IntegralConstantC<4> Four;
 
 template<>
 struct BernsteinPolynomial<Zero, Zero>

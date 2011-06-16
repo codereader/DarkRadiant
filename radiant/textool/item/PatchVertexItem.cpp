@@ -1,6 +1,7 @@
 #include "PatchVertexItem.h"
 
 #include "math/aabb.h"
+#include "math/Matrix4.h"
 #include "igl.h"
 
 namespace textool {

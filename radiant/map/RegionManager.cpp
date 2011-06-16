@@ -188,7 +188,8 @@ void RegionManager::addRegionBrushes() {
 		float angle = camWnd->getCameraAngles()[CAMERA_YAW];
 
 		// Check if the camera origin is within the region
-		if (aabb_intersects_point(_bounds, camOrigin)) {
+		if (_bounds.intersects(camOrigin))
+		{
 			// Set the origin key of the playerStart entity
 			Node_getEntity(_playerStart)->setKeyValue("origin", camOrigin);
 			Node_getEntity(_playerStart)->setKeyValue("angle", floatToStr(angle));

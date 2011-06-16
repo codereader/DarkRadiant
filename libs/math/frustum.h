@@ -138,6 +138,13 @@ public:
   }
 };
 
+/// \brief A compile-time-constant integer.
+template<int VALUE_>
+struct IntegralConstant
+{
+  enum unnamed_{ VALUE = VALUE_ };
+};
+
 #define CLIP_X_LT_W(p) (Vector4ClipLT< IntegralConstant<0> >::compare(p))
 #define CLIP_X_GT_W(p) (Vector4ClipGT< IntegralConstant<0> >::compare(p))
 #define CLIP_Y_LT_W(p) (Vector4ClipLT< IntegralConstant<1> >::compare(p))
