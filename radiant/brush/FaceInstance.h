@@ -2,7 +2,7 @@
 #define FACEINSTANCE_H_
 
 #include "math/Plane3.h"
-#include "math/line.h"
+#include "math/Line.h"
 #include "render.h"
 #include "selectionlib.h"
 
