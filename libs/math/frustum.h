@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Matrix4.h"
 #include "math/Plane3.h"
 #include "math/AABB.h"
-#include "math/line.h"
+#include "math/Segment.h"
 
 #include "VolumeIntersectionValue.h"
 
@@ -503,7 +503,7 @@ inline bool plane3_test_point(const Plane3& plane, const Vector3& point)
 
 inline bool plane3_test_line(const Plane3& plane, const Segment& segment)
 {
-  return segment_classify_plane(segment, plane) == 2;
+	return segment.classifyPlane(plane) == 2;
 }
 
 inline bool frustum_test_point(const Frustum& frustum, const Vector3& point)

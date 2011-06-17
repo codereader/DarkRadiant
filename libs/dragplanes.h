@@ -88,7 +88,7 @@ public:
 
     for(Vector3* i = corners; i != corners + 8; ++i)
     {
-      *i = line_closest_point(line, *i) - (*i);
+      *i = line.getClosestPoint(*i) - (*i);
     }
 
     if(planes[0].normal().dot(corners[1]) > 0

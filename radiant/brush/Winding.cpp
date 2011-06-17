@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "itextstream.h"
 #include <algorithm>
 #include "FixedWinding.h"
-#include "math/line.h"
+#include "math/Ray.h"
 #include "math/Plane3.h"
 #include "texturelib.h"
 #include "Brush.h"
@@ -218,7 +218,7 @@ std::size_t Winding::opposite(const std::size_t index, const std::size_t other) 
 	float dist_best = 0;
 	std::size_t index_best = c_brush_maxFaces;
 
-	Ray edge(ray_for_points((*this)[index].vertex, (*this)[other].vertex));
+	Ray edge = Ray::createForPoints((*this)[index].vertex, (*this)[other].vertex);
 
 	for (std::size_t i=0; i < size(); ++i)
 	{
@@ -226,7 +226,7 @@ std::size_t Winding::opposite(const std::size_t index, const std::size_t other) 
 			continue;
 		}
 
-		float dist_squared = ray_squared_distance_to_point(edge, (*this)[i].vertex);
+		float dist_squared = edge.getSquaredDistance((*this)[i].vertex);
 
 		if (dist_squared > dist_best) {
 			dist_best = dist_squared;
@@ -269,7 +269,7 @@ Vector3 Winding::centroid(const Plane3& plane) const
 		ray.origin[remap.x] = centroid[remap.x];
 		ray.origin[remap.y] = centroid[remap.y];
 		ray.direction[remap.z] = 1;
-		centroid[remap.z] = ray_distance_to_plane(ray, plane);
+		centroid[remap.z] = ray.getDistance(plane);
 	}
 
 	return centroid;

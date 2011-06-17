@@ -1,6 +1,6 @@
 #include "BestPoint.h"
 #include "math/frustum.h"
-#include "math/line.h"
+#include "math/Ray.h"
 
 // get the distance of a point to a segment.
 Point3D segment_closest_point_to_point(const Segment3D& segment, const Point3D& point) {
@@ -86,10 +86,10 @@ void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersection& bes
     assign_if_closer(
       best,
       SelectionIntersection(
-      static_cast<float>(ray_distance_to_plane(
-          Ray(Vector3(0, 0, 0), Vector3(0, 0, 1)),
-          Plane3(normalised[0], normalised[1], normalised[2])
-        )),
+      static_cast<float>(
+		  Ray(Vector3(0, 0, 0), Vector3(0, 0, 1)).getDistance(
+			Plane3(normalised[0], normalised[1], normalised[2])
+		  )),
         0
       )
     );

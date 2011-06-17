@@ -214,7 +214,7 @@ void FaceInstance::testSelect_centroid(Selector& selector, SelectionTest& test) 
 
 void FaceInstance::selectPlane(Selector& selector, const Line& line, PlanesIterator first, PlanesIterator last, const PlaneCallback& selectedPlaneCallback) {
 	for (Winding::const_iterator i = getFace().getWinding().begin(); i != getFace().getWinding().end(); ++i) {
-		Vector3 v(line_closest_point(line, (*i).vertex) - (*i).vertex);
+		Vector3 v(line.getClosestPoint(i->vertex) - i->vertex);
 		float dot = getFace().plane3().normal().dot(v);
 		if (dot <= 0) {
 				return;
