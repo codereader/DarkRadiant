@@ -4,7 +4,7 @@
 #include "GLProgramAttributes.h"
 #include "picomodel.h"
 #include "render.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 
 #include "ishaders.h"
 #include "imodelsurface.h"

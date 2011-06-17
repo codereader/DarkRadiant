@@ -1,7 +1,7 @@
 #ifndef SELECTION_ALGORITHM_POLICIES_H_
 #define SELECTION_ALGORITHM_POLICIES_H_
 
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "scenelib.h"
 #include "xyview/GlobalXYWnd.h"
 

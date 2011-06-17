@@ -3,7 +3,7 @@
 
 #include "imodel.h"
 #include "picomodel.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "imodelsurface.h"
 
 #include <boost/shared_ptr.hpp>

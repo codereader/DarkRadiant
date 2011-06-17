@@ -18,8 +18,8 @@
 #include <stack>
 
 #include "debugging/debugging.h"
-#include "math/aabb.h"
-#include "math/quaternion.h"
+#include "math/AABB.h"
+#include "math/Quaternion.h"
 #include "generic/callback.h"
 #include <boost/shared_ptr.hpp>
 

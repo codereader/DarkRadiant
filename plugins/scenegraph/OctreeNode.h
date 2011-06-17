@@ -3,7 +3,7 @@
 
 #include "inode.h"
 #include "ispacepartition.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 
 #include <boost/weak_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>

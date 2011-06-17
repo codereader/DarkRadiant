@@ -2,7 +2,7 @@
 #define _NULLMODEL_H_
 
 #include "imodel.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "entitylib.h"
 
 namespace model {

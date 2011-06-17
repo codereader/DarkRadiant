@@ -7,7 +7,7 @@
 #include "gtkutil/event/SingleIdleCallback.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "math/Vector3.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "ishaders.h"
 #include "iradiant.h"
 #include "iselection.h"

@@ -3,7 +3,7 @@
 
 #include "texturelib.h"
 #include "Winding.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "iregistry.h"
 #include "BrushPrimitTexDef.h"
 #include "selection/algorithm/Shader.h"

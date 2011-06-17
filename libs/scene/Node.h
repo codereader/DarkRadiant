@@ -5,7 +5,7 @@
 #include "ipath.h"
 #include <list>
 #include "TraversableNodeSet.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "math/Matrix4.h"
 #include "generic/callback.h"
 #include <boost/enable_shared_from_this.hpp>

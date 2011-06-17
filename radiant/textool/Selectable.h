@@ -2,7 +2,7 @@
 #define TEXTOOL_SELECTABLE_H_
 
 #include "math/Vector2.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "Rectangle.h"
 
 namespace textool {

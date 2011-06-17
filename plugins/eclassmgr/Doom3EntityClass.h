@@ -5,7 +5,7 @@
 #include "irender.h"
 
 #include "math/Vector3.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "string/string.h"
 
 #include "parser/DefTokeniser.h"
