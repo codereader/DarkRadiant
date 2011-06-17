@@ -2,7 +2,7 @@
 #define FACE_VERTEX_ITEM_H_
 
 #include "brush/Face.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "textool/TexToolItem.h"
 
 namespace textool

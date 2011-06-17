@@ -1,7 +1,7 @@
 #include "MathTest.h"
 
 #include "math/Matrix4.h"
-#include "math/quaternion.h"
+#include "math/Quaternion.h"
 
 void MathTest::run()
 {

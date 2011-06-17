@@ -3,7 +3,7 @@
 
 #include "inode.h"
 #include "math/Vector3.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 
 namespace entity {
 

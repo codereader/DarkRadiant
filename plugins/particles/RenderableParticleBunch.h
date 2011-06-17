@@ -4,7 +4,7 @@
 #include "irender.h"
 #include "iparticlestage.h"
 
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"

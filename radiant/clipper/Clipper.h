@@ -5,7 +5,7 @@
 #include "iregistry.h"
 #include "icommandsystem.h"
 #include "ClipPoint.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 
 namespace {
 	const unsigned int NUM_CLIP_POINTS = 3;

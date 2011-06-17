@@ -2,7 +2,7 @@
 #define MD5MODEL_H_
 
 #include "imodel.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include <vector>
 #include "parser/DefTokeniser.h"
 

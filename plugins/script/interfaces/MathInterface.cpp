@@ -1,7 +1,7 @@
 #include "MathInterface.h"
 
 #include "math/FloatTools.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"

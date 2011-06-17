@@ -122,13 +122,13 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\libs\math\aabb.cpp" />
+    <ClCompile Include="..\..\libs\math\AABB.cpp" />
     <ClCompile Include="..\..\libs\math\frustum.cpp" />
     <ClCompile Include="..\..\libs\math\Matrix4.cpp" />
-    <ClCompile Include="..\..\libs\math\quaternion.cpp" />
+    <ClCompile Include="..\..\libs\math\Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libs\math\aabb.h" />
+    <ClInclude Include="..\..\libs\math\AABB.h" />
     <ClInclude Include="..\..\libs\math\curve.h" />
     <ClInclude Include="..\..\libs\math\FloatTools.h" />
     <ClInclude Include="..\..\libs\math\frustum.h" />
@@ -137,7 +137,7 @@
     <ClInclude Include="..\..\libs\math\Matrix4.h" />
     <ClInclude Include="..\..\libs\math\pi.h" />
     <ClInclude Include="..\..\libs\math\Plane3.h" />
-    <ClInclude Include="..\..\libs\math\quaternion.h" />
+    <ClInclude Include="..\..\libs\math\Quaternion.h" />
     <ClInclude Include="..\..\libs\math\Vector2.h" />
     <ClInclude Include="..\..\libs\math\Vector3.h" />
     <ClInclude Include="..\..\libs\math\Vector4.h" />

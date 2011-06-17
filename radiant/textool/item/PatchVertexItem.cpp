@@ -1,6 +1,6 @@
 #include "PatchVertexItem.h"
 
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "math/Matrix4.h"
 #include "igl.h"
 

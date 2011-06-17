@@ -6,7 +6,7 @@
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
-#include "math/quaternion.h"
+#include "math/Quaternion.h"
 
 /* greebo: These are the visitor classes that apply the actual transformations to
  * the visited instance

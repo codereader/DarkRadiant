@@ -25,7 +25,7 @@
 #include "ui/common/SoundChooser.h"
 #include "ui/entitychooser/EntityClassChooser.h"
 
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "brushmanip.h"
 
 #include <gtkmm/menu.h>

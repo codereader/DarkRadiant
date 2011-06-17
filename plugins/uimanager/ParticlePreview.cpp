@@ -6,7 +6,7 @@
 #include "iparticles.h"
 #include "i18n.h"
 
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "math/frustum.h"
 #include "entitylib.h"
 

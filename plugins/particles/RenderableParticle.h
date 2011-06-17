@@ -6,7 +6,7 @@
 #include "iparticles.h"
 #include "irender.h"
 
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "render.h"
 #include <map>
 #include <boost/random/linear_congruential.hpp>

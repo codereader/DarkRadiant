@@ -4,7 +4,7 @@
 #include "irender.h"
 #include "render.h"
 #include "irenderable.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "math/frustum.h"
 #include "iselectiontest.h"
 #include "modelskin.h"

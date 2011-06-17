@@ -3,7 +3,7 @@
 
 #include <list>
 #include "icommandsystem.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "math/Vector2.h"
 #include "iscenegraph.h"
 

@@ -1,6 +1,6 @@
 #include "Matrix4.h"
 
-#include "quaternion.h"
+#include "Quaternion.h"
 
 namespace
 {

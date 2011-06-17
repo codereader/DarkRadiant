@@ -2,7 +2,7 @@
 #include "OpenGLShader.h"
 
 #include "math/Matrix4.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "irender.h"
 #include "ishaders.h"
 #include "texturelib.h"
@@ -466,7 +466,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
 // DEBUG: Stream insertion for RendererLight
 
-#include "math/aabb.h"
+#include "math/AABB.h"
 
 inline
 std::ostream& operator<< (std::ostream& os, const RendererLight& light) {

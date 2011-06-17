@@ -3,7 +3,7 @@
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
-#include "math/quaternion.h"
+#include "math/Quaternion.h"
 
 #include "render.h"
 

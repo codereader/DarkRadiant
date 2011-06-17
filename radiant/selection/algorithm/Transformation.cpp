@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include <string>
 #include <map>
-#include "math/quaternion.h"
+#include "math/Quaternion.h"
 #include "iundo.h"
 #include "imap.h"
 #include "igrid.h"

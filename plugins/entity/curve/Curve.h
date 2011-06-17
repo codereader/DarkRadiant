@@ -4,7 +4,7 @@
 #include "signal/signal.h"
 #include "iselectiontest.h"
 #include "math/curve.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "RenderableCurve.h"
 
 namespace entity {
