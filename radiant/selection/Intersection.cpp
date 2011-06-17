@@ -15,7 +15,7 @@ void ray_for_device_point(Ray& ray, const Matrix4& device2object, const float x,
 
   // construct ray
   ray.direction -= ray.origin;
-  vector3_normalise(ray.direction);
+  ray.direction.normalise();
 }
 
 bool sphere_intersect_ray(const Vector3& origin, float radius, const Ray& ray, Vector3& intersection) {

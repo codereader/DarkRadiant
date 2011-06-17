@@ -11,9 +11,9 @@
  */
 
 void BezierInterpolate(BezierCurve *pCurve) {
-	pCurve->left = vector3_mid(pCurve->left, pCurve->crd);
-	pCurve->right = vector3_mid(pCurve->crd, pCurve->right);
-	pCurve->crd = vector3_mid(pCurve->left, pCurve->right);
+	pCurve->left = pCurve->left.mid(pCurve->crd);
+	pCurve->right = pCurve->crd.mid(pCurve->right);
+	pCurve->crd = pCurve->left.mid(pCurve->right);
 }
 
 bool BezierCurve::isCurved() const
@@ -98,9 +98,9 @@ void BezierCurve::interpolate(BezierCurve* leftCurve, BezierCurve* rightCurve) c
 	rightCurve->right = right;
 
 	// The mid-point of the current curve
-	leftCurve->crd = vector3_mid(left, crd);		// ip_left
-	rightCurve->crd = vector3_mid(crd, right);		// ip_right
-	leftCurve->right = rightCurve->left = vector3_mid(leftCurve->crd, rightCurve->crd); // ip_crd
+	leftCurve->crd = left.mid(crd);		// ip_left
+	rightCurve->crd = crd.mid(right);		// ip_right
+	leftCurve->right = rightCurve->left = leftCurve->crd.mid(rightCurve->crd); // ip_crd
 }
 
 std::size_t BezierCurveTree::setup(std::size_t idx, std::size_t stride)

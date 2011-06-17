@@ -77,7 +77,7 @@ public:
 inline Segment segment_for_startend(const Vector3& start, const Vector3& end)
 {
   Segment segment;
-  segment.origin = vector3_mid(start, end);
+  segment.origin = start.mid(end);
   segment.extents = end - segment.origin;
   return segment;
 }

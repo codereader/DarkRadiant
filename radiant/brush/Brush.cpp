@@ -1141,7 +1141,7 @@ void Brush::buildBRep() {
             FaceVertexId faceVertex = faceVertices[ProximalVertexArray_index(edgePairs, uniqueEdges[i])];
 
             const Winding& w = m_faces[faceVertex.getFace()]->getWinding();
-            Vector3 edge = vector3_mid(w[faceVertex.getVertex()].vertex, w[w.next(faceVertex.getVertex())].vertex);
+            Vector3 edge = w[faceVertex.getVertex()].vertex.mid(w[w.next(faceVertex.getVertex())].vertex);
             _uniqueEdgePoints[i] = PointVertex(edge, colour_vertex);
           }
         }

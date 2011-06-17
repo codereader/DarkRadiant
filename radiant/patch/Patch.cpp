@@ -530,7 +530,7 @@ bool Patch::isDegenerate() const {
 	for (PatchControlConstIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
 
 		// Skip the first comparison
-		if (i != m_ctrl.begin() && !vector3_equal_epsilon(i->vertex, prev, 0.0001f)) {
+		if (i != m_ctrl.begin() && !i->vertex.isEqual(prev, 0.0001f)) {
 			return false;
 		}
 
@@ -692,7 +692,7 @@ void Patch::Redisperse(EMatrixMajor mt)
     {
       p2 = p1+col_stride;
       p3 = p2+col_stride;
-      p2->vertex = vector3_mid(p1->vertex, p3->vertex);
+      p2->vertex = p1->vertex.mid(p3->vertex);
       p1 = p3;
     }
   }
@@ -1378,7 +1378,7 @@ void Patch::ConstructSeam(EPatchCap eType, Vector3* p, std::size_t width)
     break;
   case eCapEndCap:
     {
-      Vector3 p5(vector3_mid(p[0], p[4]));
+      Vector3 p5(p[0].mid(p[4]));
 
       setDims(3, 3);
       m_ctrl[0].vertex = p[0];
@@ -2476,16 +2476,16 @@ unsigned int subarray_get_degen(PatchControlIter subarray, std::size_t strideU, 
 
 inline void deCasteljau3(const Vector3& P0, const Vector3& P1, const Vector3& P2, Vector3& P01, Vector3& P12, Vector3& P012)
 {
-  P01 = vector3_mid(P0, P1);
-  P12 = vector3_mid(P1, P2);
-  P012 = vector3_mid(P01, P12);
+  P01 = P0.mid(P1);
+  P12 = P1.mid(P2);
+  P012 = P01.mid(P12);
 }
 
 inline void BezierInterpolate3( const Vector3& start, Vector3& left, Vector3& mid, Vector3& right, const Vector3& end )
 {
-  left = vector3_mid(start, mid);
-  right = vector3_mid(mid, end);
-  mid = vector3_mid(left, right);
+  left = start.mid(mid);
+  right = mid.mid(end);
+  mid = left.mid(right);
 }
 
 inline void BezierInterpolate2( const Vector2& start, Vector2& left, Vector2& mid, Vector2& right, const Vector2& end )
@@ -2541,10 +2541,10 @@ inline Vector2 vector2_linear_interpolated(const Vector2& a, const Vector2& b, d
 
 void normalise_safe(Vector3& normal)
 {
-  if(normal != g_vector3_identity)
-  {
-    vector3_normalise(normal);
-  }
+	if (normal != g_vector3_identity)
+	{
+		normal.normalise();
+	}
 }
 
 inline void QuadraticBezier_evaluate(const PatchControl& a, const PatchControl& b, const PatchControl& c, double t, PatchControl& point, PatchControl& left, PatchControl& right)
@@ -3107,14 +3107,14 @@ void Patch::BuildTesselationCurves(EMatrixMajor major)
 				// interpolated from three columns of control points
 				{
 					BezierCurve* pCurve = new BezierCurve(
-						vector3_mid((p1+strideU)->vertex, (p3+strideU)->vertex),			// crd
-						vector3_mid(p1->vertex, p3->vertex),								// left
-						vector3_mid((p1+(strideU<<1))->vertex, (p3+(strideU<<1))->vertex)	// right
+						(p1+strideU)->vertex.mid((p3+strideU)->vertex),			// crd
+						p1->vertex.mid(p3->vertex),								// left
+						(p1+(strideU<<1))->vertex.mid((p3+(strideU<<1))->vertex)	// right
 					);
 
-					pCurve->crd = vector3_mid(pCurve->crd, (p2+strideU)->vertex);
-					pCurve->left = vector3_mid(pCurve->left, p2->vertex);
-					pCurve->right = vector3_mid(pCurve->right, (p2+(strideU<<1))->vertex);
+					pCurve->crd = pCurve->crd.mid((p2+strideU)->vertex);
+					pCurve->left = pCurve->left.mid(p2->vertex);
+					pCurve->right = pCurve->right.mid((p2+(strideU<<1))->vertex);
 
 					pCurveList = g_slist_prepend(pCurveList, pCurve);
 				}

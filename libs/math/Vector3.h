@@ -418,6 +418,30 @@ public:
 		return (float_equal_epsilon(angle(other), float(0.0f), float(0.001f))
 			 || float_equal_epsilon(angle(other), c_pi, float(0.001f)));
 	}
+
+	// Swaps all components with the other vector
+	template<typename OtherElement>
+	void swap(BasicVector3<OtherElement>& other)
+	{
+		std::swap(x(), other.x());
+		std::swap(y(), other.y());
+		std::swap(z(), other.z());
+	}
+
+	// Returns the mid-point of this vector and the other one
+	BasicVector3<Element> mid(const BasicVector3<Element>& other) const
+	{
+		return (*this + other) * 0.5f;
+	}
+
+	// Returns true if this vector is equal to the other one, considering the given tolerance.
+	template<typename OtherElement, typename Epsilon>
+	bool isEqual(const BasicVector3<OtherElement>& other, Epsilon epsilon) const
+	{
+		return float_equal_epsilon(x(), other.x(), epsilon) && 
+			   float_equal_epsilon(y(), other.y(), epsilon) && 
+			   float_equal_epsilon(z(), other.z(), epsilon);
+	}
 };
 
 /** Stream insertion operator for BasicVector3. Formats vector as "<x, y, z>".
@@ -444,34 +468,7 @@ const Vector3 g_vector3_axis_z(0, 0, 1);
 
 const Vector3 g_vector3_axes[3] = { g_vector3_axis_x, g_vector3_axis_y, g_vector3_axis_z };
 
-template<typename Element, typename OtherElement>
-inline void vector3_swap(BasicVector3<Element>& self, BasicVector3<OtherElement>& other) {
-  std::swap(self.x(), other.x());
-  std::swap(self.y(), other.y());
-  std::swap(self.z(), other.z());
-}
 
-template<typename Element, typename OtherElement, typename Epsilon>
-inline bool vector3_equal_epsilon(const BasicVector3<Element>& self, const BasicVector3<OtherElement>& other, Epsilon epsilon) {
-  return float_equal_epsilon(self.x(), other.x(), epsilon)
-    && float_equal_epsilon(self.y(), other.y(), epsilon)
-    && float_equal_epsilon(self.z(), other.z(), epsilon);
-}
-
-template<typename Element>
-inline BasicVector3<Element> vector3_mid(const BasicVector3<Element>& begin, const BasicVector3<Element>& end) {
-  return (begin + end)*0.5;
-}
-
-template<typename Element>
-inline Element float_divided(Element f, Element other) {
-  return f / other;
-}
-
-template<typename Element>
-inline void vector3_normalise(BasicVector3<Element>& self) {
-  self = self.getNormalised();
-}
 
 template<typename Element>
 inline BasicVector3<Element> vector3_snapped(const BasicVector3<Element>& self) {

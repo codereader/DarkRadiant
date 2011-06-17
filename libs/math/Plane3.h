@@ -74,7 +74,7 @@ public:
 	 */
 	bool operator== (const Plane3& other) const
 	{
-  		return vector3_equal_epsilon(_normal, other._normal, EPSILON_NORMAL) &&
+  		return _normal.isEqual(other._normal, EPSILON_NORMAL) &&
 			   float_equal_epsilon(_dist, other._dist, EPSILON_DIST);
 	}
 
