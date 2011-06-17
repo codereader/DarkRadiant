@@ -98,6 +98,11 @@ public:
 	 * Normalise this quaternion in-place.
 	 */
 	void normalise();
+
+	/**
+	 * Returns the given point as transformed by this quaternion
+	 */
+	Vector3 transformPoint(const Vector3& point) const;
 };
 
 inline const Quaternion& Quaternion::Identity()
@@ -190,56 +195,32 @@ inline void Quaternion::normalise()
 	*this = getNormalised();
 }
 
+inline Vector3 Quaternion::transformPoint(const Vector3& point) const
+{
+	float xx = x() * x();
+	float yy = y() * y();
+	float zz = z() * z();
+	float ww = w() * w();
+
+	float xy2 = x() * y() * 2;
+	float xz2 = x() * z() * 2;
+	float xw2 = x() * w() * 2;
+	float yz2 = y() * z() * 2;
+	float yw2 = y() * w() * 2;
+	float zw2 = z() * w() * 2;
+
+	return Vector3(
+		ww * point.x() + yw2 * point.z() - zw2 * point.y() + xx * point.x() + xy2 * point.y() + xz2 * point.z() - zz * point.x() - yy * point.x(),
+		xy2 * point.x() + yy * point.y() + yz2 * point.z() + zw2 * point.x() - zz * point.y() + ww * point.y() - xw2 * point.z() - xx * point.y(),
+		xz2 * point.x() + yz2 * point.y() + zz * point.z() - yw2 * point.x() - yy * point.z() + xw2 * point.y() - xx * point.z() + ww * point.z()
+	);
+}
+
 const double c_half_sqrt2 = 0.70710678118654752440084436210485;
 const float c_half_sqrt2f = static_cast<float>(c_half_sqrt2);
 
 
 
-
-#if 0
-/// \brief Returns \p self concatenated with the rotation transform produced by \p rotation.
-/// The concatenated rotation occurs before \p self.
-inline Matrix4 matrix4_rotated_by_quaternion(const Matrix4& self, const Quaternion& rotation)
-{
-	return self.getMultipliedBy(Matrix4::getRotation(rotation));
-}
-
-/// \brief Concatenates \p self with the rotation transform produced by \p rotation.
-/// The concatenated rotation occurs before \p self.
-inline void matrix4_rotate_by_quaternion(Matrix4& self, const Quaternion& rotation)
-{
-  self = matrix4_rotated_by_quaternion(self, rotation);
-}
-#endif
-
-/// \brief Rotates \p self by \p rotation, using \p pivotpoint.
-inline void matrix4_pivoted_rotate_by_quaternion(Matrix4& self, const Quaternion& rotation, const Vector3& pivotpoint)
-{
-  self.translateBy(pivotpoint);
-  self.rotateBy(rotation);
-  self.translateBy(-pivotpoint);
-}
-
-inline Vector3 quaternion_transformed_point(const Quaternion& quaternion, const Vector3& point)
-{
-  float xx = quaternion.x() * quaternion.x();
-  float yy = quaternion.y() * quaternion.y();
-  float zz = quaternion.z() * quaternion.z();
-  float ww = quaternion.w() * quaternion.w();
-
-  float xy2 = quaternion.x() * quaternion.y() * 2;
-  float xz2 = quaternion.x() * quaternion.z() * 2;
-  float xw2 = quaternion.x() * quaternion.w() * 2;
-  float yz2 = quaternion.y() * quaternion.z() * 2;
-  float yw2 = quaternion.y() * quaternion.w() * 2;
-  float zw2 = quaternion.z() * quaternion.w() * 2;
-
-	return Vector3(
-    ww * point.x() + yw2 * point.z() - zw2 * point.y() + xx * point.x() + xy2 * point.y() + xz2 * point.z() - zz * point.x() - yy * point.x(),
-    xy2 * point.x() + yy * point.y() + yz2 * point.z() + zw2 * point.x() - zz * point.y() + ww * point.y() - xw2 * point.z() - xx * point.y(),
-    xz2 * point.x() + yz2 * point.y() + zz * point.z() - yw2 * point.x() - yy * point.z() + xw2 * point.y() - xx * point.z() + ww * point.z()
-  );
-}
 
 /// \brief Constructs a pure-rotation transform from \p axis and \p angle (radians).
 inline Matrix4 matrix4_rotation_for_axisangle(const Vector3& axis, float angle)
