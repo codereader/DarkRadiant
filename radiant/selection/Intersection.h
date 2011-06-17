@@ -1,7 +1,7 @@
 #ifndef INTERSECTION_H_
 #define INTERSECTION_H_
 
-#include "math/line.h"
+#include "math/Ray.h"
 
 /* greebo: Intersection methods. Needed to perform selectionTests
  *

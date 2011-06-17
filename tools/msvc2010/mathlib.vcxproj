@@ -138,6 +138,8 @@
     <ClInclude Include="..\..\libs\math\pi.h" />
     <ClInclude Include="..\..\libs\math\Plane3.h" />
     <ClInclude Include="..\..\libs\math\Quaternion.h" />
+    <ClInclude Include="..\..\libs\math\Ray.h" />
+    <ClInclude Include="..\..\libs\math\Segment.h" />
     <ClInclude Include="..\..\libs\math\Vector2.h" />
     <ClInclude Include="..\..\libs\math\Vector3.h" />
     <ClInclude Include="..\..\libs\math\Vector4.h" />
