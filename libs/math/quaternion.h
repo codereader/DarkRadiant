@@ -3,7 +3,11 @@
 /// \file
 /// \brief Quaternion data types and related operations.
 
-#include "math/Matrix4.h"
+#include "Vector3.h"
+#include "Vector4.h"
+
+// Forward declaration, include Matrix4.h for definition
+class Matrix4;
 
 /// \brief A quaternion stored in single-precision floating-point.
 class Quaternion :
@@ -218,26 +222,3 @@ inline Vector3 Quaternion::transformPoint(const Vector3& point) const
 
 const double c_half_sqrt2 = 0.70710678118654752440084436210485;
 const float c_half_sqrt2f = static_cast<float>(c_half_sqrt2);
-
-
-
-
-/// \brief Constructs a pure-rotation transform from \p axis and \p angle (radians).
-inline Matrix4 matrix4_rotation_for_axisangle(const Vector3& axis, float angle)
-{
-	return Matrix4::getRotation(Quaternion::createForAxisAngle(axis, angle));
-}
-
-/// \brief Rotates \p self about \p axis by \p angle.
-inline void matrix4_rotate_by_axisangle(Matrix4& self, const Vector3& axis, float angle)
-{
-  self.multiplyBy(matrix4_rotation_for_axisangle(axis, angle));
-}
-
-/// \brief Rotates \p self about \p axis by \p angle using \p pivotpoint.
-inline void matrix4_pivoted_rotate_by_axisangle(Matrix4& self, const Vector3& axis, float angle, const Vector3& pivotpoint)
-{
-  self.translateBy(pivotpoint);
-  matrix4_rotate_by_axisangle(self, axis, angle);
-  self.translateBy(-pivotpoint);
-}
