@@ -15,7 +15,7 @@ public:
 	{}
 
 	void operator()(Vector3& point, const Vector3& original) {
-		vector3_snap(point, _snap);
+		point.snap(_snap);
 	}
 };
 

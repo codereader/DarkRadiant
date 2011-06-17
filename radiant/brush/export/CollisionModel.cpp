@@ -19,8 +19,9 @@ namespace cmutil {
 	}
 
 // Writes the given Vector3 in the format ( 0 1 2 ) to the given stream
-void writeVector(std::ostream& st, const Vector3& vector) {
-	Vector3 snapped = vector3_snapped(vector, MAX_PRECISION);
+void writeVector(std::ostream& st, const Vector3& vector)
+{
+	Vector3 snapped = vector.getSnapped(MAX_PRECISION);
 	st << "( ";
 	st << snapped[0] << " ";
 	st << snapped[1] << " ";
@@ -89,8 +90,9 @@ int CollisionModel::findVertex(const Vector3& vertex) const {
 	return -1;
 }
 
-std::size_t CollisionModel::addVertex(const Vector3& vertex) {
-	Vector3 snapped = vector3_snapped(vertex, MAX_PRECISION);
+std::size_t CollisionModel::addVertex(const Vector3& vertex)
+{
+	Vector3 snapped = vertex.getSnapped(MAX_PRECISION);
 
 	// Try to lookup the index of the given vertex
 	int foundIndex = findVertex(snapped);

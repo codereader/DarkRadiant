@@ -21,9 +21,9 @@ inline void planepts_assign(PlanePoints planepts, const PlanePoints other) {
 }
 
 inline void planepts_quantise(PlanePoints planepts, double snap) {
-	vector3_snap(planepts[0], snap);
-	vector3_snap(planepts[1], snap);
-	vector3_snap(planepts[2], snap);
+	planepts[0].snap(snap);
+	planepts[1].snap(snap);
+	planepts[2].snap(snap);
 }
 
 inline void edge_snap(Vector3& edge, double snap) {
@@ -32,7 +32,7 @@ inline void edge_snap(Vector3& edge, double snap) {
 	if (scale > 0.0f) {
 		edge *= scale;
 	}
-	vector3_snap(edge, snap);
+	edge.snap(snap);
 }
 
 inline void planepts_snap(PlanePoints planepts, double snap) {
@@ -44,7 +44,7 @@ inline void planepts_snap(PlanePoints planepts, double snap) {
 	double length_squared_12 = edge12.dot(edge12);
 	double length_squared_20 = edge20.dot(edge20);
 
-	vector3_snap(planepts[0], snap);
+	planepts[0].snap(snap);
 
 	if (length_squared_01 < length_squared_12) {
 		if (length_squared_12 < length_squared_20) {

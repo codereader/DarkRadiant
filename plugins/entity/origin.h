@@ -32,7 +32,7 @@ const Vector3 ORIGINKEY_IDENTITY = Vector3(0, 0, 0);
 
 inline Vector3 origin_snapped(const Vector3& origin, float snap)
 {
-  return vector3_snapped(origin, snap);
+	return origin.getSnapped(snap);
 }
 
 class OriginKey :

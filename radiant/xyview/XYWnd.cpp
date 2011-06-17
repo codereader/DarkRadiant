@@ -395,7 +395,7 @@ void XYWnd::DropClipPoint(int pointx, int pointy) {
 	GlobalClipper().setViewType(static_cast<EViewType>(getViewType()));
 	int nDim = (GlobalClipper().getViewType() == YZ ) ?  0 : ( (GlobalClipper().getViewType() == XZ) ? 1 : 2 );
 	point[nDim] = mid[nDim];
-	vector3_snap(point, GlobalGrid().getGridSize());
+	point.snap(GlobalGrid().getGridSize());
 	GlobalClipper().newClipPoint(point);
 }
 

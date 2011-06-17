@@ -19,32 +19,32 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
       const float p = (j * dp) - (static_cast<float>(c_pi) / 2.0f);
 
       {
-        Vector3 v(origin + vector3_for_spherical(t, p) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
         glVertex3fv(v);
       }
 
       {
-        Vector3 v(origin + vector3_for_spherical(t, p + dp) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t, p + dp) * radius);
         glVertex3fv(v);
       }
 
       {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
         glVertex3fv(v);
       }
 
       {
-        Vector3 v(origin + vector3_for_spherical(t, p) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
         glVertex3fv(v);
       }
 
       {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
         glVertex3fv(v);
       }
 
       {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t + dt, p) * radius);
         glVertex3fv(v);
       }
     }
@@ -57,17 +57,17 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
       const float t = i * dt;
 
       {
-        Vector3 v(origin + vector3_for_spherical(t, p) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
         glVertex3fv(v);
       }
 
       {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p + dp) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
         glVertex3fv(v);
       }
 
       {
-        Vector3 v(origin + vector3_for_spherical(t + dt, p) * radius);
+        Vector3 v(origin + Vector3::createForSpherical(t + dt, p) * radius);
         glVertex3fv(v);
       }
     }

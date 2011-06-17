@@ -287,18 +287,18 @@ void FaceInstance::snapComponents(float snap) {
 	}
 
 	if (selectedVertices()) {
-		vector3_snap(m_face->m_move_planepts[0], snap);
-		vector3_snap(m_face->m_move_planepts[1], snap);
-		vector3_snap(m_face->m_move_planepts[2], snap);
+		m_face->m_move_planepts[0].snap(snap);
+		m_face->m_move_planepts[1].snap(snap);
+		m_face->m_move_planepts[2].snap(snap);
 		m_face->assign_planepts(m_face->m_move_planepts);
 		planepts_assign(m_face->m_move_planeptsTransformed, m_face->m_move_planepts);
 		m_face->freezeTransform();
 	}
 
 	if (selectedEdges()) {
-		vector3_snap(m_face->m_move_planepts[0], snap);
-		vector3_snap(m_face->m_move_planepts[1], snap);
-		vector3_snap(m_face->m_move_planepts[2], snap);
+		m_face->m_move_planepts[0].snap(snap);
+		m_face->m_move_planepts[1].snap(snap);
+		m_face->m_move_planepts[2].snap(snap);
 		m_face->assign_planepts(m_face->m_move_planepts);
 		planepts_assign(m_face->m_move_planeptsTransformed, m_face->m_move_planepts);
 		m_face->freezeTransform();

@@ -43,8 +43,9 @@ public:
 	}
 
 	// Snaps the control vertex to the grid
-	void snapto(float snap) {
-		vector3_snap(m_ctrl->vertex, snap);
+	void snapto(float snap)
+	{
+		m_ctrl->vertex.snap(snap);
 	}
 };
 

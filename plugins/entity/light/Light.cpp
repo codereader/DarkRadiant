@@ -651,7 +651,7 @@ void Light::translateLightStart(const Vector3& translation) {
 	if (dist > 0) {
 		// Light_Start is too "high", project it back onto the origin plane
 		_lightStartTransformed = candidate - normal*dist;
-		vector3_snap(_lightStartTransformed, GlobalGrid().getGridSize());
+		_lightStartTransformed.snap(GlobalGrid().getGridSize());
 	}
 	else {
 		// The candidate seems to be ok, apply it to the selection
@@ -676,13 +676,13 @@ void Light::translateLightTarget(const Vector3& translation) {
 			_lightStartTransformed = rotationMatrix.transformPoint(_lightStart);
 			_lightEndTransformed = rotationMatrix.transformPoint(_lightEnd);
 
-			vector3_snap(_lightStartTransformed, GlobalGrid().getGridSize());
-			vector3_snap(_lightEndTransformed, GlobalGrid().getGridSize());
+			_lightStartTransformed.snap(GlobalGrid().getGridSize());
+			_lightEndTransformed.snap(GlobalGrid().getGridSize());
 		}
 
 		// Snap the rotated vectors to the grid
-		vector3_snap(_lightRightTransformed, GlobalGrid().getGridSize());
-		vector3_snap(_lightUpTransformed, GlobalGrid().getGridSize());
+		_lightRightTransformed.snap(GlobalGrid().getGridSize());
+		_lightUpTransformed.snap(GlobalGrid().getGridSize());
 	}
 
 	// if we are at 180 degrees, invert the light_start and light_end vectors
