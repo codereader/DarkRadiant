@@ -132,7 +132,7 @@
     <ClInclude Include="..\..\libs\math\curve.h" />
     <ClInclude Include="..\..\libs\math\FloatTools.h" />
     <ClInclude Include="..\..\libs\math\frustum.h" />
-    <ClInclude Include="..\..\libs\math\line.h" />
+    <ClInclude Include="..\..\libs\math\Line.h" />
     <ClInclude Include="..\..\libs\math\lrint.h" />
     <ClInclude Include="..\..\libs\math\Matrix4.h" />
     <ClInclude Include="..\..\libs\math\pi.h" />
