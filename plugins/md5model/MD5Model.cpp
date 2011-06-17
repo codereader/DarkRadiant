@@ -297,8 +297,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 				MD5Weight& weight = weights[vert.weight_index + k];
 				MD5Joint& joint = joints[weight.joint];
 
-				Vector3 rotatedPoint = quaternion_transformed_point(
-						joint.rotation, weight.v);
+				Vector3 rotatedPoint = Quaternion(joint.rotation).transformPoint(weight.v);
 				skinned += (rotatedPoint + joint.position) * weight.t;
 			}
 

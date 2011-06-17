@@ -493,6 +493,14 @@ void MathTest::testQuaternions()
 	REQUIRE_TRUE(float_equal_epsilon(normalised.y(), 0.02450980f, EPSILON), "Quaternion normalisation failed on y");
 	REQUIRE_TRUE(float_equal_epsilon(normalised.z(), 0.03431372f, EPSILON), "Quaternion normalisation failed on z");
 	REQUIRE_TRUE(float_equal_epsilon(normalised.w(), 0.05392156f, EPSILON), "Quaternion normalisation failed on w");
+
+	Vector3 point(13, 17, 19);
+
+	Vector3 transformed = q1.transformPoint(point);
+
+	REQUIRE_TRUE(transformed.x() == q1.w()*q1.w()*point.x() + 2*q1.y()*q1.w()*point.z() - 2*q1.z()*q1.w()*point.y() + q1.x()*q1.x()*point.x() + 2*q1.y()*q1.x()*point.y() + 2*q1.z()*q1.x()*point.z() - q1.z()*q1.z()*point.x() - q1.y()*q1.y()*point.x(), "Quaternion point transformation failed on x");
+	REQUIRE_TRUE(transformed.y() == 2*q1.x()*q1.y()*point.x() + q1.y()*q1.y()*point.y() + 2*q1.z()*q1.y()*point.z() + 2*q1.w()*q1.z()*point.x() - q1.z()*q1.z()*point.y() + q1.w()*q1.w()*point.y() - 2*q1.x()*q1.w()*point.z() - q1.x()*q1.x()*point.y(), "Quaternion point transformation failed on y");
+	REQUIRE_TRUE(transformed.z() == 2*q1.x()*q1.z()*point.x() + 2*q1.y()*q1.z()*point.y() + q1.z()*q1.z()*point.z() - 2*q1.w()*q1.y()*point.x() - q1.y()*q1.y()*point.z() + 2*q1.w()*q1.x()*point.y() - q1.x()*q1.x()*point.z() + q1.w()*q1.w()*point.z(), "Quaternion point transformation failed on z");
 }
 
 // Initialise the static registrar object
