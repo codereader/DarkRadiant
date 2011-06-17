@@ -350,7 +350,8 @@ void Face::applyShaderFromFace(const Face& other) {
 	for (Winding::const_iterator i = other.m_winding.begin(); i != other.m_winding.end(); ++i) {
 		for (Winding::const_iterator j = m_winding.begin(); j != m_winding.end(); ++j) {
 			// Check if the vertices are matching
-			if (vector3_equal_epsilon(j->vertex, i->vertex, 0.001f)) {
+			if (j->vertex.isEqual(i->vertex, 0.001f))
+			{
 				// Match found, add to list
 				thisVerts.push_back(j);
 				otherVerts.push_back(i);

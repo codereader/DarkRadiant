@@ -222,7 +222,7 @@ public:
       }
     }
 
-    return AABB(vector3_mid(min, max), (max - min)*0.5);
+    return AABB(min.mid(max), (max - min)*0.5f);
   }
   AABB evaluateResize(const Vector3& translation, const Matrix4& rotation) const
   {

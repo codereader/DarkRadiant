@@ -70,7 +70,7 @@ public:
 			if (index != c_brush_maxFaces) {
 					const Winding& winding = getFace().getWinding();
 					std::size_t adjacent = winding.next(index);
-					functor(vector3_mid(winding[index].vertex, winding[adjacent].vertex));
+					functor(winding[index].vertex.mid(winding[adjacent].vertex));
 				}
 		}
 	}

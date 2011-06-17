@@ -82,7 +82,7 @@ void RotateManipulator::updateCircleTransforms()
 		_pivot._worldSpace.getTransposed().transformDirection(_pivot._viewpointSpace.z().getVector3())
     );
 
-    _circleX_visible = !vector3_equal_epsilon(g_vector3_axis_x, localViewpoint, 1e-6f);
+    _circleX_visible = !g_vector3_axis_x.isEqual(localViewpoint, 1e-6f);
     if(_circleX_visible)
     {
       _local2worldX = Matrix4::getIdentity();
@@ -92,7 +92,7 @@ void RotateManipulator::updateCircleTransforms()
 	  _local2worldX.premultiplyBy(_pivot._worldSpace);
     }
 
-    _circleY_visible = !vector3_equal_epsilon(g_vector3_axis_y, localViewpoint, 1e-6f);
+	_circleY_visible = !g_vector3_axis_y.isEqual(localViewpoint, 1e-6f);
     if(_circleY_visible)
     {
       _local2worldY = Matrix4::getIdentity();
@@ -102,7 +102,7 @@ void RotateManipulator::updateCircleTransforms()
       _local2worldY.premultiplyBy(_pivot._worldSpace);
     }
 
-    _circleZ_visible = !vector3_equal_epsilon(g_vector3_axis_z, localViewpoint, 1e-6f);
+	_circleZ_visible = !g_vector3_axis_z.isEqual(localViewpoint, 1e-6f);
     if(_circleZ_visible)
     {
       _local2worldZ = Matrix4::getIdentity();

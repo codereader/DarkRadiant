@@ -309,6 +309,18 @@ public:
 		return *reinterpret_cast<const BasicVector3<Element>*>(_v);
 	}
 
+	/**
+	 * Equality check with tolerance epsilon.
+	 */
+	template<typename OtherElement>
+	bool isEqual(const BasicVector4<OtherElement>& other, Element epsilon) const
+	{
+		return float_equal_epsilon(x(), other.x(), epsilon) && 
+			   float_equal_epsilon(y(), other.y(), epsilon) && 
+			   float_equal_epsilon(z(), other.z(), epsilon) && 
+			   float_equal_epsilon(w(), other.w(), epsilon);
+	}
+
 }; // BasicVector4
 
 // ==========================================================================================
@@ -326,14 +338,3 @@ inline std::ostream& operator<<(std::ostream& st, BasicVector4<T> vec) {
 
 // A 4-element vector stored in single-precision floating-point.
 typedef BasicVector4<float> Vector4;
-
-// =============== Common Vector4 Methods ==================================================
-
-template<typename Element, typename OtherElement>
-inline bool vector4_equal_epsilon(const BasicVector4<Element>& self, const BasicVector4<OtherElement>& other, Element epsilon)
-{
-  return float_equal_epsilon(self.x(), other.x(), epsilon)
-    && float_equal_epsilon(self.y(), other.y(), epsilon)
-    && float_equal_epsilon(self.z(), other.z(), epsilon)
-    && float_equal_epsilon(self.w(), other.w(), epsilon);
-}

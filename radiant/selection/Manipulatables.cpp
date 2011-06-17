@@ -18,14 +18,14 @@ void translation_local2object(Vector3& object, const Vector3& local, const Matri
 
 void RotateFree::Construct(const Matrix4& device2manip, const float x, const float y) {
     point_on_sphere(_start, device2manip, x, y);
-    vector3_normalise(_start);
+    _start.normalise();
 }
 
 void RotateFree::Transform(const Matrix4& manip2object, const Matrix4& device2manip, const float x, const float y) {
     Vector3 current;
 
     point_on_sphere(current, device2manip, x, y);
-    vector3_normalise(current);
+    current.normalise();
 
 	// call the Rotatable with its transform method
     _rotatable.rotate(Quaternion::createForUnitVectors(_start, current));
