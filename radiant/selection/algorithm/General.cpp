@@ -552,7 +552,7 @@ Vector3 getCurrentSelectionCenter() {
 	BoundsAccumulator walker;
 	GlobalSelectionSystem().foreachSelected(walker);
 
-	return vector3_snapped(walker.getBounds().getOrigin());
+	return walker.getBounds().getOrigin().getSnapped();
 }
 
 AABB getCurrentSelectionBounds() {

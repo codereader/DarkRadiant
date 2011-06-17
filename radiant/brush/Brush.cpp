@@ -759,9 +759,9 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides,
 			float t = i * dt;
 			float p = static_cast<float>(j * dp - c_pi / 2);
 
-			planepts[0] = mid + vector3_for_spherical(t, p)*radius;
-			planepts[1] = mid + vector3_for_spherical(t, p + dp)*radius;
-			planepts[2] = mid + vector3_for_spherical(t + dt, p + dp)*radius;
+			planepts[0] = mid + Vector3::createForSpherical(t, p)*radius;
+			planepts[1] = mid + Vector3::createForSpherical(t, p + dp)*radius;
+			planepts[2] = mid + Vector3::createForSpherical(t + dt, p + dp)*radius;
 
 			addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
 		}
@@ -774,9 +774,9 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides,
 		{
 			float t = i * dt;
 
-			planepts[0] = mid + vector3_for_spherical(t, p)*radius;
-			planepts[1] = mid + vector3_for_spherical(t + dt, p + dp)*radius;
-			planepts[2] = mid + vector3_for_spherical(t + dt, p)*radius;
+			planepts[0] = mid + Vector3::createForSpherical(t, p)*radius;
+			planepts[1] = mid + Vector3::createForSpherical(t + dt, p + dp)*radius;
+			planepts[2] = mid + Vector3::createForSpherical(t + dt, p)*radius;
 
 			addPlane(planepts[0], planepts[1], planepts[2], shader, projection);
 		}

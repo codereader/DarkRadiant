@@ -269,9 +269,9 @@ void Face::snapto(float snap) {
 	if (contributes()) {
 		PlanePoints planePoints;
 		update_move_planepts_vertex(0, planePoints);
-		vector3_snap(planePoints[0], snap);
-		vector3_snap(planePoints[1], snap);
-		vector3_snap(planePoints[2], snap);
+		planePoints[0].snap(snap);
+		planePoints[1].snap(snap);
+		planePoints[2].snap(snap);
 		assign_planepts(planePoints);
 		freezeTransform();
 		SceneChangeNotify();

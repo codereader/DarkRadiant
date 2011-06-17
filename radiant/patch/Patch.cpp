@@ -357,8 +357,9 @@ void Patch::snapto(float snap)
 {
 	undoSave();
 
-	for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {
-		vector3_snap(i->vertex, snap);
+	for(PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i)
+	{
+		i->vertex.snap(snap);
 	}
 
 	controlPointsChanged();

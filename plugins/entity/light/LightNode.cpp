@@ -182,40 +182,40 @@ void LightNode::snapComponents(float snap) {
 		// Check, if any components are selected and snap the selected ones to the grid
 		if (isSelectedComponents()) {
 			if (_lightTargetInstance.isSelected()) {
-				vector3_snap(_light.targetTransformed(), snap);
+				_light.targetTransformed().snap(snap);
 			}
 			if (_lightRightInstance.isSelected()) {
-				vector3_snap(_light.rightTransformed(), snap);
+				_light.rightTransformed().snap(snap);
 			}
 			if (_lightUpInstance.isSelected()) {
-				vector3_snap(_light.upTransformed(), snap);
+				_light.upTransformed().snap(snap);
 			}
 
 			if (_light.useStartEnd()) {
 				if (_lightEndInstance.isSelected()) {
-					vector3_snap(_light.endTransformed(), snap);
+					_light.endTransformed().snap(snap);
 				}
 
 				if (_lightStartInstance.isSelected()) {
-					vector3_snap(_light.startTransformed(), snap);
+					_light.startTransformed().snap(snap);
 				}
 			}
 		}
 		else {
 			// None are selected, snap them all
-			vector3_snap(_light.targetTransformed(), snap);
-			vector3_snap(_light.rightTransformed(), snap);
-			vector3_snap(_light.upTransformed(), snap);
+			_light.targetTransformed().snap(snap);
+			_light.rightTransformed().snap(snap);
+			_light.upTransformed().snap(snap);
 
 			if (_light.useStartEnd()) {
-				vector3_snap(_light.endTransformed(), snap);
-				vector3_snap(_light.startTransformed(), snap);
+				_light.endTransformed().snap(snap);
+				_light.startTransformed().snap(snap);
 			}
 		}
 	}
 	else {
 		// There is only one vertex for point lights, namely the light_center, always snap it
-		vector3_snap(_light.getDoom3Radius().m_centerTransformed, snap);
+		_light.getDoom3Radius().m_centerTransformed.snap(snap);
 	}
 
 	_light.freezeTransform();

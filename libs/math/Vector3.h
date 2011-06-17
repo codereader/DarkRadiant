@@ -86,6 +86,18 @@ public:
         strm >> z();
     }
 
+	/**
+	 * Named constructor, returning a vector on the unit sphere for the given spherical coordinates.
+	 */
+	static BasicVector3<Element> createForSpherical(Element theta, Element phi)
+	{
+		return BasicVector3<Element>(
+			cos(theta) * cos(phi),
+			sin(theta) * cos(phi),
+			sin(phi)
+		);
+	}
+
 	/** Set all 3 components to the provided values.
 	 */
 	void set(const Element& x, const Element& y, const Element& z) {
@@ -442,6 +454,48 @@ public:
 			   float_equal_epsilon(y(), other.y(), epsilon) && 
 			   float_equal_epsilon(z(), other.z(), epsilon);
 	}
+
+	/**
+	 * Returns a "snapped" copy of this Vector, each component rounded to integers.
+	 */
+	BasicVector3<Element> getSnapped() const
+	{
+		return BasicVector3<Element>(
+			static_cast<Element>(float_to_integer(x())),
+			static_cast<Element>(float_to_integer(y())),
+			static_cast<Element>(float_to_integer(z()))
+		);
+	}
+
+	/**
+	 * Snaps this vector to integer values in place.
+	 */
+	void snap()
+	{
+		*this = getSnapped();
+	}
+
+	/**
+	 * Returns a "snapped" copy of this Vector, each component rounded to the given precision.
+	 */
+	template<typename OtherElement>
+	BasicVector3<Element> getSnapped(const OtherElement& snap) const
+	{
+		return BasicVector3<Element>(
+			static_cast<Element>(float_snapped(x(), snap)),
+			static_cast<Element>(float_snapped(y(), snap)),
+			static_cast<Element>(float_snapped(z(), snap))
+		);
+	}
+
+	/**
+	 * Snaps this vector to the given precision in place.
+	 */
+	template<typename OtherElement>
+	void snap(const OtherElement& snap)
+	{
+		*this = getSnapped(snap);
+	}
 };
 
 /** Stream insertion operator for BasicVector3. Formats vector as "<x, y, z>".
@@ -458,7 +512,7 @@ std::ostream& operator<<(std::ostream& st, BasicVector3<T> vec) {
 // A 3-element vector stored in single-precision floating-point.
 typedef BasicVector3<float> Vector3;
 
-// =============== Common Vector3 Methods ==================================================
+// =============== Vector3 Constants ==================================================
 
 const Vector3 g_vector3_identity(0, 0, 0);
 const Vector3 g_vector3_max = Vector3(FLT_MAX, FLT_MAX, FLT_MAX);
@@ -467,40 +521,3 @@ const Vector3 g_vector3_axis_y(0, 1, 0);
 const Vector3 g_vector3_axis_z(0, 0, 1);
 
 const Vector3 g_vector3_axes[3] = { g_vector3_axis_x, g_vector3_axis_y, g_vector3_axis_z };
-
-
-
-template<typename Element>
-inline BasicVector3<Element> vector3_snapped(const BasicVector3<Element>& self) {
-  return BasicVector3<Element>(
-    Element(float_to_integer(self.x())),
-    Element(float_to_integer(self.y())),
-    Element(float_to_integer(self.z()))
-  );
-}
-
-template<typename Element>
-inline void vector3_snap(BasicVector3<Element>& self) {
-  self = vector3_snapped(self);
-}
-
-template<typename Element, typename OtherElement>
-inline BasicVector3<Element> vector3_snapped(const BasicVector3<Element>& self, const OtherElement& snap) {
-  return BasicVector3<Element>(
-    Element(float_snapped(self.x(), snap)),
-    Element(float_snapped(self.y(), snap)),
-    Element(float_snapped(self.z(), snap))
-  );
-}
-template<typename Element, typename OtherElement>
-inline void vector3_snap(BasicVector3<Element>& self, const OtherElement& snap) {
-  self = vector3_snapped(self, snap);
-}
-
-inline Vector3 vector3_for_spherical(float theta, float phi) {
-  return Vector3(
-    cos(theta) * cos(phi),
-    sin(theta) * cos(phi),
-    sin(phi)
-  );
-}

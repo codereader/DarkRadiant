@@ -202,7 +202,7 @@ void PasteToCamera(const cmd::ArgumentList& args)
 
   // Work out the delta
   Vector3 mid = selection::algorithm::getCurrentSelectionCenter();
-  Vector3 delta = vector3_snapped(camWnd->getCameraOrigin(), GlobalGrid().getGridSize()) - mid;
+  Vector3 delta = camWnd->getCameraOrigin().getSnapped(GlobalGrid().getGridSize()) - mid;
 
   // Move to camera
   GlobalSelectionSystem().translateSelected(delta);
