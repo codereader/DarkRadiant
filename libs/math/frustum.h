@@ -32,29 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "VolumeIntersectionValue.h"
 
-inline Matrix4 matrix4_frustum(float left, float right, float bottom, float top, float nearval, float farval)
-{
-  return Matrix4::byColumns(
-    static_cast<float>( (2*nearval) / (right-left) ),
-    0,
-    0,
-    0,
-    0,
-    static_cast<float>( (2*nearval) / (top-bottom) ),
-    0,
-    0,
-    static_cast<float>( (right+left) / (right-left) ),
-    static_cast<float>( (top+bottom) / (top-bottom) ),
-    static_cast<float>( -(farval+nearval) / (farval-nearval) ),
-    -1,
-    0,
-    0,
-    static_cast<float>( -(2*farval*nearval) / (farval-nearval) ),
-    0
-  );
-}
-
-
 
 typedef unsigned char ClipResult;
 const ClipResult c_CLIP_PASS = 0x00; // 000000
