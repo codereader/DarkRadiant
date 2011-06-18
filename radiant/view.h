@@ -177,11 +177,11 @@ public:
         return m_frustum.testIntersection(aabb);
     }
 
-  VolumeIntersectionValue TestAABB(const AABB& aabb, const Matrix4& localToWorld) const
-  {
-    debug_count_oriented_bbox();
-    return frustum_intersects_transformed_aabb(m_frustum, aabb, localToWorld);
-  }
+	VolumeIntersectionValue TestAABB(const AABB& aabb, const Matrix4& localToWorld) const
+	{
+		debug_count_oriented_bbox();
+		return m_frustum.testIntersection(aabb, localToWorld);
+	}
 
   const Matrix4& GetViewMatrix() const
   {

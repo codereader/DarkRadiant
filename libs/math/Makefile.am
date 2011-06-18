@@ -5,5 +5,6 @@ pkglib_LTLIBRARIES = libmath.la
 libmath_la_LDFLAGS = -release @PACKAGE_VERSION@
 libmath_la_SOURCES = Matrix4.cpp \
                      frustum.cpp \
+					 Plane3.cpp \
                      AABB.cpp \
                      Quaternion.cpp

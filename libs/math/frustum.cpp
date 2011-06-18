@@ -107,3 +107,20 @@ VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb) const
     return result;
 }
 
+VolumeIntersectionValue Frustum::testIntersection(const AABB& aabb, const Matrix4& localToWorld) const
+{
+	AABB aabb_world(aabb);
+	aabb_world.origin = localToWorld.transformPoint(aabb_world.origin);
+
+	if (right.containsAABB(aabb_world, localToWorld) || 
+		left.containsAABB(aabb_world, localToWorld) || 
+		bottom.containsAABB(aabb_world, localToWorld) || 
+		top.containsAABB(aabb_world, localToWorld) || 
+		back.containsAABB(aabb_world, localToWorld) || 
+		front.containsAABB(aabb_world, localToWorld))
+	{
+		return VOLUME_OUTSIDE;
+	}
+
+	return VOLUME_INSIDE;
+}

@@ -17,6 +17,9 @@
 #include "FloatTools.h"
 #include "Vector3.h"
 
+class Matrix4;
+class AABB;
+
 namespace
 {
 	// Some constants for "equality" check.
@@ -204,6 +207,13 @@ public:
 			return Vector3(0,0,0);
 		}
 	}
+
+	float distanceToOrientedExtents(const Vector3& extents, const Matrix4& orientation) const;
+
+	/** 
+	 * Return false if the given AABB with the given orientation is partially or completely outside this plane.
+	 */
+	bool containsAABB(const AABB& aabb, const Matrix4& orientation) const;
 
 }; // class Plane3
 
