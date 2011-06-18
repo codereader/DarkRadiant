@@ -16,7 +16,7 @@ public:
 	/// \brief Returns the point at which \p line intersects \p plane,
 	// or an undefined value if there is no intersection.
 	inline Vector3 intersectPlane(const Plane3& plane) const {
-		return origin + direction * (-plane.distanceToPoint(origin) / direction.dot(plane.normal()));
+		return origin + direction * (-plane.distanceToPointWinding(origin) / direction.dot(plane.normal()));
 	}
 };
 

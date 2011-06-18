@@ -352,22 +352,29 @@ inline std::size_t matrix4_clip_line(const Matrix4& self, const Vector3& p0, con
  * \brief
  * Object representing a frustum, defined by six planes.
  */
-struct Frustum
+class Frustum
 {
-  Plane3 right, left, bottom, top, back, front;
+public:
+	Plane3 right, left, bottom, top, back, front;
 
-  Frustum()
-  {
-  }
-  Frustum(const Plane3& _right,
-    const Plane3& _left,
-    const Plane3& _bottom,
-    const Plane3& _top,
-    const Plane3& _back,
-    const Plane3& _front)
-    : right(_right), left(_left), bottom(_bottom), top(_top), back(_back), front(_front)
-  {
-  }
+	Frustum()
+	{}
+
+	Frustum(const Plane3& _right, const Plane3& _left, 
+			const Plane3& _bottom, const Plane3& _top,
+			const Plane3& _back, const Plane3& _front) : 
+		right(_right), 
+		left(_left), 
+		bottom(_bottom), 
+		top(_top), 
+		back(_back), 
+		front(_front)
+	{}
+
+	/**
+	 * Construct the frustum planes from the given projection matrix.
+	 */
+	static Frustum createFromViewproj(const Matrix4& viewproj);
 
     /**
      * \brief
@@ -393,6 +400,19 @@ struct Frustum
      */
     VolumeIntersectionValue testIntersection(const AABB& aabb) const;
 };
+
+inline Frustum Frustum::createFromViewproj(const Matrix4& viewproj)
+{
+	return Frustum
+	(
+		Plane3(viewproj[3] - viewproj[0], viewproj[7] - viewproj[4], viewproj[11] - viewproj[ 8], viewproj[15] - viewproj[12]).getNormalised(),
+		Plane3(viewproj[3] + viewproj[0], viewproj[7] + viewproj[4], viewproj[11] + viewproj[ 8], viewproj[15] + viewproj[12]).getNormalised(),
+		Plane3(viewproj[3] + viewproj[1], viewproj[7] + viewproj[5], viewproj[11] + viewproj[ 9], viewproj[15] + viewproj[13]).getNormalised(),
+		Plane3(viewproj[3] - viewproj[1], viewproj[7] - viewproj[5], viewproj[11] - viewproj[ 9], viewproj[15] - viewproj[13]).getNormalised(),
+		Plane3(viewproj[3] - viewproj[2], viewproj[7] - viewproj[6], viewproj[11] - viewproj[10], viewproj[15] - viewproj[14]).getNormalised(),
+		Plane3(viewproj[3] + viewproj[2], viewproj[7] + viewproj[6], viewproj[11] + viewproj[10], viewproj[15] + viewproj[14]).getNormalised()
+	);
+}
 
 /**
  * \brief
@@ -424,19 +444,6 @@ inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
 inline bool viewproj_test_transformed_point(const Matrix4& viewproj, const Vector3& point, const Matrix4& localToWorld)
 {
   return viewproj_test_point(viewproj, localToWorld.transformPoint(point));
-}
-
-inline Frustum frustum_from_viewproj(const Matrix4& viewproj)
-{
-  return Frustum
-  (
-    Plane3(viewproj[ 3] - viewproj[ 0], viewproj[ 7] - viewproj[ 4], viewproj[11] - viewproj[ 8], viewproj[15] - viewproj[12]).getNormalised(),
-    Plane3(viewproj[ 3] + viewproj[ 0], viewproj[ 7] + viewproj[ 4], viewproj[11] + viewproj[ 8], viewproj[15] + viewproj[12]).getNormalised(),
-    Plane3(viewproj[ 3] + viewproj[ 1], viewproj[ 7] + viewproj[ 5], viewproj[11] + viewproj[ 9], viewproj[15] + viewproj[13]).getNormalised(),
-    Plane3(viewproj[ 3] - viewproj[ 1], viewproj[ 7] - viewproj[ 5], viewproj[11] - viewproj[ 9], viewproj[15] - viewproj[13]).getNormalised(),
-    Plane3(viewproj[ 3] - viewproj[ 2], viewproj[ 7] - viewproj[ 6], viewproj[11] - viewproj[10], viewproj[15] - viewproj[14]).getNormalised(),
-    Plane3(viewproj[ 3] + viewproj[ 2], viewproj[ 7] + viewproj[ 6], viewproj[11] + viewproj[10], viewproj[15] + viewproj[14]).getNormalised()
-  );
 }
 
 inline float plane_distance_to_point(const Plane3& plane, const Vector3& point)

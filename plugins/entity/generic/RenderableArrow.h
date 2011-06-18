@@ -2,7 +2,7 @@
 #define RENDERABLEARROW_H_
 
 #include "irender.h"
-#include "math/Line.h"
+#include "math/Ray.h"
 
 #include "entitylib.h"
 
