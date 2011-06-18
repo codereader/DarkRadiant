@@ -158,7 +158,7 @@ public:
   }
   bool TestLine(const Segment& segment) const
   {
-    return frustum_test_line(m_frustum, segment);
+    return m_frustum.testLine(segment);
   }
   bool TestPlane(const Plane3& plane) const
   {
