@@ -132,7 +132,7 @@ void FixedWinding::clip(const Plane3& plane, const Plane3& clipPlane, std::size_
 		return; // Degenerate winding, exit
 	}
 
-	PlaneClassification classification = Winding::classifyDistance(clipPlane.distanceToPoint(back().vertex), ON_EPSILON);
+	PlaneClassification classification = Winding::classifyDistance(clipPlane.distanceToPointWinding(back().vertex), ON_EPSILON);
 	PlaneClassification nextClassification;
 
 	// for each edge
@@ -140,7 +140,7 @@ void FixedWinding::clip(const Plane3& plane, const Plane3& clipPlane, std::size_
 		 next != size();
 		 i = next, ++next, classification = nextClassification)
 	{
-		nextClassification = Winding::classifyDistance(clipPlane.distanceToPoint((*this)[next].vertex), ON_EPSILON);
+		nextClassification = Winding::classifyDistance(clipPlane.distanceToPointWinding((*this)[next].vertex), ON_EPSILON);
 		const FixedWindingVertex& vertex = (*this)[i];
 
 		// if first vertex of edge is ON

@@ -4,8 +4,7 @@
  *
  * It is sufficient to specify four numbers to fully describe the plane: the three
  * components of the normal vector (x,y,z) and the dot product of the normal and any point of this plane.
- * (basically this is the "height" at which the plane intersects the z-axis)
- *
+  *
  * There are several constructors available: one requires all four number be passed directly,
  * the second requires the normal vector and the distance <dist> to be passed, the third and fourth
  * requires a set of three points that define the plane.
@@ -154,9 +153,10 @@ public:
   		return pointToProject + planePoint - n*pointToProject.dot(n);
   	}
 
-  	/** greebo: Returns the distance to the given point.
+  	/** greebo: Returns the signed distance to the given point, used by DarkRadiant's winding code,
+	 * where the distance value is negated (for whatever reason).
   	 */
-  	float distanceToPoint(const Vector3& point) const
+  	float distanceToPointWinding(const Vector3& point) const
 	{
   		return point.dot(_normal) - _dist;
   	}

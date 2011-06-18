@@ -104,7 +104,7 @@ class View : public VolumeTest
   {
 	  m_viewproj = m_scissor.getMultipliedBy(m_projection).getMultipliedBy(m_modelview);
 
-    m_frustum = frustum_from_viewproj(m_viewproj);
+    m_frustum = Frustum::createFromViewproj(m_viewproj);
     m_viewer = viewer_from_viewproj(m_viewproj);
   }
 public:
