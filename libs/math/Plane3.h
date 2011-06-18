@@ -161,6 +161,23 @@ public:
   		return point.dot(_normal) - _dist;
   	}
 
+	/**
+	 * Returns the shortest distance of the given point to this plane.
+	 */
+	float distanceToPoint(const Vector3& point) const
+	{
+  		return _normal.dot(point) + _dist;
+  	}
+
+	/**
+	 * Returns true if the given point is on the negative side of this plane (which is the
+	 * opposite side as the plane's normal vector is).
+	 */
+	bool testPoint(const Vector3& point) const
+	{
+		return point.dot(_normal) + _dist <= 0;
+	}
+
   	/* greebo: This calculates the intersection point of three planes.
 	 * Returns <0,0,0> if no intersection point could be found, otherwise returns the coordinates of the intersection point
 	 * (this may also be 0,0,0) */
