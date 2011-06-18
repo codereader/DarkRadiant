@@ -404,6 +404,13 @@ public:
 	 * Test the intersection of this frustum with a transformed AABB.
 	 */
 	VolumeIntersectionValue testIntersection(const AABB& aabb, const Matrix4& localToWorld) const;
+
+	/**
+	 * Returns true if the given point is contained in this frustum.
+	 */
+	bool testPoint(const Vector3& point) const;
+
+	bool testLine(const Segment& segment) const;
 };
 
 inline Frustum Frustum::createFromViewproj(const Matrix4& viewproj)
@@ -419,7 +426,27 @@ inline Frustum Frustum::createFromViewproj(const Matrix4& viewproj)
 	);
 }
 
+inline bool Frustum::testPoint(const Vector3& point) const
+{
+	return !right.testPoint(point) && !left.testPoint(point) && 
+		   !bottom.testPoint(point) && !top.testPoint(point) && 
+		   !back.testPoint(point) && !front.testPoint(point);
+}
 
+inline bool plane3_test_line(const Plane3& plane, const Segment& segment)
+{
+	return segment.classifyPlane(plane) == 2; // totally inside
+}
+
+inline bool Frustum::testLine(const Segment& segment) const
+{
+	return !plane3_test_line(right, segment) && 
+		   !plane3_test_line(left, segment) && 
+		   !plane3_test_line(bottom, segment) && 
+		   !plane3_test_line(top, segment) && 
+		   !plane3_test_line(back, segment) && 
+		   !plane3_test_line(front, segment);
+}
 
 /**
  * \brief
@@ -451,49 +478,6 @@ inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
 inline bool viewproj_test_transformed_point(const Matrix4& viewproj, const Vector3& point, const Matrix4& localToWorld)
 {
   return viewproj_test_point(viewproj, localToWorld.transformPoint(point));
-}
-
-#if 0
-inline float plane_distance_to_oriented_extents(const Plane3& plane, const Vector3& extents, const Matrix4& orientation)
-{
-  return fabs(extents[0] * plane.normal().dot(orientation.x().getVector3()))
-    + fabs(extents[1] * plane.normal().dot(orientation.y().getVector3()))
-    + fabs(extents[2] * plane.normal().dot(orientation.z().getVector3()));
-}
-
-/// \brief Return false if \p aabb with \p orientation is partially or completely outside \p plane.
-inline bool plane_contains_oriented_aabb(const Plane3& plane, const AABB& aabb, const Matrix4& orientation)
-{
-  float dot = plane.distanceToPoint(aabb.origin);
-  return !(dot > 0 || -dot < plane_distance_to_oriented_extents(plane, aabb.extents, orientation));
-}
-#endif
-
-
-
-inline bool plane3_test_line(const Plane3& plane, const Segment& segment)
-{
-	return segment.classifyPlane(plane) == 2;
-}
-
-inline bool frustum_test_point(const Frustum& frustum, const Vector3& point)
-{
-  return !frustum.right.testPoint(point)
-    && !frustum.left.testPoint(point)
-    && !frustum.bottom.testPoint(point)
-    && !frustum.top.testPoint(point)
-    && !frustum.back.testPoint(point)
-    && !frustum.front.testPoint(point);
-}
-
-inline bool frustum_test_line(const Frustum& frustum, const Segment& segment)
-{
-  return !plane3_test_line(frustum.right, segment)
-    && !plane3_test_line(frustum.left, segment)
-    && !plane3_test_line(frustum.bottom, segment)
-    && !plane3_test_line(frustum.top, segment)
-    && !plane3_test_line(frustum.back, segment)
-    && !plane3_test_line(frustum.front, segment);
 }
 
 inline bool viewer_test_plane(const Vector4& viewer, const Plane3& plane)
