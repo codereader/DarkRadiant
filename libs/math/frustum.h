@@ -399,6 +399,11 @@ public:
      * Test the intersection of this frustum with an AABB.
      */
     VolumeIntersectionValue testIntersection(const AABB& aabb) const;
+
+	/**
+	 * Test the intersection of this frustum with a transformed AABB.
+	 */
+	VolumeIntersectionValue testIntersection(const AABB& aabb, const Matrix4& localToWorld) const;
 };
 
 inline Frustum Frustum::createFromViewproj(const Matrix4& viewproj)
@@ -413,6 +418,8 @@ inline Frustum Frustum::createFromViewproj(const Matrix4& viewproj)
 		Plane3(viewproj[3] + viewproj[2], viewproj[7] + viewproj[6], viewproj[11] + viewproj[10], viewproj[15] + viewproj[14]).getNormalised()
 	);
 }
+
+
 
 /**
  * \brief
@@ -446,6 +453,7 @@ inline bool viewproj_test_transformed_point(const Matrix4& viewproj, const Vecto
   return viewproj_test_point(viewproj, localToWorld.transformPoint(point));
 }
 
+#if 0
 inline float plane_distance_to_oriented_extents(const Plane3& plane, const Vector3& extents, const Matrix4& orientation)
 {
   return fabs(extents[0] * plane.normal().dot(orientation.x().getVector3()))
@@ -459,21 +467,9 @@ inline bool plane_contains_oriented_aabb(const Plane3& plane, const AABB& aabb, 
   float dot = plane.distanceToPoint(aabb.origin);
   return !(dot > 0 || -dot < plane_distance_to_oriented_extents(plane, aabb.extents, orientation));
 }
+#endif
 
-inline VolumeIntersectionValue frustum_intersects_transformed_aabb(const Frustum& frustum, const AABB& aabb, const Matrix4& localToWorld)
-{
-  AABB aabb_world(aabb);
-  aabb_world.origin = localToWorld.transformPoint(aabb_world.origin);
 
-  if(plane_contains_oriented_aabb(frustum.right, aabb_world, localToWorld)
-    || plane_contains_oriented_aabb(frustum.left, aabb_world, localToWorld)
-    || plane_contains_oriented_aabb(frustum.bottom, aabb_world, localToWorld)
-    || plane_contains_oriented_aabb(frustum.top, aabb_world, localToWorld)
-    || plane_contains_oriented_aabb(frustum.back, aabb_world, localToWorld)
-    || plane_contains_oriented_aabb(frustum.front, aabb_world, localToWorld))
-    return VOLUME_OUTSIDE;
-  return VOLUME_INSIDE;
-}
 
 inline bool plane3_test_line(const Plane3& plane, const Segment& segment)
 {
