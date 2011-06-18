@@ -446,11 +446,6 @@ inline bool viewproj_test_transformed_point(const Matrix4& viewproj, const Vecto
   return viewproj_test_point(viewproj, localToWorld.transformPoint(point));
 }
 
-inline float plane_distance_to_point(const Plane3& plane, const Vector3& point)
-{
-  return plane.normal().dot(point) + plane.dist();
-}
-
 inline float plane_distance_to_oriented_extents(const Plane3& plane, const Vector3& extents, const Matrix4& orientation)
 {
   return fabs(extents[0] * plane.normal().dot(orientation.x().getVector3()))
@@ -461,7 +456,7 @@ inline float plane_distance_to_oriented_extents(const Plane3& plane, const Vecto
 /// \brief Return false if \p aabb with \p orientation is partially or completely outside \p plane.
 inline bool plane_contains_oriented_aabb(const Plane3& plane, const AABB& aabb, const Matrix4& orientation)
 {
-  float dot = plane_distance_to_point(plane, aabb.origin);
+  float dot = plane.distanceToPoint(aabb.origin);
   return !(dot > 0 || -dot < plane_distance_to_oriented_extents(plane, aabb.extents, orientation));
 }
 
@@ -480,11 +475,6 @@ inline VolumeIntersectionValue frustum_intersects_transformed_aabb(const Frustum
   return VOLUME_INSIDE;
 }
 
-inline bool plane3_test_point(const Plane3& plane, const Vector3& point)
-{
-  return point.dot(plane.normal()) + plane.dist() <= 0;
-}
-
 inline bool plane3_test_line(const Plane3& plane, const Segment& segment)
 {
 	return segment.classifyPlane(plane) == 2;
@@ -492,12 +482,12 @@ inline bool plane3_test_line(const Plane3& plane, const Segment& segment)
 
 inline bool frustum_test_point(const Frustum& frustum, const Vector3& point)
 {
-  return !plane3_test_point(frustum.right, point)
-    && !plane3_test_point(frustum.left, point)
-    && !plane3_test_point(frustum.bottom, point)
-    && !plane3_test_point(frustum.top, point)
-    && !plane3_test_point(frustum.back, point)
-    && !plane3_test_point(frustum.front, point);
+  return !frustum.right.testPoint(point)
+    && !frustum.left.testPoint(point)
+    && !frustum.bottom.testPoint(point)
+    && !frustum.top.testPoint(point)
+    && !frustum.back.testPoint(point)
+    && !frustum.front.testPoint(point);
 }
 
 inline bool frustum_test_line(const Frustum& frustum, const Segment& segment)
