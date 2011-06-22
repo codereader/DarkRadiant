@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ivolumetest.h"
 #include "math/frustum.h"
+#include "math/ViewProjection.h"
 
 
 #if defined(_DEBUG)
@@ -91,8 +92,9 @@ class View : public VolumeTest
 
   Matrix4 m_scissor;
 
-  /// combined modelview and projection matrix
-  Matrix4 m_viewproj;
+	/// combined modelview and projection matrix
+	ViewProjection m_viewproj;
+
   /// camera position in world space
   Vector4 m_viewer;
   /// view frustum in world space
@@ -152,10 +154,11 @@ public:
     construct();
   }
 
-  bool TestPoint(const Vector3& point) const
-  {
-    return viewproj_test_point(m_viewproj, point);
-  }
+	bool TestPoint(const Vector3& point) const
+	{
+		return m_viewproj.testPoint(point);
+	}
+
   bool TestLine(const Segment& segment) const
   {
     return m_frustum.testLine(segment);

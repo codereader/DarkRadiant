@@ -464,21 +464,9 @@ inline std::ostream& operator<< (std::ostream& os, const Frustum& frustum)
     return os;
 }
 
-inline bool viewproj_test_point(const Matrix4& viewproj, const Vector3& point)
-{
-	Vector4 hpoint = viewproj.transform(Vector4(point, 1.0f));
 
-  if(fabs(hpoint[0]) < fabs(hpoint[3])
-    && fabs(hpoint[1]) < fabs(hpoint[3])
-    && fabs(hpoint[2]) < fabs(hpoint[3]))
-    return true;
-  return false;
-}
 
-inline bool viewproj_test_transformed_point(const Matrix4& viewproj, const Vector3& point, const Matrix4& localToWorld)
-{
-  return viewproj_test_point(viewproj, localToWorld.transformPoint(point));
-}
+
 
 inline bool viewer_test_plane(const Vector4& viewer, const Plane3& plane)
 {
