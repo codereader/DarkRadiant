@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ivolumetest.h"
 #include "math/frustum.h"
 #include "math/ViewProjection.h"
+#include "math/Viewer.h"
 
 
 #if defined(_DEBUG)
@@ -95,8 +96,9 @@ class View : public VolumeTest
 	/// combined modelview and projection matrix
 	ViewProjection m_viewproj;
 
-  /// camera position in world space
-  Vector4 m_viewer;
+	/// camera position in world space
+	Viewer m_viewer;
+
   /// view frustum in world space
   Frustum m_frustum;
 
@@ -107,7 +109,7 @@ class View : public VolumeTest
 	  m_viewproj = m_scissor.getMultipliedBy(m_projection).getMultipliedBy(m_modelview);
 
     m_frustum = Frustum::createFromViewproj(m_viewproj);
-    m_viewer = viewer_from_viewproj(m_viewproj);
+	m_viewer = Viewer::createFromViewProjection(m_viewproj);
   }
 public:
   View(bool fill = false) :
@@ -166,12 +168,12 @@ public:
   bool TestPlane(const Plane3& plane) const
   {
     debug_count_plane();
-    return viewer_test_plane(m_viewer, plane);
+	return m_viewer.testPlane(plane);
   }
   bool TestPlane(const Plane3& plane, const Matrix4& localToWorld) const
   {
     debug_count_oriented_plane();
-    return viewer_test_transformed_plane(m_viewer, plane, localToWorld);
+	return m_viewer.testPlane(plane, localToWorld);
   }
 
     VolumeIntersectionValue TestAABB(const AABB& aabb) const
