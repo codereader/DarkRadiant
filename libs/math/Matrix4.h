@@ -10,6 +10,17 @@
 
 class Quaternion;
 
+typedef unsigned char ClipResult;
+
+const ClipResult c_CLIP_PASS = 0x00; // 000000
+const ClipResult c_CLIP_LT_X = 0x01; // 000001
+const ClipResult c_CLIP_GT_X = 0x02; // 000010
+const ClipResult c_CLIP_LT_Y = 0x04; // 000100
+const ClipResult c_CLIP_GT_Y = 0x08; // 001000
+const ClipResult c_CLIP_LT_Z = 0x10; // 010000
+const ClipResult c_CLIP_GT_Z = 0x20; // 100000
+const ClipResult c_CLIP_FAIL = 0x3F; // 111111
+
 /**
  * A 4x4 matrix stored in single-precision floating-point.
  *
@@ -674,6 +685,27 @@ public:
 	 * This matrix must be affine and orthogonal to produce a meaningful result.
 	 */
 	Vector3 getScale() const;
+
+	/**
+	 * Transforms and clips the line formed by p0, p1 by this canonical matrix.
+	 * Stores the resulting line in clipped. 
+	 * 
+	 * @returns: the number of points in the resulting line.
+	 */
+	std::size_t clipLine(const Vector3& p0, const Vector3& p1, Vector4 clipped[2]) const;
+
+	/** 
+	 * Clips point by this canonical matrix and stores the result in clipped.
+	 * Returns a bitmask indicating which clip-planes the point was outside.
+	 */
+	ClipResult clipPoint(const Vector3& point, Vector4& clipped) const;
+
+	/** 
+	 * Transforms and clips the triangle formed by p0, p1, p2 by this canonical matrix.
+	 * Stores the resulting polygon in clipped.
+	 * Returns the number of points in the resulting polygon.
+	 */
+	std::size_t clipTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, Vector4 clipped[9]) const;
 };
 
 // =========================================================================================

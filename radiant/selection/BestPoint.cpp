@@ -100,7 +100,7 @@ void LineStrip_BestPoint(const Matrix4& local2view, const PointVertex* vertices,
   Vector4 clipped[2];
   for(std::size_t i = 0; (i + 1) < size; ++i)
   {
-    const std::size_t count = matrix4_clip_line(local2view, vertices[i].vertex, vertices[i + 1].vertex, clipped);
+    const std::size_t count = local2view.clipLine(vertices[i].vertex, vertices[i + 1].vertex, clipped);
     BestPoint(count, clipped, best, eClipCullNone);
   }
 }
@@ -109,14 +109,14 @@ void LineLoop_BestPoint(const Matrix4& local2view, const PointVertex* vertices, 
   Vector4 clipped[2];
   for(std::size_t i = 0; i < size; ++i)
   {
-    const std::size_t count = matrix4_clip_line(local2view, vertices[i].vertex, vertices[(i+1)%size].vertex, clipped);
+    const std::size_t count = local2view.clipLine(vertices[i].vertex, vertices[(i+1)%size].vertex, clipped);
     BestPoint(count, clipped, best, eClipCullNone);
   }
 }
 
 void Line_BestPoint(const Matrix4& local2view, const PointVertex vertices[2], SelectionIntersection& best) {
   Vector4 clipped[2];
-  const std::size_t count = matrix4_clip_line(local2view, vertices[0].vertex, vertices[1].vertex, clipped);
+  const std::size_t count = local2view.clipLine(vertices[0].vertex, vertices[1].vertex, clipped);
   BestPoint(count, clipped, best, eClipCullNone);
 }
 
@@ -124,7 +124,7 @@ void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const PointVer
   Vector4 clipped[9];
   for(std::size_t i=0; i<size; ++i)
   {
-    const std::size_t count = matrix4_clip_triangle(local2view, g_vector3_identity, vertices[i].vertex, vertices[(i+1)%size].vertex, clipped);
+    const std::size_t count = local2view.clipTriangle(g_vector3_identity, vertices[i].vertex, vertices[(i+1)%size].vertex, clipped);
     BestPoint(count, clipped, best, cull);
   }
 }
@@ -132,11 +132,11 @@ void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const PointVer
 void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const PointVertex* vertices, SelectionIntersection& best) {
   Vector4 clipped[9];
   {
-    const std::size_t count = matrix4_clip_triangle(local2view, vertices[0].vertex, vertices[1].vertex, vertices[3].vertex, clipped);
+    const std::size_t count = local2view.clipTriangle(vertices[0].vertex, vertices[1].vertex, vertices[3].vertex, clipped);
     BestPoint(count, clipped, best, cull);
   }
   {
-    const std::size_t count = matrix4_clip_triangle(local2view, vertices[1].vertex, vertices[2].vertex, vertices[3].vertex, clipped);
+    const std::size_t count = local2view.clipTriangle(vertices[1].vertex, vertices[2].vertex, vertices[3].vertex, clipped);
 	  BestPoint(count, clipped, best, cull);
   }
 }
@@ -146,8 +146,7 @@ void Triangles_BestPoint(const Matrix4& local2view, clipcull_t cull, FlatShadedV
   {
     Vector4 clipped[9];
     BestPoint(
-      matrix4_clip_triangle(
-        local2view,
+      local2view.clipTriangle(
         x->vertex,
         y->vertex,
         z->vertex,

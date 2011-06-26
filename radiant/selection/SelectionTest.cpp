@@ -28,7 +28,7 @@ void SelectionVolume::BeginMesh(const Matrix4& localToWorld, bool twoSided)
 
 void SelectionVolume::TestPoint(const Vector3& point, SelectionIntersection& best) {
     Vector4 clipped;
-    if(matrix4_clip_point(_local2view, point, clipped) == c_CLIP_PASS)
+    if (_local2view.clipPoint(point, clipped) == c_CLIP_PASS)
     {
       best = select_point_from_clipped(clipped);
     }
@@ -39,8 +39,7 @@ void SelectionVolume::TestPolygon(const VertexPointer& vertices, std::size_t cou
     for(std::size_t i=0; i+2<count; ++i)
     {
       BestPoint(
-        matrix4_clip_triangle(
-          _local2view,
+        _local2view.clipTriangle(
           vertices[0],
           vertices[i+1],
           vertices[i+2],
@@ -60,8 +59,7 @@ void SelectionVolume::TestLineLoop(const VertexPointer& vertices, std::size_t co
     for(VertexPointer::iterator i = vertices.begin(), end = i + count, prev = i + (count-1); i != end; prev = i, ++i)
     {
       BestPoint(
-        matrix4_clip_line(
-          _local2view,
+        _local2view.clipLine(
           *prev,
           *i,
           clipped
@@ -80,8 +78,7 @@ void SelectionVolume::TestLineStrip(const VertexPointer& vertices, std::size_t c
     for(VertexPointer::iterator i = vertices.begin(), end = i + count, next = i + 1; next != end; i = next, ++next)
     {
       BestPoint(
-        matrix4_clip_line(
-          _local2view,
+        _local2view.clipLine(
           *i,
           *next,
           clipped
@@ -100,8 +97,7 @@ void SelectionVolume::TestLines(const VertexPointer& vertices, std::size_t count
     for(VertexPointer::iterator i = vertices.begin(), end = i + count; i != end; i += 2)
     {
       BestPoint(
-        matrix4_clip_line(
-          _local2view,
+        _local2view.clipLine(
           *i,
           *(i+1),
           clipped
@@ -118,8 +114,7 @@ void SelectionVolume::TestTriangles(const VertexPointer& vertices, const IndexPo
     for(IndexPointer::iterator i(indices.begin()); i != indices.end(); i += 3)
     {
       BestPoint(
-        matrix4_clip_triangle(
-          _local2view,
+        _local2view.clipTriangle(
           vertices[*i],
           vertices[*(i+1)],
           vertices[*(i+2)],
@@ -137,8 +132,7 @@ void SelectionVolume::TestQuads(const VertexPointer& vertices, const IndexPointe
     for(IndexPointer::iterator i(indices.begin()); i != indices.end(); i += 4)
     {
       BestPoint(
-        matrix4_clip_triangle(
-          _local2view,
+		  _local2view.clipTriangle(
           vertices[*i],
           vertices[*(i+1)],
           vertices[*(i+3)],
@@ -149,8 +143,7 @@ void SelectionVolume::TestQuads(const VertexPointer& vertices, const IndexPointe
         _cull
       );
 	    BestPoint(
-        matrix4_clip_triangle(
-          _local2view,
+        _local2view.clipTriangle(
           vertices[*(i+1)],
           vertices[*(i+2)],
           vertices[*(i+3)],
@@ -168,8 +161,7 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
     for(IndexPointer::iterator i(indices.begin()); i+2 != indices.end(); i += 2)
     {
       BestPoint(
-        matrix4_clip_triangle(
-          _local2view,
+        _local2view.clipTriangle(
           vertices[*i],
           vertices[*(i+1)],
           vertices[*(i+2)],
@@ -180,8 +172,7 @@ void SelectionVolume::TestQuadStrip(const VertexPointer& vertices, const IndexPo
         _cull
       );
       BestPoint(
-        matrix4_clip_triangle(
-          _local2view,
+        _local2view.clipTriangle(
           vertices[*(i+2)],
           vertices[*(i+1)],
           vertices[*(i+3)],
