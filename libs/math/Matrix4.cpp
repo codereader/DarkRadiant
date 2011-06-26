@@ -563,32 +563,33 @@ void Matrix4::scaleBy(const Vector3& scale)
 namespace
 {
 
-template<typename Index>
 class Vector4ClipLT
 {
 public:
-  static bool compare(const Vector4& self)
+  static bool compare(const Vector4& self, std::size_t index)
   {
-    return self[Index::VALUE] < self[3];
+    return self[index] < self[3];
   }
-  static float scale(const Vector4& self, const Vector4& other)
+
+  static float scale(const Vector4& self, const Vector4& other, std::size_t index)
   {
-    return (self[Index::VALUE] - self[3]) / (other[3] - other[Index::VALUE]);
+    return (self[index] - self[3]) / (other[3] - other[index]);
   }
 };
 
-template<typename Index>
 class Vector4ClipGT
 {
 public:
-  static bool compare(const Vector4& self)
+  static bool compare(const Vector4& self, std::size_t index)
   {
-    return self[Index::VALUE] > -self[3];
+    return self[index] > -self[3];
   }
-  static float scale(const Vector4& self, const Vector4& other)
+
+  static float scale(const Vector4& self, const Vector4& other, std::size_t index)
   {
-    return (self[Index::VALUE] + self[3]) / (-other[3] - other[Index::VALUE]);
+    return (self[index] + self[3]) / (-other[3] - other[index]);
   }
+
 };
 
 template<typename ClipPlane>
@@ -598,19 +599,19 @@ public:
   typedef Vector4* iterator;
   typedef const Vector4* const_iterator;
 
-  static std::size_t apply(const_iterator first, const_iterator last, iterator out)
+  static std::size_t apply(const_iterator first, const_iterator last, iterator out, std::size_t index)
   {
     const_iterator next = first, i = last - 1;
     iterator tmp(out);
-    bool b0 = ClipPlane::compare(*i);
+    bool b0 = ClipPlane::compare(*i, index);
     while(next != last)
     {
-      bool b1 = ClipPlane::compare(*next);
+      bool b1 = ClipPlane::compare(*next, index);
       if(b0 ^ b1)
       {
         *out = *next - *i;
 
-        float scale = ClipPlane::scale(*i, *out);
+        float scale = ClipPlane::scale(*i, *out, index);
 
         (*out)[0] = (*i)[0] + scale*((*out)[0]);
         (*out)[1] = (*i)[1] + scale*((*out)[1]);
@@ -635,19 +636,12 @@ public:
   }
 };
 
-/// \brief A compile-time-constant integer.
-template<int VALUE_>
-struct IntegralConstant
-{
-  enum unnamed_{ VALUE = VALUE_ };
-};
-
-#define CLIP_X_LT_W(p) (Vector4ClipLT< IntegralConstant<0> >::compare(p))
-#define CLIP_X_GT_W(p) (Vector4ClipGT< IntegralConstant<0> >::compare(p))
-#define CLIP_Y_LT_W(p) (Vector4ClipLT< IntegralConstant<1> >::compare(p))
-#define CLIP_Y_GT_W(p) (Vector4ClipGT< IntegralConstant<1> >::compare(p))
-#define CLIP_Z_LT_W(p) (Vector4ClipLT< IntegralConstant<2> >::compare(p))
-#define CLIP_Z_GT_W(p) (Vector4ClipGT< IntegralConstant<2> >::compare(p))
+#define CLIP_X_LT_W(p) (Vector4ClipLT::compare(p, 0))
+#define CLIP_X_GT_W(p) (Vector4ClipGT::compare(p, 0))
+#define CLIP_Y_LT_W(p) (Vector4ClipLT::compare(p, 1))
+#define CLIP_Y_GT_W(p) (Vector4ClipGT::compare(p, 1))
+#define CLIP_Z_LT_W(p) (Vector4ClipLT::compare(p, 2))
+#define CLIP_Z_GT_W(p) (Vector4ClipGT::compare(p, 2))
 
 	inline ClipResult homogenous_clip_point(const Vector4& clipped)
 	{
@@ -824,13 +818,13 @@ struct IntegralConstant
 		Vector4 buffer[9];
 		std::size_t count = 3;
 
-		count = Vector4ClipPolygon< Vector4ClipLT< IntegralConstant<0> > >::apply(clipped, clipped + count, buffer);
-		count = Vector4ClipPolygon< Vector4ClipGT< IntegralConstant<0> > >::apply(buffer, buffer + count, clipped);
-		count = Vector4ClipPolygon< Vector4ClipLT< IntegralConstant<1> > >::apply(clipped, clipped + count, buffer);
-		count = Vector4ClipPolygon< Vector4ClipGT< IntegralConstant<1> > >::apply(buffer, buffer + count, clipped);
-		count = Vector4ClipPolygon< Vector4ClipLT< IntegralConstant<2> > >::apply(clipped, clipped + count, buffer);
+		count = Vector4ClipPolygon< Vector4ClipLT >::apply(clipped, clipped + count, buffer, 0);
+		count = Vector4ClipPolygon< Vector4ClipGT >::apply(buffer, buffer + count, clipped, 0);
+		count = Vector4ClipPolygon< Vector4ClipLT >::apply(clipped, clipped + count, buffer, 1);
+		count = Vector4ClipPolygon< Vector4ClipGT >::apply(buffer, buffer + count, clipped, 1);
+		count = Vector4ClipPolygon< Vector4ClipLT >::apply(clipped, clipped + count, buffer, 2);
 
-		return Vector4ClipPolygon< Vector4ClipGT< IntegralConstant<2> > >::apply(buffer, buffer + count, clipped);
+		return Vector4ClipPolygon< Vector4ClipGT >::apply(buffer, buffer + count, clipped, 2);
 	}
 
 } // namespace
