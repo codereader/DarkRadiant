@@ -1,6 +1,6 @@
 #include "SpeakerNode.h"
 
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include <boost/bind.hpp>
 
 namespace entity {

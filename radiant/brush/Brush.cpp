@@ -1,6 +1,6 @@
 #include "Brush.h"
 
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "signal/signal.h"
 #include "irenderable.h"
 #include "itextstream.h"

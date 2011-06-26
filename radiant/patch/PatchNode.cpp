@@ -3,7 +3,7 @@
 #include "ifilter.h"
 #include "iradiant.h"
 #include "icounter.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(bool patchDef3) :

@@ -1,4 +1,4 @@
-#include "frustum.h"
+#include "Frustum.h"
 
 // Normalise all planes in frustum
 void Frustum::normalisePlanes()

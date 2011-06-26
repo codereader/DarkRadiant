@@ -4,7 +4,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Line.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "entitylib.h"
 #include "igl.h"
 

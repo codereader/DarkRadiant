@@ -1,5 +1,5 @@
 #include "BestPoint.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "math/Ray.h"
 
 // get the distance of a point to a segment.

@@ -1,6 +1,6 @@
 #include "NullModel.h"
 
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "irenderable.h"
 #include <stdexcept>
 

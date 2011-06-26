@@ -5,7 +5,7 @@
 #include "ishaders.h"
 #include "ifilter.h"
 #include "imodelcache.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "generic/callback.h"
 #include <boost/bind.hpp>
 

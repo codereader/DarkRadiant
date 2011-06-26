@@ -2,7 +2,7 @@
 
 #include "ifilter.h"
 #include "irenderable.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include <boost/bind.hpp>
 
 extern FaceInstanceSet g_SelectedFaceInstances;

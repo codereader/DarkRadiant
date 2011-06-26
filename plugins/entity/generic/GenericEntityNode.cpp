@@ -1,6 +1,6 @@
 #include "GenericEntityNode.h"
 
-#include "math/frustum.h"
+#include "math/Frustum.h"
 
 namespace entity {
 

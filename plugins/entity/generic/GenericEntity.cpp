@@ -2,7 +2,7 @@
 
 #include "iregistry.h"
 #include "irenderable.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 
 #include "../EntitySettings.h"
 #include "GenericEntityNode.h"

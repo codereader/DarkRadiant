@@ -6,7 +6,7 @@
 #include "ieclass.h"
 #include "os/path.h"
 #include "math/AABB.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "modelskin.h"
 #include "entitylib.h"
 

@@ -2,7 +2,7 @@
 #define RADIANTCAMERAVIEW_H_
 
 #include "icamera.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 
 #include "view.h"
 #include "Camera.h"
