@@ -4,11 +4,12 @@
 /// \brief View-frustum data types and related operations.
 
 #include "math/Matrix4.h"
-#include "math/Plane3.h"
-#include "math/AABB.h"
 #include "math/Segment.h"
 
 #include "VolumeIntersectionValue.h"
+
+class AABB;
+class Plane3;
 
 /**
  * \brief
