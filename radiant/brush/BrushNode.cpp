@@ -4,7 +4,7 @@
 #include "ifilter.h"
 #include "iradiant.h"
 #include "icounter.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include <boost/bind.hpp>
 
 // Constructor

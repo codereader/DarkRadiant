@@ -7,7 +7,7 @@
 #include "editable.h"
 #include "render.h"
 #include "irenderable.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "transformlib.h"
 
 #include "../origin.h"

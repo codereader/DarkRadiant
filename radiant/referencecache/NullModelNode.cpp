@@ -1,6 +1,6 @@
 #include "NullModelNode.h"
 
-#include "math/frustum.h"
+#include "math/Frustum.h"
 
 namespace model {
 

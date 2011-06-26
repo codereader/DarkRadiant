@@ -123,7 +123,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\math\AABB.cpp" />
-    <ClCompile Include="..\..\libs\math\frustum.cpp" />
+    <ClCompile Include="..\..\libs\math\Frustum.cpp" />
     <ClCompile Include="..\..\libs\math\Matrix4.cpp" />
     <ClCompile Include="..\..\libs\math\Plane3.cpp" />
     <ClCompile Include="..\..\libs\math\Quaternion.cpp" />
@@ -132,7 +132,7 @@
     <ClInclude Include="..\..\libs\math\AABB.h" />
     <ClInclude Include="..\..\libs\math\curve.h" />
     <ClInclude Include="..\..\libs\math\FloatTools.h" />
-    <ClInclude Include="..\..\libs\math\frustum.h" />
+    <ClInclude Include="..\..\libs\math\Frustum.h" />
     <ClInclude Include="..\..\libs\math\Line.h" />
     <ClInclude Include="..\..\libs\math\lrint.h" />
     <ClInclude Include="..\..\libs\math\Matrix4.h" />

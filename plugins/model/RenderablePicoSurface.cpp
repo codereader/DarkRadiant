@@ -1,7 +1,7 @@
 #include "RenderablePicoSurface.h"
 
 #include "modelskin.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "iselectiontest.h"
 #include "irenderable.h"
 

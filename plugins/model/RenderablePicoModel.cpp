@@ -7,7 +7,7 @@
 #include "ishaders.h"
 #include "ifilter.h"
 #include "imodelsurface.h"
-#include "math/frustum.h" // VolumeIntersectionValue
+#include "math/Frustum.h" // VolumeIntersectionValue
 
 namespace model {
 

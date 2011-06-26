@@ -7,7 +7,7 @@
 #include "i18n.h"
 
 #include "math/AABB.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "entitylib.h"
 
 #include "string/string.h"

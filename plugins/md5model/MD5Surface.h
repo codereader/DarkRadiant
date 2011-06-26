@@ -5,7 +5,7 @@
 #include "render.h"
 #include "irenderable.h"
 #include "math/AABB.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "iselectiontest.h"
 #include "modelskin.h"
 #include "imodelsurface.h"

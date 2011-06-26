@@ -8,7 +8,7 @@
 #include "irenderable.h"
 #include "itextstream.h"
 #include "iselectiontest.h"
-#include "math/frustum.h"
+#include "math/Frustum.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
 #include "brush/Winding.h"
