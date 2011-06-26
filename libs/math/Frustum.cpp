@@ -1,5 +1,7 @@
 #include "Frustum.h"
 
+#include "AABB.h"
+
 // Normalise all planes in frustum
 void Frustum::normalisePlanes()
 {
