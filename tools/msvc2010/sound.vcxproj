@@ -47,19 +47,35 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    
+    <Import Project="properties\DarkRadiant Base Release Win32.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\OpenAL + Vorbis.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    
+    <Import Project="properties\DarkRadiant Base Debug Win32.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\OpenAL + Vorbis.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    
+    <Import Project="properties\DarkRadiant Base Release x64.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\OpenAL + Vorbis.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    
+    <Import Project="properties\DarkRadiant Base Debug x64.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GTKmm.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\OpenAL + Vorbis.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -97,9 +113,8 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHs /MP %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/openal/include;$(SolutionDir)/../../w32deps/openal/include/AL;$(SolutionDir)/../../w32deps/vorbis/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/glew/include;$(SolutionDir)/../../w32deps/gtkmm/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -116,14 +131,13 @@
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>OpenAL32.lib;libvorbis.lib;gtkutillib.lib;glib-2.0.lib;gobject-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkmm-vc100-d-2_4.lib;sigc-vc100-d-2_0.lib;glibmm-vc100-d-2_4.lib;atkmm-vc100-d-1_6.lib;gdkmm-vc100-d-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL32.lib;libvorbis.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\w32deps/boost\lib;$(SolutionDir)\..\..\w32deps/openal\lib;$(SolutionDir)\..\..\w32deps/gtk2\lib;$(SolutionDir)\..\..\w32deps/gtkmm/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -152,9 +166,8 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHs /MP %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/openal/include;$(SolutionDir)/../../w32deps/openal/include/AL;$(SolutionDir)/../../w32deps/vorbis/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/glew/include;$(SolutionDir)/../../w32deps/gtkmm/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -170,14 +183,13 @@
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>OpenAL32.lib;libvorbis.lib;gtkutillib.lib;glib-2.0.lib;gobject-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkmm-vc100-d-2_4.lib;sigc-vc100-d-2_0.lib;glibmm-vc100-d-2_4.lib;atkmm-vc100-d-1_6.lib;gdkmm-vc100-d-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL32.lib;libvorbis.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\w64deps/boost\lib;$(SolutionDir)\..\..\w64deps/openal\lib;$(SolutionDir)\..\..\w64deps/gtk2\lib;$(SolutionDir)\..\..\w64deps/gtkmm/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -203,11 +215,10 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/openal/include;$(SolutionDir)/../../w32deps/openal/include/AL;$(SolutionDir)/../../w32deps/vorbis/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/glew/include;$(SolutionDir)/../../w32deps/gtkmm/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -220,14 +231,13 @@
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>OpenAL32.lib;libvorbis.lib;gtkutillib.lib;glib-2.0.lib;gobject-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkmm-vc100-2_4.lib;sigc-vc100-2_0.lib;glibmm-vc100-2_4.lib;atkmm-vc100-1_6.lib;gdkmm-vc100-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL32.lib;libvorbis.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\w32deps/boost\lib;$(SolutionDir)\..\..\w32deps/openal\lib;$(SolutionDir)\..\..\w32deps/vorbis\lib;$(SolutionDir)\..\..\w32deps/gtk2\lib;$(SolutionDir)\..\..\w32deps/gtkmm/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -260,11 +270,10 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/openal/include;$(SolutionDir)/../../w32deps/openal/include/AL;$(SolutionDir)/../../w32deps/vorbis/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/glew/include;$(SolutionDir)/../../w32deps/gtkmm/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -277,14 +286,13 @@
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4250;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>OpenAL32.lib;libvorbis.lib;gtkutillib.lib;glib-2.0.lib;gobject-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkmm-vc100-2_4.lib;sigc-vc100-2_0.lib;glibmm-vc100-2_4.lib;atkmm-vc100-1_6.lib;gdkmm-vc100-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OpenAL32.lib;libvorbis.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\w64deps/boost\lib;$(SolutionDir)\..\..\w64deps/openal\lib;$(SolutionDir)\..\..\w64deps/gtk2\lib;$(SolutionDir)\..\..\w64deps/gtkmm/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
