@@ -47,19 +47,39 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    
+    <Import Project="properties\DarkRadiant Base Release Win32.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\libpng.props" />
+    <Import Project="properties\zlib.props" />
+    <Import Project="properties\GTKmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    
+    <Import Project="properties\DarkRadiant Base Debug Win32.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\libpng.props" />
+    <Import Project="properties\zlib.props" />
+    <Import Project="properties\GTKmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    
+    <Import Project="properties\DarkRadiant Base Release x64.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\libpng.props" />
+    <Import Project="properties\zlib.props" />
+    <Import Project="properties\GTKmm.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    
+    <Import Project="properties\DarkRadiant Base Debug x64.props" />
+    <Import Project="properties\Boost.props" />
+    <Import Project="properties\GLEW.props" />
+    <Import Project="properties\libpng.props" />
+    <Import Project="properties\zlib.props" />
+    <Import Project="properties\GTKmm.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
@@ -97,9 +117,8 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHs /MP %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/glew/include;$(SolutionDir)/../../w32deps/libpng/include;$(SolutionDir)/../../w32deps/zlib/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
@@ -120,10 +139,9 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>ddslib.lib;jpeglib.lib;xmlutillib.lib;libxml2-d-vc100.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;glu32.lib;glew32.lib;opengl32.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ddslib.lib;jpeglib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w32deps/gtk2\lib;$(SolutionDir)\..\..\w32deps/glew\lib;$(SolutionDir)\..\..\w32deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -152,9 +170,8 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHs %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/glew/include;$(SolutionDir)/../../w32deps/libpng/include;$(SolutionDir)/../../w32deps/zlib/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -174,10 +191,9 @@
     </ClCompile>
     <Link>
       <AdditionalOptions>/NODEFAULTLIB:LIBCMT %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>ddslib.lib;jpeglib.lib;xmlutillib.lib;libxml2-d-vc100.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;glu32.lib;glew32.lib;opengl32.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ddslib.lib;jpeglib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w64deps/gtk2\lib;$(SolutionDir)\..\..\w64deps/glew\lib;$(SolutionDir)\..\..\w64deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -203,11 +219,10 @@
       </Command>
     </CustomBuildStep>
     <ClCompile>
-      <AdditionalOptions>/EHsc /MP %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/glew/include;$(SolutionDir)/../../w32deps/libpng/include;$(SolutionDir)/../../w32deps/zlib/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -223,10 +238,9 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ddslib.lib;jpeglib.lib;xmlutillib.lib;libxml2-vc100.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;glu32.lib;glew32.lib;opengl32.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ddslib.lib;jpeglib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w32deps/gtk2\lib;$(SolutionDir)\..\..\w32deps/glew\lib;$(SolutionDir)\..\..\w32deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -259,11 +273,10 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/EHsc %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/EHsc /MP</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)/../../include;$(SolutionDir)/../../libs;$(SolutionDir)/../../w32deps/boost/include;$(SolutionDir)/../../w32deps/libxml2/include;$(SolutionDir)/../../w32deps/gtk2/include/gtk-2.0;$(SolutionDir)/../../w32deps/gtk2/include/atk-1.0;$(SolutionDir)/../../w32deps/gtk2/include/glib-2.0;$(SolutionDir)/../../w32deps/gtk2/include/cairo;$(SolutionDir)/../../w32deps/gtk2/include/pango-1.0;$(SolutionDir)/../../w32deps/gtk2/lib/glib-2.0/include;$(SolutionDir)/../../w32deps/gtk2/lib/gtk-2.0/include;$(SolutionDir)/../../w32deps/glew/include;$(SolutionDir)/../../w32deps/libpng/include;$(SolutionDir)/../../w32deps/zlib/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -279,10 +292,9 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ddslib.lib;jpeglib.lib;xmlutillib.lib;libxml2-vc100.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;glu32.lib;glew32.lib;opengl32.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ddslib.lib;jpeglib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(SolutionDir)\..\..\build\libs\$(Platform)\$(Configuration);$(SolutionDir)\..\..\build\libs\$(Platform);$(SolutionDir)\..\..\w64deps/gtk2\lib;$(SolutionDir)\..\..\w64deps/glew\lib;$(SolutionDir)\..\..\w64deps\libxml2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>$(SolutionDir)/../../plugins/$(ProjectName)/$(ProjectName).def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
