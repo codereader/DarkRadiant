@@ -10,9 +10,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link />
-    <Link>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-    </Link>
+    <Link />
   </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="PlatformDepsDir">
