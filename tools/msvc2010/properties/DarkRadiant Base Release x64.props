@@ -3,8 +3,18 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="DarkRadiant Base.props" />
   </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <PlatformDepsDir>$(DarkRadiantRoot)\w64deps\</PlatformDepsDir>
+    <LibSuffix>-d</LibSuffix>
+  </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
-  <ItemGroup />
+  <ItemGroup>
+    <BuildMacro Include="PlatformDepsDir">
+      <Value>$(PlatformDepsDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="LibSuffix">
+      <Value>$(LibSuffix)</Value>
+    </BuildMacro>
+  </ItemGroup>
 </Project>
