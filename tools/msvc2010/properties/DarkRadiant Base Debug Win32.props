@@ -5,7 +5,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <PlatformDepsDir>$(DarkRadiantRoot)\w32deps\</PlatformDepsDir>
-    <LibSuffix />
+    <LibSuffix>-d</LibSuffix>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
