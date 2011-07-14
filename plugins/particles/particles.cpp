@@ -5,8 +5,12 @@
 #include "itextstream.h"
 #include "debugging/debugging.h"
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+#include "editor/ParticleEditorModule.h"
+
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
+{
 	registry.registerModule(particles::ParticlesManagerPtr(new particles::ParticlesManager));
+	registry.registerModule(ui::ParticleEditorModulePtr(new ui::ParticleEditorModule));
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

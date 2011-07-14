@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "imainframe.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
 #include "colourscheme/ColourSchemeEditor.h"
@@ -11,6 +12,7 @@
 #include "FilterMenu.h"
 #include "ModelPreview.h"
 #include "ParticlePreview.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include <gtkmm/iconfactory.h>
 
@@ -201,6 +203,20 @@ UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
                   << fullPath << "'";
         throw;
     }
+	catch (const Gtk::BuilderError& e)
+	{
+		std::cerr << "[UIManager] Gtk::BuilderError with code "
+                  << e.code()
+                  << " attempting to load Glade file '"
+                  << fullPath << "'";
+
+		gtkutil::MessageBox::ShowError("[UIManager] Gtk::BuilderError with code "
+                  + intToStr(e.code())
+                  + " attempting to load Glade file '"
+                  + fullPath + "'", GlobalMainFrame().getTopLevelWindow());
+
+        throw;
+	}
 
     // The builder was created successfully.
     std::cout << "[UIManager] Successfully loaded " << fullPath
