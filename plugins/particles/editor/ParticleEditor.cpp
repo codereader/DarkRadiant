@@ -3,10 +3,17 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
+#include "iparticles.h"
+
 #include "gtkutil/MultiMonitor.h"
+#include "gtkutil/TextColumn.h"
+#include "gtkutil/TreeModel.h"
 
 #include <gtkmm/button.h>
 #include <gtkmm/paned.h>
+#include <gtkmm/treeview.h>
+
+#include "ParticleDefPopulator.h"
 
 namespace ui
 {
@@ -23,6 +30,7 @@ namespace
 ParticleEditor::ParticleEditor() :
 	gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	gtkutil::GladeWidgetHolder(GlobalUIManager().getGtkBuilderFromFile("ParticleEditor.glade")),
+	_defList(Gtk::ListStore::create(_defColumns)),
 	_preview(GlobalUIManager().createParticlePreview())
 {
 	// Window properties
@@ -57,6 +65,51 @@ ParticleEditor::ParticleEditor() :
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
     _windowPosition.connect(this);
     _windowPosition.applyPosition();
+
+	setupParticleDefList();
+}
+
+void ParticleEditor::setupParticleDefList()
+{
+	Gtk::TreeView* view = getGladeWidget<Gtk::TreeView>("definitionView");
+
+	view->set_model(_defList);
+	view->set_headers_visible(false);
+
+	// Single text column
+	view->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), _defColumns.name, false)));
+
+	// Apply full-text search to the column
+	view->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+
+	populateParticleDefList();
+
+	// Connect up the selection changed callback
+	_defSelection = view->get_selection();
+	_defSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onSelChanged));
+}
+
+void ParticleEditor::populateParticleDefList()
+{
+	_defList->clear();
+
+	// Create and use a ParticlesVisitor to populate the list
+	ParticlesVisitor visitor(_defList, _defColumns);
+	GlobalParticlesManager().forEachParticleDef(visitor);
+}
+
+void ParticleEditor::_onSelChanged()
+{
+	// Get the selection and store it
+	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
+
+	if (iter)
+	{
+		Gtk::TreeModel::Row row = *iter;
+		std::string selectedParticle = row[_defColumns.name];
+
+		_preview->setParticle(selectedParticle);
+	}
 }
 
 void ParticleEditor::_onCancel()
