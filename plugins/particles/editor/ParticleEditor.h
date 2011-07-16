@@ -51,6 +51,7 @@ public:
 private:
 	void _preHide();
 	void _preShow();
+	void _postShow();
 
 	// gtkmm callbacks
 	void _onCancel();
@@ -59,6 +60,9 @@ private:
 
 	void setupParticleDefList();
 	void populateParticleDefList();
+
+	void activateEditPanels();
+	void deactivateEditPanels();
 };
 
 } // namespace
