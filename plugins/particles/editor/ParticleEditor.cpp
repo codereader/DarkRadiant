@@ -67,6 +67,9 @@ ParticleEditor::ParticleEditor() :
     _windowPosition.applyPosition();
 
 	setupParticleDefList();
+
+	// Fire the selection changed signal to initialise the sensitiveness
+	_onSelChanged();
 }
 
 void ParticleEditor::setupParticleDefList()
@@ -98,6 +101,24 @@ void ParticleEditor::populateParticleDefList()
 	GlobalParticlesManager().forEachParticleDef(visitor);
 }
 
+void ParticleEditor::activateEditPanels()
+{
+	getGladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(true);
+	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(true);
+
+	getGladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(true);
+	getGladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(true);
+}
+
+void ParticleEditor::deactivateEditPanels()
+{
+	getGladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(false);
+	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(false);		
+
+	getGladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(false);
+	getGladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(false);
+}
+
 void ParticleEditor::_onSelChanged()
 {
 	// Get the selection and store it
@@ -109,6 +130,18 @@ void ParticleEditor::_onSelChanged()
 		std::string selectedParticle = row[_defColumns.name];
 
 		_preview->setParticle(selectedParticle);
+
+		activateEditPanels();
+
+		// Load particle data
+	}
+	else
+	{
+		// Clear working particle
+		
+		_preview->setParticle("");
+
+		deactivateEditPanels();
 	}
 }
 
@@ -128,6 +161,15 @@ void ParticleEditor::_preShow()
 {
 	// Restore the position
 	_windowPosition.applyPosition();
+}
+
+void ParticleEditor::_postShow()
+{
+	// Initialise the GL widget after the widgets have been shown
+	_preview->initialisePreview();
+
+	// Call the base class, will enter main loop
+	BlockingTransientWindow::_postShow();
 }
 
 void ParticleEditor::_onOK()
