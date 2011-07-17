@@ -1,5 +1,4 @@
-#ifndef PARTICLEDEF_H_
-#define PARTICLEDEF_H_
+#pragma once
 
 #include "ParticleStage.h"
 
@@ -70,7 +69,7 @@ public:
 	/**
 	 * Returns the number of stages for this particle system.
 	 */
-	std::size_t getNumStages()
+	std::size_t getNumStages() const
 	{
 		return _stages.size();
 	}
@@ -106,6 +105,29 @@ public:
 	void removeObserver(IParticleDef::Observer* observer)
 	{
 		_observers.erase(observer);
+	}
+
+	bool operator==(const IParticleDef& other) const 
+	{
+		// Compare depth hack flag
+		if (getDepthHack() != other.getDepthHack()) return false;
+
+		// Compare number of stages
+		if (getNumStages() != other.getNumStages()) return false;
+
+		// Compare each stage
+		for (std::size_t i = 0; i < getNumStages(); ++i)
+		{
+			if (getParticleStage(i) != other.getParticleStage(i)) return false;
+		}
+
+		// All checks passed => equal
+		return true;
+	}
+
+	bool operator!=(const IParticleDef& other) const
+	{
+		return !operator==(other);
 	}
 
 	void parseFromTokens(parser::DefTokeniser& tok)
@@ -146,5 +168,3 @@ public:
 typedef boost::shared_ptr<ParticleDef> ParticleDefPtr;
 
 }
-
-#endif /*PARTICLEDEF_H_*/
