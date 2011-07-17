@@ -1,5 +1,4 @@
-#ifndef IPARTICLES_H_
-#define IPARTICLES_H_
+#pragma once
 
 #include "imodule.h"
 #include <boost/function.hpp>
@@ -54,7 +53,7 @@ public:
 	/**
 	 * Returns the number of stages for this particle system.
 	 */
-	virtual std::size_t getNumStages() = 0;
+	virtual std::size_t getNumStages() const = 0;
 
 	/**
 	 * Return a specific particle stage (const version)
@@ -69,6 +68,11 @@ public:
 	// Add or remove an observer to get notified on particle events
 	virtual void addObserver(Observer* observer) = 0;
 	virtual void removeObserver(Observer* observer) = 0;
+
+	// Comparison operators - particle defs are considered equal if all properties (except the name!),
+	// number of stages and stage contents are the equal
+	virtual bool operator==(const IParticleDef& other) const = 0;
+	virtual bool operator!=(const IParticleDef& other) const = 0;
 };
 typedef boost::shared_ptr<IParticleDef> IParticleDefPtr;
 
@@ -189,5 +193,3 @@ inline particles::IParticlesManager& GlobalParticlesManager()
 	);
 	return _particlesManager;
 }
-
-#endif /*IPARTICLES_H_*/

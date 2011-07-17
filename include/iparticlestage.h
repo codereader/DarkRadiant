@@ -1,5 +1,4 @@
-#ifndef _IPARTICLE_STAGE_H_
-#define _IPARTICLE_STAGE_H_
+#pragma once
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
@@ -37,6 +36,11 @@ public:
 
 	// Returns the integrated value at the point <fraction>.
 	virtual float integrate(float fraction) const = 0;
+
+	// Comparison operators - particle parameters are considered equal 
+	// if both from and to are equal
+	virtual bool operator==(const IParticleParameter& other) const = 0;
+	virtual bool operator!=(const IParticleParameter& other) const = 0;
 };
 
 /**
@@ -404,8 +408,11 @@ public:
 	 */
 	virtual const IParticleParameter& getRotationSpeed() const = 0;
 	virtual IParticleParameter& getRotationSpeed() = 0;
+
+	// Comparison operators - particle stages are considered equal 
+	// if all properties are equal
+	virtual bool operator==(const IParticleStage& other) const = 0;
+	virtual bool operator!=(const IParticleStage& other) const = 0;
 };
 
 } // namespace
-
-#endif /* _IPARTICLE_STAGE_H_ */

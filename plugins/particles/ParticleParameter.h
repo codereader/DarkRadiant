@@ -72,6 +72,16 @@ public:
 		return (_to - _from) * 0.5f * (fraction*fraction) + _from * fraction;
 	}
 
+	bool operator==(const IParticleParameter& other) const
+	{
+		return getFrom() == other.getFrom() && getTo() == other.getTo();
+	}
+
+	bool operator!=(const IParticleParameter& other) const
+	{
+		return !operator==(other);
+	}
+
 	void parseFromTokens(parser::DefTokeniser& tok)
 	{
 		std::string val = tok.nextToken();
