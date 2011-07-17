@@ -64,7 +64,7 @@ public:
 	/**
 	 * Return a specific particle stage (non-const version)
 	 */
-	virtual IParticleStage& getParticleStages(std::size_t stageNum) = 0;
+	virtual IParticleStage& getParticleStage(std::size_t stageNum) = 0;
 
 	// Add or remove an observer to get notified on particle events
 	virtual void addObserver(Observer* observer) = 0;
