@@ -86,7 +86,7 @@ public:
 	/**
 	 * Return a specific particle stage (non-const version)
 	 */
-	IParticleStage& getParticleStages(std::size_t stageNum)
+	IParticleStage& getParticleStage(std::size_t stageNum)
 	{
 		return _stages[stageNum];
 	}
