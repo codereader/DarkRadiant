@@ -81,19 +81,19 @@ ParticleDefPtr ParticlesManager::findOrInsertParticleDef(const std::string& name
 }
 
 // Parse particle defs from string
-void ParticlesManager::parseStream(std::istream& contents)
+void ParticlesManager::parseStream(std::istream& contents, const std::string& filename)
 {
 	// Usual ritual, get a parser::DefTokeniser and start tokenising the DEFs
 	parser::BasicDefTokeniser<std::istream> tok(contents);
 
 	while (tok.hasMoreTokens())
 	{
-		parseParticleDef(tok);
+		parseParticleDef(tok, filename);
 	}
 }
 
 // Parse a single particle def
-void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
+void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok, const std::string& filename)
 {
 	// Standard DEF, starts with "particle <name> {"
 	std::string declName = tok.nextToken();
@@ -127,6 +127,8 @@ void ParticlesManager::parseParticleDef(parser::DefTokeniser& tok)
 	tok.assertNextToken("{");
 
 	ParticleDefPtr pdef = findOrInsertParticleDef(name);
+
+	pdef->setFilename(filename);
 
 	// Let the particle construct itself from the token stream
 	pdef->parseFromTokens(tok);

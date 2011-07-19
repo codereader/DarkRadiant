@@ -8,6 +8,7 @@
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/TreeModel.h"
+#include "gtkutil/dialog/MessageBox.h"
 
 #include <gtkmm/button.h>
 #include <gtkmm/paned.h>
@@ -124,25 +125,96 @@ void ParticleEditor::_onSelChanged()
 	// Get the selection and store it
 	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
 
-	if (iter)
+	if (!selectionChangeAllowed())
 	{
-		Gtk::TreeModel::Row row = *iter;
-		std::string selectedParticle = row[_defColumns.name];
+		// Revert the selection (re-enter this function) and cancel the operation
+		_defSelection->select(_selectedIter);
+		return;
+	}
 
-		_preview->setParticle(selectedParticle);
+	if (_selectedIter == iter)
+	{
+		return; // nothing to do so far
+	}
+
+	// Store new selection
+	_selectedIter = iter;
+
+	if (_selectedIter)
+	{
+		// Copy the particle def and set it up for editing
+		setupEditParticle();
 
 		activateEditPanels();
 
-		// Load particle data
+		// TODO Load particle data
 	}
 	else
 	{
-		// Clear working particle
+		// TODO Clear working particle
 		
 		_preview->setParticle("");
 
 		deactivateEditPanels();
 	}
+}
+
+void ParticleEditor::setupEditParticle()
+{
+	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
+
+	if (!iter) return;
+
+	std::string selectedParticle = (*iter)[_defColumns.name];
+
+	particles::IParticleDefPtr particleDef = GlobalParticlesManager().getParticle(selectedParticle);
+
+	if (particleDef == NULL)
+	{
+		_preview->setParticle("");
+		return;
+	}
+
+	_preview->setParticle(selectedParticle);
+}
+
+bool ParticleEditor::selectionChangeAllowed()
+{
+	// Get the selection and store it
+	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
+
+	if (_selectedIter && _particle != NULL && _selectedIter != iter)
+	{
+		// Particle selection changed, check if we have any unsaved changes
+		std::string originalParticleName = (*_selectedIter)[_defColumns.name];
+
+		particles::IParticleDefPtr originalParticle = GlobalParticlesManager().getParticle(originalParticleName);
+
+		if (!originalParticle || *_particle != *originalParticle)
+		{
+			// The particle we're editing has been changed from the saved one
+			gtkutil::MessageBox box(_("Save Changes"), 
+				(boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % originalParticleName).str(),
+				IDialog::MESSAGE_SAVECONFIRMATION, GlobalMainFrame().getTopLevelWindow());
+
+			IDialog::Result result = box.run();
+
+			if (result == IDialog::RESULT_CANCELLED)
+			{
+				return false;
+			}
+			
+			if (result = IDialog::RESULT_YES)
+			{
+				// Save the changes
+				// TODO
+			}
+
+			return true;
+		}
+	}
+
+	return true;
 }
 
 void ParticleEditor::_onCancel()

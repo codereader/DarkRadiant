@@ -40,7 +40,7 @@ public:
 			// File is open, so parse the tokens
 			try {
 				std::istream is(&(file->getInputStream()));
-				_manager.parseStream(is);
+				_manager.parseStream(is, filename);
 			}
 			catch (parser::ParseException& e) {
 				std::cerr << "[particles] Failed to parse " << filename
