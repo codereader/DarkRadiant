@@ -99,6 +99,8 @@ public:
 	// Resets/clears all values to default. This is called by parseFromTokens().
 	void reset();
 
+	void copyFrom(const IParticleStage& other);
+
 	/**
 	 * Get the shader name.
 	 */

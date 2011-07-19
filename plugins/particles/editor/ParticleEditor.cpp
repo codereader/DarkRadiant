@@ -15,6 +15,9 @@
 #include <gtkmm/treeview.h>
 
 #include "ParticleDefPopulator.h"
+#include "../ParticlesManager.h"
+
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
 {
@@ -26,6 +29,8 @@ namespace
 
 	const std::string RKEY_ROOT = "user/ui/particleEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+
+	const std::string EDIT_SUFFIX = "___editor";
 }
 
 ParticleEditor::ParticleEditor() :
@@ -137,6 +142,9 @@ void ParticleEditor::_onSelChanged()
 		return; // nothing to do so far
 	}
 
+	// Selected particle changed, free the existing edit particle
+	releaseEditParticle();
+
 	// Store new selection
 	_selectedIter = iter;
 
@@ -175,7 +183,26 @@ void ParticleEditor::setupEditParticle()
 		return;
 	}
 
-	_preview->setParticle(selectedParticle);
+	// Generate a temporary name for this particle, and instantiate a copy
+	std::string temporaryParticleName = selectedParticle + EDIT_SUFFIX;
+
+	_particle = particles::ParticlesManager::Instance().findOrInsertParticleDef(temporaryParticleName);
+	_particle->setFilename(particleDef->getFilename());
+
+	_particle->copyFrom(*particleDef);
+
+	// Point the preview to this temporary particle def
+	_preview->setParticle(_particle->getName());
+}
+
+void ParticleEditor::releaseEditParticle()
+{
+	if (_particle && boost::algorithm::ends_with(_particle->getName(), EDIT_SUFFIX))
+	{
+		particles::ParticlesManager::Instance().removeParticleDef(_particle->getName());
+	}
+	
+	_particle.reset();
 }
 
 bool ParticleEditor::selectionChangeAllowed()
@@ -227,6 +254,9 @@ void ParticleEditor::_preHide()
 {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
+
+	// Free the edit particle before hiding this dialog
+	releaseEditParticle();
 }
 
 void ParticleEditor::_preShow()

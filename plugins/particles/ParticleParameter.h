@@ -72,6 +72,14 @@ public:
 		return (_to - _from) * 0.5f * (fraction*fraction) + _from * fraction;
 	}
 
+	ParticleParameter& operator=(const IParticleParameter& other)
+	{
+		setFrom(other.getFrom());
+		setTo(other.getTo());
+
+		return *this;
+	}
+
 	bool operator==(const IParticleParameter& other) const
 	{
 		return getFrom() == other.getFrom() && getTo() == other.getTo();

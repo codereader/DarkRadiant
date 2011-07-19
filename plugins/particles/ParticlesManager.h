@@ -1,5 +1,4 @@
-#ifndef PARTICLESMANAGER_H_
-#define PARTICLESMANAGER_H_
+#pragma once
 
 #include "ParticleDef.h"
 #include "ParticleStage.h"
@@ -35,6 +34,13 @@ public:
 	void removeObserver(IParticlesManager::Observer* observer);
 	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
 	IParticleDefPtr getParticle(const std::string& name);
+
+	// Finds or creates the particle def with the given name, always returns non-NULL
+	ParticleDefPtr findOrInsertParticleDef(const std::string& name);
+
+	// Removes the named particle definition from the storage
+	void removeParticleDef(const std::string& name);
+
 	IRenderableParticlePtr getRenderableParticle(const std::string& name);
 	void reloadParticleDefs();
 
@@ -49,15 +55,17 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);
 
+	static ParticlesManager& Instance()
+	{
+		return *boost::static_pointer_cast<ParticlesManager>(
+			module::GlobalModuleRegistry().getModule(MODULE_PARTICLESMANAGER)
+		);
+	}
+
 private:
 	// Recursive-descent parse functions
 	void parseParticleDef(parser::DefTokeniser& tok, const std::string& filename);
-
-	// Finds or creates the particle def with the given name, always returns non-NULL
-	ParticleDefPtr findOrInsertParticleDef(const std::string& name);
 };
 typedef boost::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 
 }
-
-#endif /*PARTICLESMANAGER_H_*/
