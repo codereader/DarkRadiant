@@ -42,7 +42,7 @@ public:
 	 * Accept a stream containing particle definitions to parse and add to the
 	 * list.
 	 */
-	void parseStream(std::istream& s);
+	void parseStream(std::istream& s, const std::string& filename);
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
@@ -51,7 +51,7 @@ public:
 
 private:
 	// Recursive-descent parse functions
-	void parseParticleDef(parser::DefTokeniser& tok);
+	void parseParticleDef(parser::DefTokeniser& tok, const std::string& filename);
 
 	// Finds or creates the particle def with the given name, always returns non-NULL
 	ParticleDefPtr findOrInsertParticleDef(const std::string& name);

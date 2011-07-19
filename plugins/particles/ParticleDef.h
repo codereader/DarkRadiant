@@ -22,6 +22,9 @@ class ParticleDef
 	// Name
 	std::string _name;
 
+	// The filename this particle has been defined in
+	std::string _filename;
+
 	// Depth hack
 	float _depthHack;
 
@@ -44,8 +47,19 @@ public:
 	/**
 	 * Return the ParticleDef name.
 	 */
-	std::string getName() const {
+	const std::string& getName() const
+	{
 		return _name;
+	}
+
+	const std::string& getFilename() const
+	{
+		return _filename;
+	}
+
+	void setFilename(const std::string& filename)
+	{
+		_filename = filename;
 	}
 
 	// Clears stage and depth hack information

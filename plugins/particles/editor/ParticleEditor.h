@@ -10,6 +10,8 @@
 
 #include "iparticlepreview.h"
 
+#include "../ParticleDef.h"
+
 namespace ui
 {
 
@@ -39,6 +41,12 @@ private:
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
 
+	// The currently selected row in the model
+	Gtk::TreeModel::iterator _selectedIter;
+
+	// The particle definition we're working on
+	particles::ParticleDefPtr _particle;
+
 private:
 	ParticleEditor();
 
@@ -63,6 +71,9 @@ private:
 
 	void activateEditPanels();
 	void deactivateEditPanels();
+
+	bool selectionChangeAllowed();
+	void setupEditParticle();
 };
 
 } // namespace
