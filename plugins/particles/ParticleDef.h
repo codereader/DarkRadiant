@@ -144,6 +144,21 @@ public:
 		return !operator==(other);
 	}
 
+	void copyFrom(const IParticleDef& other)
+	{
+		setDepthHack(other.getDepthHack());
+
+		_name = other.getName();
+		_filename = other.getFilename();
+
+		_stages.resize(other.getNumStages());
+
+		for (std::size_t i = 0; i < _stages.size(); ++i)
+		{
+			_stages[i].copyFrom(other.getParticleStage(i));
+		}
+	}
+
 	void parseFromTokens(parser::DefTokeniser& tok)
 	{
 		// Clear out the particle def (except the name) before parsing

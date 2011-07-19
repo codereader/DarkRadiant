@@ -80,6 +80,16 @@ ParticleDefPtr ParticlesManager::findOrInsertParticleDef(const std::string& name
 	return result.first->second;
 }
 
+void ParticlesManager::removeParticleDef(const std::string& name)
+{
+	ParticleDefMap::iterator i = _particleDefs.find(name);
+
+	if (i != _particleDefs.end())
+	{
+		_particleDefs.erase(i);
+	}
+}
+
 // Parse particle defs from string
 void ParticlesManager::parseStream(std::istream& contents, const std::string& filename)
 {

@@ -79,6 +79,10 @@ public:
 	// number of stages and stage contents are the equal
 	virtual bool operator==(const IParticleDef& other) const = 0;
 	virtual bool operator!=(const IParticleDef& other) const = 0;
+
+	// Copies all properties from the other particle, overwriting this one
+	// Note: Observers are not copied
+	virtual void copyFrom(const IParticleDef& other) = 0;
 };
 typedef boost::shared_ptr<IParticleDef> IParticleDefPtr;
 

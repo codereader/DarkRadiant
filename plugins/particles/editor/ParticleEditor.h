@@ -73,7 +73,9 @@ private:
 	void deactivateEditPanels();
 
 	bool selectionChangeAllowed();
+
 	void setupEditParticle();
+	void releaseEditParticle();
 };
 
 } // namespace

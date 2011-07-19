@@ -108,6 +108,63 @@ void ParticleStage::reset()
 	_aspect = ParticleParameter(1.0f);
 }
 
+void ParticleStage::copyFrom(const IParticleStage& other)
+{
+	setMaterialName(other.getMaterialName());
+	setCount(other.getCount());
+	setDuration(other.getDuration());
+	setCycles(other.getCycles());
+	setBunching(other.getBunching());
+	setTimeOffset(other.getTimeOffset());
+	setDeadTime(other.getDeadTime());
+	setColour(other.getColour());
+	setFadeColour(other.getFadeColour());
+	setFadeInFraction(other.getFadeInFraction());
+	setFadeOutFraction(other.getFadeOutFraction());
+	setFadeIndexFraction(other.getFadeIndexFraction());
+	setAnimationFrames(other.getAnimationFrames());
+	setAnimationRate(other.getAnimationRate());
+	setInitialAngle(other.getInitialAngle());
+	setBoundsExpansion(other.getBoundsExpansion());
+	setRandomDistribution(other.getRandomDistribution());
+	setUseEntityColour(other.getUseEntityColour());
+	setGravity(other.getGravity());
+	setWorldGravityFlag(other.getWorldGravityFlag());
+	setOffset(other.getOffset());
+	setOrientationType(other.getOrientationType());
+
+	for (int i = 0; i < 3; ++i)
+	{
+		setOrientationParm(i, other.getOrientationParm(i));
+	}
+
+	setDistributionType(other.getDistributionType());
+
+	for (int i = 0; i < 3; ++i)
+	{
+		setDistributionParm(i, other.getDistributionParm(i));
+	}
+
+	setDirectionType(other.getDirectionType());
+
+	for (int i = 0; i < 3; ++i)
+	{
+		setDirectionParm(i, other.getDirectionParm(i));
+	}
+
+	setCustomPathType(other.getCustomPathType());
+
+	for (int i = 0; i < 7; ++i)
+	{
+		setCustomPathParm(i, other.getCustomPathParm(i));
+	}
+
+	getSize() = other.getSize();
+	getAspect() = other.getAspect();
+	getSpeed() = other.getSpeed();
+	getRotationSpeed() = other.getRotationSpeed();
+}
+
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 {
 	reset();
