@@ -137,7 +137,7 @@ void ParticleEditor::_onSelChanged()
 		return;
 	}
 
-	if (_selectedIter == iter)
+	if (_selectedIter && iter && _selectedIter == iter)
 	{
 		return; // nothing to do so far
 	}
