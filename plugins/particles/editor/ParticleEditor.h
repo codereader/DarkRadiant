@@ -29,12 +29,28 @@ public:
 		Gtk::TreeModelColumn<std::string> name;
 	};
 
+	// Treemodel definition
+	struct StageColumns :
+		public Gtk::TreeModel::ColumnRecord
+	{
+		StageColumns() { add(name); add(visible); add(colour); }
+
+		Gtk::TreeModelColumn<std::string> name;
+		Gtk::TreeModelColumn<bool> visible;
+		Gtk::TreeModelColumn<std::string> colour;
+	};
+
 private:
 	// List of target_addobjectives entities
 	DefColumns _defColumns;
 	Glib::RefPtr<Gtk::ListStore> _defList;
 
 	Glib::RefPtr<Gtk::TreeSelection> _defSelection;
+
+	StageColumns _stageColumns;
+	Glib::RefPtr<Gtk::ListStore> _stageList;
+
+	Glib::RefPtr<Gtk::TreeSelection> _stageSelection;
 
 	IParticlePreviewPtr _preview;
 
@@ -65,9 +81,12 @@ private:
 	void _onCancel();
 	void _onOK();
 	void _onSelChanged();
+	void _onStageSelChanged();
 
 	void setupParticleDefList();
 	void populateParticleDefList();
+
+	void setupParticleStageList();
 
 	void activateEditPanels();
 	void deactivateEditPanels();
@@ -76,6 +95,8 @@ private:
 
 	void setupEditParticle();
 	void releaseEditParticle();
+
+	void updateWidgetsFromParticle();
 };
 
 } // namespace

@@ -37,6 +37,7 @@ ParticleEditor::ParticleEditor() :
 	gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalMainFrame().getTopLevelWindow()),
 	gtkutil::GladeWidgetHolder(GlobalUIManager().getGtkBuilderFromFile("ParticleEditor.glade")),
 	_defList(Gtk::ListStore::create(_defColumns)),
+	_stageList(Gtk::ListStore::create(_stageColumns)),
 	_preview(GlobalUIManager().createParticlePreview())
 {
 	// Window properties
@@ -73,6 +74,7 @@ ParticleEditor::ParticleEditor() :
     _windowPosition.applyPosition();
 
 	setupParticleDefList();
+	setupParticleStageList();
 
 	// Fire the selection changed signal to initialise the sensitiveness
 	_onSelChanged();
@@ -105,6 +107,21 @@ void ParticleEditor::populateParticleDefList()
 	// Create and use a ParticlesVisitor to populate the list
 	ParticlesVisitor visitor(_defList, _defColumns);
 	GlobalParticlesManager().forEachParticleDef(visitor);
+}
+
+void ParticleEditor::setupParticleStageList()
+{
+	Gtk::TreeView* view = getGladeWidget<Gtk::TreeView>("stageView");
+
+	view->set_model(_stageList);
+	view->set_headers_visible(false);
+
+	// Single text column
+	view->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Stage"), _stageColumns.name, false)));
+
+	// Connect up the selection changed callback
+	_stageSelection = view->get_selection();
+	_stageSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onStageSelChanged));
 }
 
 void ParticleEditor::activateEditPanels()
@@ -155,15 +172,35 @@ void ParticleEditor::_onSelChanged()
 
 		activateEditPanels();
 
-		// TODO Load particle data
+		// Load particle data
+		updateWidgetsFromParticle();
 	}
 	else
 	{
-		// TODO Clear working particle
-		
 		_preview->setParticle("");
-
 		deactivateEditPanels();
+	}
+}
+
+void ParticleEditor::_onStageSelChanged()
+{
+	// TODO
+}
+
+void ParticleEditor::updateWidgetsFromParticle()
+{
+	if (!_particle) return;
+
+	// Load stages
+	_stageList->clear();
+
+	for (std::size_t i = 0; i < _particle->getNumStages(); ++i)
+	{
+		Gtk::TreeModel::iterator iter = _stageList->append();
+
+		(*iter)[_stageColumns.name] = (boost::format("Stage %d") % i).str();
+		(*iter)[_stageColumns.visible] = true;
+		(*iter)[_stageColumns.colour] = "#000000";
 	}
 }
 
@@ -210,7 +247,7 @@ bool ParticleEditor::selectionChangeAllowed()
 	// Get the selection and store it
 	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
 
-	if (_selectedIter && _particle != NULL && _selectedIter != iter)
+	if (_selectedIter && _particle != NULL && iter && _selectedIter != iter)
 	{
 		// Particle selection changed, check if we have any unsaved changes
 		std::string originalParticleName = (*_selectedIter)[_defColumns.name];
