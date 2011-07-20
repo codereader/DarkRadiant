@@ -12,6 +12,7 @@
 
 #include <gtkmm/button.h>
 #include <gtkmm/paned.h>
+#include <gtkmm/spinbutton.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/stock.h>
 
@@ -227,6 +228,7 @@ void ParticleEditor::_onDefSelChanged()
 	else
 	{
 		_preview->setParticle("");
+		_stageList->clear();
 		deactivateEditPanels();
 	}
 }
@@ -248,9 +250,6 @@ void ParticleEditor::_onStageSelChanged()
 	if (_selectedStageIter)
 	{
 		activateSettingsEditPanels();
-
-		// Reload the current stage data
-		// TODO
 
 		// Activate delete, move and toggle buttons
 		isStageSelected = true;
@@ -275,6 +274,9 @@ void ParticleEditor::_onStageSelChanged()
 	getGladeWidget<Gtk::Button>("removeStageButton")->set_sensitive(isStageSelected);
 	getGladeWidget<Gtk::Button>("toggleStageButton")->set_sensitive(isStageSelected);
 	getGladeWidget<Gtk::Button>("duplicateStageButton")->set_sensitive(isStageSelected);
+
+	// Reload the current stage data
+	updateWidgetsFromStage();
 }
 
 void ParticleEditor::_onAddStage()
@@ -361,6 +363,9 @@ void ParticleEditor::updateWidgetsFromParticle()
 
 	// Load stages
 	reloadStageList();
+
+	// Load stage data into controls
+	updateWidgetsFromStage();
 }
 
 void ParticleEditor::reloadStageList()
@@ -381,6 +386,34 @@ void ParticleEditor::reloadStageList()
 		(*iter)[_stageColumns.visible] = true;
 		(*iter)[_stageColumns.colour] = stage.isVisible() ? "#000000" : "#707070";
 	}
+
+	// Select the first stage if possible
+	gtkutil::TreeModel::findAndSelectInteger(getGladeWidget<Gtk::TreeView>("stageView"), 0, _stageColumns.index);
+}
+
+void ParticleEditor::updateWidgetsFromStage()
+{
+	if (!_particle || !_selectedStageIter) return;
+
+	const particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
+
+	getGladeWidget<Gtk::Entry>("shaderEntry")->set_text(stage.getMaterialName());
+
+	const Vector4& colour = stage.getColour();
+	getGladeWidget<Gtk::Entry>("colourEntry")->set_text(
+		(boost::format("%f %f %f %f") % colour.x() % colour.y() % colour.z() % colour.w()).str()
+	);
+
+	const Vector4& fadeColour = stage.getFadeColour();
+	getGladeWidget<Gtk::Entry>("fadeColourEntry")->set_text(
+		(boost::format("%f %f %f %f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str()
+	);
+
+	getGladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->get_adjustment()->set_value(stage.getFadeInFraction());
+	getGladeWidget<Gtk::SpinButton>("fadeOutFractionSpinner")->get_adjustment()->set_value(stage.getFadeOutFraction());
+	getGladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->get_adjustment()->set_value(stage.getFadeIndexFraction());
+	getGladeWidget<Gtk::SpinButton>("animFramesSpinner")->get_adjustment()->set_value(stage.getAnimationFrames());
+	getGladeWidget<Gtk::SpinButton>("animRateSpinner")->get_adjustment()->set_value(stage.getAnimationRate());
 }
 
 void ParticleEditor::setupEditParticle()
