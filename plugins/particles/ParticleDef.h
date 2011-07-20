@@ -118,6 +118,12 @@ public:
 		}
 
 		std::swap(_stages[index], _stages[index2]);
+
+		// Notify any observers about this event
+		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
+		{
+			(*i++)->onParticleStageOrderChanged();
+		}
 	}
 
 	void appendStage(const ParticleStage& stage)
