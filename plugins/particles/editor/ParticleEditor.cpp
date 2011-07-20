@@ -126,6 +126,16 @@ void ParticleEditor::setupParticleStageList()
 	// Connect the stage control buttons
 	getGladeWidget<Gtk::Button>("addStageButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onAddStage));
+	getGladeWidget<Gtk::Button>("removeStageButton")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onRemoveStage));
+	getGladeWidget<Gtk::Button>("toggleStageButton")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onToggleStage));
+	getGladeWidget<Gtk::Button>("moveStageUpButton")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onMoveUpStage));
+	getGladeWidget<Gtk::Button>("moveStageDownButton")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onMoveDownStage));
+	getGladeWidget<Gtk::Button>("duplicateStageButton")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDuplicateStage));
 }
 
 void ParticleEditor::activateEditPanels()
@@ -278,6 +288,35 @@ void ParticleEditor::_onRemoveStage()
 	reloadStageList();
 }
 
+void ParticleEditor::_onToggleStage()
+{
+	if (!_particle || !_selectedStageIter) return;
+
+	std::size_t index = getSelectedStageIndex();
+
+	particles::IParticleStage& stage = _particle->getParticleStage(index);
+
+	stage.setVisible(!stage.isVisible());
+
+	reloadStageList();
+	selectStage(index);
+}
+
+void ParticleEditor::_onMoveUpStage()
+{
+	// TODO
+}
+
+void ParticleEditor::_onMoveDownStage()
+{
+	// TODO
+}
+
+void ParticleEditor::_onDuplicateStage()
+{
+	// TODO
+}
+
 void ParticleEditor::updateWidgetsFromParticle()
 {
 	if (!_particle) return;
@@ -295,12 +334,14 @@ void ParticleEditor::reloadStageList()
 
 	for (std::size_t i = 0; i < _particle->getNumStages(); ++i)
 	{
+		const particles::IParticleStage& stage = _particle->getParticleStage(i);
+
 		Gtk::TreeModel::iterator iter = _stageList->append();
 
 		(*iter)[_stageColumns.name] = (boost::format("Stage %d") % static_cast<int>(i)).str();
 		(*iter)[_stageColumns.index] = static_cast<int>(i);
 		(*iter)[_stageColumns.visible] = true;
-		(*iter)[_stageColumns.colour] = "#000000";
+		(*iter)[_stageColumns.colour] = stage.isVisible() ? "#000000" : "#707070";
 	}
 }
 

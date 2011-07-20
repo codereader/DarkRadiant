@@ -28,12 +28,14 @@ namespace
 	}
 }
 
-ParticleStage::ParticleStage()
+ParticleStage::ParticleStage() :
+	_visible(true)
 {
 	reset();
 }
 
-ParticleStage::ParticleStage(parser::DefTokeniser& tok)
+ParticleStage::ParticleStage(parser::DefTokeniser& tok) :
+	_visible(true)
 {
 	// Parse from the tokens, but don't allow any parse exceptions
 	// from leaving this constructor.

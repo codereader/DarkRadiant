@@ -46,6 +46,8 @@ public:
 
 	const AABB& getBounds();
 
+	const IParticleStage& getStage() const;
+
 private:
 	// Returns the correct rotation matrix required by the stage orientation settings
 	void calculateStageViewRotation(const Matrix4& viewRotation);

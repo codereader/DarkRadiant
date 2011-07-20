@@ -89,6 +89,11 @@ const AABB& RenderableParticleStage::getBounds()
 	return _bounds;
 }
 
+const IParticleStage& RenderableParticleStage::getStage() const
+{
+	return _stage;
+}
+
 void RenderableParticleStage::calculateStageViewRotation(const Matrix4& viewRotation)
 {
 	switch (_stage.getOrientationType())
