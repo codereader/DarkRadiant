@@ -33,11 +33,12 @@ public:
 	struct StageColumns :
 		public Gtk::TreeModel::ColumnRecord
 	{
-		StageColumns() { add(name); add(visible); add(colour); }
+		StageColumns() { add(name); add(index); add(visible); add(colour); }
 
-		Gtk::TreeModelColumn<std::string> name;
+		Gtk::TreeModelColumn<Glib::ustring> name;
+		Gtk::TreeModelColumn<int> index;
 		Gtk::TreeModelColumn<bool> visible;
-		Gtk::TreeModelColumn<std::string> colour;
+		Gtk::TreeModelColumn<Glib::ustring> colour;
 	};
 
 private:
@@ -57,8 +58,9 @@ private:
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;
 
-	// The currently selected row in the model
-	Gtk::TreeModel::iterator _selectedIter;
+	// The currently selected rows in the model
+	Gtk::TreeModel::iterator _selectedDefIter;
+	Gtk::TreeModel::iterator _selectedStageIter;
 
 	// The particle definition we're working on
 	particles::ParticleDefPtr _particle;
@@ -80,8 +82,14 @@ private:
 	// gtkmm callbacks
 	void _onCancel();
 	void _onOK();
-	void _onSelChanged();
+	void _onDefSelChanged();
 	void _onStageSelChanged();
+	void _onAddStage();
+	void _onRemoveStage();
+
+	// Returns the 0-based index of the current stage
+	std::size_t getSelectedStageIndex();
+	void selectStage(std::size_t index);
 
 	void setupParticleDefList();
 	void populateParticleDefList();
@@ -91,12 +99,16 @@ private:
 	void activateEditPanels();
 	void deactivateEditPanels();
 
+	void activateSettingsEditPanels();
+	void deactivateSettingsEditPanels();
+
 	bool selectionChangeAllowed();
 
 	void setupEditParticle();
 	void releaseEditParticle();
 
 	void updateWidgetsFromParticle();
+	void reloadStageList();
 };
 
 } // namespace

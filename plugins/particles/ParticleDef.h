@@ -80,34 +80,38 @@ public:
 		_depthHack = value;
 	}
 
-	/**
-	 * Returns the number of stages for this particle system.
-	 */
 	std::size_t getNumStages() const
 	{
 		return _stages.size();
 	}
 
-	/**
-	 * Return a specific particle stage (const version)
-	 */
 	const IParticleStage& getParticleStage(std::size_t stageNum) const
 	{
 		return _stages[stageNum];
 	}
 
-	/**
-	 * Return a specific particle stage (non-const version)
-	 */
 	IParticleStage& getParticleStage(std::size_t stageNum)
 	{
 		return _stages[stageNum];
 	}
 
-	/**
-	 * Append a particle stage.
-	 */
-	void appendStage(const ParticleStage& stage) {
+	std::size_t addParticleStage() 
+	{
+		_stages.push_back(ParticleStage());
+
+		return _stages.size() - 1;
+	}
+
+	void removeParticleStage(std::size_t index)
+	{
+		if (index < _stages.size())
+		{
+			_stages.erase(_stages.begin() + index);
+		}
+	}
+
+	void appendStage(const ParticleStage& stage)
+	{
 		_stages.push_back(stage);
 	}
 

@@ -71,6 +71,16 @@ public:
 	 */
 	virtual IParticleStage& getParticleStage(std::size_t stageNum) = 0;
 
+	/**
+	 * Add a new stage to this particle, returns the index of the new stage.
+	 */
+	virtual std::size_t addParticleStage() = 0;
+
+	/**
+	 * Removes the stage with the given index.
+	 */
+	virtual void removeParticleStage(std::size_t index) = 0;
+
 	// Add or remove an observer to get notified on particle events
 	virtual void addObserver(Observer* observer) = 0;
 	virtual void removeObserver(Observer* observer) = 0;
