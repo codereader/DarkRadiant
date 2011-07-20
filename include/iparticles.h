@@ -81,6 +81,13 @@ public:
 	 */
 	virtual void removeParticleStage(std::size_t index) = 0;
 
+	/**
+	 * Swaps the location of the two given particle stages. After this step the
+	 * particle stage at <index> will be at <index2> and vice versa.
+	 * If one of the indices is out of bounds (or both indices are equal) nothing will happen.
+	 */
+	virtual void swapParticleStages(std::size_t index, std::size_t index2) = 0;
+
 	// Add or remove an observer to get notified on particle events
 	virtual void addObserver(Observer* observer) = 0;
 	virtual void removeObserver(Observer* observer) = 0;

@@ -110,6 +110,16 @@ public:
 		}
 	}
 
+	void swapParticleStages(std::size_t index, std::size_t index2)
+	{
+		if (index >= _stages.size() || index2 >= _stages.size() || index == index2)
+		{
+			return;
+		}
+
+		std::swap(_stages[index], _stages[index2]);
+	}
+
 	void appendStage(const ParticleStage& stage)
 	{
 		_stages.push_back(stage);
