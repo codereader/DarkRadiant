@@ -40,7 +40,8 @@ ParticleEditor::ParticleEditor() :
 	gtkutil::GladeWidgetHolder(GlobalUIManager().getGtkBuilderFromFile("ParticleEditor.glade")),
 	_defList(Gtk::ListStore::create(_defColumns)),
 	_stageList(Gtk::ListStore::create(_stageColumns)),
-	_preview(GlobalUIManager().createParticlePreview())
+	_preview(GlobalUIManager().createParticlePreview()),
+	_callbacksDisabled(false)
 {
 	// Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -77,6 +78,7 @@ ParticleEditor::ParticleEditor() :
 
 	setupParticleDefList();
 	setupParticleStageList();
+	setupSettingsPages();
 
 	// Fire the selection changed signal to initialise the sensitivity
 	_onDefSelChanged();
@@ -141,6 +143,53 @@ void ParticleEditor::setupParticleStageList()
 		sigc::mem_fun(*this, &ParticleEditor::_onDuplicateStage));
 
 	getGladeWidget<Gtk::Button>("duplicateStageButton")->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::COPY, Gtk::ICON_SIZE_BUTTON)));
+}
+
+void ParticleEditor::setupSettingsPages()
+{
+	getGladeWidget<Gtk::Entry>("shaderEntry")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+	getGladeWidget<Gtk::Entry>("colourEntry")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+	getGladeWidget<Gtk::Entry>("fadeColourEntry")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+
+	getGladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("fadeOutFractionSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("animFramesSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("animRateSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+}
+
+void ParticleEditor::_onShaderControlsChanged()
+{
+	if (_callbacksDisabled || !_particle || !_selectedStageIter) return;
+
+	std::size_t index = getSelectedStageIndex();
+
+	particles::IParticleStage& stage = _particle->getParticleStage(index);
+
+	std::string material = getGladeWidget<Gtk::Entry>("shaderEntry")->get_text();
+	
+	// Only assign a new material if it has actually changed, otherwise the whole particle gets re-shuffled
+	if (material != stage.getMaterialName())
+	{
+		stage.setMaterialName(getGladeWidget<Gtk::Entry>("shaderEntry")->get_text());
+	}
+
+	stage.setColour(Vector4(getGladeWidget<Gtk::Entry>("colourEntry")->get_text()));
+	stage.setFadeColour(Vector4(getGladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));
+	
+	stage.setFadeInFraction(getGladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->get_adjustment()->get_value());
+	stage.setFadeOutFraction(getGladeWidget<Gtk::SpinButton>("fadeOutFractionSpinner")->get_adjustment()->get_value());
+	stage.setFadeIndexFraction(getGladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->get_adjustment()->get_value());
+	stage.setAnimationFrames(getGladeWidget<Gtk::SpinButton>("animFramesSpinner")->get_adjustment()->get_value());
+	stage.setAnimationRate(getGladeWidget<Gtk::SpinButton>("animRateSpinner")->get_adjustment()->get_value());
 }
 
 void ParticleEditor::activateEditPanels()
@@ -394,6 +443,8 @@ void ParticleEditor::reloadStageList()
 void ParticleEditor::updateWidgetsFromStage()
 {
 	if (!_particle || !_selectedStageIter) return;
+	
+	_callbacksDisabled = true;
 
 	const particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
 
@@ -401,12 +452,12 @@ void ParticleEditor::updateWidgetsFromStage()
 
 	const Vector4& colour = stage.getColour();
 	getGladeWidget<Gtk::Entry>("colourEntry")->set_text(
-		(boost::format("%f %f %f %f") % colour.x() % colour.y() % colour.z() % colour.w()).str()
+		(boost::format("%.2f %.2f %.2f %.2f") % colour.x() % colour.y() % colour.z() % colour.w()).str()
 	);
 
 	const Vector4& fadeColour = stage.getFadeColour();
 	getGladeWidget<Gtk::Entry>("fadeColourEntry")->set_text(
-		(boost::format("%f %f %f %f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str()
+		(boost::format("%.2f %.2f %.2f %.2f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str()
 	);
 
 	getGladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->get_adjustment()->set_value(stage.getFadeInFraction());
@@ -414,6 +465,8 @@ void ParticleEditor::updateWidgetsFromStage()
 	getGladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->get_adjustment()->set_value(stage.getFadeIndexFraction());
 	getGladeWidget<Gtk::SpinButton>("animFramesSpinner")->get_adjustment()->set_value(stage.getAnimationFrames());
 	getGladeWidget<Gtk::SpinButton>("animRateSpinner")->get_adjustment()->set_value(stage.getAnimationRate());
+
+	_callbacksDisabled = false;
 }
 
 void ParticleEditor::setupEditParticle()
