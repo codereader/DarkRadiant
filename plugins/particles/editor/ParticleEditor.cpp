@@ -77,7 +77,7 @@ ParticleEditor::ParticleEditor() :
 	setupParticleStageList();
 
 	// Fire the selection changed signal to initialise the sensitiveness
-	_onSelChanged();
+	_onDefSelChanged();
 }
 
 void ParticleEditor::setupParticleDefList()
@@ -97,7 +97,7 @@ void ParticleEditor::setupParticleDefList()
 
 	// Connect up the selection changed callback
 	_defSelection = view->get_selection();
-	_defSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onSelChanged));
+	_defSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onDefSelChanged));
 }
 
 void ParticleEditor::populateParticleDefList()
@@ -117,11 +117,15 @@ void ParticleEditor::setupParticleStageList()
 	view->set_headers_visible(false);
 
 	// Single text column
-	view->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Stage"), _stageColumns.name, false)));
+	view->append_column(*Gtk::manage(new gtkutil::ColouredTextColumn(_("Stage"), _stageColumns.name, _stageColumns.colour, false)));
 
 	// Connect up the selection changed callback
 	_stageSelection = view->get_selection();
 	_stageSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onStageSelChanged));
+
+	// Connect the stage control buttons
+	getGladeWidget<Gtk::Button>("addStageButton")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onAddStage));
 }
 
 void ParticleEditor::activateEditPanels()
@@ -129,20 +133,51 @@ void ParticleEditor::activateEditPanels()
 	getGladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(true);
 	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(true);
 
-	getGladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(true);
-	getGladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(true);
+	activateSettingsEditPanels();
 }
 
 void ParticleEditor::deactivateEditPanels()
 {
 	getGladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(false);
-	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(false);		
-
 	getGladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(false);
+
+	deactivateSettingsEditPanels();
+}
+
+void ParticleEditor::activateSettingsEditPanels()
+{
+	getGladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(true);
+	getGladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(true);
+}
+
+void ParticleEditor::deactivateSettingsEditPanels()
+{
+	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(false);		
 	getGladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(false);
 }
 
-void ParticleEditor::_onSelChanged()
+std::size_t ParticleEditor::getSelectedStageIndex()
+{
+	// Get the selection and store it
+	Gtk::TreeModel::iterator iter = _stageSelection->get_selected();
+
+	int value = (*iter)[_stageColumns.index];
+
+	if (value < 0)
+	{
+		throw std::logic_error("Invalid stage index stored in model.");
+	}
+
+	return value;
+}
+
+void ParticleEditor::selectStage(std::size_t index)
+{
+	gtkutil::TreeModel::findAndSelectInteger(
+		getGladeWidget<Gtk::TreeView>("stageView"), static_cast<int>(index), _stageColumns.index);
+}
+
+void ParticleEditor::_onDefSelChanged()
 {
 	// Get the selection and store it
 	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
@@ -150,11 +185,11 @@ void ParticleEditor::_onSelChanged()
 	if (!selectionChangeAllowed())
 	{
 		// Revert the selection (re-enter this function) and cancel the operation
-		_defSelection->select(_selectedIter);
+		_defSelection->select(_selectedDefIter);
 		return;
 	}
 
-	if (_selectedIter && iter && _selectedIter == iter)
+	if (_selectedDefIter && iter && _selectedDefIter == iter)
 	{
 		return; // nothing to do so far
 	}
@@ -163,9 +198,9 @@ void ParticleEditor::_onSelChanged()
 	releaseEditParticle();
 
 	// Store new selection
-	_selectedIter = iter;
+	_selectedDefIter = iter;
 
-	if (_selectedIter)
+	if (_selectedDefIter)
 	{
 		// Copy the particle def and set it up for editing
 		setupEditParticle();
@@ -184,10 +219,74 @@ void ParticleEditor::_onSelChanged()
 
 void ParticleEditor::_onStageSelChanged()
 {
-	// TODO
+	// Get the selection and store it
+	Gtk::TreeModel::iterator iter = _stageSelection->get_selected();
+
+	if (_selectedStageIter && iter && _selectedStageIter == iter)
+	{
+		return; // nothing to do so far
+	}
+
+	_selectedStageIter = iter;
+
+	bool isStageSelected = false;
+
+	if (_selectedStageIter)
+	{
+		activateSettingsEditPanels();
+
+		// Reload the current stage data
+		// TODO
+
+		// Activate delete, move and toggle buttons
+		isStageSelected = true;
+	}
+	else
+	{
+		// No valid selection
+		deactivateSettingsEditPanels();
+
+		// Deactivate delete, move and toggle buttons
+		isStageSelected = false;
+	}
+
+	getGladeWidget<Gtk::Button>("removeStageButton")->set_sensitive(isStageSelected);
+	getGladeWidget<Gtk::Button>("toggleStageButton")->set_sensitive(isStageSelected);
+	getGladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(isStageSelected);
+	getGladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(isStageSelected);
+	getGladeWidget<Gtk::Button>("duplicateStageButton")->set_sensitive(isStageSelected);
+}
+
+void ParticleEditor::_onAddStage()
+{
+	if (!_particle) return;
+
+	// Add a new stage at the end of the list
+	std::size_t newStage = _particle->addParticleStage();
+
+	reloadStageList();
+
+	selectStage(newStage);
+}
+
+void ParticleEditor::_onRemoveStage()
+{
+	if (!_particle || !_selectedStageIter) return;
+
+	_particle->removeParticleStage(getSelectedStageIndex());
+
+	reloadStageList();
 }
 
 void ParticleEditor::updateWidgetsFromParticle()
+{
+	if (!_particle) return;
+
+	// Load stages
+	reloadStageList();
+}
+
+void ParticleEditor::reloadStageList()
 {
 	if (!_particle) return;
 
@@ -198,7 +297,8 @@ void ParticleEditor::updateWidgetsFromParticle()
 	{
 		Gtk::TreeModel::iterator iter = _stageList->append();
 
-		(*iter)[_stageColumns.name] = (boost::format("Stage %d") % i).str();
+		(*iter)[_stageColumns.name] = (boost::format("Stage %d") % static_cast<int>(i)).str();
+		(*iter)[_stageColumns.index] = static_cast<int>(i);
 		(*iter)[_stageColumns.visible] = true;
 		(*iter)[_stageColumns.colour] = "#000000";
 	}
@@ -247,10 +347,10 @@ bool ParticleEditor::selectionChangeAllowed()
 	// Get the selection and store it
 	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
 
-	if (_selectedIter && _particle != NULL && iter && _selectedIter != iter)
+	if (_selectedDefIter && _particle != NULL && iter && _selectedDefIter != iter)
 	{
 		// Particle selection changed, check if we have any unsaved changes
-		std::string originalParticleName = (*_selectedIter)[_defColumns.name];
+		std::string originalParticleName = (*_selectedDefIter)[_defColumns.name];
 
 		particles::IParticleDefPtr originalParticle = GlobalParticlesManager().getParticle(originalParticleName);
 

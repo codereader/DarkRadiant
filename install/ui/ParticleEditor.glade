@@ -171,7 +171,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button5">
+                              <object class="GtkButton" id="removeStageButton">
                                 <property name="label">gtk-remove</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -186,7 +186,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button4">
+                              <object class="GtkButton" id="toggleStageButton">
                                 <property name="label" translatable="yes">Toggle Visibility</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -211,7 +211,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkButton" id="button6">
+                              <object class="GtkButton" id="moveStageUpButton">
                                 <property name="label">gtk-go-up</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -226,7 +226,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button7">
+                              <object class="GtkButton" id="moveStageDownButton">
                                 <property name="label">gtk-go-down</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -241,7 +241,7 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="button8">
+                              <object class="GtkButton" id="duplicateStageButton">
                                 <property name="label" translatable="yes">Duplicate</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
