@@ -77,6 +77,8 @@ public:
 	void onParticleStageOrderChanged();
 	void onParticleStageAdded();
 	void onParticleStageRemoved();
+	void onParticleStageChanged();
+	void onParticleStageMaterialChanged();
 
 private:
 	void calculateBounds();

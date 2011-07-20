@@ -13,6 +13,8 @@
 namespace particles
 {
 
+class ParticleDef;
+
 /**
  * Representation of a single particle stage. Each stage consists of a set of
  * particles with the same properties (texture, acceleration etc).
@@ -25,6 +27,9 @@ class ParticleStage :
 public:
 private:
 	friend std::ostream& operator<< (std::ostream&, const ParticleStage&);
+
+	// The particle system we're part of
+	ParticleDef& _particle;
 
 	// Number of particles
 	int _count;						// total number of particles, although some may be invisible at a given time
@@ -54,7 +59,7 @@ private:
 
 	float _initialAngle;			// in degrees, random angle is used if zero ( default )
 
-	ParticleParameter _rotationSpeed; // half the particles will have negative rotation speeds,
+	ParticleParameterPtr _rotationSpeed; // half the particles will have negative rotation speeds,
 									  // this is measured in degrees/sec
 
 	float _boundsExpansion;			// user tweak to fix poorly calculated bounds
@@ -78,31 +83,29 @@ private:
 	DirectionType _directionType;	// Direction type
 	float _directionParms[4];		// Direction parameters
 
-	ParticleParameter _speed;		// Speed
+	ParticleParameterPtr _speed;		// Speed
 
 	// Custom path will completely replace the standard path calculations
 
 	CustomPathType _customPathType;	// use custom C code routines for determining the origin
 	float _customPathParms[8];		// custom path parameters
 
-	ParticleParameter _size;		// Size
+	ParticleParameterPtr _size;		// Size
 
-	ParticleParameter _aspect;		// greater than 1 makes the T axis longer
+	ParticleParameterPtr _aspect;		// greater than 1 makes the T axis longer
 
 	// whether this stage is visible, used within the particle editor only
 	bool _visible;
 
 public:
 	// Create an empty particle stage with default values
-	ParticleStage();
+	ParticleStage(ParticleDef& particle);
 
 	// Create a particle stage from the given token stream
-	ParticleStage(parser::DefTokeniser& tok);
+	ParticleStage(ParticleDef& particle, parser::DefTokeniser& tok);
 
 	// Resets/clears all values to default. This is called by parseFromTokens().
 	void reset();
-
-	void copyFrom(const IParticleStage& other);
 
 	/**
 	 * Get the shader name.
@@ -112,7 +115,7 @@ public:
 	/**
 	 * Set the shader name.
 	 */
-	void setMaterialName(const std::string& material) { _material = material; }
+	void setMaterialName(const std::string& material) { _material = material; notifyMaterialChange(); }
 
 	/**
 	 * Get the particle count.
@@ -122,7 +125,7 @@ public:
 	/**
 	 * Set the particle count.
 	 */
-	void setCount(int count) { _count = count; }
+	void setCount(int count) { _count = count; notifyChange(); }
 
 	/**
 	 * Get the duration in seconds.
@@ -132,7 +135,7 @@ public:
 	/**
 	 * Set the duration in seconds, updates cyclemsec.
 	 */
-	void setDuration(float duration) { _duration = duration; recalculateCycleMsec(); }
+	void setDuration(float duration) { _duration = duration; recalculateCycleMsec(); notifyChange(); }
 
 	/**
 	 * Returns ( duration + deadTime ) in msec.
@@ -147,7 +150,7 @@ public:
 	/**
 	 * Set the cycles value.
 	 */
-	void setCycles(float cycles) { _cycles = clampZeroOrPositive(cycles); }
+	void setCycles(float cycles) { _cycles = clampZeroOrPositive(cycles); notifyChange(); }
 
 	/**
 	 * Get the bunching value [0..1]
@@ -157,7 +160,7 @@ public:
 	/**
 	 * Set the bunching value [0..1]
 	 */
-	void setBunching(float value) { _bunching = clampOneZero(value); }
+	void setBunching(float value) { _bunching = clampOneZero(value); notifyChange(); }
 
 	/**
 	 * Get the time offset in seconds
@@ -167,7 +170,7 @@ public:
 	/**
 	 * Set the time offset in seconds
 	 */
-	void setTimeOffset(float value) { _timeOffset = value; }
+	void setTimeOffset(float value) { _timeOffset = value; notifyChange(); }
 
 	/**
 	 * Get the dead time in seconds
@@ -177,7 +180,7 @@ public:
 	/**
 	 * Set the dead time in seconds, updates cyclemsec.
 	 */
-	void setDeadTime(float value) { _deadTime = value; recalculateCycleMsec(); }
+	void setDeadTime(float value) { _deadTime = value; recalculateCycleMsec(); notifyChange(); }
 
 	/**
 	 * Get the particle render colour.
@@ -187,7 +190,7 @@ public:
 	/**
 	 * Set the particle render colour.
 	 */
-	void setColour(const Vector4& colour) { _colour = colour; }
+	void setColour(const Vector4& colour) { _colour = colour; notifyChange(); }
 
 	/**
 	 * Get the particle render colour.
@@ -197,7 +200,7 @@ public:
 	/**
 	 * Set the particle render colour.
 	 */
-	void setFadeColour(const Vector4& colour) { _fadeColour = colour; }
+	void setFadeColour(const Vector4& colour) { _fadeColour = colour; notifyChange(); }
 
 	/**
 	 * Get the fade in fraction [0..1]
@@ -207,7 +210,7 @@ public:
 	/**
 	 * Set the fade in fraction [0..1]
 	 */
-	void setFadeInFraction(float fraction) { _fadeInFraction = clampOneZero(fraction); }
+	void setFadeInFraction(float fraction) { _fadeInFraction = clampOneZero(fraction); notifyChange(); }
 
 	/**
 	 * Get the fade out fraction [0..1]
@@ -217,7 +220,7 @@ public:
 	/**
 	 * Set the fade out fraction [0..1]
 	 */
-	void setFadeOutFraction(float fraction) { _fadeOutFraction = clampOneZero(fraction); }
+	void setFadeOutFraction(float fraction) { _fadeOutFraction = clampOneZero(fraction); notifyChange(); }
 
 	/**
 	 * Get the fade index fraction [0..1]
@@ -227,7 +230,7 @@ public:
 	/**
 	 * Set the fade index fraction [0..1]
 	 */
-	void setFadeIndexFraction(float fraction) { _fadeIndexFraction = clampOneZero(fraction); }
+	void setFadeIndexFraction(float fraction) { _fadeIndexFraction = clampOneZero(fraction); notifyChange(); }
 
 	/**
 	 * Get the animation frames.
@@ -237,7 +240,7 @@ public:
 	/**
 	 * Set the animation frames.
 	 */
-	void setAnimationFrames(int animationFrames) { _animationFrames = animationFrames; }
+	void setAnimationFrames(int animationFrames) { _animationFrames = animationFrames; notifyChange(); }
 
 	/**
 	 * Get the animation rate.
@@ -247,7 +250,7 @@ public:
 	/**
 	 * Set the animation frames.
 	 */
-	void setAnimationRate(float animationRate) { _animationRate = animationRate; }
+	void setAnimationRate(float animationRate) { _animationRate = animationRate; notifyChange(); }
 
 	/**
 	 * Get the initial angle.
@@ -257,7 +260,7 @@ public:
 	/**
 	 * Set the initial angle.
 	 */
-	void setInitialAngle(float angle) { _initialAngle = angle; }
+	void setInitialAngle(float angle) { _initialAngle = angle; notifyChange(); }
 
 	/**
 	 * Get the bounds expansion value.
@@ -267,7 +270,7 @@ public:
 	/**
 	 * Set the bounds expansion value.
 	 */
-	void setBoundsExpansion(float value) { _boundsExpansion = value; }
+	void setBoundsExpansion(float value) { _boundsExpansion = value; notifyChange(); }
 
 	/**
 	 * Get the random distribution flag.
@@ -277,7 +280,7 @@ public:
 	/**
 	 * Set the random distribution flag.
 	 */
-	void setRandomDistribution(bool value) { _randomDistribution = value; }
+	void setRandomDistribution(bool value) { _randomDistribution = value; notifyChange(); }
 
 	/**
 	 * Get the "use entity colour" flag.
@@ -287,7 +290,7 @@ public:
 	/**
 	 * Set the "use entity colour" flag.
 	 */
-	void setUseEntityColour(bool value) { _entityColor = value; }
+	void setUseEntityColour(bool value) { _entityColor = value; notifyChange(); }
 
 	/**
 	 * Get the gravity factor.
@@ -297,7 +300,7 @@ public:
 	/**
 	 * Set the gravity factor.
 	 */
-	void setGravity(float value) { _gravity = value; }
+	void setGravity(float value) { _gravity = value; notifyChange(); }
 
 	/**
 	 * Get the "apply gravity in world space" flag.
@@ -307,7 +310,7 @@ public:
 	/**
 	 * Get the "apply gravity in world space" flag.
 	 */
-	void setWorldGravityFlag(bool value) { _applyWorldGravity = value; }
+	void setWorldGravityFlag(bool value) { _applyWorldGravity = value; notifyChange(); }
 
 	/**
 	 * Get the offset vector.
@@ -317,7 +320,7 @@ public:
 	/**
 	 * Set the offset vector.
 	 */
-	void setOffset(const Vector3& value) { _offset = value; }
+	void setOffset(const Vector3& value) { _offset = value; notifyChange(); }
 
 	/**
 	 * Get the orientation type.
@@ -327,7 +330,7 @@ public:
 	/**
 	 * Set the orientation type.
 	 */
-	void setOrientationType(OrientationType value) { _orientationType = value; }
+	void setOrientationType(OrientationType value) { _orientationType = value; notifyChange(); }
 
 	/**
 	 * Get the orientation parameter with the given index [0..3]
@@ -345,6 +348,8 @@ public:
 	{
 		assert(parmNum >= 0 && parmNum < 4);
 		_orientationParms[parmNum] = value;
+
+		notifyChange();
 	}
 
 	/**
@@ -355,7 +360,7 @@ public:
 	/**
 	 * Set the distribution type.
 	 */
-	void setDistributionType(DistributionType value) { _distributionType = value; }
+	void setDistributionType(DistributionType value) { _distributionType = value; notifyChange(); }
 
 	/**
 	 * Get the distribution parameter with the given index [0..3]
@@ -373,6 +378,8 @@ public:
 	{
 		assert(parmNum >= 0 && parmNum < 4);
 		_distributionParms[parmNum] = value;
+
+		notifyChange();
 	}
 
 	/**
@@ -383,7 +390,7 @@ public:
 	/**
 	 * Set the direction type.
 	 */
-	void setDirectionType(DirectionType value) { _directionType = value; }
+	void setDirectionType(DirectionType value) { _directionType = value; notifyChange(); }
 
 	/**
 	 * Get the direction parameter with the given index [0..3]
@@ -401,6 +408,8 @@ public:
 	{
 		assert(parmNum >= 0 && parmNum < 4);
 		_directionParms[parmNum] = value;
+
+		notifyChange();
 	}
 
 	/**
@@ -411,7 +420,7 @@ public:
 	/**
 	 * Set the custom path type.
 	 */
-	void setCustomPathType(CustomPathType value) { _customPathType = value; }
+	void setCustomPathType(CustomPathType value) { _customPathType = value; notifyChange(); }
 
 	/**
 	 * Get the custom path parameter with the given index [0..7]
@@ -429,31 +438,33 @@ public:
 	{
 		assert(parmNum >= 0 && parmNum < 8);
 		_customPathParms[parmNum] = value;
+
+		notifyChange();
 	}
 
 	/**
 	 * Get the particle size
 	 */
-	const ParticleParameter& getSize() const { return _size; }
-	ParticleParameter& getSize() { return _size; }
+	const ParticleParameter& getSize() const { return *_size; }
+	ParticleParameter& getSize() { return *_size; }
 
 	/**
 	 * Get the aspect ratio.
 	 */
-	const ParticleParameter& getAspect() const { return _aspect; }
-	ParticleParameter& getAspect() { return _aspect; }
+	const ParticleParameter& getAspect() const { return *_aspect; }
+	ParticleParameter& getAspect() { return *_aspect; }
 
 	/**
 	 * Get the particle speed.
 	 */
-	const ParticleParameter& getSpeed() const { return _speed; }
-	ParticleParameter& getSpeed() { return _speed; }
+	const ParticleParameter& getSpeed() const { return *_speed; }
+	ParticleParameter& getSpeed() { return *_speed; }
 
 	/**
 	 * Get the particle rotation speed.
 	 */
-	const ParticleParameter& getRotationSpeed() const { return _rotationSpeed; }
-	ParticleParameter& getRotationSpeed() { return _rotationSpeed; }
+	const ParticleParameter& getRotationSpeed() const { return *_rotationSpeed; }
+	ParticleParameter& getRotationSpeed() { return *_rotationSpeed; }
 
 	bool operator==(const IParticleStage& other) const 
 	{
@@ -521,6 +532,8 @@ public:
 		return !operator==(other);
 	}
 
+	void copyFrom(const IParticleStage& other);
+
 	bool isVisible() const
 	{
 		return _visible;
@@ -529,6 +542,12 @@ public:
 	void setVisible(bool visible)
 	{
 		_visible = visible;
+	}
+
+	// Called by the ParticleParameter classes on modification
+	void onParameterChanged()
+	{
+		notifyChange();
 	}
 
 	// Parser method, reads in all stage parameters from the given token stream
@@ -559,7 +578,11 @@ private:
 
 	Vector3 parseVector3(parser::DefTokeniser& tok);
 	Vector4 parseVector4(parser::DefTokeniser& tok);
+
+	void notifyChange();
+	void notifyMaterialChange();
 };
+typedef boost::shared_ptr<ParticleStage> ParticleStagePtr;
 
 /**
  * Stream insertion operator for debugging.

@@ -72,6 +72,9 @@
     <ClCompile Include="..\..\plugins\particles\editor\ParticleEditor.cpp">
       <Filter>src\editor</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\particles\ParticleParameter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\particles\particles.def">
