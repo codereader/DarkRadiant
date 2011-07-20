@@ -8,6 +8,7 @@ particles_la_LDFLAGS = -module -avoid-version \
 particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la
 particles_la_SOURCES = ParticlesManager.cpp \
 		       particles.cpp \
+			   ParticleParameter.cpp \
 		       ParticleStage.cpp \
 		       RenderableParticle.cpp \
 		       RenderableParticleStage.cpp \

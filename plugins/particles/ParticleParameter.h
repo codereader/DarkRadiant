@@ -4,12 +4,12 @@
 #include "iparticlestage.h"
 
 #include "parser/DefTokeniser.h"
-#include <boost/lexical_cast.hpp>
-
-#include "itextstream.h"
+#include <boost/shared_ptr.hpp>
 
 namespace particles
 {
+
+class ParticleStage;
 
 /**
  * greebo: A particle parameter represents a bounded member value
@@ -23,21 +23,27 @@ class ParticleParameter :
 	public IParticleParameter
 {
 private:
+	// The owner stage
+	ParticleStage& _stage;
+
 	float _from;	// lower bound
 	float _to;		// upper bound
 
 public:
-	ParticleParameter() :
+	ParticleParameter(ParticleStage& stage) :
+		_stage(stage),
 		_from(0),
 		_to(0)
 	{}
 
-	ParticleParameter(float constantValue) :
+	ParticleParameter(ParticleStage& stage, float constantValue) :
+		_stage(stage),
 		_from(constantValue),
 		_to(constantValue)
 	{}
 
-	ParticleParameter(float from, float to) :
+	ParticleParameter(ParticleStage& stage, float from, float to) :
+		_stage(stage),
 		_from(from),
 		_to(to)
 	{}
@@ -52,15 +58,9 @@ public:
 		return _to;
 	}
 
-	void setFrom(float value)
-	{
-		_from = value;
-	}
+	void setFrom(float value);
 
-	void setTo(float value)
-	{
-		_to = value;
-	}
+	void setTo(float value);
 
 	float evaluate(float fraction) const
 	{
@@ -90,44 +90,9 @@ public:
 		return !operator==(other);
 	}
 
-	void parseFromTokens(parser::DefTokeniser& tok)
-	{
-		std::string val = tok.nextToken();
-
-		try
-		{
-			setFrom(boost::lexical_cast<float>(val));
-		}
-		catch (boost::bad_lexical_cast&)
-		{
-			globalErrorStream() << "[particles] Bad lower value, token is '" <<
-				val << "'" << std::endl;
-		}
-
-		if (tok.peek() == "to")
-		{
-			// Upper value is there, parse it
-			tok.skipTokens(1); // skip the "to"
-
-			val = tok.nextToken();
-
-			try
-			{
-				// cut off the quotes before converting to double
-				setTo(boost::lexical_cast<float>(val));
-			}
-			catch (boost::bad_lexical_cast&)
-			{
-				globalErrorStream() << "[particles] Bad upper value, token is '" <<
-					val << "'" << std::endl;
-			}
-		}
-		else
-		{
-			setTo(getFrom());
-		}
-	}
+	void parseFromTokens(parser::DefTokeniser& tok);
 };
+typedef boost::shared_ptr<ParticleParameter> ParticleParameterPtr;
 
 } // namespace
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 template<typename Element> class BasicVector4;
@@ -413,6 +415,11 @@ public:
 	// if all properties are equal
 	virtual bool operator==(const IParticleStage& other) const = 0;
 	virtual bool operator!=(const IParticleStage& other) const = 0;
+
+	/**
+	 * Copy operator, copies all properties from the other stage into this one.
+	 */
+	virtual void copyFrom(const IParticleStage& other) = 0;
 
 	/**
 	 * Returns the stage visibility. This flag is used in the Particle Editor context only,

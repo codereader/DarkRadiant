@@ -4,6 +4,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 
+#include "ParticleDef.h"
+
 namespace particles
 {
 
@@ -28,13 +30,23 @@ namespace
 	}
 }
 
-ParticleStage::ParticleStage() :
+ParticleStage::ParticleStage(ParticleDef& particle) :
+	_particle(particle),
+	_rotationSpeed(new ParticleParameter(*this)),
+	_speed(new ParticleParameter(*this)),
+	_size(new ParticleParameter(*this)),
+	_aspect(new ParticleParameter(*this)),
 	_visible(true)
 {
 	reset();
 }
 
-ParticleStage::ParticleStage(parser::DefTokeniser& tok) :
+ParticleStage::ParticleStage(ParticleDef& particle, parser::DefTokeniser& tok) :
+	_particle(particle),
+	_rotationSpeed(new ParticleParameter(*this)),
+	_speed(new ParticleParameter(*this)),
+	_size(new ParticleParameter(*this)),
+	_aspect(new ParticleParameter(*this)),
 	_visible(true)
 {
 	// Parse from the tokens, but don't allow any parse exceptions
@@ -104,10 +116,10 @@ void ParticleStage::reset()
 	_customPathParms[0] = _customPathParms[1] = _customPathParms[2] = _customPathParms[3] = 0;
 	_customPathParms[4] = _customPathParms[5] = _customPathParms[6] = _customPathParms[7] = 0;
 
-	_speed = ParticleParameter(150.0f);
-	_rotationSpeed = ParticleParameter();
-	_size = ParticleParameter(4.0f);
-	_aspect = ParticleParameter(1.0f);
+	*_speed = ParticleParameter(*this, 150.0f);
+	*_rotationSpeed = ParticleParameter(*this);
+	*_size = ParticleParameter(*this, 4.0f);
+	*_aspect = ParticleParameter(*this, 1.0f);
 }
 
 void ParticleStage::copyFrom(const IParticleStage& other)
@@ -161,10 +173,10 @@ void ParticleStage::copyFrom(const IParticleStage& other)
 		setCustomPathParm(i, other.getCustomPathParm(i));
 	}
 
-	getSize() = other.getSize();
-	getAspect() = other.getAspect();
-	getSpeed() = other.getSpeed();
-	getRotationSpeed() = other.getRotationSpeed();
+	*_size = other.getSize();
+	*_aspect = other.getAspect();
+	*_speed = other.getSpeed();
+	*_rotationSpeed = other.getRotationSpeed();
 }
 
 void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
@@ -237,7 +249,7 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		}
 		else if (token == "rotation")
 		{
-			_rotationSpeed.parseFromTokens(tok);
+			_rotationSpeed->parseFromTokens(tok);
 		}
 		else if (token == "boundsExpansion")
 		{
@@ -285,15 +297,15 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 		}
 		else if (token == "speed")
 		{
-			_speed.parseFromTokens(tok);
+			_speed->parseFromTokens(tok);
 		}
 		else if (token == "size")
 		{
-			_size.parseFromTokens(tok);
+			_size->parseFromTokens(tok);
 		}
 		else if (token == "aspect")
 		{
-			_aspect.parseFromTokens(tok);
+			_aspect->parseFromTokens(tok);
 		}
 		else if (token == "orientation")
 		{
@@ -523,6 +535,18 @@ Vector4 ParticleStage::parseVector4(parser::DefTokeniser& tok)
 	}
 
 	return vec;
+}
+
+void ParticleStage::notifyChange()
+{
+	_particle.onStageChanged();
+}
+
+void ParticleStage::notifyMaterialChange()
+{
+	notifyChange(); // this is a general change as well
+
+	_particle.onStageMaterialChanged();
 }
 
 } // namespace

@@ -29,7 +29,7 @@ class ParticleDef
 	float _depthHack;
 
 	// Vector of stages
-	typedef std::vector<ParticleStage> StageList;
+	typedef std::vector<ParticleStagePtr> StageList;
 	StageList _stages;
 
 	typedef std::set<IParticleDef::Observer*> Observers;
@@ -87,17 +87,17 @@ public:
 
 	const IParticleStage& getParticleStage(std::size_t stageNum) const
 	{
-		return _stages[stageNum];
+		return *_stages[stageNum];
 	}
 
 	IParticleStage& getParticleStage(std::size_t stageNum)
 	{
-		return _stages[stageNum];
+		return *_stages[stageNum];
 	}
 
 	std::size_t addParticleStage() 
 	{
-		_stages.push_back(ParticleStage());
+		_stages.push_back(ParticleStagePtr(new ParticleStage(*this)));
 
 		// Notify any observers about this event
 		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
@@ -138,7 +138,7 @@ public:
 		}
 	}
 
-	void appendStage(const ParticleStage& stage)
+	void appendStage(const ParticleStagePtr& stage)
 	{
 		_stages.push_back(stage);
 
@@ -146,6 +146,25 @@ public:
 		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
 		{
 			(*i++)->onParticleStageAdded();
+		}
+	}
+
+	// Called by the stage when a value or parameter has been changed
+	void onStageChanged()
+	{
+		// Notify any observers about this event
+		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
+		{
+			(*i++)->onParticleStageChanged();
+		}
+	}
+
+	void onStageMaterialChanged()
+	{
+		// Notify any observers about this event
+		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
+		{
+			(*i++)->onParticleStageMaterialChanged();
 		}
 	}
 
@@ -188,11 +207,12 @@ public:
 
 		_filename = other.getFilename();
 
-		_stages.resize(other.getNumStages());
+		_stages.clear();
 
-		for (std::size_t i = 0; i < _stages.size(); ++i)
+		for (std::size_t i = 0; i < other.getNumStages(); ++i)
 		{
-			_stages[i].copyFrom(other.getParticleStage(i));
+			_stages.push_back(ParticleStagePtr(new ParticleStage(*this)));
+			_stages[i]->copyFrom(other.getParticleStage(i));
 		}
 	}
 
@@ -214,7 +234,7 @@ public:
 			else if (token == "{")
 			{
 				// Construct/Parse the stage from the tokens
-				ParticleStage stage(tok);
+				ParticleStagePtr stage(new ParticleStage(*this, tok));
 
 				// Append to the ParticleDef
 				appendStage(stage);

@@ -136,6 +136,17 @@ void RenderableParticle::onParticleStageRemoved()
 	setupStages();
 }
 
+void RenderableParticle::onParticleStageChanged()
+{
+	// don't react to generic changes, these are handled via update()
+}
+
+void RenderableParticle::onParticleStageMaterialChanged()
+{
+	// Re-construct our renderable stages
+	setupStages();
+}
+
 void RenderableParticle::calculateBounds()
 {
 	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)

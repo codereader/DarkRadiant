@@ -336,7 +336,19 @@ void ParticleEditor::_onMoveDownStage()
 
 void ParticleEditor::_onDuplicateStage()
 {
-	// TODO
+	if (!_particle) return;
+
+	std::size_t srcStageIndex = getSelectedStageIndex();
+	std::size_t newStageIndex = _particle->addParticleStage();
+
+	particles::IParticleStage& srcStage = _particle->getParticleStage(srcStageIndex);
+	particles::IParticleStage& newStage = _particle->getParticleStage(newStageIndex);
+
+	newStage.copyFrom(srcStage);
+
+	reloadStageList();
+
+	selectStage(newStageIndex);
 }
 
 void ParticleEditor::updateWidgetsFromParticle()

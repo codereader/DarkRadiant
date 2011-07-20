@@ -39,6 +39,12 @@ public:
 		// Called when one of the particle stages is removed
 		virtual void onParticleStageRemoved() {} // empty default impl.
 
+		// Called when a particle stage has been modified
+		virtual void onParticleStageChanged() {}
+
+		// Called when a particle stage material has been changed
+		virtual void onParticleStageMaterialChanged() {}
+
 		// Called when the order of the particle stages is changed
 		virtual void onParticleStageOrderChanged() {} // empty default impl.
 	};
@@ -130,7 +136,7 @@ public:
 	 * @rotation: the matrix to orient themselves to the viewer.
 	 */
 	virtual void update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation) = 0;
-
+		
 	/**
 	 * Get the particle definition used by this renderable.
 	 */
