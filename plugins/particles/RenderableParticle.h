@@ -75,6 +75,8 @@ public:
 	// IParticleDef::Observer implementation
 	void onParticleReload();
 	void onParticleStageOrderChanged();
+	void onParticleStageAdded();
+	void onParticleStageRemoved();
 
 private:
 	void calculateBounds();

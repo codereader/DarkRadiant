@@ -124,6 +124,18 @@ void RenderableParticle::onParticleStageOrderChanged()
 	setupStages();
 }
 
+void RenderableParticle::onParticleStageAdded()
+{
+	// Re-construct our renderable stages
+	setupStages();
+}
+
+void RenderableParticle::onParticleStageRemoved()
+{
+	// Re-construct our renderable stages
+	setupStages();
+}
+
 void RenderableParticle::calculateBounds()
 {
 	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
