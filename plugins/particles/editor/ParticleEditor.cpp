@@ -250,6 +250,11 @@ void ParticleEditor::_onStageSelChanged()
 
 		// Activate delete, move and toggle buttons
 		isStageSelected = true;
+
+		std::size_t index = (*_selectedStageIter)[_stageColumns.index];
+
+		getGladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(index > 0);
+		getGladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(index < _particle->getNumStages() - 1);
 	}
 	else
 	{
@@ -258,12 +263,13 @@ void ParticleEditor::_onStageSelChanged()
 
 		// Deactivate delete, move and toggle buttons
 		isStageSelected = false;
+
+		getGladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(false);
+		getGladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(false);
 	}
 
 	getGladeWidget<Gtk::Button>("removeStageButton")->set_sensitive(isStageSelected);
 	getGladeWidget<Gtk::Button>("toggleStageButton")->set_sensitive(isStageSelected);
-	getGladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(isStageSelected);
-	getGladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(isStageSelected);
 	getGladeWidget<Gtk::Button>("duplicateStageButton")->set_sensitive(isStageSelected);
 }
 
@@ -304,12 +310,28 @@ void ParticleEditor::_onToggleStage()
 
 void ParticleEditor::_onMoveUpStage()
 {
-	// TODO
+	if (!_particle) return;
+
+	std::size_t selIndex = getSelectedStageIndex();
+	assert(selIndex > 0);
+
+	_particle->swapParticleStages(selIndex, selIndex - 1);
+
+	reloadStageList();
+	selectStage(selIndex - 1);
 }
 
 void ParticleEditor::_onMoveDownStage()
 {
-	// TODO
+	if (!_particle) return;
+
+	std::size_t selIndex = getSelectedStageIndex();
+	assert(_particle->getNumStages() > 0 && selIndex < _particle->getNumStages() - 1);
+
+	_particle->swapParticleStages(selIndex, selIndex + 1);
+
+	reloadStageList();
+	selectStage(selIndex + 1);
 }
 
 void ParticleEditor::_onDuplicateStage()
