@@ -13,6 +13,7 @@
 #include <gtkmm/button.h>
 #include <gtkmm/paned.h>
 #include <gtkmm/treeview.h>
+#include <gtkmm/stock.h>
 
 #include "ParticleDefPopulator.h"
 #include "../ParticlesManager.h"
@@ -76,8 +77,9 @@ ParticleEditor::ParticleEditor() :
 	setupParticleDefList();
 	setupParticleStageList();
 
-	// Fire the selection changed signal to initialise the sensitiveness
+	// Fire the selection changed signal to initialise the sensitivity
 	_onDefSelChanged();
+	_onStageSelChanged();
 }
 
 void ParticleEditor::setupParticleDefList()
@@ -136,6 +138,8 @@ void ParticleEditor::setupParticleStageList()
 		sigc::mem_fun(*this, &ParticleEditor::_onMoveDownStage));
 	getGladeWidget<Gtk::Button>("duplicateStageButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDuplicateStage));
+
+	getGladeWidget<Gtk::Button>("duplicateStageButton")->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::COPY, Gtk::ICON_SIZE_BUTTON)));
 }
 
 void ParticleEditor::activateEditPanels()
