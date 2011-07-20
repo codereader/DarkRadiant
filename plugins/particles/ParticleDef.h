@@ -99,6 +99,12 @@ public:
 	{
 		_stages.push_back(ParticleStage());
 
+		// Notify any observers about this event
+		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
+		{
+			(*i++)->onParticleStageAdded();
+		}
+
 		return _stages.size() - 1;
 	}
 
@@ -107,6 +113,12 @@ public:
 		if (index < _stages.size())
 		{
 			_stages.erase(_stages.begin() + index);
+		}
+
+		// Notify any observers about this event
+		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
+		{
+			(*i++)->onParticleStageRemoved();
 		}
 	}
 
@@ -129,6 +141,12 @@ public:
 	void appendStage(const ParticleStage& stage)
 	{
 		_stages.push_back(stage);
+
+		// Notify any observers about this event
+		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
+		{
+			(*i++)->onParticleStageAdded();
+		}
 	}
 
 	void addObserver(IParticleDef::Observer* observer)
