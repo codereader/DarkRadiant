@@ -86,6 +86,10 @@ private:
 	void _onStageSelChanged();
 	void _onAddStage();
 	void _onRemoveStage();
+	void _onToggleStage();
+	void _onMoveUpStage();
+	void _onMoveDownStage();
+	void _onDuplicateStage();
 
 	// Returns the 0-based index of the current stage
 	std::size_t getSelectedStageIndex();

@@ -89,6 +89,9 @@ private:
 
 	ParticleParameter _aspect;		// greater than 1 makes the T axis longer
 
+	// whether this stage is visible, used within the particle editor only
+	bool _visible;
+
 public:
 	// Create an empty particle stage with default values
 	ParticleStage();
@@ -516,6 +519,16 @@ public:
 	bool operator!=(const IParticleStage& other) const
 	{
 		return !operator==(other);
+	}
+
+	bool isVisible() const
+	{
+		return _visible;
+	}
+
+	void setVisible(bool visible)
+	{
+		_visible = visible;
 	}
 
 	// Parser method, reads in all stage parameters from the given token stream

@@ -54,6 +54,9 @@ void RenderableParticle::renderSolid(RenderableCollector& collector, const Volum
 		for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
 			 stage != i->second.stages.end(); ++stage)
 		{
+			// Skip invisible stages
+			if (!(*stage)->getStage().isVisible()) continue;
+
 			collector.addRenderable(**stage, Matrix4::getIdentity());
 		}
 	}

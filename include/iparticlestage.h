@@ -413,6 +413,18 @@ public:
 	// if all properties are equal
 	virtual bool operator==(const IParticleStage& other) const = 0;
 	virtual bool operator!=(const IParticleStage& other) const = 0;
+
+	/**
+	 * Returns the stage visibility. This flag is used in the Particle Editor context only,
+	 * it is not saved to the .prt file therefore it has no effect within the Doom 3 engine.
+	 */
+	virtual bool isVisible() const = 0;
+
+	/**
+	 * Sets the stage visibility. This flag is used in the Particle Editor context only,
+	 * it is not saved to the .prt file therefore it has no effect within the Doom 3 engine.
+	 */
+	virtual void setVisible(bool visible) = 0;
 };
 
 } // namespace
