@@ -112,6 +112,7 @@ private:
 	void releaseEditParticle();
 
 	void updateWidgetsFromParticle();
+	void updateWidgetsFromStage();
 	void reloadStageList();
 };
 
