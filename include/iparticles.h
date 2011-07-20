@@ -32,6 +32,9 @@ public:
 		// from the .prt files. RenderableParticles are monitoring
 		// this event to re-construct their render information
 		virtual void onParticleReload() {} // empty default impl.
+
+		// Called when the order of the particle stages is changed
+		virtual void onParticleStageOrderChanged() {} // empty default impl.
 	};
 
     /**
