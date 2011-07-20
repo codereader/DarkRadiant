@@ -168,7 +168,6 @@ public:
 	{
 		setDepthHack(other.getDepthHack());
 
-		_name = other.getName();
 		_filename = other.getFilename();
 
 		_stages.resize(other.getNumStages());

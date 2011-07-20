@@ -33,6 +33,12 @@ public:
 		// this event to re-construct their render information
 		virtual void onParticleReload() {} // empty default impl.
 
+		// Called when one of the particle stages is added
+		virtual void onParticleStageAdded() {} // empty default impl.
+	
+		// Called when one of the particle stages is removed
+		virtual void onParticleStageRemoved() {} // empty default impl.
+
 		// Called when the order of the particle stages is changed
 		virtual void onParticleStageOrderChanged() {} // empty default impl.
 	};
@@ -101,7 +107,7 @@ public:
 	virtual bool operator!=(const IParticleDef& other) const = 0;
 
 	// Copies all properties from the other particle, overwriting this one
-	// Note: Observers are not copied
+	// Note: Name and observers are not copied
 	virtual void copyFrom(const IParticleDef& other) = 0;
 };
 typedef boost::shared_ptr<IParticleDef> IParticleDefPtr;
