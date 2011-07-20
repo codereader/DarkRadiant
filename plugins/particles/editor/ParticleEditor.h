@@ -65,6 +65,8 @@ private:
 	// The particle definition we're working on
 	particles::ParticleDefPtr _particle;
 
+	bool _callbacksDisabled;
+
 private:
 	ParticleEditor();
 
@@ -91,6 +93,8 @@ private:
 	void _onMoveDownStage();
 	void _onDuplicateStage();
 
+	void _onShaderControlsChanged();
+
 	// Returns the 0-based index of the current stage
 	std::size_t getSelectedStageIndex();
 	void selectStage(std::size_t index);
@@ -99,6 +103,7 @@ private:
 	void populateParticleDefList();
 
 	void setupParticleStageList();
+	void setupSettingsPages();
 
 	void activateEditPanels();
 	void deactivateEditPanels();
