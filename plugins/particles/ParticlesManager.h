@@ -45,6 +45,23 @@ public:
 	void reloadParticleDefs();
 
 	/**
+	 * Writes the named particle declaration to the file it is associated with, 
+	 * replacing any existing declaration with the same name in that file.
+	 * Any other particle declarations that happen to be declared in the same file
+	 * will be preserved.
+	 *
+	 * If the associated file is stored in a PK4, a copy is written to the current
+	 * fs_game ("mod") folder and that file is used for the save operation. 
+	 * No other particle declaration will be removed from the copied file.
+	 *
+	 * Note: this method does not check if the named particle system is already
+	 * defined in a different file.
+	 *
+	 * Returns TRUE on success, FALSE otherwise.
+	 */
+	bool saveParticleDef(const std::string& particle);
+
+	/**
 	 * Accept a stream containing particle definitions to parse and add to the
 	 * list.
 	 */

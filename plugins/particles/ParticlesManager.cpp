@@ -191,4 +191,11 @@ void ParticlesManager::reloadParticleDefs()
 	}
 }
 
+bool ParticlesManager::saveParticleDef(const std::string& particle)
+{
+	// TODO
+
+	return false;
+}
+
 } // namespace particles

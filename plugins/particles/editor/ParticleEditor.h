@@ -77,13 +77,15 @@ public:
 	static void displayDialog(const cmd::ArgumentList& args);
 
 private:
+	// Override the delete event
+	void _onDeleteEvent();
+
 	void _preHide();
 	void _preShow();
 	void _postShow();
 
 	// gtkmm callbacks
-	void _onCancel();
-	void _onOK();
+	void _onClose();
 	void _onDefSelChanged();
 	void _onStageSelChanged();
 	void _onAddStage();
@@ -94,6 +96,7 @@ private:
 	void _onDuplicateStage();
 
 	void _onShaderControlsChanged();
+	void _onCountTimeControlsChanged();
 
 	// Returns the 0-based index of the current stage
 	std::size_t getSelectedStageIndex();
@@ -111,7 +114,13 @@ private:
 	void activateSettingsEditPanels();
 	void deactivateSettingsEditPanels();
 
+	bool particleHasUnsavedChanges();
 	bool selectionChangeAllowed();
+
+	// Asks the user whether to save the particle, returns true on "yes"
+	bool askForSave();
+
+	bool saveCurrentParticle();
 
 	void setupEditParticle();
 	void releaseEditParticle();
@@ -119,6 +128,10 @@ private:
 	void updateWidgetsFromParticle();
 	void updateWidgetsFromStage();
 	void reloadStageList();
+
+	// Returns the current value of the given spin button as float/int
+	float getSpinButtonValueAsFloat(const std::string& widgetName);
+	int getSpinButtonValueAsInt(const std::string& widgetName);
 };
 
 } // namespace
