@@ -51,12 +51,9 @@ ParticleEditor::ParticleEditor() :
     add(*getGladeWidget<Gtk::Widget>("mainVbox"));
     g_assert(get_child() != NULL);
 
-	// Wire up the buttons
-	getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onCancel)
-    );
-	getGladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
-        sigc::mem_fun(*this, &ParticleEditor::_onOK)
+	// Wire up the close button
+	getGladeWidget<Gtk::Button>("closeButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &ParticleEditor::_onClose)
     );
 
 	// Set the default size of the window
@@ -83,6 +80,19 @@ ParticleEditor::ParticleEditor() :
 	// Fire the selection changed signal to initialise the sensitivity
 	_onDefSelChanged();
 	_onStageSelChanged();
+}
+
+void ParticleEditor::_onDeleteEvent()
+{
+	if (particleHasUnsavedChanges() && askForSave() && !saveCurrentParticle())
+	{
+		// Particle has unsaved changes, user wants to save the particle, 
+		// but the save attempt failed, inhibit window destruction
+		return;
+	}
+
+	// Window destruction allowed, pass to base class => triggers destroy
+	BlockingTransientWindow::_onDeleteEvent();
 }
 
 void ParticleEditor::setupParticleDefList()
@@ -164,15 +174,26 @@ void ParticleEditor::setupSettingsPages()
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
 	getGladeWidget<Gtk::SpinButton>("animRateSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+
+	getGladeWidget<Gtk::SpinButton>("countSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("timeSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("bunchingSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("cyclesSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("timeOffsetSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("deadTimeSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
 }
 
 void ParticleEditor::_onShaderControlsChanged()
 {
 	if (_callbacksDisabled || !_particle || !_selectedStageIter) return;
 
-	std::size_t index = getSelectedStageIndex();
-
-	particles::IParticleStage& stage = _particle->getParticleStage(index);
+	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
 
 	std::string material = getGladeWidget<Gtk::Entry>("shaderEntry")->get_text();
 	
@@ -185,11 +206,35 @@ void ParticleEditor::_onShaderControlsChanged()
 	stage.setColour(Vector4(getGladeWidget<Gtk::Entry>("colourEntry")->get_text()));
 	stage.setFadeColour(Vector4(getGladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));
 	
-	stage.setFadeInFraction(getGladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->get_adjustment()->get_value());
-	stage.setFadeOutFraction(getGladeWidget<Gtk::SpinButton>("fadeOutFractionSpinner")->get_adjustment()->get_value());
-	stage.setFadeIndexFraction(getGladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->get_adjustment()->get_value());
-	stage.setAnimationFrames(getGladeWidget<Gtk::SpinButton>("animFramesSpinner")->get_adjustment()->get_value());
-	stage.setAnimationRate(getGladeWidget<Gtk::SpinButton>("animRateSpinner")->get_adjustment()->get_value());
+	stage.setFadeInFraction(getSpinButtonValueAsFloat("fadeInFractionSpinner"));
+	stage.setFadeOutFraction(getSpinButtonValueAsFloat("fadeOutFractionSpinner"));
+	stage.setFadeIndexFraction(getSpinButtonValueAsFloat("fadeIndexFractionSpinner"));
+	stage.setAnimationFrames(getSpinButtonValueAsFloat("animFramesSpinner"));
+	stage.setAnimationRate(getSpinButtonValueAsFloat("animRateSpinner"));
+}
+
+void ParticleEditor::_onCountTimeControlsChanged()
+{
+	if (_callbacksDisabled || !_particle || !_selectedStageIter) return;
+
+	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
+
+	stage.setCount(getSpinButtonValueAsInt("countSpinner"));
+	stage.setDuration(getSpinButtonValueAsFloat("timeSpinner"));
+	stage.setBunching(getSpinButtonValueAsFloat("bunchingSpinner"));
+	stage.setCycles(getSpinButtonValueAsInt("cyclesSpinner"));
+	stage.setTimeOffset(getSpinButtonValueAsFloat("timeOffsetSpinner"));
+	stage.setDeadTime(getSpinButtonValueAsFloat("deadTimeSpinner"));
+}
+
+float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
+{
+	return static_cast<float>(getGladeWidget<Gtk::SpinButton>(widgetName)->get_adjustment()->get_value());
+}
+
+int ParticleEditor::getSpinButtonValueAsInt(const std::string& widgetName)
+{
+	return static_cast<int>(getGladeWidget<Gtk::SpinButton>(widgetName)->get_adjustment()->get_value());
 }
 
 void ParticleEditor::activateEditPanels()
@@ -466,6 +511,13 @@ void ParticleEditor::updateWidgetsFromStage()
 	getGladeWidget<Gtk::SpinButton>("animFramesSpinner")->get_adjustment()->set_value(stage.getAnimationFrames());
 	getGladeWidget<Gtk::SpinButton>("animRateSpinner")->get_adjustment()->set_value(stage.getAnimationRate());
 
+	getGladeWidget<Gtk::SpinButton>("countSpinner")->get_adjustment()->set_value(stage.getCount());
+	getGladeWidget<Gtk::SpinButton>("timeSpinner")->get_adjustment()->set_value(stage.getDuration());
+	getGladeWidget<Gtk::SpinButton>("bunchingSpinner")->get_adjustment()->set_value(stage.getBunching());
+	getGladeWidget<Gtk::SpinButton>("cyclesSpinner")->get_adjustment()->set_value(stage.getCycles());
+	getGladeWidget<Gtk::SpinButton>("timeOffsetSpinner")->get_adjustment()->set_value(stage.getTimeOffset());
+	getGladeWidget<Gtk::SpinButton>("deadTimeSpinner")->get_adjustment()->set_value(stage.getDeadTime());
+
 	_callbacksDisabled = false;
 }
 
@@ -507,12 +559,12 @@ void ParticleEditor::releaseEditParticle()
 	_particle.reset();
 }
 
-bool ParticleEditor::selectionChangeAllowed()
+bool ParticleEditor::particleHasUnsavedChanges()
 {
 	// Get the selection and store it
 	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
 
-	if (_selectedDefIter && _particle != NULL && iter && _selectedDefIter != iter)
+	if (_selectedDefIter && _particle && iter && _selectedDefIter != iter)
 	{
 		// Particle selection changed, check if we have any unsaved changes
 		std::string originalParticleName = (*_selectedDefIter)[_defColumns.name];
@@ -521,35 +573,72 @@ bool ParticleEditor::selectionChangeAllowed()
 
 		if (!originalParticle || *_particle != *originalParticle)
 		{
-			// The particle we're editing has been changed from the saved one
-			gtkutil::MessageBox box(_("Save Changes"), 
-				(boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % originalParticleName).str(),
-				IDialog::MESSAGE_SAVECONFIRMATION, GlobalMainFrame().getTopLevelWindow());
-
-			IDialog::Result result = box.run();
-
-			if (result == IDialog::RESULT_CANCELLED)
-			{
-				return false;
-			}
-			
-			if (result = IDialog::RESULT_YES)
-			{
-				// Save the changes
-				// TODO
-			}
-
 			return true;
 		}
 	}
 
+	return false;
+}
+
+bool ParticleEditor::askForSave()
+{
+	// Get the original particle name
+	std::string originalParticleName = (*_selectedDefIter)[_defColumns.name];
+
+	particles::IParticleDefPtr originalParticle = GlobalParticlesManager().getParticle(originalParticleName);
+
+	// The particle we're editing has been changed from the saved one
+	gtkutil::MessageBox box(_("Save Changes"), 
+		(boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % originalParticleName).str(),
+		IDialog::MESSAGE_SAVECONFIRMATION, GlobalMainFrame().getTopLevelWindow());
+
+	IDialog::Result result = box.run();
+				
+	return (result == IDialog::RESULT_YES);
+}
+
+bool ParticleEditor::selectionChangeAllowed()
+{
+	if (particleHasUnsavedChanges())
+	{
+		if (askForSave())
+		{
+			// Attempt to save the particle, return true on success to allow selection change
+			return saveCurrentParticle();
+		}
+		
+		// User does not want to save, selection change is allowed
+		return true;
+	}
+
+	// No changes, selection change allowed
 	return true;
 }
 
-void ParticleEditor::_onCancel()
+bool ParticleEditor::saveCurrentParticle()
 {
-	// Close the window
-	destroy();
+	// Get the original particle name
+	std::string originalParticleName = (*_selectedDefIter)[_defColumns.name];
+
+	particles::IParticleDefPtr originalParticle = GlobalParticlesManager().getParticle(originalParticleName);
+
+	// If the particle is not existing at all yet, create a new one
+	// TODO: This is not needed when the "New Particle" algorithm is working ok
+	if (!originalParticle)
+	{
+		particles::ParticleDefPtr newParticle = 
+			particles::ParticlesManager::Instance().findOrInsertParticleDef(originalParticleName);
+
+		newParticle->setFilename(""); // TODO
+		
+		originalParticle = newParticle;
+	}
+
+	// Write the changes from the working copy into the actual instance
+	originalParticle->copyFrom(*_particle);
+
+	// Write changes to disk, and return the result
+	return particles::ParticlesManager::Instance().saveParticleDef(originalParticle->getName());
 }
 
 void ParticleEditor::_preHide()
@@ -576,8 +665,15 @@ void ParticleEditor::_postShow()
 	BlockingTransientWindow::_postShow();
 }
 
-void ParticleEditor::_onOK()
+void ParticleEditor::_onClose()
 {
+	if (particleHasUnsavedChanges() && askForSave() && !saveCurrentParticle())
+	{
+		// Particle has unsaved changes, user wants to save the particle, 
+		// but the save attempt failed, inhibit window destruction
+		return;
+	}
+
 	// Close the window
 	destroy();
 }
