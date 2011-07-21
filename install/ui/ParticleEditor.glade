@@ -729,6 +729,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="adjustment">time</property>
+                                    <property name="restrict_to_fill_level">False</property>
                                     <property name="fill_level">1</property>
                                     <property name="digits">2</property>
                                     <property name="draw_value">False</property>
@@ -750,7 +751,7 @@
                               <object class="GtkLabel" id="label13">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">Time Offset:</property>
+                                <property name="label" translatable="yes">Time Offset / sec:</property>
                               </object>
                               <packing>
                                 <property name="top_attach">4</property>
@@ -783,6 +784,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="adjustment">cycles</property>
+                                    <property name="restrict_to_fill_level">False</property>
                                     <property name="fill_level">1</property>
                                     <property name="digits">0</property>
                                     <property name="draw_value">False</property>
@@ -826,8 +828,9 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="adjustment">timeOffset</property>
+                                    <property name="restrict_to_fill_level">False</property>
                                     <property name="fill_level">1</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">0</property>
                                     <property name="draw_value">False</property>
                                     <property name="value_pos">left</property>
                                   </object>
@@ -867,8 +870,9 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="adjustment">count</property>
+                                    <property name="restrict_to_fill_level">False</property>
                                     <property name="fill_level">1</property>
-                                    <property name="digits">2</property>
+                                    <property name="digits">0</property>
                                     <property name="draw_value">False</property>
                                     <property name="value_pos">left</property>
                                   </object>
@@ -886,7 +890,7 @@
                               <object class="GtkLabel" id="label16">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">Time / sec: </property>
+                                <property name="label" translatable="yes">Duration / sec: </property>
                               </object>
                               <packing>
                                 <property name="top_attach">1</property>
@@ -931,6 +935,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="adjustment">bunching</property>
+                                    <property name="restrict_to_fill_level">False</property>
                                     <property name="fill_level">1</property>
                                     <property name="digits">2</property>
                                     <property name="draw_value">False</property>
@@ -952,7 +957,7 @@
                               <object class="GtkLabel" id="label14">
                                 <property name="visible">True</property>
                                 <property name="xalign">0</property>
-                                <property name="label" translatable="yes">Dead Time:</property>
+                                <property name="label" translatable="yes">Dead Time / sec:</property>
                               </object>
                               <packing>
                                 <property name="top_attach">5</property>
@@ -986,6 +991,7 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="adjustment">deadTime</property>
+                                    <property name="restrict_to_fill_level">False</property>
                                     <property name="fill_level">1</property>
                                     <property name="digits">2</property>
                                     <property name="draw_value">False</property>
@@ -1089,13 +1095,13 @@
     </child>
   </object>
   <object class="GtkAdjustment" id="count">
-    <property name="upper">99999</property>
+    <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
     <property name="page_size">10</property>
   </object>
   <object class="GtkAdjustment" id="time">
-    <property name="upper">9999</property>
+    <property name="upper">999</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">10</property>
     <property name="page_size">10</property>
@@ -1107,20 +1113,20 @@
     <property name="page_size">10</property>
   </object>
   <object class="GtkAdjustment" id="cycles">
-    <property name="upper">9999</property>
+    <property name="upper">999</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
     <property name="page_size">10</property>
   </object>
   <object class="GtkAdjustment" id="timeOffset">
-    <property name="upper">9999</property>
-    <property name="step_increment">0.01</property>
+    <property name="upper">999</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
     <property name="page_size">10</property>
   </object>
   <object class="GtkAdjustment" id="deadTime">
-    <property name="upper">100</property>
-    <property name="step_increment">1</property>
+    <property name="upper">999</property>
+    <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">1</property>
     <property name="page_size">10</property>
   </object>
