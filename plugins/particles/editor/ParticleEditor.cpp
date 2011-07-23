@@ -176,6 +176,8 @@ void ParticleEditor::setupSettingsPages()
 	getGladeWidget<Gtk::SpinButton>("animRateSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
 
+	// COUNT
+
 	getGladeWidget<Gtk::SpinButton>("countSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
 	getGladeWidget<Gtk::SpinButton>("timeSpinner")->signal_changed().connect(
@@ -188,6 +190,8 @@ void ParticleEditor::setupSettingsPages()
 		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
 	getGladeWidget<Gtk::SpinButton>("deadTimeSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
+
+	// DISTRIBUTION
 
 	getGladeWidget<Gtk::RadioButton>("distRectangle")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
@@ -209,6 +213,36 @@ void ParticleEditor::setupSettingsPages()
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
 
 	getGladeWidget<Gtk::CheckButton>("distRandom")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+
+	// DIRECTION / ORIENTATION
+
+	getGladeWidget<Gtk::RadioButton>("directionCone")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("directionOutward")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+
+	getGladeWidget<Gtk::SpinButton>("coneAngleSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("upwardBiasSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+
+	getGladeWidget<Gtk::RadioButton>("orientationView")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("orientationAimed")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("orientationX")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("orientationY")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("orientationZ")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+
+	getGladeWidget<Gtk::SpinButton>("aimedTrailsSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("aimedTimeSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("initialAngleSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
 }
 
@@ -282,6 +316,56 @@ void ParticleEditor::_onDistributionControlsChanged()
 	stage.setOffset(Vector3(getGladeWidget<Gtk::Entry>("distOffsetEntry")->get_text()));
 
 	stage.setRandomDistribution(getGladeWidget<Gtk::CheckButton>("distRandom")->get_active());
+}
+
+void ParticleEditor::_onDirectionControlsChanged()
+{
+	if (_callbacksDisabled || !_particle || !_selectedStageIter) return;
+
+	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
+
+	if (getGladeWidget<Gtk::RadioButton>("directionCone")->get_active())
+	{
+		stage.setDirectionType(particles::IParticleStage::DIRECTION_CONE);
+		stage.setDirectionParm(0, getSpinButtonValueAsFloat("coneAngleSpinner"));
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("directionOutward")->get_active())
+	{
+		stage.setDirectionType(particles::IParticleStage::DIRECTION_OUTWARD);
+		stage.setDirectionParm(0, getSpinButtonValueAsFloat("upwardBiasSpinner"));
+	}
+
+	getGladeWidget<Gtk::Widget>("coneAngleHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_CONE);
+	getGladeWidget<Gtk::Widget>("upwardBiasHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_OUTWARD);
+
+	if (getGladeWidget<Gtk::RadioButton>("orientationView")->get_active())
+	{
+		stage.setOrientationType(particles::IParticleStage::ORIENTATION_VIEW);
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("orientationAimed")->get_active())
+	{
+		stage.setOrientationType(particles::IParticleStage::ORIENTATION_AIMED);
+
+		stage.setOrientationParm(0, getSpinButtonValueAsFloat("aimedTrailsSpinner"));
+		stage.setOrientationParm(1, getSpinButtonValueAsFloat("aimedTimeSpinner"));
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("orientationX")->get_active())
+	{
+		stage.setOrientationType(particles::IParticleStage::ORIENTATION_X);
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("orientationY")->get_active())
+	{
+		stage.setOrientationType(particles::IParticleStage::ORIENTATION_Y);
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("orientationZ")->get_active())
+	{
+		stage.setOrientationType(particles::IParticleStage::ORIENTATION_Z);
+	}
+
+	getGladeWidget<Gtk::Widget>("aimedTrailsHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
+	getGladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
+
+	stage.setInitialAngle(getSpinButtonValueAsFloat("initialAngleSpinner"));
 }
 
 float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
@@ -575,6 +659,8 @@ void ParticleEditor::updateWidgetsFromStage()
 	getGladeWidget<Gtk::SpinButton>("timeOffsetSpinner")->get_adjustment()->set_value(stage.getTimeOffset());
 	getGladeWidget<Gtk::SpinButton>("deadTimeSpinner")->get_adjustment()->set_value(stage.getDeadTime());
 
+	// DISTRIBUTION
+
 	bool useRingSize = false;
 
 	switch (stage.getDistributionType())
@@ -601,6 +687,51 @@ void ParticleEditor::updateWidgetsFromStage()
 	getGladeWidget<Gtk::SpinButton>("distSizeRingSpinner")->get_adjustment()->set_value(stage.getDistributionParm(3));
 	getGladeWidget<Gtk::Entry>("distOffsetEntry")->set_text(std::string(stage.getOffset()));
 	getGladeWidget<Gtk::CheckButton>("distRandom")->set_active(stage.getRandomDistribution());
+
+	// DIRECTION / ORIENTATION
+
+	switch (stage.getDirectionType())
+	{
+	case particles::IParticleStage::DIRECTION_CONE:
+		getGladeWidget<Gtk::RadioButton>("directionCone")->set_active(true);
+		getGladeWidget<Gtk::SpinButton>("coneAngleSpinner")->get_adjustment()->set_value(stage.getDirectionParm(0));
+		break;
+	case particles::IParticleStage::DIRECTION_OUTWARD:
+		getGladeWidget<Gtk::RadioButton>("directionOutward")->set_active(true);
+		getGladeWidget<Gtk::SpinButton>("upwardBiasSpinner")->get_adjustment()->set_value(stage.getDirectionParm(0));
+		break;
+	};
+
+	getGladeWidget<Gtk::Widget>("coneAngleHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_CONE);
+	getGladeWidget<Gtk::Widget>("upwardBiasHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_OUTWARD);
+
+	// Orientation Type
+	switch (stage.getOrientationType())
+	{
+	case particles::IParticleStage::ORIENTATION_VIEW:
+		getGladeWidget<Gtk::RadioButton>("orientationView")->set_active(true);
+		break;
+	case particles::IParticleStage::ORIENTATION_AIMED:
+		getGladeWidget<Gtk::RadioButton>("orientationAimed")->set_active(true);
+		getGladeWidget<Gtk::SpinButton>("aimedTrailsSpinner")->get_adjustment()->set_value(stage.getOrientationParm(0));
+		getGladeWidget<Gtk::SpinButton>("aimedTimeSpinner")->get_adjustment()->set_value(stage.getOrientationParm(1));
+		break;
+	case particles::IParticleStage::ORIENTATION_X:
+		getGladeWidget<Gtk::RadioButton>("orientationX")->set_active(true);
+
+		break;
+	case particles::IParticleStage::ORIENTATION_Y:
+		getGladeWidget<Gtk::RadioButton>("orientationY")->set_active(true);
+		break;
+	case particles::IParticleStage::ORIENTATION_Z:
+		getGladeWidget<Gtk::RadioButton>("orientationZ")->set_active(true);
+		break;
+	};
+
+	getGladeWidget<Gtk::Widget>("aimedTrailsHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
+	getGladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
+
+	getGladeWidget<Gtk::SpinButton>("initialAngleSpinner")->get_adjustment()->set_value(stage.getInitialAngle());
 
 	_callbacksDisabled = false;
 }

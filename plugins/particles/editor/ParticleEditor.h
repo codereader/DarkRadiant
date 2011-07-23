@@ -98,6 +98,7 @@ private:
 	void _onShaderControlsChanged();
 	void _onCountTimeControlsChanged();
 	void _onDistributionControlsChanged();
+	void _onDirectionControlsChanged();
 
 	// Returns the 0-based index of the current stage
 	std::size_t getSelectedStageIndex();
