@@ -13,6 +13,7 @@
 #include <gtkmm/button.h>
 #include <gtkmm/paned.h>
 #include <gtkmm/spinbutton.h>
+#include <gtkmm/checkbutton.h>
 #include <gtkmm/treeview.h>
 #include <gtkmm/stock.h>
 
@@ -187,6 +188,28 @@ void ParticleEditor::setupSettingsPages()
 		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
 	getGladeWidget<Gtk::SpinButton>("deadTimeSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
+
+	getGladeWidget<Gtk::RadioButton>("distRectangle")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("distCylinder")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("distSphere")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+
+	getGladeWidget<Gtk::SpinButton>("distSizeXSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("distSizeYSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("distSizeZSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("distSizeRingSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+
+	getGladeWidget<Gtk::Entry>("distOffsetEntry")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+
+	getGladeWidget<Gtk::CheckButton>("distRandom")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
 }
 
 void ParticleEditor::_onShaderControlsChanged()
@@ -225,6 +248,40 @@ void ParticleEditor::_onCountTimeControlsChanged()
 	stage.setCycles(getSpinButtonValueAsInt("cyclesSpinner"));
 	stage.setTimeOffset(getSpinButtonValueAsFloat("timeOffsetSpinner"));
 	stage.setDeadTime(getSpinButtonValueAsFloat("deadTimeSpinner"));
+}
+
+void ParticleEditor::_onDistributionControlsChanged()
+{
+	if (_callbacksDisabled || !_particle || !_selectedStageIter) return;
+
+	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
+
+	if (getGladeWidget<Gtk::RadioButton>("distRectangle")->get_active())
+	{
+		stage.setDistributionType(particles::IParticleStage::DISTRIBUTION_RECT);
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("distCylinder")->get_active())
+	{
+		stage.setDistributionType(particles::IParticleStage::DISTRIBUTION_CYLINDER);
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("distSphere")->get_active())
+	{
+		stage.setDistributionType(particles::IParticleStage::DISTRIBUTION_SPHERE);
+	}
+
+	bool useRingSize = stage.getDistributionType() != particles::IParticleStage::DISTRIBUTION_RECT;
+
+	getGladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
+	getGladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
+
+	stage.setDistributionParm(0, getSpinButtonValueAsFloat("distSizeXSpinner"));
+	stage.setDistributionParm(1, getSpinButtonValueAsFloat("distSizeYSpinner"));
+	stage.setDistributionParm(2, getSpinButtonValueAsFloat("distSizeZSpinner"));
+	stage.setDistributionParm(3, getSpinButtonValueAsFloat("distSizeRingSpinner"));
+
+	stage.setOffset(Vector3(getGladeWidget<Gtk::Entry>("distOffsetEntry")->get_text()));
+
+	stage.setRandomDistribution(getGladeWidget<Gtk::CheckButton>("distRandom")->get_active());
 }
 
 float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
@@ -517,6 +574,33 @@ void ParticleEditor::updateWidgetsFromStage()
 	getGladeWidget<Gtk::SpinButton>("cyclesSpinner")->get_adjustment()->set_value(stage.getCycles());
 	getGladeWidget<Gtk::SpinButton>("timeOffsetSpinner")->get_adjustment()->set_value(stage.getTimeOffset());
 	getGladeWidget<Gtk::SpinButton>("deadTimeSpinner")->get_adjustment()->set_value(stage.getDeadTime());
+
+	bool useRingSize = false;
+
+	switch (stage.getDistributionType())
+	{
+	case particles::IParticleStage::DISTRIBUTION_RECT:
+		getGladeWidget<Gtk::RadioButton>("distRectangle")->set_active(true);
+		break;
+	case particles::IParticleStage::DISTRIBUTION_CYLINDER:
+		getGladeWidget<Gtk::RadioButton>("distCylinder")->set_active(true);
+		useRingSize = true;
+		break;
+	case particles::IParticleStage::DISTRIBUTION_SPHERE:
+		getGladeWidget<Gtk::RadioButton>("distSphere")->set_active(true);
+		useRingSize = true;
+		break;
+	};
+
+	getGladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
+	getGladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
+	
+	getGladeWidget<Gtk::SpinButton>("distSizeXSpinner")->get_adjustment()->set_value(stage.getDistributionParm(0));
+	getGladeWidget<Gtk::SpinButton>("distSizeYSpinner")->get_adjustment()->set_value(stage.getDistributionParm(1));
+	getGladeWidget<Gtk::SpinButton>("distSizeZSpinner")->get_adjustment()->set_value(stage.getDistributionParm(2));
+	getGladeWidget<Gtk::SpinButton>("distSizeRingSpinner")->get_adjustment()->set_value(stage.getDistributionParm(3));
+	getGladeWidget<Gtk::Entry>("distOffsetEntry")->set_text(std::string(stage.getOffset()));
+	getGladeWidget<Gtk::CheckButton>("distRandom")->set_active(stage.getRandomDistribution());
 
 	_callbacksDisabled = false;
 }
