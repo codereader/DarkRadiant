@@ -15,6 +15,7 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
+#include <fstream>
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
@@ -222,11 +223,23 @@ bool ParticlesManager::saveParticleDef(const std::string& particleName)
 			// There is a file with that name already in the VFS, copy it to the target file
 			TextInputStream& inheritStream = inheritFile->getInputStream();
 
-			// TODO
+			std::ofstream outFile(targetFile.file_string().c_str());
+
+			char buf[16384];
+			std::size_t bytesRead = inheritStream.read(buf, sizeof(buf));
+
+			while (bytesRead > 0)
+			{
+				outFile.write(buf, bytesRead);
+
+				bytesRead = inheritStream.read(buf, sizeof(buf));
+			}
+
+			outFile.close();
 		}
 	}
 
-	// TODO
+	// TODO: Open target file and write/merge the particle declaration
 
 	return false;
 }

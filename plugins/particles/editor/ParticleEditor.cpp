@@ -81,7 +81,7 @@ ParticleEditor::ParticleEditor() :
 	set_default_size(static_cast<int>(rect.get_width() * 0.6f), height);
 
 	// Setup and pack the preview
-	_preview->setSize(rect.get_width() * 0.3f, -1);
+	_preview->setSize(static_cast<int>(rect.get_width() * 0.3f), -1);
 	getGladeWidget<Gtk::HPaned>("mainPane")->add2(*_preview->getWidget());
 
 	// Connect the window position tracker
@@ -342,7 +342,7 @@ void ParticleEditor::_onShaderControlsChanged()
 	stage.setFadeInFraction(getSpinButtonValueAsFloat("fadeInFractionSpinner"));
 	stage.setFadeOutFraction(getSpinButtonValueAsFloat("fadeOutFractionSpinner"));
 	stage.setFadeIndexFraction(getSpinButtonValueAsFloat("fadeIndexFractionSpinner"));
-	stage.setAnimationFrames(getSpinButtonValueAsFloat("animFramesSpinner"));
+	stage.setAnimationFrames(getSpinButtonValueAsInt("animFramesSpinner"));
 	stage.setAnimationRate(getSpinButtonValueAsFloat("animRateSpinner"));
 }
 
@@ -355,7 +355,7 @@ void ParticleEditor::_onCountTimeControlsChanged()
 	stage.setCount(getSpinButtonValueAsInt("countSpinner"));
 	stage.setDuration(getSpinButtonValueAsFloat("timeSpinner"));
 	stage.setBunching(getSpinButtonValueAsFloat("bunchingSpinner"));
-	stage.setCycles(getSpinButtonValueAsInt("cyclesSpinner"));
+	stage.setCycles(getSpinButtonValueAsFloat("cyclesSpinner"));
 	stage.setTimeOffset(getSpinButtonValueAsFloat("timeOffsetSpinner"));
 	stage.setDeadTime(getSpinButtonValueAsFloat("deadTimeSpinner"));
 }
@@ -757,7 +757,11 @@ void ParticleEditor::_onDuplicateStage()
 
 void ParticleEditor::updateWidgetsFromParticle()
 {
-	if (!_particle) return;
+	if (!_particle) 
+	{
+		getGladeWidget<Gtk::Label>("outFileLabel")->set_markup("");
+		return;
+	}
 
 	// Load stages
 	reloadStageList();
@@ -771,6 +775,13 @@ void ParticleEditor::updateWidgetsFromParticle()
 
 	// Load stage data into controls
 	updateWidgetsFromStage();
+
+	// Update outfile label
+	boost::filesystem::path outFile = GlobalGameManager().getModPath();
+	outFile /= particles::PARTICLES_DIR;
+	outFile /= _particle->getFilename();
+	getGladeWidget<Gtk::Label>("outFileLabel")->set_markup(
+		(boost::format(_("Note: changes will be written to the file <i>%s</i>")) % outFile.file_string()).str());
 }
 
 void ParticleEditor::reloadStageList()
