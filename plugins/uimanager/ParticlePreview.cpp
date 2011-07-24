@@ -418,9 +418,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	// particle system
 	_particle->renderSolid(_renderer, _volumeTest);
 
-	RenderStateFlags flags = RENDER_DEPTHTEST
-                             | RENDER_COLOURWRITE
-                             //| RENDER_DEPTHWRITE
+	RenderStateFlags flags = RENDER_COLOURWRITE
                              | RENDER_ALPHATEST
                              | RENDER_BLEND
                              | RENDER_CULLFACE
@@ -433,19 +431,14 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 							 | RENDER_LIGHTING
 							 | RENDER_TEXTURE_2D
 							 | RENDER_SMOOTH
-							 | RENDER_SCALED;
-
-	flags |= RENDER_FILL
-           | RENDER_LIGHTING
-           | RENDER_TEXTURE_2D
-           | RENDER_TEXTURE_CUBEMAP
-           | RENDER_SMOOTH
-           | RENDER_SCALED
-           | RENDER_BUMP
-           | RENDER_PROGRAM
-           | RENDER_MATERIAL_VCOL
-           | RENDER_VCOL_INVERT
-           | RENDER_SCREEN;
+							 | RENDER_SCALED 
+							 | RENDER_FILL
+							 | RENDER_TEXTURE_CUBEMAP
+							 | RENDER_BUMP
+							 | RENDER_PROGRAM
+							 | RENDER_MATERIAL_VCOL
+							 | RENDER_VCOL_INVERT
+							 | RENDER_SCREEN;
 
 	// Force activation of client state GL_COLOR_ARRAY, shaders don't require this state
 	flags |= RENDER_FORCE_COLORARRAY;
