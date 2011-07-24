@@ -178,6 +178,13 @@ void ParticleEditor::setupParticleStageList()
 
 void ParticleEditor::setupSettingsPages()
 {
+	// Depth Hack
+
+	getGladeWidget<Gtk::CheckButton>("depthHack")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onDepthHackChanged));
+
+	// SHADER
+
 	getGladeWidget<Gtk::Entry>("shaderEntry")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
 	getGladeWidget<Gtk::Entry>("colourEntry")->signal_changed().connect(
@@ -493,6 +500,13 @@ void ParticleEditor::_onPathControlsChanged()
 	updatePathWidgetSensitivity();
 }
 
+void ParticleEditor::_onDepthHackChanged()
+{
+	if (_callbacksDisabled || !_particle) return;
+
+	_particle->setDepthHack(getGladeWidget<Gtk::CheckButton>("depthHack")->get_active());
+}
+
 void ParticleEditor::updatePathWidgetSensitivity()
 {
 	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
@@ -747,6 +761,9 @@ void ParticleEditor::updateWidgetsFromParticle()
 
 	// Load stages
 	reloadStageList();
+
+	// Update depth hack
+	getGladeWidget<Gtk::CheckButton>("depthHack")->set_active(_particle->getDepthHack());
 
 	// Load stage data into controls
 	updateWidgetsFromStage();

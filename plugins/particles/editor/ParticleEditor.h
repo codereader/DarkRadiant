@@ -117,6 +117,7 @@ private:
 	void _onDirectionControlsChanged();
 	void _onSizeControlsChanged();
 	void _onPathControlsChanged();
+	void _onDepthHackChanged();
 
 	void updatePathWidgetSensitivity();
 
