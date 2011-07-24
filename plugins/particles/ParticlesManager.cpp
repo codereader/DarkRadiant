@@ -8,6 +8,7 @@
 #include "icommandsystem.h"
 #include "ieventmanager.h"
 #include "ifilesystem.h"
+#include "igame.h"
 
 #include "parser/DefTokeniser.h"
 #include "math/Vector4.h"
@@ -16,6 +17,9 @@
 
 #include <iostream>
 #include <boost/bind.hpp>
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
 
 namespace particles {
 
@@ -191,8 +195,37 @@ void ParticlesManager::reloadParticleDefs()
 	}
 }
 
-bool ParticlesManager::saveParticleDef(const std::string& particle)
+bool ParticlesManager::saveParticleDef(const std::string& particleName)
 {
+	ParticleDefMap::const_iterator found = _particleDefs.find(particleName);
+
+	if (found == _particleDefs.end())
+	{
+		globalWarningStream() << "Cannot save particle, as it's not registered in the particleDef map." << std::endl;
+		return false;
+	}
+
+	ParticleDefPtr particle = found->second;
+
+	std::string relativePath = PARTICLES_DIR + particle->getFilename();
+
+	fs::path targetFile = GlobalGameManager().getModPath();
+	targetFile /= relativePath;
+
+	// If the file doesn't exist yet, let's check if we need to inherit stuff first from the VFS
+	if (!fs::exists(targetFile))
+	{
+		ArchiveTextFilePtr inheritFile = GlobalFileSystem().openTextFile(relativePath);
+
+		if (inheritFile != NULL)
+		{
+			// There is a file with that name already in the VFS, copy it to the target file
+			TextInputStream& inheritStream = inheritFile->getInputStream();
+
+			// TODO
+		}
+	}
+
 	// TODO
 
 	return false;
