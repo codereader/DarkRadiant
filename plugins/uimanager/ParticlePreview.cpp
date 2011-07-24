@@ -464,30 +464,25 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 
 	if (_showWireFrameButton->get_active())
 	{
-		flags = RENDER_DEPTHTEST
-                             | RENDER_COLOURWRITE
-                             //| RENDER_DEPTHWRITE
-                             | RENDER_ALPHATEST
-                             | RENDER_BLEND
-                             | RENDER_CULLFACE
-                             | RENDER_COLOURARRAY
-                             | RENDER_OFFSETLINE
-                             | RENDER_POLYGONSMOOTH
-                             | RENDER_LINESMOOTH
-                             | RENDER_COLOURCHANGE
-							 | RENDER_LIGHTING
-							 | RENDER_SMOOTH
-							 | RENDER_SCALED;
-
-		flags |= RENDER_LIGHTING
-			   | RENDER_TEXTURE_CUBEMAP
-			   | RENDER_SMOOTH
-			   | RENDER_SCALED
-			   | RENDER_BUMP
-			   | RENDER_PROGRAM
-			   | RENDER_MATERIAL_VCOL
-			   | RENDER_VCOL_INVERT
-			   | RENDER_SCREEN;
+		flags = RENDER_COLOURWRITE
+                //| RENDER_DEPTHWRITE
+                | RENDER_ALPHATEST
+                | RENDER_BLEND
+                | RENDER_CULLFACE
+                | RENDER_COLOURARRAY
+                | RENDER_OFFSETLINE
+                | RENDER_POLYGONSMOOTH
+                | RENDER_LINESMOOTH
+                | RENDER_COLOURCHANGE
+				| RENDER_LIGHTING
+				| RENDER_SMOOTH
+				| RENDER_SCALED
+				| RENDER_TEXTURE_CUBEMAP
+				| RENDER_BUMP
+				| RENDER_PROGRAM
+				| RENDER_MATERIAL_VCOL
+				| RENDER_VCOL_INVERT
+				| RENDER_SCREEN;
 
 		flags |= RENDER_FORCE_COLORARRAY;
 
