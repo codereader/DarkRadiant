@@ -91,14 +91,7 @@ public:
 
 	~ParticlePreview();
 
-	/**
-	 * Set the pixel size of the ParticlePreview widget. The widget is always
-	 * square.
-	 *
-	 * @param size
-	 * The pixel size of the square widget.
-	 */
-	void setSize(int size);
+	void setSize(int width, int height);
 
 	/**
 	 * Initialise the GL preview. This clears the window and sets up the

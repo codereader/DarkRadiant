@@ -166,9 +166,9 @@ ParticlePreview::~ParticlePreview()
 
 // Set the size request for the widget
 
-void ParticlePreview::setSize(int size)
+void ParticlePreview::setSize(int width, int height)
 {
-	_glWidget->set_size_request(size, size);
+	_glWidget->set_size_request(width, height);
 }
 
 // Initialise the preview GL stuff

@@ -36,11 +36,11 @@ ParticlesChooser::ParticlesChooser() :
 	int height = static_cast<int>(rect.get_height() * 0.6f);
 
 	set_default_size(
-		static_cast<int>(rect.get_width() * 0.4f), static_cast<int>(rect.get_height() * 0.6f)
+		static_cast<int>(rect.get_width() * 0.4f), height
 	);
 
 	// Set the default size of the window
-	_preview->setSize(height);
+	_preview->setSize(rect.get_width() * 0.2f, height);
 
 	// Main dialog vbox
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 12));

@@ -30,13 +30,12 @@ public:
     virtual ~IParticlePreview() {}
 
 	/**
-	 * Set the pixel size of the IParticlePreview widget. The widget is always
-	 * square.
+	 * Set the pixel size of the IParticlePreview widget. 
 	 *
-	 * @param size
-	 * The pixel size of the square widget.
+	 * @param width, height
+	 * The pixel size of the widget.
 	 */
-	virtual void setSize(int size) = 0;
+	virtual void setSize(int width, int height) = 0;
 
 	/**
 	 * Initialise the GL preview. This clears the window and sets up the

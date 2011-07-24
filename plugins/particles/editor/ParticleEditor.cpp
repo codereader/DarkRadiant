@@ -66,7 +66,7 @@ ParticleEditor::ParticleEditor() :
 	set_default_size(static_cast<int>(rect.get_width() * 0.6f), height);
 
 	// Setup and pack the preview
-	_preview->setSize(height);
+	_preview->setSize(rect.get_width() * 0.3f, height);
 	getGladeWidget<Gtk::HPaned>("mainPane")->add2(*_preview->getWidget());
 
 	// Connect the window position tracker
