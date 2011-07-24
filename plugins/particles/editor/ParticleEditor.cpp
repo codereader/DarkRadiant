@@ -4,11 +4,14 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "iparticles.h"
+#include "igame.h"
 
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/TextColumn.h"
+#include "gtkutil/FileChooser.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/dialog/MessageBox.h"
+#include "gtkutil/EntryAbortedException.h"
 
 #include <gtkmm/button.h>
 #include <gtkmm/paned.h>
@@ -20,6 +23,7 @@
 #include "ParticleDefPopulator.h"
 #include "../ParticlesManager.h"
 
+#include <boost/filesystem.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace ui
@@ -32,6 +36,7 @@ namespace
 
 	const std::string RKEY_ROOT = "user/ui/particleEditor/";
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+	const std::string RKEY_RECENT_PATH = RKEY_ROOT + "recentSavePath";
 
 	const std::string EDIT_SUFFIX = "___editor";
 }
@@ -55,6 +60,16 @@ ParticleEditor::ParticleEditor() :
 	// Wire up the close button
 	getGladeWidget<Gtk::Button>("closeButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ParticleEditor::_onClose)
+    );
+
+	getGladeWidget<Gtk::Button>("newParticleButon")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onNewParticle)
+    );
+	getGladeWidget<Gtk::Button>("saveParticleButton")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSaveParticle)
+    );
+	getGladeWidget<Gtk::Button>("saveParticleAsButton")->signal_clicked().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSaveAsParticle)
     );
 
 	// Set the default size of the window
@@ -123,6 +138,11 @@ void ParticleEditor::populateParticleDefList()
 	// Create and use a ParticlesVisitor to populate the list
 	ParticlesVisitor visitor(_defList, _defColumns);
 	GlobalParticlesManager().forEachParticleDef(visitor);
+}
+
+void ParticleEditor::selectParticleDef(const std::string& particleDefName)
+{
+	gtkutil::TreeModel::findAndSelectString(getGladeWidget<Gtk::TreeView>("definitionView"), particleDefName, _defColumns.name);
 }
 
 void ParticleEditor::setupParticleStageList()
@@ -1070,6 +1090,121 @@ void ParticleEditor::_onClose()
 
 	// Close the window
 	destroy();
+}
+
+void ParticleEditor::_onNewParticle()
+{
+	if (particleHasUnsavedChanges() && askForSave() && !saveCurrentParticle())
+	{
+		// Particle has unsaved changes, user wants to save the particle, 
+		// but the save attempt failed, inhibit window destruction
+		return;
+	}
+
+	std::string particleName = queryNewParticleName();
+
+	if (particleName.empty())
+	{
+		return; // no valid name, abort
+	}
+
+	std::string destFile = queryParticleFile();
+
+	if (destFile.empty())
+	{
+		return; // no valid destination file
+	}
+
+	// Good filename, good destination file, we're set to go
+	particles::ParticleDefPtr particle = particles::ParticlesManager::Instance().findOrInsertParticleDef(particleName);
+
+	particle->setFilename(destFile);
+
+	// Re-load the particles list
+	populateParticleDefList();
+
+	// Highlight our new particle
+	selectParticleDef(particle->getName());
+}
+
+std::string ParticleEditor::queryParticleFile()
+{
+	// Get the filename we should save this particle into
+	gtkutil::FileChooser chooser(getRefPtr(), _("Select .prt file"), false, false, "particle", ".prt");
+
+	boost::filesystem::path modParticlesPath = GlobalGameManager().getModPath();
+	modParticlesPath /= "particles";
+
+	if (!boost::filesystem::exists(modParticlesPath))
+	{
+		globalOutputStream() << "Ensuring mod particles path: " << modParticlesPath << std::endl;
+		boost::filesystem::create_directories(modParticlesPath);
+	}
+
+	// Point the file chooser to that new file
+	chooser.setCurrentPath(GlobalGameManager().getModPath() + "/particles");
+	chooser.askForOverwrite(false);
+
+	return chooser.display();
+}
+
+std::string ParticleEditor::queryNewParticleName()
+{
+	// It's ok after this point to create a new particle
+	while (true)
+	{
+		// Query the name of the new particle from the user
+		std::string particleName;
+
+		if (particleName.empty())
+		{
+			try
+			{
+				particleName = gtkutil::Dialog::TextEntryDialog(
+					_("Enter Name"),
+					_("Enter Particle Name"),
+					"",
+					GlobalMainFrame().getTopLevelWindow()
+				);
+			}
+			catch (gtkutil::EntryAbortedException&)
+			{
+				break;
+			}
+		}
+
+		if (particleName.empty())
+		{
+			// Wrong name, let the user try again
+			gtkutil::MessageBox::ShowError(_("Cannot create particle with an empty name."), GlobalMainFrame().getTopLevelWindow());
+			continue;
+		}
+
+		// Check if this particle already exists
+		particles::IParticleDefPtr existing = GlobalParticlesManager().getParticle(particleName);
+
+		if (existing == NULL)
+		{
+			// Success, return that name
+			return particleName;
+		}
+		else
+		{
+			// Wrong name, let the user try again
+			gtkutil::MessageBox::ShowError(_("This name is already in use."), GlobalMainFrame().getTopLevelWindow());
+			continue;
+		}
+	}
+
+	return ""; // no successful entry
+}
+
+void ParticleEditor::_onSaveParticle()
+{
+}
+
+void ParticleEditor::_onSaveAsParticle()
+{
 }
 
 void ParticleEditor::displayDialog(const cmd::ArgumentList& args)
