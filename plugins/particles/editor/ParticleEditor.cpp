@@ -1036,17 +1036,8 @@ bool ParticleEditor::saveCurrentParticle()
 
 	particles::IParticleDefPtr originalParticle = GlobalParticlesManager().getParticle(originalParticleName);
 
-	// If the particle is not existing at all yet, create a new one
-	// TODO: This is not needed when the "New Particle" algorithm is working ok
-	if (!originalParticle)
-	{
-		particles::ParticleDefPtr newParticle = 
-			particles::ParticlesManager::Instance().findOrInsertParticleDef(originalParticleName);
-
-		newParticle->setFilename(""); // TODO
-		
-		originalParticle = newParticle;
-	}
+	// This should really succeed, we can't have non-existing particles selected in the treeview
+	assert(originalParticle);
 
 	// Write the changes from the working copy into the actual instance
 	originalParticle->copyFrom(*_particle);
@@ -1101,18 +1092,23 @@ void ParticleEditor::_onNewParticle()
 		return;
 	}
 
+	createAndSelectNewParticle();
+}
+
+particles::ParticleDefPtr ParticleEditor::createAndSelectNewParticle()
+{
 	std::string particleName = queryNewParticleName();
 
 	if (particleName.empty())
 	{
-		return; // no valid name, abort
+		return particles::ParticleDefPtr(); // no valid name, abort
 	}
 
 	std::string destFile = queryParticleFile();
 
 	if (destFile.empty())
 	{
-		return; // no valid destination file
+		return particles::ParticleDefPtr(); // no valid destination file
 	}
 
 	// Good filename, good destination file, we're set to go
@@ -1125,6 +1121,8 @@ void ParticleEditor::_onNewParticle()
 
 	// Highlight our new particle
 	selectParticleDef(particle->getName());
+
+	return particle;
 }
 
 std::string ParticleEditor::queryParticleFile()
@@ -1201,10 +1199,38 @@ std::string ParticleEditor::queryNewParticleName()
 
 void ParticleEditor::_onSaveParticle()
 {
+	saveCurrentParticle();
 }
 
 void ParticleEditor::_onSaveAsParticle()
 {
+	// Get the original particle name
+	std::string originalParticleName = (*_selectedDefIter)[_defColumns.name];
+
+	if (originalParticleName.empty())
+	{
+		return;
+	}
+
+	// Look up the original particle def
+	particles::IParticleDefPtr original = GlobalParticlesManager().getParticle(originalParticleName);
+
+	// Create a new particle
+	particles::ParticleDefPtr newParticle = createAndSelectNewParticle();
+
+	if (!newParticle)
+	{
+		return;
+	}
+
+	// Copy stuff from original particle
+	newParticle->copyFrom(*original);
+
+	// Save the new particle declaration to the file immediately
+	saveCurrentParticle();
+
+	// Reload controls
+	updateWidgetsFromParticle();
 }
 
 void ParticleEditor::displayDialog(const cmd::ArgumentList& args)

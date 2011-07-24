@@ -97,6 +97,10 @@ private:
 	std::string queryNewParticleName();
 	std::string queryParticleFile();
 
+	// Creates a particle with a new name (queried from the user), selects it and returns the particle ref
+	// Returns NULL if the user cancelled in some way
+	particles::ParticleDefPtr createAndSelectNewParticle();
+
 	// Highlight the named particle in the treeview
 	void selectParticleDef(const std::string& particleDefName);
 
