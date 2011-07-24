@@ -100,6 +100,9 @@ private:
 	void _onDistributionControlsChanged();
 	void _onDirectionControlsChanged();
 	void _onSizeControlsChanged();
+	void _onPathControlsChanged();
+
+	void updatePathWidgetSensitivity();
 
 	// Returns the 0-based index of the current stage
 	std::size_t getSelectedStageIndex();
