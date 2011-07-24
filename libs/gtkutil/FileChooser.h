@@ -1,5 +1,4 @@
-#ifndef _GTKUTIL_FILECHOOSER_H_
-#define _GTKUTIL_FILECHOOSER_H_
+#pragma once
 
 // gtkmm file-chooser dialogs.
 
@@ -38,6 +37,9 @@ private:
 
 	// The optional preview object
 	PreviewPtr _preview;
+
+	// Whether to ask about overwriting files
+	bool _askOverwrite;
 
 public:
 	/**
@@ -96,6 +98,12 @@ public:
 	virtual std::string getSelectedFileName();
 
 	/**
+	 * It's possible to inihibit the "File exists - replace" question when
+	 * selecting filenames for saving.
+	 */
+	void askForOverwrite(bool ask);
+
+	/**
 	 * greebo: Displays the dialog and enters the GTK main loop.
 	 * Returns the filename or "" if the user hit cancel.
 	 *
@@ -117,5 +125,3 @@ private:
 };
 
 } // namespace gtkutil
-
-#endif /* _GTKUTIL_FILECHOOSER_H_ */

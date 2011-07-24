@@ -26,7 +26,8 @@ FileChooser::FileChooser(const std::string& title,
 	_fileType(fileType),
 	_defaultExt(defaultExt),
 	_open(open),
-	_browseFolders(browseFolders)
+	_browseFolders(browseFolders),
+	_askOverwrite(true)
 {
 	construct();
 }
@@ -43,7 +44,8 @@ FileChooser::FileChooser(const Glib::RefPtr<Gtk::Window>& parentWindow,
 	_fileType(fileType),
 	_defaultExt(defaultExt),
 	_open(open),
-	_browseFolders(browseFolders)
+	_browseFolders(browseFolders),
+	_askOverwrite(true)
 {
 	construct();
 }
@@ -171,6 +173,11 @@ std::string FileChooser::getSelectedFileName()
 	return fileName;
 }
 
+void FileChooser::askForOverwrite(bool ask)
+{
+	_askOverwrite = ask;
+}
+
 void FileChooser::attachPreview(const PreviewPtr& preview)
 {
 	if (_preview != NULL)
@@ -211,18 +218,26 @@ std::string FileChooser::display()
 			return fileName;
 		}
 
-		// If file exists, ask for overwrite
-		std::string askTitle = _title;
-		askTitle += (!fileName.empty()) ? ": " + os::getFilename(fileName) : "";
-
-		std::string askMsg = (boost::format("The file %s already exists.") % os::getFilename(fileName)).str();
-		askMsg += "\n";
-		askMsg += _("Do you want to replace it?");
-
-		MessageBox box(askTitle, askMsg, ui::IDialog::MESSAGE_ASK);
-
-		if (box.run() == ui::IDialog::RESULT_YES)
+		if (_askOverwrite)
 		{
+			// If file exists, ask for overwrite
+			std::string askTitle = _title;
+			askTitle += (!fileName.empty()) ? ": " + os::getFilename(fileName) : "";
+
+			std::string askMsg = (boost::format("The file %s already exists.") % os::getFilename(fileName)).str();
+			askMsg += "\n";
+			askMsg += _("Do you want to replace it?");
+
+			MessageBox box(askTitle, askMsg, ui::IDialog::MESSAGE_ASK);
+
+			if (box.run() == ui::IDialog::RESULT_YES)
+			{
+				return fileName;
+			}
+		}
+		else
+		{
+			// Don't ask questions, return the selected filename
 			return fileName;
 		}
 	}
