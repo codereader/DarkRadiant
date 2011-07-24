@@ -223,9 +223,9 @@ void ParticleEditor::setupSettingsPages()
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 
 	getGladeWidget<Gtk::SpinButton>("coneAngleSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 	getGladeWidget<Gtk::SpinButton>("upwardBiasSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 
 	getGladeWidget<Gtk::RadioButton>("orientationView")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
@@ -239,11 +239,11 @@ void ParticleEditor::setupSettingsPages()
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 
 	getGladeWidget<Gtk::SpinButton>("aimedTrailsSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 	getGladeWidget<Gtk::SpinButton>("aimedTimeSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 	getGladeWidget<Gtk::SpinButton>("initialAngleSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 }
 
 void ParticleEditor::_onShaderControlsChanged()
