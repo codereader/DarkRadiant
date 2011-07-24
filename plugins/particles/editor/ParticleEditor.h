@@ -88,6 +88,18 @@ private:
 	void _onClose();
 	void _onDefSelChanged();
 	void _onStageSelChanged();
+
+	void _onNewParticle();
+	void _onSaveParticle();
+	void _onSaveAsParticle();
+
+	// Returns a new, not-already-existing particle def name, returns empty on cancel
+	std::string queryNewParticleName();
+	std::string queryParticleFile();
+
+	// Highlight the named particle in the treeview
+	void selectParticleDef(const std::string& particleDefName);
+
 	void _onAddStage();
 	void _onRemoveStage();
 	void _onToggleStage();
