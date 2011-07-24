@@ -271,6 +271,28 @@ void ParticleEditor::setupSettingsPages()
 
 	getGladeWidget<Gtk::SpinButton>("boundsExpansionSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+
+	// PATH
+
+	getGladeWidget<Gtk::RadioButton>("pathStandard")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("pathFlies")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	getGladeWidget<Gtk::RadioButton>("pathHelix")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+
+	getGladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("pathRadiusSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("pathSizeXSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("pathSizeYSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("pathSizeZSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
 }
 
 void ParticleEditor::_onShaderControlsChanged()
@@ -417,6 +439,62 @@ void ParticleEditor::_onSizeControlsChanged()
 	stage.setWorldGravityFlag(getGladeWidget<Gtk::CheckButton>("useWorldGravity")->get_active());
 
 	stage.setBoundsExpansion(getSpinButtonValueAsFloat("boundsExpansionSpinner"));
+}
+
+void ParticleEditor::_onPathControlsChanged()
+{
+	if (_callbacksDisabled || !_particle || !_selectedStageIter) return;
+
+	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
+
+	if (getGladeWidget<Gtk::RadioButton>("pathStandard")->get_active())
+	{
+		stage.setCustomPathType(particles::IParticleStage::PATH_STANDARD);
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("pathFlies")->get_active())
+	{
+		stage.setCustomPathType(particles::IParticleStage::PATH_FLIES);
+		
+		stage.setCustomPathParm(0, getSpinButtonValueAsFloat("pathRadialSpeedSpinner"));
+		stage.setCustomPathParm(1, getSpinButtonValueAsFloat("pathAxialSpeedSpinner"));
+		stage.setCustomPathParm(2, getSpinButtonValueAsFloat("pathRadiusSpinner"));
+	}
+	else if (getGladeWidget<Gtk::RadioButton>("pathHelix")->get_active())
+	{
+		stage.setCustomPathType(particles::IParticleStage::PATH_HELIX);
+
+		stage.setCustomPathParm(0, getSpinButtonValueAsFloat("pathSizeXSpinner"));
+		stage.setCustomPathParm(1, getSpinButtonValueAsFloat("pathSizeYSpinner"));
+		stage.setCustomPathParm(2, getSpinButtonValueAsFloat("pathSizeZSpinner"));
+		stage.setCustomPathParm(3, getSpinButtonValueAsFloat("pathRadialSpeedSpinner"));
+		stage.setCustomPathParm(4, getSpinButtonValueAsFloat("pathAxialSpeedSpinner"));
+	}
+
+	updatePathWidgetSensitivity();
+}
+
+void ParticleEditor::updatePathWidgetSensitivity()
+{
+	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
+
+	// Sensitivity
+	bool useAnySpinner = stage.getCustomPathType() != particles::IParticleStage::PATH_STANDARD;
+	bool useFlies = stage.getCustomPathType() == particles::IParticleStage::PATH_FLIES;
+
+	getGladeWidget<Gtk::Widget>("pathRadialSpeedLabel")->set_sensitive(useAnySpinner);
+	getGladeWidget<Gtk::Widget>("pathAxialSpeedLabel")->set_sensitive(useAnySpinner);
+	getGladeWidget<Gtk::Widget>("pathRadialSpeedHBox")->set_sensitive(useAnySpinner);
+	getGladeWidget<Gtk::Widget>("pathAxialSpeedsHBox")->set_sensitive(useAnySpinner);
+
+	getGladeWidget<Gtk::Widget>("pathRadiusLabel")->set_sensitive(useAnySpinner && useFlies);
+	getGladeWidget<Gtk::Widget>("pathSphereRadiusHBox")->set_sensitive(useAnySpinner && useFlies);
+	
+	getGladeWidget<Gtk::Widget>("pathSizeXLabel")->set_sensitive(useAnySpinner && !useFlies);
+	getGladeWidget<Gtk::Widget>("pathSizeYLabel")->set_sensitive(useAnySpinner && !useFlies);
+	getGladeWidget<Gtk::Widget>("pathSizeZLabel")->set_sensitive(useAnySpinner && !useFlies);
+	getGladeWidget<Gtk::Widget>("pathSizeXHBox")->set_sensitive(useAnySpinner && !useFlies);
+	getGladeWidget<Gtk::Widget>("pathSizeYHBox")->set_sensitive(useAnySpinner && !useFlies);
+	getGladeWidget<Gtk::Widget>("pathSizeZHBox")->set_sensitive(useAnySpinner && !useFlies);
 }
 
 float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
@@ -803,6 +881,36 @@ void ParticleEditor::updateWidgetsFromStage()
 	getGladeWidget<Gtk::CheckButton>("useWorldGravity")->set_active(stage.getWorldGravityFlag());
 
 	getGladeWidget<Gtk::SpinButton>("boundsExpansionSpinner")->get_adjustment()->set_value(stage.getBoundsExpansion());
+
+	// PATH
+
+	switch (stage.getCustomPathType())
+	{
+	case particles::IParticleStage::PATH_STANDARD:
+		getGladeWidget<Gtk::RadioButton>("pathStandard")->set_active(true);
+		break;
+	case particles::IParticleStage::PATH_FLIES:
+		getGladeWidget<Gtk::RadioButton>("pathFlies")->set_active(true);
+
+		getGladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(0));
+		getGladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(1));
+		getGladeWidget<Gtk::SpinButton>("pathRadiusSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
+		break;
+	case particles::IParticleStage::PATH_HELIX:
+		getGladeWidget<Gtk::RadioButton>("pathHelix")->set_active(true);
+
+		getGladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(3));
+		getGladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(4));
+		getGladeWidget<Gtk::SpinButton>("pathSizeXSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(0));
+		getGladeWidget<Gtk::SpinButton>("pathSizeYSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(1));
+		getGladeWidget<Gtk::SpinButton>("pathSizeZSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
+		break;
+	default:
+		globalWarningStream() << "This custom particle path type is not supported." << std::endl;
+		break;
+	};
+
+	updatePathWidgetSensitivity();
 
 	_callbacksDisabled = false;
 }
