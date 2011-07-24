@@ -244,6 +244,33 @@ void ParticleEditor::setupSettingsPages()
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 	getGladeWidget<Gtk::SpinButton>("initialAngleSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+
+	// SIZE / SPEED / ASPECT
+
+	getGladeWidget<Gtk::SpinButton>("sizeFromSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("sizeToSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("speedFromSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("speedToSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("rotationSpeedFromSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("rotationSpeedToSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("aspectFromSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	getGladeWidget<Gtk::SpinButton>("aspectToSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+
+	getGladeWidget<Gtk::SpinButton>("gravitySpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	getGladeWidget<Gtk::CheckButton>("useWorldGravity")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+
+	getGladeWidget<Gtk::SpinButton>("boundsExpansionSpinner")->signal_changed().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
 }
 
 void ParticleEditor::_onShaderControlsChanged()
@@ -366,6 +393,30 @@ void ParticleEditor::_onDirectionControlsChanged()
 	getGladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
 
 	stage.setInitialAngle(getSpinButtonValueAsFloat("initialAngleSpinner"));
+}
+
+void ParticleEditor::_onSizeControlsChanged()
+{
+	if (_callbacksDisabled || !_particle || !_selectedStageIter) return;
+
+	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
+
+	stage.getSize().setFrom(getSpinButtonValueAsFloat("sizeFromSpinner"));
+	stage.getSize().setTo(getSpinButtonValueAsFloat("sizeToSpinner"));
+
+	stage.getSpeed().setFrom(getSpinButtonValueAsFloat("speedFromSpinner"));
+	stage.getSpeed().setTo(getSpinButtonValueAsFloat("speedToSpinner"));
+
+	stage.getRotationSpeed().setFrom(getSpinButtonValueAsFloat("rotationSpeedFromSpinner"));
+	stage.getRotationSpeed().setTo(getSpinButtonValueAsFloat("rotationSpeedToSpinner"));
+
+	stage.getAspect().setFrom(getSpinButtonValueAsFloat("aspectFromSpinner"));
+	stage.getAspect().setTo(getSpinButtonValueAsFloat("aspectToSpinner"));
+
+	stage.setGravity(getSpinButtonValueAsFloat("gravitySpinner"));
+	stage.setWorldGravityFlag(getGladeWidget<Gtk::CheckButton>("useWorldGravity")->get_active());
+
+	stage.setBoundsExpansion(getSpinButtonValueAsFloat("boundsExpansionSpinner"));
 }
 
 float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
@@ -732,6 +783,26 @@ void ParticleEditor::updateWidgetsFromStage()
 	getGladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
 
 	getGladeWidget<Gtk::SpinButton>("initialAngleSpinner")->get_adjustment()->set_value(stage.getInitialAngle());
+
+	// SIZE / SPEED / ASPECT
+
+	getGladeWidget<Gtk::SpinButton>("sizeFromSpinner")->get_adjustment()->set_value(stage.getSize().getFrom());
+	getGladeWidget<Gtk::SpinButton>("sizeToSpinner")->get_adjustment()->set_value(stage.getSize().getTo());
+
+	getGladeWidget<Gtk::SpinButton>("speedFromSpinner")->get_adjustment()->set_value(stage.getSpeed().getFrom());
+	getGladeWidget<Gtk::SpinButton>("speedToSpinner")->get_adjustment()->set_value(stage.getSpeed().getTo());
+
+	getGladeWidget<Gtk::SpinButton>("rotationSpeedFromSpinner")->get_adjustment()->set_value(stage.getRotationSpeed().getFrom());
+	getGladeWidget<Gtk::SpinButton>("rotationSpeedToSpinner")->get_adjustment()->set_value(stage.getRotationSpeed().getTo());
+
+	getGladeWidget<Gtk::SpinButton>("aspectFromSpinner")->get_adjustment()->set_value(stage.getAspect().getFrom());
+	getGladeWidget<Gtk::SpinButton>("aspectToSpinner")->get_adjustment()->set_value(stage.getAspect().getTo());
+
+	getGladeWidget<Gtk::SpinButton>("gravitySpinner")->get_adjustment()->set_value(stage.getGravity());
+
+	getGladeWidget<Gtk::CheckButton>("useWorldGravity")->set_active(stage.getWorldGravityFlag());
+
+	getGladeWidget<Gtk::SpinButton>("boundsExpansionSpinner")->get_adjustment()->set_value(stage.getBoundsExpansion());
 
 	_callbacksDisabled = false;
 }

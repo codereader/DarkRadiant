@@ -99,6 +99,7 @@ private:
 	void _onCountTimeControlsChanged();
 	void _onDistributionControlsChanged();
 	void _onDirectionControlsChanged();
+	void _onSizeControlsChanged();
 
 	// Returns the 0-based index of the current stage
 	std::size_t getSelectedStageIndex();
