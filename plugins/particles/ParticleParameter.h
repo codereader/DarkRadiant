@@ -94,6 +94,9 @@ public:
 };
 typedef boost::shared_ptr<ParticleParameter> ParticleParameterPtr;
 
+// Stream insertion
+std::ostream& operator<<(std::ostream& stream, const ParticleParameter& param);
+
 } // namespace
 
 #endif /* _PARTICLE_PARAMETER_H_ */

@@ -60,4 +60,16 @@ void ParticleParameter::parseFromTokens(parser::DefTokeniser& tok)
 	}
 }
 
+std::ostream& operator<<(std::ostream& stream, const ParticleParameter& param)
+{
+	stream << "\"" << param.getFrom() << "\"";
+
+	if (param.getFrom() != param.getTo())
+	{
+		stream << " to " << "\"" << param.getTo() << "\"";
+	}
+
+	return stream;
+}
+
 } // namespace
