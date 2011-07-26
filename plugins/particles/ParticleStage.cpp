@@ -601,20 +601,20 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 	switch (stage.getDistributionType())
 	{
 	case ParticleStage::DISTRIBUTION_RECT:
-		stream << "rect " << stage.getDistributionParm(0) << 
-							 stage.getDistributionParm(1) << 
-							 stage.getDistributionParm(2) << std::endl;
+		stream << "rect " << stage.getDistributionParm(0) << " "
+						  << stage.getDistributionParm(1) << " "
+						  << stage.getDistributionParm(2) << std::endl;
 		break;
 	case ParticleStage::DISTRIBUTION_CYLINDER:
-		stream << "cylinder " << stage.getDistributionParm(0) << 
-								 stage.getDistributionParm(1) <<
-								 stage.getDistributionParm(2) <<
-								 stage.getDistributionParm(3) << std::endl;
+		stream << "cylinder " << stage.getDistributionParm(0) << " "
+							  << stage.getDistributionParm(1) << " "
+							  << stage.getDistributionParm(2) << " "
+							  << stage.getDistributionParm(3) << std::endl;
 		break;
 	case ParticleStage::DISTRIBUTION_SPHERE:
-		stream << "sphere " << stage.getDistributionParm(0) << 
-							   stage.getDistributionParm(1) << 
-							   stage.getDistributionParm(2) << std::endl;
+		stream << "sphere " << stage.getDistributionParm(0) << " "
+							<< stage.getDistributionParm(1) << " "
+							<< stage.getDistributionParm(2) << std::endl;
 		break;
 	};
 
@@ -706,7 +706,7 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 	writeVector3(stream, stage.getOffset());
 	stream << std::endl;
 
-	stream << "\t\t" << "gravity " << "\t\t\t\t" << (stage.getWorldGravityFlag() ? "world " : "") << stage.getGravity() << std::endl;
+	stream << "\t\t" << "gravity " << "\t\t\t" << (stage.getWorldGravityFlag() ? "world " : "") << stage.getGravity() << std::endl;
 
 	if (stage.getUseEntityColour())
 	{
