@@ -1075,7 +1075,21 @@ bool ParticleEditor::saveCurrentParticle()
 	originalParticle->copyFrom(*_particle);
 
 	// Write changes to disk, and return the result
-	return particles::ParticlesManager::Instance().saveParticleDef(originalParticle->getName());
+	try
+	{
+		particles::ParticlesManager::Instance().saveParticleDef(originalParticle->getName());
+		return true;
+	}
+	catch (std::runtime_error& err)
+	{
+		std::string errMsg = (boost::format(_("Error saving particle definition:\n%s")) % err.what()).str();
+
+		globalErrorStream() << errMsg << std::endl;
+
+		gtkutil::MessageBox::ShowError(errMsg, getRefPtr());
+
+		return false;
+	}
 }
 
 void ParticleEditor::_preHide()
