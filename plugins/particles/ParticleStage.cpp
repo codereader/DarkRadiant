@@ -572,7 +572,9 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 	stream << "\t{" << std::endl;
 
 	stream << "\t\t" << "count " << "\t\t\t\t" << stage.getCount() << std::endl;
-	stream << "\t\t" << "material " << "\t\t\t" << stage.getMaterialName() << std::endl;
+
+	const std::string& material = stage.getMaterialName();
+	stream << "\t\t" << "material " << "\t\t\t" << (material.empty() ? "textures/" : material) << std::endl;
 
 	if (stage.getAnimationFrames() != 0)
 	{
