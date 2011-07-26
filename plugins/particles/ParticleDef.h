@@ -250,7 +250,29 @@ public:
 			(*i++)->onParticleReload();
 		}
 	}
+
+	// Stream insertion operator, writing the entire particle def to the given stream
+	friend std::ostream& operator<< (std::ostream& stream, const ParticleDef& def);
 };
 typedef boost::shared_ptr<ParticleDef> ParticleDefPtr;
+
+// This will write the entire particle decl to the given stream, including the leading "particle" keyword
+inline std::ostream& operator<<(std::ostream& stream, const ParticleDef& def)
+{
+	// Decl keyword, name and opening brace
+	stream << "particle " << def.getName() << " { " << std::endl;
+
+	// Write stages, one by one
+	for (ParticleDef::StageList::const_iterator i = def._stages.begin(); i != def._stages.end(); ++i)
+	{
+		const ParticleStage& stage = **i;
+		stream << stage;
+	}
+
+	// Closing brace
+	stream << "}" << std::endl;
+
+	return stream;
+}
 
 }

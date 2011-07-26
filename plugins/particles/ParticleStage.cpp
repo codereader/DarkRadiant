@@ -28,6 +28,18 @@ namespace
 			return 0;
 		}
 	}
+
+	inline std::ostream& writeColour(std::ostream& stream, const Vector4& colour)
+	{
+		stream << colour.x() << " " << colour.y() << " " << colour.z() << " " << colour.w();
+		return stream;
+	}
+
+	inline std::ostream& writeVector3(std::ostream& stream, const Vector3& vec)
+	{
+		stream << vec.x() << " " << vec.y() << " " << vec.z();
+		return stream;
+	}
 }
 
 ParticleStage::ParticleStage(ParticleDef& particle) :
@@ -547,6 +559,166 @@ void ParticleStage::notifyMaterialChange()
 	notifyChange(); // this is a general change as well
 
 	_particle.onStageMaterialChanged();
+}
+
+std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
+{
+	std::size_t prevPrecision = stream.precision();
+
+	// Three post-comma digits precision
+	stream.precision(3);
+
+	// Opening brace
+	stream << "\t{" << std::endl;
+
+	stream << "\t\t" << "count " << "\t\t\t\t" << stage.getCount() << std::endl;
+	stream << "\t\t" << "material " << "\t\t\t" << stage.getMaterialName() << std::endl;
+
+	if (stage.getAnimationFrames() != 0)
+	{
+		stream << "\t\t" << "animationFrames " << "\t\t" << stage.getAnimationFrames() << std::endl;
+	}
+
+	if (stage.getAnimationRate() != 0)
+	{
+		stream << "\t\t" << "animationrate " << "\t\t" << stage.getAnimationRate() << std::endl;
+	}
+
+	stream << "\t\t" << "time " << "\t\t\t\t" << stage.getDuration() << std::endl;
+	stream << "\t\t" << "cycles " << "\t\t\t\t" << stage.getCycles() << std::endl;
+
+	if (stage.getDeadTime() != 0)
+	{
+		stream << "\t\t" << "deadTime " << "\t\t\t" << stage.getDeadTime() << std::endl;
+	}
+
+	stream << "\t\t" << "timeOffset " << "\t\t\t" << stage.getTimeOffset() << std::endl;
+	stream << "\t\t" << "bunching " << "\t\t\t" << stage.getBunching() << std::endl;
+
+	// Distribution
+	stream << "\t\t" << "distribution " << "\t\t";
+	
+	switch (stage.getDistributionType())
+	{
+	case ParticleStage::DISTRIBUTION_RECT:
+		stream << "rect " << stage.getDistributionParm(0) << 
+							 stage.getDistributionParm(1) << 
+							 stage.getDistributionParm(2) << std::endl;
+		break;
+	case ParticleStage::DISTRIBUTION_CYLINDER:
+		stream << "cylinder " << stage.getDistributionParm(0) << 
+								 stage.getDistributionParm(1) <<
+								 stage.getDistributionParm(2) <<
+								 stage.getDistributionParm(3) << std::endl;
+		break;
+	case ParticleStage::DISTRIBUTION_SPHERE:
+		stream << "sphere " << stage.getDistributionParm(0) << 
+							   stage.getDistributionParm(1) << 
+							   stage.getDistributionParm(2) << std::endl;
+		break;
+	};
+
+	// Direction
+	stream << "\t\t" << "direction " << "\t\t\t";
+	
+	switch (stage.getDirectionType())
+	{
+	case ParticleStage::DIRECTION_CONE:
+		stream << "cone";
+		break;
+	case ParticleStage::DIRECTION_OUTWARD:
+		stream << "outward";
+		break;
+	};
+
+	stream << " " << stage.getDirectionParm(0) << std::endl;
+
+	// Orientation
+	stream << "\t\t" << "orientation " << "\t\t";
+	
+	switch (stage.getOrientationType())
+	{
+	case ParticleStage::ORIENTATION_VIEW:
+		stream << "view";
+		break;
+	case ParticleStage::ORIENTATION_AIMED:
+		stream << "aimed " << stage.getOrientationParm(0) << " " << stage.getOrientationParm(1); // trails + time
+		break;
+	case ParticleStage::ORIENTATION_X:
+		stream << "x";
+		break;
+	case ParticleStage::ORIENTATION_Y:
+		stream << "y";
+		break;
+	case ParticleStage::ORIENTATION_Z:
+		stream << "z";
+		break;
+	};
+
+	stream << std::endl;
+
+	// Custom path, only flies and helix get written
+	switch (stage.getCustomPathType())
+	{
+	case ParticleStage::PATH_FLIES: // customPath flies 10.000 10.000 10.000
+		stream << "\t\t" << "customPath " << "\t\t\t";
+		stream << "flies " << stage.getCustomPathParm(0) << " " 
+						   << stage.getCustomPathParm(1) << " " 
+						   << stage.getCustomPathParm(2) << std::endl; 
+		break;
+	case ParticleStage::PATH_HELIX:
+		stream << "\t\t" << "customPath " << "\t\t\t";
+		stream << "helix " << stage.getCustomPathParm(0) << " " 
+						   << stage.getCustomPathParm(1) << " " 
+						   << stage.getCustomPathParm(2) << " " 
+						   << stage.getCustomPathParm(3) << " " 
+						   << stage.getCustomPathParm(4) << std::endl; 
+		break;
+	default:
+		break;
+	};
+	
+	stream << "\t\t" << "speed " << "\t\t\t\t" << stage.getSpeed() << std::endl;
+	stream << "\t\t" << "size " << "\t\t\t\t" << stage.getSize() << std::endl;
+	stream << "\t\t" << "aspect " << "\t\t\t\t" << stage.getAspect() << std::endl;
+
+	if (stage.getInitialAngle() != 0)
+	{
+		stream << "\t\t" << "angle " << "\t\t\t\t" << stage.getInitialAngle() << std::endl;
+	}
+
+	stream << "\t\t" << "rotation " << "\t\t\t" << stage.getRotationSpeed() << std::endl;
+	stream << "\t\t" << "randomDistribution " << "\t" << (stage.getRandomDistribution() ? "1" : "0") << std::endl;
+	stream << "\t\t" << "boundsExpansion " << "\t" << stage.getBoundsExpansion() << std::endl;
+	stream << "\t\t" << "fadeIn " << "\t\t\t\t" << stage.getFadeInFraction() << std::endl;
+	stream << "\t\t" << "fadeOut " << "\t\t\t" << stage.getFadeOutFraction() << std::endl;
+	stream << "\t\t" << "fadeIndex " << "\t\t\t" << stage.getFadeIndexFraction() << std::endl;
+
+	stream << "\t\t" << "color " << "\t\t\t\t";
+	writeColour(stream, stage.getColour());
+	stream << std::endl;
+	
+	stream << "\t\t" << "fadeColor " << "\t\t\t";
+	writeColour(stream, stage.getFadeColour());
+	stream << std::endl;
+
+	stream << "\t\t" << "offset " << "\t\t\t\t";
+	writeVector3(stream, stage.getOffset());
+	stream << std::endl;
+
+	stream << "\t\t" << "gravity " << "\t\t\t\t" << (stage.getWorldGravityFlag() ? "world " : "") << stage.getGravity() << std::endl;
+
+	if (stage.getUseEntityColour())
+	{
+		stream << "\t\t" << "entityColor " << "\t\t\t\t" << "1" << std::endl;
+	}
+
+	// Closing brace
+	stream << "\t}" << std::endl;
+
+	stream.precision(prevPrecision);
+
+	return stream;
 }
 
 } // namespace

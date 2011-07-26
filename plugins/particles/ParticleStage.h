@@ -24,7 +24,6 @@ class ParticleDef;
 class ParticleStage :
 	public IParticleStage
 {
-public:
 private:
 	friend std::ostream& operator<< (std::ostream&, const ParticleStage&);
 
@@ -585,14 +584,9 @@ private:
 typedef boost::shared_ptr<ParticleStage> ParticleStagePtr;
 
 /**
- * Stream insertion operator for debugging.
+ * Write stage to text stream, including opening & closing braces and one level of indentation.
  */
-inline std::ostream& operator<< (std::ostream& os, const ParticleStage& stage) {
-	os << "ParticleStage { count = " << stage._count << ", "
-	   << "colour = " << stage._colour
-	   << " }";
-	return os;
-}
+std::ostream& operator<< (std::ostream& os, const ParticleStage& stage);
 
 }
 

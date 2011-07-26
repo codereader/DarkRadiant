@@ -300,8 +300,9 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 		}
 		
 		// We're at the insertion point (which might as well be EOF of the inheritStream)
-		// TODO: Write the particle def
-		tempStream << "PARTICLE HERE" << std::endl;
+
+		// Write the particle declaration
+		tempStream << *particle << std::endl;
 
 		tempStream << inheritStream.rdbuf() << std::endl;
 		
@@ -312,8 +313,8 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 		// Just put the particle def into the file and that's it, leave a comment at the head of the decl
 		writeParticleCommentHeader(tempStream);
 
-		// TODO
-		tempStream << "PARTICLE HERE" << std::endl;
+		// Write the particle declaration
+		tempStream << *particle << std::endl;
 	}
 
 	tempStream.close();
