@@ -57,9 +57,9 @@ public:
 	 * Note: this method does not check if the named particle system is already
 	 * defined in a different file.
 	 *
-	 * Returns TRUE on success, FALSE otherwise.
+	 * throws a std::runtime_error on any failure.
 	 */
-	bool saveParticleDef(const std::string& particle);
+	void saveParticleDef(const std::string& particle);
 
 	/**
 	 * Accept a stream containing particle definitions to parse and add to the
@@ -82,6 +82,8 @@ public:
 private:
 	// Recursive-descent parse functions
 	void parseParticleDef(parser::DefTokeniser& tok, const std::string& filename);
+
+	static void stripParticleDefFromStream(std::istream& input, std::ostream& output, const std::string& particleName);
 };
 typedef boost::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 
