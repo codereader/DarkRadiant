@@ -4,6 +4,7 @@
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/GladeWidgetHolder.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/dialog/Dialog.h"
 
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeselection.h>
@@ -138,10 +139,12 @@ private:
 	void deactivateSettingsEditPanels();
 
 	bool particleHasUnsavedChanges();
-	bool selectionChangeAllowed();
 
-	// Asks the user whether to save the particle, returns true on "yes"
-	bool askForSave();
+	// Asks the user whether to save the particle, returns the dialog run result
+	IDialog::Result askForSave();
+
+	// Returns true if leaving the current working particle went ok (was saved, or no unsaved changes)
+	bool handleParticleLeave();
 
 	bool saveCurrentParticle();
 
