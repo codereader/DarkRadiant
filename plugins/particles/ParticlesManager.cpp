@@ -304,7 +304,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 		// Write the particle declaration
 		tempStream << *particle << std::endl;
 
-		tempStream << inheritStream.rdbuf() << std::endl;
+		tempStream << inheritStream.rdbuf();
 		
 		inheritStream.close();
 	}

@@ -23,6 +23,8 @@
 #include "ParticleDefPopulator.h"
 #include "../ParticlesManager.h"
 
+#include "os/path.h"
+
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -1189,7 +1191,9 @@ std::string ParticleEditor::queryParticleFile()
 	chooser.setCurrentPath(GlobalGameManager().getModPath() + "/particles");
 	chooser.askForOverwrite(false);
 
-	return chooser.display();
+	std::string result = chooser.display();
+
+	return !result.empty() ? os::getFilename(os::standardPath(result)) : "";
 }
 
 std::string ParticleEditor::queryNewParticleName()

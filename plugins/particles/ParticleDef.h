@@ -270,7 +270,7 @@ inline std::ostream& operator<<(std::ostream& stream, const ParticleDef& def)
 	}
 
 	// Closing brace
-	stream << "}" << std::endl;
+	stream << "}";
 
 	return stream;
 }
