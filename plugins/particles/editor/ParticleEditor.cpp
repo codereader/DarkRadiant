@@ -102,13 +102,8 @@ ParticleEditor::ParticleEditor() :
 
 void ParticleEditor::_onDeleteEvent()
 {
-	if (particleHasUnsavedChanges() && askForSave() && !saveCurrentParticle())
-	{
-		// Particle has unsaved changes, user wants to save the particle, 
-		// but the save attempt failed, inhibit window destruction
-		return;
-	}
-
+	if (!handleParticleLeave())	return; // action not allowed or cancelled
+	
 	// Window destruction allowed, pass to base class => triggers destroy
 	BlockingTransientWindow::_onDeleteEvent();
 }
@@ -597,7 +592,7 @@ void ParticleEditor::_onDefSelChanged()
 	// Get the selection and store it
 	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
 
-	if (!selectionChangeAllowed())
+	if (!handleParticleLeave())	
 	{
 		// Revert the selection (re-enter this function) and cancel the operation
 		_defSelection->select(_selectedDefIter);
@@ -1028,7 +1023,7 @@ bool ParticleEditor::particleHasUnsavedChanges()
 	return false;
 }
 
-bool ParticleEditor::askForSave()
+IDialog::Result ParticleEditor::askForSave()
 {
 	// Get the original particle name
 	std::string originalParticleName = (*_selectedDefIter)[_defColumns.name];
@@ -1040,27 +1035,7 @@ bool ParticleEditor::askForSave()
 		(boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % originalParticleName).str(),
 		IDialog::MESSAGE_SAVECONFIRMATION, GlobalMainFrame().getTopLevelWindow());
 
-	IDialog::Result result = box.run();
-				
-	return (result == IDialog::RESULT_YES);
-}
-
-bool ParticleEditor::selectionChangeAllowed()
-{
-	if (particleHasUnsavedChanges())
-	{
-		if (askForSave())
-		{
-			// Attempt to save the particle, return true on success to allow selection change
-			return saveCurrentParticle();
-		}
-		
-		// User does not want to save, selection change is allowed
-		return true;
-	}
-
-	// No changes, selection change allowed
-	return true;
+	return box.run();
 }
 
 bool ParticleEditor::saveCurrentParticle()
@@ -1120,25 +1095,42 @@ void ParticleEditor::_postShow()
 
 void ParticleEditor::_onClose()
 {
-	if (particleHasUnsavedChanges() && askForSave() && !saveCurrentParticle())
-	{
-		// Particle has unsaved changes, user wants to save the particle, 
-		// but the save attempt failed, inhibit window destruction
-		return;
-	}
+	if (!handleParticleLeave())	return; // action not allowed or cancelled
 
 	// Close the window
 	destroy();
 }
 
+bool ParticleEditor::handleParticleLeave()
+{
+	if (particleHasUnsavedChanges())
+	{
+		IDialog::Result result = askForSave();
+		
+		if (result == IDialog::RESULT_YES)
+		{
+			// User wants to save
+			if (!saveCurrentParticle())
+			{
+				return false; // save attempt failed
+			}
+
+			// Save successful, go ahead
+		}
+		else if (result == IDialog::RESULT_CANCELLED)
+		{
+			return false; // user cancelled
+		}
+
+		// Use doesn't want to save
+	}
+
+	return true;
+}
+
 void ParticleEditor::_onNewParticle()
 {
-	if (particleHasUnsavedChanges() && askForSave() && !saveCurrentParticle())
-	{
-		// Particle has unsaved changes, user wants to save the particle, 
-		// but the save attempt failed, inhibit window destruction
-		return;
-	}
+	if (!handleParticleLeave())	return; // action not allowed or cancelled
 
 	createAndSelectNewParticle();
 }

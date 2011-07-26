@@ -576,7 +576,7 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 
 	if (stage.getAnimationFrames() != 0)
 	{
-		stream << "\t\t" << "animationFrames " << "\t\t" << stage.getAnimationFrames() << std::endl;
+		stream << "\t\t" << "animationFrames " << "\t" << stage.getAnimationFrames() << std::endl;
 	}
 
 	if (stage.getAnimationRate() != 0)
