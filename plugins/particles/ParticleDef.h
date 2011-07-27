@@ -259,6 +259,9 @@ typedef boost::shared_ptr<ParticleDef> ParticleDefPtr;
 // This will write the entire particle decl to the given stream, including the leading "particle" keyword
 inline std::ostream& operator<<(std::ostream& stream, const ParticleDef& def)
 {
+	// Don't use scientific notation when exporting floats
+	stream << std::fixed;
+
 	// Decl keyword, name and opening brace
 	stream << "particle " << def.getName() << " { " << std::endl;
 
