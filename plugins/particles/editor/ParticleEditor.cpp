@@ -1268,6 +1268,10 @@ void ParticleEditor::_onSaveAsParticle()
 	// Copy stuff from original particle
 	newParticle->copyFrom(*original);
 
+	// Clear selection and re-select the particle to set up the working copy
+	_defSelection->unselect_all();
+	selectParticleDef(newParticle->getName());
+
 	// Save the new particle declaration to the file immediately
 	saveCurrentParticle();
 
