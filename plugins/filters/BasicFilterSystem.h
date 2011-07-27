@@ -75,7 +75,10 @@ public:
 	void setFilterState(const std::string& filter, bool state);
 
 	// Query whether an item is visible or filtered out
-	bool isVisible(const std::string& item, const std::string& name);
+	bool isVisible(const FilterRule::Type type, const std::string& name);
+
+	// Query whether an entity is visible or filtered out
+	bool isEntityVisible(const FilterRule::Type type, const Entity& entity);
 
 	// Whether this filter is read-only and can't be changed
 	bool filterIsReadOnly(const std::string& filter);

@@ -1,38 +1,31 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_IFILTER_H)
-#define INCLUDED_IFILTER_H
+#pragma once
 
 #include "imodule.h"
 #include "inode.h"
+
+#include <boost/shared_ptr.hpp>
 #include <vector>
+#include <cassert>
 
 /**
  * This structure defines a simple filtercriterion as used by the Filtersystem
  */
-struct FilterRule {
+class FilterRule
+{
+public:
+	enum Type
+	{
+		TYPE_TEXTURE,
+		TYPE_ENTITYCLASS,
+		TYPE_OBJECT,
+		TYPE_ENTITYKEYVALUE,
+	};
 
-	// "texture", "entityclass" or "object"
-	std::string type;
+	// The rule type
+	Type type;
+
+	// The entity key, only applies for type "entitykeyvalue"
+	std::string entityKey;
 
 	// the match expression regex
 	std::string match;
@@ -40,25 +33,56 @@ struct FilterRule {
 	// true for action="show", false for action="hide"
 	bool show;
 
-	// Constructor
-	FilterRule(const std::string t, const std::string m, bool s) :
-		type(t),
-		match(m),
-		show(s)
+private:
+	// Private Constructor, use the named constructors below
+	FilterRule(const Type type_, const std::string& match_, bool show_) :
+		type(type_),
+		match(match_),
+		show(show_)
 	{}
+
+	// Alternative private constructor for the entityKeyValue type
+	FilterRule(const Type type_, const std::string& entityKey_, const std::string& match_, bool show_) :
+		type(type_),
+		entityKey(entityKey_),
+		match(match_),
+		show(show_)
+	{}
+
+public:
+	// Named constructors
+
+	// Regular constructor for the non-entitykeyvalue types
+	static FilterRule Create(const Type type, const std::string& match, bool show)
+	{
+		assert(type != TYPE_ENTITYKEYVALUE); 
+
+		return FilterRule(type, match, show);
+	}
+
+	// Constructor for the entity key value type
+	static FilterRule CreateEntityKeyValueRule(const std::string& key, const std::string& match, bool show)
+	{
+		return FilterRule(TYPE_ENTITYKEYVALUE, key, match, show);
+	}
 };
 typedef std::vector<FilterRule> FilterRules;
 
 /** Visitor interface for evaluating the available filters in the
  * FilterSystem.
  */
-struct IFilterVisitor {
+struct IFilterVisitor
+{
     virtual ~IFilterVisitor() {}
+
 	// Visit function
 	virtual void visit(const std::string& filterName) = 0;
 };
 
-const std::string MODULE_FILTERSYSTEM("FilterSystem");
+const char* const MODULE_FILTERSYSTEM = "FilterSystem";
+
+// Forward declaration
+class Entity;
 
 /** Interface for the FilterSystem.
  */
@@ -124,15 +148,29 @@ public:
 	 * active filters.
 	 *
 	 * @param item
-	 * The item to query - "texture", "entityclass" or "object"
+	 * The filter type to query
 	 *
-	 * @param text
+	 * @param name
 	 * String name of the item to query.
 	 *
 	 * @returns
 	 * true if the item is visible, false otherwise.
 	 */
-	virtual bool isVisible(const std::string& item, const std::string& text) = 0;
+	virtual bool isVisible(const FilterRule::Type type, const std::string& name) = 0;
+
+	/**
+	 * Test if a given entity should be visible or not, based on the currently active filters.
+	 *
+	 * @param type
+	 * The filter type to query
+	 *
+	 * @param entity
+	 * The Entity to test
+	 *
+	 * @returns
+	 * true if the entity is visible, false otherwise.
+	 */
+	virtual bool isEntityVisible(const FilterRule::Type type, const Entity& entity) = 0;	
 
 	// =====  API for Filter management and editing =====
 
@@ -185,5 +223,3 @@ inline FilterSystem& GlobalFilterSystem() {
 	);
 	return _filterSystem;
 }
-
-#endif

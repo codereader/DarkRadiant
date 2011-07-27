@@ -36,7 +36,7 @@ public:
 	 */
 	XMLFilter(const std::string& name, bool readOnly);
 
-	/** Add a rule to this filter.
+	/** Add a (non entitykeyvalue) rule to this filter.
 	 *
 	 * @param type
 	 * The type of rule - "texture", "entityclass" or "object".
@@ -48,20 +48,49 @@ public:
 	 * true if this filter should show its matches, false if it should
 	 * hide them.
 	 */
-	void addRule(const std::string& type, const std::string& match, bool show) {
-		_rules.push_back(FilterRule(type, match, show));
+	void addRule(const FilterRule::Type type, const std::string& match, bool show)
+	{
+		_rules.push_back(FilterRule::Create(type, match, show));
+	}
+
+	/** Add an entitykeyvalue rule to this filter.
+	 *
+	 * @param key
+	 * The key to match.
+	 *
+	 * @param match
+	 * The regex expression to match against the spawnarg value.
+	 *
+	 * @param show
+	 * true if this filter should show its matches, false if it should
+	 * hide them.
+	 */
+	void addEntityKeyValueRule(const std::string& key, const std::string& match, bool show)
+	{
+		_rules.push_back(FilterRule::CreateEntityKeyValueRule(key, match, show));
 	}
 
 	/** Test a given item for visibility against all of the rules
 	 * in this XMLFilter.
 	 *
-	 * @param itemClass
+	 * @param type
 	 * Class of the item to test - "texture", "entityclass" etc
 	 *
 	 * @param name
 	 * String name of the item to test.
 	 */
-	bool isVisible(const std::string& itemClass, const std::string& texture) const;
+	bool isVisible(const FilterRule::Type type, const std::string& name) const;
+
+	/** Test a given entity for visibility against all of the rules
+	 * in this XMLFilter.
+	 *
+	 * @param type
+	 * Class of the item to test - "texture", "entityclass" etc
+	 *
+	 * @param entity
+	 * The entity to test
+	 */
+	bool isEntityVisible(const FilterRule::Type type, const Entity& entity) const;
 
 	/** greebo: Returns the name of the toggle event associated to this filter
 	 */

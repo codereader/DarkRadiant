@@ -55,6 +55,7 @@ private:
 		Gtk::TreeModelColumn<int> index;
 		Gtk::TreeModelColumn<int> type;
 		Gtk::TreeModelColumn<Glib::ustring> typeString;
+		Gtk::TreeModelColumn<Glib::ustring> entityKey;
 		Gtk::TreeModelColumn<Glib::ustring> regexMatch;
 		Gtk::TreeModelColumn<Glib::ustring> showHide;
 	};
@@ -118,8 +119,8 @@ private:
 	const Glib::RefPtr<Gtk::ListStore>& createTypeStore();
 	const Glib::RefPtr<Gtk::ListStore>& createActionStore();
 
-	// Converts the given string "entityclass", "object", etc. into an index in the typestore
-	int getTypeIndexForString(const std::string& type);
+	// Converts the given enum into a string "entityclass", "object"
+	std::string getStringForType(const FilterRule::Type type);
 
 	void onSave();
 	void onCancel();

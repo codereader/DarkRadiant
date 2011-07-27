@@ -60,8 +60,8 @@ public:
 	InstanceUpdateWalker() :
 		_hideWalker(true),
 		_showWalker(false),
-		_patchesAreVisible(GlobalFilterSystem().isVisible("object", "patch")),
-		_brushesAreVisible(GlobalFilterSystem().isVisible("object", "brush"))
+		_patchesAreVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_OBJECT, "patch")),
+		_brushesAreVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_OBJECT, "brush"))
 	{
 
 	}
@@ -71,18 +71,20 @@ public:
 	{
 		// Retrieve the parent entity and check its entity class.
 		Entity* entity = Node_getEntity(node);
+
 		if (entity != NULL)
 		{
-			IEntityClassConstPtr eclass = entity->getEntityClass();
-			bool entityClassVisible = GlobalFilterSystem().isVisible("entityclass", eclass->getName());
+			// Check the eclass first
+			bool entityIsVisible = GlobalFilterSystem().isEntityVisible(FilterRule::TYPE_ENTITYCLASS, *entity) &&
+								   GlobalFilterSystem().isEntityVisible(FilterRule::TYPE_ENTITYKEYVALUE, *entity);
 
 			Node_traverseSubgraph(
 				node,
-				entityClassVisible ? _showWalker : _hideWalker
+				entityIsVisible ? _showWalker : _hideWalker
 			);
 
-			// If the entity class is hidden, don't traverse the child nodes
-			return entityClassVisible;
+			// If the entity is hidden, don't traverse the child nodes
+			return entityIsVisible;
 		}
 
 		// greebo: Update visibility of Patches

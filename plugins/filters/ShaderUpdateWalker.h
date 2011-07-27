@@ -14,10 +14,11 @@ class ShaderUpdateWalker :
 	public shaders::ShaderVisitor
 {
 public:
-	void visit(const MaterialPtr& shader) {
+	void visit(const MaterialPtr& shader)
+	{
 		// Set the shader's visibility based on the current filter settings
 		shader->setVisible(
-			GlobalFilterSystem().isVisible("texture", shader->getName())
+			GlobalFilterSystem().isVisible(FilterRule::TYPE_TEXTURE, shader->getName())
 		);
 	}
 };
