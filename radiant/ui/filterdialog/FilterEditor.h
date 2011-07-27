@@ -48,6 +48,7 @@ private:
 			add(index);
 			add(type);
 			add(typeString);
+			add(entityKey);
 			add(regexMatch);
 			add(showHide);
 		}
@@ -121,6 +122,7 @@ private:
 
 	// Converts the given enum into a string "entityclass", "object"
 	std::string getStringForType(const FilterRule::Type type);
+	FilterRule::Type getTypeForString(const std::string& typeStr);
 
 	void onSave();
 	void onCancel();
@@ -131,6 +133,7 @@ private:
 	void onDeleteRule();
 
 	void onRegexEdited(const Glib::ustring& path, const Glib::ustring& new_text);
+	void onEntityKeyEdited(const Glib::ustring& path, const Glib::ustring& new_text);
 	void onTypeEdited(const Glib::ustring& path, const Glib::ustring& new_text);
 	void onActionEdited(const Glib::ustring& path, const Glib::ustring& new_text);
 	void onNameEdited();
