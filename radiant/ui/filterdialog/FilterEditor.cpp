@@ -126,9 +126,10 @@ void FilterEditor::update()
 		Gtk::TreeModel::Row row = *_ruleStore->append();
 
 		row[_columns.index] = static_cast<int>(i);
-		row[_columns.type] = getTypeIndexForString(rule.type);
-		row[_columns.typeString] = rule.type;
+		row[_columns.type] = static_cast<int>(rule.type);
+		row[_columns.typeString] = getStringForType(rule.type);
 		row[_columns.regexMatch] = rule.match;
+		row[_columns.entityKey] = rule.entityKey;
 		row[_columns.showHide] = rule.show ? std::string(_("show")) : std::string(_("hide"));
 	}
 
@@ -239,6 +240,10 @@ const Glib::RefPtr<Gtk::ListStore>& FilterEditor::createTypeStore()
 	row[_typeStoreColumns.type] = index++;
 	row[_typeStoreColumns.typeString] = Glib::ustring("object");
 
+	row = *_typeStore->append();
+	row[_typeStoreColumns.type] = index++;
+	row[_typeStoreColumns.typeString] = Glib::ustring("entitykeyvalue");
+
 	return _typeStore;
 }
 
@@ -288,20 +293,15 @@ Gtk::Widget& FilterEditor::createButtonPanel()
 	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
-int FilterEditor::getTypeIndexForString(const std::string& type)
+std::string FilterEditor::getStringForType(const FilterRule::Type type)
 {
-	// Switch on the string
-	if (type == "entityclass") {
-		return 0;
-	}
-	else if (type == "texture") {
-		return 1;
-	}
-	else if (type == "object") {
-		return 2;
-	}
-
-	return -1;
+	switch (type)
+	{
+	case FilterRule::TYPE_TEXTURE: return "texture";
+	case FilterRule::TYPE_OBJECT: return "object";
+	case FilterRule::TYPE_ENTITYCLASS: return "entityclass";
+	case FilterRule::TYPE_ENTITYKEYVALUE: return "entitykeyvalue";
+	};
 }
 
 void FilterEditor::save()
@@ -388,7 +388,7 @@ void FilterEditor::onTypeEdited(const Glib::ustring& path, const Glib::ustring& 
 		Gtk::TreeModel::Row row = *iter;
 
 		// Look up the type index for "new_text"
-		int typeIndex = getTypeIndexForString(new_text);
+		//FilterRule::Type type = (new_text);
 
 		// Get the criterion number
 		int index = row[_columns.index];
@@ -396,10 +396,10 @@ void FilterEditor::onTypeEdited(const Glib::ustring& path, const Glib::ustring& 
 		// Update the criterion
 		assert(index >= 0 && index < static_cast<int>(_filter.rules.size()));
 
-		_filter.rules[index].type = new_text;
+		_filter.rules[index].type = FilterRule::TYPE_ENTITYCLASS;
 
 		// Update the liststore item
-		row[_columns.type] = typeIndex;
+		row[_columns.type] = FilterRule::TYPE_ENTITYCLASS;
 		row[_columns.typeString] = new_text;
 	}
 }
@@ -453,7 +453,7 @@ void FilterEditor::onRuleSelectionChanged()
 
 void FilterEditor::onAddRule()
 {
-	FilterRule newRule("texture", "textures/", false);
+	FilterRule newRule = FilterRule::Create(FilterRule::TYPE_TEXTURE, "textures/", false);
 	_filter.rules.push_back(newRule);
 
 	update();

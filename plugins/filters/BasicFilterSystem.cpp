@@ -81,9 +81,26 @@ void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readO
 			 critIter != critNodes.end();
 			 ++critIter)
 		{
-			filter.addRule(critIter->getAttributeValue("type"),
-						   critIter->getAttributeValue("match"),
-						   critIter->getAttributeValue("action") == "show");
+			std::string typeStr = critIter->getAttributeValue("type");
+			bool show = critIter->getAttributeValue("action") == "show";
+			std::string match = critIter->getAttributeValue("match");
+
+			if (typeStr == "texture")
+			{
+				filter.addRule(FilterRule::TYPE_TEXTURE, match, show);
+			}
+			else if (typeStr == "entityclass")
+			{
+				filter.addRule(FilterRule::TYPE_ENTITYCLASS, match, show);
+			}
+			else if (typeStr == "object")
+			{
+				filter.addRule(FilterRule::TYPE_OBJECT, match, show);
+			}
+			else if (typeStr == "entitykeyvalue")
+			{
+				filter.addEntityKeyValueRule(critIter->getAttributeValue("key"), match, show);
+			}
 		}
 
 		// Add this XMLFilter to the list of available filters
@@ -143,11 +160,26 @@ void BasicFilterSystem::shutdownModule() {
 		// Save all the rules as children to that node
 		FilterRules ruleSet = i->second.getRuleSet();
 
-		for (FilterRules::const_iterator r = ruleSet.begin(); r != ruleSet.end(); ++r) {
+		for (FilterRules::const_iterator r = ruleSet.begin(); r != ruleSet.end(); ++r)
+		{
 			// Create a new criterion tag
 			xml::Node criterion = filter.createChild("filterCriterion");
 
-			criterion.setAttributeValue("type", r->type);
+			std::string typeStr;
+
+			switch (r->type)
+			{
+			case FilterRule::TYPE_TEXTURE: typeStr = "texture"; break;
+			case FilterRule::TYPE_OBJECT: typeStr = "object"; break;
+			case FilterRule::TYPE_ENTITYCLASS: typeStr = "entityclass"; break;
+			case FilterRule::TYPE_ENTITYKEYVALUE: 
+				typeStr = "entitykeyvalue"; 
+				criterion.setAttributeValue("key", r->entityKey);
+				break;
+			default: continue;
+			};
+
+			criterion.setAttributeValue("type", typeStr);
 			criterion.setAttributeValue("match", r->match);
 			criterion.setAttributeValue("action", r->show ? "show" : "hide");
 		}
@@ -403,8 +435,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 }
 
 // Query whether an item is visible or filtered out
-bool BasicFilterSystem::isVisible(const std::string& item,
-								  const std::string& name)
+bool BasicFilterSystem::isVisible(const FilterRule::Type type, const std::string& name)
 {
 	// Check if this item is in the visibility cache, returning
 	// its cached value if found
@@ -423,7 +454,8 @@ bool BasicFilterSystem::isVisible(const std::string& item,
 		// Delegate the check to the filter object. If a filter returns
 		// false for the visibility check, then the item is filtered
 		// and we don't need any more checks.
-		if (!activeIter->second.isVisible(item, name)) {
+		if (!activeIter->second.isVisible(type, name))
+		{
 			visFlag = false;
 			break;
 		}
@@ -431,6 +463,30 @@ bool BasicFilterSystem::isVisible(const std::string& item,
 
 	// Cache the result and return to caller
 	_visibilityCache.insert(StringFlagCache::value_type(name, visFlag));
+
+	return visFlag;
+}
+
+bool BasicFilterSystem::isEntityVisible(const FilterRule::Type type, const Entity& entity)
+{
+	// Otherwise, walk the list of active filters to find a value for
+	// this item.
+	bool visFlag = true; // default if no filters modify it
+
+	for (FilterTable::iterator activeIter = _activeFilters.begin();
+		 activeIter != _activeFilters.end();
+		 ++activeIter)
+	{
+		// Delegate the check to the filter object. If a filter returns
+		// false for the visibility check, then the item is filtered
+		// and we don't need any more checks.
+		if (!activeIter->second.isEntityVisible(type, entity))
+		{
+			visFlag = false;
+			break;
+		}
+	}
+
 	return visFlag;
 }
 

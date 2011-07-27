@@ -68,9 +68,10 @@ void OpenGLShader::realise(const std::string& name)
     // Construct the shader passes based on the name
     construct(name);
 
-    if (_material != NULL) {
+    if (_material != NULL)
+	{
 		// greebo: Check the filtersystem whether we're filtered
-		_material->setVisible(GlobalFilterSystem().isVisible("texture", name));
+		_material->setVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_TEXTURE, name));
 
 		if (m_used != 0) {
 			_material->SetInUse(true);
