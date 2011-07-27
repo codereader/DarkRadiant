@@ -150,6 +150,7 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 
 	gtkutil::TextColumn* indexCol = Gtk::manage(new gtkutil::TextColumn(_("Index"), _columns.index));
 	gtkutil::TextColumn* regexCol = Gtk::manage(new gtkutil::TextColumn(_("Match"), _columns.regexMatch));
+	gtkutil::TextColumn* entityKeyCol = Gtk::manage(new gtkutil::TextColumn(_("Entity Key"), _columns.entityKey));
 
 	// Create the cell renderer for the action choice
 	Gtk::CellRendererCombo* actionComboRenderer = Gtk::manage(new Gtk::CellRendererCombo);
@@ -170,6 +171,11 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 	rend->property_editable() = true;
 	rend->signal_edited().connect(sigc::mem_fun(*this, &FilterEditor::onRegexEdited));
 
+	// Entity Key editing
+	rend = entityKeyCol->getCellRenderer();
+	rend->property_editable() = true;
+	rend->signal_edited().connect(sigc::mem_fun(*this, &FilterEditor::onEntityKeyEdited));
+
 	// Create the cell renderer for the type choice
 	Gtk::CellRendererCombo* typeComboRenderer = Gtk::manage(new Gtk::CellRendererCombo);
 
@@ -186,6 +192,7 @@ Gtk::Widget& FilterEditor::createCriteriaPanel()
 
 	_ruleView->append_column(*indexCol);
 	_ruleView->append_column(*typeCol);
+	_ruleView->append_column(*entityKeyCol);
 	_ruleView->append_column(*regexCol);
 	_ruleView->append_column(*actionCol);
 
@@ -301,7 +308,28 @@ std::string FilterEditor::getStringForType(const FilterRule::Type type)
 	case FilterRule::TYPE_OBJECT: return "object";
 	case FilterRule::TYPE_ENTITYCLASS: return "entityclass";
 	case FilterRule::TYPE_ENTITYKEYVALUE: return "entitykeyvalue";
+	default: return "";
 	};
+}
+
+FilterRule::Type FilterEditor::getTypeForString(const std::string& typeStr)
+{
+	if (typeStr == "texture")
+	{
+		return FilterRule::TYPE_TEXTURE;
+	}
+	else if (typeStr == "object")
+	{
+		return FilterRule::TYPE_OBJECT;
+	}
+	else if (typeStr == "entityclass")
+	{
+		return FilterRule::TYPE_ENTITYCLASS;
+	}
+	else // "entitykeyvalue"
+	{
+		return FilterRule::TYPE_ENTITYKEYVALUE;
+	}
 }
 
 void FilterEditor::save()
@@ -378,6 +406,27 @@ void FilterEditor::onRegexEdited(const Glib::ustring& path, const Glib::ustring&
 	}
 }
 
+void FilterEditor::onEntityKeyEdited(const Glib::ustring& path, const Glib::ustring& new_text)
+{
+	Gtk::TreeModel::iterator iter = _ruleStore->get_iter(path);
+
+	if (iter)
+	{
+		// The iter points to the edited cell now, get the criterion number
+		Gtk::TreeModel::Row row = *iter;
+
+		int index = row[_columns.index];
+
+		// Update the criterion
+		assert(index >= 0 && index < static_cast<int>(_filter.rules.size()));
+
+		_filter.rules[index].entityKey = new_text;
+
+		// Update the liststore item
+		row[_columns.entityKey] = new_text;
+	}
+}
+
 void FilterEditor::onTypeEdited(const Glib::ustring& path, const Glib::ustring& new_text)
 {
 	Gtk::TreeModel::iterator iter = _ruleStore->get_iter(path);
@@ -388,7 +437,7 @@ void FilterEditor::onTypeEdited(const Glib::ustring& path, const Glib::ustring& 
 		Gtk::TreeModel::Row row = *iter;
 
 		// Look up the type index for "new_text"
-		//FilterRule::Type type = (new_text);
+		FilterRule::Type type = getTypeForString(new_text);
 
 		// Get the criterion number
 		int index = row[_columns.index];
@@ -396,10 +445,10 @@ void FilterEditor::onTypeEdited(const Glib::ustring& path, const Glib::ustring& 
 		// Update the criterion
 		assert(index >= 0 && index < static_cast<int>(_filter.rules.size()));
 
-		_filter.rules[index].type = FilterRule::TYPE_ENTITYCLASS;
+		_filter.rules[index].type = type;
 
 		// Update the liststore item
-		row[_columns.type] = FilterRule::TYPE_ENTITYCLASS;
+		row[_columns.type] = type;
 		row[_columns.typeString] = new_text;
 	}
 }
