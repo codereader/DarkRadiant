@@ -205,8 +205,6 @@ public:
 	{
 		setDepthHack(other.getDepthHack());
 
-		_filename = other.getFilename();
-
 		_stages.clear();
 
 		for (std::size_t i = 0; i < other.getNumStages(); ++i)
