@@ -16,12 +16,14 @@
 #include "scenelib.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/StockIconMenuItem.h"
+#include "gtkutil/RightAlignedLabel.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "xmlutil/Document.h"
 #include "signal/signal.h"
 #include "map/Map.h"
 #include "selection/algorithm/Entity.h"
+#include "selection/algorithm/General.h"
 
 #include <map>
 #include <string>
@@ -95,6 +97,12 @@ void EntityInspector::construct()
 	_showHelpColumnCheckbox->signal_toggled().connect(sigc::mem_fun(*this, &EntityInspector::_onToggleShowHelpIcons));
 
 	topHBox->pack_start(*_showHelpColumnCheckbox, false, false, 0);
+
+	// Label showing the primitive number
+	_primitiveNumLabel = Gtk::manage(new gtkutil::RightAlignedLabel(""));
+	_primitiveNumLabel->set_alignment(0.95f, 0.5f);
+	
+	topHBox->pack_start(*_primitiveNumLabel, true, true, 0);
 
     // Add checkbutton hbox to main widget
 	_mainWidget->pack_start(*topHBox, false, false, 0);
@@ -1000,6 +1008,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 	if (GlobalSelectionSystem().countSelected() != 1)
     {
         changeSelectedEntity(NULL);
+		_primitiveNumLabel->set_text("");
 		return;
 	}
 
@@ -1010,22 +1019,37 @@ void EntityInspector::getEntityFromSelectionSystem()
 	if (selectedNode->isRoot())
     {
         changeSelectedEntity(NULL);
+		_primitiveNumLabel->set_text("");
 		return;
 	}
 
     // Try both the selected node (if an entity is selected) or the parent node
     // (if a brush is selected).
     Entity* newSelectedEntity = Node_getEntity(selectedNode);
+
     if (newSelectedEntity)
     {
         // Node was an entity, use this
         changeSelectedEntity(newSelectedEntity);
+
+		// Just set the entity number
+		std::size_t ent(0), prim(0);
+		selection::algorithm::getSelectionIndex(ent, prim);
+
+		_primitiveNumLabel->set_text(
+			(boost::format(_("Entity %d")) % ent).str());
     }
     else
     {
         // Node was not an entity, try parent instead
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
         changeSelectedEntity(Node_getEntity(selectedNodeParent));
+		
+		std::size_t ent(0), prim(0);
+		selection::algorithm::getSelectionIndex(ent, prim);
+
+		_primitiveNumLabel->set_text(
+			(boost::format(_("Entity %d, Primitive %d")) % ent % prim).str());
     }
 }
 

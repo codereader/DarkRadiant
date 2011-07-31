@@ -103,6 +103,9 @@ private:
 	Gtk::CheckButton* _showInheritedCheckbox;
 	Gtk::CheckButton* _showHelpColumnCheckbox;
 
+	// A label showing the primitive number
+	Gtk::Label* _primitiveNumLabel;
+
     // View and model for the keyvalue list
 	ListStoreColumnsPtr _columns;
 	Glib::RefPtr<Gtk::ListStore> _kvStore;
