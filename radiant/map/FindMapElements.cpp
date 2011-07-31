@@ -6,6 +6,7 @@
 #include "iradiant.h"
 #include "scenelib.h"
 #include "xyview/GlobalXYWnd.h"
+#include "selection/algorithm/General.h"
 
 /** greebo:  This file contains code from map.cpp concerning the lookup
  * 			 of map elements (primitives and entities) by number.
@@ -89,88 +90,6 @@ void SelectBrush (int entitynum, int brushnum)
   }
 }
 
-
-class PrimitiveFindIndexWalker :
-	public scene::NodeVisitor
-{
-	scene::INodePtr _node;
-	std::size_t& _count;
-public:
-	PrimitiveFindIndexWalker(const scene::INodePtr& node, std::size_t& count) :
-		_node(node),
-		_count(count)
-	{}
-
-	bool pre(const scene::INodePtr& node) {
-		if (Node_isPrimitive(node)) {
-			// Have we found the node?
-			if (_node == node) {
-				// Yes, found, set needle to NULL
-				_node = scene::INodePtr();
-			}
-
-			// As long as the needle is non-NULL, increment the counter
-			if (_node != NULL) {
-				++_count;
-			}
-		}
-
-		return true;
-	}
-};
-
-class EntityFindIndexWalker :
-	public scene::NodeVisitor
-{
-	scene::INodePtr _node;
-	std::size_t& _count;
-public:
-	EntityFindIndexWalker(const scene::INodePtr& node, std::size_t& count) :
-		_node(node),
-		_count(count)
-	{}
-
-	bool pre(const scene::INodePtr& node) {
-		if (Node_isEntity(node)) {
-			// Have we found the node?
-			if (_node == node) {
-				// Yes, found, set needle to NULL
-				_node = scene::INodePtr();
-			}
-
-			// As long as the needle is non-NULL, increment the counter
-			if (_node != NULL) {
-				++_count;
-			}
-		}
-
-		return true;
-	}
-};
-
-void GetSelectionIndex(std::size_t& ent, std::size_t& brush)
-{
-	if (GlobalSelectionSystem().countSelected() != 0)
-	{
-		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
-		scene::INodePtr parent = node->getParent();
-
-		if (Node_isEntity(node)) {
-			// Selection is an entity, find its index
-			EntityFindIndexWalker walker(node, ent);
-			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-		}
-		else if (Node_isPrimitive(node)) {
-			// Node is a primitive, find parent entity and child index
-			EntityFindIndexWalker walker(parent, ent);
-			Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
-
-			PrimitiveFindIndexWalker brushWalker(node, brush);
-			Node_traverseSubgraph(parent, brushWalker);
-		}
-	}
-}
-
 void DoFind(const cmd::ArgumentList& args)
 {
 	ui::IDialogPtr dialog = GlobalDialogManager().createDialog(_("Find Brush"));
@@ -179,7 +98,7 @@ void DoFind(const cmd::ArgumentList& args)
 	ui::IDialog::Handle brushEntry = dialog->addEntryBox(_("Brush Number:"));
 
 	std::size_t ent(0), br(0);
-	GetSelectionIndex(ent, br);
+	selection::algorithm::getSelectionIndex(ent, br);
 
 	dialog->setElementValue(entityEntry, sizetToStr(ent));
 	dialog->setElementValue(brushEntry, sizetToStr(br));

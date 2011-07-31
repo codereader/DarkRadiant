@@ -96,6 +96,10 @@ namespace selection {
 	// Returns the AABB of the current selection (invalid bounds if nothing is selected).
 	AABB getCurrentSelectionBounds();
 
+	// Finds the index of the selected entity and primitive and 
+	// writes the result back into the given numbers. Does nothing if no selection is present.
+	void getSelectionIndex(std::size_t& ent, std::size_t& brush);
+
 	} // namespace algorithm
 } // namespace selection
 
