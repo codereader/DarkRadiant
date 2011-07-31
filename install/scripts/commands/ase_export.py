@@ -25,8 +25,8 @@ __commandDisplayName__ = 'Export ASE...'
 # The actual algorithm called by DarkRadiant is contained in the execute() function
 def execute():
     script = "Dark Radiant ASCII Scene Export (*.ase)"
-    author = "Richard Bartlett, some additions by greebo"
-    version = "0.6"
+    author = "Richard Bartlett, some additions by greebo and tels"
+    version = "0.7"
 
     # Check if we have a valid selection
 
@@ -67,6 +67,11 @@ def execute():
         for index in range(numfaces):
             facenode = brushnode.getFace(index)
             shader = facenode.getShader()
+
+            # Tels: skip if caulk and no caulk should be exported
+            if (shader == 'textures/common/caulk') and (int(GlobalRegistry.get('user/scripts/aseExport/exportcaulk'))) == 0:
+                continue
+
             if not shader in shaderlist:
                 shaderlist.append(shader)
             winding = facenode.getWinding()
@@ -85,6 +90,11 @@ def execute():
         faces = []
 
         shader = patchnode.getShader()
+
+        # Tels: skip if caulk and no caulk should be exported
+        if shader == 'textures/common/caulk' and int(GlobalRegistry.get('user/scripts/aseExport/exportcaulk')) == 0:
+            return
+
         if not shader in shaderlist:
             shaderlist.append(shader)
         mesh = patchnode.getTesselatedPatchMesh()
@@ -132,9 +142,6 @@ def execute():
             else:
                 print('WARNING: unsupported node type selected. Skipping: ' + scenenode.getNodeType())
 
-    walker = dataCollector()
-    GlobalSelectionSystem.foreachSelected(walker)
-
     # Dialog
     dialog = GlobalDialogManager.createDialog(script + 'v' + version)
 
@@ -150,6 +157,10 @@ def execute():
     centerObjectsHandle = dialog.addCheckbox("Center objects at 0,0,0 origin")
     dialog.setElementValue(centerObjectsHandle, GlobalRegistry.get('user/scripts/aseExport/centerObjects'))
 
+    # Add another checkbox
+    exportCaulkHandle = dialog.addCheckbox("Export caulked faces")
+    dialog.setElementValue(exportCaulkHandle, GlobalRegistry.get('user/scripts/aseExport/exportcaulk'))
+
     if dialog.run() == Dialog.OK:
         fullpath = dialog.getElementValue(pathHandle) + '/' + dialog.getElementValue(fileHandle)
         if not fullpath.endswith('.ase'):
@@ -159,6 +170,7 @@ def execute():
         GlobalRegistry.set('user/scripts/aseExport/recentFilename', dialog.getElementValue(fileHandle))
         GlobalRegistry.set('user/scripts/aseExport/recentPath', dialog.getElementValue(pathHandle))
         GlobalRegistry.set('user/scripts/aseExport/centerObjects', dialog.getElementValue(centerObjectsHandle))
+        GlobalRegistry.set('user/scripts/aseExport/exportcaulk', dialog.getElementValue(exportCaulkHandle))
 
         try:
             file = open(fullpath, 'r')
@@ -172,6 +184,10 @@ def execute():
             overwrite = True
 
         if overwrite:
+
+            # Tels: Only collect the data if we are going to export it
+            walker = dataCollector()
+            GlobalSelectionSystem.foreachSelected(walker)
 
             # greebo: Check if we should center objects at the 0,0,0 origin
             if int(dialog.getElementValue(centerObjectsHandle)) == 1:
