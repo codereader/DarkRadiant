@@ -338,14 +338,15 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
 
     // If this is a purely blend material (no DBS layers), set the editor blend
     // mode from the first blend layer.
-    if (!hasDiffuseLayer && numLayers > 0)
+	// greebo: Hack to let "shader not found" textures be handled as diffusemaps
+    if (!hasDiffuseLayer && numLayers > 0 && _material->getName() != "_default")
     {
-        pass.renderFlags |= RENDER_BLEND;
-        pass.m_sort = OpenGLState::eSortTranslucent;
+		pass.renderFlags |= RENDER_BLEND;
+		pass.m_sort = OpenGLState::eSortTranslucent;
 
-        BlendFunc bf = allLayers[0]->getBlendFunc();
-        pass.m_blend_src = bf.src;
-        pass.m_blend_dst = bf.dest;
+		BlendFunc bf = allLayers[0]->getBlendFunc();
+		pass.m_blend_src = bf.src;
+		pass.m_blend_dst = bf.dest;
     }
 }
 
