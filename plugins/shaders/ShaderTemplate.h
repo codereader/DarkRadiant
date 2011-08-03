@@ -22,6 +22,9 @@ namespace shaders
  */
 class ShaderTemplate
 {
+private:
+	static const int SORT_UNDEFINED = -99999;	// undefined sort number, will be replaced after parsing
+
 	// Template name
 	std::string _name;
 
@@ -78,7 +81,7 @@ public:
       fogLight(false),
       ambientLight(false),
       blendLight(false),
-      _sortReq(Material::SORT_OPAQUE),
+      _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
 	  _blockContents(blockContents),
 	  _parsed(false)
@@ -89,64 +92,76 @@ public:
 	/**
 	 * Get the name of this shader template.
 	 */
-	std::string getName() const {
+	std::string getName() const
+	{
     	return _name;
 	}
 
 	/**
 	 * Set the name of this shader template.
 	 */
-	void setName(const std::string& name) {
+	void setName(const std::string& name)
+	{
 		_name = name;
 	}
 
-	const std::string& getDescription() {
+	const std::string& getDescription()
+	{
 		if (!_parsed) parseDefinition();
 		return description;
 	}
 
-	int getFlags() {
+	int getFlags()
+	{
 		if (!_parsed) parseDefinition();
 		return m_nFlags;
 	}
 
-	Material::ECull getCull() {
+	Material::ECull getCull()
+	{
 		if (!_parsed) parseDefinition();
 		return m_Cull;
 	}
 
-	const Layers& getLayers() {
+	const Layers& getLayers()
+	{
 		if (!_parsed) parseDefinition();
 		return m_layers;
 	}
 
-	bool isFogLight() {
+	bool isFogLight()
+	{
 		if (!_parsed) parseDefinition();
 		return fogLight;
 	}
 
-	bool isAmbientLight() {
+	bool isAmbientLight()
+	{
 		if (!_parsed) parseDefinition();
 		return ambientLight;
 	}
 
-	bool isBlendLight() {
+	bool isBlendLight()
+	{
 		if (!_parsed) parseDefinition();
 		return blendLight;
 	}
 
-    int getSortRequest() const
+    int getSortRequest()
     {
+		if (!_parsed) parseDefinition();
         return _sortReq;
     }
 
-    float getPolygonOffset() const
+    float getPolygonOffset()
     {
+		if (!_parsed) parseDefinition();
         return _polygonOffset;
     }
 
 	// Sets the raw block definition contents, will be parsed on demand
-	void setBlockContents(const std::string& blockContents) {
+	void setBlockContents(const std::string& blockContents)
+	{
 		_blockContents = blockContents;
 	}
 
@@ -162,13 +177,17 @@ public:
      */
 	NamedBindablePtr getEditorTexture();
 
-	const shaders::MapExpressionPtr& getLightFalloff() {
+	const shaders::MapExpressionPtr& getLightFalloff()
+	{
 		if (!_parsed) parseDefinition();
 		return _lightFalloff;
 	}
 
 	// Add a specific layer to this template
 	void addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr);
+
+	// Returns true if this shader template includes a diffusemap stage
+	bool hasDiffusemap();
 
 private:
 
