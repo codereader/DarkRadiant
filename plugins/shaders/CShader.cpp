@@ -37,7 +37,7 @@ CShader::~CShader() {
 	GetTextureManager().checkBindings();
 }
 
-Material::SortRequest CShader::getSortRequest() const
+int CShader::getSortRequest() const
 {
     return _template->getSortRequest();
 }

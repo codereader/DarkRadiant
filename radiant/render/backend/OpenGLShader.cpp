@@ -379,7 +379,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     previewPass.m_colour = Vector4(1, 1, 1, 1);
 
     // Sort position
-    if (_material->getSortRequest() == Material::SORT_DECAL)
+    if (_material->getSortRequest() > Material::SORT_OPAQUE)
     {
         previewPass.m_sort = OpenGLState::eSortOverlayFirst;
     }
