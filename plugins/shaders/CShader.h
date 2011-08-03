@@ -1,5 +1,4 @@
-#ifndef CSHADER_H_
-#define CSHADER_H_
+#pragma once
 
 #include "ShaderDefinition.h"
 #include <boost/shared_ptr.hpp>
@@ -45,7 +44,7 @@ public:
 
     /* Material implementation */
 
-    SortRequest getSortRequest() const;
+    int getSortRequest() const;
     float getPolygonOffset() const;
 	TexturePtr getEditorImage();
 	bool isEditorImageNoTex();
@@ -119,5 +118,3 @@ public:
 typedef boost::shared_ptr<CShader> CShaderPtr;
 
 } // namespace shaders
-
-#endif /*CSHADER_H_*/

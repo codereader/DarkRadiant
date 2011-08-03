@@ -83,14 +83,27 @@ public:
     /**
      * \brief
      * Requested sort position from material declaration (e.g. "sort decal").
+	 * The actual sort order of a material is stored as a floating point number,
+	 * these enumerations represent some regularly used shortcuts in material decls.
+	 * The values of this enum have been modeled after the ones found in the D3 SDK.
      */
     enum SortRequest
     {
-        SORT_OPAQUE,
-        SORT_DECAL
+		SORT_SUBVIEW = -3,		// mirrors, viewscreens, etc
+		SORT_GUI = -2,			// guis
+		SORT_BAD = -1,
+		SORT_OPAQUE,			// opaque
+		SORT_PORTAL_SKY,
+		SORT_DECAL,				// scorch marks, etc.
+		SORT_FAR,
+		SORT_MEDIUM,			// normal translucent
+		SORT_CLOSE,
+		SORT_ALMOST_NEAREST,	// gun smoke puffs
+		SORT_NEAREST,			// screen blood blobs
+		SORT_POST_PROCESS = 100	// after a screen copy to texture
     };
 
-  virtual ~Material() {}
+	virtual ~Material() {}
 
     /**
      * \brief
@@ -124,8 +137,10 @@ public:
     /**
      * \brief
      * Return the requested sort position of this material.
+	 * greebo: D3 is using floating points for the sort value but
+	 * as far as I can see only rounded numbers have been used.
      */
-    virtual SortRequest getSortRequest() const = 0;
+    virtual int getSortRequest() const = 0;
 
     /**
      * \brief

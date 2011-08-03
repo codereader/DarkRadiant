@@ -139,7 +139,7 @@ public:
      * \brief
      * Sort position.
      */
-    std::size_t m_sort;
+    int m_sort;
 
     /**
      * \brief
@@ -206,6 +206,7 @@ public:
 	// Default constructor
 	OpenGLState()
 	: renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
+	  m_sort(eSortFirst),
       polygonOffset(0.0f),
 	  texture0(0),
 	  texture1(0),

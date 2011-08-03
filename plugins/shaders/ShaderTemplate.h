@@ -1,5 +1,4 @@
-#ifndef SHADERTEMPLATE_H_
-#define SHADERTEMPLATE_H_
+#pragma once
 
 #include "MapExpression.h"
 #include "Doom3ShaderLayer.h"
@@ -56,8 +55,8 @@ private:
   // cull stuff
   Material::ECull m_Cull;
 
-    // Sort position (e.g. sort decal)
-    Material::SortRequest _sortReq;
+    // Sort position (e.g. sort decal == 2)
+    int _sortReq;
 
     // Polygon offset
     float _polygonOffset;
@@ -136,7 +135,7 @@ public:
 		return blendLight;
 	}
 
-    Material::SortRequest getSortRequest() const
+    int getSortRequest() const
     {
         return _sortReq;
     }
@@ -205,5 +204,3 @@ typedef boost::shared_ptr<ShaderTemplate> ShaderTemplatePtr;
 typedef std::map<std::string, ShaderTemplatePtr> ShaderTemplateMap;
 
 }
-
-#endif /*SHADERTEMPLATE_H_*/
