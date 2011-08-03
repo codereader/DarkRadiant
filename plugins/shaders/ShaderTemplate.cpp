@@ -9,6 +9,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/algorithm/string/trim.hpp>
 #include <iostream>
 
 namespace shaders
@@ -65,6 +66,58 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
         // greebo: Parse description token, this should be the next one
         description = tokeniser.nextToken();
     }
+	else if (token == "sort")
+	{
+		std::string sortVal = tokeniser.nextToken();
+
+		if (sortVal == "opaque")
+		{
+			_sortReq = Material::SORT_OPAQUE;
+		}
+		else if (sortVal == "decal")
+		{
+			_sortReq = Material::SORT_DECAL;
+		}
+		else if (sortVal == "portalSky")
+		{
+			_sortReq = Material::SORT_PORTAL_SKY;
+		}
+		else if (sortVal == "subview")
+		{
+			_sortReq = Material::SORT_SUBVIEW;
+		}
+		else if (sortVal == "far")
+		{
+			_sortReq = Material::SORT_FAR;
+		}
+		else if (sortVal == "medium")
+		{
+			_sortReq = Material::SORT_MEDIUM;
+		}
+		else if (sortVal == "close")
+		{
+			_sortReq = Material::SORT_CLOSE;
+		}
+		else if (sortVal == "almostNearest")
+		{
+			_sortReq = Material::SORT_ALMOST_NEAREST;
+		}
+		else if (sortVal == "nearest")
+		{
+			_sortReq = Material::SORT_NEAREST;
+		}
+		else if (sortVal == "postProcess")
+		{
+			_sortReq = Material::SORT_POST_PROCESS;
+		}
+		else // no special sort keyword, try to parse the numeric value
+		{
+			//  Strip any quotes
+			boost::algorithm::trim_if(sortVal, boost::algorithm::is_any_of("\""));
+
+			_sortReq = strToInt(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
+		}
+	}
 }
 
 /* Searches for light-specific keywords and takes the appropriate actions
@@ -287,6 +340,20 @@ void ShaderTemplate::parseDefinition()
         globalErrorStream() << "Error while parsing shader " << _name << ": "
             << p.what() << std::endl;
     }
+
+	// greebo: It appears that D3 is applying default sort values for material without
+	// an explicitly defined sort value, depending on whether a diffusemap stage is present
+	if (_sortReq == SORT_UNDEFINED)
+	{
+		if (hasDiffusemap())
+		{
+			_sortReq = Material::SORT_OPAQUE;
+		}
+		else
+		{
+			_sortReq = Material::SORT_MEDIUM;
+		}
+	}
 }
 
 void ShaderTemplate::addLayer(const Doom3ShaderLayerPtr& layer)
@@ -306,6 +373,21 @@ void ShaderTemplate::addLayer(ShaderLayer::Type type, const MapExpressionPtr& ma
 {
 	// Construct a layer out of this mapexpression and pass the call
 	addLayer(Doom3ShaderLayerPtr(new Doom3ShaderLayer(type, mapExpr)));
+}
+
+bool ShaderTemplate::hasDiffusemap()
+{
+	if (!_parsed) parseDefinition();
+
+	for (Layers::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+    {
+        if ((*i)->getType() == ShaderLayer::DIFFUSE)
+        {
+            return true;
+        }
+    }
+
+	return false; // no diffuse found
 }
 
 } // namespace
