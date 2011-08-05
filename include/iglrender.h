@@ -107,24 +107,32 @@ public:
 class OpenGLState
 {
 public:
-  enum ESort
-  {
-    eSortFirst = 0,
-    eSortOpaque = 1,
-    eSortMultiFirst = 2,
-    eSortMultiLast = 1023,
-    eSortOverbrighten = 1024,
-    eSortFullbright = 1025,
-    eSortHighlight = 1026,
-    eSortTranslucent = 1027,
-    eSortOverlayFirst = 1028,
-    eSortOverlayLast = 2047,
-    eSortControlFirst = 2048,
-    eSortControlLast = 3071,
-    eSortGUI0 = 3072,
-    eSortGUI1 = 3073,
-    eSortLast = 4096,
-  };
+	enum ESort
+	{
+		eSortFirst = -64,
+		eSortOpaque = 0,			// used by depth buffer fill passes
+		eSortPortalSky = 1,
+
+		eSortMultiFirst = 2,		// used by the DBS pass
+		eSortMultiLast = 1023,
+
+		eSortOverbrighten = 1024,
+		eSortFullbright = 1025,		// used by non-translucent editor passes
+		eSortHighlight = 1026,
+
+		eSortTranslucent = 1027,	// used by blend-type editor passes
+
+		eSortOverlayFirst = 1028,	// used by decals
+		eSortOverlayLast = 2047,
+
+		eSortControlFirst = 2048,	// used by POINT renderers
+		eSortControlLast = 3071,
+
+		eSortGUI0 = 3072,			// used by selection system controls, pivots (visible)
+		eSortGUI1 = 3073,			// used by selection system controls, pivots (obscured)
+
+		eSortLast = 4096,
+	};
 
     /**
      * \brief

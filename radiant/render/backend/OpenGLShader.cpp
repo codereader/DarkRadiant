@@ -379,7 +379,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     previewPass.m_colour = Vector4(1, 1, 1, 1);
 
     // Sort position
-    if (_material->getSortRequest() > Material::SORT_OPAQUE)
+    if (_material->getSortRequest() >= Material::SORT_DECAL)
     {
         previewPass.m_sort = OpenGLState::eSortOverlayFirst;
     }
@@ -432,10 +432,8 @@ void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
     // Colour modulation
     state.m_colour = Vector4(layer->getColour(), 1.0);
 
-    state.m_sort = OpenGLState::eSortFullbright;
-
 	// Sort position
-    if (_material->getSortRequest() == Material::SORT_DECAL)
+    if (_material->getSortRequest() >= Material::SORT_DECAL)
     {
         state.m_sort = OpenGLState::eSortOverlayFirst;
     }
