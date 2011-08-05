@@ -314,20 +314,20 @@ void OpenGLShader::constructLightingPassesFromMaterial()
 void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
 {
     bool hasDiffuseLayer = false;
-    int numLayers = 0;
 
     // Determine alphatest from first diffuse layer
     const ShaderLayerVector& allLayers = _material->getAllLayers();
+
     for (ShaderLayerVector::const_iterator i = allLayers.begin();
          i != allLayers.end();
          ++i)
     {
-        ++numLayers;
-
         ShaderLayerPtr layer = *i;
+
         if (layer->getType() == ShaderLayer::DIFFUSE)
         {
             hasDiffuseLayer = true;
+
             if (layer->getAlphaTest() > 0)
             {
                 applyAlphaTestToPass(pass, layer->getAlphaTest());
@@ -339,7 +339,7 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
     // If this is a purely blend material (no DBS layers), set the editor blend
     // mode from the first blend layer.
 	// greebo: Hack to let "shader not found" textures be handled as diffusemaps
-    if (!hasDiffuseLayer && numLayers > 0 && _material->getName() != "_default")
+    if (!hasDiffuseLayer && !allLayers.empty() && _material->getName() != "_default")
     {
 		pass.renderFlags |= RENDER_BLEND;
 		pass.m_sort = OpenGLState::eSortTranslucent;
@@ -393,7 +393,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 }
 
 // Append a blend (non-interaction) layer
-void OpenGLShader::appendBlendLayer(ShaderLayerPtr layer)
+void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
 {
     TexturePtr layerTex = layer->getTexture();
 
