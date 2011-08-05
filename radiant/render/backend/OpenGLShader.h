@@ -73,7 +73,7 @@ private:
     void constructNormalShader(const std::string& name);
 
     // Shader pass construction helpers
-    void appendBlendLayer(ShaderLayerPtr layer);
+    void appendBlendLayer(const ShaderLayerPtr& layer);
     void appendInteractionLayer(const DBSTriplet& triplet);
     void constructLightingPassesFromMaterial();
     void determineBlendModeForEditorPass(OpenGLState& pass);
