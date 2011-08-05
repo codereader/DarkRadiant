@@ -66,6 +66,10 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
         // greebo: Parse description token, this should be the next one
         description = tokeniser.nextToken();
     }
+	else if (token == "polygonoffset")
+	{
+		_polygonOffset = strToFloat(tokeniser.nextToken(), 0);
+	}
 	else if (token == "sort")
 	{
 		std::string sortVal = tokeniser.nextToken();
