@@ -362,17 +362,11 @@ void ShaderTemplate::parseDefinition()
     }
 
 	// greebo: It appears that D3 is applying default sort values for material without
-	// an explicitly defined sort value, depending on whether a diffusemap stage is present
+	// an explicitly defined sort value, depending on a couple of things I didn't really investigate
+	// Some blend materials get SORT_MEDIUM applied by default, diffuses get OPAQUE assigned, but lights do not, etc.
 	if (_sortReq == SORT_UNDEFINED)
 	{
-		if (hasDiffusemap())
-		{
-			_sortReq = Material::SORT_OPAQUE;
-		}
-		else
-		{
-			_sortReq = Material::SORT_MEDIUM;
-		}
+		_sortReq = Material::SORT_OPAQUE;
 	}
 }
 
