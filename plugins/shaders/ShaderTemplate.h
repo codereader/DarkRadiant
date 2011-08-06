@@ -53,10 +53,14 @@ private:
 	// The description tag of the material
 	std::string description;
 
-  int m_nFlags;
+	// Material flags
+	int _materialFlags;
 
-  // cull stuff
-  Material::ECull m_Cull;
+	// cull type
+	Material::CullType _cullType;
+
+	// texure repeat type
+	Material::ClampType _clampType;
 
     // Sort position (e.g. sort decal == 2)
     int _sortReq;
@@ -81,13 +85,14 @@ public:
       fogLight(false),
       ambientLight(false),
       blendLight(false),
+	  _materialFlags(0),
+	  _cullType(Material::CULL_BACK),
+	  _clampType(Material::CLAMP_REPEAT),
       _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
 	  _blockContents(blockContents),
 	  _parsed(false)
-	{
-    	m_nFlags = 0;
-	}
+	{}
 
 	/**
 	 * Get the name of this shader template.
@@ -111,16 +116,22 @@ public:
 		return description;
 	}
 
-	int getFlags()
+	int getMaterialFlags()
 	{
 		if (!_parsed) parseDefinition();
-		return m_nFlags;
+		return _materialFlags;
 	}
 
-	Material::ECull getCull()
+	Material::CullType getCullType()
 	{
 		if (!_parsed) parseDefinition();
-		return m_Cull;
+		return _cullType;
+	}
+
+	Material::ClampType getClampType()
+	{
+		if (!_parsed) parseDefinition();
+		return _clampType;
 	}
 
 	const Layers& getLayers()

@@ -366,8 +366,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
                               | RENDER_SMOOTH;
 
     // Handle certain shader flags
-    if ((_material->getFlags() & QER_CULL) == 0
-        || _material->getCull() == Material::eCullBack)
+	if (_material->getCullType() != Material::CULL_NONE)
     {
         previewPass.renderFlags |= RENDER_CULLFACE;
     }

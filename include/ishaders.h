@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_ISHADERS_H)
-#define INCLUDED_ISHADERS_H
+#pragma once
 
 #include "iimage.h"
 #include "imodule.h"
@@ -43,21 +41,6 @@ typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
 
 } // namespace shaders
 
-enum
-{
-  QER_TRANS = 1 << 0,
-  QER_NOCARVE = 1 << 1,
-  QER_NODRAW = 1 << 2,
-  QER_NONSOLID = 1 << 3,
-  QER_WATER = 1 << 4,
-  QER_LAVA = 1 << 5,
-  QER_FOG = 1 << 6,
-  QER_CULL = 1 << 8,
-  QER_AREAPORTAL = 1 << 9,
-  QER_CLIP = 1 << 10,
-  QER_BOTCLIP = 1 << 11,
-};
-
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 typedef Vector3 Colour3;
@@ -74,11 +57,34 @@ class Material
 {
 public:
 
-  enum ECull
-  {
-    eCullNone,
-    eCullBack,
-  };
+	enum CullType
+	{
+		CULL_BACK,		// default backside culling, for materials without special flags
+		CULL_FRONT,		// "backSided"
+		CULL_NONE,		// "twoSided"
+	};
+
+	// Global material flags, applies to all stages
+	enum Flags
+	{
+		FLAG_NOSHADOWS				= 1 << 0,		// noShadows
+		FLAG_NOSELFSHADOW			= 1 << 1,		// noSelfShadow
+		FLAG_FORCESHADOWS			= 1 << 2,		// forceShadows
+		FLAG_NOOVERLAYS				= 1 << 3,		// noOverlays
+		FLAG_FORCEOVERLAYS			= 1 << 4,		// forceOverlays
+		FLAG_TRANSLUCENT			= 1 << 5,		// translucent
+		FLAG_FORCEOPAQUE			= 1 << 6,		// forceOpaque
+		FLAG_NOFOG					= 1 << 7,		// noFog
+		FLAG_UNSMOOTHEDTANGENTS		= 1 << 8,		// unsmoothedTangents
+	};
+
+	enum ClampType
+	{
+		CLAMP_REPEAT				= 1 << 0,		// default = no clamping
+		CLAMP_NOREPEAT				= 1 << 1,		// "clamp"
+		CLAMP_ZEROCLAMP				= 1 << 2,		// "zeroclamp"
+		CLAMP_ALPHAZEROCLAMP		= 1 << 3,		// "alphazeroclamp"
+	};
 
     /**
      * \brief
@@ -125,12 +131,10 @@ public:
 
   virtual bool IsInUse() const = 0;
   virtual void SetInUse(bool bInUse) = 0;
-  // get the editor flags (QER_NOCARVE QER_TRANS)
-  virtual int getFlags() const = 0;
+  
   // test if it's a true shader, or a default shader created to wrap around a texture
   virtual bool IsDefault() const = 0;
-  // get the cull type
-  virtual ECull getCull() = 0;
+  
   // get shader file name (ie the file where this one is defined)
   virtual const char* getShaderFileName() const = 0;
 
@@ -147,6 +151,19 @@ public:
      * Return a polygon offset if one is defined. The default is 0.
      */
     virtual float getPolygonOffset() const = 0;
+
+	/**
+	 * Get the desired texture repeat behaviour.
+	 */
+	virtual ClampType getClampType() const = 0;
+
+	// Get the cull type (none, back, front)
+	virtual CullType getCullType() const = 0;
+
+	/**
+	 * Get the global material flags (translucent, noshadows, etc.)
+	 */
+	virtual int getFlags() const = 0;
 
 	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.
@@ -355,5 +372,3 @@ inline MaterialManager& GlobalMaterialManager() {
 #define QERApp_ActiveShaders_IteratorAtEnd GlobalMaterialManager().endActiveShadersIterator
 #define QERApp_ActiveShaders_IteratorCurrent GlobalMaterialManager().dereferenceActiveShadersIterator
 #define QERApp_ActiveShaders_IteratorIncrement GlobalMaterialManager().incrementActiveShadersIterator
-
-#endif
