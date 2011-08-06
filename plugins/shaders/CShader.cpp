@@ -126,8 +126,9 @@ void CShader::SetInUse(bool bInUse) {
 }
 
 // get the shader flags
-int CShader::getFlags() const {
-	return _template->getFlags();
+int CShader::getFlags() const
+{
+	return _template->getMaterialFlags();
 }
 
 // test if it's a true shader, or a default shader created to wrap around a texture
@@ -136,9 +137,15 @@ bool CShader::IsDefault() const {
 }
 
 // get the cull type
-Material::ECull CShader::getCull() {
-	return _template->getCull();
-};
+Material::CullType CShader::getCullType() const
+{
+	return _template->getCullType();
+}
+
+Material::ClampType CShader::getClampType() const
+{
+	return _template->getClampType();
+}
 
 // get shader file name (ie the file where this one is defined)
 const char* CShader::getShaderFileName() const {

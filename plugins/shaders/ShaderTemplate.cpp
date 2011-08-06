@@ -24,51 +24,52 @@ NamedBindablePtr ShaderTemplate::getEditorTexture()
 }
 
 /*  Searches a token for known shaderflags (e.g. "translucent") and sets the flags
- *  in the member variable m_nFlags
+ *  in the member variable _materialFlags
  *
  *  Note: input "token" has to be lowercase for the keywords to be recognized
  */
 void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
                                       const std::string& token)
 {
-    if (token == "qer_trans") {
-        m_nFlags |= QER_TRANS;
+    if (token == "translucent")
+	{
+        _materialFlags |= Material::FLAG_TRANSLUCENT;
     }
-    else if (token == "translucent") {
-        m_nFlags |= QER_TRANS;
-    }
-    else if (token == "decal_macro") {
-        m_nFlags |= QER_TRANS;
+    else if (token == "decal_macro")
+	{
+        _materialFlags |= Material::FLAG_TRANSLUCENT;
         _sortReq = Material::SORT_DECAL;
         _polygonOffset = 1.0f;
+		// DECAL_MACRO also includes "discrete"
     }
-    else if (token == "twosided") {
-        m_Cull = Material::eCullNone;
-        m_nFlags |= QER_CULL;
+    else if (token == "twosided")
+	{
+        _cullType = Material::CULL_NONE;
     }
-    else if (token == "nodraw") {
-        m_nFlags |= QER_NODRAW;
+	else if (token == "backsided")
+	{
+        _cullType = Material::CULL_FRONT;
     }
-    else if (token == "nonsolid") {
-        m_nFlags |= QER_NONSOLID;
-    }
-    else if (token == "liquid") {
-        m_nFlags |= QER_WATER;
-    }
-    else if (token == "areaportal") {
-        m_nFlags |= QER_AREAPORTAL;
-    }
-    else if (token == "playerclip" || token == "monsterclip"
-            || token == "ikclip" || token == "moveableclip") {
-        m_nFlags |= QER_CLIP;
-    }
-    else if (token == "description") {
+    else if (token == "description")
+	{
         // greebo: Parse description token, this should be the next one
         description = tokeniser.nextToken();
     }
 	else if (token == "polygonoffset")
 	{
 		_polygonOffset = strToFloat(tokeniser.nextToken(), 0);
+	}
+	else if (token == "clamp")
+	{
+		_clampType = Material::CLAMP_NOREPEAT;
+	}
+	else if (token == "zeroclamp")
+	{
+		_clampType = Material::CLAMP_ZEROCLAMP;
+	}
+	else if (token == "alphazeroclamp")
+	{
+		_clampType = Material::CLAMP_ALPHAZEROCLAMP;
 	}
 	else if (token == "sort")
 	{
@@ -122,22 +123,30 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 			_sortReq = strToInt(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
 		}
 	}
+	else if (token == "noshadows")
+	{
+		_materialFlags |= Material::FLAG_NOSHADOWS;
+	}
 }
 
 /* Searches for light-specific keywords and takes the appropriate actions
  */
 void ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std::string& token)
 {
-    if (token == "ambientlight") {
+    if (token == "ambientlight")
+	{
         ambientLight = true;
     }
-    else if (token == "blendlight") {
+    else if (token == "blendlight")
+	{
         blendLight = true;
     }
-    else if (token == "foglight") {
+    else if (token == "foglight")
+	{
         fogLight = true;
     }
-    else if (!fogLight && token == "lightfalloffimage") {
+    else if (!fogLight && token == "lightfalloffimage")
+	{
         _lightFalloff = MapExpression::createForToken(tokeniser);
     }
 }
@@ -174,13 +183,16 @@ void ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
     {
         std::string blendType = boost::algorithm::to_lower_copy(tokeniser.nextToken());
 
-        if (blendType == "diffusemap") {
+        if (blendType == "diffusemap")
+		{
             _currentLayer->setLayerType(ShaderLayer::DIFFUSE);
         }
-        else if (blendType == "bumpmap") {
+        else if (blendType == "bumpmap")
+		{
             _currentLayer->setLayerType(ShaderLayer::BUMP);
         }
-        else if (blendType == "specularmap") {
+        else if (blendType == "specularmap")
+		{
             _currentLayer->setLayerType(ShaderLayer::SPECULAR);
         }
         else
@@ -313,28 +325,32 @@ void ShaderTemplate::parseDefinition()
         while (level > 0 && tokeniser.hasMoreTokens())
         {
             std::string token = tokeniser.nextToken();
-            std::string token_lowercase = boost::algorithm::to_lower_copy(token);
-
-            if (token=="}") {
-
-                if (--level == 1) {
+            
+            if (token=="}")
+			{
+                if (--level == 1)
+				{
                     saveLayer();
                 }
             }
-            else if (token=="{") {
+            else if (token=="{")
+			{
                 ++level;
             }
-            else {
+            else
+			{
+				boost::algorithm::to_lower(token);
+
                 switch (level) {
                     case 1: // global level
-                        parseShaderFlags(tokeniser, token_lowercase);
-                        parseLightFlags(tokeniser, token_lowercase);
-                        parseBlendShortcuts(tokeniser, token_lowercase);
+                        parseShaderFlags(tokeniser, token);
+                        parseLightFlags(tokeniser, token);
+                        parseBlendShortcuts(tokeniser, token);
                         break;
                     case 2: // stage level
-                        parseBlendType(tokeniser, token_lowercase);
-                        parseBlendMaps(tokeniser, token_lowercase);
-                        parseStageModifiers(tokeniser, token_lowercase);
+                        parseBlendType(tokeniser, token);
+                        parseBlendMaps(tokeniser, token);
+                        parseStageModifiers(tokeniser, token);
                         break;
                 }
             }

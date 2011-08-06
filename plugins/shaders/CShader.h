@@ -75,7 +75,10 @@ public:
 	bool IsDefault() const;
 
 	// get the cull type
-	ECull getCull();
+	CullType getCullType() const;
+
+	// Clamp type
+	ClampType getClampType() const;
 
 	// get shader file name (ie the file where this one is defined)
 	const char* getShaderFileName() const;
