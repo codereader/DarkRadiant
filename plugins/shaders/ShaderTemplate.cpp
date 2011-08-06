@@ -127,6 +127,34 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	{
 		_materialFlags |= Material::FLAG_NOSHADOWS;
 	}
+	else if (token == "noselfshadow")
+	{
+		_materialFlags |= Material::FLAG_NOSELFSHADOW;
+	}
+	else if (token == "forceshadows")
+	{
+		_materialFlags |= Material::FLAG_FORCESHADOWS;
+	}
+	else if (token == "nooverlays")
+	{
+		_materialFlags |= Material::FLAG_NOOVERLAYS;
+	}
+	else if (token == "forceoverlays")
+	{
+		_materialFlags |= Material::FLAG_FORCEOVERLAYS;
+	}
+	else if (token == "forceopaque")
+	{
+		_materialFlags |= Material::FLAG_FORCEOPAQUE;
+	}
+	else if (token == "nofog")
+	{
+		_materialFlags |= Material::FLAG_NOFOG;
+	}
+	else if (token == "unsmoothedtangents")
+	{
+		_materialFlags |= Material::FLAG_UNSMOOTHEDTANGENTS;
+	}
 }
 
 /* Searches for light-specific keywords and takes the appropriate actions
