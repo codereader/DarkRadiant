@@ -271,6 +271,9 @@ private:
 	bool parseSurfaceFlags(parser::DefTokeniser&, const std::string&);
 	bool parseCondition(parser::DefTokeniser&, const std::string&);
 
+	// For parsing "red", "green", "blue", "alpha" and "rgb"/"rgba" values
+	void parseColourExpression(parser::DefTokeniser& tokeniser, std::size_t component);
+
 	bool saveLayer();
 
 };

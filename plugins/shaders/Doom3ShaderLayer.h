@@ -3,6 +3,7 @@
 #include <ishaders.h>
 #include <vector>
 
+#include "math/Vector4.h"
 #include "NamedBindable.h"
 
 namespace shaders
@@ -73,31 +74,12 @@ public:
 	// Constructor
 	Doom3ShaderLayer(ShaderTemplate& material, 
 					 ShaderLayer::Type type = ShaderLayer::BLEND,
-                     NamedBindablePtr btex = NamedBindablePtr())
-	: _material(material),
-	  _bindableTex(btex),
-	  _type(type),
-	  _blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
-      _vertexColourMode(VERTEX_COLOUR_NONE),
-      _cubeMapMode(CUBE_MAP_NONE),
-	  _stageFlags(0),
-	  _clampType(CLAMP_REPEAT),
-      _alphaTest(-1.0),
-	  _texGenType(TEXGEN_NORMAL)
-	{ 
-		// Init the colour to 1,1,1,1
-		_colour[0] = REG_ONE;
-		_colour[1] = REG_ONE;
-		_colour[2] = REG_ONE;
-		_colour[3] = REG_ONE;
-
-		_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = 0;
-	}
+                     const NamedBindablePtr& btex = NamedBindablePtr());
 
     /* ShaderLayer implementation */
     TexturePtr getTexture() const;
     BlendFunc getBlendFunc() const;
-    Vector3 getColour() const;
+    Vector4 getColour() const;
     VertexColourMode getVertexColourMode() const;
     CubeMapMode getCubeMapMode() const;
     double getAlphaTest() const;
@@ -212,7 +194,7 @@ public:
      * \brief
      * Set the colour.
      */
-    void setColour(const Vector3& col);
+    void setColour(const Vector4& col);
 
     /**
      * \brief
