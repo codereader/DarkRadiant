@@ -1,14 +1,26 @@
 #pragma once
 
 #include <ishaders.h>
+#include <vector>
 
 #include "NamedBindable.h"
 
 namespace shaders
 {
 
+typedef std::vector<float> Registers;
+
+// The indices to the constants in the registers array
+enum ReservedRegisters
+{
+	REG_ZERO = 0,
+	REG_ONE  = 1,
+	NUM_RESERVED_REGISTERS,
+};
+
 typedef std::pair<std::string, std::string> StringPair;
 
+class ShaderTemplate;
 
 /**
  * \brief
@@ -18,6 +30,8 @@ class Doom3ShaderLayer
 : public ShaderLayer
 {
 private:
+	// The owning material (which holds the registers)
+	ShaderTemplate& _material;
 
 	// The bindable texture for this stage
 	NamedBindablePtr _bindableTex;
@@ -32,7 +46,8 @@ private:
     StringPair _blendFuncStrings;
 
     // Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
-    Vector3 _colour;
+	// The 4 numbers are indices into the registers array in the parent material
+	std::size_t _colour[4];
 
     // Vertex colour blend mode
     VertexColourMode _vertexColourMode;
@@ -49,21 +64,35 @@ private:
     // Alpha test value. -1 means no test, otherwise must be 0 - 1
     float _alphaTest;
 
+	// texgen normal, reflect, skybox, wobblesky
+	TexGenType _texGenType;
+	float _texGenParams[3]; // 3 parameters for wobblesky texgen
+
 public:
 
 	// Constructor
-	Doom3ShaderLayer(ShaderLayer::Type type = ShaderLayer::BLEND,
+	Doom3ShaderLayer(ShaderTemplate& material, 
+					 ShaderLayer::Type type = ShaderLayer::BLEND,
                      NamedBindablePtr btex = NamedBindablePtr())
-	: _bindableTex(btex),
+	: _material(material),
+	  _bindableTex(btex),
 	  _type(type),
 	  _blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
-      _colour(1, 1, 1),
       _vertexColourMode(VERTEX_COLOUR_NONE),
       _cubeMapMode(CUBE_MAP_NONE),
 	  _stageFlags(0),
 	  _clampType(CLAMP_REPEAT),
-      _alphaTest(-1.0)
-	{ }
+      _alphaTest(-1.0),
+	  _texGenType(TEXGEN_NORMAL)
+	{ 
+		// Init the colour to 1,1,1,1
+		_colour[0] = REG_ONE;
+		_colour[1] = REG_ONE;
+		_colour[2] = REG_ONE;
+		_colour[3] = REG_ONE;
+
+		_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = 0;
+	}
 
     /* ShaderLayer implementation */
     TexturePtr getTexture() const;
@@ -139,6 +168,28 @@ public:
 		_clampType = type;
 	}
 
+	TexGenType getTexGenType() const
+	{
+		return _texGenType;
+	}
+
+	void setTexGenType(TexGenType type)
+	{
+		_texGenType = type;
+	}
+
+	float getTexGenParam(std::size_t index) const 
+	{
+		assert(index < 3);
+		return _texGenParams[index];
+	}
+
+	void setTexGenParam(std::size_t index, float value)
+	{
+		assert(index < 3);
+		_texGenParams[index] = value;
+	}
+
     /**
      * \brief
      * Set the blend function string.
@@ -161,10 +212,7 @@ public:
      * \brief
      * Set the colour.
      */
-    void setColour(const Vector3& col)
-    {
-        _colour = col;
-    }
+    void setColour(const Vector3& col);
 
     /**
      * \brief

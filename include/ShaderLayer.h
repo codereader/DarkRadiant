@@ -78,6 +78,14 @@ public:
 		FLAG_COLOURED				= 1 << 11,
 	};
 
+	enum TexGenType
+	{
+		TEXGEN_NORMAL		= 1 << 0,
+		TEXGEN_REFLECT		= 1 << 1,
+		TEXGEN_SKYBOX		= 1 << 2,
+		TEXGEN_WOBBLESKY	= 1 << 3,
+	};
+
     /**
      * \brief
 	 * Destructor
@@ -105,6 +113,17 @@ public:
 	 * Each stage can have its own clamp type, overriding the per-material one.
 	 */
 	virtual ClampType getClampType() const = 0;
+
+	/**
+	 * Returns the texgen type: normal, reflect, skybox, etc.
+	 * Use getTexGenParam(i) to retrieve the wobblesky parameters [0..2]
+	 */
+	virtual TexGenType getTexGenType() const = 0;
+
+	/**
+	 * TexGen type wobblesky has 3 parameters, get them here, with index in [0..2]
+	 */
+	virtual float getTexGenParam(std::size_t index) const = 0;
 
     /**
      * \brief
