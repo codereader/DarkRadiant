@@ -165,7 +165,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 
 /* Searches for light-specific keywords and takes the appropriate actions
  */
-bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std::string& token)
+bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const std::string& token)
 {
     if (token == "ambientlight")
 	{
@@ -253,9 +253,12 @@ bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
                 // This is an explicit GL blend mode
                 tokeniser.assertNextToken(",");
                 blendFuncStrings.second = tokeniser.nextToken();
-            } else {
+            }
+			else
+			{
                 blendFuncStrings.second = "";
             }
+
             _currentLayer->setBlendFuncStrings(blendFuncStrings);
         }
     }
@@ -285,6 +288,33 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         );
         _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_CAMERA);
     }
+	else if (token == "texgen")
+	{
+		std::string type = tokeniser.nextToken();
+
+		if (type == "skybox")
+		{
+			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_SKYBOX);
+		}
+		else if (type == "reflect")
+		{
+			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_REFLECT);
+		}
+		else if (type == "normal")
+		{
+			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_NORMAL);
+		}
+		else if (type == "wobblesky")
+		{
+			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_WOBBLESKY);
+
+			// Parse the 3 wobblesky parameters
+			for (std::size_t i = 0; i < 3; ++i)
+			{
+				_currentLayer->setTexGenParam(i, strToFloat(tokeniser.nextToken()));
+			}
+		}
+	}
 	else
 	{
 		return false; // unrecognised token, return false
@@ -628,7 +658,7 @@ bool ShaderTemplate::saveLayer()
     }
 
     // Clear the currentLayer structure for possible future layers
-    _currentLayer = Doom3ShaderLayerPtr(new Doom3ShaderLayer);
+    _currentLayer = Doom3ShaderLayerPtr(new Doom3ShaderLayer(*this));
 
     return true;
 }
@@ -673,11 +703,11 @@ void ShaderTemplate::parseDefinition()
                 switch (level) {
                     case 1: // global level
                         if (parseShaderFlags(tokeniser, token)) continue;
-                        if (parseLightFlags(tokeniser, token)) continue;
+                        if (parseLightKeywords(tokeniser, token)) continue;
                         if (parseBlendShortcuts(tokeniser, token)) continue;
 						if (parseSurfaceFlags(tokeniser, token)) continue;
 
-						//globalWarningStream() << "Material keyword not recognised: " << token << std::endl;
+						globalWarningStream() << "Material keyword not recognised: " << token << std::endl;
 
                         break;
                     case 2: // stage level
@@ -686,7 +716,7 @@ void ShaderTemplate::parseDefinition()
                         if (parseBlendMaps(tokeniser, token)) continue;
                         if (parseStageModifiers(tokeniser, token)) continue;
 
-						//globalWarningStream() << "Stage keyword not recognised: " << token << std::endl;
+						globalWarningStream() << "Stage keyword not recognised: " << token << std::endl;
 
                         break;
                 }
@@ -723,7 +753,7 @@ void ShaderTemplate::addLayer(const Doom3ShaderLayerPtr& layer)
 void ShaderTemplate::addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr)
 {
 	// Construct a layer out of this mapexpression and pass the call
-	addLayer(Doom3ShaderLayerPtr(new Doom3ShaderLayer(type, mapExpr)));
+	addLayer(Doom3ShaderLayerPtr(new Doom3ShaderLayer(*this, type, mapExpr)));
 }
 
 bool ShaderTemplate::hasDiffusemap()

@@ -94,7 +94,27 @@ BlendFunc Doom3ShaderLayer::getBlendFunc() const
 
 Vector3 Doom3ShaderLayer::getColour() const
 {
-    return _colour;
+	// Resolve the register values
+    return Vector3(_material.getRegister(_colour[0]), _material.getRegister(_colour[1]), _material.getRegister(_colour[2]));
+}
+
+void Doom3ShaderLayer::setColour(const Vector3& col)
+{
+	// Assign all 3 components of the colour, allocating new registers on the fly where needed
+	for (std::size_t i = 0; i < 3; ++i)
+	{
+		// Does this colour component refer to a reserved constant index?
+		if (_colour[i] < NUM_RESERVED_REGISTERS)
+		{
+			// Yes, break this up by allocating a new register for this value
+			_colour[i] = _material.getNewRegister(col[i]);
+		}
+		else
+		{
+			// Already using a custom register
+			_material.setRegister(_colour[i], col[i]);
+		}
+	}
 }
 
 ShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const

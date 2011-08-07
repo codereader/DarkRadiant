@@ -73,6 +73,10 @@ private:
     // Polygon offset
     float _polygonOffset;
 
+	// The registers keeping the results of expression evaluations
+	// The first two slots are always reserved for the constants 0 and 1
+	Registers _registers;
+
 	std::string _blockContents;
 
 	// Whether the block has been parsed
@@ -86,7 +90,7 @@ public:
      */
 	ShaderTemplate(const std::string& name, const std::string& blockContents)
 	: _name(name),
-      _currentLayer(new Doom3ShaderLayer),
+      _currentLayer(new Doom3ShaderLayer(*this)),
       fogLight(false),
       ambientLight(false),
       blendLight(false),
@@ -97,9 +101,13 @@ public:
 	  _surfaceType(Material::SURFTYPE_DEFAULT),
       _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
+	  _registers(NUM_RESERVED_REGISTERS),
 	  _blockContents(blockContents),
 	  _parsed(false)
-	{}
+	{
+		_registers[REG_ZERO] = 0;
+		_registers[REG_ONE] = 1;
+	}
 
 	/**
 	 * Get the name of this shader template.
@@ -219,6 +227,26 @@ public:
 	// Returns true if this shader template includes a diffusemap stage
 	bool hasDiffusemap();
 
+	// Returns the value of the given register
+	float getRegister(std::size_t index) const
+	{
+		assert(index < _registers.size());
+		return _registers[index];
+	}
+
+	void setRegister(std::size_t index, float value)
+	{
+		assert(index < _registers.size());
+		_registers[index] = value;
+	}
+
+	// Allocates a new register, initialised with the given value
+	std::size_t getNewRegister(float newVal)
+	{
+		_registers.push_back(newVal);
+		return _registers.size() - 1;
+	}
+
 private:
 
 	// Add the given layer and assigns editor preview layer if applicable
@@ -235,7 +263,7 @@ private:
     // recursive-descent parser. Each of these helpers return true 
 	// if the token was recognised and parsed
 	bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
-	bool parseLightFlags(parser::DefTokeniser&, const std::string&);
+	bool parseLightKeywords(parser::DefTokeniser&, const std::string&);
 	bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
 	bool parseBlendType(parser::DefTokeniser&, const std::string&);
 	bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
