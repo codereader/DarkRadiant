@@ -5,6 +5,15 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
+// Texture repeat types
+enum ClampType
+{
+	CLAMP_REPEAT				= 1 << 0,		// default = no clamping
+	CLAMP_NOREPEAT				= 1 << 1,		// "clamp"
+	CLAMP_ZEROCLAMP				= 1 << 2,		// "zeroclamp"
+	CLAMP_ALPHAZEROCLAMP		= 1 << 3,		// "alphazeroclamp"
+};
+
 /**
  * \brief
  * Representation of a GL blend function.
@@ -52,6 +61,23 @@ public:
         BLEND
     };
 
+	// Stage flags
+	enum Flags
+	{
+		FLAG_IGNORE_ALPHATEST		= 1 << 0,
+		FLAG_FILTER_NEAREST			= 1 << 1,
+		FLAG_FILTER_LINEAR			= 1 << 2,
+		FLAG_HIGHQUALITY			= 1 << 3,	// "uncompressed"
+		FLAG_FORCE_HIGHQUALITY		= 1 << 4,
+		FLAG_NO_PICMIP				= 1 << 5,
+		FLAG_MASK_RED				= 1 << 6,
+		FLAG_MASK_GREEN				= 1 << 7,
+		FLAG_MASK_BLUE				= 1 << 8,
+		FLAG_MASK_ALPHA				= 1 << 9,
+		FLAG_MASK_DEPTH				= 1 << 10,
+		FLAG_COLOURED				= 1 << 11,
+	};
+
     /**
      * \brief
 	 * Destructor
@@ -69,6 +95,16 @@ public:
      * Return the Texture object corresponding to this layer (may be NULL).
      */
     virtual TexturePtr getTexture() const = 0;
+
+	/**
+	 * The flags set on this stage.
+	 */
+	virtual int getStageFlags() const = 0;
+
+	/**
+	 * Each stage can have its own clamp type, overriding the per-material one.
+	 */
+	virtual ClampType getClampType() const = 0;
 
     /**
      * \brief

@@ -108,8 +108,9 @@ void OpenGLShader::unrealise()
     destroy();
 }
 
-unsigned int OpenGLShader::getFlags() const {
-    return _material->getFlags();
+unsigned int OpenGLShader::getFlags() const
+{
+    return _material->getMaterialFlags();
 }
 
 // Append a default shader pass onto the back of the state list

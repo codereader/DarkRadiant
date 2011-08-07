@@ -69,7 +69,7 @@ public:
 	void SetInUse(bool bInUse);
 
 	// get the shader flags
-	int getFlags() const;
+	int getMaterialFlags() const;
 
 	// test if it's a true shader, or a default shader created to wrap around a texture
 	bool IsDefault() const;
@@ -79,6 +79,10 @@ public:
 
 	// Clamp type
 	ClampType getClampType() const;
+
+	int getSurfaceFlags() const;
+
+	SurfaceType getSurfaceType() const;
 
 	// get shader file name (ie the file where this one is defined)
 	const char* getShaderFileName() const;

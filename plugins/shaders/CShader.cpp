@@ -126,7 +126,7 @@ void CShader::SetInUse(bool bInUse) {
 }
 
 // get the shader flags
-int CShader::getFlags() const
+int CShader::getMaterialFlags() const
 {
 	return _template->getMaterialFlags();
 }
@@ -142,9 +142,19 @@ Material::CullType CShader::getCullType() const
 	return _template->getCullType();
 }
 
-Material::ClampType CShader::getClampType() const
+ClampType CShader::getClampType() const
 {
 	return _template->getClampType();
+}
+
+int CShader::getSurfaceFlags() const
+{
+	return _template->getSurfaceFlags();
+}
+
+Material::SurfaceType CShader::getSurfaceType() const
+{
+	return _template->getSurfaceType();
 }
 
 // get shader file name (ie the file where this one is defined)

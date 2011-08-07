@@ -60,7 +60,12 @@ private:
 	Material::CullType _cullType;
 
 	// texure repeat type
-	Material::ClampType _clampType;
+	ClampType _clampType;
+
+	// Surface flags (nonsolid, areaportal, etc.)
+	int _surfaceFlags;
+
+	Material::SurfaceType _surfaceType;
 
     // Sort position (e.g. sort decal == 2)
     int _sortReq;
@@ -87,7 +92,9 @@ public:
       blendLight(false),
 	  _materialFlags(0),
 	  _cullType(Material::CULL_BACK),
-	  _clampType(Material::CLAMP_REPEAT),
+	  _clampType(CLAMP_REPEAT),
+	  _surfaceFlags(0),
+	  _surfaceType(Material::SURFTYPE_DEFAULT),
       _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
 	  _blockContents(blockContents),
@@ -128,10 +135,22 @@ public:
 		return _cullType;
 	}
 
-	Material::ClampType getClampType()
+	ClampType getClampType()
 	{
 		if (!_parsed) parseDefinition();
 		return _clampType;
+	}
+
+	int getSurfaceFlags()
+	{
+		if (!_parsed) parseDefinition();
+		return _surfaceFlags;
+	}
+
+	Material::SurfaceType getSurfaceType()
+	{
+		if (!_parsed) parseDefinition();
+		return _surfaceType;
 	}
 
 	const Layers& getLayers()
@@ -213,13 +232,16 @@ private:
 	void parseDefinition();
 
     // Parse helpers. These scan for possible matches, this is not a
-    // recursive-descent parser
-	void parseShaderFlags(parser::DefTokeniser&, const std::string&);
-	void parseLightFlags(parser::DefTokeniser&, const std::string&);
-	void parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
-	void parseBlendType(parser::DefTokeniser&, const std::string&);
-	void parseBlendMaps(parser::DefTokeniser&, const std::string&);
-    void parseStageModifiers(parser::DefTokeniser&, const std::string&);
+    // recursive-descent parser. Each of these helpers return true 
+	// if the token was recognised and parsed
+	bool parseShaderFlags(parser::DefTokeniser&, const std::string&);
+	bool parseLightFlags(parser::DefTokeniser&, const std::string&);
+	bool parseBlendShortcuts(parser::DefTokeniser&, const std::string&);
+	bool parseBlendType(parser::DefTokeniser&, const std::string&);
+	bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
+    bool parseStageModifiers(parser::DefTokeniser&, const std::string&);
+	bool parseSurfaceFlags(parser::DefTokeniser&, const std::string&);
+	bool parseCondition(parser::DefTokeniser&, const std::string&);
 
 	bool saveLayer();
 
