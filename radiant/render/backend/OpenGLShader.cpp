@@ -430,7 +430,7 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
     }
 
     // Colour modulation
-    state.m_colour = Vector4(layer->getColour(), 1.0);
+    state.m_colour = layer->getColour();
 
 	// Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)

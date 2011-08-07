@@ -5,6 +5,10 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
+// Forward-declare Vector4
+template<typename Element> class BasicVector4;
+typedef BasicVector4<float> Vector4;
+
 // Texture repeat types
 enum ClampType
 {
@@ -138,7 +142,7 @@ public:
      * \brief
      * Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
      */
-    virtual Vector3 getColour() const = 0;
+    virtual Vector4 getColour() const = 0;
 
     /**
      * \brief

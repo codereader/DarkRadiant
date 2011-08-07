@@ -76,6 +76,27 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
 
 // ShaderLayer implementation
 
+Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type type, const NamedBindablePtr& btex)
+:	_material(material),
+	_bindableTex(btex),
+	_type(type),
+	_blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
+	_vertexColourMode(VERTEX_COLOUR_NONE),
+	_cubeMapMode(CUBE_MAP_NONE),
+	_stageFlags(0),
+	_clampType(CLAMP_REPEAT),
+	_alphaTest(-1.0),
+	_texGenType(TEXGEN_NORMAL)
+{ 
+	// Init the colour to 1,1,1,1
+	_colour[0] = REG_ONE;
+	_colour[1] = REG_ONE;
+	_colour[2] = REG_ONE;
+	_colour[3] = REG_ONE;
+
+	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = 0;
+}
+
 TexturePtr Doom3ShaderLayer::getTexture() const
 {
     // Bind texture to GL if needed
@@ -92,16 +113,17 @@ BlendFunc Doom3ShaderLayer::getBlendFunc() const
     return blendFuncFromStrings(_blendFuncStrings);
 }
 
-Vector3 Doom3ShaderLayer::getColour() const
+Vector4 Doom3ShaderLayer::getColour() const
 {
 	// Resolve the register values
-    return Vector3(_material.getRegister(_colour[0]), _material.getRegister(_colour[1]), _material.getRegister(_colour[2]));
+    return Vector4(_material.getRegister(_colour[0]), _material.getRegister(_colour[1]), 
+				   _material.getRegister(_colour[2]), _material.getRegister(_colour[3]));
 }
 
-void Doom3ShaderLayer::setColour(const Vector3& col)
+void Doom3ShaderLayer::setColour(const Vector4& col)
 {
 	// Assign all 3 components of the colour, allocating new registers on the fly where needed
-	for (std::size_t i = 0; i < 3; ++i)
+	for (std::size_t i = 0; i < 4; ++i)
 	{
 		// Does this colour component refer to a reserved constant index?
 		if (_colour[i] < NUM_RESERVED_REGISTERS)

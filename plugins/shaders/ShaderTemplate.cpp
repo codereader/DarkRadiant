@@ -323,6 +323,20 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	return true;
 }
 
+void ShaderTemplate::parseColourExpression(parser::DefTokeniser& tokeniser, std::size_t component)
+{
+	// Get the colour value
+    std::string valueString = tokeniser.nextToken();
+    float value = strToFloat(valueString);
+
+	// Set the appropriate component
+    Vector4 currentColour = _currentLayer->getColour();
+
+	currentColour[component] = value;
+
+	_currentLayer->setColour(currentColour);
+}
+
 // Search for colour modifications, e.g. red, green, blue, rgb or vertexColor
 bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
                                          const std::string& token)
@@ -339,35 +353,40 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
             ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY
         );
     }
-    else if (token == "red" || token == "green" ||
-			 token == "blue" || token == "rgb")
-    {
-        // Get the colour value
+	else if (token == "red")
+	{
+		parseColourExpression(tokeniser, 0);
+	}
+	else if (token == "green")
+	{
+		parseColourExpression(tokeniser, 1);
+	}
+	else if (token == "blue")
+	{
+		parseColourExpression(tokeniser, 2);
+	}
+	else if (token == "alpha")
+	{
+		parseColourExpression(tokeniser, 3);
+	}
+	else if (token == "rgb")
+	{
+		// Get the colour value
         std::string valueString = tokeniser.nextToken();
         float value = strToFloat(valueString);
 
-        // Set the appropriate component(s)
-        Vector3 currentColour = _currentLayer->getColour();
+		// Set the RGB components, keep current alpha
+		_currentLayer->setColour(Vector4(value, value, value, _currentLayer->getColour().w()));
+	}
+	else if (token == "rgba")
+	{
+		// Get the colour value
+        std::string valueString = tokeniser.nextToken();
+        float value = strToFloat(valueString);
 
-        if (token == "red")
-        {
-            currentColour[0] = value;
-        }
-        else if (token == "green")
-        {
-            currentColour[1] = value;
-        }
-        else if (token == "blue")
-        {
-            currentColour[2] = value;
-        }
-        else
-        {
-            currentColour = Vector3(value, value, value);
-        }
-
-        _currentLayer->setColour(currentColour);
-    }
+		// Set all four components
+		_currentLayer->setColour(Vector4(value, value, value, value));
+	}
     else if (token == "alphatest")
     {
         // Get the alphatest value
