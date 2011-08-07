@@ -40,6 +40,12 @@ private:
     // Cube map mode
     CubeMapMode _cubeMapMode;
 
+	// Flags for this stage (forceHighQuality, ignoreAlphaTest, etc.)
+	int _stageFlags;
+
+	// Per-stage clamping
+	ClampType _clampType;
+
     // Alpha test value. -1 means no test, otherwise must be 0 - 1
     float _alphaTest;
 
@@ -54,6 +60,8 @@ public:
       _colour(1, 1, 1),
       _vertexColourMode(VERTEX_COLOUR_NONE),
       _cubeMapMode(CUBE_MAP_NONE),
+	  _stageFlags(0),
+	  _clampType(CLAMP_REPEAT),
       _alphaTest(-1.0)
 	{ }
 
@@ -100,6 +108,36 @@ public:
     {
         return _type;
     }
+
+	int getStageFlags() const
+	{
+		return _stageFlags;
+	}
+
+	void setStageFlags(int flags)
+	{
+		_stageFlags = flags;
+	}
+
+	void setStageFlag(ShaderLayer::Flags flag)
+	{
+		_stageFlags |= flag;
+	}
+
+	void clearStageFlag(ShaderLayer::Flags flag)
+	{
+		_stageFlags &= ~flag;
+	}
+
+	ClampType getClampType() const 
+	{
+		return _clampType;
+	}
+
+	void setClampType(ClampType type) 
+	{
+		_clampType = type;
+	}
 
     /**
      * \brief

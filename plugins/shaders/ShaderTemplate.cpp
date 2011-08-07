@@ -28,7 +28,7 @@ NamedBindablePtr ShaderTemplate::getEditorTexture()
  *
  *  Note: input "token" has to be lowercase for the keywords to be recognized
  */
-void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
+bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
                                       const std::string& token)
 {
     if (token == "translucent")
@@ -40,7 +40,7 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
         _materialFlags |= Material::FLAG_TRANSLUCENT;
         _sortReq = Material::SORT_DECAL;
         _polygonOffset = 1.0f;
-		// DECAL_MACRO also includes "discrete"
+		_surfaceFlags |= Material::SURF_DISCRETE;
     }
     else if (token == "twosided")
 	{
@@ -61,15 +61,15 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "clamp")
 	{
-		_clampType = Material::CLAMP_NOREPEAT;
+		_clampType = CLAMP_NOREPEAT;
 	}
 	else if (token == "zeroclamp")
 	{
-		_clampType = Material::CLAMP_ZEROCLAMP;
+		_clampType = CLAMP_ZEROCLAMP;
 	}
 	else if (token == "alphazeroclamp")
 	{
-		_clampType = Material::CLAMP_ALPHAZEROCLAMP;
+		_clampType = CLAMP_ALPHAZEROCLAMP;
 	}
 	else if (token == "sort")
 	{
@@ -155,11 +155,17 @@ void ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	{
 		_materialFlags |= Material::FLAG_UNSMOOTHEDTANGENTS;
 	}
+	else
+	{
+		return false; // unrecognised token, return false
+	}
+
+	return true; // token recognised
 }
 
 /* Searches for light-specific keywords and takes the appropriate actions
  */
-void ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std::string& token)
+bool ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std::string& token)
 {
     if (token == "ambientlight")
 	{
@@ -177,10 +183,16 @@ void ShaderTemplate::parseLightFlags(parser::DefTokeniser& tokeniser, const std:
 	{
         _lightFalloff = MapExpression::createForToken(tokeniser);
     }
+	else
+	{
+		return false; // unrecognised token, return false
+	}
+
+	return true;
 }
 
 // Parse any single-line stages (such as "diffusemap x/y/z")
-void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
+bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
                                          const std::string& token)
 {
     if (token == "qer_editorimage")
@@ -199,13 +211,19 @@ void ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
     {
 		addLayer(ShaderLayer::BUMP, MapExpression::createForToken(tokeniser));
     }
+	else
+	{
+		return false; // unrecognised token, return false
+	}
+
+	return true;
 }
 
 /* Parses for possible blend commands like "add", "diffusemap", "gl_one, gl_zero" etc.
  * Note: input "token" has to be lowercase
  * Output: true, if the blend keyword was found, false otherwise.
  */
-void ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::string& token)
+bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::string& token)
 {
     if (token == "blend")
     {
@@ -241,11 +259,17 @@ void ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
             _currentLayer->setBlendFuncStrings(blendFuncStrings);
         }
     }
+	else
+	{
+		return false; // unrecognised token, return false
+	}
+
+	return true;
 }
 
 /* Searches for the map keyword in stage 2, expects token to be lowercase
  */
-void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token)
+bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::string& token)
 {
     if (token == "map")
     {
@@ -261,10 +285,16 @@ void ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         );
         _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_CAMERA);
     }
+	else
+	{
+		return false; // unrecognised token, return false
+	}
+
+	return true;
 }
 
 // Search for colour modifications, e.g. red, green, blue, rgb or vertexColor
-void ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
+bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
                                          const std::string& token)
 {
     if (token == "vertexcolor")
@@ -279,10 +309,8 @@ void ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
             ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY
         );
     }
-    else if (token == "red"
-             || token == "green"
-             || token == "blue"
-             || token == "rgb")
+    else if (token == "red" || token == "green" ||
+			 token == "blue" || token == "rgb")
     {
         // Get the colour value
         std::string valueString = tokeniser.nextToken();
@@ -290,6 +318,7 @@ void ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 
         // Set the appropriate component(s)
         Vector3 currentColour = _currentLayer->getColour();
+
         if (token == "red")
         {
             currentColour[0] = value;
@@ -306,6 +335,7 @@ void ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
         {
             currentColour = Vector3(value, value, value);
         }
+
         _currentLayer->setColour(currentColour);
     }
     else if (token == "alphatest")
@@ -314,6 +344,277 @@ void ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
         std::string valueStr = tokeniser.nextToken();
         _currentLayer->setAlphaTest(strToFloat(valueStr));
     }
+	else if (token == "colored")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_COLOURED);
+	}
+	else if (token == "clamp")
+	{
+		_currentLayer->setClampType(CLAMP_NOREPEAT);
+	}
+	else if (token == "zeroclamp")
+	{
+		_currentLayer->setClampType(CLAMP_ZEROCLAMP);
+	}
+	else if (token == "alphazeroclamp")
+	{
+		_currentLayer->setClampType(CLAMP_ALPHAZEROCLAMP);
+	}
+	else if (token == "noclamp")
+	{
+		_currentLayer->setClampType(CLAMP_REPEAT);
+	}
+	else if (token == "uncompressed" || token == "highquality")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_HIGHQUALITY);
+	}
+	else if (token == "forcehighquality")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_FORCE_HIGHQUALITY);
+	}
+	else if (token == "nopicmip")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_NO_PICMIP);
+	}
+	else if (token == "maskred")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_RED);
+	}
+	else if (token == "maskgreen")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_GREEN);
+	}
+	else if (token == "maskblue")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_BLUE);
+	}
+	else if (token == "maskalpha")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_ALPHA);
+	}
+	else if (token == "maskcolor")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_RED);
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_GREEN);
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_BLUE);
+	}
+	else if (token == "maskdepth")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_DEPTH);
+	}
+	else if (token == "nearest")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_FILTER_NEAREST);
+	}
+	else if (token == "linear")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_FILTER_LINEAR);
+	}
+	else
+	{
+		return false; // unrecognised token, return false
+	}
+
+	return true;
+}
+
+bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
+                                       const std::string& token)
+{
+    if (token == "solid")
+    {
+        _surfaceFlags |= Material::SURF_SOLID;
+    }
+    else if (token == "water")
+    {
+        _surfaceFlags |= Material::SURF_WATER;
+    }
+    else if (token == "playerclip")
+    {
+        _surfaceFlags |= Material::SURF_PLAYERCLIP;
+    }
+    else if (token == "monsterclip")
+    {
+        _surfaceFlags |= Material::SURF_MONSTERCLIP;
+    }
+	else if (token == "moveableclip")
+    {
+        _surfaceFlags |= Material::SURF_MOVEABLECLIP;
+    }
+	else if (token == "ikclip")
+    {
+        _surfaceFlags |= Material::SURF_IKCLIP;
+    }
+	else if (token == "blood")
+    {
+        _surfaceFlags |= Material::SURF_BLOOD;
+    }
+	else if (token == "trigger")
+    {
+        _surfaceFlags |= Material::SURF_TRIGGER;
+    }
+	else if (token == "aassolid")
+    {
+		_surfaceFlags |= Material::SURF_AASSOLID;
+    }
+	else if (token == "aasobstacle")
+    {
+        _surfaceFlags |= Material::SURF_AASOBSTACLE;
+    }
+	else if (token == "flashlight_trigger")
+    {
+        _surfaceFlags |= Material::SURF_FLASHLIGHT_TRIGGER;
+    }
+	else if (token == "nonsolid")
+    {
+        _surfaceFlags |= Material::SURF_NONSOLID;
+    }
+	else if (token == "nullnormal")
+    {
+        _surfaceFlags |= Material::SURF_NULLNORMAL;
+    }
+	else if (token == "areaportal")
+    {
+		_surfaceFlags |= Material::SURF_AREAPORTAL;
+    }
+	else if (token == "qer_nocarve")
+    {
+		_surfaceFlags |= Material::SURF_NOCARVE;
+    }
+	else if (token == "discrete")
+    {
+        _surfaceFlags |= Material::SURF_DISCRETE;
+    }
+	else if (token == "nofragment")
+    {
+        _surfaceFlags |= Material::SURF_NOFRAGMENT;
+    }
+	else if (token == "slick")
+    {
+        _surfaceFlags |= Material::SURF_SLICK;
+    }
+	else if (token == "collision")
+    {
+        _surfaceFlags |= Material::SURF_COLLISION;
+    }
+	else if (token == "noimpact")
+    {
+        _surfaceFlags |= Material::SURF_NOIMPACT;
+    }
+	else if (token == "nodamage")
+    {
+        _surfaceFlags |= Material::SURF_NODAMAGE;
+    }
+	else if (token == "ladder")
+    {
+        _surfaceFlags |= Material::SURF_LADDER;
+    }
+	else if (token == "nosteps")
+    {
+        _surfaceFlags |= Material::SURF_NOSTEPS;
+    }
+	else if (token == "metal")
+    {
+		_surfaceType = Material::SURFTYPE_METAL;
+    }
+	else if (token == "stone")
+    {
+        _surfaceType = Material::SURFTYPE_STONE;
+    }
+	else if (token == "flesh")
+    {
+        _surfaceType = Material::SURFTYPE_FLESH;
+    }
+	else if (token == "wood")
+    {
+        _surfaceType = Material::SURFTYPE_WOOD;
+    }
+	else if (token == "cardboard")
+    {
+        _surfaceType = Material::SURFTYPE_CARDBOARD;
+    }
+	else if (token == "liquid")
+    {
+        _surfaceType = Material::SURFTYPE_LIQUID;
+    }
+	else if (token == "glass")
+    {
+        _surfaceType = Material::SURFTYPE_GLASS;
+    }
+	else if (token == "plastic")
+    {
+        _surfaceType = Material::SURFTYPE_PLASTIC;
+    }
+	else if (token == "ricochet")
+    {
+        _surfaceType = Material::SURFTYPE_RICOCHET;
+    }
+	else if (token == "surftype10")
+    {
+        _surfaceType = Material::SURFTYPE_10;
+    }
+	else if (token == "surftype11")
+    {
+        _surfaceType = Material::SURFTYPE_11;
+    }
+	else if (token == "surftype12")
+    {
+        _surfaceType = Material::SURFTYPE_12;
+    }
+	else if (token == "surftype13")
+    {
+        _surfaceType = Material::SURFTYPE_13;
+    }
+	else if (token == "surftype14")
+    {
+        _surfaceType = Material::SURFTYPE_14;
+    }
+	else if (token == "surftype15")
+    {
+        _surfaceType = Material::SURFTYPE_15;
+    }
+	else if (token == "guisurf")
+	{
+		// Something like "guisurf blah.gui" or "guisurf entity2", skip the argument and proceed
+		tokeniser.skipTokens(1);
+	}
+	else
+	{
+		return false; // unrecognised token, return false
+	}
+
+	return true;
+}
+
+bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::string& token)
+{
+	if (token == "if")
+	{
+		// Parse condition
+		tokeniser.skipTokens(1); // skip opening parenthesis
+
+		std::size_t level = 1;
+
+		while (level > 0 && tokeniser.hasMoreTokens())
+		{
+			std::string next = tokeniser.nextToken();
+
+			if (next == ")")
+			{
+				level--;
+			}
+			else if (next == "(")
+			{
+				level++;
+			}
+		}
+
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 /* Saves the accumulated data (m_type, m_blendFunc etc.) to the m_layers vector.
@@ -371,14 +672,22 @@ void ShaderTemplate::parseDefinition()
 
                 switch (level) {
                     case 1: // global level
-                        parseShaderFlags(tokeniser, token);
-                        parseLightFlags(tokeniser, token);
-                        parseBlendShortcuts(tokeniser, token);
+                        if (parseShaderFlags(tokeniser, token)) continue;
+                        if (parseLightFlags(tokeniser, token)) continue;
+                        if (parseBlendShortcuts(tokeniser, token)) continue;
+						if (parseSurfaceFlags(tokeniser, token)) continue;
+
+						//globalWarningStream() << "Material keyword not recognised: " << token << std::endl;
+
                         break;
                     case 2: // stage level
-                        parseBlendType(tokeniser, token);
-                        parseBlendMaps(tokeniser, token);
-                        parseStageModifiers(tokeniser, token);
+						if (parseCondition(tokeniser, token)) continue;
+                        if (parseBlendType(tokeniser, token)) continue;
+                        if (parseBlendMaps(tokeniser, token)) continue;
+                        if (parseStageModifiers(tokeniser, token)) continue;
+
+						//globalWarningStream() << "Stage keyword not recognised: " << token << std::endl;
+
                         break;
                 }
             }

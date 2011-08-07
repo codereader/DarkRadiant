@@ -64,7 +64,7 @@ public:
 		CULL_NONE,		// "twoSided"
 	};
 
-	// Global material flags, applies to all stages
+	// Global material flags
 	enum Flags
 	{
 		FLAG_NOSHADOWS				= 1 << 0,		// noShadows
@@ -78,12 +78,54 @@ public:
 		FLAG_UNSMOOTHEDTANGENTS		= 1 << 8,		// unsmoothedTangents
 	};
 
-	enum ClampType
+	// Surface Flags
+	enum SurfaceFlags
 	{
-		CLAMP_REPEAT				= 1 << 0,		// default = no clamping
-		CLAMP_NOREPEAT				= 1 << 1,		// "clamp"
-		CLAMP_ZEROCLAMP				= 1 << 2,		// "zeroclamp"
-		CLAMP_ALPHAZEROCLAMP		= 1 << 3,		// "alphazeroclamp"
+		SURF_SOLID					= 1 << 0,
+		SURF_WATER					= 1 << 1,
+		SURF_PLAYERCLIP				= 1 << 2,
+		SURF_MONSTERCLIP			= 1 << 3,
+		SURF_MOVEABLECLIP			= 1 << 4,
+		SURF_IKCLIP					= 1 << 5,
+		SURF_BLOOD					= 1 << 6,
+		SURF_TRIGGER				= 1 << 7,
+		SURF_AASSOLID				= 1 << 8,
+		SURF_AASOBSTACLE			= 1 << 9,
+		SURF_FLASHLIGHT_TRIGGER		= 1 << 10,
+		SURF_NONSOLID				= 1 << 11,
+		SURF_NULLNORMAL				= 1 << 12,
+		SURF_AREAPORTAL				= 1 << 13,
+		SURF_NOCARVE				= 1 << 14,
+		SURF_DISCRETE				= 1 << 15,
+		SURF_NOFRAGMENT				= 1 << 16,
+		SURF_SLICK					= 1 << 17,
+		SURF_COLLISION				= 1 << 18,
+		SURF_NOIMPACT				= 1 << 19,
+		SURF_NODAMAGE				= 1 << 20,
+		SURF_LADDER					= 1 << 21,
+		SURF_NOSTEPS				= 1 << 22,
+	};
+
+	// Surface Type (plastic, stone, etc.)
+	enum SurfaceType
+	{
+		SURFTYPE_DEFAULT,
+		SURFTYPE_METAL,
+		SURFTYPE_STONE,
+		SURFTYPE_FLESH,
+		SURFTYPE_WOOD,
+		SURFTYPE_CARDBOARD,
+		SURFTYPE_LIQUID,
+		SURFTYPE_GLASS,
+		SURFTYPE_PLASTIC,
+		SURFTYPE_RICOCHET,
+		SURFTYPE_AASOBSTACLE,
+		SURFTYPE_10,
+		SURFTYPE_11,
+		SURFTYPE_12,
+		SURFTYPE_13,
+		SURFTYPE_14,
+		SURFTYPE_15
 	};
 
     /**
@@ -163,7 +205,17 @@ public:
 	/**
 	 * Get the global material flags (translucent, noshadows, etc.)
 	 */
-	virtual int getFlags() const = 0;
+	virtual int getMaterialFlags() const = 0;
+
+	/**
+	 * Surface flags (areaportal, nonsolid, etc.)
+	 */
+	virtual int getSurfaceFlags() const = 0;
+
+	/**
+	 * Surface Type (wood, stone, surfType15, ...)
+	 */
+	virtual SurfaceType getSurfaceType() const = 0;
 
 	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.
