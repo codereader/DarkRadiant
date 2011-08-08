@@ -6,6 +6,7 @@
 #include "parser/DefBlockTokeniser.h"
 #include "ShaderDefinition.h"
 #include "Doom3ShaderSystem.h"
+#include "TableDefinition.h"
 
 #include <iostream>
 #include <boost/algorithm/string/replace.hpp>
@@ -25,12 +26,26 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 	// will be parsed separately.
 	parser::BasicDefBlockTokeniser<std::istream> tokeniser(inStr);
 
-	while (tokeniser.hasMoreBlocks()) {
+	while (tokeniser.hasMoreBlocks())
+	{
 		// Get the next block
 		parser::BlockTokeniser::Block block = tokeniser.nextBlock();
 
 		// Skip tables
-		if (block.name.substr(0, 5) == "table") {
+		if (block.name.substr(0, 5) == "table")
+		{
+			std::string tableName = block.name.substr(6);
+
+			if (tableName.empty())
+			{
+				globalErrorStream() << "[shaders] " << filename << ": Missing table name." << std::endl;
+				continue;
+			}
+
+			TableDefinitionPtr table(new TableDefinition(tableName, block.contents));
+
+			// TODO: Save table def
+
 			continue;
 		}
 
@@ -49,31 +64,6 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 	}
 }
 
-/* Parses through a table definition within a material file.
- * It just skips over the whole content
- */
-void ShaderFileLoader::parseShaderTable(parser::DefTokeniser& tokeniser)
-{
-	// This is the name of the table
-	tokeniser.nextToken();
-
-	tokeniser.assertNextToken("{");
-	unsigned short int openBraces = 1;
-
-	// Continue parsing till the table is over, i.e. the according closing brace is found
-	while (openBraces>0 && tokeniser.hasMoreTokens()) {
-		const std::string token = tokeniser.nextToken();
-
-		if (token == "{") {
-			openBraces++;
-		}
-
-		if (token == "}") {
-			openBraces--;
-		}
-	}
-}
-
 void ShaderFileLoader::visit(const std::string& filename)
 {
 	// Construct the full VFS path
@@ -86,7 +76,8 @@ void ShaderFileLoader::visit(const std::string& filename)
 		std::istream is(&(file->getInputStream()));
 		parseShaderFile(is, fullPath);
 	}
-	else {
+	else
+	{
 		throw std::runtime_error("Unable to read shaderfile: " + fullPath);
 	}
 }
