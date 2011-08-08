@@ -1,0 +1,39 @@
+#pragma once
+
+#include <vector>
+
+namespace shaders
+{
+
+// Syntax:
+// table <tablename> { [snap] [clamp] { <data>, <data>, ... } }
+
+class TableDefinition
+{
+private:
+	std::string _name;
+	std::string _blockContents;
+
+	// Whether to prevent value interpolation
+	bool _snap;
+
+	// Whether to prevent wrapping around at index bounds
+	bool _clamp;
+
+	// The actual values of this table
+	std::vector<float> _values;
+
+	// Whether we parsed the block contents already
+	bool _parsed;
+
+public:
+	TableDefinition(const std::string& name, const std::string& blockContents);
+
+	// Retrieve a value from this table, respecting the clamp and snap flags
+	float getValue(float index);
+
+private:
+	void parseDefinition();
+};
+
+} // namespace

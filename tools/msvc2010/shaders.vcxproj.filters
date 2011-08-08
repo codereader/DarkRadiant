@@ -49,6 +49,9 @@
     <ClCompile Include="..\..\plugins\shaders\ShaderExpression.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\shaders\TableDefinition.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\shaders\CameraCubeMapDecl.h">
@@ -103,6 +106,9 @@
       <Filter>src\textures</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\shaders\ShaderExpression.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\shaders\TableDefinition.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

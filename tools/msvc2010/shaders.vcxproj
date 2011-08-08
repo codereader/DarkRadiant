@@ -321,6 +321,7 @@
     <ClCompile Include="..\..\plugins\shaders\ShaderFileLoader.cpp" />
     <ClCompile Include="..\..\plugins\shaders\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\plugins\shaders\ShaderTemplate.cpp" />
+    <ClCompile Include="..\..\plugins\shaders\TableDefinition.cpp" />
     <ClCompile Include="..\..\plugins\shaders\textures\GLTextureManager.cpp" />
     <ClCompile Include="..\..\plugins\shaders\textures\ImageFileLoader.cpp" />
     <ClCompile Include="..\..\plugins\shaders\textures\TextureManipulator.cpp" />
@@ -339,6 +340,7 @@
     <ClInclude Include="..\..\plugins\shaders\ShaderLibrary.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderNameCompareFunctor.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderTemplate.h" />
+    <ClInclude Include="..\..\plugins\shaders\TableDefinition.h" />
     <ClInclude Include="..\..\plugins\shaders\textures\CubeMapTexture.h" />
     <ClInclude Include="..\..\plugins\shaders\textures\GLTextureManager.h" />
     <ClInclude Include="..\..\plugins\shaders\textures\HeightmapCreator.h" />

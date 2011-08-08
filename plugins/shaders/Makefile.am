@@ -12,7 +12,9 @@ shaders_la_SOURCES = ShaderTemplate.cpp \
                      CShader.cpp \
                      ShaderLibrary.cpp \
                      MapExpression.cpp \
+					 ShaderExpression.cpp \
                      ShaderFileLoader.cpp \
+					 TableDefinition.cpp \
                      plugin.cpp \
                      textures/TextureManipulator.cpp \
                      textures/ImageFileLoader.cpp \
