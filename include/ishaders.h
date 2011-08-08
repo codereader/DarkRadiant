@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "Texture.h"
 #include "ShaderLayer.h"
+#include "ishaderexpression.h"
 
 class Image;
 
@@ -279,7 +280,8 @@ std::ostream& operator<< (std::ostream& os, const Material& shader) {
 	return os;
 }
 
-namespace shaders {
+namespace shaders
+{
 
 /**
  * greebo: Abstract visitor class for traversing shader lists.
@@ -293,12 +295,11 @@ public:
 
 } // namespace shaders
 
-typedef struct _GSList GSList;
 typedef boost::function<void(const std::string&)> ShaderNameCallback;
 
 class ModuleObserver;
 
-const std::string MODULE_SHADERSYSTEM("MaterialManager");
+const char* const MODULE_SHADERSYSTEM = "MaterialManager";
 
 /**
  * \brief
@@ -408,9 +409,16 @@ public:
 	virtual TexturePtr loadTextureFromFile(
 			const std::string& filename,
 			const std::string& moduleNames = "GDK") = 0;
+
+	/**
+	 * Creates a new shader expression for the given string. This can be used to create standalone
+	 * expression objects for unit testing purposes.
+	 */ 
+	virtual shaders::IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr) = 0;
 };
 
-inline MaterialManager& GlobalMaterialManager() {
+inline MaterialManager& GlobalMaterialManager()
+{
 	// Cache the reference locally
 	static MaterialManager& _shaderSystem(
 		*boost::static_pointer_cast<MaterialManager>(

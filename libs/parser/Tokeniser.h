@@ -60,7 +60,8 @@ public:
  *
  *  Standard delimiters are initialised to whitespace: " \t\n\v\r"
  */
-class BasicStringTokeniser
+class BasicStringTokeniser :
+	public StringTokeniser
 {
     // Internal Boost tokenizer and its iterator
     typedef boost::char_separator<char> CharSeparator;

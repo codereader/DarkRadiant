@@ -113,6 +113,8 @@ public:
     // Get default textures for D,B,S layers
     TexturePtr getDefaultInteractionTexture(ShaderLayer::Type t);
 
+	IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr);
+
 public:
 
 	/** Load the shader definitions from the MTR files
