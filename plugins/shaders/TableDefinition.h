@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 namespace shaders
 {
@@ -11,7 +12,10 @@ namespace shaders
 class TableDefinition
 {
 private:
+	// The block name
 	std::string _name;
+
+	// Raw content
 	std::string _blockContents;
 
 	// Whether to prevent value interpolation
@@ -35,5 +39,6 @@ public:
 private:
 	void parseDefinition();
 };
+typedef boost::shared_ptr<TableDefinition> TableDefinitionPtr;
 
 } // namespace
