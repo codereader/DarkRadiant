@@ -131,7 +131,7 @@
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -182,7 +182,7 @@
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -229,7 +229,7 @@
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -283,7 +283,7 @@
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalDependencies>xmlutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -317,6 +317,7 @@
     <ClCompile Include="..\..\plugins\shaders\Doom3ShaderSystem.cpp" />
     <ClCompile Include="..\..\plugins\shaders\MapExpression.cpp" />
     <ClCompile Include="..\..\plugins\shaders\plugin.cpp" />
+    <ClCompile Include="..\..\plugins\shaders\ShaderExpression.cpp" />
     <ClCompile Include="..\..\plugins\shaders\ShaderFileLoader.cpp" />
     <ClCompile Include="..\..\plugins\shaders\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\plugins\shaders\ShaderTemplate.cpp" />
@@ -333,6 +334,7 @@
     <ClInclude Include="..\..\plugins\shaders\NamedBindable.h" />
     <ClInclude Include="..\..\plugins\shaders\plugin.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderDefinition.h" />
+    <ClInclude Include="..\..\plugins\shaders\ShaderExpression.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderFileLoader.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderLibrary.h" />
     <ClInclude Include="..\..\plugins\shaders\ShaderNameCompareFunctor.h" />

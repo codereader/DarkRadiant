@@ -10,6 +10,7 @@
 
 #include "ShaderDefinition.h"
 #include "ShaderFileLoader.h"
+#include "ShaderExpression.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -277,6 +278,11 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename,
 
 	// Pass the call to the library
 	return _library->loadTextureFromFile(filename, moduleNames);
+}
+
+IShaderExpressionPtr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
+{
+	return ShaderExpression::createFromString(exprStr);
 }
 
 const std::string& Doom3ShaderSystem::getName() const {
