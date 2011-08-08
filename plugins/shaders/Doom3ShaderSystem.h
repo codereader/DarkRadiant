@@ -1,5 +1,4 @@
-#ifndef DOOM3SHADERSYSTEM_H_
-#define DOOM3SHADERSYSTEM_H_
+#pragma once
 
 #include "ishaders.h"
 #include "ifilesystem.h"
@@ -9,6 +8,7 @@
 #include "moduleobservers.h"
 
 #include "ShaderLibrary.h"
+#include "TableDefinition.h"
 #include "textures/GLTextureManager.h"
 
 namespace shaders {
@@ -24,6 +24,10 @@ class Doom3ShaderSystem
 	// The shaderlibrary stores all the known shaderdefinitions
 	// as well as the active shaders
 	ShaderLibraryPtr _library;
+
+	// The lookup tables used in shader expressions
+	typedef std::map<std::string, TableDefinitionPtr, ShaderNameCompareFunctor> TableDefinitions;
+	TableDefinitions _tables;
 
 	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
@@ -115,6 +119,12 @@ public:
 
 	IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr);
 
+	// Look up a table def, return NULL if not found
+	TableDefinitionPtr getTableForName(const std::string& name);
+
+	// Method for adding tables, returns FALSE if a def with the same name already exists
+	bool addTableDefinition(const TableDefinitionPtr& def);
+
 public:
 
 	/** Load the shader definitions from the MTR files
@@ -143,5 +153,3 @@ shaders::Doom3ShaderSystemPtr GetShaderSystem();
 shaders::ShaderLibrary& GetShaderLibrary();
 
 shaders::GLTextureManager& GetTextureManager();
-
-#endif /*DOOM3SHADERSYSTEM_H_*/
