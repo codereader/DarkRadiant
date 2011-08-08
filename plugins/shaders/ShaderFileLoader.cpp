@@ -44,7 +44,11 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 
 			TableDefinitionPtr table(new TableDefinition(tableName, block.contents));
 
-			// TODO: Save table def
+			if (!GetShaderSystem()->addTableDefinition(table))
+			{
+				globalErrorStream() << "[shaders] " << filename
+					<< ": table " << tableName << " already defined." << std::endl;
+			}
 
 			continue;
 		}
@@ -57,7 +61,8 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 		ShaderDefinition def(shaderTemplate, filename);
 
 		// Insert into the definitions map, if not already present
-		if (!GetShaderLibrary().addDefinition(block.name, def)) {
+		if (!GetShaderLibrary().addDefinition(block.name, def))
+		{
     		globalErrorStream() << "[shaders] " << filename
 				<< ": shader " << block.name << " already defined." << std::endl;
 		}

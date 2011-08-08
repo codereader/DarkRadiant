@@ -1,5 +1,4 @@
-#ifndef SHADERNAMECOMPAREFUNCTOR_H_
-#define SHADERNAMECOMPAREFUNCTOR_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -17,5 +16,3 @@ struct ShaderNameCompareFunctor :
 		return string_compare_nocase(s1.c_str(), s2.c_str()) < 0;
 	}
 };
-
-#endif /*SHADERNAMECOMPAREFUNCTOR_H_*/

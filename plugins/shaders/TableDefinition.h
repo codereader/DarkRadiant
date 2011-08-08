@@ -33,6 +33,11 @@ private:
 public:
 	TableDefinition(const std::string& name, const std::string& blockContents);
 
+	const std::string& getName() const
+	{
+		return _name;
+	}
+
 	// Retrieve a value from this table, respecting the clamp and snap flags
 	float getValue(float index);
 

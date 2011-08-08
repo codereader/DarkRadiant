@@ -100,8 +100,11 @@ void Doom3ShaderSystem::realise() {
 	}
 }
 
-void Doom3ShaderSystem::unrealise() {
-	if (_realised) {
+void Doom3ShaderSystem::unrealise()
+{
+	if (_realised)
+	{
+		_tables.clear();
 		_observers.unrealise();
 		freeShaders();
 		_realised = false;
@@ -283,6 +286,21 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename,
 IShaderExpressionPtr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
 {
 	return ShaderExpression::createFromString(exprStr);
+}
+
+TableDefinitionPtr Doom3ShaderSystem::getTableForName(const std::string& name)
+{
+	TableDefinitions::const_iterator i = _tables.find(name);
+
+	return i != _tables.end() ? i->second : TableDefinitionPtr();
+}
+
+bool Doom3ShaderSystem::addTableDefinition(const TableDefinitionPtr& def)
+{
+	std::pair<TableDefinitions::iterator, bool> result = _tables.insert(
+		TableDefinitions::value_type(def->getName(), def));
+
+	return result.second;
 }
 
 const std::string& Doom3ShaderSystem::getName() const {
