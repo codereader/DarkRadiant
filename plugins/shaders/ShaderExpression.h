@@ -135,10 +135,15 @@ public:
 	// The operator precedence, smaller values mean higher priority
 	enum Precedence
 	{
-		DIV = 0,
-		MUL = 0,
-		ADD = 1,
-		SUB = 1,
+		MULTIPLICATION			= 0,	// *
+		DIVISION				= 0,	// /
+		MODULO					= 0,	// %
+		ADDITION				= 1,	// +
+		SUBTRACTION				= 1,	// -
+		RELATIONAL_COMPARISON	= 2,	// > >= < <=
+		EQUALITY_COMPARISON		= 3,	// == !=
+		LOGICAL_AND				= 4,	// &&
+		LOGICAL_OR				= 5,	// ||
 	};
 
 protected:
@@ -180,7 +185,7 @@ class AddExpression :
 public:
 	AddExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
 				  const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
-		BinaryExpression(ADD, a, b)
+		BinaryExpression(ADDITION, a, b)
 	{}
 
 	virtual float getValue()
@@ -202,7 +207,7 @@ class SubtractExpression :
 public:
 	SubtractExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
 					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
-		BinaryExpression(SUB, a, b)
+		BinaryExpression(SUBTRACTION, a, b)
 	{}
 
 	virtual float getValue()
@@ -224,7 +229,7 @@ class MultiplyExpression :
 public:
 	MultiplyExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
 					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
-		BinaryExpression(MUL, a, b)
+		BinaryExpression(MULTIPLICATION, a, b)
 	{}
 
 	virtual float getValue()
@@ -246,12 +251,210 @@ class DivideExpression :
 public:
 	DivideExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
 					 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
-		BinaryExpression(DIV, a, b)
+		BinaryExpression(DIVISION, a, b)
 	{}
 
 	virtual float getValue()
 	{
 		return _a->getValue() / _b->getValue();
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning modulo of A % B
+class ModuloExpression :
+	public BinaryExpression
+{
+public:
+	ModuloExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+					 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(MODULO, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return fmod(_a->getValue(), _b->getValue());
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning 1 if A < B, otherwise 0
+class LesserThanExpression :
+	public BinaryExpression
+{
+public:
+	LesserThanExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+						 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(RELATIONAL_COMPARISON, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() < _b->getValue() ? 1.0f : 0;
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning 1 if A <= B, otherwise 0
+class LesserThanOrEqualExpression :
+	public BinaryExpression
+{
+public:
+	LesserThanOrEqualExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+								const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(RELATIONAL_COMPARISON, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() <= _b->getValue() ? 1.0f : 0;
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning 1 if A > B, otherwise 0
+class GreaterThanExpression :
+	public BinaryExpression
+{
+public:
+	GreaterThanExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+						  const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(RELATIONAL_COMPARISON, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() > _b->getValue() ? 1.0f : 0;
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning 1 if A >= B, otherwise 0
+class GreaterThanOrEqualExpression :
+	public BinaryExpression
+{
+public:
+	GreaterThanOrEqualExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+								 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(RELATIONAL_COMPARISON, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() >= _b->getValue() ? 1.0f : 0;
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning 1 if A == B, otherwise 0
+class EqualityExpression :
+	public BinaryExpression
+{
+public:
+	EqualityExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(EQUALITY_COMPARISON, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() == _b->getValue() ? 1.0f : 0;
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning 1 if A != B, otherwise 0
+class InequalityExpression :
+	public BinaryExpression
+{
+public:
+	InequalityExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+					     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(EQUALITY_COMPARISON, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() != _b->getValue() ? 1.0f : 0;
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning 1 if both A and B are true (non-zero), otherwise 0
+class LogicalAndExpression :
+	public BinaryExpression
+{
+public:
+	LogicalAndExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+					     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(LOGICAL_AND, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return (_a->getValue() != 0 && _b->getValue() != 0) ? 1.0f : 0;
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression returning 1 if either A or B are true (non-zero), otherwise 0
+class LogicalOrExpression :
+	public BinaryExpression
+{
+public:
+	LogicalOrExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+					    const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(LOGICAL_OR, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return (_a->getValue() != 0 || _b->getValue() != 0) ? 1.0f : 0;
 	}
 
 	virtual float evaluate()
