@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "parser/DefTokeniser.h"
 
+#include <cmath>
 #include <boost/lexical_cast.hpp>
 
 namespace shaders
@@ -21,7 +22,45 @@ float TableDefinition::getValue(float index)
 {
 	if (!_parsed) parseDefinition();
 
-	return 0.0f; // TODO
+	// Don't bother if we don't have any values to look up
+	if (_values.empty())
+	{
+		return 0.0f;
+	}
+
+	// Ensure that index is within bounds if clamp is active
+	if (_clamp)
+	{
+		if (index < 0) 
+		{
+			index = 0;
+		}
+
+		if (index > _values.size())
+		{
+			index = _values.size() - 1;
+		}
+	}
+	else if (index > _values.size() - 1)
+	{
+		// No clamping, wrap around the bounds
+		index = std::fmod(index, _values.size() - 1);
+	}
+
+	// Calculate the index into our std::vector
+	std::size_t lookupIndex = static_cast<std::size_t>(std::floor(index + 0.5f));
+
+	if (_snap)
+	{
+		// Snap is activated, round to the nearest integer
+		return _values[lookupIndex];
+	}
+
+	// No snapping, interpolate between this and the next value
+	float fraction = index - lookupIndex;
+	std::size_t nextIndex = (lookupIndex + 1) % _values.size();
+	
+	return (1-fraction)*_values[lookupIndex] + fraction*_values[nextIndex];
 }
 
 void TableDefinition::parseDefinition()
