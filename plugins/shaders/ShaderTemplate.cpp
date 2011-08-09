@@ -325,21 +325,6 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	return true;
 }
 
-void ShaderTemplate::parseColourExpression(parser::DefTokeniser& tokeniser, std::size_t component)
-{
-	// Get the colour value
-    std::string valueString = tokeniser.nextToken();
-    float value = strToFloat(valueString);
-
-	// Set the appropriate component
-    Vector4 currentColour = _currentLayer->getColour();
-
-	currentColour[component] = value;
-
-	_currentLayer->setColour(currentColour);
-}
-
-// Search for colour modifications, e.g. red, green, blue, rgb or vertexColor
 bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
                                          const std::string& token)
 {
@@ -357,43 +342,41 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
     }
 	else if (token == "red")
 	{
-		parseColourExpression(tokeniser, 0);
+		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RED, expr);
 	}
 	else if (token == "green")
 	{
-		parseColourExpression(tokeniser, 1);
+		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_GREEN, expr);
 	}
 	else if (token == "blue")
 	{
-		parseColourExpression(tokeniser, 2);
+		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_BLUE, expr);
 	}
 	else if (token == "alpha")
 	{
-		parseColourExpression(tokeniser, 3);
+		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_ALPHA, expr);
 	}
 	else if (token == "rgb")
 	{
 		// Get the colour value
-        std::string valueString = tokeniser.nextToken();
-        float value = strToFloat(valueString);
-
-		// Set the RGB components, keep current alpha
-		_currentLayer->setColour(Vector4(value, value, value, _currentLayer->getColour().w()));
+		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RGB, expr);
 	}
 	else if (token == "rgba")
 	{
-		// Get the colour value
-        std::string valueString = tokeniser.nextToken();
-        float value = strToFloat(valueString);
-
-		// Set all four components
-		_currentLayer->setColour(Vector4(value, value, value, value));
+		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RGBA, expr);
 	}
     else if (token == "alphatest")
     {
-        // Get the alphatest value
-        std::string valueStr = tokeniser.nextToken();
-        _currentLayer->setAlphaTest(strToFloat(valueStr));
+		// Get the alphatest expression
+		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		       
+        _currentLayer->setAlphaTest(expr);
     }
 	else if (token == "colored")
 	{

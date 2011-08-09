@@ -81,7 +81,7 @@ const IShaderExpressionPtr Doom3ShaderLayer::NULL_EXPRESSION;
 Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type type, const NamedBindablePtr& btex)
 :	_material(material),
 	_registers(NUM_RESERVED_REGISTERS),
-	_condition(REG_ONE),
+	_condition(REG_ZERO),
 	_bindableTex(btex),
 	_type(type),
 	_blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
@@ -89,7 +89,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_cubeMapMode(CUBE_MAP_NONE),
 	_stageFlags(0),
 	_clampType(CLAMP_REPEAT),
-	_alphaTest(-1.0),
+	_alphaTest(REG_ONE),
 	_texGenType(TEXGEN_NORMAL)
 { 
 	_registers[REG_ZERO] = 0;
@@ -127,6 +127,42 @@ Vector4 Doom3ShaderLayer::getColour() const
 				   getRegister(_colour[2]), getRegister(_colour[3]));
 }
 
+void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const IShaderExpressionPtr& expr)
+{
+	// Store the expression and link it to our registers
+	_expressions.push_back(expr);
+
+	std::size_t index = expr->linkToRegister(_registers);
+
+	// Now assign the index to our colour components
+	switch (comp)
+	{
+	case COMP_RED:
+		_colour[0] = index;
+		break;
+	case COMP_GREEN:
+		_colour[1] = index;
+		break;
+	case COMP_BLUE:
+		_colour[2] = index;
+		break;
+	case COMP_ALPHA:
+		_colour[3] = index;
+		break;
+	case COMP_RGB:
+		_colour[0] = index;
+		_colour[1] = index;
+		_colour[2] = index;
+		break;
+	case COMP_RGBA:
+		_colour[0] = index;
+		_colour[1] = index;
+		_colour[2] = index;
+		_colour[3] = index;
+		break;
+	};
+}
+
 void Doom3ShaderLayer::setColour(const Vector4& col)
 {
 	// Assign all 3 components of the colour, allocating new registers on the fly where needed
@@ -158,7 +194,7 @@ ShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
 
 double Doom3ShaderLayer::getAlphaTest() const
 {
-    return _alphaTest;
+    return _registers[_alphaTest];
 }
 
 }
