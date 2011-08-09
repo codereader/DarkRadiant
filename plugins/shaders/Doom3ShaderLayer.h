@@ -9,16 +9,6 @@
 namespace shaders
 {
 
-typedef std::vector<float> Registers;
-
-// The indices to the constants in the registers array
-enum ReservedRegisters
-{
-	REG_ZERO = 0,
-	REG_ONE  = 1,
-	NUM_RESERVED_REGISTERS,
-};
-
 typedef std::pair<std::string, std::string> StringPair;
 
 class ShaderTemplate;
@@ -31,8 +21,20 @@ class Doom3ShaderLayer
 : public ShaderLayer
 {
 private:
-	// The owning material (which holds the registers)
+	// The owning material template
 	ShaderTemplate& _material;
+
+	// The registers keeping the results of expression evaluations
+	Registers _registers;
+
+	// The expressions used in this stage
+	typedef std::vector<IShaderExpressionPtr> Expressions;
+	Expressions _expressions;
+
+	static const IShaderExpressionPtr NULL_EXPRESSION;
+
+	// The condition register for this stage. Points to a register to be interpreted as bool.
+	std::size_t _condition;
 
 	// The bindable texture for this stage
 	NamedBindablePtr _bindableTex;
@@ -83,6 +85,30 @@ public:
     VertexColourMode getVertexColourMode() const;
     CubeMapMode getCubeMapMode() const;
     double getAlphaTest() const;
+
+	// True if the condition for this stage is fulfilled 
+	// (expressions must have been evaluated before this call)
+	bool isVisible()
+	{
+		return _registers[_condition] != 0;
+	}
+
+	void setCondition(const IShaderExpressionPtr& conditionExpr)
+	{
+		// Store the expression in our list
+		_expressions.push_back(conditionExpr);
+
+		// Link the result to our local registers
+		_condition = conditionExpr->linkToRegister(_registers);
+	}
+
+	void evaluateExpressions() 
+	{
+		for (Expressions::iterator i = _expressions.begin(); i != _expressions.end(); ++i)
+		{
+			(*i)->evaluate();
+		}
+	}
 
     /**
      * \brief
@@ -223,6 +249,26 @@ public:
     {
         _alphaTest = alphaTest;
     }
+
+	// Returns the value of the given register
+	float getRegister(std::size_t index) const
+	{
+		assert(index < _registers.size());
+		return _registers[index];
+	}
+
+	void setRegister(std::size_t index, float value)
+	{
+		assert(index < _registers.size());
+		_registers[index] = value;
+	}
+
+	// Allocates a new register, initialised with the given value
+	std::size_t getNewRegister(float newVal)
+	{
+		_registers.push_back(newVal);
+		return _registers.size() - 1;
+	}
 };
 
 /**

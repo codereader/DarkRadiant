@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ishaders.h"
-#include "parser/Tokeniser.h"
+#include "parser/DefTokeniser.h"
 #include "TableDefinition.h"
 
 namespace shaders
@@ -11,8 +11,47 @@ namespace shaders
 class ShaderExpression :
 	public IShaderExpression
 {
+protected:
+	// The register index we're writing to (-1 by default)
+	int _index;
+
+	// The register we're writing to
+	Registers* _registers;
+
 public:
+	ShaderExpression() :
+		_index(-1),
+		_registers(NULL)
+	{}
+
+	// Base implementations
+	virtual float evaluate()
+	{
+		// Evaluate this register and write it into the respective register index
+		float val = getValue();
+
+		if (_registers != NULL)
+		{
+			(*_registers)[_index] = val;
+		}
+
+		return val;
+	}
+
+	std::size_t linkToRegister(Registers& registers) 
+	{
+		_registers = &registers;
+
+		// Allocate a new register
+		registers.push_back(0);
+
+		// Return the index to the newly allocated register
+		return registers.size() - 1;
+	}
+
 	static IShaderExpressionPtr createFromString(const std::string& exprStr);
+
+	static IShaderExpressionPtr createFromTokens(parser::DefTokeniser& tokeniser);
 };
 
 // Detail namespace
@@ -38,12 +77,6 @@ public:
 		// not implemented yet
 		return 0.0f;
 	}
-
-	virtual float evaluate()
-	{
-		// do nothing so far
-		return getValue();
-	}
 };
 
 // An expression returning the current (game) time as result
@@ -59,12 +92,6 @@ public:
 	{
 		// not implemented yet
 		return 0.0f;
-	}
-
-	virtual float evaluate()
-	{
-		// do nothing so far
-		return getValue();
 	}
 };
 
@@ -84,12 +111,6 @@ public:
 	virtual float getValue()
 	{
 		return _value;
-	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
 	}
 };
 
@@ -117,12 +138,6 @@ public:
 	{
 		float lookupVal = _lookupExpr->getValue();
 		return _tableDef->getValue(lookupVal);
-	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
 	}
 };
 
@@ -192,12 +207,6 @@ public:
 	{
 		return _a->getValue() + _b->getValue();
 	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
-	}
 };
 
 // An expression subtracting the value of two expressions
@@ -213,12 +222,6 @@ public:
 	virtual float getValue()
 	{
 		return _a->getValue() - _b->getValue();
-	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
 	}
 };
 
@@ -236,12 +239,6 @@ public:
 	{
 		return _a->getValue() * _b->getValue();
 	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
-	}
 };
 
 // An expression dividing the value of two expressions
@@ -257,12 +254,6 @@ public:
 	virtual float getValue()
 	{
 		return _a->getValue() / _b->getValue();
-	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
 	}
 };
 
@@ -280,12 +271,6 @@ public:
 	{
 		return fmod(_a->getValue(), _b->getValue());
 	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
-	}
 };
 
 // An expression returning 1 if A < B, otherwise 0
@@ -301,12 +286,6 @@ public:
 	virtual float getValue()
 	{
 		return _a->getValue() < _b->getValue() ? 1.0f : 0;
-	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
 	}
 };
 
@@ -324,12 +303,6 @@ public:
 	{
 		return _a->getValue() <= _b->getValue() ? 1.0f : 0;
 	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
-	}
 };
 
 // An expression returning 1 if A > B, otherwise 0
@@ -345,12 +318,6 @@ public:
 	virtual float getValue()
 	{
 		return _a->getValue() > _b->getValue() ? 1.0f : 0;
-	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
 	}
 };
 
@@ -368,12 +335,6 @@ public:
 	{
 		return _a->getValue() >= _b->getValue() ? 1.0f : 0;
 	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
-	}
 };
 
 // An expression returning 1 if A == B, otherwise 0
@@ -389,12 +350,6 @@ public:
 	virtual float getValue()
 	{
 		return _a->getValue() == _b->getValue() ? 1.0f : 0;
-	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
 	}
 };
 
@@ -412,12 +367,6 @@ public:
 	{
 		return _a->getValue() != _b->getValue() ? 1.0f : 0;
 	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
-	}
 };
 
 // An expression returning 1 if both A and B are true (non-zero), otherwise 0
@@ -434,12 +383,6 @@ public:
 	{
 		return (_a->getValue() != 0 && _b->getValue() != 0) ? 1.0f : 0;
 	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
-	}
 };
 
 // An expression returning 1 if either A or B are true (non-zero), otherwise 0
@@ -455,12 +398,6 @@ public:
 	virtual float getValue()
 	{
 		return (_a->getValue() != 0 || _b->getValue() != 0) ? 1.0f : 0;
-	}
-
-	virtual float evaluate()
-	{
-		// no saving so far
-		return getValue();
 	}
 };
 

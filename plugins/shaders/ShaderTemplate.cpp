@@ -12,6 +12,8 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <iostream>
 
+#include "ShaderExpression.h"
+
 namespace shaders
 {
 
@@ -640,7 +642,9 @@ bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::
 	if (token == "if")
 	{
 		// Parse condition
-		tokeniser.skipTokens(1); // skip opening parenthesis
+		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+
+		/*tokeniser.skipTokens(1); // skip opening parenthesis
 
 		std::size_t level = 1;
 
@@ -656,7 +660,7 @@ bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::
 			{
 				level++;
 			}
-		}
+		}*/
 
 		return true;
 	}
@@ -691,7 +695,7 @@ void ShaderTemplate::parseDefinition()
     parser::BasicDefTokeniser<std::string> tokeniser(
         _blockContents,
         " \t\n\v\r",    // delimiters (whitespace)
-        "{}(),"         // add the comma character to the kept delimiters
+        "{}()[],-+*/%"  // add the comma character to the kept delimiters, plus all necessary math symbols
     );
 
     _parsed = true; // we're parsed from now on
@@ -704,14 +708,14 @@ void ShaderTemplate::parseDefinition()
         {
             std::string token = tokeniser.nextToken();
             
-            if (token=="}")
+            if (token == "}")
 			{
                 if (--level == 1)
 				{
                     saveLayer();
                 }
             }
-            else if (token=="{")
+            else if (token == "{")
 			{
                 ++level;
             }

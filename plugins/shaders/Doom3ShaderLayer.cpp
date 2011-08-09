@@ -76,8 +76,12 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
 
 // ShaderLayer implementation
 
+const IShaderExpressionPtr Doom3ShaderLayer::NULL_EXPRESSION;
+
 Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type type, const NamedBindablePtr& btex)
 :	_material(material),
+	_registers(NUM_RESERVED_REGISTERS),
+	_condition(REG_ONE),
 	_bindableTex(btex),
 	_type(type),
 	_blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
@@ -88,6 +92,9 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_alphaTest(-1.0),
 	_texGenType(TEXGEN_NORMAL)
 { 
+	_registers[REG_ZERO] = 0;
+	_registers[REG_ONE] = 1;
+
 	// Init the colour to 1,1,1,1
 	_colour[0] = REG_ONE;
 	_colour[1] = REG_ONE;
@@ -116,8 +123,8 @@ BlendFunc Doom3ShaderLayer::getBlendFunc() const
 Vector4 Doom3ShaderLayer::getColour() const
 {
 	// Resolve the register values
-    return Vector4(_material.getRegister(_colour[0]), _material.getRegister(_colour[1]), 
-				   _material.getRegister(_colour[2]), _material.getRegister(_colour[3]));
+    return Vector4(getRegister(_colour[0]), getRegister(_colour[1]), 
+				   getRegister(_colour[2]), getRegister(_colour[3]));
 }
 
 void Doom3ShaderLayer::setColour(const Vector4& col)
@@ -129,12 +136,12 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 		if (_colour[i] < NUM_RESERVED_REGISTERS)
 		{
 			// Yes, break this up by allocating a new register for this value
-			_colour[i] = _material.getNewRegister(col[i]);
+			_colour[i] = getNewRegister(col[i]);
 		}
 		else
 		{
 			// Already using a custom register
-			_material.setRegister(_colour[i], col[i]);
+			setRegister(_colour[i], col[i]);
 		}
 	}
 }
