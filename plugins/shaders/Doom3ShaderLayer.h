@@ -20,6 +20,18 @@ class ShaderTemplate;
 class Doom3ShaderLayer
 : public ShaderLayer
 {
+public:
+	// An enum used to select which colour components are affected by an operation
+	enum ColourComponentSelector
+	{
+		COMP_RED,	// red only
+		COMP_GREEN,	// green only
+		COMP_BLUE,	// blue only
+		COMP_ALPHA,	// alpha only
+		COMP_RGB,	// red, green and blue
+		COMP_RGBA,	// all: red, greeb, blue, alpha
+	};
+
 private:
 	// The owning material template
 	ShaderTemplate& _material;
@@ -64,8 +76,8 @@ private:
 	// Per-stage clamping
 	ClampType _clampType;
 
-    // Alpha test value. -1 means no test, otherwise must be 0 - 1
-    float _alphaTest;
+    // Alpha test value, pointing into the register array. 0 means no test, otherwise must be within (0 - 1]
+    std::size_t _alphaTest;
 
 	// texgen normal, reflect, skybox, wobblesky
 	TexGenType _texGenType;
@@ -218,10 +230,18 @@ public:
 
     /**
      * \brief
-     * Set the colour.
+     * Set the colour to a constant Vector4. Calling this method
+	 * will override any colour expressions that might have been assigned to
+	 * this shader layer at an earlier point.
      */
     void setColour(const Vector4& col);
 
+	/**
+	 * Set the given colour component to use the given expression. This can be a single
+	 * component out of the 4 available ones (R, G, B, A) or one of the two combos RGB and RGBA.
+	 */
+	void setColourExpression(ColourComponentSelector comp, const IShaderExpressionPtr& expr);
+	
     /**
      * \brief
      * Set a texture object (overrides the map expression when getTexture is
@@ -243,11 +263,12 @@ public:
 
     /**
      * \brief
-     * Set alphatest value
+     * Set alphatest expression
      */
-    void setAlphaTest(float alphaTest)
+    void setAlphaTest(const IShaderExpressionPtr& expr)
     {
-        _alphaTest = alphaTest;
+		_expressions.push_back(expr);
+		_alphaTest = expr->linkToRegister(_registers);
     }
 
 	// Returns the value of the given register
