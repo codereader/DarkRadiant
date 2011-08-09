@@ -135,8 +135,10 @@ public:
 	// The operator precedence, smaller values mean higher priority
 	enum Precedence
 	{
-		ADD,
-		MUL,
+		DIV = 0,
+		MUL = 0,
+		ADD = 1,
+		SUB = 1,
 	};
 
 protected:
@@ -145,7 +147,6 @@ protected:
 	Precedence _precedence;
 
 public:
-	// Pass the table and the expression used to perform the lookup 
 	BinaryExpression(Precedence precedence,
 					 const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
 				     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
@@ -177,7 +178,6 @@ class AddExpression :
 	public BinaryExpression
 {
 public:
-	// Pass the table and the expression used to perform the lookup 
 	AddExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
 				  const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
 		BinaryExpression(ADD, a, b)
@@ -186,6 +186,72 @@ public:
 	virtual float getValue()
 	{
 		return _a->getValue() + _b->getValue();
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression subtracting the value of two expressions
+class SubtractExpression :
+	public BinaryExpression
+{
+public:
+	SubtractExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(SUB, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() - _b->getValue();
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression multiplying the value of two expressions
+class MultiplyExpression :
+	public BinaryExpression
+{
+public:
+	MultiplyExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(MUL, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() * _b->getValue();
+	}
+
+	virtual float evaluate()
+	{
+		// no saving so far
+		return getValue();
+	}
+};
+
+// An expression dividing the value of two expressions
+class DivideExpression :
+	public BinaryExpression
+{
+public:
+	DivideExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
+					 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+		BinaryExpression(DIV, a, b)
+	{}
+
+	virtual float getValue()
+	{
+		return _a->getValue() / _b->getValue();
 	}
 
 	virtual float evaluate()
