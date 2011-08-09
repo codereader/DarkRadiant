@@ -40,18 +40,25 @@ public:
 
 		while (_tokeniser.hasMoreTokens())
 		{
-			std::string token = _tokeniser.nextToken();
+			// Don't actually pull the token from the tokeniser, we might want to 
+			// return the tokeniser to the caller if the token is not part of the expression
+			// The token will be exhausted from the stream once it is recognised as keyword
+			std::string token = _tokeniser.peek();
 
 			// Get a new term, push it on the stack
 			IShaderExpressionPtr term;
 
 			if (token == "(")
 			{
+				_tokeniser.nextToken(); // valid keyword, exhaust
+
 				// New scope, treat this as new expression
 				term = getExpression();
 			}
 			else if (token == ")" || token == "]")
 			{
+				_tokeniser.nextToken(); // valid keyword, exhaust
+
 				// End of scope reached, break the loop and roll up the expression
 				break;
 			}
@@ -63,6 +70,7 @@ public:
 
 			if (term)
 			{
+				// The token has already been pulled from the tokeniser
 				operands.push(term);
 				continue;
 			}
@@ -74,6 +82,8 @@ public:
 
 			if (op)
 			{
+				_tokeniser.nextToken(); // valid keyword, exhaust
+
 				if (operands.empty())
 				{
 					throw parser::ParseException("Missing operand for operator: " + token);
@@ -90,13 +100,11 @@ public:
 
 				// Push this one on the operator stack
 				operators.push(op);
+				continue;
 			}
-			else
-			{
-				// Not an operand, not an operator, we seem to be done here
-				// TODO: We've exhausted the tokeniser too much by one token!
-				break;
-			}
+			
+			// Not an operand, not an operator, we seem to be done here
+			break;
 		}
 
 		// Roll up the operations
@@ -143,10 +151,14 @@ private:
 		operators.pop();
 	}
 
+	// Try to get a valid expression from the token. If the token was found to be valid
+	// The token is actually pulled from the tokeniser using nextToken()
 	IShaderExpressionPtr getTerm(const std::string& token)
 	{
 		if (boost::algorithm::istarts_with(token, "parm"))
 		{
+			_tokeniser.nextToken(); // valid keyword, exhaust
+
 			// This is a shaderparm, get the number
 			int shaderParmNum = strToInt(token.substr(4));
 		
@@ -161,10 +173,14 @@ private:
 		}
 		else if (token == "time")
 		{
+			_tokeniser.nextToken(); // valid keyword, exhaust
+
 			return IShaderExpressionPtr(new TimeExpression);
 		}
 		else if (token == "sound")
 		{
+			_tokeniser.nextToken(); // valid keyword, exhaust
+
 			// No sound support so far
 			return IShaderExpressionPtr(new ConstantExpression(0));
 		}
@@ -176,6 +192,8 @@ private:
 			if (table != NULL)
 			{
 				// Got it, this is a table name
+				_tokeniser.nextToken(); // valid keyword, exhaust, this hasn't been done by the caller yet
+				
 				// We need an opening '[' to have valid syntax
 				_tokeniser.assertNextToken("[");
 
@@ -196,6 +214,9 @@ private:
 				try
 				{
 					float value = boost::lexical_cast<float>(token);
+
+					_tokeniser.nextToken(); // valid keyword, exhaust
+
 					return IShaderExpressionPtr(new ConstantExpression(value));
 				}
 				catch (boost::bad_lexical_cast&)
