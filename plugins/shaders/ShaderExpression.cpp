@@ -22,14 +22,14 @@ namespace
 class ShaderExpressionParser
 {
 private:
-	parser::StringTokeniser& _tokeniser;
+	parser::DefTokeniser& _tokeniser;
 
 	// Two stacks, one for operands, one for operators
 	std::stack<IShaderExpressionPtr> _operands;
 	std::stack<BinaryExpressionPtr> _operators;
 
 public:
-	ShaderExpressionParser(parser::StringTokeniser& tokeniser) :
+	ShaderExpressionParser(parser::DefTokeniser& tokeniser) :
 		_tokeniser(tokeniser)
 	{}
 
@@ -40,7 +40,23 @@ public:
 			std::string token = _tokeniser.nextToken();
 
 			// Get a new term, push it on the stack
-			IShaderExpressionPtr term = getTerm(token);
+			IShaderExpressionPtr term;
+
+			if (token == "(")
+			{
+				// New scope, treat this as new expression
+				term = getExpression();
+			}
+			else if (token == ")" || token == "]")
+			{
+				// End of scope reached, break the loop and roll up the expression
+				break;
+			}
+			else
+			{
+				// No parantheses, get a new term, push it on the stack
+				term = getTerm(token);
+			}			
 
 			if (term)
 			{
@@ -106,17 +122,7 @@ private:
 	{
 		IShaderExpressionPtr rv;
 
-		if (token == "(")
-		{
-			// A paranthesis always suggests a new token, enter recursion to retrieve the first
-			rv = getExpression();
-		}
-		else if (token == ")")
-		{
-			// Should not happen?
-			assert(false);
-		}
-		else if (boost::algorithm::istarts_with(token, "parm"))
+		if (boost::algorithm::istarts_with(token, "parm"))
 		{
 			// This is a shaderparm, get the number
 			int shaderParmNum = strToInt(token.substr(4));
@@ -134,10 +140,10 @@ private:
 		{
 			rv.reset(new TimeExpression);
 		}
-		else if (token == "+" || token == "-")
+		else if (token == "sound")
 		{
-			// TODO: This is a sign operator
-			rv = getTerm(_tokeniser.nextToken());
+			// No sound support so far
+			rv.reset(new ConstantExpression(0));
 		}
 		else 
 		{
@@ -169,12 +175,8 @@ private:
 					float value = boost::lexical_cast<float>(token);
 					rv.reset(new ConstantExpression(value));
 				}
-				catch (boost::bad_lexical_cast& ex)
-				{
-					throw new parser::ParseException(
-						"Expected time, parm<N> , table name or floating point value, found: " +
-						token + " (" + ex.what() + ")");
-				}
+				catch (boost::bad_lexical_cast&)
+				{}
 			}
 		}
 
@@ -323,7 +325,7 @@ IShaderExpressionPtr ShaderExpression::createFromTokens(parser::StringTokeniser&
 
 IShaderExpressionPtr ShaderExpression::createFromString(const std::string& exprStr)
 {
-	parser::BasicStringTokeniser tokeniser(exprStr);
+	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "()[]-+*/%|&");
 
 	try
 	{
