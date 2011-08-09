@@ -139,8 +139,6 @@ private:
 
 	IShaderExpressionPtr getTerm(const std::string& token)
 	{
-		IShaderExpressionPtr rv;
-
 		if (boost::algorithm::istarts_with(token, "parm"))
 		{
 			// This is a shaderparm, get the number
@@ -148,7 +146,7 @@ private:
 		
 			if (shaderParmNum >= 0 && shaderParmNum <= MAX_SHADERPARM_INDEX)
 			{
-				rv.reset(new ShaderParmExpression(shaderParmNum));
+				return IShaderExpressionPtr(new ShaderParmExpression(shaderParmNum));
 			}
 			else
 			{
@@ -157,12 +155,12 @@ private:
 		}
 		else if (token == "time")
 		{
-			rv.reset(new TimeExpression);
+			return IShaderExpressionPtr(new TimeExpression);
 		}
 		else if (token == "sound")
 		{
 			// No sound support so far
-			rv.reset(new ConstantExpression(0));
+			return IShaderExpressionPtr(new ConstantExpression(0));
 		}
 		else 
 		{
@@ -184,7 +182,7 @@ private:
 				}
 
 				// Construct a new table lookup expression and link them together
-				rv.reset(new TableLookupExpression(table, lookupValue));
+				return IShaderExpressionPtr(new TableLookupExpression(table, lookupValue));
 			}
 			else
 			{
@@ -192,14 +190,14 @@ private:
 				try
 				{
 					float value = boost::lexical_cast<float>(token);
-					rv.reset(new ConstantExpression(value));
+					return IShaderExpressionPtr(new ConstantExpression(value));
 				}
 				catch (boost::bad_lexical_cast&)
 				{}
 			}
 		}
 
-		return rv;
+		return IShaderExpressionPtr();
 	}
 
 	// Helper routines
