@@ -5,6 +5,18 @@
 namespace shaders
 {
 
+// Material registers, used to store shader expression results
+// The first two slots are always reserved for the constants 0 and 1, see enum ReservedRegisters
+typedef std::vector<float> Registers;
+
+// The indices to the constants in the registers array
+enum ReservedRegisters
+{
+	REG_ZERO = 0,
+	REG_ONE  = 1,
+	NUM_RESERVED_REGISTERS,
+};
+
 /**
  * A shader expression is something found in a Doom 3 material declaration, 
  * where things like shader parameters, time and constants can be combined
@@ -33,6 +45,14 @@ public:
 	 * into the linked material register.
 	 */
 	virtual float evaluate() = 0;
+
+	/**
+	 * Link the expression to the given Registers vector.
+	 * Calling evaluate() will cause the result to be saved into the register.
+	 *
+	 * @returns: the register position the result will be written to.
+	 */
+	virtual std::size_t linkToRegister(Registers& registers) = 0;
 };
 typedef boost::shared_ptr<IShaderExpression> IShaderExpressionPtr;
 

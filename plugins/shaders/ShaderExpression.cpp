@@ -91,6 +91,12 @@ public:
 				// Push this one on the operator stack
 				operators.push(op);
 			}
+			else
+			{
+				// Not an operand, not an operator, we seem to be done here
+				// TODO: We've exhausted the tokeniser too much by one token!
+				break;
+			}
 		}
 
 		// Roll up the operations
@@ -262,14 +268,11 @@ private:
 
 } // namespace expressions
 
-IShaderExpressionPtr ShaderExpression::createFromString(const std::string& exprStr)
+IShaderExpressionPtr ShaderExpression::createFromTokens(parser::DefTokeniser& tokeniser)
 {
-	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "()[]-+*/%");
-
 	try
 	{
 		expressions::ShaderExpressionParser parser(tokeniser);
-
 		return parser.getExpression();
 	}
 	catch (parser::ParseException& ex)
@@ -277,6 +280,12 @@ IShaderExpressionPtr ShaderExpression::createFromString(const std::string& exprS
 		globalWarningStream() << "[shaders] " << ex.what() << std::endl;
 		return IShaderExpressionPtr();
 	}
+}
+
+IShaderExpressionPtr ShaderExpression::createFromString(const std::string& exprStr)
+{
+	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "()[]-+*/%");
+	return createFromTokens(tokeniser);
 }
 
 } // namespace
