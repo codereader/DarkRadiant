@@ -221,6 +221,42 @@ private:
 		{
 			return BinaryExpressionPtr(new DivideExpression);
 		}
+		else if (token == "%")
+		{
+			return BinaryExpressionPtr(new ModuloExpression);
+		}
+		else if (token == "<")
+		{
+			return BinaryExpressionPtr(new LesserThanExpression);
+		}
+		else if (token == "<=")
+		{
+			return BinaryExpressionPtr(new LesserThanOrEqualExpression);
+		}
+		else if (token == ">")
+		{
+			return BinaryExpressionPtr(new GreaterThanExpression);
+		}
+		else if (token == ">=")
+		{
+			return BinaryExpressionPtr(new GreaterThanOrEqualExpression);
+		}
+		else if (token == "==")
+		{
+			return BinaryExpressionPtr(new EqualityExpression);
+		}
+		else if (token == "!=")
+		{
+			return BinaryExpressionPtr(new InequalityExpression);
+		}
+		else if (token == "&&")
+		{
+			return BinaryExpressionPtr(new LogicalAndExpression);
+		}
+		else if (token == "||")
+		{
+			return BinaryExpressionPtr(new LogicalOrExpression);
+		}
 
 		return BinaryExpressionPtr();
 	}
