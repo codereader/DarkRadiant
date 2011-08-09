@@ -109,6 +109,12 @@ public:
     virtual TexturePtr getTexture() const = 0;
 
 	/**
+	 * Evaluate all shader expressions used in this stage. Call this once (each frame) 
+	 * before requesting things like getAlphaTest(), getColour() or isVisible()
+	 */
+	virtual void evaluateExpressions() = 0;
+
+	/**
 	 * The flags set on this stage.
 	 */
 	virtual int getStageFlags() const = 0;
@@ -183,10 +189,16 @@ public:
      * Get the alpha test value for this layer.
      *
      * \return
-     * The alpha test value, between 0.0 and 1.0 if it is set. If no alpha test
-     * value is set, -1 will be returned.
+     * The alpha test value, within (0..1] if it is set. If no alpha test
+     * value is set, 0 will be returned.
      */
-    virtual double getAlphaTest() const = 0;
+    virtual float getAlphaTest() const = 0;
+
+	/**
+	 * Whether this stage is active. Unconditional stages always return true,
+	 * conditional ones return the result of the most recent condition expression evaluation.
+	 */
+	virtual bool isVisible() const = 0;
 };
 
 /**

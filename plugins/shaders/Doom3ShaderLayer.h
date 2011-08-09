@@ -96,11 +96,11 @@ public:
     Vector4 getColour() const;
     VertexColourMode getVertexColourMode() const;
     CubeMapMode getCubeMapMode() const;
-    double getAlphaTest() const;
+    float getAlphaTest() const;
 
 	// True if the condition for this stage is fulfilled 
 	// (expressions must have been evaluated before this call)
-	bool isVisible()
+	bool isVisible() const
 	{
 		return _registers[_condition] != 0;
 	}
