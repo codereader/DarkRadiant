@@ -36,7 +36,7 @@ float TableDefinition::getValue(float index)
 			index = 0;
 		}
 
-		if (index > _values.size())
+		if (index > _values.size() - 1)
 		{
 			index = _values.size() - 1;
 		}
