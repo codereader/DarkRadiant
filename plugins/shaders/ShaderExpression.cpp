@@ -7,6 +7,9 @@
 #include "Doom3ShaderSystem.h"
 
 #include <stack>
+#include <list>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 
 namespace shaders
 {
@@ -17,18 +20,77 @@ namespace expressions
 namespace
 {
 	const int MAX_SHADERPARM_INDEX = 11;
+	const int MAX_GLOBAL_SHADERPARM_INDEX = 7;
 }
+
+class ShaderExpressionTokeniser :
+	public parser::DefTokeniser
+{
+private:
+	parser::DefTokeniser& _tokeniser;
+
+	// buffer containing tokens pulled from the wrapped tokeniser
+	std::list<std::string> _buffer;
+
+	const char* _delims;
+
+public:
+	ShaderExpressionTokeniser(parser::DefTokeniser& tokeniser) :
+		_tokeniser(tokeniser),
+		_delims("[]+-%*/")
+	{}
+
+	
+    bool hasMoreTokens() const 
+	{
+		return !_buffer.empty() || _tokeniser.hasMoreTokens();
+	}
+
+    std::string nextToken() 
+	{
+		if (_buffer.empty())
+		{
+			// Pull a new token from the underlying stream and split it up
+			std::string rawToken = _tokeniser.nextToken();
+			boost::algorithm::split(_buffer, rawToken, boost::algorithm::is_any_of(_delims));
+		}
+
+		std::string result = _buffer.front();
+		_buffer.pop_front();
+
+		return result;
+	}
+
+    std::string peek() const 
+	{
+		if (!_buffer.empty())
+		{
+			// We have items in the buffer, return that one
+			return _buffer.front();
+		}
+		
+		// No items in the buffer, take a peek in the underlying stream
+		std::string rawToken = _tokeniser.peek();
+
+		// Split up the token if necessary
+		std::vector<std::string> tokens;
+		boost::algorithm::split(tokens, rawToken, boost::algorithm::is_any_of(_delims));
+
+		// Return the first of these tokens
+		return tokens.front();
+	}
+};
 
 class ShaderExpressionParser
 {
 private:
-	parser::DefTokeniser& _tokeniser;
+	ShaderExpressionTokeniser& _tokeniser;
 
 	typedef std::stack<IShaderExpressionPtr> OperandStack;
 	typedef std::stack<BinaryExpressionPtr> OperatorStack;
 
 public:
-	ShaderExpressionParser(parser::DefTokeniser& tokeniser) :
+	ShaderExpressionParser(ShaderExpressionTokeniser& tokeniser) :
 		_tokeniser(tokeniser)
 	{}
 
@@ -171,6 +233,22 @@ private:
 				throw new parser::ParseException("Shaderparm index out of bounds");
 			}
 		}
+		else if (boost::algorithm::istarts_with(token, "global"))
+		{
+			_tokeniser.nextToken(); // valid keyword, exhaust
+
+			// This is a shaderparm, get the number
+			int shaderParmNum = strToInt(token.substr(6));
+		
+			if (shaderParmNum >= 0 && shaderParmNum <= MAX_GLOBAL_SHADERPARM_INDEX)
+			{
+				return IShaderExpressionPtr(new GlobalShaderParmExpression(shaderParmNum));
+			}
+			else
+			{
+				throw new parser::ParseException("Shaderparm index out of bounds");
+			}
+		}
 		else if (token == "time")
 		{
 			_tokeniser.nextToken(); // valid keyword, exhaust
@@ -291,9 +369,13 @@ private:
 
 IShaderExpressionPtr ShaderExpression::createFromTokens(parser::DefTokeniser& tokeniser)
 {
+	// Create an adapter which takes care of splitting the tokens into finer grains
+	// The incoming DefTokeniser is not splitting up expressions like "3*4" without any whitespace in them
+	expressions::ShaderExpressionTokeniser adapter(tokeniser);
+
 	try
 	{
-		expressions::ShaderExpressionParser parser(tokeniser);
+		expressions::ShaderExpressionParser parser(adapter);
 		return parser.getExpression();
 	}
 	catch (parser::ParseException& ex)

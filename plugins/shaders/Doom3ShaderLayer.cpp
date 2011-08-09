@@ -81,7 +81,7 @@ const IShaderExpressionPtr Doom3ShaderLayer::NULL_EXPRESSION;
 Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type type, const NamedBindablePtr& btex)
 :	_material(material),
 	_registers(NUM_RESERVED_REGISTERS),
-	_condition(REG_ZERO),
+	_condition(REG_ONE),
 	_bindableTex(btex),
 	_type(type),
 	_blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
@@ -89,7 +89,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_cubeMapMode(CUBE_MAP_NONE),
 	_stageFlags(0),
 	_clampType(CLAMP_REPEAT),
-	_alphaTest(REG_ONE),
+	_alphaTest(REG_ZERO),
 	_texGenType(TEXGEN_NORMAL)
 { 
 	_registers[REG_ZERO] = 0;
