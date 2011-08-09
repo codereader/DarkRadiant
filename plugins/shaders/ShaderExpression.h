@@ -79,6 +79,25 @@ public:
 	}
 };
 
+class GlobalShaderParmExpression :
+	public ShaderExpression
+{
+private:
+	// The global shaderparm number to retrieve
+	int _parmNum;
+public:
+	GlobalShaderParmExpression(int parmNum) :
+		ShaderExpression(),
+		_parmNum(parmNum)
+	{}
+
+	virtual float getValue()
+	{
+		// not implemented yet
+		return 0.0f;
+	}
+};
+
 // An expression returning the current (game) time as result
 class TimeExpression :
 	public ShaderExpression

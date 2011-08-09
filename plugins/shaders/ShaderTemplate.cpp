@@ -664,7 +664,7 @@ void ShaderTemplate::parseDefinition()
     parser::BasicDefTokeniser<std::string> tokeniser(
         _blockContents,
         " \t\n\v\r",    // delimiters (whitespace)
-        "{}()[],-+*/%"  // add the comma character to the kept delimiters, plus all necessary math symbols
+        "{}(),"  // add the comma character to the kept delimiters
     );
 
     _parsed = true; // we're parsed from now on
