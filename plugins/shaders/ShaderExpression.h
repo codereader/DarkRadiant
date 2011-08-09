@@ -45,8 +45,10 @@ public:
 		// Allocate a new register
 		registers.push_back(0);
 
-		// Return the index to the newly allocated register
-		return registers.size() - 1;
+		// Save the index to the newly allocated register
+		_index = static_cast<int>(registers.size() - 1);
+
+		return _index;
 	}
 
 	static IShaderExpressionPtr createFromString(const std::string& exprStr);

@@ -265,6 +265,9 @@ void OpenGLShader::constructLightingPassesFromMaterial()
          i != allLayers.end();
          ++i)
     {
+		// Make sure we had at least one evaluation call to fill the material registers
+		(*i)->evaluateExpressions();
+
         switch ((*i)->getType())
         {
         case ShaderLayer::DIFFUSE:
