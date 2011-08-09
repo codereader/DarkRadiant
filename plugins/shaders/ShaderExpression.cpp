@@ -266,7 +266,7 @@ private:
 
 IShaderExpressionPtr ShaderExpression::createFromString(const std::string& exprStr)
 {
-	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "()[]-+*/%|&");
+	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "()[]-+*/%");
 
 	try
 	{
