@@ -643,24 +643,8 @@ bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::
 	{
 		// Parse condition
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
-
-		/*tokeniser.skipTokens(1); // skip opening parenthesis
-
-		std::size_t level = 1;
-
-		while (level > 0 && tokeniser.hasMoreTokens())
-		{
-			std::string next = tokeniser.nextToken();
-
-			if (next == ")")
-			{
-				level--;
-			}
-			else if (next == "(")
-			{
-				level++;
-			}
-		}*/
+		
+		_currentLayer->setCondition(expr);
 
 		return true;
 	}
@@ -723,7 +707,8 @@ void ShaderTemplate::parseDefinition()
 			{
 				boost::algorithm::to_lower(token);
 
-                switch (level) {
+                switch (level)
+				{
                     case 1: // global level
                         if (parseShaderFlags(tokeniser, token)) continue;
                         if (parseLightKeywords(tokeniser, token)) continue;
@@ -746,7 +731,8 @@ void ShaderTemplate::parseDefinition()
             }
         }
     }
-    catch (parser::ParseException& p) {
+    catch (parser::ParseException& p)
+	{
         globalErrorStream() << "Error while parsing shader " << _name << ": "
             << p.what() << std::endl;
     }
