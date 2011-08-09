@@ -311,6 +311,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_WOBBLESKY);
 
 			// Parse the 3 wobblesky parameters
+			// greebo: The D3 SDK says that registers could be used here (to support expressions), 
+			// but no D3 material uses an expression for the texgen parameters
 			for (std::size_t i = 0; i < 3; ++i)
 			{
 				_currentLayer->setTexGenParam(i, strToFloat(tokeniser.nextToken()));
