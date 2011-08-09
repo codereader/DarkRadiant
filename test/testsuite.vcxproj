@@ -160,13 +160,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MathTest.cpp" />
-    <ClCompile Include="ShaderTest.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="testsuite.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MathTest.h" />
-    <ClInclude Include="ShaderTest.h" />
     <ClInclude Include="Test.h" />
     <ClInclude Include="TestManager.h" />
   </ItemGroup>
