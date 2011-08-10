@@ -171,8 +171,18 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
 // Add an interaction layer
 void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 {
-    // Append a depthfill shader pass if requested
-    if (triplet.needDepthFill)
+	// Set layer vertex colour mode and alphatest parameters
+    ShaderLayer::VertexColourMode vcolMode = ShaderLayer::VERTEX_COLOUR_NONE;
+    double alphaTest = -1;
+
+    if (triplet.diffuse)
+    {
+        vcolMode = triplet.diffuse->getVertexColourMode();
+        alphaTest = triplet.diffuse->getAlphaTest();
+    }
+
+    // Append a depthfill shader pass if requested (not applicable for alpha-test materials)
+    if (triplet.needDepthFill && alphaTest <= 0.0)
     {
         // Create depth-buffer fill pass
         OpenGLState& zPass = appendDefaultPass();
@@ -213,14 +223,6 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 
     dbsPass.glProgram = GLProgramFactory::instance().getProgram("bumpMap");
 
-    // Set layer vertex colour mode and alphatest parameters
-    ShaderLayer::VertexColourMode vcolMode = ShaderLayer::VERTEX_COLOUR_NONE;
-    double alphaTest = -1;
-    if (triplet.diffuse)
-    {
-        vcolMode = triplet.diffuse->getVertexColourMode();
-        alphaTest = triplet.diffuse->getAlphaTest();
-    }
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {
         // Vertex colours allowed
