@@ -489,7 +489,8 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 // Render the bucket contents
 void OpenGLShaderPass::render(OpenGLState& current,
                               unsigned int flagsMask,
-                              const Vector3& viewer)
+                              const Vector3& viewer,
+							  std::size_t time)
 {
     // Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
@@ -524,9 +525,9 @@ void OpenGLShaderPass::render(OpenGLState& current,
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
     }
-	else if(!_renderables.empty())
+	else if (!_renderables.empty())
     {
-		renderAllContained(current, viewer);
+		renderAllContained(current, viewer, time);
 	}
 }
 
@@ -590,7 +591,8 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 
 // Flush renderables
 void OpenGLShaderPass::renderAllContained(OpenGLState& current,
-                                          const Vector3& viewer)
+                                          const Vector3& viewer,
+										  std::size_t time)
 {
 	// Keep a pointer to the last transform matrix used
 	const Matrix4* transform = 0;

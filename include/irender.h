@@ -381,6 +381,16 @@ public:
     virtual void realise() = 0;
     virtual void unrealise() = 0;
 
+	/**
+	 * Get the current render time in milliseconds.
+	 */
+	virtual std::size_t getTime() const = 0;
+
+	/**
+	 * Set the render time in milliseconds.
+	 */
+	virtual void setTime(std::size_t milliSeconds) = 0;
+
     /* SHADER PROGRAMS */
 
     /// Available GL programs used for backend rendering.
