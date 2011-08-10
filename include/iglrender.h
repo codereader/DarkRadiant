@@ -143,6 +143,7 @@ public:
 	  texture2(0),
       texture3(0),
       texture4(0),
+	  m_colour(1,1,1,1),
 	  m_blend_src(GL_SRC_ALPHA),
 	  m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
 	  m_depthfunc(GL_LESS),
