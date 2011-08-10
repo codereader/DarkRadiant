@@ -236,6 +236,13 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     }
     applyAlphaTestToPass(dbsPass, alphaTest);
 
+	// Apply the diffuse colour modulation
+	if (triplet.diffuse)
+	{
+		triplet.diffuse->evaluateExpressions();
+		dbsPass.m_colour = triplet.diffuse->getColour();
+	}
+
     dbsPass.m_depthfunc = GL_LEQUAL;
     dbsPass.m_sort = OpenGLState::eSortMultiFirst;
     dbsPass.m_blend_src = GL_ONE;
