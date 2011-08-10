@@ -109,6 +109,7 @@
     <ClInclude Include="..\..\include\ifonts.h" />
     <ClInclude Include="..\..\include\igame.h" />
     <ClInclude Include="..\..\include\igl.h" />
+    <ClInclude Include="..\..\include\iglprogram.h" />
     <ClInclude Include="..\..\include\iglrender.h" />
     <ClInclude Include="..\..\include\igrid.h" />
     <ClInclude Include="..\..\include\igroupdialog.h" />

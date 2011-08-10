@@ -1,8 +1,8 @@
 #pragma once
 
 #include "GLProgramAttributes.h"
-#include "iglrender.h"
-#include "math/Matrix4.h"
+#include "iglprogram.h"
+#include "igl.h"
 
 namespace render
 {
