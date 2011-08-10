@@ -21,6 +21,7 @@ class OpenGLRenderSystem
   public OpenGLStateManager,
   public ModuleObserver
 {
+private:
 	// Map of named Shader objects
 	typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
 	typedef boost::weak_ptr<OpenGLShader> OpenGLShaderWeakPtr;
@@ -38,6 +39,15 @@ class OpenGLRenderSystem
 
 	// Map of OpenGLState references, with access functions.
 	OpenGLStates _state_sorted;
+
+	// Render time
+	std::size_t _time;
+
+	// Lights
+	RendererLights m_lights;
+	bool m_lightsChanged;
+	typedef std::map<LightCullable*, LinearLightList> LightLists;
+	LightLists m_lightLists;
 
 public:
 
@@ -57,6 +67,10 @@ public:
 				const Vector3& viewer);
 	void realise();
 	void unrealise();
+
+	std::size_t getTime() const;
+	void setTime(std::size_t milliSeconds);
+
     bool shaderProgramsAvailable() const;
     ShaderProgram getCurrentShaderProgram() const;
     void setShaderProgram(ShaderProgram prog);
@@ -64,12 +78,6 @@ public:
 	void extensionsInitialised();
 
 	// light culling
-
-	RendererLights m_lights;
-	bool m_lightsChanged;
-	typedef std::map<LightCullable*, LinearLightList> LightLists;
-	LightLists m_lightLists;
-
 	const LightList& attach(LightCullable& cullable);
 	void detach(LightCullable& cullable);
 	void changed(LightCullable& cullable);

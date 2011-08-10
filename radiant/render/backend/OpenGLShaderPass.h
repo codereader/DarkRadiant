@@ -1,5 +1,4 @@
-#ifndef OPENGLSHADERPASS_H_
-#define OPENGLSHADERPASS_H_
+#pragma once
 
 #include "math/Vector3.h"
 #include "iglrender.h"
@@ -20,6 +19,7 @@ class RendererLight;
  */
 class OpenGLShaderPass
 {
+private:
 	// The state applied to this bucket
 	OpenGLState _state;
 
@@ -63,7 +63,8 @@ private:
 
 	// Render all of our contained TransformedRenderables
 	void renderAllContained(OpenGLState& current,
-						    const Vector3& viewer);
+						    const Vector3& viewer,
+							std::size_t time);
 
     /* Helper functions to enable/disable particular GL states */
 
@@ -130,7 +131,8 @@ public:
      */
 	void render(OpenGLState& current,
 				unsigned int flagsMask,
-				const Vector3& viewer);
+				const Vector3& viewer,
+				std::size_t time);
 
 	/**
 	 * Returns true if this shaderpass doesn't have anything to render.
@@ -140,6 +142,3 @@ public:
 		return _renderables.empty();
 	}
 };
-
-
-#endif

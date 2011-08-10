@@ -40,6 +40,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 	_realised(false),
 	_currentShaderProgram(SHADER_PROGRAM_NONE),
 	_shadersAvailable(false),
+	_time(0),
 	m_lightsChanged(true),
 	m_traverseRenderablesMutex(false)
 {
@@ -188,7 +189,7 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 		}
 
         // Render the OpenGLShaderPass
-		i->second->render(current, globalstate, viewer);
+		i->second->render(current, globalstate, viewer, _time);
 	}
 }
 
@@ -244,6 +245,16 @@ void OpenGLRenderSystem::unrealise()
 		// Unrealise the GLPrograms
 		GLProgramFactory::instance().unrealise();
 	}
+}
+
+std::size_t OpenGLRenderSystem::getTime() const
+{
+	return _time;
+}
+
+void OpenGLRenderSystem::setTime(std::size_t milliSeconds)
+{
+	_time = milliSeconds;
 }
 
 RenderSystem::ShaderProgram OpenGLRenderSystem::getCurrentShaderProgram() const
