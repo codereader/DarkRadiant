@@ -1,6 +1,7 @@
 #pragma once
 
-#include "iglrender.h"
+#include "iglprogram.h"
+#include "igl.h"
 
 namespace render {
 

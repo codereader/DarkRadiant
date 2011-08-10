@@ -3,6 +3,7 @@
 
 #include "igame.h"
 #include "string/string.h"
+#include "math/Matrix4.h"
 
 namespace render
 {

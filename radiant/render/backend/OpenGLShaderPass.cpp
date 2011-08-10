@@ -6,6 +6,7 @@
 #include "irender.h"
 #include "ishaders.h"
 #include "texturelib.h"
+#include "iglprogram.h"
 
 namespace {
 
