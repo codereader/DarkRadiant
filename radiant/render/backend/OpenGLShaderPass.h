@@ -62,6 +62,8 @@ private:
                     const Vector3& viewer,
 					std::size_t time);
 
+	void setupTextureMatrix(GLenum textureUnit, const ShaderLayerPtr& stage);
+
 	// Render all of our contained TransformedRenderables
 	void renderAllContained(OpenGLState& current,
 						    const Vector3& viewer,

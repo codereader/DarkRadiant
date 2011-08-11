@@ -77,7 +77,7 @@ void OpenGLShaderPass::enableTexture2D()
 
     setTexture0();
     glEnable(GL_TEXTURE_2D);
-
+	
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     GlobalOpenGL().assertNoErrors();
 }
@@ -129,6 +129,23 @@ void OpenGLShaderPass::disableRenderBlend()
     GlobalOpenGL().assertNoErrors();
 }
 
+void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerPtr& stage)
+{
+	// Set the texture matrix for the given unit 
+	glActiveTexture(textureUnit);
+	glClientActiveTexture(textureUnit);
+
+	if (stage)
+	{
+		Vector2 scale = stage->getScale();
+		glLoadMatrixf(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
+	}
+	else
+	{
+		glLoadMatrixf(Matrix4::getIdentity());
+	}
+}
+
 // Apply all textures to texture units
 void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
                                         unsigned requiredState)
@@ -139,37 +156,43 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
     GLenum textureMode = 0;
 
     if (requiredState & RENDER_TEXTURE_CUBEMAP) // cube map has priority
+	{
         textureMode = GL_TEXTURE_CUBE_MAP;
+	}
     else if (requiredState & RENDER_TEXTURE_2D)
+	{
         textureMode = GL_TEXTURE_2D;
+	}
 
     // Apply our texture numbers to the current state
     if (textureMode != 0) // only if one of the RENDER_TEXTURE options
     {
-        if(GLEW_VERSION_1_3)
+		glMatrixMode(GL_TEXTURE);
+
+        if (GLEW_VERSION_1_3)
         {
-            setTextureState(
-                current.texture0, _state.texture0, GL_TEXTURE0, textureMode
-            );
-            setTextureState(
-                current.texture1, _state.texture1, GL_TEXTURE1, textureMode
-            );
-            setTextureState(
-                current.texture2, _state.texture2, GL_TEXTURE2, textureMode
-            );
-            setTextureState(
-                current.texture3, _state.texture2, GL_TEXTURE2, textureMode
-            );
-            setTextureState(
-                current.texture4, _state.texture2, GL_TEXTURE2, textureMode
-            );
+			setTextureState(current.texture0, _state.texture0, GL_TEXTURE0, textureMode);
+			setupTextureMatrix(GL_TEXTURE0, _state.stage0);
+
+			setTextureState(current.texture1, _state.texture1, GL_TEXTURE1, textureMode);
+			setupTextureMatrix(GL_TEXTURE1, _state.stage1);
+
+            setTextureState(current.texture2, _state.texture2, GL_TEXTURE2, textureMode);
+			setupTextureMatrix(GL_TEXTURE2, _state.stage2);
+
+            setTextureState(current.texture3, _state.texture2, GL_TEXTURE2, textureMode);
+			setTextureState(current.texture4, _state.texture2, GL_TEXTURE2, textureMode);
+
+			glActiveTexture(GL_TEXTURE0);
+			glClientActiveTexture(GL_TEXTURE0);
         }
         else
         {
-            setTextureState(
-                current.texture0, _state.texture0, textureMode
-            );
+            setTextureState(current.texture0, _state.texture0, textureMode);
+			setupTextureMatrix(GL_TEXTURE0, _state.stage0);
         }
+
+		glMatrixMode(GL_MODELVIEW);
     }
 }
 
@@ -212,27 +235,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 		globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
 	}
 
-	// Evaluate any shader expressions
-	if (_state.stage0) 
-	{
-		_state.stage0->evaluateExpressions(time);
-
-		// The alpha test value might change over time
-		if (_state.stage0->getAlphaTest() > 0)
-		{
-			_state.renderFlags |= RENDER_ALPHATEST;
-		}
-		else
-		{
-			_state.renderFlags &= ~RENDER_ALPHATEST;
-		}
-	}
-	if (_state.stage1) _state.stage1->evaluateExpressions(time);
-	if (_state.stage2) _state.stage2->evaluateExpressions(time);
-	if (_state.stage3) _state.stage3->evaluateExpressions(time);
-	if (_state.stage4) _state.stage4->evaluateExpressions(time);
-
-    // Apply the global state mask to our own desired render flags to determine
+	// Apply the global state mask to our own desired render flags to determine
     // the final set of flags that must bet set
 	const unsigned int requiredState = _state.renderFlags & globalStateMask;
 
@@ -520,9 +523,30 @@ void OpenGLShaderPass::render(OpenGLState& current,
                               const Vector3& viewer,
 							  std::size_t time)
 {
+	// Evaluate any shader expressions
+	if (_state.stage0) 
+	{
+		_state.stage0->evaluateExpressions(time);
+
+		// The alpha test value might change over time
+		if (_state.stage0->getAlphaTest() > 0)
+		{
+			_state.renderFlags |= RENDER_ALPHATEST;
+		}
+		else
+		{
+			_state.renderFlags &= ~RENDER_ALPHATEST;
+		}
+	}
+	if (_state.stage1) _state.stage1->evaluateExpressions(time);
+	if (_state.stage2) _state.stage2->evaluateExpressions(time);
+	if (_state.stage3) _state.stage3->evaluateExpressions(time);
+	if (_state.stage4) _state.stage4->evaluateExpressions(time);
+
     // Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
-    glLoadMatrixf(Matrix4::getIdentity());
+	glLoadMatrixf(Matrix4::getIdentity());
+
     glMatrixMode(GL_MODELVIEW);
 
 	// Apply our state to the current state object
