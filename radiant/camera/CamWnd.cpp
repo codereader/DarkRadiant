@@ -19,8 +19,14 @@
 
 #include <boost/bind.hpp>
 
+#include <gtkmm/main.h>
 #include <gtkmm/image.h>
 #include <gtkmm/radiotoolbutton.h>
+
+namespace
+{
+	const std::size_t MSEC_PER_FRAME = 16;
+}
 
 class ObjectFinder :
 	public scene::NodeVisitor
@@ -127,6 +133,7 @@ CamWnd::CamWnd() :
 	m_drawing(false),
 	m_bFreeMove(false),
 	_camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
+	_timer(MSEC_PER_FRAME, _onFrame, this),
 	m_window_observer(NewWindowObserver()),
 	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, _camGLWidget)),
 	m_deferred_motion(boost::bind(&CamWnd::_onDeferredMouseMotion, this, _1, _2, _3))
@@ -198,6 +205,16 @@ void CamWnd::constructToolbar()
         sigc::mem_fun(*this, &CamWnd::farClipPlaneOut)
     );
 
+	getGladeWidget<Gtk::ToolButton>("startTimeButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &CamWnd::startRenderTime)
+    );
+	getGladeWidget<Gtk::ToolButton>("stopTimeButton")->signal_clicked().connect(
+        sigc::mem_fun(*this, &CamWnd::stopRenderTime)
+    );
+
+	// Stop time, initially
+	stopRenderTime();
+
     Gtk::Widget* toolbar = getGladeWidget<Gtk::Widget>("camToolbar");
 
     // Hide the toolbar if requested
@@ -268,6 +285,51 @@ CamWnd::~CamWnd()
 
 	// Notify the camera manager about our destruction
 	GlobalCamera().removeCamWnd(_id);
+}
+
+void CamWnd::startRenderTime()
+{
+	if (_timer.isEnabled())
+	{
+		// Timer is already running, just reset the preview time
+		GlobalRenderSystem().setTime(0);
+	}
+	else
+	{
+		// Timer is not enabled, we're paused or stopped
+		_timer.enable();
+	}
+
+	getGladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(false);
+	getGladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(true);
+}
+
+gboolean CamWnd::_onFrame(gpointer data)
+{
+	CamWnd* self = reinterpret_cast<CamWnd*>(data);
+
+	if (!self->m_drawing)
+	{
+		// Give the UI a chance to react
+		while (Gtk::Main::events_pending())
+		{
+			Gtk::Main::iteration();
+		}
+
+		GlobalRenderSystem().setTime(GlobalRenderSystem().getTime() + MSEC_PER_FRAME);
+		self->_camGLWidget->queue_draw();
+	}
+
+	// Return true, so that the timer gets called again
+	return TRUE;
+}
+
+void CamWnd::stopRenderTime()
+{
+	_timer.disable();
+
+	getGladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(true);
+	getGladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(false);
 }
 
 void CamWnd::onRenderModeButtonsChanged()
@@ -691,6 +753,8 @@ void CamWnd::Cam_Draw() {
 
 void CamWnd::draw()
 {
+	if (m_drawing) return;
+
 	m_drawing = true;
 
 	// Scoped object handling the GL context switching
