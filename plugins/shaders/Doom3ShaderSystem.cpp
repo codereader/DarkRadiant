@@ -320,14 +320,152 @@ const StringSet& Doom3ShaderSystem::getDependencies() const {
 	return _dependencies;
 }
 
-void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx) {
-	globalOutputStream() << "Doom3ShaderSystem::initialiseModule called\n";
+void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx)
+{
+	globalOutputStream() << getName() << "::initialiseModule called" << std::endl;
 
 	construct();
 	realise();
+
+#ifdef _DEBUG
+	testShaderExpressionParsing();
+#endif
 }
 
-void Doom3ShaderSystem::shutdownModule() {
+void Doom3ShaderSystem::testShaderExpressionParsing()
+{
+	// Test a few things
+	std::string exprStr = "3";
+	IShaderExpressionPtr expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3+4";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "(3+4)";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "(4.2)";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3+5+6";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3+(5+6)";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3 * 3+5";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3+3*5";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "(3+3)*5";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "(3+3*7)-5";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3-3*5";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "blinktable[0]";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "blinktable[1]";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "blinktable[0.3]";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "blinksnaptable[0.3]";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "xianjittertable[0]";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "xianjittertable[time]";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3-3*xianjittertable[2]";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3+xianjittertable[3]*7";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "(3+xianjittertable[3])*7";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "2.3 % 2";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "2.0 % 0.5";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "2 == 2";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "1 == 2";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "1 != 2";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "1.2 != 1.2";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "1.2 == 1.2*3";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "1.2*3 == 1.2*3";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3 == 3 && 1 != 0";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "1 != 1 || 3 == 3";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "4 == 3 || 1 != 0";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "time";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(2) << std::endl;
+}
+
+void Doom3ShaderSystem::shutdownModule()
+{
 	globalOutputStream() << "Doom3ShaderSystem::shutdownModule called\n";
 
 	destroy();
