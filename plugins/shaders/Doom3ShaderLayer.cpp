@@ -101,6 +101,9 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_colour[2] = REG_ONE;
 	_colour[3] = REG_ONE;
 
+	_scale[0] = REG_ONE;
+	_scale[1] = REG_ONE;
+
 	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = 0;
 }
 

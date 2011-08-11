@@ -5,6 +5,8 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 
+#include "math/Vector2.h"
+
 // Forward-declare Vector4
 template<typename Element> class BasicVector4;
 typedef BasicVector4<float> Vector4;
@@ -183,6 +185,11 @@ public:
      * Get the cube map mode for this layer.
      */
     virtual CubeMapMode getCubeMapMode() const = 0;
+
+	/**
+	 * Returns the value of the scale expressions of this stage.
+	 */
+	virtual Vector2 getScale() = 0;
 
     /**
      * \brief
