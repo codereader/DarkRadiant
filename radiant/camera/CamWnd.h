@@ -151,6 +151,7 @@ private:
     void updateActiveRenderModeButton();
 
 	void Cam_Draw();
+	void drawTime();
 
 	void onSizeAllocate(Gtk::Allocation& allocation);
 	bool onExpose(GdkEventExpose* ev);

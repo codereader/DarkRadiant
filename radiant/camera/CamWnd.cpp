@@ -300,7 +300,7 @@ void CamWnd::startRenderTime()
 		_timer.enable();
 	}
 
-	getGladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(false);
+	//getGladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(false);
 	getGladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(true);
 }
 
@@ -702,6 +702,8 @@ void CamWnd::Cam_Draw() {
 	extern const char* Cull_GetStats();
 
 	GlobalOpenGL().drawString(Cull_GetStats());
+
+	drawTime();
 
 	// Draw the selection drag rectangle
 	if (!_dragRectangle.empty())
@@ -1140,6 +1142,47 @@ void CamWnd::_onFreelookMotion(int x, int y, guint state)
 	{
 		m_Camera.m_strafe_forward = false;
 	}
+}
+
+void CamWnd::drawTime()
+{
+	if (GlobalRenderSystem().getTime() == 0)
+	{
+		return;
+	}
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, static_cast<float>(m_Camera.width), 0, static_cast<float>(m_Camera.height), -100, 100);
+
+	glScalef(1, -1, 1);
+	glTranslatef(static_cast<float>(m_Camera.width) - 90, -static_cast<float>(m_Camera.height), 0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	if (GLEW_VERSION_1_3)
+	{
+		glClientActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0);
+	}
+
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_COLOR_ARRAY);
+
+	glDisable(GL_TEXTURE_2D);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_COLOR_MATERIAL);
+	glDisable(GL_DEPTH_TEST);
+
+	glColor3f(1.f, 1.f, 1.f);
+	glLineWidth(1);
+
+	glRasterPos3f(1.0f, static_cast<float>(m_Camera.height) - 1.0f, 0.0f);
+
+	std::size_t time = GlobalRenderSystem().getTime();
+	GlobalOpenGL().drawString((boost::format("Time: %.3f sec.") % (time * 0.001f)).str());
 }
 
 // -------------------------------------------------------------------------------
