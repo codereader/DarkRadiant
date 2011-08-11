@@ -142,6 +142,9 @@ public:
 	virtual const StringSet& getDependencies() const;
 	virtual void initialiseModule(const ApplicationContext& ctx);
 	virtual void shutdownModule();
+
+private:
+	void testShaderExpressionParsing();
 }; // class Doom3ShaderSystem
 
 typedef boost::shared_ptr<Doom3ShaderSystem> Doom3ShaderSystemPtr;
