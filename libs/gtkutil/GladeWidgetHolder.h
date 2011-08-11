@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gtkmm/builder.h>
+#include <cassert>
 
 namespace gtkutil
 {
@@ -24,12 +25,12 @@ protected:
     template<typename WidgetType>
     WidgetType* getGladeWidget(const std::string& name)
     {
-        g_assert(_builder);
+        assert(_builder);
 
         WidgetType* widget = NULL;
         _builder->get_widget(name, widget);
 
-        g_assert(widget);
+        assert(widget);
         return widget;
     }
 
