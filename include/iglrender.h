@@ -90,7 +90,11 @@ public:
 	 * which hold the actual values of many parameters, some of them
 	 * time-dependent or depending on entity parameters.
 	 */
-	std::vector<ShaderLayerPtr> _stages;
+	ShaderLayerPtr stage0;
+	ShaderLayerPtr stage1;
+	ShaderLayerPtr stage2;
+	ShaderLayerPtr stage3;
+	ShaderLayerPtr stage4;
 
 	// The 4 colour components, only for use in OpenGLStates 
 	// that do not have any shader stages attached, otherwise pull the colour from there.

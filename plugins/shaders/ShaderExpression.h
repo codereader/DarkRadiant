@@ -25,10 +25,10 @@ public:
 	{}
 
 	// Base implementations
-	virtual float evaluate()
+	virtual float evaluate(std::size_t time)
 	{
 		// Evaluate this register and write it into the respective register index
-		float val = getValue();
+		float val = getValue(time);
 
 		if (_registers != NULL)
 		{
@@ -74,7 +74,7 @@ public:
 		_parmNum(parmNum)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
 		// not implemented yet
 		return 0.0f;
@@ -93,7 +93,7 @@ public:
 		_parmNum(parmNum)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
 		// not implemented yet
 		return 0.0f;
@@ -109,10 +109,9 @@ public:
 		ShaderExpression()
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		// not implemented yet
-		return 0.0f;
+		return time / 1000.0f; // convert msecs to secs
 	}
 };
 
@@ -129,7 +128,7 @@ public:
 		_value(value)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
 		return _value;
 	}
@@ -155,9 +154,9 @@ public:
 		assert(_lookupExpr);
 	}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		float lookupVal = _lookupExpr->getValue();
+		float lookupVal = _lookupExpr->getValue(time);
 		return _tableDef->getValue(lookupVal);
 	}
 };
@@ -224,9 +223,9 @@ public:
 		BinaryExpression(ADDITION, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() + _b->getValue();
+		return _a->getValue(time) + _b->getValue(time);
 	}
 };
 
@@ -240,9 +239,9 @@ public:
 		BinaryExpression(SUBTRACTION, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() - _b->getValue();
+		return _a->getValue(time) - _b->getValue(time);
 	}
 };
 
@@ -256,9 +255,9 @@ public:
 		BinaryExpression(MULTIPLICATION, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() * _b->getValue();
+		return _a->getValue(time) * _b->getValue(time);
 	}
 };
 
@@ -272,9 +271,9 @@ public:
 		BinaryExpression(DIVISION, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() / _b->getValue();
+		return _a->getValue(time) / _b->getValue(time);
 	}
 };
 
@@ -288,9 +287,9 @@ public:
 		BinaryExpression(MODULO, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return fmod(_a->getValue(), _b->getValue());
+		return fmod(_a->getValue(time), _b->getValue(time));
 	}
 };
 
@@ -304,9 +303,9 @@ public:
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() < _b->getValue() ? 1.0f : 0;
+		return _a->getValue(time) < _b->getValue(time) ? 1.0f : 0;
 	}
 };
 
@@ -320,9 +319,9 @@ public:
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() <= _b->getValue() ? 1.0f : 0;
+		return _a->getValue(time) <= _b->getValue(time) ? 1.0f : 0;
 	}
 };
 
@@ -336,9 +335,9 @@ public:
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() > _b->getValue() ? 1.0f : 0;
+		return _a->getValue(time) > _b->getValue(time) ? 1.0f : 0;
 	}
 };
 
@@ -352,9 +351,9 @@ public:
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() >= _b->getValue() ? 1.0f : 0;
+		return _a->getValue(time) >= _b->getValue(time) ? 1.0f : 0;
 	}
 };
 
@@ -368,9 +367,9 @@ public:
 		BinaryExpression(EQUALITY_COMPARISON, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() == _b->getValue() ? 1.0f : 0;
+		return _a->getValue(time) == _b->getValue(time) ? 1.0f : 0;
 	}
 };
 
@@ -384,9 +383,9 @@ public:
 		BinaryExpression(EQUALITY_COMPARISON, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return _a->getValue() != _b->getValue() ? 1.0f : 0;
+		return _a->getValue(time) != _b->getValue(time) ? 1.0f : 0;
 	}
 };
 
@@ -400,9 +399,9 @@ public:
 		BinaryExpression(LOGICAL_AND, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return (_a->getValue() != 0 && _b->getValue() != 0) ? 1.0f : 0;
+		return (_a->getValue(time) != 0 && _b->getValue(time) != 0) ? 1.0f : 0;
 	}
 };
 
@@ -416,9 +415,9 @@ public:
 		BinaryExpression(LOGICAL_OR, a, b)
 	{}
 
-	virtual float getValue()
+	virtual float getValue(std::size_t time)
 	{
-		return (_a->getValue() != 0 || _b->getValue() != 0) ? 1.0f : 0;
+		return (_a->getValue(time) != 0 || _b->getValue(time) != 0) ? 1.0f : 0;
 	}
 };
 

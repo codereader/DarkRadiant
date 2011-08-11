@@ -38,13 +38,13 @@ public:
 	/** 
 	 * Retrieve the floating point value of this expression.
 	 */
-	virtual float getValue() = 0;
+	virtual float getValue(std::size_t time) = 0;
 
 	/**
 	 * Evaluates the value of this expression, writing any results
 	 * into the linked material register.
 	 */
-	virtual float evaluate() = 0;
+	virtual float evaluate(std::size_t time) = 0;
 
 	/**
 	 * Link the expression to the given Registers vector.

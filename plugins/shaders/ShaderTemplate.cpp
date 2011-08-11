@@ -663,7 +663,7 @@ void ShaderTemplate::parseDefinition()
     // Construct a local deftokeniser to parse the unparsed block
     parser::BasicDefTokeniser<std::string> tokeniser(
         _blockContents,
-        " \t\n\v\r",    // delimiters (whitespace)
+		parser::WHITESPACE, // delimiters (whitespace)
         "{}(),"  // add the comma character to the kept delimiters
     );
 

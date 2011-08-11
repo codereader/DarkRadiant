@@ -59,7 +59,8 @@ private:
     // relevant GL parameters directly.
 	void applyState(OpenGLState& current,
                     unsigned int globalStateMask,
-                    const Vector3& viewer);
+                    const Vector3& viewer,
+					std::size_t time);
 
 	// Render all of our contained TransformedRenderables
 	void renderAllContained(OpenGLState& current,
