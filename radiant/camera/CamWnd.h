@@ -1,5 +1,4 @@
-#ifndef CAMWND_H_
-#define CAMWND_H_
+#pragma once
 
 #include "iscenegraph.h"
 #include "irender.h"
@@ -8,6 +7,7 @@
 #include "gtkutil/FreezePointer.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/GladeWidgetHolder.h"
+#include "gtkutil/Timer.h"
 #include "selection/RadiantWindowObserver.h"
 
 #include "view.h"
@@ -30,6 +30,7 @@ class CamWnd :
     public sigc::trackable,
     private gtkutil::GladeWidgetHolder
 {
+private:
     // Outer GUI widget (containing toolbar and GL widget)
     Gtk::Container* _mainWidget;
 
@@ -64,6 +65,8 @@ class CamWnd :
 	std::size_t _mapValidHandle;
 
 	Rectangle _dragRectangle;
+
+	gtkutil::Timer _timer;
 
 public:
 	SelectionSystemWindowObserver* m_window_observer;
@@ -138,6 +141,9 @@ public:
 	void farClipPlaneIn();
 	void farClipPlaneOut();
 
+	void startRenderTime();
+	void stopRenderTime();
+
 private:
     void constructGUIComponents();
     void constructToolbar();
@@ -166,6 +172,7 @@ private:
 
 	void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
 	void _onFreelookMotion(int x, int y, guint state);
+	static gboolean _onFrame(gpointer data);
 };
 
 /**
@@ -173,5 +180,3 @@ private:
  */
 typedef boost::shared_ptr<CamWnd> CamWndPtr;
 typedef boost::weak_ptr<CamWnd> CamWndWeakPtr;
-
-#endif /*CAMWND_H_*/

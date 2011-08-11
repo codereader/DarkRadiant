@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
@@ -64,10 +64,42 @@
         <child>
           <object class="GtkSeparatorToolItem" id="separator">
             <property name="visible">True</property>
-            <property name="draw">False</property>
           </object>
           <packing>
-            <property name="expand">True</property>
+            <property name="expand">False</property>
+            <property name="homogeneous">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToolButton" id="startTimeButton">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Start Render Time</property>
+            <property name="use_underline">True</property>
+            <property name="stock_id">gtk-media-play</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="homogeneous">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkToolButton" id="stopTimeButton">
+            <property name="visible">True</property>
+            <property name="label" translatable="yes">Stop Render Time</property>
+            <property name="use_underline">True</property>
+            <property name="stock_id">gtk-stop</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="homogeneous">True</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparatorToolItem" id="separator1">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
             <property name="homogeneous">True</property>
           </packing>
         </child>
