@@ -43,12 +43,10 @@ void	main()
 	var_tex_diffuse_bump.st = (gl_TextureMatrix[0] * attr_TexCoord0).st;
 
 	// transform texcoords into bumpmap texture space
-	// greebo: Use texture matrix 0, instead of 1, tex unit 1 is not fed with coords (#2405)
-	var_tex_diffuse_bump.pq = (gl_TextureMatrix[0] * attr_TexCoord0).st;
+	var_tex_diffuse_bump.pq = (gl_TextureMatrix[1] * attr_TexCoord0).st;
 
 	// transform texcoords into specularmap texture space
-	// greebo: Use texture matrix 0, instead of 1, tex unit 1 is not fed with coords (#2405)
-	var_tex_specular = (gl_TextureMatrix[0] * attr_TexCoord0).st;
+	var_tex_specular = (gl_TextureMatrix[2] * attr_TexCoord0).st;
 
 	// calc light xy,z attenuation in light space
 	var_tex_atten_xy_z = gl_TextureMatrix[3] * gl_Vertex;
