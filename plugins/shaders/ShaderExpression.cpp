@@ -51,8 +51,7 @@ public:
 		if (_buffer.empty())
 		{
 			// Pull a new token from the underlying stream and split it up
-			std::string rawToken = _tokeniser.nextToken();
-			boost::algorithm::split(_buffer, rawToken, boost::algorithm::is_any_of(_delims));
+			fillBuffer(_tokeniser.nextToken());
 		}
 
 		std::string result = _buffer.front();
@@ -72,12 +71,23 @@ public:
 		// No items in the buffer, take a peek in the underlying stream
 		std::string rawToken = _tokeniser.peek();
 
-		// Split up the token if necessary
-		std::vector<std::string> tokens;
-		boost::algorithm::split(tokens, rawToken, boost::algorithm::is_any_of(_delims));
+		// Split up the token by using a sub-tokeniser, keeping all delimiters
+		parser::BasicDefTokeniser<std::string> subtokeniser(rawToken, "", _delims);
+		
+		// Return the first of these tokens, then exit
+		return subtokeniser.nextToken();
+	}
 
-		// Return the first of these tokens
-		return tokens.front();
+private:
+	void fillBuffer(const std::string& token)
+	{
+		// Use a separate tokeniser and keep all delimiters
+		parser::BasicDefTokeniser<std::string> subtokeniser(token, "", _delims);
+
+		while (subtokeniser.hasMoreTokens())
+		{
+			_buffer.push_back(subtokeniser.nextToken());
+		}
 	}
 };
 
@@ -387,7 +397,7 @@ IShaderExpressionPtr ShaderExpression::createFromTokens(parser::DefTokeniser& to
 
 IShaderExpressionPtr ShaderExpression::createFromString(const std::string& exprStr)
 {
-	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "()[]-+*/%");
+	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "{}(),");
 	return createFromTokens(tokeniser);
 }
 
