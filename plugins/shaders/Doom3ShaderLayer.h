@@ -83,6 +83,9 @@ private:
 	TexGenType _texGenType;
 	float _texGenParams[3]; // 3 parameters for wobblesky texgen
 
+	// The register indices of this stage's scale expressions
+	std::size_t _scale[2];
+
 public:
 
 	// Constructor
@@ -247,10 +250,27 @@ public:
      * Set a texture object (overrides the map expression when getTexture is
      * called).
      */
-    void setTexture(TexturePtr tex)
+    void setTexture(const TexturePtr& tex)
     {
         _texture = tex;
     }
+
+	Vector2 getScale() 
+	{
+		return Vector2(_registers[_scale[0]], _registers[_scale[1]]);
+	}
+
+	/**
+	 * Set the scale expressions of this stage, overwriting any previous scales.
+	 */
+	void setScale(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
+	{
+		_expressions.push_back(xExpr);
+		_expressions.push_back(yExpr);
+
+		_scale[0] = xExpr->linkToRegister(_registers);
+		_scale[1] = yExpr->linkToRegister(_registers);
+	}
 
     /**
      * \brief
