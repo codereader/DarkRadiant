@@ -28,39 +28,51 @@ float TableDefinition::getValue(float index)
 		return 0.0f;
 	}
 
-	// Ensure that index is within bounds if clamp is active
+	if (_values.size() == 1)
+	{
+		return _values[0];
+	}
+
 	if (_clamp)
 	{
-		if (index < 0) 
+		if (index > 1.0f) 
 		{
-			index = 0;
+			index = 1.0f - 1.0f / _values.size();
+		}
+		else if (index < 0.0f) 
+		{
+			index = 0.0f;
 		}
 
-		if (index > _values.size() - 1)
-		{
-			index = _values.size() - 1;
-		}
+		// Map the index to the [0..N-1] interval
+		index *= _values.size() - 1;
 	}
-	else if (index > _values.size() - 1)
+	else
 	{
-		// No clamping, wrap around the bounds
-		index = std::fmod(index, _values.size() - 1);
+		// Only take the fractional part of the index
+		index = std::fmod(index, 1.0f);
+
+		// Map the index to the [0..N] interval
+		index *= _values.size();
 	}
 
-	// Calculate the index into our std::vector
-	std::size_t lookupIndex = static_cast<std::size_t>(std::floor(index + 0.5f));
-
+	// If snap is active, round the values to the nearest integer
 	if (_snap)
 	{
-		// Snap is activated, round to the nearest integer
-		return _values[lookupIndex];
-	}
+		index = std::floor(index + 0.5f);
 
-	// No snapping, interpolate between this and the next value
-	float fraction = index - lookupIndex;
-	std::size_t nextIndex = (lookupIndex + 1) % _values.size();
-	
-	return (1-fraction)*_values[lookupIndex] + fraction*_values[nextIndex];
+		return _values[static_cast<std::size_t>(index) % _values.size()];
+	}
+	else
+	{
+		// No snapping, pick the interpolation values
+		std::size_t leftIdx = static_cast<std::size_t>(std::floor(index)) % _values.size();
+		std::size_t rightIdx = (leftIdx + 1) % _values.size();
+
+		float fraction = index - leftIdx;
+
+		return (1-fraction)*_values[leftIdx] + fraction*_values[rightIdx];
+	}
 }
 
 void TableDefinition::parseDefinition()
