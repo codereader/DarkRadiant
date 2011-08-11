@@ -114,11 +114,11 @@ public:
 		_condition = conditionExpr->linkToRegister(_registers);
 	}
 
-	void evaluateExpressions() 
+	void evaluateExpressions(std::size_t time) 
 	{
 		for (Expressions::iterator i = _expressions.begin(); i != _expressions.end(); ++i)
 		{
-			(*i)->evaluate();
+			(*i)->evaluate(time);
 		}
 	}
 

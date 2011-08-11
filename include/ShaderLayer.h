@@ -112,7 +112,7 @@ public:
 	 * Evaluate all shader expressions used in this stage. Call this once (each frame) 
 	 * before requesting things like getAlphaTest(), getColour() or isVisible()
 	 */
-	virtual void evaluateExpressions() = 0;
+	virtual void evaluateExpressions(std::size_t time) = 0;
 
 	/**
 	 * The flags set on this stage.

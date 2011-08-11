@@ -17,7 +17,7 @@ inline void setTextureState(GLint& current,
 							GLenum textureUnit,
                             GLenum textureMode)
 {
-    if(texture != current)
+    if (texture != current)
     {
         glActiveTexture(textureUnit);
         glClientActiveTexture(textureUnit);
@@ -32,12 +32,12 @@ inline void setTextureState(GLint& current,
                             const GLint& texture,
                             GLenum textureMode)
 {
-  if(texture != current)
-  {
-    glBindTexture(textureMode, texture);
-    GlobalOpenGL().assertNoErrors();
-    current = texture;
-  }
+	if (texture != current)
+	{
+		glBindTexture(textureMode, texture);
+		GlobalOpenGL().assertNoErrors();
+		current = texture;
+	}
 }
 
 // Utility function to toggle an OpenGL state flag
@@ -46,16 +46,16 @@ inline void setState(unsigned int state,
 					 unsigned int flag,
 					 GLenum glflag)
 {
-  if(delta & state & flag)
-  {
-    glEnable(glflag);
-    GlobalOpenGL().assertNoErrors();
-  }
-  else if(delta & ~state & flag)
-  {
-    glDisable(glflag);
-    GlobalOpenGL().assertNoErrors();
-  }
+	if (delta & state & flag)
+	{
+		glEnable(glflag);
+		GlobalOpenGL().assertNoErrors();
+	}
+	else if(delta & ~state & flag)
+	{
+		glDisable(glflag);
+		GlobalOpenGL().assertNoErrors();
+	}
 }
 
 } // namespace
@@ -64,7 +64,7 @@ inline void setState(unsigned int state,
 
 void OpenGLShaderPass::setTexture0()
 {
-    if(GLEW_VERSION_1_3)
+    if (GLEW_VERSION_1_3)
     {
         glActiveTexture(GL_TEXTURE0);
         glClientActiveTexture(GL_TEXTURE0);
@@ -137,6 +137,7 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
     // mode for all textures, we can't have texture1 as 2D and texture2 as
     // CUBE_MAP for example.
     GLenum textureMode = 0;
+
     if (requiredState & RENDER_TEXTURE_CUBEMAP) // cube map has priority
         textureMode = GL_TEXTURE_CUBE_MAP;
     else if (requiredState & RENDER_TEXTURE_2D)
@@ -203,12 +204,33 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
 // Apply own state to current state object
 void OpenGLShaderPass::applyState(OpenGLState& current,
 					              unsigned int globalStateMask,
-                                  const Vector3& viewer)
+                                  const Vector3& viewer,
+								  std::size_t time)
 {
-  if(_state.renderFlags & RENDER_OVERRIDE)
-  {
-    globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
-  }
+	if (_state.renderFlags & RENDER_OVERRIDE)
+	{
+		globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
+	}
+
+	// Evaluate any shader expressions
+	if (_state.stage0) 
+	{
+		_state.stage0->evaluateExpressions(time);
+
+		// The alpha test value might change over time
+		if (_state.stage0->getAlphaTest() > 0)
+		{
+			_state.renderFlags |= RENDER_ALPHATEST;
+		}
+		else
+		{
+			_state.renderFlags &= ~RENDER_ALPHATEST;
+		}
+	}
+	if (_state.stage1) _state.stage1->evaluateExpressions(time);
+	if (_state.stage2) _state.stage2->evaluateExpressions(time);
+	if (_state.stage3) _state.stage3->evaluateExpressions(time);
+	if (_state.stage4) _state.stage4->evaluateExpressions(time);
 
     // Apply the global state mask to our own desired render flags to determine
     // the final set of flags that must bet set
@@ -224,19 +246,19 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 						  ? _state.glProgram
 						  : 0;
 
-    if(program != current.glProgram)
+    if (program != current.glProgram)
     {
-        if(current.glProgram != 0)
+        if (current.glProgram != 0)
         {
-          current.glProgram->disable();
-          glColor4fv(current.m_colour);
+			current.glProgram->disable();
+			glColor4fv(current.m_colour);
         }
 
         current.glProgram = program;
 
-        if(current.glProgram != 0)
+        if (current.glProgram != 0)
         {
-          current.glProgram->enable();
+			current.glProgram->enable();
         }
     }
 
@@ -247,12 +269,12 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     {
         if(changingBitsMask & requiredState & RENDER_FILL)
         {
-            glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
             GlobalOpenGL().assertNoErrors();
         }
         else if(changingBitsMask & ~requiredState & RENDER_FILL)
         {
-            glPolygonMode (GL_FRONT_AND_BACK, GL_LINE);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
             GlobalOpenGL().assertNoErrors();
         }
 
@@ -425,6 +447,11 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     applyAllTextures(current, requiredState);
 
     // Set the GL colour if it isn't set already
+	if (_state.stage0)
+	{
+		_state.m_colour = _state.stage0->getColour();
+	}
+
     if (_state.m_colour != current.m_colour)
     {
         glColor4fv(_state.m_colour);
@@ -499,7 +526,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
     glMatrixMode(GL_MODELVIEW);
 
 	// Apply our state to the current state object
-	applyState(current, flagsMask, viewer);
+	applyState(current, flagsMask, viewer, time);
 
     // If RENDER_SCREEN is set, just render a quad, otherwise render all
     // objects.

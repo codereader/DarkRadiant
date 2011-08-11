@@ -32,34 +32,38 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 {
     // Iterate over the list of OpenGLStateBuckets, bumpmap and non-bumpmap
     // buckets are handled differently.
-    for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
+    for (Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
     {
-      if(((*i)->state().renderFlags & RENDER_BUMP) != 0)
-      {
-        if(lights != 0)
-        {
-          OpenGLStateBucketAdd add(*(*i), renderable, modelview);
-		  lights->forEachLight(boost::bind(&OpenGLStateBucketAdd::visit, &add, _1));
-        }
-      }
-      else
-      {
-        (*i)->addRenderable(renderable, modelview);
-      }
+		OpenGLShaderPass* pass = *i;
+
+		if ((pass->state().renderFlags & RENDER_BUMP) != 0)
+		{
+			if (lights != NULL)
+			{
+				OpenGLStateBucketAdd add(*pass, renderable, modelview);
+				lights->forEachLight(boost::bind(&OpenGLStateBucketAdd::visit, &add, _1));
+			}
+		}
+		else
+		{
+			pass->addRenderable(renderable, modelview);
+		}
     }
 }
 
-void OpenGLShader::incrementUsed() {
-    if(++m_used == 1 && _material != 0)
+void OpenGLShader::incrementUsed()
+{
+    if (++m_used == 1 && _material)
     {
-      _material->SetInUse(true);
+		_material->SetInUse(true);
     }
 }
 
-void OpenGLShader::decrementUsed() {
-    if(--m_used == 0 && _material != 0)
+void OpenGLShader::decrementUsed()
+{
+    if (--m_used == 0 && _material)
     {
-      _material->SetInUse(false);
+		_material->SetInUse(false);
     }
 }
 
@@ -73,7 +77,8 @@ void OpenGLShader::realise(const std::string& name)
 		// greebo: Check the filtersystem whether we're filtered
 		_material->setVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_TEXTURE, name));
 
-		if (m_used != 0) {
+		if (m_used != 0)
+		{
 			_material->SetInUse(true);
 		}
     }
@@ -84,9 +89,7 @@ void OpenGLShader::realise(const std::string& name)
           ++i)
     {
     	_glStateManager.insertSortedState(
-            OpenGLStates::value_type(
-                (*i)->statePtr(), *i
-            )
+            OpenGLStates::value_type((*i)->statePtr(), *i)
         );
     }
 
@@ -139,6 +142,7 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
     if (triplet.diffuse)
     {
         pass.texture0 = triplet.diffuse->getTexture()->getGLTexNum();
+		pass.stage0 = triplet.diffuse;
     }
     else
     {
@@ -146,9 +150,11 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
             ShaderLayer::DIFFUSE
         )->getGLTexNum();
     }
+
     if (triplet.bump)
     {
         pass.texture1 = triplet.bump->getTexture()->getGLTexNum();
+		pass.stage1 = triplet.bump;
     }
     else
     {
@@ -156,9 +162,11 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
             ShaderLayer::BUMP
         )->getGLTexNum();
     }
+
     if (triplet.specular)
     {
         pass.texture2 = triplet.specular->getTexture()->getGLTexNum();
+		pass.stage2 = triplet.specular;
     }
     else
     {
@@ -206,7 +214,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     // Add the DBS pass
     OpenGLState& dbsPass = appendDefaultPass();
 
-    // Populate the textures
+    // Populate the textures and remember the stage reference
     setGLTexturesFromTriplet(dbsPass, triplet);
 
     // Set render flags
@@ -234,12 +242,12 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
             dbsPass.renderFlags |= RENDER_VCOL_INVERT;
         }
     }
+
     applyAlphaTestToPass(dbsPass, alphaTest);
 
 	// Apply the diffuse colour modulation
 	if (triplet.diffuse)
 	{
-		triplet.diffuse->evaluateExpressions();
 		dbsPass.m_colour = triplet.diffuse->getColour();
 	}
 
@@ -275,7 +283,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
          ++i)
     {
 		// Make sure we had at least one evaluation call to fill the material registers
-		(*i)->evaluateExpressions();
+		(*i)->evaluateExpressions(0);
 
         switch ((*i)->getType())
         {
