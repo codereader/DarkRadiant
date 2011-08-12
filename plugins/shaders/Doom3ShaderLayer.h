@@ -95,6 +95,10 @@ private:
 	// The register indices of this stage's shear expressions
 	std::size_t _shear[2];
 
+	// The shader programs used in this stage
+	std::string _vertexProgram;
+	std::string _fragmentProgram;
+
 public:
 
 	// Constructor
@@ -367,6 +371,28 @@ public:
 	{
 		_registers.push_back(newVal);
 		return _registers.size() - 1;
+	}
+
+	// Vertex program name
+	const std::string& getVertexProgram()
+	{
+		return _vertexProgram;
+	}
+
+	void setVertexProgram(const std::string& name)
+	{
+		_vertexProgram = name;
+	}
+
+	// Fragment program name
+	const std::string& getFragmentProgram()
+	{
+		return _fragmentProgram;
+	}
+
+	void setFragmentProgram(const std::string& name)
+	{
+		_fragmentProgram = name;
 	}
 };
 
