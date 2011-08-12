@@ -212,5 +212,15 @@ float Doom3ShaderLayer::getAlphaTest() const
     return _registers[_alphaTest];
 }
 
+TexturePtr Doom3ShaderLayer::getFragmentMap(int index)
+{
+	if (index < 0 || index >= _fragmentMaps.size())
+	{
+		return TexturePtr();
+	}
+
+	return GetTextureManager().getBinding(_fragmentMaps[index]);
+}
+
 }
 

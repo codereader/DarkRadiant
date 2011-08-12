@@ -394,16 +394,22 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 
 		IShaderExpressionPtr parm0 = ShaderExpression::createFromTokens(tokeniser);
 
-		if (tokeniser.nextToken() == ",")
+		if (tokeniser.peek() == ",")
 		{
+			tokeniser.nextToken();
+
 			IShaderExpressionPtr parm1 = ShaderExpression::createFromTokens(tokeniser);
 
-			if (tokeniser.nextToken() == ",")
+			if (tokeniser.peek() == ",")
 			{
+				tokeniser.nextToken();
+
 				IShaderExpressionPtr parm2 = ShaderExpression::createFromTokens(tokeniser);
 
-				if (tokeniser.nextToken() == ",")
+				if (tokeniser.peek() == ",")
 				{
+					tokeniser.nextToken();
+
 					IShaderExpressionPtr parm3 = ShaderExpression::createFromTokens(tokeniser);
 
 					// All 4 layers specified
@@ -426,6 +432,29 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 			// Pass only one component, the shaderlayer will repeat the first parm 4 times
 			_currentLayer->setVertexParm(parmNum, parm0);
 		}
+	}
+	else if (token == "fragmentmap")
+	{
+		// fragmentMap <index> [options] <map>
+		int mapNum = strToInt(tokeniser.nextToken());
+
+		std::string next = tokeniser.peek();
+		boost::algorithm::to_lower(next);
+
+		// These are all valid option keywords
+		while (next == "cubemap" || next == "cameracubemap" || next == "nearest" ||
+			next == "linear" || next == "clamp" || next == "noclamp" ||
+			next == "zeroclamp" || next == "alphazeroclamp" || next == "forcehighquality" ||
+			next == "uncompressed" || next == "highquality" || next == "nopicmip")
+		{
+			tokeniser.nextToken();
+
+			next = tokeniser.peek();
+			boost::algorithm::to_lower(next);
+		}
+
+		// Get the map expression (but don't really use it)
+		_currentLayer->setFragmentMap(mapNum, MapExpression::createForToken(tokeniser));
 	}
     else if (token == "alphatest")
     {
