@@ -387,6 +387,46 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		_currentLayer->setFragmentProgram(prog);
 		_currentLayer->setVertexProgram(prog);
 	}
+	else if (token == "vertexparm")
+	{
+		// vertexParm		<parmNum>		<parm1> [,<parm2>] [,<parm3>] [,<parm4>]
+		int parmNum = strToInt(tokeniser.nextToken());
+
+		IShaderExpressionPtr parm0 = ShaderExpression::createFromTokens(tokeniser);
+
+		if (tokeniser.nextToken() == ",")
+		{
+			IShaderExpressionPtr parm1 = ShaderExpression::createFromTokens(tokeniser);
+
+			if (tokeniser.nextToken() == ",")
+			{
+				IShaderExpressionPtr parm2 = ShaderExpression::createFromTokens(tokeniser);
+
+				if (tokeniser.nextToken() == ",")
+				{
+					IShaderExpressionPtr parm3 = ShaderExpression::createFromTokens(tokeniser);
+
+					// All 4 layers specified
+					_currentLayer->setVertexParm(parmNum, parm0, parm1, parm2, parm3);
+				}
+				else
+				{
+					// Pass NULL as fourth component, it will be set to 1 by the shaderlayer
+					_currentLayer->setVertexParm(parmNum, parm0, parm1, parm2);
+				}
+			}
+			else
+			{
+				// Pass NULL as components z and w, the shaderlayer will set z and w to 0, 1
+				_currentLayer->setVertexParm(parmNum, parm0, parm1);
+			}
+		}
+		else
+		{
+			// Pass only one component, the shaderlayer will repeat the first parm 4 times
+			_currentLayer->setVertexParm(parmNum, parm0);
+		}
+	}
     else if (token == "alphatest")
     {
 		// Get the alphatest expression
