@@ -89,6 +89,9 @@ private:
 	// The register indices of this stage's translate expressions
 	std::size_t _translation[2];
 
+	// The rotation register index
+	std::size_t _rotation;
+
 public:
 
 	// Constructor
@@ -290,6 +293,21 @@ public:
 
 		_translation[0] = xExpr->linkToRegister(_registers);
 		_translation[1] = yExpr->linkToRegister(_registers);
+	}
+
+	float getRotation() 
+	{
+		return _registers[_rotation];
+	}
+
+	/**
+	 * Set the "rotate" expression of this stage, overwriting any previous one.
+	 */
+	void setRotation(const IShaderExpressionPtr& expr)
+	{
+		_expressions.push_back(expr);
+
+		_rotation = expr->linkToRegister(_registers);
 	}
 
     /**

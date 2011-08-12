@@ -109,6 +109,9 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_translation[0] = REG_ZERO;
 	_translation[1] = REG_ZERO;
 
+	// Rotation is set to 0 by default
+	_rotation = REG_ZERO;
+
 	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = 0;
 }
 

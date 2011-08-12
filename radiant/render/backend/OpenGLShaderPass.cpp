@@ -146,8 +146,16 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerP
 			0, 0, 1, 0,
 			translation.x(), translation.y(), 0, 1
 		);
+		
+		float rotate = stage->getRotation();
+		float angle = rotate * 2 * static_cast<float>(c_pi);
+		
+		Matrix4 rot = Matrix4::getRotationAboutZ(angle);		
 
-		glLoadMatrixf(tex);
+		Matrix4 trans1 = Matrix4::getTranslation(Vector3(-0.5f, -0.5f, 0));
+		Matrix4 trans2 = Matrix4::getTranslation(Vector3(+0.5f, +0.5f, 0));
+
+		glLoadMatrixf(tex.getMultipliedBy(trans2.getMultipliedBy(rot.getMultipliedBy(trans1))));
 	}
 	else
 	{

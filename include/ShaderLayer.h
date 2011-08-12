@@ -196,6 +196,11 @@ public:
 	 */
 	virtual Vector2 getTranslation() = 0;
 
+	/**
+	 * Returns the value of the rotate expression of this stage.
+	 */
+	virtual float getRotation() = 0;
+
     /**
      * \brief
      * Get the alpha test value for this layer.
