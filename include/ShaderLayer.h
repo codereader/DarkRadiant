@@ -222,6 +222,16 @@ public:
 	 * conditional ones return the result of the most recent condition expression evaluation.
 	 */
 	virtual bool isVisible() const = 0;
+
+	/**
+	 * Returns the name of this stage's fragment program.
+	 */
+	virtual const std::string& getVertexProgram() = 0;
+
+	/**
+	 * Returns the name of this stage's fragment program.
+	 */
+	virtual const std::string& getFragmentProgram() = 0;
 };
 
 /**

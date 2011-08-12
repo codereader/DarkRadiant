@@ -373,6 +373,20 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RGBA, expr);
 	}
+	else if (token == "fragmentprogram")
+	{
+		_currentLayer->setFragmentProgram(tokeniser.nextToken());
+	}
+	else if (token == "vertexprogram")
+	{
+		_currentLayer->setVertexProgram(tokeniser.nextToken());
+	}
+	else if (token == "program")
+	{
+		std::string prog = tokeniser.nextToken();
+		_currentLayer->setFragmentProgram(prog);
+		_currentLayer->setVertexProgram(prog);
+	}
     else if (token == "alphatest")
     {
 		// Get the alphatest expression
