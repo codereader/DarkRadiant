@@ -138,7 +138,16 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerP
 	if (stage)
 	{
 		Vector2 scale = stage->getScale();
-		glLoadMatrixf(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
+		Vector2 translation = stage->getTranslation();
+
+		Matrix4 tex = Matrix4::byColumns(
+			scale.x(), 0, 0, 0, 
+			0, scale.y(), 0, 0,
+			0, 0, 1, 0,
+			translation.x(), translation.y(), 0, 1
+		);
+
+		glLoadMatrixf(tex);
 	}
 	else
 	{
@@ -496,8 +505,6 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 }
 
 // DEBUG: Stream insertion for RendererLight
-
-#include "math/AABB.h"
 
 inline
 std::ostream& operator<< (std::ostream& os, const RendererLight& light) {

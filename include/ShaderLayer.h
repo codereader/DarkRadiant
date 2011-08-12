@@ -191,6 +191,11 @@ public:
 	 */
 	virtual Vector2 getScale() = 0;
 
+	/**
+	 * Returns the value of the translate expressions of this stage.
+	 */
+	virtual Vector2 getTranslation() = 0;
+
     /**
      * \brief
      * Get the alpha test value for this layer.
