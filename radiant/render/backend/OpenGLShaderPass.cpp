@@ -156,6 +156,22 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerP
 			// Regular scale, apply translation and scale
 			tex.multiplyBy(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
 		}
+
+		Vector2 shear = stage->getShear();
+
+		if (shear.x() != 0 || shear.y() != 0)
+		{
+			Matrix4 shearMatrix = Matrix4::byColumns(
+				1, shear.y(), 0, 0,
+				shear.x(), 1, 0, 0,
+				0, 0, 1, 0,
+				0, 0, 0, 1
+			);
+
+			tex.multiplyBy(transMinusHalf);
+			tex.multiplyBy(shearMatrix);
+			tex.multiplyBy(transPlusHalf);
+		}
 		
 		// Rotation
 		float rotate = stage->getRotation();

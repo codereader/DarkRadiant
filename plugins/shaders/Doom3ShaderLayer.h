@@ -92,6 +92,9 @@ private:
 	// The rotation register index
 	std::size_t _rotation;
 
+	// The register indices of this stage's shear expressions
+	std::size_t _shear[2];
+
 public:
 
 	// Constructor
@@ -308,6 +311,23 @@ public:
 		_expressions.push_back(expr);
 
 		_rotation = expr->linkToRegister(_registers);
+	}
+
+	Vector2 getShear() 
+	{
+		return Vector2(_registers[_shear[0]], _registers[_shear[1]]);
+	}
+
+	/**
+	 * Set the shear expressions of this stage, overwriting any previous ones.
+	 */
+	void setShear(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
+	{
+		_expressions.push_back(xExpr);
+		_expressions.push_back(yExpr);
+
+		_shear[0] = xExpr->linkToRegister(_registers);
+		_shear[1] = yExpr->linkToRegister(_registers);
 	}
 
     /**

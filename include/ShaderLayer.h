@@ -202,6 +202,11 @@ public:
 	 */
 	virtual float getRotation() = 0;
 
+	/**
+	 * Returns the value of the 'shear' expressions of this stage.
+	 */
+	virtual Vector2 getShear() = 0;
+
     /**
      * \brief
      * Get the alpha test value for this layer.

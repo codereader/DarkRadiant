@@ -112,6 +112,10 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	// Rotation is set to 0 by default
 	_rotation = REG_ZERO;
 
+	// No shearing so far
+	_shear[0] = REG_ZERO;
+	_shear[1] = REG_ZERO;
+
 	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = 0;
 }
 
