@@ -405,6 +405,14 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 
 		_currentLayer->setTranslation(xTranslateExpr, yTranslateExpr);
 	}
+	else if (token == "shear")
+	{
+		IShaderExpressionPtr xShearExpr = ShaderExpression::createFromTokens(tokeniser);
+		tokeniser.assertNextToken(",");
+		IShaderExpressionPtr yShearExpr = ShaderExpression::createFromTokens(tokeniser);
+
+		_currentLayer->setShear(xShearExpr, yShearExpr);
+	}
 	else if (token == "rotate")
 	{
 		IShaderExpressionPtr rotExpr = ShaderExpression::createFromTokens(tokeniser);
