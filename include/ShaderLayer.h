@@ -6,10 +6,7 @@
 #include <vector>
 
 #include "math/Vector2.h"
-
-// Forward-declare Vector4
-template<typename Element> class BasicVector4;
-typedef BasicVector4<float> Vector4;
+#include "math/Vector4.h"
 
 // Texture repeat types
 enum ClampType
@@ -232,6 +229,11 @@ public:
 	 * Returns the name of this stage's fragment program.
 	 */
 	virtual const std::string& getFragmentProgram() = 0;
+
+	/**
+	 * Returns the 4 parameter values for the vertexParm index <parm>.
+	 */
+	virtual Vector4 getVertexParm(int parm) = 0;
 };
 
 /**
