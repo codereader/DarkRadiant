@@ -234,6 +234,16 @@ public:
 	 * Returns the 4 parameter values for the vertexParm index <parm>.
 	 */
 	virtual Vector4 getVertexParm(int parm) = 0;
+
+	/**
+	 * Returns the number of fragment maps in this stage.
+	 */
+	virtual std::size_t getNumFragmentMaps() = 0;
+
+	/**
+	 * Returns the fragment map with the given index. 
+	 */
+	virtual TexturePtr getFragmentMap(int index) = 0;
 };
 
 /**

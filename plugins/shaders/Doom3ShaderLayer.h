@@ -103,6 +103,9 @@ private:
 	// since a single vertex parm consists of 4 values, the _vertexParms array is usually of size 0, 4, 8, etc.
 	std::vector<std::size_t> _vertexParms;
 
+	// The array of fragment maps
+	std::vector<MapExpressionPtr> _fragmentMaps;
+
 public:
 
 	// Constructor
@@ -460,6 +463,25 @@ public:
 	void setFragmentProgram(const std::string& name)
 	{
 		_fragmentProgram = name;
+	}
+
+	std::size_t getNumFragmentMaps()
+	{
+		return _fragmentMaps.size();
+	}
+
+	TexturePtr getFragmentMap(int index);
+
+	void setFragmentMap(int index, const MapExpressionPtr& map)
+	{
+		assert(index >= 0);
+
+		if (index >= _fragmentMaps.size())
+		{
+			_fragmentMaps.resize(index + 1);
+		}
+
+		_fragmentMaps[index] = map;
 	}
 };
 
