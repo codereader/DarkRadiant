@@ -86,6 +86,9 @@ private:
 	// The register indices of this stage's scale expressions
 	std::size_t _scale[2];
 
+	// The register indices of this stage's translate expressions
+	std::size_t _translation[2];
+
 public:
 
 	// Constructor
@@ -270,6 +273,23 @@ public:
 
 		_scale[0] = xExpr->linkToRegister(_registers);
 		_scale[1] = yExpr->linkToRegister(_registers);
+	}
+
+	Vector2 getTranslation() 
+	{
+		return Vector2(_registers[_translation[0]], _registers[_translation[1]]);
+	}
+
+	/**
+	 * Set the "translate" expressions of this stage, overwriting any previous expressions.
+	 */
+	void setTranslation(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
+	{
+		_expressions.push_back(xExpr);
+		_expressions.push_back(yExpr);
+
+		_translation[0] = xExpr->linkToRegister(_registers);
+		_translation[1] = yExpr->linkToRegister(_registers);
 	}
 
     /**

@@ -101,8 +101,13 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_colour[2] = REG_ONE;
 	_colour[3] = REG_ONE;
 
+	// Scale is set to 1,1 by default
 	_scale[0] = REG_ONE;
 	_scale[1] = REG_ONE;
+
+	// Translation is set to 0,0 by default
+	_translation[0] = REG_ZERO;
+	_translation[1] = REG_ZERO;
 
 	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = 0;
 }

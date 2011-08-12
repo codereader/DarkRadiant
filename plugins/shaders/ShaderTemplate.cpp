@@ -388,6 +388,14 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 
 		_currentLayer->setScale(xScaleExpr, yScaleExpr);
 	}
+	else if (token == "translate")
+	{
+		IShaderExpressionPtr xTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
+		tokeniser.assertNextToken(",");
+		IShaderExpressionPtr yTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
+
+		_currentLayer->setTranslation(xTranslateExpr, yTranslateExpr);
+	}
 	else if (token == "colored")
 	{
 		_currentLayer->setStageFlag(ShaderLayer::FLAG_COLOURED);
