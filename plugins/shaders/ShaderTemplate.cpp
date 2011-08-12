@@ -388,6 +388,15 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 
 		_currentLayer->setScale(xScaleExpr, yScaleExpr);
 	}
+	else if (token == "centerscale")
+	{
+		IShaderExpressionPtr xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		tokeniser.assertNextToken(",");
+		IShaderExpressionPtr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+
+		_currentLayer->setScale(xScaleExpr, yScaleExpr);
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_CENTERSCALE);	// enable centerScale
+	}
 	else if (token == "translate" || token == "scroll")
 	{
 		IShaderExpressionPtr xTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
