@@ -388,13 +388,19 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 
 		_currentLayer->setScale(xScaleExpr, yScaleExpr);
 	}
-	else if (token == "translate")
+	else if (token == "translate" || token == "scroll")
 	{
 		IShaderExpressionPtr xTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
 		IShaderExpressionPtr yTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		_currentLayer->setTranslation(xTranslateExpr, yTranslateExpr);
+	}
+	else if (token == "rotate")
+	{
+		IShaderExpressionPtr rotExpr = ShaderExpression::createFromTokens(tokeniser);
+
+		_currentLayer->setRotation(rotExpr);
 	}
 	else if (token == "colored")
 	{
