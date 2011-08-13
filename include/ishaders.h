@@ -77,6 +77,7 @@ public:
 		FLAG_FORCEOPAQUE			= 1 << 6,		// forceOpaque
 		FLAG_NOFOG					= 1 << 7,		// noFog
 		FLAG_UNSMOOTHEDTANGENTS		= 1 << 8,		// unsmoothedTangents
+		FLAG_MIRROR					= 1 << 9,		// mirror
 	};
 
 	// Surface Flags

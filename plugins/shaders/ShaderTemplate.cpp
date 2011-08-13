@@ -157,6 +157,10 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	{
 		_materialFlags |= Material::FLAG_UNSMOOTHEDTANGENTS;
 	}
+	else if (token == "mirror")
+	{
+		_materialFlags |= Material::FLAG_MIRROR;
+	}
 	else
 	{
 		return false; // unrecognised token, return false
@@ -392,6 +396,29 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		else
 		{
 			globalWarningStream() << "Could not parse alpha expression in shader: " << getName() << std::endl;
+		}
+	}
+	else if (token == "color")
+	{
+		// color <exp0>, <exp1>, <exp2>, <exp3>
+		IShaderExpressionPtr red = ShaderExpression::createFromTokens(tokeniser);
+		tokeniser.assertNextToken(",");
+		IShaderExpressionPtr green = ShaderExpression::createFromTokens(tokeniser);
+		tokeniser.assertNextToken(",");
+		IShaderExpressionPtr blue = ShaderExpression::createFromTokens(tokeniser);
+		tokeniser.assertNextToken(",");
+		IShaderExpressionPtr alpha = ShaderExpression::createFromTokens(tokeniser);
+
+		if (red && green && blue && alpha)
+		{
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RED, red);
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_GREEN, green);
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_BLUE, blue);
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_ALPHA, alpha);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse color expressions in shader: " << getName() << std::endl;
 		}
 	}
 	else if (token == "rgb")
