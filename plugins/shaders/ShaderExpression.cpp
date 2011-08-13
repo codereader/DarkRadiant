@@ -305,6 +305,8 @@ private:
 		}
 		else if (boost::algorithm::iequals("fragmentprograms", token))
 		{
+			_tokeniser.nextToken(); // valid token, exhaust
+
 			// There's no fragmentPrograms option in DR, let's assume true
 			return IShaderExpressionPtr(new ConstantExpression(1));
 		}
