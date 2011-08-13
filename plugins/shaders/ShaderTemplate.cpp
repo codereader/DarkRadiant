@@ -153,6 +153,10 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	{
 		_materialFlags |= Material::FLAG_NOFOG;
 	}
+	else if (token == "noportalfog")
+	{
+		_materialFlags |= Material::FLAG_NOPORTALFOG;
+	}
 	else if (token == "unsmoothedtangents")
 	{
 		_materialFlags |= Material::FLAG_UNSMOOTHEDTANGENTS;
