@@ -345,33 +345,81 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "red")
 	{
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
-		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RED, expr);
+		
+		if (expr)
+		{
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RED, expr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse red expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "green")
 	{
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
-		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_GREEN, expr);
+
+		if (expr)
+		{
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_GREEN, expr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse green expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "blue")
 	{
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
-		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_BLUE, expr);
+		
+		if (expr)
+		{
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_BLUE, expr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse blue expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "alpha")
 	{
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
-		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_ALPHA, expr);
+		
+		if (expr)
+		{
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_ALPHA, expr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse alpha expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "rgb")
 	{
 		// Get the colour value
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
-		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RGB, expr);
+
+		if (expr)
+		{
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RGB, expr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse rgb expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "rgba")
 	{
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
-		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RGBA, expr);
+
+		if (expr)
+		{
+			_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RGBA, expr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse rgba expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "fragmentprogram")
 	{
@@ -460,8 +508,15 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
     {
 		// Get the alphatest expression
 		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
-		       
-        _currentLayer->setAlphaTest(expr);
+		   
+		if (expr)
+		{
+			_currentLayer->setAlphaTest(expr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse alphatest expression in shader: " << getName() << std::endl;
+		}		
     }
 	else if (token == "scale")
 	{
@@ -469,7 +524,14 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		tokeniser.assertNextToken(",");
 		IShaderExpressionPtr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 
-		_currentLayer->setScale(xScaleExpr, yScaleExpr);
+		if (xScaleExpr && yScaleExpr)
+		{
+			_currentLayer->setScale(xScaleExpr, yScaleExpr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse scale expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "centerscale")
 	{
@@ -477,8 +539,15 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		tokeniser.assertNextToken(",");
 		IShaderExpressionPtr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 
-		_currentLayer->setScale(xScaleExpr, yScaleExpr);
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_CENTERSCALE);	// enable centerScale
+		if (xScaleExpr && yScaleExpr)
+		{
+			_currentLayer->setScale(xScaleExpr, yScaleExpr);
+			_currentLayer->setStageFlag(ShaderLayer::FLAG_CENTERSCALE);	// enable centerScale
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse centerScale expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "translate" || token == "scroll")
 	{
@@ -486,7 +555,14 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		tokeniser.assertNextToken(",");
 		IShaderExpressionPtr yTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
 
-		_currentLayer->setTranslation(xTranslateExpr, yTranslateExpr);
+		if (xTranslateExpr && yTranslateExpr)
+		{
+			_currentLayer->setTranslation(xTranslateExpr, yTranslateExpr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "shear")
 	{
@@ -494,13 +570,27 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		tokeniser.assertNextToken(",");
 		IShaderExpressionPtr yShearExpr = ShaderExpression::createFromTokens(tokeniser);
 
-		_currentLayer->setShear(xShearExpr, yShearExpr);
+		if (xShearExpr && yShearExpr)
+		{
+			_currentLayer->setShear(xShearExpr, yShearExpr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "rotate")
 	{
 		IShaderExpressionPtr rotExpr = ShaderExpression::createFromTokens(tokeniser);
 
-		_currentLayer->setRotation(rotExpr);
+		if (rotExpr)
+		{
+			_currentLayer->setRotation(rotExpr);
+		}
+		else
+		{
+			globalWarningStream() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
+		}
 	}
 	else if (token == "colored")
 	{
