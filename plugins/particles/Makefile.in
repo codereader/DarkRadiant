@@ -67,10 +67,12 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
-particles_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la
+particles_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
+	$(top_builddir)/libs/gtkutil/libgtkutil.la
 am_particles_la_OBJECTS = ParticlesManager.lo particles.lo \
-	ParticleStage.lo RenderableParticle.lo \
-	RenderableParticleStage.lo RenderableParticleBunch.lo
+	ParticleParameter.lo ParticleStage.lo RenderableParticle.lo \
+	RenderableParticleStage.lo RenderableParticleBunch.lo \
+	ParticleEditor.lo
 particles_la_OBJECTS = $(am_particles_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -287,19 +289,27 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs 
+AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs $(GTKMM_CFLAGS)
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = particles.la
 particles_la_LDFLAGS = -module -avoid-version \
-                       ${GL_LIBS}
+                       $(GL_LIBS) \
+                       $(GTKMM_LIBS) \
+                       $(BOOST_FILESYSTEM_LIBS) \
+                       $(REGEX_LIBS) \
+                       $(BOOST_SYSTEM_LIBS)
 
-particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la
+particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
+                      $(top_builddir)/libs/gtkutil/libgtkutil.la
+
 particles_la_SOURCES = ParticlesManager.cpp \
-		       particles.cpp \
-		       ParticleStage.cpp \
-		       RenderableParticle.cpp \
-		       RenderableParticleStage.cpp \
-		       RenderableParticleBunch.cpp
+                       particles.cpp \
+                       ParticleParameter.cpp \
+                       ParticleStage.cpp \
+                       RenderableParticle.cpp \
+                       RenderableParticleStage.cpp \
+                       RenderableParticleBunch.cpp \
+                       editor/ParticleEditor.cpp
 
 all: all-am
 
@@ -375,6 +385,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleParameter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleStage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticlesManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableParticle.Plo@am__quote@
@@ -405,6 +417,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+ParticleEditor.lo: editor/ParticleEditor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ParticleEditor.lo -MD -MP -MF $(DEPDIR)/ParticleEditor.Tpo -c -o ParticleEditor.lo `test -f 'editor/ParticleEditor.cpp' || echo '$(srcdir)/'`editor/ParticleEditor.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ParticleEditor.Tpo $(DEPDIR)/ParticleEditor.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='editor/ParticleEditor.cpp' object='ParticleEditor.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ParticleEditor.lo `test -f 'editor/ParticleEditor.cpp' || echo '$(srcdir)/'`editor/ParticleEditor.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

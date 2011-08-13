@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "iselectiontest.h"
 
 #include "generic/callback.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 #include "undolib.h"
 #include "scenelib.h"
 

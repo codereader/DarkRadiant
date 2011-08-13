@@ -70,9 +70,9 @@ LTLIBRARIES = $(modules_LTLIBRARIES)
 shaders_la_DEPENDENCIES = $(top_builddir)/libs/xmlutil/libxmlutil.la
 am_shaders_la_OBJECTS = ShaderTemplate.lo CameraCubeMapDecl.lo \
 	CShader.lo ShaderLibrary.lo MapExpression.lo \
-	ShaderFileLoader.lo plugin.lo TextureManipulator.lo \
-	ImageFileLoader.lo GLTextureManager.lo Doom3ShaderSystem.lo \
-	Doom3ShaderLayer.lo
+	ShaderExpression.lo ShaderFileLoader.lo TableDefinition.lo \
+	plugin.lo TextureManipulator.lo ImageFileLoader.lo \
+	GLTextureManager.lo Doom3ShaderSystem.lo Doom3ShaderLayer.lo
 shaders_la_OBJECTS = $(am_shaders_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -303,7 +303,9 @@ shaders_la_SOURCES = ShaderTemplate.cpp \
                      CShader.cpp \
                      ShaderLibrary.cpp \
                      MapExpression.cpp \
+					 ShaderExpression.cpp \
                      ShaderFileLoader.cpp \
+					 TableDefinition.cpp \
                      plugin.cpp \
                      textures/TextureManipulator.cpp \
                      textures/ImageFileLoader.cpp \
@@ -392,9 +394,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLTextureManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ImageFileLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapExpression.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderExpression.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderFileLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderLibrary.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderTemplate.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TableDefinition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TextureManipulator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
 

@@ -25,7 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "itransformable.h"
 #include "itransformnode.h"
 #include "math/Matrix4.h"
-#include "math/quaternion.h"
+#include "math/Quaternion.h"
 
 /// \brief A transform node which has no effect.
 class IdentityTransform :
