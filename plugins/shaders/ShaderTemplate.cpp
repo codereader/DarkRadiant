@@ -191,6 +191,19 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		// The map token is already loaded in "next", skip the highpoly model name
 		tokeniser.skipTokens(1);
 	}
+	else if (token == "renderbumpflat")
+	{
+		// Skip over this renderbump directive
+		// Syntax: RenderBumpFlat [-size <width> <height>] <modelfile>
+		std::string next = tokeniser.nextToken();
+		boost::algorithm::to_lower(next);
+
+		// Skip over the optional args
+		if (next == "-size")
+		{
+			tokeniser.skipTokens(3); // skip width, height and model
+		}
+	}
 	else
 	{
 		return false; // unrecognised token, return false
