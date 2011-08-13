@@ -303,6 +303,11 @@ private:
 			// No sound support so far
 			return IShaderExpressionPtr(new ConstantExpression(0));
 		}
+		else if (boost::algorithm::iequals("fragmentprograms", token))
+		{
+			// There's no fragmentPrograms option in DR, let's assume true
+			return IShaderExpressionPtr(new ConstantExpression(1));
+		}
 		else 
 		{
 			// Check if this keyword is a material lookup table
