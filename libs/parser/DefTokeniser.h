@@ -249,7 +249,9 @@ public:
                             continue;
 
                         default: // false alarm, add the slash and carry on
-                            _state = SEARCHING;
+							// greebo: switch to TOKEN_STARTED, the SEARCHING state might 
+							// overwrite this if the next token is a kept delimiter
+                            _state = TOKEN_STARTED; 
                             tok += "/";
                             // Do not increment next here
                             continue;

@@ -482,6 +482,10 @@ void Doom3ShaderSystem::testShaderExpressionParsing()
 	exprStr = "3 * 5 * -6";
 	expr = createShaderExpressionFromString(exprStr);
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "decalFade[(time - Parm3)/(parm4 - parm3)]";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 }
 
 void Doom3ShaderSystem::shutdownModule()
