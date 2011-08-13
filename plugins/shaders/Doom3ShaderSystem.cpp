@@ -462,6 +462,26 @@ void Doom3ShaderSystem::testShaderExpressionParsing()
 	exprStr = "time";
 	expr = createShaderExpressionFromString(exprStr);
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(2) << std::endl;
+
+	exprStr = "-3 + 5";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3 * -5";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3 * -5 + 4";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3 + -5 * 4";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
+
+	exprStr = "3 * 5 * -6";
+	expr = createShaderExpressionFromString(exprStr);
+	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 }
 
 void Doom3ShaderSystem::shutdownModule()
