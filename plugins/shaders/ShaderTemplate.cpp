@@ -161,6 +161,36 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	{
 		_materialFlags |= Material::FLAG_MIRROR;
 	}
+	else if (token == "renderbump")
+	{
+		// Skip over this renderbump directive
+		// Syntax: renderBump [-size <width> <height>] [-aa <0/1/2>] [-trace <0.01 - 1.0>] <normalMapImage> <highPolyModel>
+		std::string next = tokeniser.nextToken();
+		boost::algorithm::to_lower(next);
+
+		// Skip over the optional args
+		while (next.length() > 0 && next[0] == '-')
+		{
+			if (next == "-size")
+			{
+				tokeniser.skipTokens(2); // skip width, height
+			}
+			else if (next == "-aa")
+			{
+				tokeniser.skipTokens(1);
+			}
+			else if (next == "-trace")
+			{
+				tokeniser.skipTokens(1);
+			}
+
+			next = tokeniser.nextToken();
+			boost::algorithm::to_lower(next);
+		}
+
+		// The map token is already loaded in "next", skip the highpoly model name
+		tokeniser.skipTokens(1);
+	}
 	else
 	{
 		return false; // unrecognised token, return false
