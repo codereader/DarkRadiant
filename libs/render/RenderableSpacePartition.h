@@ -6,7 +6,7 @@
 #include "irenderable.h"
 
 #include "math/Matrix4.h"
-#include "math/aabb.h"
+#include "math/AABB.h"
 
 namespace render
 {

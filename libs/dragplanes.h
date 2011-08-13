@@ -24,8 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iselectiontest.h"
 #include "selectionlib.h"
-#include "math/aabb.h"
-#include "math/line.h"
+#include "math/AABB.h"
+#include "math/Line.h"
 
 // local must be a pure rotation
 inline Vector3 translation_to_local(const Vector3& translation, const Matrix4& local)

@@ -128,10 +128,10 @@ void ParticleStage::reset()
 	_customPathParms[0] = _customPathParms[1] = _customPathParms[2] = _customPathParms[3] = 0;
 	_customPathParms[4] = _customPathParms[5] = _customPathParms[6] = _customPathParms[7] = 0;
 
-	*_speed = ParticleParameter(*this, 150.0f);
-	*_rotationSpeed = ParticleParameter(*this);
-	*_size = ParticleParameter(*this, 4.0f);
-	*_aspect = ParticleParameter(*this, 1.0f);
+	_speed.reset(new ParticleParameter(*this, 150.0f));
+	_rotationSpeed.reset(new ParticleParameter(*this));
+	_size.reset(new ParticleParameter(*this, 4.0f));
+	_aspect.reset(new ParticleParameter(*this, 1.0f));
 }
 
 void ParticleStage::copyFrom(const IParticleStage& other)

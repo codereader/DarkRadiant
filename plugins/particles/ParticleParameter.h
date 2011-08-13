@@ -30,6 +30,7 @@ private:
 	float _to;		// upper bound
 
 public:
+
 	ParticleParameter(ParticleStage& stage) :
 		_stage(stage),
 		_from(0),

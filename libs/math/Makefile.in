@@ -68,7 +68,8 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libmath_la_LIBADD =
-am_libmath_la_OBJECTS = matrix.lo frustum.lo aabb.lo quaternion.lo
+am_libmath_la_OBJECTS = Matrix4.lo Frustum.lo Plane3.lo AABB.lo \
+	Quaternion.lo
 libmath_la_OBJECTS = $(am_libmath_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -289,10 +290,11 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs
 AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libmath.la
 libmath_la_LDFLAGS = -release @PACKAGE_VERSION@
-libmath_la_SOURCES = matrix.cpp \
-                     frustum.cpp \
-                     aabb.cpp \
-                     quaternion.cpp
+libmath_la_SOURCES = Matrix4.cpp \
+                     Frustum.cpp \
+					 Plane3.cpp \
+                     AABB.cpp \
+                     Quaternion.cpp
 
 all: all-am
 
@@ -368,10 +370,11 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/aabb.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/frustum.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/matrix.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quaternion.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AABB.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Frustum.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Matrix4.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Plane3.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Quaternion.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

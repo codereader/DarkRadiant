@@ -69,14 +69,14 @@ am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libgtkutil_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la
-am_libgtkutil_la_OBJECTS = ConsoleView.lo GLWidget.lo PanedPosition.lo \
-	VFSTreePopulator.lo Timer.lo WindowPosition.lo \
-	PersistentTransientWindow.lo TransientWindow.lo Dialog.lo \
-	MessageBox.lo dialog_legacy.lo glfont.lo \
-	MenuItemAccelerator.lo cursor.lo DeferredAdjustment.lo \
-	PopupMenu.lo widget.lo RegistryConnector.lo PathEntry.lo \
-	TreeModel.lo ModalProgressDialog.lo SerialisableWidgets.lo \
-	SourceView.lo clipboard.lo FileChooser.lo
+am_libgtkutil_la_OBJECTS = ConsoleView.lo FreezePointer.lo GLWidget.lo \
+	PanedPosition.lo VFSTreePopulator.lo Timer.lo \
+	WindowPosition.lo PersistentTransientWindow.lo \
+	TransientWindow.lo Dialog.lo MessageBox.lo GLFont.lo \
+	MenuItemAccelerator.lo Cursor.lo PopupMenu.lo \
+	RegistryConnector.lo PathEntry.lo TreeModel.lo \
+	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
+	clipboard.lo FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -311,6 +311,7 @@ libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
+						FreezePointer.cpp \
 						GLWidget.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
@@ -320,13 +321,10 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
                         window/TransientWindow.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
-						dialog_legacy.cpp \
-						glfont.cpp \
+						GLFont.cpp \
 						MenuItemAccelerator.cpp \
-						cursor.cpp \
-						DeferredAdjustment.cpp \
+						Cursor.cpp \
 						menu/PopupMenu.cpp \
-						widget.cpp \
 						RegistryConnector.cpp \
 						PathEntry.cpp \
 						TreeModel.cpp \
@@ -411,9 +409,11 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ConsoleView.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DeferredAdjustment.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Cursor.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Dialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileChooser.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FreezePointer.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLFont.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLWidget.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItemAccelerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MessageBox.Plo@am__quote@
@@ -431,10 +431,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFSTreePopulator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WindowPosition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/clipboard.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cursor.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dialog_legacy.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/glfont.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/widget.Plo@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
