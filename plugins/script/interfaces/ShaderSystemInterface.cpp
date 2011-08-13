@@ -1,9 +1,37 @@
 #include "ShaderSystemInterface.h"
 
-namespace script {
+#include <boost/bind.hpp>
 
-void ShaderSystemInterface::foreachShader(shaders::ShaderVisitor& visitor) {
-	GlobalMaterialManager().foreachShader(visitor);
+namespace script
+{
+
+namespace
+{
+	class ShaderNameToShaderWrapper 
+	{
+	private:
+		shaders::ShaderVisitor& _visitor;
+
+	public:
+		ShaderNameToShaderWrapper(shaders::ShaderVisitor& visitor) :
+			_visitor(visitor)
+		{}
+
+		void visit(const std::string& name)
+		{
+			// Resolve the material name and pass it on
+			MaterialPtr material = GlobalMaterialManager().getMaterialForName(name);
+			_visitor.visit(material);
+		}
+	};
+}
+
+void ShaderSystemInterface::foreachShader(shaders::ShaderVisitor& visitor)
+{
+	// Note: foreachShader only traverses the loaded materials, use a small adaptor to traverse all known
+	ShaderNameToShaderWrapper adaptor(visitor);
+
+	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameToShaderWrapper::visit, &adaptor, _1));
 }
 
 ScriptShader ShaderSystemInterface::getMaterialForName(const std::string& name) {
