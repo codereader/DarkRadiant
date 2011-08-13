@@ -110,6 +110,8 @@ public:
 		OperandStack operands;
 		OperatorStack operators;
 
+		bool lastTokenWasOperator = false; // to detect signs
+
 		while (_tokeniser.hasMoreTokens())
 		{
 			// Don't actually pull the token from the tokeniser, we might want to 
@@ -122,14 +124,14 @@ public:
 
 			if (token == "(")
 			{
-				_tokeniser.nextToken(); // valid keyword, exhaust
+				_tokeniser.nextToken(); // valid token, exhaust
 
 				// New scope, treat this as new expression
 				term = getExpression();
 			}
 			else if (token == ")" || token == "]")
 			{
-				_tokeniser.nextToken(); // valid keyword, exhaust
+				_tokeniser.nextToken(); // valid token, exhaust
 
 				// End of scope reached, break the loop and roll up the expression
 				break;
@@ -144,6 +146,8 @@ public:
 			{
 				// The token has already been pulled from the tokeniser
 				operands.push(term);
+
+				lastTokenWasOperator = false;
 				continue;
 			}
 			
@@ -154,14 +158,26 @@ public:
 
 			if (op)
 			{
-				_tokeniser.nextToken(); // valid keyword, exhaust
+				_tokeniser.nextToken(); // valid token, exhaust
 
-				if (operands.empty())
+				if (operands.empty() || lastTokenWasOperator)
 				{
+					lastTokenWasOperator = false; // clear the flag again
+
 					// If this is a + or -, take it as a sign operator
-					if (token == "+" || token == "-")
+					if (token == "+")
 					{
-						operands.push(IShaderExpressionPtr(new ConstantExpression(0)));
+						// A leading +, just ignore it
+						continue;
+					}
+					else if (token == "-")
+					{
+						// A leading -, interpret it as -1 *
+						operands.push(IShaderExpressionPtr(new ConstantExpression(-1)));
+						operators.push(BinaryExpressionPtr(new MultiplyExpression));
+
+						// Discard the - operator
+						continue;
 					}
 					else
 					{
@@ -169,12 +185,19 @@ public:
 					}
 				}
 
+				// We have operands, so this is a regular operator
+				lastTokenWasOperator = true;
+
 				// Check precedence if we have previous operators
-				if (!operators.empty())
+				while (!operators.empty())
 				{
 					if (operators.top()->getPrecedence() <= op->getPrecedence())
 					{
 						finaliseOperator(operands, operators);
+					}
+					else
+					{
+						break;
 					}
 				}
 
@@ -237,7 +260,7 @@ private:
 	{
 		if (boost::algorithm::istarts_with(token, "parm"))
 		{
-			_tokeniser.nextToken(); // valid keyword, exhaust
+			_tokeniser.nextToken(); // valid token, exhaust
 
 			// This is a shaderparm, get the number
 			int shaderParmNum = strToInt(token.substr(4));
@@ -253,7 +276,7 @@ private:
 		}
 		else if (boost::algorithm::istarts_with(token, "global"))
 		{
-			_tokeniser.nextToken(); // valid keyword, exhaust
+			_tokeniser.nextToken(); // valid token, exhaust
 
 			// This is a shaderparm, get the number
 			int shaderParmNum = strToInt(token.substr(6));
@@ -269,13 +292,13 @@ private:
 		}
 		else if (token == "time")
 		{
-			_tokeniser.nextToken(); // valid keyword, exhaust
+			_tokeniser.nextToken(); // valid token, exhaust
 
 			return IShaderExpressionPtr(new TimeExpression);
 		}
 		else if (token == "sound")
 		{
-			_tokeniser.nextToken(); // valid keyword, exhaust
+			_tokeniser.nextToken(); // valid token, exhaust
 
 			// No sound support so far
 			return IShaderExpressionPtr(new ConstantExpression(0));
@@ -288,7 +311,7 @@ private:
 			if (table != NULL)
 			{
 				// Got it, this is a table name
-				_tokeniser.nextToken(); // valid keyword, exhaust, this hasn't been done by the caller yet
+				_tokeniser.nextToken(); // valid token, exhaust, this hasn't been done by the caller yet
 				
 				// We need an opening '[' to have valid syntax
 				_tokeniser.assertNextToken("[");
@@ -311,7 +334,7 @@ private:
 				{
 					float value = boost::lexical_cast<float>(token);
 
-					_tokeniser.nextToken(); // valid keyword, exhaust
+					_tokeniser.nextToken(); // valid token, exhaust
 
 					return IShaderExpressionPtr(new ConstantExpression(value));
 				}
