@@ -138,7 +138,7 @@ public:
 			{
 				// No parantheses, get a new term, push it on the stack
 				term = getTerm(token);
-			}			
+			}
 
 			if (term)
 			{
@@ -158,7 +158,15 @@ public:
 
 				if (operands.empty())
 				{
-					throw parser::ParseException("Missing operand for operator: " + token);
+					// If this is a + or -, take it as a sign operator
+					if (token == "+" || token == "-")
+					{
+						operands.push(IShaderExpressionPtr(new ConstantExpression(0)));
+					}
+					else
+					{
+						throw parser::ParseException("Missing operand for operator: " + token);
+					}
 				}
 
 				// Check precedence if we have previous operators
