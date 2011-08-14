@@ -52,6 +52,10 @@ void ShaderFileLoader::parseShaderFile(std::istream& inStr,
 
 			continue;
 		}
+		else if (block.name.substr(0, 5) == "skin ")
+		{
+			continue; // skip skin definition
+		}
 		else if (block.name.substr(0, 9) == "particle ")
 		{
 			continue; // skip particle definition
