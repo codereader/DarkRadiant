@@ -154,6 +154,21 @@ public:
 		SORT_POST_PROCESS = 100	// after a screen copy to texture
     };
 
+	// Deform Type 
+	enum DeformType
+	{
+		DEFORM_NONE,
+		DEFORM_SPRITE,
+		DEFORM_TUBE,
+		DEFORM_FLARE,
+		DEFORM_EXPAND,
+		DEFORM_MOVE,
+		DEFORM_TURBULENT,
+		DEFORM_EYEBALL,
+		DEFORM_PARTICLE,
+		DEFORM_PARTICLE2,
+	};
+
 	virtual ~Material() {}
 
     /**
@@ -219,6 +234,11 @@ public:
 	 * Surface Type (wood, stone, surfType15, ...)
 	 */
 	virtual SurfaceType getSurfaceType() const = 0;
+
+	/**
+	 * Get the deform type of this material
+	 */
+	virtual DeformType getDeformType() const = 0;
 
 	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.
