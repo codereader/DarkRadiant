@@ -88,6 +88,9 @@ public:
 	// Deform types
 	DeformType getDeformType() const;
 
+	// Get the spectrum, -1 is "not defined"
+	int getSpectrum() const;
+
 	// get shader file name (ie the file where this one is defined)
 	const char* getShaderFileName() const;
 

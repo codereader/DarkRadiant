@@ -246,6 +246,12 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 			boost::algorithm::to_lower(next);
 		}
 
+		if (next == "colormap")
+		{
+			// Some D3 materials define a wrong spawnarg, don't let the parser be put off by that
+			next = tokeniser.nextToken();
+		}
+
 		// The map token is already loaded in "next", skip the highpoly model name
 		tokeniser.skipTokens(1);
 	}
@@ -290,6 +296,19 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
 	{
         _lightFalloff = MapExpression::createForToken(tokeniser);
     }
+	else if (token == "spectrum")
+	{
+		std::string value = tokeniser.nextToken();
+
+		try
+		{
+			_spectrum = boost::lexical_cast<int>(value);
+		}
+		catch (boost::bad_lexical_cast& e)
+		{
+			globalWarningStream() << "Expect integer number as spectrum value, found " << value << std::endl;
+		}
+	}
 	else
 	{
 		return false; // unrecognised token, return false
@@ -743,6 +762,10 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		{
 			globalWarningStream() << "Could not parse " << token << " expression in shader: " << getName() << std::endl;
 		}
+	}
+	else if (token == "ignorealphatest")
+	{
+		_currentLayer->setStageFlag(ShaderLayer::FLAG_IGNORE_ALPHATEST);
 	}
 	else if (token == "colored")
 	{

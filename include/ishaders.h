@@ -241,6 +241,11 @@ public:
 	virtual DeformType getDeformType() const = 0;
 
 	/**
+	 * Returns the spectrum of this shader, -1 means "no defined spectrum"
+	 */
+	virtual int getSpectrum() const = 0;
+
+	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.
 	 * The definition is lacking the outermost curly braces.
 	 */
