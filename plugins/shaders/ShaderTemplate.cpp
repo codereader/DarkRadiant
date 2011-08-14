@@ -165,6 +165,33 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	{
 		_materialFlags |= Material::FLAG_MIRROR;
 	}
+	else if (token == "decalinfo")
+	{
+		// Syntax: decalInfo <staySeconds> <fadeSeconds> [start rgb] [end rgb]
+		// Example: decalInfo 10 5 ( 1 1 1 1 ) ( 0 0 0 0 )
+		_decalInfo.stayMilliSeconds = static_cast<int>(strToFloat(tokeniser.nextToken()) * 1000);
+		_decalInfo.fadeMilliSeconds = static_cast<int>(strToFloat(tokeniser.nextToken()) * 1000);
+
+		// Start colour
+		tokeniser.assertNextToken("(");
+
+		_decalInfo.startColour.x() = strToFloat(tokeniser.nextToken());
+		_decalInfo.startColour.y() = strToFloat(tokeniser.nextToken());
+		_decalInfo.startColour.z() = strToFloat(tokeniser.nextToken());
+		_decalInfo.startColour.w() = strToFloat(tokeniser.nextToken());
+
+		tokeniser.assertNextToken(")");
+
+		// End colour
+		tokeniser.assertNextToken("(");
+
+		_decalInfo.endColour.x() = strToFloat(tokeniser.nextToken());
+		_decalInfo.endColour.y() = strToFloat(tokeniser.nextToken());
+		_decalInfo.endColour.z() = strToFloat(tokeniser.nextToken());
+		_decalInfo.endColour.w() = strToFloat(tokeniser.nextToken());
+
+		tokeniser.assertNextToken(")");
+	}
 	else if (token == "deform")
 	{
 		std::string type = tokeniser.nextToken();
