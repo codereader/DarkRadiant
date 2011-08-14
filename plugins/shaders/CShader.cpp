@@ -157,6 +157,11 @@ Material::SurfaceType CShader::getSurfaceType() const
 	return _template->getSurfaceType();
 }
 
+Material::DeformType CShader::getDeformType() const
+{
+	return _template->getDeformType();
+}
+
 // get shader file name (ie the file where this one is defined)
 const char* CShader::getShaderFileName() const {
 	return _fileName.c_str();

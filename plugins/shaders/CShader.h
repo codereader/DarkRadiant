@@ -12,6 +12,7 @@ namespace shaders {
 class CShader
 : public Material
 {
+private:
 	ShaderTemplatePtr _template;
 
 	// The shader file name (i.e. the file where this one is defined)
@@ -83,6 +84,9 @@ public:
 	int getSurfaceFlags() const;
 
 	SurfaceType getSurfaceType() const;
+
+	// Deform types
+	DeformType getDeformType() const;
 
 	// get shader file name (ie the file where this one is defined)
 	const char* getShaderFileName() const;

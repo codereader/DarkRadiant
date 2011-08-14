@@ -165,6 +165,60 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	{
 		_materialFlags |= Material::FLAG_MIRROR;
 	}
+	else if (token == "deform")
+	{
+		std::string type = tokeniser.nextToken();
+		boost::algorithm::to_lower(type);
+
+		if (type == "sprite")
+		{
+			_deformType = Material::DEFORM_SPRITE;
+		}
+		else if (type == "tube")
+		{
+			_deformType = Material::DEFORM_TUBE;
+		}
+		else if (type == "flare")
+		{
+			_deformType = Material::DEFORM_FLARE;
+
+			tokeniser.skipTokens(1); // skip size info
+		}
+		else if (type == "expand")
+		{
+			_deformType = Material::DEFORM_EXPAND;
+
+			tokeniser.skipTokens(1); // skip amount
+		}
+		else if (type == "move")
+		{
+			_deformType = Material::DEFORM_MOVE;
+
+			tokeniser.skipTokens(1); // skip amount
+		}
+		else if (type == "turbulent")
+		{
+			_deformType = Material::DEFORM_TURBULENT;
+
+			tokeniser.skipTokens(4); // skip table, range, timeoffset, domain
+		}
+		else if (type == "eyeball")
+		{
+			_deformType = Material::DEFORM_EYEBALL;
+		}
+		else if (type == "particle")
+		{
+			_deformType = Material::DEFORM_PARTICLE;
+
+			tokeniser.skipTokens(1); // skip particle name
+		}
+		else if (type == "particle2")
+		{
+			_deformType = Material::DEFORM_PARTICLE2;
+
+			tokeniser.skipTokens(1); // skip particle name
+		}
+	}
 	else if (token == "renderbump")
 	{
 		// Skip over this renderbump directive
@@ -368,6 +422,30 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 			{
 				_currentLayer->setTexGenParam(i, strToFloat(tokeniser.nextToken()));
 			}
+		}
+	}
+	else if (token == "cubemap")
+    {
+		// Parse the cubemap expression, but don't do anything with it for now
+		MapExpression::createForToken(tokeniser);
+    }
+	else if (token == "videomap")
+    {
+		std::string nextToken = tokeniser.nextToken();
+		boost::algorithm::to_lower(nextToken);
+
+		if (nextToken == "loop")
+		{
+			// Skip looping keyword and ignore the videomap expression
+			tokeniser.skipTokens(1);
+		}
+    }
+	else if (token == "soundmap")
+	{
+		// This stage should render as sound meter/map - skip this information for now
+		if (tokeniser.peek() == "waveform")
+		{
+			tokeniser.skipTokens(1);
 		}
 	}
 	else

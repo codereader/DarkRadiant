@@ -67,6 +67,8 @@ private:
 
 	Material::SurfaceType _surfaceType;
 
+	Material::DeformType _deformType;
+
     // Sort position (e.g. sort decal == 2)
     int _sortReq;
 
@@ -96,6 +98,7 @@ public:
 	  _clampType(CLAMP_REPEAT),
 	  _surfaceFlags(0),
 	  _surfaceType(Material::SURFTYPE_DEFAULT),
+	  _deformType(Material::DEFORM_NONE),
       _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
 	  _blockContents(blockContents),
@@ -152,6 +155,12 @@ public:
 	{
 		if (!_parsed) parseDefinition();
 		return _surfaceType;
+	}
+
+	Material::DeformType getDeformType()
+	{
+		if (!_parsed) parseDefinition();
+		return _deformType;
 	}
 
 	const Layers& getLayers()
