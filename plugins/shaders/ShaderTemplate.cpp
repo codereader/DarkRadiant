@@ -25,6 +25,39 @@ NamedBindablePtr ShaderTemplate::getEditorTexture()
     return _editorTex;
 }
 
+IShaderExpressionPtr ShaderTemplate::parseSingleExpressionTerm(parser::DefTokeniser& tokeniser)
+{
+	std::string token = tokeniser.nextToken();
+
+	if (token == "(")
+	{
+		std::string expr = token;
+		std::size_t level = 1;
+
+		while (level > 0)
+		{
+			token = tokeniser.nextToken();
+			expr += token;
+
+			if (token == ")")
+			{
+				--level;
+			}
+			else if (token == "(")
+			{
+				++level;
+			}
+		}
+
+		return ShaderExpression::createFromString(expr);
+	}
+	else
+	{
+		// No parenthesis, parse this token alone
+		return ShaderExpression::createFromString(token);
+	}
+}
+
 /*  Searches a token for known shaderflags (e.g. "translucent") and sets the flags
  *  in the member variable _materialFlags
  *
@@ -209,25 +242,29 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		{
 			_deformType = Material::DEFORM_FLARE;
 
-			tokeniser.skipTokens(1); // skip size info
+			parseSingleExpressionTerm(tokeniser); // skip size info
 		}
 		else if (type == "expand")
 		{
 			_deformType = Material::DEFORM_EXPAND;
 
-			tokeniser.skipTokens(1); // skip amount
+			parseSingleExpressionTerm(tokeniser); // skip amount
 		}
 		else if (type == "move")
 		{
 			_deformType = Material::DEFORM_MOVE;
 
-			tokeniser.skipTokens(1); // skip amount
+			parseSingleExpressionTerm(tokeniser); // skip amount
 		}
 		else if (type == "turbulent")
 		{
 			_deformType = Material::DEFORM_TURBULENT;
 
-			tokeniser.skipTokens(4); // skip table, range, timeoffset, domain
+			tokeniser.skipTokens(1); // skip table name
+
+			parseSingleExpressionTerm(tokeniser); // range
+			parseSingleExpressionTerm(tokeniser); // timeoffset
+			parseSingleExpressionTerm(tokeniser); // domain
 		}
 		else if (type == "eyeball")
 		{
