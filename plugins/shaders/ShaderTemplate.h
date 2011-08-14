@@ -69,6 +69,9 @@ private:
 
 	Material::DeformType _deformType;
 
+	// The spectrum this shader is responding to (or emitting in the case of light materials)
+	int _spectrum;
+
     // Sort position (e.g. sort decal == 2)
     int _sortReq;
 
@@ -99,6 +102,7 @@ public:
 	  _surfaceFlags(0),
 	  _surfaceType(Material::SURFTYPE_DEFAULT),
 	  _deformType(Material::DEFORM_NONE),
+	  _spectrum(-1),
       _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
 	  _blockContents(blockContents),
@@ -161,6 +165,12 @@ public:
 	{
 		if (!_parsed) parseDefinition();
 		return _deformType;
+	}
+
+	int getSpectrum()
+	{
+		if (!_parsed) parseDefinition();
+		return _spectrum;
 	}
 
 	const Layers& getLayers()

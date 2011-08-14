@@ -162,6 +162,11 @@ Material::DeformType CShader::getDeformType() const
 	return _template->getDeformType();
 }
 
+int CShader::getSpectrum() const
+{
+	return _template->getSpectrum();
+}
+
 // get shader file name (ie the file where this one is defined)
 const char* CShader::getShaderFileName() const {
 	return _fileName.c_str();
