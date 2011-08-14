@@ -106,6 +106,9 @@ private:
 	// The array of fragment maps
 	std::vector<MapExpressionPtr> _fragmentMaps;
 
+	// Stage-specific polygon offset, is 0 if not used
+	float _privatePolygonOffset;
+
 public:
 
 	// Constructor
@@ -482,6 +485,16 @@ public:
 		}
 
 		_fragmentMaps[index] = map;
+	}
+
+	float getPrivatePolygonOffset()
+	{
+		return _privatePolygonOffset;
+	}
+
+	void setPrivatePolygonOffset(float value)
+	{
+		_privatePolygonOffset = value;
 	}
 };
 

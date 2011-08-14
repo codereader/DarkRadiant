@@ -244,6 +244,11 @@ public:
 	 * Returns the fragment map with the given index. 
 	 */
 	virtual TexturePtr getFragmentMap(int index) = 0;
+
+	/**
+	 * Stage-specific polygon offset, overriding the "global" one defined on the material.
+	 */
+	virtual float getPrivatePolygonOffset() = 0;
 };
 
 /**

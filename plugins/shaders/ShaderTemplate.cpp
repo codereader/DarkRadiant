@@ -246,12 +246,6 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 			boost::algorithm::to_lower(next);
 		}
 
-		if (next == "colormap")
-		{
-			// Some D3 materials define a wrong spawnarg, don't let the parser be put off by that
-			next = tokeniser.nextToken();
-		}
-
 		// The map token is already loaded in "next", skip the highpoly model name
 		tokeniser.skipTokens(1);
 	}
@@ -306,7 +300,8 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
 		}
 		catch (boost::bad_lexical_cast& e)
 		{
-			globalWarningStream() << "Expect integer number as spectrum value, found " << value << std::endl;
+			globalWarningStream() << "Expect integer number as spectrum value, found " << 
+				value << ": " << e.what() << std::endl;
 		}
 	}
 	else
@@ -824,6 +819,10 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "maskdepth")
 	{
 		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_DEPTH);
+	}
+	else if (token == "privatepolygonoffset")
+	{
+		_currentLayer->setPrivatePolygonOffset(strToFloat(tokeniser.nextToken()));
 	}
 	else if (token == "nearest")
 	{

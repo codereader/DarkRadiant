@@ -90,7 +90,8 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_stageFlags(0),
 	_clampType(CLAMP_REPEAT),
 	_alphaTest(REG_ZERO),
-	_texGenType(TEXGEN_NORMAL)
+	_texGenType(TEXGEN_NORMAL),
+	_privatePolygonOffset(0)
 { 
 	_registers[REG_ZERO] = 0;
 	_registers[REG_ONE] = 1;
