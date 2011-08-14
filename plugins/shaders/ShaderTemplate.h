@@ -78,6 +78,8 @@ private:
     // Polygon offset
     float _polygonOffset;
 
+	Material::DecalInfo _decalInfo;
+
 	// Raw material declaration
 	std::string _blockContents;
 
@@ -107,7 +109,12 @@ public:
       _polygonOffset(0.0f),
 	  _blockContents(blockContents),
 	  _parsed(false)
-	{}
+	{
+		_decalInfo.stayMilliSeconds = 0;
+		_decalInfo.fadeMilliSeconds = 0;
+		_decalInfo.startColour = Vector4(1,1,1,1);
+		_decalInfo.endColour = Vector4(0,0,0,0);
+	}
 
 	/**
 	 * Get the name of this shader template.
@@ -171,6 +178,12 @@ public:
 	{
 		if (!_parsed) parseDefinition();
 		return _spectrum;
+	}
+
+	const Material::DecalInfo& getDecalInfo()
+	{
+		if (!_parsed) parseDefinition();
+		return _decalInfo;
 	}
 
 	const Layers& getLayers()

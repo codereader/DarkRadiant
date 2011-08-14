@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "imodule.h"
 
 #include "math/Vector3.h"
+#include "math/Vector4.h"
 
 #include <ostream>
 #include <vector>
@@ -169,6 +170,14 @@ public:
 		DEFORM_PARTICLE2,
 	};
 
+	struct DecalInfo
+	{
+		int		stayMilliSeconds;
+		int		fadeMilliSeconds;
+		Vector4	startColour;
+		Vector4	endColour;
+	};
+
 	virtual ~Material() {}
 
     /**
@@ -244,6 +253,11 @@ public:
 	 * Returns the spectrum of this shader, -1 means "no defined spectrum"
 	 */
 	virtual int getSpectrum() const = 0;
+
+	/**
+	 * Retrieves the decal info structure of this material.
+	 */
+	virtual const DecalInfo& getDecalInfo() const = 0;
 
 	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.

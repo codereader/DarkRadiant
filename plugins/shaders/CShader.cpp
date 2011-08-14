@@ -167,6 +167,11 @@ int CShader::getSpectrum() const
 	return _template->getSpectrum();
 }
 
+const Material::DecalInfo& CShader::getDecalInfo() const
+{
+	return _template->getDecalInfo();
+}
+
 // get shader file name (ie the file where this one is defined)
 const char* CShader::getShaderFileName() const {
 	return _fileName.c_str();
