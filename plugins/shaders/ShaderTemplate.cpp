@@ -526,6 +526,32 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 			tokeniser.skipTokens(1);
 		}
 	}
+	else if (token == "remoterendermap")
+	{
+		try
+		{
+			strToInt(tokeniser.nextToken());
+			strToInt(tokeniser.nextToken());
+		}
+		catch (boost::bad_lexical_cast& e)
+		{
+			globalWarningStream() << "Error parsing remoteRenderMap. Expected two integers: " 
+				<< e.what() << std::endl;
+		}
+	}
+	else if (token == "mirrorrendermap")
+	{
+		try
+		{
+			strToInt(tokeniser.nextToken());
+			strToInt(tokeniser.nextToken());
+		}
+		catch (boost::bad_lexical_cast& e)
+		{
+			globalWarningStream() << "Error parsing mirrorRenderMap. Expected two integers: "
+				<< e.what() << std::endl;
+		}
+	}
 	else
 	{
 		return false; // unrecognised token, return false
