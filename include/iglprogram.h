@@ -3,6 +3,8 @@
 class Matrix4;
 template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
+template<typename Element> class BasicVector4;
+typedef BasicVector4<float> Vector4;
 
 /**
  * Representation of a GL vertex/fragment program.
@@ -54,7 +56,7 @@ public:
 	 * Origin of the light in 3D space.
 	 *
 	 * @param colour
-	 * Colour of the light in 3D space.
+	 * Colour of the light material.
 	 *
 	 * @param world2light
 	 * Transformation from world space into light space, based on the position
@@ -67,7 +69,7 @@ public:
 	virtual void applyRenderParams(const Vector3& viewer,
   							       const Matrix4& localToWorld,
   							       const Vector3& origin,
-  							       const Vector3& colour,
+  							       const Vector4& colour,
   							       const Matrix4& world2light,
   							       float ambientFactor) = 0;
 };
