@@ -75,6 +75,62 @@ Entity& EntityNode::getEntity()
 	return _entity;
 }
 
+float EntityNode::getShaderParm(int parmNum) const
+{
+	// FIXME: SLOW implementation - one could use an observer class holding 
+	// the cached float value here
+
+	// Entity parms 0-2 are mapped to the value of the _color spawnarg
+	switch (parmNum)
+	{
+	case 0:
+	case 1:
+	case 2:
+	{
+		// Use a stringstream to parse the string
+		std::string val = _entity.getKeyValue("_color");
+
+		if (val.empty())
+		{
+			return 1.0f;
+		}
+
+		std::stringstream strm(val);
+
+		Vector3 color;
+
+		strm << std::skipws;
+		strm >> color.x();
+		strm >> color.y();
+		strm >> color.z();
+
+		switch (parmNum)
+		{
+		case 0: return color.x();
+		case 1: return color.y();
+		case 2: return color.z();
+		};
+		
+		break;
+	}
+	default: 
+		break;
+	};
+	
+	// All other cases: look up the shaderParms from the dictionary
+	std::string val = _entity.getKeyValue("shaderParm" + intToStr(parmNum));
+
+	if (val.empty())
+	{
+		// parm3 is bound to "alpha" and defaults to 1.0
+		return parmNum == 3 ? 1.0f : 0.0f;
+	}
+	else
+	{
+		return strToFloat(val);
+	}
+}
+
 std::string EntityNode::getName() const {
 	return _namespaceManager.getName();
 }

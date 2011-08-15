@@ -84,6 +84,11 @@ const AABB& LightNode::localAABB() const {
 	return _light.localAABB();
 }
 
+float LightNode::getShaderParm(int parmNum) const
+{
+	return EntityNode::getShaderParm(parmNum);
+}
+
 void LightNode::onInsertIntoScene()
 {
 	// Call the base class first

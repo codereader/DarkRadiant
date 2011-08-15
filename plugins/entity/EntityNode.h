@@ -1,5 +1,4 @@
-#ifndef _ENTITY_NODE_H_
-#define _ENTITY_NODE_H_
+#pragma once
 
 #include "ientity.h"
 #include "inamespace.h"
@@ -28,7 +27,8 @@ class EntityNode :
 	public Transformable,
 	public MatrixTransform,	// influences local2world of child nodes
 	public scene::Cloneable, // all entities are cloneable, to be implemented in subclasses
-	public IEntityClass::Observer
+	public IEntityClass::Observer,
+	public IRenderEntity
 {
 protected:
 	// The entity class
@@ -62,6 +62,9 @@ public:
 
 	// IEntityNode implementation
 	Entity& getEntity();
+
+	// RenderEntity implementation
+	virtual float getShaderParm(int parmNum) const;
 
 	// Namespaced implementation
 	// Gets/sets the namespace of this named object
@@ -99,5 +102,3 @@ private:
 };
 
 } // namespace entity
-
-#endif /* _ENTITY_NODE_H_ */

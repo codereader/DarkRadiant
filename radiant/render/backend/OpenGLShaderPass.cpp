@@ -654,7 +654,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
         Vector3 osViewer = inverseObjTransform.transformPoint(viewer);
 
 		// Calculate all dynamic values in the layer
-		layer->evaluateExpressions(time);
+		layer->evaluateExpressions(time, *light);
 
         // Get the XY and Z falloff texture numbers.
         GLuint attenuation_xy = layer->getTexture()->getGLTexNum();

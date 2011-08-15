@@ -1,5 +1,4 @@
-#ifndef LIGHTNODE_H_
-#define LIGHTNODE_H_
+#pragma once
 
 #include "scenelib.h"
 
@@ -22,6 +21,7 @@ class LightNode :
 	public RendererLight,
 	public scene::SelectableLight
 {
+private:
 	Light _light;
 
 	// The (draggable) light center instance
@@ -48,6 +48,9 @@ public:
 
 	// EntityNode implementation
 	virtual void refreshModel();
+
+	// RenderEntity implementation
+	virtual float getShaderParm(int parmNum) const;
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
@@ -140,5 +143,3 @@ private:
 typedef boost::shared_ptr<LightNode> LightNodePtr;
 
 } // namespace entity
-
-#endif /*LIGHTNODE_H_*/

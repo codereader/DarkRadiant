@@ -8,6 +8,8 @@
 #include "math/Vector2.h"
 #include "math/Vector4.h"
 
+class IRenderEntity;
+
 // Texture repeat types
 enum ClampType
 {
@@ -112,6 +114,12 @@ public:
 	 * before requesting things like getAlphaTest(), getColour() or isVisible()
 	 */
 	virtual void evaluateExpressions(std::size_t time) = 0;
+
+	/**
+	 * Like evaluateExpressions(time), but with an additional renderentity as argument
+	 * to give this stage the ability to resolve parm0..parm11 values.
+	 */
+	virtual void evaluateExpressions(std::size_t time, const IRenderEntity& entity) = 0;
 
 	/**
 	 * The flags set on this stage.
