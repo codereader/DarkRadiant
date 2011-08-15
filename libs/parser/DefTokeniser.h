@@ -276,10 +276,20 @@ public:
 
                     // This comment lasts until the end of the line.
 
-                    if (*next == '\r' || *next == '\n') {
-                        _state = SEARCHING;
-                        ++next;
-                        continue;
+                    if (*next == '\r' || *next == '\n')
+					{
+						++next;
+
+						// If we have a token at this point, return it
+						if (tok != "") 
+						{
+							return true;
+						}
+						else
+						{
+							_state = SEARCHING;
+							continue;
+						}
                     }
                     else {
                         ++next;
