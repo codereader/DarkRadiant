@@ -304,8 +304,19 @@ public:
 
                     if (*next == '/') {
                     	// End of comment
-                        _state = SEARCHING;
                         ++next;
+
+						// If we have a token at this point, return it
+						if (tok != "") 
+						{
+							return true;
+						}
+						else
+						{
+							_state = SEARCHING;
+							continue;
+						}
+
                         continue;
                     }
                     else if (*next == '*') {
