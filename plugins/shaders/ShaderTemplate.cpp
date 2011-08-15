@@ -854,7 +854,10 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "colored")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_COLOURED);
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RED, ShaderExpression::createFromString("parm0"));
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_GREEN, ShaderExpression::createFromString("parm1"));
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_BLUE, ShaderExpression::createFromString("parm2"));
+		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_ALPHA, ShaderExpression::createFromString("parm3"));
 	}
 	else if (token == "clamp")
 	{
