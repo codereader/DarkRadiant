@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_IRENDER_H)
-#define INCLUDED_IRENDER_H
+#pragma once
 
 #include "imodule.h"
 #include <boost/function/function_fwd.hpp>
@@ -66,14 +64,34 @@ class AABB;
 class Matrix4;
 
 template<typename Element> class BasicVector3;
+typedef BasicVector3<float> Vector3;
 
 class Shader;
+
+/**
+ * A RenderEntity represents a map entity as seen by the renderer. 
+ * It provides up to 12 numbered parameters to the renderer:
+ * parm0, parm1 ... parm11.
+ *
+ * A few of the entity parms are hardwired to things like render colour 
+ * as defined through the entity's _color keyvalue, some are set through 
+ * scripting, spawmargs or gameplay code.
+ */
+class IRenderEntity
+{
+public:
+	/**
+	 * Get the value of this entity's shader parm with the given index.
+	 */
+	virtual float getShaderParm(int parmNum) const = 0;
+};
 
 /**
  * \brief
  * Interface for a light source in the renderer.
  */
-class RendererLight
+class RendererLight :
+	public IRenderEntity
 {
 public:
     virtual ~RendererLight() {}
@@ -459,5 +477,3 @@ inline RenderSystem& GlobalRenderSystem()
 	);
 	return _instance;
 }
-
-#endif
