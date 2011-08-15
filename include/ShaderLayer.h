@@ -78,8 +78,7 @@ public:
 		FLAG_MASK_BLUE				= 1 << 8,
 		FLAG_MASK_ALPHA				= 1 << 9,
 		FLAG_MASK_DEPTH				= 1 << 10,
-		FLAG_COLOURED				= 1 << 11,
-		FLAG_CENTERSCALE			= 1 << 12,  // whether to translate -0.5, scale and translate +0.5
+		FLAG_CENTERSCALE			= 1 << 11,  // whether to translate -0.5, scale and translate +0.5
 	};
 
 	enum TexGenType
