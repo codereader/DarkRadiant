@@ -638,24 +638,27 @@ void OpenGLShaderPass::render(OpenGLState& current,
 void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
                                                 const RendererLight* light,
                                                 const Vector3& viewer,
-                                                const Matrix4& objTransform)
+                                                const Matrix4& objTransform,
+												std::size_t time)
 {
     assert(light);
 
     // Get the light shader and examine its first (and only valid) layer
     const MaterialPtr& lightShader = light->getShader()->getMaterial();
+	ShaderLayer* layer = lightShader->firstLayer();
 
-    if (lightShader->firstLayer())
+    if (layer)
     {
-        // Calculate viewer location in object space
+		// Calculate viewer location in object space
         Matrix4 inverseObjTransform = objTransform.getInverse();
         Vector3 osViewer = inverseObjTransform.transformPoint(viewer);
 
+		// Calculate all dynamic values in the layer
+		layer->evaluateExpressions(time);
+
         // Get the XY and Z falloff texture numbers.
-        GLuint attenuation_xy =
-            lightShader->firstLayer()->getTexture()->getGLTexNum();
-        GLuint attenuation_z =
-            lightShader->lightFalloffImage()->getGLTexNum();
+        GLuint attenuation_xy = layer->getTexture()->getGLTexNum();
+        GLuint attenuation_z = lightShader->lightFalloffImage()->getGLTexNum();
 
         // Bind the falloff textures
         assert(current.renderFlags & RENDER_TEXTURE_2D);
@@ -672,7 +675,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-        // Get the world-space to light-space transformation matrix
+		// Get the world-space to light-space transformation matrix
         Matrix4 world2light = light->getLightTextureTransformation();
 
         // Set the ambient factor - 1.0 for an ambient light, 0.0 for normal light
@@ -683,7 +686,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
             osViewer,
             objTransform,
             light->getLightOrigin(),
-            light->colour(),
+            layer->getColour(),
             world2light,
             ambient
         );
@@ -732,7 +735,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 		const RendererLight* light = i->light;
 		if (current.glProgram != 0 && light != NULL)
         {
-            setUpLightingCalculation(current, light, viewer, *transform);
+            setUpLightingCalculation(current, light, viewer, *transform, time);
         }
 
         // Render the renderable

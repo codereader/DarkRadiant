@@ -37,7 +37,7 @@ public:
     void applyRenderParams(const Vector3& viewer,
                            const Matrix4& localToWorld,
                            const Vector3& origin,
-                           const Vector3& colour,
+                           const Vector4& colour,
                            const Matrix4& world2light,
                            float ambientFactor);
 };

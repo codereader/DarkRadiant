@@ -94,7 +94,8 @@ private:
     void setUpLightingCalculation(OpenGLState& current,
                                   const RendererLight* light,
                                   const Vector3& viewer,
-                                  const Matrix4& objTransform);
+                                  const Matrix4& objTransform,
+								  std::size_t time);
 
 public:
 

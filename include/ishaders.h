@@ -280,7 +280,7 @@ public:
 	 */
 	virtual bool isFogLight() const = 0;
 
-  virtual const ShaderLayer* firstLayer() const = 0;
+	virtual ShaderLayer* firstLayer() const = 0;
 
     /**
      * \brief
