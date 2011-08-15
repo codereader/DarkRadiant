@@ -643,9 +643,9 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     assert(light);
 
     // Get the light shader and examine its first (and only valid) layer
-    MaterialPtr lightShader = light->getShader()->getMaterial();
+    const MaterialPtr& lightShader = light->getShader()->getMaterial();
 
-    if (lightShader->firstLayer() != 0)
+    if (lightShader->firstLayer())
     {
         // Calculate viewer location in object space
         Matrix4 inverseObjTransform = objTransform.getInverse();
@@ -676,9 +676,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
         Matrix4 world2light = light->getLightTextureTransformation();
 
         // Set the ambient factor - 1.0 for an ambient light, 0.0 for normal light
-        float ambient = 0.0;
-        if (lightShader->isAmbientLight())
-            ambient = 1.0;
+        float ambient = lightShader->isAmbientLight() ? 1.0f : 0.0f;
 
         // Bind the GL program parameters
         current.glProgram->applyRenderParams(
