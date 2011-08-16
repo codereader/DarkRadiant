@@ -209,10 +209,11 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
 }
 
 void Face::submitRenderables(RenderableCollector& collector,
-                             const Matrix4& localToWorld) const
+                             const Matrix4& localToWorld,
+							 const IRenderEntity& entity) const
 {
 	collector.SetState(_faceShader.getGLShader(), RenderableCollector::eFullMaterials);
-	collector.addRenderable(*this, localToWorld);
+	collector.addRenderable(*this, localToWorld, entity);
 }
 
 void Face::transform(const Matrix4& matrix, bool mirror) {

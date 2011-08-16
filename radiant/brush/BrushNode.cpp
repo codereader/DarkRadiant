@@ -4,6 +4,7 @@
 #include "ifilter.h"
 #include "iradiant.h"
 #include "icounter.h"
+#include "ientity.h"
 #include "math/Frustum.h"
 #include <boost/bind.hpp>
 
@@ -436,6 +437,12 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 {
 	m_lightList->evaluateLights();
 
+	// TODO: This can be cached
+	scene::INodePtr parentNode = getParent();
+	IEntityNode* parentEntity = reinterpret_cast<IEntityNode*>(parentNode.get());
+
+	assert(parentEntity); // brushes rendered without parent - no way!
+
     // Submit the lights and renderable geometry for each face
 	for (FaceInstances::const_iterator i = m_faceInstances.begin();
          i != m_faceInstances.end();
@@ -447,7 +454,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
         collector.setLights(i->m_lights);
 
 		// greebo: BrushNodes have always an identity l2w, don't do any transforms
-		i->submitRenderables(collector, volume);
+		i->submitRenderables(collector, volume, *parentEntity);
     }
 
 	renderComponentsSelected(collector, volume, localToWorld);

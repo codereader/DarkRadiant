@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inode.h"
 #include "ipath.h"
 #include "imodule.h"
+#include "irender.h"
 #include "inameobserver.h"
 
 class IEntityClass;
@@ -255,7 +256,8 @@ public:
     virtual void detachObserver(Observer* observer) = 0;
 };
 
-class IEntityNode
+class IEntityNode :
+	public IRenderEntity
 {
 public:
     virtual ~IEntityNode() {}
