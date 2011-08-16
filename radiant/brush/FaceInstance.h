@@ -111,7 +111,8 @@ public:
      * Submit renderable geometry to a RenderableCollector (without l2w transform).
      */
 	void submitRenderables(RenderableCollector& collector,
-                           const VolumeTest& volume) const;
+                           const VolumeTest& volume,
+						   const IRenderEntity& entity) const;
 
     /**
      * \brief
@@ -119,7 +120,8 @@ public:
      */
 	void submitRenderables(RenderableCollector& collector,
                            const VolumeTest& volume,
-                           const Matrix4& localToWorld) const;
+                           const Matrix4& localToWorld,
+						   const IRenderEntity& entity) const;
 
 	void testSelect(SelectionTest& test, SelectionIntersection& best);
 

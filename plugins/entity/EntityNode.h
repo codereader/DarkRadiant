@@ -27,8 +27,7 @@ class EntityNode :
 	public Transformable,
 	public MatrixTransform,	// influences local2world of child nodes
 	public scene::Cloneable, // all entities are cloneable, to be implemented in subclasses
-	public IEntityClass::Observer,
-	public IRenderEntity
+	public IEntityClass::Observer
 {
 protected:
 	// The entity class

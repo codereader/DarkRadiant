@@ -73,7 +73,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 		}
 		else
 		{
-			pass->addRenderable(renderable, modelview);
+			pass->addRenderable(renderable, modelview, entity);
 		}
     }
 }
@@ -449,6 +449,9 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
                     | RENDER_BLEND
                     | RENDER_DEPTHTEST
                     | RENDER_COLOURWRITE;
+
+	// Remember the stage for later evaluation of shader expressions
+	state.stage0 = layer;
 
     // Set the texture
     state.texture0 = layerTex->getGLTexNum();

@@ -143,7 +143,8 @@ public:
      * Submit renderable geometry to a RenderableCollector.
      */
 	void submitRenderables(RenderableCollector& collector,
-                           const Matrix4& localToWorld) const;
+                           const Matrix4& localToWorld,
+						   const IRenderEntity& entity) const;
 
 	void transform(const Matrix4& matrix, bool mirror);
 
