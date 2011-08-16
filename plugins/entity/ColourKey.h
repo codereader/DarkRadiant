@@ -10,7 +10,7 @@ namespace entity
  * greebo: this is a class encapsulating the "_color" spawnarg
  * of entity, observing it and maintaining the corresponding shader.
  */
-class Colour :
+class ColourKey :
 	public KeyObserver
 {
 private:
@@ -18,7 +18,7 @@ private:
 	Vector3 _colour;
 
 public:
-	Colour() :
+	ColourKey() :
 		_colour(1,1,1)
 	{
 		captureShader();
