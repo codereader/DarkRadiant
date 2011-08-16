@@ -42,18 +42,19 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
 
 // Front end renderable submission
 void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
-											const Matrix4& localToWorld)
+											const Matrix4& localToWorld,
+											const IRenderEntity& entity)
 {
 	// Submit renderables from each surface
-	for (SurfaceList::iterator i = _surfVec.begin();
-		 i != _surfVec.end();
-		 ++i)
+	for (SurfaceList::iterator i = _surfVec.begin(); i != _surfVec.end(); ++i)
 	{
 		// Check if the surface's shader is filtered, if not then submit it for
 		// rendering
-		MaterialPtr surfaceShader = (*i)->getShader()->getMaterial();
-		if (surfaceShader->isVisible()) {
-			(*i)->submitRenderables(rend, localToWorld);
+		const MaterialPtr& surfaceShader = (*i)->getShader()->getMaterial();
+
+		if (surfaceShader->isVisible())
+		{
+			(*i)->submitRenderables(rend, localToWorld, entity);
 		}
 	}
 }
