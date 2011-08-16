@@ -1,6 +1,7 @@
 #include "PatchNode.h"
 
 #include "ifilter.h"
+#include "ientity.h"
 #include "iradiant.h"
 #include "icounter.h"
 #include "math/Frustum.h"
@@ -296,8 +297,12 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	collector.setLights(*m_lightList);
 
+	// TODO: This can be cached
+	IEntityNodePtr parentEntity = boost::dynamic_pointer_cast<IEntityNode>(getParent());
+	assert(parentEntity); // patches rendered without parent - no way!
+
 	// Pass the call to the patch instance, it adds the renderable
-	m_patch.render_solid(collector, volume, localToWorld());
+	m_patch.render_solid(collector, volume, localToWorld(), *parentEntity);
 
 	// Render the selected components
 	renderComponentsSelected(collector, volume);

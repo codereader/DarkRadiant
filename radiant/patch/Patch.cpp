@@ -214,13 +214,14 @@ const AABB& Patch::localAABB() const {
 }
 
 // Render functions: solid mode
-void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volume, 
+						 const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
 	collector.SetState(m_state, RenderableCollector::eFullMaterials);
-	collector.addRenderable(m_render_solid, localToWorld);
+	collector.addRenderable(m_render_solid, localToWorld, entity);
 }
 
 // Render functions for WireFrame rendering

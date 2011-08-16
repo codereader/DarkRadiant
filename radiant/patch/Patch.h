@@ -1,5 +1,4 @@
-#ifndef PATCHCLASS_H_
-#define PATCHCLASS_H_
+#pragma once
 
 #include <vector>
 
@@ -112,6 +111,8 @@ public:
 	// Copy constructors (create this patch from another patch)
 	Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransform, const Callback& boundsChanged);
 
+	~Patch();
+
 	PatchNode& getPatchNode();
 
 	InstanceCounter m_instanceCounter;
@@ -133,7 +134,8 @@ public:
 	const AABB& localAABB() const;
 
 	// Render functions: solid mode, wireframe mode and components
-	void render_solid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render_solid(RenderableCollector& collector, const VolumeTest& volume, 
+					  const Matrix4& localToWorld, const IRenderEntity& entity) const;
 	void render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void render_component(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
@@ -403,10 +405,4 @@ private:
 	void BuildTesselationCurves(EMatrixMajor major);
 	void accumulateVertexTangentSpace(std::size_t index, Vector3 tangentX[6], Vector3 tangentY[6], Vector2 tangentS[6], Vector2 tangentT[6], std::size_t index0, std::size_t index1);
 	void BuildVertexArray();
-
-public:
-	// Destructor
-	~Patch();
-}; // end class Patch
-
-#endif /*PATCHCLASS_H_*/
+};
