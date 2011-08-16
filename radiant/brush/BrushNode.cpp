@@ -438,8 +438,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 	m_lightList->evaluateLights();
 
 	// TODO: This can be cached
-	scene::INodePtr parentNode = getParent();
-	IEntityNode* parentEntity = reinterpret_cast<IEntityNode*>(parentNode.get());
+	IEntityNodePtr parentEntity = boost::dynamic_pointer_cast<IEntityNode>(getParent());
 
 	assert(parentEntity); // brushes rendered without parent - no way!
 
