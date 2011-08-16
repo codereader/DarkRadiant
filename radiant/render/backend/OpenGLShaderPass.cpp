@@ -591,7 +591,6 @@ inline
 std::ostream& operator<< (std::ostream& os, const RendererLight& light) {
 	os << "RendererLight { origin = " << light.worldOrigin()
 	   << ", lightOrigin = " << light.getLightOrigin()
-       << ", colour = " << light.colour()
 	   << " }";
 	return os;
 }

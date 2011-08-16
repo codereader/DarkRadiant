@@ -137,8 +137,6 @@ public:
      * pyramid (the same as worldOrigin()).
      */
 	virtual Vector3 getLightOrigin() const = 0;
-
-	virtual const Vector3& colour() const = 0;
 };
 typedef boost::shared_ptr<RendererLight> RendererLightPtr;
 
