@@ -10,6 +10,7 @@
 #include "NamespaceManager.h"
 #include "target/TargetableNode.h"
 #include "NameKey.h"
+#include "ColourKey.h"
 
 #include "KeyObserverMap.h"
 
@@ -46,6 +47,9 @@ protected:
 
 	// The OpenGLRenderable, using the NameKey helper class to retrieve the name
 	RenderableNameKey _renderableName;
+
+	// The keyobserver watching over the "_color" keyvalue
+	ColourKey _colourKey;
 
 	// A helper class managing the collection of KeyObservers attached to the Doom3Entity
 	KeyObserverMap _keyObservers;

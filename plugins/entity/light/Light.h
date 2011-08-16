@@ -74,7 +74,6 @@ class Light :
 
   RotationKey m_rotationKey;
   Float9 m_rotation;
-	ColourKey _colourKey;
 
 	ModelKey _modelKey;
 

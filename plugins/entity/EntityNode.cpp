@@ -49,10 +49,12 @@ void EntityNode::construct()
 	TargetableNode::construct();
 
 	addKeyObserver("name", _nameKey);
+	addKeyObserver("_color", _colourKey);
 }
 
 void EntityNode::destruct()
 {
+	removeKeyObserver("_color", _colourKey);
 	removeKeyObserver("name", _nameKey);
 
 	TargetableNode::destruct();
