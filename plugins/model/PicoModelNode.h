@@ -93,7 +93,8 @@ private:
 	// Instance render function
 	void submitRenderables(RenderableCollector& collector,
 						   const VolumeTest& volume,
-						   const Matrix4& localToWorld) const;
+						   const Matrix4& localToWorld,
+						   const IRenderEntity& entity) const;
 };
 typedef boost::shared_ptr<PicoModelNode> PicoModelNodePtr;
 
