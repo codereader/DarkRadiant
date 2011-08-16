@@ -1,6 +1,7 @@
 #include "OpenGLShader.h"
+
 #include "GLProgramFactory.h"
-#include "OpenGLStateBucketAdd.h"
+#include "OpenGLShaderPassAdd.h"
 #include "render/OpenGLRenderSystem.h"
 
 #include "iuimanager.h"
@@ -40,8 +41,34 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 		{
 			if (lights != NULL)
 			{
-				OpenGLStateBucketAdd add(*pass, renderable, modelview);
-				lights->forEachLight(boost::bind(&OpenGLStateBucketAdd::visit, &add, _1));
+				OpenGLShaderPassAdd add(*pass, renderable, modelview);
+				lights->forEachLight(boost::bind(&OpenGLShaderPassAdd::visit, &add, _1));
+			}
+		}
+		else
+		{
+			pass->addRenderable(renderable, modelview);
+		}
+    }
+}
+
+void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
+								 const Matrix4& modelview,
+								 const IRenderEntity& entity,
+								 const LightList* lights)
+{
+    // Iterate over the list of OpenGLStateBuckets, bumpmap and non-bumpmap
+    // buckets are handled differently.
+    for (Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
+    {
+		OpenGLShaderPass* pass = *i;
+
+		if ((pass->state().renderFlags & RENDER_BUMP) != 0)
+		{
+			if (lights != NULL)
+			{
+				OpenGLShaderPassAdd add(*pass, renderable, modelview, &entity);
+				lights->forEachLight(boost::bind(&OpenGLShaderPassAdd::visit, &add, _1));
 			}
 		}
 		else

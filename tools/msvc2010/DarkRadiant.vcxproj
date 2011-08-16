@@ -547,6 +547,7 @@
     <ClInclude Include="..\..\radiant\Profile.h" />
     <ClInclude Include="..\..\radiant\RadiantModule.h" />
     <ClInclude Include="..\..\radiant\renderer.h" />
+    <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h" />
     <ClInclude Include="..\..\radiant\select.h" />
     <ClInclude Include="..\..\radiant\timer.h" />
     <ClInclude Include="..\..\radiant\view.h" />
@@ -643,7 +644,6 @@
     <ClInclude Include="..\..\radiant\render\backend\GLProgramFactory.h" />
     <ClInclude Include="..\..\radiant\render\backend\OpenGLShader.h" />
     <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPass.h" />
-    <ClInclude Include="..\..\radiant\render\backend\OpenGLStateBucketAdd.h" />
     <ClInclude Include="..\..\radiant\render\backend\OpenGLStateLess.h" />
     <ClInclude Include="..\..\radiant\render\backend\glprogram\ARBBumpProgram.h" />
     <ClInclude Include="..\..\radiant\render\backend\glprogram\ARBDepthFillProgram.h" />

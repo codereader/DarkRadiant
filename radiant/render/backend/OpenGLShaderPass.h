@@ -4,6 +4,7 @@
 #include "iglrender.h"
 
 #include <vector>
+#include <map>
 
 /* FORWARD DECLS */
 class Matrix4;
@@ -27,8 +28,8 @@ private:
 	 * Representation of a transformed-and-lit renderable object. Stores a
 	 * single object, with its transform matrix and illuminating light source.
 	 */
-	struct TransformedRenderable {
-
+	struct TransformedRenderable
+	{
     	// The renderable object
     	const OpenGLRenderable* renderable;
 
@@ -38,19 +39,29 @@ private:
 		// The light falling on this obejct
     	const RendererLight* light;
 
-		// Default constructor
+		// The entity attached to this renderable
+		const IRenderEntity* entity;
+
+		// Constructor
 		TransformedRenderable(const OpenGLRenderable& r,
 							  const Matrix4& t,
-							  const RendererLight* l)
+							  const RendererLight* l,
+							  const IRenderEntity* e)
 		: renderable(&r),
 		  transform(&t),
-		  light(l)
-		{ }
+		  light(l),
+		  entity(e)
+		{}
 	};
 
 	// Vector of transformed renderables using this state
 	typedef std::vector<TransformedRenderable> Renderables;
-	Renderables _renderables;
+	Renderables _renderablesWithoutEntity;
+	
+	// Renderables sorted by RenderEntity
+	typedef std::map<const IRenderEntity*, Renderables> RenderablesByEntity;
+
+	RenderablesByEntity _renderables;
 
 private:
 
@@ -60,12 +71,14 @@ private:
 	void applyState(OpenGLState& current,
                     unsigned int globalStateMask,
                     const Vector3& viewer,
-					std::size_t time);
+					std::size_t time,
+					const IRenderEntity* entity);
 
 	void setupTextureMatrix(GLenum textureUnit, const ShaderLayerPtr& stage);
 
-	// Render all of our contained TransformedRenderables
-	void renderAllContained(OpenGLState& current,
+	// Render all of the given TransformedRenderables
+	void renderAllContained(const Renderables& renderables,
+							OpenGLState& current,
 						    const Vector3& viewer,
 							std::size_t time);
 
@@ -105,6 +118,15 @@ public:
 	 */
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
+					   const RendererLight* light = 0);
+
+	/**
+	 * Add a renderable to this state bucket with the given object transform
+	 * matrix and light.
+	 */
+	void addRenderable(const OpenGLRenderable& renderable,
+					   const Matrix4& modelview,
+					   const IRenderEntity& entity,
 					   const RendererLight* light = 0);
 
 	/**
