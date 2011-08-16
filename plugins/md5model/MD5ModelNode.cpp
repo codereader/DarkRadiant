@@ -90,7 +90,11 @@ void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest&
 {
 	_lightList->evaluateLights();
 
-	render(collector, volume, localToWorld());
+	// TODO: This can be cached
+	IEntityNodePtr parentEntity = boost::dynamic_pointer_cast<IEntityNode>(getParent());
+	assert(parentEntity);
+
+	render(collector, volume, localToWorld(), *parentEntity);
 }
 
 void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
@@ -99,7 +103,7 @@ void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeT
 }
 
 void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volume,
-		const Matrix4& localToWorld) const
+		const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
 	// Do some rough culling (per model, not per surface)
 	if (volume.TestAABB(localAABB(), localToWorld) == VOLUME_OUTSIDE)
@@ -116,7 +120,7 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 		 ++i, ++j, ++k)
 	{
 		collector.setLights(*j);
-		(*i)->render(collector, localToWorld, k->shader != NULL ? k->shader : (*i)->getState());
+		(*i)->render(collector, localToWorld, k->shader != NULL ? k->shader : (*i)->getState(), entity);
 	}
 }
 
