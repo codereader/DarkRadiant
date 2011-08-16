@@ -848,8 +848,9 @@ Vector3 Light::getLightOrigin() const {
 		return worldOrigin() + m_doom3Radius.m_centerTransformed;
 	}
 }
-const Vector3& Light::colour() const {
-	return m_colour.m_colour;
+const Vector3& Light::colour() const
+{
+	return m_colour.getColour();
 }
 
 Vector3& Light::target() 			{ return _lightTarget; }
