@@ -321,6 +321,14 @@ public:
 							   const Matrix4& modelview,
 							   const LightList* lights = 0) = 0;
 
+	/** 
+	 * Like above, but taking an additional IRenderEntity argument.
+	 */
+	virtual void addRenderable(const OpenGLRenderable& renderable,
+							   const Matrix4& modelview,
+							   const IRenderEntity& entity,
+							   const LightList* lights = 0) = 0;
+
   virtual void incrementUsed() = 0;
   virtual void decrementUsed() = 0;
   virtual void attach(ModuleObserver& observer) = 0;

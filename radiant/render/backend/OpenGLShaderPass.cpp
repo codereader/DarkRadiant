@@ -58,6 +58,21 @@ inline void setState(unsigned int state,
 	}
 }
 
+inline void evaluateStage(const ShaderLayerPtr& stage, std::size_t time, const IRenderEntity* entity)
+{
+	if (stage) 
+	{
+		if (entity)
+		{
+			stage->evaluateExpressions(time, *entity);
+		}
+		else
+		{
+			stage->evaluateExpressions(time);
+		}
+	}
+}
+
 } // namespace
 
 // GL state enabling/disabling helpers
@@ -281,8 +296,30 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
 void OpenGLShaderPass::applyState(OpenGLState& current,
 					              unsigned int globalStateMask,
                                   const Vector3& viewer,
-								  std::size_t time)
+								  std::size_t time,
+								  const IRenderEntity* entity)
 {
+	// Evaluate any shader expressions
+	if (_state.stage0) 
+	{
+		evaluateStage(_state.stage0, time, entity);
+
+		// The alpha test value might change over time
+		if (_state.stage0->getAlphaTest() > 0)
+		{
+			_state.renderFlags |= RENDER_ALPHATEST;
+		}
+		else
+		{
+			_state.renderFlags &= ~RENDER_ALPHATEST;
+		}
+	}
+
+	if (_state.stage1) evaluateStage(_state.stage1, time, entity);
+	if (_state.stage2) evaluateStage(_state.stage2, time, entity);
+	if (_state.stage3) evaluateStage(_state.stage3, time, entity);
+	if (_state.stage4) evaluateStage(_state.stage4, time, entity);
+
 	if (_state.renderFlags & RENDER_OVERRIDE)
 	{
 		globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
@@ -564,9 +601,23 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 									  const Matrix4& modelview,
 									  const RendererLight* light)
 {
-	_renderables.push_back(TransformedRenderable(renderable, modelview, light));
+	_renderablesWithoutEntity.push_back(TransformedRenderable(renderable, modelview, light, NULL));
 }
 
+void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
+									  const Matrix4& modelview,
+									  const IRenderEntity& entity,
+									  const RendererLight* light)
+{
+	RenderablesByEntity::iterator i = _renderables.find(&entity);
+
+	if (i == _renderables.end())
+	{
+		i = _renderables.insert(RenderablesByEntity::value_type(&entity, Renderables())).first;
+	}
+
+	i->second.push_back(TransformedRenderable(renderable, modelview, light, &entity));
+}
 
 // Render the bucket contents
 void OpenGLShaderPass::render(OpenGLState& current,
@@ -574,34 +625,14 @@ void OpenGLShaderPass::render(OpenGLState& current,
                               const Vector3& viewer,
 							  std::size_t time)
 {
-	// Evaluate any shader expressions
-	if (_state.stage0) 
-	{
-		_state.stage0->evaluateExpressions(time);
-
-		// The alpha test value might change over time
-		if (_state.stage0->getAlphaTest() > 0)
-		{
-			_state.renderFlags |= RENDER_ALPHATEST;
-		}
-		else
-		{
-			_state.renderFlags &= ~RENDER_ALPHATEST;
-		}
-	}
-	if (_state.stage1) _state.stage1->evaluateExpressions(time);
-	if (_state.stage2) _state.stage2->evaluateExpressions(time);
-	if (_state.stage3) _state.stage3->evaluateExpressions(time);
-	if (_state.stage4) _state.stage4->evaluateExpressions(time);
-
-    // Reset the texture matrix
+	// Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
 	glLoadMatrixf(Matrix4::getIdentity());
 
     glMatrixMode(GL_MODELVIEW);
 
 	// Apply our state to the current state object
-	applyState(current, flagsMask, viewer, time);
+	applyState(current, flagsMask, viewer, time, NULL);
 
     // If RENDER_SCREEN is set, just render a quad, otherwise render all
     // objects.
@@ -628,9 +659,20 @@ void OpenGLShaderPass::render(OpenGLState& current,
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
     }
-	else if (!_renderables.empty())
+	else 
     {
-		renderAllContained(current, viewer, time);
+		if (!_renderables.empty())
+		{
+			renderAllContained(_renderablesWithoutEntity, current, viewer, time);
+		}
+
+		for (RenderablesByEntity::const_iterator i = _renderables.begin(); i != _renderables.end(); ++i)
+		{
+			// Apply our state to the current state object
+			applyState(current, flagsMask, viewer, time, i->first);
+
+			renderAllContained(i->second, current, viewer, time);
+		}
 	}
 }
 
@@ -694,19 +736,18 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 }
 
 // Flush renderables
-void OpenGLShaderPass::renderAllContained(OpenGLState& current,
+void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
+										  OpenGLState& current,
                                           const Vector3& viewer,
 										  std::size_t time)
 {
-	// Keep a pointer to the last transform matrix used
+	// Keep a pointer to the last transform matrix and render entity used
 	const Matrix4* transform = 0;
 
 	glPushMatrix();
 
 	// Iterate over each transformed renderable in the vector
-	for(OpenGLShaderPass::Renderables::const_iterator i = _renderables.begin();
-  		i != _renderables.end();
-  		++i)
+	for(Renderables::const_iterator i = renderables.begin(); i != renderables.end(); ++i)
 	{
 		// If the current iteration's transform matrix was different from the
 		// last, apply it and store for the next iteration
