@@ -159,7 +159,6 @@ void Light::construct()
 	// which might set them to true again.
 	m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
 
-	_owner.addKeyObserver("_color", _colourKey);
 	_owner.addKeyObserver("origin", m_originKey);
 
 	_owner.addKeyObserver("angle", _angleObserver);
@@ -182,7 +181,6 @@ void Light::construct()
 	_entity.setIsContainer(true);
 
 	// Load the light colour (might be inherited)
-	_colourKey.onKeyValueChanged(_entity.getKeyValue("_color")); // redundant?
 	m_shader.valueChanged(_entity.getKeyValue("texture"));
 
 	// Hook the "model" spawnarg to the ModelKey class
@@ -194,7 +192,6 @@ void Light::destroy()
 	_modelKey.modelChanged("");
 	_modelKey.setActive(false); // disable callbacks during destruction
 
-	_owner.removeKeyObserver("_color", _colourKey);
 	_owner.removeKeyObserver("origin", m_originKey);
 
 	_owner.removeKeyObserver("angle", _angleObserver);
@@ -577,10 +574,10 @@ void Light::renderWireframe(RenderableCollector& collector,
 {
 	// Main render, submit the diamond that represents the light entity
 	collector.SetState(
-		_colourKey.getWireShader(), RenderableCollector::eWireframeOnly
+		_owner.getEntity().getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly
 	);
 	collector.SetState(
-		_colourKey.getWireShader(), RenderableCollector::eFullMaterials
+		_owner.getEntity().getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials
 	);
 	collector.addRenderable(*this, localToWorld);
 
@@ -847,10 +844,6 @@ Vector3 Light::getLightOrigin() const {
         // AABB origin + light_center, i.e. center in world space
 		return worldOrigin() + m_doom3Radius.m_centerTransformed;
 	}
-}
-const Vector3& Light::colour() const
-{
-	return _colourKey.getColour();
 }
 
 Vector3& Light::target() 			{ return _lightTarget; }
