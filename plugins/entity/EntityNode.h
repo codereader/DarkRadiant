@@ -92,7 +92,7 @@ public:
 	void addKeyObserver(const std::string& key, KeyObserver& observer);
 	void removeKeyObserver(const std::string& key, KeyObserver& observer);
 
-	virtual void OnEClassReload();
+	virtual void onEClassReload();
 
 private:
 	// Routines used by constructor and destructor, should be non-virtual
