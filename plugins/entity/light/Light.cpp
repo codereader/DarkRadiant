@@ -159,7 +159,7 @@ void Light::construct()
 	// which might set them to true again.
 	m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
 
-	_owner.addKeyObserver("_color", m_colour);
+	_owner.addKeyObserver("_color", _colourKey);
 	_owner.addKeyObserver("origin", m_originKey);
 
 	_owner.addKeyObserver("angle", _angleObserver);
@@ -182,7 +182,7 @@ void Light::construct()
 	_entity.setIsContainer(true);
 
 	// Load the light colour (might be inherited)
-	m_colour.onKeyValueChanged(_entity.getKeyValue("_color")); // redundant?
+	_colourKey.onKeyValueChanged(_entity.getKeyValue("_color")); // redundant?
 	m_shader.valueChanged(_entity.getKeyValue("texture"));
 
 	// Hook the "model" spawnarg to the ModelKey class
@@ -194,7 +194,7 @@ void Light::destroy()
 	_modelKey.modelChanged("");
 	_modelKey.setActive(false); // disable callbacks during destruction
 
-	_owner.removeKeyObserver("_color", m_colour);
+	_owner.removeKeyObserver("_color", _colourKey);
 	_owner.removeKeyObserver("origin", m_originKey);
 
 	_owner.removeKeyObserver("angle", _angleObserver);
@@ -577,10 +577,10 @@ void Light::renderWireframe(RenderableCollector& collector,
 {
 	// Main render, submit the diamond that represents the light entity
 	collector.SetState(
-		m_colour.getWireShader(), RenderableCollector::eWireframeOnly
+		_colourKey.getWireShader(), RenderableCollector::eWireframeOnly
 	);
 	collector.SetState(
-		m_colour.getWireShader(), RenderableCollector::eFullMaterials
+		_colourKey.getWireShader(), RenderableCollector::eFullMaterials
 	);
 	collector.addRenderable(*this, localToWorld);
 
@@ -589,10 +589,10 @@ void Light::renderWireframe(RenderableCollector& collector,
     {
 		/* greebo: uncomment this to let the light volume box render in the default colour
 		collector.SetState(
-			m_colour->getWireShader(), RenderableCollector::eWireframeOnly
+			_colourKey->getWireShader(), RenderableCollector::eWireframeOnly
 		);
 		collector.SetState(
-			m_colour->getWireShader(), RenderableCollector::eFullMaterials
+			_colourKey->getWireShader(), RenderableCollector::eFullMaterials
 		);*/
 
 		if (isProjected())
@@ -850,7 +850,7 @@ Vector3 Light::getLightOrigin() const {
 }
 const Vector3& Light::colour() const
 {
-	return m_colour.getColour();
+	return _colourKey.getColour();
 }
 
 Vector3& Light::target() 			{ return _lightTarget; }
