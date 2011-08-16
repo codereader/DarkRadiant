@@ -123,7 +123,6 @@ public:
 
 	Vector3 getLightOrigin() const;
 	const Matrix4& rotation() const;
-	const Vector3& colour() const;
 
 protected:
 	// Gets called by the Transformable implementation whenever
