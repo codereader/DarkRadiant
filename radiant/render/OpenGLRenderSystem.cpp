@@ -175,8 +175,8 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
     glDisable(GL_FOG);
 
 	// Iterate over the sorted mapping between OpenGLStates and their
-	// OpenGLStateBuckets (containing the renderable geometry), and render
-	// the contents of each bucket. Each state bucket is passed a reference
+	// OpenGLShaderPasses (containing the renderable geometry), and render
+	// the contents of each bucket. Each pass is passed a reference
 	// to the "current" state, which it can change.
 	for (OpenGLStates::iterator i = _state_sorted.begin();
 		i != _state_sorted.end();
