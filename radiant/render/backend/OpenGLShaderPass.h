@@ -165,6 +165,6 @@ public:
 	 */
 	bool empty() const
 	{
-		return _renderables.empty();
+		return _renderables.empty() && _renderablesWithoutEntity.empty();
 	}
 };

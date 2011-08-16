@@ -661,7 +661,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
     }
 	else 
     {
-		if (!_renderables.empty())
+		if (!_renderablesWithoutEntity.empty())
 		{
 			renderAllContained(_renderablesWithoutEntity, current, viewer, time);
 		}
@@ -674,6 +674,9 @@ void OpenGLShaderPass::render(OpenGLState& current,
 			renderAllContained(i->second, current, viewer, time);
 		}
 	}
+
+	_renderablesWithoutEntity.clear();
+	_renderables.clear();
 }
 
 // Setup lighting
@@ -786,7 +789,6 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
 
     // Cleanup
     glPopMatrix();
-    _renderables.clear();
 }
 
 
