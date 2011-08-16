@@ -12,7 +12,7 @@
 
 #include "../origin.h"
 #include "../rotation.h"
-#include "../colour.h"
+#include "../ColourKey.h"
 #include "../ModelKey.h"
 #include "../Doom3Entity.h"
 #include "../KeyObserverDelegate.h"
