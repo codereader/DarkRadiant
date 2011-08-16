@@ -207,7 +207,7 @@ bool EntityNode::isHighlighted() const
 	return isSelected();
 }
 
-void EntityNode::OnEClassReload()
+void EntityNode::onEClassReload()
 {
 	// Let the keyobservers reload their values
 	_keyObservers.refreshObservers();

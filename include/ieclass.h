@@ -25,9 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * \brief Entity Class definition loader API.
  * \ingroup eclass
  */
-
-#if !defined(INCLUDED_IECLASS_H)
-#define INCLUDED_IECLASS_H
+#pragma once
 
 #include "ModResource.h"
 
@@ -152,7 +150,7 @@ public:
 		 * greebo: Gets called as soon as the contents of the eclass
 		 * get changed, which is true for the "reloadDefs" command.
 		 */
-		virtual void OnEClassReload() = 0;
+		virtual void onEClassReload() = 0;
 	};
 
 	// Adds/removes an eclass observer
@@ -458,5 +456,3 @@ inline IEntityClassManager& GlobalEntityClassManager() {
 	);
 	return _eclassMgr;
 }
-
-#endif

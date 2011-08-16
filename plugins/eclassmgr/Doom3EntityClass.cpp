@@ -431,7 +431,7 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 	// Notify the observers
 	for (Observers::const_iterator i = _observers.begin(); i != _observers.end(); ++i)
 	{
-		(*i)->OnEClassReload();
+		(*i)->onEClassReload();
 	}
 }
 
