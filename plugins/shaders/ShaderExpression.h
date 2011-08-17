@@ -90,7 +90,7 @@ public:
 
 	virtual float getValue(std::size_t time)
 	{
-		// not implemented yet
+		// parmNN is 0 without entity
 		return 0.0f;
 	}
 
@@ -114,7 +114,7 @@ public:
 
 	virtual float getValue(std::size_t time)
 	{
-		// not implemented yet
+		// globalNN is 0 without entity
 		return 0.0f;
 	}
 
@@ -196,7 +196,8 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		float lookupVal = _lookupExpr->getValue(time, entity);
+		return _tableDef->getValue(lookupVal);
 	}
 };
 
@@ -269,7 +270,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) + _b->getValue(time, entity);
 	}
 };
 
@@ -290,7 +291,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) - _b->getValue(time, entity);
 	}
 };
 
@@ -332,7 +333,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) / _b->getValue(time, entity);
 	}
 };
 
@@ -353,7 +354,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return fmod(_a->getValue(time, entity), _b->getValue(time, entity));
 	}
 };
 
@@ -374,7 +375,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) < _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -395,7 +396,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) <= _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -416,7 +417,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) > _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -437,7 +438,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) >= _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -458,7 +459,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) == _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -479,7 +480,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return _a->getValue(time, entity) != _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -500,7 +501,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return (_a->getValue(time, entity) != 0 && _b->getValue(time, entity) != 0) ? 1.0f : 0;
 	}
 };
 
@@ -521,7 +522,7 @@ public:
 
 	virtual float getValue(std::size_t time, const IRenderEntity& entity)
 	{
-		return getValue(time);
+		return (_a->getValue(time, entity) != 0 || _b->getValue(time, entity) != 0) ? 1.0f : 0;
 	}
 };
 
