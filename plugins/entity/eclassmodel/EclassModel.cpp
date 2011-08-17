@@ -75,8 +75,9 @@ void EclassModel::updateTransform()
 	m_transformChanged();
 }
 
-void EclassModel::originChanged() {
-	m_origin = m_originKey.m_origin;
+void EclassModel::originChanged()
+{
+	m_origin = m_originKey.get();
 	updateTransform();
 }
 
@@ -114,19 +115,22 @@ void EclassModel::rotate(const Quaternion& rotation) {
 	m_rotation.rotate(rotation);
 }
 
-void EclassModel::snapto(float snap) {
-	m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-	m_originKey.write(&m_entity);
+void EclassModel::snapto(float snap)
+{
+	m_originKey.snap(snap);
+	m_originKey.write(m_entity);
 }
 
-void EclassModel::revertTransform() {
-	m_origin = m_originKey.m_origin;
+void EclassModel::revertTransform()
+{
+	m_origin = m_originKey.get();
 	m_rotation = m_rotationKey.m_rotation;
 }
 
-void EclassModel::freezeTransform() {
-	m_originKey.m_origin = m_origin;
-	m_originKey.write(&m_entity);
+void EclassModel::freezeTransform()
+{
+	m_originKey.set(m_origin);
+	m_originKey.write(m_entity);
 	m_rotationKey.m_rotation = m_rotation;
 	m_rotationKey.write(&m_entity, true);
 }

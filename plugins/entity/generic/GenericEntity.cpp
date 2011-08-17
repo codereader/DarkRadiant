@@ -106,14 +106,15 @@ void GenericEntity::rotate(const Quaternion& rotation)
 	}
 }
 
-void GenericEntity::snapto(float snap) {
-	m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-	m_originKey.write(&m_entity);
+void GenericEntity::snapto(float snap)
+{
+	m_originKey.snap(snap);
+	m_originKey.write(m_entity);
 }
 
 void GenericEntity::revertTransform()
 {
-	m_origin = m_originKey.m_origin;
+	m_origin = m_originKey.get();
 
 	if (_allow3Drotations)
 	{
@@ -125,9 +126,10 @@ void GenericEntity::revertTransform()
 	}
 }
 
-void GenericEntity::freezeTransform() {
-	m_originKey.m_origin = m_origin;
-	m_originKey.write(&m_entity);
+void GenericEntity::freezeTransform()
+{
+	m_originKey.set(m_origin);
+	m_originKey.write(m_entity);
 
 	if (_allow3Drotations)
 	{
@@ -202,8 +204,9 @@ void GenericEntity::updateTransform()
 	_owner.transformChanged();
 }
 
-void GenericEntity::originChanged() {
-	m_origin = m_originKey.m_origin;
+void GenericEntity::originChanged()
+{
+	m_origin = m_originKey.get();
 	updateTransform();
 }
 

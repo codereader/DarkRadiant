@@ -1,5 +1,4 @@
-#ifndef DOOM3GROUP_H_
-#define DOOM3GROUP_H_
+#pragma once
 
 #include "Bounded.h"
 #include "editable.h"
@@ -7,7 +6,7 @@
 #include "pivot.h"
 
 #include "../ModelKey.h"
-#include "../origin.h"
+#include "../OriginKey.h"
 #include "../rotation.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
@@ -150,5 +149,3 @@ public:
 };
 
 } // namespace entity
-
-#endif /*DOOM3GROUP_H_*/

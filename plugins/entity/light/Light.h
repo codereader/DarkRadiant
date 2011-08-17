@@ -1,5 +1,4 @@
-#ifndef LIGHTCLASS_H_
-#define LIGHTCLASS_H_
+#pragma once
 
 #include "igl.h"
 #include "irender.h"
@@ -10,7 +9,7 @@
 #include "math/Frustum.h"
 #include "transformlib.h"
 
-#include "../origin.h"
+#include "../OriginKey.h"
 #include "../rotation.h"
 #include "../ColourKey.h"
 #include "../ModelKey.h"
@@ -288,5 +287,3 @@ public:
 }; // class Light
 
 } // namespace entity
-
-#endif /*LIGHTCLASS_H_*/

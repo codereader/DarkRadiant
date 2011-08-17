@@ -234,7 +234,7 @@ void Light::updateOrigin() {
 void Light::originChanged()
 {
 	// The "origin" key has been changed, reset the current working copy to that value
-	_originTransformed = m_originKey.m_origin;
+	_originTransformed = m_originKey.get();
 	updateOrigin();
 }
 
@@ -405,11 +405,12 @@ void Light::updateRenderableRadius() const
  *
  * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode
  */
-void Light::snapto(float snap) {
-    m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-    m_originKey.write(&_entity);
+void Light::snapto(float snap)
+{
+    m_originKey.snap(snap);
+    m_originKey.write(_entity);
 
-	_originTransformed = m_originKey.m_origin;
+	_originTransformed = m_originKey.get();
 
 	updateOrigin();
 }
@@ -449,7 +450,7 @@ void Light::transformLightRadius(const Matrix4& transform)
 
 void Light::revertTransform()
 {
-	_originTransformed = m_originKey.m_origin;
+	_originTransformed = m_originKey.get();
 
 	m_rotation = m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation;
 	m_doom3Radius.m_radiusTransformed = m_doom3Radius.m_radius;
@@ -465,8 +466,8 @@ void Light::revertTransform()
 
 void Light::freezeTransform()
 {
-    m_originKey.m_origin = _originTransformed;
-    m_originKey.write(&_entity);
+    m_originKey.set(_originTransformed);
+    m_originKey.write(_entity);
 
     if (isProjected()) {
 	    if (m_useLightTarget) {

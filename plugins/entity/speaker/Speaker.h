@@ -1,5 +1,4 @@
-#ifndef SPEAKER_H_
-#define SPEAKER_H_
+#pragma once
 
 #include "ieclass.h"
 #include "Bounded.h"
@@ -10,7 +9,7 @@
 #include "transformlib.h"
 #include "generic/callback.h"
 
-#include "../origin.h"
+#include "../OriginKey.h"
 #include "../Doom3Entity.h"
 #include "../EntitySettings.h"
 #include "../KeyObserverDelegate.h"
@@ -120,5 +119,3 @@ public:
 };
 
 } // namespace entity
-
-#endif /*SPEAKER_H_*/
