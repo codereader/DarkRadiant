@@ -574,10 +574,10 @@ void Light::renderWireframe(RenderableCollector& collector,
 {
 	// Main render, submit the diamond that represents the light entity
 	collector.SetState(
-		_owner.getEntity().getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly
+		_owner.getColourShader(), RenderableCollector::eWireframeOnly
 	);
 	collector.SetState(
-		_owner.getEntity().getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials
+		_owner.getColourShader(), RenderableCollector::eFullMaterials
 	);
 	collector.addRenderable(*this, localToWorld);
 

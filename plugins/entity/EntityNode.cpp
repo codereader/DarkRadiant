@@ -215,4 +215,14 @@ void EntityNode::onEClassReload()
 	_keyObservers.refreshObservers();
 }
 
+const Vector3& EntityNode::getColour() const
+{
+	return _colourKey.getColour();
+}
+
+const ShaderPtr& EntityNode::getColourShader() const
+{
+	return _colourKey.getWireShader();
+}
+
 } // namespace entity
