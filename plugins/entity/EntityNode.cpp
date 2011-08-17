@@ -138,6 +138,20 @@ void EntityNode::onRemoveFromScene()
 	_entity.instanceDetach(scene::findMapFile(getSelf()));
 }
 
+void EntityNode::onChildAdded(const scene::INodePtr& child)
+{
+	Node::onChildAdded(child);
+
+	child->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
+}
+
+void EntityNode::onChildRemoved(const scene::INodePtr& child)
+{
+	Node::onChildRemoved(child);
+
+	child->setRenderEntity(IRenderEntityPtr());
+}
+
 std::string EntityNode::name() const
 {
 	return _nameKey.name();

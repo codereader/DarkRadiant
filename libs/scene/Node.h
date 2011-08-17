@@ -1,8 +1,8 @@
-#ifndef SCENE_NODE_H_
-#define SCENE_NODE_H_
+#pragma once
 
 #include "inode.h"
 #include "ipath.h"
+#include "irender.h"
 #include <list>
 #include "TraversableNodeSet.h"
 #include "math/AABB.h"
@@ -55,6 +55,9 @@ private:
 
 	// The list of layers this object is associated to
 	LayerList _layers;
+
+	// If this node is attached to a parent entity, this is the reference to it
+	IRenderEntityPtr _renderEntity;
 
 public:
 	Node();
@@ -147,6 +150,12 @@ public:
 	// Returns a shared reference to this node
 	scene::INodePtr getSelf();
 
+	// Set the render entity this node is attached to
+	void setRenderEntity(const IRenderEntityPtr& entity)
+	{
+		_renderEntity = entity;
+	}
+
 protected:
 	// Fills in the ancestors and self (in this order) into the given targetPath.
 	void getPathRecursively(scene::Path& targetPath);
@@ -166,5 +175,3 @@ private:
 };
 
 } // namespace scene
-
-#endif /* SCENE_NODE_H_ */
