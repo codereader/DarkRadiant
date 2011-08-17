@@ -670,12 +670,25 @@ void OpenGLShaderPass::render(OpenGLState& current,
 			// Apply our state to the current state object
 			applyState(current, flagsMask, viewer, time, i->first);
 
+			if (!stateIsActive())
+			{
+				continue;
+			}
+
 			renderAllContained(i->second, current, viewer, time);
 		}
 	}
 
 	_renderablesWithoutEntity.clear();
 	_renderables.clear();
+}
+
+bool OpenGLShaderPass::stateIsActive()
+{
+	return ((_state.stage0 == NULL || _state.stage0->isVisible()) && 
+			(_state.stage1 == NULL || _state.stage1->isVisible()) && 
+			(_state.stage2 == NULL || _state.stage2->isVisible()) && 
+			(_state.stage3 == NULL || _state.stage3->isVisible()));
 }
 
 // Setup lighting
