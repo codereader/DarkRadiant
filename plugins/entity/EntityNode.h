@@ -98,6 +98,10 @@ public:
 
 	virtual void onEClassReload();
 
+	// Returns the colour as defined in the _color spawnarg
+	const Vector3& getColour() const;
+	const ShaderPtr& getColourShader() const;
+
 private:
 	// Routines used by constructor and destructor, should be non-virtual
 	void construct();
