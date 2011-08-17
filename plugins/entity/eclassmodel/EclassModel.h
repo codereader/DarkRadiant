@@ -1,5 +1,4 @@
-#ifndef ECLASSMODEL_H_
-#define ECLASSMODEL_H_
+#pragma once
 
 #include "editable.h"
 
@@ -8,7 +7,7 @@
 #include "generic/callback.h"
 #include "pivot.h"
 
-#include "../origin.h"
+#include "../OriginKey.h"
 #include "../rotation.h"
 #include "../angle.h"
 #include "../ModelKey.h"
@@ -87,5 +86,3 @@ public:
 };
 
 } // namespace entity
-
-#endif /*ECLASSMODEL_H_*/

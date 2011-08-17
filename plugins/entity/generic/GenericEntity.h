@@ -1,5 +1,4 @@
-#ifndef GENERICENTITY_H_
-#define GENERICENTITY_H_
+#pragma once
 
 #include "Bounded.h"
 #include "editable.h"
@@ -7,7 +6,7 @@
 #include "math/Vector3.h"
 #include "entitylib.h"
 
-#include "../origin.h"
+#include "../OriginKey.h"
 #include "../angle.h"
 #include "../rotation.h"
 #include "../Doom3Entity.h"
@@ -97,5 +96,3 @@ public:
 };
 
 } // namespace entity
-
-#endif /*GENERICENTITY_H_*/

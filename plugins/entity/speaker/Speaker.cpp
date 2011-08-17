@@ -124,21 +124,23 @@ void Speaker::rotate(const Quaternion& rotation)
 	// nothing to rotate here, speakers are symmetric
 }
 
-void Speaker::snapto(float snap) {
-	m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-	m_originKey.write(&m_entity);
+void Speaker::snapto(float snap)
+{
+	m_originKey.snap(snap);
+	m_originKey.write(m_entity);
 }
 
 void Speaker::revertTransform()
 {
-	m_origin = m_originKey.m_origin;
+	m_origin = m_originKey.get();
 
 	_radiiTransformed = _radii;
 }
 
-void Speaker::freezeTransform() {
-	m_originKey.m_origin = m_origin;
-	m_originKey.write(&m_entity);
+void Speaker::freezeTransform()
+{
+	m_originKey.set(m_origin);
+	m_originKey.write(m_entity);
 
 	_radii = _radiiTransformed;
 
@@ -259,7 +261,7 @@ void Speaker::updateTransform()
 
 void Speaker::originChanged()
 {
-	m_origin = m_originKey.m_origin;
+	m_origin = m_originKey.get();
 	updateTransform();
 }
 

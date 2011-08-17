@@ -317,7 +317,6 @@
     <ClCompile Include="..\..\plugins\entity\ModelKey.cpp" />
     <ClCompile Include="..\..\plugins\entity\NameKeyObserver.cpp" />
     <ClCompile Include="..\..\plugins\entity\NamespaceManager.cpp" />
-    <ClCompile Include="..\..\plugins\entity\origin.cpp" />
     <ClCompile Include="..\..\plugins\entity\plugin.cpp" />
     <ClCompile Include="..\..\plugins\entity\rotation.cpp" />
     <ClCompile Include="..\..\plugins\entity\curve\Curve.cpp">
@@ -367,7 +366,7 @@
     <ClInclude Include="..\..\plugins\entity\NameKey.h" />
     <ClInclude Include="..\..\plugins\entity\NameKeyObserver.h" />
     <ClInclude Include="..\..\plugins\entity\NamespaceManager.h" />
-    <ClInclude Include="..\..\plugins\entity\origin.h" />
+    <ClInclude Include="..\..\plugins\entity\OriginKey.h" />
     <ClInclude Include="..\..\plugins\entity\plugin.h" />
     <ClInclude Include="..\..\plugins\entity\rotation.h" />
     <ClInclude Include="..\..\plugins\entity\ShaderParms.h" />

@@ -58,9 +58,6 @@
     <ClCompile Include="..\..\plugins\entity\NamespaceManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\origin.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\plugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
     <ClInclude Include="..\..\plugins\entity\NamespaceManager.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\origin.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\entity\plugin.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -280,6 +274,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\ShaderParms.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\OriginKey.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

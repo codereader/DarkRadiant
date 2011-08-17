@@ -124,18 +124,20 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 	m_curveCatmullRom.testSelect(selector, test, best);
 }
 
-void Doom3Group::snapOrigin(float snap) {
-	m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-	m_originKey.write(&_entity);
+void Doom3Group::snapOrigin(float snap)
+{
+	m_originKey.snap(snap);
+	m_originKey.write(_entity);
 	m_renderOrigin.updatePivot();
 }
 
 void Doom3Group::translateOrigin(const Vector3& translation)
 {
-	m_origin = m_originKey.m_origin + translation;
+	m_origin = m_originKey.get() + translation;
 
 	// Only non-models should have their rendered origin different than <0,0,0>
-	if (!isModel()) {
+	if (!isModel())
+	{
 		m_nameOrigin = m_origin;
 	}
 
@@ -152,7 +154,7 @@ void Doom3Group::translate(const Vector3& translation, bool rotation, bool scale
 	// rotation-translation applied (except for freeModelRotation set to TRUE)
 	if ((!scale && !rotation) || (isModel() && !freeModelRotation))
 	{
-		m_origin = m_originKey.m_origin + translation;
+		m_origin = m_originKey.get() + translation;
 	}
 
 	// Only non-models should have their rendered origin different than <0,0,0>
@@ -184,13 +186,15 @@ void Doom3Group::scale(const Vector3& scale)
 	}
 }
 
-void Doom3Group::snapto(float snap) {
-	m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-	m_originKey.write(&_entity);
+void Doom3Group::snapto(float snap)
+{
+	m_originKey.snap(snap);
+	m_originKey.write(_entity);
 }
 
-void Doom3Group::revertTransform() {
-	m_origin = m_originKey.m_origin;
+void Doom3Group::revertTransform()
+{
+	m_origin = m_originKey.get();
 
 	// Only non-models should have their origin different than <0,0,0>
 	if (!isModel()) {
@@ -205,9 +209,10 @@ void Doom3Group::revertTransform() {
 	m_curveCatmullRom.revertTransform();
 }
 
-void Doom3Group::freezeTransform() {
-	m_originKey.m_origin = m_origin;
-	m_originKey.write(&_entity);
+void Doom3Group::freezeTransform()
+{
+	m_originKey.set(m_origin);
+	m_originKey.write(_entity);
 
 	if (!isModel()) {
 		ChildTransformFreezer freezer;
@@ -366,8 +371,9 @@ void Doom3Group::translateChildren(const Vector3& childTranslation)
 	}
 }
 
-void Doom3Group::originChanged() {
-	m_origin = m_originKey.m_origin;
+void Doom3Group::originChanged()
+{
+	m_origin = m_originKey.get();
 	updateTransform();
 	// Only non-models should have their origin different than <0,0,0>
 	if (!isModel())
