@@ -78,11 +78,9 @@ void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest
 {
 	_lightList.evaluateLights();
 
-	// TODO: This can be cached
-	IEntityNodePtr parentEntity = boost::dynamic_pointer_cast<IEntityNode>(getParent());
-	assert(parentEntity);
+	assert(_renderEntity);
 
-	submitRenderables(collector, volume, localToWorld(), *parentEntity);
+	submitRenderables(collector, volume, localToWorld(), *_renderEntity);
 }
 
 void PicoModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {

@@ -297,12 +297,10 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	const_cast<Patch&>(m_patch).evaluateTransform();
 	collector.setLights(*m_lightList);
 
-	// TODO: This can be cached
-	IEntityNodePtr parentEntity = boost::dynamic_pointer_cast<IEntityNode>(getParent());
-	assert(parentEntity); // patches rendered without parent - no way!
+	assert(_renderEntity); // patches rendered without parent - no way!
 
 	// Pass the call to the patch instance, it adds the renderable
-	m_patch.render_solid(collector, volume, localToWorld(), *parentEntity);
+	m_patch.render_solid(collector, volume, localToWorld(), *_renderEntity);
 
 	// Render the selected components
 	renderComponentsSelected(collector, volume);

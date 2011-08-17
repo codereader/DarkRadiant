@@ -56,6 +56,7 @@ private:
 	// The list of layers this object is associated to
 	LayerList _layers;
 
+protected:
 	// If this node is attached to a parent entity, this is the reference to it
 	IRenderEntityPtr _renderEntity;
 
