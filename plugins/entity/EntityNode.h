@@ -11,6 +11,7 @@
 #include "target/TargetableNode.h"
 #include "NameKey.h"
 #include "ColourKey.h"
+#include "ShaderParms.h"
 
 #include "KeyObserverMap.h"
 
@@ -53,6 +54,9 @@ protected:
 
 	// A helper class managing the collection of KeyObservers attached to the Doom3Entity
 	KeyObserverMap _keyObservers;
+
+	// Helper class observing the "shaderParmNN" spawnargs and caching their values
+	ShaderParms _shaderParms;
 
 public:
 	// The Constructor needs the eclass

@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 #include <boost/algorithm/string/predicate.hpp>
 
+#include "Doom3Entity.h"
+
 namespace entity
 {
 
@@ -38,7 +40,8 @@ struct CaseInsensitiveKeyCompare :
 {
 	bool operator()(const std::string &s1, const std::string &s2) const
 	{
-		return boost::algorithm::ilexicographical_compare(s1, s2);
+		// return boost::algorithm::ilexicographical_compare(s1, s2); // slow!
+		return string_compare_nocase(s1.c_str(), s2.c_str()) < 0;
 	}
 };
 

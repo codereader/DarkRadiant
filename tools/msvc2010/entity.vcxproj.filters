@@ -130,6 +130,9 @@
     <ClCompile Include="..\..\plugins\entity\target\TargetManager.cpp">
       <Filter>src\target</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\ShaderParms.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\entity\angle.h">
@@ -274,6 +277,9 @@
       <Filter>src\target</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\ColourKey.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\ShaderParms.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

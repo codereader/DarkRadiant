@@ -12,7 +12,8 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_namespaceManager(_entity),
 	_nameKey(_entity),
 	_renderableName(_nameKey),
-	_keyObservers(_entity)
+	_keyObservers(_entity),
+	_shaderParms(_keyObservers, _colourKey)
 {
 	construct();
 }
@@ -32,7 +33,8 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_namespaceManager(_entity),
 	_nameKey(_entity),
 	_renderableName(_nameKey),
-	_keyObservers(_entity)
+	_keyObservers(_entity),
+	_shaderParms(_keyObservers, _colourKey)
 {
 	construct();
 }
@@ -50,10 +52,14 @@ void EntityNode::construct()
 
 	addKeyObserver("name", _nameKey);
 	addKeyObserver("_color", _colourKey);
+
+	_shaderParms.addKeyObservers();
 }
 
 void EntityNode::destruct()
 {
+	_shaderParms.removeKeyObservers();
+
 	removeKeyObserver("_color", _colourKey);
 	removeKeyObserver("name", _nameKey);
 
@@ -79,58 +85,7 @@ Entity& EntityNode::getEntity()
 
 float EntityNode::getShaderParm(int parmNum) const
 {
-	// FIXME: SLOW implementation - one could use an observer class holding 
-	// the cached float value here
-
-	// Entity parms 0-2 are mapped to the value of the _color spawnarg
-	switch (parmNum)
-	{
-	case 0:
-	case 1:
-	case 2:
-	{
-		// Use a stringstream to parse the string
-		std::string val = _entity.getKeyValue("_color");
-
-		if (val.empty())
-		{
-			return 1.0f;
-		}
-
-		std::stringstream strm(val);
-
-		Vector3 color;
-
-		strm << std::skipws;
-		strm >> color.x();
-		strm >> color.y();
-		strm >> color.z();
-
-		switch (parmNum)
-		{
-		case 0: return color.x();
-		case 1: return color.y();
-		case 2: return color.z();
-		};
-		
-		break;
-	}
-	default: 
-		break;
-	};
-	
-	// All other cases: look up the shaderParms from the dictionary
-	std::string val = _entity.getKeyValue("shaderParm" + intToStr(parmNum));
-
-	if (val.empty())
-	{
-		// parm3 is bound to "alpha" and defaults to 1.0
-		return parmNum == 3 ? 1.0f : 0.0f;
-	}
-	else
-	{
-		return strToFloat(val);
-	}
+	return _shaderParms.getParmValue(parmNum);
 }
 
 std::string EntityNode::getName() const {
