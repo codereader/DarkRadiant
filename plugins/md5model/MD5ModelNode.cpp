@@ -90,11 +90,9 @@ void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest&
 {
 	_lightList->evaluateLights();
 
-	// TODO: This can be cached
-	IEntityNodePtr parentEntity = boost::dynamic_pointer_cast<IEntityNode>(getParent());
-	assert(parentEntity);
+	assert(_renderEntity);
 
-	render(collector, volume, localToWorld(), *parentEntity);
+	render(collector, volume, localToWorld(), *_renderEntity);
 }
 
 void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const

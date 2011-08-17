@@ -437,10 +437,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 {
 	m_lightList->evaluateLights();
 
-	// TODO: This can be cached
-	IEntityNodePtr parentEntity = boost::dynamic_pointer_cast<IEntityNode>(getParent());
-
-	assert(parentEntity); // brushes rendered without parent - no way!
+	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
     // Submit the lights and renderable geometry for each face
 	for (FaceInstances::const_iterator i = m_faceInstances.begin();
@@ -453,7 +450,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
         collector.setLights(i->m_lights);
 
 		// greebo: BrushNodes have always an identity l2w, don't do any transforms
-		i->submitRenderables(collector, volume, *parentEntity);
+		i->submitRenderables(collector, volume, *_renderEntity);
     }
 
 	renderComponentsSelected(collector, volume, localToWorld);
