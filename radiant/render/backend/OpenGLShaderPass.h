@@ -74,6 +74,9 @@ private:
 					std::size_t time,
 					const IRenderEntity* entity);
 
+	// Returns true if the stage associated to this pass is active and should be rendered
+	bool stateIsActive();
+
 	void setupTextureMatrix(GLenum textureUnit, const ShaderLayerPtr& stage);
 
 	// Render all of the given TransformedRenderables
