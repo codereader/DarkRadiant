@@ -88,6 +88,10 @@ public:
 	virtual void onInsertIntoScene();
 	virtual void onRemoveFromScene();
 
+	// Sets/clears render entity references on child nodes
+	virtual void onChildAdded(const scene::INodePtr& child);
+	virtual void onChildRemoved(const scene::INodePtr& child);
+
 	// Nameable implementation
 	virtual std::string name() const;
 

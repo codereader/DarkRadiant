@@ -12,6 +12,9 @@
 class AABB;
 class Matrix4;
 
+class IRenderEntity;
+typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
+
 namespace scene {
 
 /**
@@ -145,6 +148,9 @@ public:
 	 * Returns true if this node is in the scene
 	 */
 	virtual bool inScene() const = 0;
+
+	// Set the render entity this node is attached to
+	virtual void setRenderEntity(const IRenderEntityPtr& entity) = 0;
 
 	// Call this if the node gets changed in any way or gets inserted somewhere.
 	virtual void boundsChanged() = 0;

@@ -85,6 +85,7 @@ public:
 	 */
 	virtual float getShaderParm(int parmNum) const = 0;
 };
+typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
 
 /**
  * \brief
