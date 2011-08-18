@@ -57,7 +57,10 @@ public:
 
 	// Front-end render methods
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	bool isHighlighted() const
 	{
