@@ -595,7 +595,8 @@ void CamWnd::Cam_Draw() {
 			               | RENDER_LIGHTING
 			               | RENDER_TEXTURE_2D
 			               | RENDER_SMOOTH
-			               | RENDER_SCALED;
+			               | RENDER_SCALED
+						   | RENDER_MATERIAL_VCOL;
 
 			break;
 
