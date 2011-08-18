@@ -74,10 +74,18 @@ scene::INodePtr ParticlesManager::getParticleNode(const std::string& name)
 	// Cut off the ".prt" from the end of the particle name
 	if (boost::algorithm::ends_with(nameCleaned, ".prt"))
 	{
-		nameCleaned = nameCleaned.substr(0, name.length() - 4);
+		nameCleaned = nameCleaned.substr(0, nameCleaned.length() - 4);
 	}
 
-	return ParticleNodePtr(new ParticleNode(nameCleaned));
+	ParticleDefMap::const_iterator found = _particleDefs.find(nameCleaned);
+
+	if (found == _particleDefs.end())
+	{
+		return scene::INodePtr();
+	}
+
+	RenderableParticlePtr renderable(new RenderableParticle(found->second));
+	return ParticleNodePtr(new ParticleNode(renderable));
 }
 
 IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string& name)

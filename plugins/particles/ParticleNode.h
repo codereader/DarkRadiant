@@ -4,6 +4,8 @@
 #include "iparticlenode.h"
 #include "iparticles.h"
 
+#include "RenderableParticle.h"
+
 namespace particles
 {
 
@@ -12,29 +14,15 @@ class ParticleNode :
 	public IParticleNode
 {
 private:
-	IRenderableParticlePtr _renderableParticle;
+	RenderableParticlePtr _renderableParticle;
 
 public:
 	// Construct the node giving a renderable particle 
-	ParticleNode(const IRenderableParticlePtr& particle);
+	ParticleNode(const RenderableParticlePtr& particle);
 
-	// Construct the node using a particle def name
-	ParticleNode(const std::string& particleName);
-
-	const IRenderableParticlePtr& getParticle() const
-	{
-		return _renderableParticle;
-	}
-
-	const AABB& localAABB() const
-	{
-		return _renderableParticle->getBounds();
-	}
-
-	bool isHighlighted(void) const
-	{
-		return false;
-	}
+	const IRenderableParticlePtr& getParticle() const;
+	const AABB& localAABB() const;
+	bool isHighlighted(void) const;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 

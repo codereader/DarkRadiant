@@ -1,28 +1,47 @@
 #include "ParticleNode.h"
 
-#include "itextstream.h"
-
 namespace particles
 {
 
-ParticleNode::ParticleNode(const IRenderableParticlePtr& particle) :
+ParticleNode::ParticleNode(const RenderableParticlePtr& particle) :
 	_renderableParticle(particle)
 {}
 
-ParticleNode::ParticleNode(const std::string& particleName) :
-	_renderableParticle(GlobalParticlesManager().getRenderableParticle(particleName))
-{}
+const IRenderableParticlePtr& ParticleNode::getParticle() const
+{
+	return _renderableParticle;
+}
+
+const AABB& ParticleNode::localAABB() const
+{
+	return _renderableParticle->getBounds();
+}
+
+bool ParticleNode::isHighlighted(void) const
+{
+	return false;
+}
 
 void ParticleNode::renderSolid(RenderableCollector& collector, 
 							   const VolumeTest& volume) const
 {
-	globalOutputStream() << "ParticleNode::renderSolid" << std::endl;
+	if (!_renderableParticle) return;
+
+	_renderableParticle->update(GlobalRenderSystem().getTime(), 
+		GlobalRenderSystem(), Matrix4::getIdentity());
+
+	_renderableParticle->renderSolid(collector, volume, localToWorld());
 }
 
 void ParticleNode::renderWireframe(RenderableCollector& collector, 
 								   const VolumeTest& volume) const
 {
-	globalOutputStream() << "ParticleNode::renderWireframe" << std::endl;
+	if (!_renderableParticle) return;
+
+	_renderableParticle->update(GlobalRenderSystem().getTime(), 
+		GlobalRenderSystem(), Matrix4::getIdentity());
+
+	_renderableParticle->renderWireframe(collector, volume, localToWorld());
 }
 
 } // namespace

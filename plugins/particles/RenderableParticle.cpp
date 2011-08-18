@@ -43,7 +43,8 @@ void RenderableParticle::update(std::size_t time, RenderSystem& renderSystem, co
 }
 
 // Front-end render methods
-void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void RenderableParticle::renderSolid(RenderableCollector& collector, 
+	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
 	{
@@ -57,9 +58,21 @@ void RenderableParticle::renderSolid(RenderableCollector& collector, const Volum
 			// Skip invisible stages
 			if (!(*stage)->getStage().isVisible()) continue;
 
-			collector.addRenderable(**stage, Matrix4::getIdentity());
+			collector.addRenderable(**stage, localToWorld);
 		}
 	}
+}
+
+void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	renderSolid(collector, volume, Matrix4::getIdentity());
+}
+
+void RenderableParticle::renderWireframe(RenderableCollector& collector, 
+	const VolumeTest& volume, const Matrix4& localToWorld) const
+{
+	// Does the same thing as renderSolid
+	renderSolid(collector, volume, localToWorld);
 }
 
 void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
