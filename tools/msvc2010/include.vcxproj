@@ -132,6 +132,7 @@
     <ClInclude Include="..\..\include\inode.h" />
     <ClInclude Include="..\..\include\iorthocontextmenu.h" />
     <ClInclude Include="..\..\include\iorthoview.h" />
+    <ClInclude Include="..\..\include\iparticlenode.h" />
     <ClInclude Include="..\..\include\iparticlepreview.h" />
     <ClInclude Include="..\..\include\iparticles.h" />
     <ClInclude Include="..\..\include\iparticlestage.h" />
