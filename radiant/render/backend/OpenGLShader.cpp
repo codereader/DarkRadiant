@@ -408,10 +408,15 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     previewPass.renderFlags = RENDER_FILL
                               | RENDER_TEXTURE_2D
                               | RENDER_DEPTHTEST
-                              | RENDER_DEPTHWRITE
                               | RENDER_COLOURWRITE
                               | RENDER_LIGHTING
                               | RENDER_SMOOTH;
+
+	// Don't let translucent materials write to the depth buffer
+	if ((_material->getMaterialFlags() & Material::FLAG_TRANSLUCENT) == 0)
+	{
+		previewPass.renderFlags |= RENDER_DEPTHWRITE;
+	}
 
     // Handle certain shader flags
 	if (_material->getCullType() != Material::CULL_NONE)
