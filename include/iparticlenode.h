@@ -13,7 +13,7 @@ class IParticleNode
 {
 public:
 	// Get the reference to the render particle this node is containing
-	virtual const IRenderableParticlePtr& getParticle() const = 0;
+	virtual IRenderableParticlePtr getParticle() const = 0;
 };
 typedef boost::shared_ptr<IParticleNode> IParticleNodePtr;
 
