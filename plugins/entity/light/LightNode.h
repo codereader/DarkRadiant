@@ -7,7 +7,11 @@
 #include "../VertexInstance.h"
 #include "../EntityNode.h"
 
-namespace entity {
+namespace entity
+{
+
+class LightNode;
+typedef boost::shared_ptr<LightNode> LightNodePtr;
 
 class LightNode :
 	public EntityNode,
@@ -39,9 +43,12 @@ private:
 
 public:
 	LightNode(const IEntityClassPtr& eclass);
+
+private:
 	LightNode(const LightNode& other);
 
-	void construct();
+public:
+	static LightNodePtr Create(const IEntityClassPtr& eclass);
 
 	virtual ~LightNode();
 
@@ -132,12 +139,14 @@ protected:
 	// or when reverting transformations.
 	void _applyTransformation();
 
+	// Override EntityNode::construct()
+	void construct();
+
 private:
 	void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
 
 	void evaluateTransform();
 
 }; // class LightNode
-typedef boost::shared_ptr<LightNode> LightNodePtr;
 
 } // namespace entity

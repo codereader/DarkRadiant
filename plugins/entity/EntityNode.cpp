@@ -1,9 +1,12 @@
 #include "EntityNode.h"
 
+#include "i18n.h"
+
 #include "EntitySettings.h"
 #include "target/RenderableTargetInstances.h"
 
-namespace entity {
+namespace entity
+{
 
 EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	TargetableNode(_entity, *this),
@@ -15,9 +18,7 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_modelKey(*this),
 	_keyObservers(_entity),
 	_shaderParms(_keyObservers, _colourKey)
-{
-	construct();
-}
+{}
 
 EntityNode::EntityNode(const EntityNode& other) :
 	IEntityNode(other),
@@ -38,9 +39,7 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_modelKey(*this),
 	_keyObservers(_entity),
 	_shaderParms(_keyObservers, _colourKey)
-{
-	construct();
-}
+{}
 
 EntityNode::~EntityNode()
 {
@@ -223,7 +222,9 @@ ModelKey& EntityNode::getModelKey()
 
 void EntityNode::onModelKeyChanged(const std::string& value)
 {
-	// TODO: Default implementation suitable for Light, Generic and EClassModel
+	// Default implementation suitable for Light, Generic and EClassModel
+	// Dispatch the call to the key observer, which will create the child node
+	_modelKey.modelChanged(value);
 }
 
 void EntityNode::_modelKeyChanged(const std::string& value)

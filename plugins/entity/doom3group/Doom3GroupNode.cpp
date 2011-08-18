@@ -45,6 +45,14 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	// clone() method
 }
 
+Doom3GroupNodePtr Doom3GroupNode::Create(const IEntityClassPtr& eclass)
+{
+	Doom3GroupNodePtr instance(new Doom3GroupNode(eclass));
+	instance->construct();
+
+	return instance;
+}
+
 Doom3GroupNode::~Doom3GroupNode()
 {
 	m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
@@ -55,6 +63,8 @@ Doom3GroupNode::~Doom3GroupNode()
 
 void Doom3GroupNode::construct()
 {
+	EntityNode::construct();
+
 	m_contained.construct();
 
 	// Attach the callback as keyobserver for the skin key

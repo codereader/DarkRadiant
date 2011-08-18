@@ -15,8 +15,18 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_contained(other.m_contained, *this)
 {}
 
+GenericEntityNodePtr GenericEntityNode::Create(const IEntityClassPtr& eclass)
+{
+	GenericEntityNodePtr instance(new GenericEntityNode(eclass));
+	instance->construct();
+
+	return instance;
+}
+
 void GenericEntityNode::construct()
 {
+	EntityNode::construct();
+
 	m_contained.construct();
 }
 

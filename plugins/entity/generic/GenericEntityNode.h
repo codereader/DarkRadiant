@@ -1,5 +1,4 @@
-#ifndef GENERICENTITYNODE_H_
-#define GENERICENTITYNODE_H_
+#pragma once
 
 #include "nameable.h"
 #include "editable.h"
@@ -14,7 +13,11 @@
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
 
-namespace entity {
+namespace entity
+{
+
+class GenericEntityNode;
+typedef boost::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
 
 class GenericEntityNode :
 	public EntityNode,
@@ -26,9 +29,12 @@ class GenericEntityNode :
 
 public:
 	GenericEntityNode(const IEntityClassPtr& eclass);
+
+private:
 	GenericEntityNode(const GenericEntityNode& other);
 
-	void construct();
+public:
+	static GenericEntityNodePtr Create(const IEntityClassPtr& eclass);
 
 	// Snappable implementation
 	virtual void snapto(float snap);
@@ -56,9 +62,9 @@ protected:
 	// Called by the Transformable implementation before freezing
 	// or when reverting transformations.
 	void _applyTransformation();
+
+	// Override EntityNode::construct()
+	void construct();
 };
-typedef boost::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
 
 } // namespace entity
-
-#endif /*GENERICENTITYNODE_H_*/
