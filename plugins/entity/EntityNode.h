@@ -11,6 +11,7 @@
 #include "target/TargetableNode.h"
 #include "NameKey.h"
 #include "ColourKey.h"
+#include "ModelKey.h"
 #include "ShaderParms.h"
 
 #include "KeyObserverMap.h"
@@ -23,6 +24,7 @@ namespace entity {
 class EntityNode :
 	public IEntityNode,
 	public SelectableNode, // derives from scene::Node
+	public SelectionTestable,
 	public Namespaced,
 	public TargetableNode,
 	public Nameable,
@@ -52,6 +54,10 @@ protected:
 	// The keyobserver watching over the "_color" keyvalue
 	ColourKey _colourKey;
 
+	// Model child node handling helper
+	ModelKey _modelKey;
+	KeyObserverDelegate _modelKeyObserver;
+
 	// A helper class managing the collection of KeyObservers attached to the Doom3Entity
 	KeyObserverMap _keyObservers;
 
@@ -72,6 +78,9 @@ public:
 
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const;
+
+	// SelectionTestable implementation
+	virtual void testSelect(Selector& selector, SelectionTest& test);
 
 	// Namespaced implementation
 	// Gets/sets the namespace of this named object
@@ -110,10 +119,18 @@ public:
 	const Vector3& getColour() const;
 	const ShaderPtr& getColourShader() const;
 
+	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
+
+protected:
+	virtual void onModelKeyChanged(const std::string& value);
+
 private:
 	// Routines used by constructor and destructor, should be non-virtual
 	void construct();
 	void destruct();
+
+	// Private function target - wraps to virtual protected signal
+	void _modelKeyChanged(const std::string& value);
 };
 
 } // namespace entity

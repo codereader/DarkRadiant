@@ -20,7 +20,6 @@ class Doom3GroupNode :
 	public EntityNode,
 	public scene::GroupNode,
 	public Snappable,
-	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
@@ -115,6 +114,9 @@ protected:
 	// Called by the Transformable implementation before freezing
 	// or when reverting transformations.
 	void _applyTransformation();
+
+	// Model Key changed signal
+	void onModelKeyChanged(const std::string& value);
 
 private:
 	void evaluateTransform();

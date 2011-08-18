@@ -12,6 +12,7 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_namespaceManager(_entity),
 	_nameKey(_entity),
 	_renderableName(_nameKey),
+	_modelKey(*this),
 	_keyObservers(_entity),
 	_shaderParms(_keyObservers, _colourKey)
 {
@@ -21,6 +22,7 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 EntityNode::EntityNode(const EntityNode& other) :
 	IEntityNode(other),
 	SelectableNode(other),
+	SelectionTestable(other),
 	Namespaced(other),
 	TargetableNode(_entity, *this),
 	Nameable(other),
@@ -33,6 +35,7 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_namespaceManager(_entity),
 	_nameKey(_entity),
 	_renderableName(_nameKey),
+	_modelKey(*this),
 	_keyObservers(_entity),
 	_shaderParms(_keyObservers, _colourKey)
 {
@@ -53,12 +56,18 @@ void EntityNode::construct()
 	addKeyObserver("name", _nameKey);
 	addKeyObserver("_color", _colourKey);
 
+	_modelKeyObserver.setCallback(boost::bind(&EntityNode::_modelKeyChanged, this, _1));
+	addKeyObserver("model", _modelKeyObserver);
+
 	_shaderParms.addKeyObservers();
 }
 
 void EntityNode::destruct()
 {
 	_shaderParms.removeKeyObservers();
+
+	_modelKey.setActive(false); // disable callbacks during destruction
+	removeKeyObserver("model", _modelKeyObserver);
 
 	removeKeyObserver("_color", _colourKey);
 	removeKeyObserver("name", _nameKey);
@@ -86,6 +95,19 @@ Entity& EntityNode::getEntity()
 float EntityNode::getShaderParm(int parmNum) const
 {
 	return _shaderParms.getParmValue(parmNum);
+}
+
+void EntityNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	test.BeginMesh(localToWorld());
+
+	// Pass the call down to the model node, if applicable
+	SelectionTestablePtr selectionTestable = Node_getSelectionTestable(_modelKey.getNode());
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(selector, test);
+    }
 }
 
 std::string EntityNode::getName() const {
@@ -192,6 +214,22 @@ const Vector3& EntityNode::getColour() const
 const ShaderPtr& EntityNode::getColourShader() const
 {
 	return _colourKey.getWireShader();
+}
+
+ModelKey& EntityNode::getModelKey()
+{
+	return _modelKey;
+}
+
+void EntityNode::onModelKeyChanged(const std::string& value)
+{
+	// TODO: Default implementation suitable for Light, Generic and EClassModel
+}
+
+void EntityNode::_modelKeyChanged(const std::string& value)
+{
+	// Wrap the call to the virtual event
+	onModelKeyChanged(value);
 }
 
 } // namespace entity

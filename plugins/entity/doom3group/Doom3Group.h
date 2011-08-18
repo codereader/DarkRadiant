@@ -31,7 +31,6 @@ class Doom3Group
 	Doom3GroupNode& _owner;
 	Doom3Entity& _entity;
 
-	ModelKey m_model;
 	OriginKey m_originKey;
 	Vector3 m_origin;
 
@@ -57,7 +56,6 @@ class Doom3Group
 
 	KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
-	KeyObserverDelegate _modelObserver;
 	KeyObserverDelegate _nameObserver;
 
 public:

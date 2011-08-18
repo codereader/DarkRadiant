@@ -16,7 +16,6 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	Snappable(other),
-	SelectionTestable(other),
 	_speaker(other._speaker,
 		*this,
 		Callback(boost::bind(&Node::transformChanged, this)),

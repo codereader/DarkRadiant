@@ -20,7 +20,6 @@ namespace entity {
 class SpeakerNode :
 	public EntityNode,
 	public Snappable,
-	public SelectionTestable,
 	public PlaneSelectable,
 	public ComponentSelectionTestable
 {
