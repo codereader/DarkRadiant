@@ -23,6 +23,14 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	_skinObserver(boost::bind(&EclassModelNode::skinChanged, this, _1))
 {}
 
+EclassModelNodePtr EclassModelNode::Create(const IEntityClassPtr& eclass)
+{
+	EclassModelNodePtr instance(new EclassModelNode(eclass));
+	instance->construct();
+
+	return instance;
+}
+
 EclassModelNode::~EclassModelNode()
 {
 	destroy();
@@ -30,6 +38,8 @@ EclassModelNode::~EclassModelNode()
 
 void EclassModelNode::construct()
 {
+	EntityNode::construct();
+
 	m_contained.construct();
 
 	addKeyObserver("skin", _skinObserver);
@@ -46,9 +56,10 @@ void EclassModelNode::snapto(float snap) {
 }
 
 // EntityNode implementation
-void EclassModelNode::refreshModel() {
+void EclassModelNode::refreshModel()
+{
 	// Simulate a "model" key change
-	m_contained.modelChanged(_entity.getKeyValue("model"));
+	getModelKey().modelChanged(_entity.getKeyValue("model"));
 
 	// Trigger a skin change
 	skinChanged(_entity.getKeyValue("skin"));
@@ -64,7 +75,8 @@ void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTe
 	EntityNode::renderSolid(collector, volume);
 
 	// greebo: Check if the skin needs updating before rendering.
-	if (_updateSkin) {
+	if (_updateSkin)
+	{
 		// Instantiate a walker class equipped with the new value
 		SkinChangedWalker walker(_entity.getKeyValue("skin"));
 		// Update all children
@@ -83,11 +95,6 @@ void EclassModelNode::renderWireframe(RenderableCollector& collector, const Volu
 	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
 }
 
-void EclassModelNode::testSelect(Selector& selector, SelectionTest& test)
-{
-	m_contained.testSelect(selector, test);
-}
-
 scene::INodePtr EclassModelNode::clone() const
 {
 	EclassModelNodePtr node(new EclassModelNode(*this));
@@ -96,7 +103,8 @@ scene::INodePtr EclassModelNode::clone() const
 	return node;
 }
 
-void EclassModelNode::skinChanged(const std::string& value) {
+void EclassModelNode::skinChanged(const std::string& value)
+{
 	// Instantiate a walker class equipped with the new value
 	SkinChangedWalker walker(value);
 	// Update all children

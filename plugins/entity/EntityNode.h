@@ -16,8 +16,12 @@
 
 #include "KeyObserverMap.h"
 
-namespace entity {
-
+namespace entity
+{
+	
+class EntityNode;
+typedef boost::shared_ptr<EntityNode> EntityNodePtr;
+ 
 /**
  * greebo: This is the common base class of all map entities.
  */
@@ -64,13 +68,14 @@ protected:
 	// Helper class observing the "shaderParmNN" spawnargs and caching their values
 	ShaderParms _shaderParms;
 
-public:
+protected:
 	// The Constructor needs the eclass
 	EntityNode(const IEntityClassPtr& eclass);
 
 	// Copy constructor
 	EntityNode(const EntityNode& other);
 
+public:
 	virtual ~EntityNode();
 
 	// IEntityNode implementation
@@ -124,9 +129,17 @@ public:
 protected:
 	virtual void onModelKeyChanged(const std::string& value);
 
+	/**
+	 * greebo: construct() does the necessary setup, connects keyobservers, etc.
+	 * This is called by the static constructors - it seems awkward but is necessary
+	 * since the boost::shared_from_this() is not working when the object is not fully
+	 * constructed yet.
+	 * Subclasses must make sure to have this base method called if they override this.
+	 */
+	virtual void construct();
+
 private:
-	// Routines used by constructor and destructor, should be non-virtual
-	void construct();
+	// Routine used by the destructor, should be non-virtual
 	void destruct();
 
 	// Private function target - wraps to virtual protected signal

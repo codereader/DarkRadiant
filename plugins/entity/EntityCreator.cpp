@@ -15,26 +15,31 @@
 #include <iostream>
 
 #include "i18n.h"
+#include "target/RenderableTargetInstances.h"
+#include "Doom3Entity.h"
+
 #include "light/LightNode.h"
 #include "doom3group/Doom3GroupNode.h"
 #include "speaker/SpeakerNode.h"
 #include "generic/GenericEntityNode.h"
 #include "eclassmodel/EclassModelNode.h"
-#include "target/RenderableTargetInstances.h"
-#include "Doom3Entity.h"
 
-namespace entity {
+namespace entity
+{
 
-	namespace {
-		inline NamespacedPtr Node_getNamespaced(scene::INodePtr node) {
+	namespace
+	{
+		inline NamespacedPtr Node_getNamespaced(const scene::INodePtr& node)
+		{
 			return boost::dynamic_pointer_cast<Namespaced>(node);
 		}
 	}
 
-scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& eclass) {
-
+scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& eclass)
+{
 	// Null entityclass check
-	if (!eclass) {
+	if (!eclass)
+	{
 		throw std::runtime_error(
 			_("Doom3EntityCreator::getEntityForEClass(): "
 			"cannot create entity for NULL entityclass.")
@@ -43,46 +48,37 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& ec
 
 	// Otherwise create the correct entity subclass based on the entity class
 	// parameters.
-	scene::INodePtr returnValue;
+	EntityNodePtr node;
 
-	if (eclass->isLight()) {
-		LightNodePtr node(new LightNode(eclass));
-		node->construct();
-
-		returnValue = node;
+	if (eclass->isLight())
+	{
+		node = LightNode::Create(eclass);
 	}
-	else if (!eclass->isFixedSize()) {
+	else if (!eclass->isFixedSize())
+	{
 		// Variable size entity
-		Doom3GroupNodePtr node(new Doom3GroupNode(eclass));
-		node->construct();
-
-		returnValue = node;
+		node = Doom3GroupNode::Create(eclass);
 	}
-	else if (!eclass->getAttribute("model").value.empty()) {
+	else if (!eclass->getAttribute("model").value.empty())
+	{
 		// Fixed size, has model path
-		EclassModelNodePtr node(new EclassModelNode(eclass));
-		node->construct();
-
-		returnValue = node;
+		node = EclassModelNode::Create(eclass);
 	}
-	else if (eclass->getName() == "speaker") {
-		SpeakerNodePtr node(new SpeakerNode(eclass));
-		node->construct();
-
-		returnValue = node;
+	else if (eclass->getName() == "speaker")
+	{
+		node = SpeakerNode::Create(eclass);
 	}
-	else {
+	else
+	{
 		// Fixed size, no model path
-		GenericEntityNodePtr node(new GenericEntityNode(eclass));
-		node->construct();
-
-		returnValue = node;
+		node = GenericEntityNode::Create(eclass);
 	}
 
-	return returnValue;
+	return node;
 }
 
-scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass) {
+scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
+{
 	scene::INodePtr node = getEntityForEClass(eclass);
 	Entity* entity = Node_getEntity(node);
 	assert(entity != NULL);

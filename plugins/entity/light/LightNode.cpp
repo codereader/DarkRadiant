@@ -41,8 +41,18 @@ LightNode::LightNode(const LightNode& other) :
 	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
 {}
 
+LightNodePtr LightNode::Create(const IEntityClassPtr& eclass)
+{
+	LightNodePtr instance(new LightNode(eclass));
+	instance->construct();
+
+	return instance;
+}
+
 void LightNode::construct()
 {
+	EntityNode::construct();
+
 	_light.construct();
 }
 

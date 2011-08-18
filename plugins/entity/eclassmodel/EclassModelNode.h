@@ -1,5 +1,4 @@
-#ifndef ECLASSMODELNODE_H_
-#define ECLASSMODELNODE_H_
+#pragma once
 
 #include "nameable.h"
 #include "inamespace.h"
@@ -17,12 +16,17 @@
 
 #include "EclassModel.h"
 
-namespace entity {
+namespace entity
+{
+
+class EclassModelNode;
+typedef boost::shared_ptr<EclassModelNode> EclassModelNodePtr;
 
 class EclassModelNode :
 	public EntityNode,
 	public Snappable
 {
+private:
 	friend class EclassModel;
 
 	EclassModel m_contained;
@@ -33,11 +37,14 @@ class EclassModelNode :
 
 	KeyObserverDelegate _skinObserver;
 
-public:
+private:
 	// Constructor
 	EclassModelNode(const IEntityClassPtr& eclass);
 	// Copy Constructor
 	EclassModelNode(const EclassModelNode& other);
+
+public:
+	static EclassModelNodePtr Create(const IEntityClassPtr& eclass);
 
 	virtual ~EclassModelNode();
 
@@ -56,9 +63,6 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 
-	// SelectionTestable
-	void testSelect(Selector& selector, SelectionTest& test);
-
 	void skinChanged(const std::string& value);
 
 protected:
@@ -70,12 +74,11 @@ protected:
 	// or when reverting transformations.
 	void _applyTransformation();
 
-public:
+	// Override EntityNode::construct()
 	void construct();
+
+private:
 	void destroy();
 };
-typedef boost::shared_ptr<EclassModelNode> EclassModelNodePtr;
 
-} // namespace entity
-
-#endif /*ECLASSMODELNODE_H_*/
+} // namespace

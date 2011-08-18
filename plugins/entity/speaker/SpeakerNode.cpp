@@ -23,8 +23,18 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
 {}
 
+boost::shared_ptr<SpeakerNode> SpeakerNode::Create(const IEntityClassPtr& eclass)
+{
+	SpeakerNodePtr instance(new SpeakerNode(eclass));
+	instance->construct();
+
+	return instance;
+}
+
 void SpeakerNode::construct()
 {
+	EntityNode::construct();
+
 	_speaker.construct();
 }
 

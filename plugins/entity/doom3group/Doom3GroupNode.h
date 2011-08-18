@@ -1,5 +1,4 @@
-#ifndef DOOM3GROUPNODE_H_
-#define DOOM3GROUPNODE_H_
+#pragma once
 
 #include "igroupnode.h"
 #include "icurve.h"
@@ -14,7 +13,11 @@
 #include "../EntityNode.h"
 #include "../KeyObserverDelegate.h"
 
-namespace entity {
+namespace entity 
+{
+
+class Doom3GroupNode;
+typedef boost::shared_ptr<Doom3GroupNode> Doom3GroupNodePtr;
 
 class Doom3GroupNode :
 	public EntityNode,
@@ -25,6 +28,7 @@ class Doom3GroupNode :
 	public ComponentSnappable,
 	public CurveNode
 {
+private:
 	friend class Doom3Group;
 
 	// The contained Doom3Group class
@@ -41,14 +45,16 @@ class Doom3GroupNode :
 
 	KeyObserverDelegate _skinObserver;
 
+private:
+	// Constructor
+	Doom3GroupNode(const IEntityClassPtr& eclass);
 	// Private copy constructor, is invoked by clone()
 	Doom3GroupNode(const Doom3GroupNode& other);
 
 public:
-	Doom3GroupNode(const IEntityClassPtr& eclass);
-	virtual ~Doom3GroupNode();
+	static Doom3GroupNodePtr Create(const IEntityClassPtr& eclass);
 
-	void construct();
+	virtual ~Doom3GroupNode();
 
 	// EntityNode implementation
 	virtual void refreshModel();
@@ -118,12 +124,12 @@ protected:
 	// Model Key changed signal
 	void onModelKeyChanged(const std::string& value);
 
+	// Override EntityNode::construct()
+	virtual void construct();
+
 private:
 	void evaluateTransform();
 
-}; // class Doom3GroupNode
-typedef boost::shared_ptr<Doom3GroupNode> Doom3GroupNodePtr;
+};
 
-} // namespace entity
-
-#endif /*DOOM3GROUPNODE_H_*/
+} // namespace

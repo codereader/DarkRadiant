@@ -24,6 +24,7 @@ class EclassModelNode;
 class EclassModel :
 	public Snappable
 {
+private:
 	EclassModelNode& _owner;
 
 	Doom3Entity& m_entity;
@@ -34,7 +35,6 @@ class EclassModel :
 	float m_angle;
 	RotationKey m_rotationKey;
 	Float9 m_rotation;
-	ModelKey m_model;
 
 	RenderablePivot m_renderOrigin;
 
@@ -42,7 +42,6 @@ class EclassModel :
 
 	KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
-	KeyObserverDelegate _modelObserver;
 
 public:
 	EclassModel(EclassModelNode& owner,
@@ -68,8 +67,6 @@ public:
 	void revertTransform();
 	void freezeTransform();
 
-	void testSelect(Selector& selector, SelectionTest& test);
-
 public:
 	void construct();
 	void destroy();
@@ -81,8 +78,6 @@ public:
 	void angleChanged();
 
 	void rotationChanged();
-
-	void modelChanged(const std::string& value);
 };
 
 } // namespace entity
