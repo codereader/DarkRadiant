@@ -20,7 +20,7 @@ public:
 	// Construct the node giving a renderable particle 
 	ParticleNode(const RenderableParticlePtr& particle);
 
-	const IRenderableParticlePtr& getParticle() const;
+	IRenderableParticlePtr getParticle() const;
 	const AABB& localAABB() const;
 	bool isHighlighted(void) const;
 

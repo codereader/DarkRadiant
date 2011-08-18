@@ -1,5 +1,7 @@
 #include "ParticleNode.h"
 
+#include "ivolumetest.h"
+
 namespace particles
 {
 
@@ -7,7 +9,7 @@ ParticleNode::ParticleNode(const RenderableParticlePtr& particle) :
 	_renderableParticle(particle)
 {}
 
-const IRenderableParticlePtr& ParticleNode::getParticle() const
+IRenderableParticlePtr ParticleNode::getParticle() const
 {
 	return _renderableParticle;
 }
@@ -27,8 +29,11 @@ void ParticleNode::renderSolid(RenderableCollector& collector,
 {
 	if (!_renderableParticle) return;
 
+	Matrix4 modelView = volume.GetModelview();
+	modelView.t() = Vector4(0,0,0,1);
+
 	_renderableParticle->update(GlobalRenderSystem().getTime(), 
-		GlobalRenderSystem(), Matrix4::getIdentity());
+		GlobalRenderSystem(), modelView);
 
 	_renderableParticle->renderSolid(collector, volume, localToWorld());
 }
@@ -38,8 +43,11 @@ void ParticleNode::renderWireframe(RenderableCollector& collector,
 {
 	if (!_renderableParticle) return;
 
+	Matrix4 modelView = volume.GetModelview();
+	modelView.t() = Vector4(0,0,0,1);
+
 	_renderableParticle->update(GlobalRenderSystem().getTime(), 
-		GlobalRenderSystem(), Matrix4::getIdentity());
+		GlobalRenderSystem(), modelView);
 
 	_renderableParticle->renderWireframe(collector, volume, localToWorld());
 }
