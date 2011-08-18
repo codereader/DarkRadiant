@@ -1,13 +1,12 @@
-#ifndef MODELKEY_H_
-#define MODELKEY_H_
+#pragma once
 
 #include <string>
 #include "inode.h"
 
 /**
  * greebo: A ModelKey object watches the "model" spawnarg of
- *         an entity. As soon as the keyvalue changes, the according
- *         modelnode is loaded and inserted into the entity's Traversable.
+ * an entity. As soon as the keyvalue changes, the according
+ * modelnode is loaded and inserted into the entity's Traversable.
  */
 class ModelKey
 {
@@ -34,5 +33,3 @@ public:
 	// Returns the reference to the "singleton" model node
 	const scene::INodePtr& getNode() const;
 };
-
-#endif /* MODELKEY_H_ */

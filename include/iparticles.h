@@ -11,6 +11,12 @@ template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 class AABB;
 
+namespace scene
+{
+	class INode;
+	typedef boost::shared_ptr<INode> INodePtr;
+}
+
 namespace particles
 {
 
@@ -207,6 +213,11 @@ public:
 	 * @returns: the renderable particle instance or NULL if the named particle was not found.
 	 */
 	virtual IRenderableParticlePtr getRenderableParticle(const std::string& name) = 0;
+
+	/**
+	 * Get a Particle Node, suitable for insertion into the scenegraph as child of an entity node.
+	 */
+	virtual scene::INodePtr getParticleNode(const std::string& name) = 0;
 
 	/**
 	 * Reloads the definitions from the .prt files. Any existing references to IParticleDefs
