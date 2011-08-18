@@ -13,7 +13,6 @@ class LightNode :
 	public EntityNode,
 	public Snappable,
 	public Editable,
-	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,

@@ -21,8 +21,7 @@ namespace entity {
 
 class EclassModelNode :
 	public EntityNode,
-	public Snappable,
-	public SelectionTestable
+	public Snappable
 {
 	friend class EclassModel;
 

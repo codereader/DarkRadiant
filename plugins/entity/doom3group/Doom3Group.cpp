@@ -27,7 +27,6 @@ Doom3Group::Doom3Group(
 		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
-	m_model(owner),
 	m_originKey(boost::bind(&Doom3Group::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
@@ -44,7 +43,6 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 		const Callback& boundsChanged) :
 	_owner(owner),
 	_entity(_owner._entity),
-	m_model(owner),
 	m_originKey(boost::bind(&Doom3Group::originChanged, this)),
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
@@ -112,14 +110,6 @@ void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTes
 
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best)
 {
-	// Pass the call down to the model node, if applicable
-	SelectionTestablePtr selectionTestable = Node_getSelectionTestable(m_model.getNode());
-
-    if (selectionTestable)
-	{
-		selectionTestable->testSelect(selector, test);
-    }
-
 	m_curveNURBS.testSelect(selector, test, best);
 	m_curveCatmullRom.testSelect(selector, test, best);
 }
@@ -257,14 +247,12 @@ void Doom3Group::construct()
 {
 	_angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
 	_rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
-	_modelObserver.setCallback(boost::bind(&Doom3Group::modelChanged, this, _1));
 	_nameObserver.setCallback(boost::bind(&Doom3Group::nameChanged, this, _1));
 
 	m_rotation.setIdentity();
 
 	m_isModel = false;
 
-	_owner.addKeyObserver("model", _modelObserver);
 	_owner.addKeyObserver("origin", m_originKey);
 	_owner.addKeyObserver("angle", _angleObserver);
 	_owner.addKeyObserver("rotation", _rotationObserver);
@@ -278,9 +266,7 @@ void Doom3Group::construct()
 void Doom3Group::destroy()
 {
 	modelChanged("");
-	m_model.setActive(false); // disable callbacks during destruction
 
-	_owner.removeKeyObserver("model", _modelObserver);
 	_owner.removeKeyObserver("origin", m_originKey);
 	_owner.removeKeyObserver("angle", _angleObserver);
 	_owner.removeKeyObserver("rotation", _rotationObserver);
@@ -296,11 +282,11 @@ bool Doom3Group::isModel() const {
 void Doom3Group::setIsModel(bool newValue) {
 	if (newValue && !m_isModel) {
 		// The model key is not recognised as "name"
-		m_model.modelChanged(m_modelKey);
+		_owner.getModelKey().modelChanged(m_modelKey);
 	}
 	else if (!newValue && m_isModel) {
 		// Clear the model path
-		m_model.modelChanged("");
+		_owner.getModelKey().modelChanged("");
 		m_nameOrigin = m_origin;
 	}
 	m_isModel = newValue;
@@ -334,17 +320,22 @@ void Doom3Group::nameChanged(const std::string& value) {
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3Group::modelChanged(const std::string& value) {
+void Doom3Group::modelChanged(const std::string& value)
+{
 	m_modelKey = value;
 	updateIsModel();
-	if (isModel()) {
-		m_model.modelChanged(value);
+
+	if (isModel())
+	{
+		_owner.getModelKey().modelChanged(value);
 		m_nameOrigin = Vector3(0,0,0);
 	}
-	else {
-		m_model.modelChanged("");
+	else
+	{
+		_owner.getModelKey().modelChanged("");
 		m_nameOrigin = m_origin;
 	}
+
 	m_renderOrigin.updatePivot();
 }
 

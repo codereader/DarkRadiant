@@ -24,7 +24,6 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	EntityNode(other),
 	scene::GroupNode(other),
 	Snappable(other),
-	SelectionTestable(other),
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
 	ComponentSnappable(other),
@@ -211,6 +210,8 @@ void Doom3GroupNode::snapto(float snap) {
 
 void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
 {
+	EntityNode::testSelect(selector, test);
+
 	test.BeginMesh(localToWorld());
 	SelectionIntersection best;
 
@@ -367,6 +368,15 @@ void Doom3GroupNode::_applyTransformation()
 		// Update the origin when we're in "child primitive" mode
 		_renderableName.setOrigin(m_contained.getOrigin());
 	}
+}
+
+void Doom3GroupNode::onModelKeyChanged(const std::string& value)
+{
+	// Override the default behaviour
+	// Don't call EntityNode::onModelKeyChanged(value);
+
+	// Pass the call to the contained model
+	m_contained.modelChanged(value);
 }
 
 } // namespace entity
