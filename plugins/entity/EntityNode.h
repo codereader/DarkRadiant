@@ -69,6 +69,9 @@ protected:
 	// Helper class observing the "shaderParmNN" spawnargs and caching their values
 	ShaderParms _shaderParms;
 
+	// This entity's main direction, usually determined by the angle/rotation keys
+	Vector3 _direction;
+
 protected:
 	// The Constructor needs the eclass
 	EntityNode(const IEntityClassPtr& eclass);
@@ -85,6 +88,7 @@ public:
 
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const;
+	virtual const Vector3& getDirection() const;
 
 	// SelectionTestable implementation
 	virtual void testSelect(Selector& selector, SelectionTest& test);

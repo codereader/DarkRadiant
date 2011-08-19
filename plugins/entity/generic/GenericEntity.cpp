@@ -228,4 +228,9 @@ void GenericEntity::rotationChanged()
 	updateTransform();
 }
 
+const Vector3& GenericEntity::getDirection() const
+{
+	return m_ray.direction;
+}
+
 } // namespace entity

@@ -25,8 +25,10 @@ public:
 	bool isHighlighted(void) const;
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+
+private:
+	void update(const VolumeTest& viewVolume) const;
 };
 typedef boost::shared_ptr<ParticleNode> ParticleNodePtr;
 
