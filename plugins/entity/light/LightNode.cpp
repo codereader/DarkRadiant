@@ -85,9 +85,10 @@ void LightNode::lightChanged() {
 	GlobalRenderSystem().lightChanged(*this);
 }
 
-void LightNode::refreshModel() {
+void LightNode::refreshModel()
+{
 	// Simulate a "model" key change
-	_light._modelKey.modelChanged(_entity.getKeyValue("model"));
+	_modelKey.modelChanged(_entity.getKeyValue("model"));
 }
 
 const AABB& LightNode::localAABB() const {
@@ -119,8 +120,10 @@ void LightNode::onRemoveFromScene()
 	setSelectedComponents(false, SelectionSystem::eFace);
 }
 
-// Test the light volume for selection, this just passes the call on to the contained Light class
-void LightNode::testSelect(Selector& selector, SelectionTest& test) {
+void LightNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	EntityNode::testSelect(selector, test);
+
 	_light.testSelect(selector, test, localToWorld());
 }
 

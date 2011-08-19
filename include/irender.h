@@ -92,7 +92,7 @@ typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
  * Interface for a light source in the renderer.
  */
 class RendererLight :
-	public IRenderEntity
+	public virtual IRenderEntity
 {
 public:
     virtual ~RendererLight() {}

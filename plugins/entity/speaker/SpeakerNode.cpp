@@ -64,7 +64,10 @@ void SpeakerNode::selectReversedPlanes(Selector& selector, const SelectedPlanes&
 	_dragPlanes.selectReversedPlanes(localAABB(), selector, selectedPlanes);
 }
 
-void SpeakerNode::testSelect(Selector& selector, SelectionTest& test) {
+void SpeakerNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	EntityNode::testSelect(selector, test);
+
 	_speaker.testSelect(selector, test, localToWorld());
 }
 
