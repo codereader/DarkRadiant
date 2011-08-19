@@ -74,8 +74,6 @@ class Light :
   RotationKey m_rotationKey;
   Float9 m_rotation;
 
-	ModelKey _modelKey;
-
 	Doom3LightRadius m_doom3Radius;
 
 	// Renderable components of this light
@@ -142,7 +140,6 @@ class Light :
 
     KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
-	KeyObserverDelegate _modelObserver;
 
 	KeyObserverDelegate _lightRadiusObserver;
 	KeyObserverDelegate _lightCenterObserver;

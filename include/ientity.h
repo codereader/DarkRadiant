@@ -257,7 +257,7 @@ public:
 };
 
 class IEntityNode :
-	public IRenderEntity
+	public virtual IRenderEntity
 {
 public:
     virtual ~IEntityNode() {}

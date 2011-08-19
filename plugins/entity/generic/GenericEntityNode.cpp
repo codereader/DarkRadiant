@@ -45,7 +45,10 @@ const AABB& GenericEntityNode::localAABB() const {
 	return m_contained.localAABB();
 }
 
-void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test) {
+void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	EntityNode::testSelect(selector, test);
+
 	m_contained.testSelect(selector, test, localToWorld());
 }
 
