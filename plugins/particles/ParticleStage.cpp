@@ -712,7 +712,7 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 
 	if (stage.getUseEntityColour())
 	{
-		stream << "\t\t" << "entityColor " << "\t\t\t\t" << "1" << std::endl;
+		stream << "\t\t" << "entityColor " << "\t\t" << "1" << std::endl;
 	}
 
 	// Closing brace
