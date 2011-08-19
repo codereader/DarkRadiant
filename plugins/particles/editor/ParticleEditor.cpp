@@ -188,6 +188,8 @@ void ParticleEditor::setupSettingsPages()
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
 	getGladeWidget<Gtk::Entry>("fadeColourEntry")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
+	getGladeWidget<Gtk::CheckButton>("useEntityColour")->signal_toggled().connect(
+		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
 
 	getGladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
@@ -334,8 +336,8 @@ void ParticleEditor::_onShaderControlsChanged()
 	}
 
 	stage.setColour(Vector4(getGladeWidget<Gtk::Entry>("colourEntry")->get_text()));
-	stage.setFadeColour(Vector4(getGladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));
-	
+	stage.setUseEntityColour(getGladeWidget<Gtk::CheckButton>("useEntityColour")->get_active());
+	stage.setFadeColour(Vector4(getGladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));	
 	stage.setFadeInFraction(getSpinButtonValueAsFloat("fadeInFractionSpinner"));
 	stage.setFadeOutFraction(getSpinButtonValueAsFloat("fadeOutFractionSpinner"));
 	stage.setFadeIndexFraction(getSpinButtonValueAsFloat("fadeIndexFractionSpinner"));
@@ -818,6 +820,8 @@ void ParticleEditor::updateWidgetsFromStage()
 	getGladeWidget<Gtk::Entry>("colourEntry")->set_text(
 		(boost::format("%.2f %.2f %.2f %.2f") % colour.x() % colour.y() % colour.z() % colour.w()).str()
 	);
+
+	getGladeWidget<Gtk::CheckButton>("useEntityColour")->set_active(stage.getUseEntityColour());
 
 	const Vector4& fadeColour = stage.getFadeColour();
 	getGladeWidget<Gtk::Entry>("fadeColourEntry")->set_text(
