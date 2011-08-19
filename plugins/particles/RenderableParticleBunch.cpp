@@ -240,13 +240,11 @@ void RenderableParticleBunch::calculateAnim(ParticleRenderInfo& particle)
 
 void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 {
-	// We start with the stage's standard colour
-	particle.colour = _stage.getColour();
+	Vector4 mainColour = !_stage.getUseEntityColour() ? 
+		_stage.getColour() : Vector4(_entityColour.x(), _entityColour.y(), _entityColour.z(), 1);
 
-	if (_stage.getUseEntityColour())
-	{
-		particle.colour = Vector4(_entityColour.x(), _entityColour.y(), _entityColour.z(), 1);
-	}
+	// We start with the stage's standard colour
+	particle.colour = mainColour;
 
 	// Consider fade index fraction, which can spawn particles already faded to some extent
 	float fadeIndexFraction = _stage.getFadeIndexFraction();
@@ -277,7 +275,7 @@ void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 
 	if (fadeInFraction > 0 && particle.timeFraction <= fadeInFraction)
 	{
-		particle.colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), particle.timeFraction / fadeInFraction);
+		particle.colour = lerpColour(_stage.getFadeColour(), mainColour, particle.timeFraction / fadeInFraction);
 	}
 
 	float fadeOutFraction = _stage.getFadeOutFraction();
@@ -285,7 +283,7 @@ void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 
 	if (fadeOutFraction > 0 && particle.timeFraction >= fadeOutFractionInverse)
 	{
-		particle.colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (particle.timeFraction - fadeOutFractionInverse) / fadeOutFraction);
+		particle.colour = lerpColour(mainColour, _stage.getFadeColour(), (particle.timeFraction - fadeOutFractionInverse) / fadeOutFraction);
 	}
 }
 
