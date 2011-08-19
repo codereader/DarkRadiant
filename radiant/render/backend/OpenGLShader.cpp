@@ -418,10 +418,10 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 		previewPass.renderFlags |= RENDER_DEPTHWRITE;
 	}
 
-	if (_material->firstLayer() && _material->firstLayer()->getVertexColourMode() != ShaderLayer::VERTEX_COLOUR_NONE)
+	/*if (_material->firstLayer() && _material->firstLayer()->getVertexColourMode() != ShaderLayer::VERTEX_COLOUR_NONE)
 	{
 		previewPass.renderFlags |= RENDER_COLOURARRAY;
-	}
+	}*/
 
     // Handle certain shader flags
 	if (_material->getCullType() != Material::CULL_NONE)
