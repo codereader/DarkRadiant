@@ -270,8 +270,16 @@ void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 
 void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 {
+	// Check if the main direction is different to the z axis
+	Vector3 dir = _direction.getNormalised();
+	Vector3 z(0,0,1);
+
+	double deviation = dir.angle(z);
+
+	Matrix4 rotation = deviation != 0 ? Matrix4::getRotation(z, dir) : Matrix4::getIdentity();
+
 	// Consider offset as starting point
-	particle.origin = _offset;
+	particle.origin = rotation.transformPoint(_offset);
 
 	switch (_stage.getCustomPathType())
 	{
@@ -284,7 +292,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 			particle.origin += distributionOffset;
 
 			// Calculate particle direction, pass distribution offset (this is needed for DIRECTION_OUTWARD)
-			Vector3 particleDirection = getDirection(particle, _direction, distributionOffset);
+			Vector3 particleDirection = getDirection(particle, rotation, distributionOffset);
 
 			// Consider speed
 			particle.origin += particleDirection * integrate(_stage.getSpeed(), particle.timeSecs);
@@ -377,13 +385,8 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 	particle.origin += gravity * _stage.getGravity() * particle.timeSecs * particle.timeSecs * 0.5f;
 }
 
-Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset)
+Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, const Matrix4& rotation, const Vector3& distributionOffset)
 {
-	if (baseDirection.getLengthSquared() == 0)
-	{
-		return Vector3(0,0,1); // degenerate input
-	}
-
 	switch (_stage.getDirectionType())
 	{
 	case IParticleStage::DIRECTION_CONE:
@@ -403,19 +406,8 @@ Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, cons
 
 			Vector3 endPoint(cos(theta) * sin(phi), sin(theta) * sin(phi), cos(phi));
 
-			// Check if the main direction is different to the z axis
-			Vector3 dir = baseDirection.getNormalised();
-			Vector3 z(0,0,1);
-
-			double deviation = dir.angle(z);
-
-			if (deviation != 0)
-			{
-				Matrix4 rotation = Matrix4::getRotation(z, dir);
-
-				// Rotate the vector into the particle's main direction
-				endPoint = rotation.transformPoint(endPoint);
-			}
+			// Rotate the vector into the particle's main direction
+			endPoint = rotation.transformPoint(endPoint);
 
 			return endPoint.getNormalised();
 		}

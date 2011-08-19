@@ -108,8 +108,8 @@ private:
 	// Handles animFrame stuff, may only be called if animFrames > 0
 	void calculateAnim(ParticleRenderInfo& particle);
 
-	// baseDirection should be normalised and not degenerate
-	Vector3 getDirection(ParticleRenderInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset);
+	// The rotation is used to deviate the offsets should be normalised and not degenerate
+	Vector3 getDirection(ParticleRenderInfo& particle, const Matrix4& rotation, const Vector3& distributionOffset);
 
 	Vector3 getDistributionOffset(ParticleRenderInfo& particle, bool distributeParticlesRandomly);
 
