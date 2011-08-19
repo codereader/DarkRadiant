@@ -6,7 +6,8 @@ namespace particles
 RenderableParticle::RenderableParticle(const IParticleDefPtr& particleDef) :
 	_particleDef(), // don't initialise the ptr yet
 	_random(rand()), // use a random seed
-	_direction(0,0,1) // default direction
+	_direction(0,0,1), // default direction
+	_entityColour(1,1,1) // default entity colour
 {
 	// Use this method, for observer handling
 	setParticleDef(particleDef);
@@ -43,8 +44,8 @@ void RenderableParticle::update(std::size_t time, RenderSystem& renderSystem, co
 }
 
 // Front-end render methods
-void RenderableParticle::renderSolid(RenderableCollector& collector, 
-	const VolumeTest& volume, const Matrix4& localToWorld) const
+void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
+	const Matrix4& localToWorld, const IRenderEntity* entity) const
 {
 	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
 	{
@@ -58,21 +59,28 @@ void RenderableParticle::renderSolid(RenderableCollector& collector,
 			// Skip invisible stages
 			if (!(*stage)->getStage().isVisible()) continue;
 
-			collector.addRenderable(**stage, localToWorld);
+			if (entity)
+			{
+				collector.addRenderable(**stage, localToWorld, *entity);
+			}
+			else
+			{
+				collector.addRenderable(**stage, localToWorld);
+			}
 		}
 	}
 }
 
 void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	renderSolid(collector, volume, Matrix4::getIdentity());
+	renderSolid(collector, volume, Matrix4::getIdentity(), NULL);
 }
 
-void RenderableParticle::renderWireframe(RenderableCollector& collector, 
-	const VolumeTest& volume, const Matrix4& localToWorld) const
+void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
+	const Matrix4& localToWorld, const IRenderEntity* entity) const
 {
 	// Does the same thing as renderSolid
-	renderSolid(collector, volume, localToWorld);
+	renderSolid(collector, volume, localToWorld, entity);
 }
 
 void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
@@ -108,6 +116,14 @@ void RenderableParticle::setParticleDef(const IParticleDefPtr& def)
 void RenderableParticle::setMainDirection(const Vector3& direction)
 {
 	_direction = direction;
+
+	// The particle stages hold a const-reference to _direction
+	// so no further update is needed
+}
+
+void RenderableParticle::setEntityColour(const Vector3& colour)
+{
+	_entityColour = colour;
 
 	// The particle stages hold a const-reference to _direction
 	// so no further update is needed
@@ -191,7 +207,7 @@ void RenderableParticle::setupStages()
 		}
 
 		// Create a new renderable stage and add it to the shader
-		RenderableParticleStagePtr renderableStage(new RenderableParticleStage(stage, _random, _direction));
+		RenderableParticleStagePtr renderableStage(new RenderableParticleStage(stage, _random, _direction, _entityColour));
 		_shaderMap[materialName].stages.push_back(renderableStage);
 	}
 }

@@ -162,6 +162,12 @@ public:
 	virtual void setMainDirection(const Vector3& direction) = 0;
 
 	/**
+	 * Set the colour needed by the particle system when the setting
+	 * "use entity colour" is activated.
+	 */
+	virtual void setEntityColour(const Vector3& colour) = 0;
+
+	/**
 	 * Returns the bounding box taken by the entirety of quads in this particle.
 	 * Make sure to call this after the update() method, as getAABB() will
 	 * calculate and return the bounds at the time passed to update().

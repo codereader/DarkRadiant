@@ -32,7 +32,7 @@ void ParticleNode::renderSolid(RenderableCollector& collector,
 	// Update the particle system before rendering
 	update(volume);
 
-	_renderableParticle->renderSolid(collector, volume, localToWorld());
+	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity.get());
 }
 
 void ParticleNode::renderWireframe(RenderableCollector& collector, 
@@ -43,7 +43,7 @@ void ParticleNode::renderWireframe(RenderableCollector& collector,
 	// Update the particle system before rendering
 	update(volume);
 
-	_renderableParticle->renderWireframe(collector, volume, localToWorld());
+	_renderableParticle->renderWireframe(collector, volume, localToWorld(), _renderEntity.get());
 }
 
 void ParticleNode::update(const VolumeTest& viewVolume) const
@@ -54,6 +54,10 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 
 	// Get the main direction of our parent entity
 	_renderableParticle->setMainDirection(_renderEntity->getDirection());
+
+	// Set entity colour, might be needed
+	_renderableParticle->setEntityColour(Vector3(
+		_renderEntity->getShaderParm(0), _renderEntity->getShaderParm(1), _renderEntity->getShaderParm(2)));
 
 	_renderableParticle->update(GlobalRenderSystem().getTime(), 
 		GlobalRenderSystem(), viewRotation);
