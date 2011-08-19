@@ -327,7 +327,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
 	// Apply the global state mask to our own desired render flags to determine
     // the final set of flags that must bet set
-	const unsigned int requiredState = _state.renderFlags & globalStateMask;
+	unsigned int requiredState = _state.renderFlags & globalStateMask;
+
+	// In per-entity mode, allow the entity to add requirements
+	if (entity != NULL)
+	{
+		requiredState |= entity->getRequiredShaderFlags();
+	}
 
     // Construct a mask containing all the flags that will be changing between
     // the current state and the required state. This avoids performing

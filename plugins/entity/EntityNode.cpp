@@ -18,7 +18,8 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_modelKey(*this),
 	_keyObservers(_entity),
 	_shaderParms(_keyObservers, _colourKey),
-	_direction(1,0,0)
+	_direction(1,0,0),
+	_requiredShaderFlags(RENDER_DEFAULT)
 {}
 
 EntityNode::EntityNode(const EntityNode& other) :
@@ -40,7 +41,8 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_modelKey(*this),
 	_keyObservers(_entity),
 	_shaderParms(_keyObservers, _colourKey),
-	_direction(1,0,0)
+	_direction(1,0,0),
+	_requiredShaderFlags(RENDER_DEFAULT)
 {}
 
 EntityNode::~EntityNode()
@@ -116,6 +118,16 @@ float EntityNode::getShaderParm(int parmNum) const
 const Vector3& EntityNode::getDirection() const
 {
 	return _direction;
+}
+
+unsigned int EntityNode::getRequiredShaderFlags() const
+{
+	return _requiredShaderFlags;
+}
+
+void EntityNode::setRequiredShaderFlags(unsigned int flags)
+{
+	_requiredShaderFlags = flags;
 }
 
 void EntityNode::testSelect(Selector& selector, SelectionTest& test)
