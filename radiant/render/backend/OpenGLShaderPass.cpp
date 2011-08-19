@@ -394,16 +394,6 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
             GlobalOpenGL().assertNoErrors();
         }
 
-        // RENDER_TEXTURE_2D
-        if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
-        {
-            enableTexture2D();
-        }
-        else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
-        {
-            disableTexture2D();
-        }
-
         // RENDER_TEXTURE_CUBEMAP
         if(changingBitsMask & requiredState & RENDER_TEXTURE_CUBEMAP)
         {
@@ -412,6 +402,16 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_CUBEMAP)
         {
             disableTextureCubeMap();
+        }
+
+		// RENDER_TEXTURE_2D
+        if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
+        {
+            enableTexture2D();
+        }
+        else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
+        {
+            disableTexture2D();
         }
 
         // RENDER_BLEND
