@@ -662,13 +662,13 @@ void CamWnd::Cam_Draw() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	if (GLEW_VERSION_1_3) {
+	if (GLEW_VERSION_1_3)
+	{
 		glClientActiveTexture(GL_TEXTURE0);
 		glActiveTexture(GL_TEXTURE0);
 	}
 
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
 
@@ -709,6 +709,13 @@ void CamWnd::Cam_Draw() {
 	// Draw the selection drag rectangle
 	if (!_dragRectangle.empty())
 	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(0, (float)m_Camera.width, 0, (float)m_Camera.height, -100, 100);
+
+		glScalef(1, -1, 1);
+		glTranslatef(0, -(float)m_Camera.height, 0);
+
 		// Define the blend function for transparency
 		glEnable(GL_BLEND);
 		glBlendColor(0, 0, 0, 0.2f);
