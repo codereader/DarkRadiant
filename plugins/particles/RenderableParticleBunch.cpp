@@ -8,6 +8,22 @@
 namespace particles
 {
 
+RenderableParticleBunch::RenderableParticleBunch(std::size_t index,
+	int randSeed, const IParticleStage& stage, const Matrix4& viewRotation,
+	const Vector3& direction, const Vector3& entityColour) :
+	_index(index),
+	_stage(stage),
+	_quads(),
+	_randSeed(randSeed),
+	_distributeParticlesRandomly(_stage.getRandomDistribution()),
+	_offset(_stage.getOffset()),
+	_viewRotation(viewRotation),
+	_direction(direction),
+	_entityColour(entityColour)
+{
+	// Geometry is written in update(), just reserve the space
+}
+
 void RenderableParticleBunch::update(std::size_t time)
 {
 	_bounds = AABB();
@@ -226,6 +242,11 @@ void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 {
 	// We start with the stage's standard colour
 	particle.colour = _stage.getColour();
+
+	if (_stage.getUseEntityColour())
+	{
+		particle.colour = Vector4(_entityColour.x(), _entityColour.y(), _entityColour.z(), 1);
+	}
 
 	// Consider fade index fraction, which can spawn particles already faded to some extent
 	float fadeIndexFraction = _stage.getFadeIndexFraction();

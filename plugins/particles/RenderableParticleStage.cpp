@@ -6,13 +6,15 @@ namespace particles
 RenderableParticleStage::RenderableParticleStage(
 		const IParticleStage& stage,
 		boost::rand48& random,
-		const Vector3& direction) :
+		const Vector3& direction,
+		const Vector3& entityColour) :
 	_stage(stage),
 	_numSeeds(32),
 	_seeds(_numSeeds),
 	_bunches(2), // two bunches
 	_viewRotation(Matrix4::getIdentity()), // is re-calculated each update anyway
-	_direction(direction)
+	_direction(direction),
+	_entityColour(entityColour)
 {
 	// Generate our vector of random numbers used seed particle bunches
 	// using the random number generator as provided by our parent particle system
@@ -190,7 +192,7 @@ void RenderableParticleStage::ensureBunches(std::size_t localTimeMSec)
 RenderableParticleBunchPtr RenderableParticleStage::createBunch(std::size_t cycleIndex)
 {
 	return RenderableParticleBunchPtr(new RenderableParticleBunch(
-				cycleIndex, getSeed(cycleIndex), _stage, _viewRotation, _direction));
+		cycleIndex, getSeed(cycleIndex), _stage, _viewRotation, _direction, _entityColour));
 }
 
 int RenderableParticleStage::getSeed(std::size_t cycleIndex)

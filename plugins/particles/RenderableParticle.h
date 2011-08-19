@@ -47,6 +47,9 @@ private:
 	// by calls to getBounds(), otherwise might hold outdated bounds information.
 	AABB _bounds;
 
+	// The colour used when "use entity colour" is activated.
+	Vector3 _entityColour;
+
 public:
 	RenderableParticle(const IParticleDefPtr& particleDef);
 
@@ -57,10 +60,12 @@ public:
 
 	// Front-end render methods
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
+					 const Matrix4& localToWorld, const IRenderEntity* entity) const;
 
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
+						 const Matrix4& localToWorld, const IRenderEntity* entity) const;
 
 	bool isHighlighted() const
 	{
@@ -71,6 +76,7 @@ public:
 	void setParticleDef(const IParticleDefPtr& def);
 
 	void setMainDirection(const Vector3& direction);
+	void setEntityColour(const Vector3& colour);
 
 	// Updates bounds from stages and returns the value
 	const AABB& getBounds();
