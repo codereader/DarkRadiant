@@ -35,11 +35,6 @@ void GenericEntityNode::snapto(float snap) {
 	m_contained.snapto(snap);
 }
 
-// EntityNode implementation
-void GenericEntityNode::refreshModel() {
-	// nothing to do
-}
-
 // Bounded implementation
 const AABB& GenericEntityNode::localAABB() const {
 	return m_contained.localAABB();

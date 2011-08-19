@@ -48,10 +48,6 @@ const AABB& SpeakerNode::localAABB() const {
 	return _speaker.localAABB();
 }
 
-void SpeakerNode::refreshModel() {
-	// Nothing to do
-}
-
 void SpeakerNode::selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
 {
 	test.BeginMesh(localToWorld());

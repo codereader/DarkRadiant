@@ -85,12 +85,6 @@ void LightNode::lightChanged() {
 	GlobalRenderSystem().lightChanged(*this);
 }
 
-void LightNode::refreshModel()
-{
-	// Simulate a "model" key change
-	_modelKey.modelChanged(_entity.getKeyValue("model"));
-}
-
 const AABB& LightNode::localAABB() const {
 	return _light.localAABB();
 }

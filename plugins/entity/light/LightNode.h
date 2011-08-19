@@ -52,9 +52,6 @@ public:
 
 	virtual ~LightNode();
 
-	// EntityNode implementation
-	virtual void refreshModel();
-
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const;
 
