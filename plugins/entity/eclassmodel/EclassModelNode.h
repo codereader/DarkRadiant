@@ -31,11 +31,7 @@ private:
 
 	EclassModel m_contained;
 
-	mutable bool _updateSkin;
-
 	AABB _localAABB;
-
-	KeyObserverDelegate _skinObserver;
 
 private:
 	// Constructor
@@ -62,8 +58,6 @@ public:
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
-
-	void skinChanged(const std::string& value);
 
 protected:
 	// Gets called by the Transformable implementation whenever

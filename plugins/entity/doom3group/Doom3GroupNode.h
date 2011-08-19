@@ -40,11 +40,6 @@ private:
 
 	VertexInstance _originInstance;
 
-	// TRUE if the skin needs updating
-	mutable bool _updateSkin;
-
-	KeyObserverDelegate _skinObserver;
-
 private:
 	// Constructor
 	Doom3GroupNode(const IEntityClassPtr& eclass);
@@ -107,8 +102,6 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
-
-	void skinChanged(const std::string& value);
 
 	void transformComponents(const Matrix4& matrix);
 

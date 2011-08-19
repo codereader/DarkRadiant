@@ -58,12 +58,18 @@ void EntityNode::construct()
 	_modelKeyObserver.setCallback(boost::bind(&EntityNode::_modelKeyChanged, this, _1));
 	addKeyObserver("model", _modelKeyObserver);
 
+	// Connect the skin keyvalue change handler directly to the model node manager
+	_skinKeyObserver.setCallback(boost::bind(&ModelKey::skinChanged, &_modelKey, _1));
+	addKeyObserver("skin", _skinKeyObserver);
+
 	_shaderParms.addKeyObservers();
 }
 
 void EntityNode::destruct()
 {
 	_shaderParms.removeKeyObservers();
+
+	removeKeyObserver("skin", _skinKeyObserver);
 
 	_modelKey.setActive(false); // disable callbacks during destruction
 	removeKeyObserver("model", _modelKeyObserver);

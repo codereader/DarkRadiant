@@ -3,7 +3,8 @@
 #include <boost/bind.hpp>
 #include "../curve/CurveControlPointFunctors.h"
 
-namespace entity {
+namespace entity
+{
 
 Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
@@ -15,9 +16,7 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom,
 					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
-	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
-	_updateSkin(true),
-	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
+	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)))
 {}
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
@@ -37,9 +36,7 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom,
 					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
-	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
-	_updateSkin(true),
-	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
+	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)))
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method
@@ -57,8 +54,6 @@ Doom3GroupNode::~Doom3GroupNode()
 {
 	m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
 	m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);
-
-	removeKeyObserver("skin", _skinObserver);
 }
 
 void Doom3GroupNode::construct()
@@ -66,9 +61,6 @@ void Doom3GroupNode::construct()
 	EntityNode::construct();
 
 	m_contained.construct();
-
-	// Attach the callback as keyobserver for the skin key
-	addKeyObserver("skin", _skinObserver);
 
 	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(
 		boost::bind(&CurveEditInstance::curveChanged, &m_curveNURBS)
@@ -238,18 +230,6 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 {
 	EntityNode::renderSolid(collector, volume);
 
-	// greebo: Check if the skin needs updating before rendering.
-	if (_updateSkin) {
-		if (m_contained.isModel()) {
-			// Instantiate a walker class equipped with the new value
-			SkinChangedWalker walker(_entity.getKeyValue("skin"));
-			// Update all children
-			traverse(walker);
-		}
-
-		_updateSkin = false;
-	}
-
 	m_contained.renderSolid(collector, volume, localToWorld(), isSelected());
 
 	// Render curves always relative to the absolute map origin
@@ -325,21 +305,13 @@ void Doom3GroupNode::transformComponents(const Matrix4& matrix) {
 	}
 }
 
-void Doom3GroupNode::skinChanged(const std::string& value) {
-	if (m_contained.isModel()) {
-		// Instantiate a walker class equipped with the new value
-		SkinChangedWalker walker(value);
-		// Update all children of this node
-		traverse(walker);
-	}
-}
-
-void Doom3GroupNode::refreshModel() {
+void Doom3GroupNode::refreshModel()
+{
 	// Simulate a "model" key change
 	m_contained.modelChanged(_entity.getKeyValue("model"));
 
 	// Trigger a skin change
-	skinChanged(_entity.getKeyValue("skin"));
+	getModelKey().skinChanged(_entity.getKeyValue("skin"));
 }
 
 void Doom3GroupNode::_onTransformationChanged()
