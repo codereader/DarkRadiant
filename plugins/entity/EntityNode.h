@@ -61,6 +61,7 @@ protected:
 	// Model child node handling helper
 	ModelKey _modelKey;
 	KeyObserverDelegate _modelKeyObserver;
+	KeyObserverDelegate _skinKeyObserver;
 
 	// A helper class managing the collection of KeyObservers attached to the Doom3Entity
 	KeyObserverMap _keyObservers;

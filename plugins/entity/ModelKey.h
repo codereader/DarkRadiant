@@ -30,6 +30,9 @@ public:
 	// and inserts the new one after acquiring the model from the cache.
 	void modelChanged(const std::string& value);
 
+	// Gets called by the attached Entity when the "skin" spawnarg changes
+	void skinChanged(const std::string& value);
+
 	// Returns the reference to the "singleton" model node
 	const scene::INodePtr& getNode() const;
 };

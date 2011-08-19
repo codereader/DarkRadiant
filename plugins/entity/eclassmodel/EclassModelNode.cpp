@@ -7,9 +7,7 @@ namespace entity {
 EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_contained(*this, Callback(boost::bind(&Node::transformChanged, this))),
-	_updateSkin(true),
-	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
-	_skinObserver(boost::bind(&EclassModelNode::skinChanged, this, _1))
+	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
@@ -18,9 +16,7 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 	m_contained(other.m_contained,
 				*this,
 				Callback(boost::bind(&Node::transformChanged, this))),
-	_updateSkin(true),
-	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
-	_skinObserver(boost::bind(&EclassModelNode::skinChanged, this, _1))
+	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
 {}
 
 EclassModelNodePtr EclassModelNode::Create(const IEntityClassPtr& eclass)
@@ -41,13 +37,10 @@ void EclassModelNode::construct()
 	EntityNode::construct();
 
 	m_contained.construct();
-
-	addKeyObserver("skin", _skinObserver);
 }
 
 void EclassModelNode::destroy()
 {
-	removeKeyObserver("skin", _skinObserver);
 }
 
 // Snappable implementation
@@ -62,7 +55,7 @@ void EclassModelNode::refreshModel()
 	getModelKey().modelChanged(_entity.getKeyValue("model"));
 
 	// Trigger a skin change
-	skinChanged(_entity.getKeyValue("skin"));
+	getModelKey().skinChanged(_entity.getKeyValue("skin"));
 }
 
 const AABB& EclassModelNode::localAABB() const
@@ -73,17 +66,6 @@ const AABB& EclassModelNode::localAABB() const
 void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
-
-	// greebo: Check if the skin needs updating before rendering.
-	if (_updateSkin)
-	{
-		// Instantiate a walker class equipped with the new value
-		SkinChangedWalker walker(_entity.getKeyValue("skin"));
-		// Update all children
-		traverse(walker);
-
-		_updateSkin = false;
-	}
 
 	m_contained.renderSolid(collector, volume, localToWorld(), isSelected());
 }
@@ -101,14 +83,6 @@ scene::INodePtr EclassModelNode::clone() const
 	node->construct();
 
 	return node;
-}
-
-void EclassModelNode::skinChanged(const std::string& value)
-{
-	// Instantiate a walker class equipped with the new value
-	SkinChangedWalker walker(value);
-	// Update all children
-	traverse(walker);
 }
 
 void EclassModelNode::_onTransformationChanged()

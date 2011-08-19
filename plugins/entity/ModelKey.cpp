@@ -4,6 +4,7 @@
 #include "ifiletypes.h"
 #include "scenelib.h"
 #include "ifilter.h"
+#include "modelskin.h"
 #include <boost/algorithm/string/replace.hpp>
 
 ModelKey::ModelKey(scene::INode& parentNode) :
@@ -68,5 +69,16 @@ void ModelKey::modelChanged(const std::string& value)
 		{
 			_modelNode->enable(scene::Node::eExcluded);
 		}
+	}
+}
+
+void ModelKey::skinChanged(const std::string& value)
+{
+	// Check if we have a skinnable model
+	SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+
+	if (skinned)
+	{
+		skinned->skinChanged(value);
 	}
 }
