@@ -48,16 +48,6 @@ void EclassModelNode::snapto(float snap) {
 	m_contained.snapto(snap);
 }
 
-// EntityNode implementation
-void EclassModelNode::refreshModel()
-{
-	// Simulate a "model" key change
-	getModelKey().modelChanged(_entity.getKeyValue("model"));
-
-	// Trigger a skin change
-	getModelKey().skinChanged(_entity.getKeyValue("skin"));
-}
-
 const AABB& EclassModelNode::localAABB() const
 {
 	return _localAABB;

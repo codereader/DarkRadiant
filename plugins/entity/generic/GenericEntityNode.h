@@ -39,9 +39,6 @@ public:
 	// Snappable implementation
 	virtual void snapto(float snap);
 
-	// EntityNode implementation
-	virtual void refreshModel();
-
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
 

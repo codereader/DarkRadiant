@@ -305,15 +305,6 @@ void Doom3GroupNode::transformComponents(const Matrix4& matrix) {
 	}
 }
 
-void Doom3GroupNode::refreshModel()
-{
-	// Simulate a "model" key change
-	m_contained.modelChanged(_entity.getKeyValue("model"));
-
-	// Trigger a skin change
-	getModelKey().skinChanged(_entity.getKeyValue("skin"));
-}
-
 void Doom3GroupNode::_onTransformationChanged()
 {
 	// If this is a container, pass the call to the children and leave the entity unharmed

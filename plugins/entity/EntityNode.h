@@ -81,6 +81,7 @@ public:
 
 	// IEntityNode implementation
 	Entity& getEntity();
+	virtual void refreshModel();
 
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const;

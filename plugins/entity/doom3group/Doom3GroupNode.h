@@ -51,9 +51,6 @@ public:
 
 	virtual ~Doom3GroupNode();
 
-	// EntityNode implementation
-	virtual void refreshModel();
-
 	// CurveNode implementation
 	virtual bool hasEmptyCurve();
 	virtual void appendControlPoints(unsigned int numPoints);
