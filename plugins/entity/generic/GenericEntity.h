@@ -83,6 +83,8 @@ public:
 	void revertTransform();
 	void freezeTransform();
 
+	const Vector3& getDirection() const;
+
 public:
 
 	void construct();

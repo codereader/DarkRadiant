@@ -17,7 +17,8 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_renderableName(_nameKey),
 	_modelKey(*this),
 	_keyObservers(_entity),
-	_shaderParms(_keyObservers, _colourKey)
+	_shaderParms(_keyObservers, _colourKey),
+	_direction(1,0,0)
 {}
 
 EntityNode::EntityNode(const EntityNode& other) :
@@ -38,7 +39,8 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_renderableName(_nameKey),
 	_modelKey(*this),
 	_keyObservers(_entity),
-	_shaderParms(_keyObservers, _colourKey)
+	_shaderParms(_keyObservers, _colourKey),
+	_direction(1,0,0)
 {}
 
 EntityNode::~EntityNode()
@@ -109,6 +111,11 @@ void EntityNode::refreshModel()
 float EntityNode::getShaderParm(int parmNum) const
 {
 	return _shaderParms.getParmValue(parmNum);
+}
+
+const Vector3& EntityNode::getDirection() const
+{
+	return _direction;
 }
 
 void EntityNode::testSelect(Selector& selector, SelectionTest& test)

@@ -29,11 +29,8 @@ void ParticleNode::renderSolid(RenderableCollector& collector,
 {
 	if (!_renderableParticle) return;
 
-	Matrix4 modelView = volume.GetModelview();
-	modelView.t() = Vector4(0,0,0,1);
-
-	_renderableParticle->update(GlobalRenderSystem().getTime(), 
-		GlobalRenderSystem(), modelView);
+	// Update the particle system before rendering
+	update(volume);
 
 	_renderableParticle->renderSolid(collector, volume, localToWorld());
 }
@@ -43,13 +40,23 @@ void ParticleNode::renderWireframe(RenderableCollector& collector,
 {
 	if (!_renderableParticle) return;
 
-	Matrix4 modelView = volume.GetModelview();
-	modelView.t() = Vector4(0,0,0,1);
-
-	_renderableParticle->update(GlobalRenderSystem().getTime(), 
-		GlobalRenderSystem(), modelView);
+	// Update the particle system before rendering
+	update(volume);
 
 	_renderableParticle->renderWireframe(collector, volume, localToWorld());
+}
+
+void ParticleNode::update(const VolumeTest& viewVolume) const
+{
+	// Get the view rotation and cancel out the translation part
+	Matrix4 viewRotation = viewVolume.GetModelview();
+	viewRotation.t() = Vector4(0,0,0,1);
+
+	// Get the main direction of our parent entity
+	_renderableParticle->setMainDirection(_renderEntity->getDirection());
+
+	_renderableParticle->update(GlobalRenderSystem().getTime(), 
+		GlobalRenderSystem(), viewRotation);
 }
 
 } // namespace

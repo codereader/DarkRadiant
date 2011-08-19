@@ -84,6 +84,11 @@ public:
 	 * Get the value of this entity's shader parm with the given index.
 	 */
 	virtual float getShaderParm(int parmNum) const = 0;
+
+	/**
+	 * Entities can specify directions, which are used for particle emission for instance.
+	 */
+	virtual const Vector3& getDirection() const = 0;
 };
 typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
 

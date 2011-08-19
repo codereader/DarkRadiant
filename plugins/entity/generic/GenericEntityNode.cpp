@@ -6,13 +6,15 @@ namespace entity {
 
 GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	m_contained(*this)
+	m_contained(*this),
+	_localPivot(Matrix4::getIdentity())
 {}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	Snappable(other),
-	m_contained(other.m_contained, *this)
+	m_contained(other.m_contained, *this),
+	_localPivot(other._localPivot)
 {}
 
 GenericEntityNodePtr GenericEntityNode::Create(const IEntityClassPtr& eclass)
@@ -69,6 +71,12 @@ void GenericEntityNode::renderWireframe(RenderableCollector& collector, const Vo
 	m_contained.renderWireframe(collector, volume, localToWorld());
 }
 
+const Vector3& GenericEntityNode::getDirection() const
+{
+	// Return the direction as specified by the angle/rotation keys
+	return m_contained.getDirection();
+}
+
 void GenericEntityNode::_onTransformationChanged()
 {
 	if (getType() == TRANSFORM_PRIMITIVE)
@@ -93,6 +101,11 @@ void GenericEntityNode::_applyTransformation()
 
 		m_contained.freezeTransform();
 	}
+}
+
+const Matrix4& GenericEntityNode::getLocalPivot() const
+{
+	return _localPivot;
 }
 
 } // namespace entity
