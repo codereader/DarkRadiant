@@ -70,9 +70,9 @@ LTLIBRARIES = $(modules_LTLIBRARIES)
 particles_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/gtkutil/libgtkutil.la
 am_particles_la_OBJECTS = ParticlesManager.lo particles.lo \
-	ParticleParameter.lo ParticleStage.lo RenderableParticle.lo \
-	RenderableParticleStage.lo RenderableParticleBunch.lo \
-	ParticleEditor.lo
+	ParticleNode.lo ParticleParameter.lo ParticleStage.lo \
+	RenderableParticle.lo RenderableParticleStage.lo \
+	RenderableParticleBunch.lo ParticleEditor.lo
 particles_la_OBJECTS = $(am_particles_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -304,6 +304,7 @@ particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
 
 particles_la_SOURCES = ParticlesManager.cpp \
                        particles.cpp \
+					   ParticleNode.cpp \
                        ParticleParameter.cpp \
                        ParticleStage.cpp \
                        RenderableParticle.cpp \
@@ -386,6 +387,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleEditor.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleParameter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleStage.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticlesManager.Plo@am__quote@

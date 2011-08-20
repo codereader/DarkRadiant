@@ -69,7 +69,7 @@ am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 entity_la_DEPENDENCIES = $(top_builddir)/libs/math/libmath.la \
 	$(top_builddir)/libs/scene/libscenegraph.la
-am_entity_la_OBJECTS = origin.lo angle.lo ModelKey.lo rotation.lo \
+am_entity_la_OBJECTS = angle.lo ShaderParms.lo ModelKey.lo rotation.lo \
 	Light.lo Renderables.lo LightNode.lo EclassModel.lo \
 	EclassModelNode.lo EntityCreator.lo EntitySettings.lo \
 	Speaker.lo SpeakerRenderables.lo SpeakerNode.lo Doom3Entity.lo \
@@ -77,7 +77,7 @@ am_entity_la_OBJECTS = origin.lo angle.lo ModelKey.lo rotation.lo \
 	CurveCatmullRom.lo CurveNURBS.lo Curve.lo CurveEditInstance.lo \
 	plugin.lo GenericEntity.lo GenericEntityNode.lo \
 	NamespaceManager.lo KeyValueObserver.lo NameKeyObserver.lo \
-	colour.lo KeyValue.lo TargetKey.lo TargetableNode.lo \
+	KeyValue.lo TargetKey.lo TargetableNode.lo \
 	TargetKeyCollection.lo TargetManager.lo \
 	RenderableTargetInstances.lo
 entity_la_OBJECTS = $(am_entity_la_OBJECTS)
@@ -305,8 +305,8 @@ entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(GTKMM_LIBS)
 entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                    $(top_builddir)/libs/scene/libscenegraph.la
 
-entity_la_SOURCES = origin.cpp \
-                    angle.cpp \
+entity_la_SOURCES = angle.cpp \
+					ShaderParms.cpp \
                     ModelKey.cpp \
                     rotation.cpp \
                     light/Light.cpp \
@@ -333,7 +333,6 @@ entity_la_SOURCES = origin.cpp \
                     NamespaceManager.cpp \
                     KeyValueObserver.cpp \
                     NameKeyObserver.cpp \
-                    colour.cpp \
                     KeyValue.cpp \
                     target/TargetKey.cpp \
                     target/TargetableNode.cpp \
@@ -438,6 +437,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NamespaceManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderableTargetInstances.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Renderables.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShaderParms.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Speaker.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpeakerRenderables.Plo@am__quote@
@@ -446,8 +446,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TargetableNode.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/angle.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/colour.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/origin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rotation.Plo@am__quote@
 
