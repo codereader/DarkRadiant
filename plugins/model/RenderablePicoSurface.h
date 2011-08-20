@@ -93,8 +93,12 @@ public:
 	 *
 	 * @param localToWorld
 	 * Object to world-space transform.
+	 *
+	 * @param entity
+	 * The entity this object is attached to.
 	 */
-	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld);
+	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld,
+						   const IRenderEntity& entity);
 
 	/**
 	 * Render function from OpenGLRenderable

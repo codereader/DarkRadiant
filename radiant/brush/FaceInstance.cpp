@@ -153,7 +153,8 @@ bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& loca
 
 // Submit renderable geometry
 void FaceInstance::submitRenderables(RenderableCollector& collector,
-                                     const VolumeTest& volume) const
+                                     const VolumeTest& volume,
+									 const IRenderEntity& entity) const
 {
 	if (m_face->intersectVolume(volume))
 	{
@@ -164,7 +165,7 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
 			collector.Highlight(RenderableCollector::eFace);
 		}
 
-		m_face->submitRenderables(collector, Matrix4::getIdentity());
+		m_face->submitRenderables(collector, Matrix4::getIdentity(), entity);
 		collector.PopState();
 	}
 }
@@ -172,7 +173,8 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
 // Submit renderable geometry (with transform)
 void FaceInstance::submitRenderables(RenderableCollector& collector,
                                      const VolumeTest& volume,
-                                     const Matrix4& localToWorld) const
+                                     const Matrix4& localToWorld,
+									 const IRenderEntity& entity) const
 {
 	if (m_face->intersectVolume(volume, localToWorld))
 	{
@@ -183,7 +185,7 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
 			collector.Highlight(RenderableCollector::eFace);
 		}
 
-		m_face->submitRenderables(collector, localToWorld);
+		m_face->submitRenderables(collector, localToWorld, entity);
 		collector.PopState();
 	}
 }

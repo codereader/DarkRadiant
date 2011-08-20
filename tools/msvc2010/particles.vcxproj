@@ -130,7 +130,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;gtkutillib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -181,7 +181,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;gtkutillib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -228,7 +228,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;gtkutillib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -282,7 +282,7 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;gtkutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xmlutillib.lib;mathlib.lib;gtkutillib.lib;scenelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -312,6 +312,7 @@
     <ClInclude Include="..\..\plugins\particles\editor\ParticleEditorModule.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleDef.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleFileLoader.h" />
+    <ClInclude Include="..\..\plugins\particles\ParticleNode.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleParameter.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleQuad.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleRenderInfo.h" />
@@ -323,6 +324,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\particles\editor\ParticleEditor.cpp" />
+    <ClCompile Include="..\..\plugins\particles\ParticleNode.cpp" />
     <ClCompile Include="..\..\plugins\particles\ParticleParameter.cpp" />
     <ClCompile Include="..\..\plugins\particles\particles.cpp" />
     <ClCompile Include="..\..\plugins\particles\ParticlesManager.cpp" />

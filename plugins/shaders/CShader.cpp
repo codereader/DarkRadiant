@@ -216,10 +216,13 @@ void CShader::setName(const std::string& name) {
 	_name = name;
 }
 
-const ShaderLayer* CShader::firstLayer() const {
-	if (_layers.empty()) {
-		return 0;
+ShaderLayer* CShader::firstLayer() const
+{
+	if (_layers.empty())
+	{
+		return NULL;
 	}
+
 	return _layers.front().get();
 }
 

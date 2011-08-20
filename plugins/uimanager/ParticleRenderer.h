@@ -92,6 +92,13 @@ public:
 		_stateStack.back()->addRenderable(renderable, world);
 	}
 
+	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world, const IRenderEntity& entity)
+	{
+		assert(!_stateStack.empty());
+
+		_stateStack.back()->addRenderable(renderable, world, entity);
+	}
+
 	const EStyle getStyle() const
 	{
 		return eFullMaterials;

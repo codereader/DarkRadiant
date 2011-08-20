@@ -31,9 +31,6 @@
     <ClCompile Include="..\..\plugins\entity\angle.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\colour.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\entity\Doom3Entity.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -59,9 +56,6 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\entity\NamespaceManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\entity\origin.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\entity\plugin.cpp">
@@ -133,12 +127,12 @@
     <ClCompile Include="..\..\plugins\entity\target\TargetManager.cpp">
       <Filter>src\target</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\entity\ShaderParms.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\entity\angle.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\colour.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\Doom3Entity.h">
@@ -175,9 +169,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\NamespaceManager.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\origin.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\plugin.h">
@@ -278,6 +269,15 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\entity\target\TargetManager.h">
       <Filter>src\target</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\ColourKey.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\ShaderParms.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\entity\OriginKey.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

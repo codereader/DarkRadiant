@@ -7,8 +7,8 @@ modules_LTLIBRARIES = entity.la
 entity_la_LDFLAGS = -module -avoid-version $(GL_LIBS) $(GTKMM_LIBS)
 entity_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                    $(top_builddir)/libs/scene/libscenegraph.la
-entity_la_SOURCES = origin.cpp \
-                    angle.cpp \
+entity_la_SOURCES = angle.cpp \
+					ShaderParms.cpp \
                     ModelKey.cpp \
                     rotation.cpp \
                     light/Light.cpp \
@@ -35,7 +35,6 @@ entity_la_SOURCES = origin.cpp \
                     NamespaceManager.cpp \
                     KeyValueObserver.cpp \
                     NameKeyObserver.cpp \
-                    colour.cpp \
                     KeyValue.cpp \
                     target/TargetKey.cpp \
                     target/TargetableNode.cpp \

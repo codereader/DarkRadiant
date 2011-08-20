@@ -2,6 +2,8 @@
 
 #include <boost/shared_ptr.hpp>
 
+class IRenderEntity;
+
 namespace shaders
 {
 
@@ -36,15 +38,26 @@ class IShaderExpression
 {
 public:
 	/** 
-	 * Retrieve the floating point value of this expression.
+	 * Retrieve the floating point value of this expression. DEPRECATED
 	 */
 	virtual float getValue(std::size_t time) = 0;
+
+	/** 
+	 * Retrieve the floating point value of this expression.
+	 */
+	virtual float getValue(std::size_t time, const IRenderEntity& entity) = 0;
+
+	/**
+	 * Evaluates the value of this expression, writing any results
+	 * into the linked material register. DEPRECATED
+	 */
+	virtual float evaluate(std::size_t time) = 0;
 
 	/**
 	 * Evaluates the value of this expression, writing any results
 	 * into the linked material register.
 	 */
-	virtual float evaluate(std::size_t time) = 0;
+	virtual float evaluate(std::size_t time, const IRenderEntity& entity) = 0;
 
 	/**
 	 * Link the expression to the given Registers vector.

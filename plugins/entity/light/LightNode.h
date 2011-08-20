@@ -1,5 +1,4 @@
-#ifndef LIGHTNODE_H_
-#define LIGHTNODE_H_
+#pragma once
 
 #include "scenelib.h"
 
@@ -8,13 +7,16 @@
 #include "../VertexInstance.h"
 #include "../EntityNode.h"
 
-namespace entity {
+namespace entity
+{
+
+class LightNode;
+typedef boost::shared_ptr<LightNode> LightNodePtr;
 
 class LightNode :
 	public EntityNode,
 	public Snappable,
 	public Editable,
-	public SelectionTestable,
 	public ComponentSelectionTestable,
 	public ComponentEditable,
 	public ComponentSnappable,
@@ -22,6 +24,7 @@ class LightNode :
 	public RendererLight,
 	public scene::SelectableLight
 {
+private:
 	Light _light;
 
 	// The (draggable) light center instance
@@ -40,14 +43,17 @@ class LightNode :
 
 public:
 	LightNode(const IEntityClassPtr& eclass);
+
+private:
 	LightNode(const LightNode& other);
 
-	void construct();
+public:
+	static LightNodePtr Create(const IEntityClassPtr& eclass);
 
 	virtual ~LightNode();
 
-	// EntityNode implementation
-	virtual void refreshModel();
+	// RenderEntity implementation
+	virtual float getShaderParm(int parmNum) const;
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
@@ -120,7 +126,6 @@ public:
 
 	Vector3 getLightOrigin() const;
 	const Matrix4& rotation() const;
-	const Vector3& colour() const;
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -131,14 +136,14 @@ protected:
 	// or when reverting transformations.
 	void _applyTransformation();
 
+	// Override EntityNode::construct()
+	void construct();
+
 private:
 	void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
 
 	void evaluateTransform();
 
 }; // class LightNode
-typedef boost::shared_ptr<LightNode> LightNodePtr;
 
 } // namespace entity
-
-#endif /*LIGHTNODE_H_*/

@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_IRENDER_H)
-#define INCLUDED_IRENDER_H
+#pragma once
 
 #include "imodule.h"
 #include <boost/function/function_fwd.hpp>
@@ -66,14 +64,51 @@ class AABB;
 class Matrix4;
 
 template<typename Element> class BasicVector3;
+typedef BasicVector3<float> Vector3;
 
 class Shader;
+
+/**
+ * A RenderEntity represents a map entity as seen by the renderer. 
+ * It provides up to 12 numbered parameters to the renderer:
+ * parm0, parm1 ... parm11.
+ *
+ * A few of the entity parms are hardwired to things like render colour 
+ * as defined through the entity's _color keyvalue, some are set through 
+ * scripting, spawmargs or gameplay code.
+ */
+class IRenderEntity
+{
+public:
+	/**
+	 * Returns additional shader flags - some entities do add requirements
+	 * with regard to openGL states.
+	 */
+	virtual unsigned int getRequiredShaderFlags() const = 0;
+
+	/**
+	 * Set required shader flags.
+	 */
+	virtual void setRequiredShaderFlags(unsigned int flags) = 0;
+
+	/**
+	 * Get the value of this entity's shader parm with the given index.
+	 */
+	virtual float getShaderParm(int parmNum) const = 0;
+
+	/**
+	 * Entities can specify directions, which are used for particle emission for instance.
+	 */
+	virtual const Vector3& getDirection() const = 0;
+};
+typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
 
 /**
  * \brief
  * Interface for a light source in the renderer.
  */
-class RendererLight
+class RendererLight :
+	public virtual IRenderEntity
 {
 public:
     virtual ~RendererLight() {}
@@ -119,8 +154,6 @@ public:
      * pyramid (the same as worldOrigin()).
      */
 	virtual Vector3 getLightOrigin() const = 0;
-
-	virtual const Vector3& colour() const = 0;
 };
 typedef boost::shared_ptr<RendererLight> RendererLightPtr;
 
@@ -303,6 +336,14 @@ public:
 							   const Matrix4& modelview,
 							   const LightList* lights = 0) = 0;
 
+	/** 
+	 * Like above, but taking an additional IRenderEntity argument.
+	 */
+	virtual void addRenderable(const OpenGLRenderable& renderable,
+							   const Matrix4& modelview,
+							   const IRenderEntity& entity,
+							   const LightList* lights = 0) = 0;
+
   virtual void incrementUsed() = 0;
   virtual void decrementUsed() = 0;
   virtual void attach(ModuleObserver& observer) = 0;
@@ -459,5 +500,3 @@ inline RenderSystem& GlobalRenderSystem()
 	);
 	return _instance;
 }
-
-#endif

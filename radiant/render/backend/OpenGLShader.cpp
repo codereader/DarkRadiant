@@ -1,6 +1,7 @@
 #include "OpenGLShader.h"
+
 #include "GLProgramFactory.h"
-#include "OpenGLStateBucketAdd.h"
+#include "OpenGLShaderPassAdd.h"
 #include "render/OpenGLRenderSystem.h"
 
 #include "iuimanager.h"
@@ -40,13 +41,39 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 		{
 			if (lights != NULL)
 			{
-				OpenGLStateBucketAdd add(*pass, renderable, modelview);
-				lights->forEachLight(boost::bind(&OpenGLStateBucketAdd::visit, &add, _1));
+				OpenGLShaderPassAdd add(*pass, renderable, modelview);
+				lights->forEachLight(boost::bind(&OpenGLShaderPassAdd::visit, &add, _1));
 			}
 		}
 		else
 		{
 			pass->addRenderable(renderable, modelview);
+		}
+    }
+}
+
+void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
+								 const Matrix4& modelview,
+								 const IRenderEntity& entity,
+								 const LightList* lights)
+{
+    // Iterate over the list of OpenGLStateBuckets, bumpmap and non-bumpmap
+    // buckets are handled differently.
+    for (Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
+    {
+		OpenGLShaderPass* pass = *i;
+
+		if ((pass->state().renderFlags & RENDER_BUMP) != 0)
+		{
+			if (lights != NULL)
+			{
+				OpenGLShaderPassAdd add(*pass, renderable, modelview, &entity);
+				lights->forEachLight(boost::bind(&OpenGLShaderPassAdd::visit, &add, _1));
+			}
+		}
+		else
+		{
+			pass->addRenderable(renderable, modelview, entity);
 		}
     }
 }
@@ -381,10 +408,15 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     previewPass.renderFlags = RENDER_FILL
                               | RENDER_TEXTURE_2D
                               | RENDER_DEPTHTEST
-                              | RENDER_DEPTHWRITE
                               | RENDER_COLOURWRITE
                               | RENDER_LIGHTING
                               | RENDER_SMOOTH;
+
+	// Don't let translucent materials write to the depth buffer
+	if ((_material->getMaterialFlags() & Material::FLAG_TRANSLUCENT) == 0)
+	{
+		previewPass.renderFlags |= RENDER_DEPTHWRITE;
+	}
 
     // Handle certain shader flags
 	if (_material->getCullType() != Material::CULL_NONE)
@@ -422,6 +454,9 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
                     | RENDER_BLEND
                     | RENDER_DEPTHTEST
                     | RENDER_COLOURWRITE;
+
+	// Remember the stage for later evaluation of shader expressions
+	state.stage0 = layer;
 
     // Set the texture
     state.texture0 = layerTex->getGLTexNum();

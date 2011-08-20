@@ -1,5 +1,4 @@
-#ifndef LIGHTCLASS_H_
-#define LIGHTCLASS_H_
+#pragma once
 
 #include "igl.h"
 #include "irender.h"
@@ -10,9 +9,9 @@
 #include "math/Frustum.h"
 #include "transformlib.h"
 
-#include "../origin.h"
+#include "../OriginKey.h"
 #include "../rotation.h"
-#include "../colour.h"
+#include "../ColourKey.h"
 #include "../ModelKey.h"
 #include "../Doom3Entity.h"
 #include "../KeyObserverDelegate.h"
@@ -74,9 +73,6 @@ class Light :
 
   RotationKey m_rotationKey;
   Float9 m_rotation;
-  Colour m_colour;
-
-	ModelKey _modelKey;
 
 	Doom3LightRadius m_doom3Radius;
 
@@ -144,7 +140,6 @@ class Light :
 
     KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
-	KeyObserverDelegate _modelObserver;
 
 	KeyObserverDelegate _lightRadiusObserver;
 	KeyObserverDelegate _lightCenterObserver;
@@ -289,5 +284,3 @@ public:
 }; // class Light
 
 } // namespace entity
-
-#endif /*LIGHTCLASS_H_*/

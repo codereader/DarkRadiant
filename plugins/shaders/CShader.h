@@ -116,7 +116,7 @@ public:
 	 */
 	void setName(const std::string& name);
 
-	const ShaderLayer* firstLayer() const;
+	ShaderLayer* firstLayer() const;
 
     /* Material implementation */
 

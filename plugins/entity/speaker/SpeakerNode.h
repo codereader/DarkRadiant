@@ -1,5 +1,4 @@
-#ifndef SPEAKERNODE_H_
-#define SPEAKERNODE_H_
+#pragma once
 
 #include "nameable.h"
 #include "editable.h"
@@ -15,15 +14,19 @@
 
 #include "Speaker.h"
 
-namespace entity {
+namespace entity
+{
+
+class SpeakerNode;
+typedef boost::shared_ptr<SpeakerNode> SpeakerNodePtr;
 
 class SpeakerNode :
 	public EntityNode,
 	public Snappable,
-	public SelectionTestable,
 	public PlaneSelectable,
 	public ComponentSelectionTestable
 {
+private:
 	friend class Speaker;
 
     // The Speaker class itself
@@ -32,18 +35,15 @@ class SpeakerNode :
 	// dragplanes for resizing using mousedrag
 	DragPlanes _dragPlanes;
 
-public:
+private:
 	SpeakerNode(const IEntityClassPtr& eclass);
 	SpeakerNode(const SpeakerNode& other);
 
-	// Called after the constructor is done
-	void construct();
-
+public:
+	static SpeakerNodePtr Create(const IEntityClassPtr& eclass);
+	
 	// Snappable implementation
 	virtual void snapto(float snap);
-
-	// EntityNode implementation
-	virtual void refreshModel();
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const;
@@ -77,11 +77,11 @@ protected:
 	// or when reverting transformations.
 	void _applyTransformation();
 
+	// Called after the constructor is done, overrides EntityNode
+	void construct();
+
 private:
 	void evaluateTransform();
 };
-typedef boost::shared_ptr<SpeakerNode> SpeakerNodePtr;
 
 } // namespace entity
-
-#endif /*SPEAKERNODE_H_*/

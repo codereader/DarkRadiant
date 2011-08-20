@@ -58,6 +58,21 @@ inline void setState(unsigned int state,
 	}
 }
 
+inline void evaluateStage(const ShaderLayerPtr& stage, std::size_t time, const IRenderEntity* entity)
+{
+	if (stage) 
+	{
+		if (entity)
+		{
+			stage->evaluateExpressions(time, *entity);
+		}
+		else
+		{
+			stage->evaluateExpressions(time);
+		}
+	}
+}
+
 } // namespace
 
 // GL state enabling/disabling helpers
@@ -281,8 +296,30 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
 void OpenGLShaderPass::applyState(OpenGLState& current,
 					              unsigned int globalStateMask,
                                   const Vector3& viewer,
-								  std::size_t time)
+								  std::size_t time,
+								  const IRenderEntity* entity)
 {
+	// Evaluate any shader expressions
+	if (_state.stage0) 
+	{
+		evaluateStage(_state.stage0, time, entity);
+
+		// The alpha test value might change over time
+		if (_state.stage0->getAlphaTest() > 0)
+		{
+			_state.renderFlags |= RENDER_ALPHATEST;
+		}
+		else
+		{
+			_state.renderFlags &= ~RENDER_ALPHATEST;
+		}
+	}
+
+	if (_state.stage1) evaluateStage(_state.stage1, time, entity);
+	if (_state.stage2) evaluateStage(_state.stage2, time, entity);
+	if (_state.stage3) evaluateStage(_state.stage3, time, entity);
+	if (_state.stage4) evaluateStage(_state.stage4, time, entity);
+
 	if (_state.renderFlags & RENDER_OVERRIDE)
 	{
 		globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
@@ -290,7 +327,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
 	// Apply the global state mask to our own desired render flags to determine
     // the final set of flags that must bet set
-	const unsigned int requiredState = _state.renderFlags & globalStateMask;
+	unsigned int requiredState = _state.renderFlags & globalStateMask;
+
+	// In per-entity mode, allow the entity to add requirements
+	if (entity != NULL)
+	{
+		requiredState |= entity->getRequiredShaderFlags();
+	}
 
     // Construct a mask containing all the flags that will be changing between
     // the current state and the required state. This avoids performing
@@ -351,16 +394,6 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
             GlobalOpenGL().assertNoErrors();
         }
 
-        // RENDER_TEXTURE_2D
-        if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
-        {
-            enableTexture2D();
-        }
-        else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
-        {
-            disableTexture2D();
-        }
-
         // RENDER_TEXTURE_CUBEMAP
         if(changingBitsMask & requiredState & RENDER_TEXTURE_CUBEMAP)
         {
@@ -369,6 +402,16 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_CUBEMAP)
         {
             disableTextureCubeMap();
+        }
+
+		// RENDER_TEXTURE_2D
+        if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
+        {
+            enableTexture2D();
+        }
+        else if(changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
+        {
+            disableTexture2D();
         }
 
         // RENDER_BLEND
@@ -554,7 +597,6 @@ inline
 std::ostream& operator<< (std::ostream& os, const RendererLight& light) {
 	os << "RendererLight { origin = " << light.worldOrigin()
 	   << ", lightOrigin = " << light.getLightOrigin()
-       << ", colour = " << light.colour()
 	   << " }";
 	return os;
 }
@@ -564,9 +606,23 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 									  const Matrix4& modelview,
 									  const RendererLight* light)
 {
-	_renderables.push_back(TransformedRenderable(renderable, modelview, light));
+	_renderablesWithoutEntity.push_back(TransformedRenderable(renderable, modelview, light, NULL));
 }
 
+void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
+									  const Matrix4& modelview,
+									  const IRenderEntity& entity,
+									  const RendererLight* light)
+{
+	RenderablesByEntity::iterator i = _renderables.find(&entity);
+
+	if (i == _renderables.end())
+	{
+		i = _renderables.insert(RenderablesByEntity::value_type(&entity, Renderables())).first;
+	}
+
+	i->second.push_back(TransformedRenderable(renderable, modelview, light, &entity));
+}
 
 // Render the bucket contents
 void OpenGLShaderPass::render(OpenGLState& current,
@@ -574,34 +630,14 @@ void OpenGLShaderPass::render(OpenGLState& current,
                               const Vector3& viewer,
 							  std::size_t time)
 {
-	// Evaluate any shader expressions
-	if (_state.stage0) 
-	{
-		_state.stage0->evaluateExpressions(time);
-
-		// The alpha test value might change over time
-		if (_state.stage0->getAlphaTest() > 0)
-		{
-			_state.renderFlags |= RENDER_ALPHATEST;
-		}
-		else
-		{
-			_state.renderFlags &= ~RENDER_ALPHATEST;
-		}
-	}
-	if (_state.stage1) _state.stage1->evaluateExpressions(time);
-	if (_state.stage2) _state.stage2->evaluateExpressions(time);
-	if (_state.stage3) _state.stage3->evaluateExpressions(time);
-	if (_state.stage4) _state.stage4->evaluateExpressions(time);
-
-    // Reset the texture matrix
+	// Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
 	glLoadMatrixf(Matrix4::getIdentity());
 
     glMatrixMode(GL_MODELVIEW);
 
 	// Apply our state to the current state object
-	applyState(current, flagsMask, viewer, time);
+	applyState(current, flagsMask, viewer, time, NULL);
 
     // If RENDER_SCREEN is set, just render a quad, otherwise render all
     // objects.
@@ -628,34 +664,64 @@ void OpenGLShaderPass::render(OpenGLState& current,
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
     }
-	else if (!_renderables.empty())
+	else 
     {
-		renderAllContained(current, viewer, time);
+		if (!_renderablesWithoutEntity.empty())
+		{
+			renderAllContained(_renderablesWithoutEntity, current, viewer, time);
+		}
+
+		for (RenderablesByEntity::const_iterator i = _renderables.begin(); i != _renderables.end(); ++i)
+		{
+			// Apply our state to the current state object
+			applyState(current, flagsMask, viewer, time, i->first);
+
+			if (!stateIsActive())
+			{
+				continue;
+			}
+
+			renderAllContained(i->second, current, viewer, time);
+		}
 	}
+
+	_renderablesWithoutEntity.clear();
+	_renderables.clear();
+}
+
+bool OpenGLShaderPass::stateIsActive()
+{
+	return ((_state.stage0 == NULL || _state.stage0->isVisible()) && 
+			(_state.stage1 == NULL || _state.stage1->isVisible()) && 
+			(_state.stage2 == NULL || _state.stage2->isVisible()) && 
+			(_state.stage3 == NULL || _state.stage3->isVisible()));
 }
 
 // Setup lighting
 void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
                                                 const RendererLight* light,
                                                 const Vector3& viewer,
-                                                const Matrix4& objTransform)
+                                                const Matrix4& objTransform,
+												std::size_t time)
 {
     assert(light);
 
     // Get the light shader and examine its first (and only valid) layer
     const MaterialPtr& lightShader = light->getShader()->getMaterial();
+	ShaderLayer* layer = lightShader->firstLayer();
 
-    if (lightShader->firstLayer())
+    if (layer)
     {
-        // Calculate viewer location in object space
+		// Calculate viewer location in object space
         Matrix4 inverseObjTransform = objTransform.getInverse();
         Vector3 osViewer = inverseObjTransform.transformPoint(viewer);
 
+		// Calculate all dynamic values in the layer
+		layer->evaluateExpressions(time, *light);
+
         // Get the XY and Z falloff texture numbers.
-        GLuint attenuation_xy =
-            lightShader->firstLayer()->getTexture()->getGLTexNum();
-        GLuint attenuation_z =
-            lightShader->lightFalloffImage()->getGLTexNum();
+        GLuint attenuation_xy = layer->getTexture()->getGLTexNum();
+        GLuint attenuation_z = lightShader->lightFalloffImage()->getGLTexNum();
 
         // Bind the falloff textures
         assert(current.renderFlags & RENDER_TEXTURE_2D);
@@ -672,7 +738,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-        // Get the world-space to light-space transformation matrix
+		// Get the world-space to light-space transformation matrix
         Matrix4 world2light = light->getLightTextureTransformation();
 
         // Set the ambient factor - 1.0 for an ambient light, 0.0 for normal light
@@ -683,7 +749,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
             osViewer,
             objTransform,
             light->getLightOrigin(),
-            light->colour(),
+            layer->getColour(),
             world2light,
             ambient
         );
@@ -691,19 +757,18 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 }
 
 // Flush renderables
-void OpenGLShaderPass::renderAllContained(OpenGLState& current,
+void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
+										  OpenGLState& current,
                                           const Vector3& viewer,
 										  std::size_t time)
 {
-	// Keep a pointer to the last transform matrix used
+	// Keep a pointer to the last transform matrix and render entity used
 	const Matrix4* transform = 0;
 
 	glPushMatrix();
 
 	// Iterate over each transformed renderable in the vector
-	for(OpenGLShaderPass::Renderables::const_iterator i = _renderables.begin();
-  		i != _renderables.end();
-  		++i)
+	for(Renderables::const_iterator i = renderables.begin(); i != renderables.end(); ++i)
 	{
 		// If the current iteration's transform matrix was different from the
 		// last, apply it and store for the next iteration
@@ -732,7 +797,7 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 		const RendererLight* light = i->light;
 		if (current.glProgram != 0 && light != NULL)
         {
-            setUpLightingCalculation(current, light, viewer, *transform);
+            setUpLightingCalculation(current, light, viewer, *transform, time);
         }
 
         // Render the renderable
@@ -742,7 +807,6 @@ void OpenGLShaderPass::renderAllContained(OpenGLState& current,
 
     // Cleanup
     glPopMatrix();
-    _renderables.clear();
 }
 
 

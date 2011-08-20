@@ -78,7 +78,8 @@ private:
 	void constructRemaps();
 	void destroyRemaps();
 
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void render(RenderableCollector& collector, const VolumeTest& volume, 
+				const Matrix4& localToWorld, const IRenderEntity& entity) const;
 };
 typedef boost::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
 

@@ -8,6 +8,22 @@
 namespace particles
 {
 
+RenderableParticleBunch::RenderableParticleBunch(std::size_t index,
+	int randSeed, const IParticleStage& stage, const Matrix4& viewRotation,
+	const Vector3& direction, const Vector3& entityColour) :
+	_index(index),
+	_stage(stage),
+	_quads(),
+	_randSeed(randSeed),
+	_distributeParticlesRandomly(_stage.getRandomDistribution()),
+	_offset(_stage.getOffset()),
+	_viewRotation(viewRotation),
+	_direction(direction),
+	_entityColour(entityColour)
+{
+	// Geometry is written in update(), just reserve the space
+}
+
 void RenderableParticleBunch::update(std::size_t time)
 {
 	_bounds = AABB();
@@ -224,8 +240,11 @@ void RenderableParticleBunch::calculateAnim(ParticleRenderInfo& particle)
 
 void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 {
+	Vector4 mainColour = !_stage.getUseEntityColour() ? 
+		_stage.getColour() : Vector4(_entityColour.x(), _entityColour.y(), _entityColour.z(), 1);
+
 	// We start with the stage's standard colour
-	particle.colour = _stage.getColour();
+	particle.colour = mainColour;
 
 	// Consider fade index fraction, which can spawn particles already faded to some extent
 	float fadeIndexFraction = _stage.getFadeIndexFraction();
@@ -256,7 +275,7 @@ void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 
 	if (fadeInFraction > 0 && particle.timeFraction <= fadeInFraction)
 	{
-		particle.colour = lerpColour(_stage.getFadeColour(), _stage.getColour(), particle.timeFraction / fadeInFraction);
+		particle.colour = lerpColour(_stage.getFadeColour(), mainColour, particle.timeFraction / fadeInFraction);
 	}
 
 	float fadeOutFraction = _stage.getFadeOutFraction();
@@ -264,14 +283,22 @@ void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 
 	if (fadeOutFraction > 0 && particle.timeFraction >= fadeOutFractionInverse)
 	{
-		particle.colour = lerpColour(_stage.getColour(), _stage.getFadeColour(), (particle.timeFraction - fadeOutFractionInverse) / fadeOutFraction);
+		particle.colour = lerpColour(mainColour, _stage.getFadeColour(), (particle.timeFraction - fadeOutFractionInverse) / fadeOutFraction);
 	}
 }
 
 void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 {
+	// Check if the main direction is different to the z axis
+	Vector3 dir = _direction.getNormalised();
+	Vector3 z(0,0,1);
+
+	double deviation = dir.angle(z);
+
+	Matrix4 rotation = deviation != 0 ? Matrix4::getRotation(z, dir) : Matrix4::getIdentity();
+
 	// Consider offset as starting point
-	particle.origin = _offset;
+	particle.origin = rotation.transformPoint(_offset);
 
 	switch (_stage.getCustomPathType())
 	{
@@ -284,7 +311,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 			particle.origin += distributionOffset;
 
 			// Calculate particle direction, pass distribution offset (this is needed for DIRECTION_OUTWARD)
-			Vector3 particleDirection = getDirection(particle, _direction, distributionOffset);
+			Vector3 particleDirection = getDirection(particle, rotation, distributionOffset);
 
 			// Consider speed
 			particle.origin += particleDirection * integrate(_stage.getSpeed(), particle.timeSecs);
@@ -377,13 +404,8 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 	particle.origin += gravity * _stage.getGravity() * particle.timeSecs * particle.timeSecs * 0.5f;
 }
 
-Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset)
+Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, const Matrix4& rotation, const Vector3& distributionOffset)
 {
-	if (baseDirection.getLengthSquared() == 0)
-	{
-		return Vector3(0,0,1); // degenerate input
-	}
-
 	switch (_stage.getDirectionType())
 	{
 	case IParticleStage::DIRECTION_CONE:
@@ -403,19 +425,8 @@ Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, cons
 
 			Vector3 endPoint(cos(theta) * sin(phi), sin(theta) * sin(phi), cos(phi));
 
-			// Check if the main direction is different to the z axis
-			Vector3 dir = baseDirection.getNormalised();
-			Vector3 z(0,0,1);
-
-			double deviation = dir.angle(z);
-
-			if (deviation != 0)
-			{
-				Matrix4 rotation = Matrix4::getRotation(z, dir);
-
-				// Rotate the vector into the particle's main direction
-				endPoint = rotation.transformPoint(endPoint);
-			}
+			// Rotate the vector into the particle's main direction
+			endPoint = rotation.transformPoint(endPoint);
 
 			return endPoint.getNormalised();
 		}

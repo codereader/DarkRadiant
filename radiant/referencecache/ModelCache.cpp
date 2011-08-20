@@ -6,6 +6,7 @@
 #include "ifiletypes.h"
 #include "iselection.h"
 #include "ieventmanager.h"
+#include "iparticles.h"
 
 #include <iostream>
 #include <set>
@@ -120,20 +121,28 @@ ModelLoaderPtr ModelCache::getModelLoaderForType(const std::string& type)
 	return NullModelLoader::InstancePtr();
 }
 
-scene::INodePtr ModelCache::getModelNode(const std::string& modelPath) {
+scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
+{
 	// Check if we have a reference to a modeldef
 	IModelDefPtr modelDef = GlobalEntityClassManager().findModel(modelPath);
 
 	// The actual model path (is usually the same as the incoming modelPath)
 	std::string actualModelPath(modelPath);
 
-	if (modelDef != NULL) {
+	if (modelDef != NULL)
+	{
 		// We have a valid modelDef, override the model path
 		actualModelPath = modelDef->mesh;
 	}
 
 	// Get the extension of this model
 	std::string type = actualModelPath.substr(actualModelPath.rfind(".") + 1);
+
+	if (type == "prt")
+	{
+		// This is a particle, pass the call to the Particles Manager
+		return GlobalParticlesManager().getParticleNode(actualModelPath);
+	}
 
 	// Get a suitable model loader
 	ModelLoaderPtr modelLoader = getModelLoaderForType(type);

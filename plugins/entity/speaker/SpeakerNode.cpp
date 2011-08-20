@@ -16,7 +16,6 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	Snappable(other),
-	SelectionTestable(other),
 	_speaker(other._speaker,
 		*this,
 		Callback(boost::bind(&Node::transformChanged, this)),
@@ -24,8 +23,18 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	_dragPlanes(boost::bind(&SpeakerNode::selectedChangedComponent, this, _1))
 {}
 
+boost::shared_ptr<SpeakerNode> SpeakerNode::Create(const IEntityClassPtr& eclass)
+{
+	SpeakerNodePtr instance(new SpeakerNode(eclass));
+	instance->construct();
+
+	return instance;
+}
+
 void SpeakerNode::construct()
 {
+	EntityNode::construct();
+
 	_speaker.construct();
 }
 
@@ -37,10 +46,6 @@ void SpeakerNode::snapto(float snap) {
 // Bounded implementation
 const AABB& SpeakerNode::localAABB() const {
 	return _speaker.localAABB();
-}
-
-void SpeakerNode::refreshModel() {
-	// Nothing to do
 }
 
 void SpeakerNode::selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
@@ -55,7 +60,10 @@ void SpeakerNode::selectReversedPlanes(Selector& selector, const SelectedPlanes&
 	_dragPlanes.selectReversedPlanes(localAABB(), selector, selectedPlanes);
 }
 
-void SpeakerNode::testSelect(Selector& selector, SelectionTest& test) {
+void SpeakerNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	EntityNode::testSelect(selector, test);
+
 	_speaker.testSelect(selector, test, localToWorld());
 }
 

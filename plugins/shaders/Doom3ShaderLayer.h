@@ -148,6 +148,14 @@ public:
 		}
 	}
 
+	void evaluateExpressions(std::size_t time, const IRenderEntity& entity)
+	{
+		for (Expressions::iterator i = _expressions.begin(); i != _expressions.end(); ++i)
+		{
+			(*i)->evaluate(time, entity);
+		}
+	}
+
     /**
      * \brief
      * Set the bindable texture object.

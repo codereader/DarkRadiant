@@ -308,7 +308,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\entity\angle.cpp" />
-    <ClCompile Include="..\..\plugins\entity\colour.cpp" />
     <ClCompile Include="..\..\plugins\entity\Doom3Entity.cpp" />
     <ClCompile Include="..\..\plugins\entity\EntityCreator.cpp" />
     <ClCompile Include="..\..\plugins\entity\EntityNode.cpp" />
@@ -318,7 +317,6 @@
     <ClCompile Include="..\..\plugins\entity\ModelKey.cpp" />
     <ClCompile Include="..\..\plugins\entity\NameKeyObserver.cpp" />
     <ClCompile Include="..\..\plugins\entity\NamespaceManager.cpp" />
-    <ClCompile Include="..\..\plugins\entity\origin.cpp" />
     <ClCompile Include="..\..\plugins\entity\plugin.cpp" />
     <ClCompile Include="..\..\plugins\entity\rotation.cpp" />
     <ClCompile Include="..\..\plugins\entity\curve\Curve.cpp">
@@ -343,6 +341,7 @@
     <ClCompile Include="..\..\plugins\entity\generic\GenericEntityNode.cpp" />
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModel.cpp" />
     <ClCompile Include="..\..\plugins\entity\eclassmodel\EclassModelNode.cpp" />
+    <ClCompile Include="..\..\plugins\entity\ShaderParms.cpp" />
     <ClCompile Include="..\..\plugins\entity\speaker\Speaker.cpp" />
     <ClCompile Include="..\..\plugins\entity\speaker\SpeakerNode.cpp" />
     <ClCompile Include="..\..\plugins\entity\speaker\SpeakerRenderables.cpp" />
@@ -354,7 +353,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\entity\angle.h" />
-    <ClInclude Include="..\..\plugins\entity\colour.h" />
+    <ClInclude Include="..\..\plugins\entity\ColourKey.h" />
     <ClInclude Include="..\..\plugins\entity\Doom3Entity.h" />
     <ClInclude Include="..\..\plugins\entity\EntityCreator.h" />
     <ClInclude Include="..\..\plugins\entity\EntityNode.h" />
@@ -367,9 +366,10 @@
     <ClInclude Include="..\..\plugins\entity\NameKey.h" />
     <ClInclude Include="..\..\plugins\entity\NameKeyObserver.h" />
     <ClInclude Include="..\..\plugins\entity\NamespaceManager.h" />
-    <ClInclude Include="..\..\plugins\entity\origin.h" />
+    <ClInclude Include="..\..\plugins\entity\OriginKey.h" />
     <ClInclude Include="..\..\plugins\entity\plugin.h" />
     <ClInclude Include="..\..\plugins\entity\rotation.h" />
+    <ClInclude Include="..\..\plugins\entity\ShaderParms.h" />
     <ClInclude Include="..\..\plugins\entity\SkinChangedWalker.h" />
     <ClInclude Include="..\..\plugins\entity\VertexInstance.h" />
     <ClInclude Include="..\..\plugins\entity\curve\Curve.h" />

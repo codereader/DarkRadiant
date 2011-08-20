@@ -56,24 +56,17 @@ private:
 	// The bounds of this quad group, calculated on demand
 	AABB _bounds;
 
+	// The entity colour (instance owned by RenderableParticle)
+	const Vector3& _entityColour;
+
 public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index,
 							int randSeed,
 							const IParticleStage& stage,
 							const Matrix4& viewRotation,
-							const Vector3& direction) :
-		_index(index),
-		_stage(stage),
-		_quads(),
-		_randSeed(randSeed),
-		_distributeParticlesRandomly(_stage.getRandomDistribution()),
-		_offset(_stage.getOffset()),
-		_viewRotation(viewRotation),
-		_direction(direction)
-	{
-		// Geometry is written in update(), just reserve the space
-	}
+							const Vector3& direction,
+							const Vector3& entityColour);
 
 	std::size_t getIndex() const
 	{
@@ -108,8 +101,8 @@ private:
 	// Handles animFrame stuff, may only be called if animFrames > 0
 	void calculateAnim(ParticleRenderInfo& particle);
 
-	// baseDirection should be normalised and not degenerate
-	Vector3 getDirection(ParticleRenderInfo& particle, const Vector3& baseDirection, const Vector3& distributionOffset);
+	// The rotation is used to deviate the offsets should be normalised and not degenerate
+	Vector3 getDirection(ParticleRenderInfo& particle, const Matrix4& rotation, const Vector3& distributionOffset);
 
 	Vector3 getDistributionOffset(ParticleRenderInfo& particle, bool distributeParticlesRandomly);
 
