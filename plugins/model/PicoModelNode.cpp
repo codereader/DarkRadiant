@@ -74,10 +74,13 @@ void PicoModelNode::clearLights() {
 	_lights.clear();
 }
 
-void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
 	_lightList.evaluateLights();
 
-	submitRenderables(collector, volume, localToWorld());
+	assert(_renderEntity);
+
+	submitRenderables(collector, volume, localToWorld(), *_renderEntity);
 }
 
 void PicoModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
@@ -87,7 +90,8 @@ void PicoModelNode::renderWireframe(RenderableCollector& collector, const Volume
 // Renderable submission
 void PicoModelNode::submitRenderables(RenderableCollector& collector,
 									  const VolumeTest& volume,
-									  const Matrix4& localToWorld) const
+									  const Matrix4& localToWorld,
+									  const IRenderEntity& entity) const
 {
 	// Test the model's intersection volume, if it intersects pass on the
 	// render call
@@ -105,16 +109,19 @@ void PicoModelNode::submitRenderables(RenderableCollector& collector,
 			{
 				// Submit the surface and shader to the collector, checking first
 				// to make sure the texture is not filtered
-				MaterialPtr surfaceShader = i->second->getMaterial();
-				if (surfaceShader->isVisible()) {
+				const MaterialPtr& surfaceShader = i->second->getMaterial();
+
+				if (surfaceShader->isVisible())
+				{
 					collector.SetState(i->second, RenderableCollector::eFullMaterials);
-					collector.addRenderable(*i->first, localToWorld);
+					collector.addRenderable(*i->first, localToWorld, entity);
 				}
 			}
 		}
-		else {
+		else
+		{
 			// Submit the model's geometry
-			_picoModel->submitRenderables(collector, localToWorld);
+			_picoModel->submitRenderables(collector, localToWorld, entity);
 		}
 	}
 }

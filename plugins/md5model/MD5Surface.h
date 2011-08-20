@@ -67,7 +67,7 @@ public:
 	/**
 	 * Get the Shader object.
 	 */
-	ShaderPtr getState() const;
+	const ShaderPtr& getState() const;
 
 	/**
 	 * Calculate the AABB and build the display lists for rendering.
@@ -82,8 +82,8 @@ public:
 
 	const AABB& localAABB() const;
 
-	void render(RenderableCollector& collector, const Matrix4& localToWorld, ShaderPtr state) const;
-	void render(RenderableCollector& collector, const Matrix4& localToWorld) const;
+	void render(RenderableCollector& collector, const Matrix4& localToWorld, 
+				const ShaderPtr& state, const IRenderEntity& entity) const;
 
 	// Test for selection
 	void testSelect(Selector& selector,

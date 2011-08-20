@@ -1,9 +1,12 @@
 #include "EntityNode.h"
 
+#include "i18n.h"
+
 #include "EntitySettings.h"
 #include "target/RenderableTargetInstances.h"
 
-namespace entity {
+namespace entity
+{
 
 EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	TargetableNode(_entity, *this),
@@ -12,14 +15,17 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_namespaceManager(_entity),
 	_nameKey(_entity),
 	_renderableName(_nameKey),
-	_keyObservers(_entity)
-{
-	construct();
-}
+	_modelKey(*this),
+	_keyObservers(_entity),
+	_shaderParms(_keyObservers, _colourKey),
+	_direction(1,0,0),
+	_requiredShaderFlags(RENDER_DEFAULT)
+{}
 
 EntityNode::EntityNode(const EntityNode& other) :
 	IEntityNode(other),
 	SelectableNode(other),
+	SelectionTestable(other),
 	Namespaced(other),
 	TargetableNode(_entity, *this),
 	Nameable(other),
@@ -32,10 +38,12 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_namespaceManager(_entity),
 	_nameKey(_entity),
 	_renderableName(_nameKey),
-	_keyObservers(_entity)
-{
-	construct();
-}
+	_modelKey(*this),
+	_keyObservers(_entity),
+	_shaderParms(_keyObservers, _colourKey),
+	_direction(1,0,0),
+	_requiredShaderFlags(RENDER_DEFAULT)
+{}
 
 EntityNode::~EntityNode()
 {
@@ -49,10 +57,28 @@ void EntityNode::construct()
 	TargetableNode::construct();
 
 	addKeyObserver("name", _nameKey);
+	addKeyObserver("_color", _colourKey);
+
+	_modelKeyObserver.setCallback(boost::bind(&EntityNode::_modelKeyChanged, this, _1));
+	addKeyObserver("model", _modelKeyObserver);
+
+	// Connect the skin keyvalue change handler directly to the model node manager
+	_skinKeyObserver.setCallback(boost::bind(&ModelKey::skinChanged, &_modelKey, _1));
+	addKeyObserver("skin", _skinKeyObserver);
+
+	_shaderParms.addKeyObservers();
 }
 
 void EntityNode::destruct()
 {
+	_shaderParms.removeKeyObservers();
+
+	removeKeyObserver("skin", _skinKeyObserver);
+
+	_modelKey.setActive(false); // disable callbacks during destruction
+	removeKeyObserver("model", _modelKeyObserver);
+
+	removeKeyObserver("_color", _colourKey);
 	removeKeyObserver("name", _nameKey);
 
 	TargetableNode::destruct();
@@ -73,6 +99,48 @@ void EntityNode::removeKeyObserver(const std::string& key, KeyObserver& observer
 Entity& EntityNode::getEntity()
 {
 	return _entity;
+}
+
+void EntityNode::refreshModel()
+{
+	// Simulate a "model" key change
+	_modelKey.modelChanged(_entity.getKeyValue("model"));
+
+	// Trigger a skin change
+	_modelKey.skinChanged(_entity.getKeyValue("skin"));
+}
+
+float EntityNode::getShaderParm(int parmNum) const
+{
+	return _shaderParms.getParmValue(parmNum);
+}
+
+const Vector3& EntityNode::getDirection() const
+{
+	return _direction;
+}
+
+unsigned int EntityNode::getRequiredShaderFlags() const
+{
+	return _requiredShaderFlags;
+}
+
+void EntityNode::setRequiredShaderFlags(unsigned int flags)
+{
+	_requiredShaderFlags = flags;
+}
+
+void EntityNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	test.BeginMesh(localToWorld());
+
+	// Pass the call down to the model node, if applicable
+	SelectionTestablePtr selectionTestable = Node_getSelectionTestable(_modelKey.getNode());
+
+    if (selectionTestable)
+	{
+		selectionTestable->testSelect(selector, test);
+    }
 }
 
 std::string EntityNode::getName() const {
@@ -125,6 +193,22 @@ void EntityNode::onRemoveFromScene()
 	_entity.instanceDetach(scene::findMapFile(getSelf()));
 }
 
+void EntityNode::onChildAdded(const scene::INodePtr& child)
+{
+	// Let the child know which renderEntity it has - this has to happen before onChildAdded()
+	child->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
+
+	Node::onChildAdded(child);
+}
+
+void EntityNode::onChildRemoved(const scene::INodePtr& child)
+{
+	Node::onChildRemoved(child);
+
+	// Leave the renderEntity on the child until this point - this has to happen after onChildRemoved()
+	child->setRenderEntity(IRenderEntityPtr());
+}
+
 std::string EntityNode::name() const
 {
 	return _nameKey.name();
@@ -151,10 +235,38 @@ bool EntityNode::isHighlighted() const
 	return isSelected();
 }
 
-void EntityNode::OnEClassReload()
+void EntityNode::onEClassReload()
 {
 	// Let the keyobservers reload their values
 	_keyObservers.refreshObservers();
+}
+
+const Vector3& EntityNode::getColour() const
+{
+	return _colourKey.getColour();
+}
+
+const ShaderPtr& EntityNode::getColourShader() const
+{
+	return _colourKey.getWireShader();
+}
+
+ModelKey& EntityNode::getModelKey()
+{
+	return _modelKey;
+}
+
+void EntityNode::onModelKeyChanged(const std::string& value)
+{
+	// Default implementation suitable for Light, Generic and EClassModel
+	// Dispatch the call to the key observer, which will create the child node
+	_modelKey.modelChanged(value);
+}
+
+void EntityNode::_modelKeyChanged(const std::string& value)
+{
+	// Wrap the call to the virtual event
+	onModelKeyChanged(value);
 }
 
 } // namespace entity

@@ -41,8 +41,18 @@ LightNode::LightNode(const LightNode& other) :
 	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
 {}
 
+LightNodePtr LightNode::Create(const IEntityClassPtr& eclass)
+{
+	LightNodePtr instance(new LightNode(eclass));
+	instance->construct();
+
+	return instance;
+}
+
 void LightNode::construct()
 {
+	EntityNode::construct();
+
 	_light.construct();
 }
 
@@ -75,13 +85,13 @@ void LightNode::lightChanged() {
 	GlobalRenderSystem().lightChanged(*this);
 }
 
-void LightNode::refreshModel() {
-	// Simulate a "model" key change
-	_light._modelKey.modelChanged(_entity.getKeyValue("model"));
-}
-
 const AABB& LightNode::localAABB() const {
 	return _light.localAABB();
+}
+
+float LightNode::getShaderParm(int parmNum) const
+{
+	return EntityNode::getShaderParm(parmNum);
 }
 
 void LightNode::onInsertIntoScene()
@@ -104,8 +114,10 @@ void LightNode::onRemoveFromScene()
 	setSelectedComponents(false, SelectionSystem::eFace);
 }
 
-// Test the light volume for selection, this just passes the call on to the contained Light class
-void LightNode::testSelect(Selector& selector, SelectionTest& test) {
+void LightNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	EntityNode::testSelect(selector, test);
+
 	_light.testSelect(selector, test, localToWorld());
 }
 
@@ -421,10 +433,6 @@ bool LightNode::testAABB(const AABB& other) const {
 
 Vector3 LightNode::getLightOrigin() const {
 	return _light.getLightOrigin();
-}
-
-const Vector3& LightNode::colour() const {
-	return _light.colour();
 }
 
 const Matrix4& LightNode::rotation() const {

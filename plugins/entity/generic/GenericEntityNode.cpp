@@ -6,18 +6,29 @@ namespace entity {
 
 GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	m_contained(*this)
+	m_contained(*this),
+	_localPivot(Matrix4::getIdentity())
 {}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	EntityNode(other),
 	Snappable(other),
-	SelectionTestable(other),
-	m_contained(other.m_contained, *this)
+	m_contained(other.m_contained, *this),
+	_localPivot(other._localPivot)
 {}
+
+GenericEntityNodePtr GenericEntityNode::Create(const IEntityClassPtr& eclass)
+{
+	GenericEntityNodePtr instance(new GenericEntityNode(eclass));
+	instance->construct();
+
+	return instance;
+}
 
 void GenericEntityNode::construct()
 {
+	EntityNode::construct();
+
 	m_contained.construct();
 }
 
@@ -26,17 +37,15 @@ void GenericEntityNode::snapto(float snap) {
 	m_contained.snapto(snap);
 }
 
-// EntityNode implementation
-void GenericEntityNode::refreshModel() {
-	// nothing to do
-}
-
 // Bounded implementation
 const AABB& GenericEntityNode::localAABB() const {
 	return m_contained.localAABB();
 }
 
-void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test) {
+void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test)
+{
+	EntityNode::testSelect(selector, test);
+
 	m_contained.testSelect(selector, test, localToWorld());
 }
 
@@ -60,6 +69,12 @@ void GenericEntityNode::renderWireframe(RenderableCollector& collector, const Vo
 	EntityNode::renderWireframe(collector, volume);
 
 	m_contained.renderWireframe(collector, volume, localToWorld());
+}
+
+const Vector3& GenericEntityNode::getDirection() const
+{
+	// Return the direction as specified by the angle/rotation keys
+	return m_contained.getDirection();
 }
 
 void GenericEntityNode::_onTransformationChanged()
@@ -86,6 +101,11 @@ void GenericEntityNode::_applyTransformation()
 
 		m_contained.freezeTransform();
 	}
+}
+
+const Matrix4& GenericEntityNode::getLocalPivot() const
+{
+	return _localPivot;
 }
 
 } // namespace entity

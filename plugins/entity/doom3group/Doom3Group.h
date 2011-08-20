@@ -1,5 +1,4 @@
-#ifndef DOOM3GROUP_H_
-#define DOOM3GROUP_H_
+#pragma once
 
 #include "Bounded.h"
 #include "editable.h"
@@ -7,7 +6,7 @@
 #include "pivot.h"
 
 #include "../ModelKey.h"
-#include "../origin.h"
+#include "../OriginKey.h"
 #include "../rotation.h"
 #include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
@@ -32,7 +31,6 @@ class Doom3Group
 	Doom3GroupNode& _owner;
 	Doom3Entity& _entity;
 
-	ModelKey m_model;
 	OriginKey m_originKey;
 	Vector3 m_origin;
 
@@ -58,7 +56,6 @@ class Doom3Group
 
 	KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
-	KeyObserverDelegate _modelObserver;
 	KeyObserverDelegate _nameObserver;
 
 public:
@@ -150,5 +147,3 @@ public:
 };
 
 } // namespace entity
-
-#endif /*DOOM3GROUP_H_*/

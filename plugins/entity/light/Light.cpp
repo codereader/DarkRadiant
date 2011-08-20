@@ -75,7 +75,6 @@ Light::Light(Doom3Entity& entity,
 	m_originKey(boost::bind(&Light::originChanged, this)),
 	_originTransformed(ORIGINKEY_IDENTITY),
 	m_rotationKey(boost::bind(&Light::rotationChanged, this)),
-	_modelKey(owner),
 	_renderableRadius(_lightBox.origin),
 	_renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
 	_rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
@@ -103,7 +102,6 @@ Light::Light(const Light& other,
   m_originKey(boost::bind(&Light::originChanged, this)),
   _originTransformed(ORIGINKEY_IDENTITY),
   m_rotationKey(boost::bind(&Light::rotationChanged, this)),
-  _modelKey(owner),
   _renderableRadius(_lightBox.origin),
   _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
   _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
@@ -143,7 +141,6 @@ void Light::construct()
 
 	_angleObserver.setCallback(boost::bind(&RotationKey::angleChanged, &m_rotationKey, _1));
 	_rotationObserver.setCallback(boost::bind(&RotationKey::rotationChanged, &m_rotationKey, _1));
-	_modelObserver.setCallback(boost::bind(&ModelKey::modelChanged, &_modelKey, _1));
 
 	_lightRadiusObserver.setCallback(boost::bind(&Doom3LightRadius::lightRadiusChanged, &m_doom3Radius, _1));
 	_lightCenterObserver.setCallback(boost::bind(&Doom3LightRadius::lightCenterChanged, &m_doom3Radius, _1));
@@ -159,7 +156,6 @@ void Light::construct()
 	// which might set them to true again.
 	m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
 
-	_owner.addKeyObserver("_color", m_colour);
 	_owner.addKeyObserver("origin", m_originKey);
 
 	_owner.addKeyObserver("angle", _angleObserver);
@@ -182,19 +178,11 @@ void Light::construct()
 	_entity.setIsContainer(true);
 
 	// Load the light colour (might be inherited)
-	m_colour.onKeyValueChanged(_entity.getKeyValue("_color")); // redundant?
 	m_shader.valueChanged(_entity.getKeyValue("texture"));
-
-	// Hook the "model" spawnarg to the ModelKey class
-	_owner.addKeyObserver("model", _modelObserver);
 }
 
 void Light::destroy()
 {
-	_modelKey.modelChanged("");
-	_modelKey.setActive(false); // disable callbacks during destruction
-
-	_owner.removeKeyObserver("_color", m_colour);
 	_owner.removeKeyObserver("origin", m_originKey);
 
 	_owner.removeKeyObserver("angle", _angleObserver);
@@ -209,9 +197,6 @@ void Light::destroy()
 	_owner.removeKeyObserver("light_start", _lightStartObserver);
 	_owner.removeKeyObserver("light_end", _lightEndObserver);
 	_owner.removeKeyObserver("texture", _lightTextureObserver);
-
-	// Hook the "model" spawnarg to the ModelKey class
-	_owner.removeKeyObserver("model", _modelObserver);
 }
 
 void Light::updateOrigin() {
@@ -237,7 +222,7 @@ void Light::updateOrigin() {
 void Light::originChanged()
 {
 	// The "origin" key has been changed, reset the current working copy to that value
-	_originTransformed = m_originKey.m_origin;
+	_originTransformed = m_originKey.get();
 	updateOrigin();
 }
 
@@ -408,11 +393,12 @@ void Light::updateRenderableRadius() const
  *
  * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode
  */
-void Light::snapto(float snap) {
-    m_originKey.m_origin = origin_snapped(m_originKey.m_origin, snap);
-    m_originKey.write(&_entity);
+void Light::snapto(float snap)
+{
+    m_originKey.snap(snap);
+    m_originKey.write(_entity);
 
-	_originTransformed = m_originKey.m_origin;
+	_originTransformed = m_originKey.get();
 
 	updateOrigin();
 }
@@ -452,7 +438,7 @@ void Light::transformLightRadius(const Matrix4& transform)
 
 void Light::revertTransform()
 {
-	_originTransformed = m_originKey.m_origin;
+	_originTransformed = m_originKey.get();
 
 	m_rotation = m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation;
 	m_doom3Radius.m_radiusTransformed = m_doom3Radius.m_radius;
@@ -468,8 +454,8 @@ void Light::revertTransform()
 
 void Light::freezeTransform()
 {
-    m_originKey.m_origin = _originTransformed;
-    m_originKey.write(&_entity);
+    m_originKey.set(_originTransformed);
+    m_originKey.write(_entity);
 
     if (isProjected()) {
 	    if (m_useLightTarget) {
@@ -577,10 +563,10 @@ void Light::renderWireframe(RenderableCollector& collector,
 {
 	// Main render, submit the diamond that represents the light entity
 	collector.SetState(
-		m_colour.getWireShader(), RenderableCollector::eWireframeOnly
+		_owner.getColourShader(), RenderableCollector::eWireframeOnly
 	);
 	collector.SetState(
-		m_colour.getWireShader(), RenderableCollector::eFullMaterials
+		_owner.getColourShader(), RenderableCollector::eFullMaterials
 	);
 	collector.addRenderable(*this, localToWorld);
 
@@ -589,10 +575,10 @@ void Light::renderWireframe(RenderableCollector& collector,
     {
 		/* greebo: uncomment this to let the light volume box render in the default colour
 		collector.SetState(
-			m_colour->getWireShader(), RenderableCollector::eWireframeOnly
+			_colourKey->getWireShader(), RenderableCollector::eWireframeOnly
 		);
 		collector.SetState(
-			m_colour->getWireShader(), RenderableCollector::eFullMaterials
+			_colourKey->getWireShader(), RenderableCollector::eFullMaterials
 		);*/
 
 		if (isProjected())
@@ -612,19 +598,14 @@ void Light::renderWireframe(RenderableCollector& collector,
 
 void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
 {
-	// Pass the call down to the model node, if applicable
-	SelectionTestablePtr selectionTestable = Node_getSelectionTestable(_modelKey.getNode());
-
-    if (selectionTestable)
-	{
-		selectionTestable->testSelect(selector, test);
-    }
-
 	test.BeginMesh(localToWorld);
 
 	SelectionIntersection best;
+
 	aabb_testselect(_lightBox, test, best);
-	if (best.valid()) {
+
+	if (best.valid())
+	{
 		selector.addIntersection(best);
 	}
 }
@@ -847,9 +828,6 @@ Vector3 Light::getLightOrigin() const {
         // AABB origin + light_center, i.e. center in world space
 		return worldOrigin() + m_doom3Radius.m_centerTransformed;
 	}
-}
-const Vector3& Light::colour() const {
-	return m_colour.m_colour;
 }
 
 Vector3& Light::target() 			{ return _lightTarget; }

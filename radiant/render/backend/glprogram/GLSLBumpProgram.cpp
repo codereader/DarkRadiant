@@ -121,7 +121,7 @@ void GLSLBumpProgram::disable()
 void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
                                        const Matrix4& objectToWorld,
                                        const Vector3& origin,
-                                       const Vector3& colour,
+                                       const Vector4& colour,
                                        const Matrix4& world2light,
                                        float ambientFactor)
 {

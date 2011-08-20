@@ -2,10 +2,12 @@
 
 #include "irender.h"
 #include "itextstream.h"
+#include "imainframe.h"
 #include "debugging/debugging.h"
 #include "modulesystem/StaticModule.h"
 
 #include "gtkutil/GLWidget.h"
+#include "gtkutil/dialog/MessageBox.h"
 #include <gdkmm/gl/context.h>
 
 #include <boost/lexical_cast.hpp>
@@ -20,9 +22,9 @@ OpenGLModule::OpenGLModule() :
 void OpenGLModule::assertNoErrors()
 {
 #ifdef _DEBUG
-
     // Return if no error
     GLenum error = glGetError();
+
     if (error == GL_NO_ERROR)
     {
         return;
@@ -37,11 +39,11 @@ void OpenGLModule::assertNoErrors()
             gluErrorString(error)
         );
         allErrString += boost::lexical_cast<std::string>(error);
-        allErrString += "(" + std::string(strErr) + ") ";
+        allErrString += " (" + std::string(strErr) + ") ";
 	}
 
-    // This is a logic_error because we should handle GL errors correctly.
-    throw std::logic_error(allErrString);
+    // Show the error message and terminate
+	gtkutil::MessageBox::ShowFatalError(allErrString, GlobalMainFrame().getTopLevelWindow());
 #endif
 }
 

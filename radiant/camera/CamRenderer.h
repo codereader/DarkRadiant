@@ -1,5 +1,4 @@
-#ifndef CAMRENDERER_H_
-#define CAMRENDERER_H_
+#pragma once
 
 #include "renderer.h"
 
@@ -91,11 +90,23 @@ public:
     m_state_stack.back().state->addRenderable(renderable, world, m_state_stack.back().lights);
   }
 
+	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& world, const IRenderEntity& entity)
+	{
+		if (m_state_stack.back().highlight & ePrimitive)
+		{
+			m_state_select0->addRenderable(renderable, world, entity, m_state_stack.back().lights);
+		}
+
+		if (m_state_stack.back().highlight & eFace)
+		{
+			m_state_select1->addRenderable(renderable, world, entity, m_state_stack.back().lights);
+		}
+
+		m_state_stack.back().state->addRenderable(renderable, world, entity, m_state_stack.back().lights);
+	}
+
   void render(const Matrix4& modelview, const Matrix4& projection)
   {
     GlobalRenderSystem().render(m_globalstate, modelview, projection, m_viewer);
   }
 }; // class CamRenderer
-
-
-#endif /*CAMRENDERER_H_*/

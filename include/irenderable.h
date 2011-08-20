@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_RENDERABLE_H)
-#define INCLUDED_RENDERABLE_H
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 
@@ -30,6 +28,7 @@ typedef boost::shared_ptr<Shader> ShaderPtr;
 class OpenGLRenderable;
 class LightList;
 class Matrix4;
+class IRenderEntity;
 
 /**
  * \brief
@@ -114,6 +113,14 @@ public:
 	virtual void addRenderable(const OpenGLRenderable& renderable,
 							   const Matrix4& world) = 0;
 
+	/**
+	 * Like addRenderable() above but providing an additional IRenderEntity argument
+	 * needed to evaluate the shader expressions right before rendering.
+	 */
+	virtual void addRenderable(const OpenGLRenderable& renderable,
+							   const Matrix4& world,
+							   const IRenderEntity& entity) = 0;
+
 
 	/**
     * Return the render style of this RenderableCollector.
@@ -178,5 +185,3 @@ public:
 	virtual bool isHighlighted() const = 0;
 };
 typedef boost::shared_ptr<Renderable> RenderablePtr;
-
-#endif

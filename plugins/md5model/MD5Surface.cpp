@@ -160,7 +160,8 @@ void MD5Surface::setShader(const std::string& name) {
 	captureShader();
 }
 
-ShaderPtr MD5Surface::getState() const {
+const ShaderPtr& MD5Surface::getState() const
+{
 	return _shader;
 }
 
@@ -185,13 +186,11 @@ const AABB& MD5Surface::localAABB() const {
 	return _aabb_local;
 }
 
-void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, ShaderPtr state) const {
+void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, 
+						const ShaderPtr& state, const IRenderEntity& entity) const
+{
 	collector.SetState(state, RenderableCollector::eFullMaterials);
-	collector.addRenderable(*this, localToWorld);
-}
-
-void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld) const {
-	render(collector, localToWorld, _shader);
+	collector.addRenderable(*this, localToWorld, entity);
 }
 
 int MD5Surface::getNumVertices() const

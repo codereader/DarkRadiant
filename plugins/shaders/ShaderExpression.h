@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ishaders.h"
+#include "irender.h"
 #include "parser/DefTokeniser.h"
 #include "TableDefinition.h"
 
@@ -29,6 +30,19 @@ public:
 	{
 		// Evaluate this register and write it into the respective register index
 		float val = getValue(time);
+
+		if (_registers != NULL)
+		{
+			(*_registers)[_index] = val;
+		}
+
+		return val;
+	}
+
+	virtual float evaluate(std::size_t time, const IRenderEntity& entity)
+	{
+		// Evaluate this register and write it into the respective register index
+		float val = getValue(time, entity);
 
 		if (_registers != NULL)
 		{
@@ -76,8 +90,13 @@ public:
 
 	virtual float getValue(std::size_t time)
 	{
-		// not implemented yet
+		// parmNN is 0 without entity
 		return 0.0f;
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return entity.getShaderParm(_parmNum);
 	}
 };
 
@@ -95,8 +114,13 @@ public:
 
 	virtual float getValue(std::size_t time)
 	{
-		// not implemented yet
+		// globalNN is 0 without entity
 		return 0.0f;
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return getValue(time);
 	}
 };
 
@@ -112,6 +136,11 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		return time / 1000.0f; // convert msecs to secs
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return getValue(time);
 	}
 };
 
@@ -131,6 +160,11 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		return _value;
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return getValue(time);
 	}
 };
 
@@ -157,6 +191,12 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		float lookupVal = _lookupExpr->getValue(time);
+		return _tableDef->getValue(lookupVal);
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		float lookupVal = _lookupExpr->getValue(time, entity);
 		return _tableDef->getValue(lookupVal);
 	}
 };
@@ -227,6 +267,11 @@ public:
 	{
 		return _a->getValue(time) + _b->getValue(time);
 	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) + _b->getValue(time, entity);
+	}
 };
 
 // An expression subtracting the value of two expressions
@@ -242,6 +287,11 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		return _a->getValue(time) - _b->getValue(time);
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) - _b->getValue(time, entity);
 	}
 };
 
@@ -259,6 +309,11 @@ public:
 	{
 		return _a->getValue(time) * _b->getValue(time);
 	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) * _b->getValue(time, entity);
+	}
 };
 
 // An expression dividing the value of two expressions
@@ -274,6 +329,11 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		return _a->getValue(time) / _b->getValue(time);
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) / _b->getValue(time, entity);
 	}
 };
 
@@ -291,6 +351,11 @@ public:
 	{
 		return fmod(_a->getValue(time), _b->getValue(time));
 	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return fmod(_a->getValue(time, entity), _b->getValue(time, entity));
+	}
 };
 
 // An expression returning 1 if A < B, otherwise 0
@@ -306,6 +371,11 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		return _a->getValue(time) < _b->getValue(time) ? 1.0f : 0;
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) < _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -323,6 +393,11 @@ public:
 	{
 		return _a->getValue(time) <= _b->getValue(time) ? 1.0f : 0;
 	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) <= _b->getValue(time, entity) ? 1.0f : 0;
+	}
 };
 
 // An expression returning 1 if A > B, otherwise 0
@@ -338,6 +413,11 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		return _a->getValue(time) > _b->getValue(time) ? 1.0f : 0;
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) > _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -355,6 +435,11 @@ public:
 	{
 		return _a->getValue(time) >= _b->getValue(time) ? 1.0f : 0;
 	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) >= _b->getValue(time, entity) ? 1.0f : 0;
+	}
 };
 
 // An expression returning 1 if A == B, otherwise 0
@@ -370,6 +455,11 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		return _a->getValue(time) == _b->getValue(time) ? 1.0f : 0;
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) == _b->getValue(time, entity) ? 1.0f : 0;
 	}
 };
 
@@ -387,6 +477,11 @@ public:
 	{
 		return _a->getValue(time) != _b->getValue(time) ? 1.0f : 0;
 	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return _a->getValue(time, entity) != _b->getValue(time, entity) ? 1.0f : 0;
+	}
 };
 
 // An expression returning 1 if both A and B are true (non-zero), otherwise 0
@@ -403,6 +498,11 @@ public:
 	{
 		return (_a->getValue(time) != 0 && _b->getValue(time) != 0) ? 1.0f : 0;
 	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return (_a->getValue(time, entity) != 0 && _b->getValue(time, entity) != 0) ? 1.0f : 0;
+	}
 };
 
 // An expression returning 1 if either A or B are true (non-zero), otherwise 0
@@ -418,6 +518,11 @@ public:
 	virtual float getValue(std::size_t time)
 	{
 		return (_a->getValue(time) != 0 || _b->getValue(time) != 0) ? 1.0f : 0;
+	}
+
+	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	{
+		return (_a->getValue(time, entity) != 0 || _b->getValue(time, entity) != 0) ? 1.0f : 0;
 	}
 };
 

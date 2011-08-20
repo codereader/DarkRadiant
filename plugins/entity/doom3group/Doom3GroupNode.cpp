@@ -3,7 +3,8 @@
 #include <boost/bind.hpp>
 #include "../curve/CurveControlPointFunctors.h"
 
-namespace entity {
+namespace entity
+{
 
 Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
@@ -15,16 +16,13 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom,
 					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
-	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
-	_updateSkin(true),
-	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
+	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)))
 {}
 
 Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	EntityNode(other),
 	scene::GroupNode(other),
 	Snappable(other),
-	SelectionTestable(other),
 	ComponentSelectionTestable(other),
 	ComponentEditable(other),
 	ComponentSnappable(other),
@@ -38,28 +36,31 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 				 boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
 	m_curveCatmullRom(m_contained.m_curveCatmullRom,
 					  boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)),
-	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1))),
-	_updateSkin(true),
-	_skinObserver(boost::bind(&Doom3GroupNode::skinChanged, this, _1))
+	_originInstance(VertexInstance(m_contained.getOrigin(), boost::bind(&Doom3GroupNode::selectionChangedComponent, this, _1)))
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method
+}
+
+Doom3GroupNodePtr Doom3GroupNode::Create(const IEntityClassPtr& eclass)
+{
+	Doom3GroupNodePtr instance(new Doom3GroupNode(eclass));
+	instance->construct();
+
+	return instance;
 }
 
 Doom3GroupNode::~Doom3GroupNode()
 {
 	m_contained.m_curveCatmullRom.disconnect(m_contained.m_curveCatmullRomChanged);
 	m_contained.m_curveNURBS.disconnect(m_contained.m_curveNURBSChanged);
-
-	removeKeyObserver("skin", _skinObserver);
 }
 
 void Doom3GroupNode::construct()
 {
-	m_contained.construct();
+	EntityNode::construct();
 
-	// Attach the callback as keyobserver for the skin key
-	addKeyObserver("skin", _skinObserver);
+	m_contained.construct();
 
 	m_contained.m_curveNURBSChanged = m_contained.m_curveNURBS.connect(
 		boost::bind(&CurveEditInstance::curveChanged, &m_curveNURBS)
@@ -211,6 +212,8 @@ void Doom3GroupNode::snapto(float snap) {
 
 void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
 {
+	EntityNode::testSelect(selector, test);
+
 	test.BeginMesh(localToWorld());
 	SelectionIntersection best;
 
@@ -226,18 +229,6 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
 void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
-
-	// greebo: Check if the skin needs updating before rendering.
-	if (_updateSkin) {
-		if (m_contained.isModel()) {
-			// Instantiate a walker class equipped with the new value
-			SkinChangedWalker walker(_entity.getKeyValue("skin"));
-			// Update all children
-			traverse(walker);
-		}
-
-		_updateSkin = false;
-	}
 
 	m_contained.renderSolid(collector, volume, localToWorld(), isSelected());
 
@@ -314,23 +305,6 @@ void Doom3GroupNode::transformComponents(const Matrix4& matrix) {
 	}
 }
 
-void Doom3GroupNode::skinChanged(const std::string& value) {
-	if (m_contained.isModel()) {
-		// Instantiate a walker class equipped with the new value
-		SkinChangedWalker walker(value);
-		// Update all children of this node
-		traverse(walker);
-	}
-}
-
-void Doom3GroupNode::refreshModel() {
-	// Simulate a "model" key change
-	m_contained.modelChanged(_entity.getKeyValue("model"));
-
-	// Trigger a skin change
-	skinChanged(_entity.getKeyValue("skin"));
-}
-
 void Doom3GroupNode::_onTransformationChanged()
 {
 	// If this is a container, pass the call to the children and leave the entity unharmed
@@ -367,6 +341,15 @@ void Doom3GroupNode::_applyTransformation()
 		// Update the origin when we're in "child primitive" mode
 		_renderableName.setOrigin(m_contained.getOrigin());
 	}
+}
+
+void Doom3GroupNode::onModelKeyChanged(const std::string& value)
+{
+	// Override the default behaviour
+	// Don't call EntityNode::onModelKeyChanged(value);
+
+	// Pass the call to the contained model
+	m_contained.modelChanged(value);
 }
 
 } // namespace entity

@@ -1095,9 +1095,6 @@
     <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPass.h">
       <Filter>src\render\backend</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\render\backend\OpenGLStateBucketAdd.h">
-      <Filter>src\render\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\render\backend\OpenGLStateLess.h">
       <Filter>src\render\backend</Filter>
     </ClInclude>
@@ -1637,6 +1634,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\Profile.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\backend\OpenGLShaderPassAdd.h">
+      <Filter>src\render\backend</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

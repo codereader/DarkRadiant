@@ -4,6 +4,7 @@
 #include "ifiletypes.h"
 #include "scenelib.h"
 #include "ifilter.h"
+#include "modelskin.h"
 #include <boost/algorithm/string/replace.hpp>
 
 ModelKey::ModelKey(scene::INode& parentNode) :
@@ -11,7 +12,8 @@ ModelKey::ModelKey(scene::INode& parentNode) :
 	_active(true)
 {}
 
-const scene::INodePtr& ModelKey::getNode() const {
+const scene::INodePtr& ModelKey::getNode() const
+{
 	return _modelNode;
 }
 
@@ -26,7 +28,8 @@ void ModelKey::modelChanged(const std::string& value)
 	if (!_active) return; // deactivated during parent node destruction
 
 	// Remove the old model node first
-	if (_modelNode != NULL) {
+	if (_modelNode != NULL)
+	{
 		_parentNode.removeChildNode(_modelNode);
 	}
 
@@ -34,7 +37,8 @@ void ModelKey::modelChanged(const std::string& value)
     // Sanitise the keyvalue - must use forward slashes
 	_modelPath = boost::algorithm::replace_all_copy(value, "\\", "/");
 
-	if (_modelPath.empty()) {
+	if (_modelPath.empty())
+	{
 		// Empty "model" spawnarg, clear the pointer and exit
 		_modelNode = scene::INodePtr();
 		return;
@@ -65,5 +69,16 @@ void ModelKey::modelChanged(const std::string& value)
 		{
 			_modelNode->enable(scene::Node::eExcluded);
 		}
+	}
+}
+
+void ModelKey::skinChanged(const std::string& value)
+{
+	// Check if we have a skinnable model
+	SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+
+	if (skinned)
+	{
+		skinned->skinChanged(value);
 	}
 }

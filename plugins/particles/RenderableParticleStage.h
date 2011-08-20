@@ -36,8 +36,14 @@ private:
 	// The bounds of this stage (calculated on demand)
 	AABB _bounds;
 
+	// The entity colour (instance owned by RenderableParticle)
+	const Vector3& _entityColour;
+
 public:
-	RenderableParticleStage(const IParticleStage& stage, boost::rand48& random, const Vector3& direction);
+	RenderableParticleStage(const IParticleStage& stage, 
+							boost::rand48& random, 
+							const Vector3& direction,
+							const Vector3& entityColour);
 
 	void render(const RenderInfo& info) const;
 

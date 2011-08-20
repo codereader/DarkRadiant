@@ -49,6 +49,9 @@
     <ClInclude Include="..\..\plugins\particles\editor\ParticleDefPopulator.h">
       <Filter>src\editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\particles\ParticleNode.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\particles\particles.cpp">
@@ -73,6 +76,9 @@
       <Filter>src\editor</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\particles\ParticleParameter.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\particles\ParticleNode.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

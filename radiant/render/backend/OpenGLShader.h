@@ -108,6 +108,14 @@ public:
 					   const Matrix4& modelview,
 					   const LightList* lights);
 
+	/**
+	 * Add a renderable object to this shader.
+	 */
+	void addRenderable(const OpenGLRenderable& renderable,
+					   const Matrix4& modelview,
+					   const IRenderEntity& entity,
+					   const LightList* lights);
+
 	void incrementUsed();
 
 	void decrementUsed();

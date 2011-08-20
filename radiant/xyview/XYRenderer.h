@@ -76,12 +76,27 @@ public:
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& localToWorld)
 	{
-		if (_stateStack.back()._highlight & ePrimitive) {
+		if (_stateStack.back()._highlight & ePrimitive)
+		{
 			_selectedShader->addRenderable(renderable, localToWorld);
 		}
 		else if (_stateStack.back()._state != NULL)
 		{
 			_stateStack.back()._state->addRenderable(renderable, localToWorld);
+		}
+	}
+
+	void addRenderable(const OpenGLRenderable& renderable,
+					   const Matrix4& localToWorld,
+					   const IRenderEntity& entity)
+	{
+		if (_stateStack.back()._highlight & ePrimitive)
+		{
+			_selectedShader->addRenderable(renderable, localToWorld, entity);
+		}
+		else if (_stateStack.back()._state != NULL)
+		{
+			_stateStack.back()._state->addRenderable(renderable, localToWorld, entity);
 		}
 	}
 
