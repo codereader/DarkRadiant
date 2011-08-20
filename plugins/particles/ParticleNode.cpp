@@ -1,12 +1,14 @@
 #include "ParticleNode.h"
 
 #include "ivolumetest.h"
+#include "itextstream.h"
 
 namespace particles
 {
 
 ParticleNode::ParticleNode(const RenderableParticlePtr& particle) :
-	_renderableParticle(particle)
+	_renderableParticle(particle),
+	_local2Parent(Matrix4::getIdentity())
 {}
 
 IRenderableParticlePtr ParticleNode::getParticle() const
@@ -22,6 +24,29 @@ const AABB& ParticleNode::localAABB() const
 bool ParticleNode::isHighlighted(void) const
 {
 	return false;
+}
+
+const Matrix4& ParticleNode::localToParent() const
+{
+	scene::INodePtr parent = getParent();
+
+	if (parent == NULL)
+	{
+		_local2Parent = Matrix4::getIdentity();
+	}
+	else
+	{
+		_local2Parent = parent->localToWorld();
+
+		// compensate the parent rotation only
+		_local2Parent.t().x() = 0;
+		_local2Parent.t().y() = 0;
+		_local2Parent.t().z() = 0;
+
+		_local2Parent.invert();
+	}
+
+	return _local2Parent;
 }
 
 void ParticleNode::renderSolid(RenderableCollector& collector, 
