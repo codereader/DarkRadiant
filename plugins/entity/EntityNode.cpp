@@ -195,15 +195,17 @@ void EntityNode::onRemoveFromScene()
 
 void EntityNode::onChildAdded(const scene::INodePtr& child)
 {
-	Node::onChildAdded(child);
-
+	// Let the child know which renderEntity it has - this has to happen before onChildAdded()
 	child->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(getSelf()));
+
+	Node::onChildAdded(child);
 }
 
 void EntityNode::onChildRemoved(const scene::INodePtr& child)
 {
 	Node::onChildRemoved(child);
 
+	// Leave the renderEntity on the child until this point - this has to happen after onChildRemoved()
 	child->setRenderEntity(IRenderEntityPtr());
 }
 
