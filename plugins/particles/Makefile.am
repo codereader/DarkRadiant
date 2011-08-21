@@ -10,10 +10,11 @@ particles_la_LDFLAGS = -module -avoid-version \
                        $(REGEX_LIBS) \
                        $(BOOST_SYSTEM_LIBS)
 particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
+                      $(top_builddir)/libs/scene/libscenegraph.la \
                       $(top_builddir)/libs/gtkutil/libgtkutil.la
 particles_la_SOURCES = ParticlesManager.cpp \
                        particles.cpp \
-					   ParticleNode.cpp \
+                       ParticleNode.cpp \
                        ParticleParameter.cpp \
                        ParticleStage.cpp \
                        RenderableParticle.cpp \
