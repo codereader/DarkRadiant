@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-04-28 16:58+0200\n"
-"PO-Revision-Date: 2011-04-28 18:42+0100\n"
-"Last-Translator: greebo <greebo@angua.at>\n"
+"POT-Creation-Date: 2011-08-21 08:38+0200\n"
+"PO-Revision-Date: 2011-08-21 08:38+0100\n"
+"Last-Translator: Matthias <greebo@darkradiant>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -49,7 +49,7 @@ msgstr "CSG Subtraktion: Keine Brushes ausgewählt."
 msgid "CSG Merge: No brushes selected."
 msgstr "CSG Zusammenfügen: Keine Brushes ausgewählt."
 
-#: ..\..\radiant\brushmanip.cpp:475
+#: ..\..\radiant\brushmanip.cpp:474
 msgid "Exactly one brush must be selected for this operation."
 msgstr "Für diese Operation muss genau ein Brush ausgewählt sein."
 
@@ -107,12 +107,12 @@ msgid "Caulk shader name"
 msgstr "Name des Caulk Shaders"
 
 #: ..\..\radiant\entity.cpp:93
-#: ..\..\radiant\mainframe_old.cpp:578
+#: ..\..\radiant\mainframe_old.cpp:576
 #: ..\..\radiant\map\Map.cpp:488
 #: ..\..\radiant\map\Map.cpp:585
 #: ..\..\radiant\map\Map.cpp:605
-#: ..\..\radiant\referencecache\ModelCache.cpp:206
-#: ..\..\radiant\referencecache\ModelCache.cpp:222
+#: ..\..\radiant\referencecache\ModelCache.cpp:215
+#: ..\..\radiant\referencecache\ModelCache.cpp:231
 msgid "Processing..."
 msgstr "Vorgang läuft..."
 
@@ -146,6 +146,7 @@ msgid "Remove from Layer..."
 msgstr "Von Layer entfernen..."
 
 #: ..\..\radiant\layers\LayerSystem.cpp:469
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1208
 msgid "Enter Name"
 msgstr "Namen eingeben"
 
@@ -181,7 +182,7 @@ msgstr "Starte Mainframe"
 msgid "DarkRadiant Startup Complete"
 msgstr "DarkRadiant Startphase abgeschlossen"
 
-#: ..\..\radiant\mainframe_old.cpp:128
+#: ..\..\radiant\mainframe_old.cpp:126
 #: ..\..\radiant\settings\GameManager.cpp:89
 #: ..\..\radiant\settings\GameManager.cpp:266
 #: ..\..\radiant\settings\GameManager.cpp:310
@@ -189,24 +190,24 @@ msgstr "DarkRadiant Startphase abgeschlossen"
 msgid "Game"
 msgstr "Spiel"
 
-#: ..\..\radiant\mainframe_old.cpp:129
+#: ..\..\radiant\mainframe_old.cpp:127
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: ..\..\radiant\mainframe_old.cpp:132
+#: ..\..\radiant\mainframe_old.cpp:130
 msgid "Constructing Menu"
 msgstr "Erzeuge Menü"
 
-#: ..\..\radiant\mainframe_old.cpp:143
+#: ..\..\radiant\mainframe_old.cpp:141
 msgid "Settings/Source View"
 msgstr "Einstellungen/Quellansicht"
 
-#: ..\..\radiant\mainframe_old.cpp:150
+#: ..\..\radiant\mainframe_old.cpp:148
 #: ..\..\radiant\ui\mainframe\MainFrame.cpp:585
 msgid "Exit Radiant"
 msgstr "Verlasse Radiant"
 
-#: ..\..\radiant\mainframe_old.cpp:578
+#: ..\..\radiant\mainframe_old.cpp:576
 msgid "Loading Shaders"
 msgstr "Lade Shader"
 
@@ -260,15 +261,15 @@ msgstr "Maximale Grösse des Schnappschussverzeichnisses (MB)"
 msgid "Brushes: %lu Patches: %lu Entities: %lu"
 msgstr "Brushes: %lu Patches: %lu Entities: %lu"
 
-#: ..\..\radiant\map\FindMapElements.cpp:176
+#: ..\..\radiant\map\FindMapElements.cpp:95
 msgid "Find Brush"
 msgstr "Suche Brush"
 
-#: ..\..\radiant\map\FindMapElements.cpp:178
+#: ..\..\radiant\map\FindMapElements.cpp:97
 msgid "Entity Number:"
 msgstr "Entitynummer:"
 
-#: ..\..\radiant\map\FindMapElements.cpp:179
+#: ..\..\radiant\map\FindMapElements.cpp:98
 msgid "Brush Number:"
 msgstr "Brushnummer:"
 
@@ -405,27 +406,27 @@ msgstr "Schreibvorgang abgebrochen"
 msgid "Could not open pointfile: %s"
 msgstr "Konnte das Pointfile nicht öffnen: %s"
 
-#: ..\..\radiant\map\RegionManager.cpp:198
+#: ..\..\radiant\map\RegionManager.cpp:199
 msgid "Warning: Camera not within region, can't set info_player_start."
 msgstr "Warnung: die Kamera befindet sich nicht innerhalb der Region, konnte daher den Spielerstartpunkt nicht setzen."
 
-#: ..\..\radiant\map\RegionManager.cpp:249
+#: ..\..\radiant\map\RegionManager.cpp:250
 msgid "Could not set Region: XY Top View not found."
 msgstr "Konnte Region nicht festlegen, weil die XY-Ansicht nicht gefunden wurde."
 
-#: ..\..\radiant\map\RegionManager.cpp:277
+#: ..\..\radiant\map\RegionManager.cpp:278
 msgid "Could not set Region: please select a single Brush."
 msgstr "Kann Region nicht festlegen: bitte einen einzelnen Brush auswählen."
 
-#: ..\..\radiant\map\RegionManager.cpp:303
+#: ..\..\radiant\map\RegionManager.cpp:304
 msgid "This command is not available in component mode."
 msgstr "Dieser Befehl steht im Komponentenmodus nicht zur Verfügung."
 
-#: ..\..\radiant\map\RegionManager.cpp:310
+#: ..\..\radiant\map\RegionManager.cpp:311
 msgid "Could not set Region: nothing selected."
 msgstr "Kann keine Region festlegen: keine Elemente ausgewählt."
 
-#: ..\..\radiant\map\RegionManager.cpp:325
+#: ..\..\radiant\map\RegionManager.cpp:326
 msgid "Export region"
 msgstr "Exportiere Region"
 
@@ -438,7 +439,7 @@ msgstr "Initialisiere Modul: %s"
 msgid "Initialising Modules"
 msgstr "Initialisiere Module"
 
-#: ..\..\radiant\patch\Patch.cpp:1682
+#: ..\..\radiant\patch\Patch.cpp:1684
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr "Patch ist nicht geeignet für diese Operation."
 
@@ -476,8 +477,8 @@ msgstr "Kann Texturen nicht zusammenheften, für diese Operation müssten genau 
 msgid "Cannot bulge patch. No patches selected."
 msgstr "Kann Patch nicht auswölben: keine Patches ausgewählt."
 
-#: ..\..\radiant\referencecache\ModelCache.cpp:206
-#: ..\..\radiant\referencecache\ModelCache.cpp:222
+#: ..\..\radiant\referencecache\ModelCache.cpp:215
+#: ..\..\radiant\referencecache\ModelCache.cpp:231
 msgid "Reloading Models"
 msgstr "Neuladen der Modelle"
 
@@ -648,8 +649,9 @@ msgstr "Patch"
 
 #: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:95
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:337
-#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:58
+#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:72
 #: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:81
+#: xml_file_content.cpp:33
 msgid "Shader"
 msgstr "Shader"
 
@@ -1594,7 +1596,7 @@ msgstr "Definition"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:185
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:224
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:46
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:379
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:387
 #: ..\..\radiant\ui\modelselector\ModelSelector.cpp:321
 #: ..\..\plugins\eclasstree\EClassTree.cpp:127
 msgid "Value"
@@ -1664,47 +1666,57 @@ msgstr "Benutzerdefinierte Eigenschaften dieser Entityklasse, falls definiert"
 msgid "Choose entity class..."
 msgstr "Entityklasse auswählen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:87
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:89
 msgid "Show inherited properties"
 msgstr "Zeige vererbte Eigenschaften"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:93
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:95
 msgid "Show help icons"
 msgstr "Zeige Hilfe-Symbole"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:241
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:249
 msgid "Add property..."
 msgstr "Eigenschaft hinzufügen..."
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:245
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:253
 msgid "Delete property"
 msgstr "Eigenschaft entfernen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:253
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:261
 msgid "Copy Spawnarg"
 msgstr "Wertepaar kopieren"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:258
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:266
 msgid "Cut Spawnarg"
 msgstr "Wertepaar ausschneiden"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:263
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:271
 msgid "Paste Spawnarg"
 msgstr "Wertepaar einfügen"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:362
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:370
 #: ..\..\plugins\eclasstree\EClassTree.cpp:113
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:391
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:399
 msgid "?"
 msgstr "?"
 
-#: ..\..\radiant\ui\einspector\EntityInspector.cpp:606
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:614
 #, c-format
 msgid "The name %s already exists in this map!"
 msgstr "Der Name %s existiert bereits in dieser Map!"
+
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1040
+#, c-format
+msgid "Entity %d"
+msgstr "Entity %d"
+
+#: ..\..\radiant\ui\einspector\EntityInspector.cpp:1052
+#, c-format
+msgid "Entity %d, Primitive %d"
+msgstr "Entity %d, Primitiv %d"
 
 #: ..\..\radiant\ui\einspector\EntityPropertyEditor.cpp:40
 msgid "Choose target entity..."
@@ -1801,6 +1813,7 @@ msgid "State"
 msgstr "Zustand"
 
 #: ..\..\radiant\ui\filterdialog\FilterDialog.cpp:195
+#: xml_file_content.cpp:125
 msgid "View"
 msgstr "Ansicht"
 
@@ -1851,30 +1864,34 @@ msgstr ""
 msgid "Rules"
 msgstr "Regeln"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:132
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:252
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:423
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:133
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:264
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:472
 msgid "show"
 msgstr "zeige"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:132
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:256
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:133
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:268
 msgid "hide"
 msgstr "verstecke"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:150
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:151
 msgid "Index"
 msgstr "Index"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:151
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:152
 msgid "Match"
 msgstr "Ausdruck"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:162
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:153
+msgid "Entity Key"
+msgstr "Entity Key"
+
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:164
 msgid "Action"
 msgstr "Aktion"
 
-#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:181
+#: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:188
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:234
 #: ..\..\plugins\dm.objectives\ComponentsDialog.cpp:269
 #: ..\..\plugins\dm.stimresponse\ClassEditor.cpp:65
@@ -2114,19 +2131,27 @@ msgstr "Benutzte Modelle:"
 msgid "Named Skins used:"
 msgstr "Benutzte Skins:"
 
-#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:18
+#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:21
 msgid "Shaders"
 msgstr "Shader"
 
-#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:61
+#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:23
+msgid "Select elements using this shader"
+msgstr "Alle Elemente mit diesem Shader auswählen"
+
+#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:24
+msgid "Deselect elements using this shader"
+msgstr "Alle Elemente mit diesem Shader deselektieren"
+
+#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:75
 msgid "Faces"
 msgstr "Faces"
 
-#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:64
+#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:78
 msgid "Patches"
 msgstr "Patches"
 
-#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:91
+#: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:103
 msgid "Shaders used:"
 msgstr "Benutzte Shader:"
 
@@ -2362,6 +2387,7 @@ msgid "Choose particles"
 msgstr "Partikel auswählen"
 
 #: ..\..\radiant\ui\particles\ParticlesChooser.cpp:73
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:119
 msgid "Particle"
 msgstr "Partikel"
 
@@ -2603,48 +2629,48 @@ msgstr "Textur-Lock"
 msgid "Both fit values must be > 0."
 msgstr "Beide Fit-Werte müssen größer als 0 sein."
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:44
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:43
 msgid "Seek in Media Browser"
 msgstr "In Media Browser zeigen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:84
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:669
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:81
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:643
 msgid "No shader"
 msgstr "Kein Shader"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:894
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:876
 msgid "Clamp texture thumbnails to constant size"
 msgstr "Textur-Vorschaubilder mit fixer Größe anzeigen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:895
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:877
 msgid "Constant size"
 msgstr "Fixe Größe"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:957
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:939
 msgid "Settings/Texture Browser"
 msgstr "Einstellungen/Texturbrowser"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:968
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:950
 msgid "Texture Thumbnail Scale"
 msgstr "Skalierung der Texturvorschaubilder"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:970
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:952
 msgid "Uniform texture thumbnail size (pixels)"
 msgstr "Einheitliche Größe der Texturvorschaubilder (in Pixel)"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:971
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:953
 msgid "Texture scrollbar"
 msgstr "Texturbrowser-Scrollbalken"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:972
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:954
 msgid "Mousewheel Increment"
 msgstr "Bildlaufgeschwindgkeit beim Scrollen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:973
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:955
 msgid "Max shadername length"
 msgstr "Maximal dargestellte Länge für Shadernamen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:975
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:957
 msgid "Show Texture Filter"
 msgstr "Zeige Textur-Filter"
 
@@ -2760,7 +2786,7 @@ msgstr "XZ Vorne"
 msgid "YZ Side"
 msgstr "YZ Seite"
 
-#: ..\..\radiant\xyview\XYWnd.cpp:706
+#: ..\..\radiant\xyview\XYWnd.cpp:707
 #, c-format
 msgid "x: %6.1lf y: %6.1lf z: %6.1lf"
 msgstr "x: %6.1lf y: %6.1lf z: %6.1lf"
@@ -3712,77 +3738,77 @@ msgstr "UNGÜLTIG"
 msgid "Edit Objective Conditions"
 msgstr "Missionsziel-Bedingungen bearbeiten"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:162
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:163
 msgid "Change Objective State"
 msgstr "Setze Status eines Missionsziels"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:163
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:164
 msgid "Change Visibility"
 msgstr "Setze Misionsziel auf sichtbar/unsichtbar"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:164
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:165
 msgid "Change Mandatory Flag"
 msgstr "Setze die 'obligatorisch'-Eigenschaft"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:252
 #: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:253
 #: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:254
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:255
 #, c-format
 msgid "Set state to %s"
 msgstr "Setze Status auf %s"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:265
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:266
 msgid "Set Invisible"
 msgstr "Unsichtbar machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:266
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:267
 msgid "Set Visible"
 msgstr "Sichtbar machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:278
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:279
 msgid "Clear mandatory flag"
 msgstr "Nicht obligatorisch machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:279
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:280
 msgid "Set mandatory flag"
 msgstr "Obligatorisch machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:493
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:494
 #, c-format
 msgid "Condition affecting objective %d"
 msgstr "Bedingung betreffend Missionsziel %d"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:531
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:532
 #, c-format
 msgid "If Objective %d in Mission %d is in state '%s' do the following: "
 msgstr "Wenn das Missionsziel %d in Mission Nr. %d den Status '%s' hat:"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:542
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:543
 #, c-format
 msgid "Set State on Objective %d to %s"
 msgstr "Setze den Status von Missionsziel %d auf %s"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:549
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:550
 #, c-format
 msgid "Make Objective %d visible"
 msgstr "Missionsziel %d sichtbar machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:553
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:554
 #, c-format
 msgid "Make Objective %d invisible"
 msgstr "Missionsziel %d unsichtbar machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:560
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:561
 #, c-format
 msgid "Make Objective %d mandatory"
 msgstr "Missionsziel %d obligatorisch machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:564
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:565
 #, c-format
 msgid "Make Objective %d not mandatory"
 msgstr "Missionsziel %d nicht obligatorisch machen"
 
-#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:571
+#: ..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp:574
 msgid "This condition is not valid or complete yet."
 msgstr "Diese Bedingung ist noch nicht gültig oder vollständig."
 
@@ -4030,6 +4056,7 @@ msgstr "Deaktivieren"
 
 #: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:369
 #: ..\..\plugins\dm.stimresponse\StimEditor.cpp:518
+#: xml_file_content.cpp:4
 msgid "Duplicate"
 msgstr "Duplizieren"
 
@@ -4154,7 +4181,7 @@ msgstr "Entity-Klassenbaum"
 msgid "Entity Class Tree..."
 msgstr "Entity-Klassenbaum..."
 
-#: ..\..\plugins\entity\EntityCreator.cpp:39
+#: ..\..\plugins\entity\EntityCreator.cpp:44
 msgid "Doom3EntityCreator::getEntityForEClass(): cannot create entity for NULL entityclass."
 msgstr "Doom3EntityCreator::getEntityForEClass(): Entity für Entity-Klasse NULL kann nicht erstellt werden."
 
@@ -4388,6 +4415,84 @@ msgstr "Quake 4 Region"
 msgid "Quake 4 prefab"
 msgstr "Quake 4 Prefab"
 
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:37
+msgid "Particle Editor"
+msgstr "Partikeleditor"
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:153
+msgid "Stage"
+msgstr "Stufe"
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:783
+#, c-format
+msgid "Note: changes will be written to the file <i>%s</i>"
+msgstr "Hinweis: alle Änderungen werden in den File <i>%s</i> geschrieben"
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1038
+msgid "Save Changes"
+msgstr "Änderungen Speichern"
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1039
+#, c-format
+msgid ""
+"Do you want to save the changes\n"
+"you made to the particle %s?"
+msgstr "Änderungen am Partikel %s speichern?"
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1066
+#, c-format
+msgid ""
+"Error saving particle definition:\n"
+"%s"
+msgstr ""
+"Fehler beim Speichern der Partikeldefinition:\n"
+"%s"
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1175
+msgid "Select .prt file"
+msgstr "Eine .prt-Datei auswählen"
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1209
+msgid "Enter Particle Name"
+msgstr "Partikelnamen eingeben"
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1223
+msgid "Cannot create particle with an empty name."
+msgstr "Es ist nicht möglich einen Partikel ohne Namen zu erstellen."
+
+#: ..\..\plugins\particles\editor\ParticleEditor.cpp:1238
+msgid "This name is already in use."
+msgstr "Dieser Name ist bereits in Verwendung."
+
+#: ..\..\plugins\particles\editor\ParticleEditorModule.h:56
+msgid "Particle Editor..."
+msgstr "Partikeleditor..."
+
+#: ..\..\plugins\particles\ParticlesManager.cpp:240
+msgid "Cannot save particle, it has not been registered yet."
+msgstr "Kann Partikeldefinition nicht speichern, sie wurde nicht registriert."
+
+#: ..\..\plugins\particles\ParticlesManager.cpp:270
+#: ..\..\plugins\particles\ParticlesManager.cpp:298
+#, c-format
+msgid "Cannot open file for writing: %s"
+msgstr "Kann die Datei nicht im Schreibmodus öffnen: %s"
+
+#: ..\..\plugins\particles\ParticlesManager.cpp:311
+#, c-format
+msgid "Cannot open file for reading: %s"
+msgstr "Kann die Datei nicht im Lesemodus öffnen: %s"
+
+#: ..\..\plugins\particles\ParticlesManager.cpp:358
+#, c-format
+msgid "Could not remove the file %s"
+msgstr "Kann die Datei nicht entfernen: %s"
+
+#: ..\..\plugins\particles\ParticlesManager.cpp:372
+#, c-format
+msgid "Could not rename the temporary file %s"
+msgstr "Konnte die temporäre Datei nicht entfernen: %s"
+
 #: ..\..\plugins\script\ScriptingSystem.cpp:182
 #: ..\..\plugins\script\ScriptingSystem.cpp:184
 msgid "Script"
@@ -4489,19 +4594,19 @@ msgstr "Löschen"
 msgid "Close without saving"
 msgstr "Schließen ohne zu speichern"
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:67
+#: ..\..\libs\gtkutil\FileChooser.cpp:69
 msgid "Open File"
 msgstr "Datei öffnen"
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:67
+#: ..\..\libs\gtkutil\FileChooser.cpp:69
 msgid "Save File"
 msgstr "Datei speichern"
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:118
+#: ..\..\libs\gtkutil\FileChooser.cpp:120
 msgid "All Files (*.*)"
 msgstr "Alle Dateien (*.*)"
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:220
+#: ..\..\libs\gtkutil\FileChooser.cpp:229
 msgid "Do you want to replace it?"
 msgstr "Willst Du sie ersetzen?"
 
@@ -5594,10 +5699,18 @@ msgid "Lighting"
 msgstr "Beleuchtet"
 
 #: xml_file_content.cpp:5
+msgid "Start Render Time"
+msgstr "Render-Zeit starten"
+
+#: xml_file_content.cpp:6
+msgid "Stop Render Time"
+msgstr "Render-Zeit stoppen"
+
+#: xml_file_content.cpp:7
 msgid "Clip plane in"
 msgstr "Entfernte Clip-Ebene heran"
 
-#: xml_file_content.cpp:6
+#: xml_file_content.cpp:8
 msgid "Clip plane out"
 msgstr "Entfernte Clip-Ebene hinaus"
 
@@ -5657,5 +5770,437 @@ msgstr "Logik für Erfüllung bearbeiten"
 msgid "Edit objective conditions"
 msgstr "Missionsziel-Bedingung bearbeiten"
 
-#~ msgid "Render Mode"
-#~ msgstr "Darstellungsmodus"
+#: xml_file_content.cpp:1
+msgid "Particle Definitions"
+msgstr "Partikeldefinitionen"
+
+#: xml_file_content.cpp:2
+msgid "Particle Stages"
+msgstr "Partikelstufen"
+
+#: xml_file_content.cpp:3
+msgid "Toggle Visibility"
+msgstr "Anzeigen/Verstecken"
+
+#: xml_file_content.cpp:5
+msgid "Depth Hack: "
+msgstr "Depth Hack:"
+
+#: xml_file_content.cpp:6
+msgid "Stage Settings"
+msgstr "Stufeneinstellungen"
+
+#: xml_file_content.cpp:7
+#: xml_file_content.cpp:9
+#: xml_file_content.cpp:38
+#: xml_file_content.cpp:39
+#: xml_file_content.cpp:48
+msgid "Material to render onto each quad."
+msgstr "Der Shader zum Rendern der Polygone dieses Partikels."
+
+#: xml_file_content.cpp:8
+#: xml_file_content.cpp:13
+msgid "Render Colour"
+msgstr "Renderfarbe"
+
+#: xml_file_content.cpp:10
+msgid "Shader: "
+msgstr "Shader:"
+
+#: xml_file_content.cpp:11
+#: xml_file_content.cpp:15
+msgid "Either 0 0 0 0 for additive, or 1 1 1 0 for blended materials."
+msgstr "Entweder 0 0 0 0 für additive, oder 1 1 1 0 für Blend-Shader."
+
+#: xml_file_content.cpp:12
+msgid "Fade Colour: "
+msgstr "Fade-Farbe"
+
+#: xml_file_content.cpp:14
+msgid "Colour: "
+msgstr "Farbe:"
+
+#: xml_file_content.cpp:16
+msgid "Use Entity Colour"
+msgstr "Entity-Farbe verwenden"
+
+#: xml_file_content.cpp:17
+msgid "Force colour from render entity (Fade Colour is still valid)"
+msgstr "Farbe der Entity übernehmen (Die Fade-Farbe ist weiterhin gültig)"
+
+#: xml_file_content.cpp:18
+msgid "Fade In Fraction:"
+msgstr "Fade In Fraction:"
+
+#: xml_file_content.cpp:19
+msgid "Fade Out Fraction:"
+msgstr "Fade Out Fraction:"
+
+#: xml_file_content.cpp:20
+#: xml_file_content.cpp:21
+#: xml_file_content.cpp:22
+msgid "In 0.0 to 1.0 range, causes later index smokes to be more faded."
+msgstr "Im Bereich 0.0 bis 1.0, bewirkt dass spätere Partikel-Polygone stärker \"gefadet\" erscheinen."
+
+#: xml_file_content.cpp:23
+msgid "Fade Index Fraction:"
+msgstr "Fade Index Fraction:"
+
+#: xml_file_content.cpp:24
+msgid "Animation:"
+msgstr "Animation:"
+
+#: xml_file_content.cpp:25
+#: xml_file_content.cpp:27
+msgid "If > 1, subdivide the texture S axis into frames and crossfade."
+msgstr "Wenn > 1, wird die Textur-Achse S je nach Anzahl der Frames zerteilt und überblendet."
+
+#: xml_file_content.cpp:26
+msgid "Frames:"
+msgstr "Frames:"
+
+#: xml_file_content.cpp:28
+#: xml_file_content.cpp:30
+#: xml_file_content.cpp:31
+msgid "Frames per second"
+msgstr "Frames pro Sekunde"
+
+#: xml_file_content.cpp:29
+msgid "Rate:"
+msgstr "Abspielrate:"
+
+#: xml_file_content.cpp:32
+msgid "FPS"
+msgstr "FPS"
+
+#: xml_file_content.cpp:34
+#: xml_file_content.cpp:46
+#: xml_file_content.cpp:47
+msgid "Total number of particles, although some may be invisible at a given time."
+msgstr "Gesamtanzahl der Partikelpolygone, möglicherweise sind nicht alle zu jedem Zeitpunkt sichtbar."
+
+#: xml_file_content.cpp:35
+msgid "Count: "
+msgstr "Anzahl:"
+
+#: xml_file_content.cpp:36
+#: xml_file_content.cpp:42
+#: xml_file_content.cpp:43
+msgid "Allows things to oneShot (1 cycle) or run for a set number of cycles on a per stage basis."
+msgstr "Gibt an wie oft die Stage abgespielt wird."
+
+#: xml_file_content.cpp:37
+msgid "Cycles:"
+msgstr "Durchläufe:"
+
+#: xml_file_content.cpp:40
+#: xml_file_content.cpp:44
+#: xml_file_content.cpp:45
+msgid "Time offset from system start for the first particle to spawn."
+msgstr "Zeitversatz, vom Start weg gerechnet, bevor das erste Polygon gerendert wird."
+
+#: xml_file_content.cpp:41
+msgid "Time Offset / sec:"
+msgstr "Zeitversatz / Sek."
+
+#: xml_file_content.cpp:49
+msgid "Duration / sec: "
+msgstr "Dauer / Sek.:"
+
+#: xml_file_content.cpp:50
+#: xml_file_content.cpp:52
+#: xml_file_content.cpp:53
+msgid "0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time"
+msgstr "0.0 = alle Polygone werden auf einmal erzeugt, 1.0 = Polygone werden zeitlich gleichmäßig über die Stage-Lebensdauer verteilt."
+
+#: xml_file_content.cpp:51
+msgid "Bunching: "
+msgstr "Häufung:"
+
+#: xml_file_content.cpp:54
+#: xml_file_content.cpp:56
+#: xml_file_content.cpp:57
+msgid "Time after particleLife before respawning."
+msgstr "Pause nach einem Stage-Durchgang"
+
+#: xml_file_content.cpp:55
+msgid "Dead Time / sec:"
+msgstr "Totzeit / Sek.:"
+
+#: xml_file_content.cpp:58
+msgid "Count / Time"
+msgstr "Anzahl / Zeit"
+
+#: xml_file_content.cpp:59
+msgid "Speed: "
+msgstr "Geschwindigkeit:"
+
+#: xml_file_content.cpp:60
+#: xml_file_content.cpp:81
+#: xml_file_content.cpp:83
+#: xml_file_content.cpp:84
+#: xml_file_content.cpp:85
+#: xml_file_content.cpp:87
+#: xml_file_content.cpp:88
+msgid "Values > 1 make the T axis longer."
+msgstr "Werte > 1 verlängern die Textur-Achse T."
+
+#: xml_file_content.cpp:61
+msgid "Aspect Ratio:"
+msgstr "Seitenverhältnis:"
+
+#: xml_file_content.cpp:62
+#: xml_file_content.cpp:89
+#: xml_file_content.cpp:90
+msgid "Can be negative to let particles float upwards."
+msgstr "Kann negativ sein, um Polygone aufwärts driften zu lassen."
+
+#: xml_file_content.cpp:63
+msgid "Gravity:"
+msgstr "Schwerkraft:"
+
+#: xml_file_content.cpp:64
+#: xml_file_content.cpp:71
+#: xml_file_content.cpp:74
+#: xml_file_content.cpp:82
+msgid "From: "
+msgstr "Von:"
+
+#: xml_file_content.cpp:65
+#: xml_file_content.cpp:72
+#: xml_file_content.cpp:78
+#: xml_file_content.cpp:86
+msgid "To: "
+msgstr "Bis:"
+
+#: xml_file_content.cpp:66
+msgid "Size: "
+msgstr "Größe:"
+
+#: xml_file_content.cpp:67
+#: xml_file_content.cpp:73
+#: xml_file_content.cpp:75
+#: xml_file_content.cpp:76
+#: xml_file_content.cpp:77
+#: xml_file_content.cpp:79
+#: xml_file_content.cpp:80
+msgid "Half the particles will have negative rotation speeds, this is measured in degrees/sec."
+msgstr "Die halben Polygone drehen sich in negativer Drehrichtung, wird in Grad/Sek.gemessen"
+
+#: xml_file_content.cpp:68
+msgid "Rotation Speed: "
+msgstr "Rotationsgeschwindigkeit:"
+
+#: xml_file_content.cpp:69
+#: xml_file_content.cpp:93
+msgid "User tweak to fix poorly calculated bounds."
+msgstr "User-Fix zur Behebung von schlecht berechneten Partikel-Bounds."
+
+#: xml_file_content.cpp:70
+msgid "Bounds Expansion:"
+msgstr "Bounds Expansion:"
+
+#: xml_file_content.cpp:91
+msgid "Use World Gravity"
+msgstr "Welt-Schwerkraftrichtung verwenden"
+
+#: xml_file_content.cpp:92
+msgid "Apply gravity in world space. If this flag is set use -z as gravity direction as in the game world, otherwise use the reverse emitter direction."
+msgstr "Wendet die Schwerkraft so an wie sie auch im Spiel wirkt. Wenn dieses Flag gesetzt ist wird die Z-Achse des Partikelsystems nach unten zeigen, ist es gelöscht wirkt es in der entgegengesetzten Richtung des Emitters."
+
+#: xml_file_content.cpp:94
+msgid "Size / Speed"
+msgstr "Größe / Geschw."
+
+#: xml_file_content.cpp:95
+msgid "Shape: "
+msgstr "Form:"
+
+#: xml_file_content.cpp:96
+msgid "Z Size:"
+msgstr "Z-Größe:"
+
+#: xml_file_content.cpp:97
+#: xml_file_content.cpp:108
+msgid "Offset from Origin to spawn all Particles, also applies to Custom Paths."
+msgstr "Abstand zur Entity, wird auch bei Speziellen Pfadoptionen angewandt. "
+
+#: xml_file_content.cpp:98
+msgid "Offset:"
+msgstr "Abstand:"
+
+#: xml_file_content.cpp:99
+msgid "X Size: "
+msgstr "X-Größe:"
+
+#: xml_file_content.cpp:100
+msgid "Y Size: "
+msgstr "Y-Größe:"
+
+#: xml_file_content.cpp:101
+#: xml_file_content.cpp:104
+msgid "Randomly orient the quad on emission. If random distribution is off, particles get spawned at <sizex, sizey, sizez>."
+msgstr "Polygone werden mit zufälliger Orientierung erzeugt. Wenn diese Einstellung abgeschaltet ist, erscheinen die Polygone bei <sizex, sizey, sizez>."
+
+#: xml_file_content.cpp:102
+msgid "Randomness:"
+msgstr "Zufälligkeit:"
+
+#: xml_file_content.cpp:103
+msgid "Distribute Particles randomly within Volume"
+msgstr "Verteile Polygone zufällig im angegebenen Volumen"
+
+#: xml_file_content.cpp:105
+msgid "Rectangular"
+msgstr "Rechteckig"
+
+#: xml_file_content.cpp:106
+msgid "Cylindric"
+msgstr "Zylindrisch"
+
+#: xml_file_content.cpp:107
+msgid "Spherical"
+msgstr "Sphärisch"
+
+#: xml_file_content.cpp:109
+#: xml_file_content.cpp:111
+#: xml_file_content.cpp:112
+msgid ""
+"Some tests showed that for the cylinder type the fourth parameter (\"ringfraction\") is only effective if >1, it effectively scales the elliptic shape by that factor.\n"
+"Values < 1.0 didn't have any effect."
+msgstr ""
+"Tests haben gezeigt dass der 4. Parameter der \"Zylinder\"-Einstellung (\"Ring Fraction\") nur bei Werten > 1 etwas Sichtbares bewirkt: die elliptische Form wird dann um diesen Faktor skaliert.\n"
+"Werte < 1 haben keinen sichtbaren Effekt."
+
+#: xml_file_content.cpp:110
+msgid "Ring Size: "
+msgstr "Ringgröße:"
+
+#: xml_file_content.cpp:113
+msgid "Distribution"
+msgstr "Verteilung"
+
+#: xml_file_content.cpp:114
+msgid "Direction: "
+msgstr "Richtung:"
+
+#: xml_file_content.cpp:115
+msgid "Orientation:"
+msgstr "Orientierung:"
+
+#: xml_file_content.cpp:116
+msgid "Time:"
+msgstr "Zeit:"
+
+#: xml_file_content.cpp:117
+msgid "Cone Angle: "
+msgstr "Öffnungswinkel:"
+
+#: xml_file_content.cpp:118
+msgid "Upward Bias: "
+msgstr "Aufwärtsdrift:"
+
+#: xml_file_content.cpp:119
+msgid "Cone"
+msgstr "Kegel"
+
+#: xml_file_content.cpp:120
+msgid "Outward"
+msgstr "Auswärts "
+
+#: xml_file_content.cpp:121
+#: xml_file_content.cpp:123
+#: xml_file_content.cpp:124
+msgid "In degrees, random angle is used if zero (default)."
+msgstr "Wird in Grad gemessen, bei einem Wert von 0 werden die Polygone zufällig gedreht."
+
+#: xml_file_content.cpp:122
+msgid "Initial Angle: "
+msgstr "Anfänglicher Winkel:"
+
+#: xml_file_content.cpp:126
+msgid "Aimed"
+msgstr "Ausgerichtet"
+
+#: xml_file_content.cpp:127
+msgid "X"
+msgstr "X"
+
+#: xml_file_content.cpp:128
+msgid "Y"
+msgstr "Y"
+
+#: xml_file_content.cpp:129
+msgid "Z"
+msgstr "Z"
+
+#: xml_file_content.cpp:130
+msgid "Trails:"
+msgstr "Spuren:"
+
+#: xml_file_content.cpp:131
+msgid "Direction / Orientation"
+msgstr "Richtung / Orientierung"
+
+#: xml_file_content.cpp:132
+msgid "Path Type: "
+msgstr "Pfad-Typ:"
+
+#: xml_file_content.cpp:133
+msgid "Radial Speed: "
+msgstr "Radiale Geschwindigkeit:"
+
+#: xml_file_content.cpp:134
+msgid "Standard"
+msgstr "Standard"
+
+#: xml_file_content.cpp:135
+msgid "Flies"
+msgstr "Fliegen"
+
+#: xml_file_content.cpp:136
+msgid ""
+"\"Flies\" particles are moving on the surface of a sphere of the given radius.\n"
+"The radial and axial speeds are chosen at random (but never 0) and are constant during the lifetime of a particle.\n"
+"Starting position appears to be random, but different to the \"distribution sphere\" type (i.e. it is not evenly distributed, instead the particles seem to bunch themselves at the poles)."
+msgstr ""
+"\"Fliegen\"-Partikel bewegen sich auf einer Kugel mit dem angegebenen Radius.\n"
+"Die radialen und axialen Geschwindigkeiten werden zufällig gewählt (sind aber immer ungleich 0) und bleiben konstant während der Lebensdauer eines Polygons.\n"
+"Die Startposition scheint zufällig gewählt zu werden, ist aber (im Gegensatz zur Verteilung vom Typ \"Kugel\") nicht gleichmäßig über die Kugeloberfläche verteilt (leichte Häufung an den Polen)."
+
+#: xml_file_content.cpp:137
+msgid "Helix"
+msgstr "Helix"
+
+#: xml_file_content.cpp:138
+msgid ""
+"Helical movement is describing an elliptic cylinder, its shape is determined by sizeX, sizeY and sizeZ.\n"
+"Particles are spawned randomly on that cylinder surface, their velocities (radial and axial) are also random (both negative and positive velocities are allowed)."
+msgstr ""
+"Die helikale Bewegung beschreibt einen elliptischen Zylinder, die Form wird durch die drei Größenparameter X, Y und Z bestimmt.\n"
+"Die Polygone werden an einem zufälligen Ort auf der Zylinderoberfläche erzeugt, ihre Geschwindigkeiten (sowohl radial als auch axial) sind ebenfalls zufällig, positiv wie negativ."
+
+#: xml_file_content.cpp:139
+msgid "Axial Speed: "
+msgstr "Axiale Geschw.:"
+
+#: xml_file_content.cpp:140
+msgid "Cylinder Size X:  "
+msgstr "Zylindergröße X:"
+
+#: xml_file_content.cpp:141
+msgid "Sphere Radius: "
+msgstr "Kugelradius:"
+
+#: xml_file_content.cpp:142
+msgid "Cylinder Size Y: "
+msgstr "Zylindergröße Y:"
+
+#: xml_file_content.cpp:143
+msgid "Cylinder Size Z: "
+msgstr "Zylindergröße Z:"
+
+#: xml_file_content.cpp:144
+msgid "Path"
+msgstr "Pfad"
+
