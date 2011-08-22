@@ -620,7 +620,7 @@ void OpenGLShader::construct(const std::string& name)
               state.m_colour[1] = highLightColour[1];
               state.m_colour[2] = highLightColour[2];
               state.m_colour[3] = 0.3f;
-              state.renderFlags = RENDER_FILL|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_BLEND|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_FILL|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_BLEND|RENDER_COLOURWRITE;
               state.m_sort = OpenGLState::eSortHighlight;
               state.m_depthfunc = GL_LEQUAL;
             }
