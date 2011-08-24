@@ -310,13 +310,16 @@ gboolean CamWnd::_onFrame(gpointer data)
 
 	if (!self->m_drawing)
 	{
-		// Give the UI a chance to react
-		while (Gtk::Main::events_pending())
+		GlobalRenderSystem().setTime(GlobalRenderSystem().getTime() + MSEC_PER_FRAME);
+
+		// Give the UI a chance to react, but don't hang in there forever
+		std::size_t maxEventsPerCallback = 5;
+
+		while (Gtk::Main::events_pending() && --maxEventsPerCallback != 0)
 		{
 			Gtk::Main::iteration();
 		}
-
-		GlobalRenderSystem().setTime(GlobalRenderSystem().getTime() + MSEC_PER_FRAME);
+		
 		self->_camGLWidget->queue_draw();
 	}
 
