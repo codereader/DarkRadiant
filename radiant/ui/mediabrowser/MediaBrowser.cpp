@@ -33,6 +33,7 @@
 
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/common/ShaderDefinitionView.h"
+#include "ui/mainframe/ScreenUpdateBlocker.h"
 
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -344,8 +345,14 @@ void MediaBrowser::populate()
 
 	//ScopedDebugTimer timer("MediaBrowserPopulation");
 
-	ShaderNameFunctor functor(_treeStore, _columns);
+	boost::shared_ptr<ScreenUpdateBlocker> _blocker;
 
+	if (GlobalMainFrame().getTopLevelWindow())
+	{
+		_blocker.reset(new ScreenUpdateBlocker(_("Processing..."), _("Populating MediaBrowser")));
+	}
+
+	ShaderNameFunctor functor(_treeStore, _columns);
 	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
 }
 
