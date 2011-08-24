@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-08-21 08:38+0200\n"
-"PO-Revision-Date: 2011-08-21 08:38+0100\n"
+"POT-Creation-Date: 2011-08-24 18:34+0200\n"
+"PO-Revision-Date: 2011-08-24 18:35+0100\n"
 "Last-Translator: Matthias <greebo@darkradiant>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
@@ -113,6 +113,7 @@ msgstr "Name des Caulk Shaders"
 #: ..\..\radiant\map\Map.cpp:605
 #: ..\..\radiant\referencecache\ModelCache.cpp:215
 #: ..\..\radiant\referencecache\ModelCache.cpp:231
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:352
 msgid "Processing..."
 msgstr "Vorgang läuft..."
 
@@ -650,7 +651,7 @@ msgstr "Patch"
 #: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:95
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:337
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:72
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:81
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:82
 #: xml_file_content.cpp:33
 msgid "Shader"
 msgstr "Shader"
@@ -2155,31 +2156,35 @@ msgstr "Patches"
 msgid "Shaders used:"
 msgstr "Benutzte Shader:"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:51
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:52
 msgid "Load in Textures view"
 msgstr "In Texturbrowser laden"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:54
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:55
 msgid "Apply to selection"
 msgstr "Auf Auswahl anwenden"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:57
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:58
 msgid "Show Shader Definition"
 msgstr "Zeige Shaderdefinition"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:61
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:62
 msgid "Other Materials"
 msgstr "Andere Shader"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:403
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:352
+msgid "Populating MediaBrowser"
+msgstr "Lade Medienbrowser"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:410
 msgid "View Shader Definition"
 msgstr "Shaderdefinition ansehen"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:508
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:515
 msgid "Settings/Media Browser"
 msgstr "Einstellungen/Mediabrowser"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:510
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:517
 msgid "Load media tree at startup"
 msgstr "Lade Medienbaum während des Startvorgangs"
 

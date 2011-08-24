@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-08-21 08:38+0200\n"
+"POT-Creation-Date: 2011-08-24 18:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -108,6 +108,7 @@ msgstr ""
 #: ..\..\radiant\map\Map.cpp:605
 #: ..\..\radiant\referencecache\ModelCache.cpp:215
 #: ..\..\radiant\referencecache\ModelCache.cpp:231
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:352
 msgid "Processing..."
 msgstr ""
 
@@ -625,7 +626,7 @@ msgstr ""
 #: ..\..\radiant\selection\shaderclipboard\ShaderClipboard.cpp:95
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:337
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:72
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:81 xml_file_content.cpp:33
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:82 xml_file_content.cpp:33
 msgid "Shader"
 msgstr ""
 
@@ -2116,31 +2117,35 @@ msgstr ""
 msgid "Shaders used:"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:51
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:52
 msgid "Load in Textures view"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:54
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:55
 msgid "Apply to selection"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:57
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:58
 msgid "Show Shader Definition"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:61
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:62
 msgid "Other Materials"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:403
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:352
+msgid "Populating MediaBrowser"
+msgstr ""
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:410
 msgid "View Shader Definition"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:508
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:515
 msgid "Settings/Media Browser"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:510
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:517
 msgid "Load media tree at startup"
 msgstr ""
 
