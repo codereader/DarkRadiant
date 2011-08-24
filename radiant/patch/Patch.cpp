@@ -467,12 +467,14 @@ void Patch::importState(const UndoMemento* state) {
 	controlPointsChanged();
 }
 
-void Patch::captureShader() {
-	m_state = GlobalRenderSystem().capture(m_shader.c_str());
+void Patch::captureShader()
+{
+	m_state = GlobalRenderSystem().capture(m_shader);
 }
 
-void Patch::releaseShader() {
-	m_state = ShaderPtr();
+void Patch::releaseShader()
+{
+	m_state.reset();
 }
 
 void Patch::check_shader() {
