@@ -30,7 +30,7 @@ private:
   const Vector3& m_viewer;
 
 public:
-  CamRenderer(RenderStateFlags globalstate, ShaderPtr select0, ShaderPtr select1, const Vector3& viewer) :
+  CamRenderer(RenderStateFlags globalstate, const ShaderPtr& select0, const ShaderPtr& select1, const Vector3& viewer) :
     m_globalstate(globalstate),
     m_state_select0(select0),
     m_state_select1(select1),
