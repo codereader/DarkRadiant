@@ -1,5 +1,6 @@
 #include "EntitySettings.h"
 
+#include "iuimanager.h"
 #include "imainframe.h"
 
 namespace entity {
@@ -11,7 +12,8 @@ EntitySettings::EntitySettings() :
 	_dragResizeEntitiesSymmetrically(GlobalRegistry().getBool(RKEY_DRAG_RESIZE_SYMMETRICALLY)),
 	_alwaysShowLightVertices(GlobalRegistry().getBool(RKEY_ALWAYS_SHOW_LIGHT_VERTICES)),
 	_freeModelRotation(GlobalRegistry().getBool(RKEY_FREE_MODEL_ROTATION)),
-	_showEntityAngles(GlobalRegistry().getBool(RKEY_SHOW_ENTITY_ANGLES))
+	_showEntityAngles(GlobalRegistry().getBool(RKEY_SHOW_ENTITY_ANGLES)),
+	_lightVertexColoursLoaded(false)
 {
 	// Register this class as keyobserver
 	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
@@ -79,6 +81,17 @@ void EntitySettings::keyChanged(const std::string& key, const std::string& value
 
 	// Redraw the scene
 	GlobalMainFrame().updateAllWindows();
+}
+
+void EntitySettings::loadLightVertexColours()
+{
+	_lightVertexColoursLoaded = true;
+
+	_lightVertexColours[VERTEX_START_END_DESELECTED] = ColourSchemes().getColour("light_startend_deselected");
+	_lightVertexColours[VERTEX_START_END_SELECTED] = ColourSchemes().getColour("light_startend_selected");
+	_lightVertexColours[VERTEX_INACTIVE] = ColourSchemes().getColour("light_vertex_normal");
+	_lightVertexColours[VERTEX_DESELECTED] = ColourSchemes().getColour("light_vertex_deselected");
+	_lightVertexColours[VERTEX_SELECTED] = ColourSchemes().getColour("light_vertex_selected");
 }
 
 } // namespace entity

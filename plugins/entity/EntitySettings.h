@@ -1,8 +1,8 @@
-#ifndef _ENTITY_SETTINGS_H_
-#define _ENTITY_SETTINGS_H_
+#pragma once
 
 #include "iregistry.h"
 #include <boost/shared_ptr.hpp>
+#include "math/Vector3.h"
 
 namespace entity {
 
@@ -29,6 +29,18 @@ typedef boost::shared_ptr<EntitySettings> EntitySettingsPtr;
 class EntitySettings :
 	public RegistryKeyObserver
 {
+public:
+	enum LightEditVertexType
+	{
+		VERTEX_START_END_DESELECTED,
+		VERTEX_START_END_SELECTED,
+		VERTEX_INACTIVE,
+		VERTEX_DESELECTED,
+		VERTEX_SELECTED,
+		NUM_LIGHT_VERTEX_COLOURS,
+	};
+
+private:
 	// TRUE if entity names should be drawn
     bool _renderEntityNames;
 
@@ -49,6 +61,11 @@ class EntitySettings :
 	// true if GenericEntities should render their direction arrows
 	bool _showEntityAngles;
 
+	// Cached colour values
+	Vector3 _lightVertexColours[NUM_LIGHT_VERTEX_COLOURS];
+
+	bool _lightVertexColoursLoaded;
+
 	// Private constructor
 	EntitySettings();
 public:
@@ -56,6 +73,16 @@ public:
 
 	// RegistryKeyObserver implementation
 	void keyChanged(const std::string& key, const std::string& value);
+
+	const Vector3& getLightVertexColour(LightEditVertexType type)
+	{
+		if (!_lightVertexColoursLoaded)
+		{
+			loadLightVertexColours();
+		}
+
+		return _lightVertexColours[type];
+	}
 
 	bool renderEntityNames() {
 		return _renderEntityNames;
@@ -92,8 +119,9 @@ public:
 
 	// Releases the singleton pointer
 	static void destroy();
+
+private:
+	void loadLightVertexColours();
 };
 
 } // namespace entity
-
-#endif /* _ENTITY_SETTINGS_H_ */
