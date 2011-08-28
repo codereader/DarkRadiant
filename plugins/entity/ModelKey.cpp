@@ -27,6 +27,14 @@ void ModelKey::modelChanged(const std::string& value)
 {
 	if (!_active) return; // deactivated during parent node destruction
 
+	// Sanitise the keyvalue - must use forward slashes
+	std::string newModelName = boost::algorithm::replace_all_copy(value, "\\", "/");
+
+	if (newModelName == _modelPath)
+	{
+		return; // new name is the same as we have now
+	}
+
 	// Remove the old model node first
 	if (_modelNode != NULL)
 	{
@@ -34,8 +42,7 @@ void ModelKey::modelChanged(const std::string& value)
 	}
 
 	// Now store the new modelpath
-    // Sanitise the keyvalue - must use forward slashes
-	_modelPath = boost::algorithm::replace_all_copy(value, "\\", "/");
+    _modelPath = newModelName;
 
 	if (_modelPath.empty())
 	{
