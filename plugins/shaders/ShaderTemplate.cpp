@@ -1206,7 +1206,15 @@ void ShaderTemplate::parseDefinition()
 	// Some blend materials get SORT_MEDIUM applied by default, diffuses get OPAQUE assigned, but lights do not, etc.
 	if (_sortReq == SORT_UNDEFINED)
 	{
-		_sortReq = Material::SORT_OPAQUE;
+		// Translucent materials need to be drawn after opaque ones, if not explicitly specified otherwise
+		if (_materialFlags & Material::FLAG_TRANSLUCENT)
+		{
+			_sortReq = Material::SORT_MEDIUM;
+		}
+		else
+		{
+			_sortReq = Material::SORT_OPAQUE;
+		}
 	}
 }
 
