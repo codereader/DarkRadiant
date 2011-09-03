@@ -147,6 +147,7 @@
     <ClInclude Include="..\..\include\irenderable.h" />
     <ClInclude Include="..\..\include\irendersystemfactory.h" />
     <ClInclude Include="..\..\include\iscenegraph.h" />
+    <ClInclude Include="..\..\include\iscenegraphfactory.h" />
     <ClInclude Include="..\..\include\iscript.h" />
     <ClInclude Include="..\..\include\iselectable.h" />
     <ClInclude Include="..\..\include\iselectiontest.h" />
