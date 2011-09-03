@@ -13,6 +13,9 @@
     <ClCompile Include="..\..\plugins\scenegraph\SceneGraph.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\scenegraph\SceneGraphFactory.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\scenegraph\Octree.h">
@@ -22,6 +25,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\scenegraph\SceneGraph.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\scenegraph\SceneGraphFactory.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
