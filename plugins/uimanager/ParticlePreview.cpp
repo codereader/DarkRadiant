@@ -64,7 +64,6 @@ ParticlePreview::ParticlePreview() :
 	_pauseButton(NULL),
 	_stopButton(NULL),
 	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
-	_renderer(_renderSystem),
 	_previewTimeMsec(0),
 	_renderingInProgress(false),
 	_timer(MSEC_PER_FRAME, _onFrame, this),

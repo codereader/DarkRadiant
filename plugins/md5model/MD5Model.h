@@ -1,7 +1,7 @@
-#ifndef MD5MODEL_H_
-#define MD5MODEL_H_
+#pragma once
 
 #include "imodel.h"
+#include "imd5model.h"
 #include "math/AABB.h"
 #include <vector>
 #include "parser/DefTokeniser.h"
@@ -12,8 +12,10 @@ namespace md5 {
 
 // generic model node
 class MD5Model :
+	public IMD5Model,
 	public model::IModel
 {
+private:
 	typedef std::vector<MD5SurfacePtr> SurfaceList;
 	SurfaceList _surfaces;
 
@@ -31,6 +33,8 @@ class MD5Model :
 
 	// The VFS path to this model
 	std::string _modelPath;
+
+	IMD5AnimPtr _anim;
 
 public:
 	MD5Model();
@@ -88,6 +92,11 @@ public:
 	// OpenGLRenderable implementation
 	virtual void render(const RenderInfo& info) const;
 
+	// IMD5Model implementation
+	virtual void setAnim(const IMD5AnimPtr& anim);
+	virtual const IMD5AnimPtr& getAnim() const;
+	virtual void updateAnim(std::size_t time) const;
+
 private:
 	/**
 	 * Helper: Parse an MD5 vector, which consists of three separated numbers
@@ -100,10 +109,7 @@ private:
 
 	// Re-populates the list of active shader names
 	void updateMaterialList();
-
-}; // class MD5Model
+};
 typedef boost::shared_ptr<MD5Model> MD5ModelPtr;
 
-} // namespace md5
-
-#endif /*MD5MODEL_H_*/
+} // namespace

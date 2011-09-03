@@ -6,14 +6,14 @@
 #include "irendersystemfactory.h"
 
 #include "math/Matrix4.h"
+#include "render/NopVolumeTest.h"
+#include "render/ShaderStateRenderer.h"
 
 #include <string>
 #include <map>
 #include "gtkutil/GLWidget.h"
 #include "gtkutil/Timer.h"
 #include <gtkmm/frame.h>
-
-#include "ParticleRenderer.h"
 
 namespace Gtk
 {
@@ -43,8 +43,8 @@ private:
 
 	// The front-end renderer, collecting the OpenGLRenderables
 	// from the particle system
-	ParticleRenderer _renderer;
-	ParticleVolumeTest _volumeTest;
+	render::ShaderStateRenderer _renderer;
+	render::NopVolumeTest _volumeTest;
 
 	// Current particle to display
 	particles::IRenderableParticlePtr _particle;
