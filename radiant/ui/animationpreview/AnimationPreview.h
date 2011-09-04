@@ -4,6 +4,7 @@
 #include "imd5model.h"
 #include "inode.h"
 #include "ieclass.h"
+#include "iscenegraph.h"
 #include "irendersystemfactory.h"
 #include "math/Matrix4.h"
 
@@ -33,6 +34,9 @@ private:
 	Gtk::ToolButton* _startButton;
 	Gtk::ToolButton* _pauseButton;
 	Gtk::ToolButton* _stopButton;
+
+	// The local scenegraph
+	scene::GraphPtr _scene;
 
 	// The backend rendersystem instance
 	RenderSystemPtr _renderSystem;
