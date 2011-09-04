@@ -6,6 +6,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "imainframe.h"
+#include "iscenegraphfactory.h"
 #include "imd5anim.h"
 #include "gtkutil/MultiMonitor.h"
 #include "gtkutil/GLWidgetSentry.h"
@@ -51,6 +52,7 @@ AnimationPreview::AnimationPreview() :
 	_startButton(NULL),
 	_pauseButton(NULL),
 	_stopButton(NULL),
+	_scene(GlobalSceneGraphFactory().createSceneGraph()),
 	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
 	_renderingInProgress(false),
 	_timer(MSEC_PER_FRAME, _onFrame, this),
@@ -236,6 +238,9 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 		GlobalEntityClassManager().findClass("func_static"));
 
 	_model->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(_parentEntity));
+
+	// Set the parent entity as new root of the local scenegraph
+	_scene->setRoot(_parentEntity);
 
 	if (_model != NULL)
 	{

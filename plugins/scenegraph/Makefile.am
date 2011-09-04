@@ -7,5 +7,6 @@ scenegraph_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
 				    $(top_builddir)/libs/scene/libscenegraph.la
 scenegraph_la_LDFLAGS = -module -avoid-version
 scenegraph_la_SOURCES = SceneGraph.cpp \
+						SceneGraphFactory.cpp \
 						Octree.cpp
 
