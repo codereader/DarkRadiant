@@ -370,7 +370,6 @@
     <ClInclude Include="..\..\plugins\entity\plugin.h" />
     <ClInclude Include="..\..\plugins\entity\rotation.h" />
     <ClInclude Include="..\..\plugins\entity\ShaderParms.h" />
-    <ClInclude Include="..\..\plugins\entity\SkinChangedWalker.h" />
     <ClInclude Include="..\..\plugins\entity\VertexInstance.h" />
     <ClInclude Include="..\..\plugins\entity\curve\Curve.h" />
     <ClInclude Include="..\..\plugins\entity\curve\CurveCatmullRom.h" />

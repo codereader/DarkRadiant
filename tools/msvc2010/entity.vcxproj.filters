@@ -177,9 +177,6 @@
     <ClInclude Include="..\..\plugins\entity\rotation.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\entity\SkinChangedWalker.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\entity\VertexInstance.h">
       <Filter>src</Filter>
     </ClInclude>

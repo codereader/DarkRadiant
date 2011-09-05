@@ -12,7 +12,6 @@
 #include "../angle.h"
 #include "../ModelKey.h"
 #include "../NameKey.h"
-#include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../KeyObserverDelegate.h"
 #include "transformlib.h"
