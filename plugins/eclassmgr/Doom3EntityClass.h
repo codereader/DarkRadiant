@@ -1,5 +1,4 @@
-#ifndef DOOM3ENTITYCLASS_H_
-#define DOOM3ENTITYCLASS_H_
+#pragma once
 
 #include "ieclass.h"
 #include "irender.h"
@@ -55,8 +54,8 @@ private:
 	bool _colourTransparent;
 
 	// Shader versions of the colour
-	ShaderPtr _fillShader;
-	ShaderPtr _wireShader;
+	std::string _fillShader;
+	std::string _wireShader;
 
 	// Does this entity have a fixed size?
 	bool _fixedSize;
@@ -91,13 +90,6 @@ private:
 	Observers _observers;
 
 private:
-
-	// Capture the shaders corresponding to the current colour
-	void captureColour();
-
-	// Release the shaders associated with the current colour
-	void releaseColour();
-
 	// Clear all contents (done before parsing from tokens)
 	void clear();
 
@@ -178,11 +170,11 @@ public:
 
 	/** Return this entity's wireframe shader.
 	 */
-	const ShaderPtr& getWireShader() const;
+	const std::string& getWireShader() const;
 
 	/** Return this entity's fill shader.
 	 */
-	const ShaderPtr& getFillShader() const;
+	const std::string& getFillShader() const;
 
 	/* ATTRIBUTES */
 
@@ -288,5 +280,3 @@ private:
 typedef boost::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
 
 }
-
-#endif /*DOOM3ENTITYCLASS_H_*/

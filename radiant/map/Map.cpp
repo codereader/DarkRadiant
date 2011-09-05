@@ -170,6 +170,10 @@ void Map::onResourceRealise() {
 	// Take the new node and insert it as map root
 	GlobalSceneGraph().setRoot(m_resource->getNode());
 
+	// Associate the Scenegaph with the global RenderSystem
+	GlobalSceneGraph().root()->setRenderSystem(boost::dynamic_pointer_cast<RenderSystem>(
+		module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
+
 	AutoSaver().clearChanges();
 
 	setValid(true);

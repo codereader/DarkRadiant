@@ -86,16 +86,23 @@ void EclassModel::rotationChanged() {
 void EclassModel::renderSolid(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
-	if(selected) {
+	if (selected)
+	{
 		m_renderOrigin.render(collector, volume, localToWorld);
 	}
 
-	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+	collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
 }
+
 void EclassModel::renderWireframe(RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const
 {
 	renderSolid(collector, volume, localToWorld, selected);
+}
+
+void EclassModel::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	m_renderOrigin.setRenderSystem(renderSystem);
 }
 
 void EclassModel::translate(const Vector3& translation)

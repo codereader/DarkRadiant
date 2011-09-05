@@ -92,6 +92,8 @@ public:
 	// OpenGLRenderable implementation
 	virtual void render(const RenderInfo& info) const;
 
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
 	// IMD5Model implementation
 	virtual void setAnim(const IMD5AnimPtr& anim);
 	virtual const IMD5AnimPtr& getAnim() const;

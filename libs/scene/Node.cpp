@@ -195,6 +195,9 @@ void Node::onChildAdded(const INodePtr& child)
 		child->setParent(shared_from_this());
 	}
 
+	// Pass down the RenderSystem to or children
+	child->setRenderSystem(_renderSystem.lock());
+
 	// greebo: The bounds most probably change when child nodes are added
 	boundsChanged();
 
@@ -396,6 +399,21 @@ void Node::transformChanged() {
 
 void Node::setTransformChangedCallback(const Callback& callback) {
 	_transformChangedCallback = callback;
+}
+
+RenderSystemPtr Node::getRenderSystem() const
+{
+	return _renderSystem.lock();
+}
+
+void Node::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_renderSystem = renderSystem;
+
+	if (_children.empty()) return;
+
+	// Propagate this call to all children
+	_children.setRenderSystem(renderSystem);
 }
 
 unsigned long Node::_maxNodeId = 0;

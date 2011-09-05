@@ -10,9 +10,7 @@ NullModel::NullModel() :
 	_aabbLocal(Vector3(0, 0, 0), Vector3(8, 8, 8)),
 	_aabbSolid(_aabbLocal),
 	_aabbWire(_aabbLocal)
-{
-	_state = GlobalRenderSystem().capture("");
-}
+{}
 
 NullModel::~NullModel() {
 	_state = ShaderPtr();
@@ -34,6 +32,18 @@ void NullModel::renderWireframe(RenderableCollector& collector,
 {
 	collector.SetState(_state, RenderableCollector::eWireframeOnly);
 	collector.addRenderable(_aabbWire, localToWorld);
+}
+
+void NullModel::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	if (renderSystem)
+	{
+		_state = renderSystem->capture("");
+	}
+	else
+	{
+		_state.reset();
+	}
 }
 
 void NullModel::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld) {

@@ -1,5 +1,4 @@
-#ifndef MD5SURFACE_H_
-#define MD5SURFACE_H_
+#pragma once
 
 #include "irender.h"
 #include "render.h"
@@ -37,6 +36,9 @@ private:
 	// The GL display lists for this surface's geometry
 	GLuint _normalList;
 	GLuint _lightingList;
+
+	// We need to keep a reference for skin swapping
+	RenderSystemWeakPtr _renderSystem;
 
 private:
 
@@ -83,7 +85,9 @@ public:
 	const AABB& localAABB() const;
 
 	void render(RenderableCollector& collector, const Matrix4& localToWorld, 
-				const ShaderPtr& state, const IRenderEntity& entity) const;
+				const IRenderEntity& entity) const;
+
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	// Test for selection
 	void testSelect(Selector& selector,
@@ -102,6 +106,4 @@ public:
 };
 typedef boost::shared_ptr<MD5Surface> MD5SurfacePtr;
 
-} // namespace md5
-
-#endif /*MD5SURFACE_H_*/
+} // namespace

@@ -67,6 +67,11 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
 						 const Matrix4& localToWorld, const IRenderEntity* entity) const;
 
+	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	{
+		// TODO: Remove argument from update() and use the parameter passed here
+	}
+
 	bool isHighlighted() const
 	{
 		return false; // never highlighted

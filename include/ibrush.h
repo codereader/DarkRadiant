@@ -1,5 +1,4 @@
-#ifndef _IBRUSH_H_
-#define _IBRUSH_H_
+#pragma once
 
 #include "inode.h"
 #include "imodule.h"
@@ -18,9 +17,6 @@ class BrushCreator :
 {
 public:
 	virtual scene::INodePtr createBrush() = 0;
-
-	// Call this when the clip plane colours should be updated.
-	virtual void clipperColourChanged() = 0;
 };
 
 // The structure defining a single corner point of an IWinding
@@ -201,5 +197,3 @@ inline BrushCreator& GlobalBrushCreator()
 	);
 	return _brushCreator;
 }
-
-#endif /* _IBRUSH_H_ */

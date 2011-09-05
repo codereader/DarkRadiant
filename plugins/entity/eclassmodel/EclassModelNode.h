@@ -42,8 +42,6 @@ private:
 public:
 	static EclassModelNodePtr Create(const IEntityClassPtr& eclass);
 
-	virtual ~EclassModelNode();
-
 	// Snappable implementation
 	virtual void snapto(float snap);
 
@@ -55,6 +53,7 @@ public:
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -67,9 +66,6 @@ protected:
 
 	// Override EntityNode::construct()
 	void construct();
-
-private:
-	void destroy();
 };
 
 } // namespace

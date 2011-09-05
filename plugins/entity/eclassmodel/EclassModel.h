@@ -59,6 +59,7 @@ public:
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);

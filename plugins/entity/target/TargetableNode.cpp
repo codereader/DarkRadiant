@@ -4,10 +4,11 @@
 
 namespace entity {
 
-TargetableNode::TargetableNode(Doom3Entity& entity, scene::Node& node) :
+TargetableNode::TargetableNode(Doom3Entity& entity, scene::Node& node, const ShaderPtr& wireShader) :
 	_d3entity(entity),
 	_renderableLines(_targetKeys),
-	_node(node)
+	_node(node),
+	_wireShader(wireShader)
 {
 	// Note: don't do anything with _d3Entity here,
 	// the structure is not fully constructed yet at this point.
@@ -77,8 +78,8 @@ const Vector3& TargetableNode::getWorldPosition() const {
 void TargetableNode::render(RenderableCollector& collector, const VolumeTest& volume) const {
 	if (!_node.visible()) return;
 
-	collector.SetState(_d3entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
-	collector.SetState(_d3entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials);
+	collector.SetState(_wireShader, RenderableCollector::eWireframeOnly);
+	collector.SetState(_wireShader, RenderableCollector::eFullMaterials);
 	_renderableLines.render(collector, volume, getWorldPosition());
 }
 

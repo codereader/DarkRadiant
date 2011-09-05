@@ -55,9 +55,6 @@ public:
 
 	// ----------------------------------------------------------------------------------
 
-	// Re-constructs the BrushClipPlane to activate the colour change
-	void clipperColourChanged();
-
 	// returns true if the texture lock is enabled
 	bool textureLockEnabled() const;
 	void setTextureLock(bool enabled);

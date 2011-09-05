@@ -163,7 +163,7 @@ public:
 	};
 
 	// static data
-	static ShaderPtr m_state_point;
+	ShaderPtr m_state_point;
 	// ----
 
 	static double m_maxWorldCoord;
@@ -252,8 +252,7 @@ public:
 	/// \brief Appends a new face constructed from the parameters to the end of the face list.
 	FacePtr addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2, const std::string& shader, const TextureProjection& projection);
 
-	static void constructStatic();
-	static void destroyStatic();
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	std::size_t DEBUG_size();
 

@@ -76,8 +76,8 @@ private:
 	RenderablePatchFixedWireframe m_render_wireframe_fixed;
 
 	// The shader states for the control points and the lattice
-	static ShaderPtr m_state_ctrl;
-	static ShaderPtr m_state_lattice;
+	ShaderPtr m_state_ctrl;
+	ShaderPtr m_state_lattice;
 
 	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
 	VertexBuffer<PointVertex> m_ctrl_vertices;
@@ -98,6 +98,9 @@ private:
 	// Callback functions when the patch gets changed
 	Callback m_evaluateTransform;
 	Callback m_boundsChanged;
+
+	// The rendersystem we're attached to, to acquire materials
+	RenderSystemWeakPtr _renderSystem;
 
 	// greebo: Initialises the patch member variables
 	void construct();
@@ -138,6 +141,8 @@ public:
 					  const Matrix4& localToWorld, const IRenderEntity& entity) const;
 	void render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void render_component(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	const ShaderPtr& getState() const;
 
@@ -341,19 +346,6 @@ public:
 
 	// Revert the state of this patch to the one that has been saved in the UndoMemento
 	void importState(const UndoMemento* state);
-
-	// Initialise the static member variables of this class, called from >> patchmodule.cpp
-	static void constructStatic()
-	{
-		Patch::m_state_ctrl = GlobalRenderSystem().capture("$POINT");
-		Patch::m_state_lattice = GlobalRenderSystem().capture("$LATTICE");
-	}
-
-	// Release the static member variables of this class, called from >> patchmodule.cpp
-	static void destroyStatic() {
-		Patch::m_state_ctrl = ShaderPtr();
-		Patch::m_state_lattice = ShaderPtr();
-	}
 
 	/** greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
 	 */

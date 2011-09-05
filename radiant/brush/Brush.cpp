@@ -368,14 +368,16 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 	return m_faces.back();
 }
 
-void Brush::constructStatic() {
-	Face::m_quantise = quantiseFloating;
-
-	m_state_point = GlobalRenderSystem().capture("$POINT");
-}
-
-void Brush::destroyStatic() {
-
+void Brush::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	if (renderSystem)
+	{
+		m_state_point = renderSystem->capture("$POINT");
+	}
+	else
+	{
+		m_state_point.reset();
+	}
 }
 
 std::size_t Brush::DEBUG_size() {
@@ -1236,4 +1238,3 @@ void Brush::buildBRep() {
 // ----------------------------------------------------------------------------
 
 double Brush::m_maxWorldCoord = 0;
-ShaderPtr Brush::m_state_point;

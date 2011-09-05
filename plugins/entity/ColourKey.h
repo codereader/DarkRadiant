@@ -17,6 +17,8 @@ private:
 	ShaderPtr _wireShader;
 	Vector3 _colour;
 
+	RenderSystemWeakPtr _renderSystem;
+
 public:
 	ColourKey() :
 		_colour(1,1,1)
@@ -46,6 +48,13 @@ public:
 		captureShader();
 	}
 
+	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	{
+		_renderSystem = renderSystem;
+
+		captureShader();
+	}
+
 	const ShaderPtr& getWireShader() const
 	{
 		return _wireShader;
@@ -55,8 +64,17 @@ private:
 
 	void captureShader()
 	{
-		std::string wireCol = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
-		_wireShader = GlobalRenderSystem().capture(wireCol);
+		RenderSystemPtr renderSystem = _renderSystem.lock();
+
+		if (renderSystem)
+		{
+			std::string wireCol = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
+			_wireShader = renderSystem->capture(wireCol);
+		}
+		else
+		{
+			_wireShader.reset();
+		}
 	}
 };
 
