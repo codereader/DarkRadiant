@@ -69,8 +69,10 @@ void MD5Model::setModelPath(const std::string& modelPath) {
 	_modelPath = modelPath;
 }
 
-void MD5Model::applySkin(const ModelSkin& skin) {
-	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
+void MD5Model::applySkin(const ModelSkin& skin)
+{
+	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
 		(*i)->applySkin(skin);
 	}
 
@@ -110,22 +112,39 @@ const model::IModelSurface& MD5Model::getSurface(int surfaceNum) const
 	return *_surfaces[surfaceNum];
 }
 
-void MD5Model::render(const RenderInfo& info) const {
+void MD5Model::render(const RenderInfo& info) const
+{
 	// Render options
 	if (info.checkFlag(RENDER_TEXTURE_2D))
+	{
 		glEnable(GL_TEXTURE_2D);
-	if (info.checkFlag(RENDER_SMOOTH))
-		glShadeModel(GL_SMOOTH);
+	}
 
-	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
+	if (info.checkFlag(RENDER_SMOOTH))
+	{
+		glShadeModel(GL_SMOOTH);
+	}
+
+	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
 		// Get the Material to test the shader name against the filter system
-		MaterialPtr surfaceShader = (*i)->getState()->getMaterial();
-		if (surfaceShader->isVisible()) {
+		const MaterialPtr& surfaceShader = (*i)->getState()->getMaterial();
+
+		if (surfaceShader->isVisible())
+		{
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getEditorImage();
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 			(*i)->render(info.getFlags());
 		}
+	}
+}
+
+void MD5Model::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
+		(*i)->setRenderSystem(renderSystem);
 	}
 }
 

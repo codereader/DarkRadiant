@@ -142,8 +142,20 @@ void MD5Surface::testSelect(Selector& selector,
 	}
 }
 
-void MD5Surface::captureShader() {
-	_shader = GlobalRenderSystem().capture(_shaderName);
+void MD5Surface::captureShader()
+{
+	RenderSystemPtr renderSystem = _renderSystem.lock();
+
+	if (renderSystem)
+	{
+		// Capture current shader
+		_shader = renderSystem->capture(_shaderName);
+	}
+	else
+	{
+		// Free shaders
+		_shader.reset();
+	}
 }
 
 MD5Surface::vertices_t& MD5Surface::vertices() {
@@ -154,7 +166,8 @@ MD5Surface::indices_t& MD5Surface::indices() {
 	return _indices;
 }
 
-void MD5Surface::setShader(const std::string& name) {
+void MD5Surface::setShader(const std::string& name)
+{
 	_shaderName = name;
 	_originalShaderName = name;
 	captureShader();
@@ -165,16 +178,19 @@ const ShaderPtr& MD5Surface::getState() const
 	return _shader;
 }
 
-void MD5Surface::applySkin(const ModelSkin& skin) {
+void MD5Surface::applySkin(const ModelSkin& skin)
+{
 	// Look up the remap for this surface's material name. If there is a remap
 	// change the Shader* to point to the new shader.
 	std::string remap = skin.getRemap(_originalShaderName);
 
-	if (!remap.empty()) {
+	if (!remap.empty())
+	{
 		// Save the remapped shader name
 		_shaderName = remap;
 	}
-	else {
+	else
+	{
 		// No remap, so reset our shader to the original unskinned shader
 		_shaderName = _originalShaderName;
 	}
@@ -187,10 +203,20 @@ const AABB& MD5Surface::localAABB() const {
 }
 
 void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, 
-						const ShaderPtr& state, const IRenderEntity& entity) const
+						const IRenderEntity& entity) const
 {
-	collector.SetState(state, RenderableCollector::eFullMaterials);
+	assert(_shader); // shader must be captured at this point
+
+	collector.SetState(_shader, RenderableCollector::eFullMaterials);
 	collector.addRenderable(*this, localToWorld, entity);
+}
+
+void MD5Surface::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_renderSystem = renderSystem;
+	
+	// Attempt to capture the shader now (or free them if renderSystem is NULL)
+	captureShader();
 }
 
 int MD5Surface::getNumVertices() const

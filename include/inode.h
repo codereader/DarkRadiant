@@ -149,7 +149,8 @@ public:
 	 */
 	virtual bool inScene() const = 0;
 
-	// Set the render entity this node is attached to
+	// Get/Set the render entity this node is attached to
+	virtual const IRenderEntityPtr& getRenderEntity() const = 0;
 	virtual void setRenderEntity(const IRenderEntityPtr& entity) = 0;
 
 	// Call this if the node gets changed in any way or gets inserted somewhere.

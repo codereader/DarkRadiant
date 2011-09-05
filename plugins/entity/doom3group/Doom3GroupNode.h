@@ -98,6 +98,8 @@ public:
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	void transformComponents(const Matrix4& matrix);

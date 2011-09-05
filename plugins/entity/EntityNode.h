@@ -75,6 +75,10 @@ protected:
 	// Additional shader flags for consideration by the render system
 	unsigned int _requiredShaderFlags;
 
+	// The wireframe / solid shaders as determined by the entityclass
+	ShaderPtr _fillShader;
+	ShaderPtr _wireShader;
+
 protected:
 	// The Constructor needs the eclass
 	EntityNode(const IEntityClassPtr& eclass);
@@ -123,6 +127,7 @@ public:
 	// Renderable implementation, can be overridden by subclasses
 	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	virtual void setRenderSystem(const RenderSystemPtr& renderSystem);
 	virtual bool isHighlighted() const;
 
 	// Adds/removes the keyobserver to/from the KeyObserverMap
@@ -136,6 +141,9 @@ public:
 	const ShaderPtr& getColourShader() const;
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
+
+	const ShaderPtr& getWireShader() const;
+	const ShaderPtr& getFillShader() const;
 
 protected:
 	virtual void onModelKeyChanged(const std::string& value);

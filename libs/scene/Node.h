@@ -60,6 +60,9 @@ protected:
 	// If this node is attached to a parent entity, this is the reference to it
 	IRenderEntityPtr _renderEntity;
 
+	// The render system for passing down the child hierarchy later on
+	RenderSystemWeakPtr _renderSystem;
+
 public:
 	Node();
 	Node(const Node& other);
@@ -151,11 +154,20 @@ public:
 	// Returns a shared reference to this node
 	scene::INodePtr getSelf();
 
+	const IRenderEntityPtr& getRenderEntity() const
+	{
+		return _renderEntity;
+	}
+
 	// Set the render entity this node is attached to
 	void setRenderEntity(const IRenderEntityPtr& entity)
 	{
 		_renderEntity = entity;
 	}
+
+	// Base renderable implementation
+	virtual RenderSystemPtr getRenderSystem() const;
+	virtual void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 protected:
 	// Fills in the ancestors and self (in this order) into the given targetPath.

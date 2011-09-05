@@ -56,7 +56,7 @@ public:
 
 		if (entity != NULL)
 		{
-			_collector.SetState(entity->getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+			_collector.SetState(node->getRenderEntity()->getWireShader(), RenderableCollector::eWireframeOnly);
 		}
 
 		node->viewChanged();

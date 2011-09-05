@@ -270,14 +270,6 @@ void BrushNode::onRemoveFromScene()
 	Node::onRemoveFromScene();
 }
 
-void BrushNode::constructStatic() {
-	m_state_selpoint = GlobalRenderSystem().capture("$SELPOINT");
-}
-
-void BrushNode::destroyStatic() {
-	m_state_selpoint = ShaderPtr();
-}
-
 void BrushNode::clear() {
 	m_faceInstances.clear();
 }
@@ -371,6 +363,23 @@ void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 	renderClipPlane(collector, volume);
 
 	renderWireframe(collector, volume, localToWorld());
+}
+
+void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	Node::setRenderSystem(renderSystem);
+
+	if (renderSystem)
+	{
+		m_state_selpoint = renderSystem->capture("$SELPOINT");
+	}
+	else
+	{
+		m_state_selpoint.reset();
+	}
+
+	m_brush.setRenderSystem(renderSystem);
+	m_clipPlane.setRenderSystem(renderSystem);
 }
 
 void BrushNode::renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const {
@@ -548,5 +557,3 @@ void BrushNode::_applyTransformation()
 	evaluateTransform();
 	m_brush.freezeTransform();
 }
-
-ShaderPtr BrushNode::m_state_selpoint;

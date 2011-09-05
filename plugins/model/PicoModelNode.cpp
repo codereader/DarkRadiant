@@ -87,6 +87,13 @@ void PicoModelNode::renderWireframe(RenderableCollector& collector, const Volume
 	renderSolid(collector, volume);
 }
 
+void PicoModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	Node::setRenderSystem(renderSystem);
+
+	// TODO: Ensure shaders here
+}
+
 // Renderable submission
 void PicoModelNode::submitRenderables(RenderableCollector& collector,
 									  const VolumeTest& volume,

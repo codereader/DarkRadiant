@@ -51,27 +51,16 @@ void BrushModuleClass::constructPreferences() {
 	page->appendCheckBox("", _("Enable Texture Lock (for Brushes)"), "user/ui/brush/textureLock");
 }
 
-void BrushModuleClass::construct() {
+void BrushModuleClass::construct()
+{
 	Brush_registerCommands();
-
-	BrushClipPlane::constructStatic();
-	BrushNode::constructStatic();
-	Brush::constructStatic();
 
 	Brush::m_maxWorldCoord = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
 }
 
-void BrushModuleClass::destroy() {
+void BrushModuleClass::destroy()
+{
 	Brush::m_maxWorldCoord = 0;
-
-	Brush::destroyStatic();
-	BrushNode::destroyStatic();
-	BrushClipPlane::destroyStatic();
-}
-
-void BrushModuleClass::clipperColourChanged() {
-	BrushClipPlane::destroyStatic();
-	BrushClipPlane::constructStatic();
 }
 
 void BrushModuleClass::keyChanged(const std::string& key, const std::string& val) {
@@ -124,7 +113,6 @@ const StringSet& BrushModuleClass::getDependencies() const {
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_UNDOSYSTEM);
 	}
 
@@ -153,8 +141,6 @@ void BrushModuleClass::shutdownModule() {
 
 // Define a static BrushModule
 module::StaticModule<BrushModuleClass> staticBrushModule;
-
-ShaderPtr BrushClipPlane::m_state;
 
 // greebo: The accessor function for the brush module containing the static instance
 // TODO: Change this to return a reference instead of a raw pointer

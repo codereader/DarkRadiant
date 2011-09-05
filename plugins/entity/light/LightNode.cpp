@@ -282,6 +282,12 @@ void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 	renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
+void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	// The renderable vertices are maintaining shader objects, acquire/free them now
+	_light.setRenderSystem(renderSystem);
+}
+
 // Renders the components of this light instance
 void LightNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {

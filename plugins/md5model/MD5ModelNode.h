@@ -25,7 +25,7 @@ class MD5ModelNode :
 
 	struct Remap {
 		std::string name;
-		ShaderPtr shader;
+		//ShaderPtr shader;
 	};
 
 	typedef std::vector<Remap> SurfaceRemaps;
@@ -64,6 +64,7 @@ public:
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	bool isHighlighted() const
 	{

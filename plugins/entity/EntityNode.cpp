@@ -9,7 +9,7 @@ namespace entity
 {
 
 EntityNode::EntityNode(const IEntityClassPtr& eclass) :
-	TargetableNode(_entity, *this),
+	TargetableNode(_entity, *this, _wireShader),
 	_eclass(eclass),
 	_entity(_eclass),
 	_namespaceManager(_entity),
@@ -27,7 +27,7 @@ EntityNode::EntityNode(const EntityNode& other) :
 	SelectableNode(other),
 	SelectionTestable(other),
 	Namespaced(other),
-	TargetableNode(_entity, *this),
+	TargetableNode(_entity, *this, _wireShader),
 	Nameable(other),
 	Transformable(other),
 	MatrixTransform(other),
@@ -225,9 +225,28 @@ void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTes
 	if (collector.getStyle() == RenderableCollector::eWireframeOnly &&
 		EntitySettings::InstancePtr()->renderEntityNames())
     {
-		collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+		collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);
 		collector.addRenderable(_renderableName, localToWorld());
 	}
+}
+
+void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	SelectableNode::setRenderSystem(renderSystem);
+
+	if (renderSystem)
+	{
+		_fillShader = renderSystem->capture(_entity.getEntityClass()->getFillShader());
+		_wireShader = renderSystem->capture(_entity.getEntityClass()->getWireShader());
+	}
+	else
+	{
+		_fillShader.reset();
+		_wireShader.reset();
+	}
+
+	// The colour key is maintaining a shader object as well
+	_colourKey.setRenderSystem(renderSystem);
 }
 
 bool EntityNode::isHighlighted() const
@@ -267,6 +286,16 @@ void EntityNode::_modelKeyChanged(const std::string& value)
 {
 	// Wrap the call to the virtual event
 	onModelKeyChanged(value);
+}
+
+const ShaderPtr& EntityNode::getWireShader() const
+{
+	return _wireShader;
+}
+
+const ShaderPtr& EntityNode::getFillShader() const
+{
+	return _fillShader;
 }
 
 } // namespace entity

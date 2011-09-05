@@ -281,14 +281,6 @@ bool PatchNode::testLight(const RendererLight& light) const {
 	return light.testAABB(worldAABB());
 }
 
-void PatchNode::constructStatic() {
-	m_state_selpoint = GlobalRenderSystem().capture("$SELPOINT");
-}
-
-void PatchNode::destroyStatic() {
-	m_state_selpoint = ShaderPtr();
-}
-
 void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
@@ -318,6 +310,22 @@ void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 
 	// Render the selected components
 	renderComponentsSelected(collector, volume);
+}
+
+void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	Node::setRenderSystem(renderSystem);
+
+	m_patch.setRenderSystem(renderSystem);
+
+	if (renderSystem)
+	{
+		m_state_selpoint = renderSystem->capture("$SELPOINT");
+	}
+	else
+	{
+		m_state_selpoint.reset();
+	}
 }
 
 // Renders the components of this patch instance, makes use of the Patch::render_component() method
@@ -436,6 +444,3 @@ void PatchNode::_applyTransformation()
 	evaluateTransform();
 	m_patch.freezeTransform();
 }
-
-// Initialise the shader member variable
-ShaderPtr PatchNode::m_state_selpoint;

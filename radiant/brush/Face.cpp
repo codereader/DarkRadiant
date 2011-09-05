@@ -528,4 +528,4 @@ void Face::updateFaceVisibility()
 
 // ---------------------------------------------------------------------------------------
 
-QuantiseFunc Face::m_quantise;
+QuantiseFunc Face::m_quantise = quantiseFloating;

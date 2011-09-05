@@ -44,7 +44,7 @@ class PatchNode :
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable)
 	mutable AABB m_aabb_component;
 
-	static ShaderPtr m_state_selpoint;
+	ShaderPtr m_state_selpoint;
 
 public:
 	// Construct a PatchNode with no arguments
@@ -127,16 +127,14 @@ public:
 	// LightCullable implementation
 	bool testLight(const RendererLight& light) const;
 
-	// Initialise/release the static member variables
-	static void constructStatic();
-	static void destroyStatic();
-
 	// Renderable implementation
 
 	// Render functions, these make sure that all things get rendered properly. The calls are also passed on
 	// to the contained patch <m_patch>
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
 	// Renders the components of this patch instance, makes use of the Patch::render_component() method
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 

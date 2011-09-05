@@ -596,6 +596,16 @@ void Light::renderWireframe(RenderableCollector& collector,
 	}
 }
 
+void Light::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_rCentre.setRenderSystem(renderSystem);
+	_rTarget.setRenderSystem(renderSystem);
+	_rUp.setRenderSystem(renderSystem);
+	_rRight.setRenderSystem(renderSystem);
+	_rStart.setRenderSystem(renderSystem);
+	_rEnd.setRenderSystem(renderSystem);
+}
+
 void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
 {
 	test.BeginMesh(localToWorld);

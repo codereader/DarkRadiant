@@ -34,8 +34,10 @@ class TargetableNode :
 	// The node we're associated with
 	scene::Node& _node;
 
+	const ShaderPtr& _wireShader;
+
 public:
-	TargetableNode(Doom3Entity& entity, scene::Node& node);
+	TargetableNode(Doom3Entity& entity, scene::Node& node, const ShaderPtr& wireShader);
 
 	// Connect this class with the Doom3Entity
 	void construct();

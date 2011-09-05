@@ -85,6 +85,8 @@ public:
 	void postUndo();
 	void postRedo();
 
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
 private:
 	// Sends the current state to the undosystem
 	void undoSave();

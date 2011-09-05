@@ -29,16 +29,10 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _inheritanceResolved(false),
   _modName("base"),
   _parseStamp(0)
-{
-	// Capture the shaders
-	captureColour();
-}
+{}
 
 Doom3EntityClass::~Doom3EntityClass()
-{
-	// Release the shaders
-	releaseColour();
-}
+{}
 
 const std::string& Doom3EntityClass::getName() const {
 	return _name;
@@ -98,39 +92,39 @@ void Doom3EntityClass::setIsLight(bool val) {
     	_fixedSize = true;
 }
 
-/** Set the display colour for this entity.
- *
- * @param colour
- * The new colour to use.
- */
-void Doom3EntityClass::setColour(const Vector3& colour) {
+void Doom3EntityClass::setColour(const Vector3& colour)
+{
 	// Set the specified flag
 	_colourSpecified = true;
 
 	// Release the current shaders, then capture the new ones
-	releaseColour();
 	_colour = colour;
-	captureColour();
+	
+	// Set the entity colour to default, if none was specified
+	if (_colour == Vector3(-1, -1, -1)) 
+	{
+		_colour = ColourSchemes().getColour("default_entity");
+	}
+
+	// Capture fill and wire versions of the entity colour
+	std::string fillCol = _colourTransparent ?
+		(boost::format("[%f %f %f]") % _colour[0] % _colour[1] % _colour[2]).str() :
+		(boost::format("(%f %f %f)") % _colour[0] % _colour[1] % _colour[2]).str();
+
+	std::string wireCol = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
 }
 
-/** Get this entity's colour.
- *
- * @returns
- * A Vector3 containing the current colour.
- */
 const Vector3& Doom3EntityClass::getColour() const {
 	return _colour;
 }
 
-/** Return this entity's wireframe shader.
- */
-const ShaderPtr& Doom3EntityClass::getWireShader() const {
+const std::string& Doom3EntityClass::getWireShader() const
+{
 	return _wireShader;
 }
 
-/** Return this entity's fill shader.
- */
-const ShaderPtr& Doom3EntityClass::getFillShader() const {
+const std::string& Doom3EntityClass::getFillShader() const
+{
 	return _fillShader;
 }
 
@@ -174,31 +168,6 @@ Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name, bool brush
 	else {
 		return Doom3EntityClassPtr(new Doom3EntityClass(name));
 	}
-}
-
-// Capture the shaders for the current colour
-void Doom3EntityClass::captureColour()
-{
-	// Set the entity colour to default, if none was specified
-	if (_colour == Vector3(-1, -1, -1)) {
-		_colour = ColourSchemes().getColour("default_entity");
-	}
-
-	// Capture fill and wire versions of the entity colour
-	std::string fillCol = _colourTransparent ?
-		(boost::format("[%f %f %f]") % _colour[0] % _colour[1] % _colour[2]).str() :
-		(boost::format("(%f %f %f)") % _colour[0] % _colour[1] % _colour[2]).str();
-
-	std::string wireCol = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
-
-	_fillShader = GlobalRenderSystem().capture(fillCol);
-	_wireShader = GlobalRenderSystem().capture(wireCol);
-}
-
-// Release the shaders for the current colour
-void Doom3EntityClass::releaseColour() {
-	_fillShader = ShaderPtr();
-	_wireShader = ShaderPtr();
 }
 
 // Enumerate entity class attributes
@@ -275,9 +244,6 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 	{
 		setColour(Vector3(colourAttr.value));
 	}
-
-	// Update the colour shader
-	captureColour();
 }
 
 // Find a single attribute
@@ -329,7 +295,6 @@ void Doom3EntityClass::clear()
     _colour = Vector3(-1,-1,-1);
 	_colourSpecified = false;
 	_colourTransparent = false;
-	releaseColour();
 
 	_fixedSize = false;
 

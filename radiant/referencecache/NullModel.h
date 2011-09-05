@@ -25,7 +25,7 @@ public:
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 
 	// IModel implementation

@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <boost/function/function_fwd.hpp>
 
 #include "math/Vector3.h"
+#include <boost/weak_ptr.hpp>
 
 #include "ShaderLayer.h"
 
@@ -67,6 +68,7 @@ template<typename Element> class BasicVector3;
 typedef BasicVector3<float> Vector3;
 
 class Shader;
+typedef boost::shared_ptr<Shader> ShaderPtr;
 
 /**
  * A RenderEntity represents a map entity as seen by the renderer. 
@@ -100,6 +102,11 @@ public:
 	 * Entities can specify directions, which are used for particle emission for instance.
 	 */
 	virtual const Vector3& getDirection() const = 0;
+
+	/**
+	 * Returns the wireframe shader for this entity - child primitives need this for rendering.
+	 */
+	virtual const ShaderPtr& getWireShader() const = 0;
 };
 typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
 
@@ -485,6 +492,7 @@ public:
     virtual void extensionsInitialised() = 0;
 };
 typedef boost::shared_ptr<RenderSystem> RenderSystemPtr;
+typedef boost::weak_ptr<RenderSystem> RenderSystemWeakPtr;
 
 /**
  * \brief
