@@ -78,6 +78,8 @@ public:
 	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld,
 						   const IRenderEntity& entity);
 
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
 	/**
 	 * Back-end render function from OpenGLRenderable. This is called from the
 	 * model selector but not the main renderer, which uses the front-end render

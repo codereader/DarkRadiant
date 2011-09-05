@@ -91,7 +91,7 @@ void PicoModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	Node::setRenderSystem(renderSystem);
 
-	// TODO: Ensure shaders here
+	_picoModel->setRenderSystem(renderSystem);
 }
 
 // Renderable submission

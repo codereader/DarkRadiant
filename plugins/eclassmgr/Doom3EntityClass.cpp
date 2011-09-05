@@ -107,11 +107,11 @@ void Doom3EntityClass::setColour(const Vector3& colour)
 	}
 
 	// Capture fill and wire versions of the entity colour
-	std::string fillCol = _colourTransparent ?
+	_fillShader = _colourTransparent ?
 		(boost::format("[%f %f %f]") % _colour[0] % _colour[1] % _colour[2]).str() :
 		(boost::format("(%f %f %f)") % _colour[0] % _colour[1] % _colour[2]).str();
 
-	std::string wireCol = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
+	_wireShader = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
 }
 
 const Vector3& Doom3EntityClass::getColour() const {

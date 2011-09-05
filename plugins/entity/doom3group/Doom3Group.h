@@ -8,7 +8,6 @@
 #include "../ModelKey.h"
 #include "../OriginKey.h"
 #include "../rotation.h"
-#include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"

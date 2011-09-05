@@ -284,6 +284,8 @@ void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 
 void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
+	EntityNode::setRenderSystem(renderSystem);
+
 	// The renderable vertices are maintaining shader objects, acquire/free them now
 	_light.setRenderSystem(renderSystem);
 }
