@@ -20,13 +20,19 @@ RenderableParticle::~RenderableParticle()
 }
 
 // Time is in msecs
-void RenderableParticle::update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation)
+void RenderableParticle::update(const Matrix4& viewRotation)
 {
+	RenderSystemPtr renderSystem = _renderSystem.lock();
+
+	if (!renderSystem) return; // no rendersystem there yet
+
+	std::size_t time = renderSystem->getTime();
+
 	// Invalidate our bounds information
 	_bounds = AABB();
 
 	// Make sure all shaders are constructed
-	ensureShaders(renderSystem);
+	ensureShaders(*renderSystem);
 
 	// greebo: Use the inverse matrix of the incoming matrix, this is enough to compensate
 	// the camera rotation.
@@ -87,6 +93,11 @@ void RenderableParticle::renderWireframe(RenderableCollector& collector, const V
 {
 	// Does the same thing as renderSolid
 	renderSolid(collector, volume);
+}
+
+void RenderableParticle::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_renderSystem = renderSystem;
 }
 
 const IParticleDefPtr& RenderableParticle::getParticleDef() const

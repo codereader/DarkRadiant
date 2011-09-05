@@ -1,5 +1,4 @@
-#ifndef _RENDERABLE_PARTICLE_H_
-#define _RENDERABLE_PARTICLE_H_
+#pragma once
 
 #include "RenderableParticleStage.h"
 
@@ -50,13 +49,16 @@ private:
 	// The colour used when "use entity colour" is activated.
 	Vector3 _entityColour;
 
+	// The associated rendersystem, needed to get time an shaders
+	RenderSystemWeakPtr _renderSystem;
+
 public:
 	RenderableParticle(const IParticleDefPtr& particleDef);
 
 	~RenderableParticle();
 
 	// Time is in msecs
-	void update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation);
+	void update(const Matrix4& viewRotation);
 
 	// Front-end render methods
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
@@ -67,10 +69,7 @@ public:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
 						 const Matrix4& localToWorld, const IRenderEntity* entity) const;
 
-	void setRenderSystem(const RenderSystemPtr& renderSystem)
-	{
-		// TODO: Remove argument from update() and use the parameter passed here
-	}
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	bool isHighlighted() const
 	{
@@ -106,5 +105,3 @@ private:
 typedef boost::shared_ptr<RenderableParticle> RenderableParticlePtr;
 
 } // namespace
-
-#endif /* _RENDERABLE_PARTICLE_H_ */

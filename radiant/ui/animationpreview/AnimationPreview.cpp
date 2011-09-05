@@ -237,10 +237,14 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	_parentEntity = GlobalEntityCreator().createEntity(
 		GlobalEntityClassManager().findClass("func_static"));
 
-	_model->setRenderEntity(boost::dynamic_pointer_cast<IRenderEntity>(_parentEntity));
+	// AddChildNode also tells the model which renderentity it is attached to
+	_parentEntity->addChildNode(_model);
 
 	// Set the parent entity as new root of the local scenegraph
 	_scene->setRoot(_parentEntity);
+
+	// Associate the render system with our scenegraph such that nodes can acquire their shaders
+	_parentEntity->setRenderSystem(_renderSystem);
 
 	if (_model != NULL)
 	{
