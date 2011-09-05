@@ -3,6 +3,9 @@
 #include "gtkutil/GLWidgetSentry.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
+#include "ientity.h"
+#include "ieclass.h"
+#include "iscenegraphfactory.h"
 #include "iparticles.h"
 #include "i18n.h"
 
@@ -34,6 +37,7 @@ namespace {
 
 	const GLfloat PREVIEW_FOV = 60;
 	const unsigned int MSEC_PER_FRAME = 16;
+	const char* const FUNC_EMITTER_CLASS = "func_emitter";
 
 	// Set the bool to true for the lifetime of this object
 	class ScopedBoolLock
@@ -63,8 +67,8 @@ ParticlePreview::ParticlePreview() :
 	_startButton(NULL),
 	_pauseButton(NULL),
 	_stopButton(NULL),
+	_scene(GlobalSceneGraphFactory().createSceneGraph()),
 	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
-	_previewTimeMsec(0),
 	_renderingInProgress(false),
 	_timer(MSEC_PER_FRAME, _onFrame, this),
 	_previewWidth(0),
@@ -153,6 +157,9 @@ ParticlePreview::ParticlePreview() :
 
 	// Pack into a frame and return
 	add(*vbx);
+
+	// Setup the scene graph
+	setupSceneGraph();
 }
 
 ParticlePreview::~ParticlePreview()
@@ -236,10 +243,14 @@ void ParticlePreview::setParticle(const std::string& name)
 		return;
 	}
 
-	_particle = GlobalParticlesManager().getRenderableParticle(nameClean);
+	scene::INodePtr node = GlobalParticlesManager().getParticleNode(nameClean);
+
+	_particle = Node_getParticleNode(node);
 
 	if (_particle != NULL && _lastParticle != nameClean)
 	{
+		_entity->addChildNode(node);
+
 		// Reset preview time
 		stopPlayback();
 
@@ -248,10 +259,10 @@ void ParticlePreview::setParticle(const std::string& name)
 		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
 
 		// Call update(0) once to enable the bounds calculation
-		_particle->update(_previewTimeMsec, *_renderSystem, _rotation);
+		_particle->getParticle()->update(_rotation);
 
 		// Use particle AABB to adjust camera distance
-		const AABB& particleBounds = _particle->getBounds();
+		const AABB& particleBounds = _particle->getParticle()->getBounds();
 
 		if (particleBounds.isValid())
 		{
@@ -283,7 +294,7 @@ void ParticlePreview::startPlayback()
 	if (_timer.isEnabled())
 	{
 		// Timer is already running, just reset the preview time
-		_previewTimeMsec = 0;
+		_renderSystem->setTime(0);
 	}
 	else
 	{
@@ -297,7 +308,7 @@ void ParticlePreview::startPlayback()
 
 void ParticlePreview::stopPlayback()
 {
-	_previewTimeMsec = 0;
+	_renderSystem->setTime(0);
 	_timer.disable();
 
 	_pauseButton->set_sensitive(false);
@@ -341,7 +352,7 @@ void ParticlePreview::callbackStepForward()
 		_timer.disable();
 	}
 
-	_previewTimeMsec += MSEC_PER_FRAME;
+	_renderSystem->setTime(_renderSystem->getTime() + MSEC_PER_FRAME);
 	_glWidget->queue_draw();
 }
 
@@ -355,9 +366,9 @@ void ParticlePreview::callbackStepBack()
 		_timer.disable();
 	}
 
-	if (_previewTimeMsec > 0)
+	if (_renderSystem->getTime() > 0)
 	{
-		_previewTimeMsec -= MSEC_PER_FRAME;
+		_renderSystem->setTime(_renderSystem->getTime() - MSEC_PER_FRAME);
 	}
 
 	_glWidget->queue_draw();
@@ -389,6 +400,21 @@ Matrix4 ParticlePreview::getProjectionMatrix(float near_z, float far_z, float fi
 	);
 }
 
+void ParticlePreview::setupSceneGraph()
+{
+	_entity = GlobalEntityCreator().createEntity(
+		GlobalEntityClassManager().findClass(FUNC_EMITTER_CLASS));
+
+	// This entity is acting as our root node in the scene
+	_scene->setRoot(_entity);
+
+	// Associate our rendersystem with the graph
+	_scene->root()->setRenderSystem(_renderSystem);
+
+	// Set our render time to 0
+	_renderSystem->setTime(0);
+}
+
 bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 {
 	if (_renderingInProgress) return false; // avoid double-entering this method
@@ -411,11 +437,11 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 	}
 
 	// Update the particle
-	_particle->update(_previewTimeMsec, *_renderSystem, _rotation);
+	_particle->getParticle()->update(_rotation);
 
 	// Front-end render phase, collect OpenGLRenderable objects from the
 	// particle system
-	_particle->renderSolid(_renderer, _volumeTest);
+	_particle->getParticle()->renderSolid(_renderer, _volumeTest);
 
 	RenderStateFlags flags = RENDER_COLOURWRITE
                              | RENDER_ALPHATEST
@@ -485,7 +511,7 @@ bool ParticlePreview::callbackGLDraw(GdkEventExpose* ev)
 
 		flags |= RENDER_FORCE_COLORARRAY;
 
-		_particle->renderSolid(_renderer, _volumeTest);
+		_particle->getParticle()->renderSolid(_renderer, _volumeTest);
 
 		_renderSystem->render(flags, modelview, projection);
 	}
@@ -508,7 +534,7 @@ gboolean ParticlePreview::_onFrame(gpointer data)
 
 	if (!self->_renderingInProgress)
 	{
-		self->_previewTimeMsec += MSEC_PER_FRAME;
+		self->_renderSystem->setTime(self->_renderSystem->getTime() + MSEC_PER_FRAME);
 		self->_glWidget->queue_draw();
 	}
 
@@ -548,7 +574,7 @@ void ParticlePreview::drawTime()
 
 	glRasterPos3f(1.0f, static_cast<float>(_previewHeight) - 1.0f, 0.0f);
 
-	GlobalOpenGL().drawString((boost::format("%.3f sec.") % (_previewTimeMsec * 0.001f)).str());
+	GlobalOpenGL().drawString((boost::format("%.3f sec.") % (_renderSystem->getTime() * 0.001f)).str());
 }
 
 void ParticlePreview::drawAxes()
@@ -623,7 +649,7 @@ bool ParticlePreview::callbackGLScroll(GdkEventScroll* ev)
 	if (_particle == NULL) return false;
 
 	// Scroll increment is a fraction of the AABB radius
-	float inc = static_cast<float>(_particle->getBounds().getRadius()) * 0.1f;
+	float inc = static_cast<float>(_particle->getParticle()->getBounds().getRadius()) * 0.1f;
 
 	if (ev->direction == GDK_SCROLL_UP)
 		_camDist += inc;

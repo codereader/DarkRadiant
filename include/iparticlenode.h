@@ -18,3 +18,14 @@ public:
 typedef boost::shared_ptr<IParticleNode> IParticleNodePtr;
 
 } // namespace
+
+// Cast shortcuts
+inline bool Node_isParticle(const scene::INodePtr& node)
+{
+	return boost::dynamic_pointer_cast<particles::IParticleNode>(node) != NULL;
+}
+
+inline particles::IParticleNodePtr Node_getParticleNode(const scene::INodePtr& node)
+{
+	return boost::dynamic_pointer_cast<particles::IParticleNode>(node);
+}

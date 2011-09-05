@@ -1,8 +1,9 @@
-#ifndef _PARTICLE_PREVIEW_H_
-#define _PARTICLE_PREVIEW_H_
+#pragma once
 
 #include "iparticles.h"
+#include "iparticlenode.h"
 #include "iparticlepreview.h"
+#include "iscenegraph.h"
 #include "irendersystemfactory.h"
 
 #include "math/Matrix4.h"
@@ -38,16 +39,22 @@ private:
 	Gtk::ToggleToolButton* _showAxesButton;
 	Gtk::ToggleToolButton* _showWireFrameButton;
 
+	// The scene we're rendering
+	scene::GraphPtr _scene;
+
 	// The backend rendersystem instance
 	RenderSystemPtr _renderSystem;
+
+	// A particle is attached to a paren entity
+	scene::INodePtr _entity;
 
 	// The front-end renderer, collecting the OpenGLRenderables
 	// from the particle system
 	render::ShaderStateRenderer _renderer;
 	render::NopVolumeTest _volumeTest;
 
-	// Current particle to display
-	particles::IRenderableParticlePtr _particle;
+	// Current particle node to display
+	particles::IParticleNodePtr _particle;
 
 	// Current distance between camera and preview
 	GLfloat _camDist;
@@ -56,9 +63,6 @@ private:
 	Matrix4 _rotation;
 
 	std::string _lastParticle;
-
-	// Increasing preview time in msecs
-	std::size_t _previewTimeMsec;
 
 	// Mutex flag to avoid draw call bunching
 	bool _renderingInProgress;
@@ -82,6 +86,9 @@ private:
 	void onSizeAllocate(Gtk::Allocation& allocation);
 
 	static Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
+
+	// Creates parent entity etc.
+	void setupSceneGraph();
 
 public:
 
@@ -115,7 +122,7 @@ public:
 	 */
 	particles::IParticleDefPtr getParticle()
 	{
-		return _particle ? _particle->getParticleDef() : particles::IParticleDefPtr();
+		return _particle ? _particle->getParticle()->getParticleDef() : particles::IParticleDefPtr();
 	}
 
 private:
@@ -132,5 +139,3 @@ private:
 typedef boost::shared_ptr<ParticlePreview> ParticlePreviewPtr;
 
 } // namespace
-
-#endif /* _PARTICLE_PREVIEW_H_ */
