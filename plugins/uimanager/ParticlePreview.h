@@ -70,7 +70,6 @@ public:
 
 protected:
 	void onToggleAxes();
-	void onSizeAllocate(Gtk::Allocation& allocation);
 
 	// Creates parent entity etc.
 	void setupSceneGraph();
