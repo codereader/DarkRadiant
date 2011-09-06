@@ -48,6 +48,7 @@ RenderPreview::RenderPreview() :
 	_pauseButton(NULL),
 	_stopButton(NULL),
 	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
+	_sceneWalker(_renderer, _volumeTest),
 	_renderingInProgress(false),
 	_timer(MSEC_PER_FRAME, _onFrame, this),
 	_previewWidth(0),
@@ -273,8 +274,6 @@ bool RenderPreview::onPreRender()
 
 bool RenderPreview::onGLDraw(GdkEventExpose*)
 {
-	// TODO
-
 	if (_renderingInProgress) return false; // avoid double-entering this method
 
 	ScopedBoolLock lock(_renderingInProgress); // will be set to false on method exit
@@ -303,11 +302,8 @@ bool RenderPreview::onGLDraw(GdkEventExpose*)
 		return false;
 	}
 
-	// Front-end render phase, collect OpenGLRenderable objects from the
-	RenderHighlighted sceneRenderer(_renderer, _volumeTest);
-
-	// Submit renderables from scene graph
-	GlobalSceneGraph().foreachVisibleNodeInVolume(volume, renderHighlightWalker);
+	// Front-end render phase, collect OpenGLRenderable objects from the scene
+	getScene()->foreachVisibleNodeInVolume(_volumeTest, _sceneWalker);
 
 	RenderStateFlags flags = RENDER_COLOURWRITE | 
 							 RENDER_ALPHATEST | 

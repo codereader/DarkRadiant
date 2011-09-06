@@ -10,7 +10,11 @@
 #include "generic/callback.h"
 #include <boost/enable_shared_from_this.hpp>
 
-namespace scene {
+namespace scene
+{
+
+class Graph;
+typedef boost::shared_ptr<Graph> GraphPtr;
 
 class Node :
 	public INode,
@@ -63,12 +67,17 @@ protected:
 	// The render system for passing down the child hierarchy later on
 	RenderSystemWeakPtr _renderSystem;
 
+	// The scene::Graph we're belonging to
+	GraphPtr _sceneGraph;
+
 public:
 	Node();
 	Node(const Node& other);
 
 	static void resetIds();
 	static unsigned long getNewId();
+
+	void setSceneGraph(const GraphPtr& sceneGraph);
 
 	bool isRoot() const;
 	void setIsRoot(bool isRoot);

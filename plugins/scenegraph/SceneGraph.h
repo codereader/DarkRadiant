@@ -6,6 +6,7 @@
 #include "scenelib.h"
 #include "imodule.h"
 #include "ispacepartition.h"
+#include <boost/enable_shared_from_this.hpp>
 
 namespace scene
 {
@@ -17,7 +18,8 @@ namespace scene
  * \see scene::Graph
  */
 class SceneGraph :
-	public Graph
+	public Graph,
+	public boost::enable_shared_from_this<SceneGraph>
 {
 private:
 	typedef std::list<Graph::Observer*> ObserverList;

@@ -59,7 +59,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	if (_root != NULL)
 	{
 		// "Uninstantiate" the whole scene
-		UninstanceSubgraphWalker walker;
+		UninstanceSubgraphWalker walker(boost::static_pointer_cast<Graph>(shared_from_this()));
 		Node_traverseSubgraph(_root, walker);
 	}
 
@@ -71,7 +71,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	if (_root != NULL)
 	{
 		// New root not NULL, "instantiate" the whole scene
-		InstanceSubgraphWalker instanceWalker;
+		InstanceSubgraphWalker instanceWalker(boost::static_pointer_cast<Graph>(shared_from_this()));
 		Node_traverseSubgraph(_root, instanceWalker);
 	}
 }
