@@ -365,11 +365,11 @@ void RenderPreview::renderWireFrame()
 	// Set up the camera
 	Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
-	// TODO
-	//_particle->getParticle()->renderSolid(_renderer, _volumeTest);
+	// Front-end render phase, collect OpenGLRenderable objects from the scene
+	getScene()->foreachVisibleNodeInVolume(_volumeTest, _sceneWalker);
 
-	// TODO
-	//_renderSystem->render(flags, getModelViewMatrix(), projection);
+	// Launch the back end rendering
+	_renderSystem->render(flags, _volumeTest.GetModelview(), projection);
 }
 
 bool RenderPreview::onGLMotion(GdkEventMotion* ev)
