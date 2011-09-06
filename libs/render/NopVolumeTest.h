@@ -8,7 +8,8 @@ namespace render
 
 /**
  * greebo: This is a minimal VolumeTest implementation which
- * returns true in all test cases. All matrices are identity.
+ * returns true in all test cases. All matrices are identity
+ * unless they're set to something different.
  */
 class NopVolumeTest :
 	public VolumeTest
@@ -73,6 +74,21 @@ public:
 	virtual const Matrix4& GetModelview() const
 	{
 		return _modelView;
+	}
+
+	void setViewPort(const Matrix4& matrix)
+	{
+		_viewPort = matrix;
+	}
+
+	void setProjection(const Matrix4& matrix)
+	{
+		_projection = matrix;
+	}
+
+	void setModelView(const Matrix4& matrix)
+	{
+		_modelView = matrix;
 	}
 };
 
