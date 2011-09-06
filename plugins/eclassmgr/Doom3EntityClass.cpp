@@ -97,7 +97,6 @@ void Doom3EntityClass::setColour(const Vector3& colour)
 	// Set the specified flag
 	_colourSpecified = true;
 
-	// Release the current shaders, then capture the new ones
 	_colour = colour;
 	
 	// Set the entity colour to default, if none was specified
@@ -106,7 +105,7 @@ void Doom3EntityClass::setColour(const Vector3& colour)
 		_colour = ColourSchemes().getColour("default_entity");
 	}
 
-	// Capture fill and wire versions of the entity colour
+	// Define fill and wire versions of the entity colour
 	_fillShader = _colourTransparent ?
 		(boost::format("[%f %f %f]") % _colour[0] % _colour[1] % _colour[2]).str() :
 		(boost::format("(%f %f %f)") % _colour[0] % _colour[1] % _colour[2]).str();

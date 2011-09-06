@@ -7,6 +7,7 @@
 #include "iparticles.h"
 #include "i18n.h"
 
+#include "scene/Node.h"
 #include "entitylib.h"
 
 #include "string/string.h"
@@ -150,6 +151,8 @@ void ParticlePreview::setupSceneGraph()
 
 	_entity = GlobalEntityCreator().createEntity(
 		GlobalEntityClassManager().findClass(FUNC_EMITTER_CLASS));
+
+	_entity->enable(scene::Node::eHidden);
 
 	// This entity is acting as our root node in the scene
 	getScene()->setRoot(_entity);

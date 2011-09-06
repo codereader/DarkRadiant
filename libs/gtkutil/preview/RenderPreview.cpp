@@ -330,11 +330,11 @@ bool RenderPreview::onGLDraw(GdkEventExpose*)
 	// Launch the back end rendering
 	_renderSystem->render(flags, _volumeTest.GetModelview(), projection);
 
-	// Draw the render time
-	drawTime();
-
 	// Give subclasses an opportunity to render their own on-screen stuff
 	onPostRender();
+
+	// Draw the render time
+	drawTime();
 
 	return false;
 }
@@ -359,8 +359,6 @@ void RenderPreview::renderWireFrame()
 			| RENDER_MATERIAL_VCOL
 			| RENDER_VCOL_INVERT
 			| RENDER_SCREEN;
-
-	flags |= RENDER_FORCE_COLORARRAY;
 
 	// Set up the camera
 	Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
