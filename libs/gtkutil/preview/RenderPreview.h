@@ -10,6 +10,7 @@
 #include "irender.h"
 
 #include "render/ShaderStateRenderer.h"
+#include "render/SceneRenderer.h"
 #include "render/NopVolumeTest.h"
 
 namespace Gtk
@@ -57,6 +58,9 @@ protected:
 	// The front-end renderer, collecting the OpenGLRenderables
 	render::ShaderStateRenderer _renderer;
 	render::NopVolumeTest _volumeTest;
+
+	// The scene adaptor passing nodes into our front-end renderer
+	render::SceneRenderer _sceneWalker;
 
 	// Current distance between camera and preview
 	GLfloat _camDist;

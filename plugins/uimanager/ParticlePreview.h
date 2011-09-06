@@ -25,6 +25,7 @@ private:
 
 	// Current particle node to display
 	particles::IParticleNodePtr _particle;
+	scene::INodePtr _particleNode;
 
 	std::string _lastParticle;
 

@@ -77,6 +77,12 @@ void ParticlePreview::setParticle(const std::string& name)
 	// If the model name is empty, release the model
 	if (nameClean.empty())
 	{
+		if (_particleNode)
+		{
+			_entity->removeChildNode(_particleNode);
+		}
+
+		_particleNode.reset();
 		_particle.reset();
 		stopPlayback();
 		return;
@@ -88,13 +94,17 @@ void ParticlePreview::setParticle(const std::string& name)
 		setupSceneGraph();
 	}
 
-	scene::INodePtr node = GlobalParticlesManager().getParticleNode(nameClean);
+	if (_particleNode)
+	{
+		_entity->removeChildNode(_particleNode);
+	}
 
-	_particle = Node_getParticleNode(node);
+	_particleNode = GlobalParticlesManager().getParticleNode(nameClean);
+	_particle = Node_getParticleNode(_particleNode);
 
 	if (_particle != NULL && _lastParticle != nameClean)
 	{
-		_entity->addChildNode(node);
+		_entity->addChildNode(_particleNode);
 
 		// Reset preview time
 		stopPlayback();

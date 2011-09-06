@@ -51,6 +51,9 @@ class INode;
 typedef boost::shared_ptr<INode> INodePtr;
 typedef boost::weak_ptr<INode> INodeWeakPtr;
 
+class Graph;
+typedef boost::shared_ptr<Graph> GraphPtr;
+
 class NodeVisitor
 {
 public:
@@ -88,6 +91,12 @@ public:
 	 * Destructor
 	 */
 	virtual ~INode() {}
+
+	/**
+	 * Set the scenegraph this node is belonging to. This is usually
+	 * set by the scenegraph itself during insertion.
+	 */
+	virtual void setSceneGraph(const GraphPtr& sceneGraph) = 0; 
 
 	/** greebo: Returns true, if the node is the root element
 	 * 			of the scenegraph.
