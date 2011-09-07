@@ -26,7 +26,13 @@ PicoModelNode::~PicoModelNode() {
 	GlobalRenderSystem().detach(*this);
 }
 
-const IModel& PicoModelNode::getIModel() const {
+const IModel& PicoModelNode::getIModel() const
+{
+	return *_picoModel;
+}
+
+IModel& PicoModelNode::getIModel() 
+{
 	return *_picoModel;
 }
 

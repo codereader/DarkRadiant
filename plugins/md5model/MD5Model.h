@@ -7,8 +7,10 @@
 #include "parser/DefTokeniser.h"
 
 #include "MD5Surface.h"
+#include "RenderableMD5Skeleton.h"
 
-namespace md5 {
+namespace md5
+{
 
 // generic model node
 class MD5Model :
@@ -36,6 +38,8 @@ private:
 
 	IMD5AnimPtr _anim;
 
+	RenderableMD5Skeleton _renderableSkeleton;
+
 public:
 	MD5Model();
 
@@ -49,6 +53,11 @@ public:
 	/** greebo: Reads the model data from the given tokeniser.
 	 */
 	void parseFromTokens(parser::DefTokeniser& tok);
+
+	RenderableMD5Skeleton& getRenderableSkeleton()
+	{
+		return _renderableSkeleton;
+	}
 
 	void updateAABB();
 

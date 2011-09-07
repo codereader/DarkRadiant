@@ -50,6 +50,7 @@ public:
 
 	// ModelNode implementation
 	virtual const IModel& getIModel() const;
+	virtual IModel& getIModel();
 
 	// SkinnedModel implementation
 	// Skin changed notify

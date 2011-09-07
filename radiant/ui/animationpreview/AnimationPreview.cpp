@@ -51,6 +51,9 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 
 	_model = node;
 
+	// Set the animation to play
+	dynamic_cast<md5::IMD5Model&>(model->getIModel()).setAnim(_anim);
+
 	// AddChildNode also tells the model which renderentity it is attached to
 	_entity->addChildNode(_model);
 
@@ -94,6 +97,10 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 void AnimationPreview::setAnim(const md5::IMD5AnimPtr& anim)
 {
 	_anim = anim;
+
+	// Set the animation to play
+	model::ModelNodePtr model = Node_getModel(_model);
+	dynamic_cast<md5::IMD5Model&>(model->getIModel()).setAnim(_anim);
 }
 
 void AnimationPreview::setupSceneGraph()

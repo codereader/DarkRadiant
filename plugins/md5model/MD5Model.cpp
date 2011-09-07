@@ -146,6 +146,8 @@ void MD5Model::setRenderSystem(const RenderSystemPtr& renderSystem)
 	{
 		(*i)->setRenderSystem(renderSystem);
 	}
+
+	_renderableSkeleton.setRenderSystem(renderSystem);
 }
 
 void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
@@ -369,6 +371,8 @@ Vector3 MD5Model::parseVector3(parser::DefTokeniser& tok) {
 void MD5Model::setAnim(const IMD5AnimPtr& anim)
 {
 	_anim = anim;
+
+	_renderableSkeleton.setAnim(_anim);
 
 	if (!_anim)
 	{

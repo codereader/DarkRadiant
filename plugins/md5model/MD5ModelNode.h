@@ -16,6 +16,7 @@ class MD5ModelNode :
 	public LightCullable,
 	public SkinnedModel
 {
+private:
 	MD5ModelPtr _model;
 
 	const LightList* _lightList;
@@ -40,6 +41,7 @@ public:
 
 	// ModelNode implementation
 	virtual const model::IModel& getIModel() const;
+	virtual model::IModel& getIModel();
 
 	void lightsChanged();
 
