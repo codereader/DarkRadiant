@@ -23,40 +23,12 @@ private:
 	int _frameRate;
 	int _numAnimatedComponents;
 
-	struct Joint
-	{
-		std::string name;
-		int parentId; // ID of parent bone (-1 == no parent)
-
-		// The 6 possible components that might be modified by a key
-		enum AnimComponent 
-		{
-			X		= 1 << 0, 
-			Y		= 1 << 1, 
-			Z		= 1 << 2,
-			YAW		= 1 << 3, 
-			PITCH	= 1 << 4, 
-			ROLL	= 1 << 5,
-			INVALID_COMPONENT	= 1 << 6
-		};
-
-		// A bit mask explaining which components we're animating
-		std::size_t animComponents;
-
-		std::size_t firstKey;
-	};
-
 	std::vector<Joint> _joints;
 
 	// One AABB per frame
 	std::vector<AABB> _bounds;
 
-	struct Key
-	{
-		Vector3 origin;
-		Quaternion orientation;
-	};
-	typedef std::vector<Key> Keys;
+	typedef std::vector<IMD5Anim::Key> Keys;
 
 	Keys _baseFrame;
 
@@ -76,9 +48,14 @@ public:
 		return _joints.size();
 	}
 
-	const Joint& getJointById(std::size_t id) const
+	const Joint& getJoint(std::size_t index) const
 	{
-		return _joints[id];
+		return _joints[index];
+	}
+
+	const Key& getBaseFrameKey(std::size_t jointNum) const
+	{
+		return _baseFrame[jointNum];
 	}
 
 	void parseFromStream(std::istream& stream);

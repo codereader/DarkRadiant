@@ -24,7 +24,13 @@ NullModelNodePtr NullModelNode::InstancePtr()
 	return _nullModelNode;
 }
 
-const IModel& NullModelNode::getIModel() const {
+const IModel& NullModelNode::getIModel() const
+{
+	return *_nullModel;
+}
+
+IModel& NullModelNode::getIModel()
+{
 	return *_nullModel;
 }
 

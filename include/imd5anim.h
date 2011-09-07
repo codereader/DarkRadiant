@@ -2,8 +2,37 @@
 
 #include "imodule.h"
 
+#include "math/Vector3.h"
+#include "math/Quaternion.h"
+
 namespace md5
 {
+
+struct Joint
+{
+	// the name of this bone
+	std::string name;
+
+	// ID of parent bone (-1 == no parent)
+	int parentId; 
+
+	// The 6 possible components that might be modified by a key
+	enum AnimComponent 
+	{
+		X		= 1 << 0, 
+		Y		= 1 << 1, 
+		Z		= 1 << 2,
+		YAW		= 1 << 3, 
+		PITCH	= 1 << 4, 
+		ROLL	= 1 << 5,
+		INVALID_COMPONENT	= 1 << 6
+	};
+
+	// A bit mask explaining which components we're animating
+	std::size_t animComponents;
+
+	std::size_t firstKey;
+};
 
 /** 
  * Base class for an MD5 animation as used in Doom 3.
@@ -11,6 +40,27 @@ namespace md5
 class IMD5Anim 
 {
 public:
+	// Information used by the base frame
+	struct Key
+	{
+		Vector3 origin;
+		Quaternion orientation;
+	};
+
+	/**
+	 * Get the number of joints in this animation.
+	 */
+	virtual std::size_t getNumJoints() const = 0;
+
+	/** 
+	 * Retrieve a certain joint by index, bounds are [0..getNumJoints())
+	 */
+	virtual const Joint& getJoint(std::size_t index) const = 0;
+
+	/**
+	 * Returns the baseframe info for the given joint nubmber.
+	 */
+	virtual const Key& getBaseFrameKey(std::size_t jointNum) const = 0;
 };
 typedef boost::shared_ptr<IMD5Anim> IMD5AnimPtr;
 

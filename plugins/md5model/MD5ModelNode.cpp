@@ -33,6 +33,10 @@ const model::IModel& MD5ModelNode::getIModel() const {
 	return *_model;
 }
 
+model::IModel& MD5ModelNode::getIModel() {
+	return *_model;
+}
+
 void MD5ModelNode::lightsChanged() {
 	_lightList->lightsChanged();
 }
@@ -127,6 +131,10 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 		collector.setLights(*j);
 		(*i)->render(collector, localToWorld, entity);
 	}
+
+	// Render the skeleton for the moment being
+	collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
+	collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
 }
 
 void MD5ModelNode::constructRemaps()

@@ -29,6 +29,7 @@ public:
 	static NullModelNodePtr InstancePtr();
 
 	virtual const IModel& getIModel() const;
+	virtual IModel& getIModel();
 
 	void testSelect(Selector& selector, SelectionTest& test);
 
