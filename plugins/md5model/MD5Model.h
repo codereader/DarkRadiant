@@ -106,7 +106,7 @@ public:
 	// IMD5Model implementation
 	virtual void setAnim(const IMD5AnimPtr& anim);
 	virtual const IMD5AnimPtr& getAnim() const;
-	virtual void updateAnim(std::size_t time) const;
+	virtual void updateAnim(std::size_t time);
 
 private:
 	/**

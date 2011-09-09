@@ -385,9 +385,11 @@ const IMD5AnimPtr& MD5Model::getAnim() const
 	return _anim;
 }
 
-void MD5Model::updateAnim(std::size_t time) const
+void MD5Model::updateAnim(std::size_t time)
 {
 	if (!_anim) return; // nothing to do
+
+	_renderableSkeleton.update();
 
 	// TODO
 }

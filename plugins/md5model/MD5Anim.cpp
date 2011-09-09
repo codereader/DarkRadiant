@@ -19,15 +19,27 @@ void MD5Anim::parseJointHierarchy(parser::DefTokeniser& tok)
 
 	for (std::size_t i = 0; i < _joints.size(); ++i)
 	{
+		// Assign the correct joint ID
+		_joints[i].id = static_cast<int>(i);
+
 		// Syntax: "<jointName>"	<parentId> <animComponentMask> <firstKey>
 		_joints[i].name = tok.nextToken();
-		_joints[i].parentId = strToInt(tok.nextToken());	
+
+		int parentId = strToInt(tok.nextToken());
+		_joints[i].parentId = parentId;	
+
 		_joints[i].animComponents = strToSizet(tok.nextToken());
 		_joints[i].firstKey = strToSizet(tok.nextToken());
 
 		// Some sanity checks
 		assert(_joints[i].parentId == -1 || (_joints[i].parentId >= 0 && _joints[i].parentId < _joints.size()));
 		assert(_joints[i].animComponents < Joint::INVALID_COMPONENT);
+
+		// Add this joint as child to its parent joint
+		if (parentId >= 0)
+		{
+			_joints[parentId].children.push_back(_joints[i].id);
+		}
 	}
 
 	// If we don't hit a closing brace at this point something went amiss

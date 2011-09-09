@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 
+#include <vector>
 #include "math/Vector3.h"
 #include "math/Quaternion.h"
 
@@ -10,6 +11,9 @@ namespace md5
 
 struct Joint
 {
+	// The ID of this joint
+	int id;
+
 	// the name of this bone
 	std::string name;
 
@@ -32,6 +36,9 @@ struct Joint
 	std::size_t animComponents;
 
 	std::size_t firstKey;
+
+	// The child joint IDs
+	std::vector<int> children;
 };
 
 /** 
