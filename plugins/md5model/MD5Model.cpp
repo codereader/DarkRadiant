@@ -201,7 +201,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	    }
 
 		// Set the Vector4 rotation on the joint
-	    i->rotation = Vector4(rawRotation, w);
+	    i->rotation = Quaternion(rawRotation, w);
 	}
 
 	// End of joints datablock
@@ -210,13 +210,17 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	// ------ MESHES ------
 
 	// For each mesh, there should be a mesh datablock
-	for (std::size_t i = 0; i < numMeshes; ++i) {
+	for (std::size_t i = 0; i < numMeshes; ++i)
+	{
 		// Start of datablock
 		tok.assertNextToken("mesh");
 		tok.assertNextToken("{");
 
 		// Construct the surface for this mesh
 		MD5Surface& surface = newSurface();
+
+		// Get the reference to the mesh definition
+		MD5Mesh& mesh = surface.getMesh();
 
 		// Get the shader name
 		tok.assertNextToken("shader");
@@ -229,7 +233,8 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	    std::size_t numVerts = strToSizet(tok.nextToken());
 
 		// Initialise the vertex vector
-		MD5Verts verts(numVerts);
+		MD5Verts& verts = mesh.vertices;
+		verts.resize(numVerts);
 
 		// Update the vertexcount
 		_vertexCount += numVerts;
@@ -264,7 +269,8 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 		_polyCount += numTris;
 
 		// Initialise the triangle vector
-		MD5Tris tris(numTris);
+		MD5Tris& tris = mesh.triangles;
+		tris.resize(numTris);
 
 		// Read each triangle
 		for(MD5Tris::iterator tr = tris.begin(); tr != tris.end(); ++tr) {
@@ -286,7 +292,8 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 		std::size_t numWeights = strToSizet(tok.nextToken());
 
 		// Initialise weights vector
-		MD5Weights weights(numWeights);
+		MD5Weights& weights = mesh.weights;
+		weights.resize(numWeights);
 
 		// Populate with weight data
 		for(MD5Weights::iterator w = weights.begin(); w != weights.end(); ++w) {
@@ -297,7 +304,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 			w->index = strToSizet(tok.nextToken());
 			w->joint = strToSizet(tok.nextToken());
 
-			// Strength and direction (?)
+			// Strength and relative position
 			w->t = strToFloat(tok.nextToken());
 			w->v = parseVector3(tok);
 
@@ -317,7 +324,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 				MD5Weight& weight = weights[vert.weight_index + k];
 				MD5Joint& joint = joints[weight.joint];
 
-				Vector3 rotatedPoint = Quaternion(joint.rotation).transformPoint(weight.v);
+				Vector3 rotatedPoint = joint.rotation.transformPoint(weight.v);
 				skinned += (rotatedPoint + joint.position) * weight.t;
 			}
 
