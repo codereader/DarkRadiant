@@ -7,6 +7,7 @@ namespace md5
 
 namespace
 {
+	// greebo: this code has been mostly taken from the web, with some additional fixes on my behalf and the D3 SDK
 	inline Quaternion slerp(const Quaternion& qa, const Quaternion& qb, float fraction)
 	{
 		// quaternion to return
