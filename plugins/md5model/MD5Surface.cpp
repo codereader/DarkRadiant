@@ -33,12 +33,12 @@ void MD5Surface::updateGeometry()
 {
 	_aabb_local = AABB();
 
-	for (vertices_t::iterator i = _vertices.begin(); i != _vertices.end(); ++i)
+	for (Vertices::const_iterator i = _vertices.begin(); i != _vertices.end(); ++i)
 	{
 		_aabb_local.includePoint(i->vertex);
 	}
 
-	for (MD5Surface::indices_t::iterator i = _indices.begin();
+	for (MD5Surface::Indices::iterator i = _indices.begin();
 		 i != _indices.end();
 		 i += 3)
 	{
@@ -49,7 +49,7 @@ void MD5Surface::updateGeometry()
 		ArbitraryMeshTriangle_sumTangents(a, b, c);
 	}
 
-	for (MD5Surface::vertices_t::iterator i = _vertices.begin();
+	for (MD5Surface::Vertices::iterator i = _vertices.begin();
 		 i != _vertices.end();
 		 ++i)
 	{
@@ -82,7 +82,7 @@ void MD5Surface::createDisplayLists()
 	glNewList(_lightingList, GL_COMPILE);
 
 	glBegin(GL_TRIANGLES);
-	for (indices_t::const_iterator i = _indices.begin();
+	for (Indices::const_iterator i = _indices.begin();
 		 i != _indices.end();
 		 ++i)
 	{
@@ -108,7 +108,7 @@ void MD5Surface::createDisplayLists()
 	glNewList(_normalList, GL_COMPILE);
 
 	glBegin(GL_TRIANGLES);
-	for (indices_t::const_iterator i = _indices.begin();
+	for (Indices::const_iterator i = _indices.begin();
 		 i != _indices.end();
 		 ++i)
 	{
@@ -158,19 +158,6 @@ void MD5Surface::captureShader()
 		// Free shaders
 		_shader.reset();
 	}
-}
-
-MD5Surface::vertices_t& MD5Surface::vertices() {
-	return _vertices;
-}
-
-MD5Surface::indices_t& MD5Surface::indices() {
-	return _indices;
-}
-
-MD5Mesh& MD5Surface::getMesh()
-{
-	return _mesh;
 }
 
 void MD5Surface::setShader(const std::string& name)
@@ -263,6 +250,67 @@ const std::string& MD5Surface::getDefaultMaterial() const
 const std::string& MD5Surface::getActiveMaterial() const
 {
 	return _shaderName;
+}
+
+void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
+{
+	MD5Verts& verts = _mesh.vertices;
+	MD5Weights& weights= _mesh.weights;
+	MD5Tris& tris= _mesh.triangles;
+
+	_vertices.clear();
+	_indices.clear();
+
+	for (MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j)
+	{
+		MD5Vert& vert = (*j);
+
+		Vector3 skinned(0, 0, 0);
+
+		for (std::size_t k = 0; k != vert.weight_count; ++k)
+		{
+			MD5Weight& weight = weights[vert.weight_index + k];
+			const MD5Joint& joint = joints[weight.joint];
+
+			Vector3 rotatedPoint = joint.rotation.transformPoint(weight.v);
+			skinned += (rotatedPoint + joint.position) * weight.t;
+		}
+
+		_vertices.push_back(
+			ArbitraryMeshVertex(skinned, Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v))
+		);
+	}
+
+	// Build the indices based on the triangle information
+	for (MD5Tris::iterator j = tris.begin(); j != tris.end(); ++j)
+	{
+		MD5Tri& tri = (*j);
+
+		_indices.insert(static_cast<RenderIndex>(tri.a));
+		_indices.insert(static_cast<RenderIndex>(tri.b));
+		_indices.insert(static_cast<RenderIndex>(tri.c));
+	}
+
+	for (Indices::iterator j = _indices.begin(); j != _indices.end(); j += 3)
+	{
+		ArbitraryMeshVertex& a = _vertices[*(j + 0)];
+		ArbitraryMeshVertex& b = _vertices[*(j + 1)];
+		ArbitraryMeshVertex& c = _vertices[*(j + 2)];
+
+		Vector3 weightedNormal((c.vertex - a.vertex).crossProduct(b.vertex - a.vertex));
+
+		a.normal += weightedNormal;
+		b.normal += weightedNormal;
+		c.normal += weightedNormal;
+	}
+
+	// Normalise all normal vectors
+	for (MD5Surface::Vertices::iterator j = _vertices.begin(); j != _vertices.end(); ++j)
+	{
+		j->normal = Normal3f(j->normal.getNormalised());
+	}
+
+	updateGeometry();
 }
 
 void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)

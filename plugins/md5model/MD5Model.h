@@ -18,6 +18,9 @@ class MD5Model :
 	public model::IModel
 {
 private:
+	// The list of joints as defined in the .md5mesh file
+	MD5Joints _joints;
+
 	typedef std::vector<MD5SurfacePtr> SurfaceList;
 	SurfaceList _surfaces;
 
@@ -122,7 +125,7 @@ public:
 private:
 
 	// Creates a new MD5Surface, adds it to the local list and returns the reference
-	MD5Surface& newSurface();
+	MD5Surface& createNewSurface();
 
 	// Re-populates the list of active shader names
 	void updateMaterialList();

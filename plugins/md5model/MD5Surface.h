@@ -20,8 +20,8 @@ class MD5Surface :
 	public OpenGLRenderable
 {
 public:
-	typedef VertexBuffer<ArbitraryMeshVertex> vertices_t;
-	typedef IndexBuffer indices_t;
+	typedef VertexBuffer<ArbitraryMeshVertex> Vertices;
+	typedef IndexBuffer Indices;
 
 private:
 	AABB _aabb_local;
@@ -36,8 +36,8 @@ private:
 	// The mesh definition - will be baked into renderable vertex arrays
 	MD5Mesh _mesh;
 
-	vertices_t _vertices;
-	indices_t _indices;	
+	Vertices _vertices;
+	Indices _indices;	
 
 	// The GL display lists for this surface's geometry
 	GLuint _normalList;
@@ -66,10 +66,6 @@ public:
 	 */
 	~MD5Surface();
 
-	vertices_t& vertices();
-	indices_t& indices();
-	MD5Mesh& getMesh();
-
 	// Set/get the shader name
 	void setShader(const std::string& name);
 
@@ -82,6 +78,10 @@ public:
 	 * Calculate the AABB and build the display lists for rendering.
 	 */
 	void updateGeometry();
+
+	// Updates the mesh to the pose defined in the .md5mesh file - usually a T-Pose
+	// It needs the joints defined in that file as reference
+	void updateToDefaultPose(const MD5Joints& joints);
 
 	// Applies the given Skin to this surface.
 	void applySkin(const ModelSkin& skin);
