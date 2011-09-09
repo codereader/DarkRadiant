@@ -113,12 +113,13 @@ public:
 	virtual const IMD5AnimPtr& getAnim() const;
 	virtual void updateAnim(std::size_t time);
 
-private:
 	/**
 	 * Helper: Parse an MD5 vector, which consists of three separated numbers
 	 * enclosed with parentheses.
 	 */
-	Vector3 parseVector3(parser::DefTokeniser& tok);
+	static Vector3 parseVector3(parser::DefTokeniser& tok);
+
+private:
 
 	// Creates a new MD5Surface, adds it to the local list and returns the reference
 	MD5Surface& newSurface();

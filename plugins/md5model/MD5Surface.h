@@ -10,6 +10,7 @@
 #include "imodelsurface.h"
 
 #include "MD5DataStructures.h"
+#include "parser/DefTokeniser.h"
 
 namespace md5
 {
@@ -109,6 +110,8 @@ public:
 
 	const std::string& getDefaultMaterial() const;
 	const std::string& getActiveMaterial() const;
+
+	void parseFromTokens(parser::DefTokeniser& tok);
 };
 typedef boost::shared_ptr<MD5Surface> MD5SurfacePtr;
 

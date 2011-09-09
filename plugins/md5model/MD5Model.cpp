@@ -212,115 +212,29 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	// For each mesh, there should be a mesh datablock
 	for (std::size_t i = 0; i < numMeshes; ++i)
 	{
-		// Start of datablock
-		tok.assertNextToken("mesh");
-		tok.assertNextToken("{");
-
 		// Construct the surface for this mesh
 		MD5Surface& surface = newSurface();
 
-		// Get the reference to the mesh definition
-		MD5Mesh& mesh = surface.getMesh();
-
-		// Get the shader name
-		tok.assertNextToken("shader");
-		surface.setShader(tok.nextToken());
-
-		// ----- VERTICES ------
-
-		// Read the vertex count
-		tok.assertNextToken("numverts");
-	    std::size_t numVerts = strToSizet(tok.nextToken());
-
-		// Initialise the vertex vector
-		MD5Verts& verts = mesh.vertices;
-		verts.resize(numVerts);
-
-		// Update the vertexcount
-		_vertexCount += numVerts;
-
-		// Populate each vertex struct with parsed values
-		for (MD5Verts::iterator vt = verts.begin(); vt != verts.end(); ++vt) {
-
-			tok.assertNextToken("vert");
-
-			// Index of vert
-			vt->index = strToSizet(tok.nextToken());
-
-			// U and V texcoords
-			tok.assertNextToken("(");
-			vt->u = strToFloat(tok.nextToken());
-			vt->v = strToFloat(tok.nextToken());
-			tok.assertNextToken(")");
-
-			// Weight index and count
-			vt->weight_index = strToSizet(tok.nextToken());
-			vt->weight_count = strToSizet(tok.nextToken());
-
-		} // for each vertex
-
-		// ------  TRIANGLES ------
-
-		// Read the number of triangles
-		tok.assertNextToken("numtris");
-		std::size_t numTris = strToSizet(tok.nextToken());
-
-		// Update the polycount
-		_polyCount += numTris;
-
-		// Initialise the triangle vector
-		MD5Tris& tris = mesh.triangles;
-		tris.resize(numTris);
-
-		// Read each triangle
-		for(MD5Tris::iterator tr = tris.begin(); tr != tris.end(); ++tr) {
-
-			tok.assertNextToken("tri");
-
-			// Triangle index, followed by the indexes of its 3 vertices
-			tr->index = strToSizet(tok.nextToken());
-			tr->a = 	strToSizet(tok.nextToken());
-			tr->b = 	strToSizet(tok.nextToken());
-			tr->c = 	strToSizet(tok.nextToken());
-
-		} // for each triangle
-
-		// -----  WEIGHTS ------
-
-		// Read the number of weights
-		tok.assertNextToken("numweights");
-		std::size_t numWeights = strToSizet(tok.nextToken());
-
-		// Initialise weights vector
-		MD5Weights& weights = mesh.weights;
-		weights.resize(numWeights);
-
-		// Populate with weight data
-		for(MD5Weights::iterator w = weights.begin(); w != weights.end(); ++w) {
-
-			tok.assertNextToken("weight");
-
-			// Index and joint
-			w->index = strToSizet(tok.nextToken());
-			w->joint = strToSizet(tok.nextToken());
-
-			// Strength and relative position
-			w->t = strToFloat(tok.nextToken());
-			w->v = parseVector3(tok);
-
-		} // for each weight
-
-		// ----- END OF MESH DECL -----
-
-		tok.assertNextToken("}");
+		surface.parseFromTokens(tok);
 
 		// ------ CALCULATION ------
 
-		for (MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j) {
+		MD5Verts& verts = surface.getMesh().vertices;
+		MD5Weights& weights= surface.getMesh().weights;
+		MD5Tris& tris= surface.getMesh().triangles;
+
+		// Update the vertexcount
+		_vertexCount += verts.size();
+		// Update the polycount
+		_polyCount += tris.size();
+
+		for (MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j)
+		{
 			MD5Vert& vert = (*j);
 
 			Vector3 skinned(0, 0, 0);
-			for (std::size_t k = 0; k != vert.weight_count; ++k) {
+			for (std::size_t k = 0; k != vert.weight_count; ++k)
+			{
 				MD5Weight& weight = weights[vert.weight_index + k];
 				MD5Joint& joint = joints[weight.joint];
 

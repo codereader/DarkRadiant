@@ -2,6 +2,8 @@
 
 #include "ivolumetest.h"
 #include "GLProgramAttributes.h"
+#include "string/string.h"
+#include "MD5Model.h"
 
 namespace md5
 {
@@ -261,6 +263,102 @@ const std::string& MD5Surface::getDefaultMaterial() const
 const std::string& MD5Surface::getActiveMaterial() const
 {
 	return _shaderName;
+}
+
+void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
+{
+	// Start of datablock
+	tok.assertNextToken("mesh");
+	tok.assertNextToken("{");
+
+	// Get the reference to the mesh definition
+	MD5Mesh& mesh = _mesh;
+
+	// Get the shader name
+	tok.assertNextToken("shader");
+	setShader(tok.nextToken());
+
+	// ----- VERTICES ------
+
+	// Read the vertex count
+	tok.assertNextToken("numverts");
+	std::size_t numVerts = strToSizet(tok.nextToken());
+
+	// Initialise the vertex vector
+	MD5Verts& verts = mesh.vertices;
+	verts.resize(numVerts);
+
+	// Populate each vertex struct with parsed values
+	for (MD5Verts::iterator vt = verts.begin(); vt != verts.end(); ++vt) {
+
+		tok.assertNextToken("vert");
+
+		// Index of vert
+		vt->index = strToSizet(tok.nextToken());
+
+		// U and V texcoords
+		tok.assertNextToken("(");
+		vt->u = strToFloat(tok.nextToken());
+		vt->v = strToFloat(tok.nextToken());
+		tok.assertNextToken(")");
+
+		// Weight index and count
+		vt->weight_index = strToSizet(tok.nextToken());
+		vt->weight_count = strToSizet(tok.nextToken());
+
+	} // for each vertex
+
+	// ------  TRIANGLES ------
+
+	// Read the number of triangles
+	tok.assertNextToken("numtris");
+	std::size_t numTris = strToSizet(tok.nextToken());
+
+	// Initialise the triangle vector
+	MD5Tris& tris = mesh.triangles;
+	tris.resize(numTris);
+
+	// Read each triangle
+	for(MD5Tris::iterator tr = tris.begin(); tr != tris.end(); ++tr) {
+
+		tok.assertNextToken("tri");
+
+		// Triangle index, followed by the indexes of its 3 vertices
+		tr->index = strToSizet(tok.nextToken());
+		tr->a = 	strToSizet(tok.nextToken());
+		tr->b = 	strToSizet(tok.nextToken());
+		tr->c = 	strToSizet(tok.nextToken());
+
+	} // for each triangle
+
+	// -----  WEIGHTS ------
+
+	// Read the number of weights
+	tok.assertNextToken("numweights");
+	std::size_t numWeights = strToSizet(tok.nextToken());
+
+	// Initialise weights vector
+	MD5Weights& weights = mesh.weights;
+	weights.resize(numWeights);
+
+	// Populate with weight data
+	for(MD5Weights::iterator w = weights.begin(); w != weights.end(); ++w) {
+
+		tok.assertNextToken("weight");
+
+		// Index and joint
+		w->index = strToSizet(tok.nextToken());
+		w->joint = strToSizet(tok.nextToken());
+
+		// Strength and relative position
+		w->t = strToFloat(tok.nextToken());
+		w->v = MD5Model::parseVector3(tok);
+
+	} // for each weight
+
+	// ----- END OF MESH DECL -----
+
+	tok.assertNextToken("}");
 }
 
 } // namespace md5
