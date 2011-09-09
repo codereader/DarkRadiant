@@ -9,6 +9,8 @@
 #include "modelskin.h"
 #include "imodelsurface.h"
 
+#include "MD5DataStructures.h"
+
 namespace md5
 {
 
@@ -30,8 +32,11 @@ private:
 	// Shader object
 	ShaderPtr _shader;
 
+	// The mesh definition - will be baked into renderable vertex arrays
+	MD5Mesh _mesh;
+
 	vertices_t _vertices;
-	indices_t _indices;
+	indices_t _indices;	
 
 	// The GL display lists for this surface's geometry
 	GLuint _normalList;
@@ -62,6 +67,7 @@ public:
 
 	vertices_t& vertices();
 	indices_t& indices();
+	MD5Mesh& getMesh();
 
 	// Set/get the shader name
 	void setShader(const std::string& name);

@@ -1,13 +1,13 @@
-#ifndef MD5DATASTRUCTURES_H_
-#define MD5DATASTRUCTURES_H_
+#pragma once
 
 #include <vector>
 #include "math/Vector3.h"
+#include "math/Quaternion.h"
 
-/** greebo: These are some data structures used by the MD5Parser
+/** greebo: Some data structures used in MD5 model code
  */
-
-namespace md5 {
+namespace md5
+{
 
 /**
  * Data structure containing MD5 Joint information.
@@ -16,7 +16,7 @@ struct MD5Joint
 {
 	int parent;
 	Vector3 position;
-	Vector4 rotation;
+	Quaternion rotation;
 };
 
 typedef std::vector<MD5Joint> MD5Joints;
@@ -24,7 +24,7 @@ typedef std::vector<MD5Joint> MD5Joints;
 #ifdef _DEBUG
 
 // Stream insertion for MD5Joint
-std::ostream& operator<< (std::ostream& os, const MD5Joint& jt) {
+inline std::ostream& operator<< (std::ostream& os, const MD5Joint& jt) {
 	os << "MD5Joint { parent=" << jt.parent
 	   << " position=" << jt.position
 	   << " rotation=" << jt.rotation
@@ -69,23 +69,22 @@ typedef std::vector<MD5Tri> MD5Tris;
  */
 struct MD5Weight
 {
-	std::size_t index;
-	std::size_t joint;
-	float t;
-	Vector3 v;
+	std::size_t index;	// Weight index
+	std::size_t joint;	// Joint ID
+	float t;			// Weight
+	Vector3 v;			// Vertex Posistion relative to the Bone
 };
 
 typedef std::vector<MD5Weight> MD5Weights;
 
-typedef float MD5Component;
-typedef std::vector<MD5Component> MD5Components;
-
-class MD5Frame
+// The combination of vertices, triangles and weighting information
+// represents our MD5 mesh - using this info it's possible to create
+// the actual rendered geometry (position, normals, etc.)
+struct MD5Mesh
 {
-public:
-	MD5Components m_components;
+	MD5Verts	vertices;
+	MD5Tris		triangles;
+	MD5Weights	weights;
 };
 
-} // namespace md5
-
-#endif /*MD5DATASTRUCTURES_H_*/
+} // namespace

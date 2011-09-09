@@ -166,6 +166,11 @@ MD5Surface::indices_t& MD5Surface::indices() {
 	return _indices;
 }
 
+MD5Mesh& MD5Surface::getMesh()
+{
+	return _mesh;
+}
+
 void MD5Surface::setShader(const std::string& name)
 {
 	_shaderName = name;
