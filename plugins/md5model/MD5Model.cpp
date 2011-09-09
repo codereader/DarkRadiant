@@ -28,7 +28,8 @@ std::size_t MD5Model::size() const {
 	return _surfaces.size();
 }
 
-MD5Surface& MD5Model::newSurface() {
+MD5Surface& MD5Model::createNewSurface()
+{
 	_surfaces.push_back(MD5SurfacePtr(new MD5Surface));
 	return *_surfaces.back();
 }
@@ -44,7 +45,8 @@ const AABB& MD5Model::localAABB() const {
 	return _aabb_local;
 }
 
-void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld) {
+void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
+{
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
 	{
 		if (test.getVolume().TestAABB((*i)->localAABB(), localToWorld) != VOLUME_OUTSIDE)
@@ -149,7 +151,8 @@ void MD5Model::setRenderSystem(const RenderSystemPtr& renderSystem)
 	}
 }
 
-void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
+void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
+{
 	_vertexCount = 0;
 	_polyCount = 0;
 
@@ -174,12 +177,12 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	tok.assertNextToken("{");
 
 	// Initialise the Joints vector with the specified number of objects
-	MD5Joints joints(numJoints);
+	_joints.resize(numJoints);
 
 	// Iterate over the vector of Joints, filling in each one with parsed
 	// values
-	for(MD5Joints::iterator i = joints.begin(); i != joints.end(); ++i) {
-
+	for(MD5Joints::iterator i = _joints.begin(); i != _joints.end(); ++i)
+	{
 		// Skip the joint name
 		tok.skipTokens(1);
 
@@ -195,6 +198,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	    // Calculate the W value. If it is NaN (due to underflow in the sqrt),
 	    // set it to 0.
 	    float lSq = rawRotation.getLengthSquared();
+
 	    float w = -sqrt(1.0f - lSq);
 	    if (isNaN(w)) {
 	    	w = 0;
@@ -213,64 +217,19 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	for (std::size_t i = 0; i < numMeshes; ++i)
 	{
 		// Construct the surface for this mesh
-		MD5Surface& surface = newSurface();
+		MD5Surface& surface = createNewSurface();
 
 		surface.parseFromTokens(tok);
 
-		// ------ CALCULATION ------
-
-		MD5Verts& verts = surface.getMesh().vertices;
-		MD5Weights& weights= surface.getMesh().weights;
-		MD5Tris& tris= surface.getMesh().triangles;
+		// Build the default vertex array
+		surface.updateToDefaultPose(_joints);
 
 		// Update the vertexcount
-		_vertexCount += verts.size();
+		_vertexCount += surface.getNumVertices();
+
 		// Update the polycount
-		_polyCount += tris.size();
-
-		for (MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j)
-		{
-			MD5Vert& vert = (*j);
-
-			Vector3 skinned(0, 0, 0);
-			for (std::size_t k = 0; k != vert.weight_count; ++k)
-			{
-				MD5Weight& weight = weights[vert.weight_index + k];
-				MD5Joint& joint = joints[weight.joint];
-
-				Vector3 rotatedPoint = joint.rotation.transformPoint(weight.v);
-				skinned += (rotatedPoint + joint.position) * weight.t;
-			}
-
-			surface.vertices().push_back(
-				ArbitraryMeshVertex(skinned, Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v))
-			);
-		}
-
-		for (MD5Tris::iterator j = tris.begin(); j != tris.end(); ++j) {
-			MD5Tri& tri = (*j);
-			surface.indices().insert(RenderIndex(tri.a));
-			surface.indices().insert(RenderIndex(tri.b));
-			surface.indices().insert(RenderIndex(tri.c));
-		}
-
-		for (MD5Surface::indices_t::iterator j = surface.indices().begin(); j != surface.indices().end(); j += 3) {
-			ArbitraryMeshVertex& a = surface.vertices()[*(j + 0)];
-			ArbitraryMeshVertex& b = surface.vertices()[*(j + 1)];
-			ArbitraryMeshVertex& c = surface.vertices()[*(j + 2)];
-			Vector3 weightedNormal((c.vertex - a.vertex).crossProduct(b.vertex - a.vertex) );
-			a.normal += weightedNormal;
-			b.normal += weightedNormal;
-			c.normal += weightedNormal;
-		}
-
-		for (MD5Surface::vertices_t::iterator j = surface.vertices().begin(); j != surface.vertices().end(); ++j) {
-			j->normal = Normal3f(j->normal.getNormalised());
-		}
-
-		surface.updateGeometry();
-
-	} // for each mesh
+		_polyCount += surface.getNumTriangles();
+	}
 
 	updateAABB();
 	updateMaterialList();
@@ -294,7 +253,10 @@ void MD5Model::setAnim(const IMD5AnimPtr& anim)
 
 	if (!_anim)
 	{
-		// TODO: Reset to standard pose
+		for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+		{
+			(*i)->updateToDefaultPose(_joints);
+		}
 	}
 }
 
