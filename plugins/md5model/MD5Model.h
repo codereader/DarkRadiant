@@ -36,8 +36,13 @@ private:
 	// The VFS path to this model
 	std::string _modelPath;
 
+	// The animation which is currently active on this model
 	IMD5AnimPtr _anim;
 
+	// The current state of our animated skeleton
+	MD5Skeleton _skeleton;
+
+	// The OpenGLRenderable visualising the MD5Skeleton
 	RenderableMD5Skeleton _renderableSkeleton;
 
 public:
