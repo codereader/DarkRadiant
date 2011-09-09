@@ -221,6 +221,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 
 		surface.parseFromTokens(tok);
 
+		// Build the index array - this has to happen at least once
+		surface.buildIndexArray();
+
 		// Build the default vertex array
 		surface.updateToDefaultPose(_joints);
 

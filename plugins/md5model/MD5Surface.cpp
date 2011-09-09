@@ -38,7 +38,7 @@ void MD5Surface::updateGeometry()
 		_aabb_local.includePoint(i->vertex);
 	}
 
-	for (MD5Surface::Indices::iterator i = _indices.begin();
+	for (Indices::iterator i = _indices.begin();
 		 i != _indices.end();
 		 i += 3)
 	{
@@ -49,7 +49,7 @@ void MD5Surface::updateGeometry()
 		ArbitraryMeshTriangle_sumTangents(a, b, c);
 	}
 
-	for (MD5Surface::Vertices::iterator i = _vertices.begin();
+	for (Vertices::iterator i = _vertices.begin();
 		 i != _vertices.end();
 		 ++i)
 	{
@@ -225,7 +225,7 @@ int MD5Surface::getNumTriangles() const
 
 const ArbitraryMeshVertex& MD5Surface::getVertex(int vertexIndex) const
 {
-	assert(vertexIndex >= 0 && vertexIndex < _vertices.size());
+	assert(vertexIndex >= 0 && vertexIndex < static_cast<int>(_vertices.size()));
 	return _vertices[vertexIndex];
 }
 
@@ -259,7 +259,6 @@ void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 	MD5Tris& tris= _mesh.triangles;
 
 	_vertices.clear();
-	_indices.clear();
 
 	for (MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j)
 	{
@@ -281,14 +280,10 @@ void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 		);
 	}
 
-	// Build the indices based on the triangle information
-	for (MD5Tris::iterator j = tris.begin(); j != tris.end(); ++j)
+	// Ensure the index array is ok
+	if (_indices.empty())
 	{
-		MD5Tri& tri = (*j);
-
-		_indices.insert(static_cast<RenderIndex>(tri.a));
-		_indices.insert(static_cast<RenderIndex>(tri.b));
-		_indices.insert(static_cast<RenderIndex>(tri.c));
+		buildIndexArray();
 	}
 
 	for (Indices::iterator j = _indices.begin(); j != _indices.end(); j += 3)
@@ -305,12 +300,27 @@ void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 	}
 
 	// Normalise all normal vectors
-	for (MD5Surface::Vertices::iterator j = _vertices.begin(); j != _vertices.end(); ++j)
+	for (Vertices::iterator j = _vertices.begin(); j != _vertices.end(); ++j)
 	{
 		j->normal = Normal3f(j->normal.getNormalised());
 	}
 
 	updateGeometry();
+}
+
+void MD5Surface::buildIndexArray()
+{
+	_indices.clear();
+
+	// Build the indices based on the triangle information
+	for (MD5Tris::const_iterator j = _mesh.triangles.begin(); j != _mesh.triangles.end(); ++j)
+	{
+		const MD5Tri& tri = (*j);
+
+		_indices.insert(static_cast<RenderIndex>(tri.a));
+		_indices.insert(static_cast<RenderIndex>(tri.b));
+		_indices.insert(static_cast<RenderIndex>(tri.c));
+	}
 }
 
 void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
