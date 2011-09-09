@@ -40,23 +40,28 @@ void MD5Skeleton::update(const IMD5AnimPtr& anim, std::size_t time)
 		{
 			_skeleton[i].origin.x() = frameKeys[key++];
 		}
-		else if (joint.animComponents & Joint::Y)
+
+		if (joint.animComponents & Joint::Y)
 		{
 			_skeleton[i].origin.y() = frameKeys[key++];
 		}
-		else if (joint.animComponents & Joint::Z)
+
+		if (joint.animComponents & Joint::Z)
 		{
 			_skeleton[i].origin.z() = frameKeys[key++];
 		}
-		else if (joint.animComponents & Joint::YAW)
+
+		if (joint.animComponents & Joint::YAW)
 		{
 			_skeleton[i].orientation.x() = frameKeys[key++];
 		}
-		else if (joint.animComponents & Joint::PITCH)
+
+		if (joint.animComponents & Joint::PITCH)
 		{
 			_skeleton[i].orientation.y() = frameKeys[key++];
 		}
-		else if (joint.animComponents & Joint::ROLL)
+
+		if (joint.animComponents & Joint::ROLL)
 		{
 			_skeleton[i].orientation.z() = frameKeys[key++];
 		}
