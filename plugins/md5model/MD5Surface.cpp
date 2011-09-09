@@ -285,6 +285,54 @@ void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 		buildIndexArray();
 	}
 
+	buildVertexNormals();
+
+	updateGeometry();
+}
+
+void MD5Surface::updateToSkeleton(const MD5Skeleton& skeleton)
+{
+	// Ensure we have all vertices allocated
+	if (_vertices.size() != _mesh.vertices.size())
+	{
+		_vertices.resize(_mesh.vertices.size());
+	}
+
+	// Deform vertices to fit the skeleton
+	for (std::size_t j = 0; j < _mesh.vertices.size(); ++j)
+	{
+		MD5Vert& vert = _mesh.vertices[j];
+
+		Vector3 skinned(0, 0, 0);
+
+		for (std::size_t k = 0; k != vert.weight_count; ++k)
+		{
+			MD5Weight& weight = _mesh.weights[vert.weight_index + k];
+			const IMD5Anim::Key& key = skeleton.getKey(weight.joint);
+			//const Joint& joint = skeleton.getJoint(weight.joint);
+
+			Vector3 rotatedPoint = key.orientation.transformPoint(weight.v);
+			skinned += (rotatedPoint + key.origin) * weight.t;
+		}
+
+		_vertices[j].vertex = skinned;
+		_vertices[j].texcoord = TexCoord2f(vert.u, vert.v);
+		_vertices[j].normal = Normal3f(0,0,0);
+	}
+
+	// Ensure the index array is ok
+	if (_indices.empty())
+	{
+		buildIndexArray();
+	}
+
+	buildVertexNormals();
+
+	updateGeometry();
+}
+
+void MD5Surface::buildVertexNormals()
+{
 	for (Indices::iterator j = _indices.begin(); j != _indices.end(); j += 3)
 	{
 		ArbitraryMeshVertex& a = _vertices[*(j + 0)];
@@ -303,13 +351,6 @@ void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 	{
 		j->normal = Normal3f(j->normal.getNormalised());
 	}
-
-	updateGeometry();
-}
-
-void MD5Surface::updateToSkeleton(const MD5Skeleton& skeleton)
-{
-
 }
 
 void MD5Surface::buildIndexArray()
