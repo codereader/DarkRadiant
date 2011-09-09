@@ -254,30 +254,29 @@ const std::string& MD5Surface::getActiveMaterial() const
 
 void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 {
-	MD5Verts& verts = _mesh.vertices;
-	MD5Weights& weights= _mesh.weights;
-	MD5Tris& tris= _mesh.triangles;
-
-	_vertices.clear();
-
-	for (MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j)
+	if (_vertices.size() != _mesh.vertices.size())
 	{
-		MD5Vert& vert = (*j);
+		_vertices.resize(_mesh.vertices.size());
+	}
+
+	for (std::size_t j = 0; j < _mesh.vertices.size(); ++j)
+	{
+		MD5Vert& vert = _mesh.vertices[j];
 
 		Vector3 skinned(0, 0, 0);
 
 		for (std::size_t k = 0; k != vert.weight_count; ++k)
 		{
-			MD5Weight& weight = weights[vert.weight_index + k];
+			MD5Weight& weight = _mesh.weights[vert.weight_index + k];
 			const MD5Joint& joint = joints[weight.joint];
 
 			Vector3 rotatedPoint = joint.rotation.transformPoint(weight.v);
 			skinned += (rotatedPoint + joint.position) * weight.t;
 		}
 
-		_vertices.push_back(
-			ArbitraryMeshVertex(skinned, Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v))
-		);
+		_vertices[j].vertex = skinned;
+		_vertices[j].texcoord = TexCoord2f(vert.u, vert.v);
+		_vertices[j].normal = Normal3f(0,0,0);
 	}
 
 	// Ensure the index array is ok
@@ -306,6 +305,11 @@ void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 	}
 
 	updateGeometry();
+}
+
+void MD5Surface::updateToSkeleton(const MD5Skeleton& skeleton)
+{
+
 }
 
 void MD5Surface::buildIndexArray()

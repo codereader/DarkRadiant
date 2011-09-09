@@ -15,6 +15,8 @@
 namespace md5
 {
 
+class MD5Skeleton;
+
 class MD5Surface :
 	public model::IModelSurface,
 	public OpenGLRenderable
@@ -82,6 +84,9 @@ public:
 	// Updates the mesh to the pose defined in the .md5mesh file - usually a T-Pose
 	// It needs the joints defined in that file as reference
 	void updateToDefaultPose(const MD5Joints& joints);
+
+	// Updates this mesh to the state of the given skeleton
+	void updateToSkeleton(const MD5Skeleton& skeleton);
 
 	// Applies the given Skin to this surface.
 	void applySkin(const ModelSkin& skin);
