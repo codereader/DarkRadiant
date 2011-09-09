@@ -325,6 +325,7 @@
     <ClCompile Include="..\..\plugins\md5model\MD5Model.cpp" />
     <ClCompile Include="..\..\plugins\md5model\MD5ModelLoader.cpp" />
     <ClCompile Include="..\..\plugins\md5model\MD5ModelNode.cpp" />
+    <ClCompile Include="..\..\plugins\md5model\MD5Skeleton.cpp" />
     <ClCompile Include="..\..\plugins\md5model\MD5Surface.cpp" />
     <ClCompile Include="..\..\plugins\md5model\plugin.cpp" />
   </ItemGroup>

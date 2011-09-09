@@ -11,6 +11,7 @@ md5model_la_SOURCES = MD5Model.cpp \
                       MD5Surface.cpp \
                       plugin.cpp \
                       MD5ModelLoader.cpp \
+					  MD5Skeleton.cpp \
 					  MD5AnimationCache.cpp \
 					  MD5Anim.cpp
 
