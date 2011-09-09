@@ -53,6 +53,9 @@ public:
 		Vector3 origin;
 		Quaternion orientation;
 	};
+	
+	// Each frame has a series of float values, applied to one or more animated components (x, y, z, yaw, pitch, roll)
+	typedef std::vector<float> FrameKeys;
 
 	/**
 	 * Get the number of joints in this animation.
@@ -65,9 +68,24 @@ public:
 	virtual const Joint& getJoint(std::size_t index) const = 0;
 
 	/**
-	 * Returns the baseframe info for the given joint nubmber.
+	 * Returns the baseframe info for the given joint number.
 	 */
 	virtual const Key& getBaseFrameKey(std::size_t jointNum) const = 0;
+
+	/**
+	 * Returns the frame rate this anim should be played.
+	 */
+	virtual int getFrameRate() const = 0;
+
+	/**
+	 * Returns the number of frames in this animation.
+	 */
+	virtual std::size_t getNumFrames() const = 0;
+
+	/**
+	 * Returns the float values of the given frame index.
+	 */
+	virtual const FrameKeys& getFrameKeys(std::size_t index) const = 0;
 };
 typedef boost::shared_ptr<IMD5Anim> IMD5AnimPtr;
 

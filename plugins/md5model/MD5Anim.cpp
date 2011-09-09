@@ -7,7 +7,6 @@ namespace md5
 {
 
 MD5Anim::MD5Anim() :
-	_numFrames(-1),
 	_frameRate(0),
 	_numAnimatedComponents(-1)
 {}
@@ -51,7 +50,7 @@ void MD5Anim::parseFrameBounds(parser::DefTokeniser& tok)
 	tok.assertNextToken("bounds");
 	tok.assertNextToken("{");
 		
-	for (std::size_t i = 0; i < _numFrames; ++i)
+	for (std::size_t i = 0; i < _frames.size(); ++i)
 	{
 		tok.assertNextToken("(");
 
@@ -158,16 +157,16 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 		_commandLine = tok.nextToken();
 
 		tok.assertNextToken("numFrames");
-		_numFrames = strToInt(tok.nextToken());
+		int numFrames = strToInt(tok.nextToken());
 
 		tok.assertNextToken("numJoints");
 		std::size_t numJoints = strToSizet(tok.nextToken());
 
 		// Adjust the arrays
 		_joints.resize(numJoints);
-		_bounds.resize(_numFrames);
+		_bounds.resize(numFrames);
 		_baseFrame.resize(numJoints);
-		_frames.resize(_numFrames);
+		_frames.resize(numFrames);
 
 		tok.assertNextToken("frameRate");
 		_frameRate = strToInt(tok.nextToken());
@@ -185,7 +184,7 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 		parseBaseFrame(tok);
 
 		// Parse each actual frame
-		for (std::size_t i = 0; i < _numFrames; ++i)
+		for (std::size_t i = 0; i < _frames.size(); ++i)
 		{
 			parseFrame(i, tok);
 		}
