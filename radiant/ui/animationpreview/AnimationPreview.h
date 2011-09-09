@@ -45,6 +45,8 @@ protected:
 	void setupSceneGraph();
 
 	bool onPreRender();
+
+	RenderStateFlags getRenderFlagsFill();
 };
 typedef boost::shared_ptr<AnimationPreview> AnimationPreviewPtr;
 

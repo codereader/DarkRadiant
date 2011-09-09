@@ -103,6 +103,11 @@ bool AnimationPreview::onPreRender()
 	return true;
 }
 
+RenderStateFlags AnimationPreview::getRenderFlagsFill()
+{
+	return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
+}
+
 void AnimationPreview::setAnim(const md5::IMD5AnimPtr& anim)
 {
 	_anim = anim;

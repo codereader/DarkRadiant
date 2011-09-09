@@ -272,6 +272,53 @@ bool RenderPreview::onPreRender()
 	return true;
 }
 
+RenderStateFlags RenderPreview::getRenderFlagsFill()
+{
+	return RENDER_COLOURWRITE | 
+			RENDER_ALPHATEST | 
+			RENDER_BLEND |
+			RENDER_CULLFACE |
+			RENDER_COLOURARRAY |
+            RENDER_OFFSETLINE |
+            RENDER_POLYGONSMOOTH |
+            RENDER_LINESMOOTH |
+            RENDER_COLOURCHANGE |
+			RENDER_FILL |
+			RENDER_LIGHTING |
+			RENDER_TEXTURE_2D |
+			RENDER_SMOOTH |
+			RENDER_SCALED |
+			RENDER_FILL |
+			RENDER_TEXTURE_CUBEMAP |
+			RENDER_BUMP |
+			RENDER_PROGRAM |
+			RENDER_MATERIAL_VCOL |
+			RENDER_VCOL_INVERT |
+			RENDER_SCREEN;
+}
+
+RenderStateFlags RenderPreview::getRenderFlagsWireframe()
+{
+	return RENDER_COLOURWRITE |
+           RENDER_ALPHATEST |
+           RENDER_BLEND |
+           RENDER_CULLFACE |
+           RENDER_COLOURARRAY |
+           RENDER_OFFSETLINE |
+           RENDER_POLYGONSMOOTH |
+           RENDER_LINESMOOTH |
+           RENDER_COLOURCHANGE |
+		   RENDER_LIGHTING |
+		   RENDER_SMOOTH |
+		   RENDER_SCALED |
+		   RENDER_TEXTURE_CUBEMAP |
+		   RENDER_BUMP |
+		   RENDER_PROGRAM |
+		   RENDER_MATERIAL_VCOL |
+		   RENDER_VCOL_INVERT |
+		   RENDER_SCREEN;
+}
+
 bool RenderPreview::onGLDraw(GdkEventExpose*)
 {
 	if (_renderingInProgress) return false; // avoid double-entering this method
@@ -305,27 +352,7 @@ bool RenderPreview::onGLDraw(GdkEventExpose*)
 	// Front-end render phase, collect OpenGLRenderable objects from the scene
 	getScene()->foreachVisibleNodeInVolume(_volumeTest, _sceneWalker);
 
-	RenderStateFlags flags = RENDER_COLOURWRITE | 
-							 RENDER_ALPHATEST | 
-							 RENDER_BLEND |
-							 RENDER_CULLFACE |
-							 RENDER_COLOURARRAY |
-                             RENDER_OFFSETLINE |
-                             RENDER_POLYGONSMOOTH |
-                             RENDER_LINESMOOTH |
-                             RENDER_COLOURCHANGE |
-							 RENDER_FILL |
-							 RENDER_LIGHTING |
-							 RENDER_TEXTURE_2D |
-							 RENDER_SMOOTH |
-							 RENDER_SCALED |
-							 RENDER_FILL |
-							 RENDER_TEXTURE_CUBEMAP |
-							 RENDER_BUMP |
-							 RENDER_PROGRAM |
-							 RENDER_MATERIAL_VCOL |
-							 RENDER_VCOL_INVERT |
-							 RENDER_SCREEN;
+	RenderStateFlags flags = getRenderFlagsFill();
 
 	// Launch the back end rendering
 	_renderSystem->render(flags, _volumeTest.GetModelview(), projection);
@@ -341,24 +368,7 @@ bool RenderPreview::onGLDraw(GdkEventExpose*)
 
 void RenderPreview::renderWireFrame()
 {
-	RenderStateFlags flags = RENDER_COLOURWRITE
-            | RENDER_ALPHATEST
-            | RENDER_BLEND
-            | RENDER_CULLFACE
-            | RENDER_COLOURARRAY
-            | RENDER_OFFSETLINE
-            | RENDER_POLYGONSMOOTH
-            | RENDER_LINESMOOTH
-            | RENDER_COLOURCHANGE
-			| RENDER_LIGHTING
-			| RENDER_SMOOTH
-			| RENDER_SCALED
-			| RENDER_TEXTURE_CUBEMAP
-			| RENDER_BUMP
-			| RENDER_PROGRAM
-			| RENDER_MATERIAL_VCOL
-			| RENDER_VCOL_INVERT
-			| RENDER_SCREEN;
+	RenderStateFlags flags = getRenderFlagsWireframe();
 
 	// Set up the camera
 	Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
