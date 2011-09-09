@@ -275,7 +275,10 @@ void MD5Model::updateAnim(std::size_t time)
 	// Update our joint hierarchy first
 	_skeleton.update(_anim, time);
 
-	// TODO
+	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
+		(*i)->updateToSkeleton(_skeleton);
+	}
 }
 
 } // namespace

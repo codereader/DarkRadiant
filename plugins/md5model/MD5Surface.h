@@ -56,6 +56,9 @@ private:
 	// Create the display lists
 	void createDisplayLists();
 
+	// Re-calculate the normal vectors
+	void buildVertexNormals();
+
 public:
 
 	/**
