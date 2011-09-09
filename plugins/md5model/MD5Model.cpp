@@ -12,7 +12,8 @@ namespace md5 {
 
 MD5Model::MD5Model() :
 	_polyCount(0),
-	_vertexCount(0)
+	_vertexCount(0),
+	_renderableSkeleton(_skeleton)
 {}
 
 MD5Model::const_iterator MD5Model::begin() const {
@@ -146,8 +147,6 @@ void MD5Model::setRenderSystem(const RenderSystemPtr& renderSystem)
 	{
 		(*i)->setRenderSystem(renderSystem);
 	}
-
-	_renderableSkeleton.setRenderSystem(renderSystem);
 }
 
 void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
@@ -372,8 +371,6 @@ void MD5Model::setAnim(const IMD5AnimPtr& anim)
 {
 	_anim = anim;
 
-	_renderableSkeleton.setAnim(_anim);
-
 	if (!_anim)
 	{
 		// TODO: Reset to standard pose
@@ -389,7 +386,8 @@ void MD5Model::updateAnim(std::size_t time)
 {
 	if (!_anim) return; // nothing to do
 
-	_renderableSkeleton.update();
+	// Update our joint hierarchy first
+	_skeleton.update(_anim, time);
 
 	// TODO
 }

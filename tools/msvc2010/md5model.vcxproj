@@ -314,6 +314,7 @@
     <ClInclude Include="..\..\plugins\md5model\MD5Model.h" />
     <ClInclude Include="..\..\plugins\md5model\MD5ModelLoader.h" />
     <ClInclude Include="..\..\plugins\md5model\MD5ModelNode.h" />
+    <ClInclude Include="..\..\plugins\md5model\MD5Skeleton.h" />
     <ClInclude Include="..\..\plugins\md5model\MD5Surface.h" />
     <ClInclude Include="..\..\plugins\md5model\RenderableMD5Skeleton.h" />
     <ClInclude Include="..\..\plugins\md5model\VectorLightList.h" />

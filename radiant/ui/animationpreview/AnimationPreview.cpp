@@ -98,7 +98,7 @@ bool AnimationPreview::onPreRender()
 {
 	// Set the animation to play
 	model::ModelNodePtr model = Node_getModel(_model);
-	dynamic_cast<md5::IMD5Model&>(model->getIModel()).updateAnim(0);
+	dynamic_cast<md5::IMD5Model&>(model->getIModel()).updateAnim(_renderSystem->getTime());
 
 	return true;
 }
