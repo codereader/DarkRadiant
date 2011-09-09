@@ -19,7 +19,6 @@ private:
 	// The command line used to export this md5anim def
 	std::string _commandLine;
 
-	int _numFrames;
 	int _frameRate;
 	int _numAnimatedComponents;
 
@@ -33,7 +32,7 @@ private:
 	Keys _baseFrame;
 
 	// Each frame has <numAnimatedComponents> float values
-	std::vector< std::vector<float> > _frames;
+	std::vector<FrameKeys> _frames;
 
 public:
 	MD5Anim();
@@ -56,6 +55,21 @@ public:
 	const Key& getBaseFrameKey(std::size_t jointNum) const
 	{
 		return _baseFrame[jointNum];
+	}
+
+	int getFrameRate() const
+	{
+		return _frameRate;
+	}
+
+	std::size_t getNumFrames() const
+	{
+		return _frames.size();
+	}
+
+	const FrameKeys& getFrameKeys(std::size_t index) const
+	{
+		return _frames[index];
 	}
 
 	void parseFromStream(std::istream& stream);

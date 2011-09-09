@@ -40,7 +40,7 @@ public:
 	}
 
 private:
-	void updateJointRecursively(std::size_t jointId, std::size_t time);
+	void updateJointRecursively(std::size_t jointId);
 };
 
 } // namespace

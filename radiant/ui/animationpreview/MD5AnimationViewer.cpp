@@ -57,7 +57,7 @@ MD5AnimationViewer::MD5AnimationViewer() :
 
 	_preview->setModelNode(model);
 
-	md5::IMD5AnimPtr anim = GlobalAnimationCache().getAnim("models/md5/chars/guards/proguard/combat_sword_idle.md5anim");
+	md5::IMD5AnimPtr anim = GlobalAnimationCache().getAnim("models/md5/chars/guards/proguard/walk.md5anim");
 
 	_preview->setAnim(anim);
 }
