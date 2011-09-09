@@ -43,6 +43,8 @@ public:
 protected:
 	// Creates parent entity etc.
 	void setupSceneGraph();
+
+	bool onPreRender();
 };
 typedef boost::shared_ptr<AnimationPreview> AnimationPreviewPtr;
 

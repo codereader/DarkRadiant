@@ -27,7 +27,7 @@ public:
 	/**
 	 * Update the mesh using the given animation playback time.
 	 */
-	virtual void updateAnim(std::size_t time) const = 0;
+	virtual void updateAnim(std::size_t time) = 0;
 };
 typedef boost::shared_ptr<IMD5Model> IMD5ModelPtr;
 
