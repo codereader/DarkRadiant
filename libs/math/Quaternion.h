@@ -201,7 +201,7 @@ inline void Quaternion::conjugate()
 
 inline Quaternion Quaternion::getNormalised() const
 {
-	const float n = 1.0f / (x() * x() + y() * y() + z() * z() + w() * w());
+	const float n = 1.0f / sqrt(x() * x() + y() * y() + z() * z() + w() * w());
 
 	return Quaternion(x() * n, y() * n, z() * n, w() * n);
 }
