@@ -80,8 +80,15 @@ public:
 
 	/**
 	 * Multiplies this quaternion by the other one in place.
+	 * Equivalent to: *this = getMultipliedBy(other);
 	 */
 	void multiplyBy(const Quaternion& other);
+
+	/**
+	 * Multiplies this quaternion by the other one in place.
+	 * Equivalent to: *this = other.getMultipliedBy(*this);
+	 */
+	void preMultiplyBy(const Quaternion& other);
 
 	/**
 	 * Returns the inverse of this quaternion.
@@ -175,6 +182,11 @@ inline Quaternion Quaternion::getMultipliedBy(const Quaternion& other) const
 inline void Quaternion::multiplyBy(const Quaternion& other)
 {
 	*this = getMultipliedBy(other);
+}
+
+inline void Quaternion::preMultiplyBy(const Quaternion& other)
+{
+	*this = other.getMultipliedBy(*this);
 }
 
 inline Quaternion Quaternion::getInverse() const
