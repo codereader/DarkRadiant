@@ -60,6 +60,9 @@
     <ClCompile Include="..\..\plugins\md5model\MD5AnimationCache.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\md5model\MD5Skeleton.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\md5model\md5model.def">
