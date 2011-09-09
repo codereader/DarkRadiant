@@ -102,52 +102,9 @@ inline void swap(IndexBuffer& self, IndexBuffer& other) {
 /// \brief A resizable buffer of vertices.
 /// \param Vertex The vertex data type.
 template<typename Vertex>
-class VertexBuffer {
-	typedef typename std::vector<Vertex> Vertices;
-	Vertices m_data;
-public:
-	typedef typename Vertices::iterator iterator;
-	typedef typename Vertices::const_iterator const_iterator;
-
-	iterator begin() {
-		return m_data.begin();
-	}
-	iterator end() {
-		return m_data.end();
-	}
-	const_iterator begin() const {
-		return m_data.begin();
-	}
-	const_iterator end() const {
-		return m_data.end();
-	}
-
-	bool empty() const {
-		return m_data.empty();
-	}
-	RenderIndex size() const {
-		return RenderIndex(m_data.size());
-	}
-	const Vertex* data() const {
-		return &(*m_data.begin());
-	}
-	Vertex& operator[](std::size_t index) {
-		return m_data[index];
-	}
-	const Vertex& operator[](std::size_t index) const {
-		return m_data[index];
-	}
-
-	void clear() {
-		m_data.clear();
-	}
-	void reserve(std::size_t max_vertices) {
-		m_data.reserve(max_vertices);
-	}
-	void push_back(const Vertex& vertex) {
-		m_data.push_back(vertex);
-	}
-};
+class VertexBuffer :
+	public std::vector<Vertex>
+{};
 
 /// \brief A wrapper around a VertexBuffer which inserts only vertices which have not already been inserted.
 /// \param Vertex The vertex data type. Must support operator<, operator== and operator!=.
@@ -709,7 +666,7 @@ public:
 
 	void render(const RenderInfo& info) const {
 		pointvertex_gl_array(m_vertices.data());
-		glDrawArrays(m_mode, 0, m_vertices.size());
+		glDrawArrays(m_mode, 0, static_cast<GLsizei>(m_vertices.size()));
 	}
 };
 
