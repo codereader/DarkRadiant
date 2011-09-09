@@ -54,6 +54,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "model", "model.vcxproj", "{
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "particles", "particles.vcxproj", "{4361B40C-C042-40E4-8CD1-5A24EA120E9B}"
 	ProjectSection(ProjectDependencies) = postProject
+		{F7408B46-E4A9-470C-9731-9A1564247385} = {F7408B46-E4A9-470C-9731-9A1564247385}
 		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject

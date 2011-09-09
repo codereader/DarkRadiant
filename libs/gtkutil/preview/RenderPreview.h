@@ -117,6 +117,10 @@ protected:
 	// Use this to render a wireframe view of the scene
 	void renderWireFrame();
 
+	// Override these to define the flags to render a fill/wireframe scene
+	virtual RenderStateFlags getRenderFlagsFill();
+	virtual RenderStateFlags getRenderFlagsWireframe();
+
 private:
 	void associateRenderSystem();
 
