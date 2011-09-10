@@ -65,15 +65,6 @@ MD5AnimationViewer::MD5AnimationViewer() :
 
 	// Populate with model names
 	populateModelList();
-
-	// TEMPORARY
-	scene::INodePtr model =  GlobalModelCache().getModelNode("models/md5/chars/guards/proguard/tdm_ai_proguard_use.md5mesh");
-
-	_preview->setModelNode(model);
-
-	md5::IMD5AnimPtr anim = GlobalAnimationCache().getAnim("models/md5/chars/guards/proguard/walk.md5anim");
-
-	_preview->setAnim(anim);
 }
 
 void MD5AnimationViewer::Show(const cmd::ArgumentList& args)
