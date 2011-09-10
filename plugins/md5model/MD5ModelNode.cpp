@@ -132,9 +132,9 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 		(*i)->render(collector, localToWorld, entity);
 	}
 
-	// Render the skeleton for the moment being
-	collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
-	collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
+	// Uncomment to render the skeleton
+	//collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
+	//collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
 }
 
 void MD5ModelNode::constructRemaps()
