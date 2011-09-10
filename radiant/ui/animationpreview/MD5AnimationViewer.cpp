@@ -12,6 +12,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/LeftAlignedLabel.h"
+#include "gtkutil/VFSTreePopulator.h"
 
 #include <gtkmm/box.h>
 #include <gtkmm/button.h>
@@ -23,7 +24,8 @@ namespace ui
 
 MD5AnimationViewer::MD5AnimationViewer() :
 	gtkutil::BlockingTransientWindow(_("MD5 Animation Viewer"), GlobalMainFrame().getTopLevelWindow()),
-	_modelList(Gtk::ListStore::create(_modelColumns)),
+	_modelList(Gtk::TreeStore::create(_modelColumns)),
+	_modelPopulator(_modelList),
 	_animList(Gtk::ListStore::create(_animColumns)),
 	_preview(new AnimationPreview)
 {
@@ -225,11 +227,16 @@ void MD5AnimationViewer::_onAnimSelChanged()
 
 void MD5AnimationViewer::visit(const IModelDefPtr& modelDef)
 {
-	// Add the Def name to the list store
-	Gtk::TreeModel::iterator iter = _modelList->append();
+	_modelPopulator.addPath(modelDef->getModName() + "/" + modelDef->name);
+}
 
+void MD5AnimationViewer::visit(const Glib::RefPtr<Gtk::TreeStore>& store,
+	const Gtk::TreeModel::iterator& iter, const std::string& path, bool isExplicit)
+{
+	// Get the display path, everything after rightmost slash
 	Gtk::TreeModel::Row row = *iter;
-	row[_modelColumns.name] = modelDef->name;
+
+	row[_modelColumns.name] = path.substr(path.rfind("/") + 1);
 }
 
 void MD5AnimationViewer::populateModelList()
@@ -237,6 +244,8 @@ void MD5AnimationViewer::populateModelList()
 	_modelList->clear();
 
 	GlobalEntityClassManager().forEachModelDef(*this);
+
+	_modelPopulator.forEachNode(*this);
 }
 
 void MD5AnimationViewer::populateAnimationList()
