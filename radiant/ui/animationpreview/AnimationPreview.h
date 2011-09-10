@@ -40,6 +40,8 @@ public:
 		return _anim;
 	}
 
+	AABB getSceneBounds();
+
 protected:
 	// Creates parent entity etc.
 	void setupSceneGraph();

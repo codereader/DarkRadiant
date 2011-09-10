@@ -6,6 +6,7 @@
 #include "ieclass.h"
 #include "imd5anim.h"
 #include "itextstream.h"
+#include "math/AABB.h"
 
 namespace ui
 {
@@ -70,18 +71,15 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 		// Reset the rotation to the default one
 		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
 		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
+		
+		// Use AABB to adjust camera distance
+		const AABB& bounds = _model->localAABB();
 
-		// Call update(0) once to enable the bounds calculation
-		//_particle->update(_previewTimeMsec, *_renderSystem, _rotation);
-
-		// Use particle AABB to adjust camera distance
-		//const AABB& particleBounds = _particle->getBounds();
-
-		/*if (particleBounds.isValid())
+		if (bounds.isValid())
 		{
-			_camDist = -2.0f * static_cast<float>(particleBounds.getRadius());
+			_camDist = -5.0f * static_cast<float>(bounds.getRadius());
 		}
-		else*/
+		else
 		{
 			// Bounds not valid, fall back to default
 			_camDist = -40.0f;
@@ -99,8 +97,17 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	_glWidget->queueDraw();
 }
 
+AABB AnimationPreview::getSceneBounds()
+{
+	if (!_model) return RenderPreview::getSceneBounds();
+
+	return _model->localAABB();
+}
+
 bool AnimationPreview::onPreRender()
 {
+	if (!_model) return false;
+
 	// Set the animation to play
 	model::ModelNodePtr model = Node_getModel(_model);
 	dynamic_cast<md5::IMD5Model&>(model->getIModel()).updateAnim(_renderSystem->getTime());
