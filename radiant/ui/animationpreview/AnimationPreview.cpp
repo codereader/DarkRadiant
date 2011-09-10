@@ -49,6 +49,11 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 		return;
 	}
 
+	if (_model)
+	{
+		_entity->removeChildNode(_model);
+	}
+
 	_model = node;
 
 	// Set the animation to play
@@ -111,6 +116,11 @@ RenderStateFlags AnimationPreview::getRenderFlagsFill()
 void AnimationPreview::setAnim(const md5::IMD5AnimPtr& anim)
 {
 	_anim = anim;
+
+	if (!_model)
+	{
+		return;
+	}
 
 	// Set the animation to play
 	model::ModelNodePtr model = Node_getModel(_model);
