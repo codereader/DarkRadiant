@@ -177,8 +177,7 @@ void ParticleEditor::setupSettingsPages()
 {
 	// Depth Hack
 
-	getGladeWidget<Gtk::SpinButton>("depthHackSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDepthHackChanged));
+	connectSpinner("depthHackSpinner", &ParticleEditor::_onDepthHackChanged);
 
 	// SHADER
 
@@ -191,31 +190,20 @@ void ParticleEditor::setupSettingsPages()
 	getGladeWidget<Gtk::CheckButton>("useEntityColour")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
 
-	getGladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("fadeOutFractionSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("animFramesSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("animRateSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-
+	connectSpinner("fadeInFractionSpinner", &ParticleEditor::_onShaderControlsChanged);
+	connectSpinner("fadeOutFractionSpinner", &ParticleEditor::_onShaderControlsChanged);
+	connectSpinner("fadeIndexFractionSpinner", &ParticleEditor::_onShaderControlsChanged);
+	connectSpinner("animFramesSpinner", &ParticleEditor::_onShaderControlsChanged);
+	connectSpinner("animRateSpinner", &ParticleEditor::_onShaderControlsChanged);
+	
 	// COUNT
 
-	getGladeWidget<Gtk::SpinButton>("countSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("timeSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("bunchingSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("cyclesSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("timeOffsetSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("deadTimeSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onCountTimeControlsChanged));
+	connectSpinner("countSpinner", &ParticleEditor::_onCountTimeControlsChanged);
+	connectSpinner("timeSpinner", &ParticleEditor::_onCountTimeControlsChanged);
+	connectSpinner("bunchingSpinner", &ParticleEditor::_onCountTimeControlsChanged);
+	connectSpinner("cyclesSpinner", &ParticleEditor::_onCountTimeControlsChanged);
+	connectSpinner("timeOffsetSpinner", &ParticleEditor::_onCountTimeControlsChanged);
+	connectSpinner("deadTimeSpinner", &ParticleEditor::_onCountTimeControlsChanged);
 
 	// DISTRIBUTION
 
@@ -226,14 +214,10 @@ void ParticleEditor::setupSettingsPages()
 	getGladeWidget<Gtk::RadioButton>("distSphere")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
 
-	getGladeWidget<Gtk::SpinButton>("distSizeXSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("distSizeYSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("distSizeZSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("distSizeRingSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
+	connectSpinner("distSizeXSpinner", &ParticleEditor::_onDistributionControlsChanged);
+	connectSpinner("distSizeYSpinner", &ParticleEditor::_onDistributionControlsChanged);
+	connectSpinner("distSizeZSpinner", &ParticleEditor::_onDistributionControlsChanged);
+	connectSpinner("distSizeRingSpinner", &ParticleEditor::_onDistributionControlsChanged);
 
 	getGladeWidget<Gtk::Entry>("distOffsetEntry")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
@@ -248,10 +232,8 @@ void ParticleEditor::setupSettingsPages()
 	getGladeWidget<Gtk::RadioButton>("directionOutward")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 
-	getGladeWidget<Gtk::SpinButton>("coneAngleSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("upwardBiasSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	connectSpinner("coneAngleSpinner", &ParticleEditor::_onDirectionControlsChanged);
+	connectSpinner("upwardBiasSpinner", &ParticleEditor::_onDirectionControlsChanged);
 
 	getGladeWidget<Gtk::RadioButton>("orientationView")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
@@ -264,40 +246,26 @@ void ParticleEditor::setupSettingsPages()
 	getGladeWidget<Gtk::RadioButton>("orientationZ")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 
-	getGladeWidget<Gtk::SpinButton>("aimedTrailsSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("aimedTimeSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("initialAngleSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
+	connectSpinner("aimedTrailsSpinner", &ParticleEditor::_onDirectionControlsChanged);
+	connectSpinner("aimedTimeSpinner", &ParticleEditor::_onDirectionControlsChanged);
+	connectSpinner("initialAngleSpinner", &ParticleEditor::_onDirectionControlsChanged);
 
 	// SIZE / SPEED / ASPECT
 
-	getGladeWidget<Gtk::SpinButton>("sizeFromSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("sizeToSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("speedFromSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("speedToSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("rotationSpeedFromSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("rotationSpeedToSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("aspectFromSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("aspectToSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
+	connectSpinner("sizeFromSpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("sizeToSpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("speedFromSpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("speedToSpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("rotationSpeedFromSpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("rotationSpeedToSpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("aspectFromSpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("aspectToSpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("gravitySpinner", &ParticleEditor::_onSizeControlsChanged);
+	connectSpinner("boundsExpansionSpinner", &ParticleEditor::_onSizeControlsChanged);
 
-	getGladeWidget<Gtk::SpinButton>("gravitySpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
 	getGladeWidget<Gtk::CheckButton>("useWorldGravity")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-
-	getGladeWidget<Gtk::SpinButton>("boundsExpansionSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-
+	
 	// PATH
 
 	getGladeWidget<Gtk::RadioButton>("pathStandard")->signal_toggled().connect(
@@ -307,18 +275,12 @@ void ParticleEditor::setupSettingsPages()
 	getGladeWidget<Gtk::RadioButton>("pathHelix")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
 
-	getGladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("pathRadiusSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("pathSizeXSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("pathSizeYSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-	getGladeWidget<Gtk::SpinButton>("pathSizeZSpinner")->signal_changed().connect(
-		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
+	connectSpinner("pathRadialSpeedSpinner", &ParticleEditor::_onPathControlsChanged);
+	connectSpinner("pathAxialSpeedSpinner", &ParticleEditor::_onPathControlsChanged);
+	connectSpinner("pathRadiusSpinner", &ParticleEditor::_onPathControlsChanged);
+	connectSpinner("pathSizeXSpinner", &ParticleEditor::_onPathControlsChanged);
+	connectSpinner("pathSizeYSpinner", &ParticleEditor::_onPathControlsChanged);
+	connectSpinner("pathSizeZSpinner", &ParticleEditor::_onPathControlsChanged);
 }
 
 void ParticleEditor::_onShaderControlsChanged()
@@ -530,14 +492,35 @@ void ParticleEditor::updatePathWidgetSensitivity()
 	getGladeWidget<Gtk::Widget>("pathSizeZHBox")->set_sensitive(useAnySpinner && !useFlies);
 }
 
+bool ParticleEditor::_onSpinButtonKeyRelease(GdkEventKey*, MemberMethod func)
+{
+	// Call the pointer-to-member method
+	(this->*func)();
+	return false;
+}
+
+void ParticleEditor::connectSpinner(const std::string& name, MemberMethod func)
+{
+	// Connect the regular "value-changed" signal to the given method
+	getGladeWidget<Gtk::SpinButton>(name)->signal_value_changed().connect(
+		sigc::mem_fun(*this, func));
+
+	// Additionally, since the value-changed signal is only called after the user leaves
+	// the entry field after typing in a value, we hook a special key-release event to catch inputs
+	getGladeWidget<Gtk::SpinButton>(name)->signal_key_release_event().connect(
+		sigc::bind(sigc::mem_fun(*this, &ParticleEditor::_onSpinButtonKeyRelease), func), false);
+}
+
 float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
 {
-	return static_cast<float>(getGladeWidget<Gtk::SpinButton>(widgetName)->get_adjustment()->get_value());
+	Gtk::SpinButton* sb = getGladeWidget<Gtk::SpinButton>(widgetName);
+	return strToFloat(sb->get_text());
 }
 
 int ParticleEditor::getSpinButtonValueAsInt(const std::string& widgetName)
 {
-	return static_cast<int>(getGladeWidget<Gtk::SpinButton>(widgetName)->get_adjustment()->get_value());
+	Gtk::SpinButton* sb = getGladeWidget<Gtk::SpinButton>(widgetName);
+	return strToInt(sb->get_text());
 }
 
 void ParticleEditor::activateEditPanels()
