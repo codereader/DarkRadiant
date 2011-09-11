@@ -58,7 +58,7 @@ class BrushNode :
 
 	BrushClipPlane m_clipPlane;
 
-	static ShaderPtr m_state_selpoint;
+	ShaderPtr m_state_selpoint;
 
 	// TRUE if any of the FaceInstance's component selection got changed or transformed
 	mutable bool _renderableComponentsNeedUpdate;
@@ -126,9 +126,6 @@ public:
 	// Allocates a new node on the heap (via copy construction)
 	scene::INodePtr clone() const;
 
-	static void constructStatic();
-	static void destroyStatic();
-
 	// BrushObserver implementation
 	void clear();
 	void reserve(std::size_t size);
@@ -151,6 +148,8 @@ public:
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
 	void viewChanged() const;
 	bool isHighlighted() const;
 

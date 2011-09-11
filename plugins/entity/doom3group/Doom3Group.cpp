@@ -88,8 +88,8 @@ void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& v
 		m_renderOrigin.render(collector, volume, localToWorld);
 	}
 
-	collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
-	collector.SetState(_entity.getEntityClass()->getWireShader(), RenderableCollector::eFullMaterials);
+	collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
+	collector.SetState(_owner.getWireShader(), RenderableCollector::eFullMaterials);
 
 	if (!m_curveNURBS.isEmpty())
 	{
@@ -108,6 +108,11 @@ void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTes
 	const Matrix4& localToWorld, bool selected) const
 {
 	renderSolid(collector, volume, localToWorld, selected);
+}
+
+void Doom3Group::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	m_renderOrigin.setRenderSystem(renderSystem);
 }
 
 void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best)

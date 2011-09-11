@@ -37,11 +37,6 @@ public:
 		_spacePartition = spacePartition;
 	}
 
-	void setShader(const ShaderPtr& shader)
-	{
-		_shader = shader;
-	}
-
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 	{
 		if (_shader != NULL)
@@ -57,6 +52,18 @@ public:
 		{
 			collector.SetState(_shader, RenderableCollector::eWireframeOnly);
 			collector.addRenderable(*this, Matrix4::getIdentity());
+		}
+	}
+
+	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	{
+		if (renderSystem)
+		{
+			_shader = renderSystem->capture("[1 0 0]");
+		}
+		else
+		{
+			_shader.reset();
 		}
 	}
 

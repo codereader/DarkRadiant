@@ -74,6 +74,13 @@ void ParticleNode::renderWireframe(RenderableCollector& collector,
 	_renderableParticle->renderWireframe(collector, volume, localToWorld(), _renderEntity.get());
 }
 
+void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	Node::setRenderSystem(renderSystem);
+
+	_renderableParticle->setRenderSystem(renderSystem);
+}
+
 void ParticleNode::onInsertIntoScene()
 {
 	scene::Node::onInsertIntoScene();
@@ -107,8 +114,7 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 	_renderableParticle->setEntityColour(Vector3(
 		_renderEntity->getShaderParm(0), _renderEntity->getShaderParm(1), _renderEntity->getShaderParm(2)));
 
-	_renderableParticle->update(GlobalRenderSystem().getTime(), 
-		GlobalRenderSystem(), viewRotation);
+	_renderableParticle->update(viewRotation);
 }
 
 } // namespace

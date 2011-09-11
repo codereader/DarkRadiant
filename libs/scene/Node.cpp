@@ -89,6 +89,11 @@ unsigned long Node::getNewId() {
 	return ++_maxNodeId;
 }
 
+void Node::setSceneGraph(const GraphPtr& sceneGraph)
+{
+	_sceneGraph = sceneGraph;
+}
+
 bool Node::isRoot() const
 {
 	return _isRoot;
@@ -195,12 +200,15 @@ void Node::onChildAdded(const INodePtr& child)
 		child->setParent(shared_from_this());
 	}
 
+	// Pass down the RenderSystem to or children
+	child->setRenderSystem(_renderSystem.lock());
+
 	// greebo: The bounds most probably change when child nodes are added
 	boundsChanged();
 
 	if (!_instantiated) return;
 
-	InstanceSubgraphWalker visitor;
+	InstanceSubgraphWalker visitor(_sceneGraph);
 	Node_traverseSubgraph(child, visitor);
 }
 
@@ -213,7 +221,7 @@ void Node::onChildRemoved(const INodePtr& child)
 
 	if (!_instantiated) return;
 
-	UninstanceSubgraphWalker visitor;
+	UninstanceSubgraphWalker visitor(_sceneGraph);
 	Node_traverseSubgraph(child, visitor);
 }
 
@@ -299,7 +307,10 @@ void Node::evaluateBounds() const
 		_boundsChanged = false;
 
 		// Now that our bounds are re-calculated, notify the scenegraph
-		GlobalSceneGraph().nodeBoundsChanged(const_cast<Node*>(this)->shared_from_this());
+		if (_sceneGraph)
+		{
+			_sceneGraph->nodeBoundsChanged(const_cast<Node*>(this)->shared_from_this());
+		}
 	}
 }
 
@@ -335,11 +346,11 @@ void Node::boundsChanged() {
 		parent->boundsChanged();
 	}
 
-	if (_isRoot)
+	if (_isRoot && _sceneGraph)
 	{
 		// greebo: It's enough if only root nodes call the global scenegraph
 		// as nodes are passing their calls up to their parents anyway
-		GlobalSceneGraph().boundsChanged();
+		_sceneGraph->boundsChanged();
 	}
 }
 
@@ -396,6 +407,21 @@ void Node::transformChanged() {
 
 void Node::setTransformChangedCallback(const Callback& callback) {
 	_transformChangedCallback = callback;
+}
+
+RenderSystemPtr Node::getRenderSystem() const
+{
+	return _renderSystem.lock();
+}
+
+void Node::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_renderSystem = renderSystem;
+
+	if (_children.empty()) return;
+
+	// Propagate this call to all children
+	_children.setRenderSystem(renderSystem);
 }
 
 unsigned long Node::_maxNodeId = 0;

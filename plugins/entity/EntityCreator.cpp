@@ -176,8 +176,6 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 	// Construct Doom3Group stuff
 	CurveEditInstance::initialiseShaders();
 
-	RenderablePivot::StaticShader() = GlobalRenderSystem().capture("$PIVOT");
-
 	GlobalRenderSystem().attachRenderable(RenderableTargetInstances::Instance());
 
 	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", RKEY_SHOW_ALL_LIGHT_RADII);

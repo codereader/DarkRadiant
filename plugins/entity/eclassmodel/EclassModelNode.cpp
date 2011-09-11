@@ -27,20 +27,11 @@ EclassModelNodePtr EclassModelNode::Create(const IEntityClassPtr& eclass)
 	return instance;
 }
 
-EclassModelNode::~EclassModelNode()
-{
-	destroy();
-}
-
 void EclassModelNode::construct()
 {
 	EntityNode::construct();
 
 	m_contained.construct();
-}
-
-void EclassModelNode::destroy()
-{
 }
 
 // Snappable implementation
@@ -65,6 +56,13 @@ void EclassModelNode::renderWireframe(RenderableCollector& collector, const Volu
 	EntityNode::renderWireframe(collector, volume);
 
 	m_contained.renderWireframe(collector, volume, localToWorld(), isSelected());
+}
+
+void EclassModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	EntityNode::setRenderSystem(renderSystem);
+
+	m_contained.setRenderSystem(renderSystem);
 }
 
 scene::INodePtr EclassModelNode::clone() const

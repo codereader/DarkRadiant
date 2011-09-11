@@ -26,7 +26,13 @@ PicoModelNode::~PicoModelNode() {
 	GlobalRenderSystem().detach(*this);
 }
 
-const IModel& PicoModelNode::getIModel() const {
+const IModel& PicoModelNode::getIModel() const
+{
+	return *_picoModel;
+}
+
+IModel& PicoModelNode::getIModel() 
+{
 	return *_picoModel;
 }
 
@@ -85,6 +91,13 @@ void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest
 
 void PicoModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
 	renderSolid(collector, volume);
+}
+
+void PicoModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	Node::setRenderSystem(renderSystem);
+
+	_picoModel->setRenderSystem(renderSystem);
 }
 
 // Renderable submission

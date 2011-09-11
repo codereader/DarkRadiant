@@ -3,6 +3,8 @@
 #include "i18n.h"
 #include "ifilesystem.h"
 #include "imodel.h"
+#include "imd5model.h"
+#include "imd5anim.h"
 #include "ifiletypes.h"
 #include "iselection.h"
 #include "ieventmanager.h"
@@ -148,11 +150,48 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 	ModelLoaderPtr modelLoader = getModelLoaderForType(type);
 
 	// Try to construct a model node using the suitable loader
-	scene::INodePtr modelNode = modelLoader->loadModel(actualModelPath);
+	scene::INodePtr node = modelLoader->loadModel(actualModelPath);
 
-	if (modelNode != NULL) {
+	if (node)
+	{
+		// For MD5 models, apply the idle animation by default
+		if (modelDef)
+		{
+			model::ModelNodePtr modelNode = Node_getModel(node);
+
+			if (!modelNode)
+			{
+				return node;
+			}
+
+			// Set the animation to play
+			try
+			{
+				md5::IMD5Model& md5model = dynamic_cast<md5::IMD5Model&>(modelNode->getIModel());
+
+				// Look up the "idle" anim if there is one
+				IModelDef::Anims::const_iterator found = modelDef->anims.find("idle");
+
+				if (found != modelDef->anims.end())
+				{
+					// Load the anim
+					md5::IMD5AnimPtr anim = GlobalAnimationCache().getAnim(found->second);
+
+					if (anim)
+					{
+						md5model.setAnim(anim);
+						md5model.updateAnim(0);
+					}
+				}
+			}
+			catch (std::bad_cast&)
+			{
+				// not an MD5 model, do nothing
+			}
+		}
+
 		// Model load was successful
-		return modelNode;
+		return node;
 	}
 
 	// The model load failed, let's return the NullModel

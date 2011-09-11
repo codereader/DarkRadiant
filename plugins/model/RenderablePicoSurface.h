@@ -1,5 +1,4 @@
-#ifndef RENDERABLEPICOSURFACE_H_
-#define RENDERABLEPICOSURFACE_H_
+#pragma once
 
 #include "GLProgramAttributes.h"
 #include "picomodel.h"
@@ -59,6 +58,9 @@ class RenderablePicoSurface :
     GLuint _dlProgramNegVCol;
     GLuint _dlProgramNoVCol;
 
+	// We need to keep a reference for skin swapping
+	RenderSystemWeakPtr _renderSystem;
+
 private:
 
 	// Get a colour vector from an unsigned char array (may be NULL)
@@ -99,6 +101,8 @@ public:
 	 */
 	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld,
 						   const IRenderEntity& entity);
+
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	/**
 	 * Render function from OpenGLRenderable
@@ -142,8 +146,9 @@ public:
 
 	const std::string& getDefaultMaterial() const;
 	const std::string& getActiveMaterial() const;
+
+private:
+	void captureShader();
 };
 
 }
-
-#endif /*RENDERABLEPICOSURFACE_H_*/

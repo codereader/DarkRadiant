@@ -59,14 +59,27 @@ void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
 	}
 }
 
+void RenderablePicoModel::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	for (SurfaceList::iterator i = _surfVec.begin(); i != _surfVec.end(); ++i)
+	{
+		(*i)->setRenderSystem(renderSystem);
+	}
+}
+
 // OpenGL (back-end) render function
 void RenderablePicoModel::render(const RenderInfo& info) const {
 
 	// Render options
 	if (info.checkFlag(RENDER_TEXTURE_2D))
+	{
 		glEnable(GL_TEXTURE_2D);
+	}
+
 	if (info.checkFlag(RENDER_SMOOTH))
+	{
 		glShadeModel(GL_SMOOTH);
+	}
 
 	// Iterate over the surfaces, calling the render function on each one
 	for (SurfaceList::const_iterator i = _surfVec.begin();
@@ -74,8 +87,10 @@ void RenderablePicoModel::render(const RenderInfo& info) const {
 		 ++i)
 	{
 		// Get the Material to test the shader name against the filter system
-		MaterialPtr surfaceShader = (*i)->getShader()->getMaterial();
-		if (surfaceShader->isVisible()) {
+		const MaterialPtr& surfaceShader = (*i)->getShader()->getMaterial();
+
+		if (surfaceShader->isVisible())
+		{
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getEditorImage();
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());

@@ -13,6 +13,9 @@
     <Filter Include="dialog">
       <UniqueIdentifier>{3c2d027e-6163-4207-92af-ae7893d4deb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="preview">
+      <UniqueIdentifier>{b4505f4f-f301-4c38-8d52-cdf5059a3585}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h">
@@ -85,6 +88,9 @@
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotionDelta.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
     <ClInclude Include="..\..\libs\gtkutil\NonModalEntry.h" />
+    <ClInclude Include="..\..\libs\gtkutil\preview\RenderPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">
@@ -120,5 +126,8 @@
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\preview\RenderPreview.cpp">
+      <Filter>preview</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

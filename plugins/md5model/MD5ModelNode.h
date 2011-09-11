@@ -16,6 +16,7 @@ class MD5ModelNode :
 	public LightCullable,
 	public SkinnedModel
 {
+private:
 	MD5ModelPtr _model;
 
 	const LightList* _lightList;
@@ -25,7 +26,7 @@ class MD5ModelNode :
 
 	struct Remap {
 		std::string name;
-		ShaderPtr shader;
+		//ShaderPtr shader;
 	};
 
 	typedef std::vector<Remap> SurfaceRemaps;
@@ -40,6 +41,7 @@ public:
 
 	// ModelNode implementation
 	virtual const model::IModel& getIModel() const;
+	virtual model::IModel& getIModel();
 
 	void lightsChanged();
 
@@ -64,6 +66,7 @@ public:
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	bool isHighlighted() const
 	{

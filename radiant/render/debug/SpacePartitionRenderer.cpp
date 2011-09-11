@@ -78,14 +78,15 @@ void SpacePartitionRenderer::shutdownModule()
 void SpacePartitionRenderer::installRenderer()
 {
 	_renderableSP.setSpacePartition(GlobalSceneGraph().getSpacePartition());
-	_renderableSP.setShader(GlobalRenderSystem().capture("[1 0 0]"));
+	_renderableSP.setRenderSystem(boost::dynamic_pointer_cast<RenderSystem>(
+		module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
 
 	GlobalRenderSystem().attachRenderable(_renderableSP);
 }
 
 void SpacePartitionRenderer::uninstallRenderer()
 {
-	_renderableSP.setShader(ShaderPtr());
+	_renderableSP.setRenderSystem(RenderSystemPtr());
 	_renderableSP.setSpacePartition(scene::ISpacePartitionSystemPtr());
 
 	GlobalRenderSystem().detachRenderable(_renderableSP);

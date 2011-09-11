@@ -7,13 +7,15 @@
 #include "scenelib.h"
 
 #include "Octree.h"
+#include "SceneGraphFactory.h"
 
 namespace scene
 {
 
 SceneGraph::SceneGraph() :
 	_visitedSPNodes(0),
-	_skippedSPNodes(0)
+	_skippedSPNodes(0),
+	_spacePartition(new Octree)
 {}
 
 void SceneGraph::addSceneObserver(Graph::Observer* observer) {
@@ -57,7 +59,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	if (_root != NULL)
 	{
 		// "Uninstantiate" the whole scene
-		UninstanceSubgraphWalker walker;
+		UninstanceSubgraphWalker walker(boost::static_pointer_cast<Graph>(shared_from_this()));
 		Node_traverseSubgraph(_root, walker);
 	}
 
@@ -69,7 +71,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	if (_root != NULL)
 	{
 		// New root not NULL, "instantiate" the whole scene
-		InstanceSubgraphWalker instanceWalker;
+		InstanceSubgraphWalker instanceWalker(boost::static_pointer_cast<Graph>(shared_from_this()));
 		Node_traverseSubgraph(_root, instanceWalker);
 	}
 }
@@ -216,33 +218,29 @@ ISpacePartitionSystemPtr SceneGraph::getSpacePartition()
 }
 
 // RegisterableModule implementation
-const std::string& SceneGraph::getName() const {
+const std::string& SceneGraphModule::getName() const
+{
 	static std::string _name(MODULE_SCENEGRAPH);
 	return _name;
 }
 
-const StringSet& SceneGraph::getDependencies() const {
+const StringSet& SceneGraphModule::getDependencies() const
+{
 	static StringSet _dependencies; // no deps
 	return _dependencies;
 }
 
-void SceneGraph::initialiseModule(const ApplicationContext& ctx)
+void SceneGraphModule::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "SceneGraph::initialiseModule called" << std::endl;
-
-	_spacePartition = ISpacePartitionSystemPtr(new Octree);
-}
-
-void SceneGraph::shutdownModule()
-{
-	_spacePartition = ISpacePartitionSystemPtr();
+	globalOutputStream() << getName() << "::initialiseModule called" << std::endl;
 }
 
 } // namespace scene
 
 extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
-	registry.registerModule(scene::SceneGraphPtr(new scene::SceneGraph));
+	registry.registerModule(scene::SceneGraphModulePtr(new scene::SceneGraphModule));
+	registry.registerModule(scene::SceneGraphFactoryPtr(new scene::SceneGraphFactory));
 
 	// Initialise the streams using the given application context
 	module::initialiseStreams(registry.getApplicationContext());

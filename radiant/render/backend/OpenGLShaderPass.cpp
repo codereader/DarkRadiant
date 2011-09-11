@@ -467,7 +467,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
         setState(requiredState, changingBitsMask, RENDER_ALPHATEST, GL_ALPHA_TEST);
 
-        if ((changingBitsMask & requiredState & RENDER_COLOURARRAY) || (globalStateMask & RENDER_FORCE_COLORARRAY))
+        if ((changingBitsMask & requiredState & RENDER_COLOURARRAY))
         {
             glEnableClientState(GL_COLOR_ARRAY);
             GlobalOpenGL().assertNoErrors();

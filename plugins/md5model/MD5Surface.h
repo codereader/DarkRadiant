@@ -1,5 +1,4 @@
-#ifndef MD5SURFACE_H_
-#define MD5SURFACE_H_
+#pragma once
 
 #include "irender.h"
 #include "render.h"
@@ -10,16 +9,21 @@
 #include "modelskin.h"
 #include "imodelsurface.h"
 
+#include "MD5DataStructures.h"
+#include "parser/DefTokeniser.h"
+
 namespace md5
 {
+
+class MD5Skeleton;
 
 class MD5Surface :
 	public model::IModelSurface,
 	public OpenGLRenderable
 {
 public:
-	typedef VertexBuffer<ArbitraryMeshVertex> vertices_t;
-	typedef IndexBuffer indices_t;
+	typedef VertexBuffer<ArbitraryMeshVertex> Vertices;
+	typedef IndexBuffer Indices;
 
 private:
 	AABB _aabb_local;
@@ -31,12 +35,18 @@ private:
 	// Shader object
 	ShaderPtr _shader;
 
-	vertices_t _vertices;
-	indices_t _indices;
+	// The mesh definition - will be baked into renderable vertex arrays
+	MD5Mesh _mesh;
+
+	Vertices _vertices;
+	Indices _indices;	
 
 	// The GL display lists for this surface's geometry
 	GLuint _normalList;
 	GLuint _lightingList;
+
+	// We need to keep a reference for skin swapping
+	RenderSystemWeakPtr _renderSystem;
 
 private:
 
@@ -45,6 +55,9 @@ private:
 
 	// Create the display lists
 	void createDisplayLists();
+
+	// Re-calculate the normal vectors
+	void buildVertexNormals();
 
 public:
 
@@ -57,9 +70,6 @@ public:
 	 * Destructor.
 	 */
 	~MD5Surface();
-
-	vertices_t& vertices();
-	indices_t& indices();
 
 	// Set/get the shader name
 	void setShader(const std::string& name);
@@ -74,6 +84,13 @@ public:
 	 */
 	void updateGeometry();
 
+	// Updates the mesh to the pose defined in the .md5mesh file - usually a T-Pose
+	// It needs the joints defined in that file as reference
+	void updateToDefaultPose(const MD5Joints& joints);
+
+	// Updates this mesh to the state of the given skeleton
+	void updateToSkeleton(const MD5Skeleton& skeleton);
+
 	// Applies the given Skin to this surface.
 	void applySkin(const ModelSkin& skin);
 
@@ -83,7 +100,9 @@ public:
 	const AABB& localAABB() const;
 
 	void render(RenderableCollector& collector, const Matrix4& localToWorld, 
-				const ShaderPtr& state, const IRenderEntity& entity) const;
+				const IRenderEntity& entity) const;
+
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	// Test for selection
 	void testSelect(Selector& selector,
@@ -99,9 +118,12 @@ public:
 
 	const std::string& getDefaultMaterial() const;
 	const std::string& getActiveMaterial() const;
+
+	void parseFromTokens(parser::DefTokeniser& tok);
+
+	// Rebuild the render index array - usually needs to be called only once
+	void buildIndexArray();
 };
 typedef boost::shared_ptr<MD5Surface> MD5SurfacePtr;
 
-} // namespace md5
-
-#endif /*MD5SURFACE_H_*/
+} // namespace

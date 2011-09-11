@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/layers/LayerControlDialog.h"
 #include "ui/filterdialog/FilterDialog.h"
+#include "ui/animationpreview/MD5AnimationViewer.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Group.h"
@@ -110,6 +111,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings/GameManager.h"
 #include "modulesystem/ModuleRegistry.h"
 #include "RadiantModule.h"
+
+#include "imd5anim.h"
 
 extern FaceInstanceSet g_SelectedFaceInstances;
 
@@ -724,6 +727,7 @@ void MainFrame_Construct()
 
 	GlobalCommandSystem().addCommand("CreateDecalsForFaces", selection::algorithm::createDecalsForSelectedFaces);
 
+	GlobalCommandSystem().addCommand("AnimationPreview", ui::MD5AnimationViewer::Show);
 	GlobalCommandSystem().addCommand("FindReplaceTextures", ui::FindAndReplaceShader::showDialog);
 	GlobalCommandSystem().addCommand("ShowCommandList", ui::CommandList::showDialog);
 	GlobalCommandSystem().addCommand("About", ui::AboutDialog::showDialog);
@@ -857,6 +861,7 @@ void MainFrame_Construct()
 
 	GlobalEventManager().addCommand("CreateDecalsForFaces", "CreateDecalsForFaces");
 
+	GlobalEventManager().addCommand("AnimationPreview", "AnimationPreview");
 	GlobalEventManager().addCommand("FindReplaceTextures", "FindReplaceTextures");
 	GlobalEventManager().addCommand("ShowCommandList", "ShowCommandList");
 	GlobalEventManager().addCommand("About", "About");

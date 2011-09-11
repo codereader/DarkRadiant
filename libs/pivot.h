@@ -19,10 +19,11 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_PIVOT_H)
-#define INCLUDED_PIVOT_H
+#pragma once
 
 #include "math/Matrix4.h"
+#include "irenderable.h"
+#include "render.h"
 
 inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2screen)
 {
@@ -217,10 +218,6 @@ inline void Pivot2World_viewplaneSpace(Matrix4& manip2world, const Matrix4& pivo
   manip2world.multiplyBy(scale);
 }
 
-
-#include "irenderable.h"
-#include "render.h"
-
 const Colour4b g_colour_x(255, 0, 0, 255);
 const Colour4b g_colour_y(0, 255, 0, 255);
 const Colour4b g_colour_z(0, 0, 255, 255);
@@ -228,15 +225,17 @@ const Colour4b g_colour_z(0, 0, 255, 255);
 class RenderablePivot :
 	public OpenGLRenderable
 {
+private:
 	VertexBuffer<PointVertex> _vertices;
 	const Vector3& _pivot;
+
+	ShaderPtr _shader;
 
 public:
 	mutable Matrix4 m_localToWorld;
 
-	static ShaderPtr& StaticShader()
+	const ShaderPtr& getShader() const
 	{
-		static ShaderPtr _shader;
 		return _shader;
 	}
 
@@ -271,6 +270,18 @@ public:
 		_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
 	}
 
+	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	{
+		if (renderSystem)
+		{
+			_shader = renderSystem->capture("$PIVOT");
+		}
+		else
+		{
+			_shader.reset();
+		}
+	}
+
 	void render(const RenderInfo& info) const
 	{
 		if(_vertices.size() == 0) return;
@@ -280,22 +291,18 @@ public:
 		glDrawArrays(GL_LINES, 0, _vertices.size());
 	}
 
-  void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
-  {
-    collector.PushState();
+	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+	{
+		collector.PushState();
 
-	// greebo: Commented this out to avoid the point from being moved along with the view.
-    //Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+		// greebo: Commented this out to avoid the point from being moved along with the view.
+		//Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
-    collector.Highlight(RenderableCollector::ePrimitive, false);
-    collector.SetState(StaticShader(), RenderableCollector::eWireframeOnly);
-    collector.SetState(StaticShader(), RenderableCollector::eFullMaterials);
-    collector.addRenderable(*this, localToWorld);
+		collector.Highlight(RenderableCollector::ePrimitive, false);
+		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
+		collector.SetState(_shader, RenderableCollector::eFullMaterials);
+		collector.addRenderable(*this, localToWorld);
 
-    collector.PopState();
-  }
+		collector.PopState();
+	}
 };
-
-
-
-#endif

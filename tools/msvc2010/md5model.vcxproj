@@ -308,17 +308,24 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\md5model\MD5Anim.h" />
+    <ClInclude Include="..\..\plugins\md5model\MD5AnimationCache.h" />
     <ClInclude Include="..\..\plugins\md5model\MD5DataStructures.h" />
     <ClInclude Include="..\..\plugins\md5model\MD5Model.h" />
     <ClInclude Include="..\..\plugins\md5model\MD5ModelLoader.h" />
     <ClInclude Include="..\..\plugins\md5model\MD5ModelNode.h" />
+    <ClInclude Include="..\..\plugins\md5model\MD5Skeleton.h" />
     <ClInclude Include="..\..\plugins\md5model\MD5Surface.h" />
+    <ClInclude Include="..\..\plugins\md5model\RenderableMD5Skeleton.h" />
     <ClInclude Include="..\..\plugins\md5model\VectorLightList.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\plugins\md5model\MD5Anim.cpp" />
+    <ClCompile Include="..\..\plugins\md5model\MD5AnimationCache.cpp" />
     <ClCompile Include="..\..\plugins\md5model\MD5Model.cpp" />
     <ClCompile Include="..\..\plugins\md5model\MD5ModelLoader.cpp" />
     <ClCompile Include="..\..\plugins\md5model\MD5ModelNode.cpp" />
+    <ClCompile Include="..\..\plugins\md5model\MD5Skeleton.cpp" />
     <ClCompile Include="..\..\plugins\md5model\MD5Surface.cpp" />
     <ClCompile Include="..\..\plugins\md5model\plugin.cpp" />
   </ItemGroup>

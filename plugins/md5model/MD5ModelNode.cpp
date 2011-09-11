@@ -33,6 +33,10 @@ const model::IModel& MD5ModelNode::getIModel() const {
 	return *_model;
 }
 
+model::IModel& MD5ModelNode::getIModel() {
+	return *_model;
+}
+
 void MD5ModelNode::lightsChanged() {
 	_lightList->lightsChanged();
 }
@@ -100,6 +104,13 @@ void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeT
 	renderSolid(collector, volume);
 }
 
+void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	Node::setRenderSystem(renderSystem);
+
+	_model->setRenderSystem(renderSystem);
+}
+
 void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volume,
 		const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
@@ -118,15 +129,22 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 		 ++i, ++j, ++k)
 	{
 		collector.setLights(*j);
-		(*i)->render(collector, localToWorld, k->shader != NULL ? k->shader : (*i)->getState(), entity);
+		(*i)->render(collector, localToWorld, entity);
 	}
+
+	// Uncomment to render the skeleton
+	//collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
+	//collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
 }
 
-void MD5ModelNode::constructRemaps() {
+void MD5ModelNode::constructRemaps()
+{
 	// greebo: Acquire the ModelSkin reference from the SkinCache
 	// Note: This always returns a valid reference
 	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
 
+	_model->applySkin(skin);
+#if 0
 	// Iterate over all surfaces and remaps
 	_surfaceRemaps.resize(_model->size());
 	MD5ModelNode::SurfaceRemaps::iterator j = _surfaceRemaps.begin();
@@ -145,12 +163,14 @@ void MD5ModelNode::constructRemaps() {
 			j->shader = ShaderPtr();
 		}
 	}
-
+#endif
 	// Refresh the scene
 	GlobalSceneGraph().sceneChanged();
 }
 
-void MD5ModelNode::destroyRemaps() {
+void MD5ModelNode::destroyRemaps() 
+{
+#if 0
 	// Iterate over all remaps and NULLify the shader pointers
 	for (MD5ModelNode::SurfaceRemaps::iterator i = _surfaceRemaps.begin();
 		 i != _surfaceRemaps.end(); ++i)
@@ -159,6 +179,7 @@ void MD5ModelNode::destroyRemaps() {
 			i->shader = ShaderPtr();
 		}
 	}
+#endif
 }
 
 // Returns the name of the currently active skin

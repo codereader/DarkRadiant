@@ -337,7 +337,6 @@
     <ClInclude Include="..\..\plugins\uimanager\MenuManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\ModelPreview.h" />
     <ClInclude Include="..\..\plugins\uimanager\ParticlePreview.h" />
-    <ClInclude Include="..\..\plugins\uimanager\ParticleRenderer.h" />
     <ClInclude Include="..\..\plugins\uimanager\StatusBarManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\ToolbarManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\UIManager.h" />

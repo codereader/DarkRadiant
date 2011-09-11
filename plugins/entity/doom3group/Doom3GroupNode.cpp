@@ -247,6 +247,13 @@ void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const Volum
 	m_curveCatmullRom.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
 }
 
+void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	EntityNode::setRenderSystem(renderSystem);
+
+	m_contained.setRenderSystem(renderSystem);
+}
+
 void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)

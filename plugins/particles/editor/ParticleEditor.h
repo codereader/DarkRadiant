@@ -112,6 +112,13 @@ private:
 	void _onMoveDownStage();
 	void _onDuplicateStage();
 
+	// A pointer-to-member function typedef
+	typedef void (ParticleEditor::*MemberMethod)();
+
+	// Connect a spin button to call the given member method
+	void connectSpinner(const std::string& name, MemberMethod func);
+	bool _onSpinButtonKeyRelease(GdkEventKey*, MemberMethod func);
+
 	void _onShaderControlsChanged();
 	void _onCountTimeControlsChanged();
 	void _onDistributionControlsChanged();
@@ -144,7 +151,8 @@ private:
 	IDialog::Result askForSave();
 
 	// Returns true if leaving the current working particle went ok (was saved, or no unsaved changes)
-	bool handleParticleLeave();
+	bool handleParticleLeave(bool requireSelectionChange = true);
+	bool defSelectionHasChanged();
 
 	bool saveCurrentParticle();
 
