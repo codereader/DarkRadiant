@@ -102,7 +102,7 @@ ParticleEditor::ParticleEditor() :
 
 void ParticleEditor::_onDeleteEvent()
 {
-	if (!handleParticleLeave())	return; // action not allowed or cancelled
+	if (!handleParticleLeave(false))	return; // action not allowed or cancelled
 	
 	// Window destruction allowed, pass to base class => triggers destroy
 	BlockingTransientWindow::_onDeleteEvent();
@@ -991,10 +991,7 @@ void ParticleEditor::releaseEditParticle()
 
 bool ParticleEditor::particleHasUnsavedChanges()
 {
-	// Get the selection and store it
-	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
-
-	if (_selectedDefIter && _particle && iter && _selectedDefIter != iter)
+	if (_selectedDefIter && _particle)
 	{
 		// Particle selection changed, check if we have any unsaved changes
 		std::string originalParticleName = (*_selectedDefIter)[_defColumns.name];
@@ -1082,15 +1079,35 @@ void ParticleEditor::_postShow()
 
 void ParticleEditor::_onClose()
 {
-	if (!handleParticleLeave())	return; // action not allowed or cancelled
+	if (!handleParticleLeave(false))	return; // action not allowed or cancelled
 
 	// Close the window
 	destroy();
 }
 
-bool ParticleEditor::handleParticleLeave()
+bool ParticleEditor::defSelectionHasChanged()
 {
-	if (particleHasUnsavedChanges())
+	// Check if the selection has changed
+	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
+
+	if (!_selectedDefIter)
+	{
+		return iter;
+	}
+	else if (!iter) // _selectedDefIter is valid
+	{
+		return true;
+	}
+	else // both iter and _selectedDefIter are valid 
+	{
+		return _selectedDefIter != iter;
+	}
+}
+
+bool ParticleEditor::handleParticleLeave(bool requireSelectionChange)
+{
+	// On close requests we don't require the selection to have changed
+	if ((!requireSelectionChange || defSelectionHasChanged()) && particleHasUnsavedChanges())
 	{
 		IDialog::Result result = askForSave();
 		
@@ -1109,7 +1126,7 @@ bool ParticleEditor::handleParticleLeave()
 			return false; // user cancelled
 		}
 
-		// Use doesn't want to save
+		// User doesn't want to save
 	}
 
 	return true;
@@ -1117,7 +1134,8 @@ bool ParticleEditor::handleParticleLeave()
 
 void ParticleEditor::_onNewParticle()
 {
-	if (!handleParticleLeave())	return; // action not allowed or cancelled
+	// Check for unsaved changes, don't require a selection change
+	if (!handleParticleLeave(false)) return; // action not allowed or cancelled
 
 	createAndSelectNewParticle();
 }
