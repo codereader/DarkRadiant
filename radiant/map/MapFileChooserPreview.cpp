@@ -17,7 +17,7 @@ MapFileChooserPreview::MapFileChooserPreview() :
 	Gtk::VBox(false, 0),
 	_preview(Gtk::manage(new ui::MapPreview))
 {
-	_preview->setSize(400);
+	_preview->setSize(400, 400);
 
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 0));
 
@@ -113,7 +113,7 @@ bool MapFileChooserPreview::setMapName(const std::string& name)
 
 	if (_mapResource->load())
 	{
-		// Get the node from the reosource
+		// Get the node from the resource
 		scene::INodePtr root = _mapResource->getNode();
 
 		assert(root != NULL);

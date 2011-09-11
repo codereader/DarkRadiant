@@ -121,9 +121,9 @@ protected:
 	virtual RenderStateFlags getRenderFlagsFill();
 	virtual RenderStateFlags getRenderFlagsWireframe();
 
-private:
 	void associateRenderSystem();
 
+private:
 	// gtkmm callbacks
 	bool onGLDraw(GdkEventExpose*);
 	bool onGLMotion(GdkEventMotion*);

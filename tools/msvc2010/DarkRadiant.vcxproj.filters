@@ -1317,9 +1317,6 @@
     <ClInclude Include="..\..\radiant\ui\common\MapPreview.h">
       <Filter>src\ui\common</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\MapPreviewView.h">
-      <Filter>src\ui\common</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\RenderableAABB.h">
       <Filter>src\ui\common</Filter>
     </ClInclude>
