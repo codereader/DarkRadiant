@@ -146,6 +146,8 @@ public:
                            const Matrix4& localToWorld,
 						   const IRenderEntity& entity) const;
 
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
 	void transform(const Matrix4& matrix, bool mirror);
 
 	void assign_planepts(const PlanePoints planepts);

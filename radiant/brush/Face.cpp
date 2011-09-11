@@ -14,7 +14,7 @@
 
 Face::Face(Brush& owner, FaceObserver* observer) :
 	_owner(owner),
-	_faceShader(texdef_name_default()),
+	_faceShader(*this, texdef_name_default()),
 	m_texdef(_faceShader, TextureProjection(), false),
 	m_observer(observer),
 	m_undoable_observer(0),
@@ -38,7 +38,7 @@ Face::Face(
 	FaceObserver* observer
 ) :
 	_owner(owner),
-	_faceShader(shader),
+	_faceShader(*this, shader),
 	m_texdef(_faceShader, projection),
 	m_observer(observer),
 	m_undoable_observer(0),
@@ -54,7 +54,7 @@ Face::Face(
 
 Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 	_owner(owner),
-	_faceShader(""),
+	_faceShader(*this, ""),
 	m_texdef(_faceShader, TextureProjection()),
 	m_observer(observer),
 	m_undoable_observer(NULL),
@@ -71,7 +71,7 @@ Face::Face(Brush& owner, const Plane3& plane, FaceObserver* observer) :
 Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 		   const std::string& shader, FaceObserver* observer) :
 	_owner(owner),
-	_faceShader(shader),
+	_faceShader(*this, shader),
 	m_texdef(_faceShader, TextureProjection()),
 	m_observer(observer),
 	m_undoable_observer(NULL),
@@ -96,7 +96,7 @@ Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
 	Undoable(other),
 	FaceShader::Observer(other),
 	_owner(owner),
-	_faceShader(other._faceShader.getMaterialName(), other._faceShader.m_flags),
+	_faceShader(*this, other._faceShader.getMaterialName(), other._faceShader.m_flags),
 	m_texdef(_faceShader, other.getTexdef().normalised()),
 	m_observer(observer),
 	m_undoable_observer(0),
@@ -216,6 +216,11 @@ void Face::submitRenderables(RenderableCollector& collector,
 	collector.addRenderable(*this, localToWorld, entity);
 }
 
+void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_faceShader.setRenderSystem(renderSystem);
+}
+
 void Face::transform(const Matrix4& matrix, bool mirror) {
 	if (GlobalBrush()->textureLockEnabled()) {
 		m_texdefTransformed.transformLocked(_faceShader.width(), _faceShader.height(), m_plane.getPlane(), matrix);
@@ -296,7 +301,16 @@ void Face::shaderChanged()
 	m_observer->shaderChanged();
 
 	// Update the visibility flag, but leave out the contributes() check
-	_faceIsVisible = getFaceShader().getGLShader()->getMaterial()->isVisible();
+	const ShaderPtr& shader = getFaceShader().getGLShader();
+
+	if (shader)
+	{
+		_faceIsVisible = shader->getMaterial()->isVisible();
+	}
+	else
+	{
+		_faceIsVisible = false; // no shader => not visible
+	}
 
 	planeChanged();
 	SceneChangeNotify();

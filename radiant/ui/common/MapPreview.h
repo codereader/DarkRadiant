@@ -50,8 +50,6 @@ protected:
 	bool onPreRender();
 
 	RenderStateFlags getRenderFlagsFill();
-
-	void setupSceneGraph();
 };
 
 } // namespace ui

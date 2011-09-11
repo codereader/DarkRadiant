@@ -3,6 +3,10 @@
 #include "texturelib.h"
 #include "shaderlib.h"
 
+#include "Face.h"
+#include "Brush.h"
+#include "BrushNode.h"
+
 namespace
 {
 
@@ -23,7 +27,8 @@ namespace
 }
 
 // Constructor
-FaceShader::FaceShader(const std::string& shader, const ContentsFlagsValue& flags) :
+FaceShader::FaceShader(Face& owner, const std::string& shader, const ContentsFlagsValue& flags) :
+	_owner(owner),
 	_inUse(false),
 	_materialName(shader),
 	m_flags(flags),
@@ -33,7 +38,8 @@ FaceShader::FaceShader(const std::string& shader, const ContentsFlagsValue& flag
 }
 
 // Destructor
-FaceShader::~FaceShader() {
+FaceShader::~FaceShader()
+{
 	releaseShader();
 }
 
@@ -41,24 +47,56 @@ void FaceShader::setInUse(bool inUse)
 {
 	_inUse = inUse;
 
+	if (!_glShader) return;
+
     // Update the shader's use count
-    if (inUse)
+    if (_inUse)
         _glShader->incrementUsed();
     else
         _glShader->decrementUsed();
 }
 
-void FaceShader::captureShader()
+void FaceShader::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	_glShader = GlobalRenderSystem().capture(_materialName);
-    assert(_glShader);
-
-	_glShader->attach(*this);
+	captureShader();
 }
 
-void FaceShader::releaseShader() {
-	_glShader->detach(*this);
-	_glShader = ShaderPtr();
+void FaceShader::captureShader()
+{
+	// Check if we have a rendersystem - can we capture already?
+	RenderSystemPtr renderSystem = _owner.getBrush().getBrushNode().getRenderSystem();
+
+	if (renderSystem)
+	{
+		_glShader = renderSystem->capture(_materialName);
+		 assert(_glShader);
+
+		 _glShader->attach(*this);
+
+		 if (_inUse)
+		 {
+			 _glShader->incrementUsed();
+		 }
+	}
+	else
+	{
+		releaseShader();
+	}
+}
+
+void FaceShader::releaseShader()
+{
+	if (_glShader)
+	{
+		if (_inUse)
+		{
+			_glShader->decrementUsed();
+		}
+
+		_glShader->detach(*this);
+
+		_glShader.reset();
+	}
 }
 
 void FaceShader::realise()
@@ -104,20 +142,18 @@ void FaceShader::detachObserver(Observer& observer)
 	_observers.erase(&observer);
 }
 
-const std::string& FaceShader::getMaterialName() const {
+const std::string& FaceShader::getMaterialName() const
+{
 	return _materialName;
 }
 
-void FaceShader::setMaterialName(const std::string& name) {
-	if (_inUse) {
-		_glShader->decrementUsed();
-	}
+void FaceShader::setMaterialName(const std::string& name)
+{
 	releaseShader();
+
 	_materialName = name;
+
 	captureShader();
-	if (_inUse) {
-		_glShader->incrementUsed();
-	}
 }
 
 ContentsFlagsValue FaceShader::getFlags() const {
