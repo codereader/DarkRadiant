@@ -1,16 +1,10 @@
-#ifndef _MAP_PREVIEW_WIDGET_H_
-#define _MAP_PREVIEW_WIDGET_H_
+#pragma once
 
 #include "ifiltermenu.h"
-#include "gtkutil/GLWidget.h"
-#include "math/Matrix4.h"
-#include "igl.h"
-#include "irender.h"
+#include "gtkutil/preview/RenderPreview.h"
 #include "inode.h"
 
 #include "ui/menu/FiltersMenu.h"
-
-#include <gtkmm/frame.h>
 
 namespace ui
 {
@@ -29,26 +23,11 @@ typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
  * Use the setRootNode() method to specify the subgraph to preview.
  */
 class MapPreview :
-	public Gtk::Frame
+	public gtkutil::RenderPreview
 {
 private:
-	// GL widget
-	gtkutil::GLWidget* _glWidget;
-
-	// Current distance between camera and preview
-	GLfloat _camDist;
-
-	// Current rotation matrix
-	Matrix4 _rotation;
-
 	// The filters menu
 	IFilterMenuPtr _filtersMenu;
-
-	// The root node of the scene to be rendered
-	scene::INodePtr _root;
-
-	ShaderPtr _stateSelect1;
-	ShaderPtr _stateSelect2;
 
 	// The filter observer
 	MapPreviewFilterObserverPtr _filterObserver;
@@ -58,38 +37,21 @@ public:
 
 	~MapPreview();
 
-	/**
-	 * Set the pixel size of the MapPreviewCam widget. The widget is always
-	 * square.
-	 *
-	 * @param size
-	 * The pixel size of the square widget.
-	 */
-	void setSize(int size);
-
-	/**
-	 * Initialise the GL preview. This clears the window and sets up the
-	 * initial matrices and lights.
-	 */
-	void initialisePreview();
-
 	// Get/set the map root to render
 	void setRootNode(const scene::INodePtr& root);
 	scene::INodePtr getRootNode();
 
-	// Updates the view
-	void draw();
+	AABB getSceneBounds();
 
 	// Gets called by a local helper object on each FilterSystem change
 	void onFiltersChanged();
 
-private:
-	// gtkmm Callbacks
-	bool onExpose(GdkEventExpose*);
-	bool onMouseMotion(GdkEventMotion*);
-	bool onMouseScroll(GdkEventScroll*);
+protected:
+	bool onPreRender();
+
+	RenderStateFlags getRenderFlagsFill();
+
+	void setupSceneGraph();
 };
 
 } // namespace ui
-
-#endif /* _MAP_PREVIEW_WIDGET_H_ */

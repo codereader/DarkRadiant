@@ -719,7 +719,6 @@
     <ClInclude Include="..\..\radiant\ui\common\CommandEntry.h" />
     <ClInclude Include="..\..\radiant\ui\common\EntityChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\MapPreview.h" />
-    <ClInclude Include="..\..\radiant\ui\common\MapPreviewView.h" />
     <ClInclude Include="..\..\radiant\ui\common\RenderableAABB.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderDefinitionView.h" />
