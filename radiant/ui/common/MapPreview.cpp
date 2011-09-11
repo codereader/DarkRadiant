@@ -6,9 +6,6 @@
 #include "iscenegraphfactory.h"
 #include "math/AABB.h"
 
-#include "ientity.h"
-#include "ieclass.h"
-
 #include <gtkmm/toolbar.h>
 
 namespace ui
@@ -100,11 +97,6 @@ bool MapPreview::onPreRender()
 RenderStateFlags MapPreview::getRenderFlagsFill()
 {
 	return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
-}
-
-void MapPreview::setupSceneGraph()
-{
-	RenderPreview::setupSceneGraph();
 }
 
 } // namespace ui

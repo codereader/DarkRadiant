@@ -378,6 +378,11 @@ void Brush::setRenderSystem(const RenderSystemPtr& renderSystem)
 	{
 		m_state_point.reset();
 	}
+
+	for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) 
+	{
+		(*i)->setRenderSystem(renderSystem);
+	}
 }
 
 std::size_t Brush::DEBUG_size() {

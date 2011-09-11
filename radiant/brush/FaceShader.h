@@ -1,5 +1,4 @@
-#ifndef FACESHADER_H_
-#define FACESHADER_H_
+#pragma once
 
 #include <string>
 #include <set>
@@ -9,6 +8,8 @@
 #include <boost/noncopyable.hpp>
 
 #include "ContentsFlagsValue.h"
+
+class Face;
 
 /**
  * \brief
@@ -53,6 +54,9 @@ public:
 		}
 	};
 
+	// The owning face
+	Face& _owner;
+
     // The text name of the material
 	std::string _materialName;
 
@@ -67,7 +71,7 @@ public:
 	bool m_realised;
 
 	// Constructor
-	FaceShader(const std::string& shader, const ContentsFlagsValue& flags = ContentsFlagsValue(0, 0, 0, false));
+	FaceShader(Face& owner, const std::string& shader, const ContentsFlagsValue& flags = ContentsFlagsValue(0, 0, 0, false));
 
 	// Destructor
 	virtual ~FaceShader();
@@ -110,6 +114,6 @@ public:
 	std::size_t width() const;
 	std::size_t height() const;
 
-}; // class FaceShader
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
-#endif /*FACESHADER_H_*/
+}; // class FaceShader
