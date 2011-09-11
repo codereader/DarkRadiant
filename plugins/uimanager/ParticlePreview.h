@@ -19,6 +19,7 @@ class ParticlePreview :
 private:
 	Gtk::ToggleToolButton* _showAxesButton;
 	Gtk::ToggleToolButton* _showWireFrameButton;
+	Gtk::ToggleToolButton* _automaticLoopButton;
 
 	// A particle is attached to a paren entity
 	scene::INodePtr _entity;
