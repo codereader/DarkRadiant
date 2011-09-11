@@ -151,7 +151,8 @@ private:
 	IDialog::Result askForSave();
 
 	// Returns true if leaving the current working particle went ok (was saved, or no unsaved changes)
-	bool handleParticleLeave();
+	bool handleParticleLeave(bool requireSelectionChange = true);
+	bool defSelectionHasChanged();
 
 	bool saveCurrentParticle();
 
