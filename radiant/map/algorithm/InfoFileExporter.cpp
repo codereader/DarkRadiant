@@ -1,8 +1,10 @@
 #include "InfoFileExporter.h"
 
 #include "imodel.h"
+#include "iparticlenode.h"
 #include "itextstream.h"
 #include "../InfoFile.h"
+#include "debugging/ScenegraphUtils.h"
 
 namespace map
 {
@@ -37,9 +39,9 @@ InfoFileExporter::~InfoFileExporter()
 
 bool InfoFileExporter::pre(const scene::INodePtr& node)
 {
-	// Don't export the layer settings for models, as they are not there
+	// Don't export the layer settings for models and particles, as they are not there
 	// at map load/parse time.
-	if (Node_isModel(node)) 
+	if (Node_isModel(node) || Node_isParticle(node)) 
 	{
 		return false;
 	}
@@ -59,7 +61,12 @@ bool InfoFileExporter::pre(const scene::INodePtr& node)
 	}
 
 	// Close the Node block
-	_stream << "}" << std::endl;
+	_stream << "}";
+
+	// Write additional node info, for easier debugging of layer issues
+	_stream << " // " << getNodeInfo(node);
+
+	_stream << std::endl;
 
 	_layerInfoCount++;
 
