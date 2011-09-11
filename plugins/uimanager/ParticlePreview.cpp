@@ -5,6 +5,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "iparticles.h"
+#include "iparticlestage.h"
 #include "i18n.h"
 
 #include "scene/Node.h"
@@ -59,8 +60,12 @@ ParticlePreview::ParticlePreview() :
 		GlobalUIManager().getLocalPixbufWithMask("wireframe.png"))));
 	_showWireFrameButton->set_tooltip_text(_("Show wireframe"));
 
+	_automaticLoopButton = Gtk::manage(new Gtk::ToggleToolButton(_("Auto Loop")));
+	_automaticLoopButton->set_tooltip_text(_("Auto Loop"));
+
 	toolbar->insert(*_showAxesButton, 0);
 	toolbar->insert(*_showWireFrameButton, 0);
+	toolbar->insert(*_automaticLoopButton, 0);
 	toolbar->insert(*reloadButton, 0);
 
 	addToolbar(*toolbar);
@@ -184,6 +189,41 @@ void ParticlePreview::onPostRender()
 	if (_showAxesButton->get_active())
 	{
 		drawAxes();
+	}
+
+	const particles::IParticleDefPtr& def = _particle->getParticle()->getParticleDef();
+
+	// Calculate the total time of the particles
+	int totalTimeMsec = 0;
+
+	for (std::size_t i = 0; i < def->getNumStages(); ++i)
+	{
+		const particles::IParticleStage& stage = def->getParticleStage(i);
+
+		// For ever-repeating stages, set stuff to INT_MAX and break
+		if (stage.getCycles() == 0)
+		{
+			totalTimeMsec = INT_MAX;
+			break;
+		}
+
+		totalTimeMsec += static_cast<int>(stage.getCycleMsec() * stage.getCycles());
+	}
+
+	// Update the sensitivity of the auto-loop button
+	if (totalTimeMsec < INT_MAX)
+	{
+		_automaticLoopButton->set_sensitive(true);
+
+		// Auto-Loop is possible, check if we should reset the time
+		if (_automaticLoopButton->get_active() && _renderSystem->getTime() > totalTimeMsec)
+		{
+			_renderSystem->setTime(0);
+		}
+	}
+	else
+	{
+		_automaticLoopButton->set_sensitive(false);
 	}
 }
 
