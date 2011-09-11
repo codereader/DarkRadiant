@@ -10,6 +10,8 @@
 #include "ientity.h"
 #include "ipatch.h"
 #include "ibrush.h"
+#include "imodel.h"
+#include "iparticlenode.h"
 
 #include "warnings.h"
 #include <cstddef>
@@ -445,29 +447,42 @@ public:
 };
 
 // greebo: These tool methods have been moved from map.cpp, they might come in handy
-enum ENodeType {
+enum ENodeType
+{
     eNodeUnknown,
     eNodeMap,
     eNodeEntity,
     eNodePrimitive,
+	eNodeModel,
+	eNodeParticle,
 };
 
-inline std::string nodetype_get_name(ENodeType type) {
-	if (type == eNodeMap)
-		return "map";
-	if (type == eNodeEntity)
-		return "entity";
-	if (type == eNodePrimitive)
-		return "primitive";
-	return "unknown";
+inline std::string nodetype_get_name(ENodeType type)
+{
+	switch (type)
+	{
+	case eNodeMap: return "map";
+	case eNodeEntity: return "entity";
+	case eNodePrimitive: return "primitive";
+	case eNodeModel: return "model";
+	case eNodeParticle: return "particle";
+	default: return "unknown";
+	};
 }
 
-inline ENodeType node_get_nodetype(const scene::INodePtr& node) {
+inline ENodeType node_get_nodetype(const scene::INodePtr& node)
+{
 	if (Node_isEntity(node)) {
 		return eNodeEntity;
 	}
-	if (Node_isPrimitive(node)) {
+	else if (Node_isPrimitive(node)) {
 		return eNodePrimitive;
+	}
+	else if (Node_isModel(node)) {
+		return eNodeModel;
+	}
+	else if (Node_isParticle(node)) {
+		return eNodeParticle;
 	}
 	return eNodeUnknown;
 }
