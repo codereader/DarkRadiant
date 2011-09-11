@@ -1,5 +1,4 @@
-#ifndef RENDERABLEVERTICES_H_
-#define RENDERABLEVERTICES_H_
+#pragma once
 
 #include "irender.h"
 #include "ieclass.h"
@@ -33,7 +32,6 @@ public:
 	// Constructor
 	RenderableVertex(const Vector3& center, const Vector3& origin, const Vector3& colour)
 		: 	_localCentre(center),
-			_shader(GlobalRenderSystem().capture("$BIGPOINT")),
 			_worldOrigin(origin),
 			_colour(colour)
 	{}
@@ -42,13 +40,27 @@ public:
   		return _worldOrigin;
   	}
 
+	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	{
+		if (renderSystem)
+		{
+			_shader = renderSystem->capture("$BIGPOINT");
+		}
+		else
+		{
+			_shader.reset();
+		}
+	}
+
   	// Return the Shader for rendering
-  	ShaderPtr getShader() const {
+  	const ShaderPtr& getShader() const
+	{
   		return _shader;
   	}
 
 	// GL render function
-  	virtual void render(const RenderInfo& info) const {
+  	virtual void render(const RenderInfo& info) const
+	{
 		Vector3 centreWorld = _localCentre + _worldOrigin;
 
 	    // Draw the center point
@@ -108,6 +120,3 @@ public:
 };
 
 } // namespace entity
-
-
-#endif /*RENDERABLEVERTICES_H_*/

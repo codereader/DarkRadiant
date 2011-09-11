@@ -1,26 +1,4 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined (INCLUDED_ISCENEGRAPH_H)
-#define INCLUDED_ISCENEGRAPH_H
+#pragma once
 
 #include <cstddef>
 #include "imodule.h"
@@ -53,8 +31,7 @@ typedef boost::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
 * Each node may refer to zero or more 'child' nodes (directed).
 * A node may never have itself as one of its ancestors (acyclic).
 */
-class Graph :
-	public RegisterableModule
+class Graph
 {
 public:
 	typedef boost::function<void ()> BoundsChangedFunc;
@@ -71,10 +48,10 @@ public:
 		virtual void onSceneGraphChange() {}
 
 		// Gets called when a new <node> is inserted into the scenegraph
-		virtual void onSceneNodeInsert(const scene::INodePtr& node) {}
+		virtual void onSceneNodeInsert(const INodePtr& node) {}
 
 		// Gets called when <node> is removed from the scenegraph
-		virtual void onSceneNodeErase(const scene::INodePtr& node) {}
+		virtual void onSceneNodeErase(const INodePtr& node) {}
 	};
 
 	// Returns the root-node of the graph.
@@ -129,22 +106,27 @@ public:
 	// Returns the associated spacepartition
 	virtual ISpacePartitionSystemPtr getSpacePartition() = 0;
 };
+typedef boost::shared_ptr<Graph> GraphPtr;
 
-  class Cloneable
-  {
-  public:
-    /// \brief destructor
-    virtual ~Cloneable() {}
-    /// \brief Returns a copy of itself.
-    virtual scene::INodePtr clone() const = 0;
-  };
-  typedef boost::shared_ptr<Cloneable> CloneablePtr;
-}
+class Cloneable
+{
+public:
+	/// \brief destructor
+	virtual ~Cloneable() {}
 
-inline scene::Graph& GlobalSceneGraph() {
+	/// \brief Returns a copy of itself.
+	virtual scene::INodePtr clone() const = 0;
+};
+typedef boost::shared_ptr<Cloneable> CloneablePtr;
+
+} // namespace
+
+// Accessor to the singleton scenegraph, used for the main map
+inline scene::Graph& GlobalSceneGraph()
+{
 	// Cache the reference locally
 	static scene::Graph& _sceneGraph(
-		*boost::static_pointer_cast<scene::Graph>(
+		*boost::dynamic_pointer_cast<scene::Graph>(
 			module::GlobalModuleRegistry().getModule(MODULE_SCENEGRAPH)
 		)
 	);
@@ -153,7 +135,5 @@ inline scene::Graph& GlobalSceneGraph() {
 
 inline void SceneChangeNotify()
 {
-  GlobalSceneGraph().sceneChanged();
+	GlobalSceneGraph().sceneChanged();
 }
-
-#endif

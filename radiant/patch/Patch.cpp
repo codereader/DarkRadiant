@@ -42,10 +42,6 @@ inline bool double_valid(double f) {
 
 // ====== Patch Implementation =========================================================================
 
-// Initialise the shader state variables and the patch type
-ShaderPtr Patch::m_state_ctrl;
-ShaderPtr Patch::m_state_lattice;
-
 // Initialise the cycle cap index member variable
 int Patch::m_CycleCapIndex = 0;
 
@@ -180,11 +176,10 @@ PatchNode& Patch::getPatchNode()
 	return _node;
 }
 
-void Patch::instanceAttach(MapFile* map) {
-	if (++m_instanceCounter.m_count == 1) {
-		// Notify the shader that one more instance is using this
-		m_state->incrementUsed();
-
+void Patch::instanceAttach(MapFile* map)
+{
+	if (++m_instanceCounter.m_count == 1)
+	{
 		m_map = map;
 
 		// Attach the UndoObserver to this patch
@@ -193,12 +188,13 @@ void Patch::instanceAttach(MapFile* map) {
 }
 
 // Remove the attached instance and decrease the counters
-void Patch::instanceDetach(MapFile* map) {
-	if(--m_instanceCounter.m_count == 0) {
+void Patch::instanceDetach(MapFile* map)
+{
+	if(--m_instanceCounter.m_count == 0)
+	{
 		m_map = 0;
 		m_undoable_observer = 0;
 		GlobalUndoSystem().release(this);
-		m_state->decrementUsed();
 	}
 }
 
@@ -255,7 +251,15 @@ void Patch::render_component(RenderableCollector& collector, const VolumeTest& v
 	collector.addRenderable(m_render_ctrl, localToWorld);
 }
 
-const ShaderPtr& Patch::getState() const {
+void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_renderSystem = renderSystem;
+
+	captureShader();
+}
+
+const ShaderPtr& Patch::getState() const
+{
 	return m_state;
 }
 
@@ -469,7 +473,21 @@ void Patch::importState(const UndoMemento* state) {
 
 void Patch::captureShader()
 {
-	m_state = GlobalRenderSystem().capture(m_shader);
+	RenderSystemPtr renderSystem = _renderSystem.lock();
+
+	if (renderSystem)
+	{
+		m_state = renderSystem->capture(m_shader);
+
+		m_state_ctrl = renderSystem->capture("$POINT");
+		m_state_lattice = renderSystem->capture("$LATTICE");
+	}
+	else
+	{
+		m_state.reset();
+		m_state_ctrl.reset();
+		m_state_lattice.reset();
+	}
 }
 
 void Patch::releaseShader()

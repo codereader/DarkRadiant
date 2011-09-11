@@ -25,6 +25,18 @@
     <ClInclude Include="..\..\plugins\md5model\VectorLightList.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\md5model\MD5Anim.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\md5model\MD5AnimationCache.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\md5model\RenderableMD5Skeleton.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\md5model\MD5Skeleton.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\md5model\MD5Model.cpp">
@@ -40,6 +52,15 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\md5model\plugin.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\md5model\MD5Anim.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\md5model\MD5AnimationCache.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\md5model\MD5Skeleton.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

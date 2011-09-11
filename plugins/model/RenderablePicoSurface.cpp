@@ -50,8 +50,7 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 
 	_mappedShaderName = _originalShaderName;
 
-	// Capture the shader
-	_shader = GlobalRenderSystem().capture(_mappedShaderName);
+	// Capturing the shader happens later on when we have a RenderSystem reference
 
     // Get the number of vertices and indices, and reserve capacity in our
     // vectors in advance by populating them with empty structs.
@@ -215,6 +214,13 @@ void RenderablePicoSurface::render(const RenderInfo& info) const
 	}
 }
 
+void RenderablePicoSurface::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_renderSystem = renderSystem;
+
+	captureShader();
+}
+
 // Construct a list for GLProgram mode, either with or without vertex colour
 GLuint RenderablePicoSurface::compileProgramList(
         ShaderLayer::VertexColourMode mode
@@ -311,19 +317,21 @@ void RenderablePicoSurface::applySkin(const ModelSkin& skin)
 	// Look up the remap for this surface's material name. If there is a remap
 	// change the Shader* to point to the new shader.
 	std::string remap = skin.getRemap(_originalShaderName);
-	if (remap != "" && remap != _mappedShaderName) { // change to a new shader
-		// Switch shader objects
-		_shader = GlobalRenderSystem().capture(remap);
 
+	if (remap != "" && remap != _mappedShaderName)
+	{
 		// Save the remapped shader name
 		_mappedShaderName = remap;
-	}
-	else if (remap == "" && _mappedShaderName != _originalShaderName) {
-		// No remap, so reset our shader to the original unskinned shader
-		_shader = GlobalRenderSystem().capture(_originalShaderName);
 
+		captureShader();
+	}
+	else if (remap == "" && _mappedShaderName != _originalShaderName)
+	{
+		// No remap, so reset our shader to the original unskinned shader
 		// Reset the remapped shader name
 		_mappedShaderName = _originalShaderName;
+
+		captureShader();
 	}
 }
 
@@ -388,6 +396,20 @@ const std::string& RenderablePicoSurface::getDefaultMaterial() const
 const std::string& RenderablePicoSurface::getActiveMaterial() const
 {
 	return _mappedShaderName;
+}
+
+void RenderablePicoSurface::captureShader()
+{
+	RenderSystemPtr renderSystem = _renderSystem.lock();
+
+	if (renderSystem)
+	{
+		_shader = renderSystem->capture(_mappedShaderName);
+	}
+	else
+	{
+		_shader.reset();
+	}
 }
 
 } // namespace model

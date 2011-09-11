@@ -23,6 +23,10 @@ namespace particles
 // see iparticlestage.h for definition
 class IParticleStage;
 
+// see iparticlenode.h for definition
+class IParticleNode;
+typedef boost::shared_ptr<IParticleNode> IParticleNodePtr;
+
 /**
  * Representation of a particles declaration.
  */
@@ -136,12 +140,13 @@ class IRenderableParticle :
 {
 public:
 	/**
-	 * Update the particle geometry using the given time in milliseconds.
-	 * The rendersystem is needed for acquiring the shaders.
+	 * Update the particle geometry using the given rendersystem.
+	 * The rendersystem is needed for acquiring the shaders and
+	 * the current render time.
 	 *
-	 * @rotation: the matrix to orient themselves to the viewer.
+	 * @viewRotation: the matrix to orient themselves to the viewer.
 	 */
-	virtual void update(std::size_t time, RenderSystem& renderSystem, const Matrix4& viewRotation) = 0;
+	virtual void update(const Matrix4& viewRotation) = 0;
 		
 	/**
 	 * Get the particle definition used by this renderable.

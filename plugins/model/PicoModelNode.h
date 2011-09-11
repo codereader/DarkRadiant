@@ -50,6 +50,7 @@ public:
 
 	// ModelNode implementation
 	virtual const IModel& getIModel() const;
+	virtual IModel& getIModel();
 
 	// SkinnedModel implementation
 	// Skin changed notify
@@ -83,6 +84,7 @@ public:
 	// Renderable implementation
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	bool isHighlighted() const
 	{

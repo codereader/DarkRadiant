@@ -12,7 +12,6 @@
 #include "../angle.h"
 #include "../ModelKey.h"
 #include "../NameKey.h"
-#include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../KeyObserverDelegate.h"
 #include "transformlib.h"
@@ -59,6 +58,7 @@ public:
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);

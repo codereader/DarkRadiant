@@ -129,7 +129,7 @@ class Light :
 
   mutable bool m_doom3ProjectionChanged;
 
-  LightShader m_shader;
+	LightShader m_shader;
 
     // The 8x8 box representing the light object itself
     AABB _lightBox;
@@ -216,6 +216,8 @@ public:
 						 const VolumeTest& volume,
 						 const Matrix4& localToWorld,
 						 bool selected) const;
+
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	// Adds the light centre renderable to the given collector
 	void renderLightCentre(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;

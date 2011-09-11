@@ -72,9 +72,6 @@
     <ClInclude Include="..\..\plugins\uimanager\ParticlePreview.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\uimanager\ParticleRenderer.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\StatusBarManager.h">
       <Filter>src</Filter>
     </ClInclude>

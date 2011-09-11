@@ -276,4 +276,12 @@ void TraversableNodeSet::notifyEraseAll()
 	}
 }
 
+void TraversableNodeSet::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i)
+	{
+		(*i)->setRenderSystem(renderSystem);
+	}
+}
+
 } // namespace scene

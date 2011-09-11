@@ -155,6 +155,7 @@
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
     <ClInclude Include="..\..\libs\gtkutil\NonModalEntry.h" />
+    <ClInclude Include="..\..\libs\gtkutil\preview\RenderPreview.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\PersistentTransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\TransientWindow.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\preview\RenderPreview.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\TransientWindow.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\menu\PopupMenu.cpp" />

@@ -22,11 +22,16 @@ public:
 	}
 
 	// Renderable implementation (empty)
-	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 	{}
 
-	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 	{}
+
+	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	{
+		// Nothing to render
+	}
 
 	bool isHighlighted() const
 	{

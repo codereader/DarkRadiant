@@ -305,11 +305,13 @@
   <ItemGroup>
     <ClCompile Include="..\..\plugins\scenegraph\Octree.cpp" />
     <ClCompile Include="..\..\plugins\scenegraph\SceneGraph.cpp" />
+    <ClCompile Include="..\..\plugins\scenegraph\SceneGraphFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\scenegraph\Octree.h" />
     <ClInclude Include="..\..\plugins\scenegraph\OctreeNode.h" />
     <ClInclude Include="..\..\plugins\scenegraph\SceneGraph.h" />
+    <ClInclude Include="..\..\plugins\scenegraph\SceneGraphFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\scenegraph\scenegraph.def" />

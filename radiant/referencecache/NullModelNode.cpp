@@ -12,7 +12,8 @@ NullModelNode::NullModelNode(const NullModelPtr& nullModel) :
 	_nullModel(nullModel)
 {}
 
-NullModelNodePtr NullModelNode::InstancePtr() {
+NullModelNodePtr NullModelNode::InstancePtr()
+{
 	static NullModelNodePtr _nullModelNode;
 
 	if (_nullModelNode == NULL) {
@@ -23,7 +24,13 @@ NullModelNodePtr NullModelNode::InstancePtr() {
 	return _nullModelNode;
 }
 
-const IModel& NullModelNode::getIModel() const {
+const IModel& NullModelNode::getIModel() const
+{
+	return *_nullModel;
+}
+
+IModel& NullModelNode::getIModel()
+{
 	return *_nullModel;
 }
 
@@ -37,6 +44,11 @@ void NullModelNode::renderSolid(RenderableCollector& collector, const VolumeTest
 
 void NullModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
 	_nullModel->renderWireframe(collector, volume, localToWorld());
+}
+
+void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	_nullModel->setRenderSystem(renderSystem);
 }
 
 const AABB& NullModelNode::localAABB() const {

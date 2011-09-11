@@ -1,11 +1,13 @@
-#ifndef SCENE_INSTANCE_WALKERS_H_
-#define SCENE_INSTANCE_WALKERS_H_
+#pragma once
 
 #include "inode.h"
 #include <stack>
 
 namespace scene
 {
+
+class Graph;
+typedef boost::shared_ptr<Graph> GraphPtr;
 
 /**
  * greebo: This Walker instantiates the visited nodes.
@@ -17,7 +19,11 @@ class InstanceSubgraphWalker :
 {
 private:
 	std::stack<INodePtr> _nodeStack;
+
+	GraphPtr& _sceneGraph;
 public:
+	InstanceSubgraphWalker(GraphPtr& sceneGraph);
+
 	bool pre(const INodePtr& node);
 	void post(const INodePtr& node);
 };
@@ -30,11 +36,14 @@ public:
 class UninstanceSubgraphWalker :
 	public scene::NodeVisitor
 {
+private:
+	GraphPtr& _sceneGraph;
+
 public:
+	UninstanceSubgraphWalker(GraphPtr& sceneGraph);
+
 	bool pre(const scene::INodePtr& node);
 	void post(const scene::INodePtr& node);
 };
 
 } // namespace scene
-
-#endif /* SCENE_INSTANCE_WALKERS_H_ */

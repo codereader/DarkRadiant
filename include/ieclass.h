@@ -208,16 +208,16 @@ public:
 	virtual const Vector3& getColour() const = 0;
 
 	/**
-	 * Get the Shader used for rendering this entity class in
+	 * Get the named Shader used for rendering this entity class in
 	 * wireframe mode.
 	 */
-	virtual const ShaderPtr& getWireShader() const = 0;
+	virtual const std::string& getWireShader() const = 0;
 
 	/**
 	 * Get the Shader used for rendering this entity class in
 	 * filled mode.
 	 */
-	virtual const ShaderPtr& getFillShader() const = 0;
+	virtual const std::string& getFillShader() const = 0;
 
 
 	/* ENTITY CLASS ATTRIBUTES */

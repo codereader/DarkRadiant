@@ -8,7 +8,6 @@
 #include "../ModelKey.h"
 #include "../OriginKey.h"
 #include "../rotation.h"
-#include "../SkinChangedWalker.h"
 #include "../Doom3Entity.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"
@@ -87,6 +86,7 @@ public:
 
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
 

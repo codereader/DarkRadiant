@@ -80,8 +80,15 @@ public:
 
 	/**
 	 * Multiplies this quaternion by the other one in place.
+	 * Equivalent to: *this = getMultipliedBy(other);
 	 */
 	void multiplyBy(const Quaternion& other);
+
+	/**
+	 * Multiplies this quaternion by the other one in place.
+	 * Equivalent to: *this = other.getMultipliedBy(*this);
+	 */
+	void preMultiplyBy(const Quaternion& other);
 
 	/**
 	 * Returns the inverse of this quaternion.
@@ -177,6 +184,11 @@ inline void Quaternion::multiplyBy(const Quaternion& other)
 	*this = getMultipliedBy(other);
 }
 
+inline void Quaternion::preMultiplyBy(const Quaternion& other)
+{
+	*this = other.getMultipliedBy(*this);
+}
+
 inline Quaternion Quaternion::getInverse() const
 {
 	return Quaternion(-getVector3(), w());
@@ -189,7 +201,7 @@ inline void Quaternion::conjugate()
 
 inline Quaternion Quaternion::getNormalised() const
 {
-	const float n = 1.0f / (x() * x() + y() * y() + z() * z() + w() * w());
+	const float n = 1.0f / sqrt(x() * x() + y() * y() + z() * z() + w() * w());
 
 	return Quaternion(x() * n, y() * n, z() * n, w() * n);
 }

@@ -1,19 +1,26 @@
-#ifndef MD5MODEL_H_
-#define MD5MODEL_H_
+#pragma once
 
 #include "imodel.h"
+#include "imd5model.h"
 #include "math/AABB.h"
 #include <vector>
 #include "parser/DefTokeniser.h"
 
 #include "MD5Surface.h"
+#include "RenderableMD5Skeleton.h"
 
-namespace md5 {
+namespace md5
+{
 
 // generic model node
 class MD5Model :
+	public IMD5Model,
 	public model::IModel
 {
+private:
+	// The list of joints as defined in the .md5mesh file
+	MD5Joints _joints;
+
 	typedef std::vector<MD5SurfacePtr> SurfaceList;
 	SurfaceList _surfaces;
 
@@ -32,6 +39,15 @@ class MD5Model :
 	// The VFS path to this model
 	std::string _modelPath;
 
+	// The animation which is currently active on this model
+	IMD5AnimPtr _anim;
+
+	// The current state of our animated skeleton
+	MD5Skeleton _skeleton;
+
+	// The OpenGLRenderable visualising the MD5Skeleton
+	RenderableMD5Skeleton _renderableSkeleton;
+
 public:
 	MD5Model();
 
@@ -45,6 +61,11 @@ public:
 	/** greebo: Reads the model data from the given tokeniser.
 	 */
 	void parseFromTokens(parser::DefTokeniser& tok);
+
+	RenderableMD5Skeleton& getRenderableSkeleton()
+	{
+		return _renderableSkeleton;
+	}
 
 	void updateAABB();
 
@@ -88,22 +109,27 @@ public:
 	// OpenGLRenderable implementation
 	virtual void render(const RenderInfo& info) const;
 
-private:
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
+	// IMD5Model implementation
+	virtual void setAnim(const IMD5AnimPtr& anim);
+	virtual const IMD5AnimPtr& getAnim() const;
+	virtual void updateAnim(std::size_t time);
+
 	/**
 	 * Helper: Parse an MD5 vector, which consists of three separated numbers
 	 * enclosed with parentheses.
 	 */
-	Vector3 parseVector3(parser::DefTokeniser& tok);
+	static Vector3 parseVector3(parser::DefTokeniser& tok);
+
+private:
 
 	// Creates a new MD5Surface, adds it to the local list and returns the reference
-	MD5Surface& newSurface();
+	MD5Surface& createNewSurface();
 
 	// Re-populates the list of active shader names
 	void updateMaterialList();
-
-}; // class MD5Model
+};
 typedef boost::shared_ptr<MD5Model> MD5ModelPtr;
 
-} // namespace md5
-
-#endif /*MD5MODEL_H_*/
+} // namespace

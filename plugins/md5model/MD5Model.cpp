@@ -12,7 +12,8 @@ namespace md5 {
 
 MD5Model::MD5Model() :
 	_polyCount(0),
-	_vertexCount(0)
+	_vertexCount(0),
+	_renderableSkeleton(_skeleton)
 {}
 
 MD5Model::const_iterator MD5Model::begin() const {
@@ -27,7 +28,8 @@ std::size_t MD5Model::size() const {
 	return _surfaces.size();
 }
 
-MD5Surface& MD5Model::newSurface() {
+MD5Surface& MD5Model::createNewSurface()
+{
 	_surfaces.push_back(MD5SurfacePtr(new MD5Surface));
 	return *_surfaces.back();
 }
@@ -43,7 +45,8 @@ const AABB& MD5Model::localAABB() const {
 	return _aabb_local;
 }
 
-void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld) {
+void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
+{
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
 	{
 		if (test.getVolume().TestAABB((*i)->localAABB(), localToWorld) != VOLUME_OUTSIDE)
@@ -69,8 +72,10 @@ void MD5Model::setModelPath(const std::string& modelPath) {
 	_modelPath = modelPath;
 }
 
-void MD5Model::applySkin(const ModelSkin& skin) {
-	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
+void MD5Model::applySkin(const ModelSkin& skin)
+{
+	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
 		(*i)->applySkin(skin);
 	}
 
@@ -110,17 +115,26 @@ const model::IModelSurface& MD5Model::getSurface(int surfaceNum) const
 	return *_surfaces[surfaceNum];
 }
 
-void MD5Model::render(const RenderInfo& info) const {
+void MD5Model::render(const RenderInfo& info) const
+{
 	// Render options
 	if (info.checkFlag(RENDER_TEXTURE_2D))
+	{
 		glEnable(GL_TEXTURE_2D);
-	if (info.checkFlag(RENDER_SMOOTH))
-		glShadeModel(GL_SMOOTH);
+	}
 
-	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
+	if (info.checkFlag(RENDER_SMOOTH))
+	{
+		glShadeModel(GL_SMOOTH);
+	}
+
+	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
 		// Get the Material to test the shader name against the filter system
-		MaterialPtr surfaceShader = (*i)->getState()->getMaterial();
-		if (surfaceShader->isVisible()) {
+		const MaterialPtr& surfaceShader = (*i)->getState()->getMaterial();
+
+		if (surfaceShader->isVisible())
+		{
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getEditorImage();
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
@@ -129,7 +143,16 @@ void MD5Model::render(const RenderInfo& info) const {
 	}
 }
 
-void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
+void MD5Model::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
+		(*i)->setRenderSystem(renderSystem);
+	}
+}
+
+void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
+{
 	_vertexCount = 0;
 	_polyCount = 0;
 
@@ -154,12 +177,12 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	tok.assertNextToken("{");
 
 	// Initialise the Joints vector with the specified number of objects
-	MD5Joints joints(numJoints);
+	_joints.resize(numJoints);
 
 	// Iterate over the vector of Joints, filling in each one with parsed
 	// values
-	for(MD5Joints::iterator i = joints.begin(); i != joints.end(); ++i) {
-
+	for(MD5Joints::iterator i = _joints.begin(); i != _joints.end(); ++i)
+	{
 		// Skip the joint name
 		tok.skipTokens(1);
 
@@ -175,13 +198,14 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	    // Calculate the W value. If it is NaN (due to underflow in the sqrt),
 	    // set it to 0.
 	    float lSq = rawRotation.getLengthSquared();
+
 	    float w = -sqrt(1.0f - lSq);
 	    if (isNaN(w)) {
 	    	w = 0;
 	    }
 
 		// Set the Vector4 rotation on the joint
-	    i->rotation = Vector4(rawRotation, w);
+	    i->rotation = Quaternion(rawRotation, w);
 	}
 
 	// End of joints datablock
@@ -190,146 +214,25 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok) {
 	// ------ MESHES ------
 
 	// For each mesh, there should be a mesh datablock
-	for (std::size_t i = 0; i < numMeshes; ++i) {
-		// Start of datablock
-		tok.assertNextToken("mesh");
-		tok.assertNextToken("{");
-
+	for (std::size_t i = 0; i < numMeshes; ++i)
+	{
 		// Construct the surface for this mesh
-		MD5Surface& surface = newSurface();
+		MD5Surface& surface = createNewSurface();
 
-		// Get the shader name
-		tok.assertNextToken("shader");
-		surface.setShader(tok.nextToken());
+		surface.parseFromTokens(tok);
 
-		// ----- VERTICES ------
+		// Build the index array - this has to happen at least once
+		surface.buildIndexArray();
 
-		// Read the vertex count
-		tok.assertNextToken("numverts");
-	    std::size_t numVerts = strToSizet(tok.nextToken());
-
-		// Initialise the vertex vector
-		MD5Verts verts(numVerts);
+		// Build the default vertex array
+		surface.updateToDefaultPose(_joints);
 
 		// Update the vertexcount
-		_vertexCount += numVerts;
-
-		// Populate each vertex struct with parsed values
-		for (MD5Verts::iterator vt = verts.begin(); vt != verts.end(); ++vt) {
-
-			tok.assertNextToken("vert");
-
-			// Index of vert
-			vt->index = strToSizet(tok.nextToken());
-
-			// U and V texcoords
-			tok.assertNextToken("(");
-			vt->u = strToFloat(tok.nextToken());
-			vt->v = strToFloat(tok.nextToken());
-			tok.assertNextToken(")");
-
-			// Weight index and count
-			vt->weight_index = strToSizet(tok.nextToken());
-			vt->weight_count = strToSizet(tok.nextToken());
-
-		} // for each vertex
-
-		// ------  TRIANGLES ------
-
-		// Read the number of triangles
-		tok.assertNextToken("numtris");
-		std::size_t numTris = strToSizet(tok.nextToken());
+		_vertexCount += surface.getNumVertices();
 
 		// Update the polycount
-		_polyCount += numTris;
-
-		// Initialise the triangle vector
-		MD5Tris tris(numTris);
-
-		// Read each triangle
-		for(MD5Tris::iterator tr = tris.begin(); tr != tris.end(); ++tr) {
-
-			tok.assertNextToken("tri");
-
-			// Triangle index, followed by the indexes of its 3 vertices
-			tr->index = strToSizet(tok.nextToken());
-			tr->a = 	strToSizet(tok.nextToken());
-			tr->b = 	strToSizet(tok.nextToken());
-			tr->c = 	strToSizet(tok.nextToken());
-
-		} // for each triangle
-
-		// -----  WEIGHTS ------
-
-		// Read the number of weights
-		tok.assertNextToken("numweights");
-		std::size_t numWeights = strToSizet(tok.nextToken());
-
-		// Initialise weights vector
-		MD5Weights weights(numWeights);
-
-		// Populate with weight data
-		for(MD5Weights::iterator w = weights.begin(); w != weights.end(); ++w) {
-
-			tok.assertNextToken("weight");
-
-			// Index and joint
-			w->index = strToSizet(tok.nextToken());
-			w->joint = strToSizet(tok.nextToken());
-
-			// Strength and direction (?)
-			w->t = strToFloat(tok.nextToken());
-			w->v = parseVector3(tok);
-
-		} // for each weight
-
-		// ----- END OF MESH DECL -----
-
-		tok.assertNextToken("}");
-
-		// ------ CALCULATION ------
-
-		for (MD5Verts::iterator j = verts.begin(); j != verts.end(); ++j) {
-			MD5Vert& vert = (*j);
-
-			Vector3 skinned(0, 0, 0);
-			for (std::size_t k = 0; k != vert.weight_count; ++k) {
-				MD5Weight& weight = weights[vert.weight_index + k];
-				MD5Joint& joint = joints[weight.joint];
-
-				Vector3 rotatedPoint = Quaternion(joint.rotation).transformPoint(weight.v);
-				skinned += (rotatedPoint + joint.position) * weight.t;
-			}
-
-			surface.vertices().push_back(
-				ArbitraryMeshVertex(skinned, Normal3f(0, 0, 0), TexCoord2f(vert.u, vert.v))
-			);
-		}
-
-		for (MD5Tris::iterator j = tris.begin(); j != tris.end(); ++j) {
-			MD5Tri& tri = (*j);
-			surface.indices().insert(RenderIndex(tri.a));
-			surface.indices().insert(RenderIndex(tri.b));
-			surface.indices().insert(RenderIndex(tri.c));
-		}
-
-		for (MD5Surface::indices_t::iterator j = surface.indices().begin(); j != surface.indices().end(); j += 3) {
-			ArbitraryMeshVertex& a = surface.vertices()[*(j + 0)];
-			ArbitraryMeshVertex& b = surface.vertices()[*(j + 1)];
-			ArbitraryMeshVertex& c = surface.vertices()[*(j + 2)];
-			Vector3 weightedNormal((c.vertex - a.vertex).crossProduct(b.vertex - a.vertex) );
-			a.normal += weightedNormal;
-			b.normal += weightedNormal;
-			c.normal += weightedNormal;
-		}
-
-		for (MD5Surface::vertices_t::iterator j = surface.vertices().begin(); j != surface.vertices().end(); ++j) {
-			j->normal = Normal3f(j->normal.getNormalised());
-		}
-
-		surface.updateGeometry();
-
-	} // for each mesh
+		_polyCount += surface.getNumTriangles();
+	}
 
 	updateAABB();
 	updateMaterialList();
@@ -347,114 +250,35 @@ Vector3 MD5Model::parseVector3(parser::DefTokeniser& tok) {
 	return Vector3(x, y, z);
 }
 
-} // namespace md5
+void MD5Model::setAnim(const IMD5AnimPtr& anim)
+{
+	_anim = anim;
 
-/** greebo: The commented out stuff below are remnants from an MD5Anim parser,
- *          left for later reference.
- */
+	if (!_anim)
+	{
+		for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+		{
+			(*i)->updateToDefaultPose(_joints);
+		}
+	}
+}
 
-//bool MD5Anim_parse(Tokeniser& tokeniser)
-//{
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseVersion(tokeniser));
-//  tokeniser.nextLine();
-//
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "commandline"));
-//  const char* commandline;
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, commandline));
-//  tokeniser.nextLine();
-//
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numFrames"));
-//  std::size_t numFrames;
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numFrames));
-//  tokeniser.nextLine();
-//
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numJoints"));
-//  std::size_t numJoints;
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numJoints));
-//  tokeniser.nextLine();
-//
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "frameRate"));
-//  std::size_t frameRate;
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, frameRate));
-//  tokeniser.nextLine();
-//
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "numAnimatedComponents"));
-//  std::size_t numAnimatedComponents;
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, numAnimatedComponents));
-//  tokeniser.nextLine();
-//
-//  // parse heirarchy
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "hierarchy"));
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-//  tokeniser.nextLine();
-//
-//  for(std::size_t i = 0; i < numJoints; ++i)
-//  {
-//    const char* name;
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseString(tokeniser, name));
-//    int parent;
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseInteger(tokeniser, parent));
-//    std::size_t flags;
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, flags));
-//    std::size_t index;
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseSize(tokeniser, index));
-//    tokeniser.nextLine();
-//  }
-//
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-//  tokeniser.nextLine();
-//
-//  // parse bounds
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "bounds"));
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-//  tokeniser.nextLine();
-//
-//  for(std::size_t i = 0; i < numFrames; ++i)
-//  {
-//    Vector3 mins;
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, mins));
-//    Vector3 maxs;
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, maxs));
-//    tokeniser.nextLine();
-//  }
-//
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-//  tokeniser.nextLine();
-//
-//  // parse baseframe
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "baseframe"));
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-//  tokeniser.nextLine();
-//
-//  for(std::size_t i = 0; i < numJoints; ++i)
-//  {
-//    Vector3 position;
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, position));
-//    Vector3 rotation;
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseVector3(tokeniser, rotation));
-//    tokeniser.nextLine();
-//  }
-//
-//  MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-//  tokeniser.nextLine();
-//
-//  // parse frames
-//  for(std::size_t i = 0; i < numFrames; ++i)
-//  {
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "frame"));
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "{"));
-//    tokeniser.nextLine();
-//
-//    for(std::size_t i = 0; i < numAnimatedComponents; ++i)
-//    {
-//      float component;
-//      MD5_RETURN_FALSE_IF_FAIL(MD5_parseFloat(tokeniser, component));
-//      tokeniser.nextLine();
-//    }
-//
-//    MD5_RETURN_FALSE_IF_FAIL(MD5_parseToken(tokeniser, "}"));
-//    tokeniser.nextLine();
-//  }
-//
-//  return true;
-//}
+const IMD5AnimPtr& MD5Model::getAnim() const
+{
+	return _anim;
+}
+
+void MD5Model::updateAnim(std::size_t time)
+{
+	if (!_anim) return; // nothing to do
+
+	// Update our joint hierarchy first
+	_skeleton.update(_anim, time);
+
+	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
+		(*i)->updateToSkeleton(_skeleton);
+	}
+}
+
+} // namespace

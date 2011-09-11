@@ -108,8 +108,12 @@ typedef boost::weak_ptr<IModel> IModelWeakPtr;
 class ModelNode {
 public:
     virtual ~ModelNode() {}
+
 	// Returns the contained IModel
 	virtual const IModel& getIModel() const = 0;
+
+	// Returns the contained IModel
+	virtual IModel& getIModel() = 0;
 };
 typedef boost::shared_ptr<ModelNode> ModelNodePtr;
 

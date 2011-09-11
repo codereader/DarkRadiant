@@ -1,41 +1,62 @@
-#ifndef LIGHTSHADER_H_
-#define LIGHTSHADER_H_
+#pragma once
 
 #include <string>
 #include "irender.h"
 
 namespace entity {
 
-class LightShader {
+class LightShader
+{
+private:
+	std::string _shaderName;
 
-	ShaderPtr m_shader;
+	ShaderPtr _shader;
 
-	void setDefault() {
-		m_shader = GlobalRenderSystem().capture(m_defaultShader);
-	}
+	// The reference to the rendersystem, in case our shader is changing
+	RenderSystemWeakPtr _renderSystem;
 
 public:
 	static std::string m_defaultShader;
 
-	LightShader() {
-		setDefault();
-	}
+	LightShader() :
+		_shaderName(m_defaultShader)
+	{}
 
-	void valueChanged(const std::string& value) {
-		if (value.empty()) {
-			setDefault();
-		}
-		else {
-			m_shader = GlobalRenderSystem().capture(value);
-		}
+	void valueChanged(const std::string& value)
+	{
+		_shaderName = value.empty() ? m_defaultShader : value;
+		
+		captureShader();
 		SceneChangeNotify();
 	}
 
-	const ShaderPtr& get() const {
-		return m_shader;
+	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	{
+		_renderSystem = renderSystem;
+
+		captureShader();
+	}
+
+	const ShaderPtr& get() const
+	{
+		return _shader;
+	}
+
+private:
+
+	void captureShader()
+	{
+		RenderSystemPtr renderSystem = _renderSystem.lock();
+
+		if (renderSystem)
+		{
+			_shader = renderSystem->capture(_shaderName);
+		}
+		else
+		{
+			_shader.reset();
+		}
 	}
 };
 
 } // namespace entity
-
-#endif /*LIGHTSHADER_H_*/

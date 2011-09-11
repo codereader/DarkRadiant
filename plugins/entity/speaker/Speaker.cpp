@@ -74,7 +74,7 @@ void Speaker::renderSolid(RenderableCollector& collector,
                           const Matrix4& localToWorld,
                           bool isSelected) const
 {
-	collector.SetState(m_entity.getEntityClass()->getFillShader(), RenderableCollector::eFullMaterials);
+	collector.SetState(_owner.getFillShader(), RenderableCollector::eFullMaterials);
 	collector.addRenderable(m_aabb_solid, localToWorld);
 
     // Submit the speaker radius if we are selected or the "show all speaker
@@ -91,7 +91,7 @@ void Speaker::renderWireframe(RenderableCollector& collector,
                               const Matrix4& localToWorld,
                               bool isSelected) const
 {
-	collector.SetState(m_entity.getEntityClass()->getWireShader(), RenderableCollector::eWireframeOnly);
+	collector.SetState(_owner.getWireShader(), RenderableCollector::eWireframeOnly);
 	collector.addRenderable(m_aabb_wire, localToWorld);
 
     // Submit the speaker radius if we are selected or the "show all speaker

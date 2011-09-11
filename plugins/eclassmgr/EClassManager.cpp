@@ -100,6 +100,9 @@ void EClassManager::resolveModelInheritance(const std::string& name, const Doom3
 			{
 				model->skin = i->second->skin;
 			}
+
+			// Append all inherited animations, if missing on the child
+			model->anims.insert(i->second->anims.begin(), i->second->anims.end());
 		}
 	}
 }

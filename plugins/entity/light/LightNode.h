@@ -115,6 +115,8 @@ public:
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
   	// Renders the components of this light instance
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const;
 
