@@ -113,42 +113,14 @@ void PicoModelNode::submitRenderables(RenderableCollector& collector,
 		// Submit the lights
 		collector.setLights(_lights);
 
-#if 0
-		// If the surface cache is populated, then use this instead of the
-		// original model in order to get the skinned textures
-		if (!_mappedSurfs.empty()) {
-			for (MappedSurfaces::const_iterator i = _mappedSurfs.begin();
-				 i != _mappedSurfs.end();
-				 ++i)
-			{
-				// Submit the surface and shader to the collector, checking first
-				// to make sure the texture is not filtered
-				const MaterialPtr& surfaceShader = i->second->getMaterial();
-
-				if (surfaceShader->isVisible())
-				{
-					collector.SetState(i->second, RenderableCollector::eFullMaterials);
-					collector.addRenderable(*i->first, localToWorld, entity);
-				}
-			}
-		}
-		else
-		{
-			// Submit the model's geometry
-			_picoModel->submitRenderables(collector, localToWorld, entity);
-		}
-#endif
 		// Submit the model's geometry
 		_picoModel->submitRenderables(collector, localToWorld, entity);
 	}
 }
 
 // Skin changed notify
-void PicoModelNode::skinChanged(const std::string& newSkinName) {
-
-	// Clear all the surface mappings before doing anything
-	//_mappedSurfs.clear();
-
+void PicoModelNode::skinChanged(const std::string& newSkinName)
+{
 	// The new skin name is stored locally
 	_skin = newSkinName;
 
@@ -156,30 +128,6 @@ void PicoModelNode::skinChanged(const std::string& newSkinName) {
 	// Note: This always returns a valid reference
 	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
 	_picoModel->applySkin(skin);
-
-#if 0
-	// Otherwise get the list of RenderablePicoSurfaces from the model and
-	// determine a texture remapping for each one
-	const SurfaceList& surfs = _picoModel->getSurfaces();
-	for (SurfaceList::const_iterator i = surfs.begin();
-		 i != surfs.end();
-		 ++i)
-	{
-		// Get the surface's material and test the skin for a remap
-		std::string material = (*i)->getActiveMaterial();
-		std::string mapped = skin.getRemap(material);
-		if (mapped.empty())
-			mapped = material; // use original material for remap
-
-		// Add the surface and the mapped shader to our surface cache
-		_mappedSurfs.push_back(
-			std::make_pair(
-				*i,
-				GlobalRenderSystem().capture(mapped)
-			)
-		);
-	}
-#endif
 
 	// Refresh the scene (TODO: get rid of that)
 	GlobalSceneGraph().sceneChanged();
