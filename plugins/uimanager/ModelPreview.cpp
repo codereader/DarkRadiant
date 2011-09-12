@@ -173,6 +173,11 @@ void ModelPreview::onPostRender()
 	}
 }
 
+RenderStateFlags ModelPreview::getRenderFlagsFill()
+{
+	return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
+}
+
 void ModelPreview::callbackToggleBBox()
 {
 	_glWidget->queueDraw();
