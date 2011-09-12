@@ -121,12 +121,12 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 	}
 
 	SurfaceLightLists::const_iterator j = _surfaceLightLists.begin();
-	SurfaceRemaps::const_iterator k = _surfaceRemaps.begin();
+	//SurfaceRemaps::const_iterator k = _surfaceRemaps.begin();
 
 	// greebo: Iterate over all MD5 surfaces and render them
 	for (MD5Model::const_iterator i = _model->begin();
 		 i != _model->end();
-		 ++i, ++j, ++k)
+		 ++i, ++j)
 	{
 		collector.setLights(*j);
 		(*i)->render(collector, localToWorld, entity);

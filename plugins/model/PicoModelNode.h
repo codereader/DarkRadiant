@@ -19,6 +19,7 @@ class PicoModelNode :
 	public LightCullable,
 	public SkinnedModel
 {
+private:
 	// The actual model
 	RenderablePicoModelPtr _picoModel;
 
@@ -30,13 +31,6 @@ class PicoModelNode :
 
 	// The light list from the shader cache when we attach
 	const LightList& _lightList;
-
-	// Cache of RenderablePicoSurfaces along with their shaders. This is
-	// necessary to allow each Instance to have its own skin.
-	typedef std::pair< boost::shared_ptr<RenderablePicoSurface>,
-					   ShaderPtr> MappedSurface;
-	typedef std::vector<MappedSurface> MappedSurfaces;
-	MappedSurfaces _mappedSurfs;
 
 	// The name of this model's skin
 	std::string _skin;
