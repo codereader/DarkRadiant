@@ -6,6 +6,7 @@
 #include "../GLWidget.h"
 #include "../Timer.h"
 
+#include "ifiltermenu.h"
 #include "iscenegraph.h"
 #include "irender.h"
 
@@ -23,6 +24,10 @@ namespace Gtk
 
 namespace gtkutil
 {
+
+// Forward decl.
+class RenderPreviewFilterObserver;
+typedef boost::shared_ptr<RenderPreviewFilterObserver> RenderPreviewFilterObserverPtr;
 
 /**
  * greebo: This class acts as base for widgets featuring 
@@ -76,6 +81,12 @@ protected:
 	int _previewWidth;
 	int _previewHeight;
 
+	// The filters menu
+	ui::IFilterMenuPtr _filtersMenu;
+
+	// The filter observer
+	RenderPreviewFilterObserverPtr _filterObserver;
+
 public:
 	RenderPreview();
 
@@ -88,6 +99,8 @@ public:
 	 * initial matrices and lights.
 	 */
 	void initialisePreview();
+
+	void onFiltersChanged();
 
 protected:
 	const scene::GraphPtr& getScene();

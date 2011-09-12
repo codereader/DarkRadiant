@@ -11,40 +11,8 @@
 namespace ui
 {
 
-// Helper class, which notifies the MapPreview about a filter change
-class MapPreviewFilterObserver :
-	public FilterSystem::Observer
-{
-	MapPreview& _owner;
-public:
-	MapPreviewFilterObserver(MapPreview& owner) :
-		_owner(owner)
-	{}
-
-	void onFiltersChanged() {
-		_owner.onFiltersChanged();
-	}
-};
-typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
-
-MapPreview::MapPreview() :
-	_filtersMenu(GlobalUIManager().createFilterMenu())
-{
-	Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
-	toolbar->add(*_filtersMenu->getMenuBarWidget());
-
-	addToolbar(*toolbar);
-
-	// Add an observer to the FilterSystem to get notified about changes
-	_filterObserver = MapPreviewFilterObserverPtr(new MapPreviewFilterObserver(*this));
-
-	GlobalFilterSystem().addObserver(_filterObserver);
-}
-
-MapPreview::~MapPreview()
-{
-	GlobalFilterSystem().removeObserver(_filterObserver);
-}
+MapPreview::MapPreview()
+{}
 
 void MapPreview::setRootNode(const scene::INodePtr& root)
 {
@@ -75,15 +43,6 @@ AABB MapPreview::getSceneBounds()
 	if (!getScene()->root()) return RenderPreview::getSceneBounds();
 
 	return getScene()->root()->worldAABB();
-}
-
-void MapPreview::onFiltersChanged()
-{
-	// Sanity check
-	if (getScene()->root() == NULL) return;
-
-	GlobalFilterSystem().updateSubgraph(getScene()->root());
-	_glWidget->queueDraw();
 }
 
 bool MapPreview::onPreRender()
