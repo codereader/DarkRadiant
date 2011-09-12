@@ -1,6 +1,5 @@
 #include "RenderPreview.h"
 
-#include "itextstream.h"
 #include "i18n.h"
 #include "igl.h"
 #include "iscenegraphfactory.h"
@@ -341,9 +340,6 @@ bool RenderPreview::onGLDraw(GdkEventExpose*)
 	// Keep the modelview matrix in the volumetest class up to date
 	_volumeTest.setModelView(getModelViewMatrix());
 	_volumeTest.setProjection(projection);
-
-	globalOutputStream() << "modelview: " << getModelViewMatrix() << std::endl;
-	globalOutputStream() << "projection: " << projection << std::endl;
 
 	// Pre-Render event
 	if (!onPreRender())
