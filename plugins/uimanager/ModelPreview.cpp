@@ -46,11 +46,13 @@ ModelPreview::ModelPreview() :
 		GlobalUIManager().getLocalPixbuf("iconDrawBBox.png"))));
 	toolbar->insert(*_drawBBox, 0);
 
-	// Create the filters menu
-	toolbar->add(*_filtersMenu->getMenuBarWidget());
+	Gtk::Toolbar* filterToolbar = Gtk::manage(new Gtk::Toolbar);
 
-	// Pack into a frame and return
+	// Create the filters menu
+	filterToolbar->add(*_filtersMenu->getMenuBarWidget());
+
 	addToolbar(*toolbar);
+	addToolbar(*filterToolbar);
 }
 
 // Set the model, this also resets the camera
@@ -169,7 +171,7 @@ void ModelPreview::onPostRender()
 		glDisable(GL_TEXTURE_2D);
 		glColor3f(0, 1, 1);
 
-		aabb_draw_wire(_modelNode->localAABB()); // TODO: This seems to have broken (was RenderableAABB before)
+		aabb_draw_wire(_modelNode->localAABB());
 	}
 }
 
