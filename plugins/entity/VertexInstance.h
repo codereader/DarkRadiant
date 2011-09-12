@@ -1,5 +1,4 @@
-#ifndef VERTEXINSTANCE_H_
-#define VERTEXINSTANCE_H_
+#pragma once
 
 #include "irender.h"
 #include "iuimanager.h"
@@ -28,9 +27,20 @@ public:
 	VertexInstance(Vector3& vertex, const SelectionChangeCallback& observer) :
 		_vertex(vertex),
 		_selectable(observer),
-		_colour(ColourSchemes().getColour("light_vertex_deselected")),
-		_shader(GlobalRenderSystem().capture("$BIGPOINT"))
+		_colour(ColourSchemes().getColour("light_vertex_deselected"))
 	{}
+
+	void setRenderSystem(const RenderSystemPtr& renderSystem)
+	{
+		if (renderSystem)
+		{
+			_shader = renderSystem->capture("$BIGPOINT");
+		}
+		else
+		{
+			_shader.reset();
+		}
+	}
 
 	void setVertex(const Vector3& vertex) {
 		_vertex = vertex;
@@ -41,7 +51,7 @@ public:
 	}
 
 	// Return the Shader for rendering
-  	ShaderPtr getShader() const {
+  	const ShaderPtr& getShader() const {
   		return _shader;
   	}
 
@@ -118,5 +128,3 @@ public:
 		}
 	}
 }; // class VertexInstanceRelative
-
-#endif /*VERTEXINSTANCE_H_*/
