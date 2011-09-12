@@ -1,32 +1,47 @@
-#ifndef MERGE_H_
-#define MERGE_H_
+#pragma once
 
 #include "iscenegraph.h"
 #include "scenelib.h"
 
-namespace map {
+namespace map
+{
 
 class MapMergeAll :
 	public scene::NodeVisitor
 {
-  mutable scene::Path m_path;
-public:
-  MapMergeAll(const scene::Path& root)
-    : m_path(root)
-  {
-  }
-  virtual bool pre(const scene::INodePtr& node)
-  {
-    m_path.top()->addChildNode(node);
-    m_path.push(node);
-    Node_setSelected(node, true);
-    return false;
-  }
+private:
+	scene::Path _path;
 
-  virtual void post(const scene::INodePtr& node)
-  {
-    m_path.pop();
-  }
+public:
+	MapMergeAll(const scene::Path& root) : 
+		_path(root)
+	{}
+
+	bool pre(const scene::INodePtr& originalNode)
+	{
+		// The removeChildNode below might destroy the instance - push the refcount
+		scene::INodePtr node = originalNode;
+
+		// greebo: Un-register the node from its previous parent first to be clean
+		scene::INodePtr oldParent = node->getParent();
+
+		if (oldParent)
+		{
+			oldParent->removeChildNode(node);
+		}
+
+		_path.top()->addChildNode(node);
+		_path.push(node);
+
+		Node_setSelected(node, true);
+		
+		return false;
+	}
+
+	void post(const scene::INodePtr& node)
+	{
+		_path.pop();
+	}
 };
 
 class MapMergeEntities :
@@ -44,15 +59,29 @@ public:
 		_targetLayers.insert(GlobalLayerSystem().getFirstVisibleLayer());
 	}
 
-	virtual bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& originalNode)
+	{
+		// The removeChildNode below might destroy the instance - push the refcount
+		scene::INodePtr node = originalNode;
+
 		// greebo: Check if the visited node is the worldspawn of the other map
-		if (node_is_worldspawn(node)) {
+		if (node_is_worldspawn(node))
+		{
 			// Find the worldspawn of the target map
 			scene::INodePtr world_node = GlobalMap().findWorldspawn();
 
-			if (world_node == NULL) {
+			if (world_node == NULL)
+			{
 				// Set the worldspawn to the new node
 				GlobalMap().setWorldspawn(node);
+
+				// greebo: Un-register the node from its previous parent first to be clean
+				scene::INodePtr oldParent = node->getParent();
+
+				if (oldParent)
+				{
+					oldParent->removeChildNode(node);
+				}
 
 				// Insert the visited node at the target path
 				m_path.top()->addChildNode(node);
@@ -63,7 +92,8 @@ public:
 				NodeSelector visitor;
 				node->traverse(visitor);
 			}
-			else {
+			else
+			{
 				// The target map already has a worldspawn
 				m_path.push(world_node);
 
@@ -72,7 +102,8 @@ public:
 				node->traverse(visitor);
 			}
 		}
-		else {
+		else
+		{
 			// This is an ordinary entity, not worldspawn
 
 			// Insert this node at the target path
@@ -105,11 +136,10 @@ public:
 };
 
 /// Merges the map graph rooted at \p node into the global scene-graph.
-inline void MergeMap(scene::INodePtr node) {
+inline void MergeMap(scene::INodePtr node)
+{
 	MapMergeEntities visitor(scene::Path(GlobalSceneGraph().root()));
 	node->traverse(visitor);
 }
 
 } // namespace map
-
-#endif /*MERGE_H_*/
