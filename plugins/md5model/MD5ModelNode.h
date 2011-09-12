@@ -24,14 +24,6 @@ private:
 	typedef std::vector<VectorLightList> SurfaceLightLists;
 	SurfaceLightLists _surfaceLightLists;
 
-	struct Remap {
-		std::string name;
-		//ShaderPtr shader;
-	};
-
-	typedef std::vector<Remap> SurfaceRemaps;
-	SurfaceRemaps _surfaceRemaps;
-
 	// The name of this model's skin
 	std::string _skin;
 
@@ -78,9 +70,6 @@ public:
 	void skinChanged(const std::string& newSkinName);
 
 private:
-	void constructRemaps();
-	void destroyRemaps();
-
 	void render(RenderableCollector& collector, const VolumeTest& volume, 
 				const Matrix4& localToWorld, const IRenderEntity& entity) const;
 };

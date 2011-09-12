@@ -19,14 +19,11 @@ inline void Surface_addLight(const MD5Surface& surface,
 
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
 	_model(model),
-	_surfaceLightLists(_model->size()),
-	_surfaceRemaps(_model->size())
+	_surfaceLightLists(_model->size())
 {
 	_lightList = &GlobalRenderSystem().attach(*this);
 
 	Node::setTransformChangedCallback(Callback((boost::bind(&MD5ModelNode::lightsChanged, this))));
-
-	constructRemaps();
 }
 
 const model::IModel& MD5ModelNode::getIModel() const {
@@ -41,8 +38,8 @@ void MD5ModelNode::lightsChanged() {
 	_lightList->lightsChanged();
 }
 
-MD5ModelNode::~MD5ModelNode() {
-	destroyRemaps();
+MD5ModelNode::~MD5ModelNode()
+{
 	GlobalRenderSystem().detach(*this);
 }
 
@@ -121,7 +118,6 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 	}
 
 	SurfaceLightLists::const_iterator j = _surfaceLightLists.begin();
-	//SurfaceRemaps::const_iterator k = _surfaceRemaps.begin();
 
 	// greebo: Iterate over all MD5 surfaces and render them
 	for (MD5Model::const_iterator i = _model->begin();
@@ -137,64 +133,24 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 	//collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
 }
 
-void MD5ModelNode::constructRemaps()
-{
-	// greebo: Acquire the ModelSkin reference from the SkinCache
-	// Note: This always returns a valid reference
-	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
-
-	_model->applySkin(skin);
-#if 0
-	// Iterate over all surfaces and remaps
-	_surfaceRemaps.resize(_model->size());
-	MD5ModelNode::SurfaceRemaps::iterator j = _surfaceRemaps.begin();
-
-	for (MD5Model::const_iterator i = _model->begin(); i != _model->end(); ++i,++j)
-	{
-		// Get the replacement shadername
-		std::string remap = skin.getRemap((*i)->getDefaultMaterial());
-
-		if (!remap.empty()) {
-			// We have a valid remap, store it
-			j->name = remap;
-			j->shader = GlobalRenderSystem().capture(remap);
-		} else {
-			// No remap, leave the name as it is
-			j->shader = ShaderPtr();
-		}
-	}
-#endif
-	// Refresh the scene
-	GlobalSceneGraph().sceneChanged();
-}
-
-void MD5ModelNode::destroyRemaps() 
-{
-#if 0
-	// Iterate over all remaps and NULLify the shader pointers
-	for (MD5ModelNode::SurfaceRemaps::iterator i = _surfaceRemaps.begin();
-		 i != _surfaceRemaps.end(); ++i)
-	{
-		if (i->shader) {
-			i->shader = ShaderPtr();
-		}
-	}
-#endif
-}
-
 // Returns the name of the currently active skin
 std::string MD5ModelNode::getSkin() const {
 	return _skin;
 }
 
-void MD5ModelNode::skinChanged(const std::string& newSkinName) {
-	ASSERT_MESSAGE(_surfaceRemaps.size() == _model->size(), "ERROR");
-	destroyRemaps();
-
+void MD5ModelNode::skinChanged(const std::string& newSkinName)
+{
 	// greebo: Store the new skin name locally
 	_skin = newSkinName;
 
-	constructRemaps();
+	// greebo: Acquire the ModelSkin reference from the SkinCache
+	// Note: This always returns a valid reference
+	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
+
+	_model->applySkin(skin);
+
+	// Refresh the scene
+	GlobalSceneGraph().sceneChanged();
 }
 
 } // namespace md5
