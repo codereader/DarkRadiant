@@ -1,15 +1,14 @@
-#ifndef IMODELPREVIEW_H_
-#define IMODELPREVIEW_H_
+#pragma once
 
 #include <string>
 #include <boost/shared_ptr.hpp>
 
 namespace Gtk { class Widget; }
 
-namespace model {
+namespace scene {
 
-class IModel;
-typedef boost::shared_ptr<IModel> IModelPtr;
+class INode;
+typedef boost::shared_ptr<INode> INodePtr;
 
 }
 
@@ -68,13 +67,8 @@ public:
 	/**
 	 * Get the model from the widget, in order to display properties about it.
 	 */
-	virtual model::IModelPtr getModel() = 0;
-
-	// To be called on dialog shutdown - releases local model cache
-	virtual void clear() = 0;
+	virtual scene::INodePtr getModelNode() = 0;
 };
 typedef boost::shared_ptr<IModelPreview> IModelPreviewPtr;
 
 } // namespace ui
-
-#endif /* IMODELPREVIEW_H_ */

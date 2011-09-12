@@ -155,14 +155,6 @@ void AIHeadChooserDialog::onOK()
 	destroy();
 }
 
-void AIHeadChooserDialog::_preDestroy()
-{
-	// Clear the model preview cache
-	_preview->clear();
-
-	BlockingTransientWindow::_preDestroy();
-}
-
 void AIHeadChooserDialog::_postShow()
 {
 	// Initialise the GL widget after the widgets have been shown

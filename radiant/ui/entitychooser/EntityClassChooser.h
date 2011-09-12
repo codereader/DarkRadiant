@@ -1,5 +1,4 @@
-#ifndef ENTITYCLASSCHOOSER_H_
-#define ENTITYCLASSCHOOSER_H_
+#pragma once
 
 #include "iradiant.h"
 #include "ieclass.h"
@@ -103,9 +102,6 @@ protected:
 	// Override BlockingTransientWindow::_postShow()
 	void _postShow();
 
-	// Override BlockingTransientWindow::_postHide()
-	void _postHide();
-
 public:
 	// Public accessor to the singleton instance
 	static EntityClassChooser& Instance();
@@ -135,5 +131,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /*ENTITYCLASSCHOOSER_H_*/

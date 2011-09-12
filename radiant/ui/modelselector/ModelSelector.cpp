@@ -197,9 +197,6 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 	// show and enter recursive main loop. This will block until the dialog is hidden in some way.
 	show();
 
-	// Reset the preview model to release resources
-	_modelPreview->clear();
-
 	// Construct the model/skin combo and return it
 	return ModelSelectorResult(
 		_lastModel,
@@ -360,9 +357,16 @@ void ModelSelector::updateSelected()
 
 	// Check that the model is actually valid by querying the IModelPtr
 	// returned from the preview widget.
-	model::IModelPtr mdl = _modelPreview->getModel();
+	scene::INodePtr mdl = _modelPreview->getModelNode();
 	if (!mdl) {
 		return; // no valid model
+	}
+
+	model::ModelNodePtr modelNode = Node_getModel(mdl);
+
+	if (!modelNode)
+	{
+		return;
 	}
 
 	// Update the text in the info table
@@ -377,18 +381,18 @@ void ModelSelector::updateSelected()
 
 	row = *_infoStore->append();
 	row[_infoStoreColumns.attribute] = std::string(_("Total vertices"));
-	row[_infoStoreColumns.value] = intToStr(mdl->getVertexCount());
+	row[_infoStoreColumns.value] = intToStr(modelNode->getIModel().getVertexCount());
 
 	row = *_infoStore->append();
 	row[_infoStoreColumns.attribute] = std::string(_("Total polys"));
-	row[_infoStoreColumns.value] = intToStr(mdl->getPolyCount());
+	row[_infoStoreColumns.value] = intToStr(modelNode->getIModel().getPolyCount());
 
 	row = *_infoStore->append();
 	row[_infoStoreColumns.attribute] = std::string(_("Material surfaces"));
-	row[_infoStoreColumns.value] = intToStr(mdl->getSurfaceCount());
+	row[_infoStoreColumns.value] = intToStr(modelNode->getIModel().getSurfaceCount());
 
 	// Add the list of active materials
-	const model::MaterialList& matList(mdl->getActiveMaterials());
+	const model::MaterialList& matList(modelNode->getIModel().getActiveMaterials());
 
 	if (!matList.empty())
 	{

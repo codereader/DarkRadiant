@@ -21,7 +21,7 @@ private:
 	Gtk::ToggleToolButton* _showWireFrameButton;
 	Gtk::ToggleToolButton* _automaticLoopButton;
 
-	// A particle is attached to a paren entity
+	// A particle is attached to a parent entity
 	scene::INodePtr _entity;
 
 	// Current particle node to display
