@@ -4,6 +4,7 @@
 #include "imodule.h"
 #include "inode.h"
 #include "ipath.h"
+#include <boost/weak_ptr.hpp>
 #include <boost/function/function_fwd.hpp>
 
 /**
@@ -107,6 +108,7 @@ public:
 	virtual ISpacePartitionSystemPtr getSpacePartition() = 0;
 };
 typedef boost::shared_ptr<Graph> GraphPtr;
+typedef boost::weak_ptr<Graph> GraphWeakPtr;
 
 class Cloneable
 {
