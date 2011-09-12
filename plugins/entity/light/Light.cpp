@@ -604,6 +604,8 @@ void Light::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_rRight.setRenderSystem(renderSystem);
 	_rStart.setRenderSystem(renderSystem);
 	_rEnd.setRenderSystem(renderSystem);
+
+	m_shader.setRenderSystem(renderSystem);
 }
 
 void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
