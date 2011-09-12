@@ -96,6 +96,8 @@ protected:
 
 	bool onPreRender();
 	void onPostRender();
+
+	RenderStateFlags getRenderFlagsFill();
 };
 typedef boost::shared_ptr<ModelPreview> ModelPreviewPtr;
 
