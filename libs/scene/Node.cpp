@@ -208,8 +208,13 @@ void Node::onChildAdded(const INodePtr& child)
 
 	if (!_instantiated) return;
 
-	InstanceSubgraphWalker visitor(_sceneGraph);
-	Node_traverseSubgraph(child, visitor);
+	GraphPtr sceneGraph = _sceneGraph.lock();
+
+	if (sceneGraph)
+	{
+		InstanceSubgraphWalker visitor(sceneGraph);
+		Node_traverseSubgraph(child, visitor);
+	}
 }
 
 void Node::onChildRemoved(const INodePtr& child)
@@ -221,8 +226,13 @@ void Node::onChildRemoved(const INodePtr& child)
 
 	if (!_instantiated) return;
 
-	UninstanceSubgraphWalker visitor(_sceneGraph);
-	Node_traverseSubgraph(child, visitor);
+	GraphPtr sceneGraph = _sceneGraph.lock();
+
+	if (sceneGraph)
+	{
+		UninstanceSubgraphWalker visitor(sceneGraph);
+		Node_traverseSubgraph(child, visitor);
+	}
 }
 
 void Node::onInsertIntoScene()
@@ -307,9 +317,11 @@ void Node::evaluateBounds() const
 		_boundsChanged = false;
 
 		// Now that our bounds are re-calculated, notify the scenegraph
-		if (_sceneGraph)
+		GraphPtr sceneGraph = _sceneGraph.lock();
+
+		if (sceneGraph)
 		{
-			_sceneGraph->nodeBoundsChanged(const_cast<Node*>(this)->shared_from_this());
+			sceneGraph->nodeBoundsChanged(const_cast<Node*>(this)->shared_from_this());
 		}
 	}
 }
@@ -346,11 +358,16 @@ void Node::boundsChanged() {
 		parent->boundsChanged();
 	}
 
-	if (_isRoot && _sceneGraph)
+	// greebo: It's enough if only root nodes call the global scenegraph
+	// as nodes are passing their calls up to their parents anyway
+	if (_isRoot)
 	{
-		// greebo: It's enough if only root nodes call the global scenegraph
-		// as nodes are passing their calls up to their parents anyway
-		_sceneGraph->boundsChanged();
+		GraphPtr sceneGraph = _sceneGraph.lock();
+
+		if (sceneGraph)
+		{
+			sceneGraph->boundsChanged();
+		}
 	}
 }
 

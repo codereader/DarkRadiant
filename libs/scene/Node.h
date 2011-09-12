@@ -9,12 +9,13 @@
 #include "math/Matrix4.h"
 #include "generic/callback.h"
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/weak_ptr.hpp>
 
 namespace scene
 {
 
 class Graph;
-typedef boost::shared_ptr<Graph> GraphPtr;
+typedef boost::weak_ptr<Graph> GraphWeakPtr;
 
 class Node :
 	public INode,
@@ -67,8 +68,8 @@ protected:
 	// The render system for passing down the child hierarchy later on
 	RenderSystemWeakPtr _renderSystem;
 
-	// The scene::Graph we're belonging to
-	GraphPtr _sceneGraph;
+	// The scene::Graph we're belonging to (weak reference to avoid circular references)
+	GraphWeakPtr _sceneGraph;
 
 public:
 	Node();
