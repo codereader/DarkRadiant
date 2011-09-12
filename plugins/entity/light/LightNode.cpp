@@ -14,12 +14,12 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 		   Callback(boost::bind(&scene::Node::transformChanged, this)),
 		   Callback(boost::bind(&scene::Node::boundsChanged, this)),
 		   Callback(boost::bind(&LightNode::lightChanged, this))),
-	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightTargetInstance(VertexInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightUpInstance(VertexInstanceRelative(_light.upTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightStartInstance(VertexInstance(_light.startTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightEndInstance(VertexInstance(_light.endTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightCenterInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightTargetInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightRightInstance(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightStartInstance(_light.startTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightEndInstance(_light.endTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
 	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
 {}
 
@@ -32,12 +32,12 @@ LightNode::LightNode(const LightNode& other) :
            Callback(boost::bind(&Node::transformChanged, this)),
 		   Callback(boost::bind(&Node::boundsChanged, this)),
 		   Callback(boost::bind(&LightNode::lightChanged, this))),
-	_lightCenterInstance(VertexInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightTargetInstance(VertexInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightRightInstance(VertexInstanceRelative(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightUpInstance(VertexInstanceRelative(_light.upTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightStartInstance(VertexInstance(_light.startTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
-	_lightEndInstance(VertexInstance(_light.endTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1))),
+	_lightCenterInstance(_light.getDoom3Radius().m_centerTransformed, boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightTargetInstance(_light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightRightInstance(_light.rightTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightStartInstance(_light.startTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
+	_lightEndInstance(_light.endTransformed(), boost::bind(&LightNode::selectedChangedComponent, this, _1)),
 	m_dragPlanes(boost::bind(&LightNode::selectedChangedComponent, this, _1))
 {}
 
@@ -54,10 +54,6 @@ void LightNode::construct()
 	EntityNode::construct();
 
 	_light.construct();
-}
-
-LightNode::~LightNode()
-{
 }
 
 const Matrix4& LightNode::getLocalPivot() const {
@@ -288,6 +284,13 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	// The renderable vertices are maintaining shader objects, acquire/free them now
 	_light.setRenderSystem(renderSystem);
+
+	_lightCenterInstance.setRenderSystem(renderSystem);
+	_lightTargetInstance.setRenderSystem(renderSystem);
+	_lightRightInstance.setRenderSystem(renderSystem);
+	_lightUpInstance.setRenderSystem(renderSystem);
+	_lightStartInstance.setRenderSystem(renderSystem);
+	_lightEndInstance.setRenderSystem(renderSystem);
 }
 
 // Renders the components of this light instance

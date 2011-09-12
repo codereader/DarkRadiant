@@ -254,6 +254,8 @@ void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	m_contained.setRenderSystem(renderSystem);
 	m_curveNURBS.setRenderSystem(renderSystem);
 	m_curveCatmullRom.setRenderSystem(renderSystem);
+
+	_originInstance.setRenderSystem(renderSystem);
 }
 
 void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const

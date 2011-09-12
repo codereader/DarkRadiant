@@ -50,8 +50,6 @@ private:
 public:
 	static LightNodePtr Create(const IEntityClassPtr& eclass);
 
-	virtual ~LightNode();
-
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const;
 
