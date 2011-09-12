@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ifiltermenu.h"
 #include "imodel.h"
 #include "imodelpreview.h"
 
@@ -36,9 +35,6 @@ private:
 	// Name of last model, to detect changes in model which require camera
 	// recalculation
 	std::string _lastModel;
-
-	// The filters menu
-	IFilterMenuPtr _filtersMenu;
 
 private:
 	// gtkmm callbacks

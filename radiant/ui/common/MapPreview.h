@@ -1,17 +1,10 @@
 #pragma once
 
-#include "ifiltermenu.h"
 #include "gtkutil/preview/RenderPreview.h"
 #include "inode.h"
 
-#include "ui/menu/FiltersMenu.h"
-
 namespace ui
 {
-
-// Forward decl.
-class MapPreviewFilterObserver;
-typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
 
 /**
  * greebo: This is a preview widget similar to the ui::ModelPreview class,
@@ -25,26 +18,14 @@ typedef boost::shared_ptr<MapPreviewFilterObserver> MapPreviewFilterObserverPtr;
 class MapPreview :
 	public gtkutil::RenderPreview
 {
-private:
-	// The filters menu
-	IFilterMenuPtr _filtersMenu;
-
-	// The filter observer
-	MapPreviewFilterObserverPtr _filterObserver;
-
 public:
 	MapPreview();
-
-	~MapPreview();
 
 	// Get/set the map root to render
 	void setRootNode(const scene::INodePtr& root);
 	scene::INodePtr getRootNode();
 
 	AABB getSceneBounds();
-
-	// Gets called by a local helper object on each FilterSystem change
-	void onFiltersChanged();
 
 protected:
 	bool onPreRender();

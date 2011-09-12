@@ -1,9 +1,11 @@
 #include "RenderPreview.h"
 
+#include "ifilter.h"
 #include "i18n.h"
 #include "igl.h"
 #include "iscenegraphfactory.h"
 #include "irendersystemfactory.h"
+#include "iuimanager.h"
 
 #include "math/AABB.h"
 
@@ -41,6 +43,22 @@ namespace
 	};
 }
 
+// Helper class, which notifies the MapPreview about a filter change
+class RenderPreviewFilterObserver :
+	public FilterSystem::Observer
+{
+	RenderPreview& _owner;
+public:
+	RenderPreviewFilterObserver(RenderPreview& owner) :
+		_owner(owner)
+	{}
+
+	void onFiltersChanged() {
+		_owner.onFiltersChanged();
+	}
+};
+typedef boost::shared_ptr<RenderPreviewFilterObserver> RenderPreviewFilterObserverPtr;
+
 RenderPreview::RenderPreview() :
 	Gtk::Frame(),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "RenderPreview"))),
@@ -52,7 +70,8 @@ RenderPreview::RenderPreview() :
 	_renderingInProgress(false),
 	_timer(MSEC_PER_FRAME, _onFrame, this),
 	_previewWidth(0),
-	_previewHeight(0)
+	_previewHeight(0),
+	_filtersMenu(GlobalUIManager().createFilterMenu())
 {
 	// Main vbox - above is the GL widget, below is the toolbar
 	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
@@ -109,9 +128,15 @@ RenderPreview::RenderPreview() :
 	toolbar->insert(*_stopButton, 0);
 
 	_toolHBox->pack_start(*toolbar, true, true, 0);
+	_toolHBox->pack_start(*_filtersMenu->getMenuBarWidget(), false, false, 0);
 
-	// Pack into a frame and return
+	// Pack into a frame
 	add(*vbx);
+
+	// Add an observer to the FilterSystem to get notified about changes
+	_filterObserver.reset(new RenderPreviewFilterObserver(*this));
+
+	GlobalFilterSystem().addObserver(_filterObserver);
 }
 
 RenderPreview::~RenderPreview()
@@ -120,6 +145,17 @@ RenderPreview::~RenderPreview()
 	{
 		_timer.disable();
 	}
+
+	GlobalFilterSystem().removeObserver(_filterObserver);
+}
+
+void RenderPreview::onFiltersChanged()
+{
+	if (!getScene()->root()) return;
+
+	GlobalFilterSystem().updateSubgraph(getScene()->root());
+
+	_glWidget->queueDraw();
 }
 
 void RenderPreview::addToolbar(Gtk::Toolbar& toolbar)

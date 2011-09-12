@@ -1,5 +1,6 @@
 #include "ModelPreview.h"
 
+#include "ifilter.h"
 #include "iuimanager.h"
 #include "imodelcache.h"
 #include "ieclass.h"
@@ -31,8 +32,7 @@ namespace
 
 ModelPreview::ModelPreview() :
 	gtkutil::RenderPreview(),
-	_lastModel(""),
-	_filtersMenu(GlobalUIManager().createFilterMenu())
+	_lastModel("")
 {
 	// Create the toolbar
 	Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
@@ -46,13 +46,7 @@ ModelPreview::ModelPreview() :
 		GlobalUIManager().getLocalPixbuf("iconDrawBBox.png"))));
 	toolbar->insert(*_drawBBox, 0);
 
-	Gtk::Toolbar* filterToolbar = Gtk::manage(new Gtk::Toolbar);
-
-	// Create the filters menu
-	filterToolbar->add(*_filtersMenu->getMenuBarWidget());
-
 	addToolbar(*toolbar);
-	addToolbar(*filterToolbar);
 }
 
 // Set the model, this also resets the camera
@@ -89,6 +83,9 @@ void ModelPreview::setModel(const std::string& model)
 	if (_modelNode && model != _lastModel)
 	{
 		_entity->addChildNode(_modelNode);
+
+		// Trigger an initial update of the subgraph
+		GlobalFilterSystem().updateSubgraph(getScene()->root());
 
 		// Reset preview time
 		stopPlayback();
