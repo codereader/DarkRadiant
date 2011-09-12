@@ -79,23 +79,26 @@ void ModelPreview::setModel(const std::string& model)
 
 	_modelNode = GlobalModelCache().getModelNode(model);
 
-	// Reset camera if the model has changed
-	if (_modelNode && model != _lastModel)
+	if (_modelNode)
 	{
 		_entity->addChildNode(_modelNode);
 
 		// Trigger an initial update of the subgraph
 		GlobalFilterSystem().updateSubgraph(getScene()->root());
 
-		// Reset preview time
-		stopPlayback();
+		// Reset camera if the model has changed
+		if (model != _lastModel)
+		{
+			// Reset preview time
+			stopPlayback();
 
-		// Reset the rotation to the default one
-		_rotation = Matrix4::getRotation(Vector3(0,-1,0), Vector3(0,-0.3f,1));
-		_rotation.multiplyBy(Matrix4::getRotation(Vector3(0,1,0), Vector3(1,-1,0)));
+			// Reset the rotation to the default one
+			_rotation = Matrix4::getRotationAboutZDegrees(45);
+			_rotation = _rotation.getMultipliedBy(Matrix4::getRotation(Vector3(1,-1,0), 45));
 
-		// Calculate camera distance so model is appropriately zoomed
-		_camDist = -(_modelNode->localAABB().getRadius() * 2.7f);
+			// Calculate camera distance so model is appropriately zoomed
+			_camDist = -(_modelNode->localAABB().getRadius() * 5.0f);
+		}
 
 		_lastModel = model;
 	}
