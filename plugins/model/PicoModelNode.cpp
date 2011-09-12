@@ -113,6 +113,7 @@ void PicoModelNode::submitRenderables(RenderableCollector& collector,
 		// Submit the lights
 		collector.setLights(_lights);
 
+#if 0
 		// If the surface cache is populated, then use this instead of the
 		// original model in order to get the skinned textures
 		if (!_mappedSurfs.empty()) {
@@ -136,6 +137,9 @@ void PicoModelNode::submitRenderables(RenderableCollector& collector,
 			// Submit the model's geometry
 			_picoModel->submitRenderables(collector, localToWorld, entity);
 		}
+#endif
+		// Submit the model's geometry
+		_picoModel->submitRenderables(collector, localToWorld, entity);
 	}
 }
 
@@ -143,7 +147,7 @@ void PicoModelNode::submitRenderables(RenderableCollector& collector,
 void PicoModelNode::skinChanged(const std::string& newSkinName) {
 
 	// Clear all the surface mappings before doing anything
-	_mappedSurfs.clear();
+	//_mappedSurfs.clear();
 
 	// The new skin name is stored locally
 	_skin = newSkinName;
@@ -151,7 +155,9 @@ void PicoModelNode::skinChanged(const std::string& newSkinName) {
 	// greebo: Acquire the ModelSkin reference from the SkinCache
 	// Note: This always returns a valid reference
 	ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
+	_picoModel->applySkin(skin);
 
+#if 0
 	// Otherwise get the list of RenderablePicoSurfaces from the model and
 	// determine a texture remapping for each one
 	const SurfaceList& surfs = _picoModel->getSurfaces();
@@ -173,8 +179,9 @@ void PicoModelNode::skinChanged(const std::string& newSkinName) {
 			)
 		);
 	}
+#endif
 
-	// Refresh the scene
+	// Refresh the scene (TODO: get rid of that)
 	GlobalSceneGraph().sceneChanged();
 }
 
