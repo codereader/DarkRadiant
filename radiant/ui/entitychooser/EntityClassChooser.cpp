@@ -148,14 +148,6 @@ const std::string& EntityClassChooser::getSelectedEntityClass() const
     return _selectedName;
 }
 
-void EntityClassChooser::_postHide()
-{
-    BlockingTransientWindow::_postHide();
-
-    // Release the models when the dialog is hidden again
-    _modelPreview->clear();
-}
-
 void EntityClassChooser::_onDeleteEvent()
 {
     _result = RESULT_CANCELLED;

@@ -1,16 +1,12 @@
-#ifndef MODELPREVIEW_H_
-#define MODELPREVIEW_H_
+#pragma once
 
 #include "ifiltermenu.h"
 #include "imodel.h"
 #include "imodelpreview.h"
-#include "math/Matrix4.h"
 
-#include <GL/glew.h>
 #include <string>
 #include <map>
-#include "gtkutil/GLWidget.h"
-#include <gtkmm/frame.h>
+#include "gtkutil/preview/RenderPreview.h"
 
 namespace Gtk { class ToggleToolButton; }
 
@@ -23,54 +19,30 @@ namespace ui
  * with setModel() and setSkin(). This class handles zooming and rotating the
  * model itself.
  */
-
 class ModelPreview :
 	public IModelPreview,
-	public Gtk::Frame
+	public gtkutil::RenderPreview
 {
 private:
-	// GL widget
-	gtkutil::GLWidget* _glWidget;
-
 	// Toolbar buttons
 	Gtk::ToggleToolButton* _drawBBox;
 
-	// A small cache mapping model names to IModel objects to avoid
-	// reloading the models on each selection or skin change.
-	// This map is cleared on dialog closure so that the allocated
-	// models get released when they're not needed anymore.
-	typedef std::map<std::string, model::IModelPtr> ModelMap;
-	ModelMap _modelCache;
+	// The parent entity
+	scene::INodePtr _entity;
 
 	// Current model to display
-	model::IModelPtr _model;
+	scene::INodePtr _modelNode;
 
 	// Name of last model, to detect changes in model which require camera
 	// recalculation
 	std::string _lastModel;
 
-	// Current distance between camera and preview
-	GLfloat _camDist;
-
-	// Current rotation matrix
-	Matrix4 _rotation;
-
 	// The filters menu
 	IFilterMenuPtr _filtersMenu;
 
-	int _previewWidth;
-	int _previewHeight;
-
 private:
-
 	// gtkmm callbacks
-	bool callbackGLDraw(GdkEventExpose*);
-	bool callbackGLMotion(GdkEventMotion*);
-	bool callbackGLScroll(GdkEventScroll*);
 	void callbackToggleBBox();
-	void onSizeAllocate(Gtk::Allocation& allocation);
-
-	static Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
 
 public:
 
@@ -78,19 +50,16 @@ public:
 	 */
 	ModelPreview();
 
-	/**
-	 * Set the pixel size of the ModelPreview widget. 
-	 *
-	 * @param size
-	 * The pixel size of the widget.
-	 */
-	void setSize(int xsize, int ysize);
+	// IModelPreview implementation, wrapping to base
+	void setSize(int width, int height)
+	{
+		RenderPreview::setSize(width, height);
+	}
 
-	/**
-	 * Initialise the GL preview. This clears the window and sets up the
-	 * initial matrices and lights.
-	 */
-	void initialisePreview();
+	void initialisePreview()
+	{
+		RenderPreview::initialisePreview();
+	}
 
 	/**
 	 * Set the widget to display the given model. If the model name is the
@@ -114,15 +83,20 @@ public:
 	/**
 	 * Get the model from the widget, in order to display properties about it.
 	 */
-	model::IModelPtr getModel() {
-		return _model;
+	scene::INodePtr getModelNode()
+	{
+		return _modelNode;
 	}
 
-	// To be called on dialog shutdown - releases local model cache
-	void clear();
+protected:
+	// Creates parent entity etc.
+	void setupSceneGraph();
+
+	AABB getSceneBounds();
+
+	bool onPreRender();
+	void onPostRender();
 };
 typedef boost::shared_ptr<ModelPreview> ModelPreviewPtr;
 
 } // namespace
-
-#endif /*MODELPREVIEW_H_*/

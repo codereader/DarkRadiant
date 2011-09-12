@@ -1,5 +1,4 @@
-#ifndef AI_HEAD_CHOOSER_DIALOG_H_
-#define AI_HEAD_CHOOSER_DIALOG_H_
+#pragma once
 
 #include "imodelpreview.h"
 
@@ -70,8 +69,7 @@ public:
 	Result getResult();
 
 private:
-	// Override base class _preDestroy
-	void _preDestroy();
+	// Override base class
 	void _postShow();
 
 	void populateHeadStore();
@@ -88,5 +86,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /* AI_HEAD_CHOOSER_DIALOG_H_ */
