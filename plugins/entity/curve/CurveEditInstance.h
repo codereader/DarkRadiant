@@ -1,5 +1,4 @@
-#ifndef CURVEEDITINSTANCE_H_
-#define CURVEEDITINSTANCE_H_
+#pragma once
 
 #include "Curve.h"
 #include "selectionlib.h"
@@ -51,14 +50,14 @@ private:
 		ShaderPtr selectedShader;
 	};
 
-	static CurveShaders _shaders;
+	CurveShaders _shaders;
 
 public:
 
 	// Constructor
 	CurveEditInstance(Curve& curve, const SelectionChangeCallback& selectionChanged);
 
-	static void initialiseShaders();
+	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	// Traversal functions, these cycle through all (selected) control points
 	void forEach(ControlPointFunctor& functor);
@@ -104,5 +103,3 @@ private:
 };
 
 } // namespace entity
-
-#endif /*CURVEEDITINSTANCE_H_*/

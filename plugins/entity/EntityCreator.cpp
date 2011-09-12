@@ -173,9 +173,6 @@ void Doom3EntityCreator::initialiseModule(const ApplicationContext& ctx)
 
 	LightShader::m_defaultShader = GlobalRegistry().get("game/defaults/lightShader");
 
-	// Construct Doom3Group stuff
-	CurveEditInstance::initialiseShaders();
-
 	GlobalRenderSystem().attachRenderable(RenderableTargetInstances::Instance());
 
 	GlobalEventManager().addRegistryToggle("ToggleShowAllLightRadii", RKEY_SHOW_ALL_LIGHT_RADII);

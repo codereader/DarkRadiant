@@ -5,9 +5,6 @@
 
 namespace entity {
 
-// Initialise the static member
-CurveEditInstance::CurveShaders CurveEditInstance::_shaders;
-
 CurveEditInstance::CurveEditInstance(Curve& curve, const SelectionChangeCallback& selectionChanged) :
 	_curve(curve),
     _selectionChanged(selectionChanged),
@@ -34,10 +31,18 @@ void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test)
     }
 }
 
-void CurveEditInstance::initialiseShaders()
+void CurveEditInstance::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	_shaders.controlsShader = GlobalRenderSystem().capture("$POINT");
-	_shaders.selectedShader = GlobalRenderSystem().capture("$SELPOINT");
+	if (renderSystem)
+	{
+		_shaders.controlsShader = renderSystem->capture("$POINT");
+		_shaders.selectedShader = renderSystem->capture("$SELPOINT");
+	}
+	else
+	{
+		_shaders.controlsShader.reset();
+		_shaders.selectedShader.reset();
+	}
 }
 
 bool CurveEditInstance::isSelected() const {
