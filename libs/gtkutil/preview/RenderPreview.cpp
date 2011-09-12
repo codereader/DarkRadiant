@@ -141,7 +141,7 @@ void RenderPreview::initialisePreview()
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glClearColor(0.0, 0.0, 0.0, 0);
-	glClearDepth(100.0);
+	glClearDepth(1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set up the camera
