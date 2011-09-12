@@ -219,6 +219,18 @@ void Face::submitRenderables(RenderableCollector& collector,
 void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	_faceShader.setRenderSystem(renderSystem);
+
+	// Update the visibility flag, we might have switched shaders
+	const ShaderPtr& shader = _faceShader.getGLShader();
+
+	if (shader)
+	{
+		_faceIsVisible = shader->getMaterial()->isVisible();
+	}
+	else
+	{
+		_faceIsVisible = false; // no shader => not visible
+	}
 }
 
 void Face::transform(const Matrix4& matrix, bool mirror) {

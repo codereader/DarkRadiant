@@ -545,12 +545,13 @@ bool Map::import(const std::string& filename) {
 			// is not the NULL node
 
 			// Create a new maproot
-			scene::INodePtr cloneRoot(new BasicContainer);
+			/*scene::INodePtr cloneRoot(new BasicContainer);
 
 			{
 				CloneAll cloner(cloneRoot);
 				resource->getNode()->traverse(cloner);
-			}
+			}*/
+			scene::INodePtr otherRoot = resource->getNode();
 
 			// Discard all layer information found in the imported file
 			{
@@ -558,21 +559,23 @@ bool Map::import(const std::string& filename) {
 				layers.insert(0);
 
 				scene::AssignNodeToLayersWalker walker(layers);
-				Node_traverseSubgraph(cloneRoot, walker);
+				Node_traverseSubgraph(otherRoot, walker);
 			}
 
 			// Adjust all new names to fit into the existing map namespace,
 			// this routine will be changing a lot of names in the importNamespace
 			INamespacePtr nspace = getRoot()->getNamespace();
 
-			if (nspace != NULL) {
+			if (nspace != NULL)
+			{
 				// Prepare our namespace for import
-				nspace->importNames(cloneRoot);
-				// Now add the cloned names to the local namespace
-				nspace->connect(cloneRoot);
+				nspace->importNames(otherRoot);
+
+				// Now add the imported names to the local namespace
+				nspace->connect(otherRoot);
 			}
 
-			MergeMap(cloneRoot);
+			MergeMap(otherRoot);
 			success = true;
 		}
 	}
