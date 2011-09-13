@@ -68,6 +68,8 @@ void FaceShader::captureShader()
 
 	if (renderSystem)
 	{
+		releaseShader();
+
 		_glShader = renderSystem->capture(_materialName);
 		 assert(_glShader);
 
