@@ -513,17 +513,19 @@ void splitBrushesByPlane(const Vector3 planePoints[3], EBrushSplit split)
 	TextureProjection projection;
 	projection.constructDefault();
 
-	{
-		// Instantiate a scoped walker
-		BrushByPlaneClipper splitter(
-			planePoints[0],
-			planePoints[1],
-			planePoints[2],
-			projection,
-			split
-		);
-		GlobalSelectionSystem().foreachSelected(splitter);
-	}
+	// Collect all selected brushes
+	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
+
+	// Instantiate a scoped walker
+	BrushByPlaneClipper splitter(
+		planePoints[0],
+		planePoints[1],
+		planePoints[2],
+		projection,
+		split
+	);
+
+	splitter.split(brushes);
 
 	SceneChangeNotify();
 }
