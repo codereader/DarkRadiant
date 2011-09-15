@@ -58,14 +58,14 @@ public:
 		BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(newNode);
 		assert(brushNode != NULL);
 
+		// Add the child to the same parent as the source brush
+		parent->addChildNode(brushNode);
+
 		// Move the child brushes to the same layer as their source
 		scene::assignNodeToLayers(brushNode, _brush->getLayers());
 
 		// Copy all faces from the source brush
 		brushNode->getBrush().copy(_brush->getBrush());
-
-		// Add the child to the same parent as the source brush
-		parent->addChildNode(brushNode);
 
 		Node_setSelected(brushNode, true);
 
