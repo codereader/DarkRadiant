@@ -1,5 +1,4 @@
-#ifndef BRUSH_BY_PLANE_CLIPPER_H_
-#define BRUSH_BY_PLANE_CLIPPER_H_
+#pragma once
 
 #include <set>
 #include <map>
@@ -9,11 +8,12 @@
 #include "math/Vector3.h"
 #include "brush/TextureProjection.h"
 
+#include "selection/algorithm/Primitives.h"
+
 namespace brush {
 namespace algorithm {
 
-class BrushByPlaneClipper :
-	public SelectionSystem::Visitor
+class BrushByPlaneClipper
 {
 private:
 	const Vector3& _p0;
@@ -40,11 +40,7 @@ public:
 	BrushByPlaneClipper(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 						const TextureProjection& projection, EBrushSplit split);
 
-	// The destructor performs the node deletions and insertions
-	virtual ~BrushByPlaneClipper();
-
-	// SelectionSystem::Visitor implementation
-	void visit(const scene::INodePtr& node) const;
+	void split(const BrushPtrVector& brushes);
 
 private:
 	void getMostUsedTexturing(const Brush& brush) const;
@@ -52,5 +48,3 @@ private:
 
 } // namespace algorithm
 } // namespace brush
-
-#endif /* BRUSH_BY_PLANE_CLIPPER_H_ */

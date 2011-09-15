@@ -2,11 +2,14 @@
 
 #include "CSG.h"
 #include "scenelib.h"
-#include "brush/Brush.h"
+#include "brush/BrushNode.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 
-namespace brush {
-namespace algorithm {
+namespace brush
+{
+
+namespace algorithm
+{
 
 BrushByPlaneClipper::BrushByPlaneClipper(
 	const Vector3& p0, const Vector3& p1, const Vector3& p2,
@@ -20,26 +23,97 @@ BrushByPlaneClipper::BrushByPlaneClipper(
 		_caulkShader(GlobalClipper().getCaulkShader())
 {}
 
-BrushByPlaneClipper::~BrushByPlaneClipper()
+void BrushByPlaneClipper::split(const BrushPtrVector& brushes)
 {
-	for (std::set<scene::INodePtr>::iterator i = _deleteList.begin();
-		 i != _deleteList.end(); ++i)
+	Plane3 plane(_p0, _p1, _p2);
+
+	if (!plane.isValid())
 	{
-		// Remove the node from the scene
-		scene::removeNodeFromParent(*i);
+		return;
 	}
 
-	for (InsertMap::iterator i = _insertList.begin();
-		 i != _insertList.end(); ++i)
+	for (BrushPtrVector::const_iterator i = brushes.begin(); i != brushes.end(); ++i)
 	{
-		// Insert the child into the designated parent
-		scene::addNodeToContainer(i->first, i->second);
+		const BrushNodePtr& node = *i;
 
-		// Select the child
-		Node_setSelected(i->first, true);
+		// Don't clip invisible nodes
+		if (!node->visible())
+		{
+			continue;
+		}
+
+		Brush& brush = node->getBrush();
+
+		scene::INodePtr parent = node->getParent();
+
+		if (!parent)
+		{
+			continue;
+		}
+
+		// greebo: Analyse the brush to find out which shader is the most used one
+		getMostUsedTexturing(brush);
+
+		BrushSplitType split = Brush_classifyPlane(brush, _split == eFront ? -plane : plane);
+
+		if (split.counts[ePlaneBack] && split.counts[ePlaneFront])
+		{
+			// the plane intersects this brush
+			if (_split == eFrontAndBack)
+			{
+				scene::INodePtr fragmentNode = GlobalBrushCreator().createBrush();
+
+				assert(fragmentNode != NULL);
+
+				// greebo: For copying the texture scale the new node needs to be inserted in the scene
+				// otherwise the shaders cannot be captured and the scale is off
+
+				// Insert the child into the designated parent
+				scene::addNodeToContainer(fragmentNode, parent);
+
+				// Select the child
+				Node_setSelected(fragmentNode, true);
+
+				parent->addChildNode(fragmentNode);
+				
+				Brush* fragment = Node_getBrush(fragmentNode);
+				assert(fragment != NULL);
+				fragment->copy(brush);
+
+				// Put the fragment in the same layer as the brush it was clipped from
+				scene::assignNodeToLayers(fragmentNode, node->getLayers());
+
+				FacePtr newFace = fragment->addPlane(_p0, _p1, _p2, _mostUsedShader, _mostUsedProjection);
+
+				if (newFace != NULL && _split != eFront)
+				{
+					newFace->flipWinding();
+				}
+
+				fragment->removeEmptyFaces();
+				ASSERT_MESSAGE(!fragment->empty(), "brush left with no faces after split");
+			}
+
+			FacePtr newFace = brush.addPlane(_p0, _p1, _p2, _mostUsedShader, _mostUsedProjection);
+
+			if (newFace != NULL && _split == eFront) {
+				newFace->flipWinding();
+			}
+
+			brush.removeEmptyFaces();
+			ASSERT_MESSAGE(!brush.empty(), "brush left with no faces after split");
+		}
+		// the plane does not intersect this brush
+		else if (_split != eFrontAndBack && split.counts[ePlaneBack] != 0)
+		{
+			// the brush is "behind" the plane
+			// Remove the node from the scene
+			scene::removeNodeFromParent(node);
+		}
 	}
 }
 
+#if 0
 void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
 {
 	// Don't clip invisible nodes
@@ -75,6 +149,9 @@ void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
 		if (_split == eFrontAndBack)
 		{
 			scene::INodePtr fragmentNode = GlobalBrushCreator().createBrush();
+
+			// greebo: For copying the texture scale the new node needs a valid rendersystem
+			fragmentNode->setRenderSystem(node->getRenderSystem());
 
 			assert(fragmentNode != NULL);
 
@@ -115,6 +192,7 @@ void BrushByPlaneClipper::visit(const scene::INodePtr& node) const
 		_deleteList.insert(node);
 	}
 }
+#endif
 
 void BrushByPlaneClipper::getMostUsedTexturing(const Brush& brush) const
 {
