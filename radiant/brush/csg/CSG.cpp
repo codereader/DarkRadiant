@@ -418,7 +418,8 @@ bool Brush_merge(Brush& brush, const BrushPtrVector& in, bool onlyshape) {
 	return true;
 }
 
-void mergeSelectedBrushes(const cmd::ArgumentList& args) {
+void mergeSelectedBrushes(const cmd::ArgumentList& args)
+{
 	// Get the current selection
 	BrushPtrVector brushes = selection::algorithm::getSelectedBrushes();
 
@@ -434,15 +435,21 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args) {
 		return;
 	}
 
-	globalOutputStream() << "CSG Merge: Merging " << static_cast<int>(brushes.size()) << " brushes.\n";
+	globalOutputStream() << "CSG Merge: Merging " << brushes.size() << " brushes." << std::endl;
 
 	UndoableCommand undo("mergeSelectedBrushes");
 
 	// Take the last selected node as reference for layers and parent
 	scene::INodePtr merged = GlobalSelectionSystem().ultimateSelected();
 
+	scene::INodePtr parent = merged->getParent();
+	assert(parent != NULL);
+
 	// Create a new BrushNode
 	scene::INodePtr node = GlobalBrushCreator().createBrush();
+
+	// Insert the newly created brush into the (same) parent entity
+	parent->addChildNode(node);
 
 	// Move the new brush to the same layers as the merged one
 	scene::assignNodeToLayers(node, merged->getLayers());
@@ -451,29 +458,25 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args) {
 	Brush* brush = Node_getBrush(node);
 
 	// Attempt to merge the selected brushes into the new one
-	if (!Brush_merge(*brush, brushes, true)) {
-		globalOutputStream() << "CSG Merge: Failed - result would not be convex.\n";
+	if (!Brush_merge(*brush, brushes, true))
+	{
+		globalWarningStream() << "CSG Merge: Failed - result would not be convex." << std::endl;
+		return;
 	}
-	else {
-		ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after merge");
 
-		scene::INodePtr parent = merged->getParent();
-		assert(parent != NULL);
+	ASSERT_MESSAGE(!brush->empty(), "brush left with no faces after merge");
 
-		// Remove the original brushes
-		for (BrushPtrVector::iterator i = brushes.begin(); i != brushes.end(); i++) {
-			scene::removeNodeFromParent(*i);
-		}
-
-		// Insert the newly created brush into the (same) parent entity
-		parent->addChildNode(node);
-
-		// Select the new brush
-		Node_setSelected(node, true);
-
-		globalOutputStream() << "CSG Merge: Succeeded.\n";
-		SceneChangeNotify();
+	// Remove the original brushes
+	for (BrushPtrVector::iterator i = brushes.begin(); i != brushes.end(); ++i)
+	{
+		scene::removeNodeFromParent(*i);
 	}
+
+	// Select the new brush
+	Node_setSelected(node, true);
+
+	globalOutputStream() << "CSG Merge: Succeeded." << std::endl;
+	SceneChangeNotify();
 }
 
 class BrushSetClipPlane :
