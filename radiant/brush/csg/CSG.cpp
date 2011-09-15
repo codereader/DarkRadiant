@@ -276,6 +276,8 @@ public:
 
 					scene::INodePtr newBrush = GlobalBrushCreator().createBrush();
 
+					parent->addChildNode(newBrush);
+
 					// Move the new Brush to the same layers as the source node
 					scene::assignNodeToLayers(newBrush, node->getLayers());
 
@@ -283,9 +285,6 @@ public:
 					ASSERT_MESSAGE(!(*i)->getBrush().empty(), "brush left with no faces after subtract");
 
 					Node_getBrush(newBrush)->copy((*i)->getBrush());
-					//delete (*i);
-
-					parent->addChildNode(newBrush);
 				}
 
 			    _deleteList.push_back(node);
