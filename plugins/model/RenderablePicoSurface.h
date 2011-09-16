@@ -32,9 +32,6 @@ class RenderablePicoSurface :
 	std::string _originalShaderName;
 	std::string _mappedShaderName;
 
-	// Shader object containing the material shader for this surface
-	ShaderPtr _shader;
-
 	// Vector of ArbitraryMeshVertex structures, containing the coordinates,
 	// normals, tangents and texture coordinates of the component vertices
 	typedef std::vector<ArbitraryMeshVertex> VertexVector;
@@ -57,9 +54,6 @@ class RenderablePicoSurface :
 	GLuint _dlProgramPosVCol;
     GLuint _dlProgramNegVCol;
     GLuint _dlProgramNoVCol;
-
-	// We need to keep a reference for skin swapping
-	RenderSystemWeakPtr _renderSystem;
 
 private:
 
@@ -96,11 +90,14 @@ public:
 	 * @param localToWorld
 	 * Object to world-space transform.
 	 *
+	 * @param shader
+	 * The shader to submit ourselves as renderable
+	 *
 	 * @param entity
 	 * The entity this object is attached to.
 	 */
 	void submitRenderables(RenderableCollector& rend, const Matrix4& localToWorld,
-						   const IRenderEntity& entity);
+						   const ShaderPtr& shader, const IRenderEntity& entity);
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
@@ -109,26 +106,11 @@ public:
 	 */
 	void render(const RenderInfo& info) const;
 
-	/** Get the Shader for this surface.
-	 */
-	const ShaderPtr& getShader() const {
-		return _shader;
-	}
-
 	/** Get the containing AABB for this surface.
 	 */
 	const AABB& getAABB() const {
 		return _localAABB;
 	}
-
-	/** Apply the provided skin to this surface. If the skin has a remap for
-	 * this surface's material, it will be applied, otherwise no action will
-	 * occur.
-	 *
-	 * @param skin
-	 * ModelSkin object to apply to this surface.
-	 */
-	void applySkin(const ModelSkin& skin);
 
 	/**
 	 * Perform a selection test on this surface.
@@ -145,10 +127,11 @@ public:
 	ModelPolygon getPolygon(int polygonIndex) const;
 
 	const std::string& getDefaultMaterial() const;
-	const std::string& getActiveMaterial() const;
+	void setDefaultMaterial(const std::string& defaultMaterial);
 
 private:
 	void captureShader();
 };
+typedef boost::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
 
 }

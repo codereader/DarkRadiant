@@ -41,43 +41,43 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) {
 	std::string path = rootPath(modelName);
 	std::string name = os::getRelativePath(modelName, path);
 
-	/* greebo: Path is empty for models in PK4 files, don't give up on this
-
-	if (path.empty()) {
-		// Empty path => empty model
-		return scene::INodePtr();
-	}*/
+	// greebo: Path is empty for models in PK4 files, don't check this
 
 	// Try to load the model from the given VFS path
 	IModelPtr model = GlobalModelCache().getModel(name);
 
-	if (model == NULL) {
-		globalErrorStream() << "PicoModelLoader: Could not load model << " << modelName.c_str() << "\n";
+	if (model == NULL)
+	{
+		globalErrorStream() << "PicoModelLoader: Could not load model << " << modelName << std::endl;
 		return scene::INodePtr();
 	}
 
-	// The cached model should be an MD5Model, otherwise we're in the wrong movie
+	// The cached model should be an PicoModel, otherwise we're in the wrong movie
 	RenderablePicoModelPtr picoModel =
 		boost::dynamic_pointer_cast<RenderablePicoModel>(model);
 
-	if (picoModel != NULL) {
+	if (picoModel != NULL)
+	{
 		// Load was successful, construct a modelnode using this resource
 		return PicoModelNodePtr(new PicoModelNode(picoModel));
 	}
-	else {
-		globalErrorStream() << "PicoModelLoader: Cached model is not a PicoModel?\n";
+	else
+	{
+		globalErrorStream() << "PicoModelLoader: Cached model is not a PicoModel?" << std::endl;
 	}
 
 	return scene::INodePtr();
 }
 
 // Load the given model from the VFS path
-IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name) {
+IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
+{
 	// Open an ArchiveFile to load
 	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
 
-	if (file == NULL) {
-		globalErrorStream() << "Failed to load model " << name.c_str() << "\n";
+	if (file == NULL)
+	{
+		globalErrorStream() << "Failed to load model " << name << std::endl;
 		return IModelPtr();
 	}
 
@@ -112,14 +112,17 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name) {
 }
 
 // RegisterableModule implementation
-const std::string& PicoModelLoader::getName() const {
+const std::string& PicoModelLoader::getName() const
+{
 	return _moduleName; // e.g. ModelLoaderASE
 }
 
-const StringSet& PicoModelLoader::getDependencies() const {
+const StringSet& PicoModelLoader::getDependencies() const
+{
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+	{
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_RENDERSYSTEM);
 		_dependencies.insert(MODULE_FILETYPES);
@@ -130,7 +133,7 @@ const StringSet& PicoModelLoader::getDependencies() const {
 
 void PicoModelLoader::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << "PicoModelLoader: " << getName().c_str() << " initialised." << std::endl;
+	globalOutputStream() << "PicoModelLoader: " << getName() << " initialised." << std::endl;
 
 	std::string extLower = boost::to_lower_copy(_extension);
 	std::string filter("*." + extLower);

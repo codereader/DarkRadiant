@@ -11,8 +11,9 @@
 
 namespace model {
 
+// greebo: Construct a new RenderablePicoModel instance, we re-use the surfaces only
 PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :
-	_picoModel(picoModel),
+	_picoModel(new RenderablePicoModel(*picoModel)), 
 	_name(picoModel->getFilename()),
 	_lightList(GlobalRenderSystem().attach(*this))
 {
@@ -134,7 +135,8 @@ void PicoModelNode::skinChanged(const std::string& newSkinName)
 }
 
 // Returns the name of the currently active skin
-std::string PicoModelNode::getSkin() const {
+std::string PicoModelNode::getSkin() const
+{
 	return _skin;
 }
 

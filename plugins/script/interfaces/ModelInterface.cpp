@@ -32,11 +32,6 @@ std::string ScriptModelSurface::getDefaultMaterial() const
 	return _surface.getDefaultMaterial();
 }
 
-std::string ScriptModelSurface::getActiveMaterial() const
-{
-	return _surface.getActiveMaterial();
-}
-
 // ----------- ScriptModelNode -----------
 
 // Constructor, checks if the passed node is actually an entity
@@ -167,7 +162,6 @@ void ModelInterface::registerInterface(boost::python::object& nspace)
 			boost::python::return_value_policy<boost::python::copy_const_reference>())
 		.def("getPolygon", &ScriptModelSurface::getPolygon)
 		.def("getDefaultMaterial", &ScriptModelSurface::getDefaultMaterial)
-		.def("getActiveMaterial", &ScriptModelSurface::getActiveMaterial)
 	;
 
 	// Add the ModelNode interface

@@ -1,5 +1,4 @@
-#ifndef _IMODELSURFACE_H_
-#define _IMODELSURFACE_H_
+#pragma once
 
 // Math/Vertex classes
 #include "render/ArbitraryMeshVertex.h"
@@ -41,13 +40,6 @@ public:
 	 * the name of the material without any skin applied.
 	 */
 	virtual const std::string& getDefaultMaterial() const = 0;
-
-	/**
-	 * Get the name of the currently mapped material (with skin applied).
-	 */
-	virtual const std::string& getActiveMaterial() const = 0;
 };
 
 } // namespace
-
-#endif /* _IMODELSURFACE_H_ */
