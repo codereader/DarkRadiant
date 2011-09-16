@@ -5,11 +5,13 @@
 #include "iselectiontest.h"
 #include "texturelib.h"
 #include "ishaders.h"
+#include "modelskin.h"
 #include "ifilter.h"
 #include "imodelsurface.h"
-#include "math/Frustum.h" // VolumeIntersectionValue
+#include "VolumeIntersectionValue.h"
 
-namespace model {
+namespace model
+{
 
 // Constructor
 RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
@@ -19,10 +21,11 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
 	int nSurf = PicoGetModelNumSurfaces(mod);
 
 	// Create a RenderablePicoSurface for each surface in the structure
-	for (int n = 0; n < nSurf; ++n) {
-
+	for (int n = 0; n < nSurf; ++n)
+	{
 		// Retrieve the surface, discarding it if it is null or non-triangulated (?)
 		picoSurface_t* surf = PicoGetModelSurface(mod, n);
+
 		if (surf == 0 || PicoGetSurfaceType(surf) != PICO_TRIANGLES)
 			continue;
 
@@ -30,14 +33,27 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod,
 		PicoFixSurfaceNormals(surf);
 
 		// Create the RenderablePicoSurface object and add it to the vector
-		boost::shared_ptr<RenderablePicoSurface> rSurf(
-			new RenderablePicoSurface(surf, fExt));
-		_surfVec.push_back(rSurf);
+		RenderablePicoSurfacePtr rSurf(new RenderablePicoSurface(surf, fExt));
+
+		_surfVec.push_back(Surface(rSurf));
 
 		// Extend the model AABB to include the surface's AABB
 		_localAABB.includeAABB(rSurf->getAABB());
 	}
+}
 
+RenderablePicoModel::RenderablePicoModel(const RenderablePicoModel& other) :
+	_surfVec(other._surfVec.size()),
+	_localAABB(other._localAABB),
+	_filename(other._filename),
+	_modelPath(other._modelPath)
+{
+	// Copy the other model's surfaces, but not its shaders, revert to default
+	for (std::size_t i = 0; i < other._surfVec.size(); ++i)
+	{
+		_surfVec[i].surface = other._surfVec[i].surface;
+		_surfVec[i].activeMaterial = _surfVec[i].surface->getDefaultMaterial();
+	}
 }
 
 // Front end renderable submission
@@ -48,28 +64,31 @@ void RenderablePicoModel::submitRenderables(RenderableCollector& rend,
 	// Submit renderables from each surface
 	for (SurfaceList::iterator i = _surfVec.begin(); i != _surfVec.end(); ++i)
 	{
+		assert(i->shader);
+
 		// Check if the surface's shader is filtered, if not then submit it for
 		// rendering
-		const MaterialPtr& surfaceShader = (*i)->getShader()->getMaterial();
+		const MaterialPtr& surfaceShader = i->shader->getMaterial();
 
 		if (surfaceShader->isVisible())
 		{
-			(*i)->submitRenderables(rend, localToWorld, entity);
+			i->surface->submitRenderables(rend, localToWorld, i->shader, entity);
 		}
 	}
 }
 
 void RenderablePicoModel::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	for (SurfaceList::iterator i = _surfVec.begin(); i != _surfVec.end(); ++i)
-	{
-		(*i)->setRenderSystem(renderSystem);
-	}
+	_renderSystem = renderSystem;
+
+	captureShaders();
 }
 
 // OpenGL (back-end) render function
-void RenderablePicoModel::render(const RenderInfo& info) const {
-
+void RenderablePicoModel::render(const RenderInfo& info) const
+{
+// greebo: No GL state changes in render methods!
+#if 0
 	// Render options
 	if (info.checkFlag(RENDER_TEXTURE_2D))
 	{
@@ -80,22 +99,28 @@ void RenderablePicoModel::render(const RenderInfo& info) const {
 	{
 		glShadeModel(GL_SMOOTH);
 	}
+#endif
 
 	// Iterate over the surfaces, calling the render function on each one
 	for (SurfaceList::const_iterator i = _surfVec.begin();
 		 i != _surfVec.end();
 		 ++i)
 	{
+// greebo: Shader visibility checks have already been performed in the front end pass
+#if 0
 		// Get the Material to test the shader name against the filter system
-		const MaterialPtr& surfaceShader = (*i)->getShader()->getMaterial();
+		const MaterialPtr& surfaceShader = i->shader->getMaterial();
 
 		if (surfaceShader->isVisible())
 		{
 			// Bind the OpenGL texture and render the surface geometry
 			TexturePtr tex = surfaceShader->getEditorImage();
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
-			(*i)->render(info.getFlags());
+			i->surface->render(info.getFlags());
 		}
+#else
+		i->surface->render(info.getFlags());
+#endif
 	}
 }
 
@@ -114,7 +139,7 @@ int RenderablePicoModel::getVertexCount() const {
 		 i != _surfVec.end();
 		 ++i)
 	{
-		sum += (*i)->getNumVertices();
+		sum += i->surface->getNumVertices();
 	}
 	return sum;
 }
@@ -128,7 +153,7 @@ int RenderablePicoModel::getPolyCount() const
 		 i != _surfVec.end();
 		 ++i)
 	{
-		sum += (*i)->getNumTriangles();
+		sum += i->surface->getNumTriangles();
 	}
 
 	return sum;
@@ -137,41 +162,82 @@ int RenderablePicoModel::getPolyCount() const
 const IModelSurface& RenderablePicoModel::getSurface(int surfaceNum) const
 {
 	assert(surfaceNum >= 0 && surfaceNum < _surfVec.size());
-	return *_surfVec[surfaceNum];
+	return *(_surfVec[surfaceNum].surface);
 }
 
 // Apply the given skin to this model
 void RenderablePicoModel::applySkin(const ModelSkin& skin)
 {
-	// Apply the skin to each surface
+	// Apply the skin to each surface, then try to capture shaders
 	for (SurfaceList::iterator i = _surfVec.begin();
 		 i != _surfVec.end();
 		 ++i)
 	{
-		(*i)->applySkin(skin);
+		const std::string& defaultMaterial = i->surface->getDefaultMaterial();
+		const std::string& activeMaterial = i->activeMaterial;
+
+		// Look up the remap for this surface's material name. If there is a remap
+		// change the Shader* to point to the new shader.
+		std::string remap = skin.getRemap(defaultMaterial);
+
+		if (!remap.empty() && remap != activeMaterial)
+		{
+			// Save the remapped shader name
+			i->activeMaterial = remap;
+		}
+		else if (remap.empty() && activeMaterial != defaultMaterial)
+		{
+			// No remap, so reset our shader to the original unskinned shader
+			i->activeMaterial = defaultMaterial;
+		}
 	}
+
+	captureShaders();
 
 	// greebo: Update the active material list after applying this skin
 	updateMaterialList();
 }
 
+void RenderablePicoModel::captureShaders()
+{
+	RenderSystemPtr renderSystem = _renderSystem.lock();
+
+	// Capture or release our shaders
+	for (SurfaceList::iterator i = _surfVec.begin(); i != _surfVec.end(); ++i)
+	{
+		if (renderSystem)
+		{
+			i->shader = renderSystem->capture(i->activeMaterial);
+		}
+		else
+		{
+			i->shader.reset();
+		}
+	}
+}
+
 // Update the list of active materials
-void RenderablePicoModel::updateMaterialList() const {
+void RenderablePicoModel::updateMaterialList() const
+{
 	_materialList.clear();
+
 	for (SurfaceList::const_iterator i = _surfVec.begin();
 		 i != _surfVec.end();
 		 ++i)
 	{
-		_materialList.push_back((*i)->getActiveMaterial());
+		_materialList.push_back(i->activeMaterial);
 	}
 }
 
 // Return the list of active skins for this model
-const MaterialList& RenderablePicoModel::getActiveMaterials() const {
+const MaterialList& RenderablePicoModel::getActiveMaterials() const
+{
 	// If the material list is empty, populate it
-	if (_materialList.empty()) {
+	if (_materialList.empty())
+	{
 		updateMaterialList();
 	}
+
 	// Return the list
 	return _materialList;
 }
@@ -189,20 +255,22 @@ void RenderablePicoModel::testSelect(Selector& selector,
     	 ++i)
 	{
 		// Check volume intersection
-		if (test.getVolume().TestAABB((*i)->getAABB(), localToWorld) != VOLUME_OUTSIDE)
+		if (test.getVolume().TestAABB(i->surface->getAABB(), localToWorld) != VOLUME_OUTSIDE)
 		{
 			// Volume intersection passed, delegate the selection test
-        	(*i)->testSelect(selector, test, localToWorld);
+        	i->surface->testSelect(selector, test, localToWorld);
 		}
 	}
 }
 
-std::string RenderablePicoModel::getModelPath() const {
+std::string RenderablePicoModel::getModelPath() const
+{
 	return _modelPath;
 }
 
-void RenderablePicoModel::setModelPath(const std::string& modelPath) {
+void RenderablePicoModel::setModelPath(const std::string& modelPath)
+{
 	_modelPath = modelPath;
 }
 
-}
+} // namespace

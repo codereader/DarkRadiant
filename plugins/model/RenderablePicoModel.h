@@ -1,5 +1,4 @@
-#ifndef RENDERABLEPICOMODEL_H_
-#define RENDERABLEPICOMODEL_H_
+#pragma once
 
 #include "imodel.h"
 #include "picomodel.h"
@@ -9,7 +8,11 @@
 #include <boost/shared_ptr.hpp>
 
 /* FORWARD DECLS */
-namespace model { class RenderablePicoSurface; }
+namespace model
+{
+	class RenderablePicoSurface;
+	typedef boost::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
+}
 class RenderableCollector;
 class RendererLight;
 class SelectionTest;
@@ -19,20 +22,42 @@ namespace model
 {
 
 /**
- * List of RenderablePicoSurfaces.
- */
-typedef std::vector<boost::shared_ptr<RenderablePicoSurface> > SurfaceList;
-
-/**
  * Renderable class containing a model loaded via the picomodel library. A
  * RenderablePicoModel is made up of one or more RenderablePicoSurface objects,
  * each of which contains a number of polygons with the same texture. Rendering
- * a RenderablePicoModel involves rendering all of its surfaces, each of which
- * binds its texture(s) and submits its geometry via OpenGL calls.
+ * a RenderablePicoModel involves rendering all of its surfaces, submitting 
+ * their geometry via OpenGL calls.
  */
 class RenderablePicoModel
 : public IModel
 {
+private:
+	// greebo: RenderablePicoSurfaces are shared objects, the actual shaders 
+	// and the model skin handling are managed by the nodes/imodels referencing them
+	struct Surface
+	{
+		// The (shared) surface object
+		RenderablePicoSurfacePtr surface;
+
+		// The name of the material (with skin applied)
+		// The default material name is stored on the surface
+		std::string activeMaterial;
+
+		// The shader this surface is using
+		ShaderPtr shader;
+
+		Surface()
+		{}
+
+		// Constructor
+		Surface(const RenderablePicoSurfacePtr& surface_) :
+			surface(surface_)
+		{}
+	};
+
+	// List of RenderablePicoSurfaces.
+	typedef std::vector<Surface> SurfaceList;
+
 	// Vector of renderable surfaces for this model
 	SurfaceList _surfVec;
 
@@ -48,11 +73,17 @@ class RenderablePicoModel
 	// The VFS path to this model
 	std::string _modelPath;
 
+	// We need to keep a reference for skin swapping
+	RenderSystemWeakPtr _renderSystem;
+
 private:
 
 	// Update the list of materials by querying each surface for its current
 	// material.
 	void updateMaterialList() const;
+
+	// Ensure all shaders for the active materials
+	void captureShaders();
 
 public:
 
@@ -62,6 +93,12 @@ public:
 	 * correct handling of material paths (which differs between ASE and LWO)
 	 */
 	RenderablePicoModel(picoModel_t* mod, const std::string& fExt);
+
+	/**
+	 * Copy constructor: re-use the surfaces from the other model
+	 * but make it possible to assign custom skins to the surfaces.
+	 */
+	RenderablePicoModel(const RenderablePicoModel& other);
 
 	/**
 	 * Front-end render function used by the main collector.
@@ -161,5 +198,3 @@ public:
 typedef boost::shared_ptr<RenderablePicoModel> RenderablePicoModelPtr;
 
 }
-
-#endif /*RENDERABLEPICOMODEL_H_*/

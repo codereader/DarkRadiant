@@ -179,10 +179,11 @@ void RenderablePicoSurface::calculateTangents() {
 // Front-end renderable submission
 void RenderablePicoSurface::submitRenderables(RenderableCollector& rend,
 											  const Matrix4& localToWorld,
+											  const ShaderPtr& shader,
 											  const IRenderEntity& entity)
 {
 	// Submit geometry
-	rend.SetState(_shader, RenderableCollector::eFullMaterials);
+	rend.SetState(shader, RenderableCollector::eFullMaterials);
     rend.addRenderable(*this, localToWorld, entity);
 }
 
@@ -212,13 +213,6 @@ void RenderablePicoSurface::render(const RenderInfo& info) const
     {
 		glCallList(_dlRegular);
 	}
-}
-
-void RenderablePicoSurface::setRenderSystem(const RenderSystemPtr& renderSystem)
-{
-	_renderSystem = renderSystem;
-
-	captureShader();
 }
 
 // Construct a list for GLProgram mode, either with or without vertex colour
@@ -311,36 +305,13 @@ void RenderablePicoSurface::createDisplayLists()
 	glEndList();
 }
 
-// Apply a skin to this surface
-void RenderablePicoSurface::applySkin(const ModelSkin& skin)
-{
-	// Look up the remap for this surface's material name. If there is a remap
-	// change the Shader* to point to the new shader.
-	std::string remap = skin.getRemap(_originalShaderName);
-
-	if (remap != "" && remap != _mappedShaderName)
-	{
-		// Save the remapped shader name
-		_mappedShaderName = remap;
-
-		captureShader();
-	}
-	else if (remap == "" && _mappedShaderName != _originalShaderName)
-	{
-		// No remap, so reset our shader to the original unskinned shader
-		// Reset the remapped shader name
-		_mappedShaderName = _originalShaderName;
-
-		captureShader();
-	}
-}
-
 // Perform selection test for this surface
 void RenderablePicoSurface::testSelect(Selector& selector,
 									   SelectionTest& test,
 									   const Matrix4& localToWorld) const
 {
-	if (!_vertices.empty() && !_indices.empty()) {
+	if (!_vertices.empty() && !_indices.empty())
+	{
 		// Test for triangle selection
 		test.BeginMesh(localToWorld);
 		SelectionIntersection result;
@@ -393,23 +364,9 @@ const std::string& RenderablePicoSurface::getDefaultMaterial() const
 	return _originalShaderName;
 }
 
-const std::string& RenderablePicoSurface::getActiveMaterial() const
+void RenderablePicoSurface::setDefaultMaterial(const std::string& defaultMaterial)
 {
-	return _mappedShaderName;
-}
-
-void RenderablePicoSurface::captureShader()
-{
-	RenderSystemPtr renderSystem = _renderSystem.lock();
-
-	if (renderSystem)
-	{
-		_shader = renderSystem->capture(_mappedShaderName);
-	}
-	else
-	{
-		_shader.reset();
-	}
+	_originalShaderName = defaultMaterial;
 }
 
 } // namespace model
