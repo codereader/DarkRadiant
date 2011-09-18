@@ -29,12 +29,14 @@ MD5Model::MD5Model(const MD5Model& other) :
 	// Copy-construct the other model's surfaces, but not its shaders, revert to default
 	for (std::size_t i = 0; i < other._surfaces.size(); ++i)
 	{
-		_surfaces[i].reset(new MD5Surface(*other._surfaces[i]));
-		_surfaces[i]->setActiveMaterial(other._surfaces[i]->getDefaultMaterial());
+		_surfaces[i].surface.reset(new MD5Surface(*other._surfaces[i].surface));
+		_surfaces[i].activeMaterial = _surfaces[i].surface->getDefaultMaterial();
 
 		// Build the index array - this has to happen at least once
-		_surfaces[i]->buildIndexArray();
+		_surfaces[i].surface->buildIndexArray();
 	}
+
+	updateMaterialList();
 }
 
 MD5Model::const_iterator MD5Model::begin() const {
@@ -52,17 +54,21 @@ std::size_t MD5Model::size() const {
 MD5Surface& MD5Model::createNewSurface()
 {
 	_surfaces.push_back(MD5SurfacePtr(new MD5Surface));
-	return *_surfaces.back();
+	return *(_surfaces.back().surface);
 }
 
-void MD5Model::updateAABB() {
+void MD5Model::updateAABB()
+{
 	_aabb_local = AABB();
-	for(SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i) {
-		_aabb_local.includeAABB((*i)->localAABB());
+
+	for(SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
+		_aabb_local.includeAABB(i->surface->localAABB());
 	}
 }
 
-const AABB& MD5Model::localAABB() const {
+const AABB& MD5Model::localAABB() const
+{
 	return _aabb_local;
 }
 
@@ -70,9 +76,9 @@ void MD5Model::testSelect(Selector& selector, SelectionTest& test, const Matrix4
 {
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
 	{
-		if (test.getVolume().TestAABB((*i)->localAABB(), localToWorld) != VOLUME_OUTSIDE)
+		if (test.getVolume().TestAABB(i->surface->localAABB(), localToWorld) != VOLUME_OUTSIDE)
 		{
-			(*i)->testSelect(selector, test, localToWorld);
+			i->surface->testSelect(selector, test, localToWorld);
 		}
 	}
 }
@@ -95,49 +101,91 @@ void MD5Model::setModelPath(const std::string& modelPath) {
 
 void MD5Model::applySkin(const ModelSkin& skin)
 {
+	// Apply the skin to each surface, then try to capture shaders
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
 	{
-		(*i)->applySkin(skin);
+		const std::string& defaultMaterial = i->surface->getDefaultMaterial();
+		const std::string& activeMaterial = i->activeMaterial;
+
+		// Look up the remap for this surface's material name. If there is a remap
+		// change the Shader* to point to the new shader.
+		std::string remap = skin.getRemap(defaultMaterial);
+
+		if (!remap.empty() && remap != activeMaterial)
+		{
+			// Save the remapped shader name
+			i->activeMaterial = remap;
+		}
+		else if (remap.empty() && activeMaterial != defaultMaterial)
+		{
+			// No remap, so reset our shader to the original unskinned shader
+			i->activeMaterial = defaultMaterial;
+		}
 	}
 
+	captureShaders();
 	updateMaterialList();
 }
 
-int MD5Model::getSurfaceCount() const {
+int MD5Model::getSurfaceCount() const
+{
 	return static_cast<int>(size());
 }
 
-int MD5Model::getVertexCount() const {
+int MD5Model::getVertexCount() const
+{
 	return static_cast<int>(_vertexCount);
 }
 
-int MD5Model::getPolyCount() const {
+int MD5Model::getPolyCount() const
+{
 	return static_cast<int>(_polyCount);
 }
 
-void MD5Model::updateMaterialList() {
+void MD5Model::updateMaterialList()
+{
 	_surfaceNames.clear();
 
 	for (SurfaceList::const_iterator i = _surfaces.begin();
 		 i != _surfaces.end();
 		 ++i)
 	{
-		_surfaceNames.push_back((*i)->getActiveMaterial());
+		_surfaceNames.push_back(i->activeMaterial);
 	}
 }
 
-const model::MaterialList& MD5Model::getActiveMaterials() const {
+const model::MaterialList& MD5Model::getActiveMaterials() const
+{
 	return _surfaceNames;
+}
+
+void MD5Model::captureShaders()
+{
+	RenderSystemPtr renderSystem = _renderSystem.lock();
+
+	// Capture or release our shaders
+	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
+	{
+		if (renderSystem)
+		{
+			i->shader = renderSystem->capture(i->activeMaterial);
+		}
+		else
+		{
+			i->shader.reset();
+		}
+	}
 }
 
 const model::IModelSurface& MD5Model::getSurface(int surfaceNum) const
 {
 	assert(surfaceNum >= 0 && surfaceNum < _surfaces.size());
-	return *_surfaces[surfaceNum];
+	return *(_surfaces[surfaceNum].surface);
 }
 
 void MD5Model::render(const RenderInfo& info) const
 {
+#if 0 // greebo: No state changes in back-end render methods!
 	// Render options
 	if (info.checkFlag(RENDER_TEXTURE_2D))
 	{
@@ -148,7 +196,10 @@ void MD5Model::render(const RenderInfo& info) const
 	{
 		glShadeModel(GL_SMOOTH);
 	}
+#endif
 
+// greebo: We don't need a back-end render method here, at least not yet (FIXME)
+#if 0
 	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
 	{
 		// Get the Material to test the shader name against the filter system
@@ -162,14 +213,14 @@ void MD5Model::render(const RenderInfo& info) const
 			(*i)->render(info.getFlags());
 		}
 	}
+#endif
 }
 
 void MD5Model::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	for (SurfaceList::const_iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
-	{
-		(*i)->setRenderSystem(renderSystem);
-	}
+	_renderSystem = renderSystem;
+
+	captureShaders();
 }
 
 void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
@@ -281,7 +332,7 @@ void MD5Model::setAnim(const IMD5AnimPtr& anim)
 	{
 		for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
 		{
-			(*i)->updateToDefaultPose(_joints);
+			i->surface->updateToDefaultPose(_joints);
 		}
 	}
 }
@@ -300,7 +351,7 @@ void MD5Model::updateAnim(std::size_t time)
 
 	for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
 	{
-		(*i)->updateToSkeleton(_skeleton);
+		i->surface->updateToSkeleton(_skeleton);
 	}
 }
 

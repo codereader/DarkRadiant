@@ -25,7 +25,26 @@ class MD5Model :
 private:
 	MD5Joints _joints;
 
-	typedef std::vector<MD5SurfacePtr> SurfaceList;
+	struct Surface
+	{
+		// The MD5 mesh
+		MD5SurfacePtr surface;
+
+		// The name of the material with skin applied
+		std::string activeMaterial;
+
+		// Mapped shader
+		ShaderPtr shader;
+
+		Surface()
+		{}
+
+		Surface(const MD5SurfacePtr& surface_) :
+			surface(surface_)
+		{}
+	};
+
+	typedef std::vector<Surface> SurfaceList;
 	SurfaceList _surfaces;
 
 	AABB _aabb_local;
@@ -51,6 +70,9 @@ private:
 
 	// The OpenGLRenderable visualising the MD5Skeleton
 	RenderableMD5Skeleton _renderableSkeleton;
+
+	// We need to keep a reference for skin swapping
+	RenderSystemWeakPtr _renderSystem;
 
 public:
 	MD5Model();
@@ -137,6 +159,8 @@ private:
 
 	// Re-populates the list of active shader names
 	void updateMaterialList();
+
+	void captureShaders();
 };
 typedef boost::shared_ptr<MD5Model> MD5ModelPtr;
 
