@@ -1,5 +1,4 @@
-#ifndef MODELCACHE_H_
-#define MODELCACHE_H_
+#pragma once
 
 #include <map>
 #include <string>
@@ -11,8 +10,8 @@ namespace model {
 class ModelCache :
 	public IModelCache
 {
-	// The container maps model names to weak references
-	typedef std::map<std::string, IModelWeakPtr> ModelMap;
+	// The container maps model names to instances
+	typedef std::map<std::string, IModelPtr> ModelMap;
 	ModelMap _modelMap;
 
 	// Flag to disable the cache on demand (used during clear())
@@ -47,5 +46,3 @@ public:
 };
 
 } // namespace model
-
-#endif /*MODELCACHE_H_*/

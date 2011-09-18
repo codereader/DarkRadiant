@@ -221,6 +221,7 @@ GLuint RenderablePicoSurface::compileProgramList(
 )
 {
     GLuint list = glGenLists(1);
+	assert(list != 0); // check if we run out of display lists
     glNewList(list, GL_COMPILE);
 
 	glBegin(GL_TRIANGLES);
@@ -285,6 +286,7 @@ void RenderablePicoSurface::createDisplayLists()
 
 	// Generate the list for flat-shaded (unlit) mode
 	_dlRegular = glGenLists(1);
+	assert(_dlRegular != 0); // check if we run out of display lists
 	glNewList(_dlRegular, GL_COMPILE);
 
 	glBegin(GL_TRIANGLES);

@@ -86,5 +86,6 @@ struct MD5Mesh
 	MD5Tris		triangles;
 	MD5Weights	weights;
 };
+typedef boost::shared_ptr<MD5Mesh> MD5MeshPtr;
 
 } // namespace

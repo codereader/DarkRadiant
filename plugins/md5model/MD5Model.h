@@ -12,13 +12,17 @@
 namespace md5
 {
 
-// generic model node
+/**
+ * A geometry/anim/shader/skin managing object for MD5 models which
+ * is embedded into an MD5ModelNode. Each MD5Model object references
+ * one or more MD5Surface objects, which are not shared across MD5Models
+ * since they are animated.
+ */
 class MD5Model :
 	public IMD5Model,
 	public model::IModel
 {
 private:
-	// The list of joints as defined in the .md5mesh file
 	MD5Joints _joints;
 
 	typedef std::vector<MD5SurfacePtr> SurfaceList;
@@ -50,6 +54,10 @@ private:
 
 public:
 	MD5Model();
+
+	// Copy constructor - re-uses the MD5ModelDef from <other>,
+	// Surfaces are copied and assigned their default material
+	MD5Model(const MD5Model& other);
 
 	typedef SurfaceList::const_iterator const_iterator;
 

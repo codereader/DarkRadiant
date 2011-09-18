@@ -14,15 +14,26 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
 }
 
 // Constructor
-MD5Surface::MD5Surface()
-: _shaderName(""),
-  _originalShaderName(""),
-  _normalList(0),
-  _lightingList(0)
+MD5Surface::MD5Surface() : 
+	_shaderName(""),
+	_originalShaderName(""),
+	_mesh(new MD5Mesh),
+	_normalList(0),
+	_lightingList(0)
+{}
+
+MD5Surface::MD5Surface(const MD5Surface& other) :
+	_aabb_local(other._aabb_local),
+	_shaderName(other._shaderName),
+	_originalShaderName(other._originalShaderName),
+	_mesh(other._mesh),
+	_normalList(0),
+	_lightingList(0)
 {}
 
 // Destructor
-MD5Surface::~MD5Surface() {
+MD5Surface::~MD5Surface()
+{
 	// Release GL display lists
 	glDeleteLists(_normalList, 1);
 	glDeleteLists(_lightingList, 1);
@@ -252,22 +263,29 @@ const std::string& MD5Surface::getActiveMaterial() const
 	return _shaderName;
 }
 
+void MD5Surface::setActiveMaterial(const std::string& activeMaterial)
+{
+	_shaderName = activeMaterial;
+
+	captureShader();
+}
+
 void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 {
-	if (_vertices.size() != _mesh.vertices.size())
+	if (_vertices.size() != _mesh->vertices.size())
 	{
-		_vertices.resize(_mesh.vertices.size());
+		_vertices.resize(_mesh->vertices.size());
 	}
 
-	for (std::size_t j = 0; j < _mesh.vertices.size(); ++j)
+	for (std::size_t j = 0; j < _mesh->vertices.size(); ++j)
 	{
-		MD5Vert& vert = _mesh.vertices[j];
+		MD5Vert& vert = _mesh->vertices[j];
 
 		Vector3 skinned(0, 0, 0);
 
 		for (std::size_t k = 0; k != vert.weight_count; ++k)
 		{
-			MD5Weight& weight = _mesh.weights[vert.weight_index + k];
+			MD5Weight& weight = _mesh->weights[vert.weight_index + k];
 			const MD5Joint& joint = joints[weight.joint];
 
 			Vector3 rotatedPoint = joint.rotation.transformPoint(weight.v);
@@ -293,21 +311,21 @@ void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 void MD5Surface::updateToSkeleton(const MD5Skeleton& skeleton)
 {
 	// Ensure we have all vertices allocated
-	if (_vertices.size() != _mesh.vertices.size())
+	if (_vertices.size() != _mesh->vertices.size())
 	{
-		_vertices.resize(_mesh.vertices.size());
+		_vertices.resize(_mesh->vertices.size());
 	}
 
 	// Deform vertices to fit the skeleton
-	for (std::size_t j = 0; j < _mesh.vertices.size(); ++j)
+	for (std::size_t j = 0; j < _mesh->vertices.size(); ++j)
 	{
-		MD5Vert& vert = _mesh.vertices[j];
+		MD5Vert& vert = _mesh->vertices[j];
 
 		Vector3 skinned(0, 0, 0);
 
 		for (std::size_t k = 0; k != vert.weight_count; ++k)
 		{
-			MD5Weight& weight = _mesh.weights[vert.weight_index + k];
+			MD5Weight& weight = _mesh->weights[vert.weight_index + k];
 			const IMD5Anim::Key& key = skeleton.getKey(weight.joint);
 			//const Joint& joint = skeleton.getJoint(weight.joint);
 
@@ -358,7 +376,7 @@ void MD5Surface::buildIndexArray()
 	_indices.clear();
 
 	// Build the indices based on the triangle information
-	for (MD5Tris::const_iterator j = _mesh.triangles.begin(); j != _mesh.triangles.end(); ++j)
+	for (MD5Tris::const_iterator j = _mesh->triangles.begin(); j != _mesh->triangles.end(); ++j)
 	{
 		const MD5Tri& tri = (*j);
 
@@ -375,7 +393,7 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 	tok.assertNextToken("{");
 
 	// Get the reference to the mesh definition
-	MD5Mesh& mesh = _mesh;
+	MD5Mesh& mesh = *_mesh;
 
 	// Get the shader name
 	tok.assertNextToken("shader");

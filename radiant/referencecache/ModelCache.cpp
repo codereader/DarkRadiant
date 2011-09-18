@@ -203,21 +203,12 @@ IModelPtr ModelCache::getModel(const std::string& modelPath) {
 	// Try to lookup the existing model
 	ModelMap::iterator found = _modelMap.find(modelPath);
 
-	if (_enabled && found != _modelMap.end()) {
-		// Try to lock the weak pointer
-		IModelPtr model = found->second.lock();
-
-		if (model != NULL) {
-			// Model is cached and weak pointer could be locked, return
-			return model;
-		}
-
-		// Weak pointer could not be locked, remove from the map
-		_modelMap.erase(found);
+	if (_enabled && found != _modelMap.end())
+	{
+		return found->second;
 	}
 
-	// The model is not cached, the weak pointer could not be locked
-	// or the cache is disabled, load afresh
+	// The model is not cached or the cache is disabled, load afresh
 
 	// Get the extension of this model
 	std::string type = modelPath.substr(modelPath.rfind(".") + 1);
@@ -227,11 +218,10 @@ IModelPtr ModelCache::getModel(const std::string& modelPath) {
 
 	IModelPtr model = modelLoader->loadModelFromPath(modelPath);
 
-	if (model != NULL) {
-		// Model successfully loaded, insert a weak reference into the map
-		_modelMap.insert(
-			ModelMap::value_type(modelPath, IModelWeakPtr(model))
-		);
+	if (model != NULL)
+	{
+		// Model successfully loaded, insert a reference into the map
+		_modelMap.insert(ModelMap::value_type(modelPath, model));
 	}
 
 	return model;
