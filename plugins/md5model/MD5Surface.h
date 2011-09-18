@@ -29,11 +29,7 @@ private:
 	AABB _aabb_local;
 
 	// Shader name
-	std::string _shaderName;
 	std::string _originalShaderName;
-
-	// Shader object
-	ShaderPtr _shader;
 
 	// The mesh definition - will be baked into renderable vertex arrays
 	// Several MD5Surfaces can share the same mesh
@@ -47,13 +43,7 @@ private:
 	GLuint _normalList;
 	GLuint _lightingList;
 
-	// We need to keep a reference for skin swapping
-	RenderSystemWeakPtr _renderSystem;
-
 private:
-
-	// Capture the named shader
-	void captureShader();
 
 	// Create the display lists
 	void createDisplayLists();
@@ -79,13 +69,8 @@ public:
 	~MD5Surface();
 
 	// Set/get the shader name
-	void setShader(const std::string& name);
-
-	/**
-	 * Get the Shader object.
-	 */
-	const ShaderPtr& getState() const;
-
+	void setDefaultMaterial(const std::string& name);
+	
 	/**
 	 * Calculate the AABB and build the display lists for rendering.
 	 */
@@ -107,9 +92,7 @@ public:
 	const AABB& localAABB() const;
 
 	void render(RenderableCollector& collector, const Matrix4& localToWorld, 
-				const IRenderEntity& entity) const;
-
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+				const ShaderPtr& shader, const IRenderEntity& entity) const;
 
 	// Test for selection
 	void testSelect(Selector& selector,

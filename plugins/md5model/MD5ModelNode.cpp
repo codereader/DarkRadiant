@@ -2,6 +2,7 @@
 
 #include "ivolumetest.h"
 #include "imodelcache.h"
+#include "ishaders.h"
 #include <boost/bind.hpp>
 
 namespace md5 {
@@ -75,7 +76,7 @@ void MD5ModelNode::insertLight(const RendererLight& light) {
 
 	SurfaceLightLists::iterator j = _surfaceLightLists.begin();
 	for (MD5Model::const_iterator i = _model->begin(); i != _model->end(); ++i) {
-		Surface_addLight(*(*i), *j++, l2w, light);
+		Surface_addLight(*i->surface, *j++, l2w, light);
 	}
 }
 
@@ -124,8 +125,16 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 		 i != _model->end();
 		 ++i, ++j)
 	{
-		collector.setLights(*j);
-		(*i)->render(collector, localToWorld, entity);
+		assert(i->shader);
+
+		// Get the Material to test the shader name against the filter system
+		const MaterialPtr& surfaceShader = i->shader->getMaterial();
+
+		if (surfaceShader->isVisible())
+		{
+			collector.setLights(*j);
+			i->surface->render(collector, localToWorld, i->shader, entity);
+		}
 	}
 
 	// Uncomment to render the skeleton

@@ -15,7 +15,6 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
 
 // Constructor
 MD5Surface::MD5Surface() : 
-	_shaderName(""),
 	_originalShaderName(""),
 	_mesh(new MD5Mesh),
 	_normalList(0),
@@ -24,7 +23,6 @@ MD5Surface::MD5Surface() :
 
 MD5Surface::MD5Surface(const MD5Surface& other) :
 	_aabb_local(other._aabb_local),
-	_shaderName(other._shaderName),
 	_originalShaderName(other._originalShaderName),
 	_mesh(other._mesh),
 	_normalList(0),
@@ -90,6 +88,7 @@ void MD5Surface::createDisplayLists()
 {
 	// Create the list for lighting mode
 	_lightingList = glGenLists(1);
+	assert(_lightingList != 0);
 	glNewList(_lightingList, GL_COMPILE);
 
 	glBegin(GL_TRIANGLES);
@@ -116,6 +115,7 @@ void MD5Surface::createDisplayLists()
 
 	// Generate the list for flat-shaded (unlit) mode
 	_normalList = glGenLists(1);
+	assert(_normalList != 0);
 	glNewList(_normalList, GL_COMPILE);
 
 	glBegin(GL_TRIANGLES);
@@ -155,52 +155,9 @@ void MD5Surface::testSelect(Selector& selector,
 	}
 }
 
-void MD5Surface::captureShader()
+void MD5Surface::setDefaultMaterial(const std::string& name)
 {
-	RenderSystemPtr renderSystem = _renderSystem.lock();
-
-	if (renderSystem)
-	{
-		// Capture current shader
-		_shader = renderSystem->capture(_shaderName);
-	}
-	else
-	{
-		// Free shaders
-		_shader.reset();
-	}
-}
-
-void MD5Surface::setShader(const std::string& name)
-{
-	_shaderName = name;
 	_originalShaderName = name;
-	captureShader();
-}
-
-const ShaderPtr& MD5Surface::getState() const
-{
-	return _shader;
-}
-
-void MD5Surface::applySkin(const ModelSkin& skin)
-{
-	// Look up the remap for this surface's material name. If there is a remap
-	// change the Shader* to point to the new shader.
-	std::string remap = skin.getRemap(_originalShaderName);
-
-	if (!remap.empty())
-	{
-		// Save the remapped shader name
-		_shaderName = remap;
-	}
-	else
-	{
-		// No remap, so reset our shader to the original unskinned shader
-		_shaderName = _originalShaderName;
-	}
-
-	captureShader();
 }
 
 const AABB& MD5Surface::localAABB() const {
@@ -208,20 +165,12 @@ const AABB& MD5Surface::localAABB() const {
 }
 
 void MD5Surface::render(RenderableCollector& collector, const Matrix4& localToWorld, 
-						const IRenderEntity& entity) const
+						const ShaderPtr& shader, const IRenderEntity& entity) const
 {
-	assert(_shader); // shader must be captured at this point
+	assert(shader); // shader must be captured at this point
 
-	collector.SetState(_shader, RenderableCollector::eFullMaterials);
+	collector.SetState(shader, RenderableCollector::eFullMaterials);
 	collector.addRenderable(*this, localToWorld, entity);
-}
-
-void MD5Surface::setRenderSystem(const RenderSystemPtr& renderSystem)
-{
-	_renderSystem = renderSystem;
-	
-	// Attempt to capture the shader now (or free them if renderSystem is NULL)
-	captureShader();
 }
 
 int MD5Surface::getNumVertices() const
@@ -256,18 +205,6 @@ model::ModelPolygon MD5Surface::getPolygon(int polygonIndex) const
 const std::string& MD5Surface::getDefaultMaterial() const
 {
 	return _originalShaderName;
-}
-
-const std::string& MD5Surface::getActiveMaterial() const
-{
-	return _shaderName;
-}
-
-void MD5Surface::setActiveMaterial(const std::string& activeMaterial)
-{
-	_shaderName = activeMaterial;
-
-	captureShader();
 }
 
 void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
@@ -397,7 +334,7 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 
 	// Get the shader name
 	tok.assertNextToken("shader");
-	setShader(tok.nextToken());
+	setDefaultMaterial(tok.nextToken());
 
 	// ----- VERTICES ------
 
