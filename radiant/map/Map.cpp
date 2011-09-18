@@ -534,7 +534,10 @@ void Map::createNew() {
 	focusViews(Vector3(0,0,0), Vector3(0,0,0));
 }
 
-bool Map::import(const std::string& filename) {
+bool Map::import(const std::string& filename)
+{
+	ui::ScreenUpdateBlocker blocker(_("Importing map..."), filename);
+
 	bool success = false;
 
 	{
