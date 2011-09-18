@@ -34,6 +34,7 @@ MD5Model::MD5Model(const MD5Model& other) :
 
 		// Build the index array - this has to happen at least once
 		_surfaces[i].surface->buildIndexArray();
+		_surfaces[i].surface->updateToDefaultPose(_joints);
 	}
 
 	updateMaterialList();
