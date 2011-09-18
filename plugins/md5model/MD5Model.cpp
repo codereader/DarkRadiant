@@ -16,6 +16,27 @@ MD5Model::MD5Model() :
 	_renderableSkeleton(_skeleton)
 {}
 
+MD5Model::MD5Model(const MD5Model& other) :
+	_joints(other._joints),
+	_surfaces(other._surfaces.size()), // resize to fit other
+	_aabb_local(other._aabb_local),
+	_polyCount(other._polyCount),
+	_vertexCount(other._vertexCount),
+	_filename(other._filename),
+	_modelPath(other._modelPath),
+	_renderableSkeleton(_skeleton)
+{
+	// Copy-construct the other model's surfaces, but not its shaders, revert to default
+	for (std::size_t i = 0; i < other._surfaces.size(); ++i)
+	{
+		_surfaces[i].reset(new MD5Surface(*other._surfaces[i]));
+		_surfaces[i]->setActiveMaterial(other._surfaces[i]->getDefaultMaterial());
+
+		// Build the index array - this has to happen at least once
+		_surfaces[i]->buildIndexArray();
+	}
+}
+
 MD5Model::const_iterator MD5Model::begin() const {
 	return _surfaces.begin();
 }
@@ -177,11 +198,13 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 	tok.assertNextToken("{");
 
 	// Initialise the Joints vector with the specified number of objects
-	_joints.resize(numJoints);
+	MD5Joints& joints = _joints;
+
+	joints.resize(numJoints);
 
 	// Iterate over the vector of Joints, filling in each one with parsed
 	// values
-	for(MD5Joints::iterator i = _joints.begin(); i != _joints.end(); ++i)
+	for(MD5Joints::iterator i = joints.begin(); i != joints.end(); ++i)
 	{
 		// Skip the joint name
 		tok.skipTokens(1);
@@ -225,7 +248,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 		surface.buildIndexArray();
 
 		// Build the default vertex array
-		surface.updateToDefaultPose(_joints);
+		surface.updateToDefaultPose(joints);
 
 		// Update the vertexcount
 		_vertexCount += surface.getNumVertices();

@@ -18,7 +18,7 @@ inline void Surface_addLight(const MD5Surface& surface,
 }
 
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
-	_model(model),
+	_model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
 	_surfaceLightLists(_model->size())
 {
 	_lightList = &GlobalRenderSystem().attach(*this);

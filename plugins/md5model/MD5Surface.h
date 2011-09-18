@@ -36,10 +36,12 @@ private:
 	ShaderPtr _shader;
 
 	// The mesh definition - will be baked into renderable vertex arrays
-	MD5Mesh _mesh;
+	// Several MD5Surfaces can share the same mesh
+	MD5MeshPtr _mesh;
 
+	// Our render data
 	Vertices _vertices;
-	Indices _indices;	
+	Indices _indices;
 
 	// The GL display lists for this surface's geometry
 	GLuint _normalList;
@@ -65,6 +67,11 @@ public:
 	 * Constructor.
 	 */
 	MD5Surface();
+
+	/**
+	 * Copy constructor, re-uses the MD5Mesh of <other>.
+	 */
+	MD5Surface(const MD5Surface& other);
 
 	/**
 	 * Destructor.
@@ -118,6 +125,7 @@ public:
 
 	const std::string& getDefaultMaterial() const;
 	const std::string& getActiveMaterial() const;
+	void setActiveMaterial(const std::string& activeMaterial);
 
 	void parseFromTokens(parser::DefTokeniser& tok);
 
