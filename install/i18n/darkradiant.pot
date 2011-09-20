@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-09-12 22:01+0200\n"
+"POT-Creation-Date: 2011-09-20 18:28+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,18 +28,18 @@ msgstr ""
 msgid "Enable Texture Lock (for Brushes)"
 msgstr ""
 
-#: ..\..\radiant\brush\csg\CSG.cpp:301
+#: ..\..\radiant\brush\csg\CSG.cpp:300
 msgid "This Is Not Dromed Warning"
 msgstr ""
 
-#: ..\..\radiant\brush\csg\CSG.cpp:302
+#: ..\..\radiant\brush\csg\CSG.cpp:301
 msgid ""
 "Note: be careful when using the CSG tool, as you might end up\n"
 "with a unnecessary number of tiny brushes and/or leaks.\n"
 "This popup will not be shown again."
 msgstr ""
 
-#: ..\..\radiant\brush\csg\CSG.cpp:317 ..\..\radiant\brush\csg\CSG.cpp:318
+#: ..\..\radiant\brush\csg\CSG.cpp:316 ..\..\radiant\brush\csg\CSG.cpp:317
 msgid "CSG Subtract: No brushes selected."
 msgstr ""
 
@@ -104,10 +104,10 @@ msgid "Caulk shader name"
 msgstr ""
 
 #: ..\..\radiant\entity.cpp:93 ..\..\radiant\mainframe_old.cpp:579
-#: ..\..\radiant\map\Map.cpp:492 ..\..\radiant\map\Map.cpp:592
-#: ..\..\radiant\map\Map.cpp:612
-#: ..\..\radiant\referencecache\ModelCache.cpp:254
-#: ..\..\radiant\referencecache\ModelCache.cpp:270
+#: ..\..\radiant\map\Map.cpp:492 ..\..\radiant\map\Map.cpp:596
+#: ..\..\radiant\map\Map.cpp:617
+#: ..\..\radiant\referencecache\ModelCache.cpp:244
+#: ..\..\radiant\referencecache\ModelCache.cpp:260
 #: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:352
 msgid "Processing..."
 msgstr ""
@@ -279,63 +279,67 @@ msgstr ""
 msgid "Saving Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:631
+#: ..\..\radiant\map\Map.cpp:539
+msgid "Importing..."
+msgstr ""
+
+#: ..\..\radiant\map\Map.cpp:636
 msgid ""
 "Save changes to map \"%1\"\n"
 "before closing?"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:641
+#: ..\..\radiant\map\Map.cpp:646
 msgid "%1 minutes"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:647
+#: ..\..\radiant\map\Map.cpp:652
 msgid "%1 seconds"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:652
+#: ..\..\radiant\map\Map.cpp:657
 msgid ""
 "If you don't save, changes from the last %1\n"
 "will be lost."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:712
+#: ..\..\radiant\map\Map.cpp:717
 msgid "Save Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:748
+#: ..\..\radiant\map\Map.cpp:753
 msgid "Save Copy As..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:765
+#: ..\..\radiant\map\Map.cpp:770
 msgid "Load Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:817
+#: ..\..\radiant\map\Map.cpp:822
 msgid "New Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:827 ..\..\radiant\ui\mru\MRU.cpp:91
+#: ..\..\radiant\map\Map.cpp:832 ..\..\radiant\ui\mru\MRU.cpp:91
 msgid "Open Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:831
+#: ..\..\radiant\map\Map.cpp:836
 msgid "Open map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:844
+#: ..\..\radiant\map\Map.cpp:849
 msgid "Import map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:873
+#: ..\..\radiant\map\Map.cpp:878
 msgid "Export selection"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:887
+#: ..\..\radiant\map\Map.cpp:892
 msgid "Save selected as Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:972
+#: ..\..\radiant\map\Map.cpp:977
 #, c-format
 msgid ""
 "Failure reading map from clipboard:\n"
@@ -346,31 +350,37 @@ msgstr ""
 msgid "<no description>"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:194 ..\..\radiant\map\MapResource.cpp:491
-#: ..\..\radiant\map\MapResource.cpp:510
+#: ..\..\radiant\map\MapResource.cpp:242
+#, c-format
+msgid ""
+"Error while creating backup:\n"
+"%s"
+msgstr ""
+
+#: ..\..\radiant\map\MapResource.cpp:254 ..\..\radiant\map\MapResource.cpp:560
 #, c-format
 msgid "File is write-protected: %s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:350
+#: ..\..\radiant\map\MapResource.cpp:412
 #, c-format
 msgid ""
 "Failure opening map file:\n"
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:364
+#: ..\..\radiant\map\MapResource.cpp:426
 #, c-format
 msgid ""
 "Could not determine map format of file:\n"
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:457
+#: ..\..\radiant\map\MapResource.cpp:519
 msgid "Map loading cancelled"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:470
+#: ..\..\radiant\map\MapResource.cpp:532
 #, c-format
 msgid ""
 "Failure reading map file:\n"
@@ -379,7 +389,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:551
+#: ..\..\radiant\map\MapResource.cpp:641
 msgid "Map writing cancelled"
 msgstr ""
 
@@ -457,8 +467,8 @@ msgstr ""
 msgid "Cannot bulge patch. No patches selected."
 msgstr ""
 
-#: ..\..\radiant\referencecache\ModelCache.cpp:254
-#: ..\..\radiant\referencecache\ModelCache.cpp:270
+#: ..\..\radiant\referencecache\ModelCache.cpp:244
+#: ..\..\radiant\referencecache\ModelCache.cpp:260
 msgid "Reloading Models"
 msgstr ""
 
