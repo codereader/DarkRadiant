@@ -536,7 +536,7 @@ void Map::createNew() {
 
 bool Map::import(const std::string& filename)
 {
-	ui::ScreenUpdateBlocker blocker(_("Importing map..."), filename);
+	ui::ScreenUpdateBlocker blocker(_("Importing..."), filename);
 
 	bool success = false;
 
@@ -588,7 +588,8 @@ bool Map::import(const std::string& filename)
 	return success;
 }
 
-bool Map::saveDirect(const std::string& filename) {
+bool Map::saveDirect(const std::string& filename)
+{
 	if (_saveInProgress) return false; // safeguard
 
 	// Disable screen updates for the scope of this function
@@ -608,7 +609,8 @@ bool Map::saveDirect(const std::string& filename) {
 	return result;
 }
 
-bool Map::saveSelected(const std::string& filename) {
+bool Map::saveSelected(const std::string& filename)
+{
 	if (_saveInProgress) return false; // safeguard
 
 	// Disable screen updates for the scope of this function
