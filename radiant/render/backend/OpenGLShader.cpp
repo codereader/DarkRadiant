@@ -370,7 +370,7 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
          i != allLayers.end();
          ++i)
     {
-        ShaderLayerPtr layer = *i;
+        const ShaderLayerPtr& layer = *i;
 
         if (layer->getType() == ShaderLayer::DIFFUSE)
         {

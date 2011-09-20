@@ -31,9 +31,10 @@ public:
 
 		eSortOverbrighten = 1024,
 		eSortFullbright = 1025,		// used by non-translucent editor passes
-		eSortHighlight = 1026,
 
-		eSortTranslucent = 1027,	// used by blend-type editor passes
+		eSortTranslucent = 1026,	// used by blend-type editor passes
+
+		eSortHighlight = 1027,		// used by the (red) selection system overlay
 
 		eSortOverlayFirst = 1028,	// used by decals
 		eSortOverlayLast = 2047,
