@@ -1,11 +1,11 @@
-#ifndef MAPRESOURCE_H_
-#define MAPRESOURCE_H_
+#pragma once
 
 #include "imapresource.h"
 #include "imapformat.h"
 #include "imodel.h"
 #include <set>
 #include <boost/utility.hpp>
+#include <boost/filesystem.hpp>
 
 namespace map {
 
@@ -24,6 +24,8 @@ class MapResource :
 
 	std::string _path;
 	std::string _name;
+
+	static std::string _infoFileExt;
 
 	// Type of resource "map"
 	std::string _type;
@@ -93,11 +95,14 @@ private:
 
 	bool loadFile(std::istream& mapStream, const MapFormat& format, 
 				  const scene::INodePtr& root, const std::string& filename);
+
+	// Returns a (hopefully) unique file extension for saving
+	static std::string getTemporaryFileExtension();
+
+	static bool checkIsWriteable(const boost::filesystem::path& path);
 };
 // Resource pointer types
 typedef boost::shared_ptr<MapResource> MapResourcePtr;
 typedef boost::weak_ptr<MapResource> MapResourceWeakPtr;
 
 } // namespace map
-
-#endif /*MAPRESOURCE_H_*/

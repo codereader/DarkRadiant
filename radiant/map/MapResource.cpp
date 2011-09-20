@@ -20,15 +20,21 @@
 #include "map/algorithm/Traverse.h"
 #include "stream/textfilestream.h"
 #include "referencecache/NullModelNode.h"
+
 #include <boost/bind.hpp>
 #include <boost/format.hpp>
+#include <boost/filesystem.hpp>
+
 #include "InfoFile.h"
+#include "string/string.h"
 
 #include "algorithm/MapImporter.h"
 #include "algorithm/MapExporter.h"
 #include "algorithm/InfoFileExporter.h"
 #include "algorithm/AssignLayerMappingWalker.h"
 #include "algorithm/ChildPrimitives.h"
+
+namespace fs = boost::filesystem;
 
 namespace map
 {
@@ -69,6 +75,8 @@ namespace
 	};
 }
 
+std::string MapResource::_infoFileExt;
+
 // Constructor
 MapResource::MapResource(const std::string& name) :
 	_mapRoot(model::NullModelNode::InstancePtr()),
@@ -80,6 +88,16 @@ MapResource::MapResource(const std::string& name) :
 	// Initialise the paths, this is all needed for realisation
     _path = rootPath(_originalName);
 	_name = os::getRelativePath(_originalName, _path);
+
+	if (_infoFileExt.empty())
+	{
+		_infoFileExt = GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
+	}
+
+	if (_infoFileExt[0] == '.') 
+	{
+		_infoFileExt = _infoFileExt.substr(1);
+	}
 }
 
 MapResource::~MapResource() {
@@ -169,33 +187,77 @@ bool MapResource::save()
 	return false;
 }
 
-bool MapResource::saveBackup() {
-	std::string fullpath = _path + _name;
+bool MapResource::saveBackup()
+{
+	fs::path fullpath = (_path + _name);
 
-	if (path_is_absolute(fullpath.c_str())) {
+	if (path_is_absolute(fullpath.file_string().c_str()))
+	{
 		// Save a backup if possible. This is done by renaming the original,
 		// which won't work if the existing map is currently open by Doom 3
 		// in the background.
-		if (!file_exists(fullpath.c_str())) {
+		if (!fs::exists(fullpath))
+		{
 			return false;
 		}
 
-		if (file_writeable(fullpath.c_str())) {
-			std::string pathWithoutExtension = fullpath.substr(0, fullpath.rfind('.'));
-			std::string backup = pathWithoutExtension + ".bak";
+		fs::path auxFile = fullpath;
+		auxFile.replace_extension(_infoFileExt);
 
-			return (!file_exists(backup.c_str()) || file_remove(backup.c_str())) // remove backup
-				&& file_move(fullpath.c_str(), backup.c_str()); // rename current to backup
+		if (file_writeable(fullpath.file_string().c_str()))
+		{
+			fs::path backup = fullpath;
+			backup.replace_extension("bak");
+			
+			fs::path auxFileBackup = auxFile;
+			auxFileBackup.replace_extension(_infoFileExt + ".bak");
+
+			try
+			{
+				// remove backup
+				if (fs::exists(backup))
+				{
+					fs::remove(backup);
+				}
+
+				// rename current to backup
+				fs::rename(fullpath, backup);
+
+				// remove aux file backup
+				if (fs::exists(auxFileBackup))
+				{
+					fs::remove(auxFileBackup);
+				}
+
+				// rename current to backup
+				fs::rename(auxFile, auxFileBackup);
+
+				return true;
+			}
+			catch (fs::basic_filesystem_error<fs::path>& ex)
+			{
+				globalErrorStream() << "Error while creating backups: " << ex.what() << std::endl;
+
+				gtkutil::MessageBox::ShowError(
+					(boost::format(_("Error while creating backup:\n%s")) % ex.what()).str(),
+					GlobalMainFrame().getTopLevelWindow());
+
+				return false;
+			}
 		}
-		else {
-			globalErrorStream() << "map path is not writeable: " << fullpath << std::endl;
+		else
+		{
+			globalErrorStream() << "map path is not writeable: " << fullpath.file_string() << std::endl;
+
 			// File is write-protected
 			gtkutil::MessageBox::ShowError(
-				(boost::format(_("File is write-protected: %s")) % fullpath).str(),
+				(boost::format(_("File is write-protected: %s")) % fullpath.file_string()).str(),
 				GlobalMainFrame().getTopLevelWindow());
+
 			return false;
 		}
 	}
+
 	return false;
 }
 
@@ -478,43 +540,69 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 	}
 }
 
+std::string MapResource::getTemporaryFileExtension()
+{
+	time_t localtime;
+	time(&localtime);
+
+	return sizetToStr(localtime);
+}
+
+bool MapResource::checkIsWriteable(const boost::filesystem::path& path)
+{
+	// Check writeability of the given file
+	if (boost::filesystem::exists(path) && !file_writeable(path.file_string().c_str()))
+	{
+		// File is write-protected
+		globalErrorStream() << "File is write-protected." << std::endl;
+
+		gtkutil::MessageBox::ShowError(
+			(boost::format(_("File is write-protected: %s")) % path.file_string()).str(),
+			GlobalMainFrame().getTopLevelWindow());
+
+		return false;
+	}
+
+	return true;
+}
+
 bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 						   GraphTraversalFunc traverse, const std::string& filename)
 {
-	globalOutputStream() << "Open file " << filename << " ";
+	// greebo: When auto-saving large maps users occasionally hit cancel
+	// we need to make sure to write to temporary files so that we don't
+	// leave a corrupt .map and .darkradiant file behind.
+	std::string tempExt = getTemporaryFileExtension();
 
-	if (file_exists(filename.c_str()) && !file_writeable(filename.c_str()))
-	{
-		// File is write-protected
-		globalErrorStream() << "failure, file is write-protected." << std::endl;
-		gtkutil::MessageBox::ShowError(
-			(boost::format(_("File is write-protected: %s")) % filename).str(),
-			GlobalMainFrame().getTopLevelWindow());
-		return false;
-	}
+	// Actual output file paths
+	fs::path outFile = filename;
+	fs::path auxFile = outFile;
+	auxFile.replace_extension(_infoFileExt);
 
+	// Temporary file paths
+	fs::path tempOutFile = outFile;
+	tempOutFile.replace_extension("map" + tempExt);
+
+	fs::path tempAuxFile = auxFile;
+	tempAuxFile.replace_extension("aux" + tempExt);
+
+	// Check writeability of the output files
+	if (!checkIsWriteable(outFile)) return false;
+	if (!checkIsWriteable(auxFile)) return false;
+	if (!checkIsWriteable(tempOutFile)) return false;
+	if (!checkIsWriteable(tempAuxFile)) return false;
+
+	// Test opening the output file
+	globalOutputStream() << "Opening file " << tempOutFile.file_string() << " ";
+	
 	// Open the stream to the output file
-	std::ofstream outfile(filename.c_str());
+	std::ofstream outFileStream(tempOutFile.file_string().c_str());
 
-	// Open the auxiliary file too
-	std::string auxFilename(filename);
-	auxFilename = auxFilename.substr(0, auxFilename.rfind('.'));
-	auxFilename += GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
+	globalOutputStream() << "and auxiliary file " << tempAuxFile.file_string() << " for writing...";
 
-	globalOutputStream() << "and auxiliary file " << auxFilename << " for writing...";
+	std::ofstream auxFileStream(tempAuxFile.file_string().c_str());
 
-	if (file_exists(auxFilename.c_str()) && !file_writeable(auxFilename.c_str())) {
-		// File is write-protected
-		globalErrorStream() << "failure, file is write-protected." << std::endl;
-		gtkutil::MessageBox::ShowError(
-			(boost::format(_("File is write-protected: %s")) % auxFilename).str(),
-			GlobalMainFrame().getTopLevelWindow());
-		return false;
-	}
-
-	std::ofstream auxfile(auxFilename.c_str());
-
-	if (outfile.is_open() && auxfile.is_open())
+	if (outFileStream.is_open() && auxFileStream.is_open())
 	{
 		globalOutputStream() << "success" << std::endl;
 
@@ -529,7 +617,9 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 		// writer to it. The constructor will prepare the scene
 		// and the destructor will clean it up afterwards. That way
 		// we ensure a nice and tidy scene when exceptions are thrown.
-		MapExporter exporter(*mapWriter, root, outfile, counter.getCount());
+		MapExporter exporter(*mapWriter, root, outFileStream, counter.getCount());
+
+		bool cancelled = false;
 
 		try
 		{
@@ -541,7 +631,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 			// provided the MapFormat doesn't disallow layer saving.
 			if (format.allowInfoFileCreation())
 			{
-				InfoFileExporter infoExporter(root, auxfile);
+				InfoFileExporter infoExporter(root, auxFileStream);
 				traverse(root, infoExporter);
 			}
 		}
@@ -551,13 +641,47 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 				_("Map writing cancelled"),
 				GlobalMainFrame().getTopLevelWindow()
 			);
+
+			cancelled = true;
 		}
 
-		outfile.close();
-		auxfile.close();
+		outFileStream.close();
+		auxFileStream.close();
+
+		// If the user cancelled the operation, just remove the temporary files 
+		if (cancelled)
+		{
+			fs::remove(tempOutFile);
+			fs::remove(tempAuxFile);
+
+			return true;
+		}
+
+		// Move the temporary files over to the target path
+		try
+		{
+			if (fs::exists(outFile)) 
+			{
+				fs::remove(outFile);
+			}
+			fs::rename(tempOutFile, outFile);
+
+			if (fs::exists(auxFile)) 
+			{
+				fs::remove(auxFile);
+			}
+			fs::rename(tempAuxFile, auxFile);
+		}
+		catch (fs::basic_filesystem_error<fs::path>& ex)
+		{
+			globalErrorStream() << "Error moving temporary files to destination paths: "
+				<< ex.what() << std::endl;
+		}
+
 	    return true;
 	}
-	else {
+	else
+	{
 		globalErrorStream() << "failure" << std::endl;
 		return false;
 	}
