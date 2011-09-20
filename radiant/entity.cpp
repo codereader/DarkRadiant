@@ -145,7 +145,11 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 
 	GlobalSceneGraph().root()->addChildNode(node);
 
-    if (entityClass->isFixedSize() || (isModel && !primitivesSelected)) {
+	// The layer list we're moving the newly created node/subgraph into
+	scene::LayerList targetLayers;
+
+    if (entityClass->isFixedSize() || (isModel && !primitivesSelected))
+	{
 		selection::algorithm::deleteSelection();
 
         ITransformablePtr transform = Node_getTransformable(node);
@@ -159,7 +163,7 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
         GlobalSelectionSystem().setSelectedAll(false);
 
 		// Move the item to the first visible layer
-		node->moveToLayer(GlobalLayerSystem().getFirstVisibleLayer());
+		targetLayers.insert(GlobalLayerSystem().getFirstVisibleLayer());
 
         Node_setSelected(node, true);
     }
@@ -184,12 +188,12 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 		if (primitivesSelected)
 		{
 			scene::INodePtr primitive = GlobalSelectionSystem().ultimateSelected();
-			scene::assignNodeToLayers(node, primitive->getLayers());
+			targetLayers = primitive->getLayers();
 		}
 		else
 		{
 			// Otherwise move the item to the first visible layer
-			node->moveToLayer(GlobalLayerSystem().getFirstVisibleLayer());
+			targetLayers.insert(GlobalLayerSystem().getFirstVisibleLayer());
 		}
 
         // Parent the selected primitives to the new node
@@ -201,6 +205,10 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 	    GlobalSelectionSystem().setSelectedAll(false);
 	    Node_setSelected(node, true);
     }
+
+	// Assign the layers - including all child nodes (#2864)
+	scene::AssignNodeToLayersWalker layerWalker(targetLayers);
+	Node_traverseSubgraph(node, layerWalker);
 
     // Set the light radius and origin
 
