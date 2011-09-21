@@ -23,9 +23,9 @@ public:
 
 	bool pre(const scene::INodePtr& node)
 	{
-		if (Node_isModel(node))
+		if (Node_isModel(node) || Node_isParticle(node))
 		{
-			// We have a model, assign the layers of the parent
+			// We have a model or particle, assign the layers of the parent
 			scene::INodePtr parent = node->getParent();
 
 			if (parent != NULL)
