@@ -22,6 +22,26 @@ void ModelKey::setActive(bool active)
 	_active = active;
 }
 
+void ModelKey::refreshModel()
+{
+	if (!_modelNode) return;
+
+	// Check if we have a skinnable model and remember the skin
+	SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+
+	std::string skin = skinned ? skinned->getSkin() : "";
+	
+	attachModelNode();
+	
+	// Reset the skin to the previous value if we have a model
+	skinned = boost::dynamic_pointer_cast<SkinnedModel>(_modelNode);
+
+	if (skinned)
+	{
+		skinned->skinChanged(skin);
+	}
+}
+
 // Update the contained model from the provided keyvalues
 void ModelKey::modelChanged(const std::string& value)
 {
@@ -35,14 +55,20 @@ void ModelKey::modelChanged(const std::string& value)
 		return; // new name is the same as we have now
 	}
 
+	// Now store the new modelpath
+    _modelPath = newModelName;
+
+	// Call the attach routine
+	attachModelNode();
+}
+
+void ModelKey::attachModelNode()
+{
 	// Remove the old model node first
 	if (_modelNode != NULL)
 	{
 		_parentNode.removeChildNode(_modelNode);
 	}
-
-	// Now store the new modelpath
-    _modelPath = newModelName;
 
 	if (_modelPath.empty())
 	{
@@ -56,7 +82,7 @@ void ModelKey::modelChanged(const std::string& value)
 	_modelNode = GlobalModelCache().getModelNode(_modelPath);
 
 	// The model loader should not return NULL, but a sanity check is always ok
-	if (_modelNode != NULL)
+	if (_modelNode)
 	{
 		// Add the model node as child of the entity node
 		_parentNode.addChildNode(_modelNode);
