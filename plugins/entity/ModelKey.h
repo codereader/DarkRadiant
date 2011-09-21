@@ -26,6 +26,9 @@ public:
 
 	void setActive(bool active);
 
+	// Refreshes the attached model
+	void refreshModel();
+
 	// Update the model to the provided keyvalue, this removes the old scene::Node
 	// and inserts the new one after acquiring the model from the cache.
 	void modelChanged(const std::string& value);
@@ -35,4 +38,8 @@ public:
 
 	// Returns the reference to the "singleton" model node
 	const scene::INodePtr& getNode() const;
+
+private:
+	// Loads the model node and attaches it to the parent node
+	void attachModelNode();
 };

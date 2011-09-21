@@ -103,11 +103,7 @@ Entity& EntityNode::getEntity()
 
 void EntityNode::refreshModel()
 {
-	// Simulate a "model" key change
-	_modelKey.modelChanged(_entity.getKeyValue("model"));
-
-	// Trigger a skin change
-	_modelKey.skinChanged(_entity.getKeyValue("skin"));
+	_modelKey.refreshModel();
 }
 
 float EntityNode::getShaderParm(int parmNum) const
