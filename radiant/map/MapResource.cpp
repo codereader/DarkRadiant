@@ -229,8 +229,12 @@ bool MapResource::saveBackup()
 					fs::remove(auxFileBackup);
 				}
 
-				// rename current to backup
-				fs::rename(auxFile, auxFileBackup);
+				// Check if the .darkradiant file exists in the first place
+				if (fs::exists(auxFile))
+				{
+					// rename current to backup
+					fs::rename(auxFile, auxFileBackup);
+				}
 
 				return true;
 			}
