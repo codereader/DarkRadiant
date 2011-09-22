@@ -59,7 +59,11 @@ void FiltersMenu::addItemsToMainMenu()
 	MenuPopulatingVisitor visitor(MENU_PATH);
 	GlobalFilterSystem().forEachFilter(visitor);
 
-	menuManager.add(MENU_PATH, "_FiltersSep", menuSeparator, "", "", "");
+	menuManager.add(MENU_PATH, "_FiltersSep1", menuSeparator, "", "", "");
+	menuManager.add(MENU_PATH, "ActivateAllFilters", menuItem, _("Activate _all Filters"), MENU_ICON, "ActivateAllFilters");
+	menuManager.add(MENU_PATH, "DeactivateAllFilters", menuItem, _("Deactivate _all Filters"), MENU_ICON, "DeactivateAllFilters");
+
+	menuManager.add(MENU_PATH, "_FiltersSep2", menuSeparator, "", "", "");
 	menuManager.add(MENU_PATH, "EditFilters", menuItem, _("Edit Filters..."), MENU_ICON, "EditFiltersDialog");
 }
 

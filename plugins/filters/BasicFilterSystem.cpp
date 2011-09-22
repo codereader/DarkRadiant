@@ -30,6 +30,44 @@ namespace {
 	const std::string RKEY_USER_ACTIVE_FILTERS = RKEY_USER_FILTER_BASE + "//activeFilter";
 }
 
+void BasicFilterSystem::setAllFilterStates(bool state)
+{
+	if (state)
+	{
+		_activeFilters = _availableFilters;
+	}
+	else
+	{
+		_activeFilters.clear();
+	}
+
+	// Invalidate the visibility cache to force new values to be
+	// loaded from the filters themselves
+	_visibilityCache.clear();
+
+	// Update the scenegraph instances
+	update();
+
+	updateEvents();
+
+	notifyObservers();
+
+	// Trigger an immediate scene redraw
+	GlobalSceneGraph().sceneChanged();
+}
+
+void BasicFilterSystem::setAllFilterStatesCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		globalOutputStream() << "Usage: SetAllFilterStates 1|0" << std::endl;
+		globalOutputStream() << " an argument value of 1 activates all filters, 0 deactivates them." << std::endl;
+		return;
+	}
+
+	setAllFilterStates(args.front().getInt() != 0);
+}
+
 // Initialise the filter system
 void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 {
@@ -48,6 +86,16 @@ void BasicFilterSystem::initialiseModule(const ApplicationContext& ctx)
 
 	// user-defined filters
 	addFiltersFromXML(userFilters, false);
+
+	// Add the (de-)activate all commands
+	GlobalCommandSystem().addCommand("SetAllFilterStates", boost::bind(&BasicFilterSystem::setAllFilterStatesCmd, this, _1), cmd::ARGTYPE_INT);
+
+	// Register two shortcuts
+	GlobalCommandSystem().addStatement("ActivateAllFilters", "SetAllFilterStates 1");
+	GlobalCommandSystem().addStatement("DeactivateAllFilters", "SetAllFilterStates 0");
+
+	GlobalEventManager().addCommand("ActivateAllFilters", "ActivateAllFilters");
+	GlobalEventManager().addCommand("DeactivateAllFilters", "DeactivateAllFilters");
 }
 
 void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readOnly) {
@@ -551,6 +599,7 @@ const StringSet& BasicFilterSystem::getDependencies() const {
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;

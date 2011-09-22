@@ -1,9 +1,9 @@
-#ifndef BASICFILTERSYSTEM_H_
-#define BASICFILTERSYSTEM_H_
+#pragma once
 
 #include "XMLFilter.h"
 #include "imodule.h"
 #include "ifilter.h"
+#include "icommandsystem.h"
 #include "xmlutil/Node.h"
 
 #include <map>
@@ -98,6 +98,14 @@ public:
 	// Applies the ruleset and replaces the previous one for a given filter.
 	bool setFilterRules(const std::string& filter, const FilterRules& ruleSet);
 
+	/** 
+	 * Activates or deactivates all known filters.
+	 */
+	void setAllFilterStates(bool state);
+
+	// Command target, inspects arguments and passes on to the 
+	void setAllFilterStatesCmd(const cmd::ArgumentList& args);
+
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
@@ -107,5 +115,3 @@ public:
 typedef boost::shared_ptr<BasicFilterSystem> BasicFilterSystemPtr;
 
 } // namespace filters
-
-#endif /*BASICFILTERSYSTEM_H_*/
