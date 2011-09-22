@@ -7,7 +7,7 @@
 
 namespace ui {
 
-ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::string& message) :
+ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::string& message, bool forceDisplay) :
 	TransientWindow(title, GlobalMainFrame().getTopLevelWindow()),
 	_grabbedFocus(false)
 {
@@ -30,7 +30,7 @@ ScreenUpdateBlocker::ScreenUpdateBlocker(const std::string& title, const std::st
 	_realizeHandler = signal_realize().connect(
 		sigc::mem_fun(*this, &ScreenUpdateBlocker::onRealize));
 
-	if (GlobalMainFrame().isActiveApp())
+	if (GlobalMainFrame().isActiveApp() || forceDisplay)
 	{
 		// Show this window immediately
 		show();
