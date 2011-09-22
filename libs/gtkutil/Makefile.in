@@ -68,12 +68,13 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(pkglibdir)"
 LTLIBRARIES = $(pkglib_LTLIBRARIES)
 libgtkutil_la_DEPENDENCIES =  \
-	$(top_builddir)/libs/xmlutil/libxmlutil.la
+	$(top_builddir)/libs/xmlutil/libxmlutil.la \
+	$(top_builddir)/libs/math/libmath.la
 am_libgtkutil_la_OBJECTS = ConsoleView.lo FreezePointer.lo GLWidget.lo \
 	PanedPosition.lo VFSTreePopulator.lo Timer.lo \
 	WindowPosition.lo PersistentTransientWindow.lo \
-	TransientWindow.lo Dialog.lo MessageBox.lo GLFont.lo \
-	MenuItemAccelerator.lo Cursor.lo PopupMenu.lo \
+	TransientWindow.lo Dialog.lo MessageBox.lo RenderPreview.lo \
+	GLFont.lo MenuItemAccelerator.lo Cursor.lo PopupMenu.lo \
 	RegistryConnector.lo PathEntry.lo TreeModel.lo \
 	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
 	clipboard.lo FileChooser.lo
@@ -306,10 +307,15 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libgtkutil.la
 libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
-						$(GTKGLEXTMM_LIBS) $(GTKMM_LIBS) $(XML_LIBS) \
+						$(GTKGLEXTMM_LIBS) \
+						$(GTKMM_LIBS) \
+						$(XML_LIBS) \
+						$(GLEW_LIBS) \
 						$(GTKSOURCEVIEWMM_LIBS)
 
-libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
+libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
+			$(top_builddir)/libs/math/libmath.la
+
 libgtkutil_la_SOURCES = ConsoleView.cpp \
 						FreezePointer.cpp \
 						GLWidget.cpp \
@@ -321,6 +327,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
                         window/TransientWindow.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
+						preview/RenderPreview.cpp \
 						GLFont.cpp \
 						MenuItemAccelerator.cpp \
 						Cursor.cpp \
@@ -423,6 +430,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PersistentTransientWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PopupMenu.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RegistryConnector.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderPreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SerialisableWidgets.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceView.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Timer.Plo@am__quote@
@@ -487,6 +495,14 @@ MessageBox.lo: dialog/MessageBox.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='dialog/MessageBox.cpp' object='MessageBox.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MessageBox.lo `test -f 'dialog/MessageBox.cpp' || echo '$(srcdir)/'`dialog/MessageBox.cpp
+
+RenderPreview.lo: preview/RenderPreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT RenderPreview.lo -MD -MP -MF $(DEPDIR)/RenderPreview.Tpo -c -o RenderPreview.lo `test -f 'preview/RenderPreview.cpp' || echo '$(srcdir)/'`preview/RenderPreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/RenderPreview.Tpo $(DEPDIR)/RenderPreview.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='preview/RenderPreview.cpp' object='RenderPreview.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o RenderPreview.lo `test -f 'preview/RenderPreview.cpp' || echo '$(srcdir)/'`preview/RenderPreview.cpp
 
 PopupMenu.lo: menu/PopupMenu.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT PopupMenu.lo -MD -MP -MF $(DEPDIR)/PopupMenu.Tpo -c -o PopupMenu.lo `test -f 'menu/PopupMenu.cpp' || echo '$(srcdir)/'`menu/PopupMenu.cpp
