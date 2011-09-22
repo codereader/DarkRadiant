@@ -139,6 +139,11 @@ public:
 	 */
 	virtual bool getFilterState(const std::string& filter) = 0;
 
+	/** 
+	 * Activates or deactivates all known filters.
+	 */
+	virtual void setAllFilterStates(bool state) = 0;
+
 	/** greebo: Returns the event name of the given filter. This is needed
 	 * 			to create the toggle event to menus/etc.
 	 */
