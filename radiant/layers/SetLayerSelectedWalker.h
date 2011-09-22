@@ -1,10 +1,10 @@
-#ifndef SET_LAYER_SELECTED_WALKER_H_
-#define SET_LAYER_SELECTED_WALKER_H_
+#pragma once
 
 #include "ilayer.h"
 #include "scenelib.h"
 
-namespace scene {
+namespace scene
+{
 
 class SetLayerSelectedWalker :
 	public NodeVisitor
@@ -19,17 +19,25 @@ public:
 	{}
 
 	// scene::NodeVisitor
-	bool pre(const scene::INodePtr& node) {
+	bool pre(const scene::INodePtr& node)
+	{
+		if (!node->visible())
+		{
+			return false; // skip hidden nodes
+		}
+
 		Entity* entity = Node_getEntity(node);
 
-		if (entity != NULL && entity->getKeyValue("classname") == "worldspawn") {
+		if (entity != NULL && entity->getKeyValue("classname") == "worldspawn")
+		{
 			// Skip the worldspawn
 			return true;
 		}
 
 		LayerList layers = node->getLayers();
 
-		if (layers.find(_layer) != layers.end()) {
+		if (layers.find(_layer) != layers.end())
+		{
 			Node_setSelected(node, _selected);
 		}
 
@@ -38,5 +46,3 @@ public:
 };
 
 } // namespace scene
-
-#endif /* SET_LAYER_SELECTED_WALKER_H_ */
