@@ -32,15 +32,19 @@ public:
  * greebo: This Walker un-instantiates the visited nodes
  * The whole subgraph is traversed and erase() is
  * called on each nodes, AFTER it has been traversed.
+ *
+ * Contrary to InstanceSubgraphWalker this class is taking
+ * a direct reference to Graph, since it is invoked in the
+ * SceneGraph destructor.
  */
 class UninstanceSubgraphWalker :
 	public scene::NodeVisitor
 {
 private:
-	GraphPtr& _sceneGraph;
+	Graph& _sceneGraph;
 
 public:
-	UninstanceSubgraphWalker(GraphPtr& sceneGraph);
+	UninstanceSubgraphWalker(Graph& sceneGraph);
 
 	bool pre(const scene::INodePtr& node);
 	void post(const scene::INodePtr& node);

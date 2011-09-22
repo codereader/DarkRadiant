@@ -3,6 +3,7 @@
 #include "ifiletypes.h"
 
 #include <gtkmm/stock.h>
+#include <gtkmm/label.h>
 
 #include "i18n.h"
 #include "os/path.h"
@@ -53,6 +54,16 @@ FileChooser::FileChooser(const Glib::RefPtr<Gtk::Window>& parentWindow,
 FileChooser::~FileChooser()
 {
 	hide();
+
+	// Free any attached preview widgets
+	if (_preview)
+	{
+		// Replace the existing preview with a simple label widget
+		Gtk::Label* label = Gtk::manage(new Gtk::Label);
+		set_preview_widget(*label);
+		
+		_preview.reset();
+	}
 }
 
 void FileChooser::construct()

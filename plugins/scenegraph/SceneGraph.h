@@ -39,6 +39,8 @@ private:
 public:
 	SceneGraph();
 
+	~SceneGraph();
+
 	/** greebo: Adds/removes an observer from the scenegraph,
 	 * 			to get notified upon insertions/deletions
 	 */

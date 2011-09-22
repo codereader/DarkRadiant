@@ -39,7 +39,7 @@ void InstanceSubgraphWalker::post(const INodePtr& node)
 
 // ==============================================================================================
 
-UninstanceSubgraphWalker::UninstanceSubgraphWalker(GraphPtr& sceneGraph) :
+UninstanceSubgraphWalker::UninstanceSubgraphWalker(Graph& sceneGraph) :
 	_sceneGraph(sceneGraph)
 {}
 
@@ -53,7 +53,7 @@ void UninstanceSubgraphWalker::post(const scene::INodePtr& node)
 	// Notify the Scenegraph about the upcoming deletion
 	if (node->inScene())
 	{
-		_sceneGraph->erase(node);
+		_sceneGraph.erase(node);
 		node->setSceneGraph(GraphPtr());
 	}
 }

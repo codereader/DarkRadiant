@@ -18,6 +18,15 @@ SceneGraph::SceneGraph() :
 	_spacePartition(new Octree)
 {}
 
+SceneGraph::~SceneGraph()
+{
+	// Make sure the scene graph is properly uninstantiated
+	if (root())
+	{
+		setRoot(scene::INodePtr());
+	}
+}
+
 void SceneGraph::addSceneObserver(Graph::Observer* observer) {
 	if (observer != NULL) {
 		// Add the passed observer to the list
@@ -59,7 +68,7 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	if (_root != NULL)
 	{
 		// "Uninstantiate" the whole scene
-		UninstanceSubgraphWalker walker(boost::static_pointer_cast<Graph>(shared_from_this()));
+		UninstanceSubgraphWalker walker(*this);
 		Node_traverseSubgraph(_root, walker);
 	}
 
