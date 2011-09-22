@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-09-20 18:28+0200\n"
+"POT-Creation-Date: 2011-09-22 17:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -104,8 +104,8 @@ msgid "Caulk shader name"
 msgstr ""
 
 #: ..\..\radiant\entity.cpp:93 ..\..\radiant\mainframe_old.cpp:579
-#: ..\..\radiant\map\Map.cpp:492 ..\..\radiant\map\Map.cpp:596
-#: ..\..\radiant\map\Map.cpp:617
+#: ..\..\radiant\map\Map.cpp:176 ..\..\radiant\map\Map.cpp:497
+#: ..\..\radiant\map\Map.cpp:601 ..\..\radiant\map\Map.cpp:622
 #: ..\..\radiant\referencecache\ModelCache.cpp:244
 #: ..\..\radiant\referencecache\ModelCache.cpp:260
 #: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:352
@@ -275,71 +275,75 @@ msgstr ""
 msgid "unnamed.map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:492
+#: ..\..\radiant\map\Map.cpp:176
+msgid "Loading textures..."
+msgstr ""
+
+#: ..\..\radiant\map\Map.cpp:497
 msgid "Saving Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:539
+#: ..\..\radiant\map\Map.cpp:544
 msgid "Importing..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:636
+#: ..\..\radiant\map\Map.cpp:641
 msgid ""
 "Save changes to map \"%1\"\n"
 "before closing?"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:646
+#: ..\..\radiant\map\Map.cpp:651
 msgid "%1 minutes"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:652
+#: ..\..\radiant\map\Map.cpp:657
 msgid "%1 seconds"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:657
+#: ..\..\radiant\map\Map.cpp:662
 msgid ""
 "If you don't save, changes from the last %1\n"
 "will be lost."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:717
+#: ..\..\radiant\map\Map.cpp:722
 msgid "Save Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:753
+#: ..\..\radiant\map\Map.cpp:758
 msgid "Save Copy As..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:770
+#: ..\..\radiant\map\Map.cpp:775
 msgid "Load Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:822
+#: ..\..\radiant\map\Map.cpp:827
 msgid "New Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:832 ..\..\radiant\ui\mru\MRU.cpp:91
+#: ..\..\radiant\map\Map.cpp:837 ..\..\radiant\ui\mru\MRU.cpp:91
 msgid "Open Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:836
+#: ..\..\radiant\map\Map.cpp:841
 msgid "Open map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:849
+#: ..\..\radiant\map\Map.cpp:854
 msgid "Import map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:878
+#: ..\..\radiant\map\Map.cpp:883
 msgid "Export selection"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:892
+#: ..\..\radiant\map\Map.cpp:897
 msgid "Save selected as Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:977
+#: ..\..\radiant\map\Map.cpp:982
 #, c-format
 msgid ""
 "Failure reading map from clipboard:\n"
@@ -350,37 +354,37 @@ msgstr ""
 msgid "<no description>"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:242
+#: ..\..\radiant\map\MapResource.cpp:246
 #, c-format
 msgid ""
 "Error while creating backup:\n"
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:254 ..\..\radiant\map\MapResource.cpp:560
+#: ..\..\radiant\map\MapResource.cpp:258 ..\..\radiant\map\MapResource.cpp:564
 #, c-format
 msgid "File is write-protected: %s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:412
+#: ..\..\radiant\map\MapResource.cpp:416
 #, c-format
 msgid ""
 "Failure opening map file:\n"
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:426
+#: ..\..\radiant\map\MapResource.cpp:430
 #, c-format
 msgid ""
 "Could not determine map format of file:\n"
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:519
+#: ..\..\radiant\map\MapResource.cpp:523
 msgid "Map loading cancelled"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:532
+#: ..\..\radiant\map\MapResource.cpp:536
 #, c-format
 msgid ""
 "Failure reading map file:\n"
@@ -389,7 +393,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:641
+#: ..\..\radiant\map\MapResource.cpp:645
 msgid "Map writing cancelled"
 msgstr ""
 
@@ -2187,6 +2191,14 @@ msgid "Loading textures"
 msgstr ""
 
 #: ..\..\radiant\ui\menu\FiltersMenu.cpp:63
+msgid "Activate _all Filters"
+msgstr ""
+
+#: ..\..\radiant\ui\menu\FiltersMenu.cpp:64
+msgid "_Deactivate all Filters"
+msgstr ""
+
+#: ..\..\radiant\ui\menu\FiltersMenu.cpp:67
 msgid "Edit Filters..."
 msgstr ""
 
@@ -4558,19 +4570,19 @@ msgstr ""
 msgid "Close without saving"
 msgstr ""
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:69
+#: ..\..\libs\gtkutil\FileChooser.cpp:80
 msgid "Open File"
 msgstr ""
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:69
+#: ..\..\libs\gtkutil\FileChooser.cpp:80
 msgid "Save File"
 msgstr ""
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:120
+#: ..\..\libs\gtkutil\FileChooser.cpp:131
 msgid "All Files (*.*)"
 msgstr ""
 
-#: ..\..\libs\gtkutil\FileChooser.cpp:229
+#: ..\..\libs\gtkutil\FileChooser.cpp:240
 msgid "Do you want to replace it?"
 msgstr ""
 

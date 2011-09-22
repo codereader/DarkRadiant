@@ -16,7 +16,7 @@ class ScreenUpdateBlocker :
 
 public:
 	// Pass the window title and the text message to the constructor
-	ScreenUpdateBlocker(const std::string& title, const std::string& message);
+	ScreenUpdateBlocker(const std::string& title, const std::string& message, bool forceDisplay = false);
 
 	~ScreenUpdateBlocker();
 
