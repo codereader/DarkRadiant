@@ -10,9 +10,13 @@ AM_CXXFLAGS = -fPIC
 
 pkglib_LTLIBRARIES = libgtkutil.la
 libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
-						$(GTKGLEXTMM_LIBS) $(GTKMM_LIBS) $(XML_LIBS) \
+						$(GTKGLEXTMM_LIBS) \
+						$(GTKMM_LIBS) \
+						$(XML_LIBS) \
+						$(GLEW_LIBS) \
 						$(GTKSOURCEVIEWMM_LIBS)
-libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la
+libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
+			$(top_builddir)/libs/math/libmath.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \
 						FreezePointer.cpp \
 						GLWidget.cpp \

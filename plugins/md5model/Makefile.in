@@ -71,7 +71,8 @@ md5model_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/scene/libscenegraph.la \
 	$(top_builddir)/libs/math/libmath.la
 am_md5model_la_OBJECTS = MD5Model.lo MD5ModelNode.lo MD5Surface.lo \
-	plugin.lo MD5ModelLoader.lo
+	plugin.lo MD5ModelLoader.lo MD5Skeleton.lo \
+	MD5AnimationCache.lo MD5Anim.lo
 md5model_la_OBJECTS = $(am_md5model_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -299,7 +300,10 @@ md5model_la_SOURCES = MD5Model.cpp \
                       MD5ModelNode.cpp \
                       MD5Surface.cpp \
                       plugin.cpp \
-                      MD5ModelLoader.cpp
+                      MD5ModelLoader.cpp \
+					  MD5Skeleton.cpp \
+					  MD5AnimationCache.cpp \
+					  MD5Anim.cpp
 
 all: all-am
 
@@ -375,9 +379,12 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MD5Anim.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MD5AnimationCache.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MD5Model.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MD5ModelLoader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MD5ModelNode.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MD5Skeleton.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MD5Surface.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/plugin.Plo@am__quote@
 

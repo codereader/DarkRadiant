@@ -150,6 +150,8 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-SplitPaneLayout.$(OBJEXT) \
 	darkradiant-RegularLayout.$(OBJEXT) \
 	darkradiant-ScreenUpdateBlocker.$(OBJEXT) \
+	darkradiant-AnimationPreview.$(OBJEXT) \
+	darkradiant-MD5AnimationViewer.$(OBJEXT) \
 	darkradiant-patchmanip.$(OBJEXT) darkradiant-XYWnd.$(OBJEXT) \
 	darkradiant-GlobalXYWnd.$(OBJEXT) \
 	darkradiant-TexToolItem.$(OBJEXT) \
@@ -584,6 +586,8 @@ darkradiant_SOURCES = main.cpp \
                       ui/mainframe/SplitPaneLayout.cpp \
                       ui/mainframe/RegularLayout.cpp \
                       ui/mainframe/ScreenUpdateBlocker.cpp \
+					  ui/animationpreview/AnimationPreview.cpp \
+					  ui/animationpreview/MD5AnimationViewer.cpp \
                       patchmanip.cpp \
                       xyview/XYWnd.cpp \
                       xyview/GlobalXYWnd.cpp \
@@ -773,6 +777,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AboutDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AddPropertyDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AnglePropertyEditor.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AnimationPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ApplicationContextImpl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-AutoSaver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BestPoint.Po@am__quote@
@@ -855,6 +860,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LogStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LogStreamBuf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LogWriter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MD5AnimationViewer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MRU.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MRUMenuItem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MainFrame.Po@am__quote@
@@ -2741,6 +2747,38 @@ darkradiant-ScreenUpdateBlocker.obj: ui/mainframe/ScreenUpdateBlocker.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/mainframe/ScreenUpdateBlocker.cpp' object='darkradiant-ScreenUpdateBlocker.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-ScreenUpdateBlocker.obj `if test -f 'ui/mainframe/ScreenUpdateBlocker.cpp'; then $(CYGPATH_W) 'ui/mainframe/ScreenUpdateBlocker.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/mainframe/ScreenUpdateBlocker.cpp'; fi`
+
+darkradiant-AnimationPreview.o: ui/animationpreview/AnimationPreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-AnimationPreview.o -MD -MP -MF $(DEPDIR)/darkradiant-AnimationPreview.Tpo -c -o darkradiant-AnimationPreview.o `test -f 'ui/animationpreview/AnimationPreview.cpp' || echo '$(srcdir)/'`ui/animationpreview/AnimationPreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-AnimationPreview.Tpo $(DEPDIR)/darkradiant-AnimationPreview.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/animationpreview/AnimationPreview.cpp' object='darkradiant-AnimationPreview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-AnimationPreview.o `test -f 'ui/animationpreview/AnimationPreview.cpp' || echo '$(srcdir)/'`ui/animationpreview/AnimationPreview.cpp
+
+darkradiant-AnimationPreview.obj: ui/animationpreview/AnimationPreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-AnimationPreview.obj -MD -MP -MF $(DEPDIR)/darkradiant-AnimationPreview.Tpo -c -o darkradiant-AnimationPreview.obj `if test -f 'ui/animationpreview/AnimationPreview.cpp'; then $(CYGPATH_W) 'ui/animationpreview/AnimationPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/animationpreview/AnimationPreview.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-AnimationPreview.Tpo $(DEPDIR)/darkradiant-AnimationPreview.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/animationpreview/AnimationPreview.cpp' object='darkradiant-AnimationPreview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-AnimationPreview.obj `if test -f 'ui/animationpreview/AnimationPreview.cpp'; then $(CYGPATH_W) 'ui/animationpreview/AnimationPreview.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/animationpreview/AnimationPreview.cpp'; fi`
+
+darkradiant-MD5AnimationViewer.o: ui/animationpreview/MD5AnimationViewer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MD5AnimationViewer.o -MD -MP -MF $(DEPDIR)/darkradiant-MD5AnimationViewer.Tpo -c -o darkradiant-MD5AnimationViewer.o `test -f 'ui/animationpreview/MD5AnimationViewer.cpp' || echo '$(srcdir)/'`ui/animationpreview/MD5AnimationViewer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MD5AnimationViewer.Tpo $(DEPDIR)/darkradiant-MD5AnimationViewer.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/animationpreview/MD5AnimationViewer.cpp' object='darkradiant-MD5AnimationViewer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MD5AnimationViewer.o `test -f 'ui/animationpreview/MD5AnimationViewer.cpp' || echo '$(srcdir)/'`ui/animationpreview/MD5AnimationViewer.cpp
+
+darkradiant-MD5AnimationViewer.obj: ui/animationpreview/MD5AnimationViewer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MD5AnimationViewer.obj -MD -MP -MF $(DEPDIR)/darkradiant-MD5AnimationViewer.Tpo -c -o darkradiant-MD5AnimationViewer.obj `if test -f 'ui/animationpreview/MD5AnimationViewer.cpp'; then $(CYGPATH_W) 'ui/animationpreview/MD5AnimationViewer.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/animationpreview/MD5AnimationViewer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MD5AnimationViewer.Tpo $(DEPDIR)/darkradiant-MD5AnimationViewer.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/animationpreview/MD5AnimationViewer.cpp' object='darkradiant-MD5AnimationViewer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MD5AnimationViewer.obj `if test -f 'ui/animationpreview/MD5AnimationViewer.cpp'; then $(CYGPATH_W) 'ui/animationpreview/MD5AnimationViewer.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/animationpreview/MD5AnimationViewer.cpp'; fi`
 
 darkradiant-patchmanip.o: patchmanip.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-patchmanip.o -MD -MP -MF $(DEPDIR)/darkradiant-patchmanip.Tpo -c -o darkradiant-patchmanip.o `test -f 'patchmanip.cpp' || echo '$(srcdir)/'`patchmanip.cpp
