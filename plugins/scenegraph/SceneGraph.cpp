@@ -13,9 +13,9 @@ namespace scene
 {
 
 SceneGraph::SceneGraph() :
+	_spacePartition(new Octree),
 	_visitedSPNodes(0),
-	_skippedSPNodes(0),
-	_spacePartition(new Octree)
+	_skippedSPNodes(0)
 {}
 
 SceneGraph::~SceneGraph()
@@ -80,7 +80,8 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 	if (_root != NULL)
 	{
 		// New root not NULL, "instantiate" the whole scene
-		InstanceSubgraphWalker instanceWalker(boost::static_pointer_cast<Graph>(shared_from_this()));
+		GraphPtr self = shared_from_this();
+		InstanceSubgraphWalker instanceWalker(self);
 		Node_traverseSubgraph(_root, instanceWalker);
 	}
 }
