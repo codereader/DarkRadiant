@@ -570,6 +570,10 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 		// Now create the four walls
 		for (int i = 0; i < 4; i++)
 		{
+			// Insert each node into the same parent as the existing patch
+			// It's vital to do this first, otherwise these patches won't have valid shaders
+			parent->addChildNode(nodes[i]);
+
 			// Retrieve the contained patch from the node
 			Patch* wallPatch = Node_getPatch(nodes[i]);
 
@@ -578,15 +582,15 @@ void thickenPatch(const PatchNodePtr& sourcePatch,
 
 			if (!wallPatch->isDegenerate())
 			{
-				// Insert each node into the same parent as the existing patch
-				parent->addChildNode(nodes[i]);
-
 				// Now select the newly created patch
 				Node_setSelected(nodes[i], true);
 			}
 			else
 			{
 				globalOutputStream() << "Thicken: Discarding degenerate patch." << std::endl;
+
+				// Remove again
+				parent->removeChildNode(nodes[i]);
 			}
 		}
 	}
