@@ -191,7 +191,7 @@ bool MapResource::saveBackup()
 {
 	fs::path fullpath = (_path + _name);
 
-	if (path_is_absolute(fullpath.file_string().c_str()))
+	if (path_is_absolute(fullpath.string().c_str()))
 	{
 		// Save a backup if possible. This is done by renaming the original,
 		// which won't work if the existing map is currently open by Doom 3
@@ -204,7 +204,7 @@ bool MapResource::saveBackup()
 		fs::path auxFile = fullpath;
 		auxFile.replace_extension(_infoFileExt);
 
-		if (file_writeable(fullpath.file_string().c_str()))
+		if (file_writeable(fullpath.string().c_str()))
 		{
 			fs::path backup = fullpath;
 			backup.replace_extension("bak");
@@ -238,7 +238,7 @@ bool MapResource::saveBackup()
 
 				return true;
 			}
-			catch (fs::basic_filesystem_error<fs::path>& ex)
+			catch (fs::filesystem_error& ex)
 			{
 				globalErrorStream() << "Error while creating backups: " << ex.what() << std::endl;
 
@@ -251,11 +251,11 @@ bool MapResource::saveBackup()
 		}
 		else
 		{
-			globalErrorStream() << "map path is not writeable: " << fullpath.file_string() << std::endl;
+			globalErrorStream() << "map path is not writeable: " << fullpath.string() << std::endl;
 
 			// File is write-protected
 			gtkutil::MessageBox::ShowError(
-				(boost::format(_("File is write-protected: %s")) % fullpath.file_string()).str(),
+				(boost::format(_("File is write-protected: %s")) % fullpath.string()).str(),
 				GlobalMainFrame().getTopLevelWindow());
 
 			return false;
@@ -555,13 +555,13 @@ std::string MapResource::getTemporaryFileExtension()
 bool MapResource::checkIsWriteable(const boost::filesystem::path& path)
 {
 	// Check writeability of the given file
-	if (boost::filesystem::exists(path) && !file_writeable(path.file_string().c_str()))
+	if (boost::filesystem::exists(path) && !file_writeable(path.string().c_str()))
 	{
 		// File is write-protected
 		globalErrorStream() << "File is write-protected." << std::endl;
 
 		gtkutil::MessageBox::ShowError(
-			(boost::format(_("File is write-protected: %s")) % path.file_string()).str(),
+			(boost::format(_("File is write-protected: %s")) % path.string()).str(),
 			GlobalMainFrame().getTopLevelWindow());
 
 		return false;
@@ -597,14 +597,14 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 	if (!checkIsWriteable(tempAuxFile)) return false;
 
 	// Test opening the output file
-	globalOutputStream() << "Opening file " << tempOutFile.file_string() << " ";
+	globalOutputStream() << "Opening file " << tempOutFile.string() << " ";
 	
 	// Open the stream to the output file
-	std::ofstream outFileStream(tempOutFile.file_string().c_str());
+	std::ofstream outFileStream(tempOutFile.string().c_str());
 
-	globalOutputStream() << "and auxiliary file " << tempAuxFile.file_string() << " for writing...";
+	globalOutputStream() << "and auxiliary file " << tempAuxFile.string() << " for writing...";
 
-	std::ofstream auxFileStream(tempAuxFile.file_string().c_str());
+	std::ofstream auxFileStream(tempAuxFile.string().c_str());
 
 	if (outFileStream.is_open() && auxFileStream.is_open())
 	{
@@ -676,7 +676,7 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 			}
 			fs::rename(tempAuxFile, auxFile);
 		}
-		catch (fs::basic_filesystem_error<fs::path>& ex)
+		catch (fs::filesystem_error& ex)
 		{
 			globalErrorStream() << "Error moving temporary files to destination paths: "
 				<< ex.what() << std::endl;

@@ -262,12 +262,12 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 			// There is a file with that name already in the VFS, copy it to the target file
 			TextInputStream& inheritStream = inheritFile->getInputStream();
 
-			std::ofstream outFile(targetFile.file_string().c_str());
+			std::ofstream outFile(targetFile.string().c_str());
 
 			if (!outFile.is_open())
 			{
 				throw std::runtime_error(
-					(boost::format(_("Cannot open file for writing: %s")) % targetFile.file_string()).str());
+					(boost::format(_("Cannot open file for writing: %s")) % targetFile.string()).str());
 			}
 
 			char buf[16384];
@@ -288,14 +288,14 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	fs::path tempFile = targetFile;
 	
 	tempFile.remove_filename();
-	tempFile /= "_" + targetFile.filename();
+	tempFile /= "_" + targetFile.filename().string();
 
-	std::ofstream tempStream(tempFile.file_string().c_str());
+	std::ofstream tempStream(tempFile.string().c_str());
 
 	if (!tempStream.is_open())
 	{
 		throw std::runtime_error(
-				(boost::format(_("Cannot open file for writing: %s")) % tempFile.file_string()).str());
+				(boost::format(_("Cannot open file for writing: %s")) % tempFile.string()).str());
 	}
 
 	std::string tempString;
@@ -303,12 +303,12 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	// If a previous file exists, open it for reading and filter out the particle def we'll be writing
 	if (fs::exists(targetFile))
 	{
-		std::ifstream inheritStream(targetFile.file_string().c_str());
+		std::ifstream inheritStream(targetFile.string().c_str());
 
 		if (!inheritStream.is_open())
 		{
 			throw std::runtime_error(
-					(boost::format(_("Cannot open file for reading: %s")) % targetFile.file_string()).str());
+					(boost::format(_("Cannot open file for reading: %s")) % targetFile.string()).str());
 		}
 
 		// Write the file to the output stream, up to the point the particle def should be written to
@@ -349,13 +349,13 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 		{
 			fs::remove(targetFile);
 		}
-		catch (fs::basic_filesystem_error<fs::path>& e)
+		catch (fs::filesystem_error& e)
 		{
-			globalErrorStream() << "Could not remove the file " << targetFile.file_string() << std::endl
+			globalErrorStream() << "Could not remove the file " << targetFile.string() << std::endl
 				<< e.what() << std::endl;
 
 			throw std::runtime_error(
-				(boost::format(_("Could not remove the file %s")) % targetFile.file_string()).str());
+				(boost::format(_("Could not remove the file %s")) % targetFile.string()).str());
 		}
 	}
 
@@ -363,13 +363,13 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	{
 		fs::rename(tempFile, targetFile);
 	}
-	catch (fs::basic_filesystem_error<fs::path>& e)
+	catch (fs::filesystem_error& e)
 	{
-		globalErrorStream() << "Could not rename the temporary file " << tempFile.file_string() << std::endl
+		globalErrorStream() << "Could not rename the temporary file " << tempFile.string() << std::endl
 			<< e.what() << std::endl;
 
 		throw std::runtime_error(
-			(boost::format(_("Could not rename the temporary file %s")) % tempFile.file_string()).str());
+			(boost::format(_("Could not rename the temporary file %s")) % tempFile.string()).str());
 	}
 }
 

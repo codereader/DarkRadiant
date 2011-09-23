@@ -92,7 +92,7 @@ void RenderableParticleBunch::update(std::size_t time)
 		if (particle.angle == 0)
 		{
 			// Use random angle
-			particle.angle = 360 * static_cast<float>(_random()) / boost::rand48::max_value;
+			particle.angle = 360 * static_cast<float>(_random()) / boost::rand48::max();
 		}
 
 		// Past this point, no more "randomness" is required, so let's check if we still need

@@ -763,7 +763,7 @@ void ParticleEditor::updateWidgetsFromParticle()
 	outFile /= particles::PARTICLES_DIR;
 	outFile /= _particle->getFilename();
 	getGladeWidget<Gtk::Label>("outFileLabel")->set_markup(
-		(boost::format(_("Note: changes will be written to the file <i>%s</i>")) % outFile.file_string()).str());
+		(boost::format(_("Note: changes will be written to the file <i>%s</i>")) % outFile.string()).str());
 }
 
 void ParticleEditor::reloadStageList()

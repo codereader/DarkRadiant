@@ -113,7 +113,7 @@ void AutoMapSaver::saveSnapshot() {
 	snapshotPath += GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 
 	// Retrieve the mapname
-	std::string mapName = fullPath.leaf();
+	std::string mapName = fullPath.leaf().string();
 
 	// Check if the folder exists and create it if necessary
 	if (file_exists(snapshotPath.c_str()) || os::makeDirectory(snapshotPath)) {

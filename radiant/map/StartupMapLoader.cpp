@@ -35,7 +35,7 @@ void StartupMapLoader::onRadiantStartup()
 
 		// First, look in the regular maps path
 		if (boost::filesystem::exists(fullMapPath)) {
-			mapToLoad = fullMapPath.file_string();
+			mapToLoad = fullMapPath.string();
 			break;
 		}
 
@@ -43,7 +43,7 @@ void StartupMapLoader::onRadiantStartup()
 		fullMapPath = mapsPath.remove_leaf().remove_leaf() / candidate;
 
 		if (boost::filesystem::exists(fullMapPath)) {
-			mapToLoad = fullMapPath.file_string();
+			mapToLoad = fullMapPath.string();
 			break;
 		}
 	}
