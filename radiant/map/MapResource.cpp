@@ -94,9 +94,9 @@ MapResource::MapResource(const std::string& name) :
 		_infoFileExt = GlobalRegistry().get(RKEY_INFO_FILE_EXTENSION);
 	}
 
-	if (_infoFileExt[0] == '.') 
+	if (!_infoFileExt.empty() && _infoFileExt[0] != '.') 
 	{
-		_infoFileExt = _infoFileExt.substr(1);
+		_infoFileExt = "." + _infoFileExt;
 	}
 }
 
@@ -207,10 +207,12 @@ bool MapResource::saveBackup()
 		if (file_writeable(fullpath.string().c_str()))
 		{
 			fs::path backup = fullpath;
-			backup.replace_extension("bak");
+			backup.replace_extension(".bak");
 			
 			fs::path auxFileBackup = auxFile;
 			auxFileBackup.replace_extension(_infoFileExt + ".bak");
+
+			bool errorOccurred = false;
 
 			try
 			{
@@ -222,7 +224,16 @@ bool MapResource::saveBackup()
 
 				// rename current to backup
 				fs::rename(fullpath, backup);
+			}
+			catch (fs::filesystem_error& ex)
+			{
+				globalWarningStream() << "Error while creating backups: " << ex.what() << 
+					", the file is possibly opened by the game." << std::endl;
+				errorOccurred = true;
+			}
 
+			try
+			{
 				// remove aux file backup
 				if (fs::exists(auxFileBackup))
 				{
@@ -235,19 +246,15 @@ bool MapResource::saveBackup()
 					// rename current to backup
 					fs::rename(auxFile, auxFileBackup);
 				}
-
-				return true;
 			}
 			catch (fs::filesystem_error& ex)
 			{
-				globalErrorStream() << "Error while creating backups: " << ex.what() << std::endl;
-
-				gtkutil::MessageBox::ShowError(
-					(boost::format(_("Error while creating backup:\n%s")) % ex.what()).str(),
-					GlobalMainFrame().getTopLevelWindow());
-
-				return false;
+				globalWarningStream() << "Error while creating backups: " << ex.what() << 
+					", the file is possibly opened by the game." << std::endl;
+				errorOccurred = true;
 			}
+
+			return !errorOccurred;
 		}
 		else
 		{
@@ -585,10 +592,10 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 
 	// Temporary file paths
 	fs::path tempOutFile = outFile;
-	tempOutFile.replace_extension("map" + tempExt);
+	tempOutFile.replace_extension(".map" + tempExt);
 
 	fs::path tempAuxFile = auxFile;
-	tempAuxFile.replace_extension("aux" + tempExt);
+	tempAuxFile.replace_extension(".aux" + tempExt);
 
 	// Check writeability of the output files
 	if (!checkIsWriteable(outFile)) return false;
