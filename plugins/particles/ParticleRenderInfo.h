@@ -1,9 +1,17 @@
-#ifndef _PARTICLE_RENDER_INFO_H_
-#define _PARTICLE_RENDER_INFO_H_
+#pragma once
 
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include <boost/random/linear_congruential.hpp>
+
+// greebo: Thanks for nothing to the boost.random developers who changed the class layout completely 
+// between 1.46 and 1.47, without leaving a way to have code that is compatible with both versions,
+// not even for a few months.
+#if BOOST_VERSION >= 104700
+#define GET_BOOST_RAND48_MAX(x) (boost::rand48::max())
+#else
+#define GET_BOOST_RAND48_MAX(x) (x.max())
+#endif
 
 namespace particles
 {
@@ -58,15 +66,15 @@ struct ParticleRenderInfo
 		t0(0),
 		tWidth(1)
 	{
+		boost::rand48::result_type maxVal = GET_BOOST_RAND48_MAX(random);
+
 		// Generate five random numbers for path calcs, this is needed in calculateOrigin
-		rand[0] = static_cast<float>(random()) / boost::rand48::max();
-		rand[1] = static_cast<float>(random()) / boost::rand48::max();
-		rand[2] = static_cast<float>(random()) / boost::rand48::max();
-		rand[3] = static_cast<float>(random()) / boost::rand48::max();
-		rand[4] = static_cast<float>(random()) / boost::rand48::max();
+		rand[0] = static_cast<float>(random()) / maxVal;
+		rand[1] = static_cast<float>(random()) / maxVal;
+		rand[2] = static_cast<float>(random()) / maxVal;
+		rand[3] = static_cast<float>(random()) / maxVal;
+		rand[4] = static_cast<float>(random()) / maxVal;
 	}
 };
 
 } // namespace
-
-#endif /* _PARTICLE_RENDER_INFO_H_ */
