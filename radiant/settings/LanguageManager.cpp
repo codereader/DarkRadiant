@@ -146,7 +146,7 @@ void LanguageManager::findAvailableLanguages()
 			// Get the index (is this a known language?)
 			try
 			{
-				int index = getLanguageIndex(candidate.filename());
+				int index = getLanguageIndex(candidate.filename().string());
 
 				// Add this to the list (could use more extensive checking, but this is enough for now)
 				_availableLanguages.push_back(index);

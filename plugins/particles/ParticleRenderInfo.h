@@ -59,11 +59,11 @@ struct ParticleRenderInfo
 		tWidth(1)
 	{
 		// Generate five random numbers for path calcs, this is needed in calculateOrigin
-		rand[0] = static_cast<float>(random()) / boost::rand48::max_value;
-		rand[1] = static_cast<float>(random()) / boost::rand48::max_value;
-		rand[2] = static_cast<float>(random()) / boost::rand48::max_value;
-		rand[3] = static_cast<float>(random()) / boost::rand48::max_value;
-		rand[4] = static_cast<float>(random()) / boost::rand48::max_value;
+		rand[0] = static_cast<float>(random()) / boost::rand48::max();
+		rand[1] = static_cast<float>(random()) / boost::rand48::max();
+		rand[2] = static_cast<float>(random()) / boost::rand48::max();
+		rand[3] = static_cast<float>(random()) / boost::rand48::max();
+		rand[4] = static_cast<float>(random()) / boost::rand48::max();
 	}
 };
 

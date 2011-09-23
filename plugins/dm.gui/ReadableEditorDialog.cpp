@@ -34,7 +34,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include "boost/filesystem/fstream.hpp"
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem.hpp>
 #include "string/string.h"
 #include "i18n.h"
 

@@ -65,16 +65,19 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 		// Get the candidate
 		const fs::path& candidate = *it;
 
-		if (fs::is_directory(candidate)) {
+		if (fs::is_directory(candidate))
+		{
 			// Check if we should traverse further
-			if (visitor.directory(candidate.string().substr(rootLen), it.level()+1)) {
+			if (visitor.directory(candidate.generic_string().substr(rootLen), it.level()+1))
+			{
 				// Visitor returned true, prevent going deeper into it
 				it.no_push();
 			}
 		}
-		else {
+		else
+		{
 			// File
-			visitor.file(candidate.string().substr(rootLen));
+			visitor.file(candidate.generic_string().substr(rootLen));
 		}
 	}
 }
