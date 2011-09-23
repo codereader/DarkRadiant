@@ -106,18 +106,19 @@ void AutoMapSaver::saveSnapshot() {
 	}
 
 	// Construct the boost::path class out of the full map path (throws on fail)
-	Path fullPath = Path(GlobalMap().getMapName(), boost::filesystem::native);
+	Path fullPath = GlobalMap().getMapName();
 
 	// Append the the snapshot folder to the path
-	std::string snapshotPath = fullPath.branch_path().string() + "/";
-	snapshotPath += GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
+	Path snapshotPath = fullPath;
+	snapshotPath.remove_filename();
+	snapshotPath /= GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 
 	// Retrieve the mapname
-	std::string mapName = fullPath.leaf().string();
+	std::string mapName = fullPath.filename().string();
 
 	// Check if the folder exists and create it if necessary
-	if (file_exists(snapshotPath.c_str()) || os::makeDirectory(snapshotPath)) {
-
+	if (boost::filesystem::exists(snapshotPath) || os::makeDirectory(snapshotPath.string()))
+	{
 		// Reset the size counter of the snapshots folder
 		std::size_t folderSize = 0;
 
@@ -127,7 +128,7 @@ void AutoMapSaver::saveSnapshot() {
 		for (int nCount = 0; nCount < INT_MAX; nCount++) {
 
 			// Construct the base name without numbered extension
-			filename = snapshotPath + mapName;
+			filename = (snapshotPath / mapName).string();
 
 			// Now append the number and the map extension to the map name
 			filename += ".";
