@@ -310,10 +310,8 @@ void createCMFromSelection(const cmd::ArgumentList& args) {
 
 			try {
 				// create the new autosave filename by changing the extension
-				Path cmPath = boost::filesystem::change_extension(
-						Path(modelPath, boost::filesystem::native),
-						newExtension
-					);
+				Path cmPath = modelPath;
+				cmPath.replace_extension(newExtension);
 
 				// Open the stream to the output file
 				std::ofstream outfile(cmPath.string().c_str());
