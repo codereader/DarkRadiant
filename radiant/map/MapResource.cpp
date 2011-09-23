@@ -209,8 +209,8 @@ bool MapResource::saveBackup()
 			fs::path backup = fullpath;
 			backup.replace_extension(".bak");
 			
-			fs::path auxFileBackup = auxFile;
-			auxFileBackup.replace_extension(_infoFileExt + ".bak");
+			// replace_extension() doesn't accept something like ".darkradiant.bak", so roll our own
+			fs::path auxFileBackup = auxFile.string() + ".bak";
 
 			bool errorOccurred = false;
 
