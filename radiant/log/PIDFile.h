@@ -39,7 +39,7 @@ public:
 #ifndef _DEBUG
 			boost::filesystem::path path = registry.getApplicationContext().getSettingsPath();
 			path /= "darkradiant.log";
-			std::string logPath = path.file_string();
+			std::string logPath = path.string();
 			boost::algorithm::replace_all(logPath, "\\\\", "\\");
 			boost::algorithm::replace_all(logPath, "//", "/");
 
