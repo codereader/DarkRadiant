@@ -1,5 +1,4 @@
-#ifndef GRAPHTREEMODELPOPULATOR_H_
-#define GRAPHTREEMODELPOPULATOR_H_
+#pragma once
 
 #include "iscenegraph.h"
 #include "scenelib.h"
@@ -16,21 +15,29 @@ namespace ui {
 class GraphTreeModelPopulator :
 	public scene::NodeVisitor
 {
+private:
 	// The model to be populated
 	GraphTreeModel& _model;
 
+	bool _visibleNodesOnly;
+
 public:
-	GraphTreeModelPopulator(GraphTreeModel& model) :
-		_model(model)
+	GraphTreeModelPopulator(GraphTreeModel& model, bool visibleNodesOnly) :
+		_model(model),
+		_visibleNodesOnly(visibleNodesOnly)
 	{
 		// Clear out the model before traversal
 		_model.clear();
 	}
 
 	// NodeVisitor implementation
-	bool pre(const scene::INodePtr& node) {
-		// Insert this node into the GraphTreeModel
-		_model.insert(node);
+	bool pre(const scene::INodePtr& node)
+	{
+		if (!_visibleNodesOnly || node->visible())
+		{
+			// Insert this node into the GraphTreeModel
+			_model.insert(node);
+		}
 
 		Entity* ent = Node_getEntity(node);
 
@@ -44,5 +51,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /*GRAPHTREEMODELPOPULATOR_H_*/

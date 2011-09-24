@@ -1,5 +1,4 @@
-#ifndef GRAPHTREEMODELSELECTIONUPDATER_H_
-#define GRAPHTREEMODELSELECTIONUPDATER_H_
+#pragma once
 
 #include "scenelib.h"
 #include <gtkmm/treeselection.h>
@@ -13,28 +12,48 @@ class GraphTreeModelSelectionUpdater :
 private:
 	GraphTreeModel& _model;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
+	bool _visibleOnly;
 
 public:
-	GraphTreeModelSelectionUpdater(GraphTreeModel& model, const Glib::RefPtr<Gtk::TreeSelection>& selection) :
+	GraphTreeModelSelectionUpdater(GraphTreeModel& model, const Glib::RefPtr<Gtk::TreeSelection>& selection, bool visibleOnly) :
 		_model(model),
-		_selection(selection)
+		_selection(selection),
+		_visibleOnly(visibleOnly)
 	{}
 
 	bool pre(const scene::INodePtr& node)
 	{
 		const GraphTreeNodePtr& gtNode = _model.find(node);
+		Gtk::TreeModel::iterator iter;
 
-		if (gtNode == NULL) {
-			return true;
-		}
-
-		if (Node_isSelected(node))
+		if (gtNode)
 		{
-			_selection->select(gtNode->getIter());
+			iter = gtNode->getIter();
+		}
+		else if (!_visibleOnly)
+		{
+			// The node might have been previously hidden, insert a new one
+			GraphTreeNodePtr newlyInserted = _model.insert(node);
+
+			if (newlyInserted)
+			{
+				iter = newlyInserted->getIter();
+			}
 		}
 		else
 		{
-			_selection->unselect(gtNode->getIter());
+			return true;
+		}
+
+		if (!iter) return true;
+
+		if (Node_isSelected(node))
+		{
+			_selection->select(iter);
+		}
+		else
+		{
+			_selection->unselect(iter);
 		}
 
 		return true;
@@ -42,5 +61,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /*GRAPHTREEMODELSELECTIONUPDATER_H_*/

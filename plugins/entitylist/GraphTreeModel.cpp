@@ -105,42 +105,55 @@ void GraphTreeModel::clear()
 	_model->clear();
 }
 
-void GraphTreeModel::refresh()
+void GraphTreeModel::refresh(bool visibleOnly)
 {
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
-	GraphTreeModelPopulator populator(*this);
+	GraphTreeModelPopulator populator(*this, visibleOnly);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), populator);
 }
 
-void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection)
+void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, bool visibleOnly)
 {
-	GraphTreeModelSelectionUpdater updater(*this, selection);
+	GraphTreeModelSelectionUpdater updater(*this, selection, visibleOnly);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), updater);
 }
 
-void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node)
+void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node, bool visibleOnly)
 {
 	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(node));
 
-	if (found != _nodemap.end())
+	GraphTreeNodePtr foundNode;
+
+	// The node is not in our map, it might have been previously hidden
+	if (found == _nodemap.end() && !visibleOnly)
+	{
+		// Insert it and go ahead
+		foundNode = insert(node);
+	}
+	else
+	{
+		foundNode = found->second;
+	}
+
+	if (foundNode)
 	{
 		if (Node_isSelected(node))
 		{
 			// Select the row in the TreeView
-			selection->select(found->second->getIter());
+			selection->select(foundNode->getIter());
 
 			// Scroll to the row
 			Gtk::TreeView* tv = selection->get_tree_view();
 
-			Gtk::TreeModel::Path selectedPath(found->second->getIter());
+			Gtk::TreeModel::Path selectedPath(foundNode->getIter());
 
 			tv->expand_to_path(selectedPath);
 			tv->scroll_to_row(selectedPath, 0.3f);
 		}
 		else
 		{
-			selection->unselect(found->second->getIter());
+			selection->unselect(foundNode->getIter());
 		}
 	}
 }

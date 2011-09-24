@@ -26,6 +26,7 @@ namespace ui {
 		const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 
 		const std::string RKEY_ENTITYLIST_FOCUS_SELECTION = RKEY_ROOT + "focusSelection";
+		const std::string RKEY_ENTITYLIST_VISIBLE_ONLY = RKEY_ROOT + "visibleNodesOnly";
 	}
 
 EntityList::EntityList() :
@@ -72,16 +73,20 @@ void EntityList::populateWindow()
 	_focusOnSelectedEntityToggle = Gtk::manage(new Gtk::CheckButton(_("Focus camera on selected entity.")));
 
 	// Update the toggle item status according to the registry
-	bool isActive = GlobalRegistry().get(RKEY_ENTITYLIST_FOCUS_SELECTION) == "1";
-	_focusOnSelectedEntityToggle->set_active(isActive);
+	_focusOnSelectedEntityToggle->set_active(GlobalRegistry().getBool(RKEY_ENTITYLIST_FOCUS_SELECTION));
 
-	// Connect the toggle button's "toggled" signal
+	_visibleNodesOnly = Gtk::manage(new Gtk::CheckButton(_("List visible nodes only")));
+	_visibleNodesOnly->set_active(GlobalRegistry().getBool(RKEY_ENTITYLIST_VISIBLE_ONLY));
+
+	// Connect the toggle buttons' "toggled" signal
 	_focusOnSelectedEntityToggle->signal_toggled().connect(sigc::mem_fun(*this, &EntityList::onFocusSelectionToggle));
+	_visibleNodesOnly->signal_toggled().connect(sigc::mem_fun(*this, &EntityList::onVisibleOnlyToggle));
 
 	// Create a VBOX
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
 	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
 	vbox->pack_start(*_focusOnSelectedEntityToggle, false, false, 0);
+	vbox->pack_start(*_visibleNodesOnly, false, false, 0);
 
 	// Pack the VBOX into the window
 	add(*vbox);
@@ -93,7 +98,7 @@ void EntityList::update()
 	_callbackActive = true;
 
 	// Traverse the entire tree, updating the selection
-	_treeModel.updateSelectionStatus(_treeView->get_selection());
+	_treeModel.updateSelectionStatus(_treeView->get_selection(), _visibleNodesOnly->get_active());
 
 	_callbackActive = false;
 }
@@ -141,7 +146,7 @@ void EntityList::_preShow()
 	_callbackActive = true;
 
 	// Repopulate the model before showing the dialog
-	_treeModel.refresh();
+	_treeModel.refresh(_visibleNodesOnly->get_active());
 
 	_callbackActive = false;
 
@@ -203,7 +208,18 @@ void EntityList::onFocusSelectionToggle()
 	// Update the registry state in the registry
 	bool active = _focusOnSelectedEntityToggle->get_active();
 
-	GlobalRegistry().set(RKEY_ENTITYLIST_FOCUS_SELECTION, active ? "1" : "0");
+	GlobalRegistry().setBool(RKEY_ENTITYLIST_FOCUS_SELECTION, active);
+}
+
+void EntityList::onVisibleOnlyToggle()
+{
+	// Update the registry state in the registry
+	bool active = _visibleNodesOnly->get_active();
+
+	GlobalRegistry().setBool(RKEY_ENTITYLIST_VISIBLE_ONLY, active);
+
+	// Update the whole tree
+	_treeModel.refresh(_visibleNodesOnly->get_active());
 }
 
 bool EntityList::onSelection(const Glib::RefPtr<Gtk::TreeModel>& model,
