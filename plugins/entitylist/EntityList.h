@@ -1,5 +1,4 @@
-#ifndef ENTITYLIST_H_
-#define ENTITYLIST_H_
+#pragma once
 
 #include "iselection.h"
 #include "iscenegraph.h"
@@ -27,14 +26,16 @@ class EntityList :
 	public SelectionSystem::Observer,
 	public RadiantEventListener
 {
+private:
 	// The main tree view
 	Gtk::TreeView* _treeView;
 
 	// The GraphTreeModel instance
 	GraphTreeModel _treeModel;
 
-	// The small checkbox in the lower half
+	// The checkboxes in the lower half
 	Gtk::CheckButton* _focusOnSelectedEntityToggle;
+	Gtk::CheckButton* _visibleNodesOnly;
 
 	gtkutil::WindowPosition _windowPosition;
 
@@ -64,6 +65,7 @@ private:
 	void onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
 	bool onSelection(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::Path& path, bool path_currently_selected);
 	void onFocusSelectionToggle();
+	void onVisibleOnlyToggle();
 
 	// (private) Constructor, creates all the widgets
 	EntityList();
@@ -86,5 +88,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /*ENTITYLIST_H_*/

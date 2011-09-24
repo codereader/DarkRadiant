@@ -59,13 +59,13 @@ public:
 	void clear();
 
 	// Rebuilds the entire tree using a scene::Graph::Walker
-	void refresh();
+	void refresh(bool visibleOnly);
 
 	// Updates the selection status of the entire tree
-	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection);
+	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, bool visibleOnly);
 
 	// Updates the selection status of the given node only
-	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node);
+	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node, bool visibleOnly);
 
 	const TreeColumns& getColumns() const;
 	Glib::RefPtr<Gtk::TreeModel> getModel();
