@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ifilter.h"
 #include "iselection.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
@@ -24,6 +25,7 @@ typedef boost::shared_ptr<EntityList> EntityListPtr;
 class EntityList :
 	public gtkutil::PersistentTransientWindow,
 	public SelectionSystem::Observer,
+	public FilterSystem::Observer,
 	public RadiantEventListener
 {
 private:
@@ -57,15 +59,21 @@ private:
 	 */
 	void update();
 
-	/** greebo: SelectionSystem::Observer implementation.
-	 * 			Gets notified as soon as the selection is changed.
+	/** 
+	 * greebo: SelectionSystem::Observer implementation.
+	 * Gets notified as soon as the selection is changed.
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
+
+	// FilterSystem::Observer implementation
+	void onFiltersChanged();
 
 	void onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
 	bool onSelection(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::Path& path, bool path_currently_selected);
 	void onFocusSelectionToggle();
 	void onVisibleOnlyToggle();
+
+	void expandRootNode();
 
 	// (private) Constructor, creates all the widgets
 	EntityList();
