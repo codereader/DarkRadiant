@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_TEXWINDOW_H)
-#define INCLUDED_TEXWINDOW_H
+#pragma once
 
 #include "iregistry.h"
 #include "icommandsystem.h"
@@ -134,6 +132,8 @@ public:
 	int getTextureWidth(const TexturePtr& tex);
 	// Return the display height of a texture in the texture browser
 	int getTextureHeight(const TexturePtr& tex);
+
+	int getViewportHeight();
 
 	/**
 	 * greebo: Constructs the TextureBrowser window and retrieves the
@@ -268,5 +268,3 @@ private:
 
 // Accessor method to the singleton instance
 ui::TextureBrowser& GlobalTextureBrowser();
-
-#endif

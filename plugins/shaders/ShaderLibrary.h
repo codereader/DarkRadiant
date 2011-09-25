@@ -1,5 +1,4 @@
-#ifndef SHADERLIBRARY_H_
-#define SHADERLIBRARY_H_
+#pragma once
 
 #include <string>
 #include <map>
@@ -18,16 +17,6 @@ class ShaderLibrary
 	ShaderMap _shaders;
 
 public:
-	typedef ShaderMap::iterator iterator;
-
-private:
-	// greebo: This is the iterator used by texwindow.cpp
-	// to cycle through the system (somewhat deprecated)
-	iterator _publicIterator;
-
-public:
-	// Constructor
-	ShaderLibrary();
 
 	/* greebo: Add a shader definition to the internal list
 	 * @returns: FALSE, if such a name already exists, TRUE otherwise
@@ -58,14 +47,6 @@ public:
 	 */
 	CShaderPtr findShader(const std::string& name);
 
-	// --- Support for this ActiveShaders_IteratorAtEnd() stuff ---
-
-	// Returns the public iterator that is used by texwindow.cpp
-	iterator& getIterator();
-	void incrementIterator();
-	iterator begin();
-	iterator end();
-
 	void foreachShaderName(const ShaderNameCallback& callback);
 
 	TexturePtr loadTextureFromFile(const std::string& filename,
@@ -74,10 +55,11 @@ public:
 	// Traverse the library using the given shadername
 	void foreachShader(ShaderVisitor& visitor);
 
+	void realiseLighting();
+	void unrealiseLighting();
+
 }; // class ShaderLibrary
 
 typedef boost::shared_ptr<ShaderLibrary> ShaderLibraryPtr;
 
 } // namespace shaders
-
-#endif /*SHADERLIBRARY_H_*/

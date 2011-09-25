@@ -394,12 +394,6 @@ public:
 	 */
 	virtual void foreachShader(shaders::ShaderVisitor& visitor) = 0;
 
-  // iterate over the list of active shaders (deprecated functions)
-  virtual void beginActiveShadersIterator() = 0;
-  virtual bool endActiveShadersIterator() = 0;
-  virtual MaterialPtr dereferenceActiveShadersIterator() = 0;
-  virtual void incrementActiveShadersIterator() = 0;
-
 	// The observer gets notified when the list of active shaders changes
 	class ActiveShadersObserver
 	{
@@ -468,8 +462,3 @@ inline MaterialManager& GlobalMaterialManager()
 	);
 	return _shaderSystem;
 }
-
-#define QERApp_ActiveShaders_IteratorBegin GlobalMaterialManager().beginActiveShadersIterator
-#define QERApp_ActiveShaders_IteratorAtEnd GlobalMaterialManager().endActiveShadersIterator
-#define QERApp_ActiveShaders_IteratorCurrent GlobalMaterialManager().dereferenceActiveShadersIterator
-#define QERApp_ActiveShaders_IteratorIncrement GlobalMaterialManager().incrementActiveShadersIterator

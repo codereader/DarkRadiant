@@ -152,19 +152,6 @@ void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback) {
 	_library->foreachShaderName(callback);
 }
 
-void Doom3ShaderSystem::beginActiveShadersIterator() {
-	_library->getIterator() = _library->begin();
-}
-bool Doom3ShaderSystem::endActiveShadersIterator() {
-	return _library->getIterator() == _library->end();
-}
-MaterialPtr Doom3ShaderSystem::dereferenceActiveShadersIterator() {
-	return _library->getIterator()->second;
-}
-void Doom3ShaderSystem::incrementActiveShadersIterator() {
-	_library->incrementIterator();
-}
-
 void Doom3ShaderSystem::attach(ModuleObserver& observer)
 {
 	_observers.attach(observer);
@@ -185,26 +172,18 @@ void Doom3ShaderSystem::detach(ModuleObserver& observer)
 	_observers.detach(observer);
 }
 
-void Doom3ShaderSystem::setLightingEnabled(bool enabled) {
-	if (CShader::m_lightingEnabled != enabled) {
+void Doom3ShaderSystem::setLightingEnabled(bool enabled)
+{
+	if (CShader::m_lightingEnabled != enabled)
+	{
 		// First unrealise the lighting of all shaders
-		for (ShaderLibrary::iterator i = _library->begin();
-			 i != _library->end();
-			 i++)
-		{
-			i->second->unrealiseLighting();
-		}
+		_library->unrealiseLighting();
 
 		// Set the global (greebo: Does this really need to be done this way?)
 		CShader::m_lightingEnabled = enabled;
 
 		// Now realise the lighting of all shaders
-		for (ShaderLibrary::iterator i = _library->begin();
-			 i != _library->end();
-			 i++)
-		{
-			i->second->realiseLighting();
-		}
+		_library->realiseLighting();
 	}
 }
 

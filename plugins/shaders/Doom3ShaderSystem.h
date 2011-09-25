@@ -81,11 +81,6 @@ public:
 
 	void foreachShaderName(const ShaderNameCallback& callback);
 
-	void beginActiveShadersIterator();
-	bool endActiveShadersIterator();
-	MaterialPtr dereferenceActiveShadersIterator();
-	void incrementActiveShadersIterator();
-
 	void activeShadersChangedNotify();
 
 	// Enable or disable the active shaders callback
