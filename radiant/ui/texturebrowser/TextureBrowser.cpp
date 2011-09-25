@@ -297,24 +297,45 @@ void TextureBrowser::evaluateHeight()
 {
 	// greebo: Let the texture browser re-evaluate the scrollbar each frame
    m_heightChanged = false;
-
    m_nTotalHeight = 0;
-
-   TextureLayout layout;
 
    if (GlobalMaterialManager().isRealised())
    {
-    for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
-    {
-      MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+	   class HeightWalker :
+			public shaders::ShaderVisitor
+		{
+		private:
+			TextureBrowser& _browser;
+			TextureLayout _layout;
+			int _totalHeight;
 
-      if (!shaderIsVisible(shader))
-        continue;
+		public:
+			HeightWalker(TextureBrowser& browser) :
+				_browser(browser),
+				_totalHeight(0)
+			{}
 
-      int   x, y;
-      nextTexturePos(layout, shader->getEditorImage(), &x, &y);
-      m_nTotalHeight = std::max(m_nTotalHeight, abs(layout.current_y) + getFontHeight() + getTextureHeight(shader->getEditorImage()) + 4);
-    }
+			void visit(const MaterialPtr& shader)
+			{
+				if (!_browser.shaderIsVisible(shader))
+				{
+					return;
+				}
+
+				int x, y;
+				_browser.nextTexturePos(_layout, shader->getEditorImage(), &x, &y);
+				_totalHeight = std::max(_totalHeight, abs(_layout.current_y) + _browser.getFontHeight() + _browser.getTextureHeight(shader->getEditorImage()) + 4);
+			}
+
+			int getTotalHeight()
+			{
+				return _totalHeight;
+			}
+		} _walker(*this);
+
+		GlobalMaterialManager().foreachShader(_walker);
+
+		m_nTotalHeight = _walker.getTotalHeight();
    }
 }
 
@@ -377,75 +398,119 @@ void TextureBrowser::toggle(const cmd::ArgumentList& args)
 // if current texture is not displayed, nothing is changed
 void TextureBrowser::focus(const std::string& name)
 {
-  // scroll origin so the texture is completely on screen
-  TextureLayout layout;
+	// scroll origin so the texture is completely on screen
+  
+	class FocusWalker :
+		public shaders::ShaderVisitor
+	{
+	private:
+		TextureBrowser& _browser;
+		TextureLayout _layout;
+		int _x;
+		int _y;
+		const std::string& _name;
 
-  for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
-  {
-    MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+	public:
+		FocusWalker(TextureBrowser& browser, const std::string& name) :
+			_browser(browser),
+			_name(name)
+		{}
 
-    if (!shaderIsVisible(shader))
-      continue;
+		void visit(const MaterialPtr& shader)
+		{
+			if (!_browser.shaderIsVisible(shader))
+			{
+				return;
+			}
 
-    int x, y;
-    nextTexturePos(layout, shader->getEditorImage(), &x, &y);
-    TexturePtr q = shader->getEditorImage();
-    if (!q)
-      break;
+			_browser.nextTexturePos(_layout, shader->getEditorImage(), &_x, &_y);
 
-    // we have found when texdef->name and the shader name match
-    // NOTE: as everywhere else for our comparisons, we are not case sensitive
-    if (shader_equal(name, shader->getName()))
-    {
-      int textureHeight = getTextureHeight(q) + 2 * getFontHeight();
+			TexturePtr q = shader->getEditorImage();
+			
+			if (!q) return;
 
-      int originy = getOriginY();
-      if (y > originy)
-      {
-        originy = y;
-      }
+			// we have found when texdef->name and the shader name match
+			// NOTE: as everywhere else for our comparisons, we are not case sensitive
+			if (shader_equal(_name, shader->getName()))
+			{
+				int textureHeight = _browser.getTextureHeight(q) + 2 * _browser.getFontHeight();
 
-      if (y - textureHeight < originy - height)
-      {
-        originy = (y - textureHeight) + height;
-      }
+				int originy = _browser.getOriginY();
 
-      setOriginY(originy);
-      return;
-    }
-  }
+				if (_y > originy)
+				{
+					originy = _y;
+				}
+
+				if (_y - textureHeight < originy - _browser.getViewportHeight())
+				{
+					originy = (_y - textureHeight) + _browser.getViewportHeight();
+				}
+
+				_browser.setOriginY(originy);
+			}
+		}
+	} _walker(*this, name);
+
+	GlobalMaterialManager().foreachShader(_walker);
 }
 
 MaterialPtr TextureBrowser::getShaderAtCoords(int mx, int my)
 {
 	my += getOriginY() - height;
 
-	TextureLayout layout;
-	for(QERApp_ActiveShaders_IteratorBegin();
-		!QERApp_ActiveShaders_IteratorAtEnd();
-		QERApp_ActiveShaders_IteratorIncrement())
+	class MaterialFinder :
+		public shaders::ShaderVisitor
 	{
-		MaterialPtr shader = QERApp_ActiveShaders_IteratorCurrent();
+	private:
+		TextureBrowser& _browser;
+		TextureLayout _layout;
+		int _x;
+		int _y;
+		MaterialPtr _material;
 
-		if (!shaderIsVisible(shader))
-			continue;
+	public:
+		MaterialFinder(TextureBrowser& browser, int x, int y) :
+			_browser(browser),
+			_x(x),
+			_y(y)
+		{}
 
-		int x, y;
-		nextTexturePos(layout, shader->getEditorImage(), &x, &y);
+		void visit(const MaterialPtr& shader)
+		{
+			if (!_browser.shaderIsVisible(shader))
+			{
+				return;
+			}
 
-		TexturePtr tex = shader->getEditorImage();
-		if (tex == NULL) {
-			break;
+			int x, y;
+			_browser.nextTexturePos(_layout, shader->getEditorImage(), &x, &y);
+
+			TexturePtr tex = shader->getEditorImage();
+
+			if (tex == NULL)
+			{
+				return;
+			}
+
+			int nWidth = _browser.getTextureWidth(tex);
+			int nHeight = _browser.getTextureHeight(tex);
+
+			if (_x > x && _x - x < nWidth && _y < y && y - _y < nHeight + _browser.getFontHeight())
+			{
+				_material = shader;
+			}
 		}
 
-		int nWidth = getTextureWidth(tex);
-		int nHeight = getTextureHeight(tex);
-		if (mx > x && mx - x < nWidth && my < y && y - my < nHeight + getFontHeight()) {
-			return shader;
+		MaterialPtr getMaterial()
+		{
+			return _material;
 		}
-	}
+	} _walker(*this, mx, my);
 
-	return MaterialPtr();
+	GlobalMaterialManager().foreachShader(_walker);
+
+	return _walker.getMaterial();
 }
 
 void TextureBrowser::selectTextureAt(int mx, int my)
@@ -463,27 +528,170 @@ void TextureBrowser::selectTextureAt(int mx, int my)
 
 void TextureBrowser::draw()
 {
-  int originy = getOriginY();
+	GlobalOpenGL().assertNoErrors();
 
-  GlobalOpenGL().assertNoErrors();
+	Vector3 colorBackground = ColourSchemes().getColour("texture_background");
+	glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
+	glViewport(0, 0, width, height);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 
-  Vector3 colorBackground = ColourSchemes().getColour("texture_background");
-  glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
-  glViewport(0, 0, width, height);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+	glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glDisable (GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glOrtho (0, width, originy-height, originy, -100, 100);
+	glEnable (GL_TEXTURE_2D);
 
-  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glDisable (GL_DEPTH_TEST);
-  glDisable(GL_BLEND);
-  glOrtho (0, width, originy-height, originy, -100, 100);
-  glEnable (GL_TEXTURE_2D);
+	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
-  glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
+	class MaterialRenderer :
+		public shaders::ShaderVisitor
+	{
+	private:
+		TextureBrowser& _browser;
+		TextureLayout _layout;
+		int _lastY;
+		int _lastHeight;
+		MaterialPtr _material;
+		bool _hideUnused;
+		unsigned int _maxNameLength;
 
-  int last_y = 0, last_height = 0;
+	public:
+		MaterialRenderer(TextureBrowser& browser, bool hideUnused) :
+			_browser(browser),
+			_lastY(0),
+			_lastHeight(0),
+			_hideUnused(hideUnused),
+			_maxNameLength(GlobalRegistry().getInt(RKEY_TEXTURE_MAX_NAME_LENGTH))
+		{}
 
-	unsigned int maxNameLength = GlobalRegistry().getInt(RKEY_TEXTURE_MAX_NAME_LENGTH);
+		void visit(const MaterialPtr& shader)
+		{
+			if (!_browser.shaderIsVisible(shader))
+			{
+				return;
+			}
+
+			int x, y;
+			_browser.nextTexturePos(_layout, shader->getEditorImage(), &x, &y);
+
+			TexturePtr q = shader->getEditorImage();
+
+			if (!q) return;
+
+			int nWidth = _browser.getTextureWidth(q);
+			int nHeight = _browser.getTextureHeight(q);
+
+			if (y != _lastY)
+			{
+				_lastY = y;
+				_lastHeight = 0;
+			}
+
+			_lastHeight = std::max(nHeight, _lastHeight);
+
+			// Is this texture visible?
+			if ((y - nHeight - _browser.getFontHeight() < _browser.getOriginY()) && 
+				(y > _browser.getOriginY() - _browser.getViewportHeight()))
+			{
+				// borders rules:
+				// if it's the current texture, draw a thick red line, else:
+				// shaders have a white border, simple textures don't
+				// if !texture_showinuse: (some textures displayed may not be in use)
+				// draw an additional square around with 0.5 1 0.5 color
+				if (shader_equal(_browser.getSelectedShader(), shader->getName()))
+				{
+					glLineWidth(3);
+					glColor3f(1,0,0);
+					glDisable(GL_TEXTURE_2D);
+
+					glBegin(GL_LINE_LOOP);
+					glVertex2i(x - 4, y - _browser.getFontHeight() + 4);
+					glVertex2i(x - 4, y - _browser.getFontHeight() - nHeight - 4);
+					glVertex2i(x + 4 + nWidth, y - _browser.getFontHeight() - nHeight - 4);
+					glVertex2i(x + 4 + nWidth, y - _browser.getFontHeight() + 4);
+					glEnd();
+
+					glEnable (GL_TEXTURE_2D);
+					glLineWidth (1);
+				}
+				else
+				{
+					glLineWidth(1);
+
+					// shader border:
+					if (!shader->IsDefault())
+					{
+						glColor3f(1,1,1);
+						glDisable(GL_TEXTURE_2D);
+
+						glBegin(GL_LINE_LOOP);
+						glVertex2i(x-1,y+1-_browser.getFontHeight());
+						glVertex2i(x-1,y-nHeight-1-_browser.getFontHeight());
+						glVertex2i(x+1+nWidth,y-nHeight-1-_browser.getFontHeight());
+						glVertex2i(x+1+nWidth,y+1-_browser.getFontHeight());
+						glEnd();
+						glEnable (GL_TEXTURE_2D);
+					}
+
+					// highlight in-use textures
+					if (!_hideUnused && shader->IsInUse())
+					{
+						glColor3f(0.5f, 1 ,0.5f);
+						glDisable(GL_TEXTURE_2D);
+						glBegin(GL_LINE_LOOP);
+						glVertex2i(x-3,y+3-_browser.getFontHeight());
+						glVertex2i(x-3,y-nHeight-3-_browser.getFontHeight());
+						glVertex2i(x+3+nWidth,y-nHeight-3-_browser.getFontHeight());
+						glVertex2i(x+3+nWidth,y+3-_browser.getFontHeight());
+						glEnd();
+						glEnable (GL_TEXTURE_2D);
+					}
+				}
+
+				// Draw the texture
+				glBindTexture(GL_TEXTURE_2D, q->getGLTexNum());
+				GlobalOpenGL().assertNoErrors();
+				glColor3f(1,1,1);
+				glBegin(GL_QUADS);
+				glTexCoord2i(0,0);
+				glVertex2i(x,y-_browser.getFontHeight());
+				glTexCoord2i(1,0);
+				glVertex2i(x+nWidth,y-_browser.getFontHeight());
+				glTexCoord2i(1,1);
+				glVertex2i(x+nWidth,y-_browser.getFontHeight()-nHeight);
+				glTexCoord2i (0,1);
+				glVertex2i(x,y-_browser.getFontHeight()-nHeight);
+				glEnd();
+
+				// draw the texture name
+				glDisable (GL_TEXTURE_2D);
+				glColor3f (1,1,1);
+
+				glRasterPos2i (x, y-_browser.getFontHeight()+5);
+
+				// don't draw the directory name
+				std::string name = shader->getName();
+				name = name.substr(name.rfind("/") + 1);
+
+				// Ellipsize the name if it's too long
+				if (name.size() > _maxNameLength)
+				{
+					name = name.substr(0, _maxNameLength/2) +
+      					"..." +
+      					name.substr(name.size() - _maxNameLength/2);
+				}
+
+				GlobalOpenGL().drawString(name);
+				glEnable(GL_TEXTURE_2D);
+			}
+		}
+
+	} _walker(*this, m_hideUnused);
+
+	GlobalMaterialManager().foreachShader(_walker);
+
+#if 0
 
   TextureLayout layout;
   for(QERApp_ActiveShaders_IteratorBegin(); !QERApp_ActiveShaders_IteratorAtEnd(); QERApp_ActiveShaders_IteratorIncrement())
@@ -605,10 +813,10 @@ void TextureBrowser::draw()
 
     //int totalHeight = abs(y) + last_height + textureBrowser.getFontHeight() + 4;
   }
+#endif
 
-  // reset the current texture
-  glBindTexture(GL_TEXTURE_2D, 0);
-
+	// reset the current texture
+	glBindTexture(GL_TEXTURE_2D, 0);
     GlobalOpenGL().assertNoErrors();
 }
 
@@ -791,6 +999,11 @@ void TextureBrowser::updateScroll()
 			vadjustment->set_upper(totalHeight);
 		}
 	}
+}
+
+int TextureBrowser::getViewportHeight()
+{
+	return height;
 }
 
 void TextureBrowser::onSizeAllocate(Gtk::Allocation& allocation)

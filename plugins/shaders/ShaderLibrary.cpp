@@ -10,11 +10,6 @@
 
 namespace shaders {
 
-ShaderLibrary::ShaderLibrary()
-{
-	_publicIterator = _shaders.begin();
-}
-
 // Insert into the definitions map, if not already present
 bool ShaderLibrary::addDefinition(const std::string& name,
 								  const ShaderDefinition& def)
@@ -118,25 +113,8 @@ std::size_t ShaderLibrary::getNumShaders() {
 	return _definitions.size();
 }
 
-ShaderLibrary::iterator& ShaderLibrary::getIterator() {
-	return _publicIterator;
-}
-
-void ShaderLibrary::incrementIterator() {
-	if (_publicIterator != end()) {
-		++_publicIterator;
-	}
-}
-
-ShaderLibrary::iterator ShaderLibrary::begin() {
-	return _shaders.begin();
-}
-
-ShaderLibrary::iterator ShaderLibrary::end() {
-	return _shaders.end();
-}
-
-void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback) {
+void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback)
+{
 	for (ShaderDefinitionMap::const_iterator i = _definitions.begin();
 		 i != _definitions.end();
 		 ++i)
@@ -154,9 +132,28 @@ TexturePtr ShaderLibrary::loadTextureFromFile(const std::string& filename,
 	return texture;
 }
 
-void ShaderLibrary::foreachShader(ShaderVisitor& visitor) {
-	for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i) {
+void ShaderLibrary::foreachShader(ShaderVisitor& visitor)
+{
+	for (ShaderMap::const_iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+	{
 		visitor.visit(i->second);
+	}
+}
+
+void ShaderLibrary::realiseLighting()
+{
+	// First unrealise the lighting of all shaders
+	for (ShaderMap::const_iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+	{
+		i->second->realiseLighting();
+	}
+}
+
+void ShaderLibrary::unrealiseLighting()
+{
+	for (ShaderMap::const_iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+	{
+		i->second->unrealiseLighting();
 	}
 }
 
