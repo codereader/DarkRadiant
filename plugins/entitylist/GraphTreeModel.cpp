@@ -121,7 +121,7 @@ void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)
 
 void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection)
 {
-	GraphTreeModelSelectionUpdater updater(*this, selection, _visibleNodesOnly);
+	GraphTreeModelSelectionUpdater updater(*this, selection);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), updater);
 }
 

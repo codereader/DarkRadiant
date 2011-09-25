@@ -12,13 +12,11 @@ class GraphTreeModelSelectionUpdater :
 private:
 	GraphTreeModel& _model;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
-	bool _visibleOnly;
 
 public:
-	GraphTreeModelSelectionUpdater(GraphTreeModel& model, const Glib::RefPtr<Gtk::TreeSelection>& selection, bool visibleOnly) :
+	GraphTreeModelSelectionUpdater(GraphTreeModel& model, const Glib::RefPtr<Gtk::TreeSelection>& selection) :
 		_model(model),
-		_selection(selection),
-		_visibleOnly(visibleOnly)
+		_selection(selection)
 	{}
 
 	bool pre(const scene::INodePtr& node)
@@ -30,7 +28,7 @@ public:
 		{
 			iter = gtNode->getIter();
 		}
-		else if (!_visibleOnly)
+		else if (node->visible())
 		{
 			// The node might have been previously hidden, insert a new one
 			GraphTreeNodePtr newlyInserted = _model.insert(node);
