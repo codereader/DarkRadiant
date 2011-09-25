@@ -381,22 +381,13 @@ void Patch::setShader(const std::string& name)
 
 	undoSave();
 
-	// Decrement the use count of the shader
-	if (m_instanceCounter.m_count != 0) {
-		m_state->decrementUsed();
-	}
-
 	// release the shader
 	releaseShader();
 
 	// Set the name of the shader and capture it
 	m_shader = name;
-	captureShader();
 
-	// Increment the counter
-	if (m_instanceCounter.m_count != 0) {
-		m_state->incrementUsed();
-	}
+	captureShader();
 
 	// Check if the shader is ok
 	check_shader();
@@ -479,11 +470,23 @@ void Patch::captureShader()
 	{
 		m_state = renderSystem->capture(m_shader);
 
+		// Increment the counter
+		if (m_instanceCounter.m_count != 0)
+		{
+			m_state->incrementUsed();
+		}
+
 		m_state_ctrl = renderSystem->capture("$POINT");
 		m_state_lattice = renderSystem->capture("$LATTICE");
 	}
 	else
 	{
+		// Decrement the use count of the shader
+		if (m_state && m_instanceCounter.m_count > 0)
+		{
+			m_state->decrementUsed();
+		}
+
 		m_state.reset();
 		m_state_ctrl.reset();
 		m_state_lattice.reset();
@@ -492,6 +495,12 @@ void Patch::captureShader()
 
 void Patch::releaseShader()
 {
+	// Decrement the use count of the shader
+	if (m_instanceCounter.m_count > 0)
+	{
+		m_state->decrementUsed();
+	}
+
 	m_state.reset();
 }
 
