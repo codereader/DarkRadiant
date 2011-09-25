@@ -33,7 +33,8 @@ namespace ui {
 	}
 
 GraphTreeModel::GraphTreeModel() :
-	_model(Gtk::TreeStore::create(_columns))
+	_model(Gtk::TreeStore::create(_columns)),
+	_visibleNodesOnly(false)
 {}
 
 GraphTreeModel::~GraphTreeModel()
@@ -105,31 +106,38 @@ void GraphTreeModel::clear()
 	_model->clear();
 }
 
-void GraphTreeModel::refresh(bool visibleOnly)
+void GraphTreeModel::refresh()
 {
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
-	GraphTreeModelPopulator populator(*this, visibleOnly);
+	GraphTreeModelPopulator populator(*this, _visibleNodesOnly);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), populator);
 }
 
-void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, bool visibleOnly)
+void GraphTreeModel::setConsiderVisibleNodesOnly(bool visibleOnly)
 {
-	GraphTreeModelSelectionUpdater updater(*this, selection, visibleOnly);
+	_visibleNodesOnly = visibleOnly;
+}
+
+void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection)
+{
+	GraphTreeModelSelectionUpdater updater(*this, selection, _visibleNodesOnly);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), updater);
 }
 
-void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node, bool visibleOnly)
+void GraphTreeModel::updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node)
 {
 	NodeMap::const_iterator found = _nodemap.find(scene::INodeWeakPtr(node));
 
 	GraphTreeNodePtr foundNode;
 
-	// The node is not in our map, it might have been previously hidden
-	if (found == _nodemap.end() && !visibleOnly)
+	if (found == _nodemap.end())
 	{
-		// Insert it and go ahead
-		foundNode = insert(node);
+		// The node is not in our map, it might have been previously hidden
+		if (node->visible())
+		{
+			foundNode = insert(node);
+		}
 	}
 	else
 	{

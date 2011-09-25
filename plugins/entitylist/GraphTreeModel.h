@@ -1,5 +1,4 @@
-#ifndef GRAPHTREEMODEL_H_
-#define GRAPHTREEMODEL_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 #include <map>
@@ -9,7 +8,8 @@
 #include <gtkmm/treestore.h>
 #include <gtkmm/treeselection.h>
 
-namespace ui {
+namespace ui
+{
 
 /**
  * greebo: This wraps around a GtkTreeModel which can be used
@@ -43,6 +43,9 @@ private:
 	TreeColumns _columns;
 	Glib::RefPtr<Gtk::TreeStore> _model;
 
+	// The flag whether to skip invisible items
+	bool _visibleNodesOnly;
+
 public:
 	GraphTreeModel();
 	~GraphTreeModel();
@@ -58,14 +61,17 @@ public:
 	// Remove everything from the TreeModel
 	void clear();
 
+	// Set whether invisible nodes should be considered, does NOT trigger a refresh!
+	void setConsiderVisibleNodesOnly(bool visibleOnly);
+
 	// Rebuilds the entire tree using a scene::Graph::Walker
-	void refresh(bool visibleOnly);
+	void refresh();
 
 	// Updates the selection status of the entire tree
-	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, bool visibleOnly);
+	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection);
 
 	// Updates the selection status of the given node only
-	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node, bool visibleOnly);
+	void updateSelectionStatus(const Glib::RefPtr<Gtk::TreeSelection>& selection, const scene::INodePtr& node);
 
 	const TreeColumns& getColumns() const;
 	Glib::RefPtr<Gtk::TreeModel> getModel();
@@ -94,5 +100,3 @@ private:
 };
 
 } // namespace ui
-
-#endif /*GRAPHTREEMODEL_H_*/

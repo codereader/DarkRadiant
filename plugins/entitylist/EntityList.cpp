@@ -78,6 +78,8 @@ void EntityList::populateWindow()
 	_visibleNodesOnly = Gtk::manage(new Gtk::CheckButton(_("List visible nodes only")));
 	_visibleNodesOnly->set_active(GlobalRegistry().getBool(RKEY_ENTITYLIST_VISIBLE_ONLY));
 
+	_treeModel.setConsiderVisibleNodesOnly(_visibleNodesOnly->get_active());
+
 	// Connect the toggle buttons' "toggled" signal
 	_focusOnSelectedEntityToggle->signal_toggled().connect(sigc::mem_fun(*this, &EntityList::onFocusSelectionToggle));
 	_visibleNodesOnly->signal_toggled().connect(sigc::mem_fun(*this, &EntityList::onVisibleOnlyToggle));
@@ -98,7 +100,7 @@ void EntityList::update()
 	_callbackActive = true;
 
 	// Traverse the entire tree, updating the selection
-	_treeModel.updateSelectionStatus(_treeView->get_selection(), _visibleNodesOnly->get_active());
+	_treeModel.updateSelectionStatus(_treeView->get_selection());
 
 	_callbackActive = false;
 }
@@ -119,10 +121,24 @@ void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 	_callbackActive = false;
 }
 
+void EntityList::onFiltersChanged()
+{
+	// Only react to filter changes if we display visible nodes only otherwise we don't care
+	if (_visibleNodesOnly->get_active())
+	{
+		// When filter are changed possibly any node changed its visibility,
+		// refresh the whole tree
+		_treeModel.refresh();
+		expandRootNode();
+	}
+}
+
 // Pre-hide callback
 void EntityList::_preHide()
 {
 	_treeModel.disconnectFromSceneGraph();
+
+	GlobalFilterSystem().removeObserver(InstancePtr());
 
 	// De-register self from the SelectionSystem
 	GlobalSelectionSystem().removeObserver(this);
@@ -140,18 +156,23 @@ void EntityList::_preShow()
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
 
+	// Add ourselves as filter observer, to get notified when filters are changing
+	GlobalFilterSystem().addObserver(InstancePtr());
+
 	// Restore the position
 	_windowPosition.applyPosition();
 
 	_callbackActive = true;
 
 	// Repopulate the model before showing the dialog
-	_treeModel.refresh(_visibleNodesOnly->get_active());
+	_treeModel.refresh();
 
 	_callbackActive = false;
 
 	// Update the widgets
 	update();
+
+	expandRootNode();
 }
 
 void EntityList::toggle(const cmd::ArgumentList& args)
@@ -219,7 +240,16 @@ void EntityList::onVisibleOnlyToggle()
 	GlobalRegistry().setBool(RKEY_ENTITYLIST_VISIBLE_ONLY, active);
 
 	// Update the whole tree
-	_treeModel.refresh(_visibleNodesOnly->get_active());
+	_treeModel.setConsiderVisibleNodesOnly(_visibleNodesOnly->get_active());
+	_treeModel.refresh();
+
+	expandRootNode();
+}
+
+void EntityList::expandRootNode()
+{
+	GraphTreeNodePtr rootNode = _treeModel.find(GlobalSceneGraph().root());
+	_treeView->expand_row(Gtk::TreeModel::Path(rootNode->getIter()), false);
 }
 
 bool EntityList::onSelection(const Glib::RefPtr<Gtk::TreeModel>& model,

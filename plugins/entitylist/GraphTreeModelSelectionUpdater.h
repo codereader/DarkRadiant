@@ -42,7 +42,7 @@ public:
 		}
 		else
 		{
-			return true;
+			return true; 
 		}
 
 		if (!iter) return true;
