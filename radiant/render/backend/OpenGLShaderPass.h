@@ -11,6 +11,8 @@ class Matrix4;
 class OpenGLRenderable;
 class RendererLight;
 
+namespace render { class OpenGLShader; }
+
 /**
  * @brief A single component pass of an OpenGL shader.
  *
@@ -21,6 +23,8 @@ class RendererLight;
 class OpenGLShaderPass
 {
 private:
+	render::OpenGLShader& _owner;
+
 	// The state applied to this bucket
 	OpenGLState _state;
 
@@ -115,6 +119,10 @@ private:
 
 public:
 
+	OpenGLShaderPass(render::OpenGLShader& owner) :
+		_owner(owner)
+	{}
+
 	/**
 	 * Add a renderable to this state bucket with the given object transform
 	 * matrix and light.
@@ -170,4 +178,9 @@ public:
 	{
 		return _renderables.empty() && _renderablesWithoutEntity.empty();
 	}
+
+	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
 };
+
+// Stream insertion operator
+std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
