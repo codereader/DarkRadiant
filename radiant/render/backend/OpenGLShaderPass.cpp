@@ -809,5 +809,60 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
     glPopMatrix();
 }
 
+// Stream insertion operator
+std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self)
+{
+// Shortcut to save some typing
+#define OUTPUT_RENDERFLAG(x) if (self._state.renderFlags & (x)) { st << "|" << #x; }
 
+	const MaterialPtr& material = self._owner.getMaterial();
 
+	st << (material ? material->getName() : "null material") << " - ";
+	
+	st << "Renderflags: ";
+
+	OUTPUT_RENDERFLAG(RENDER_LINESTIPPLE);
+	OUTPUT_RENDERFLAG(RENDER_LINESMOOTH);
+	OUTPUT_RENDERFLAG(RENDER_POLYGONSTIPPLE);
+	OUTPUT_RENDERFLAG(RENDER_POLYGONSMOOTH);
+	OUTPUT_RENDERFLAG(RENDER_ALPHATEST);
+	OUTPUT_RENDERFLAG(RENDER_DEPTHTEST);
+	OUTPUT_RENDERFLAG(RENDER_DEPTHWRITE);
+	OUTPUT_RENDERFLAG(RENDER_COLOURWRITE);
+	OUTPUT_RENDERFLAG(RENDER_CULLFACE);
+	OUTPUT_RENDERFLAG(RENDER_SCALED);
+	OUTPUT_RENDERFLAG(RENDER_SMOOTH);
+	OUTPUT_RENDERFLAG(RENDER_LIGHTING);
+	OUTPUT_RENDERFLAG(RENDER_BLEND);
+	OUTPUT_RENDERFLAG(RENDER_OFFSETLINE);
+	OUTPUT_RENDERFLAG(RENDER_FILL);
+	OUTPUT_RENDERFLAG(RENDER_COLOURARRAY);
+	OUTPUT_RENDERFLAG(RENDER_COLOURCHANGE);
+	OUTPUT_RENDERFLAG(RENDER_MATERIAL_VCOL);
+	OUTPUT_RENDERFLAG(RENDER_VCOL_INVERT);
+	OUTPUT_RENDERFLAG(RENDER_TEXTURE_2D);
+	OUTPUT_RENDERFLAG(RENDER_TEXTURE_CUBEMAP);
+	OUTPUT_RENDERFLAG(RENDER_BUMP);
+	OUTPUT_RENDERFLAG(RENDER_PROGRAM);
+	OUTPUT_RENDERFLAG(RENDER_SCREEN);
+	OUTPUT_RENDERFLAG(RENDER_OVERRIDE);
+
+	st << " - ";
+
+	st << "Sort: " << self._state.m_sort << " - ";
+	st << "PolygonOffset: " << self._state.polygonOffset << " - ";
+
+	if (self._state.texture0 > 0) st << "Texture0: " << self._state.texture0 << " - ";
+	if (self._state.texture1 > 0) st << "Texture1: " << self._state.texture1 << " - ";
+	if (self._state.texture2 > 0) st << "Texture2: " << self._state.texture2 << " - ";
+	if (self._state.texture3 > 0) st << "Texture3: " << self._state.texture3 << " - ";
+	if (self._state.texture4 > 0) st << "Texture4: " << self._state.texture4 << " - ";
+
+	st << "Colour: " << self._state.m_colour << " - ";
+
+	st << "CubeMapMode: " << self._state.cubeMapMode;
+
+	st << std::endl;
+
+	return st;
+}
