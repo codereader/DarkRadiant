@@ -10,10 +10,12 @@ bin_PROGRAMS = darkradiant
 darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
 darkradiant_LDFLAGS = $(GTKMM_LIBS) \
                       $(GTKGLEXTMM_LIBS) \
+		      $(GTKSOURCEVIEWMM_LIBS) \
                       $(XML_LIBS) \
                       $(GLEW_LIBS) \
                       $(GL_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
+		      $(BOOST_SYSTEM_LIBS) \
                       $(REGEX_LIBS)
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/gtkutil/libgtkutil.la \
