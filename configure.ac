@@ -151,6 +151,12 @@ then
     AC_SUBST([BOOST_PYTHON_LIBS])
 fi
 
+# dynamic link library
+AC_CHECK_LIB([dl], [main],
+             [DL_LIBS='-ldl'],
+             [AC_MSG_ERROR([DL library not found])])
+AC_SUBST([DL_LIBS])
+
 # GTKSourceView
 PKG_CHECK_MODULES([GTKSOURCEVIEWMM], [gtksourceviewmm-2.0], [],
                   [script_module=''])

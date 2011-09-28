@@ -16,7 +16,8 @@ darkradiant_LDFLAGS = $(GTKMM_LIBS) \
                       $(GL_LIBS) \
                       $(BOOST_FILESYSTEM_LIBS) \
 		      $(BOOST_SYSTEM_LIBS) \
-                      $(REGEX_LIBS)
+                      $(REGEX_LIBS) \
+		      $(DL_LIBS)
 darkradiant_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
                     $(top_builddir)/libs/gtkutil/libgtkutil.la \
                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
