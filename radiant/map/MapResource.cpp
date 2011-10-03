@@ -580,38 +580,24 @@ bool MapResource::checkIsWriteable(const boost::filesystem::path& path)
 bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 						   GraphTraversalFunc traverse, const std::string& filename)
 {
-	// greebo: When auto-saving large maps users occasionally hit cancel
-	// we need to make sure to write to temporary files so that we don't
-	// leave a corrupt .map and .darkradiant file behind.
-	std::string tempExt = getTemporaryFileExtension();
-
 	// Actual output file paths
 	fs::path outFile = filename;
 	fs::path auxFile = outFile;
 	auxFile.replace_extension(_infoFileExt);
 
-	// Temporary file paths
-	fs::path tempOutFile = outFile;
-	tempOutFile.replace_extension(".map" + tempExt);
-
-	fs::path tempAuxFile = auxFile;
-	tempAuxFile.replace_extension(".aux" + tempExt);
-
 	// Check writeability of the output files
 	if (!checkIsWriteable(outFile)) return false;
 	if (!checkIsWriteable(auxFile)) return false;
-	if (!checkIsWriteable(tempOutFile)) return false;
-	if (!checkIsWriteable(tempAuxFile)) return false;
 
 	// Test opening the output file
-	globalOutputStream() << "Opening file " << tempOutFile.string() << " ";
+	globalOutputStream() << "Opening file " << outFile.string() << " ";
 	
 	// Open the stream to the output file
-	std::ofstream outFileStream(tempOutFile.string().c_str());
+	std::ofstream outFileStream(outFile.string().c_str());
 
-	globalOutputStream() << "and auxiliary file " << tempAuxFile.string() << " for writing...";
+	globalOutputStream() << "and auxiliary file " << auxFile.string() << " for writing...";
 
-	std::ofstream auxFileStream(tempAuxFile.string().c_str());
+	std::ofstream auxFileStream(auxFile.string().c_str());
 
 	if (outFileStream.is_open() && auxFileStream.is_open())
 	{
@@ -659,40 +645,15 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 		outFileStream.close();
 		auxFileStream.close();
 
-		// If the user cancelled the operation, just remove the temporary files 
-		if (cancelled)
-		{
-			fs::remove(tempOutFile);
-			fs::remove(tempAuxFile);
-
-			return true;
-		}
-
-		// Move the temporary files over to the target path
-		try
-		{
-			if (fs::exists(outFile)) 
-			{
-				fs::remove(outFile);
-			}
-			fs::rename(tempOutFile, outFile);
-
-			if (fs::exists(auxFile)) 
-			{
-				fs::remove(auxFile);
-			}
-			fs::rename(tempAuxFile, auxFile);
-		}
-		catch (fs::filesystem_error& ex)
-		{
-			globalErrorStream() << "Error moving temporary files to destination paths: "
-				<< ex.what() << std::endl;
-		}
-
-	    return true;
+		return !cancelled;
 	}
 	else
 	{
+		gtkutil::MessageBox::ShowError(
+			_("Could not open output streams for writing"),
+			GlobalMainFrame().getTopLevelWindow()
+		);
+
 		globalErrorStream() << "failure" << std::endl;
 		return false;
 	}
