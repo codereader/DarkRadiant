@@ -1,5 +1,8 @@
 #include "PatchDef2.h"
 
+// greebo: Specialise the boost::lexical_cast<float>() function
+#define SPECIALISE_STR_TO_FLOAT
+
 #include "imap.h"
 #include "ipatch.h"
 #include "parser/DefTokeniser.h"

@@ -18,18 +18,38 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined(INCLUDED_STRING_STRING_H)
-#define INCLUDED_STRING_STRING_H
+#pragma once
 
 /// \file
 /// C-style null-terminated-character-array string library.
 
 #include <cstring>
 #include <cctype>
+#include <cstdlib>
 #include <algorithm>
 
 #include <boost/lexical_cast.hpp>
+
+#ifdef SPECIALISE_STR_TO_FLOAT
+
+inline float strToFloat(const std::string& str)
+{
+    return std::atof(str.c_str());
+}
+
+#else
+
+inline float strToFloat(const std::string& str, float fallBackValue = 0)
+{
+	try {
+		return boost::lexical_cast<float>(str);
+	}
+	catch (boost::bad_lexical_cast&) {
+		return fallBackValue;
+	}
+}
+
+#endif
 
 inline std::string intToStr(int i, const std::string& fallBackValue = "")
 {
@@ -55,16 +75,6 @@ inline std::string floatToStr(float f, const std::string& fallBackValue = "")
 {
 	try {
 		return boost::lexical_cast<std::string>(f);
-	}
-	catch (boost::bad_lexical_cast&) {
-		return fallBackValue;
-	}
-}
-
-inline float strToFloat(const std::string& str, float fallBackValue = 0)
-{
-	try {
-		return boost::lexical_cast<float>(str);
 	}
 	catch (boost::bad_lexical_cast&) {
 		return fallBackValue;
@@ -223,5 +233,3 @@ inline std::size_t string_length(const char* string)
 {
   return std::strlen(string);
 }
-
-#endif
