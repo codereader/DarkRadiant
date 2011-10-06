@@ -1,5 +1,8 @@
 #include "BrushDef3.h"
 
+// greebo: Specialise the boost::lexical_cast<float>() function
+#define SPECIALISE_STR_TO_FLOAT
+
 #include "imap.h"
 #include "ibrush.h"
 #include "parser/DefTokeniser.h"

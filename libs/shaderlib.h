@@ -18,9 +18,7 @@ You should have received a copy of the GNU General Public License
 along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
-#if !defined (INCLUDED_SHADERLIB_H)
-#define INCLUDED_SHADERLIB_H
+#pragma once
 
 #include "string/string.h"
 #include "character.h"
@@ -63,10 +61,8 @@ inline const char* shader_get_textureName(const char* name)
   return name + string_length(GlobalTexturePrefix_get());
 }
 
-inline std::string texdef_name_default() {
-  //return GlobalTexturePrefix_get();
-	return GlobalRegistry().get("game/defaults/defaultTexture");
+inline const std::string& texdef_name_default()
+{
+	static std::string _default = GlobalRegistry().get("game/defaults/defaultTexture");
+	return _default;
 }
-
-
-#endif
