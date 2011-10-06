@@ -74,8 +74,6 @@ void BrushByPlaneClipper::split(const BrushPtrVector& brushes)
 				// Select the child
 				Node_setSelected(fragmentNode, true);
 
-				parent->addChildNode(fragmentNode);
-				
 				Brush* fragment = Node_getBrush(fragmentNode);
 				assert(fragment != NULL);
 				fragment->copy(brush);
