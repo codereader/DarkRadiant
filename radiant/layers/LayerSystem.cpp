@@ -359,6 +359,11 @@ std::string LayerSystem::getLayerName(int layerID) const {
 	return "";
 }
 
+bool LayerSystem::layerExists(int layerID) const
+{
+	return _layers.find(layerID) != _layers.end();
+}
+
 int LayerSystem::getHighestLayerID() const {
 	if (_layers.size() == 0) {
 		// Empty layer map, just return 0
