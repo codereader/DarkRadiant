@@ -69,6 +69,9 @@ public:
 	int getLayerID(const std::string& name) const;
 	std::string getLayerName(int layerID) const;
 
+	// Check for layer existence
+	bool layerExists(int layerID) const;
+
 	// Renames the given layer and returns TRUE on success
 	bool renameLayer(int layerID, const std::string& newLayerName);
 

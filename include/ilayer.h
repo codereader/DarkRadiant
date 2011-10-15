@@ -1,5 +1,4 @@
-#ifndef ILAYER_H_
-#define ILAYER_H_
+#pragma once
 
 #include <set>
 #include <string>
@@ -101,6 +100,11 @@ public:
 	virtual std::string getLayerName(int layerID) const = 0;
 
 	/**
+	 * Returns TRUE if the given layer exists, FALSE otherwise.
+	 */
+	virtual bool layerExists(int layerID) const = 0;
+
+	/**
 	 * greebo: Renames the given layer. Returns TRUE on success, FALSE if the name is
 	 * already in use.
 	 */
@@ -176,5 +180,3 @@ inline scene::ILayerSystem& GlobalLayerSystem()
 	);
 	return _layerSystem;
 }
-
-#endif /*ILAYER_H_*/

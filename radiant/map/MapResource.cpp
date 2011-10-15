@@ -33,6 +33,7 @@
 #include "algorithm/InfoFileExporter.h"
 #include "algorithm/AssignLayerMappingWalker.h"
 #include "algorithm/ChildPrimitives.h"
+#include "../layers/LayerValidityCheckWalker.h"
 
 namespace fs = boost::filesystem;
 
@@ -516,6 +517,15 @@ bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, con
 			// Now that the graph is in place, assign the layers
 			AssignLayerMappingWalker walker(infoFile);
 			root->traverse(walker);
+
+			globalOutputStream() << "Sanity-checking the layer assignments...";
+
+			// Sanity-check the layer mapping, it's possible that some .darkradiant
+			// files are mapping nodes to non-existent layer IDs
+			scene::LayerValidityCheckWalker checker;
+			root->traverse(checker);
+
+			globalOutputStream() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
 		}
 		catch (parser::ParseException& e)
 		{
