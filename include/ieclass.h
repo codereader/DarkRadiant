@@ -78,9 +78,19 @@ public:
 		return *_typeRef;
 	}
 
+	const StringRef& getTypeRef() const
+	{
+		return _typeRef;
+	}
+
 	void setType(const std::string& type)
 	{
 		_typeRef.reset(new std::string(type));
+	}
+
+	void setType(const StringRef& typeRef)
+	{
+		_typeRef = typeRef;
 	}
 
 	/**
@@ -101,6 +111,11 @@ public:
 		return *_valueRef;
 	}
 
+	const StringRef& getValueRef() const
+	{
+		return _valueRef;
+	}
+
 	/**
 	 * Sets the value of this entity class attribute. This will break up any
 	 * inheritance and make this instance owner of its value string.
@@ -108,6 +123,11 @@ public:
 	void setValue(const std::string& value)
 	{
 		_valueRef.reset(new std::string(value));
+	}
+
+	void setValue(const StringRef& valueRef)
+	{
+		_valueRef = valueRef;
 	}
 
 	/**
@@ -118,9 +138,19 @@ public:
 		return *_descRef;
 	}
 
+	const StringRef& getDescriptionRef() const
+	{
+		return _descRef;
+	}
+
 	void setDescription(const std::string& desc)
 	{
 		_descRef.reset(new std::string(desc));
+	}
+
+	void setDescription(const StringRef& descRef)
+	{
+		_descRef = descRef;
 	}
 
 	/**
