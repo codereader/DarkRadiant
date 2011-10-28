@@ -31,14 +31,16 @@ class Doom3EntityClass
 : public IEntityClass
 {
 private:
+	typedef boost::shared_ptr<std::string> StringRef;
+
 	class StringCompareFunctor :
 		public std::binary_function<std::string, std::string, bool>
 	{
 	public:
-		bool operator()(const std::string& lhs, const std::string& rhs) const
+		bool operator()(const StringRef& lhs, const StringRef& rhs) const
 		{
 			//return boost::algorithm::ilexicographical_compare(lhs, rhs); // this is slow!
-			return string_compare_nocase(lhs.c_str(), rhs.c_str()) < 0;
+			return string_compare_nocase(lhs->c_str(), rhs->c_str()) < 0;
 		}
 	};
 
@@ -62,7 +64,17 @@ private:
 
 	// Map of named EntityAttribute structures. EntityAttributes are picked
 	// up from the DEF file during parsing. Ignores key case.
-	typedef std::map<std::string, EntityClassAttribute, StringCompareFunctor> EntityAttributeMap;
+
+	// greebo: I've changed the EntityAttributeMap key type to StringRef, to save
+	// more than 130 MB of string data used for just the keys. A default TDM installation
+	// has about 780k entity class attributes after resolving inheritance.
+	// However, the memory saving comes with a performance cost since we need 
+	// to convert the incoming std::string queries to StringRefs before passing
+	// them to std::map::find(). During a regular DarkRadiant startup 
+	// there are about 64k find() operations, a single idLight
+	// creation costs about 30-40 find() operations, which is ok I guess.
+
+	typedef std::map<StringRef, EntityClassAttribute, StringCompareFunctor> EntityAttributeMap;
 	EntityAttributeMap _attributes;
 
 	// The model and skin for this entity class (if it has one)
