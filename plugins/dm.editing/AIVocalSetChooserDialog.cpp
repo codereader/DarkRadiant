@@ -211,9 +211,9 @@ void AIVocalSetChooserDialog::onSetSelectionChanged()
 				// Add only explicit (non-inherited) usage strings
 				if (!i->inherited) {
 					if (!usage.empty())
-						usage += std::string("\n") + i->value;
+						usage += std::string("\n") + i->getValue();
 					else
-						usage += i->value;
+						usage += i->getValue();
 				}
 			}
 
@@ -263,7 +263,7 @@ public:
 
 	void visit(const IEntityClassPtr& eclass)
 	{
-		if (eclass->getAttribute("editor_vocal_set").value == "1")
+		if (eclass->getAttribute("editor_vocal_set").getValue() == "1")
 		{
 			_list.insert(eclass->getName());
 		}

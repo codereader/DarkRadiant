@@ -187,7 +187,7 @@ std::string Doom3Entity::getKeyValue(const std::string& key) const
 	}
 	else
 	{
-		return _eclass->getAttribute(key).value;
+		return _eclass->getAttribute(key).getValue();
 	}
 }
 
@@ -197,7 +197,7 @@ bool Doom3Entity::isInherited(const std::string& key) const
 	bool definedLocally = (find(key) != _keyValues.end());
 
 	// The value is inherited, if it doesn't exist locally and the inherited one is not empty
-	return (!definedLocally && !_eclass->getAttribute(key).value.empty());
+	return (!definedLocally && !_eclass->getAttribute(key).getValue().empty());
 }
 
 Entity::KeyValuePairs Doom3Entity::getKeyValuePairs(const std::string& prefix) const
@@ -315,7 +315,7 @@ void Doom3Entity::insert(const std::string& key, const std::string& value)
 		// Allocate a new KeyValue object and insert it into the map
 		insert(
 			key,
-			KeyValuePtr(new KeyValue(value, _eclass->getAttribute(key).value))
+			KeyValuePtr(new KeyValue(value, _eclass->getAttribute(key).getValue()))
 		);
 	}
 }

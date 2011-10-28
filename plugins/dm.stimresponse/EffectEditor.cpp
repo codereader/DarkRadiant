@@ -59,7 +59,7 @@ EffectEditor::EffectEditor(const Glib::RefPtr<Gtk::Window>& parent,
 		Gtk::TreeModel::Row row = *_effectStore->append();
 
 		row[_effectColumns.name] = i->first;
-		row[_effectColumns.caption] = i->second->getAttribute("editor_caption").value;
+		row[_effectColumns.caption] = i->second->getAttribute("editor_caption").getValue();
 	}
 
 	// Create the widgets

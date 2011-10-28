@@ -27,12 +27,17 @@ void EClassManagerInterface::forEachModelDef(ModelDefVisitor& visitor)
 // IScriptInterface implementation
 void EClassManagerInterface::registerInterface(boost::python::object& nspace) {
 	// Add the declaration for the EClassAttribute
-	nspace["EntityClassAttribute"] = boost::python::class_<EntityClassAttribute>("EntityClassAttribute")
-		.def_readwrite("type", &EntityClassAttribute::type)
-		.def_readwrite("name", &EntityClassAttribute::name)
-		.def_readwrite("value", &EntityClassAttribute::value)
-		.def_readwrite("description", &EntityClassAttribute::description)
-		.def_readwrite("inherited", &EntityClassAttribute::inherited)
+	nspace["EntityClassAttribute"] = boost::python::class_<EntityClassAttribute>(
+		"EntityClassAttribute", boost::python::init<const EntityClassAttribute&>())
+		.def("getType", &EntityClassAttribute::getType,
+			boost::python::return_value_policy<boost::python::copy_const_reference>())
+		.def("getName", &EntityClassAttribute::getName,
+			boost::python::return_value_policy<boost::python::copy_const_reference>())
+		.def("getValue", &EntityClassAttribute::getValue,
+			boost::python::return_value_policy<boost::python::copy_const_reference>())
+		.def("getDescription", &EntityClassAttribute::getDescription,
+			boost::python::return_value_policy<boost::python::copy_const_reference>())
+		.def_readonly("inherited", &EntityClassAttribute::inherited)
 	;
 
 	// Declare the Anims std::map to Python

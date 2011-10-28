@@ -23,7 +23,7 @@ void SRPropertyLoader::visit(const std::string& key, const std::string& value) {
 }
 
 void SRPropertyLoader::visit(const EntityClassAttribute& attribute) {
-	parseAttribute(attribute.name, attribute.value, true);
+	parseAttribute(attribute.getName(), attribute.getValue(), true);
 }
 
 /** greebo: Private helper method that does the attribute analysis

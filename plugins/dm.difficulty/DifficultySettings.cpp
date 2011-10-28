@@ -207,7 +207,7 @@ std::string DifficultySettings::getParentClass(const std::string& className) {
 	}
 
 	EntityClassAttribute inheritAttr = eclass->getAttribute("inherit");
-	return inheritAttr.value;
+	return inheritAttr.getValue();
 }
 
 Gtk::TreeModel::iterator DifficultySettings::findOrInsertClassname(const std::string& className)
@@ -309,19 +309,19 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def)
 	{
 		EntityClassAttribute& attr = *i;
 
-		if (attr.value.empty()) {
+		if (attr.getValue().empty()) {
 			continue; // empty spawnarg attribute => invalid
 		}
 
 		// Get the index from the string's tail
-		std::string indexStr = attr.name.substr(prefix.length());
+		std::string indexStr = attr.getName().substr(prefix.length());
 
 		const EntityClassAttribute& classAttr = def->getAttribute(diffPrefix + "class_" + indexStr);
 		const EntityClassAttribute& argAttr = def->getAttribute(diffPrefix + "arg_" + indexStr);
 
-		SettingPtr setting = createSetting(classAttr.value);
-		setting->spawnArg = attr.value;
-		setting->argument = argAttr.value;
+		SettingPtr setting = createSetting(classAttr.getValue());
+		setting->spawnArg = attr.getValue();
+		setting->argument = argAttr.getValue();
 
 		// This has been parsed from the default entityDef
 		setting->isDefault = true;

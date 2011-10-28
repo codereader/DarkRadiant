@@ -178,8 +178,8 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
 			// Append the details to the treestore
 			Gtk::TreeModel::Row row = *_listStore->append();
 
-			row[_columns.name] = attr.name;
-			row[_columns.value] = attr.value;
+			row[_columns.name] = attr.getName();
+			row[_columns.value] = attr.getValue();
 			row[_columns.colour] = attr.inherited ? "#666666" : "black";
 			row[_columns.inherited] = attr.inherited ? "1" : "0";
 		}

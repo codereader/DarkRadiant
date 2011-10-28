@@ -62,11 +62,11 @@ std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr
 		EntityClassAttribute attribute = eclass->getAttribute(INHERIT_KEY);
 
 		// Don't use empty or derived "inherit" keys
-		if (!attribute.value.empty() && !attribute.inherited) {
+		if (!attribute.getValue().empty() && !attribute.inherited) {
 
 			// Get the inherited eclass first and resolve the path
 			IEntityClassPtr parent = GlobalEntityClassManager().findClass(
-				attribute.value
+				attribute.getValue()
 			);
 
 			if (parent != NULL) {
@@ -77,7 +77,7 @@ std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr
 					<< eclass->getName() << std::endl;
 			}
 
-			returnValue += attribute.value + "/";
+			returnValue += attribute.getValue() + "/";
 		}
 	}
 	catch (std::runtime_error&) {

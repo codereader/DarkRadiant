@@ -1,5 +1,4 @@
-#ifndef ATTRIBUTECOPYINGVISITOR_H_
-#define ATTRIBUTECOPYINGVISITOR_H_
+#pragma once
 
 #include "ieclass.h"
 
@@ -18,25 +17,19 @@ class AttributeCopyingVisitor
 	IEntityClass& _target;
 
 public:
-
 	// Constructor sets target
 	AttributeCopyingVisitor(IEntityClass& target)
 	: _target(target)
-	{ }
+	{}
 
 	virtual ~AttributeCopyingVisitor() {}
 
 	// Required visit function
-	void visit(const EntityClassAttribute& attr) {
-
+	void visit(const EntityClassAttribute& attr)
+	{
 		// greebo: Add the attribute with "inherited" set to true
-		EntityClassAttribute copiedAttr(attr);
-		copiedAttr.inherited = true;
-
-		_target.addAttribute(copiedAttr);
+		_target.addAttribute(EntityClassAttribute(attr, true));
 	}
 };
 
 }
-
-#endif /*ATTRIBUTECOPYINGVISITOR_H_*/

@@ -18,7 +18,8 @@ class ScriptEntityClass
 
 public:
 	ScriptEntityClass(const IEntityClassPtr& eclass) :
-		_eclass(eclass)
+		_eclass(eclass),
+		_emptyAttribute("text", "", "")
 	{}
 
 	operator const IEntityClassPtr&() const {

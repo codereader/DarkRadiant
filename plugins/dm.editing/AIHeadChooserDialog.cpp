@@ -183,8 +183,8 @@ void AIHeadChooserDialog::onHeadSelectionChanged()
 
 		if (eclass != NULL)
 		{
-			_preview->setModel(eclass->getAttribute("model").value);
-			_preview->setSkin(eclass->getAttribute("skin").value);
+			_preview->setModel(eclass->getAttribute("model").getValue());
+			_preview->setSkin(eclass->getAttribute("skin").getValue());
 
 			// Update the usage panel
 			Glib::RefPtr<Gtk::TextBuffer> buf = _description->get_buffer();
@@ -200,9 +200,9 @@ void AIHeadChooserDialog::onHeadSelectionChanged()
 				// Add only explicit (non-inherited) usage strings
 				if (!i->inherited) {
 					if (!usage.empty())
-						usage += std::string("\n") + i->value;
+						usage += std::string("\n") + i->getValue();
 					else
-						usage += i->value;
+						usage += i->getValue();
 				}
 			}
 
@@ -247,7 +247,7 @@ public:
 
 	void visit(const IEntityClassPtr& eclass)
 	{
-		if (eclass->getAttribute("editor_head").value == "1")
+		if (eclass->getAttribute("editor_head").getValue() == "1")
 		{
 			_list.insert(eclass->getName());
 		}
