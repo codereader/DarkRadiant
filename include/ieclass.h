@@ -101,6 +101,11 @@ public:
 		return *_nameRef;
 	}
 
+	const StringRef& getNameRef() const
+	{
+		return _nameRef;
+	}
+
 	/**
 	 * Direct reference to the value for easy access to the value. This reference
 	 * is pointing directly at the string owned by the ValueRef shared_ptr,

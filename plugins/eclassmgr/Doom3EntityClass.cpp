@@ -137,7 +137,7 @@ void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
 {
 	// Try to insert the class attribute
 	std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
-		EntityAttributeMap::value_type(attribute.getName(), attribute)
+		EntityAttributeMap::value_type(attribute.getNameRef(), attribute)
 	);
 
 	if (!result.second)
@@ -185,7 +185,7 @@ void Doom3EntityClass::forEachClassAttribute(
 		 ++i)
 	{
 		// Visit if it is a non-editor key or we are visiting all keys
-		if (editorKeys || !boost::algorithm::istarts_with(i->first, "editor_"))
+		if (editorKeys || !boost::algorithm::istarts_with(*i->first, "editor_"))
 			visitor.visit(i->second);
 	}
 }
@@ -256,7 +256,9 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 // Find a single attribute
 EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
 {
-	EntityAttributeMap::iterator f = _attributes.find(name);
+	StringRef ref(new std::string(name));
+
+	EntityAttributeMap::iterator f = _attributes.find(ref);
 
 	return (f != _attributes.end()) ? f->second : _emptyAttribute;
 }
@@ -264,7 +266,9 @@ EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
 // Find a single attribute
 const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name) const
 {
-	EntityAttributeMap::const_iterator f = _attributes.find(name);
+	StringRef ref(new std::string(name));
+
+	EntityAttributeMap::const_iterator f = _attributes.find(ref);
 
 	return (f != _attributes.end()) ? f->second : _emptyAttribute;
 }
@@ -280,7 +284,7 @@ EntityClassAttributeList Doom3EntityClass::getAttributeList(const std::string& n
 		 ++i)
 	{
 		// Prefix matches, add to list
-		if (boost::algorithm::istarts_with(i->first, name))
+		if (boost::algorithm::istarts_with(*i->first, name))
 		{
 			matches.push_back(i->second);
 		}
