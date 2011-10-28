@@ -140,19 +140,23 @@ void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
 		EntityAttributeMap::value_type(attribute.getName(), attribute)
 	);
 
-	if (!result.second) {
+	if (!result.second)
+	{
 		EntityClassAttribute& existing = result.first->second;
 
 		// greebo: Attribute already existed, check if we have some
 		// descriptive properties to be added to the existing one.
-		if (!attribute.getDescription().empty() && existing.getDescription().empty()) {
-			existing.setDescription(attribute.getDescription());
+		if (!attribute.getDescription().empty() && existing.getDescription().empty())
+		{
+			// Use the shared string reference to save memory
+			existing.setDescription(attribute.getDescriptionRef());
 		}
 
 		// Check if we have a more descriptive type than "text"
 		if (attribute.getType() != "text" && existing.getType() == "text")
 		{
-			existing.setType(attribute.getType());
+			// Use the shared string reference to save memory
+			existing.setType(attribute.getTypeRef());
 		}
 	}
 }
