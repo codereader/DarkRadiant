@@ -67,7 +67,7 @@ void AIVocalSetPreview::update()
 		for (EntityClassAttributeList::const_iterator i = sndAttrs.begin();
 			i != sndAttrs.end(); ++i)
 		{
-			_setShaders.push_back(i->value);
+			_setShaders.push_back(i->getValue());
 		}
 	}
 

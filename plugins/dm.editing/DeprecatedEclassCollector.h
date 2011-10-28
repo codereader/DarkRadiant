@@ -20,13 +20,13 @@ public:
 	{
 		const EntityClassAttribute& attr = eclass->getAttribute("editor_replacement");
 
-		if (attr.value.empty())
+		if (attr.getValue().empty())
 		{
 			return;
 		}
 
 		// Non-empty editor_replacement, add fixup code
-		_fixupCode += ENTITYDEF_PREFIX + eclass->getName() + " => " + attr.value + "\n";
+		_fixupCode += ENTITYDEF_PREFIX + eclass->getName() + " => " + attr.getValue() + "\n";
 	}
 
 	const std::string& getFixupCode() const

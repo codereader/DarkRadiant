@@ -1,5 +1,4 @@
-#ifndef ATTRIBUTESUFFIXCOMPARATOR_H_
-#define ATTRIBUTESUFFIXCOMPARATOR_H_
+#pragma once
 
 #include "ieclass.h"
 
@@ -30,8 +29,8 @@ public:
 					 const EntityClassAttribute& y) const
 	{
 		// Get both substrings. An empty suffix comes first.
-		std::string sx = x.name.substr(_startPos);
-		std::string sy = y.name.substr(_startPos);
+		std::string sx = x.getName().substr(_startPos);
+		std::string sy = y.getName().substr(_startPos);
 		if (sx.empty())
 			return true;
 		else if (sy.empty())
@@ -54,5 +53,3 @@ public:
 
 	}
 };
-
-#endif /*ATTRIBUTESUFFIXCOMPARATOR_H_*/

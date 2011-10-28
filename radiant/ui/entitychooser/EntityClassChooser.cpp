@@ -236,9 +236,9 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
         if (!i->inherited)
         {
             if (!usage.empty())
-                usage += std::string("\n") + i->value;
+                usage += std::string("\n") + i->getValue();
             else
-                usage += i->value;
+                usage += i->getValue();
         }
     }
 
@@ -267,8 +267,8 @@ void EntityClassChooser::updateSelection()
 
             if (eclass != NULL)
             {
-                _modelPreview->setModel(eclass->getAttribute("model").value);
-                _modelPreview->setSkin(eclass->getAttribute("skin").value);
+                _modelPreview->setModel(eclass->getAttribute("model").getValue());
+                _modelPreview->setSkin(eclass->getAttribute("skin").getValue());
             }
 
             // Update the _selectionName field

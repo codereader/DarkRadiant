@@ -28,6 +28,7 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _skin(""),
   _inheritanceResolved(false),
   _modName("base"),
+  _emptyAttribute("", "", ""),
   _parseStamp(0)
 {}
 
@@ -60,16 +61,16 @@ bool Doom3EntityClass::isFixedSize() const {
     else {
         // Check for the existence of editor_mins/maxs attributes, and that
         // they do not contain only a question mark
-		return (getAttribute("editor_mins").value.size() > 1
-                && getAttribute("editor_maxs").value.size() > 1);
+		return (getAttribute("editor_mins").getValue().size() > 1
+                && getAttribute("editor_maxs").getValue().size() > 1);
     }
 }
 
 AABB Doom3EntityClass::getBounds() const {
     if (isFixedSize()) {
         return AABB::createFromMinMax(
-        	getAttribute("editor_mins").value,
-        	getAttribute("editor_maxs").value
+        	getAttribute("editor_mins").getValue(),
+        	getAttribute("editor_maxs").getValue()
         );
     }
     else {
@@ -136,7 +137,7 @@ void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
 {
 	// Try to insert the class attribute
 	std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
-		EntityAttributeMap::value_type(attribute.name, attribute)
+		EntityAttributeMap::value_type(attribute.getName(), attribute)
 	);
 
 	if (!result.second) {
@@ -144,13 +145,14 @@ void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
 
 		// greebo: Attribute already existed, check if we have some
 		// descriptive properties to be added to the existing one.
-		if (!attribute.description.empty() && existing.description.empty()) {
-			existing.description = attribute.description;
+		if (!attribute.getDescription().empty() && existing.getDescription().empty()) {
+			existing.setDescription(attribute.getDescription());
 		}
 
 		// Check if we have a more descriptive type than "text"
-		if (attribute.type != "text" && existing.type == "text") {
-			existing.type = attribute.type;
+		if (attribute.getType() != "text" && existing.getType() == "text")
+		{
+			existing.setType(attribute.getType());
 		}
 	}
 }
@@ -194,7 +196,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 	// Lookup the parent name and return if it is not set. Also return if the
 	// parent name is the same as our own classname, to avoid infinite
 	// recursion.
-	std::string parName = getAttribute("inherit").value;
+	std::string parName = getAttribute("inherit").getValue();
 	if (parName.empty() || parName == _name)
 		return;
 
@@ -221,17 +223,19 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 	// Construct the inheritance list
 	buildInheritanceChain();
 
-	if (getAttribute("model").value != "") {
+	if (!getAttribute("model").getValue().empty())
+	{
 		// We have a model path (probably an inherited one)
-		setModelPath(getAttribute("model").value);
+		setModelPath(getAttribute("model").getValue());
 	}
 
-	if (getAttribute("editor_light").value == "1" || getAttribute("spawnclass").value == "idLight") {
+	if (getAttribute("editor_light").getValue() == "1" || getAttribute("spawnclass").getValue() == "idLight")
+	{
 		// We have a light
 		setIsLight(true);
 	}
 
-	if (getAttribute("editor_transparent").value == "1")
+	if (getAttribute("editor_transparent").getValue() == "1")
 	{
 		_colourTransparent = true;
 	}
@@ -239,9 +243,9 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 	// (Re)set the colour
 	const EntityClassAttribute& colourAttr = getAttribute("editor_color");
 
-	if (!colourAttr.value.empty())
+	if (!colourAttr.getValue().empty())
 	{
-		setColour(Vector3(colourAttr.value));
+		setColour(Vector3(colourAttr.getValue()));
 	}
 }
 
@@ -318,10 +322,12 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
     tokeniser.assertNextToken("{");
 
     // Loop over all of the keys in this entitydef
-    while (true) {
+    while (true)
+	{
         const std::string key = tokeniser.nextToken();
 
-        if (key == "}") {
+        if (key == "}")
+		{
         	break; // end of def
         }
 
@@ -329,18 +335,12 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 
         // Otherwise, switch on the key name
 
-        if (key == "model") {
+        if (key == "model")
+		{
         	setModelPath(os::standardPath(value));
         }
-        else if (key == "editor_color") {
-            setColour(value);
-        }
-        else if (key == "editor_light") {
-            if (value == "1") {
-                setIsLight(true);
-            }
-        }
-        else if (key == "spawnclass") {
+        else if (key == "spawnclass")
+		{
             if (value == "idLight") {
                 setIsLight(true);
             }
@@ -355,37 +355,51 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 			std::size_t spacePos = key.find(' ', 7);
 
 			// Only proceed if we have a space (some keys like "editor_displayFolder" don't have spaces)
-			if (spacePos != std::string::npos) {
+			if (spacePos != std::string::npos)
+			{
 				// The part beyond the space is the name of the attribute
 				std::string attName = key.substr(spacePos + 1);
 
 				// Get the type by trimming the string left and right
 				std::string type = key.substr(7, key.length() - attName.length() - 8);
 
-				// Ignore editor_setKeyValue
-				if (!attName.empty() && type != "setKeyValue") {
+				if (type == "color")
+				{
+					setColour(value);
+				}
+				else if (type == "light")
+				{
+					setIsLight(value == "1");
+				}
+				else if (!attName.empty() && type != "setKeyValue") // Ignore editor_setKeyValue
+				{
 					// Transform the type into a better format
-					if (type == "var" || type == "string") {
+					if (type == "var" || type == "string")
+					{
 						type = "text";
 					}
 
+					// Construct an attribute with empty value, but with valid description
         			addAttribute(EntityClassAttribute(type, attName, "", value));
         		}
 			}
 		}
 
-		// Following key-specific processing, add the keyvalue to the eclass
-		EntityClassAttribute attribute("text", key, value, "");
+		if (getAttribute(key).getType().empty())
+		{
+			// Following key-specific processing, add the keyvalue to the eclass
+			EntityClassAttribute attribute("text", key, value, "");
 
-		if (getAttribute(key).type.empty()) {
 			// Type is empty, attribute does not exist, add it.
 			addAttribute(attribute);
 		}
-		else if (getAttribute(key).value.empty() ) {
+		else if (getAttribute(key).getValue().empty())
+		{
 			// Attribute type is set, but value is empty, set the value.
-			getAttribute(key).value = value;
+			getAttribute(key).setValue(value);
 		}
-		else {
+		else
+		{
 			// Both type and value are not empty, emit a warning
 			globalWarningStream() << "[eclassmgr] attribute " << key
 				<< " already set on entityclass " << _name << std::endl;
@@ -410,7 +424,7 @@ void Doom3EntityClass::buildInheritanceChain() {
 	_inheritanceChain.push_back(_name);
 
 	// Walk up the inheritance chain
-	std::string parentClassName = getAttribute("inherit").value;
+	std::string parentClassName = getAttribute("inherit").getValue();
 	while (!parentClassName.empty()) {
 		_inheritanceChain.push_front(parentClassName);
 
@@ -421,7 +435,7 @@ void Doom3EntityClass::buildInheritanceChain() {
 			break;
 		}
 
-		parentClassName = parentClass->getAttribute("inherit").value;
+		parentClassName = parentClass->getAttribute("inherit").getValue();
 	}
 }
 

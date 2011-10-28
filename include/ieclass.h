@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 #include <list>
 #include <map>
+#include <boost/shared_ptr.hpp>
 
 /* FORWARD DECLS */
 
@@ -47,27 +48,80 @@ class AABB;
  *
  * \ingroup eclass
  */
-struct EntityClassAttribute
+class EntityClassAttribute
 {
+private:
+	/**
+	 * String references are shared_ptrs to save memory.
+	 * The actual string might be owned by another entity class we're inheriting from.
+	 */
+	typedef boost::shared_ptr<std::string> StringRef;
+
+	// Reference to the name string
+	StringRef _typeRef;
+
+	// Reference to the name string
+	StringRef _nameRef;
+
+	// Reference to the attribute value string
+	StringRef _valueRef;
+
+	// Reference to the description string
+	StringRef _descRef;
+
+public:
 	/**
 	 * The key type (string, bool etc.).
 	 */
-	std::string type;
+	const std::string& getType() const
+	{
+		return *_typeRef;
+	}
+
+	void setType(const std::string& type)
+	{
+		_typeRef.reset(new std::string(type));
+	}
 
 	/**
 	 * The attribute key name.
 	 */
-	std::string name;
+	const std::string& getName() const
+	{
+		return *_nameRef;
+	}
 
 	/**
-	 * Current attribute value.
+	 * Direct reference to the value for easy access to the value. This reference
+	 * is pointing directly at the string owned by the ValueRef shared_ptr,
+	 * which in turn might be owned by a class we're inheriting from.
 	 */
-	std::string value;
+	const std::string& getValue() const
+	{
+		return *_valueRef;
+	}
+
+	/**
+	 * Sets the value of this entity class attribute. This will break up any
+	 * inheritance and make this instance owner of its value string.
+	 */
+	void setValue(const std::string& value)
+	{
+		_valueRef.reset(new std::string(value));
+	}
 
 	/**
 	 * The help text associated with the key (in the DEF file).
 	 */
-	std::string description;
+	const std::string& getDescription() const
+	{
+		return *_descRef;
+	}
+
+	void setDescription(const std::string& desc)
+	{
+		_descRef.reset(new std::string(desc));
+	}
 
 	/**
 	 * Is TRUE for inherited keyvalues.
@@ -75,18 +129,32 @@ struct EntityClassAttribute
 	bool inherited;
 
 	/**
-	 * Construct an EntityClassAttribute with empty strings and a false
-	 * inherited flag.
+	 * Construct a non-inherited EntityClassAttribute, passing the actual strings
+	 * which will be owned by this class instance.
 	 */
-	EntityClassAttribute(const std::string& t = "",
-						 const std::string& n = "",
-						 const std::string& v = "",
-						 const std::string& d = "")
-	: type(t),
-	  name(n),
-	  value(v),
-	  description(d),
+	EntityClassAttribute(const std::string& type_,
+						 const std::string& name_,
+						 const std::string& value_,	
+						 const std::string& description_ = "")
+	: _typeRef(new std::string(type_)),
+	  _nameRef(new std::string(name_)),
+	  _valueRef(new std::string(value_)),
+	  _descRef(new std::string(description_)),
 	  inherited(false)
+	{}
+
+	/**
+	 * Construct a inherited EntityClassAttribute with a true inherited flag.
+	 * The strings are taken from the inherited attribute.
+	 * Note: this is not a copy-constructor on purpose, to allow STL assignments to 
+	 * copy the actual instance values.
+	 */
+	EntityClassAttribute(const EntityClassAttribute& parentAttr, bool inherited_)
+	: _typeRef(parentAttr._typeRef),	// take type string,
+	  _nameRef(parentAttr._nameRef),	// name string,
+	  _valueRef(parentAttr._valueRef),	// value string 
+	  _descRef(parentAttr._descRef),	// and description from the parent attribute
+	  inherited(inherited_)
 	{}
 };
 

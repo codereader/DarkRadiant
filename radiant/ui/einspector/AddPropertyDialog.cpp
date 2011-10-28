@@ -146,26 +146,26 @@ public:
 	void visit(const EntityClassAttribute& attr)
 	{
 		// greebo: Only add the property if it hasn't been set directly on the entity itself.
-		if (!_entity->getKeyValue(attr.name).empty() && !_entity->isInherited(attr.name))
+		if (!_entity->getKeyValue(attr.getName()).empty() && !_entity->isInherited(attr.getName()))
 		{
 			return;
 		}
 
 		// Also ignore all attributes with empty descriptions
-		if (attr.description.empty())
+		if (attr.getDescription().empty())
 		{
 			return;
 		}
 
 		// Escape any Pango markup in the attribute name (e.g. "<" or ">")
-		Glib::ustring escName = Glib::Markup::escape_text(attr.name);
+		Glib::ustring escName = Glib::Markup::escape_text(attr.getName());
 
 		Gtk::TreeModel::Row row = *_store->append(_parent->children());
 
 		row[_columns.displayName] = escName;
-		row[_columns.propertyName] = attr.name;
-		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(attr.type);
-		row[_columns.description] = attr.description;
+		row[_columns.propertyName] = attr.getName();
+		row[_columns.icon] = PropertyEditorFactory::getPixbufFor(attr.getType());
+		row[_columns.description] = attr.getDescription();
 	}
 };
 

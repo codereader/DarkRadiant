@@ -189,10 +189,10 @@ void EntityInspector::onKeyChange(const std::string& key,
 
     if (parms.type.empty())
     {
-        parms.type = attr.type;
+        parms.type = attr.getType();
     }
 
-    bool hasDescription = !attr.description.empty();
+    bool hasDescription = !attr.getDescription().empty();
 
     // Set the values for the row
 	Gtk::TreeModel::Row row = *keyValueIter;
@@ -831,11 +831,11 @@ bool EntityInspector::_onQueryTooltip(int x, int y, bool keyboard_tooltip, const
 				// Find the attribute on the eclass, that's where the descriptions are defined
 				const EntityClassAttribute& attr = eclass->getAttribute(key);
 
-				if (!attr.description.empty())
+				if (!attr.getDescription().empty())
 				{
 					// Check the description of the focused item
 					_keyValueTreeView->set_tooltip_row(tooltip, path);
-					tooltip->set_markup(attr.description);
+					tooltip->set_markup(attr.getDescription());
 
 					return true; // show tooltip
 				}
@@ -866,7 +866,7 @@ void EntityInspector::treeSelectionChanged()
     if (parms.type.empty())
 	{
     	IEntityClassConstPtr eclass = _selectedEntity->getEntityClass();
-		parms.type = eclass->getAttribute(key).type;
+		parms.type = eclass->getAttribute(key).getType();
     }
 
 	// Remove the existing PropertyEditor widget, if there is one
@@ -955,14 +955,14 @@ void EntityInspector::addClassProperties()
         {
 			// Only add properties with values, we don't want the optional
 			// "editor_var xxx" properties here.
-			if (!a.value.empty())
+			if (!a.getValue().empty())
             {
-				bool hasDescription = !a.description.empty();
+				bool hasDescription = !a.getDescription().empty();
 
 				Gtk::TreeModel::Row row = *_store->append();
 
-				row[_columns.name] = a.name;
-				row[_columns.value] = a.value;
+				row[_columns.name] = a.getName();
+				row[_columns.value] = a.getValue();
 				row[_columns.colour] = "#707070";
 				row[_columns.icon] = Glib::RefPtr<Gdk::Pixbuf>();
 				row[_columns.isInherited] = true;

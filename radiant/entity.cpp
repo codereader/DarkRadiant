@@ -178,7 +178,7 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 
         // If there is an "editor_material" class attribute, apply this shader
         // to all of the selected primitives before parenting them
-        std::string material = entity->getEntityClass()->getAttribute("editor_material").value;
+        std::string material = entity->getEntityClass()->getAttribute("editor_material").getValue();
 
         if (!material.empty()) {
             selection::algorithm::applyShaderToSelection(material);
@@ -230,8 +230,8 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 		for (EntityClassAttributeList::const_iterator i = list.begin(); i != list.end(); ++i)
 		{
 			// Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
-			std::string key = i->name.substr(i->name.find_first_of(' ') + 1);
-			entity->setKeyValue(key, i->value);
+			std::string key = i->getName().substr(i->getName().find_first_of(' ') + 1);
+			entity->setKeyValue(key, i->getValue());
 		}
 	}
 

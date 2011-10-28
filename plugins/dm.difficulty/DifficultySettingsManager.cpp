@@ -96,8 +96,8 @@ void DifficultySettingsManager::loadDifficultyNames() {
 		if (eclass != NULL) {
 			EntityClassAttribute attr = eclass->getAttribute(nameKey);
 
-			if (!attr.value.empty()) {
-				_difficultyNames.push_back(attr.value);
+			if (!attr.getValue().empty()) {
+				_difficultyNames.push_back(attr.getValue());
 				continue;
 			}
 		}
