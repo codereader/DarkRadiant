@@ -27,15 +27,12 @@ public:
 		// this means that patchDef3 = true in the PatchNode constructor.
 		scene::INodePtr node(new PatchNode(true));
 
-		// Determine the first visible layer
-		int layer = GlobalLayerSystem().getFirstVisibleLayer();
+		// Determine the layer patches should be created in
+		int layer = GlobalLayerSystem().getActiveLayer();
 
-		if (layer != -1)
-		{
-			// Move it to the first visible layer
-			node->moveToLayer(layer);
-		}
-
+		// Move it to the first visible layer
+		node->moveToLayer(layer);
+		
 		return node;
 	}
 
@@ -80,15 +77,12 @@ public:
 		// The PatchNodeDoom3 constructor takes false == patchDef2
 		scene::INodePtr node(new PatchNode(false));
 
-		// Determine the first visible layer
-		int layer = GlobalLayerSystem().getFirstVisibleLayer();
+		// Determine the layer patches should be created in
+		int layer = GlobalLayerSystem().getActiveLayer();
 
-		if (layer != -1)
-		{
-			// Move it to the first visible layer
-			node->moveToLayer(layer);
-		}
-
+		// Move it to the first visible layer
+		node->moveToLayer(layer);
+		
 		return node;
 	}
 
