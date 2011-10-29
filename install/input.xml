@@ -11,8 +11,8 @@
 	<modifiers>
 		<!-- Modifier definitions (referring to a bitfield, you better don't change these) -->
 		<modifier name="SHIFT" bitIndex="0" />
-		<modifier name="CONTROL" bitIndex="1" />
-		<modifier name="ALT" bitIndex="2" />
+		<modifier name="CONTROL" bitIndex="2" />
+		<modifier name="ALT" bitIndex="3" />
 	</modifiers>
 	<xyview>
 		<event name="MoveView" button="MOUSE_RIGHT" modifiers="" />
