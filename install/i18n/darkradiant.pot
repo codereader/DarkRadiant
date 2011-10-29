@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2011-09-22 17:43+0200\n"
+"POT-Creation-Date: 2011-10-29 20:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -105,7 +105,7 @@ msgstr ""
 
 #: ..\..\radiant\entity.cpp:93 ..\..\radiant\mainframe_old.cpp:579
 #: ..\..\radiant\map\Map.cpp:176 ..\..\radiant\map\Map.cpp:497
-#: ..\..\radiant\map\Map.cpp:601 ..\..\radiant\map\Map.cpp:622
+#: ..\..\radiant\map\Map.cpp:585 ..\..\radiant\map\Map.cpp:606
 #: ..\..\radiant\referencecache\ModelCache.cpp:244
 #: ..\..\radiant\referencecache\ModelCache.cpp:260
 #: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:352
@@ -121,40 +121,40 @@ msgstr ""
 msgid "Unable to create entity %s, no brushes selected."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:32
+#: ..\..\radiant\layers\LayerSystem.cpp:33
 msgid "Default"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:35
+#: ..\..\radiant\layers\LayerSystem.cpp:36
 msgid "Create Layer..."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:37
+#: ..\..\radiant\layers\LayerSystem.cpp:38
 msgid "Add to Layer..."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:38
+#: ..\..\radiant\layers\LayerSystem.cpp:39
 msgid "Move to Layer..."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:39
+#: ..\..\radiant\layers\LayerSystem.cpp:40
 msgid "Remove from Layer..."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:469
+#: ..\..\radiant\layers\LayerSystem.cpp:526
 #: ..\..\plugins\particles\editor\ParticleEditor.cpp:1209
 msgid "Enter Name"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:470
+#: ..\..\radiant\layers\LayerSystem.cpp:527
 msgid "Enter Layer Name"
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:482
+#: ..\..\radiant\layers\LayerSystem.cpp:539
 msgid "Cannot create layer with empty name."
 msgstr ""
 
-#: ..\..\radiant\layers\LayerSystem.cpp:496
+#: ..\..\radiant\layers\LayerSystem.cpp:553
 msgid "This name already exists."
 msgstr ""
 
@@ -226,27 +226,27 @@ msgstr ""
 msgid "Loading entity %d"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:266
+#: ..\..\radiant\map\AutoSaver.cpp:271
 msgid "Settings/Autosave"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:269
+#: ..\..\radiant\map\AutoSaver.cpp:274
 msgid "Enable Autosave"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:270
+#: ..\..\radiant\map\AutoSaver.cpp:275
 msgid "Autosave Interval (in minutes)"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:272
+#: ..\..\radiant\map\AutoSaver.cpp:277
 msgid "Save Snapshots"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:273
+#: ..\..\radiant\map\AutoSaver.cpp:278
 msgid "Snapshot folder (relative to map folder)"
 msgstr ""
 
-#: ..\..\radiant\map\AutoSaver.cpp:274
+#: ..\..\radiant\map\AutoSaver.cpp:279
 msgid "Max Snapshot Folder size (MB)"
 msgstr ""
 
@@ -287,63 +287,63 @@ msgstr ""
 msgid "Importing..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:641
+#: ..\..\radiant\map\Map.cpp:625
 msgid ""
 "Save changes to map \"%1\"\n"
 "before closing?"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:651
+#: ..\..\radiant\map\Map.cpp:635
 msgid "%1 minutes"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:657
+#: ..\..\radiant\map\Map.cpp:641
 msgid "%1 seconds"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:662
+#: ..\..\radiant\map\Map.cpp:646
 msgid ""
 "If you don't save, changes from the last %1\n"
 "will be lost."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:722
+#: ..\..\radiant\map\Map.cpp:706
 msgid "Save Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:758
+#: ..\..\radiant\map\Map.cpp:742
 msgid "Save Copy As..."
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:775
+#: ..\..\radiant\map\Map.cpp:759
 msgid "Load Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:827
+#: ..\..\radiant\map\Map.cpp:811
 msgid "New Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:837 ..\..\radiant\ui\mru\MRU.cpp:91
+#: ..\..\radiant\map\Map.cpp:821 ..\..\radiant\ui\mru\MRU.cpp:91
 msgid "Open Map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:841
+#: ..\..\radiant\map\Map.cpp:825
 msgid "Open map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:854
+#: ..\..\radiant\map\Map.cpp:838
 msgid "Import map"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:883
+#: ..\..\radiant\map\Map.cpp:867
 msgid "Export selection"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:897
+#: ..\..\radiant\map\Map.cpp:881
 msgid "Save selected as Prefab"
 msgstr ""
 
-#: ..\..\radiant\map\Map.cpp:982
+#: ..\..\radiant\map\Map.cpp:966
 #, c-format
 msgid ""
 "Failure reading map from clipboard:\n"
@@ -354,37 +354,30 @@ msgstr ""
 msgid "<no description>"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:246
-#, c-format
-msgid ""
-"Error while creating backup:\n"
-"%s"
-msgstr ""
-
-#: ..\..\radiant\map\MapResource.cpp:258 ..\..\radiant\map\MapResource.cpp:564
+#: ..\..\radiant\map\MapResource.cpp:266 ..\..\radiant\map\MapResource.cpp:581
 #, c-format
 msgid "File is write-protected: %s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:416
+#: ..\..\radiant\map\MapResource.cpp:424
 #, c-format
 msgid ""
 "Failure opening map file:\n"
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:430
+#: ..\..\radiant\map\MapResource.cpp:438
 #, c-format
 msgid ""
 "Could not determine map format of file:\n"
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:523
+#: ..\..\radiant\map\MapResource.cpp:540
 msgid "Map loading cancelled"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:536
+#: ..\..\radiant\map\MapResource.cpp:553
 #, c-format
 msgid ""
 "Failure reading map file:\n"
@@ -393,8 +386,12 @@ msgid ""
 "%s"
 msgstr ""
 
-#: ..\..\radiant\map\MapResource.cpp:645
+#: ..\..\radiant\map\MapResource.cpp:648
 msgid "Map writing cancelled"
+msgstr ""
+
+#: ..\..\radiant\map\MapResource.cpp:663
+msgid "Could not open output streams for writing"
 msgstr ""
 
 #: ..\..\radiant\map\PointFile.cpp:111
@@ -435,15 +432,15 @@ msgstr ""
 msgid "Initialising Modules"
 msgstr ""
 
-#: ..\..\radiant\patch\Patch.cpp:1704
+#: ..\..\radiant\patch\Patch.cpp:1713
 msgid "Sorry. Patch is not suitable for this kind of operation."
 msgstr ""
 
-#: ..\..\radiant\patch\PatchCreators.h:66
+#: ..\..\radiant\patch\PatchCreators.h:63
 msgid "Settings/Patch"
 msgstr ""
 
-#: ..\..\radiant\patch\PatchCreators.h:67
+#: ..\..\radiant\patch\PatchCreators.h:64
 msgid "Patch Subdivide Threshold"
 msgstr ""
 
@@ -451,23 +448,23 @@ msgstr ""
 msgid "Cannot create caps, no patches selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:626
+#: ..\..\radiant\patchmanip.cpp:630
 msgid "Cannot thicken patch. Nothing selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:679
+#: ..\..\radiant\patchmanip.cpp:683
 msgid ""
 "Cannot stitch textures. \n"
 "Could not cast nodes to patches."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:688
+#: ..\..\radiant\patchmanip.cpp:692
 msgid ""
 "Cannot stitch patch textures. \n"
 "Exactly 2 patches must be selected."
 msgstr ""
 
-#: ..\..\radiant\patchmanip.cpp:722
+#: ..\..\radiant\patchmanip.cpp:726
 msgid "Cannot bulge patch. No patches selected."
 msgstr ""
 
@@ -530,20 +527,20 @@ msgstr ""
 msgid "No patches selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:483
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:481
 msgid "Could not create patch."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:600
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:598
 msgid "No faces selected."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:619
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:617
 #, c-format
 msgid "%d faces were not suitable (had more than 4 vertices)."
 msgstr ""
 
-#: ..\..\radiant\selection\algorithm\Primitives.cpp:667
+#: ..\..\radiant\selection\algorithm\Primitives.cpp:665
 msgid "No brushes selected."
 msgstr ""
 
@@ -1809,7 +1806,7 @@ msgstr ""
 #: ..\..\radiant\ui\filterdialog\FilterEditor.cpp:83
 #: ..\..\plugins\dm.conversation\ConversationDialog.cpp:159
 #: ..\..\plugins\dm.conversation\ConversationEditor.cpp:96
-#: ..\..\plugins\entitylist\EntityList.cpp:58
+#: ..\..\plugins\entitylist\EntityList.cpp:59
 msgid "Name"
 msgstr ""
 
@@ -1921,39 +1918,41 @@ msgstr ""
 msgid "<b>%d</b> shader(s) replaced."
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:52
-msgid "Click to select all in layer, hold SHIFT to deselect"
-msgstr ""
-
-#: ..\..\radiant\ui\layers\LayerControl.cpp:53
-msgid "Rename this layer"
-msgstr ""
-
 #: ..\..\radiant\ui\layers\LayerControl.cpp:54
-msgid "Delete this layer"
+msgid ""
+"Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as "
+"active layer."
 msgstr ""
 
 #: ..\..\radiant\ui\layers\LayerControl.cpp:55
+msgid "Rename this layer"
+msgstr ""
+
+#: ..\..\radiant\ui\layers\LayerControl.cpp:56
+msgid "Delete this layer"
+msgstr ""
+
+#: ..\..\radiant\ui\layers\LayerControl.cpp:57
 msgid "Toggle layer visibility"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:110
+#: ..\..\radiant\ui\layers\LayerControl.cpp:124
 msgid "Do you really want to delete this layer?"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:114
+#: ..\..\radiant\ui\layers\LayerControl.cpp:128
 msgid "Confirm Layer Deletion"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:136
+#: ..\..\radiant\ui\layers\LayerControl.cpp:150
 msgid "Rename Layer"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:137
+#: ..\..\radiant\ui\layers\LayerControl.cpp:151
 msgid "Enter new Layer Name"
 msgstr ""
 
-#: ..\..\radiant\ui\layers\LayerControl.cpp:159
+#: ..\..\radiant\ui\layers\LayerControl.cpp:173
 msgid "Could not rename layer, please try again."
 msgstr ""
 
@@ -2592,12 +2591,12 @@ msgid "Bottom"
 msgstr ""
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:64
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:354
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:355
 msgid "Right"
 msgstr ""
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:65
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:351
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:352
 msgid "Left"
 msgstr ""
 
@@ -2643,43 +2642,43 @@ msgid "Seek in Media Browser"
 msgstr ""
 
 #: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:81
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:643
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:851
 msgid "No shader"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:876
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1089
 msgid "Clamp texture thumbnails to constant size"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:877
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1090
 msgid "Constant size"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:939
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1152
 msgid "Settings/Texture Browser"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:950
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1163
 msgid "Texture Thumbnail Scale"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:952
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1165
 msgid "Uniform texture thumbnail size (pixels)"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:953
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1166
 msgid "Texture scrollbar"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:954
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1167
 msgid "Mousewheel Increment"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:955
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1168
 msgid "Max shadername length"
 msgstr ""
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:957
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:1170
 msgid "Show Texture Filter"
 msgstr ""
 
@@ -3075,8 +3074,8 @@ msgid "Gui Path"
 msgstr ""
 
 #: ..\..\plugins\dm.gui\plugin.cpp:93
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:55
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:731
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:56
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:732
 msgid "Readable Editor"
 msgstr ""
 
@@ -3104,49 +3103,49 @@ msgstr ""
 msgid "XData Storage Folder"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:59
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:60
 msgid ""
 "Cannot run Readable Editor on this selection.\n"
 "Please select a single XData entity."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:62
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:63
 msgid "Page Editing:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:63
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:64
 msgid "General Properties:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:186
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:187
 msgid "Inventory Name:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:201
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:202
 msgid "XData Name:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:227
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:228
 msgid "Number of Pages:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:230
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:231
 msgid "Layout:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:232
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:233
 msgid "One-sided"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:254
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:255
 msgid "Pageturn Sound:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:273 xml_file_content.cpp:165
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:274 xml_file_content.cpp:165
 msgid "Insert"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:278
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:279
 #: ..\..\plugins\dm.stimresponse\CustomStimEditor.cpp:60
 #: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:365
 #: ..\..\plugins\dm.stimresponse\ResponseEditor.cpp:384
@@ -3154,246 +3153,246 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:299
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:300
 msgid "Current Page:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:317
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:318
 msgid "Gui Definition:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:363
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:364
 msgid "Title:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:382
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:383
 #: ..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp:27
 msgid "Body:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:406
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:407
 msgid "Insert whole Page"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:411
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:412
 msgid "Insert on left Side"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:416
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:417
 msgid "Insert on right Side"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:426
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:427
 msgid "Delete whole Page"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:431
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:432
 msgid "Delete on left Side"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:436
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:437
 msgid "Delete on right Side"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:446
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:447
 msgid "Append Page"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:455
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:456
 msgid "Prepend Page"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:464
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:465
 msgid "Show last XData import summary"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:469
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:470
 msgid "Show duplicated definitions"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:474
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:475
 msgid "Show Gui import summary"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:492
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:493
 msgid "Save & Close"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:496
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:497
 msgid "Tools"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:528
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:529
 msgid "<Name_Here>"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:545
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:833
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1551
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:546
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:834
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1552
 #, c-format
 msgid "Failed to import %s."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:547
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:548
 msgid "Creating a new XData definition..."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:549
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:835
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:855
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:913
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1553
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:550
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:836
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:856
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:914
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1554
 #: ..\..\plugins\dm.gui\XdFileChooserDialog.cpp:61
 msgid "Do you want to open the import summary?"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:551
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:837
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:857
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:915
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1555
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:552
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:838
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:858
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:916
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1556
 msgid "Import failed"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:611
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:612
 msgid ""
 "You have imported an XData definition that is contained in a PK4, which "
 "can't be accessed for saving."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:613
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:614
 msgid ""
 "Please rename your XData definition, so that it is stored under a different "
 "filename."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:630
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:651
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:631
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:652
 #, c-format
 msgid "Failed to open %s for saving."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:637
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:638
 msgid ""
 "Merging failed, because the length of the definition to be overwritten could "
 "not be retrieved."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:674
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:675
 msgid "Mod path not defined. Using Base path..."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:687
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:706
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:688
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:707
 msgid "Mod Base path not defined, neither is Mod path. Using Engine path..."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:693
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:711
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:694
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:712
 msgid "Mod Base path not defined. Using Mod path..."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:853
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:911
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:854
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:912
 #, c-format
 msgid "Failed to load gui definition %s."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1014
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1015
 msgid "Import definition?"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1015
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1016
 #, c-format
 msgid "The definition %s already exists. Should it be imported?"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1028
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1029
 msgid "Import failed:"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1031
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1032
 msgid "Consult the import summary for further information."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1062
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1063
 #, c-format
 msgid ""
 "To avoid duplicated XData definitions the current definition has been "
 "renamed to %s."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1066
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1067
 msgid "XData has been renamed."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1332
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1333
 msgid "The specified gui definition is not a readable."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1337
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1349
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1338
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1350
 msgid ""
 "The specified gui definition is not suitable for the currently chosen page-"
 "layout."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1359
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1360
 msgid "Failure during import."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1362
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1363
 msgid "The specified Definition does not exist."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1370
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1371
 msgid "Not a suitable Gui Definition!"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1371
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1372
 msgid "Start the Gui Browser?"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1405
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1406
 msgid "Switching to default Gui..."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1406
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1407
 msgid "You didn't choose a Gui. Using the default Gui now."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1424
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1425
 msgid ""
 "No import summary available. An XData definition has to be imported first..."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1436
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1437
 msgid "XData import summary"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1445
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1446
 msgid "No import summary available. Browse Gui Definitions first."
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1456
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1457
 msgid "Gui import summary"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1508
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1528
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1509
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1529
 msgid "Please specify an XData name first!"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1734
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1762
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1735
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1763
 msgid "Duplicated XData definitions"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1735
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1736
 msgid "There are no duplicated definitions!"
 msgstr ""
 
-#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1756
+#: ..\..\plugins\dm.gui\ReadableEditorDialog.cpp:1757
 #, c-format
 msgid "%s has been defined in:"
 msgstr ""
@@ -4185,8 +4184,12 @@ msgstr ""
 msgid "Entity List"
 msgstr ""
 
-#: ..\..\plugins\entitylist\EntityList.cpp:72
+#: ..\..\plugins\entitylist\EntityList.cpp:73
 msgid "Focus camera on selected entity."
+msgstr ""
+
+#: ..\..\plugins\entitylist\EntityList.cpp:78
+msgid "List visible nodes only"
 msgstr ""
 
 #: ..\..\plugins\eventmanager\Modifiers.cpp:141
@@ -4381,17 +4384,17 @@ msgstr ""
 msgid "Doom 3 prefab"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp:103
+#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef.cpp:106
 #, c-format
 msgid "BrushDefParser: invalid token '%s'"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:106
+#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:109
 #, c-format
 msgid "BrushDef3Parser: invalid token '%s'"
 msgstr ""
 
-#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:177
+#: ..\..\plugins\mapdoom3\primitiveparsers\BrushDef3.cpp:180
 #, c-format
 msgid "BrushDef3ParserQuake4: invalid token '%s'"
 msgstr ""
@@ -4464,22 +4467,22 @@ msgid "Cannot save particle, it has not been registered yet."
 msgstr ""
 
 #: ..\..\plugins\particles\ParticlesManager.cpp:270
-#: ..\..\plugins\particles\ParticlesManager.cpp:298
+#: ..\..\plugins\particles\ParticlesManager.cpp:302
 #, c-format
 msgid "Cannot open file for writing: %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:311
+#: ..\..\plugins\particles\ParticlesManager.cpp:315
 #, c-format
 msgid "Cannot open file for reading: %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:358
+#: ..\..\plugins\particles\ParticlesManager.cpp:362
 #, c-format
 msgid "Could not remove the file %s"
 msgstr ""
 
-#: ..\..\plugins\particles\ParticlesManager.cpp:372
+#: ..\..\plugins\particles\ParticlesManager.cpp:376
 #, c-format
 msgid "Could not rename the temporary file %s"
 msgstr ""
