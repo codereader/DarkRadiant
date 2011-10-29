@@ -21,8 +21,10 @@ namespace ui
 {
 	namespace
 	{
-		const std::string ICON_LAYER_VISIBLE("check.png");
-		const std::string ICON_LAYER_HIDDEN("empty.png");
+		const char* const ICON_LAYER_VISIBLE("check.png");
+		const char* const ICON_LAYER_HIDDEN("empty.png");
+		const char* const ICON_LAYER_ACTIVE_VISIBLE("active_layer_visible.png");
+		const char* const ICON_LAYER_ACTIVE_HIDDEN("active_layer_invisible.png");
 	}
 
 LayerControl::LayerControl(int layerID) :
@@ -49,7 +51,7 @@ LayerControl::LayerControl(int layerID) :
 	_buttonHBox->pack_start(*_renameButton, false, false, 0);
 	_buttonHBox->pack_start(*_deleteButton, false, false, 0);
 
-	_labelButton->set_tooltip_text(_("Click to select all in layer, hold SHIFT to deselect"));
+	_labelButton->set_tooltip_text(_("Click to select all in layer, hold SHIFT to deselect, hold CTRL to set as active layer."));
 	_renameButton->set_tooltip_text(_("Rename this layer"));
 	_deleteButton->set_tooltip_text(_("Delete this layer"));
 	_toggle->set_tooltip_text(_("Toggle layer visibility"));
@@ -84,7 +86,19 @@ void LayerControl::update()
 
 	_labelButton->set_label(layerSystem.getLayerName(_layerID));
 
-	std::string imageName = layerIsVisible ? ICON_LAYER_VISIBLE : ICON_LAYER_HIDDEN;
+	bool isActive = layerSystem.getActiveLayer() == _layerID; 
+
+	std::string imageName;
+	
+	if (isActive)
+	{
+		imageName = layerIsVisible ? ICON_LAYER_ACTIVE_VISIBLE : ICON_LAYER_ACTIVE_HIDDEN;
+	}
+	else
+	{
+		imageName = layerIsVisible ? ICON_LAYER_VISIBLE : ICON_LAYER_HIDDEN;
+	}
+
 	_toggle->set_image(*Gtk::manage(new Gtk::Image(GlobalUIManager().getLocalPixbufWithMask(imageName))));
 
 	// Don't allow deleting or renaming layer 0
@@ -164,6 +178,17 @@ void LayerControl::onRename()
 
 void LayerControl::onLayerSelect()
 {
+	// When holding down CTRL the user sets this as active
+	if ((GlobalEventManager().getModifierState() & GDK_CONTROL_MASK) != 0)
+	{
+		GlobalLayerSystem().setActiveLayer(_layerID);
+
+		// Update our icon set
+		LayerControlDialog::Instance().refresh();
+
+		return;
+	}
+
 	// By default, we SELECT the layer
 	bool selected = true;
 

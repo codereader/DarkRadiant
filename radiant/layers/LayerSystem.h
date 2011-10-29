@@ -1,5 +1,4 @@
-#ifndef LAYERSYSTEM_H_
-#define LAYERSYSTEM_H_
+#pragma once
 
 #include <vector>
 #include <map>
@@ -8,16 +7,18 @@
 
 namespace scene {
 
-	namespace {
-		const std::string COMMAND_PREFIX_ADDTOLAYER("AddSelectionToLayer");
-		const std::string COMMAND_PREFIX_MOVETOLAYER("MoveSelectionToLayer");
-		const std::string COMMAND_PREFIX_SHOWLAYER("ShowLayer");
-		const std::string COMMAND_PREFIX_HIDELAYER("HideLayer");
-	}
+namespace
+{
+	const char* const COMMAND_PREFIX_ADDTOLAYER("AddSelectionToLayer");
+	const char* const COMMAND_PREFIX_MOVETOLAYER("MoveSelectionToLayer");
+	const char* const COMMAND_PREFIX_SHOWLAYER("ShowLayer");
+	const char* const COMMAND_PREFIX_HIDELAYER("HideLayer");
+}
 
 class LayerSystem :
 	public ILayerSystem
 {
+private:
 	// greebo: An array of booleans reflects the visibility status
 	// of all layers. Indexed by the layer id, it can be used to
 	// quickly check whether a layer is visible or not.
@@ -31,7 +32,12 @@ class LayerSystem :
 	typedef std::vector<LayerCommandTargetPtr> CommandTargetList;
 	CommandTargetList _commandTargets;
 
+	// The ID of the active layer
+	int _activeLayer;
+
 public:
+	LayerSystem();
+
 	/**
 	 * greebo: Creates a new layer with the given name.
 	 *
@@ -76,15 +82,19 @@ public:
 	bool renameLayer(int layerID, const std::string& newLayerName);
 
 	// Returns the ID of the first visible layer or -1 if all are hidden.
-	virtual int getFirstVisibleLayer() const;
+	int getFirstVisibleLayer() const;
+
+	// Active layers
+	int getActiveLayer() const;
+	void setActiveLayer(int layerID);
 
 	// Returns true if the given layer is visible
-	virtual bool layerIsVisible(const std::string& layerName);
-	virtual bool layerIsVisible(int layerID);
+	bool layerIsVisible(const std::string& layerName);
+	bool layerIsVisible(int layerID);
 
 	// Sets the visibility state of the given layer to <visible>
-	virtual void setLayerVisibility(const std::string& layerName, bool visible);
-	virtual void setLayerVisibility(int layerID, bool visible);
+	void setLayerVisibility(const std::string& layerName, bool visible);
+	void setLayerVisibility(int layerID, bool visible);
 
 	/**
 	 * greebo: Traverses the selection and adds each node to the given layer.
@@ -105,15 +115,15 @@ public:
 	void removeSelectionFromLayer(const std::string& layerName);
 	void removeSelectionFromLayer(int layerID);
 
-	virtual bool updateNodeVisibility(const scene::INodePtr& node);
+	bool updateNodeVisibility(const scene::INodePtr& node);
 
 	// Selects/unselects an entire layer
-	virtual void setSelected(int layerID, bool selected);
+	void setSelected(int layerID, bool selected);
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const ApplicationContext& ctx);
+	const std::string& getName() const;
+	const StringSet& getDependencies() const;
+	void initialiseModule(const ApplicationContext& ctx);
 
 	// Command target
 	void createLayerCmd(const cmd::ArgumentList& args);
@@ -136,5 +146,3 @@ private:
 LayerSystem& getLayerSystem();
 
 } // namespace scene
-
-#endif /* LAYERSYSTEM_H_ */

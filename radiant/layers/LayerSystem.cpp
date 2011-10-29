@@ -28,20 +28,29 @@
 namespace scene
 {
 
-	namespace {
-		const char* const DEFAULT_LAYER_NAME = N_("Default");
+namespace
+{
+	const char* const DEFAULT_LAYER_NAME = N_("Default");
 
-		const char* const LAYER_ICON = "layers.png";
-		const char* const CREATE_LAYER_TEXT = N_("Create Layer...");
+	const char* const LAYER_ICON = "layers.png";
+	const char* const CREATE_LAYER_TEXT = N_("Create Layer...");
 
-		const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
-		const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
-		const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
-	}
+	const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
+	const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
+	const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
 
-int LayerSystem::createLayer(const std::string& name, int layerID) {
+	const int DEFAULT_LAYER = 0;
+}
+
+LayerSystem::LayerSystem() :
+	_activeLayer(DEFAULT_LAYER)
+{}
+
+int LayerSystem::createLayer(const std::string& name, int layerID)
+{
 	// Check if the ID already exists
-	if (_layers.find(layerID) != _layers.end()) {
+	if (_layers.find(layerID) != _layers.end())
+	{
 		// already exists => quit
 		return -1;
 	}
@@ -69,7 +78,8 @@ int LayerSystem::createLayer(const std::string& name, int layerID) {
 	return result.first->first;
 }
 
-int LayerSystem::createLayer(const std::string& name) {
+int LayerSystem::createLayer(const std::string& name)
+{
 	// Check if the layer already exists
 	int existingID = getLayerID(name);
 
@@ -86,11 +96,13 @@ int LayerSystem::createLayer(const std::string& name) {
 	return createLayer(name, newID);
 }
 
-void LayerSystem::deleteLayer(const std::string& name) {
+void LayerSystem::deleteLayer(const std::string& name)
+{
 	// Check if the layer already exists
 	int layerID = getLayerID(name);
 
-	if (layerID == -1) {
+	if (layerID == -1)
+	{
 		globalErrorStream() << "Could not delete layer, name doesn't exist: "
 			<< name << std::endl;
 		return;
@@ -106,6 +118,12 @@ void LayerSystem::deleteLayer(const std::string& name) {
 	// Reset the visibility flag to TRUE
 	_layerVisibility[layerID] = true;
 
+	if (layerID == _activeLayer)
+	{
+		// We have removed the active layer, fall back to default
+		_activeLayer = DEFAULT_LAYER;
+	}
+
 	// Fire the visibility changed event to
 	// update the scenegraph and redraw the views
 	onLayerVisibilityChanged();
@@ -119,18 +137,22 @@ void LayerSystem::foreachLayer(Visitor& visitor)
 	}
 }
 
-void LayerSystem::reset() {
+void LayerSystem::reset()
+{
+	_activeLayer = DEFAULT_LAYER;
+
 	_layers.clear();
-	_layers.insert(LayerMap::value_type(0, _(DEFAULT_LAYER_NAME)));
+	_layers.insert(LayerMap::value_type(DEFAULT_LAYER, _(DEFAULT_LAYER_NAME)));
 
 	_layerVisibility.resize(1);
-	_layerVisibility[0] = true;
+	_layerVisibility[DEFAULT_LAYER] = true;
 
 	// Update the LayerControlDialog
 	ui::LayerControlDialog::Instance().refresh();
 }
 
-bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName) {
+bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName)
+{
 	// Check sanity
 	if (newLayerName.empty() || newLayerName == _(DEFAULT_LAYER_NAME)) {
 		return false; // empty name or default name used
@@ -148,19 +170,41 @@ bool LayerSystem::renameLayer(int layerID, const std::string& newLayerName) {
 	return true;
 }
 
-int LayerSystem::getFirstVisibleLayer() const {
+int LayerSystem::getFirstVisibleLayer() const
+{
 	// Iterate over all IDs and check the visibility status, return the first visible
-	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); i++) {
-		if (_layerVisibility[i->first]) {
+	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); ++i)
+	{
+		if (_layerVisibility[i->first])
+		{
 			return i->first;
 		}
 	}
 
-	// No layer visible, return 0 to prevent callers from doing unreasonable things.
-	return 0;
+	// No layer visible, return DEFAULT_LAYER to prevent callers from doing unreasonable things.
+	return DEFAULT_LAYER;
 }
 
-bool LayerSystem::layerIsVisible(const std::string& layerName) {
+int LayerSystem::getActiveLayer() const
+{
+	return _activeLayer;
+}
+
+void LayerSystem::setActiveLayer(int layerID)
+{
+	LayerMap::iterator i = _layers.find(layerID);
+
+	if (i == _layers.end())
+	{
+		return; // do nothing
+	}
+
+	// ID is valid, assign active layer
+	_activeLayer = layerID;
+}
+
+bool LayerSystem::layerIsVisible(const std::string& layerName) 
+{
 	// Check if the layer already exists
 	int layerID = getLayerID(layerName);
 
@@ -366,8 +410,8 @@ bool LayerSystem::layerExists(int layerID) const
 
 int LayerSystem::getHighestLayerID() const {
 	if (_layers.size() == 0) {
-		// Empty layer map, just return 0
-		return 0;
+		// Empty layer map, just return DEFAULT_LAYER
+		return DEFAULT_LAYER;
 	}
 
 	// A map is sorted, so return the ID of the element from the end of the map
@@ -410,7 +454,7 @@ void LayerSystem::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << "LayerSystem::initialiseModule called.\n";
 
-	// Create the "master" layer with ID 0
+	// Create the "master" layer with ID DEFAULT_LAYER
 	createLayer(_(DEFAULT_LAYER_NAME));
 
 	// Add command targets for the first 10 layer IDs here
