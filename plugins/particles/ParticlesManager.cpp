@@ -288,7 +288,11 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	fs::path tempFile = targetFile;
 	
 	tempFile.remove_filename();
+#if BOOST_VERSION < 104700
+	tempFile /= "_" + targetFile.filename();
+#else
 	tempFile /= "_" + targetFile.filename().string();
+#endif
 
 	std::ofstream tempStream(tempFile.string().c_str());
 

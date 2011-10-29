@@ -114,7 +114,11 @@ void AutoMapSaver::saveSnapshot() {
 	snapshotPath /= GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 
 	// Retrieve the mapname
+#if BOOST_VERSION < 104700
+	std::string mapName = fullPath.filename();
+#else
 	std::string mapName = fullPath.filename().string();
+#endif
 
 	// Check if the folder exists and create it if necessary
 	if (boost::filesystem::exists(snapshotPath) || os::makeDirectory(snapshotPath.string()))
