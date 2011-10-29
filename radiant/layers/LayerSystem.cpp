@@ -227,9 +227,11 @@ bool LayerSystem::layerIsVisible(int layerID) {
 	return _layerVisibility[layerID];
 }
 
-void LayerSystem::setLayerVisibility(int layerID, bool visible) {
+void LayerSystem::setLayerVisibility(int layerID, bool visible)
+{
 	// Sanity check
-	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
+	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size()))
+	{
 		globalOutputStream() <<
 			"LayerSystem: Setting visibility of invalid layer ID: " <<
 			layerID << std::endl;
@@ -238,6 +240,12 @@ void LayerSystem::setLayerVisibility(int layerID, bool visible) {
 
 	// Set the visibility
 	_layerVisibility[layerID] = visible;
+
+	if (!visible && layerID == _activeLayer)
+	{
+		// We just hid the active layer, fall back to another one
+		_activeLayer = getFirstVisibleLayer();
+	}
 
 	// Fire the visibility changed event
 	onLayerVisibilityChanged();
