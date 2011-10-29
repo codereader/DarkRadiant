@@ -116,6 +116,18 @@ public:
 	virtual int getFirstVisibleLayer() const = 0;
 
 	/**
+	 * Returns the ID of the layer that is currently signed as active (will return the default layer
+	 * if no other layer is active). Note that the returned layer is not necessarily visible.
+	 */
+	virtual int getActiveLayer() const = 0;
+
+	/**
+	 * Declare the given layer as active. Nothing will happen if the given layer ID is not existent.
+	 * This method doesn't change the visibility of the given layer.
+	 */
+	virtual void setActiveLayer(int layerID) = 0;
+
+	/**
 	 * greebo: Queries the visibility of the given layer.
 	 */
 	virtual bool layerIsVisible(const std::string& layerName) = 0;
