@@ -133,10 +133,10 @@ public:
 inline void MergeMap(const scene::INodePtr& node)
 {
 	// Discard all layer information found in the data to be merged
-	// We move everything into the first visible layer
+	// We move everything into the active layer
 	{
 		scene::LayerList layers;
-		layers.insert(GlobalLayerSystem().getFirstVisibleLayer());
+		layers.insert(GlobalLayerSystem().getActiveLayer());
 
 		scene::AssignNodeToLayersWalker walker(layers);
 		Node_traverseSubgraph(node, walker);

@@ -84,19 +84,12 @@ void BrushModuleClass::toggleTextureLock() {
 
 scene::INodePtr BrushModuleClass::createBrush()
 {
-	// Determine the first visible layer
-	int layer = GlobalLayerSystem().getFirstVisibleLayer();
+	scene::INodePtr node(new BrushNode);
 
-	if (layer != -1)
-	{
-		scene::INodePtr node(new BrushNode);
+	// Move it to the active layer
+	node->moveToLayer(GlobalLayerSystem().getActiveLayer());
 
-		// Move it to the first visible layer
-		node->moveToLayer(layer);
-		return node;
-	}
-
-	return scene::INodePtr();
+	return node;
 }
 
 // RegisterableModule implementation

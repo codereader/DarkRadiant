@@ -80,6 +80,10 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& ec
 scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
 {
 	scene::INodePtr node = getEntityForEClass(eclass);
+
+	// All entities are created in the active layer by default
+	node->moveToLayer(GlobalLayerSystem().getActiveLayer());
+
 	Entity* entity = Node_getEntity(node);
 	assert(entity != NULL);
 
