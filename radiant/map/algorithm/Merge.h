@@ -47,17 +47,14 @@ public:
 class MapMergeEntities :
 	public scene::NodeVisitor
 {
+private:
 	// The target path (usually GlobalSceneGraph().root())
 	mutable scene::Path m_path;
-
-	scene::LayerList _targetLayers;
 
 public:
 	MapMergeEntities(const scene::Path& root) :
 		m_path(root)
-	{
-		_targetLayers.insert(GlobalLayerSystem().getFirstVisibleLayer());
-	}
+	{}
 
 	bool pre(const scene::INodePtr& originalNode)
 	{
@@ -122,22 +119,29 @@ public:
 			Node_setSelected(node, true);
 		}
 
-		// Add the node to the target layer set
-		scene::AssignNodeToLayersWalker walker(_targetLayers);
-		Node_traverseSubgraph(node, walker);
-
 		// Only traverse top-level entities, don't traverse the children
 		return false;
 	}
 
-	virtual void post(const scene::INodePtr& node) {
+	void post(const scene::INodePtr& node)
+	{
 		m_path.pop();
 	}
 };
 
 /// Merges the map graph rooted at \p node into the global scene-graph.
-inline void MergeMap(scene::INodePtr node)
+inline void MergeMap(const scene::INodePtr& node)
 {
+	// Discard all layer information found in the data to be merged
+	// We move everything into the first visible layer
+	{
+		scene::LayerList layers;
+		layers.insert(GlobalLayerSystem().getFirstVisibleLayer());
+
+		scene::AssignNodeToLayersWalker walker(layers);
+		Node_traverseSubgraph(node, walker);
+	}
+
 	MapMergeEntities visitor(scene::Path(GlobalSceneGraph().root()));
 	node->traverse(visitor);
 }
