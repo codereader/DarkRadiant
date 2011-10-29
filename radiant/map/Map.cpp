@@ -548,27 +548,11 @@ bool Map::import(const std::string& filename)
 	{
 		IMapResourcePtr resource = GlobalMapResourceManager().capture(filename);
 
-		if (resource->load()) {
+		if (resource->load())
+		{
 			// load() returned TRUE, this means that the resource node
 			// is not the NULL node
-
-			// Create a new maproot
-			/*scene::INodePtr cloneRoot(new BasicContainer);
-
-			{
-				CloneAll cloner(cloneRoot);
-				resource->getNode()->traverse(cloner);
-			}*/
 			scene::INodePtr otherRoot = resource->getNode();
-
-			// Discard all layer information found in the imported file
-			{
-				scene::LayerList layers;
-				layers.insert(0);
-
-				scene::AssignNodeToLayersWalker walker(layers);
-				Node_traverseSubgraph(otherRoot, walker);
-			}
 
 			// Adjust all new names to fit into the existing map namespace,
 			// this routine will be changing a lot of names in the importNamespace
