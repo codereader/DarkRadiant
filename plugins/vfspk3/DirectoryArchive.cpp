@@ -68,7 +68,7 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 		if (fs::is_directory(candidate))
 		{
 			// Check if we should traverse further
-#if BOOST_VERSION < 104700
+#if BOOST_VERSION < 104600
 			if (visitor.directory(candidate.string().substr(rootLen), it.level()+1))
 #else
 			if (visitor.directory(candidate.generic_string().substr(rootLen), it.level()+1))
@@ -81,7 +81,7 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 		else
 		{
 			// File
-#if BOOST_VERSION < 104700
+#if BOOST_VERSION < 104600
 			visitor.file(candidate.string().substr(rootLen));
 #else
 			visitor.file(candidate.generic_string().substr(rootLen));
