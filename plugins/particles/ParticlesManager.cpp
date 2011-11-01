@@ -19,6 +19,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <boost/version.hpp>
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
@@ -288,7 +289,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	fs::path tempFile = targetFile;
 	
 	tempFile.remove_filename();
-#if BOOST_VERSION < 104700
+#if BOOST_VERSION < 104600
 	tempFile /= "_" + targetFile.filename();
 #else
 	tempFile /= "_" + targetFile.filename().string();

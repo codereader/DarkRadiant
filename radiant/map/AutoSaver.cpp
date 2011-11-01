@@ -19,6 +19,7 @@
 #include "map/Map.h"
 #include "modulesystem/ApplicationContextImpl.h"
 
+#include <boost/version.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/exception.hpp>
@@ -114,7 +115,7 @@ void AutoMapSaver::saveSnapshot() {
 	snapshotPath /= GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 
 	// Retrieve the mapname
-#if BOOST_VERSION < 104700
+#if BOOST_VERSION < 104600
 	std::string mapName = fullPath.filename();
 #else
 	std::string mapName = fullPath.filename().string();
