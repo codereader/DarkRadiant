@@ -624,22 +624,23 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 		// writer to it. The constructor will prepare the scene
 		// and the destructor will clean it up afterwards. That way
 		// we ensure a nice and tidy scene when exceptions are thrown.
-		MapExporter exporter(*mapWriter, root, outFileStream, counter.getCount());
+		MapExporterPtr exporter;
+		
+		if (format.allowInfoFileCreation())
+		{
+			exporter.reset(new MapExporter(*mapWriter, root, outFileStream, auxFileStream, counter.getCount()));
+		}
+		else
+		{
+			exporter.reset(new MapExporter(*mapWriter, root, outFileStream, counter.getCount())); // no aux stream
+		}
 
 		bool cancelled = false;
 
 		try
 		{
 			// Pass the traversal function and the root of the subgraph to export
-			exporter.exportMap(root, traverse);
-
-			// Now traverse the scene again and write the .darkradiant file,
-			// provided the MapFormat doesn't disallow layer saving.
-			if (format.allowInfoFileCreation())
-			{
-				InfoFileExporter infoExporter(root, auxFileStream);
-				traverse(root, infoExporter);
-			}
+			exporter->exportMap(root, traverse);
 		}
 		catch (gtkutil::ModalProgressDialog::OperationAbortedException&)
 		{
@@ -650,6 +651,8 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 
 			cancelled = true;
 		}
+
+		exporter.reset();
 
 		outFileStream.close();
 		auxFileStream.close();

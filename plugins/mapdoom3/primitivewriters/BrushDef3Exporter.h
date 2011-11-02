@@ -39,10 +39,6 @@ public:
 	// Writes a brushDef3 definition from the given brush to the given stream
 	static void exportBrush(std::ostream& stream, const IBrush& brush, bool writeContentsFlags = true)
 	{
-		if (!brush.hasContributingFaces()) {
-			return;
-		}
-
 		// Brush decl header
 		stream << "{" << std::endl;
 		stream << "brushDef3" << std::endl;

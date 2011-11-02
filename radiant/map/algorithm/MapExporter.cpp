@@ -32,6 +32,34 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::o
 	_totalNodeCount(nodeCount),
 	_curNodeCount(0)
 {
+	construct();
+}
+
+MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, 
+				std::ostream& mapStream, std::ostream& auxStream, std::size_t nodeCount) :
+	_writer(writer),
+	_mapStream(mapStream),
+	_infoFileExporter(new InfoFileExporter(auxStream)),
+	_root(root),
+	_dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
+	_totalNodeCount(nodeCount),
+	_curNodeCount(0)
+{
+	construct();
+}
+
+MapExporter::~MapExporter()
+{
+	// Close any info file stream
+	_infoFileExporter.reset();
+
+	// The finish() call is placed in the destructor to make sure that 
+	// even on unhandled exceptions the map is left in a working state
+	finishScene();
+}
+
+void MapExporter::construct()
+{
 	if (_totalNodeCount > 0 && GlobalMainFrame().isActiveApp())
 	{
 		enableProgressDialog();
@@ -49,13 +77,6 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::o
 
 	// Add origin to func_* children before writing
 	prepareScene();
-}
-
-MapExporter::~MapExporter()
-{
-	// The finish() call is placed in the destructor to make sure that 
-	// even on unhandled exceptions the map is left in a working state
-	finishScene();
 }
 
 void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse)
@@ -111,17 +132,22 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			
 			_writer.beginWriteEntity(*entity, _mapStream);
 
+			if (_infoFileExporter) _infoFileExporter->visit(node);
+
 			return true;
 		}
 
 		IBrush* brush = Node_getIBrush(node);
 
-		if (brush != NULL)
+		if (brush != NULL && brush->hasContributingFaces())
 		{
 			// Progress dialog handling
 			onNodeProgress();
 
 			_writer.beginWriteBrush(*brush, _mapStream);
+
+			if (_infoFileExporter) _infoFileExporter->visit(node);
+
 			return true;
 		}
 
@@ -133,6 +159,9 @@ bool MapExporter::pre(const scene::INodePtr& node)
 			onNodeProgress();
 
 			_writer.beginWritePatch(*patch, _mapStream);
+
+			if (_infoFileExporter) _infoFileExporter->visit(node);
+
 			return true;
 		}
 	}
@@ -158,7 +187,7 @@ void MapExporter::post(const scene::INodePtr& node)
 
 		IBrush* brush = Node_getIBrush(node);
 
-		if (brush != NULL)
+		if (brush != NULL && brush->hasContributingFaces())
 		{
 			_writer.endWriteBrush(*brush, _mapStream);
 			return;

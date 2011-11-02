@@ -5,6 +5,7 @@
 #include "igame.h"
 
 #include "gtkutil/ModalProgressDialog.h"
+#include "InfoFileExporter.h"
 #include "EventRateLimiter.h"
 
 namespace map
@@ -31,6 +32,9 @@ private:
 	// The stream we're writing to
 	std::ostream& _mapStream;
 
+	// Optional info file exporter (is NULL if no info file should be written)
+	InfoFileExporterPtr _infoFileExporter;
+
 	// The root node of the subgraph to be exported
 	scene::INodePtr _root;
 
@@ -46,13 +50,18 @@ private:
 
 public:
 	// The constructor prepares the scene and the output stream
-	MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::ostream& mapStream, std::size_t nodeCount = 0);
+	MapExporter(IMapWriter& writer, const scene::INodePtr& root, 
+				std::ostream& mapStream, std::size_t nodeCount = 0);
+
+	// Additional constructor allowed to write to the auxiliary .darkradiant file
+	MapExporter(IMapWriter& writer, const scene::INodePtr& root, 
+				std::ostream& mapStream, std::ostream& auxStream, std::size_t nodeCount = 0);
 
 	// Cleans up the scene on destruction
 	~MapExporter();
 
 	// Entry point for traversing the given root node using the given traversal function
-	virtual void exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse);
+	void exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse);
 
 	void enableProgressDialog();
 	void disableProgressDialog();
@@ -62,6 +71,9 @@ public:
 	void post(const scene::INodePtr& node);
 
 private:
+	// Common code shared by the constructors
+	void construct();
+
 	void onNodeProgress();
 
 	// Is called before exporting the scene to prepare func_* groups.
@@ -70,5 +82,6 @@ private:
 	// Called after all the writing has been performed, cleans up func_* groups
 	void finishScene();
 };
+typedef boost::shared_ptr<MapExporter> MapExporterPtr;
 
 } // namespace
