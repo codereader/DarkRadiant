@@ -588,7 +588,7 @@ bool MapResource::checkIsWriteable(const boost::filesystem::path& path)
 }
 
 bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
-						   GraphTraversalFunc traverse, const std::string& filename)
+						   const GraphTraversalFunc& traverse, const std::string& filename)
 {
 	// Actual output file paths
 	fs::path outFile = filename;
@@ -630,9 +630,8 @@ bool MapResource::saveFile(const MapFormat& format, const scene::INodePtr& root,
 
 		try
 		{
-			// Use the traversal function to start pushing relevant nodes
-			// to the MapExporter
-			traverse(root, exporter);
+			// Pass the traversal function and the root of the subgraph to export
+			exporter.exportMap(root, traverse);
 
 			// Now traverse the scene again and write the .darkradiant file,
 			// provided the MapFormat doesn't disallow layer saving.

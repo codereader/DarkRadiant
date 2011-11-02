@@ -1,5 +1,4 @@
-#ifndef MAP_REGIONMANAGER_
-#define MAP_REGIONMANAGER_
+#pragma once
 
 #include <list>
 #include "icommandsystem.h"
@@ -101,7 +100,7 @@ public:
 	 * 		 whether the walker.pre() and walker.post() methods are invoked. This allows
 	 * 		 filtering of the non-regioned nodes.
 	 */
-	static void traverseRegion(scene::INodePtr root, scene::NodeVisitor& walker);
+	static void traverseRegion(const scene::INodePtr& root, scene::NodeVisitor& walker);
 
 	// Static command targets for use in EventManager
 
@@ -141,5 +140,3 @@ public:
 
 // Use this to call the non-static member methods.
 map::RegionManager& GlobalRegion();
-
-#endif /*MAP_REGIONMANAGER_*/

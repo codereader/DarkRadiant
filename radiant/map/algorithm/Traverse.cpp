@@ -50,13 +50,15 @@ public:
 	}
 };
 
-void traverseSelected(scene::INodePtr root, scene::NodeVisitor& nodeExporter) {
+void traverseSelected(const scene::INodePtr& root, scene::NodeVisitor& nodeExporter)
+{
 	// Create a wrapper which calls the nodeExporter only for selected and related items
 	IncludeSelectedWalker visitor(nodeExporter);
 	root->traverse(visitor);
 }
 
-void traverse(scene::INodePtr root, scene::NodeVisitor& nodeExporter) {
+void traverse(const scene::INodePtr& root, scene::NodeVisitor& nodeExporter)
+{
 	// Just traverse the root using the given nodeExporter, no special rules
 	root->traverse(nodeExporter);
 }

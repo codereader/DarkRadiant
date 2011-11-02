@@ -314,7 +314,8 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args) {
 	}
 }
 
-void RegionManager::traverseRegion(scene::INodePtr root, scene::NodeVisitor& nodeExporter) {
+void RegionManager::traverseRegion(const scene::INodePtr& root, scene::NodeVisitor& nodeExporter)
+{
 	// Pass the given Walker on to the ExcludeWalker,
 	// which calls the nodeExporter.pre() and .post() methods if the visited item is regioned.
 	ExcludeNonRegionedWalker visitor(nodeExporter);
