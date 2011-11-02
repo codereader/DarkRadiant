@@ -79,7 +79,7 @@ public:
 
 	// Save the map contents to the given filename using the given MapFormat export module
 	static bool saveFile(const MapFormat& format, const scene::INodePtr& root,
-						 GraphTraversalFunc traverse, const std::string& filename);
+						 const GraphTraversalFunc& traverse, const std::string& filename);
 
 private:
 	// Create a backup copy of the map (used before saving)

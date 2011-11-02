@@ -51,6 +51,9 @@ public:
 	// Cleans up the scene on destruction
 	~MapExporter();
 
+	// Entry point for traversing the given root node using the given traversal function
+	virtual void exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse);
+
 	void enableProgressDialog();
 	void disableProgressDialog();
 

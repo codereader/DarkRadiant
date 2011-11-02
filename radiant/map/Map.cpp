@@ -981,8 +981,8 @@ void Map::exportSelected(std::ostream& out)
 	// Create our main MapExporter walker for traversal
 	MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
 
-	// Use the traverseSelected function to start writing selected nodes
-	traverseSelected(GlobalSceneGraph().root(), exporter);
+	// Pass the traverseSelected function and start writing selected nodes
+	exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
 }
 
 // RegisterableModule implementation

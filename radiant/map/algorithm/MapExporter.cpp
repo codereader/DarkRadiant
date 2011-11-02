@@ -47,9 +47,19 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::o
 	int precision = strToInt(nodes[0].getAttributeValue("value"));
 	_mapStream.precision(precision);
 
-	prepareScene();
-
 	// Add origin to func_* children before writing
+	prepareScene();
+}
+
+MapExporter::~MapExporter()
+{
+	// The finish() call is placed in the destructor to make sure that 
+	// even on unhandled exceptions the map is left in a working state
+	finishScene();
+}
+
+void MapExporter::exportMap(const scene::INodePtr& root, const GraphTraversalFunc& traverse)
+{
 	try
 	{
 		_writer.beginWriteMap(_mapStream);
@@ -58,10 +68,10 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::o
 	{
 		globalErrorStream() << "Failure exporting a node (pre): " << ex.what() << std::endl;
 	}
-}
 
-MapExporter::~MapExporter()
-{
+	// Perform the actual map traversal
+	traverse(root, *this);
+
 	try
 	{
 		_writer.endWriteMap(_mapStream);
@@ -71,7 +81,7 @@ MapExporter::~MapExporter()
 		globalErrorStream() << "Failure exporting a node (pre): " << ex.what() << std::endl;
 	}
 
-	finishScene();
+	// finishScene() is handled through the destructor
 }
 
 void MapExporter::enableProgressDialog()
