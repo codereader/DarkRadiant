@@ -9,9 +9,8 @@
 namespace map
 {
 
-InfoFileExporter::InfoFileExporter(const scene::INodePtr& root, std::ostream& stream) :
+InfoFileExporter::InfoFileExporter(std::ostream& stream) :
 	_stream(stream),
-	_root(root),
 	_layerInfoCount(0)
 {
 	// Write the information file header
@@ -37,29 +36,23 @@ InfoFileExporter::~InfoFileExporter()
 	globalOutputStream() << _layerInfoCount << " node-to-layer mappings written." << std::endl;
 }
 
-bool InfoFileExporter::pre(const scene::INodePtr& node)
+void InfoFileExporter::visit(const scene::INodePtr& node)
 {
 	// Don't export the layer settings for models and particles, as they are not there
-	// at map load/parse time.
-	if (Node_isModel(node) || Node_isParticle(node)) 
-	{
-		return false;
-	}
+	// at map load/parse time - these shouldn't even be passed in here
+	assert(node && !Node_isModel(node) && !Node_isParticle(node));
 
 	// Open a Node block
 	_stream << "\t\t" << InfoFile::NODE << " { ";
 
-	if (node != NULL)
+	scene::LayerList layers = node->getLayers();
+
+	// Write a space-separated list of node IDs
+	for (scene::LayerList::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		scene::LayerList layers = node->getLayers();
-
-		// Write a space-separated list of node IDs
-		for (scene::LayerList::iterator i = layers.begin(); i != layers.end(); ++i)
-		{
-			_stream << *i << " ";
-		}
+		_stream << *i << " ";
 	}
-
+	
 	// Close the Node block
 	_stream << "}";
 
@@ -69,8 +62,6 @@ bool InfoFileExporter::pre(const scene::INodePtr& node)
 	_stream << std::endl;
 
 	_layerInfoCount++;
-
-	return true;
 }
 
 void InfoFileExporter::writeLayerNames()
