@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "scenelib.h"
 #include "undolib.h"
+#include "LayerValidityCheckWalker.h"
 
 namespace scene
 {
@@ -254,6 +255,8 @@ void TraversableNodeSet::processInsertBuffer()
 		 i != _undoInsertBuffer.end(); ++i)
 	{
 		_owner.onChildAdded(*i);
+
+		LayerValidityCheckWalker::ProcessNode(*i);
 	}
 
 	// Clear the buffer after this operation
