@@ -1650,9 +1650,6 @@
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h">
       <Filter>src\ui\animationpreview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\layers\LayerValidityCheckWalker.h">
-      <Filter>src\layers</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

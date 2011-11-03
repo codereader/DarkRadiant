@@ -33,7 +33,7 @@
 #include "algorithm/InfoFileExporter.h"
 #include "algorithm/AssignLayerMappingWalker.h"
 #include "algorithm/ChildPrimitives.h"
-#include "../layers/LayerValidityCheckWalker.h"
+#include "scene/LayerValidityCheckWalker.h"
 
 namespace fs = boost::filesystem;
 

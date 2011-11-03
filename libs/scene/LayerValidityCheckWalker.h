@@ -18,18 +18,31 @@ public:
 	// scene::NodeVisitor
 	bool pre(const INodePtr& node)
 	{
+		if (ProcessNode(node))
+		{
+			_numFixed++;
+		}
+		
+		return true;
+	}
+
+	// Returns true if the node has been "fixed"
+	static bool ProcessNode(const INodePtr& node)
+	{
 		LayerList list = node->getLayers();
+
+		bool fixed = false;
 
 		for (LayerList::iterator i = list.begin(); i != list.end(); ++i)
 		{
 			if (!GlobalLayerSystem().layerExists(*i))
 			{
 				node->removeFromLayer(*i);
-				_numFixed++;
+				fixed = true;
 			}
 		}
-		
-		return true;
+
+		return fixed;
 	}
 
 	std::size_t getNumFixed() const

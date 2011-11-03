@@ -28,5 +28,8 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />
+    <ClInclude Include="..\..\libs\scene\LayerValidityCheckWalker.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
