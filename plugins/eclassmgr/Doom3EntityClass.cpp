@@ -347,6 +347,17 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 		{
         	setModelPath(os::standardPath(value));
         }
+		else if (key == "editor_color")
+		{
+			setColour(value);
+        }
+		else if (key == "editor_light")
+		{
+			if (value == "1")
+			{
+				setIsLight(true);
+			}
+        }
         else if (key == "spawnclass")
 		{
             if (value == "idLight") {
@@ -371,15 +382,7 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 				// Get the type by trimming the string left and right
 				std::string type = key.substr(7, key.length() - attName.length() - 8);
 
-				if (type == "color")
-				{
-					setColour(value);
-				}
-				else if (type == "light")
-				{
-					setIsLight(value == "1");
-				}
-				else if (!attName.empty() && type != "setKeyValue") // Ignore editor_setKeyValue
+				if (!attName.empty() && type != "setKeyValue") // Ignore editor_setKeyValue
 				{
 					// Transform the type into a better format
 					if (type == "var" || type == "string")
