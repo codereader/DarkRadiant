@@ -6,7 +6,7 @@ cd DarkRadiant_install.x64
 del *.* /S /Q
 xcopy ..\DarkRadiant\install\*.* /s .
 del *.exp /S /Q
-del *.pdb /S /Q
+rem del *.pdb /S /Q
 del *.lib /S /Q
 del *.suo /S /Q
 del *.pgd /S /Q
