@@ -3,15 +3,15 @@
 
 [Setup]
 AppName=DarkRadiant
-AppVerName=DarkRadiant 1.7.0pre9 x64
+AppVerName=DarkRadiant 1.7.0pre10 x64
 AppPublisher=The Dark Mod
 AppPublisherURL=http://www.thedarkmod.com
 AppSupportURL=http://www.thedarkmod.com
 AppUpdatesURL=http://www.thedarkmod.com
 DefaultDirName={pf}\DarkRadiant
-DefaultGroupName=DarkRadiant 1.7.0pre9 x64
+DefaultGroupName=DarkRadiant 1.7.0pre10 x64
 OutputDir=C:\Games\DarkRadiant\tools\innosetup
-OutputBaseFilename=darkradiant-1.7.0pre9.x64
+OutputBaseFilename=darkradiant-1.7.0pre10.x64
 Compression=lzma
 SolidCompression=yes
 ArchitecturesAllowed=x64
@@ -25,7 +25,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Games\DarkRadiant_install.x64\darkradiant.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Games\DarkRadiant_install.x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Games\DarkRadiant_install.x64\*"; Excludes: "*.pdb"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
