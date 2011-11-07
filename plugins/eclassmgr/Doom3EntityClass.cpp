@@ -251,6 +251,12 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 	{
 		setColour(Vector3(colourAttr.getValue()));
 	}
+	else
+	{
+		// If no colour is set, assign the default entity colour to this class
+		static Vector3 defaultColour = ColourSchemes().getColour("default_entity");
+		setColour(defaultColour);
+	}
 }
 
 // Find a single attribute
