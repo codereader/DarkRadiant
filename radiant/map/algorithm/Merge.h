@@ -103,6 +103,14 @@ public:
 		{
 			// This is an ordinary entity, not worldspawn
 
+			// greebo: Un-register the entity from its previous root node first to be clean
+			scene::INodePtr oldParent = node->getParent();
+
+			if (oldParent)
+			{
+				oldParent->removeChildNode(node);
+			}
+
 			// Insert this node at the target path
 			m_path.top()->addChildNode(node);
 			m_path.push(node);
