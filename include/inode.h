@@ -172,6 +172,12 @@ public:
 
 	// Returns the transformation from local to world coordinates
 	virtual const Matrix4& localToWorld() const = 0;
+
+	// Undo/Redo events - some nodes need to do extra legwork after undo or redo
+	// This is called by the TraversableNodeSet after a undo/redo operation
+	// not by the UndoSystem itself, at least not yet.
+	virtual void onPostUndo() {}
+	virtual void onPostRedo() {}
 };
 
 } // namespace scene
