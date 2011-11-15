@@ -29,8 +29,31 @@
 
 namespace undo {
 
-namespace {
+namespace
+{
 	const std::string RKEY_UNDO_QUEUE_SIZE = "user/ui/undo/queueSize";
+
+	class PostUndoWalker :
+		public scene::NodeVisitor
+	{
+	public:
+		bool pre(const scene::INodePtr& node)
+		{
+			node->onPostUndo();
+			return true;
+		}
+	};
+
+	class PostRedoWalker :
+		public scene::NodeVisitor
+	{
+	public:
+		bool pre(const scene::INodePtr& node)
+		{
+			node->onPostRedo();
+			return true;
+		}
+	};
 }
 
 class RadiantUndoSystem :
@@ -170,6 +193,10 @@ public:
 				observer->postUndo();
 			}
 
+			// Trigger the onPostUndo event on all scene nodes
+			PostUndoWalker walker;
+			GlobalSceneGraph().root()->traverse(walker);
+
 			GlobalSceneGraph().sceneChanged();
 		}
 	}
@@ -192,6 +219,10 @@ public:
 				Observer* observer = *(i++);
 				observer->postRedo();
 			}
+
+			// Trigger the onPostUndo event on all scene nodes
+			PostRedoWalker walker;
+			GlobalSceneGraph().root()->traverse(walker);
 
 			GlobalSceneGraph().sceneChanged();
 		}

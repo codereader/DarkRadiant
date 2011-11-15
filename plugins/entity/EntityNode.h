@@ -145,6 +145,9 @@ public:
 	const ShaderPtr& getWireShader() const;
 	const ShaderPtr& getFillShader() const;
 
+	virtual void onPostUndo();
+	virtual void onPostRedo();
+
 protected:
 	virtual void onModelKeyChanged(const std::string& value);
 
