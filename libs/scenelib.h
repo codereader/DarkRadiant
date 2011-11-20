@@ -87,24 +87,41 @@ inline bool Node_isPrimitive(const scene::INodePtr& node)
 class ParentBrushes :
 	public scene::NodeVisitor
 {
-	scene::INodePtr m_parent;
+private:
+	scene::INodePtr _parent;
+
 public:
-	ParentBrushes(scene::INodePtr parent) :
-		m_parent(parent)
+	ParentBrushes(const scene::INodePtr& parent) :
+		_parent(parent)
 	{}
 
-	virtual bool pre(const scene::INodePtr& node) {
+	virtual bool pre(const scene::INodePtr& node)
+	{
 		return false;
 	}
 
-	virtual void post(const scene::INodePtr& node) {
-		if (Node_isPrimitive(node)) {
-			m_parent->addChildNode(node);
+	virtual void post(const scene::INodePtr& node) 
+	{
+		if (Node_isPrimitive(node))
+		{
+			// We need to keep the hard reference to the node, such that the refcount doesn't reach 0
+			scene::INodePtr nodeRef = node;
+
+			scene::INodePtr oldParent = nodeRef->getParent();
+
+			if (oldParent)
+			{
+				// greebo: remove the node from the old parent first
+				oldParent->removeChildNode(nodeRef);
+			}
+
+			_parent->addChildNode(nodeRef);
 		}
 	}
 };
 
-inline void parentBrushes(const scene::INodePtr& subgraph, const scene::INodePtr& parent) {
+inline void parentBrushes(const scene::INodePtr& subgraph, const scene::INodePtr& parent)
+{
 	ParentBrushes visitor(parent);
 	subgraph->traverse(visitor);
 }
