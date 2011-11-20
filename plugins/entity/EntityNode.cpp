@@ -1,6 +1,7 @@
 #include "EntityNode.h"
 
 #include "i18n.h"
+#include "itextstream.h"
 
 #include "EntitySettings.h"
 #include "target/RenderableTargetInstances.h"
@@ -223,7 +224,19 @@ void EntityNode::onChildRemoved(const scene::INodePtr& child)
 	Node::onChildRemoved(child);
 
 	// Leave the renderEntity on the child until this point - this has to happen after onChildRemoved()
-	child->setRenderEntity(IRenderEntityPtr());
+
+	// greebo: Double-check that we're the currently assigned renderentity - in some cases nodes on the undostack
+	// keep references to child nodes - we should never NULLify renderentities of nodes that are not assigned to us
+	IRenderEntityPtr curRenderEntity = child->getRenderEntity();
+
+	if (curRenderEntity && curRenderEntity.get() == static_cast<IRenderEntity*>(this))
+	{
+		child->setRenderEntity(IRenderEntityPtr());	
+	}
+	else
+	{
+		globalWarningStream() << "[EntityNode] the child being removed is already assigned to a different render entity." << std::endl;
+	}
 }
 
 std::string EntityNode::name() const
