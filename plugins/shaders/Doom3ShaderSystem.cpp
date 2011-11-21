@@ -311,159 +311,164 @@ void Doom3ShaderSystem::initialiseModule(const ApplicationContext& ctx)
 #endif
 }
 
+// Horrible evil macro to avoid assertion failures if expr is NULL
+#define GET_EXPR_OR_RETURN expr = createShaderExpressionFromString(exprStr);\
+                                  if (!expr) return;
+
 void Doom3ShaderSystem::testShaderExpressionParsing()
 {
 	// Test a few things
 	std::string exprStr = "3";
-	IShaderExpressionPtr expr = createShaderExpressionFromString(exprStr);
+	IShaderExpressionPtr expr;
+    GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+4";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(3+4)";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(4.2)";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+5+6";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+(5+6)";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 * 3+5";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+3*5";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(3+3)*5";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(3+3*7)-5";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3-3*5";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "blinktable[0]";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "blinktable[1]";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "blinktable[0.3]";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "blinksnaptable[0.3]";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "xianjittertable[0]";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "xianjittertable[time]";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3-3*xianjittertable[2]";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3+xianjittertable[3]*7";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "(3+xianjittertable[3])*7";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "2.3 % 2";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "2.0 % 0.5";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "2 == 2";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1 == 2";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1 != 2";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1.2 != 1.2";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1.2 == 1.2*3";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1.2*3 == 1.2*3";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 == 3 && 1 != 0";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "1 != 1 || 3 == 3";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "4 == 3 || 1 != 0";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "time";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(2) << std::endl;
 
 	exprStr = "-3 + 5";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 * -5";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 * -5 + 4";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 + -5 * 4";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "3 * 5 * -6";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 
 	exprStr = "decalFade[(time - Parm3)/(parm4 - parm3)]";
-	expr = createShaderExpressionFromString(exprStr);
+	GET_EXPR_OR_RETURN;
 	globalOutputStream() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 }
 
