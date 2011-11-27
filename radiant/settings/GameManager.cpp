@@ -18,8 +18,10 @@
 #include "modulesystem/ApplicationContextImpl.h"
 #include <iostream>
 
-namespace game {
+using boost::format;
 
+namespace game
+{
 	namespace {
 		const std::string RKEY_GAME_TYPE = "user/game/type";
 		const std::string RKEY_FS_GAME = "user/game/fs_game";
@@ -142,22 +144,30 @@ void Manager::initialise(const std::string& appPath)
 	}
 }
 
-std::string Manager::getUserEnginePath() {
+std::string Manager::getUserEnginePath()
+{
 #if defined(POSIX)
-		// Get the user home folder
-		std::string homeDir = os::standardPathWithSlash(g_get_home_dir());
-		// Get the game prefix, which has to be appended (e.g. ".doom3")
-		std::string prefix = currentGame()->getKeyValue("prefix");
 
-		// Construct the user's engine path
-		return os::standardPathWithSlash(homeDir + prefix + "/");
-#else
-		// In all other environments, we just take the engine path as base
-		return _enginePath;
+    // First check for a local copy of the game tree, e.g. ~/.doom3
+    std::string localPath = os::standardPathWithSlash(
+        os::standardPathWithSlash(g_get_home_dir())
+        + currentGame()->getKeyValue("prefix")
+    );
+
+    if (os::fileOrDirExists(localPath))
+    {
+        return localPath;
+    }
+
 #endif
+
+    // Otherwise (Windows, or no local mod path found) return the regular engine
+    // path
+    return _enginePath;
 }
 
-void Manager::constructPaths() {
+void Manager::constructPaths()
+{
 	_enginePath = GlobalRegistry().get(RKEY_ENGINE_PATH);
 
 	// Make sure it's a well formatted path
@@ -203,6 +213,36 @@ void Manager::constructPaths() {
 		// No fs_game, no modpath
 		_modPath = "";
 	}
+}
+
+bool Manager::userWantsToCorrectSettings() const
+{
+    using boost::format;
+    std::stringstream msg("<b>Warning:</b>\n");
+
+    if (!os::fileOrDirExists(_enginePath))
+    {
+        msg << format(_("Engine path \"%1%\" does not exist.\n")) % _enginePath;
+    }
+
+    if (!_fsGame.empty() && !os::fileOrDirExists(_modPath))
+    {
+        msg << format(_("The fs_game folder \"%1%\" does not exist.\n"))
+               % _modPath;
+    }
+
+    if (!_fsGameBase.empty() && !os::fileOrDirExists(_modBasePath))
+    {
+        msg << format(_("The fs_game_base folder \"%1%\" does not exist.\n"))
+               % _modBasePath;
+    }
+
+    msg << _("Do you want to correct these settings?");
+
+    gtkutil::MessageBox msgBox(
+        _("Invalid Settings"), msg.str(), ui::IDialog::MESSAGE_ASK
+    );
+    return (msgBox.run() == ui::IDialog::RESULT_YES);
 }
 
 void Manager::initEnginePath()
@@ -269,32 +309,9 @@ void Manager::initEnginePath()
 		// Construct the paths with the settings found there
 		constructPaths();
 
-		if (!settingsValid()) {
-			std::string msg("<b>Warning:</b>\n");
-
-			if (!file_exists(_enginePath.c_str())) {
-				msg += _("Engine path does not exist.");
-				msg += "\n";
-			}
-
-			if (!_fsGame.empty() && !file_exists(_modPath.c_str())) {
-				msg += _("The fs_game folder does not exist.");
-				msg += "\n";
-			}
-
-			if (!_fsGameBase.empty() && !file_exists(_modBasePath.c_str())) {
-				msg += _("The fs_game_base folder does not exist.");
-				msg += "\n";
-			}
-
-			msg += _("Do you want to correct these settings?");
-
-			gtkutil::MessageBox msgBox(_("Invalid Settings"), msg, ui::IDialog::MESSAGE_ASK);
-
-			if (msgBox.run() == ui::IDialog::RESULT_NO)
-			{
-				break;
-			}
+		if (!settingsValid() && !userWantsToCorrectSettings())
+        {
+            break;
 		}
 	}
 
@@ -312,16 +329,16 @@ void Manager::initEnginePath()
 }
 
 bool Manager::settingsValid() const {
-	if (file_exists(_enginePath.c_str())) {
+	if (os::fileOrDirExists(_enginePath)) {
 
 		// Check the mod base path, if appropriate
-		if (!_fsGameBase.empty() && !file_exists(_modBasePath.c_str())) {
+		if (!_fsGameBase.empty() && !os::fileOrDirExists(_modBasePath)) {
 			// Mod base name is not empty, but folder doesnt' exist
 			return false;
 		}
 
 		// Check the mod path, if appropriate
-		if (!_fsGame.empty() && !file_exists(_modPath.c_str())) {
+		if (!_fsGame.empty() && !os::fileOrDirExists(_modPath)) {
 			// Mod name is not empty, but mod folder doesnt' exist
 			return false;
 		}

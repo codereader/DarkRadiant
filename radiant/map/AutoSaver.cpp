@@ -141,7 +141,7 @@ void AutoMapSaver::saveSnapshot() {
 			filename += ".";
 			filename += GlobalRegistry().get(RKEY_MAP_EXTENSION);
 
-			if (file_exists(filename.c_str())) {
+			if (os::fileOrDirExists(filename)) {
 				// Add to the folder size
 				folderSize += file_size(filename.c_str());
 			}

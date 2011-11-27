@@ -315,7 +315,7 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
 	// Load user preferences, these overwrite any values that have defined before
 	// The called method also checks for any upgrades that have to be performed
 	const std::string userSettingsFile = ctx.getSettingsPath() + "user.xml";
-	if (file_exists(userSettingsFile.c_str())) {
+	if (os::fileOrDirExists(userSettingsFile)) {
 		import(userSettingsFile, "", Registry::treeUser);
 	}
     else {
@@ -324,17 +324,17 @@ void XMLRegistry::initialiseModule(const ApplicationContext& ctx)
     }
 
 	const std::string userColoursFile = ctx.getSettingsPath() + "colours.xml";
-	if (file_exists(userColoursFile.c_str())) {
+	if (os::fileOrDirExists(userColoursFile)) {
 		import(userColoursFile, "user/ui", Registry::treeUser);
 	}
 
 	const std::string userInputFile = ctx.getSettingsPath() + "input.xml";
-	if (file_exists(userInputFile.c_str())) {
+	if (os::fileOrDirExists(userInputFile)) {
 		import(userInputFile, "user/ui", Registry::treeUser);
 	}
 
 	const std::string userFilterFile = ctx.getSettingsPath() + "filters.xml";
-	if (file_exists(userFilterFile.c_str())) {
+	if (os::fileOrDirExists(userFilterFile)) {
 		import(userFilterFile, "user/ui/filtersystem", Registry::treeUser);
 	}
 

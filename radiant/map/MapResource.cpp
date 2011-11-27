@@ -155,7 +155,7 @@ bool MapResource::save()
 	std::string fullpath = _path + _name;
 
 	// Save a backup of the existing file (rename it to .bak) if it exists in the first place
-	if (file_exists(fullpath.c_str()))
+	if (os::fileOrDirExists(fullpath))
 	{
 		if (!saveBackup())
 		{

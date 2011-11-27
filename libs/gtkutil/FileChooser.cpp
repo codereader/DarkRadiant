@@ -224,7 +224,7 @@ std::string FileChooser::display()
 			return fileName;
 		}
 
-		if (!file_exists(fileName.c_str()))
+		if (!os::fileOrDirExists(fileName))
 		{
 			return fileName;
 		}

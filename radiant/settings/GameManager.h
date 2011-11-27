@@ -54,6 +54,8 @@ private:
 
 private:
 
+    bool userWantsToCorrectSettings() const;
+
    // Set the map and prefab file paths from the current game information
    void setMapAndPrefabPaths(const std::string& baseGamePath);
 

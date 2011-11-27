@@ -103,10 +103,15 @@ inline bool file_writeable(const char* path)
   return file_accessible(path, FileAccess::Write);
 }
 
-/// \brief Returns true if the file or directory identified by \p path exists.
-inline bool file_exists(const char* path)
+namespace os
 {
-  return file_accessible(path, FileAccess::Exists);
+
+/// \brief Returns true if the file or directory identified by \p path exists.
+inline bool fileOrDirExists(const std::string& path)
+{
+  return file_accessible(path.c_str(), FileAccess::Exists);
+}
+
 }
 
 /// \brief Returns true if the file or directory identified by \p path exists and is a directory.

@@ -53,7 +53,7 @@ void StartupMapLoader::onRadiantStartup()
 	}
 	else {
 		std::string lastMap = GlobalMRU().getLastMapName();
-		if (GlobalMRU().loadLastMap() && !lastMap.empty() && file_exists(lastMap.c_str())) {
+		if (GlobalMRU().loadLastMap() && !lastMap.empty() && os::fileOrDirExists(lastMap)) {
 			GlobalMap().load(lastMap);
 		}
 		else {
