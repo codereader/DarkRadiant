@@ -14,6 +14,7 @@
 
 #include "parser/DefTokeniser.h"
 #include "math/Vector4.h"
+#include "os/fs.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -21,7 +22,6 @@
 #include <iostream>
 #include <boost/version.hpp>
 #include <boost/bind.hpp>
-#include <boost/filesystem.hpp>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -287,13 +287,9 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 
 	// Open a temporary file
 	fs::path tempFile = targetFile;
-	
+
 	tempFile.remove_filename();
-#if BOOST_VERSION < 104600
-	tempFile /= "_" + targetFile.filename();
-#else
-	tempFile /= "_" + targetFile.filename().string();
-#endif
+	tempFile /= "_" + os::get_filename(targetFile);
 
 	std::ofstream tempStream(tempFile.string().c_str());
 

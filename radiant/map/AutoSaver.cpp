@@ -14,6 +14,8 @@
 #include "os/file.h"
 #include "os/path.h"
 #include "os/dir.h"
+#include "os/fs.h"
+
 #include <limits.h>
 #include "string/string.h"
 #include "map/Map.h"
@@ -115,11 +117,7 @@ void AutoMapSaver::saveSnapshot() {
 	snapshotPath /= GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 
 	// Retrieve the mapname
-#if BOOST_VERSION < 104600
-	std::string mapName = fullPath.filename();
-#else
-	std::string mapName = fullPath.filename().string();
-#endif
+	std::string mapName = os::get_filename(fullPath.filename());
 
 	// Check if the folder exists and create it if necessary
 	if (boost::filesystem::exists(snapshotPath) || os::makeDirectory(snapshotPath.string()))

@@ -7,15 +7,19 @@
 #include "ifilesystem.h"
 #include "settings/PreferenceSystem.h"
 #include "ui/prefdialog/PrefDialog.h"
+
 #include "os/file.h"
 #include "os/dir.h"
 #include "os/path.h"
+#include "os/fs.h"
+
 #include "GameFileLoader.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "Win32Registry.h"
 #include "modulesystem/StaticModule.h"
 #include "modulesystem/ApplicationContextImpl.h"
+
 #include <iostream>
 
 using boost::format;
@@ -149,14 +153,12 @@ std::string Manager::getUserEnginePath()
 #if defined(POSIX)
 
     // First check for a local copy of the game tree, e.g. ~/.doom3
-    std::string localPath = os::standardPathWithSlash(
-        os::standardPathWithSlash(g_get_home_dir())
-        + currentGame()->getKeyValue("prefix")
-    );
+    fs::path localPath = fs::path(g_get_home_dir())
+                         / currentGame()->getKeyValue("prefix");
 
-    if (os::fileOrDirExists(localPath))
+    if (fs::exists(localPath))
     {
-        return localPath;
+        return os::get_generic_string(localPath);
     }
 
 #endif

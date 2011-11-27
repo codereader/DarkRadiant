@@ -4,9 +4,8 @@
 #include "UnixPath.h"
 #include "os/file.h"
 #include "os/dir.h"
+#include "os/fs.h"
 #include <vector>
-
-#include <boost/filesystem.hpp>
 
 namespace fs = boost::filesystem;
 
@@ -64,15 +63,12 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 	{
 		// Get the candidate
 		const fs::path& candidate = *it;
+        std::string candidateStr = os::get_generic_string(candidate);
 
 		if (fs::is_directory(candidate))
 		{
 			// Check if we should traverse further
-#if BOOST_VERSION < 104600
-			if (visitor.directory(candidate.string().substr(rootLen), it.level()+1))
-#else
-			if (visitor.directory(candidate.generic_string().substr(rootLen), it.level()+1))
-#endif
+			if (visitor.directory(candidateStr.substr(rootLen), it.level()+1))
 			{
 				// Visitor returned true, prevent going deeper into it
 				it.no_push();
@@ -81,11 +77,7 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 		else
 		{
 			// File
-#if BOOST_VERSION < 104600
-			visitor.file(candidate.string().substr(rootLen));
-#else
-			visitor.file(candidate.generic_string().substr(rootLen));
-#endif
+			visitor.file(candidateStr.substr(rootLen));
 		}
 	}
 }
