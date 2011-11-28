@@ -20,7 +20,6 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/stock.h>
 
-#include "ParticleDefPopulator.h"
 #include "../ParticlesManager.h"
 
 #include "os/path.h"
@@ -54,7 +53,7 @@ ParticleEditor::ParticleEditor() :
 	// Window properties
     set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
     set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
-    
+
     // Add vbox to dialog
     add(*getGladeWidget<Gtk::Widget>("mainVbox"));
     g_assert(get_child() != NULL);
@@ -103,7 +102,7 @@ ParticleEditor::ParticleEditor() :
 void ParticleEditor::_onDeleteEvent()
 {
 	if (!handleParticleLeave(false))	return; // action not allowed or cancelled
-	
+
 	// Window destruction allowed, pass to base class => triggers destroy
 	BlockingTransientWindow::_onDeleteEvent();
 }
@@ -127,6 +126,47 @@ void ParticleEditor::setupParticleDefList()
 	_defSelection = view->get_selection();
 	_defSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onDefSelChanged));
 }
+
+namespace
+{
+
+/**
+ * Visitor class to retrieve particle system names and add them to a
+ * GtkListStore.
+ */
+class ParticlesVisitor
+{
+private:
+	// List store to populate
+	Glib::RefPtr<Gtk::ListStore> _store;
+
+	const ParticleEditor::DefColumns& _columns;
+
+public:
+
+	/**
+	 * Constructor.
+	 */
+	ParticlesVisitor(const Glib::RefPtr<Gtk::ListStore>& store,
+					 const ParticleEditor::DefColumns& columns)
+	: _store(store),
+	  _columns(columns)
+	{}
+
+	/**
+	 * Functor operator.
+	 */
+	void operator() (const particles::IParticleDef& def)
+	{
+		// Add the Def name to the list store
+		Gtk::TreeModel::iterator iter = _store->append();
+
+		Gtk::TreeModel::Row row = *iter;
+		row[_columns.name] = def.getName();
+	}
+};
+
+} // namespace
 
 void ParticleEditor::populateParticleDefList()
 {
@@ -195,7 +235,7 @@ void ParticleEditor::setupSettingsPages()
 	connectSpinner("fadeIndexFractionSpinner", &ParticleEditor::_onShaderControlsChanged);
 	connectSpinner("animFramesSpinner", &ParticleEditor::_onShaderControlsChanged);
 	connectSpinner("animRateSpinner", &ParticleEditor::_onShaderControlsChanged);
-	
+
 	// COUNT
 
 	connectSpinner("countSpinner", &ParticleEditor::_onCountTimeControlsChanged);
@@ -265,7 +305,7 @@ void ParticleEditor::setupSettingsPages()
 
 	getGladeWidget<Gtk::CheckButton>("useWorldGravity")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
-	
+
 	// PATH
 
 	getGladeWidget<Gtk::RadioButton>("pathStandard")->signal_toggled().connect(
@@ -290,7 +330,7 @@ void ParticleEditor::_onShaderControlsChanged()
 	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
 
 	std::string material = getGladeWidget<Gtk::Entry>("shaderEntry")->get_text();
-	
+
 	// Only assign a new material if it has actually changed, otherwise the whole particle gets re-shuffled
 	if (material != stage.getMaterialName())
 	{
@@ -299,7 +339,7 @@ void ParticleEditor::_onShaderControlsChanged()
 
 	stage.setColour(Vector4(getGladeWidget<Gtk::Entry>("colourEntry")->get_text()));
 	stage.setUseEntityColour(getGladeWidget<Gtk::CheckButton>("useEntityColour")->get_active());
-	stage.setFadeColour(Vector4(getGladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));	
+	stage.setFadeColour(Vector4(getGladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));
 	stage.setFadeInFraction(getSpinButtonValueAsFloat("fadeInFractionSpinner"));
 	stage.setFadeOutFraction(getSpinButtonValueAsFloat("fadeOutFractionSpinner"));
 	stage.setFadeIndexFraction(getSpinButtonValueAsFloat("fadeIndexFractionSpinner"));
@@ -442,7 +482,7 @@ void ParticleEditor::_onPathControlsChanged()
 	else if (getGladeWidget<Gtk::RadioButton>("pathFlies")->get_active())
 	{
 		stage.setCustomPathType(particles::IParticleStage::PATH_FLIES);
-		
+
 		stage.setCustomPathParm(0, getSpinButtonValueAsFloat("pathRadialSpeedSpinner"));
 		stage.setCustomPathParm(1, getSpinButtonValueAsFloat("pathAxialSpeedSpinner"));
 		stage.setCustomPathParm(2, getSpinButtonValueAsFloat("pathRadiusSpinner"));
@@ -483,7 +523,7 @@ void ParticleEditor::updatePathWidgetSensitivity()
 
 	getGladeWidget<Gtk::Widget>("pathRadiusLabel")->set_sensitive(useAnySpinner && useFlies);
 	getGladeWidget<Gtk::Widget>("pathSphereRadiusHBox")->set_sensitive(useAnySpinner && useFlies);
-	
+
 	getGladeWidget<Gtk::Widget>("pathSizeXLabel")->set_sensitive(useAnySpinner && !useFlies);
 	getGladeWidget<Gtk::Widget>("pathSizeYLabel")->set_sensitive(useAnySpinner && !useFlies);
 	getGladeWidget<Gtk::Widget>("pathSizeZLabel")->set_sensitive(useAnySpinner && !useFlies);
@@ -547,7 +587,7 @@ void ParticleEditor::activateSettingsEditPanels()
 
 void ParticleEditor::deactivateSettingsEditPanels()
 {
-	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(false);		
+	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(false);
 	getGladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(false);
 }
 
@@ -577,7 +617,7 @@ void ParticleEditor::_onDefSelChanged()
 	// Get the selection and store it
 	Gtk::TreeModel::iterator iter = _defSelection->get_selected();
 
-	if (!handleParticleLeave())	
+	if (!handleParticleLeave())
 	{
 		// Revert the selection (re-enter this function) and cancel the operation
 		_defSelection->select(_selectedDefIter);
@@ -739,7 +779,7 @@ void ParticleEditor::_onDuplicateStage()
 
 void ParticleEditor::updateWidgetsFromParticle()
 {
-	if (!_particle) 
+	if (!_particle)
 	{
 		getGladeWidget<Gtk::Label>("outFileLabel")->set_markup("");
 		return;
@@ -792,7 +832,7 @@ void ParticleEditor::reloadStageList()
 void ParticleEditor::updateWidgetsFromStage()
 {
 	if (!_particle || !_selectedStageIter) return;
-	
+
 	_callbacksDisabled = true;
 
 	const particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
@@ -845,7 +885,7 @@ void ParticleEditor::updateWidgetsFromStage()
 
 	getGladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
 	getGladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
-	
+
 	getGladeWidget<Gtk::SpinButton>("distSizeXSpinner")->get_adjustment()->set_value(stage.getDistributionParm(0));
 	getGladeWidget<Gtk::SpinButton>("distSizeYSpinner")->get_adjustment()->set_value(stage.getDistributionParm(1));
 	getGladeWidget<Gtk::SpinButton>("distSizeZSpinner")->get_adjustment()->set_value(stage.getDistributionParm(2));
@@ -985,7 +1025,7 @@ void ParticleEditor::releaseEditParticle()
 	{
 		particles::ParticlesManager::Instance().removeParticleDef(_particle->getName());
 	}
-	
+
 	_particle.reset();
 }
 
@@ -1015,7 +1055,7 @@ IDialog::Result ParticleEditor::askForSave()
 	particles::IParticleDefPtr originalParticle = GlobalParticlesManager().getParticle(originalParticleName);
 
 	// The particle we're editing has been changed from the saved one
-	gtkutil::MessageBox box(_("Save Changes"), 
+	gtkutil::MessageBox box(_("Save Changes"),
 		(boost::format(_("Do you want to save the changes\nyou made to the particle %s?")) % originalParticleName).str(),
 		IDialog::MESSAGE_SAVECONFIRMATION, GlobalMainFrame().getTopLevelWindow());
 
@@ -1098,7 +1138,7 @@ bool ParticleEditor::defSelectionHasChanged()
 	{
 		return true;
 	}
-	else // both iter and _selectedDefIter are valid 
+	else // both iter and _selectedDefIter are valid
 	{
 		return _selectedDefIter != iter;
 	}
@@ -1110,7 +1150,7 @@ bool ParticleEditor::handleParticleLeave(bool requireSelectionChange)
 	if ((!requireSelectionChange || defSelectionHasChanged()) && particleHasUnsavedChanges())
 	{
 		IDialog::Result result = askForSave();
-		
+
 		if (result == IDialog::RESULT_YES)
 		{
 			// User wants to save
