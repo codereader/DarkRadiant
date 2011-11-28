@@ -6,6 +6,7 @@
 #include "imainframe.h"
 #include "iuimanager.h"
 
+#include <glibmm.h>
 #include <gtkmm/box.h>
 #include <gtkmm/textview.h>
 #include <gtkmm/button.h>
@@ -19,6 +20,8 @@
 #include "gtkutil/MultiMonitor.h"
 #include "string/string.h"
 
+#include "debugging/ScopedDebugTimer.h"
+
 namespace ui
 {
 
@@ -27,6 +30,94 @@ namespace ui
         const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
     }
 
+// Local class for loading entity class definitions in a separate thread. A
+// delegated class is required because the slot executed in a thread must not
+// belong to a class which derives from sigc::trackable (which all Gtk::Widget
+// subclasses do) [1].
+//
+// The class owns a Glib::Dispatcher which is like a sigc::signal which works
+// across threads [2]. The EntityClassChooser must connect to this dispatcher
+// BEFORE the thread is started, then the thread may invoke the dispatcher to
+// emit a signal but must NOT write to any member variables directly. When the
+// dispatcher is invoked, the connected slot in EntityClassChooser will run in
+// the main GUI thread, and will retrieve the data from
+// ThreadedEntityClassLoader and display it in the GUI.
+//
+// [1] http://developer.gnome.org/glibmm/2.28/classGlib_1_1Thread.html#ab165854ff2fc9b454ee4d97050485782
+// [2] http://developer.gnome.org/glibmm/2.28/classGlib_1_1Dispatcher.html
+
+class EntityClassChooser::ThreadedEntityClassLoader
+{
+    // The dispatcher object
+    Glib::Dispatcher _dispatcher;
+
+    // Column specification struct
+    const EntityClassChooser::TreeColumns& _columns;
+
+    // The tree store to populate. We must operate on our own tree store, since
+    // updating the EntityClassChooser's tree store from a different thread
+    // wouldn't be safe
+    Glib::RefPtr<Gtk::TreeStore> _treeStore;
+
+    // The thread object
+    Glib::Thread* _thread;
+
+private:
+
+    // The worker function that will execute in the thread
+    void run()
+    {
+        ScopedDebugTimer timer("ThreadedEntityClassLoader::run()");
+
+        // Create new treestoree
+        _treeStore = Gtk::TreeStore::create(_columns);
+
+        // Populate it with the list of entity classes by using a visitor class.
+        EntityClassTreePopulator visitor(_treeStore, _columns);
+        GlobalEntityClassManager().forEachEntityClass(visitor);
+
+        // Insert the data, using the same walker class as Visitor
+        visitor.forEachNode(visitor);
+
+        // Invoke dispatcher to notify the EntityClassChooser
+        _dispatcher();
+    }
+
+public:
+
+    // Construct and initialise variables
+    ThreadedEntityClassLoader(const EntityClassChooser::TreeColumns& cols)
+    : _columns(cols), _thread(NULL)
+    { }
+
+    // Connect the given slot to be invoked when entity population has finished.
+    // The slot will be invoked in the main thread (to be precise, the thread
+    // that called connectFinishedSlot()).
+    void connectFinishedSlot(const sigc::slot<void>& slot)
+    {
+        _dispatcher.connect(slot);
+    }
+
+    // Return the populated treestore, and join the thread (wait for it to
+    // finish and release its resources).
+    Glib::RefPtr<Gtk::TreeStore> getTreeStoreAndQuit()
+    {
+        g_assert(_thread);
+        _thread->join();
+
+        return _treeStore;
+    }
+
+    // Start loading entity classes in a new thread
+    void loadEntityClasses()
+    {
+        _thread = Glib::Thread::create(
+            sigc::mem_fun(*this, &ThreadedEntityClassLoader::run), true
+        );
+    }
+};
+
+// Main constructor
 EntityClassChooser::EntityClassChooser()
 : gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE),
                                    GlobalMainFrame().getTopLevelWindow()),
@@ -34,6 +125,7 @@ EntityClassChooser::EntityClassChooser()
         GlobalUIManager().getGtkBuilderFromFile("EntityClassChooser.glade")
   ),
   _treeStore(Gtk::TreeStore::create(_columns)),
+  _eclassLoader(new ThreadedEntityClassLoader(_columns)),
   _selection(NULL),
   _selectedName(""),
   _modelPreview(GlobalUIManager().createModelPreview()),
@@ -71,10 +163,20 @@ EntityClassChooser::EntityClassChooser()
     // Register to the eclass manager
     GlobalEntityClassManager().addObserver(this);
 
-    // Populate the model and setup the tree view
+    // Setup the tree view and invoke threaded loader to get the entity classes
     setupTreeView();
-    loadEntityClasses();
+    _eclassLoader->connectFinishedSlot(
+        sigc::mem_fun(*this, &EntityClassChooser::getEntityClassesFromLoader)
+    );
+    _eclassLoader->loadEntityClasses();
 }
+
+void EntityClassChooser::getEntityClassesFromLoader()
+{
+    _treeStore = _eclassLoader->getTreeStoreAndQuit();
+    setTreeViewModel();
+}
+
 // Display the singleton instance
 std::string EntityClassChooser::chooseEntityClass()
 {
@@ -127,7 +229,8 @@ void EntityClassChooser::onRadiantShutdown()
 void EntityClassChooser::onEClassReload()
 {
     // Reload the class tree
-    loadEntityClasses();
+    g_assert(_eclassLoader);
+    _eclassLoader->loadEntityClasses();
 }
 
 
@@ -176,34 +279,33 @@ void EntityClassChooser::_postShow()
     BlockingTransientWindow::_postShow();
 }
 
-void EntityClassChooser::loadEntityClasses()
+// Create the tree view
+
+Gtk::TreeView* EntityClassChooser::treeView()
 {
-    // Clear the tree store first
-    _treeStore->clear();
-
-    // Populate it with the list of entity
-    // classes by using a visitor class.
-    EntityClassTreePopulator visitor(_treeStore, _columns);
-    GlobalEntityClassManager().forEachEntityClass(visitor);
-
-    // insert the data, using the same walker class as Visitor
-    visitor.forEachNode(visitor);
+    return getGladeWidget<Gtk::TreeView>("entityTreeView");
 }
 
-// Create the tree view
+void EntityClassChooser::setTreeViewModel()
+{
+    // Ensure model is sorted before giving it to the tree view
+    gtkutil::TreeModel::applyFoldersFirstSortFunc(
+        _treeStore, _columns.name, _columns.isFolder
+    );
+    treeView()->set_model(_treeStore);
+}
 
 void EntityClassChooser::setupTreeView()
 {
-    // Construct the tree view widget with the now-populated model
-    Gtk::TreeView* treeView = getGladeWidget<Gtk::TreeView>("entityTreeView");
-    treeView->set_model(_treeStore);
-
     // Use the TreeModel's full string search function
-    treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+    Gtk::TreeView* view = treeView();
+    view->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
 
-    _selection = treeView->get_selection();
+    _selection = view->get_selection();
     _selection->set_mode(Gtk::SELECTION_BROWSE);
-    _selection->signal_changed().connect(sigc::mem_fun(*this, &EntityClassChooser::callbackSelectionChanged));
+    _selection->signal_changed().connect(
+        sigc::mem_fun(*this, &EntityClassChooser::updateSelection)
+    );
 
     // Single column with icon and name
     Gtk::TreeViewColumn* col = Gtk::manage(
@@ -211,9 +313,7 @@ void EntityClassChooser::setupTreeView()
     );
     col->set_sort_column(_columns.name);
 
-    treeView->append_column(*col);
-
-    gtkutil::TreeModel::applyFoldersFirstSortFunc(_treeStore, _columns.name, _columns.isFolder);
+    view->append_column(*col);
 }
 
 // Update the usage information
@@ -300,11 +400,6 @@ void EntityClassChooser::callbackOK()
     _result = RESULT_OK;
 
     hide(); // breaks main loop
-}
-
-void EntityClassChooser::callbackSelectionChanged()
-{
-    updateSelection();
 }
 
 } // namespace ui

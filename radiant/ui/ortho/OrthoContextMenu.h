@@ -108,8 +108,8 @@ private:
 	bool checkAddEntity();
 	bool checkAddModel();
 
-	void callbackAddEntity();
-	void callbackAddPlayerStart();
+	void addEntity();
+	void addPlayerStart();
 	void callbackMovePlayerStart();
 	void callbackAddModel();
 	void callbackAddLight();

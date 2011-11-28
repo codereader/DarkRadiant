@@ -261,16 +261,17 @@ std::string OrthoContextMenu::getRegistryKeyWithDefault(
         return value;
 }
 
-void OrthoContextMenu::callbackAddEntity()
+void OrthoContextMenu::addEntity()
 {
 	UndoableCommand command("createEntity");
 
 	// Display the chooser to select an entity classname
 	std::string cName = EntityClassChooser::chooseEntityClass();
 
-	if (!cName.empty()) {
-		// Create the entity. We might get an EntityCreationException if the
-		// wrong number of brushes is selected.
+	if (!cName.empty()) 
+    {
+        // Create the entity. We might get an EntityCreationException if the
+        // wrong number of brushes is selected.
 		try {
 			entity::createEntityFromSelection(cName, _lastPoint);
 		}
@@ -280,7 +281,7 @@ void OrthoContextMenu::callbackAddEntity()
 	}
 }
 
-void OrthoContextMenu::callbackAddPlayerStart()
+void OrthoContextMenu::addPlayerStart()
 {
 	UndoableCommand command("addPlayerStart");
 
@@ -445,7 +446,7 @@ void OrthoContextMenu::registerDefaultItems()
 	gtkutil::MenuItemPtr addEntity(
 		new gtkutil::MenuItem(
 			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT))),
-			boost::bind(&OrthoContextMenu::callbackAddEntity, this),
+			boost::bind(&OrthoContextMenu::addEntity, this),
 			boost::bind(&OrthoContextMenu::checkAddEntity, this))
 	);
 
@@ -488,7 +489,7 @@ void OrthoContextMenu::registerDefaultItems()
 	gtkutil::MenuItemPtr addPlayerStart(
 		new gtkutil::MenuItem(
 			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT))),
-			boost::bind(&OrthoContextMenu::callbackAddPlayerStart, this),
+			boost::bind(&OrthoContextMenu::addPlayerStart, this),
 			boost::bind(&OrthoContextMenu::checkAddPlayerStart, this),
 			boost::bind(&OrthoContextMenu::checkAddPlayerStart, this))
 	);

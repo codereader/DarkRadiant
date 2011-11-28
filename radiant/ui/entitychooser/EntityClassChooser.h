@@ -57,6 +57,10 @@ private:
 	// Tree model holding the classnames
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
 
+    // Delegated object for loading entity classes in a separate thread
+    class ThreadedEntityClassLoader;
+    boost::shared_ptr<ThreadedEntityClassLoader> _eclassLoader; // PIMPL idiom
+
 	// GtkTreeSelection holding the currently-selected classname
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
@@ -72,6 +76,10 @@ private:
 	// Constructor. Creates the GTK widgets.
 	EntityClassChooser();
 
+    Gtk::TreeView* treeView();
+    void setTreeViewModel();
+    void getEntityClassesFromLoader();
+
 	/* Widget construction helpers */
 	void setupTreeView();
 
@@ -85,15 +93,8 @@ private:
 	void callbackCancel();
 	void callbackOK();
 
-	// Check when the selection changes, disable the add button if there
-	// is nothing selected.
-	void callbackSelectionChanged();
-
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityClassChooserPtr& InstancePtr();
-
-	// Loads or reloads the entity class tree
-	void loadEntityClasses();
 
 protected:
 	// Override TransientWindow::_onDeleteEvent
