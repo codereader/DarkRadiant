@@ -91,15 +91,18 @@ public:
 	ScopedDebugTimer(const std::string& name, bool showFps = false)
 	: _op(name), _fps(showFps)
 	{
+#ifndef NDEBUG
 		// Save start time
 		gettimeofday(&_s, NULL);
+#endif
 	}
 
 	/**
 	 * Destructor. Prints out the time of the operation.
 	 */
-	~ScopedDebugTimer() {
-
+	~ScopedDebugTimer()
+    {
+#ifndef NDEBUG
 		// Get the current time
 		timeval end;
 		gettimeofday(&end, NULL);
@@ -107,14 +110,16 @@ public:
 		// Calculate duration
 		double duration = end - _s;
 
-		globalOutputStream() << "[ScopedDebugTimer] \"" << _op
-			<< "\" in " << duration << " seconds";
+        globalOutputStream() << "[ScopedDebugTimer] \"" << _op << "\" in "
+                             << duration << " seconds";
 
-		if (_fps) {
-			globalOutputStream() << " (" << (1.0 / duration) << " FPS)";
+		if (_fps)
+        {
+            globalOutputStream() << " (" << (1.0 / duration) << " FPS)";
 		}
 
-		globalOutputStream() << std::endl;
+        globalOutputStream() << std::endl;
+#endif
 	}
 };
 
