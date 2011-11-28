@@ -10,6 +10,7 @@
 #include <gtkmm/textview.h>
 #include <gtkmm/button.h>
 #include <gtkmm/stock.h>
+#include <gtkmm/paned.h>
 
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -46,15 +47,15 @@ EntityClassChooser::EntityClassChooser()
         static_cast<int>(rect.get_height() * 0.6f)
     );
 
-	// Set the model preview height to something significantly smaller than the window's height to allow shrinking
-    _modelPreview->setSize(static_cast<int>(rect.get_width() * 0.4f), static_cast<int>(rect.get_height() * 0.2f));
+    // Set the model preview height to something significantly smaller than the
+    // window's height to allow shrinking
+    _modelPreview->setSize(static_cast<int>(rect.get_width() * 0.4f),
+                           static_cast<int>(rect.get_height() * 0.2f));
 
-    // Create GUI elements and pack into main VBox
-    add(*getGladeWidget<Gtk::Widget>("mainHbox"));
+    // Create GUI elements and pack into self
+    Gtk::Paned* mainPaned = getGladeWidget<Gtk::Paned>("mainPaned");
+    add(*mainPaned);
     g_assert(get_child() != NULL);
-
-    Gtk::HBox* hbox = getGladeWidget<Gtk::HBox>("mainHbox");
-    assert(hbox == get_child());
 
     // Connect button signals
     getGladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
@@ -64,7 +65,8 @@ EntityClassChooser::EntityClassChooser()
         sigc::mem_fun(*this, &EntityClassChooser::callbackCancel)
     );
 
-    hbox->pack_end(*_modelPreview->getWidget(), true, true, 0);
+    // Add model preview to right-hand-side of main container
+    mainPaned->pack2(*_modelPreview->getWidget(), true, true);
 
     // Register to the eclass manager
     GlobalEntityClassManager().addObserver(this);

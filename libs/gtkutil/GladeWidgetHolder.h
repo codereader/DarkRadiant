@@ -40,12 +40,6 @@ protected:
     GladeWidgetHolder(const Glib::RefPtr<Gtk::Builder>& builder)
     : _builder(builder)
     { }
-
-    /// Set the builder to use.
-    void setBuilder(const Glib::RefPtr<Gtk::Builder>& builder)
-    {
-        _builder = builder;
-    }
 };
 
 }

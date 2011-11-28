@@ -153,7 +153,7 @@ std::string Manager::getUserEnginePath()
 #if defined(POSIX)
 
     // First check for a local copy of the game tree, e.g. ~/.doom3
-    fs::path localPath = fs::path(g_get_home_dir())
+    fs::path localPath = fs::path(Glib::get_home_dir())
                          / currentGame()->getKeyValue("prefix");
 
     if (fs::exists(localPath))
