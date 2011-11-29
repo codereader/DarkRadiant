@@ -12,7 +12,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\gtk2\lib;$(PlatformDepsDir)\gtkmm\lib;$(PlatformDepsDir)\gtksourceviewmm\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glib-2.0.lib;gobject-2.0.lib;gdk-win32-2.0.lib;gdk_pixbuf-2.0.lib;gtk-win32-2.0.lib;pango-1.0.lib;intl.lib;gtkmm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_4.lib;sigc-vc$(PlatformToolsetVersion)$(LibSuffix)-2_0.lib;glibmm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_4.lib;atkmm-vc$(PlatformToolsetVersion)$(LibSuffix)-1_6.lib;gdkmm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_4.lib;gtksourceviewmm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_2.lib;pangomm-vc$(PlatformToolsetVersion)$(LibSuffix)-1_4.lib;giomm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glib-2.0.lib;gobject-2.0.lib;gthread-2.0.lib;gdk-win32-2.0.lib;gdk_pixbuf-2.0.lib;gtk-win32-2.0.lib;pango-1.0.lib;intl.lib;gtkmm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_4.lib;sigc-vc$(PlatformToolsetVersion)$(LibSuffix)-2_0.lib;glibmm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_4.lib;atkmm-vc$(PlatformToolsetVersion)$(LibSuffix)-1_6.lib;gdkmm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_4.lib;gtksourceviewmm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_2.lib;pangomm-vc$(PlatformToolsetVersion)$(LibSuffix)-1_4.lib;giomm-vc$(PlatformToolsetVersion)$(LibSuffix)-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
