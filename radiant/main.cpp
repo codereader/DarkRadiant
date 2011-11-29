@@ -88,6 +88,12 @@ int main (int argc, char* argv[])
 
 #endif
 
+	// Initialise Glib threading if necessary
+	if (!Glib::thread_supported()) 
+	{
+		Glib::thread_init();
+	}
+
     Glib::add_exception_handler(&std::terminate);
 
     // Initialise gtksourceviewmm
