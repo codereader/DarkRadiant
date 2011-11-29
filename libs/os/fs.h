@@ -8,13 +8,14 @@
 
 #include <boost/version.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/algorithm/string/predicate.hpp>
 
 namespace fs = boost::filesystem;
 
 namespace os
 {
     /// Return the string filename of a path object
-    inline std::string get_filename(const fs::path& p)
+    inline std::string filename_from_path(const fs::path& p)
     {
 #if BOOST_VERSION < 104600
         return p.filename();
@@ -24,7 +25,7 @@ namespace os
     }
 
     /// Return a string for the given path in platform-independent format
-    inline std::string get_generic_string(const fs::path& p)
+    inline std::string string_from_path(const fs::path& p)
     {
 #if BOOST_VERSION < 104600
         return p.string(); // in contrast to file_string() (native format)
@@ -33,4 +34,17 @@ namespace os
 #endif
     }
 
+    /// Overload of standardPathWithSlash that accepts a fs::path
+    inline std::string standardPathWithSlash(const fs::path& p)
+    {
+        std::string genString = string_from_path(p);
+
+        // Just add slash if needed, we don't need to convert intermediate
+        // slashes since string_from_path will already have done that.
+		if (!boost::algorithm::ends_with(genString, "/"))
+        {
+			genString += "/";
+		}
+        return genString;
+    }
 }

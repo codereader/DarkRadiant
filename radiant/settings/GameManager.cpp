@@ -158,7 +158,7 @@ std::string Manager::getUserEnginePath()
 
     if (fs::exists(localPath))
     {
-        return os::get_generic_string(localPath);
+        return os::standardPathWithSlash(localPath);
     }
 
 #endif

@@ -289,7 +289,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	fs::path tempFile = targetFile;
 
 	tempFile.remove_filename();
-	tempFile /= "_" + os::get_filename(targetFile);
+	tempFile /= "_" + os::filename_from_path(targetFile);
 
 	std::ofstream tempStream(tempFile.string().c_str());
 

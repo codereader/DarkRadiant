@@ -187,7 +187,7 @@ AC_SUBST([AL_LIBS])
 
 # Configure global flags, cancelling any modifications we may have made during
 # configuration
-WARNING_FLAGS="-Wall -Wno-unused-variable"
+WARNING_FLAGS="-Wall -Wno-unused-variable -Werror=return-type"
 CFLAGS="$USER_CFLAGS $WARNING_FLAGS"
 CXXFLAGS="$USER_CXXFLAGS $WARNING_FLAGS"
 CPPFLAGS="$USER_CPPFLAGS -DPOSIX"

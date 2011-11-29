@@ -63,7 +63,7 @@ void DirectoryArchive::forEachFile(VisitorFunc visitor, const std::string& root)
 	{
 		// Get the candidate
 		const fs::path& candidate = *it;
-        std::string candidateStr = os::get_generic_string(candidate);
+        std::string candidateStr = os::string_from_path(candidate);
 
 		if (fs::is_directory(candidate))
 		{
