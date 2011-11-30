@@ -765,7 +765,6 @@
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayDialog.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayRegistryKeys.h" />
     <ClInclude Include="..\..\radiant\ui\particles\ParticlesChooser.h" />
-    <ClInclude Include="..\..\radiant\ui\particles\ParticlesVisitor.h" />
     <ClInclude Include="..\..\radiant\ui\patch\BulgePatchDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\CapDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchCreateDialog.h" />

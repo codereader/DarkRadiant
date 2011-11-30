@@ -1455,9 +1455,6 @@
     <ClInclude Include="..\..\radiant\ui\particles\ParticlesChooser.h">
       <Filter>src\ui\particles</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\particles\ParticlesVisitor.h">
-      <Filter>src\ui\particles</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\patch\BulgePatchDialog.h">
       <Filter>src\ui\patch</Filter>
     </ClInclude>

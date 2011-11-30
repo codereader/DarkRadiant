@@ -46,9 +46,6 @@
     <ClInclude Include="..\..\plugins\particles\editor\ParticleEditorModule.h">
       <Filter>src\editor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\particles\editor\ParticleDefPopulator.h">
-      <Filter>src\editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\particles\ParticleNode.h">
       <Filter>src</Filter>
     </ClInclude>

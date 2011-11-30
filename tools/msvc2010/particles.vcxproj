@@ -307,7 +307,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\plugins\particles\editor\ParticleDefPopulator.h" />
     <ClInclude Include="..\..\plugins\particles\editor\ParticleEditor.h" />
     <ClInclude Include="..\..\plugins\particles\editor\ParticleEditorModule.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleDef.h" />

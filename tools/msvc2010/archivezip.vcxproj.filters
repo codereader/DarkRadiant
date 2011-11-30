@@ -41,8 +41,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="archivezip.def">
+    <None Include="..\..\plugins\archivezip\archivezip.def">
       <Filter>src</Filter>
-    </CustomBuild>
+    </None>
   </ItemGroup>
 </Project>
