@@ -25,10 +25,11 @@
 namespace ui
 {
 
-    namespace
-    {
-        const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
-    }
+namespace
+{
+    const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
+    const std::string RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
+}
 
 // Local class for loading entity class definitions in a separate thread. A
 // delegated class is required because the slot executed in a thread must not
@@ -117,7 +118,24 @@ public:
     }
 };
 
-void test() { std::cout << "changed" << std::endl; }
+void savePropertyToRegistry(Glib::PropertyProxy<int>& prop,
+                            const std::string& rkey)
+{
+    GlobalRegistry().setInt(rkey, prop.get_value());
+}
+
+void bindPropertyToRegistry(Glib::PropertyProxy<int> prop,
+                            const std::string& rkey)
+{
+    // Set initial value then connect to changed signal
+    if (GlobalRegistry().keyExists(rkey))
+    {
+        prop.set_value(GlobalRegistry().getInt(rkey));
+    }
+    prop.signal_changed().connect(
+        sigc::bind(sigc::ptr_fun(savePropertyToRegistry), prop, rkey)
+    );
+}
 
 // Main constructor
 EntityClassChooser::EntityClassChooser()
@@ -172,7 +190,7 @@ EntityClassChooser::EntityClassChooser()
     );
     _eclassLoader->loadEntityClasses();
 
-    mainPaned->property_position().signal_changed().connect(sigc::ptr_fun(test));
+    bindPropertyToRegistry(mainPaned->property_position(), RKEY_SPLIT_POS);
 }
 
 void EntityClassChooser::getEntityClassesFromLoader()
