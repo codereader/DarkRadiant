@@ -24,7 +24,7 @@ inline bool triangles_same_winding(const BasicVector3<Element>& x1, const BasicV
 
 // -------------- FaceInstance implementation ---------------------------------------
 
-FaceInstance::FaceInstance(Face& face, const SelectionChangeCallback& observer) :
+FaceInstance::FaceInstance(Face& face, const SelectionChangedSlot& observer) :
 	m_face(&face),
 	m_selectable(boost::bind(&FaceInstance::selectedChanged, this, _1)),
 	m_selectableVertices(observer),

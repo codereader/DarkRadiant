@@ -116,7 +116,7 @@ class ObservedSelectable
 : public Selectable
 {
     // Callback to invoke on selection changed
-    SelectionChangeCallback m_onchanged;
+    SelectionChangedSlot m_onchanged;
 
     // Current selection state
     bool m_selected;
@@ -127,7 +127,7 @@ public:
      * \brief
      * Construct an ObservedSelectable with the given callback function.
      */
-    ObservedSelectable(const SelectionChangeCallback& onchanged)
+    ObservedSelectable(const SelectionChangedSlot& onchanged)
     : m_onchanged(onchanged), m_selected(false)
     { }
 

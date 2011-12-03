@@ -7,7 +7,7 @@
  */
 
 #include "imodule.h"
-#include <boost/function/function_fwd.hpp>
+#include <sigc++/signal.h>
 
 enum GridSize {
 	GRID_0125 = -3,
@@ -53,8 +53,9 @@ public:
 	virtual GridLook getMajorLook() const = 0;
 	virtual GridLook getMinorLook() const = 0;
 
-	typedef boost::function<void()> GridChangedFunc;
-	virtual std::size_t addGridChangeCallback(const GridChangedFunc& callback) = 0;
+    /// Signal emitted when the grid is changed
+	virtual sigc::signal<void> signal_gridChanged() const = 0;
+
 }; // class IGridManager
 
 // This is the accessor for the grid module

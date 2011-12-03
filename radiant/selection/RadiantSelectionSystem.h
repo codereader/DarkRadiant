@@ -7,7 +7,6 @@
 #include "selectionlib.h"
 #include "math/Matrix4.h"
 #include "gtkutil/event/SingleIdleCallback.h"
-#include "signal/signal.h"
 #include "Manipulator.h"
 #include "Manipulatables.h"
 #include "TranslateManipulator.h"
@@ -53,6 +52,7 @@
  */
 // RadiantSelectionSystem
 class RadiantSelectionSystem :
+    public sigc::trackable,
 	public SelectionSystem,
 	public Translatable,
 	public Rotatable,
@@ -86,6 +86,8 @@ public:
 private:
 	SelectionInfo _selectionInfo;
 
+    sigc::signal<void, const Selectable&> _sigSelectionChanged;
+
 	EManipulatorMode _manipulatorMode;
 	// The currently active manipulator
 	Manipulator* _manipulator;
@@ -110,9 +112,6 @@ private:
 	SelectionListType _selection;
 	SelectionListType _componentSelection;
 
-	typedef Signal1<const Selectable&> SelectionChangedSignal;
-	SelectionChangedSignal _selectionChangedSignal;
-
 	void ConstructPivot();
 	mutable bool _pivotChanged;
 	bool _pivotMoving;
@@ -121,8 +120,6 @@ private:
 	Vector2 _deviceStart;
 
 	bool nothingSelected() const;
-
-	std::size_t _boundsChangedHandler;
 
 public:
 
@@ -161,6 +158,11 @@ public:
 	void onSelectedChanged(const scene::INodePtr& node, const Selectable& selectable);
 	void onComponentSelection(const scene::INodePtr& node, const Selectable& selectable);
 
+    SelectionChangedSignal signal_selectionChanged() const
+    {
+        return _sigSelectionChanged;
+    }
+
 	scene::INodePtr ultimateSelected();
 	scene::INodePtr penultimateSelected();
 
@@ -169,8 +171,6 @@ public:
 
 	void foreachSelected(const Visitor& visitor);
 	void foreachSelectedComponent(const Visitor& visitor);
-
-	void addSelectionChangeCallback(const SelectionChangeCallback& callback);
 
 	void startMove();
 

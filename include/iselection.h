@@ -3,7 +3,7 @@
 #include <cstddef>
 #include "imodule.h"
 #include <boost/shared_ptr.hpp>
-#include <boost/function/function_fwd.hpp>
+#include <sigc++/signal.h>
 
 class RenderableCollector;
 class View;
@@ -26,7 +26,8 @@ typedef BasicVector4<float> Vector4;
 class Matrix4;
 class Quaternion;
 
-typedef boost::function<void (const Selectable&)> SelectionChangeCallback;
+typedef sigc::signal<void, const Selectable&> SelectionChangedSignal;
+typedef sigc::slot<void, const Selectable&> SelectionChangedSlot;
 
 class SelectionInfo;
 
@@ -147,26 +148,24 @@ public:
      */
     virtual void foreachSelectedComponent(const Visitor& visitor) = 0;
 
-	/**
-	 * greebo: Connect a signal handler to get notified about selection changes.
-	 */
-	virtual void addSelectionChangeCallback(const SelectionChangeCallback& callback) = 0;
+    /// Signal emitted when the selection is changed
+    virtual SelectionChangedSignal signal_selectionChanged() const = 0;
 
-  virtual void NudgeManipulator(const Vector3& nudge, const Vector3& view) = 0;
-
-  virtual void translateSelected(const Vector3& translation) = 0;
-  virtual void rotateSelected(const Quaternion& rotation) = 0;
-  virtual void scaleSelected(const Vector3& scaling) = 0;
-
-  virtual void pivotChanged() const = 0;
-
-  virtual bool SelectManipulator(const View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon) = 0;
-  virtual void SelectPoint(const View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;
-  virtual void SelectArea(const View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;
-
-  virtual void MoveSelected(const View& view, const Vector2& devicePoint) = 0;
-  virtual void endMove() = 0;
-  virtual void cancelMove() = 0;
+    virtual void NudgeManipulator(const Vector3& nudge, const Vector3& view) = 0;
+    
+    virtual void translateSelected(const Vector3& translation) = 0;
+    virtual void rotateSelected(const Quaternion& rotation) = 0;
+    virtual void scaleSelected(const Vector3& scaling) = 0;
+    
+    virtual void pivotChanged() const = 0;
+    
+    virtual bool SelectManipulator(const View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon) = 0;
+    virtual void SelectPoint(const View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon, EModifier modifier, bool face) = 0;
+    virtual void SelectArea(const View& view, const Vector2& devicePoint, const Vector2& deviceDelta, EModifier modifier, bool face) = 0;
+    
+    virtual void MoveSelected(const View& view, const Vector2& devicePoint) = 0;
+    virtual void endMove() = 0;
+    virtual void cancelMove() = 0;
 
 	/**
 	 * Returns the current "work zone", which is defined by the

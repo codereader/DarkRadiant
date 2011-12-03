@@ -32,10 +32,10 @@ private:
 	friend class Doom3Group;
 
 	// The contained Doom3Group class
-	Doom3Group m_contained;
+	Doom3Group _d3Group;
 
-	CurveEditInstance m_curveNURBS;
-	CurveEditInstance m_curveCatmullRom;
+	CurveEditInstance _nurbsEditInstance;
+	CurveEditInstance _catmullRomEditInstance;
 	mutable AABB m_aabb_component;
 
 	VertexInstance _originInstance;

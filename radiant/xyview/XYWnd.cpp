@@ -109,9 +109,9 @@ XYWnd::XYWnd(int id) :
 	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(m_deferred_motion, &gtkutil::DeferredMotion::onMouseMotion));
 	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMouseWheelScroll));
 
-	_validCallbackHandle = GlobalMap().addValidCallback(
-		boost::bind(&DeferredDraw::onMapValidChanged, &m_deferredDraw)
-	);
+    GlobalMap().signal_mapValidityChanged().connect(
+        sigc::mem_fun(m_deferredDraw, &DeferredDraw::onMapValidChanged)
+    );
 
 	updateProjection();
 	updateModelview();
@@ -132,8 +132,6 @@ XYWnd::XYWnd(int id) :
 XYWnd::~XYWnd()
 {
 	destroyXYView();
-
-	GlobalMap().removeValidCallback(_validCallbackHandle);
 
 	// Store the current position and scale to the registry, so that it may be
 	// picked up again when creating XYViews after switching layouts

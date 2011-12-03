@@ -14,7 +14,7 @@ namespace entity {
 /** greebo: This class is wrapped around a Curve class to manage
  * 			all the selection and transformation operations.
  */
-class CurveEditInstance
+class CurveEditInstance: public sigc::trackable
 {
 public:
 	class ControlPointFunctor
@@ -35,7 +35,7 @@ private:
 	// The associated curve
 	Curve& _curve;
 
-	SelectionChangeCallback _selectionChanged;
+	SelectionChangedSlot _selectionChanged;
 	ControlPoints& _controlPointsTransformed;
 	const ControlPoints& _controlPoints;
 	typedef std::vector<ObservedSelectable> Selectables;
@@ -55,7 +55,7 @@ private:
 public:
 
 	// Constructor
-	CurveEditInstance(Curve& curve, const SelectionChangeCallback& selectionChanged);
+	CurveEditInstance(Curve& curve, const SelectionChangedSlot& selectionChanged);
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 

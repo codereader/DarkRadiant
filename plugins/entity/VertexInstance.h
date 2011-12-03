@@ -24,7 +24,7 @@ protected:
 
 public:
 	// Construct the instance with the given <vertex> coordinates and connect the selectionChangeCallback
-	VertexInstance(Vector3& vertex, const SelectionChangeCallback& observer) :
+	VertexInstance(Vector3& vertex, const SelectionChangedSlot& observer) :
 		_vertex(vertex),
 		_selectable(observer),
 		_colour(ColourSchemes().getColour("light_vertex_deselected"))
@@ -108,7 +108,7 @@ class VertexInstanceRelative : public VertexInstance {
 	Vector3& _origin;
 public:
 	// Construct the instance with the given <vertex> coordinates and connect the selectionChangeCallback
-	VertexInstanceRelative(Vector3& relativeToOrigin, Vector3& origin, const SelectionChangeCallback& observer)
+	VertexInstanceRelative(Vector3& relativeToOrigin, Vector3& origin, const SelectionChangedSlot& observer)
 		: VertexInstance(relativeToOrigin, observer),
 		  _origin(origin)
 	{}

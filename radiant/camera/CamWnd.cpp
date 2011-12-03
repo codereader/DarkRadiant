@@ -145,7 +145,9 @@ CamWnd::CamWnd() :
 
     constructGUIComponents();
 
-	_mapValidHandle = GlobalMap().addValidCallback(boost::bind(&DeferredDraw::onMapValidChanged, &m_deferredDraw));
+    GlobalMap().signal_mapValidityChanged().connect(
+        sigc::mem_fun(m_deferredDraw, &DeferredDraw::onMapValidChanged)
+    );
 
 	// Deactivate all commands, just to make sure
 	disableDiscreteMoveEvents();
@@ -269,8 +271,6 @@ CamWnd::~CamWnd()
 
 	// Disconnect self from EventManager
 	GlobalEventManager().disconnect(_camGLWidget);
-
-	GlobalMap().removeValidCallback(_mapValidHandle);
 
 	if (m_bFreeMove) {
 		disableFreeMove();
@@ -941,7 +941,7 @@ void CamWnd::setContainer(const Glib::RefPtr<Gtk::Window>& newParent)
 		return;
 	}
 
-	if (_parentWindow != NULL)
+	if (_parentWindow)
 	{
 		// Parent change, disconnect first
 		m_window_observer->removeObservedWidget(_parentWindow);
@@ -955,7 +955,7 @@ void CamWnd::setContainer(const Glib::RefPtr<Gtk::Window>& newParent)
 		_parentWindow.reset();
 	}
 
-	if (newParent != NULL)
+	if (newParent)
 	{
 		_parentWindow = newParent;
 

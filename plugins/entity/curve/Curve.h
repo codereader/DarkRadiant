@@ -1,13 +1,12 @@
-#ifndef CURVE_BASE_H_
-#define CURVE_BASE_H_
+#pragma once
 
-#include "signal/signal.h"
 #include "iselectiontest.h"
 #include "math/curve.h"
 #include "math/AABB.h"
 #include "RenderableCurve.h"
 
-namespace entity {
+namespace entity 
+{
 
 /** greebo: This is the base class for the two Doom3-supported curve
  * 			subclasses CurveNURBS and CurveCatmullRomSpline.
@@ -32,19 +31,22 @@ protected:
 	AABB _bounds;
 
 	Callback _boundsChanged;
-	Signal _curveChanged;
+    sigc::signal<void> _sigCurveChanged;
+
 public:
 	Curve(const Callback& boundsChanged);
 
 	virtual ~Curve() {}
 
-	// "Curve changed" signal stuff
-	std::size_t connect(const CurveChangedCallback& curveChanged);
-	void disconnect(std::size_t id);
-
 	bool isEmpty() const;
 
 	const AABB& getBounds() const;
+
+    /// Signal emitted when curve changes
+    sigc::signal<void> signal_curveChanged()
+    {
+        return _sigCurveChanged;
+    }
 
 	// Tesselation has to be implemented by the subclasses
 	virtual void tesselate() = 0;
@@ -99,5 +101,3 @@ protected:
 };
 
 } // namespace entity
-
-#endif /*CURVE_BASE_H_*/

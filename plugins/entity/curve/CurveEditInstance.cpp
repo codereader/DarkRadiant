@@ -5,7 +5,7 @@
 
 namespace entity {
 
-CurveEditInstance::CurveEditInstance(Curve& curve, const SelectionChangeCallback& selectionChanged) :
+CurveEditInstance::CurveEditInstance(Curve& curve, const SelectionChangedSlot& selectionChanged) :
 	_curve(curve),
     _selectionChanged(selectionChanged),
     _controlPointsTransformed(_curve.getTransformedControlPoints()),

@@ -9,12 +9,12 @@
 #include "icommandsystem.h"
 #include "moduleobserver.h"
 #include "math/Vector3.h"
-#include "signal/signal.h"
 
 #include "StartupMapLoader.h"
 
 #include <glibmm/ustring.h>
 #include <glibmm/timer.h>
+#include <sigc++/signal.h>
 
 class TextInputStream;
 
@@ -36,7 +36,7 @@ class Map :
 	bool m_valid;
 	bool m_modified;
 
-	Signal _mapValidCallbacks;
+    sigc::signal<void> _sigMapValidityChanged;
 
 	scene::INodePtr m_world_node; // "classname" "worldspawn" !
 
@@ -160,10 +160,8 @@ public:
 	// Sets the modified status of this map
 	void setModified(bool modifiedFlag);
 
-	typedef boost::function<void()> MapValidChangedFunc;
-
-	std::size_t addValidCallback(const MapValidChangedFunc& handler);
-	void removeValidCallback(std::size_t id);
+    // Signal emitted when the map validity changes
+    sigc::signal<void> signal_mapValidityChanged() const;
 
 	// Updates the window title of the mainframe
 	void updateTitle();

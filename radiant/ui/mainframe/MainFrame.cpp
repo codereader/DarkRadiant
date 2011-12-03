@@ -286,7 +286,7 @@ Gtk::Container* MainFrame::getMainContainer()
 void MainFrame::createTopLevelWindow()
 {
 	// Destroy any previous toplevel window
-	if (_window != NULL)
+	if (_window)
 	{
 		GlobalEventManager().disconnect(_window->get_toplevel());
 
@@ -487,13 +487,14 @@ void MainFrame::create()
 	LayerControlDialog::init();
 }
 
-void MainFrame::saveWindowPosition() {
+void MainFrame::saveWindowPosition() 
+{
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
 	Glib::RefPtr<Gdk::Window> window = _window->get_window();
 
-	if (window != NULL)
+	if (window)
 	{
 		GlobalRegistry().setAttribute(
 			RKEY_WINDOW_STATE,

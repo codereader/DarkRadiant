@@ -23,7 +23,7 @@ private:
 	ObservedSelectable m_selectable;
 	ObservedSelectable m_selectableVertices;
 	ObservedSelectable m_selectableEdges;
-	SelectionChangeCallback m_selectionChanged;
+	SelectionChangedSlot m_selectionChanged;
 
 	VertexSelection m_vertexSelection;
 	VertexSelection m_edgeSelection;
@@ -31,7 +31,7 @@ private:
 public:
 	mutable VectorLightList m_lights;
 
-	FaceInstance(Face& face, const SelectionChangeCallback& observer);
+	FaceInstance(Face& face, const SelectionChangedSlot& observer);
 	FaceInstance(const FaceInstance& other);
 
 	FaceInstance& operator=(const FaceInstance& other);

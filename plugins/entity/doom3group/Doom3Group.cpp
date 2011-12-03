@@ -48,8 +48,8 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
 	m_rotationKey(boost::bind(&Doom3Group::rotationChanged, this)),
-	m_isModel(other.m_isModel),
 	m_renderOrigin(m_nameOrigin),
+	m_isModel(other.m_isModel),
 	m_curveNURBS(boundsChanged),
 	m_curveCatmullRom(boundsChanged)
 {

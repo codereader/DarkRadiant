@@ -197,26 +197,24 @@ void Map::onResourceUnrealise() {
     }
 }
 
-void Map::setValid(bool valid) {
-	m_valid = valid;
-	_mapValidCallbacks();
+sigc::signal<void> Map::signal_mapValidityChanged() const
+{
+    return _sigMapValidityChanged;
 }
 
-bool Map::isValid() const {
+void Map::setValid(bool valid)
+{
+	m_valid = valid;
+	_sigMapValidityChanged();
+}
+
+bool Map::isValid() const
+{
 	return m_valid;
 }
 
-std::size_t Map::addValidCallback(const MapValidChangedFunc& handler)
+void Map::updateTitle()
 {
-	return _mapValidCallbacks.connect(handler);
-}
-
-void Map::removeValidCallback(std::size_t id)
-{
-	_mapValidCallbacks.disconnect(id);
-}
-
-void Map::updateTitle() {
 	std::string title = gtkutil::IConv::localeToUTF8(_mapName);
 
 	if (m_modified) {
@@ -702,7 +700,7 @@ bool Map::saveAs()
 {
 	if (_saveInProgress) return false; // safeguard
 
-	std::string filename = 
+	std::string filename =
 		MapFileManager::getMapFilename(false, _("Save Map"), "map", getMapName());
 
 	if (!filename.empty()) {
@@ -738,7 +736,7 @@ bool Map::saveCopyAs()
 		_lastCopyMapName = getMapName();
 	}
 
-	std::string filename = 
+	std::string filename =
 		MapFileManager::getMapFilename(false, _("Save Copy As..."), "map", _lastCopyMapName);
 
 	if (!filename.empty()) {
@@ -755,7 +753,7 @@ bool Map::saveCopyAs()
 
 void Map::loadPrefabAt(const Vector3& targetCoords)
 {
-	std::string filename = 
+	std::string filename =
 		MapFileManager::getMapFilename(true, _("Load Prefab"), "prefab");
 
 	if (!filename.empty()) {
@@ -834,7 +832,7 @@ void Map::openMap(const cmd::ArgumentList& args) {
 
 void Map::importMap(const cmd::ArgumentList& args)
 {
-	std::string filename = 
+	std::string filename =
 		MapFileManager::getMapFilename(true, _("Import map"));
 
 	if (!filename.empty())
@@ -863,7 +861,7 @@ void Map::saveMap(const cmd::ArgumentList& args)
 
 void Map::exportMap(const cmd::ArgumentList& args)
 {
-	std::string filename = 
+	std::string filename =
 		MapFileManager::getMapFilename(false, _("Export selection"));
 
 	if (!filename.empty()) {
@@ -937,7 +935,7 @@ void Map::importSelected(TextInputStream& in)
 	MapFormatPtr format = getFormat();
 
 	IMapReaderPtr reader = format->getMapReader(importFilter);
-	
+
 	try
 	{
 		// Start parsing
@@ -1025,6 +1023,7 @@ module::StaticModule<Map> staticMapModule;
 } // namespace map
 
 // Accessor method containing the singleton Map instance
-map::Map& GlobalMap() {
+map::Map& GlobalMap() 
+{
 	return *map::staticMapModule.getModule();
 }

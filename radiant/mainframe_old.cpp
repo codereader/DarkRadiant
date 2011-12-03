@@ -255,7 +255,8 @@ void ComponentModeChanged()
 	GlobalEventManager().setToggled("DragFaces", FaceMode());
 }
 
-void ComponentMode_SelectionChanged(const Selectable& selectable) {
+void componentMode_SelectionChanged(const Selectable& selectable) 
+{
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent
 	        && GlobalSelectionSystem().countSelected() == 0) {
 		SelectionSystem_DefaultMode();
@@ -870,5 +871,7 @@ void MainFrame_Construct()
 
   Patch_registerCommands();
 
-	GlobalSelectionSystem().addSelectionChangeCallback(ComponentMode_SelectionChanged);
+	GlobalSelectionSystem().signal_selectionChanged().connect(
+        sigc::ptr_fun(componentMode_SelectionChanged)
+    );
 }

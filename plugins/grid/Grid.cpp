@@ -12,7 +12,6 @@
 #include "iuimanager.h"
 #include "ipreferencesystem.h"
 #include "string/string.h"
-#include "signal/signal.h"
 
 #include "i18n.h"
 #include "GridItem.h"
@@ -83,7 +82,7 @@ private:
 	// The currently active grid size
 	GridSize _activeGridSize;
 
-	Signal _gridChangeCallbacks;
+    sigc::signal<void> _sigGridChanged;
 
 public:
 	GridManager() :
@@ -167,17 +166,15 @@ public:
 		page->appendCombo(_("Minor Grid Style"), RKEY_GRID_LOOK_MINOR, looks);
 	}
 
-	std::size_t addGridChangeCallback(const GridChangedFunc& callback)
-	{
-		std::size_t handle = _gridChangeCallbacks.connect(callback);
 
-		callback();
+	sigc::signal<void> signal_gridChanged() const
+    {
+        return _sigGridChanged;
+    }
 
-		return handle;
-	}
-
-	void gridChangeNotify() {
-		_gridChangeCallbacks();
+	void gridChangeNotify() 
+    {
+		_sigGridChanged();
 	}
 
 	void gridDownCmd(const cmd::ArgumentList& args) {
@@ -255,7 +252,8 @@ public:
 }; // class GridManager
 typedef boost::shared_ptr<GridManager> GridManagerPtr;
 
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) {
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry) 
+{
 	registry.registerModule(GridManagerPtr(new GridManager));
 
 	// Initialise the streams using the given application context

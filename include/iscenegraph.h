@@ -5,7 +5,7 @@
 #include "inode.h"
 #include "ipath.h"
 #include <boost/weak_ptr.hpp>
-#include <boost/function/function_fwd.hpp>
+#include <sigc++/signal.h>
 
 /**
  * \defgroup scenegraph Scenegraph
@@ -35,7 +35,6 @@ typedef boost::shared_ptr<ISpacePartitionSystem> ISpacePartitionSystemPtr;
 class Graph
 {
 public:
-	typedef boost::function<void ()> BoundsChangedFunc;
 
 	/* greebo: Derive from this class to get notified on scene changes
 	 */
@@ -75,15 +74,12 @@ public:
 	// greebo: Remove the scene observer from the list
 	virtual void removeSceneObserver(Observer* observer) = 0;
 
+    /// Accessor for the signal emitted when bounds are changed
+    virtual sigc::signal<void> signal_boundsChanged() const = 0;
+
 	/// \brief Invokes all bounds-changed callbacks. Called when the bounds of any instance in the scene change.
 	/// \todo Move to a separate class.
 	virtual void boundsChanged() = 0;
-
-	/// \brief Add a \p callback to be invoked when the bounds of any instance in the scene change.
-	virtual std::size_t addBoundsChangedCallback(const BoundsChangedFunc& callback) = 0;
-
-	/// \brief Remove a \p callback to be invoked when the bounds of any instance in the scene change.
-	virtual void removeBoundsChangedCallback(std::size_t handle) = 0;
 
 	// A specific node has changed its bounds
 	virtual void nodeBoundsChanged(const scene::INodePtr& node) = 0;

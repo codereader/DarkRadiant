@@ -88,7 +88,12 @@ void SceneGraph::setRoot(const INodePtr& newRoot)
 
 void SceneGraph::boundsChanged()
 {
-    _boundsChanged();
+    _sigBoundsChanged();
+}
+
+sigc::signal<void> SceneGraph::signal_boundsChanged() const
+{
+    return _sigBoundsChanged;
 }
 
 void SceneGraph::insert(const INodePtr& node)
@@ -120,16 +125,6 @@ void SceneGraph::erase(const INodePtr& node)
 	for (ObserverList::iterator i = _sceneObservers.begin(); i != _sceneObservers.end(); ++i) {
 		(*i)->onSceneNodeErase(node);
 	}
-}
-
-std::size_t SceneGraph::addBoundsChangedCallback(const BoundsChangedFunc& callback)
-{
-    return _boundsChanged.connect(callback);
-}
-
-void SceneGraph::removeBoundsChangedCallback(std::size_t handle)
-{
-    _boundsChanged.disconnect(handle);
 }
 
 void SceneGraph::nodeBoundsChanged(const scene::INodePtr& node)

@@ -165,8 +165,8 @@ struct ShaderNameFunctor
 
 	ShaderNameFunctor(const Glib::RefPtr<Gtk::TreeStore>& store,
 					 const MediaBrowser::TreeColumns& columns) :
-		_store(store),
 		_columns(columns),
+		_store(store),
 		_otherMaterialsPath(_(OTHER_MATERIALS_FOLDER)),
 		_folderIcon(GlobalUIManager().getLocalPixbuf(FOLDER_ICON)),
 		_textureIcon(GlobalUIManager().getLocalPixbuf(TEXTURE_ICON))

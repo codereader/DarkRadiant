@@ -50,7 +50,7 @@ public:
   ObservedSelectable m_selectable_bottom; // -z
   AABB m_bounds;
 
-  DragPlanes(const SelectionChangeCallback& onchanged) :
+  DragPlanes(const SelectionChangedSlot& onchanged) :
     m_selectable_right(onchanged),
     m_selectable_left(onchanged),
     m_selectable_front(onchanged),

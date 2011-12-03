@@ -204,7 +204,8 @@ bool RadiantSelectionSystem::nothingSelected() const
 		   (Mode() == eGroupPart && _countPrimitive == 0);
 }
 
-void RadiantSelectionSystem::pivotChanged() const  {
+void RadiantSelectionSystem::pivotChanged() const  
+{
     _pivotChanged = true;
     SceneChangeNotify();
 }
@@ -273,7 +274,7 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 	int delta = isSelected ? +1 : -1;
 
 	_countPrimitive += delta;
-	_selectionChangedSignal(selectable);
+	_sigSelectionChanged(selectable);
 
 	_selectionInfo.totalCount += delta;
 
@@ -315,7 +316,7 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
 	int delta = selectable.isSelected() ? +1 : -1;
 
 	_countComponent += delta;
-	_selectionChangedSignal(selectable);
+	_sigSelectionChanged(selectable);
 
 	_selectionInfo.totalCount += delta;
 	_selectionInfo.componentCount += delta;
@@ -399,12 +400,6 @@ void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 	{
 		visitor.visit((i++)->first);
 	}
-}
-
-// Add a "selection changed" callback
-void RadiantSelectionSystem::addSelectionChangeCallback(const SelectionChangeCallback& callback)
-{
-	_selectionChangedSignal.connect(callback);
 }
 
 // Start a move, the current pivot point is saved as a start point
@@ -1054,15 +1049,22 @@ const StringSet& RadiantSelectionSystem::getDependencies() const {
 	return _dependencies;
 }
 
-void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
+void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) 
+{
 	globalOutputStream() << "RadiantSelectionSystem::initialiseModule called.\n";
 
 	constructStatic();
 
 	SetManipulatorMode(eTranslate);
 	pivotChanged();
-	addSelectionChangeCallback(boost::bind(&RadiantSelectionSystem::pivotChangedSelection, this, _1));
-	GlobalGrid().addGridChangeCallback(boost::bind(&RadiantSelectionSystem::pivotChanged, this));
+
+    _sigSelectionChanged.connect(
+        sigc::mem_fun(this, &RadiantSelectionSystem::pivotChangedSelection)
+    );
+
+	GlobalGrid().signal_gridChanged().connect(
+        sigc::mem_fun(this, &RadiantSelectionSystem::pivotChanged)
+    );
 
 	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_PIVOT);
 
@@ -1070,21 +1072,21 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx) {
 	GlobalEventManager().connectSelectionSystem(this);
 
 	// Connect the bounds changed caller
-	_boundsChangedHandler =	GlobalSceneGraph().addBoundsChangedCallback(
-		boost::bind(&RadiantSelectionSystem::onSceneBoundsChanged, this)
+    GlobalSceneGraph().signal_boundsChanged().connect(
+		sigc::mem_fun(this, &RadiantSelectionSystem::onSceneBoundsChanged)
 	);
 
 	GlobalRenderSystem().attachRenderable(*this);
 }
 
-void RadiantSelectionSystem::shutdownModule() {
+void RadiantSelectionSystem::shutdownModule() 
+{
 	// greebo: Unselect everything so that no references to scene::Nodes
 	// are kept after shutdown, causing destruction issues.
 	setSelectedAll(false);
 	setSelectedAllComponents(false);
 
 	GlobalRenderSystem().detachRenderable(*this);
-	GlobalSceneGraph().removeBoundsChangedCallback(_boundsChangedHandler);
 
 	destroyStatic();
 }

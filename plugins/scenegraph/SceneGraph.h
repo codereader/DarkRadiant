@@ -2,7 +2,8 @@
 
 #include <map>
 #include <list>
-#include "signal/signal.h"
+#include <sigc++/signal.h>
+
 #include "scenelib.h"
 #include "imodule.h"
 #include "ispacepartition.h"
@@ -25,7 +26,7 @@ private:
 	typedef std::list<Graph::Observer*> ObserverList;
 	ObserverList _sceneObservers;
 
-	Signal _boundsChanged;
+    sigc::signal<void> _sigBoundsChanged;
 
 	// The root-element, the scenegraph starts here
 	scene::INodePtr _root;
@@ -58,11 +59,11 @@ public:
 	// Note: these are the WorkZone and the SelectionSystem, AFAIK
 	void boundsChanged();
 
+    /// Return the boundsChanged signal
+    sigc::signal<void> signal_boundsChanged() const;
+
 	void insert(const INodePtr& node);
 	void erase(const INodePtr& node);
-
-	std::size_t addBoundsChangedCallback(const BoundsChangedFunc& callback);
-	void removeBoundsChangedCallback(std::size_t handle);
 
 	void nodeBoundsChanged(const scene::INodePtr& node);
 

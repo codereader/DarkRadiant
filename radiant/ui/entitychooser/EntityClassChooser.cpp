@@ -117,6 +117,8 @@ public:
     }
 };
 
+void test() { std::cout << "changed" << std::endl; }
+
 // Main constructor
 EntityClassChooser::EntityClassChooser()
 : gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE),
@@ -169,6 +171,8 @@ EntityClassChooser::EntityClassChooser()
         sigc::mem_fun(*this, &EntityClassChooser::getEntityClassesFromLoader)
     );
     _eclassLoader->loadEntityClasses();
+
+    mainPaned->property_position().signal_changed().connect(sigc::ptr_fun(test));
 }
 
 void EntityClassChooser::getEntityClassesFromLoader()

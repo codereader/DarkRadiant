@@ -42,17 +42,6 @@ std::string Curve::getEntityKeyValue() {
 	return value;
 }
 
-std::size_t Curve::connect(const CurveChangedCallback& curveChanged)
-{
-	curveChanged();
-	return _curveChanged.connect(curveChanged);
-}
-
-void Curve::disconnect(std::size_t id)
-{
-	_curveChanged.disconnect(id);
-}
-
 void Curve::testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best) {
 	if (_renderCurve.m_vertices.size() > 0) {
 		PointVertexArray_testSelect(
@@ -126,7 +115,8 @@ bool Curve::parseCurve(const std::string& value) {
 	return true;
 }
 
-void Curve::curveChanged() {
+void Curve::curveChanged() 
+{
 	// Recalculate the tesselation
 	tesselate();
 
@@ -143,7 +133,7 @@ void Curve::curveChanged() {
 	_boundsChanged();
 
 	// Emit the "curve changed" signal
-	_curveChanged();
+	_sigCurveChanged();
 }
 
 void Curve::onKeyValueChanged(const std::string& value) {

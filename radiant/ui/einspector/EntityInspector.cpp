@@ -20,7 +20,6 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "xmlutil/Document.h"
-#include "signal/signal.h"
 #include "map/Map.h"
 #include "selection/algorithm/Entity.h"
 #include "selection/algorithm/General.h"
@@ -402,7 +401,7 @@ Gtk::Widget& EntityInspector::createTreeViewPane()
 
 	Glib::RefPtr<Gdk::Pixbuf> helpIcon = GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME);
 
-	if (helpIcon != NULL)
+	if (helpIcon)
 	{
 		_helpColumn->set_fixed_width(helpIcon->get_width());
 	}

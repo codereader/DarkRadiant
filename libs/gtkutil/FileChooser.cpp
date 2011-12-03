@@ -107,7 +107,9 @@ void FileChooser::construct()
 	set_modal(true);
 
 	// Set the default size of the window
-	Gdk::Rectangle rect = _parent != NULL ? MultiMonitor::getMonitorForWindow(_parent) : MultiMonitor::getMonitor(0);
+	Gdk::Rectangle rect = _parent 
+                           ? MultiMonitor::getMonitorForWindow(_parent)
+                           : MultiMonitor::getMonitor(0);
 
 	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(2*rect.get_height()/3));
 

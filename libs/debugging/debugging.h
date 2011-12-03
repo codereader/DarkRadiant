@@ -26,7 +26,6 @@ inline ErrorHandlingFunction& GlobalErrorHandler()
 #elif defined (__i386__) && defined (__GNUC__) && __GNUC__ >= 2
 #define DEBUGGER_BREAKPOINT() __asm__ __volatile__ ("int $03")
 #else
-#include <signal.h>
 
 #define DEBUGGER_BREAKPOINT() raise(SIGTRAP);
 #endif
