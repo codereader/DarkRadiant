@@ -1,3 +1,10 @@
+darkradiant (1.7.0.1~oneiric1) oneiric; urgency=low
+
+  * Fixed possible crash in displaying particle editor on Linux.
+  * Fixed failure to find user-local mod assets in (e.g.) ~/.doom3/darkmod
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 29 Nov 2011 19:51:12 +0000
+
 darkradiant (1.7.0~oneiric1) oneiric; urgency=low
 
   * 1.7.0 release.
