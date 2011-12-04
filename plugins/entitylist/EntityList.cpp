@@ -6,7 +6,7 @@
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
-#include "registry/registry.h"
+#include "registry/bind.h"
 #include "entitylib.h"
 #include "scenelib.h"
 #include "icamera.h"
@@ -73,16 +73,19 @@ void EntityList::populateWindow()
 	_focusOnSelectedEntityToggle = Gtk::manage(new Gtk::CheckButton(_("Focus camera on selected entity.")));
 
 	// Update the toggle item status according to the registry
-	_focusOnSelectedEntityToggle->set_active(registry::getValue<bool>(RKEY_ENTITYLIST_FOCUS_SELECTION));
+    registry::bindPropertyToKey(_focusOnSelectedEntityToggle->property_active(),
+                                RKEY_ENTITYLIST_FOCUS_SELECTION);
 
 	_visibleNodesOnly = Gtk::manage(new Gtk::CheckButton(_("List visible nodes only")));
-	_visibleNodesOnly->set_active(registry::getValue<bool>(RKEY_ENTITYLIST_VISIBLE_ONLY));
+    registry::bindPropertyToKey(_visibleNodesOnly->property_active(),
+                                RKEY_ENTITYLIST_VISIBLE_ONLY);
 
 	_treeModel.setConsiderVisibleNodesOnly(_visibleNodesOnly->get_active());
 
 	// Connect the toggle buttons' "toggled" signal
-	_focusOnSelectedEntityToggle->signal_toggled().connect(sigc::mem_fun(*this, &EntityList::onFocusSelectionToggle));
-	_visibleNodesOnly->signal_toggled().connect(sigc::mem_fun(*this, &EntityList::onVisibleOnlyToggle));
+	_visibleNodesOnly->signal_toggled().connect(
+        sigc::mem_fun(*this, &EntityList::onVisibleOnlyToggle)
+    );
 
 	// Create a VBOX
 	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
@@ -224,21 +227,8 @@ void EntityList::onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::Tr
 	update();
 }
 
-void EntityList::onFocusSelectionToggle()
-{
-	// Update the registry state in the registry
-	bool active = _focusOnSelectedEntityToggle->get_active();
-
-	registry::setValue<bool>(RKEY_ENTITYLIST_FOCUS_SELECTION, active);
-}
-
 void EntityList::onVisibleOnlyToggle()
 {
-	// Update the registry state in the registry
-	bool active = _visibleNodesOnly->get_active();
-
-	registry::setValue<bool>(RKEY_ENTITYLIST_VISIBLE_ONLY, active);
-
 	// Update the whole tree
 	_treeModel.setConsiderVisibleNodesOnly(_visibleNodesOnly->get_active());
 	_treeModel.refresh();

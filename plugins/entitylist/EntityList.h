@@ -70,7 +70,6 @@ private:
 
 	void onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
 	bool onSelection(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::Path& path, bool path_currently_selected);
-	void onFocusSelectionToggle();
 	void onVisibleOnlyToggle();
 
 	void expandRootNode();
