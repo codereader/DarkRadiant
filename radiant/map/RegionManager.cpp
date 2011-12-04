@@ -1,7 +1,6 @@
 #include "RegionManager.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "brush/TexDef.h"
 #include "ibrush.h"
 #include "ientity.h"
@@ -17,6 +16,7 @@
 
 #include "select.h"
 
+#include "registry/registry.h"
 #include "brushmanip.h" // Construct_RegionBrushes()
 #include "RegionWalkers.h"
 #include "MapFileManager.h"
@@ -69,8 +69,8 @@ namespace map {
 RegionManager::RegionManager() :
 	_active(false)
 {
-	_worldMin = GlobalRegistry().getFloat("game/defaults/minWorldCoord");
-	_worldMax = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
+	_worldMin = registry::getValue<float>("game/defaults/minWorldCoord");
+	_worldMax = registry::getValue<float>("game/defaults/maxWorldCoord");
 
 	for (int i = 0; i < 6; i++) {
 		_brushes[i] = scene::INodePtr();

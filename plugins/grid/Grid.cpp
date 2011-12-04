@@ -8,11 +8,11 @@
 #include "icommandsystem.h"
 #include "imainframe.h"
 #include "ieventmanager.h"
-#include "iregistry.h"
 #include "iuimanager.h"
 #include "ipreferencesystem.h"
 #include "string/string.h"
 
+#include "registry/registry.h"
 #include "i18n.h"
 #include "GridItem.h"
 #include <boost/bind.hpp>
@@ -71,7 +71,7 @@ public:
 		// Map the [GRID_0125...GRID_256] values (starting from -3) to [0..N]
 		int registryValue = static_cast<int>(_activeGridSize) - static_cast<int>(GRID_0125);
 
-		GlobalRegistry().setInt(RKEY_DEFAULT_GRID_SIZE, registryValue);
+		registry::setValue<int>(RKEY_DEFAULT_GRID_SIZE, registryValue);
 	}
 
 private:
@@ -91,7 +91,7 @@ public:
 
 	void loadDefaultValue() {
 		// Get the registry value
-		int registryValue = GlobalRegistry().getInt(RKEY_DEFAULT_GRID_SIZE);
+		int registryValue = registry::getValue<int>(RKEY_DEFAULT_GRID_SIZE);
 
 		// Map the [0..N] values to [GRID_0125...GRID_256]
 		int mapped = registryValue + static_cast<int>(GRID_0125);
@@ -242,11 +242,11 @@ public:
 	}
 
 	GridLook getMajorLook() const {
-		return getLookFromNumber( GlobalRegistry().getInt(RKEY_GRID_LOOK_MAJOR) );
+		return getLookFromNumber( registry::getValue<int>(RKEY_GRID_LOOK_MAJOR) );
 	}
 
 	GridLook getMinorLook() const {
-		return getLookFromNumber( GlobalRegistry().getInt(RKEY_GRID_LOOK_MINOR) );
+		return getLookFromNumber( registry::getValue<int>(RKEY_GRID_LOOK_MINOR) );
 	}
 
 }; // class GridManager

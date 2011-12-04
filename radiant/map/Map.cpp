@@ -16,6 +16,7 @@
 #include "imapresource.h"
 #include "iselectionset.h"
 
+#include "registry/registry.h"
 #include "stream/textfilestream.h"
 #include "entitylib.h"
 #include "os/path.h"
@@ -394,7 +395,7 @@ void Map::gotoStartPosition() {
 				origin = playerStart->getKeyValue("origin");
 
 				// angua: move the camera upwards a bit
-				origin.z() += GlobalRegistry().getFloat(RKEY_PLAYER_HEIGHT);
+				origin.z() += registry::getValue<float>(RKEY_PLAYER_HEIGHT);
 
 				// Check for an angle key, and use it if present
 				try {

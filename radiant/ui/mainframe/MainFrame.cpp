@@ -23,6 +23,7 @@
 #include "camera/CameraSettings.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
+#include "registry/registry.h"
 #include "map/AutoSaver.h"
 #include "brush/BrushModule.h"
 #include "gtkutil/FramedWidget.h"
@@ -335,7 +336,7 @@ void MainFrame::restoreWindowPosition()
 		windowState = strToInt(GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state"));
 	}
 
-	int startMonitor = GlobalRegistry().getInt(RKEY_MULTIMON_START_MONITOR);
+	int startMonitor = registry::getValue<int>(RKEY_MULTIMON_START_MONITOR);
 
 	if (startMonitor < gtkutil::MultiMonitor::getNumMonitors())
 	{

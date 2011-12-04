@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/BrushVisit.h"
 #include "brushmanip.h"
 
+#include "registry/registry.h"
 #include "ipreferencesystem.h"
 #include "modulesystem/StaticModule.h"
 
@@ -55,7 +56,7 @@ void BrushModuleClass::construct()
 {
 	Brush_registerCommands();
 
-	Brush::m_maxWorldCoord = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
+	Brush::m_maxWorldCoord = registry::getValue<float>("game/defaults/maxWorldCoord");
 }
 
 void BrushModuleClass::destroy()

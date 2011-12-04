@@ -9,6 +9,7 @@
 #include "iradiant.h"
 #include "ipreferencesystem.h"
 
+#include "registry/registry.h"
 #include "gdk/gdkwindow.h"
 
 #include "os/file.h"
@@ -47,7 +48,7 @@ namespace {
 AutoMapSaver::AutoMapSaver() :
 	_enabled(GlobalRegistry().get(RKEY_AUTOSAVE_ENABLED) == "1"),
 	_snapshotsEnabled(GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED) == "1"),
-	_interval(GlobalRegistry().getInt(RKEY_AUTOSAVE_INTERVAL) * 60),
+	_interval(registry::getValue<int>(RKEY_AUTOSAVE_INTERVAL) * 60),
 	_timer(_interval*1000, onIntervalReached, this),
 	_changes(0)
 {
@@ -66,7 +67,7 @@ void AutoMapSaver::keyChanged(const std::string& key, const std::string& val) {
 
 	_enabled = (GlobalRegistry().get(RKEY_AUTOSAVE_ENABLED) == "1");
 	_snapshotsEnabled = (GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED) == "1");
-	_interval = GlobalRegistry().getInt(RKEY_AUTOSAVE_INTERVAL) * 60;
+	_interval = registry::getValue<int>(RKEY_AUTOSAVE_INTERVAL) * 60;
 
 	// Update the internal timer
 	_timer.setTimeout(_interval * 1000);
@@ -101,7 +102,7 @@ void AutoMapSaver::saveSnapshot() {
 	// 3. inc that and save the map
 
 	unsigned int maxSnapshotFolderSize =
-		GlobalRegistry().getInt(RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
+		registry::getValue<int>(RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
 
 	// Sanity check in case there is something weird going on in the registry
 	if (maxSnapshotFolderSize == 0) {

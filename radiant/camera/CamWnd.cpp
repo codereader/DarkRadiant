@@ -16,6 +16,7 @@
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
 #include "render/RenderStatistics.h"
+#include "registry/registry.h"
 
 #include <boost/bind.hpp>
 
@@ -90,8 +91,8 @@ public:
 		_bestUp(bestUp),
 		_bestDown(bestDown)
 	{
-		_bestUp = GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
-		_bestDown = -GlobalRegistry().getFloat("game/defaults/maxWorldCoord");
+		_bestUp = registry::getValue<float>("game/defaults/maxWorldCoord");
+		_bestDown = -registry::getValue<float>("game/defaults/maxWorldCoord");
 	}
 
 	bool pre(const scene::INodePtr& node) {
@@ -417,11 +418,11 @@ void CamWnd::changeFloor(const bool up) {
 	FloorHeightWalker walker(current, bestUp, bestDown);
 	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
-	if (up && bestUp != GlobalRegistry().getFloat("game/defaults/maxWorldCoord")) {
+	if (up && bestUp != registry::getValue<float>("game/defaults/maxWorldCoord")) {
 		current = bestUp;
 	}
 
-	if (!up && bestDown != -GlobalRegistry().getFloat("game/defaults/maxWorldCoord")) {
+	if (!up && bestDown != -registry::getValue<float>("game/defaults/maxWorldCoord")) {
 		current = bestDown;
 	}
 

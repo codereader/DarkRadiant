@@ -4,8 +4,8 @@
 #include "itextstream.h"
 #include "entitylib.h"
 #include "scenelib.h"
-#include "iregistry.h"
 #include "string/string.h"
+#include "registry/registry.h"
 #include "DifficultyEntity.h"
 #include "DifficultyEntityFinder.h"
 
@@ -38,7 +38,7 @@ void DifficultySettingsManager::loadDefaultSettings() {
 	}
 
 	// greebo: Setup the default difficulty levels using the found entityDef
-	int numLevels = GlobalRegistry().getInt(RKEY_DIFFICULTY_LEVELS);
+	int numLevels = registry::getValue<int>(RKEY_DIFFICULTY_LEVELS);
 	for (int i = 0; i < numLevels; i++) {
 		// Allocate a new settings object
 		DifficultySettingsPtr settings(new DifficultySettings(i));
@@ -78,7 +78,7 @@ void DifficultySettingsManager::loadDifficultyNames() {
 	);
 
 	// greebo: Setup the default difficulty levels using the found entityDef
-	int numLevels = GlobalRegistry().getInt(RKEY_DIFFICULTY_LEVELS);
+	int numLevels = registry::getValue<int>(RKEY_DIFFICULTY_LEVELS);
 	for (int i = 0; i < numLevels; i++) {
 		std::string nameKey = "diff" + intToStr(i) + "default";
 

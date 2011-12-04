@@ -1,12 +1,12 @@
 #include "EntityList.h"
 
 #include "ieventmanager.h"
-#include "iregistry.h"
 #include "imainframe.h"
 #include "nameable.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
+#include "registry/registry.h"
 #include "entitylib.h"
 #include "scenelib.h"
 #include "icamera.h"
@@ -73,10 +73,10 @@ void EntityList::populateWindow()
 	_focusOnSelectedEntityToggle = Gtk::manage(new Gtk::CheckButton(_("Focus camera on selected entity.")));
 
 	// Update the toggle item status according to the registry
-	_focusOnSelectedEntityToggle->set_active(GlobalRegistry().getBool(RKEY_ENTITYLIST_FOCUS_SELECTION));
+	_focusOnSelectedEntityToggle->set_active(registry::getValue<bool>(RKEY_ENTITYLIST_FOCUS_SELECTION));
 
 	_visibleNodesOnly = Gtk::manage(new Gtk::CheckButton(_("List visible nodes only")));
-	_visibleNodesOnly->set_active(GlobalRegistry().getBool(RKEY_ENTITYLIST_VISIBLE_ONLY));
+	_visibleNodesOnly->set_active(registry::getValue<bool>(RKEY_ENTITYLIST_VISIBLE_ONLY));
 
 	_treeModel.setConsiderVisibleNodesOnly(_visibleNodesOnly->get_active());
 
@@ -229,7 +229,7 @@ void EntityList::onFocusSelectionToggle()
 	// Update the registry state in the registry
 	bool active = _focusOnSelectedEntityToggle->get_active();
 
-	GlobalRegistry().setBool(RKEY_ENTITYLIST_FOCUS_SELECTION, active);
+	registry::setValue<bool>(RKEY_ENTITYLIST_FOCUS_SELECTION, active);
 }
 
 void EntityList::onVisibleOnlyToggle()
@@ -237,7 +237,7 @@ void EntityList::onVisibleOnlyToggle()
 	// Update the registry state in the registry
 	bool active = _visibleNodesOnly->get_active();
 
-	GlobalRegistry().setBool(RKEY_ENTITYLIST_VISIBLE_ONLY, active);
+	registry::setValue<bool>(RKEY_ENTITYLIST_VISIBLE_ONLY, active);
 
 	// Update the whole tree
 	_treeModel.setConsiderVisibleNodesOnly(_visibleNodesOnly->get_active());

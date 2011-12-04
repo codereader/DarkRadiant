@@ -1,7 +1,6 @@
 #include "XYWnd.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "iscenegraph.h"
 #include "iundo.h"
 #include "ieventmanager.h"
@@ -27,6 +26,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "map/RegionManager.h"
 #include "selection/algorithm/General.h"
+#include "registry/registry.h"
 
 #include "GlobalXYWnd.h"
 #include "XYRenderer.h"
@@ -62,8 +62,8 @@ XYWnd::XYWnd(int id) :
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
 	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, _glWidget)),
 	m_deferred_motion(boost::bind(&XYWnd::callbackMouseMotion, this, _1, _2, _3)),
-	_minWorldCoord(GlobalRegistry().getFloat("game/defaults/minWorldCoord")),
-	_maxWorldCoord(GlobalRegistry().getFloat("game/defaults/maxWorldCoord")),
+	_minWorldCoord(registry::getValue<float>("game/defaults/minWorldCoord")),
+	_maxWorldCoord(registry::getValue<float>("game/defaults/maxWorldCoord")),
 	_moveStarted(false),
 	_zoomStarted(false),
 	_chaseMouseHandler(0),

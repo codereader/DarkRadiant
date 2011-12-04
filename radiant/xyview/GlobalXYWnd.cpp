@@ -6,6 +6,7 @@
 #include "iuimanager.h"
 #include "ipreferencesystem.h"
 
+#include "registry/registry.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 
@@ -198,7 +199,7 @@ void XYWndManager::keyChanged(const std::string& key, const std::string& val)
 	_showOutline = (GlobalRegistry().get(RKEY_SHOW_OUTLINE) == "1");
 	_showAxes = (GlobalRegistry().get(RKEY_SHOW_AXES) == "1");
 	_showWorkzone = (GlobalRegistry().get(RKEY_SHOW_WORKZONE) == "1");
-	_defaultBlockSize = (GlobalRegistry().getInt(RKEY_DEFAULT_BLOCKSIZE));
+	_defaultBlockSize = (registry::getValue<int>(RKEY_DEFAULT_BLOCKSIZE));
 	updateAllViews();
 }
 

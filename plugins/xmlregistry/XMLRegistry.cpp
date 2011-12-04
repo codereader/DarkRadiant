@@ -189,38 +189,6 @@ std::string XMLRegistry::get(const std::string& key) {
 	}
 }
 
-float XMLRegistry::getFloat(const std::string& key) {
-	// Load the key and convert to float
-	return strToFloat(get(key));
-}
-
-void XMLRegistry::setFloat(const std::string& key, const double value) {
-	// Pass the call to set() to do the rest
-	set(key, doubleToStr(value));
-}
-
-int XMLRegistry::getInt(const std::string& key) {
-	// Load the key and convert to int
-	return strToInt(get(key));
-}
-
-void XMLRegistry::setInt(const std::string& key, const int value) {
-	// Pass the call to set() to do the rest
-	set(key, intToStr(value));
-}
-
-bool XMLRegistry::getBool(const std::string& key)
-{
-	std::string value = get(key);
-
-	return !value.empty() && value != "0";
-}
-
-void XMLRegistry::setBool(const std::string& key, const bool value)
-{
-	set(key, value ? "1" : "0");
-}
-
 void XMLRegistry::set(const std::string& key, const std::string& value) {
 	// Create or set the value in the user tree, the default tree stays untouched
 	// Convert the string to UTF-8 before storing it into the RegistryTree

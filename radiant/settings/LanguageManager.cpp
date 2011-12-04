@@ -95,7 +95,7 @@ void LanguageManager::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	// Load the currently selected index into the registry
-	GlobalRegistry().setInt(RKEY_LANGUAGE, curLangIndex);
+	registry::setValue<int>(RKEY_LANGUAGE, curLangIndex);
 	GlobalRegistry().setAttribute(RKEY_LANGUAGE, "volatile", "1"); // don't save this to user.xml
 
 	// Add Preferences
@@ -109,7 +109,7 @@ void LanguageManager::shutdownModule()
 {
 	// Get the language setting from the registry (this is an integer)
 	// and look up the language code (two digit)
-	int langNum = GlobalRegistry().getInt(RKEY_LANGUAGE);
+	int langNum = registry::getValue<int>(RKEY_LANGUAGE);
 
 	assert(langNum >= 0 && langNum < static_cast<int>(_availableLanguages.size()));
 

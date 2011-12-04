@@ -1,5 +1,6 @@
 #include "Overlay.h"
 
+#include "registry/registry.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "texturelib.h"
@@ -21,13 +22,13 @@ namespace {
 Overlay::Overlay()
 :	_imageName(GlobalRegistry().get(RKEY_OVERLAY_IMAGE)),
 	_visible(GlobalRegistry().get(RKEY_OVERLAY_VISIBLE) == "1"),
-	_transparency(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSPARENCY)),
-	_scale(GlobalRegistry().getFloat(RKEY_OVERLAY_SCALE)),
+	_transparency(registry::getValue<float>(RKEY_OVERLAY_TRANSPARENCY)),
+	_scale(registry::getValue<float>(RKEY_OVERLAY_SCALE)),
 	_scaleWithXYView(GlobalRegistry().get(RKEY_OVERLAY_SCALE_WITH_XY) == "1"),
 	_panWithXYView(GlobalRegistry().get(RKEY_OVERLAY_PAN_WITH_XY) == "1"),
 	_keepProportions(GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1"),
-	_translationX(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONX)),
-	_translationY(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONY))
+	_translationX(registry::getValue<float>(RKEY_OVERLAY_TRANSLATIONX)),
+	_translationY(registry::getValue<float>(RKEY_OVERLAY_TRANSLATIONY))
 {
 	// Watch the relevant registry keys
 	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_VISIBLE);
@@ -222,10 +223,10 @@ void Overlay::keyChanged(const std::string& key, const std::string& val)
 	_scaleWithXYView = (GlobalRegistry().get(RKEY_OVERLAY_SCALE_WITH_XY) == "1"),
 	_panWithXYView = (GlobalRegistry().get(RKEY_OVERLAY_PAN_WITH_XY) == "1"),
 	setImage(GlobalRegistry().get(RKEY_OVERLAY_IMAGE));
-	setTransparency(GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSPARENCY));
-	setImageScale(GlobalRegistry().getFloat(RKEY_OVERLAY_SCALE));
-	setImagePosition( GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONX),
-					  GlobalRegistry().getFloat(RKEY_OVERLAY_TRANSLATIONY) );
+	setTransparency(registry::getValue<float>(RKEY_OVERLAY_TRANSPARENCY));
+	setImageScale(registry::getValue<float>(RKEY_OVERLAY_SCALE));
+	setImagePosition( registry::getValue<float>(RKEY_OVERLAY_TRANSLATIONX),
+					  registry::getValue<float>(RKEY_OVERLAY_TRANSLATIONY) );
 }
 
 // Helper method, constrains the <input> float to the given min/max values

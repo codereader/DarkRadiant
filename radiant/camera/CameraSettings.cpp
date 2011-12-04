@@ -4,18 +4,19 @@
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
 
+#include "registry/registry.h"
 #include "GlobalCamera.h"
 
 #include <boost/lexical_cast.hpp>
 
 CameraSettings::CameraSettings() :
 	_callbackActive(false),
-	_movementSpeed(GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED)),
-	_angleSpeed(GlobalRegistry().getInt(RKEY_ROTATION_SPEED)),
+	_movementSpeed(registry::getValue<int>(RKEY_MOVEMENT_SPEED)),
+	_angleSpeed(registry::getValue<int>(RKEY_ROTATION_SPEED)),
 	_invertMouseVerticalAxis(GlobalRegistry().get(RKEY_INVERT_MOUSE_VERTICAL_AXIS) == "1"),
 	_discreteMovement(GlobalRegistry().get(RKEY_DISCRETE_MOVEMENT) == "1"),
 	_cameraDrawMode(RENDER_MODE_TEXTURED),
-	_cubicScale(GlobalRegistry().getInt(RKEY_CUBIC_SCALE)),
+	_cubicScale(registry::getValue<int>(RKEY_CUBIC_SCALE)),
 	_farClipEnabled(GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1"),
 	_solidSelectionBoxes(GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1"),
 	_toggleFreelook(GlobalRegistry().get(RKEY_TOGGLE_FREE_MOVE) == "1")
@@ -26,7 +27,7 @@ CameraSettings::CameraSettings() :
 	}
 
 	// Initialise the draw mode from the integer value stored in the registry
-	importDrawMode(GlobalRegistry().getInt(RKEY_DRAWMODE));
+	importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));
 
 	// Connect self to the according registry keys
 	GlobalRegistry().addKeyObserver(this, RKEY_MOVEMENT_SPEED);
@@ -125,8 +126,8 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 
 		// Load the values from the registry
 		_toggleFreelook = GlobalRegistry().get(RKEY_TOGGLE_FREE_MOVE) == "1";
-		_movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
-		_angleSpeed = GlobalRegistry().getInt(RKEY_ROTATION_SPEED);
+		_movementSpeed = registry::getValue<int>(RKEY_MOVEMENT_SPEED);
+		_angleSpeed = registry::getValue<int>(RKEY_ROTATION_SPEED);
 		_invertMouseVerticalAxis = (GlobalRegistry().get(RKEY_INVERT_MOUSE_VERTICAL_AXIS) == "1");
 		_farClipEnabled = (GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1");
 		_solidSelectionBoxes = (GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1");
@@ -134,7 +135,7 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 		GlobalEventManager().setToggled("ToggleCubicClip", _farClipEnabled);
 
 		// Determine the draw mode represented by the integer registry value
-		importDrawMode(GlobalRegistry().getInt(RKEY_DRAWMODE));
+		importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));
 
 		// Check if a global camwindow is set
 		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
@@ -172,7 +173,7 @@ void CameraSettings::setRenderMode(const CameraDrawMode& mode)
 {
     // Write the value into the registry, this should trigger the keyChanged()
     // callback that in turn calls the update functions
-	GlobalRegistry().setInt(RKEY_DRAWMODE, static_cast<int>(mode));
+	registry::setValue<int>(RKEY_DRAWMODE, static_cast<int>(mode));
 }
 
 void CameraSettings::toggleLightingMode() 

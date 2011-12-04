@@ -10,6 +10,8 @@
 #include "inamespace.h"
 #include "iselection.h"
 #include "imainframe.h"
+
+#include "registry/registry.h"
 #include "scenelib.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "xyview/GlobalXYWnd.h"
@@ -179,7 +181,7 @@ void cloneSelected(const cmd::ArgumentList& args) {
 	// Finally, move the cloned nodes to their destination and select them
 	cloner.moveClonedNodes(true);
 
-	if (GlobalRegistry().getInt(RKEY_OFFSET_CLONED_OBJECTS) == 1)
+	if (registry::getValue<int>(RKEY_OFFSET_CLONED_OBJECTS) == 1)
 	{
 		// Move the current selection by one grid unit to the "right" and "downwards"
 		nudgeSelected(eNudgeDown);

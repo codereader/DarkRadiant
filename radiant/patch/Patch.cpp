@@ -1,13 +1,14 @@
 #include "Patch.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "shaderlib.h"
 #include "irenderable.h"
 #include "itextstream.h"
 #include "iselectiontest.h"
+
+#include "registry/registry.h"
 #include "math/Frustum.h"
 #include "texturelib.h"
 #include "brush/TextureProjection.h"
@@ -1065,7 +1066,7 @@ void Patch::NaturalTexture() {
 	undoSave();
 
 	// Retrieve the default scale from the registry
-	float defaultScale = GlobalRegistry().getFloat("user/ui/textures/defaultTextureScale");
+	float defaultScale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
 
 	/* In this next block, the routine cycles through all the patch columns and
 	 * measures the distances to the next column.
@@ -1899,7 +1900,7 @@ void Patch::ProjectTexture(int nAxis) {
 	}
 
 	// Retrieve the default scale from the registry
-	float defaultScale = GlobalRegistry().getFloat("user/ui/defaultTextureScale");
+	float defaultScale = registry::getValue<float>("user/ui/defaultTextureScale");
 
 	/* Calculate the conversion factor between world and texture coordinates
 	 * by using the image width/height.*/

@@ -2,6 +2,7 @@
 
 #include "igl.h"
 #include <stdlib.h>
+#include "registry/registry.h"
 #include "imagelib.h"
 #include "math/Vector3.h"
 #include "ipreferencesystem.h"
@@ -20,9 +21,9 @@ namespace {
 namespace shaders {
 
 TextureManipulator::TextureManipulator() :
-	_gamma(GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA)),
+	_gamma(registry::getValue<float>(RKEY_TEXTURES_GAMMA)),
 	_maxTextureSize(0),
-	_textureQuality(GlobalRegistry().getInt(RKEY_TEXTURES_QUALITY))
+	_textureQuality(registry::getValue<int>(RKEY_TEXTURES_QUALITY))
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_GAMMA);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_QUALITY);
@@ -41,9 +42,9 @@ TextureManipulator& TextureManipulator::instance() {
 
 // RegistryKeyObserver implementation
 void TextureManipulator::keyChanged(const std::string& key, const std::string& val) {
-	_textureQuality = GlobalRegistry().getInt(RKEY_TEXTURES_QUALITY);
+	_textureQuality = registry::getValue<int>(RKEY_TEXTURES_QUALITY);
 
-	float newGamma = GlobalRegistry().getFloat(RKEY_TEXTURES_GAMMA);
+	float newGamma = registry::getValue<float>(RKEY_TEXTURES_GAMMA);
 
 	// Has the gamma actually changed?
 	if (_gamma != newGamma) {

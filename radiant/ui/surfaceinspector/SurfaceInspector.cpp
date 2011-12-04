@@ -22,6 +22,7 @@
 #include "gtkutil/dialog/MessageBox.h"
 #include "gtkutil/SerialisableWidgets.h"
 
+#include "registry/registry.h"
 #include "selectionlib.h"
 #include "math/FloatTools.h"
 #include "string/string.h"
@@ -432,7 +433,7 @@ void SurfaceInspector::populateWindow()
 
 	// Create the default texture scale spinner
 	Gtk::Adjustment* defaultAdj = Gtk::manage(new Gtk::Adjustment(
-		GlobalRegistry().getFloat(RKEY_DEFAULT_TEXTURE_SCALE),
+		registry::getValue<float>(RKEY_DEFAULT_TEXTURE_SCALE),
 		0.0f, 1000.0f, 0.1f, 0.1f, 0)
 	);
 

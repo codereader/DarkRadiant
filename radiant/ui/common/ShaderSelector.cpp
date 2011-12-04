@@ -41,9 +41,9 @@ namespace
 ShaderSelector::ShaderSelector(Client* client, const std::string& prefixes, bool isLightTexture) :
 	Gtk::VBox(false, 3),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "ShaderSelector"))),
-	_infoStore(Gtk::ListStore::create(_infoStoreColumns)),
 	_client(client),
-	_isLightTexture(isLightTexture)
+	_isLightTexture(isLightTexture),
+	_infoStore(Gtk::ListStore::create(_infoStoreColumns))
 {
 	// Split the given comma-separated list into the vector
 	boost::algorithm::split(_prefixes, prefixes, boost::algorithm::is_any_of(","));

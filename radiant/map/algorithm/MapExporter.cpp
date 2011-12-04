@@ -3,13 +3,13 @@
 #include <ostream>
 #include "i18n.h"
 #include "itextstream.h"
-#include "iregistry.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ientity.h"
 #include "igroupnode.h"
 #include "imainframe.h"
 
+#include "registry/registry.h"
 #include "scenelib.h"
 #include "string/string.h"
 
@@ -28,7 +28,7 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root, std::o
 	_writer(writer),
 	_mapStream(mapStream),
 	_root(root),
-	_dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
+	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
 	_totalNodeCount(nodeCount),
 	_curNodeCount(0)
 {
@@ -41,7 +41,7 @@ MapExporter::MapExporter(IMapWriter& writer, const scene::INodePtr& root,
 	_mapStream(mapStream),
 	_infoFileExporter(new InfoFileExporter(auxStream)),
 	_root(root),
-	_dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
+	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_SAVE_STATUS_INTERLEAVE)),
 	_totalNodeCount(nodeCount),
 	_curNodeCount(0)
 {

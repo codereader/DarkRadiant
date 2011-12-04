@@ -12,7 +12,6 @@
 #include "icommandsystem.h"
 #include "itextstream.h"
 #include "ieventmanager.h"
-#include "iregistry.h"
 #include "ipreferencesystem.h"
 #include "iscenegraph.h"
 
@@ -20,6 +19,7 @@
 #include <map>
 #include <set>
 
+#include "registry/registry.h"
 #include "SnapShot.h"
 #include "Operation.h"
 #include "Stack.h"
@@ -92,7 +92,7 @@ public:
 	// Gets called as soon as the observed registry keys get changed
 	void keyChanged(const std::string& key, const std::string& val) {
         // TODO: use val here
-		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
+		_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 	}
 
 	UndoObserver* observer(Undoable* undoable) {
@@ -332,7 +332,7 @@ public:
 		GlobalEventManager().addCommand("Undo", "Undo");
 		GlobalEventManager().addCommand("Redo", "Redo");
 
-		_undoLevels = GlobalRegistry().getInt(RKEY_UNDO_QUEUE_SIZE);
+		_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 
 		// Add self to the key observers to get notified on change
 		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);

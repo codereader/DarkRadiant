@@ -18,7 +18,7 @@
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/MultiMonitor.h"
 #include "string/string.h"
-#include "registry.h"
+#include "registry/bind.h"
 
 #include "debugging/ScopedDebugTimer.h"
 

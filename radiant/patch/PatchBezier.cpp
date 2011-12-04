@@ -1,7 +1,7 @@
 #include "PatchBezier.h"
 
 #include "math/pi.h"
-#include "iregistry.h"
+#include "registry/registry.h"
 
 	namespace {
 		const std::string RKEY_PATCH_SUBDIVIDE_THRESHOLD = "user/ui/patch/subdivideThreshold";
@@ -53,7 +53,7 @@ bool BezierCurve::isCurved() const
 
 	const double index = width * angle;
 
-	static float subdivideThreshold = GlobalRegistry().getFloat(RKEY_PATCH_SUBDIVIDE_THRESHOLD);
+	static float subdivideThreshold = registry::getValue<float>(RKEY_PATCH_SUBDIVIDE_THRESHOLD);
 
 	if (index > subdivideThreshold)
 	{

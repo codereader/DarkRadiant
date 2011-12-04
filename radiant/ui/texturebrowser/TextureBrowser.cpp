@@ -11,6 +11,7 @@
 #include "gtkutil/IconTextMenuItem.h"
 #include "gtkutil/LeftAlignedLabel.h"
 
+#include "registry/registry.h"
 #include "shaderlib.h"
 #include "selection/algorithm/Shader.h"
 #include "ui/mediabrowser/MediaBrowser.h"
@@ -52,20 +53,20 @@ TextureBrowser::TextureBrowser() :
 	_popupX(-1),
 	_popupY(-1),
 	_startOrigin(-1),
-	_epsilon(GlobalRegistry().getFloat(RKEY_TEXTURE_CONTEXTMENU_EPSILON)),
+	_epsilon(registry::getValue<float>(RKEY_TEXTURE_CONTEXTMENU_EPSILON)),
 	_popupMenu(new gtkutil::PopupMenu),
 	_filter(NULL),
 	_glWidget(NULL),
 	_textureScrollbar(NULL),
 	m_heightChanged(true),
 	m_originInvalid(true),
-	m_mouseWheelScrollIncrement(GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
+	m_mouseWheelScrollIncrement(registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
 	m_textureScale(50),
 	m_showTextureFilter(GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1"),
 	m_showTextureScrollbar(GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1"),
 	m_hideUnused(GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1"),
 	m_resizeTextures(true),
-	m_uniformTextureSize(GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE))
+	m_uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE))
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
 	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
@@ -109,7 +110,7 @@ void TextureBrowser::textureModeChanged()
 
 void TextureBrowser::setScaleFromRegistry()
 {
-	int index = GlobalRegistry().getInt(RKEY_TEXTURE_SCALE);
+	int index = registry::getValue<int>(RKEY_TEXTURE_SCALE);
 
 	switch (index) {
 		case 0: m_textureScale = 10; break;
@@ -132,9 +133,9 @@ void TextureBrowser::keyChanged(const std::string& key, const std::string& val)
 {
 	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
 	m_showTextureFilter = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1");
-	m_uniformTextureSize = GlobalRegistry().getInt(RKEY_TEXTURE_UNIFORM_SIZE);
+	m_uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
 	m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
-	m_mouseWheelScrollIncrement = GlobalRegistry().getInt(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+	m_mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
 
 	if (m_showTextureScrollbar)
 	{
@@ -562,7 +563,7 @@ void TextureBrowser::draw()
 			_lastY(0),
 			_lastHeight(0),
 			_hideUnused(hideUnused),
-			_maxNameLength(GlobalRegistry().getInt(RKEY_TEXTURE_MAX_NAME_LENGTH))
+			_maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH))
 		{}
 
 		void visit(const MaterialPtr& shader)

@@ -1,8 +1,8 @@
 #include "RenderableText.h"
 
 #include "itextstream.h"
-#include "iregistry.h"
 
+#include "registry/registry.h"
 #include "math/Matrix4.h"
 #include <vector>
 #include <list>
@@ -262,11 +262,11 @@ void RenderableText::ensureFont()
 	}
 
 	// Determine resolution
-	if (_owner.textscale <= GlobalRegistry().getFloat(RKEY_SMALLFONT_LIMIT))
+	if (_owner.textscale <= registry::getValue<float>(RKEY_SMALLFONT_LIMIT))
 	{
 		_resolution = fonts::Resolution12;
 	}
-	else if (_owner.textscale <= GlobalRegistry().getFloat(RKEY_MEDIUMFONT_LIMIT))
+	else if (_owner.textscale <= registry::getValue<float>(RKEY_MEDIUMFONT_LIMIT))
 	{
 		_resolution = fonts::Resolution24;
 	}

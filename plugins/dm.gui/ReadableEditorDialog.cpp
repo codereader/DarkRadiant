@@ -36,13 +36,14 @@
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem.hpp>
+
+#include "registry/registry.h"
 #include "string/string.h"
 #include "i18n.h"
 
 // Modules
 #include "imainframe.h"
 #include "ientity.h"
-#include "iregistry.h"
 #include "imap.h"
 #include "igame.h"
 #include "idialogmanager.h"
@@ -664,7 +665,7 @@ std::string ReadableEditorDialog::constructStoragePath()
 	std::string storagePath;
 	if (_useDefaultFilename)
 	{
-		switch (GlobalRegistry().getInt(RKEY_READABLES_STORAGE_FOLDER))
+		switch (registry::getValue<int>(RKEY_READABLES_STORAGE_FOLDER))
 		{
 			case 0: // Use Mod dir
 				storagePath = GlobalGameManager().getModPath();

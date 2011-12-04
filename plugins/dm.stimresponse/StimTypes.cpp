@@ -2,10 +2,10 @@
 
 #include "iuimanager.h"
 #include "itextstream.h"
-#include "iregistry.h"
 #include "string/string.h"
 #include "gtkutil/TreeModel.h"
 #include "entitylib.h"
+#include "registry/registry.h"
 #include "SREntity.h"
 #include "i18n.h"
 
@@ -224,7 +224,7 @@ void StimTypes::add(int id,
 void StimTypes::visit(const std::string& key, const std::string& value)
 {
 	std::string prefix = GlobalRegistry().get(RKEY_STORAGE_PREFIX);
-	int lowestCustomId = GlobalRegistry().getInt(RKEY_LOWEST_CUSTOM_STIM_ID);
+	int lowestCustomId = registry::getValue<int>(RKEY_LOWEST_CUSTOM_STIM_ID);
 
 	if (boost::algorithm::starts_with(key, prefix))
 	{
@@ -267,7 +267,7 @@ StimTypeMap& StimTypes::getStimMap()
 
 int StimTypes::getFreeCustomStimId()
 {
-	int freeId = GlobalRegistry().getInt(RKEY_LOWEST_CUSTOM_STIM_ID);
+	int freeId = registry::getValue<int>(RKEY_LOWEST_CUSTOM_STIM_ID);
 
 	StimTypeMap::iterator found = _stimTypes.find(freeId);
 

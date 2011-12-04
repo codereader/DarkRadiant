@@ -2,13 +2,13 @@
 
 #include "ieventmanager.h"
 #include "iselection.h"
-#include "iregistry.h"
 #include "gdk/gdkkeysyms.h"
 #include "xmlutil/Node.h"
 
 #include "Camera.h"
 #include "CameraSettings.h"
 
+#include "registry/registry.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 #include "modulesystem/StaticModule.h"
@@ -181,26 +181,26 @@ void GlobalCameraManager::resetCameraAngles(const cmd::ArgumentList& args)
 
 void GlobalCameraManager::increaseCameraSpeed(const cmd::ArgumentList& args) {
 
-	int movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
+	int movementSpeed = registry::getValue<int>(RKEY_MOVEMENT_SPEED);
 	movementSpeed *= 2;
 
 	if (movementSpeed > MAX_CAMERA_SPEED){
 		movementSpeed = MAX_CAMERA_SPEED;
 	}
 
-	GlobalRegistry().setInt(RKEY_MOVEMENT_SPEED, movementSpeed);
+	registry::setValue<int>(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
 void GlobalCameraManager::decreaseCameraSpeed(const cmd::ArgumentList& args) {
 
-	int movementSpeed = GlobalRegistry().getInt(RKEY_MOVEMENT_SPEED);
+	int movementSpeed = registry::getValue<int>(RKEY_MOVEMENT_SPEED);
 	movementSpeed /= 2;
 
 	if (movementSpeed < 1){
 		movementSpeed = 1;
 	}
 
-	GlobalRegistry().setInt(RKEY_MOVEMENT_SPEED, movementSpeed);
+	registry::setValue<int>(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
 void GlobalCameraManager::benchmark() {
@@ -497,9 +497,9 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 	// openGL module is tricked into believing there are no GLSL shader programs supported.
 	// Later on, when switching back to TEXTURED the rendersystem will attempt to destroy
 	// program objects it never created.
-	if (GlobalRegistry().getInt(RKEY_DRAWMODE) == RENDER_MODE_LIGHTING)
+	if (registry::getValue<int>(RKEY_DRAWMODE) == RENDER_MODE_LIGHTING)
 	{
-		GlobalRegistry().setInt(RKEY_DRAWMODE, RENDER_MODE_TEXTURED);
+		registry::setValue<int>(RKEY_DRAWMODE, RENDER_MODE_TEXTURED);
 	}
 
 	registerCommands();

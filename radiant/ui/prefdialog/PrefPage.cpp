@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "stream/textfilestream.h"
+#include "registry/registry.h"
 
 #include <gtkmm/adjustment.h>
 #include <gtkmm/alignment.h>
@@ -262,7 +263,7 @@ Gtk::Widget* PrefPage::appendSpinner(const std::string& name, const std::string&
                                    double lower, double upper, int fraction)
 {
 	// Load the initial value (maybe unnecessary, as the value is loaded upon dialog show)
-	float value = GlobalRegistry().getFloat(registryKey);
+	float value = registry::getValue<float>(registryKey);
 
 	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 0.0, 0.0));
 	alignment->show();

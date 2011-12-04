@@ -8,6 +8,7 @@
 #include "imainframe.h"
 #include "ientityinspector.h"
 
+#include "registry/registry.h"
 #include "gtkutil/FramedWidget.h"
 
 #include "camera/GlobalCamera.h"
@@ -327,7 +328,7 @@ void SplitPaneLayout::toggleFullscreenCameraView()
 
 SplitPaneLayout::Position SplitPaneLayout::getCameraPositionFromRegistry()
 {
-	int value = GlobalRegistry().getInt(RKEY_SPLITPANE_CAMPOS);
+	int value = registry::getValue<int>(RKEY_SPLITPANE_CAMPOS);
 
 	if (value < QuadrantTopLeft || value > QuadrantBottomRight)
 	{
@@ -339,7 +340,7 @@ SplitPaneLayout::Position SplitPaneLayout::getCameraPositionFromRegistry()
 
 void SplitPaneLayout::saveCameraPositionToRegistry()
 {
-	GlobalRegistry().setInt(RKEY_SPLITPANE_CAMPOS, static_cast<int>(_cameraPosition));
+	registry::setValue<int>(RKEY_SPLITPANE_CAMPOS, static_cast<int>(_cameraPosition));
 }
 
 void SplitPaneLayout::setCameraTopLeft(bool newState)

@@ -8,7 +8,7 @@
 #include "iuimanager.h"
 #include "string/string.h"
 #include "os/file.h"
-
+#include "registry/registry.h"
 #include "gtkutil/dialog/MessageBox.h"
 
 #include "map/Map.h"
@@ -25,7 +25,7 @@ namespace ui {
 	}
 
 MRU::MRU() :
-	_numMaxFiles(GlobalRegistry().getInt(RKEY_MRU_LENGTH)),
+	_numMaxFiles(registry::getValue<int>(RKEY_MRU_LENGTH)),
 	_loadLastMap(GlobalRegistry().get(RKEY_LOAD_LAST_MAP) == "1"),
 	_list(_numMaxFiles),
 	_emptyMenuItem(_(RECENT_FILES_CAPTION), *this, 0)
@@ -114,7 +114,7 @@ void MRU::keyChanged(const std::string& key, const std::string& val)
 {
 	// greebo: Don't load the new number of maximum files from the registry,
 	// this would mess up the existing widgets, wait for the DarkRadiant restart instead
-	//_numMaxFiles = GlobalRegistry().getInt(RKEY_MRU_LENGTH);
+	//_numMaxFiles = registry::getValue<int>(RKEY_MRU_LENGTH);
 	_loadLastMap = (GlobalRegistry().get(RKEY_LOAD_LAST_MAP) == "1");
 }
 

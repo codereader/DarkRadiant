@@ -3,16 +3,18 @@
 #include "iuimanager.h"
 #include "imainframe.h"
 
+#include "registry/registry.h"
+
 namespace entity {
 
 EntitySettings::EntitySettings() :
-	_renderEntityNames(GlobalRegistry().getBool(RKEY_SHOW_ENTITY_NAMES)),
-	_showAllSpeakerRadii(GlobalRegistry().getBool(RKEY_SHOW_ALL_SPEAKER_RADII)),
-	_showAllLightRadii(GlobalRegistry().getBool(RKEY_SHOW_ALL_LIGHT_RADII)),
-	_dragResizeEntitiesSymmetrically(GlobalRegistry().getBool(RKEY_DRAG_RESIZE_SYMMETRICALLY)),
-	_alwaysShowLightVertices(GlobalRegistry().getBool(RKEY_ALWAYS_SHOW_LIGHT_VERTICES)),
-	_freeModelRotation(GlobalRegistry().getBool(RKEY_FREE_MODEL_ROTATION)),
-	_showEntityAngles(GlobalRegistry().getBool(RKEY_SHOW_ENTITY_ANGLES)),
+	_renderEntityNames(registry::getValue<bool>(RKEY_SHOW_ENTITY_NAMES)),
+	_showAllSpeakerRadii(registry::getValue<bool>(RKEY_SHOW_ALL_SPEAKER_RADII)),
+	_showAllLightRadii(registry::getValue<bool>(RKEY_SHOW_ALL_LIGHT_RADII)),
+	_dragResizeEntitiesSymmetrically(registry::getValue<bool>(RKEY_DRAG_RESIZE_SYMMETRICALLY)),
+	_alwaysShowLightVertices(registry::getValue<bool>(RKEY_ALWAYS_SHOW_LIGHT_VERTICES)),
+	_freeModelRotation(registry::getValue<bool>(RKEY_FREE_MODEL_ROTATION)),
+	_showEntityAngles(registry::getValue<bool>(RKEY_SHOW_ENTITY_ANGLES)),
 	_lightVertexColoursLoaded(false)
 {
 	// Register this class as keyobserver

@@ -8,6 +8,7 @@
 #include "iselectiontest.h"
 #include "igroupnode.h"
 #include "selectionlib.h"
+#include "registry/registry.h"
 #include "gtkutil/dialog/MessageBox.h"
 #include "string/string.h"
 #include "brush/FaceInstance.h"
@@ -743,43 +744,43 @@ void rotateTexture(const float& angle) {
 }
 
 void shiftTextureLeft() {
-	shiftTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
+	shiftTexture(Vector2(-registry::getValue<float>("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
 }
 
 void shiftTextureRight() {
-	shiftTexture(Vector2(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
+	shiftTexture(Vector2(registry::getValue<float>("user/ui/textures/surfaceInspector/hShiftStep"), 0.0f));
 }
 
 void shiftTextureUp() {
-	shiftTexture(Vector2(0.0f, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
+	shiftTexture(Vector2(0.0f, registry::getValue<float>("user/ui/textures/surfaceInspector/vShiftStep")));
 }
 
 void shiftTextureDown() {
-	shiftTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vShiftStep")));
+	shiftTexture(Vector2(0.0f, -registry::getValue<float>("user/ui/textures/surfaceInspector/vShiftStep")));
 }
 
 void scaleTextureLeft() {
-	scaleTexture(Vector2(-GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
+	scaleTexture(Vector2(-registry::getValue<float>("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
 void scaleTextureRight() {
-	scaleTexture(Vector2(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
+	scaleTexture(Vector2(registry::getValue<float>("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
 void scaleTextureUp() {
-	scaleTexture(Vector2(0.0f, GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
+	scaleTexture(Vector2(0.0f, registry::getValue<float>("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
 void scaleTextureDown() {
-	scaleTexture(Vector2(0.0f, -GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/vScaleStep")));
+	scaleTexture(Vector2(0.0f, -registry::getValue<float>("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
 void rotateTextureClock() {
-	rotateTexture(fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
+	rotateTexture(fabs(registry::getValue<float>("user/ui/textures/surfaceInspector/rotStep")));
 }
 
 void rotateTextureCounter() {
-	rotateTexture(-fabs(GlobalRegistry().getFloat("user/ui/textures/surfaceInspector/rotStep")));
+	rotateTexture(-fabs(registry::getValue<float>("user/ui/textures/surfaceInspector/rotStep")));
 }
 
 void rotateTexture(const cmd::ArgumentList& args) {

@@ -7,6 +7,7 @@
 #include "camera/GlobalCamera.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
+#include "registry/registry.h"
 #include <iostream>
 #include <boost/bind.hpp>
 
@@ -20,7 +21,7 @@ namespace
 }
 
 RadiantWindowObserver::RadiantWindowObserver() :
-	_selectEpsilon(GlobalRegistry().getFloat(RKEY_SELECT_EPSILON)),
+	_selectEpsilon(registry::getValue<float>(RKEY_SELECT_EPSILON)),
 	_mouseDown(false),
 	_listenForCancelEvents(false)
 {}

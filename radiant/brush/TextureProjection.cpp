@@ -1,5 +1,6 @@
 #include "TextureProjection.h"
 
+#include "registry/registry.h"
 #include "texturelib.h"
 #include <limits>
 
@@ -9,7 +10,7 @@ void TextureProjection::assign(const TextureProjection& other) {
 }
 
 void TextureProjection::constructDefault() {
-	float scale = GlobalRegistry().getFloat("user/ui/textures/defaultTextureScale");
+	float scale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
 
 	m_texdef._scale[0] = scale;
 	m_texdef._scale[1] = scale;

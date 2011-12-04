@@ -3,10 +3,10 @@
 #include "i18n.h"
 #include "ientity.h"
 #include "imap.h"
-#include "iregistry.h"
 #include "imainframe.h"
 
 #include <boost/format.hpp>
+#include "registry/registry.h"
 #include "string/string.h"
 #include "gtkutil/dialog/MessageBox.h"
 
@@ -20,7 +20,7 @@ namespace
 
 MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream) :
 	_root(root),
-	_dialogEventLimiter(GlobalRegistry().getInt(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
+	_dialogEventLimiter(registry::getValue<int>(RKEY_MAP_LOAD_STATUS_INTERLEAVE)),
 	_entityCount(0),
 	_primitiveCount(0),
 	_inputStream(inputStream),

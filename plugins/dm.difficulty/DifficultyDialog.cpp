@@ -1,10 +1,11 @@
 #include "DifficultyDialog.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "iundo.h"
 #include "imainframe.h"
 #include "iscenegraph.h"
+
+#include "registry/registry.h"
 #include "string/string.h"
 #include "gtkutil/RightAlignment.h"
 
@@ -65,7 +66,7 @@ void DifficultyDialog::_preShow()
 
 void DifficultyDialog::createDifficultyEditors()
 {
-	int numLevels = GlobalRegistry().getInt(RKEY_DIFFICULTY_LEVELS);
+	int numLevels = registry::getValue<int>(RKEY_DIFFICULTY_LEVELS);
 
 	for (int i = 0; i < numLevels; i++)
 	{
