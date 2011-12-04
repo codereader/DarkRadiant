@@ -28,8 +28,8 @@ namespace
 
 // Constructor
 FaceShader::FaceShader(Face& owner, const std::string& shader, const ContentsFlagsValue& flags) :
-	_owner(owner),
 	_inUse(false),
+	_owner(owner),
 	_materialName(shader),
 	m_flags(flags),
 	m_realised(false)

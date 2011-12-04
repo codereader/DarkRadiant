@@ -2,7 +2,6 @@
 #include "EntityClassTreePopulator.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 
@@ -19,6 +18,7 @@
 #include "gtkutil/IconTextColumn.h"
 #include "gtkutil/MultiMonitor.h"
 #include "string/string.h"
+#include "registry.h"
 
 #include "debugging/ScopedDebugTimer.h"
 
@@ -118,25 +118,6 @@ public:
     }
 };
 
-void savePropertyToRegistry(Glib::PropertyProxy<int>& prop,
-                            const std::string& rkey)
-{
-    GlobalRegistry().setInt(rkey, prop.get_value());
-}
-
-void bindPropertyToRegistry(Glib::PropertyProxy<int> prop,
-                            const std::string& rkey)
-{
-    // Set initial value then connect to changed signal
-    if (GlobalRegistry().keyExists(rkey))
-    {
-        prop.set_value(GlobalRegistry().getInt(rkey));
-    }
-    prop.signal_changed().connect(
-        sigc::bind(sigc::ptr_fun(savePropertyToRegistry), prop, rkey)
-    );
-}
-
 // Main constructor
 EntityClassChooser::EntityClassChooser()
 : gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE),
@@ -190,7 +171,8 @@ EntityClassChooser::EntityClassChooser()
     );
     _eclassLoader->loadEntityClasses();
 
-    bindPropertyToRegistry(mainPaned->property_position(), RKEY_SPLIT_POS);
+    // Persist layout to registry
+    registry::bindPropertyToKey(mainPaned->property_position(), RKEY_SPLIT_POS);
 }
 
 void EntityClassChooser::getEntityClassesFromLoader()
