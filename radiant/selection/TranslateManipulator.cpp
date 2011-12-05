@@ -3,7 +3,7 @@
 #include "Selectors.h"
 #include "BestPoint.h"
 
-#include "iregistry.h"
+#include "registry/registry.h"
 
 const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 
@@ -151,7 +151,7 @@ void TranslateManipulator::testSelect(const View& view, const Matrix4& pivot2wor
     } else {
     	Selectable* selectable = NULL;
 
-    	if (GlobalRegistry().get(RKEY_TRANSLATE_CONSTRAINED) == "1") {
+    	if (registry::getValue<bool>(RKEY_TRANSLATE_CONSTRAINED)) {
 	    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence
 	    	Matrix4 local2view(view.GetViewMatrix().getMultipliedBy(_pivot._worldSpace));
 

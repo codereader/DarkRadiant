@@ -4,9 +4,9 @@
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "ilayer.h"
-#include "iregistry.h"
 #include "imainframe.h"
 
+#include "registry/registry.h"
 #include "gtkutil/ScrolledFrame.h"
 
 #include <gtkmm/table.h>

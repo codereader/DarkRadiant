@@ -95,7 +95,7 @@ void LanguageManager::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	// Load the currently selected index into the registry
-	registry::setValue<int>(RKEY_LANGUAGE, curLangIndex);
+	registry::setValue(RKEY_LANGUAGE, curLangIndex);
 	GlobalRegistry().setAttribute(RKEY_LANGUAGE, "volatile", "1"); // don't save this to user.xml
 
 	// Add Preferences

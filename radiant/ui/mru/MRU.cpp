@@ -26,7 +26,7 @@ namespace ui {
 
 MRU::MRU() :
 	_numMaxFiles(registry::getValue<int>(RKEY_MRU_LENGTH)),
-	_loadLastMap(GlobalRegistry().get(RKEY_LOAD_LAST_MAP) == "1"),
+	_loadLastMap(registry::getValue<bool>(RKEY_LOAD_LAST_MAP)),
 	_list(_numMaxFiles),
 	_emptyMenuItem(_(RECENT_FILES_CAPTION), *this, 0)
 {
@@ -115,7 +115,7 @@ void MRU::keyChanged(const std::string& key, const std::string& val)
 	// greebo: Don't load the new number of maximum files from the registry,
 	// this would mess up the existing widgets, wait for the DarkRadiant restart instead
 	//_numMaxFiles = registry::getValue<int>(RKEY_MRU_LENGTH);
-	_loadLastMap = (GlobalRegistry().get(RKEY_LOAD_LAST_MAP) == "1");
+	_loadLastMap = registry::getValue<bool>(RKEY_LOAD_LAST_MAP);
 }
 
 // Construct the MRU preference page and add it to the given group

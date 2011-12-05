@@ -62,9 +62,9 @@ TextureBrowser::TextureBrowser() :
 	m_originInvalid(true),
 	m_mouseWheelScrollIncrement(registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
 	m_textureScale(50),
-	m_showTextureFilter(GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1"),
-	m_showTextureScrollbar(GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1"),
-	m_hideUnused(GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1"),
+	m_showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
+	m_showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
+	m_hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
 	m_resizeTextures(true),
 	m_uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE))
 {
@@ -131,10 +131,10 @@ void TextureBrowser::clearFilter()
 
 void TextureBrowser::keyChanged(const std::string& key, const std::string& val)
 {
-	m_hideUnused = (GlobalRegistry().get(RKEY_TEXTURES_HIDE_UNUSED) == "1");
-	m_showTextureFilter = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_FILTER) == "1");
+	m_hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
+	m_showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);
 	m_uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
-	m_showTextureScrollbar = (GlobalRegistry().get(RKEY_TEXTURE_SHOW_SCROLLBAR) == "1");
+	m_showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
 	m_mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
 
 	if (m_showTextureScrollbar)

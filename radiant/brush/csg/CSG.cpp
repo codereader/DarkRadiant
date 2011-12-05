@@ -8,11 +8,11 @@
 #include "igrid.h"
 #include "iradiant.h"
 #include "imainframe.h"
-#include "iregistry.h"
 #include "iselection.h"
 #include "scenelib.h"
 #include "shaderlib.h"
 
+#include "registry/registry.h"
 #include "brush/Face.h"
 #include "brush/Brush.h"
 #include "brush/BrushNode.h"
@@ -295,7 +295,7 @@ public:
 
 void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 {
-	if (GlobalRegistry().get(RKEY_EMIT_CSG_SUBTRACT_WARNING) == "1")
+	if (registry::getValue<bool>(RKEY_EMIT_CSG_SUBTRACT_WARNING))
 	{
 		gtkutil::MessageBox box(_("This Is Not Dromed Warning"),
 			_("Note: be careful when using the CSG tool, as you might end up\n"
@@ -306,7 +306,7 @@ void subtractBrushesFromUnselected(const cmd::ArgumentList& args)
 		box.run();
 
 		// Disable this warning
-		GlobalRegistry().set(RKEY_EMIT_CSG_SUBTRACT_WARNING, "0");
+        registry::setValue(RKEY_EMIT_CSG_SUBTRACT_WARNING, false);
 	}
 
 	// Collect all selected brushes

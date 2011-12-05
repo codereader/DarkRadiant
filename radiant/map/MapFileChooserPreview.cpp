@@ -3,6 +3,8 @@
 #include "imap.h"
 #include "i18n.h"
 #include "itextstream.h"
+
+#include "registry/registry.h"
 #include "scenelib.h"
 #include "brush/BrushModule.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -108,28 +110,29 @@ bool MapFileChooserPreview::setMapName(const std::string& name)
 
 	// Suppress the map loading dialog to avoid user
 	// getting stuck in the "drag filename" operation
-	std::string prevValue = GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG);
-	GlobalRegistry().set(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, "1");
+    {
+        registry::ScopedKeyChanger<bool> changer(
+            RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true
+        );
 
-	if (_mapResource->load())
-	{
-		// Get the node from the resource
-		scene::INodePtr root = _mapResource->getNode();
+        if (_mapResource->load())
+        {
+            // Get the node from the resource
+            scene::INodePtr root = _mapResource->getNode();
 
-		assert(root != NULL);
+            assert(root != NULL);
 
-		// Set the new rootnode
-		_preview->setRootNode(root);
+            // Set the new rootnode
+            _preview->setRootNode(root);
 
-		success = true;
-	}
-	else
-	{
-		// Map load failed
-		globalWarningStream() << "Could not load map: " << _mapName << std::endl;
-	}
-
-	GlobalRegistry().set(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, prevValue);
+            success = true;
+        }
+        else
+        {
+            // Map load failed
+            globalWarningStream() << "Could not load map: " << _mapName << std::endl;
+        }
+    }
 
 	return success;
 }

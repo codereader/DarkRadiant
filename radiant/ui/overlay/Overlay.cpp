@@ -21,12 +21,12 @@ namespace {
 // Main constructor
 Overlay::Overlay()
 :	_imageName(GlobalRegistry().get(RKEY_OVERLAY_IMAGE)),
-	_visible(GlobalRegistry().get(RKEY_OVERLAY_VISIBLE) == "1"),
+	_visible(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE)),
 	_transparency(registry::getValue<float>(RKEY_OVERLAY_TRANSPARENCY)),
 	_scale(registry::getValue<float>(RKEY_OVERLAY_SCALE)),
-	_scaleWithXYView(GlobalRegistry().get(RKEY_OVERLAY_SCALE_WITH_XY) == "1"),
-	_panWithXYView(GlobalRegistry().get(RKEY_OVERLAY_PAN_WITH_XY) == "1"),
-	_keepProportions(GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1"),
+	_scaleWithXYView(registry::getValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY)),
+	_panWithXYView(registry::getValue<bool>(RKEY_OVERLAY_PAN_WITH_XY)),
+	_keepProportions(registry::getValue<bool>(RKEY_OVERLAY_PROPORTIONAL)),
 	_translationX(registry::getValue<float>(RKEY_OVERLAY_TRANSLATIONX)),
 	_translationY(registry::getValue<float>(RKEY_OVERLAY_TRANSLATIONY))
 {
@@ -218,10 +218,10 @@ void Overlay::setImageScale(float scale) {
 // RegistryKeyObserver implementation, gets called upon key change
 void Overlay::keyChanged(const std::string& key, const std::string& val)
 {
-	show(GlobalRegistry().get(RKEY_OVERLAY_VISIBLE) == "1");
-	_keepProportions = (GlobalRegistry().get(RKEY_OVERLAY_PROPORTIONAL) == "1");
-	_scaleWithXYView = (GlobalRegistry().get(RKEY_OVERLAY_SCALE_WITH_XY) == "1"),
-	_panWithXYView = (GlobalRegistry().get(RKEY_OVERLAY_PAN_WITH_XY) == "1"),
+	show(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
+	_keepProportions = registry::getValue<bool>(RKEY_OVERLAY_PROPORTIONAL);
+	_scaleWithXYView = registry::getValue<bool>(RKEY_OVERLAY_SCALE_WITH_XY),
+	_panWithXYView = registry::getValue<bool>(RKEY_OVERLAY_PAN_WITH_XY),
 	setImage(GlobalRegistry().get(RKEY_OVERLAY_IMAGE));
 	setTransparency(registry::getValue<float>(RKEY_OVERLAY_TRANSPARENCY));
 	setImageScale(registry::getValue<float>(RKEY_OVERLAY_SCALE));

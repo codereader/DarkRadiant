@@ -3,7 +3,7 @@
 #include "SelectionTest.h"
 #include "Planes.h"
 
-#include "iregistry.h"
+#include "registry/registry.h"
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
@@ -71,7 +71,7 @@ void DragManipulator::testSelect(const View& view, const Matrix4& pivot2world) {
 			 i != bestSelector.best().end(); ++i)
 		{
 			// greebo: Disabled this, it caused the currently selected patch vertices being deselected.
-			if (GlobalRegistry().get(RKEY_TRANSIENT_COMPONENT_SELECTION) == "1")
+			if (registry::getValue<bool>(RKEY_TRANSIENT_COMPONENT_SELECTION))
 			{
 				if (!(*i)->isSelected())
 				{

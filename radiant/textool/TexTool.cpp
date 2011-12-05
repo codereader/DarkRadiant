@@ -2,12 +2,12 @@
 
 #include "i18n.h"
 #include "ieventmanager.h"
-#include "iregistry.h"
 #include "imainframe.h"
 #include "igl.h"
 #include "iundo.h"
 #include "iuimanager.h"
 
+#include "registry/registry.h"
 #include "patch/PatchNode.h"
 #include "texturelib.h"
 #include "selectionlib.h"
@@ -58,7 +58,7 @@ TexTool::TexTool()
   _manipulatorMode(false),
   _viewOriginMove(false),
   _grid(GRID_DEFAULT),
-  _gridActive(GlobalRegistry().get(RKEY_GRID_STATE) == "1")
+  _gridActive(registry::getValue<bool>(RKEY_GRID_STATE))
 {
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_NORMAL);
 

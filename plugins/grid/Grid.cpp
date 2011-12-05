@@ -71,7 +71,7 @@ public:
 		// Map the [GRID_0125...GRID_256] values (starting from -3) to [0..N]
 		int registryValue = static_cast<int>(_activeGridSize) - static_cast<int>(GRID_0125);
 
-		registry::setValue<int>(RKEY_DEFAULT_GRID_SIZE, registryValue);
+		registry::setValue(RKEY_DEFAULT_GRID_SIZE, registryValue);
 	}
 
 private:

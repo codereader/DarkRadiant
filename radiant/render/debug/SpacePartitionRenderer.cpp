@@ -1,5 +1,6 @@
 #include "SpacePartitionRenderer.h"
 
+#include "registry/registry.h"
 #include "modulesystem/StaticModule.h"
 #include <boost/bind.hpp>
 
@@ -25,9 +26,9 @@ void SpacePartitionRenderer::keyChanged(const std::string& changedKey, const std
 
 void SpacePartitionRenderer::toggle(const cmd::ArgumentList& args)
 {
-	GlobalRegistry().set(
+    registry::setValue(
 		RKEY_RENDER_SPACE_PARTITION,
-		GlobalRegistry().get(RKEY_RENDER_SPACE_PARTITION) != "1" ? "1" : "0"
+		!registry::getValue<bool>(RKEY_RENDER_SPACE_PARTITION)
 	);
 }
 
@@ -56,7 +57,7 @@ void SpacePartitionRenderer::initialiseModule(const ApplicationContext& ctx)
 {
 	GlobalRegistry().addKeyObserver(this, RKEY_RENDER_SPACE_PARTITION);
 
-	if (GlobalRegistry().get(RKEY_RENDER_SPACE_PARTITION) == "1")
+	if (registry::getValue<bool>(RKEY_RENDER_SPACE_PARTITION))
 	{
 		installRenderer();
 	}
@@ -67,7 +68,7 @@ void SpacePartitionRenderer::initialiseModule(const ApplicationContext& ctx)
 
 void SpacePartitionRenderer::shutdownModule()
 {
-	if (GlobalRegistry().get(RKEY_RENDER_SPACE_PARTITION) == "1")
+	if (registry::getValue<bool>(RKEY_RENDER_SPACE_PARTITION))
 	{
 		uninstallRenderer();
 	}

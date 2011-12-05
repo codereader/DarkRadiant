@@ -46,8 +46,8 @@ namespace {
 
 
 AutoMapSaver::AutoMapSaver() :
-	_enabled(GlobalRegistry().get(RKEY_AUTOSAVE_ENABLED) == "1"),
-	_snapshotsEnabled(GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED) == "1"),
+	_enabled(registry::getValue<bool>(RKEY_AUTOSAVE_ENABLED)),
+	_snapshotsEnabled(registry::getValue<bool>(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED)),
 	_interval(registry::getValue<int>(RKEY_AUTOSAVE_INTERVAL) * 60),
 	_timer(_interval*1000, onIntervalReached, this),
 	_changes(0)
@@ -65,8 +65,8 @@ void AutoMapSaver::keyChanged(const std::string& key, const std::string& val) {
 	// Stop the current timer
 	stopTimer();
 
-	_enabled = (GlobalRegistry().get(RKEY_AUTOSAVE_ENABLED) == "1");
-	_snapshotsEnabled = (GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED) == "1");
+	_enabled = registry::getValue<bool>(RKEY_AUTOSAVE_ENABLED);
+	_snapshotsEnabled = registry::getValue<bool>(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
 	_interval = registry::getValue<int>(RKEY_AUTOSAVE_INTERVAL) * 60;
 
 	// Update the internal timer

@@ -188,7 +188,7 @@ void GlobalCameraManager::increaseCameraSpeed(const cmd::ArgumentList& args) {
 		movementSpeed = MAX_CAMERA_SPEED;
 	}
 
-	registry::setValue<int>(RKEY_MOVEMENT_SPEED, movementSpeed);
+	registry::setValue(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
 void GlobalCameraManager::decreaseCameraSpeed(const cmd::ArgumentList& args) {
@@ -200,7 +200,7 @@ void GlobalCameraManager::decreaseCameraSpeed(const cmd::ArgumentList& args) {
 		movementSpeed = 1;
 	}
 
-	registry::setValue<int>(RKEY_MOVEMENT_SPEED, movementSpeed);
+	registry::setValue(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
 void GlobalCameraManager::benchmark() {
@@ -499,7 +499,7 @@ void GlobalCameraManager::initialiseModule(const ApplicationContext& ctx)
 	// program objects it never created.
 	if (registry::getValue<int>(RKEY_DRAWMODE) == RENDER_MODE_LIGHTING)
 	{
-		registry::setValue<int>(RKEY_DRAWMODE, RENDER_MODE_TEXTURED);
+		registry::setValue(RKEY_DRAWMODE, RENDER_MODE_TEXTURED);
 	}
 
 	registerCommands();

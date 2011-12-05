@@ -7,6 +7,7 @@
 #include "igroupdialog.h"
 #include "ientityinspector.h"
 
+#include "registry/registry.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/FramedWidget.h"
 
@@ -66,7 +67,7 @@ void FloatingLayout::activate() {
     	_("Texture Browser")
     );
 
-	if (GlobalRegistry().get(RKEY_GROUPDIALOG_VISIBLE) == "1")
+	if (registry::getValue<bool>(RKEY_GROUPDIALOG_VISIBLE))
 	{
 		GlobalGroupDialog().showDialogWindow();
 	}
@@ -89,8 +90,8 @@ void FloatingLayout::deactivate()
 	GlobalXYWndManager().destroyViews();
 
 	// Save groupdialog state
-	GlobalRegistry().set(RKEY_GROUPDIALOG_VISIBLE,
-		GlobalGroupDialog().getDialogWindow()->is_visible() ? "1" : "0");
+    registry::setValue(RKEY_GROUPDIALOG_VISIBLE,
+                       GlobalGroupDialog().getDialogWindow()->is_visible());
 
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();

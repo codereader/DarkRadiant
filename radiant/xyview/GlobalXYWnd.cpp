@@ -189,22 +189,23 @@ void XYWndManager::constructPreferences()
 // Load/Reload the values from the registry
 void XYWndManager::keyChanged(const std::string& key, const std::string& val)
 {
-	_chaseMouse = (GlobalRegistry().get(RKEY_CHASE_MOUSE) == "1");
-	_camXYUpdate = (GlobalRegistry().get(RKEY_CAMERA_XY_UPDATE) == "1");
-	_showCrossHairs = (GlobalRegistry().get(RKEY_SHOW_CROSSHAIRS) == "1");
-	_showGrid = (GlobalRegistry().get(RKEY_SHOW_GRID) == "1");
-	_showSizeInfo = (GlobalRegistry().get(RKEY_SHOW_SIZE_INFO) == "1");
-	_showBlocks = (GlobalRegistry().get(RKEY_SHOW_BLOCKS) == "1");
-	_showCoordinates = (GlobalRegistry().get(RKEY_SHOW_COORDINATES) == "1");
-	_showOutline = (GlobalRegistry().get(RKEY_SHOW_OUTLINE) == "1");
-	_showAxes = (GlobalRegistry().get(RKEY_SHOW_AXES) == "1");
-	_showWorkzone = (GlobalRegistry().get(RKEY_SHOW_WORKZONE) == "1");
-	_defaultBlockSize = (registry::getValue<int>(RKEY_DEFAULT_BLOCKSIZE));
+	_chaseMouse = registry::getValue<bool>(RKEY_CHASE_MOUSE);
+	_camXYUpdate = registry::getValue<bool>(RKEY_CAMERA_XY_UPDATE);
+	_showCrossHairs = registry::getValue<bool>(RKEY_SHOW_CROSSHAIRS);
+	_showGrid = registry::getValue<bool>(RKEY_SHOW_GRID);
+	_showSizeInfo = registry::getValue<bool>(RKEY_SHOW_SIZE_INFO);
+	_showBlocks = registry::getValue<bool>(RKEY_SHOW_BLOCKS);
+	_showCoordinates = registry::getValue<bool>(RKEY_SHOW_COORDINATES);
+	_showOutline = registry::getValue<bool>(RKEY_SHOW_OUTLINE);
+	_showAxes = registry::getValue<bool>(RKEY_SHOW_AXES);
+	_showWorkzone = registry::getValue<bool>(RKEY_SHOW_WORKZONE);
+	_defaultBlockSize = registry::getValue<int>(RKEY_DEFAULT_BLOCKSIZE);
 	updateAllViews();
 }
 
-bool XYWndManager::higherEntitySelectionPriority() const {
-	return GlobalRegistry().get(RKEY_HIGHER_ENTITY_PRIORITY) == "1";
+bool XYWndManager::higherEntitySelectionPriority() const 
+{
+	return registry::getValue<bool>(RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
 bool XYWndManager::chaseMouse() const {

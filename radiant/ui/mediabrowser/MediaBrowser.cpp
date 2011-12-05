@@ -7,7 +7,6 @@
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "ishaders.h"
-#include "iregistry.h"
 #include "select.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/IconTextMenuItem.h"
@@ -28,6 +27,7 @@
 #include <iostream>
 #include <map>
 
+#include "registry/registry.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 
@@ -332,7 +332,7 @@ void MediaBrowser::reloadMedia()
 void MediaBrowser::init()
 {
 	// Check for pre-loading the textures
-	if (GlobalRegistry().get(RKEY_MEDIA_BROWSER_PRELOAD) == "1")
+	if (registry::getValue<bool>(RKEY_MEDIA_BROWSER_PRELOAD))
 	{
 		getInstance().populate();
 	}

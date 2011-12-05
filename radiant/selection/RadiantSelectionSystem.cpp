@@ -15,6 +15,7 @@
 #include "patch/PatchSceneWalk.h"
 #include "xyview/GlobalXYWnd.h"
 #include "modulesystem/StaticModule.h"
+#include "registry/registry.h"
 
 #include <boost/bind.hpp>
 
@@ -941,7 +942,7 @@ void RadiantSelectionSystem::ConstructPivot()
 
 	if (!nothingSelected()) {
 		if (_selectionInfo.entityCount == 1 && _selectionInfo.totalCount == 1 &&
-			GlobalRegistry().get(RKEY_ROTATION_PIVOT) == "1")
+			registry::getValue<bool>(RKEY_ROTATION_PIVOT))
 		{
 			// Test, if a single entity is selected
 			scene::INodePtr node = ultimateSelected();

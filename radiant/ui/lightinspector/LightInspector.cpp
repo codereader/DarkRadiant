@@ -5,11 +5,11 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "ishaders.h"
-#include "iregistry.h"
 #include "iuimanager.h"
 #include "iradiant.h"
 #include "imainframe.h"
 
+#include "registry/registry.h"
 #include "scenelib.h"
 #include "gtkutil/IconTextButton.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -120,7 +120,7 @@ LightInspector::LightInspector()
 	_mainVBox->pack_start(*hbx, true, true, 0);
 
 	// Create an apply button, if instant-apply is disabled
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "0")
+	if (!registry::getValue<bool>(RKEY_INSTANT_APPLY))
 	{
 		_mainVBox->pack_start(*Gtk::manage(new Gtk::HSeparator), false, false, 0);
 		_mainVBox->pack_end(createButtons(), false, false, 0);
@@ -178,7 +178,7 @@ void LightInspector::shaderSelectionChanged(
 	// greebo: Do not write to the entities if this call resulted from an update()
 	if (_updateActive) return;
 
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
     {
 		std::string commandStr("setLightTexture: ");
 		commandStr += _texSelector->getSelection();
@@ -413,7 +413,7 @@ void LightInspector::_onProjToggle()
 	_pointLightToggle->set_active(!_isProjected);
 	_useStartEnd->set_sensitive(_isProjected);
 
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
 	{
 		writeToAllEntities();
 	}
@@ -430,7 +430,7 @@ void LightInspector::_onPointToggle()
 	_projLightToggle->set_active(_isProjected);
 	_useStartEnd->set_sensitive(_isProjected);
 
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
 	{
 		writeToAllEntities();
 	}
@@ -600,7 +600,7 @@ void LightInspector::_onOptionsToggle()
 {
 	if (_updateActive) return; // avoid callback loops
 
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
 	{
 		writeToAllEntities();
 	}
@@ -610,7 +610,7 @@ void LightInspector::_onColourChange()
 {
 	if (_updateActive) return; // avoid callback loops
 
-	if (GlobalRegistry().get(RKEY_INSTANT_APPLY) == "1")
+	if (registry::getValue<bool>(RKEY_INSTANT_APPLY))
 	{
 		writeToAllEntities();
 	}

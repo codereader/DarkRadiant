@@ -64,17 +64,19 @@ void BrushModuleClass::destroy()
 	Brush::m_maxWorldCoord = 0;
 }
 
-void BrushModuleClass::keyChanged(const std::string& key, const std::string& val) {
-	_textureLockEnabled = (GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1");
+void BrushModuleClass::keyChanged(const std::string& key, const std::string& val) 
+{
+	_textureLockEnabled = registry::getValue<bool>(RKEY_ENABLE_TEXTURE_LOCK);
 }
 
 bool BrushModuleClass::textureLockEnabled() const {
 	return _textureLockEnabled;
 }
 
-void BrushModuleClass::setTextureLock(bool enabled) {
+void BrushModuleClass::setTextureLock(bool enabled)
+{
 	// Write the value to the registry, the keyChanged() method is triggered automatically
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, enabled ? "1" : "0");
+    registry::setValue(RKEY_ENABLE_TEXTURE_LOCK, enabled);
 }
 
 void BrushModuleClass::toggleTextureLock() {
@@ -118,7 +120,7 @@ void BrushModuleClass::initialiseModule(const ApplicationContext& ctx) {
 
 	construct();
 
-	_textureLockEnabled = (GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1");
+	_textureLockEnabled = registry::getValue<bool>(RKEY_ENABLE_TEXTURE_LOCK);
 
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
 

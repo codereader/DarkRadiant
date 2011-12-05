@@ -2,10 +2,10 @@
 
 #include "i18n.h"
 #include "igl.h"
-#include "iregistry.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "version.h"
+#include "registry/registry.h"
 #include "string/string.h"
 
 #include "gtkutil/LeftAlignedLabel.h"
@@ -54,7 +54,7 @@ void AboutDialog::populateWindow()
 	std::string date = __DATE__;
 	std::string time = __TIME__;
 
-	bool showBuildTime = GlobalRegistry().get(RKEY_SHOW_BUILD_TIME) == "1";
+	bool showBuildTime = registry::getValue<bool>(RKEY_SHOW_BUILD_TIME);
 	std::string buildDate = (showBuildTime) ? date + " " + time : date;
 
 	std::string appName(RADIANT_APPNAME_FULL());

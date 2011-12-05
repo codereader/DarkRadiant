@@ -1,6 +1,6 @@
 #include "FaceVertexItem.h"
 
-#include "iregistry.h"
+#include "registry/registry.h"
 #include "../TexTool.h"
 
 #include "FaceItem.h"
@@ -78,7 +78,7 @@ void FaceVertexItem::transform(const Matrix4& matrix)
 	Vector2 pivot;
 
 	// Check if the pivot
-	if (GlobalRegistry().get(ui::RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID) == "1")
+	if (registry::getValue<bool>(ui::RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID))
 	{
 		pivot = getTexCentroid();
 	}

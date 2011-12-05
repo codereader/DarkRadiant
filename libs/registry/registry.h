@@ -2,6 +2,8 @@
 
 #include "iregistry.h"
 
+#include <boost/noncopyable.hpp>
+
 /// Convenience methods and types for interacting with the XML registry
 namespace registry
 {
@@ -45,5 +47,32 @@ template<typename T> T getValue(const std::string& key)
 
     return T();
 }
+
+/**
+ * \brief
+ * Scoped sentry object which sets a registry key to a temporary value for its
+ * lifetime, and restores the original value on destruction.
+ */
+template<typename T>
+class ScopedKeyChanger
+: boost::noncopyable
+{
+    std::string _key;
+    T _origVal;
+
+public:
+
+    ScopedKeyChanger(const std::string& key, T tempVal)
+    : _key(key),
+      _origVal(registry::getValue<T>(key))
+    {
+        registry::setValue(_key, tempVal);
+    }
+
+    ~ScopedKeyChanger()
+    {
+        registry::setValue(_key, _origVal);
+    }
+};
 
 }

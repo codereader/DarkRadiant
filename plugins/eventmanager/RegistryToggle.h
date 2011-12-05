@@ -2,8 +2,9 @@
 #define REGISTRYTOGGLE_H_
 
 #include "ieventmanager.h"
-#include "iregistry.h"
 #include "Toggle.h"
+
+#include "registry/registry.h"
 #include <boost/bind.hpp>
 
 /* greebo: A RegistryToggle is an Toggle Event that changes the value of the
@@ -29,7 +30,7 @@ public:
 		_registryKey(registryKey)
 	{
 		// Initialise the current state
-		_toggled = (GlobalRegistry().get(_registryKey) == "1");
+		_toggled = registry::getValue<bool>(_registryKey);
 
 		// Register self as KeyObserver to get notified on key changes
 		GlobalRegistry().addKeyObserver(this, _registryKey);
@@ -41,7 +42,7 @@ public:
 	virtual bool setToggled(const bool toggled)
 	{
 		// Set the registry key, this triggers the keyChanged() method
-		GlobalRegistry().set(_registryKey, toggled ? "1" : "0");
+        registry::setValue(_registryKey, toggled);
 
 		return true;
 	}
@@ -62,9 +63,12 @@ public:
 		}
 
 		// Check if the toggle event is enabled
-		if (_enabled) {
+		if (_enabled) 
+        {
 			// Invert the registry key to <toggled> state
-			GlobalRegistry().set(_registryKey, (GlobalRegistry().get(_registryKey) == "1") ? "0" : "1");
+            registry::setValue(
+                _registryKey, !registry::getValue<bool>(_registryKey)
+            );
 
 			// The updates of the widgets are done by the triggered keyChanged() method
 		}

@@ -1,7 +1,6 @@
 #include "EventManager.h"
 
 #include "imodule.h"
-#include "iregistry.h"
 #include "iradiant.h"
 #include "itextstream.h"
 #include "iselection.h"
@@ -15,6 +14,7 @@
 #include <gtkmm/editable.h>
 #include <gtkmm/textview.h>
 
+#include "registry/registry.h"
 #include "xmlutil/Node.h"
 
 #include "Statement.h"
@@ -58,7 +58,7 @@ void EventManager::initialiseModule(const ApplicationContext& ctx) {
 	_modifiers.loadModifierDefinitions();
 	_mouseEvents.initialise();
 
-	_debugMode = (GlobalRegistry().get(RKEY_DEBUG) == "1");
+	_debugMode = registry::getValue<bool>(RKEY_DEBUG);
 
 	// Deactivate the empty event, so it's safe to return it as NullEvent
 	_emptyEvent->setEnabled(false);

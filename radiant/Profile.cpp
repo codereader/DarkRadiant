@@ -17,8 +17,10 @@ namespace profile {
 		const std::string RKEY_TESTCMDS = RKEY_AUTOMATED_TEST_ROOT + "/testCommands//testCommand";
 	}
 
-bool CheckAutomatedTestRun() {
-	if (GlobalRegistry().get(RKEY_AUTOMATED_TEST) != "1") {
+bool CheckAutomatedTestRun() 
+{
+	if (!registry::getValue<bool>(RKEY_AUTOMATED_TEST)) 
+    {
 		return false;
 	}
 

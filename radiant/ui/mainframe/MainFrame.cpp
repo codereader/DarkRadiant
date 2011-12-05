@@ -138,7 +138,7 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 	}
 
 	// Load the value and act
-	setDesktopCompositionEnabled(GlobalRegistry().get(RKEY_DISABLE_WIN_DESKTOP_COMP) != "1");
+	setDesktopCompositionEnabled(!registry::getValue<bool>(RKEY_DISABLE_WIN_DESKTOP_COMP));
 #endif
 }
 

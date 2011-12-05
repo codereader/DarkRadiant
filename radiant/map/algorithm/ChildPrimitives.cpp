@@ -1,10 +1,11 @@
 #include "ChildPrimitives.h"
 
-#include "iregistry.h"
 #include "ibrush.h"
 #include "ientity.h"
 #include "igroupnode.h"
 #include "scenelib.h"
+
+#include "registry/registry.h"
 
 namespace map
 {
@@ -68,25 +69,19 @@ public:
 void addOriginToChildPrimitives(const scene::INodePtr& root)
 {
 	// Disable texture lock during this process
-	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
+    registry::ScopedKeyChanger<bool> changer(RKEY_ENABLE_TEXTURE_LOCK, false);
 
 	OriginAdder adder;
 	Node_traverseSubgraph(root, adder);
-
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
 }
 
 void removeOriginFromChildPrimitives(const scene::INodePtr& root)
 {
 	// Disable texture lock during this process
-	bool textureLockStatus = GlobalRegistry().get(RKEY_ENABLE_TEXTURE_LOCK) == "1";
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, "0");
+    registry::ScopedKeyChanger<bool> changer(RKEY_ENABLE_TEXTURE_LOCK, false);
 
 	OriginRemover remover;
 	Node_traverseSubgraph(root, remover);
-
-	GlobalRegistry().set(RKEY_ENABLE_TEXTURE_LOCK, textureLockStatus ? "1" : "0");
 }
 
 } // namespace

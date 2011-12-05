@@ -340,7 +340,7 @@ SplitPaneLayout::Position SplitPaneLayout::getCameraPositionFromRegistry()
 
 void SplitPaneLayout::saveCameraPositionToRegistry()
 {
-	registry::setValue<int>(RKEY_SPLITPANE_CAMPOS, static_cast<int>(_cameraPosition));
+	registry::setValue(RKEY_SPLITPANE_CAMPOS, static_cast<int>(_cameraPosition));
 }
 
 void SplitPaneLayout::setCameraTopLeft(bool newState)

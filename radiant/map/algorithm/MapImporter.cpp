@@ -33,7 +33,7 @@ MapImporter::MapImporter(const scene::INodePtr& root, std::istream& inputStream)
 	// Move the pointer back to the beginning of the file
 	_inputStream.seekg(0, std::ios::beg);
 
-	bool showProgressDialog = (GlobalRegistry().get(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG) != "1");
+	bool showProgressDialog = registry::getValue<bool>(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG);
 
 	if (showProgressDialog)
 	{

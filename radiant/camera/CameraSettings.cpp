@@ -13,13 +13,13 @@ CameraSettings::CameraSettings() :
 	_callbackActive(false),
 	_movementSpeed(registry::getValue<int>(RKEY_MOVEMENT_SPEED)),
 	_angleSpeed(registry::getValue<int>(RKEY_ROTATION_SPEED)),
-	_invertMouseVerticalAxis(GlobalRegistry().get(RKEY_INVERT_MOUSE_VERTICAL_AXIS) == "1"),
-	_discreteMovement(GlobalRegistry().get(RKEY_DISCRETE_MOVEMENT) == "1"),
+	_invertMouseVerticalAxis(registry::getValue<bool>(RKEY_INVERT_MOUSE_VERTICAL_AXIS)),
+	_discreteMovement(registry::getValue<bool>(RKEY_DISCRETE_MOVEMENT)),
 	_cameraDrawMode(RENDER_MODE_TEXTURED),
 	_cubicScale(registry::getValue<int>(RKEY_CUBIC_SCALE)),
-	_farClipEnabled(GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1"),
-	_solidSelectionBoxes(GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1"),
-	_toggleFreelook(GlobalRegistry().get(RKEY_TOGGLE_FREE_MOVE) == "1")
+	_farClipEnabled(registry::getValue<bool>(RKEY_ENABLE_FARCLIP)),
+	_solidSelectionBoxes(registry::getValue<bool>(RKEY_SOLID_SELECTION_BOXES)),
+	_toggleFreelook(registry::getValue<bool>(RKEY_TOGGLE_FREE_MOVE))
 {
 	// Constrain the cubic scale to a fixed value
 	if (_cubicScale > MAX_CUBIC_SCALE) {
@@ -72,19 +72,11 @@ bool CameraSettings::showCameraToolbar() const
 {
     // TODO: There must be a less verbose way of introducing a new RKEY with a
     // default behaviour if unset.
-    if (GlobalRegistry().get(RKEY_SHOW_CAMERA_TOOLBAR) == "0")
+    if (!GlobalRegistry().keyExists(RKEY_SHOW_CAMERA_TOOLBAR))
     {
-        return false;
+        registry::setValue(RKEY_SHOW_CAMERA_TOOLBAR, true);
     }
-    else if (GlobalRegistry().get(RKEY_SHOW_CAMERA_TOOLBAR) == "1")
-    {
-        return true;
-    }
-    else // unset
-    {
-        GlobalRegistry().set(RKEY_SHOW_CAMERA_TOOLBAR, "1");
-        return true;
-    }
+    return registry::getValue<bool>(RKEY_SHOW_CAMERA_TOOLBAR);
 }
 
 void CameraSettings::importDrawMode(const int mode) 
@@ -125,12 +117,12 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 		_callbackActive = true;
 
 		// Load the values from the registry
-		_toggleFreelook = GlobalRegistry().get(RKEY_TOGGLE_FREE_MOVE) == "1";
+		_toggleFreelook = registry::getValue<bool>(RKEY_TOGGLE_FREE_MOVE);
 		_movementSpeed = registry::getValue<int>(RKEY_MOVEMENT_SPEED);
 		_angleSpeed = registry::getValue<int>(RKEY_ROTATION_SPEED);
-		_invertMouseVerticalAxis = (GlobalRegistry().get(RKEY_INVERT_MOUSE_VERTICAL_AXIS) == "1");
-		_farClipEnabled = (GlobalRegistry().get(RKEY_ENABLE_FARCLIP) == "1");
-		_solidSelectionBoxes = (GlobalRegistry().get(RKEY_SOLID_SELECTION_BOXES) == "1");
+		_invertMouseVerticalAxis = registry::getValue<bool>(RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+		_farClipEnabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP);
+		_solidSelectionBoxes = registry::getValue<bool>(RKEY_SOLID_SELECTION_BOXES);
 
 		GlobalEventManager().setToggled("ToggleCubicClip", _farClipEnabled);
 
@@ -150,7 +142,7 @@ void CameraSettings::keyChanged(const std::string& key, const std::string& val)
 			cam->removeHandlersMove();
 
 			// Check the value and take the according actions
-			_discreteMovement = (GlobalRegistry().get(RKEY_DISCRETE_MOVEMENT) == "1");
+			_discreteMovement = registry::getValue<bool>(RKEY_DISCRETE_MOVEMENT);
 
 			// Reconnect the new handlers
 			cam->addHandlersMove();
@@ -173,7 +165,7 @@ void CameraSettings::setRenderMode(const CameraDrawMode& mode)
 {
     // Write the value into the registry, this should trigger the keyChanged()
     // callback that in turn calls the update functions
-	registry::setValue<int>(RKEY_DRAWMODE, static_cast<int>(mode));
+	registry::setValue(RKEY_DRAWMODE, static_cast<int>(mode));
 }
 
 void CameraSettings::toggleLightingMode() 

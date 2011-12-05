@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iscenegraph.h"
-#include "iregistry.h"
+#include "registry/registry.h"
 
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -272,7 +272,7 @@ void OverlayDialog::getStateFromRegistry()
 void OverlayDialog::updateSensitivity()
 {
 	// If the "Use image" toggle is disabled, desensitise all the other widgets
-	_subWidgets["subTable"]->set_sensitive(GlobalRegistry().get(RKEY_OVERLAY_VISIBLE) == "1");
+	_subWidgets["subTable"]->set_sensitive(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 }
 
 // Close button

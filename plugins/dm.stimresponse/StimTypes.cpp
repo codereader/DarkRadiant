@@ -178,7 +178,7 @@ void StimTypes::setStimTypeCaption(int id, const std::string& caption)
 
 		// Combine the ID and the caption
 		std::string captionPlusId = caption;
-		bool showStimTypeIds = GlobalRegistry().get(RKEY_SHOW_STIM_TYPE_IDS) == "1";
+		bool showStimTypeIds = registry::getValue<bool>(RKEY_SHOW_STIM_TYPE_IDS);
 		captionPlusId += showStimTypeIds ? " (" + intToStr(id) + ")" : "";
 
 		// Update the list store
@@ -208,7 +208,7 @@ void StimTypes::add(int id,
 
 	// Combine the ID and the caption
 	std::string captionPlusId = caption;
-	bool showStimTypeIds = GlobalRegistry().get(RKEY_SHOW_STIM_TYPE_IDS) == "1";
+	bool showStimTypeIds = registry::getValue<bool>(RKEY_SHOW_STIM_TYPE_IDS);
 	captionPlusId += showStimTypeIds ? " (" + intToStr(id) + ")" : "";
 
 	Gtk::TreeModel::Row row = *_listStore->append();

@@ -10,6 +10,7 @@
 #include "iselection.h"
 #include "itexdef.h"
 
+#include "registry/registry.h"
 #include "modulesystem/StaticModule.h"
 #include "ClipPoint.h"
 #include "brush/csg/CSG.h"
@@ -33,7 +34,7 @@ Clipper::Clipper() :
 void Clipper::keyChanged(const std::string& key, const std::string& val)
 {
 	_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);
-	_useCaulk = (GlobalRegistry().get(RKEY_CLIPPER_USE_CAULK) == "1");
+	_useCaulk = registry::getValue<bool>(RKEY_CLIPPER_USE_CAULK);
 }
 
 void Clipper::constructPreferences() {
@@ -271,7 +272,7 @@ const StringSet& Clipper::getDependencies() const {
 void Clipper::initialiseModule(const ApplicationContext& ctx) {
 	globalOutputStream() << "Clipper::initialiseModule called\n";
 
-	_useCaulk = (GlobalRegistry().get(RKEY_CLIPPER_USE_CAULK) == "1");
+	_useCaulk = registry::getValue<bool>(RKEY_CLIPPER_USE_CAULK);
 	_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);
 	GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_USE_CAULK);
 	GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_CAULK_SHADER);
