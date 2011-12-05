@@ -3,7 +3,6 @@
 
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "gtkutil/RegistryConnector.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "PrefPage.h"
@@ -54,9 +53,6 @@ private:
 
 	// The root page
 	PrefPagePtr _root;
-
-	// Helper class to pump/extract values to/from the Registry
-	gtkutil::RegistryConnector _registryConnector;
 
 	// Stays false until the main window is created,
 	// which happens in toggleWindow() first (the mainframe doesn't exist earlier)

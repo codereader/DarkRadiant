@@ -2,7 +2,6 @@
 #define PREFPAGE_H_
 
 #include "ipreferencesystem.h"
-#include "gtkutil/RegistryConnector.h"
 
 namespace Gtk
 {
@@ -50,23 +49,16 @@ private:
 
 	Gtk::Label* _titleLabel;
 
-	// The reference to the dialog's connector object
-	gtkutil::RegistryConnector& _connector;
-
 public:
 	/** greebo: Constructor
 	 *
 	 * @name: The display caption of this prefpage
 	 * @parentPath: the path to the parent of this page
 	 * @notebook: The Gtk::Notebook widget this page is child of.
-	 * @connector: the reference to the RegistryConnector that can
-	 * 			   be used to connect the widget to the registry.
-	 * 			   Usually, this owned by the PrefsDlg class.
 	 */
 	PrefPage(const std::string& name,
 	         const std::string& parentPath,
-	         Gtk::Notebook* notebook,
-	         gtkutil::RegistryConnector& connector);
+	         Gtk::Notebook* notebook);
 
 	/** greebo: Sets the title caption that is displayed on the right.
 	 * 			Overrides the default title that is generated

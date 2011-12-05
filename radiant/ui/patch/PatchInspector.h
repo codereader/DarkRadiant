@@ -9,7 +9,6 @@
 #include "ipatch.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/RegistryConnector.h"
 #include "gtkutil/event/SingleIdleCallback.h"
 
 class Patch;
@@ -66,7 +65,7 @@ class PatchInspector
 		Gtk::Entry* value;
 		gtkutil::ControlButton* smaller;
 		gtkutil::ControlButton* larger;
-		Gtk::Entry* step;
+		Gtk::Entry* stepEntry;
 		Gtk::Label* steplabel;
 	};
 
@@ -98,9 +97,6 @@ class PatchInspector
 
 	// If this is set to TRUE, the GTK callbacks will be disabled
 	bool _updateActive;
-
-	// The helper class that syncs the registry to/from widgets
-	gtkutil::RegistryConnector _connector;
 
 private:
 

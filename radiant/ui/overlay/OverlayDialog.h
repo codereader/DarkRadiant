@@ -4,7 +4,10 @@
 #include "icommandsystem.h"
 
 #include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/RegistryConnector.h"
+
+#include <gtkmm/filechooserbutton.h>
+#include <gtkmm/table.h>
+#include <gtkmm/togglebutton.h>
 
 #include <map>
 #include <string>
@@ -27,13 +30,9 @@ typedef boost::shared_ptr<OverlayDialog> OverlayDialogPtr;
 class OverlayDialog :
 	public gtkutil::PersistentTransientWindow
 {
-	// Subwidgets, held in a map. This is just a named list of widgets, to
-	// avoid adding new member variables for each widget.
-	typedef std::map<std::string, Gtk::Widget*> WidgetMap;
-	WidgetMap _subWidgets;
-
-	// The helper class that syncs the widgets with the Registry on demand
-	gtkutil::RegistryConnector _connector;
+	Gtk::FileChooserButton* _fileChooserBtn;
+    Gtk::Table* _subTable;
+    Gtk::ToggleButton* _useImageBtn;
 
 	// TRUE, if a widget update is in progress (to avoid callback loops)
 	bool _callbackActive;
@@ -46,21 +45,13 @@ private:
 	Gtk::Widget& createWidgets();
 	Gtk::Widget& createButtons();
 
-	/** greebo: Connects the widgets to the Registry
-	 */
-	void connectWidgets();
-
-	// Get the overlay state from the registry, and set dialog widgets
-	// accordingly
-	void getStateFromRegistry();
-
-	// Updates the sensitivity of the objects according to the registry state
+	void initialiseWidgets();
 	void updateSensitivity();
 
 	// gtkmm callbacks
 	void _onClose();
 	void _onFileSelection();
-	void _onChange();
+	void toggleUseImage();
 	void _onScrollChange();
 
 	// Contains the pointer to the singleton instance

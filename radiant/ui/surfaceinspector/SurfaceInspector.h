@@ -8,7 +8,6 @@
 #include "iundo.h"
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
-#include "gtkutil/RegistryConnector.h"
 #include "gtkutil/event/SingleIdleCallback.h"
 #include "ui/common/ShaderChooser.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
@@ -51,7 +50,7 @@ class SurfaceInspector
 		Gtk::Entry* value;
 		gtkutil::ControlButton* smaller;
 		gtkutil::ControlButton* larger;
-		Gtk::Entry* step;
+		Gtk::Entry* stepEntry;
 		Gtk::Label* steplabel;
 	};
 
@@ -105,10 +104,6 @@ class SurfaceInspector
 
 	// To avoid key changed loopbacks when the registry is updated
 	bool _callbackActive;
-
-	// This member takes care of importing/exporting Registry
-	// key values from and to widgets
-	gtkutil::RegistryConnector _connector;
 
 	// A reference to the SelectionInfo structure (with the counters)
 	const SelectionInfo& _selectionInfo;
@@ -196,20 +191,11 @@ private:
 	// Applies the entered shader to the current selection
 	void emitShader();
 
-	// Saves the connected widget content into the registry
-	void saveToRegistry();
-
 	// Executes the fit command for the selection
 	void fitTexture();
 
 	// The callback when the "select shader" button is pressed, opens the ShaderChooser dialog
 	void onShaderSelect();
-
-	// Gets called when the step entry fields get changed
-	void onStepChanged();
-
-	// Gets called when the value entry field is changed (shift/scale/rotation) - emits the texcoords
-	void onDefaultScaleChanged();
 
 	// The callback for the Fit Texture button
 	void onFit();

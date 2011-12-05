@@ -45,7 +45,7 @@ PrefDialog::PrefDialog() :
 	populateWindow();
 
 	// Create the root element with the Notebook and Connector references
-	_root = PrefPagePtr(new PrefPage("", "", _notebook, _registryConnector));
+	_root = PrefPagePtr(new PrefPage("", "", _notebook));
 
 	add(*_overallVBox);
 }
@@ -151,9 +151,6 @@ void PrefDialog::toggleWindow(bool isModal)
 	}
 	else
 	{
-		// Import the registry keys
-		_registryConnector.importValues();
-
 		// Rebuild the tree and expand it
 		updateTreeStore();
 		_treeView->expand_all();
@@ -248,8 +245,6 @@ void PrefDialog::showPage(const std::string& path)
 
 void PrefDialog::save()
 {
-	_registryConnector.exportValues();
-
 	if (_isModal)
 	{
 		Gtk::Main::quit();

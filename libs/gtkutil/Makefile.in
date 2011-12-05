@@ -82,9 +82,9 @@ am_libgtkutil_la_OBJECTS = ConsoleView.lo FreezePointer.lo GLWidget.lo \
 	WindowPosition.lo PersistentTransientWindow.lo \
 	TransientWindow.lo Dialog.lo MessageBox.lo RenderPreview.lo \
 	GLFont.lo MenuItemAccelerator.lo Cursor.lo PopupMenu.lo \
-	RegistryConnector.lo PathEntry.lo TreeModel.lo \
-	ModalProgressDialog.lo SerialisableWidgets.lo SourceView.lo \
-	clipboard.lo FileChooser.lo
+	PathEntry.lo TreeModel.lo ModalProgressDialog.lo \
+	SerialisableWidgets.lo SourceView.lo clipboard.lo \
+	FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -340,7 +340,6 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						MenuItemAccelerator.cpp \
 						Cursor.cpp \
 						menu/PopupMenu.cpp \
-						RegistryConnector.cpp \
 						PathEntry.cpp \
 						TreeModel.cpp \
 						ModalProgressDialog.cpp \
@@ -437,7 +436,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PersistentTransientWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PopupMenu.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RegistryConnector.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RenderPreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SerialisableWidgets.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceView.Plo@am__quote@

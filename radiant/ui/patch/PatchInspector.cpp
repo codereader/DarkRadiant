@@ -1,25 +1,19 @@
 #include "PatchInspector.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "iuimanager.h"
 #include "imainframe.h"
 
-#include <gtkmm/table.h>
-#include <gtkmm/checkbutton.h>
-#include <gtkmm/alignment.h>
-#include <gtkmm/box.h>
-#include <gtkmm/entry.h>
-#include <gtkmm/spinbutton.h>
+#include <gtkmm.h>
 
+#include "registry/bind.h"
 #include "selectionlib.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
-#include "gtkutil/SerialisableWidgets.h"
 
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
@@ -197,26 +191,16 @@ void PatchInspector::populateWindow()
     // Connect the step values to the according registry values
 	using namespace gtkutil;
 
-	_connector.addObject(
-		RKEY_X_STEP,
-		StringSerialisablePtr(new SerialisableTextEntryWrapper(_coords["x"].step))
-	);
-	_connector.addObject(
-		RKEY_Y_STEP,
-		StringSerialisablePtr(new SerialisableTextEntryWrapper(_coords["y"].step))
-	);
-	_connector.addObject(
-		RKEY_Z_STEP,
-		StringSerialisablePtr(new SerialisableTextEntryWrapper(_coords["z"].step))
-	);
-	_connector.addObject(
-		RKEY_S_STEP,
-		StringSerialisablePtr(new SerialisableTextEntryWrapper(_coords["s"].step))
-	);
-	_connector.addObject(
-		RKEY_T_STEP,
-		StringSerialisablePtr(new SerialisableTextEntryWrapper(_coords["t"].step))
-	);
+    registry::bindPropertyToKey(_coords["x"].stepEntry->property_text(),
+                                RKEY_X_STEP);
+    registry::bindPropertyToKey(_coords["y"].stepEntry->property_text(),
+                                RKEY_Y_STEP);
+    registry::bindPropertyToKey(_coords["z"].stepEntry->property_text(),
+                                RKEY_Z_STEP);
+    registry::bindPropertyToKey(_coords["s"].stepEntry->property_text(),
+                                RKEY_S_STEP);
+    registry::bindPropertyToKey(_coords["t"].stepEntry->property_text(),
+                                RKEY_T_STEP);
 
     // Connect all the arrow buttons
     for (CoordMap::iterator i = _coords.begin(); i != _coords.end(); ++i)
@@ -319,11 +303,10 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	coordRow.hbox->pack_start(*coordRow.steplabel, false, false, 0);
 
 	// Create the entry field
-	coordRow.step = Gtk::manage(new Gtk::Entry);
-	coordRow.step->set_width_chars(5);
-	coordRow.step->signal_changed().connect(sigc::mem_fun(*this, &PatchInspector::onStepChanged));
+	coordRow.stepEntry = Gtk::manage(new Gtk::Entry);
+	coordRow.stepEntry->set_width_chars(5);
 
-	coordRow.hbox->pack_start(*coordRow.step, false, false, 0);
+	coordRow.hbox->pack_start(*coordRow.stepEntry, false, false, 0);
 
 	// Pack the hbox into the table
 	table.attach(*coordRow.hbox, 1, 2, row, row + 1);
@@ -623,23 +606,11 @@ void PatchInspector::emitTesselation()
 	GlobalMainFrame().updateAllWindows();
 }
 
-void PatchInspector::saveToRegistry()
-{
-	// Pass the call to the RegistryConnector
-	_connector.exportValues();
-}
-
 void PatchInspector::onCoordChange()
 {
 	if (_updateActive) return;
 
 	emitCoords();
-}
-
-void PatchInspector::onStepChanged()
-{
-	// Save contents to the registry
-	saveToRegistry();
 }
 
 void PatchInspector::onTessChange()
@@ -668,7 +639,7 @@ void PatchInspector::onClickLarger(CoordRow* row)
 {
 	// Get the current value and the step increment
 	float value = strToFloat(row->value->get_text());
-	float step = strToFloat(row->step->get_text());
+	float step = strToFloat(row->stepEntry->get_text());
 
 	// This triggers the onCoordChange callback method
 	row->value->set_text(floatToStr(value + step));
@@ -678,7 +649,7 @@ void PatchInspector::onClickSmaller(CoordRow* row)
 {
 	// Get the current value and the step increment
 	float value = strToFloat(row->value->get_text());
-	float step = strToFloat(row->step->get_text());
+	float step = strToFloat(row->stepEntry->get_text());
 
 	// This triggers the onCoordChange callback method
 	row->value->set_text(floatToStr(value - step));

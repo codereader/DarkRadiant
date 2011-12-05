@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "stream/textfilestream.h"
-#include "registry/registry.h"
+#include "registry/bind.h"
 
 #include <gtkmm/adjustment.h>
 #include <gtkmm/alignment.h>
@@ -33,15 +33,10 @@ namespace ui {
 		typedef std::vector<std::string> StringVector;
 	}
 
-PrefPage::PrefPage(
-		const std::string& name,
-		const std::string& parentPath,
-		Gtk::Notebook* notebook,
-		gtkutil::RegistryConnector& connector) :
-	_name(name),
-	_path(parentPath),
-	_notebook(notebook),
-	_connector(connector)
+PrefPage::PrefPage(const std::string& name,
+                   const std::string& parentPath,
+                   Gtk::Notebook* notebook)
+: _name(name), _path(parentPath), _notebook(notebook)
 {
 	// If this is not the root item, add a leading slash
 	_path += (!_path.empty()) ? "/" : "";
@@ -108,12 +103,7 @@ Gtk::Widget* PrefPage::appendCheckBox(const std::string& name,
 	Gtk::CheckButton* check = Gtk::manage(new Gtk::CheckButton(flag));
 
 	// Connect the registry key to this toggle button
-	using namespace gtkutil;
-
-	_connector.addObject(
-		registryKey,
-		StringSerialisablePtr(new SerialisableToggleButtonWrapper(check))
-	);
+    registry::bindPropertyToKey(check->property_active(), registryKey);
 
 	appendNamedWidget(name, *check);
 
@@ -127,11 +117,7 @@ void PrefPage::appendSlider(const std::string& name, const std::string& registry
 	Gtk::Adjustment* adj = Gtk::manage(new Gtk::Adjustment(value, lower, upper, step_increment, page_increment, page_size));
 
 	// Connect the registry key to this adjustment
-    using namespace gtkutil;
-	_connector.addObject(
-        registryKey,
-        StringSerialisablePtr(new SerialisableAdjustmentWrapper(adj))
-    );
+    registry::bindPropertyToKey(adj->property_value(), registryKey);
 
 	// scale
 	Gtk::Alignment* alignment = Gtk::manage(new Gtk::Alignment(0.0, 0.5, 1.0, 0.0));
@@ -147,6 +133,15 @@ void PrefPage::appendSlider(const std::string& name, const std::string& registry
 	scale->set_digits((step_increment < 1.0f) ? 2 : 0);
 
 	appendNamedWidget(name, *alignment);
+}
+
+namespace
+{
+    void setRegValueFromActiveText(Gtk::ComboBoxText* combo,
+                                   const std::string& key)
+    {
+        GlobalRegistry().set(key, combo->get_active_text());
+    }
 }
 
 void PrefPage::appendCombo(const std::string& name,
@@ -170,19 +165,21 @@ void PrefPage::appendCombo(const std::string& name,
 		combo->append_text(*i);
     }
 
-	StringSerialisablePtr wrapper;
-
 	if (storeValueNotIndex)
 	{
-		wrapper = StringSerialisablePtr(new SerialisableComboBox_TextWrapper(combo));
+        // There is no property_active_text() apparently, so we have to connect
+        // manually
+        combo->set_active_text(GlobalRegistry().get(registryKey));
+        combo->property_active().signal_changed().connect(
+            sigc::bind(
+                sigc::ptr_fun(setRegValueFromActiveText), combo, registryKey
+            )
+        );
 	}
 	else
 	{
-		wrapper = StringSerialisablePtr(new SerialisableComboBox_IndexWrapper(combo));
+        registry::bindPropertyToKey(combo->property_active(), registryKey);
 	}
-
-	// Connect the registry key to the newly created combo box
-	_connector.addObject(registryKey, wrapper);
 
     // Add it to the container
     alignment->add(*combo);
@@ -202,11 +199,7 @@ Gtk::Widget* PrefPage::appendEntry(const std::string& name, const std::string& r
 	alignment->add(*entry);
 
 	// Connect the registry key to the newly created input field
-	using namespace gtkutil;
-	_connector.addObject(
-		registryKey,
-		StringSerialisablePtr(new SerialisableTextEntryWrapper(entry))
-	);
+    registry::bindPropertyToKey(entry->property_text(), registryKey);
 
 	appendNamedWidget(name, *alignment);
 
@@ -228,12 +221,8 @@ Gtk::Widget* PrefPage::appendPathEntry(const std::string& name, const std::strin
 	gtkutil::PathEntry* entry = Gtk::manage(new gtkutil::PathEntry(browseDirectories));
 
 	// Connect the registry key to the newly created input field
-	using namespace gtkutil;
-
-	_connector.addObject(
-		registryKey,
-		StringSerialisablePtr(new SerialisableTextEntryWrapper(&entry->getEntryWidget()))
-	);
+    registry::bindPropertyToKey(entry->getEntryWidget().property_text(),
+                                registryKey);
 
 	appendNamedWidget(name, *entry);
 
@@ -272,12 +261,7 @@ Gtk::Widget* PrefPage::appendSpinner(const std::string& name, const std::string&
 	alignment->add(*spin);
 
 	// Connect the registry key to the newly created input field
-	using namespace gtkutil;
-
-	_connector.addObject(
-		registryKey,
-		StringSerialisablePtr(new SerialisableSpinButtonWrapper(spin))
-	);
+    registry::bindPropertyToKey(spin->property_value(), registryKey);
 
 	appendNamedWidget(name, *alignment);
 
@@ -307,7 +291,7 @@ PrefPagePtr PrefPage::createOrFindPage(const std::string& path) {
 
 	if (child == NULL) {
 		// No child found, create a new page and add it to the list
-		child = PrefPagePtr(new PrefPage(parts[0], _path, _notebook, _connector));
+		child = PrefPagePtr(new PrefPage(parts[0], _path, _notebook));
 		_children.push_back(child);
 	}
 

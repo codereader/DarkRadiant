@@ -8,7 +8,7 @@
 #include "iradiant.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
-#include "gtkutil/RegistryConnector.h"
+
 namespace gtkutil { class ControlButton; }
 typedef boost::shared_ptr<gtkutil::ControlButton> ControlButtonPtr;
 
@@ -22,9 +22,6 @@ namespace Gtk
 }
 
 /* greebo: The dialog providing the Free Transform functionality.
- *
- * The scale and rotation steps are loaded and written from/to the registry
- * using the RegistryConnector helper class.
  *
  * The Dialog gets notified upon selection change and updates the widget
  * sensitivity accordingly.
@@ -52,7 +49,7 @@ class TransformDialog
 		int direction; // Direction (rotation only), is 1 by default
 		Gtk::HBox* hbox;
 		Gtk::Label* label;
-		Gtk::Entry* step;
+		Gtk::Entry* stepEntry;
 		Gtk::Label* stepLabel;
 		ControlButtonPtr smaller;
 		ControlButtonPtr larger;
@@ -73,9 +70,6 @@ class TransformDialog
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
-	// The helper class that syncs the registry to/from widgets
-	gtkutil::RegistryConnector _connector;
-
 private:
 
 	// TransientWindow callbacks
@@ -86,10 +80,6 @@ private:
 	 * 			the current selection.
 	 */
 	void update();
-
-	/** greebo: Saves the step values to the registry
-	 */
-	void saveToRegistry();
 
 	// This is called to initialise the dialog window / create the widgets
 	void populateWindow();

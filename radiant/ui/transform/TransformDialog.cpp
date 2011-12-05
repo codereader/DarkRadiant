@@ -1,21 +1,21 @@
 #include "TransformDialog.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "selectionlib.h"
 #include "string/string.h"
+#include "registry/bind.h"
 
 #include <gtkmm/box.h>
 #include <gtkmm/table.h>
+#include <gtkmm/entry.h>
 
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/ControlButton.h"
-#include "gtkutil/SerialisableWidgets.h"
 
 #include "selection/algorithm/Transformation.h"
 
@@ -157,43 +157,18 @@ void TransformDialog::populateWindow()
     _entries["scaleZ"] = createEntryRow(_(LABEL_SCALEZ), *_scaleTable, 2, false, 2);
 
     // Connect the step values to the according registry values
-   using namespace gtkutil;
-	_connector.addObject(
-      RKEY_ROTX_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_entries["rotateX"].step)
-      )
-   );
-	_connector.addObject(
-      RKEY_ROTY_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_entries["rotateY"].step)
-      )
-   );
-	_connector.addObject(
-      RKEY_ROTZ_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_entries["rotateZ"].step)
-      )
-   );
-	_connector.addObject(
-      RKEY_SCALEX_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_entries["scaleX"].step)
-      )
-   );
-	_connector.addObject(
-      RKEY_SCALEY_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_entries["scaleY"].step)
-      )
-   );
-	_connector.addObject(
-      RKEY_SCALEZ_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_entries["scaleZ"].step)
-      )
-   );
+    registry::bindPropertyToKey(_entries["rotateX"].stepEntry->property_text(),
+                                RKEY_ROTX_STEP);
+    registry::bindPropertyToKey(_entries["rotateY"].stepEntry->property_text(),
+                                RKEY_ROTY_STEP);
+    registry::bindPropertyToKey(_entries["rotateZ"].stepEntry->property_text(),
+                                RKEY_ROTZ_STEP);
+    registry::bindPropertyToKey(_entries["scaleX"].stepEntry->property_text(),
+                                RKEY_SCALEX_STEP);
+    registry::bindPropertyToKey(_entries["scaleY"].stepEntry->property_text(),
+                                RKEY_SCALEY_STEP);
+    registry::bindPropertyToKey(_entries["scaleZ"].stepEntry->property_text(),
+                                RKEY_SCALEZ_STEP);
 
     // Connect all the arrow buttons
     for (EntryRowMap::iterator i = _entries.begin(); i != _entries.end(); ++i)
@@ -250,11 +225,10 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 	entryRow.hbox->pack_start(*entryRow.stepLabel, false, false, 0);
 
 	// Create the entry field
-	entryRow.step = Gtk::manage(new Gtk::Entry);
-	entryRow.step->set_width_chars(5);
-	entryRow.step->signal_changed().connect(sigc::mem_fun(*this, &TransformDialog::onStepChanged));
+	entryRow.stepEntry = Gtk::manage(new Gtk::Entry);
+	entryRow.stepEntry->set_width_chars(5);
 
-	entryRow.hbox->pack_start(*entryRow.step, false, false, 0);
+	entryRow.hbox->pack_start(*entryRow.stepEntry, false, false, 0);
 
 	// Pack the hbox into the table
 	table.attach(*entryRow.hbox, 1, 2, row, row + 1);
@@ -300,21 +274,10 @@ void TransformDialog::selectionChanged(const scene::INodePtr& node, bool isCompo
 	update();
 }
 
-void TransformDialog::saveToRegistry() {
-	// Pass the call to the RegistryConnector
-	_connector.exportValues();
-}
-
-void TransformDialog::onStepChanged()
-{
-	// Save the contents into the registry
-	saveToRegistry();
-}
-
 void TransformDialog::onClickLarger(EntryRow* row)
 {
 	// Get the current step increment
-	float step = strToFloat(row->step->get_text());
+	float step = strToFloat(row->stepEntry->get_text());
 
 	// Determine the action
 	if (row->isRotator)
@@ -344,7 +307,7 @@ void TransformDialog::onClickLarger(EntryRow* row)
 void TransformDialog::onClickSmaller(EntryRow* row)
 {
 	// Get the current value and the step increment
-	float step = strToFloat(row->step->get_text());
+	float step = strToFloat(row->stepEntry->get_text());
 
 	// Determine the action
 	if (row->isRotator)

@@ -20,9 +20,8 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/dialog/MessageBox.h"
-#include "gtkutil/SerialisableWidgets.h"
 
-#include "registry/registry.h"
+#include "registry/bind.h"
 #include "selectionlib.h"
 #include "math/FloatTools.h"
 #include "string/string.h"
@@ -104,55 +103,22 @@ SurfaceInspector::SurfaceInspector()
 	populateWindow();
 
 	// Connect the defaultTexScale and texLockButton widgets to "their" registry keys
-	using namespace gtkutil;
-
-	_connector.addObject(
-      RKEY_DEFAULT_TEXTURE_SCALE,
-	  StringSerialisablePtr(
-         new SerialisableSpinButtonWrapper(_defaultTexScale)
-      )
-	);
-	_connector.addObject(
-      RKEY_ENABLE_TEXTURE_LOCK,
-	  StringSerialisablePtr(
-         new SerialisableToggleButtonWrapper(_texLockButton)
-      )
-	);
+    registry::bindPropertyToKey(_defaultTexScale->property_value(),
+                                RKEY_DEFAULT_TEXTURE_SCALE);
+    registry::bindPropertyToKey(_texLockButton->property_active(), 
+                                RKEY_ENABLE_TEXTURE_LOCK);
 
 	// Connect the step values to the according registry values
-	_connector.addObject(
-      RKEY_HSHIFT_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_manipulators[HSHIFT].step)
-      )
-	);
-	_connector.addObject(
-      RKEY_VSHIFT_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_manipulators[VSHIFT].step)
-      )
-	);
-	_connector.addObject(
-      RKEY_HSCALE_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_manipulators[HSCALE].step)
-      )
-	);
-	_connector.addObject(
-      RKEY_VSCALE_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_manipulators[VSCALE].step)
-      )
-	);
-	_connector.addObject(
-      RKEY_ROTATION_STEP,
-      StringSerialisablePtr(
-         new SerialisableTextEntryWrapper(_manipulators[ROTATION].step)
-      )
-	);
-
-	// Load the values from the Registry
-	_connector.importValues();
+    registry::bindPropertyToKey(_manipulators[HSHIFT].stepEntry->property_text(),
+                                RKEY_HSHIFT_STEP);
+    registry::bindPropertyToKey(_manipulators[VSHIFT].stepEntry->property_text(),
+                                RKEY_VSHIFT_STEP);
+    registry::bindPropertyToKey(_manipulators[HSCALE].stepEntry->property_text(),
+                                RKEY_HSCALE_STEP);
+    registry::bindPropertyToKey(_manipulators[VSCALE].stepEntry->property_text(),
+                                RKEY_VSCALE_STEP);
+    registry::bindPropertyToKey(_manipulators[ROTATION].stepEntry->property_text(),
+                                RKEY_ROTATION_STEP);
 
 	// Be notified upon key changes
 	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
@@ -239,8 +205,6 @@ void SurfaceInspector::connectEvents()
 	_applyTex.natural->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
 	_applyTex.normalise->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
 
-	_defaultTexScale->signal_value_changed().connect(sigc::mem_fun(*this, &SurfaceInspector::onDefaultScaleChanged));
-
 	for (ManipulatorMap::iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
 		i->second.smaller->signal_clicked().connect(sigc::mem_fun(*this, &SurfaceInspector::doUpdate));
@@ -259,9 +223,6 @@ void SurfaceInspector::keyChanged(const std::string& key, const std::string& val
 
 	// Disable this event to prevent double-firing
 	GlobalEventManager().findEvent("TogTexLock")->setEnabled(false);
-
-	// Tell the registryconnector to import the values from the Registry
-	_connector.importValues();
 
 	// Re-enable the event
 	GlobalEventManager().findEvent("TogTexLock")->setEnabled(true);
@@ -508,11 +469,10 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	manipRow.hbox->pack_start(*manipRow.steplabel, false, false, 0);
 
 	// Create the entry field
-	manipRow.step = Gtk::manage(new Gtk::Entry);
-	manipRow.step->set_width_chars(5);
-	manipRow.step->signal_changed().connect(sigc::mem_fun(*this, &SurfaceInspector::onStepChanged));
+	manipRow.stepEntry = Gtk::manage(new Gtk::Entry);
+	manipRow.stepEntry->set_width_chars(5);
 
-	manipRow.hbox->pack_start(*manipRow.step, false, false, 0);
+	manipRow.hbox->pack_start(*manipRow.stepEntry, false, false, 0);
 
 	// Pack the hbox into the table
 	table.attach(*manipRow.hbox, 1, 2, row, row + 1);
@@ -678,18 +638,6 @@ void SurfaceInspector::selectionChanged(const scene::INodePtr& node, bool isComp
 	update();
 }
 
-void SurfaceInspector::saveToRegistry()
-{
-	// Disable the keyChanged() callback during the update process
-	_callbackActive = true;
-
-	// Pass the call to the RegistryConnector
-	_connector.exportValues();
-
-	// Re-enable the callbacks
-	_callbackActive = false;
-}
-
 void SurfaceInspector::fitTexture()
 {
 	double repeatX = _fitTexture.width->get_value();
@@ -709,18 +657,6 @@ void SurfaceInspector::fitTexture()
 void SurfaceInspector::shaderSelectionChanged(const std::string& shader)
 {
 	emitShader();
-}
-
-void SurfaceInspector::onDefaultScaleChanged()
-{
-	// Tell the class instance to save its contents into the registry
-	saveToRegistry();
-}
-
-void SurfaceInspector::onStepChanged()
-{
-	// Save contents to the registry
-	saveToRegistry();
 }
 
 void SurfaceInspector::onFit() {
@@ -785,8 +721,6 @@ void SurfaceInspector::_preShow()
 
 	// Restore the position
 	_windowPosition.applyPosition();
-	// Import the registry keys
-	_connector.importValues();
 
 	// Re-scan the selection
 	update();
