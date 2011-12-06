@@ -70,7 +70,6 @@
     <ClInclude Include="..\..\libs\gtkutil\nonmodal.h" />
     <ClInclude Include="..\..\libs\gtkutil\PanedPosition.h" />
     <ClInclude Include="..\..\libs\gtkutil\PathEntry.h" />
-    <ClInclude Include="..\..\libs\gtkutil\RegistryConnector.h" />
     <ClInclude Include="..\..\libs\gtkutil\RightAlignedLabel.h" />
     <ClInclude Include="..\..\libs\gtkutil\RightAlignment.h" />
     <ClInclude Include="..\..\libs\gtkutil\ScrolledFrame.h" />
@@ -116,7 +115,6 @@
     <ClCompile Include="..\..\libs\gtkutil\ModalProgressDialog.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\PanedPosition.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\PathEntry.cpp" />
-    <ClCompile Include="..\..\libs\gtkutil\RegistryConnector.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\SerialisableWidgets.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\SourceView.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\Timer.cpp" />
