@@ -6,10 +6,10 @@
 #include "iregistry.h"
 typedef unsigned char byte;
 
-namespace shaders {
+namespace shaders
+{
 
-class TextureManipulator :
- 	public RegistryKeyObserver
+class TextureManipulator: public sigc::trackable
 {
 	// The gamma correction table
 	byte _gammaTable[256];
@@ -36,9 +36,6 @@ public:
 	// the accessor function creates a static instance of the class
 	static TextureManipulator& instance();
 
-	// RegistryKeyObserver implementation
-	void keyChanged(const std::string& key, const std::string& val);
-
 	// Constructs the prefpage
 	void constructPreferences();
 
@@ -60,6 +57,7 @@ public:
 	Colour3 getFlatshadeColour(const ImagePtr& input);
 
 private:
+	void keyChanged();
 
 	// Returns the gamma corrected image taken from <input>
 	// (Does not allocate new memory)

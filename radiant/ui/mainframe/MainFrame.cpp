@@ -131,7 +131,9 @@ void MainFrame::initialiseModule(const ApplicationContext& ctx)
 			page->appendCheckBox("", _("Disable Windows Desktop Composition"),
 				RKEY_DISABLE_WIN_DESKTOP_COMP);
 
-			GlobalRegistry().addKeyObserver(this, RKEY_DISABLE_WIN_DESKTOP_COMP);
+			GlobalRegistry().signalForKey(RKEY_DISABLE_WIN_DESKTOP_COMP).connect(
+                sigc::mem_fun(this, &MainFrame::keyChanged)
+            );
 		}
 
 		FreeLibrary(lib);
@@ -147,13 +149,10 @@ void MainFrame::shutdownModule()
 	globalOutputStream() << "MainFrame::shutdownModule called." << std::endl;
 }
 
-void MainFrame::keyChanged(const std::string& changedKey, const std::string& newValue)
+void MainFrame::keyChanged(const std::string& newValue)
 {
 #ifdef WIN32
-	if (changedKey == RKEY_DISABLE_WIN_DESKTOP_COMP)
-	{
-		setDesktopCompositionEnabled(newValue != "1");
-	}
+    setDesktopCompositionEnabled(newValue != "1");
 #endif
 }
 

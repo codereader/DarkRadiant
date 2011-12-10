@@ -27,6 +27,10 @@ namespace detail
  * exists at the time this function is called, the property will be set to the
  * current key value before the connection is made.
  *
+ * Note that the observation happens in one direction only: the key is updated
+ * to match the property. If the key could be changed somewhere else and the
+ * property needs to be aware, use the Registry::signalForKey() signal.
+ *
  * \param prop
  * A Glib::PropertyProxy to be connected to the registry.
  *

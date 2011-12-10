@@ -17,10 +17,10 @@ typedef struct _GtkWidget GtkWidget;
  * container with n elements. The subclass MRUList is providing the interface
  * and iterators for inserting and manipulating the list.
  */
-namespace ui {
+namespace ui
+{
 
-class MRU :
-	public RegistryKeyObserver
+class MRU: public sigc::trackable
 {
 	// The list type containing the menuItem widgets
 	typedef std::list<MRUMenuItem> MenuItems;
@@ -37,6 +37,9 @@ class MRU :
 
 	// The empty menuitem (for displaying "Recent files")
 	MRUMenuItem _emptyMenuItem;
+
+private:
+	void keyChanged();
 
 public:
 	// Constructor (initialises the widgets and loads the list from the registry)
@@ -60,9 +63,6 @@ public:
 
 	// Returns the filename of the last opened map, or "" if there doesn't exist one
 	std::string getLastMapName();
-
-	// The callback for registry key changes
-	void keyChanged(const std::string& key, const std::string& val);
 
 	// Add the menu items to the GlobalUIManager
 	void constructMenu();

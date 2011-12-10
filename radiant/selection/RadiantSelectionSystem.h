@@ -58,7 +58,6 @@ class RadiantSelectionSystem :
 	public Rotatable,
 	public Scalable,
 	public Renderable,
-	public RegistryKeyObserver,
 	protected gtkutil::SingleIdleCallback
 {
 	mutable Matrix4 _pivot2world;
@@ -121,6 +120,8 @@ private:
 
 	bool nothingSelected() const;
 
+	void keyChanged();
+
 public:
 
 	RadiantSelectionSystem();
@@ -130,9 +131,6 @@ public:
 	 * entity count, etc.)
 	 */
 	const SelectionInfo& getSelectionInfo();
-
-	// RegistryKeyObserver implementation
-	void keyChanged(const std::string& key, const std::string& val);
 
 	void onSceneBoundsChanged();
 

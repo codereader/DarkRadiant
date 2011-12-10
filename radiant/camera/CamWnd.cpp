@@ -16,7 +16,7 @@
 #include "CameraSettings.h"
 #include "GlobalCamera.h"
 #include "render/RenderStatistics.h"
-#include "registry/registry.h"
+#include "registry/adaptors.h"
 
 #include <boost/bind.hpp>
 
@@ -228,7 +228,7 @@ void CamWnd::constructToolbar()
     }
 
     // Connect to show/hide registry key
-    GlobalRegistry().addBooleanKeyObserver(
+    registry::observeBooleanKey(
        RKEY_SHOW_CAMERA_TOOLBAR,
        sigc::mem_fun(toolbar, &Gtk::Widget::show),
        sigc::mem_fun(toolbar, &Gtk::Widget::hide)

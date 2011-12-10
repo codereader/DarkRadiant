@@ -318,9 +318,9 @@ void Manager::initEnginePath()
 	}
 
 	// Register as observer, to get notified about future engine path changes
-	GlobalRegistry().addKeyObserver(this, RKEY_ENGINE_PATH);
-	GlobalRegistry().addKeyObserver(this, RKEY_FS_GAME);
-	GlobalRegistry().addKeyObserver(this, RKEY_FS_GAME_BASE);
+	observeKey(RKEY_ENGINE_PATH);
+	observeKey(RKEY_FS_GAME);
+	observeKey(RKEY_FS_GAME_BASE);
 
 	// Force an update ((re-)initialises the VFS)
 	updateEnginePath(true);
@@ -330,7 +330,17 @@ void Manager::initEnginePath()
 	page->appendLabel(_("<b>Note</b>: You will have to restart DarkRadiant for the changes to take effect."));
 }
 
-bool Manager::settingsValid() const {
+void Manager::observeKey(const std::string& key)
+{
+    // Hide std::string signal argument, replace with bound false value for
+    // updateEnginePath().
+	GlobalRegistry().signalForKey(key).connect(
+        sigc::bind(sigc::mem_fun(this, &Manager::updateEnginePath), false)
+    );
+}
+
+bool Manager::settingsValid() const
+{
 	if (os::fileOrDirExists(_enginePath)) {
 
 		// Check the mod base path, if appropriate
@@ -350,12 +360,6 @@ bool Manager::settingsValid() const {
 
 	// Engine path doesn't exist
 	return false;
-}
-
-void Manager::keyChanged(const std::string& key, const std::string& val)
-{
-	// call the engine path setter, fs_game is updated there as well
-	updateEnginePath();
 }
 
 void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)

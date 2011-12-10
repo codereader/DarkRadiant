@@ -26,8 +26,7 @@ typedef boost::shared_ptr<EntitySettings> EntitySettingsPtr;
  * variables accordingly. This can be used as some sort of "cache"
  * to avoid slow registry queries during rendering, for instance.
  */
-class EntitySettings :
-	public RegistryKeyObserver
+class EntitySettings: public sigc::trackable
 {
 public:
 	enum LightEditVertexType
@@ -69,11 +68,6 @@ private:
 	// Private constructor
 	EntitySettings();
 public:
-	~EntitySettings();
-
-	// RegistryKeyObserver implementation
-	void keyChanged(const std::string& key, const std::string& value);
-
 	const Vector3& getLightVertexColour(LightEditVertexType type)
 	{
 		if (!_lightVertexColoursLoaded)
@@ -121,6 +115,9 @@ public:
 	static void destroy();
 
 private:
+	void keyChanged();
+    void refreshFromRegistry();
+    void observeKey(const std::string&);
 	void loadLightVertexColours();
 };
 

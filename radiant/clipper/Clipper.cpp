@@ -31,7 +31,7 @@ Clipper::Clipper() :
 {}
 
 // Update the internally stored variables on registry key change
-void Clipper::keyChanged(const std::string& key, const std::string& val)
+void Clipper::keyChanged()
 {
 	_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);
 	_useCaulk = registry::getValue<bool>(RKEY_CLIPPER_USE_CAULK);
@@ -269,13 +269,19 @@ const StringSet& Clipper::getDependencies() const {
 	return _dependencies;
 }
 
-void Clipper::initialiseModule(const ApplicationContext& ctx) {
+void Clipper::initialiseModule(const ApplicationContext& ctx)
+{
 	globalOutputStream() << "Clipper::initialiseModule called\n";
 
 	_useCaulk = registry::getValue<bool>(RKEY_CLIPPER_USE_CAULK);
 	_caulkShader = GlobalRegistry().get(RKEY_CLIPPER_CAULK_SHADER);
-	GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_USE_CAULK);
-	GlobalRegistry().addKeyObserver(this, RKEY_CLIPPER_CAULK_SHADER);
+
+	GlobalRegistry().signalForKey(RKEY_CLIPPER_USE_CAULK).connect(
+        sigc::mem_fun(this, &Clipper::keyChanged)
+    );
+	GlobalRegistry().signalForKey(RKEY_CLIPPER_CAULK_SHADER).connect(
+        sigc::mem_fun(this, &Clipper::keyChanged)
+    );
 
 	constructPreferences();
 

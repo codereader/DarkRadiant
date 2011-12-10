@@ -31,20 +31,27 @@ Overlay::Overlay()
 	_translationY(registry::getValue<float>(RKEY_OVERLAY_TRANSLATIONY))
 {
 	// Watch the relevant registry keys
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_VISIBLE);
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_TRANSPARENCY);
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_IMAGE);
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_SCALE);
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_TRANSLATIONX);
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_TRANSLATIONY);
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_PROPORTIONAL);
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_SCALE_WITH_XY);
-	GlobalRegistry().addKeyObserver(this, RKEY_OVERLAY_PAN_WITH_XY);
+	observeKey(RKEY_OVERLAY_VISIBLE);
+	observeKey(RKEY_OVERLAY_TRANSPARENCY);
+	observeKey(RKEY_OVERLAY_IMAGE);
+	observeKey(RKEY_OVERLAY_SCALE);
+	observeKey(RKEY_OVERLAY_TRANSLATIONX);
+	observeKey(RKEY_OVERLAY_TRANSLATIONY);
+	observeKey(RKEY_OVERLAY_PROPORTIONAL);
+	observeKey(RKEY_OVERLAY_SCALE_WITH_XY);
+	observeKey(RKEY_OVERLAY_PAN_WITH_XY);
 }
 
-void Overlay::onRadiantShutdown() {
+void Overlay::observeKey(const std::string& key)
+{
+    GlobalRegistry().signalForKey(key).connect(
+        sigc::mem_fun(this, &Overlay::keyChanged)
+    );
+}
+
+void Overlay::onRadiantShutdown()
+{
 	_texture = TexturePtr();
-	GlobalRegistry().removeKeyObserver(this);
 }
 
 void Overlay::destroyInstance() {
@@ -215,8 +222,7 @@ void Overlay::setImageScale(float scale) {
 	_scale = constrainFloat(scale, MIN_SCALE, MAX_SCALE);
 }
 
-// RegistryKeyObserver implementation, gets called upon key change
-void Overlay::keyChanged(const std::string& key, const std::string& val)
+void Overlay::keyChanged()
 {
 	show(registry::getValue<bool>(RKEY_OVERLAY_VISIBLE));
 	_keepProportions = registry::getValue<bool>(RKEY_OVERLAY_PROPORTIONAL);

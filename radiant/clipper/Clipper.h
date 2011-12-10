@@ -11,9 +11,8 @@ namespace {
 	const unsigned int NUM_CLIP_POINTS = 3;
 }
 
-class Clipper :
-	public IClipper,
-	public RegistryKeyObserver
+class Clipper : public IClipper,
+                public sigc::trackable
 {
 	// Hold the currently active xy view type
 	EViewType _viewType;
@@ -32,12 +31,13 @@ class Clipper :
 	// The shader name used for new faces when _useCaulk is true
 	std::string _caulkShader;
 
+private:
+	// Update the internally stored variables on registry key change
+	void keyChanged();
+
 public:
 	// Constructor
 	Clipper();
-
-	// Update the internally stored variables on registry key change
-	void keyChanged(const std::string& key, const std::string& val);
 
 	void constructPreferences();
 

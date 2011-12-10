@@ -9,10 +9,10 @@
  * and saves the map files either to snapshots or to a single yyyy.autosave.map file.
  */
 
-namespace map {
+namespace map
+{
 
-class AutoMapSaver :
-	public RegistryKeyObserver
+class AutoMapSaver: public sigc::trackable
 {
 	// TRUE, if autosaving is enabled
 	bool _enabled;
@@ -44,8 +44,7 @@ public:
 	// Clears the _changes member variable that indicates how many changes have been made
 	void clearChanges();
 
-	// The RegistryKeyObserver implementation - gets called upon key change
-	void keyChanged(const std::string& key, const std::string& val);
+	void registryKeyChanged();
 
 	// Adds the elements to the according preference page
 	void constructPreferences();

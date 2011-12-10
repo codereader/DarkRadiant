@@ -59,7 +59,7 @@ class TextureBrowser;
 typedef boost::shared_ptr<TextureBrowser> TextureBrowserPtr;
 
 class TextureBrowser :
-	public RegistryKeyObserver,
+    public sigc::trackable,
 	public MaterialManager::ActiveShadersObserver,
 	public boost::enable_shared_from_this<TextureBrowser>
 {
@@ -125,9 +125,6 @@ public:
 
 	void clearFilter();
 
-	// RegistryKeyObserver implementation
-	void keyChanged(const std::string& key, const std::string& val);
-
 	// Return the display width of a texture in the texture browser
 	int getTextureWidth(const TexturePtr& tex);
 	// Return the display height of a texture in the texture browser
@@ -185,6 +182,9 @@ private:
 
 	// greebo: This gets called as soon as the texture mode gets changed
 	void textureModeChanged();
+
+    void observeKey(const std::string& key);
+	void keyChanged();
 
 	void setScaleFromRegistry();
 

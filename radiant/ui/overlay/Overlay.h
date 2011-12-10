@@ -16,9 +16,8 @@ typedef boost::shared_ptr<Overlay> OverlayPtr;
  * It is configured via the XMLRegistry, and its draw() method is called from
  * the XYWnd class to insert the image into the window.
  */
-class Overlay :
-	public RegistryKeyObserver,
-	public RadiantEventListener
+class Overlay : public RadiantEventListener,
+                public sigc::trackable
 {
 private:
 
@@ -51,6 +50,8 @@ private:
 	TexturePtr _texture;
 
 private:
+    void observeKey(const std::string& key);
+	void keyChanged();
 
 	/* Main constructor */
 	Overlay();
@@ -85,9 +86,6 @@ public:
 
 	// Sets the image position in quasi texture coordinates
 	void setImagePosition(const float& x, const float& y);
-
-	// RegistryKeyObserver implementation, gets called upon key change
-	void keyChanged(const std::string& key, const std::string& val);
 
 	/**
 	 * Public draw method, called from the XYWnd.

@@ -68,12 +68,12 @@ TextureBrowser::TextureBrowser() :
 	m_resizeTextures(true),
 	m_uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE))
 {
-	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_HIDE_UNUSED);
-	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SCALE);
-	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_UNIFORM_SIZE);
-	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SHOW_SCROLLBAR);
-	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_MOUSE_WHEEL_INCR);
-	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURE_SHOW_FILTER);
+	observeKey(RKEY_TEXTURES_HIDE_UNUSED);
+	observeKey(RKEY_TEXTURE_SCALE);
+	observeKey(RKEY_TEXTURE_UNIFORM_SIZE);
+	observeKey(RKEY_TEXTURE_SHOW_SCROLLBAR);
+	observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
+	observeKey(RKEY_TEXTURE_SHOW_FILTER);
 
 	_shader = texdef_name_default();
 
@@ -93,6 +93,13 @@ TextureBrowser::TextureBrowser() :
 	_popupMenu->addItem(_seekInMediaBrowser,
 						boost::bind(&TextureBrowser::onSeekInMediaBrowser, this),
 						boost::bind(&TextureBrowser::checkSeekInMediaBrowser, this));
+}
+
+void TextureBrowser::observeKey(const std::string& key)
+{
+    GlobalRegistry().signalForKey(key).connect(
+        sigc::mem_fun(this, &TextureBrowser::keyChanged)
+    );
 }
 
 void TextureBrowser::queueDraw()
@@ -129,7 +136,7 @@ void TextureBrowser::clearFilter()
 	queueDraw();
 }
 
-void TextureBrowser::keyChanged(const std::string& key, const std::string& val)
+void TextureBrowser::keyChanged()
 {
 	m_hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
 	m_showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);

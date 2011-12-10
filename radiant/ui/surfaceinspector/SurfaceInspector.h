@@ -36,7 +36,6 @@ typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
 class SurfaceInspector
 : public gtkutil::PersistentTransientWindow,
-  public RegistryKeyObserver,
   public SelectionSystem::Observer,
   public ShaderChooser::ChooserClient,
   public RadiantEventListener,
@@ -119,7 +118,7 @@ public:
 
 	/** greebo: Gets called when the default texscale registry key changes
 	 */
-	void keyChanged(const std::string& key, const std::string& val);
+	void keyChanged();
 
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating of the

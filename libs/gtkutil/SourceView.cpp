@@ -72,12 +72,9 @@ SourceView::SourceView(const std::string& language, bool readOnly)
 	add(*_view);
 
 	// Subscribe for style scheme changes
-	GlobalRegistry().addKeyObserver(this, RKEY_SOURCEVIEW_STYLE);
-}
-
-SourceView::~SourceView()
-{
-	GlobalRegistry().removeKeyObserver(this);
+    GlobalRegistry().signalForKey(RKEY_SOURCEVIEW_STYLE).connect(
+        sigc::mem_fun(*this, &SourceView::setStyleSchemeFromRegistry)
+    );
 }
 
 void SourceView::setContents(const std::string& newContents)
@@ -94,11 +91,6 @@ std::string SourceView::getContents()
 void SourceView::clear()
 {
 	setContents("");
-}
-
-void SourceView::keyChanged(const std::string& changedKey, const std::string& newValue)
-{
-	setStyleSchemeFromRegistry();
 }
 
 std::list<std::string> SourceView::getAvailableStyleSchemeIds()

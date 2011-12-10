@@ -31,19 +31,10 @@
 class XMLRegistry :
 	public Registry
 {
-	// The map of RegistryKeyObservers. The same observer can observe several keys, and
-	// the same key can be observed by several observers, hence the multimap.
-	typedef std::multimap<const std::string, RegistryKeyObserver*> KeyObserverMap;
-	KeyObserverMap _keyObservers;
-
-    // Boolean key observers (using two separate callbacks)
-    struct TrueFalseCallbacks
-    {
-        sigc::slot<void> trueCallback;
-        sigc::slot<void> falseCallback;
-    };
-    typedef std::multimap<std::string, TrueFalseCallbacks> BooleanKeyObservers;
-    BooleanKeyObservers _boolKeyObservers;
+    // The map of registry key signals. There is one signal per key, but a
+    // signal can of course be connected to multiple slots.
+    typedef std::map<const std::string, sigc::signal<void> > KeySignals;
+    mutable KeySignals _keySignals;
 
 private:
 	// The default import node and toplevel node
@@ -115,13 +106,7 @@ public:
 	 */
 	void exportToFile(const std::string& key, const std::string& filename);
 
-	void addKeyObserver(RegistryKeyObserver*, const std::string&);
-    void addBooleanKeyObserver(
-       const std::string& key, sigc::slot<void>, sigc::slot<void>
-    );
-
-	// Removes an observer watching the <observedKey> from the internal list of observers.
-	void removeKeyObserver(RegistryKeyObserver* observer);
+    sigc::signal<void> signalForKey(const std::string& key) const;
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;
@@ -129,8 +114,7 @@ public:
 	virtual void initialiseModule(const ApplicationContext& ctx);
 
 private:
-	// Cycles through the key observers and notifies the ones that observe the given <changedKey>
-	void notifyKeyObservers(const std::string& changedKey, const std::string& newVal);
+	void emitSignalForKey(const std::string& changedKey);
 };
 typedef boost::shared_ptr<XMLRegistry> XMLRegistryPtr;
 

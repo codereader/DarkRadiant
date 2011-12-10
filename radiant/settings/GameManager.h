@@ -9,14 +9,14 @@
 #include "iregistry.h"
 #include "Game.h"
 
-namespace game {
+namespace game
+{
 
 /** greebo: The Manager class for keeping track
  * 			of the possible games and the current game.
  */
-class Manager :
-	public IGameManager,
-	public RegistryKeyObserver // Observes the engine path
+class Manager : public IGameManager,
+                public sigc::trackable
 {
 public:
 	// The map containing the named Game objects
@@ -53,7 +53,7 @@ private:
 	bool _enginePathInitialised;
 
 private:
-
+    void observeKey(const std::string& key);
     bool userWantsToCorrectSettings() const;
 
    // Set the map and prefab file paths from the current game information
@@ -79,11 +79,6 @@ private:
 
 public:
 	Manager();
-
-	/** greebo: RegistryKeyObserver implementation, gets notified
-	 * 			upon engine path changes.
-	 */
-	void keyChanged(const std::string& key, const std::string& val);
 
 	/** greebo: Reloads the setting from the registry and
 	 * 			triggers a VFS refresh if the path has changed.

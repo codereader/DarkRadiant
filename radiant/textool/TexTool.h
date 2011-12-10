@@ -32,7 +32,6 @@ typedef boost::shared_ptr<TexTool> TexToolPtr;
 
 class TexTool
 : public gtkutil::PersistentTransientWindow,
-  public RegistryKeyObserver,
   public SelectionSystem::Observer,
   public RadiantEventListener,
   public gtkutil::SingleIdleCallback
@@ -95,6 +94,8 @@ private:
 	/* TransientWindow callbacks */
 	virtual void _preHide();
 	virtual void _preShow();
+
+	void setGridActive(bool active);
 
 	/** greebo: Selects all items that are related / connected
 	 * 			to the currently selected ones. E.g. if one patch
@@ -242,10 +243,6 @@ public:
 	 * @axis: 0 = s-Axis flip, 1 = t-axis flip
 	 */
 	void flipSelected(int axis);
-
-	/** greebo: RegistryKeyObserver implementation, gets called upon key change
-	 */
-	void keyChanged(const std::string& key, const std::string& val);
 
 	/** greebo: Static command targets
 	 */

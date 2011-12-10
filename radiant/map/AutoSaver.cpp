@@ -52,16 +52,24 @@ AutoMapSaver::AutoMapSaver() :
 	_timer(_interval*1000, onIntervalReached, this),
 	_changes(0)
 {
-	GlobalRegistry().addKeyObserver(this, RKEY_AUTOSAVE_INTERVAL);
-	GlobalRegistry().addKeyObserver(this, RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
-	GlobalRegistry().addKeyObserver(this, RKEY_AUTOSAVE_ENABLED);
+	GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
+        sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+    );
+	GlobalRegistry().signalForKey(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED).connect(
+        sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+    );
+	GlobalRegistry().signalForKey(RKEY_AUTOSAVE_ENABLED).connect(
+        sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
+    );
 }
 
-AutoMapSaver::~AutoMapSaver() {
+AutoMapSaver::~AutoMapSaver() 
+{
 	stopTimer();
 }
 
-void AutoMapSaver::keyChanged(const std::string& key, const std::string& val) {
+void AutoMapSaver::registryKeyChanged() 
+{
 	// Stop the current timer
 	stopTimer();
 

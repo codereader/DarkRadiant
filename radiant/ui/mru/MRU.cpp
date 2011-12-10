@@ -30,7 +30,9 @@ MRU::MRU() :
 	_list(_numMaxFiles),
 	_emptyMenuItem(_(RECENT_FILES_CAPTION), *this, 0)
 {
-	GlobalRegistry().addKeyObserver(this, RKEY_MRU_LENGTH);
+	GlobalRegistry().signalForKey(RKEY_MRU_LENGTH).connect(
+        sigc::mem_fun(this, &MRU::keyChanged)
+    );
 
 	// Add the preference settings
 	constructPreferences();
@@ -110,7 +112,7 @@ void MRU::loadMap(const std::string& fileName)
 	}
 }
 
-void MRU::keyChanged(const std::string& key, const std::string& val)
+void MRU::keyChanged()
 {
 	// greebo: Don't load the new number of maximum files from the registry,
 	// this would mess up the existing widgets, wait for the DarkRadiant restart instead

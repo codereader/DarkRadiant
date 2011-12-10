@@ -56,9 +56,8 @@ namespace
 	};
 }
 
-class RadiantUndoSystem :
-	public UndoSystem,
-	public RegistryKeyObserver
+class RadiantUndoSystem : public UndoSystem,
+                          public sigc::trackable
 {
 	// The operation Observers which get notified on certain events
 	// This is not a set to retain the order of the observers
@@ -90,8 +89,8 @@ public:
 	}
 
 	// Gets called as soon as the observed registry keys get changed
-	void keyChanged(const std::string& key, const std::string& val) {
-        // TODO: use val here
+	void keyChanged()
+    {
 		_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 	}
 
@@ -335,7 +334,9 @@ public:
 		_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 
 		// Add self to the key observers to get notified on change
-		GlobalRegistry().addKeyObserver(this, RKEY_UNDO_QUEUE_SIZE);
+		GlobalRegistry().signalForKey(RKEY_UNDO_QUEUE_SIZE).connect(
+            sigc::mem_fun(this, &RadiantUndoSystem::keyChanged)
+        );
 
 		// add the preference settings
 		constructPreferences();

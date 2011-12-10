@@ -29,11 +29,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ibrush.h"
 
 class BrushModuleClass :
-	public RegistryKeyObserver,
-	public BrushCreator
+	public BrushCreator,
+    public sigc::trackable
 {
 
 	bool _textureLockEnabled;
+
+private:
+	void keyChanged();
 
 public:
     // destructor
@@ -61,9 +64,6 @@ public:
 
 	// Switches the texture lock on/off
 	void toggleTextureLock();
-
-	// The callback for registry key changes
-	void keyChanged(const std::string& key, const std::string& val);
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const;

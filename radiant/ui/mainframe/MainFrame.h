@@ -11,11 +11,11 @@
 #include <gtkmm/box.h>
 #include <gtkmm/toolbar.h>
 
-namespace ui {
+namespace ui
+{
 
-class MainFrame :
-	public IMainFrame,
-	public RegistryKeyObserver
+class MainFrame : public IMainFrame,
+                  public sigc::trackable
 {
 	// The top-level window
 	Glib::RefPtr<Gtk::Window> _window;
@@ -32,6 +32,9 @@ class MainFrame :
 
 	typedef std::map<Toolbar, Gtk::Toolbar*> ToolbarMap;
 	ToolbarMap _toolbars;
+
+private:
+	void keyChanged(const std::string& newValue);
 
 public:
 	MainFrame();
@@ -50,9 +53,6 @@ public:
 	Gtk::Toolbar* getToolbar(Toolbar type);
 
 	void updateAllWindows();
-
-	// RegistryKeyObserver implementation
-	void keyChanged(const std::string& changedKey, const std::string& newValue);
 
 	// Apply the named viewstyle
 	void applyLayout(const std::string& name);

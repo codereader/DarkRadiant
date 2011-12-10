@@ -7,7 +7,7 @@
 #include "iundo.h"
 #include "iuimanager.h"
 
-#include "registry/registry.h"
+#include "registry/adaptors.h"
 #include "patch/PatchNode.h"
 #include "texturelib.h"
 #include "selectionlib.h"
@@ -79,7 +79,11 @@ TexTool::TexTool()
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
 
-	GlobalRegistry().addKeyObserver(this, RKEY_GRID_STATE);
+    registry::observeBooleanKey(
+        RKEY_GRID_STATE,
+        sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), true),
+        sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), false)
+    );
 }
 
 TexToolPtr& TexTool::InstancePtr()
@@ -88,10 +92,9 @@ TexToolPtr& TexTool::InstancePtr()
 	return _instancePtr;
 }
 
-void TexTool::keyChanged(const std::string& key, const std::string& val)
+void TexTool::setGridActive(bool active)
 {
-	_gridActive = (val == "1");
-
+	_gridActive = active;
 	draw();
 }
 

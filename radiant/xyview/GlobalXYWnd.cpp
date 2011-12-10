@@ -187,7 +187,7 @@ void XYWndManager::constructPreferences()
 }
 
 // Load/Reload the values from the registry
-void XYWndManager::keyChanged(const std::string& key, const std::string& val)
+void XYWndManager::refreshFromRegistry()
 {
 	_chaseMouse = registry::getValue<bool>(RKEY_CHASE_MOUSE);
 	_camXYUpdate = registry::getValue<bool>(RKEY_CAMERA_XY_UPDATE);
@@ -565,27 +565,34 @@ const StringSet& XYWndManager::getDependencies() const
 	return _dependencies;
 }
 
+void XYWndManager::observeKey(const std::string& key)
+{
+    GlobalRegistry().signalForKey(key).connect(
+        sigc::mem_fun(this, &XYWndManager::refreshFromRegistry)
+    );
+}
+
 void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 {
 	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
 
 	// Connect self to the according registry keys
-	GlobalRegistry().addKeyObserver(this, RKEY_CHASE_MOUSE);
-	GlobalRegistry().addKeyObserver(this, RKEY_CAMERA_XY_UPDATE);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_CROSSHAIRS);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_GRID);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_SIZE_INFO);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_ANGLES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_BLOCKS);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_COORDINATES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_OUTLINE);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_AXES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_WORKZONE);
-	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_BLOCKSIZE);
+	observeKey(RKEY_CHASE_MOUSE);
+	observeKey(RKEY_CAMERA_XY_UPDATE);
+	observeKey(RKEY_SHOW_CROSSHAIRS);
+	observeKey(RKEY_SHOW_GRID);
+	observeKey(RKEY_SHOW_SIZE_INFO);
+	observeKey(RKEY_SHOW_ENTITY_ANGLES);
+	observeKey(RKEY_SHOW_ENTITY_NAMES);
+	observeKey(RKEY_SHOW_BLOCKS);
+	observeKey(RKEY_SHOW_COORDINATES);
+	observeKey(RKEY_SHOW_OUTLINE);
+	observeKey(RKEY_SHOW_AXES);
+	observeKey(RKEY_SHOW_WORKZONE);
+	observeKey(RKEY_DEFAULT_BLOCKSIZE);
 
 	// Trigger loading the values of the observed registry keys
-	keyChanged("", "");
+	refreshFromRegistry();
 
 	// Construct the preference settings widgets
 	constructPreferences();
@@ -604,8 +611,6 @@ void XYWndManager::initialiseModule(const ApplicationContext& ctx)
 
 void XYWndManager::shutdownModule()
 {
-	GlobalRegistry().removeKeyObserver(this);
-
 	// Release all owned XYWndPtrs
 	destroyViews();
 

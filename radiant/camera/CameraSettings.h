@@ -6,9 +6,9 @@
 
 #include <sigc++/signal.h>
 
-/* greebo: This is the home of all the camera settings. As this class derives
- * from a RegistryKeyObserver, it can be connected to the according registry keys
- * and gets notified if any of the observed keys are changed.*/
+/* greebo: This is the home of all the camera settings. As this class observes
+ * the registry it can be connected to the according registry keys and gets
+ * notified if any of the observed keys are changed.*/
 
 namespace 
 {
@@ -37,8 +37,7 @@ enum CameraDrawMode
     RENDER_MODE_LIGHTING
 };
 
-class CameraSettings :
-	public RegistryKeyObserver
+class CameraSettings: public sigc::trackable
 {
 	bool _callbackActive;
 
@@ -60,11 +59,12 @@ class CameraSettings :
     // Signals
     sigc::signal<void> _sigRenderModeChanged;
 
+private:
+    void observeKey(const std::string& key);
+	void keyChanged();
+
 public:
 	CameraSettings();
-
-    // RegistryKeyObserver implementation
-	void keyChanged(const std::string& key, const std::string& val);
 
 	int movementSpeed() const;
 	int angleSpeed() const;

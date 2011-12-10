@@ -1,7 +1,6 @@
 #ifndef _SPACE_PARTITION_RENDERER_H_
 #define _SPACE_PARTITION_RENDERER_H_
 
-#include "iregistry.h"
 #include "icommandsystem.h"
 #include "iscenegraph.h"
 
@@ -10,16 +9,11 @@
 namespace render
 {
 
-class SpacePartitionRenderer :
-	public RegistryKeyObserver,
-	public RegisterableModule
+class SpacePartitionRenderer : public RegisterableModule
 {
 	RenderableSpacePartition _renderableSP;
 
 public:
-	// RegistryKeyObserver implementation
-	void keyChanged(const std::string& changedKey, const std::string& newValue);
-
 	const std::string& getName() const;
 	const StringSet& getDependencies() const;
 	void initialiseModule(const ApplicationContext& ctx);

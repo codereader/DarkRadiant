@@ -91,42 +91,16 @@ void XMLRegistry::exportToFile(const std::string& key, const std::string& filena
 	_userTree.exportToFile(key, filename);
 }
 
-void XMLRegistry::addKeyObserver(RegistryKeyObserver* observer, const std::string& observedKey) 
+sigc::signal<void> XMLRegistry::signalForKey(const std::string& key)
+const
 {
-	_keyObservers.insert( std::make_pair(observedKey, observer) );
-}
-
-void XMLRegistry::addBooleanKeyObserver(const std::string& key,
-                                        sigc::slot<void> trueCallback,
-                                        sigc::slot<void> falseCallback)
-{
-    TrueFalseCallbacks cbs;
-    cbs.trueCallback = trueCallback;
-    cbs.falseCallback = falseCallback;
-
-    _boolKeyObservers.insert(std::make_pair(key, cbs));
-}
-
-// Removes an observer watching the <observedKey> from the internal list of observers.
-void XMLRegistry::removeKeyObserver(RegistryKeyObserver* observer) {
-	// Traverse through the keyObserverMap and try to find the specified observer
-    for (KeyObserverMap::iterator i = _keyObservers.begin();
-         i != _keyObservers.end();
-         /* in-loop increment */)
-    {
-		if (i->second == observer) {
-			_keyObservers.erase(i++);
-		}
-		else {
-			i++;
-		}
-	}
+    return _keySignals[key]; // will return existing or default-construct
 }
 
 bool XMLRegistry::keyExists(const std::string& key) {
 	// Pass the query on to findXPath which queries the subtrees
 	xml::NodeList result = findXPath(key);
-	return (result.size() > 0);
+	return (!result.empty());
 }
 
 void XMLRegistry::deleteXPath(const std::string& path) {
@@ -195,7 +169,7 @@ void XMLRegistry::set(const std::string& key, const std::string& value) {
 	_userTree.set(key, gtkutil::IConv::localeToUTF8(value));
 
 	// Notify the observers
-	notifyKeyObservers(key, value);
+	emitSignalForKey(key);
 }
 
 void XMLRegistry::import(const std::string& importFilePath, const std::string& parentKey, Tree tree) {
@@ -209,32 +183,13 @@ void XMLRegistry::import(const std::string& importFilePath, const std::string& p
 	}
 }
 
-void XMLRegistry::notifyKeyObservers(const std::string& changedKey, const std::string& newVal)
+void XMLRegistry::emitSignalForKey(const std::string& changedKey)
 {
-	for (KeyObserverMap::iterator it = _keyObservers.find(changedKey);
-		 it != _keyObservers.upper_bound(changedKey) && it != _keyObservers.end();
-		 ++it)
-	{
-		RegistryKeyObserver* keyObserver = it->second;
-
-		if (keyObserver != NULL) {
-			keyObserver->keyChanged(changedKey, newVal);
-		}
-	}
-
-    // Notify any BooleanKeyObservers as well
-    if (newVal == "0" || newVal == "1")
+    // Do not default-construct a signal, just emit if there is one already
+    KeySignals::iterator i = _keySignals.find(changedKey);
+    if (i != _keySignals.end())
     {
-        BooleanKeyObservers::iterator i = _boolKeyObservers.find(changedKey);
-        while (i != _boolKeyObservers.end() && i->first == changedKey)
-        {
-            if (newVal == "0")
-                i->second.falseCallback();
-            else if (newVal == "1")
-                i->second.trueCallback();
-
-            ++i;
-        }
+        i->second.emit();
     }
 }
 

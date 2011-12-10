@@ -917,7 +917,7 @@ const selection::WorkZone& RadiantSelectionSystem::getWorkZone()
 	return _workZone;
 }
 
-void RadiantSelectionSystem::keyChanged(const std::string& key, const std::string& val)
+void RadiantSelectionSystem::keyChanged()
 {
 	if (!nothingSelected()) {
 		pivotChanged();
@@ -1067,7 +1067,9 @@ void RadiantSelectionSystem::initialiseModule(const ApplicationContext& ctx)
         sigc::mem_fun(this, &RadiantSelectionSystem::pivotChanged)
     );
 
-	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_PIVOT);
+	GlobalRegistry().signalForKey(RKEY_ROTATION_PIVOT).connect(
+        sigc::mem_fun(this, &RadiantSelectionSystem::keyChanged)
+    );
 
 	// Pass a reference to self to the global event manager
 	GlobalEventManager().connectSelectionSystem(this);

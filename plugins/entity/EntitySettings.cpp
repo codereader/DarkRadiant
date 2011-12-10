@@ -8,28 +8,25 @@
 namespace entity {
 
 EntitySettings::EntitySettings() :
-	_renderEntityNames(registry::getValue<bool>(RKEY_SHOW_ENTITY_NAMES)),
-	_showAllSpeakerRadii(registry::getValue<bool>(RKEY_SHOW_ALL_SPEAKER_RADII)),
-	_showAllLightRadii(registry::getValue<bool>(RKEY_SHOW_ALL_LIGHT_RADII)),
-	_dragResizeEntitiesSymmetrically(registry::getValue<bool>(RKEY_DRAG_RESIZE_SYMMETRICALLY)),
-	_alwaysShowLightVertices(registry::getValue<bool>(RKEY_ALWAYS_SHOW_LIGHT_VERTICES)),
-	_freeModelRotation(registry::getValue<bool>(RKEY_FREE_MODEL_ROTATION)),
-	_showEntityAngles(registry::getValue<bool>(RKEY_SHOW_ENTITY_ANGLES)),
 	_lightVertexColoursLoaded(false)
 {
+    refreshFromRegistry();
+
 	// Register this class as keyobserver
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_NAMES);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ALL_SPEAKER_RADII);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ALL_LIGHT_RADII);
-	GlobalRegistry().addKeyObserver(this, RKEY_DRAG_RESIZE_SYMMETRICALLY);
-	GlobalRegistry().addKeyObserver(this, RKEY_ALWAYS_SHOW_LIGHT_VERTICES);
-	GlobalRegistry().addKeyObserver(this, RKEY_FREE_MODEL_ROTATION);
-	GlobalRegistry().addKeyObserver(this, RKEY_SHOW_ENTITY_ANGLES);
+	observeKey(RKEY_SHOW_ENTITY_NAMES);
+	observeKey(RKEY_SHOW_ALL_SPEAKER_RADII);
+	observeKey(RKEY_SHOW_ALL_LIGHT_RADII);
+	observeKey(RKEY_DRAG_RESIZE_SYMMETRICALLY);
+	observeKey(RKEY_ALWAYS_SHOW_LIGHT_VERTICES);
+	observeKey(RKEY_FREE_MODEL_ROTATION);
+	observeKey(RKEY_SHOW_ENTITY_ANGLES);
 }
 
-EntitySettings::~EntitySettings() 
+void EntitySettings::observeKey(const std::string& key)
 {
-	GlobalRegistry().removeKeyObserver(this);
+    GlobalRegistry().signalForKey(key).connect(
+        sigc::mem_fun(this, &EntitySettings::keyChanged)
+    );
 }
 
 EntitySettingsPtr& EntitySettings::InstancePtr()
@@ -48,38 +45,20 @@ void EntitySettings::destroy()
 	InstancePtr() = EntitySettingsPtr();
 }
 
-// RegistryKeyObserver implementation
-void EntitySettings::keyChanged(const std::string& key, const std::string& value)
+void EntitySettings::refreshFromRegistry()
 {
-	// Update the internal value
-	if (key == RKEY_SHOW_ENTITY_NAMES)
-	{
-        _renderEntityNames = (value == "1");
-	}
-	else if (key == RKEY_SHOW_ALL_SPEAKER_RADII)
-	{
-		_showAllSpeakerRadii = (value == "1");
-	}
-	else if (key == RKEY_SHOW_ALL_LIGHT_RADII)
-	{
-		_showAllLightRadii = (value == "1");
-	}
-	else if (key == RKEY_DRAG_RESIZE_SYMMETRICALLY)
-	{
-		_dragResizeEntitiesSymmetrically = (value == "1");
-	}
-	else if (key == RKEY_ALWAYS_SHOW_LIGHT_VERTICES)
-	{
-		_alwaysShowLightVertices = (value == "1");
-	}
-	else if (key == RKEY_FREE_MODEL_ROTATION)
-	{
-		_freeModelRotation = (value == "1");
-	}
-	else if (key == RKEY_SHOW_ENTITY_ANGLES)
-	{
-		_showEntityAngles = (value == "1");
-	}
+    _renderEntityNames = registry::getValue<bool>(RKEY_SHOW_ENTITY_NAMES);
+    _showAllSpeakerRadii = registry::getValue<bool>(RKEY_SHOW_ALL_SPEAKER_RADII);
+    _showAllLightRadii = registry::getValue<bool>(RKEY_SHOW_ALL_LIGHT_RADII);
+    _dragResizeEntitiesSymmetrically = registry::getValue<bool>(RKEY_DRAG_RESIZE_SYMMETRICALLY);
+    _alwaysShowLightVertices = registry::getValue<bool>(RKEY_ALWAYS_SHOW_LIGHT_VERTICES);
+    _freeModelRotation = registry::getValue<bool>(RKEY_FREE_MODEL_ROTATION);
+    _showEntityAngles = registry::getValue<bool>(RKEY_SHOW_ENTITY_ANGLES);
+}
+
+void EntitySettings::keyChanged()
+{
+    refreshFromRegistry();
 
 	// Redraw the scene
 	GlobalMainFrame().updateAllWindows();

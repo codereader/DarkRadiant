@@ -121,8 +121,12 @@ SurfaceInspector::SurfaceInspector()
                                 RKEY_ROTATION_STEP);
 
 	// Be notified upon key changes
-	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_TEXTURE_LOCK);
-	GlobalRegistry().addKeyObserver(this, RKEY_DEFAULT_TEXTURE_SCALE);
+	GlobalRegistry().signalForKey(RKEY_ENABLE_TEXTURE_LOCK).connect(
+        sigc::mem_fun(this, &SurfaceInspector::keyChanged)
+    );
+	GlobalRegistry().signalForKey(RKEY_DEFAULT_TEXTURE_SCALE).connect(
+        sigc::mem_fun(this, &SurfaceInspector::keyChanged)
+    );
 
 	// Register this dialog to the EventManager, so that shortcuts can propagate to the main window
 	GlobalEventManager().connectDialogWindow(this);
@@ -212,7 +216,7 @@ void SurfaceInspector::connectEvents()
 	}
 }
 
-void SurfaceInspector::keyChanged(const std::string& key, const std::string& val)
+void SurfaceInspector::keyChanged()
 {
 	// Avoid callback loops
 	if (_callbackActive) {

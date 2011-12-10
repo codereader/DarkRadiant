@@ -1,6 +1,6 @@
 #include "SpacePartitionRenderer.h"
 
-#include "registry/registry.h"
+#include "registry/adaptors.h"
 #include "modulesystem/StaticModule.h"
 #include <boost/bind.hpp>
 
@@ -10,18 +10,6 @@ namespace render
 namespace
 {
 	const std::string RKEY_RENDER_SPACE_PARTITION = "debug/ui/scenegraph/renderSpacePartition";
-}
-
-void SpacePartitionRenderer::keyChanged(const std::string& changedKey, const std::string& newValue)
-{
-	if (newValue == "1")
-	{
-		installRenderer();
-	}
-	else
-	{
-		uninstallRenderer();
-	}
 }
 
 void SpacePartitionRenderer::toggle(const cmd::ArgumentList& args)
@@ -55,7 +43,11 @@ const StringSet& SpacePartitionRenderer::getDependencies() const
 
 void SpacePartitionRenderer::initialiseModule(const ApplicationContext& ctx)
 {
-	GlobalRegistry().addKeyObserver(this, RKEY_RENDER_SPACE_PARTITION);
+    registry::observeBooleanKey(
+        RKEY_RENDER_SPACE_PARTITION,
+        sigc::mem_fun(this, &SpacePartitionRenderer::installRenderer),
+        sigc::mem_fun(this, &SpacePartitionRenderer::uninstallRenderer)
+    );
 
 	if (registry::getValue<bool>(RKEY_RENDER_SPACE_PARTITION))
 	{
@@ -72,8 +64,6 @@ void SpacePartitionRenderer::shutdownModule()
 	{
 		uninstallRenderer();
 	}
-
-	GlobalRegistry().removeKeyObserver(this);
 }
 
 void SpacePartitionRenderer::installRenderer()

@@ -18,9 +18,7 @@ namespace
 	const char* const RKEY_SOURCEVIEW_STYLE = "user/ui/sourceView/style";
 }
 
-class SourceView :
-	public Gtk::ScrolledWindow,
-	public RegistryKeyObserver
+class SourceView: public Gtk::ScrolledWindow
 {
 private:
 	gtksourceview::SourceView* _view;
@@ -37,8 +35,6 @@ public:
 	 */
 	SourceView(const std::string& language, bool readOnly);
 
-	~SourceView();
-
 	void setContents(const std::string& newContents);
 
 	// Returns the contents of the source buffer
@@ -46,8 +42,6 @@ public:
 
 	// Clears the contents of the buffer
 	void clear();
-
-	void keyChanged(const std::string& changedKey, const std::string& newValue);
 
 	// Utility method to retrieve a list of all available style scheme names.
 	static std::list<std::string> getAvailableStyleSchemeIds();

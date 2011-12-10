@@ -30,17 +30,24 @@ CameraSettings::CameraSettings() :
 	importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));
 
 	// Connect self to the according registry keys
-	GlobalRegistry().addKeyObserver(this, RKEY_MOVEMENT_SPEED);
-	GlobalRegistry().addKeyObserver(this, RKEY_ROTATION_SPEED);
-	GlobalRegistry().addKeyObserver(this, RKEY_INVERT_MOUSE_VERTICAL_AXIS);
-	GlobalRegistry().addKeyObserver(this, RKEY_DISCRETE_MOVEMENT);
-	GlobalRegistry().addKeyObserver(this, RKEY_ENABLE_FARCLIP);
-	GlobalRegistry().addKeyObserver(this, RKEY_DRAWMODE);
-	GlobalRegistry().addKeyObserver(this, RKEY_SOLID_SELECTION_BOXES);
-	GlobalRegistry().addKeyObserver(this, RKEY_TOGGLE_FREE_MOVE);
+	observeKey(RKEY_MOVEMENT_SPEED);
+	observeKey(RKEY_ROTATION_SPEED);
+	observeKey(RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	observeKey(RKEY_DISCRETE_MOVEMENT);
+	observeKey(RKEY_ENABLE_FARCLIP);
+	observeKey(RKEY_DRAWMODE);
+	observeKey(RKEY_SOLID_SELECTION_BOXES);
+	observeKey(RKEY_TOGGLE_FREE_MOVE);
 
 	// greebo: Add the preference settings
 	constructPreferencePage();
+}
+
+void CameraSettings::observeKey(const std::string& key)
+{
+    GlobalRegistry().signalForKey(key).connect(
+        sigc::mem_fun(this, &CameraSettings::keyChanged)
+    );
 }
 
 void CameraSettings::constructPreferencePage() 
@@ -107,7 +114,7 @@ void CameraSettings::importDrawMode(const int mode)
     _sigRenderModeChanged.emit();
 }
 
-void CameraSettings::keyChanged(const std::string& key, const std::string& val)
+void CameraSettings::keyChanged()
 {
 	// Check for iterative loops
 	if (_callbackActive) {

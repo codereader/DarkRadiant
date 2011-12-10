@@ -10,9 +10,8 @@
 
 #include "XYWnd.h"
 
-class XYWndManager :
-	public IXWndManager,
-	public RegistryKeyObserver
+class XYWndManager : public IXWndManager,
+                     public sigc::trackable
 {
 	// Store an indexed map of XYWnds. When one is deleted, it will notify
 	// the XYWndManager of its index so that it can be removed from the map
@@ -45,14 +44,13 @@ private:
 
 	// Get a unique ID for the XYWnd map
 	int getUniqueID() const;
+    void observeKey(const std::string&);
+	void refreshFromRegistry();
 
 public:
 
 	// Constructor
 	XYWndManager();
-
-	// The callback that gets called on registry key changes
-	void keyChanged(const std::string& key, const std::string& val);
 
 	// Returns the state of the xy view preferences
 	bool chaseMouse() const;

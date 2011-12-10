@@ -8,7 +8,8 @@
 #include "ipreferencesystem.h"
 #include "../Doom3ShaderSystem.h"
 
-namespace {
+namespace 
+{
 	static byte *row1 = NULL, *row2 = NULL;
 	static std::size_t rowsize = 0;
 
@@ -25,8 +26,12 @@ TextureManipulator::TextureManipulator() :
 	_maxTextureSize(0),
 	_textureQuality(registry::getValue<int>(RKEY_TEXTURES_QUALITY))
 {
-	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_GAMMA);
-	GlobalRegistry().addKeyObserver(this, RKEY_TEXTURES_QUALITY);
+	GlobalRegistry().signalForKey(RKEY_TEXTURES_GAMMA).connect(
+        sigc::mem_fun(this, &TextureManipulator::keyChanged)
+    );
+	GlobalRegistry().signalForKey(RKEY_TEXTURES_QUALITY).connect(
+        sigc::mem_fun(this, &TextureManipulator::keyChanged)
+    );
 
 	calculateGammaTable();
 
@@ -40,8 +45,8 @@ TextureManipulator& TextureManipulator::instance() {
     return _instance;
 }
 
-// RegistryKeyObserver implementation
-void TextureManipulator::keyChanged(const std::string& key, const std::string& val) {
+void TextureManipulator::keyChanged() 
+{
 	_textureQuality = registry::getValue<int>(RKEY_TEXTURES_QUALITY);
 
 	float newGamma = registry::getValue<float>(RKEY_TEXTURES_GAMMA);
