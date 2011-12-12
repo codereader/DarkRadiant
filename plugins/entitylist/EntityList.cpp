@@ -2,10 +2,11 @@
 
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "iuimanager.h"
+
 #include "nameable.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "gtkutil/TextColumn.h"
-#include "gtkutil/ScrolledFrame.h"
 #include "registry/bind.h"
 #include "entitylib.h"
 #include "scenelib.h"
@@ -30,11 +31,14 @@ namespace ui {
 	}
 
 EntityList::EntityList() :
-	gtkutil::PersistentTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true),
+	gtkutil::PersistentTransientWindow(
+        _(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true
+    ),
+    gtkutil::GladeWidgetHolder(
+        GlobalUIManager().getGtkBuilderFromFile("EntityList.glade")
+    ),
 	_callbackActive(false)
 {
-	// Set the default border width in accordance to the HIG
-	set_border_width(12);
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
 
 	// Create all the widgets and pack them into the window
@@ -50,51 +54,52 @@ EntityList::EntityList() :
 	_windowPosition.applyPosition();
 }
 
+Gtk::CheckButton* EntityList::visibleOnly()
+{
+    return getGladeWidget<Gtk::CheckButton>("visibleOnly");
+}
+
+Gtk::TreeView* EntityList::treeView()
+{
+    return getGladeWidget<Gtk::TreeView>("treeView");
+}
+
 void EntityList::populateWindow()
 {
-	// Create the treeview
-	_treeView = Gtk::manage(new Gtk::TreeView(_treeModel.getModel()));
-	_treeView->set_headers_visible(false);
+    add(*getGladeWidget<Gtk::Widget>("main"));
 
-	Gtk::TreeViewColumn* column = Gtk::manage(new gtkutil::TextColumn(_("Name"), _treeModel.getColumns().name));
+	// Configure the treeview
+    treeView()->set_model(_treeModel.getModel());
+
+	Gtk::TreeViewColumn* column = Gtk::manage(
+        new gtkutil::TextColumn(_("Name"), _treeModel.getColumns().name)
+    );
 	column->pack_start(*Gtk::manage(new Gtk::CellRendererText), true);
 
-	Glib::RefPtr<Gtk::TreeSelection> sel = _treeView->get_selection();
+	Glib::RefPtr<Gtk::TreeSelection> sel = treeView()->get_selection();
 	sel->set_mode(Gtk::SELECTION_MULTIPLE);
 	sel->set_select_function(sigc::mem_fun(*this, &EntityList::onSelection));
 
-	_treeView->signal_row_expanded().connect(sigc::mem_fun(*this, &EntityList::onRowExpand));
+	treeView()->signal_row_expanded().connect(sigc::mem_fun(*this, &EntityList::onRowExpand));
 
-	_treeView->append_column(*column);
+	treeView()->append_column(*column);
 	column->set_sort_column(_treeModel.getColumns().name);
 	column->clicked();
 
-	// Create the toggle item
-	_focusOnSelectedEntityToggle = Gtk::manage(new Gtk::CheckButton(_("Focus camera on selected entity.")));
-
 	// Update the toggle item status according to the registry
-    registry::bindPropertyToKey(_focusOnSelectedEntityToggle->property_active(),
-                                RKEY_ENTITYLIST_FOCUS_SELECTION);
-
-	_visibleNodesOnly = Gtk::manage(new Gtk::CheckButton(_("List visible nodes only")));
-    registry::bindPropertyToKey(_visibleNodesOnly->property_active(),
+    registry::bindPropertyToKey(
+        getGladeWidget<Gtk::CheckButton>("focusSelected")->property_active(),
+        RKEY_ENTITYLIST_FOCUS_SELECTION
+    );
+    registry::bindPropertyToKey(visibleOnly()->property_active(),
                                 RKEY_ENTITYLIST_VISIBLE_ONLY);
 
-	_treeModel.setConsiderVisibleNodesOnly(_visibleNodesOnly->get_active());
+	_treeModel.setConsiderVisibleNodesOnly(visibleOnly()->get_active());
 
 	// Connect the toggle buttons' "toggled" signal
-	_visibleNodesOnly->signal_toggled().connect(
+	visibleOnly()->signal_toggled().connect(
         sigc::mem_fun(*this, &EntityList::onVisibleOnlyToggle)
     );
-
-	// Create a VBOX
-	Gtk::VBox* vbox = Gtk::manage(new Gtk::VBox(false, 6));
-	vbox->pack_start(*Gtk::manage(new gtkutil::ScrolledFrame(*_treeView)), true, true, 0);
-	vbox->pack_start(*_focusOnSelectedEntityToggle, false, false, 0);
-	vbox->pack_start(*_visibleNodesOnly, false, false, 0);
-
-	// Pack the VBOX into the window
-	add(*vbox);
 }
 
 void EntityList::update()
@@ -103,7 +108,7 @@ void EntityList::update()
 	_callbackActive = true;
 
 	// Traverse the entire tree, updating the selection
-	_treeModel.updateSelectionStatus(_treeView->get_selection());
+	_treeModel.updateSelectionStatus(treeView()->get_selection());
 
 	_callbackActive = false;
 }
@@ -119,15 +124,16 @@ void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 
 	_callbackActive = true;
 
-	_treeModel.updateSelectionStatus(_treeView->get_selection(), node);
+	_treeModel.updateSelectionStatus(treeView()->get_selection(), node);
 
 	_callbackActive = false;
 }
 
 void EntityList::onFiltersChanged()
 {
-	// Only react to filter changes if we display visible nodes only otherwise we don't care
-	if (_visibleNodesOnly->get_active())
+    // Only react to filter changes if we display visible nodes only otherwise
+    // we don't care
+	if (visibleOnly()->get_active())
 	{
 		// When filter are changed possibly any node changed its visibility,
 		// refresh the whole tree
@@ -230,7 +236,7 @@ void EntityList::onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::Tr
 void EntityList::onVisibleOnlyToggle()
 {
 	// Update the whole tree
-	_treeModel.setConsiderVisibleNodesOnly(_visibleNodesOnly->get_active());
+	_treeModel.setConsiderVisibleNodesOnly(visibleOnly()->get_active());
 	_treeModel.refresh();
 
 	expandRootNode();
@@ -239,7 +245,7 @@ void EntityList::onVisibleOnlyToggle()
 void EntityList::expandRootNode()
 {
 	GraphTreeNodePtr rootNode = _treeModel.find(GlobalSceneGraph().root());
-	_treeView->expand_row(Gtk::TreeModel::Path(rootNode->getIter()), false);
+	treeView()->expand_row(Gtk::TreeModel::Path(rootNode->getIter()), false);
 }
 
 bool EntityList::onSelection(const Glib::RefPtr<Gtk::TreeModel>& model,
@@ -265,7 +271,7 @@ bool EntityList::onSelection(const Glib::RefPtr<Gtk::TreeModel>& model,
 		// Select the instance
 		selectable->setSelected(path_currently_selected == false);
 
-		if (_focusOnSelectedEntityToggle->get_active())
+		if (getGladeWidget<Gtk::CheckButton>("focusSelected")->get_active())
 		{
 			const AABB& aabb = node->worldAABB();
 			Vector3 origin(aabb.origin);

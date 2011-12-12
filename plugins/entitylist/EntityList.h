@@ -7,6 +7,7 @@
 #include "icommandsystem.h"
 #include "imodule.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/GladeWidgetHolder.h"
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include "GraphTreeModel.h"
 
@@ -26,24 +27,21 @@ class EntityList :
 	public gtkutil::PersistentTransientWindow,
 	public SelectionSystem::Observer,
 	public FilterSystem::Observer,
-	public RadiantEventListener
+	public RadiantEventListener,
+    private gtkutil::GladeWidgetHolder
 {
 private:
-	// The main tree view
-	Gtk::TreeView* _treeView;
-
 	// The GraphTreeModel instance
 	GraphTreeModel _treeModel;
-
-	// The checkboxes in the lower half
-	Gtk::CheckButton* _focusOnSelectedEntityToggle;
-	Gtk::CheckButton* _visibleNodesOnly;
 
 	gtkutil::WindowPosition _windowPosition;
 
 	bool _callbackActive;
 
 private:
+    Gtk::TreeView* treeView();
+    Gtk::CheckButton* visibleOnly();
+
 	// This is where the static shared_ptr of the singleton instance is held.
 	static EntityListPtr& InstancePtr();
 
