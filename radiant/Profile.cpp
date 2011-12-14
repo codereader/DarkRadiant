@@ -7,6 +7,7 @@
 #include "debugging/ScopedDebugTimer.h"
 #include "string/string.h"
 #include <gtkmm/main.h>
+#include "registry/registry.h"
 
 namespace profile {
 

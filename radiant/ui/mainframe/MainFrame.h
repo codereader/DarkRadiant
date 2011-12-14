@@ -34,7 +34,7 @@ class MainFrame : public IMainFrame,
 	ToolbarMap _toolbars;
 
 private:
-	void keyChanged(const std::string& newValue);
+	void keyChanged();
 
 public:
 	MainFrame();

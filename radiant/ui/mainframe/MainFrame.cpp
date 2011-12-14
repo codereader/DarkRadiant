@@ -149,10 +149,10 @@ void MainFrame::shutdownModule()
 	globalOutputStream() << "MainFrame::shutdownModule called." << std::endl;
 }
 
-void MainFrame::keyChanged(const std::string& newValue)
+void MainFrame::keyChanged()
 {
 #ifdef WIN32
-    setDesktopCompositionEnabled(newValue != "1");
+	setDesktopCompositionEnabled(!registry::getValue<bool>(RKEY_DISABLE_WIN_DESKTOP_COMP));
 #endif
 }
 
