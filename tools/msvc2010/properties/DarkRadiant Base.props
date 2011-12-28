@@ -2,12 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <DarkRadiantRoot>$(SolutionDir)/../..</DarkRadiantRoot>
+    <DarkRadiantRoot>$(SolutionDir)..\..</DarkRadiantRoot>
+    <W32DepsDir>$(DarkRadiantRoot)\w32deps\</W32DepsDir>
+    <W64DepsDir>$(DarkRadiantRoot)\w64deps\</W64DepsDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(DarkRadiantRoot)\include;$(DarkRadiantRoot)\libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(DarkRadiantRoot)\build\libs\$(Platform);$(DarkRadiantRoot)\build\libs\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -16,6 +19,12 @@
   <ItemGroup>
     <BuildMacro Include="DarkRadiantRoot">
       <Value>$(DarkRadiantRoot)</Value>
+    </BuildMacro>
+    <BuildMacro Include="W32DepsDir">
+      <Value>$(W32DepsDir)</Value>
+    </BuildMacro>
+    <BuildMacro Include="W64DepsDir">
+      <Value>$(W64DepsDir)</Value>
     </BuildMacro>
   </ItemGroup>
 </Project>

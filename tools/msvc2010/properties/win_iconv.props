@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Lib>
-      <AdditionalDependencies>libiconv.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libiconv$(LibSuffix)-vc$(PlatformToolsetVersion).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>

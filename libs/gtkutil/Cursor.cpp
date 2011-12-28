@@ -1,7 +1,7 @@
 #include "Cursor.h"
 
 #ifdef WIN32
-#include <gdk/gdkwin32.h>
+#include <gdk/win32/gdkwin32.h>
 #else
 #include <gdk/gdkx.h>
 #endif

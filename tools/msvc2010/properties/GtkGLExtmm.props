@@ -9,7 +9,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\gtkglextmm\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gdkglextmm-vc$(PlatformToolsetVersion)$(LibSuffix)-1_2.lib;gtkglextmm-vc$(PlatformToolsetVersion)$(LibSuffix)-1_2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gdkglextmm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;gtkglextmm$(LibSuffix)-vc$(PlatformToolsetVersion).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

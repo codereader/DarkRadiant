@@ -8,7 +8,11 @@
     <LibSuffix />
   </PropertyGroup>
   <PropertyGroup />
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="PlatformDepsDir">
       <Value>$(PlatformDepsDir)</Value>

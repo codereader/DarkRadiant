@@ -47,33 +47,33 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Release Win32.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\DarkRadiant Base Release Win32.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Release x64.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\DarkRadiant Base Release x64.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="properties\DarkRadiant Base Debug x64.props" />
     <Import Project="properties\Boost.props" />
     <Import Project="properties\GTKmm.props" />
-    <Import Project="properties\DarkRadiant Base Debug x64.props" />
     <Import Project="properties\libxml2.props" />
     <Import Project="properties\GLEW.props" />
   </ImportGroup>
@@ -134,7 +134,6 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -148,6 +147,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -185,7 +185,6 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -199,6 +198,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -232,7 +232,6 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2-vc100.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc100-2_4.lib;sigc-vc100-2_0.lib;glibmm-vc100-2_4.lib;atkmm-vc100-1_6.lib;gdkmm-vc100-2_4.lib;giomm-vc100-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -250,6 +249,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>
@@ -286,7 +286,6 @@
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;libxml2-vc100.lib;glib-2.0.lib;gtk-win32-2.0.lib;gdk-win32-2.0.lib;gobject-2.0.lib;gdk_pixbuf-2.0.lib;gtkmm-vc100-2_4.lib;sigc-vc100-2_0.lib;glibmm-vc100-2_4.lib;atkmm-vc100-1_6.lib;gdkmm-vc100-2_4.lib;giomm-vc100-2_4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -304,6 +303,7 @@
       <ImportLibrary>
       </ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
+      <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>

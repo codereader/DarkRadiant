@@ -33,13 +33,13 @@ typedef unsigned char byte;
 
 void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
 {
-	globalErrorStream() << "libpng warning: " << warning_msg << "\n";
+	globalErrorStream() << "libpng warning: " << warning_msg << std::endl;
 }
 
 void user_error_fn(png_structp png_ptr, png_const_charp error_msg)
 {
-	globalErrorStream() << "libpng error: " << error_msg << "\n";
-	longjmp(png_ptr->jmpbuf, 0);
+	globalErrorStream() << "libpng error: " << error_msg << std::endl;
+	longjmp(png_jmpbuf(png_ptr), 1);
 }
 
 void user_read_data(png_structp png_ptr, png_bytep data, png_uint_32 length)
@@ -88,9 +88,9 @@ static RGBAImagePtr LoadPNGBuff (unsigned char* fbuffer)
 	}
 
 	// configure the read function
-	png_set_read_fn(png_ptr, (voidp)&p_fbuffer, (png_rw_ptr)&user_read_data);
+	png_set_read_fn(png_ptr, (png_voidp)&p_fbuffer, (png_rw_ptr)&user_read_data);
 
-	if (setjmp(png_ptr->jmpbuf))
+	if (setjmp(png_jmpbuf(png_ptr)))
 	{
 		png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 		return RGBAImagePtr();
