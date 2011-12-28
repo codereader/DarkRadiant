@@ -12,6 +12,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
+#include <FTGL/ftgl.h>
 
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
@@ -71,7 +72,7 @@ void OpenGLModule::sharedContextCreated()
 	GlobalRenderSystem().extensionsInitialised();
 	GlobalRenderSystem().realise();
 
-	_font.reset(new gtkutil::GLFont("Sans 8"));
+	_font.reset(new gtkutil::GLFont(gtkutil::GLFont::FONT_SANS, 12));
 }
 
 void OpenGLModule::sharedContextDestroyed()
@@ -150,14 +151,13 @@ bool OpenGLModule::contextValid() const
 
 void OpenGLModule::drawString(const std::string& string) const
 {
-	glListBase(_font->getDisplayList());
-	glCallLists(GLsizei(string.size()), GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(string.c_str()));
+	ftglRenderFont(_font->getFtglFont(),string.c_str(),0xFFFF);//FTGL_RENDER_ALL);
 }
 
 void OpenGLModule::drawChar(char character) const
 {
-	glListBase(_font->getDisplayList());
-	glCallLists(1, GL_UNSIGNED_BYTE, reinterpret_cast<const GLubyte*>(&character));
+	std::string str(1,character);
+	drawString(str);
 }
 
 int OpenGLModule::getFontHeight() 

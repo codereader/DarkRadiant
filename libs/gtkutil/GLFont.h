@@ -1,29 +1,33 @@
 #pragma once
 
 #include <boost/shared_ptr.hpp>
+#include <FTGL/ftgl.h>
 
 namespace gtkutil
 {
 
-typedef unsigned int GLuint;
-
 class GLFont
 {
 private:
-	GLuint _displayList;
 	int _pixelHeight;
+	FTGL::FTGLfont* _ftglFont;	
 
 public:
-	// Construct a font using the Pango font name
-	// the constructor will allocate the GL display lists
-	GLFont(const char* fontName);
+	enum Style
+	{
+		FONT_SANS,	// free sans
+		FONT_MONO,	// free mono
+	};
 
-	// Destructor frees the GL display list again
+	// the constructor will allocate the FTGL font
+	GLFont(Style style, unsigned int size);
+
+	// Destructor frees the FTGL object again
 	~GLFont();
 
-	GLuint getDisplayList() const
+	FTGL::FTGLfont* getFtglFont()
 	{
-		return _displayList;
+		return _ftglFont;
 	}
 
 	int getPixelHeight() const

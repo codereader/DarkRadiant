@@ -12,10 +12,11 @@ xcopy ..\..\w32deps\gtk2\bin\etc\* ..\..\install\etc\. /S /Y
 
 @rem The engines should come from the w64deps folder
 md ..\..\install\lib\gtk-2.0\engines
-xcopy ..\..\w64deps\gtk2\bin\lib\gtk-2.0\engines\*.dll ..\..\install\lib\gtk-2.0\engines\. /S /Y
 
 @rem Copy GTK+ libraries (64 bit)
 IF "%1" == "Debug" GOTO GTK_DEBUG
+
+	xcopy ..\..\w64deps\gtk2\bin\lib\gtk-2.0\engines\*.dll ..\..\install\lib\gtk-2.0\engines\. /S /Y
 
 	copy ..\..\w64deps\gtk2\bin\atk-vc100.dll ..\..\install /Y
 	copy ..\..\w64deps\gtk2\bin\cairo-vc100.dll ..\..\install /Y
@@ -34,6 +35,7 @@ IF "%1" == "Debug" GOTO GTK_DEBUG
 	copy ..\..\w64deps\gtk2\bin\pangowin32-vc100.dll ..\..\install /Y
 
 	copy ..\..\w64deps\fontconfig\bin\fontconfig-vc100.dll ..\..\install /Y
+	copy ..\..\w64deps\ftgl\bin\ftgl-vc100.dll ..\..\install /Y
 
 	copy ..\..\w64deps\gettext\bin\gettext-vc100.dll ..\..\install /Y
 	copy ..\..\w64deps\pixman\bin\pixman-vc100.dll ..\..\install /Y
@@ -41,6 +43,9 @@ IF "%1" == "Debug" GOTO GTK_DEBUG
 GOTO GTK_END
 
 :GTK_DEBUG
+
+	@rem Use the debug version of the libwimp.dll
+	xcopy ..\..\w64deps\gtk2\bin\lib\gtk-2.0\engines\debug\*.dll ..\..\install\lib\gtk-2.0\engines\. /S /Y
 
 	copy ..\..\w64deps\gtk2\bin\atk-d-vc100.dll ..\..\install /Y
 	copy ..\..\w64deps\gtk2\bin\cairo-d-vc100.dll ..\..\install /Y
@@ -59,6 +64,7 @@ GOTO GTK_END
 	copy ..\..\w64deps\gtk2\bin\pangowin32-d-vc100.dll ..\..\install /Y
 
 	copy ..\..\w64deps\fontconfig\bin\fontconfig-d-vc100.dll ..\..\install /Y
+	copy ..\..\w64deps\ftgl\bin\ftgl-d-vc100.dll ..\..\install /Y
 
 	copy ..\..\w64deps\gettext\bin\gettext-d-vc100.dll ..\..\install /Y
 	copy ..\..\w64deps\pixman\bin\pixman-d-vc100.dll ..\..\install /Y
