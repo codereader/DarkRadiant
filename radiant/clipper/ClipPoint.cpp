@@ -42,7 +42,7 @@ void ClipPoint::Draw(const std::string& label, float scale) {
 
 	// draw label
 	glRasterPos3f (_coords[0] + offset, _coords[1] + offset, _coords[2] + offset);
-	glCallLists (GLsizei(label.length()), GL_UNSIGNED_BYTE, label.c_str());
+	GlobalOpenGL().drawString(label);
 }
 
 float fDiff(float f1, float f2) {
