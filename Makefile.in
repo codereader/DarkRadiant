@@ -96,12 +96,13 @@ am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 am__installdirs = "$(DESTDIR)$(applicationsdir)" \
 	"$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" \
-	"$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" \
-	"$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" \
-	"$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"
+	"$(DESTDIR)$(fontsdir)" "$(DESTDIR)$(gamedir)" \
+	"$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" \
+	"$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)" \
+	"$(DESTDIR)$(uifilesdir)"
 DATA = $(applications_DATA) $(bitmaps_DATA) $(commands_DATA) \
-	$(game_DATA) $(glprogs_DATA) $(pkgdata_DATA) $(scripts_DATA) \
-	$(sourceviewer_DATA) $(uifiles_DATA)
+	$(fonts_DATA) $(game_DATA) $(glprogs_DATA) $(pkgdata_DATA) \
+	$(scripts_DATA) $(sourceviewer_DATA) $(uifiles_DATA)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 AM_RECURSIVE_TARGETS = $(RECURSIVE_TARGETS:-recursive=) \
@@ -180,6 +181,8 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FTGL_CFLAGS = @FTGL_CFLAGS@
+FTGL_LIBS = @FTGL_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 GLEW_LIBS = @GLEW_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
@@ -349,9 +352,13 @@ pkgdata_DATA = $(top_srcdir)/install/colours.xml \
 glprogsdir = $(pkgdatadir)/gl
 glprogs_DATA = $(top_srcdir)/install/gl/*
 
+# Install fonts
+fontsdir = $(pkgdatadir)/ui/fonts
+fonts_DATA = $(top_srcdir)/install/ui/fonts/*
+
 # Install UI files
 uifilesdir = $(pkgdatadir)/ui
-uifiles_DATA = $(top_srcdir)/install/ui/*
+uifiles_DATA = $(top_srcdir)/install/ui/*.glade
 
 # Install python scripts
 scriptsdir = $(pkglibdir)/scripts
@@ -489,6 +496,26 @@ uninstall-commandsDATA:
 	test -n "$$files" || exit 0; \
 	echo " ( cd '$(DESTDIR)$(commandsdir)' && rm -f" $$files ")"; \
 	cd "$(DESTDIR)$(commandsdir)" && rm -f $$files
+install-fontsDATA: $(fonts_DATA)
+	@$(NORMAL_INSTALL)
+	test -z "$(fontsdir)" || $(MKDIR_P) "$(DESTDIR)$(fontsdir)"
+	@list='$(fonts_DATA)'; test -n "$(fontsdir)" || list=; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(fontsdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(fontsdir)" || exit $$?; \
+	done
+
+uninstall-fontsDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(fonts_DATA)'; test -n "$(fontsdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	test -n "$$files" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(fontsdir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(fontsdir)" && rm -f $$files
 install-gameDATA: $(game_DATA)
 	@$(NORMAL_INSTALL)
 	test -z "$(gamedir)" || $(MKDIR_P) "$(DESTDIR)$(gamedir)"
@@ -925,7 +952,7 @@ check: check-recursive
 all-am: Makefile $(DATA) config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"; do \
+	for dir in "$(DESTDIR)$(applicationsdir)" "$(DESTDIR)$(bitmapsdir)" "$(DESTDIR)$(commandsdir)" "$(DESTDIR)$(fontsdir)" "$(DESTDIR)$(gamedir)" "$(DESTDIR)$(glprogsdir)" "$(DESTDIR)$(pkgdatadir)" "$(DESTDIR)$(scriptsdir)" "$(DESTDIR)$(sourceviewerdir)" "$(DESTDIR)$(uifilesdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -976,8 +1003,8 @@ info: info-recursive
 info-am:
 
 install-data-am: install-applicationsDATA install-bitmapsDATA \
-	install-commandsDATA install-gameDATA install-glprogsDATA \
-	install-pkgdataDATA install-scriptsDATA \
+	install-commandsDATA install-fontsDATA install-gameDATA \
+	install-glprogsDATA install-pkgdataDATA install-scriptsDATA \
 	install-sourceviewerDATA install-uifilesDATA
 
 install-dvi: install-dvi-recursive
@@ -1025,7 +1052,7 @@ ps: ps-recursive
 ps-am:
 
 uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
-	uninstall-commandsDATA uninstall-gameDATA \
+	uninstall-commandsDATA uninstall-fontsDATA uninstall-gameDATA \
 	uninstall-glprogsDATA uninstall-pkgdataDATA \
 	uninstall-scriptsDATA uninstall-sourceviewerDATA \
 	uninstall-uifilesDATA
@@ -1043,17 +1070,17 @@ uninstall-am: uninstall-applicationsDATA uninstall-bitmapsDATA \
 	install install-am install-applicationsDATA \
 	install-bitmapsDATA install-commandsDATA install-data \
 	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-gameDATA install-glprogsDATA \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-pkgdataDATA \
-	install-ps install-ps-am install-scriptsDATA \
-	install-sourceviewerDATA install-strip install-uifilesDATA \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-recursive uninstall uninstall-am \
+	install-exec-am install-fontsDATA install-gameDATA \
+	install-glprogsDATA install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-pkgdataDATA install-ps install-ps-am \
+	install-scriptsDATA install-sourceviewerDATA install-strip \
+	install-uifilesDATA installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am \
 	uninstall-applicationsDATA uninstall-bitmapsDATA \
-	uninstall-commandsDATA uninstall-gameDATA \
+	uninstall-commandsDATA uninstall-fontsDATA uninstall-gameDATA \
 	uninstall-glprogsDATA uninstall-pkgdataDATA \
 	uninstall-scriptsDATA uninstall-sourceviewerDATA \
 	uninstall-uifilesDATA

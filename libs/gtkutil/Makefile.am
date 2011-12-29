@@ -5,7 +5,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 			  $(GTKMM_CFLAGS) \
 			  $(GTKGLEXTMM_CFLAGS) \
 			  $(XML_CFLAGS) \
-			  $(GTKSOURCEVIEWMM_CFLAGS)
+			  $(GTKSOURCEVIEWMM_CFLAGS) \
+              $(FTGL_CFLAGS)
 AM_CXXFLAGS = -fPIC
 
 pkglib_LTLIBRARIES = libgtkutil.la
@@ -14,7 +15,8 @@ libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 						$(GTKMM_LIBS) \
 						$(XML_LIBS) \
 						$(GLEW_LIBS) \
-						$(GTKSOURCEVIEWMM_LIBS)
+						$(GTKSOURCEVIEWMM_LIBS) \
+                        $(FTGL_LIBS)
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
 			$(top_builddir)/libs/math/libmath.la
 libgtkutil_la_SOURCES = ConsoleView.cpp \

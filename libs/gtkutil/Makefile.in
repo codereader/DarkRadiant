@@ -158,6 +158,8 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FTGL_CFLAGS = @FTGL_CFLAGS@
+FTGL_LIBS = @FTGL_LIBS@
 GETTEXT_MACRO_VERSION = @GETTEXT_MACRO_VERSION@
 GLEW_LIBS = @GLEW_LIBS@
 GLIB_CFLAGS = @GLIB_CFLAGS@
@@ -310,7 +312,8 @@ AM_CPPFLAGS = -I$(top_srcdir)/include \
 			  $(GTKMM_CFLAGS) \
 			  $(GTKGLEXTMM_CFLAGS) \
 			  $(XML_CFLAGS) \
-			  $(GTKSOURCEVIEWMM_CFLAGS)
+			  $(GTKSOURCEVIEWMM_CFLAGS) \
+              $(FTGL_CFLAGS)
 
 AM_CXXFLAGS = -fPIC
 pkglib_LTLIBRARIES = libgtkutil.la
@@ -319,7 +322,8 @@ libgtkutil_la_LDFLAGS = -release @PACKAGE_VERSION@ \
 						$(GTKMM_LIBS) \
 						$(XML_LIBS) \
 						$(GLEW_LIBS) \
-						$(GTKSOURCEVIEWMM_LIBS)
+						$(GTKSOURCEVIEWMM_LIBS) \
+                        $(FTGL_LIBS)
 
 libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
 			$(top_builddir)/libs/math/libmath.la
