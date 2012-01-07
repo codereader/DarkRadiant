@@ -244,9 +244,6 @@ void MainFrame::destroy()
 	// Free the layout
 	if (_currentLayout != NULL)
 	{
-		// Save the layout to the registry
-		GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, _currentLayout->getName());
-
 		removeLayout();
 	}
 
@@ -487,7 +484,7 @@ void MainFrame::create()
 	LayerControlDialog::init();
 }
 
-void MainFrame::saveWindowPosition() 
+void MainFrame::saveWindowPosition()
 {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
@@ -540,6 +537,11 @@ void MainFrame::updateAllWindows()
 	GlobalXYWndManager().updateAllViews();
 }
 
+void MainFrame::setActiveLayoutName(const std::string& name)
+{
+    GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, name);
+}
+
 void MainFrame::applyLayout(const std::string& name)
 {
 	if (getCurrentLayout() == name)
@@ -551,7 +553,8 @@ void MainFrame::applyLayout(const std::string& name)
 	}
 
 	// Set or clear?
-	if (!name.empty()) {
+	if (!name.empty())
+    {
 		// Try to find that new layout
 		IMainFrameLayoutPtr layout = GlobalMainFrameLayoutManager().getLayout(name);
 

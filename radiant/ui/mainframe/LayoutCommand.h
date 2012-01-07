@@ -1,11 +1,12 @@
-#ifndef _LAYOUT_COMMAND_H_
-#define _LAYOUT_COMMAND_H_
+#pragma once
 
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
 #include "icommandsystem.h"
 #include "imainframe.h"
+
+#include "gtkutil/dialog/MessageBox.h"
 
 #include <string>
 #include <boost/bind.hpp>
@@ -72,11 +73,13 @@ public:
 	// Command target for activating the layout
 	void activateLayout(const cmd::ArgumentList& args)
 	{
-		GlobalMainFrame().applyLayout(_layoutName);
+		GlobalMainFrame().setActiveLayoutName(_layoutName);
+        gtkutil::MessageBox infoBox("Restart required",
+                                    "Restart DarkRadiant to apply changes",
+                                    ui::IDialog::MESSAGE_CONFIRM);
+        infoBox.run();
 	}
 };
 typedef boost::shared_ptr<LayoutCommand> LayoutCommandPtr;
 
 } // namespace ui
-
-#endif /* _LAYOUT_COMMAND_H_ */

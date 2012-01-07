@@ -56,6 +56,7 @@ public:
 
 	// Apply the named viewstyle
 	void applyLayout(const std::string& name);
+    void setActiveLayoutName(const std::string& name);
 	std::string getCurrentLayout();
 
 	// Command to toggle the current layout's camera fullscreen mode

@@ -74,6 +74,9 @@ public:
 	 */
 	virtual void applyLayout(const std::string& name) = 0;
 
+    /// Store the layout name, but do not immediately apply it
+    virtual void setActiveLayoutName(const std::string& name) = 0;
+
 	/**
 	 * Returns the name of the currently activated layout or
 	 * an empty string if no layout is applied.
