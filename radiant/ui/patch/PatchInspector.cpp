@@ -479,7 +479,6 @@ void PatchInspector::rescanSelection()
 
 		Subdivisions tess(UINT_MAX, UINT_MAX);
 		bool tessIsFixed = false;
-		bool tessIsSame = false;
 
 		// Try to find a pair of same tesselation values
 		for (PatchPtrVector::const_iterator i = list.begin(); i != list.end(); ++i)
@@ -489,7 +488,6 @@ void PatchInspector::rescanSelection()
 			if (tess.x() == UINT_MAX)
             {
 				// Not initialised yet, take these values for starters
-				tessIsSame = true;
 				tessIsFixed = p.subdivionsFixed();
 				tess = p.getSubdivisions();
 			}
@@ -502,7 +500,6 @@ void PatchInspector::rescanSelection()
 				{
 					// Our journey ends here, we cannot find a pair of tesselations
 					// for all selected patches or the same fixed/variable status
-					tessIsSame = false;
 					tessIsFixed = false;
 					break;
 				}

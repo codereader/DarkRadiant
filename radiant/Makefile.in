@@ -83,6 +83,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-OpenGLShader.$(OBJEXT) \
 	darkradiant-GLProgramFactory.$(OBJEXT) \
 	darkradiant-OpenGLShaderPass.$(OBJEXT) \
+	darkradiant-LinearLightList.$(OBJEXT) \
 	darkradiant-OpenGLModule.$(OBJEXT) \
 	darkradiant-OpenGLRenderSystem.$(OBJEXT) \
 	darkradiant-RenderSystemFactory.$(OBJEXT) \
@@ -528,6 +529,7 @@ darkradiant_SOURCES = main.cpp \
                       render/backend/OpenGLShader.cpp \
                       render/backend/GLProgramFactory.cpp \
                       render/backend/OpenGLShaderPass.cpp \
+                      render/LinearLightList.cpp \
                       render/OpenGLModule.cpp \
                       render/OpenGLRenderSystem.cpp \
 					  render/RenderSystemFactory.cpp \
@@ -874,6 +876,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LayerSystem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LightInspector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LightTextureChooser.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LinearLightList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LogFile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LogStream.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-LogStreamBuf.Po@am__quote@
@@ -1549,6 +1552,22 @@ darkradiant-OpenGLShaderPass.obj: render/backend/OpenGLShaderPass.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/backend/OpenGLShaderPass.cpp' object='darkradiant-OpenGLShaderPass.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-OpenGLShaderPass.obj `if test -f 'render/backend/OpenGLShaderPass.cpp'; then $(CYGPATH_W) 'render/backend/OpenGLShaderPass.cpp'; else $(CYGPATH_W) '$(srcdir)/render/backend/OpenGLShaderPass.cpp'; fi`
+
+darkradiant-LinearLightList.o: render/LinearLightList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-LinearLightList.o -MD -MP -MF $(DEPDIR)/darkradiant-LinearLightList.Tpo -c -o darkradiant-LinearLightList.o `test -f 'render/LinearLightList.cpp' || echo '$(srcdir)/'`render/LinearLightList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-LinearLightList.Tpo $(DEPDIR)/darkradiant-LinearLightList.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/LinearLightList.cpp' object='darkradiant-LinearLightList.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LinearLightList.o `test -f 'render/LinearLightList.cpp' || echo '$(srcdir)/'`render/LinearLightList.cpp
+
+darkradiant-LinearLightList.obj: render/LinearLightList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-LinearLightList.obj -MD -MP -MF $(DEPDIR)/darkradiant-LinearLightList.Tpo -c -o darkradiant-LinearLightList.obj `if test -f 'render/LinearLightList.cpp'; then $(CYGPATH_W) 'render/LinearLightList.cpp'; else $(CYGPATH_W) '$(srcdir)/render/LinearLightList.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-LinearLightList.Tpo $(DEPDIR)/darkradiant-LinearLightList.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='render/LinearLightList.cpp' object='darkradiant-LinearLightList.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-LinearLightList.obj `if test -f 'render/LinearLightList.cpp'; then $(CYGPATH_W) 'render/LinearLightList.cpp'; else $(CYGPATH_W) '$(srcdir)/render/LinearLightList.cpp'; fi`
 
 darkradiant-OpenGLModule.o: render/OpenGLModule.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-OpenGLModule.o -MD -MP -MF $(DEPDIR)/darkradiant-OpenGLModule.Tpo -c -o darkradiant-OpenGLModule.o `test -f 'render/OpenGLModule.cpp' || echo '$(srcdir)/'`render/OpenGLModule.cpp

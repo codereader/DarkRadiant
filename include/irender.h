@@ -70,12 +70,12 @@ class Shader;
 typedef boost::shared_ptr<Shader> ShaderPtr;
 
 /**
- * A RenderEntity represents a map entity as seen by the renderer. 
+ * A RenderEntity represents a map entity as seen by the renderer.
  * It provides up to 12 numbered parameters to the renderer:
  * parm0, parm1 ... parm11.
  *
- * A few of the entity parms are hardwired to things like render colour 
- * as defined through the entity's _color keyvalue, some are set through 
+ * A few of the entity parms are hardwired to things like render colour
+ * as defined through the entity's _color keyvalue, some are set through
  * scripting, spawmargs or gameplay code.
  */
 class IRenderEntity
@@ -144,7 +144,8 @@ public:
      */
     virtual Matrix4 getLightTextureTransformation() const = 0;
 
-	virtual bool testAABB(const AABB& other) const = 0;
+    /// Return true if this light intersects the given AABB
+	virtual bool intersectsAABB(const AABB& aabb) const = 0;
 
     /**
      * \brief
@@ -163,14 +164,19 @@ public:
 };
 typedef boost::shared_ptr<RendererLight> RendererLightPtr;
 
+inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
+{
+    return os << "RendererLight { worldOrigin = " << l.worldOrigin() << " }";
+}
+
 /**
  * \brief
  * Interface for an object which can test its intersection with a RendererLight.
  *
- * Objects which implement this interface define a testLight() function which
- * determines whether the given light intersects the object. They also provide
- * methods to allow the renderer to provide the list of lights which will be
- * illuminating the object, subsequent to the intersection test.
+ * Objects which implement this interface define a intersectsLight() function
+ * which determines whether the given light intersects the object. They also
+ * provide methods to allow the renderer to provide the list of lights which
+ * will be illuminating the object, subsequent to the intersection test.
  *
  * \todo
  * This interface seems to exist because of the design decision that lit objects
@@ -179,28 +185,55 @@ typedef boost::shared_ptr<RendererLight> RendererLightPtr;
  * renderer is refactored to process the scene light-by-light this class will
  * not be necessary.
  */
-class LightCullable
+class LitObject
 {
 public:
-    virtual ~LightCullable() {}
-	virtual bool testLight(const RendererLight& light) const = 0;
-	virtual void insertLight(const RendererLight& light) {}
-	virtual void clearLights() {}
+    virtual ~LitObject() {}
+
+    /// Test if the given light intersects the LitObject
+    virtual bool intersectsLight(const RendererLight& light) const = 0;
+
+    /// Add a light to the set of lights which do intersect this object
+    virtual void insertLight(const RendererLight& light) {}
+
+    /// Clear out all lights in the set of lights intersecting this object
+    virtual void clearLights() {}
 };
-typedef boost::shared_ptr<LightCullable> LightCullablePtr;
+typedef boost::shared_ptr<LitObject> LitObjectPtr;
 
 class Renderable;
 typedef boost::function<void(const Renderable&)> RenderableCallback;
 
 typedef boost::function<void(const RendererLight&)> RendererLightCallback;
 
+/**
+ * \brief
+ * A list of lights which may intersect an object
+ *
+ * A LightList is responsible for calculating which lights intersect a
+ * particular object. Although there is nothing exposed in the interface, the
+ * LightList holds a reference to a single lit object, and it is the
+ * intersection with this object which is calculated.
+ *
+ * \internal
+ * This interface doesn't really make any sense, and its purpose is not clear.
+ * It seems to be basically a set of callback functions which need to be invoked
+ * at the right time during the render process, but these shouldn't really be
+ * the responsibility of anything outside the renderer itself.
+ */
 class LightList
 {
 public:
-  virtual ~LightList() {}
-  virtual void evaluateLights() const = 0;
-  virtual void lightsChanged() const = 0;
-  virtual void forEachLight(const RendererLightCallback& callback) const = 0;
+    virtual ~LightList() {}
+
+    /// Trigger the LightList to recalculate which lights intersect its object
+    virtual void calculateIntersectingLights() const = 0;
+
+    /// Set the dirty flag, informing the LightList that an update is required
+    virtual void setDirty() = 0;
+
+    /// Invoke a callback on all contained lights.
+    virtual void forEachLight(const RendererLightCallback& callback) const = 0;
 };
 
 const int c_attr_TexCoord0 = 1;
@@ -342,7 +375,7 @@ public:
 							   const Matrix4& modelview,
 							   const LightList* lights = 0) = 0;
 
-	/** 
+	/**
 	 * Like above, but taking an additional IRenderEntity argument.
 	 */
 	virtual void addRenderable(const OpenGLRenderable& renderable,
@@ -461,9 +494,40 @@ public:
 
     /* LIGHT MANAGEMENT */
 
-    virtual const LightList& attach(LightCullable& cullable) = 0;
-    virtual void detach(LightCullable& cullable) = 0;
-    virtual void changed(LightCullable& cullable) = 0;
+    /**
+     * \brief
+     * Add a lit object to the renderer.
+     *
+     * The renderer will create and return a reference to a LightList associated
+     * with this particular LitObject. The lit object can use the public
+     * LightList interface to trigger a recalculation of light intersections, or
+     * to set the dirty flag indicating to the LightList that a recalculation is
+     * necessary.
+     *
+     * \internal
+     * When the LightList implementation performs the intersection calculation,
+     * it will use the LitObject's intersectsLight method to do so, and if the
+     * intersection is detected, the insertLight method will be invoked on the
+     * LitObject. This means that (1) the renderer stores a LightList for each
+     * object, (2) the object itself has a reference to the LightList owned by
+     * the renderer, and (3) the LitObject interface allows the object to
+     * maintain ANOTHER list of intersecting lights, added with insertLight().
+     * This seems like a lot of indirection, but it might have something to do
+     * with allowing objects with multiple sub-components to submit only a
+     * subset of lights for each component.
+     *
+     * \param object
+     * The lit object to add.
+     *
+     * \return
+     * A reference to a LightList which manages the lights that intersect the
+     * submitted object.
+     */
+    virtual LightList& attachLitObject(LitObject& object) = 0;
+
+    virtual void detachLitObject(LitObject& cullable) = 0;
+
+    virtual void litObjectChanged(LitObject& cullable) = 0;
 
     /**
      * \brief

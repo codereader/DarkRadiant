@@ -22,7 +22,7 @@ class PatchNode :
 	public ComponentEditable,
 	public ComponentSnappable,
 	public PlaneSelectable,
-	public LightCullable,
+	public LitObject,
 	public Transformable
 {
 	DragPlanes m_dragPlanes;
@@ -37,7 +37,7 @@ class PatchNode :
 	// An array of renderable points
 	mutable RenderablePointVector m_render_selected;
 
-	const LightList* m_lightList;
+	LightList* m_lightList;
 
 	Patch m_patch;
 
@@ -124,8 +124,8 @@ public:
 	// (see ObservedSelectable and PatchControlInstance)
 	void selectedChangedComponent(const Selectable& selectable);
 
-	// LightCullable implementation
-	bool testLight(const RendererLight& light) const;
+	// LitObject implementation
+	bool intersectsLight(const RendererLight& light) const;
 
 	// Renderable implementation
 

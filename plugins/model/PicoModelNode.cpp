@@ -15,7 +15,7 @@ namespace model {
 PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :
 	_picoModel(new RenderablePicoModel(*picoModel)), 
 	_name(picoModel->getFilename()),
-	_lightList(GlobalRenderSystem().attach(*this))
+	_lightList(GlobalRenderSystem().attachLitObject(*this))
 {
 	Node::setTransformChangedCallback(boost::bind(&PicoModelNode::lightsChanged, this));
 
@@ -24,7 +24,7 @@ PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :
 }
 
 PicoModelNode::~PicoModelNode() {
-	GlobalRenderSystem().detach(*this);
+	GlobalRenderSystem().detachLitObject(*this);
 }
 
 const IModel& PicoModelNode::getIModel() const
@@ -58,19 +58,21 @@ void PicoModelNode::setModel(const RenderablePicoModelPtr& model) {
 	_picoModel = model;
 }
 
-// LightCullable test function
-bool PicoModelNode::testLight(const RendererLight& light) const {
-	return light.testAABB(worldAABB());
+// LitObject test function
+bool PicoModelNode::intersectsLight(const RendererLight& light) const
+{
+	return light.intersectsAABB(worldAABB());
 }
 
 // Add a light to this model instance
-void PicoModelNode::insertLight(const RendererLight& light) {
+void PicoModelNode::insertLight(const RendererLight& light)
+{
 	// Calculate transform from the superclass
 	const Matrix4& l2w = localToWorld();
 
 	// If the light's AABB intersects the oriented AABB of this model instance,
 	// add the light to our light list
-	if (light.testAABB(AABB::createFromOrientedAABB(_picoModel->localAABB(), l2w)))
+	if (light.intersectsAABB(AABB::createFromOrientedAABB(_picoModel->localAABB(), l2w)))
 	{
 		_lights.addLight(light);
 	}
@@ -83,7 +85,7 @@ void PicoModelNode::clearLights() {
 
 void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	_lightList.evaluateLights();
+	_lightList.calculateIntersectingLights();
 
 	assert(_renderEntity);
 

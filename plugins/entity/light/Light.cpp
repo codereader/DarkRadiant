@@ -776,7 +776,7 @@ AABB Light::lightAABB() const
 	return AABB(_originTransformed, m_doom3Radius.m_radiusTransformed);
 }
 
-bool Light::testAABB(const AABB& other) const
+bool Light::intersectsAABB(const AABB& other) const
 {
     bool returnVal;
 	if (isProjected())

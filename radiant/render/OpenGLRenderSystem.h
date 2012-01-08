@@ -46,8 +46,11 @@ private:
 	// Lights
 	RendererLights m_lights;
 	bool m_lightsChanged;
-	typedef std::map<LightCullable*, LinearLightList> LightLists;
+	typedef std::map<LitObject*, LinearLightList> LightLists;
 	LightLists m_lightLists;
+
+private:
+	void propagateLightChangedFlagToAllLights();
 
 public:
 
@@ -77,17 +80,14 @@ public:
 
 	void extensionsInitialised();
 
-	// light culling
-	const LightList& attach(LightCullable& cullable);
-	void detach(LightCullable& cullable);
-	void changed(LightCullable& cullable);
+	LightList& attachLitObject(LitObject& cullable);
+	void detachLitObject(LitObject& cullable);
+	void litObjectChanged(LitObject& cullable);
 
     // Attach and detach light sources
 	void attachLight(RendererLight& light);
 	void detachLight(RendererLight& light);
 	void lightChanged(RendererLight& light);
-
-	void evaluateChanged();
 
 	typedef std::set<const Renderable*> Renderables;
 	Renderables m_renderables;

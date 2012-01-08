@@ -356,23 +356,34 @@ void OpenGLRenderSystem::extensionsInitialised()
 	}
 }
 
-const LightList& OpenGLRenderSystem::attach(LightCullable& cullable)
+LightList& OpenGLRenderSystem::attachLitObject(LitObject& object)
 {
 	return m_lightLists.insert(
 		LightLists::value_type(
-			&cullable,
-			LinearLightList(cullable, m_lights, boost::bind(&OpenGLRenderSystem::evaluateChanged, this)))
-		).first->second;
+			&object,
+			LinearLightList(
+                object,
+                m_lights,
+                boost::bind(
+                    &OpenGLRenderSystem::propagateLightChangedFlagToAllLights,
+                    this
+                )
+            )
+        )
+    ).first->second;
 }
 
-void OpenGLRenderSystem::detach(LightCullable& cullable) {
-	m_lightLists.erase(&cullable);
+void OpenGLRenderSystem::detachLitObject(LitObject& object) 
+{
+	m_lightLists.erase(&object);
 }
 
-void OpenGLRenderSystem::changed(LightCullable& cullable) {
-	LightLists::iterator i = m_lightLists.find(&cullable);
-	ASSERT_MESSAGE(i != m_lightLists.end(), "cullable not attached");
-	i->second.lightsChanged();
+void OpenGLRenderSystem::litObjectChanged(LitObject& object) 
+{
+	LightLists::iterator i = m_lightLists.find(&object);
+    assert(i != m_lightLists.end());
+
+	i->second.setDirty();
 }
 
 void OpenGLRenderSystem::attachLight(RendererLight& light)
@@ -394,11 +405,16 @@ void OpenGLRenderSystem::lightChanged(RendererLight& light)
     m_lightsChanged = true;
 }
 
-void OpenGLRenderSystem::evaluateChanged() {
-    if (m_lightsChanged) {
+void OpenGLRenderSystem::propagateLightChangedFlagToAllLights()
+{
+    if (m_lightsChanged)
+    {
     	m_lightsChanged = false;
-    	for (LightLists::iterator i = m_lightLists.begin(); i != m_lightLists.end(); ++i) {
-    		i->second.lightsChanged();
+    	for (LightLists::iterator i = m_lightLists.begin();
+             i != m_lightLists.end();
+             ++i) 
+        {
+    		i->second.setDirty();
     	}
 	}
 }

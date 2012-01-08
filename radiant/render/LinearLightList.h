@@ -1,79 +1,73 @@
-#ifndef LINEARLIGHTLIST_H_
-#define LINEARLIGHTLIST_H_
+#pragma once
 
 #include "irender.h"
 #include <list>
 #include <boost/function/function_fwd.hpp>
 
-namespace render {
+namespace render
+{
 
 typedef std::set<RendererLight*> RendererLights;
 
+/**
+ * \brief
+ * Main renderer implementation of LightList interface.
+ *
+ * The LinearLightList is reponsible for associating a single lit object with
+ * all of the lights which currently light it.
+ */
 class LinearLightList :
 	public LightList
 {
 public:
-	typedef boost::function<void()> EvaluateChangedCallback;
-private:
-	LightCullable& m_cullable;
-	RendererLights& m_allLights;
-	EvaluateChangedCallback m_evaluateChanged;
+	typedef boost::function<void()> VoidCallback;
 
+private:
+
+    // Target object
+	LitObject& _litObject;
+
+    // Set of all available lights
+	RendererLights& _allLights;
+
+    // Update callback
+	VoidCallback _testDirtyFunc;
+
+    // List of lights which are intersecting our lit object
 	typedef std::list<RendererLight*> Lights;
-	mutable Lights m_lights;
-	mutable bool m_lightsChanged;
+	mutable Lights _activeLights;
+
+    // Dirty flag indicating recalculation needed
+	mutable bool m_dirty;
+
 public:
 
-	LinearLightList(LightCullable& cullable,
-					RendererLights& lights,
-					const EvaluateChangedCallback& evaluateChanged) :
-		m_cullable(cullable),
-		m_allLights(lights),
-		m_evaluateChanged(evaluateChanged)
+    /**
+     * \brief
+     * Construct and initialise with values.
+     *
+     * \param object
+     * The illuminatable object whose lit status we are tracking.
+     *
+     * \param lights
+     * Entire set of available light sources provided by the renderer.
+     *
+     * \param testFunc
+     * A callback function to request the renderer check if the light list
+     * needs to recalculate its intersections, and call setDirty() if necessary.
+     */
+    LinearLightList(LitObject& object,
+                    RendererLights& lights,
+                    VoidCallback testFunc)
+    : _litObject(object), _allLights(lights), _testDirtyFunc(testFunc)
 	{
-		m_lightsChanged = true;
+		m_dirty = true;
 	}
 
-	void evaluateLights() const
-	{
-		m_evaluateChanged();
-
-		if (m_lightsChanged)
-		{
-			m_lightsChanged = false;
-
-			m_lights.clear();
-			m_cullable.clearLights();
-
-			for (RendererLights::const_iterator i = m_allLights.begin();
-				 i != m_allLights.end(); ++i)
-			{
-				if (lightEnabled(*(*i), m_cullable)) {
-					m_lights.push_back(*i);
-					m_cullable.insertLight(*(*i));
-				}
-			}
-		}
-	}
-
-	void forEachLight(const RendererLightCallback& callback) const {
-		evaluateLights();
-
-		for (Lights::const_iterator i = m_lights.begin(); i != m_lights.end(); ++i) {
-			callback(*(*i));
-		}
-	}
-
-	void lightsChanged() const {
-		m_lightsChanged = true;
-	}
-
-private:
-	inline bool lightEnabled(const RendererLight& light, const LightCullable& cullable) const {
-		return cullable.testLight(light);
-	}
+    // LightList implementation
+	void calculateIntersectingLights() const;
+	void forEachLight(const RendererLightCallback& callback) const;
+	void setDirty();
 };
 
 } // namespace render
-
-#endif /*LINEARLIGHTLIST_H_*/

@@ -6,7 +6,7 @@
 #include "irender.h"
 #include "modelskin.h"
 #include "irenderable.h"
-#include "VectorLightList.h"
+#include "render/VectorLightList.h"
 #include "RenderablePicoModel.h"
 
 namespace model {
@@ -16,7 +16,7 @@ class PicoModelNode :
 	public ModelNode,
 	public Nameable,
 	public SelectionTestable,
-	public LightCullable,
+	public LitObject,
 	public SkinnedModel
 {
 private:
@@ -27,10 +27,10 @@ private:
 
 	// Vector of RendererLight references which illuminate this instance, set
 	// with addLight() and clearLights()
-	VectorLightList _lights;
+    render::lib::VectorLightList _lights;
 
 	// The light list from the shader cache when we attach
-	const LightList& _lightList;
+	LightList& _lightList;
 
 	// The name of this model's skin
 	std::string _skin;
@@ -56,8 +56,9 @@ public:
 	virtual const AABB& localAABB() const;
 
 	// Lights changed function
-	void lightsChanged() {
-		_lightList.lightsChanged();
+	void lightsChanged()
+    {
+		_lightList.setDirty();
 	}
 
 	// SelectionTestable implementation
@@ -68,8 +69,8 @@ public:
 	const RenderablePicoModelPtr& getModel() const;
 	void setModel(const RenderablePicoModelPtr& model);
 
-	// LightCullable test function
-	bool testLight(const RendererLight& light) const;
+	// LitObject test function
+	bool intersectsLight(const RendererLight& light) const;
 	// Add a light to this model instance
 	void insertLight(const RendererLight& light);
 	// Clear all lights from this model instance

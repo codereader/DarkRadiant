@@ -60,6 +60,7 @@ darkradiant_SOURCES = main.cpp \
                       render/backend/OpenGLShader.cpp \
                       render/backend/GLProgramFactory.cpp \
                       render/backend/OpenGLShaderPass.cpp \
+                      render/LinearLightList.cpp \
                       render/OpenGLModule.cpp \
                       render/OpenGLRenderSystem.cpp \
 					  render/RenderSystemFactory.cpp \

@@ -4,7 +4,7 @@
 #include "nameable.h"
 #include "MD5Model.h"
 #include "modelskin.h"
-#include "VectorLightList.h"
+#include "render/VectorLightList.h"
 
 namespace md5 {
 
@@ -13,15 +13,15 @@ class MD5ModelNode :
 	public model::ModelNode,
 	public Nameable,
 	public SelectionTestable,
-	public LightCullable,
+	public LitObject,
 	public SkinnedModel
 {
 private:
 	MD5ModelPtr _model;
 
-	const LightList* _lightList;
+	LightList* _lightList;
 
-	typedef std::vector<VectorLightList> SurfaceLightLists;
+	typedef std::vector<render::lib::VectorLightList> SurfaceLightLists;
 	SurfaceLightLists _surfaceLightLists;
 
 	// The name of this model's skin
@@ -50,8 +50,8 @@ public:
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test);
 
-	// LightCullable implementation
-	bool testLight(const RendererLight& light) const;
+	// LitObject implementation
+	bool intersectsLight(const RendererLight& light) const;
 	void insertLight(const RendererLight& light);
 	void clearLights();
 

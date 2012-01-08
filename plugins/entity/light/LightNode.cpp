@@ -451,8 +451,9 @@ ShaderPtr LightNode::getShader() const {
 	return _light.getShader();
 }
 
-bool LightNode::testAABB(const AABB& other) const {
-	return _light.testAABB(other);
+bool LightNode::intersectsAABB(const AABB& aabb) const
+{
+	return _light.intersectsAABB(aabb);
 }
 
 Vector3 LightNode::getLightOrigin() const {

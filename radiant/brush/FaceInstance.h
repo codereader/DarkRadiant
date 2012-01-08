@@ -1,16 +1,15 @@
-#ifndef FACEINSTANCE_H_
-#define FACEINSTANCE_H_
+#pragma once
 
 #include "math/Plane3.h"
 #include "math/Line.h"
 #include "render.h"
+#include "render/VectorLightList.h"
 #include "selectionlib.h"
 
 #include "SelectableComponents.h"
 #include "VertexSelection.h"
 #include "Face.h"
 #include "Brush.h"
-#include "VectorLightList.h"
 
 typedef const Plane3* PlanePointer;
 typedef PlanePointer* PlanesIterator;
@@ -29,7 +28,7 @@ private:
 	VertexSelection m_edgeSelection;
 
 public:
-	mutable VectorLightList m_lights;
+	mutable render::lib::VectorLightList m_lights;
 
 	FaceInstance(Face& face, const SelectionChangedSlot& observer);
 	FaceInstance(const FaceInstance& other);
@@ -199,5 +198,3 @@ public:
 		return m_faceInstances.size();
 	}
 };
-
-#endif /*FACEINSTANCE_H_*/

@@ -182,17 +182,10 @@ void Camera::freeMove(int dx, int dy) {
 void Camera::mouseControl(int x, int y) {
 	int movementSpeed = getCameraSettings()->movementSpeed();
 
-	int   xl, xh;
-	int yl, yh;
 	float xf, yf;
 
 	xf = (float)(x - width/2) / (width/2);
 	yf = (float)(y - height/2) / (height/2);
-
-	xl = width/3;
-	xh = xl*2;
-	yl = height/3;
-	yh = yl*2;
 
 	xf *= 1.0f - fabsf(yf);
 	if (xf < 0) {

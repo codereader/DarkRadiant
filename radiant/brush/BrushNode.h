@@ -32,10 +32,10 @@ class BrushNode :
 	public ComponentEditable,
 	public ComponentSnappable,
 	public PlaneSelectable,
-	public LightCullable,
+	public LitObject,
 	public Transformable
 {
-	const LightList* m_lightList;
+	LightList* m_lightList;
 
 	// The actual contained brush (NO reference)
 	Brush m_brush;
@@ -139,8 +139,8 @@ public:
 	void vertex_push_back(SelectableVertex& vertex);
 	void DEBUG_verify();
 
-	// LightCullable implementation
-	bool testLight(const RendererLight& light) const;
+	// LitObject implementation
+	bool intersectsLight(const RendererLight& light) const;
 	void insertLight(const RendererLight& light);
 	void clearLights();
 

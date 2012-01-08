@@ -591,16 +591,6 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
   GlobalOpenGL().assertNoErrors();
 }
 
-// DEBUG: Stream insertion for RendererLight
-
-inline
-std::ostream& operator<< (std::ostream& os, const RendererLight& light) {
-	os << "RendererLight { origin = " << light.worldOrigin()
-	   << ", lightOrigin = " << light.getLightOrigin()
-	   << " }";
-	return os;
-}
-
 // Add a Renderable to this bucket
 void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 									  const Matrix4& modelview,

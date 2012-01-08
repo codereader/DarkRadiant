@@ -10,7 +10,7 @@
 
 // Constructor
 BrushNode::BrushNode() :
-	m_lightList(&GlobalRenderSystem().attach(*this)),
+	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this,
 			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))),
@@ -40,9 +40,9 @@ BrushNode::BrushNode(const BrushNode& other) :
 	ComponentEditable(other),
 	ComponentSnappable(other),
 	PlaneSelectable(other),
-	LightCullable(other),
+	LitObject(other),
 	Transformable(other),
-	m_lightList(&GlobalRenderSystem().attach(*this)),
+	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this, other.m_brush,
 			Callback(boost::bind(&BrushNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))),
@@ -56,12 +56,13 @@ BrushNode::BrushNode(const BrushNode& other) :
 }
 
 BrushNode::~BrushNode() {
-	GlobalRenderSystem().detach(*this);
+	GlobalRenderSystem().detachLitObject(*this);
 	m_brush.detach(*this); // BrushObserver
 }
 
-void BrushNode::lightsChanged() {
-	m_lightList->lightsChanged();
+void BrushNode::lightsChanged()
+{
+	m_lightList->setDirty();
 }
 
 const AABB& BrushNode::localAABB() const {
@@ -315,8 +316,8 @@ void BrushNode::DEBUG_verify() {
 	ASSERT_MESSAGE(m_faceInstances.size() == m_brush.DEBUG_size(), "FATAL: mismatch");
 }
 
-bool BrushNode::testLight(const RendererLight& light) const {
-	return light.testAABB(worldAABB());
+bool BrushNode::intersectsLight(const RendererLight& light) const {
+	return light.intersectsAABB(worldAABB());
 }
 
 void BrushNode::insertLight(const RendererLight& light) {
@@ -444,7 +445,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
                             const VolumeTest& volume,
                             const Matrix4& localToWorld) const
 {
-	m_lightList->evaluateLights();
+	m_lightList->calculateIntersectingLights();
 
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 

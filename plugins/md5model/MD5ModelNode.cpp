@@ -9,11 +9,15 @@ namespace md5 {
 
 // Local helper
 inline void Surface_addLight(const MD5Surface& surface,
-								 VectorLightList& lights,
-								 const Matrix4& localToWorld,
-								 const RendererLight& light)
+                             render::lib::VectorLightList& lights,
+                             const Matrix4& localToWorld,
+                             const RendererLight& light)
 {
-	if (light.testAABB(AABB::createFromOrientedAABB(surface.localAABB(), localToWorld))) {
+	if (light.intersectsAABB(
+            AABB::createFromOrientedAABB(surface.localAABB(), localToWorld)
+        )
+    )
+    {
 		lights.addLight(light);
 	}
 }
@@ -22,7 +26,7 @@ MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
 	_model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
 	_surfaceLightLists(_model->size())
 {
-	_lightList = &GlobalRenderSystem().attach(*this);
+	_lightList = &GlobalRenderSystem().attachLitObject(*this);
 
 	Node::setTransformChangedCallback(Callback((boost::bind(&MD5ModelNode::lightsChanged, this))));
 }
@@ -35,13 +39,14 @@ model::IModel& MD5ModelNode::getIModel() {
 	return *_model;
 }
 
-void MD5ModelNode::lightsChanged() {
-	_lightList->lightsChanged();
+void MD5ModelNode::lightsChanged()
+{
+	_lightList->setDirty();
 }
 
 MD5ModelNode::~MD5ModelNode()
 {
-	GlobalRenderSystem().detach(*this);
+	GlobalRenderSystem().detachLitObject(*this);
 }
 
 void MD5ModelNode::setModel(const MD5ModelPtr& model) {
@@ -65,8 +70,9 @@ void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test) {
 	_model->testSelect(selector, test, localToWorld());
 }
 
-bool MD5ModelNode::testLight(const RendererLight& light) const {
-	return light.testAABB(worldAABB());
+bool MD5ModelNode::intersectsLight(const RendererLight& light) const
+{
+	return light.intersectsAABB(worldAABB());
 }
 
 void MD5ModelNode::insertLight(const RendererLight& light) {
@@ -90,7 +96,7 @@ void MD5ModelNode::clearLights() {
 
 void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	_lightList->evaluateLights();
+	_lightList->calculateIntersectingLights();
 
 	assert(_renderEntity);
 

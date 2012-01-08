@@ -122,7 +122,7 @@ public:
     Vector3 worldOrigin() const;
     Matrix4 getLightTextureTransformation() const;
 	ShaderPtr getShader() const;
-	bool testAABB(const AABB& other) const;
+	bool intersectsAABB(const AABB& other) const;
 
 	Vector3 getLightOrigin() const;
 	const Matrix4& rotation() const;

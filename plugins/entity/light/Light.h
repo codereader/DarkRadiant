@@ -258,7 +258,7 @@ public:
     Vector3 worldOrigin() const;
 
     Matrix4 getLightTextureTransformation() const;
-  	bool testAABB(const AABB& other) const;
+  	bool intersectsAABB(const AABB& other) const;
 	const Matrix4& rotation() const;
 	Vector3 getLightOrigin() const;
 	const Vector3& colour() const;

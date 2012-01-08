@@ -11,7 +11,7 @@ PatchNode::PatchNode(bool patchDef3) :
 	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
 	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
-	m_lightList(&GlobalRenderSystem().attach(*this)),
+	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(*this,
 			Callback(boost::bind(&PatchNode::evaluateTransform, this)),
 			Callback(boost::bind(&Node::boundsChanged, this))) // create the m_patch member with the node parameters
@@ -34,12 +34,12 @@ PatchNode::PatchNode(const PatchNode& other) :
 	ComponentEditable(other),
 	ComponentSnappable(other),
 	PlaneSelectable(other),
-	LightCullable(other),
+	LitObject(other),
 	Transformable(other),
 	m_dragPlanes(boost::bind(&PatchNode::selectedChangedComponent, this, _1)),
 	_selectable(boost::bind(&PatchNode::selectedChanged, this, _1)),
 	m_render_selected(GL_POINTS),
-	m_lightList(&GlobalRenderSystem().attach(*this)),
+	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(other.m_patch,
 			*this,
 			Callback(boost::bind(&PatchNode::evaluateTransform, this)),
@@ -50,7 +50,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 
 PatchNode::~PatchNode()
 {
-	GlobalRenderSystem().detach(*this);
+	GlobalRenderSystem().detachLitObject(*this);
 }
 
 void PatchNode::allocate(std::size_t size) {
@@ -85,8 +85,9 @@ IPatch& PatchNode::getPatch() {
 	return m_patch;
 }
 
-void PatchNode::lightsChanged() {
-	m_lightList->lightsChanged();
+void PatchNode::lightsChanged()
+{
+	m_lightList->setDirty();
 }
 
 // Snappable implementation
@@ -277,8 +278,8 @@ void PatchNode::onRemoveFromScene()
 	Node::onRemoveFromScene();
 }
 
-bool PatchNode::testLight(const RendererLight& light) const {
-	return light.testAABB(worldAABB());
+bool PatchNode::intersectsLight(const RendererLight& light) const {
+	return light.intersectsAABB(worldAABB());
 }
 
 void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
