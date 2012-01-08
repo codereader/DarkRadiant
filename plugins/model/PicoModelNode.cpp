@@ -79,7 +79,8 @@ void PicoModelNode::insertLight(const RendererLight& light)
 }
 
 // Clear all lights from this model instance
-void PicoModelNode::clearLights() {
+void PicoModelNode::clearLights() 
+{
 	_lights.clear();
 }
 

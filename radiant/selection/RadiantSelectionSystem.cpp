@@ -1011,8 +1011,8 @@ void RadiantSelectionSystem::ConstructPivot()
  */
 void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
 	if (!nothingSelected()) {
-		collector.Highlight(RenderableCollector::ePrimitive, false);
-		collector.Highlight(RenderableCollector::eFace, false);
+		collector.highlightFaces(false);
+		collector.highlightPrimitives(false);
 
 		collector.SetState(_state, RenderableCollector::eWireframeOnly);
 		collector.SetState(_state, RenderableCollector::eFullMaterials);

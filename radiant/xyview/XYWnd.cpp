@@ -1171,16 +1171,12 @@ void XYWnd::drawBlockGrid() {
 	}
 
 	float	x, y, xb, xe, yb, ye;
-	float	w, h;
 	char	text[32];
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_TEXTURE_1D);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
-
-	w = (_width / 2 / m_fScale);
-	h = (_height / 2 / m_fScale);
 
 	Vector4 windowCoords = getWindowCoordinates();
 

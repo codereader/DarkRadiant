@@ -19,6 +19,8 @@ class VectorLightList
     typedef std::vector<const RendererLight*> Lights;
     Lights _lights;
 
+    friend std::ostream& operator<< (std::ostream&, const VectorLightList&);
+
 public:
 
     void addLight(const RendererLight& light) {
@@ -41,6 +43,11 @@ public:
         }
     }
 };
+
+inline std::ostream& operator<< (std::ostream& os, const VectorLightList& ll)
+{
+    return os << "VectorLightList { size = " << ll._lights.size() << " }";
+}
 
 }
 }

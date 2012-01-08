@@ -82,9 +82,12 @@ public:
 	}
 
 	// Front-end render function
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const {
-		collector.Highlight(RenderableCollector::ePrimitive, false);
-		collector.Highlight(RenderableCollector::eFace, false);
+	void render(RenderableCollector& collector,
+                const VolumeTest& volume,
+                const Matrix4& localToWorld) const
+    {
+		collector.highlightPrimitives(false);
+		collector.highlightFaces(false);
 		collector.SetState(_shader, RenderableCollector::eFullMaterials);
 		collector.SetState(_shader, RenderableCollector::eWireframeOnly);
 

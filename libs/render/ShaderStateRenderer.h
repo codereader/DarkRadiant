@@ -64,15 +64,14 @@ public:
 		_stateStack.back()->addRenderable(renderable, world, entity);
 	}
 
-	const EStyle getStyle() const
+	bool supportsFullMaterials() const
 	{
-		return eFullMaterials;
+        return true;
 	}
 
-	void Highlight(EHighlightMode mode, bool bEnable = true)
-	{
-		// Do nothing for now
-	}
+    // No support for selection highlighting
+	void highlightFaces(bool enable = true) { }
+	void highlightPrimitives(bool enable = true) { }
 };
 
 } // namespace

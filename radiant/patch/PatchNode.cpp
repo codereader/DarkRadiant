@@ -372,8 +372,9 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	update_selected();
 
 	// If there are any selected components, add them to the collector
-	if (!m_render_selected.empty()) {
-		collector.Highlight(RenderableCollector::ePrimitive, false);
+	if (!m_render_selected.empty())
+    {
+		collector.highlightPrimitives(false);
 		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
 		collector.SetState(PatchNode::m_state_selpoint, RenderableCollector::eFullMaterials);
 		collector.addRenderable(m_render_selected, localToWorld());

@@ -72,7 +72,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-Camera.$(OBJEXT) \
 	darkradiant-GlobalCamera.$(OBJEXT) \
 	darkradiant-CameraSettings.$(OBJEXT) \
-	darkradiant-CamWnd.$(OBJEXT) \
+	darkradiant-CamRenderer.$(OBJEXT) darkradiant-CamWnd.$(OBJEXT) \
 	darkradiant-FloatingCamWnd.$(OBJEXT) \
 	darkradiant-Namespace.$(OBJEXT) \
 	darkradiant-NamespaceFactory.$(OBJEXT) \
@@ -518,6 +518,7 @@ darkradiant_SOURCES = main.cpp \
                       camera/Camera.cpp \
                       camera/GlobalCamera.cpp \
                       camera/CameraSettings.cpp \
+                      camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
                       namespace/Namespace.cpp \
@@ -811,6 +812,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-BulgePatchDialog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-COutRedirector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CSG.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CamRenderer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CamWnd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-Camera.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-CameraSettings.Po@am__quote@
@@ -1376,6 +1378,22 @@ darkradiant-CameraSettings.obj: camera/CameraSettings.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='camera/CameraSettings.cpp' object='darkradiant-CameraSettings.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CameraSettings.obj `if test -f 'camera/CameraSettings.cpp'; then $(CYGPATH_W) 'camera/CameraSettings.cpp'; else $(CYGPATH_W) '$(srcdir)/camera/CameraSettings.cpp'; fi`
+
+darkradiant-CamRenderer.o: camera/CamRenderer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CamRenderer.o -MD -MP -MF $(DEPDIR)/darkradiant-CamRenderer.Tpo -c -o darkradiant-CamRenderer.o `test -f 'camera/CamRenderer.cpp' || echo '$(srcdir)/'`camera/CamRenderer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-CamRenderer.Tpo $(DEPDIR)/darkradiant-CamRenderer.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='camera/CamRenderer.cpp' object='darkradiant-CamRenderer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CamRenderer.o `test -f 'camera/CamRenderer.cpp' || echo '$(srcdir)/'`camera/CamRenderer.cpp
+
+darkradiant-CamRenderer.obj: camera/CamRenderer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CamRenderer.obj -MD -MP -MF $(DEPDIR)/darkradiant-CamRenderer.Tpo -c -o darkradiant-CamRenderer.obj `if test -f 'camera/CamRenderer.cpp'; then $(CYGPATH_W) 'camera/CamRenderer.cpp'; else $(CYGPATH_W) '$(srcdir)/camera/CamRenderer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-CamRenderer.Tpo $(DEPDIR)/darkradiant-CamRenderer.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='camera/CamRenderer.cpp' object='darkradiant-CamRenderer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-CamRenderer.obj `if test -f 'camera/CamRenderer.cpp'; then $(CYGPATH_W) 'camera/CamRenderer.cpp'; else $(CYGPATH_W) '$(srcdir)/camera/CamRenderer.cpp'; fi`
 
 darkradiant-CamWnd.o: camera/CamWnd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-CamWnd.o -MD -MP -MF $(DEPDIR)/darkradiant-CamWnd.Tpo -c -o darkradiant-CamWnd.o `test -f 'camera/CamWnd.cpp' || echo '$(srcdir)/'`camera/CamWnd.cpp

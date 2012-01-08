@@ -249,10 +249,11 @@ void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& v
 	// Nothing so far (FIXME)
 }
 
-void EntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void EntityNode::renderWireframe(RenderableCollector& collector,
+                                 const VolumeTest& volume) const
 {
 	// Submit renderable text name if required
-	if (collector.getStyle() == RenderableCollector::eWireframeOnly &&
+	if (!collector.supportsFullMaterials() &&
 		EntitySettings::InstancePtr()->renderEntityNames())
     {
 		collector.SetState(getWireShader(), RenderableCollector::eWireframeOnly);

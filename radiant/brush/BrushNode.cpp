@@ -498,7 +498,7 @@ void BrushNode::renderComponentsSelected(RenderableCollector& collector, const V
 
 	update_selected();
 	if (!m_render_selected.empty()) {
-		collector.Highlight(RenderableCollector::ePrimitive, false);
+		collector.highlightPrimitives(false);
 		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eWireframeOnly);
 		collector.SetState(BrushNode::m_state_selpoint, RenderableCollector::eFullMaterials);
 		collector.addRenderable(m_render_selected, localToWorld);

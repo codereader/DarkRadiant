@@ -26,15 +26,10 @@ public:
 	// to the contained RenderableCollector.
 	void render(const Renderable& renderable) const
 	{
-	    switch(_collector.getStyle())
-	    {
-	    case RenderableCollector::eFullMaterials:
+	    if (_collector.supportsFullMaterials())
 			renderable.renderSolid(_collector, _volume);
-			break;
-	    case RenderableCollector::eWireframeOnly:
+        else
 			renderable.renderWireframe(_collector, _volume);
-			break;
-	    }
 	}
 
 	RenderableCallback getRenderableCallback()
@@ -67,19 +62,19 @@ public:
 		}
 
 		node->viewChanged();
-		
+
 		if (node->isHighlighted() || (parent != NULL && parent->isHighlighted()))
 		{
 			if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
 			{
-				_collector.Highlight(RenderableCollector::eFace);
+				_collector.highlightFaces(true);
 			}
 			else
 			{
 				node->renderComponents(_collector, _volume);
 			}
 
-			_collector.Highlight(RenderableCollector::ePrimitive);
+			_collector.highlightPrimitives(true);
 		}
 
 		render(*node);

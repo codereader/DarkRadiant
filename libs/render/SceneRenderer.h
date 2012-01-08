@@ -31,15 +31,10 @@ public:
 	// to the contained RenderableCollector.
 	void render(const Renderable& renderable) const
 	{
-	    switch(_collector.getStyle())
-	    {
-	    case RenderableCollector::eFullMaterials:
+	    if (_collector.supportsFullMaterials())
 			renderable.renderSolid(_collector, _volume);
-			break;
-	    case RenderableCollector::eWireframeOnly:
+        else
 			renderable.renderWireframe(_collector, _volume);
-			break;
-	    }
 	}
 
 	// scene::Graph::Walker implementation, tells each node to submit its OpenGLRenderables
@@ -48,7 +43,7 @@ public:
 		_collector.PushState();
 
 		node->viewChanged();
-		
+
 		render(*node);
 
 		_collector.PopState();

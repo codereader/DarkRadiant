@@ -49,6 +49,7 @@ darkradiant_SOURCES = main.cpp \
                       camera/Camera.cpp \
                       camera/GlobalCamera.cpp \
                       camera/CameraSettings.cpp \
+                      camera/CamRenderer.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
                       namespace/Namespace.cpp \

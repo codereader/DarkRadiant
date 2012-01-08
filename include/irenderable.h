@@ -33,12 +33,7 @@ class IRenderEntity;
 class RenderableCollector
 {
 public:
-  enum EHighlightMode
-  {
-    eFace = 1 << 0,
-    /*! Full highlighting. */
-    ePrimitive = 1 << 1,
-  };
+	virtual ~RenderableCollector() {}
 
 	/**
 	 * Enumeration containing render styles.
@@ -47,11 +42,6 @@ public:
 		eWireframeOnly,
 		eFullMaterials
 	};
-
-	/**
-	 * Destructor
-	 */
-	virtual ~RenderableCollector() {}
 
 	/**
 	 * Push a Shader onto the internal shader stack. This is an OpenGL-style
@@ -105,18 +95,22 @@ public:
 							   const IRenderEntity& entity) = 0;
 
 
-	/**
-    * Return the render style of this RenderableCollector.
-	 *
-    * TODO: If a RenderableCollector has a single style, why do we pass in an
-    * EStyle parameter when setting the state with SetState()?
-	 */
-	virtual const EStyle getStyle() const = 0;
+    /**
+     * \brief
+     * Determine if this RenderableCollector can accept renderables for full
+     * materials rendering, or just wireframe rendering.
+     *
+     * \return
+     * true if full materials are supported, false if only wireframe rendering
+     * is supported.
+     */
+	virtual bool supportsFullMaterials() const = 0;
 
-	/**
-	 * Set the highlighting (selection) mode.
-	 */
-	virtual void Highlight(EHighlightMode mode, bool bEnable = true) = 0;
+    /// Highlight faces of subsequently-submitted objects, if supported
+    virtual void highlightFaces(bool enable) = 0;
+
+    /// Highlight primitives of subsequently-submitted objects, if supported
+    virtual void highlightPrimitives(bool enable) = 0;
 
   	/**
   	 * Set the list of lights to be used for lighting-mode rendering. This

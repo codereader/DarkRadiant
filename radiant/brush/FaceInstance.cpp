@@ -162,7 +162,7 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
 
 		if (selectedComponents())
 		{
-			collector.Highlight(RenderableCollector::eFace);
+			collector.highlightFaces(true);
 		}
 
 		m_face->submitRenderables(collector, Matrix4::getIdentity(), entity);
@@ -182,7 +182,7 @@ void FaceInstance::submitRenderables(RenderableCollector& collector,
 
 		if (selectedComponents())
 		{
-			collector.Highlight(RenderableCollector::eFace);
+			collector.highlightFaces(true);
 		}
 
 		m_face->submitRenderables(collector, localToWorld, entity);
