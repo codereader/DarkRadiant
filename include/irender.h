@@ -220,6 +220,51 @@ typedef boost::function<void(const RendererLight&)> RendererLightCallback;
  * It seems to be basically a set of callback functions which need to be invoked
  * at the right time during the render process, but these shouldn't really be
  * the responsibility of anything outside the renderer itself.
+ *
+ * As of 2011-01-09/r6927 the calling sequence seems to be as follows:
+ *
+ * 1. Illuminated object (e.g. patch, brush) adds itself to the RenderSystem
+ * with attachLitObject() at construction.
+ * 2. attachLitObject() returns a reference to a (newly-created) LightList which
+ * manages the lights intersecting this lit object. The lit object stores this
+ * reference internally, while the LightList implementation also stores a
+ * reference to the LitObject.
+ * 3. When the lit object's renderSolid() method is invoked to set up a render,
+ * it invokes LightList::calculateIntersectingLights() on the stored LightList
+ * reference.
+ * 4. calculateIntersectingLights() first checks to see if the lights need
+ * updating, which is true if EITHER this LightList's setDirty() method OR the
+ * RenderSystem's lightChanged() has been called since the last calculation. If
+ * no update is needed, it returns.
+ * 5. If an update IS needed, the LightList iterates over all lights in the
+ * scene, and tests if each one intersects its associated lit object (which is
+ * the one that just invoked calculateIntersectingLights(), although nothing
+ * enforces this). This intersection test is performed by passing the light to
+ * the LitObject::intersectsLight() method.
+ * 6. For each light which passes the intersection test, the LightList both adds
+ * it to its internal list of "active" (i.e. intersecting) lights for its
+ * object, and passes it to the object's insertLight() method. Some object
+ * classes then use insertLight() to populate another internal LightList subject
+ * to additional (internal) intersection tests, but this is not required.
+ * 7. At this point, calculateIntersectingLights() has finished, and returns
+ * control to its calling renderSolid() method.
+ * 8. The renderSolid() method (or another method it calls) passes a LightList
+ * to the RenderableCollector with setLights(). The light list it passes may be
+ * the original list returned from attachLitObject(), or the additional internal
+ * list populated in step 6.
+ * 9. The RenderableCollector state machine stores the LightList as the
+ * "current" light list.
+ * 10. Any subsequent renderables submitted with
+ * RenderableCollector::addRenderable() are associated with the current
+ * LightList passed in the previous step, and passed to the current Shader.
+ * 11. The OpenGLShader accepts the renderable and LightList, and adds them to
+ * its internal OpenGLShaderPasses: once only if RENDER_BUMP is not active, not
+ * at all if RENDER_BUMP is active but the LightList is NULL, or once for each
+ * light in the LightList otherwise.
+ * 12. The OpenGLShaderPass now contains a list of TransformedRenderable
+ * structures, each associating a single renderable with a single light.
+ * Multiple TransformedRenderable will exist for the same renderable if there
+ * were multiple lights illuminating it.
  */
 class LightList
 {

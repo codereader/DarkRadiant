@@ -661,7 +661,9 @@ void OpenGLShaderPass::render(OpenGLState& current,
 			renderAllContained(_renderablesWithoutEntity, current, viewer, time);
 		}
 
-		for (RenderablesByEntity::const_iterator i = _renderables.begin(); i != _renderables.end(); ++i)
+		for (RenderablesByEntity::const_iterator i = _renderables.begin();
+             i != _renderables.end();
+             ++i)
 		{
 			// Apply our state to the current state object
 			applyState(current, flagsMask, viewer, time, i->first);
