@@ -22,9 +22,6 @@
     <ClInclude Include="..\..\plugins\md5model\MD5Surface.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\md5model\VectorLightList.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\md5model\MD5Anim.h">
       <Filter>src</Filter>
     </ClInclude>

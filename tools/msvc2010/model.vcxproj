@@ -323,7 +323,6 @@
     <ClInclude Include="..\..\plugins\model\plugin.h" />
     <ClInclude Include="..\..\plugins\model\RenderablePicoModel.h" />
     <ClInclude Include="..\..\plugins\model\RenderablePicoSurface.h" />
-    <ClInclude Include="..\..\plugins\model\VectorLightList.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\model\model.def" />

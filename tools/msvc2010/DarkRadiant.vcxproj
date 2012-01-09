@@ -320,6 +320,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\brushmanip.cpp" />
+    <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp" />
     <ClCompile Include="..\..\radiant\entity.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\mainframe_old.cpp" />
@@ -331,6 +332,7 @@
     <ClCompile Include="..\..\radiant\patchmanip.cpp" />
     <ClCompile Include="..\..\radiant\Profile.cpp" />
     <ClCompile Include="..\..\radiant\RadiantModule.cpp" />
+    <ClCompile Include="..\..\radiant\render\LinearLightList.cpp" />
     <ClCompile Include="..\..\radiant\select.cpp" />
     <ClCompile Include="..\..\radiant\timer.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp" />
@@ -578,7 +580,6 @@
     <ClInclude Include="..\..\radiant\brush\SelectableComponents.h" />
     <ClInclude Include="..\..\radiant\brush\TexDef.h" />
     <ClInclude Include="..\..\radiant\brush\TextureProjection.h" />
-    <ClInclude Include="..\..\radiant\brush\VectorLightList.h" />
     <ClInclude Include="..\..\radiant\brush\VertexInstance.h" />
     <ClInclude Include="..\..\radiant\brush\VertexSelection.h" />
     <ClInclude Include="..\..\radiant\brush\Winding.h" />

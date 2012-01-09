@@ -793,6 +793,12 @@
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp">
       <Filter>src\ui\animationpreview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\render\LinearLightList.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp">
+      <Filter>src\camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\brushmanip.h">
@@ -880,9 +886,6 @@
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\TextureProjection.h">
-      <Filter>src\brush</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\brush\VectorLightList.h">
       <Filter>src\brush</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\brush\VertexInstance.h">

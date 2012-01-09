@@ -39,9 +39,6 @@
     <ClInclude Include="..\..\plugins\model\RenderablePicoSurface.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\model\VectorLightList.h">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\model\model.def">
