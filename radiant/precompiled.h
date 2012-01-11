@@ -5,18 +5,17 @@
  */
 #pragma once
 
-// Include boost stuff
+// Include common boost headers that don't have link dependencies
 #include <boost/shared_ptr.hpp>
-#include <boost/shared_array.hpp>
 #include <boost/function.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/noncopyable.hpp>
 
 // Include GTKmm
 #include <gtkmm.h>
-#include <glibmm.h>
 
 // Add DarkRadiant interfaces
 #include "Bounded.h"
@@ -110,3 +109,13 @@
 #include "VolumeIntersectionValue.h"
 #include "warnings.h"
 #include "windowobserver.h"
+
+// Include important math headers
+#include "math/Vector2.h"
+#include "math/Vector3.h"
+#include "math/Vector4.h"
+#include "math/Matrix4.h"
+#include "math/AABB.h"
+
+// Include registry methods
+#include "registry/registry.h"
