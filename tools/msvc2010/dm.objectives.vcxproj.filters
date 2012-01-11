@@ -139,6 +139,9 @@
     <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveConditionsDialog.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.objectives\precompiled.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\dm.objectives\Component.h">
@@ -289,6 +292,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveCondition.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.objectives\precompiled.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

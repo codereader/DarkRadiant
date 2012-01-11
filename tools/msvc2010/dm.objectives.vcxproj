@@ -124,14 +124,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -175,14 +175,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -224,12 +224,12 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -278,12 +278,12 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;4355;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -323,6 +323,12 @@
     <ClCompile Include="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\objectives.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\ObjectivesEditor.cpp" />
+    <ClCompile Include="..\..\plugins\dm.objectives\precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\plugins\dm.objectives\Specifier.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\SpecifierType.cpp" />
     <ClCompile Include="..\..\plugins\dm.objectives\ce\AIFindBodyComponentEditor.cpp" />
@@ -368,6 +374,7 @@
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveEntityFinder.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectiveKeyExtractor.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\ObjectivesEditor.h" />
+    <ClInclude Include="..\..\plugins\dm.objectives\precompiled.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\RandomOrigin.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\Specifier.h" />
     <ClInclude Include="..\..\plugins\dm.objectives\SpecifierType.h" />
