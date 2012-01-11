@@ -6,7 +6,7 @@
 
 #include "precompiled_main.h"
 
-// Some objectives editor specifics
+// Some S/R editor specifics
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignedLabel.h"
