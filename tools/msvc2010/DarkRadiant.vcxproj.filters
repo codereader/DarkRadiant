@@ -799,6 +799,9 @@
     <ClCompile Include="..\..\radiant\camera\CamRenderer.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\precompiled.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\brushmanip.h">
@@ -1649,6 +1652,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h">
       <Filter>src\ui\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\precompiled.h">
+      <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
