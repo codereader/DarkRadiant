@@ -124,14 +124,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -175,14 +175,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -224,12 +224,12 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -278,12 +278,12 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;mathlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -311,6 +311,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\script\precompiled.h" />
     <ClInclude Include="..\..\plugins\script\PythonConsoleWriter.h" />
     <ClInclude Include="..\..\plugins\script\SceneNodeBuffer.h" />
     <ClInclude Include="..\..\plugins\script\ScriptCommand.h" />
@@ -340,6 +341,12 @@
     <ClInclude Include="..\..\plugins\script\interfaces\SoundInterface.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\plugins\script\precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\plugins\script\SceneNodeBuffer.cpp" />
     <ClCompile Include="..\..\plugins\script\ScriptCommand.cpp" />
     <ClCompile Include="..\..\plugins\script\ScriptingSystem.cpp" />
