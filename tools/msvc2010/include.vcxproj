@@ -169,6 +169,10 @@
     <ClInclude Include="..\..\include\ModResource.h" />
     <ClInclude Include="..\..\include\moduleobserver.h" />
     <ClInclude Include="..\..\include\nameable.h" />
+    <ClInclude Include="..\..\include\precompiled_boost.h" />
+    <ClInclude Include="..\..\include\precompiled_interfaces.h" />
+    <ClInclude Include="..\..\include\precompiled_main.h" />
+    <ClInclude Include="..\..\include\precompiled_math.h" />
     <ClInclude Include="..\..\include\ShaderLayer.h" />
     <ClInclude Include="..\..\include\StringSerialisable.h" />
     <ClInclude Include="..\..\include\Texture.h" />
