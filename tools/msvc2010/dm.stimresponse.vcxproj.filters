@@ -55,6 +55,9 @@
     <ClCompile Include="..\..\plugins\dm.stimresponse\StimTypes.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.stimresponse\precompiled.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\dm.stimresponse\ClassEditor.h">
@@ -100,6 +103,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\dm.stimresponse\StimTypes.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.stimresponse\precompiled.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

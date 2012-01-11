@@ -124,14 +124,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -175,14 +175,14 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <BrowseInformation>
       </BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -224,12 +224,12 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -278,12 +278,12 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)vc80.pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4610;4510;4512;4505;4100;4127;4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>precompiled.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gtkutillib.lib;xmlutillib.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -316,6 +316,12 @@
     <ClCompile Include="..\..\plugins\dm.stimresponse\EffectArgumentItem.cpp" />
     <ClCompile Include="..\..\plugins\dm.stimresponse\EffectEditor.cpp" />
     <ClCompile Include="..\..\plugins\dm.stimresponse\plugin.cpp" />
+    <ClCompile Include="..\..\plugins\dm.stimresponse\precompiled.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\plugins\dm.stimresponse\ResponseEditor.cpp" />
     <ClCompile Include="..\..\plugins\dm.stimresponse\ResponseEffect.cpp" />
     <ClCompile Include="..\..\plugins\dm.stimresponse\ResponseEffectTypes.cpp" />
@@ -333,6 +339,7 @@
     <ClInclude Include="..\..\plugins\dm.stimresponse\CustomStimEditor.h" />
     <ClInclude Include="..\..\plugins\dm.stimresponse\EffectArgumentItem.h" />
     <ClInclude Include="..\..\plugins\dm.stimresponse\EffectEditor.h" />
+    <ClInclude Include="..\..\plugins\dm.stimresponse\precompiled.h" />
     <ClInclude Include="..\..\plugins\dm.stimresponse\ResponseEditor.h" />
     <ClInclude Include="..\..\plugins\dm.stimresponse\ResponseEffect.h" />
     <ClInclude Include="..\..\plugins\dm.stimresponse\ResponseEffectTypes.h" />
