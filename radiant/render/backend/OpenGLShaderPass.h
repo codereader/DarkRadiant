@@ -26,7 +26,7 @@ private:
 	render::OpenGLShader& _owner;
 
 	// The state applied to this bucket
-	OpenGLState _state;
+	OpenGLState _glState;
 
 	/*
 	 * Representation of a transformed-and-lit renderable object. Stores a
@@ -144,12 +144,12 @@ public:
 	 * Return the OpenGL state associated with this bucket.
 	 */
 	OpenGLState& state() {
-		return _state;
+		return _glState;
 	}
 
 	OpenGLState* statePtr()
 	{
-		return &_state;
+		return &_glState;
 	}
 
 	/**

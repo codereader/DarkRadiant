@@ -8,13 +8,15 @@
 #include "texturelib.h"
 #include "iglprogram.h"
 
+#include "debugging/render.h"
+
 namespace {
 
 // Bind the given texture to the texture unit, if it is different from the
 // current state, then set the current state to the new texture.
 inline void setTextureState(GLint& current,
-							const GLint& texture,
-							GLenum textureUnit,
+                            const GLint& texture,
+                            GLenum textureUnit,
                             GLenum textureMode)
 {
     if (texture != current)
@@ -32,45 +34,45 @@ inline void setTextureState(GLint& current,
                             const GLint& texture,
                             GLenum textureMode)
 {
-	if (texture != current)
-	{
-		glBindTexture(textureMode, texture);
-		GlobalOpenGL().assertNoErrors();
-		current = texture;
-	}
+    if (texture != current)
+    {
+        glBindTexture(textureMode, texture);
+        GlobalOpenGL().assertNoErrors();
+        current = texture;
+    }
 }
 
 // Utility function to toggle an OpenGL state flag
 inline void setState(unsigned int state,
-					 unsigned int delta,
-					 unsigned int flag,
-					 GLenum glflag)
+                     unsigned int delta,
+                     unsigned int flag,
+                     GLenum glflag)
 {
-	if (delta & state & flag)
-	{
-		glEnable(glflag);
-		GlobalOpenGL().assertNoErrors();
-	}
-	else if(delta & ~state & flag)
-	{
-		glDisable(glflag);
-		GlobalOpenGL().assertNoErrors();
-	}
+    if (delta & state & flag)
+    {
+        glEnable(glflag);
+        GlobalOpenGL().assertNoErrors();
+    }
+    else if(delta & ~state & flag)
+    {
+        glDisable(glflag);
+        GlobalOpenGL().assertNoErrors();
+    }
 }
 
 inline void evaluateStage(const ShaderLayerPtr& stage, std::size_t time, const IRenderEntity* entity)
 {
-	if (stage) 
-	{
-		if (entity)
-		{
-			stage->evaluateExpressions(time, *entity);
-		}
-		else
-		{
-			stage->evaluateExpressions(time);
-		}
-	}
+    if (stage)
+    {
+        if (entity)
+        {
+            stage->evaluateExpressions(time, *entity);
+        }
+        else
+        {
+            stage->evaluateExpressions(time);
+        }
+    }
 }
 
 } // namespace
@@ -92,7 +94,7 @@ void OpenGLShaderPass::enableTexture2D()
 
     setTexture0();
     glEnable(GL_TEXTURE_2D);
-	
+
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     GlobalOpenGL().assertNoErrors();
 }
@@ -146,72 +148,72 @@ void OpenGLShaderPass::disableRenderBlend()
 
 void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerPtr& stage)
 {
-	// Set the texture matrix for the given unit 
-	glActiveTexture(textureUnit);
-	glClientActiveTexture(textureUnit);
+    // Set the texture matrix for the given unit
+    glActiveTexture(textureUnit);
+    glClientActiveTexture(textureUnit);
 
-	if (stage)
-	{
-		static const Matrix4 transMinusHalf = Matrix4::getTranslation(Vector3(-0.5f, -0.5f, 0));
-		static const Matrix4 transPlusHalf = Matrix4::getTranslation(Vector3(+0.5f, +0.5f, 0));
+    if (stage)
+    {
+        static const Matrix4 transMinusHalf = Matrix4::getTranslation(Vector3(-0.5f, -0.5f, 0));
+        static const Matrix4 transPlusHalf = Matrix4::getTranslation(Vector3(+0.5f, +0.5f, 0));
 
-		Matrix4 tex = Matrix4::getIdentity();
+        Matrix4 tex = Matrix4::getIdentity();
 
-		Vector2 scale = stage->getScale();
+        Vector2 scale = stage->getScale();
 
-		if (stage->getStageFlags() & ShaderLayer::FLAG_CENTERSCALE)
-		{
-			// Center scale, apply translation by -0.5 first, then scale, then translate back
-			tex.multiplyBy(transMinusHalf);
-			tex.multiplyBy(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
-			tex.multiplyBy(transPlusHalf);
-		}
-		else
-		{
-			// Regular scale, apply translation and scale
-			tex.multiplyBy(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
-		}
+        if (stage->getStageFlags() & ShaderLayer::FLAG_CENTERSCALE)
+        {
+            // Center scale, apply translation by -0.5 first, then scale, then translate back
+            tex.multiplyBy(transMinusHalf);
+            tex.multiplyBy(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
+            tex.multiplyBy(transPlusHalf);
+        }
+        else
+        {
+            // Regular scale, apply translation and scale
+            tex.multiplyBy(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
+        }
 
-		Vector2 shear = stage->getShear();
+        Vector2 shear = stage->getShear();
 
-		if (shear.x() != 0 || shear.y() != 0)
-		{
-			Matrix4 shearMatrix = Matrix4::byColumns(
-				1, shear.y(), 0, 0,
-				shear.x(), 1, 0, 0,
-				0, 0, 1, 0,
-				0, 0, 0, 1
-			);
+        if (shear.x() != 0 || shear.y() != 0)
+        {
+            Matrix4 shearMatrix = Matrix4::byColumns(
+                1, shear.y(), 0, 0,
+                shear.x(), 1, 0, 0,
+                0, 0, 1, 0,
+                0, 0, 0, 1
+            );
 
-			tex.multiplyBy(transMinusHalf);
-			tex.multiplyBy(shearMatrix);
-			tex.multiplyBy(transPlusHalf);
-		}
-		
-		// Rotation
-		float rotate = stage->getRotation();
+            tex.multiplyBy(transMinusHalf);
+            tex.multiplyBy(shearMatrix);
+            tex.multiplyBy(transPlusHalf);
+        }
 
-		if (rotate != 0)
-		{
-			float angle = rotate * 2 * static_cast<float>(c_pi);
-		
-			Matrix4 rot = Matrix4::getRotationAboutZ(angle);	
+        // Rotation
+        float rotate = stage->getRotation();
 
-			tex.multiplyBy(transMinusHalf);
-			tex.multiplyBy(rot);
-			tex.multiplyBy(transPlusHalf);
-		}
+        if (rotate != 0)
+        {
+            float angle = rotate * 2 * static_cast<float>(c_pi);
 
-		// Apply translation as last step
-		Vector2 translation = stage->getTranslation();
-		tex.multiplyBy(Matrix4::getTranslation(Vector3(translation.x(), translation.y(), 0)));
+            Matrix4 rot = Matrix4::getRotationAboutZ(angle);
 
-		glLoadMatrixf(tex);
-	}
-	else
-	{
-		glLoadMatrixf(Matrix4::getIdentity());
-	}
+            tex.multiplyBy(transMinusHalf);
+            tex.multiplyBy(rot);
+            tex.multiplyBy(transPlusHalf);
+        }
+
+        // Apply translation as last step
+        Vector2 translation = stage->getTranslation();
+        tex.multiplyBy(Matrix4::getTranslation(Vector3(translation.x(), translation.y(), 0)));
+
+        glLoadMatrixf(tex);
+    }
+    else
+    {
+        glLoadMatrixf(Matrix4::getIdentity());
+    }
 }
 
 // Apply all textures to texture units
@@ -224,43 +226,43 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
     GLenum textureMode = 0;
 
     if (requiredState & RENDER_TEXTURE_CUBEMAP) // cube map has priority
-	{
+    {
         textureMode = GL_TEXTURE_CUBE_MAP;
-	}
+    }
     else if (requiredState & RENDER_TEXTURE_2D)
-	{
+    {
         textureMode = GL_TEXTURE_2D;
-	}
+    }
 
     // Apply our texture numbers to the current state
     if (textureMode != 0) // only if one of the RENDER_TEXTURE options
     {
-		glMatrixMode(GL_TEXTURE);
+        glMatrixMode(GL_TEXTURE);
 
         if (GLEW_VERSION_1_3)
         {
-			setTextureState(current.texture0, _state.texture0, GL_TEXTURE0, textureMode);
-			setupTextureMatrix(GL_TEXTURE0, _state.stage0);
+            setTextureState(current.texture0, _glState.texture0, GL_TEXTURE0, textureMode);
+            setupTextureMatrix(GL_TEXTURE0, _glState.stage0);
 
-			setTextureState(current.texture1, _state.texture1, GL_TEXTURE1, textureMode);
-			setupTextureMatrix(GL_TEXTURE1, _state.stage1);
+            setTextureState(current.texture1, _glState.texture1, GL_TEXTURE1, textureMode);
+            setupTextureMatrix(GL_TEXTURE1, _glState.stage1);
 
-            setTextureState(current.texture2, _state.texture2, GL_TEXTURE2, textureMode);
-			setupTextureMatrix(GL_TEXTURE2, _state.stage2);
+            setTextureState(current.texture2, _glState.texture2, GL_TEXTURE2, textureMode);
+            setupTextureMatrix(GL_TEXTURE2, _glState.stage2);
 
-            setTextureState(current.texture3, _state.texture2, GL_TEXTURE2, textureMode);
-			setTextureState(current.texture4, _state.texture2, GL_TEXTURE2, textureMode);
+            setTextureState(current.texture3, _glState.texture2, GL_TEXTURE2, textureMode);
+            setTextureState(current.texture4, _glState.texture2, GL_TEXTURE2, textureMode);
 
-			glActiveTexture(GL_TEXTURE0);
-			glClientActiveTexture(GL_TEXTURE0);
+            glActiveTexture(GL_TEXTURE0);
+            glClientActiveTexture(GL_TEXTURE0);
         }
         else
         {
-            setTextureState(current.texture0, _state.texture0, textureMode);
-			setupTextureMatrix(GL_TEXTURE0, _state.stage0);
+            setTextureState(current.texture0, _glState.texture0, textureMode);
+            setupTextureMatrix(GL_TEXTURE0, _glState.stage0);
         }
 
-		glMatrixMode(GL_MODELVIEW);
+        glMatrixMode(GL_MODELVIEW);
     }
 }
 
@@ -272,7 +274,7 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
     if (requiredState & RENDER_TEXTURE_CUBEMAP)
     {
         // Copy cubemap mode enum to current state object
-        current.cubeMapMode = _state.cubeMapMode;
+        current.cubeMapMode = _glState.cubeMapMode;
 
         // Apply axis transformation (swap Y and Z coordinates)
         Matrix4 transform = Matrix4::byRows(
@@ -294,70 +296,70 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
 
 // Apply own state to current state object
 void OpenGLShaderPass::applyState(OpenGLState& current,
-					              unsigned int globalStateMask,
+                                  unsigned int globalStateMask,
                                   const Vector3& viewer,
-								  std::size_t time,
-								  const IRenderEntity* entity)
+                                  std::size_t time,
+                                  const IRenderEntity* entity)
 {
-	// Evaluate any shader expressions
-	if (_state.stage0) 
-	{
-		evaluateStage(_state.stage0, time, entity);
+    // Evaluate any shader expressions
+    if (_glState.stage0)
+    {
+        evaluateStage(_glState.stage0, time, entity);
 
-		// The alpha test value might change over time
-		if (_state.stage0->getAlphaTest() > 0)
-		{
-			_state.renderFlags |= RENDER_ALPHATEST;
-		}
-		else
-		{
-			_state.renderFlags &= ~RENDER_ALPHATEST;
-		}
-	}
+        // The alpha test value might change over time
+        if (_glState.stage0->getAlphaTest() > 0)
+        {
+            _glState.renderFlags |= RENDER_ALPHATEST;
+        }
+        else
+        {
+            _glState.renderFlags &= ~RENDER_ALPHATEST;
+        }
+    }
 
-	if (_state.stage1) evaluateStage(_state.stage1, time, entity);
-	if (_state.stage2) evaluateStage(_state.stage2, time, entity);
-	if (_state.stage3) evaluateStage(_state.stage3, time, entity);
-	if (_state.stage4) evaluateStage(_state.stage4, time, entity);
+    if (_glState.stage1) evaluateStage(_glState.stage1, time, entity);
+    if (_glState.stage2) evaluateStage(_glState.stage2, time, entity);
+    if (_glState.stage3) evaluateStage(_glState.stage3, time, entity);
+    if (_glState.stage4) evaluateStage(_glState.stage4, time, entity);
 
-	if (_state.renderFlags & RENDER_OVERRIDE)
-	{
-		globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
-	}
+    if (_glState.renderFlags & RENDER_OVERRIDE)
+    {
+        globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
+    }
 
-	// Apply the global state mask to our own desired render flags to determine
+    // Apply the global state mask to our own desired render flags to determine
     // the final set of flags that must bet set
-	unsigned int requiredState = _state.renderFlags & globalStateMask;
+    unsigned int requiredState = _glState.renderFlags & globalStateMask;
 
-	// In per-entity mode, allow the entity to add requirements
-	if (entity != NULL)
-	{
-		requiredState |= entity->getRequiredShaderFlags();
-	}
+    // In per-entity mode, allow the entity to add requirements
+    if (entity != NULL)
+    {
+        requiredState |= entity->getRequiredShaderFlags();
+    }
 
     // Construct a mask containing all the flags that will be changing between
     // the current state and the required state. This avoids performing
     // unnecessary GL calls to set the state to its existing value.
-	const unsigned int changingBitsMask = requiredState ^ current.renderFlags;
+    const unsigned int changingBitsMask = requiredState ^ current.renderFlags;
 
     // Set the GLProgram if required
-	GLProgram* program = (requiredState & RENDER_PROGRAM) != 0
-						  ? _state.glProgram
-						  : 0;
+    GLProgram* program = (requiredState & RENDER_PROGRAM) != 0
+                          ? _glState.glProgram
+                          : 0;
 
     if (program != current.glProgram)
     {
         if (current.glProgram != 0)
         {
-			current.glProgram->disable();
-			glColor4fv(current.m_colour);
+            current.glProgram->disable();
+            glColor4fv(current.m_colour);
         }
 
         current.glProgram = program;
 
         if (current.glProgram != 0)
         {
-			current.glProgram->enable();
+            current.glProgram->enable();
         }
     }
 
@@ -404,7 +406,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
             disableTextureCubeMap();
         }
 
-		// RENDER_TEXTURE_2D
+        // RENDER_TEXTURE_2D
         if(changingBitsMask & requiredState & RENDER_TEXTURE_2D)
         {
             enableTexture2D();
@@ -475,13 +477,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         else if(changingBitsMask & ~requiredState & RENDER_COLOURARRAY)
         {
             glDisableClientState(GL_COLOR_ARRAY);
-            glColor4fv(_state.m_colour);
+            glColor4fv(_glState.m_colour);
             GlobalOpenGL().assertNoErrors();
         }
 
         if(changingBitsMask & ~requiredState & RENDER_COLOURCHANGE)
         {
-            glColor4fv(_state.m_colour);
+            glColor4fv(_glState.m_colour);
             GlobalOpenGL().assertNoErrors();
         }
 
@@ -494,47 +496,47 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
     } // end of changingBitsMask-dependent changes
 
-  if(requiredState & RENDER_DEPTHTEST && _state.m_depthfunc != current.m_depthfunc)
+  if(requiredState & RENDER_DEPTHTEST && _glState.m_depthfunc != current.m_depthfunc)
   {
-    glDepthFunc(_state.m_depthfunc);
+    glDepthFunc(_glState.m_depthfunc);
     GlobalOpenGL().assertNoErrors();
-    current.m_depthfunc = _state.m_depthfunc;
+    current.m_depthfunc = _glState.m_depthfunc;
   }
 
   if(requiredState & RENDER_LINESTIPPLE
-    && (_state.m_linestipple_factor != current.m_linestipple_factor
-    || _state.m_linestipple_pattern != current.m_linestipple_pattern))
+    && (_glState.m_linestipple_factor != current.m_linestipple_factor
+    || _glState.m_linestipple_pattern != current.m_linestipple_pattern))
   {
-    glLineStipple(_state.m_linestipple_factor, _state.m_linestipple_pattern);
+    glLineStipple(_glState.m_linestipple_factor, _glState.m_linestipple_pattern);
     GlobalOpenGL().assertNoErrors();
-    current.m_linestipple_factor = _state.m_linestipple_factor;
-    current.m_linestipple_pattern = _state.m_linestipple_pattern;
+    current.m_linestipple_factor = _glState.m_linestipple_factor;
+    current.m_linestipple_pattern = _glState.m_linestipple_pattern;
   }
 
     // Set up the alpha test parameters
     if (requiredState & RENDER_ALPHATEST
-        && ( _state.alphaFunc != current.alphaFunc
-            || _state.alphaThreshold != current.alphaThreshold)
+        && ( _glState.alphaFunc != current.alphaFunc
+            || _glState.alphaThreshold != current.alphaThreshold)
     )
     {
         // Set alpha function in GL
-        glAlphaFunc(_state.alphaFunc, _state.alphaThreshold);
+        glAlphaFunc(_glState.alphaFunc, _glState.alphaThreshold);
         GlobalOpenGL().assertNoErrors();
 
         // Store state values
-        current.alphaFunc = _state.alphaFunc;
-        current.alphaThreshold = _state.alphaThreshold;
+        current.alphaFunc = _glState.alphaFunc;
+        current.alphaThreshold = _glState.alphaThreshold;
     }
 
     // Apply polygon offset
-    if (_state.polygonOffset != current.polygonOffset)
+    if (_glState.polygonOffset != current.polygonOffset)
     {
-        current.polygonOffset = _state.polygonOffset;
+        current.polygonOffset = _glState.polygonOffset;
 
         if (current.polygonOffset > 0.0f)
         {
             glEnable(GL_POLYGON_OFFSET_FILL);
-            glPolygonOffset(-1, -1 *_state.polygonOffset);
+            glPolygonOffset(-1, -1 *_glState.polygonOffset);
         }
         else
         {
@@ -546,15 +548,15 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     applyAllTextures(current, requiredState);
 
     // Set the GL colour if it isn't set already
-	if (_state.stage0)
-	{
-		_state.m_colour = _state.stage0->getColour();
-	}
-
-    if (_state.m_colour != current.m_colour)
+    if (_glState.stage0)
     {
-        glColor4fv(_state.m_colour);
-        current.m_colour = _state.m_colour;
+        _glState.m_colour = _glState.stage0->getColour();
+    }
+
+    if (_glState.m_colour != current.m_colour)
+    {
+        glColor4fv(_glState.m_colour);
+        current.m_colour = _glState.m_colour;
         GlobalOpenGL().assertNoErrors();
     }
 
@@ -562,28 +564,28 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     setUpCubeMapAndTexGen(current, requiredState, viewer);
 
   if(requiredState & RENDER_BLEND
-    && (_state.m_blend_src != current.m_blend_src || _state.m_blend_dst != current.m_blend_dst))
+    && (_glState.m_blend_src != current.m_blend_src || _glState.m_blend_dst != current.m_blend_dst))
   {
-    glBlendFunc(_state.m_blend_src, _state.m_blend_dst);
+    glBlendFunc(_glState.m_blend_src, _glState.m_blend_dst);
     GlobalOpenGL().assertNoErrors();
-    current.m_blend_src = _state.m_blend_src;
-    current.m_blend_dst = _state.m_blend_dst;
+    current.m_blend_src = _glState.m_blend_src;
+    current.m_blend_dst = _glState.m_blend_dst;
   }
 
   if(!(requiredState & RENDER_FILL)
-    && _state.m_linewidth != current.m_linewidth)
+    && _glState.m_linewidth != current.m_linewidth)
   {
-    glLineWidth(_state.m_linewidth);
+    glLineWidth(_glState.m_linewidth);
     GlobalOpenGL().assertNoErrors();
-    current.m_linewidth = _state.m_linewidth;
+    current.m_linewidth = _glState.m_linewidth;
   }
 
   if(!(requiredState & RENDER_FILL)
-    && _state.m_pointsize != current.m_pointsize)
+    && _glState.m_pointsize != current.m_pointsize)
   {
-    glPointSize(_state.m_pointsize);
+    glPointSize(_glState.m_pointsize);
     GlobalOpenGL().assertNoErrors();
-    current.m_pointsize = _state.m_pointsize;
+    current.m_pointsize = _glState.m_pointsize;
   }
 
   current.renderFlags = requiredState;
@@ -593,45 +595,45 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
 // Add a Renderable to this bucket
 void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
-									  const Matrix4& modelview,
-									  const RendererLight* light)
+                                      const Matrix4& modelview,
+                                      const RendererLight* light)
 {
-	_renderablesWithoutEntity.push_back(TransformedRenderable(renderable, modelview, light, NULL));
+    _renderablesWithoutEntity.push_back(TransformedRenderable(renderable, modelview, light, NULL));
 }
 
 void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
-									  const Matrix4& modelview,
-									  const IRenderEntity& entity,
-									  const RendererLight* light)
+                                      const Matrix4& modelview,
+                                      const IRenderEntity& entity,
+                                      const RendererLight* light)
 {
-	RenderablesByEntity::iterator i = _renderables.find(&entity);
+    RenderablesByEntity::iterator i = _renderables.find(&entity);
 
-	if (i == _renderables.end())
-	{
-		i = _renderables.insert(RenderablesByEntity::value_type(&entity, Renderables())).first;
-	}
+    if (i == _renderables.end())
+    {
+        i = _renderables.insert(RenderablesByEntity::value_type(&entity, Renderables())).first;
+    }
 
-	i->second.push_back(TransformedRenderable(renderable, modelview, light, &entity));
+    i->second.push_back(TransformedRenderable(renderable, modelview, light, &entity));
 }
 
 // Render the bucket contents
 void OpenGLShaderPass::render(OpenGLState& current,
                               unsigned int flagsMask,
                               const Vector3& viewer,
-							  std::size_t time)
+                              std::size_t time)
 {
-	// Reset the texture matrix
+    // Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
-	glLoadMatrixf(Matrix4::getIdentity());
+    glLoadMatrixf(Matrix4::getIdentity());
 
     glMatrixMode(GL_MODELVIEW);
 
-	// Apply our state to the current state object
-	applyState(current, flagsMask, viewer, time, NULL);
+    // Apply our state to the current state object
+    applyState(current, flagsMask, viewer, time, NULL);
 
     // If RENDER_SCREEN is set, just render a quad, otherwise render all
     // objects.
-    if ((flagsMask & _state.renderFlags & RENDER_SCREEN) != 0)
+    if ((flagsMask & _glState.renderFlags & RENDER_SCREEN) != 0)
     {
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -677,16 +679,16 @@ void OpenGLShaderPass::render(OpenGLState& current,
 		}
 	}
 
-	_renderablesWithoutEntity.clear();
-	_renderables.clear();
+    _renderablesWithoutEntity.clear();
+    _renderables.clear();
 }
 
 bool OpenGLShaderPass::stateIsActive()
 {
-	return ((_state.stage0 == NULL || _state.stage0->isVisible()) && 
-			(_state.stage1 == NULL || _state.stage1->isVisible()) && 
-			(_state.stage2 == NULL || _state.stage2->isVisible()) && 
-			(_state.stage3 == NULL || _state.stage3->isVisible()));
+    return ((_glState.stage0 == NULL || _glState.stage0->isVisible()) &&
+            (_glState.stage1 == NULL || _glState.stage1->isVisible()) &&
+            (_glState.stage2 == NULL || _glState.stage2->isVisible()) &&
+            (_glState.stage3 == NULL || _glState.stage3->isVisible()));
 }
 
 // Setup lighting
@@ -694,22 +696,22 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
                                                 const RendererLight* light,
                                                 const Vector3& viewer,
                                                 const Matrix4& objTransform,
-												std::size_t time)
+                                                std::size_t time)
 {
     assert(light);
 
     // Get the light shader and examine its first (and only valid) layer
     const MaterialPtr& lightShader = light->getShader()->getMaterial();
-	ShaderLayer* layer = lightShader->firstLayer();
+    ShaderLayer* layer = lightShader->firstLayer();
 
     if (layer)
     {
-		// Calculate viewer location in object space
+        // Calculate viewer location in object space
         Matrix4 inverseObjTransform = objTransform.getInverse();
         Vector3 osViewer = inverseObjTransform.transformPoint(viewer);
 
-		// Calculate all dynamic values in the layer
-		layer->evaluateExpressions(time, *light);
+        // Calculate all dynamic values in the layer
+        layer->evaluateExpressions(time, *light);
 
         // Get the XY and Z falloff texture numbers.
         GLuint attenuation_xy = layer->getTexture()->getGLTexNum();
@@ -730,7 +732,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-		// Get the world-space to light-space transformation matrix
+        // Get the world-space to light-space transformation matrix
         Matrix4 world2light = light->getLightTextureTransformation();
 
         // Set the ambient factor - 1.0 for an ambient light, 0.0 for normal light
@@ -750,44 +752,44 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 
 // Flush renderables
 void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
-										  OpenGLState& current,
+                                          OpenGLState& current,
                                           const Vector3& viewer,
-										  std::size_t time)
+                                          std::size_t time)
 {
-	// Keep a pointer to the last transform matrix and render entity used
-	const Matrix4* transform = 0;
+    // Keep a pointer to the last transform matrix and render entity used
+    const Matrix4* transform = 0;
 
-	glPushMatrix();
+    glPushMatrix();
 
-	// Iterate over each transformed renderable in the vector
-	for(Renderables::const_iterator i = renderables.begin(); i != renderables.end(); ++i)
-	{
-		// If the current iteration's transform matrix was different from the
-		// last, apply it and store for the next iteration
-	    if (transform == NULL || 
-			(transform != i->transform && !transform->isAffineEqual(*i->transform)))
-		{
-			transform = i->transform;
-      		glPopMatrix();
-      		glPushMatrix();
-      		glMultMatrixf(*transform);
+    // Iterate over each transformed renderable in the vector
+    for(Renderables::const_iterator i = renderables.begin(); i != renderables.end(); ++i)
+    {
+        // If the current iteration's transform matrix was different from the
+        // last, apply it and store for the next iteration
+        if (transform == NULL ||
+            (transform != i->transform && !transform->isAffineEqual(*i->transform)))
+        {
+            transform = i->transform;
+            glPopMatrix();
+            glPushMatrix();
+            glMultMatrixf(*transform);
 
-      		// Determine the face direction
-      		if ((current.renderFlags & RENDER_CULLFACE) != 0 && 
-				transform->getHandedness() == Matrix4::RIGHTHANDED)
-      		{
-      			glFrontFace(GL_CW);
-      		}
-      		else
-      		{
-      			glFrontFace(GL_CCW);
-      		}
-    	}
+            // Determine the face direction
+            if ((current.renderFlags & RENDER_CULLFACE) != 0 &&
+                transform->getHandedness() == Matrix4::RIGHTHANDED)
+            {
+                glFrontFace(GL_CW);
+            }
+            else
+            {
+                glFrontFace(GL_CCW);
+            }
+        }
 
-		// If we are using a lighting program and this renderable is lit, set
-		// up the lighting calculation
-		const RendererLight* light = i->light;
-		if (current.glProgram != 0 && light != NULL)
+        // If we are using a lighting program and this renderable is lit, set
+        // up the lighting calculation
+        const RendererLight* light = i->light;
+        if (current.glProgram != 0 && light != NULL)
         {
             setUpLightingCalculation(current, light, viewer, *transform, time);
         }
@@ -804,57 +806,28 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
 // Stream insertion operator
 std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self)
 {
-// Shortcut to save some typing
-#define OUTPUT_RENDERFLAG(x) if (self._state.renderFlags & (x)) { st << "|" << #x; }
+    const MaterialPtr& material = self._owner.getMaterial();
 
-	const MaterialPtr& material = self._owner.getMaterial();
+    st << (material ? material->getName() : "null material") << " - ";
 
-	st << (material ? material->getName() : "null material") << " - ";
-	
-	st << "Renderflags: ";
+    st << "Renderflags: " << debug::printStateFlags(self._glState.renderFlags);
 
-	OUTPUT_RENDERFLAG(RENDER_LINESTIPPLE);
-	OUTPUT_RENDERFLAG(RENDER_LINESMOOTH);
-	OUTPUT_RENDERFLAG(RENDER_POLYGONSTIPPLE);
-	OUTPUT_RENDERFLAG(RENDER_POLYGONSMOOTH);
-	OUTPUT_RENDERFLAG(RENDER_ALPHATEST);
-	OUTPUT_RENDERFLAG(RENDER_DEPTHTEST);
-	OUTPUT_RENDERFLAG(RENDER_DEPTHWRITE);
-	OUTPUT_RENDERFLAG(RENDER_COLOURWRITE);
-	OUTPUT_RENDERFLAG(RENDER_CULLFACE);
-	OUTPUT_RENDERFLAG(RENDER_SCALED);
-	OUTPUT_RENDERFLAG(RENDER_SMOOTH);
-	OUTPUT_RENDERFLAG(RENDER_LIGHTING);
-	OUTPUT_RENDERFLAG(RENDER_BLEND);
-	OUTPUT_RENDERFLAG(RENDER_OFFSETLINE);
-	OUTPUT_RENDERFLAG(RENDER_FILL);
-	OUTPUT_RENDERFLAG(RENDER_COLOURARRAY);
-	OUTPUT_RENDERFLAG(RENDER_COLOURCHANGE);
-	OUTPUT_RENDERFLAG(RENDER_MATERIAL_VCOL);
-	OUTPUT_RENDERFLAG(RENDER_VCOL_INVERT);
-	OUTPUT_RENDERFLAG(RENDER_TEXTURE_2D);
-	OUTPUT_RENDERFLAG(RENDER_TEXTURE_CUBEMAP);
-	OUTPUT_RENDERFLAG(RENDER_BUMP);
-	OUTPUT_RENDERFLAG(RENDER_PROGRAM);
-	OUTPUT_RENDERFLAG(RENDER_SCREEN);
-	OUTPUT_RENDERFLAG(RENDER_OVERRIDE);
+    st << " - ";
 
-	st << " - ";
+    st << "Sort: " << self._glState.m_sort << " - ";
+    st << "PolygonOffset: " << self._glState.polygonOffset << " - ";
 
-	st << "Sort: " << self._state.m_sort << " - ";
-	st << "PolygonOffset: " << self._state.polygonOffset << " - ";
+    if (self._glState.texture0 > 0) st << "Texture0: " << self._glState.texture0 << " - ";
+    if (self._glState.texture1 > 0) st << "Texture1: " << self._glState.texture1 << " - ";
+    if (self._glState.texture2 > 0) st << "Texture2: " << self._glState.texture2 << " - ";
+    if (self._glState.texture3 > 0) st << "Texture3: " << self._glState.texture3 << " - ";
+    if (self._glState.texture4 > 0) st << "Texture4: " << self._glState.texture4 << " - ";
 
-	if (self._state.texture0 > 0) st << "Texture0: " << self._state.texture0 << " - ";
-	if (self._state.texture1 > 0) st << "Texture1: " << self._state.texture1 << " - ";
-	if (self._state.texture2 > 0) st << "Texture2: " << self._state.texture2 << " - ";
-	if (self._state.texture3 > 0) st << "Texture3: " << self._state.texture3 << " - ";
-	if (self._state.texture4 > 0) st << "Texture4: " << self._state.texture4 << " - ";
+    st << "Colour: " << self._glState.m_colour << " - ";
 
-	st << "Colour: " << self._state.m_colour << " - ";
+    st << "CubeMapMode: " << self._glState.cubeMapMode;
 
-	st << "CubeMapMode: " << self._state.cubeMapMode;
+    st << std::endl;
 
-	st << std::endl;
-
-	return st;
+    return st;
 }
