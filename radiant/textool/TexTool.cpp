@@ -153,6 +153,20 @@ void TexTool::_preShow() {
 	_windowPosition.applyPosition();
 }
 
+void TexTool::_postShow()
+{
+#ifdef WIN32
+	// Hack to prevent the textool renderview from going all grey, not receiving expose events
+	_glWidget->reference();
+
+	Gtk::Container* container = _glWidget->get_parent();
+	container->remove(*_glWidget);
+	container->add(*_glWidget);
+
+	_glWidget->unreference();
+#endif
+}
+
 void TexTool::gridUp() {
 	if (_grid*2 <= GRID_MAX && _gridActive) {
 		_grid *= 2;

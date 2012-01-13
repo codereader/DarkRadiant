@@ -94,6 +94,7 @@ private:
 	/* TransientWindow callbacks */
 	virtual void _preHide();
 	virtual void _preShow();
+	virtual void _postShow();
 
 	void setGridActive(bool active);
 
