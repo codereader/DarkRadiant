@@ -11,8 +11,8 @@ copy ..\..\w32deps\glew\bin\glew32.dll ..\..\install /Y
 @rem copy ..\..\w32deps\libpng\bin\libpng13.dll ..\..\install /Y
 @rem copy ..\..\w32deps\libiconv\bin\libiconv2.dll ..\..\install /Y
 
-@rem md ..\..\install\etc
-@rem xcopy ..\..\w32deps\gtk2\bin\etc\* ..\..\install\etc\. /S /Y
+md ..\..\install\etc
+xcopy ..\..\w32deps\gtk2\bin\etc\* ..\..\install\etc\. /S /Y
 
 md ..\..\install\lib\gtk-2.0\engines
 
