@@ -92,7 +92,6 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
 
 Face::Face(Brush& owner, const Face& other, FaceObserver* observer) :
 	IFace(other),
-	OpenGLRenderable(other),
 	Undoable(other),
 	FaceShader::Observer(other),
 	_owner(owner),
@@ -142,12 +141,6 @@ void Face::instanceDetach(MapFile* map) {
 	GlobalUndoSystem().release(this);
 	m_map = 0;
 	_faceShader.setInUse(false);
-}
-
-// Back-end render function
-void Face::render(const RenderInfo& info) const
-{
-	m_winding.render(info);
 }
 
 void Face::undoSave() {
@@ -213,7 +206,7 @@ void Face::submitRenderables(RenderableCollector& collector,
 							 const IRenderEntity& entity) const
 {
 	collector.SetState(_faceShader.getGLShader(), RenderableCollector::eFullMaterials);
-	collector.addRenderable(*this, localToWorld, entity);
+	collector.addRenderable(m_winding, localToWorld, entity);
 }
 
 void Face::setRenderSystem(const RenderSystemPtr& renderSystem)

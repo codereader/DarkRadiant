@@ -352,7 +352,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         if (current.glProgram != 0)
         {
             current.glProgram->disable();
-            glColor4fv(current.m_colour);
+            glColor4fv(current.getColour());
         }
 
         current.glProgram = program;
@@ -477,13 +477,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         else if(changingBitsMask & ~requiredState & RENDER_COLOURARRAY)
         {
             glDisableClientState(GL_COLOR_ARRAY);
-            glColor4fv(_glState.m_colour);
+            glColor4fv(_glState.getColour());
             GlobalOpenGL().assertNoErrors();
         }
 
         if(changingBitsMask & ~requiredState & RENDER_COLOURCHANGE)
         {
-            glColor4fv(_glState.m_colour);
+            glColor4fv(_glState.getColour());
             GlobalOpenGL().assertNoErrors();
         }
 
@@ -550,13 +550,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     // Set the GL colour if it isn't set already
     if (_glState.stage0)
     {
-        _glState.m_colour = _glState.stage0->getColour();
+        _glState.setColour(_glState.stage0->getColour());
     }
 
-    if (_glState.m_colour != current.m_colour)
+    if (_glState.getColour() != current.getColour())
     {
-        glColor4fv(_glState.m_colour);
-        current.m_colour = _glState.m_colour;
+        glColor4fv(_glState.getColour());
+        current.setColour(_glState.getColour());
         GlobalOpenGL().assertNoErrors();
     }
 
@@ -823,7 +823,7 @@ std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self)
     if (self._glState.texture3 > 0) st << "Texture3: " << self._glState.texture3 << " - ";
     if (self._glState.texture4 > 0) st << "Texture4: " << self._glState.texture4 << " - ";
 
-    st << "Colour: " << self._glState.m_colour << " - ";
+    st << "Colour: " << self._glState.getColour() << " - ";
 
     st << "CubeMapMode: " << self._glState.cubeMapMode;
 

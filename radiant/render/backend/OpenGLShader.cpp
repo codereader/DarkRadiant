@@ -226,13 +226,10 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
                                 | RENDER_TEXTURE_2D
                                 | RENDER_DEPTHTEST
                                 | RENDER_DEPTHWRITE
-                                | RENDER_COLOURWRITE
+                                | RENDER_COLOURWRITE // TODO: maybe not for depth pass?
                                 | RENDER_PROGRAM;
 
-        zPass.m_colour[0] = 0;
-        zPass.m_colour[1] = 0;
-        zPass.m_colour[2] = 0;
-        zPass.m_colour[3] = 1;
+        zPass.setColour(Vector4(0, 0, 0, 1));
         zPass.m_sort = OpenGLState::eSortOpaque;
 
         zPass.glProgram = GLProgramFactory::instance().getProgram("depthFill");
@@ -275,7 +272,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 	// Apply the diffuse colour modulation
 	if (triplet.diffuse)
 	{
-		dbsPass.m_colour = triplet.diffuse->getColour();
+		dbsPass.setColour(triplet.diffuse->getColour());
 	}
 
     dbsPass.m_depthfunc = GL_LEQUAL;
@@ -428,7 +425,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     determineBlendModeForEditorPass(previewPass);
 
     // Set the GL color to white
-    previewPass.m_colour = Vector4(1, 1, 1, 1);
+    previewPass.setColour(Vector4(1, 1, 1, 1));
 
     // Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
@@ -485,7 +482,7 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
     }
 
     // Colour modulation
-    state.m_colour = layer->getColour();
+    state.setColour(layer->getColour());
 
 	// Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
@@ -530,13 +527,17 @@ void OpenGLShader::construct(const std::string& name)
 
     // Check the first character of the name to see if this is a special built-in
     // shader
-    switch(name[0])
+    switch (name[0])
     {
         case '(': // fill shader
         {
             OpenGLState& state = appendDefaultPass();
-            sscanf(name.c_str(), "(%f %f %f)", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
-            state.m_colour[3] = 1.0f;
+
+            Vector4 colour;
+            sscanf(name.c_str(), "(%f %f %f)", &colour[0], &colour[1], &colour[2]);
+            colour[3] = 1.0f;
+            state.setColour(colour);
+
             state.renderFlags = RENDER_FILL|RENDER_LIGHTING|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
             state.m_sort = OpenGLState::eSortFullbright;
             break;
@@ -545,8 +546,12 @@ void OpenGLShader::construct(const std::string& name)
         case '[':
         {
             OpenGLState& state = appendDefaultPass();
-            sscanf(name.c_str(), "[%f %f %f]", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
-            state.m_colour[3] = 0.5f;
+
+            Vector4 colour;
+            sscanf(name.c_str(), "[%f %f %f]", &colour[0], &colour[1], &colour[2]);
+            colour[3] = 0.5f;
+            state.setColour(colour);
+
             state.renderFlags = RENDER_FILL|RENDER_LIGHTING|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_BLEND;
             state.m_sort = OpenGLState::eSortTranslucent;
             break;
@@ -555,8 +560,12 @@ void OpenGLShader::construct(const std::string& name)
         case '<': // wireframe shader
         {
             OpenGLState& state = appendDefaultPass();
-            sscanf(name.c_str(), "<%f %f %f>", &state.m_colour[0], &state.m_colour[1], &state.m_colour[2]);
-            state.m_colour[3] = 1;
+
+            Vector4 colour;
+            sscanf(name.c_str(), "<%f %f %f>", &colour[0], &colour[1], &colour[2]);
+            colour[3] = 1;
+            state.setColour(colour);
+
             state.renderFlags = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
             state.m_sort = OpenGLState::eSortFullbright;
             state.m_depthfunc = GL_LESS;
@@ -602,10 +611,7 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$LATTICE")
             {
-              state.m_colour[0] = 1;
-              state.m_colour[1] = 0.5;
-              state.m_colour[2] = 0;
-              state.m_colour[3] = 1;
+              state.setColour(1, 0.5, 0, 1);
               state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortControlFirst;
             }
@@ -616,42 +622,34 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$CAM_HIGHLIGHT")
             {
-              state.m_colour[0] = highLightColour[0];
-              state.m_colour[1] = highLightColour[1];
-              state.m_colour[2] = highLightColour[2];
-              state.m_colour[3] = 0.3f;
+              state.setColour(highLightColour[0],
+                              highLightColour[1],
+                              highLightColour[2],
+                              0.3f);
               state.renderFlags = RENDER_FILL|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_BLEND|RENDER_COLOURWRITE;
               state.m_sort = OpenGLState::eSortHighlight;
               state.m_depthfunc = GL_LEQUAL;
             }
             else if (name == "$CAM_OVERLAY")
             {
-        #if 0
-              state.renderFlags = RENDER_CULLFACE|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
-              state.m_sort = OpenGLState::eSortOverlayFirst;
-        #else
               state.renderFlags = RENDER_CULLFACE|RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_OFFSETLINE;
               state.m_sort = OpenGLState::eSortOverlayFirst + 1;
               state.m_depthfunc = GL_LEQUAL;
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.m_colour[0] = 0.75;
-              hiddenLine.m_colour[1] = 0.75;
-              hiddenLine.m_colour[2] = 0.75;
-              hiddenLine.m_colour[3] = 1;
+              hiddenLine.setColour(0.75, 0.75, 0.75, 1);
               hiddenLine.renderFlags = RENDER_CULLFACE|RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_OFFSETLINE|RENDER_LINESTIPPLE;
               hiddenLine.m_sort = OpenGLState::eSortOverlayFirst;
               hiddenLine.m_depthfunc = GL_GREATER;
               hiddenLine.m_linestipple_factor = 2;
-        #endif
             }
             else if (name == "$XY_OVERLAY")
             {
               Vector3 colorSelBrushes = ColourSchemes().getColour("selected_brush");
-              state.m_colour[0] = colorSelBrushes[0];
-              state.m_colour[1] = colorSelBrushes[1];
-              state.m_colour[2] = colorSelBrushes[2];
-              state.m_colour[3] = 1;
+              state.setColour(colorSelBrushes[0],
+                              colorSelBrushes[1],
+                              colorSelBrushes[2],
+                              1);
               state.renderFlags = RENDER_COLOURWRITE | RENDER_LINESTIPPLE;
               state.m_sort = OpenGLState::eSortOverlayFirst;
               state.m_linewidth = 2;
@@ -664,42 +662,13 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$POINTFILE")
             {
-              state.m_colour[0] = 1;
-              state.m_colour[1] = 0;
-              state.m_colour[2] = 0;
-              state.m_colour[3] = 1;
+              state.setColour(1, 0, 0, 1);
               state.renderFlags = RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortFullbright;
               state.m_linewidth = 4;
             }
-            else if (name == "$LIGHT_SPHERE")
-            {
-              state.m_colour[0] = .15f * .95f;
-              state.m_colour[1] = .15f * .95f;
-              state.m_colour[2] = .15f * .95f;
-              state.m_colour[3] = 1;
-              state.renderFlags = RENDER_CULLFACE | RENDER_DEPTHTEST | RENDER_BLEND | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
-              state.m_blend_src = GL_ONE;
-              state.m_blend_dst = GL_ONE;
-              state.m_sort = OpenGLState::eSortTranslucent;
-            }
-            else if (name == "$Q3MAP2_LIGHT_SPHERE")
-            {
-              state.m_colour[0] = .05f;
-              state.m_colour[1] = .05f;
-              state.m_colour[2] = .05f;
-              state.m_colour[3] = 1;
-              state.renderFlags = RENDER_CULLFACE | RENDER_DEPTHTEST | RENDER_BLEND | RENDER_FILL;
-              state.m_blend_src = GL_ONE;
-              state.m_blend_dst = GL_ONE;
-              state.m_sort = OpenGLState::eSortTranslucent;
-            }
             else if (name == "$WIRE_OVERLAY")
             {
-        #if 0
-              state.renderFlags = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
-              state.m_sort = OpenGLState::eSortOverlayFirst;
-        #else
               state.renderFlags = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_depthfunc = GL_LEQUAL;
@@ -708,7 +677,6 @@ void OpenGLShader::construct(const std::string& name)
               hiddenLine.renderFlags = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE;
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
               hiddenLine.m_depthfunc = GL_GREATER;
-        #endif
             }
             else if (name == "$FLATSHADE_OVERLAY")
             {
@@ -724,20 +692,20 @@ void OpenGLShader::construct(const std::string& name)
             else if (name == "$CLIPPER_OVERLAY")
             {
               Vector3 colorClipper = ColourSchemes().getColour("clipper");
-              state.m_colour[0] = colorClipper[0];
-              state.m_colour[1] = colorClipper[1];
-              state.m_colour[2] = colorClipper[2];
-              state.m_colour[3] = 1;
+              state.setColour(colorClipper[0],
+                              colorClipper[1],
+                              colorClipper[2],
+                              1);
               state.renderFlags = RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_FILL | RENDER_POLYGONSTIPPLE;
               state.m_sort = OpenGLState::eSortOverlayFirst;
             }
             else if (name == "$OVERBRIGHT")
             {
               const float lightScale = 2;
-              state.m_colour[0] = lightScale * 0.5f;
-              state.m_colour[1] = lightScale * 0.5f;
-              state.m_colour[2] = lightScale * 0.5f;
-              state.m_colour[3] = 0.5;
+              state.setColour(lightScale * 0.5f,
+                              lightScale * 0.5f,
+                              lightScale * 0.5f,
+                              0.5);
               state.renderFlags = RENDER_FILL|RENDER_BLEND|RENDER_COLOURWRITE|RENDER_SCREEN;
               state.m_sort = OpenGLState::eSortOverbrighten;
               state.m_blend_src = GL_DST_COLOR;
@@ -745,14 +713,7 @@ void OpenGLShader::construct(const std::string& name)
             }
             else
             {
-              // default to something recognisable.. =)
-              ERROR_MESSAGE("hardcoded renderstate not found");
-              state.m_colour[0] = 1;
-              state.m_colour[1] = 0;
-              state.m_colour[2] = 1;
-              state.m_colour[3] = 1;
-              state.renderFlags = RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
-              state.m_sort = OpenGLState::eSortFirst;
+                assert(false);
             }
             break;
         } // case '$'
@@ -763,7 +724,7 @@ void OpenGLShader::construct(const std::string& name)
             constructNormalShader(name);
         }
 
-    } // switch
+    } // switch (name[0])
 }
 
 }

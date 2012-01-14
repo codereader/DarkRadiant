@@ -19,6 +19,10 @@ class GLProgram;
  */
 class OpenGLState
 {
+    // The 4 colour components, only for use in OpenGLStates that do not have
+    // any shader stages attached, otherwise pull the colour from there.
+	Vector4 _colour;
+
 public:
 	enum ESort
 	{
@@ -47,6 +51,18 @@ public:
 
 		eSortLast = 4096,
 	};
+
+    /// Return the glColor for this state
+    const Vector4& getColour() const { return _colour; }
+
+    /// Set the glColor for this state, from a Vector4
+    void setColour(const Vector4& col) { _colour = col; }
+
+    /// Set the glColor for this state, from individual components
+    void setColour(float r, float g, float b, float a)
+    {
+        setColour(Vector4(r, g, b, a));
+    }
 
     /**
      * \brief
@@ -97,10 +113,6 @@ public:
 	ShaderLayerPtr stage3;
 	ShaderLayerPtr stage4;
 
-	// The 4 colour components, only for use in OpenGLStates 
-	// that do not have any shader stages attached, otherwise pull the colour from there.
-	Vector4 m_colour;
-
     /**
      * \brief
      * Source blend mode.
@@ -140,7 +152,8 @@ public:
 
 	// Default constructor
 	OpenGLState()
-	: renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
+	: _colour(1,1,1,1),
+	  renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
 	  m_sort(eSortFirst),
       polygonOffset(0.0f),
 	  texture0(0),
@@ -148,7 +161,6 @@ public:
 	  texture2(0),
       texture3(0),
       texture4(0),
-	  m_colour(1,1,1,1),
 	  m_blend_src(GL_SRC_ALPHA),
 	  m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
 	  m_depthfunc(GL_LESS),

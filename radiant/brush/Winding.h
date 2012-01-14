@@ -41,7 +41,8 @@ class SelectionIntersection;
 // The Winding structure extends the abstract IWinding class
 // by a few methods for rendering and selection tests.
 class Winding :
-	public IWinding
+	public IWinding,
+    public OpenGLRenderable
 {
 public:
 	/** greebo: Calculates the AABB of this winding
