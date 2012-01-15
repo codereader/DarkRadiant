@@ -26,10 +26,16 @@ void PersistentTransientWindow::setParentWindow(const Glib::RefPtr<Gtk::Window>&
 	// Connect new parent
 	if (_parent)
 	{
+#ifndef WIN32
+		// greebo: In Windows, it seems that child windows get minimised along with their parent
+		// so we don't need to track the state changes anymore. If Linux window managers behave
+		// the same we can probably replace this entire class.
+
 		// Connect to the window-state-event signal of the parent window
 		_windowStateConn = _parent->signal_window_state_event().connect(
 			sigc::mem_fun(*this, &PersistentTransientWindow::onParentWindowStateEvent)
 		);
+#endif
 	}
 }
 
