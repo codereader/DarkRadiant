@@ -11,19 +11,14 @@
 #include "texturelib.h"
 
 #include <boost/bind.hpp>
-#include <cstdio>
+#include <boost/foreach.hpp>
 
 namespace render
 {
 
-void OpenGLShader::destroy() {
-	// Clear the shaderptr, so that the shared_ptr reference count is decreased
+void OpenGLShader::destroy()
+{
     _material = MaterialPtr();
-
-    for(Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
-    {
-      delete *i;
-    }
     _shaderPasses.clear();
 }
 
@@ -31,11 +26,10 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 								 const Matrix4& modelview,
 								 const LightList* lights)
 {
-    // Iterate over the list of OpenGLStateBuckets, bumpmap and non-bumpmap
-    // buckets are handled differently.
-    for (Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
+    // Add the renderable to all of our shader passes
+    BOOST_FOREACH(OpenGLShaderPassPtr pass, _shaderPasses)
     {
-		OpenGLShaderPass* pass = *i;
+        g_assert(pass);
 
 		if ((pass->state().renderFlags & RENDER_BUMP) != 0)
 		{
@@ -57,12 +51,8 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 								 const IRenderEntity& entity,
 								 const LightList* lights)
 {
-    // Iterate over the list of OpenGLStateBuckets, bumpmap and non-bumpmap
-    // buckets are handled differently.
-    for (Passes::iterator i = _shaderPasses.begin(); i != _shaderPasses.end(); ++i)
+    BOOST_FOREACH(OpenGLShaderPassPtr pass, _shaderPasses)
     {
-		OpenGLShaderPass* pass = *i;
-
 		if ((pass->state().renderFlags & RENDER_BUMP) != 0)
 		{
 			if (lights != NULL)
@@ -146,7 +136,7 @@ unsigned int OpenGLShader::getFlags() const
 // Append a default shader pass onto the back of the state list
 OpenGLState& OpenGLShader::appendDefaultPass()
 {
-    _shaderPasses.push_back(new OpenGLShaderPass(*this));
+    _shaderPasses.push_back(OpenGLShaderPassPtr(new OpenGLShaderPass(*this)));
     OpenGLState& state = _shaderPasses.back()->state();
     return state;
 }

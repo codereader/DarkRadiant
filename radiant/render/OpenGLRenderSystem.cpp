@@ -68,14 +68,7 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 
 	if (i != _shaders.end())
 	{
-		// Try to lock pointer, which will fail if the object has been
-		// deleted
-		OpenGLShaderPtr sp = i->second.lock();
-
-		if (sp)
-		{
-			return sp;
-		}
+        return i->second;
 	}
 
 	// Either the shader was not found, or the weak pointer failed to lock
@@ -196,27 +189,26 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 void OpenGLRenderSystem::realise()
 {
     if (_realised) {
-    	return; // already realised
+        return; // already realised
     }
 
     _realised = true;
 
-	if (shaderProgramsAvailable()
+    if (shaderProgramsAvailable()
         && getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
-		// Realise the GLPrograms
-		GLProgramFactory::instance().realise();
-	}
+        // Realise the GLPrograms
+        GLProgramFactory::instance().realise();
+    }
 
-	// Realise the OpenGLShader objects
-	for (ShaderMap::iterator i = _shaders.begin();
-		 i != _shaders.end(); ++i)
-	{
-		OpenGLShaderPtr sp = i->second.lock();
-		if (sp != NULL) {
-			sp->realise(i->first);
-		}
-	}
+    // Realise the OpenGLShader objects
+    for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+    {
+        OpenGLShaderPtr sp = i->second;
+        assert(sp);
+
+        sp->realise(i->first);
+    }
 }
 
 void OpenGLRenderSystem::unrealise()
@@ -228,14 +220,12 @@ void OpenGLRenderSystem::unrealise()
     _realised = false;
 
 	// Unrealise the OpenGLShader objects
-	for (ShaderMap::iterator i = _shaders.begin();
-		 i != _shaders.end();
-		 ++i)
+	for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i)
 	{
-		OpenGLShaderPtr sp = i->second.lock();
-		if (sp != NULL) {
-			sp->unrealise();
-		}
+        OpenGLShaderPtr sp = i->second;
+        assert(sp);
+
+        sp->unrealise();
     }
 
 	if (GlobalOpenGL().contextValid()

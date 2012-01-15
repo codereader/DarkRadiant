@@ -11,7 +11,10 @@ class Matrix4;
 class OpenGLRenderable;
 class RendererLight;
 
-namespace render { class OpenGLShader; }
+namespace render
+{ 
+    
+class OpenGLShader;
 
 /**
  * @brief A single component pass of an OpenGL shader.
@@ -182,5 +185,9 @@ public:
 	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
 };
 
+typedef boost::shared_ptr<OpenGLShaderPass> OpenGLShaderPassPtr;
+
 // Stream insertion operator
 std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
+
+} // namespace render

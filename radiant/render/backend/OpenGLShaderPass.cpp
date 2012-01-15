@@ -10,7 +10,11 @@
 
 #include "debugging/render.h"
 
-namespace {
+namespace render
+{
+
+namespace
+{
 
 // Bind the given texture to the texture unit, if it is different from the
 // current state, then set the current state to the new texture.
@@ -830,4 +834,6 @@ std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self)
     st << std::endl;
 
     return st;
+}
+
 }

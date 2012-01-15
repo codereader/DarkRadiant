@@ -5,10 +5,12 @@
 #include <map>
 
 class OpenGLState;
-class OpenGLShaderPass;
 
 namespace render
 {
+
+class OpenGLShaderPass;
+typedef boost::shared_ptr<OpenGLShaderPass> OpenGLShaderPassPtr;
 
 /**
  * A sorted map of OpenGL states, maintained by the OpenGLStateManager. The sort
@@ -17,7 +19,7 @@ namespace render
  * context switches.
  */
 typedef std::map<OpenGLState*,
-				 OpenGLShaderPass*,
+				 OpenGLShaderPassPtr,
 				 OpenGLStateLess> OpenGLStates;
 
 /**

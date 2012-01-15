@@ -2,6 +2,9 @@
 
 #include "OpenGLShaderPass.h"
 
+namespace render
+{
+
 /**
  * Functor class which populates an OpenGLShaderPass.
  */
@@ -36,3 +39,5 @@ public:
 		}
 	}
 };
+
+}

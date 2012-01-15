@@ -10,7 +10,8 @@
 
 #include <boost/weak_ptr.hpp>
 
-namespace render {
+namespace render
+{
 
 /**
  * \brief
@@ -23,9 +24,7 @@ class OpenGLRenderSystem
 {
 private:
 	// Map of named Shader objects
-	typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
-	typedef boost::weak_ptr<OpenGLShader> OpenGLShaderWeakPtr;
-	typedef std::map<std::string, OpenGLShaderWeakPtr> ShaderMap;
+	typedef std::map<std::string, OpenGLShaderPtr> ShaderMap;
 	ShaderMap _shaders;
 
 	// whether this module has been realised

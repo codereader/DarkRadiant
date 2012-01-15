@@ -26,7 +26,7 @@ private:
 	render::OpenGLStateManager& _glStateManager;
 
     // List of shader passes for this shader
-	typedef std::list<OpenGLShaderPass*> Passes;
+	typedef std::list<OpenGLShaderPassPtr> Passes;
 	Passes _shaderPasses;
 
     // The Material corresponding to this OpenGLShader
@@ -159,6 +159,8 @@ public:
 	unsigned int getFlags() const;
 
 };
+
+typedef boost::shared_ptr<OpenGLShader> OpenGLShaderPtr;
 
 }
 
