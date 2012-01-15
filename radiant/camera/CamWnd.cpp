@@ -1197,6 +1197,45 @@ void CamWnd::drawTime()
 	GlobalOpenGL().drawString((boost::format("Time: %.3f sec.") % (time * 0.001f)).str());
 }
 
+void CamWnd::connectWindowStateEvent(Gtk::Window& window)
+{
+	// Connect to the window-state-event signal
+	_windowStateConn = window.signal_window_state_event().connect(
+		sigc::mem_fun(*this, &CamWnd::onWindowStateEvent)
+	);
+}
+
+void CamWnd::disconnectWindowStateEvent()
+{
+	_windowStateConn.disconnect();
+}
+
+bool CamWnd::onWindowStateEvent(GdkEventWindowState* ev)
+{
+	if ((ev->changed_mask & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN)) != 0)
+	{
+		// Now let's see what the new state of the window is
+		if ((ev->new_window_state & (GDK_WINDOW_STATE_ICONIFIED|GDK_WINDOW_STATE_WITHDRAWN)) == 0)
+		{
+			// Window got maximised again, re-add the GL widget to fix it from going gray
+			Gtk::Widget* glWidget = getWidget();
+
+			// greebo: Unfortunate hack to fix the grey GL renderviews in Win32
+			Gtk::Container* container = glWidget->get_parent();
+
+			if (container != NULL)
+			{
+				glWidget->reference();
+				container->remove(*glWidget);
+				container->add(*glWidget);
+				glWidget->unreference();
+			}
+		}
+	}
+
+	return false;
+}
+
 // -------------------------------------------------------------------------------
 
 ShaderPtr CamWnd::m_state_select1;

@@ -68,6 +68,9 @@ private:
 
 	gtkutil::Timer _timer;
 
+	// Used in Windows only
+	sigc::connection _windowStateConn;
+
 public:
 	SelectionSystemWindowObserver* m_window_observer;
 
@@ -173,7 +176,15 @@ private:
 
 	void _onDeferredMouseMotion(gdouble x, gdouble y, guint state);
 	void _onFreelookMotion(int x, int y, guint state);
+
 	static gboolean _onFrame(gpointer data);
+
+protected:
+	// Used in Windows only to fix camera views going grey
+	void connectWindowStateEvent(Gtk::Window& window);
+	void disconnectWindowStateEvent();
+
+	bool onWindowStateEvent(GdkEventWindowState* ev); // only used in Windows
 };
 
 /**

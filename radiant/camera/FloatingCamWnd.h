@@ -1,5 +1,4 @@
-#ifndef _FLOATING_CAMERA_WINDOW_H_
-#define _FLOATING_CAMERA_WINDOW_H_
+#pragma once
 
 #include "gtkutil/window/PersistentTransientWindow.h"
 #include <boost/shared_ptr.hpp>
@@ -17,5 +16,3 @@ public:
 	virtual ~FloatingCamWnd();
 };
 typedef boost::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
-
-#endif /* _FLOATING_CAMERA_WINDOW_H_ */
