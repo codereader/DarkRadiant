@@ -119,6 +119,7 @@
     <ClInclude Include="..\..\include\imainframe.h" />
     <ClInclude Include="..\..\include\imainframelayout.h" />
     <ClInclude Include="..\..\include\imap.h" />
+    <ClInclude Include="..\..\include\imapcompiler.h" />
     <ClInclude Include="..\..\include\imapformat.h" />
     <ClInclude Include="..\..\include\imapresource.h" />
     <ClInclude Include="..\..\include\imd5anim.h" />

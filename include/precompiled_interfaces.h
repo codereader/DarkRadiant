@@ -42,6 +42,7 @@
 #include "imainframelayout.h"
 #include "imap.h"
 #include "imapformat.h"
+//#include "imapcompiler.h"
 #include "imapresource.h"
 #include "imd5anim.h"
 #include "imd5model.h"

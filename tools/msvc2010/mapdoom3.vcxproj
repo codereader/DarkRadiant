@@ -307,6 +307,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapFormat.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapReader.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapWriter.h" />
@@ -323,6 +324,7 @@
     <ClInclude Include="..\..\plugins\mapdoom3\primitivewriters\PatchDefExporter.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapReader.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapWriter.cpp" />

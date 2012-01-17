@@ -11,6 +11,9 @@
     <Filter Include="src\primitivewriters">
       <UniqueIdentifier>{76e389ef-7864-4fbf-aa1f-d2afd91ba985}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\compiler">
+      <UniqueIdentifier>{f6fd3c0c-b85a-44fd-9149-fa840615ac31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapFormat.h">
@@ -55,6 +58,9 @@
     <ClInclude Include="..\..\plugins\mapdoom3\Quake4MapReader.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
@@ -92,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\Quake4MapReader.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.cpp">
+      <Filter>src\compiler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
