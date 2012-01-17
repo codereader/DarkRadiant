@@ -1,7 +1,7 @@
 #pragma once 
 
 #include "imodule.h"
-#include <boost/shared_ptr.hpp>
+#include "inode.h"
 
 namespace map
 {
@@ -16,7 +16,7 @@ public:
     virtual ~IMapCompiler() {}
 
 	// Use the given map file to generate the .proc file containing the pre-processed map models
-	virtual void generateProc(const std::string& mapFile) = 0;
+	virtual void generateProc(const scene::INodePtr& root) = 0;
 };
 typedef boost::shared_ptr<IMapCompiler> IMapCompilerPtr;
 

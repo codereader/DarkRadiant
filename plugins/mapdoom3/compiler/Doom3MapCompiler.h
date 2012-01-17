@@ -2,6 +2,7 @@
 
 #include "imapcompiler.h"
 #include "icommandsystem.h"
+#include "inode.h"
 
 namespace map
 {
@@ -10,7 +11,7 @@ class Doom3MapCompiler :
 	public IMapCompiler
 {
 public:
-	virtual void generateProc(const std::string& mapFile);
+	virtual void generateProc(const scene::INodePtr& root);
 
 	virtual const std::string& getName() const;
 	virtual const StringSet& getDependencies() const;
@@ -20,6 +21,10 @@ public:
 private:
 	//  The method called by the "dmap" command
 	void dmapCmd(const cmd::ArgumentList& args);
+
+	// Runs the actual dmap sequence on the given map file
+	void runDmap(const scene::INodePtr& root);
+	void runDmap(const std::string& mapFile);
 };
 typedef boost::shared_ptr<Doom3MapCompiler> Doom3MapCompilerPtr;
 
