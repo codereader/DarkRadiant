@@ -558,7 +558,7 @@ void XYWnd::beginMove()
 		endMove();
 	}
 	_moveStarted = true;
-	_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(), 
+	_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(),
 		sigc::mem_fun(*this, &XYWnd::callbackMoveDelta));
 
 	m_move_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackMoveFocusOut));
@@ -578,7 +578,7 @@ void XYWnd::beginZoom()
 	}
 	_zoomStarted = true;
 	_dragZoom = 0;
-	_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(), 
+	_freezePointer.freeze(_parent ? _parent : GlobalMainFrame().getTopLevelWindow(),
 		sigc::mem_fun(*this, &XYWnd::callbackZoomDelta));
 	m_zoom_focusOut = _glWidget->signal_focus_out_event().connect(sigc::mem_fun(*this, &XYWnd::callbackZoomFocusOut));
 }
@@ -921,8 +921,8 @@ void XYWnd::drawGrid()
 				density = 4;
 				// slightly bigger crosses
 				sizeFactor = 1.95;
-			} 
-			else 
+			}
+			else
 			{
 				// minor grid (rendered first)
 				if (colourGridMinor == colourGridBack)
@@ -1090,7 +1090,7 @@ void XYWnd::drawGrid()
 		}
 	}
 
-	if (GlobalXYWnd().showAxes()) 
+	if (GlobalXYWnd().showAxes())
 	{
 		const char g_AxisName[3] = { 'X', 'Y', 'Z' };
 
@@ -1519,14 +1519,18 @@ void XYWnd::draw()
 
 	glLoadMatrixf(m_modelview);
 
-	unsigned int globalstate = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_POLYGONSMOOTH | RENDER_LINESMOOTH;
-	if (!getCameraSettings()->solidSelectionBoxes()) {
-		globalstate |= RENDER_LINESTIPPLE;
+	unsigned int flagsMask = RENDER_COLOURARRAY
+                           | RENDER_COLOURWRITE
+                           | RENDER_POLYGONSMOOTH
+                           | RENDER_LINESMOOTH;
+	if (!getCameraSettings()->solidSelectionBoxes())
+    {
+		flagsMask |= RENDER_LINESTIPPLE;
 	}
 
 	{
 		// Construct the renderer and render the scene
-		XYRenderer renderer(globalstate, _selectedShader.get());
+		XYRenderer renderer(flagsMask, _selectedShader.get());
 
 		// First pass (scenegraph traversal)
 		render::collectRenderablesInScene(renderer, m_view);

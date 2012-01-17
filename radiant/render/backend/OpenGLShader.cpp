@@ -219,7 +219,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
                                 | RENDER_COLOURWRITE // TODO: maybe not for depth pass?
                                 | RENDER_PROGRAM;
 
-        zPass.setColour(Vector4(0, 0, 0, 1));
+        zPass.setColour(Colour4::BLACK());
         zPass.m_sort = OpenGLState::eSortOpaque;
 
         zPass.glProgram = GLProgramFactory::instance().getProgram("depthFill");
@@ -239,6 +239,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
                         | RENDER_DEPTHTEST
 						| RENDER_DEPTHWRITE
                         | RENDER_COLOURWRITE
+                        | RENDER_COLOURCHANGE
                         | RENDER_SMOOTH
                         | RENDER_BUMP
                         | RENDER_PROGRAM;
@@ -415,7 +416,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     determineBlendModeForEditorPass(previewPass);
 
     // Set the GL color to white
-    previewPass.setColour(Vector4(1, 1, 1, 1));
+    previewPass.setColour(Colour4::WHITE());
 
     // Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
@@ -523,7 +524,7 @@ void OpenGLShader::construct(const std::string& name)
         {
             OpenGLState& state = appendDefaultPass();
 
-            Vector4 colour;
+            Colour4 colour;
             sscanf(name.c_str(), "(%f %f %f)", &colour[0], &colour[1], &colour[2]);
             colour[3] = 1.0f;
             state.setColour(colour);
@@ -537,7 +538,7 @@ void OpenGLShader::construct(const std::string& name)
         {
             OpenGLState& state = appendDefaultPass();
 
-            Vector4 colour;
+            Colour4 colour;
             sscanf(name.c_str(), "[%f %f %f]", &colour[0], &colour[1], &colour[2]);
             colour[3] = 0.5f;
             state.setColour(colour);
@@ -551,7 +552,7 @@ void OpenGLShader::construct(const std::string& name)
         {
             OpenGLState& state = appendDefaultPass();
 
-            Vector4 colour;
+            Colour4 colour;
             sscanf(name.c_str(), "<%f %f %f>", &colour[0], &colour[1], &colour[2]);
             colour[3] = 1;
             state.setColour(colour);

@@ -1,5 +1,4 @@
-#ifndef TEXTUREMANIPULATOR_H_
-#define TEXTUREMANIPULATOR_H_
+#pragma once
 
 #include "iimage.h"
 #include "ishaders.h"
@@ -54,7 +53,7 @@ public:
 	/* greebo: Performs a fast scan over the pixel data, taking every
 	 * 20th pixel to determine the representative flat shade colour
 	 */
-	Colour3 getFlatshadeColour(const ImagePtr& input);
+	Vector3 getFlatshadeColour(const ImagePtr& input);
 
 private:
 	void keyChanged();
@@ -82,5 +81,3 @@ private:
 }; // class TextureManipulator
 
 } // namespace shaders
-
-#endif /*TEXTUREMANIPULATOR_H_*/

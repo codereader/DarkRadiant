@@ -7,6 +7,7 @@
 
 #include "math/Vector2.h"
 #include "math/Vector4.h"
+#include "render/Colour4.h"
 
 class IRenderEntity;
 
@@ -155,7 +156,7 @@ public:
      * \brief
      * Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
      */
-    virtual Vector4 getColour() const = 0;
+    virtual Colour4 getColour() const = 0;
 
     /**
      * \brief

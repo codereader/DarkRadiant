@@ -21,7 +21,7 @@ class OpenGLState
 {
     // The 4 colour components, only for use in OpenGLStates that do not have
     // any shader stages attached, otherwise pull the colour from there.
-	Vector4 _colour;
+	Colour4 _colour;
 
 public:
 	enum ESort
@@ -53,15 +53,23 @@ public:
 	};
 
     /// Return the glColor for this state
-    const Vector4& getColour() const { return _colour; }
+    const Colour4& getColour() const
+    {
+        assert(_colour.isValid());
+        return _colour;
+    }
 
     /// Set the glColor for this state, from a Vector4
-    void setColour(const Vector4& col) { _colour = col; }
+    void setColour(const Colour4& col)
+    {
+        assert(col.isValid());
+        _colour = col;
+    }
 
     /// Set the glColor for this state, from individual components
     void setColour(float r, float g, float b, float a)
     {
-        setColour(Vector4(r, g, b, a));
+        setColour(Colour4(r, g, b, a));
     }
 
     /**
@@ -152,7 +160,7 @@ public:
 
 	// Default constructor
 	OpenGLState()
-	: _colour(1,1,1,1),
+	: _colour(Colour4::WHITE()),
 	  renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
 	  m_sort(eSortFirst),
       polygonOffset(0.0f),

@@ -28,9 +28,40 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ShaderLayer.h"
 
-// Rendering states to sort by.
-// Higher bits have the most effect - slowest state changes should be highest.
+/**
+ * \file
+ * Interfaces for the back-end renderer.
+ */
 
+/**
+ * \name Global render flags
+ *
+ * These flags control which capabilities of the renderer are used throughout
+ * the render process. They have a four stage lifecycle:
+ *
+ * 1. The flags are initially SET in the Shader implementation, describing the
+ * features that the particular Shader would like to use for rendering its
+ * renderables. For example, a shader pass performing a blend will set
+ * RENDER_BLEND as one of its flags.
+ *
+ * 2. The flags are MASKED by another set of flags provided to a
+ * RenderableCollector before it traverses the scene graph, in order to control
+ * which shader-specified flags can actually be used for that render pass. For
+ * example, the XYRenderer renders in wireframe mode only, so it does not enable
+ * RENDER_FILL in its mask, while the CamRenderer does.
+ *
+ * 3. The flags are used to set or change OpenGL state in the shader pass
+ * implementation. For example, if RENDER_BLEND is set, then glEnable(GL_BLEND)
+ * will be called before the associated shader's renderables are rendered. Some
+ * flags map directly to glEnable parameters, while others (such as
+ * RENDER_PROGRAM) specify more complex changes.
+ *
+ * 4. The flags are passed as a parameter to the OpenGLRenderable::render()
+ * method, allowing individual objects to modify their behaviour accordingly.
+ * For example, objects may decide whether or not to submit colour information
+ * to OpenGL based on the value of the RENDER_COLOURCHANGE flag.
+ */
+///@{
 const unsigned int RENDER_DEFAULT = 0;
 const unsigned int RENDER_LINESTIPPLE = 1 << 0; // glEnable(GL_LINE_STIPPLE)
 const unsigned int RENDER_LINESMOOTH = 1 << 1; // glEnable(GL_LINE_SMOOTH)
@@ -58,7 +89,7 @@ const unsigned int RENDER_PROGRAM = 1 << 22;
 const unsigned int RENDER_SCREEN = 1 << 23;
 const unsigned int RENDER_OVERRIDE = 1 << 24;
 typedef unsigned int RenderStateFlags;
-
+///@}
 
 class AABB;
 class Matrix4;

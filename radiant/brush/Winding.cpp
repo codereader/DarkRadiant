@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "GLProgramAttributes.h"
 
+#include "debugging/render.h"
+
 namespace {
 	struct indexremap_t {
 		indexremap_t(std::size_t _x, std::size_t _y, std::size_t _z) :
@@ -68,6 +70,12 @@ void Winding::render(const RenderInfo& info) const
     {
 		return;
 	}
+
+    // Our vertex colours are always white, if requested
+    if (info.checkFlag(RENDER_COLOURCHANGE))
+    {
+        glColor3f(1, 1, 1);
+    }
 
 	// A shortcut pointer to the first array element to avoid
 	// massive calls to std::vector<>::begin()

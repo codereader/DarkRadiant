@@ -62,7 +62,7 @@ private:
 
     // Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
 	// The 4 numbers are indices into the registers array in the parent material
-	std::size_t _colour[4];
+	std::size_t _colIdx[4];
 
     // Vertex colour blend mode
     VertexColourMode _vertexColourMode;
@@ -119,7 +119,7 @@ public:
     /* ShaderLayer implementation */
     TexturePtr getTexture() const;
     BlendFunc getBlendFunc() const;
-    Vector4 getColour() const;
+    Colour4 getColour() const;
     VertexColourMode getVertexColourMode() const;
     CubeMapMode getCubeMapMode() const;
     float getAlphaTest() const;
@@ -372,7 +372,7 @@ public:
     }
 
 	// Returns the value of the given register
-	float getRegister(std::size_t index) const
+	float getRegisterValue(std::size_t index) const
 	{
 		assert(index < _registers.size());
 		return _registers[index];

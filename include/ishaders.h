@@ -43,10 +43,6 @@ typedef boost::shared_ptr<MapExpression> MapExpressionPtr;
 
 } // namespace shaders
 
-template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
-typedef Vector3 Colour3;
-
 /**
  * \brief
  * Interface for a material shader.

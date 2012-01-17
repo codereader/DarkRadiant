@@ -92,15 +92,15 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_alphaTest(REG_ZERO),
 	_texGenType(TEXGEN_NORMAL),
 	_privatePolygonOffset(0)
-{ 
+{
 	_registers[REG_ZERO] = 0;
 	_registers[REG_ONE] = 1;
 
 	// Init the colour to 1,1,1,1
-	_colour[0] = REG_ONE;
-	_colour[1] = REG_ONE;
-	_colour[2] = REG_ONE;
-	_colour[3] = REG_ONE;
+	_colIdx[0] = REG_ONE;
+	_colIdx[1] = REG_ONE;
+	_colIdx[2] = REG_ONE;
+	_colIdx[3] = REG_ONE;
 
 	// Scale is set to 1,1 by default
 	_scale[0] = REG_ONE;
@@ -136,11 +136,13 @@ BlendFunc Doom3ShaderLayer::getBlendFunc() const
     return blendFuncFromStrings(_blendFuncStrings);
 }
 
-Vector4 Doom3ShaderLayer::getColour() const
+Colour4 Doom3ShaderLayer::getColour() const
 {
 	// Resolve the register values
-    return Vector4(getRegister(_colour[0]), getRegister(_colour[1]), 
-				   getRegister(_colour[2]), getRegister(_colour[3]));
+    Colour4 colour(getRegisterValue(_colIdx[0]), getRegisterValue(_colIdx[1]),
+				   getRegisterValue(_colIdx[2]), getRegisterValue(_colIdx[3]));
+    assert(colour.isValid());
+    return colour;
 }
 
 void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const IShaderExpressionPtr& expr)
@@ -154,27 +156,27 @@ void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const I
 	switch (comp)
 	{
 	case COMP_RED:
-		_colour[0] = index;
+		_colIdx[0] = index;
 		break;
 	case COMP_GREEN:
-		_colour[1] = index;
+		_colIdx[1] = index;
 		break;
 	case COMP_BLUE:
-		_colour[2] = index;
+		_colIdx[2] = index;
 		break;
 	case COMP_ALPHA:
-		_colour[3] = index;
+		_colIdx[3] = index;
 		break;
 	case COMP_RGB:
-		_colour[0] = index;
-		_colour[1] = index;
-		_colour[2] = index;
+		_colIdx[0] = index;
+		_colIdx[1] = index;
+		_colIdx[2] = index;
 		break;
 	case COMP_RGBA:
-		_colour[0] = index;
-		_colour[1] = index;
-		_colour[2] = index;
-		_colour[3] = index;
+		_colIdx[0] = index;
+		_colIdx[1] = index;
+		_colIdx[2] = index;
+		_colIdx[3] = index;
 		break;
 	};
 }
@@ -185,15 +187,15 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 	for (std::size_t i = 0; i < 4; ++i)
 	{
 		// Does this colour component refer to a reserved constant index?
-		if (_colour[i] < NUM_RESERVED_REGISTERS)
+		if (_colIdx[i] < NUM_RESERVED_REGISTERS)
 		{
 			// Yes, break this up by allocating a new register for this value
-			_colour[i] = getNewRegister(col[i]);
+			_colIdx[i] = getNewRegister(col[i]);
 		}
 		else
 		{
 			// Already using a custom register
-			setRegister(_colour[i], col[i]);
+			setRegister(_colIdx[i], col[i]);
 		}
 	}
 }

@@ -59,7 +59,7 @@ void TextureManipulator::keyChanged()
 	}
 }
 
-Colour3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
+Vector3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
 	// Calculate the number of pixels in this image
 	std::size_t numPixels = input->getWidth(0) * input->getHeight(0);
 
@@ -71,7 +71,7 @@ Colour3 TextureManipulator::getFlatshadeColour(const ImagePtr& input) {
 	// Set the pixel pointer to the very first pixel
 	byte* pixels = input->getMipMapPixels(0);
 
-	Colour3 returnValue;
+	Vector3 returnValue;
 	int pixelCount = 0;
 
 	// Go over all the pixels and change their value accordingly

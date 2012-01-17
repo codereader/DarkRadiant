@@ -12,7 +12,6 @@ namespace shaders
 class ShaderExpression :
 	public IShaderExpression
 {
-protected:
 	// The register index we're writing to (-1 by default)
 	int _index;
 
