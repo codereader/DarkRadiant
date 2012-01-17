@@ -75,11 +75,12 @@ am__base_list = \
 am__installdirs = "$(DESTDIR)$(modulesdir)"
 LTLIBRARIES = $(modules_LTLIBRARIES)
 mapdoom3_la_DEPENDENCIES = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-	$(top_builddir)/libs/xmlutil/libxmlutil.la
+	$(top_builddir)/libs/xmlutil/libxmlutil.la \
+	$(top_builddir)/libs/scene/libscenegraph.la
 am_mapdoom3_la_OBJECTS = Doom3MapFormat.lo Doom3PrefabFormat.lo \
 	Quake4MapFormat.lo Quake4MapReader.lo Doom3MapReader.lo \
-	mapdoom3.lo Doom3MapWriter.lo BrushDef.lo BrushDef3.lo \
-	Patch.lo PatchDef2.lo PatchDef3.lo
+	mapdoom3.lo Doom3MapWriter.lo Doom3MapCompiler.lo BrushDef.lo \
+	BrushDef3.lo Patch.lo PatchDef2.lo PatchDef3.lo
 mapdoom3_la_OBJECTS = $(am_mapdoom3_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -305,21 +306,23 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
 modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = mapdoom3.la
 mapdoom3_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-                     $(top_builddir)/libs/xmlutil/libxmlutil.la
+                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
+                     $(top_builddir)/libs/scene/libscenegraph.la
 
 mapdoom3_la_LDFLAGS = -module -avoid-version $(GTKMM_LIBS) $(XML_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
-                 Doom3PrefabFormat.cpp \
-				 Quake4MapFormat.cpp \
-				 Quake4MapReader.cpp \
+                      Doom3PrefabFormat.cpp \
+                      Quake4MapFormat.cpp \
+                      Quake4MapReader.cpp \
                       Doom3MapReader.cpp \
                       mapdoom3.cpp \
-					  Doom3MapWriter.cpp \
-                 primitiveparsers/BrushDef.cpp \
-                 primitiveparsers/BrushDef3.cpp \
-                 primitiveparsers/Patch.cpp \
-                 primitiveparsers/PatchDef2.cpp \
-                 primitiveparsers/PatchDef3.cpp
+                      Doom3MapWriter.cpp \
+                      compiler/Doom3MapCompiler.cpp \
+                      primitiveparsers/BrushDef.cpp \
+                      primitiveparsers/BrushDef3.cpp \
+                      primitiveparsers/Patch.cpp \
+                      primitiveparsers/PatchDef2.cpp \
+                      primitiveparsers/PatchDef3.cpp
 
 all: all-am
 
@@ -397,6 +400,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BrushDef.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BrushDef3.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3MapCompiler.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3MapFormat.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3MapReader.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Doom3MapWriter.Plo@am__quote@
@@ -431,6 +435,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LTCXXCOMPILE) -c -o $@ $<
+
+Doom3MapCompiler.lo: compiler/Doom3MapCompiler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Doom3MapCompiler.lo -MD -MP -MF $(DEPDIR)/Doom3MapCompiler.Tpo -c -o Doom3MapCompiler.lo `test -f 'compiler/Doom3MapCompiler.cpp' || echo '$(srcdir)/'`compiler/Doom3MapCompiler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Doom3MapCompiler.Tpo $(DEPDIR)/Doom3MapCompiler.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='compiler/Doom3MapCompiler.cpp' object='Doom3MapCompiler.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Doom3MapCompiler.lo `test -f 'compiler/Doom3MapCompiler.cpp' || echo '$(srcdir)/'`compiler/Doom3MapCompiler.cpp
 
 BrushDef.lo: primitiveparsers/BrushDef.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT BrushDef.lo -MD -MP -MF $(DEPDIR)/BrushDef.Tpo -c -o BrushDef.lo `test -f 'primitiveparsers/BrushDef.cpp' || echo '$(srcdir)/'`primitiveparsers/BrushDef.cpp

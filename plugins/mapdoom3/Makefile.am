@@ -5,18 +5,20 @@ modulesdir = $(pkglibdir)/modules
 modules_LTLIBRARIES = mapdoom3.la
 
 mapdoom3_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
-                     $(top_builddir)/libs/xmlutil/libxmlutil.la
+                     $(top_builddir)/libs/xmlutil/libxmlutil.la \
+                     $(top_builddir)/libs/scene/libscenegraph.la
 mapdoom3_la_LDFLAGS = -module -avoid-version $(GTKMM_LIBS) $(XML_LIBS)
 mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
-                 Doom3PrefabFormat.cpp \
-				 Quake4MapFormat.cpp \
-				 Quake4MapReader.cpp \
+                      Doom3PrefabFormat.cpp \
+                      Quake4MapFormat.cpp \
+                      Quake4MapReader.cpp \
                       Doom3MapReader.cpp \
                       mapdoom3.cpp \
-					  Doom3MapWriter.cpp \
-                 primitiveparsers/BrushDef.cpp \
-                 primitiveparsers/BrushDef3.cpp \
-                 primitiveparsers/Patch.cpp \
-                 primitiveparsers/PatchDef2.cpp \
-                 primitiveparsers/PatchDef3.cpp
+                      Doom3MapWriter.cpp \
+                      compiler/Doom3MapCompiler.cpp \
+                      primitiveparsers/BrushDef.cpp \
+                      primitiveparsers/BrushDef3.cpp \
+                      primitiveparsers/Patch.cpp \
+                      primitiveparsers/PatchDef2.cpp \
+                      primitiveparsers/PatchDef3.cpp
 
