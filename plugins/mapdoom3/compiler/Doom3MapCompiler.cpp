@@ -16,6 +16,8 @@
 #include "scene/Node.h"
 #include "../Doom3MapReader.h"
 
+#include "ProcCompiler.h"
+
 namespace map
 {
 
@@ -82,15 +84,22 @@ void Doom3MapCompiler::generateProc(const scene::INodePtr& root)
 {
 	globalOutputStream() << "=== DMAP: GenerateProc ===" << std::endl;
 
-	
+	ProcCompiler compiler(root);
+
+	ProcFilePtr procFile = compiler.generateProcFile();
+
+	if (procFile != NULL)
+	{
+		procFile->saveToFile("");
+	}
 }
 
 void Doom3MapCompiler::runDmap(const scene::INodePtr& root)
 {
 	assert(root);
 
-	// Load the data from the .map file into our working format
-
+	// First step: process map into .proc file
+	generateProc(root);
 }
 
 void Doom3MapCompiler::runDmap(const std::string& mapFile)
