@@ -848,10 +848,6 @@
       <Project>{b6d4b38a-0c39-42cd-8193-75979e1f4d68}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="jpeglib.vcxproj">
-      <Project>{4286e605-5358-462f-ac57-44fcc697585b}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="mathlib.vcxproj">
       <Project>{3c9fb5aa-7118-476e-b33d-d3ac1c8412bb}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
