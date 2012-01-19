@@ -61,6 +61,10 @@ private:
 	Gtk::TreeView* _treeView;
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
+	// Populates the Media Browser in its own thread
+    class Populator;
+    boost::shared_ptr<Populator> _populator;
+
 	// Context menu
 	gtkutil::PopupMenu _popupMenu;
 
@@ -84,11 +88,6 @@ private:
 	bool _onExpose(GdkEventExpose*);
 	void _onSelectionChanged();
 
-	/**
-	 * greebo: Custom tree sort function to list folders before textures
-	 */
-	int treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b);
-
 	/* Tree selection query functions */
 
 	bool isDirectorySelected(); // is a directory selected
@@ -96,6 +95,8 @@ private:
 
 	// Populates the treeview
 	void populate();
+
+	void getTreeStoreFromLoader();
 
 	/** Return the singleton instance.
 	 */
@@ -152,6 +153,11 @@ public:
 	 * greebo: Registers the preference page.
 	 */
 	static void registerPreferences();
+
+	/**
+	 * greebo: Custom tree sort function to list folders before textures
+	 */
+	int treeViewSortFunc(const Gtk::TreeModel::iterator& a, const Gtk::TreeModel::iterator& b);
 };
 
 }

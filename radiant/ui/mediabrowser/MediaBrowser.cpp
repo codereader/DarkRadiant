@@ -23,6 +23,7 @@
 #include <gtkmm/frame.h>
 #include <gtkmm/dialog.h>
 #include <gtkmm/stock.h>
+#include <glibmm/thread.h>
 
 #include <iostream>
 #include <map>
@@ -35,6 +36,8 @@
 #include "ui/common/ShaderDefinitionView.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 
+#include "debugging/ScopedDebugTimer.h"
+
 #include <boost/bind.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/functional/hash/hash.hpp>
@@ -44,95 +47,25 @@ namespace ui
 
 /* CONSTANTS */
 
-namespace {
-
-	const char* FOLDER_ICON = "folder16.png";
-	const char* TEXTURE_ICON = "icon_texture.png";
-
-	const char* LOAD_TEXTURE_TEXT = N_("Load in Textures view");
-	const char* LOAD_TEXTURE_ICON = "textureLoadInTexWindow16.png";
-
-	const char* APPLY_TEXTURE_TEXT = N_("Apply to selection");
-	const char* APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
-
-	const char* SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
-	const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
-
-	const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
-	const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
-}
-
-// Constructor
-MediaBrowser::MediaBrowser()
-: _treeStore(Gtk::TreeStore::create(_columns)),
-  _treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
-  _selection(_treeView->get_selection()),
-  _popupMenu(_treeView),
-  _preview(Gtk::manage(new TexturePreviewCombo)),
-  _isPopulated(false)
-{
-	// Allocate a new top-level widget
-	_widget.reset(new Gtk::VBox(false, 0));
-
-	// Create the treeview
-	_treeView->set_headers_visible(false);
-	_widget->signal_expose_event().connect(sigc::mem_fun(*this, &MediaBrowser::_onExpose));
-
-	_treeView->append_column(*Gtk::manage(new gtkutil::IconTextColumn(
-		_("Shader"), _columns.displayName, _columns.icon)));
-
-	// Set the tree store to sort on this column
-	_treeStore->set_sort_column(_columns.displayName, Gtk::SORT_ASCENDING);
-	_treeStore->set_sort_func(_columns.displayName, sigc::mem_fun(*this, &MediaBrowser::treeViewSortFunc));
-
-	// Use the TreeModel's full string search function
-	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
-
-	// Pack the treeview into a scrollwindow, frame and then into the vbox
-	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
-
-	Gtk::Frame* frame = Gtk::manage(new Gtk::Frame);
-	frame->add(*scroll);
-
-	_widget->pack_start(*frame, true, true, 0);
-
-	// Connect up the selection changed callback
-	_selection->signal_changed().connect(sigc::mem_fun(*this, &MediaBrowser::_onSelectionChanged));
-
-	// Construct the popup context menu
-	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON),
-			_(LOAD_TEXTURE_TEXT)
-		)),
-		boost::bind(&MediaBrowser::_onLoadInTexView, this),
-		boost::bind(&MediaBrowser::_testLoadInTexView, this)
-	);
-	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON),
-			_(APPLY_TEXTURE_TEXT)
-		)),
-		boost::bind(&MediaBrowser::_onApplyToSel, this),
-		boost::bind(&MediaBrowser::_testSingleTexSel, this)
-	);
-	_popupMenu.addItem(
-		Gtk::manage(new gtkutil::IconTextMenuItem(
-			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON),
-			_(SHOW_SHADER_DEF_TEXT)
-		)),
-		boost::bind(&MediaBrowser::_onShowShaderDefinition, this),
-		boost::bind(&MediaBrowser::_testSingleTexSel, this)
-	);
-
-	// Pack in the TexturePreviewCombo widgets
-	_widget->pack_end(*_preview, false, false, 0);
-}
-
-/* Callback functor for processing shader names */
-
 namespace
 {
+
+const char* FOLDER_ICON = "folder16.png";
+const char* TEXTURE_ICON = "icon_texture.png";
+
+const char* LOAD_TEXTURE_TEXT = N_("Load in Textures view");
+const char* LOAD_TEXTURE_ICON = "textureLoadInTexWindow16.png";
+
+const char* APPLY_TEXTURE_TEXT = N_("Apply to selection");
+const char* APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
+
+const char* SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
+const char* SHOW_SHADER_DEF_ICON = "icon_script.png";
+
+const std::string RKEY_MEDIA_BROWSER_PRELOAD = "user/ui/mediaBrowser/preLoadMediaTree";
+const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
+
+/* Callback functor for processing shader names */
 
 struct ShaderNameCompareFunctor :
 	public std::binary_function<std::string, std::string, bool>
@@ -235,6 +168,181 @@ struct ShaderNameFunctor
 
 } // namespace
 
+class MediaBrowser::Populator
+{
+private:
+    // The dispatcher object
+    Glib::Dispatcher _dispatcher;
+
+    // Column specification struct
+    const MediaBrowser::TreeColumns& _columns;
+
+    // The tree store to populate. We must operate on our own tree store, since
+    // updating the MediaBrowser's tree store from a different thread
+    // wouldn't be safe
+    Glib::RefPtr<Gtk::TreeStore> _treeStore;
+
+    // The thread object
+    Glib::Thread* _thread;
+
+	// Mutex needed in all thread-joining methods
+	Glib::Mutex _mutex;
+
+private:
+
+    // The worker function that will execute in the thread
+    void run()
+    {
+        ScopedDebugTimer timer("MediaBrowser::Populator::run()");
+
+        // Create new treestoree
+        _treeStore = Gtk::TreeStore::create(_columns);
+
+        ShaderNameFunctor functor(_treeStore, _columns);
+		GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
+
+		// Set the tree store to sort on this column (triggers sorting)
+		_treeStore->set_sort_column(_columns.displayName, Gtk::SORT_ASCENDING);
+		_treeStore->set_sort_func(_columns.displayName, sigc::mem_fun(MediaBrowser::getInstance(), &MediaBrowser::treeViewSortFunc));
+
+        // Invoke dispatcher to notify the EntityClassChooser
+        _dispatcher();
+    }
+	
+	// Ensures that the worker thread (if it exists) is finished before leaving this method
+	// it's important that the join() and the NULL assignment is happening in a controlled
+	// fashion to avoid calling join() on a thread object already free'd by gthread.
+	void joinThreadSafe()
+	{
+		Glib::Mutex::Lock lock(_mutex); // only one thread should be able to execute this method at a time
+
+		if (_thread == NULL)
+		{
+			// There is no thread, it might be possible that it has been free'd already
+			return;
+		}
+
+        _thread->join();
+
+		// set the thread object to NULL before releasing the lock, 
+		// there might be another thread waiting to enter this block, and
+		// the since the object has been freed by gthread already, it must be NULLified
+		_thread = NULL; 
+	}
+
+public:
+
+    // Construct and initialise variables
+    Populator(const MediaBrowser::TreeColumns& cols) : 
+		_columns(cols), 
+		_thread(NULL)
+    {}
+
+    // Connect the given slot to be invoked when population has finished.
+    // The slot will be invoked in the main thread (to be precise, the thread
+    // that called connectFinishedSlot()).
+    void connectFinishedSlot(const sigc::slot<void>& slot)
+    {
+        _dispatcher.connect(slot);
+    }
+
+    // Return the populated treestore, and join the thread (wait for it to
+    // finish and release its resources).
+    Glib::RefPtr<Gtk::TreeStore> getTreeStoreAndQuit()
+    {
+		joinThreadSafe();
+
+        return _treeStore;
+    }
+
+	void waitUntilFinished()
+	{
+		joinThreadSafe();
+	}
+
+    // Start loading entity classes in a new thread
+    void populate()
+    {
+		Glib::Mutex::Lock lock(_mutex); // avoid concurrency with joinThreadSafe() above
+
+		if (_thread != NULL)
+		{
+			return; // there is already a worker thread running
+		}
+
+        _thread = Glib::Thread::create(sigc::mem_fun(*this, &Populator::run), true);
+    }
+};
+
+// Constructor
+MediaBrowser::MediaBrowser()
+: _treeStore(Gtk::TreeStore::create(_columns)),
+  _treeView(Gtk::manage(new Gtk::TreeView(_treeStore))),
+  _selection(_treeView->get_selection()),
+  _populator(new Populator(_columns)),
+  _popupMenu(_treeView),
+  _preview(Gtk::manage(new TexturePreviewCombo)),
+  _isPopulated(false)
+{
+	// Allocate a new top-level widget
+	_widget.reset(new Gtk::VBox(false, 0));
+
+	// Create the treeview
+	_treeView->set_headers_visible(false);
+	_widget->signal_expose_event().connect(sigc::mem_fun(*this, &MediaBrowser::_onExpose));
+
+	_treeView->append_column(*Gtk::manage(new gtkutil::IconTextColumn(
+		_("Shader"), _columns.displayName, _columns.icon)));
+
+	// Use the TreeModel's full string search function
+	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
+
+	// Pack the treeview into a scrollwindow, frame and then into the vbox
+	Gtk::ScrolledWindow* scroll = Gtk::manage(new gtkutil::ScrolledFrame(*_treeView));
+
+	Gtk::Frame* frame = Gtk::manage(new Gtk::Frame);
+	frame->add(*scroll);
+
+	_widget->pack_start(*frame, true, true, 0);
+
+	// Connect up the selection changed callback
+	_selection->signal_changed().connect(sigc::mem_fun(*this, &MediaBrowser::_onSelectionChanged));
+
+	// Construct the popup context menu
+	_popupMenu.addItem(
+		Gtk::manage(new gtkutil::IconTextMenuItem(
+			GlobalUIManager().getLocalPixbuf(LOAD_TEXTURE_ICON),
+			_(LOAD_TEXTURE_TEXT)
+		)),
+		boost::bind(&MediaBrowser::_onLoadInTexView, this),
+		boost::bind(&MediaBrowser::_testLoadInTexView, this)
+	);
+	_popupMenu.addItem(
+		Gtk::manage(new gtkutil::IconTextMenuItem(
+			GlobalUIManager().getLocalPixbuf(APPLY_TEXTURE_ICON),
+			_(APPLY_TEXTURE_TEXT)
+		)),
+		boost::bind(&MediaBrowser::_onApplyToSel, this),
+		boost::bind(&MediaBrowser::_testSingleTexSel, this)
+	);
+	_popupMenu.addItem(
+		Gtk::manage(new gtkutil::IconTextMenuItem(
+			GlobalUIManager().getLocalPixbuf(SHOW_SHADER_DEF_ICON),
+			_(SHOW_SHADER_DEF_TEXT)
+		)),
+		boost::bind(&MediaBrowser::_onShowShaderDefinition, this),
+		boost::bind(&MediaBrowser::_testSingleTexSel, this)
+	);
+
+	// Pack in the TexturePreviewCombo widgets
+	_widget->pack_end(*_preview, false, false, 0);
+
+	// Connect the finish callback to load the treestore
+	_populator->connectFinishedSlot(
+        sigc::mem_fun(*this, &MediaBrowser::getTreeStoreFromLoader)
+    );
+}
+
 /* Tree query functions */
 
 bool MediaBrowser::isDirectorySelected()
@@ -303,9 +411,13 @@ MediaBrowserPtr& MediaBrowser::getInstancePtr()
 // Set the selection in the treeview
 void MediaBrowser::setSelection(const std::string& selection)
 {
-	if (!_isPopulated) {
+	if (!_isPopulated)
+	{
 		populate();
 	}
+
+	// Make sure the treestore is finished loading
+	_populator->waitUntilFinished();
 
 	// If the selection string is empty, collapse the treeview and return with
 	// no selection
@@ -340,20 +452,33 @@ void MediaBrowser::init()
 
 void MediaBrowser::populate()
 {
+	if (!_isPopulated)
+	{
+		// Clear our treestore and put a single item in it
+		_treeStore->clear(); 
+
+		Gtk::TreeModel::iterator iter = _treeStore->append();
+		Gtk::TreeModel::Row row = *iter;
+
+		row[_columns.displayName] = _("Loading, please wait...");
+		row[_columns.fullName] = _("Loading, please wait...");
+		row[_columns.icon] = GlobalUIManager().getLocalPixbuf(TEXTURE_ICON);
+		row[_columns.isFolder] = false;
+		row[_columns.isOtherMaterialsFolder] = false;
+	}
+
 	// Set the flag to true to avoid double-entering this function
 	_isPopulated = true;
 
-	//ScopedDebugTimer timer("MediaBrowserPopulation");
+	// Start the background thread
+	_populator->populate();
+}
 
-	boost::shared_ptr<ScreenUpdateBlocker> _blocker;
-
-	if (GlobalMainFrame().getTopLevelWindow())
-	{
-		_blocker.reset(new ScreenUpdateBlocker(_("Processing..."), _("Populating MediaBrowser")));
-	}
-
-	ShaderNameFunctor functor(_treeStore, _columns);
-	GlobalMaterialManager().foreachShaderName(boost::bind(&ShaderNameFunctor::visit, &functor, _1));
+void MediaBrowser::getTreeStoreFromLoader()
+{
+    _treeStore = _populator->getTreeStoreAndQuit();
+    
+	_treeView->set_model(_treeStore);
 }
 
 /* gtkutil::PopupMenu callbacks */
