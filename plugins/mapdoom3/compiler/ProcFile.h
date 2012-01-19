@@ -2,9 +2,58 @@
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
+#include "ibrush.h"
+#include "ipatch.h"
+#include "ishaders.h"
 
 namespace map
 {
+
+struct BspFace
+{
+	std::size_t			planenum;		// serves as index into ProcFile::planes
+
+	MaterialPtr			material;		// the material of this plane
+	//textureVectors_t	texVec;			// FIXME
+
+	IWinding*			winding;		// only clipped to the other sides of the brush
+	IWinding*			visibleHull;	// also clipped to the solid parts of the world
+};
+
+// A brush structure used during compilation
+struct ProcBrush
+{
+	ProcBrush*			next;
+	ProcBrush*			original;	// chopped up brushes will reference the originals
+
+	int					entitynum;			// editor numbering for messages
+	int					brushnum;			// editor numbering for messages
+
+	MaterialPtr			contentShader;	// one face's shader will determine the volume attributes
+
+	int					contents;
+	bool				opaque;
+	int					outputNumber;		// set when the brush is written to the file list
+
+	AABB				bounds;
+	//int					numsides;
+
+	typedef std::vector<BspFace> BspFaces;
+	BspFaces			sides;
+};
+
+// A primitive can either be a brush or a patch,
+// so only one of the pointers is non-NULL
+struct ProcPrimitive
+{
+	ProcBrush* brush;
+	IPatch* patch;
+
+	ProcPrimitive() :
+		brush(NULL),
+		patch(NULL)
+	{}
+};
 
 struct ProcEntity
 {
@@ -13,12 +62,21 @@ struct ProcEntity
 
 	Vector3			origin;
 
-	//primitive_t*	primitives;
+	// Each entity has 0..N primitives
+	typedef std::vector<ProcPrimitive> Primitives;
+	Primitives		primitives;
+
 	//struct tree_s *		tree;
 
 	//int					numAreas;
 	//uArea_t *			areas;
+
+	ProcEntity(const IEntityNodePtr& entityNode) :
+		mapEntity(entityNode)
+	{}
 };
+
+
 
 /**
  * This class represents the processed data (entity models and shadow volumes)
@@ -30,6 +88,9 @@ class ProcFile
 public:
 	typedef std::vector<ProcEntity> ProcEntities;
 	ProcEntities entities;
+
+	// All the planes in the map
+	PlaneSet planes;
 
 	void saveToFile(const std::string& path)
 	{

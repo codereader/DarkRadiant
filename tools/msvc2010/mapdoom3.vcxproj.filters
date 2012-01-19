@@ -67,6 +67,9 @@
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcFile.h">
       <Filter>src\compiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\PlaneSet.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
