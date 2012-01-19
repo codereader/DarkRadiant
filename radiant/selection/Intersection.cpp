@@ -3,7 +3,7 @@
 void point_for_device_point(Vector3& point, const Matrix4& device2object, const float x, const float y, const float z)
 {
 	// transform from normalised device coords to object coords
-	point = device2object.transformPoint(Vector3(x, y, z));
+	point = device2object.transform(Vector4(x, y, z, 1)).getProjected();
 }
 
 void ray_for_device_point(Ray& ray, const Matrix4& device2object, const float x, const float y) {
