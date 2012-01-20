@@ -17,7 +17,7 @@ ProcFilePtr ProcCompiler::generateProcFile()
 	_procFile.reset(new ProcFile);
 
 	// Load all entities into proc entities
-	
+	generateBrushData();
 
 	return _procFile;
 }

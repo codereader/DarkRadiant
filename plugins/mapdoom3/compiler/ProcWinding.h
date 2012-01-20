@@ -73,10 +73,9 @@ public:
 	// Clips this winding against the given plane
 	void clip(const Plane3& plane, const float epsilon = 0.0f)
 	{
-		assert( this );
-
 		std::size_t numPoints = IWinding::size();
 
+		// Alloc space on the stack
 		float* dists = (float*) _alloca((numPoints + 4) * sizeof(float));
 		byte* sides = (byte*) _alloca((numPoints + 4) * sizeof(byte));
 
@@ -88,7 +87,7 @@ public:
 
 		for (i = 0; i < numPoints; i++)
 		{
-			dists[i] = dot = plane.distanceToPoint((*this)[i].vertex);
+			dists[i] = dot = plane.distanceToPointWinding((*this)[i].vertex);
 
 			if (dot > epsilon)
 			{
@@ -196,9 +195,12 @@ public:
 			newPoints[newNumPoints] = mid;
 			newNumPoints++;
 		}
+
+		// Cut off any excess winding vertices
+		newPoints.resize(newNumPoints);
 	
 		// Overwrite ourselves with the new winding
-		this->swap(newPoints); 
+		swap(newPoints); 
 	}
 };
 
