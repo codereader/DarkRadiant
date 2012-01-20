@@ -25,11 +25,14 @@ struct BspFace
 	ProcWinding			visibleHull;	// also clipped to the solid parts of the world
 };
 
+struct ProcBrush;
+typedef boost::weak_ptr<ProcBrush> ProcBrushWeakPtr;
+
 // A brush structure used during compilation
 struct ProcBrush
 {
-	ProcBrush*			next;
-	ProcBrush*			original;	// chopped up brushes will reference the originals
+	//ProcBrush*			next;
+	ProcBrushWeakPtr	original;	// chopped up brushes will reference the originals
 
 	int					entitynum;			// editor numbering for messages
 	int					brushnum;			// editor numbering for messages
@@ -41,21 +44,20 @@ struct ProcBrush
 	int					outputNumber;		// set when the brush is written to the file list
 
 	AABB				bounds;
-	//int				numsides;
 
 	typedef std::vector<BspFace> BspFaces;
-	BspFaces			sides; 
+	BspFaces			sides;
 };
+typedef boost::shared_ptr<ProcBrush> ProcBrushPtr;
 
 // A primitive can either be a brush or a patch,
 // so only one of the pointers is non-NULL
 struct ProcPrimitive
 {
-	ProcBrush* brush;
+	ProcBrushPtr brush;
 	IPatch* patch;
 
 	ProcPrimitive() :
-		brush(NULL),
 		patch(NULL)
 	{}
 };

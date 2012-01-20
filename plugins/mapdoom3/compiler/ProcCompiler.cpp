@@ -36,10 +36,13 @@ private:
 
 	const ProcFilePtr& _procFile;
 
+	std::size_t _entityPrimitive;
+
 public:
 	ToolPrimitiveGenerator(ProcEntity& entity, const ProcFilePtr& procFile) :
 		_entity(entity),
-		_procFile(procFile)
+		_procFile(procFile),
+		_entityPrimitive(0)
 	{}
 
 	bool pre(const scene::INodePtr& node)
@@ -49,6 +52,8 @@ public:
 
 		if (brush != NULL)
 		{
+			_entityPrimitive++;
+
 			_buildBrush.sides.clear();
 			
 			for (std::size_t i = 0 ; i < brush->getNumFaces(); i++)
@@ -77,9 +82,9 @@ public:
 			// get the content for the entire brush
 			setBrushContents();
 
-			if (finishBrush())
+			if (!finishBrush())
 			{
-				_entity.primitives.push_back(ProcPrimitive());
+				return false;
 			}
 
 			return false;
@@ -90,6 +95,8 @@ public:
 
 		if (patch != NULL)
 		{
+			_entityPrimitive++;
+
 			_entity.primitives.push_back(ProcPrimitive());
 
 
@@ -103,7 +110,31 @@ public:
 private:
 	bool boundBrush()
 	{
-		// TODO
+		_buildBrush.bounds = AABB();
+
+		for (std::size_t i = 0; i < _buildBrush.sides.size(); ++i)
+		{
+			const ProcWinding& winding = _buildBrush.sides[i].winding;
+
+			for (std::size_t j = 0; j < winding.size(); ++j)
+			{
+				_buildBrush.bounds.includePoint(winding[j].vertex);
+			}
+		}
+
+		Vector3 corner1 = _buildBrush.bounds.origin + _buildBrush.bounds.extents;
+
+		if (corner1[0] < MIN_WORLD_COORD || corner1[1] < MIN_WORLD_COORD || corner1[2] < MIN_WORLD_COORD)
+		{
+			return false;
+		}
+
+		Vector3 corner2 = _buildBrush.bounds.origin - _buildBrush.bounds.extents;
+
+		if (corner2[0] > MAX_WORLD_COORD || corner2[1] > MAX_WORLD_COORD || corner2[2] > MAX_WORLD_COORD)
+		{
+			return false;
+		}
 
 		return true;
 	}
@@ -143,7 +174,32 @@ private:
 			return false;
 		}
 
-		// TODO
+		if (_buildBrush.contents & Material::SURF_AREAPORTAL)
+		{
+			if (_procFile->entities.size() != 1)
+			{
+				globalWarningStream() << 
+					(boost::format("Entity %d, Brush %d: areaportals only allowed in world") % 
+					 (_procFile->entities.size() - 1) % _entityPrimitive).str() << std::endl;
+				return false;
+			}
+		}
+
+		// keep it
+		_entity.primitives.push_back(ProcPrimitive());
+
+		ProcPrimitive& prim = _entity.primitives.back();
+
+		// copy-construct the brush
+		prim.brush.reset(new ProcBrush(_buildBrush));
+
+		prim.brush->entitynum = _procFile->entities.size() - 1;
+		prim.brush->brushnum = _entityPrimitive;
+
+		prim.brush->original = prim.brush; // reference to self
+
+		_buildBrush.sides.clear();
+		_buildBrush.entitynum = 0;
 
 		return true;
 	}
