@@ -87,7 +87,7 @@ public:
 
 		for (i = 0; i < numPoints; i++)
 		{
-			dists[i] = dot = plane.distanceToPointWinding((*this)[i].vertex);
+			dists[i] = dot = plane.distanceToPoint((*this)[i].vertex);
 
 			if (dot > epsilon)
 			{

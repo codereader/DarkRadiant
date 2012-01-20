@@ -166,7 +166,7 @@ bool Winding::testPlane(const Plane3& plane, bool flipped) const
 
 	for (const_iterator i = begin(); i != end(); ++i)
 	{
-		if (test == classifyDistance(plane.distanceToPointWinding(i->vertex), ON_EPSILON))
+		if (test == classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON))
 		{
 			return false;
 		}
@@ -181,7 +181,7 @@ BrushSplitType Winding::classifyPlane(const Plane3& plane) const
 
 	for (const_iterator i = begin(); i != end(); ++i)
 	{
-		++split.counts[classifyDistance(plane.distanceToPointWinding(i->vertex), ON_EPSILON)];
+		++split.counts[classifyDistance(plane.distanceToPoint(i->vertex), ON_EPSILON)];
 	}
 
 	return split;

@@ -12,6 +12,12 @@
  * Note: the plane numbers are stored in single precision.
  * Note: the constructor requiring three points does NOT check if two or more points are equal.
  * Note: two planes are considered equal when the difference of their normals and distances are below an epsilon.
+ *
+ * Note about the stored values: in contrast to the Doom 3 Engine sources where the idPlane object
+ * stores 4 floating point values a, b, c, d as in the plane equation a*x + b*y + c*z + d = 0,
+ * DarkRadiant's Plane3 class stores the normal vector and the actual distance value, which is -d.
+ * The Plane3::dist() method returns the same value as idPlane3::Dist(), just beware when using the dist
+ * member variable in any of Plane3 backends.
  */
 
 #include "FloatTools.h"
@@ -30,8 +36,8 @@ namespace
 class Plane3
 {
 private:
-	Vector3 _normal; // normal vector
-	float _dist;		// distance
+	Vector3 _normal;	// normal vector (a, b, c)
+	float _dist;		// distance		 (-d)
 
 public:
 	// Constructor with no arguments
@@ -156,18 +162,17 @@ public:
   		return pointToProject + planePoint - n*pointToProject.dot(n);
   	}
 
-  	/** greebo: Returns the signed distance to the given point, used by DarkRadiant's winding code,
-	 * where the distance value is negated (for whatever reason).
+  	/** greebo: Returns the signed distance to the given point.
   	 */
-  	float distanceToPointWinding(const Vector3& point) const
+  	float distanceToPoint(const Vector3& point) const
 	{
   		return point.dot(_normal) - _dist;
   	}
 
 	/**
-	 * Returns the shortest distance of the given point to this plane.
+	 * Used in the containsAABB code
 	 */
-	float distanceToPoint(const Vector3& point) const
+	float distanceToPointAABB(const Vector3& point) const
 	{
   		return _normal.dot(point) + _dist;
   	}
