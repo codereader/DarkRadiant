@@ -97,9 +97,56 @@ public:
 		{
 			_entityPrimitive++;
 
+			// FIXME: Implement this option?
+			// if ( dmapGlobals.noCurves ) {
+			//	return;
+			//}
+
+			_procFile->numPatches++;
+
+			MaterialPtr material = GlobalMaterialManager().getMaterialForName(patch->getShader());
+
 			_entity.primitives.push_back(ProcPrimitive());
+			ProcTris& tris = _entity.primitives.back().patch;
 
+			// Get the tesselated mesh
+			PatchMesh mesh = patch->getTesselatedPatchMesh();
 
+			// Create triangles out of the quad-based tesselation
+			for (std::size_t h = 0; h < mesh.height - 1; ++h)
+			{
+				for (std::size_t w = 1; w < mesh.width; ++w)
+				{
+					tris.resize(tris.size() + 2);
+
+					std::size_t triIdx = tris.size() - 2;
+
+					const PatchMesh::Vertex& v1 = mesh.vertices[h*mesh.width + w - 1];
+					const PatchMesh::Vertex& v2 = mesh.vertices[h*mesh.width + w];
+					const PatchMesh::Vertex& v3 = mesh.vertices[(h+1)*mesh.width + w - 1];
+					const PatchMesh::Vertex& v4 = mesh.vertices[(h+1)*mesh.width + w];
+					
+					tris[triIdx].v[0].vertex = v1.vertex;
+					tris[triIdx].v[1].vertex = v2.vertex;
+					tris[triIdx].v[2].vertex = v3.vertex;
+					tris[triIdx].material = material;
+
+					tris[triIdx+1].v[0].vertex = v4.vertex;
+					tris[triIdx+1].v[1].vertex = v3.vertex;
+					tris[triIdx+1].v[2].vertex = v2.vertex;
+					tris[triIdx+1].material = material;
+				}
+			}
+
+#if 0 // FIXME: Implement "discrete" surface flag
+			// set merge groups if needed, to prevent multiple sides from being
+			// merged into a single surface in the case of gui shaders, mirrors, and autosprites
+			if ( material->IsDiscrete() ) {
+				for ( tri = prim->tris ; tri ; tri = tri->next ) {
+					tri->mergeGroup = (void *)patch;
+				}
+			}
+#endif
 
 			return false;
 		}

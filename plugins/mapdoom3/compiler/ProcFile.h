@@ -7,12 +7,31 @@
 #include "ishaders.h"
 
 #include "math/AABB.h"
+#include "render/ArbitraryMeshVertex.h"
 
 #include "PlaneSet.h"
 #include "ProcWinding.h"
 
 namespace map
 {
+
+struct HashVertex;
+struct OptVertex; 
+
+// chains of ProcTri are the general unit of processing
+struct ProcTri
+{
+	MaterialPtr			material;
+	//void *				mergeGroup;		// we want to avoid merging triangles
+											// from different fixed groups, like guiSurfs and mirrors
+	int					planeNum;			// not set universally, just in some areas
+
+	ArbitraryMeshVertex	v[3];
+
+	const HashVertex*	hashVert[3];		// for T-junction pass
+	OptVertex*			optVert[3];			// for optimization
+};
+typedef std::vector<ProcTri> ProcTris;
 
 struct BspFace
 {
@@ -54,12 +73,8 @@ typedef boost::shared_ptr<ProcBrush> ProcBrushPtr;
 // so only one of the pointers is non-NULL
 struct ProcPrimitive
 {
-	ProcBrushPtr brush;
-	IPatch* patch;
-
-	ProcPrimitive() :
-		patch(NULL)
-	{}
+	ProcBrushPtr	brush;
+	ProcTris		patch;	// this is empty for brushes
 };
 
 struct ProcEntity
@@ -100,9 +115,11 @@ public:
 	PlaneSet planes;
 
 	std::size_t numPortals;
+	std::size_t numPatches;
 
 	ProcFile() :
-		numPortals(0)
+		numPortals(0),
+		numPatches(0)
 	{}
 
 	void saveToFile(const std::string& path)
