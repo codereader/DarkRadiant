@@ -49,8 +49,8 @@ public:
 
 		if (brush != NULL)
 		{
-			_entity.primitives.push_back(ProcPrimitive());
-
+			_buildBrush.sides.clear();
+			
 			for (std::size_t i = 0 ; i < brush->getNumFaces(); i++)
 			{
 				_buildBrush.sides.push_back(BspFace());
@@ -74,6 +74,14 @@ public:
 				return false;
 			}
 
+			// get the content for the entire brush
+			setBrushContents();
+
+			if (finishBrush())
+			{
+				_entity.primitives.push_back(ProcPrimitive());
+			}
+
 			return false;
 		}
 
@@ -93,6 +101,100 @@ public:
 	}
 
 private:
+	bool boundBrush()
+	{
+		// TODO
+
+		return true;
+	}
+
+	bool createBrushWindings()
+	{
+		for (std::size_t i = 0; i < _buildBrush.sides.size(); ++i)
+		{
+			BspFace& side = _buildBrush.sides[i];
+
+			const Plane3& plane = _procFile->planes.getPlane(side.planenum);
+
+			// We start out with a near-infinitely large winding
+			side.winding.setFromPlane(plane);
+
+			// Clip this large winding against all other windings
+			for (std::size_t j = 0; j < _buildBrush.sides.size() && !side.winding.empty(); j++ )
+			{
+				if (i == j) continue;
+
+				if (_buildBrush.sides[j].planenum == (_buildBrush.sides[i].planenum ^ 1))
+				{
+					continue;		// back side clipaway
+				}
+
+				side.winding.clip(_procFile->planes.getPlane(_buildBrush.sides[j].planenum ^ 1));
+			}
+		}
+
+		return boundBrush();
+	}
+
+	bool finishBrush()
+	{
+		if (!createBrushWindings())
+		{
+			return false;
+		}
+
+		// TODO
+
+		return true;
+	}
+
+	void setBrushContents()
+	{
+		assert(!_buildBrush.sides.empty());
+
+		const BspFace& firstSide = _buildBrush.sides[0];
+		int contents = firstSide.material->getSurfaceFlags();
+
+		_buildBrush.contentShader = firstSide.material;
+		
+		bool mixed = false;
+
+		// a brush is only opaque if all sides are opaque
+		_buildBrush.opaque = true;
+
+		for (std::size_t i = 1; i < _buildBrush.sides.size(); i++)
+		{
+			const BspFace& side = _buildBrush.sides[i];
+
+			if (!side.material)
+			{
+				continue;
+			}
+
+			int flags = side.material->getSurfaceFlags();
+
+			if (flags != contents)
+			{
+				mixed = true;
+				contents |= flags;
+			}
+
+			// TODO: DarkRadiant's Material doesn't deliver coverage yet, use material flags in the meantime
+			//if (side.material->Coverage() != MC_OPAQUE )
+			if (side.material->getMaterialFlags() & Material::FLAG_TRANSLUCENT)
+			{
+				_buildBrush.opaque = false;
+			}
+		}
+
+		if (contents & Material::SURF_AREAPORTAL)
+		{
+			_procFile->numPortals++;
+		}
+
+		_buildBrush.contents = contents;
+	}
+
 	bool removeDuplicateBrushPlanes()
 	{
 		for (std::size_t i = 1 ; i < _buildBrush.sides.size(); ++i)

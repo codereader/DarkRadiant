@@ -6,6 +6,11 @@
 #include "ipatch.h"
 #include "ishaders.h"
 
+#include "math/AABB.h"
+
+#include "PlaneSet.h"
+#include "ProcWinding.h"
+
 namespace map
 {
 
@@ -16,8 +21,8 @@ struct BspFace
 	MaterialPtr			material;		// the material of this plane
 	//textureVectors_t	texVec;			// FIXME
 
-	IWinding*			winding;		// only clipped to the other sides of the brush
-	IWinding*			visibleHull;	// also clipped to the solid parts of the world
+	ProcWinding			winding;		// only clipped to the other sides of the brush
+	ProcWinding			visibleHull;	// also clipped to the solid parts of the world
 };
 
 // A brush structure used during compilation
@@ -36,10 +41,10 @@ struct ProcBrush
 	int					outputNumber;		// set when the brush is written to the file list
 
 	AABB				bounds;
-	//int					numsides;
+	//int				numsides;
 
 	typedef std::vector<BspFace> BspFaces;
-	BspFaces			sides;
+	BspFaces			sides; 
 };
 
 // A primitive can either be a brush or a patch,
@@ -91,6 +96,12 @@ public:
 
 	// All the planes in the map
 	PlaneSet planes;
+
+	std::size_t numPortals;
+
+	ProcFile() :
+		numPortals(0)
+	{}
 
 	void saveToFile(const std::string& path)
 	{

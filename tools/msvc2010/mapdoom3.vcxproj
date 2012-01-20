@@ -311,6 +311,7 @@
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\PlaneSet.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcFile.h" />
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcWinding.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapFormat.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapReader.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapWriter.h" />

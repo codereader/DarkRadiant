@@ -38,6 +38,11 @@ private:
 	};
 
 public:
+	const Plane3& getPlane(std::size_t planeNum) const
+	{
+		return _list[planeNum];
+	}
+
 	// Returns the index of the plane3, which can be the index of an existing plane
 	// if its normal and distance are equal respecting the given epsilon
 	std::size_t findOrInsertPlane(const Plane3& plane, float epsNormal, float epsDist)
@@ -52,7 +57,7 @@ public:
 		{
 			Range range = _hashToIndex.equal_range(hashKey + border);
 
-			for (typename IndexLookupMap::const_iterator i = range.first; i != range.second; ++i)
+			for (IndexLookupMap::const_iterator i = range.first; i != range.second; ++i)
 			{
 				const Plane3& candidate = _list[i->second];
 
