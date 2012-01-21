@@ -19,6 +19,8 @@ class GLSLBumpProgram
     int _locViewOrigin;
     int _locLightScale;
     int _locAmbientFactor;
+    int _locVColScale;
+    int _locVColOffset;
 
     // Program object identifier
     GLuint _programObj;
@@ -30,14 +32,9 @@ public:
     void destroy();
     void enable();
     void disable();
-
-    // Set render pass parameters
     void applyRenderParams(const Vector3& viewer,
                            const Matrix4& localToWorld,
-                           const Vector3& origin,
-                           const Vector4& colour,
-                           const Matrix4& world2light,
-                           float ambientFactor);
+                           const Params&);
 };
 
 } // namespace render

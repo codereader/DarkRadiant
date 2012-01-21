@@ -342,7 +342,7 @@ RenderStateFlags RenderPreview::getRenderFlagsFill()
             RENDER_OFFSETLINE |
             RENDER_POLYGONSMOOTH |
             RENDER_LINESMOOTH |
-            RENDER_COLOURCHANGE |
+            RENDER_VERTEX_COLOUR |
 			RENDER_FILL |
 			RENDER_LIGHTING |
 			RENDER_TEXTURE_2D |
@@ -352,8 +352,6 @@ RenderStateFlags RenderPreview::getRenderFlagsFill()
 			RENDER_TEXTURE_CUBEMAP |
 			RENDER_BUMP |
 			RENDER_PROGRAM |
-			RENDER_MATERIAL_VCOL |
-			RENDER_VCOL_INVERT |
 			RENDER_SCREEN;
 }
 
@@ -367,15 +365,13 @@ RenderStateFlags RenderPreview::getRenderFlagsWireframe()
            RENDER_OFFSETLINE |
            RENDER_POLYGONSMOOTH |
            RENDER_LINESMOOTH |
-           RENDER_COLOURCHANGE |
+           RENDER_VERTEX_COLOUR |
 		   RENDER_LIGHTING |
 		   RENDER_SMOOTH |
 		   RENDER_SCALED |
 		   RENDER_TEXTURE_CUBEMAP |
 		   RENDER_BUMP |
 		   RENDER_PROGRAM |
-		   RENDER_MATERIAL_VCOL |
-		   RENDER_VCOL_INVERT |
 		   RENDER_SCREEN;
 }
 

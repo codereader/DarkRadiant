@@ -72,7 +72,7 @@ void Winding::render(const RenderInfo& info) const
 	}
 
     // Our vertex colours are always white, if requested
-    if (info.checkFlag(RENDER_COLOURCHANGE))
+    if (info.checkFlag(RENDER_VERTEX_COLOUR))
     {
         glColor3f(1, 1, 1);
     }

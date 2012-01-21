@@ -578,52 +578,50 @@ void CamWnd::Cam_Draw() {
                                      | RENDER_OFFSETLINE
                                      | RENDER_POLYGONSMOOTH
                                      | RENDER_LINESMOOTH
-                                     | RENDER_COLOURCHANGE;
+                                     | RENDER_VERTEX_COLOUR;
 
     // Add mode-specific render flags
 	switch (getCameraSettings()->getRenderMode())
     {
-		case RENDER_MODE_WIREFRAME:
-			break;
+        case RENDER_MODE_WIREFRAME:
+            break;
 
-		case RENDER_MODE_SOLID:
-			allowedRenderFlags |= RENDER_FILL
-			               | RENDER_LIGHTING
-			               | RENDER_SMOOTH
-			               | RENDER_SCALED;
+        case RENDER_MODE_SOLID:
+            allowedRenderFlags |= RENDER_FILL
+                                | RENDER_LIGHTING
+                                | RENDER_SMOOTH
+                                | RENDER_SCALED;
 
-			break;
+            break;
 
-		case RENDER_MODE_TEXTURED:
-			allowedRenderFlags |= RENDER_FILL
-			               | RENDER_LIGHTING
-			               | RENDER_TEXTURE_2D
-			               | RENDER_SMOOTH
-			               | RENDER_SCALED
-						   | RENDER_MATERIAL_VCOL;
+        case RENDER_MODE_TEXTURED:
+            allowedRenderFlags |= RENDER_FILL
+                                | RENDER_LIGHTING
+                                | RENDER_TEXTURE_2D
+                                | RENDER_SMOOTH
+                                | RENDER_SCALED;
 
-			break;
+            break;
 
-		case RENDER_MODE_LIGHTING:
-			allowedRenderFlags |= RENDER_FILL
-			               | RENDER_LIGHTING
-			               | RENDER_TEXTURE_2D
-                           | RENDER_TEXTURE_CUBEMAP
-			               | RENDER_SMOOTH
-			               | RENDER_SCALED
-			               | RENDER_BUMP
-			               | RENDER_PROGRAM
-                           | RENDER_MATERIAL_VCOL
-                           | RENDER_VCOL_INVERT
-			               | RENDER_SCREEN;
+        case RENDER_MODE_LIGHTING:
+            allowedRenderFlags |= RENDER_FILL
+                                | RENDER_LIGHTING
+                                | RENDER_TEXTURE_2D
+                                | RENDER_TEXTURE_CUBEMAP
+                                | RENDER_VERTEX_COLOUR
+                                | RENDER_SMOOTH
+                                | RENDER_SCALED
+                                | RENDER_BUMP
+                                | RENDER_PROGRAM
+                                | RENDER_SCREEN;
 
-			break;
+            break;
 
-		default:
-			allowedRenderFlags = 0;
+        default:
+            allowedRenderFlags = 0;
 
-			break;
-	}
+            break;
+    }
 
 	if (!getCameraSettings()->solidSelectionBoxes()) {
 		allowedRenderFlags |= RENDER_LINESTIPPLE|RENDER_POLYGONSTIPPLE;

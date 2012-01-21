@@ -51,8 +51,7 @@ class RenderablePicoSurface :
 
 	// The GL display lists for this surface's geometry
 	GLuint _dlRegular;
-	GLuint _dlProgramPosVCol;
-    GLuint _dlProgramNegVCol;
+	GLuint _dlProgramVcol;
     GLuint _dlProgramNoVCol;
 
 private:
@@ -64,7 +63,7 @@ private:
 	void calculateTangents();
 
 	// Create the display lists
-    GLuint compileProgramList(ShaderLayer::VertexColourMode);
+    GLuint compileProgramList(bool includeColour);
 	void createDisplayLists();
 
 	std::string cleanupShaderName(const std::string& mapName);

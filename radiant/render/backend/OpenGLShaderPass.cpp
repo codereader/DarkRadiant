@@ -487,12 +487,6 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
             GlobalOpenGL().assertNoErrors();
         }
 
-        if(changingBitsMask & ~requiredState & RENDER_COLOURCHANGE)
-        {
-            glColor4fv(_glState.getColour());
-            GlobalOpenGL().assertNoErrors();
-        }
-
         // Set GL states corresponding to RENDER_ flags
         setState(requiredState, changingBitsMask, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
         setState(requiredState, changingBitsMask, RENDER_LINESMOOTH, GL_LINE_SMOOTH);
@@ -706,51 +700,46 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     // Get the light shader and examine its first (and only valid) layer
     const MaterialPtr& lightShader = light->getShader()->getMaterial();
     ShaderLayer* layer = lightShader->firstLayer();
+    if (!layer) return;
 
-    if (layer)
-    {
-        // Calculate viewer location in object space
-        Matrix4 inverseObjTransform = objTransform.getInverse();
-        Vector3 osViewer = inverseObjTransform.transformPoint(viewer);
+    // Calculate viewer location in object space
+    Matrix4 inverseObjTransform = objTransform.getInverse();
+    Vector3 osViewer = inverseObjTransform.transformPoint(viewer);
 
-        // Calculate all dynamic values in the layer
-        layer->evaluateExpressions(time, *light);
+    // Calculate all dynamic values in the layer
+    layer->evaluateExpressions(time, *light);
 
-        // Get the XY and Z falloff texture numbers.
-        GLuint attenuation_xy = layer->getTexture()->getGLTexNum();
-        GLuint attenuation_z = lightShader->lightFalloffImage()->getGLTexNum();
+    // Get the XY and Z falloff texture numbers.
+    GLuint attenuation_xy = layer->getTexture()->getGLTexNum();
+    GLuint attenuation_z = lightShader->lightFalloffImage()->getGLTexNum();
 
-        // Bind the falloff textures
-        assert(current.renderFlags & RENDER_TEXTURE_2D);
+    // Bind the falloff textures
+    assert(current.renderFlags & RENDER_TEXTURE_2D);
 
-        setTextureState(
-            current.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
-        );
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    setTextureState(
+        current.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
+    );
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-        setTextureState(
-            current.texture4, attenuation_z, GL_TEXTURE4, GL_TEXTURE_2D
-        );
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    setTextureState(
+        current.texture4, attenuation_z, GL_TEXTURE4, GL_TEXTURE_2D
+    );
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-        // Get the world-space to light-space transformation matrix
-        Matrix4 world2light = light->getLightTextureTransformation();
+    // Get the world-space to light-space transformation matrix
+    Matrix4 world2light = light->getLightTextureTransformation();
 
-        // Set the ambient factor - 1.0 for an ambient light, 0.0 for normal light
-        float ambient = lightShader->isAmbientLight() ? 1.0f : 0.0f;
+    // Set the GL program parameters
+    GLProgram::Params parms(
+        light->getLightOrigin(), layer->getColour(), world2light
+    );
+    parms.ambientFactor = lightShader->isAmbientLight() ? 1.0f : 0.0f;
+    parms.invertVertexColour = _glState.isColourInverted();
 
-        // Bind the GL program parameters
-        current.glProgram->applyRenderParams(
-            osViewer,
-            objTransform,
-            light->getLightOrigin(),
-            layer->getColour(),
-            world2light,
-            ambient
-        );
-    }
+    assert(current.glProgram);
+    current.glProgram->applyRenderParams(osViewer, objTransform, parms);
 }
 
 // Flush renderables
@@ -792,7 +781,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
         // If we are using a lighting program and this renderable is lit, set
         // up the lighting calculation
         const RendererLight* light = r.light;
-        if (current.glProgram != 0 && light != NULL)
+        if (current.glProgram && light)
         {
             setUpLightingCalculation(current, light, viewer, *transform, time);
         }

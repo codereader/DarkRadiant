@@ -50,16 +50,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * example, the XYRenderer renders in wireframe mode only, so it does not enable
  * RENDER_FILL in its mask, while the CamRenderer does.
  *
- * 3. The flags are used to set or change OpenGL state in the shader pass
+ * 3. The flags may be used to set or change OpenGL state in the shader pass
  * implementation. For example, if RENDER_BLEND is set, then glEnable(GL_BLEND)
  * will be called before the associated shader's renderables are rendered. Some
  * flags map directly to glEnable parameters, while others (such as
- * RENDER_PROGRAM) specify more complex changes.
+ * RENDER_PROGRAM) specify more complex changes. Some flags do not enable any GL
+ * features at all.
  *
  * 4. The flags are passed as a parameter to the OpenGLRenderable::render()
  * method, allowing individual objects to modify their behaviour accordingly.
  * For example, objects may decide whether or not to submit colour information
- * to OpenGL based on the value of the RENDER_COLOURCHANGE flag.
+ * to OpenGL based on the value of the RENDER_VERTEX_COLOUR flag.
  */
 ///@{
 const unsigned int RENDER_DEFAULT = 0;
@@ -77,15 +78,36 @@ const unsigned int RENDER_SMOOTH = 1 << 10; // glShadeModel
 const unsigned int RENDER_LIGHTING = 1 << 11; // glEnable(GL_LIGHTING)
 const unsigned int RENDER_BLEND = 1 << 12; // glEnable(GL_BLEND)
 const unsigned int RENDER_OFFSETLINE = 1 << 13; // glEnable(GL_POLYGON_OFFSET_LINE)
-const unsigned int RENDER_FILL = 1 << 14; // glPolygonMode
-const unsigned int RENDER_COLOURARRAY = 1 << 15; // glEnableClientState(GL_COLOR_ARRAY)
-const unsigned int RENDER_COLOURCHANGE = 1 << 16; // render() is allowed to call glColor*()
-const unsigned int RENDER_MATERIAL_VCOL = 1 << 17; // material requests per-vertex colour
-const unsigned int RENDER_VCOL_INVERT = 1 << 18; // vertex colours should be inverted
-const unsigned int RENDER_TEXTURE_2D = 1 << 19; // glEnable(GL_TEXTURE_2D)
-const unsigned int RENDER_TEXTURE_CUBEMAP = 1 << 20; // glEnable(GL_TEXTURE_CUBE_MAP)
+
+/// Objects will be rendered as filled polygons (not wireframe).
+const unsigned int RENDER_FILL = 1 << 14;
+
+const unsigned int RENDER_COLOURARRAY = 1 << 15;
+
+/**
+ * If enabled, objects should submit vertex colour information. If disabled,
+ * objects must not change glColor during rendering. 
+ *
+ * Does not affect GL state.
+ */
+const unsigned int RENDER_VERTEX_COLOUR = 1 << 16;
+
+/// GL_TEXTURE_2D will be enabled during rendering.
+const unsigned int RENDER_TEXTURE_2D = 1 << 19;
+
+/// GL_TEXTURE_CUBE_MAP will be enabled during rendering.
+const unsigned int RENDER_TEXTURE_CUBEMAP = 1 << 20;
+
+/**
+ * Normal map information will be used during rendering. If enabled, objects
+ * should submit normal/tangent/bitangent vertex attributes to enable normal
+ * mapping.
+ */
 const unsigned int RENDER_BUMP = 1 << 21;
+
+/// A vertex and fragment shader program will be used during rendering.
 const unsigned int RENDER_PROGRAM = 1 << 22;
+
 const unsigned int RENDER_SCREEN = 1 << 23;
 const unsigned int RENDER_OVERRIDE = 1 << 24;
 typedef unsigned int RenderStateFlags;

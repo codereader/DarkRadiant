@@ -212,10 +212,10 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
         // Create depth-buffer fill pass
         OpenGLState& zPass = appendDefaultPass();
         zPass.renderFlags = RENDER_FILL
-                                | RENDER_CULLFACE
-                                | RENDER_DEPTHTEST
-                                | RENDER_DEPTHWRITE
-                                | RENDER_PROGRAM;
+                          | RENDER_CULLFACE
+                          | RENDER_DEPTHTEST
+                          | RENDER_DEPTHWRITE
+                          | RENDER_PROGRAM;
 
         zPass.setColour(Colour4::BLACK());
         zPass.m_sort = OpenGLState::eSortOpaque;
@@ -246,12 +246,12 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {
         // Vertex colours allowed
-        dbsPass.renderFlags |= RENDER_MATERIAL_VCOL;
+        dbsPass.renderFlags |= RENDER_VERTEX_COLOUR;
 
         if (vcolMode == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
         {
             // Vertex colours are inverted
-            dbsPass.renderFlags |= RENDER_VCOL_INVERT;
+            dbsPass.setColourInverted(true);
         }
     }
 

@@ -30,6 +30,13 @@ uniform vec3		u_light_origin;
 uniform vec3		u_light_color;
 uniform float		u_light_scale;
 
+// Vertex colour parameters. Vertex colour is calculated as
+// (colour * scale + offset), so for normal vertex colouring scale should be 1.0
+// and offset 0.0, and for inverse colouring scale should be -1.0 and offset
+// 1.0.
+uniform float       u_vcol_scale;
+uniform float       u_vcol_offset;
+
 varying vec3		var_vertex;
 varying vec4		var_tex_diffuse_bump;
 varying vec2		var_tex_specular;
@@ -75,7 +82,7 @@ void	main()
     ).rgb;
 
 	// compute final color
-    gl_FragColor = diffuse * gl_Color;
+    gl_FragColor = diffuse * (gl_Color * u_vcol_scale + u_vcol_offset);
     gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;
 	gl_FragColor.rgb *= attenuation_z;

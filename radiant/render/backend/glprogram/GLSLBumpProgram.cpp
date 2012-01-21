@@ -50,8 +50,10 @@ void GLSLBumpProgram::create()
     // Set the uniform locations to the correct bound values
     _locLightOrigin = glGetUniformLocation(_programObj, "u_light_origin");
     _locLightColour = glGetUniformLocation(_programObj, "u_light_color");
-    _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
-    _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
+    _locViewOrigin  = glGetUniformLocation(_programObj, "u_view_origin");
+    _locLightScale  = glGetUniformLocation(_programObj, "u_light_scale");
+    _locVColScale   = glGetUniformLocation(_programObj, "u_vcol_scale");
+    _locVColOffset  = glGetUniformLocation(_programObj, "u_vcol_offset");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -119,22 +121,19 @@ void GLSLBumpProgram::disable()
 }
 
 void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
-                                       const Matrix4& objectToWorld,
-                                       const Vector3& origin,
-                                       const Vector4& colour,
-                                       const Matrix4& world2light,
-                                       float ambientFactor)
+                                        const Matrix4& objectToWorld,
+                                        const Params& parms)
 {
     Matrix4 worldToObject(objectToWorld);
     worldToObject.invert();
 
     // Calculate the light origin in object space
-    Vector3 localLight = worldToObject.transformPoint(origin);
+    Vector3 localLight = worldToObject.transformPoint(parms.lightOrigin);
 
-    Matrix4 local2light(world2light);
+    Matrix4 local2light(parms.world2Light);
     local2light.multiplyBy(objectToWorld); // local->world->light
 
-    // Bind uniform parameters
+    // Set lighting parameters in the shader
     glUniform3f(
         _locViewOrigin, viewer.x(), viewer.y(), viewer.z()
     );
@@ -142,9 +141,22 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
         _locLightOrigin, localLight.x(), localLight.y(), localLight.z()
     );
     glUniform3f(
-        _locLightColour, colour.x(), colour.y(), colour.z()
+        _locLightColour,
+        parms.lightColour.x(), parms.lightColour.y(), parms.lightColour.z()
     );
     glUniform1f(_locLightScale, _lightScale);
+
+    // Set vertex colour parameters
+    if (parms.invertVertexColour)
+    {
+        glUniform1f(_locVColScale,  -1.0f);
+        glUniform1f(_locVColOffset,  1.0f);
+    }
+    else
+    {
+        glUniform1f(_locVColScale,  1.0f);
+        glUniform1f(_locVColOffset, 0.0f);
+    }
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);

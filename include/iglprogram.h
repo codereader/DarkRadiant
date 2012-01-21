@@ -1,10 +1,8 @@
 #pragma once
 
-class Matrix4;
-template<typename Element> class BasicVector3;
-typedef BasicVector3<float> Vector3;
-template<typename Element> class BasicVector4;
-typedef BasicVector4<float> Vector4;
+#include "math/Vector3.h"
+#include "math/Matrix4.h"
+#include "render/Colour4.h"
 
 /**
  * Representation of a GL vertex/fragment program.
@@ -38,6 +36,37 @@ public:
   	 */
 	virtual void disable() = 0;
 
+    /// Data structure containing rendering parameters
+    struct Params
+    {
+        /// Light origin in world space
+        Vector3 lightOrigin;
+
+        /// Light colour
+        Colour4 lightColour;
+
+        /// Transformation from world space into light space
+        Matrix4 world2Light;
+
+        /// Amount of directionality, 0.0 for normal light, 1.0 for ambient
+        float ambientFactor;
+
+        /// Whether vertex colours should be inverted
+        bool invertVertexColour;
+
+        Params(const Vector3& lightOrigin_,
+               const Colour4& lightColour_,
+               const Matrix4& world2Light_)
+        : lightOrigin(lightOrigin_),
+          lightColour(lightColour_),
+          world2Light(world2Light_),
+          ambientFactor(0.0),
+          invertVertexColour(false)
+        {
+
+        }
+    };
+
 	/**
 	 * \brief
      * Apply render parameters used by this program to OpenGL.
@@ -46,30 +75,18 @@ public:
      * submitted for rendering; the GLProgram must apply to the GL state any
      * parameters it uses.
 	 *
-	 * @param viewer
+	 * \param viewer
 	 * Location of the viewer in object space.
 	 *
-	 * @param localToWorld
+	 * \param localToWorld
 	 * Local to world transformation matrix.
+     *
+     * \param lightParms
+     * Params structure containing lighting information.
 	 *
-	 * @param origin
-	 * Origin of the light in 3D space.
-	 *
-	 * @param colour
-	 * Colour of the light material.
-	 *
-	 * @param world2light
-	 * Transformation from world space into light space, based on the position
-	 * and transformations of the light volume.
-	 *
-	 * @param ambientFactor
-	 * 0.0 for a normal light, 1.0 for an ambient light. This affects whether
-	 * the lighting is directional or not.
 	 */
 	virtual void applyRenderParams(const Vector3& viewer,
   							       const Matrix4& localToWorld,
-  							       const Vector3& origin,
-  							       const Vector4& colour,
-  							       const Matrix4& world2light,
-  							       float ambientFactor) = 0;
+  							       const Params& lightParms)
+    { }
 };

@@ -23,6 +23,9 @@ class OpenGLState
     // any shader stages attached, otherwise pull the colour from there.
 	Colour4 _colour;
 
+    // Colour inversion flag
+    bool _invertColour;
+
 public:
 	enum ESort
 	{
@@ -71,6 +74,12 @@ public:
     {
         setColour(Colour4(r, g, b, a));
     }
+
+    /// Set this state to invert colour values
+    void setColourInverted(bool inverted) { _invertColour = inverted; }
+
+    /// Test whether this state is inverting colour values
+    bool isColourInverted() const        { return _invertColour; }
 
     /**
      * \brief
@@ -161,6 +170,7 @@ public:
 	// Default constructor
 	OpenGLState()
 	: _colour(Colour4::WHITE()),
+      _invertColour(false),
 	  renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
 	  m_sort(eSortFirst),
       polygonOffset(0.0f),

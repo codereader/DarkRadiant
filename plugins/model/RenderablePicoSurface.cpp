@@ -15,8 +15,7 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 : _originalShaderName(""),
   _mappedShaderName(""),
   _dlRegular(0),
-  _dlProgramPosVCol(0),
-  _dlProgramNegVCol(0),
+  _dlProgramVcol(0),
   _dlProgramNoVCol(0)
 {
 	// Get the shader from the picomodel struct. If this is a LWO model, use
@@ -135,8 +134,7 @@ RenderablePicoSurface::~RenderablePicoSurface()
 {
 	glDeleteLists(_dlRegular, 1);
 	glDeleteLists(_dlProgramNoVCol, 1);
-	glDeleteLists(_dlProgramPosVCol, 1);
-    glDeleteLists(_dlProgramNegVCol, 1);
+	glDeleteLists(_dlProgramVcol, 1);
 }
 
 // Convert byte pointers to colour vector
@@ -193,16 +191,9 @@ void RenderablePicoSurface::render(const RenderInfo& info) const
 	// Invoke appropriate display list
 	if (info.checkFlag(RENDER_PROGRAM))
     {
-        if (info.checkFlag(RENDER_MATERIAL_VCOL))
+        if (info.checkFlag(RENDER_VERTEX_COLOUR))
         {
-            if (info.checkFlag(RENDER_VCOL_INVERT))
-            {
-                glCallList(_dlProgramNegVCol);
-            }
-            else
-            {
-                glCallList(_dlProgramPosVCol);
-            }
+            glCallList(_dlProgramVcol);
         }
         else
         {
@@ -216,9 +207,7 @@ void RenderablePicoSurface::render(const RenderInfo& info) const
 }
 
 // Construct a list for GLProgram mode, either with or without vertex colour
-GLuint RenderablePicoSurface::compileProgramList(
-        ShaderLayer::VertexColourMode mode
-)
+GLuint RenderablePicoSurface::compileProgramList(bool includeColour)
 {
     GLuint list = glGenLists(1);
 	assert(list != 0); // check if we run out of display lists
@@ -242,29 +231,16 @@ GLuint RenderablePicoSurface::compileProgramList(
 		}
 
         // Optional vertex colour
-        if (mode == ShaderLayer::VERTEX_COLOUR_MULTIPLY)
+        if (includeColour)
         {
             glColor3fv(v.colour);
-        }
-        else if (mode == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
-        {
-            glColor3d(
-                1.0 - v.colour[0],
-                1.0 - v.colour[1],
-                1.0 - v.colour[2]
-            );
         }
 
         // Submit the vertex itself
 		glVertex3fv(v.vertex);
 	}
-
-    // Set vertex colour back to white
-    // HACK: find out why other objects are not setting their correct colour,
-    // and fix them.
-    glColor3f(1, 1, 1);
-
 	glEnd();
+
 	glEndList();
 
     return list;
@@ -274,15 +250,8 @@ GLuint RenderablePicoSurface::compileProgramList(
 void RenderablePicoSurface::createDisplayLists()
 {
 	// Generate the lists for lighting mode
-    _dlProgramNoVCol = compileProgramList(
-        ShaderLayer::VERTEX_COLOUR_NONE
-    );
-    _dlProgramPosVCol = compileProgramList(
-        ShaderLayer::VERTEX_COLOUR_MULTIPLY
-    );
-    _dlProgramNegVCol = compileProgramList(
-        ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY
-    );
+    _dlProgramNoVCol = compileProgramList(false);
+    _dlProgramVcol = compileProgramList(true);
 
 	// Generate the list for flat-shaded (unlit) mode
 	_dlRegular = glGenLists(1);

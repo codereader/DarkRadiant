@@ -106,18 +106,15 @@ void ARBBumpProgram::disable()
 
 void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
                                        const Matrix4& objectToWorld,
-                                       const Vector3& origin,
-                                       const Vector4& colour,
-                                       const Matrix4& world2light,
-                                       float ambientFactor)
+                                       const Params& lp)
 {
     Matrix4 worldToObject(objectToWorld);
     worldToObject.invert();
 
     // Calculate the light origin in object space
-    Vector3 localLight = worldToObject.transformPoint(origin);
+    Vector3 localLight = worldToObject.transformPoint(lp.lightOrigin);
     
-    Matrix4 local2light(world2light);
+    Matrix4 local2light(lp.world2Light);
     local2light.multiplyBy(objectToWorld); // local->world->light
 
     // view origin
@@ -132,7 +129,8 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
 
     // light colour
     glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, _locLightColour, colour.x(), colour.y(), colour.z(), 0
+        GL_FRAGMENT_PROGRAM_ARB, _locLightColour, 
+        lp.lightColour.x(), lp.lightColour.y(), lp.lightColour.z(), 0
     );
 
 	// light scale
@@ -142,7 +140,7 @@ void ARBBumpProgram::applyRenderParams(const Vector3& viewer,
 
 	// ambient factor
 	glProgramLocalParameter4fARB(
-        GL_FRAGMENT_PROGRAM_ARB, _locAmbientFactor, ambientFactor, 0, 0, 0
+        GL_FRAGMENT_PROGRAM_ARB, _locAmbientFactor, lp.ambientFactor, 0, 0, 0
     );
 
     glActiveTexture(GL_TEXTURE3);
