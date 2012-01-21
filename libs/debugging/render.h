@@ -2,6 +2,8 @@
 
 #include <ostream>
 
+#include "render/Colour4.h"
+
 namespace debug
 {
     namespace detail
@@ -50,5 +52,13 @@ namespace debug
     inline detail::StateFlagsInserter printStateFlags(int flags)
     {
         return detail::StateFlagsInserter(flags);
+    }
+
+    /// Get the current GL_COLOR as a Colour4 for debugging
+    inline Colour4 getGLColor()
+    {
+        Colour4 result;
+        glGetFloatv(GL_CURRENT_COLOR, &result[0]);
+        return result;
     }
 }

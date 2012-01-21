@@ -8,6 +8,8 @@
 #include "texturelib.h"
 #include "iglprogram.h"
 
+#include <boost/foreach.hpp>
+
 #include "debugging/render.h"
 
 namespace render
@@ -551,18 +553,15 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     // Apply the GL textures
     applyAllTextures(current, requiredState);
 
-    // Set the GL colour if it isn't set already
+    // Set the GL colour. Do this unconditionally, since setting glColor is
+    // cheap and it avoids problems with leaked colour states.
     if (_glState.stage0)
     {
         _glState.setColour(_glState.stage0->getColour());
     }
-
-    if (_glState.getColour() != current.getColour())
-    {
-        glColor4fv(_glState.getColour());
-        current.setColour(_glState.getColour());
-        GlobalOpenGL().assertNoErrors();
-    }
+    glColor4fv(_glState.getColour());
+    current.setColour(_glState.getColour());
+    GlobalOpenGL().assertNoErrors();
 
     // Set up the cubemap and texgen parameters
     setUpCubeMapAndTexGen(current, requiredState, viewer);
@@ -766,14 +765,14 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
     glPushMatrix();
 
     // Iterate over each transformed renderable in the vector
-    for(Renderables::const_iterator i = renderables.begin(); i != renderables.end(); ++i)
+    BOOST_FOREACH (const TransformedRenderable& r, renderables)
     {
         // If the current iteration's transform matrix was different from the
         // last, apply it and store for the next iteration
         if (transform == NULL ||
-            (transform != i->transform && !transform->isAffineEqual(*i->transform)))
+            (transform != r.transform && !transform->isAffineEqual(*r.transform)))
         {
-            transform = i->transform;
+            transform = r.transform;
             glPopMatrix();
             glPushMatrix();
             glMultMatrixf(*transform);
@@ -792,7 +791,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
 
         // If we are using a lighting program and this renderable is lit, set
         // up the lighting calculation
-        const RendererLight* light = i->light;
+        const RendererLight* light = r.light;
         if (current.glProgram != 0 && light != NULL)
         {
             setUpLightingCalculation(current, light, viewer, *transform, time);
@@ -800,7 +799,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
 
         // Render the renderable
         RenderInfo info(current.renderFlags, viewer, current.cubeMapMode);
-        i->renderable->render(info);
+        r.renderable->render(info);
     }
 
     // Cleanup

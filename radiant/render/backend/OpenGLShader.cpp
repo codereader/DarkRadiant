@@ -213,10 +213,8 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
         OpenGLState& zPass = appendDefaultPass();
         zPass.renderFlags = RENDER_FILL
                                 | RENDER_CULLFACE
-                                | RENDER_TEXTURE_2D
                                 | RENDER_DEPTHTEST
                                 | RENDER_DEPTHWRITE
-                                | RENDER_COLOURWRITE // TODO: maybe not for depth pass?
                                 | RENDER_PROGRAM;
 
         zPass.setColour(Colour4::BLACK());
@@ -239,7 +237,6 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
                         | RENDER_DEPTHTEST
 						| RENDER_DEPTHWRITE
                         | RENDER_COLOURWRITE
-                        | RENDER_COLOURCHANGE
                         | RENDER_SMOOTH
                         | RENDER_BUMP
                         | RENDER_PROGRAM;
