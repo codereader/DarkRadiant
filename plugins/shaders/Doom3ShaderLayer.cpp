@@ -141,7 +141,12 @@ Colour4 Doom3ShaderLayer::getColour() const
 	// Resolve the register values
     Colour4 colour(getRegisterValue(_colIdx[0]), getRegisterValue(_colIdx[1]),
 				   getRegisterValue(_colIdx[2]), getRegisterValue(_colIdx[3]));
-    assert(colour.isValid());
+
+    if (!colour.isValid())
+    {
+        return Colour4::WHITE();
+    }
+
     return colour;
 }
 
