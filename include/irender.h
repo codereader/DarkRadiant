@@ -82,34 +82,37 @@ const unsigned int RENDER_OFFSETLINE = 1 << 13; // glEnable(GL_POLYGON_OFFSET_LI
 /// Objects will be rendered as filled polygons (not wireframe).
 const unsigned int RENDER_FILL = 1 << 14;
 
-const unsigned int RENDER_COLOURARRAY = 1 << 15;
-
 /**
  * If enabled, objects should submit vertex colour information. If disabled,
  * objects must not change glColor during rendering. 
  *
  * Does not affect GL state.
  */
-const unsigned int RENDER_VERTEX_COLOUR = 1 << 16;
+const unsigned int RENDER_VERTEX_COLOUR = 1 << 15;
 
 /// GL_TEXTURE_2D will be enabled during rendering.
-const unsigned int RENDER_TEXTURE_2D = 1 << 19;
+const unsigned int RENDER_TEXTURE_2D = 1 << 16;
 
-/// GL_TEXTURE_CUBE_MAP will be enabled during rendering.
-const unsigned int RENDER_TEXTURE_CUBEMAP = 1 << 20;
+/**
+ * Cube map rendering (in camera space) is enabled. The renderer will enable
+ * GL_TEXTURE_CUBE_MAP, and set up the texture matrix such that the viewer
+ * location is the origin.  Objects should submit their vertex coordinates as
+ * texture coordinates, which will result in the correct cube map alignment.
+ */
+const unsigned int RENDER_TEXTURE_CUBEMAP = 1 << 17;
 
 /**
  * Normal map information will be used during rendering. If enabled, objects
  * should submit normal/tangent/bitangent vertex attributes to enable normal
  * mapping.
  */
-const unsigned int RENDER_BUMP = 1 << 21;
+const unsigned int RENDER_BUMP = 1 << 18;
 
 /// A vertex and fragment shader program will be used during rendering.
-const unsigned int RENDER_PROGRAM = 1 << 22;
+const unsigned int RENDER_PROGRAM = 1 << 19;
 
-const unsigned int RENDER_SCREEN = 1 << 23;
-const unsigned int RENDER_OVERRIDE = 1 << 24;
+const unsigned int RENDER_SCREEN = 1 << 20;
+const unsigned int RENDER_OVERRIDE = 1 << 21;
 typedef unsigned int RenderStateFlags;
 ///@}
 

@@ -574,7 +574,6 @@ void CamWnd::Cam_Draw() {
                                      | RENDER_ALPHATEST
                                      | RENDER_BLEND
                                      | RENDER_CULLFACE
-                                     | RENDER_COLOURARRAY
                                      | RENDER_OFFSETLINE
                                      | RENDER_POLYGONSMOOTH
                                      | RENDER_LINESMOOTH

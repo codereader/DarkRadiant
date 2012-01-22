@@ -32,10 +32,6 @@ public:
 	const AABB& localAABB() const;
 	bool isHighlighted(void) const;
 
-	// Add/remove required shader flags to the parent entity on insertion/removal
-	virtual void onInsertIntoScene();
-	virtual void onRemoveFromScene();
-
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const;
 

@@ -81,26 +81,6 @@ void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_renderableParticle->setRenderSystem(renderSystem);
 }
 
-void ParticleNode::onInsertIntoScene()
-{
-	scene::Node::onInsertIntoScene();
-
-	if (_renderEntity)
-	{
-		_renderEntity->setRequiredShaderFlags(_renderEntity->getRequiredShaderFlags() | RENDER_COLOURARRAY);
-	}
-}
-
-void ParticleNode::onRemoveFromScene()
-{
-	scene::Node::onRemoveFromScene();
-
-	if (_renderEntity)
-	{
-		_renderEntity->setRequiredShaderFlags(_renderEntity->getRequiredShaderFlags() & ~RENDER_COLOURARRAY);
-	}
-}
-
 void ParticleNode::update(const VolumeTest& viewVolume) const
 {
 	// Get the view rotation and cancel out the translation part

@@ -155,6 +155,9 @@ void RenderableParticleBunch::render(const RenderInfo& info) const
 {
 	if (_quads.empty()) return;
 
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+
 	glVertexPointer(3, GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].vertex));
 	glTexCoordPointer(2, GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].texcoord));
 	glNormalPointer(GL_FLOAT, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].normal));

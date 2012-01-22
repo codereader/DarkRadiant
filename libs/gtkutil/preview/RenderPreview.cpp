@@ -338,7 +338,6 @@ RenderStateFlags RenderPreview::getRenderFlagsFill()
 			RENDER_ALPHATEST | 
 			RENDER_BLEND |
 			RENDER_CULLFACE |
-			RENDER_COLOURARRAY |
             RENDER_OFFSETLINE |
             RENDER_POLYGONSMOOTH |
             RENDER_LINESMOOTH |
@@ -361,7 +360,6 @@ RenderStateFlags RenderPreview::getRenderFlagsWireframe()
            RENDER_ALPHATEST |
            RENDER_BLEND |
            RENDER_CULLFACE |
-           RENDER_COLOURARRAY |
            RENDER_OFFSETLINE |
            RENDER_POLYGONSMOOTH |
            RENDER_LINESMOOTH |

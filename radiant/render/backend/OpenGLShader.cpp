@@ -568,31 +568,31 @@ void OpenGLShader::construct(const std::string& name)
 
             if (name == "$POINT")
             {
-              state.renderFlags = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortControlFirst;
               state.m_pointsize = 4;
             }
             else if (name == "$SELPOINT")
             {
-              state.renderFlags = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortControlFirst + 1;
               state.m_pointsize = 4;
             }
             else if (name == "$BIGPOINT")
             {
-              state.renderFlags = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortControlFirst;
               state.m_pointsize = 6;
             }
             else if (name == "$PIVOT")
             {
-              state.renderFlags = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_linewidth = 2;
               state.m_depthfunc = GL_LEQUAL;
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.renderFlags = RENDER_COLOURARRAY|RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_LINESTIPPLE;
+              hiddenLine.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_LINESTIPPLE;
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
               hiddenLine.m_linewidth = 2;
               hiddenLine.m_depthfunc = GL_GREATER;
@@ -645,7 +645,7 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$DEBUG_CLIPPED")
             {
-              state.renderFlags = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortLast;
             }
             else if (name == "$POINTFILE")
@@ -657,23 +657,23 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$WIRE_OVERLAY")
             {
-              state.renderFlags = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
+              state.renderFlags | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_depthfunc = GL_LEQUAL;
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.renderFlags = RENDER_COLOURARRAY | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE;
+              hiddenLine.renderFlags = RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE;
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
               hiddenLine.m_depthfunc = GL_GREATER;
             }
             else if (name == "$FLATSHADE_OVERLAY")
             {
-              state.renderFlags = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_COLOURARRAY | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
+              state.renderFlags = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_depthfunc = GL_LEQUAL;
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.renderFlags = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_COLOURARRAY | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_POLYGONSTIPPLE;
+              hiddenLine.renderFlags = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_POLYGONSTIPPLE;
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
               hiddenLine.m_depthfunc = GL_GREATER;
             }

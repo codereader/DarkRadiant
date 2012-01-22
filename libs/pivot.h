@@ -284,7 +284,9 @@ public:
 
 	void render(const RenderInfo& info) const
 	{
-		if(_vertices.size() == 0) return;
+		if (_vertices.empty()) return;
+
+        glEnableClientState(GL_COLOR_ARRAY);
 
 		glVertexPointer(3, GL_FLOAT, sizeof(PointVertex), &_vertices.data()->vertex);
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_vertices.data()->colour);

@@ -35,7 +35,6 @@ namespace debug
             OUTPUT_RENDERFLAG(RENDER_BLEND);
             OUTPUT_RENDERFLAG(RENDER_OFFSETLINE);
             OUTPUT_RENDERFLAG(RENDER_FILL);
-            OUTPUT_RENDERFLAG(RENDER_COLOURARRAY);
             OUTPUT_RENDERFLAG(RENDER_VERTEX_COLOUR);
             OUTPUT_RENDERFLAG(RENDER_TEXTURE_2D);
             OUTPUT_RENDERFLAG(RENDER_TEXTURE_CUBEMAP);
@@ -58,5 +57,21 @@ namespace debug
         Colour4 result;
         glGetFloatv(GL_CURRENT_COLOR, &result[0]);
         return result;
+    }
+
+    /// Get a GL integer for debugging
+    inline int getGLInt(GLenum name)
+    {
+        int result;
+        glGetIntegerv(name, &result);
+        return result;
+    }
+
+    /// Get a GL boolean for debugging
+    inline bool getGLBool(GLenum name)
+    {
+        GLboolean result;
+        glGetBooleanv(name, &result);
+        return result == GL_TRUE;
     }
 }

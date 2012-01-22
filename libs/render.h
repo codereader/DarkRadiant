@@ -571,7 +571,9 @@ inline ArbitraryMeshVertex arbitrarymeshvertex_quantised(const ArbitraryMeshVert
 
 
 /// \brief Sets up the OpenGL colour and vertex arrays for \p array.
-inline void pointvertex_gl_array(const PointVertex* array) {
+inline void pointvertex_gl_array(const PointVertex* array)
+{
+    glEnableClientState(GL_COLOR_ARRAY);
 	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &array->colour);
 	glVertexPointer(3, GL_FLOAT, sizeof(PointVertex), &array->vertex);
 }
@@ -678,27 +680,10 @@ public:
 	RenderableIndexBuffer(GLenum mode, const IndexBuffer& indices, const VertexBuffer<PointVertex>& vertices)
 			: m_mode(mode), m_indices(indices), m_vertices(vertices) {}
 
-	void render(const RenderInfo& info) const {
-#if 1
+	void render(const RenderInfo& info) const
+    {
 		pointvertex_gl_array(m_vertices.data());
 		glDrawElements(m_mode, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
-#else
-
-		glBegin(m_mode);
-		if(state & RENDER_COLOURARRAY != 0) {
-			for(std::size_t i = 0; i < m_indices.size(); ++i) {
-				glColor4ubv(&m_vertices[m_indices[i]].colour.r);
-				glVertex3fv(m_vertices[m_indices[i]].vertex);
-			}
-		}
-		else {
-			for(std::size_t i = 0; i < m_indices.size(); ++i) {
-				glVertex3fv(m_vertices[m_indices[i]].vertex);
-			}
-		}
-		glEnd();
-#endif
-
 	}
 };
 

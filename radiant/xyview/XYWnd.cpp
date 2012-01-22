@@ -1519,8 +1519,7 @@ void XYWnd::draw()
 
 	glLoadMatrixf(m_modelview);
 
-	unsigned int flagsMask = RENDER_COLOURARRAY
-                           | RENDER_COLOURWRITE
+	unsigned int flagsMask = RENDER_COLOURWRITE
                            | RENDER_POLYGONSMOOTH
                            | RENDER_LINESMOOTH;
 	if (!getCameraSettings()->solidSelectionBoxes())

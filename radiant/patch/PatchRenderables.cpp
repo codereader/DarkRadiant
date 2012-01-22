@@ -58,6 +58,7 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 
 	glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(16));
 	glClientActiveTexture(GL_TEXTURE0);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 	glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(0));
 	glVertexPointer(3, GL_FLOAT, sizeof(ArbitraryMeshVertex), BUFFER_OFFSET(40));
 
@@ -85,6 +86,7 @@ void RenderablePatchSolid::render(const RenderInfo& info) const
 	else
 	{
 		glNormalPointer(GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().normal);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		glTexCoordPointer(2, GL_FLOAT, sizeof(ArbitraryMeshVertex), &m_tess.vertices.front().texcoord);
 	}
 

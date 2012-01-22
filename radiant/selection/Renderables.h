@@ -54,6 +54,7 @@ public:
 
 	void render(const RenderInfo& info) const
 	{
+        glEnableClientState(GL_COLOR_ARRAY);
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(FlatShadedVertex), &_vertices.front().colour);
 		glVertexPointer(3, GL_FLOAT, sizeof(FlatShadedVertex), &_vertices.front().vertex);
 		glNormalPointer(GL_FLOAT, sizeof(FlatShadedVertex), &_vertices.front().normal);

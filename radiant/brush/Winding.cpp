@@ -72,6 +72,7 @@ void Winding::render(const RenderInfo& info) const
 	}
 
     // Our vertex colours are always white, if requested
+    glDisableClientState(GL_COLOR_ARRAY);
     if (info.checkFlag(RENDER_VERTEX_COLOUR))
     {
         glColor3f(1, 1, 1);
@@ -90,6 +91,7 @@ void Winding::render(const RenderInfo& info) const
         // In cube-map mode, we submit the vertex coordinate as the texture
         // coordinate. The RenderSystem will set the appropriate texture matrix
         // etc.
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(
             3, GL_FLOAT, sizeof(WindingVertex), &firstElement.vertex
         );
@@ -122,6 +124,7 @@ void Winding::render(const RenderInfo& info) const
         // Set texture coordinates in 2D texture mode
 		if (info.checkFlag(RENDER_TEXTURE_2D))
         {
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
             glTexCoordPointer(
                 2, GL_FLOAT, sizeof(WindingVertex), &firstElement.texcoord
             );

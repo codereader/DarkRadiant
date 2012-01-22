@@ -25,6 +25,7 @@ public:
 	{
 		if (m_size == 0) return;
 
+        glEnableClientState(GL_COLOR_ARRAY);
 		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &m_vertices->colour);
 		glVertexPointer(3, GL_FLOAT, sizeof(PointVertex), &m_vertices->vertex);
 		glDrawElements(GL_LINES, GLsizei(m_size<<1), RenderIndexTypeID, &m_faceVertex.front());

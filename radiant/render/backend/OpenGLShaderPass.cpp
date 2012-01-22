@@ -101,7 +101,6 @@ void OpenGLShaderPass::enableTexture2D()
     setTexture0();
     glEnable(GL_TEXTURE_2D);
 
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     GlobalOpenGL().assertNoErrors();
 }
 
@@ -110,7 +109,6 @@ void OpenGLShaderPass::disableTexture2D()
     setTexture0();
     glDisable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     GlobalOpenGL().assertNoErrors();
 }
@@ -120,7 +118,6 @@ void OpenGLShaderPass::enableTextureCubeMap()
 {
     setTexture0();
     glEnable(GL_TEXTURE_CUBE_MAP);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     GlobalOpenGL().assertNoErrors();
 }
@@ -131,7 +128,6 @@ void OpenGLShaderPass::disableTextureCubeMap()
     setTexture0();
     glDisable(GL_TEXTURE_CUBE_MAP);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     GlobalOpenGL().assertNoErrors();
 }
@@ -474,18 +470,6 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         }
 
         setState(requiredState, changingBitsMask, RENDER_ALPHATEST, GL_ALPHA_TEST);
-
-        if ((changingBitsMask & requiredState & RENDER_COLOURARRAY))
-        {
-            glEnableClientState(GL_COLOR_ARRAY);
-            GlobalOpenGL().assertNoErrors();
-        }
-        else if(changingBitsMask & ~requiredState & RENDER_COLOURARRAY)
-        {
-            glDisableClientState(GL_COLOR_ARRAY);
-            glColor4fv(_glState.getColour());
-            GlobalOpenGL().assertNoErrors();
-        }
 
         // Set GL states corresponding to RENDER_ flags
         setState(requiredState, changingBitsMask, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
