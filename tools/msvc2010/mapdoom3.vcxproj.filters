@@ -73,6 +73,9 @@
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcWinding.h">
       <Filter>src\compiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcLight.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
@@ -115,6 +118,9 @@
       <Filter>src\compiler</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcLight.cpp">
       <Filter>src\compiler</Filter>
     </ClCompile>
   </ItemGroup>

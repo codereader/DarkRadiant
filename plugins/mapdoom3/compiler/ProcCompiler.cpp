@@ -126,15 +126,36 @@ public:
 					const PatchMesh::Vertex& v3 = mesh.vertices[(h+1)*mesh.width + w - 1];
 					const PatchMesh::Vertex& v4 = mesh.vertices[(h+1)*mesh.width + w];
 					
-					tris[triIdx].v[0].vertex = v1.vertex;
+					// greebo: Ordering such that it matches the one in D3
+					tris[triIdx].v[0].vertex = v4.vertex;
+					tris[triIdx].v[0].normal = v4.normal;
+					tris[triIdx].v[0].texcoord = v4.texcoord;
+
 					tris[triIdx].v[1].vertex = v2.vertex;
-					tris[triIdx].v[2].vertex = v3.vertex;
+					tris[triIdx].v[1].normal = v2.normal;
+					tris[triIdx].v[1].texcoord = v2.texcoord;
+
+					tris[triIdx].v[2].vertex = v1.vertex;
+					tris[triIdx].v[2].normal = v1.normal;
+					tris[triIdx].v[2].texcoord = v1.texcoord;
+
 					tris[triIdx].material = material;
 
-					tris[triIdx+1].v[0].vertex = v4.vertex;
-					tris[triIdx+1].v[1].vertex = v3.vertex;
-					tris[triIdx+1].v[2].vertex = v2.vertex;
-					tris[triIdx+1].material = material;
+					triIdx++;
+
+					tris[triIdx].v[0].vertex = v3.vertex;
+					tris[triIdx].v[0].normal = v3.normal;
+					tris[triIdx].v[0].texcoord = v3.texcoord;
+
+					tris[triIdx].v[1].vertex = v4.vertex;
+					tris[triIdx].v[1].normal = v4.normal;
+					tris[triIdx].v[1].texcoord = v4.texcoord;
+
+					tris[triIdx].v[2].vertex = v1.vertex;
+					tris[triIdx].v[2].normal = v1.normal;
+					tris[triIdx].v[2].texcoord = v1.texcoord;
+
+					tris[triIdx].material = material;
 				}
 			}
 
@@ -386,11 +407,61 @@ public:
 			// Traverse this entity's primitives
 			ToolPrimitiveGenerator primitiveGenerator(_procFile->entities.back(), _procFile);
 			node->traverse(primitiveGenerator);
+
+			// Check if this is a light
+			const Entity& entity = entityNode->getEntity();
 			
+			if (entity.getKeyValue("classname") == "light")
+			{
+				createMapLight(entity);
+			}
+
 			return false; // processed => stop traversal here
 		}
 
 		return true;
+	}
+
+private:
+	void createMapLight(const Entity& entity)
+	{
+		// designers can add the "noPrelight" flag to signal that
+		// the lights will move around, so we don't want
+		// to bother chopping up the surfaces under it or creating
+		// shadow volumes
+		if (entity.getKeyValue("noPrelight") == "1")
+		{
+			return;
+		}
+
+		_procFile->lights.push_back(ProcLight());
+
+		ProcLight& light = _procFile->lights.back();
+
+		// get the name for naming the shadow surfaces
+		light.name = entity.getKeyValue("name");
+
+		// TODO light->shadowTris = NULL;
+
+		// parse parms exactly as the game do
+		// use the game's epair parsing code so
+		// we can use the same renderLight generation
+		//gameEdit->ParseSpawnArgsToRenderLight( &mapEnt->epairs, &light->def.parms );
+		light.parseFromSpawnargs(entity);
+		
+		// fills everything in based on light.parms
+		light.deriveLightData();
+
+		// Check the name
+		if (light.name.empty())
+		{
+			globalErrorStream() <<
+				(boost::format("Light at (%f,%f,%f) didn't have a name") %
+				light.parms.origin[0], light.parms.origin[1], light.parms.origin[2] );
+
+			_procFile->lights.pop_back();
+			return;
+		}
 	}
 };
 

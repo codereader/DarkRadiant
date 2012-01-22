@@ -86,6 +86,15 @@ public:
 			   float_equal_epsilon(_dist, other._dist, EPSILON_DIST);
 	}
 
+	// Subtracts plane equations: the returned plane is (a1-a2)*x + (b1-b2)*y + (c1-c2)*z + (d1-d2) = 0
+	Plane3	operator-(const Plane3& other) const
+	{
+		return Plane3(_normal[0] - other._normal[0], 
+					  _normal[1] - other._normal[1], 
+					  _normal[2] - other._normal[2],
+					  other._dist - _dist);		// since we're storing -d as _dist, we need to substract this from other
+	}
+
 	// Returns the normal vector of this plane
   	Vector3& normal()
 	{
