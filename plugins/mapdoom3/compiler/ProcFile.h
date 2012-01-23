@@ -115,13 +115,19 @@ public:
 
 	std::size_t numPortals;
 	std::size_t numPatches;
+	std::size_t numWorldBrushes;
+	std::size_t numWorldTriSurfs;
+
+	AABB mapBounds;
 
 	typedef std::vector<ProcLight> ProcLights;
 	ProcLights lights;
 
 	ProcFile() :
 		numPortals(0),
-		numPatches(0)
+		numPatches(0),
+		numWorldBrushes(0),
+		numWorldTriSurfs(0)
 	{}
 
 	void saveToFile(const std::string& path)

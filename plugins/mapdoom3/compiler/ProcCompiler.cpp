@@ -422,6 +422,32 @@ public:
 		return true;
 	}
 
+	void buildStats()
+	{
+		_procFile->mapBounds = AABB();
+
+		if (_procFile->entities.empty())
+		{
+			return;
+		}
+
+		// Accumulate worldspawn primitives
+		const ProcEntity& entity = *_procFile->entities.begin();
+
+		for (std::size_t p = 0; p < entity.primitives.size(); ++p)
+		{
+			if (entity.primitives[p].brush)
+			{
+				_procFile->numWorldBrushes++;
+				_procFile->mapBounds.includeAABB(entity.primitives[p].brush->bounds);
+			}
+			else if (!entity.primitives[p].patch.empty())
+			{
+				_procFile->numWorldTriSurfs++;
+			}
+		}
+	}
+
 private:
 	void createMapLight(const Entity& entity)
 	{
@@ -471,6 +497,21 @@ void ProcCompiler::generateBrushData()
 {
 	ToolDataGenerator generator(_procFile);
 	_root->traverse(generator);
+
+	generator.buildStats();
+
+	globalOutputStream() << (boost::format("%5i total world brushes") % _procFile->numWorldBrushes).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i total world triSurfs") % _procFile->numWorldTriSurfs).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i patches") % _procFile->numPatches).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i entities") % _procFile->entities.size()).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i planes") % _procFile->planes.size()).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i areaportals") % _procFile->numPortals).str() << std::endl;
+
+	Vector3 minBounds = _procFile->mapBounds.origin - _procFile->mapBounds.extents;
+	Vector3 maxBounds = _procFile->mapBounds.origin + _procFile->mapBounds.extents;
+
+	globalOutputStream() << (boost::format("size: %5.0f,%5.0f,%5.0f to %5.0f,%5.0f,%5.0f") % 
+		minBounds[0] % minBounds[1] % minBounds[2] % maxBounds[0] % maxBounds[1] % maxBounds[2]).str() << std::endl;
 }
 
 } // namespace

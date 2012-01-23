@@ -43,6 +43,11 @@ public:
 		return _list[planeNum];
 	}
 
+	std::size_t size() const
+	{
+		return _list.size();
+	}
+
 	// Returns the index of the plane3, which can be the index of an existing plane
 	// if its normal and distance are equal respecting the given epsilon
 	std::size_t findOrInsertPlane(const Plane3& plane, float epsNormal, float epsDist)
