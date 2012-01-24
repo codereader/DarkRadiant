@@ -34,7 +34,7 @@ struct ProcTri
 };
 typedef std::vector<ProcTri> ProcTris;
 
-struct BspFace
+struct ProcFace
 {
 	std::size_t			planenum;		// serves as index into ProcFile::planes
 
@@ -65,8 +65,8 @@ struct ProcBrush
 
 	AABB				bounds;
 
-	typedef std::vector<BspFace> BspFaces;
-	BspFaces			sides;
+	typedef std::vector<ProcFace> ProcFaces;
+	ProcFaces			sides;
 };
 typedef boost::shared_ptr<ProcBrush> ProcBrushPtr;
 

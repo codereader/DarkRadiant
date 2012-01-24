@@ -19,6 +19,8 @@ ProcFilePtr ProcCompiler::generateProcFile()
 	// Load all entities into proc entities
 	generateBrushData();
 
+	processModels();
+
 	return _procFile;
 }
 
@@ -58,8 +60,8 @@ public:
 			
 			for (std::size_t i = 0 ; i < brush->getNumFaces(); i++)
 			{
-				_buildBrush.sides.push_back(BspFace());
-				BspFace& side = _buildBrush.sides.back();
+				_buildBrush.sides.push_back(ProcFace());
+				ProcFace& side = _buildBrush.sides.back();
 
 				const IFace& mapFace = brush->getFace(i);
 
@@ -211,7 +213,7 @@ private:
 	{
 		for (std::size_t i = 0; i < _buildBrush.sides.size(); ++i)
 		{
-			BspFace& side = _buildBrush.sides[i];
+			ProcFace& side = _buildBrush.sides[i];
 
 			const Plane3& plane = _procFile->planes.getPlane(side.planenum);
 
@@ -276,7 +278,7 @@ private:
 	{
 		assert(!_buildBrush.sides.empty());
 
-		const BspFace& firstSide = _buildBrush.sides[0];
+		const ProcFace& firstSide = _buildBrush.sides[0];
 		int contents = firstSide.material->getSurfaceFlags();
 
 		_buildBrush.contentShader = firstSide.material;
@@ -288,7 +290,7 @@ private:
 
 		for (std::size_t i = 1; i < _buildBrush.sides.size(); i++)
 		{
-			const BspFace& side = _buildBrush.sides[i];
+			const ProcFace& side = _buildBrush.sides[i];
 
 			if (!side.material)
 			{
@@ -512,6 +514,170 @@ void ProcCompiler::generateBrushData()
 
 	globalOutputStream() << (boost::format("size: %5.0f,%5.0f,%5.0f to %5.0f,%5.0f,%5.0f") % 
 		minBounds[0] % minBounds[1] % minBounds[2] % maxBounds[0] % maxBounds[1] % maxBounds[2]).str() << std::endl;
+}
+
+bool ProcCompiler::processModels()
+{
+	for (std::size_t i = 0; i < _procFile->entities.size(); ++i)
+	{
+		ProcEntity& entity = _procFile->entities[i];
+
+		if (entity.primitives.empty())
+		{
+			continue;
+		}
+
+		globalOutputStream() << "############### entity " << i << " ###############" << std::endl;
+
+		// if we leaked, stop without any more processing, only floodfill the first entity (world)
+		if (!processModel(entity, i == 0))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void ProcCompiler::makeStructuralProcFaceList(const ProcEntity::Primitives& primitives)
+{
+	for (ProcEntity::Primitives::const_iterator i = primitives.begin();
+		i != primitives.end(); ++i)
+	{
+		if (!i->brush) continue; // skip all patches
+
+		ProcBrush& brush = *i->brush;
+
+		if (!brush.opaque && !(brush.contents & Material::SURF_AREAPORTAL))
+		{
+			continue; // skip all non-opaque non-portals
+		}
+
+		for (ProcBrush::ProcFaces::const_iterator s = brush.sides.begin(); s != brush.sides.end(); ++s)
+		{
+			const ProcFace& side = *s;
+
+			if (side.winding.empty()) continue;
+
+			int sideFlags = side.material->getSurfaceFlags();
+
+			// Skip all faces of a portal brush that are not textured with the "areaportal" face
+			if ((brush.contents & Material::SURF_AREAPORTAL) && !(sideFlags & Material::SURF_AREAPORTAL))
+			{
+				continue;
+			}
+
+			// Allocate a new BspFace
+			_bspFaces.push_back(BspFace());
+			BspFace& face = _bspFaces.back();
+
+			// Check if this is a portal face
+			face.portal = (sideFlags & Material::SURF_AREAPORTAL) != 0;
+			face.w = side.winding;
+			face.planenum = side.planenum & ~1; // use the even plane number
+		}
+	}
+}
+
+void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces& faces)
+{
+	// TODO
+}
+
+void ProcCompiler::faceBsp(ProcEntity& entity)
+{
+	globalOutputStream() << "--- FaceBSP: " << _bspFaces.size() << " faces ---" << std::endl;
+
+	_bspTree.bounds = AABB();
+
+	// Accumulate bounds
+	for (BspFaces::const_iterator f = _bspFaces.begin(); f != _bspFaces.end(); ++f)
+	{
+		for (std::size_t i = 0; i < f->w.size(); ++i)
+		{
+			_bspTree.bounds.includePoint(f->w[i].vertex);
+		}
+	}
+
+	// Allocate the head node and use the total bounds
+	_bspTree.head.reset(new BspTreeNode);
+	_bspTree.head->bounds = _bspTree.bounds;
+
+	buildFaceTreeRecursively(_bspTree.head, _bspFaces);
+
+	globalOutputStream() << (boost::format("%5i leafs") % _bspTree.numFaceLeafs).str() << std::endl;
+
+	//common->Printf( "%5.1f seconds faceBsp\n", ( end - start ) / 1000.0 );
+}
+
+bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
+{
+	_bspFaces.clear();
+
+	// build a bsp tree using all of the sides
+	// of all of the structural brushes
+	makeStructuralProcFaceList(entity.primitives);
+
+	// Sort all the faces into the tree
+	faceBsp(entity);
+
+	/*e->tree = FaceBSP( faces );
+
+	// create portals at every leaf intersection
+	// to allow flood filling
+	MakeTreePortals( e->tree );
+
+	// classify the leafs as opaque or areaportal
+	FilterBrushesIntoTree( e );
+
+	// see if the bsp is completely enclosed
+	if ( floodFill && !dmapGlobals.noFlood ) {
+		if ( FloodEntities( e->tree ) ) {
+			// set the outside leafs to opaque
+			FillOutside( e );
+		} else {
+			common->Printf ( "**********************\n" );
+			common->Warning( "******* leaked *******" );
+			common->Printf ( "**********************\n" );
+			LeakFile( e->tree );
+			// bail out here.  If someone really wants to
+			// process a map that leaks, they should use
+			// -noFlood
+			return false;
+		}
+	}
+
+	// get minimum convex hulls for each visible side
+	// this must be done before creating area portals,
+	// because the visible hull is used as the portal
+	ClipSidesByTree( e );
+
+	// determine areas before clipping tris into the
+	// tree, so tris will never cross area boundaries
+	FloodAreas( e );
+
+	// we now have a BSP tree with solid and non-solid leafs marked with areas
+	// all primitives will now be clipped into this, throwing away
+	// fragments in the solid areas
+	PutPrimitivesInAreas( e );
+
+	// now build shadow volumes for the lights and split
+	// the optimize lists by the light beam trees
+	// so there won't be unneeded overdraw in the static
+	// case
+	Prelight( e );
+
+	// optimizing is a superset of fixing tjunctions
+	if ( !dmapGlobals.noOptimize ) {
+		OptimizeEntity( e );
+	} else  if ( !dmapGlobals.noTJunc ) {
+		FixEntityTjunctions( e );
+	}
+
+	// now fix t junctions across areas
+	FixGlobalTjunctions( e );*/
+
+	return true;
 }
 
 } // namespace
