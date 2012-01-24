@@ -46,6 +46,11 @@ public:
 	int split(const Plane3& plane, const float epsilon, ProcWinding& front, ProcWinding& back) const;
 
 	int planeSide(const Plane3& plane, const float epsilon = ON_EPSILON) const;
+
+private:
+	Plane3 getPlane() const;
+
+	Vector3 getCenter() const;
 };
 
 } // namespace

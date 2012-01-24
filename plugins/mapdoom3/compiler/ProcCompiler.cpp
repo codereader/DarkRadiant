@@ -746,20 +746,18 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 
 			if (!front.empty())
 			{
-				/*newFace = AllocBspFace();
-				newFace->w = frontWinding;
-				newFace->next = childLists[0];
-				newFace->planenum = split->planenum;
-				childLists[0] = newFace;*/
+				childLists[0].push_back(BspFacePtr(new BspFace));
+
+				childLists[0].back()->w = front;
+				childLists[0].back()->planenum = (*split)->planenum;
 			}
 
 			if (!back.empty())
 			{
-				/*newFace = AllocBspFace();
-				newFace->w = backWinding;
-				newFace->next = childLists[1];
-				newFace->planenum = split->planenum;
-				childLists[1] = newFace;*/
+				childLists[1].push_back(BspFacePtr(new BspFace));
+
+				childLists[1].back()->w = back;
+				childLists[1].back()->planenum = (*split)->planenum;
 			}
 
 			split->reset(); //FreeBspFace( split );

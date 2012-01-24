@@ -178,9 +178,203 @@ void ProcWinding::clip(const Plane3& plane, const float epsilon)
 	swap(newPoints); 
 }
 
+Vector3 ProcWinding::getCenter() const
+{
+	Vector3 center(0,0,0);
+
+	for (std::size_t i = 0; i < IWinding::size(); ++i)
+	{
+		center += (*this)[i].vertex;
+	}
+
+	return center * (1.0f / IWinding::size());
+}
+
+Plane3 ProcWinding::getPlane() const
+{
+	if (IWinding::size() < 3 )
+	{
+		return Plane3(0,0,0,0);
+	}
+
+	Vector3 center = getCenter();
+
+	Vector3 v1 = (*this)[0].vertex - center;
+	Vector3 v2 = (*this)[1].vertex - center;
+
+	Plane3 plane;
+
+	plane.normal() = v2.crossProduct(v1);
+	plane.normalise();
+
+	// Fit the plane through the first point of this winding
+	plane.dist() = plane.normal().dot((*this)[0].vertex);
+
+	return plane;
+}
+
 int ProcWinding::split(const Plane3& plane, const float epsilon, ProcWinding& front, ProcWinding& back) const
 {
-	return -1;
+	std::size_t numPoints = IWinding::size();
+
+	float* dists = (float*)_alloca((numPoints+4) * sizeof(float));
+	unsigned char* sides = (unsigned char*)_alloca((numPoints+4) * sizeof(unsigned char));
+
+	int counts[3] = {0, 0, 0};
+
+	// determine sides for each point
+	std::size_t i;
+
+	for (i = 0; i < numPoints; i++ )
+	{
+		float dot = dists[i] = plane.distanceToPoint((*this)[i].vertex);
+
+		if (dot > epsilon)
+		{
+			sides[i] = SIDE_FRONT;
+		}
+		else if (dot < -epsilon)
+		{
+			sides[i] = SIDE_BACK;
+		}
+		else
+		{
+			sides[i] = SIDE_ON;
+		}
+
+		counts[sides[i]]++;
+	}
+
+	sides[i] = sides[0];
+	dists[i] = dists[0];
+	
+	front.clear();
+	back.clear();
+
+	// if coplanar, put on the front side if the normals match
+	if (!counts[SIDE_FRONT] && !counts[SIDE_BACK])
+	{
+		Plane3 windingPlane = getPlane();
+
+		if (windingPlane.normal().dot(plane.normal()) > 0.0f)
+		{
+			front = *this;
+			return SIDE_FRONT;
+		}
+		else
+		{
+			back = *this;
+			return SIDE_BACK;
+		}
+	}
+
+	// if nothing at the front of the clipping plane
+	if (!counts[SIDE_FRONT])
+	{
+		back = *this;
+		return SIDE_BACK;
+	}
+
+	// if nothing at the back of the clipping plane
+	if (!counts[SIDE_BACK])
+	{
+		front = *this;
+		return SIDE_FRONT;
+	}
+
+	std::size_t maxpts = numPoints + 4;	// cant use counts[0]+2 because of fp grouping errors
+
+	front.reserve(maxpts);
+	back.reserve(maxpts);
+		
+	for (i = 0; i < numPoints; ++i)
+	{
+		const IWinding::value_type& p1 = (*this)[i];
+		
+		if (sides[i] == SIDE_ON)
+		{
+			front.push_back(p1);
+			back.push_back(p1);
+			continue;
+		}
+	
+		if (sides[i] == SIDE_FRONT)
+		{
+			front.push_back(p1);
+		}
+
+		if (sides[i] == SIDE_BACK)
+		{
+			back.push_back(p1);
+		}
+
+		if (sides[i+1] == SIDE_ON || sides[i+1] == sides[i])
+		{
+			continue;
+		}
+			
+		// generate a split point
+		const IWinding::value_type& p2 = (*this)[(i+1) % numPoints];
+		IWinding::value_type mid;
+
+		// always calculate the split going from the same side
+		// or minor epsilon issues can happen
+		if (sides[i] == SIDE_FRONT)
+		{
+			float dot = dists[i] / (dists[i] - dists[i+1]);
+
+			for (std::size_t j = 0; j < 3; ++j)
+			{
+				// avoid round off error when possible
+				if (plane.normal()[j] == 1.0f)
+				{
+					mid.vertex[j] = plane.dist();
+				}
+				else if (plane.normal()[j] == -1.0f)
+				{
+					mid.vertex[j] = -plane.dist();
+				}
+				else
+				{
+					mid.vertex[j] = p1.vertex[j] + dot * (p2.vertex[j] - p1.vertex[j]);
+				}
+			}
+
+			mid.texcoord.x() = p1.texcoord.x() + dot * (p2.texcoord.x() - p1.texcoord.x());
+			mid.texcoord.y() = p1.texcoord.y() + dot * (p2.texcoord.y() - p1.texcoord.y());
+		}
+		else
+		{
+			float dot = dists[i+1] / (dists[i+1] - dists[i]);
+
+			for (std::size_t j = 0; j < 3; ++j)
+			{	
+				// avoid round off error when possible
+				if (plane.normal()[j] == 1.0f)
+				{
+					mid.vertex[j] = plane.dist();
+				}
+				else if (plane.normal()[j] == -1.0f)
+				{
+					mid.vertex[j] = -plane.dist();
+				} 
+				else
+				{
+					mid.vertex[j] = p2.vertex[j] + dot * (p1.vertex[j] - p2.vertex[j]);
+				}
+			}
+
+			mid.texcoord.x() = p2.texcoord.x() + dot * (p1.texcoord.x() - p2.texcoord.x());
+			mid.texcoord.y() = p2.texcoord.y() + dot * (p1.texcoord.y() - p2.texcoord.y());
+		}
+
+		front.push_back(mid);
+		back.push_back(mid);
+	}
+	
+	assert(front.size() <= maxpts && back.size() <= maxpts);
+
+	return SIDE_CROSS;
 }
 
 int ProcWinding::planeSide(const Plane3& plane, const float epsilon) const
