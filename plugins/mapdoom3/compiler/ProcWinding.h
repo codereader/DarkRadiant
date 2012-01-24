@@ -18,6 +18,9 @@ namespace map
 #define	SIDE_FRONT	0
 #define	SIDE_BACK	1
 #define	SIDE_ON		2
+#define	SIDE_CROSS	3
+
+#define ON_EPSILON 0.1f
 
 class ProcWinding : 
 	public IWinding
@@ -206,6 +209,50 @@ public:
 	
 		// Overwrite ourselves with the new winding
 		swap(newPoints); 
+	}
+
+	int planeSide(const Plane3& plane, const float epsilon = ON_EPSILON) const
+	{
+		bool front = false;
+		bool back = false;
+
+		for (std::size_t i = 0; i < size(); ++i)
+		{
+			float d = plane.distanceToPoint((*this)[i].vertex);
+
+			if (d < -epsilon)
+			{
+				if (front)
+				{
+					return SIDE_CROSS;
+				}
+
+				back = true;
+				continue;
+			}
+			else if (d > epsilon)
+			{
+				if (back)
+				{
+					return SIDE_CROSS;
+				}
+
+				front = true;
+				continue;
+			}
+		}
+
+		if (back)
+		{
+			return SIDE_BACK;
+		}
+
+		if (front)
+		{
+			return SIDE_FRONT;
+		}
+
+		return SIDE_ON;
 	}
 };
 

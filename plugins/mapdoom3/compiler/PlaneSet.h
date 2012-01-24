@@ -21,6 +21,7 @@ private:
 	typedef std::vector<Plane3> PlaneList;
 	PlaneList _list;
 
+public:
 	enum PlaneType
 	{
 		// plane types
@@ -37,7 +38,6 @@ private:
 		PLANETYPE_NONAXIAL			= 9,
 	};
 
-public:
 	const Plane3& getPlane(std::size_t planeNum) const
 	{
 		return _list[planeNum];
@@ -104,7 +104,6 @@ public:
 		}
 	}
 
-private:
 	// Classifies the given plane
 	static PlaneType getPlaneType(const Plane3& plane)
 	{

@@ -3,10 +3,13 @@
 #include "itextstream.h"
 #include "math/Plane3.h"
 #include "ishaders.h"
+#include <limits>
 #include <boost/format.hpp>
 
 namespace map
 {
+
+const std::size_t PLANENUM_LEAF = std::numeric_limits<std::size_t>::max();
 
 ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_root(root)
@@ -568,8 +571,8 @@ void ProcCompiler::makeStructuralProcFaceList(const ProcEntity::Primitives& prim
 			}
 
 			// Allocate a new BspFace
-			_bspFaces.push_back(BspFace());
-			BspFace& face = _bspFaces.back();
+			_bspFaces.push_back(BspFacePtr(new BspFace()));
+			BspFace& face = *_bspFaces.back();
 
 			// Check if this is a portal face
 			face.portal = (sideFlags & Material::SURF_AREAPORTAL) != 0;
@@ -579,9 +582,243 @@ void ProcCompiler::makeStructuralProcFaceList(const ProcEntity::Primitives& prim
 	}
 }
 
+#define	BLOCK_SIZE	1024
+
+std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFaces& faces)
+{
+	// if it is crossing a 1k block boundary, force a split
+	// this prevents epsilon problems from extending an
+	// arbitrary distance across the map
+
+	Vector3 halfSize = node->bounds.extents;
+	Vector3 nodeMin = node->bounds.origin - node->bounds.extents;
+	Vector3 nodeMax = node->bounds.origin + node->bounds.extents;
+
+	for (int axis = 0; axis < 3; ++axis)
+	{
+		float dist;
+
+		if (halfSize[axis] > BLOCK_SIZE)
+		{
+			dist = BLOCK_SIZE * ( floor( (nodeMin[axis] + halfSize[axis]) / BLOCK_SIZE ) + 1.0f );
+		}
+		else
+		{
+			dist = BLOCK_SIZE * ( floor( nodeMin[axis] / BLOCK_SIZE ) + 1.0f );
+		}
+
+		if (dist > nodeMin[axis] + 1.0f && dist < nodeMax[axis] - 1.0f)
+		{
+			//plane[0] = plane[1] = plane[2] = 0.0f;
+			//plane[3] = -dist;
+
+			Plane3 plane(0, 0, 0, dist);
+			plane.normal()[axis] = 1.0f;
+
+			return _procFile->planes.findOrInsertPlane(plane, EPSILON_NORMAL, EPSILON_DIST);
+		}
+	}
+
+	// pick one of the face planes
+	// if we have any portal faces at all, only
+	// select from them, otherwise select from
+	// all faces
+	int bestValue = -999999;
+	BspFaces::const_iterator bestSplit = faces.begin();
+
+	bool havePortals = false;
+
+	for (BspFaces::const_iterator split = faces.begin(); split != faces.end(); ++split)
+	{
+		(*split)->checked = false;
+
+		if ((*split)->portal)
+		{
+			havePortals = true;
+		}
+	}
+
+	for (BspFaces::const_iterator split = faces.begin(); split != faces.end(); ++split)
+	{
+		if ((*split)->checked) continue;
+
+		// greebo: prefer portals as split planes, if we have some
+		if (havePortals != (*split)->portal) continue;
+
+		const Plane3& mapPlane = _procFile->planes.getPlane((*split)->planenum);
+		//mapPlane = &dmapGlobals.mapPlanes[ split->planenum ];
+
+		int splits = 0;
+		int facing = 0;
+		int front = 0;
+		int back = 0;
+
+		for (BspFaces::const_iterator check = faces.begin(); check != faces.end(); ++check)
+		{
+			if ((*check)->planenum == (*split)->planenum)
+			{
+				facing++;
+				(*check)->checked = true;	// won't need to test this plane again
+				continue;
+			}
+
+			int side = (*check)->w.planeSide(mapPlane);
+
+			if (side == SIDE_CROSS)
+			{
+				splits++;
+			}
+			else if (side == SIDE_FRONT)
+			{
+				front++;
+			}
+			else if (side == SIDE_BACK)
+			{
+				back++;
+			}
+		}
+
+		int value =  5*facing - 5*splits; // - abs(front-back);
+
+		if (PlaneSet::getPlaneType(mapPlane) < PlaneSet::PLANETYPE_TRUEAXIAL)
+		{
+			value += 5;		// axial is better
+		}
+
+		if (value > bestValue)
+		{
+			bestValue = value;
+			bestSplit = split;
+		}
+	}
+
+	if (bestValue == -999999)
+	{
+		return std::numeric_limits<std::size_t>::max();
+	}
+
+	return (*bestSplit)->planenum;
+}
+
 void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces& faces)
 {
-	// TODO
+	/*
+	int			side;
+	bspface_t	*newFace;
+	bspface_t	*childLists[2];
+	idWinding	*frontWinding, *backWinding;
+	int			i;
+	int			splitPlaneNum;
+	*/
+
+	std::size_t splitPlaneNum = selectSplitPlaneNum(node, faces);
+	
+	// if we don't have any more faces, this is a node
+	if (splitPlaneNum == std::numeric_limits<std::size_t>::max())
+	{
+		node->planenum = PLANENUM_LEAF;
+		_bspTree.numFaceLeafs++;
+		return;
+	}
+
+	// partition the list
+	node->planenum = splitPlaneNum;
+
+	const Plane3& plane = _procFile->planes.getPlane(splitPlaneNum);
+	//idPlane &plane = dmapGlobals.mapPlanes[ splitPlaneNum ];
+
+	BspFaces childLists[2];
+
+	BspFaces::iterator next;
+
+	for (BspFaces::iterator split = faces.begin(); split != faces.end(); split = next )
+	{
+		next = split + 1; // remember the pointer to next
+
+		if ((*split)->planenum == node->planenum)
+		{
+			split->reset();
+			//FreeBspFace( split );
+			continue;
+		}
+
+		int side = (*split)->w.planeSide(plane);
+
+		if (side == SIDE_CROSS)
+		{
+			// Split into front and back winding
+			ProcWinding front;
+			ProcWinding back;
+
+			/*(*split)->w.split(plane, CLIP_EPSILON * 2, frontWinding, backWinding);
+
+			if (!frontWinding.empty())
+			{
+				newFace = AllocBspFace();
+				newFace->w = frontWinding;
+				newFace->next = childLists[0];
+				newFace->planenum = split->planenum;
+				childLists[0] = newFace;
+			}
+
+			if (!backWinding.empty())
+			{
+				newFace = AllocBspFace();
+				newFace->w = backWinding;
+				newFace->next = childLists[1];
+				newFace->planenum = split->planenum;
+				childLists[1] = newFace;
+			}*/
+
+			split->reset(); //FreeBspFace( split );
+		}
+		else if (side == SIDE_FRONT)
+		{
+			childLists[0].push_back(*split);
+			//split->next = childLists[0];
+			//childLists[0] = split;
+		}
+		else if ( side == SIDE_BACK )
+		{
+			childLists[1].push_back(*split);
+			//split->next = childLists[1];
+			//childLists[1] = split;
+		}
+	}
+
+
+	// recursively process children
+	for (std::size_t i = 0; i < 2; ++i)
+	{
+		node->children[i].reset(new BspTreeNode);
+		node->children[i]->parent = node.get();
+		node->children[i]->bounds = node->bounds;
+	}
+
+	// split the bounds if we have a nice axial plane
+	for (std::size_t i = 0; i < 3; ++i)
+	{
+		if (fabs(plane.normal()[i] - 1.0f) < 0.001f)
+		{
+			// greebo: calculate the new origin and extents, if we set the children[0].min's and children[1].max's components to dist
+			float distHalf = plane.dist() * 0.5f;
+			float base = 0.5f * (node->children[0]->bounds.origin[i] + node->children[0]->bounds.extents[i]);
+			
+			node->children[0]->bounds.origin[i] = base + distHalf;
+			node->children[0]->bounds.extents[i] = base - distHalf;
+
+			base = 0.5f * (node->children[0]->bounds.origin[i] - node->children[0]->bounds.extents[i]);
+
+			node->children[1]->bounds.origin[i] = base + distHalf;
+			node->children[1]->bounds.origin[i] = base - distHalf;
+			break;
+		}
+	}
+
+	for (std::size_t i = 0; i < 2; ++i)
+	{
+		buildFaceTreeRecursively(node->children[i], childLists[i]);
+	}
 }
 
 void ProcCompiler::faceBsp(ProcEntity& entity)
@@ -593,9 +830,9 @@ void ProcCompiler::faceBsp(ProcEntity& entity)
 	// Accumulate bounds
 	for (BspFaces::const_iterator f = _bspFaces.begin(); f != _bspFaces.end(); ++f)
 	{
-		for (std::size_t i = 0; i < f->w.size(); ++i)
+		for (std::size_t i = 0; i < (*f)->w.size(); ++i)
 		{
-			_bspTree.bounds.includePoint(f->w[i].vertex);
+			_bspTree.bounds.includePoint((*f)->w[i].vertex);
 		}
 	}
 

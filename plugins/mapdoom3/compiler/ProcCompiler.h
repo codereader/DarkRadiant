@@ -29,6 +29,7 @@ private:
 		bool				checked;		// used by SelectSplitPlaneNum()
 		ProcWinding			w;
 	};
+	typedef boost::shared_ptr<BspFace> BspFacePtr;
 
 	struct BspTreeNode;
 	typedef boost::shared_ptr<BspTreeNode> BspTreeNodePtr; 
@@ -36,13 +37,14 @@ private:
 	struct BspTreeNode
 	{
 		// both leafs and nodes
-		int					planenum;	// -1 = leaf node
+		std::size_t			planenum;	// PLANENUM_LEAF = leaf node (== std::size_t::max)
 		BspTreeNode*		parent;
 		AABB				bounds;		// valid after portalization
 
 		// nodes only
 		ProcFace*			side;		// the side that created the node (use raw pointer here?)
 		BspTreeNodePtr		children[2];
+
 		int					nodeNumber;	// set after pruning
 
 		// leafs only
@@ -78,7 +80,7 @@ private:
 
 	BspTree _bspTree;
 
-	typedef std::vector<BspFace> BspFaces;
+	typedef std::vector<BspFacePtr> BspFaces;
 	BspFaces _bspFaces;
 
 public:
@@ -102,6 +104,8 @@ private:
 	// Split the given face list, and assign them to node->children[], then enter recursion
 	// The given face list will be emptied before returning
 	void buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces& faces);
+
+	std::size_t selectSplitPlaneNum(const BspTreeNodePtr& node, BspFaces& list);
 };
 
 } // namespace
