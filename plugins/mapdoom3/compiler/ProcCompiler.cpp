@@ -10,6 +10,7 @@ namespace map
 {
 
 const std::size_t PLANENUM_LEAF = std::numeric_limits<std::size_t>::max();
+const float CLIP_EPSILON = 0.1f;
 
 ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_root(root)
@@ -702,15 +703,6 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 
 void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces& faces)
 {
-	/*
-	int			side;
-	bspface_t	*newFace;
-	bspface_t	*childLists[2];
-	idWinding	*frontWinding, *backWinding;
-	int			i;
-	int			splitPlaneNum;
-	*/
-
 	std::size_t splitPlaneNum = selectSplitPlaneNum(node, faces);
 	
 	// if we don't have any more faces, this is a node
@@ -750,25 +742,25 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 			ProcWinding front;
 			ProcWinding back;
 
-			/*(*split)->w.split(plane, CLIP_EPSILON * 2, frontWinding, backWinding);
+			(*split)->w.split(plane, CLIP_EPSILON * 2, front, back);
 
-			if (!frontWinding.empty())
+			if (!front.empty())
 			{
-				newFace = AllocBspFace();
+				/*newFace = AllocBspFace();
 				newFace->w = frontWinding;
 				newFace->next = childLists[0];
 				newFace->planenum = split->planenum;
-				childLists[0] = newFace;
+				childLists[0] = newFace;*/
 			}
 
-			if (!backWinding.empty())
+			if (!back.empty())
 			{
-				newFace = AllocBspFace();
+				/*newFace = AllocBspFace();
 				newFace->w = backWinding;
 				newFace->next = childLists[1];
 				newFace->planenum = split->planenum;
-				childLists[1] = newFace;
-			}*/
+				childLists[1] = newFace;*/
+			}
 
 			split->reset(); //FreeBspFace( split );
 		}
