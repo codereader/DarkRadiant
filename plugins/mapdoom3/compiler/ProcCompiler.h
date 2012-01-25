@@ -21,6 +21,9 @@ private:
 	// The working copy
 	ProcFilePtr _procFile;
 
+	struct ProcPortal;
+	typedef boost::shared_ptr<ProcPortal> ProcPortalPtr;
+
 	struct BspFace
 	{
 		int					planenum;
@@ -33,6 +36,15 @@ private:
 
 	struct BspTreeNode;
 	typedef boost::shared_ptr<BspTreeNode> BspTreeNodePtr; 
+
+	struct ProcPortal
+	{
+		Plane3			plane;
+		BspTreeNodePtr	onnode;			// NULL = outside box
+		BspTreeNodePtr	nodes[2];		// [0] = front side of plane
+		ProcPortalPtr	next[2];
+		ProcWinding		winding;
+	};
 
 	struct BspTreeNode
 	{
@@ -68,12 +80,13 @@ private:
 	struct BspTree
 	{
 		BspTreeNodePtr	head;
-		BspTreeNode		outside;
+		BspTreeNodePtr	outside;
 		AABB			bounds;
 
 		std::size_t		numFaceLeafs;
 
 		BspTree() :
+			outside(new BspTreeNode),
 			numFaceLeafs(0)
 		{}
 	};
@@ -82,6 +95,9 @@ private:
 
 	typedef std::vector<BspFacePtr> BspFaces;
 	BspFaces _bspFaces;
+
+	std::size_t _numActivePortals;
+	std::size_t _numPeakPortals;
 
 public:
 	ProcCompiler(const scene::INodePtr& root);
@@ -106,6 +122,12 @@ private:
 	void buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces& faces);
 
 	std::size_t selectSplitPlaneNum(const BspTreeNodePtr& node, BspFaces& list);
+
+	void makeTreePortals();
+
+	void makeHeadNodePortals();
+
+	void addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNodePtr& front, const BspTreeNodePtr& back);
 };
 
 } // namespace

@@ -13,7 +13,9 @@ const std::size_t PLANENUM_LEAF = std::numeric_limits<std::size_t>::max();
 const float CLIP_EPSILON = 0.1f;
 
 ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
-	_root(root)
+	_root(root),
+	_numActivePortals(0),
+	_numPeakPortals(0)
 {}
 
 ProcFilePtr ProcCompiler::generateProcFile()
@@ -837,6 +839,101 @@ void ProcCompiler::faceBsp(ProcEntity& entity)
 	//common->Printf( "%5.1f seconds faceBsp\n", ( end - start ) / 1000.0 );
 }
 
+void ProcCompiler::addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNodePtr& front, const BspTreeNodePtr& back)
+{
+	// TODO
+	/*if (p->nodes[0] || p->nodes[1]) {
+		common->Error( "AddPortalToNode: allready included");
+	}
+
+	p->nodes[0] = front;
+	p->next[0] = front->portals;
+	front->portals = p;
+	
+	p->nodes[1] = back;
+	p->next[1] = back->portals;
+	back->portals = p;*/
+}
+
+void ProcCompiler::makeHeadNodePortals()
+{
+	_bspTree.outside->planenum = PLANENUM_LEAF;
+	// TODO _bspTree.outside.brushlist = NULL;
+	// TODO _bspTree.outside.portals = NULL;
+	_bspTree.outside->opaque = false;
+
+	BspTreeNodePtr& node = _bspTree.head;
+
+	// if no nodes, don't go any farther
+	if (node->planenum == PLANENUM_LEAF)
+	{
+		return;
+	}
+
+	AABB bounds = _bspTree.bounds;
+
+	// pad with some space so there will never be null volume leafs
+	static const float SIDESPACE = 8;
+	bounds.extendBy(Vector3(SIDESPACE, SIDESPACE, SIDESPACE));
+
+	ProcPortalPtr portals[6];
+	Plane3 planes[6];
+
+	for (std::size_t i = 0; i < 3; ++i)
+	{
+		for (std::size_t j = 0; j < 2 ; ++j)
+		{
+			std::size_t n = j*3 + i;
+
+			portals[n].reset(new ProcPortal);
+
+			_numActivePortals++;
+			if (_numActivePortals > _numPeakPortals)
+			{
+				_numPeakPortals = _numActivePortals;
+			}
+	
+			Plane3& pl = planes[n];
+			pl = Plane3(0,0,0,0);
+
+			if (j) // j == 1
+			{
+				pl.normal()[i] = -1;
+				pl.dist() = (bounds.origin + bounds.extents)[i];
+			}
+			else // j == 0
+			{
+				pl.normal()[i] = 1;
+				pl.dist() = -(bounds.origin - bounds.extents)[i];
+			}
+
+			portals[n]->plane = pl;
+			portals[n]->winding.setFromPlane(pl);
+			
+			addPortalToNodes(portals[n], node, _bspTree.outside);
+		}
+	}
+
+	/* TODO
+	
+	// clip the basewindings by all the other planes
+	for (i=0 ; i<6 ; i++) {
+		for (j=0 ; j<6 ; j++) {
+			if (j == i) {
+				continue;
+			}
+			portals[i]->winding = portals[i]->winding->Clip( bplanes[j], ON_EPSILON );
+		}
+	}*/
+}
+
+void ProcCompiler::makeTreePortals()
+{
+	globalOutputStream() << "----- MakeTreePortals -----" << std::endl;
+	makeHeadNodePortals();
+	// TODO MakeTreePortals_r (tree->headnode);
+}
+
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 {
 	_bspFaces.clear();
@@ -848,12 +945,11 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 	// Sort all the faces into the tree
 	faceBsp(entity);
 
-	/*e->tree = FaceBSP( faces );
-
 	// create portals at every leaf intersection
 	// to allow flood filling
-	MakeTreePortals( e->tree );
+	makeTreePortals();
 
+	/*
 	// classify the leafs as opaque or areaportal
 	FilterBrushesIntoTree( e );
 
