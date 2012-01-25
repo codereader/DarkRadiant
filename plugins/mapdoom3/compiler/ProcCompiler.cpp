@@ -11,6 +11,7 @@ namespace map
 
 const std::size_t PLANENUM_LEAF = std::numeric_limits<std::size_t>::max();
 const float CLIP_EPSILON = 0.1f;
+const float SPLIT_WINDING_EPSILON = 0.001f;
 
 ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_root(root),
@@ -852,15 +853,69 @@ void ProcCompiler::addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNo
 	portal->nodes[1] = back;
 
 	// Add the given portal to the front and back node
-	front->portals.push_back(portal);
-	back->portals.push_back(portal);
+	portal->next[0] = front->portals;
+	front->portals = portal;
+
+	portal->next[1] = back->portals;
+	back->portals = portal;
+}
+
+void ProcCompiler::removePortalFromNode(const ProcPortalPtr& portal, const BspTreeNodePtr& node)
+{
+	ProcPortalPtr* portalRef = &node->portals;
+	
+	// remove reference to the current portal
+	while (true)
+	{
+		ProcPortalPtr& test = *portalRef;
+
+		if (!test)
+		{
+			globalErrorStream() << "RemovePortalFromNode: portal not bounding leaf" << std::endl;
+			return;
+		}
+
+		if (test == portal)
+		{
+			break; // found
+		}
+
+		if (test->nodes[0] == node)
+		{
+			portalRef = &(test->next[0]);
+		}
+		else if (test->nodes[1] == node)
+		{
+			portalRef = &(test->next[1]);
+		}
+		else
+		{
+			globalErrorStream() << "removePortalFromNode: portal not in leaf" << std::endl;	
+			return;
+		}
+	}
+	
+	if (portal->nodes[0] == node)
+	{
+		*portalRef = portal->next[0];
+		portal->nodes[0].reset();
+	} 
+	else if (portal->nodes[1] == node)
+	{
+		*portalRef = portal->next[1];	
+		portal->nodes[1].reset();
+	}
+	else
+	{
+		globalErrorStream() << "removePortalFromNode: mislinked" << std::endl;
+	}	
 }
 
 void ProcCompiler::makeHeadNodePortals()
 {
 	_bspTree.outside->planenum = PLANENUM_LEAF;
 	// TODO _bspTree.outside.brushlist = NULL;
-	_bspTree.outside->portals.clear();
+	_bspTree.outside->portals.reset();
 	_bspTree.outside->opaque = false;
 
 	BspTreeNodePtr& node = _bspTree.head;
@@ -936,7 +991,7 @@ void ProcCompiler::calculateNodeBounds(const BspTreeNodePtr& node)
 	std::size_t s = 0;
 
 	// Use raw pointers to avoid constant shared_ptr assigments
-	for (ProcPortal* p = node->portals.begin()->get(); p != NULL; p = p->next[s].get())
+	for (ProcPortal* p = node->portals.get(); p != NULL; p = p->next[s].get())
 	{
 		s = (p->nodes[1] == node) ? 1 : 0;
 
@@ -983,31 +1038,28 @@ void ProcCompiler::makeNodePortal(const BspTreeNodePtr& node)
 	std::size_t side;
 
 	// clip the portal by all the other portals in the node
-	if (!node->portals.empty())
+	for (ProcPortal* p = node->portals.get(); p != NULL && !w.empty(); p = p->next[side].get())
 	{
-		for (ProcPortal* p = node->portals.begin()->get(); p != NULL && !w.empty(); p = p->next[side].get())
+		Plane3 plane;
+
+		if (p->nodes[0] == node)
 		{
-			Plane3 plane;
-
-			if (p->nodes[0] == node)
-			{
-				side = 0;
-				plane = p->plane;
-			}
-			else if (p->nodes[1] == node)
-			{
-				side = 1;
-				plane = -p->plane;
-			}
-			else
-			{
-				globalErrorStream() << "makeNodePortal: mislinked portal" << std::endl;
-				side = 0;	// quiet a compiler warning
-				return;
-			}
-
-			w.clip(plane, CLIP_EPSILON);
+			side = 0;
+			plane = p->plane;
 		}
+		else if (p->nodes[1] == node)
+		{
+			side = 1;
+			plane = -p->plane;
+		}
+		else
+		{
+			globalErrorStream() << "makeNodePortal: mislinked portal" << std::endl;
+			side = 0;	// quiet a compiler warning
+			return;
+		}
+
+		w.clip(plane, CLIP_EPSILON);
 	}
 
 	if (w.empty())
@@ -1029,6 +1081,116 @@ void ProcCompiler::makeNodePortal(const BspTreeNodePtr& node)
 	newPortal->winding = w;
 
 	addPortalToNodes(newPortal, node->children[0], node->children[1]);
+}
+
+void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
+{
+	const Plane3& plane = _procFile->planes.getPlane(node->planenum);
+
+	const BspTreeNodePtr& front = node->children[0];
+	const BspTreeNodePtr& back = node->children[1];
+
+	ProcPortalPtr nextPortal;
+
+	for (ProcPortalPtr portal = node->portals; portal; portal = nextPortal)
+	{
+		std::size_t side;
+
+		if (portal->nodes[0] == node)
+		{
+			side = 0;
+		}
+		else if (portal->nodes[1] == node)
+		{
+			side = 1;
+		}
+		else
+		{
+			globalErrorStream() << "splitNodePortals: mislinked portal" << std::endl;
+			side = 0;	// quiet a compiler warning
+		}
+
+		nextPortal = portal->next[side];
+
+		const BspTreeNodePtr& otherNode = portal->nodes[!side];
+
+		removePortalFromNode(portal, portal->nodes[0]);
+		removePortalFromNode(portal, portal->nodes[1]);
+
+		// cut the portal into two portals, one on each side of the cut plane
+		ProcWinding frontwinding;
+		ProcWinding backwinding;
+		portal->winding.split(plane, SPLIT_WINDING_EPSILON, frontwinding, backwinding);
+
+		if (!frontwinding.empty() && frontwinding.isTiny())
+		{
+			frontwinding.clear();
+			_numTinyPortals++;
+		}
+
+		if (!backwinding.empty() && backwinding.isTiny())
+		{
+			backwinding.clear();
+			_numTinyPortals++;
+		}
+
+		if (frontwinding.empty() && backwinding.empty())
+		{	
+			continue; // tiny windings on both sides
+		}
+
+		if (frontwinding.empty())
+		{
+			backwinding.clear();
+
+			if (side == 0)
+			{
+				addPortalToNodes(portal, back, otherNode);
+			}
+			else
+			{
+				addPortalToNodes(portal, otherNode, back);
+			}
+
+			continue;
+		}
+
+		if (backwinding.empty())
+		{
+			frontwinding.clear();
+
+			if (side == 0)
+			{
+				addPortalToNodes(portal, front, otherNode);
+			}
+			else
+			{
+				addPortalToNodes(portal, otherNode, front);
+			}
+
+			continue;
+		}
+		
+		// the winding is split
+		ProcPortalPtr newPortal(new ProcPortal);
+		*newPortal = *portal;
+		newPortal->winding = backwinding;
+		
+		portal->winding = frontwinding;
+
+		if (side == 0)
+		{
+			addPortalToNodes(portal, front, otherNode);
+			addPortalToNodes(newPortal, back, otherNode);
+		}
+		else
+		{
+			addPortalToNodes(portal, otherNode, front);
+			addPortalToNodes(newPortal, otherNode, back);
+		}
+	}
+
+	node->portals.reset();
 }
 
 void ProcCompiler::makeTreePortalsRecursively(const BspTreeNodePtr& node)
@@ -1056,8 +1218,7 @@ void ProcCompiler::makeTreePortalsRecursively(const BspTreeNodePtr& node)
 	}
 
 	makeNodePortal(node);
-
-	// TODO SplitNodePortals (node);
+	splitNodePortals(node);
 
 	makeTreePortalsRecursively(node->children[0]);
 	makeTreePortalsRecursively(node->children[1]);

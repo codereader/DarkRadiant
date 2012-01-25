@@ -69,8 +69,7 @@ private:
 		int					occupied;	// 1 or greater can reach entity
 		ProcEntity*			occupant;	// for leak file testing
 
-		typedef std::vector<ProcPortalPtr> Portals;
-		Portals				portals;	// also on nodes during construction
+		ProcPortalPtr 		portals;	// also on nodes during constructions
 
 		BspTreeNode() :
 			parent(NULL),
@@ -133,11 +132,13 @@ private:
 	// create the new portal by taking the full plane winding for the cutting plane
 	// and clipping it by all of parents of this node
 	void makeNodePortal(const BspTreeNodePtr& node);
+	void splitNodePortals(const BspTreeNodePtr& node);
 
 	ProcWinding getBaseWindingForNode(const BspTreeNodePtr& node);
 
 	void calculateNodeBounds(const BspTreeNodePtr& node);
 	void addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNodePtr& front, const BspTreeNodePtr& back);
+	void removePortalFromNode(const ProcPortalPtr& portal, const BspTreeNodePtr& node);
 };
 
 } // namespace
