@@ -421,4 +421,29 @@ int ProcWinding::planeSide(const Plane3& plane, const float epsilon) const
 	return SIDE_ON;
 }
 
+bool ProcWinding::isTiny() const
+{
+	static const float EDGE_LENGTH_SQUARED = 0.2f * 0.2f;
+
+	std::size_t edges = 0;
+	std::size_t numPoints = IWinding::size();
+
+	for (std::size_t i = 0; i < numPoints; ++i)
+	{
+		Vector3 delta = (*this)[(i + 1) % numPoints].vertex - (*this)[i].vertex;
+
+		float len = delta.getLengthSquared();
+
+		if (len > EDGE_LENGTH_SQUARED)
+		{
+			if (++edges == 3) // greebo: we need at least 3 planes that are above the threshold
+			{
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 } // namespace

@@ -15,7 +15,8 @@ const float CLIP_EPSILON = 0.1f;
 ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_root(root),
 	_numActivePortals(0),
-	_numPeakPortals(0)
+	_numPeakPortals(0),
+	_numTinyPortals(0)
 {}
 
 ProcFilePtr ProcCompiler::generateProcFile()
@@ -841,25 +842,25 @@ void ProcCompiler::faceBsp(ProcEntity& entity)
 
 void ProcCompiler::addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNodePtr& front, const BspTreeNodePtr& back)
 {
-	// TODO
-	/*if (p->nodes[0] || p->nodes[1]) {
-		common->Error( "AddPortalToNode: allready included");
+	if (portal->nodes[0] || portal->nodes[1])
+	{
+		globalErrorStream() << "AddPortalToNode: already included" << std::endl;
+		return;
 	}
 
-	p->nodes[0] = front;
-	p->next[0] = front->portals;
-	front->portals = p;
-	
-	p->nodes[1] = back;
-	p->next[1] = back->portals;
-	back->portals = p;*/
+	portal->nodes[0] = front;
+	portal->nodes[1] = back;
+
+	// Add the given portal to the front and back node
+	front->portals.push_back(portal);
+	back->portals.push_back(portal);
 }
 
 void ProcCompiler::makeHeadNodePortals()
 {
 	_bspTree.outside->planenum = PLANENUM_LEAF;
 	// TODO _bspTree.outside.brushlist = NULL;
-	// TODO _bspTree.outside.portals = NULL;
+	_bspTree.outside->portals.clear();
 	_bspTree.outside->opaque = false;
 
 	BspTreeNodePtr& node = _bspTree.head;
@@ -876,6 +877,8 @@ void ProcCompiler::makeHeadNodePortals()
 	static const float SIDESPACE = 8;
 	bounds.extendBy(Vector3(SIDESPACE, SIDESPACE, SIDESPACE));
 
+	// greebo: Six planes/portals to separate the whole tree from the "outside"
+	// Each portal has the head node as front and the outside as back node
 	ProcPortalPtr portals[6];
 	Plane3 planes[6];
 
@@ -914,24 +917,159 @@ void ProcCompiler::makeHeadNodePortals()
 		}
 	}
 
-	/* TODO
-	
-	// clip the basewindings by all the other planes
-	for (i=0 ; i<6 ; i++) {
-		for (j=0 ; j<6 ; j++) {
-			if (j == i) {
-				continue;
-			}
-			portals[i]->winding = portals[i]->winding->Clip( bplanes[j], ON_EPSILON );
+	// clip the (near-infinitely large) windings by all the other planes
+	for (std::size_t i = 0; i < 6; ++i)
+	{
+		for (std::size_t j = 0; j < 6; ++j)
+		{
+			if (j == i) continue;
+
+			portals[i]->winding.clip(planes[j], ON_EPSILON);
 		}
-	}*/
+	}
+}
+
+void ProcCompiler::calculateNodeBounds(const BspTreeNodePtr& node)
+{
+	// calc mins/maxs for both leafs and nodes
+	node->bounds = AABB();
+	std::size_t s = 0;
+
+	// Use raw pointers to avoid constant shared_ptr assigments
+	for (ProcPortal* p = node->portals.begin()->get(); p != NULL; p = p->next[s].get())
+	{
+		s = (p->nodes[1] == node) ? 1 : 0;
+
+		for (std::size_t i = 0; i < p->winding.size(); ++i)
+		{
+			node->bounds.includePoint(p->winding[i].vertex);
+		}
+	}
+}
+
+ProcWinding ProcCompiler::getBaseWindingForNode(const BspTreeNodePtr& node)
+{
+	ProcWinding winding(_procFile->planes.getPlane(node->planenum));
+
+	// clip by all the parents
+	BspTreeNode* nodeRaw = node.get(); // FIXME
+	for (BspTreeNode* n = node->parent; n != NULL && !winding.empty(); )
+	{
+		const Plane3& plane = _procFile->planes.getPlane(n->planenum);
+		static const float BASE_WINDING_EPSILON = 0.001f;
+
+		if (n->children[0].get() == nodeRaw)
+		{
+			// take front
+			winding.clip(plane, BASE_WINDING_EPSILON);
+		} 
+		else
+		{
+			// take back
+			winding.clip(-plane, BASE_WINDING_EPSILON);
+		}
+
+		nodeRaw = n;
+		n = n->parent;
+	}
+
+	return winding;
+}
+
+void ProcCompiler::makeNodePortal(const BspTreeNodePtr& node)
+{
+	ProcWinding w = getBaseWindingForNode(node);
+
+	std::size_t side;
+
+	// clip the portal by all the other portals in the node
+	if (!node->portals.empty())
+	{
+		for (ProcPortal* p = node->portals.begin()->get(); p != NULL && !w.empty(); p = p->next[side].get())
+		{
+			Plane3 plane;
+
+			if (p->nodes[0] == node)
+			{
+				side = 0;
+				plane = p->plane;
+			}
+			else if (p->nodes[1] == node)
+			{
+				side = 1;
+				plane = -p->plane;
+			}
+			else
+			{
+				globalErrorStream() << "makeNodePortal: mislinked portal" << std::endl;
+				side = 0;	// quiet a compiler warning
+				return;
+			}
+
+			w.clip(plane, CLIP_EPSILON);
+		}
+	}
+
+	if (w.empty())
+	{
+		return;
+	}
+
+	if (w.isTiny())
+	{
+		_numTinyPortals++;
+		w.clear();
+		return;
+	}
+	
+	ProcPortalPtr newPortal(new ProcPortal);
+
+	newPortal->plane = _procFile->planes.getPlane(node->planenum);
+	newPortal->onnode = node;
+	newPortal->winding = w;
+
+	addPortalToNodes(newPortal, node->children[0], node->children[1]);
+}
+
+void ProcCompiler::makeTreePortalsRecursively(const BspTreeNodePtr& node)
+{
+	calculateNodeBounds(node);
+
+	if (node->bounds.extents.getLengthSquared() <= 0)
+	{
+		globalWarningStream() << "node without a volume" << std::endl;
+	}
+
+	for (std::size_t i = 0; i < 3; ++i)
+	{
+		if ((node->bounds.origin - node->bounds.extents)[i] < MIN_WORLD_COORD || 
+			(node->bounds.origin + node->bounds.extents)[i] > MAX_WORLD_COORD )
+		{
+			globalWarningStream() << "node with unbounded volume" << std::endl;
+			break;
+		}
+	}
+
+	if (node->planenum == PLANENUM_LEAF)
+	{
+		return;
+	}
+
+	makeNodePortal(node);
+
+	// TODO SplitNodePortals (node);
+
+	makeTreePortalsRecursively(node->children[0]);
+	makeTreePortalsRecursively(node->children[1]);
 }
 
 void ProcCompiler::makeTreePortals()
 {
 	globalOutputStream() << "----- MakeTreePortals -----" << std::endl;
+
 	makeHeadNodePortals();
-	// TODO MakeTreePortals_r (tree->headnode);
+
+	makeTreePortalsRecursively(_bspTree.head);
 }
 
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)

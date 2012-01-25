@@ -47,6 +47,9 @@ public:
 
 	int planeSide(const Plane3& plane, const float epsilon = ON_EPSILON) const;
 
+	// A winding is not tiny if at least three edges are above a certain threshold
+	bool isTiny() const;
+
 private:
 	Plane3 getPlane() const;
 
