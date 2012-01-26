@@ -712,7 +712,7 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces& faces)
 {
 	std::size_t splitPlaneNum = selectSplitPlaneNum(node, faces);
-	
+
 	// if we don't have any more faces, this is a node
 	if (splitPlaneNum == std::numeric_limits<std::size_t>::max())
 	{
@@ -725,7 +725,6 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 	node->planenum = splitPlaneNum;
 
 	const Plane3& plane = _procFile->planes.getPlane(splitPlaneNum);
-	//idPlane &plane = dmapGlobals.mapPlanes[ splitPlaneNum ];
 
 	BspFaces childLists[2];
 
@@ -740,7 +739,6 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 		if ((*split)->planenum == node->planenum)
 		{
 			split->reset();
-			//FreeBspFace( split );
 			continue;
 		}
 
@@ -770,22 +768,17 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 				childLists[1].back()->planenum = (*split)->planenum;
 			}
 
-			split->reset(); //FreeBspFace( split );
+			split->reset();
 		}
 		else if (side == SIDE_FRONT)
 		{
 			childLists[0].push_back(*split);
-			//split->next = childLists[0];
-			//childLists[0] = split;
 		}
 		else if ( side == SIDE_BACK )
 		{
 			childLists[1].push_back(*split);
-			//split->next = childLists[1];
-			//childLists[1] = split;
 		}
 	}
-
 
 	// recursively process children
 	for (std::size_t i = 0; i < 2; ++i)
@@ -810,7 +803,7 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 			base = 0.5f * (node->children[1]->bounds.origin[i] - node->children[1]->bounds.extents[i]);
 
 			node->children[1]->bounds.origin[i] = base + distHalf;
-			node->children[1]->bounds.origin[i] = base - distHalf;
+			node->children[1]->bounds.extents[i] = base - distHalf;
 			break;
 		}
 	}
@@ -963,12 +956,12 @@ void ProcCompiler::makeHeadNodePortals()
 			if (j) // j == 1
 			{
 				pl.normal()[i] = -1;
-				pl.dist() = (bounds.origin + bounds.extents)[i];
+				pl.dist() = -(bounds.origin + bounds.extents)[i];
 			}
 			else // j == 0
 			{
 				pl.normal()[i] = 1;
-				pl.dist() = -(bounds.origin - bounds.extents)[i];
+				pl.dist() = (bounds.origin - bounds.extents)[i];
 			}
 
 			portals[n]->plane = pl;
@@ -1118,7 +1111,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
 		nextPortal = portal->next[side];
 
-		const BspTreeNodePtr& otherNode = portal->nodes[!side];
+		BspTreeNodePtr otherNode = portal->nodes[!side];
 
 		removePortalFromNode(portal, portal->nodes[0]);
 		removePortalFromNode(portal, portal->nodes[1]);
@@ -1203,15 +1196,20 @@ void ProcCompiler::makeTreePortalsRecursively(const BspTreeNodePtr& node)
 {
 	calculateNodeBounds(node);
 
+	Vector3 minbounds = node->bounds.origin - node->bounds.extents;
+	Vector3 maxBounds = node->bounds.origin + node->bounds.extents;
+
 	if (node->bounds.extents.getLengthSquared() <= 0)
 	{
 		globalWarningStream() << "node without a volume" << std::endl;
 	}
 
+	Vector3 boundsMin = node->bounds.origin - node->bounds.extents;
+	Vector3 boundsMax = node->bounds.origin + node->bounds.extents;
+
 	for (std::size_t i = 0; i < 3; ++i)
 	{
-		if ((node->bounds.origin - node->bounds.extents)[i] < MIN_WORLD_COORD || 
-			(node->bounds.origin + node->bounds.extents)[i] > MAX_WORLD_COORD )
+		if (boundsMin[i] < MIN_WORLD_COORD || boundsMax[i] > MAX_WORLD_COORD )
 		{
 			globalWarningStream() << "node with unbounded volume" << std::endl;
 			break;
