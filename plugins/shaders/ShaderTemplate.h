@@ -37,7 +37,7 @@ public:
   	typedef std::vector<Doom3ShaderLayerPtr> Layers;
 
 private:
-	Layers m_layers;
+	Layers _layers;
 
     // Editorimage texture
 	NamedBindablePtr _editorTex;
@@ -80,6 +80,9 @@ private:
 
 	Material::DecalInfo _decalInfo;
 
+	// Whether this material renders opaque, perforated, etc.
+	Material::Coverage _coverage;
+
 	// Raw material declaration
 	std::string _blockContents;
 
@@ -107,6 +110,7 @@ public:
 	  _spectrum(-1),
       _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
+	  _coverage(Material::MC_UNDETERMINED),
 	  _blockContents(blockContents),
 	  _parsed(false)
 	{
@@ -186,10 +190,16 @@ public:
 		return _decalInfo;
 	}
 
+	Material::Coverage getCoverage()
+	{
+		if (!_parsed) parseDefinition();
+		return _coverage;
+	}
+
 	const Layers& getLayers()
 	{
 		if (!_parsed) parseDefinition();
-		return m_layers;
+		return _layers;
 	}
 
 	bool isFogLight()

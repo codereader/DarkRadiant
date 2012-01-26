@@ -69,6 +69,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
     if (token == "translucent")
 	{
         _materialFlags |= Material::FLAG_TRANSLUCENT;
+		_coverage = Material::MC_TRANSLUCENT;
     }
     else if (token == "decal_macro")
 	{
@@ -181,6 +182,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	else if (token == "forceopaque")
 	{
 		_materialFlags |= Material::FLAG_FORCEOPAQUE;
+		_coverage = Material::MC_OPAQUE;
 	}
 	else if (token == "nofog")
 	{
@@ -197,6 +199,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	else if (token == "mirror")
 	{
 		_materialFlags |= Material::FLAG_MIRROR;
+		_coverage = Material::MC_OPAQUE;
 	}
 	else if (token == "decalinfo")
 	{
@@ -772,7 +775,9 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		else
 		{
 			globalWarningStream() << "Could not parse alphatest expression in shader: " << getName() << std::endl;
-		}		
+		}
+
+		_coverage = Material::MC_PERFORATED;
     }
 	else if (token == "scale")
 	{
@@ -1118,7 +1123,7 @@ bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::
 	}
 }
 
-/* Saves the accumulated data (m_type, m_blendFunc etc.) to the m_layers vector.
+/* Saves the accumulated data (m_type, m_blendFunc etc.) to the _layers vector.
  */
 bool ShaderTemplate::saveLayer()
 {
@@ -1216,12 +1221,59 @@ void ShaderTemplate::parseDefinition()
 			_sortReq = Material::SORT_OPAQUE;
 		}
 	}
+
+	std::size_t numAmbientStages = 0;
+
+	for (Layers::const_iterator i = _layers.begin(); i != _layers.end(); ++i)
+	{
+		if ((*i)->getType() == ShaderLayer::BLEND)
+		{
+			numAmbientStages++;
+		}
+	}
+	
+	// Determine coverage if not yet done
+	if (_coverage == Material::MC_UNDETERMINED)
+	{
+		// automatically set MC_TRANSLUCENT if we don't have any interaction stages and 
+		// the first stage is blended and not an alpha test mask or a subview
+		if (_layers.empty())
+		{
+			// non-visible
+			_coverage = Material::MC_TRANSLUCENT;
+		} 
+		else if (_layers.size() != numAmbientStages)
+		{
+			// we have an interaction draw
+			_coverage = Material::MC_OPAQUE;
+		}
+		else
+		{
+			const Doom3ShaderLayer& firstLayer = **_layers.begin();
+
+			BlendFunc blend = firstLayer.getBlendFunc();
+
+			// If the layers are blended with the destination, we consider it translucent
+			if (blend.dest != GL_ZERO || 
+				blend.src == GL_DST_COLOR ||
+				blend.src == GL_ONE_MINUS_DST_COLOR ||
+				blend.src == GL_DST_ALPHA ||
+				blend.src == GL_ONE_MINUS_DST_ALPHA)
+			{
+				_coverage = Material::MC_TRANSLUCENT;
+			}
+			else
+			{
+				_coverage = Material::MC_OPAQUE;
+			}
+		}
+	}
 }
 
 void ShaderTemplate::addLayer(const Doom3ShaderLayerPtr& layer)
 {
 	// Add the layer
-	m_layers.push_back(layer);
+	_layers.push_back(layer);
 
 	// If there is no editor texture yet, use the bindable texture, but no Bump or speculars
 	if (!_editorTex && layer->getBindableTexture() != NULL &&
@@ -1241,7 +1293,7 @@ bool ShaderTemplate::hasDiffusemap()
 {
 	if (!_parsed) parseDefinition();
 
-	for (Layers::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	for (Layers::const_iterator i = _layers.begin(); i != _layers.end(); ++i)
     {
         if ((*i)->getType() == ShaderLayer::DIFFUSE)
         {

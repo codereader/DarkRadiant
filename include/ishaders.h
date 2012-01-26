@@ -174,6 +174,14 @@ public:
 		Vector4	endColour;
 	};
 
+	enum Coverage
+	{
+		MC_UNDETERMINED,
+		MC_OPAQUE,			// completely fills the triangle, will have black drawn on fillDepthBuffer
+		MC_PERFORATED,		// may have alpha tested holes
+		MC_TRANSLUCENT		// blended with background
+	};
+
 	virtual ~Material() {}
 
     /**
@@ -254,6 +262,12 @@ public:
 	 * Retrieves the decal info structure of this material.
 	 */
 	virtual const DecalInfo& getDecalInfo() const = 0;
+
+	/**
+	 * Returns the coverage type of this material, also needed
+	 * by the map compiler.
+	 */
+	virtual Coverage getCoverage() const = 0;
 
 	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.

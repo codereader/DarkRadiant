@@ -93,6 +93,8 @@ public:
 
 	const DecalInfo& getDecalInfo() const;
 
+	Coverage getCoverage() const;
+
 	// get shader file name (ie the file where this one is defined)
 	const char* getShaderFileName() const;
 
