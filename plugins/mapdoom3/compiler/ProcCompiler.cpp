@@ -272,7 +272,7 @@ private:
 		prim.brush.reset(new ProcBrush(_buildBrush));
 
 		prim.brush->entitynum = _procFile->entities.size() - 1;
-		prim.brush->brushnum = _entityPrimitive;
+		prim.brush->brushnum = _entityPrimitive - 1;
 
 		prim.brush->original = prim.brush; // reference to self
 
@@ -313,9 +313,7 @@ private:
 				contents |= flags;
 			}
 
-			// TODO: DarkRadiant's Material doesn't deliver coverage yet, use material flags in the meantime
-			//if (side.material->Coverage() != MC_OPAQUE )
-			if (side.material->getMaterialFlags() & Material::FLAG_TRANSLUCENT)
+			if (side.material->getCoverage() != Material::MC_OPAQUE)
 			{
 				_buildBrush.opaque = false;
 			}
@@ -549,15 +547,21 @@ bool ProcCompiler::processModels()
 
 void ProcCompiler::makeStructuralProcFaceList(const ProcEntity::Primitives& primitives)
 {
-	for (ProcEntity::Primitives::const_iterator i = primitives.begin();
-		i != primitives.end(); ++i)
+	std::size_t brushCount = 0;
+	std::size_t nonOpaqueCount = 0;
+
+	for (ProcEntity::Primitives::const_reverse_iterator i = primitives.rbegin();
+		i != primitives.rend(); ++i)
 	{
 		if (!i->brush) continue; // skip all patches
+
+		brushCount++;
 
 		ProcBrush& brush = *i->brush;
 
 		if (!brush.opaque && !(brush.contents & Material::SURF_AREAPORTAL))
 		{
+			nonOpaqueCount++;
 			continue; // skip all non-opaque non-portals
 		}
 
@@ -629,11 +633,11 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 	// select from them, otherwise select from
 	// all faces
 	int bestValue = -999999;
-	BspFaces::const_iterator bestSplit = faces.begin();
+	BspFaces::const_reverse_iterator bestSplit = faces.rbegin();
 
 	bool havePortals = false;
 
-	for (BspFaces::const_iterator split = faces.begin(); split != faces.end(); ++split)
+	for (BspFaces::const_reverse_iterator split = faces.rbegin(); split != faces.rend(); ++split)
 	{
 		(*split)->checked = false;
 
@@ -643,7 +647,7 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 		}
 	}
 
-	for (BspFaces::const_iterator split = faces.begin(); split != faces.end(); ++split)
+	for (BspFaces::const_reverse_iterator split = faces.rbegin(); split != faces.rend(); ++split)
 	{
 		if ((*split)->checked) continue;
 
@@ -658,7 +662,7 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 		int front = 0;
 		int back = 0;
 
-		for (BspFaces::const_iterator check = faces.begin(); check != faces.end(); ++check)
+		for (BspFaces::const_reverse_iterator check = faces.rbegin(); check != faces.rend(); ++check)
 		{
 			if ((*check)->planenum == (*split)->planenum)
 			{
@@ -725,9 +729,11 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 
 	BspFaces childLists[2];
 
-	BspFaces::iterator next;
+	BspFaces::reverse_iterator next;
 
-	for (BspFaces::iterator split = faces.begin(); split != faces.end(); split = next )
+	// greebo: We use a reverse iterator since D3 is pushing planes to front of the list,
+	// this way we keep the same order
+	for (BspFaces::reverse_iterator split = faces.rbegin(); split != faces.rend(); split = next )
 	{
 		next = split + 1; // remember the pointer to next
 

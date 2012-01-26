@@ -31,6 +31,12 @@ private:
 											// any non-portals
 		bool				checked;		// used by SelectSplitPlaneNum()
 		ProcWinding			w;
+
+		BspFace() :
+			planenum(0),
+			portal(false),
+			checked(false)
+		{}
 	};
 	typedef boost::shared_ptr<BspFace> BspFacePtr;
 
@@ -44,6 +50,10 @@ private:
 		BspTreeNodePtr	nodes[2];		// [0] = front side of plane
 		ProcPortalPtr	next[2];
 		ProcWinding		winding;
+
+		ProcPortal() :
+			plane(0,0,0,0)
+		{}
 	};
 
 	struct BspTreeNode
@@ -72,7 +82,13 @@ private:
 		ProcPortalPtr 		portals;	// also on nodes during constructions
 
 		BspTreeNode() :
+			planenum(0),
 			parent(NULL),
+			side(NULL),
+			nodeNumber(0),
+			opaque(false),
+			area(0),
+			occupied(0),
 			occupant(NULL)
 		{}
 	};
