@@ -8,7 +8,7 @@ namespace map
 // Forward decl.
 struct ProcEntity;
 struct ProcFace;
-struct ProcBrush;
+class ProcBrush;
 typedef boost::shared_ptr<ProcBrush> ProcBrushPtr;
 
 struct BspTreeNode;

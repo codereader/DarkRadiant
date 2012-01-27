@@ -464,4 +464,20 @@ bool ProcWinding::isHuge() const
 	return false;
 }
 
+float ProcWinding::getArea() const
+{
+	float total = 0.0f;
+	std::size_t numPoints = IWinding::size();
+
+	for (std::size_t i = 2; i < numPoints; ++i)
+	{
+		Vector3 d1 = (*this)[i-1].vertex - (*this)[0].vertex;
+		Vector3 d2 = (*this)[i].vertex - (*this)[0].vertex;
+		Vector3 cross = d1.crossProduct(d2);
+		total += cross.getLength();
+	}
+
+	return total * 0.5f;
+}
+
 } // namespace

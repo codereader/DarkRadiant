@@ -310,6 +310,7 @@
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\BspTree.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\PlaneSet.h" />
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcBrush.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcFile.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcLight.h" />

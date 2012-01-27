@@ -53,6 +53,8 @@ public:
 	// A base winding made from a plane is typically huge
 	bool isHuge() const;
 
+	float getArea() const;
+
 private:
 	Plane3 getPlane() const;
 

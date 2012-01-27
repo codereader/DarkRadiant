@@ -188,37 +188,6 @@ public:
 	}
 
 private:
-	bool boundBrush()
-	{
-		_buildBrush.bounds = AABB();
-
-		for (std::size_t i = 0; i < _buildBrush.sides.size(); ++i)
-		{
-			const ProcWinding& winding = _buildBrush.sides[i].winding;
-
-			for (std::size_t j = 0; j < winding.size(); ++j)
-			{
-				_buildBrush.bounds.includePoint(winding[j].vertex);
-			}
-		}
-
-		Vector3 corner1 = _buildBrush.bounds.origin + _buildBrush.bounds.extents;
-
-		if (corner1[0] < MIN_WORLD_COORD || corner1[1] < MIN_WORLD_COORD || corner1[2] < MIN_WORLD_COORD)
-		{
-			return false;
-		}
-
-		Vector3 corner2 = _buildBrush.bounds.origin - _buildBrush.bounds.extents;
-
-		if (corner2[0] > MAX_WORLD_COORD || corner2[1] > MAX_WORLD_COORD || corner2[2] > MAX_WORLD_COORD)
-		{
-			return false;
-		}
-
-		return true;
-	}
-
 	bool createBrushWindings()
 	{
 		for (std::size_t i = 0; i < _buildBrush.sides.size(); ++i)
@@ -244,7 +213,7 @@ private:
 			}
 		}
 
-		return boundBrush();
+		return _buildBrush.bound();
 	}
 
 	bool finishBrush()
@@ -1242,52 +1211,53 @@ void ProcCompiler::makeTreePortals(BspTree& tree)
 	makeTreePortalsRecursively(tree.head);
 }
 
-namespace
+float ProcCompiler::calculateBrushVolume(const ProcBrushPtr& brush) 
 {
+	if (!brush) return 0;
 
-#define	PSIDE_FRONT			1
-#define	PSIDE_BACK			2
-#define	PSIDE_BOTH			(PSIDE_FRONT|PSIDE_BACK)
-#define	PSIDE_FACING		4
+	ProcWinding* w = NULL;
+	std::size_t i = 0;
 
-inline int brushMostlyOnSide(const ProcBrushPtr& brush, const Plane3& plane)
-{
-	float max = 0;
-	int side = PSIDE_FRONT;
-
-	for (std::size_t i = 0; i < brush->sides.size(); ++i)
+	// grab the first valid point as the corner
+	for (i = 0; i < brush->sides.size(); ++i)
 	{
-		const ProcWinding& w = brush->sides[i].winding;
+		w = &brush->sides[i].winding;
 
-		for (std::size_t j = 0; j < w.size(); ++j)
-		{
-			float d = plane.distanceToPoint(w[j].vertex);
-
-			if (d > max)
-			{
-				max = d;
-				side = PSIDE_FRONT;
-			}
-
-			if (-d > max)
-			{
-				max = -d;
-				side = PSIDE_BACK;
-			}
-		}
+		if (!w->empty())
+			break;
 	}
 
-	return side;
-}
+	if (w->empty())
+	{
+		return 0;
+	}
 
-} // namespace
+	Vector3 corner = (*w)[0].vertex;
+
+	// make tetrahedrons to all other faces
+	float volume = 0;
+
+	for (; i < brush->sides.size(); ++i)
+	{
+		const ProcWinding& winding = brush->sides[i].winding;
+
+		if (winding.empty())
+		{
+			continue;
+		}
+
+		const Plane3& plane = _procFile->planes.getPlane(brush->sides[i].planenum);
+
+		float d = -plane.distanceToPoint(corner);
+		float area = winding.getArea();
+		volume += d * area;
+	}
+
+	return volume / 3;
+}
 
 void ProcCompiler::splitBrush(const ProcBrushPtr& brush, std::size_t planenum, ProcBrushPtr& front, ProcBrushPtr& back)
 {
-	/*uBrush_t	*b[2];
-	idWinding	*cw[2], *midwinding;
-	side_t		*s, *cs;*/
-
 	const Plane3& plane = _procFile->planes.getPlane(planenum);
 
 	// check all points
@@ -1322,7 +1292,7 @@ void ProcCompiler::splitBrush(const ProcBrushPtr& brush, std::size_t planenum, P
 
 	if (d_back > -0.1) // PLANESIDE_EPSILON)
 	{	// only on front
-		front.reset(new ProcBrush(*brush));
+		front.reset(new ProcBrush(*brush)); // copy
 		return;
 	}
 
@@ -1333,13 +1303,12 @@ void ProcCompiler::splitBrush(const ProcBrushPtr& brush, std::size_t planenum, P
 	{
 		const Plane3& plane2 = _procFile->planes.getPlane(brush->sides[i].planenum ^ 1);
 		w.clip(plane2, 0);
-		//w = w->Clip( plane2, 0 ); // PLANESIDE_EPSILON);
 	}
 
 	if (w.empty() || w.isTiny())
 	{
 		// the brush isn't really split
-		int side = brushMostlyOnSide(brush, plane);
+		int side = brush->mostlyOnSide(plane);
 
 		if (side == PSIDE_FRONT)
 		{
@@ -1363,111 +1332,109 @@ void ProcCompiler::splitBrush(const ProcBrushPtr& brush, std::size_t planenum, P
 
 	// split it for real
 
-#if 0 // TODO
+	ProcBrushPtr parts[2];
+
 	for (std::size_t i = 0; i < 2; ++i)
 	{
-		b[i] = AllocBrush (brush->numsides+1);
-		memcpy( b[i], brush, sizeof( uBrush_t ) - sizeof( brush->sides ) );
-		b[i]->numsides = 0;
-		b[i]->next = NULL;
-		b[i]->original = brush->original;
+		parts[i].reset(new ProcBrush(*brush));
+
+		parts[i]->sides.clear(); // reserve(brush->sides.size() + 1);
+		parts[i]->original = brush->original;
 	}
 
 	// split all the current windings
+	ProcWinding cw[2];
 
-	for ( i = 0; i < brush->numsides; i++ ) {
-		s = &brush->sides[i];
-		w = s->winding;
-		if (!w)
-			continue;
-		w->Split( plane, 0 /*PLANESIDE_EPSILON*/, &cw[0], &cw[1] );
-		for ( j = 0; j < 2; j++ ) {
-			if ( !cw[j] ) {
-				continue;
-			}
-/*
-			if ( cw[j]->IsTiny() )
-			{
-				delete cw[j];
-				continue;
-			}
-*/
-			cs = &b[j]->sides[b[j]->numsides];
-			b[j]->numsides++;
-			*cs = *s;
-			cs->winding = cw[j];
+	for (std::size_t i = 0; i < brush->sides.size(); ++i)
+	{
+		ProcFace& side = brush->sides[i];
+		ProcWinding w = side.winding;
+
+		if (w.empty()) continue;
+
+		w.split(plane, 0 /*PLANESIDE_EPSILON*/, cw[0], cw[1]);
+
+		for (std::size_t j = 0; j < 2; ++j)
+		{
+			if (cw[j].empty()) continue;
+
+			parts[j]->sides.push_back(side);
+			parts[j]->sides.back().winding.swap(cw[j]);
 		}
 	}
-
 
 	// see if we have valid polygons on both sides
 
-	for (i=0 ; i<2 ; i++)
+	for (std::size_t i = 0 ; i < 2 ; ++i)
 	{
-		if ( !BoundBrush (b[i]) ) {
+		if (!parts[i]->bound())
+		{
 			break;
 		}
 
-		if ( b[i]->numsides < 3 )
+		if (parts[i]->sides.size() < 3)
 		{
-			FreeBrush (b[i]);
-			b[i] = NULL;
+			parts[i].reset();
 		}
 	}
 
-	if ( !(b[0] && b[1]) )
+	if (!(parts[0] && parts[1]))
 	{
-		if (!b[0] && !b[1])
-			common->Printf ("split removed brush\n");
+		if (!parts[0] && !parts[1])
+		{
+			globalOutputStream() << "split removed brush" << std::endl;
+		}
 		else
-			common->Printf ("split not on both sides\n");
-		if (b[0])
 		{
-			FreeBrush (b[0]);
-			*front = CopyBrush (brush);
+			globalOutputStream() << "split not on both sides" << std::endl;
 		}
-		if (b[1])
+
+		if (parts[0])
 		{
-			FreeBrush (b[1]);
-			*back = CopyBrush (brush);
+			parts[0].reset();
+			front.reset(new ProcBrush(*brush)); // copy
 		}
+
+		if (parts[1])
+		{
+			parts[1].reset();
+			back.reset(new ProcBrush(*brush)); // copy
+		}
+
 		return;
 	}
 
 	// add the midwinding to both sides
-	for (i=0 ; i<2 ; i++)
+	for (std::size_t i = 0; i < 2; ++i)
 	{
-		cs = &b[i]->sides[b[i]->numsides];
-		b[i]->numsides++;
+		parts[i]->sides.push_back(ProcFace());
 
-		cs->planenum = planenum^i^1;
-		cs->material = NULL;
+		parts[i]->sides.back().planenum = planenum^i^1;
+		
 		if (i==0)
-			cs->winding = midwinding->Copy();
-		else
-			cs->winding = midwinding;
-	}
-
-{
-	float	v1;
-	int		i;
-
-	for (i=0 ; i<2 ; i++)
-	{
-		v1 = BrushVolume (b[i]);
-		if (v1 < 1.0)
 		{
-			FreeBrush (b[i]);
-			b[i] = NULL;
-//			common->Printf ("tiny volume after clip\n");
+			parts[i]->sides.back().winding = midwinding; // copy
+		}
+		else
+		{
+			parts[i]->sides.back().winding.swap(midwinding); // move
 		}
 	}
-}
 
-	*front = b[0];
-	*back = b[1];
+	{
+		for (std::size_t i = 0; i < 2; ++i)
+		{
+			float v1 = calculateBrushVolume(parts[i]);
 
-#endif
+			if (v1 < 1.0f)
+			{
+				parts[i].reset();
+			}
+		}
+	}
+
+	front.swap(parts[0]); // assign return values
+	back.swap(parts[1]);
 }
 
 std::size_t ProcCompiler::filterBrushIntoTreeRecursively(const ProcBrushPtr& brush, const BspTreeNodePtr& node)

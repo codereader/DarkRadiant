@@ -90,6 +90,8 @@ private:
 	void splitBrush(const ProcBrushPtr& brush, std::size_t planenum, ProcBrushPtr& front, ProcBrushPtr& back);
 	std::size_t filterBrushIntoTreeRecursively(const ProcBrushPtr& brush, const BspTreeNodePtr& node);
 
+	float calculateBrushVolume(const ProcBrushPtr& brush);
+
 	ProcWinding getBaseWindingForNode(const BspTreeNodePtr& node);
 
 	void calculateNodeBounds(const BspTreeNodePtr& node);

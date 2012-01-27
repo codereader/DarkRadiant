@@ -12,6 +12,7 @@
 #include "PlaneSet.h"
 #include "ProcWinding.h"
 #include "ProcLight.h"
+#include "ProcBrush.h"
 #include "BspTree.h"
 
 namespace map
@@ -34,42 +35,6 @@ struct ProcTri
 	OptVertex*			optVert[3];			// for optimization
 };
 typedef std::vector<ProcTri> ProcTris;
-
-struct ProcFace
-{
-	std::size_t			planenum;		// serves as index into ProcFile::planes
-
-	MaterialPtr			material;		// the material of this plane
-	//textureVectors_t	texVec;			// FIXME
-
-	ProcWinding			winding;		// only clipped to the other sides of the brush
-	ProcWinding			visibleHull;	// also clipped to the solid parts of the world
-};
-
-struct ProcBrush;
-typedef boost::weak_ptr<ProcBrush> ProcBrushWeakPtr;
-
-// A brush structure used during compilation
-struct ProcBrush
-{
-	//ProcBrush*			next;
-	ProcBrushWeakPtr	original;	// chopped up brushes will reference the originals
-
-	std::size_t			entitynum;			// editor numbering for messages
-	std::size_t			brushnum;			// editor numbering for messages
-
-	MaterialPtr			contentShader;	// one face's shader will determine the volume attributes
-
-	int					contents;
-	bool				opaque;
-	int					outputNumber;		// set when the brush is written to the file list
-
-	AABB				bounds;
-
-	typedef std::vector<ProcFace> ProcFaces;
-	ProcFaces			sides;
-};
-typedef boost::shared_ptr<ProcBrush> ProcBrushPtr;
 
 // A primitive can either be a brush or a patch,
 // so only one of the pointers is non-NULL
