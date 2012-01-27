@@ -86,6 +86,10 @@ private:
 	// fragments in each leaf so portal surfaces can be matched to materials
 	void filterBrushesIntoTree(ProcEntity& entity);
 
+	// Generates two new brushes, leaving the original unchanged
+	void splitBrush(const ProcBrushPtr& brush, std::size_t planenum, ProcBrushPtr& front, ProcBrushPtr& back);
+	std::size_t filterBrushIntoTreeRecursively(const ProcBrushPtr& brush, const BspTreeNodePtr& node);
+
 	ProcWinding getBaseWindingForNode(const BspTreeNodePtr& node);
 
 	void calculateNodeBounds(const BspTreeNodePtr& node);

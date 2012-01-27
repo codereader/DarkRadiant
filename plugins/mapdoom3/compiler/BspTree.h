@@ -8,6 +8,8 @@ namespace map
 // Forward decl.
 struct ProcEntity;
 struct ProcFace;
+struct ProcBrush;
+typedef boost::shared_ptr<ProcBrush> ProcBrushPtr;
 
 struct BspTreeNode;
 typedef boost::shared_ptr<BspTreeNode> BspTreeNodePtr; 
@@ -44,7 +46,8 @@ struct BspTreeNode
 	// leafs only
 	bool				opaque;		// view can never be inside
 
-	//uBrush_t *			brushlist;	// fragments of all brushes in this leaf
+	typedef std::vector<ProcBrushPtr> Brushes;
+	Brushes				brushlist;	// fragments of all brushes in this leaf
 									// needed for FindSideForPortal
 
 	int					area;		// determined by flood filling up to areaportals

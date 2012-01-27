@@ -1242,6 +1242,268 @@ void ProcCompiler::makeTreePortals(BspTree& tree)
 	makeTreePortalsRecursively(tree.head);
 }
 
+namespace
+{
+
+#define	PSIDE_FRONT			1
+#define	PSIDE_BACK			2
+#define	PSIDE_BOTH			(PSIDE_FRONT|PSIDE_BACK)
+#define	PSIDE_FACING		4
+
+inline int brushMostlyOnSide(const ProcBrushPtr& brush, const Plane3& plane)
+{
+	float max = 0;
+	int side = PSIDE_FRONT;
+
+	for (std::size_t i = 0; i < brush->sides.size(); ++i)
+	{
+		const ProcWinding& w = brush->sides[i].winding;
+
+		for (std::size_t j = 0; j < w.size(); ++j)
+		{
+			float d = plane.distanceToPoint(w[j].vertex);
+
+			if (d > max)
+			{
+				max = d;
+				side = PSIDE_FRONT;
+			}
+
+			if (-d > max)
+			{
+				max = -d;
+				side = PSIDE_BACK;
+			}
+		}
+	}
+
+	return side;
+}
+
+} // namespace
+
+void ProcCompiler::splitBrush(const ProcBrushPtr& brush, std::size_t planenum, ProcBrushPtr& front, ProcBrushPtr& back)
+{
+	/*uBrush_t	*b[2];
+	idWinding	*cw[2], *midwinding;
+	side_t		*s, *cs;*/
+
+	const Plane3& plane = _procFile->planes.getPlane(planenum);
+
+	// check all points
+	float d_front = 0;
+	float d_back = 0;
+
+	for (std::size_t i = 0; i < brush->sides.size(); ++i)
+	{
+		ProcWinding& w = brush->sides[i].winding;
+
+		for (std::size_t j = 0; j < w.size(); ++j)
+		{
+			float d = plane.distanceToPoint(w[j].vertex);
+
+			if (d > 0 && d > d_front)
+			{
+				d_front = d;
+			}
+
+			if (d < 0 && d < d_back)
+			{
+				d_back = d;
+			}
+		}
+	}
+
+	if (d_front < 0.1f) // PLANESIDE_EPSILON)
+	{	// only on back
+		back.reset(new ProcBrush(*brush)); // copy
+		return;
+	}
+
+	if (d_back > -0.1) // PLANESIDE_EPSILON)
+	{	// only on front
+		front.reset(new ProcBrush(*brush));
+		return;
+	}
+
+	// create a new winding from the split plane
+	ProcWinding w(plane);
+
+	for (std::size_t i = 0; i < brush->sides.size() && !w.empty(); ++i)
+	{
+		const Plane3& plane2 = _procFile->planes.getPlane(brush->sides[i].planenum ^ 1);
+		w.clip(plane2, 0);
+		//w = w->Clip( plane2, 0 ); // PLANESIDE_EPSILON);
+	}
+
+	if (w.empty() || w.isTiny())
+	{
+		// the brush isn't really split
+		int side = brushMostlyOnSide(brush, plane);
+
+		if (side == PSIDE_FRONT)
+		{
+			front.reset(new ProcBrush(*brush));
+		}
+
+		if (side == PSIDE_BACK)
+		{
+			back.reset(new ProcBrush(*brush));
+		}
+
+		return;
+	}
+
+	if (w.isHuge())
+	{
+		globalWarningStream() << "huge winding" << std::endl;
+	}
+
+	ProcWinding midwinding = w;
+
+	// split it for real
+
+#if 0 // TODO
+	for (std::size_t i = 0; i < 2; ++i)
+	{
+		b[i] = AllocBrush (brush->numsides+1);
+		memcpy( b[i], brush, sizeof( uBrush_t ) - sizeof( brush->sides ) );
+		b[i]->numsides = 0;
+		b[i]->next = NULL;
+		b[i]->original = brush->original;
+	}
+
+	// split all the current windings
+
+	for ( i = 0; i < brush->numsides; i++ ) {
+		s = &brush->sides[i];
+		w = s->winding;
+		if (!w)
+			continue;
+		w->Split( plane, 0 /*PLANESIDE_EPSILON*/, &cw[0], &cw[1] );
+		for ( j = 0; j < 2; j++ ) {
+			if ( !cw[j] ) {
+				continue;
+			}
+/*
+			if ( cw[j]->IsTiny() )
+			{
+				delete cw[j];
+				continue;
+			}
+*/
+			cs = &b[j]->sides[b[j]->numsides];
+			b[j]->numsides++;
+			*cs = *s;
+			cs->winding = cw[j];
+		}
+	}
+
+
+	// see if we have valid polygons on both sides
+
+	for (i=0 ; i<2 ; i++)
+	{
+		if ( !BoundBrush (b[i]) ) {
+			break;
+		}
+
+		if ( b[i]->numsides < 3 )
+		{
+			FreeBrush (b[i]);
+			b[i] = NULL;
+		}
+	}
+
+	if ( !(b[0] && b[1]) )
+	{
+		if (!b[0] && !b[1])
+			common->Printf ("split removed brush\n");
+		else
+			common->Printf ("split not on both sides\n");
+		if (b[0])
+		{
+			FreeBrush (b[0]);
+			*front = CopyBrush (brush);
+		}
+		if (b[1])
+		{
+			FreeBrush (b[1]);
+			*back = CopyBrush (brush);
+		}
+		return;
+	}
+
+	// add the midwinding to both sides
+	for (i=0 ; i<2 ; i++)
+	{
+		cs = &b[i]->sides[b[i]->numsides];
+		b[i]->numsides++;
+
+		cs->planenum = planenum^i^1;
+		cs->material = NULL;
+		if (i==0)
+			cs->winding = midwinding->Copy();
+		else
+			cs->winding = midwinding;
+	}
+
+{
+	float	v1;
+	int		i;
+
+	for (i=0 ; i<2 ; i++)
+	{
+		v1 = BrushVolume (b[i]);
+		if (v1 < 1.0)
+		{
+			FreeBrush (b[i]);
+			b[i] = NULL;
+//			common->Printf ("tiny volume after clip\n");
+		}
+	}
+}
+
+	*front = b[0];
+	*back = b[1];
+
+#endif
+}
+
+std::size_t ProcCompiler::filterBrushIntoTreeRecursively(const ProcBrushPtr& brush, const BspTreeNodePtr& node)
+{
+	if (!brush)
+	{
+		return 0;
+	}
+
+	// add it to the leaf list
+	if (node->planenum == PLANENUM_LEAF)
+	{
+		node->brushlist.push_back(brush);
+
+		// classify the leaf by the structural brush
+		if (brush->opaque)
+		{
+			node->opaque = true;
+		}
+
+		return 1;
+	}
+
+	// split it by the node plane
+	ProcBrushPtr front;
+	ProcBrushPtr back;
+	splitBrush(brush, node->planenum, front, back);
+
+	std::size_t count = 0;
+
+	count += filterBrushIntoTreeRecursively(front, node->children[0]);
+	count += filterBrushIntoTreeRecursively(back, node->children[1]);
+
+	return count;
+}
+
 void ProcCompiler::filterBrushesIntoTree(ProcEntity& entity)
 {
 	globalOutputStream() << "----- FilterBrushesIntoTree -----" << std::endl;
@@ -1260,10 +1522,7 @@ void ProcCompiler::filterBrushesIntoTree(ProcEntity& entity)
 		// Copy the brush
 		ProcBrushPtr newBrush(new ProcBrush(*brush));
 
-		std::size_t r = 0;
-		// TODO std::size_t r = filterBrushIntoTreeRecursively(newBrush, e->tree->headnode );
-
-		_numClusters += r;
+		_numClusters += filterBrushIntoTreeRecursively(newBrush, entity.tree.head);
 	}
 
 	globalOutputStream() << (boost::format("%5i total brushes") % _numUniqueBrushes).str() << std::endl;

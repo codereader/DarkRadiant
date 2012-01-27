@@ -446,4 +446,22 @@ bool ProcWinding::isTiny() const
 	return true;
 }
 
+bool ProcWinding::isHuge() const 
+{
+	std::size_t numPoints = IWinding::size();
+
+	for (std::size_t i = 0; i < numPoints; ++i)
+	{
+		for (std::size_t j = 0; j < 3; ++j)
+		{
+			if ((*this)[i].vertex[j] <= MIN_WORLD_COORD || (*this)[i].vertex[j] >= MAX_WORLD_COORD ) 
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 } // namespace

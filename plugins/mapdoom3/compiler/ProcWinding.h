@@ -50,6 +50,9 @@ public:
 	// A winding is not tiny if at least three edges are above a certain threshold
 	bool isTiny() const;
 
+	// A base winding made from a plane is typically huge
+	bool isHuge() const;
+
 private:
 	Plane3 getPlane() const;
 
