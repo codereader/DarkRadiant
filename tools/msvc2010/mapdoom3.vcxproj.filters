@@ -76,6 +76,9 @@
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcLight.h">
       <Filter>src\compiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\BspTree.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">

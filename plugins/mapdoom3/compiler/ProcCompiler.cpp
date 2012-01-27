@@ -17,7 +17,9 @@ ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_root(root),
 	_numActivePortals(0),
 	_numPeakPortals(0),
-	_numTinyPortals(0)
+	_numTinyPortals(0),
+	_numUniqueBrushes(0),
+	_numClusters(0)
 {}
 
 ProcFilePtr ProcCompiler::generateProcFile()
@@ -709,7 +711,7 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 	return (*bestSplit)->planenum;
 }
 
-void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces& faces)
+void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces& faces, BspTree& tree)
 {
 	std::size_t splitPlaneNum = selectSplitPlaneNum(node, faces);
 
@@ -717,7 +719,7 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 	if (splitPlaneNum == std::numeric_limits<std::size_t>::max())
 	{
 		node->planenum = PLANENUM_LEAF;
-		_bspTree.numFaceLeafs++;
+		tree.numFaceLeafs++;
 		return;
 	}
 
@@ -810,32 +812,35 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 
 	for (std::size_t i = 0; i < 2; ++i)
 	{
-		buildFaceTreeRecursively(node->children[i], childLists[i]);
+		buildFaceTreeRecursively(node->children[i], childLists[i], tree);
 	}
+
+	// Cleanup
+	faces.clear();
 }
 
 void ProcCompiler::faceBsp(ProcEntity& entity)
 {
 	globalOutputStream() << "--- FaceBSP: " << _bspFaces.size() << " faces ---" << std::endl;
 
-	_bspTree.bounds = AABB();
+	entity.tree.bounds = AABB();
 
 	// Accumulate bounds
 	for (BspFaces::const_iterator f = _bspFaces.begin(); f != _bspFaces.end(); ++f)
 	{
 		for (std::size_t i = 0; i < (*f)->w.size(); ++i)
 		{
-			_bspTree.bounds.includePoint((*f)->w[i].vertex);
+			entity.tree.bounds.includePoint((*f)->w[i].vertex);
 		}
 	}
 
 	// Allocate the head node and use the total bounds
-	_bspTree.head.reset(new BspTreeNode);
-	_bspTree.head->bounds = _bspTree.bounds;
+	entity.tree.head.reset(new BspTreeNode);
+	entity.tree.head->bounds = entity.tree.bounds;
 
-	buildFaceTreeRecursively(_bspTree.head, _bspFaces);
+	buildFaceTreeRecursively(entity.tree.head, _bspFaces, entity.tree);
 
-	globalOutputStream() << (boost::format("%5i leafs") % _bspTree.numFaceLeafs).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i leafs") % entity.tree.numFaceLeafs).str() << std::endl;
 
 	//common->Printf( "%5.1f seconds faceBsp\n", ( end - start ) / 1000.0 );
 }
@@ -910,14 +915,14 @@ void ProcCompiler::removePortalFromNode(const ProcPortalPtr& portal, const BspTr
 	}	
 }
 
-void ProcCompiler::makeHeadNodePortals()
+void ProcCompiler::makeHeadNodePortals(BspTree& tree)
 {
-	_bspTree.outside->planenum = PLANENUM_LEAF;
-	// TODO _bspTree.outside.brushlist = NULL;
-	_bspTree.outside->portals.reset();
-	_bspTree.outside->opaque = false;
+	tree.outside->planenum = PLANENUM_LEAF;
+	// TODO tree.outside.brushlist = NULL;
+	tree.outside->portals.reset();
+	tree.outside->opaque = false;
 
-	BspTreeNodePtr& node = _bspTree.head;
+	BspTreeNodePtr& node = tree.head;
 
 	// if no nodes, don't go any farther
 	if (node->planenum == PLANENUM_LEAF)
@@ -925,7 +930,7 @@ void ProcCompiler::makeHeadNodePortals()
 		return;
 	}
 
-	AABB bounds = _bspTree.bounds;
+	AABB bounds = tree.bounds;
 
 	// pad with some space so there will never be null volume leafs
 	static const float SIDESPACE = 8;
@@ -967,7 +972,7 @@ void ProcCompiler::makeHeadNodePortals()
 			portals[n]->plane = pl;
 			portals[n]->winding.setFromPlane(pl);
 			
-			addPortalToNodes(portals[n], node, _bspTree.outside);
+			addPortalToNodes(portals[n], node, tree.outside);
 		}
 	}
 
@@ -1228,13 +1233,41 @@ void ProcCompiler::makeTreePortalsRecursively(const BspTreeNodePtr& node)
 	makeTreePortalsRecursively(node->children[1]);
 }
 
-void ProcCompiler::makeTreePortals()
+void ProcCompiler::makeTreePortals(BspTree& tree)
 {
 	globalOutputStream() << "----- MakeTreePortals -----" << std::endl;
 
-	makeHeadNodePortals();
+	makeHeadNodePortals(tree);
 
-	makeTreePortalsRecursively(_bspTree.head);
+	makeTreePortalsRecursively(tree.head);
+}
+
+void ProcCompiler::filterBrushesIntoTree(ProcEntity& entity)
+{
+	globalOutputStream() << "----- FilterBrushesIntoTree -----" << std::endl;
+
+	_numUniqueBrushes = 0;
+	_numClusters = 0;
+
+	for (ProcEntity::Primitives::const_iterator prim = entity.primitives.begin(); prim != entity.primitives.end(); ++prim)
+	{
+		const ProcBrushPtr& brush = prim->brush;
+
+		if (!brush) continue;
+		
+		_numUniqueBrushes++;
+
+		// Copy the brush
+		ProcBrushPtr newBrush(new ProcBrush(*brush));
+
+		std::size_t r = 0;
+		// TODO std::size_t r = filterBrushIntoTreeRecursively(newBrush, e->tree->headnode );
+
+		_numClusters += r;
+	}
+
+	globalOutputStream() << (boost::format("%5i total brushes") % _numUniqueBrushes).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i cluster references") % _numClusters).str() << std::endl;
 }
 
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
@@ -1250,12 +1283,12 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 
 	// create portals at every leaf intersection
 	// to allow flood filling
-	makeTreePortals();
+	makeTreePortals(entity.tree);
 
-	/*
 	// classify the leafs as opaque or areaportal
-	FilterBrushesIntoTree( e );
-
+	filterBrushesIntoTree(entity);
+	
+	/*
 	// see if the bsp is completely enclosed
 	if ( floodFill && !dmapGlobals.noFlood ) {
 		if ( FloodEntities( e->tree ) ) {

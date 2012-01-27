@@ -12,6 +12,7 @@
 #include "PlaneSet.h"
 #include "ProcWinding.h"
 #include "ProcLight.h"
+#include "BspTree.h"
 
 namespace map
 {
@@ -89,7 +90,7 @@ struct ProcEntity
 	typedef std::vector<ProcPrimitive> Primitives;
 	Primitives		primitives;
 
-	//struct tree_s *		tree;
+	BspTree			tree;
 
 	//int					numAreas;
 	//uArea_t *			areas;

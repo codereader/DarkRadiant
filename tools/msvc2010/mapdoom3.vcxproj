@@ -307,6 +307,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\BspTree.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\PlaneSet.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.h" />
