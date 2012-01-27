@@ -1496,6 +1496,23 @@ void ProcCompiler::filterBrushesIntoTree(ProcEntity& entity)
 	globalOutputStream() << (boost::format("%5i cluster references") % _numClusters).str() << std::endl;
 }
 
+#if 0 // Debug helper to show the brush count in each BSP node
+inline void printBrushCount(const BspTreeNodePtr& node, std::size_t level)
+{
+	globalOutputStream() << level << ": node has " << node->brushlist.size() << " brushes." << std::endl;
+
+	if (node->children[0])
+	{
+		printBrushCount(node->children[0], level+1);
+	}
+
+	if (node->children[1])
+	{
+		printBrushCount(node->children[1], level+1);
+	}
+}
+#endif
+
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 {
 	_bspFaces.clear();
@@ -1513,7 +1530,11 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 
 	// classify the leafs as opaque or areaportal
 	filterBrushesIntoTree(entity);
-	
+
+#if 0
+	printBrushCount(entity.tree.head, 0);
+#endif
+
 	/*
 	// see if the bsp is completely enclosed
 	if ( floodFill && !dmapGlobals.noFlood ) {
