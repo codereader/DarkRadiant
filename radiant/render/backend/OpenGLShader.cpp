@@ -657,7 +657,7 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$WIRE_OVERLAY")
             {
-              state.renderFlags | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
+              state.renderFlags = RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_depthfunc = GL_LEQUAL;
 
