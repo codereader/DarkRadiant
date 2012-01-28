@@ -120,8 +120,7 @@ const unsigned RENDER_BUMP = 1 << 19;
 /// A vertex and fragment shader program will be used during rendering.
 const unsigned RENDER_PROGRAM = 1 << 20;
 
-const unsigned RENDER_SCREEN = 1 << 21;
-const unsigned RENDER_OVERRIDE = 1 << 22;
+const unsigned RENDER_OVERRIDE = 1 << 21;
 typedef unsigned RenderStateFlags;
 ///@}
 

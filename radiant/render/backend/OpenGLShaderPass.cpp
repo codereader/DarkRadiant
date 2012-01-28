@@ -612,53 +612,25 @@ void OpenGLShaderPass::render(OpenGLState& current,
     // Apply our state to the current state object
     applyState(current, flagsMask, viewer, time, NULL);
 
-    // If RENDER_SCREEN is set, just render a quad, otherwise render all
-    // objects.
-    if ((flagsMask & _glState.renderFlags & RENDER_SCREEN) != 0)
+    if (!_renderablesWithoutEntity.empty())
     {
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadMatrixf(Matrix4::getIdentity());
-
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadMatrixf(Matrix4::getIdentity());
-
-        glBegin(GL_QUADS);
-        glVertex3f(-1, -1, 0);
-        glVertex3f(1, -1, 0);
-        glVertex3f(1, 1, 0);
-        glVertex3f(-1, 1, 0);
-        glEnd();
-
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
+        renderAllContained(_renderablesWithoutEntity, current, viewer, time);
     }
-	else 
+
+    for (RenderablesByEntity::const_iterator i = _renderables.begin();
+         i != _renderables.end();
+         ++i)
     {
-		if (!_renderablesWithoutEntity.empty())
-		{
-			renderAllContained(_renderablesWithoutEntity, current, viewer, time);
-		}
+        // Apply our state to the current state object
+        applyState(current, flagsMask, viewer, time, i->first);
 
-		for (RenderablesByEntity::const_iterator i = _renderables.begin();
-             i != _renderables.end();
-             ++i)
-		{
-			// Apply our state to the current state object
-			applyState(current, flagsMask, viewer, time, i->first);
+        if (!stateIsActive())
+        {
+            continue;
+        }
 
-			if (!stateIsActive())
-			{
-				continue;
-			}
-
-			renderAllContained(i->second, current, viewer, time);
-		}
-	}
+        renderAllContained(i->second, current, viewer, time);
+    }
 
     _renderablesWithoutEntity.clear();
     _renderables.clear();

@@ -167,22 +167,19 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	glHint(GL_FOG_HINT, GL_NICEST);
     glDisable(GL_FOG);
 
-	// Iterate over the sorted mapping between OpenGLStates and their
-	// OpenGLShaderPasses (containing the renderable geometry), and render
-	// the contents of each bucket. Each pass is passed a reference
-	// to the "current" state, which it can change.
+    // Iterate over the sorted mapping between OpenGLStates and their
+    // OpenGLShaderPasses (containing the renderable geometry), and render the
+    // contents of each bucket. Each pass is passed a reference to the "current"
+    // state, which it can change.
 	for (OpenGLStates::iterator i = _state_sorted.begin();
 		i != _state_sorted.end();
 		++i)
 	{
-		// Check if the render pass is applicable before calling the render() method
-		if (i->second->empty() && (globalstate & i->second->state().renderFlags & RENDER_SCREEN) == 0)
-		{
-			continue;
-		}
-
         // Render the OpenGLShaderPass
-		i->second->render(current, globalstate, viewer, _time);
+        if (!i->second->empty())
+        {
+            i->second->render(current, globalstate, viewer, _time);
+        }
 	}
 }
 
@@ -462,8 +459,6 @@ void OpenGLRenderSystem::initialiseModule(const ApplicationContext& ctx)
 	globalOutputStream() << "ShaderCache::initialiseModule called.\n";
 
 	GlobalMaterialManager().attach(*this);
-
-	capture("$OVERBRIGHT");
 
 	// greebo: Don't realise the module yet, this must wait
 	// until the shared GL context has been created (this

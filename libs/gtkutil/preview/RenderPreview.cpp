@@ -350,8 +350,7 @@ RenderStateFlags RenderPreview::getRenderFlagsFill()
 			RENDER_FILL |
 			RENDER_TEXTURE_CUBEMAP |
 			RENDER_BUMP |
-			RENDER_PROGRAM |
-			RENDER_SCREEN;
+			RENDER_PROGRAM;
 }
 
 RenderStateFlags RenderPreview::getRenderFlagsWireframe()
@@ -369,8 +368,7 @@ RenderStateFlags RenderPreview::getRenderFlagsWireframe()
 		   RENDER_SCALED |
 		   RENDER_TEXTURE_CUBEMAP |
 		   RENDER_BUMP |
-		   RENDER_PROGRAM |
-		   RENDER_SCREEN;
+		   RENDER_PROGRAM;
 }
 
 bool RenderPreview::onGLDraw(GdkEventExpose*)

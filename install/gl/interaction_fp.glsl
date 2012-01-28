@@ -83,6 +83,7 @@ void	main()
 
 	// compute final color
     gl_FragColor = diffuse * (gl_Color * u_vcol_scale + u_vcol_offset);
+    gl_FragColor.rgb *= 2.0; // replacement for RENDER_SCREEN light scaling
     gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;
 	gl_FragColor.rgb *= attenuation_z;

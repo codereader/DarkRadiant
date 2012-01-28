@@ -693,18 +693,6 @@ void OpenGLShader::construct(const std::string& name)
               state.renderFlags = RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_FILL | RENDER_POLYGONSTIPPLE;
               state.m_sort = OpenGLState::eSortOverlayFirst;
             }
-            else if (name == "$OVERBRIGHT")
-            {
-              const float lightScale = 2;
-              state.setColour(lightScale * 0.5f,
-                              lightScale * 0.5f,
-                              lightScale * 0.5f,
-                              0.5);
-              state.renderFlags = RENDER_FILL|RENDER_BLEND|RENDER_COLOURWRITE|RENDER_SCREEN;
-              state.m_sort = OpenGLState::eSortOverbrighten;
-              state.m_blend_src = GL_DST_COLOR;
-              state.m_blend_dst = GL_SRC_COLOR;
-            }
             else
             {
                 assert(false);
