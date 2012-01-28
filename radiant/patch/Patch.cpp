@@ -59,8 +59,8 @@ Patch::Patch(PatchNode& node, const Callback& evaluateTransform, const Callback&
 	m_render_solid(m_tess),
 	m_render_wireframe(m_tess),
 	m_render_wireframe_fixed(m_tess),
-	m_render_ctrl(GL_POINTS, m_ctrl_vertices),
-	m_render_lattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
+	_renderableCtrlPoints(GL_POINTS, m_ctrl_vertices),
+	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
 	_tesselationChanged(true),
 	m_evaluateTransform(evaluateTransform),
@@ -82,8 +82,8 @@ Patch::Patch(const Patch& other, PatchNode& node, const Callback& evaluateTransf
 	m_render_solid(m_tess),
 	m_render_wireframe(m_tess),
 	m_render_wireframe_fixed(m_tess),
-	m_render_ctrl(GL_POINTS, m_ctrl_vertices),
-	m_render_lattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
+	_renderableCtrlPoints(GL_POINTS, m_ctrl_vertices),
+	_renderableLattice(GL_LINES, m_lattice_indices, m_ctrl_vertices),
 	m_transformChanged(false),
 	_tesselationChanged(true),
 	m_evaluateTransform(evaluateTransform),
@@ -217,7 +217,7 @@ void Patch::render_solid(RenderableCollector& collector, const VolumeTest& volum
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
-	collector.SetState(m_state, RenderableCollector::eFullMaterials);
+	collector.SetState(_shader, RenderableCollector::eFullMaterials);
 	collector.addRenderable(m_render_solid, localToWorld, entity);
 }
 
@@ -227,7 +227,7 @@ void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& v
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
-	collector.SetState(m_state, RenderableCollector::eFullMaterials);
+	collector.SetState(_shader, RenderableCollector::eFullMaterials);
 
 	if (m_patchDef3) {
 		collector.addRenderable(m_render_wireframe_fixed, localToWorld);
@@ -238,18 +238,20 @@ void Patch::render_wireframe(RenderableCollector& collector, const VolumeTest& v
 }
 
 // greebo: This renders the patch components, namely the lattice and the corner controls
-void Patch::render_component(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+void Patch::submitRenderablePoints(RenderableCollector& collector,
+                                   const VolumeTest& volume,
+                                   const Matrix4& localToWorld) const
 {
 	// Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(*this).updateTesselation();
 
-	collector.SetState(m_state_lattice, RenderableCollector::eWireframeOnly);
-	collector.SetState(m_state_lattice, RenderableCollector::eFullMaterials);
-	collector.addRenderable(m_render_lattice, localToWorld);
+	collector.SetState(_latticeShader, RenderableCollector::eWireframeOnly);
+	collector.SetState(_latticeShader, RenderableCollector::eFullMaterials);
+	collector.addRenderable(_renderableLattice, localToWorld);
 
-	collector.SetState(m_state_ctrl, RenderableCollector::eWireframeOnly);
-	collector.SetState(m_state_ctrl, RenderableCollector::eFullMaterials);
-	collector.addRenderable(m_render_ctrl, localToWorld);
+	collector.SetState(_pointShader, RenderableCollector::eWireframeOnly);
+	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
+	collector.addRenderable(_renderableCtrlPoints, localToWorld);
 }
 
 void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -261,7 +263,7 @@ void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 const ShaderPtr& Patch::getState() const
 {
-	return m_state;
+	return _shader;
 }
 
 // Implementation of the abstract method of SelectionTestable
@@ -398,12 +400,12 @@ void Patch::setShader(const std::string& name)
 
 bool Patch::hasVisibleMaterial() const
 {
-	return m_state->getMaterial()->isVisible();
+	return _shader->getMaterial()->isVisible();
 }
 
 int Patch::getShaderFlags() const {
-	if(m_state != 0) {
-		return m_state->getFlags();
+	if(_shader != 0) {
+		return _shader->getFlags();
 	}
 	return 0;
 }
@@ -469,28 +471,28 @@ void Patch::captureShader()
 
 	if (renderSystem)
 	{
-		m_state = renderSystem->capture(m_shader);
+		_shader = renderSystem->capture(m_shader);
 
 		// Increment the counter
 		if (m_instanceCounter.m_count != 0)
 		{
-			m_state->incrementUsed();
+			_shader->incrementUsed();
 		}
 
-		m_state_ctrl = renderSystem->capture("$POINT");
-		m_state_lattice = renderSystem->capture("$LATTICE");
+		_pointShader = renderSystem->capture("$POINT");
+		_latticeShader = renderSystem->capture("$LATTICE");
 	}
 	else
 	{
 		// Decrement the use count of the shader
-		if (m_state && m_instanceCounter.m_count > 0)
+		if (_shader && m_instanceCounter.m_count > 0)
 		{
-			m_state->decrementUsed();
+			_shader->decrementUsed();
 		}
 
-		m_state.reset();
-		m_state_ctrl.reset();
-		m_state_lattice.reset();
+		_shader.reset();
+		_pointShader.reset();
+		_latticeShader.reset();
 	}
 }
 
@@ -499,10 +501,10 @@ void Patch::releaseShader()
 	// Decrement the use count of the shader
 	if (m_instanceCounter.m_count > 0)
 	{
-		m_state->decrementUsed();
+		_shader->decrementUsed();
 	}
 
-	m_state.reset();
+	_shader.reset();
 }
 
 void Patch::check_shader() {
@@ -613,7 +615,7 @@ void Patch::updateTesselation()
     UniqueVertexBuffer<PointVertex> inserter(m_ctrl_vertices);
     for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
     {
-      ctrl_indices.insert(inserter.insert(pointvertex_quantised(PointVertex(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
+      ctrl_indices.push_back(inserter.insert(pointvertex_quantised(PointVertex(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
     }
   }
   {
@@ -621,40 +623,16 @@ void Patch::updateTesselation()
     {
       if(std::size_t(i - ctrl_indices.begin()) % m_width)
       {
-        m_lattice_indices.insert(*(i - 1));
-        m_lattice_indices.insert(*i);
+        m_lattice_indices.push_back(*(i - 1));
+        m_lattice_indices.push_back(*i);
       }
       if(std::size_t(i - ctrl_indices.begin()) >= m_width)
       {
-        m_lattice_indices.insert(*(i - m_width));
-        m_lattice_indices.insert(*i);
+        m_lattice_indices.push_back(*(i - m_width));
+        m_lattice_indices.push_back(*i);
       }
     }
   }
-
-#if 0
-  {
-    Array<RenderIndex>::iterator first = m_tess.indices.begin();
-    for(std::size_t s=0; s<m_tess.m_numStrips; s++)
-    {
-      Array<RenderIndex>::iterator last = first + m_tess.m_lenStrips;
-
-      for(Array<RenderIndex>::iterator i(first); i+2 != last; i += 2)
-      {
-        ArbitraryMeshTriangle_sumTangents(m_tess.vertices[*(i+0)], m_tess.vertices[*(i+1)], m_tess.vertices[*(i+2)]);
-        ArbitraryMeshTriangle_sumTangents(m_tess.vertices[*(i+2)], m_tess.vertices[*(i+1)], m_tess.vertices[*(i+3)]);
-      }
-
-      first = last;
-    }
-
-    for(Array<ArbitraryMeshVertex>::iterator i = m_tess.vertices.begin(); i != m_tess.vertices.end(); ++i)
-    {
-      vector3_normalise(reinterpret_cast<Vector3&>((*i).tangent));
-      vector3_normalise(reinterpret_cast<Vector3&>((*i).bitangent));
-    }
-  }
-#endif
 
   m_render_solid.update();
 }
@@ -940,8 +918,8 @@ void Patch::TranslateTexture(float s, float t)
 {
   undoSave();
 
-    s = -1 * s / m_state->getMaterial()->getEditorImage()->getWidth();
-    t = t / m_state->getMaterial()->getEditorImage()->getHeight();
+    s = -1 * s / _shader->getMaterial()->getEditorImage()->getWidth();
+    t = t / _shader->getMaterial()->getEditorImage()->getHeight();
 
 	translateTexCoords(Vector2(s,t));
 
@@ -1084,7 +1062,7 @@ void Patch::NaturalTexture() {
 	 * the scaled texture size in pixels.
 	 */
 	{
-		float fSize = (float)m_state->getMaterial()->getEditorImage()->getWidth() * defaultScale;
+		float fSize = (float)_shader->getMaterial()->getEditorImage()->getWidth() * defaultScale;
 
 		double texBest = 0;
 		double tex = 0;
@@ -1137,7 +1115,7 @@ void Patch::NaturalTexture() {
 	// and calculate the longest distances, convert them to texture coordinates
 	// and apply them to the according texture coordinates.
 	{
-		float fSize = -(float)m_state->getMaterial()->getEditorImage()->getHeight() * defaultScale;
+		float fSize = -(float)_shader->getMaterial()->getEditorImage()->getHeight() * defaultScale;
 
 		double texBest = 0;
 		double tex = 0;
@@ -1904,8 +1882,8 @@ void Patch::ProjectTexture(int nAxis) {
 
 	/* Calculate the conversion factor between world and texture coordinates
 	 * by using the image width/height.*/
-	float fWidth = 1 / (m_state->getMaterial()->getEditorImage()->getWidth() * defaultScale);
-	float fHeight = 1 / (m_state->getMaterial()->getEditorImage()->getHeight() * -defaultScale);
+	float fWidth = 1 / (_shader->getMaterial()->getEditorImage()->getWidth() * defaultScale);
+	float fHeight = 1 / (_shader->getMaterial()->getEditorImage()->getHeight() * -defaultScale);
 
 	// Cycle through all the control points with an iterator
 	for (PatchControlIter i = m_ctrl.begin(); i != m_ctrl.end(); ++i) {

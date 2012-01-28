@@ -13,7 +13,12 @@ class RenderableCurve :
 public:
 	std::vector<PointVertex> m_vertices;
 
-	void render(const RenderInfo& info) const {
+	void render(const RenderInfo& info) const
+    {
+        if (info.checkFlag(RENDER_VERTEX_COLOUR))
+        {
+            glEnableClientState(GL_COLOR_ARRAY);
+        }
 		pointvertex_gl_array(&m_vertices.front());
 		glDrawArrays(GL_LINE_STRIP, 0, GLsizei(m_vertices.size()));
 	}

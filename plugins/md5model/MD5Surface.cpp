@@ -317,9 +317,9 @@ void MD5Surface::buildIndexArray()
 	{
 		const MD5Tri& tri = (*j);
 
-		_indices.insert(static_cast<RenderIndex>(tri.a));
-		_indices.insert(static_cast<RenderIndex>(tri.b));
-		_indices.insert(static_cast<RenderIndex>(tri.c));
+		_indices.push_back(static_cast<RenderIndex>(tri.a));
+		_indices.push_back(static_cast<RenderIndex>(tri.b));
+		_indices.push_back(static_cast<RenderIndex>(tri.c));
 	}
 }
 

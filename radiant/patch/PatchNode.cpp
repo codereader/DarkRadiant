@@ -329,7 +329,7 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	}
 }
 
-// Renders the components of this patch instance, makes use of the Patch::render_component() method
+// Renders the components of this patch instance
 void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
@@ -339,9 +339,9 @@ void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
 	// Only render the components, if we are in the according ComponentMode
-	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex) {
-		// Call the method of the patch itself
-		m_patch.render_component(collector, volume, localToWorld());
+	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
+    {
+		m_patch.submitRenderablePoints(collector, volume, localToWorld());
 	}
 }
 

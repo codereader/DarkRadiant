@@ -41,55 +41,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 typedef unsigned int RenderIndex;
 const GLenum RenderIndexTypeID = GL_UNSIGNED_INT;
 
-/// \brief A resizable buffer of indices.
-class IndexBuffer {
-	typedef std::vector<RenderIndex> Indices;
-	Indices m_data;
-public:
-	typedef Indices::iterator iterator;
-	typedef Indices::const_iterator const_iterator;
-
-	iterator begin() {
-		return m_data.begin();
-	}
-	const_iterator begin() const {
-		return m_data.begin();
-	}
-	iterator end() {
-		return m_data.end();
-	}
-	const_iterator end() const {
-		return m_data.end();
-	}
-
-	bool empty() const {
-		return m_data.empty();
-	}
-	std::size_t size() const {
-		return m_data.size();
-	}
-	const RenderIndex* data() const {
-		return &(*m_data.begin());
-	}
-	RenderIndex& operator[](std::size_t index) {
-		return m_data[index];
-	}
-	const RenderIndex& operator[](std::size_t index) const {
-		return m_data[index];
-	}
-	void clear() {
-		m_data.clear();
-	}
-	void reserve(std::size_t max_indices) {
-		m_data.reserve(max_indices);
-	}
-	void insert(RenderIndex index) {
-		m_data.push_back(index);
-	}
-	void swap(IndexBuffer& other) {
-		std::swap(m_data, m_data);
-	}
-};
+/// Vector of indices for use with glDrawElements
+typedef std::vector<RenderIndex> IndexBuffer;
 
 namespace std {
 /// \brief Swaps the values of \p self and \p other.
@@ -99,19 +52,12 @@ inline void swap(IndexBuffer& self, IndexBuffer& other) {
 }
 }
 
-/// \brief A resizable buffer of vertices.
-/// \param Vertex The vertex data type.
-template<typename Vertex>
-class VertexBuffer :
-	public std::vector<Vertex>
-{};
-
-/// \brief A wrapper around a VertexBuffer which inserts only vertices which have not already been inserted.
+/// \brief A wrapper around a std::vector which inserts only vertices which have not already been inserted.
 /// \param Vertex The vertex data type. Must support operator<, operator== and operator!=.
 /// For best performance, quantise vertices before inserting them.
 template<typename Vertex>
 class UniqueVertexBuffer {
-	typedef VertexBuffer<Vertex> Vertices;
+	typedef std::vector<Vertex> Vertices;
 	Vertices& m_data;
 
 	struct bnode {
@@ -573,11 +519,11 @@ inline ArbitraryMeshVertex arbitrarymeshvertex_quantised(const ArbitraryMeshVert
 /// \brief Sets up the OpenGL colour and vertex arrays for \p array.
 inline void pointvertex_gl_array(const PointVertex* array)
 {
-    glEnableClientState(GL_COLOR_ARRAY);
 	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &array->colour);
 	glVertexPointer(3, GL_FLOAT, sizeof(PointVertex), &array->vertex);
 }
 
+/// A renderable collection of coloured vertices
 class RenderablePointVector :
 	public OpenGLRenderable
 {
@@ -600,6 +546,12 @@ public:
 	{
 		if (_vector.empty()) return;
 
+        // Enable point colours if required
+        if (info.checkFlag(RENDER_VERTEX_COLOUR)
+            || (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS))
+        {
+            glEnableClientState(GL_COLOR_ARRAY);
+        }
 		pointvertex_gl_array(&_vector.front());
 		glDrawArrays(_mode, 0, static_cast<GLsizei>(_vector.size()));
 	}
@@ -659,31 +611,46 @@ public:
 };
 
 
-class RenderableVertexBuffer : public OpenGLRenderable {
-	const GLenum m_mode;
-	const VertexBuffer<PointVertex>& m_vertices;
+/// A renderable wrapper for a collection of vertices stored elsewhere
+class RenderableVertexBuffer : public OpenGLRenderable
+{
+	const GLenum _mode;
+	const std::vector<PointVertex>& m_vertices;
 public:
-	RenderableVertexBuffer(GLenum mode, const VertexBuffer<PointVertex>& vertices)
-			: m_mode(mode), m_vertices(vertices) {}
-
-	void render(const RenderInfo& info) const {
-		pointvertex_gl_array(m_vertices.data());
-		glDrawArrays(m_mode, 0, static_cast<GLsizei>(m_vertices.size()));
-	}
-};
-
-class RenderableIndexBuffer : public OpenGLRenderable {
-	const GLenum m_mode;
-	const IndexBuffer& m_indices;
-	const VertexBuffer<PointVertex>& m_vertices;
-public:
-	RenderableIndexBuffer(GLenum mode, const IndexBuffer& indices, const VertexBuffer<PointVertex>& vertices)
-			: m_mode(mode), m_indices(indices), m_vertices(vertices) {}
+	RenderableVertexBuffer(GLenum mode, const std::vector<PointVertex>& vertices)
+			: _mode(mode), m_vertices(vertices) {}
 
 	void render(const RenderInfo& info) const
     {
+        if (info.checkFlag(RENDER_VERTEX_COLOUR)
+            || (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS))
+        {
+            glEnableClientState(GL_COLOR_ARRAY);
+        }
 		pointvertex_gl_array(m_vertices.data());
-		glDrawElements(m_mode, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
+		glDrawArrays(_mode, 0, static_cast<GLsizei>(m_vertices.size()));
+	}
+};
+
+/// Renderable wrapper for a set of vertices and indices stored in other arrays
+class RenderableIndexBuffer : public OpenGLRenderable
+{
+	const GLenum _mode;
+	const IndexBuffer& m_indices;
+	const std::vector<PointVertex>& m_vertices;
+public:
+	RenderableIndexBuffer(GLenum mode, const IndexBuffer& indices, const std::vector<PointVertex>& vertices)
+			: _mode(mode), m_indices(indices), m_vertices(vertices) {}
+
+	void render(const RenderInfo& info) const
+    {
+        if (info.checkFlag(RENDER_VERTEX_COLOUR)
+            || (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS))
+        {
+            glEnableClientState(GL_COLOR_ARRAY);
+        }
+		pointvertex_gl_array(m_vertices.data());
+		glDrawElements(_mode, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
 	}
 };
 

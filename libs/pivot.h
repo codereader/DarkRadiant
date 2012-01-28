@@ -226,7 +226,7 @@ class RenderablePivot :
 	public OpenGLRenderable
 {
 private:
-	VertexBuffer<PointVertex> _vertices;
+    std::vector<PointVertex> _vertices;
 	const Vector3& _pivot;
 
 	ShaderPtr _shader;

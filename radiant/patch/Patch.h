@@ -43,7 +43,7 @@ private:
 	// greebo: The name of the shader
 	std::string m_shader;
 
-	ShaderPtr m_state;
+	ShaderPtr _shader;
 
 	// Patch dimensions
 	std::size_t m_width;
@@ -76,17 +76,17 @@ private:
 	RenderablePatchFixedWireframe m_render_wireframe_fixed;
 
 	// The shader states for the control points and the lattice
-	ShaderPtr m_state_ctrl;
-	ShaderPtr m_state_lattice;
+	ShaderPtr _pointShader;
+	ShaderPtr _latticeShader;
 
 	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
-	VertexBuffer<PointVertex> m_ctrl_vertices;
+    std::vector<PointVertex> m_ctrl_vertices;
 	// The renderable of the control points
-	RenderableVertexBuffer m_render_ctrl;
+	RenderableVertexBuffer _renderableCtrlPoints;
 
 	// The lattice indices and their renderable
 	IndexBuffer m_lattice_indices;
-	RenderableIndexBuffer m_render_lattice;
+	RenderableIndexBuffer _renderableLattice;
 
 	bool m_bOverlay;
 
@@ -140,7 +140,11 @@ public:
 	void render_solid(RenderableCollector& collector, const VolumeTest& volume, 
 					  const Matrix4& localToWorld, const IRenderEntity& entity) const;
 	void render_wireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void render_component(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+
+    /// Submit renderable edge and face points
+	void submitRenderablePoints(RenderableCollector& collector,
+                                const VolumeTest& volume,
+                                const Matrix4& localToWorld) const;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 

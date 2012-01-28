@@ -22,7 +22,7 @@ class MD5Surface :
 	public OpenGLRenderable
 {
 public:
-	typedef VertexBuffer<ArbitraryMeshVertex> Vertices;
+	typedef std::vector<ArbitraryMeshVertex> Vertices;
 	typedef IndexBuffer Indices;
 
 private:

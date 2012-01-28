@@ -568,19 +568,25 @@ void OpenGLShader::construct(const std::string& name)
 
             if (name == "$POINT")
             {
-              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_POINT_COLOUR
+                                | RENDER_COLOURWRITE
+                                | RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortControlFirst;
               state.m_pointsize = 4;
             }
             else if (name == "$SELPOINT")
             {
-              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_POINT_COLOUR
+                                | RENDER_COLOURWRITE
+                                | RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortControlFirst + 1;
               state.m_pointsize = 4;
             }
             else if (name == "$BIGPOINT")
             {
-              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.renderFlags = RENDER_POINT_COLOUR
+                                | RENDER_COLOURWRITE
+                                | RENDER_DEPTHWRITE;
               state.m_sort = OpenGLState::eSortControlFirst;
               state.m_pointsize = 6;
             }

@@ -63,35 +63,44 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * to OpenGL based on the value of the RENDER_VERTEX_COLOUR flag.
  */
 ///@{
-const unsigned int RENDER_DEFAULT = 0;
-const unsigned int RENDER_LINESTIPPLE = 1 << 0; // glEnable(GL_LINE_STIPPLE)
-const unsigned int RENDER_LINESMOOTH = 1 << 1; // glEnable(GL_LINE_SMOOTH)
-const unsigned int RENDER_POLYGONSTIPPLE = 1 << 2; // glEnable(GL_POLYGON_STIPPLE)
-const unsigned int RENDER_POLYGONSMOOTH = 1 << 3; // glEnable(GL_POLYGON_SMOOTH)
-const unsigned int RENDER_ALPHATEST = 1 << 4; // glEnable(GL_ALPHA_TEST)
-const unsigned int RENDER_DEPTHTEST = 1 << 5; // glEnable(GL_DEPTH_TEST)
-const unsigned int RENDER_DEPTHWRITE = 1 << 6; // glDepthMask(GL_TRUE)
-const unsigned int RENDER_COLOURWRITE = 1 << 7; // glColorMask(GL_TRUE; GL_TRUE; GL_TRUE; GL_TRUE)
-const unsigned int RENDER_CULLFACE = 1 << 8; // glglEnable(GL_CULL_FACE)
-const unsigned int RENDER_SCALED = 1 << 9; // glEnable(GL_NORMALIZE)
-const unsigned int RENDER_SMOOTH = 1 << 10; // glShadeModel
-const unsigned int RENDER_LIGHTING = 1 << 11; // glEnable(GL_LIGHTING)
-const unsigned int RENDER_BLEND = 1 << 12; // glEnable(GL_BLEND)
-const unsigned int RENDER_OFFSETLINE = 1 << 13; // glEnable(GL_POLYGON_OFFSET_LINE)
+const unsigned RENDER_DEFAULT = 0;
+const unsigned RENDER_LINESTIPPLE = 1 << 0; // glEnable(GL_LINE_STIPPLE)
+const unsigned RENDER_LINESMOOTH = 1 << 1; // glEnable(GL_LINE_SMOOTH)
+const unsigned RENDER_POLYGONSTIPPLE = 1 << 2; // glEnable(GL_POLYGON_STIPPLE)
+const unsigned RENDER_POLYGONSMOOTH = 1 << 3; // glEnable(GL_POLYGON_SMOOTH)
+const unsigned RENDER_ALPHATEST = 1 << 4; // glEnable(GL_ALPHA_TEST)
+const unsigned RENDER_DEPTHTEST = 1 << 5; // glEnable(GL_DEPTH_TEST)
+const unsigned RENDER_DEPTHWRITE = 1 << 6; // glDepthMask(GL_TRUE)
+const unsigned RENDER_COLOURWRITE = 1 << 7; // glColorMask(GL_TRUE; GL_TRUE; GL_TRUE; GL_TRUE)
+const unsigned RENDER_CULLFACE = 1 << 8; // glglEnable(GL_CULL_FACE)
+const unsigned RENDER_SCALED = 1 << 9; // glEnable(GL_NORMALIZE)
+const unsigned RENDER_SMOOTH = 1 << 10; // glShadeModel
+const unsigned RENDER_LIGHTING = 1 << 11; // glEnable(GL_LIGHTING)
+const unsigned RENDER_BLEND = 1 << 12; // glEnable(GL_BLEND)
+const unsigned RENDER_OFFSETLINE = 1 << 13; // glEnable(GL_POLYGON_OFFSET_LINE)
 
 /// Objects will be rendered as filled polygons (not wireframe).
-const unsigned int RENDER_FILL = 1 << 14;
+const unsigned RENDER_FILL = 1 << 14;
 
 /**
- * If enabled, objects should submit vertex colour information. If disabled,
- * objects must not change glColor during rendering. 
+ * If enabled, mesh objects (geometry that does not consist only of GL_POINTS)
+ * should submit vertex colour information. If disabled, mesh objects must not
+ * change glColor during rendering. 
  *
  * Does not affect GL state.
  */
-const unsigned int RENDER_VERTEX_COLOUR = 1 << 15;
+const unsigned RENDER_VERTEX_COLOUR = 1 << 15;
+
+/**
+ * If enabled, point geometry may submit colours for each point. If disabled,
+ * point geometry must not change colour during rendering.
+ *
+ * Does not affect GL state.
+ */
+const unsigned RENDER_POINT_COLOUR = 1 << 16;
 
 /// GL_TEXTURE_2D will be enabled during rendering.
-const unsigned int RENDER_TEXTURE_2D = 1 << 16;
+const unsigned RENDER_TEXTURE_2D = 1 << 17;
 
 /**
  * Cube map rendering (in camera space) is enabled. The renderer will enable
@@ -99,21 +108,21 @@ const unsigned int RENDER_TEXTURE_2D = 1 << 16;
  * location is the origin.  Objects should submit their vertex coordinates as
  * texture coordinates, which will result in the correct cube map alignment.
  */
-const unsigned int RENDER_TEXTURE_CUBEMAP = 1 << 17;
+const unsigned RENDER_TEXTURE_CUBEMAP = 1 << 18;
 
 /**
  * Normal map information will be used during rendering. If enabled, objects
  * should submit normal/tangent/bitangent vertex attributes to enable normal
  * mapping.
  */
-const unsigned int RENDER_BUMP = 1 << 18;
+const unsigned RENDER_BUMP = 1 << 19;
 
 /// A vertex and fragment shader program will be used during rendering.
-const unsigned int RENDER_PROGRAM = 1 << 19;
+const unsigned RENDER_PROGRAM = 1 << 20;
 
-const unsigned int RENDER_SCREEN = 1 << 20;
-const unsigned int RENDER_OVERRIDE = 1 << 21;
-typedef unsigned int RenderStateFlags;
+const unsigned RENDER_SCREEN = 1 << 21;
+const unsigned RENDER_OVERRIDE = 1 << 22;
+typedef unsigned RenderStateFlags;
 ///@}
 
 class AABB;

@@ -1096,7 +1096,7 @@ void Brush::buildBRep() {
       }
 
       IndexBuffer uniqueEdgeIndices;
-      typedef VertexBuffer<ProximalVertex> UniqueEdges;
+      typedef std::vector<ProximalVertex> UniqueEdges;
       UniqueEdges uniqueEdges;
 
       uniqueEdgeIndices.reserve(faceVertices.size());
@@ -1117,7 +1117,7 @@ void Brush::buildBRep() {
           UniqueVertexBuffer<ProximalVertex> inserter(uniqueEdges);
           for(ProximalVertexArray::iterator i = edgePairs.begin(); i != edgePairs.end(); ++i)
           {
-            uniqueEdgeIndices.insert(inserter.insert(ProximalVertex(&(*i))));
+            uniqueEdgeIndices.push_back(inserter.insert(ProximalVertex(&(*i))));
           }
         }
 
@@ -1156,7 +1156,7 @@ void Brush::buildBRep() {
 
 
       IndexBuffer uniqueVertexIndices;
-      typedef VertexBuffer<ProximalVertex> UniqueVertices;
+      typedef std::vector<ProximalVertex> UniqueVertices;
       UniqueVertices uniqueVertices;
 
       uniqueVertexIndices.reserve(faceVertices.size());
@@ -1177,7 +1177,7 @@ void Brush::buildBRep() {
           UniqueVertexBuffer<ProximalVertex> inserter(uniqueVertices);
           for(ProximalVertexArray::iterator i = vertexRings.begin(); i != vertexRings.end(); ++i)
           {
-            uniqueVertexIndices.insert(inserter.insert(ProximalVertex(&(*i))));
+            uniqueVertexIndices.push_back(inserter.insert(ProximalVertex(&(*i))));
           }
         }
 
