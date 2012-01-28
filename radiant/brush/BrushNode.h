@@ -51,7 +51,10 @@ class BrushNode :
 	VertexInstances m_vertexInstances;
 
 	mutable RenderableWireframe m_render_wireframe;
-	mutable RenderablePointVector m_render_selected;
+
+    // Renderable array of vertex and edge points
+	mutable RenderablePointVector _selectedPoints;
+
 	mutable AABB m_aabb_component;
 	mutable RenderablePointVector _faceCentroidPointsCulled;
 	mutable bool m_viewChanged; // requires re-evaluation of view-dependent cached data
@@ -178,7 +181,9 @@ private:
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void update_selected() const;
-	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderSelectedPoints(RenderableCollector& collector,
+                              const VolumeTest& volume,
+                              const Matrix4& localToWorld) const;
 
 	void renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const;
 	void evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const;
