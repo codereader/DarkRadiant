@@ -1760,6 +1760,74 @@ void ProcCompiler::fillOutside(const ProcEntity& entity)
 	globalOutputStream() << (boost::format("%5i inside leafs") % _numInsideLeafs).str() << std::endl;
 }
 
+void ProcCompiler::clipSideByTreeRecursively(ProcWinding& winding, ProcFace& side, const BspTreeNodePtr& node)
+{
+	if (winding.empty()) return;
+
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		if (side.planenum == node->planenum)
+		{
+			clipSideByTreeRecursively(winding, side, node->children[0]);
+			return;
+		}
+
+		if (side.planenum == (node->planenum ^ 1))
+		{
+			clipSideByTreeRecursively(winding, side, node->children[1]);
+			return;
+		}
+
+		ProcWinding front;
+		ProcWinding back;
+		winding.split(_procFile->planes.getPlane(node->planenum), ON_EPSILON, front, back);
+		
+		clipSideByTreeRecursively(front, side, node->children[0]);
+		clipSideByTreeRecursively(back, side, node->children[1]);
+		return;
+	}
+
+	// if opaque leaf, don't add
+	if (!node->opaque)
+	{
+		if (side.visibleHull.empty())
+		{
+			side.visibleHull.swap(winding);
+		}
+		else
+		{
+			side.visibleHull.addToConvexHull(winding, _procFile->planes.getPlane(side.planenum).normal());
+		}
+	}
+}
+
+void ProcCompiler::clipSidesByTree(ProcEntity& entity)
+{
+	globalOutputStream() << "----- ClipSidesByTree -----" << std::endl;
+
+	for (ProcEntity::Primitives::const_iterator prim = entity.primitives.begin(); prim != entity.primitives.end(); ++prim)
+	{
+		const ProcBrushPtr& brush = prim->brush;
+
+		if (!brush) continue;
+
+		for (std::size_t i = 0; i < brush->sides.size(); ++i)
+		{
+			ProcFace& side = brush->sides[i];
+
+			if (side.winding.empty()) continue;
+			
+			ProcWinding winding(side.winding); // copy
+			
+			side.visibleHull.clear();
+
+			clipSideByTreeRecursively(winding, side, entity.tree.head);
+
+			// FIXME: Implement noClipSide option?
+		}
+	}
+}
+
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 {
 	_bspFaces.clear();
@@ -1809,14 +1877,14 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 		}
 	}
 
-	/*// get minimum convex hulls for each visible side
+	// get minimum convex hulls for each visible side
 	// this must be done before creating area portals,
 	// because the visible hull is used as the portal
-	ClipSidesByTree( e );
+	clipSidesByTree(entity);
 
 	// determine areas before clipping tris into the
 	// tree, so tris will never cross area boundaries
-	FloodAreas( e );
+	/*FloodAreas( e );
 
 	// we now have a BSP tree with solid and non-solid leafs marked with areas
 	// all primitives will now be clipped into this, throwing away

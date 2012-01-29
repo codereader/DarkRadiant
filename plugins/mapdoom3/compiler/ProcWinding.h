@@ -57,6 +57,10 @@ public:
 
 	Vector3 getCenter() const;
 
+	// Adds the given winding to the convex hull.
+	// Assumes the current winding already is a convex hull with three or more points.
+	void addToConvexHull(const ProcWinding& winding, const Vector3& normal, const float epsilon = ON_EPSILON);
+
 private:
 	Plane3 getPlane() const;
 };

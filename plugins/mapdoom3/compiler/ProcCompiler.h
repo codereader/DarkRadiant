@@ -112,6 +112,16 @@ private:
 	void calculateNodeBounds(const BspTreeNodePtr& node);
 	void addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNodePtr& front, const BspTreeNodePtr& back);
 	void removePortalFromNode(const ProcPortalPtr& portal, const BspTreeNodePtr& node);
+
+	/**
+	 * Creates side->visibleHull for all visible sides
+	 * The visible hull for a side will consist of the convex hull of all points 
+	 * in non-opaque clusters, which allows overlaps to be trimmed off automatically.
+	 */
+	void clipSidesByTree(ProcEntity& entity);
+
+	// Adds non-opaque leaf fragments to the convex hull
+	void clipSideByTreeRecursively(ProcWinding& winding, ProcFace& side, const BspTreeNodePtr& node);
 };
 
 } // namespace

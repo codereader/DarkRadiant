@@ -480,4 +480,95 @@ float ProcWinding::getArea() const
 	return total * 0.5f;
 }
 
+void ProcWinding::addToConvexHull(const ProcWinding& winding, const Vector3& normal, const float epsilon)
+{
+	if (winding.empty()) return;
+
+	std::size_t maxPts = IWinding::size() + winding.size();
+
+	IWinding::reserve(maxPts);
+
+	//IWinding::value_type* newHullPoints = (IWinding::value_type*)_alloca(maxPts * sizeof(IWinding::value_type));
+	Vector3* hullDirs = (Vector3*)_alloca(maxPts * sizeof(Vector3));
+	bool* hullSide = (bool*)_alloca(maxPts * sizeof(bool));
+
+	std::size_t j = 0;
+	for (std::size_t i = 0; i < winding.size(); ++i)
+	{
+		const IWinding::value_type& p1 = winding[i];
+		std::size_t numPoints = IWinding::size();
+
+		// calculate hull edge vectors
+		for (j = 0; j < numPoints; ++j)
+		{
+			Vector3 dir = (*this)[(j + 1) % numPoints].vertex - (*this)[j].vertex;
+			dir.normalise();
+
+			hullDirs[j] = normal.crossProduct(dir);
+		}
+
+		// calculate side for each hull edge
+		bool outside = false;
+
+		for (j = 0; j < numPoints; ++j)
+		{
+			Vector3 dir = p1.vertex - (*this)[j].vertex;
+
+			float d = dir.dot(hullDirs[j]);
+
+			if (d >= epsilon)
+			{
+				outside = true;
+			}
+
+			if (d >= -epsilon)
+			{
+				hullSide[j] = true;
+			} 
+			else 
+			{
+				hullSide[j] = false;
+			}
+		}
+
+		// if the point is effectively inside, do nothing
+		if (!outside) continue;
+
+		// find the back side to front side transition
+		for (j = 0; j < numPoints; ++j)
+		{
+			if (!hullSide[j] && hullSide[(j + 1) % numPoints])
+			{
+				break;
+			}
+		}
+
+		if (j >= numPoints)
+		{
+			continue;
+		}
+
+		ProcWinding newHull;
+		newHull.reserve(maxPts); // ensure size of target buffer
+
+		// insert the point here
+		newHull.push_back(p1);
+
+		// copy over all points that aren't double fronts
+		j = (j + 1) % numPoints;
+
+		for (std::size_t k = 0; k < numPoints; ++k)
+		{
+			if (hullSide[(j + k) % numPoints] && hullSide[(j + k + 1) % numPoints])
+			{
+				continue;
+			}
+
+			newHull.push_back((*this)[(j + k + 1) % numPoints]);
+		}
+
+		this->swap(newHull);
+	}
+}
+
 } // namespace
