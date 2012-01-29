@@ -1799,7 +1799,8 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 			globalWarningStream() << "******* leaked *******" << std::endl;
 			globalOutputStream() <<  "**********************" << std::endl;
 			
-			// TODO LeakFile( e->tree );
+			// Generate a new leakfile
+			_procFile->leakFile.reset(new LeakFile(entity.tree));
 
 			// bail out here.  If someone really wants to
 			// process a map that leaks, they should use

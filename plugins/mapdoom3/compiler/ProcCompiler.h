@@ -5,6 +5,7 @@
 #include "ProcFile.h"
 #include "BspTree.h"
 #include "math/Vector3.h"
+#include "LeakFile.h"
 
 namespace map
 {

@@ -90,10 +90,11 @@ void Doom3MapCompiler::generateProc(const scene::INodePtr& root)
 
 	if (_procFile != NULL)
 	{
-		_procFile->saveToFile("");
+		if (!_procFile->hasLeak())
+		{
+			_procFile->saveToFile("");
+		}
 	}
-
-	_debugRenderer->setProcFile(_procFile);
 }
 
 void Doom3MapCompiler::runDmap(const scene::INodePtr& root)
@@ -102,6 +103,11 @@ void Doom3MapCompiler::runDmap(const scene::INodePtr& root)
 
 	// First step: process map into .proc file
 	generateProc(root);
+
+	if (_procFile->hasLeak())
+	{
+		return;
+	}
 }
 
 void Doom3MapCompiler::runDmap(const std::string& mapFile)
@@ -134,6 +140,16 @@ void Doom3MapCompiler::runDmap(const std::string& mapFile)
 
 	// Start the sequence
 	runDmap(root);
+
+	if (_procFile->hasLeak())
+	{
+		std::string ext = "." + os::getExtension(mapFile);
+		std::string leakFileName = boost::algorithm::replace_last_copy(mapFile, ext, LeakFile::Extension());
+
+		_procFile->leakFile->writeToFile(leakFileName);
+
+		return;
+	}
 }
 
 void Doom3MapCompiler::dmapCmd(const cmd::ArgumentList& args)
@@ -180,6 +196,13 @@ void Doom3MapCompiler::setDmapRenderOption(const cmd::ArgumentList& args)
 		return;
 	}
 
+	if (!_debugRenderer)
+	{
+		_debugRenderer.reset(new DebugRenderer);
+		GlobalRenderSystem().attachRenderable(*_debugRenderer);
+	}
+
+	_debugRenderer->setProcFile(_procFile);
 	_debugRenderer->setActiveNode(args[0].getInt());
 
 	GlobalSceneGraph().sceneChanged();
@@ -211,14 +234,16 @@ void Doom3MapCompiler::initialiseModule(const ApplicationContext& ctx)
 
 	GlobalCommandSystem().addCommand("dmap", boost::bind(&Doom3MapCompiler::dmapCmd, this, _1), cmd::ARGTYPE_STRING);
 	GlobalCommandSystem().addCommand("setDmapRenderOption", boost::bind(&Doom3MapCompiler::setDmapRenderOption, this, _1), cmd::ARGTYPE_INT);
-
-	_debugRenderer.reset(new DebugRenderer);
-	GlobalRenderSystem().attachRenderable(*_debugRenderer);
 }
 
 void Doom3MapCompiler::shutdownModule()
 {
-	_debugRenderer.reset();
+	if (_debugRenderer)
+	{
+		GlobalRenderSystem().detachRenderable(*_debugRenderer);
+		_debugRenderer.reset();
+	}
+
 	_procFile.reset();
 }
 
