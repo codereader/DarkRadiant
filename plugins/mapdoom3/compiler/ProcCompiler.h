@@ -48,6 +48,12 @@ private:
 	std::size_t _numUniqueBrushes;
 	std::size_t _numClusters;
 
+	std::size_t _numFloodedLeafs;
+
+	std::size_t _numOutsideLeafs;
+	std::size_t _numInsideLeafs;
+	std::size_t _numSolidLeafs;
+
 public:
 	ProcCompiler(const scene::INodePtr& root);
 
@@ -91,6 +97,14 @@ private:
 	std::size_t filterBrushIntoTreeRecursively(const ProcBrushPtr& brush, const BspTreeNodePtr& node);
 
 	float calculateBrushVolume(const ProcBrushPtr& brush);
+
+	bool floodEntities(BspTree& tree);
+	bool placeOccupant(const BspTreeNodePtr& node, const Vector3& origin, const ProcEntityPtr& entity);
+	void floodPortalsRecursively(const BspTreeNodePtr& node, int dist);
+
+	// Fill (set node->opaque = true) all nodes that can't be reached by entities
+	void fillOutside(const ProcEntity& entity);
+	void fillOutsideRecursively(const BspTreeNodePtr& node);
 
 	ProcWinding getBaseWindingForNode(const BspTreeNodePtr& node);
 

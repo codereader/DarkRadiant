@@ -4,12 +4,19 @@
 #include "icommandsystem.h"
 #include "inode.h"
 
+#include "ProcFile.h"
+#include "DebugRenderer.h"
+
 namespace map
 {
 
 class Doom3MapCompiler :
 	public IMapCompiler
 {
+private:
+	DebugRendererPtr _debugRenderer;
+	ProcFilePtr _procFile;
+
 public:
 	virtual void generateProc(const scene::INodePtr& root);
 
@@ -21,6 +28,8 @@ public:
 private:
 	//  The method called by the "dmap" command
 	void dmapCmd(const cmd::ArgumentList& args);
+
+	void setDmapRenderOption(const cmd::ArgumentList& args);
 
 	// Runs the actual dmap sequence on the given map file
 	void runDmap(const scene::INodePtr& root);

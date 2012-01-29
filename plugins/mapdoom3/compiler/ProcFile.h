@@ -73,7 +73,7 @@ struct ProcEntity
 class ProcFile
 {
 public:
-	typedef std::vector<ProcEntity> ProcEntities;
+	typedef std::vector<ProcEntityPtr> ProcEntities;
 	ProcEntities entities;
 
 	// All the planes in the map

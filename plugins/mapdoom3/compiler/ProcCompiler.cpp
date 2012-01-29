@@ -9,7 +9,9 @@
 namespace map
 {
 
-const std::size_t PLANENUM_LEAF = std::numeric_limits<std::size_t>::max();
+std::size_t	BspTreeNode::nextNodeId = 0;
+std::size_t ProcPortal::nextPortalId = 0;
+
 const float CLIP_EPSILON = 0.1f;
 const float SPLIT_WINDING_EPSILON = 0.001f;
 
@@ -19,7 +21,11 @@ ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_numPeakPortals(0),
 	_numTinyPortals(0),
 	_numUniqueBrushes(0),
-	_numClusters(0)
+	_numClusters(0),
+	_numFloodedLeafs(0),
+	_numOutsideLeafs(0),
+	_numInsideLeafs(0),
+	_numSolidLeafs(0)
 {}
 
 ProcFilePtr ProcCompiler::generateProcFile()
@@ -381,10 +387,10 @@ public:
 
 		if (entityNode)
 		{
-			_procFile->entities.push_back(ProcEntity(entityNode));
+			_procFile->entities.push_back(ProcEntityPtr(new ProcEntity(entityNode)));
 
 			// Traverse this entity's primitives
-			ToolPrimitiveGenerator primitiveGenerator(_procFile->entities.back(), _procFile);
+			ToolPrimitiveGenerator primitiveGenerator(*_procFile->entities.back(), _procFile);
 			node->traverse(primitiveGenerator);
 
 			// Check if this is a light
@@ -411,7 +417,7 @@ public:
 		}
 
 		// Accumulate worldspawn primitives
-		const ProcEntity& entity = *_procFile->entities.begin();
+		const ProcEntity& entity = **_procFile->entities.begin();
 
 		for (std::size_t p = 0; p < entity.primitives.size(); ++p)
 		{
@@ -497,7 +503,7 @@ bool ProcCompiler::processModels()
 {
 	for (std::size_t i = 0; i < _procFile->entities.size(); ++i)
 	{
-		ProcEntity& entity = _procFile->entities[i];
+		ProcEntity& entity = *_procFile->entities[i];
 
 		if (entity.primitives.empty())
 		{
@@ -589,9 +595,6 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 
 		if (dist > nodeMin[axis] + 1.0f && dist < nodeMax[axis] - 1.0f)
 		{
-			//plane[0] = plane[1] = plane[2] = 0.0f;
-			//plane[3] = -dist;
-
 			Plane3 plane(0, 0, 0, dist);
 			plane.normal()[axis] = 1.0f;
 
@@ -626,7 +629,6 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 		if (havePortals != (*split)->portal) continue;
 
 		const Plane3& mapPlane = _procFile->planes.getPlane((*split)->planenum);
-		//mapPlane = &dmapGlobals.mapPlanes[ split->planenum ];
 
 		int splits = 0;
 		int facing = 0;
@@ -658,7 +660,7 @@ std::size_t ProcCompiler::selectSplitPlaneNum(const BspTreeNodePtr& node, BspFac
 			}
 		}
 
-		int value =  5*facing - 5*splits; // - abs(front-back);
+		int value = 5*facing - 5*splits; // - abs(front-back);
 
 		if (PlaneSet::getPlaneType(mapPlane) < PlaneSet::PLANETYPE_TRUEAXIAL)
 		{
@@ -822,6 +824,8 @@ void ProcCompiler::addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNo
 		return;
 	}
 
+	//globalOutputStream() << (boost::format("Adding portal %d to node front = %d and back = %d") % portal->portalId % front->nodeId % back->nodeId) << std::endl;
+
 	portal->nodes[0] = front;
 	portal->nodes[1] = back;
 
@@ -836,6 +840,8 @@ void ProcCompiler::addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNo
 void ProcCompiler::removePortalFromNode(const ProcPortalPtr& portal, const BspTreeNodePtr& node)
 {
 	ProcPortalPtr* portalRef = &node->portals;
+
+	//globalOutputStream() << (boost::format("Removing portal %d from node %d") % portal->portalId % node->nodeId) << std::endl;
 	
 	// remove reference to the current portal
 	while (true)
@@ -887,6 +893,7 @@ void ProcCompiler::removePortalFromNode(const ProcPortalPtr& portal, const BspTr
 void ProcCompiler::makeHeadNodePortals(BspTree& tree)
 {
 	tree.outside->planenum = PLANENUM_LEAF;
+	tree.outside->nodeId = 9999;
 	// TODO tree.outside.brushlist = NULL;
 	tree.outside->portals.reset();
 	tree.outside->opaque = false;
@@ -1063,6 +1070,8 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 	const BspTreeNodePtr& front = node->children[0];
 	const BspTreeNodePtr& back = node->children[1];
 
+	//globalOutputStream() << "-- Split node portals on node " << node->nodeId << std::endl;
+
 	ProcPortalPtr nextPortal;
 
 	for (ProcPortalPtr portal = node->portals; portal; portal = nextPortal)
@@ -1085,6 +1094,7 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
 		nextPortal = portal->next[side];
 
+		// Remember the other node before removing the portal from them
 		BspTreeNodePtr otherNode = portal->nodes[!side];
 
 		removePortalFromNode(portal, portal->nodes[0]);
@@ -1097,12 +1107,16 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
 		if (!frontwinding.empty() && frontwinding.isTiny())
 		{
+			//globalOutputStream() << " Discarding tiny portal " << portal->portalId << std::endl;
+
 			frontwinding.clear();
 			_numTinyPortals++;
 		}
 
 		if (!backwinding.empty() && backwinding.isTiny())
 		{
+			//globalOutputStream() << " Discarding portal " << portal->portalId << std::endl;
+
 			backwinding.clear();
 			_numTinyPortals++;
 		}
@@ -1114,6 +1128,8 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
 		if (frontwinding.empty())
 		{
+			//globalOutputStream() << " No front winding " << portal->portalId << std::endl;
+
 			backwinding.clear();
 
 			if (side == 0)
@@ -1130,6 +1146,8 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
 		if (backwinding.empty())
 		{
+			//globalOutputStream() << " No back winding " << portal->portalId << std::endl;
+
 			frontwinding.clear();
 
 			if (side == 0)
@@ -1143,10 +1161,11 @@ void ProcCompiler::splitNodePortals(const BspTreeNodePtr& node)
 
 			continue;
 		}
+
+		//globalOutputStream() << " Splitting portal " << portal->portalId << std::endl;
 		
 		// the winding is split
-		ProcPortalPtr newPortal(new ProcPortal);
-		*newPortal = *portal;
+		ProcPortalPtr newPortal(new ProcPortal(*portal)); // copy-construct
 		newPortal->winding = backwinding;
 		
 		portal->winding = frontwinding;
@@ -1496,10 +1515,46 @@ void ProcCompiler::filterBrushesIntoTree(ProcEntity& entity)
 	globalOutputStream() << (boost::format("%5i cluster references") % _numClusters).str() << std::endl;
 }
 
-#if 0 // Debug helper to show the brush count in each BSP node
+#if 1 // Debug helpers
+inline std::string printPortals(const BspTreeNodePtr& node)
+{
+	if (!node->portals) return "-";
+
+	std::string rv;
+	std::size_t s;
+	std::size_t count = 0;
+
+	for (ProcPortalPtr p = node->portals; p; p = p->next[s])
+	{
+		if (p->nodes[0] == node)
+		{
+			s = 0;
+		}
+		else
+		{
+			s = 1;
+		}
+
+		count++;
+
+		rv += (!rv.empty()) ? ", " : "";
+		rv += sizetToStr(p->portalId);
+
+		rv += (s == 0) ? " (f)" : " (b)";
+	}
+
+	rv += " [count: " + sizetToStr(count) + "]";
+
+	return rv;
+}
+
 inline void printBrushCount(const BspTreeNodePtr& node, std::size_t level)
 {
-	globalOutputStream() << level << ": node has " << node->brushlist.size() << " brushes." << std::endl;
+	for (std::size_t i = 0; i < level; ++i) globalOutputStream() << " ";
+	globalOutputStream() << level << ": node " << node->nodeId << " has " << node->brushlist.size() << " brushes." << std::endl;
+
+	for (std::size_t i = 0; i < level; ++i) globalOutputStream() << " ";
+	globalOutputStream() << level << ": node " << node->nodeId << " has portals: " << printPortals(node) << std::endl;
 
 	if (node->children[0])
 	{
@@ -1513,9 +1568,204 @@ inline void printBrushCount(const BspTreeNodePtr& node, std::size_t level)
 }
 #endif
 
+void ProcCompiler::floodPortalsRecursively(const BspTreeNodePtr& node, int dist)
+{
+	if (node->occupied)
+	{
+		return;
+	}
+
+	if (node->opaque)
+	{
+		return;
+	}
+
+	_numFloodedLeafs++;
+	node->occupied = dist;
+
+	for (ProcPortal* p = node->portals.get(); p != NULL; )
+	{
+		std::size_t s = p->nodes[1] == node ? 0 : 1;
+
+		floodPortalsRecursively(p->nodes[s], dist + 1);
+
+		p = p->next[s].get();
+	}
+}
+
+bool ProcCompiler::placeOccupant(const BspTreeNodePtr& node, const Vector3& origin, const ProcEntityPtr& entity)
+{
+	assert(node);
+
+	// find the leaf to start in
+	BspTreeNode* nodeIter = node.get();
+
+	while (nodeIter->planenum != PLANENUM_LEAF)
+	{
+		const Plane3& plane = _procFile->planes.getPlane(nodeIter->planenum);
+
+		float d = plane.distanceToPoint(origin);
+
+		if (d >= 0.0f)
+		{
+			nodeIter = nodeIter->children[0].get();
+		}
+		else
+		{
+			nodeIter = nodeIter->children[1].get();
+		}
+
+		assert(nodeIter);
+	}
+
+	if (node->opaque)
+	{
+		return false;
+	}
+
+	node->occupant = entity;
+
+	floodPortalsRecursively(node, 1);
+
+	return true;
+}
+
+bool ProcCompiler::floodEntities(BspTree& tree)
+{
+	const BspTreeNodePtr& headnode = tree.head;
+
+	globalOutputStream() << "--- FloodEntities ---" << std::endl;
+
+	bool inside = false;
+	tree.outside->occupied = 0;
+
+	_numFloodedLeafs = 0;
+	bool errorShown = false;
+
+	for (std::size_t i = 1; i < _procFile->entities.size(); ++i)
+	{
+		Entity& mapEnt = _procFile->entities[i]->mapEntity->getEntity();
+		
+		std::string originStr = mapEnt.getKeyValue("origin");
+
+		if (originStr.empty())
+		{
+			continue;
+		}
+
+		Vector3 origin(originStr);
+
+		// any entity can have "noFlood" set to skip it
+		if (!mapEnt.getKeyValue("noFlood").empty())
+		{
+			continue;
+		}
+
+		std::string className = mapEnt.getKeyValue("classname");
+		
+		if (className == "light")
+		{
+			// don't place lights that have a light_start field, because they can still
+			// be valid if their origin is outside the world
+			if (!mapEnt.getKeyValue("light_start").empty())
+			{
+				continue;
+			}
+
+			// don't place fog lights, because they often
+			// have origins outside the light
+			std::string texture = mapEnt.getKeyValue("texture");
+
+			if (!texture.empty())
+			{
+				MaterialPtr mat = GlobalMaterialManager().getMaterialForName(texture);
+
+				if (mat->isFogLight())
+				{
+					continue;
+				}
+			}
+		}
+
+		if (placeOccupant(headnode, origin, _procFile->entities[i]))
+		{
+			inside = true;
+		}
+
+		if (tree.outside->occupied && !errorShown)
+		{
+			errorShown = true;
+			globalErrorStream() << "Leak on entity #" << i << std::endl;
+			globalErrorStream() << "Entity classname was " << mapEnt.getKeyValue("classname") << std::endl;
+			globalErrorStream() << "Entity name was " << mapEnt.getKeyValue("name") << std::endl;
+			globalErrorStream() << "Entity origin is " << Vector3(mapEnt.getKeyValue("origin")) << std::endl;
+		}
+	}
+
+	globalOutputStream() << (boost::format("%5i flooded leafs") % _numFloodedLeafs).str() << std::endl;
+
+	if (!inside)
+	{
+		globalOutputStream() << "no entities in open -- no filling" << std::endl;
+	}
+	else if (tree.outside->occupied > 0)
+	{
+		globalOutputStream() << "entity reached from outside -- no filling" << std::endl;
+	}
+
+	return inside && tree.outside->occupied == 0;
+}
+
+void ProcCompiler::fillOutsideRecursively(const BspTreeNodePtr& node)
+{
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		fillOutsideRecursively(node->children[0]);
+		fillOutsideRecursively(node->children[1]);
+		return;
+	}
+
+	// anything not reachable by an entity
+	// can be filled away
+	if (!node->occupied)
+	{
+		if (!node->opaque)
+		{
+			_numOutsideLeafs++;
+			node->opaque = true;
+		} 
+		else
+		{
+			_numSolidLeafs++;
+		}
+	}
+	else
+	{
+		_numInsideLeafs++;
+	}
+}
+
+void ProcCompiler::fillOutside(const ProcEntity& entity)
+{
+	_numOutsideLeafs = 0;
+	_numInsideLeafs = 0;
+	_numSolidLeafs = 0;
+
+	globalOutputStream() << "--- FillOutside ---" << std::endl;
+
+	fillOutsideRecursively(entity.tree.head);
+
+	globalOutputStream() << (boost::format("%5i solid leafs") % _numSolidLeafs).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i leafs filled") % _numOutsideLeafs).str() << std::endl;
+	globalOutputStream() << (boost::format("%5i inside leafs") % _numInsideLeafs).str() << std::endl;
+}
+
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 {
 	_bspFaces.clear();
+
+	BspTreeNode::nextNodeId = 0;
+	ProcPortal::nextPortalId = 0;
 
 	// build a bsp tree using all of the sides
 	// of all of the structural brushes
@@ -1535,17 +1785,22 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 	printBrushCount(entity.tree.head, 0);
 #endif
 
-	/*
 	// see if the bsp is completely enclosed
-	if ( floodFill && !dmapGlobals.noFlood ) {
-		if ( FloodEntities( e->tree ) ) {
+	if (floodFill/* && !dmapGlobals.noFlood*/)	// TODO: noflood option
+	{
+		if (floodEntities(entity.tree))
+		{
 			// set the outside leafs to opaque
-			FillOutside( e );
-		} else {
-			common->Printf ( "**********************\n" );
-			common->Warning( "******* leaked *******" );
-			common->Printf ( "**********************\n" );
-			LeakFile( e->tree );
+			fillOutside(entity);
+		}
+		else
+		{
+			globalOutputStream() <<	 "**********************" << std::endl;
+			globalWarningStream() << "******* leaked *******" << std::endl;
+			globalOutputStream() <<  "**********************" << std::endl;
+			
+			// TODO LeakFile( e->tree );
+
 			// bail out here.  If someone really wants to
 			// process a map that leaks, they should use
 			// -noFlood
@@ -1553,7 +1808,7 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 		}
 	}
 
-	// get minimum convex hulls for each visible side
+	/*// get minimum convex hulls for each visible side
 	// this must be done before creating area portals,
 	// because the visible hull is used as the portal
 	ClipSidesByTree( e );

@@ -86,12 +86,14 @@ void Doom3MapCompiler::generateProc(const scene::INodePtr& root)
 
 	ProcCompiler compiler(root);
 
-	ProcFilePtr procFile = compiler.generateProcFile();
+	_procFile = compiler.generateProcFile();
 
-	if (procFile != NULL)
+	if (_procFile != NULL)
 	{
-		procFile->saveToFile("");
+		_procFile->saveToFile("");
 	}
+
+	_debugRenderer->setProcFile(_procFile);
 }
 
 void Doom3MapCompiler::runDmap(const scene::INodePtr& root)
@@ -170,6 +172,19 @@ void Doom3MapCompiler::dmapCmd(const cmd::ArgumentList& args)
 	runDmap(mapPath);
 }
 
+void Doom3MapCompiler::setDmapRenderOption(const cmd::ArgumentList& args)
+{
+	if (args.size() == 0)
+	{
+		globalOutputStream() << "Usage: setDmapRenderOption <nodeId>" << std::endl;
+		return;
+	}
+
+	_debugRenderer->setActiveNode(args[0].getInt());
+
+	GlobalSceneGraph().sceneChanged();
+}
+
 // RegisterableModule implementation
 const std::string& Doom3MapCompiler::getName() const
 {
@@ -184,6 +199,7 @@ const StringSet& Doom3MapCompiler::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_RENDERSYSTEM);
 	}
 
 	return _dependencies;
@@ -194,10 +210,16 @@ void Doom3MapCompiler::initialiseModule(const ApplicationContext& ctx)
 	globalOutputStream() << getName() << ": initialiseModule called." << std::endl;
 
 	GlobalCommandSystem().addCommand("dmap", boost::bind(&Doom3MapCompiler::dmapCmd, this, _1), cmd::ARGTYPE_STRING);
+	GlobalCommandSystem().addCommand("setDmapRenderOption", boost::bind(&Doom3MapCompiler::setDmapRenderOption, this, _1), cmd::ARGTYPE_INT);
+
+	_debugRenderer.reset(new DebugRenderer);
+	GlobalRenderSystem().attachRenderable(*_debugRenderer);
 }
 
 void Doom3MapCompiler::shutdownModule()
 {
+	_debugRenderer.reset();
+	_procFile.reset();
 }
 
 } // namespace

@@ -55,10 +55,10 @@ public:
 
 	float getArea() const;
 
+	Vector3 getCenter() const;
+
 private:
 	Plane3 getPlane() const;
-
-	Vector3 getCenter() const;
 };
 
 } // namespace
