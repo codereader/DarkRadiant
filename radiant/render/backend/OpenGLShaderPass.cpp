@@ -311,11 +311,11 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         // The alpha test value might change over time
         if (_glState.stage0->getAlphaTest() > 0)
         {
-            _glState.renderFlags |= RENDER_ALPHATEST;
+            _glState.setRenderFlag(RENDER_ALPHATEST);
         }
         else
         {
-            _glState.renderFlags &= ~RENDER_ALPHATEST;
+            _glState.clearRenderFlag(RENDER_ALPHATEST);
         }
     }
 
@@ -324,25 +324,19 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     if (_glState.stage3) evaluateStage(_glState.stage3, time, entity);
     if (_glState.stage4) evaluateStage(_glState.stage4, time, entity);
 
-    if (_glState.renderFlags & RENDER_OVERRIDE)
+    if (_glState.testRenderFlag(RENDER_OVERRIDE))
     {
         globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
     }
 
     // Apply the global state mask to our own desired render flags to determine
     // the final set of flags that must bet set
-    unsigned int requiredState = _glState.renderFlags & globalStateMask;
-
-    // In per-entity mode, allow the entity to add requirements
-    if (entity != NULL)
-    {
-        requiredState |= entity->getRequiredShaderFlags();
-    }
+    const unsigned requiredState = _glState.getRenderFlags() & globalStateMask;
 
     // Construct a mask containing all the flags that will be changing between
     // the current state and the required state. This avoids performing
     // unnecessary GL calls to set the state to its existing value.
-    const unsigned int changingBitsMask = requiredState ^ current.renderFlags;
+    const unsigned changingBitsMask = requiredState ^ current.getRenderFlags();
 
     // Set the GLProgram if required
     GLProgram* program = (requiredState & RENDER_PROGRAM) != 0
@@ -569,7 +563,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     current.m_pointsize = _glState.m_pointsize;
   }
 
-  current.renderFlags = requiredState;
+  current.setRenderFlags(requiredState);
 
   GlobalOpenGL().assertNoErrors();
 }
@@ -670,7 +664,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     GLuint attenuation_z = lightShader->lightFalloffImage()->getGLTexNum();
 
     // Bind the falloff textures
-    assert(current.renderFlags & RENDER_TEXTURE_2D);
+    assert(current.testRenderFlag(RENDER_TEXTURE_2D));
 
     setTextureState(
         current.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
@@ -723,8 +717,8 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
             glMultMatrixf(*transform);
 
             // Determine the face direction
-            if ((current.renderFlags & RENDER_CULLFACE) != 0 &&
-                transform->getHandedness() == Matrix4::RIGHTHANDED)
+            if (current.testRenderFlag(RENDER_CULLFACE)
+                && transform->getHandedness() == Matrix4::RIGHTHANDED)
             {
                 glFrontFace(GL_CW);
             }
@@ -743,7 +737,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
         }
 
         // Render the renderable
-        RenderInfo info(current.renderFlags, viewer, current.cubeMapMode);
+        RenderInfo info(current.getRenderFlags(), viewer, current.cubeMapMode);
         r.renderable->render(info);
     }
 
@@ -758,7 +752,7 @@ std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self)
 
     st << (material ? material->getName() : "null material") << " - ";
 
-    st << "Renderflags: " << debug::printStateFlags(self._glState.renderFlags);
+    st << "Renderflags: " << debug::StateFlagsInserter(self._glState.getRenderFlags());
 
     st << " - ";
 

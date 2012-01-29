@@ -8,47 +8,76 @@ namespace debug
 {
     namespace detail
     {
-        // Stream insertion helper class
-        struct StateFlagsInserter
+        inline bool boolFromGLBool(GLboolean b)
         {
-            int flags;
-            StateFlagsInserter(int f): flags(f) { }
-        };
-
-        // Stream insertion function
-        inline std::ostream& operator<<(std::ostream& os,
-                                        const StateFlagsInserter& s)
-        {
-            #define OUTPUT_RENDERFLAG(x) if (s.flags & (x)) { os << "|" << #x; }
-            OUTPUT_RENDERFLAG(RENDER_LINESTIPPLE);
-            OUTPUT_RENDERFLAG(RENDER_LINESMOOTH);
-            OUTPUT_RENDERFLAG(RENDER_POLYGONSTIPPLE);
-            OUTPUT_RENDERFLAG(RENDER_POLYGONSMOOTH);
-            OUTPUT_RENDERFLAG(RENDER_ALPHATEST);
-            OUTPUT_RENDERFLAG(RENDER_DEPTHTEST);
-            OUTPUT_RENDERFLAG(RENDER_DEPTHWRITE);
-            OUTPUT_RENDERFLAG(RENDER_COLOURWRITE);
-            OUTPUT_RENDERFLAG(RENDER_CULLFACE);
-            OUTPUT_RENDERFLAG(RENDER_SCALED);
-            OUTPUT_RENDERFLAG(RENDER_SMOOTH);
-            OUTPUT_RENDERFLAG(RENDER_LIGHTING);
-            OUTPUT_RENDERFLAG(RENDER_BLEND);
-            OUTPUT_RENDERFLAG(RENDER_OFFSETLINE);
-            OUTPUT_RENDERFLAG(RENDER_FILL);
-            OUTPUT_RENDERFLAG(RENDER_VERTEX_COLOUR);
-            OUTPUT_RENDERFLAG(RENDER_TEXTURE_2D);
-            OUTPUT_RENDERFLAG(RENDER_TEXTURE_CUBEMAP);
-            OUTPUT_RENDERFLAG(RENDER_BUMP);
-            OUTPUT_RENDERFLAG(RENDER_PROGRAM);
-            OUTPUT_RENDERFLAG(RENDER_OVERRIDE);
-            return os;
+            return b == GL_TRUE;
         }
     }
 
-    /// Convert a renderstateflags int to a streamable object for debugging
-    inline detail::StateFlagsInserter printStateFlags(int flags)
+    /// Streamable object to insert render state flags
+    struct StateFlagsInserter
     {
-        return detail::StateFlagsInserter(flags);
+        int flags;
+        StateFlagsInserter(int f): flags(f) { }
+    };
+
+    inline std::ostream& operator<<(std::ostream& os,
+                                    const StateFlagsInserter& s)
+    {
+        #define OUTPUT_RENDERFLAG(x) if (s.flags & (x)) { os << "|" << #x; }
+        OUTPUT_RENDERFLAG(RENDER_LINESTIPPLE);
+        OUTPUT_RENDERFLAG(RENDER_LINESMOOTH);
+        OUTPUT_RENDERFLAG(RENDER_POLYGONSTIPPLE);
+        OUTPUT_RENDERFLAG(RENDER_POLYGONSMOOTH);
+        OUTPUT_RENDERFLAG(RENDER_ALPHATEST);
+        OUTPUT_RENDERFLAG(RENDER_DEPTHTEST);
+        OUTPUT_RENDERFLAG(RENDER_DEPTHWRITE);
+        OUTPUT_RENDERFLAG(RENDER_COLOURWRITE);
+        OUTPUT_RENDERFLAG(RENDER_CULLFACE);
+        OUTPUT_RENDERFLAG(RENDER_SCALED);
+        OUTPUT_RENDERFLAG(RENDER_SMOOTH);
+        OUTPUT_RENDERFLAG(RENDER_LIGHTING);
+        OUTPUT_RENDERFLAG(RENDER_BLEND);
+        OUTPUT_RENDERFLAG(RENDER_OFFSETLINE);
+        OUTPUT_RENDERFLAG(RENDER_FILL);
+        OUTPUT_RENDERFLAG(RENDER_VERTEX_COLOUR);
+        OUTPUT_RENDERFLAG(RENDER_TEXTURE_2D);
+        OUTPUT_RENDERFLAG(RENDER_TEXTURE_CUBEMAP);
+        OUTPUT_RENDERFLAG(RENDER_BUMP);
+        OUTPUT_RENDERFLAG(RENDER_PROGRAM);
+        OUTPUT_RENDERFLAG(RENDER_OVERRIDE);
+        return os;
+    }
+
+    /// Streamable object to insert glColorMask value
+    class ColorMaskInserter { };
+
+    inline std::ostream& operator<<(std::ostream& os,
+                                    const ColorMaskInserter& i)
+    {
+        using namespace detail;
+
+        GLboolean vals[4];
+        glGetBooleanv(GL_COLOR_WRITEMASK, &vals[0]);
+
+        os << "{ R = " << boolFromGLBool(vals[0]) 
+           << ", G = " << boolFromGLBool(vals[1])
+           << ", B = " << boolFromGLBool(vals[2]) 
+           << ", A = " << boolFromGLBool(vals[3]) << " }";
+        return os;
+    }
+
+    /// Streamable object to insert glDepthMask value
+    class DepthMaskInserter { };
+
+    inline std::ostream& operator<<(std::ostream& os,
+                                    const DepthMaskInserter& i)
+    {
+        GLboolean mask;
+        glGetBooleanv(GL_DEPTH_WRITEMASK, &mask);
+
+        os << detail::boolFromGLBool(mask);
+        return os;
     }
 
     /// Get the current GL_COLOR as a Colour4 for debugging

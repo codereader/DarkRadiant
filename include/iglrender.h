@@ -16,6 +16,13 @@ class GLProgram;
  * \brief
  * Data structure encapsulating various parameters of the OpenGL state machine,
  * as well as parameters used internally by Radiant.
+ *
+ * The OpenGLState class is used to keep track of OpenGL state parameters used
+ * by the renderer, in order to avoid using slow glGet() calls or repeatedly
+ * changing states to the same value. Each shader pass keeps an OpenGLState
+ * member which stores the state values it wishes to use, and these values are
+ * selectively applied to a single "current" OpenGLState object maintained by
+ * the render system.
  */
 class OpenGLState
 {
@@ -25,6 +32,9 @@ class OpenGLState
 
     // Colour inversion flag
     bool _invertColour;
+
+    // Set of RENDER_XXX flags
+    unsigned _renderFlags;
 
 public:
 	enum ESort
@@ -79,16 +89,36 @@ public:
     void setColourInverted(bool inverted) { _invertColour = inverted; }
 
     /// Test whether this state is inverting colour values
-    bool isColourInverted() const        { return _invertColour; }
+    bool isColourInverted() const         { return _invertColour; }
 
-    /**
-     * \brief
-     * Render state flags.
-     *
-     * A bitfield containing render flags such as RENDER_COLOURWRITE or
-     * RENDER_BLEND.
-     */
-    unsigned int renderFlags;
+    /// \name Render flag operations
+    ///@{
+
+    /// Set all render flags for this state
+    void setRenderFlags(unsigned newFlags) { _renderFlags = newFlags; }
+
+    /// Set a single render flag on this state
+    void setRenderFlag(unsigned flag)
+    {
+        setRenderFlags(_renderFlags | flag);
+    }
+
+    /// Clear a single render flag on this state
+    void clearRenderFlag(unsigned flag)
+    {
+        setRenderFlags(_renderFlags & ~flag);
+    }
+
+    /// Test the value of a single render flag
+    bool testRenderFlag(unsigned flag) const
+    {
+        return (_renderFlags & flag) > 0;
+    }
+
+    /// Return the render flags for this state
+    unsigned getRenderFlags() const { return _renderFlags; }
+
+    ///@}
 
     /**
      * \brief
@@ -167,11 +197,11 @@ public:
      */
     ShaderLayer::CubeMapMode cubeMapMode;
 
-	// Default constructor
+	/// Default constructor
 	OpenGLState()
 	: _colour(Colour4::WHITE()),
       _invertColour(false),
-	  renderFlags(0), // corresponds to RENDER_DEFAULT. TODO: potentially fragile
+	  _renderFlags(0),
 	  m_sort(eSortFirst),
       polygonOffset(0.0f),
 	  texture0(0),

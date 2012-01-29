@@ -31,7 +31,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     {
         g_assert(pass);
 
-		if ((pass->state().renderFlags & RENDER_BUMP) != 0)
+		if (pass->state().testRenderFlag(RENDER_BUMP))
 		{
 			if (lights != NULL)
 			{
@@ -53,7 +53,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 {
     BOOST_FOREACH(OpenGLShaderPassPtr pass, _shaderPasses)
     {
-		if ((pass->state().renderFlags & RENDER_BUMP) != 0)
+        if (pass->state().testRenderFlag(RENDER_BUMP))
 		{
 			if (lights != NULL)
 			{
@@ -211,13 +211,12 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     {
         // Create depth-buffer fill pass
         OpenGLState& zPass = appendDefaultPass();
-        zPass.renderFlags = RENDER_FILL
-                          | RENDER_CULLFACE
-                          | RENDER_DEPTHTEST
-                          | RENDER_DEPTHWRITE
-                          | RENDER_PROGRAM;
+        zPass.setRenderFlag(RENDER_FILL);
+        zPass.setRenderFlag(RENDER_CULLFACE);
+        zPass.setRenderFlag(RENDER_DEPTHTEST);
+        zPass.setRenderFlag(RENDER_DEPTHWRITE);
+        zPass.setRenderFlag(RENDER_PROGRAM);
 
-        zPass.setColour(Colour4::BLACK());
         zPass.m_sort = OpenGLState::eSortOpaque;
 
         zPass.glProgram = GLProgramFactory::instance().getProgram("depthFill");
@@ -230,23 +229,22 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     setGLTexturesFromTriplet(dbsPass, triplet);
 
     // Set render flags
-    dbsPass.renderFlags = RENDER_BLEND
-                        | RENDER_FILL
-                        | RENDER_TEXTURE_2D
-                        | RENDER_CULLFACE
-                        | RENDER_DEPTHTEST
-						| RENDER_DEPTHWRITE
-                        | RENDER_COLOURWRITE
-                        | RENDER_SMOOTH
-                        | RENDER_BUMP
-                        | RENDER_PROGRAM;
+    dbsPass.setRenderFlag(RENDER_BLEND);
+    dbsPass.setRenderFlag(RENDER_FILL);
+    dbsPass.setRenderFlag(RENDER_TEXTURE_2D);
+    dbsPass.setRenderFlag(RENDER_CULLFACE);
+    dbsPass.setRenderFlag(RENDER_DEPTHTEST);
+    dbsPass.setRenderFlag(RENDER_COLOURWRITE);
+    dbsPass.setRenderFlag(RENDER_SMOOTH);
+    dbsPass.setRenderFlag(RENDER_BUMP);
+    dbsPass.setRenderFlag(RENDER_PROGRAM);
 
     dbsPass.glProgram = GLProgramFactory::instance().getProgram("bumpMap");
 
     if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
     {
         // Vertex colours allowed
-        dbsPass.renderFlags |= RENDER_VERTEX_COLOUR;
+        dbsPass.setRenderFlag(RENDER_VERTEX_COLOUR);
 
         if (vcolMode == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
         {
@@ -273,7 +271,7 @@ void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, float alphaTest)
 {
     if (alphaTest > 0)
     {
-        pass.renderFlags |= RENDER_ALPHATEST;
+        pass.setRenderFlag(RENDER_ALPHATEST);
         pass.alphaFunc = GL_GEQUAL; // alpha >= threshold
         pass.alphaThreshold = alphaTest;
     }
@@ -374,7 +372,7 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
 	// greebo: Hack to let "shader not found" textures be handled as diffusemaps
     if (!hasDiffuseLayer && !allLayers.empty() && _material->getName() != "_default")
     {
-		pass.renderFlags |= RENDER_BLEND;
+		pass.setRenderFlag(RENDER_BLEND);
 		pass.m_sort = OpenGLState::eSortTranslucent;
 
 		BlendFunc bf = allLayers[0]->getBlendFunc();
@@ -390,23 +388,24 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 
     // Render the editor texture in legacy mode
     previewPass.texture0 = _material->getEditorImage()->getGLTexNum();
-    previewPass.renderFlags = RENDER_FILL
-                              | RENDER_TEXTURE_2D
-                              | RENDER_DEPTHTEST
-                              | RENDER_COLOURWRITE
-                              | RENDER_LIGHTING
-                              | RENDER_SMOOTH;
+
+    previewPass.setRenderFlag(RENDER_FILL);
+    previewPass.setRenderFlag(RENDER_TEXTURE_2D);
+    previewPass.setRenderFlag(RENDER_DEPTHTEST);
+    previewPass.setRenderFlag(RENDER_COLOURWRITE);
+    previewPass.setRenderFlag(RENDER_LIGHTING);
+    previewPass.setRenderFlag(RENDER_SMOOTH);
 
 	// Don't let translucent materials write to the depth buffer
 	if ((_material->getMaterialFlags() & Material::FLAG_TRANSLUCENT) == 0)
 	{
-		previewPass.renderFlags |= RENDER_DEPTHWRITE;
+		previewPass.setRenderFlag(RENDER_DEPTHWRITE);
 	}
 
     // Handle certain shader flags
 	if (_material->getCullType() != Material::CULL_NONE)
     {
-        previewPass.renderFlags |= RENDER_CULLFACE;
+        previewPass.setRenderFlag(RENDER_CULLFACE);
     }
 
     // Set up blend properties
@@ -435,10 +434,10 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
     TexturePtr layerTex = layer->getTexture();
 
     OpenGLState& state = appendDefaultPass();
-    state.renderFlags = RENDER_FILL
-                    | RENDER_BLEND
-                    | RENDER_DEPTHTEST
-                    | RENDER_COLOURWRITE;
+    state.setRenderFlag(RENDER_FILL);
+    state.setRenderFlag(RENDER_BLEND);
+    state.setRenderFlag(RENDER_DEPTHTEST);
+    state.setRenderFlag(RENDER_COLOURWRITE);
 
 	// Remember the stage for later evaluation of shader expressions
 	state.stage0 = layer;
@@ -455,18 +454,18 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
     if (state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA ||
 		(state.m_blend_src == GL_ONE && state.m_blend_dst == GL_ZERO))
     {
-		state.renderFlags |= RENDER_DEPTHWRITE;
+		state.setRenderFlag(RENDER_DEPTHWRITE);
     }
 
     // Set texture dimensionality (cube map or 2D)
     state.cubeMapMode = layer->getCubeMapMode();
     if (state.cubeMapMode == ShaderLayer::CUBE_MAP_CAMERA)
     {
-        state.renderFlags |= RENDER_TEXTURE_CUBEMAP;
+        state.setRenderFlag(RENDER_TEXTURE_CUBEMAP);
     }
     else
     {
-        state.renderFlags |= RENDER_TEXTURE_2D;
+        state.setRenderFlag(RENDER_TEXTURE_2D);
     }
 
     // Colour modulation
@@ -526,7 +525,7 @@ void OpenGLShader::construct(const std::string& name)
             colour[3] = 1.0f;
             state.setColour(colour);
 
-            state.renderFlags = RENDER_FILL|RENDER_LIGHTING|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+            state.setRenderFlags(RENDER_FILL | RENDER_LIGHTING | RENDER_DEPTHTEST | RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
             state.m_sort = OpenGLState::eSortFullbright;
             break;
         }
@@ -540,7 +539,7 @@ void OpenGLShader::construct(const std::string& name)
             colour[3] = 0.5f;
             state.setColour(colour);
 
-            state.renderFlags = RENDER_FILL|RENDER_LIGHTING|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_BLEND;
+            state.setRenderFlags(RENDER_FILL | RENDER_LIGHTING | RENDER_DEPTHTEST | RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_BLEND);
             state.m_sort = OpenGLState::eSortTranslucent;
             break;
         }
@@ -554,7 +553,7 @@ void OpenGLShader::construct(const std::string& name)
             colour[3] = 1;
             state.setColour(colour);
 
-            state.renderFlags = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+            state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
             state.m_sort = OpenGLState::eSortFullbright;
             state.m_depthfunc = GL_LESS;
             state.m_linewidth = 1;
@@ -568,37 +567,40 @@ void OpenGLShader::construct(const std::string& name)
 
             if (name == "$POINT")
             {
-              state.renderFlags = RENDER_POINT_COLOUR
-                                | RENDER_COLOURWRITE
-                                | RENDER_DEPTHWRITE;
+              state.setRenderFlag(RENDER_POINT_COLOUR);
+              state.setRenderFlag(RENDER_COLOURWRITE);
+              state.setRenderFlag(RENDER_DEPTHWRITE);
+
               state.m_sort = OpenGLState::eSortControlFirst;
               state.m_pointsize = 4;
             }
             else if (name == "$SELPOINT")
             {
-              state.renderFlags = RENDER_POINT_COLOUR
-                                | RENDER_COLOURWRITE
-                                | RENDER_DEPTHWRITE;
+              state.setRenderFlag(RENDER_POINT_COLOUR);
+              state.setRenderFlag(RENDER_COLOURWRITE);
+              state.setRenderFlag(RENDER_DEPTHWRITE);
+
               state.m_sort = OpenGLState::eSortControlFirst + 1;
               state.m_pointsize = 4;
             }
             else if (name == "$BIGPOINT")
             {
-              state.renderFlags = RENDER_POINT_COLOUR
-                                | RENDER_COLOURWRITE
-                                | RENDER_DEPTHWRITE;
+              state.setRenderFlag(RENDER_POINT_COLOUR);
+              state.setRenderFlag(RENDER_COLOURWRITE);
+              state.setRenderFlag(RENDER_DEPTHWRITE);
+
               state.m_sort = OpenGLState::eSortControlFirst;
               state.m_pointsize = 6;
             }
             else if (name == "$PIVOT")
             {
-              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_DEPTHWRITE;
+              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_linewidth = 2;
               state.m_depthfunc = GL_LEQUAL;
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHTEST|RENDER_LINESTIPPLE;
+              hiddenLine.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
               hiddenLine.m_linewidth = 2;
               hiddenLine.m_depthfunc = GL_GREATER;
@@ -606,12 +608,12 @@ void OpenGLShader::construct(const std::string& name)
             else if (name == "$LATTICE")
             {
               state.setColour(1, 0.5, 0, 1);
-              state.renderFlags = RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
               state.m_sort = OpenGLState::eSortControlFirst;
             }
             else if (name == "$WIREFRAME")
             {
-              state.renderFlags = RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE;
+              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
               state.m_sort = OpenGLState::eSortFullbright;
             }
             else if (name == "$CAM_HIGHLIGHT")
@@ -620,19 +622,19 @@ void OpenGLShader::construct(const std::string& name)
                               highLightColour[1],
                               highLightColour[2],
                               0.3f);
-              state.renderFlags = RENDER_FILL|RENDER_DEPTHTEST|RENDER_CULLFACE|RENDER_BLEND|RENDER_COLOURWRITE;
+              state.setRenderFlags(RENDER_FILL | RENDER_DEPTHTEST | RENDER_CULLFACE | RENDER_BLEND | RENDER_COLOURWRITE);
               state.m_sort = OpenGLState::eSortHighlight;
               state.m_depthfunc = GL_LEQUAL;
             }
             else if (name == "$CAM_OVERLAY")
             {
-              state.renderFlags = RENDER_CULLFACE|RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_DEPTHWRITE|RENDER_OFFSETLINE;
+              state.setRenderFlags(RENDER_CULLFACE | RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_OFFSETLINE);
               state.m_sort = OpenGLState::eSortOverlayFirst + 1;
               state.m_depthfunc = GL_LEQUAL;
 
               OpenGLState& hiddenLine = appendDefaultPass();
               hiddenLine.setColour(0.75, 0.75, 0.75, 1);
-              hiddenLine.renderFlags = RENDER_CULLFACE|RENDER_DEPTHTEST|RENDER_COLOURWRITE|RENDER_OFFSETLINE|RENDER_LINESTIPPLE;
+              hiddenLine.setRenderFlags(RENDER_CULLFACE | RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_OFFSETLINE | RENDER_LINESTIPPLE);
               hiddenLine.m_sort = OpenGLState::eSortOverlayFirst;
               hiddenLine.m_depthfunc = GL_GREATER;
               hiddenLine.m_linestipple_factor = 2;
@@ -644,42 +646,42 @@ void OpenGLShader::construct(const std::string& name)
                               colorSelBrushes[1],
                               colorSelBrushes[2],
                               1);
-              state.renderFlags = RENDER_COLOURWRITE | RENDER_LINESTIPPLE;
+              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_LINESTIPPLE);
               state.m_sort = OpenGLState::eSortOverlayFirst;
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
             }
             else if (name == "$DEBUG_CLIPPED")
             {
-              state.renderFlags = RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
+              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
               state.m_sort = OpenGLState::eSortLast;
             }
             else if (name == "$POINTFILE")
             {
               state.setColour(1, 0, 0, 1);
-              state.renderFlags = RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE;
+              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
               state.m_sort = OpenGLState::eSortFullbright;
               state.m_linewidth = 4;
             }
             else if (name == "$WIRE_OVERLAY")
             {
-              state.renderFlags = RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
+              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE);
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_depthfunc = GL_LEQUAL;
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.renderFlags = RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE;
+              hiddenLine.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE);
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
               hiddenLine.m_depthfunc = GL_GREATER;
             }
             else if (name == "$FLATSHADE_OVERLAY")
             {
-              state.renderFlags = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE;
+              state.setRenderFlags(RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE);
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_depthfunc = GL_LEQUAL;
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.renderFlags = RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_POLYGONSTIPPLE;
+              hiddenLine.setRenderFlags(RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_POLYGONSTIPPLE);
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
               hiddenLine.m_depthfunc = GL_GREATER;
             }
@@ -690,7 +692,7 @@ void OpenGLShader::construct(const std::string& name)
                               colorClipper[1],
                               colorClipper[2],
                               1);
-              state.renderFlags = RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_FILL | RENDER_POLYGONSTIPPLE;
+              state.setRenderFlags(RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_FILL | RENDER_POLYGONSTIPPLE);
               state.m_sort = OpenGLState::eSortOverlayFirst;
             }
             else

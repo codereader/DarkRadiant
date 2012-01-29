@@ -20,10 +20,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 /// ============================================================================
 
-uniform sampler2D	u_colormap;
-
 void	main()
 {
-	gl_FragColor.a = texture2D(u_colormap, gl_TexCoord[0].st).a;
-	gl_FragColor.rgb = vec3(0.0, 0.0, 0.0);
+	gl_FragColor.a = 1.0;
+	gl_FragColor.rgb = vec3(1.0, 1.0, 0.0);
 }

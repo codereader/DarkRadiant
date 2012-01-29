@@ -135,7 +135,8 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 	OpenGLState current;
 	current.m_sort = OpenGLState::eSortFirst;
 
-    // default renderstate settings
+    // Set up initial GL state. This MUST MATCH the defaults in the OpenGLState
+    // object, otherwise required state changes may not occur.
     glLineStipple(current.m_linestipple_factor,
     			  current.m_linestipple_pattern);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -150,8 +151,15 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
     glDisable(GL_CULL_FACE);
     glShadeModel(GL_FLAT);
     glDisable(GL_DEPTH_TEST);
+
+    // RENDER_DEPTHWRITE defaults to 0
     glDepthMask(GL_FALSE);
+
+    // RENDER_COLOURWRITE defaults to 0
+    glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
     glDisable(GL_ALPHA_TEST);
+
     glDisable(GL_LINE_STIPPLE);
     glDisable(GL_POLYGON_STIPPLE);
     glDisable(GL_POLYGON_OFFSET_LINE);

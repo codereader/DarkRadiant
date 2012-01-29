@@ -72,9 +72,6 @@ protected:
 	// This entity's main direction, usually determined by the angle/rotation keys
 	Vector3 _direction;
 
-	// Additional shader flags for consideration by the render system
-	unsigned int _requiredShaderFlags;
-
 	// The wireframe / solid shaders as determined by the entityclass
 	ShaderPtr _fillShader;
 	ShaderPtr _wireShader;
@@ -96,8 +93,6 @@ public:
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const;
 	virtual const Vector3& getDirection() const;
-	virtual unsigned int getRequiredShaderFlags() const;
-	virtual void setRequiredShaderFlags(unsigned int flags);
 
 	// SelectionTestable implementation
 	virtual void testSelect(Selector& selector, SelectionTest& test);

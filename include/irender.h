@@ -145,16 +145,6 @@ typedef boost::shared_ptr<Shader> ShaderPtr;
 class IRenderEntity
 {
 public:
-	/**
-	 * Returns additional shader flags - some entities do add requirements
-	 * with regard to openGL states.
-	 */
-	virtual unsigned int getRequiredShaderFlags() const = 0;
-
-	/**
-	 * Set required shader flags.
-	 */
-	virtual void setRequiredShaderFlags(unsigned int flags) = 0;
 
 	/**
 	 * Get the value of this entity's shader parm with the given index.
