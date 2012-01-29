@@ -66,6 +66,13 @@ struct ProcEntity
 	{}
 };
 
+struct ProcInterAreaPortal
+{
+	std::size_t area0;
+	std::size_t area1;
+	ProcFace*	side;
+};
+
 class LeakFile;
 typedef boost::shared_ptr<LeakFile> LeakFilePtr;
 
@@ -94,6 +101,9 @@ public:
 	ProcLights lights;
 
 	LeakFilePtr leakFile;
+
+	typedef std::vector<ProcInterAreaPortal> InterAreaPortals;
+	InterAreaPortals interAreaPortals;
 
 	ProcFile() :
 		numPortals(0),

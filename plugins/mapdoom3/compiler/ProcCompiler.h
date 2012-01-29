@@ -126,6 +126,8 @@ private:
 	// Adds non-opaque leaf fragments to the convex hull
 	void clipSideByTreeRecursively(ProcWinding& winding, ProcFace& side, const BspTreeNodePtr& node);
 
+	// Mark each leaf with an area, bounded by Material::SURF_AREAPORTAL
+	// sets entity.areas
 	void floodAreas(ProcEntity& entity);
 	
 	// Set all the areas to -1 before filling
@@ -137,6 +139,8 @@ private:
 	void floodAreasRecursively(const BspTreeNodePtr& node);
 
 	ProcFace* findSideForPortal(const ProcPortalPtr& portal);
+	void checkAreasRecursively(const BspTreeNodePtr& node);
+	void findInterAreaPortalsRecursively(const BspTreeNodePtr& node);
 
 	// returns true if the portal has non-opaque leafs on both sides
 	static bool portalIsPassable(const ProcPortal& portal);

@@ -2001,6 +2001,106 @@ void ProcCompiler::findAreasRecursively(const BspTreeNodePtr& node)
 	_numAreas++;
 }
 
+void ProcCompiler::checkAreasRecursively(const BspTreeNodePtr& node)
+{
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		checkAreasRecursively(node->children[0]);
+		checkAreasRecursively(node->children[1]);
+		return;
+	}
+
+	if (!node->opaque && node->area < 0)
+	{
+		globalErrorStream() << "ProcCompiler::checkAreasRecursively: area = %i" << node->area << std::endl;
+	}
+}
+
+void ProcCompiler::findInterAreaPortalsRecursively(const BspTreeNodePtr& node)
+{
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		findInterAreaPortalsRecursively(node->children[0]);
+		findInterAreaPortalsRecursively(node->children[1]);
+		return;
+	}
+
+	if (node->opaque)
+	{
+		return;
+	}
+
+	std::size_t s = 0;
+	for (ProcPortalPtr p = node->portals; p; p = p->next[s])
+	{
+		s = (p->nodes[1] == node) ? 1 : 0;
+		const BspTreeNodePtr& other = p->nodes[1-s];
+
+		if (other->opaque)
+		{
+			continue;
+		}
+
+		// only report areas going from lower number to higher number
+		// so we don't report the portal twice
+		if (other->area <= node->area)
+		{
+			continue;
+		}
+
+		ProcFace* side = findSideForPortal(p);
+
+		if (side == NULL)
+		{
+			globalWarningStream() << "findSideForPortal failed at " << p->winding.getCenter() << std::endl;
+			continue;
+		}
+
+		const ProcWinding& w = side->visibleHull;
+
+		if (w.empty())
+		{
+			continue;
+		}
+
+		// see if we have created this portal before
+		std::size_t i = 0;
+
+		for (i = 0; i < _procFile->interAreaPortals.size(); ++i)
+		{
+			ProcInterAreaPortal& iap = _procFile->interAreaPortals[i];
+
+			if (side == iap.side &&
+				((p->nodes[0]->area == iap.area0 && p->nodes[1]->area == iap.area1) || 
+				 (p->nodes[1]->area == iap.area0 && p->nodes[0]->area == iap.area1))) 
+			{
+				break;
+			}
+		}
+
+		if (i != _procFile->interAreaPortals.size())
+		{
+			continue;	// already emitted
+		}
+
+		_procFile->interAreaPortals.push_back(ProcInterAreaPortal());
+		ProcInterAreaPortal& iap = _procFile->interAreaPortals.back();
+
+		if (side->planenum == p->onnode->planenum)
+		{
+			iap.area0 = p->nodes[0]->area;
+			iap.area1 = p->nodes[1]->area;
+		}
+		else
+		{
+			iap.area0 = p->nodes[1]->area;
+			iap.area1 = p->nodes[0]->area;
+		}
+
+		iap.side = side;
+	}
+}
+
 void ProcCompiler::floodAreas(ProcEntity& entity)
 {
 	globalOutputStream() <<	"--- FloodAreas ---" << std::endl;
@@ -2017,13 +2117,16 @@ void ProcCompiler::floodAreas(ProcEntity& entity)
 	entity.numAreas = _numAreas;
 
 	// make sure we got all of them
-	/*CheckAreas_r( e->tree->headnode );
+	checkAreasRecursively(entity.tree.head);
 
 	// identify all portals between areas if this is the world
-	if ( e == &dmapGlobals.uEntities[0] ) {
-		numInterAreaPortals = 0;
-		FindInterAreaPortals_r( e->tree->headnode );
-	}*/
+	if (&entity == _procFile->entities.begin()->get())
+	{
+		_procFile->interAreaPortals.clear();
+		findInterAreaPortalsRecursively(entity.tree.head);
+
+		globalOutputStream() << (boost::format("%5i interarea portals") % _procFile->interAreaPortals.size()) << std::endl;
+	}
 }
 
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
