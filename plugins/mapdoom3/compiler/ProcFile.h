@@ -57,11 +57,12 @@ struct ProcEntity
 
 	BspTree			tree;
 
-	//int					numAreas;
+	std::size_t		numAreas;
 	//uArea_t *			areas;
 
 	ProcEntity(const IEntityNodePtr& entityNode) :
-		mapEntity(entityNode)
+		mapEntity(entityNode),
+		numAreas(0)
 	{}
 };
 

@@ -55,6 +55,9 @@ private:
 	std::size_t _numInsideLeafs;
 	std::size_t _numSolidLeafs;
 
+	std::size_t _numAreas;
+	std::size_t _numAreaFloods;
+
 public:
 	ProcCompiler(const scene::INodePtr& root);
 
@@ -122,6 +125,21 @@ private:
 
 	// Adds non-opaque leaf fragments to the convex hull
 	void clipSideByTreeRecursively(ProcWinding& winding, ProcFace& side, const BspTreeNodePtr& node);
+
+	void floodAreas(ProcEntity& entity);
+	
+	// Set all the areas to -1 before filling
+	void clearAreasRecursively(const BspTreeNodePtr& node);
+
+	// Just decend the tree, and for each node that hasn't had an area set, flood fill out from there
+	void findAreasRecursively(const BspTreeNodePtr& node);
+
+	void floodAreasRecursively(const BspTreeNodePtr& node);
+
+	ProcFace* findSideForPortal(const ProcPortalPtr& portal);
+
+	// returns true if the portal has non-opaque leafs on both sides
+	static bool portalIsPassable(const ProcPortal& portal);
 };
 
 } // namespace

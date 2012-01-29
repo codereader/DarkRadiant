@@ -73,7 +73,7 @@ struct BspTreeNode
 	Brushes				brushlist;	// fragments of all brushes in this leaf
 									// needed for FindSideForPortal
 
-	int					area;		// determined by flood filling up to areaportals
+	std::size_t			area;		// determined by flood filling up to areaportals
 	int					occupied;	// 1 or greater can reach entity
 	ProcEntityPtr		occupant;	// for leak file testing
 

@@ -25,7 +25,9 @@ ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_numFloodedLeafs(0),
 	_numOutsideLeafs(0),
 	_numInsideLeafs(0),
-	_numSolidLeafs(0)
+	_numSolidLeafs(0),
+	_numAreas(0),
+	_numAreaFloods(0)
 {}
 
 ProcFilePtr ProcCompiler::generateProcFile()
@@ -1828,6 +1830,202 @@ void ProcCompiler::clipSidesByTree(ProcEntity& entity)
 	}
 }
 
+void ProcCompiler::clearAreasRecursively(const BspTreeNodePtr& node)
+{
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		clearAreasRecursively(node->children[0]);
+		clearAreasRecursively(node->children[1]);
+		return;
+	}
+
+	node->area = -1;
+}
+
+bool ProcCompiler::portalIsPassable(const ProcPortal& portal)
+{
+	if (!portal.onnode)
+	{
+		return false;	// to global outsideleaf
+	}
+
+	if (portal.nodes[0]->planenum != PLANENUM_LEAF || portal.nodes[1]->planenum != PLANENUM_LEAF)
+	{
+		globalErrorStream() << "ProcCompiler::portalIsPassable: not a leaf" << std::endl;
+		return false;
+	}
+
+	if (!portal.nodes[0]->opaque && !portal.nodes[1]->opaque )
+	{
+		return true;
+	}
+
+	return false;
+}
+
+ProcFace* ProcCompiler::findSideForPortal(const ProcPortalPtr& portal)
+{
+	// scan both bordering nodes brush lists for a portal brush
+	// that shares the plane
+	for (std::size_t i = 0; i < 2; ++i)
+	{
+		BspTreeNodePtr node = portal->nodes[i];
+
+		for (BspTreeNode::Brushes::const_iterator b = node->brushlist.begin(); b != node->brushlist.end(); ++b)
+		{
+			ProcBrush& brush = **b;
+
+			if (!(brush.contents & Material::SURF_AREAPORTAL))
+			{
+				continue;
+			}
+
+			ProcBrushPtr orig = brush.original.lock();
+
+			assert(orig);
+
+			for (std::size_t j = 0 ; j < orig->sides.size(); ++j)
+			{
+				ProcFace& s = orig->sides[j];
+
+				if (s.visibleHull.empty())
+				{
+					continue;
+				}
+
+				if (!(s.material->getSurfaceFlags() & Material::SURF_AREAPORTAL))
+				{
+					continue;
+				}
+
+				if ((s.planenum & ~1) != (portal->onnode->planenum & ~1))
+				{
+					continue;
+				}
+
+				// remove the visible hull from any other portal sides of this portal brush
+				for (std::size_t k = 0; k < orig->sides.size(); ++k)
+				{
+					if (k == j)
+					{
+						continue;
+					}
+
+					ProcFace& s2 = orig->sides[k];
+
+					if (s2.visibleHull.empty())
+					{
+						continue;
+					}
+
+					if (!(s2.material->getSurfaceFlags() & Material::SURF_AREAPORTAL))
+					{
+						continue;
+					}
+
+					Vector3 center = s2.visibleHull.getCenter();
+
+					globalWarningStream() << "brush has multiple area portal sides at " << center << std::endl;
+
+					s2.visibleHull.clear();
+				}
+
+				return &s;
+			}
+		}
+	}
+
+	return NULL;
+}
+
+void ProcCompiler::floodAreasRecursively(const BspTreeNodePtr& node)
+{
+	if (node->area != -1)
+	{
+		return;		// already got it
+	}
+
+	if (node->opaque)
+	{
+		return;
+	}
+
+	_numAreaFloods++;
+	node->area = _numAreas;
+
+	std::size_t s = 0;
+	for (ProcPortalPtr p = node->portals; p; p = p->next[s])
+	{
+		s = (p->nodes[1] == node);
+		const BspTreeNodePtr& other = p->nodes[1-s];
+
+		if (!portalIsPassable(*p))
+		{
+			continue;
+		}
+
+		// can't flood through an area portal
+		if (findSideForPortal(p))
+		{
+			continue;
+		}
+
+		floodAreasRecursively(other);
+	}
+}
+
+void ProcCompiler::findAreasRecursively(const BspTreeNodePtr& node)
+{
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		findAreasRecursively(node->children[0]);
+		findAreasRecursively(node->children[1]);
+		return;
+	}
+
+	if (node->opaque)
+	{
+		return;
+	}
+
+	if (node->area != -1)
+	{
+		return;		// already got it
+	}
+
+	_numAreaFloods = 0;
+	floodAreasRecursively(node);
+
+	globalOutputStream() << (boost::format("Area %i has %i leafs") % _numAreas % _numAreaFloods) << std::endl;
+
+	_numAreas++;
+}
+
+void ProcCompiler::floodAreas(ProcEntity& entity)
+{
+	globalOutputStream() <<	"--- FloodAreas ---" << std::endl;
+
+	// set all areas to -1
+	clearAreasRecursively(entity.tree.head);
+
+	// flood fill from non-opaque areas
+	_numAreas = 0;
+
+	findAreasRecursively(entity.tree.head);
+
+	globalOutputStream() << (boost::format("%5i areas") % _numAreas) << std::endl;
+	entity.numAreas = _numAreas;
+
+	// make sure we got all of them
+	/*CheckAreas_r( e->tree->headnode );
+
+	// identify all portals between areas if this is the world
+	if ( e == &dmapGlobals.uEntities[0] ) {
+		numInterAreaPortals = 0;
+		FindInterAreaPortals_r( e->tree->headnode );
+	}*/
+}
+
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 {
 	_bspFaces.clear();
@@ -1884,12 +2082,12 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 
 	// determine areas before clipping tris into the
 	// tree, so tris will never cross area boundaries
-	/*FloodAreas( e );
+	floodAreas(entity);
 
 	// we now have a BSP tree with solid and non-solid leafs marked with areas
 	// all primitives will now be clipped into this, throwing away
 	// fragments in the solid areas
-	PutPrimitivesInAreas( e );
+	/*PutPrimitivesInAreas( e );
 
 	// now build shadow volumes for the lights and split
 	// the optimize lists by the light beam trees
