@@ -1589,7 +1589,7 @@ void ProcCompiler::floodPortalsRecursively(const BspTreeNodePtr& node, int dist)
 
 		floodPortalsRecursively(p->nodes[s], dist + 1);
 
-		p = p->next[s].get();
+		p = p->next[1-s].get();
 	}
 }
 
@@ -1598,7 +1598,7 @@ bool ProcCompiler::placeOccupant(const BspTreeNodePtr& node, const Vector3& orig
 	assert(node);
 
 	// find the leaf to start in
-	BspTreeNode* nodeIter = node.get();
+	BspTreeNodePtr nodeIter = node;
 
 	while (nodeIter->planenum != PLANENUM_LEAF)
 	{
@@ -1608,24 +1608,24 @@ bool ProcCompiler::placeOccupant(const BspTreeNodePtr& node, const Vector3& orig
 
 		if (d >= 0.0f)
 		{
-			nodeIter = nodeIter->children[0].get();
+			nodeIter = nodeIter->children[0];
 		}
 		else
 		{
-			nodeIter = nodeIter->children[1].get();
+			nodeIter = nodeIter->children[1];
 		}
 
 		assert(nodeIter);
 	}
 
-	if (node->opaque)
+	if (nodeIter->opaque)
 	{
 		return false;
 	}
 
-	node->occupant = entity;
+	nodeIter->occupant = entity;
 
-	floodPortalsRecursively(node, 1);
+	floodPortalsRecursively(nodeIter, 1);
 
 	return true;
 }
