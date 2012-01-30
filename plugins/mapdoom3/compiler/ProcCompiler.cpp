@@ -775,10 +775,10 @@ void ProcCompiler::buildFaceTreeRecursively(const BspTreeNodePtr& node, BspFaces
 			node->children[0]->bounds.origin[i] = base + distHalf;
 			node->children[0]->bounds.extents[i] = base - distHalf;
 
-			base = 0.5f * (node->children[1]->bounds.origin[i] - node->children[1]->bounds.extents[i]);
+			base = 0.5f * (node->children[1]->bounds.extents[i] - node->children[1]->bounds.origin[i]);
 
-			node->children[1]->bounds.origin[i] = base + distHalf;
-			node->children[1]->bounds.extents[i] = base - distHalf;
+			node->children[1]->bounds.origin[i] = distHalf - base;
+			node->children[1]->bounds.extents[i] = distHalf + base;
 			break;
 		}
 	}
