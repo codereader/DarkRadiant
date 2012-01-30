@@ -15,6 +15,8 @@ std::size_t ProcPortal::nextPortalId = 0;
 const float CLIP_EPSILON = 0.1f;
 const float SPLIT_WINDING_EPSILON = 0.001f;
 
+const std::size_t MULTIAREA_CROSS = std::numeric_limits<std::size_t>::max();
+
 ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_root(root),
 	_numActivePortals(0),
@@ -2129,6 +2131,336 @@ void ProcCompiler::floodAreas(ProcEntity& entity)
 	}
 }
 
+ProcTris ProcCompiler::triangleListForSide(const ProcFace& side, const ProcWinding& winding)
+{
+	const MaterialPtr& si = side.material;
+
+	// skip any generated faces
+	if (!si) return ProcTris();
+	
+	// don't create faces for non-visible sides
+	if (!si->surfaceCastsShadow() && !si->isDrawn())
+	{
+		return ProcTris();
+	}
+
+#if 1
+	// triangle fan using only the outer verts
+	// this gives the minimum triangle count,
+	// but may have some very distended triangles
+	ProcTris triList;
+
+	for (std::size_t i = 2; i < winding.size(); ++i)
+	{
+		triList.push_back(ProcTri());
+		ProcTri& tri = triList.back();
+
+		tri.material = si;	
+		
+		for (std::size_t j = 0; j < 3; ++j)
+		{
+			const Vector3* vec;
+
+			if (j == 0)
+			{
+				vec = &(winding[0].vertex);
+			} 
+			else if ( j == 1 )
+			{
+				vec = &(winding[i-1].vertex);
+			} 
+			else
+			{
+				vec = &(winding[i].vertex);
+			}
+
+			ArbitraryMeshVertex& dv = tri.v[j];
+#if 0
+			// round the xyz to a given precision
+			for ( k = 0 ; k < 3 ; k++ )
+			{
+				dv->xyz[k] = SNAP_INT_TO_FLOAT * floor( vec[k] * SNAP_FLOAT_TO_INT + 0.5 );
+			}
+#else
+			dv.vertex = *vec;
+#endif
+				
+			// calculate texture s/t from brush primitive texture matrix
+			// TODO dv.texcoord[0] = DotProduct( dv.vertex, s->texVec.v[0] ) + s->texVec.v[0][3];
+			// TODO dv.texcoord[1] = DotProduct( dv.vertex, s->texVec.v[1] ) + s->texVec.v[1][3];
+
+			// copy normal
+			dv.normal = _procFile->planes.getPlane(side.planenum).normal();
+
+			if (dv.normal.getLength() < 0.9f || dv.normal.getLength() > 1.1f)
+			{
+				globalErrorStream() << "Bad normal in TriListForSide" << std::endl;
+				return triList;
+			}
+		}
+	}
+#else
+	// triangle fan from central point, more verts and tris, but less distended
+	// I use this when debugging some tjunction problems
+	triList = NULL;
+	for ( i = 0 ; i < w->GetNumPoints() ; i++ ) {
+		idVec3	midPoint;
+
+		tri = AllocTri();
+		tri->material = si;	
+		tri->next = triList;
+		triList = tri;
+
+		for ( j = 0 ; j < 3 ; j++ ) {
+			if ( j == 0 ) {
+				vec = &midPoint;
+				midPoint = w->GetCenter();
+			} else if ( j == 1 ) {
+				vec = &((*w)[i]).ToVec3();
+			} else {
+				vec = &((*w)[(i+1)%w->GetNumPoints()]).ToVec3();
+			}
+
+			dv = tri->v + j;
+
+			VectorCopy( *vec, dv->xyz );
+				
+			// calculate texture s/t from brush primitive texture matrix
+			dv->st[0] = DotProduct( dv->xyz, s->texVec.v[0] ) + s->texVec.v[0][3];
+			dv->st[1] = DotProduct( dv->xyz, s->texVec.v[1] ) + s->texVec.v[1][3];
+
+			// copy normal
+			dv->normal = dmapGlobals.mapPlanes[s->planenum].Normal();
+			if ( dv->normal.Length() < 0.9f || dv->normal.Length() > 1.1f ) {
+				common->Error( "Bad normal in TriListForSide" );
+			}
+		}
+	}
+#endif
+
+	// set merge groups if needed, to prevent multiple sides from being
+	// merged into a single surface in the case of gui shaders, mirrors, and autosprites
+	if (side.material->isDiscrete())
+	{
+		for (ProcTris::iterator tri = triList.begin(); tri != triList.end(); ++tri)
+		{
+			tri->mergeGroup = &side;
+		}
+	}
+
+	return triList;
+}
+
+std::size_t ProcCompiler::checkWindingInAreasRecursively(const ProcWinding& winding, const BspTreeNodePtr& node)
+{
+	assert(!winding.empty());
+
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		ProcWinding front;
+		ProcWinding back;
+		winding.split(_procFile->planes.getPlane(node->planenum), ON_EPSILON, front, back);
+
+		std::size_t	a1 = checkWindingInAreasRecursively(front, node->children[0]);
+		std::size_t a2 = checkWindingInAreasRecursively(back, node->children[1]);
+		
+		if (a1 == MULTIAREA_CROSS || a2 == MULTIAREA_CROSS)
+		{
+			return MULTIAREA_CROSS;	// different
+		}
+
+		if (a1 == -1)
+		{
+			return a2;	// one solid
+		}
+
+		if (a2 == -1)
+		{
+			return a1;	// one solid
+		}
+
+		if (a1 != a2)
+		{
+			return MULTIAREA_CROSS;	// cross areas
+		}
+
+		return a1;
+	}
+
+	return node->area;
+}
+
+void ProcCompiler::putWindingIntoAreasRecursively(ProcEntity& entity, const ProcWinding& winding, 
+	ProcFace& side, const BspTreeNodePtr& node)
+{
+	if (winding.empty()) return;
+
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		if (side.planenum == node->planenum)
+		{
+			putWindingIntoAreasRecursively(entity, winding, side, node->children[0]);
+			return;
+		}
+
+		if (side.planenum == (node->planenum ^ 1))
+		{
+			putWindingIntoAreasRecursively(entity, winding, side, node->children[1]);
+			return;
+		}
+
+		// see if we need to split it
+		// adding the "noFragment" flag to big surfaces like sky boxes
+		// will avoid potentially dicing them up into tons of triangles
+		// that take forever to optimize back together
+		if (/*FIXME !dmapGlobals.fullCarve || */side.material->getSurfaceFlags() & Material::SURF_NOFRAGMENT)
+		{
+			std::size_t area = checkWindingInAreasRecursively(winding, node);
+
+			if (area != MULTIAREA_CROSS)
+			{
+				ProcTris tris = triangleListForSide(side, winding);
+
+				/*TODO mapTri_t	*tri;
+
+				ProcTri
+
+				// put in single area
+				tri = TriListForSide( side, w );
+				AddTriListToArea( e, tri, side->planenum, area, &side->texVec );
+				return;*/
+			}
+		}
+
+		// TODO
+		/*w->Split( dmapGlobals.mapPlanes[ node->planenum ], ON_EPSILON, &front, &back );
+
+		PutWindingIntoAreas_r( e, front, side, node->children[0] );
+		if ( front ) {
+			delete front;
+		}
+
+		PutWindingIntoAreas_r( e, back, side, node->children[1] );
+		if ( back ) {
+			delete back;
+		}
+
+		return;*/
+	}
+
+	/*
+	// if opaque leaf, don't add
+	if ( node->area >= 0 && !node->opaque ) {
+		mapTri_t	*tri;
+
+		tri = TriListForSide( side, w );
+		AddTriListToArea( e, tri, side->planenum, node->area, &side->texVec );
+	}
+
+	*/
+}
+
+void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
+{
+	globalOutputStream() << "----- PutPrimitivesInAreas -----" << std::endl;
+
+	// allocate space for surface chains for each area
+	entity.areas.resize(entity.numAreas);
+
+	// for each primitive, clip it to the non-solid leafs
+	// and divide it into different areas
+	for (ProcEntity::Primitives::const_iterator prim = entity.primitives.begin();
+		prim != entity.primitives.end(); ++prim)
+	{
+		const ProcBrushPtr& brush = prim->brush;
+
+		if (!brush)
+		{
+			// add curve triangles
+			for (std::size_t i = 0; i < prim->patch.size(); ++i)
+			{
+				//TODO AddMapTriToAreas(tri, e);
+			}
+
+			continue;
+		}
+
+		// clip in brush sides
+		for (std::size_t i = 0; i < brush->sides.size(); ++i)
+		{
+			ProcFace& side = brush->sides[i];
+
+			if (side.visibleHull.empty())
+			{
+				continue;
+			}
+
+			putWindingIntoAreasRecursively(entity, side.visibleHull, side, entity.tree.head);
+		}
+	}
+
+	// optionally inline some of the func_static models
+	/*if ( dmapGlobals.entityNum == 0 ) {
+		bool inlineAll = dmapGlobals.uEntities[0].mapEntity->epairs.GetBool( "inlineAllStatics" );
+
+		for ( int eNum = 1 ; eNum < dmapGlobals.num_entities ; eNum++ ) {
+			uEntity_t *entity = &dmapGlobals.uEntities[eNum];
+			const char *className = entity->mapEntity->epairs.GetString( "classname" );
+			if ( idStr::Icmp( className, "func_static" ) ) {
+				continue;
+			}
+			if ( !entity->mapEntity->epairs.GetBool( "inline" ) && !inlineAll ) {
+				continue;
+			}
+			const char *modelName = entity->mapEntity->epairs.GetString( "model" );
+			if ( !modelName ) {
+				continue;
+			}
+			idRenderModel	*model = renderModelManager->FindModel( modelName );
+
+			common->Printf( "inlining %s.\n", entity->mapEntity->epairs.GetString( "name" ) );
+
+			idMat3	axis;
+			// get the rotation matrix in either full form, or single angle form
+			if ( !entity->mapEntity->epairs.GetMatrix( "rotation", "1 0 0 0 1 0 0 0 1", axis ) ) {
+				float angle = entity->mapEntity->epairs.GetFloat( "angle" );
+				if ( angle != 0.0f ) {
+					axis = idAngles( 0.0f, angle, 0.0f ).ToMat3();
+				} else {
+					axis.Identity();
+				}
+			}		
+
+			idVec3	origin = entity->mapEntity->epairs.GetVector( "origin" );
+
+			for ( i = 0 ; i < model->NumSurfaces() ; i++ ) {
+				const modelSurface_t *surface = model->Surface( i );
+				const srfTriangles_t *tri = surface->geometry;
+
+				mapTri_t	mapTri;
+				memset( &mapTri, 0, sizeof( mapTri ) );
+				mapTri.material = surface->shader;
+				// don't let discretes (autosprites, etc) merge together
+				if ( mapTri.material->IsDiscrete() ) {
+					mapTri.mergeGroup = (void *)surface;
+				}
+				for ( int j = 0 ; j < tri->numIndexes ; j += 3 ) {
+					for ( int k = 0 ; k < 3 ; k++ ) {
+						idVec3 v = tri->verts[tri->indexes[j+k]].xyz;
+
+						mapTri.v[k].xyz = v * axis + origin;
+
+						mapTri.v[k].normal = tri->verts[tri->indexes[j+k]].normal * axis;
+						mapTri.v[k].st = tri->verts[tri->indexes[j+k]].st;
+					}
+					AddMapTriToAreas( &mapTri, e );
+				}
+			}
+		}
+	}
+	*/
+}
+
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 {
 	_bspFaces.clear();
@@ -2190,13 +2522,13 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 	// we now have a BSP tree with solid and non-solid leafs marked with areas
 	// all primitives will now be clipped into this, throwing away
 	// fragments in the solid areas
-	/*PutPrimitivesInAreas( e );
+	putPrimitivesInAreas(entity);
 
 	// now build shadow volumes for the lights and split
 	// the optimize lists by the light beam trees
 	// so there won't be unneeded overdraw in the static
 	// case
-	Prelight( e );
+	/*Prelight( e );
 
 	// optimizing is a superset of fixing tjunctions
 	if ( !dmapGlobals.noOptimize ) {

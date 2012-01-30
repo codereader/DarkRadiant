@@ -104,6 +104,7 @@ public:
 		SURF_NODAMAGE				= 1 << 20,
 		SURF_LADDER					= 1 << 21,
 		SURF_NOSTEPS				= 1 << 22,
+		SURF_ENTITYGUI				= 1 << 23,
 	};
 
 	// Surface Type (plastic, stone, etc.)
@@ -289,6 +290,25 @@ public:
 	 * material def contains the global "fogLight" keyword.
 	 */
 	virtual bool isFogLight() const = 0;
+
+	// returns true if the material will generate shadows, not making a
+	// distinction between global and no-self shadows
+	virtual bool surfaceCastsShadow() const = 0;
+
+	/**
+	 * returns true if the material will draw anything at all.  Triggers, portals,
+	 * etc, will not have anything to draw.  A not drawn surface can still castShadow,
+	 * which can be used to make a simplified shadow hull for a complex object set as noShadow.
+	 */
+	virtual bool isDrawn() const = 0;
+
+	/**
+	 * a discrete surface will never be merged with other surfaces by dmap, which is
+	 * necessary to prevent mutliple gui surfaces, mirrors, autosprites, and some other
+	 * special effects from being combined into a single surface
+	 * guis, merging sprites or other effects, mirrors and remote views are always discrete
+	 */
+	virtual bool isDiscrete() const = 0;
 
 	virtual ShaderLayer* firstLayer() const = 0;
 

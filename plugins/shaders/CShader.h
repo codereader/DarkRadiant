@@ -127,6 +127,9 @@ public:
 	bool isAmbientLight() const;
 	bool isBlendLight() const;
 	bool isFogLight() const;
+	bool surfaceCastsShadow() const;
+	bool isDrawn() const;
+	bool isDiscrete() const;
 
 	bool isVisible() const;
 	void setVisible(bool visible);

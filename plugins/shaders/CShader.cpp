@@ -251,6 +251,24 @@ bool CShader::isFogLight() const {
 	return _template->isFogLight();
 }
 
+bool CShader::surfaceCastsShadow() const
+{
+	int flags = getMaterialFlags();
+	return (flags & Material::FLAG_FORCESHADOWS) || !(flags & Material::FLAG_NOSHADOWS);
+}
+
+bool CShader::isDrawn() const
+{
+	return _template->getLayers().size() > 0 || (getSurfaceFlags() & SURF_ENTITYGUI) /*|| gui != NULL*/;
+}
+
+bool CShader::isDiscrete() const
+{
+	int flags = getSurfaceFlags();
+	return (flags & SURF_ENTITYGUI) /*|| gui*/ || getDeformType() != DEFORM_NONE || 
+			getSortRequest() == SORT_SUBVIEW || (flags & SURF_DISCRETE);
+}
+
 bool CShader::isVisible() const {
 	return _visible;
 }

@@ -19,13 +19,19 @@ namespace map
 {
 
 struct HashVertex;
-struct OptVertex; 
+struct OptVertex;
+
+struct ProcArea
+{
+	struct optimizeGroup_s	*groups;
+	// we might want to add other fields later
+};
 
 // chains of ProcTri are the general unit of processing
 struct ProcTri
 {
 	MaterialPtr			material;
-	//void *				mergeGroup;		// we want to avoid merging triangles
+	const ProcFace*		mergeGroup;			// we want to avoid merging triangles
 											// from different fixed groups, like guiSurfs and mirrors
 	int					planeNum;			// not set universally, just in some areas
 
@@ -33,6 +39,10 @@ struct ProcTri
 
 	const HashVertex*	hashVert[3];		// for T-junction pass
 	OptVertex*			optVert[3];			// for optimization
+
+	ProcTri() :
+		mergeGroup(NULL)
+	{}
 };
 typedef std::vector<ProcTri> ProcTris;
 
@@ -58,7 +68,9 @@ struct ProcEntity
 	BspTree			tree;
 
 	std::size_t		numAreas;
-	//uArea_t *			areas;
+
+	typedef std::vector<ProcArea> Areas;
+	Areas			areas;	// populated in putPrimitiveInAreas()
 
 	ProcEntity(const IEntityNodePtr& entityNode) :
 		mapEntity(entityNode),

@@ -144,6 +144,19 @@ private:
 
 	// returns true if the portal has non-opaque leafs on both sides
 	static bool portalIsPassable(const ProcPortal& portal);
+
+	void putPrimitivesInAreas(ProcEntity& entity);
+
+	// Clips a winding down into the bsp tree, then converts
+	// the fragments to triangles and adds them to the area lists
+	void putWindingIntoAreasRecursively(ProcEntity& entity, const ProcWinding& winding, 
+										ProcFace& side, const BspTreeNodePtr& node);
+
+	// Returns the area number that the winding is in, or MULTIAREA_CROSS if it crosses multiple areas.
+	// Empty windings are not allowed!
+	std::size_t checkWindingInAreasRecursively(const ProcWinding& winding, const BspTreeNodePtr& node);
+
+	ProcTris triangleListForSide(const ProcFace& side, const ProcWinding& winding);
 };
 
 } // namespace
