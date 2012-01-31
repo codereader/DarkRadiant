@@ -571,4 +571,12 @@ void ProcWinding::addToConvexHull(const ProcWinding& winding, const Vector3& nor
 	}
 }
 
+float ProcWinding::getTriangleArea(const Vector3& a, const Vector3& b, const Vector3& c)
+{
+	Vector3 v1 = b - a;
+	Vector3 v2 = c - a;
+
+	return 0.5f * v1.crossProduct(v2).getLength();
+}
+
 } // namespace

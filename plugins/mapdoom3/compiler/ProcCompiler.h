@@ -164,6 +164,11 @@ private:
 	void addTriListToArea(ProcEntity& entity, const ProcTris& triList, 
 						  std::size_t planeNum, std::size_t areaNum, 
 						  Vector4 texVec[2]);
+
+	void addMapTrisToAreas(const ProcTris& tris, ProcEntity& e);
+
+	void clipTriIntoTreeRecursively(const ProcWinding& winding, const ProcTri& originalTri, 
+								  ProcEntity& entity, const BspTreeNodePtr& node);
 };
 
 } // namespace

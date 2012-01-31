@@ -36,6 +36,14 @@ public:
 		setFromPlane(plane);
 	}
 
+	ProcWinding(const Vector3& a, const Vector3& b, const Vector3& c) :
+		IWinding(3)
+	{
+		(*this)[0].vertex = a;
+		(*this)[1].vertex = b;
+		(*this)[2].vertex = c;
+	}
+
 	// Creates a near-infinitely large winding from the given plane
 	void setFromPlane(const Plane3& plane);
 
@@ -60,6 +68,8 @@ public:
 	// Adds the given winding to the convex hull.
 	// Assumes the current winding already is a convex hull with three or more points.
 	void addToConvexHull(const ProcWinding& winding, const Vector3& normal, const float epsilon = ON_EPSILON);
+
+	static float getTriangleArea(const Vector3& a, const Vector3& b, const Vector3& c);
 
 private:
 	Plane3 getPlane() const;

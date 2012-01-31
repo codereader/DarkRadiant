@@ -897,7 +897,7 @@ void ProcCompiler::makeHeadNodePortals(BspTree& tree)
 {
 	tree.outside->planenum = PLANENUM_LEAF;
 	tree.outside->nodeId = 9999;
-	// TODO tree.outside.brushlist = NULL;
+	tree.outside->brushlist.clear();
 	tree.outside->portals.reset();
 	tree.outside->opaque = false;
 
@@ -2404,32 +2404,216 @@ void ProcCompiler::putWindingIntoAreasRecursively(ProcEntity& entity, const Proc
 			}
 		}
 
-		// TODO
-		/*w->Split( dmapGlobals.mapPlanes[ node->planenum ], ON_EPSILON, &front, &back );
+		ProcWinding front;
+		ProcWinding back;
+		winding.split(_procFile->planes.getPlane(node->planenum), ON_EPSILON, front, back);
 
-		PutWindingIntoAreas_r( e, front, side, node->children[0] );
-		if ( front ) {
-			delete front;
-		}
+		putWindingIntoAreasRecursively(entity, front, side, node->children[0]);
+		putWindingIntoAreasRecursively(entity, back, side, node->children[1]);
 
-		PutWindingIntoAreas_r( e, back, side, node->children[1] );
-		if ( back ) {
-			delete back;
-		}
-
-		return;*/
+		return;
 	}
 
-	/*
 	// if opaque leaf, don't add
-	if ( node->area >= 0 && !node->opaque ) {
-		mapTri_t	*tri;
+	if (node->area >= 0 && !node->opaque)
+	{
+		ProcTris tris = triangleListForSide(side, winding);
+		addTriListToArea(entity, tris, side.planenum, node->area, side.texVec);
+	}
+}
 
-		tri = TriListForSide( side, w );
-		AddTriListToArea( e, tri, side->planenum, node->area, &side->texVec );
+// TODO: Make this a member method of ProcTri
+inline void getTexVecForTri(Vector4 texVec[2], const ProcTri& tri)
+{
+	float d0[5];
+	float d1[5];
+
+	const ArbitraryMeshVertex& a = tri.v[0];
+	const ArbitraryMeshVertex& b = tri.v[1];
+	const ArbitraryMeshVertex& c = tri.v[2];
+
+	d0[0] = b.vertex[0] - a.vertex[0];
+	d0[1] = b.vertex[1] - a.vertex[1];
+	d0[2] = b.vertex[2] - a.vertex[2];
+	d0[3] = b.texcoord[0] - a.texcoord[0];
+	d0[4] = b.texcoord[1] - a.texcoord[1];
+
+	d1[0] = c.vertex[0] - a.vertex[0];
+	d1[1] = c.vertex[1] - a.vertex[1];
+	d1[2] = c.vertex[2] - a.vertex[2];
+	d1[3] = c.texcoord[0] - a.texcoord[0];
+	d1[4] = c.texcoord[1] - a.texcoord[1];
+
+	float area = d0[3] * d1[4] - d0[4] * d1[3];
+	float inva = 1.0f / area;
+
+	Vector3	temp(
+		(d0[0] * d1[4] - d0[4] * d1[0]) * inva,
+		(d0[1] * d1[4] - d0[4] * d1[1]) * inva,
+		(d0[2] * d1[4] - d0[4] * d1[2]) * inva
+	);
+
+	temp.normalise();
+
+	texVec[0].x() = temp.x();
+	texVec[0].y() = temp.y();
+	texVec[0].z() = temp.z();
+
+	texVec[0][3] = tri.v[0].vertex.dot(texVec[0].getVector3()) - tri.v[0].texcoord[0];
+
+    temp[0] = (d0[3] * d1[0] - d0[0] * d1[3]) * inva;
+    temp[1] = (d0[3] * d1[1] - d0[1] * d1[3]) * inva;
+    temp[2] = (d0[3] * d1[2] - d0[2] * d1[3]) * inva;
+
+	temp.normalise();
+
+	texVec[1].x() = temp.x();
+	texVec[1].y() = temp.y();
+	texVec[1].z() = temp.z();
+	texVec[1][3] = tri.v[0].vertex.dot(texVec[0].getVector3()) - tri.v[0].texcoord[1];
+}
+
+// TODO: Make this a member method of ProcTri
+// Regenerate the texcoords and colors on a fragmented tri from the plane equations
+void triVertsFromOriginal(ProcTri& tri, const ProcTri& original)
+{
+	float denom = ProcWinding::getTriangleArea(original.v[0].vertex, original.v[1].vertex, original.v[2].vertex);
+
+	if (denom == 0)
+	{
+		return;		// original was degenerate, so it doesn't matter
+	}
+	
+	for (std::size_t i = 0; i < 3; ++i)
+	{
+		// find the barycentric coordinates
+		float a = ProcWinding::getTriangleArea(tri.v[i].vertex, original.v[1].vertex, original.v[2].vertex ) / denom;
+		float b = ProcWinding::getTriangleArea(tri.v[i].vertex, original.v[2].vertex, original.v[0].vertex ) / denom;
+		float c = ProcWinding::getTriangleArea(tri.v[i].vertex, original.v[0].vertex, original.v[1].vertex ) / denom;
+
+		// regenerate the interpolated values
+		tri.v[i].texcoord[0] = a * original.v[0].texcoord[0] + b * original.v[1].texcoord[0] + c * original.v[2].texcoord[0];
+		tri.v[i].texcoord[1] = a * original.v[0].texcoord[1] + b * original.v[1].texcoord[1] + c * original.v[2].texcoord[1];
+
+		for (std::size_t j = 0; j < 3; ++j)
+		{
+			tri.v[i].normal[j] = a * original.v[0].normal[j] + b * original.v[1].normal[j] + c * original.v[2].normal[j];
+		}
+
+		tri.v[i].normal.normalise();
+	}
+}
+
+inline ProcTris windingToTriList(const ProcWinding& w, const ProcTri& originalTri)
+{
+	assert(!w.empty());
+
+	ProcTris triList;
+
+	for (std::size_t i = 2 ; i < w.size(); ++i)
+	{
+		triList.push_back(originalTri);
+
+		ProcTri& tri = triList.back();
+
+		for (std::size_t j = 0; j < 3; ++j)
+		{
+			if (j == 0)
+			{
+				tri.v[j].vertex = w[0].vertex;
+			}
+			else if (j == 1)
+			{
+				tri.v[j].vertex = w[i-1].vertex;
+			} 
+			else
+			{
+				tri.v[j].vertex = w[i].vertex;
+			}
+		}
+
+		triVertsFromOriginal(tri, originalTri);
 	}
 
-	*/
+	return triList;
+}
+
+void ProcCompiler::clipTriIntoTreeRecursively(const ProcWinding& winding, const ProcTri& originalTri, 
+											  ProcEntity& entity, const BspTreeNodePtr& node)
+{
+	assert(!winding.empty());
+
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		ProcWinding front;
+		ProcWinding back;
+
+		winding.split(_procFile->planes.getPlane(node->planenum), ON_EPSILON, front, back);
+
+		clipTriIntoTreeRecursively(front, originalTri, entity, node->children[0]);
+		clipTriIntoTreeRecursively(back, originalTri, entity, node->children[1]);
+
+		return;
+	}
+
+	// if opaque leaf, don't add
+	if (!node->opaque && node->area != MULTIAREA_CROSS)
+	{
+		ProcTris list = windingToTriList(winding, originalTri);
+
+		Plane3 plane(originalTri.v[0].vertex, originalTri.v[1].vertex, originalTri.v[2].vertex);
+
+		std::size_t planeNum = _procFile->planes.findOrInsertPlane(plane, EPSILON_NORMAL, EPSILON_DIST);
+
+		Vector4 texVec[2];
+		getTexVecForTri(texVec, originalTri);
+
+		addTriListToArea(entity, list, planeNum, node->area, texVec);
+	}
+}
+
+void ProcCompiler::addMapTrisToAreas(const ProcTris& tris, ProcEntity& entity)
+{
+	for (ProcTris::const_iterator tri = tris.begin(); tri != tris.end(); ++tri)
+	{
+		// skip degenerate triangles from pinched curves
+		if (ProcWinding::getTriangleArea(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex) <= 0)
+		{
+			continue;
+		}
+
+		// FIXME
+		/*if ( dmapGlobals.fullCarve ) {
+			// always fragment into areas
+			w = WindingForTri( tri );
+			ClipTriIntoTree_r( w, tri, e, e->tree->headnode );
+			return;
+		}*/
+
+		ProcWinding w(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex);
+
+		std::size_t area = checkWindingInAreasRecursively(w, entity.tree.head);
+
+		if (area != MULTIAREA_CROSS)
+		{
+			// put in single area
+			ProcTris newTri(1, *tri); // list with 1 triangle
+
+			Plane3 plane(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex);
+
+			std::size_t planeNum = _procFile->planes.findOrInsertPlane(plane, EPSILON_NORMAL, EPSILON_DIST);
+
+			Vector4 texVec[2];
+			getTexVecForTri(texVec, newTri[0]);
+
+			addTriListToArea(entity, newTri, planeNum, area, texVec);
+		} 
+		else
+		{
+			// fragment into areas
+			clipTriIntoTreeRecursively(w, *tri, entity, entity.tree.head);
+		}
+	}
 }
 
 void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
@@ -2451,7 +2635,7 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 			// add curve triangles
 			for (std::size_t i = 0; i < prim->patch.size(); ++i)
 			{
-				//TODO AddMapTriToAreas(tri, e);
+				addMapTrisToAreas(prim->patch, entity);
 			}
 
 			continue;
