@@ -88,11 +88,10 @@ public:
 				side.planenum = findOrInsertPlane(mapFace.getPlane3());
 				side.material = GlobalMaterialManager().getMaterialForName(mapFace.getShader());
 
-				// FIXME: Required?
-				//ms->GetTextureVectors( s->texVec.v );
+				side.calculateTextureVectors(mapFace.getPlane3(), mapFace.getTexDefMatrix());
 				// remove any integral shift, which will help with grouping
-				//s->texVec.v[0][3] -= floor( s->texVec.v[0][3] );
-				//s->texVec.v[1][3] -= floor( s->texVec.v[1][3] );
+				side.texVec[0][3] -= floor(side.texVec[0][3]);
+				side.texVec[1][3] -= floor(side.texVec[1][3]);
 			}
 
 			// if there are mirrored planes, the entire brush is invalid
