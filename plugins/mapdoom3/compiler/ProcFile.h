@@ -21,12 +21,6 @@ namespace map
 struct HashVertex;
 struct OptVertex;
 
-struct ProcArea
-{
-	struct optimizeGroup_s	*groups;
-	// we might want to add other fields later
-};
-
 // chains of ProcTri are the general unit of processing
 struct ProcTri
 {
@@ -45,6 +39,37 @@ struct ProcTri
 	{}
 };
 typedef std::vector<ProcTri> ProcTris;
+
+#define MAX_GROUP_LIGHTS 16
+
+struct ProcOptimizeGroup
+{
+	AABB				bounds;			// set in CarveGroupsByLight
+
+	// all of these must match to add a triangle to the triList
+	bool				smoothed;		// curves will never merge with brushes
+	std::size_t			planeNum;
+	std::size_t			areaNum;
+	MaterialPtr			material;
+	int					numGroupLights;
+	ProcLight			groupLights[MAX_GROUP_LIGHTS];	// lights effecting this list
+	const ProcFace*		mergeGroup;		// if this differs (guiSurfs, mirrors, etc), the
+										// groups will not be combined into model surfaces
+										// after optimization
+	Vector4				texVec[2];
+
+	bool				surfaceEmitted;
+
+	ProcTris			triList;
+	ProcTris			regeneratedTris;	// after each island optimization
+	Vector3				axis[2];			// orthogonal to the plane, so optimization can be 2D
+};
+
+struct ProcArea
+{
+	typedef std::vector<ProcOptimizeGroup> OptimizeGroups;
+	OptimizeGroups	groups;
+};
 
 // A primitive can either be a brush or a patch,
 // so only one of the pointers is non-NULL

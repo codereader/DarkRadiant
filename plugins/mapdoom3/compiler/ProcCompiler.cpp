@@ -2185,8 +2185,8 @@ ProcTris ProcCompiler::triangleListForSide(const ProcFace& side, const ProcWindi
 #endif
 				
 			// calculate texture s/t from brush primitive texture matrix
-			// TODO dv.texcoord[0] = DotProduct( dv.vertex, s->texVec.v[0] ) + s->texVec.v[0][3];
-			// TODO dv.texcoord[1] = DotProduct( dv.vertex, s->texVec.v[1] ) + s->texVec.v[1][3];
+			dv.texcoord[0] = dv.vertex.dot(side.texVec[0].getVector3()) + side.texVec[0][3];
+			dv.texcoord[1] = dv.vertex.dot(side.texVec[1].getVector3()) + side.texVec[1][3];
 
 			// copy normal
 			dv.normal = _procFile->planes.getPlane(side.planenum).normal();
@@ -2289,6 +2289,85 @@ std::size_t ProcCompiler::checkWindingInAreasRecursively(const ProcWinding& wind
 	return node->area;
 }
 
+#define	 TEXTURE_OFFSET_EQUAL_EPSILON	0.005f
+#define	 TEXTURE_VECTOR_EQUAL_EPSILON	0.001f
+
+void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList, 
+									std::size_t planeNum, std::size_t areaNum, 
+									Vector4 texVec[2])
+{
+	if (triList.empty())
+	{
+		return;
+	}
+
+	ProcArea& area = entity.areas[areaNum];
+	ProcArea::OptimizeGroups::iterator group;
+
+	for (group = area.groups.begin(); group != area.groups.end(); ++group)
+	{
+		if (group->material == triList[0].material && 
+			group->planeNum == planeNum && 
+			group->mergeGroup == triList[0].mergeGroup)
+		{
+			// check the texture vectors
+			std::size_t i = 0;
+
+			for (i = 0; i < 2; ++i)
+			{
+				std::size_t j = 0;
+
+				for (j = 0; j < 3; ++j)
+				{
+					if (fabs(texVec[i][j] - group->texVec[i][j]) > TEXTURE_VECTOR_EQUAL_EPSILON)
+					{
+						break;
+					}
+				}
+
+				if (j != 3)
+				{
+					break;
+				}
+
+				if (fabs(texVec[i][3] - group->texVec[i][3]) > TEXTURE_OFFSET_EQUAL_EPSILON)
+				{
+					break;
+				}
+			}
+
+			if (i == 2)
+			{
+				break;	// exact match
+			}
+			/*else
+			{
+				// different texture offsets
+				i = 1;	// just for debugger breakpoint
+			}*/
+		}
+	}
+
+	if (group == area.groups.end())
+	{
+		area.groups.push_back(ProcOptimizeGroup());
+		group = area.groups.end() - 1;
+
+		group->numGroupLights = 0;
+		group->smoothed = false;
+		group->surfaceEmitted = false;
+
+		group->planeNum = planeNum;
+		group->mergeGroup = triList[0].mergeGroup;
+		group->material = triList[0].material;
+		group->texVec[0] = texVec[0];
+		group->texVec[1] = texVec[1];
+	}
+
+	// Append the incoming triangles to the existing ones in the group
+	group->triList.insert(group->triList.end(), triList.begin(), triList.end());
+}
+
 void ProcCompiler::putWindingIntoAreasRecursively(ProcEntity& entity, const ProcWinding& winding, 
 	ProcFace& side, const BspTreeNodePtr& node)
 {
@@ -2320,14 +2399,8 @@ void ProcCompiler::putWindingIntoAreasRecursively(ProcEntity& entity, const Proc
 			{
 				ProcTris tris = triangleListForSide(side, winding);
 
-				/*TODO mapTri_t	*tri;
-
-				ProcTri
-
-				// put in single area
-				tri = TriListForSide( side, w );
-				AddTriListToArea( e, tri, side->planenum, area, &side->texVec );
-				return;*/
+				addTriListToArea(entity, tris, side.planenum, area, side.texVec);
+				return;
 			}
 		}
 

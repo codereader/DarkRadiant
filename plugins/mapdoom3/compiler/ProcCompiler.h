@@ -157,6 +157,13 @@ private:
 	std::size_t checkWindingInAreasRecursively(const ProcWinding& winding, const BspTreeNodePtr& node);
 
 	ProcTris triangleListForSide(const ProcFace& side, const ProcWinding& winding);
+
+	// The triList is appended to the apropriate optimzeGroup_t,
+	// creating a new one if needed.
+	// The entire list is assumed to come from the same planar primitive
+	void addTriListToArea(ProcEntity& entity, const ProcTris& triList, 
+						  std::size_t planeNum, std::size_t areaNum, 
+						  Vector4 texVec[2]);
 };
 
 } // namespace
