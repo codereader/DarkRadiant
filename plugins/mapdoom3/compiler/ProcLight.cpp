@@ -100,12 +100,12 @@ void ProcLight::parseFromSpawnargs(const Entity& ent)
 		}
 		else
 		{
-			parms.axis = getRotation(rotation);
+			parms.axis = Matrix4::getRotation(rotation);
 		}
 	}
 	else
 	{
-		parms.axis = getRotation(rotation);
+		parms.axis = Matrix4::getRotation(rotation);
 	}
 
 	// fix degenerate identity matrices
@@ -280,44 +280,6 @@ void ProcLight::setLightFrustum()
 		frustum[i] = -frustum[i];
 		frustum[i].normalise();
 	}
-}
-
-Matrix4 ProcLight::getRotation(const std::string& value)
-{
-	float rotation[9];
-
-	std::stringstream strm(value);
-    strm << std::skipws;
-
-	for (int i = 0; i < 9; ++i)
-	{
-		strm >> rotation[i];
-	}
-
-	if (!strm)
-	{
-		// Parsing failed, fall back to the identity matrix
-		return Matrix4::getIdentity();
-	}
-
-	return Matrix4::byColumns(
-		rotation[0],
-		rotation[1],
-		rotation[2],
-		0,
-		rotation[3],
-		rotation[4],
-		rotation[5],
-		0,
-		rotation[6],
-		rotation[7],
-		rotation[8],
-		0,
-		0,
-		0,
-		0,
-		1
-	);
 }
 
 } // namespace

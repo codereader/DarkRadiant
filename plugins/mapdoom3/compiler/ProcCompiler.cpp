@@ -3,6 +3,8 @@
 #include "itextstream.h"
 #include "math/Plane3.h"
 #include "ishaders.h"
+#include "imodelcache.h"
+#include "imodelsurface.h"
 #include <limits>
 #include <boost/format.hpp>
 
@@ -2308,7 +2310,7 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
 	{
 		if (group->material == triList[0].material && 
 			group->planeNum == planeNum && 
-			group->mergeGroup == triList[0].mergeGroup)
+			(group->mergeGroup == triList[0].mergeGroup || group->mergeSurf == triList[0].mergeSurf))
 		{
 			// check the texture vectors
 			std::size_t i = 0;
@@ -2359,6 +2361,7 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
 
 		group->planeNum = planeNum;
 		group->mergeGroup = triList[0].mergeGroup;
+		group->mergeSurf = triList[0].mergeSurf;
 		group->material = triList[0].material;
 		group->texVec[0] = texVec[0];
 		group->texVec[1] = texVec[1];
@@ -2656,65 +2659,112 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 	}
 
 	// optionally inline some of the func_static models
-	/*if ( dmapGlobals.entityNum == 0 ) {
-		bool inlineAll = dmapGlobals.uEntities[0].mapEntity->epairs.GetBool( "inlineAllStatics" );
+	if (&entity == _procFile->entities[0].get())
+	{
+		IEntityNodePtr worldspawn = _procFile->entities[0]->mapEntity;
 
-		for ( int eNum = 1 ; eNum < dmapGlobals.num_entities ; eNum++ ) {
-			uEntity_t *entity = &dmapGlobals.uEntities[eNum];
-			const char *className = entity->mapEntity->epairs.GetString( "classname" );
-			if ( idStr::Icmp( className, "func_static" ) ) {
+		bool inlineAll = worldspawn->getEntity().getKeyValue("inlineAllStatics") == "1";
+
+		for (std::size_t eNum = 1; eNum < _procFile->entities.size(); ++eNum)
+		{
+			ProcEntity& entity = *_procFile->entities[eNum];
+			Entity& mapEnt = entity.mapEntity->getEntity();
+
+			if (mapEnt.getKeyValue("classname") != "func_static")
+			{
 				continue;
 			}
-			if ( !entity->mapEntity->epairs.GetBool( "inline" ) && !inlineAll ) {
+
+			if (mapEnt.getKeyValue("inline") != "1" && !inlineAll)
+			{
 				continue;
 			}
-			const char *modelName = entity->mapEntity->epairs.GetString( "model" );
-			if ( !modelName ) {
+
+			std::string modelName = mapEnt.getKeyValue("model");
+
+			if (modelName.empty())
+			{
 				continue;
 			}
-			idRenderModel	*model = renderModelManager->FindModel( modelName );
 
-			common->Printf( "inlining %s.\n", entity->mapEntity->epairs.GetString( "name" ) );
+			model::IModelPtr model = GlobalModelCache().getModel(modelName);
+			
+			if (model == NULL)
+			{
+				globalWarningStream() << "Cannot inline entity " << mapEnt.getKeyValue("name") <<
+					" since the model cannot be loaded: " << modelName << std::endl;
+				continue;
+			}
 
-			idMat3	axis;
+			globalOutputStream() << "inlining " << mapEnt.getKeyValue("name") << std::endl;
+			
 			// get the rotation matrix in either full form, or single angle form
-			if ( !entity->mapEntity->epairs.GetMatrix( "rotation", "1 0 0 0 1 0 0 0 1", axis ) ) {
-				float angle = entity->mapEntity->epairs.GetFloat( "angle" );
-				if ( angle != 0.0f ) {
-					axis = idAngles( 0.0f, angle, 0.0f ).ToMat3();
-				} else {
-					axis.Identity();
+			std::string rotation = mapEnt.getKeyValue("rotation");
+
+			Matrix4 axis;
+
+			if (rotation.empty())
+			{
+				float angle = strToFloat(mapEnt.getKeyValue("angle"));
+
+				// idMath::AngleNormalize360
+				if (angle >= 360.0f || angle < 0.0f)
+				{
+					angle -= floor(angle / 360.0f) * 360.0f;
 				}
-			}		
 
-			idVec3	origin = entity->mapEntity->epairs.GetVector( "origin" );
+				axis = Matrix4::getRotationAboutZDegrees(angle);
+			}
+			else
+			{
+				axis = Matrix4::getRotation(rotation);
+			}
 
-			for ( i = 0 ; i < model->NumSurfaces() ; i++ ) {
-				const modelSurface_t *surface = model->Surface( i );
-				const srfTriangles_t *tri = surface->geometry;
+			Vector3 origin = Vector3(mapEnt.getKeyValue("origin"));
 
-				mapTri_t	mapTri;
-				memset( &mapTri, 0, sizeof( mapTri ) );
-				mapTri.material = surface->shader;
-				// don't let discretes (autosprites, etc) merge together
-				if ( mapTri.material->IsDiscrete() ) {
-					mapTri.mergeGroup = (void *)surface;
-				}
-				for ( int j = 0 ; j < tri->numIndexes ; j += 3 ) {
-					for ( int k = 0 ; k < 3 ; k++ ) {
-						idVec3 v = tri->verts[tri->indexes[j+k]].xyz;
+			for (int i = 0; i < model->getSurfaceCount(); ++i)
+			{
+				const model::IModelSurface& surface = model->getSurface(i);
 
-						mapTri.v[k].xyz = v * axis + origin;
+				MaterialPtr material = GlobalMaterialManager().getMaterialForName(surface.getDefaultMaterial());
 
-						mapTri.v[k].normal = tri->verts[tri->indexes[j+k]].normal * axis;
-						mapTri.v[k].st = tri->verts[tri->indexes[j+k]].st;
+				ProcTris tris;
+
+				int numTris = surface.getNumTriangles();
+				for (int j = 0; j < numTris; ++j)
+				{
+					tris.push_back(ProcTri());
+					ProcTri& tri = tris.back();
+
+					tri.material = material;
+					
+					if (material->isDiscrete())
+					{
+						tri.mergeSurf = &surface;
 					}
-					AddMapTriToAreas( &mapTri, e );
+
+					model::ModelPolygon poly = surface.getPolygon(j);
+					
+					tri.v[0].vertex = axis.transformPoint(poly.a.vertex) + origin;
+					tri.v[0].normal = axis.transformDirection(poly.a.normal);
+					tri.v[0].texcoord = poly.a.texcoord;
+
+					tri.v[1].vertex = axis.transformPoint(poly.b.vertex) + origin;
+					tri.v[1].normal = axis.transformDirection(poly.b.normal);
+					tri.v[1].texcoord = poly.b.texcoord;
+
+					tri.v[2].vertex = axis.transformPoint(poly.c.vertex) + origin;
+					tri.v[2].normal = axis.transformDirection(poly.c.normal);
+					tri.v[2].texcoord = poly.c.texcoord;
+
+					// greebo: This is probably the point where the normals should be renormalised to
+					// fix the weird lighting when applying "rotation hack scaling"
 				}
+
+				addMapTrisToAreas(tris, entity);
 			}
 		}
 	}
-	*/
 }
 
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)

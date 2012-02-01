@@ -15,6 +15,8 @@
 #include "ProcBrush.h"
 #include "BspTree.h"
 
+namespace model { class IModelSurface; }
+
 namespace map
 {
 
@@ -24,18 +26,19 @@ struct OptVertex;
 // chains of ProcTri are the general unit of processing
 struct ProcTri
 {
-	MaterialPtr			material;
-	const ProcFace*		mergeGroup;			// we want to avoid merging triangles
-											// from different fixed groups, like guiSurfs and mirrors
-	int					planeNum;			// not set universally, just in some areas
+	MaterialPtr					material;
+	const ProcFace*				mergeGroup;		// we want to avoid merging triangles
+	const model::IModelSurface* mergeSurf;		// from different fixed groups, like guiSurfs and mirrors
+	int							planeNum;		// not set universally, just in some areas
 
-	ArbitraryMeshVertex	v[3];
+	ArbitraryMeshVertex			v[3];
 
-	const HashVertex*	hashVert[3];		// for T-junction pass
-	OptVertex*			optVert[3];			// for optimization
+	const HashVertex*			hashVert[3];	// for T-junction pass
+	OptVertex*					optVert[3];		// for optimization
 
 	ProcTri() :
-		mergeGroup(NULL)
+		mergeGroup(NULL),
+		mergeSurf(NULL)
 	{}
 };
 typedef std::vector<ProcTri> ProcTris;
@@ -53,9 +56,9 @@ struct ProcOptimizeGroup
 	MaterialPtr			material;
 	int					numGroupLights;
 	ProcLight			groupLights[MAX_GROUP_LIGHTS];	// lights effecting this list
-	const ProcFace*		mergeGroup;		// if this differs (guiSurfs, mirrors, etc), the
-										// groups will not be combined into model surfaces
-										// after optimization
+	const ProcFace*		mergeGroup;			// if this differs (guiSurfs, mirrors, etc), the
+	const model::IModelSurface* mergeSurf;	// groups will not be combined into model surfaces
+											// after optimization
 	Vector4				texVec[2];
 
 	bool				surfaceEmitted;
