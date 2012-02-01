@@ -81,6 +81,18 @@ public:
 	static Matrix4 getTranslation(const Vector3& translation);
 
 	/**
+	 * greebo: Attempts to parse the rotation from the given string, which is
+	 * a whitespace-separated chain of nine floating point values, as used 
+	 * in entity spawnargs.
+	 * 
+	 * Example: "0 1 0 -1 0 0 0 0 1"
+	 *
+	 * Returns: the parsed (translation-free) matrix. In case of parser errors
+	 * the identity matrix is returned.
+	 */
+	static Matrix4 getRotation(const std::string& rotationString);
+
+	/**
 	 * greebo: Returns the rotation matrix defined by two three-component
 	 * vectors.
 	 * The rotational axis is defined by the normalised cross product of those

@@ -58,6 +58,44 @@ const Matrix4& Matrix4::getIdentity()
     return _identity;
 }
 
+Matrix4 Matrix4::getRotation(const std::string& rotationString)
+{
+	float rotation[9];
+
+	std::stringstream strm(rotationString);
+    strm << std::skipws;
+
+	for (int i = 0; i < 9; ++i)
+	{
+		strm >> rotation[i];
+	}
+
+	if (!strm)
+	{
+		// Parsing failed, fall back to the identity matrix
+		return Matrix4::getIdentity();
+	}
+
+	return Matrix4::byColumns(
+		rotation[0],
+		rotation[1],
+		rotation[2],
+		0,
+		rotation[3],
+		rotation[4],
+		rotation[5],
+		0,
+		rotation[6],
+		rotation[7],
+		rotation[8],
+		0,
+		0,
+		0,
+		0,
+		1
+	);
+}
+
 // Get a translation matrix for the given vector
 Matrix4 Matrix4::getTranslation(const Vector3& translation)
 {
