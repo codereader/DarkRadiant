@@ -2262,8 +2262,8 @@ std::size_t ProcCompiler::checkWindingInAreasRecursively(const ProcWinding& wind
 		ProcWinding back;
 		winding.split(_procFile->planes.getPlane(node->planenum), ON_EPSILON, front, back);
 
-		std::size_t	a1 = checkWindingInAreasRecursively(front, node->children[0]);
-		std::size_t a2 = checkWindingInAreasRecursively(back, node->children[1]);
+		std::size_t	a1 = front.empty() ? 0 : checkWindingInAreasRecursively(front, node->children[0]);
+		std::size_t a2 = back.empty() ? 0 : checkWindingInAreasRecursively(back, node->children[1]);
 		
 		if (a1 == MULTIAREA_CROSS || a2 == MULTIAREA_CROSS)
 		{
@@ -2556,8 +2556,15 @@ void ProcCompiler::clipTriIntoTreeRecursively(const ProcWinding& winding, const 
 
 		winding.split(_procFile->planes.getPlane(node->planenum), ON_EPSILON, front, back);
 
-		clipTriIntoTreeRecursively(front, originalTri, entity, node->children[0]);
-		clipTriIntoTreeRecursively(back, originalTri, entity, node->children[1]);
+		if (!front.empty())
+		{
+			clipTriIntoTreeRecursively(front, originalTri, entity, node->children[0]);
+		}
+
+		if (!back.empty())
+		{
+			clipTriIntoTreeRecursively(back, originalTri, entity, node->children[1]);
+		}
 
 		return;
 	}
@@ -2767,6 +2774,19 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 
 				addMapTrisToAreas(tris, entity);
 			}
+		}
+	}
+
+	// Print result
+	for (std::size_t a = 0; a < entity.areas.size(); ++a)
+	{
+		globalOutputStream() << "Area " << a << ": ";
+		
+		globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
+
+		for (std::size_t g = 0; g < entity.areas[a].groups.size(); ++g)
+		{
+			globalOutputStream() << "  Group " << g << ": Plane " << entity.areas[a].groups[g].planeNum << std::endl;
 		}
 	}
 }
