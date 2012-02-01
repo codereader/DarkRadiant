@@ -2588,13 +2588,14 @@ void ProcCompiler::addMapTrisToAreas(const ProcTris& tris, ProcEntity& entity)
 			continue;
 		}
 
-		// FIXME
-		/*if ( dmapGlobals.fullCarve ) {
+		// FIXME: fullCarve can be disabled, is enabled by default
+		if (true/* dmapGlobals.fullCarve*/)
+		{
 			// always fragment into areas
-			w = WindingForTri( tri );
-			ClipTriIntoTree_r( w, tri, e, e->tree->headnode );
+			ProcWinding w(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex);
+			clipTriIntoTreeRecursively(w, *tri, entity, entity.tree.head);
 			return;
-		}*/
+		}
 
 		ProcWinding w(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex);
 
