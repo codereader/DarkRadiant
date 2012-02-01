@@ -182,15 +182,15 @@ public:
 				}
 			}
 
-#if 0 // FIXME: Implement "discrete" surface flag
 			// set merge groups if needed, to prevent multiple sides from being
 			// merged into a single surface in the case of gui shaders, mirrors, and autosprites
-			if ( material->IsDiscrete() ) {
-				for ( tri = prim->tris ; tri ; tri = tri->next ) {
-					tri->mergeGroup = (void *)patch;
+			if (material->isDiscrete())
+			{
+				for (ProcTris::iterator tri = tris.begin(); tri != tris.end(); ++tri)
+				{
+					tri->mergePatch = patch;
 				}
 			}
-#endif
 
 			return false;
 		}
@@ -2310,7 +2310,9 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
 	{
 		if (group->material == triList[0].material && 
 			group->planeNum == planeNum && 
-			(group->mergeGroup == triList[0].mergeGroup || group->mergeSurf == triList[0].mergeSurf))
+			(group->mergeGroup == triList[0].mergeGroup || 
+			 group->mergeSurf == triList[0].mergeSurf || 
+			 group->mergePatch == triList[0].mergePatch))
 		{
 			// check the texture vectors
 			std::size_t i = 0;
@@ -2362,6 +2364,7 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
 		group->planeNum = planeNum;
 		group->mergeGroup = triList[0].mergeGroup;
 		group->mergeSurf = triList[0].mergeSurf;
+		group->mergePatch = triList[0].mergePatch;
 		group->material = triList[0].material;
 		group->texVec[0] = texVec[0];
 		group->texVec[1] = texVec[1];

@@ -16,6 +16,7 @@
 #include "BspTree.h"
 
 namespace model { class IModelSurface; }
+class IPatch;
 
 namespace map
 {
@@ -29,7 +30,8 @@ struct ProcTri
 	MaterialPtr					material;
 	const ProcFace*				mergeGroup;		// we want to avoid merging triangles
 	const model::IModelSurface* mergeSurf;		// from different fixed groups, like guiSurfs and mirrors
-	int							planeNum;		// not set universally, just in some areas
+	const IPatch*				mergePatch;
+	int							planeNum;		
 
 	ArbitraryMeshVertex			v[3];
 
@@ -38,7 +40,8 @@ struct ProcTri
 
 	ProcTri() :
 		mergeGroup(NULL),
-		mergeSurf(NULL)
+		mergeSurf(NULL),
+		mergePatch(NULL)
 	{}
 };
 typedef std::vector<ProcTri> ProcTris;
@@ -58,7 +61,7 @@ struct ProcOptimizeGroup
 	ProcLight			groupLights[MAX_GROUP_LIGHTS];	// lights effecting this list
 	const ProcFace*		mergeGroup;			// if this differs (guiSurfs, mirrors, etc), the
 	const model::IModelSurface* mergeSurf;	// groups will not be combined into model surfaces
-											// after optimization
+	const IPatch*		mergePatch;			// after optimization
 	Vector4				texVec[2];
 
 	bool				surfaceEmitted;
