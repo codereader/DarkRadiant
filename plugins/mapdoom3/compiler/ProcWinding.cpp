@@ -46,7 +46,7 @@ void ProcWinding::setFromPlane(const Plane3& plane)
 }
 
 // Clips this winding against the given plane
-void ProcWinding::clip(const Plane3& plane, const float epsilon)
+bool ProcWinding::clip(const Plane3& plane, const float epsilon)
 {
 	std::size_t numPoints = IWinding::size();
 
@@ -93,13 +93,13 @@ void ProcWinding::clip(const Plane3& plane, const float epsilon)
 	if (!counts[SIDE_FRONT])
 	{
 		IWinding::clear();
-		return;
+		return false;
 	}
 
 	// if nothing at the back of the clipping plane
 	if (!counts[SIDE_BACK])
 	{
-		return;
+		return true;
 	}
 
 	std::size_t maxpts = numPoints + 4;		// cant use counts[0]+2 because of fp grouping errors
@@ -114,7 +114,7 @@ void ProcWinding::clip(const Plane3& plane, const float epsilon)
 
 		if (newNumPoints + 1 > maxpts)
 		{
-			return;		// can't split -- fall back to original
+			return true;		// can't split -- fall back to original
 		}
 
 		if (sides[i] == SIDE_ON)
@@ -137,7 +137,7 @@ void ProcWinding::clip(const Plane3& plane, const float epsilon)
 
 		if (newNumPoints + 1 > maxpts)
 		{
-			return;		// can't split -- fall back to original
+			return true;		// can't split -- fall back to original
 		}
 
 		// generate a split point
@@ -176,6 +176,8 @@ void ProcWinding::clip(const Plane3& plane, const float epsilon)
 	
 	// Overwrite ourselves with the new winding
 	swap(newPoints); 
+
+	return true;
 }
 
 Vector3 ProcWinding::getCenter() const

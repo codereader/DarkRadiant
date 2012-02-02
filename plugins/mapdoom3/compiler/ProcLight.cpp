@@ -1,5 +1,7 @@
 #include "ProcLight.h"
 
+#include "ProcWinding.h"
+
 namespace map
 {
 
@@ -252,12 +254,11 @@ void ProcLight::deriveLightData()
 
 	//R_FreeLightDefFrustum( light );
 
-	// TODO frustumTris = R_PolytopeSurface( 6, frustum, frustumWindings );
+	frustumTris = generatePolytopeSurface(6, frustum, frustumWindings);
 
-	/*// a projected light will have one shadowFrustum, a point light will have
+	// a projected light will have one shadowFrustum, a point light will have
 	// six unless the light center is outside the box
-	R_MakeShadowFrustums( light );
-	*/
+	//R_MakeShadowFrustums( light );
 }
 
 void ProcLight::setLightFrustum()
@@ -280,6 +281,103 @@ void ProcLight::setLightFrustum()
 		frustum[i] = -frustum[i];
 		frustum[i].normalise();
 	}
+}
+
+#define MAX_POLYTOPE_PLANES 6
+
+inline void boundSurface(Surface& surf)
+{
+	surf.bounds == AABB();
+
+	for (Surface::Vertices::const_iterator i = surf.vertices.begin(); i != surf.vertices.end(); ++i)
+	{
+		surf.bounds.includePoint(i->vertex);
+	}
+}
+
+Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, ProcWinding* windings)
+{
+	ProcWinding planeWindings[MAX_POLYTOPE_PLANES];
+
+	if (numPlanes > MAX_POLYTOPE_PLANES)
+	{
+		globalErrorStream() << "generatePolytopeSurface: more than " << 
+			MAX_POLYTOPE_PLANES << " planes." << std::endl;
+		return Surface();
+	}
+
+	std::size_t numVerts = 0;
+	//std::size_t numIndexes = 0;
+
+	for (std::size_t i = 0; i < numPlanes; ++i)
+	{
+		const Plane3& plane = planes[i];
+		ProcWinding& w = planeWindings[i];
+
+		w.setFromPlane(plane);
+
+		for (std::size_t j = 0; j < numPlanes; ++j)
+		{
+			const Plane3& plane2 = planes[j];
+
+			if (j == i)
+			{
+				continue;
+			}
+
+			if (!w.clip(-plane2, ON_EPSILON))
+			{
+				break;
+			}
+		}
+
+		if (w.size() <= 2)
+		{
+			continue;
+		}
+
+		numVerts += w.size();
+		//numIndexes += (w.size() - 2) * 3;
+	}
+
+	Surface tri;
+	tri.vertices.resize(numVerts);
+
+	// copy the data from the windings
+	for (std::size_t i = 0; i < numPlanes; ++i)
+	{
+		ProcWinding& w = planeWindings[i];
+
+		if (w.empty())
+		{
+			continue;
+		}
+
+		for (std::size_t j = 0; j < w.size(); ++j)
+		{
+			tri.vertices.push_back(ArbitraryMeshVertex(w[j].vertex, Vector3(0,0,0), TexCoord2f(0,0)));
+		}
+
+		/*for (std::size_t j = 1; j < w.size() - 1; ++j)
+		{
+			tri->indexes[ tri->numIndexes + 0 ] = tri->numVerts;
+			tri->indexes[ tri->numIndexes + 1 ] = tri->numVerts + j;
+			tri->indexes[ tri->numIndexes + 2 ] = tri->numVerts + j + 1;
+			tri->numIndexes += 3;
+		}*/
+
+		//tri->numVerts += w.size();
+
+		// optionally save the winding
+		if (windings)
+		{
+			windings[i].swap(w);
+		}
+	}
+
+	boundSurface(tri);
+	
+	return tri;
 }
 
 } // namespace

@@ -2823,6 +2823,181 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 	}*/
 }
 
+void ProcCompiler::boundOptimizeGroup(ProcOptimizeGroup& group)
+{
+	group.bounds = AABB();
+
+	for (ProcTris::reverse_iterator tri = group.triList.rbegin(); tri != group.triList.rend(); ++tri)
+	{
+		group.bounds.includePoint(tri->v[0].vertex);
+		group.bounds.includePoint(tri->v[1].vertex);
+		group.bounds.includePoint(tri->v[2].vertex);
+	}
+}
+
+void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
+{
+	/*int			i;
+	optimizeGroup_t	*group;
+	mapTri_t	*tri;
+	mapTri_t	*shadowers;
+	optimizeGroup_t		*shadowerGroups;
+	bool		hasPerforatedSurface = false;*/
+
+	//
+	// build a group list of all the triangles that will contribute to
+	// the optimized shadow volume, leaving the original triangles alone
+	//
+
+	// shadowers will contain all the triangles that will contribute to the
+	// shadow volume
+	// TODO shadowerGroups = NULL;
+	const Vector3& lightOrigin = light.getGlobalLightOrigin();
+
+	// if the light is no-shadows, don't add any surfaces
+	// to the beam tree at all
+	if (!light.parms.noShadows && light.getLightShader()->lightCastsShadows())
+	{
+		for (std::size_t i = 0; i < entity.numAreas; ++i)
+		{
+			const ProcArea& area = entity.areas[i];
+
+			for (ProcArea::OptimizeGroups::const_reverse_iterator group = area.groups.rbegin(); 
+				 group != area.groups.rend(); ++group)
+			{
+				// if the surface doesn't cast shadows, skip it
+				if (!group->material->surfaceCastsShadow())
+				{
+					continue;
+				}
+
+				// if the group doesn't face away from the light, it
+				// won't contribute to the shadow volume
+				if (_procFile->planes.getPlane(group->planeNum).distanceToPoint(lightOrigin) > 0)
+				{
+					continue;
+				}
+
+				// if the group bounds doesn't intersect the light bounds,
+				// skip it
+				if (!group->bounds.intersects(light.getFrustumTris().bounds))
+				{
+					continue;
+				}
+
+				/*// build up a list of the triangle fragments inside the
+				// light frustum
+				shadowers = NULL;
+				for ( tri = group->triList ; tri ; tri = tri->next ) {
+					mapTri_t	*in, *out;
+
+					// clip it to the light frustum
+					ClipTriByLight( light, tri, &in, &out );
+					FreeTriList( out );
+					shadowers = MergeTriLists( shadowers, in );
+				}
+
+				// if we didn't get any out of this group, we don't
+				// need to create a new group in the shadower list
+				if ( !shadowers ) {
+					continue;
+				}
+
+				// find a group in shadowerGroups to add these to
+				// we will ignore everything but planenum, and we
+				// can merge across areas
+				optimizeGroup_t	*check;
+
+				for ( check = shadowerGroups ; check ; check = check->nextGroup ) {
+					if ( check->planeNum == group->planeNum ) {
+						break;
+					}
+				}
+				if ( !check ) {
+					check = (optimizeGroup_t *)Mem_Alloc( sizeof( *check ) );
+					*check = *group;
+					check->triList = NULL;
+					check->nextGroup = shadowerGroups;
+					shadowerGroups = check;
+				}
+
+				// if any surface is a shadow-casting perforated or translucent surface, we
+				// can't use the face removal optimizations because we can see through
+				// some of the faces
+				if ( group->material->Coverage() != MC_OPAQUE ) {
+					hasPerforatedSurface = true;
+				}
+
+				check->triList = MergeTriLists( check->triList, shadowers );*/
+			}
+		}
+	}
+
+	// take the shadower group list and create a beam tree and shadow volume
+	/*light->shadowTris = CreateLightShadow( shadowerGroups, light );
+
+	if ( light->shadowTris && hasPerforatedSurface ) {
+		// can't ever remove front faces, because we can see through some of them
+		light->shadowTris->numShadowIndexesNoCaps = light->shadowTris->numShadowIndexesNoFrontCaps = 
+			light->shadowTris->numIndexes;
+	}
+
+	// we don't need the original shadower triangles for anything else
+	FreeOptimizeGroupList( shadowerGroups );*/
+}
+
+void ProcCompiler::preLight(ProcEntity& entity)
+{
+	/*int			i;
+	int			start, end;
+	mapLight_t	*light;*/
+
+	// don't prelight anything but the world entity
+	if (&entity != _procFile->entities[0].get())
+	{
+		return;
+	}
+	
+	if (1 > 0 /*dmapGlobals.shadowOptLevel > 0*/) // FIXME: shadowopt level is 1 by default
+	{
+		globalOutputStream() << "----- BuildLightShadows -----" << std::endl;
+		
+		// calc bounds for all the groups to speed things up
+		for (std::size_t i = 0; i < entity.numAreas; ++i)
+		{
+			ProcArea& area = entity.areas[i];
+
+			for (ProcArea::OptimizeGroups::reverse_iterator group = area.groups.rbegin();
+				 group != area.groups.rend(); ++group)
+			{
+				boundOptimizeGroup(*group);
+			}
+		}
+
+		for (std::size_t i = 0; i < _procFile->lights.size(); ++i)
+		{
+			ProcLight& light = _procFile->lights[i];
+
+			buildLightShadows(entity, light);
+		}
+	}
+
+
+	/*if ( !dmapGlobals.noLightCarve ) {
+		common->Printf( "----- CarveGroupsByLight -----\n" );
+		start = Sys_Milliseconds();
+		// now subdivide the optimize groups into additional groups for
+		// each light that illuminates them
+		for ( i = 0 ; i < dmapGlobals.mapLights.Num() ; i++ ) {
+			light = dmapGlobals.mapLights[i];
+			CarveGroupsByLight( e, light );
+		}
+
+		end = Sys_Milliseconds();
+		common->Printf( "%5.1f seconds for CarveGroupsByLight\n", ( end - start ) / 1000.0 );
+	}*/
+}
+
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 {
 	_bspFaces.clear();
@@ -2890,9 +3065,9 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 	// the optimize lists by the light beam trees
 	// so there won't be unneeded overdraw in the static
 	// case
-	/*Prelight( e );
+	preLight(entity);
 
-	// optimizing is a superset of fixing tjunctions
+	/*// optimizing is a superset of fixing tjunctions
 	if ( !dmapGlobals.noOptimize ) {
 		OptimizeEntity( e );
 	} else  if ( !dmapGlobals.noTJunc ) {

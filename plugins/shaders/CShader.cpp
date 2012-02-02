@@ -251,10 +251,17 @@ bool CShader::isFogLight() const {
 	return _template->isFogLight();
 }
 
+bool CShader::lightCastsShadows() const
+{
+	int flags = getMaterialFlags();
+	return (flags & FLAG_FORCESHADOWS) ||
+		   (!isFogLight() && !isAmbientLight() && !isBlendLight() && !(flags & FLAG_NOSHADOWS));
+}
+
 bool CShader::surfaceCastsShadow() const
 {
 	int flags = getMaterialFlags();
-	return (flags & Material::FLAG_FORCESHADOWS) || !(flags & Material::FLAG_NOSHADOWS);
+	return (flags & FLAG_FORCESHADOWS) || !(flags & FLAG_NOSHADOWS);
 }
 
 bool CShader::isDrawn() const

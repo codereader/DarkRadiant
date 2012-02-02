@@ -169,6 +169,14 @@ private:
 
 	void clipTriIntoTreeRecursively(const ProcWinding& winding, const ProcTri& originalTri, 
 								  ProcEntity& entity, const BspTreeNodePtr& node);
+
+	// Break optimize groups up into additional groups at light boundaries, so
+	// optimization won't cross light bounds
+	void preLight(ProcEntity& entity);
+	void boundOptimizeGroup(ProcOptimizeGroup& group);
+
+	// Build the beam tree and shadow volume surface for a light
+	void buildLightShadows(ProcEntity& entity, ProcLight& light);
 };
 
 } // namespace

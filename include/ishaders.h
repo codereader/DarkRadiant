@@ -291,6 +291,12 @@ public:
 	 */
 	virtual bool isFogLight() const = 0;
 
+	/**
+	 * For light shaders: implicitly no-shadows lights (ambients, fogs, etc) 
+	 * will never cast shadows but individual light entities can also override this value.
+	 */
+	virtual bool lightCastsShadows() const = 0;
+
 	// returns true if the material will generate shadows, not making a
 	// distinction between global and no-self shadows
 	virtual bool surfaceCastsShadow() const = 0;

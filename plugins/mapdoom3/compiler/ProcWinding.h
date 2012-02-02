@@ -47,8 +47,9 @@ public:
 	// Creates a near-infinitely large winding from the given plane
 	void setFromPlane(const Plane3& plane);
 
-	// Clips this winding against the given plane
-	void clip(const Plane3& plane, const float epsilon = 0.0f);
+	// Clips this winding against the given plane,
+	// returns true if some part was at the front
+	bool clip(const Plane3& plane, const float epsilon = 0.0f);
 
 	// Splits this winding in two, using the given plane as splitter. This winding itself stays unaltered
 	int split(const Plane3& plane, const float epsilon, ProcWinding& front, ProcWinding& back) const;

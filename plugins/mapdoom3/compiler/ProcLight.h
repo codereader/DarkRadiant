@@ -5,7 +5,10 @@
 #include "ientity.h"
 #include "ishaders.h"
 #include "math/Matrix4.h"
+#include "math/AABB.h"
 #include "math/Vector3.h"
+#include "render/ArbitraryMeshVertex.h"
+#include "ProcWinding.h"
 
 namespace map
 {
@@ -60,6 +63,14 @@ struct RenderLightParms
 	//idSoundEmitter *		referenceSound;		// for shader sound tables, allowing effects to vary with sounds
 };
 
+struct Surface
+{
+	AABB		bounds;
+
+	typedef std::vector<ArbitraryMeshVertex> Vertices;
+	Vertices	vertices;
+};
+
 // Represents a map light
 class ProcLight
 {
@@ -71,6 +82,8 @@ private:
 	Plane3		lightProject[4];
 
 	Plane3		frustum[6];				// in global space, positive side facing out, last two are front/back
+	ProcWinding	frustumWindings[6];
+	Surface		frustumTris;
 
 	Matrix4		modelMatrix;	
 
@@ -95,12 +108,29 @@ public:
 
 	void deriveLightData();
 
+	const MaterialPtr& getLightShader() const 
+	{
+		return lightShader;
+	}
+
+	const Vector3& getGlobalLightOrigin() const
+	{
+		return globalLightOrigin;
+	}
+
+	const Surface& getFrustumTris() const
+	{
+		return frustumTris;
+	}
+
 private:
 	Matrix4 getRotation(const std::string& value);
 
 	// Creates plane equations from the light projection, positive sides
 	// face out of the light (ref: R_SetLightFrustum)
 	void setLightFrustum();
+
+	static Surface generatePolytopeSurface(int numPlanes, const Plane3* planes, ProcWinding* windings);
 };
 
 } // namespace
