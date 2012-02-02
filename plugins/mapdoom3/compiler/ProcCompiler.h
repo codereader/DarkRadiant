@@ -177,6 +177,7 @@ private:
 
 	// Build the beam tree and shadow volume surface for a light
 	void buildLightShadows(ProcEntity& entity, ProcLight& light);
+	void clipTriByLight(const ProcLight& light, const ProcTri& tri, ProcTris& in, ProcTris& out);
 };
 
 } // namespace

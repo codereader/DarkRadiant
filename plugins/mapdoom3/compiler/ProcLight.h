@@ -118,6 +118,11 @@ public:
 		return globalLightOrigin;
 	}
 
+	const Plane3& getFrustumPlane(std::size_t i) const
+	{
+		return frustum[i];
+	}
+
 	const Surface& getFrustumTris() const
 	{
 		return frustumTris;

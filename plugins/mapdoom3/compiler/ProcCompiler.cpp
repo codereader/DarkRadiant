@@ -2835,15 +2835,69 @@ void ProcCompiler::boundOptimizeGroup(ProcOptimizeGroup& group)
 	}
 }
 
+void ProcCompiler::clipTriByLight(const ProcLight& light, const ProcTri& tri, ProcTris& in, ProcTris& out)
+{
+	in.clear();
+	out.clear();
+
+	// clip this winding to the light
+	ProcWinding inside(tri.v[0].vertex, tri.v[1].vertex, tri.v[2].vertex);
+	ProcWinding outside[6];
+
+	bool hasOutside = false;
+	ProcWinding oldInside;
+
+	for (std::size_t i = 0; i < 6 ; ++i)
+	{
+		oldInside = inside;
+
+		if (!oldInside.empty())
+		{
+			oldInside.split(light.getFrustumPlane(i), 0, outside[i], inside);
+			oldInside.clear();
+		}
+		else
+		{
+			outside[i].clear();
+		}
+
+		if (!outside[i].empty())
+		{
+			hasOutside = true;
+		}
+	}
+
+	if (inside.empty())
+	{
+		// the entire winding is outside this light
+		out.push_back(tri);
+		return;
+	}
+
+	if (!hasOutside)
+	{
+		// the entire winding is inside this light
+		in.push_back(tri);
+		return;
+	}
+
+	// the winding is split
+	in = windingToTriList(inside, tri);
+	inside.clear();
+
+	// combine all the outside fragments
+	for (std::size_t i = 0; i < 6; ++i)
+	{
+		if (!outside[i].empty())
+		{
+			ProcTris temp = windingToTriList(outside[i], tri);
+			out.insert(out.end(), temp.begin(), temp.end());
+		}
+	}
+}
+
 void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 {
-	/*int			i;
-	optimizeGroup_t	*group;
-	mapTri_t	*tri;
-	mapTri_t	*shadowers;
-	optimizeGroup_t		*shadowerGroups;
-	bool		hasPerforatedSurface = false;*/
-
 	//
 	// build a group list of all the triangles that will contribute to
 	// the optimized shadow volume, leaving the original triangles alone
@@ -2851,8 +2905,9 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 
 	// shadowers will contain all the triangles that will contribute to the
 	// shadow volume
-	// TODO shadowerGroups = NULL;
+	ProcArea::OptimizeGroups shadowerGroups;
 	const Vector3& lightOrigin = light.getGlobalLightOrigin();
+	bool hasPerforatedSurface = false;
 
 	// if the light is no-shadows, don't add any surfaces
 	// to the beam tree at all
@@ -2885,65 +2940,73 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 					continue;
 				}
 
-				/*// build up a list of the triangle fragments inside the
+				// build up a list of the triangle fragments inside the
 				// light frustum
-				shadowers = NULL;
-				for ( tri = group->triList ; tri ; tri = tri->next ) {
-					mapTri_t	*in, *out;
+				ProcTris shadowers;
 
+				for (ProcTris::const_reverse_iterator tri = group->triList.rbegin();
+					 tri != group->triList.rend(); ++tri)
+				{
 					// clip it to the light frustum
-					ClipTriByLight( light, tri, &in, &out );
-					FreeTriList( out );
-					shadowers = MergeTriLists( shadowers, in );
+					ProcTris in;
+					ProcTris out;
+
+					clipTriByLight(light, *tri, in, out);
+					
+					shadowers.insert(shadowers.end(), in.begin(), in.end());
 				}
 
 				// if we didn't get any out of this group, we don't
 				// need to create a new group in the shadower list
-				if ( !shadowers ) {
+				if (shadowers.empty())
+				{
 					continue;
 				}
 
 				// find a group in shadowerGroups to add these to
 				// we will ignore everything but planenum, and we
 				// can merge across areas
-				optimizeGroup_t	*check;
+				ProcArea::OptimizeGroups::iterator check = shadowerGroups.begin();
 
-				for ( check = shadowerGroups ; check ; check = check->nextGroup ) {
-					if ( check->planeNum == group->planeNum ) {
+				for ( ; check != shadowerGroups.end(); ++check)
+				{
+					if (check->planeNum == group->planeNum)
+					{
 						break;
 					}
 				}
-				if ( !check ) {
-					check = (optimizeGroup_t *)Mem_Alloc( sizeof( *check ) );
-					*check = *group;
-					check->triList = NULL;
-					check->nextGroup = shadowerGroups;
-					shadowerGroups = check;
+
+				if (check == shadowerGroups.end())
+				{
+					shadowerGroups.push_back(*group);
+					check = shadowerGroups.end() - 1;
 				}
 
 				// if any surface is a shadow-casting perforated or translucent surface, we
 				// can't use the face removal optimizations because we can see through
 				// some of the faces
-				if ( group->material->Coverage() != MC_OPAQUE ) {
+				if (group->material->getCoverage() != Material::MC_OPAQUE)
+				{
 					hasPerforatedSurface = true;
 				}
 
-				check->triList = MergeTriLists( check->triList, shadowers );*/
+				check->triList.insert(check->triList.end(), shadowers.begin(), shadowers.end());
 			}
 		}
 	}
 
 	// take the shadower group list and create a beam tree and shadow volume
+	// TODO
 	/*light->shadowTris = CreateLightShadow( shadowerGroups, light );
 
 	if ( light->shadowTris && hasPerforatedSurface ) {
 		// can't ever remove front faces, because we can see through some of them
 		light->shadowTris->numShadowIndexesNoCaps = light->shadowTris->numShadowIndexesNoFrontCaps = 
 			light->shadowTris->numIndexes;
-	}
+	}*/
 
 	// we don't need the original shadower triangles for anything else
-	FreeOptimizeGroupList( shadowerGroups );*/
+	//FreeOptimizeGroupList( shadowerGroups );
 }
 
 void ProcCompiler::preLight(ProcEntity& entity)
