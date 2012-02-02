@@ -2601,7 +2601,7 @@ void ProcCompiler::addMapTrisToAreas(const ProcTris& tris, ProcEntity& entity)
 			// always fragment into areas
 			ProcWinding w(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex);
 			clipTriIntoTreeRecursively(w, *tri, entity, entity.tree.head);
-			return;
+			continue;
 		}
 
 		ProcWinding w(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex);
@@ -2639,21 +2639,38 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 
 	// for each primitive, clip it to the non-solid leafs
 	// and divide it into different areas
-	for (ProcEntity::Primitives::const_iterator prim = entity.primitives.begin();
-		prim != entity.primitives.end(); ++prim)
+	std::size_t primCount = 0;
+	for (ProcEntity::Primitives::const_reverse_iterator prim = entity.primitives.rbegin();
+		prim != entity.primitives.rend(); ++prim, ++primCount)
 	{
 		const ProcBrushPtr& brush = prim->brush;
 
 		if (!brush)
 		{
+			//globalOutputStream() << "--- Primitive: " << primCount << " (patch) " << std::endl;
+
 			// add curve triangles
-			for (std::size_t i = 0; i < prim->patch.size(); ++i)
+			addMapTrisToAreas(prim->patch, entity);
+			
+			/*// Print result
+			for (std::size_t a = 0; a < entity.areas.size(); ++a)
 			{
-				addMapTrisToAreas(prim->patch, entity);
-			}
+				globalOutputStream() << " Area " << a << ": ";
+		
+				globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
+
+				for (ProcArea::OptimizeGroups::const_reverse_iterator g = entity.areas[a].groups.rbegin(); 
+					g != entity.areas[a].groups.rend(); ++g)
+				{
+					globalOutputStream() << "  plane " << g->planeNum << ", " <<
+						g->triList.size() << " tris" << std::endl;
+				}
+			}*/
 
 			continue;
 		}
+
+		//globalOutputStream() << "--- Primitive: " << primCount << " (brush " << brush->brushnum << ") " << std::endl;
 
 		// clip in brush sides
 		for (std::size_t i = 0; i < brush->sides.size(); ++i)
@@ -2667,6 +2684,21 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 
 			putWindingIntoAreasRecursively(entity, side.visibleHull, side, entity.tree.head);
 		}
+
+		// Print result
+		/*for (std::size_t a = 0; a < entity.areas.size(); ++a)
+		{
+			globalOutputStream() << " Area " << a << ": ";
+		
+			globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
+
+			for (ProcArea::OptimizeGroups::const_reverse_iterator g = entity.areas[a].groups.rbegin(); 
+				g != entity.areas[a].groups.rend(); ++g)
+			{
+				globalOutputStream() << "  plane " << g->planeNum << ", " <<
+					g->triList.size() << " tris" << std::endl;
+			}
+		}*/
 	}
 
 	// optionally inline some of the func_static models
@@ -2777,7 +2809,7 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 		}
 	}
 
-	// Print result
+	/*// Print result
 	for (std::size_t a = 0; a < entity.areas.size(); ++a)
 	{
 		globalOutputStream() << "Area " << a << ": ";
@@ -2788,7 +2820,7 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 		{
 			globalOutputStream() << "  Group " << g << ": Plane " << entity.areas[a].groups[g].planeNum << std::endl;
 		}
-	}
+	}*/
 }
 
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
