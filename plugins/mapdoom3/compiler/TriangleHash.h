@@ -12,6 +12,9 @@ namespace map
 #define	HASH_BINS		16
 #define	SNAP_FRACTIONS	32
 
+#define	VERTEX_EPSILON	( 1.0 / SNAP_FRACTIONS )
+#define	COLINEAR_EPSILON	( 1.8 * VERTEX_EPSILON )
+
 struct HashVert
 {
 	struct HashVert* next;
@@ -71,10 +74,10 @@ public:
 
 		for (std::size_t i = 0; i < 3; ++i)
 		{
-			_hashIntMins[i] = min[i] * SNAP_FRACTIONS;
+			_hashIntMins[i] = static_cast<int>(min[i] * SNAP_FRACTIONS);
 
 			_hashScale[i] = _hashBounds.extents[i] / HASH_BINS;
-			_hashIntScale[i] = _hashScale[i] * SNAP_FRACTIONS;
+			_hashIntScale[i] = static_cast<int>(_hashScale[i] * SNAP_FRACTIONS);
 
 			if (_hashIntScale[i] < 1) 
 			{
@@ -114,7 +117,7 @@ public:
 		// snap the vert to integral values
 		for (i = 0 ; i < 3 ; i++ )
 		{
-			iv[i] = floor( (vertex[i] + 0.5/SNAP_FRACTIONS ) * SNAP_FRACTIONS );
+			iv[i] = static_cast<int>(floor( (vertex[i] + 0.5/SNAP_FRACTIONS ) * SNAP_FRACTIONS ));
 			block[i] = ( iv[i] - _hashIntMins[i] ) / _hashIntScale[i];
 
 			if (block[i] < 0)
@@ -173,93 +176,98 @@ public:
 
 	// Adds two new ProcTris to the front of the fixed list if the hashVert is on an edge of 
 	// the given mapTri (returns true), otherwise does nothing (and returns false).
-	bool fixTriangleAgainstHashVert(const ProcTri& test, HashVert* hv, std::list<ProcTri>& fixed)
+	bool fixTriangleAgainstHashVert(const ProcTri& a, HashVert* hv, std::list<ProcTri>& fixed)
 	{
-		return false; // TODO
-		/*int			i;
-		const idDrawVert	*v1, *v2, *v3;
-		idDrawVert	split;
-		idVec3		dir;
-		float		len;
-		float		frac;
-		mapTri_t	*new1, *new2;
-		idVec3		temp;
-		float		d, off;
-		const idVec3 *v;
-		idPlane		plane1, plane2;
-
-		v = &hv->v;
+		const Vector3& v = hv->v;
 
 		// if the triangle already has this hashVert as a vert,
 		// it can't be split by it
-		if ( a->hashVert[0] == hv || a->hashVert[1] == hv || a->hashVert[2] == hv ) {
-			return NULL;
+		if (a.hashVert[0] == hv || a.hashVert[1] == hv || a.hashVert[2] == hv )
+		{
+			return false;
 		}
 
 		// we probably should find the edge that the vertex is closest to.
 		// it is possible to be < 1 unit away from multiple
 		// edges, but we only want to split by one of them
-		for ( i = 0 ; i < 3 ; i++ ) {
-			v1 = &a->v[i];
-			v2 = &a->v[(i+1)%3];
-			v3 = &a->v[(i+2)%3];
-			VectorSubtract( v2->xyz, v1->xyz, dir );
-			len = dir.Normalize();
+		for (std::size_t i = 0; i < 3; ++i)
+		{
+			const ArbitraryMeshVertex& v1 = a.v[i];
+			const ArbitraryMeshVertex& v2 = a.v[(i+1) % 3];
+			const ArbitraryMeshVertex& v3 = a.v[(i+2) % 3];
+
+			Vector3 dir = v2.vertex - v1.vertex;
+
+			float len = dir.normalise();
 
 			// if it is close to one of the edge vertexes, skip it
-			VectorSubtract( *v, v1->xyz, temp );
-			d = DotProduct( temp, dir );
-			if ( d <= 0 || d >= len ) {
+			Vector3 temp = v - v1.vertex;
+			
+			float d = temp.dot(dir);
+
+			if (d <= 0 || d >= len)
+			{
 				continue;
 			}
 
 			// make sure it is on the line
-			VectorMA( v1->xyz, d, dir, temp );
-			VectorSubtract( temp, *v, temp );
-			off = temp.Length();
-			if ( off <= -COLINEAR_EPSILON || off >= COLINEAR_EPSILON ) {
+			temp = v1.vertex + dir * d;
+			temp -= v;
+			float off = temp.getLength();
+
+			if (off <= -COLINEAR_EPSILON || off >= COLINEAR_EPSILON) 
+			{
 				continue;
 			}
 
 			// take the x/y/z from the splitter,
 			// but interpolate everything else from the original tri
-			VectorCopy( *v, split.xyz );
-			frac = d / len;
-			split.st[0] = v1->st[0] + frac * ( v2->st[0] - v1->st[0] );
-			split.st[1] = v1->st[1] + frac * ( v2->st[1] - v1->st[1] );
-			split.normal[0] = v1->normal[0] + frac * ( v2->normal[0] - v1->normal[0] );
-			split.normal[1] = v1->normal[1] + frac * ( v2->normal[1] - v1->normal[1] );
-			split.normal[2] = v1->normal[2] + frac * ( v2->normal[2] - v1->normal[2] );
-			split.normal.Normalize();
+			float frac = d / len;
+
+			TexCoord2f texcoord(
+				v1.texcoord[0] + frac * (v2.texcoord[0] - v1.texcoord[0]),
+				v1.texcoord[1] + frac * (v2.texcoord[1] - v1.texcoord[1])
+			);
+
+			Vector3 normal(
+				v1.normal[0] + frac * (v2.normal[0] - v1.normal[0]),
+				v1.normal[1] + frac * (v2.normal[1] - v1.normal[1]),
+				v1.normal[2] + frac * (v2.normal[2] - v1.normal[2])
+			);
+
+			normal.normalise();
+
+			ArbitraryMeshVertex split(v, normal, texcoord);
 
 			// split the tri
-			new1 = CopyMapTri( a );
-			new1->v[(i+1)%3] = split;
-			new1->hashVert[(i+1)%3] = hv;
-			new1->next = NULL;
+			ProcTri new1(a);
+			new1.v[(i + 1) % 3] = split;
+			new1.hashVert[(i + 1) % 3] = hv;
 
-			new2 = CopyMapTri( a );
-			new2->v[i] = split;
-			new2->hashVert[i] = hv;
-			new2->next = new1;
+			ProcTri new2(a);
+			new2.v[i] = split;
+			new2.hashVert[i] = hv;
 
-			plane1.FromPoints( new1->hashVert[0]->v, new1->hashVert[1]->v, new1->hashVert[2]->v );
-			plane2.FromPoints( new2->hashVert[0]->v, new2->hashVert[1]->v, new2->hashVert[2]->v );
+			Plane3 plane1(new1.hashVert[0]->v, new1.hashVert[1]->v, new1.hashVert[2]->v);
+			Plane3 plane2(new2.hashVert[0]->v, new2.hashVert[1]->v, new2.hashVert[2]->v);
 
-			d = DotProduct( plane1, plane2 );
+			d = plane1.normal().dot(plane2.normal());
 
 			// if the two split triangle's normals don't face the same way,
 			// it should not be split
-			if ( d <= 0 ) {
-				FreeTriList( new2 );
+			if (d <= 0) 
+			{
 				continue;
 			}
 
-			return new2;
+			fixed.push_front(new1);
+			fixed.push_front(new2);
+
+			return true;
 		}
 
 
-		return NULL;*/
+		return false;
 	}
 
 	// Potentially splits a triangle into a list of triangles based on tjunctions
@@ -333,7 +341,7 @@ public:
 		// add a 1.0 slop margin on each side
 		for (std::size_t i = 0; i < 3; ++i) 
 		{
-			blocks[0][i] = (min[i] - 1.0 - hashBoundsMin[i]) / _hashScale[i];
+			blocks[0][i] = static_cast<int>((min[i] - 1.0 - hashBoundsMin[i]) / _hashScale[i]);
 
 			if (blocks[0][i] < 0)
 			{
@@ -344,7 +352,7 @@ public:
 				blocks[0][i] = HASH_BINS - 1;
 			}
 
-			blocks[1][i] = (max[i] + 1.0 - hashBoundsMin[i]) / _hashScale[i];
+			blocks[1][i] = static_cast<int>((max[i] + 1.0 - hashBoundsMin[i]) / _hashScale[i]);
 
 			if (blocks[1][i] < 0)
 			{

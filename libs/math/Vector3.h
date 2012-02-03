@@ -328,12 +328,18 @@ public:
 
 	/**
 	 * Normalise this vector in-place by scaling by the inverse of its size.
+	 * Returns the length it had before normalisation.
 	 */
-	void normalise() {
-		float inverseLength = 1/getLength();
+	float normalise()
+	{
+		float length = getLength();
+		float inverseLength = 1/length;
+
 		_v[0] *= inverseLength;
 		_v[1] *= inverseLength;
 		_v[2] *= inverseLength;
+		
+		return length;
 	}
 
 	// Returns a vector with the reciprocal values of each component
