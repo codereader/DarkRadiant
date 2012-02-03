@@ -222,7 +222,10 @@ void Map::updateTitle()
 		title += " *";
 	}
 
-	GlobalMainFrame().getTopLevelWindow()->set_title(title);
+	if (GlobalMainFrame().getTopLevelWindow())
+	{
+		GlobalMainFrame().getTopLevelWindow()->set_title(title);
+	}
 }
 
 void Map::setMapName(const std::string& newName) {

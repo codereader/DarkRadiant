@@ -35,7 +35,7 @@ private:
 public:
 	MapFileChooserPreview();
 
-	virtual ~MapFileChooserPreview() {}
+	virtual ~MapFileChooserPreview();
 
 	virtual Gtk::Widget& getPreviewWidget();
 

@@ -17,7 +17,7 @@ namespace map {
 
 MapFileChooserPreview::MapFileChooserPreview() :
 	Gtk::VBox(false, 0),
-	_preview(Gtk::manage(new ui::MapPreview))
+	_preview(new ui::MapPreview)
 {
 	_preview->setSize(400, 400);
 
@@ -29,6 +29,11 @@ MapFileChooserPreview::MapFileChooserPreview() :
 	pack_start(*vbox, true, true, 0);
 
 	show_all();
+}
+
+MapFileChooserPreview::~MapFileChooserPreview()
+{
+	delete _preview;
 }
 
 Gtk::Widget& MapFileChooserPreview::getPreviewWidget()
