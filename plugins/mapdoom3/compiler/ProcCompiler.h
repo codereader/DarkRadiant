@@ -61,6 +61,17 @@ private:
 
 	TriangleHashPtr _triangleHash;
 
+	AABB		_optBounds;
+
+	typedef std::vector<OriginalEdge> OriginalEdges;
+	OriginalEdges	_originalEdges;
+
+	typedef std::vector<OptEdge> OptEdges;
+	OptEdges		_optEdges;
+
+	typedef std::vector<OptVertex> OptVertices;
+	OptVertices		_optVerts;
+
 public:
 	ProcCompiler(const scene::INodePtr& root);
 
@@ -195,6 +206,10 @@ private:
 
 	// removes triangles that are degenerated or flipped backwards
 	void hashTriangles(ProcArea::OptimizeGroups& groups);
+	void addOriginalEdges(ProcOptimizeGroup& group);
+
+	OptVertex* findOptVertex(const ArbitraryMeshVertex& vertex, ProcOptimizeGroup& group);
+	void addOriginalTriangle(OptVertex* v[3]);
 };
 
 } // namespace

@@ -22,8 +22,53 @@ namespace map
 {
 
 struct HashVertex;
-struct OptVertex;
+
 struct HashVert;
+
+struct OptVertex
+{
+	ArbitraryMeshVertex	v;
+	Vector3				pv;					// projected against planar axis, third value is 0
+	struct OptEdge*		edges;
+	struct OptVertex*	islandLink;
+	bool				addedToIsland;
+	bool				emitted;			// when regenerating triangles
+
+	OptVertex() :
+		edges(NULL),
+		islandLink(NULL),
+		addedToIsland(false),
+		emitted(false)
+	{}
+};
+
+struct OptEdge
+{
+	OptVertex*		v1;
+	OptVertex*		v2;
+	struct OptEdge*	islandLink;
+	bool			addedToIsland;
+	bool			created;		// not one of the original edges
+	bool			combined;		// combined from two or more colinear edges
+	struct OptTri*	frontTri;
+	struct OptTri*	backTri;
+	struct OptEdge*	v1link;
+	struct OptEdge*	v2link;
+};
+
+struct OriginalEdge
+{
+	OptVertex*	v1;
+	OptVertex*	v2;
+
+	OriginalEdge()
+	{}
+
+	OriginalEdge(OptVertex* v1_, OptVertex* v2_) :
+		v1(v1_),
+		v2(v2_)
+	{}
+};
 
 // chains of ProcTri are the general unit of processing
 struct ProcTri
@@ -43,7 +88,10 @@ struct ProcTri
 		mergeGroup(NULL),
 		mergeSurf(NULL),
 		mergePatch(NULL)
-	{}
+	{
+		optVert[0] = optVert[1] = optVert[2] = NULL;
+		hashVert[0] = hashVert[1] = hashVert[2] = NULL;
+	}
 };
 typedef std::vector<ProcTri> ProcTris;
 

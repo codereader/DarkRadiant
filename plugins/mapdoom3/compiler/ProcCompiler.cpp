@@ -17,6 +17,9 @@ std::size_t ProcPortal::nextPortalId = 0;
 const float CLIP_EPSILON = 0.1f;
 const float SPLIT_WINDING_EPSILON = 0.001f;
 
+static std::size_t DEFAULT_OPT_EDGES = 0x40000;
+static std::size_t DEFAULT_OPT_VERTICES = 0x10000;
+
 const std::size_t MULTIAREA_CROSS = std::numeric_limits<std::size_t>::max();
 
 ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
@@ -2960,6 +2963,175 @@ void ProcCompiler::fixAreaGroupsTjunctions(ProcArea::OptimizeGroups& groups)
 	}
 }
 
+inline void calcNormalVectors(const Vector3& self, Vector3& left, Vector3& down)
+{
+	float d = self.x() * self.x() + self.y() * self.y();
+
+	if (!d)
+	{
+		left[0] = 1;
+		left[1] = 0;
+		left[2] = 0;
+	} 
+	else 
+	{
+		d = 1 / sqrt(d);
+
+		left[0] = -self.y() * d;
+		left[1] = self.x() * d;
+		left[2] = 0;
+	}
+
+	down = left.crossProduct(self);
+}
+
+OptVertex* ProcCompiler::findOptVertex(const ArbitraryMeshVertex& v, ProcOptimizeGroup& group)
+{
+	// deal with everything strictly as 2D
+	float x = v.vertex.dot(group.axis[0]);
+	float y = v.vertex.dot(group.axis[1]);
+
+	// should we match based on the t-junction fixing hash verts?
+	for (std::size_t i = 0; i < _optVerts.size(); ++i)
+	{
+		if (_optVerts[i].pv[0] == x && _optVerts[i].pv[1] == y)
+		{
+			return &_optVerts[i];
+		}
+	}
+
+	// not found, insert a new one
+	_optVerts.push_back(OptVertex());
+
+	OptVertex* vert = &_optVerts.back(); // TODO: greebo: instead of OptVertex* we might as well use array indices?
+	
+	vert->v = v;
+	vert->pv[0] = x;
+	vert->pv[1] = y;
+	vert->pv[2] = 0;
+
+	_optBounds.includePoint(vert->pv);
+
+	return vert;
+}
+
+// an empty area will be considered invalid.
+// Due to some truly aweful epsilon issues, a triangle can switch between
+// valid and invalid depending on which order you look at the verts, so
+// consider it invalid if any one of the possibilities is invalid.
+bool isTriangleValid(const OptVertex* v1, const OptVertex* v2, const OptVertex* v3) 
+{
+	Vector3 d1 = v2->pv - v1->pv;
+	Vector3 d2 = v3->pv - v1->pv;
+
+	Vector3 normal = d1.crossProduct(d2);
+
+	if (normal[2] <= 0)
+	{
+		return false;
+	}
+
+	d1 = v3->pv - v2->pv;
+	d2 = v1->pv - v2->pv;
+	normal = d1.crossProduct(d2);
+
+	if (normal[2] <= 0)
+	{
+		return false;
+	}
+
+	d1 = v1->pv - v3->pv;
+	d2 = v2->pv - v3->pv;
+	normal = d1.crossProduct(d2);
+
+	if (normal[2] <= 0) 
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ProcCompiler::addOriginalTriangle(OptVertex* v[3])
+{
+	// if this triangle is backwards (possible with epsilon issues)
+	// ignore it completely
+	if (!isTriangleValid(v[0], v[1], v[2])) 
+	{
+		globalWarningStream() << "WARNING: backwards triangle in input!" << std::endl;
+		return;
+	}
+
+	for (std::size_t i = 0; i < 3; ++i)
+	{
+		OptVertex* v1 = v[i];
+		OptVertex* v2 = v[(i+1) % 3];
+
+		if (v1 == v2)
+		{
+			// this probably shouldn't happen, because the
+			// tri would be degenerate
+			continue;
+		}
+
+		std::size_t j = 0;
+
+		// see if there is an existing one
+		for ( ; j < _originalEdges.size(); ++j)
+		{
+			if (_originalEdges[j].v1 == v1 && _originalEdges[j].v2 == v2)
+			{
+				break;
+			}
+
+			if (_originalEdges[j].v2 == v1 && _originalEdges[j].v1 == v2)
+			{
+				break;
+			}
+		}
+
+		if (j == _originalEdges.size())
+		{
+			// add it
+			_originalEdges.push_back(OriginalEdge(v1, v2));
+		}
+	}
+}
+
+void ProcCompiler::addOriginalEdges(ProcOptimizeGroup& group)
+{
+	if (false/* dmapGlobals.verbose */) // FIXME
+	{
+		globalOutputStream() <<  "----" << std::endl;
+		globalOutputStream() << (boost::format("%6i original tris") % group.triList.size()) << std::endl;
+	}
+
+	_optBounds = AABB();
+
+	// allocate space for max possible edges
+	std::size_t numTris = group.triList.size();
+
+	_originalEdges.resize(numTris * 3);
+
+	// add all unique triangle edges
+	_optEdges.clear();
+	_optEdges.reserve(DEFAULT_OPT_EDGES);
+
+	_optVerts.clear();
+	_optVerts.reserve(DEFAULT_OPT_VERTICES);
+
+	OptVertex*	v[3];
+
+	for (ProcTris::iterator tri = group.triList.begin(); tri != group.triList.end(); ++tri)
+	{
+		v[0] = tri->optVert[0] = findOptVertex(tri->v[0], group);
+		v[1] = tri->optVert[1] = findOptVertex(tri->v[1], group);
+		v[2] = tri->optVert[2] = findOptVertex(tri->v[2], group);
+
+		addOriginalTriangle(v);
+	}
+}
+
 void ProcCompiler::optimizeOptList(ProcOptimizeGroup& group)
 {
 	ProcArea::OptimizeGroups tempList(1, group);
@@ -2969,11 +3141,11 @@ void ProcCompiler::optimizeOptList(ProcOptimizeGroup& group)
 	// can we avoid doing this if colinear vertexes break edges?
 	fixAreaGroupsTjunctions(tempList);
 	
-	/*// create the 2D vectors
-	dmapGlobals.mapPlanes[opt->planeNum].Normal().NormalVectors( opt->axis[0], opt->axis[1] );
+	// create the 2D vectors
+	calcNormalVectors(_procFile->planes.getPlane(group.planeNum).normal(), group.axis[0], group.axis[1]);
 
-	AddOriginalEdges( opt );
-	SplitOriginalEdgesAtCrossings( opt );
+	addOriginalEdges(group);
+	/*SplitOriginalEdgesAtCrossings( opt );
 
 #if 0
 	// seperate any discontinuous areas for individual optimization
