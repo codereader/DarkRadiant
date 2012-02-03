@@ -95,7 +95,7 @@ public:
 	// for naming the shadow volume surface and interactions
 	std::string		name;
 
-	// TODO srfTriangles_t	*shadowTris;
+	Surface		shadowTris;
 
 	ProcLight()
 	{

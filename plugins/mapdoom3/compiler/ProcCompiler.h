@@ -6,6 +6,7 @@
 #include "BspTree.h"
 #include "math/Vector3.h"
 #include "LeakFile.h"
+#include "TriangleHash.h"
 
 namespace map
 {
@@ -57,6 +58,8 @@ private:
 
 	std::size_t _numAreas;
 	std::size_t _numAreaFloods;
+
+	TriangleHashPtr _triangleHash;
 
 public:
 	ProcCompiler(const scene::INodePtr& root);
@@ -178,6 +181,20 @@ private:
 	// Build the beam tree and shadow volume surface for a light
 	void buildLightShadows(ProcEntity& entity, ProcLight& light);
 	void clipTriByLight(const ProcLight& light, const ProcTri& tri, ProcTris& in, ProcTris& out);
+
+	// shadowerGroups should be exactly clipped to the light frustum before calling.
+	// shadowerGroups is optimized by this function, but the contents can be freed, because the returned
+	// lightShadow_t list is a further culling and optimization of the data.
+	Surface createLightShadow(ProcArea::OptimizeGroups& shadowerGroups, const ProcLight& light);
+
+	// This will also fix tjunctions
+	void optimizeGroupList(ProcArea::OptimizeGroups& groupList);
+	std::size_t countGroupListTris(ProcArea::OptimizeGroups& groupList);
+	void optimizeOptList(ProcOptimizeGroup& group);
+	void fixAreaGroupsTjunctions(ProcArea::OptimizeGroups& groups);
+
+	// removes triangles that are degenerated or flipped backwards
+	void hashTriangles(ProcArea::OptimizeGroups& groups);
 };
 
 } // namespace

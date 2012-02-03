@@ -2896,6 +2896,191 @@ void ProcCompiler::clipTriByLight(const ProcLight& light, const ProcTri& tri, Pr
 	}
 }
 
+std::size_t ProcCompiler::countGroupListTris(ProcArea::OptimizeGroups& groupList)
+{
+	std::size_t c = 0;
+
+	for (ProcArea::OptimizeGroups::const_iterator group = groupList.begin(); group != groupList.end(); ++group)
+	{
+		c += group->triList.size();
+	}
+
+	return c;
+}
+
+void ProcCompiler::hashTriangles(ProcArea::OptimizeGroups& groups)
+{
+	// clear the hash tables
+	_triangleHash.reset(new TriangleHash);
+
+	// bound all the triangles to determine the bucket size
+	_triangleHash->calculateBounds(groups);
+
+	_triangleHash->hashTriangles(groups);
+}
+
+void ProcCompiler::fixAreaGroupsTjunctions(ProcArea::OptimizeGroups& groups)
+{
+	if (false/*dmapGlobals.noTJunc*/) return; // FIXME
+
+	if (groups.empty()) return;
+
+	if (false/*dmapGlobals.verbose*/) // FIXME
+	{
+		std::size_t startCount = countGroupListTris(groups);
+		globalOutputStream() << "----- FixAreaGroupsTjunctions -----" << std::endl;
+		globalOutputStream() << (boost::format("%6i triangles in") % startCount) << std::endl;
+	}
+
+	hashTriangles(groups);
+
+	for (ProcArea::OptimizeGroups::reverse_iterator group = groups.rbegin();
+		 group != groups.rend(); ++group)
+	{
+		// don't touch discrete surfaces
+		if (group->material && group->material->isDiscrete())
+		{
+			continue;
+		}
+
+		ProcTris newList;
+
+		for (ProcTris::const_iterator tri = group->triList.begin(); tri != group->triList.end(); ++tri)
+		{
+			_triangleHash->fixTriangleAgainstHash(*tri, newList);
+		}
+
+		group->triList.swap(newList);
+	}
+
+	if (false/*dmapGlobals.verbose*/) // FIXME
+	{
+		std::size_t endCount = countGroupListTris(groups);
+		globalOutputStream() << (boost::format("%6i triangles out") % endCount) << std::endl;
+	}
+}
+
+void ProcCompiler::optimizeOptList(ProcOptimizeGroup& group)
+{
+	ProcArea::OptimizeGroups tempList(1, group);
+
+	// fix the t junctions among this single list
+	// so we can match edges
+	// can we avoid doing this if colinear vertexes break edges?
+	fixAreaGroupsTjunctions(tempList);
+	
+	/*// create the 2D vectors
+	dmapGlobals.mapPlanes[opt->planeNum].Normal().NormalVectors( opt->axis[0], opt->axis[1] );
+
+	AddOriginalEdges( opt );
+	SplitOriginalEdgesAtCrossings( opt );
+
+#if 0
+	// seperate any discontinuous areas for individual optimization
+	// to reduce the scope of the problem
+	SeparateIslands( opt );
+#else
+	DontSeparateIslands( opt );
+#endif
+
+	// now free the hash verts
+	FreeTJunctionHash();
+	_triangleHash.reset();
+
+	// free the original list and use the new one
+	FreeTriList( opt->triList );
+	opt->triList = opt->regeneratedTris;
+	opt->regeneratedTris = NULL;*/
+}
+
+void ProcCompiler::optimizeGroupList(ProcArea::OptimizeGroups& groupList)
+{
+	if (groupList.empty()) return;
+
+	std::size_t c_in = countGroupListTris(groupList);
+
+	// optimize and remove colinear edges, which will
+	// re-introduce some t junctions
+	for (ProcArea::OptimizeGroups::reverse_iterator group = groupList.rbegin(); 
+		 group != groupList.rend(); ++group)
+	{
+		optimizeOptList(*group);
+	}
+
+	/*std::size_t c_edge = CountGroupListTris( groupList );
+
+	// fix t junctions again
+	FixAreaGroupsTjunctions( groupList );
+	FreeTJunctionHash();
+	std::size_t c_tjunc2 = CountGroupListTris( groupList );
+
+	SetGroupTriPlaneNums( groupList );
+
+	common->Printf( "----- OptimizeAreaGroups Results -----\n" );
+	common->Printf( "%6i tris in\n", c_in );
+	common->Printf( "%6i tris after edge removal optimization\n", c_edge );
+	common->Printf( "%6i tris after final t junction fixing\n", c_tjunc2 );*/
+}
+
+Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups, const ProcLight& light)
+{
+	globalOutputStream() << (boost::format("----- CreateLightShadow %p -----") % (&light)) << std::endl;
+
+	// optimize all the groups
+	optimizeGroupList(shadowerGroups);
+
+	Surface shadowTris;
+	/*// combine all the triangles into one list
+	mapTri_t	*combined;
+
+	combined = NULL;
+	for ( optimizeGroup_t *group = shadowerGroups ; group ; group = group->nextGroup ) {
+		combined = MergeTriLists( combined, CopyTriList( group->triList ) );
+	}
+
+	if ( !combined ) {
+		return NULL;
+	}
+
+	// find uniqued vertexes
+	srfTriangles_t	*occluders = ShareMapTriVerts( combined );
+
+	FreeTriList( combined );
+
+	// find silhouette information for the triSurf
+	R_CleanupTriangles( occluders, false, true, false );
+
+	// let the renderer build the shadow volume normally
+	idRenderEntityLocal		space;
+
+	space.modelMatrix[0] = 1;
+	space.modelMatrix[5] = 1;
+	space.modelMatrix[10] = 1;
+	space.modelMatrix[15] = 1;
+
+	srfCullInfo_t cullInfo;
+	memset( &cullInfo, 0, sizeof( cullInfo ) );
+
+	// call the normal shadow creation, but with the superOptimize flag set, which will
+	// call back to SuperOptimizeOccluders after clipping the triangles to each frustum
+	srfTriangles_t	*shadowTris;
+	if ( dmapGlobals.shadowOptLevel == SO_MERGE_SURFACES ) {
+		shadowTris = R_CreateShadowVolume( &space, occluders, &light->def, SG_STATIC, cullInfo );
+	} else {
+		shadowTris = R_CreateShadowVolume( &space, occluders, &light->def, SG_OFFLINE, cullInfo );
+	}
+	R_FreeStaticTriSurf( occluders );
+
+	R_FreeInteractionCullInfo( cullInfo );
+
+	if ( shadowTris ) {
+		dmapGlobals.totalShadowTriangles += shadowTris->numIndexes / 3;
+		dmapGlobals.totalShadowVerts += shadowTris->numVerts / 3;
+	}*/
+
+	return shadowTris;
+}
+
 void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 {
 	//
@@ -2996,9 +3181,9 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 	}
 
 	// take the shadower group list and create a beam tree and shadow volume
-	// TODO
-	/*light->shadowTris = CreateLightShadow( shadowerGroups, light );
+	light.shadowTris = createLightShadow(shadowerGroups, light);
 
+	/* TODO
 	if ( light->shadowTris && hasPerforatedSurface ) {
 		// can't ever remove front faces, because we can see through some of them
 		light->shadowTris->numShadowIndexesNoCaps = light->shadowTris->numShadowIndexesNoFrontCaps = 

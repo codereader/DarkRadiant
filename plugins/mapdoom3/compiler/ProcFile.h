@@ -23,6 +23,7 @@ namespace map
 
 struct HashVertex;
 struct OptVertex;
+struct HashVert;
 
 // chains of ProcTri are the general unit of processing
 struct ProcTri
@@ -35,7 +36,7 @@ struct ProcTri
 
 	ArbitraryMeshVertex			v[3];
 
-	const HashVertex*			hashVert[3];	// for T-junction pass
+	const HashVert*				hashVert[3];	// for T-junction pass
 	OptVertex*					optVert[3];		// for optimization
 
 	ProcTri() :
