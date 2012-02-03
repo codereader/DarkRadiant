@@ -22,14 +22,16 @@ namespace map
 {
 
 struct HashVertex;
-
+struct OptEdge;
+typedef boost::shared_ptr<OptEdge> OptEdgePtr;
 struct HashVert;
 
 struct OptVertex
 {
 	ArbitraryMeshVertex	v;
 	Vector3				pv;					// projected against planar axis, third value is 0
-	struct OptEdge*		edges;
+
+	OptEdge*			edges;
 	struct OptVertex*	islandLink;
 	bool				addedToIsland;
 	bool				emitted;			// when regenerating triangles
@@ -54,6 +56,15 @@ struct OptEdge
 	struct OptTri*	backTri;
 	struct OptEdge*	v1link;
 	struct OptEdge*	v2link;
+
+	void linkToVertices()
+	{
+		v1link = v1->edges;
+		v1->edges = this;
+
+		v2link = v2->edges;
+		v2->edges = this;
+	}
 };
 
 struct OriginalEdge
@@ -69,6 +80,21 @@ struct OriginalEdge
 		v2(v2_)
 	{}
 };
+
+struct EdgeCrossing
+{
+	OptVertex*	ov;
+
+	EdgeCrossing() :
+		ov(NULL)
+	{}
+
+	EdgeCrossing(OptVertex* ov_) :
+		ov(ov_)
+	{}
+};
+typedef std::vector<EdgeCrossing> EdgeCrossings;
+typedef std::vector<EdgeCrossings> EdgeCrossingsList;
 
 // chains of ProcTri are the general unit of processing
 struct ProcTri

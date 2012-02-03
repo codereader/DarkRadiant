@@ -210,6 +210,15 @@ private:
 
 	OptVertex* findOptVertex(const ArbitraryMeshVertex& vertex, ProcOptimizeGroup& group);
 	void addOriginalTriangle(OptVertex* v[3]);
+	void splitOriginalEdgesAtCrossings(ProcOptimizeGroup& group);
+
+	// Creates a new OptVertex where the line segments cross.
+	// this should only be called if PointsStraddleLine returned true
+	// will return NULL if the lines are colinear
+	OptVertex* getEdgeIntersection(const OptVertex* p1, const OptVertex* p2,
+						const OptVertex* l1, const OptVertex* l2, ProcOptimizeGroup& opt);
+
+	void addEdgeIfNotAlready(OptVertex* v1, OptVertex* v2);
 };
 
 } // namespace

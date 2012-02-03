@@ -3015,6 +3015,9 @@ OptVertex* ProcCompiler::findOptVertex(const ArbitraryMeshVertex& v, ProcOptimiz
 	return vert;
 }
 
+namespace
+{
+
 // an empty area will be considered invalid.
 // Due to some truly aweful epsilon issues, a triangle can switch between
 // valid and invalid depending on which order you look at the verts, so
@@ -3051,6 +3054,105 @@ bool isTriangleValid(const OptVertex* v1, const OptVertex* v2, const OptVertex* 
 
 	return true;
 }
+
+// Returns false if it is either front or back facing
+bool isTriangleDegenerate(const OptVertex* v1, const OptVertex* v2, const OptVertex* v3)
+{
+	Vector3 d1 = v2->pv - v1->pv;
+	Vector3 d2 = v3->pv - v1->pv;
+	Vector3 normal = d1.crossProduct(d2);
+
+	return normal[2] == 0;
+}
+
+// Colinear is considdered crossing.
+bool pointsStraddleLine(OptVertex* p1, OptVertex* p2, OptVertex* l1, OptVertex* l2)
+{
+	bool t1 = isTriangleDegenerate(l1, l2, p1);
+	bool t2 = isTriangleDegenerate(l1, l2, p2);
+
+	if (t1 && t2) 
+	{
+		// colinear case
+		float s1 = (p1->pv - l1->pv).dot(l2->pv - l1->pv);
+		float s2 = (p2->pv - l1->pv).dot(l2->pv - l1->pv);
+		float s3 = (p1->pv - l2->pv).dot(l2->pv - l1->pv);
+		float s4 = (p2->pv - l2->pv).dot(l2->pv - l1->pv);
+
+		bool positive = (s1 > 0 || s2 > 0 || s3 > 0 || s4 > 0);
+		bool negative = (s1 < 0 || s2 < 0 || s3 < 0 || s4 < 0);
+
+		return (positive && negative);
+	} 
+	else if (p1 != l1 && p1 != l2 && p2 != l1 && p2 != l2)
+	{
+		// no shared verts
+		t1 = isTriangleValid(l1, l2, p1);
+		t2 = isTriangleValid(l1, l2, p2);
+
+		if (t1 && t2) 
+		{
+			return false;
+		}
+
+		t1 = isTriangleValid(l1, p1, l2);
+		t2 = isTriangleValid(l1, p2, l2);
+
+		if (t1 && t2)
+		{
+			return false;
+		}
+
+		return true;
+	} 
+	else 
+	{
+		// a shared vert, not colinear, so not crossing
+		return false;
+	}
+}
+
+bool edgesCross(OptVertex* a1, OptVertex* a2, OptVertex* b1, OptVertex* b2)
+{
+	// if both verts match, consider it to be crossed
+	if (a1 == b1 && a2 == b2)
+	{
+		return true;
+	}
+
+	if (a1 == b2 && a2 == b1)
+	{
+		return true;
+	}
+
+	// if only one vert matches, it might still be colinear, which
+	// would be considered crossing
+
+	// if both lines' verts are on opposite sides of the other
+	// line, it is crossed
+	if (!pointsStraddleLine(a1, a2, b1, b2))
+	{
+		return false;
+	}
+
+	if (!pointsStraddleLine(b1, b2, a1, a2))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool vertexIsBetween(const OptVertex* p1, const OptVertex* v1, const OptVertex* v2)
+{
+	Vector3 d1 = p1->pv - v1->pv;
+	Vector3 d2 = p1->pv - v2->pv;
+	float d = d1.dot(d2);
+
+	return (d < 0);
+}
+
+} // namespace
 
 void ProcCompiler::addOriginalTriangle(OptVertex* v[3])
 {
@@ -3132,6 +3234,244 @@ void ProcCompiler::addOriginalEdges(ProcOptimizeGroup& group)
 	}
 }
 
+OptVertex* ProcCompiler::getEdgeIntersection(const OptVertex* p1, const OptVertex* p2,
+								const OptVertex* l1, const OptVertex* l2, ProcOptimizeGroup& group)
+{
+	Vector3 dir1 = p1->pv - l1->pv;
+	Vector3 dir2 = p1->pv - l2->pv;
+	Vector3 cross1 = dir1.crossProduct(dir2);
+
+	dir1 = p2->pv - l1->pv;
+	dir2 = p2->pv - l2->pv;
+	Vector3 cross2 = dir1.crossProduct(dir2);
+
+	if (cross1[2] - cross2[2] == 0)
+	{
+		return NULL;
+	}
+
+	float f = cross1[2] / (cross1[2] - cross2[2]);
+
+	ArbitraryMeshVertex v;
+
+	v.vertex = p1->v.vertex * (1.0f - f) + p2->v.vertex * f;
+	v.normal = p1->v.normal * (1.0f - f) + p2->v.normal * f;
+	v.normal.normalise();
+	v.texcoord[0] = p1->v.texcoord[0] * (1.0f - f) + p2->v.texcoord[0] * f;
+	v.texcoord[1] = p1->v.texcoord[1] * (1.0f - f) + p2->v.texcoord[1] * f;
+
+	return findOptVertex(v, group);
+}
+
+void ProcCompiler::addEdgeIfNotAlready(OptVertex* v1, OptVertex* v2)
+{
+	// make sure that there isn't an identical edge already added
+	for (OptEdge* e = v1->edges; e ; )
+	{
+		if ((e->v1 == v1 && e->v2 == v2) || (e->v1 == v2 && e->v2 == v1))
+		{
+			return;		// already added
+		}
+
+		if (e->v1 == v1)
+		{
+			e = e->v1link;
+		} 
+		else if (e->v2 == v1)
+		{
+			e = e->v2link;
+		} 
+		else 
+		{
+			globalErrorStream() << "addEdgeIfNotAlready: bad edge link" << std::endl;
+			return;
+		}
+	}
+
+	// this edge is a keeper
+	_optEdges.push_back(OptEdge());
+
+	OptEdge* newEdge = &_optEdges.back();
+	newEdge->v1 = v1;
+	newEdge->v2 = v2;
+
+	newEdge->islandLink = NULL;
+
+	// link the edge to its verts
+	newEdge->linkToVertices();
+}
+
+void ProcCompiler::splitOriginalEdgesAtCrossings(ProcOptimizeGroup& group)
+{
+	std::size_t numOriginalVerts = _optVerts.size();
+
+	// now split any crossing edges and create optEdges
+	// linked to the vertexes
+
+#if 0
+	// debug drawing bounds
+	dmapGlobals.drawBounds = optBounds;
+
+	dmapGlobals.drawBounds[0][0] -= 2;
+	dmapGlobals.drawBounds[0][1] -= 2;
+	dmapGlobals.drawBounds[1][0] += 2;
+	dmapGlobals.drawBounds[1][1] += 2;
+#endif
+
+	// generate crossing points between all the original edges
+	EdgeCrossingsList crossings(_originalEdges.size());
+
+	for (std::size_t i = 0; i < _originalEdges.size(); ++i)
+	{
+#if 0
+		if ( dmapGlobals.drawflag ) {
+			DrawOriginalEdges( numOriginalEdges, originalEdges );
+			qglBegin( GL_LINES );
+			qglColor3f( 0, 1, 0 );
+			qglVertex3fv( originalEdges[i].v1->pv.ToFloatPtr() );
+			qglColor3f( 0, 0, 1 );
+			qglVertex3fv( originalEdges[i].v2->pv.ToFloatPtr() );
+			qglEnd();
+			qglFlush();
+		}
+#endif
+		for (std::size_t j = i + 1; j < _originalEdges.size(); ++j)
+		{
+			OptVertex* v1 = _originalEdges[i].v1;
+			OptVertex* v2 = _originalEdges[i].v2;
+			OptVertex* v3 = _originalEdges[j].v1;
+			OptVertex* v4 = _originalEdges[j].v2;
+
+			if (!edgesCross(v1, v2, v3, v4))
+			{
+				continue;
+			}
+
+			// this is the only point in optimization where
+			// completely new points are created, and it only
+			// happens if there is overlapping coplanar
+			// geometry in the source triangles
+			OptVertex* newVert = getEdgeIntersection(v1, v2, v3, v4, group);
+
+			if (!newVert)
+			{
+				// colinear, so add both verts of each edge to opposite
+				if (vertexIsBetween(v3, v1, v2)) 
+				{
+					crossings[i].push_back(EdgeCrossing(v3));
+				}
+
+				if (vertexIsBetween(v4, v1, v2)) 
+				{
+					crossings[i].push_back(EdgeCrossing(v4));
+				}
+
+				if (vertexIsBetween(v1, v3, v4)) 
+				{
+					crossings[j].push_back(EdgeCrossing(v1));
+				}
+
+				if (vertexIsBetween(v2, v3, v4)) 
+				{
+					crossings[j].push_back(EdgeCrossing(v2));
+				}
+
+				continue;
+			}
+
+			if (newVert != v1 && newVert != v2)
+			{
+				crossings[i].push_back(EdgeCrossing(newVert));
+			}
+
+			if (newVert != v3 && newVert != v4)
+			{
+				crossings[j].push_back(EdgeCrossing(newVert));
+			}
+		}
+	}
+
+	// now split each edge by its crossing points
+	// colinear edges will have duplicated edges added, but it won't hurt anything
+	for (std::size_t i = 0; i < _originalEdges.size(); ++i)
+	{
+		std::size_t numCross = crossings[i].size();
+		numCross += 2;	// account for originals
+
+		std::vector<OptVertex*> sorted(numCross);
+		memset(&sorted[0], 0, sorted.size());
+
+		sorted[0] = _originalEdges[i].v1;
+		sorted[1] = _originalEdges[i].v2;
+
+		std::size_t j = 2;
+
+		for (EdgeCrossings::const_iterator cross = crossings[i].begin(); cross != crossings[i].end(); ++cross)
+		{
+			sorted[j] = cross->ov;
+			j++;
+		}
+
+		// add all possible fragment combinations that aren't divided by another point
+		for (std::size_t j = 0; j < numCross; ++j)
+		{
+			for (std::size_t k = j+1; k < numCross; ++k)
+			{
+				std::size_t l = 0;
+
+				for (; l < numCross; ++l)
+				{
+					if (sorted[l] == sorted[j] || sorted[l] == sorted[k])
+					{
+						continue;
+					}
+
+					if (sorted[j] == sorted[k])
+					{
+						continue;
+					}
+					
+					if (vertexIsBetween(sorted[l], sorted[j], sorted[k]))
+					{
+						break;
+					}
+				}
+
+				if (l == numCross)
+				{
+					//common->Printf( "line %i fragment from point %i to %i\n", i, sorted[j] - optVerts, sorted[k] - optVerts );
+					addEdgeIfNotAlready(sorted[j], sorted[k]);
+				}
+			}
+		}
+	}
+
+
+	crossings.clear();
+	_originalEdges.clear();
+
+	// check for duplicated edges
+	for (std::size_t i = 0 ; i < _optEdges.size(); ++i)
+	{
+		for (std::size_t j = i + 1; j < _optEdges.size(); ++j)
+		{
+			if ((_optEdges[i].v1 == _optEdges[j].v1 && _optEdges[i].v2 == _optEdges[j].v2) ||
+				(_optEdges[i].v1 == _optEdges[j].v2 && _optEdges[i].v2 == _optEdges[j].v1))
+			{
+				globalOutputStream() << "duplicated optEdge" << std::endl;
+			}
+		}
+	}
+
+	if (false/* dmapGlobals.verbose*/)
+	{
+		globalOutputStream() << (boost::format("%6i original edges") % _originalEdges.size()) << std::endl;
+		globalOutputStream() << (boost::format("%6i edges after splits") % _optEdges.size()) << std::endl;
+		globalOutputStream() << (boost::format("%6i original vertexes") % numOriginalVerts) << std::endl;
+		globalOutputStream() << (boost::format("%6i vertexes after splits") % _optVerts.size()) << std::endl;
+	}
+}
+
 void ProcCompiler::optimizeOptList(ProcOptimizeGroup& group)
 {
 	ProcArea::OptimizeGroups tempList(1, group);
@@ -3145,8 +3485,9 @@ void ProcCompiler::optimizeOptList(ProcOptimizeGroup& group)
 	calcNormalVectors(_procFile->planes.getPlane(group.planeNum).normal(), group.axis[0], group.axis[1]);
 
 	addOriginalEdges(group);
-	/*SplitOriginalEdgesAtCrossings( opt );
+	splitOriginalEdgesAtCrossings(group);
 
+	/*
 #if 0
 	// seperate any discontinuous areas for individual optimization
 	// to reduce the scope of the problem
