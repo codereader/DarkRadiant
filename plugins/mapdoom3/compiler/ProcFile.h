@@ -108,6 +108,7 @@ struct OptTri
 		v[0] = v[1] = v[2] = NULL;
 	}
 };
+typedef boost::shared_ptr<OptTri> OptTriPtr;
 
 // chains of ProcTri are the general unit of processing
 struct ProcTri

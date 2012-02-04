@@ -12,7 +12,9 @@ private:
 
 	OptVertex*	_verts;
 	OptEdge*	_edges;
-	OptTri*		_tris;
+
+	typedef std::vector<OptTriPtr> Tris;
+	Tris		_tris;
 
 	struct EdgeLength
 	{
@@ -45,6 +47,15 @@ private:
 	static int LengthSort(const void* a, const void* b);
 
 	bool tryAddNewEdge(OptVertex* v1, OptVertex* v2);
+
+	// Generate a new list of triangles from the optEdeges
+	void buildOptTriangles();
+	void createOptTri(OptVertex* first, OptEdge* e1, OptEdge* e2);
+
+	// Tests if a 2D point is inside an original triangle
+	bool pointInTri(const Vector3& p, const ProcTri& tri);
+
+	void linkTriToEdge(OptTri& optTri, OptEdge& edge);
 };
 
 } // namespace 

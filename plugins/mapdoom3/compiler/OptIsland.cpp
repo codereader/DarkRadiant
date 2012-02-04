@@ -1,5 +1,6 @@
 #include "OptIsland.h"
 
+#include "itextstream.h"
 #include "OptUtils.h"
 
 namespace map
@@ -38,6 +39,395 @@ void OptIsland::linkEdges()
 	}
 }
 
+bool OptIsland::pointInTri(const Vector3& p, const ProcTri& tri)
+{
+	// the normal[2] == 0 case is not uncommon when a square is triangulated in
+	// the opposite manner to the original
+
+	Vector3 d1 = tri.optVert[0]->pv - p;
+	Vector3 d2 = tri.optVert[1]->pv - p;
+
+	Vector3 normal = d1.crossProduct(d2);
+
+	if (normal[2] < 0)
+	{
+		return false;
+	}
+
+	d1 = tri.optVert[1]->pv - p;
+	d2 = tri.optVert[2]->pv - p;
+	normal = d1.crossProduct(d2);
+
+	if (normal[2] < 0)
+	{
+		return false;
+	}
+
+	d1 = tri.optVert[2]->pv - p;
+	d2 = tri.optVert[0]->pv - p;
+	normal = d1.crossProduct(d2);
+
+	if (normal[2] < 0)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void OptIsland::linkTriToEdge(OptTri& optTri, OptEdge& edge)
+{
+	if ((edge.v1 == optTri.v[0] && edge.v2 == optTri.v[1]) || 
+		(edge.v1 == optTri.v[1] && edge.v2 == optTri.v[2]) || 
+		(edge.v1 == optTri.v[2] && edge.v2 == optTri.v[0]))
+	{
+		if (edge.backTri)
+		{
+			globalOutputStream() << "Warning: linkTriToEdge: already in use" << std::endl;
+			return;
+		}
+
+		edge.backTri = &optTri;
+		return;
+	}
+
+	if ((edge.v1 == optTri.v[1] && edge.v2 == optTri.v[0]) || 
+		(edge.v1 == optTri.v[2] && edge.v2 == optTri.v[1]) || 
+		(edge.v1 == optTri.v[0] && edge.v2 == optTri.v[2]))
+	{
+		if (edge.frontTri)
+		{
+			globalOutputStream() << "Warning: linkTriToEdge: already in use" << std::endl;
+			return;
+		}
+
+		edge.frontTri = &optTri;
+		return;
+	}
+
+	globalErrorStream() << "linkTriToEdge: edge not found on tri" << std::endl;
+}
+
+void OptIsland::createOptTri(OptVertex* first, OptEdge* e1, OptEdge* e2)
+{
+	OptVertex* second = NULL;
+	OptVertex* third = NULL;
+
+	if (e1->v1 == first)
+	{
+		second = e1->v2;
+	}
+	else if (e1->v2 == first)
+	{
+		second = e1->v1;
+	}
+	else
+	{
+		globalErrorStream() << "createOptTri: mislinked edge" << std::endl;
+		return;
+	}
+
+	if (e2->v1 == first)
+	{
+		third = e2->v2;
+	} 
+	else if (e2->v2 == first)
+	{
+		third = e2->v1;
+	} 
+	else 
+	{
+		globalErrorStream() << "createOptTri: mislinked edge" << std::endl;
+		return;
+	}
+
+	if (!OptUtils::IsTriangleValid(first, second, third))
+	{
+		globalErrorStream() << "createOptTri: invalid" << std::endl;
+		return;
+	}
+
+#if 0
+//DrawEdges( island );
+
+		// identify the third edge
+	if ( dmapGlobals.drawflag ) {
+		qglColor3f(1,1,0);
+		qglBegin( GL_LINES );
+		qglVertex3fv( e1->v1->pv.ToFloatPtr() );
+		qglVertex3fv( e1->v2->pv.ToFloatPtr() );
+		qglEnd();
+		qglFlush();
+		qglColor3f(0,1,1);
+		qglBegin( GL_LINES );
+		qglVertex3fv( e2->v1->pv.ToFloatPtr() );
+		qglVertex3fv( e2->v2->pv.ToFloatPtr() );
+		qglEnd();
+		qglFlush();
+	}
+#endif
+
+	OptEdge* opposite = NULL;
+
+	for (opposite = second->edges; opposite; )
+	{
+		if (opposite != e1 && (opposite->v1 == third || opposite->v2 == third))
+		{
+			break;
+		}
+
+		if (opposite->v1 == second)
+		{
+			opposite = opposite->v1link;
+		}
+		else if (opposite->v2 == second)
+		{
+			opposite = opposite->v2link;
+		}
+		else
+		{
+			globalErrorStream() << "createOptTri: invalid" << std::endl;
+			return;
+		}
+	}
+
+	if (!opposite)
+	{
+		globalErrorStream() << "Warning: createOptTri: couldn't locate opposite" << std::endl;
+		return;
+	}
+
+#if 0
+	if ( dmapGlobals.drawflag ) {
+		qglColor3f(1,0,1);
+		qglBegin( GL_LINES );
+		qglVertex3fv( opposite->v1->pv.ToFloatPtr() );
+		qglVertex3fv( opposite->v2->pv.ToFloatPtr() );
+		qglEnd();
+		qglFlush();
+	}
+#endif
+
+	// create new triangle
+	_tris.push_back(OptTriPtr(new OptTri));
+	OptTri& optTri = *_tris.back();
+
+	optTri.v[0] = first;
+	optTri.v[1] = second;
+	optTri.v[2] = third;
+	optTri.midpoint = (optTri.v[0]->pv + optTri.v[1]->pv + optTri.v[2]->pv ) * ( 1.0f / 3.0f );
+
+#if 0
+	if ( dmapGlobals.drawflag ) {
+		qglColor3f( 1, 1, 1 );
+		qglPointSize( 4 );
+		qglBegin( GL_POINTS );
+		qglVertex3fv( optTri->midpoint.ToFloatPtr() );
+		qglEnd();
+		qglFlush();
+	}
+#endif
+
+	// find the midpoint, and scan through all the original triangles to
+	// see if it is inside any of them
+	ProcTris::const_iterator tri;
+	for (tri = _group.triList.begin(); tri != _group.triList.end(); ++tri)
+	{
+		if (pointInTri(optTri.midpoint, *tri))
+		{
+			break;
+		}
+	}
+
+	if (tri != _group.triList.end())
+	{
+		optTri.filled = true;
+	}
+	else
+	{
+		optTri.filled = false;
+	}
+
+#if 0
+	if ( dmapGlobals.drawflag ) {
+		if ( optTri->filled ) {
+			qglColor3f( ( 128 + orandom.RandomInt( 127 ) )/ 255.0, 0, 0 );
+		} else {
+			qglColor3f( 0, ( 128 + orandom.RandomInt( 127 ) ) / 255.0, 0 );
+		}
+		qglBegin( GL_TRIANGLES );
+		qglVertex3fv( optTri->v[0]->pv.ToFloatPtr() );
+		qglVertex3fv( optTri->v[1]->pv.ToFloatPtr() );
+		qglVertex3fv( optTri->v[2]->pv.ToFloatPtr() );
+		qglEnd();
+		qglColor3f( 1, 1, 1 );
+		qglBegin( GL_LINE_LOOP );
+		qglVertex3fv( optTri->v[0]->pv.ToFloatPtr() );
+		qglVertex3fv( optTri->v[1]->pv.ToFloatPtr() );
+		qglVertex3fv( optTri->v[2]->pv.ToFloatPtr() );
+		qglEnd();
+		qglFlush();
+	}
+#endif
+
+	// link the triangle to its edges
+	linkTriToEdge(optTri, *e1);
+	linkTriToEdge(optTri, *e2);
+	linkTriToEdge(optTri, *opposite);
+}
+
+void OptIsland::buildOptTriangles()
+{
+	// free them
+	_tris.clear();
+
+	// clear the vertex emitted flags
+	for (OptVertex* ov = _verts; ov; ov = ov->islandLink)
+	{
+		ov->emitted = false;
+	}
+
+	// clear the edge triangle links
+	for (OptEdge* check = _edges; check; check = check->islandLink)
+	{
+		check->frontTri = check->backTri = NULL;
+	}
+
+	// check all possible triangle made up out of the
+	// edges coming off the vertex
+	for (OptVertex* ov = _verts; ov; ov = ov->islandLink)
+	{
+		if (!ov->edges) continue;
+
+#if 0
+		if ( dmapGlobals.drawflag && ov == (optVertex_t *)0x1845a60 ) {
+			for ( e1 = ov->edges ; e1 ; e1 = e1Next ) {
+				qglBegin( GL_LINES );
+				qglColor3f( 0,1,0 );
+				qglVertex3fv( e1->v1->pv.ToFloatPtr() );
+				qglVertex3fv( e1->v2->pv.ToFloatPtr() );
+				qglEnd();
+				qglFlush();
+				if ( e1->v1 == ov ) {
+					e1Next = e1->v1link;
+				} else if ( e1->v2 == ov ) {
+					e1Next = e1->v2link;
+				}
+			}
+		}
+#endif
+
+		OptEdge* e1Next = NULL;
+
+		for (OptEdge* e1 = ov->edges; e1; e1 = e1Next)
+		{
+			OptVertex* second = NULL;
+
+			if (e1->v1 == ov)
+			{
+				second = e1->v2;
+				e1Next = e1->v1link;
+			}
+			else if (e1->v2 == ov)
+			{
+				second = e1->v1;
+				e1Next = e1->v2link;
+			} 
+			else
+			{
+				globalErrorStream() << "buildOptTriangles: mislinked edge" << std::endl;
+				return;
+			}
+
+			// if the vertex has already been used, it can't be used again
+			if (second->emitted) continue;
+
+			OptEdge* e2Next = NULL;
+
+			for (OptEdge* e2 = ov->edges; e2; e2 = e2Next)
+			{
+				OptVertex* third = NULL;
+
+				if (e2->v1 == ov) 
+				{
+					third = e2->v2;
+					e2Next = e2->v1link;
+				} 
+				else if (e2->v2 == ov)
+				{
+					third = e2->v1;
+					e2Next = e2->v2link;
+				} 
+				else
+				{
+					globalErrorStream() << "buildOptTriangles: mislinked edge" << std::endl;
+					return;
+				}
+
+				if (e2 == e1) continue;
+
+				// if the vertex has already been used, it can't be used again
+				if (third->emitted) continue;
+
+				// if the triangle is backwards or degenerate, don't use it
+				if (!OptUtils::IsTriangleValid(ov, second, third))
+				{
+					continue;
+				}
+
+				// see if any other edge bisects these two, which means
+				// this triangle shouldn't be used
+				OptEdge* checkNext = NULL;
+				OptEdge* check = NULL;
+
+				for (check = ov->edges; check; check = checkNext)
+				{
+					OptVertex* middle = NULL;
+
+					if (check->v1 == ov)
+					{
+						middle = check->v2;
+						checkNext = check->v1link;
+					} 
+					else if (check->v2 == ov)
+					{
+						middle = check->v1;
+						checkNext = check->v2link;
+					} 
+					else
+					{
+						globalErrorStream() << "buildOptTriangles: mislinked edge" << std::endl;
+						return;
+					}
+
+					if (check == e1 || check == e2)
+					{
+						continue;
+					}
+
+					if (OptUtils::IsTriangleValid(ov, second, middle) && 
+						OptUtils::IsTriangleValid(ov, middle, third))
+					{
+						break;	// should use the subdivided ones
+					}
+				}
+
+				if (check)
+				{
+					continue;	// don't use it
+				}
+
+				// the triangle is valid
+				createOptTri(ov, e1, e2);
+			}
+		}
+
+		// later vertexes will not emit triangles that use an
+		// edge that this vert has already used
+		ov->emitted = true;
+	}
+}
+
 void OptIsland::optimise()
 {
 	// add space-filling fake edges so we have a complete
@@ -46,9 +436,9 @@ void OptIsland::optimise()
 	
 	// determine all the possible triangles, and decide if
 	// the are filled or empty
-	/*BuildOptTriangles( island );
+	buildOptTriangles();
 
-	// remove interior vertexes that have filled triangles
+	/*// remove interior vertexes that have filled triangles
 	// between all their edges
 	RemoveInteriorEdges( island );
 	DrawEdges( island );
