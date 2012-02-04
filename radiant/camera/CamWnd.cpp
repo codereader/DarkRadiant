@@ -27,6 +27,10 @@
 namespace
 {
 	const std::size_t MSEC_PER_FRAME = 16;
+
+    const std::string FAR_CLIP_IN_TEXT = "Move far clip plane closer";
+    const std::string FAR_CLIP_OUT_TEXT = "Move far clip plane further away";
+    const std::string FAR_CLIP_DISABLED_TEXT = " (currently disabled in preferences)";
 }
 
 class ObjectFinder :
@@ -201,11 +205,17 @@ void CamWnd::constructToolbar()
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
 
+    // Far clip buttons.
     getGladeWidget<Gtk::ToolButton>("clipPlaneInButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneIn)
     );
     getGladeWidget<Gtk::ToolButton>("clipPlaneOutButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneOut)
+    );
+
+    setFarClipButtonSensitivity();
+    GlobalRegistry().signalForKey(RKEY_ENABLE_FARCLIP).connect(
+        sigc::mem_fun(*this, &CamWnd::setFarClipButtonSensitivity)
     );
 
 	getGladeWidget<Gtk::ToolButton>("startTimeButton")->signal_clicked().connect(
@@ -232,6 +242,22 @@ void CamWnd::constructToolbar()
        RKEY_SHOW_CAMERA_TOOLBAR,
        sigc::mem_fun(toolbar, &Gtk::Widget::show),
        sigc::mem_fun(toolbar, &Gtk::Widget::hide)
+    );
+}
+
+void CamWnd::setFarClipButtonSensitivity()
+{
+    // Only enabled if cubic clipping is enabled.
+    bool enabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP, true);
+    getGladeWidget<Gtk::Widget>("clipPlaneInButton")->set_sensitive(enabled);
+    getGladeWidget<Gtk::Widget>("clipPlaneOutButton")->set_sensitive(enabled);
+
+    // Update tooltips so users know why they are disabled
+    getGladeWidget<Gtk::Widget>("clipPlaneInButton")->set_tooltip_text(
+        FAR_CLIP_IN_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT)
+    );
+    getGladeWidget<Gtk::Widget>("clipPlaneOutButton")->set_tooltip_text(
+        FAR_CLIP_OUT_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT)
     );
 }
 

@@ -189,7 +189,8 @@ bool CameraSettings::toggleFreelook() const {
 	return _toggleFreelook;
 }
 
-bool CameraSettings::farClipEnabled() const {
+bool CameraSettings::farClipEnabled() const
+{
 	return _farClipEnabled;
 }
 
@@ -217,19 +218,10 @@ bool CameraSettings::discreteMovement() const {
 	return _discreteMovement;
 }
 
-void CameraSettings::setCubicScale(const int& scale) {
+void CameraSettings::setCubicScale(const int& scale)
+{
 	// Update the internal value
 	_cubicScale = scale;
-
-	std::string scaleStr;
-	try {
-		scaleStr = boost::lexical_cast<std::string>(_cubicScale);
-	}
-	catch (boost::bad_lexical_cast e) {
-		scaleStr = "0";
-	}
-
-	GlobalRegistry().set(RKEY_CUBIC_SCALE, scaleStr);
 
 	// Constrain the value to [1..MAX_CUBIC_SCALE]
 	if (_cubicScale>MAX_CUBIC_SCALE) {
@@ -239,14 +231,17 @@ void CameraSettings::setCubicScale(const int& scale) {
 	if (_cubicScale < 1) {
 		_cubicScale = 1;
 	}
+
+    // Store to registry
+    registry::setValue(RKEY_CUBIC_SCALE, _cubicScale);
 }
 
-void CameraSettings::setFarClip(bool farClipEnabled) {
-	// Write the value into the registry, the keyChanged() method is automatically triggered hereby
-	GlobalRegistry().set(RKEY_ENABLE_FARCLIP, farClipEnabled ? "1" : "0");
+void CameraSettings::setFarClip(bool farClipEnabled)
+{
+    registry::setValue(RKEY_ENABLE_FARCLIP, farClipEnabled);
 }
 
-void CameraSettings::toggleFarClip(bool newState)
+void CameraSettings::toggleFarClip(bool)
 {
 	setFarClip(!_farClipEnabled);
 }

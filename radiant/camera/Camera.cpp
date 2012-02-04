@@ -243,15 +243,18 @@ void Camera::moveUpdateAxes() {
 	right[1] = -forward[0];
 }
 
-bool Camera::farClipEnabled() const {
+bool Camera::farClipEnabled() const
+{
 	return getCameraSettings()->farClipEnabled();
 }
 
-float Camera::getFarClipPlane() const {
+float Camera::getFarClipPlane() const
+{
 	return (farClipEnabled()) ? pow(2.0, (getCameraSettings()->cubicScale() + 7) / 2.0) : 32768.0f;
 }
 
-void Camera::updateProjection() {
+void Camera::updateProjection()
+{
 	float farClip = getFarClipPlane();
 	projection = projection_for_camera(farClip / 4096.0f, farClip, fieldOfView, width, height);
 

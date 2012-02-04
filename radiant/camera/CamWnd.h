@@ -150,6 +150,7 @@ public:
 private:
     void constructGUIComponents();
     void constructToolbar();
+    void setFarClipButtonSensitivity();
     void onRenderModeButtonsChanged();
     void updateActiveRenderModeButton();
 
