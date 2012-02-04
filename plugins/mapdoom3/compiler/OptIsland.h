@@ -41,8 +41,15 @@ private:
 	void linkVerts();
 	void linkEdges();
 
+	void unlinkEdge(OptEdge& e);
+	void removeEdgeFromVert(OptEdge& e1, OptVertex* vert);
+
 	// Add all possible edges between the verts
 	void addInteriorEdges();
+
+	// Edges that have triangles of the same type (filled / empty)
+	// on both sides will be removed
+	void removeInteriorEdges();
 
 	static int LengthSort(const void* a, const void* b);
 

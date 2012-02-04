@@ -428,6 +428,117 @@ void OptIsland::buildOptTriangles()
 	}
 }
 
+void OptIsland::removeEdgeFromVert(OptEdge& e1, OptVertex* vert)
+{
+	if (!vert) return;
+
+	OptEdge** prev = &vert->edges;
+
+	while (*prev)
+	{
+		OptEdge* e = *prev;
+
+		if (e == &e1)
+		{
+			if (e1.v1 == vert)
+			{
+				*prev = e1.v1link;
+			}
+			else if (e1.v2 == vert)
+			{
+				*prev = e1.v2link;
+			} 
+			else
+			{
+				globalErrorStream() << "removeEdgeFromVert: vert not found" << std::endl;
+			}
+			return;
+		}
+
+		if (e->v1 == vert)
+		{
+			prev = &e->v1link;
+		}
+		else if (e->v2 == vert)
+		{
+			prev = &e->v2link;
+		} 
+		else
+		{
+			globalErrorStream() << "removeEdgeFromVert: vert not found" << std::endl;
+		}
+	}
+}
+
+void OptIsland::unlinkEdge(OptEdge& e)
+{
+	removeEdgeFromVert(e, e.v1);
+	removeEdgeFromVert(e, e.v2);
+
+	for (OptEdge** prev = &_edges; *prev; prev = &(*prev)->islandLink)
+	{
+		if (*prev == &e)
+		{
+			*prev = e.islandLink;
+			return;
+		}
+	}
+
+	globalErrorStream() << "unlinkEdge: couldn't free edge" << std::endl;
+}
+
+void OptIsland::removeInteriorEdges()
+{
+	std::size_t exteriorEdges = 0;
+	std::size_t interiorEdges = 0;
+
+	OptEdge* next = NULL;
+
+	for (OptEdge* e = _edges; e; e = next)
+	{
+		// we might remove the edge, so get the next link now
+		next = e->islandLink;
+
+		bool front = false;
+
+		if (!e->frontTri)
+		{
+			front = false;
+		} 
+		else
+		{
+			front = e->frontTri->filled;
+		}
+
+		bool back = false;
+
+		if (!e->backTri)
+		{
+			back = false;
+		} 
+		else
+		{
+			back = e->backTri->filled;
+		}
+
+		if (front == back)
+		{
+			// free the edge
+			unlinkEdge(*e);
+			interiorEdges++;
+			continue;
+		}
+
+		exteriorEdges++;
+	}
+
+	if (false/* dmapGlobals.verbose */)
+	{
+		globalOutputStream() << (boost::format("%6i original interior edges") % interiorEdges).str() << std::endl;
+		globalOutputStream() << (boost::format("%6i original exterior edges") % exteriorEdges).str() << std::endl;
+	}
+}
+
 void OptIsland::optimise()
 {
 	// add space-filling fake edges so we have a complete
@@ -438,10 +549,10 @@ void OptIsland::optimise()
 	// the are filled or empty
 	buildOptTriangles();
 
-	/*// remove interior vertexes that have filled triangles
+	// remove interior vertexes that have filled triangles
 	// between all their edges
-	RemoveInteriorEdges( island );
-	DrawEdges( island );
+	removeInteriorEdges();
+	/*DrawEdges( island );
 
 	ValidateEdgeCounts( island );
 
