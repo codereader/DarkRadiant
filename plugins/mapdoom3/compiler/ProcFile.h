@@ -96,6 +96,19 @@ struct EdgeCrossing
 typedef std::vector<EdgeCrossing> EdgeCrossings;
 typedef std::vector<EdgeCrossings> EdgeCrossingsList;
 
+struct OptTri
+{
+	Vector3		midpoint;
+	OptVertex*	v[3];
+	bool		filled;
+
+	OptTri() :
+		filled(false)
+	{
+		v[0] = v[1] = v[2] = NULL;
+	}
+};
+
 // chains of ProcTri are the general unit of processing
 struct ProcTri
 {

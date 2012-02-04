@@ -18,6 +18,7 @@ mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       mapdoom3.cpp \
                       Doom3MapWriter.cpp \
                       compiler/Doom3MapCompiler.cpp \
+					  compiler/OptIsland.cpp \
                       compiler/ProcCompiler.cpp \
 					  compiler/ProcWinding.cpp \
 					  compiler/ProcLight.cpp \

@@ -219,6 +219,8 @@ private:
 						const OptVertex* l1, const OptVertex* l2, ProcOptimizeGroup& opt);
 
 	void addEdgeIfNotAlready(OptVertex* v1, OptVertex* v2);
+
+	void dontSeparateIslands(ProcOptimizeGroup& group);
 };
 
 } // namespace
