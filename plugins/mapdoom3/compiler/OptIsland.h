@@ -63,6 +63,11 @@ private:
 	bool pointInTri(const Vector3& p, const ProcTri& tri);
 
 	void linkTriToEdge(OptTri& optTri, OptEdge& edge);
+
+	void validateEdgeCounts();
+
+	void combineCollinearEdges();
+	void removeIfColinear(OptVertex* ov);
 };
 
 } // namespace 

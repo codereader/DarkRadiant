@@ -539,6 +539,252 @@ void OptIsland::removeInteriorEdges()
 	}
 }
 
+void OptIsland::validateEdgeCounts()
+{
+	for (OptVertex* vert = _verts; vert; vert = vert->islandLink)
+	{
+		std::size_t c = 0;
+
+		for (OptEdge* e = vert->edges; e; )
+		{
+			c++;
+
+			if (e->v1 == vert)
+			{
+				e = e->v1link;
+			}
+			else if (e->v2 == vert)
+			{
+				e = e->v2link;
+			}
+			else
+			{
+				globalErrorStream() << "validateEdgeCounts: mislinked" << std::endl;
+				return;
+			}
+		}
+
+		if (c != 2 && c != 0)
+		{
+			// this can still happen at diamond intersections
+//			common->Printf( "ValidateEdgeCounts: %i edges\n", c );
+		}
+	}
+}
+
+#define	COLINEAR_EPSILON	0.1
+void OptIsland::removeIfColinear(OptVertex* ov)
+{
+	/*optEdge_t	*e, *e1, *e2;
+	
+	idVec3		dir1, dir2;
+	float		len, dist;
+	idVec3		point;
+	idVec3		offset;
+	float		off;*/
+
+	OptVertex* v2 = ov;
+
+	// we must find exactly two edges before testing for colinear
+	OptEdge* e1 = NULL;
+	OptEdge* e2 = NULL;
+
+	for (OptEdge* e = ov->edges; e; )
+	{
+		if (!e1)
+		{
+			e1 = e;
+		}
+		else if (!e2)
+		{
+			e2 = e;
+		} 
+		else
+		{
+			return;		// can't remove a vertex with three edges
+		}
+
+		if (e->v1 == v2)
+		{
+			e = e->v1link;
+		}
+		else if (e->v2 == v2)
+		{
+			e = e->v2link;
+		}
+		else
+		{
+			globalErrorStream() << "removeIfColinear: mislinked edge" << std::endl;
+			return;
+		}
+	}
+
+	// can't remove if no edges
+	if (!e1) return;
+
+	if (!e2)
+	{
+		// this may still happen legally when a tiny triangle is
+		// the only thing in a group
+		globalOutputStream() << "WARNING: vertex with only one edge" << std::endl;
+		return;
+	}
+
+	OptVertex* v1 = NULL;
+
+	if (e1->v1 == v2)
+	{
+		v1 = e1->v2;
+	} 
+	else if (e1->v2 == v2)
+	{
+		v1 = e1->v1;
+	}
+	else
+	{
+		globalErrorStream() << "removeIfColinear: mislinked edge" << std::endl;
+		return;
+	}
+
+	OptVertex* v3 = NULL;
+
+	if (e2->v1 == v2)
+	{
+		v3 = e2->v2;
+	} 
+	else if (e2->v2 == v2) 
+	{
+		v3 = e2->v1;
+	} 
+	else 
+	{
+		globalErrorStream() << "removeIfColinear: mislinked edge" << std::endl;
+		return;
+	}
+
+	if (v1 == v3)
+	{
+		globalErrorStream() << "removeIfColinear: mislinked edge" << std::endl;
+		return;
+	}
+
+	// they must point in opposite directions
+	float dist = (v3->pv - v2->pv).dot(v1->pv - v2->pv);
+
+	if (dist >= 0) return;
+
+	// see if they are colinear
+	Vector3 dir1 = v3->v.vertex - v1->v.vertex;
+	float len = dir1.normalise();
+
+	Vector3 dir2 = v2->v.vertex - v1->v.vertex;
+
+	dist = dir2.dot(dir1);
+
+	Vector3 point = v1->v.vertex + dir1*dist;
+
+	Vector3 offset = point - v2->v.vertex;
+	float off = offset.getLength();
+
+	if (off > COLINEAR_EPSILON)
+	{
+		return;
+	}
+
+#if 0
+	if ( dmapGlobals.drawflag ) {
+		qglBegin( GL_LINES );
+		qglColor3f( 1, 1, 0 );
+		qglVertex3fv( v1->pv.ToFloatPtr() );
+		qglVertex3fv( v2->pv.ToFloatPtr() );
+		qglEnd();
+		qglFlush();
+		qglBegin( GL_LINES );
+		qglColor3f( 0, 1, 1 );
+		qglVertex3fv( v2->pv.ToFloatPtr() );
+		qglVertex3fv( v3->pv.ToFloatPtr() );
+		qglEnd();
+		qglFlush();
+	}
+#endif
+
+	// replace the two edges with a single edge
+	unlinkEdge(*e1);
+	unlinkEdge(*e2);
+
+	// v2 should have no edges now
+	if (v2->edges)
+	{
+		globalErrorStream() << "removeIfColinear: didn't remove properly" << std::endl;
+	}
+	
+	// if there is an existing edge that already
+	// has these exact verts, we have just collapsed a
+	// sliver triangle out of existance, and all the edges
+	// can be removed
+	for (OptEdge* e = _edges; e; e = e->islandLink)
+	{
+		if ((e->v1 == v1 && e->v2 == v3) || (e->v1 == v3 && e->v2 == v1))
+		{
+			unlinkEdge(*e);
+			removeIfColinear(v1);
+			removeIfColinear(v3);
+			return;
+		}
+	}
+
+	// if we can't add the combined edge, link
+	// the originals back in
+	if (!tryAddNewEdge(v1, v3))
+	{
+		e1->islandLink = _edges;
+		_edges = e1;
+		e1->linkToVertices();
+
+		e2->islandLink = _edges;
+		_edges = e2;
+		e1->linkToVertices();
+		return;
+	}
+
+	// recursively try to combine both verts now,
+	// because things may have changed since the last combine test
+	removeIfColinear(v1);
+	removeIfColinear(v3);
+}
+
+void OptIsland::combineCollinearEdges()
+{
+	std::size_t edges = 0;
+
+	for (OptEdge* e = _edges; e; e = e->islandLink)
+	{
+		edges++;
+	}
+
+	if (false/* dmapGlobals.verbose */)
+	{
+		globalOutputStream() << (boost::format("%6i original exterior edges") % edges).str() << std::endl;
+	}
+
+	for (OptVertex* ov = _verts; ov; ov = ov->islandLink)
+	{
+		removeIfColinear(ov);
+	}
+
+	edges = 0;
+
+	for (OptEdge* e = _edges; e; e = e->islandLink)
+	{
+		edges++;
+	}
+
+	if (false/* dmapGlobals.verbose */)
+	{
+		globalOutputStream() << (boost::format("%6i optimized exterior edges") % edges).str() << std::endl;
+	}
+}
+
 void OptIsland::optimise()
 {
 	// add space-filling fake edges so we have a complete
@@ -552,12 +798,13 @@ void OptIsland::optimise()
 	// remove interior vertexes that have filled triangles
 	// between all their edges
 	removeInteriorEdges();
-	/*DrawEdges( island );
+	//DrawEdges( island );
 
-	ValidateEdgeCounts( island );
+	validateEdgeCounts();
 
 	// remove vertexes that only have two colinear edges
-	CombineColinearEdges( island );
+	combineCollinearEdges();
+	/*
 	CullUnusedVerts( island );
 	DrawEdges( island );
 
