@@ -262,6 +262,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 	}
 
     dbsPass.m_depthfunc = GL_LEQUAL;
+    dbsPass.polygonOffset = 0.5f;
     dbsPass.m_sort = OpenGLState::eSortMultiFirst;
     dbsPass.m_blend_src = GL_ONE;
     dbsPass.m_blend_dst = GL_ONE;

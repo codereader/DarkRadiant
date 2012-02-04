@@ -100,16 +100,16 @@ void Winding::render(const RenderInfo& info) const
     {
         // Lighting mode, submit normals, tangents and texcoords to the shader
         // program.
-		glVertexAttribPointerARB(
+		glVertexAttribPointer(
             ATTR_NORMAL, 3, GL_FLOAT, 0, sizeof(WindingVertex), &firstElement.normal
         );
-		glVertexAttribPointerARB(
+		glVertexAttribPointer(
             ATTR_TEXCOORD, 2, GL_FLOAT, 0, sizeof(WindingVertex), &firstElement.texcoord
         );
-		glVertexAttribPointerARB(
+		glVertexAttribPointer(
             ATTR_TANGENT, 3, GL_FLOAT, 0, sizeof(WindingVertex), &firstElement.tangent
         );
-		glVertexAttribPointerARB(
+		glVertexAttribPointer(
             ATTR_BITANGENT, 3, GL_FLOAT, 0, sizeof(WindingVertex), &firstElement.bitangent
         );
 	}
