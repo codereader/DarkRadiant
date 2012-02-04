@@ -511,7 +511,9 @@ void OpenGLShader::constructNormalShader(const std::string& name)
 void OpenGLShader::construct(const std::string& name)
 {
 	// Retrieve the highlight colour from the colourschemes (once)
-	static Vector3 highLightColour = ColourSchemes().getColour("selected_brush_camera");
+	const static Colour4 highLightColour(
+        ColourSchemes().getColour("selected_brush_camera"), 0.3f
+    );
 
     // Check the first character of the name to see if this is a special built-in
     // shader
@@ -619,12 +621,15 @@ void OpenGLShader::construct(const std::string& name)
             }
             else if (name == "$CAM_HIGHLIGHT")
             {
-              state.setColour(highLightColour[0],
-                              highLightColour[1],
-                              highLightColour[2],
-                              0.3f);
-              state.setRenderFlags(RENDER_FILL | RENDER_DEPTHTEST | RENDER_CULLFACE | RENDER_BLEND | RENDER_COLOURWRITE);
+              state.setRenderFlag(RENDER_FILL);
+              state.setRenderFlag(RENDER_DEPTHTEST);
+              state.setRenderFlag(RENDER_CULLFACE);
+              state.setRenderFlag(RENDER_BLEND);
+              state.setRenderFlag(RENDER_COLOURWRITE);
+
+              state.setColour(highLightColour);
               state.m_sort = OpenGLState::eSortHighlight;
+              state.polygonOffset = 0.5f;
               state.m_depthfunc = GL_LEQUAL;
             }
             else if (name == "$CAM_OVERLAY")

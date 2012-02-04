@@ -28,6 +28,11 @@ public:
     : Vector4(r, g, b, a)
     { }
 
+    /// Construct a Colour4 from a Vector3 and optional alpha
+    Colour4(const Vector3& vec, float alpha = 1.0f)
+    : Vector4(vec, alpha)
+    { }
+
     /// Return true if this colour contains valid component values
     bool isValid() const
     {
