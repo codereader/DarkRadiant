@@ -3351,7 +3351,7 @@ void ProcCompiler::splitOriginalEdgesAtCrossings(ProcOptimizeGroup& group)
 
 void ProcCompiler::dontSeparateIslands(ProcOptimizeGroup& group)
 {
-	OptIsland island(group, _optVerts, _optEdges);
+	OptIsland island(group, _optVerts, _optEdges, _procFile);
 
 	island.optimise();
 }

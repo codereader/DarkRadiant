@@ -8,6 +8,8 @@ namespace map
 class OptIsland
 {
 private:
+	ProcFilePtr _procFile;
+
 	ProcOptimizeGroup& _group;
 
 	OptVertex*	_verts;
@@ -29,7 +31,8 @@ private:
 public:
 	OptIsland(ProcOptimizeGroup& group, 
 			  std::vector<OptVertex>& vertices, 
-			  std::vector<OptEdge>& edges);
+			  std::vector<OptEdge>& edges,
+			  const ProcFilePtr& procFile);
 
 	// At this point, all needed vertexes are already in the list, 
 	// including any that were added at crossing points.
@@ -68,6 +71,12 @@ private:
 
 	void combineCollinearEdges();
 	void removeIfColinear(OptVertex* ov);
+
+	// Unlink any verts with no edges, so they won't be used in the retriangulation
+	void cullUnusedVerts();
+
+	// Add new triangles to the group's regeneratedTris
+	void regenerateTriangles();
 };
 
 } // namespace 

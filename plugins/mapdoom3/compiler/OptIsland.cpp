@@ -8,7 +8,9 @@ namespace map
 
 OptIsland::OptIsland(ProcOptimizeGroup& group, 
 					 std::vector<OptVertex>& vertices, 
-					 std::vector<OptEdge>& edges) :
+					 std::vector<OptEdge>& edges,
+					 const ProcFilePtr& procFile) :
+	_procFile(procFile),
 	_group(group),
 	_verts(NULL),
 	_edges(NULL),
@@ -785,6 +787,95 @@ void OptIsland::combineCollinearEdges()
 	}
 }
 
+void OptIsland::cullUnusedVerts()
+{
+	std::size_t numKeep = 0;
+	std::size_t numFree = 0;
+
+	for (OptVertex** prev = &_verts; *prev; )
+	{
+		OptVertex* vert = *prev;
+
+		if ( !vert->edges )
+		{
+			// free it
+			*prev = vert->islandLink;
+			numFree++;
+		}
+		else
+		{
+			OptEdge* edge = vert->edges;
+
+			if ((edge->v1 == vert && !edge->v1link) || (edge->v2 == vert && !edge->v2link))
+			{
+				// is is occasionally possible to get a vert
+				// with only a single edge when colinear optimizations
+				// crunch down a complex sliver
+				unlinkEdge(*edge);
+
+				// free it
+				*prev = vert->islandLink;
+				numFree++;
+			}
+			else
+			{
+				prev = &vert->islandLink;
+				numKeep++;
+			}
+		}
+	}
+
+	if (false/* dmapGlobals.verbose */)
+	{
+		globalOutputStream() << (boost::format("%6i verts kept") % numKeep) << std::endl;
+		globalOutputStream() << (boost::format("%6i verts freed") % numFree) << std::endl;
+	}
+}
+
+void OptIsland::regenerateTriangles()
+{
+	std::size_t numOut = 0;
+
+	for (std::size_t i = 0; i < _tris.size(); ++i)
+	{
+		const OptTriPtr& optTri = _tris[i];
+
+		if (!optTri->filled) continue;
+
+		// create a new mapTri_t
+		ProcTri tri;
+
+		tri.material = _group.material;
+		tri.mergeGroup = _group.mergeGroup;
+
+		tri.v[0] = optTri->v[0]->v;
+		tri.v[1] = optTri->v[1]->v;
+		tri.v[2] = optTri->v[2]->v;
+
+		Plane3 plane(tri.v[0].vertex, tri.v[1].vertex, tri.v[2].vertex);
+		
+		if (plane.normal().dot(_procFile->planes.getPlane(_group.planeNum).normal()) <= 0)
+		{
+			// this can happen reasonably when a triangle is nearly degenerate in
+			// optimization planar space, and winds up being degenerate in 3D space
+			globalWarningStream() << "WARNING: backwards triangle generated!" << std::endl;
+			// discard it
+			continue;
+		}
+
+		_group.regeneratedTris.push_back(tri);
+
+		numOut++;
+	}
+
+	_tris.clear();
+
+	if (false/* dmapGlobals.verbose */)
+	{
+		globalOutputStream() << (boost::format("%6i tris out") % numOut) << std::endl;
+	}
+}
+
 void OptIsland::optimise()
 {
 	// add space-filling fake edges so we have a complete
@@ -804,21 +895,21 @@ void OptIsland::optimise()
 
 	// remove vertexes that only have two colinear edges
 	combineCollinearEdges();
-	/*
-	CullUnusedVerts( island );
-	DrawEdges( island );
+	
+	cullUnusedVerts();
+	//DrawEdges( island );
 
 	// add new internal edges between the remaining exterior edges
 	// to give us a full triangulation again
-	AddInteriorEdges( island );
-	DrawEdges( island );
+	addInteriorEdges();
+	//DrawEdges( island );
 
 	// determine all the possible triangles, and decide if
 	// the are filled or empty
-	BuildOptTriangles( island );
+	buildOptTriangles();
 
-	// make mapTri_t out of the filled optTri_t
-	RegenerateTriangles( island );*/
+	// make ProcTri out of the filled OptTri
+	regenerateTriangles();
 }
 
 int OptIsland::LengthSort(const void *a, const void *b)
