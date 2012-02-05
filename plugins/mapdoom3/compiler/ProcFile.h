@@ -117,7 +117,7 @@ struct ProcTri
 	const ProcFace*				mergeGroup;		// we want to avoid merging triangles
 	const model::IModelSurface* mergeSurf;		// from different fixed groups, like guiSurfs and mirrors
 	const IPatch*				mergePatch;
-	int							planeNum;		
+	std::size_t					planeNum;
 
 	ArbitraryMeshVertex			v[3];
 

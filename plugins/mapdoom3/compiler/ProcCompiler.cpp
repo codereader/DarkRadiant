@@ -3379,21 +3379,31 @@ void ProcCompiler::optimizeOptList(ProcOptimizeGroup& group)
 	dontSeparateIslands(group);
 #endif
 
-	/*// now free the hash verts
-	FreeTJunctionHash();
+	// now free the hash verts
 	_triangleHash.reset();
 
 	// free the original list and use the new one
-	FreeTriList( opt->triList );
-	opt->triList = opt->regeneratedTris;
-	opt->regeneratedTris = NULL;*/
+	group.triList.swap(group.regeneratedTris);
+	group.regeneratedTris.clear();
+}
+
+void ProcCompiler::setGroupTriPlaneNums(ProcArea::OptimizeGroups& groupList)
+{
+	for (ProcArea::OptimizeGroups::reverse_iterator group = groupList.rbegin(); 
+		 group != groupList.rend(); ++group)
+	{
+		for (ProcTris::iterator tri = group->triList.begin(); tri != group->triList.end(); ++tri)
+		{
+			tri->planeNum = group->planeNum;
+		}
+	}
 }
 
 void ProcCompiler::optimizeGroupList(ProcArea::OptimizeGroups& groupList)
 {
 	if (groupList.empty()) return;
 
-	std::size_t c_in = countGroupListTris(groupList);
+	std::size_t numIn = countGroupListTris(groupList);
 
 	// optimize and remove colinear edges, which will
 	// re-introduce some t junctions
@@ -3403,19 +3413,20 @@ void ProcCompiler::optimizeGroupList(ProcArea::OptimizeGroups& groupList)
 		optimizeOptList(*group);
 	}
 
-	/*std::size_t c_edge = CountGroupListTris( groupList );
+	std::size_t numEdge = countGroupListTris(groupList);
 
 	// fix t junctions again
-	FixAreaGroupsTjunctions( groupList );
-	FreeTJunctionHash();
-	std::size_t c_tjunc2 = CountGroupListTris( groupList );
+	fixAreaGroupsTjunctions(groupList);
+	_triangleHash.reset();
 
-	SetGroupTriPlaneNums( groupList );
+	std::size_t numTjunc2 = countGroupListTris(groupList);
 
-	common->Printf( "----- OptimizeAreaGroups Results -----\n" );
-	common->Printf( "%6i tris in\n", c_in );
-	common->Printf( "%6i tris after edge removal optimization\n", c_edge );
-	common->Printf( "%6i tris after final t junction fixing\n", c_tjunc2 );*/
+	setGroupTriPlaneNums(groupList);
+
+	globalOutputStream() << "----- OptimizeAreaGroups Results -----" << std::endl;
+	globalOutputStream() << (boost::format("%6i tris in") % numIn) << std::endl;
+	globalOutputStream() << (boost::format("%6i tris after edge removal optimization") % numEdge) << std::endl;
+	globalOutputStream() << (boost::format("%6i tris after final t junction fixing") % numTjunc2) << std::endl;
 }
 
 Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups, const ProcLight& light)

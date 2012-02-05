@@ -221,6 +221,9 @@ private:
 	void addEdgeIfNotAlready(OptVertex* v1, OptVertex* v2);
 
 	void dontSeparateIslands(ProcOptimizeGroup& group);
+
+	// Copies the group planeNum to every triangle in each group
+	void setGroupTriPlaneNums(ProcArea::OptimizeGroups& groupList);
 };
 
 } // namespace
