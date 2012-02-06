@@ -9,6 +9,7 @@
 #include "math/Vector3.h"
 #include "render/ArbitraryMeshVertex.h"
 #include "ProcWinding.h"
+#include "Surface.h"
 
 namespace map
 {
@@ -61,14 +62,6 @@ struct RenderLightParms
 	MaterialPtr				shader;				// NULL = either lights/defaultPointLight or lights/defaultProjectedLight
 	float					shaderParms[MAX_ENTITY_SHADER_PARMS];		// can be used in any way by shader
 	//idSoundEmitter *		referenceSound;		// for shader sound tables, allowing effects to vary with sounds
-};
-
-struct Surface
-{
-	AABB		bounds;
-
-	typedef std::vector<ArbitraryMeshVertex> Vertices;
-	Vertices	vertices;
 };
 
 // Represents a map light

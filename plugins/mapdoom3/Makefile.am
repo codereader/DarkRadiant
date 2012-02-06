@@ -22,6 +22,7 @@ mapdoom3_la_SOURCES = Doom3MapFormat.cpp \
                       compiler/ProcCompiler.cpp \
 					  compiler/ProcWinding.cpp \
 					  compiler/ProcLight.cpp \
+					  compiler/Surface.cpp \
                       primitiveparsers/BrushDef.cpp \
                       primitiveparsers/BrushDef3.cpp \
                       primitiveparsers/Patch.cpp \

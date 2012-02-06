@@ -3489,6 +3489,7 @@ Surface ProcCompiler::shareMapTriVerts(const ProcTris& tris)
 	Surface uTri;
 
 	uTri.vertices.reserve(count * 3);
+	uTri.indices.reserve(count * 3);
 
 	for (ProcTris::const_iterator step = tris.begin(); step != tris.end(); ++step)
 	{
@@ -3510,9 +3511,8 @@ Surface ProcCompiler::shareMapTriVerts(const ProcTris& tris)
 			if (j == uTri.vertices.size())
 			{
 				uTri.vertices.push_back(dv);
+				uTri.indices.push_back(static_cast<int>(j));
 			}
-
-			//uTri.indexes[numIndexes++] = j;
 		}
 	}
 
@@ -3548,10 +3548,10 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
 	combined.clear();
 	
 	// find silhouette information for the triSurf
-	/*R_CleanupTriangles( occluders, false, true, false );
+	occluders.cleanupTriangles(false, true, false);
 
 	// let the renderer build the shadow volume normally
-	idRenderEntityLocal		space;
+	/*idRenderEntityLocal		space;
 
 	space.modelMatrix[0] = 1;
 	space.modelMatrix[5] = 1;

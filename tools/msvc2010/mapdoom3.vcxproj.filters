@@ -97,6 +97,9 @@
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\OptUtils.h">
       <Filter>src\compiler</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\Surface.h">
+      <Filter>src\compiler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp">
@@ -148,6 +151,9 @@
       <Filter>src\compiler</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\OptIsland.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\Surface.cpp">
       <Filter>src\compiler</Filter>
     </ClCompile>
   </ItemGroup>

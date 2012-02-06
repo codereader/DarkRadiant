@@ -319,6 +319,7 @@
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcFile.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcLight.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\ProcWinding.h" />
+    <ClInclude Include="..\..\plugins\mapdoom3\compiler\Surface.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\compiler\TriangleHash.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapFormat.h" />
     <ClInclude Include="..\..\plugins\mapdoom3\Doom3MapReader.h" />
@@ -341,6 +342,7 @@
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcLight.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcWinding.cpp" />
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\Surface.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapFormat.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapReader.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\Doom3MapWriter.cpp" />
