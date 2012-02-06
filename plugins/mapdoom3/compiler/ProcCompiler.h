@@ -224,6 +224,8 @@ private:
 
 	// Copies the group planeNum to every triangle in each group
 	void setGroupTriPlaneNums(ProcArea::OptimizeGroups& groupList);
+
+	Surface shareMapTriVerts(const ProcTris& tris);
 };
 
 } // namespace

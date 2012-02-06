@@ -3429,6 +3429,96 @@ void ProcCompiler::optimizeGroupList(ProcArea::OptimizeGroups& groupList)
 	globalOutputStream() << (boost::format("%6i tris after final t junction fixing") % numTjunc2) << std::endl;
 }
 
+namespace
+{
+
+#define	XYZ_EPSILON	0.01
+#define	ST_EPSILON	0.001
+#define	COSINE_EPSILON	0.999
+
+static bool matchVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b)
+{
+	if (fabs(a.vertex[0] - b.vertex[0] ) > XYZ_EPSILON)
+	{
+		return false;
+	}
+
+	if (fabs(a.vertex[1] - b.vertex[1] ) > XYZ_EPSILON)
+	{
+		return false;
+	}
+
+	if (fabs(a.vertex[2] - b.vertex[2] ) > XYZ_EPSILON)
+	{
+		return false;
+	}
+
+	if (fabs(a.texcoord[0] - b.texcoord[0] ) > ST_EPSILON)
+	{
+		return false;
+	}
+
+	if (fabs(a.texcoord[1] - b.texcoord[1] ) > ST_EPSILON)
+	{
+		return false;
+	}
+
+	// if the normal is 0 (smoothed normals), consider it a match
+	if (a.normal[0] == 0 && a.normal[1] == 0 && a.normal[2] == 0 && 
+		b.normal[0] == 0 && b.normal[1] == 0 && b.normal[2] == 0)
+	{
+		return true;
+	}
+
+	// otherwise do a dot-product cosine check
+	if (a.normal.dot(b.normal) < COSINE_EPSILON)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+}
+
+Surface ProcCompiler::shareMapTriVerts(const ProcTris& tris)
+{
+	// unique the vertexes
+	std::size_t count = tris.size();
+
+	Surface uTri;
+
+	uTri.vertices.reserve(count * 3);
+
+	for (ProcTris::const_iterator step = tris.begin(); step != tris.end(); ++step)
+	{
+		for (std::size_t i = 0; i < 3; ++i)
+		{
+			const ArbitraryMeshVertex& dv = step->v[i];
+
+			// search for a match
+			std::size_t j = 0;
+
+			for (j = 0; j < uTri.vertices.size(); ++j)
+			{
+				if (matchVert(uTri.vertices[j], dv))
+				{
+					break;
+				}
+			}
+
+			if (j == uTri.vertices.size())
+			{
+				uTri.vertices.push_back(dv);
+			}
+
+			//uTri.indexes[numIndexes++] = j;
+		}
+	}
+
+	return uTri;
+}
+
 Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups, const ProcLight& light)
 {
 	globalOutputStream() << (boost::format("----- CreateLightShadow %p -----") % (&light)) << std::endl;
@@ -3437,25 +3527,28 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
 	optimizeGroupList(shadowerGroups);
 
 	Surface shadowTris;
-	/*// combine all the triangles into one list
-	mapTri_t	*combined;
+	
+	// combine all the triangles into one list
+	ProcTris combined;
 
-	combined = NULL;
-	for ( optimizeGroup_t *group = shadowerGroups ; group ; group = group->nextGroup ) {
-		combined = MergeTriLists( combined, CopyTriList( group->triList ) );
+	for (ProcArea::OptimizeGroups::reverse_iterator group = shadowerGroups.rbegin(); 
+		 group != shadowerGroups.rend(); ++group)
+	{
+		combined.insert(combined.end(), group->triList.begin(), group->triList.end());
 	}
 
-	if ( !combined ) {
-		return NULL;
+	if (combined.empty())
+	{
+		return shadowTris;
 	}
 
 	// find uniqued vertexes
-	srfTriangles_t	*occluders = ShareMapTriVerts( combined );
+	Surface occluders = shareMapTriVerts(combined);
 
-	FreeTriList( combined );
-
+	combined.clear();
+	
 	// find silhouette information for the triSurf
-	R_CleanupTriangles( occluders, false, true, false );
+	/*R_CleanupTriangles( occluders, false, true, false );
 
 	// let the renderer build the shadow volume normally
 	idRenderEntityLocal		space;
