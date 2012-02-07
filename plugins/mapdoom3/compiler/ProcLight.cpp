@@ -285,16 +285,6 @@ void ProcLight::setLightFrustum()
 
 #define MAX_POLYTOPE_PLANES 6
 
-inline void boundSurface(Surface& surf)
-{
-	surf.bounds == AABB();
-
-	for (Surface::Vertices::const_iterator i = surf.vertices.begin(); i != surf.vertices.end(); ++i)
-	{
-		surf.bounds.includePoint(i->vertex);
-	}
-}
-
 Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, ProcWinding* windings)
 {
 	ProcWinding planeWindings[MAX_POLYTOPE_PLANES];
@@ -307,7 +297,7 @@ Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, 
 	}
 
 	std::size_t numVerts = 0;
-	//std::size_t numIndexes = 0;
+	std::size_t numIndices = 0;
 
 	for (std::size_t i = 0; i < numPlanes; ++i)
 	{
@@ -337,11 +327,12 @@ Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, 
 		}
 
 		numVerts += w.size();
-		//numIndexes += (w.size() - 2) * 3;
+		numIndices += (w.size() - 2) * 3;
 	}
 
 	Surface tri;
 	tri.vertices.resize(numVerts);
+	tri.indices.resize(numIndices);
 
 	// copy the data from the windings
 	for (std::size_t i = 0; i < numPlanes; ++i)
@@ -358,15 +349,15 @@ Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, 
 			tri.vertices.push_back(ArbitraryMeshVertex(w[j].vertex, Vector3(0,0,0), TexCoord2f(0,0)));
 		}
 
-		/*for (std::size_t j = 1; j < w.size() - 1; ++j)
-		{
-			tri->indexes[ tri->numIndexes + 0 ] = tri->numVerts;
-			tri->indexes[ tri->numIndexes + 1 ] = tri->numVerts + j;
-			tri->indexes[ tri->numIndexes + 2 ] = tri->numVerts + j + 1;
-			tri->numIndexes += 3;
-		}*/
+		std::size_t indicesCount = 0;
 
-		//tri->numVerts += w.size();
+		for (std::size_t j = 1; j < w.size() - 1; ++j)
+		{
+			tri.indices[indicesCount + 0] = static_cast<int>(tri.vertices.size());
+			tri.indices[indicesCount + 1] = static_cast<int>(tri.vertices.size() + j);
+			tri.indices[indicesCount + 2] = static_cast<int>(tri.vertices.size() + j + 1);
+			indicesCount += 3;
+		}
 
 		// optionally save the winding
 		if (windings)
@@ -375,7 +366,7 @@ Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, 
 		}
 	}
 
-	boundSurface(tri);
+	tri.calcBounds();
 	
 	return tri;
 }

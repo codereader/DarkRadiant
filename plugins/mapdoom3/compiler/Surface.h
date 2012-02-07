@@ -53,9 +53,17 @@ public:
 	// true if there aren't any dangling edges
 	bool		perfectHull;
 
+	// mirroredVerts[0] is the mirror of vertices.size() - mirroredVerts.size() + 0
+	std::vector<int> mirroredVerts;
+
+	// pairs of the number of the first vertex and the number of the duplicate vertex
+	std::vector<int> dupVerts;
+
 	Surface() :
 		perfectHull(false)
 	{}
+
+	void calcBounds();
 
 	void cleanupTriangles(bool createNormals, bool identifySilEdges, bool useUnsmoothedTangents);
 
@@ -82,6 +90,24 @@ private:
 	void identifySilEdges(bool omitCoplanarEdges);
 	void defineEdge(int v1, int v2, int planeNum);
 	static int SilEdgeSort(const void* a_, const void* b_);
+
+	// Modifies the surface to bust apart any verts that are shared by both positive and
+	// negative texture polarities, so tangent space smoothing at the vertex doesn't
+	// degenerate.
+	// 
+	// This will create some identical vertexes (which will eventually get different tangent
+	// vectors), so never optimize the resulting mesh, or it will get the mirrored edges back.
+	// 
+	// Reallocates vertices and changes indices in place
+	// Silindexes are unchanged by this.
+	// 
+	// sets mirroredVerts and mirroredVerts[]
+	void duplicateMirroredVertexes();
+
+	// Returns true if the texture polarity of the face is negative, false if it is positive or zero
+	bool getFaceNegativePolarity(std::size_t firstIndex) const;
+
+	void createDupVerts();
 };
 
 } // namespace

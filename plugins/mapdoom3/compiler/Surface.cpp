@@ -11,6 +11,16 @@ std::size_t Surface::MAX_SIL_EDGES = 0x10000;
 std::size_t	Surface::_totalCoplanarSilEdges = 0;
 std::size_t Surface::_totalSilEdges = 0;
 
+void Surface::calcBounds()
+{
+	bounds == AABB();
+
+	for (Vertices::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
+	{
+		bounds.includePoint(i->vertex);
+	}
+}
+
 bool Surface::rangeCheckIndexes()
 {
 	if (indices.empty())
@@ -391,6 +401,142 @@ void Surface::identifySilEdges(bool omitCoplanarEdges)
 	silEdges.resize(_numSilEdges);
 }
 
+namespace
+{
+	struct TangentVertex 
+	{
+		bool	polarityUsed[2];
+		int		negativeRemap;
+	};
+}
+
+bool Surface::getFaceNegativePolarity(std::size_t firstIndex) const
+{
+	float d0[5], d1[5];
+
+	const ArbitraryMeshVertex& a = vertices[indices[firstIndex + 0]];
+	const ArbitraryMeshVertex& b = vertices[indices[firstIndex + 1]];
+	const ArbitraryMeshVertex& c = vertices[indices[firstIndex + 2]];
+
+	d0[3] = b.texcoord[0] - a.texcoord[0];
+	d0[4] = b.texcoord[1] - a.texcoord[1];
+
+	d1[3] = c.texcoord[0] - a.texcoord[0];
+	d1[4] = c.texcoord[1] - a.texcoord[1];
+
+	float area = d0[3] * d1[4] - d0[4] * d1[3];
+
+	if (area >= 0)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void Surface::duplicateMirroredVertexes()
+{
+	TangentVertex* tverts = reinterpret_cast<TangentVertex*>(alloca(vertices.size() * sizeof(TangentVertex)));
+	memset(tverts, 0, vertices.size() * sizeof(TangentVertex));
+
+	// determine texture polarity of each surface
+
+	// mark each vert with the polarities it uses
+	for (std::size_t i = 0; i < indices.size(); i += 3)
+	{
+		int	polarity = getFaceNegativePolarity(i) ? 1 : 0;
+
+		for (std::size_t j = 0; j < 3 ; ++j)
+		{
+			tverts[indices[i+j]].polarityUsed[polarity] = true;
+		}
+	}
+
+	// now create new verts as needed
+	std::size_t totalVerts = vertices.size();
+
+	for (std::size_t i = 0; i < vertices.size(); ++i)
+	{
+		TangentVertex& vert = tverts[i];
+
+		if (vert.polarityUsed[0] && vert.polarityUsed[1])
+		{
+			vert.negativeRemap = static_cast<int>(totalVerts);
+			totalVerts++;
+		}
+	}
+
+	mirroredVerts.resize(totalVerts - vertices.size());
+
+	// now create the new list
+	if (totalVerts == vertices.size())
+	{
+		mirroredVerts.clear();
+		return;
+	}
+
+	std::size_t numVertsOld = vertices.size();
+	vertices.resize(totalVerts);
+
+	// create the duplicates
+	std::size_t numMirror = 0;
+
+	for (std::size_t i = 0 ; i < numVertsOld; ++i)
+	{
+		int j = tverts[i].negativeRemap;
+
+		if (j)
+		{
+			vertices[j] = vertices[i];
+			mirroredVerts[numMirror] = static_cast<int>(i);
+			numMirror++;
+		}
+	}
+
+	// change the indexes
+	for (std::size_t i = 0; i < indices.size(); ++i)
+	{
+		if (tverts[indices[i]].negativeRemap && getFaceNegativePolarity(3*(i/3)))
+		{
+			indices[i] = tverts[indices[i]].negativeRemap;
+		}
+	}
+}
+
+void Surface::createDupVerts()
+{
+	int* remap = (int*)alloca(vertices.size()*sizeof(int));
+
+	// initialize vertex remap in case there are unused verts
+	for (std::size_t i = 0; i < vertices.size(); ++i)
+	{
+		remap[i] = static_cast<int>(i);
+	}
+
+	// set the remap based on how the silhouette indexes are remapped
+	for (std::size_t i = 0; i < indices.size(); ++i)
+	{
+		remap[indices[i]] = silIndexes[i];
+	}
+
+	// create duplicate vertex index based on the vertex remap
+	dupVerts.resize(vertices.size() * 2);
+
+	std::size_t numDupVerts = 0;
+
+	for (std::size_t i = 0; i < vertices.size(); ++i)
+	{
+		if (remap[i] != i)
+		{
+			dupVerts[numDupVerts * 2 + 0] = static_cast<int>(i);
+			dupVerts[numDupVerts * 2 + 1] = remap[i];
+			numDupVerts++;
+		}
+	}
+
+	dupVerts.resize(numDupVerts * 2);
+}
+
 void Surface::cleanupTriangles(bool createNormals, bool identifySilEdgesFlag, bool useUnsmoothedTangents)
 {
 	if (!rangeCheckIndexes()) return;
@@ -411,16 +557,16 @@ void Surface::cleanupTriangles(bool createNormals, bool identifySilEdgesFlag, bo
 	}
 
 	// bust vertexes that share a mirrored edge into separate vertexes
-	/*R_DuplicateMirroredVertexes( tri );
+	duplicateMirroredVertexes();
 
 	// optimize the index order (not working?)
 //	R_OrderIndexes( tri->numIndexes, tri->indexes );
 
-	R_CreateDupVerts( tri );
+	createDupVerts();
 
-	R_BoundTriSurf( tri );
-
-	if ( useUnsmoothedTangents ) {
+	calcBounds();
+	
+	/*if ( useUnsmoothedTangents ) {
 		R_BuildDominantTris( tri );
 		R_DeriveUnsmoothedTangents( tri );
 	} else if ( !createNormals ) {
