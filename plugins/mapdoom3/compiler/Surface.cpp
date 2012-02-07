@@ -127,6 +127,45 @@ void Surface::createSilIndexes()
 	}
 }
 
+void Surface::removeDegenerateTriangles()
+{
+	std::size_t numRemoved = 0;
+
+	// check for completely degenerate triangles
+	for (std::size_t i = 0; i < indices.size(); )
+	{
+		int a = silIndexes[i];
+		int b = silIndexes[i+1];
+		int c = silIndexes[i+2];
+
+		if (a == b || a == c || b == c)
+		{
+			numRemoved++;
+
+			// remove three indices
+			indices.erase(indices.begin() + i, indices.begin() + i + 2);
+
+			if (!silIndexes.empty())
+			{
+				silIndexes.erase(silIndexes.begin() + i, silIndexes.begin() + i + 2);
+			}
+
+			// Size of vector is decreased by 3 now, no need to increase i
+		}
+		else
+		{
+			i += 3;
+		}
+	}
+
+	// this doesn't free the memory used by the unused verts
+
+	if (numRemoved > 0)
+	{
+		globalOutputStream() << (boost::format("removed %i degenerate triangles") % numRemoved) << std::endl;
+	}
+}
+
 void Surface::cleanupTriangles(bool createNormals, bool identifySilEdges, bool useUnsmoothedTangents)
 {
 	if (!rangeCheckIndexes()) return;
@@ -135,9 +174,9 @@ void Surface::cleanupTriangles(bool createNormals, bool identifySilEdges, bool u
 
 //	R_RemoveDuplicatedTriangles( tri );	// this may remove valid overlapped transparent triangles
 
-	/*R_RemoveDegenerateTriangles( tri );
+	removeDegenerateTriangles();
 
-	R_TestDegenerateTextureSpace( tri );
+	/*R_TestDegenerateTextureSpace( tri );
 
 //	R_RemoveUnusedVerts( tri );
 

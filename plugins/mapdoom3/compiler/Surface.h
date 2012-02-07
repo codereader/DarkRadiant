@@ -36,6 +36,8 @@ private:
 	void createSilIndexes();
 
 	std::vector<int> createSilRemap();
+
+	void removeDegenerateTriangles();
 };
 
 } // namespace
