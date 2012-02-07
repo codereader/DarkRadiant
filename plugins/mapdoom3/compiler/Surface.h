@@ -18,6 +18,9 @@ public:
 	typedef std::vector<int> Indices;
 	Indices		indices;
 
+	// indexes changed to be the first vertex with same XYZ, ignoring normal and texcoords
+	Indices		silIndexes;
+
 	void cleanupTriangles(bool createNormals, bool identifySilEdges, bool useUnsmoothedTangents);
 
 private:
@@ -27,6 +30,12 @@ private:
 	// No indexes is acceptable.
 	// More vertexes than are referenced by indexes are acceptable.
 	bool rangeCheckIndexes();
+
+	// Uniquing vertexes only on xyz before creating sil edges reduces
+	// the edge count by about 20% on Q3 models
+	void createSilIndexes();
+
+	std::vector<int> createSilRemap();
 };
 
 } // namespace

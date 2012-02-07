@@ -1,6 +1,8 @@
 #include "Surface.h"
 
+#include <map>
 #include "itextstream.h"
+#include "render/ArbitraryMeshVertex.h"
 
 namespace map
 {
@@ -44,16 +46,96 @@ bool Surface::rangeCheckIndexes()
 	return true;
 }
 
+namespace
+{
+	// typedefs needed to simulate the idHashIndex class
+	typedef std::multimap<int, std::size_t> IndexLookupMap;
+	typedef std::pair<typename IndexLookupMap::const_iterator, 
+					  typename IndexLookupMap::const_iterator> Range;
+}
+
+std::vector<int> Surface::createSilRemap()
+{
+	std::vector<int> remap(vertices.size());
+
+	static int hashSize = 1024;
+
+	if (false/* !r_useSilRemap.GetBool() */)
+	{
+		for (std::size_t i = 0 ; i < vertices.size(); ++i)
+		{
+			remap[i] = static_cast<int>(i);
+		}
+
+		return remap;
+	}
+
+	IndexLookupMap lookup;
+
+	std::size_t removed = 0;
+	std::size_t unique = 0;
+
+	for (std::size_t i = 0 ; i < vertices.size(); ++i)
+	{
+		const ArbitraryMeshVertex& v1 = vertices[i];
+
+		// see if there is an earlier vert that it can map to
+		int	hashKey = (static_cast<int>(v1.vertex[0]) + 
+					   static_cast<int>(v1.vertex[1]) + 
+					   static_cast<int>(v1.vertex[2])) & hashSize;
+		
+		Range range = lookup.equal_range(hashKey);
+
+		IndexLookupMap::const_iterator j;
+
+		for (j = range.first; j != range.second; ++j)
+		{
+			const ArbitraryMeshVertex& v2 = vertices[j->second];
+
+			if (v2.vertex == v1.vertex)
+			{
+				removed++;
+				remap[i] = static_cast<int>(j->second);
+				break;
+			}
+		}
+
+		if (j == range.second)
+		{
+			unique++;
+			remap[i] = static_cast<int>(i);
+
+			lookup.insert(IndexLookupMap::value_type(hashKey, i));
+		}
+	}
+
+	return remap;
+}
+
+void Surface::createSilIndexes()
+{
+	silIndexes.clear();
+
+	std::vector<int> remap = createSilRemap();
+
+	// remap indexes to the first one
+	silIndexes.resize(indices.size());
+
+	for (std::size_t i = 0; i < indices.size(); ++i)
+	{
+		silIndexes[i] = remap[indices[i]];
+	}
+}
+
 void Surface::cleanupTriangles(bool createNormals, bool identifySilEdges, bool useUnsmoothedTangents)
 {
 	if (!rangeCheckIndexes()) return;
 
-	/*
-	R_CreateSilIndexes( tri );
+	createSilIndexes();
 
 //	R_RemoveDuplicatedTriangles( tri );	// this may remove valid overlapped transparent triangles
 
-	R_RemoveDegenerateTriangles( tri );
+	/*R_RemoveDegenerateTriangles( tri );
 
 	R_TestDegenerateTextureSpace( tri );
 
