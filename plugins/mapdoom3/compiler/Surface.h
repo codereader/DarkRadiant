@@ -56,6 +56,9 @@ public:
 	// set when the vertex tangents have been calculated
 	bool		tangentsCalculated;
 
+	// set when the face planes have been calculated
+	bool		facePlanesCalculated;
+
 	// mirroredVerts[0] is the mirror of vertices.size() - mirroredVerts.size() + 0
 	std::vector<int> mirroredVerts;
 
@@ -78,9 +81,13 @@ public:
 
 	std::vector<DominantTri> dominantTris;
 
+	// [numIndexes/3] plane equations
+	std::vector<Plane3> facePlanes;
+
 	Surface() :
 		perfectHull(false),
-		tangentsCalculated(false)
+		tangentsCalculated(false),
+		facePlanesCalculated(false)
 	{}
 
 	void calcBounds();
@@ -88,6 +95,13 @@ public:
 	void cleanupTriangles(bool createNormals, bool identifySilEdges, bool useUnsmoothedTangents);
 
 private:
+	struct FaceTangents
+	{
+		Vector3 tangents[2];
+		bool	negativePolarity;
+		bool	degenerate;
+	};
+
 	// Check for syntactically incorrect indexes, like out of range values.
 	// Does not check for semantics, like degenerate triangles.
 	// No vertexes is acceptable if no indexes.
@@ -135,6 +149,21 @@ private:
 	// Derives the normal and orthogonal tangent vectors for the triangle vertices.
 	// For each vertex the normal and tangent vectors are derived from a single dominant triangle.
 	void deriveUnsmoothedTangents();
+
+	// Writes the facePlanes values, overwriting existing ones if present
+	void deriveFacePlanes();
+
+	void deriveFaceTangents(std::vector<FaceTangents>& tangents);
+	void deriveTangentsWithoutNormals();
+
+	// Builds tangents, normals, and face planes
+	void deriveTangents(bool allocFacePlanes);
+
+	// Derives the normal and orthogonal tangent vectors for the triangle vertices.
+	// For each vertex the normal and tangent vectors are derived from all triangles
+	// using the vertex which results in smooth tangents across the mesh.
+	// In the process the triangle planes are calculated as well.
+	void deriveTangents(std::vector<Plane3>& planes);
 };
 
 } // namespace

@@ -764,6 +764,535 @@ void Surface::deriveUnsmoothedTangents()
 	}
 }
 
+void Surface::deriveFacePlanes()
+{
+	if (facePlanes.empty())
+	{
+		facePlanes.resize(indices.size());
+	}
+
+	for (std::size_t i = 0, plane = 0; i < indices.size(); i += 3, ++plane)
+	{
+		float d0[3], d1[3];
+		
+		const ArbitraryMeshVertex& a = vertices[indices[i + 0]];
+		const ArbitraryMeshVertex& b = vertices[indices[i + 1]];
+		const ArbitraryMeshVertex& c = vertices[indices[i + 2]];
+
+		d0[0] = b.vertex[0] - a.vertex[0];
+		d0[1] = b.vertex[1] - a.vertex[1];
+		d0[2] = b.vertex[2] - a.vertex[2];
+
+		d1[0] = c.vertex[0] - a.vertex[0];
+		d1[1] = c.vertex[1] - a.vertex[1];
+		d1[2] = c.vertex[2] - a.vertex[2];
+
+		Vector3 n(
+			d1[1] * d0[2] - d1[2] * d0[1],
+			d1[2] * d0[0] - d1[0] * d0[2],
+			d1[0] * d0[1] - d1[1] * d0[0]
+		);
+
+		float f = 1/sqrt(n.x() * n.x() + n.y() * n.y() + n.z() * n.z());
+
+		n.x() *= f;
+		n.y() *= f;
+		n.z() *= f;
+
+		facePlanes[plane].normal() = n;
+		facePlanes[plane].dist() = n.dot(a.vertex);
+	}
+
+	facePlanesCalculated = true;
+}
+
+void Surface::deriveFaceTangents(std::vector<FaceTangents>& faceTangents)
+{
+	//
+	// calculate tangent vectors for each face in isolation
+	//
+	std::size_t numPositive = 0;
+	std::size_t numNegative = 0;
+
+	std::size_t numTextureDegenerateFaces = 0;
+
+	for (std::size_t i = 0; i < indices.size(); i += 3)
+	{
+		float d0[5], d1[5];
+
+		FaceTangents& ft = faceTangents[i/3];
+
+		const ArbitraryMeshVertex& a = vertices[indices[i + 0]];
+		const ArbitraryMeshVertex& b = vertices[indices[i + 1]];
+		const ArbitraryMeshVertex& c = vertices[indices[i + 2]];
+
+		d0[0] = b.vertex[0] - a.vertex[0];
+		d0[1] = b.vertex[1] - a.vertex[1];
+		d0[2] = b.vertex[2] - a.vertex[2];
+		d0[3] = b.texcoord[0] - a.texcoord[0];
+		d0[4] = b.texcoord[1] - a.texcoord[1];
+
+		d1[0] = c.vertex[0] - a.vertex[0];
+		d1[1] = c.vertex[1] - a.vertex[1];
+		d1[2] = c.vertex[2] - a.vertex[2];
+		d1[3] = c.texcoord[0] - a.texcoord[0];
+		d1[4] = c.texcoord[1] - a.texcoord[1];
+
+		float area = d0[3] * d1[4] - d0[4] * d1[3];
+
+		if (fabs(area) < 1e-20f)
+		{
+			ft.negativePolarity = false;
+			ft.degenerate = true;
+			ft.tangents[0] = Vector3(0,0,0);
+			ft.tangents[1] = Vector3(0,0,0);
+			numTextureDegenerateFaces++;
+			continue;
+		}
+
+		if (area > 0.0f)
+		{
+			ft.negativePolarity = false;
+			numPositive++;
+		} 
+		else
+		{
+			ft.negativePolarity = true;
+			numNegative++;
+		}
+		ft.degenerate = false;
+
+#ifdef USE_INVA
+		float inva = area < 0.0f ? -1 : 1;		// was = 1.0f / area;
+
+        temp[0] = (d0[0] * d1[4] - d0[4] * d1[0]) * inva;
+        temp[1] = (d0[1] * d1[4] - d0[4] * d1[1]) * inva;
+        temp[2] = (d0[2] * d1[4] - d0[4] * d1[2]) * inva;
+		temp.Normalize();
+		ft->tangents[0] = temp;
+        
+        temp[0] = (d0[3] * d1[0] - d0[0] * d1[3]) * inva;
+        temp[1] = (d0[3] * d1[1] - d0[1] * d1[3]) * inva;
+        temp[2] = (d0[3] * d1[2] - d0[2] * d1[3]) * inva;
+		temp.Normalize();
+		ft->tangents[1] = temp;
+#else
+		Vector3 temp(
+			d0[0] * d1[4] - d0[4] * d1[0],
+			d0[1] * d1[4] - d0[4] * d1[1],
+			d0[2] * d1[4] - d0[4] * d1[2]
+		);
+		temp.normalise();
+		ft.tangents[0] = temp;
+        
+        temp[0] = (d0[3] * d1[0] - d0[0] * d1[3]);
+        temp[1] = (d0[3] * d1[1] - d0[1] * d1[3]);
+        temp[2] = (d0[3] * d1[2] - d0[2] * d1[3]);
+		temp.normalise();
+		ft.tangents[1] = temp;
+#endif
+	}
+}
+
+void Surface::deriveTangentsWithoutNormals()
+{
+	std::vector<FaceTangents> faceTangents(indices.size() / 3);
+
+	deriveFaceTangents(faceTangents);
+
+	// clear the tangents
+	/*for ( i = 0 ; i < tri->numVerts ; i++ ) {
+		tri->verts[i].tangents[0].Zero();
+		tri->verts[i].tangents[1].Zero();
+	}*/
+
+	// sum up the neighbors
+	for (std::size_t i = 0; i < indices.size(); i += 3)
+	{
+		FaceTangents& ft = faceTangents[i/3];
+
+		// for each vertex on this face
+		for (std::size_t j = 0; j < 3; ++j)
+		{
+			ArbitraryMeshVertex& vert = vertices[indices[i+j]];
+
+			vert.tangent = vert.tangent + ft.tangents[0];
+			vert.bitangent = vert.bitangent + ft.tangents[1];
+		}
+	}
+
+#if 0
+	// sum up both sides of the mirrored verts
+	// so the S vectors exactly mirror, and the T vectors are equal
+	for ( i = 0 ; i < tri->numMirroredVerts ; i++ ) {
+		idDrawVert	*v1, *v2;
+
+		v1 = &tri->verts[ tri->numVerts - tri->numMirroredVerts + i ];
+		v2 = &tri->verts[ tri->mirroredVerts[i] ];
+
+		v1->tangents[0] -= v2->tangents[0];
+		v1->tangents[1] += v2->tangents[1];
+
+		v2->tangents[0] = vec3_origin - v1->tangents[0];
+		v2->tangents[1] = v1->tangents[1];
+	}
+#endif
+
+	// project the summed vectors onto the normal plane
+	// and normalize.  The tangent vectors will not necessarily
+	// be orthogonal to each other, but they will be orthogonal
+	// to the surface normal.
+	for (std::size_t i = 0 ; i < vertices.size(); ++i)
+	{
+		ArbitraryMeshVertex& vert = vertices[i];
+
+		float d = vert.tangent.dot(vert.normal);
+		vert.tangent = vert.tangent - vert.normal * d;
+		vert.tangent.normalise();
+
+		d = vert.bitangent.dot(vert.normal);
+		vert.bitangent = vert.bitangent - vert.normal * d;
+		vert.bitangent.normalise();
+	}
+
+	tangentsCalculated = true;
+}
+
+void Surface::deriveTangents(std::vector<Plane3>& planes)
+{
+	bool* used = (bool*)alloca(vertices.size() * sizeof(bool));
+	memset(used, 0, vertices.size()*sizeof(bool));
+
+	std::vector<Plane3>::iterator planesIter = planes.begin();
+
+	for (std::size_t i = 0; i < indices.size(); i += 3) 
+	{
+		float d0[5], d1[5];
+		
+		int v0 = indices[i + 0];
+		int v1 = indices[i + 1];
+		int v2 = indices[i + 2];
+
+		ArbitraryMeshVertex& a = vertices[v0];
+		ArbitraryMeshVertex& b = vertices[v1];
+		ArbitraryMeshVertex& c = vertices[v2];
+
+		d0[0] = b.vertex[0] - a.vertex[0];
+		d0[1] = b.vertex[1] - a.vertex[1];
+		d0[2] = b.vertex[2] - a.vertex[2];
+		d0[3] = b.texcoord[0] - a.texcoord[0];
+		d0[4] = b.texcoord[1] - a.texcoord[1];
+
+		d1[0] = c.vertex[0] - a.vertex[0];
+		d1[1] = c.vertex[1] - a.vertex[1];
+		d1[2] = c.vertex[2] - a.vertex[2];
+		d1[3] = c.texcoord[0] - a.texcoord[0];
+		d1[4] = c.texcoord[1] - a.texcoord[1];
+
+		// normal
+		Vector3 n(
+			d1[1] * d0[2] - d1[2] * d0[1],
+			d1[2] * d0[0] - d1[0] * d0[2],
+			d1[0] * d0[1] - d1[1] * d0[0]
+		);
+
+		float f = 1 / sqrt(n.x() * n.x() + n.y() * n.y() + n.z() * n.z());
+
+		n.x() *= f;
+		n.y() *= f;
+		n.z() *= f;
+
+		planesIter->normal() = n;
+		planesIter->dist() = n.dot(a.vertex);
+		++planesIter;
+
+		// area sign bit
+		float area = d0[3] * d1[4] - d0[4] * d1[3];
+		unsigned long signBit = ( *(unsigned long *)&area ) & ( 1 << 31 ); // FIXME: portability?
+
+		// first tangent
+		Vector3 t0(
+			d0[0] * d1[4] - d0[4] * d1[0],
+			d0[1] * d1[4] - d0[4] * d1[1],
+			d0[2] * d1[4] - d0[4] * d1[2]
+		);
+
+		f = 1/sqrt(t0.x() * t0.x() + t0.y() * t0.y() + t0.z() * t0.z());
+		*(unsigned long *)&f ^= signBit;
+
+		t0.x() *= f;
+		t0.y() *= f;
+		t0.z() *= f;
+
+		// second tangent
+		Vector3 t1(
+			d0[3] * d1[0] - d0[0] * d1[3],
+			d0[3] * d1[1] - d0[1] * d1[3],
+			d0[3] * d1[2] - d0[2] * d1[3]
+		);
+
+		f = 1/sqrt(t1.x() * t1.x() + t1.y() * t1.y() + t1.z() * t1.z());
+		*(unsigned long *)&f ^= signBit;
+
+		t1.x() *= f;
+		t1.y() *= f;
+		t1.z() *= f;
+
+		if (used[v0])
+		{
+			a.normal += n;
+			a.tangent += t0;
+			a.bitangent += t1;
+		} 
+		else 
+		{
+			a.normal = n;
+			a.tangent = t0;
+			a.bitangent = t1;
+			used[v0] = true;
+		}
+
+		if (used[v1])
+		{
+			b.normal += n;
+			b.tangent += t0;
+			b.bitangent += t1;
+		} 
+		else 
+		{
+			b.normal = n;
+			b.tangent = t0;
+			b.bitangent = t1;
+			used[v1] = true;
+		}
+
+		if (used[v2])
+		{
+			c.normal += n;
+			c.tangent += t0;
+			c.bitangent += t1;
+		} 
+		else
+		{
+			c.normal = n;
+			c.tangent = t0;
+			c.bitangent = t1;
+			used[v2] = true;
+		}
+	}
+}
+
+void Surface::deriveTangents(bool allocFacePlanes)
+{
+	if (!dominantTris.empty())
+	{
+		deriveUnsmoothedTangents();
+		return;
+	}
+
+	if (tangentsCalculated)
+	{
+		return;
+	}
+
+	//tr.pc.c_tangentIndexes += tri->numIndexes; // greebo: increment performance counters in idRenderSystemLocal
+
+	if (facePlanes.empty() && allocFacePlanes)
+	{
+		facePlanes.resize(indices.size());
+	}
+	
+#if 1
+
+	if (!facePlanes.empty())
+	{
+		deriveTangents(facePlanes);
+	}
+	else
+	{
+		std::vector<Plane3> dummyPlanes(indices.size() / 3);
+		deriveTangents(dummyPlanes);
+	}
+
+#else
+
+	for ( i = 0; i < tri->numVerts; i++ ) {
+		tri->verts[i].normal.Zero();
+		tri->verts[i].tangents[0].Zero();
+		tri->verts[i].tangents[1].Zero();
+	}
+
+	for ( i = 0; i < tri->numIndexes; i += 3 ) {
+		// make face tangents
+		float		d0[5], d1[5];
+		idDrawVert	*a, *b, *c;
+		idVec3		temp, normal, tangents[2];
+
+		a = tri->verts + tri->indexes[i + 0];
+		b = tri->verts + tri->indexes[i + 1];
+		c = tri->verts + tri->indexes[i + 2];
+
+		d0[0] = b.vertex[0] - a.vertex[0];
+		d0[1] = b.vertex[1] - a.vertex[1];
+		d0[2] = b.vertex[2] - a.vertex[2];
+		d0[3] = b.texcoord[0] - a.texcoord[0];
+		d0[4] = b.texcoord[1] - a.texcoord[1];
+
+		d1[0] = c.vertex[0] - a.vertex[0];
+		d1[1] = c.vertex[1] - a.vertex[1];
+		d1[2] = c.vertex[2] - a.vertex[2];
+		d1[3] = c.texcoord[0] - a.texcoord[0];
+		d1[4] = c.texcoord[1] - a.texcoord[1];
+
+		// normal
+		temp[0] = d1[1] * d0[2] - d1[2] * d0[1];
+		temp[1] = d1[2] * d0[0] - d1[0] * d0[2];
+		temp[2] = d1[0] * d0[1] - d1[1] * d0[0];
+		VectorNormalizeFast2( temp, normal );
+
+#ifdef USE_INVA
+		float area = d0[3] * d1[4] - d0[4] * d1[3];
+		float inva = area < 0.0f ? -1 : 1;		// was = 1.0f / area;
+
+        temp[0] = (d0[0] * d1[4] - d0[4] * d1[0]) * inva;
+        temp[1] = (d0[1] * d1[4] - d0[4] * d1[1]) * inva;
+        temp[2] = (d0[2] * d1[4] - d0[4] * d1[2]) * inva;
+		VectorNormalizeFast2( temp, tangents[0] );
+        
+        temp[0] = (d0[3] * d1[0] - d0[0] * d1[3]) * inva;
+        temp[1] = (d0[3] * d1[1] - d0[1] * d1[3]) * inva;
+        temp[2] = (d0[3] * d1[2] - d0[2] * d1[3]) * inva;
+		VectorNormalizeFast2( temp, tangents[1] );
+#else
+        temp[0] = (d0[0] * d1[4] - d0[4] * d1[0]);
+        temp[1] = (d0[1] * d1[4] - d0[4] * d1[1]);
+        temp[2] = (d0[2] * d1[4] - d0[4] * d1[2]);
+		VectorNormalizeFast2( temp, tangents[0] );
+        
+        temp[0] = (d0[3] * d1[0] - d0[0] * d1[3]);
+        temp[1] = (d0[3] * d1[1] - d0[1] * d1[3]);
+        temp[2] = (d0[3] * d1[2] - d0[2] * d1[3]);
+		VectorNormalizeFast2( temp, tangents[1] );
+#endif
+
+		// sum up the tangents and normals for each vertex on this face
+		for ( int j = 0 ; j < 3 ; j++ ) {
+			vert = &tri->verts[tri->indexes[i+j]];
+			vert->normal += normal;
+			vert->tangents[0] += tangents[0];
+			vert->tangents[1] += tangents[1];
+		}
+
+		if ( planes ) {
+			planes->Normal() = normal;
+			planes->FitThroughPoint( a.vertex );
+			planes++;
+		}
+	}
+
+#endif
+
+#if 0
+
+	if ( tri->silIndexes != NULL ) {
+		for ( i = 0; i < tri->numVerts; i++ ) {
+			tri->verts[i].normal.Zero();
+		}
+		for ( i = 0; i < tri->numIndexes; i++ ) {
+			tri->verts[tri->silIndexes[i]].normal += planes[i/3].Normal();
+		}
+		for ( i = 0 ; i < tri->numIndexes ; i++ ) {
+			tri->verts[tri->indexes[i]].normal = tri->verts[tri->silIndexes[i]].normal;
+		}
+	}
+
+#else
+
+	// add the normal of a duplicated vertex to the normal of the first vertex with the same XYZ
+	for (std::size_t i = 0; i < dupVerts.size(); ++i)
+	{
+		vertices[dupVerts[i*2+0]].normal += vertices[dupVerts[i*2+1]].normal;
+	}
+
+	// copy vertex normals to duplicated vertices
+	for (std::size_t i = 0; i < dupVerts.size(); ++i)
+	{
+		vertices[dupVerts[i*2+1]].normal = vertices[dupVerts[i*2+0]].normal;
+	}
+
+#endif
+
+#if 0
+	// sum up both sides of the mirrored verts
+	// so the S vectors exactly mirror, and the T vectors are equal
+	for ( i = 0 ; i < tri->numMirroredVerts ; i++ ) {
+		idDrawVert	*v1, *v2;
+
+		v1 = &tri->verts[ tri->numVerts - tri->numMirroredVerts + i ];
+		v2 = &tri->verts[ tri->mirroredVerts[i] ];
+
+		v1->tangents[0] -= v2->tangents[0];
+		v1->tangents[1] += v2->tangents[1];
+
+		v2->tangents[0] = vec3_origin - v1->tangents[0];
+		v2->tangents[1] = v1->tangents[1];
+	}
+#endif
+
+	// project the summed vectors onto the normal plane
+	// and normalize.  The tangent vectors will not necessarily
+	// be orthogonal to each other, but they will be orthogonal
+	// to the surface normal.
+#if 1
+
+	for (std::size_t i = 0; i < vertices.size(); ++i)
+	{
+		Vector3& v = vertices[i].normal;
+		float f = 1/sqrt(v.x() * v.x() + v.y() * v.y() + v.z() * v.z());
+		v.x() *= f; 
+		v.y() *= f; 
+		v.z() *= f;
+
+		Vector3& tangent = vertices[i].tangent;
+
+		tangent -= v * tangent.dot(v);
+		f = 1/sqrt(tangent.x() * tangent.x() + tangent.y() * tangent.y() + tangent.z() * tangent.z());
+		tangent.x() *= f;
+		tangent.y() *= f; 
+		tangent.z() *= f;
+
+		Vector3& bitangent = vertices[i].bitangent;
+
+		bitangent -= v * bitangent.dot(v);
+		f = 1/sqrt(bitangent.x() * bitangent.x() + bitangent.y() * bitangent.y() + bitangent.z() * bitangent.z());
+		bitangent.x() *= f;
+		bitangent.y() *= f; 
+		bitangent.z() *= f;
+	}
+
+#else
+
+	for ( i = 0 ; i < tri->numVerts ; i++ ) {
+		idDrawVert *vert = &tri->verts[i];
+
+		VectorNormalizeFast2( vert->normal, vert->normal );
+
+		// project the tangent vectors
+		for ( int j = 0 ; j < 2 ; j++ ) {
+			float d;
+
+			d = vert->tangents[j] * vert->normal;
+			vert->tangents[j] = vert->tangents[j] - d * vert->normal;
+			VectorNormalizeFast2( vert->tangents[j], vert->tangents[j] );
+		}
+	}
+
+#endif
+
+	tangentsCalculated = true;
+	facePlanesCalculated = true;
+}
+
 void Surface::cleanupTriangles(bool createNormals, bool identifySilEdgesFlag, bool useUnsmoothedTangents)
 {
 	if (!rangeCheckIndexes()) return;
@@ -800,12 +1329,12 @@ void Surface::cleanupTriangles(bool createNormals, bool identifySilEdgesFlag, bo
 	}
 	else if (!createNormals)
 	{
-		//TODO R_DeriveFacePlanes( tri );
-		//TODO R_DeriveTangentsWithoutNormals( tri );
+		deriveFacePlanes();
+		deriveTangentsWithoutNormals();
 	}
 	else 
 	{
-		//TODO R_DeriveTangents( tri );
+		deriveTangents(true);
 	}
 }
 
