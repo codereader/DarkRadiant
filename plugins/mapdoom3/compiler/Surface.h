@@ -53,14 +53,34 @@ public:
 	// true if there aren't any dangling edges
 	bool		perfectHull;
 
+	// set when the vertex tangents have been calculated
+	bool		tangentsCalculated;
+
 	// mirroredVerts[0] is the mirror of vertices.size() - mirroredVerts.size() + 0
 	std::vector<int> mirroredVerts;
 
 	// pairs of the number of the first vertex and the number of the duplicate vertex
 	std::vector<int> dupVerts;
 
+	// this is used for calculating unsmoothed normals and tangents for deformed models
+	struct DominantTri
+	{
+		int		v2, v3;
+		float	normalizationScale[3];
+
+		DominantTri() :
+			v2(0),
+			v3(0)
+		{
+			normalizationScale[0] = normalizationScale[1] = normalizationScale[2] = 0;
+		}
+	};
+
+	std::vector<DominantTri> dominantTris;
+
 	Surface() :
-		perfectHull(false)
+		perfectHull(false),
+		tangentsCalculated(false)
 	{}
 
 	void calcBounds();
@@ -108,6 +128,13 @@ private:
 	bool getFaceNegativePolarity(std::size_t firstIndex) const;
 
 	void createDupVerts();
+
+	// Find the largest triangle that uses each vertex
+	void buildDominantTris();
+
+	// Derives the normal and orthogonal tangent vectors for the triangle vertices.
+	// For each vertex the normal and tangent vectors are derived from a single dominant triangle.
+	void deriveUnsmoothedTangents();
 };
 
 } // namespace

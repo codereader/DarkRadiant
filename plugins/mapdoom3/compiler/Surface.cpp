@@ -537,6 +537,233 @@ void Surface::createDupVerts()
 	dupVerts.resize(numDupVerts * 2);
 }
 
+namespace 
+{
+
+struct IndexSort 
+{
+	int		vertexNum;
+	int		faceNum;
+};
+
+int IndexSortFunc(const void* a_, const void* b_)
+{
+	const IndexSort* a = reinterpret_cast<const IndexSort*>(a_);
+	const IndexSort* b = reinterpret_cast<const IndexSort*>(b_);
+
+	if (a->vertexNum < b->vertexNum)
+	{
+		return -1;
+	}
+
+	if (a->vertexNum > b->vertexNum)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+} // namespace
+
+void Surface::buildDominantTris()
+{
+	std::vector<IndexSort> ind(indices.size());
+	
+	for (std::size_t i = 0; i < indices.size(); ++i)
+	{
+		ind[i].vertexNum = indices[i];
+		ind[i].faceNum = static_cast<int>(i) / 3;
+	}
+
+	qsort(&ind[0], indices.size(), sizeof(IndexSort), IndexSortFunc);
+
+	dominantTris.resize(vertices.size());
+
+	std::size_t j = 0;
+
+	for (std::size_t i = 0; i < indices.size(); i += j)
+	{
+		float maxArea = 0;
+		int vertNum = ind[i].vertexNum;
+
+		for (j = 0; i + j < indices.size() && ind[i+j].vertexNum == vertNum; ++j)
+		{
+			float d0[5], d1[5];
+			
+			int	i1 = indices[ind[i+j].faceNum * 3 + 0];
+			int	i2 = indices[ind[i+j].faceNum * 3 + 1];
+			int	i3 = indices[ind[i+j].faceNum * 3 + 2];
+			
+			const ArbitraryMeshVertex& a = vertices[i1];
+			const ArbitraryMeshVertex& b = vertices[i2];
+			const ArbitraryMeshVertex& c = vertices[i3];
+
+			d0[0] = b.vertex[0] - a.vertex[0];
+			d0[1] = b.vertex[1] - a.vertex[1];
+			d0[2] = b.vertex[2] - a.vertex[2];
+			d0[3] = b.texcoord[0] - a.texcoord[0];
+			d0[4] = b.texcoord[1] - a.texcoord[1];
+
+			d1[0] = c.vertex[0] - a.vertex[0];
+			d1[1] = c.vertex[1] - a.vertex[1];
+			d1[2] = c.vertex[2] - a.vertex[2];
+			d1[3] = c.texcoord[0] - a.texcoord[0];
+			d1[4] = c.texcoord[1] - a.texcoord[1];
+
+			Vector3 normal(
+				d1[1] * d0[2] - d1[2] * d0[1],
+				d1[2] * d0[0] - d1[0] * d0[2],
+				d1[0] * d0[1] - d1[1] * d0[0]
+			);
+
+			float area = normal.getLength();
+
+			// if this is smaller than what we already have, skip it
+			if (area < maxArea)
+			{
+				continue;
+			}
+
+			maxArea = area;
+
+			if (i1 == vertNum)
+			{
+				dominantTris[vertNum].v2 = i2;
+				dominantTris[vertNum].v3 = i3;
+			}
+			else if (i2 == vertNum) 
+			{
+				dominantTris[vertNum].v2 = i3;
+				dominantTris[vertNum].v3 = i1;
+			}
+			else
+			{
+				dominantTris[vertNum].v2 = i1;
+				dominantTris[vertNum].v3 = i2;
+			}
+
+			float len = area;
+
+			if (len < 0.001f)
+			{
+				len = 0.001f;
+			}
+
+			dominantTris[vertNum].normalizationScale[2] = 1.0f / len;		// normal
+
+			// texture area
+			area = d0[3] * d1[4] - d0[4] * d1[3];
+
+			Vector3 tangent(
+				d0[0] * d1[4] - d0[4] * d1[0],
+				d0[1] * d1[4] - d0[4] * d1[1],
+				d0[2] * d1[4] - d0[4] * d1[2]
+			);
+
+			len = tangent.getLength();
+
+			if (len < 0.001f)
+			{
+				len = 0.001f;
+			}
+
+			dominantTris[vertNum].normalizationScale[0] = ( area > 0 ? 1 : -1 ) / len;	// tangents[0]
+	        
+			Vector3 bitangent(
+				d0[3] * d1[0] - d0[0] * d1[3],
+				d0[3] * d1[1] - d0[1] * d1[3],
+				d0[3] * d1[2] - d0[2] * d1[3]
+			);
+
+			len = bitangent.getLength();
+
+			if (len < 0.001f)
+			{
+				len = 0.001f;
+			}
+
+#ifdef DERIVE_UNSMOOTHED_BITANGENT
+			dominantTris[vertNum].normalizationScale[1] = ( area > 0 ? 1 : -1 );
+#else
+			dominantTris[vertNum].normalizationScale[1] = ( area > 0 ? 1 : -1 ) / len;	// tangents[1]
+#endif
+		}
+	}
+}
+
+void Surface::deriveUnsmoothedTangents()
+{
+	if (tangentsCalculated)
+	{
+		return;
+	}
+
+	tangentsCalculated = true;
+
+	for (std::size_t i = 0; i < vertices.size(); ++i)
+	{
+		float d0, d1, d2, d3, d4;
+		float d5, d6, d7, d8, d9;
+		float s0, s1, s2;
+		float n0, n1, n2;
+		float t0, t1, t2;
+		float t3, t4, t5;
+
+		const DominantTri& dt = dominantTris[i];
+
+		ArbitraryMeshVertex& a = vertices[i];
+		ArbitraryMeshVertex& b = vertices[dt.v2];
+		ArbitraryMeshVertex& c = vertices[dt.v3];
+
+		d0 = b.vertex[0] - a.vertex[0];
+		d1 = b.vertex[1] - a.vertex[1];
+		d2 = b.vertex[2] - a.vertex[2];
+		d3 = b.texcoord[0] - a.texcoord[0];
+		d4 = b.texcoord[1] - a.texcoord[1];
+
+		d5 = c.vertex[0] - a.vertex[0];
+		d6 = c.vertex[1] - a.vertex[1];
+		d7 = c.vertex[2] - a.vertex[2];
+		d8 = c.texcoord[0] - a.texcoord[0];
+		d9 = c.texcoord[1] - a.texcoord[1];
+
+		s0 = dt.normalizationScale[0];
+		s1 = dt.normalizationScale[1];
+		s2 = dt.normalizationScale[2];
+
+		n0 = s2 * ( d6 * d2 - d7 * d1 );
+		n1 = s2 * ( d7 * d0 - d5 * d2 );
+		n2 = s2 * ( d5 * d1 - d6 * d0 );
+
+		t0 = s0 * ( d0 * d9 - d4 * d5 );
+		t1 = s0 * ( d1 * d9 - d4 * d6 );
+		t2 = s0 * ( d2 * d9 - d4 * d7 );
+
+#ifndef DERIVE_UNSMOOTHED_BITANGENT
+		t3 = s1 * ( d3 * d5 - d0 * d8 );
+		t4 = s1 * ( d3 * d6 - d1 * d8 );
+		t5 = s1 * ( d3 * d7 - d2 * d8 );
+#else
+		t3 = s1 * ( n2 * t1 - n1 * t2 );
+		t4 = s1 * ( n0 * t2 - n2 * t0 );
+		t5 = s1 * ( n1 * t0 - n0 * t1 );
+#endif
+
+		a.normal[0] = n0;
+		a.normal[1] = n1;
+		a.normal[2] = n2;
+		
+		a.tangent[0] = t0;
+		a.tangent[1] = t1;
+		a.tangent[2] = t2;
+		
+		a.bitangent[0] = t3;
+		a.bitangent[1] = t4;
+		a.bitangent[2] = t5;
+	}
+}
+
 void Surface::cleanupTriangles(bool createNormals, bool identifySilEdgesFlag, bool useUnsmoothedTangents)
 {
 	if (!rangeCheckIndexes()) return;
@@ -566,16 +793,20 @@ void Surface::cleanupTriangles(bool createNormals, bool identifySilEdgesFlag, bo
 
 	calcBounds();
 	
-	/*if ( useUnsmoothedTangents ) {
-		R_BuildDominantTris( tri );
-		R_DeriveUnsmoothedTangents( tri );
-	} else if ( !createNormals ) {
-		R_DeriveFacePlanes( tri );
-		R_DeriveTangentsWithoutNormals( tri );
-	} else {
-		R_DeriveTangents( tri );
+	if (useUnsmoothedTangents)
+	{
+		buildDominantTris();
+		deriveUnsmoothedTangents();
 	}
-	*/
+	else if (!createNormals)
+	{
+		//TODO R_DeriveFacePlanes( tri );
+		//TODO R_DeriveTangentsWithoutNormals( tri );
+	}
+	else 
+	{
+		//TODO R_DeriveTangents( tri );
+	}
 }
 
 } // namespace
