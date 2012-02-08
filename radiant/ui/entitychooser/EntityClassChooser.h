@@ -67,6 +67,9 @@ private:
 	// Last selected classname
 	std::string _selectedName;
 
+    // Class we should select when the treemodel is populated
+    std::string _classToHighlight;
+
 	// Model preview widget
 	IModelPreviewPtr _modelPreview;
 

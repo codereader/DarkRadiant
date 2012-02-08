@@ -125,7 +125,6 @@ EntityClassChooser::EntityClassChooser()
   gtkutil::GladeWidgetHolder(
         GlobalUIManager().getGtkBuilderFromFile("EntityClassChooser.glade")
   ),
-  _treeStore(Gtk::TreeStore::create(_columns)),
   _eclassLoader(new ThreadedEntityClassLoader(_columns)),
   _selection(NULL),
   _selectedName(""),
@@ -245,11 +244,21 @@ EntityClassChooser::Result EntityClassChooser::getResult()
 
 void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
 {
-    gtkutil::TreeModel::findAndSelectString(
-        getGladeWidget<Gtk::TreeView>("entityTreeView"),
-        eclass,
-        _columns.name
-    );
+    // Select immediately if possible, otherwise remember class name for later
+    // selection
+    if (_treeStore)
+    {
+        gtkutil::TreeModel::findAndSelectString(
+            getGladeWidget<Gtk::TreeView>("entityTreeView"),
+            eclass,
+            _columns.name
+        );
+        _classToHighlight.clear();
+    }
+    else
+    {
+        _classToHighlight = eclass;
+    }
 }
 
 const std::string& EntityClassChooser::getSelectedEntityClass() const
@@ -297,6 +306,13 @@ void EntityClassChooser::setTreeViewModel()
         _treeStore, _columns.name, _columns.isFolder
     );
     treeView()->set_model(_treeStore);
+
+    // Pre-select the given class if requested by setSelectedEntityClass()
+    if (!_classToHighlight.empty())
+    {
+        g_assert(_treeStore);
+        setSelectedEntityClass(_classToHighlight);
+    }
 }
 
 void EntityClassChooser::setupTreeView()
