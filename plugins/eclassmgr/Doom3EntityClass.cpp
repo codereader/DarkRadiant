@@ -70,16 +70,13 @@ AABB Doom3EntityClass::getBounds() const {
     }
 }
 
-bool Doom3EntityClass::isLight() const {
+bool Doom3EntityClass::isLight() const
+{
     return _isLight;
 }
 
-/** Set whether this entity type is a light entity
- *
- * @param val
- * true to set this as a light entity, false to disable
- */
-void Doom3EntityClass::setIsLight(bool val) {
+void Doom3EntityClass::setIsLight(bool val)
+{
     _isLight = val;
     if (_isLight)
     	_fixedSize = true;
@@ -351,16 +348,11 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         }
 		else if (key == "editor_light")
 		{
-			if (value == "1")
-			{
-				setIsLight(true);
-			}
+            setIsLight(value == "1");
         }
         else if (key == "spawnclass")
 		{
-            if (value == "idLight") {
-                setIsLight(true);
-            }
+            setIsLight(value == "idLight");
         }
 		else if (boost::algorithm::istarts_with(key, "editor_"))
 		{

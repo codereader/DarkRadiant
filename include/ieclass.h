@@ -252,15 +252,9 @@ public:
 	 */
 	virtual const std::string& getName() const = 0;
 
-	/**
-	 * Query whether this entity class represents a light.
-	 */
-	virtual bool isLight() const = 0;
 
-	/**
-	 * Set whether this entity class represents a light.
-	 */
-	virtual void setIsLight(bool isLight) = 0;
+	/// Query whether this entity class represents a light.
+	virtual bool isLight() const = 0;
 
 	/* ENTITY CLASS SIZE */
 
@@ -280,14 +274,6 @@ public:
 	virtual AABB getBounds() const = 0;
 
 	/* ENTITY CLASS COLOURS */
-
-	/**
-	 * Set this entity class' display colour.
-	 *
-	 * @param col
-	 * Vector3 containing the R,G,B values to use.
-	 */
-	virtual void setColour(const Vector3& col) = 0;
 
 	/**
 	 * Return this entity class' display colour.
@@ -369,23 +355,12 @@ public:
 
 	/* MODEL AND SKIN */
 
-	/** Set a model path on this entity.
-	 *
-	 * @param model
-	 * The model path to use.
-	 */
-	virtual void setModelPath(const std::string& model) = 0;
-
 	/** Retrieve the model path for this entity.
 	 *
 	 * @returns
 	 * The VFS model path, or the empty string if there is no model.
 	 */
 	virtual const std::string& getModelPath() const = 0;
-
-	/** Set the model skin.
-	 */
-	virtual void setSkin(const std::string&) = 0;
 
 	/** Get the model skin, or the empty string if there is no skin.
 	 */

@@ -141,12 +141,13 @@ public:
      */
 	const std::string& getName() const;
 
+    void setIsLight(bool val);
+
     // IEntityClass implementation
     sigc::signal<void> changedSignal() const;
 	bool isFixedSize() const;
 	AABB getBounds() const;
     bool isLight() const;
-    void setIsLight(bool val);
 	void setColour(const Vector3& colour);
 	const Vector3& getColour() const;
 	const std::string& getWireShader() const;

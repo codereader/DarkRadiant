@@ -29,29 +29,46 @@ sigc::signal<void> EClassManager::defsReloadedSignal() const
 }
 
 // Get a named entity class, creating if necessary
-IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_brushes) {
+IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_brushes)
+{
 	// Return an error if no name is given
-    if (name.empty()) {
+    if (name.empty())
+    {
         return IEntityClassPtr();
     }
 
 	// Convert string to lowercase, for case-insensitive lookup
 	std::string lName = boost::algorithm::to_lower_copy(name);
 
-    // Find the EntityClass in the map.
-    EntityClasses::iterator i = _entityClasses.find(lName);
-    if (i != _entityClasses.end()) {
-        return i->second; // found it, return
+    // Find and return if exists
+    Doom3EntityClassPtr eclass = findInternal(lName);
+    if (eclass)
+    {
+        return eclass;
     }
 
     // Otherwise insert the new EntityClass
-    //IEntityClassPtr e = eclass::Doom3EntityClass::create(lName, has_brushes);
+    //IEntityClassPtr eclass = eclass::Doom3EntityClass::create(lName, has_brushes);
     // greebo: Changed fallback behaviour when unknown entites are encountered to TRUE
     // so that brushes of unknown entites don't get lost (issue #240)
-    Doom3EntityClassPtr e = Doom3EntityClass::create(lName, true);
+    eclass = Doom3EntityClass::create(lName, true);
 
     // Try to insert the class
-    return insertUnique(e);
+    return insertUnique(eclass);
+}
+
+Doom3EntityClassPtr EClassManager::findInternal(const std::string& name) const
+{
+    // Find the EntityClass in the map.
+    EntityClasses::const_iterator i = _entityClasses.find(name);
+    if (i != _entityClasses.end())
+    {
+        return i->second;
+    }
+    else
+    {
+        return Doom3EntityClassPtr();
+    }
 }
 
 Doom3EntityClassPtr EClassManager::insertUnique(const Doom3EntityClassPtr& eclass)
@@ -147,12 +164,11 @@ void EClassManager::resolveInheritance()
     Vector3 worlspawnColour = ColourSchemes().getColour("default_brush");
     Vector3 lightColour = ColourSchemes().getColour("light_volumes");
 
-    IEntityClassPtr light = findOrInsert("light", true);
+    Doom3EntityClassPtr light = findInternal("light");
 	light->setColour(lightColour);
 
-	IEntityClassPtr worldspawn = findOrInsert("worldspawn", true);
+	Doom3EntityClassPtr worldspawn = findInternal("worldspawn");
 	worldspawn->setColour(worlspawnColour);
-
 }
 
 void EClassManager::realise()

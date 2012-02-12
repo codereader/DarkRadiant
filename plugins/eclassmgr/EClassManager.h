@@ -87,6 +87,7 @@ private:
 	// Tries to insert the given eclass, not overwriting existing ones
 	// In either case, the eclass in the map is returned
 	Doom3EntityClassPtr insertUnique(const Doom3EntityClassPtr& eclass);
+    Doom3EntityClassPtr findInternal(const std::string& name) const;
 
 	// Parses the given inputstream for DEFs.
 	void parse(TextInputStream& inStr, const std::string& modDir);
