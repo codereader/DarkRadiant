@@ -48,27 +48,18 @@ class EClassManager :
 	// definitions have been parsed
 	std::size_t _curParseStamp;
 
-	typedef std::set<IEntityClassManager::Observer*> Observers;
-	Observers _observers;
+    sigc::signal<void> _defsReloadedSignal;
 
 public:
     // Constructor
 	EClassManager();
 
-	// Add or remove an observer to get notified on eclass events
-	virtual void addObserver(IEntityClassManager::Observer* observer);
-	virtual void removeObserver(IEntityClassManager::Observer* observer);
-
-    // Get a named entity class, creating if necessary
+    // IEntityClassManager implementation
+    sigc::signal<void> defsReloadedSignal() const;
     virtual IEntityClassPtr findOrInsert(const std::string& name,
     									 bool has_brushes);
-
-    // Find an entity class
     IEntityClassPtr findClass(const std::string& className) const;
-
-    // Visit each entity class
 	virtual void forEachEntityClass(EntityClassVisitor& visitor);
-
 	void realise();
     void unrealise();
 

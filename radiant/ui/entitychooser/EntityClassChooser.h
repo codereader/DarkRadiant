@@ -30,7 +30,6 @@ typedef boost::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
 class EntityClassChooser :
 	public gtkutil::BlockingTransientWindow,
 	public RadiantEventListener,
-	public IEntityClassManager::Observer,
     private gtkutil::GladeWidgetHolder
 {
 public:
@@ -82,6 +81,7 @@ private:
     Gtk::TreeView* treeView();
     void setTreeViewModel();
     void getEntityClassesFromLoader();
+	void reloadEntityClasses();
 
 	/* Widget construction helpers */
 	void setupTreeView();
@@ -129,9 +129,6 @@ public:
 
 	// RadiantEventListener implementation
 	void onRadiantShutdown();
-
-	// EntityClassManager::Observer impl.
-	void onEClassReload();
 };
 
 } // namespace ui

@@ -23,14 +23,9 @@ EClassManager::EClassManager() :
 	_curParseStamp(0)
 {}
 
-void EClassManager::addObserver(IEntityClassManager::Observer* observer)
+sigc::signal<void> EClassManager::defsReloadedSignal() const
 {
-	_observers.insert(observer);
-}
-
-void EClassManager::removeObserver(IEntityClassManager::Observer* observer)
-{
-	_observers.erase(observer);
+    return _defsReloadedSignal;
 }
 
 // Get a named entity class, creating if necessary
@@ -233,10 +228,7 @@ void EClassManager::reloadDefs()
 	// Resolve the eclass inheritance again
 	resolveInheritance();
 
-	for (Observers::const_iterator i = _observers.begin(); i != _observers.end(); ++i)
-	{
-		(*i)->onEClassReload();
-	}
+    _defsReloadedSignal.emit();
 }
 
 // RegisterableModule implementation

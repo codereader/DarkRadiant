@@ -53,7 +53,6 @@ EntityNode::EntityNode(const EntityNode& other) :
 	Transformable(other),
 	MatrixTransform(other),
 	scene::Cloneable(other),
-	IEntityClass::Observer(other),
 	_eclass(other._eclass),
 	_entity(other._entity),
 	_namespaceManager(_entity),
@@ -72,7 +71,9 @@ EntityNode::~EntityNode()
 
 void EntityNode::construct()
 {
-	_eclass->addObserver(this);
+    _eclass->changedSignal().connect(
+        sigc::mem_fun(_keyObservers, &KeyObserverMap::refreshObservers)
+    );
 
 	TargetableNode::construct();
 
@@ -102,8 +103,6 @@ void EntityNode::destruct()
 	removeKeyObserver("name", _nameKey);
 
 	TargetableNode::destruct();
-
-	_eclass->removeObserver(this);
 }
 
 void EntityNode::addKeyObserver(const std::string& key, KeyObserver& observer)
@@ -271,12 +270,6 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 bool EntityNode::isHighlighted() const
 {
 	return isSelected();
-}
-
-void EntityNode::onEClassReload()
-{
-	// Let the keyobservers reload their values
-	_keyObservers.refreshObservers();
 }
 
 const Vector3& EntityNode::getColour() const

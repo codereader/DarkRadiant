@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <list>
 #include <map>
 #include <boost/shared_ptr.hpp>
+#include <sigc++/signal.h>
 
 /* FORWARD DECLS */
 
@@ -243,22 +244,8 @@ public:
 	 */
 	typedef std::list<std::string> InheritanceChain;
 
-	// An EntityClassObserver gets notified whenever the eclass contents
-	// get changed, possibly due to a reload of the declarations in the .def files.
-	class Observer
-	{
-	public:
-	    virtual ~Observer() {}
-		/**
-		 * greebo: Gets called as soon as the contents of the eclass
-		 * get changed, which is true for the "reloadDefs" command.
-		 */
-		virtual void onEClassReload() = 0;
-	};
-
-	// Adds/removes an eclass observer
-	virtual void addObserver(Observer* observer) = 0;
-	virtual void removeObserver(Observer* observer) = 0;
+    /// Signal emitted when entity class contents are changed or reloaded
+    virtual sigc::signal<void> changedSignal() const = 0;
 
 	/**
 	 * Get this entity class' name.
@@ -484,18 +471,9 @@ class IEntityClassManager :
 	public RegisterableModule
 {
 public:
-	class Observer
-	{
-	public:
-		virtual ~Observer() {}
 
-		// Gets invoked after the module reloaded the .def files
-		virtual void onEClassReload() {} // empty default impl.
-	};
-
-	// Add or remove an observer to get notified on eclass events
-	virtual void addObserver(Observer* observer) = 0;
-	virtual void removeObserver(Observer* observer) = 0;
+    /// Signal emitted when all DEFs are reloaded
+    virtual sigc::signal<void> defsReloadedSignal() const = 0;
 
 	/**
 	 * Return the IEntityClass corresponding to the given name, creating it if

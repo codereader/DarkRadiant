@@ -34,8 +34,7 @@ class EntityNode :
 	public Nameable,
 	public Transformable,
 	public MatrixTransform,	// influences local2world of child nodes
-	public scene::Cloneable, // all entities are cloneable, to be implemented in subclasses
-	public IEntityClass::Observer
+	public scene::Cloneable // all entities are cloneable, to be implemented in subclasses
 {
 protected:
 	// The entity class
@@ -128,8 +127,6 @@ public:
 	// Adds/removes the keyobserver to/from the KeyObserverMap
 	void addKeyObserver(const std::string& key, KeyObserver& observer);
 	void removeKeyObserver(const std::string& key, KeyObserver& observer);
-
-	virtual void onEClassReload();
 
 	// Returns the colour as defined in the _color spawnarg
 	const Vector3& getColour() const;

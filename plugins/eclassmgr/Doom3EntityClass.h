@@ -98,8 +98,8 @@ private:
 	// The time this def has been parsed
 	std::size_t _parseStamp;
 
-	typedef std::set<IEntityClass::Observer*> Observers;
-	Observers _observers;
+    // Emitted when contents are reloaded
+    sigc::signal<void> _changedSignal;
 
 private:
 	// Clear all contents (done before parsing from tokens)
@@ -141,51 +141,15 @@ public:
      */
 	const std::string& getName() const;
 
-	void addObserver(Observer* observer);
-	void removeObserver(Observer* observer);
-
-	/** Query whether this entity has a fixed size.
-	 */
+    // IEntityClass implementation
+    sigc::signal<void> changedSignal() const;
 	bool isFixedSize() const;
-
-	/* Return the bounding AABB.
-	 */
 	AABB getBounds() const;
-
-    /** Get whether this entity type is a light entity
-     *
-     * @returns
-     * true if this is a light, false otherwise
-     */
     bool isLight() const;
-
-    /** Set whether this entity type is a light entity
-     *
-     * @param val
-     * true to set this as a light entity, false to disable
-     */
     void setIsLight(bool val);
-
-	/** Set the display colour for this entity.
-	 *
-	 * @param colour
-	 * The new colour to use.
-	 */
 	void setColour(const Vector3& colour);
-
-	/** Get this entity's colour.
-	 *
-	 * @returns
-	 * A Vector3 containing the current colour.
-	 */
 	const Vector3& getColour() const;
-
-	/** Return this entity's wireframe shader.
-	 */
 	const std::string& getWireShader() const;
-
-	/** Return this entity's fill shader.
-	 */
 	const std::string& getFillShader() const;
 
 	/* ATTRIBUTES */

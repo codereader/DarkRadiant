@@ -160,8 +160,11 @@ EntityClassChooser::EntityClassChooser()
     // Add model preview to right-hand-side of main container
     mainPaned->pack2(*_modelPreview->getWidget(), true, true);
 
-    // Register to the eclass manager
-    GlobalEntityClassManager().addObserver(this);
+    // Listen for defs-reloaded signal (cannot bind directly to
+    // ThreadedEntityClassLoader method because it is not sigc::trackable)
+    GlobalEntityClassManager().defsReloadedSignal().connect(
+        sigc::mem_fun(this, &EntityClassChooser::reloadEntityClasses)
+    );
 
     // Setup the tree view and invoke threaded loader to get the entity classes
     setupTreeView();
@@ -221,15 +224,13 @@ void EntityClassChooser::onRadiantShutdown()
 {
     globalOutputStream() << "EntityClassChooser shutting down." << std::endl;
 
-    GlobalEntityClassManager().removeObserver(this);
-
     _modelPreview = IModelPreviewPtr();
 
     // Final step at shutdown, release the shared ptr
     InstancePtr().reset();
 }
 
-void EntityClassChooser::onEClassReload()
+void EntityClassChooser::reloadEntityClasses()
 {
     // Reload the class tree
     g_assert(_eclassLoader);

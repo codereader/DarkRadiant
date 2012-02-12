@@ -46,7 +46,8 @@ struct CaseInsensitiveKeyCompare :
 };
 
 class KeyObserverMap :
-	public Entity::Observer
+	public Entity::Observer,
+    public sigc::trackable
 {
 	// A map using case-insensitive comparison
 	typedef std::multimap<std::string, KeyObserver*, CaseInsensitiveKeyCompare> KeyObservers;
