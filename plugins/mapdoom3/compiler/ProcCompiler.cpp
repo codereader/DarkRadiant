@@ -9,6 +9,7 @@
 #include <boost/format.hpp>
 #include "OptIsland.h"
 #include "OptUtils.h"
+#include <stdexcept>
 
 namespace map
 {
@@ -3519,6 +3520,256 @@ Surface ProcCompiler::shareMapTriVerts(const ProcTris& tris)
 	return uTri;
 }
 
+Surface ProcCompiler::createVertexProgramTurboShadowVolume(const Matrix4& transform, const Surface& tri, 
+		const ProcLight& light, Surface::CullInfo& cullInfo)
+{
+	throw std::runtime_error("createVertexProgramTurboShadowVolume not implemented yet.");
+}
+
+Surface ProcCompiler::createTurboShadowVolume(const Matrix4& transform, const Surface& tri, 
+		const ProcLight& light, Surface::CullInfo& cullInfo)
+{
+	throw std::runtime_error("createTurboShadowVolume not implemented yet.");
+}
+
+namespace
+{
+
+inline Vector3 globalPointToLocal(const Matrix4& transform, const Vector3& in)
+{
+	Vector3 temp = in - transform.getTranslation();
+	//VectorSubtract( in, &modelMatrix[12], temp );
+
+	Vector3 out(
+		temp.dot(transform.x().getVector3()),	//DotProduct( temp, &modelMatrix[0] );
+		temp.dot(transform.y().getVector3()),
+		temp.dot(transform.z().getVector3())
+	);
+
+	return temp;
+}
+
+}
+
+void ProcCompiler::calcInteractionFacing(const Matrix4& transform, const Surface& tri, const ProcLight& light,
+							 Surface::CullInfo& cullInfo)
+{
+	if (!cullInfo.facing.empty())
+	{
+		return;
+	}
+
+	Vector3 localLightOrigin = globalPointToLocal(transform, light.getGlobalLightOrigin());
+
+	std::size_t numFaces = tri.indices.size() / 3;
+
+	if (tri.facePlanes.empty() || !tri.facePlanesCalculated)
+	{
+		const_cast<Surface&>(tri).deriveFacePlanes();
+	}
+
+	cullInfo.facing.resize(numFaces + 1);
+
+	// calculate back face culling
+	// exact geometric cull against face
+	for (std::size_t i = 0; i < numFaces; ++i) 
+	{
+		float planeSide = localLightOrigin.dot(tri.facePlanes[i].normal()) - tri.facePlanes[i].dist();
+		cullInfo.facing[i] = planeSide >= 0.0f;
+	}
+
+	cullInfo.facing[numFaces] = 1;	// for dangling edges to reference
+}
+
+Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface& tri, const ProcLight& light,
+							 ShadowGenType optimize, Surface::CullInfo& cullInfo)
+{
+	
+
+#if 0
+	int		i, j;
+	idVec3	lightOrigin;
+	srfTriangles_t	*newTri;
+	int		capPlaneBits;
+#endif
+
+#if 0
+	if ( !r_shadows.GetBool() ) {
+		return NULL;
+	}
+#endif
+
+	if (tri.silEdges.empty() || tri.indices.empty() || tri.vertices.empty())
+	{
+		return Surface();
+	}
+
+	//tr.pc.c_createShadowVolumes++;
+
+	// use the fast infinite projection in dynamic situations, which
+	// trades somewhat more overdraw and no cap optimizations for
+	// a very simple generation process
+	if (optimize == SG_DYNAMIC && true /*r_useTurboShadow.GetBool()*/)
+	{
+		// greebo: With the current settings this code won't be reached
+
+		if (true /*tr.backEndRendererHasVertexPrograms*/ && true/*r_useShadowVertexProgram.GetBool()*/)
+		{
+			 return createVertexProgramTurboShadowVolume(transform, tri, light, cullInfo);
+		} 
+		else
+		{
+			return createTurboShadowVolume(transform, tri, light, cullInfo);
+		}
+	}
+
+	Surface newTri;
+
+	calcInteractionFacing(transform, tri, light, cullInfo);
+
+#if 0
+	int numFaces = tri->numIndexes / 3;
+	int allFront = 1;
+	for ( i = 0; i < numFaces && allFront; i++ ) {
+		allFront &= cullInfo.facing[i];
+	}
+	if ( allFront ) {
+		// if no faces are the right direction, don't make a shadow at all
+		return NULL;
+	}
+
+	// clear the shadow volume
+	numShadowIndexes = 0;
+	numShadowVerts = 0;
+	overflowed = false;
+	indexFrustumNumber = 0;
+	capPlaneBits = 0;
+	callOptimizer = (optimize == SG_OFFLINE);
+
+	// the facing information will be the same for all six projections
+	// from a point light, as well as for any directed lights
+	globalFacing = cullInfo.facing;
+	faceCastsShadow = (byte *)_alloca16( tri->numIndexes / 3 + 1 );	// + 1 for fake dangling edge face
+	remap = (int *)_alloca16( tri->numVerts * sizeof( remap[0] ) );
+
+	R_GlobalPointToLocal( ent->modelMatrix, light->globalLightOrigin, lightOrigin );
+
+	// run through all the shadow frustums, which is one for a projected light,
+	// and usually six for a point light, but point lights with centers outside
+	// the box may have less
+	for ( int frustumNum = 0 ; frustumNum < light->numShadowFrustums ; frustumNum++ ) {
+		const shadowFrustum_t	*frust = &light->shadowFrustums[frustumNum];
+		ALIGN16( idPlane frustum[6] );
+
+		// transform the planes into entity space
+		// we could share and reverse some of the planes between frustums for a minor
+		// speed increase
+
+		// the cull test is redundant for a single shadow frustum projected light, because
+		// the surface has already been checked against the main light frustums
+
+		for ( j = 0 ; j < frust->numPlanes ; j++ ) {
+			R_GlobalPlaneToLocal( ent->modelMatrix, frust->planes[j], frustum[j] );
+
+			// try to cull the entire surface against this frustum
+			float d = tri->bounds.PlaneDistance( frustum[j] );
+			if ( d < -LIGHT_CLIP_EPSILON ) {
+				break;
+			}
+		}
+		if ( j != frust->numPlanes ) {
+			continue;
+		}
+		// we need to check all the triangles
+		int		oldFrustumNumber = indexFrustumNumber;
+
+		R_CreateShadowVolumeInFrustum( ent, tri, light, lightOrigin, frustum, frustum[5], frust->makeClippedPlanes );
+
+		// if we couldn't make a complete shadow volume, it is better to
+		// not draw one at all, avoiding streamer problems
+		if ( overflowed ) {
+			return NULL;
+		}
+
+		if ( indexFrustumNumber != oldFrustumNumber ) {
+			// note that we have caps projected against this frustum,
+			// which may allow us to skip drawing the caps if all projected
+			// planes face away from the viewer and the viewer is outside the light volume
+			capPlaneBits |= 1<<frustumNum;
+		}
+	}
+
+	// if no faces have been defined for the shadow volume,
+	// there won't be anything at all
+	if ( numShadowIndexes == 0 ) {
+		return NULL;
+	}
+
+	// this should have been prevented by the overflowed flag, so if it ever happens,
+	// it is a code error
+	if ( numShadowVerts > MAX_SHADOW_VERTS || numShadowIndexes > MAX_SHADOW_INDEXES ) {
+		common->FatalError( "Shadow volume exceeded allocation" );
+	}
+
+	// allocate a new surface for the shadow volume
+	newTri = R_AllocStaticTriSurf();
+
+	// we might consider setting this, but it would only help for
+	// large lights that are partially off screen
+	newTri->bounds.Clear();
+
+	// copy off the verts and indexes
+	newTri->numVerts = numShadowVerts;
+	newTri->numIndexes = numShadowIndexes;
+
+	// the shadow verts will go into a main memory buffer as well as a vertex
+	// cache buffer, so they can be copied back if they are purged
+	R_AllocStaticTriSurfShadowVerts( newTri, newTri->numVerts );
+	SIMDProcessor->Memcpy( newTri->shadowVertexes, shadowVerts, newTri->numVerts * sizeof( newTri->shadowVertexes[0] ) );
+
+	R_AllocStaticTriSurfIndexes( newTri, newTri->numIndexes );
+
+	if ( 1 /* sortCapIndexes */ ) {
+		newTri->shadowCapPlaneBits = capPlaneBits;
+
+		// copy the sil indexes first
+		newTri->numShadowIndexesNoCaps = 0;
+		for ( i = 0 ; i < indexFrustumNumber ; i++ ) {
+			int	c = indexRef[i].end - indexRef[i].silStart;
+			SIMDProcessor->Memcpy( newTri->indexes+newTri->numShadowIndexesNoCaps, 
+									shadowIndexes+indexRef[i].silStart, c * sizeof( newTri->indexes[0] ) );
+			newTri->numShadowIndexesNoCaps += c;
+		}
+		// copy rear cap indexes next
+		newTri->numShadowIndexesNoFrontCaps = newTri->numShadowIndexesNoCaps;
+		for ( i = 0 ; i < indexFrustumNumber ; i++ ) {
+			int	c = indexRef[i].silStart - indexRef[i].rearCapStart;
+			SIMDProcessor->Memcpy( newTri->indexes+newTri->numShadowIndexesNoFrontCaps, 
+									shadowIndexes+indexRef[i].rearCapStart, c * sizeof( newTri->indexes[0] ) );
+			newTri->numShadowIndexesNoFrontCaps += c;
+		}
+		// copy front cap indexes last
+		newTri->numIndexes = newTri->numShadowIndexesNoFrontCaps;
+		for ( i = 0 ; i < indexFrustumNumber ; i++ ) {
+			int	c = indexRef[i].rearCapStart - indexRef[i].frontCapStart;
+			SIMDProcessor->Memcpy( newTri->indexes+newTri->numIndexes, 
+									shadowIndexes+indexRef[i].frontCapStart, c * sizeof( newTri->indexes[0] ) );
+			newTri->numIndexes += c;
+		}
+
+	} else {
+		newTri->shadowCapPlaneBits = 63;	// we don't have optimized index lists
+		SIMDProcessor->Memcpy( newTri->indexes, shadowIndexes, newTri->numIndexes * sizeof( newTri->indexes[0] ) );
+	}
+
+	if ( optimize == SG_OFFLINE ) {
+		CleanupOptimizedShadowTris( newTri );
+	}
+#endif
+
+	return newTri;
+}
+
 Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups, const ProcLight& light)
 {
 	globalOutputStream() << (boost::format("----- CreateLightShadow %p -----") % (&light)) << std::endl;
@@ -3551,25 +3802,31 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
 	occluders.cleanupTriangles(false, true, false);
 
 	// let the renderer build the shadow volume normally
-	/*idRenderEntityLocal		space;
+	Matrix4 transform = Matrix4::getIdentity();
+
+#if 0
+	idRenderEntityLocal		space;
 
 	space.modelMatrix[0] = 1;
 	space.modelMatrix[5] = 1;
 	space.modelMatrix[10] = 1;
 	space.modelMatrix[15] = 1;
+#endif
 
-	srfCullInfo_t cullInfo;
-	memset( &cullInfo, 0, sizeof( cullInfo ) );
+	Surface::CullInfo cullInfo;
 
 	// call the normal shadow creation, but with the superOptimize flag set, which will
 	// call back to SuperOptimizeOccluders after clipping the triangles to each frustum
-	srfTriangles_t	*shadowTris;
-	if ( dmapGlobals.shadowOptLevel == SO_MERGE_SURFACES ) {
-		shadowTris = R_CreateShadowVolume( &space, occluders, &light->def, SG_STATIC, cullInfo );
-	} else {
-		shadowTris = R_CreateShadowVolume( &space, occluders, &light->def, SG_OFFLINE, cullInfo );
+	if (true /*dmapGlobals.shadowOptLevel == SO_MERGE_SURFACES*/) // default is merge_surfaces
+	{
+		shadowTris = createShadowVolume(transform, occluders, light, SG_STATIC, cullInfo);
 	}
-	R_FreeStaticTriSurf( occluders );
+	else
+	{
+		shadowTris = createShadowVolume(transform, occluders, light, SG_OFFLINE, cullInfo);
+	}
+
+	/*R_FreeStaticTriSurf( occluders );
 
 	R_FreeInteractionCullInfo( cullInfo );
 

@@ -84,6 +84,30 @@ public:
 	// [numIndexes/3] plane equations
 	std::vector<Plane3> facePlanes;
 
+	struct CullInfo 
+	{
+		// For each triangle a byte set to 1 if facing the light origin.
+		std::vector<unsigned char> facing; // greebo: change to std::vector<bool>?
+
+		// For each vertex a byte with the bits [0-5] set if the
+		// vertex is at the back side of the corresponding clip plane.
+		// If the 'cullBits' pointer equals LIGHT_CULL_ALL_FRONT all
+		// vertices are at the front of all the clip planes.
+		std::vector<unsigned char> cullBits;
+
+		// Clip planes in surface space used to calculate the cull bits.
+		Plane3		localClipPlanes[6];
+
+		CullInfo() :
+			facing(NULL),
+			cullBits(NULL)
+		{
+			localClipPlanes[0].dist() = localClipPlanes[1].dist() =
+				localClipPlanes[2].dist() = localClipPlanes[3].dist() =
+				localClipPlanes[4].dist() = localClipPlanes[5].dist() = 0;
+		}
+	};
+
 	Surface() :
 		perfectHull(false),
 		tangentsCalculated(false),
@@ -93,6 +117,9 @@ public:
 	void calcBounds();
 
 	void cleanupTriangles(bool createNormals, bool identifySilEdges, bool useUnsmoothedTangents);
+
+	// Writes the facePlanes values, overwriting existing ones if present
+	void deriveFacePlanes();
 
 private:
 	struct FaceTangents
@@ -149,9 +176,6 @@ private:
 	// Derives the normal and orthogonal tangent vectors for the triangle vertices.
 	// For each vertex the normal and tangent vectors are derived from a single dominant triangle.
 	void deriveUnsmoothedTangents();
-
-	// Writes the facePlanes values, overwriting existing ones if present
-	void deriveFacePlanes();
 
 	void deriveFaceTangents(std::vector<FaceTangents>& tangents);
 	void deriveTangentsWithoutNormals();
