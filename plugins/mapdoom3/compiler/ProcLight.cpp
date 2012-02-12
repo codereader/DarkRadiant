@@ -258,7 +258,7 @@ void ProcLight::deriveLightData()
 
 	// a projected light will have one shadowFrustum, a point light will have
 	// six unless the light center is outside the box
-	//R_MakeShadowFrustums( light );
+	makeShadowFrustums();
 }
 
 void ProcLight::setLightFrustum()
@@ -369,6 +369,149 @@ Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, 
 	tri.calcBounds();
 	
 	return tri;
+}
+
+void ProcLight::makeShadowFrustums()
+{
+	if (parms.pointLight)
+	{
+		// exact projection,taking into account asymetric frustums when 
+		// globalLightOrigin isn't centered
+
+		static int	faceCorners[6][4] = {
+			{ 7, 5, 1, 3 },		// positive X side
+			{ 4, 6, 2, 0 },		// negative X side
+			{ 6, 7, 3, 2 },		// positive Y side
+			{ 5, 4, 0, 1 },		// negative Y side
+			{ 6, 4, 5, 7 },		// positive Z side
+			{ 3, 1, 0, 2 }		// negative Z side
+		};
+		static int	faceEdgeAdjacent[6][4] = {
+			{ 4, 4, 2, 2 },		// positive X side
+			{ 7, 7, 1, 1 },		// negative X side
+			{ 5, 5, 0, 0 },		// positive Y side
+			{ 6, 6, 3, 3 },		// negative Y side
+			{ 0, 0, 3, 3 },		// positive Z side
+			{ 5, 5, 6, 6 }		// negative Z side
+		};
+
+		bool centerOutside = false;
+
+		// if the light center of projection is outside the light bounds,
+		// we will need to build the planes a little differently
+		if (fabs(parms.lightCenter[0]) > parms.lightRadius[0] || 
+			fabs(parms.lightCenter[1]) > parms.lightRadius[1] || 
+			fabs(parms.lightCenter[2]) > parms.lightRadius[2])
+		{
+			centerOutside = true;
+		}
+
+		// make the corners
+		Vector3 corners[8];
+
+		for (int i = 0 ; i < 8 ; ++i)
+		{
+			Vector3 temp;
+
+			for (int j = 0 ; j < 3 ; ++j)
+			{
+				if (i & (1 << j))
+				{
+					temp[j] = parms.lightRadius[j];
+				} 
+				else
+				{
+					temp[j] = -parms.lightRadius[j];
+				}
+			}
+
+			// transform to global space
+			corners[i] = parms.origin + parms.axis.transformPoint(temp);
+		}
+
+		numShadowFrustums = 0;
+
+		for (std::size_t side = 0; side < 6; ++side) 
+		{
+			ShadowFrustum& frust = shadowFrustums[numShadowFrustums];
+
+			Vector3& p1 = corners[faceCorners[side][0]];
+			Vector3& p2 = corners[faceCorners[side][1]];
+			Vector3& p3 = corners[faceCorners[side][2]];
+			
+			// plane will have positive side inward
+			Plane3 backPlane(p1, p2, p3);
+
+			// if center of projection is on the wrong side, skip
+			float d = backPlane.distanceToPoint(globalLightOrigin);
+
+			if (d < 0)
+			{
+				continue;
+			}
+
+			frust.numPlanes = 6;
+			frust.planes[5] = backPlane;
+			frust.planes[4] = backPlane;	// we don't really need the extra plane
+
+			// make planes with positive side facing inwards in light local coordinates
+			for (std::size_t edge = 0; edge < 4; ++edge)
+			{
+				Vector3& p1 = corners[faceCorners[side][edge]];
+				Vector3& p2 = corners[faceCorners[side][(edge+1)&3]];
+
+				// create a plane that goes through the center of projection
+				frust.planes[edge] = Plane3(p2, p1, globalLightOrigin);
+
+				// see if we should use an adjacent plane instead
+				if (centerOutside)
+				{
+					Vector3& p3 = corners[faceEdgeAdjacent[side][edge]];
+					Plane3 sidePlane(p2, p1, p3);
+
+					d = sidePlane.distanceToPoint(globalLightOrigin);
+
+					if (d < 0)
+					{
+						// use this plane instead of the edged plane
+						frust.planes[edge] = sidePlane;
+					}
+
+					// we can't guarantee a neighbor, so add sill planes at edge
+					shadowFrustums[numShadowFrustums].makeClippedPlanes = true;
+				}
+			}
+
+			numShadowFrustums++;
+		}
+
+		return;
+	}
+	
+	// projected light
+
+	numShadowFrustums = 1;
+	ShadowFrustum& frust = shadowFrustums[0];
+
+	// flip and transform the frustum planes so the positive side faces
+	// inward in local coordinates
+
+	// it is important to clip against even the near clip plane, because
+	// many projected lights that are faking area lights will have their
+	// origin behind solid surfaces.
+	for (std::size_t i = 0; i < 6; ++i)
+	{
+		Plane3& plane = frust.planes[i];
+
+		plane.normal() = -frustum[i].normal();
+		plane.dist() = -frustum[i].dist();
+	}
+	
+	frust.numPlanes = 6;
+	frust.makeClippedPlanes = true;
+
+	// projected lights don't have shared frustums, so any clipped edges
+	// right on the planes must have a sil plane created for them
 }
 
 } // namespace

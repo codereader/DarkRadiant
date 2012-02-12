@@ -64,6 +64,26 @@ struct RenderLightParms
 	//idSoundEmitter *		referenceSound;		// for shader sound tables, allowing effects to vary with sounds
 };
 
+struct ShadowFrustum
+{
+	int		numPlanes;		// this is always 6 for now
+	Plane3	planes[6];
+	// positive sides facing inward
+	// plane 5 is always the plane the projection is going to, the
+	// other planes are just clip planes
+	// all planes are in global coordinates
+
+	bool	makeClippedPlanes;
+	// a projected light with a single frustum needs to make sil planes
+	// from triangles that clip against side planes, but a point light
+	// that has adjacent frustums doesn't need to
+
+	ShadowFrustum() :
+		numPlanes(6),
+		makeClippedPlanes(false)
+	{}
+};
+
 // Represents a map light
 class ProcLight
 {
@@ -90,7 +110,11 @@ public:
 
 	Surface		shadowTris;
 
-	ProcLight()
+	std::size_t		numShadowFrustums;
+	ShadowFrustum	shadowFrustums[6];
+
+	ProcLight() :
+		numShadowFrustums(0)
 	{
 		// Distance value in Plane3 is not initialised
 		lightProject[0].dist() = lightProject[1].dist() = 
@@ -127,6 +151,8 @@ private:
 	// Creates plane equations from the light projection, positive sides
 	// face out of the light (ref: R_SetLightFrustum)
 	void setLightFrustum();
+
+	void makeShadowFrustums();
 
 	static Surface generatePolytopeSurface(int numPlanes, const Plane3* planes, ProcWinding* windings);
 };

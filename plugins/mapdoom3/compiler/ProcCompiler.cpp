@@ -3584,15 +3584,6 @@ void ProcCompiler::calcInteractionFacing(const Matrix4& transform, const Surface
 Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface& tri, const ProcLight& light,
 							 ShadowGenType optimize, Surface::CullInfo& cullInfo)
 {
-	
-
-#if 0
-	int		i, j;
-	idVec3	lightOrigin;
-	srfTriangles_t	*newTri;
-	int		capPlaneBits;
-#endif
-
 #if 0
 	if ( !r_shadows.GetBool() ) {
 		return NULL;
@@ -3627,37 +3618,44 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 
 	calcInteractionFacing(transform, tri, light, cullInfo);
 
-#if 0
-	int numFaces = tri->numIndexes / 3;
-	int allFront = 1;
-	for ( i = 0; i < numFaces && allFront; i++ ) {
+	std::size_t numFaces = tri.indices.size() / 3;
+	
+	unsigned char allFront = 1;
+
+	for (std::size_t i = 0; i < numFaces && allFront; ++i)
+	{
 		allFront &= cullInfo.facing[i];
 	}
-	if ( allFront ) {
+
+	if (allFront)
+	{
 		// if no faces are the right direction, don't make a shadow at all
-		return NULL;
+		return Surface();
 	}
 
 	// clear the shadow volume
-	numShadowIndexes = 0;
-	numShadowVerts = 0;
-	overflowed = false;
-	indexFrustumNumber = 0;
-	capPlaneBits = 0;
-	callOptimizer = (optimize == SG_OFFLINE);
+	std::size_t numShadowIndexes = 0;
+	std::size_t numShadowVerts = 0;
+	bool overflowed = false;
+	std::size_t indexFrustumNumber = 0;
+	int capPlaneBits = 0;
+	bool callOptimizer = (optimize == SG_OFFLINE);
 
 	// the facing information will be the same for all six projections
 	// from a point light, as well as for any directed lights
-	globalFacing = cullInfo.facing;
-	faceCastsShadow = (byte *)_alloca16( tri->numIndexes / 3 + 1 );	// + 1 for fake dangling edge face
-	remap = (int *)_alloca16( tri->numVerts * sizeof( remap[0] ) );
+	std::vector<unsigned char>& globalFacing = cullInfo.facing;
 
-	R_GlobalPointToLocal( ent->modelMatrix, light->globalLightOrigin, lightOrigin );
+	unsigned char* faceCastsShadow = (unsigned char*)alloca(tri.indices.size() / 3 + 1);	// + 1 for fake dangling edge face
+	int* remap = (int*)alloca(tri.vertices.size() * sizeof(int));
 
+	Vector3 lightOrigin = globalPointToLocal(transform, light.getGlobalLightOrigin());
+	
+#if 0
 	// run through all the shadow frustums, which is one for a projected light,
 	// and usually six for a point light, but point lights with centers outside
 	// the box may have less
-	for ( int frustumNum = 0 ; frustumNum < light->numShadowFrustums ; frustumNum++ ) {
+	for (int frustumNum = 0 ; frustumNum < light->numShadowFrustums ; frustumNum++ )
+	{
 		const shadowFrustum_t	*frust = &light->shadowFrustums[frustumNum];
 		ALIGN16( idPlane frustum[6] );
 
