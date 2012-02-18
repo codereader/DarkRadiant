@@ -2,9 +2,9 @@
 
 #include "iradiant.h"
 #include "ieclass.h"
-#include "imodelpreview.h"
 
 #include "gtkutil/GladeWidgetHolder.h"
+#include "gtkutil/preview/ModelPreview.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
 
 #include <gtkmm/treestore.h>
@@ -70,7 +70,7 @@ private:
     std::string _classToHighlight;
 
 	// Model preview widget
-	IModelPreviewPtr _modelPreview;
+    gtkutil::ModelPreviewPtr _modelPreview;
 
 	Result _result;
 

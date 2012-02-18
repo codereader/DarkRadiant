@@ -3,8 +3,8 @@
 #include <gtkmm/frame.h>
 
 #include "math/Matrix4.h"
-#include "../GLWidget.h"
 #include "../Timer.h"
+#include "../GladeWidgetHolder.h"
 
 #include "ifiltermenu.h"
 #include "iscenegraph.h"
@@ -25,6 +25,8 @@ namespace Gtk
 namespace gtkutil
 {
 
+class GLWidget;
+
 /**
  * greebo: This class acts as base for widgets featuring 
  * a real time openGL render preview. It offers
@@ -37,21 +39,16 @@ namespace gtkutil
  * After construction the local scene graph will be empty.
  */
 class RenderPreview :
-	public Gtk::Frame
+	public Gtk::Frame,
+    private GladeWidgetHolder
 {
-private:
 	// The scene we're rendering
 	scene::GraphPtr _scene;
 
-protected:
 	// GL widget
 	gtkutil::GLWidget* _glWidget;
 
-	Gtk::HBox* _toolHBox;
-
-	Gtk::ToolButton* _startButton;
-	Gtk::ToolButton* _pauseButton;
-	Gtk::ToolButton* _stopButton;
+protected:
 
 	// The backend rendersystem instance
 	RenderSystemPtr _renderSystem;
@@ -96,8 +93,11 @@ public:
 protected:
 	const scene::GraphPtr& getScene();
 
-	// Add another one to the toolbar hbox
+	/// Add another one to the toolbar hbox
 	void addToolbar(Gtk::Toolbar& toolbar);
+
+    /// Schedule a GL widget redraw operation
+    void queueDraw();
 
 	// Subclasses should at least add a single node as scene root, such that
 	// the rendersystem can be associated. This is called after initialisePreview()

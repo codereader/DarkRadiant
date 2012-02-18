@@ -1,10 +1,10 @@
-#ifndef MODELSELECTOR_H_
-#define MODELSELECTOR_H_
+#pragma once
 
 #include "modelskin.h"
 #include "iradiant.h"
 #include "iuimanager.h"
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/preview/ModelPreview.h"
 #include "gtkutil/WindowPosition.h"
 
 #include <string>
@@ -88,7 +88,7 @@ private:
 	TreeColumns _columns;
 
 	// Model preview widget
-	IModelPreviewPtr _modelPreview;
+    gtkutil::ModelPreviewPtr _modelPreview;
 
 	// Tree store containing model names (one with and one without skins)
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
@@ -188,5 +188,3 @@ public:
 };
 
 }
-
-#endif /*MODELSELECTOR_H_*/

@@ -10,7 +10,6 @@
 #include "GroupDialog.h"
 #include "debugging/debugging.h"
 #include "FilterMenu.h"
-#include "ModelPreview.h"
 #include "ParticlePreview.h"
 #include "gtkutil/dialog/MessageBox.h"
 
@@ -228,11 +227,6 @@ UIManager::getGtkBuilderFromFile(const std::string& localFileName) const
 IFilterMenuPtr UIManager::createFilterMenu()
 {
 	return IFilterMenuPtr(new FilterMenu);
-}
-
-IModelPreviewPtr UIManager::createModelPreview()
-{
-	return IModelPreviewPtr(new ModelPreview);
 }
 
 IParticlePreviewPtr UIManager::createParticlePreview()

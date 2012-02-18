@@ -12,7 +12,6 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "imainframe.h"
-#include "imodelpreview.h"
 #include "imodel.h"
 #include "i18n.h"
 
@@ -46,7 +45,7 @@ namespace
 ModelSelector::ModelSelector()
 : gtkutil::BlockingTransientWindow(_(MODELSELECTOR_TITLE), GlobalMainFrame().getTopLevelWindow()),
   _vbox(NULL),
-  _modelPreview(GlobalUIManager().createModelPreview()),
+  _modelPreview(new gtkutil::ModelPreview()),
   _treeStore(Gtk::TreeStore::create(_columns)),
   _treeStoreWithSkins(Gtk::TreeStore::create(_columns)),
   _infoStore(Gtk::ListStore::create(_infoStoreColumns)),
@@ -89,7 +88,7 @@ ModelSelector::ModelSelector()
 	Gtk::HPaned* paned = Gtk::manage(new Gtk::HPaned);
 
 	paned->pack1(*leftVbx, true, true);
-	paned->pack2(*_modelPreview->getWidget(), true, true);
+	paned->pack2(*_modelPreview, true, true);
 
 	// Pack widgets into main Vbox above the buttons
 	_vbox->pack_start(*paned, true, true, 0);

@@ -73,9 +73,9 @@ libgtkutil_la_DEPENDENCIES =  \
 am_libgtkutil_la_OBJECTS = ConsoleView.lo FreezePointer.lo GLWidget.lo \
 	PanedPosition.lo VFSTreePopulator.lo Timer.lo \
 	WindowPosition.lo PersistentTransientWindow.lo \
-	TransientWindow.lo Dialog.lo MessageBox.lo RenderPreview.lo \
-	GLFont.lo MenuItemAccelerator.lo Cursor.lo PopupMenu.lo \
-	PathEntry.lo TreeModel.lo ModalProgressDialog.lo \
+	TransientWindow.lo Dialog.lo MessageBox.lo ModelPreview.lo \
+	RenderPreview.lo GLFont.lo MenuItemAccelerator.lo Cursor.lo \
+	PopupMenu.lo PathEntry.lo TreeModel.lo ModalProgressDialog.lo \
 	SerialisableWidgets.lo SourceView.lo clipboard.lo \
 	FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
@@ -334,6 +334,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
                         window/TransientWindow.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
+                        preview/ModelPreview.cpp \
 						preview/RenderPreview.cpp \
 						GLFont.cpp \
 						MenuItemAccelerator.cpp \
@@ -431,6 +432,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItemAccelerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MessageBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelPreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PanedPosition.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PersistentTransientWindow.Plo@am__quote@
@@ -500,6 +502,14 @@ MessageBox.lo: dialog/MessageBox.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='dialog/MessageBox.cpp' object='MessageBox.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o MessageBox.lo `test -f 'dialog/MessageBox.cpp' || echo '$(srcdir)/'`dialog/MessageBox.cpp
+
+ModelPreview.lo: preview/ModelPreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ModelPreview.lo -MD -MP -MF $(DEPDIR)/ModelPreview.Tpo -c -o ModelPreview.lo `test -f 'preview/ModelPreview.cpp' || echo '$(srcdir)/'`preview/ModelPreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ModelPreview.Tpo $(DEPDIR)/ModelPreview.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='preview/ModelPreview.cpp' object='ModelPreview.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ModelPreview.lo `test -f 'preview/ModelPreview.cpp' || echo '$(srcdir)/'`preview/ModelPreview.cpp
 
 RenderPreview.lo: preview/RenderPreview.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT RenderPreview.lo -MD -MP -MF $(DEPDIR)/RenderPreview.Tpo -c -o RenderPreview.lo `test -f 'preview/RenderPreview.cpp' || echo '$(srcdir)/'`preview/RenderPreview.cpp

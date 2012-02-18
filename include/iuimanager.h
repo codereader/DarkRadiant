@@ -187,9 +187,6 @@ class IDialogManager;	// see idialogmanager.h for definition
 class IFilterMenu;		// see ifiltermenu.h for definition
 typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
-class IModelPreview;	// see imodelpreview.h for definition
-typedef boost::shared_ptr<IModelPreview> IModelPreviewPtr;
-
 class IParticlePreview;	// see iparticlepreview.h for definition
 typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
 
@@ -232,9 +229,6 @@ public:
 
 	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
 	virtual ui::IFilterMenuPtr createFilterMenu() = 0;
-
-	// Creates a new model preview (GL view with draggable viewpoint, zoom and filter functionality)
-	virtual ui::IModelPreviewPtr createModelPreview() = 0;
 
 	// Creates a new particle preview GL widget
 	virtual ui::IParticlePreviewPtr createParticlePreview() = 0;

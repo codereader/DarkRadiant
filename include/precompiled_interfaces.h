@@ -49,7 +49,6 @@
 #include "imenu.h"
 #include "imodel.h"
 #include "imodelcache.h"
-#include "imodelpreview.h"
 #include "imodelsurface.h"
 #include "imodule.h"
 #include "inameobserver.h"

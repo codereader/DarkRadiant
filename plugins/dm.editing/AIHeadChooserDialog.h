@@ -1,8 +1,8 @@
 #pragma once
 
-#include "imodelpreview.h"
-
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/preview/ModelPreview.h"
+
 #include <set>
 #include <map>
 #include <gtkmm/liststore.h>
@@ -47,7 +47,7 @@ private:
 	Gtk::TextView* _description;
 
 	// The model preview
-	IModelPreviewPtr _preview;
+    gtkutil::ModelPreviewPtr _preview;
 
 	// The name of the currently selected head
 	std::string _selectedHead;

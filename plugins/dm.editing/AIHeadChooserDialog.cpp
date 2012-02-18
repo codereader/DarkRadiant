@@ -28,6 +28,7 @@ namespace ui
 AIHeadChooserDialog::AIHeadChooserDialog() :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_headStore(Gtk::ListStore::create(_columns)),
+    _preview(new gtkutil::ModelPreview),
 	_result(RESULT_CANCEL)
 {
 	_headsView = Gtk::manage(new Gtk::TreeView(_headStore));
@@ -45,10 +46,8 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	);
 
 	// Allocate and setup the preview
-	_preview = GlobalUIManager().createModelPreview();
-	assert(_preview != NULL);
-
-	_preview->setSize(static_cast<int>(rect.get_width() * 0.4f), static_cast<int>(rect.get_height() * 0.2f));
+	_preview->setSize(static_cast<int>(rect.get_width() * 0.4f),
+                      static_cast<int>(rect.get_height() * 0.2f));
 
 	Gtk::HBox* hbx = Gtk::manage(new Gtk::HBox(false, 6));
 
@@ -66,7 +65,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	// Right: the preview and the description
 	Gtk::VBox* vbox2 = Gtk::manage(new Gtk::VBox(false, 3));
 
-	vbox2->pack_start(*_preview->getWidget(), true, true, 0);
+	vbox2->pack_start(*_preview, true, true, 0);
 	vbox2->pack_start(createDescriptionPanel(), false, false, 0);
 
 	hbx->pack_start(*vbox2, false, false, 0);

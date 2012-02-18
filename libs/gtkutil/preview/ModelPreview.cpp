@@ -1,4 +1,5 @@
 #include "ModelPreview.h"
+#include "../GLWidget.h"
 
 #include "ifilter.h"
 #include "iuimanager.h"
@@ -18,7 +19,7 @@
 
 #include <boost/algorithm/string/case_conv.hpp>
 
-namespace ui
+namespace gtkutil
 {
 
 /* CONSTANTS */
@@ -31,23 +32,8 @@ namespace
 // Construct the widgets
 
 ModelPreview::ModelPreview() :
-	gtkutil::RenderPreview(),
 	_lastModel("")
-{
-	// Create the toolbar
-	Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
-	toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
-
-	// Draw bounding box toolbar button
-	_drawBBox = Gtk::manage(new Gtk::ToggleToolButton);
-	_drawBBox->signal_toggled().connect(sigc::mem_fun(*this, &ModelPreview::callbackToggleBBox));
-
-	_drawBBox->set_icon_widget(*Gtk::manage(new Gtk::Image(
-		GlobalUIManager().getLocalPixbuf("iconDrawBBox.png"))));
-	toolbar->insert(*_drawBBox, 0);
-
-	addToolbar(*toolbar);
-}
+{ }
 
 // Set the model, this also resets the camera
 void ModelPreview::setModel(const std::string& model)
@@ -104,7 +90,7 @@ void ModelPreview::setModel(const std::string& model)
 	}
 
 	// Redraw
-	_glWidget->queueDraw();
+	queueDraw();
 }
 
 // Set the skin, this does NOT reset the camera
@@ -125,12 +111,7 @@ void ModelPreview::setSkin(const std::string& skin) {
 	}
 
 	// Redraw
-	_glWidget->queueDraw();
-}
-
-Gtk::Widget* ModelPreview::getWidget()
-{
-	return this;
+	queueDraw();
 }
 
 void ModelPreview::setupSceneGraph()
@@ -161,28 +142,9 @@ bool ModelPreview::onPreRender()
 	return _modelNode != NULL;
 }
 
-void ModelPreview::onPostRender()
-{
-	// Render the bounding box if the toggle is active
-	if (_drawBBox->get_active())
-	{
-		// Render as fullbright wireframe
-		glDisable(GL_LIGHTING);
-		glDisable(GL_TEXTURE_2D);
-		glColor3f(0, 1, 1);
-
-		aabb_draw_wire(_modelNode->localAABB());
-	}
-}
-
 RenderStateFlags ModelPreview::getRenderFlagsFill()
 {
 	return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
-}
-
-void ModelPreview::callbackToggleBBox()
-{
-	_glWidget->queueDraw();
 }
 
 } // namespace ui

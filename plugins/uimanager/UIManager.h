@@ -64,7 +64,6 @@ public:
     Glib::RefPtr<Gtk::Builder> getGtkBuilderFromFile(const std::string&) const;
 
 	IFilterMenuPtr createFilterMenu();
-	IModelPreviewPtr createModelPreview();
 	IParticlePreviewPtr createParticlePreview();
 
 	// Called on radiant shutdown

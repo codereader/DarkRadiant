@@ -8,6 +8,8 @@
 #include "itextstream.h"
 #include "math/AABB.h"
 
+#include "gtkutil/GLWidget.h"
+
 namespace ui
 {
 
@@ -94,7 +96,7 @@ void AnimationPreview::setModelNode(const scene::INodePtr& node)
 	}
 
 	// Redraw
-	_glWidget->queueDraw();
+	queueDraw();
 }
 
 AABB AnimationPreview::getSceneBounds()

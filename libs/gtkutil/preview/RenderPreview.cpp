@@ -23,6 +23,11 @@ namespace
 	const GLfloat PREVIEW_FOV = 60;
 	const unsigned int MSEC_PER_FRAME = 16;
 
+    // Widget names
+    const std::string BOTTOM_BOX("bottomBox");
+    const std::string PAUSE_BUTTON("pauseButton");
+    const std::string STOP_BUTTON("stopButton");
+
 	// Set the bool to true for the lifetime of this object
 	class ScopedBoolLock
 	{
@@ -44,11 +49,10 @@ namespace
 }
 
 RenderPreview::RenderPreview() :
-	Gtk::Frame(),
+    GladeWidgetHolder(
+        GlobalUIManager().getGtkBuilderFromFile("RenderPreview.glade")
+    ),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "RenderPreview"))),
-	_startButton(NULL),
-	_pauseButton(NULL),
-	_stopButton(NULL),
 	_renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
 	_sceneWalker(_renderer, _volumeTest),
 	_renderingInProgress(false),
@@ -57,13 +61,14 @@ RenderPreview::RenderPreview() :
 	_previewHeight(0),
 	_filtersMenu(GlobalUIManager().createFilterMenu())
 {
-	// Main vbox - above is the GL widget, below is the toolbar
-	Gtk::VBox* vbx = Gtk::manage(new Gtk::VBox(false, 0));
+    // Get main glade vbox and pack into self (frame)
+    Gtk::Box* main = getGladeWidget<Gtk::Box>("main");
+    add(*main);
 
-	// Cast the GLWidget object to GtkWidget for further use
-	vbx->pack_start(*_glWidget, true, true, 0);
+    // Insert GL widget
+	main->pack_start(*_glWidget, true, true, 0);
 
-	// Connect up the signals
+	// Connect up the signals from the GL widget
 	_glWidget->set_events(Gdk::EXPOSURE_MASK
                         | Gdk::BUTTON_PRESS_MASK
                         | Gdk::BUTTON_RELEASE_MASK
@@ -83,54 +88,26 @@ RenderPreview::RenderPreview() :
         sigc::mem_fun(this, &RenderPreview::onSizeAllocate)
     );
 
-	// The HBox containing the toolbar and the menubar
-	_toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
-	vbx->pack_end(*_toolHBox, false, false, 0);
-
-	// Create the toolbar
-	Gtk::Toolbar* toolbar = Gtk::manage(new Gtk::Toolbar);
-	toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
-
-	_startButton = Gtk::manage(new Gtk::ToolButton);
-	_startButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &RenderPreview::startPlayback)
+    // Connect up toolbar button signals
+    getGladeWidget<Gtk::ToolButton>("startButton")->signal_clicked().connect(
+        sigc::mem_fun(this, &RenderPreview::startPlayback)
     );
-	_startButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU)));
-	_startButton->set_tooltip_text(_("Start time"));
-
-	_pauseButton = Gtk::manage(new Gtk::ToolButton);
-	_pauseButton->signal_clicked().connect(sigc::mem_fun(*this, &RenderPreview::onPause));
-	_pauseButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PAUSE, Gtk::ICON_SIZE_MENU)));
-	_pauseButton->set_tooltip_text(_("Pause time"));
-
-	_stopButton = Gtk::manage(new Gtk::ToolButton);
-	_stopButton->signal_clicked().connect(
-        sigc::mem_fun(*this, &RenderPreview::stopPlayback)
+    getGladeWidget<Gtk::ToolButton>(PAUSE_BUTTON)->signal_clicked().connect(
+        sigc::mem_fun(this, &RenderPreview::onPause)
     );
-	_stopButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_STOP, Gtk::ICON_SIZE_MENU)));
-	_stopButton->set_tooltip_text(_("Stop time"));
+    getGladeWidget<Gtk::ToolButton>(STOP_BUTTON)->signal_clicked().connect(
+        sigc::mem_fun(this, &RenderPreview::stopPlayback)
+    );
+    getGladeWidget<Gtk::ToolButton>("nextButton")->signal_clicked().connect(
+        sigc::mem_fun(this, &RenderPreview::onStepForward)
+    );
+    getGladeWidget<Gtk::ToolButton>("prevButton")->signal_clicked().connect(
+        sigc::mem_fun(this, &RenderPreview::onStepBack)
+    );
 
-	Gtk::ToolButton* nextButton = Gtk::manage(new Gtk::ToolButton);
-	nextButton->signal_clicked().connect(sigc::mem_fun(*this, &RenderPreview::onStepForward));
-	nextButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_NEXT, Gtk::ICON_SIZE_MENU)));
-	nextButton->set_tooltip_text(_("Next frame"));
-
-	Gtk::ToolButton* prevButton = Gtk::manage(new Gtk::ToolButton);
-	prevButton->signal_clicked().connect(sigc::mem_fun(*this, &RenderPreview::onStepBack));
-	prevButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PREVIOUS, Gtk::ICON_SIZE_MENU)));
-	prevButton->set_tooltip_text(_("Previous frame"));
-
-	toolbar->insert(*_startButton, 0);
-	toolbar->insert(*_pauseButton, 0);
-	toolbar->insert(*nextButton, 0);
-	toolbar->insert(*prevButton, 0);
-	toolbar->insert(*_stopButton, 0);
-
-	_toolHBox->pack_start(*toolbar, true, true, 0);
-	_toolHBox->pack_start(*_filtersMenu->getMenuBarWidget(), false, false, 0);
-
-	// Pack into a frame
-	add(*vbx);
+    // Add filters menu to end of bottom hbox
+    Gtk::Box* bottom = getGladeWidget<Gtk::Box>(BOTTOM_BOX);
+	bottom->pack_start(*_filtersMenu->getMenuBarWidget(), false, false, 0);
 
 	// Get notified of filter changes
 	GlobalFilterSystem().filtersChangedSignal().connect(
@@ -151,13 +128,17 @@ void RenderPreview::filtersChanged()
 	if (!getScene()->root()) return;
 
 	GlobalFilterSystem().updateSubgraph(getScene()->root());
-
-	_glWidget->queueDraw();
+    queueDraw();
 }
 
 void RenderPreview::addToolbar(Gtk::Toolbar& toolbar)
 {
-	_toolHBox->pack_start(toolbar, true, true, 0);
+    getGladeWidget<Gtk::Box>(BOTTOM_BOX)->pack_start(toolbar, true, true, 0);
+}
+
+void RenderPreview::queueDraw()
+{
+	_glWidget->queueDraw();
 }
 
 void RenderPreview::setSize(int width, int height)
@@ -302,8 +283,8 @@ void RenderPreview::startPlayback()
 		_timer.enable();
 	}
 
-	_pauseButton->set_sensitive(true);
-	_stopButton->set_sensitive(true);
+	getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(true);
+	getGladeWidget<Gtk::Widget>(STOP_BUTTON)->set_sensitive(true);
 }
 
 void RenderPreview::stopPlayback()
@@ -311,8 +292,8 @@ void RenderPreview::stopPlayback()
 	_renderSystem->setTime(0);
 	_timer.disable();
 
-	_pauseButton->set_sensitive(false);
-	_stopButton->set_sensitive(false);
+	getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
+	getGladeWidget<Gtk::Widget>(STOP_BUTTON)->set_sensitive(false);
 
 	_glWidget->queue_draw();
 }
@@ -494,7 +475,7 @@ bool RenderPreview::onGLScroll(GdkEventScroll* ev)
 void RenderPreview::onPause()
 {
 	// Disable the button
-	_pauseButton->set_sensitive(false);
+	getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
 
 	if (_timer.isEnabled())
 	{
@@ -509,7 +490,7 @@ void RenderPreview::onPause()
 void RenderPreview::onStepForward()
 {
 	// Disable the button
-	_pauseButton->set_sensitive(false);
+	getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
 
 	if (_timer.isEnabled())
 	{
@@ -523,7 +504,7 @@ void RenderPreview::onStepForward()
 void RenderPreview::onStepBack()
 {
 	// Disable the button
-	_pauseButton->set_sensitive(false);
+	getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
 
 	if (_timer.isEnabled())
 	{

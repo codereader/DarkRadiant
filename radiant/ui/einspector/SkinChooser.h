@@ -1,12 +1,11 @@
-#ifndef SKINCHOOSER_H_
-#define SKINCHOOSER_H_
+#pragma once
 
 #include "modelskin.h"
 
 #include "iradiant.h"
-#include "imodelpreview.h"
 
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/preview/ModelPreview.h"
 #include <string>
 
 #include <gtkmm/treestore.h>
@@ -66,7 +65,7 @@ private:
 	std::string _prevSkin;
 
 	// Model preview widget
-	IModelPreviewPtr _preview;
+    gtkutil::ModelPreviewPtr _preview;
 
 private:
 	// Constructor creates GTK widgets
@@ -125,5 +124,3 @@ public:
 };
 
 }
-
-#endif /*SKINCHOOSER_H_*/

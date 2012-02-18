@@ -34,7 +34,7 @@ namespace
 SkinChooser::SkinChooser() :
 	gtkutil::BlockingTransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow()),
 	_lastSkin(""),
-	_preview(GlobalUIManager().createModelPreview())
+	_preview(new gtkutil::ModelPreview())
 {
 	set_border_width(6);
 
@@ -108,7 +108,7 @@ Gtk::Widget& SkinChooser::createPreview(int size)
 {
 	_preview->setSize(size, size);
 
-	return *_preview->getWidget();
+	return *_preview;
 }
 
 // Create the buttons panel

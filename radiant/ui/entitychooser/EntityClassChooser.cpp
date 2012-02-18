@@ -128,7 +128,7 @@ EntityClassChooser::EntityClassChooser()
   _eclassLoader(new ThreadedEntityClassLoader(_columns)),
   _selection(NULL),
   _selectedName(""),
-  _modelPreview(GlobalUIManager().createModelPreview()),
+  _modelPreview(new gtkutil::ModelPreview()),
   _result(RESULT_CANCELLED)
 {
     // Set the default size of the window
@@ -158,7 +158,7 @@ EntityClassChooser::EntityClassChooser()
     );
 
     // Add model preview to right-hand-side of main container
-    mainPaned->pack2(*_modelPreview->getWidget(), true, true);
+    mainPaned->pack2(*_modelPreview, true, true);
 
     // Listen for defs-reloaded signal (cannot bind directly to
     // ThreadedEntityClassLoader method because it is not sigc::trackable)
@@ -224,7 +224,7 @@ void EntityClassChooser::onRadiantShutdown()
 {
     globalOutputStream() << "EntityClassChooser shutting down." << std::endl;
 
-    _modelPreview = IModelPreviewPtr();
+    _modelPreview.reset();
 
     // Final step at shutdown, release the shared ptr
     InstancePtr().reset();

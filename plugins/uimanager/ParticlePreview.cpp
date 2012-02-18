@@ -12,6 +12,7 @@
 #include "entitylib.h"
 
 #include "string/string.h"
+#include "gtkutil/GLWidget.h"
 
 #include <gtkmm/box.h>
 #include <gtkmm/toolbar.h>
@@ -142,12 +143,12 @@ void ParticlePreview::setParticle(const std::string& name)
 	}
 
 	// Redraw
-	_glWidget->queueDraw();
+	queueDraw();
 }
 
 void ParticlePreview::onToggleAxes()
 {
-	_glWidget->queue_draw();
+	queue_draw();
 }
 
 void ParticlePreview::setupSceneGraph()

@@ -1,8 +1,6 @@
 #ifndef AI_VOCAL_SET_CHOOSER_DIALOG_H_
 #define AI_VOCAL_SET_CHOOSER_DIALOG_H_
 
-#include "imodelpreview.h"
-
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include <set>
 #include <map>
