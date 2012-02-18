@@ -84,7 +84,7 @@ private:
 	std::size_t _numClipSilEdges;
 	bool _overflowed;
 	std::vector<Vector4> _shadowVerts;
-	std::vector<int>	 _shadowIndices;
+	std::vector<std::size_t> _shadowIndices;
 
 #define	MAX_CLIP_SIL_EDGES		2048
 
@@ -98,6 +98,17 @@ private:
 		Vector3	verts[MAX_CLIPPED_POINTS];
 		int		edgeFlags[MAX_CLIPPED_POINTS];
 	};
+
+	struct IndexRef 
+	{
+		std::size_t	frontCapStart;
+		std::size_t	rearCapStart;
+		std::size_t	silStart;
+		std::size_t	end;
+	};
+	
+	IndexRef _indexRef[6];
+	std::size_t _indexFrustumNumber;		// which shadow generating side of a light the indexRef is for
 
 public:
 	ProcCompiler(const scene::INodePtr& root);
@@ -333,6 +344,11 @@ private:
 	// If one point is clearly clipped by the plane and the
 	// other point is on the plane, it will be completely removed.
 	bool clipLineToLight(const Vector3& a, const Vector3& b, const Plane3 frustum[4], Vector3& p1, Vector3& p2);
+
+	// make a projected copy of the even verts into the odd spots
+	// that is on the far light clip plane
+	void projectPointsToFarPlane(const Matrix4& transform, const ProcLight& light, 
+								const Plane3& lightPlaneLocal, std::size_t firstShadowVert, std::size_t numShadowVerts);
 };
 
 } // namespace

@@ -3819,7 +3819,7 @@ bool ProcCompiler::clipTriangleToLight(const Vector3& a, const Vector3& b, const
 		return false;
 	}
 
-	std::size_t base = _numShadowVerts;
+	int base = static_cast<int>(_numShadowVerts);
 
 	for (std::size_t i = 0; i < ct.numVerts; ++i)
 	{
@@ -4116,6 +4116,72 @@ void ProcCompiler::addSilEdges(const Surface& tri, unsigned short* pointCull, co
 	}
 }
 
+namespace
+{
+
+inline void getLightProjectionMatrix(const Vector3& origin, const Plane3& rearPlane, Vector4 mat[4])
+{
+	// calculate the homogeneous light vector
+	Vector4 lv(origin, 1);
+
+	float lg = Vector4(rearPlane.normal(), -rearPlane.dist()).dot(lv);
+
+	// outer product
+	mat[0][0] = lg - rearPlane.normal()[0] * lv[0];
+	mat[0][1] = -rearPlane.normal()[1] * lv[0];
+	mat[0][2] = -rearPlane.normal()[2] * lv[0];
+	mat[0][3] = rearPlane.dist() * lv[0];
+
+	mat[1][0] = -rearPlane.normal()[0] * lv[1];
+	mat[1][1] = lg - rearPlane.normal()[1] * lv[1];
+	mat[1][2] = -rearPlane.normal()[2] * lv[1];
+	mat[1][3] = rearPlane.dist() * lv[1];
+
+	mat[2][0] = -rearPlane.normal()[0] * lv[2];
+	mat[2][1] = -rearPlane.normal()[1] * lv[2];
+	mat[2][2] = lg - rearPlane.normal()[2] * lv[2];
+	mat[2][3] = rearPlane.dist() * lv[2];
+
+	mat[3][0] = -rearPlane.normal()[0] * lv[3];
+	mat[3][1] = -rearPlane.normal()[1] * lv[3];
+	mat[3][2] = -rearPlane.normal()[2] * lv[3];
+	mat[3][3] = lg - (-rearPlane.dist() * lv[3]);
+}
+
+}
+
+void ProcCompiler::projectPointsToFarPlane(const Matrix4& transform, const ProcLight& light, 
+	const Plane3& lightPlaneLocal, std::size_t firstShadowVert, std::size_t numShadowVerts)
+{
+	Vector3 lv = transform.transformPoint(light.getGlobalLightOrigin());
+
+	Vector4 mat[4];
+	getLightProjectionMatrix(lv, lightPlaneLocal, mat);
+
+	// make a projected copy of the even verts into the odd spots
+	Vector4* in = &_shadowVerts[firstShadowVert];
+
+	for (std::size_t i = firstShadowVert; i < numShadowVerts; i+= 2, in += 2)
+	{
+		in[0].w() = 1;
+
+		float w = in->getVector3().dot(mat[3].getVector3()) + mat[3][3];
+		
+		if (w == 0)
+		{
+			in[1] = in[0];
+			continue;
+		}
+
+		float oow = 1.0f / w;
+
+		in[1].x() = (in->getVector3().dot(mat[0].getVector3()) + mat[0][3]) * oow;
+		in[1].y() = (in->getVector3().dot(mat[1].getVector3()) + mat[1][3]) * oow;
+		in[1].z() = (in->getVector3().dot(mat[2].getVector3()) + mat[2][3]) * oow;
+		in[1].w() = 1;
+	}
+}
+
 void ProcCompiler::createShadowVolumeInFrustum(const Matrix4& transform, const Surface& tri,
 	const ProcLight& light, const Vector3& lightOrigin, const Plane3 frustum[6],
 	const Plane3 &farPlane, bool makeClippedPlanes, int* remap, unsigned char* faceCastsShadow,
@@ -4175,21 +4241,21 @@ void ProcCompiler::createShadowVolumeInFrustum(const Matrix4& transform, const S
 
 		if (!POINT_CULLED(i1) && remap[i1] == -1)
 		{
-			remap[i1] = _numShadowVerts;
+			remap[i1] = static_cast<int>(_numShadowVerts);
 			_shadowVerts[_numShadowVerts].getVector3() = tri.vertices[i1].vertex;
 			_numShadowVerts += 2;
 		}
 
 		if (!POINT_CULLED(i2) && remap[i2] == -1)
 		{
-			remap[i2] = _numShadowVerts;
+			remap[i2] = static_cast<int>(_numShadowVerts);
 			_shadowVerts[_numShadowVerts].getVector3() = tri.vertices[i2].vertex;
 			_numShadowVerts += 2;
 		}
 
 		if (!POINT_CULLED(i3) && remap[i3] == -1)
 		{
-			remap[i3] = _numShadowVerts;
+			remap[i3] = static_cast<int>(_numShadowVerts);
 			_shadowVerts[_numShadowVerts].getVector3() = tri.vertices[i3].vertex;
 			_numShadowVerts += 2;
 		}
@@ -4337,18 +4403,17 @@ void ProcCompiler::createShadowVolumeInFrustum(const Matrix4& transform, const S
 	addSilEdges(tri, pointCull, frustum, remap, faceCastsShadow);
 
 	// c_sils += numShadowIndexes - preSilIndexes;
-#if 0
+
 	// project all of the vertexes to the shadow plane, generating
 	// an equal number of back vertexes
-	R_ProjectPointsToFarPlane( ent, light, farPlane, firstShadowVert, numShadowVerts );
+	projectPointsToFarPlane(transform, light, farPlane, firstShadowVert, _numShadowVerts);
 
 	// note the index distribution so we can sort all the caps after all the sils
-	indexRef[indexFrustumNumber].frontCapStart = firstShadowIndex;
-	indexRef[indexFrustumNumber].rearCapStart = firstShadowIndex+numCapIndexes;
-	indexRef[indexFrustumNumber].silStart = preSilIndexes;
-	indexRef[indexFrustumNumber].end = numShadowIndexes;
-	indexFrustumNumber++;
-#endif
+	_indexRef[_indexFrustumNumber].frontCapStart = firstShadowIndex;
+	_indexRef[_indexFrustumNumber].rearCapStart = firstShadowIndex+numCapIndexes;
+	_indexRef[_indexFrustumNumber].silStart = preSilIndexes;
+	_indexRef[_indexFrustumNumber].end = _numShadowIndices;
+	_indexFrustumNumber++;
 }
 
 Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface& tri, const ProcLight& light,
@@ -4407,7 +4472,7 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 	_numShadowIndices = 0;
 	_numShadowVerts = 0;
 	bool overflowed = false;
-	std::size_t indexFrustumNumber = 0;
+	_indexFrustumNumber = 0;
 	int capPlaneBits = 0;
 	bool callOptimizer = (optimize == SG_OFFLINE);
 
@@ -4456,7 +4521,7 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 		}
 
 		// we need to check all the triangles
-		int oldFrustumNumber = indexFrustumNumber;
+		std::size_t oldFrustumNumber = _indexFrustumNumber;
 
 		createShadowVolumeInFrustum(transform, tri, light, lightOrigin, frustum, frustum[5], frust.makeClippedPlanes, remap, faceCastsShadow, globalFacing);
 
@@ -4467,7 +4532,7 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 			return Surface();
 		}
 
-		if (indexFrustumNumber != oldFrustumNumber)
+		if (_indexFrustumNumber != oldFrustumNumber)
 		{
 			// note that we have caps projected against this frustum,
 			// which may allow us to skip drawing the caps if all projected
