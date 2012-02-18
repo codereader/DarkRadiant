@@ -4,6 +4,7 @@
 #include <map>
 #include "render/ArbitraryMeshVertex.h"
 #include "math/AABB.h"
+#include "math/Vector4.h"
 
 namespace map
 {
@@ -85,6 +86,13 @@ public:
 	// [numIndexes/3] plane equations
 	std::vector<Plane3> facePlanes;
 
+	std::vector<Vector4> shadowVertices;			// these will be copied to shadowCache when it is going to be drawn.
+													// these are NULL when vertex programs are available
+
+	int shadowCapPlaneBits;
+	std::size_t numShadowIndicesNoFrontCaps;	// shadow volumes with front caps omitted
+	std::size_t numShadowIndicesNoCaps;			// shadow volumes with the front and rear caps omitted
+
 	struct CullInfo 
 	{
 		// For each triangle a byte set to 1 if facing the light origin.
@@ -112,7 +120,10 @@ public:
 	Surface() :
 		perfectHull(false),
 		tangentsCalculated(false),
-		facePlanesCalculated(false)
+		facePlanesCalculated(false),
+		shadowCapPlaneBits(0),
+		numShadowIndicesNoFrontCaps(0),
+		numShadowIndicesNoCaps(0)
 	{}
 
 	void calcBounds();
