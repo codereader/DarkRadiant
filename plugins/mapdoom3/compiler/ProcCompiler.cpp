@@ -25,6 +25,19 @@ static std::size_t DEFAULT_OPT_VERTICES = 0x10000;
 
 const std::size_t MULTIAREA_CROSS = std::numeric_limits<std::size_t>::max();
 
+static const float LIGHT_CLIP_EPSILON = 0.1f;
+
+#define	MAX_SHADOW_INDEXES		0x18000
+#define	MAX_SHADOW_VERTS		0x18000
+
+// a point that is on the plane is NOT culled
+#define	POINT_CULLED(p1) ( ( pointCull[p1] & 0xfc0 ) != 0xfc0 )
+#define TRIANGLE_CLIPPED(p1,p2,p3) ( ( ( pointCull[p1] & pointCull[p2] & pointCull[p3] ) & 0xfc0 ) != 0xfc0 )
+
+// an edge that is on the plane is NOT culled
+#define EDGE_CULLED(p1,p2) ( ( pointCull[p1] ^ 0xfc0 ) & ( pointCull[p2] ^ 0xfc0 ) & 0xfc0 )
+#define EDGE_CLIPPED(p1,p2) ( ( pointCull[p1] & pointCull[p2] & 0xfc0 ) != 0xfc0 )
+
 ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_root(root),
 	_numActivePortals(0),
@@ -37,7 +50,10 @@ ProcCompiler::ProcCompiler(const scene::INodePtr& root) :
 	_numInsideLeafs(0),
 	_numSolidLeafs(0),
 	_numAreas(0),
-	_numAreaFloods(0)
+	_numAreaFloods(0),
+	_overflowed(false),
+	_shadowVerts(MAX_SHADOW_VERTS),
+	_shadowIndices(MAX_SHADOW_INDEXES)
 {}
 
 ProcFilePtr ProcCompiler::generateProcFile()
@@ -3549,6 +3565,29 @@ inline Vector3 globalPointToLocal(const Matrix4& transform, const Vector3& in)
 	return temp;
 }
 
+inline float planeDistanceToBounds(const AABB& bounds, const Plane3& plane)
+{
+	Vector3 mins = bounds.origin - bounds.extents;
+	Vector3 maxs = bounds.origin + bounds.extents;
+
+	float d1 = plane.distanceToPoint(bounds.origin);
+	float d2 = fabs((maxs[0] - bounds.origin[0]) * plane.normal()[0]) +
+			   fabs((maxs[1] - bounds.origin[1]) * plane.normal()[1]) +
+			   fabs((maxs[2] - bounds.origin[2]) * plane.normal()[2]);
+
+	if (d1 - d2 > 0.0f)
+	{
+		return d1 - d2;
+	}
+
+	if (d1 + d2 < 0.0f)
+	{
+		return d1 + d2;
+	}
+
+	return 0.0f;
+}
+
 }
 
 void ProcCompiler::calcInteractionFacing(const Matrix4& transform, const Surface& tri, const ProcLight& light,
@@ -3579,6 +3618,737 @@ void ProcCompiler::calcInteractionFacing(const Matrix4& transform, const Surface
 	}
 
 	cullInfo.facing[numFaces] = 1;	// for dangling edges to reference
+}
+
+void ProcCompiler::calcPointCull(const Surface& tri, const Plane3 frustum[6], unsigned short* pointCull, int* remap)
+{
+	memset(remap, -1, tri.vertices.size() * sizeof(remap[0]));
+
+	int frontBits = 0;
+	std::size_t i = 0;
+
+	for (frontBits = 0, i = 0; i < 6; ++i)
+	{
+		// get front bits for the whole surface
+		if (planeDistanceToBounds(tri.bounds, frustum[i]) >= LIGHT_CLIP_EPSILON)
+		{
+			frontBits |= 1 << (i + 6);
+		}
+	}
+
+	// initialize point cull
+	for (std::size_t i = 0; i < tri.vertices.size(); ++i)
+	{
+		pointCull[i] = frontBits;
+	}
+
+	// if the surface is not completely inside the light frustum
+	if (frontBits == ( ( ( 1 << 6 ) - 1 ) ) << 6)
+	{
+		return;
+	}
+
+	unsigned char* side1 = (unsigned char*)alloca(tri.vertices.size() * sizeof(unsigned char));
+	unsigned char* side2 = (unsigned char*)alloca(tri.vertices.size() * sizeof(unsigned char));
+
+	memset(side1, 0, tri.vertices.size() * sizeof(unsigned char));
+	memset(side2, 0, tri.vertices.size() * sizeof(unsigned char));
+
+	for (i = 0; i < 6; ++i)
+	{
+		if (frontBits & (1<<(i+6)))
+		{
+			continue;
+		}
+
+		for (std::size_t c = 0; c < tri.vertices.size(); ++c)
+		{
+			float planeSide = frustum[i].normal().dot(tri.vertices[c].vertex) - frustum[i].dist();
+			side1[c] |= (planeSide < LIGHT_CLIP_EPSILON) << i;
+			side2[c] |= (planeSide > -LIGHT_CLIP_EPSILON) << i;
+		}
+	}
+
+	for (i = 0; i < tri.vertices.size(); ++i)
+	{
+		pointCull[i] |= side1[i] | (side2[i] << 6);
+	}
+}
+
+int ProcCompiler::chopWinding(ClipTri clipTris[2], int inNum, const Plane3& plane)
+{
+	float	dists[MAX_CLIPPED_POINTS];
+	int		sides[MAX_CLIPPED_POINTS];
+		
+	ClipTri& in = clipTris[inNum];
+	ClipTri& out = clipTris[inNum^1];
+
+	int counts[3] = { 0, 0, 0 };
+	
+	// determine sides for each point
+	int i = 0;
+
+	for (i = 0 ; i < in.numVerts; i++)
+	{
+		float dot = plane.distanceToPoint(in.verts[i]);
+		dists[i] = dot;
+		if (dot < -LIGHT_CLIP_EPSILON)
+		{
+			sides[i] = SIDE_BACK;
+		}
+		else if (dot > LIGHT_CLIP_EPSILON)
+		{
+			sides[i] = SIDE_FRONT;
+		}
+		else
+		{
+			sides[i] = SIDE_ON;
+		}
+
+		counts[sides[i]]++;
+	}
+
+	// if none in front, it is completely clipped away
+	if (!counts[SIDE_FRONT])
+	{
+		in.numVerts = 0;
+		return inNum;
+	}
+
+	if (!counts[SIDE_BACK])
+	{
+		return inNum;		// inout stays the same
+	}
+
+	// avoid wrapping checks by duplicating first value to end
+	sides[i] = sides[0];
+	dists[i] = dists[0];
+
+	in.verts[in.numVerts] = in.verts[0];
+	in.edgeFlags[in.numVerts] = in.edgeFlags[0];
+
+	out.numVerts = 0;
+
+	for (i = 0; i < in.numVerts; ++i)
+	{
+		Vector3& p1 = in.verts[i];
+
+		if (sides[i] != SIDE_BACK)
+		{
+			out.verts[out.numVerts] = p1;
+
+			if (sides[i] == SIDE_ON && sides[i+1] == SIDE_BACK)
+			{
+				out.edgeFlags[out.numVerts] = 1;
+			} 
+			else
+			{
+				out.edgeFlags[out.numVerts] = in.edgeFlags[i];
+			}
+
+			out.numVerts++;
+		}
+
+		if ((sides[i] == SIDE_FRONT && sides[i+1] == SIDE_BACK) || 
+			(sides[i] == SIDE_BACK && sides[i+1] == SIDE_FRONT))
+		{
+			// generate a split point
+			Vector3& p2 = in.verts[i+1];
+			
+			float dot = dists[i] / (dists[i]-dists[i+1]);
+
+			Vector3 mid;
+
+			for (int j = 0; j < 3; ++j)
+			{
+				mid[j] = p1[j] + dot*(p2[j] - p1[j]);
+			}
+				
+			out.verts[out.numVerts] = mid;
+
+			// set the edge flag
+			if (sides[i+1] != SIDE_FRONT)
+			{
+				out.edgeFlags[out.numVerts] = 1;
+			} 
+			else 
+			{
+				out.edgeFlags[out.numVerts] = in.edgeFlags[i];
+			}
+
+			out.numVerts++;
+		}
+	}
+
+	return inNum ^ 1;
+}
+
+bool ProcCompiler::clipTriangleToLight(const Vector3& a, const Vector3& b, const Vector3& c, int planeBits, const Plane3 frustum[6])
+{
+	ClipTri pingPong[2];
+
+	pingPong[0].numVerts = 3;
+	pingPong[0].edgeFlags[0] = 0;
+	pingPong[0].edgeFlags[1] = 0;
+	pingPong[0].edgeFlags[2] = 0;
+	pingPong[0].verts[0] = a;
+	pingPong[0].verts[1] = b;
+	pingPong[0].verts[2] = c;
+
+	int p = 0;
+
+	for (int i = 0 ; i < 6 ; ++i)
+	{
+		if (planeBits & ( 1 << i ))
+		{
+			p = chopWinding(pingPong, p, frustum[i]);
+
+			if (pingPong[p].numVerts < 1)
+			{
+				return false;
+			}
+		}
+	}
+
+	ClipTri& ct = pingPong[p];
+
+	// copy the clipped points out to shadowVerts
+	if (_numShadowVerts + ct.numVerts * 2 > MAX_SHADOW_VERTS)
+	{
+		_overflowed = true;
+		return false;
+	}
+
+	std::size_t base = _numShadowVerts;
+
+	for (std::size_t i = 0; i < ct.numVerts; ++i)
+	{
+		_shadowVerts[base + i*2].getVector3() = ct.verts[i];
+	}
+	_numShadowVerts += ct.numVerts * 2;
+
+	if (_numShadowIndices + 3 * (ct.numVerts - 2) > MAX_SHADOW_INDEXES) 
+	{
+		_overflowed = true;
+		return false;
+	}
+
+	for (int i = 2; i < ct.numVerts; i++)
+	{
+		_shadowIndices[_numShadowIndices++] = base + i * 2;
+		_shadowIndices[_numShadowIndices++] = base + ( i - 1 ) * 2;
+		_shadowIndices[_numShadowIndices++] = base;
+	}
+
+	// any edges that were created by the clipping process will
+	// have a silhouette quad created for it, because it is one
+	// of the exterior bounds of the shadow volume
+	for (int i = 0; i < ct.numVerts; i++)
+	{
+		if (ct.edgeFlags[i])
+		{
+			if (_numClipSilEdges == MAX_CLIP_SIL_EDGES)
+			{
+				break;
+			}
+
+			_clipSilEdges[_numClipSilEdges][0] = base + i * 2;
+
+			if (i == ct.numVerts - 1)
+			{
+				_clipSilEdges[_numClipSilEdges][1] = base;
+			} 
+			else 
+			{
+				_clipSilEdges[_numClipSilEdges][1] = base + (i + 1) * 2;
+			}
+
+			_numClipSilEdges++;
+		}
+	}
+
+	return true;
+}
+
+namespace
+{
+
+/* 
+To make sure the triangulations of the sil edges is consistant,
+we need to be able to order two points.  We don't care about how
+they compare with any other points, just that when the same two
+points are passed in (in either order), they will always specify
+the same one as leading.
+
+Currently we need to have separate faces in different surfaces
+order the same way, so we must look at the actual coordinates.
+If surfaces are ever guaranteed to not have to edge match with
+other surfaces, we could just compare indexes.
+===============
+*/
+static bool pointsOrdered(const Vector3& a, const Vector3& b)
+{
+	// vectors that wind up getting an equal hash value will
+	// potentially cause a misorder, which can show as a couple
+	// crack pixels in a shadow
+
+	// scale by some odd numbers so -8, 8, 8 will not be equal
+	// to 8, -8, 8
+
+	// in the very rare case that these might be equal, all that would
+	// happen is an oportunity for a tiny rasterization shadow crack
+	float i = a[0] + a[1]*127 + a[2]*1023;
+	float j = b[0] + b[1]*127 + b[2]*1023;
+
+	return i < j;
+}
+
+}
+
+void ProcCompiler::addClipSilEdges()
+{
+	// don't allow it to overflow
+	if (_numShadowIndices + _numClipSilEdges * 6 > MAX_SHADOW_INDEXES)
+	{
+		_overflowed = true;
+		return;
+	}
+
+	for (std::size_t i = 0; i < _numClipSilEdges; i++)
+	{
+		int v1 = _clipSilEdges[i][0];
+		int v2 = _clipSilEdges[i][1];
+		int v1_back = v1 + 1;
+		int v2_back = v2 + 1;
+
+		if (pointsOrdered(_shadowVerts[v1].getVector3(), _shadowVerts[v2].getVector3()))
+		{
+			_shadowIndices[_numShadowIndices++] = v1;
+			_shadowIndices[_numShadowIndices++] = v2;
+			_shadowIndices[_numShadowIndices++] = v1_back;
+			_shadowIndices[_numShadowIndices++] = v2;
+			_shadowIndices[_numShadowIndices++] = v2_back;
+			_shadowIndices[_numShadowIndices++] = v1_back;
+		} 
+		else
+		{
+			_shadowIndices[_numShadowIndices++] = v1;
+			_shadowIndices[_numShadowIndices++] = v2;
+			_shadowIndices[_numShadowIndices++] = v2_back;
+			_shadowIndices[_numShadowIndices++] = v1;
+			_shadowIndices[_numShadowIndices++] = v2_back;
+			_shadowIndices[_numShadowIndices++] = v1_back;
+		}
+	}
+}
+
+bool ProcCompiler::clipLineToLight(const Vector3& a, const Vector3& b, const Plane3 frustum[4], Vector3& p1, Vector3& p2)
+{
+	p1 = a;
+	p2 = b;
+
+	// clip it
+	for (int j = 0; j < 6 ; ++j)
+	{
+		float d1 = frustum[j].distanceToPoint(p1);
+		float d2 = frustum[j].distanceToPoint(p2);
+
+		// if both on or in front, not clipped to this plane
+		if (d1 > -LIGHT_CLIP_EPSILON && d2 > -LIGHT_CLIP_EPSILON)
+		{
+			continue;
+		}
+
+		// if one is behind and the other isn't clearly in front, the edge is clipped off
+		if (d1 <= -LIGHT_CLIP_EPSILON && d2 < LIGHT_CLIP_EPSILON)
+		{
+			return false;
+		}
+
+		if (d2 <= -LIGHT_CLIP_EPSILON && d1 < LIGHT_CLIP_EPSILON) 
+		{
+			return false;
+		}
+
+		// clip it, keeping the negative side
+		Vector3& clip = (d1 < 0) ? p1 : p2;
+
+#if 0
+		if ( idMath::Fabs(d1 - d2) < 0.001 ) {
+			d2 = d1 - 0.1;
+		}
+#endif
+
+		float f = d1 / (d1 - d2);
+
+		clip[0] = p1[0] + f * (p2[0] - p1[0]);
+		clip[1] = p1[1] + f * (p2[1] - p1[1]);
+		clip[2] = p1[2] + f * (p2[2] - p1[2]);
+	}
+
+	return true;	// retain a fragment
+}
+
+void ProcCompiler::addSilEdges(const Surface& tri, unsigned short* pointCull, const Plane3 frustum[6], 
+	int* remap, unsigned char* faceCastsShadow)
+{
+	std::size_t numPlanes = tri.indices.size() / 3;
+
+	// add sil edges for any true silhouette boundaries on the surface
+	for (std::size_t i = 0; i < tri.silEdges.size(); ++i)
+	{
+		const Surface::SilEdge& sil = tri.silEdges[i];
+
+		if (sil.p1 < 0 || sil.p1 > numPlanes || sil.p2 < 0 || sil.p2 > numPlanes)
+		{
+			globalErrorStream() << "Bad sil planes" << std::endl;
+			return;
+		}
+
+		// an edge will be a silhouette edge if the face on one side
+		// casts a shadow, but the face on the other side doesn't.
+		// "casts a shadow" means that it has some surface in the projection,
+		// not just that it has the correct facing direction
+		// This will cause edges that are exactly on the frustum plane
+		// to be considered sil edges if the face inside casts a shadow.
+		if (!(faceCastsShadow[sil.p1] ^ faceCastsShadow[sil.p2]))
+		{
+			continue;
+		}
+
+		// if the edge is completely off the negative side of
+		// a frustum plane, don't add it at all.  This can still
+		// happen even if the face is visible and casting a shadow
+		// if it is partially clipped
+		if (EDGE_CULLED(sil.v1, sil.v2))
+		{
+			continue;
+		}
+
+		std::size_t v1 = 0;
+		std::size_t v2 = 0;
+
+		// see if the edge needs to be clipped
+		if (EDGE_CLIPPED(sil.v1, sil.v2))
+		{
+			if (_numShadowVerts + 4 > MAX_SHADOW_VERTS)
+			{
+				_overflowed = true;
+				return;
+			}
+
+			v1 = _numShadowVerts;
+			v2 = v1 + 2;
+
+			if (!clipLineToLight(tri.vertices[sil.v1].vertex, tri.vertices[sil.v2].vertex, 
+				frustum, _shadowVerts[v1].getVector3(), _shadowVerts[v2].getVector3()))
+			{
+				continue;	// clipped away
+			}
+
+			_numShadowVerts += 4;
+		} 
+		else 
+		{
+			// use the entire edge
+			v1 = remap[sil.v1];
+			v2 = remap[sil.v2];
+			if ( v1 < 0 || v2 < 0 )
+			{
+				globalErrorStream() << "addSilEdges: bad remap[]" << std::endl;
+				return;
+			}
+		}
+
+		// don't overflow
+		if (_numShadowIndices + 6 > MAX_SHADOW_INDEXES)
+		{
+			_overflowed = true;
+			return;
+		}
+
+		// we need to choose the correct way of triangulating the silhouette quad
+		// consistantly between any two points, no matter which order they are specified.
+		// If this wasn't done, slight rasterization cracks would show in the shadow
+		// volume when two sil edges were exactly coincident
+		if (faceCastsShadow[sil.p2])
+		{
+			if (pointsOrdered(_shadowVerts[v1].getVector3(), _shadowVerts[v2].getVector3()))
+			{
+				_shadowIndices[_numShadowIndices++] = v1;
+				_shadowIndices[_numShadowIndices++] = v1+1;
+				_shadowIndices[_numShadowIndices++] = v2;
+				_shadowIndices[_numShadowIndices++] = v2;
+				_shadowIndices[_numShadowIndices++] = v1+1;
+				_shadowIndices[_numShadowIndices++] = v2+1;
+			} 
+			else
+			{
+				_shadowIndices[_numShadowIndices++] = v1;
+				_shadowIndices[_numShadowIndices++] = v2+1;
+				_shadowIndices[_numShadowIndices++] = v2;
+				_shadowIndices[_numShadowIndices++] = v1;
+				_shadowIndices[_numShadowIndices++] = v1+1;
+				_shadowIndices[_numShadowIndices++] = v2+1;
+			}
+		}
+		else
+		{ 
+			if (pointsOrdered(_shadowVerts[v1].getVector3(), _shadowVerts[v2].getVector3()))
+			{
+				_shadowIndices[_numShadowIndices++] = v1;
+				_shadowIndices[_numShadowIndices++] = v2;
+				_shadowIndices[_numShadowIndices++] = v1+1;
+				_shadowIndices[_numShadowIndices++] = v2;
+				_shadowIndices[_numShadowIndices++] = v2+1;
+				_shadowIndices[_numShadowIndices++] = v1+1;
+			} 
+			else
+			{
+				_shadowIndices[_numShadowIndices++] = v1;
+				_shadowIndices[_numShadowIndices++] = v2;
+				_shadowIndices[_numShadowIndices++] = v2+1;
+				_shadowIndices[_numShadowIndices++] = v1;
+				_shadowIndices[_numShadowIndices++] = v2+1;
+				_shadowIndices[_numShadowIndices++] = v1+1;
+			}
+		}
+	}
+}
+
+void ProcCompiler::createShadowVolumeInFrustum(const Matrix4& transform, const Surface& tri,
+	const ProcLight& light, const Vector3& lightOrigin, const Plane3 frustum[6],
+	const Plane3 &farPlane, bool makeClippedPlanes, int* remap, unsigned char* faceCastsShadow,
+	std::vector<unsigned char>& globalFacing)
+{
+#if 0
+	int		cullBits;
+#endif
+
+	unsigned short* pointCull = (unsigned short*)alloca(tri.vertices.size() * sizeof(unsigned short));
+
+	// test the vertexes for inside the light frustum, which will allow
+	// us to completely cull away some triangles from consideration.
+	calcPointCull(tri, frustum, pointCull, remap);
+
+	// this may not be the first frustum added to the volume
+	std::size_t firstShadowIndex = _numShadowIndices;
+	std::size_t firstShadowVert = _numShadowVerts;
+
+	// decide which triangles front shadow volumes, clipping as needed
+	_numClipSilEdges = 0;
+
+	std::size_t numTris = tri.indices.size() / 3;
+
+	for (std::size_t i = 0; i < numTris; ++i)
+	{
+		faceCastsShadow[i] = 0;	// until shown otherwise
+
+		// if it isn't facing the right way, don't add it
+		// to the shadow volume
+		if (globalFacing[i])
+		{
+			continue;
+		}
+
+		int i1 = tri.silIndexes[i*3 + 0];
+		int i2 = tri.silIndexes[i*3 + 1];
+		int i3 = tri.silIndexes[i*3 + 2];
+
+		// if all the verts are off one side of the frustum,
+		// don't add any of them
+		if (pointCull[i1] & pointCull[i2] & pointCull[i3] & 0x3f)
+		{
+			continue;
+		}
+
+		// make sure the verts that are not on the negative sides
+		// of the frustum are copied over.
+		// we need to get the original verts even from clipped triangles
+		// so the edges reference correctly, because an edge may be unclipped
+		// even when a triangle is clipped.
+		if (_numShadowVerts + 6 > MAX_SHADOW_VERTS)
+		{
+			_overflowed = true;
+			return;
+		}
+
+		if (!POINT_CULLED(i1) && remap[i1] == -1)
+		{
+			remap[i1] = _numShadowVerts;
+			_shadowVerts[_numShadowVerts].getVector3() = tri.vertices[i1].vertex;
+			_numShadowVerts += 2;
+		}
+
+		if (!POINT_CULLED(i2) && remap[i2] == -1)
+		{
+			remap[i2] = _numShadowVerts;
+			_shadowVerts[_numShadowVerts].getVector3() = tri.vertices[i2].vertex;
+			_numShadowVerts += 2;
+		}
+
+		if (!POINT_CULLED(i3) && remap[i3] == -1)
+		{
+			remap[i3] = _numShadowVerts;
+			_shadowVerts[_numShadowVerts].getVector3() = tri.vertices[i3].vertex;
+			_numShadowVerts += 2;
+		}
+
+		// clip the triangle if any points are on the negative sides
+		if ( TRIANGLE_CLIPPED( i1, i2, i3 ) )
+		{
+			int cullBits = ( ( pointCull[ i1 ] ^ 0xfc0 ) | ( pointCull[ i2 ] ^ 0xfc0 ) | ( pointCull[ i3 ] ^ 0xfc0 ) ) >> 6;
+
+			// this will also define clip edges that will become silhouette planes
+			if (clipTriangleToLight(tri.vertices[i1].vertex, tri.vertices[i2].vertex, tri.vertices[i3].vertex, cullBits, frustum))
+			{
+				faceCastsShadow[i] = 1;
+			}
+		} 
+		else
+		{
+			// instead of overflowing or drawing a streamer shadow, don't draw a shadow at all
+			if (_numShadowIndices + 3 > MAX_SHADOW_INDEXES)
+			{
+				_overflowed = true;
+				return;
+			}
+
+			if (remap[i1] == -1 || remap[i2] == -1 || remap[i3] == -1)
+			{
+				globalErrorStream() << "createShadowVolumeInFrustum: bad remap[]" << std::endl;
+				return;
+			}
+
+			_shadowIndices[_numShadowIndices++] = remap[i3];
+			_shadowIndices[_numShadowIndices++] = remap[i2];
+			_shadowIndices[_numShadowIndices++] = remap[i1];
+			faceCastsShadow[i] = 1;
+		}
+	}
+
+	// add indexes for the back caps, which will just be reversals of the
+	// front caps using the back vertexes
+	std::size_t numCapIndexes = _numShadowIndices - firstShadowIndex;
+
+	// if no faces have been defined for the shadow volume,
+	// there won't be anything at all
+	if (numCapIndexes == 0)
+	{
+		return;
+	}
+
+	//--------------- off-line processing ------------------
+
+	// if we are running from dmap, perform the (very) expensive shadow optimizations
+	// to remove internal sil edges and optimize the caps
+	if (false/*callOptimizer*/) // greebo: defaults to false for the moment being
+	{
+#if 0
+		optimizedShadow_t opt;
+		
+		// project all of the vertexes to the shadow plane, generating
+		// an equal number of back vertexes
+//		R_ProjectPointsToFarPlane( ent, light, farPlane, firstShadowVert, numShadowVerts );
+
+		opt = SuperOptimizeOccluders( shadowVerts, shadowIndexes + firstShadowIndex, numCapIndexes, farPlane, lightOrigin );
+
+		// pull off the non-optimized data
+		numShadowIndexes = firstShadowIndex;
+		numShadowVerts = firstShadowVert;
+
+		// add the optimized data
+		if ( numShadowIndexes + opt.totalIndexes > MAX_SHADOW_INDEXES 
+			|| numShadowVerts + opt.numVerts > MAX_SHADOW_VERTS ) {
+			overflowed = true;
+			common->Printf( "WARNING: overflowed MAX_SHADOW tables, shadow discarded\n" );
+			Mem_Free( opt.verts );
+			Mem_Free( opt.indexes );
+			return;
+		}
+
+		for ( i = 0 ; i < opt.numVerts ; i++ ) {
+			shadowVerts[numShadowVerts+i][0] = opt.verts[i][0];
+			shadowVerts[numShadowVerts+i][1] = opt.verts[i][1];
+			shadowVerts[numShadowVerts+i][2] = opt.verts[i][2];
+			shadowVerts[numShadowVerts+i][3] = 1;
+		}
+		for ( i = 0 ; i < opt.totalIndexes ; i++ ) {
+			int	index = opt.indexes[i];
+			if ( index < 0 || index > opt.numVerts ) {
+				common->Error( "optimized shadow index out of range" );
+			}
+			shadowIndexes[numShadowIndexes+i] = index + numShadowVerts;
+		}
+
+		numShadowVerts += opt.numVerts;
+		numShadowIndexes += opt.totalIndexes;
+
+		// note the index distribution so we can sort all the caps after all the sils
+		indexRef[indexFrustumNumber].frontCapStart = firstShadowIndex;
+		indexRef[indexFrustumNumber].rearCapStart = firstShadowIndex+opt.numFrontCapIndexes;
+		indexRef[indexFrustumNumber].silStart = firstShadowIndex+opt.numFrontCapIndexes+opt.numRearCapIndexes;
+		indexRef[indexFrustumNumber].end = numShadowIndexes;
+		indexFrustumNumber++;
+
+		Mem_Free( opt.verts );
+		Mem_Free( opt.indexes );
+#endif
+		return;
+	}
+
+	//--------------- real-time processing ------------------
+
+	// the dangling edge "face" is never considered to cast a shadow,
+	// so any face with dangling edges that casts a shadow will have
+	// it's dangling sil edge trigger a sil plane
+	faceCastsShadow[numTris] = 0;
+
+	// instead of overflowing or drawing a streamer shadow, don't draw a shadow at all
+	// if we ran out of space
+	if (_numShadowIndices + numCapIndexes > MAX_SHADOW_INDEXES)
+	{
+		_overflowed = true;
+		return;
+	}
+
+	for (std::size_t i = 0; i < numCapIndexes; i += 3)
+	{
+		_shadowIndices[_numShadowIndices + i + 0] = _shadowIndices[firstShadowIndex + i + 2] + 1;
+		_shadowIndices[_numShadowIndices + i + 1] = _shadowIndices[firstShadowIndex + i + 1] + 1;
+		_shadowIndices[_numShadowIndices + i + 2] = _shadowIndices[firstShadowIndex + i + 0] + 1;
+	}
+
+	_numShadowIndices += numCapIndexes;
+
+	// c_caps += numCapIndexes * 2;
+
+	std::size_t preSilIndexes = _numShadowIndices;
+
+	// if any triangles were clipped, we will have a list of edges
+	// on the frustum which must now become sil edges
+	if (makeClippedPlanes)
+	{
+		addClipSilEdges();
+	}
+
+	// any edges that are a transition between a shadowing and
+	// non-shadowing triangle will cast a silhouette edge
+	addSilEdges(tri, pointCull, frustum, remap, faceCastsShadow);
+
+	// c_sils += numShadowIndexes - preSilIndexes;
+#if 0
+	// project all of the vertexes to the shadow plane, generating
+	// an equal number of back vertexes
+	R_ProjectPointsToFarPlane( ent, light, farPlane, firstShadowVert, numShadowVerts );
+
+	// note the index distribution so we can sort all the caps after all the sils
+	indexRef[indexFrustumNumber].frontCapStart = firstShadowIndex;
+	indexRef[indexFrustumNumber].rearCapStart = firstShadowIndex+numCapIndexes;
+	indexRef[indexFrustumNumber].silStart = preSilIndexes;
+	indexRef[indexFrustumNumber].end = numShadowIndexes;
+	indexFrustumNumber++;
+#endif
 }
 
 Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface& tri, const ProcLight& light,
@@ -3634,8 +4404,8 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 	}
 
 	// clear the shadow volume
-	std::size_t numShadowIndexes = 0;
-	std::size_t numShadowVerts = 0;
+	_numShadowIndices = 0;
+	_numShadowVerts = 0;
 	bool overflowed = false;
 	std::size_t indexFrustumNumber = 0;
 	int capPlaneBits = 0;
@@ -3650,14 +4420,13 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 
 	Vector3 lightOrigin = globalPointToLocal(transform, light.getGlobalLightOrigin());
 	
-#if 0
 	// run through all the shadow frustums, which is one for a projected light,
 	// and usually six for a point light, but point lights with centers outside
 	// the box may have less
-	for (int frustumNum = 0 ; frustumNum < light->numShadowFrustums ; frustumNum++ )
+	for (std::size_t frustumNum = 0; frustumNum < light.numShadowFrustums; ++frustumNum)
 	{
-		const shadowFrustum_t	*frust = &light->shadowFrustums[frustumNum];
-		ALIGN16( idPlane frustum[6] );
+		const ShadowFrustum& frust = light.shadowFrustums[frustumNum];
+		Plane3 frustum[6];
 
 		// transform the planes into entity space
 		// we could share and reverse some of the planes between frustums for a minor
@@ -3665,31 +4434,41 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 
 		// the cull test is redundant for a single shadow frustum projected light, because
 		// the surface has already been checked against the main light frustums
+		std::size_t j = 0;
 
-		for ( j = 0 ; j < frust->numPlanes ; j++ ) {
-			R_GlobalPlaneToLocal( ent->modelMatrix, frust->planes[j], frustum[j] );
+		for (j = 0; j < frust.numPlanes; ++j)
+		{
+			frustum[j] = transform.transform(frust.planes[j]);
+			//R_GlobalPlaneToLocal( ent->modelMatrix, frust->planes[j], frustum[j] );
 
 			// try to cull the entire surface against this frustum
-			float d = tri->bounds.PlaneDistance( frustum[j] );
-			if ( d < -LIGHT_CLIP_EPSILON ) {
+			float d = planeDistanceToBounds(tri.bounds, frustum[j]);
+
+			if (d < -LIGHT_CLIP_EPSILON)
+			{
 				break;
 			}
 		}
-		if ( j != frust->numPlanes ) {
+
+		if (j != frust.numPlanes)
+		{
 			continue;
 		}
-		// we need to check all the triangles
-		int		oldFrustumNumber = indexFrustumNumber;
 
-		R_CreateShadowVolumeInFrustum( ent, tri, light, lightOrigin, frustum, frustum[5], frust->makeClippedPlanes );
+		// we need to check all the triangles
+		int oldFrustumNumber = indexFrustumNumber;
+
+		createShadowVolumeInFrustum(transform, tri, light, lightOrigin, frustum, frustum[5], frust.makeClippedPlanes, remap, faceCastsShadow, globalFacing);
 
 		// if we couldn't make a complete shadow volume, it is better to
 		// not draw one at all, avoiding streamer problems
-		if ( overflowed ) {
-			return NULL;
+		if (overflowed)
+		{
+			return Surface();
 		}
 
-		if ( indexFrustumNumber != oldFrustumNumber ) {
+		if (indexFrustumNumber != oldFrustumNumber)
+		{
 			// note that we have caps projected against this frustum,
 			// which may allow us to skip drawing the caps if all projected
 			// planes face away from the viewer and the viewer is outside the light volume
@@ -3699,13 +4478,15 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 
 	// if no faces have been defined for the shadow volume,
 	// there won't be anything at all
-	if ( numShadowIndexes == 0 ) {
-		return NULL;
+	if (_numShadowIndices == 0) 
+	{
+		return Surface();
 	}
 
+#if 0 // TODO
 	// this should have been prevented by the overflowed flag, so if it ever happens,
 	// it is a code error
-	if ( numShadowVerts > MAX_SHADOW_VERTS || numShadowIndexes > MAX_SHADOW_INDEXES ) {
+	if (numShadowVerts > MAX_SHADOW_VERTS || numShadowIndexes > MAX_SHADOW_INDEXES ) {
 		common->FatalError( "Shadow volume exceeded allocation" );
 	}
 

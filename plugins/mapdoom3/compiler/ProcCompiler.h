@@ -79,6 +79,26 @@ private:
 		SG_OFFLINE		// perform very time consuming optimizations
 	};
 
+	std::size_t _numShadowIndices;
+	std::size_t _numShadowVerts;
+	std::size_t _numClipSilEdges;
+	bool _overflowed;
+	std::vector<Vector4> _shadowVerts;
+	std::vector<int>	 _shadowIndices;
+
+#define	MAX_CLIP_SIL_EDGES		2048
+
+	int	_clipSilEdges[MAX_CLIP_SIL_EDGES][2];
+
+#define	MAX_CLIPPED_POINTS	20
+
+	struct ClipTri
+	{
+		int		numVerts;
+		Vector3	verts[MAX_CLIPPED_POINTS];
+		int		edgeFlags[MAX_CLIPPED_POINTS];
+	};
+
 public:
 	ProcCompiler(const scene::INodePtr& root);
 
@@ -270,6 +290,49 @@ private:
 	// the number of surface triangles, which will be used to handle dangling
 	void calcInteractionFacing(const Matrix4& transform, const Surface& tri, const ProcLight& light,
 							 Surface::CullInfo& cullInfo);
+
+	// Adds new verts and indexes to the shadow volume.
+	// 
+	// If the frustum completely defines the projected light,
+	// makeClippedPlanes should be true, which will cause sil quads to
+	// be added along all clipped edges.
+	// 
+	// If the frustum is just part of a point light, clipped planes don't
+	// need to be added.
+	void createShadowVolumeInFrustum(const Matrix4& transform, const Surface& tri,
+									const ProcLight& light, const Vector3& lightOrigin, const Plane3 frustum[6],
+									const Plane3 &farPlane, bool makeClippedPlanes, int* remap, 
+									unsigned char* faceCastsShadow, std::vector<unsigned char>& globalFacing);
+
+	// Also inits the remap[] array to all -1
+	void calcPointCull(const Surface& tri, const Plane3 frustum[6], unsigned short* pointCull, int* remap);
+
+	bool clipTriangleToLight(const Vector3& a, const Vector3& b, const Vector3& c, int planeBits, const Plane3 frustum[6]);
+
+	// Clips a triangle from one buffer to another, setting edge flags
+	// The returned buffer may be the same as inNum if no clipping is done
+	// If entirely clipped away, clipTris[returned].numVerts == 0
+	// 
+	// I have some worries about edge flag cases when polygons are clipped
+	// multiple times near the epsilon.
+	int chopWinding(ClipTri clipTris[2], int inNum, const Plane3& plane);
+
+	// Add sil edges for each triangle clipped to the side of the frustum.
+	// Only done for simple projected lights, not point lights.
+	void addClipSilEdges();
+
+	// Add quads from the front points to the projected points
+	// for each silhouette edge in the light
+	void addSilEdges(const Surface& tri, unsigned short* pointCull, const Plane3 frustum[6], 
+					 int* remap, unsigned char* faceCastsShadow);
+
+	// If neither point is clearly behind the clipping
+	// plane, the edge will be passed unmodified.  A sil edge that
+	// is on a border plane must be drawn.
+	// 
+	// If one point is clearly clipped by the plane and the
+	// other point is on the plane, it will be completely removed.
+	bool clipLineToLight(const Vector3& a, const Vector3& b, const Plane3 frustum[4], Vector3& p1, Vector3& p2);
 };
 
 } // namespace

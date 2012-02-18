@@ -143,6 +143,76 @@ void ProcLight::parseFromSpawnargs(const Entity& ent)
 	parms.shader = GlobalMaterialManager().getMaterialForName(shader);
 }
 
+// greebo: might be similar to the section in Light::projection() in entity/light/Light.cpp
+void ProcLight::setLightProject(Plane3 lightProject[4], const Vector3& origin, const Vector3& target,
+					   const Vector3& rightVector, const Vector3& upVector, const Vector3& start, const Vector3& stop)
+{
+	Vector3 right = rightVector;
+	float rLen = right.normalise();
+
+	Vector3 up = upVector;
+	float uLen = up.normalise();
+
+	Vector3 normal = up.crossProduct(right);
+//normal = right.Cross( up );
+	normal.normalise();
+
+	float dist = target.dot(normal); //  - ( origin * normal );
+	
+	if (dist < 0)
+	{
+		dist = -dist;
+		normal = -normal;
+	}
+
+	float scale = (0.5f * dist) / rLen;
+	right *= scale;
+
+	scale = -(0.5f * dist) / uLen;
+	up *= scale;
+
+	lightProject[2].normal() = normal;
+	lightProject[2].dist() = origin.dot(lightProject[2].normal());
+
+	lightProject[0].normal() = right;
+	lightProject[0].dist() = origin.dot(lightProject[0].normal());
+
+	lightProject[1].normal() = up;
+	lightProject[1].dist() = origin.dot(lightProject[1].normal());
+
+	// now offset to center
+	Vector4 targetGlobal(target + origin, 1);
+
+	Vector4 lightProject2Vec4(lightProject[2].normal(), -lightProject[2].dist());
+
+	float ofs = 0.5f - targetGlobal.dot(Vector4(lightProject[0].normal(), -lightProject[0].dist())) / targetGlobal.dot(lightProject2Vec4);
+	
+	lightProject[0].normal() += lightProject[2].normal() * ofs;
+	lightProject[0].dist() += lightProject[2].dist() * ofs;
+
+	Vector4 lightProject1Vec4(lightProject[1].normal(), -lightProject[1].dist());
+
+	ofs = 0.5f - targetGlobal.dot(lightProject1Vec4) / targetGlobal.dot(lightProject2Vec4);
+
+	lightProject[1].normal() += lightProject[2].normal() * ofs;
+	lightProject[1].dist() += lightProject[2].dist() * ofs;
+
+	// set the falloff vector
+	normal = stop - start;
+	dist = normal.normalise();
+	
+	if (dist <= 0)
+	{
+		dist = 1;
+	}
+
+	lightProject[3].normal() = normal * (1.0f / dist);
+
+	Vector3 startGlobal = start + origin;
+
+	lightProject[3].dist() = startGlobal.dot(lightProject[3].normal());
+}
+
 void ProcLight::deriveLightData()
 {
 	// decide which light shader we are going to use
@@ -188,9 +258,8 @@ void ProcLight::deriveLightData()
 	if (!parms.pointLight)
 	{
 		// projected light
-		// TODO
-		//R_SetLightProject( lightProject, vec3_origin /* parms.origin */, parms.target, 
-		//	parms.right, parms.up, parms.start, parms.end);
+		setLightProject(lightProject, Vector3(0,0,0) /* parms.origin */, parms.target, 
+			parms.right, parms.up, parms.start, parms.end);
 	}
 	else
 	{

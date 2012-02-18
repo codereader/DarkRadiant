@@ -148,6 +148,12 @@ public:
 private:
 	Matrix4 getRotation(const std::string& value);
 
+	// All values are reletive to the origin
+	// Assumes that right and up are not normalized
+	// This is also called by dmap during map processing.
+	void setLightProject(Plane3 lightProject[4], const Vector3& origin, const Vector3& target,
+					   const Vector3& rightVector, const Vector3& upVector, const Vector3& start, const Vector3& stop);
+
 	// Creates plane equations from the light projection, positive sides
 	// face out of the light (ref: R_SetLightFrustum)
 	void setLightFrustum();

@@ -10,18 +10,19 @@ namespace map
 
 class Surface
 {
-private:
-	// typedefs needed to simulate the idHashIndex class
-	typedef std::multimap<int, std::size_t> IndexLookupMap;
-	typedef std::pair<typename IndexLookupMap::const_iterator, 
-					  typename IndexLookupMap::const_iterator> Range;
-
+public:
 	struct SilEdge
 	{
 		// NOTE: making this a glIndex is dubious, as there can be 2x the faces as verts
 		int	p1, p2;					// planes defining the edge
 		int	v1, v2;					// verts defining the edge
 	};
+
+private:
+	// typedefs needed to simulate the idHashIndex class
+	typedef std::multimap<int, std::size_t> IndexLookupMap;
+	typedef std::pair<typename IndexLookupMap::const_iterator, 
+					  typename IndexLookupMap::const_iterator> Range;
 
 	IndexLookupMap _silEdgeLookup;
 
