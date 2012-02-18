@@ -44,7 +44,7 @@ public:
 
 	void calculateBounds(const ProcArea::OptimizeGroups& groups)
 	{
-		_hashBounds = AABB();
+		//_hashBounds = AABB();
 
 		for (ProcArea::OptimizeGroups::const_iterator group = groups.begin();
 			 group != groups.end(); ++group)
@@ -58,7 +58,7 @@ public:
 		}
 	}
 
-	void hashTriangles(ProcArea::OptimizeGroups& groups)
+	void spreadHashBounds()
 	{
 		Vector3 min = _hashBounds.origin - _hashBounds.extents;
 		Vector3 max = _hashBounds.origin + _hashBounds.extents;
@@ -84,7 +84,10 @@ public:
 				_hashIntScale[i] = 1;
 			}
 		}
+	}
 
+	void hashTriangles(ProcArea::OptimizeGroups& groups)
+	{
 		// add all the points to the hash buckets
 		for (ProcArea::OptimizeGroups::reverse_iterator group = groups.rbegin();
 			 group != groups.rend(); ++group)

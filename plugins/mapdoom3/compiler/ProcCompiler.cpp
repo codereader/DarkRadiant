@@ -2936,8 +2936,10 @@ void ProcCompiler::hashTriangles(ProcArea::OptimizeGroups& groups)
 	_triangleHash.reset(new TriangleHash);
 
 	// bound all the triangles to determine the bucket size
+	_triangleHash->_hashBounds = AABB();
 	_triangleHash->calculateBounds(groups);
 
+	_triangleHash->spreadHashBounds();
 	_triangleHash->hashTriangles(groups);
 }
 
@@ -4798,12 +4800,11 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 	// take the shadower group list and create a beam tree and shadow volume
 	light.shadowTris = createLightShadow(shadowerGroups, light);
 
-	/* TODO
-	if ( light->shadowTris && hasPerforatedSurface ) {
+	if (!light.shadowTris.vertices.empty() && hasPerforatedSurface)
+	{
 		// can't ever remove front faces, because we can see through some of them
-		light->shadowTris->numShadowIndexesNoCaps = light->shadowTris->numShadowIndexesNoFrontCaps = 
-			light->shadowTris->numIndexes;
-	}*/
+		light.shadowTris.numShadowIndicesNoCaps = light.shadowTris.numShadowIndicesNoFrontCaps = light.shadowTris.indices.size();
+	}
 
 	// we don't need the original shadower triangles for anything else
 	//FreeOptimizeGroupList( shadowerGroups );
@@ -4811,10 +4812,6 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 
 void ProcCompiler::preLight(ProcEntity& entity)
 {
-	/*int			i;
-	int			start, end;
-	mapLight_t	*light;*/
-
 	// don't prelight anything but the world entity
 	if (&entity != _procFile->entities[0].get())
 	{
@@ -4845,20 +4842,150 @@ void ProcCompiler::preLight(ProcEntity& entity)
 		}
 	}
 
+	if (false/* !dmapGlobals.noLightCarve */) // greebo: noLightCarve defaults to true
+	{
+		globalOutputStream() << "----- CarveGroupsByLight -----" << std::endl;
 
-	/*if ( !dmapGlobals.noLightCarve ) {
-		common->Printf( "----- CarveGroupsByLight -----\n" );
-		start = Sys_Milliseconds();
 		// now subdivide the optimize groups into additional groups for
 		// each light that illuminates them
-		for ( i = 0 ; i < dmapGlobals.mapLights.Num() ; i++ ) {
-			light = dmapGlobals.mapLights[i];
-			CarveGroupsByLight( e, light );
+		for (std::size_t i = 0; i < _procFile->lights.size(); ++i)
+		{
+			ProcLight& light = _procFile->lights[i];
+			// TODO CarveGroupsByLight( e, light );
 		}
 
-		end = Sys_Milliseconds();
-		common->Printf( "%5.1f seconds for CarveGroupsByLight\n", ( end - start ) / 1000.0 );
-	}*/
+		//common->Printf( "%5.1f seconds for CarveGroupsByLight\n", ( end - start ) / 1000.0 );
+	}
+}
+
+void ProcCompiler::optimizeEntity(ProcEntity& entity)
+{
+	globalOutputStream() << "----- OptimizeEntity -----" << std::endl;
+
+	for (std::size_t i = 0; i < entity.areas.size(); ++i)
+	{
+		optimizeGroupList(entity.areas[i].groups);
+	}
+}
+
+void ProcCompiler::fixGlobalTjunctions(ProcEntity& entity)
+{
+	globalOutputStream() << "----- FixGlobalTjunctions -----" << std::endl;
+
+	_triangleHash.reset(new TriangleHash);
+
+	// bound all the triangles to determine the bucket size
+	_triangleHash->_hashBounds = AABB();
+
+	for (std::size_t a = 0; a < entity.areas.size(); ++a)
+	{
+		_triangleHash->calculateBounds(entity.areas[a].groups);
+	}
+
+	// spread the bounds so it will never have a zero size
+	_triangleHash->spreadHashBounds();
+
+	for (std::size_t a = 0; a < entity.areas.size(); ++a)
+	{
+		_triangleHash->hashTriangles(entity.areas[a].groups);
+	}
+
+	// add all the func_static model vertexes to the hash buckets
+	// optionally inline some of the func_static models
+	if (&entity == _procFile->entities[0].get())
+	{
+		for (std::size_t eNum = 1; eNum < _procFile->entities.size(); ++eNum)
+		{
+			ProcEntity& otherEntity = *_procFile->entities[eNum];
+			Entity& mapEnt = otherEntity.mapEntity->getEntity();
+
+			if (mapEnt.getKeyValue("classname") != "func_static")
+			{
+				continue;
+			}
+
+			std::string modelName = mapEnt.getKeyValue("model");
+
+			if (modelName.empty())
+			{
+				continue;
+			}
+
+			model::IModelPtr model = GlobalModelCache().getModel(modelName);
+			
+			if (model == NULL)
+			{
+				globalWarningStream() << "Cannot fix global t-junctions on entity " << mapEnt.getKeyValue("name") <<
+					" since the model cannot be loaded: " << modelName << std::endl;
+				continue;
+			}
+
+			// get the rotation matrix in either full form, or single angle form
+			std::string rotation = mapEnt.getKeyValue("rotation");
+
+			Matrix4 axis;
+
+			if (rotation.empty())
+			{
+				float angle = strToFloat(mapEnt.getKeyValue("angle"));
+
+				// idMath::AngleNormalize360
+				if (angle >= 360.0f || angle < 0.0f)
+				{
+					angle -= floor(angle / 360.0f) * 360.0f;
+				}
+
+				axis = Matrix4::getRotationAboutZDegrees(angle);
+			}
+			else
+			{
+				axis = Matrix4::getRotation(rotation);
+			}
+
+			Vector3 origin = Vector3(mapEnt.getKeyValue("origin"));
+
+			for (int i = 0; i < model->getSurfaceCount(); ++i)
+			{
+				const model::IModelSurface& surface = model->getSurface(i);
+
+				MaterialPtr material = GlobalMaterialManager().getMaterialForName(surface.getDefaultMaterial());
+
+				for (int v = 0; v < surface.getNumVertices(); v += 3) // greebo: += 3 => is this ok with DR's model structure?
+				{
+					const ArbitraryMeshVertex& vertex = surface.getVertex(v);
+
+					Vector3 transformed = axis.transformPoint(vertex.vertex) + origin;
+					_triangleHash->getHashVert(transformed);
+				}
+			}
+		}
+	}
+
+	// now fix each area
+	for (std::size_t a = 0; a < entity.areas.size(); ++a)
+	{
+		for (ProcArea::OptimizeGroups::reverse_iterator group = entity.areas[a].groups.rbegin();
+			 group != entity.areas[a].groups.rend(); ++group)
+		{
+			// don't touch discrete surfaces
+			if (group->material && group->material->isDiscrete())
+			{
+				continue;
+			}
+
+			ProcTris newList;
+
+			for (ProcTris::const_iterator tri = group->triList.begin(); tri != group->triList.end(); ++tri)
+			{
+				_triangleHash->fixTriangleAgainstHash(*tri, newList);
+			}
+
+			group->triList.swap(newList);
+		}
+	}
+	
+	// done
+	_triangleHash.reset();
 }
 
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
@@ -4930,15 +5057,18 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 	// case
 	preLight(entity);
 
-	/*// optimizing is a superset of fixing tjunctions
-	if ( !dmapGlobals.noOptimize ) {
-		OptimizeEntity( e );
-	} else  if ( !dmapGlobals.noTJunc ) {
-		FixEntityTjunctions( e );
+	// optimizing is a superset of fixing tjunctions
+	if (true/*!dmapGlobals.noOptimize*/) // greebo: noOptimize is false by default
+	{
+		optimizeEntity(entity);
+	}
+	else if (false/*!dmapGlobals.noTJunc*/)
+	{
+		// TODO FixEntityTjunctions( e );
 	}
 
 	// now fix t junctions across areas
-	FixGlobalTjunctions( e );*/
+	fixGlobalTjunctions(entity);
 
 	return true;
 }

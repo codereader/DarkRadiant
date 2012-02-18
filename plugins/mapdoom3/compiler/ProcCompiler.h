@@ -349,6 +349,10 @@ private:
 	// that is on the far light clip plane
 	void projectPointsToFarPlane(const Matrix4& transform, const ProcLight& light, 
 								const Plane3& lightPlaneLocal, std::size_t firstShadowVert, std::size_t numShadowVerts);
+
+	void optimizeEntity(ProcEntity& entity);
+
+	void fixGlobalTjunctions(ProcEntity& entity);
 };
 
 } // namespace
