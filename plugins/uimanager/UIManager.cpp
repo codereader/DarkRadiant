@@ -121,7 +121,7 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbuf(const std::string& fileName)
 	{
 		pixbuf = Gdk::Pixbuf::create_from_file(fullFileName);
 
-		if (pixbuf == NULL)
+		if (!pixbuf)
 		{
 			globalErrorStream() << "Couldn't load pixbuf " << fullFileName << std::endl;
 		}
@@ -157,7 +157,7 @@ Glib::RefPtr<Gdk::Pixbuf> UIManager::getLocalPixbufWithMask(const std::string& f
 	{
 		Glib::RefPtr<Gdk::Pixbuf> rgb = Gdk::Pixbuf::create_from_file(fullFileName);
 
-		if (rgb != NULL)
+		if (rgb)
 		{
 			// File load successful, add alpha channel
 			rgba = rgb->add_alpha(true, 255, 0, 255);

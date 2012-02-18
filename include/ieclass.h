@@ -56,19 +56,19 @@ private:
 	 * String references are shared_ptrs to save memory.
 	 * The actual string might be owned by another entity class we're inheriting from.
 	 */
-	typedef boost::shared_ptr<std::string> StringRef;
+	typedef boost::shared_ptr<std::string> StringPtr;
 
 	// Reference to the name string
-	StringRef _typeRef;
+	StringPtr _typeRef;
 
 	// Reference to the name string
-	StringRef _nameRef;
+	StringPtr _nameRef;
 
 	// Reference to the attribute value string
-	StringRef _valueRef;
+	StringPtr _valueRef;
 
 	// Reference to the description string
-	StringRef _descRef;
+	StringPtr _descRef;
 
 public:
 	/**
@@ -79,7 +79,7 @@ public:
 		return *_typeRef;
 	}
 
-	const StringRef& getTypeRef() const
+	const StringPtr& getTypeRef() const
 	{
 		return _typeRef;
 	}
@@ -89,7 +89,7 @@ public:
 		_typeRef.reset(new std::string(type));
 	}
 
-	void setType(const StringRef& typeRef)
+	void setType(const StringPtr& typeRef)
 	{
 		_typeRef = typeRef;
 	}
@@ -102,7 +102,7 @@ public:
 		return *_nameRef;
 	}
 
-	const StringRef& getNameRef() const
+	const StringPtr& getNameRef() const
 	{
 		return _nameRef;
 	}
@@ -117,7 +117,7 @@ public:
 		return *_valueRef;
 	}
 
-	const StringRef& getValueRef() const
+	const StringPtr& getValueRef() const
 	{
 		return _valueRef;
 	}
@@ -131,7 +131,7 @@ public:
 		_valueRef.reset(new std::string(value));
 	}
 
-	void setValue(const StringRef& valueRef)
+	void setValue(const StringPtr& valueRef)
 	{
 		_valueRef = valueRef;
 	}
@@ -144,7 +144,7 @@ public:
 		return *_descRef;
 	}
 
-	const StringRef& getDescriptionRef() const
+	const StringPtr& getDescriptionRef() const
 	{
 		return _descRef;
 	}
@@ -154,7 +154,7 @@ public:
 		_descRef.reset(new std::string(desc));
 	}
 
-	void setDescription(const StringRef& descRef)
+	void setDescription(const StringPtr& descRef)
 	{
 		_descRef = descRef;
 	}

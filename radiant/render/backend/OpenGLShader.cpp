@@ -261,7 +261,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 		dbsPass.setColour(triplet.diffuse->getColour());
 	}
 
-    dbsPass.m_depthfunc = GL_LEQUAL;
+    dbsPass.setDepthFunc(GL_LEQUAL);
     dbsPass.polygonOffset = 0.5f;
     dbsPass.m_sort = OpenGLState::eSortMultiFirst;
     dbsPass.m_blend_src = GL_ONE;
@@ -558,7 +558,7 @@ void OpenGLShader::construct(const std::string& name)
 
             state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
             state.m_sort = OpenGLState::eSortFullbright;
-            state.m_depthfunc = GL_LESS;
+            state.setDepthFunc(GL_LESS);
             state.m_linewidth = 1;
             state.m_pointsize = 1;
             break;
@@ -600,13 +600,13 @@ void OpenGLShader::construct(const std::string& name)
               state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.m_sort = OpenGLState::eSortGUI1;
               state.m_linewidth = 2;
-              state.m_depthfunc = GL_LEQUAL;
+              state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
               hiddenLine.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
               hiddenLine.m_linewidth = 2;
-              hiddenLine.m_depthfunc = GL_GREATER;
+              hiddenLine.setDepthFunc(GL_GREATER);
             }
             else if (name == "$LATTICE")
             {
@@ -630,19 +630,19 @@ void OpenGLShader::construct(const std::string& name)
               state.setColour(highLightColour);
               state.m_sort = OpenGLState::eSortHighlight;
               state.polygonOffset = 0.5f;
-              state.m_depthfunc = GL_LEQUAL;
+              state.setDepthFunc(GL_LEQUAL);
             }
             else if (name == "$CAM_OVERLAY")
             {
               state.setRenderFlags(RENDER_CULLFACE | RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_OFFSETLINE);
               state.m_sort = OpenGLState::eSortOverlayFirst + 1;
-              state.m_depthfunc = GL_LEQUAL;
+              state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
               hiddenLine.setColour(0.75, 0.75, 0.75, 1);
               hiddenLine.setRenderFlags(RENDER_CULLFACE | RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_OFFSETLINE | RENDER_LINESTIPPLE);
               hiddenLine.m_sort = OpenGLState::eSortOverlayFirst;
-              hiddenLine.m_depthfunc = GL_GREATER;
+              hiddenLine.setDepthFunc(GL_GREATER);
               hiddenLine.m_linestipple_factor = 2;
             }
             else if (name == "$XY_OVERLAY")
@@ -673,23 +673,23 @@ void OpenGLShader::construct(const std::string& name)
             {
               state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE);
               state.m_sort = OpenGLState::eSortGUI1;
-              state.m_depthfunc = GL_LEQUAL;
+              state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
               hiddenLine.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE);
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
-              hiddenLine.m_depthfunc = GL_GREATER;
+              hiddenLine.setDepthFunc(GL_GREATER);
             }
             else if (name == "$FLATSHADE_OVERLAY")
             {
               state.setRenderFlags(RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE);
               state.m_sort = OpenGLState::eSortGUI1;
-              state.m_depthfunc = GL_LEQUAL;
+              state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
               hiddenLine.setRenderFlags(RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_POLYGONSTIPPLE);
               hiddenLine.m_sort = OpenGLState::eSortGUI0;
-              hiddenLine.m_depthfunc = GL_GREATER;
+              hiddenLine.setDepthFunc(GL_GREATER);
             }
             else if (name == "$CLIPPER_OVERLAY")
             {

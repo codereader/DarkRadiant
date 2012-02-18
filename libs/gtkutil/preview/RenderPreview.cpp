@@ -97,7 +97,9 @@ RenderPreview::RenderPreview() :
 	toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
 
 	_startButton = Gtk::manage(new Gtk::ToolButton);
-	_startButton->signal_clicked().connect(sigc::mem_fun(*this, &RenderPreview::onStart));
+	_startButton->signal_clicked().connect(
+        sigc::mem_fun(*this, &RenderPreview::startPlayback)
+    );
 	_startButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_PLAY, Gtk::ICON_SIZE_MENU)));
 	_startButton->set_tooltip_text(_("Start time"));
 
@@ -107,7 +109,9 @@ RenderPreview::RenderPreview() :
 	_pauseButton->set_tooltip_text(_("Pause time"));
 
 	_stopButton = Gtk::manage(new Gtk::ToolButton);
-	_stopButton->signal_clicked().connect(sigc::mem_fun(*this, &RenderPreview::onStop));
+	_stopButton->signal_clicked().connect(
+        sigc::mem_fun(*this, &RenderPreview::stopPlayback)
+    );
 	_stopButton->set_icon_widget(*Gtk::manage(new Gtk::Image(Gtk::Stock::MEDIA_STOP, Gtk::ICON_SIZE_MENU)));
 	_stopButton->set_tooltip_text(_("Stop time"));
 
@@ -383,7 +387,7 @@ bool RenderPreview::onGLDraw(GdkEventExpose*)
 	glViewport(0, 0, _previewWidth, _previewHeight);
 
 	// Set up the render and clear the drawing area in any case
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set up the camera
@@ -501,11 +505,6 @@ bool RenderPreview::onGLScroll(GdkEventScroll* ev)
 	return false;
 }
 
-void RenderPreview::onStart()
-{
-	startPlayback();
-}
-
 void RenderPreview::onPause()
 {
 	// Disable the button
@@ -519,11 +518,6 @@ void RenderPreview::onPause()
 	{
 		_timer.enable(); // re-enable playback
 	}
-}
-
-void RenderPreview::onStop()
-{
-	stopPlayback();
 }
 
 void RenderPreview::onStepForward()

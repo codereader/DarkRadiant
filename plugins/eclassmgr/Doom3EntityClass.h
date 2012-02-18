@@ -31,13 +31,13 @@ class Doom3EntityClass
 : public IEntityClass
 {
 private:
-	typedef boost::shared_ptr<std::string> StringRef;
+	typedef boost::shared_ptr<std::string> StringPtr;
 
 	class StringCompareFunctor :
 		public std::binary_function<std::string, std::string, bool>
 	{
 	public:
-		bool operator()(const StringRef& lhs, const StringRef& rhs) const
+		bool operator()(const StringPtr& lhs, const StringPtr& rhs) const
 		{
 			//return boost::algorithm::ilexicographical_compare(lhs, rhs); // this is slow!
 			return string_compare_nocase(lhs->c_str(), rhs->c_str()) < 0;
@@ -65,7 +65,7 @@ private:
 	// Map of named EntityAttribute structures. EntityAttributes are picked
 	// up from the DEF file during parsing. Ignores key case.
 
-	// greebo: I've changed the EntityAttributeMap key type to StringRef, to save
+	// greebo: I've changed the EntityAttributeMap key type to StringPtr, to save
 	// more than 130 MB of string data used for just the keys. A default TDM installation
 	// has about 780k entity class attributes after resolving inheritance.
 	// However, the memory saving comes with a performance cost since we need 
@@ -74,7 +74,7 @@ private:
 	// there are about 64k find() operations, a single idLight
 	// creation costs about 30-40 find() operations, which is ok I guess.
 
-	typedef std::map<StringRef, EntityClassAttribute, StringCompareFunctor> EntityAttributeMap;
+	typedef std::map<StringPtr, EntityClassAttribute, StringCompareFunctor> EntityAttributeMap;
 	EntityAttributeMap _attributes;
 
 	// The model and skin for this entity class (if it has one)

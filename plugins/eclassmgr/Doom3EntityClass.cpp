@@ -251,7 +251,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 // Find a single attribute
 EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
 {
-	StringRef ref(new std::string(name));
+	StringPtr ref(new std::string(name));
 
 	EntityAttributeMap::iterator f = _attributes.find(ref);
 
@@ -261,7 +261,7 @@ EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
 // Find a single attribute
 const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name) const
 {
-	StringRef ref(new std::string(name));
+	StringPtr ref(new std::string(name));
 
 	EntityAttributeMap::const_iterator f = _attributes.find(ref);
 

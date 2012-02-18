@@ -167,7 +167,7 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glColor4f(1,1,1,1);
-    glDepthFunc(GL_LESS);
+    glDepthFunc(current.getDepthFunc());
     glAlphaFunc(GL_ALWAYS, 0);
     glLineWidth(1);
     glPointSize(1);

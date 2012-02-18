@@ -11,7 +11,7 @@
 #include "irender.h"
 
 #include "render/ShaderStateRenderer.h"
-#include "render/SceneRenderer.h"
+#include "render/SceneRenderWalker.h"
 #include "render/NopVolumeTest.h"
 
 namespace Gtk
@@ -65,7 +65,7 @@ protected:
 	render::NopVolumeTest _volumeTest;
 
 	// The scene adaptor passing nodes into our front-end renderer
-	render::SceneRenderer _sceneWalker;
+	render::SceneRenderWalker _sceneWalker;
 
 	// Current distance between camera and preview
 	GLfloat _camDist;
@@ -141,9 +141,7 @@ private:
 	bool onGLDraw(GdkEventExpose*);
 	bool onGLMotion(GdkEventMotion*);
 	bool onGLScroll(GdkEventScroll*);
-	void onStart();
 	void onPause();
-	void onStop();
 	void onStepForward();
 	void onStepBack();
 	void onSizeAllocate(Gtk::Allocation& allocation);

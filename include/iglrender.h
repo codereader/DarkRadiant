@@ -36,6 +36,9 @@ class OpenGLState
     // Set of RENDER_XXX flags
     unsigned _renderFlags;
 
+    // GL depth function
+    GLenum _glDepthFunc;
+
 public:
 	enum ESort
 	{
@@ -120,6 +123,12 @@ public:
 
     ///@}
 
+    /// Return the depth function
+    GLenum getDepthFunc() const { return _glDepthFunc; }
+
+    /// Set the depth function
+    void setDepthFunc(GLenum func) { _glDepthFunc = func; }
+
     /**
      * \brief
      * Sort position.
@@ -172,8 +181,6 @@ public:
      */
     GLenum m_blend_dst;
 
-	GLenum m_depthfunc;
-
     // Alpha test function
     GLenum alphaFunc;
 
@@ -202,6 +209,7 @@ public:
 	: _colour(Colour4::WHITE()),
       _invertColour(false),
 	  _renderFlags(0),
+      _glDepthFunc(GL_LESS),
 	  m_sort(eSortFirst),
       polygonOffset(0.0f),
 	  texture0(0),
@@ -211,7 +219,6 @@ public:
       texture4(0),
 	  m_blend_src(GL_SRC_ALPHA),
 	  m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
-	  m_depthfunc(GL_LESS),
 	  alphaFunc(GL_ALWAYS),
 	  alphaThreshold(0),
 	  m_linewidth(1),

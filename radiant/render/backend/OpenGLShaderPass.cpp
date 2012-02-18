@@ -474,12 +474,14 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
 
     } // end of changingBitsMask-dependent changes
 
-  if(requiredState & RENDER_DEPTHTEST && _glState.m_depthfunc != current.m_depthfunc)
-  {
-    glDepthFunc(_glState.m_depthfunc);
-    GlobalOpenGL().assertNoErrors();
-    current.m_depthfunc = _glState.m_depthfunc;
-  }
+    // Set depth function
+    if (requiredState & RENDER_DEPTHTEST 
+        && _glState.getDepthFunc() != current.getDepthFunc())
+    {
+        glDepthFunc(_glState.getDepthFunc());
+        GlobalOpenGL().assertNoErrors();
+        current.setDepthFunc(_glState.getDepthFunc());
+    }
 
   if(requiredState & RENDER_LINESTIPPLE
     && (_glState.m_linestipple_factor != current.m_linestipple_factor
