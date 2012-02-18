@@ -32,6 +32,7 @@ namespace
 // Construct the widgets
 
 ModelPreview::ModelPreview() :
+    RenderPreview(false),
 	_lastModel("")
 { }
 

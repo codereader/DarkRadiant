@@ -36,11 +36,8 @@ private:
 
     // Creates parent entity etc.
     void setupSceneGraph();
-
     AABB getSceneBounds();
-
     bool onPreRender();
-
     RenderStateFlags getRenderFlagsFill();
 
 public:

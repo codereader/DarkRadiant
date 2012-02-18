@@ -206,7 +206,9 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 
 // Static function to display the instance, and return the selected model to the
 // calling function
-ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel, bool showOptions, bool showSkins)
+ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel,
+                                               bool showOptions,
+                                               bool showSkins)
 {
 	// Use the instance to select a model.
 	return Instance().showAndBlock(curModel, showOptions, showSkins);

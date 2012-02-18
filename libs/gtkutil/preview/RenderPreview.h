@@ -16,10 +16,10 @@
 
 namespace Gtk
 {
-	class ToolButton;
-	class ToggleToolButton;
-	class Toolbar;
-	class HBox;
+    class ToolButton;
+    class ToggleToolButton;
+    class Toolbar;
+    class HBox;
 }
 
 namespace gtkutil
@@ -39,108 +39,118 @@ class GLWidget;
  * After construction the local scene graph will be empty.
  */
 class RenderPreview :
-	public Gtk::Frame,
+    public Gtk::Frame,
     private GladeWidgetHolder
 {
-	// The scene we're rendering
-	scene::GraphPtr _scene;
+    // The scene we're rendering
+    scene::GraphPtr _scene;
 
-	// GL widget
-	gtkutil::GLWidget* _glWidget;
+    // GL widget
+    gtkutil::GLWidget* _glWidget;
 
-protected:
+private:
+    void connectToolbarSignals();
+    bool drawPreview();
+    bool onGLMotion(GdkEventMotion*);
+    bool onGLScroll(GdkEventScroll*);
+    void onPause();
+    void onStepForward();
+    void onStepBack();
+    void onSizeAllocate(Gtk::Allocation& allocation);
+    void filtersChanged();
 
-	// The backend rendersystem instance
-	RenderSystemPtr _renderSystem;
+    void drawTime();
 
-	// The front-end renderer, collecting the OpenGLRenderables
-	render::ShaderStateRenderer _renderer;
-	render::NopVolumeTest _volumeTest;
-
-	// The scene adaptor passing nodes into our front-end renderer
-	render::SceneRenderWalker _sceneWalker;
-
-	// Current distance between camera and preview
-	GLfloat _camDist;
-
-	// Current rotation matrix
-	Matrix4 _rotation;
-
-	// Mutex flag to avoid draw call bunching
-	bool _renderingInProgress;
-
-	gtkutil::Timer _timer;
-
-	int _previewWidth;
-	int _previewHeight;
-
-	// The filters menu
-	ui::IFilterMenuPtr _filtersMenu;
-
-public:
-	RenderPreview();
-
-	virtual ~RenderPreview();
-
-	void setSize(int width, int height);
-
-	/**
-	 * Initialise the GL preview. This clears the window and sets up the
-	 * initial matrices and lights.
-	 */
-	void initialisePreview();
+    // Called each frame by gtkutil::Timer
+    static gboolean _onFrame(gpointer data);
 
 protected:
-	const scene::GraphPtr& getScene();
 
-	/// Add another one to the toolbar hbox
-	void addToolbar(Gtk::Toolbar& toolbar);
+    // The backend rendersystem instance
+    RenderSystemPtr _renderSystem;
+
+    // The front-end renderer, collecting the OpenGLRenderables
+    render::ShaderStateRenderer _renderer;
+    render::NopVolumeTest _volumeTest;
+
+    // The scene adaptor passing nodes into our front-end renderer
+    render::SceneRenderWalker _sceneWalker;
+
+    // Current distance between camera and preview
+    GLfloat _camDist;
+
+    // Current rotation matrix
+    Matrix4 _rotation;
+
+    // Mutex flag to avoid draw call bunching
+    bool _renderingInProgress;
+
+    gtkutil::Timer _timer;
+
+    int _previewWidth;
+    int _previewHeight;
+
+    // The filters menu
+    ui::IFilterMenuPtr _filtersMenu;
+
+protected:
+    const scene::GraphPtr& getScene();
+
+    /// Add another one to the toolbar hbox
+    void addToolbar(Gtk::Toolbar& toolbar);
 
     /// Schedule a GL widget redraw operation
     void queueDraw();
 
-	// Subclasses should at least add a single node as scene root, such that
-	// the rendersystem can be associated. This is called after initialisePreview()
-	virtual void setupSceneGraph();
+    // Subclasses should at least add a single node as scene root, such that
+    // the rendersystem can be associated. This is called after initialisePreview()
+    virtual void setupSceneGraph();
 
-	virtual Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
-	virtual Matrix4 getModelViewMatrix();
+    virtual Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
+    virtual Matrix4 getModelViewMatrix();
 
-	virtual void startPlayback();
-	virtual void stopPlayback();
+    virtual void startPlayback();
+    virtual void stopPlayback();
 
-	// Override this to deliver accurate scene bounds, used for mousewheel-zooming
-	virtual AABB getSceneBounds();
+    // Override this to deliver accurate scene bounds, used for mousewheel-zooming
+    virtual AABB getSceneBounds();
 
-	// Called right before rendering, returning false will cancel the render algorithm
-	virtual bool onPreRender();
+    // Called right before rendering, returning false will cancel the render algorithm
+    virtual bool onPreRender();
 
-	// Called after the render phase, can be used to draw custom stuff on the GL widget
-	virtual void onPostRender() {}
+    // Called after the render phase, can be used to draw custom stuff on the GL widget
+    virtual void onPostRender() {}
 
-	// Use this to render a wireframe view of the scene
-	void renderWireFrame();
+    // Use this to render a wireframe view of the scene
+    void renderWireFrame();
 
-	// Override these to define the flags to render a fill/wireframe scene
-	virtual RenderStateFlags getRenderFlagsFill();
-	virtual RenderStateFlags getRenderFlagsWireframe();
+    // Override these to define the flags to render a fill/wireframe scene
+    virtual RenderStateFlags getRenderFlagsFill();
+    virtual RenderStateFlags getRenderFlagsWireframe();
 
-	void associateRenderSystem();
+    void associateRenderSystem();
 
-private:
-	bool drawPreview();
-	bool onGLMotion(GdkEventMotion*);
-	bool onGLScroll(GdkEventScroll*);
-	void onPause();
-	void onStepForward();
-	void onStepBack();
-	void onSizeAllocate(Gtk::Allocation& allocation);
-	void filtersChanged();
+    /**
+     * \brief
+     * Construct a RenderPreview
+     *
+     * \param enableAnimation
+     * If true, display animation controls in toolbar, otherwise hide the
+     * animation controls.
+     */
+    RenderPreview(bool enableAnimation = true);
 
-	void drawTime();
+    virtual ~RenderPreview();
 
-	// Called each frame by gtkutil::Timer
-	static gboolean _onFrame(gpointer data);
+public:
+    void setSize(int width, int height);
+
+    /**
+     * Initialise the GL preview. This clears the window and sets up the
+     * initial matrices and lights.
+     */
+    void initialisePreview();
+
 };
 typedef boost::shared_ptr<RenderPreview> RenderPreviewPtr;
 
