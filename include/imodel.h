@@ -88,12 +88,16 @@ public:
 	virtual const MaterialList& getActiveMaterials() const = 0;
 
 	/**
-	 * greebo: Retrieve the interface of a specific surface,
-	 * to get access to the surface's polygons and vertices.
+     * \brief
+     * Return the surface with the given index
+     *
+     * Retrieves the interface of a specific surface, to get access to the
+     * surface's polygons and vertices.
 	 *
-	 * @surfaceNum: the surface index, must be in [0..getSurfaceCount())
+	 * \param surfaceNum
+     * The surface index, must be in [0..getSurfaceCount())
 	 */
-	virtual const IModelSurface& getSurface(int surfaceNum) const = 0;
+	virtual const IModelSurface& getSurface(unsigned surfaceNum) const = 0;
 };
 
 // Smart pointer typedefs

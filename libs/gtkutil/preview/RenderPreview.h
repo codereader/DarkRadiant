@@ -25,10 +25,6 @@ namespace Gtk
 namespace gtkutil
 {
 
-// Forward decl.
-class RenderPreviewFilterObserver;
-typedef boost::shared_ptr<RenderPreviewFilterObserver> RenderPreviewFilterObserverPtr;
-
 /**
  * greebo: This class acts as base for widgets featuring 
  * a real time openGL render preview. It offers
@@ -84,9 +80,6 @@ protected:
 	// The filters menu
 	ui::IFilterMenuPtr _filtersMenu;
 
-	// The filter observer
-	RenderPreviewFilterObserverPtr _filterObserver;
-
 public:
 	RenderPreview();
 
@@ -99,8 +92,6 @@ public:
 	 * initial matrices and lights.
 	 */
 	void initialisePreview();
-
-	void onFiltersChanged();
 
 protected:
 	const scene::GraphPtr& getScene();
@@ -137,14 +128,14 @@ protected:
 	void associateRenderSystem();
 
 private:
-	// gtkmm callbacks
-	bool onGLDraw(GdkEventExpose*);
+	bool drawPreview();
 	bool onGLMotion(GdkEventMotion*);
 	bool onGLScroll(GdkEventScroll*);
 	void onPause();
 	void onStepForward();
 	void onStepBack();
 	void onSizeAllocate(Gtk::Allocation& allocation);
+	void filtersChanged();
 
 	void drawTime();
 

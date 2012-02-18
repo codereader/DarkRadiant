@@ -27,10 +27,8 @@ class RenderablePicoSurface :
 	public IModelSurface,
 	public OpenGLRenderable
 {
-	// Name of the material this surface is using, both originally and after a
-	// skin remap.
-	std::string _originalShaderName;
-	std::string _mappedShaderName;
+	// Name of the material this surface is using
+	std::string _shaderName;
 
 	// Vector of ArbitraryMeshVertex structures, containing the coordinates,
 	// normals, tangents and texture coordinates of the component vertices

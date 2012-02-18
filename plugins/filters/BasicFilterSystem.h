@@ -32,8 +32,7 @@ class BasicFilterSystem
 	typedef std::map<std::string, bool> StringFlagCache;
 	StringFlagCache _visibilityCache;
 
-	typedef std::set<FilterSystem::ObserverPtr> ObserverList;
-	ObserverList _observers;
+    sigc::signal<void> _filtersChangedSignal;
 
 private:
 
@@ -47,14 +46,11 @@ private:
 
 	void addFiltersFromXML(const xml::NodeList& nodes, bool readOnly);
 
-	// Notifies all observers about a change
-	void notifyObservers();
-
 public:
     virtual ~BasicFilterSystem() {}
 
-	void addObserver(const ObserverPtr& observer);
-	void removeObserver(const ObserverPtr& observer);
+    // FilterSystem implementation
+    sigc::signal<void> filtersChangedSignal() const;
 
 	// Invoke the InstanceUpateWalker to update the filtered status.
 	void update();

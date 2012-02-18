@@ -159,7 +159,7 @@ int RenderablePicoModel::getPolyCount() const
 	return sum;
 }
 
-const IModelSurface& RenderablePicoModel::getSurface(int surfaceNum) const
+const IModelSurface& RenderablePicoModel::getSurface(unsigned surfaceNum) const
 {
 	assert(surfaceNum >= 0 && surfaceNum < _surfVec.size());
 	return *(_surfVec[surfaceNum].surface);

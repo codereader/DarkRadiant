@@ -43,22 +43,6 @@ namespace
 	};
 }
 
-// Helper class, which notifies the MapPreview about a filter change
-class RenderPreviewFilterObserver :
-	public FilterSystem::Observer
-{
-	RenderPreview& _owner;
-public:
-	RenderPreviewFilterObserver(RenderPreview& owner) :
-		_owner(owner)
-	{}
-
-	void onFiltersChanged() {
-		_owner.onFiltersChanged();
-	}
-};
-typedef boost::shared_ptr<RenderPreviewFilterObserver> RenderPreviewFilterObserverPtr;
-
 RenderPreview::RenderPreview() :
 	Gtk::Frame(),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(true, "RenderPreview"))),
@@ -80,13 +64,24 @@ RenderPreview::RenderPreview() :
 	vbx->pack_start(*_glWidget, true, true, 0);
 
 	// Connect up the signals
-	_glWidget->set_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
-						 Gdk::POINTER_MOTION_MASK | Gdk::SCROLL_MASK);
+	_glWidget->set_events(Gdk::EXPOSURE_MASK
+                        | Gdk::BUTTON_PRESS_MASK
+                        | Gdk::BUTTON_RELEASE_MASK
+                        | Gdk::POINTER_MOTION_MASK
+                        | Gdk::SCROLL_MASK);
 
-	_glWidget->signal_expose_event().connect(sigc::mem_fun(*this, &RenderPreview::onGLDraw));
-	_glWidget->signal_motion_notify_event().connect(sigc::mem_fun(*this, &RenderPreview::onGLMotion));
-	_glWidget->signal_scroll_event().connect(sigc::mem_fun(*this, &RenderPreview::onGLScroll));
-	_glWidget->signal_size_allocate().connect(sigc::mem_fun(*this, &RenderPreview::onSizeAllocate));
+	_glWidget->signal_expose_event().connect(
+        sigc::hide(sigc::mem_fun(this, &RenderPreview::drawPreview))
+    );
+	_glWidget->signal_motion_notify_event().connect(
+        sigc::mem_fun(this, &RenderPreview::onGLMotion)
+    );
+	_glWidget->signal_scroll_event().connect(
+        sigc::mem_fun(this, &RenderPreview::onGLScroll)
+    );
+	_glWidget->signal_size_allocate().connect(
+        sigc::mem_fun(this, &RenderPreview::onSizeAllocate)
+    );
 
 	// The HBox containing the toolbar and the menubar
 	_toolHBox = Gtk::manage(new Gtk::HBox(false, 0));
@@ -137,10 +132,10 @@ RenderPreview::RenderPreview() :
 	// Pack into a frame
 	add(*vbx);
 
-	// Add an observer to the FilterSystem to get notified about changes
-	_filterObserver.reset(new RenderPreviewFilterObserver(*this));
-
-	GlobalFilterSystem().addObserver(_filterObserver);
+	// Get notified of filter changes
+	GlobalFilterSystem().filtersChangedSignal().connect(
+        sigc::mem_fun(this, &RenderPreview::filtersChanged)
+    );
 }
 
 RenderPreview::~RenderPreview()
@@ -149,11 +144,9 @@ RenderPreview::~RenderPreview()
 	{
 		_timer.disable();
 	}
-
-	GlobalFilterSystem().removeObserver(_filterObserver);
 }
 
-void RenderPreview::onFiltersChanged()
+void RenderPreview::filtersChanged()
 {
 	if (!getScene()->root()) return;
 
@@ -200,13 +193,6 @@ void RenderPreview::initialisePreview()
 
 	// Grab the GL widget with sentry object
 	gtkutil::GLWidgetSentry sentry(*_glWidget);
-
-	// Clear the window
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-	glClearColor(0.0, 0.0, 0.0, 0);
-	glClearDepth(1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Set up the camera
 	glMatrixMode(GL_PROJECTION);
@@ -338,8 +324,8 @@ bool RenderPreview::onPreRender()
 
 RenderStateFlags RenderPreview::getRenderFlagsFill()
 {
-	return RENDER_COLOURWRITE | 
-			RENDER_ALPHATEST | 
+	return RENDER_COLOURWRITE |
+			RENDER_ALPHATEST |
 			RENDER_BLEND |
 			RENDER_CULLFACE |
             RENDER_OFFSETLINE |
@@ -375,7 +361,7 @@ RenderStateFlags RenderPreview::getRenderFlagsWireframe()
 		   RENDER_PROGRAM;
 }
 
-bool RenderPreview::onGLDraw(GdkEventExpose*)
+bool RenderPreview::drawPreview()
 {
 	if (_renderingInProgress) return false; // avoid double-entering this method
 

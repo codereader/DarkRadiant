@@ -7,6 +7,8 @@
 #include <vector>
 #include <cassert>
 
+#include <sigc++/signal.h>
+
 /**
  * This structure defines a simple filtercriterion as used by the Filtersystem
  */
@@ -84,24 +86,20 @@ const char* const MODULE_FILTERSYSTEM = "FilterSystem";
 // Forward declaration
 class Entity;
 
-/** Interface for the FilterSystem.
+/**
+ * \brief
+ * Interface for the FilterSystem
+ *
+ * The filter system provides a mechanism by which certain objects or materials
+ * can be hidden from rendered views.
  */
 class FilterSystem :
 	public RegisterableModule
 {
 public:
-	class Observer
-	{
-	public:
-	    virtual ~Observer() {}
-		// Get notified when a filter is added or its enabled status changes
-		virtual void onFiltersChanged() = 0;
-	};
-	typedef boost::shared_ptr<Observer> ObserverPtr;
 
-	// Adds and removes an observer which gets notified on filter status changes
-	virtual void addObserver(const ObserverPtr& observer) = 0;
-	virtual void removeObserver(const ObserverPtr& observer) = 0;
+    /// Signal emitted when the state of filters has changed
+    virtual sigc::signal<void> filtersChangedSignal() const = 0;
 
 	/**
 	 * greebo: Updates all the "Filtered" status of all Instances

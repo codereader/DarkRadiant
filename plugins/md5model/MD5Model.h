@@ -134,7 +134,7 @@ public:
 	 */
 	virtual const std::vector<std::string>& getActiveMaterials() const;
 
-	const model::IModelSurface& getSurface(int surfaceNum) const;
+	const model::IModelSurface& getSurface(unsigned surfaceNum) const;
 
 	// OpenGLRenderable implementation
 	virtual void render(const RenderInfo& info) const;

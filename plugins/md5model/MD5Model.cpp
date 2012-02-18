@@ -178,7 +178,7 @@ void MD5Model::captureShaders()
 	}
 }
 
-const model::IModelSurface& MD5Model::getSurface(int surfaceNum) const
+const model::IModelSurface& MD5Model::getSurface(unsigned surfaceNum) const
 {
 	assert(surfaceNum >= 0 && surfaceNum < _surfaces.size());
 	return *(_surfaces[surfaceNum].surface);

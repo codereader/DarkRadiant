@@ -89,7 +89,7 @@ int NullModel::getPolyCount() const {
 	return 0;
 }
 
-const IModelSurface& NullModel::getSurface(int surfaceNum) const
+const IModelSurface& NullModel::getSurface(unsigned surfaceNum) const
 {
 	throw new std::runtime_error("NullModel::getSurface: invalid call, no surfaces.");
 }

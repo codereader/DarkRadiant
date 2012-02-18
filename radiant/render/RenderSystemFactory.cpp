@@ -10,9 +10,7 @@ namespace render
 
 RenderSystemPtr RenderSystemFactory::createRenderSystem()
 {
-    OpenGLRenderSystem* rs = new OpenGLRenderSystem();
-    OpenGLRenderSystemPtr ptr(rs);
-	return ptr;
+    return OpenGLRenderSystemPtr(new OpenGLRenderSystem());
 }
 
 const std::string& RenderSystemFactory::getName() const

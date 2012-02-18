@@ -143,7 +143,7 @@ public:
 
 	int getPolyCount() const;
 
-	const IModelSurface& getSurface(int surfaceNum) const;
+	const IModelSurface& getSurface(unsigned surfaceNum) const;
 
 	/**
 	 * Return the enclosing AABB for this model.

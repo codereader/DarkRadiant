@@ -12,8 +12,7 @@ namespace model {
 // Constructor. Copy the provided picoSurface_t structure into this object
 RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 											 const std::string& fExt)
-: _originalShaderName(""),
-  _mappedShaderName(""),
+: _shaderName(""),
   _dlRegular(0),
   _dlProgramVcol(0),
   _dlProgramNoVCol(0)
@@ -28,26 +27,24 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	{
 		if (fExt == "lwo")
 		{
-			_originalShaderName = PicoGetShaderName(shader);
+			_shaderName = PicoGetShaderName(shader);
 		}
 		else if (fExt == "ase")
 		{
 			rawName = PicoGetShaderName(shader);
 			std::string rawMapName = PicoGetShaderMapName(shader);
-			_originalShaderName = cleanupShaderName(rawMapName);
+			_shaderName = cleanupShaderName(rawMapName);
 		}
 	}
 
 	// If shader not found, fallback to alternative if available
-	// _originalShaderName is empty if the ase material has no BITMAP
-	// materialIsValid is false if _originalShaderName is not an existing shader
-	if ((_originalShaderName.empty() || !GlobalMaterialManager().materialExists(_originalShaderName)) &&
+	// _shaderName is empty if the ase material has no BITMAP
+	// materialIsValid is false if _shaderName is not an existing shader
+	if ((_shaderName.empty() || !GlobalMaterialManager().materialExists(_shaderName)) &&
 		!rawName.empty())
 	{
-		_originalShaderName = cleanupShaderName(rawName);
+		_shaderName = cleanupShaderName(rawName);
 	}
-
-	_mappedShaderName = _originalShaderName;
 
 	// Capturing the shader happens later on when we have a RenderSystem reference
 
@@ -332,12 +329,12 @@ ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
 
 const std::string& RenderablePicoSurface::getDefaultMaterial() const
 {
-	return _originalShaderName;
+	return _shaderName;
 }
 
 void RenderablePicoSurface::setDefaultMaterial(const std::string& defaultMaterial)
 {
-	_originalShaderName = defaultMaterial;
+	_shaderName = defaultMaterial;
 }
 
 } // namespace model

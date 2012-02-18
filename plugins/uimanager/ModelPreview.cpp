@@ -116,7 +116,7 @@ void ModelPreview::setSkin(const std::string& skin) {
 	if (_modelNode != NULL)
 	{
 		model::ModelNodePtr model = Node_getModel(_modelNode);
-		
+
 		if (model)
 		{
 			ModelSkin& mSkin = GlobalModelSkinCache().capture(skin);

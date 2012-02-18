@@ -50,7 +50,7 @@ void BasicFilterSystem::setAllFilterStates(bool state)
 
 	updateEvents();
 
-	notifyObservers();
+	_filtersChangedSignal.emit();
 
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
@@ -234,12 +234,9 @@ void BasicFilterSystem::shutdownModule() {
 	}
 }
 
-void BasicFilterSystem::addObserver(const ObserverPtr& observer) {
-	_observers.insert(observer);
-}
-
-void BasicFilterSystem::removeObserver(const ObserverPtr& observer) {
-	_observers.erase(observer);
+sigc::signal<void> BasicFilterSystem::filtersChangedSignal() const
+{
+    return _filtersChangedSignal;
 }
 
 void BasicFilterSystem::update()
@@ -273,14 +270,6 @@ std::string BasicFilterSystem::getFilterEventName(const std::string& filter) {
 	}
 }
 
-void BasicFilterSystem::notifyObservers() {
-	// Traverse the set
-	for (ObserverList::const_iterator i = _observers.begin(); i != _observers.end(); ++i) {
-		// Call each observer
-		(*i)->onFiltersChanged();
-	}
-}
-
 // Change the state of a named filter
 void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 
@@ -304,7 +293,7 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state) {
 	// Update the scenegraph instances
 	update();
 
-	notifyObservers();
+	_filtersChangedSignal.emit();
 
 	// Trigger an immediate scene redraw
 	GlobalSceneGraph().sceneChanged();
@@ -358,7 +347,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	// Clear the cache, the rules have changed
 	_visibilityCache.clear();
 
-	notifyObservers();
+	_filtersChangedSignal.emit();
 
 	return true;
 }
@@ -390,7 +379,7 @@ bool BasicFilterSystem::removeFilter(const std::string& filter) {
 		// Clear the cache, the rules have changed
 		_visibilityCache.clear();
 
-		notifyObservers();
+		_filtersChangedSignal.emit();
 
 		return true;
 	}
@@ -548,7 +537,9 @@ FilterRules BasicFilterSystem::getRuleSet(const std::string& filter) {
 	return FilterRules();
 }
 
-bool BasicFilterSystem::setFilterRules(const std::string& filter, const FilterRules& ruleSet) {
+bool BasicFilterSystem::setFilterRules(const std::string& filter,
+                                       const FilterRules& ruleSet)
+{
 	FilterTable::iterator f = _availableFilters.find(filter);
 
 	if (f != _availableFilters.end() && !f->second.isReadOnly()) {
@@ -558,7 +549,7 @@ bool BasicFilterSystem::setFilterRules(const std::string& filter, const FilterRu
 		// Clear the cache, the ruleset has changed
 		_visibilityCache.clear();
 
-		notifyObservers();
+		_filtersChangedSignal.emit();
 
 		return true;
 	}

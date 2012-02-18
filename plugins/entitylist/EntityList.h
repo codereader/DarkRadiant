@@ -26,7 +26,6 @@ typedef boost::shared_ptr<EntityList> EntityListPtr;
 class EntityList :
 	public gtkutil::PersistentTransientWindow,
 	public SelectionSystem::Observer,
-	public FilterSystem::Observer,
 	public RadiantEventListener,
     private gtkutil::GladeWidgetHolder
 {
@@ -63,8 +62,7 @@ private:
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
-	// FilterSystem::Observer implementation
-	void onFiltersChanged();
+	void filtersChanged();
 
 	void onRowExpand(const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path);
 	bool onSelection(const Glib::RefPtr<Gtk::TreeModel>& model, const Gtk::TreeModel::Path& path, bool path_currently_selected);
