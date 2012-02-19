@@ -5,9 +5,56 @@
 namespace map
 {
 
+#define	XYZ_EPSILON	0.01
+#define	ST_EPSILON	0.001
+#define	COSINE_EPSILON	0.999
+
 class OptUtils
 {
 public:
+	static bool MatchVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b)
+	{
+		if (fabs(a.vertex[0] - b.vertex[0] ) > XYZ_EPSILON)
+		{
+			return false;
+		}
+
+		if (fabs(a.vertex[1] - b.vertex[1] ) > XYZ_EPSILON)
+		{
+			return false;
+		}
+
+		if (fabs(a.vertex[2] - b.vertex[2] ) > XYZ_EPSILON)
+		{
+			return false;
+		}
+
+		if (fabs(a.texcoord[0] - b.texcoord[0] ) > ST_EPSILON)
+		{
+			return false;
+		}
+
+		if (fabs(a.texcoord[1] - b.texcoord[1] ) > ST_EPSILON)
+		{
+			return false;
+		}
+
+		// if the normal is 0 (smoothed normals), consider it a match
+		if (a.normal[0] == 0 && a.normal[1] == 0 && a.normal[2] == 0 && 
+			b.normal[0] == 0 && b.normal[1] == 0 && b.normal[2] == 0)
+		{
+			return true;
+		}
+
+		// otherwise do a dot-product cosine check
+		if (a.normal.dot(b.normal) < COSINE_EPSILON)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
 	// an empty area will be considered invalid.
 	// Due to some truly aweful epsilon issues, a triangle can switch between
 	// valid and invalid depending on which order you look at the verts, so

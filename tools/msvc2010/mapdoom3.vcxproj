@@ -340,6 +340,7 @@
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\Doom3MapCompiler.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\OptIsland.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcCompiler.cpp" />
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcFile.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcLight.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcWinding.cpp" />
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\Surface.cpp" />

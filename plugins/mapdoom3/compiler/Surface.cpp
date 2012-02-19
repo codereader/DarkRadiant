@@ -1293,6 +1293,17 @@ void Surface::deriveTangents(bool allocFacePlanes)
 	facePlanesCalculated = true;
 }
 
+void Surface::cleanupUTriangles()
+{
+	// perform cleanup operations
+	if (!rangeCheckIndexes()) return;
+
+	createSilIndexes();
+	removeDegenerateTriangles();
+
+	// FIXME? R_FreeStaticTriSurfSilIndexes( tri );
+}
+
 void Surface::cleanupTriangles(bool createNormals, bool identifySilEdgesFlag, bool useUnsmoothedTangents)
 {
 	if (!rangeCheckIndexes()) return;

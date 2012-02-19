@@ -156,6 +156,9 @@
     <ClCompile Include="..\..\plugins\mapdoom3\compiler\Surface.cpp">
       <Filter>src\compiler</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\mapdoom3\compiler\ProcFile.cpp">
+      <Filter>src\compiler</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\mapdoom3\mapdoom3.def">

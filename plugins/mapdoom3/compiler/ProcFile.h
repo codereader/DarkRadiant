@@ -179,6 +179,8 @@ struct ProcEntity
 	// The reference into the scenegraph
 	IEntityNodePtr	mapEntity;
 
+	std::size_t		entityNum;
+
 	Vector3			origin;
 
 	// Each entity has 0..N primitives
@@ -192,8 +194,9 @@ struct ProcEntity
 	typedef std::vector<ProcArea> Areas;
 	Areas			areas;	// populated in putPrimitiveInAreas()
 
-	ProcEntity(const IEntityNodePtr& entityNode) :
+	ProcEntity(const IEntityNodePtr& entityNode, std::size_t entityNum_) :
 		mapEntity(entityNode),
+		entityNum(entityNum_),
 		numAreas(0)
 	{}
 };
@@ -216,6 +219,8 @@ typedef boost::shared_ptr<LeakFile> LeakFilePtr;
 class ProcFile
 {
 public:
+	static const char* const FILE_ID;
+
 	typedef std::vector<ProcEntityPtr> ProcEntities;
 	ProcEntities entities;
 
@@ -244,10 +249,7 @@ public:
 		numWorldTriSurfs(0)
 	{}
 
-	void saveToFile(const std::string& path)
-	{
-		// TODO
-	}
+	void saveToFile(const std::string& path);
 
 	bool hasLeak() const
 	{

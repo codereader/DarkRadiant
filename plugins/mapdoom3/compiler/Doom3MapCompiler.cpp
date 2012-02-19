@@ -150,6 +150,11 @@ void Doom3MapCompiler::runDmap(const std::string& mapFile)
 
 		return;
 	}
+
+	std::string ext = "." + os::getExtension(mapFile);
+	std::string procFileName = boost::algorithm::replace_last_copy(mapFile, ext, ProcFile::Extension());
+
+	_procFile->saveToFile(procFileName);
 }
 
 void Doom3MapCompiler::dmapCmd(const cmd::ArgumentList& args)

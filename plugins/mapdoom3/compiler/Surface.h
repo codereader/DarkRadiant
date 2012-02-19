@@ -130,6 +130,8 @@ public:
 
 	void cleanupTriangles(bool createNormals, bool identifySilEdges, bool useUnsmoothedTangents);
 
+	void cleanupUTriangles();
+
 	// Writes the facePlanes values, overwriting existing ones if present
 	void deriveFacePlanes();
 
