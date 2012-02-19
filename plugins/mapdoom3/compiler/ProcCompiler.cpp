@@ -24,6 +24,7 @@ static std::size_t DEFAULT_OPT_EDGES = 0x40000;
 static std::size_t DEFAULT_OPT_VERTICES = 0x10000;
 
 const std::size_t MULTIAREA_CROSS = std::numeric_limits<std::size_t>::max();
+const std::size_t AREANUM_DIFFERENT	= std::numeric_limits<std::size_t>::max();
 
 static const float LIGHT_CLIP_EPSILON = 0.1f;
 
@@ -4937,6 +4938,57 @@ void ProcCompiler::fixGlobalTjunctions(ProcEntity& entity)
 	_triangleHash.reset();
 }
 
+void ProcCompiler::freeTreePortalsRecursively(const BspTreeNodePtr& node)
+{
+	// free children
+	if (node->planenum != PLANENUM_LEAF)
+	{
+		freeTreePortalsRecursively(node->children[0]);
+		freeTreePortalsRecursively(node->children[1]);
+	}
+	
+	// free portals
+	ProcPortalPtr nextp;
+	for (ProcPortalPtr p = node->portals; p; p = nextp)
+	{
+		int s = (p->nodes[1] == node);
+		nextp = p->next[s];
+
+		removePortalFromNode(p, p->nodes[!s]);
+	}
+
+	node->portals.reset();
+}
+
+std::size_t	ProcCompiler::pruneNodesRecursively(const BspTreeNodePtr& node)
+{
+	if (node->planenum == PLANENUM_LEAF)
+	{
+		return node->area;
+	}
+
+	int a1 = pruneNodesRecursively(node->children[0]);
+	int a2 = pruneNodesRecursively(node->children[1]);
+
+	if (a1 != a2 || a1 == AREANUM_DIFFERENT)
+	{
+		return AREANUM_DIFFERENT;
+	}
+
+	// free all the nodes below this point
+	freeTreePortalsRecursively(node->children[0]);
+	freeTreePortalsRecursively( node->children[1]);
+	
+	node->children[0].reset();
+	node->children[1].reset();
+	
+	// change this node to a leaf
+	node->planenum = PLANENUM_LEAF;
+	node->area = a1;
+
+	return a1;
+}
+
 bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 {
 	_bspFaces.clear();
@@ -5018,6 +5070,11 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 
 	// now fix t junctions across areas
 	fixGlobalTjunctions(entity);
+
+	// greebo: This was done by the proc output writer before, but it makes sense to 
+	// do that before returning
+	// prune unneeded nodes and count
+	pruneNodesRecursively(entity.tree.head);
 
 	return true;
 }

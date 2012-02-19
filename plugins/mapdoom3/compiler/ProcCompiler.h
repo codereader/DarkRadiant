@@ -353,6 +353,14 @@ private:
 	void optimizeEntity(ProcEntity& entity);
 
 	void fixGlobalTjunctions(ProcEntity& entity);
+
+	// Any nodes that have all children with the same
+	// area can be combined into a single leaf node
+	//
+	// Returns the area number of all children, or
+	// AREANUM_DIFFERENT if not the same.
+	std::size_t pruneNodesRecursively(const BspTreeNodePtr& node);
+	void freeTreePortalsRecursively(const BspTreeNodePtr& node);
 };
 
 } // namespace

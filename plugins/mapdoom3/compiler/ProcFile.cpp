@@ -312,38 +312,150 @@ void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t area
 	str << "}" << std::endl << std::endl;
 }
 
-std::ostream& operator<<(std::ostream& str, ProcEntity& entity)
+int numberNodesRecursively(const BspTreeNodePtr& node, int nextNumber)
 {
-	std::size_t numWriteAreas = entity.numAreas;
-
-	if (entity.entityNum != 0)
+	if (node->planenum == PLANENUM_LEAF)
 	{
-		// entities may have enclosed, empty areas that we don't need to write out
-		if (entity.numAreas > 1)
+		return nextNumber;
+	}
+
+	node->nodeNumber = nextNumber;
+	nextNumber++;
+
+	nextNumber = numberNodesRecursively(node->children[0], nextNumber);
+	nextNumber = numberNodesRecursively(node->children[1], nextNumber);
+
+	return nextNumber;
+}
+
+} // namespace
+
+std::ostream& ProcFile::writeOutputPortals(std::ostream& str, ProcEntity& entity)
+{
+	str << (boost::format("interAreaPortals { /* numAreas = */ %i /* numIAP = */ %i") % entity.numAreas % interAreaPortals.size()) 
+		<< std::endl << std::endl;
+
+	str << "/* interAreaPortal format is: numPoints positiveSideArea negativeSideArea ( point) ... */" << std::endl;
+
+	for (std::size_t i = 0; i < interAreaPortals.size(); ++i)
+	{
+		const ProcInterAreaPortal& iap = interAreaPortals[i];
+		const ProcWinding& w = iap.side->winding;
+
+		str << (boost::format("/* iap %i */ %i %i %i ") % i % w.size() % iap.area0 % iap.area1);
+
+		for (std::size_t j = 0; j < w.size(); ++j)
 		{
-			numWriteAreas = 1;
+			writeFloat(str, w[j].vertex[0]);
+			writeFloat(str, w[j].vertex[1]);
+			writeFloat(str, w[j].vertex[2]);
+		}
+
+		str << std::endl;
+	}
+
+	str << "}" << std::endl<< std::endl;
+
+	return str;
+}
+
+std::ostream& ProcFile::writeOutputNodeRecursively(std::ostream& str, const BspTreeNodePtr& node)
+{
+	if (node->planenum == PLANENUM_LEAF)
+	{
+		// we shouldn't get here unless the entire world
+		// was a single leaf
+		str << "/* node 0 */ ( 0 0 0 0 ) -1 -1" << std::endl;
+		return str;
+	}
+
+	int child[2];
+
+	for (std::size_t i = 0; i < 2; ++i)
+	{
+		if (node->children[i]->planenum == PLANENUM_LEAF)
+		{
+			child[i] = static_cast<int>(-1 - node->children[i]->area);
+		}
+		else 
+		{
+			child[i] = node->children[i]->nodeNumber;
 		}
 	}
 
-	for (std::size_t a = 0; a < numWriteAreas; ++a)
+	const Plane3& plane = planes.getPlane(node->planenum);
+
+	str << (boost::format("/* node %i */ ") % node->nodeNumber);
+
+	str << "( " 
+		<< writeFloat(str, plane.normal()[0])
+		<< writeFloat(str, plane.normal()[1])
+		<< writeFloat(str, plane.normal()[2])
+		<< writeFloat(str, -plane.dist())
+		<< " )"
+		<< std::endl;
+
+	str << (boost::format("%i %i") % child[0] % child[1]) << std::endl;
+
+	if (child[0] > 0)
 	{
-		writeOutputSurfaces(str, entity, a);
+		writeOutputNodeRecursively(str, node->children[0]);
 	}
 
-	// we will completely skip the portals and nodes if it is a single area
-	if (entity.entityNum == 0 && numWriteAreas > 1)
+	if (child[1] > 0)
 	{
-		// output the area portals
-		// WriteOutputPortals( e );
-
-		// output the nodes
-		// WriteOutputNodes( e->tree->headnode );
+		writeOutputNodeRecursively(str, node->children[1]);
 	}
 
 	return str;
 }
 
-} // namespace
+std::ostream& ProcFile::writeOutputNodes(std::ostream& str, const BspTreeNodePtr& node)
+{
+	std::size_t numNodes = numberNodesRecursively(node, 0 );
+
+	// output
+	str << (boost::format("nodes { /* numNodes = */ %i") % numNodes) << std::endl << std::endl;
+
+	str << "/* node format is: ( planeVector ) positiveChild negativeChild */" << std::endl;
+	str << "/* a child number of 0 is an opaque, solid area */" << std::endl;
+	str << "/* negative child numbers are areas: (-1-child) */" << std::endl;
+
+	writeOutputNodeRecursively(str, node);
+
+	str << "}" << std::endl << std::endl;
+
+	return str;
+}
+
+std::ostream& ProcFile::writeProcEntity(std::ostream& str, ProcEntity& entity)
+{
+	if (entity.entityNum != 0)
+	{
+		// entities may have enclosed, empty areas that we don't need to write out
+		if (entity.numAreas > 1)
+		{
+			entity.numAreas = 1;
+		}
+	}
+
+	for (std::size_t a = 0; a < entity.numAreas; ++a)
+	{
+		writeOutputSurfaces(str, entity, a);
+	}
+
+	// we will completely skip the portals and nodes if it is a single area
+	if (entity.entityNum == 0 && entity.numAreas > 1)
+	{
+		// output the area portals
+		writeOutputPortals(str, entity);
+
+		// output the nodes
+		writeOutputNodes(str, entity.tree.head);
+	}
+
+	return str;
+}
 
 void ProcFile::saveToFile(const std::string& path)
 {
@@ -372,7 +484,7 @@ void ProcFile::saveToFile(const std::string& path)
 			continue;
 		}
 
-		str << entity << std::endl;
+		writeProcEntity(str, entity);
 	}
 #if 0
 	// write the shadow volumes
