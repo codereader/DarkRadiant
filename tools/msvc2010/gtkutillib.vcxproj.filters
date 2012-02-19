@@ -90,6 +90,9 @@
     <ClInclude Include="..\..\libs\gtkutil\preview\RenderPreview.h">
       <Filter>preview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\preview\ModelPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">
@@ -125,6 +128,9 @@
     <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\preview\RenderPreview.cpp">
+      <Filter>preview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\preview\ModelPreview.cpp">
       <Filter>preview</Filter>
     </ClCompile>
   </ItemGroup>
