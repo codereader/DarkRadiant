@@ -704,7 +704,7 @@ void SurfaceInspector::onShaderSelect()
 	// Instantiate the modal dialog, will block execution
 	ShaderChooser chooser(getRefPtr(), _shaderEntry);
     chooser.signal_shaderChanged().connect(
-        sigc::hide(sigc::mem_fun(this, &SurfaceInspector::emitShader))
+        sigc::mem_fun(this, &SurfaceInspector::emitShader)
     );
     chooser.show();
 }

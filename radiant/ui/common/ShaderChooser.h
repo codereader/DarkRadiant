@@ -40,7 +40,7 @@ class ShaderChooser :
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
-    sigc::signal<void, const std::string&> _shaderChangedSignal;
+    sigc::signal<void> _shaderChangedSignal;
 
 public:
 	/** greebo: Construct the dialog window and its contents.
@@ -54,7 +54,7 @@ public:
                   Gtk::Entry* targetEntry = NULL);
 
     /// Signal emitted when selected shader is changed
-    sigc::signal<void, const std::string&> signal_shaderChanged() const
+    sigc::signal<void> signal_shaderChanged() const
     {
         return _shaderChangedSignal;
     }

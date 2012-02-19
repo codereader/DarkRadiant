@@ -93,7 +93,7 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName,
 	}
 
 	// Propagate the call up to the client (e.g. SurfaceInspector)
-    _shaderChangedSignal.emit(shaderName);
+    _shaderChangedSignal.emit();
 
 	// Get the shader, and its image map if possible
 	MaterialPtr shader = _selector->getSelectedShader();
@@ -109,7 +109,7 @@ void ShaderChooser::revertShader()
 		_targetEntry->set_text(_initialShader);
 
 		// Propagate the call up to the client (e.g. SurfaceInspector)
-        _shaderChangedSignal.emit(_targetEntry->get_text());
+        _shaderChangedSignal.emit();
 	}
 }
 
