@@ -1,5 +1,7 @@
 #pragma once
 
+#include "iuimanager.h"
+
 #include <gtkmm/builder.h>
 
 namespace gtkutil
@@ -17,12 +19,9 @@ private:
 
 protected:
 
-    /**
-     * \brief
-     * Retrieve a widget from the .glade file by name.
-     */
+    /// Retrieve a widget from the .glade file by name.
     template<typename WidgetType>
-    WidgetType* getGladeWidget(const std::string& name)
+    WidgetType* gladeWidget(const std::string& name)
     {
         g_assert(_builder);
 
@@ -33,11 +32,9 @@ protected:
         return widget;
     }
 
-    /**
-     * Initialise a GladeWidgetHolder with the given Gtk::Builder.
-     */
-    GladeWidgetHolder(const Glib::RefPtr<Gtk::Builder>& builder)
-    : _builder(builder)
+    /// Initialise a GladeWidgetHolder with a local glade file
+    GladeWidgetHolder(const std::string& localGladeFile)
+    : _builder(GlobalUIManager().getGtkBuilderFromFile(localGladeFile))
     { }
 };
 

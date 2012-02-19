@@ -43,9 +43,7 @@ ModelSelector::ModelSelector()
 : gtkutil::BlockingTransientWindow(
     _(MODELSELECTOR_TITLE), GlobalMainFrame().getTopLevelWindow()
   ),
-  gtkutil::GladeWidgetHolder(
-      GlobalUIManager().getGtkBuilderFromFile("ModelSelector.glade")
-  ),
+  gtkutil::GladeWidgetHolder("ModelSelector.glade"),
   _modelPreview(new gtkutil::ModelPreview()),
   _treeStore(Gtk::TreeStore::create(_columns)),
   _treeStoreWithSkins(Gtk::TreeStore::create(_columns)),
@@ -70,7 +68,7 @@ ModelSelector::ModelSelector()
     // allow vertical shrinking)
     _modelPreview->setSize(static_cast<int>(_position.getSize()[0]*0.4f),
                            static_cast<int>(_position.getSize()[1]*0.2f));
-    Gtk::Paned* splitter = getGladeWidget<Gtk::Paned>("splitter");
+    Gtk::Paned* splitter = gladeWidget<Gtk::Paned>("splitter");
     splitter->pack2(*_modelPreview, true, true);
 
     // Re-center the window
@@ -82,23 +80,23 @@ ModelSelector::ModelSelector()
 
     // Set scroll bar policies (default in Glade is automatic but it doesn't
     // seem to take effect)
-    getGladeWidget<Gtk::ScrolledWindow>("topScrolledWin")->set_policy(
+    gladeWidget<Gtk::ScrolledWindow>("topScrolledWin")->set_policy(
         Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC
     );
-    getGladeWidget<Gtk::ScrolledWindow>("bottomScrolledWin")->set_policy(
+    gladeWidget<Gtk::ScrolledWindow>("bottomScrolledWin")->set_policy(
         Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC
     );
 
     // Connect buttons
-    getGladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
+    gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ModelSelector::callbackOK)
     );
-    getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
+    gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ModelSelector::callbackCancel)
     );
 
     // Add main box to window
-    Gtk::Widget* mainBox = getGladeWidget<Gtk::Widget>("main");
+    Gtk::Widget* mainBox = gladeWidget<Gtk::Widget>("main");
     add(*mainBox);
 
     // Store split position in registry
@@ -147,7 +145,7 @@ void ModelSelector::_postShow()
     // conditionally hide the options
     if (!_showOptions)
     {
-        getGladeWidget<Gtk::Widget>("advancedExpander")->hide();
+        gladeWidget<Gtk::Widget>("advancedExpander")->hide();
     }
 
     // Initialise the GL widget after the widgets have been shown
@@ -205,7 +203,7 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     return ModelSelectorResult(
         _lastModel,
         _lastSkin,
-        getGladeWidget<Gtk::CheckButton>("monsterClipCheckbox")->get_active()
+        gladeWidget<Gtk::CheckButton>("monsterClipCheckbox")->get_active()
     );
 }
 
@@ -228,7 +226,7 @@ void ModelSelector::refresh()
 // Helper function to create the TreeView
 void ModelSelector::setupTreeView()
 {
-    _treeView = getGladeWidget<Gtk::TreeView>("modelTreeView");
+    _treeView = gladeWidget<Gtk::TreeView>("modelTreeView");
 
     // Single visible column, containing the directory/model name and the icon
     _treeView->append_column(*Gtk::manage(
@@ -283,7 +281,7 @@ void ModelSelector::populateModels()
 void ModelSelector::setupInfoPanel()
 {
     // Info table. Has key and value columns.
-    Gtk::TreeView* treeView = getGladeWidget<Gtk::TreeView>("infoTreeView");
+    Gtk::TreeView* treeView = gladeWidget<Gtk::TreeView>("infoTreeView");
 
     treeView->append_column(*Gtk::manage(
         new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)

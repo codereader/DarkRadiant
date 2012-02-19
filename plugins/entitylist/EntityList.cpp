@@ -34,9 +34,7 @@ EntityList::EntityList() :
 	gtkutil::PersistentTransientWindow(
         _(WINDOW_TITLE), GlobalMainFrame().getTopLevelWindow(), true
     ),
-    gtkutil::GladeWidgetHolder(
-        GlobalUIManager().getGtkBuilderFromFile("EntityList.glade")
-    ),
+    gtkutil::GladeWidgetHolder("EntityList.glade"),
 	_callbackActive(false)
 {
 	set_type_hint(Gdk::WINDOW_TYPE_HINT_DIALOG);
@@ -56,17 +54,17 @@ EntityList::EntityList() :
 
 Gtk::CheckButton* EntityList::visibleOnly()
 {
-    return getGladeWidget<Gtk::CheckButton>("visibleOnly");
+    return gladeWidget<Gtk::CheckButton>("visibleOnly");
 }
 
 Gtk::TreeView* EntityList::treeView()
 {
-    return getGladeWidget<Gtk::TreeView>("treeView");
+    return gladeWidget<Gtk::TreeView>("treeView");
 }
 
 void EntityList::populateWindow()
 {
-    add(*getGladeWidget<Gtk::Widget>("main"));
+    add(*gladeWidget<Gtk::Widget>("main"));
 
 	// Configure the treeview
     treeView()->set_model(_treeModel.getModel());
@@ -88,7 +86,7 @@ void EntityList::populateWindow()
 
 	// Update the toggle item status according to the registry
     registry::bindPropertyToKey(
-        getGladeWidget<Gtk::CheckButton>("focusSelected")->property_active(),
+        gladeWidget<Gtk::CheckButton>("focusSelected")->property_active(),
         RKEY_ENTITYLIST_FOCUS_SELECTION
     );
     registry::bindPropertyToKey(visibleOnly()->property_active(),
@@ -271,7 +269,7 @@ bool EntityList::onSelection(const Glib::RefPtr<Gtk::TreeModel>& model,
 		// Select the instance
 		selectable->setSelected(path_currently_selected == false);
 
-		if (getGladeWidget<Gtk::CheckButton>("focusSelected")->get_active())
+		if (gladeWidget<Gtk::CheckButton>("focusSelected")->get_active())
 		{
 			const AABB& aabb = node->worldAABB();
 			Vector3 origin(aabb.origin);

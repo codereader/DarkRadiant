@@ -127,10 +127,8 @@ public:
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd() :
-    gtkutil::GladeWidgetHolder(
-        GlobalUIManager().getGtkBuilderFromFile("CamWnd.glade")
-    ),
-    _mainWidget(getGladeWidget<Gtk::Container>("mainVbox")),
+    gtkutil::GladeWidgetHolder("CamWnd.glade"),
+    _mainWidget(gladeWidget<Gtk::Container>("mainVbox")),
 	_id(++_maxId),
 	m_view(true),
 	m_Camera(&m_view, Callback(boost::bind(&CamWnd::queueDraw, this))),
@@ -176,7 +174,7 @@ CamWnd::CamWnd() :
 void CamWnd::constructToolbar()
 {
     // If lighting is not available, grey out the lighting button
-    Gtk::ToggleToolButton* lightingBtn = getGladeWidget<Gtk::ToggleToolButton>(
+    Gtk::ToggleToolButton* lightingBtn = gladeWidget<Gtk::ToggleToolButton>(
         "lightingBtn"
     );
     if (!GlobalRenderSystem().shaderProgramsAvailable())
@@ -192,24 +190,24 @@ void CamWnd::constructToolbar()
     updateActiveRenderModeButton();
 
     // Connect button signals
-    getGladeWidget<Gtk::ToggleToolButton>("texturedBtn")->signal_toggled().connect(
+    gladeWidget<Gtk::ToggleToolButton>("texturedBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
     lightingBtn->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
-    getGladeWidget<Gtk::ToggleToolButton>("flatShadeBtn")->signal_toggled().connect(
+    gladeWidget<Gtk::ToggleToolButton>("flatShadeBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
-    getGladeWidget<Gtk::ToggleToolButton>("wireframeBtn")->signal_toggled().connect(
+    gladeWidget<Gtk::ToggleToolButton>("wireframeBtn")->signal_toggled().connect(
         sigc::mem_fun(*this, &CamWnd::onRenderModeButtonsChanged)
     );
 
     // Far clip buttons.
-    getGladeWidget<Gtk::ToolButton>("clipPlaneInButton")->signal_clicked().connect(
+    gladeWidget<Gtk::ToolButton>("clipPlaneInButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneIn)
     );
-    getGladeWidget<Gtk::ToolButton>("clipPlaneOutButton")->signal_clicked().connect(
+    gladeWidget<Gtk::ToolButton>("clipPlaneOutButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::farClipPlaneOut)
     );
 
@@ -218,17 +216,17 @@ void CamWnd::constructToolbar()
         sigc::mem_fun(*this, &CamWnd::setFarClipButtonSensitivity)
     );
 
-	getGladeWidget<Gtk::ToolButton>("startTimeButton")->signal_clicked().connect(
+	gladeWidget<Gtk::ToolButton>("startTimeButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::startRenderTime)
     );
-	getGladeWidget<Gtk::ToolButton>("stopTimeButton")->signal_clicked().connect(
+	gladeWidget<Gtk::ToolButton>("stopTimeButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &CamWnd::stopRenderTime)
     );
 
 	// Stop time, initially
 	stopRenderTime();
 
-    Gtk::Widget* toolbar = getGladeWidget<Gtk::Widget>("camToolbar");
+    Gtk::Widget* toolbar = gladeWidget<Gtk::Widget>("camToolbar");
 
     // Hide the toolbar if requested
     if (!getCameraSettings()->showCameraToolbar())
@@ -249,14 +247,14 @@ void CamWnd::setFarClipButtonSensitivity()
 {
     // Only enabled if cubic clipping is enabled.
     bool enabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP, true);
-    getGladeWidget<Gtk::Widget>("clipPlaneInButton")->set_sensitive(enabled);
-    getGladeWidget<Gtk::Widget>("clipPlaneOutButton")->set_sensitive(enabled);
+    gladeWidget<Gtk::Widget>("clipPlaneInButton")->set_sensitive(enabled);
+    gladeWidget<Gtk::Widget>("clipPlaneOutButton")->set_sensitive(enabled);
 
     // Update tooltips so users know why they are disabled
-    getGladeWidget<Gtk::Widget>("clipPlaneInButton")->set_tooltip_text(
+    gladeWidget<Gtk::Widget>("clipPlaneInButton")->set_tooltip_text(
         FAR_CLIP_IN_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT)
     );
-    getGladeWidget<Gtk::Widget>("clipPlaneOutButton")->set_tooltip_text(
+    gladeWidget<Gtk::Widget>("clipPlaneOutButton")->set_tooltip_text(
         FAR_CLIP_OUT_TEXT + (enabled ? "" : FAR_CLIP_DISABLED_TEXT)
     );
 }
@@ -283,7 +281,7 @@ void CamWnd::constructGUIComponents()
     );
 
     // Pack GL widget into outer widget
-    Gtk::Container* glWidgetFrame = getGladeWidget<Gtk::Container>(
+    Gtk::Container* glWidgetFrame = gladeWidget<Gtk::Container>(
         "glWidgetFrame"
     );
     glWidgetFrame->add(*_camGLWidget);
@@ -327,8 +325,8 @@ void CamWnd::startRenderTime()
 		_timer.enable();
 	}
 
-	//getGladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(false);
-	getGladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(true);
+	//gladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(false);
+	gladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(true);
 }
 
 gboolean CamWnd::_onFrame(gpointer data)
@@ -358,8 +356,8 @@ void CamWnd::stopRenderTime()
 {
 	_timer.disable();
 
-	getGladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(true);
-	getGladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(false);
+	gladeWidget<Gtk::ToolButton>("startTimeButton")->set_sensitive(true);
+	gladeWidget<Gtk::ToolButton>("stopTimeButton")->set_sensitive(false);
 }
 
 void CamWnd::onRenderModeButtonsChanged()
@@ -368,19 +366,19 @@ void CamWnd::onRenderModeButtonsChanged()
 
     // This function will be called twice, once for the inactivating button and
     // once for the activating button
-    if (getGladeWidget<ToggleToolButton>("texturedBtn")->get_active())
+    if (gladeWidget<ToggleToolButton>("texturedBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_TEXTURED);
     }
-    else if (getGladeWidget<ToggleToolButton>("wireframeBtn")->get_active())
+    else if (gladeWidget<ToggleToolButton>("wireframeBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_WIREFRAME);
     }
-    else if (getGladeWidget<ToggleToolButton>("flatShadeBtn")->get_active())
+    else if (gladeWidget<ToggleToolButton>("flatShadeBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_SOLID);
     }
-    else if (getGladeWidget<ToggleToolButton>("lightingBtn")->get_active())
+    else if (gladeWidget<ToggleToolButton>("lightingBtn")->get_active())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_LIGHTING);
     }
@@ -391,16 +389,16 @@ void CamWnd::updateActiveRenderModeButton()
     switch (getCameraSettings()->getRenderMode())
     {
     case RENDER_MODE_WIREFRAME:
-        getGladeWidget<Gtk::ToggleToolButton>("wireframeBtn")->set_active(true);
+        gladeWidget<Gtk::ToggleToolButton>("wireframeBtn")->set_active(true);
         break;
     case RENDER_MODE_SOLID:
-        getGladeWidget<Gtk::ToggleToolButton>("flatShadeBtn")->set_active(true);
+        gladeWidget<Gtk::ToggleToolButton>("flatShadeBtn")->set_active(true);
         break;
     case RENDER_MODE_TEXTURED:
-        getGladeWidget<Gtk::ToggleToolButton>("texturedBtn")->set_active(true);
+        gladeWidget<Gtk::ToggleToolButton>("texturedBtn")->set_active(true);
         break;
     case RENDER_MODE_LIGHTING:
-        getGladeWidget<Gtk::ToggleToolButton>("lightingBtn")->set_active(true);
+        gladeWidget<Gtk::ToggleToolButton>("lightingBtn")->set_active(true);
         break;
     default:
         g_assert(false);

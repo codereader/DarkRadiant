@@ -54,9 +54,7 @@ ObjectivesEditor::ObjectivesEditor() :
 	gtkutil::BlockingTransientWindow(
         _(DIALOG_TITLE), GlobalMainFrame().getTopLevelWindow()
     ),
-    gtkutil::GladeWidgetHolder(
-        GlobalUIManager().getGtkBuilderFromFile("ObjectivesEditor.glade")
-    ),
+    gtkutil::GladeWidgetHolder("ObjectivesEditor.glade"),
 	_objectiveEntityList(Gtk::ListStore::create(_objEntityColumns)),
 	_objectiveList(Gtk::ListStore::create(_objectiveColumns))
 {
@@ -65,7 +63,7 @@ ObjectivesEditor::ObjectivesEditor() :
     set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
     
     // Add vbox to dialog
-    add(*getGladeWidget<Gtk::Widget>("mainVbox"));
+    add(*gladeWidget<Gtk::Widget>("mainVbox"));
     g_assert(get_child() != NULL);
 
     // Setup signals and tree views
@@ -73,23 +71,23 @@ ObjectivesEditor::ObjectivesEditor() :
     setupObjectivesPanel();
 
     // Buttons not associated with a treeview panel
-    Gtk::Button* logicButton = getGladeWidget<Gtk::Button>(
+    Gtk::Button* logicButton = gladeWidget<Gtk::Button>(
         "editSuccessLogicButton"
     );
     logicButton->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onEditLogic)
     );
-	Gtk::Button* conditionsButton = getGladeWidget<Gtk::Button>(
+	Gtk::Button* conditionsButton = gladeWidget<Gtk::Button>(
         "editObjectiveConditionsButton"
     );
     conditionsButton->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onEditObjConditions)
     );
 
-    getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
+    gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onCancel)
     );
-	getGladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onOK)
     );
 
@@ -112,7 +110,7 @@ ObjectivesEditor::ObjectivesEditor() :
 void ObjectivesEditor::setupEntitiesPanel()
 {
 	// Tree view listing the target_addobjectives entities
-    Gtk::TreeView* entityList = getGladeWidget<Gtk::TreeView>(
+    Gtk::TreeView* entityList = gladeWidget<Gtk::TreeView>(
         "entitiesTreeView"
     );
     entityList->set_model(_objectiveEntityList);
@@ -137,12 +135,12 @@ void ObjectivesEditor::setupEntitiesPanel()
 	entityList->append_column(*Gtk::manage(new gtkutil::TextColumn("", _objEntityColumns.displayName)));
 	
     // Connect button signals
-    Gtk::Button* addButton = getGladeWidget<Gtk::Button>("createEntityButton");
+    Gtk::Button* addButton = gladeWidget<Gtk::Button>("createEntityButton");
 	addButton->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onAddEntity)
     );
 
-    Gtk::Button* delButton = getGladeWidget<Gtk::Button>("deleteEntityButton");
+    Gtk::Button* delButton = gladeWidget<Gtk::Button>("deleteEntityButton");
 	delButton->set_sensitive(false); // disabled at start
 	delButton->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onDeleteEntity)
@@ -153,7 +151,7 @@ void ObjectivesEditor::setupEntitiesPanel()
 void ObjectivesEditor::setupObjectivesPanel()
 {
     // Tree view
-    Gtk::TreeView* objList = getGladeWidget<Gtk::TreeView>(
+    Gtk::TreeView* objList = gladeWidget<Gtk::TreeView>(
         "objectivesTreeView"
     );
     objList->set_model(_objectiveList);
@@ -171,12 +169,12 @@ void ObjectivesEditor::setupObjectivesPanel()
     objList->append_column(*Gtk::manage(
         new gtkutil::TextColumn(_("Diff."), _objectiveColumns.difficultyLevel, false)));
     
-    Gtk::Button* addButton = getGladeWidget<Gtk::Button>("addObjButton");
+    Gtk::Button* addButton = gladeWidget<Gtk::Button>("addObjButton");
     addButton->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectivesEditor::_onAddObjective)
     );
 
-    Gtk::Button* editObjButton = getGladeWidget<Gtk::Button>(
+    Gtk::Button* editObjButton = gladeWidget<Gtk::Button>(
         "editObjButton"
     );
     editObjButton->set_sensitive(false); // not enabled without selection 
@@ -184,7 +182,7 @@ void ObjectivesEditor::setupObjectivesPanel()
         sigc::mem_fun(*this, &ObjectivesEditor::_onEditObjective)
     );
 
-    Gtk::Button* moveUpObjButton = getGladeWidget<Gtk::Button>(
+    Gtk::Button* moveUpObjButton = gladeWidget<Gtk::Button>(
         "objMoveUpButton"
     );
     moveUpObjButton->set_sensitive(false); // not enabled without selection 
@@ -192,7 +190,7 @@ void ObjectivesEditor::setupObjectivesPanel()
         sigc::mem_fun(*this, &ObjectivesEditor::_onMoveUpObjective)
     );
 
-    Gtk::Button* moveDownObjButton = getGladeWidget<Gtk::Button>(
+    Gtk::Button* moveDownObjButton = gladeWidget<Gtk::Button>(
         "objMoveDownButton"
     );
     moveDownObjButton->set_sensitive(false); // not enabled without selection 
@@ -200,7 +198,7 @@ void ObjectivesEditor::setupObjectivesPanel()
         sigc::mem_fun(*this, &ObjectivesEditor::_onMoveDownObjective)
     );
 
-    Gtk::Button* delObjButton = getGladeWidget<Gtk::Button>(
+    Gtk::Button* delObjButton = gladeWidget<Gtk::Button>(
         "delObjButton"
     );
     delObjButton->set_sensitive(false); // not enabled without selection 
@@ -208,7 +206,7 @@ void ObjectivesEditor::setupObjectivesPanel()
         sigc::mem_fun(*this, &ObjectivesEditor::_onDeleteObjective)
     );
     
-    Gtk::Button* clearObjButton = getGladeWidget<Gtk::Button>(
+    Gtk::Button* clearObjButton = gladeWidget<Gtk::Button>(
         "clearObjectivesButton"
     );
     clearObjButton->set_sensitive(false); // requires >0 objectives
@@ -326,7 +324,7 @@ void ObjectivesEditor::refreshObjectivesList()
 	_curEntity->second->populateListStore(_objectiveList, _objectiveColumns);
 
 	// If there is at least one objective, make the Clear button available
-    Gtk::Button* clearObjButton = getGladeWidget<Gtk::Button>(
+    Gtk::Button* clearObjButton = gladeWidget<Gtk::Button>(
         "clearObjectivesButton"
     );
 	if (_curEntity->second->isEmpty())
@@ -387,15 +385,15 @@ void ObjectivesEditor::_onEntitySelectionChanged()
 	// Clear the objectives list
 	_objectiveList->clear();
 	
-    Gtk::Button* delEntityButton = getGladeWidget<Gtk::Button>(
+    Gtk::Button* delEntityButton = gladeWidget<Gtk::Button>(
         "deleteEntityButton"
     );
-    Gtk::Widget* objButtonPanel = getGladeWidget<Gtk::Widget>(
+    Gtk::Widget* objButtonPanel = gladeWidget<Gtk::Widget>(
         "objButtonPanel"
     );
 
 	// Get the selection
-    Gtk::TreeView* entityList = getGladeWidget<Gtk::TreeView>(
+    Gtk::TreeView* entityList = gladeWidget<Gtk::TreeView>(
         "entitiesTreeView"
     );
 	Gtk::TreeModel::iterator iter = entityList->get_selection()->get_selected();
@@ -414,12 +412,12 @@ void ObjectivesEditor::_onEntitySelectionChanged()
         objButtonPanel->set_sensitive(true);
 
         // Enable mission logic button
-        getGladeWidget<Gtk::Widget>(
+        gladeWidget<Gtk::Widget>(
             "editSuccessLogicButton"
         )->set_sensitive(true);
 
 		// Enable obj condition button
-        getGladeWidget<Gtk::Widget>(
+        gladeWidget<Gtk::Widget>(
             "editObjectiveConditionsButton"
         )->set_sensitive(true);
 	}
@@ -431,12 +429,12 @@ void ObjectivesEditor::_onEntitySelectionChanged()
 		objButtonPanel->set_sensitive(false);
 
         // Disable mission logic button
-        getGladeWidget<Gtk::Widget>(
+        gladeWidget<Gtk::Widget>(
             "editSuccessLogicButton"
         )->set_sensitive(false);
 
 		// Disable obj condition button
-        getGladeWidget<Gtk::Widget>(
+        gladeWidget<Gtk::Widget>(
             "editObjectiveConditionsButton"
         )->set_sensitive(false);
 	}
@@ -446,14 +444,14 @@ void ObjectivesEditor::_onEntitySelectionChanged()
 void ObjectivesEditor::_onObjectiveSelectionChanged()
 {
 	// Get the selection
-	_curObjective = getGladeWidget<Gtk::TreeView>("objectivesTreeView")
+	_curObjective = gladeWidget<Gtk::TreeView>("objectivesTreeView")
                     ->get_selection()->get_selected();
 
 	if (_curObjective)
     {
         // Enable the edit and delete buttons
-        getGladeWidget<Gtk::Widget>("editObjButton")->set_sensitive(true);
-        getGladeWidget<Gtk::Widget>("delObjButton")->set_sensitive(true);
+        gladeWidget<Gtk::Widget>("editObjButton")->set_sensitive(true);
+        gladeWidget<Gtk::Widget>("delObjButton")->set_sensitive(true);
 
         // Check if this is the first command in the list, get the ID of the
         // selected item
@@ -465,16 +463,16 @@ void ObjectivesEditor::_onObjectiveSelectionChanged()
         bool hasNext = (highestIndex != -1 && highestIndex > index);
         bool hasPrev = (lowestIndex != -1 && lowestIndex < index);
 
-        getGladeWidget<Gtk::Widget>("objMoveUpButton")->set_sensitive(hasPrev);
-        getGladeWidget<Gtk::Widget>("objMoveDownButton")->set_sensitive(hasNext);
+        gladeWidget<Gtk::Widget>("objMoveUpButton")->set_sensitive(hasPrev);
+        gladeWidget<Gtk::Widget>("objMoveDownButton")->set_sensitive(hasNext);
 	}
 	else
     {
 		// Disable the edit, delete and move buttons
-		getGladeWidget<Gtk::Widget>("editObjButton")->set_sensitive(false);
-		getGladeWidget<Gtk::Widget>("delObjButton")->set_sensitive(false);
-		getGladeWidget<Gtk::Widget>("objMoveUpButton")->set_sensitive(false);
-        getGladeWidget<Gtk::Widget>("objMoveDownButton")->set_sensitive(false);
+		gladeWidget<Gtk::Widget>("editObjButton")->set_sensitive(false);
+		gladeWidget<Gtk::Widget>("delObjButton")->set_sensitive(false);
+		gladeWidget<Gtk::Widget>("objMoveUpButton")->set_sensitive(false);
+        gladeWidget<Gtk::Widget>("objMoveDownButton")->set_sensitive(false);
 	}
 }
 
@@ -525,7 +523,7 @@ void ObjectivesEditor::_onAddEntity()
 void ObjectivesEditor::_onDeleteEntity()
 {
 	// Get the selection
-    Gtk::TreeView* entityList = getGladeWidget<Gtk::TreeView>(
+    Gtk::TreeView* entityList = gladeWidget<Gtk::TreeView>(
         "entitiesTreeView"
     );
     Gtk::TreeModel::iterator iter = entityList->get_selection()->get_selected();

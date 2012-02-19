@@ -122,9 +122,7 @@ public:
 EntityClassChooser::EntityClassChooser()
 : gtkutil::BlockingTransientWindow(_(ECLASS_CHOOSER_TITLE),
                                    GlobalMainFrame().getTopLevelWindow()),
-  gtkutil::GladeWidgetHolder(
-        GlobalUIManager().getGtkBuilderFromFile("EntityClassChooser.glade")
-  ),
+  gtkutil::GladeWidgetHolder("EntityClassChooser.glade"),
   _eclassLoader(new ThreadedEntityClassLoader(_columns)),
   _selection(NULL),
   _selectedName(""),
@@ -145,15 +143,15 @@ EntityClassChooser::EntityClassChooser()
                            static_cast<int>(rect.get_height() * 0.2f));
 
     // Create GUI elements and pack into self
-    Gtk::Paned* mainPaned = getGladeWidget<Gtk::Paned>("mainPaned");
+    Gtk::Paned* mainPaned = gladeWidget<Gtk::Paned>("mainPaned");
     add(*mainPaned);
     g_assert(get_child() != NULL);
 
     // Connect button signals
-    getGladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
+    gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &EntityClassChooser::callbackOK)
     );
-    getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
+    gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &EntityClassChooser::callbackCancel)
     );
 
@@ -250,7 +248,7 @@ void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
     if (_treeStore)
     {
         gtkutil::TreeModel::findAndSelectString(
-            getGladeWidget<Gtk::TreeView>("entityTreeView"),
+            gladeWidget<Gtk::TreeView>("entityTreeView"),
             eclass,
             _columns.name
         );
@@ -287,7 +285,7 @@ void EntityClassChooser::_postShow()
     updateSelection();
 
     // Focus on the treeview
-    getGladeWidget<Gtk::TreeView>("entityTreeView")->grab_focus();
+    gladeWidget<Gtk::TreeView>("entityTreeView")->grab_focus();
 
     // Call the base class, will enter main loop
     BlockingTransientWindow::_postShow();
@@ -297,7 +295,7 @@ void EntityClassChooser::_postShow()
 
 Gtk::TreeView* EntityClassChooser::treeView()
 {
-    return getGladeWidget<Gtk::TreeView>("entityTreeView");
+    return gladeWidget<Gtk::TreeView>("entityTreeView");
 }
 
 void EntityClassChooser::setTreeViewModel()
@@ -344,7 +342,7 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
     IEntityClassPtr e = GlobalEntityClassManager().findOrInsert(eclass, true);
 
     // Set the usage panel to the IEntityClass' usage information string
-    Gtk::TextView* usageText = getGladeWidget<Gtk::TextView>("usageTextView");
+    Gtk::TextView* usageText = gladeWidget<Gtk::TextView>("usageTextView");
     Glib::RefPtr<Gtk::TextBuffer> buf = usageText->get_buffer();
 
     // Create the concatenated usage string
@@ -379,7 +377,7 @@ void EntityClassChooser::updateSelection()
         if (!row[_columns.isFolder])
         {
             // Make the OK button active
-            getGladeWidget<Gtk::Widget>("okButton")->set_sensitive(true);
+            gladeWidget<Gtk::Widget>("okButton")->set_sensitive(true);
 
             // Set the panel text with the usage information
             std::string selName = row[_columns.name];
@@ -405,7 +403,7 @@ void EntityClassChooser::updateSelection()
     _modelPreview->setModel("");
     _modelPreview->setSkin("");
 
-    getGladeWidget<Gtk::Widget>("okButton")->set_sensitive(false);
+    gladeWidget<Gtk::Widget>("okButton")->set_sensitive(false);
 }
 
 void EntityClassChooser::callbackCancel()

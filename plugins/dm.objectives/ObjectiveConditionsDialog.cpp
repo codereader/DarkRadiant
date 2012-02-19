@@ -29,9 +29,7 @@ namespace
 ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Window>& parent, 
 	ObjectiveEntity& objectiveEnt) :
 	gtkutil::BlockingTransientWindow(_(DIALOG_TITLE), parent),
-    gtkutil::GladeWidgetHolder(
-        GlobalUIManager().getGtkBuilderFromFile("ObjectiveConditionsDialog.glade")
-    ),
+    gtkutil::GladeWidgetHolder("ObjectiveConditionsDialog.glade"),
 	_objectiveEnt(objectiveEnt),
 	_objectiveConditionList(Gtk::ListStore::create(_objConditionColumns)),
 	_srcObjState(NULL),
@@ -46,14 +44,14 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
     set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
 
 	// Add vbox to dialog
-    add(*getGladeWidget<Gtk::Widget>("mainVbox"));
+    add(*gladeWidget<Gtk::Widget>("mainVbox"));
     g_assert(get_child() != NULL);
 
 	// OK and CANCEL actions
-	getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onCancel)
     );
-	getGladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onOK)
     );
 
@@ -74,7 +72,7 @@ ObjectiveConditionsDialog::ObjectiveConditionsDialog(const Glib::RefPtr<Gtk::Win
 void ObjectiveConditionsDialog::setupConditionsPanel()
 {
 	// Tree view listing the conditions
-    Gtk::TreeView* conditionsList = getGladeWidget<Gtk::TreeView>("conditionsTreeView");
+    Gtk::TreeView* conditionsList = gladeWidget<Gtk::TreeView>("conditionsTreeView");
     conditionsList->set_model(_objectiveConditionList);
 	conditionsList->set_headers_visible(false);
 
@@ -89,12 +87,12 @@ void ObjectiveConditionsDialog::setupConditionsPanel()
 	conditionsList->append_column(*Gtk::manage(new gtkutil::TextColumn("", _objConditionColumns.description)));
 	
     // Connect button signals
-    Gtk::Button* addButton = getGladeWidget<Gtk::Button>("addObjCondButton");
+    Gtk::Button* addButton = gladeWidget<Gtk::Button>("addObjCondButton");
 	addButton->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onAddObjCondition)
     );
 
-    Gtk::Button* delButton = getGladeWidget<Gtk::Button>("delObjCondButton");
+    Gtk::Button* delButton = gladeWidget<Gtk::Button>("delObjCondButton");
 	delButton->set_sensitive(false); // disabled at start
 	delButton->signal_clicked().connect(
         sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onDelObjCondition)
@@ -104,22 +102,22 @@ void ObjectiveConditionsDialog::setupConditionsPanel()
 void ObjectiveConditionsDialog::setupConditionEditPanel()
 {
 	// Initially everything is insensitive
-	getGladeWidget<Gtk::Button>("delObjCondButton")->set_sensitive(false);
+	gladeWidget<Gtk::Button>("delObjCondButton")->set_sensitive(false);
 
 	// Disable details controls
-    getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
+    gladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
 
 	// Set ranges for spin buttons
-	Gtk::SpinButton* srcMission = getGladeWidget<Gtk::SpinButton>("SourceMission");
+	Gtk::SpinButton* srcMission = gladeWidget<Gtk::SpinButton>("SourceMission");
 	srcMission->set_adjustment(*Gtk::manage(new Gtk::Adjustment(1, 1, 99)));
 	srcMission->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcMissionChanged));
 
-	Gtk::SpinButton* srcObj = getGladeWidget<Gtk::SpinButton>("SourceObjective");
+	Gtk::SpinButton* srcObj = gladeWidget<Gtk::SpinButton>("SourceObjective");
 	srcObj->set_adjustment(*Gtk::manage(new Gtk::Adjustment(1, 1, 999)));
 	srcObj->signal_changed().connect(sigc::mem_fun(*this, &ObjectiveConditionsDialog::_onSrcObjChanged));
 
 	// Create the state dropdown, Glade is from the last century and doesn't support GtkComboBoxText, hmpf
-	Gtk::VBox* placeholder = getGladeWidget<Gtk::VBox>("SourceStatePlaceholder");
+	Gtk::VBox* placeholder = gladeWidget<Gtk::VBox>("SourceStatePlaceholder");
 
 	_srcObjState = Gtk::manage(new Gtk::ComboBoxText);
 
@@ -135,7 +133,7 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 	placeholder->pack_start(*_srcObjState);
 
 	// Create the objectives dropdown, populate from objective entity
-	placeholder = getGladeWidget<Gtk::VBox>("TargetObjectivePlaceholder");
+	placeholder = gladeWidget<Gtk::VBox>("TargetObjectivePlaceholder");
 
 	// Populate the liststore
 	_objectiveEnt.populateListStore(_objectives, _objectiveColumns);
@@ -156,7 +154,7 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 
 	placeholder->pack_start(*_targetObj);
 
-	placeholder = getGladeWidget<Gtk::VBox>("TypePlaceholder");
+	placeholder = gladeWidget<Gtk::VBox>("TypePlaceholder");
 
 	_type = Gtk::manage(new Gtk::ComboBoxText);
 
@@ -168,7 +166,7 @@ void ObjectiveConditionsDialog::setupConditionEditPanel()
 
 	placeholder->pack_start(*_type);
 
-	placeholder = getGladeWidget<Gtk::VBox>("ValuePlaceholder");
+	placeholder = gladeWidget<Gtk::VBox>("ValuePlaceholder");
 
 	_value = Gtk::manage(new Gtk::ComboBoxText);
 
@@ -192,11 +190,11 @@ void ObjectiveConditionsDialog::loadValuesFromCondition()
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	// Source mission number
-	Gtk::SpinButton* srcMission = getGladeWidget<Gtk::SpinButton>("SourceMission");
+	Gtk::SpinButton* srcMission = gladeWidget<Gtk::SpinButton>("SourceMission");
 	srcMission->set_value(cond.sourceMission + 1); // +1 since user-visible values are 1-based
 
 	// Source objective number
-	Gtk::SpinButton* srcObj = getGladeWidget<Gtk::SpinButton>("SourceObjective");
+	Gtk::SpinButton* srcObj = gladeWidget<Gtk::SpinButton>("SourceObjective");
 	srcObj->set_value(cond.sourceObjective + 1); // +1 since user-visible values are 1-based
 
 	// Source objective state
@@ -296,10 +294,10 @@ void ObjectiveConditionsDialog::refreshPossibleValues()
 
 void ObjectiveConditionsDialog::_onConditionSelectionChanged()
 {
-	Gtk::Button* delObjCondButton = getGladeWidget<Gtk::Button>("delObjCondButton");
+	Gtk::Button* delObjCondButton = gladeWidget<Gtk::Button>("delObjCondButton");
     
 	// Get the selection
-    Gtk::TreeView* condView = getGladeWidget<Gtk::TreeView>("conditionsTreeView");
+    Gtk::TreeView* condView = gladeWidget<Gtk::TreeView>("conditionsTreeView");
 
 	_curCondition = condView->get_selection()->get_selected();
 
@@ -310,7 +308,7 @@ void ObjectiveConditionsDialog::_onConditionSelectionChanged()
 		loadValuesFromCondition();
 
 		// Enable details controls
-        getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(true);
+        gladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(true);
 	}
 	else
     {
@@ -318,7 +316,7 @@ void ObjectiveConditionsDialog::_onConditionSelectionChanged()
 		delObjCondButton->set_sensitive(false);
 
 		// Disable details controls
-        getGladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
+        gladeWidget<Gtk::Widget>("ConditionVBox")->set_sensitive(false);
 	}
 }
 
@@ -351,7 +349,7 @@ void ObjectiveConditionsDialog::_onAddObjCondition()
 
 			if (finder.getIter())
 			{
-				getGladeWidget<Gtk::TreeView>("conditionsTreeView")->get_selection()->select(finder.getIter());
+				gladeWidget<Gtk::TreeView>("conditionsTreeView")->get_selection()->select(finder.getIter());
 			}
 
 			return;
@@ -399,7 +397,7 @@ void ObjectiveConditionsDialog::_onSrcMissionChanged()
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	// Subtract 1 from the source mission, we need 0-based values
-	cond.sourceMission = getGladeWidget<Gtk::SpinButton>("SourceMission")->get_value_as_int() - 1;
+	cond.sourceMission = gladeWidget<Gtk::SpinButton>("SourceMission")->get_value_as_int() - 1;
 
 	updateSentence();
 }
@@ -411,7 +409,7 @@ void ObjectiveConditionsDialog::_onSrcObjChanged()
 	ObjectiveCondition& cond = getCurrentObjectiveCondition();
 
 	// Subtract 1 from the source objective, we need 0-based values
-	cond.sourceObjective = getGladeWidget<Gtk::SpinButton>("SourceObjective")->get_value_as_int() - 1;
+	cond.sourceObjective = gladeWidget<Gtk::SpinButton>("SourceObjective")->get_value_as_int() - 1;
 
 	updateSentence();
 }
@@ -520,7 +518,7 @@ void ObjectiveConditionsDialog::_onOK()
 
 bool ObjectiveConditionsDialog::isConditionSelected()
 {
-	return getGladeWidget<Gtk::TreeView>("conditionsTreeView")->get_selection()->get_selected();
+	return gladeWidget<Gtk::TreeView>("conditionsTreeView")->get_selection()->get_selected();
 }
 
 std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& cond)
@@ -579,7 +577,7 @@ std::string ObjectiveConditionsDialog::getSentence(const ObjectiveCondition& con
 
 void ObjectiveConditionsDialog::updateSentence()
 {
-	Gtk::Label* label = getGladeWidget<Gtk::Label>("Sentence");
+	Gtk::Label* label = gladeWidget<Gtk::Label>("Sentence");
 
 	if (isConditionSelected())
 	{

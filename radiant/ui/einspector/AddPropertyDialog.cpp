@@ -46,9 +46,7 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	gtkutil::BlockingTransientWindow(
         _(ADDPROPERTY_TITLE), GlobalMainFrame().getTopLevelWindow()
     ),
-    gtkutil::GladeWidgetHolder(
-        GlobalUIManager().getGtkBuilderFromFile("AddPropertyDialog.glade")
-    ),
+    gtkutil::GladeWidgetHolder("AddPropertyDialog.glade"),
 	_entity(entity)
 {
     // Set size of dialog
@@ -58,13 +56,13 @@ AddPropertyDialog::AddPropertyDialog(Entity* entity) :
 	set_default_size(static_cast<int>(rect.get_width()/2), static_cast<int>(rect.get_height()*2/3));
 
     // Create components
-    add(*getGladeWidget<Gtk::Widget>("mainVbox"));
+    add(*gladeWidget<Gtk::Widget>("mainVbox"));
     g_assert(get_child() != 0);
 
-	getGladeWidget<Gtk::Button>("addButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("addButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &AddPropertyDialog::_onOK)
     );
-	getGladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("cancelButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &AddPropertyDialog::_onCancel)
     );
 
@@ -82,7 +80,7 @@ void AddPropertyDialog::setupTreeView()
 	// Set up the tree store
 	_treeStore = Gtk::TreeStore::create(_columns);
 
-    Gtk::TreeView* treeView = getGladeWidget<Gtk::TreeView>(
+    Gtk::TreeView* treeView = gladeWidget<Gtk::TreeView>(
         "propertyTreeView"
     );
     treeView->set_model(_treeStore);
@@ -289,7 +287,7 @@ AddPropertyDialog::PropertyList AddPropertyDialog::chooseProperty(Entity* entity
 
 void AddPropertyDialog::updateUsagePanel()
 {
-    Gtk::TextView* usageTextView = getGladeWidget<Gtk::TextView>(
+    Gtk::TextView* usageTextView = gladeWidget<Gtk::TextView>(
         "usageTextView"
     );
 	Glib::RefPtr<Gtk::TextBuffer> buf = usageTextView->get_buffer();

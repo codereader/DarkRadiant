@@ -44,7 +44,7 @@ namespace
 
 ParticleEditor::ParticleEditor() :
 	gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalMainFrame().getTopLevelWindow()),
-	gtkutil::GladeWidgetHolder(GlobalUIManager().getGtkBuilderFromFile("ParticleEditor.glade")),
+	gtkutil::GladeWidgetHolder("ParticleEditor.glade"),
 	_defList(Gtk::ListStore::create(_defColumns)),
 	_stageList(Gtk::ListStore::create(_stageColumns)),
 	_preview(GlobalUIManager().createParticlePreview()),
@@ -55,21 +55,21 @@ ParticleEditor::ParticleEditor() :
     set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
 
     // Add vbox to dialog
-    add(*getGladeWidget<Gtk::Widget>("mainVbox"));
+    add(*gladeWidget<Gtk::Widget>("mainVbox"));
     g_assert(get_child() != NULL);
 
 	// Wire up the close button
-	getGladeWidget<Gtk::Button>("closeButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("closeButton")->signal_clicked().connect(
         sigc::mem_fun(*this, &ParticleEditor::_onClose)
     );
 
-	getGladeWidget<Gtk::Button>("newParticleButon")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("newParticleButon")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onNewParticle)
     );
-	getGladeWidget<Gtk::Button>("saveParticleButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("saveParticleButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onSaveParticle)
     );
-	getGladeWidget<Gtk::Button>("saveParticleAsButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("saveParticleAsButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onSaveAsParticle)
     );
 
@@ -83,7 +83,7 @@ ParticleEditor::ParticleEditor() :
 
 	// Setup and pack the preview
 	_preview->setSize(static_cast<int>(rect.get_width() * 0.3f), -1);
-	getGladeWidget<Gtk::HPaned>("mainPane")->add2(*_preview->getWidget());
+	gladeWidget<Gtk::HPaned>("mainPane")->add2(*_preview->getWidget());
 
 	// Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -109,7 +109,7 @@ void ParticleEditor::_onDeleteEvent()
 
 void ParticleEditor::setupParticleDefList()
 {
-	Gtk::TreeView* view = getGladeWidget<Gtk::TreeView>("definitionView");
+	Gtk::TreeView* view = gladeWidget<Gtk::TreeView>("definitionView");
 
 	view->set_model(_defList);
 	view->set_headers_visible(false);
@@ -179,12 +179,12 @@ void ParticleEditor::populateParticleDefList()
 
 void ParticleEditor::selectParticleDef(const std::string& particleDefName)
 {
-	gtkutil::TreeModel::findAndSelectString(getGladeWidget<Gtk::TreeView>("definitionView"), particleDefName, _defColumns.name);
+	gtkutil::TreeModel::findAndSelectString(gladeWidget<Gtk::TreeView>("definitionView"), particleDefName, _defColumns.name);
 }
 
 void ParticleEditor::setupParticleStageList()
 {
-	Gtk::TreeView* view = getGladeWidget<Gtk::TreeView>("stageView");
+	Gtk::TreeView* view = gladeWidget<Gtk::TreeView>("stageView");
 
 	view->set_model(_stageList);
 	view->set_headers_visible(false);
@@ -197,20 +197,20 @@ void ParticleEditor::setupParticleStageList()
 	_stageSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onStageSelChanged));
 
 	// Connect the stage control buttons
-	getGladeWidget<Gtk::Button>("addStageButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("addStageButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onAddStage));
-	getGladeWidget<Gtk::Button>("removeStageButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("removeStageButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onRemoveStage));
-	getGladeWidget<Gtk::Button>("toggleStageButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("toggleStageButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onToggleStage));
-	getGladeWidget<Gtk::Button>("moveStageUpButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("moveStageUpButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onMoveUpStage));
-	getGladeWidget<Gtk::Button>("moveStageDownButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("moveStageDownButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onMoveDownStage));
-	getGladeWidget<Gtk::Button>("duplicateStageButton")->signal_clicked().connect(
+	gladeWidget<Gtk::Button>("duplicateStageButton")->signal_clicked().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDuplicateStage));
 
-	getGladeWidget<Gtk::Button>("duplicateStageButton")->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::COPY, Gtk::ICON_SIZE_BUTTON)));
+	gladeWidget<Gtk::Button>("duplicateStageButton")->set_image(*Gtk::manage(new Gtk::Image(Gtk::Stock::COPY, Gtk::ICON_SIZE_BUTTON)));
 }
 
 void ParticleEditor::setupSettingsPages()
@@ -221,13 +221,13 @@ void ParticleEditor::setupSettingsPages()
 
 	// SHADER
 
-	getGladeWidget<Gtk::Entry>("shaderEntry")->signal_changed().connect(
+	gladeWidget<Gtk::Entry>("shaderEntry")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-	getGladeWidget<Gtk::Entry>("colourEntry")->signal_changed().connect(
+	gladeWidget<Gtk::Entry>("colourEntry")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-	getGladeWidget<Gtk::Entry>("fadeColourEntry")->signal_changed().connect(
+	gladeWidget<Gtk::Entry>("fadeColourEntry")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
-	getGladeWidget<Gtk::CheckButton>("useEntityColour")->signal_toggled().connect(
+	gladeWidget<Gtk::CheckButton>("useEntityColour")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onShaderControlsChanged));
 
 	connectSpinner("fadeInFractionSpinner", &ParticleEditor::_onShaderControlsChanged);
@@ -247,11 +247,11 @@ void ParticleEditor::setupSettingsPages()
 
 	// DISTRIBUTION
 
-	getGladeWidget<Gtk::RadioButton>("distRectangle")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("distRectangle")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("distCylinder")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("distCylinder")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("distSphere")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("distSphere")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
 
 	connectSpinner("distSizeXSpinner", &ParticleEditor::_onDistributionControlsChanged);
@@ -259,31 +259,31 @@ void ParticleEditor::setupSettingsPages()
 	connectSpinner("distSizeZSpinner", &ParticleEditor::_onDistributionControlsChanged);
 	connectSpinner("distSizeRingSpinner", &ParticleEditor::_onDistributionControlsChanged);
 
-	getGladeWidget<Gtk::Entry>("distOffsetEntry")->signal_changed().connect(
+	gladeWidget<Gtk::Entry>("distOffsetEntry")->signal_changed().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
 
-	getGladeWidget<Gtk::CheckButton>("distRandom")->signal_toggled().connect(
+	gladeWidget<Gtk::CheckButton>("distRandom")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDistributionControlsChanged));
 
 	// DIRECTION / ORIENTATION
 
-	getGladeWidget<Gtk::RadioButton>("directionCone")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("directionCone")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("directionOutward")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("directionOutward")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 
 	connectSpinner("coneAngleSpinner", &ParticleEditor::_onDirectionControlsChanged);
 	connectSpinner("upwardBiasSpinner", &ParticleEditor::_onDirectionControlsChanged);
 
-	getGladeWidget<Gtk::RadioButton>("orientationView")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("orientationView")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("orientationAimed")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("orientationAimed")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("orientationX")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("orientationX")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("orientationY")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("orientationY")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("orientationZ")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("orientationZ")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onDirectionControlsChanged));
 
 	connectSpinner("aimedTrailsSpinner", &ParticleEditor::_onDirectionControlsChanged);
@@ -303,16 +303,16 @@ void ParticleEditor::setupSettingsPages()
 	connectSpinner("gravitySpinner", &ParticleEditor::_onSizeControlsChanged);
 	connectSpinner("boundsExpansionSpinner", &ParticleEditor::_onSizeControlsChanged);
 
-	getGladeWidget<Gtk::CheckButton>("useWorldGravity")->signal_toggled().connect(
+	gladeWidget<Gtk::CheckButton>("useWorldGravity")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onSizeControlsChanged));
 
 	// PATH
 
-	getGladeWidget<Gtk::RadioButton>("pathStandard")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("pathStandard")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("pathFlies")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("pathFlies")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
-	getGladeWidget<Gtk::RadioButton>("pathHelix")->signal_toggled().connect(
+	gladeWidget<Gtk::RadioButton>("pathHelix")->signal_toggled().connect(
 		sigc::mem_fun(*this, &ParticleEditor::_onPathControlsChanged));
 
 	connectSpinner("pathRadialSpeedSpinner", &ParticleEditor::_onPathControlsChanged);
@@ -329,17 +329,17 @@ void ParticleEditor::_onShaderControlsChanged()
 
 	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
 
-	std::string material = getGladeWidget<Gtk::Entry>("shaderEntry")->get_text();
+	std::string material = gladeWidget<Gtk::Entry>("shaderEntry")->get_text();
 
 	// Only assign a new material if it has actually changed, otherwise the whole particle gets re-shuffled
 	if (material != stage.getMaterialName())
 	{
-		stage.setMaterialName(getGladeWidget<Gtk::Entry>("shaderEntry")->get_text());
+		stage.setMaterialName(gladeWidget<Gtk::Entry>("shaderEntry")->get_text());
 	}
 
-	stage.setColour(Vector4(getGladeWidget<Gtk::Entry>("colourEntry")->get_text()));
-	stage.setUseEntityColour(getGladeWidget<Gtk::CheckButton>("useEntityColour")->get_active());
-	stage.setFadeColour(Vector4(getGladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));
+	stage.setColour(Vector4(gladeWidget<Gtk::Entry>("colourEntry")->get_text()));
+	stage.setUseEntityColour(gladeWidget<Gtk::CheckButton>("useEntityColour")->get_active());
+	stage.setFadeColour(Vector4(gladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));
 	stage.setFadeInFraction(getSpinButtonValueAsFloat("fadeInFractionSpinner"));
 	stage.setFadeOutFraction(getSpinButtonValueAsFloat("fadeOutFractionSpinner"));
 	stage.setFadeIndexFraction(getSpinButtonValueAsFloat("fadeIndexFractionSpinner"));
@@ -367,32 +367,32 @@ void ParticleEditor::_onDistributionControlsChanged()
 
 	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
 
-	if (getGladeWidget<Gtk::RadioButton>("distRectangle")->get_active())
+	if (gladeWidget<Gtk::RadioButton>("distRectangle")->get_active())
 	{
 		stage.setDistributionType(particles::IParticleStage::DISTRIBUTION_RECT);
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("distCylinder")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("distCylinder")->get_active())
 	{
 		stage.setDistributionType(particles::IParticleStage::DISTRIBUTION_CYLINDER);
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("distSphere")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("distSphere")->get_active())
 	{
 		stage.setDistributionType(particles::IParticleStage::DISTRIBUTION_SPHERE);
 	}
 
 	bool useRingSize = stage.getDistributionType() != particles::IParticleStage::DISTRIBUTION_RECT;
 
-	getGladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
-	getGladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
+	gladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
+	gladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
 
 	stage.setDistributionParm(0, getSpinButtonValueAsFloat("distSizeXSpinner"));
 	stage.setDistributionParm(1, getSpinButtonValueAsFloat("distSizeYSpinner"));
 	stage.setDistributionParm(2, getSpinButtonValueAsFloat("distSizeZSpinner"));
 	stage.setDistributionParm(3, getSpinButtonValueAsFloat("distSizeRingSpinner"));
 
-	stage.setOffset(Vector3(getGladeWidget<Gtk::Entry>("distOffsetEntry")->get_text()));
+	stage.setOffset(Vector3(gladeWidget<Gtk::Entry>("distOffsetEntry")->get_text()));
 
-	stage.setRandomDistribution(getGladeWidget<Gtk::CheckButton>("distRandom")->get_active());
+	stage.setRandomDistribution(gladeWidget<Gtk::CheckButton>("distRandom")->get_active());
 }
 
 void ParticleEditor::_onDirectionControlsChanged()
@@ -401,46 +401,46 @@ void ParticleEditor::_onDirectionControlsChanged()
 
 	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
 
-	if (getGladeWidget<Gtk::RadioButton>("directionCone")->get_active())
+	if (gladeWidget<Gtk::RadioButton>("directionCone")->get_active())
 	{
 		stage.setDirectionType(particles::IParticleStage::DIRECTION_CONE);
 		stage.setDirectionParm(0, getSpinButtonValueAsFloat("coneAngleSpinner"));
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("directionOutward")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("directionOutward")->get_active())
 	{
 		stage.setDirectionType(particles::IParticleStage::DIRECTION_OUTWARD);
 		stage.setDirectionParm(0, getSpinButtonValueAsFloat("upwardBiasSpinner"));
 	}
 
-	getGladeWidget<Gtk::Widget>("coneAngleHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_CONE);
-	getGladeWidget<Gtk::Widget>("upwardBiasHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_OUTWARD);
+	gladeWidget<Gtk::Widget>("coneAngleHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_CONE);
+	gladeWidget<Gtk::Widget>("upwardBiasHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_OUTWARD);
 
-	if (getGladeWidget<Gtk::RadioButton>("orientationView")->get_active())
+	if (gladeWidget<Gtk::RadioButton>("orientationView")->get_active())
 	{
 		stage.setOrientationType(particles::IParticleStage::ORIENTATION_VIEW);
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("orientationAimed")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("orientationAimed")->get_active())
 	{
 		stage.setOrientationType(particles::IParticleStage::ORIENTATION_AIMED);
 
 		stage.setOrientationParm(0, getSpinButtonValueAsFloat("aimedTrailsSpinner"));
 		stage.setOrientationParm(1, getSpinButtonValueAsFloat("aimedTimeSpinner"));
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("orientationX")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("orientationX")->get_active())
 	{
 		stage.setOrientationType(particles::IParticleStage::ORIENTATION_X);
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("orientationY")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("orientationY")->get_active())
 	{
 		stage.setOrientationType(particles::IParticleStage::ORIENTATION_Y);
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("orientationZ")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("orientationZ")->get_active())
 	{
 		stage.setOrientationType(particles::IParticleStage::ORIENTATION_Z);
 	}
 
-	getGladeWidget<Gtk::Widget>("aimedTrailsHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
-	getGladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
+	gladeWidget<Gtk::Widget>("aimedTrailsHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
+	gladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
 
 	stage.setInitialAngle(getSpinButtonValueAsFloat("initialAngleSpinner"));
 }
@@ -464,7 +464,7 @@ void ParticleEditor::_onSizeControlsChanged()
 	stage.getAspect().setTo(getSpinButtonValueAsFloat("aspectToSpinner"));
 
 	stage.setGravity(getSpinButtonValueAsFloat("gravitySpinner"));
-	stage.setWorldGravityFlag(getGladeWidget<Gtk::CheckButton>("useWorldGravity")->get_active());
+	stage.setWorldGravityFlag(gladeWidget<Gtk::CheckButton>("useWorldGravity")->get_active());
 
 	stage.setBoundsExpansion(getSpinButtonValueAsFloat("boundsExpansionSpinner"));
 }
@@ -475,11 +475,11 @@ void ParticleEditor::_onPathControlsChanged()
 
 	particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
 
-	if (getGladeWidget<Gtk::RadioButton>("pathStandard")->get_active())
+	if (gladeWidget<Gtk::RadioButton>("pathStandard")->get_active())
 	{
 		stage.setCustomPathType(particles::IParticleStage::PATH_STANDARD);
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("pathFlies")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("pathFlies")->get_active())
 	{
 		stage.setCustomPathType(particles::IParticleStage::PATH_FLIES);
 
@@ -487,7 +487,7 @@ void ParticleEditor::_onPathControlsChanged()
 		stage.setCustomPathParm(1, getSpinButtonValueAsFloat("pathAxialSpeedSpinner"));
 		stage.setCustomPathParm(2, getSpinButtonValueAsFloat("pathRadiusSpinner"));
 	}
-	else if (getGladeWidget<Gtk::RadioButton>("pathHelix")->get_active())
+	else if (gladeWidget<Gtk::RadioButton>("pathHelix")->get_active())
 	{
 		stage.setCustomPathType(particles::IParticleStage::PATH_HELIX);
 
@@ -516,20 +516,20 @@ void ParticleEditor::updatePathWidgetSensitivity()
 	bool useAnySpinner = stage.getCustomPathType() != particles::IParticleStage::PATH_STANDARD;
 	bool useFlies = stage.getCustomPathType() == particles::IParticleStage::PATH_FLIES;
 
-	getGladeWidget<Gtk::Widget>("pathRadialSpeedLabel")->set_sensitive(useAnySpinner);
-	getGladeWidget<Gtk::Widget>("pathAxialSpeedLabel")->set_sensitive(useAnySpinner);
-	getGladeWidget<Gtk::Widget>("pathRadialSpeedHBox")->set_sensitive(useAnySpinner);
-	getGladeWidget<Gtk::Widget>("pathAxialSpeedsHBox")->set_sensitive(useAnySpinner);
+	gladeWidget<Gtk::Widget>("pathRadialSpeedLabel")->set_sensitive(useAnySpinner);
+	gladeWidget<Gtk::Widget>("pathAxialSpeedLabel")->set_sensitive(useAnySpinner);
+	gladeWidget<Gtk::Widget>("pathRadialSpeedHBox")->set_sensitive(useAnySpinner);
+	gladeWidget<Gtk::Widget>("pathAxialSpeedsHBox")->set_sensitive(useAnySpinner);
 
-	getGladeWidget<Gtk::Widget>("pathRadiusLabel")->set_sensitive(useAnySpinner && useFlies);
-	getGladeWidget<Gtk::Widget>("pathSphereRadiusHBox")->set_sensitive(useAnySpinner && useFlies);
+	gladeWidget<Gtk::Widget>("pathRadiusLabel")->set_sensitive(useAnySpinner && useFlies);
+	gladeWidget<Gtk::Widget>("pathSphereRadiusHBox")->set_sensitive(useAnySpinner && useFlies);
 
-	getGladeWidget<Gtk::Widget>("pathSizeXLabel")->set_sensitive(useAnySpinner && !useFlies);
-	getGladeWidget<Gtk::Widget>("pathSizeYLabel")->set_sensitive(useAnySpinner && !useFlies);
-	getGladeWidget<Gtk::Widget>("pathSizeZLabel")->set_sensitive(useAnySpinner && !useFlies);
-	getGladeWidget<Gtk::Widget>("pathSizeXHBox")->set_sensitive(useAnySpinner && !useFlies);
-	getGladeWidget<Gtk::Widget>("pathSizeYHBox")->set_sensitive(useAnySpinner && !useFlies);
-	getGladeWidget<Gtk::Widget>("pathSizeZHBox")->set_sensitive(useAnySpinner && !useFlies);
+	gladeWidget<Gtk::Widget>("pathSizeXLabel")->set_sensitive(useAnySpinner && !useFlies);
+	gladeWidget<Gtk::Widget>("pathSizeYLabel")->set_sensitive(useAnySpinner && !useFlies);
+	gladeWidget<Gtk::Widget>("pathSizeZLabel")->set_sensitive(useAnySpinner && !useFlies);
+	gladeWidget<Gtk::Widget>("pathSizeXHBox")->set_sensitive(useAnySpinner && !useFlies);
+	gladeWidget<Gtk::Widget>("pathSizeYHBox")->set_sensitive(useAnySpinner && !useFlies);
+	gladeWidget<Gtk::Widget>("pathSizeZHBox")->set_sensitive(useAnySpinner && !useFlies);
 }
 
 bool ParticleEditor::_onSpinButtonKeyRelease(GdkEventKey*, MemberMethod func)
@@ -542,53 +542,53 @@ bool ParticleEditor::_onSpinButtonKeyRelease(GdkEventKey*, MemberMethod func)
 void ParticleEditor::connectSpinner(const std::string& name, MemberMethod func)
 {
 	// Connect the regular "value-changed" signal to the given method
-	getGladeWidget<Gtk::SpinButton>(name)->signal_value_changed().connect(
+	gladeWidget<Gtk::SpinButton>(name)->signal_value_changed().connect(
 		sigc::mem_fun(*this, func));
 
 	// Additionally, since the value-changed signal is only called after the user leaves
 	// the entry field after typing in a value, we hook a special key-release event to catch inputs
-	getGladeWidget<Gtk::SpinButton>(name)->signal_key_release_event().connect(
+	gladeWidget<Gtk::SpinButton>(name)->signal_key_release_event().connect(
 		sigc::bind(sigc::mem_fun(*this, &ParticleEditor::_onSpinButtonKeyRelease), func), false);
 }
 
 float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
 {
-	Gtk::SpinButton* sb = getGladeWidget<Gtk::SpinButton>(widgetName);
+	Gtk::SpinButton* sb = gladeWidget<Gtk::SpinButton>(widgetName);
 	return strToFloat(sb->get_text());
 }
 
 int ParticleEditor::getSpinButtonValueAsInt(const std::string& widgetName)
 {
-	Gtk::SpinButton* sb = getGladeWidget<Gtk::SpinButton>(widgetName);
+	Gtk::SpinButton* sb = gladeWidget<Gtk::SpinButton>(widgetName);
 	return strToInt(sb->get_text());
 }
 
 void ParticleEditor::activateEditPanels()
 {
-	getGladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(true);
-	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(true);
+	gladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(true);
+	gladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(true);
 
 	activateSettingsEditPanels();
 }
 
 void ParticleEditor::deactivateEditPanels()
 {
-	getGladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(false);
-	getGladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(false);
+	gladeWidget<Gtk::Widget>("stageLabel")->set_sensitive(false);
+	gladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(false);
 
 	deactivateSettingsEditPanels();
 }
 
 void ParticleEditor::activateSettingsEditPanels()
 {
-	getGladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(true);
-	getGladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(true);
+	gladeWidget<Gtk::Widget>("stageAlignment")->set_sensitive(true);
+	gladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(true);
 }
 
 void ParticleEditor::deactivateSettingsEditPanels()
 {
-	getGladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(false);
-	getGladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(false);
+	gladeWidget<Gtk::Widget>("settingsLabel")->set_sensitive(false);
+	gladeWidget<Gtk::Widget>("settingsNotebook")->set_sensitive(false);
 }
 
 std::size_t ParticleEditor::getSelectedStageIndex()
@@ -609,7 +609,7 @@ std::size_t ParticleEditor::getSelectedStageIndex()
 void ParticleEditor::selectStage(std::size_t index)
 {
 	gtkutil::TreeModel::findAndSelectInteger(
-		getGladeWidget<Gtk::TreeView>("stageView"), static_cast<int>(index), _stageColumns.index);
+		gladeWidget<Gtk::TreeView>("stageView"), static_cast<int>(index), _stageColumns.index);
 }
 
 void ParticleEditor::_onDefSelChanged()
@@ -676,8 +676,8 @@ void ParticleEditor::_onStageSelChanged()
 
 		std::size_t index = (*_selectedStageIter)[_stageColumns.index];
 
-		getGladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(index > 0);
-		getGladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(index < _particle->getNumStages() - 1);
+		gladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(index > 0);
+		gladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(index < _particle->getNumStages() - 1);
 	}
 	else
 	{
@@ -687,13 +687,13 @@ void ParticleEditor::_onStageSelChanged()
 		// Deactivate delete, move and toggle buttons
 		isStageSelected = false;
 
-		getGladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(false);
-		getGladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(false);
+		gladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(false);
+		gladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(false);
 	}
 
-	getGladeWidget<Gtk::Button>("removeStageButton")->set_sensitive(isStageSelected);
-	getGladeWidget<Gtk::Button>("toggleStageButton")->set_sensitive(isStageSelected);
-	getGladeWidget<Gtk::Button>("duplicateStageButton")->set_sensitive(isStageSelected);
+	gladeWidget<Gtk::Button>("removeStageButton")->set_sensitive(isStageSelected);
+	gladeWidget<Gtk::Button>("toggleStageButton")->set_sensitive(isStageSelected);
+	gladeWidget<Gtk::Button>("duplicateStageButton")->set_sensitive(isStageSelected);
 
 	// Reload the current stage data
 	updateWidgetsFromStage();
@@ -781,7 +781,7 @@ void ParticleEditor::updateWidgetsFromParticle()
 {
 	if (!_particle)
 	{
-		getGladeWidget<Gtk::Label>("outFileLabel")->set_markup("");
+		gladeWidget<Gtk::Label>("outFileLabel")->set_markup("");
 		return;
 	}
 
@@ -791,7 +791,7 @@ void ParticleEditor::updateWidgetsFromParticle()
 	_callbacksDisabled = true;
 
 	// Update depth hack
-	getGladeWidget<Gtk::SpinButton>("depthHackSpinner")->get_adjustment()->set_value(_particle->getDepthHack());
+	gladeWidget<Gtk::SpinButton>("depthHackSpinner")->get_adjustment()->set_value(_particle->getDepthHack());
 
 	_callbacksDisabled = false;
 
@@ -802,7 +802,7 @@ void ParticleEditor::updateWidgetsFromParticle()
 	boost::filesystem::path outFile = GlobalGameManager().getModPath();
 	outFile /= particles::PARTICLES_DIR;
 	outFile /= _particle->getFilename();
-	getGladeWidget<Gtk::Label>("outFileLabel")->set_markup(
+	gladeWidget<Gtk::Label>("outFileLabel")->set_markup(
 		(boost::format(_("Note: changes will be written to the file <i>%s</i>")) % outFile.string()).str());
 }
 
@@ -826,7 +826,7 @@ void ParticleEditor::reloadStageList()
 	}
 
 	// Select the first stage if possible
-	gtkutil::TreeModel::findAndSelectInteger(getGladeWidget<Gtk::TreeView>("stageView"), 0, _stageColumns.index);
+	gtkutil::TreeModel::findAndSelectInteger(gladeWidget<Gtk::TreeView>("stageView"), 0, _stageColumns.index);
 }
 
 void ParticleEditor::updateWidgetsFromStage()
@@ -837,32 +837,32 @@ void ParticleEditor::updateWidgetsFromStage()
 
 	const particles::IParticleStage& stage = _particle->getParticleStage(getSelectedStageIndex());
 
-	getGladeWidget<Gtk::Entry>("shaderEntry")->set_text(stage.getMaterialName());
+	gladeWidget<Gtk::Entry>("shaderEntry")->set_text(stage.getMaterialName());
 
 	const Vector4& colour = stage.getColour();
-	getGladeWidget<Gtk::Entry>("colourEntry")->set_text(
+	gladeWidget<Gtk::Entry>("colourEntry")->set_text(
 		(boost::format("%.2f %.2f %.2f %.2f") % colour.x() % colour.y() % colour.z() % colour.w()).str()
 	);
 
-	getGladeWidget<Gtk::CheckButton>("useEntityColour")->set_active(stage.getUseEntityColour());
+	gladeWidget<Gtk::CheckButton>("useEntityColour")->set_active(stage.getUseEntityColour());
 
 	const Vector4& fadeColour = stage.getFadeColour();
-	getGladeWidget<Gtk::Entry>("fadeColourEntry")->set_text(
+	gladeWidget<Gtk::Entry>("fadeColourEntry")->set_text(
 		(boost::format("%.2f %.2f %.2f %.2f") % fadeColour.x() % fadeColour.y() % fadeColour.z() % fadeColour.w()).str()
 	);
 
-	getGladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->get_adjustment()->set_value(stage.getFadeInFraction());
-	getGladeWidget<Gtk::SpinButton>("fadeOutFractionSpinner")->get_adjustment()->set_value(stage.getFadeOutFraction());
-	getGladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->get_adjustment()->set_value(stage.getFadeIndexFraction());
-	getGladeWidget<Gtk::SpinButton>("animFramesSpinner")->get_adjustment()->set_value(stage.getAnimationFrames());
-	getGladeWidget<Gtk::SpinButton>("animRateSpinner")->get_adjustment()->set_value(stage.getAnimationRate());
+	gladeWidget<Gtk::SpinButton>("fadeInFractionSpinner")->get_adjustment()->set_value(stage.getFadeInFraction());
+	gladeWidget<Gtk::SpinButton>("fadeOutFractionSpinner")->get_adjustment()->set_value(stage.getFadeOutFraction());
+	gladeWidget<Gtk::SpinButton>("fadeIndexFractionSpinner")->get_adjustment()->set_value(stage.getFadeIndexFraction());
+	gladeWidget<Gtk::SpinButton>("animFramesSpinner")->get_adjustment()->set_value(stage.getAnimationFrames());
+	gladeWidget<Gtk::SpinButton>("animRateSpinner")->get_adjustment()->set_value(stage.getAnimationRate());
 
-	getGladeWidget<Gtk::SpinButton>("countSpinner")->get_adjustment()->set_value(stage.getCount());
-	getGladeWidget<Gtk::SpinButton>("timeSpinner")->get_adjustment()->set_value(stage.getDuration());
-	getGladeWidget<Gtk::SpinButton>("bunchingSpinner")->get_adjustment()->set_value(stage.getBunching());
-	getGladeWidget<Gtk::SpinButton>("cyclesSpinner")->get_adjustment()->set_value(stage.getCycles());
-	getGladeWidget<Gtk::SpinButton>("timeOffsetSpinner")->get_adjustment()->set_value(stage.getTimeOffset());
-	getGladeWidget<Gtk::SpinButton>("deadTimeSpinner")->get_adjustment()->set_value(stage.getDeadTime());
+	gladeWidget<Gtk::SpinButton>("countSpinner")->get_adjustment()->set_value(stage.getCount());
+	gladeWidget<Gtk::SpinButton>("timeSpinner")->get_adjustment()->set_value(stage.getDuration());
+	gladeWidget<Gtk::SpinButton>("bunchingSpinner")->get_adjustment()->set_value(stage.getBunching());
+	gladeWidget<Gtk::SpinButton>("cyclesSpinner")->get_adjustment()->set_value(stage.getCycles());
+	gladeWidget<Gtk::SpinButton>("timeOffsetSpinner")->get_adjustment()->set_value(stage.getTimeOffset());
+	gladeWidget<Gtk::SpinButton>("deadTimeSpinner")->get_adjustment()->set_value(stage.getDeadTime());
 
 	// DISTRIBUTION
 
@@ -871,115 +871,115 @@ void ParticleEditor::updateWidgetsFromStage()
 	switch (stage.getDistributionType())
 	{
 	case particles::IParticleStage::DISTRIBUTION_RECT:
-		getGladeWidget<Gtk::RadioButton>("distRectangle")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("distRectangle")->set_active(true);
 		break;
 	case particles::IParticleStage::DISTRIBUTION_CYLINDER:
-		getGladeWidget<Gtk::RadioButton>("distCylinder")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("distCylinder")->set_active(true);
 		useRingSize = true;
 		break;
 	case particles::IParticleStage::DISTRIBUTION_SPHERE:
-		getGladeWidget<Gtk::RadioButton>("distSphere")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("distSphere")->set_active(true);
 		useRingSize = true;
 		break;
 	};
 
-	getGladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
-	getGladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
+	gladeWidget<Gtk::Widget>("distSizeRingHBox")->set_sensitive(useRingSize);
+	gladeWidget<Gtk::Widget>("distSizeRingLabel")->set_sensitive(useRingSize);
 
-	getGladeWidget<Gtk::SpinButton>("distSizeXSpinner")->get_adjustment()->set_value(stage.getDistributionParm(0));
-	getGladeWidget<Gtk::SpinButton>("distSizeYSpinner")->get_adjustment()->set_value(stage.getDistributionParm(1));
-	getGladeWidget<Gtk::SpinButton>("distSizeZSpinner")->get_adjustment()->set_value(stage.getDistributionParm(2));
-	getGladeWidget<Gtk::SpinButton>("distSizeRingSpinner")->get_adjustment()->set_value(stage.getDistributionParm(3));
-	getGladeWidget<Gtk::Entry>("distOffsetEntry")->set_text(std::string(stage.getOffset()));
-	getGladeWidget<Gtk::CheckButton>("distRandom")->set_active(stage.getRandomDistribution());
+	gladeWidget<Gtk::SpinButton>("distSizeXSpinner")->get_adjustment()->set_value(stage.getDistributionParm(0));
+	gladeWidget<Gtk::SpinButton>("distSizeYSpinner")->get_adjustment()->set_value(stage.getDistributionParm(1));
+	gladeWidget<Gtk::SpinButton>("distSizeZSpinner")->get_adjustment()->set_value(stage.getDistributionParm(2));
+	gladeWidget<Gtk::SpinButton>("distSizeRingSpinner")->get_adjustment()->set_value(stage.getDistributionParm(3));
+	gladeWidget<Gtk::Entry>("distOffsetEntry")->set_text(std::string(stage.getOffset()));
+	gladeWidget<Gtk::CheckButton>("distRandom")->set_active(stage.getRandomDistribution());
 
 	// DIRECTION / ORIENTATION
 
 	switch (stage.getDirectionType())
 	{
 	case particles::IParticleStage::DIRECTION_CONE:
-		getGladeWidget<Gtk::RadioButton>("directionCone")->set_active(true);
-		getGladeWidget<Gtk::SpinButton>("coneAngleSpinner")->get_adjustment()->set_value(stage.getDirectionParm(0));
+		gladeWidget<Gtk::RadioButton>("directionCone")->set_active(true);
+		gladeWidget<Gtk::SpinButton>("coneAngleSpinner")->get_adjustment()->set_value(stage.getDirectionParm(0));
 		break;
 	case particles::IParticleStage::DIRECTION_OUTWARD:
-		getGladeWidget<Gtk::RadioButton>("directionOutward")->set_active(true);
-		getGladeWidget<Gtk::SpinButton>("upwardBiasSpinner")->get_adjustment()->set_value(stage.getDirectionParm(0));
+		gladeWidget<Gtk::RadioButton>("directionOutward")->set_active(true);
+		gladeWidget<Gtk::SpinButton>("upwardBiasSpinner")->get_adjustment()->set_value(stage.getDirectionParm(0));
 		break;
 	};
 
-	getGladeWidget<Gtk::Widget>("coneAngleHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_CONE);
-	getGladeWidget<Gtk::Widget>("upwardBiasHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_OUTWARD);
+	gladeWidget<Gtk::Widget>("coneAngleHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_CONE);
+	gladeWidget<Gtk::Widget>("upwardBiasHBox")->set_sensitive(stage.getDirectionType() == particles::IParticleStage::DIRECTION_OUTWARD);
 
 	// Orientation Type
 	switch (stage.getOrientationType())
 	{
 	case particles::IParticleStage::ORIENTATION_VIEW:
-		getGladeWidget<Gtk::RadioButton>("orientationView")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("orientationView")->set_active(true);
 		break;
 	case particles::IParticleStage::ORIENTATION_AIMED:
-		getGladeWidget<Gtk::RadioButton>("orientationAimed")->set_active(true);
-		getGladeWidget<Gtk::SpinButton>("aimedTrailsSpinner")->get_adjustment()->set_value(stage.getOrientationParm(0));
-		getGladeWidget<Gtk::SpinButton>("aimedTimeSpinner")->get_adjustment()->set_value(stage.getOrientationParm(1));
+		gladeWidget<Gtk::RadioButton>("orientationAimed")->set_active(true);
+		gladeWidget<Gtk::SpinButton>("aimedTrailsSpinner")->get_adjustment()->set_value(stage.getOrientationParm(0));
+		gladeWidget<Gtk::SpinButton>("aimedTimeSpinner")->get_adjustment()->set_value(stage.getOrientationParm(1));
 		break;
 	case particles::IParticleStage::ORIENTATION_X:
-		getGladeWidget<Gtk::RadioButton>("orientationX")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("orientationX")->set_active(true);
 
 		break;
 	case particles::IParticleStage::ORIENTATION_Y:
-		getGladeWidget<Gtk::RadioButton>("orientationY")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("orientationY")->set_active(true);
 		break;
 	case particles::IParticleStage::ORIENTATION_Z:
-		getGladeWidget<Gtk::RadioButton>("orientationZ")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("orientationZ")->set_active(true);
 		break;
 	};
 
-	getGladeWidget<Gtk::Widget>("aimedTrailsHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
-	getGladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
+	gladeWidget<Gtk::Widget>("aimedTrailsHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
+	gladeWidget<Gtk::Widget>("aimedTimeHBox")->set_sensitive(stage.getOrientationType() == particles::IParticleStage::ORIENTATION_AIMED);
 
-	getGladeWidget<Gtk::SpinButton>("initialAngleSpinner")->get_adjustment()->set_value(stage.getInitialAngle());
+	gladeWidget<Gtk::SpinButton>("initialAngleSpinner")->get_adjustment()->set_value(stage.getInitialAngle());
 
 	// SIZE / SPEED / ASPECT
 
-	getGladeWidget<Gtk::SpinButton>("sizeFromSpinner")->get_adjustment()->set_value(stage.getSize().getFrom());
-	getGladeWidget<Gtk::SpinButton>("sizeToSpinner")->get_adjustment()->set_value(stage.getSize().getTo());
+	gladeWidget<Gtk::SpinButton>("sizeFromSpinner")->get_adjustment()->set_value(stage.getSize().getFrom());
+	gladeWidget<Gtk::SpinButton>("sizeToSpinner")->get_adjustment()->set_value(stage.getSize().getTo());
 
-	getGladeWidget<Gtk::SpinButton>("speedFromSpinner")->get_adjustment()->set_value(stage.getSpeed().getFrom());
-	getGladeWidget<Gtk::SpinButton>("speedToSpinner")->get_adjustment()->set_value(stage.getSpeed().getTo());
+	gladeWidget<Gtk::SpinButton>("speedFromSpinner")->get_adjustment()->set_value(stage.getSpeed().getFrom());
+	gladeWidget<Gtk::SpinButton>("speedToSpinner")->get_adjustment()->set_value(stage.getSpeed().getTo());
 
-	getGladeWidget<Gtk::SpinButton>("rotationSpeedFromSpinner")->get_adjustment()->set_value(stage.getRotationSpeed().getFrom());
-	getGladeWidget<Gtk::SpinButton>("rotationSpeedToSpinner")->get_adjustment()->set_value(stage.getRotationSpeed().getTo());
+	gladeWidget<Gtk::SpinButton>("rotationSpeedFromSpinner")->get_adjustment()->set_value(stage.getRotationSpeed().getFrom());
+	gladeWidget<Gtk::SpinButton>("rotationSpeedToSpinner")->get_adjustment()->set_value(stage.getRotationSpeed().getTo());
 
-	getGladeWidget<Gtk::SpinButton>("aspectFromSpinner")->get_adjustment()->set_value(stage.getAspect().getFrom());
-	getGladeWidget<Gtk::SpinButton>("aspectToSpinner")->get_adjustment()->set_value(stage.getAspect().getTo());
+	gladeWidget<Gtk::SpinButton>("aspectFromSpinner")->get_adjustment()->set_value(stage.getAspect().getFrom());
+	gladeWidget<Gtk::SpinButton>("aspectToSpinner")->get_adjustment()->set_value(stage.getAspect().getTo());
 
-	getGladeWidget<Gtk::SpinButton>("gravitySpinner")->get_adjustment()->set_value(stage.getGravity());
+	gladeWidget<Gtk::SpinButton>("gravitySpinner")->get_adjustment()->set_value(stage.getGravity());
 
-	getGladeWidget<Gtk::CheckButton>("useWorldGravity")->set_active(stage.getWorldGravityFlag());
+	gladeWidget<Gtk::CheckButton>("useWorldGravity")->set_active(stage.getWorldGravityFlag());
 
-	getGladeWidget<Gtk::SpinButton>("boundsExpansionSpinner")->get_adjustment()->set_value(stage.getBoundsExpansion());
+	gladeWidget<Gtk::SpinButton>("boundsExpansionSpinner")->get_adjustment()->set_value(stage.getBoundsExpansion());
 
 	// PATH
 
 	switch (stage.getCustomPathType())
 	{
 	case particles::IParticleStage::PATH_STANDARD:
-		getGladeWidget<Gtk::RadioButton>("pathStandard")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("pathStandard")->set_active(true);
 		break;
 	case particles::IParticleStage::PATH_FLIES:
-		getGladeWidget<Gtk::RadioButton>("pathFlies")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("pathFlies")->set_active(true);
 
-		getGladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(0));
-		getGladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(1));
-		getGladeWidget<Gtk::SpinButton>("pathRadiusSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
+		gladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(0));
+		gladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(1));
+		gladeWidget<Gtk::SpinButton>("pathRadiusSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
 		break;
 	case particles::IParticleStage::PATH_HELIX:
-		getGladeWidget<Gtk::RadioButton>("pathHelix")->set_active(true);
+		gladeWidget<Gtk::RadioButton>("pathHelix")->set_active(true);
 
-		getGladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(3));
-		getGladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(4));
-		getGladeWidget<Gtk::SpinButton>("pathSizeXSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(0));
-		getGladeWidget<Gtk::SpinButton>("pathSizeYSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(1));
-		getGladeWidget<Gtk::SpinButton>("pathSizeZSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
+		gladeWidget<Gtk::SpinButton>("pathRadialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(3));
+		gladeWidget<Gtk::SpinButton>("pathAxialSpeedSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(4));
+		gladeWidget<Gtk::SpinButton>("pathSizeXSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(0));
+		gladeWidget<Gtk::SpinButton>("pathSizeYSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(1));
+		gladeWidget<Gtk::SpinButton>("pathSizeZSpinner")->get_adjustment()->set_value(stage.getCustomPathParm(2));
 		break;
 	default:
 		globalWarningStream() << "This custom particle path type is not supported." << std::endl;

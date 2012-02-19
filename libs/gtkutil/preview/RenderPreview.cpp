@@ -49,9 +49,7 @@ namespace
 }
 
 RenderPreview::RenderPreview(bool enableAnimation) :
-    GladeWidgetHolder(
-        GlobalUIManager().getGtkBuilderFromFile("RenderPreview.glade")
-    ),
+    GladeWidgetHolder("RenderPreview.glade"),
     _glWidget(Gtk::manage(new gtkutil::GLWidget(true, "RenderPreview"))),
     _renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
     _sceneWalker(_renderer, _volumeTest),
@@ -62,7 +60,7 @@ RenderPreview::RenderPreview(bool enableAnimation) :
     _filtersMenu(GlobalUIManager().createFilterMenu())
 {
     // Get main glade vbox and pack into self (frame)
-    Gtk::Box* main = getGladeWidget<Gtk::Box>("main");
+    Gtk::Box* main = gladeWidget<Gtk::Box>("main");
     add(*main);
 
     // Insert GL widget
@@ -95,7 +93,7 @@ RenderPreview::RenderPreview(bool enableAnimation) :
     }
     else
     {
-        Gtk::Widget* toolbar = getGladeWidget<Gtk::Widget>("animationToolbar");
+        Gtk::Widget* toolbar = gladeWidget<Gtk::Widget>("animationToolbar");
         Gtk::Container* parent = toolbar->get_parent();
         g_assert(parent);
         parent->remove(*toolbar);
@@ -103,7 +101,7 @@ RenderPreview::RenderPreview(bool enableAnimation) :
     }
 
     // Add filters menu to end of bottom hbox
-    Gtk::Box* bottom = getGladeWidget<Gtk::Box>(BOTTOM_BOX);
+    Gtk::Box* bottom = gladeWidget<Gtk::Box>(BOTTOM_BOX);
     bottom->pack_start(*_filtersMenu->getMenuBarWidget(), false, false, 0);
 
     // Get notified of filter changes
@@ -114,19 +112,19 @@ RenderPreview::RenderPreview(bool enableAnimation) :
 
 void RenderPreview::connectToolbarSignals()
 {
-    getGladeWidget<Gtk::ToolButton>("startButton")->signal_clicked().connect(
+    gladeWidget<Gtk::ToolButton>("startButton")->signal_clicked().connect(
         sigc::mem_fun(this, &RenderPreview::startPlayback)
     );
-    getGladeWidget<Gtk::ToolButton>(PAUSE_BUTTON)->signal_clicked().connect(
+    gladeWidget<Gtk::ToolButton>(PAUSE_BUTTON)->signal_clicked().connect(
         sigc::mem_fun(this, &RenderPreview::onPause)
     );
-    getGladeWidget<Gtk::ToolButton>(STOP_BUTTON)->signal_clicked().connect(
+    gladeWidget<Gtk::ToolButton>(STOP_BUTTON)->signal_clicked().connect(
         sigc::mem_fun(this, &RenderPreview::stopPlayback)
     );
-    getGladeWidget<Gtk::ToolButton>("nextButton")->signal_clicked().connect(
+    gladeWidget<Gtk::ToolButton>("nextButton")->signal_clicked().connect(
         sigc::mem_fun(this, &RenderPreview::onStepForward)
     );
-    getGladeWidget<Gtk::ToolButton>("prevButton")->signal_clicked().connect(
+    gladeWidget<Gtk::ToolButton>("prevButton")->signal_clicked().connect(
         sigc::mem_fun(this, &RenderPreview::onStepBack)
     );
 }
@@ -149,7 +147,7 @@ void RenderPreview::filtersChanged()
 
 void RenderPreview::addToolbar(Gtk::Toolbar& toolbar)
 {
-    getGladeWidget<Gtk::Box>(BOTTOM_BOX)->pack_start(toolbar, true, true, 0);
+    gladeWidget<Gtk::Box>(BOTTOM_BOX)->pack_start(toolbar, true, true, 0);
 }
 
 void RenderPreview::queueDraw()
@@ -299,8 +297,8 @@ void RenderPreview::startPlayback()
         _timer.enable();
     }
 
-    getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(true);
-    getGladeWidget<Gtk::Widget>(STOP_BUTTON)->set_sensitive(true);
+    gladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(true);
+    gladeWidget<Gtk::Widget>(STOP_BUTTON)->set_sensitive(true);
 }
 
 void RenderPreview::stopPlayback()
@@ -308,8 +306,8 @@ void RenderPreview::stopPlayback()
     _renderSystem->setTime(0);
     _timer.disable();
 
-    getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
-    getGladeWidget<Gtk::Widget>(STOP_BUTTON)->set_sensitive(false);
+    gladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
+    gladeWidget<Gtk::Widget>(STOP_BUTTON)->set_sensitive(false);
 
     _glWidget->queue_draw();
 }
@@ -491,7 +489,7 @@ bool RenderPreview::onGLScroll(GdkEventScroll* ev)
 void RenderPreview::onPause()
 {
     // Disable the button
-    getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
+    gladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
 
     if (_timer.isEnabled())
     {
@@ -506,7 +504,7 @@ void RenderPreview::onPause()
 void RenderPreview::onStepForward()
 {
     // Disable the button
-    getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
+    gladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
 
     if (_timer.isEnabled())
     {
@@ -520,7 +518,7 @@ void RenderPreview::onStepForward()
 void RenderPreview::onStepBack()
 {
     // Disable the button
-    getGladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
+    gladeWidget<Gtk::Widget>(PAUSE_BUTTON)->set_sensitive(false);
 
     if (_timer.isEnabled())
     {
