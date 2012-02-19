@@ -116,8 +116,8 @@ Surface shareMapTriVerts(const ProcTris& tris)
 		}
 	}
 
-	uTri.vertices.shrink_to_fit();
-	uTri.indices.shrink_to_fit();
+	//uTri.vertices.shrink_to_fit(); // not valid for std::vector
+	//uTri.indices.shrink_to_fit();
 
 	return uTri;
 }

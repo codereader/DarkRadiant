@@ -107,9 +107,7 @@ public:
 		// Clip planes in surface space used to calculate the cull bits.
 		Plane3		localClipPlanes[6];
 
-		CullInfo() :
-			facing(NULL),
-			cullBits(NULL)
+		CullInfo()
 		{
 			localClipPlanes[0].dist() = localClipPlanes[1].dist() =
 				localClipPlanes[2].dist() = localClipPlanes[3].dist() =
