@@ -22,6 +22,7 @@ libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
 libgtkutil_la_SOURCES = ConsoleView.cpp \
 						FreezePointer.cpp \
 						GLWidget.cpp \
+                        KeyValueTable.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
 						Timer.cpp \

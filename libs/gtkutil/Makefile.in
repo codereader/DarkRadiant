@@ -71,7 +71,7 @@ libgtkutil_la_DEPENDENCIES =  \
 	$(top_builddir)/libs/xmlutil/libxmlutil.la \
 	$(top_builddir)/libs/math/libmath.la
 am_libgtkutil_la_OBJECTS = ConsoleView.lo FreezePointer.lo GLWidget.lo \
-	PanedPosition.lo VFSTreePopulator.lo Timer.lo \
+	KeyValueTable.lo PanedPosition.lo VFSTreePopulator.lo Timer.lo \
 	WindowPosition.lo PersistentTransientWindow.lo \
 	TransientWindow.lo Dialog.lo MessageBox.lo ModelPreview.lo \
 	RenderPreview.lo GLFont.lo MenuItemAccelerator.lo Cursor.lo \
@@ -326,6 +326,7 @@ libgtkutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
 libgtkutil_la_SOURCES = ConsoleView.cpp \
 						FreezePointer.cpp \
 						GLWidget.cpp \
+                        KeyValueTable.cpp \
 						PanedPosition.cpp \
 						VFSTreePopulator.cpp \
 						Timer.cpp \
@@ -429,6 +430,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FreezePointer.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLFont.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GLWidget.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KeyValueTable.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItemAccelerator.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MessageBox.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@

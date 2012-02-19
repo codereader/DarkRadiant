@@ -47,7 +47,6 @@ ModelSelector::ModelSelector()
   _modelPreview(new gtkutil::ModelPreview()),
   _treeStore(Gtk::TreeStore::create(_columns)),
   _treeStoreWithSkins(Gtk::TreeStore::create(_columns)),
-  _infoStore(Gtk::ListStore::create(_infoStoreColumns)),
   _lastModel(""),
   _lastSkin(""),
   _populated(false),
@@ -76,16 +75,19 @@ ModelSelector::ModelSelector()
 
     // Set up tree views with columns etc
     setupTreeView();
-    setupInfoPanel();
+
+    // Create info panel
+    Gtk::ScrolledWindow* infoScrolledWin = gladeWidget<Gtk::ScrolledWindow>(
+        "infoScrolledWin"
+    );
+    infoScrolledWin->add(_infoTable);
 
     // Set scroll bar policies (default in Glade is automatic but it doesn't
     // seem to take effect)
     gladeWidget<Gtk::ScrolledWindow>("topScrolledWin")->set_policy(
         Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC
     );
-    gladeWidget<Gtk::ScrolledWindow>("bottomScrolledWin")->set_policy(
-        Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC
-    );
+    infoScrolledWin->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
     // Connect buttons
     gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
@@ -277,23 +279,6 @@ void ModelSelector::populateModels()
     _populated = true;
 }
 
-// Create the info panel treeview
-void ModelSelector::setupInfoPanel()
-{
-    // Info table. Has key and value columns.
-    Gtk::TreeView* treeView = gladeWidget<Gtk::TreeView>("infoTreeView");
-
-    treeView->append_column(*Gtk::manage(
-        new gtkutil::TextColumn(_("Attribute"), _infoStoreColumns.attribute)
-    ));
-
-    treeView->append_column(*Gtk::manage(
-        new gtkutil::TextColumn(_("Value"), _infoStoreColumns.value)
-    ));
-
-    treeView->set_model(_infoStore);
-}
-
 // Get the value from the selected column
 std::string ModelSelector::getSelectedValue(int colNum)
 {
@@ -312,7 +297,7 @@ std::string ModelSelector::getSelectedValue(int colNum)
 void ModelSelector::updateSelected()
 {
     // Prepare to populate the info table
-    _infoStore->clear();
+    _infoTable.clear();
 
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
@@ -342,45 +327,27 @@ void ModelSelector::updateSelected()
     }
 
     // Update the text in the info table
-    Gtk::TreeModel::Row row = *_infoStore->append();
-
-    row[_infoStoreColumns.attribute] = std::string(_("Model name"));
-    row[_infoStoreColumns.value] = mName;
-
-    row = *_infoStore->append();
-    row[_infoStoreColumns.attribute] = std::string(_("Skin name"));
-    row[_infoStoreColumns.value] = skinName;
-
-    row = *_infoStore->append();
-    row[_infoStoreColumns.attribute] = std::string(_("Total vertices"));
-    row[_infoStoreColumns.value] = intToStr(modelNode->getIModel().getVertexCount());
-
-    row = *_infoStore->append();
-    row[_infoStoreColumns.attribute] = std::string(_("Total polys"));
-    row[_infoStoreColumns.value] = intToStr(modelNode->getIModel().getPolyCount());
-
-    row = *_infoStore->append();
-    row[_infoStoreColumns.attribute] = std::string(_("Material surfaces"));
-    row[_infoStoreColumns.value] = intToStr(modelNode->getIModel().getSurfaceCount());
+    const model::IModel& model = modelNode->getIModel();
+    _infoTable.append(_("Model name"), mName);
+    _infoTable.append(_("Skin name"), skinName);
+    _infoTable.append(_("Total vertices"), intToStr(model.getVertexCount()));
+    _infoTable.append(_("Total polys"), intToStr(model.getPolyCount()));
+    _infoTable.append(_("Material surfaces"), intToStr(model.getSurfaceCount()));
 
     // Add the list of active materials
-    const model::MaterialList& matList(modelNode->getIModel().getActiveMaterials());
+    const model::MaterialList& matList(model.getActiveMaterials());
 
     if (!matList.empty())
     {
         model::MaterialList::const_iterator i = matList.begin();
 
         // First line
-        row = *_infoStore->append();
-        row[_infoStoreColumns.attribute] = std::string(_("Active materials"));
-        row[_infoStoreColumns.value] = *i;
+        _infoTable.append(_("Active materials"), *i);
 
         // Subsequent lines (if any)
         while (++i != matList.end())
         {
-            row = *_infoStore->append();
-            row[_infoStoreColumns.attribute] = std::string("");
-            row[_infoStoreColumns.value] = *i;
+            _infoTable.append("", *i);
         }
     }
 }

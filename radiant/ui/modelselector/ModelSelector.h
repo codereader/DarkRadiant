@@ -3,9 +3,11 @@
 #include "modelskin.h"
 #include "iradiant.h"
 #include "iuimanager.h"
+
 #include "gtkutil/window/BlockingTransientWindow.h"
 #include "gtkutil/preview/ModelPreview.h"
 #include "gtkutil/WindowPosition.h"
+#include "gtkutil/KeyValueTable.h"
 
 #include <string>
 #include <gtkmm/treestore.h>
@@ -71,15 +73,6 @@ public:
 		Gtk::TreeModelColumn<bool> isFolder;				// whether this is a folder
 	};
 
-	struct InfoStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		InfoStoreColumns() { add(attribute); add(value); }
-
-		Gtk::TreeModelColumn<Glib::ustring> attribute;
-		Gtk::TreeModelColumn<Glib::ustring> value;
-	};
-
 private:
 	TreeColumns _columns;
 
@@ -96,9 +89,8 @@ private:
 	// Currently-selected row in the tree store
 	Glib::RefPtr<Gtk::TreeSelection> _selection;
 
-	// List store to contain attributes and values for the selected model
-	InfoStoreColumns _infoStoreColumns;
-	Glib::RefPtr<Gtk::ListStore> _infoStore;
+    // Key/value table for model information
+    gtkutil::KeyValueTable _infoTable;
 
 	// The window position tracker
 	gtkutil::WindowPosition _position;
