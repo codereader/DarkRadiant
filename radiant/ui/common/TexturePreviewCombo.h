@@ -1,9 +1,9 @@
-#ifndef TEXTUREPREVIEWCOMBO_H_
-#define TEXTUREPREVIEWCOMBO_H_
+#pragma once
 
 #include <string>
 
 #include "gtkutil/menu/PopupMenu.h"
+#include "gtkutil/KeyValueTable.h"
 #include "gtkutil/GLWidget.h"
 
 #include <gtkmm/box.h>
@@ -26,27 +26,14 @@ namespace ui
 class TexturePreviewCombo :
 	public Gtk::HBox
 {
-private:
-	struct InfoStoreColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		InfoStoreColumns() { add(attribute); add(value); }
-
-		Gtk::TreeModelColumn<Glib::ustring> attribute;
-		Gtk::TreeModelColumn<Glib::ustring> value;
-	};
-
-	InfoStoreColumns _infoStoreColumns;
-
 	// The OpenGL preview widget
 	gtkutil::GLWidget* _glWidget;
 
 	// The texture to preview
 	std::string _texName;
 
-	// Info table list store and view
-	Glib::RefPtr<Gtk::ListStore> _infoStore;
-	Gtk::TreeView* _infoView;
+    // Info table
+    gtkutil::KeyValueTable _infoTable;
 
 	// Context menu
 	gtkutil::PopupMenu _contextMenu;
@@ -79,5 +66,3 @@ private:
 typedef boost::shared_ptr<TexturePreviewCombo> TexturePreviewComboPtr;
 
 } // namespace
-
-#endif /*TEXTUREPREVIEWCOMBO_H_*/

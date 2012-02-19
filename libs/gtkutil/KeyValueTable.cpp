@@ -1,6 +1,8 @@
 #include "KeyValueTable.h"
 #include "TextColumn.h"
 
+#include <boost/format.hpp>
+
 namespace gtkutil
 {
 
@@ -44,7 +46,7 @@ void KeyValueTable::append(const std::string& key, const std::string& value)
 {
     Gtk::TreeModel::Row row = *_store->append();
 
-    row[COLUMNS().key] = key;
+    row[COLUMNS().key] = (boost::format("<b>%1%</b>") % key).str();
     row[COLUMNS().value] = value;
 }
 
