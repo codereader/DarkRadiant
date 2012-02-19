@@ -658,11 +658,6 @@ void SurfaceInspector::fitTexture()
 	}
 }
 
-void SurfaceInspector::shaderSelectionChanged(const std::string& shader)
-{
-	emitShader();
-}
-
 void SurfaceInspector::onFit() {
 	// Call the according member method
 	fitTexture();
@@ -707,7 +702,11 @@ bool SurfaceInspector::onKeyPress(GdkEventKey* ev)
 void SurfaceInspector::onShaderSelect()
 {
 	// Instantiate the modal dialog, will block execution
-	ShaderChooser chooser(this, getRefPtr(), _shaderEntry);
+	ShaderChooser chooser(getRefPtr(), _shaderEntry);
+    chooser.signal_shaderChanged().connect(
+        sigc::hide(sigc::mem_fun(this, &SurfaceInspector::emitShader))
+    );
+    chooser.show();
 }
 
 // Static command target to toggle the window

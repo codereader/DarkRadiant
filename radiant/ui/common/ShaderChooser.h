@@ -27,22 +27,6 @@ class ShaderChooser :
 	public gtkutil::BlockingTransientWindow,
 	public ShaderSelector::Client
 {
-public:
-	// Derive from this class to get notified upon shader changes.
-	class ChooserClient
-	{
-	public:
-	    // destructor
-		virtual ~ChooserClient() {}
-
-		// greebo: This gets invoked upon selection changed to allow the client to react.
-		virtual void shaderSelectionChanged(const std::string& shader) = 0;
-	};
-
-private:
-	// The "parent" class that gets notified upon shaderchange
-	ChooserClient* _client;
-
 	// The text entry the chosen texture is written into (can be NULL)
 	Gtk::Entry* _targetEntry;
 
@@ -56,6 +40,8 @@ private:
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
 
+    sigc::signal<void, const std::string&> _shaderChangedSignal;
+
 public:
 	/** greebo: Construct the dialog window and its contents.
 	 *
@@ -64,7 +50,14 @@ public:
 	 *               Also, the initially selected shader will be read from
 	 *               this field at startup.
 	 */
-	ShaderChooser(ChooserClient* client, const Glib::RefPtr<Gtk::Window>& parent, Gtk::Entry* targetEntry = NULL);
+	ShaderChooser(const Glib::RefPtr<Gtk::Window>& parent,
+                  Gtk::Entry* targetEntry = NULL);
+
+    /// Signal emitted when selected shader is changed
+    sigc::signal<void, const std::string&> signal_shaderChanged() const
+    {
+        return _shaderChangedSignal;
+    }
 
 	/**
 	 * greebo: ShaderSelector::Client implementation

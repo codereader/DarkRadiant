@@ -24,11 +24,9 @@ namespace ui
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(ChooserClient* client,
-							 const Glib::RefPtr<Gtk::Window>& parent,
+ShaderChooser::ShaderChooser(const Glib::RefPtr<Gtk::Window>& parent,
 							 Gtk::Entry* targetEntry) :
 	gtkutil::BlockingTransientWindow(_(LABEL_TITLE), parent),
-	_client(client),
 	_targetEntry(targetEntry),
 	_selector(Gtk::manage(new ShaderSelector(this, SHADER_PREFIXES)))
 {
@@ -60,9 +58,6 @@ ShaderChooser::ShaderChooser(ChooserClient* client,
 
 	_windowPosition.connect(this);
 	_windowPosition.applyPosition();
-
-	// Show all widgets, this will enter a main loop
-	show();
 }
 
 void ShaderChooser::shutdown()
@@ -98,10 +93,7 @@ void ShaderChooser::shaderSelectionChanged(const std::string& shaderName,
 	}
 
 	// Propagate the call up to the client (e.g. SurfaceInspector)
-	if (_client != NULL)
-	{
-		_client->shaderSelectionChanged(shaderName);
-	}
+    _shaderChangedSignal.emit(shaderName);
 
 	// Get the shader, and its image map if possible
 	MaterialPtr shader = _selector->getSelectedShader();
@@ -117,10 +109,7 @@ void ShaderChooser::revertShader()
 		_targetEntry->set_text(_initialShader);
 
 		// Propagate the call up to the client (e.g. SurfaceInspector)
-		if (_client != NULL)
-		{
-			_client->shaderSelectionChanged(_targetEntry->get_text());
-		}
+        _shaderChangedSignal.emit(_targetEntry->get_text());
 	}
 }
 

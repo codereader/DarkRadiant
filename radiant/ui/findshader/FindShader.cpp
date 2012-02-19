@@ -157,13 +157,15 @@ void FindAndReplaceShader::performReplace()
 void FindAndReplaceShader::onChooseFind()
 {
 	// Construct the modal dialog, enters a main loop
-	ShaderChooser chooser(NULL, getRefPtr(), _findEntry);
+	ShaderChooser chooser(getRefPtr(), _findEntry);
+    chooser.show();
 }
 
 void FindAndReplaceShader::onChooseReplace()
 {
 	// Construct the modal dialog, enters a main loop
-	ShaderChooser chooser(NULL, getRefPtr(), _replaceEntry);
+	ShaderChooser chooser(getRefPtr(), _replaceEntry);
+    chooser.show();
 }
 
 void FindAndReplaceShader::onReplace()

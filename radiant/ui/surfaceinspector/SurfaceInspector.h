@@ -37,7 +37,6 @@ typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 class SurfaceInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
-  public ShaderChooser::ChooserClient,
   public RadiantEventListener,
   public UndoSystem::Observer,
   public gtkutil::SingleIdleCallback
@@ -128,10 +127,6 @@ public:
 
 	// Updates the widgets
 	void queueUpdate();
-
-	/** greebo: Gets called upon shader selection change (during ShaderChooser display)
-	 */
-	void shaderSelectionChanged(const std::string& shader);
 
 	// Command target to toggle the dialog
 	static void toggle(const cmd::ArgumentList& args);
