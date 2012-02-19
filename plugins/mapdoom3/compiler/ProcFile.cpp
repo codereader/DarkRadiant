@@ -116,9 +116,6 @@ Surface shareMapTriVerts(const ProcTris& tris)
 		}
 	}
 
-	//uTri.vertices.shrink_to_fit(); // not valid for std::vector
-	//uTri.indices.shrink_to_fit();
-
 	return uTri;
 }
 
@@ -457,6 +454,59 @@ std::ostream& ProcFile::writeProcEntity(std::ostream& str, ProcEntity& entity)
 	return str;
 }
 
+std::ostream& ProcFile::writeShadowTriangles(std::ostream& str, const Surface& tri)
+{
+	// emit this chain
+	str << (boost::format("/* numVerts = */ %i /* noCaps = */ %i /* noFrontCaps = */ %i /* numIndexes = */ %i /* planeBits = */ %i")
+		% tri.vertices.size() % tri.numShadowIndicesNoCaps % tri.numShadowIndicesNoFrontCaps % tri.indices.size() % tri.shadowCapPlaneBits);
+
+	str << std::endl;
+
+	// verts
+	std::size_t col = 0;
+
+	for (std::size_t i = 0 ; i < tri.vertices.size(); ++i)
+	{
+		str << "( " 
+			<< writeFloat(str, tri.shadowVertices[i][0])
+			<< writeFloat(str, tri.shadowVertices[i][1])
+			<< writeFloat(str, tri.shadowVertices[i][2])
+			<< " )";
+		
+		if (++col == 5)
+		{
+			col = 0;
+			str << std::endl;
+		}
+	}
+
+	if (col != 0)
+	{
+		str << std::endl;
+	}
+
+	// indexes
+	col = 0;
+
+	for (std::size_t i = 0 ; i < tri.indices.size(); ++i)
+	{
+		str << (boost::format("%i ") % (str, tri.indices[i]));
+
+		if (++col == 18 )
+		{
+			col = 0;
+			str << std::endl;
+		}
+	}
+
+	if (col != 0)
+	{
+		str << std::endl;
+	}
+
+	return str;
+}
+
 void ProcFile::saveToFile(const std::string& path)
 {
 	// write the file
@@ -486,24 +536,26 @@ void ProcFile::saveToFile(const std::string& path)
 
 		writeProcEntity(str, entity);
 	}
-#if 0
+
 	// write the shadow volumes
-	for ( i = 0 ; i < dmapGlobals.mapLights.Num() ; i++ ) {
-		mapLight_t	*light = dmapGlobals.mapLights[i];
-		if ( !light->shadowTris ) {
+	for (std::size_t i = 0 ; i < lights.size(); ++i)
+	{
+		ProcLight& light = lights[i];
+
+		if (light.shadowTris.vertices.empty())
+		{
 			continue;
 		}
 
-		procFile->WriteFloatString( "shadowModel { /* name = */ \"_prelight_%s\"\n\n", light->name );
-		WriteShadowTriangles( light->shadowTris );
-		procFile->WriteFloatString( "}\n\n" );
+		str << (boost::format("shadowModel { /* name = */ \"_prelight_%s\"") % light.name) << std::endl << std::endl;
 
-		R_FreeStaticTriSurf( light->shadowTris );
-		light->shadowTris = NULL;
+		writeShadowTriangles(str, light.shadowTris);
+
+		str << "}" << std::endl << std::endl;
 	}
 
-	fileSystem->CloseFile( procFile );
-#endif
+	str.flush();
+	str.close();
 }
 
 } // namespace

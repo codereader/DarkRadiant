@@ -266,6 +266,7 @@ private:
 	std::ostream& writeOutputPortals(std::ostream& str, ProcEntity& entity);
 	std::ostream& writeOutputNodes(std::ostream& str, const BspTreeNodePtr& node);
 	std::ostream& writeOutputNodeRecursively(std::ostream& str, const BspTreeNodePtr& node);
+	std::ostream& writeShadowTriangles(std::ostream& str, const Surface& shadowTris);
 };
 typedef boost::shared_ptr<ProcFile> ProcFilePtr;
 

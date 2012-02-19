@@ -127,7 +127,6 @@
     <ClInclude Include="..\..\include\imenu.h" />
     <ClInclude Include="..\..\include\imodel.h" />
     <ClInclude Include="..\..\include\imodelcache.h" />
-    <ClInclude Include="..\..\include\imodelpreview.h" />
     <ClInclude Include="..\..\include\imodelsurface.h" />
     <ClInclude Include="..\..\include\imodule.h" />
     <ClInclude Include="..\..\include\inameobserver.h" />
