@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\libs\gtkutil\DeferredMotion.h" />
     <ClInclude Include="..\..\libs\gtkutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\gtkutil\GLFont.h" />
+    <ClInclude Include="..\..\libs\gtkutil\KeyValueTable.h" />
     <ClInclude Include="..\..\libs\gtkutil\NonModalEntry.h" />
     <ClInclude Include="..\..\libs\gtkutil\preview\ModelPreview.h" />
     <ClInclude Include="..\..\libs\gtkutil\preview\RenderPreview.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="..\..\libs\gtkutil\Cursor.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\preview\ModelPreview.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\preview\RenderPreview.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp" />

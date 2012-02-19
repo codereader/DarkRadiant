@@ -93,6 +93,7 @@
     <ClInclude Include="..\..\libs\gtkutil\preview\ModelPreview.h">
       <Filter>preview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\gtkutil\KeyValueTable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp">
@@ -133,5 +134,6 @@
     <ClCompile Include="..\..\libs\gtkutil\preview\ModelPreview.cpp">
       <Filter>preview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\gtkutil\KeyValueTable.cpp" />
   </ItemGroup>
 </Project>
