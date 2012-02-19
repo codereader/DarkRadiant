@@ -44,13 +44,11 @@ struct ModelSelectorResult
 class ModelSelector;
 typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
 
-/** Singleton class encapsulating the Model Selector dialog and methods required to display the
- * dialog and retrieve the selected model.
- */
-
+/// Dialog for browsing and selecting a model and/or skin
 class ModelSelector :
 	public gtkutil::BlockingTransientWindow,
-	public RadiantEventListener
+	public RadiantEventListener,
+    private gtkutil::GladeWidgetHolder
 {
 public:
 	// Treemodel definition
@@ -83,8 +81,6 @@ public:
 	};
 
 private:
-	Gtk::VBox* _vbox; // main vbox
-
 	TreeColumns _columns;
 
 	// Model preview widget
@@ -94,6 +90,7 @@ private:
 	Glib::RefPtr<Gtk::TreeStore> _treeStore;
 	Glib::RefPtr<Gtk::TreeStore> _treeStoreWithSkins;
 
+    // Main tree view with model hierarchy
 	Gtk::TreeView* _treeView;
 
 	// Currently-selected row in the tree store
@@ -102,10 +99,6 @@ private:
 	// List store to contain attributes and values for the selected model
 	InfoStoreColumns _infoStoreColumns;
 	Glib::RefPtr<Gtk::ListStore> _infoStore;
-
-	// options widgets
-	Gtk::Expander* _advancedOptions;
-	Gtk::CheckButton* _clipCheckButton;
 
 	// The window position tracker
 	gtkutil::WindowPosition _position;
@@ -118,7 +111,8 @@ private:
 	// TRUE if the treeview has been populated
 	bool _populated;
 
-	bool _showOptions;
+    // Whether to show advanced options panel
+    bool _showOptions;
 
 private:
 	// Private constructor, creates widgets
@@ -131,13 +125,13 @@ private:
 	static ModelSelectorPtr& InstancePtr();
 
 	// Show the dialog, called internally by chooseModel(). Return the selected model path
-	ModelSelectorResult showAndBlock(const std::string& curModel, bool showOptions, bool showSkins);
+	ModelSelectorResult showAndBlock(const std::string& curModel,
+                                     bool showOptions,
+                                     bool showSkins);
 
-	// Helper functions to create GUI components
-	Gtk::Widget& createTreeView();
-	Gtk::Widget& createButtons();
-	Gtk::Widget& createAdvancedButtons();
-	Gtk::Widget& createInfoPanel();
+	// Helper functions to configure GUI components
+	void setupTreeView();
+	void setupInfoPanel();
 
 	// Populate the tree view with models
 	void populateModels();
