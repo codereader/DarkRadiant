@@ -92,7 +92,7 @@ public:
 		return Plane3(_normal[0] - other._normal[0], 
 					  _normal[1] - other._normal[1], 
 					  _normal[2] - other._normal[2],
-					  other._dist - _dist);		// since we're storing -d as _dist, we need to substract this from other
+					  _dist - other._dist);
 	}
 
 	// Returns the normal vector of this plane

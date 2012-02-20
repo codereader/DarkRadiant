@@ -1,6 +1,7 @@
 #include "ProcLight.h"
 
 #include "ProcWinding.h"
+#include "OptUtils.h"
 
 namespace map
 {
@@ -267,15 +268,14 @@ void ProcLight::deriveLightData()
 		lightProject[0].normal().x() = 0.5f / parms.lightRadius[0];
 		lightProject[1].normal().y() = 0.5f / parms.lightRadius[1];
 		lightProject[3].normal().z() = 0.5f / parms.lightRadius[2];
-		lightProject[0].dist() = 0.5f;
-		lightProject[1].dist() = 0.5f;
-		lightProject[2].dist() = 1.0f;
-		lightProject[3].dist() = 0.5f;
+		lightProject[0].dist() = -0.5f;
+		lightProject[1].dist() = -0.5f;
+		lightProject[2].dist() = -1.0f;
+		lightProject[3].dist() = -0.5f;
 	}
 
 	// set the frustum planes
 	setLightFrustum();
-
 	
 	// rotate the light planes and projections by the axis
 	//R_AxisToModelMatrix( parms.axis, parms.origin, modelMatrix );
@@ -284,7 +284,7 @@ void ProcLight::deriveLightData()
 
 	for (std::size_t i = 0 ; i < 6 ; ++i)
 	{
-		frustum[i] = modelMatrix.transform(frustum[i]);
+		frustum[i] = OptUtils::TransformPlane(frustum[i], modelMatrix);
 		//idPlane		temp;
 		//temp = frustum[i];
 		//R_LocalPlaneToGlobal( modelMatrix, temp, frustum[i] );
@@ -292,7 +292,7 @@ void ProcLight::deriveLightData()
 
 	for (std::size_t i = 0 ; i < 4 ; ++i)
 	{
-		lightProject[i] = modelMatrix.transform(lightProject[i]);
+		lightProject[i] = OptUtils::TransformPlane(lightProject[i], modelMatrix);
 		//idPlane		temp;
 		//temp = lightProject[i];
 		//R_LocalPlaneToGlobal( modelMatrix, temp, lightProject[i] );
@@ -342,7 +342,7 @@ void ProcLight::setLightFrustum()
 	frustum[4] = lightProject[3];
 
 	frustum[5] = lightProject[3];
-	frustum[5].dist() -= 1.0f;
+	frustum[5].dist() += 1.0f;
 	frustum[5] = -frustum[5];
 
 	for (std::size_t i = 0 ; i < 6 ; ++i)

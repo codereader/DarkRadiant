@@ -4455,7 +4455,7 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 
 		for (j = 0; j < frust.numPlanes; ++j)
 		{
-			frustum[j] = transform.transform(frust.planes[j]);
+			frustum[j] = OptUtils::TransformPlane(frust.planes[j], transform);
 			//R_GlobalPlaneToLocal( ent->modelMatrix, frust->planes[j], frustum[j] );
 
 			// try to cull the entire surface against this frustum

@@ -12,6 +12,23 @@ namespace map
 class OptUtils
 {
 public:
+	// greebo: This is different to Matrix4::transform(Plane3), either this or the latter seems to make assumptions
+	// of some sort.
+	static Plane3 TransformPlane(const Plane3& plane, const Matrix4& m)
+	{
+		Plane3 transformed;
+
+		// Ordinary vector transform
+		transformed.normal().x() = m[0] * plane.normal().x() + m[4] * plane.normal().y() + m[8] * plane.normal().z();
+		transformed.normal().y() = m[1] * plane.normal().x() + m[5] * plane.normal().y() + m[9] * plane.normal().z();
+		transformed.normal().z() = m[2] * plane.normal().x() + m[6] * plane.normal().y() + m[10] * plane.normal().z();
+
+		float offset = transformed.normal().x() * m[12] + transformed.normal().y() * m[13] + transformed.normal().z() * m[14];
+		transformed.dist() = plane.dist() + offset;
+
+		return transformed;
+	}
+
 	static bool MatchVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b)
 	{
 		if (fabs(a.vertex[0] - b.vertex[0] ) > XYZ_EPSILON)
