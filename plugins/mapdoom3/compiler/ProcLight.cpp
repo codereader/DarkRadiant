@@ -43,11 +43,6 @@ void ProcLight::parseFromSpawnargs(const Entity& ent)
 		return;
 	}
 
-	if (!start.empty() && end.empty())
-	{
-		end = target; // end falls back to target if not set
-	}
-
 	if (gotTarget)
 	{
 		parms.target = Vector3(target);
@@ -55,6 +50,11 @@ void ProcLight::parseFromSpawnargs(const Entity& ent)
 		parms.right = Vector3(right);
 		parms.start = Vector3(start);
 		parms.end = Vector3(end);
+	}
+
+	if (end.empty())
+	{
+		parms.end = parms.target;
 	}
 
 	if (!gotTarget)
@@ -278,24 +278,17 @@ void ProcLight::deriveLightData()
 	setLightFrustum();
 	
 	// rotate the light planes and projections by the axis
-	//R_AxisToModelMatrix( parms.axis, parms.origin, modelMatrix );
 	modelMatrix = parms.axis;
 	modelMatrix.translateBy(parms.origin);
 
 	for (std::size_t i = 0 ; i < 6 ; ++i)
 	{
 		frustum[i] = OptUtils::TransformPlane(frustum[i], modelMatrix);
-		//idPlane		temp;
-		//temp = frustum[i];
-		//R_LocalPlaneToGlobal( modelMatrix, temp, frustum[i] );
 	}
 
 	for (std::size_t i = 0 ; i < 4 ; ++i)
 	{
 		lightProject[i] = OptUtils::TransformPlane(lightProject[i], modelMatrix);
-		//idPlane		temp;
-		//temp = lightProject[i];
-		//R_LocalPlaneToGlobal( modelMatrix, temp, lightProject[i] );
 	}
 
 	// adjust global light origin for off center projections and parallel projections
@@ -320,8 +313,6 @@ void ProcLight::deriveLightData()
 	{
 		globalLightOrigin = parms.origin + parms.axis.transformPoint(parms.lightCenter);
 	}
-
-	//R_FreeLightDefFrustum( light );
 
 	frustumTris = generatePolytopeSurface(6, frustum, frustumWindings);
 
