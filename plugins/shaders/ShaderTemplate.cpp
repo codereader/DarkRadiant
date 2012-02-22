@@ -68,7 +68,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 {
     if (token == "translucent")
 	{
-        _materialFlags |= Material::FLAG_TRANSLUCENT;
+        _materialFlags |= Material::FLAG_TRANSLUCENT | Material::FLAG_NOSHADOWS;
 		_coverage = Material::MC_TRANSLUCENT;
     }
     else if (token == "decal_macro")
@@ -1268,6 +1268,17 @@ void ShaderTemplate::parseDefinition()
 				_coverage = Material::MC_OPAQUE;
 			}
 		}
+	}
+
+	// translucent automatically implies noshadows
+	if (_coverage == Material::MC_TRANSLUCENT)
+	{
+		_materialFlags |= Material::FLAG_NOSHADOWS;
+	} 
+	else 
+	{
+		// mark the contents as opaque
+		_surfaceFlags |= Material::SURF_OPAQUE;
 	}
 }
 
