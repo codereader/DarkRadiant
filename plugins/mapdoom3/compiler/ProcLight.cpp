@@ -391,8 +391,8 @@ Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, 
 	}
 
 	Surface tri;
-	tri.vertices.resize(numVerts);
-	tri.indices.resize(numIndices);
+	tri.vertices.reserve(numVerts);
+	tri.indices.reserve(numIndices);
 
 	// copy the data from the windings
 	for (std::size_t i = 0; i < numPlanes; ++i)
@@ -404,19 +404,18 @@ Surface ProcLight::generatePolytopeSurface(int numPlanes, const Plane3* planes, 
 			continue;
 		}
 
+		std::size_t startVert = tri.vertices.size();
+
 		for (std::size_t j = 0; j < w.size(); ++j)
 		{
 			tri.vertices.push_back(ArbitraryMeshVertex(w[j].vertex, Vector3(0,0,0), TexCoord2f(0,0)));
 		}
 
-		std::size_t indicesCount = 0;
-
 		for (std::size_t j = 1; j < w.size() - 1; ++j)
 		{
-			tri.indices[indicesCount + 0] = static_cast<int>(tri.vertices.size());
-			tri.indices[indicesCount + 1] = static_cast<int>(tri.vertices.size() + j);
-			tri.indices[indicesCount + 2] = static_cast<int>(tri.vertices.size() + j + 1);
-			indicesCount += 3;
+			tri.indices.push_back(static_cast<int>(startVert));
+			tri.indices.push_back(static_cast<int>(startVert + j));
+			tri.indices.push_back(static_cast<int>(startVert + j + 1));
 		}
 
 		// optionally save the winding
