@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
 "POT-Creation-Date: 2011-10-29 20:10+0200\n"
-"PO-Revision-Date: 2011-10-29 20:12+0100\n"
-"Last-Translator: Matthias <greebo@darkradiant>\n"
+"PO-Revision-Date: 2012-02-23 14:44+0100\n"
+"Last-Translator: greebo <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2600,7 +2600,7 @@ msgstr "Horiz. Skalierung:"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:52
 msgid "Vert. Scale:"
-msgstr "Vert. Verschiebung:"
+msgstr "Vert. Skalierung:"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:53
 msgid "Rotation:"
