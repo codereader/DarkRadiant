@@ -85,7 +85,7 @@ const unsigned RENDER_FILL = 1 << 14;
 /**
  * If enabled, mesh objects (geometry that does not consist only of GL_POINTS)
  * should submit vertex colour information. If disabled, mesh objects must not
- * change glColor during rendering. 
+ * change glColor during rendering.
  *
  * Does not affect GL state.
  */
@@ -482,20 +482,34 @@ public:
 							   const IRenderEntity& entity,
 							   const LightList* lights = 0) = 0;
 
-  virtual void incrementUsed() = 0;
-  virtual void decrementUsed() = 0;
-  virtual void attach(ModuleObserver& observer) = 0;
-  virtual void detach(ModuleObserver& observer) = 0;
+    /**
+     * \brief
+     * Control the visibility of this shader.
+     *
+     * A shader that is not visible will perform no rendering and ignore any
+     * renderables submitted to it with addRenderable().
+     */
+    virtual void setVisible(bool visible) = 0;
 
-	/** Retrieve the contained Material from this object.
+    /// Query if this shader is visible
+    virtual bool isVisible() const = 0;
+
+    virtual void incrementUsed() = 0;
+    virtual void decrementUsed() = 0;
+    virtual void attach(ModuleObserver& observer) = 0;
+    virtual void detach(ModuleObserver& observer) = 0;
+
+	/**
+     * \brief Retrieve the Material that was used to construct this shader (if
+     * any).
 	 *
-	 * @returns
+	 * \return
 	 * An Material subclass with information about the shader definition
 	 */
 
 	virtual const MaterialPtr& getMaterial() const = 0;
 
-  virtual unsigned int getFlags() const = 0;
+    virtual unsigned int getFlags() const = 0;
 };
 
 /**

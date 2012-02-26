@@ -19,8 +19,6 @@ namespace render
 class OpenGLShader
 : public Shader
 {
-private:
-
     // The state manager we will be inserting/removing OpenGL states from (this
     // will be the OpenGLRenderSystem).
 	render::OpenGLStateManager& _glStateManager;
@@ -32,36 +30,11 @@ private:
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
 
+    // Visibility flag
+    bool _isVisible;
+
 	std::size_t m_used;
 	ModuleObservers m_observers;
-
-private:
-
-    // Triplet of diffuse, bump and specular shaders
-    struct DBSTriplet
-    {
-        // DBS layers
-        ShaderLayerPtr diffuse;
-        ShaderLayerPtr bump;
-        ShaderLayerPtr specular;
-
-        // Need-depth-fill flag
-        bool needDepthFill;
-
-        // Initialise
-        DBSTriplet()
-        : needDepthFill(true)
-        { }
-
-        // Clear pointers
-        void reset()
-        {
-            diffuse.reset();
-            bump.reset();
-            specular.reset();
-            needDepthFill = false;
-        }
-    };
 
 private:
 
@@ -74,12 +47,14 @@ private:
 
     // Shader pass construction helpers
     void appendBlendLayer(const ShaderLayerPtr& layer);
+
+    struct DBSTriplet;
     void appendInteractionLayer(const DBSTriplet& triplet);
+
     void constructLightingPassesFromMaterial();
     void determineBlendModeForEditorPass(OpenGLState& pass);
     void constructEditorPreviewPassFromMaterial();
     void applyAlphaTestToPass(OpenGLState& pass, float alphaTest);
-
     void setGLTexturesFromTriplet(OpenGLState&, const DBSTriplet&);
 
     // Destroy internal data
@@ -91,40 +66,35 @@ private:
     // Test if we can render using lighting mode
     bool canUseLightingMode() const;
 
+    void insertPasses();
+    void removePasses();
+
 public:
 
-	/**
-	 * Constructor.
-	 */
+    /// Construct and initialise
 	OpenGLShader(render::OpenGLStateManager& glStateManager) :
 		_glStateManager(glStateManager),
+        _isVisible(true),
 		m_used(0)
 	{ }
 
-	/**
-	 * Add a renderable object to this shader.
-	 */
+    // Shader implementation
+
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
 					   const LightList* lights);
-
-	/**
-	 * Add a renderable object to this shader.
-	 */
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
 					   const IRenderEntity& entity,
 					   const LightList* lights);
-
+    void setVisible(bool visible);
+    bool isVisible() const;
 	void incrementUsed();
-
 	void decrementUsed();
-
   bool realised() const
   {
     return _material != 0;
   }
-
   void attach(ModuleObserver& observer)
   {
     if(realised())

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MaterialsList.h"
+
 #include "modelskin.h"
 #include "iradiant.h"
 #include "iuimanager.h"
@@ -92,6 +94,9 @@ private:
     // Key/value table for model information
     gtkutil::KeyValueTable _infoTable;
 
+    // Materials list table
+    MaterialsList _materialsList;
+
 	// The window position tracker
 	gtkutil::WindowPosition _position;
 
@@ -122,8 +127,8 @@ private:
                                      bool showSkins);
 
 	// Helper functions to configure GUI components
+    void setupAdvancedPanel();
 	void setupTreeView();
-	void setupInfoPanel();
 
 	// Populate the tree view with models
 	void populateModels();
@@ -133,13 +138,12 @@ private:
 
 	// Update the info table with information from the currently-selected model, and
 	// update the displayed model.
-	void updateSelected();
+	void showInfoForSelectedModel();
 
 	// Return the value from the selected column, or an empty string if nothing selected
 	std::string getSelectedValue(int col);
 
 	// gtkmm callbacks
-	void callbackSelChanged();
 	void callbackOK();
 	void callbackCancel();
 

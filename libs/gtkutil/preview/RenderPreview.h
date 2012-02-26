@@ -151,6 +151,11 @@ public:
      */
     void initialisePreview();
 
+    /// Get the RenderSystem used by the preview
+    RenderSystemPtr getRenderSystem()
+    {
+        return _renderSystem;
+    }
 };
 typedef boost::shared_ptr<RenderPreview> RenderPreviewPtr;
 

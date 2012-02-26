@@ -44,7 +44,7 @@ public:
 	int getSurfaceCount();
 	int getVertexCount();
 	int getPolyCount();
-	model::MaterialList getActiveMaterials();
+	model::StringList getActiveMaterials();
 	ScriptModelSurface getSurface(int surfaceNum);
 
 	// Checks if the given SceneNode structure is a ModelNode

@@ -16,6 +16,32 @@
 namespace render
 {
 
+// Triplet of diffuse, bump and specular shaders
+struct OpenGLShader::DBSTriplet
+{
+    // DBS layers
+    ShaderLayerPtr diffuse;
+    ShaderLayerPtr bump;
+    ShaderLayerPtr specular;
+
+    // Need-depth-fill flag
+    bool needDepthFill;
+
+    // Initialise
+    DBSTriplet()
+    : needDepthFill(true)
+    { }
+
+    // Clear pointers
+    void reset()
+    {
+        diffuse.reset();
+        bump.reset();
+        specular.reset();
+        needDepthFill = false;
+    }
+};
+
 void OpenGLShader::destroy()
 {
     _material = MaterialPtr();
@@ -26,6 +52,8 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 								 const Matrix4& modelview,
 								 const LightList* lights)
 {
+    if (!_isVisible) return;
+
     // Add the renderable to all of our shader passes
     BOOST_FOREACH(OpenGLShaderPassPtr pass, _shaderPasses)
     {
@@ -51,6 +79,8 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 								 const IRenderEntity& entity,
 								 const LightList* lights)
 {
+    if (!_isVisible) return;
+
     BOOST_FOREACH(OpenGLShaderPassPtr pass, _shaderPasses)
     {
         if (pass->state().testRenderFlag(RENDER_BUMP))
@@ -66,6 +96,27 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 			pass->addRenderable(renderable, modelview, entity);
 		}
     }
+}
+
+void OpenGLShader::setVisible(bool visible)
+{
+    // Control visibility by inserting or removing our shader passes from the GL
+    // state manager
+    if (!_isVisible && visible)
+    {
+        insertPasses();
+    }
+    else if (_isVisible && !visible)
+    {
+        removePasses();
+    }
+
+    _isVisible = visible;
+}
+
+bool OpenGLShader::isVisible() const
+{
+    return _isVisible;
 }
 
 void OpenGLShader::incrementUsed()
@@ -100,6 +151,13 @@ void OpenGLShader::realise(const std::string& name)
 		}
     }
 
+    insertPasses();
+
+    m_observers.realise();
+}
+
+void OpenGLShader::insertPasses()
+{
     // Insert all shader passes into the GL state manager
     for (Passes::iterator i = _shaderPasses.begin();
          i != _shaderPasses.end();
@@ -109,14 +167,10 @@ void OpenGLShader::realise(const std::string& name)
             OpenGLStates::value_type((*i)->statePtr(), *i)
         );
     }
-
-    m_observers.realise();
 }
 
-void OpenGLShader::unrealise()
+void OpenGLShader::removePasses()
 {
-    m_observers.unrealise();
-
     // Remove shader passes from the GL state manager
     for (Passes::iterator i = _shaderPasses.begin();
          i != _shaderPasses.end();
@@ -124,6 +178,13 @@ void OpenGLShader::unrealise()
 	{
     	_glStateManager.eraseSortedState((*i)->statePtr());
     }
+}
+
+void OpenGLShader::unrealise()
+{
+    m_observers.unrealise();
+
+    removePasses();
 
     destroy();
 }

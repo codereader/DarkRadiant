@@ -155,7 +155,7 @@ void MD5Model::updateMaterialList()
 	}
 }
 
-const model::MaterialList& MD5Model::getActiveMaterials() const
+const model::StringList& MD5Model::getActiveMaterials() const
 {
 	return _surfaceNames;
 }

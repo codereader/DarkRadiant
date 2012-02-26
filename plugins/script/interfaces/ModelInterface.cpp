@@ -87,13 +87,13 @@ ScriptModelSurface ScriptModelNode::getSurface(int surfaceNum)
 	return ScriptModelSurface(modelNode->getIModel().getSurface(surfaceNum));
 }
 
-model::MaterialList ScriptModelNode::getActiveMaterials()
+model::StringList ScriptModelNode::getActiveMaterials()
 {
 	model::ModelNodePtr modelNode = Node_getModel(*this);
-	if (modelNode == NULL) return model::MaterialList();
+	if (modelNode == NULL) return model::StringList();
 
 	// Get the list of default shaders from this model, this is without any skins applied
-	model::MaterialList materials = modelNode->getIModel().getActiveMaterials();
+	model::StringList materials = modelNode->getIModel().getActiveMaterials();
 
 	// Check if the model is a skinned one, so let's check for active skins
 	SkinnedModelPtr skinnedModel = boost::dynamic_pointer_cast<SkinnedModel>(modelNode);
@@ -105,7 +105,7 @@ model::MaterialList ScriptModelNode::getActiveMaterials()
 
 		ModelSkin& skinInfo = GlobalModelSkinCache().capture(curSkin);
 
-		for (model::MaterialList::iterator i = materials.begin(); i != materials.end(); ++i)
+		for (model::StringList::iterator i = materials.begin(); i != materials.end(); ++i)
 		{
 			std::string remap = skinInfo.getRemap(*i);
 

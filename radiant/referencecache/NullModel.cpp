@@ -94,7 +94,7 @@ const IModelSurface& NullModel::getSurface(unsigned surfaceNum) const
 	throw new std::runtime_error("NullModel::getSurface: invalid call, no surfaces.");
 }
 
-const MaterialList& NullModel::getActiveMaterials() const {
+const StringList& NullModel::getActiveMaterials() const {
 	static std::vector<std::string> _dummyMaterials;
 	return _dummyMaterials;
 }

@@ -132,6 +132,7 @@ am_darkradiant_OBJECTS = darkradiant-main.$(OBJEXT) \
 	darkradiant-PrefPage.$(OBJEXT) \
 	darkradiant-PrefDialog.$(OBJEXT) \
 	darkradiant-TransformDialog.$(OBJEXT) \
+	darkradiant-MaterialsList.$(OBJEXT) \
 	darkradiant-ModelSelector.$(OBJEXT) \
 	darkradiant-SurfaceInspector.$(OBJEXT) \
 	darkradiant-CapDialog.$(OBJEXT) \
@@ -583,6 +584,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/prefdialog/PrefPage.cpp \
                       ui/prefdialog/PrefDialog.cpp \
                       ui/transform/TransformDialog.cpp \
+                      ui/modelselector/MaterialsList.cpp \
                       ui/modelselector/ModelSelector.cpp \
                       ui/surfaceinspector/SurfaceInspector.cpp \
                       ui/patch/CapDialog.cpp \
@@ -898,6 +900,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapPreview.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapResource.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MapResourceManager.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MaterialsList.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-MediaBrowser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ModelCache.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/darkradiant-ModelFinder.Po@am__quote@
@@ -2493,6 +2496,22 @@ darkradiant-TransformDialog.obj: ui/transform/TransformDialog.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/transform/TransformDialog.cpp' object='darkradiant-TransformDialog.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-TransformDialog.obj `if test -f 'ui/transform/TransformDialog.cpp'; then $(CYGPATH_W) 'ui/transform/TransformDialog.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/transform/TransformDialog.cpp'; fi`
+
+darkradiant-MaterialsList.o: ui/modelselector/MaterialsList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MaterialsList.o -MD -MP -MF $(DEPDIR)/darkradiant-MaterialsList.Tpo -c -o darkradiant-MaterialsList.o `test -f 'ui/modelselector/MaterialsList.cpp' || echo '$(srcdir)/'`ui/modelselector/MaterialsList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MaterialsList.Tpo $(DEPDIR)/darkradiant-MaterialsList.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/modelselector/MaterialsList.cpp' object='darkradiant-MaterialsList.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MaterialsList.o `test -f 'ui/modelselector/MaterialsList.cpp' || echo '$(srcdir)/'`ui/modelselector/MaterialsList.cpp
+
+darkradiant-MaterialsList.obj: ui/modelselector/MaterialsList.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-MaterialsList.obj -MD -MP -MF $(DEPDIR)/darkradiant-MaterialsList.Tpo -c -o darkradiant-MaterialsList.obj `if test -f 'ui/modelselector/MaterialsList.cpp'; then $(CYGPATH_W) 'ui/modelselector/MaterialsList.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/modelselector/MaterialsList.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/darkradiant-MaterialsList.Tpo $(DEPDIR)/darkradiant-MaterialsList.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='ui/modelselector/MaterialsList.cpp' object='darkradiant-MaterialsList.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o darkradiant-MaterialsList.obj `if test -f 'ui/modelselector/MaterialsList.cpp'; then $(CYGPATH_W) 'ui/modelselector/MaterialsList.cpp'; else $(CYGPATH_W) '$(srcdir)/ui/modelselector/MaterialsList.cpp'; fi`
 
 darkradiant-ModelSelector.o: ui/modelselector/ModelSelector.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(darkradiant_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT darkradiant-ModelSelector.o -MD -MP -MF $(DEPDIR)/darkradiant-ModelSelector.Tpo -c -o darkradiant-ModelSelector.o `test -f 'ui/modelselector/ModelSelector.cpp' || echo '$(srcdir)/'`ui/modelselector/ModelSelector.cpp

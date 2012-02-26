@@ -26,6 +26,7 @@
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/bind.hpp>
 
 namespace ui
 {
@@ -34,7 +35,10 @@ namespace ui
 namespace
 {
     const char* const MODELSELECTOR_TITLE = N_("Choose Model");
-    const std::string RKEY_SPLIT_POS = "user/ui/modelSelector/splitPos";
+
+    const std::string RKEY_BASE = "user/ui/modelSelector/";
+    const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
+    const std::string RKEY_INFO_EXPANDED = RKEY_BASE + "infoPanelExpanded";
 }
 
 // Constructor.
@@ -47,18 +51,22 @@ ModelSelector::ModelSelector()
   _modelPreview(new gtkutil::ModelPreview()),
   _treeStore(Gtk::TreeStore::create(_columns)),
   _treeStoreWithSkins(Gtk::TreeStore::create(_columns)),
+  _materialsList(_modelPreview->getRenderSystem()),
   _lastModel(""),
   _lastSkin(""),
   _populated(false),
   _showOptions(true)
 {
     // Set the tree store's sort behaviour
-    gtkutil::TreeModel::applyFoldersFirstSortFunc(_treeStore, _columns.filename, _columns.isFolder);
-    gtkutil::TreeModel::applyFoldersFirstSortFunc(_treeStoreWithSkins, _columns.filename, _columns.isFolder);
-
-    _position.connect(this);
+    gtkutil::TreeModel::applyFoldersFirstSortFunc(
+        _treeStore, _columns.filename, _columns.isFolder
+    );
+    gtkutil::TreeModel::applyFoldersFirstSortFunc(
+        _treeStoreWithSkins, _columns.filename, _columns.isFolder
+    );
 
     // Set the default size of the window
+    _position.connect(this);
     _position.readPosition();
     _position.fitToScreen(0.8f, 0.8f);
     _position.applyPosition();
@@ -73,21 +81,9 @@ ModelSelector::ModelSelector()
     // Re-center the window
     set_position(Gtk::WIN_POS_CENTER_ON_PARENT);
 
-    // Set up tree views with columns etc
+    // Set up view widgets
     setupTreeView();
-
-    // Create info panel
-    Gtk::ScrolledWindow* infoScrolledWin = gladeWidget<Gtk::ScrolledWindow>(
-        "infoScrolledWin"
-    );
-    infoScrolledWin->add(_infoTable);
-
-    // Set scroll bar policies (default in Glade is automatic but it doesn't
-    // seem to take effect)
-    gladeWidget<Gtk::ScrolledWindow>("topScrolledWin")->set_policy(
-        Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC
-    );
-    infoScrolledWin->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
+    setupAdvancedPanel();
 
     // Connect buttons
     gladeWidget<Gtk::Button>("okButton")->signal_clicked().connect(
@@ -103,6 +99,39 @@ ModelSelector::ModelSelector()
 
     // Store split position in registry
     registry::bindPropertyToKey(splitter->property_position(), RKEY_SPLIT_POS);
+}
+
+void ModelSelector::setupAdvancedPanel()
+{
+    // Create info panel and materials list
+    Gtk::ScrolledWindow* infoScrolledWin = gladeWidget<Gtk::ScrolledWindow>(
+        "infoScrolledWin"
+    );
+    infoScrolledWin->add(_infoTable);
+    Gtk::ScrolledWindow* materialsScrolledWin = gladeWidget<Gtk::ScrolledWindow>(
+        "materialsScrolledWin"
+    );
+    materialsScrolledWin->add(_materialsList);
+
+    // Refresh preview when material visibility changed
+    _materialsList.signal_visibilityChanged().connect(
+        sigc::mem_fun(*_modelPreview, &Gtk::Widget::queue_draw)
+    );
+
+    // Set scroll bar policies (default in Glade is automatic but it doesn't
+    // seem to take effect)
+    gladeWidget<Gtk::ScrolledWindow>("topScrolledWin")->set_policy(
+        Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC
+    );
+    infoScrolledWin->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_NEVER);
+    materialsScrolledWin->set_policy(Gtk::POLICY_AUTOMATIC,
+                                     Gtk::POLICY_AUTOMATIC);
+
+    // Persistent expander position
+    registry::bindPropertyToKey(
+        gladeWidget<Gtk::Expander>("infoExpander")->property_expanded(),
+        RKEY_INFO_EXPANDED
+    );
 }
 
 void ModelSelector::_onDeleteEvent()
@@ -144,10 +173,10 @@ void ModelSelector::onRadiantShutdown()
 
 void ModelSelector::_postShow()
 {
-    // conditionally hide the options
+    // Conditionally hide the options
     if (!_showOptions)
     {
-        gladeWidget<Gtk::Widget>("advancedExpander")->hide();
+        gladeWidget<Gtk::Widget>("optionsBox")->hide();
     }
 
     // Initialise the GL widget after the widgets have been shown
@@ -194,7 +223,7 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
         );
     }
 
-    updateSelected();
+    showInfoForSelectedModel();
 
     _showOptions = showOptions;
 
@@ -245,7 +274,7 @@ void ModelSelector::setupTreeView()
     // Get the selection object and connect to its changed signal
     _selection = _treeView->get_selection();
     _selection->signal_changed().connect(
-        sigc::mem_fun(*this, &ModelSelector::callbackSelChanged)
+        sigc::mem_fun(*this, &ModelSelector::showInfoForSelectedModel)
     );
 }
 
@@ -294,7 +323,7 @@ std::string ModelSelector::getSelectedValue(int colNum)
 
 // Update the info table and model preview based on the current selection
 
-void ModelSelector::updateSelected()
+void ModelSelector::showInfoForSelectedModel()
 {
     // Prepare to populate the info table
     _infoTable.clear();
@@ -335,26 +364,12 @@ void ModelSelector::updateSelected()
     _infoTable.append(_("Material surfaces"), intToStr(model.getSurfaceCount()));
 
     // Add the list of active materials
-    const model::MaterialList& matList(model.getActiveMaterials());
-
-    if (!matList.empty())
-    {
-        model::MaterialList::const_iterator i = matList.begin();
-
-        // First line
-        _infoTable.append(_("Active materials"), *i);
-
-        // Subsequent lines (if any)
-        while (++i != matList.end())
-        {
-            _infoTable.append("", *i);
-        }
-    }
-}
-
-void ModelSelector::callbackSelChanged()
-{
-    updateSelected();
+    _materialsList.clear();
+    const model::StringList& matList(model.getActiveMaterials());
+    std::for_each(
+        matList.begin(), matList.end(),
+        boost::bind(&MaterialsList::addMaterial, &_materialsList, _1)
+    );
 }
 
 void ModelSelector::callbackOK()

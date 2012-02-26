@@ -36,14 +36,17 @@ namespace model
 
 class IModelSurface; // see imodelsurface.h
 
-/**
- * Interface for static models. This interface provides functions for
- * obtaining information about a LWO or ASE model, such as its bounding box
- * or poly count. The interface also inherits from OpenGLRenderable to allow
- * model instances to be used for rendering.
- */
-typedef std::vector<std::string> MaterialList;
+typedef std::vector<std::string> StringList;
 
+/**
+ * \brief
+ * Interface for static models.
+ *
+ * This interface provides functions for obtaining information about a LWO or
+ * ASE model, such as its bounding box or poly count. The interface also
+ * inherits from OpenGLRenderable to allow model instances to be used for
+ * rendering.
+ */
 class IModel
 : public OpenGLRenderable,
   public Bounded
@@ -82,10 +85,14 @@ public:
 	 */
 	virtual int getPolyCount() const = 0;
 
-	/** Return a vector of strings listing the active materials used in this
-	 * model, after any skin remaps. The list is owned by the model instance.
+	/**
+     * \brief
+     * Return a vector of strings listing the active materials used in this
+	 * model, after any skin remaps.
+     *
+     * The list is owned by the model instance.
 	 */
-	virtual const MaterialList& getActiveMaterials() const = 0;
+	virtual const StringList& getActiveMaterials() const = 0;
 
 	/**
      * \brief

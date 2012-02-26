@@ -119,6 +119,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/prefdialog/PrefPage.cpp \
                       ui/prefdialog/PrefDialog.cpp \
                       ui/transform/TransformDialog.cpp \
+                      ui/modelselector/MaterialsList.cpp \
                       ui/modelselector/ModelSelector.cpp \
                       ui/surfaceinspector/SurfaceInspector.cpp \
                       ui/patch/CapDialog.cpp \
