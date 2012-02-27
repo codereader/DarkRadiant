@@ -9,6 +9,7 @@
 #include <boost/format.hpp>
 #include "OptIsland.h"
 #include "OptUtils.h"
+#include "ProcPatch.h"
 #include <stdexcept>
 
 namespace map
@@ -155,6 +156,33 @@ public:
 			_entity.primitives.push_back(ProcPrimitive());
 			ProcTris& tris = _entity.primitives.back().patch;
 
+			ProcPatch surface(*patch);
+
+			if (patch->subdivionsFixed())
+			{
+				surface.subdivideExplicit(patch->getSubdivisions(), true);
+			}
+			else
+			{
+				surface.subdivide(true);
+			}
+
+			for (std::size_t i = 0; i < surface.getNumIndices(); i += 3)
+			{
+				tris.push_back(ProcTri());
+				ProcTri& tri = tris.back();
+
+				tri.v[2] = surface.getVertex(surface.getIndex(i+0));
+				tri.v[1] = surface.getVertex(surface.getIndex(i+2));
+				tri.v[0] = surface.getVertex(surface.getIndex(i+1));
+
+				tri.material = material;
+			}
+
+			globalOutputStream() << "Parsed surface from prim #" << (_entityPrimitive-1) << ": " << _entity.primitives.back().patch.size() << " tris, "
+				<< material->getName() << std::endl;
+
+#if 0
 			// Get the tesselated mesh
 			PatchMesh mesh = patch->getTesselatedPatchMesh();
 
@@ -204,6 +232,7 @@ public:
 					tris[triIdx].material = material;
 				}
 			}
+#endif
 
 			// set merge groups if needed, to prevent multiple sides from being
 			// merged into a single surface in the case of gui shaders, mirrors, and autosprites
@@ -2379,6 +2408,7 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
 	if (group == area.groups.end())
 	{
 		area.groups.push_back(ProcOptimizeGroup());
+		std::size_t oldSize = area.groups.size();
 		group = area.groups.end() - 1;
 
 		group->numGroupLights = 0;
@@ -4665,16 +4695,25 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 	// to the beam tree at all
 	if (!light.parms.noShadows && light.getLightShader()->lightCastsShadows())
 	{
+		globalOutputStream() << (boost::format("--- Light %s is casting shadows") % light.name) << std::endl;
+
 		for (std::size_t i = 0; i < entity.numAreas; ++i)
 		{
+			globalOutputStream() << (boost::format("Prelighting area %d") % i) << std::endl;
+
 			const ProcArea& area = entity.areas[i];
 
+			int groupNum = 0;
+
 			for (ProcArea::OptimizeGroups::const_reverse_iterator group = area.groups.rbegin(); 
-				 group != area.groups.rend(); ++group)
+				 group != area.groups.rend(); ++group, ++groupNum)
 			{
+				globalOutputStream() << (boost::format("Group %d: %d tris (%s) Plane %d ") % groupNum % group->triList.size() % group->material->getName() % group->planeNum);
+
 				// if the surface doesn't cast shadows, skip it
 				if (!group->material->surfaceCastsShadow())
 				{
+					globalOutputStream() << " doesn't cast a shadow\n";
 					continue;
 				}
 
@@ -4682,6 +4721,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				// won't contribute to the shadow volume
 				if (_procFile->planes.getPlane(group->planeNum).distanceToPoint(lightOrigin) > 0)
 				{
+					globalOutputStream() << " is not facing away\n";
 					continue;
 				}
 
@@ -4689,8 +4729,11 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				// skip it
 				if (!group->bounds.intersects(light.getFrustumTris().bounds))
 				{
+					globalOutputStream() << " doesn't intersect bounds\n";
 					continue;
 				}
+
+				globalOutputStream() << " build shadower...\n";
 
 				// build up a list of the triangle fragments inside the
 				// light frustum
@@ -4967,8 +5010,8 @@ std::size_t	ProcCompiler::pruneNodesRecursively(const BspTreeNodePtr& node)
 		return node->area;
 	}
 
-	int a1 = pruneNodesRecursively(node->children[0]);
-	int a2 = pruneNodesRecursively(node->children[1]);
+	std::size_t a1 = pruneNodesRecursively(node->children[0]);
+	std::size_t a2 = pruneNodesRecursively(node->children[1]);
 
 	if (a1 != a2 || a1 == AREANUM_DIFFERENT)
 	{
