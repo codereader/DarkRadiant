@@ -215,16 +215,17 @@ void GLWidget::swapBuffers()
 
 void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
 {
-	if (previous_toplevel == NULL && !Gtk::GL::widget_is_gl_capable(*this))
+	if (previous_toplevel == NULL && !is_gl_capable())
     {
 		// Create a new GL config structure
-		Glib::RefPtr<Gdk::GL::Config> glconfig = _zBuffer ? createGLConfigWithDepth() : createGLConfig();
+		Glib::RefPtr<Gdk::GL::Config> glconfig = _zBuffer
+                                               ? createGLConfigWithDepth()
+                                               : createGLConfig();
 		assert(glconfig);
 
 		Gtk::Widget* context = GlobalOpenGL().getGLContextWidget();
 
-		Gtk::GL::widget_set_gl_capability(
-			*this,
+		set_gl_capability(
 			glconfig,
 			context ? Gtk::GL::widget_get_gl_context(*context) : Glib::RefPtr<Gdk::GL::Context>(),
 			true,

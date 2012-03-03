@@ -37,7 +37,6 @@ namespace gtkutil
 class GLWidget :
 	public Gtk::GL::DrawingArea
 {
-private:
 	// TRUE, if this GL widget has depth-buffering enabled
 	bool _zBuffer;
 

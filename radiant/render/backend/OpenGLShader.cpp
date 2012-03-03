@@ -459,7 +459,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     previewPass.setRenderFlag(RENDER_SMOOTH);
 
 	// Don't let translucent materials write to the depth buffer
-	if ((_material->getMaterialFlags() & Material::FLAG_TRANSLUCENT) == 0)
+	if (!(_material->getMaterialFlags() & Material::FLAG_TRANSLUCENT))
 	{
 		previewPass.setRenderFlag(RENDER_DEPTHWRITE);
 	}
