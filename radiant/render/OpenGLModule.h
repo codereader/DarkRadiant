@@ -4,8 +4,11 @@
 #include "igl.h"
 #include <map>
 #include <string>
-#include "gtkutil/GLFont.h"
 
+#include "gtkutil/GLFont.h"
+#include "gtkutil/GLWidget.h"
+
+/// Implementation of OpenGLBinding module
 class OpenGLModule :
 	public OpenGLBinding
 {
@@ -15,9 +18,10 @@ private:
 	gtkutil::GLFontPtr _font;
 
 	// The (singleton) widget holding the context
-	Gtk::Widget* _sharedContext;
+    gtkutil::GLWidget* _sharedContextWidget;
 
-	typedef std::set<Gtk::Widget*> GLWidgets;
+    // All widgets
+	typedef std::set<gtkutil::GLWidget*> GLWidgets;
 	GLWidgets _glWidgets;
 
 	bool _contextValid;
@@ -32,9 +36,9 @@ public:
 	virtual int getFontHeight();
 
 	// GtkGLext context management
-	virtual Gtk::Widget* getGLContextWidget();
-	virtual Gtk::Widget* registerGLWidget(Gtk::Widget* widget);
-	virtual void unregisterGLWidget(Gtk::Widget* widget);
+	virtual gtkutil::GLWidget* getGLContextWidget();
+	virtual void registerGLWidget(gtkutil::GLWidget* widget);
+	virtual void unregisterGLWidget(gtkutil::GLWidget* widget);
 	virtual bool contextValid() const;
 
 	// RegisterableModule implementation

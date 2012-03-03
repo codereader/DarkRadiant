@@ -38,7 +38,7 @@ GuiView::GuiView() :
 
 void GuiView::redraw()
 {
-	_glWidget->queueDraw();
+	_glWidget->queue_draw();
 }
 
 void GuiView::setGui(const GuiPtr& gui)
@@ -117,7 +117,7 @@ void GuiView::onSizeAllocate(Gtk::Allocation& allocation)
 	_windowDims = Vector2(allocation.get_width(), allocation.get_height());
 
 	// Queue an expose event
-	_glWidget->queueDraw();
+	_glWidget->queue_draw();
 }
 
 bool GuiView::onGLDraw(GdkEventExpose*)

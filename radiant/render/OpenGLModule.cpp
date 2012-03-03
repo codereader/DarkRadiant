@@ -16,7 +16,7 @@
 
 OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error."),
-	_sharedContext(NULL),
+	_sharedContextWidget(NULL),
 	_contextValid(false)
 {}
 
@@ -81,29 +81,29 @@ void OpenGLModule::sharedContextDestroyed()
 	GlobalRenderSystem().unrealise();
 }
 
-Gtk::Widget* OpenGLModule::getGLContextWidget()
+gtkutil::GLWidget* OpenGLModule::getGLContextWidget()
 {
-	return _sharedContext;
+	return _sharedContextWidget;
 }
 
-Gtk::Widget* OpenGLModule::registerGLWidget(Gtk::Widget* widget)
+void OpenGLModule::registerGLWidget(gtkutil::GLWidget* widget)
 {
 	std::pair<GLWidgets::iterator, bool> result = _glWidgets.insert(widget);
 
 	if (result.second && _glWidgets.size() == 1)
 	{
 		// First non-duplicated widget registered, take this as context
-		_sharedContext = widget;
-		_sharedContext->reference();
+		_sharedContextWidget = widget;
+		_sharedContextWidget->reference();
 
 		// Create a context
-		gtkutil::GLWidget::makeCurrent(*_sharedContext);
+		_sharedContextWidget->makeCurrent();
         assertNoErrors();
 
 #ifdef DEBUG_GL_WIDGETS
         std::cout << "GLWidget: created shared context using ";
 
-		if (Gtk::GL::widget_get_gl_context(*_sharedContext)->is_direct())
+		if (_sharedContextWidget->get_gl_context()->is_direct())
         {
             std::cout << "DIRECT rendering" << std::endl;
         }
@@ -117,11 +117,9 @@ Gtk::Widget* OpenGLModule::registerGLWidget(Gtk::Widget* widget)
 
 		sharedContextCreated();
 	}
-
-	return _sharedContext;
 }
 
-void OpenGLModule::unregisterGLWidget(Gtk::Widget* widget)
+void OpenGLModule::unregisterGLWidget(gtkutil::GLWidget* widget)
 {
 	GLWidgets::iterator found = _glWidgets.find(widget);
 
@@ -136,8 +134,8 @@ void OpenGLModule::unregisterGLWidget(Gtk::Widget* widget)
 
 			sharedContextDestroyed();
 
-			_sharedContext->unreference();
-			_sharedContext = NULL;
+			_sharedContextWidget->unreference();
+			_sharedContextWidget = NULL;
 		}
 
 		_glWidgets.erase(found);

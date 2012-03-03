@@ -1,33 +1,30 @@
-#ifndef GLWIDGETSENTRY_H_
-#define GLWIDGETSENTRY_H_
+#pragma once
 
 #include "GLWidget.h"
 
 namespace gtkutil
 {
 
-/** Sentry class that calls GLWidget::makeCurrent() on construction and
- * GLWidget::swapBuffers() on destruction at the end of a scope. This avoids
- * the need to manually call these functions and use branches to make sure
- * they are executed.
+/**
+ * \brief
+ * Sentry class that calls GLWidget::makeCurrent() on construction and
+ * GLWidget::swapBuffers() on destruction at the end of a scope.
  */
 class GLWidgetSentry
 {
-private:
 	// The GL widget
-	Gtk::Widget& _widget;
+    gtkutil::GLWidget& _widget;
 
 	// Whether the context could be successfully switched
 	bool _success;
 
 public:
 
-	/** Constructor calls glwidget_make_current().
-	 */
-	GLWidgetSentry(Gtk::Widget& widget) :
+    /// Construct and make the widget current
+	GLWidgetSentry(gtkutil::GLWidget& widget) :
 		_widget(widget)
 	{
-		_success = GLWidget::makeCurrent(_widget);
+		_success = _widget.makeCurrent();
 	}
 
 	// Returns TRUE if the context could not be switched
@@ -40,10 +37,8 @@ public:
 	 */
 	~GLWidgetSentry()
 	{
-		 GLWidget::swapBuffers(_widget);
+        _widget.swapBuffers();
 	}
 };
 
 }
-
-#endif /*GLWIDGETSENTRY_H_*/

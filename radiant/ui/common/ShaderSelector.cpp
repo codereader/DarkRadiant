@@ -396,7 +396,7 @@ void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 void ShaderSelector::_onSelChange()
 {
 	updateInfoTable();
-	_glWidget->queueDraw();
+	_glWidget->queue_draw();
 }
 
 } // namespace ui

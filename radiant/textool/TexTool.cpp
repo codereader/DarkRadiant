@@ -277,7 +277,7 @@ void TexTool::update()
 void TexTool::draw()
 {
 	// Redraw
-	_glWidget->queueDraw();
+	_glWidget->queue_draw();
 }
 
 void TexTool::onGtkIdle()
@@ -851,13 +851,13 @@ void TexTool::onSizeAllocate(Gtk::Allocation& allocation)
 	_windowDims = Vector2(allocation.get_width(), allocation.get_height());
 
 	// Queue an expose event
-	_glWidget->queueDraw();
+	_glWidget->queue_draw();
 }
 
 bool TexTool::triggerRedraw(GdkEventFocus* ev)
 {
 	// Trigger a redraw
-	_glWidget->queueDraw();
+	_glWidget->queue_draw();
 	return false;
 }
 

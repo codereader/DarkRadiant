@@ -138,7 +138,7 @@ CamWnd::CamWnd() :
 	_camGLWidget(Gtk::manage(new gtkutil::GLWidget(true, "CamWnd"))),
 	_timer(MSEC_PER_FRAME, _onFrame, this),
 	m_window_observer(NewWindowObserver()),
-	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, _camGLWidget)),
+	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queue_draw, _camGLWidget)),
 	m_deferred_motion(boost::bind(&CamWnd::_onDeferredMouseMotion, this, _1, _2, _3))
 {
 	m_window_observer->setRectangleDrawCallback(

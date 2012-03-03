@@ -135,18 +135,22 @@ GLWidget::GLWidget(bool zBuffer, const std::string& debugName) :
 		set_name(debugName);
     }
 
-	signal_hierarchy_changed().connect(sigc::mem_fun(*this, &GLWidget::onHierarchyChanged));
-	signal_realize().connect(sigc::mem_fun(*this, &GLWidget::onRealise));
-	signal_unrealize().connect(sigc::mem_fun(*this, &GLWidget::onUnRealise));
-}
-
-GLWidget::~GLWidget()
-{
-}
-
-void GLWidget::queueDraw()
-{
-	queue_draw();
+    // Connect to signals
+	signal_hierarchy_changed().connect(
+        sigc::mem_fun(*this, &GLWidget::onHierarchyChanged)
+    );
+	signal_realize().connect(
+        sigc::bind(
+            sigc::mem_fun(GlobalOpenGL(), &OpenGLBinding::registerGLWidget),
+            this
+        )
+    );
+	signal_unrealize().connect(
+        sigc::bind(
+            sigc::mem_fun(GlobalOpenGL(), &OpenGLBinding::unregisterGLWidget),
+            this
+        )
+    );
 }
 
 Glib::RefPtr<Gdk::GL::Config> GLWidget::createGLConfigWithDepth()
@@ -188,26 +192,25 @@ Glib::RefPtr<Gdk::GL::Config>GLWidget::createGLConfig()
 	return Gdk::GL::Config::create(Gdk::GL::MODE_RGBA | Gdk::GL::MODE_DOUBLE);
 }
 
-bool GLWidget::makeCurrent(Gtk::Widget& widget)
+bool GLWidget::makeCurrent()
 {
 #ifdef DEBUG_GL_WIDGETS
-    std::cout << "GLWidget: widget '" << widget.get_name()
+    std::cout << "GLWidget: widget '" << get_name()
               << "' made current." << std::endl;
 #endif
 
-	Glib::RefPtr<Gdk::GL::Context> glcontext = Gtk::GL::widget_get_gl_context(widget);
-	Glib::RefPtr<Gdk::GL::Drawable> gldrawable = Gtk::GL::widget_get_gl_drawable(widget);
-	return gldrawable->gl_begin(glcontext);
+    return get_gl_drawable()->make_current(get_gl_context());
 }
 
-void GLWidget::swapBuffers(Gtk::Widget& widget)
+void GLWidget::swapBuffers()
 {
 #ifdef DEBUG_GL_WIDGETS
-    std::cout << "GLWidget: widget '" << gtk_widget_get_name(widget)
+    std::cout << "GLWidget: widget '" << get_name()
               << "' swapped buffers." << std::endl;
 #endif
-	Glib::RefPtr<Gdk::GL::Drawable> gldrawable = Gtk::GL::widget_get_gl_drawable(widget);
-	gldrawable->swap_buffers();
+
+    get_gl_drawable()->gl_end();
+	get_gl_drawable()->swap_buffers();
 }
 
 void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
@@ -230,16 +233,6 @@ void GLWidget::onHierarchyChanged(Gtk::Widget* previous_toplevel)
 
 		realize();
 	}
-}
-
-void GLWidget::onRealise()
-{
-	GlobalOpenGL().registerGLWidget(this);
-}
-
-void GLWidget::onUnRealise()
-{
-	GlobalOpenGL().unregisterGLWidget(this);
 }
 
 } // namespace gtkutil

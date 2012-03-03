@@ -106,7 +106,7 @@ void TextureBrowser::queueDraw()
 {
 	if (_glWidget != NULL)
 	{
-		_glWidget->queueDraw();
+		_glWidget->queue_draw();
 	}
 }
 

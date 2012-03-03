@@ -55,7 +55,7 @@ void TexturePreviewCombo::setTexture(const std::string& tex)
 {
     _texName = tex;
     refreshInfoTable();
-    _glWidget->queueDraw();
+    _glWidget->queue_draw();
 }
 
 // Refresh the info table

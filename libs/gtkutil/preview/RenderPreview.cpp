@@ -142,7 +142,7 @@ void RenderPreview::filtersChanged()
     if (!getScene()->root()) return;
 
     GlobalFilterSystem().updateSubgraph(getScene()->root());
-    queueDraw();
+    queue_draw();
 }
 
 void RenderPreview::addToolbar(Gtk::Toolbar& toolbar)
@@ -152,7 +152,7 @@ void RenderPreview::addToolbar(Gtk::Toolbar& toolbar)
 
 void RenderPreview::queueDraw()
 {
-    _glWidget->queueDraw();
+    _glWidget->queue_draw();
 }
 
 void RenderPreview::setSize(int width, int height)
@@ -439,7 +439,7 @@ bool RenderPreview::onGLMotion(GdkEventMotion* ev)
 
         // Grab the GL widget, and update the modelview matrix with the
         // additional rotation
-        if (gtkutil::GLWidget::makeCurrent(*_glWidget))
+        if (_glWidget->makeCurrent())
         {
             // Premultiply the current modelview matrix with the rotation,
             // in order to achieve rotations in eye space rather than object
@@ -452,7 +452,7 @@ bool RenderPreview::onGLMotion(GdkEventMotion* ev)
             // Save the new GL matrix for GL draw
             glGetFloatv(GL_MODELVIEW_MATRIX, _rotation);
 
-            _glWidget->queueDraw(); // trigger the GLDraw method to draw the actual model
+            _glWidget->queue_draw(); // trigger the GLDraw method to draw the actual model
         }
     }
 
@@ -480,7 +480,7 @@ bool RenderPreview::onGLScroll(GdkEventScroll* ev)
 
     if (!_renderingInProgress)
     {
-        _glWidget->queueDraw();
+        _glWidget->queue_draw();
     }
 
     return false;

@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 namespace gtkutil
 {
 
+/// OpenGL drawing widget
 class GLWidget :
 	public Gtk::GL::DrawingArea
 {
@@ -45,22 +46,16 @@ public:
 	// Constructor, pass TRUE to enable depth-buffering
     GLWidget(bool zBuffer, const std::string& debugName = std::string());
 
-	~GLWidget();
+    /// Make this GLWidget's context and drawable current
+	bool makeCurrent();
 
-	// Switches the GL context to the given widget
-	static bool makeCurrent(Gtk::Widget& widget);
-	static void swapBuffers(Gtk::Widget& widget);
-
-	void queueDraw();
+    /// Finish drawing and swap buffers
+	void swapBuffers();
 
 private:
 	// As soon as the widget is packed into a parent, this callback is invoked
 	// and enables the GL drawing for this widget
 	void onHierarchyChanged(Gtk::Widget* previous_toplevel);
-
-	// Called when the GTK drawing area is realised/unrealised
-	void onRealise();
-	void onUnRealise();
 
 	// Acquires a GDK GL config structure with or without depth
 	static Glib::RefPtr<Gdk::GL::Config> createGLConfigWithDepth();

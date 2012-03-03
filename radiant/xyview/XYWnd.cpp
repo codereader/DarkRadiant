@@ -60,7 +60,7 @@ namespace
 XYWnd::XYWnd(int id) :
 	_id(id),
 	_glWidget(Gtk::manage(new gtkutil::GLWidget(false, "XYWnd"))),
-	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queueDraw, _glWidget)),
+	m_deferredDraw(boost::bind(&gtkutil::GLWidget::queue_draw, _glWidget)),
 	m_deferred_motion(boost::bind(&XYWnd::callbackMouseMotion, this, _1, _2, _3)),
 	_minWorldCoord(registry::getValue<float>("game/defaults/minWorldCoord")),
 	_maxWorldCoord(registry::getValue<float>("game/defaults/maxWorldCoord")),
