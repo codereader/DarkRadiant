@@ -852,7 +852,7 @@ void OptIsland::regenerateTriangles()
 		tri.v[1] = optTri->v[1]->v;
 		tri.v[2] = optTri->v[2]->v;
 
-		Plane3 plane(tri.v[0].vertex, tri.v[1].vertex, tri.v[2].vertex);
+		Plane3 plane(tri.v[1].vertex, tri.v[0].vertex, tri.v[2].vertex); // Plane(p1, p0, p2) call convention to match D3
 		
 		if (plane.normal().dot(_procFile->planes.getPlane(_group.planeNum).normal()) <= 0)
 		{

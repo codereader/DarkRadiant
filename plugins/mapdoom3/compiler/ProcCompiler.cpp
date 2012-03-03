@@ -2628,7 +2628,7 @@ void ProcCompiler::clipTriIntoTreeRecursively(const ProcWinding& winding, const 
 	{
 		ProcTris list = windingToTriList(winding, originalTri);
 
-		Plane3 plane(originalTri.v[0].vertex, originalTri.v[1].vertex, originalTri.v[2].vertex);
+		Plane3 plane(originalTri.v[1].vertex, originalTri.v[0].vertex, originalTri.v[2].vertex); // Plane(p1, p0, p2) call convention to match D3
 
 		std::size_t planeNum = _procFile->planes.findOrInsertPlane(plane, EPSILON_NORMAL, EPSILON_DIST);
 
@@ -2641,7 +2641,7 @@ void ProcCompiler::clipTriIntoTreeRecursively(const ProcWinding& winding, const 
 
 void ProcCompiler::addMapTrisToAreas(const ProcTris& tris, ProcEntity& entity)
 {
-	for (ProcTris::const_iterator tri = tris.begin(); tri != tris.end(); ++tri)
+	for (ProcTris::const_reverse_iterator tri = tris.rbegin(); tri != tris.rend(); ++tri)
 	{
 		// skip degenerate triangles from pinched curves
 		if (ProcWinding::getTriangleArea(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex) <= 0)
@@ -2667,7 +2667,7 @@ void ProcCompiler::addMapTrisToAreas(const ProcTris& tris, ProcEntity& entity)
 			// put in single area
 			ProcTris newTri(1, *tri); // list with 1 triangle
 
-			Plane3 plane(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex);
+			Plane3 plane(tri->v[1].vertex, tri->v[0].vertex, tri->v[2].vertex); // Plane(p1, p0, p2) call convention to match D3
 
 			std::size_t planeNum = _procFile->planes.findOrInsertPlane(plane, EPSILON_NORMAL, EPSILON_DIST);
 
@@ -2705,6 +2705,12 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 
 			// add curve triangles
 			addMapTrisToAreas(prim->patch, entity);
+
+			/*for (std::size_t i = 0; i < _procFile->planes.size(); ++i)
+			{
+				const Plane3& plane = _procFile->planes.getPlane(i);
+				globalOutputStream() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
+			}*/
 			
 			/*// Print result
 			for (std::size_t a = 0; a < entity.areas.size(); ++a)
@@ -5090,10 +5096,24 @@ bool ProcCompiler::processModel(ProcEntity& entity, bool floodFill)
 	// tree, so tris will never cross area boundaries
 	floodAreas(entity);
 
+	/*globalOutputStream() << "--- Planelist before PutPrimitivesInAreas --- " << std::endl;
+
+	for (std::size_t i = 0; i < _procFile->planes.size(); ++i)
+	{
+		const Plane3& plane = _procFile->planes.getPlane(i);
+		globalOutputStream() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
+	}*/
+
 	// we now have a BSP tree with solid and non-solid leafs marked with areas
 	// all primitives will now be clipped into this, throwing away
 	// fragments in the solid areas
 	putPrimitivesInAreas(entity);
+
+	/*for (std::size_t i = 0; i < _procFile->planes.size(); ++i)
+	{
+		const Plane3& plane = _procFile->planes.getPlane(i);
+		globalOutputStream() << (boost::format("Plane %d: %f %f %f %f") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist()) << std::endl;
+	}*/
 
 	// now build shadow volumes for the lights and split
 	// the optimize lists by the light beam trees

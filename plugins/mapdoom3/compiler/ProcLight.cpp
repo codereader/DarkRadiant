@@ -520,13 +520,13 @@ void ProcLight::makeShadowFrustums()
 				Vector3& p2 = corners[faceCorners[side][(edge+1)&3]];
 
 				// create a plane that goes through the center of projection
-				frust.planes[edge] = Plane3(p2, p1, globalLightOrigin);
+				frust.planes[edge] = Plane3(p1, p2, globalLightOrigin); // Plane(p1, p0, p2) call convention to match D3
 
 				// see if we should use an adjacent plane instead
 				if (centerOutside)
 				{
 					Vector3& p3 = corners[faceEdgeAdjacent[side][edge]];
-					Plane3 sidePlane(p2, p1, p3);
+					Plane3 sidePlane(p1, p2, p3); // Plane(p1, p0, p2) call convention to match D3
 
 					d = sidePlane.distanceToPoint(globalLightOrigin);
 
