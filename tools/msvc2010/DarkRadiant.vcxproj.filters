@@ -802,6 +802,9 @@
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp">
+      <Filter>src\ui\modelselector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\brushmanip.h">
@@ -1655,6 +1658,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\precompiled.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h">
+      <Filter>src\ui\modelselector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
