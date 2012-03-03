@@ -278,7 +278,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
         zPass.setRenderFlag(RENDER_DEPTHWRITE);
         zPass.setRenderFlag(RENDER_PROGRAM);
 
-        zPass.m_sort = OpenGLState::eSortOpaque;
+        zPass.setSortPosition(OpenGLState::SORT_ZFILL);
 
         zPass.glProgram = GLProgramFactory::instance().getProgram("depthFill");
     }
@@ -324,7 +324,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 
     dbsPass.setDepthFunc(GL_LEQUAL);
     dbsPass.polygonOffset = 0.5f;
-    dbsPass.m_sort = OpenGLState::eSortMultiFirst;
+    dbsPass.setSortPosition(OpenGLState::SORT_INTERACTION);
     dbsPass.m_blend_src = GL_ONE;
     dbsPass.m_blend_dst = GL_ONE;
 }
@@ -435,7 +435,7 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
     if (!hasDiffuseLayer && !allLayers.empty() && _material->getName() != "_default")
     {
 		pass.setRenderFlag(RENDER_BLEND);
-		pass.m_sort = OpenGLState::eSortTranslucent;
+		pass.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
 
 		BlendFunc bf = allLayers[0]->getBlendFunc();
 		pass.m_blend_src = bf.src;
@@ -479,11 +479,11 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     // Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
     {
-        previewPass.m_sort = OpenGLState::eSortOverlayFirst;
+        previewPass.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
     }
-    else if (previewPass.m_sort != OpenGLState::eSortTranslucent)
+    else if (previewPass.getSortPosition() != OpenGLState::SORT_TRANSLUCENT)
     {
-        previewPass.m_sort = OpenGLState::eSortFullbright;
+        previewPass.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
     }
 
     // Polygon offset
@@ -536,11 +536,11 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
 	// Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
     {
-        state.m_sort = OpenGLState::eSortOverlayFirst;
+        state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
     }
     else
     {
-        state.m_sort = OpenGLState::eSortFullbright;
+        state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
 	}
 
     // Polygon offset
@@ -590,7 +590,7 @@ void OpenGLShader::construct(const std::string& name)
             state.setColour(colour);
 
             state.setRenderFlags(RENDER_FILL | RENDER_LIGHTING | RENDER_DEPTHTEST | RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
-            state.m_sort = OpenGLState::eSortFullbright;
+            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             break;
         }
 
@@ -604,7 +604,7 @@ void OpenGLShader::construct(const std::string& name)
             state.setColour(colour);
 
             state.setRenderFlags(RENDER_FILL | RENDER_LIGHTING | RENDER_DEPTHTEST | RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_BLEND);
-            state.m_sort = OpenGLState::eSortTranslucent;
+            state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
             break;
         }
 
@@ -618,7 +618,7 @@ void OpenGLShader::construct(const std::string& name)
             state.setColour(colour);
 
             state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
-            state.m_sort = OpenGLState::eSortFullbright;
+            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             state.setDepthFunc(GL_LESS);
             state.m_linewidth = 1;
             state.m_pointsize = 1;
@@ -635,7 +635,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setRenderFlag(RENDER_COLOURWRITE);
               state.setRenderFlag(RENDER_DEPTHWRITE);
 
-              state.m_sort = OpenGLState::eSortControlFirst;
+              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
               state.m_pointsize = 4;
             }
             else if (name == "$SELPOINT")
@@ -644,7 +644,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setRenderFlag(RENDER_COLOURWRITE);
               state.setRenderFlag(RENDER_DEPTHWRITE);
 
-              state.m_sort = OpenGLState::eSortControlFirst + 1;
+              state.setSortPosition(OpenGLState::SORT_POINT_LAST);
               state.m_pointsize = 4;
             }
             else if (name == "$BIGPOINT")
@@ -653,19 +653,19 @@ void OpenGLShader::construct(const std::string& name)
               state.setRenderFlag(RENDER_COLOURWRITE);
               state.setRenderFlag(RENDER_DEPTHWRITE);
 
-              state.m_sort = OpenGLState::eSortControlFirst;
+              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
               state.m_pointsize = 6;
             }
             else if (name == "$PIVOT")
             {
               state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-              state.m_sort = OpenGLState::eSortGUI1;
+              state.setSortPosition(OpenGLState::SORT_GUI0);
               state.m_linewidth = 2;
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
               hiddenLine.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
-              hiddenLine.m_sort = OpenGLState::eSortGUI0;
+              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.m_linewidth = 2;
               hiddenLine.setDepthFunc(GL_GREATER);
             }
@@ -673,12 +673,12 @@ void OpenGLShader::construct(const std::string& name)
             {
               state.setColour(1, 0.5, 0, 1);
               state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
-              state.m_sort = OpenGLState::eSortControlFirst;
+              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
             }
             else if (name == "$WIREFRAME")
             {
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
-              state.m_sort = OpenGLState::eSortFullbright;
+              state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             }
             else if (name == "$CAM_HIGHLIGHT")
             {
@@ -689,20 +689,29 @@ void OpenGLShader::construct(const std::string& name)
               state.setRenderFlag(RENDER_COLOURWRITE);
 
               state.setColour(highLightColour);
-              state.m_sort = OpenGLState::eSortHighlight;
+              state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
               state.polygonOffset = 0.5f;
               state.setDepthFunc(GL_LEQUAL);
             }
             else if (name == "$CAM_OVERLAY")
             {
-              state.setRenderFlags(RENDER_CULLFACE | RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_OFFSETLINE);
-              state.m_sort = OpenGLState::eSortOverlayFirst + 1;
+              state.setRenderFlags(RENDER_CULLFACE
+                                 | RENDER_DEPTHTEST
+                                 | RENDER_COLOURWRITE
+                                 | RENDER_DEPTHWRITE
+                                 | RENDER_OFFSETLINE);
+              state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
               state.setDepthFunc(GL_LEQUAL);
 
+              // Second pass for hidden lines
               OpenGLState& hiddenLine = appendDefaultPass();
               hiddenLine.setColour(0.75, 0.75, 0.75, 1);
-              hiddenLine.setRenderFlags(RENDER_CULLFACE | RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_OFFSETLINE | RENDER_LINESTIPPLE);
-              hiddenLine.m_sort = OpenGLState::eSortOverlayFirst;
+              hiddenLine.setRenderFlags(RENDER_CULLFACE
+                                      | RENDER_DEPTHTEST
+                                      | RENDER_COLOURWRITE
+                                      | RENDER_OFFSETLINE
+                                      | RENDER_LINESTIPPLE);
+              hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
               hiddenLine.setDepthFunc(GL_GREATER);
               hiddenLine.m_linestipple_factor = 2;
             }
@@ -714,53 +723,77 @@ void OpenGLShader::construct(const std::string& name)
                               colorSelBrushes[2],
                               1);
               state.setRenderFlags(RENDER_COLOURWRITE | RENDER_LINESTIPPLE);
-              state.m_sort = OpenGLState::eSortOverlayFirst;
+              state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
             }
             else if (name == "$DEBUG_CLIPPED")
             {
               state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
-              state.m_sort = OpenGLState::eSortLast;
+              state.setSortPosition(OpenGLState::SORT_LAST);
             }
             else if (name == "$POINTFILE")
             {
               state.setColour(1, 0, 0, 1);
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_COLOURWRITE | RENDER_DEPTHWRITE);
-              state.m_sort = OpenGLState::eSortFullbright;
+              state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
               state.m_linewidth = 4;
             }
             else if (name == "$WIRE_OVERLAY")
             {
-              state.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE);
-              state.m_sort = OpenGLState::eSortGUI1;
+              state.setRenderFlags(RENDER_COLOURWRITE
+                                 | RENDER_DEPTHWRITE
+                                 | RENDER_DEPTHTEST
+                                 | RENDER_OVERRIDE);
+              state.setSortPosition(OpenGLState::SORT_GUI1);
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.setRenderFlags(RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_LINESTIPPLE);
-              hiddenLine.m_sort = OpenGLState::eSortGUI0;
+              hiddenLine.setRenderFlags(RENDER_COLOURWRITE
+                                      | RENDER_DEPTHWRITE
+                                      | RENDER_DEPTHTEST
+                                      | RENDER_OVERRIDE
+                                      | RENDER_LINESTIPPLE);
+              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
             }
             else if (name == "$FLATSHADE_OVERLAY")
             {
-              state.setRenderFlags(RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE);
-              state.m_sort = OpenGLState::eSortGUI1;
+              state.setRenderFlags(RENDER_CULLFACE
+                                 | RENDER_LIGHTING
+                                 | RENDER_SMOOTH
+                                 | RENDER_SCALED
+                                 | RENDER_FILL
+                                 | RENDER_COLOURWRITE
+                                 | RENDER_DEPTHWRITE
+                                 | RENDER_DEPTHTEST
+                                 | RENDER_OVERRIDE);
+              state.setSortPosition(OpenGLState::SORT_GUI1);
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
-              hiddenLine.setRenderFlags(RENDER_CULLFACE | RENDER_LIGHTING | RENDER_SMOOTH | RENDER_SCALED | RENDER_FILL | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_DEPTHTEST | RENDER_OVERRIDE | RENDER_POLYGONSTIPPLE);
-              hiddenLine.m_sort = OpenGLState::eSortGUI0;
+              hiddenLine.setRenderFlags(RENDER_CULLFACE
+                                      | RENDER_LIGHTING
+                                      | RENDER_SMOOTH
+                                      | RENDER_SCALED
+                                      | RENDER_FILL
+                                      | RENDER_COLOURWRITE
+                                      | RENDER_DEPTHWRITE
+                                      | RENDER_DEPTHTEST
+                                      | RENDER_OVERRIDE
+                                      | RENDER_POLYGONSTIPPLE);
+              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
             }
             else if (name == "$CLIPPER_OVERLAY")
             {
-              Vector3 colorClipper = ColourSchemes().getColour("clipper");
-              state.setColour(colorClipper[0],
-                              colorClipper[1],
-                              colorClipper[2],
-                              1);
-              state.setRenderFlags(RENDER_CULLFACE | RENDER_COLOURWRITE | RENDER_DEPTHWRITE | RENDER_FILL | RENDER_POLYGONSTIPPLE);
-              state.m_sort = OpenGLState::eSortOverlayFirst;
+              state.setColour(ColourSchemes().getColour("clipper"));
+              state.setRenderFlags(RENDER_CULLFACE
+                                 | RENDER_COLOURWRITE
+                                 | RENDER_DEPTHWRITE
+                                 | RENDER_FILL
+                                 | RENDER_POLYGONSTIPPLE);
+              state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
             }
             else
             {

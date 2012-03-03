@@ -26,9 +26,31 @@ class GLProgram;
  */
 class OpenGLState
 {
+public:
+
+    /// Enum of possible sort positions
+    enum SortPosition
+    {
+        SORT_FIRST = -64,
+        SORT_ZFILL = 0,             // used by depth buffer fill passes
+        SORT_INTERACTION = 2,       // used by the DBS pass
+        SORT_FULLBRIGHT = 1025,     // used by non-translucent editor passes
+        SORT_TRANSLUCENT = 1026,    // used by blend-type editor passes
+        SORT_HIGHLIGHT = 1027,      // used by the (red) selection system overlay
+        SORT_OVERLAY_FIRST = 1028,  // used by decals
+        SORT_OVERLAY_LAST = 2047,
+        SORT_POINT_FIRST = 2048,    // used by POINT renderers
+        SORT_POINT_LAST = 3071,
+        SORT_GUI0 = 3072,           // used by selection system controls, pivots (visible)
+        SORT_GUI1 = 3073,           // used by selection system controls, pivots (obscured)
+        SORT_LAST = 4096,
+    };
+
+private:
+
     // The 4 colour components, only for use in OpenGLStates that do not have
     // any shader stages attached, otherwise pull the colour from there.
-	Colour4 _colour;
+    Colour4 _colour;
 
     // Colour inversion flag
     bool _invertColour;
@@ -39,34 +61,10 @@ class OpenGLState
     // GL depth function
     GLenum _glDepthFunc;
 
+    // Sort position
+    SortPosition _sortPos;
+
 public:
-	enum ESort
-	{
-		eSortFirst = -64,
-		eSortOpaque = 0,			// used by depth buffer fill passes
-		eSortPortalSky = 1,
-
-		eSortMultiFirst = 2,		// used by the DBS pass
-		eSortMultiLast = 1023,
-
-		eSortOverbrighten = 1024,
-		eSortFullbright = 1025,		// used by non-translucent editor passes
-
-		eSortTranslucent = 1026,	// used by blend-type editor passes
-
-		eSortHighlight = 1027,		// used by the (red) selection system overlay
-
-		eSortOverlayFirst = 1028,	// used by decals
-		eSortOverlayLast = 2047,
-
-		eSortControlFirst = 2048,	// used by POINT renderers
-		eSortControlLast = 3071,
-
-		eSortGUI0 = 3072,			// used by selection system controls, pivots (visible)
-		eSortGUI1 = 3073,			// used by selection system controls, pivots (obscured)
-
-		eSortLast = 4096,
-	};
 
     /// Return the glColor for this state
     const Colour4& getColour() const
@@ -129,11 +127,11 @@ public:
     /// Set the depth function
     void setDepthFunc(GLenum func) { _glDepthFunc = func; }
 
-    /**
-     * \brief
-     * Sort position.
-     */
-    int m_sort;
+    /// Return the sort position
+    SortPosition getSortPosition() const { return _sortPos; }
+
+    /// Set the sort position
+    void setSortPosition(SortPosition pos) { _sortPos = pos; }
 
     /**
      * \brief
@@ -158,16 +156,16 @@ public:
      * \}
      */
 
-	/**
+    /**
      * Each open GL State refers to one or more shader stages,
-	 * which hold the actual values of many parameters, some of them
-	 * time-dependent or depending on entity parameters.
-	 */
-	ShaderLayerPtr stage0;
-	ShaderLayerPtr stage1;
-	ShaderLayerPtr stage2;
-	ShaderLayerPtr stage3;
-	ShaderLayerPtr stage4;
+     * which hold the actual values of many parameters, some of them
+     * time-dependent or depending on entity parameters.
+     */
+    ShaderLayerPtr stage0;
+    ShaderLayerPtr stage1;
+    ShaderLayerPtr stage2;
+    ShaderLayerPtr stage3;
+    ShaderLayerPtr stage4;
 
     /**
      * \brief
@@ -187,10 +185,10 @@ public:
     // Alpha test threshold
     GLfloat alphaThreshold;
 
-	GLfloat m_linewidth;
-	GLfloat m_pointsize;
-	GLint m_linestipple_factor;
-	GLushort m_linestipple_pattern;
+    GLfloat m_linewidth;
+    GLfloat m_pointsize;
+    GLint m_linestipple_factor;
+    GLushort m_linestipple_pattern;
 
     /**
      * \brief
@@ -204,28 +202,28 @@ public:
      */
     ShaderLayer::CubeMapMode cubeMapMode;
 
-	/// Default constructor
-	OpenGLState()
-	: _colour(Colour4::WHITE()),
+    /// Default constructor
+    OpenGLState()
+    : _colour(Colour4::WHITE()),
       _invertColour(false),
-	  _renderFlags(0),
+      _renderFlags(0),
       _glDepthFunc(GL_LESS),
-	  m_sort(eSortFirst),
+      _sortPos(SORT_FIRST),
       polygonOffset(0.0f),
-	  texture0(0),
-	  texture1(0),
-	  texture2(0),
+      texture0(0),
+      texture1(0),
+      texture2(0),
       texture3(0),
       texture4(0),
-	  m_blend_src(GL_SRC_ALPHA),
-	  m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
-	  alphaFunc(GL_ALWAYS),
-	  alphaThreshold(0),
-	  m_linewidth(1),
-	  m_pointsize(1),
-	  m_linestipple_factor(1),
-	  m_linestipple_pattern(0xAAAA),
-	  glProgram(NULL),
+      m_blend_src(GL_SRC_ALPHA),
+      m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
+      alphaFunc(GL_ALWAYS),
+      alphaThreshold(0),
+      m_linewidth(1),
+      m_pointsize(1),
+      m_linestipple_factor(1),
+      m_linestipple_pattern(0xAAAA),
+      glProgram(NULL),
       cubeMapMode(ShaderLayer::CUBE_MAP_NONE)
-	{ }
+    { }
 };

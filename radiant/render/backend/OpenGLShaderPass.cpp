@@ -758,7 +758,7 @@ std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self)
 
     st << " - ";
 
-    st << "Sort: " << self._glState.m_sort << " - ";
+    st << "Sort: " << self._glState.getSortPosition() << " - ";
     st << "PolygonOffset: " << self._glState.polygonOffset << " - ";
 
     if (self._glState.texture0 > 0) st << "Texture0: " << self._glState.texture0 << " - ";

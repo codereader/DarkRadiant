@@ -10,9 +10,9 @@ struct OpenGLStateLess
 	bool operator() (const OpenGLState* self, const OpenGLState* other) const
     {
 	  //! Sort by sort-order override.
-	  if(self->m_sort != other->m_sort)
+	  if(self->getSortPosition() != other->getSortPosition())
 	  {
-	    return self->m_sort < other->m_sort;
+	    return self->getSortPosition() < other->getSortPosition();
 	  }
 	  //! Sort by texture handle.
 	  if(self->texture0 != other->texture0)

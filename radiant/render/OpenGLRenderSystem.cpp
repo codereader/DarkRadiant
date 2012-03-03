@@ -133,7 +133,6 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 
 	// Construct default OpenGL state
 	OpenGLState current;
-	current.m_sort = OpenGLState::eSortFirst;
 
     // Set up initial GL state. This MUST MATCH the defaults in the OpenGLState
     // object, otherwise required state changes may not occur.
