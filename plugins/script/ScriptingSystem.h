@@ -1,5 +1,4 @@
-#ifndef _SCRIPTING_SYSTEM_H_
-#define _SCRIPTING_SYSTEM_H_
+#pragma once
 
 #include <boost/python.hpp>
 #include <map>
@@ -37,8 +36,6 @@ private:
 	boost::python::object _mainModule;
 	boost::python::object _mainNamespace;
 	boost::python::dict _globals;
-
-	StartupListenerPtr _startupListener;
 
 	// The path where the script files are hosted
 	std::string _scriptPath;
@@ -97,5 +94,3 @@ private:
 typedef boost::shared_ptr<ScriptingSystem> ScriptingSystemPtr;
 
 } // namespace script
-
-#endif /* _SCRIPTING_SYSTEM_H_ */

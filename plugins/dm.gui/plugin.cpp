@@ -29,7 +29,6 @@
 
 class GuiModule :
 	public RegisterableModule,
-	public RadiantEventListener,
 	public boost::enable_shared_from_this<GuiModule>
 {
 public:
@@ -74,7 +73,9 @@ public:
 		GlobalCommandSystem().addCommand("ReloadReadables", ui::ReadableReloader::run);
 		GlobalEventManager().addCommand("ReloadReadables", "ReloadReadables");
 
-		GlobalRadiant().addEventListener(shared_from_this());
+		GlobalRadiant().signal_radiantStarted().connect(
+            sigc::mem_fun(this, &GuiModule::onRadiantStartup)
+        );
 
 		// Search the VFS for GUIs
 		gui::GuiManager::Instance().findGuis();

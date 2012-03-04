@@ -7,8 +7,6 @@
 #include "iuimanager.h"
 #include "igroupdialog.h"
 
-#include "StartupListener.h"
-
 #include "interfaces/MathInterface.h"
 #include "interfaces/RegistryInterface.h"
 #include "interfaces/RadiantInterface.h"
@@ -359,8 +357,9 @@ void ScriptingSystem::initialiseModule(const ApplicationContext& ctx)
 	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
 
 	// Subscribe to get notified as soon as Radiant is fully initialised
-	_startupListener = StartupListenerPtr(new StartupListener(*this));
-	GlobalRadiant().addEventListener(_startupListener);
+	GlobalRadiant().signal_radiantStarted().connect(
+        sigc::mem_fun(this, &ScriptingSystem::initialise)
+    );
 
 	// Construct the script path
 #if defined(POSIX) && defined(PKGLIBDIR)
@@ -473,7 +472,6 @@ void ScriptingSystem::shutdownModule()
 	SceneNodeBuffer::Instance().clear();
 
 	_scriptPath.clear();
-	_startupListener = StartupListenerPtr();
 
 	// Free all interfaces
 	_interfaces.clear();

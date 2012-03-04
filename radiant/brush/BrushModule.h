@@ -28,9 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "brush/TexDef.h"
 #include "ibrush.h"
 
-class BrushModuleClass :
-	public BrushCreator,
-    public sigc::trackable
+class BrushModuleClass : public BrushCreator
 {
 
 	bool _textureLockEnabled;

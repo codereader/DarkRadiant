@@ -1,8 +1,8 @@
-#ifndef IMODULE_H_
-#define IMODULE_H_
+#pragma once
 
 #include <boost/shared_ptr.hpp>
 #include <boost/function.hpp>
+#include <sigc++/trackable.h>
 
 #include <string>
 #include <set>
@@ -111,9 +111,13 @@ typedef std::set<std::string> StringSet;
  * associated with each module to perform the required downcast to the known
  * type.
  *
+ * All RegisterableModules implement sigc::trackable, since they will often want
+ * to connect themselves to another module's signal(s).
+ *
  * \ingroup module
  */
-class RegisterableModule {
+class RegisterableModule: public sigc::trackable
+{
 public:
 
     /**
@@ -301,5 +305,3 @@ namespace module {
 #else
 	#define DARKRADIANT_DLLEXPORT
 #endif
-
-#endif /*IMODULE_H_*/

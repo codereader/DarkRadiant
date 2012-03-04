@@ -396,7 +396,9 @@ MediaBrowser& MediaBrowser::getInstance()
 	{
 		instancePtr.reset(new MediaBrowser);
 
-		GlobalRadiant().addEventListener(instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &MediaBrowser::onRadiantShutdown)
+        );
 	}
 
 	return *instancePtr;

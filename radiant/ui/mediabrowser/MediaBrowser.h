@@ -23,12 +23,13 @@ namespace ui
 class MediaBrowser;
 typedef boost::shared_ptr<MediaBrowser> MediaBrowserPtr;
 
-/** Media Browser page of the group dialog, which allows browsing of
- * individual textures by name and loading them into the texture window
- * or applying directly to map geometry.
+/**
+ * \brief Media Browser page of the group dialog.
+ *
+ * This page allows browsing of individual textures by name and loading them
+ * into the texture window or applying directly to map geometry.
  */
-class MediaBrowser :
-	public RadiantEventListener
+class MediaBrowser: public sigc::trackable
 {
 public:
 	// Treemodel definition

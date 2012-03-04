@@ -13,10 +13,11 @@ namespace gtkutil
 class TransientWindow
 : public Gtk::Window
 {
-private:
-
 	// Whether this window should be hidden rather than destroyed
 	bool _hideOnDelete;
+
+    // Whether the window is currently fullscreened
+    bool _isFullscreen;
 
 protected:
 
@@ -32,11 +33,6 @@ protected:
 	virtual void _postDestroy() { }
 
 	virtual void _onDeleteEvent();
-
-private:
-
-	// GTKmm delete callback
-	bool _onDelete(GdkEventAny* ev);
 
 public:
 

@@ -27,8 +27,7 @@ typedef boost::shared_ptr<SkinChooser> SkinChooserPtr;
  * model, and all skins available.
  */
 class SkinChooser :
-	public gtkutil::BlockingTransientWindow,
-	public RadiantEventListener
+	public gtkutil::BlockingTransientWindow
 {
 public:
 	// Treemodel definition
@@ -105,7 +104,6 @@ protected:
 
 public:
 
-	// RadiantEventListener implementation
 	void onRadiantShutdown();
 
 	/** Display the dialog and return the skin chosen by the user, or an empty

@@ -495,7 +495,9 @@ SurfaceInspector& SurfaceInspector::Instance()
 		instancePtr.reset(new SurfaceInspector);
 
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &SurfaceInspector::onRadiantShutdown)
+        );
 	}
 
 	return *instancePtr;

@@ -14,8 +14,7 @@
 namespace ui
 {
 
-class MainFrame : public IMainFrame,
-                  public sigc::trackable
+class MainFrame : public IMainFrame
 {
 	// The top-level window
 	Glib::RefPtr<Gtk::Window> _window;

@@ -15,8 +15,7 @@ namespace game
 /** greebo: The Manager class for keeping track
  * 			of the possible games and the current game.
  */
-class Manager : public IGameManager,
-                public sigc::trackable
+class Manager : public IGameManager
 {
 public:
 	// The map containing the named Game objects

@@ -149,7 +149,9 @@ ModelSelector& ModelSelector::Instance()
         instancePtr.reset(new ModelSelector);
 
         // Register this instance with GlobalRadiant() at once
-        GlobalRadiant().addEventListener(instancePtr);
+        GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &ModelSelector::onRadiantShutdown)
+        );
     }
 
     return *instancePtr;

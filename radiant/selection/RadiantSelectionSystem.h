@@ -52,7 +52,6 @@
  */
 // RadiantSelectionSystem
 class RadiantSelectionSystem :
-    public sigc::trackable,
 	public SelectionSystem,
 	public Translatable,
 	public Rotatable,

@@ -24,7 +24,6 @@ namespace ui
  */
 class OrthoContextMenu :
 	public IOrthoContextMenu,
-	public RadiantEventListener,
 	public boost::enable_shared_from_this<OrthoContextMenu>
 {
 	// The GtkWidget representing the menu
@@ -85,8 +84,6 @@ public:
 	// IOrthoContextMenu implementation
 	void addItem(const IMenuItemPtr& item, int section);
 	void removeItem(const IMenuItemPtr& item);
-
-	void onRadiantStartup();
 
 private:
 

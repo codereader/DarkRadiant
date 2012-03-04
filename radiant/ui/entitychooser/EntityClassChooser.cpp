@@ -206,7 +206,9 @@ EntityClassChooser& EntityClassChooser::Instance()
         instancePtr.reset(new EntityClassChooser);
 
         // Register this instance with GlobalRadiant() at once
-        GlobalRadiant().addEventListener(instancePtr);
+        GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &EntityClassChooser::onRadiantShutdown)
+        );
     }
 
     return *instancePtr;

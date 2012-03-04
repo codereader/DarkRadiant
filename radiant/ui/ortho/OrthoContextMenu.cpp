@@ -621,7 +621,9 @@ const StringSet& OrthoContextMenu::getDependencies() const
 
 void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
 {
-	GlobalRadiant().addEventListener(shared_from_this());
+	GlobalRadiant().signal_radiantStarted().connect(
+        sigc::mem_fun(this, &OrthoContextMenu::constructMenu)
+    );
 
 	registerDefaultItems();
 }
@@ -629,11 +631,6 @@ void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
 void OrthoContextMenu::shutdownModule()
 {
 	_widget.reset();
-}
-
-void OrthoContextMenu::onRadiantStartup()
-{
-	constructMenu();
 }
 
 void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section)

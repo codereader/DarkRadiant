@@ -37,7 +37,6 @@ typedef boost::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 class SurfaceInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
-  public RadiantEventListener,
   public UndoSystem::Observer,
   public gtkutil::SingleIdleCallback
 {

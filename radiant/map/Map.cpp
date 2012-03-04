@@ -1009,7 +1009,12 @@ void Map::initialiseModule(const ApplicationContext& ctx)
 
 	// Register for the startup event
 	_startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);
-	GlobalRadiant().addEventListener(_startupMapLoader);
+	GlobalRadiant().signal_radiantStarted().connect(
+        sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantStartup)
+    );
+	GlobalRadiant().signal_radiantShutdown().connect(
+        sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantShutdown)
+    );
 
 	// Add the Map-related commands to the EventManager
 	registerCommands();

@@ -2,13 +2,16 @@
 
 #include <cassert>
 
+using namespace sigc;
+
 namespace gtkutil
 {
 
 TransientWindow::TransientWindow(const std::string& title,
                                  const Glib::RefPtr<Gtk::Window>& parent,
                                  bool hideOnDelete)
-: _hideOnDelete(hideOnDelete)
+: _hideOnDelete(hideOnDelete),
+  _isFullscreen(false)
 {
     // Set up the window
     set_title(title);
@@ -24,7 +27,11 @@ TransientWindow::TransientWindow(const std::string& title,
     set_skip_pager_hint(true);
 
     // Connect up the destroy signal (close box)
-    signal_delete_event().connect(sigc::mem_fun(*this, &TransientWindow::_onDelete));
+    signal_delete_event().connect(
+        bind_return(
+            sigc::hide(mem_fun(*this, &TransientWindow::_onDeleteEvent)), true
+        )
+    );
 }
 
 void TransientWindow::_onDeleteEvent()
@@ -37,13 +44,6 @@ void TransientWindow::_onDeleteEvent()
     {
         destroy();
     }
-}
-
-bool TransientWindow::_onDelete(GdkEventAny* ev)
-{
-    // Invoke the virtual function
-    _onDeleteEvent();
-    return true;
 }
 
 void TransientWindow::setParentWindow(const Glib::RefPtr<Gtk::Window>& parent)
@@ -118,17 +118,13 @@ void TransientWindow::setFullscreen(bool isFullScreen)
     if (isFullScreen)
     {
         fullscreen();
-
-        // Set the flag to 1
-        set_data("dr-fullscreen", reinterpret_cast<void*>(1));
     }
     else
     {
         unfullscreen();
-
-        // Set the flag to 0
-        set_data("dr-fullscreen", NULL);
     }
+
+    _isFullscreen = isFullScreen;
 }
 
 void TransientWindow::toggleFullscreen()
@@ -138,9 +134,7 @@ void TransientWindow::toggleFullscreen()
 
 bool TransientWindow::isFullscreen()
 {
-    intptr_t val = reinterpret_cast<intptr_t>(get_data("dr-fullscreen"));
-
-    return val != 0;
+    return _isFullscreen;
 }
 
 }

@@ -58,7 +58,8 @@ void Overlay::destroyInstance() {
 	InstancePtr() = OverlayPtr();
 }
 
-OverlayPtr& Overlay::InstancePtr() {
+OverlayPtr& Overlay::InstancePtr()
+{
 	static OverlayPtr _instancePtr;
 
 	if (_instancePtr == NULL) {
@@ -66,7 +67,9 @@ OverlayPtr& Overlay::InstancePtr() {
 		_instancePtr = OverlayPtr(new Overlay);
 
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*_instancePtr, &Overlay::onRadiantShutdown)
+        );
 	}
 
 	return _instancePtr;

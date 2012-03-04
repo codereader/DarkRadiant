@@ -21,8 +21,7 @@ class LayerControlDialog;
 typedef boost::shared_ptr<LayerControlDialog> LayerControlDialogPtr;
 
 class LayerControlDialog :
-	public gtkutil::PersistentTransientWindow,
-	public RadiantEventListener
+	public gtkutil::PersistentTransientWindow
 {
 	// The window position tracker
 	gtkutil::WindowPosition _windowPosition;
@@ -38,7 +37,6 @@ class LayerControlDialog :
 public:
 	LayerControlDialog();
 
-	// RadiantEventListener implementation
 	void onRadiantShutdown();
 
 	// Re-populates the window

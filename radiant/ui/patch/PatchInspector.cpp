@@ -122,7 +122,9 @@ PatchInspector& PatchInspector::Instance()
 		instancePtr.reset(new PatchInspector);
 
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &PatchInspector::onRadiantShutdown)
+        );
 	}
 
 	return *instancePtr;

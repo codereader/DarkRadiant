@@ -11,8 +11,7 @@ namespace {
 	const unsigned int NUM_CLIP_POINTS = 3;
 }
 
-class Clipper : public IClipper,
-                public sigc::trackable
+class Clipper : public IClipper
 {
 	// Hold the currently active xy view type
 	EViewType _viewType;

@@ -51,7 +51,6 @@ typedef boost::shared_ptr<ModelSelector> ModelSelectorPtr;
 /// Dialog for browsing and selecting a model and/or skin
 class ModelSelector :
 	public gtkutil::BlockingTransientWindow,
-	public RadiantEventListener,
     private gtkutil::GladeWidgetHolder
 {
 public:
@@ -173,7 +172,6 @@ public:
 	// greebo: Lets the modelselector repopulate its treeview next time the dialog is shown.
 	static void refresh();
 
-	// RadiantEventListener implementation
 	void onRadiantShutdown();
 };
 

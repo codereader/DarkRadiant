@@ -19,12 +19,12 @@ along with GtkRadiant; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#if !defined(INCLUDED_PLUGIN_H)
-#define INCLUDED_PLUGIN_H
+#pragma once
 
 #include "iradiant.h"
 
-namespace radiant {
+namespace radiant
+{
 
 /**
  * IRadiant implementation class.
@@ -32,18 +32,21 @@ namespace radiant {
 class RadiantModule :
 	public IRadiant
 {
-	typedef std::set<RadiantEventListenerWeakPtr> EventListenerList;
-	EventListenerList _eventListeners;
+    // Our signals
+    sigc::signal<void> _radiantStarted;
+    sigc::signal<void> _radiantShutdown;
 
 public:
-	void addEventListener(const RadiantEventListenerPtr& listener);
-	void removeEventListener(const RadiantEventListenerPtr& listener);
 
-	// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
+    /// Broadcast shutdwon signal and clear all listeners
 	void broadcastShutdownEvent();
 
-	// Broadcasts a "startup" event to all the listeners
+	/// Broadcasts startup signal
 	void broadcastStartupEvent();
+
+    // IRadiant implementation
+    sigc::signal<void> signal_radiantStarted() const;
+    sigc::signal<void> signal_radiantShutdown() const;
 
 	// RegisterableModule implementation
 	const std::string& getName() const;
@@ -60,5 +63,3 @@ typedef boost::shared_ptr<RadiantModule> RadiantModulePtr;
 RadiantModulePtr getGlobalRadiant();
 
 } // namespace radiant
-
-#endif

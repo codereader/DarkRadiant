@@ -10,8 +10,7 @@
 
 #include "XYWnd.h"
 
-class XYWndManager : public IXWndManager,
-                     public sigc::trackable
+class XYWndManager : public IXWndManager
 {
 	// Store an indexed map of XYWnds. When one is deleted, it will notify
 	// the XYWndManager of its index so that it can be removed from the map

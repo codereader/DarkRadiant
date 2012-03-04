@@ -40,7 +40,6 @@ typedef boost::shared_ptr<PatchInspector> PatchInspectorPtr;
 class PatchInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
-  public RadiantEventListener,
   public UndoSystem::Observer,
   public gtkutil::SingleIdleCallback,
   public IPatch::Observer

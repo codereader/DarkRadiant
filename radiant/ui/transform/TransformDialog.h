@@ -35,8 +35,7 @@ typedef boost::shared_ptr<TransformDialog> TransformDialogPtr;
 
 class TransformDialog
 : public gtkutil::PersistentTransientWindow,
-  public SelectionSystem::Observer,
-  public RadiantEventListener
+  public SelectionSystem::Observer
 {
 	// The overall vbox (for global sensitivity toggle)
 	Gtk::VBox* _dialogVBox;
@@ -118,7 +117,7 @@ public:
 	/** greebo: Safely disconnects this dialog from all systems
 	 * 			(EventManager) also saves the window state to the registry.
 	 */
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
 
 	/** greebo: The command target to connect to the EventManager.
 	 */

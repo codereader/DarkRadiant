@@ -211,7 +211,9 @@ TexTool& TexTool::Instance()
 		instancePtr.reset(new TexTool);
 
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &TexTool::onRadiantShutdown)
+        );
 	}
 
 	return *instancePtr;

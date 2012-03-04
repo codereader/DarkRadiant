@@ -35,7 +35,6 @@ class LightInspector
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
   public ShaderSelector::Client,
-  public RadiantEventListener,
   public UndoSystem::Observer
 {
 	// The overall vbox
@@ -138,7 +137,7 @@ public:
 
 	// Safely disconnects this dialog from all the systems
 	// and saves the window size/position to the registry
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
 };
 
 }

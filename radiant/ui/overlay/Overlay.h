@@ -16,8 +16,7 @@ typedef boost::shared_ptr<Overlay> OverlayPtr;
  * It is configured via the XMLRegistry, and its draw() method is called from
  * the XYWnd class to insert the image into the window.
  */
-class Overlay : public RadiantEventListener,
-                public sigc::trackable
+class Overlay : public sigc::trackable
 {
 private:
 
@@ -73,8 +72,7 @@ public:
 	 */
 	static Overlay& Instance();
 
-	// RadiantEventListener implementation
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
 
 	// Sets the name of the image that should be loaded
 	void setImage(const std::string& imageName);

@@ -1,50 +1,25 @@
-#ifndef IRADIANT_H_
-#define IRADIANT_H_
+#pragma once
 
 #include "imodule.h"
-#include <boost/weak_ptr.hpp>
 
-/** greebo: An EventListener gets notified by the Radiant module
- *          on global events like shutdown, startup and such.
- *
- *          EventListener classes must register themselves using
- *          the GlobalRadiant().addEventListener() method in order
- *          to get notified about the events.
- *
- * Note: Default implementations are empty, deriving classes are
- *       supposed to pick the events they want to listen to.
- */
-class RadiantEventListener {
-public:
-    /** Destructor
-	 */
-	virtual ~RadiantEventListener() {}
-
-	/** This gets called AFTER the MainFrame window has been constructed.
-	 */
-	virtual void onRadiantStartup() {}
-
-	/** Gets called when BEFORE the MainFrame window is destroyed.
-	 *  Note: After this call, the EventListeners are deregistered from the
-	 *        Radiant module, all the internally held shared_ptrs are cleared.
-	 */
-	virtual void onRadiantShutdown() {}
-};
-typedef boost::shared_ptr<RadiantEventListener> RadiantEventListenerPtr;
-typedef boost::weak_ptr<RadiantEventListener> RadiantEventListenerWeakPtr;
+#include <sigc++/signal.h>
 
 const std::string MODULE_RADIANT("Radiant");
 
-/** greebo: This abstract class defines the interface to the core application.
- * Use this to access methods from the main codebase in radiant/
+/**
+ * \brief
+ * Interface to the core application.
  */
 class IRadiant :
 	public RegisterableModule
 {
 public:
-	// Registers/de-registers an event listener class
-	virtual void addEventListener(const RadiantEventListenerPtr& listener) = 0;
-	virtual void removeEventListener(const RadiantEventListenerPtr& listener) = 0;
+
+    /// Signal emitted when main Radiant application is constructed
+    virtual sigc::signal<void> signal_radiantStarted() const = 0;
+
+    /// Signal emitted just before Radiant shuts down
+    virtual sigc::signal<void> signal_radiantShutdown() const = 0;
 };
 
 inline IRadiant& GlobalRadiant()
@@ -57,5 +32,3 @@ inline IRadiant& GlobalRadiant()
 	);
 	return _radiant;
 }
-
-#endif

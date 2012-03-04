@@ -96,7 +96,9 @@ TransformDialogPtr& TransformDialog::InstancePtr() {
 		_instancePtr = TransformDialogPtr(new TransformDialog);
 
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(_instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*_instancePtr, &TransformDialog::onRadiantShutdown)
+        );
 	}
 
 	return _instancePtr;

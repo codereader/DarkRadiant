@@ -256,7 +256,9 @@ LayerControlDialog& LayerControlDialog::Instance()
 		instancePtr.reset(new LayerControlDialog);
 
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &LayerControlDialog::onRadiantShutdown)
+        );
 	}
 
 	return *instancePtr;

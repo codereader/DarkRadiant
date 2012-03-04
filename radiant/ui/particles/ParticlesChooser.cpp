@@ -20,9 +20,20 @@
 namespace ui
 {
 
+namespace
+{
+    // Single column list store
+    struct ListColumns: public Gtk::TreeModel::ColumnRecord
+    {
+        Gtk::TreeModelColumn<std::string> name;
+        ListColumns() { add(name); }
+    };
+    ListColumns& COLUMNS() { static ListColumns _instance; return _instance; }
+}
+
 ParticlesChooser::ParticlesChooser() :
 	gtkutil::BlockingTransientWindow(_("Choose particles"), GlobalMainFrame().getTopLevelWindow()),
-	_particlesList(Gtk::ListStore::create(_columns)),
+	_particlesList(Gtk::ListStore::create(COLUMNS())),
 	_selectedParticle(""),
 	_preview(GlobalUIManager().createParticlePreview())
 {
@@ -69,7 +80,7 @@ Gtk::Widget& ParticlesChooser::createTreeView()
 	_treeView->set_size_request(300, -1);
 
 	// Single text column
-	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), _columns.name, false)));
+	_treeView->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), COLUMNS().name, false)));
 
 	// Apply full-text search to the column
 	_treeView->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
@@ -111,11 +122,8 @@ namespace
  */
 class ParticlesVisitor
 {
-private:
 	// List store to populate
 	Glib::RefPtr<Gtk::ListStore> _store;
-
-	const ParticlesChooser::ListColumns& _columns;
 
 	// Map of iters for fast lookup
 	ParticlesChooser::IterMap& _iterMap;
@@ -126,10 +134,8 @@ public:
 	 * Constructor.
 	 */
 	ParticlesVisitor(const Glib::RefPtr<Gtk::ListStore>& store,
-					 const ParticlesChooser::ListColumns& columns,
 					 ParticlesChooser::IterMap& map)
 	: _store(store),
-	  _columns(columns),
 	  _iterMap(map)
 	{}
 
@@ -145,7 +151,7 @@ public:
 		Gtk::TreeModel::iterator iter = _store->append();
 
 		Gtk::TreeModel::Row row = *iter;
-		row[_columns.name] = prtName;
+		row[COLUMNS().name] = prtName;
 
 		// Save the iter in the iter map
 		_iterMap.insert(ParticlesChooser::IterMap::value_type(prtName, iter));
@@ -162,7 +168,7 @@ void ParticlesChooser::populateParticleList()
 	_particlesList->clear();
 
 	// Create and use a ParticlesVisitor to populate the list
-	ParticlesVisitor visitor(_particlesList, _columns, _iterMap);
+	ParticlesVisitor visitor(_particlesList, _iterMap);
 	GlobalParticlesManager().forEachParticleDef(visitor);
 }
 
@@ -210,7 +216,9 @@ ParticlesChooser& ParticlesChooser::getInstance()
 	{
 		instancePtr.reset(new ParticlesChooser);
 
-		GlobalRadiant().addEventListener(instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &ParticlesChooser::onRadiantShutdown)
+        );
 		GlobalParticlesManager().addObserver(instancePtr.get());
 	}
 
@@ -288,7 +296,7 @@ void ParticlesChooser::_onSelChanged()
 	if (iter)
 	{
 		Gtk::TreeModel::Row row = *iter;
-		_selectedParticle = row[_columns.name];
+		_selectedParticle = row[COLUMNS().name];
 
 		_preview->setParticle(_selectedParticle);
 	}

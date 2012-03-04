@@ -33,7 +33,6 @@ typedef boost::shared_ptr<TexTool> TexToolPtr;
 class TexTool
 : public gtkutil::PersistentTransientWindow,
   public SelectionSystem::Observer,
-  public RadiantEventListener,
   public gtkutil::SingleIdleCallback
 {
 	// The window position tracker
@@ -200,7 +199,7 @@ public:
 	/** greebo: Some sort of "soft" destructor that de-registers
 	 * this class from the SelectionSystem, saves the window state, etc.
 	 */
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
 
 	/** greebo: This is the static accessor method containing
 	 * the static instance of the TexTool class. Use this to access

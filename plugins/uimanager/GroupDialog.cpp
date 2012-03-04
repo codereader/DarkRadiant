@@ -59,7 +59,9 @@ Glib::RefPtr<Gtk::Window> GroupDialog::getDialogWindow()
 void GroupDialog::construct()
 {
 	InstancePtr() = GroupDialogPtr(new GroupDialog);
-	GlobalRadiant().addEventListener(InstancePtr());
+	GlobalRadiant().signal_radiantShutdown().connect(
+        sigc::mem_fun(*InstancePtr(), &GroupDialog::onRadiantShutdown)
+    );
 }
 
 void GroupDialog::reparentNotebook(Gtk::Widget* newParent)

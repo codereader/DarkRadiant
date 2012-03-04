@@ -15,7 +15,6 @@ namespace selection
 
 class SelectionSetManager :
 	public ISelectionSetManager,
-	public RadiantEventListener,
 	public boost::enable_shared_from_this<SelectionSetManager>
 {
 private:

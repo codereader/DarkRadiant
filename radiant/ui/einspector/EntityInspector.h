@@ -48,7 +48,6 @@ typedef boost::shared_ptr<EntityInspector> EntityInspectorPtr;
 class EntityInspector :
 	public IEntityInspector,
  	public SelectionSystem::Observer,
-	public RadiantEventListener,
     public Entity::Observer,
 	public UndoSystem::Observer,
 	public boost::enable_shared_from_this<EntityInspector>
@@ -237,7 +236,6 @@ public:
 	void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor);
 	void unregisterPropertyEditor(const std::string& key);
 
-	// RadiantEventListener implementation, gets called right before shutdown
 	void onRadiantShutdown();
 
 	// Gets called after an undo operation

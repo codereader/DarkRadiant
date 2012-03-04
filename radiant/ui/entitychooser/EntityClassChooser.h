@@ -29,7 +29,6 @@ typedef boost::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
  */
 class EntityClassChooser :
 	public gtkutil::BlockingTransientWindow,
-	public RadiantEventListener,
     private gtkutil::GladeWidgetHolder
 {
 public:
@@ -127,7 +126,6 @@ public:
 	 */
 	static std::string chooseEntityClass();
 
-	// RadiantEventListener implementation
 	void onRadiantShutdown();
 };
 

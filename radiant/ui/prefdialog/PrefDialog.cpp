@@ -201,7 +201,9 @@ PrefDialog& PrefDialog::Instance()
 		instancePtr.reset(new PrefDialog);
 
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(instancePtr);
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*instancePtr, &PrefDialog::onRadiantShutdown)
+        );
 	}
 
 	return *instancePtr;

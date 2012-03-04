@@ -20,7 +20,6 @@ namespace ui {
 
 class UIManager :
 	public IUIManager,
-	public RadiantEventListener,
 	public boost::enable_shared_from_this<UIManager>
 {
 private:
@@ -68,9 +67,6 @@ public:
 
 	// Called on radiant shutdown
 	void clear();
-
-	// RadiantEventListener
-	void onRadiantShutdown();
 
 	// RegisterableModule implementation
 	const std::string& getName() const;

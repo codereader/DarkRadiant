@@ -323,7 +323,9 @@ void EntityInspector::initialiseModule(const ApplicationContext& ctx)
 {
 	construct();
 
-	GlobalRadiant().addEventListener(shared_from_this());
+	GlobalRadiant().signal_radiantShutdown().connect(
+        sigc::mem_fun(this, &EntityInspector::onRadiantShutdown)
+    );
 
 	GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
 	GlobalEventManager().addCommand("ToggleEntityInspector", "ToggleEntityInspector");

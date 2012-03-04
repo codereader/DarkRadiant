@@ -25,7 +25,6 @@ class PrefDialog;
 typedef boost::shared_ptr<PrefDialog> PrefDialogPtr;
 
 class PrefDialog :
-	public RadiantEventListener,
 	public gtkutil::PersistentTransientWindow
 {
 private:
@@ -92,9 +91,9 @@ public:
 	PrefPagePtr createOrFindPage(const std::string& path);
 
 	/** greebo: A safe shutdown request that saves the window information
-	 * 			to the registry. (RadiantEventListener implementation)
+	 * 			to the registry.
 	 */
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
 
 	/** greebo: Displays the page with the specified path.
 	 *

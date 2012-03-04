@@ -1,5 +1,4 @@
-#ifndef PARTICLESCHOOSER_H_
-#define PARTICLESCHOOSER_H_
+#pragma once
 
 #include "gtkutil/window/BlockingTransientWindow.h"
 
@@ -26,27 +25,17 @@ class IParticlePreview;
 typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
 
 /**
- * Chooser dialog for selection (and possibly preview) of particle systems.
+ * \brief
+ * Chooser dialog for selection and preview of particle systems.
  */
 class ParticlesChooser :
 	public gtkutil::BlockingTransientWindow,
-	public RadiantEventListener,
 	public particles::IParticlesManager::Observer
 {
 public:
-	// Treemodel definition
-	struct ListColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		ListColumns() { add(name); }
-
-		Gtk::TreeModelColumn<std::string> name;
-	};
-
 	typedef std::map<std::string, Gtk::TreeModel::iterator> IterMap;
 
 private:
-	ListColumns _columns;
 
 	// Liststore for the main particles list, and its selection object
 	Glib::RefPtr<Gtk::ListStore> _particlesList;
@@ -114,7 +103,6 @@ public:
 	 */
 	static std::string chooseParticle(const std::string& currentParticle = "");
 
-	// RadiantEventListener
 	void onRadiantShutdown();
 
 	// IParticlesManager::Observer
@@ -122,5 +110,3 @@ public:
 };
 
 }
-
-#endif /*PARTICLESCHOOSER_H_*/

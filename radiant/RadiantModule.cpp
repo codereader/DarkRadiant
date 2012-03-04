@@ -50,65 +50,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 namespace radiant
 {
 
-void RadiantModule::addEventListener(const RadiantEventListenerPtr& listener)
+sigc::signal<void> RadiantModule::signal_radiantStarted() const
 {
-	_eventListeners.insert(RadiantEventListenerWeakPtr(listener));
+    return _radiantStarted;
 }
 
-void RadiantModule::removeEventListener(const RadiantEventListenerPtr& listener)
+sigc::signal<void> RadiantModule::signal_radiantShutdown() const
 {
-	EventListenerList::iterator found = _eventListeners.find(
-		RadiantEventListenerWeakPtr(listener)
-	);
-
-	if (found != _eventListeners.end()) {
-		_eventListeners.erase(found);
-	}
+    return _radiantShutdown;
 }
 
-// Broadcasts a "shutdown" event to all the listeners, this also clears all listeners!
 void RadiantModule::broadcastShutdownEvent()
 {
-	for (EventListenerList::iterator i = _eventListeners.begin();
-	     i != _eventListeners.end(); /* in-loop increment */)
-	{
-		// Get the weak pointer and immediately increase the iterator
-		// This should allow removal of listeners without running into invalid
-		// iterators in the for() loop above.
-		RadiantEventListenerWeakPtr weakPtr = *i++;
-
-		// Try to lock the pointer
-		RadiantEventListenerPtr listener = weakPtr.lock();
-
-		if (listener != NULL)
-		{
-			listener->onRadiantShutdown();
-		}
-	}
-
-	// This was the final radiant event, no need for keeping any pointers anymore
-	_eventListeners.clear();
+    _radiantShutdown.emit();
+    _radiantShutdown.clear();
 }
 
 // Broadcasts a "startup" event to all the listeners
 void RadiantModule::broadcastStartupEvent()
 {
-	for (EventListenerList::iterator i = _eventListeners.begin();
-	     i != _eventListeners.end(); /* in-loop increment */)
-	{
-		// Get the weak pointer and immediately increase the iterator
-		// This should allow removal of listeners without running into invalid
-		// iterators in the for() loop above.
-		RadiantEventListenerWeakPtr weakPtr = *i++;
-
-		// Try to lock the pointer
-		RadiantEventListenerPtr listener = weakPtr.lock();
-
-		if (listener != NULL)
-		{
-			listener->onRadiantStartup();
-		}
-	}
+    _radiantStarted.emit();
 }
 
 // RegisterableModule implementation
@@ -122,7 +83,8 @@ const StringSet& RadiantModule::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
+	if (_dependencies.empty())
+    {
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
@@ -160,17 +122,15 @@ void RadiantModule::shutdownModule()
 	ui::OverlayDialog::destroy();
 	ui::TextureBrowser::destroy();
 
-    // Remove all the event listeners, otherwise the shared_ptrs
-    // lock the instances. This is just for safety, usually all
-	// EventListeners get cleared upon OnRadiantShutdown anyway.
-    _eventListeners.clear();
+    _radiantShutdown.clear();
 }
 
 // Define the static Radiant module
 module::StaticModule<RadiantModule> radiantCoreModule;
 
 // Return the static Radiant module to other code within the main binary
-RadiantModulePtr getGlobalRadiant() {
+RadiantModulePtr getGlobalRadiant()
+{
 	return radiantCoreModule.getModule();
 }
 

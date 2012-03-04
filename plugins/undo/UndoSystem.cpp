@@ -56,8 +56,7 @@ namespace
 	};
 }
 
-class RadiantUndoSystem : public UndoSystem,
-                          public sigc::trackable
+class RadiantUndoSystem : public UndoSystem
 {
 	// The operation Observers which get notified on certain events
 	// This is not a set to retain the order of the observers

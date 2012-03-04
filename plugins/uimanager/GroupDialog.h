@@ -30,7 +30,6 @@ typedef boost::shared_ptr<GroupDialog> GroupDialogPtr;
 
 class GroupDialog
 : public gtkutil::PersistentTransientWindow,
-	public RadiantEventListener,
 	public IGroupDialog
 {
 	// The window position tracker
@@ -117,7 +116,7 @@ public:
 	/** greebo: Safely disconnects this window from
 	 * 			the eventmanager and saves the window position.
 	 */
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
 
 	/**
 	 * Retrieve the static GroupDialog instance.

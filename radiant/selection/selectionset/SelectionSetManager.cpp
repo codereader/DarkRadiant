@@ -42,7 +42,9 @@ void SelectionSetManager::initialiseModule(const ApplicationContext& ctx)
 	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
 
 	// Register for the startup event
-	GlobalRadiant().addEventListener(shared_from_this());
+	GlobalRadiant().signal_radiantStarted().connect(
+        sigc::mem_fun(this, &SelectionSetManager::onRadiantStartup)
+    );
 
 	GlobalCommandSystem().addCommand("DeleteAllSelectionSets",
 		boost::bind(&SelectionSetManager::deleteAllSelectionSets, this, _1));

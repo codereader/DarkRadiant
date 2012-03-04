@@ -26,7 +26,6 @@ typedef boost::shared_ptr<EntityList> EntityListPtr;
 class EntityList :
 	public gtkutil::PersistentTransientWindow,
 	public SelectionSystem::Observer,
-	public RadiantEventListener,
     private gtkutil::GladeWidgetHolder
 {
 private:
@@ -78,7 +77,7 @@ public:
 	 * 			from the EventManager and the SelectionSystem.
 	 * 			Saves the window information to the Registry.
 	 */
-	virtual void onRadiantShutdown();
+	void onRadiantShutdown();
 
 	/** greebo: Toggles the window (command target).
 	 */

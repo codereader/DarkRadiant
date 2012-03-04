@@ -216,7 +216,9 @@ EntityList& EntityList::Instance()
 		InstancePtr() = EntityListPtr(new EntityList);
 
 		// Register this instance with GlobalRadiant() at once
-		GlobalRadiant().addEventListener(InstancePtr());
+		GlobalRadiant().signal_radiantShutdown().connect(
+            sigc::mem_fun(*InstancePtr(), &EntityList::onRadiantShutdown)
+        );
 	}
 
 	return *InstancePtr();
