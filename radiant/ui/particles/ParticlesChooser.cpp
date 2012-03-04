@@ -191,7 +191,7 @@ void ParticlesChooser::onRadiantShutdown()
 	getInstancePtr().reset();
 }
 
-void ParticlesChooser::onReloadParticles()
+void ParticlesChooser::reloadParticles()
 {
 	std::string prevSelection = _selectedParticle;
 
@@ -212,14 +212,16 @@ ParticlesChooser& ParticlesChooser::getInstance()
 {
 	ParticlesChooserPtr& instancePtr = getInstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		instancePtr.reset(new ParticlesChooser);
 
 		GlobalRadiant().signal_radiantShutdown().connect(
             sigc::mem_fun(*instancePtr, &ParticlesChooser::onRadiantShutdown)
         );
-		GlobalParticlesManager().addObserver(instancePtr.get());
+		GlobalParticlesManager().signal_particlesReloaded().connect(
+            sigc::mem_fun(*instancePtr, &ParticlesChooser::reloadParticles)
+        );
 	}
 
 	return *instancePtr;

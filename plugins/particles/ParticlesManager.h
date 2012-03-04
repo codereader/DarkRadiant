@@ -20,18 +20,17 @@ namespace {
 class ParticlesManager :
 	public IParticlesManager
 {
-private:
 	// Map of named particle defs
 	typedef std::map<std::string, ParticleDefPtr> ParticleDefMap;
 	ParticleDefMap _particleDefs;
 
-	typedef std::set<IParticlesManager::Observer*> Observers;
-	Observers _observers;
+    // Reloaded signal
+    sigc::signal<void> _particlesReloadedSignal;
 
 public:
-	// IParticlesManager implementation. For documentation see iparticles.h
-	void addObserver(IParticlesManager::Observer* observer);
-	void removeObserver(IParticlesManager::Observer* observer);
+
+	// IParticlesManager implementation
+    sigc::signal<void> signal_particlesReloaded() const;
 	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
 	IParticleDefPtr getParticle(const std::string& name);
 	scene::INodePtr getParticleNode(const std::string& name);

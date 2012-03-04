@@ -28,9 +28,7 @@ typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
  * \brief
  * Chooser dialog for selection and preview of particle systems.
  */
-class ParticlesChooser :
-	public gtkutil::BlockingTransientWindow,
-	public particles::IParticlesManager::Observer
+class ParticlesChooser: public gtkutil::BlockingTransientWindow
 {
 public:
 	typedef std::map<std::string, Gtk::TreeModel::iterator> IterMap;
@@ -79,6 +77,10 @@ private:
 
 	void setSelectedParticle(const std::string& particleName);
 
+private:
+	void onRadiantShutdown();
+	void reloadParticles();
+
 protected:
 	// Override TransientWindow::_onDeleteEvent
 	void _onDeleteEvent();
@@ -102,11 +104,6 @@ public:
 	 * choice was cancelled or invalid.
 	 */
 	static std::string chooseParticle(const std::string& currentParticle = "");
-
-	void onRadiantShutdown();
-
-	// IParticlesManager::Observer
-	void onReloadParticles();
 };
 
 }

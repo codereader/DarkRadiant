@@ -1,9 +1,10 @@
 #pragma once
 
 #include "imodule.h"
-#include <boost/function.hpp>
-
 #include "irenderable.h"
+
+#include <boost/function.hpp>
+#include <sigc++/signal.h>
 
 class RenderSystem;
 class Matrix4;
@@ -193,19 +194,9 @@ class IParticlesManager :
 	public RegisterableModule
 {
 public:
-	class Observer
-	{
-	public:
-		virtual ~Observer() {}
 
-		// Gets invoked after the module reloaded the .prt files
-		// This gives any observers the chance to react to particle def changes
-		virtual void onReloadParticles() {} // empty default impl.
-	};
-
-	// Add or remove an observer to get notified on particle events
-	virtual void addObserver(Observer* observer) = 0;
-	virtual void removeObserver(Observer* observer) = 0;
+    /// Signal emitted when particle definitions are reloaded
+    virtual sigc::signal<void> signal_particlesReloaded() const = 0;
 
 	/**
 	 * Enumerate each particle def.
