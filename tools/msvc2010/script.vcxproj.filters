@@ -28,9 +28,6 @@
     <ClInclude Include="..\..\plugins\script\ScriptWindow.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\script\StartupListener.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\script\interfaces\BrushInterface.h">
       <Filter>src\interfaces</Filter>
     </ClInclude>

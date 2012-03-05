@@ -318,7 +318,6 @@
     <ClInclude Include="..\..\plugins\script\ScriptingSystem.h" />
     <ClInclude Include="..\..\plugins\script\ScriptMenu.h" />
     <ClInclude Include="..\..\plugins\script\ScriptWindow.h" />
-    <ClInclude Include="..\..\plugins\script\StartupListener.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\BrushInterface.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\CommandSystemInterface.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\DialogInterface.h" />
