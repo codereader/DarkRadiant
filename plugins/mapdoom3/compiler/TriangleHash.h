@@ -70,7 +70,7 @@ public:
 			max[i] = ceil(max[i] + 1);
 		}
 
-		_hashBounds == AABB::createFromMinMax(min, max);
+		_hashBounds = AABB::createFromMinMax(min, max);
 
 		for (std::size_t i = 0; i < 3; ++i)
 		{

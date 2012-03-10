@@ -4618,7 +4618,7 @@ Surface ProcCompiler::createShadowVolume(const Matrix4& transform, const Surface
 
 Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups, const ProcLight& light)
 {
-	globalOutputStream() << (boost::format("----- CreateLightShadow %p -----") % (&light)) << std::endl;
+	globalOutputStream() << (boost::format("----- CreateLightShadow %s -----") % light.name) << std::endl;
 
 	// optimize all the groups
 	optimizeGroupList(shadowerGroups);
@@ -4701,11 +4701,11 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 	// to the beam tree at all
 	if (!light.parms.noShadows && light.getLightShader()->lightCastsShadows())
 	{
-		globalOutputStream() << (boost::format("--- Light %s is casting shadows") % light.name) << std::endl;
+		//globalOutputStream() << (boost::format("--- Light %s is casting shadows") % light.name) << std::endl;
 
 		for (std::size_t i = 0; i < entity.numAreas; ++i)
 		{
-			globalOutputStream() << (boost::format("Prelighting area %d") % i) << std::endl;
+			//globalOutputStream() << (boost::format("Prelighting area %d") % i) << std::endl;
 
 			const ProcArea& area = entity.areas[i];
 
@@ -4714,12 +4714,12 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 			for (ProcArea::OptimizeGroups::const_reverse_iterator group = area.groups.rbegin(); 
 				 group != area.groups.rend(); ++group, ++groupNum)
 			{
-				globalOutputStream() << (boost::format("Group %d: %d tris (%s) Plane %d ") % groupNum % group->triList.size() % group->material->getName() % group->planeNum);
+				//globalOutputStream() << (boost::format("Group %d: %d tris (%s) Plane %d ") % groupNum % group->triList.size() % group->material->getName() % group->planeNum);
 
 				// if the surface doesn't cast shadows, skip it
 				if (!group->material->surfaceCastsShadow())
 				{
-					globalOutputStream() << " doesn't cast a shadow\n";
+					//globalOutputStream() << " doesn't cast a shadow\n";
 					continue;
 				}
 
@@ -4727,7 +4727,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				// won't contribute to the shadow volume
 				if (_procFile->planes.getPlane(group->planeNum).distanceToPoint(lightOrigin) > 0)
 				{
-					globalOutputStream() << " is not facing away\n";
+					//globalOutputStream() << " is not facing away\n";
 					continue;
 				}
 
@@ -4735,11 +4735,11 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				// skip it
 				if (!group->bounds.intersects(light.getFrustumTris().bounds))
 				{
-					globalOutputStream() << " doesn't intersect bounds\n";
+					//globalOutputStream() << " doesn't intersect bounds\n";
 					continue;
 				}
 
-				globalOutputStream() << " build shadower...\n";
+				//globalOutputStream() << " build shadower...\n";
 
 				// build up a list of the triangle fragments inside the
 				// light frustum
@@ -4764,6 +4764,8 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 					continue;
 				}
 
+				//globalOutputStream() << "has " << shadowers.size() << " shadowers now, ";
+
 				// find a group in shadowerGroups to add these to
 				// we will ignore everything but planenum, and we
 				// can merge across areas
@@ -4773,6 +4775,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				{
 					if (check->planeNum == group->planeNum)
 					{
+						//globalOutputStream() << "sorting into existing group with plane " << check->planeNum << ", ";
 						break;
 					}
 				}
@@ -4781,6 +4784,8 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				{
 					shadowerGroups.push_back(*group);
 					check = shadowerGroups.end() - 1;
+					check->triList.clear(); // don't inherit the triangles of the other group
+					//globalOutputStream() << "sorting into new group with plane " << check->planeNum << ", ";
 				}
 
 				// if any surface is a shadow-casting perforated or translucent surface, we
@@ -4792,6 +4797,8 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				}
 
 				check->triList.insert(check->triList.end(), shadowers.begin(), shadowers.end());
+
+				//globalOutputStream() << "has " << check->triList.size() << " tris now" << std::endl;
 			}
 		}
 	}
