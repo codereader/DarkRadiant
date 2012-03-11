@@ -9,7 +9,7 @@ fonts_la_LDFLAGS = -module -avoid-version \
                    $(XML_LIBS) \
                    $(GL_LIBS) \
                    $(GLU_LIBS) \
-                   $(REGEX_LIBS) \
+                   $(BOOST_REGEX_LIBS) \
                    $(LIBSIGC_LIBS)
 fonts_la_SOURCES = plugin.cpp \
 					FontLoader.cpp \

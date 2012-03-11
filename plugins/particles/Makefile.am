@@ -7,7 +7,7 @@ particles_la_LDFLAGS = -module -avoid-version \
                        $(GL_LIBS) \
                        $(GTKMM_LIBS) \
                        $(BOOST_FILESYSTEM_LIBS) \
-                       $(REGEX_LIBS) \
+                       $(BOOST_REGEX_LIBS) \
                        $(BOOST_SYSTEM_LIBS)
 particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                       $(top_builddir)/libs/scene/libscenegraph.la \

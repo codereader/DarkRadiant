@@ -7,7 +7,7 @@ plugins_LTLIBRARIES = dm_objectives.la
 dm_objectives_la_LIBADD = $(top_builddir)/libs/gtkutil/libgtkutil.la \
                           $(top_builddir)/libs/xmlutil/libxmlutil.la
 dm_objectives_la_LDFLAGS = -module -avoid-version -Wl,-z,defs \
-                           $(REGEX_LIBS) $(GTKMM_LIBS) $(XML_LIBS)
+                           $(BOOST_REGEX_LIBS) $(GTKMM_LIBS) $(XML_LIBS)
 dm_objectives_la_SOURCES = ObjectivesEditor.cpp \
                      objectives.cpp \
                      SpecifierType.cpp \

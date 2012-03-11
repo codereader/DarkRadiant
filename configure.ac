@@ -100,23 +100,21 @@ AC_CHECK_LIB([GLU], [gluBuild2DMipmaps],
 AC_SUBST([GL_LIBS])
 AC_SUBST([GLU_LIBS])
 
-# Boost.Regex
-AC_CHECK_LIB([boost_regex-mt], [main],
-             [REGEX_LIBS='-lboost_regex-mt'],
-             [AC_MSG_ERROR([Boost.Regex not found])])
-AC_SUBST([REGEX_LIBS])
+# Boost
+BOOST_REQUIRE([1.46.1])
 
-# Boost.Filesystem
-AC_CHECK_LIB([boost_filesystem-mt], [main],
-             [BOOST_FILESYSTEM_LIBS='-lboost_filesystem-mt'],
-             [AC_MSG_ERROR([Boost.Filesystem not found])])
-AC_SUBST([BOOST_FILESYSTEM_LIBS])
+# Check a load of common headers we use
+BOOST_BIND
+BOOST_FOREACH
+BOOST_FORMAT
+BOOST_FUNCTION
+BOOST_SMART_PTR
+BOOST_TOKENIZER
 
-# Boost.System
-AC_CHECK_LIB([boost_system-mt], [main],
-             [BOOST_SYSTEM_LIBS='-lboost_system-mt'],
-             [AC_MSG_ERROR([Boost.System not found])])
-AC_SUBST([BOOST_SYSTEM_LIBS])
+# These ones require libraries too
+BOOST_REGEX
+BOOST_FILESYSTEM
+BOOST_SYSTEM
 
 # Boost.Python if required
 if test "$python_scripting" = 'yes'
@@ -124,32 +122,13 @@ then
     AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
     if test ! -z "$PYTHON_CONFIG"
     then
-        PYTHON_CFLAGS=`$PYTHON_CONFIG --includes`
         PYTHON_LIBS=`$PYTHON_CONFIG --libs`
+
+        BOOST_PYTHON
+        script_module='script'
+        AC_SUBST([script_module])
+        AC_SUBST([PYTHON_LIBS])
     fi
-
-    CPPFLAGS="$PYTHON_CFLAGS"
-    LDFLAGS="$PYTHON_LIBS"
-    AC_CHECK_HEADER([boost/python.hpp],
-                    [script_module='script'],
-                    [script_module=''])
-    AC_CHECK_LIB([boost_python], [main],
-                 [BOOST_PYTHON_LIBS='-lboost_python'],
-                 [])
-
-    # Also check boost_python-mt since apparently it seems to randomly change on
-    # different Ubuntu distributions.
-    if test -z "$BOOST_PYTHON_LIBS"
-    then
-        AC_CHECK_LIB([boost_python-mt], [main],
-                     [BOOST_PYTHON_LIBS='-lboost_python-mt'],
-                     [script_module=''])
-    fi
-
-    AC_SUBST([script_module])
-    AC_SUBST([PYTHON_CFLAGS])
-    AC_SUBST([PYTHON_LIBS])
-    AC_SUBST([BOOST_PYTHON_LIBS])
 fi
 
 # dynamic link library

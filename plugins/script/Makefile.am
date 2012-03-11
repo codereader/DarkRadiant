@@ -1,5 +1,8 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
-              $(XML_CFLAGS) $(PYTHON_CFLAGS) $(GTKMM_CFLAGS) $(GTKSOURCEVIEWMM_CFLAGS) \
+              $(XML_CFLAGS) \
+              $(BOOST_PYTHON_CPPFLAGS) \
+              $(GTKMM_CFLAGS) \
+              $(GTKSOURCEVIEWMM_CFLAGS) \
               -DPKGLIBDIR='"$(pkglibdir)"'
 
 modulesdir = $(pkglibdir)/modules
