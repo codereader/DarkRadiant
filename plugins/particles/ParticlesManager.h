@@ -33,7 +33,7 @@ public:
     sigc::signal<void> signal_particlesReloaded() const;
 	void forEachParticleDef(const ParticleDefVisitor& visitor) const;
 	IParticleDefPtr getParticle(const std::string& name);
-	scene::INodePtr getParticleNode(const std::string& name);
+	IParticleNodePtr createParticleNode(const std::string& name);
 
 	// Finds or creates the particle def with the given name, always returns non-NULL
 	ParticleDefPtr findOrInsertParticleDef(const std::string& name);

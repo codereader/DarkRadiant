@@ -9,37 +9,37 @@ namespace map
 {
 
 class AssignLayerMappingWalker :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
 private:
-	InfoFile& _infoFile;
+    InfoFile& _infoFile;
 
 public:
-	AssignLayerMappingWalker(InfoFile& infoFile) :
-		_infoFile(infoFile)
-	{}
+    AssignLayerMappingWalker(InfoFile& infoFile) :
+        _infoFile(infoFile)
+    {}
 
-	virtual ~AssignLayerMappingWalker() {}
+    virtual ~AssignLayerMappingWalker() {}
 
-	bool pre(const scene::INodePtr& node)
-	{
-		if (Node_isModel(node) || Node_isParticle(node))
-		{
-			// We have a model or particle, assign the layers of the parent
-			scene::INodePtr parent = node->getParent();
+    bool pre(const scene::INodePtr& node)
+    {
+        if (Node_isModel(node) || particles::isParticleNode(node))
+        {
+            // We have a model or particle, assign the layers of the parent
+            scene::INodePtr parent = node->getParent();
 
-			if (parent != NULL)
-			{
-				assignNodeToLayers(node, parent->getLayers());
-			}
+            if (parent != NULL)
+            {
+                assignNodeToLayers(node, parent->getLayers());
+            }
 
-			return true;
-		}
+            return true;
+        }
 
-		// Retrieve the next set of layer mappings and assign them
-		assignNodeToLayers(node, _infoFile.getNextLayerMapping());
-		return true;
-	}
+        // Retrieve the next set of layer mappings and assign them
+        assignNodeToLayers(node, _infoFile.getNextLayerMapping());
+        return true;
+    }
 };
 
 } // namespace

@@ -40,122 +40,122 @@ class AABB;
 class BrushDoom3 {
 public:
     virtual ~BrushDoom3() {}
-	/** greebo: Translates the brush about the given <translation> vector.
-	 */
-	virtual void translateDoom3Brush(const Vector3& translation) = 0;
+    /** greebo: Translates the brush about the given <translation> vector.
+     */
+    virtual void translateDoom3Brush(const Vector3& translation) = 0;
 };
 typedef boost::shared_ptr<BrushDoom3> BrushDoom3Ptr;
 
 #include "scene/Node.h"
 
 inline void Node_traverseSubgraph(const scene::INodePtr& node, scene::NodeVisitor& visitor) {
-	if (node == NULL) return;
+    if (node == NULL) return;
 
-	// First, visit the node itself
-	if (visitor.pre(node)) {
-		// The walker requested to descend the children of this node as well,
-		node->traverse(visitor);
-	}
+    // First, visit the node itself
+    if (visitor.pre(node)) {
+        // The walker requested to descend the children of this node as well,
+        node->traverse(visitor);
+    }
 
-	visitor.post(node);
+    visitor.post(node);
 }
 
 inline SelectablePtr Node_getSelectable(const scene::INodePtr& node) {
-	return boost::dynamic_pointer_cast<Selectable>(node);
+    return boost::dynamic_pointer_cast<Selectable>(node);
 }
 
 inline void Node_setSelected(const scene::INodePtr& node, bool selected) {
-	SelectablePtr selectable = Node_getSelectable(node);
-	if (selectable != NULL) {
-		selectable->setSelected(selected);
-	}
+    SelectablePtr selectable = Node_getSelectable(node);
+    if (selectable != NULL) {
+        selectable->setSelected(selected);
+    }
 }
 
 inline bool Node_isSelected(const scene::INodePtr& node) {
-	SelectablePtr selectable = Node_getSelectable(node);
-	if (selectable != NULL) {
-		return selectable->isSelected();
-	}
-	return false;
+    SelectablePtr selectable = Node_getSelectable(node);
+    if (selectable != NULL) {
+        return selectable->isSelected();
+    }
+    return false;
 }
 
 inline bool Node_isPrimitive(const scene::INodePtr& node)
 {
-	return Node_isBrush(node) || Node_isPatch(node);
+    return Node_isBrush(node) || Node_isPatch(node);
 }
 
 class ParentBrushes :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
 private:
-	scene::INodePtr _parent;
+    scene::INodePtr _parent;
 
 public:
-	ParentBrushes(const scene::INodePtr& parent) :
-		_parent(parent)
-	{}
+    ParentBrushes(const scene::INodePtr& parent) :
+        _parent(parent)
+    {}
 
-	virtual bool pre(const scene::INodePtr& node)
-	{
-		return false;
-	}
+    virtual bool pre(const scene::INodePtr& node)
+    {
+        return false;
+    }
 
-	virtual void post(const scene::INodePtr& node) 
-	{
-		if (Node_isPrimitive(node))
-		{
-			// We need to keep the hard reference to the node, such that the refcount doesn't reach 0
-			scene::INodePtr nodeRef = node;
+    virtual void post(const scene::INodePtr& node) 
+    {
+        if (Node_isPrimitive(node))
+        {
+            // We need to keep the hard reference to the node, such that the refcount doesn't reach 0
+            scene::INodePtr nodeRef = node;
 
-			scene::INodePtr oldParent = nodeRef->getParent();
+            scene::INodePtr oldParent = nodeRef->getParent();
 
-			if (oldParent)
-			{
-				// greebo: remove the node from the old parent first
-				oldParent->removeChildNode(nodeRef);
-			}
+            if (oldParent)
+            {
+                // greebo: remove the node from the old parent first
+                oldParent->removeChildNode(nodeRef);
+            }
 
-			_parent->addChildNode(nodeRef);
-		}
-	}
+            _parent->addChildNode(nodeRef);
+        }
+    }
 };
 
 inline void parentBrushes(const scene::INodePtr& subgraph, const scene::INodePtr& parent)
 {
-	ParentBrushes visitor(parent);
-	subgraph->traverse(visitor);
+    ParentBrushes visitor(parent);
+    subgraph->traverse(visitor);
 }
 
 class HasBrushes :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	bool& m_hasBrushes;
+    bool& m_hasBrushes;
 public:
-	HasBrushes(bool& hasBrushes) :
-		m_hasBrushes(hasBrushes)
-	{
-		m_hasBrushes = true;
-	}
+    HasBrushes(bool& hasBrushes) :
+        m_hasBrushes(hasBrushes)
+    {
+        m_hasBrushes = true;
+    }
 
-	virtual bool pre(const scene::INodePtr& node) {
-		if(!Node_isPrimitive(node)) {
-			m_hasBrushes = false;
-		}
-		return false;
-	}
+    virtual bool pre(const scene::INodePtr& node) {
+        if(!Node_isPrimitive(node)) {
+            m_hasBrushes = false;
+        }
+        return false;
+    }
 };
 
 inline bool node_is_group(scene::INodePtr node) {
-	// A node without child nodes is not a group
-	if (!node->hasChildNodes()) {
-		return false;
-	}
+    // A node without child nodes is not a group
+    if (!node->hasChildNodes()) {
+        return false;
+    }
 
-	bool hasBrushes = false;
-	HasBrushes visitor(hasBrushes);
+    bool hasBrushes = false;
+    HasBrushes visitor(hasBrushes);
 
-	node->traverse(visitor);
-	return hasBrushes;
+    node->traverse(visitor);
+    return hasBrushes;
 }
 
 namespace scene {
@@ -165,15 +165,15 @@ namespace scene {
  *         The node is also deselected beforehand.
  */
 inline void removeNodeFromParent(const scene::INodePtr& node) {
-	// Check if the node has a parent in the first place
-	scene::INodePtr parent = node->getParent();
+    // Check if the node has a parent in the first place
+    scene::INodePtr parent = node->getParent();
 
-	if (parent != NULL) {
-		// Unselect the node
-		Node_setSelected(node, false);
+    if (parent != NULL) {
+        // Unselect the node
+        Node_setSelected(node, false);
 
-		parent->removeChildNode(node);
-	}
+        parent->removeChildNode(node);
+    }
 }
 
 /**
@@ -182,19 +182,19 @@ inline void removeNodeFromParent(const scene::INodePtr& node) {
  */
 inline void assignNodeToLayers(const scene::INodePtr& node, const scene::LayerList& layers)
 {
-	if (!layers.empty())
-	{
-		scene::LayerList::const_iterator i = layers.begin();
+    if (!layers.empty())
+    {
+        scene::LayerList::const_iterator i = layers.begin();
 
-		// Move the node to the first layer (so that it gets removed from all others)
-		node->moveToLayer(*i);
+        // Move the node to the first layer (so that it gets removed from all others)
+        node->moveToLayer(*i);
 
-		// Add the node to all remaining layers
-		for (++i; i != layers.end(); ++i)
-		{
-			node->addToLayer(*i);
-		}
-	}
+        // Add the node to all remaining layers
+        for (++i; i != layers.end(); ++i)
+        {
+            node->addToLayer(*i);
+        }
+    }
 }
 
 /**
@@ -202,59 +202,59 @@ inline void assignNodeToLayers(const scene::INodePtr& node, const scene::LayerLi
  * Any previous assignments of the node get overwritten by this routine.
  */
 class AssignNodeToLayersWalker :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	const scene::LayerList& _layers;
+    const scene::LayerList& _layers;
 public:
-	AssignNodeToLayersWalker(const scene::LayerList& layers) :
-		_layers(layers)
-	{}
+    AssignNodeToLayersWalker(const scene::LayerList& layers) :
+        _layers(layers)
+    {}
 
-	bool pre(const INodePtr& node) {
-		// Pass the call to the single-node method
-		assignNodeToLayers(node, _layers);
+    bool pre(const INodePtr& node) {
+        // Pass the call to the single-node method
+        assignNodeToLayers(node, _layers);
 
-		return true; // full traverse
-	}
+        return true; // full traverse
+    }
 };
 
 class UpdateNodeVisibilityWalker :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	std::stack<bool> _visibilityStack;
+    std::stack<bool> _visibilityStack;
 public:
-	bool pre(const INodePtr& node) {
-		// Update the node visibility and store the result
-		bool nodeIsVisible = GlobalLayerSystem().updateNodeVisibility(node);
+    bool pre(const INodePtr& node) {
+        // Update the node visibility and store the result
+        bool nodeIsVisible = GlobalLayerSystem().updateNodeVisibility(node);
 
-		// Add a new element for this level
-		_visibilityStack.push(nodeIsVisible);
+        // Add a new element for this level
+        _visibilityStack.push(nodeIsVisible);
 
-		return true;
-	}
+        return true;
+    }
 
-	void post(const INodePtr& node) {
-		// Is this child visible?
-		bool childIsVisible = _visibilityStack.top();
+    void post(const INodePtr& node) {
+        // Is this child visible?
+        bool childIsVisible = _visibilityStack.top();
 
-		_visibilityStack.pop();
+        _visibilityStack.pop();
 
-		if (childIsVisible) {
-			// Show the node, regardless whether it was hidden before
-			// otherwise the parent would hide the visible children as well
-			node->disable(Node::eLayered);
-		}
+        if (childIsVisible) {
+            // Show the node, regardless whether it was hidden before
+            // otherwise the parent would hide the visible children as well
+            node->disable(Node::eLayered);
+        }
 
-		if (!node->visible()) {
-			// Node is hidden after update (and no children are visible), de-select
-			Node_setSelected(node, false);
-		}
+        if (!node->visible()) {
+            // Node is hidden after update (and no children are visible), de-select
+            Node_setSelected(node, false);
+        }
 
-		if (childIsVisible && !_visibilityStack.empty()) {
-			// The child was visible, set this parent to true
-			_visibilityStack.top() = true;
-		}
-	}
+        if (childIsVisible && !_visibilityStack.empty()) {
+            // The child was visible, set this parent to true
+            _visibilityStack.top() = true;
+        }
+    }
 };
 
 /**
@@ -262,12 +262,12 @@ public:
  *         and ensures that the container's layer visibility is updated.
  */
 inline void addNodeToContainer(const scene::INodePtr& node, const scene::INodePtr& container) {
-	// Insert the child
-	container->addChildNode(node);
+    // Insert the child
+    container->addChildNode(node);
 
-	// Ensure that worldspawn is visible
-	UpdateNodeVisibilityWalker walker;
-	Node_traverseSubgraph(container, walker);
+    // Ensure that worldspawn is visible
+    UpdateNodeVisibilityWalker walker;
+    Node_traverseSubgraph(container, walker);
 }
 
 // This in combination with Instance_getLight can be used to
@@ -275,9 +275,9 @@ inline void addNodeToContainer(const scene::INodePtr& node, const scene::INodePt
 class SelectableLight {
 public:
     virtual ~SelectableLight() {}
-	/** greebo: Get the AABB of the Light "Diamond" representation.
-	 */
-	virtual AABB getSelectAABB() = 0;
+    /** greebo: Get the AABB of the Light "Diamond" representation.
+     */
+    virtual AABB getSelectAABB() = 0;
 };
 typedef boost::shared_ptr<SelectableLight> SelectableLightPtr;
 
@@ -285,62 +285,62 @@ typedef boost::shared_ptr<SelectableLight> SelectableLightPtr;
 
 template<typename Functor>
 class NodeWalker :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	const Functor& m_functor;
+    const Functor& m_functor;
 public:
-	NodeWalker(const Functor& functor) :
-		m_functor(functor)
-	{}
+    NodeWalker(const Functor& functor) :
+        m_functor(functor)
+    {}
 
-	bool pre(const scene::INodePtr& node)
-	{
-		m_functor(node);
-		return true;
-	}
+    bool pre(const scene::INodePtr& node)
+    {
+        m_functor(node);
+        return true;
+    }
 };
 
 template<typename Type, typename Functor>
 class InstanceApply :
-	public Functor
+    public Functor
 {
 public:
-	InstanceApply(const Functor& functor) :
-		Functor(functor)
-	{}
+    InstanceApply(const Functor& functor) :
+        Functor(functor)
+    {}
 
-	void operator()(const scene::INodePtr& node) const {
-		boost::shared_ptr<Type> result = boost::dynamic_pointer_cast<Type>(node);
-		if (result != NULL) {
-			Functor::operator()(result);
-		}
-	}
+    void operator()(const scene::INodePtr& node) const {
+        boost::shared_ptr<Type> result = boost::dynamic_pointer_cast<Type>(node);
+        if (result != NULL) {
+            Functor::operator()(result);
+        }
+    }
 };
 
 inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node) {
-	return boost::dynamic_pointer_cast<ITransformable>(node);
+    return boost::dynamic_pointer_cast<ITransformable>(node);
 }
 
 inline scene::SelectableLightPtr Node_getLight(const scene::INodePtr& node) {
-	return boost::dynamic_pointer_cast<scene::SelectableLight>(node);
+    return boost::dynamic_pointer_cast<scene::SelectableLight>(node);
 }
 
 class NodeSelector :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
 public:
-	virtual bool pre(const scene::INodePtr& node) {
-		Node_setSelected(node, true);
-		return false;
-	}
+    virtual bool pre(const scene::INodePtr& node) {
+        Node_setSelected(node, true);
+        return false;
+    }
 };
 
 class InstanceCounter {
 public:
-	unsigned int m_count;
-	InstanceCounter() :
-		m_count(0)
-	{}
+    unsigned int m_count;
+    InstanceCounter() :
+        m_count(0)
+    {}
 };
 
 /** greebo: Cast a node onto a BrushDoom3 pointer
@@ -348,122 +348,122 @@ public:
  * @returns: NULL, if failed, the pointer to the class otherwise.
  */
 inline BrushDoom3Ptr Node_getBrushDoom3(scene::INodePtr node) {
-	return boost::dynamic_pointer_cast<BrushDoom3>(node);
+    return boost::dynamic_pointer_cast<BrushDoom3>(node);
 }
 
 class ChildRotator :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	Quaternion _rotation;
+    Quaternion _rotation;
 public:
-	ChildRotator(const Quaternion& rotation) :
-		_rotation(rotation)
-	{}
+    ChildRotator(const Quaternion& rotation) :
+        _rotation(rotation)
+    {}
 
-	virtual bool pre(const scene::INodePtr& node) {
-		ITransformablePtr transformable = Node_getTransformable(node);
+    virtual bool pre(const scene::INodePtr& node) {
+        ITransformablePtr transformable = Node_getTransformable(node);
 
-		if (transformable != NULL) {
-			transformable->setType(TRANSFORM_PRIMITIVE);
-			transformable->setRotation(_rotation);
-		}
+        if (transformable != NULL) {
+            transformable->setType(TRANSFORM_PRIMITIVE);
+            transformable->setRotation(_rotation);
+        }
 
-		return true;
-	}
+        return true;
+    }
 };
 
 class ChildTransformReverter :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
 public:
-	virtual bool pre(const scene::INodePtr& node) {
-		ITransformablePtr transformable = Node_getTransformable(node);
+    virtual bool pre(const scene::INodePtr& node) {
+        ITransformablePtr transformable = Node_getTransformable(node);
 
-		if (transformable != NULL) {
-			transformable->revertTransform();
-		}
-		return true;
-	}
+        if (transformable != NULL) {
+            transformable->revertTransform();
+        }
+        return true;
+    }
 };
 
 class ChildTransformFreezer :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
 public:
-	virtual bool pre(const scene::INodePtr& node) {
-		ITransformablePtr transformable = Node_getTransformable(node);
+    virtual bool pre(const scene::INodePtr& node) {
+        ITransformablePtr transformable = Node_getTransformable(node);
 
-		if (transformable != NULL) {
-			transformable->freezeTransform();
-		}
-		return true;
-	}
+        if (transformable != NULL) {
+            transformable->freezeTransform();
+        }
+        return true;
+    }
 };
 
 class ChildTranslator :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	Vector3 _translation;
+    Vector3 _translation;
 public:
-	ChildTranslator(const Vector3& translation) :
-		_translation(translation)
-	{}
+    ChildTranslator(const Vector3& translation) :
+        _translation(translation)
+    {}
 
-	virtual bool pre(const scene::INodePtr& node) {
-		ITransformablePtr transformable = Node_getTransformable(node);
+    virtual bool pre(const scene::INodePtr& node) {
+        ITransformablePtr transformable = Node_getTransformable(node);
 
-		if (transformable != NULL) {
-			transformable->setType(TRANSFORM_PRIMITIVE);
-			transformable->setTranslation(_translation);
-		}
-		return true;
-	}
+        if (transformable != NULL) {
+            transformable->setType(TRANSFORM_PRIMITIVE);
+            transformable->setTranslation(_translation);
+        }
+        return true;
+    }
 };
 
 class ChildScaler :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
 private:
-	Vector3 _scale;
+    Vector3 _scale;
 public:
-	ChildScaler(const Vector3& scale) :
-		_scale(scale)
-	{}
+    ChildScaler(const Vector3& scale) :
+        _scale(scale)
+    {}
 
-	virtual bool pre(const scene::INodePtr& node)
-	{
-		ITransformablePtr transformable = Node_getTransformable(node);
+    virtual bool pre(const scene::INodePtr& node)
+    {
+        ITransformablePtr transformable = Node_getTransformable(node);
 
-		if (transformable != NULL)
-		{
-			transformable->setType(TRANSFORM_PRIMITIVE);
-			transformable->setScale(_scale);
-		}
-		return true;
-	}
+        if (transformable != NULL)
+        {
+            transformable->setType(TRANSFORM_PRIMITIVE);
+            transformable->setScale(_scale);
+        }
+        return true;
+    }
 };
 
 inline void translateDoom3Brush(scene::INodePtr node, const Vector3& translation) {
-	// Check for BrushDoom3
-	BrushDoom3Ptr brush = Node_getBrushDoom3(node);
-	if (brush != NULL) {
-		brush->translateDoom3Brush(translation);
-	}
+    // Check for BrushDoom3
+    BrushDoom3Ptr brush = Node_getBrushDoom3(node);
+    if (brush != NULL) {
+        brush->translateDoom3Brush(translation);
+    }
 }
 
 class Doom3BrushTranslator :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	Vector3 m_origin;
+    Vector3 m_origin;
 public:
-	Doom3BrushTranslator(const Vector3& origin) :
-		m_origin(origin)
-	{}
+    Doom3BrushTranslator(const Vector3& origin) :
+        m_origin(origin)
+    {}
 
-	virtual bool pre(const scene::INodePtr& node) {
-		translateDoom3Brush(node, m_origin);
-		return true;
-	}
+    virtual bool pre(const scene::INodePtr& node) {
+        translateDoom3Brush(node, m_origin);
+        return true;
+    }
 };
 
 // greebo: These tool methods have been moved from map.cpp, they might come in handy
@@ -473,109 +473,110 @@ enum ENodeType
     eNodeMap,
     eNodeEntity,
     eNodePrimitive,
-	eNodeModel,
-	eNodeParticle,
+    eNodeModel,
+    eNodeParticle,
 };
 
 inline std::string nodetype_get_name(ENodeType type)
 {
-	switch (type)
-	{
-	case eNodeMap: return "map";
-	case eNodeEntity: return "entity";
-	case eNodePrimitive: return "primitive";
-	case eNodeModel: return "model";
-	case eNodeParticle: return "particle";
-	default: return "unknown";
-	};
+    switch (type)
+    {
+    case eNodeMap: return "map";
+    case eNodeEntity: return "entity";
+    case eNodePrimitive: return "primitive";
+    case eNodeModel: return "model";
+    case eNodeParticle: return "particle";
+    default: return "unknown";
+    };
 }
 
 inline ENodeType node_get_nodetype(const scene::INodePtr& node)
 {
-	if (Node_isEntity(node)) {
-		return eNodeEntity;
-	}
-	else if (Node_isPrimitive(node)) {
-		return eNodePrimitive;
-	}
-	else if (Node_isModel(node)) {
-		return eNodeModel;
-	}
-	else if (Node_isParticle(node)) {
-		return eNodeParticle;
-	}
-	return eNodeUnknown;
+    if (Node_isEntity(node)) {
+        return eNodeEntity;
+    }
+    else if (Node_isPrimitive(node)) {
+        return eNodePrimitive;
+    }
+    else if (Node_isModel(node)) {
+        return eNodeModel;
+    }
+    else if (particles::isParticleNode(node))
+    {
+        return eNodeParticle;
+    }
+    return eNodeUnknown;
 }
 
 class SelectedDescendantWalker :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	bool& m_selected;
+    bool& m_selected;
 public:
-	SelectedDescendantWalker(bool& selected) :
-		m_selected(selected)
-	{
-		m_selected = false;
-	}
+    SelectedDescendantWalker(bool& selected) :
+        m_selected(selected)
+    {
+        m_selected = false;
+    }
 
-	virtual bool pre(const scene::INodePtr& node) {
-		if (node->isRoot()) {
-			return false;
-		}
+    virtual bool pre(const scene::INodePtr& node) {
+        if (node->isRoot()) {
+            return false;
+        }
 
-		if (Node_isSelected(node)) {
-			m_selected = true;
-		}
+        if (Node_isSelected(node)) {
+            m_selected = true;
+        }
 
-		return true;
-	}
+        return true;
+    }
 };
 
 inline bool Node_selectedDescendant(const scene::INodePtr& node) {
-	bool selected;
+    bool selected;
 
-	SelectedDescendantWalker visitor(selected);
-	Node_traverseSubgraph(node, visitor);
+    SelectedDescendantWalker visitor(selected);
+    Node_traverseSubgraph(node, visitor);
 
-	return selected;
+    return selected;
 }
 
 class NodePathFinder :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
-	mutable scene::Path _path;
+    mutable scene::Path _path;
 
-	// The node to find
-	const scene::INodePtr _needle;
+    // The node to find
+    const scene::INodePtr _needle;
 public:
-	NodePathFinder(const scene::INodePtr& needle) :
-		_needle(needle)
-	{}
+    NodePathFinder(const scene::INodePtr& needle) :
+        _needle(needle)
+    {}
 
-	bool pre(const scene::INodePtr& n)
-	{
-		boost::shared_ptr<scene::Node> node = boost::static_pointer_cast<scene::Node>(n);
+    bool pre(const scene::INodePtr& n)
+    {
+        scene::NodePtr node = boost::dynamic_pointer_cast<scene::Node>(n);
 
-		if (node == _needle)
-		{
-			_path = node->getPath(); // found!
-		}
+        if (node == _needle)
+        {
+            _path = node->getPath(); // found!
+        }
 
-		// Descend deeper if path is still empty
-		return _path.empty();
-	}
+        // Descend deeper if path is still empty
+        return _path.empty();
+    }
 
-	const scene::Path& getPath() {
-		return _path;
-	}
+    const scene::Path& getPath() {
+        return _path;
+    }
 };
 
 // greebo: Returns the path for the given node (SLOW, traverses the scenegraph!)
 inline scene::Path findPath(const scene::INodePtr& node)
 {
-	NodePathFinder finder(node);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
-	return finder.getPath();
+    NodePathFinder finder(node);
+    Node_traverseSubgraph(GlobalSceneGraph().root(), finder);
+    return finder.getPath();
 }
 
 namespace scene {
@@ -590,18 +591,18 @@ namespace scene {
  * node->traverse(walker);
  */
 class NodeRemover :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
 public:
-	bool pre(const INodePtr& node) {
-		// Copy the node, the reference might point right to
-		// the parent's container
-		scene::INodePtr copy(node);
+    bool pre(const INodePtr& node) {
+        // Copy the node, the reference might point right to
+        // the parent's container
+        scene::INodePtr copy(node);
 
-		removeNodeFromParent(copy);
+        removeNodeFromParent(copy);
 
-		return false;
-	}
+        return false;
+    }
 };
 
 } // namespace scene

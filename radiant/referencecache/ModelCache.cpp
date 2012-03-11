@@ -143,7 +143,7 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 	if (type == "prt")
 	{
 		// This is a particle, pass the call to the Particles Manager
-		return GlobalParticlesManager().getParticleNode(actualModelPath);
+		return GlobalParticlesManager().createParticleNode(actualModelPath);
 	}
 
 	// Get a suitable model loader

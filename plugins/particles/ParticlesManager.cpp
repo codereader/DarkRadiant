@@ -65,7 +65,7 @@ IParticleDefPtr ParticlesManager::getParticle(const std::string& name)
 	return (found != _particleDefs.end()) ? found->second : IParticleDefPtr();
 }
 
-scene::INodePtr ParticlesManager::getParticleNode(const std::string& name)
+IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
 {
 	std::string nameCleaned = name;
 
@@ -79,7 +79,7 @@ scene::INodePtr ParticlesManager::getParticleNode(const std::string& name)
 
 	if (found == _particleDefs.end())
 	{
-		return scene::INodePtr();
+		return IParticleNodePtr();
 	}
 
 	RenderableParticlePtr renderable(new RenderableParticle(found->second));

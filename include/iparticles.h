@@ -187,9 +187,7 @@ typedef boost::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
  */
 typedef boost::function< void (const IParticleDef&) > ParticleDefVisitor;
 
-/**
- * Abstract interface for the ParticlesManager module.
- */
+/// Inteface for the particles manager
 class IParticlesManager :
 	public RegisterableModule
 {
@@ -216,19 +214,21 @@ public:
 	 */
 	virtual IRenderableParticlePtr getRenderableParticle(const std::string& name) = 0;
 
-	/**
-	 * Get a Particle Node, suitable for insertion into the scenegraph as child of an entity node.
-	 */
-	virtual scene::INodePtr getParticleNode(const std::string& name) = 0;
+    /// Create and return a particle node for the named particle system
+	virtual IParticleNodePtr createParticleNode(const std::string& name) = 0;
 
 	/**
-	 * Reloads the definitions from the .prt files. Any existing references to IParticleDefs
-	 * will remain valid, but their contents might change. Anything sensitive to these changes
-	 * (like the renderable particles) should subscribe as Observer to this manager class to
-	 * get notified on changes/reloads.
+     * \brief
+     * Force the particles manager to reload all particle definitions from the
+     * .prt files.
+     *
+     * Any existing references to IParticleDefs will remain valid, but their
+     * contents might change.  Anything sensitive to these changes (like the
+     * renderable particles) should connect to the particles reloaded signal.
 	 *
-	 * If particle defs are removed from the .prt files, the corresponding IParticleDef instance
-	 * will remain in memory, but will be empty after reload.
+     * If particle defs are removed from the .prt files, the corresponding
+     * IParticleDef instance will remain in memory, but will be empty after
+     * reload.
 	 */
 	virtual void reloadParticleDefs() = 0;
 };

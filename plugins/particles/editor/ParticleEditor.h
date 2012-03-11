@@ -5,17 +5,17 @@
 #include "gtkutil/GladeWidgetHolder.h"
 #include "gtkutil/WindowPosition.h"
 #include "gtkutil/dialog/Dialog.h"
+#include "gtkutil/preview/ParticlePreview.h"
 
 #include <gtkmm/liststore.h>
 #include <gtkmm/treeselection.h>
-
-#include "iparticlepreview.h"
 
 #include "../ParticleDef.h"
 
 namespace ui
 {
 
+/// Editor dialog for creating and modifying particle systems
 class ParticleEditor :
 	public gtkutil::BlockingTransientWindow,
     private gtkutil::GladeWidgetHolder
@@ -54,7 +54,7 @@ private:
 
 	Glib::RefPtr<Gtk::TreeSelection> _stageSelection;
 
-	IParticlePreviewPtr _preview;
+    gtkutil::ParticlePreviewPtr _preview;
 
 	// The position/size memoriser
 	gtkutil::WindowPosition _windowPosition;

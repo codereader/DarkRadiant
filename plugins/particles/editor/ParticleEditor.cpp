@@ -47,7 +47,7 @@ ParticleEditor::ParticleEditor() :
 	gtkutil::GladeWidgetHolder("ParticleEditor.glade"),
 	_defList(Gtk::ListStore::create(_defColumns)),
 	_stageList(Gtk::ListStore::create(_stageColumns)),
-	_preview(GlobalUIManager().createParticlePreview()),
+	_preview(new gtkutil::ParticlePreview),
 	_callbacksDisabled(false)
 {
 	// Window properties
@@ -83,7 +83,7 @@ ParticleEditor::ParticleEditor() :
 
 	// Setup and pack the preview
 	_preview->setSize(static_cast<int>(rect.get_width() * 0.3f), -1);
-	gladeWidget<Gtk::HPaned>("mainPane")->add2(*_preview->getWidget());
+	gladeWidget<Gtk::HPaned>("mainPane")->add2(*_preview);
 
 	// Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);

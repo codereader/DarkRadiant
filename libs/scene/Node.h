@@ -17,8 +17,9 @@ namespace scene
 class Graph;
 typedef boost::weak_ptr<Graph> GraphWeakPtr;
 
+/// Main implementation of INode
 class Node :
-	public INode,
+	public virtual INode,
 	public boost::enable_shared_from_this<Node>
 {
 public:
@@ -196,5 +197,7 @@ private:
 	void evaluateChildBounds() const;
 	void evaluateTransform() const;
 };
+
+typedef boost::shared_ptr<Node> NodePtr;
 
 } // namespace scene

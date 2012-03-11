@@ -32,6 +32,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
                         preview/ModelPreview.cpp \
+                        preview/ParticlePreview.cpp \
 						preview/RenderPreview.cpp \
 						GLFont.cpp \
 						MenuItemAccelerator.cpp \

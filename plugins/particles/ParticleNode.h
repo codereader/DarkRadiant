@@ -15,11 +15,11 @@ namespace particles
  * such that it can be inserted into the scenegraph as child node of an entity.
  */
 class ParticleNode :
-	public scene::Node,
 	public IParticleNode,
+    public scene::Node,
 	public TransformNode // to compensate parent rotations
 {
-private:
+    // The actual particle system that will be rendered
 	RenderableParticlePtr _renderableParticle;
 
 	mutable Matrix4 _local2Parent;

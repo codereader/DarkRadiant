@@ -4,7 +4,6 @@
 #include "imainframe.h"
 #include "iparticles.h"
 #include "iuimanager.h"
-#include "iparticlepreview.h"
 
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/ScrolledFrame.h"
@@ -35,7 +34,7 @@ ParticlesChooser::ParticlesChooser() :
 	gtkutil::BlockingTransientWindow(_("Choose particles"), GlobalMainFrame().getTopLevelWindow()),
 	_particlesList(Gtk::ListStore::create(COLUMNS())),
 	_selectedParticle(""),
-	_preview(GlobalUIManager().createParticlePreview())
+	_preview(new gtkutil::ParticlePreview)
 {
 	set_border_width(12);
 
@@ -61,7 +60,7 @@ ParticlesChooser::ParticlesChooser() :
 	hbox->pack_start(createTreeView(), true, true, 0);
 
 	Gtk::VBox* previewBox = Gtk::manage(new Gtk::VBox(false, 0));
-	previewBox->pack_start(*_preview->getWidget(), true, true, 0);
+	previewBox->pack_start(*_preview, true, true, 0);
 
 	hbox->pack_start(*previewBox, true, true, 0);
 

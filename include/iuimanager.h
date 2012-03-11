@@ -187,9 +187,6 @@ class IDialogManager;	// see idialogmanager.h for definition
 class IFilterMenu;		// see ifiltermenu.h for definition
 typedef boost::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
-class IParticlePreview;	// see iparticlepreview.h for definition
-typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
-
 /// Convenience type for GtkBuilder refptr
 typedef Glib::RefPtr<Gtk::Builder> GtkBuilderPtr;
 
@@ -229,9 +226,6 @@ public:
 
 	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
 	virtual ui::IFilterMenuPtr createFilterMenu() = 0;
-
-	// Creates a new particle preview GL widget
-	virtual ui::IParticlePreviewPtr createParticlePreview() = 0;
 };
 
 // This is the accessor for the UI manager

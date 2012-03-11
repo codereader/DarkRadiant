@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gtkutil/window/BlockingTransientWindow.h"
+#include "gtkutil/preview/ParticlePreview.h"
 
 #include "iparticles.h"
 #include "iradiant.h"
@@ -20,9 +21,6 @@ namespace ui
 
 class ParticlesChooser;
 typedef boost::shared_ptr<ParticlesChooser> ParticlesChooserPtr;
-
-class IParticlePreview;
-typedef boost::shared_ptr<IParticlePreview> IParticlePreviewPtr;
 
 /**
  * \brief
@@ -48,7 +46,7 @@ private:
 	IterMap _iterMap;
 
 	// The preview widget
-	IParticlePreviewPtr _preview;
+    gtkutil::ParticlePreviewPtr _preview;
 
 private:
 

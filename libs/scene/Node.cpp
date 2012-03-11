@@ -3,44 +3,47 @@
 #include "scenelib.h"
 #include "InstanceWalkers.h"
 
-namespace scene {
+namespace scene
+{
 
-	namespace {
+namespace
+{
 
-		/**
-		 * greebo: This walker is used to traverse the children of
-		 *         a given node and accumulate their values of worldAABB().
-		 *
-		 * Note: This walker's pre() method always returns false, so only
-		 *       the first order children are visited.
-		 */
-		class AABBAccumulateWalker :
-			public scene::NodeVisitor
-		{
-			AABB& _aabb;
-		public:
-			AABBAccumulateWalker(AABB& aabb) :
-				_aabb(aabb)
-			{}
+    /**
+     * greebo: This walker is used to traverse the children of
+     *         a given node and accumulate their values of worldAABB().
+     *
+     * Note: This walker's pre() method always returns false, so only
+     *       the first order children are visited.
+     */
+    class AABBAccumulateWalker :
+        public scene::NodeVisitor
+    {
+        AABB& _aabb;
+    public:
+        AABBAccumulateWalker(AABB& aabb) :
+            _aabb(aabb)
+        {}
 
-			virtual bool pre(const INodePtr& node) {
-				_aabb.includeAABB(node->worldAABB());
-				// Don't traverse the children
-				return false;
-			}
-		};
+        virtual bool pre(const INodePtr& node) {
+            _aabb.includeAABB(node->worldAABB());
+            // Don't traverse the children
+            return false;
+        }
+    };
 
-		class TransformChangedWalker :
-			public NodeVisitor
-		{
-		public:
-			virtual bool pre(const INodePtr& node) {
-				boost::static_pointer_cast<Node>(node)->transformChangedLocal();
-				return true;
-			}
-		};
+    class TransformChangedWalker :
+        public NodeVisitor
+    {
+    public:
+        virtual bool pre(const INodePtr& node)
+        {
+            boost::dynamic_pointer_cast<Node>(node)->transformChangedLocal();
+            return true;
+        }
+    };
 
-	} // namespace
+} // namespace
 
 Node::Node() :
 	_state(eVisible),
@@ -272,7 +275,7 @@ void Node::getPathRecursively(Path& targetPath)
 	assert(parent.get() != this); // avoid loopbacks
 
 	if (parent != NULL) {
-		boost::static_pointer_cast<Node>(parent)->getPathRecursively(targetPath);
+		boost::dynamic_pointer_cast<Node>(parent)->getPathRecursively(targetPath);
 	}
 
 	// After passing the call to the parent, add self
@@ -286,7 +289,7 @@ Path Node::getPath()
 	INodePtr parent = getParent();
 	if (parent != NULL) {
 		// We have a parent, walk up the ancestry
-		boost::static_pointer_cast<Node>(parent)->getPathRecursively(result);
+		boost::dynamic_pointer_cast<Node>(parent)->getPathRecursively(result);
 	}
 
 	// Finally, add "self" to the path

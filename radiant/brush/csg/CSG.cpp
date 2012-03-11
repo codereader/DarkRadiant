@@ -152,7 +152,7 @@ bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVecto
 		BrushPtrVector fragments;
 		fragments.reserve(other.getNumFaces());
 
-		BrushNodePtr back = boost::static_pointer_cast<BrushNode>(brush->clone());
+		BrushNodePtr back = boost::dynamic_pointer_cast<BrushNode>(brush->clone());
 
 		for (Brush::const_iterator i(other.begin()); i != other.end(); ++i)
 		{
@@ -164,7 +164,7 @@ bool Brush_subtract(const BrushNodePtr& brush, const Brush& other, BrushPtrVecto
 
 			if (split.counts[ePlaneFront] != 0 && split.counts[ePlaneBack] != 0)
 			{
-				fragments.push_back(boost::static_pointer_cast<BrushNode>(back->clone()));
+				fragments.push_back(boost::dynamic_pointer_cast<BrushNode>(back->clone()));
 
 				FacePtr newFace = fragments.back()->getBrush().addFace(face);
 
@@ -224,7 +224,7 @@ public:
 
 		if (brush != NULL && !Node_isSelected(node))
 		{
-			BrushNodePtr brushNode = boost::static_pointer_cast<BrushNode>(node);
+			BrushNodePtr brushNode = boost::dynamic_pointer_cast<BrushNode>(node);
 
 			// Get the parent of this brush
 			scene::INodePtr parent = node->getParent();
@@ -233,7 +233,7 @@ public:
 			BrushPtrVector buffer[2];
 			std::size_t swap = 0;
 
-			BrushNodePtr original = boost::static_pointer_cast<BrushNode>(brushNode->clone());
+			BrushNodePtr original = boost::dynamic_pointer_cast<BrushNode>(brushNode->clone());
 
 			//Brush* original = new Brush(*brush);
 			buffer[swap].push_back(original);

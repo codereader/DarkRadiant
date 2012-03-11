@@ -15,7 +15,8 @@ class Matrix4;
 class IRenderEntity;
 typedef boost::shared_ptr<IRenderEntity> IRenderEntityPtr;
 
-namespace scene {
+namespace scene
+{
 
 /**
 * Interface for objects which can be filtered by the FilterSystem.

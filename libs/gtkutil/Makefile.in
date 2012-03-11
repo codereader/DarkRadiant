@@ -81,10 +81,10 @@ am_libgtkutil_la_OBJECTS = ConsoleView.lo FreezePointer.lo GLWidget.lo \
 	KeyValueTable.lo PanedPosition.lo VFSTreePopulator.lo Timer.lo \
 	WindowPosition.lo PersistentTransientWindow.lo \
 	TransientWindow.lo Dialog.lo MessageBox.lo ModelPreview.lo \
-	RenderPreview.lo GLFont.lo MenuItemAccelerator.lo Cursor.lo \
-	PopupMenu.lo PathEntry.lo TreeModel.lo ModalProgressDialog.lo \
-	SerialisableWidgets.lo SourceView.lo clipboard.lo \
-	FileChooser.lo
+	ParticlePreview.lo RenderPreview.lo GLFont.lo \
+	MenuItemAccelerator.lo Cursor.lo PopupMenu.lo PathEntry.lo \
+	TreeModel.lo ModalProgressDialog.lo SerialisableWidgets.lo \
+	SourceView.lo clipboard.lo FileChooser.lo
 libgtkutil_la_OBJECTS = $(am_libgtkutil_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -355,6 +355,7 @@ libgtkutil_la_SOURCES = ConsoleView.cpp \
 						dialog/Dialog.cpp \
 						dialog/MessageBox.cpp \
                         preview/ModelPreview.cpp \
+                        preview/ParticlePreview.cpp \
 						preview/RenderPreview.cpp \
 						GLFont.cpp \
 						MenuItemAccelerator.cpp \
@@ -455,6 +456,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModalProgressDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ModelPreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PanedPosition.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticlePreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathEntry.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PersistentTransientWindow.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PopupMenu.Plo@am__quote@
@@ -531,6 +533,14 @@ ModelPreview.lo: preview/ModelPreview.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='preview/ModelPreview.cpp' object='ModelPreview.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ModelPreview.lo `test -f 'preview/ModelPreview.cpp' || echo '$(srcdir)/'`preview/ModelPreview.cpp
+
+ParticlePreview.lo: preview/ParticlePreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ParticlePreview.lo -MD -MP -MF $(DEPDIR)/ParticlePreview.Tpo -c -o ParticlePreview.lo `test -f 'preview/ParticlePreview.cpp' || echo '$(srcdir)/'`preview/ParticlePreview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ParticlePreview.Tpo $(DEPDIR)/ParticlePreview.Plo
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='preview/ParticlePreview.cpp' object='ParticlePreview.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ParticlePreview.lo `test -f 'preview/ParticlePreview.cpp' || echo '$(srcdir)/'`preview/ParticlePreview.cpp
 
 RenderPreview.lo: preview/RenderPreview.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT RenderPreview.lo -MD -MP -MF $(DEPDIR)/RenderPreview.Tpo -c -o RenderPreview.lo `test -f 'preview/RenderPreview.cpp' || echo '$(srcdir)/'`preview/RenderPreview.cpp

@@ -81,7 +81,7 @@ uimanager_la_DEPENDENCIES =  \
 am_uimanager_la_OBJECTS = MenuItem.lo GroupDialog.lo ColourScheme.lo \
 	ColourSchemeEditor.lo ColourSchemeManager.lo \
 	StatusBarManager.lo DialogManager.lo ToolbarManager.lo \
-	UIManager.lo FilterMenu.lo MenuManager.lo ParticlePreview.lo
+	UIManager.lo FilterMenu.lo MenuManager.lo
 uimanager_la_OBJECTS = $(am_uimanager_la_OBJECTS)
 AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
@@ -341,8 +341,7 @@ uimanager_la_SOURCES = MenuItem.cpp \
                        ToolbarManager.cpp \
                        UIManager.cpp \
                        FilterMenu.cpp \
-                       MenuManager.cpp \
-                       ParticlePreview.cpp
+                       MenuManager.cpp
 
 all: all-am
 
@@ -426,7 +425,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupDialog.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuItem.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MenuManager.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticlePreview.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StatusBarManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ToolbarManager.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UIManager.Plo@am__quote@

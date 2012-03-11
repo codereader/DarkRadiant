@@ -57,7 +57,6 @@
 #include "iorthocontextmenu.h"
 #include "iorthoview.h"
 #include "iparticlenode.h"
-#include "iparticlepreview.h"
 #include "iparticles.h"
 #include "iparticlestage.h"
 #include "ipatch.h"
