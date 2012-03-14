@@ -320,7 +320,6 @@
     <ClCompile Include="..\..\plugins\uimanager\GroupDialog.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\MenuItem.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\MenuManager.cpp" />
-    <ClCompile Include="..\..\plugins\uimanager\ParticlePreview.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\StatusBarManager.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\ToolbarManager.cpp" />
     <ClCompile Include="..\..\plugins\uimanager\UIManager.cpp" />
@@ -334,7 +333,6 @@
     <ClInclude Include="..\..\plugins\uimanager\GroupDialog.h" />
     <ClInclude Include="..\..\plugins\uimanager\MenuItem.h" />
     <ClInclude Include="..\..\plugins\uimanager\MenuManager.h" />
-    <ClInclude Include="..\..\plugins\uimanager\ParticlePreview.h" />
     <ClInclude Include="..\..\plugins\uimanager\StatusBarManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\ToolbarManager.h" />
     <ClInclude Include="..\..\plugins\uimanager\UIManager.h" />

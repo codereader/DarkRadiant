@@ -161,6 +161,7 @@
     <ClInclude Include="..\..\libs\gtkutil\KeyValueTable.h" />
     <ClInclude Include="..\..\libs\gtkutil\NonModalEntry.h" />
     <ClInclude Include="..\..\libs\gtkutil\preview\ModelPreview.h" />
+    <ClInclude Include="..\..\libs\gtkutil\preview\ParticlePreview.h" />
     <ClInclude Include="..\..\libs\gtkutil\preview\RenderPreview.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\BlockingTransientWindow.h" />
     <ClInclude Include="..\..\libs\gtkutil\window\PersistentTransientWindow.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="..\..\libs\gtkutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\preview\ModelPreview.cpp" />
+    <ClCompile Include="..\..\libs\gtkutil\preview\ParticlePreview.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\preview\RenderPreview.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\PersistentTransientWindow.cpp" />
     <ClCompile Include="..\..\libs\gtkutil\window\TransientWindow.cpp" />

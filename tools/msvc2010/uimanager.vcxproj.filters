@@ -25,9 +25,6 @@
     <ClCompile Include="..\..\plugins\uimanager\MenuManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\uimanager\ParticlePreview.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\plugins\uimanager\StatusBarManager.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -61,9 +58,6 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\MenuManager.h">
-      <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\plugins\uimanager\ParticlePreview.h">
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\uimanager\StatusBarManager.h">
