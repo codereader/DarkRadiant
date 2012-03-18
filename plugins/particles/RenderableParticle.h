@@ -9,17 +9,20 @@
 #include "render.h"
 #include <map>
 #include <boost/random/linear_congruential.hpp>
+#include <sigc++/connection.h>
 
 namespace particles
 {
 
-class RenderableParticle :
-	public IRenderableParticle,
-	public IParticleDef::Observer
+/// Implementation of IRenderableParticle
+class RenderableParticle : public IRenderableParticle,
+                           public sigc::trackable
 {
-private:
 	// The particle definition containing the stage info
 	IParticleDefPtr _particleDef;
+
+    // Signal connection from the particle def
+    sigc::connection _defConnection;
 
 	typedef std::vector<RenderableParticleStagePtr> RenderableParticleStageList;
 
@@ -84,14 +87,6 @@ public:
 
 	// Updates bounds from stages and returns the value
 	const AABB& getBounds();
-
-	// IParticleDef::Observer implementation
-	void onParticleReload();
-	void onParticleStageOrderChanged();
-	void onParticleStageAdded();
-	void onParticleStageRemoved();
-	void onParticleStageChanged();
-	void onParticleStageMaterialChanged();
 
 private:
 	void calculateBounds();

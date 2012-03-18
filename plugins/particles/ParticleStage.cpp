@@ -42,8 +42,7 @@ namespace
 	}
 }
 
-ParticleStage::ParticleStage(ParticleDef& particle) :
-	_particle(particle),
+ParticleStage::ParticleStage() :
 	_rotationSpeed(new ParticleParameter(*this)),
 	_speed(new ParticleParameter(*this)),
 	_size(new ParticleParameter(*this)),
@@ -53,8 +52,7 @@ ParticleStage::ParticleStage(ParticleDef& particle) :
 	reset();
 }
 
-ParticleStage::ParticleStage(ParticleDef& particle, parser::DefTokeniser& tok) :
-	_particle(particle),
+ParticleStage::ParticleStage(parser::DefTokeniser& tok) :
 	_rotationSpeed(new ParticleParameter(*this)),
 	_speed(new ParticleParameter(*this)),
 	_size(new ParticleParameter(*this)),
@@ -549,18 +547,6 @@ Vector4 ParticleStage::parseVector4(parser::DefTokeniser& tok)
 	return vec;
 }
 
-void ParticleStage::notifyChange()
-{
-	_particle.onStageChanged();
-}
-
-void ParticleStage::notifyMaterialChange()
-{
-	notifyChange(); // this is a general change as well
-
-	_particle.onStageMaterialChanged();
-}
-
 std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 {
 	std::size_t prevPrecision = stream.precision();
@@ -599,7 +585,7 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 
 	// Distribution
 	stream << "\t\t" << "distribution " << "\t\t";
-	
+
 	switch (stage.getDistributionType())
 	{
 	case ParticleStage::DISTRIBUTION_RECT:
@@ -622,7 +608,7 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 
 	// Direction
 	stream << "\t\t" << "direction " << "\t\t\t";
-	
+
 	switch (stage.getDirectionType())
 	{
 	case ParticleStage::DIRECTION_CONE:
@@ -637,7 +623,7 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 
 	// Orientation
 	stream << "\t\t" << "orientation " << "\t\t";
-	
+
 	switch (stage.getOrientationType())
 	{
 	case ParticleStage::ORIENTATION_VIEW:
@@ -664,22 +650,22 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 	{
 	case ParticleStage::PATH_FLIES: // customPath flies 10.000 10.000 10.000
 		stream << "\t\t" << "customPath " << "\t\t\t";
-		stream << "flies " << stage.getCustomPathParm(0) << " " 
-						   << stage.getCustomPathParm(1) << " " 
-						   << stage.getCustomPathParm(2) << std::endl; 
+		stream << "flies " << stage.getCustomPathParm(0) << " "
+						   << stage.getCustomPathParm(1) << " "
+						   << stage.getCustomPathParm(2) << std::endl;
 		break;
 	case ParticleStage::PATH_HELIX:
 		stream << "\t\t" << "customPath " << "\t\t\t";
-		stream << "helix " << stage.getCustomPathParm(0) << " " 
-						   << stage.getCustomPathParm(1) << " " 
-						   << stage.getCustomPathParm(2) << " " 
-						   << stage.getCustomPathParm(3) << " " 
-						   << stage.getCustomPathParm(4) << std::endl; 
+		stream << "helix " << stage.getCustomPathParm(0) << " "
+						   << stage.getCustomPathParm(1) << " "
+						   << stage.getCustomPathParm(2) << " "
+						   << stage.getCustomPathParm(3) << " "
+						   << stage.getCustomPathParm(4) << std::endl;
 		break;
 	default:
 		break;
 	};
-	
+
 	stream << "\t\t" << "speed " << "\t\t\t\t" << stage.getSpeed() << std::endl;
 	stream << "\t\t" << "size " << "\t\t\t\t" << stage.getSize() << std::endl;
 	stream << "\t\t" << "aspect " << "\t\t\t\t" << stage.getAspect() << std::endl;
@@ -699,7 +685,7 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 	stream << "\t\t" << "color " << "\t\t\t\t";
 	writeColour(stream, stage.getColour());
 	stream << std::endl;
-	
+
 	stream << "\t\t" << "fadeColor " << "\t\t\t";
 	writeColour(stream, stage.getFadeColour());
 	stream << std::endl;
@@ -723,4 +709,70 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 	return stream;
 }
 
+void ParticleStage::setMaterialName(const std::string& material)
+{
+    _material = material;
+    _changedSignal.emit();
+}
+
+bool ParticleStage::operator==(const IParticleStage& other) const
+{
+    if (getMaterialName() != other.getMaterialName()) return false;
+
+    if (getCount() != other.getCount()) return false;
+    if (getDuration() != other.getDuration()) return false;
+    if (getCycles() != other.getCycles()) return false;
+    if (getBunching() != other.getBunching()) return false;
+    if (getTimeOffset() != other.getTimeOffset()) return false;
+    if (getDeadTime() != other.getDeadTime()) return false;
+    if (getColour() != other.getColour()) return false;
+    if (getFadeColour() != other.getFadeColour()) return false;
+    if (getFadeInFraction() != other.getFadeInFraction()) return false;
+    if (getFadeOutFraction() != other.getFadeOutFraction()) return false;
+    if (getFadeIndexFraction() != other.getFadeIndexFraction()) return false;
+    if (getAnimationFrames() != other.getAnimationFrames()) return false;
+    if (getAnimationRate() != other.getAnimationRate()) return false;
+    if (getInitialAngle() != other.getInitialAngle()) return false;
+    if (getBoundsExpansion() != other.getBoundsExpansion()) return false;
+    if (getRandomDistribution() != other.getRandomDistribution()) return false;
+    if (getUseEntityColour() != other.getUseEntityColour()) return false;
+    if (getGravity() != other.getGravity()) return false;
+    if (getWorldGravityFlag() != other.getWorldGravityFlag()) return false;
+    if (getOffset() != other.getOffset()) return false;
+    if (getOrientationType() != other.getOrientationType()) return false;
+
+    for (int i = 0; i < 3; ++i)
+    {
+        if (getOrientationParm(i) != other.getOrientationParm(i)) return false;
+    }
+
+    if (getDistributionType() != other.getDistributionType()) return false;
+
+    for (int i = 0; i < 3; ++i)
+    {
+        if (getDistributionParm(i) != other.getDistributionParm(i)) return false;
+    }
+
+    if (getDirectionType() != other.getDirectionType()) return false;
+
+    for (int i = 0; i < 3; ++i)
+    {
+        if (getDirectionParm(i) != other.getDirectionParm(i)) return false;
+    }
+
+    if (getCustomPathType() != other.getCustomPathType()) return false;
+
+    for (int i = 0; i < 7; ++i)
+    {
+        if (getCustomPathParm(i) != other.getCustomPathParm(i)) return false;
+    }
+
+    if (getSize() != other.getSize()) return false;
+    if (getAspect() != other.getAspect()) return false;
+    if (getSpeed() != other.getSpeed()) return false;
+    if (getRotationSpeed() != other.getRotationSpeed()) return false;
+
+    // All checks passed => equal
+    return true;
+}
 } // namespace

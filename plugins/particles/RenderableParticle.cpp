@@ -107,17 +107,19 @@ const IParticleDefPtr& RenderableParticle::getParticleDef() const
 
 void RenderableParticle::setParticleDef(const IParticleDefPtr& def)
 {
-	if (_particleDef != NULL)
+	if (_particleDef)
 	{
-		_particleDef->removeObserver(this);
+        _defConnection.disconnect();
 	}
 
 	_particleDef = def;
 
-	if (_particleDef != NULL)
+	if (_particleDef)
 	{
 		// Start monitoring this particle for reload events
-		_particleDef->addObserver(this);
+		_defConnection = _particleDef->signal_changed().connect(
+            sigc::mem_fun(this, &RenderableParticle::setupStages)
+        );
 	}
 
 	// Re-construct our stage information
@@ -149,42 +151,6 @@ const AABB& RenderableParticle::getBounds()
 	}
 
 	return _bounds;
-}
-
-// IParticleDef::Observer implementation
-void RenderableParticle::onParticleReload()
-{
-	// Re-construct our renderable stages
-	setupStages();
-}
-
-void RenderableParticle::onParticleStageOrderChanged()
-{
-	// Re-construct our renderable stages
-	setupStages();
-}
-
-void RenderableParticle::onParticleStageAdded()
-{
-	// Re-construct our renderable stages
-	setupStages();
-}
-
-void RenderableParticle::onParticleStageRemoved()
-{
-	// Re-construct our renderable stages
-	setupStages();
-}
-
-void RenderableParticle::onParticleStageChanged()
-{
-	// don't react to generic changes, these are handled via update()
-}
-
-void RenderableParticle::onParticleStageMaterialChanged()
-{
-	// Re-construct our renderable stages
-	setupStages();
 }
 
 void RenderableParticle::calculateBounds()

@@ -32,8 +32,8 @@ class ParticleDef
 	typedef std::vector<ParticleStagePtr> StageList;
 	StageList _stages;
 
-	typedef std::set<IParticleDef::Observer*> Observers;
-	Observers _observers;
+    // Changed signal
+    sigc::signal<void> _changedSignal;
 
 public:
 
@@ -70,6 +70,9 @@ public:
 		_stages.clear();
 	}
 
+    // IParticleDef implementation
+    sigc::signal<void> signal_changed() const { return _changedSignal; }
+
 	float getDepthHack() const
 	{
 		return _depthHack;
@@ -95,88 +98,13 @@ public:
 		return *_stages[stageNum];
 	}
 
-	std::size_t addParticleStage() 
-	{
-		_stages.push_back(ParticleStagePtr(new ParticleStage(*this)));
+	std::size_t addParticleStage() ;
 
-		// Notify any observers about this event
-		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
-		{
-			(*i++)->onParticleStageAdded();
-		}
+	void removeParticleStage(std::size_t index);
 
-		return _stages.size() - 1;
-	}
+	void swapParticleStages(std::size_t index, std::size_t index2);
 
-	void removeParticleStage(std::size_t index)
-	{
-		if (index < _stages.size())
-		{
-			_stages.erase(_stages.begin() + index);
-		}
-
-		// Notify any observers about this event
-		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
-		{
-			(*i++)->onParticleStageRemoved();
-		}
-	}
-
-	void swapParticleStages(std::size_t index, std::size_t index2)
-	{
-		if (index >= _stages.size() || index2 >= _stages.size() || index == index2)
-		{
-			return;
-		}
-
-		std::swap(_stages[index], _stages[index2]);
-
-		// Notify any observers about this event
-		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
-		{
-			(*i++)->onParticleStageOrderChanged();
-		}
-	}
-
-	void appendStage(const ParticleStagePtr& stage)
-	{
-		_stages.push_back(stage);
-
-		// Notify any observers about this event
-		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
-		{
-			(*i++)->onParticleStageAdded();
-		}
-	}
-
-	// Called by the stage when a value or parameter has been changed
-	void onStageChanged()
-	{
-		// Notify any observers about this event
-		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
-		{
-			(*i++)->onParticleStageChanged();
-		}
-	}
-
-	void onStageMaterialChanged()
-	{
-		// Notify any observers about this event
-		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
-		{
-			(*i++)->onParticleStageMaterialChanged();
-		}
-	}
-
-	void addObserver(IParticleDef::Observer* observer)
-	{
-		_observers.insert(observer);
-	}
-
-	void removeObserver(IParticleDef::Observer* observer)
-	{
-		_observers.erase(observer);
-	}
+	void appendStage(const ParticleStagePtr& stage);
 
 	bool operator==(const IParticleDef& other) const 
 	{
@@ -201,53 +129,9 @@ public:
 		return !operator==(other);
 	}
 
-	void copyFrom(const IParticleDef& other)
-	{
-		setDepthHack(other.getDepthHack());
+	void copyFrom(const IParticleDef& other);
 
-		_stages.clear();
-
-		for (std::size_t i = 0; i < other.getNumStages(); ++i)
-		{
-			_stages.push_back(ParticleStagePtr(new ParticleStage(*this)));
-			_stages[i]->copyFrom(other.getParticleStage(i));
-		}
-	}
-
-	void parseFromTokens(parser::DefTokeniser& tok)
-	{
-		// Clear out the particle def (except the name) before parsing
-		clear();
-
-		// Any global keywords will come first, after which we get a series of
-		// brace-delimited stages.
-		std::string token = tok.nextToken();
-
-		while (token != "}")
-		{
-			if (token == "depthHack")
-			{
-				setDepthHack(strToFloat(tok.nextToken()));
-			}
-			else if (token == "{")
-			{
-				// Construct/Parse the stage from the tokens
-				ParticleStagePtr stage(new ParticleStage(*this, tok));
-
-				// Append to the ParticleDef
-				appendStage(stage);
-			}
-
-			// Get next token
-			token = tok.nextToken();
-		}
-
-		// Notify any observers about this event
-		for (Observers::const_iterator i = _observers.begin(); i != _observers.end();)
-		{
-			(*i++)->onParticleReload();
-		}
-	}
+	void parseFromTokens(parser::DefTokeniser& tok);
 
 	// Stream insertion operator, writing the entire particle def to the given stream
 	friend std::ostream& operator<< (std::ostream& stream, const ParticleDef& def);

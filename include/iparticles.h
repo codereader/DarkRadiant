@@ -34,31 +34,6 @@ typedef boost::shared_ptr<IParticleNode> IParticleNodePtr;
 class IParticleDef
 {
 public:
-	class Observer
-	{
-	public:
-		virtual ~Observer() {}
-
-		// Gets invoked after this particle def has been reloaded
-		// from the .prt files. RenderableParticles are monitoring
-		// this event to re-construct their render information
-		virtual void onParticleReload() {} // empty default impl.
-
-		// Called when one of the particle stages is added
-		virtual void onParticleStageAdded() {} // empty default impl.
-	
-		// Called when one of the particle stages is removed
-		virtual void onParticleStageRemoved() {} // empty default impl.
-
-		// Called when a particle stage has been modified
-		virtual void onParticleStageChanged() {}
-
-		// Called when a particle stage material has been changed
-		virtual void onParticleStageMaterialChanged() {}
-
-		// Called when the order of the particle stages is changed
-		virtual void onParticleStageOrderChanged() {} // empty default impl.
-	};
 
     /**
 	 * Destructor
@@ -114,9 +89,8 @@ public:
 	 */
 	virtual void swapParticleStages(std::size_t index, std::size_t index2) = 0;
 
-	// Add or remove an observer to get notified on particle events
-	virtual void addObserver(Observer* observer) = 0;
-	virtual void removeObserver(Observer* observer) = 0;
+    /// Signal emitted when some aspect of the particle def has changed
+    virtual sigc::signal<void> signal_changed() const = 0;
 
 	// Comparison operators - particle defs are considered equal if all properties (except the name!),
 	// number of stages and stage contents are the equal

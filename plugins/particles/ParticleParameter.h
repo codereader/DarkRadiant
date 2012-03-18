@@ -22,7 +22,6 @@ class ParticleStage;
 class ParticleParameter :
 	public IParticleParameter
 {
-private:
 	// The owner stage
 	ParticleStage& _stage;
 

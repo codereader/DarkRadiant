@@ -14,6 +14,7 @@ particles_la_LIBADD = $(top_builddir)/libs/math/libmath.la \
                       $(top_builddir)/libs/gtkutil/libgtkutil.la
 particles_la_SOURCES = ParticlesManager.cpp \
                        particles.cpp \
+                       ParticleDef.cpp \
                        ParticleNode.cpp \
                        ParticleParameter.cpp \
                        ParticleStage.cpp \
