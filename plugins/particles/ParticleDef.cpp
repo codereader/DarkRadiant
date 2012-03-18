@@ -10,7 +10,7 @@ namespace particles
 std::size_t ParticleDef::addParticleStage()
 {
     // Create a new stage and relay its changed signal
-    ParticleStagePtr stage = make_shared<ParticleStage>();
+    StageDefPtr stage = make_shared<StageDef>();
     stage->signal_changed().connect(_changedSignal.make_slot());
     _stages.push_back(stage);
 
@@ -40,7 +40,7 @@ void ParticleDef::swapParticleStages(std::size_t index, std::size_t index2)
     _changedSignal.emit();
 }
 
-void ParticleDef::appendStage(const ParticleStagePtr& stage)
+void ParticleDef::appendStage(const StageDefPtr& stage)
 {
     // Relay the incoming stage's changed signal then add to list
     stage->signal_changed().connect(_changedSignal.make_slot());
@@ -57,8 +57,8 @@ void ParticleDef::copyFrom(const IParticleDef& other)
     // Copy each stage
     for (std::size_t i = 0; i < other.getNumStages(); ++i)
     {
-        ParticleStagePtr stage = make_shared<ParticleStage>();
-        stage->copyFrom(other.getParticleStage(i));
+        StageDefPtr stage = make_shared<StageDef>();
+        stage->copyFrom(other.getStage(i));
         stage->signal_changed().connect(_changedSignal.make_slot());
         _stages.push_back(stage);
     }
@@ -82,7 +82,7 @@ void ParticleDef::parseFromTokens(parser::DefTokeniser& tok)
         else if (token == "{")
         {
             // Construct/Parse the stage from the tokens
-            ParticleStagePtr stage = make_shared<ParticleStage>(ref(tok));
+            StageDefPtr stage = make_shared<StageDef>(ref(tok));
 
             // Append to the ParticleDef
             appendStage(stage);

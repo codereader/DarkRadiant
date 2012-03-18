@@ -18,18 +18,23 @@ namespace scene
 	typedef boost::shared_ptr<INode> INodePtr;
 }
 
+/// Classes related to storage and rendering of particle systems
 namespace particles
 {
 
 // see iparticlestage.h for definition
-class IParticleStage;
+class IStageDef;
 
 // see iparticlenode.h for definition
 class IParticleNode;
 typedef boost::shared_ptr<IParticleNode> IParticleNodePtr;
 
 /**
- * Representation of a particles declaration.
+ * \brief
+ * Definition of a particle system.
+ *
+ * Each particle system is made up of one or more particle stages, information
+ * about which is provided via the IStageDef interface.
  */
 class IParticleDef
 {
@@ -40,9 +45,7 @@ public:
 	 */
 	virtual ~IParticleDef() {}
 
-	/**
-	 * Get the name of the particle system.
-	 */
+	/// Get the name of the particle system.
 	virtual const std::string& getName() const = 0;
 
 	/**
@@ -57,20 +60,14 @@ public:
 	virtual float getDepthHack() const = 0;
 	virtual void setDepthHack(float value) = 0;
 
-	/**
-	 * Returns the number of stages for this particle system.
-	 */
+	/// Returns the number of stages for this particle system.
 	virtual std::size_t getNumStages() const = 0;
 
-	/**
-	 * Return a specific particle stage (const version)
-	 */
-	virtual const IParticleStage& getParticleStage(std::size_t stageNum) const = 0;
+    /// Get a const stage definition from the particle definition
+	virtual const IStageDef& getStage(std::size_t stageNum) const = 0;
 
-	/**
-	 * Return a specific particle stage (non-const version)
-	 */
-	virtual IParticleStage& getParticleStage(std::size_t stageNum) = 0;
+    /// Get a stage definition from the particle definition
+	virtual IStageDef& getStage(std::size_t stageNum) = 0;
 
 	/**
 	 * Add a new stage to this particle, returns the index of the new stage.
@@ -170,15 +167,11 @@ public:
     /// Signal emitted when particle definitions are reloaded
     virtual sigc::signal<void> signal_particlesReloaded() const = 0;
 
-	/**
-	 * Enumerate each particle def.
-	 */
+	/// Enumerate each particle def.
 	virtual void forEachParticleDef(const ParticleDefVisitor&) const = 0;
 
-	/**
-	 * Get a named particle definition, returns NULL if not found.
-	 */
-	virtual IParticleDefPtr getParticle(const std::string& name) = 0;
+    /// Return the definition object for the given named particle system
+	virtual IParticleDefPtr getDefByName(const std::string& name) = 0;
 
 	/**
 	 * Create a renderable particle, which is capable of compiling the

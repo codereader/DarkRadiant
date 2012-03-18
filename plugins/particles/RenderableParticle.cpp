@@ -1,5 +1,7 @@
 #include "RenderableParticle.h"
 
+#include <boost/foreach.hpp>
+
 namespace particles
 {
 
@@ -50,8 +52,10 @@ void RenderableParticle::update(const Matrix4& viewRotation)
 }
 
 // Front-end render methods
-void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
-	const Matrix4& localToWorld, const IRenderEntity* entity) const
+void RenderableParticle::renderSolid(RenderableCollector& collector,
+                                     const VolumeTest& volume,
+                                     const Matrix4& localToWorld,
+                                     const IRenderEntity* entity) const
 {
 	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
 	{
@@ -59,19 +63,19 @@ void RenderableParticle::renderSolid(RenderableCollector& collector, const Volum
 
 		collector.SetState(i->second.shader, RenderableCollector::eFullMaterials);
 
-		for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
-			 stage != i->second.stages.end(); ++stage)
+        // For each stage using this shader
+        BOOST_FOREACH(RenderableParticleStagePtr stage, i->second.stages)
 		{
 			// Skip invisible stages
-			if (!(*stage)->getStage().isVisible()) continue;
+			if (!stage->getDef().isVisible()) continue;
 
 			if (entity)
 			{
-				collector.addRenderable(**stage, localToWorld, *entity);
+				collector.addRenderable(*stage, localToWorld, *entity);
 			}
 			else
 			{
-				collector.addRenderable(**stage, localToWorld);
+				collector.addRenderable(*stage, localToWorld);
 			}
 		}
 	}
@@ -174,7 +178,7 @@ void RenderableParticle::setupStages()
 
 	for (std::size_t i = 0; i < _particleDef->getNumStages(); ++i)
 	{
-		const IParticleStage& stage = _particleDef->getParticleStage(i);
+		const IStageDef& stage = _particleDef->getStage(i);
 
 		const std::string& materialName = stage.getMaterialName();
 

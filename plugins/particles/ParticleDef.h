@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParticleStage.h"
+#include "StageDef.h"
 
 #include "iparticles.h"
 
@@ -29,7 +29,7 @@ class ParticleDef
 	float _depthHack;
 
 	// Vector of stages
-	typedef std::vector<ParticleStagePtr> StageList;
+	typedef std::vector<StageDefPtr> StageList;
 	StageList _stages;
 
     // Changed signal
@@ -88,12 +88,12 @@ public:
 		return _stages.size();
 	}
 
-	const IParticleStage& getParticleStage(std::size_t stageNum) const
+	const IStageDef& getStage(std::size_t stageNum) const
 	{
 		return *_stages[stageNum];
 	}
 
-	IParticleStage& getParticleStage(std::size_t stageNum)
+	IStageDef& getStage(std::size_t stageNum)
 	{
 		return *_stages[stageNum];
 	}
@@ -104,7 +104,7 @@ public:
 
 	void swapParticleStages(std::size_t index, std::size_t index2);
 
-	void appendStage(const ParticleStagePtr& stage);
+	void appendStage(const StageDefPtr& stage);
 
 	bool operator==(const IParticleDef& other) const 
 	{
@@ -117,7 +117,7 @@ public:
 		// Compare each stage
 		for (std::size_t i = 0; i < getNumStages(); ++i)
 		{
-			if (getParticleStage(i) != other.getParticleStage(i)) return false;
+			if (getStage(i) != other.getStage(i)) return false;
 		}
 
 		// All checks passed => equal
@@ -150,7 +150,7 @@ inline std::ostream& operator<<(std::ostream& stream, const ParticleDef& def)
 	// Write stages, one by one
 	for (ParticleDef::StageList::const_iterator i = def._stages.begin(); i != def._stages.end(); ++i)
 	{
-		const ParticleStage& stage = **i;
+		const StageDef& stage = **i;
 		stream << stage;
 	}
 

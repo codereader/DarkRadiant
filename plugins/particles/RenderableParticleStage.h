@@ -1,5 +1,4 @@
-#ifndef _RENDERABLE_PARTICLE_STAGE_H_
-#define _RENDERABLE_PARTICLE_STAGE_H_
+#pragma once
 
 #include "RenderableParticleBunch.h"
 
@@ -7,17 +6,20 @@ namespace particles
 {
 
 /**
- * greebo: Each particle stage generates its geometry in one or more cycles.
- * Each cycle comes as a bunch of quads with a defined lifespan. It's possible
- * for quads of one cycle to exist during the lifetime of the next cycle (if bunching
- * is set to values below 1), but there can always be 2 bunches active at the same time.
+ * \brief
+ * Renderable object drawing the particles defined by a StageDef.
+ *
+ * Each particle stage generates its geometry in one or more cycles.  Each cycle
+ * comes as a bunch of quads with a defined lifespan. It's possible for quads of
+ * one cycle to exist during the lifetime of the next cycle (if bunching is set
+ * to values below 1), but there can always be 2 bunches active at the same
+ * time.
  */
 class RenderableParticleStage :
 	public OpenGLRenderable
 {
-private:
 	// The stage def we're rendering
-	const IParticleStage& _stage;
+	const IStageDef& _stageDef;
 
 	// We use these values as seeds whenever we instantiate a new bunch of particles
 	// each bunch has a distinct index and is using the same seed during the lifetime
@@ -40,7 +42,7 @@ private:
 	const Vector3& _entityColour;
 
 public:
-	RenderableParticleStage(const IParticleStage& stage, 
+	RenderableParticleStage(const IStageDef& stage, 
 							boost::rand48& random, 
 							const Vector3& direction,
 							const Vector3& entityColour);
@@ -52,7 +54,8 @@ public:
 
 	const AABB& getBounds();
 
-	const IParticleStage& getStage() const;
+    /// Return the stage definition associated with this renderable
+	const IStageDef& getDef() const;
 
 private:
 	// Returns the correct rotation matrix required by the stage orientation settings
@@ -71,5 +74,3 @@ private:
 typedef boost::shared_ptr<RenderableParticleStage> RenderableParticleStagePtr;
 
 } // namespace
-
-#endif /* _RENDERABLE_PARTICLE_STAGE_H_ */

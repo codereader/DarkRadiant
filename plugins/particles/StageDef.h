@@ -1,5 +1,4 @@
-#ifndef PARTICLESTAGE_H_
-#define PARTICLESTAGE_H_
+#pragma once
 
 #include "math/Vector4.h"
 
@@ -15,16 +14,10 @@ namespace particles
 
 class ParticleDef;
 
-/**
- * Representation of a single particle stage. Each stage consists of a set of
- * particles with the same properties (texture, acceleration etc).
- *
- * Most of the member descriptions are directly taken from the D3 SDK.
- */
-class ParticleStage :
-    public IParticleStage
+/// Implementation of IStageDef for idTech 4 particles
+class StageDef : public IStageDef
 {
-    friend std::ostream& operator<< (std::ostream&, const ParticleStage&);
+    friend std::ostream& operator<< (std::ostream&, const StageDef&);
 
     // Number of particles
     int _count;                     // total number of particles, although some may be invisible at a given time
@@ -121,10 +114,10 @@ private:
 public:
 
     /// Create an empty particle stage with default values
-    ParticleStage();
+    StageDef();
 
     /// Create a particle stage from the given token stream
-    ParticleStage(parser::DefTokeniser& tok);
+    StageDef(parser::DefTokeniser& tok);
 
     /// Resets/clears all values to default. This is called by parseFromTokens().
     void reset();
@@ -542,15 +535,15 @@ public:
     const ParticleParameter& getRotationSpeed() const { return *_rotationSpeed; }
     ParticleParameter& getRotationSpeed() { return *_rotationSpeed; }
 
-    /// Equality comparison with other IParticleStage objects
-    bool operator==(const IParticleStage& other) const;
+    /// Equality comparison with other IStageDef objects
+    bool operator==(const IStageDef& other) const;
 
-    bool operator!=(const IParticleStage& other) const
+    bool operator!=(const IStageDef& other) const
     {
         return !operator==(other);
     }
 
-    void copyFrom(const IParticleStage& other);
+    void copyFrom(const IStageDef& other);
 
     bool isVisible() const
     {
@@ -574,13 +567,11 @@ public:
     void parseFromTokens(parser::DefTokeniser& tok);
 
 };
-typedef boost::shared_ptr<ParticleStage> ParticleStagePtr;
+typedef boost::shared_ptr<StageDef> StageDefPtr;
 
 /**
  * Write stage to text stream, including opening & closing braces and one level of indentation.
  */
-std::ostream& operator<< (std::ostream& os, const ParticleStage& stage);
+std::ostream& operator<< (std::ostream& os, const StageDef& stage);
 
 }
-
-#endif /*PARTICLESTAGE_H_*/

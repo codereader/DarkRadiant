@@ -29,7 +29,7 @@ private:
 	std::size_t _index;
 
 	// The stage this bunch is part of
-	const IParticleStage& _stage;
+	const IStageDef& _stage;
 
 	// The quads of this particle bunch
 	typedef std::vector<ParticleQuad> Quads;
@@ -63,7 +63,7 @@ public:
 	// Each bunch has a defined zero-based index
 	RenderableParticleBunch(std::size_t index,
 							int randSeed,
-							const IParticleStage& stage,
+							const IStageDef& stage,
 							const Matrix4& viewRotation,
 							const Vector3& direction,
 							const Vector3& entityColour);

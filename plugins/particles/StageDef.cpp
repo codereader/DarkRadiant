@@ -1,4 +1,4 @@
-#include "ParticleStage.h"
+#include "StageDef.h"
 
 #include "itextstream.h"
 #include <boost/lexical_cast.hpp>
@@ -42,7 +42,7 @@ namespace
 	}
 }
 
-ParticleStage::ParticleStage() :
+StageDef::StageDef() :
 	_rotationSpeed(new ParticleParameter(*this)),
 	_speed(new ParticleParameter(*this)),
 	_size(new ParticleParameter(*this)),
@@ -52,7 +52,7 @@ ParticleStage::ParticleStage() :
 	reset();
 }
 
-ParticleStage::ParticleStage(parser::DefTokeniser& tok) :
+StageDef::StageDef(parser::DefTokeniser& tok) :
 	_rotationSpeed(new ParticleParameter(*this)),
 	_speed(new ParticleParameter(*this)),
 	_size(new ParticleParameter(*this)),
@@ -77,7 +77,7 @@ ParticleStage::ParticleStage(parser::DefTokeniser& tok) :
 	}
 }
 
-void ParticleStage::reset()
+void StageDef::reset()
 {
 	_count = 100;
 	_material.clear();
@@ -132,7 +132,7 @@ void ParticleStage::reset()
 	_aspect.reset(new ParticleParameter(*this, 1.0f));
 }
 
-void ParticleStage::copyFrom(const IParticleStage& other)
+void StageDef::copyFrom(const IStageDef& other)
 {
 	setMaterialName(other.getMaterialName());
 	setCount(other.getCount());
@@ -189,7 +189,7 @@ void ParticleStage::copyFrom(const IParticleStage& other)
 	*_rotationSpeed = other.getRotationSpeed();
 }
 
-void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
+void StageDef::parseFromTokens(parser::DefTokeniser& tok)
 {
 	reset();
 
@@ -504,7 +504,7 @@ void ParticleStage::parseFromTokens(parser::DefTokeniser& tok)
 	}
 }
 
-Vector3 ParticleStage::parseVector3(parser::DefTokeniser& tok)
+Vector3 StageDef::parseVector3(parser::DefTokeniser& tok)
 {
 	// Read 3 values and assemble to a Vector3
 	Vector3 vec;
@@ -525,7 +525,7 @@ Vector3 ParticleStage::parseVector3(parser::DefTokeniser& tok)
 	return vec;
 }
 
-Vector4 ParticleStage::parseVector4(parser::DefTokeniser& tok)
+Vector4 StageDef::parseVector4(parser::DefTokeniser& tok)
 {
 	// Read 4 values and assemble to a Vector4
 	Vector4 vec;
@@ -547,7 +547,7 @@ Vector4 ParticleStage::parseVector4(parser::DefTokeniser& tok)
 	return vec;
 }
 
-std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
+std::ostream& operator<<(std::ostream& stream, const StageDef& stage)
 {
 	std::size_t prevPrecision = stream.precision();
 
@@ -588,18 +588,18 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 
 	switch (stage.getDistributionType())
 	{
-	case ParticleStage::DISTRIBUTION_RECT:
+	case StageDef::DISTRIBUTION_RECT:
 		stream << "rect " << stage.getDistributionParm(0) << " "
 						  << stage.getDistributionParm(1) << " "
 						  << stage.getDistributionParm(2) << std::endl;
 		break;
-	case ParticleStage::DISTRIBUTION_CYLINDER:
+	case StageDef::DISTRIBUTION_CYLINDER:
 		stream << "cylinder " << stage.getDistributionParm(0) << " "
 							  << stage.getDistributionParm(1) << " "
 							  << stage.getDistributionParm(2) << " "
 							  << stage.getDistributionParm(3) << std::endl;
 		break;
-	case ParticleStage::DISTRIBUTION_SPHERE:
+	case StageDef::DISTRIBUTION_SPHERE:
 		stream << "sphere " << stage.getDistributionParm(0) << " "
 							<< stage.getDistributionParm(1) << " "
 							<< stage.getDistributionParm(2) << std::endl;
@@ -611,10 +611,10 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 
 	switch (stage.getDirectionType())
 	{
-	case ParticleStage::DIRECTION_CONE:
+	case StageDef::DIRECTION_CONE:
 		stream << "cone";
 		break;
-	case ParticleStage::DIRECTION_OUTWARD:
+	case StageDef::DIRECTION_OUTWARD:
 		stream << "outward";
 		break;
 	};
@@ -626,19 +626,19 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 
 	switch (stage.getOrientationType())
 	{
-	case ParticleStage::ORIENTATION_VIEW:
+	case StageDef::ORIENTATION_VIEW:
 		stream << "view";
 		break;
-	case ParticleStage::ORIENTATION_AIMED:
+	case StageDef::ORIENTATION_AIMED:
 		stream << "aimed " << stage.getOrientationParm(0) << " " << stage.getOrientationParm(1); // trails + time
 		break;
-	case ParticleStage::ORIENTATION_X:
+	case StageDef::ORIENTATION_X:
 		stream << "x";
 		break;
-	case ParticleStage::ORIENTATION_Y:
+	case StageDef::ORIENTATION_Y:
 		stream << "y";
 		break;
-	case ParticleStage::ORIENTATION_Z:
+	case StageDef::ORIENTATION_Z:
 		stream << "z";
 		break;
 	};
@@ -648,13 +648,13 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 	// Custom path, only flies and helix get written
 	switch (stage.getCustomPathType())
 	{
-	case ParticleStage::PATH_FLIES: // customPath flies 10.000 10.000 10.000
+	case StageDef::PATH_FLIES: // customPath flies 10.000 10.000 10.000
 		stream << "\t\t" << "customPath " << "\t\t\t";
 		stream << "flies " << stage.getCustomPathParm(0) << " "
 						   << stage.getCustomPathParm(1) << " "
 						   << stage.getCustomPathParm(2) << std::endl;
 		break;
-	case ParticleStage::PATH_HELIX:
+	case StageDef::PATH_HELIX:
 		stream << "\t\t" << "customPath " << "\t\t\t";
 		stream << "helix " << stage.getCustomPathParm(0) << " "
 						   << stage.getCustomPathParm(1) << " "
@@ -709,13 +709,13 @@ std::ostream& operator<<(std::ostream& stream, const ParticleStage& stage)
 	return stream;
 }
 
-void ParticleStage::setMaterialName(const std::string& material)
+void StageDef::setMaterialName(const std::string& material)
 {
     _material = material;
     _changedSignal.emit();
 }
 
-bool ParticleStage::operator==(const IParticleStage& other) const
+bool StageDef::operator==(const IStageDef& other) const
 {
     if (getMaterialName() != other.getMaterialName()) return false;
 

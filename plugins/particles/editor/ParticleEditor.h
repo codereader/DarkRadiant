@@ -64,7 +64,7 @@ private:
 	Gtk::TreeModel::iterator _selectedStageIter;
 
 	// The particle definition we're working on
-	particles::ParticleDefPtr _particle;
+	particles::ParticleDefPtr _currentDef;
 
 	bool _callbacksDisabled;
 

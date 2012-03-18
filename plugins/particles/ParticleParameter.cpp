@@ -1,6 +1,6 @@
 #include "ParticleParameter.h"
 
-#include "ParticleStage.h"
+#include "StageDef.h"
 
 #include "itextstream.h"
 #include <boost/lexical_cast.hpp>

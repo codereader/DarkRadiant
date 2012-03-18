@@ -197,7 +197,7 @@ void ParticlePreview::onPostRender()
 
     for (std::size_t i = 0; i < def->getNumStages(); ++i)
     {
-        const particles::IParticleStage& stage = def->getParticleStage(i);
+        const particles::IStageDef& stage = def->getStage(i);
 
         // For ever-repeating stages, set stuff to INT_MAX and break
         if (stage.getCycles() == 0)

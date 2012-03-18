@@ -46,12 +46,15 @@ public:
 };
 
 /**
- * Representation of a single particle stage. Each stage consists of a set of
- * particles with the same properties (texture, acceleration etc).
+ * \brief
+ * Definition of a single particle stage.
+ *
+ * Each stage consists of a set of particles with the same properties (texture,
+ * acceleration etc).
  *
  * Most of the member descriptions are directly taken from the D3 SDK.
  */
-class IParticleStage
+class IStageDef
 {
 public:
 
@@ -413,13 +416,13 @@ public:
 
 	// Comparison operators - particle stages are considered equal 
 	// if all properties are equal
-	virtual bool operator==(const IParticleStage& other) const = 0;
-	virtual bool operator!=(const IParticleStage& other) const = 0;
+	virtual bool operator==(const IStageDef& other) const = 0;
+	virtual bool operator!=(const IStageDef& other) const = 0;
 
 	/**
 	 * Copy operator, copies all properties from the other stage into this one.
 	 */
-	virtual void copyFrom(const IParticleStage& other) = 0;
+	virtual void copyFrom(const IStageDef& other) = 0;
 
 	/**
 	 * Returns the stage visibility. This flag is used in the Particle Editor context only,

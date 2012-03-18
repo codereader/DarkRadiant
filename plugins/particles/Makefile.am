@@ -17,7 +17,7 @@ particles_la_SOURCES = ParticlesManager.cpp \
                        ParticleDef.cpp \
                        ParticleNode.cpp \
                        ParticleParameter.cpp \
-                       ParticleStage.cpp \
+                       StageDef.cpp \
                        RenderableParticle.cpp \
                        RenderableParticleStage.cpp \
                        RenderableParticleBunch.cpp \

@@ -2,7 +2,7 @@
 
 #include "ParticleFileLoader.h"
 #include "ParticleDef.h"
-#include "ParticleStage.h"
+#include "StageDef.h"
 #include "ParticleNode.h"
 #include "RenderableParticle.h"
 
@@ -58,7 +58,7 @@ void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v) const
 	}
 }
 
-IParticleDefPtr ParticlesManager::getParticle(const std::string& name)
+IParticleDefPtr ParticlesManager::getDefByName(const std::string& name)
 {
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
 

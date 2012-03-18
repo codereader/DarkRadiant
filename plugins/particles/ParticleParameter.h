@@ -9,7 +9,7 @@
 namespace particles
 {
 
-class ParticleStage;
+class StageDef;
 
 /**
  * greebo: A particle parameter represents a bounded member value
@@ -23,26 +23,26 @@ class ParticleParameter :
 	public IParticleParameter
 {
 	// The owner stage
-	ParticleStage& _stage;
+	StageDef& _stage;
 
 	float _from;	// lower bound
 	float _to;		// upper bound
 
 public:
 
-	ParticleParameter(ParticleStage& stage) :
+	ParticleParameter(StageDef& stage) :
 		_stage(stage),
 		_from(0),
 		_to(0)
 	{}
 
-	ParticleParameter(ParticleStage& stage, float constantValue) :
+	ParticleParameter(StageDef& stage, float constantValue) :
 		_stage(stage),
 		_from(constantValue),
 		_to(constantValue)
 	{}
 
-	ParticleParameter(ParticleStage& stage, float from, float to) :
+	ParticleParameter(StageDef& stage, float from, float to) :
 		_stage(stage),
 		_from(from),
 		_to(to)

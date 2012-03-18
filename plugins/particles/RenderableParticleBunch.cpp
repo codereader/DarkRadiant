@@ -9,7 +9,7 @@ namespace particles
 {
 
 RenderableParticleBunch::RenderableParticleBunch(std::size_t index,
-	int randSeed, const IParticleStage& stage, const Matrix4& viewRotation,
+	int randSeed, const IStageDef& stage, const Matrix4& viewRotation,
 	const Vector3& direction, const Vector3& entityColour) :
 	_index(index),
 	_stage(stage),
@@ -130,7 +130,7 @@ void RenderableParticleBunch::update(std::size_t time)
 		}
 
 		// For aimed orientation, we need to override particle height and aspect
-		if (_stage.getOrientationType() == IParticleStage::ORIENTATION_AIMED)
+		if (_stage.getOrientationType() == IStageDef::ORIENTATION_AIMED)
 		{
 			pushAimedParticles(particle, stageDurationMsec);
 		}
@@ -305,7 +305,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 
 	switch (_stage.getCustomPathType())
 	{
-	case IParticleStage::PATH_STANDARD: // Standard path calculation
+	case IStageDef::PATH_STANDARD: // Standard path calculation
 		{
 			// Consider particle distribution
 			Vector3 distributionOffset = getDistributionOffset(particle, _distributeParticlesRandomly);
@@ -321,7 +321,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 		}
 		break;
 
-	case IParticleStage::PATH_FLIES:
+	case IStageDef::PATH_FLIES:
 		{
 			// greebo: "Flies" particles are moving on the surface of a sphere of radius <size>
 			// The radial and axial speeds are chosen at random (but never 0) and are constant
@@ -361,7 +361,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 		}
 		break;
 
-	case IParticleStage::PATH_HELIX:
+	case IStageDef::PATH_HELIX:
 		{
 			// greebo: Helical movement is describing an elliptic cylinder, its shape is determined by
 			// sizeX, sizeY and sizeZ. Particles are spawned randomly on that cylinder surface,
@@ -389,8 +389,8 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
 		}
 		break;
 
-	case IParticleStage::PATH_ORBIT:
-	case IParticleStage::PATH_DRIP:
+	case IStageDef::PATH_ORBIT:
+	case IStageDef::PATH_DRIP:
 		// These are actually unsupported by the engine ("bad path type")
 		globalWarningStream() << "Unsupported path type (drip/orbit)." << std::endl;
 		break;
@@ -411,7 +411,7 @@ Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, cons
 {
 	switch (_stage.getDirectionType())
 	{
-	case IParticleStage::DIRECTION_CONE:
+	case IStageDef::DIRECTION_CONE:
 		{
 			// Find a random vector on the sphere surface defined by the cone with apex 2*angle
 			float u = particle.rand[3];
@@ -433,7 +433,7 @@ Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, cons
 
 			return endPoint.getNormalised();
 		}
-	case IParticleStage::DIRECTION_OUTWARD:
+	case IStageDef::DIRECTION_OUTWARD:
 		{
 			// This heavily relies on particles being distributed randomly within the spawn area
 			Vector3 direction = distributionOffset.getNormalised();
@@ -453,7 +453,7 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleRenderInfo& parti
 	switch (_stage.getDistributionType())
 	{
 		// Rectangular distribution
-		case IParticleStage::DISTRIBUTION_RECT:
+		case IStageDef::DISTRIBUTION_RECT:
 		{
 			// Factors to use for the random distribution
 			float randX = 1.0f;
@@ -475,7 +475,7 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleRenderInfo& parti
 						   randZ * _stage.getDistributionParm(2));
 		}
 
-		case IParticleStage::DISTRIBUTION_CYLINDER:
+		case IStageDef::DISTRIBUTION_CYLINDER:
 		{
 			// Get the cylinder dimensions
 			float sizeX = _stage.getDistributionParm(0);
@@ -512,7 +512,7 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleRenderInfo& parti
 			}
 		}
 
-		case IParticleStage::DISTRIBUTION_SPHERE:
+		case IStageDef::DISTRIBUTION_SPHERE:
 		{
 			// Get the sphere dimensions
 			float maxX = _stage.getDistributionParm(0);

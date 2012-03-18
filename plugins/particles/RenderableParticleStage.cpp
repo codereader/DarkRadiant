@@ -4,11 +4,11 @@ namespace particles
 {
 
 RenderableParticleStage::RenderableParticleStage(
-		const IParticleStage& stage,
+		const IStageDef& stage,
 		boost::rand48& random,
 		const Vector3& direction,
 		const Vector3& entityColour) :
-	_stage(stage),
+	_stageDef(stage),
 	_numSeeds(32),
 	_seeds(_numSeeds),
 	_bunches(2), // two bunches
@@ -45,7 +45,7 @@ void RenderableParticleStage::update(std::size_t time, const Matrix4& viewRotati
 	_bounds = AABB();
 
 	// Check time offset (msecs)
-	std::size_t timeOffset = static_cast<std::size_t>(SEC2MS(_stage.getTimeOffset()));
+	std::size_t timeOffset = static_cast<std::size_t>(SEC2MS(_stageDef.getTimeOffset()));
 
 	if (time < timeOffset)
 	{
@@ -91,34 +91,34 @@ const AABB& RenderableParticleStage::getBounds()
 	return _bounds;
 }
 
-const IParticleStage& RenderableParticleStage::getStage() const
+const IStageDef& RenderableParticleStage::getDef() const
 {
-	return _stage;
+	return _stageDef;
 }
 
 void RenderableParticleStage::calculateStageViewRotation(const Matrix4& viewRotation)
 {
-	switch (_stage.getOrientationType())
+	switch (_stageDef.getOrientationType())
 	{
-	case IParticleStage::ORIENTATION_AIMED:
+	case IStageDef::ORIENTATION_AIMED:
 		_viewRotation = viewRotation;
 		break;
 
-	case IParticleStage::ORIENTATION_VIEW:
+	case IStageDef::ORIENTATION_VIEW:
 		_viewRotation = viewRotation;
 		break;
 
-	case IParticleStage::ORIENTATION_X:
+	case IStageDef::ORIENTATION_X:
 		// Rotate the z vector such that it faces the x axis, and use that as transform
 		_viewRotation = Matrix4::getRotation(Vector3(0,0,1), Vector3(1,0,0));
 		break;
 
-	case IParticleStage::ORIENTATION_Y:
+	case IStageDef::ORIENTATION_Y:
 		// Rotate the z vector such that it faces the y axis, and use that as transform
 		_viewRotation = Matrix4::getRotation(Vector3(0,0,1), Vector3(0,1,0));
 		break;
 
-	case IParticleStage::ORIENTATION_Z:
+	case IStageDef::ORIENTATION_Z:
 		// Particles are already facing the z axis by default
 		_viewRotation = Matrix4::getIdentity();
 		break;
@@ -131,7 +131,7 @@ void RenderableParticleStage::calculateStageViewRotation(const Matrix4& viewRota
 void RenderableParticleStage::ensureBunches(std::size_t localTimeMSec)
 {
 	// Check which bunches is active at this time
-	float cycleFrac = floor(static_cast<float>(localTimeMSec) / _stage.getCycleMsec());
+	float cycleFrac = floor(static_cast<float>(localTimeMSec) / _stageDef.getCycleMsec());
 
 	std::size_t curCycleIndex = static_cast<std::size_t>(cycleFrac);
 
@@ -157,7 +157,7 @@ void RenderableParticleStage::ensureBunches(std::size_t localTimeMSec)
 		RenderableParticleBunchPtr cur = getExistingBunchByIndex(curCycleIndex);
 		RenderableParticleBunchPtr prev = getExistingBunchByIndex(prevCycleIndex);
 
-		std::size_t numCycles = static_cast<std::size_t>(_stage.getCycles());
+		std::size_t numCycles = static_cast<std::size_t>(_stageDef.getCycles());
 
 		if (numCycles > 0 && curCycleIndex > numCycles)
 		{
@@ -192,7 +192,7 @@ void RenderableParticleStage::ensureBunches(std::size_t localTimeMSec)
 RenderableParticleBunchPtr RenderableParticleStage::createBunch(std::size_t cycleIndex)
 {
 	return RenderableParticleBunchPtr(new RenderableParticleBunch(
-		cycleIndex, getSeed(cycleIndex), _stage, _viewRotation, _direction, _entityColour));
+		cycleIndex, getSeed(cycleIndex), _stageDef, _viewRotation, _direction, _entityColour));
 }
 
 int RenderableParticleStage::getSeed(std::size_t cycleIndex)
