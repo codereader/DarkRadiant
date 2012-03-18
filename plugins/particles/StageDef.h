@@ -128,22 +128,10 @@ public:
         return _changedSignal;
     }
 
-    /**
-     * Get the shader name.
-     */
+    // IStageDef implementation
     const std::string& getMaterialName() const { return _material; }
-
-    /// Set the shader name.
     void setMaterialName(const std::string& material);
-
-    /**
-     * Get the particle count.
-     */
     int getCount() const { return _count; }
-
-    /**
-     * Set the particle count.
-     */
     void setCount(int count)
     {
         _count = count;

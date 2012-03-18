@@ -21,10 +21,9 @@ namespace particles
 #define SEC2MS(x) ((x)*1000)
 #define MS2SEC(x) ((x)*0.001f)
 
-class RenderableParticleBunch :
-	public OpenGLRenderable
+/// A single bunch of particles, consisting of a renderable set of quads
+class RenderableParticleBunch : public OpenGLRenderable
 {
-private:
 	// The bunch index
 	std::size_t _index;
 

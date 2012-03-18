@@ -95,24 +95,17 @@ public:
 	};
 
 public:
-	/**
-	 * Get the shader name.
-	 */
+
+	/// Get the shader name.
 	virtual const std::string& getMaterialName() const = 0;
 
-	/**
-	 * Set the shader name.
-	 */
+    /// Set the shader name.
 	virtual void setMaterialName(const std::string& material) = 0;
 
-	/**
-	 * Get the particle count.
-	 */
+	/// Get the particle count.
 	virtual int getCount() const = 0;
 
-	/**
-	 * Set the particle count.
-	 */
+	/// Set the particle count.
 	virtual void setCount(int count) = 0;
 
 	/**
