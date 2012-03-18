@@ -612,10 +612,10 @@ void Patch::updateTesselation()
   m_lattice_indices.reserve(((m_width * (m_height - 1)) + (m_height * (m_width - 1))) << 1);
   ctrl_indices.reserve(m_ctrlTransformed.size());
   {
-    UniqueVertexBuffer<PointVertex> inserter(m_ctrl_vertices);
+    UniqueVertexBuffer<VertexCb> inserter(m_ctrl_vertices);
     for(PatchControlIter i = m_ctrlTransformed.begin(); i != m_ctrlTransformed.end(); ++i)
     {
-      ctrl_indices.push_back(inserter.insert(pointvertex_quantised(PointVertex(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
+      ctrl_indices.push_back(inserter.insert(pointvertex_quantised(VertexCb(i->vertex, colour_for_index(i - m_ctrlTransformed.begin(), m_width)))));
     }
   }
   {
@@ -2003,7 +2003,7 @@ PatchMesh Patch::getTesselatedPatchMesh() const
 	for (std::vector<ArbitraryMeshVertex>::const_iterator i = m_tess.vertices.begin();
 		i != m_tess.vertices.end(); ++i)
 	{
-		PatchMesh::Vertex v;
+		VertexNT v;
 
 		v.vertex = i->vertex;
 		v.texcoord = i->texcoord;

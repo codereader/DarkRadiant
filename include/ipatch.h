@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "inode.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
+#include "render/VertexNT.h"
 
 // This is thrown by the internal patch routines
 class GenericPatchException :
@@ -56,23 +57,11 @@ struct PatchControl
  */
 struct PatchMesh
 {
-	struct Vertex
-	{
-		Vector3 vertex;		// 3D position
-		Vector2 texcoord;	// UV coordinates
-		Vector3 normal;		// Normal vector
-
-		// Needed for boost::python::vectorindexing_suite
-		bool operator==(const Vertex& other) const
-		{
-			return (vertex == other.vertex && texcoord == other.texcoord && normal == other.normal);
-		}
-	};
-
 	std::size_t width;	// width of this mesh
 	std::size_t height; // height of this mesh
 
-	std::vector<PatchMesh::Vertex> vertices;	// the actual geometry
+    /// Geometry with normals and texture coordinates
+	std::vector<VertexNT> vertices;
 };
 
 typedef BasicVector2<unsigned int> Subdivisions;

@@ -11,7 +11,7 @@ class RenderableCurve :
 	public OpenGLRenderable
 {
 public:
-	std::vector<PointVertex> m_vertices;
+	std::vector<VertexCb> m_vertices;
 
 	void render(const RenderInfo& info) const
     {

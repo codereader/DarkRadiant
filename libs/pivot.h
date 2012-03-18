@@ -226,7 +226,7 @@ class RenderablePivot :
 	public OpenGLRenderable
 {
 private:
-    std::vector<PointVertex> _vertices;
+    std::vector<VertexCb> _vertices;
 	const Vector3& _pivot;
 
 	ShaderPtr _shader;
@@ -244,14 +244,14 @@ public:
 	{
 		_vertices.reserve(6);
 
-		_vertices.push_back(PointVertex(_pivot, g_colour_x));
-		_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
+		_vertices.push_back(VertexCb(_pivot, g_colour_x));
+		_vertices.push_back(VertexCb(_pivot + Vector3(16,0,0), g_colour_x));
 
-		_vertices.push_back(PointVertex(_pivot, g_colour_y));
-		_vertices.push_back(PointVertex(_pivot + Vector3(0, 16, 0), g_colour_y));
+		_vertices.push_back(VertexCb(_pivot, g_colour_y));
+		_vertices.push_back(VertexCb(_pivot + Vector3(0, 16, 0), g_colour_y));
 
-		_vertices.push_back(PointVertex(_pivot, g_colour_z));
-		_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
+		_vertices.push_back(VertexCb(_pivot, g_colour_z));
+		_vertices.push_back(VertexCb(_pivot + Vector3(0, 0, 16), g_colour_z));
 	}
 
 	/** greebo: Updates the renderable vertex array to the given pivot point
@@ -260,14 +260,14 @@ public:
 	{
 		_vertices.clear();
 
-		_vertices.push_back(PointVertex(_pivot, g_colour_x));
-		_vertices.push_back(PointVertex(_pivot + Vector3(16,0,0), g_colour_x));
+		_vertices.push_back(VertexCb(_pivot, g_colour_x));
+		_vertices.push_back(VertexCb(_pivot + Vector3(16,0,0), g_colour_x));
 
-		_vertices.push_back(PointVertex(_pivot, g_colour_y));
-		_vertices.push_back(PointVertex(_pivot + Vector3(0, 16, 0), g_colour_y));
+		_vertices.push_back(VertexCb(_pivot, g_colour_y));
+		_vertices.push_back(VertexCb(_pivot + Vector3(0, 16, 0), g_colour_y));
 
-		_vertices.push_back(PointVertex(_pivot, g_colour_z));
-		_vertices.push_back(PointVertex(_pivot + Vector3(0, 0, 16), g_colour_z));
+		_vertices.push_back(VertexCb(_pivot, g_colour_z));
+		_vertices.push_back(VertexCb(_pivot + Vector3(0, 0, 16), g_colour_z));
 	}
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -288,8 +288,8 @@ public:
 
         glEnableClientState(GL_COLOR_ARRAY);
 
-		glVertexPointer(3, GL_FLOAT, sizeof(PointVertex), &_vertices.data()->vertex);
-		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &_vertices.data()->colour);
+		glVertexPointer(3, GL_FLOAT, sizeof(VertexCb), &_vertices.data()->vertex);
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexCb), &_vertices.data()->colour);
 		glDrawArrays(GL_LINES, 0, _vertices.size());
 	}
 

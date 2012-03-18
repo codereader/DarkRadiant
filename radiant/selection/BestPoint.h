@@ -1,9 +1,9 @@
-#ifndef BESTPOINT_H_
-#define BESTPOINT_H_
+#pragma once
 
 #include "math/Vector3.h"
 #include "iselectiontest.h"
 #include "Manipulatables.h"
+#include "render/VertexNCb.h"
 
 /* greebo: These are functions that are needed for selection test (which points are nearest to what and something)
  */
@@ -42,14 +42,12 @@ bool point_test_polygon_2d( const point_t& P, point_iterator_t start, point_iter
 
 void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersection& best, clipcull_t cull);
 
-void LineStrip_BestPoint(const Matrix4& local2view, const PointVertex* vertices, const std::size_t size, SelectionIntersection& best);
-void LineLoop_BestPoint(const Matrix4& local2view, const PointVertex* vertices, const std::size_t size, SelectionIntersection& best);
-void Line_BestPoint(const Matrix4& local2view, const PointVertex vertices[2], SelectionIntersection& best);
+void LineStrip_BestPoint(const Matrix4& local2view, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best);
+void LineLoop_BestPoint(const Matrix4& local2view, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best);
+void Line_BestPoint(const Matrix4& local2view, const VertexCb vertices[2], SelectionIntersection& best);
 
-void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const PointVertex* vertices, const std::size_t size, SelectionIntersection& best);
-void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const PointVertex* vertices, SelectionIntersection& best);
+void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best);
+void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const VertexCb* vertices, SelectionIntersection& best);
 
-typedef FlatShadedVertex* FlatShadedVertexIterator;
+typedef VertexNCb* FlatShadedVertexIterator;
 void Triangles_BestPoint(const Matrix4& local2view, clipcull_t cull, FlatShadedVertexIterator first, FlatShadedVertexIterator last, SelectionIntersection& best);
-
-#endif /*BESTPOINT_H_*/

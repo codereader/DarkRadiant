@@ -1,7 +1,7 @@
-#ifndef RENDERABLES_H_
-#define RENDERABLES_H_
+#pragma once
 
 #include "render.h"
+#include "render/VertexNCb.h"
 
 /* greebo: This contains the renderables (rectangles, arrows, circles, semicircles) to represent
  * the manipulators of the selected items
@@ -45,7 +45,7 @@ class RenderableArrowHead :
 	public OpenGLRenderable
 {
 public:
-	typedef std::vector<FlatShadedVertex> FlatShadedVertices;
+	typedef std::vector<VertexNCb> FlatShadedVertices;
 	FlatShadedVertices _vertices;
 
 	RenderableArrowHead(std::size_t size) :
@@ -55,9 +55,9 @@ public:
 	void render(const RenderInfo& info) const
 	{
         glEnableClientState(GL_COLOR_ARRAY);
-		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(FlatShadedVertex), &_vertices.front().colour);
-		glVertexPointer(3, GL_FLOAT, sizeof(FlatShadedVertex), &_vertices.front().vertex);
-		glNormalPointer(GL_FLOAT, sizeof(FlatShadedVertex), &_vertices.front().normal);
+		glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(VertexNCb), &_vertices.front().colour);
+		glVertexPointer(3, GL_FLOAT, sizeof(VertexNCb), &_vertices.front().vertex);
+		glNormalPointer(GL_FLOAT, sizeof(VertexNCb), &_vertices.front().normal);
 		glDrawArrays(GL_TRIANGLES, 0, GLsizei(_vertices.size()));
 	}
 
@@ -79,5 +79,3 @@ public:
 		RenderablePointVector(GL_LINE_LOOP, 4)
 	{}
 };
-
-#endif /*RENDERABLES_H_*/

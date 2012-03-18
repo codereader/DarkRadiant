@@ -8,11 +8,11 @@ namespace entity {
 
 	namespace {
 
-		inline void PointVertexArray_testSelect(PointVertex* first, std::size_t count,
+		inline void PointVertexArray_testSelect(VertexCb* first, std::size_t count,
 			SelectionTest& test, SelectionIntersection& best)
 		{
 			test.TestLineStrip(
-			    VertexPointer(&first->vertex, sizeof(PointVertex)),
+			    VertexPointer(&first->vertex, sizeof(VertexCb)),
 			    IndexPointer::index_type(count),
 			    best
 			);

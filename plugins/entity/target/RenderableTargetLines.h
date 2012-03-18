@@ -77,15 +77,15 @@ public:
 			Vector3 xyPoint2 = arrowBase - xyDir;
 
 			// The line from this to the other entity
-			_pointVector.push_back(PointVertex(_worldPosition));
-			_pointVector.push_back(PointVertex(targetPosition));
+			_pointVector.push_back(VertexCb(_worldPosition));
+			_pointVector.push_back(VertexCb(targetPosition));
 
 			// The "arrow indicators" in the xy plane
-			_pointVector.push_back(PointVertex(mid));
-			_pointVector.push_back(PointVertex(xyPoint1));
+			_pointVector.push_back(VertexCb(mid));
+			_pointVector.push_back(VertexCb(xyPoint1));
 
-			_pointVector.push_back(PointVertex(mid));
-			_pointVector.push_back(PointVertex(xyPoint2));
+			_pointVector.push_back(VertexCb(mid));
+			_pointVector.push_back(VertexCb(xyPoint2));
 		}
 	}
 };

@@ -3,7 +3,7 @@
 #include "BestPoint.h"
 
 template<typename remap_policy>
-inline void draw_semicircle(const std::size_t segments, const float radius, PointVertex* vertices, remap_policy remap) {
+inline void draw_semicircle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap) {
   const double increment = c_pi / double(segments << 2);
 
   std::size_t count = 0;
@@ -12,17 +12,17 @@ inline void draw_semicircle(const std::size_t segments, const float radius, Poin
   remap_policy::set(vertices[segments << 2].vertex, -radius, 0, 0);
   while(count < segments)
   {
-    PointVertex* i = vertices + count;
-    PointVertex* j = vertices + ((segments << 1) - (count + 1));
+    VertexCb* i = vertices + count;
+    VertexCb* j = vertices + ((segments << 1) - (count + 1));
 
-    PointVertex* k = i + (segments << 1);
-    PointVertex* l = j + (segments << 1);
+    VertexCb* k = i + (segments << 1);
+    VertexCb* l = j + (segments << 1);
 
 #if 0
-    PointVertex* m = i + (segments << 2);
-    PointVertex* n = j + (segments << 2);
-    PointVertex* o = k + (segments << 2);
-    PointVertex* p = l + (segments << 2);
+    VertexCb* m = i + (segments << 2);
+    VertexCb* n = j + (segments << 2);
+    VertexCb* o = k + (segments << 2);
+    VertexCb* p = l + (segments << 2);
 #endif
 
     remap_policy::set(i->vertex, x,-y, 0);

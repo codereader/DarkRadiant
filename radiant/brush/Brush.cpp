@@ -1148,7 +1148,7 @@ void Brush::buildBRep() {
 
             const Winding& w = m_faces[faceVertex.getFace()]->getWinding();
             Vector3 edge = w[faceVertex.getVertex()].vertex.mid(w[w.next(faceVertex.getVertex())].vertex);
-            _uniqueEdgePoints[i] = PointVertex(edge, colour_vertex);
+            _uniqueEdgePoints[i] = VertexCb(edge, colour_vertex);
           }
         }
 
@@ -1198,7 +1198,7 @@ void Brush::buildBRep() {
             FaceVertexId faceVertex = faceVertices[ProximalVertexArray_index(vertexRings, uniqueVertices[i])];
 
             const Winding& winding = m_faces[faceVertex.getFace()]->getWinding();
-            _uniqueVertexPoints[i] = PointVertex(winding[faceVertex.getVertex()].vertex, colour_vertex);
+            _uniqueVertexPoints[i] = VertexCb(winding[faceVertex.getVertex()].vertex, colour_vertex);
           }
         }
       }
@@ -1233,7 +1233,7 @@ void Brush::buildBRep() {
       for(std::size_t i=0; i<m_faces.size(); ++i)
       {
         m_faces[i]->construct_centroid();
-        _faceCentroidPoints[i] = PointVertex(m_faces[i]->centroid(), colour_vertex);
+        _faceCentroidPoints[i] = VertexCb(m_faces[i]->centroid(), colour_vertex);
       }
     }
   }

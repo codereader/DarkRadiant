@@ -96,7 +96,7 @@ void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersection& bes
   }
 }
 
-void LineStrip_BestPoint(const Matrix4& local2view, const PointVertex* vertices, const std::size_t size, SelectionIntersection& best) {
+void LineStrip_BestPoint(const Matrix4& local2view, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best) {
   Vector4 clipped[2];
   for(std::size_t i = 0; (i + 1) < size; ++i)
   {
@@ -105,7 +105,7 @@ void LineStrip_BestPoint(const Matrix4& local2view, const PointVertex* vertices,
   }
 }
 
-void LineLoop_BestPoint(const Matrix4& local2view, const PointVertex* vertices, const std::size_t size, SelectionIntersection& best) {
+void LineLoop_BestPoint(const Matrix4& local2view, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best) {
   Vector4 clipped[2];
   for(std::size_t i = 0; i < size; ++i)
   {
@@ -114,13 +114,13 @@ void LineLoop_BestPoint(const Matrix4& local2view, const PointVertex* vertices, 
   }
 }
 
-void Line_BestPoint(const Matrix4& local2view, const PointVertex vertices[2], SelectionIntersection& best) {
+void Line_BestPoint(const Matrix4& local2view, const VertexCb vertices[2], SelectionIntersection& best) {
   Vector4 clipped[2];
   const std::size_t count = local2view.clipLine(vertices[0].vertex, vertices[1].vertex, clipped);
   BestPoint(count, clipped, best, eClipCullNone);
 }
 
-void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const PointVertex* vertices, const std::size_t size, SelectionIntersection& best) {
+void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best) {
   Vector4 clipped[9];
   for(std::size_t i=0; i<size; ++i)
   {
@@ -129,7 +129,7 @@ void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const PointVer
   }
 }
 
-void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const PointVertex* vertices, SelectionIntersection& best) {
+void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const VertexCb* vertices, SelectionIntersection& best) {
   Vector4 clipped[9];
   {
     const std::size_t count = local2view.clipTriangle(vertices[0].vertex, vertices[1].vertex, vertices[3].vertex, clipped);

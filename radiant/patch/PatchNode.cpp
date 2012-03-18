@@ -358,7 +358,7 @@ void PatchNode::update_selected() const {
 		if (i->m_selectable.isSelected()) {
 			const Colour4b colour_selected(0, 0, 0, 255);
 			// Add this patch control instance to the render list
-			m_render_selected.push_back(PointVertex(reinterpret_cast<const Vertex3f&>(ctrl->vertex), colour_selected));
+			m_render_selected.push_back(VertexCb(reinterpret_cast<const Vertex3f&>(ctrl->vertex), colour_selected));
 		}
 	}
 }

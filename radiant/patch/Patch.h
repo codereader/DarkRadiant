@@ -80,7 +80,7 @@ private:
 	ShaderPtr _latticeShader;
 
 	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
-    std::vector<PointVertex> m_ctrl_vertices;
+    std::vector<VertexCb> m_ctrl_vertices;
 	// The renderable of the control points
 	RenderableVertexBuffer _renderableCtrlPoints;
 

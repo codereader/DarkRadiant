@@ -48,12 +48,12 @@ public:
 
 	// Functor
 	void operator()(Vector3& point, const Vector3& original) {
-		_points.push_back(PointVertex(Vertex3f(point), _colour));
+		_points.push_back(VertexCb(Vertex3f(point), _colour));
 	}
 
 	// ConstFunctor
 	void operator()(const Vector3& point, const Vector3& original) {
-		_points.push_back(PointVertex(Vertex3f(point), _colour));
+		_points.push_back(VertexCb(Vertex3f(point), _colour));
 	}
 };
 

@@ -29,17 +29,17 @@ public:
         {
             glEnableClientState(GL_COLOR_ARRAY);
             glColorPointer(
-                4, GL_UNSIGNED_BYTE, sizeof(PointVertex), &m_vertices->colour
+                4, GL_UNSIGNED_BYTE, sizeof(VertexCb), &m_vertices->colour
             );
         }
 
-		glVertexPointer(3, GL_FLOAT, sizeof(PointVertex), &m_vertices->vertex);
+		glVertexPointer(3, GL_FLOAT, sizeof(VertexCb), &m_vertices->vertex);
 		glDrawElements(GL_LINES, GLsizei(m_size<<1), RenderIndexTypeID, &m_faceVertex.front());
 	}
 
 	std::vector<EdgeRenderIndices> m_faceVertex;
 	std::size_t m_size;
-	const PointVertex* m_vertices;
+	const VertexCb* m_vertices;
 
 	virtual ~RenderableWireframe() {}
 };

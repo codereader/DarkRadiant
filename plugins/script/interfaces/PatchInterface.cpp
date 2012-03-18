@@ -237,16 +237,16 @@ void PatchInterface::registerInterface(boost::python::object& nspace) {
 			boost::python::return_value_policy<boost::python::copy_non_const_reference>())
 	;
 
-	nspace["PatchMeshVertex"] = boost::python::class_<PatchMesh::Vertex>("PatchMeshVertex",
+	nspace["PatchMeshVertex"] = boost::python::class_<VertexNT>("PatchMeshVertex",
 		boost::python::init<>())
-		.def_readwrite("vertex", &PatchMesh::Vertex::vertex)
-		.def_readwrite("texcoord", &PatchMesh::Vertex::texcoord)
-		.def_readwrite("normal", &PatchMesh::Vertex::normal)
+		.def_readwrite("vertex", &VertexNT::vertex)
+		.def_readwrite("texcoord", &VertexNT::texcoord)
+		.def_readwrite("normal", &VertexNT::normal)
 	;
 
-	// Declare the PatchMesh::Vertex vector
-	boost::python::class_<std::vector<PatchMesh::Vertex> >("PatchMeshVertices")
-		.def(boost::python::vector_indexing_suite<std::vector<PatchMesh::Vertex>, true>())
+	// Declare the VertexNT vector
+	boost::python::class_<std::vector<VertexNT> >("PatchMeshVertices")
+		.def(boost::python::vector_indexing_suite<std::vector<VertexNT>, true>())
 	;
 
 	nspace["PatchMesh"] = boost::python::class_<PatchMesh>("PatchMesh",

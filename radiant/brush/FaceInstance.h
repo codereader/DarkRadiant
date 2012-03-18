@@ -96,7 +96,7 @@ public:
 		RenderablePointVectorPushBack(RenderablePointVector& points) : m_points(points) {}
 		void operator()(const Vector3& point) const {
 			const Colour4b colour_selected(0, 0, 255, 255);
-			m_points.push_back(PointVertex(point, colour_selected));
+			m_points.push_back(VertexCb(point, colour_selected));
 		}
 	};
 
