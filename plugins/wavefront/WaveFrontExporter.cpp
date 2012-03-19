@@ -78,7 +78,7 @@ void WaveFrontExporter::exportPatch(IPatch& patch)
 	{
 		for (std::size_t w = 0; w < mesh.width; ++w)
 		{
-			const PatchMesh::Vertex& v = mesh.vertices[mesh.width*h + w];
+			const VertexNT& v = mesh.vertices[mesh.width*h + w];
 
 			// Write coordinates into the export buffers
 			vertexBuf += "v " + std::string(v.vertex) + "\n";

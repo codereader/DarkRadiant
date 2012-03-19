@@ -320,21 +320,22 @@
     <ClInclude Include="..\..\plugins\particles\ParticleQuad.h" />
     <ClInclude Include="..\..\plugins\particles\ParticleRenderInfo.h" />
     <ClInclude Include="..\..\plugins\particles\ParticlesManager.h" />
-    <ClInclude Include="..\..\plugins\particles\ParticleStage.h" />
     <ClInclude Include="..\..\plugins\particles\RenderableParticle.h" />
     <ClInclude Include="..\..\plugins\particles\RenderableParticleBunch.h" />
     <ClInclude Include="..\..\plugins\particles\RenderableParticleStage.h" />
+    <ClInclude Include="..\..\plugins\particles\StageDef.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\particles\editor\ParticleEditor.cpp" />
+    <ClCompile Include="..\..\plugins\particles\ParticleDef.cpp" />
     <ClCompile Include="..\..\plugins\particles\ParticleNode.cpp" />
     <ClCompile Include="..\..\plugins\particles\ParticleParameter.cpp" />
     <ClCompile Include="..\..\plugins\particles\particles.cpp" />
     <ClCompile Include="..\..\plugins\particles\ParticlesManager.cpp" />
-    <ClCompile Include="..\..\plugins\particles\ParticleStage.cpp" />
     <ClCompile Include="..\..\plugins\particles\RenderableParticle.cpp" />
     <ClCompile Include="..\..\plugins\particles\RenderableParticleBunch.cpp" />
     <ClCompile Include="..\..\plugins\particles\RenderableParticleStage.cpp" />
+    <ClCompile Include="..\..\plugins\particles\StageDef.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\plugins\particles\particles.def" />

@@ -28,9 +28,6 @@
     <ClInclude Include="..\..\plugins\particles\ParticlesManager.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\particles\ParticleStage.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\particles\RenderableParticle.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -49,15 +46,15 @@
     <ClInclude Include="..\..\plugins\particles\ParticleNode.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\particles\StageDef.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\particles\particles.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\particles\ParticlesManager.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\plugins\particles\ParticleStage.cpp">
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\particles\RenderableParticle.cpp">
@@ -76,6 +73,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\particles\ParticleNode.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\particles\StageDef.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\particles\ParticleDef.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
