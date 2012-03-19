@@ -2361,11 +2361,11 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
 
 	for (group = area.groups.begin(); group != area.groups.end(); ++group)
 	{
-		if (group->material == triList[0].material && 
+		if (group->material == triList.front().material && 
 			group->planeNum == planeNum && 
-			(group->mergeGroup == triList[0].mergeGroup || 
-			 group->mergeSurf == triList[0].mergeSurf || 
-			 group->mergePatch == triList[0].mergePatch))
+			(group->mergeGroup == triList.front().mergeGroup || 
+			 group->mergeSurf == triList.front().mergeSurf || 
+			 group->mergePatch == triList.front().mergePatch))
 		{
 			// check the texture vectors
 			std::size_t i = 0;
@@ -2416,10 +2416,10 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
 		group->surfaceEmitted = false;
 
 		group->planeNum = planeNum;
-		group->mergeGroup = triList[0].mergeGroup;
-		group->mergeSurf = triList[0].mergeSurf;
-		group->mergePatch = triList[0].mergePatch;
-		group->material = triList[0].material;
+		group->mergeGroup = triList.front().mergeGroup;
+		group->mergeSurf = triList.front().mergeSurf;
+		group->mergePatch = triList.front().mergePatch;
+		group->material = triList.front().material;
 		group->texVec[0] = texVec[0];
 		group->texVec[1] = texVec[1];
 	}
@@ -2572,9 +2572,9 @@ inline ProcTris windingToTriList(const ProcWinding& w, const ProcTri& originalTr
 
 	for (std::size_t i = 2 ; i < w.size(); ++i)
 	{
-		triList.push_back(originalTri);
+		triList.push_front(originalTri);
 
-		ProcTri& tri = triList.back();
+		ProcTri& tri = triList.front();
 
 		for (std::size_t j = 0; j < 3; ++j)
 		{
@@ -2641,7 +2641,7 @@ void ProcCompiler::clipTriIntoTreeRecursively(const ProcWinding& winding, const 
 
 void ProcCompiler::addMapTrisToAreas(const ProcTris& tris, ProcEntity& entity)
 {
-	for (ProcTris::const_reverse_iterator tri = tris.rbegin(); tri != tris.rend(); ++tri)
+	for (ProcTris::const_iterator tri = tris.begin(); tri != tris.end(); ++tri)
 	{
 		// skip degenerate triangles from pinched curves
 		if (ProcWinding::getTriangleArea(tri->v[0].vertex, tri->v[1].vertex, tri->v[2].vertex) <= 0)
@@ -2672,7 +2672,7 @@ void ProcCompiler::addMapTrisToAreas(const ProcTris& tris, ProcEntity& entity)
 			std::size_t planeNum = _procFile->planes.findOrInsertPlane(plane, EPSILON_NORMAL, EPSILON_DIST);
 
 			Vector4 texVec[2];
-			getTexVecForTri(texVec, newTri[0]);
+			getTexVecForTri(texVec, newTri.front());
 
 			addTriListToArea(entity, newTri, planeNum, area, texVec);
 		} 
@@ -3147,7 +3147,8 @@ void ProcCompiler::addOriginalEdges(ProcOptimizeGroup& group)
 	// allocate space for max possible edges
 	std::size_t numTris = group.triList.size();
 
-	_originalEdges.resize(numTris * 3);
+	_originalEdges.clear();
+	_originalEdges.reserve(numTris * 3);
 
 	// add all unique triangle edges
 	_optEdges.clear();
@@ -4745,8 +4746,8 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				// light frustum
 				ProcTris shadowers;
 
-				for (ProcTris::const_reverse_iterator tri = group->triList.rbegin();
-					 tri != group->triList.rend(); ++tri)
+				for (ProcTris::const_iterator tri = group->triList.begin();
+					 tri != group->triList.end(); ++tri)
 				{
 					// clip it to the light frustum
 					ProcTris in;

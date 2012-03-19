@@ -293,7 +293,7 @@ void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t area
 		
 		surfaceNum++;
 		
-		str << (boost::format("\"%s\" ") % ambient[0].material->getName());
+		str << (boost::format("\"%s\" ") % ambient.front().material->getName());
 
 		Surface uTri = shareMapTriVerts(ambient);
 		

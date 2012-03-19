@@ -2,6 +2,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <vector>
+#include <list>
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ishaders.h"
@@ -133,7 +134,7 @@ struct ProcTri
 		hashVert[0] = hashVert[1] = hashVert[2] = NULL;
 	}
 };
-typedef std::vector<ProcTri> ProcTris;
+typedef std::list<ProcTri> ProcTris;
 
 #define MAX_GROUP_LIGHTS 16
 
