@@ -20,38 +20,12 @@ class ParticleEditor :
 	public gtkutil::BlockingTransientWindow,
     private gtkutil::GladeWidgetHolder
 {
-public:
-	// Treemodel definition
-	struct DefColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		DefColumns() { add(name); }
-
-		Gtk::TreeModelColumn<std::string> name;
-	};
-
-	// Treemodel definition
-	struct StageColumns :
-		public Gtk::TreeModel::ColumnRecord
-	{
-		StageColumns() { add(name); add(index); add(visible); add(colour); }
-
-		Gtk::TreeModelColumn<Glib::ustring> name;
-		Gtk::TreeModelColumn<int> index;
-		Gtk::TreeModelColumn<bool> visible;
-		Gtk::TreeModelColumn<Glib::ustring> colour;
-	};
-
-private:
-	// List of target_addobjectives entities
-	DefColumns _defColumns;
+	// List of particle system defs
 	Glib::RefPtr<Gtk::ListStore> _defList;
-
 	Glib::RefPtr<Gtk::TreeSelection> _defSelection;
 
-	StageColumns _stageColumns;
+    // List of stages in the current particle def
 	Glib::RefPtr<Gtk::ListStore> _stageList;
-
 	Glib::RefPtr<Gtk::TreeSelection> _stageSelection;
 
     gtkutil::ParticlePreviewPtr _preview;

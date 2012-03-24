@@ -23,6 +23,7 @@
 #include "../ParticlesManager.h"
 
 #include "os/path.h"
+#include "registry/bind.h"
 
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -38,17 +39,44 @@ namespace
     const char* const DIALOG_TITLE = N_("Particle Editor");
 
     const std::string RKEY_ROOT = "user/ui/particleEditor/";
+    const std::string RKEY_SPLIT_POS = RKEY_ROOT + "splitPos";
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
     const std::string RKEY_RECENT_PATH = RKEY_ROOT + "recentSavePath";
 
     const std::string EDIT_SUFFIX = "___editor";
 }
 
+namespace
+{
+    // Columns for the def list
+    struct DefColumns :
+        public Gtk::TreeModel::ColumnRecord
+    {
+        DefColumns() { add(name); }
+
+        Gtk::TreeModelColumn<std::string> name;
+    };
+    DefColumns& DEF_COLS() { static DefColumns _i; return _i; }
+
+    // Columns for the stages list
+    struct StageColumns :
+        public Gtk::TreeModel::ColumnRecord
+    {
+        StageColumns() { add(name); add(index); add(visible); add(colour); }
+
+        Gtk::TreeModelColumn<Glib::ustring> name;
+        Gtk::TreeModelColumn<int> index;
+        Gtk::TreeModelColumn<bool> visible;
+        Gtk::TreeModelColumn<Glib::ustring> colour;
+    };
+    StageColumns& STAGE_COLS() { static StageColumns _i; return _i; }
+}
+
 ParticleEditor::ParticleEditor() :
     gtkutil::BlockingTransientWindow(DIALOG_TITLE, GlobalMainFrame().getTopLevelWindow()),
     gtkutil::GladeWidgetHolder("ParticleEditor.glade"),
-    _defList(Gtk::ListStore::create(_defColumns)),
-    _stageList(Gtk::ListStore::create(_stageColumns)),
+    _defList(Gtk::ListStore::create(DEF_COLS())),
+    _stageList(Gtk::ListStore::create(STAGE_COLS())),
     _preview(new gtkutil::ParticlePreview),
     _callbacksDisabled(false)
 {
@@ -83,9 +111,11 @@ ParticleEditor::ParticleEditor() :
 
     set_default_size(static_cast<int>(rect.get_width() * 0.6f), height);
 
-    // Setup and pack the preview
+    // Setup the splitter and preview
     _preview->setSize(static_cast<int>(rect.get_width() * 0.3f), -1);
-    gladeWidget<Gtk::HPaned>("mainPane")->add2(*_preview);
+    Gtk::Paned* splitter = gladeWidget<Gtk::Paned>("mainPane");
+    splitter->add2(*_preview);
+    registry::bindPropertyToKey(splitter->property_position(), RKEY_SPLIT_POS);
 
     // Connect the window position tracker
     _windowPosition.loadFromPath(RKEY_WINDOW_STATE);
@@ -117,7 +147,7 @@ void ParticleEditor::setupParticleDefList()
     view->set_headers_visible(false);
 
     // Single text column
-    view->append_column(*Gtk::manage(new gtkutil::TextColumn(_("Particle"), _defColumns.name, false)));
+    view->append_column(_("Particle"), DEF_COLS().name);
 
     // Apply full-text search to the column
     view->set_search_equal_func(sigc::ptr_fun(gtkutil::TreeModel::equalFuncStringContains));
@@ -126,7 +156,9 @@ void ParticleEditor::setupParticleDefList()
 
     // Connect up the selection changed callback
     _defSelection = view->get_selection();
-    _defSelection->signal_changed().connect(sigc::mem_fun(*this, &ParticleEditor::_onDefSelChanged));
+    _defSelection->signal_changed().connect(
+        sigc::mem_fun(*this, &ParticleEditor::_onDefSelChanged)
+    );
 }
 
 namespace
@@ -138,21 +170,16 @@ namespace
  */
 class ParticlesVisitor
 {
-private:
     // List store to populate
     Glib::RefPtr<Gtk::ListStore> _store;
-
-    const ParticleEditor::DefColumns& _columns;
 
 public:
 
     /**
      * Constructor.
      */
-    ParticlesVisitor(const Glib::RefPtr<Gtk::ListStore>& store,
-                     const ParticleEditor::DefColumns& columns)
-    : _store(store),
-      _columns(columns)
+    ParticlesVisitor(const Glib::RefPtr<Gtk::ListStore>& store)
+    : _store(store)
     {}
 
     /**
@@ -164,7 +191,7 @@ public:
         Gtk::TreeModel::iterator iter = _store->append();
 
         Gtk::TreeModel::Row row = *iter;
-        row[_columns.name] = def.getName();
+        row[DEF_COLS().name] = def.getName();
     }
 };
 
@@ -175,13 +202,13 @@ void ParticleEditor::populateParticleDefList()
     _defList->clear();
 
     // Create and use a ParticlesVisitor to populate the list
-    ParticlesVisitor visitor(_defList, _defColumns);
+    ParticlesVisitor visitor(_defList);
     GlobalParticlesManager().forEachParticleDef(visitor);
 }
 
 void ParticleEditor::selectParticleDef(const std::string& particleDefName)
 {
-    gtkutil::TreeModel::findAndSelectString(gladeWidget<Gtk::TreeView>("definitionView"), particleDefName, _defColumns.name);
+    gtkutil::TreeModel::findAndSelectString(gladeWidget<Gtk::TreeView>("definitionView"), particleDefName, DEF_COLS().name);
 }
 
 void ParticleEditor::setupParticleStageList()
@@ -192,7 +219,7 @@ void ParticleEditor::setupParticleStageList()
     view->set_headers_visible(false);
 
     // Single text column
-    view->append_column(*Gtk::manage(new gtkutil::ColouredTextColumn(_("Stage"), _stageColumns.name, _stageColumns.colour, false)));
+    view->append_column(*Gtk::manage(new gtkutil::ColouredTextColumn(_("Stage"), STAGE_COLS().name, STAGE_COLS().colour, false)));
 
     // Connect up the selection changed callback
     _stageSelection = view->get_selection();
@@ -598,7 +625,7 @@ std::size_t ParticleEditor::getSelectedStageIndex()
     // Get the selection and store it
     Gtk::TreeModel::iterator iter = _stageSelection->get_selected();
 
-    int value = (*iter)[_stageColumns.index];
+    int value = (*iter)[STAGE_COLS().index];
 
     if (value < 0)
     {
@@ -611,7 +638,7 @@ std::size_t ParticleEditor::getSelectedStageIndex()
 void ParticleEditor::selectStage(std::size_t index)
 {
     gtkutil::TreeModel::findAndSelectInteger(
-        gladeWidget<Gtk::TreeView>("stageView"), static_cast<int>(index), _stageColumns.index);
+        gladeWidget<Gtk::TreeView>("stageView"), static_cast<int>(index), STAGE_COLS().index);
 }
 
 void ParticleEditor::_onDefSelChanged()
@@ -676,7 +703,7 @@ void ParticleEditor::_onStageSelChanged()
         // Activate delete, move and toggle buttons
         isStageSelected = true;
 
-        std::size_t index = (*_selectedStageIter)[_stageColumns.index];
+        std::size_t index = (*_selectedStageIter)[STAGE_COLS().index];
 
         gladeWidget<Gtk::Button>("moveStageUpButton")->set_sensitive(index > 0);
         gladeWidget<Gtk::Button>("moveStageDownButton")->set_sensitive(index < _currentDef->getNumStages() - 1);
@@ -821,14 +848,16 @@ void ParticleEditor::reloadStageList()
 
         Gtk::TreeModel::iterator iter = _stageList->append();
 
-        (*iter)[_stageColumns.name] = (boost::format("Stage %d") % static_cast<int>(i)).str();
-        (*iter)[_stageColumns.index] = static_cast<int>(i);
-        (*iter)[_stageColumns.visible] = true;
-        (*iter)[_stageColumns.colour] = stage.isVisible() ? "#000000" : "#707070";
+        (*iter)[STAGE_COLS().name] = (boost::format("Stage %d") % static_cast<int>(i)).str();
+        (*iter)[STAGE_COLS().index] = static_cast<int>(i);
+        (*iter)[STAGE_COLS().visible] = true;
+        (*iter)[STAGE_COLS().colour] = stage.isVisible() ? "#000000" : "#707070";
     }
 
     // Select the first stage if possible
-    gtkutil::TreeModel::findAndSelectInteger(gladeWidget<Gtk::TreeView>("stageView"), 0, _stageColumns.index);
+    gtkutil::TreeModel::findAndSelectInteger(
+        gladeWidget<Gtk::TreeView>("stageView"), 0, STAGE_COLS().index
+    );
 }
 
 void ParticleEditor::updateWidgetsFromStage()
@@ -999,7 +1028,7 @@ void ParticleEditor::setupEditParticle()
     if (!iter) return;
 
     // Get the def for the selected particle system if it exists
-    std::string selectedName = (*iter)[_defColumns.name];
+    std::string selectedName = (*iter)[DEF_COLS().name];
     IParticleDefPtr def = GlobalParticlesManager().getDefByName(selectedName);
     if (!def)
     {
@@ -1034,7 +1063,7 @@ bool ParticleEditor::particleHasUnsavedChanges()
     if (_selectedDefIter && _currentDef)
     {
         // Particle selection changed, check if we have any unsaved changes
-        std::string origName = (*_selectedDefIter)[_defColumns.name];
+        std::string origName = (*_selectedDefIter)[DEF_COLS().name];
 
         IParticleDefPtr origDef = GlobalParticlesManager().getDefByName(origName);
 
@@ -1050,7 +1079,7 @@ bool ParticleEditor::particleHasUnsavedChanges()
 IDialog::Result ParticleEditor::askForSave()
 {
     // Get the original particle name
-    std::string origName = (*_selectedDefIter)[_defColumns.name];
+    std::string origName = (*_selectedDefIter)[DEF_COLS().name];
 
     // The particle we're editing has been changed from the saved one
     gtkutil::MessageBox box(_("Save Changes"),
@@ -1063,7 +1092,7 @@ IDialog::Result ParticleEditor::askForSave()
 bool ParticleEditor::saveCurrentParticle()
 {
     // Get the original particle name
-    std::string origName = (*_selectedDefIter)[_defColumns.name];
+    std::string origName = (*_selectedDefIter)[DEF_COLS().name];
 
     IParticleDefPtr origDef = GlobalParticlesManager().getDefByName(origName);
 
@@ -1291,7 +1320,7 @@ void ParticleEditor::_onSaveParticle()
 void ParticleEditor::_onSaveAsParticle()
 {
     // Get the original particle name
-    std::string origName = (*_selectedDefIter)[_defColumns.name];
+    std::string origName = (*_selectedDefIter)[DEF_COLS().name];
 
     if (origName.empty())
     {

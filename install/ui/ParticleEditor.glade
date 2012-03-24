@@ -1,7 +1,6 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
   <object class="GtkAdjustment" id="aimedTime">
     <property name="upper">60</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -115,6 +114,7 @@
   </object>
   <object class="GtkVBox" id="mainVbox">
     <property name="visible">True</property>
+    <property name="can_focus">False</property>
     <property name="border_width">12</property>
     <property name="spacing">12</property>
     <child>
@@ -125,10 +125,12 @@
         <child>
           <object class="GtkVBox" id="editVbox">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="spacing">12</property>
             <child>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="label" translatable="yes">Particle Definitions</property>
                 <attributes>
@@ -137,34 +139,39 @@
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">0</property>
               </packing>
             </child>
             <child>
               <object class="GtkAlignment" id="alignment1">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="left_padding">12</property>
                 <child>
                   <object class="GtkHBox" id="hbox1">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkFrame" id="frame1">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="label_xalign">0</property>
                         <property name="shadow_type">in</property>
                         <child>
                           <object class="GtkScrolledWindow" id="scrolledwindow1">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="hscrollbar_policy">automatic</property>
-                            <property name="vscrollbar_policy">automatic</property>
                             <child>
                               <object class="GtkTreeView" id="definitionView">
                                 <property name="height_request">130</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection" id="treeview-selection1"/>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -174,22 +181,27 @@
                         </child>
                       </object>
                       <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkVBox" id="vbox3">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <child>
                           <object class="GtkButton" id="newParticleButon">
                             <property name="label">gtk-new</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="use_stock">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -199,10 +211,12 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="use_stock">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -212,16 +226,19 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="use_action_appearance">False</property>
                             <property name="use_stock">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">2</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -229,12 +246,15 @@
                 </child>
               </object>
               <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="stageLabel">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="label" translatable="yes">Particle Stages</property>
                 <attributes>
@@ -243,34 +263,39 @@
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">2</property>
               </packing>
             </child>
             <child>
               <object class="GtkAlignment" id="stageAlignment">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="left_padding">12</property>
                 <child>
                   <object class="GtkHBox" id="hbox2">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkFrame" id="frame2">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="label_xalign">0</property>
                         <property name="shadow_type">in</property>
                         <child>
                           <object class="GtkScrolledWindow" id="scrolledwindow2">
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="hscrollbar_policy">automatic</property>
-                            <property name="vscrollbar_policy">automatic</property>
                             <child>
                               <object class="GtkTreeView" id="stageView">
                                 <property name="height_request">70</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
+                                <child internal-child="selection">
+                                  <object class="GtkTreeSelection" id="treeview-selection2"/>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -280,26 +305,32 @@
                         </child>
                       </object>
                       <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkVBox" id="vbox1">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkHBox" id="hbox3">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="spacing">6</property>
                             <property name="homogeneous">True</property>
                             <child>
                               <object class="GtkAlignment" id="alignment9">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="yalign">0</property>
                                 <property name="yscale">0</property>
                                 <child>
                                   <object class="GtkVBox" id="vbox2">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="homogeneous">True</property>
                                     <child>
                                       <object class="GtkButton" id="addStageButton">
@@ -307,10 +338,12 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_stock">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
+                                        <property name="fill">True</property>
                                         <property name="position">0</property>
                                       </packing>
                                     </child>
@@ -320,10 +353,12 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_stock">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
+                                        <property name="fill">True</property>
                                         <property name="position">1</property>
                                       </packing>
                                     </child>
@@ -333,9 +368,11 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="use_action_appearance">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
+                                        <property name="fill">True</property>
                                         <property name="position">2</property>
                                       </packing>
                                     </child>
@@ -344,17 +381,20 @@
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkAlignment" id="alignment10">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="yalign">0</property>
                                 <property name="yscale">0</property>
                                 <child>
                                   <object class="GtkVBox" id="vbox4">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="homogeneous">True</property>
                                     <child>
                                       <object class="GtkButton" id="moveStageUpButton">
@@ -362,10 +402,12 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_stock">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
+                                        <property name="fill">True</property>
                                         <property name="position">0</property>
                                       </packing>
                                     </child>
@@ -375,10 +417,12 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="use_action_appearance">False</property>
                                         <property name="use_stock">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
+                                        <property name="fill">True</property>
                                         <property name="position">1</property>
                                       </packing>
                                     </child>
@@ -388,9 +432,11 @@
                                         <property name="visible">True</property>
                                         <property name="can_focus">True</property>
                                         <property name="receives_default">True</property>
+                                        <property name="use_action_appearance">False</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
+                                        <property name="fill">True</property>
                                         <property name="position">2</property>
                                       </packing>
                                     </child>
@@ -399,18 +445,21 @@
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">True</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkAlignment" id="alignment11">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="xalign">1</property>
                             <property name="yalign">1</property>
                             <property name="xscale">0</property>
@@ -418,14 +467,18 @@
                             <child>
                               <object class="GtkHBox" id="hbox28">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="label47">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Depth Hack: </property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -433,16 +486,15 @@
                                   <object class="GtkSpinButton" id="depthHackSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">depthHack</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -450,12 +502,15 @@
                             </child>
                           </object>
                           <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -463,12 +518,15 @@
                 </child>
               </object>
               <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
                 <property name="position">3</property>
               </packing>
             </child>
             <child>
               <object class="GtkLabel" id="settingsLabel">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="label" translatable="yes">Stage Settings</property>
                 <attributes>
@@ -477,12 +535,14 @@
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">4</property>
               </packing>
             </child>
             <child>
               <object class="GtkAlignment" id="alignment2">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="left_padding">12</property>
                 <child>
                   <object class="GtkNotebook" id="settingsNotebook">
@@ -491,6 +551,7 @@
                     <child>
                       <object class="GtkAlignment" id="alignment3">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="yalign">0</property>
                         <property name="yscale">0</property>
                         <property name="top_padding">6</property>
@@ -500,6 +561,7 @@
                         <child>
                           <object class="GtkTable" id="table1">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="n_rows">7</property>
                             <property name="n_columns">2</property>
                             <property name="column_spacing">6</property>
@@ -509,10 +571,8 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">Material to render onto each quad.</property>
-                                <property name="invisible_char">&#x2022;</property>
+                                <property name="invisible_char">•</property>
                                 <property name="invisible_char_set">True</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -524,10 +584,8 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">Render Colour</property>
-                                <property name="invisible_char">&#x2022;</property>
+                                <property name="invisible_char">•</property>
                                 <property name="invisible_char_set">True</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -539,6 +597,7 @@
                             <child>
                               <object class="GtkLabel" id="shaderLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Material to render onto each quad.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Shader: </property>
@@ -550,6 +609,7 @@
                             <child>
                               <object class="GtkLabel" id="colourLabel1">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Either 0 0 0 0 for additive, or 1 1 1 0 for blended materials.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Fade Colour: </property>
@@ -563,6 +623,7 @@
                             <child>
                               <object class="GtkLabel" id="colourLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Render Colour</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Colour: </property>
@@ -576,18 +637,19 @@
                             <child>
                               <object class="GtkHBox" id="hbox4">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkEntry" id="fadeColourEntry">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Either 0 0 0 0 for additive, or 1 1 1 0 for blended materials.</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -598,9 +660,12 @@
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Force colour from render entity (Fade Colour is still valid)</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -615,6 +680,7 @@
                             <child>
                               <object class="GtkLabel" id="label2">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Fade In Fraction:</property>
                               </object>
@@ -626,20 +692,20 @@
                             <child>
                               <object class="GtkHBox" id="hbox5">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="fadeInFractionSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">fadeInFraction</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -654,6 +720,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -668,6 +736,7 @@
                             <child>
                               <object class="GtkLabel" id="label3">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Fade Out Fraction:</property>
                               </object>
@@ -679,21 +748,21 @@
                             <child>
                               <object class="GtkHBox" id="hbox6">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="fadeOutFractionSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">fadeOutFraction</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -708,6 +777,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -722,22 +793,22 @@
                             <child>
                               <object class="GtkHBox" id="hbox7">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="fadeIndexFractionSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">In 0.0 to 1.0 range, causes later index smokes to be more faded.</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">fadeIndexFraction</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -753,6 +824,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -767,6 +840,7 @@
                             <child>
                               <object class="GtkLabel" id="label7">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">In 0.0 to 1.0 range, causes later index smokes to be more faded.</property>
                                 <property name="xalign">0</property>
                                 <property name="xpad">1</property>
@@ -780,6 +854,7 @@
                             <child>
                               <object class="GtkLabel" id="label8">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Animation:</property>
                               </object>
@@ -791,16 +866,19 @@
                             <child>
                               <object class="GtkHBox" id="hbox8">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="label9">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">If &gt; 1, subdivide the texture S axis into frames and crossfade.</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Frames:</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -809,26 +887,27 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">If &gt; 1, subdivide the texture S axis into frames and crossfade.</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="width_chars">3</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">animationFrames</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label10">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Frames per second</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">Rate:</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
@@ -837,28 +916,29 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Frames per second</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">animationRate</property>
                                     <property name="digits">1</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">3</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label11">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Frames per second</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">FPS</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">4</property>
                                   </packing>
                                 </child>
@@ -880,6 +960,7 @@
                     <child type="tab">
                       <object class="GtkLabel" id="label4">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Shader</property>
                       </object>
                       <packing>
@@ -889,6 +970,7 @@
                     <child>
                       <object class="GtkAlignment" id="alignment4">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="yalign">0</property>
                         <property name="yscale">0</property>
                         <property name="top_padding">6</property>
@@ -898,6 +980,7 @@
                         <child>
                           <object class="GtkTable" id="table2">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="n_rows">6</property>
                             <property name="n_columns">2</property>
                             <property name="column_spacing">6</property>
@@ -905,6 +988,7 @@
                             <child>
                               <object class="GtkLabel" id="label18">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Total number of particles, although some may be invisible at a given time.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Count: </property>
@@ -916,6 +1000,7 @@
                             <child>
                               <object class="GtkLabel" id="label12">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Allows things to oneShot (1 cycle) or run for a set number of cycles on a per stage basis.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Cycles:</property>
@@ -929,21 +1014,21 @@
                             <child>
                               <object class="GtkHBox" id="hbox10">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="timeSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Material to render onto each quad.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">time</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -960,6 +1045,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -974,6 +1061,7 @@
                             <child>
                               <object class="GtkLabel" id="label13">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Time offset from system start for the first particle to spawn.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Time Offset / sec:</property>
@@ -987,21 +1075,21 @@
                             <child>
                               <object class="GtkHBox" id="hbox11">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="cyclesSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Allows things to oneShot (1 cycle) or run for a set number of cycles on a per stage basis.</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">cycles</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1018,6 +1106,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1032,22 +1122,22 @@
                             <child>
                               <object class="GtkHBox" id="hbox12">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="timeOffsetSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Time offset from system start for the first particle to spawn.</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">timeOffset</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1064,6 +1154,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1078,20 +1170,20 @@
                             <child>
                               <object class="GtkHBox" id="hbox9">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="countSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Total number of particles, although some may be invisible at a given time.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">count</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1108,6 +1200,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1120,6 +1214,7 @@
                             <child>
                               <object class="GtkLabel" id="label16">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Material to render onto each quad.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Duration / sec: </property>
@@ -1133,6 +1228,7 @@
                             <child>
                               <object class="GtkLabel" id="label17">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Bunching: </property>
@@ -1146,21 +1242,21 @@
                             <child>
                               <object class="GtkHBox" id="hbox13">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="bunchingSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">0.0 = all come out at first instant, 1.0 = evenly spaced over cycle time</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">bunching</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1177,6 +1273,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1191,6 +1289,7 @@
                             <child>
                               <object class="GtkLabel" id="label14">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Time after particleLife before respawning.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Dead Time / sec:</property>
@@ -1204,22 +1303,22 @@
                             <child>
                               <object class="GtkHBox" id="hbox14">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="deadTimeSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Time after particleLife before respawning.</property>
-                                    <property name="invisible_char">&#x2022;</property>
+                                    <property name="invisible_char">•</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">deadTime</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1236,6 +1335,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1257,6 +1358,7 @@
                     <child type="tab">
                       <object class="GtkLabel" id="label5">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Count / Time</property>
                       </object>
                       <packing>
@@ -1267,6 +1369,7 @@
                     <child>
                       <object class="GtkAlignment" id="alignment7">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="yalign">0</property>
                         <property name="yscale">0</property>
                         <property name="top_padding">6</property>
@@ -1276,6 +1379,7 @@
                         <child>
                           <object class="GtkTable" id="table5">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="n_rows">6</property>
                             <property name="n_columns">2</property>
                             <property name="column_spacing">6</property>
@@ -1283,6 +1387,7 @@
                             <child>
                               <object class="GtkLabel" id="label30">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Speed: </property>
                               </object>
@@ -1293,6 +1398,7 @@
                             <child>
                               <object class="GtkLabel" id="label31">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Values &gt; 1 make the T axis longer.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Aspect Ratio:</property>
@@ -1306,6 +1412,7 @@
                             <child>
                               <object class="GtkLabel" id="label32">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Can be negative to let particles float upwards.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Gravity:</property>
@@ -1319,15 +1426,18 @@
                             <child>
                               <object class="GtkHBox" id="hbox24">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="label37">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">From: </property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1335,16 +1445,15 @@
                                   <object class="GtkSpinButton" id="speedFromSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">speedFrom</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1360,17 +1469,21 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label36">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">To: </property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">3</property>
                                   </packing>
                                 </child>
@@ -1378,16 +1491,15 @@
                                   <object class="GtkSpinButton" id="speedToSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">speedTo</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">4</property>
                                   </packing>
                                 </child>
@@ -1403,6 +1515,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">5</property>
                                   </packing>
                                 </child>
@@ -1415,6 +1529,7 @@
                             <child>
                               <object class="GtkLabel" id="label33">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Size: </property>
                               </object>
@@ -1427,6 +1542,7 @@
                             <child>
                               <object class="GtkLabel" id="label34">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Half the particles will have negative rotation speeds, this is measured in degrees/sec.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Rotation Speed: </property>
@@ -1440,6 +1556,7 @@
                             <child>
                               <object class="GtkLabel" id="label35">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">User tweak to fix poorly calculated bounds.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Bounds Expansion:</property>
@@ -1453,15 +1570,18 @@
                             <child>
                               <object class="GtkHBox" id="hbox20">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="label38">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">From: </property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1469,16 +1589,15 @@
                                   <object class="GtkSpinButton" id="sizeFromSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">sizeFrom</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1494,17 +1613,21 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label39">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">To: </property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">3</property>
                                   </packing>
                                 </child>
@@ -1512,16 +1635,15 @@
                                   <object class="GtkSpinButton" id="sizeToSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">sizeTo</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">4</property>
                                   </packing>
                                 </child>
@@ -1537,6 +1659,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">5</property>
                                   </packing>
                                 </child>
@@ -1551,16 +1675,19 @@
                             <child>
                               <object class="GtkHBox" id="hbox22">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="label40">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Half the particles will have negative rotation speeds, this is measured in degrees/sec.</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">From: </property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1569,16 +1696,15 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Half the particles will have negative rotation speeds, this is measured in degrees/sec.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">rotationFrom</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1595,18 +1721,22 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label41">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Half the particles will have negative rotation speeds, this is measured in degrees/sec.</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">To: </property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">3</property>
                                   </packing>
                                 </child>
@@ -1615,16 +1745,15 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Half the particles will have negative rotation speeds, this is measured in degrees/sec.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">rotationTo</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">4</property>
                                   </packing>
                                 </child>
@@ -1641,6 +1770,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">5</property>
                                   </packing>
                                 </child>
@@ -1655,16 +1786,19 @@
                             <child>
                               <object class="GtkHBox" id="hbox23">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="label42">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Values &gt; 1 make the T axis longer.</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">From: </property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1673,16 +1807,15 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Values &gt; 1 make the T axis longer.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">aspectFrom</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1699,18 +1832,22 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label43">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Values &gt; 1 make the T axis longer.</property>
                                     <property name="xalign">0</property>
                                     <property name="label" translatable="yes">To: </property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">3</property>
                                   </packing>
                                 </child>
@@ -1719,16 +1856,15 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Values &gt; 1 make the T axis longer.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">aspectTo</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">4</property>
                                   </packing>
                                 </child>
@@ -1745,6 +1881,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">5</property>
                                   </packing>
                                 </child>
@@ -1759,22 +1897,22 @@
                             <child>
                               <object class="GtkHBox" id="hbox25">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="gravitySpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Can be negative to let particles float upwards.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">gravity</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1791,6 +1929,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1801,10 +1941,12 @@
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Apply gravity in world space. If this flag is set use -z as gravity direction as in the game world, otherwise use the reverse emitter direction.</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
@@ -1819,29 +1961,32 @@
                             <child>
                               <object class="GtkHBox" id="hbox26">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkSpinButton" id="boundsExpansionSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">User tweak to fix poorly calculated bounds.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">boundsExpansion</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="label44">
                                     <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1863,6 +2008,7 @@
                     <child type="tab">
                       <object class="GtkLabel" id="label28">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Size / Speed</property>
                       </object>
                       <packing>
@@ -1873,6 +2019,7 @@
                     <child>
                       <object class="GtkAlignment" id="alignment5">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="yalign">0</property>
                         <property name="yscale">0</property>
                         <property name="top_padding">6</property>
@@ -1882,6 +2029,7 @@
                         <child>
                           <object class="GtkTable" id="table3">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="n_rows">7</property>
                             <property name="n_columns">2</property>
                             <property name="column_spacing">6</property>
@@ -1889,6 +2037,7 @@
                             <child>
                               <object class="GtkLabel" id="label15">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Shape: </property>
                               </object>
@@ -1899,6 +2048,7 @@
                             <child>
                               <object class="GtkLabel" id="label19">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Z Size:</property>
                               </object>
@@ -1911,21 +2061,21 @@
                             <child>
                               <object class="GtkHBox" id="hbox15">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="distSizeXSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">distSizeX</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -1941,6 +2091,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -1955,6 +2107,7 @@
                             <child>
                               <object class="GtkLabel" id="label20">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Offset from Origin to spawn all Particles, also applies to Custom Paths.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Offset:</property>
@@ -1968,6 +2121,7 @@
                             <child>
                               <object class="GtkLabel" id="label21">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">X Size: </property>
                               </object>
@@ -1980,6 +2134,7 @@
                             <child>
                               <object class="GtkLabel" id="label22">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Y Size: </property>
                               </object>
@@ -1992,21 +2147,21 @@
                             <child>
                               <object class="GtkHBox" id="hbox19">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="distSizeYSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">distSizeY</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2022,6 +2177,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2036,6 +2193,7 @@
                             <child>
                               <object class="GtkLabel" id="label23">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Randomly orient the quad on emission. If random distribution is off, particles get spawned at &lt;sizex, sizey, sizez&gt;.</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Randomness:</property>
@@ -2053,6 +2211,7 @@
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">Randomly orient the quad on emission. If random distribution is off, particles get spawned at &lt;sizex, sizey, sizez&gt;.</property>
+                                <property name="use_action_appearance">False</property>
                                 <property name="draw_indicator">True</property>
                               </object>
                               <packing>
@@ -2065,6 +2224,7 @@
                             <child>
                               <object class="GtkHBox" id="hbox18">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="homogeneous">True</property>
                                 <child>
                                   <object class="GtkRadioButton" id="distRectangle">
@@ -2072,10 +2232,13 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2085,11 +2248,14 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">distRectangle</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2099,11 +2265,14 @@
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">distRectangle</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
@@ -2118,9 +2287,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="tooltip_text" translatable="yes">Offset from Origin to spawn all Particles, also applies to Custom Paths.</property>
-                                <property name="invisible_char">&#x2022;</property>
-                                <property name="primary_icon_sensitive">True</property>
-                                <property name="secondary_icon_sensitive">True</property>
+                                <property name="invisible_char">•</property>
                               </object>
                               <packing>
                                 <property name="left_attach">1</property>
@@ -2132,21 +2299,21 @@
                             <child>
                               <object class="GtkHBox" id="hbox16">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="distSizeZSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">distSizeZ</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2162,6 +2329,8 @@
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2176,6 +2345,7 @@
                             <child>
                               <object class="GtkLabel" id="distSizeRingLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">Some tests showed that for the cylinder type the fourth parameter ("ringfraction") is only effective if &gt;1, it effectively scales the elliptic shape by that factor.
 Values &lt; 1.0 didn't have any effect.</property>
                                 <property name="xalign">0</property>
@@ -2190,6 +2360,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="distSizeRingHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="distSizeRingSpinner">
@@ -2197,16 +2368,15 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">Some tests showed that for the cylinder type the fourth parameter ("ringfraction") is only effective if &gt;1, it effectively scales the elliptic shape by that factor.
 Values &lt; 1.0 didn't have any effect.</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">distSizeRing</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2224,6 +2394,8 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2245,6 +2417,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                     <child type="tab">
                       <object class="GtkLabel" id="label6">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Distribution</property>
                       </object>
                       <packing>
@@ -2255,6 +2428,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                     <child>
                       <object class="GtkAlignment" id="alignment6">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="yalign">0</property>
                         <property name="yscale">0</property>
                         <property name="top_padding">6</property>
@@ -2264,6 +2438,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                         <child>
                           <object class="GtkTable" id="table4">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="n_rows">7</property>
                             <property name="n_columns">2</property>
                             <property name="column_spacing">6</property>
@@ -2271,6 +2446,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="label25">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Direction: </property>
                               </object>
@@ -2281,6 +2457,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="label26">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Orientation:</property>
                               </object>
@@ -2293,21 +2470,21 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="coneAngleHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="coneAngleSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">coneAngle</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2323,6 +2500,8 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2337,6 +2516,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="label27">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Time:</property>
                               </object>
@@ -2349,6 +2529,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="coneAngleLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Cone Angle: </property>
                               </object>
@@ -2361,6 +2542,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="upwardBiasLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Upward Bias: </property>
                               </object>
@@ -2373,21 +2555,21 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="upwardBiasHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="upwardBiasSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">upwardBias</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2403,6 +2585,8 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2417,6 +2601,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="hbox21">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkRadioButton" id="directionCone">
@@ -2424,11 +2609,13 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2438,10 +2625,13 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">directionCone</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2454,6 +2644,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="initialAngl">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="tooltip_text" translatable="yes">In degrees, random angle is used if zero (default).</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Initial Angle: </property>
@@ -2467,22 +2658,22 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="distSizeRingHBox1">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="initialAngleSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="tooltip_text" translatable="yes">In degrees, random angle is used if zero (default).</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">initialAngle</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2499,6 +2690,8 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2513,6 +2706,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="hbox17">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="homogeneous">True</property>
                                 <child>
                                   <object class="GtkRadioButton" id="orientationView">
@@ -2520,11 +2714,14 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="xalign">0.5899999737739563</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2534,10 +2731,13 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">orientationView</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2547,10 +2747,13 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">orientationView</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
@@ -2560,10 +2763,13 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">orientationView</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">3</property>
                                   </packing>
                                 </child>
@@ -2573,10 +2779,13 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">orientationView</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">4</property>
                                   </packing>
                                 </child>
@@ -2591,6 +2800,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="label29">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Trails:</property>
                               </object>
@@ -2602,21 +2812,21 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="aimedTimeHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="aimedTimeSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">aimedTime</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2632,6 +2842,8 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2646,20 +2858,20 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="aimedTrailsHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="aimedTrailsSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">aimedTrails</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2675,6 +2887,8 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2696,6 +2910,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                     <child type="tab">
                       <object class="GtkLabel" id="label24">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Direction / Orientation</property>
                       </object>
                       <packing>
@@ -2706,6 +2921,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                     <child>
                       <object class="GtkAlignment" id="alignment8">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="yalign">0</property>
                         <property name="yscale">0</property>
                         <property name="top_padding">6</property>
@@ -2715,6 +2931,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                         <child>
                           <object class="GtkTable" id="table6">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="n_rows">7</property>
                             <property name="n_columns">2</property>
                             <property name="column_spacing">6</property>
@@ -2722,6 +2939,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="label46">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Path Type: </property>
                               </object>
@@ -2732,21 +2950,21 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="pathRadialSpeedHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="pathRadialSpeedSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathRadialSpeed</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2762,6 +2980,8 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2776,6 +2996,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkLabel" id="pathRadialSpeedLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Radial Speed: </property>
                               </object>
@@ -2788,6 +3009,7 @@ Values &lt; 1.0 didn't have any effect.</property>
                             <child>
                               <object class="GtkHBox" id="hbox27">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkRadioButton" id="pathStandard">
@@ -2795,11 +3017,13 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">False</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="active">True</property>
                                     <property name="draw_indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2812,11 +3036,13 @@ Values &lt; 1.0 didn't have any effect.</property>
                                     <property name="tooltip_text" translatable="yes">"Flies" particles are moving on the surface of a sphere of the given radius.
 The radial and axial speeds are chosen at random (but never 0) and are constant during the lifetime of a particle.
 Starting position appears to be random, but different to the "distribution sphere" type (i.e. it is not evenly distributed, instead the particles seem to bunch themselves at the poles).</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">pathStandard</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2828,10 +3054,13 @@ Starting position appears to be random, but different to the "distribution spher
                                     <property name="receives_default">False</property>
                                     <property name="tooltip_text" translatable="yes">Helical movement is describing an elliptic cylinder, its shape is determined by sizeX, sizeY and sizeZ.
 Particles are spawned randomly on that cylinder surface, their velocities (radial and axial) are also random (both negative and positive velocities are allowed).</property>
+                                    <property name="use_action_appearance">False</property>
                                     <property name="draw_indicator">True</property>
                                     <property name="group">pathStandard</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
@@ -2844,21 +3073,21 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkHBox" id="pathAxialSpeedsHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="pathAxialSpeedSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathAxialSpeed</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2874,6 +3103,8 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2888,21 +3119,21 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkHBox" id="pathSizeXHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="pathSizeXSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathSizeX</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2918,6 +3149,8 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2932,21 +3165,21 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkHBox" id="pathSphereRadiusHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="pathRadiusSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathRadius</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -2962,6 +3195,8 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -2976,21 +3211,21 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkHBox" id="pathSizeYHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="pathSizeYSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathSizeY</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -3006,6 +3241,8 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -3020,21 +3257,21 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkHBox" id="pathSizeZHBox">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="pathSizeZSpinner">
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
-                                    <property name="invisible_char">&#x25CF;</property>
+                                    <property name="invisible_char">●</property>
                                     <property name="width_chars">5</property>
                                     <property name="invisible_char_set">True</property>
-                                    <property name="primary_icon_sensitive">True</property>
-                                    <property name="secondary_icon_sensitive">True</property>
                                     <property name="adjustment">pathSizeZ</property>
                                     <property name="digits">2</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -3050,6 +3287,8 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                                     <property name="value_pos">left</property>
                                   </object>
                                   <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -3064,6 +3303,7 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkLabel" id="pathAxialSpeedLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Axial Speed: </property>
                               </object>
@@ -3076,6 +3316,7 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkLabel" id="pathSizeXLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Cylinder Size X:  </property>
                               </object>
@@ -3088,6 +3329,7 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkLabel" id="pathRadiusLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Sphere Radius: </property>
                               </object>
@@ -3100,6 +3342,7 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkLabel" id="pathSizeYLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Cylinder Size Y: </property>
                               </object>
@@ -3112,6 +3355,7 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                             <child>
                               <object class="GtkLabel" id="pathSizeZLabel">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="xalign">0</property>
                                 <property name="label" translatable="yes">Cylinder Size Z: </property>
                               </object>
@@ -3131,6 +3375,7 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
                     <child type="tab">
                       <object class="GtkLabel" id="label45">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Path</property>
                       </object>
                       <packing>
@@ -3143,13 +3388,14 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
               </object>
               <packing>
                 <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">5</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="resize">False</property>
-            <property name="shrink">True</property>
+            <property name="shrink">False</property>
           </packing>
         </child>
         <child>
@@ -3157,29 +3403,23 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
         </child>
       </object>
       <packing>
+        <property name="expand">True</property>
+        <property name="fill">True</property>
         <property name="position">0</property>
       </packing>
     </child>
     <child>
       <object class="GtkHBox" id="buttonHbox">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <property name="spacing">6</property>
-        <child>
-          <object class="GtkLabel" id="outFileLabel">
-            <property name="visible">True</property>
-            <property name="xalign">0</property>
-            <property name="use_markup">True</property>
-          </object>
-          <packing>
-            <property name="position">1</property>
-          </packing>
-        </child>
         <child>
           <object class="GtkButton" id="closeButton">
             <property name="label">gtk-close</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="use_action_appearance">False</property>
             <property name="use_stock">True</property>
           </object>
           <packing>
@@ -3189,9 +3429,23 @@ Particles are spawned randomly on that cylinder surface, their velocities (radia
             <property name="position">0</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkLabel" id="outFileLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="xalign">0</property>
+            <property name="use_markup">True</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
       </object>
       <packing>
         <property name="expand">False</property>
+        <property name="fill">True</property>
         <property name="position">1</property>
       </packing>
     </child>
