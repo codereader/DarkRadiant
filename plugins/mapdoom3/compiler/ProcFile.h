@@ -163,7 +163,7 @@ struct ProcOptimizeGroup
 
 struct ProcArea
 {
-	typedef std::vector<ProcOptimizeGroup> OptimizeGroups;
+	typedef std::list<ProcOptimizeGroup> OptimizeGroups;
 	OptimizeGroups	groups;
 };
 

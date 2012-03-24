@@ -863,7 +863,7 @@ void OptIsland::regenerateTriangles()
 			continue;
 		}
 
-		_group.regeneratedTris.push_back(tri);
+		_group.regeneratedTris.push_front(tri);
 
 		numOut++;
 	}

@@ -15,17 +15,17 @@ std::size_t countUniqueShaders(const ProcArea::OptimizeGroups& groups)
 {
 	std::size_t count = 0;
 
-	for (ProcArea::OptimizeGroups::const_reverse_iterator a = groups.rbegin(); 
-		 a != groups.rend(); ++a)
+	for (ProcArea::OptimizeGroups::const_iterator a = groups.begin(); 
+		 a != groups.end(); ++a)
 	{
 		if (a->triList.empty())
 		{	
 			continue; // ignore groups with no tris
 		}
 
-		ProcArea::OptimizeGroups::const_reverse_iterator b;
+		ProcArea::OptimizeGroups::const_iterator b;
 
-		for (b = groups.rbegin(); b != a; ++b)
+		for (b = groups.begin(); b != a; ++b)
 		{
 			if (b->triList.empty())
 			{
@@ -61,8 +61,8 @@ struct InteractionTris
 };
 typedef std::vector<InteractionTris> InteractionTrisList;
 
-bool groupsAreSurfaceCompatible(ProcArea::OptimizeGroups::reverse_iterator a, 
-								ProcArea::OptimizeGroups::reverse_iterator b)
+bool groupsAreSurfaceCompatible(ProcArea::OptimizeGroups::iterator a, 
+								ProcArea::OptimizeGroups::iterator b)
 {
 	if (a->material != b->material)
 	{
@@ -213,8 +213,8 @@ void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t area
 
 	std::size_t surfaceNum = 0;
 
-	for (ProcArea::OptimizeGroups::reverse_iterator group = area.groups.rbegin(); 
-		 group != area.groups.rend(); ++group)
+	for (ProcArea::OptimizeGroups::iterator group = area.groups.begin(); 
+		 group != area.groups.end(); ++group)
 	{
 		if (group->surfaceEmitted)
 		{
@@ -232,8 +232,8 @@ void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t area
 		// get its own list of indexes out of the original surface
 		InteractionTrisList interactions;
 
-		for (ProcArea::OptimizeGroups::reverse_iterator groupStep = group; 
-			 groupStep != area.groups.rend(); ++groupStep)
+		for (ProcArea::OptimizeGroups::iterator groupStep = group; 
+			 groupStep != area.groups.end(); ++groupStep)
 		{
 			if (groupStep->surfaceEmitted)
 			{

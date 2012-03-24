@@ -89,8 +89,8 @@ public:
 	void hashTriangles(ProcArea::OptimizeGroups& groups)
 	{
 		// add all the points to the hash buckets
-		for (ProcArea::OptimizeGroups::reverse_iterator group = groups.rbegin();
-			 group != groups.rend(); ++group)
+		for (ProcArea::OptimizeGroups::iterator group = groups.begin();
+			 group != groups.end(); ++group)
 		{
 			// don't create tjunctions against discrete surfaces (blood decals, etc)
 			if (group->material && group->material->isDiscrete())

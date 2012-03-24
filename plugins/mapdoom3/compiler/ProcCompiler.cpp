@@ -179,8 +179,8 @@ public:
 				tri.material = material;
 			}
 
-			globalOutputStream() << "Parsed surface from prim #" << (_entityPrimitive-1) << ": " << _entity.primitives.back().patch.size() << " tris, "
-				<< material->getName() << std::endl;
+			/*globalOutputStream() << "Parsed surface from prim #" << (_entityPrimitive-1) << ": " << _entity.primitives.back().patch.size() << " tris, "
+				<< material->getName() << std::endl;*/
 
 #if 0
 			// Get the tesselated mesh
@@ -2206,8 +2206,8 @@ ProcTris ProcCompiler::triangleListForSide(const ProcFace& side, const ProcWindi
 
 	for (std::size_t i = 2; i < winding.size(); ++i)
 	{
-		triList.push_back(ProcTri());
-		ProcTri& tri = triList.back();
+		triList.push_front(ProcTri());
+		ProcTri& tri = triList.front();
 
 		tri.material = si;	
 		
@@ -2407,9 +2407,12 @@ void ProcCompiler::addTriListToArea(ProcEntity& entity, const ProcTris& triList,
 
 	if (group == area.groups.end())
 	{
-		area.groups.push_back(ProcOptimizeGroup());
-		std::size_t oldSize = area.groups.size();
-		group = area.groups.end() - 1;
+		//std::size_t oldSize = area.groups.size();
+
+		area.groups.push_front(ProcOptimizeGroup());
+		group = area.groups.begin();
+
+		//globalOutputStream() << (boost::format("Adding group from plane %d after %d\n") % planeNum % oldSize);
 
 		group->numGroupLights = 0;
 		group->smoothed = false;
@@ -2719,8 +2722,8 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 		
 				globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
 
-				for (ProcArea::OptimizeGroups::const_reverse_iterator g = entity.areas[a].groups.rbegin(); 
-					g != entity.areas[a].groups.rend(); ++g)
+				for (ProcArea::OptimizeGroups::const_iterator g = entity.areas[a].groups.begin(); 
+					g != entity.areas[a].groups.end(); ++g)
 				{
 					globalOutputStream() << "  plane " << g->planeNum << ", " <<
 						g->triList.size() << " tris" << std::endl;
@@ -2752,8 +2755,8 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 		
 			globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
 
-			for (ProcArea::OptimizeGroups::const_reverse_iterator g = entity.areas[a].groups.rbegin(); 
-				g != entity.areas[a].groups.rend(); ++g)
+			for (ProcArea::OptimizeGroups::const_iterator g = entity.areas[a].groups.begin(); 
+				g != entity.areas[a].groups.end(); ++g)
 			{
 				globalOutputStream() << "  plane " << g->planeNum << ", " <<
 					g->triList.size() << " tris" << std::endl;
@@ -2869,16 +2872,17 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 		}
 	}
 
-	/*// Print result
-	for (std::size_t a = 0; a < entity.areas.size(); ++a)
+	// Print result
+	/*for (std::size_t a = 0; a < entity.areas.size(); ++a)
 	{
 		globalOutputStream() << "Area " << a << ": ";
 		
 		globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
 
-		for (std::size_t g = 0; g < entity.areas[a].groups.size(); ++g)
+		std::size_t count = 0;
+		for (ProcArea::OptimizeGroups::const_iterator g = entity.areas[a].groups.begin(); g != entity.areas[a].groups.end(); ++g, ++count)
 		{
-			globalOutputStream() << "  Group " << g << ": Plane " << entity.areas[a].groups[g].planeNum << std::endl;
+			globalOutputStream() << (boost::format("  Group %d, plane %d, %d tris\n") % count % g->planeNum % g->triList.size());
 		}
 	}*/
 }
@@ -2996,8 +3000,8 @@ void ProcCompiler::fixAreaGroupsTjunctions(ProcArea::OptimizeGroups& groups)
 
 	hashTriangles(groups);
 
-	for (ProcArea::OptimizeGroups::reverse_iterator group = groups.rbegin();
-		 group != groups.rend(); ++group)
+	for (ProcArea::OptimizeGroups::iterator group = groups.begin();
+		 group != groups.end(); ++group)
 	{
 		// don't touch discrete surfaces
 		if (group->material && group->material->isDiscrete())
@@ -3447,8 +3451,8 @@ void ProcCompiler::optimizeOptList(ProcOptimizeGroup& group)
 
 void ProcCompiler::setGroupTriPlaneNums(ProcArea::OptimizeGroups& groupList)
 {
-	for (ProcArea::OptimizeGroups::reverse_iterator group = groupList.rbegin(); 
-		 group != groupList.rend(); ++group)
+	for (ProcArea::OptimizeGroups::iterator group = groupList.begin(); 
+		 group != groupList.end(); ++group)
 	{
 		for (ProcTris::iterator tri = group->triList.begin(); tri != group->triList.end(); ++tri)
 		{
@@ -3465,8 +3469,8 @@ void ProcCompiler::optimizeGroupList(ProcArea::OptimizeGroups& groupList)
 
 	// optimize and remove colinear edges, which will
 	// re-introduce some t junctions
-	for (ProcArea::OptimizeGroups::reverse_iterator group = groupList.rbegin(); 
-		 group != groupList.rend(); ++group)
+	for (ProcArea::OptimizeGroups::iterator group = groupList.begin(); 
+		 group != groupList.end(); ++group)
 	{
 		optimizeOptList(*group);
 	}
@@ -4629,8 +4633,8 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
 	// combine all the triangles into one list
 	ProcTris combined;
 
-	for (ProcArea::OptimizeGroups::reverse_iterator group = shadowerGroups.rbegin(); 
-		 group != shadowerGroups.rend(); ++group)
+	for (ProcArea::OptimizeGroups::iterator group = shadowerGroups.begin(); 
+		 group != shadowerGroups.end(); ++group)
 	{
 		combined.insert(combined.end(), group->triList.begin(), group->triList.end());
 	}
@@ -4712,8 +4716,8 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 
 			int groupNum = 0;
 
-			for (ProcArea::OptimizeGroups::const_reverse_iterator group = area.groups.rbegin(); 
-				 group != area.groups.rend(); ++group, ++groupNum)
+			for (ProcArea::OptimizeGroups::const_iterator group = area.groups.begin(); 
+				 group != area.groups.end(); ++group, ++groupNum)
 			{
 				//globalOutputStream() << (boost::format("Group %d: %d tris (%s) Plane %d ") % groupNum % group->triList.size() % group->material->getName() % group->planeNum);
 
@@ -4754,8 +4758,20 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 					ProcTris out;
 
 					clipTriByLight(light, *tri, in, out);
-					
-					shadowers.insert(shadowers.end(), in.begin(), in.end());
+
+					/*globalOutputStream() << "in: ";
+
+					for (ProcTris::const_iterator t = in.begin(); t != in.end(); ++t)
+					{
+						globalOutputStream() << (boost::format("\t<%f, %f, %f> | <%f, %f, %f> | <%f, %f, %f>\n") % 
+							t->v[0].vertex[0] % t->v[0].vertex[1] % t->v[0].vertex[2] %
+							t->v[1].vertex[0] % t->v[1].vertex[1] % t->v[1].vertex[2] %
+							t->v[2].vertex[0] % t->v[2].vertex[1] % t->v[2].vertex[2]);
+					}
+
+					globalOutputStream() << std::endl;*/
+
+					shadowers.insert(shadowers.end(), in.begin(), in.end()); 
 				}
 
 				// if we didn't get any out of this group, we don't
@@ -4783,8 +4799,8 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 
 				if (check == shadowerGroups.end())
 				{
-					shadowerGroups.push_back(*group);
-					check = shadowerGroups.end() - 1;
+					shadowerGroups.push_front(*group);
+					check = shadowerGroups.begin();
 					check->triList.clear(); // don't inherit the triangles of the other group
 					//globalOutputStream() << "sorting into new group with plane " << check->planeNum << ", ";
 				}
@@ -4800,6 +4816,18 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 				check->triList.insert(check->triList.end(), shadowers.begin(), shadowers.end());
 
 				//globalOutputStream() << "has " << check->triList.size() << " tris now" << std::endl;
+
+				/*globalOutputStream() << "check->triList: ";
+
+				for (ProcTris::const_iterator t = check->triList.begin(); t != check->triList.end(); ++t)
+				{
+					globalOutputStream() << (boost::format("\t<%f, %f, %f> | <%f, %f, %f> | <%f, %f, %f>\n") % 
+						t->v[0].vertex[0] % t->v[0].vertex[1] % t->v[0].vertex[2] %
+						t->v[1].vertex[0] % t->v[1].vertex[1] % t->v[1].vertex[2] %
+						t->v[2].vertex[0] % t->v[2].vertex[1] % t->v[2].vertex[2]);
+				}
+
+				globalOutputStream() << std::endl;*/
 			}
 		}
 	}
@@ -4834,8 +4862,8 @@ void ProcCompiler::preLight(ProcEntity& entity)
 		{
 			ProcArea& area = entity.areas[i];
 
-			for (ProcArea::OptimizeGroups::reverse_iterator group = area.groups.rbegin();
-				 group != area.groups.rend(); ++group)
+			for (ProcArea::OptimizeGroups::iterator group = area.groups.begin();
+				 group != area.groups.end(); ++group)
 			{
 				boundOptimizeGroup(*group);
 			}
@@ -4971,8 +4999,8 @@ void ProcCompiler::fixGlobalTjunctions(ProcEntity& entity)
 	// now fix each area
 	for (std::size_t a = 0; a < entity.areas.size(); ++a)
 	{
-		for (ProcArea::OptimizeGroups::reverse_iterator group = entity.areas[a].groups.rbegin();
-			 group != entity.areas[a].groups.rend(); ++group)
+		for (ProcArea::OptimizeGroups::iterator group = entity.areas[a].groups.begin();
+			 group != entity.areas[a].groups.end(); ++group)
 		{
 			// don't touch discrete surfaces
 			if (group->material && group->material->isDiscrete())
