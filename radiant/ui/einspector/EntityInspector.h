@@ -33,6 +33,7 @@ namespace Gtk
 
 class Entity;
 class Selectable;
+class EntityClassAttribute;
 
 namespace ui
 {
@@ -193,6 +194,7 @@ private:
     static std::string  cleanInputString( const std::string& );
 
     // Add and remove inherited properties from the entity class
+    void addClassAttribute(const EntityClassAttribute& a);
     void addClassProperties();
     void removeClassProperties();
 

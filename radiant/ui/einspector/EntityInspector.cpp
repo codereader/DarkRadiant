@@ -923,6 +923,28 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
 	return returnValue;
 }
 
+void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
+{
+    // Only add properties with values, we don't want the optional
+    // "editor_var xxx" properties here.
+    if (!a.getValue().empty())
+    {
+        bool hasDescription = !a.getDescription().empty();
+
+        Gtk::TreeModel::Row row = *_kvStore->append();
+
+        row[_columns->name] = a.getName();
+        row[_columns->value] = a.getValue();
+        row[_columns->colour] = "#707070";
+        row[_columns->icon] = Glib::RefPtr<Gdk::Pixbuf>();
+        row[_columns->isInherited] = true;
+        row[_columns->hasHelpText] = hasDescription;
+        row[_columns->helpIcon] = hasDescription
+                              ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
+                              : Glib::RefPtr<Gdk::Pixbuf>();
+    }
+}
+
 // Append inherited (entityclass) properties
 void EntityInspector::addClassProperties()
 {
@@ -932,52 +954,10 @@ void EntityInspector::addClassProperties()
         className, true
     );
 
-	// Use a functor to walk the entityclass and add all of its attributes
-	// to the tree
-	class ClassPropertyVisitor
-	: public EntityClassAttributeVisitor
-	{
-		// List store to populate
-		Glib::RefPtr<Gtk::ListStore> _store;
-
-		const EntityInspector::ListStoreColumns& _columns;
-
-    public:
-
-		// Constructor
-		ClassPropertyVisitor(const Glib::RefPtr<Gtk::ListStore>& store,
-							 const EntityInspector::ListStoreColumns& columns)
-		: _store(store),
-		  _columns(columns)
-		{}
-
-		// Required visitor function
-		void visit(const EntityClassAttribute& a)
-        {
-			// Only add properties with values, we don't want the optional
-			// "editor_var xxx" properties here.
-			if (!a.getValue().empty())
-            {
-				bool hasDescription = !a.getDescription().empty();
-
-				Gtk::TreeModel::Row row = *_store->append();
-
-				row[_columns.name] = a.getName();
-				row[_columns.value] = a.getValue();
-				row[_columns.colour] = "#707070";
-				row[_columns.icon] = Glib::RefPtr<Gdk::Pixbuf>();
-				row[_columns.isInherited] = true;
-				row[_columns.hasHelpText] = hasDescription;
-				row[_columns.helpIcon] = hasDescription
-                                      ? GlobalUIManager().getLocalPixbuf(HELP_ICON_NAME)
-                                      : Glib::RefPtr<Gdk::Pixbuf>();
-			}
-		}
-	};
-
 	// Visit the entity class
-	ClassPropertyVisitor visitor(_kvStore, *_columns);
-	eclass->forEachClassAttribute(visitor);
+	eclass->forEachClassAttribute(
+        boost::bind(&EntityInspector::addClassAttribute, this, _1)
+    );
 }
 
 // Remove the inherited properties

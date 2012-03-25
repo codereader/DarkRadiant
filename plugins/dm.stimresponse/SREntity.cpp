@@ -53,7 +53,8 @@ int SREntity::getHighestIndex()
 	return index;
 }
 
-void SREntity::load(Entity* source) {
+void SREntity::load(Entity* source)
+{
 	// Clear all the items from the liststore
 	_stimStore->clear();
 	_responseStore->clear();
@@ -71,7 +72,7 @@ void SREntity::load(Entity* source) {
 	// and the target list where all the S/Rs are stored
 	// Warning messages are stored in the <_warnings> string
 	SRPropertyLoader visitor(_keys, _list, _warnings);
-	eclass->forEachClassAttribute(visitor);
+	eclass->forEachClassAttribute(boost::ref(visitor));
 
 	// Scan the entity itself after the class has been searched
 	source->forEachKeyValue(visitor);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iregistry.h"
+#include "string/convert.h"
 
 #include <boost/noncopyable.hpp>
 
@@ -15,14 +16,7 @@ namespace registry
  */
 template<typename T> void setValue(const std::string& key, const T& value)
 {
-    try
-    {
-        GlobalRegistry().set(key, boost::lexical_cast<std::string>(value));
-    }
-    catch (const boost::bad_lexical_cast&)
-    {
-        GlobalRegistry().set(key, "");
-    }
+    GlobalRegistry().set(key, string::convert<std::string>(value, ""));
 }
 
 /**
@@ -36,16 +30,14 @@ template<typename T> void setValue(const std::string& key, const T& value)
  */
 template<typename T> T getValue(const std::string& key, T defaultVal = T())
 {
-    try
+    if (GlobalRegistry().keyExists(key))
     {
-        if (GlobalRegistry().keyExists(key))
-        {
-            return boost::lexical_cast<T>(GlobalRegistry().get(key));
-        }
+        return string::convert<T>(GlobalRegistry().get(key));
     }
-    catch (const boost::bad_lexical_cast&) { }
-
-    return defaultVal;
+    else
+    {
+        return defaultVal;
+    }
 }
 
 /**

@@ -113,9 +113,7 @@ namespace
  * parent iter.
  */
 class CustomPropertyAdder
-: public EntityClassAttributeVisitor
 {
-private:
 	// Treestore to add to
 	Glib::RefPtr<Gtk::TreeStore> _store;
 
@@ -141,7 +139,7 @@ public:
 	{ }
 
 	// Required visit function
-	void visit(const EntityClassAttribute& attr)
+	void operator() (const EntityClassAttribute& attr)
 	{
 		// greebo: Only add the property if it hasn't been set directly on the entity itself.
 		if (!_entity->getKeyValue(attr.getName()).empty() && !_entity->isInherited(attr.getName()))
@@ -190,7 +188,7 @@ void AddPropertyDialog::populateTreeView()
 		// Use a CustomPropertyAdder class to visit the entityclass and add all
 		// custom properties from it
 		CustomPropertyAdder adder(_entity, _treeStore, _columns, cn);
-		_entity->getEntityClass()->forEachClassAttribute(adder);
+		_entity->getEntityClass()->forEachClassAttribute(boost::ref(adder));
 	}
 
 	/* REGISTRY (GAME FILE) DEFINED PROPERTIES */

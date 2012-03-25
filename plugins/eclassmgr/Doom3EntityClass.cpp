@@ -1,16 +1,25 @@
 #include "Doom3EntityClass.h"
-#include "AttributeCopyingVisitor.h"
 #include "AttributeSuffixComparator.h"
 
 #include "itextstream.h"
 #include "iuimanager.h"
 #include "os/path.h"
+#include "string/convert.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/erase.hpp>
+#include <boost/bind.hpp>
 
 namespace eclass
 {
+
+namespace
+{
+    const std::string DEF_ATTACH = "def_attach";
+    const std::string NAME_ATTACH = "name_attach";
+    const std::string POS_ATTACH = "pos_attach";
+}
 
 // Constructor
 Doom3EntityClass::Doom3EntityClass(const std::string& name,
@@ -88,9 +97,9 @@ void Doom3EntityClass::setColour(const Vector3& colour)
 	_colourSpecified = true;
 
 	_colour = colour;
-	
+
 	// Set the entity colour to default, if none was specified
-	if (_colour == Vector3(-1, -1, -1)) 
+	if (_colour == Vector3(-1, -1, -1))
 	{
 		_colour = ColourSchemes().getColour("default_entity");
 	}
@@ -166,7 +175,7 @@ Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name, bool brush
 
 // Enumerate entity class attributes
 void Doom3EntityClass::forEachClassAttribute(
-	EntityClassAttributeVisitor& visitor,
+	boost::function<void(const EntityClassAttribute&)> visitor,
 	bool editorKeys) const
 {
 	for (EntityAttributeMap::const_iterator i = _attributes.begin();
@@ -175,8 +184,19 @@ void Doom3EntityClass::forEachClassAttribute(
 	{
 		// Visit if it is a non-editor key or we are visiting all keys
 		if (editorKeys || !boost::algorithm::istarts_with(*i->first, "editor_"))
-			visitor.visit(i->second);
+        {
+			visitor(i->second);
+        }
 	}
+}
+
+namespace
+{
+    void copyInheritedAttribute(IEntityClass& target,
+                                const EntityClassAttribute& attr)
+    {
+		target.addAttribute(EntityClassAttribute(attr, true));
+    }
 }
 
 // Resolve inheritance for this class
@@ -201,8 +221,9 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 		pIter->second->resolveInheritance(classmap);
 
 		// Copy attributes from the parent to the child, including editor keys
-		AttributeCopyingVisitor visitor(*this);
-		pIter->second->forEachClassAttribute(visitor, true);
+		pIter->second->forEachClassAttribute(
+            boost::bind(&copyInheritedAttribute, *this, _1), true
+        );
 	}
 	else {
 		globalWarningStream() << "[eclassmgr] Entity class "
@@ -314,6 +335,89 @@ void Doom3EntityClass::clear()
 	// Leave the empty attribute alone
 
 	_inheritanceChain.clear();
+    _attachments.clear();
+}
+
+void Doom3EntityClass::parseEditorSpawnarg(const std::string& key,
+                                           const std::string& value)
+{
+    // "editor_yyy" represents an attribute that may be set on this
+    // entity. Construct a value-less EntityClassAttribute to add to
+    // the class, so that it will show in the entity inspector.
+
+    // Locate the space in "editor_bool myVariable", starting after "editor_"
+    std::size_t spacePos = key.find(' ', 7);
+
+    // Only proceed if we have a space (some keys like "editor_displayFolder"
+    // don't have spaces)
+    if (spacePos != std::string::npos)
+    {
+        // The part beyond the space is the name of the attribute
+        std::string attName = key.substr(spacePos + 1);
+
+        // Get the type by trimming the string left and right
+        std::string type = key.substr(7, key.length() - attName.length() - 8);
+
+        if (!attName.empty() && type != "setKeyValue") // Ignore editor_setKeyValue
+        {
+            // Transform the type into a better format
+            if (type == "var" || type == "string")
+            {
+                type = "text";
+            }
+
+            // Construct an attribute with empty value, but with valid
+            // description
+            addAttribute(EntityClassAttribute(type, attName, "", value));
+        }
+    }
+}
+
+namespace
+{
+
+// Return 0 for no numeric suffix, n for a suffix of n and boost::none if
+// the key did not match the prefix
+boost::optional<unsigned> numberedKey(const std::string& key,
+                                      const std::string& prefix)
+{
+    if (boost::algorithm::istarts_with(key, prefix))
+    {
+        std::string suffixStr = boost::algorithm::erase_first_copy(key, prefix);
+        if (!suffixStr.empty())
+        {
+            return string::convert<unsigned>(suffixStr, 0);
+        }
+        else
+        {
+            return 0u;
+        }
+    }
+    else
+    {
+        return boost::none;
+    }
+}
+
+}
+
+void Doom3EntityClass::parseDefAttachKeys(const std::string& key,
+                                          const std::string& value)
+{
+    boost::optional<unsigned> keyNum;
+
+    if (keyNum = numberedKey(key, DEF_ATTACH))
+    {
+        _attachments[*keyNum].className = value;
+    }
+    else if (keyNum = numberedKey(key, NAME_ATTACH))
+    {
+        _attachments[*keyNum].name = value;
+    }
+    else if (keyNum = numberedKey(key, POS_ATTACH))
+    {
+        _attachments[*keyNum].posName = value;
+    }
 }
 
 void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
@@ -325,19 +429,12 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
     tokeniser.assertNextToken("{");
 
     // Loop over all of the keys in this entitydef
-    while (true)
+    std::string key;
+    while ((key = tokeniser.nextToken()) != "}")
 	{
-        const std::string key = tokeniser.nextToken();
-
-        if (key == "}")
-		{
-        	break; // end of def
-        }
-
         const std::string value = tokeniser.nextToken();
 
-        // Otherwise, switch on the key name
-
+        // Handle some keys specially
         if (key == "model")
 		{
         	setModelPath(os::standardPath(value));
@@ -356,36 +453,12 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         }
 		else if (boost::algorithm::istarts_with(key, "editor_"))
 		{
-			// "editor_yyy" represents an attribute that may be set on this
-        	// entity. Construct a value-less EntityClassAttribute to add to
-        	// the class, so that it will show in the entity inspector.
-
-			// Locate the space in "editor_bool myVariable", starting after "editor_"
-			std::size_t spacePos = key.find(' ', 7);
-
-			// Only proceed if we have a space (some keys like "editor_displayFolder" don't have spaces)
-			if (spacePos != std::string::npos)
-			{
-				// The part beyond the space is the name of the attribute
-				std::string attName = key.substr(spacePos + 1);
-
-				// Get the type by trimming the string left and right
-				std::string type = key.substr(7, key.length() - attName.length() - 8);
-
-				if (!attName.empty() && type != "setKeyValue") // Ignore editor_setKeyValue
-				{
-					// Transform the type into a better format
-					if (type == "var" || type == "string")
-					{
-						type = "text";
-					}
-
-					// Construct an attribute with empty value, but with valid description
-        			addAttribute(EntityClassAttribute(type, attName, "", value));
-        		}
-			}
+            parseEditorSpawnarg(key, value);
 		}
 
+        parseDefAttachKeys(key, value);
+
+        // Add the EntityClassAttribute for this key/val
 		if (getAttribute(key).getType().empty())
 		{
 			// Following key-specific processing, add the keyvalue to the eclass

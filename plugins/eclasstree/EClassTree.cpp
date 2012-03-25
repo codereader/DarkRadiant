@@ -151,42 +151,31 @@ Gtk::Widget& EClassTree::createButtons()
 	return *Gtk::manage(new gtkutil::RightAlignment(*buttonHBox));
 }
 
+void EClassTree::addToListStore(const EntityClassAttribute& attr)
+{
+    // Append the details to the treestore
+    Gtk::TreeModel::Row row = *_propertyStore->append();
+
+    row[_propertyColumns.name] = attr.getName();
+    row[_propertyColumns.value] = attr.getValue();
+    row[_propertyColumns.colour] = attr.inherited ? "#666666" : "black";
+    row[_propertyColumns.inherited] = attr.inherited ? "1" : "0";
+}
+
 void EClassTree::updatePropertyView(const std::string& eclassName)
 {
 	// Clear the existing list
 	_propertyStore->clear();
 
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
-	if (eclass == NULL) {
+	if (eclass == NULL)
+    {
 		return;
 	}
 
-	class ListStorePopulator :
-		public EntityClassAttributeVisitor
-	{
-		Glib::RefPtr<Gtk::ListStore> _listStore;
-		const PropertyListColumns& _columns;
-	public:
-		ListStorePopulator(const Glib::RefPtr<Gtk::ListStore>& targetStore,
-						   const PropertyListColumns& columns) :
-			_listStore(targetStore),
-			_columns(columns)
-		{}
-
-		virtual void visit(const EntityClassAttribute& attr)
-		{
-			// Append the details to the treestore
-			Gtk::TreeModel::Row row = *_listStore->append();
-
-			row[_columns.name] = attr.getName();
-			row[_columns.value] = attr.getValue();
-			row[_columns.colour] = attr.inherited ? "#666666" : "black";
-			row[_columns.inherited] = attr.inherited ? "1" : "0";
-		}
-	};
-
-	ListStorePopulator populator(_propertyStore, _propertyColumns);
-	eclass->forEachClassAttribute(populator, true);
+	eclass->forEachClassAttribute(
+        boost::bind(&EClassTree::addToListStore, this, _1), true
+    );
 }
 
 void EClassTree::_preShow()

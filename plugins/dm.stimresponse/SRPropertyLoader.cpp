@@ -22,7 +22,8 @@ void SRPropertyLoader::visit(const std::string& key, const std::string& value) {
 	parseAttribute(key, value, false);
 }
 
-void SRPropertyLoader::visit(const EntityClassAttribute& attribute) {
+void SRPropertyLoader::operator() (const EntityClassAttribute& attribute)
+{
 	parseAttribute(attribute.getName(), attribute.getValue(), true);
 }
 

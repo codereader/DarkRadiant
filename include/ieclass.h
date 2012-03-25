@@ -200,23 +200,6 @@ public:
 typedef std::vector<EntityClassAttribute> EntityClassAttributeList;
 
 /**
- * Visitor class for EntityClassAttributes.
- *
- * \ingroup eclass
- */
-struct EntityClassAttributeVisitor {
-    virtual ~EntityClassAttributeVisitor() {}
-
-	/**
-	 * Visit function.
-	 *
-	 * @param attr
-	 * The current EntityClassAttribute to visit.
-	 */
-	virtual void visit(const EntityClassAttribute&) = 0;
-};
-
-/**
  * IEntityClass shared pointer.
  */
 class IEntityClass;
@@ -342,16 +325,17 @@ public:
 	/**
 	 * Enumerate the EntityClassAttibutes in turn.
 	 *
-	 * @param visitor
-	 * An EntityClassAttributeVisitor instance.
+	 * \param visitor
+	 * Function that will be invoked for each EntityClassAttibute.
 	 *
-	 * @param editorKeys
+	 * \param editorKeys
 	 * true if editor keys (those which start with "editor_") should be passed
 	 * to the visitor, false if they should be skipped.
 	 */
-	virtual void forEachClassAttribute(EntityClassAttributeVisitor& visitor,
-									   bool editorKeys = false) const = 0;
-
+	virtual void forEachClassAttribute(
+        boost::function<void(const EntityClassAttribute&)> visitor,
+        bool editorKeys = false
+    ) const = 0;
 
 	/* MODEL AND SKIN */
 

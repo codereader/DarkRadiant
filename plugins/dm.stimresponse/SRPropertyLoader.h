@@ -6,9 +6,7 @@
 #include "SREntity.h"
 #include "StimTypes.h"
 
-class SRPropertyLoader :
-	public Entity::Visitor,
-	public EntityClassAttributeVisitor
+class SRPropertyLoader : public Entity::Visitor
 {
 	// The reference to the list of possible key names
 	SREntity::KeyList& _keys;
@@ -31,8 +29,8 @@ public:
 	// Entity::Visitor implementation
 	void visit(const std::string& key, const std::string& value);
 
-	// EntityClassAttributeVisitor implementation
-	void visit(const EntityClassAttribute& attribute);
+	// operator() for IEntityClass::forEachEntityClass
+	void operator() (const EntityClassAttribute& attribute);
 
 private:
 
