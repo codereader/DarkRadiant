@@ -17,10 +17,10 @@ class RenderStatistics {
 public:
 	const std::string& getStatString() {
 		_statStr.clear();
-		_statStr = "prims: " + sizetToStr(_countPrims) +
-				  " | states: " + sizetToStr(_countStates) +
-				  " | transforms: "	+ sizetToStr(_countTransforms) +
-				  " | msec: " + intToStr(_timer.elapsed_msec());
+        _statStr = "prims: " + string::to_string(_countPrims) +
+				  " | states: " + string::to_string(_countStates) +
+				  " | transforms: "	+ string::to_string(_countTransforms) +
+				  " | msec: " + string::to_string(_timer.elapsed_msec());
 		return _statStr;
 	}
 

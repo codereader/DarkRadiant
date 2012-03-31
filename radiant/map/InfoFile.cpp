@@ -1,7 +1,7 @@
 #include "InfoFile.h"
 
 #include "itextstream.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include "i18n.h"
 #include <boost/algorithm/string/split.hpp>
@@ -121,7 +121,7 @@ void InfoFile::parseLayerNames() {
 		if (token == LAYER) {
 			// Get the ID
 			std::string layerIDStr = _tok.nextToken();
-			int layerID = strToInt(layerIDStr);
+			int layerID = string::convert<int>(layerIDStr);
 
 			_tok.assertNextToken("{");
 
@@ -169,7 +169,7 @@ void InfoFile::parseNodeToLayerMapping() {
 				}
 
 				// Add the ID to the list
-				_layerMappings.back().insert(strToInt(nodeToken));
+				_layerMappings.back().insert(string::convert<int>(nodeToken));
 			}
 		}
 

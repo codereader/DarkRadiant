@@ -5,7 +5,7 @@
 #include "i18n.h"
 #include <algorithm>
 
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
@@ -64,7 +64,7 @@ void DifficultyPanel::populateFromObjective(const Objective& obj)
 	{
 		// See if this level appears in the difficulty string, if yes => toggled
 		_toggles[i]->set_active(
-			std::find(parts.begin(), parts.end(), sizetToStr(i)) != parts.end()
+			std::find(parts.begin(), parts.end(), string::to_string(i)) != parts.end()
 		);
 	}
 
@@ -97,7 +97,7 @@ void DifficultyPanel::writeToObjective(Objective& obj)
 			if (_toggles[i]->get_active())
 			{
 				std::string prefix = (!obj.difficultyLevels.empty()) ? " " : "";
-				obj.difficultyLevels += prefix + sizetToStr(i);
+				obj.difficultyLevels += prefix + string::to_string(i);
 			}
 		}
 	}

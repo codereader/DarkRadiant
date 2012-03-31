@@ -1,8 +1,9 @@
-#include "BrushDef.h"
-
 // greebo: Specialise the boost::lexical_cast<float>() function
 #define SPECIALISE_STR_TO_FLOAT
 
+#include "BrushDef.h"
+
+#include "string/convert.h"
 #include "imap.h"
 #include "ibrush.h"
 #include "parser/DefTokeniser.h"
@@ -60,15 +61,15 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 		else if (token == "(") // FACE
 		{
 			// Parse three 3D points to construct a plane
-			Vector3 p1(strToFloat(tok.nextToken()), strToFloat(tok.nextToken()), strToFloat(tok.nextToken()));
+			Vector3 p1(string::to_float(tok.nextToken()), string::to_float(tok.nextToken()), string::to_float(tok.nextToken()));
 			tok.assertNextToken(")");
 			tok.assertNextToken("(");
 
-			Vector3 p2(strToFloat(tok.nextToken()), strToFloat(tok.nextToken()), strToFloat(tok.nextToken()));
+			Vector3 p2(string::to_float(tok.nextToken()), string::to_float(tok.nextToken()), string::to_float(tok.nextToken()));
 			tok.assertNextToken(")");
 			tok.assertNextToken("(");
 
-			Vector3 p3(strToFloat(tok.nextToken()), strToFloat(tok.nextToken()), strToFloat(tok.nextToken()));
+			Vector3 p3(string::to_float(tok.nextToken()), string::to_float(tok.nextToken()), string::to_float(tok.nextToken()));
 			tok.assertNextToken(")");
 
 			// Construct the plane from the three points
@@ -79,15 +80,15 @@ scene::INodePtr BrushDefParser::parse(parser::DefTokeniser& tok) const
 			tok.assertNextToken("(");
 
 			tok.assertNextToken("(");
-			texdef.xx() = strToFloat(tok.nextToken());
-			texdef.yx() = strToFloat(tok.nextToken());
-			texdef.tx() = strToFloat(tok.nextToken());
+			texdef.xx() = string::to_float(tok.nextToken());
+			texdef.yx() = string::to_float(tok.nextToken());
+			texdef.tx() = string::to_float(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken("(");
-			texdef.xy() = strToFloat(tok.nextToken());
-			texdef.yy() = strToFloat(tok.nextToken());
-			texdef.ty() = strToFloat(tok.nextToken());
+			texdef.xy() = string::to_float(tok.nextToken());
+			texdef.yy() = string::to_float(tok.nextToken());
+			texdef.ty() = string::to_float(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken(")");

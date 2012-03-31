@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "math/Quaternion.h"
 #include "math/Matrix4.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/function.hpp>
 
 const float ANGLEKEY_IDENTITY = 0;
@@ -38,12 +38,12 @@ inline float getNormalisedAngle(float angle)
 
 inline void read_angle(float& angle, const std::string& value)
 {
-	angle = getNormalisedAngle(strToFloat(value, 0));
+	angle = getNormalisedAngle(string::convert<float>(value, 0));
 }
 
 inline void write_angle(double angle, Entity* entity)
 {
-	entity->setKeyValue("angle", (angle == 0) ? "" : doubleToStr(angle));
+	entity->setKeyValue("angle", (angle == 0) ? "" : string::to_string(angle));
 }
 
 class AngleKey

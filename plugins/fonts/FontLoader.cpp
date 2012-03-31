@@ -1,6 +1,8 @@
 #include "FontLoader.h"
 
 #include "os/path.h"
+#include "string/convert.h"
+
 #include <boost/regex.hpp>
 
 #include "itextstream.h"
@@ -23,7 +25,7 @@ void FontLoader::visit(const std::string& filename)
 		std::string fontname = matches[1];
 		std::string resolutionStr = matches[2];
 
-		int r = strToInt(resolutionStr);
+		int r = string::convert<int>(resolutionStr);
 
 		Resolution resolution = NumResolutions;
 

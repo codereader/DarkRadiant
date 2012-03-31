@@ -8,7 +8,7 @@
 
 #include "imodule.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace cmd {
 
@@ -48,8 +48,8 @@ public:
 
 	Argument(const char* str) :
 		_strValue(str),
-		_doubleValue(strToDouble(str)),
-		_intValue(strToInt(str)),
+		_doubleValue(string::convert<double>(str)),
+		_intValue(string::convert<int>(str)),
 		_vector3Value(Vector3(str)),
 		_vector2Value(Vector2(str)),
 		_type(ARGTYPE_STRING)
@@ -61,8 +61,8 @@ public:
 	// String => Argument constructor
 	Argument(const std::string& str) :
 		_strValue(str),
-		_doubleValue(strToDouble(str)),
-		_intValue(strToInt(str)),
+		_doubleValue(string::convert<double>(str)),
+		_intValue(string::convert<int>(str)),
 		_vector3Value(Vector3(str)),
 		_vector2Value(Vector2(str)),
 		_type(ARGTYPE_STRING)
@@ -73,7 +73,7 @@ public:
 
 	// Double => Argument constructor
 	Argument(const double d) :
-		_strValue(doubleToStr(d)),
+		_strValue(string::to_string(d)),
 		_doubleValue(d),
 		_intValue(static_cast<int>(d)),
 		_vector3Value(static_cast<float>(d),static_cast<float>(d),static_cast<float>(d)),
@@ -88,7 +88,7 @@ public:
 
 	// Int => Argument constructor
 	Argument(const int i) :
-		_strValue(intToStr(i)),
+		_strValue(string::to_string(i)),
 		_doubleValue(static_cast<double>(i)),
 		_intValue(i),
 		_vector3Value(static_cast<float>(i),static_cast<float>(i),static_cast<float>(i)),
@@ -98,7 +98,7 @@ public:
 
 	// Vector3 => Argument constructor
 	Argument(const Vector3& v) :
-		_strValue(doubleToStr(v[0]) + " " + doubleToStr(v[1]) + " " + doubleToStr(v[2])),
+		_strValue(string::to_string(v[0]) + " " + string::to_string(v[1]) + " " + string::to_string(v[2])),
 		_doubleValue(v.getLength()),
 		_intValue(static_cast<int>(v.getLength())),
 		_vector3Value(v),
@@ -108,7 +108,7 @@ public:
 
 	// Vector2 => Argument constructor
 	Argument(const Vector2& v) :
-		_strValue(doubleToStr(v[0]) + " " + doubleToStr(v[1]) + " " + doubleToStr(v[2])),
+		_strValue(string::to_string(v[0]) + " " + string::to_string(v[1]) + " " + string::to_string(v[2])),
 		_doubleValue(v.getLength()),
 		_intValue(static_cast<int>(v.getLength())),
 		_vector3Value(v[0], v[1], 0),

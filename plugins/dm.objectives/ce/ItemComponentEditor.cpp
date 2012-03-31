@@ -6,7 +6,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 
 #include "i18n.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include <gtkmm/spinbutton.h>
 
@@ -35,7 +35,7 @@ ItemComponentEditor::ItemComponentEditor(Component& component) :
     );
 
 	// Initialise the spin button with the value from the first component argument
-	_amount->set_value(strToDouble(component.getArgument(0)));
+	_amount->set_value(string::convert<double>(component.getArgument(0)));
 }
 
 // Write to component
@@ -46,7 +46,7 @@ void ItemComponentEditor::writeToComponent() const
         Specifier::FIRST_SPECIFIER, _itemSpec->getSpecifier()
     );
 
-	_component->setArgument(0, doubleToStr(_amount->get_value()));
+	_component->setArgument(0, string::to_string(_amount->get_value()));
 }
 
 } // namespace ce

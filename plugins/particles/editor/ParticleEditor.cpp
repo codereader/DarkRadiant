@@ -583,13 +583,13 @@ void ParticleEditor::connectSpinner(const std::string& name, MemberMethod func)
 float ParticleEditor::getSpinButtonValueAsFloat(const std::string& widgetName)
 {
     Gtk::SpinButton* sb = gladeWidget<Gtk::SpinButton>(widgetName);
-    return strToFloat(sb->get_text());
+    return string::convert<float>(sb->get_text());
 }
 
 int ParticleEditor::getSpinButtonValueAsInt(const std::string& widgetName)
 {
     Gtk::SpinButton* sb = gladeWidget<Gtk::SpinButton>(widgetName);
-    return strToInt(sb->get_text());
+    return string::convert<int>(sb->get_text());
 }
 
 void ParticleEditor::activateEditPanels()

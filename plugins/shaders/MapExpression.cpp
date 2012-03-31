@@ -6,7 +6,7 @@
 #include <iostream>
 
 #include "os/path.h"
-#include "string/string.h" // contains floatToStr() helper
+#include "string/convert.h"
 #include "imagelib.h"
 #include "math/FloatTools.h" // contains float_to_integer() helper
 #include "math/Vector3.h"
@@ -113,7 +113,7 @@ HeightMapExpression::HeightMapExpression (DefTokeniser& token) {
 	token.assertNextToken("(");
 	heightMapExp = createForToken(token);
 	token.assertNextToken(",");
-	scale = strToFloat(token.nextToken());
+	scale = string::convert<float>(token.nextToken());
 	token.assertNextToken(")");
 }
 
@@ -136,7 +136,7 @@ ImagePtr HeightMapExpression::getImage() const {
 
 std::string HeightMapExpression::getIdentifier() const {
 	std::string identifier = "_heightmap_";
-	identifier.append(heightMapExp->getIdentifier() + floatToStr(scale));
+	identifier.append(heightMapExp->getIdentifier() + string::to_string(scale));
 	return identifier;
 }
 
@@ -361,19 +361,19 @@ ScaleExpression::ScaleExpression (DefTokeniser& token) : scaleGreen(0),scaleBlue
 	token.assertNextToken("(");
 	mapExp = createForToken(token);
 	token.assertNextToken(",");
-	scaleRed = strToFloat(token.nextToken());
+	scaleRed = string::convert<float>(token.nextToken());
 	if (token.nextToken() == ")") {
 		return;
 	}
-	scaleGreen = strToFloat(token.nextToken());
+	scaleGreen = string::convert<float>(token.nextToken());
 	if (token.nextToken() == ")") {
 		return;
 	}
-	scaleBlue = strToFloat(token.nextToken());
+	scaleBlue = string::convert<float>(token.nextToken());
 	if (token.nextToken() == ")") {
 		return;
 	}
-	scaleAlpha = strToFloat(token.nextToken());
+	scaleAlpha = string::convert<float>(token.nextToken());
 	token.assertNextToken(")");
 }
 
@@ -429,7 +429,7 @@ ImagePtr ScaleExpression::getImage() const {
 
 std::string ScaleExpression::getIdentifier() const {
 	std::string identifier = "_scale_";
-	identifier.append(mapExp->getIdentifier() + floatToStr(scaleRed) + floatToStr(scaleGreen) + floatToStr(scaleBlue) + floatToStr(scaleAlpha));
+	identifier.append(mapExp->getIdentifier() + string::to_string(scaleRed) + string::to_string(scaleGreen) + string::to_string(scaleBlue) + string::to_string(scaleAlpha));
 	return identifier;
 }
 

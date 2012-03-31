@@ -568,7 +568,7 @@ std::string MapResource::getTemporaryFileExtension()
 	time_t localtime;
 	time(&localtime);
 
-	return sizetToStr(localtime);
+	return string::to_string(localtime);
 }
 
 bool MapResource::checkIsWriteable(const boost::filesystem::path& path)

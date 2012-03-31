@@ -403,7 +403,7 @@ void XYWndManager::setActiveXY(int index) {
 	else
 	{
 		throw std::logic_error(
-			"Cannot set XYWnd with ID " + intToStr(index) + " as active, "
+			"Cannot set XYWnd with ID " + string::to_string(index) + " as active, "
 			+ " ID not found in map."
 		);
 	}

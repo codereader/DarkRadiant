@@ -771,7 +771,7 @@ void ReadableEditorDialog::showPage(std::size_t pageIndex)
 
 	// Update CurrentPage Label
 	_currentPageIndex = pageIndex;
-	_curPageDisplay->set_text(sizetToStr(pageIndex+1));
+	_curPageDisplay->set_text(string::to_string(pageIndex+1));
 
 	if (_xData->getPageLayout() == XData::TwoSided)
 	{
@@ -1048,7 +1048,7 @@ void ReadableEditorDialog::checkXDataUniqueness()
 
 		for (int n = 1; n > 0; n++)
 		{
-			suggestion = xdn + intToStr(n);
+			suggestion = xdn + string::to_string(n);
 
 			if (_xdLoader->getDefinitionList().find(suggestion) == _xdLoader->getDefinitionList().end())
 			{

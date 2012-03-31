@@ -3,7 +3,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include <iostream>
 #include "i18n.h"
 
@@ -134,7 +134,7 @@ void ClassEditor::spinButtonChanged(Gtk::SpinButton* spinButton)
 
 	if (found != _spinWidgets.end())
 	{
-		std::string valueText = doubleToStr(spinButton->get_value());
+		std::string valueText = string::to_string(spinButton->get_value());
 
 		if (!valueText.empty())
 		{

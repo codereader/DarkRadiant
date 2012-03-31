@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "math/Plane3.h"
+#include "string/convert.h"
 #include "ishaders.h"
 #include "imodelcache.h"
 #include "imodelsurface.h"
@@ -1596,12 +1597,12 @@ inline std::string printPortals(const BspTreeNodePtr& node)
 		count++;
 
 		rv += (!rv.empty()) ? ", " : "";
-		rv += sizetToStr(p->portalId);
+		rv += string::to_string(p->portalId);
 
 		rv += (s == 0) ? " (f)" : " (b)";
 	}
 
-	rv += " [count: " + sizetToStr(count) + "]";
+	rv += " [count: " + string::to_string(count) + "]";
 
 	return rv;
 }
@@ -2811,7 +2812,7 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 
 			if (rotation.empty())
 			{
-				float angle = strToFloat(mapEnt.getKeyValue("angle"));
+				float angle = string::convert<float>(mapEnt.getKeyValue("angle"));
 
 				// idMath::AngleNormalize360
 				if (angle >= 360.0f || angle < 0.0f)
@@ -4962,7 +4963,7 @@ void ProcCompiler::fixGlobalTjunctions(ProcEntity& entity)
 
 			if (rotation.empty())
 			{
-				float angle = strToFloat(mapEnt.getKeyValue("angle"));
+				float angle = string::convert<float>(mapEnt.getKeyValue("angle"));
 
 				// idMath::AngleNormalize360
 				if (angle >= 360.0f || angle < 0.0f)

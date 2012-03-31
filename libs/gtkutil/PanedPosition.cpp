@@ -1,6 +1,6 @@
 #include "PanedPosition.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 #include "iregistry.h"
 
 namespace
@@ -44,12 +44,12 @@ void PanedPosition::setPosition(int position)
 
 void PanedPosition::saveToPath(const std::string& path)
 {
-	GlobalRegistry().setAttribute(path, "position", intToStr(_position));
+	GlobalRegistry().setAttribute(path, "position", string::to_string(_position));
 }
 
 void PanedPosition::loadFromPath(const std::string& path)
 {
-	_position = strToInt(GlobalRegistry().getAttribute(path, "position"));
+	_position = string::convert<int>(GlobalRegistry().getAttribute(path, "position"));
 }
 
 void PanedPosition::applyPosition()

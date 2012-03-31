@@ -80,7 +80,7 @@ void DifficultySettingsManager::loadDifficultyNames() {
 	// greebo: Setup the default difficulty levels using the found entityDef
 	int numLevels = registry::getValue<int>(RKEY_DIFFICULTY_LEVELS);
 	for (int i = 0; i < numLevels; i++) {
-		std::string nameKey = "diff" + intToStr(i) + "default";
+		std::string nameKey = "diff" + string::to_string(i) + "default";
 
 		// First, try to find a map-specific name
 		if (worldspawn != NULL) {
@@ -103,7 +103,7 @@ void DifficultySettingsManager::loadDifficultyNames() {
 		}
 
 		// Fall back to a non-empty default
-		_difficultyNames.push_back(intToStr(i));
+		_difficultyNames.push_back(string::to_string(i));
 	}
 }
 

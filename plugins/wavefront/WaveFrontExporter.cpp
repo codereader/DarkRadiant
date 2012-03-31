@@ -49,7 +49,7 @@ void WaveFrontExporter::exportBrush(IBrush& brush)
 
 		for (std::size_t i = firstVertex; i < _vertexCount; ++i)
 		{
-			faceBuf += " " + sizetToStr(i+1) + "/" + sizetToStr(i+1);
+			faceBuf += " " + string::to_string(i+1) + "/" + string::to_string(i+1);
 		}
 	}
 
@@ -98,10 +98,10 @@ void WaveFrontExporter::exportPatch(IPatch& patch)
 
 				// Construct the quad
 				faceBuf += "f";
-				faceBuf += " " + sizetToStr(v1) + "/" + sizetToStr(v1);
-				faceBuf += " " + sizetToStr(v4) + "/" + sizetToStr(v4);
-				faceBuf += " " + sizetToStr(v3) + "/" + sizetToStr(v3);
-				faceBuf += " " + sizetToStr(v2) + "/" + sizetToStr(v2);
+				faceBuf += " " + string::to_string(v1) + "/" + string::to_string(v1);
+				faceBuf += " " + string::to_string(v4) + "/" + string::to_string(v4);
+				faceBuf += " " + string::to_string(v3) + "/" + string::to_string(v3);
+				faceBuf += " " + string::to_string(v2) + "/" + string::to_string(v2);
 				faceBuf += "\n";
 			}
 		}

@@ -9,7 +9,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace objectives {
 
@@ -31,7 +31,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 
 	if (boost::regex_match(key, results, reObjNum)) {
 		// Get the objective number
-		iNum = strToInt(results[1]);
+		iNum = string::convert<int>(results[1]);
 	}
 	else {
 		// No match, abort
@@ -60,7 +60,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 	}
 	else if (objSubString == "state") {
 		_objMap[iNum].state =
-			static_cast<Objective::State>(strToInt(value));
+			static_cast<Objective::State>(string::convert<int>(value));
 	}
 	else if (objSubString == "difficulty") {
 		_objMap[iNum].difficultyLevels = value;
@@ -98,7 +98,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 		else {
 
 			// Get the component number and key string
-			int componentNum = strToInt(results[1]);
+			int componentNum = string::convert<int>(results[1]);
 			std::string componentStr = results[2];
 
 			Component& comp = _objMap[iNum].components[componentNum];
@@ -132,13 +132,13 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 				}
 			}
 			else if (componentStr == "clock_interval") {
-				comp.setClockInterval(strToFloat(value));
+				comp.setClockInterval(string::convert<float>(value));
 			}
 			// Check for the spec_val first
 			else if (boost::algorithm::starts_with(componentStr, "spec_val")) {
 				// We have a component specifier value, see if the specifier itself is there already
 				Specifier::SpecifierNumber specNum = getSpecifierNumber(
-					strToInt(componentStr.substr(8), -1)
+					string::convert<int>(componentStr.substr(8), -1)
 				);
 
 				if (specNum == Specifier::MAX_SPECIFIERS) {
@@ -160,7 +160,7 @@ void ObjectiveKeyExtractor::visit(const std::string& key,
 			else if (boost::algorithm::starts_with(componentStr, "spec")) {
 				// We have a component specifier, see which one
 				Specifier::SpecifierNumber specNum = getSpecifierNumber(
-					strToInt(componentStr.substr(4), -1)
+					string::convert<int>(componentStr.substr(4), -1)
 				);
 
 				if (specNum == Specifier::MAX_SPECIFIERS) {

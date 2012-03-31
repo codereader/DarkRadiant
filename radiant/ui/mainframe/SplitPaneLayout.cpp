@@ -244,10 +244,10 @@ void SplitPaneLayout::restoreStateFromPath(const std::string& path)
 		_splitPane.posVPane2.applyPosition();
 	}
 
-	int topLeft = strToInt(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topleft"), -1);
-	int topRight = strToInt(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topright"), XY);
-	int bottomLeft = strToInt(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "bottomleft"), YZ);
-	int bottomRight = strToInt(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "bottomright"), XZ);
+	int topLeft = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topleft"), -1);
+	int topRight = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "topright"), XY);
+	int bottomLeft = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "bottomleft"), YZ);
+	int bottomRight = string::convert<int>(GlobalRegistry().getAttribute(RKEY_SPLITPANE_VIEWTYPES, "bottomright"), XZ);
 
 	// Load mapping, but leave widget pointer NULL
 	_quadrants[QuadrantTopLeft] = QuadrantInfo();
@@ -307,10 +307,10 @@ void SplitPaneLayout::saveStateToPath(const std::string& path)
 	int bottomLeft = _quadrants[QuadrantBottomLeft].xyWnd != NULL ? _quadrants[QuadrantBottomLeft].xyWnd->getViewType() : -1;
 	int bottomRight = _quadrants[QuadrantBottomRight].xyWnd != NULL ? _quadrants[QuadrantBottomRight].xyWnd->getViewType() : -1;
 
-	node.setAttributeValue("topleft", intToStr(topLeft));
-	node.setAttributeValue("topright", intToStr(topRight));
-	node.setAttributeValue("bottomleft", intToStr(bottomLeft));
-	node.setAttributeValue("bottomright", intToStr(bottomRight));
+	node.setAttributeValue("topleft", string::to_string(topLeft));
+	node.setAttributeValue("topright", string::to_string(topRight));
+	node.setAttributeValue("bottomleft", string::to_string(bottomLeft));
+	node.setAttributeValue("bottomright", string::to_string(bottomRight));
 }
 
 void SplitPaneLayout::toggleFullscreenCameraView()

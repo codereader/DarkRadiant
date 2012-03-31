@@ -78,7 +78,7 @@ bool MapImporter::addPrimitiveToEntity(const scene::INodePtr& primitive, const s
 	if (_dialog && _dialogEventLimiter.readyForEvent())
     {
 		_dialog->setTextAndFraction(
-            _dlgEntityText + "\nPrimitive " + sizetToStr(_primitiveCount),
+            _dlgEntityText + "\nPrimitive " + string::to_string(_primitiveCount),
 			getProgressFraction()
         );
     }

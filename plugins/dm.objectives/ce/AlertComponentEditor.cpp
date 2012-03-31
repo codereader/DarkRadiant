@@ -4,7 +4,7 @@
 
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include "i18n.h"
 #include <gtkmm/spinbutton.h>
@@ -39,8 +39,8 @@ AlertComponentEditor::AlertComponentEditor(Component& component) :
     );
 
 	// Initialise the spin buttons with the values from the component arguments
-	_amount->set_value(strToDouble(component.getArgument(0)));
-	_alertLevel->set_value(strToDouble(component.getArgument(1)));
+	_amount->set_value(string::convert<double>(component.getArgument(0)));
+	_alertLevel->set_value(string::convert<double>(component.getArgument(1)));
 }
 
 // Write to component
@@ -51,8 +51,8 @@ void AlertComponentEditor::writeToComponent() const
         Specifier::FIRST_SPECIFIER, _targetCombo->getSpecifier()
     );
 
-	_component->setArgument(0, doubleToStr(_amount->get_value()));
-	_component->setArgument(1, doubleToStr(_alertLevel->get_value()));
+	_component->setArgument(0, string::to_string(_amount->get_value()));
+	_component->setArgument(1, string::to_string(_alertLevel->get_value()));
 }
 
 } // namespace ce

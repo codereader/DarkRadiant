@@ -1,7 +1,7 @@
 #include "Curve.h"
 
 #include "itextstream.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "parser/Tokeniser.h"
 
 namespace entity {
@@ -28,13 +28,13 @@ std::string Curve::getEntityKeyValue() {
 	std::string value;
 
 	if (!_controlPointsTransformed.empty()) {
-		value = sizetToStr(_controlPointsTransformed.size()) + " (";
+		value = string::to_string(_controlPointsTransformed.size()) + " (";
 		for (ControlPoints::const_iterator i = _controlPointsTransformed.begin();
 			 i != _controlPointsTransformed.end();
 			 ++i)
 		{
-			value += " " + doubleToStr(i->x()) + " " +
-					 doubleToStr(i->y()) + " " + doubleToStr(i->z()) + " ";
+			value += " " + string::to_string(i->x()) + " " +
+					 string::to_string(i->y()) + " " + string::to_string(i->z()) + " ";
 		}
 		value += ")";
 	}
@@ -88,7 +88,7 @@ bool Curve::parseCurve(const std::string& value) {
 
 	try {
 		// First token is the number of control points
-		std::size_t size = strToInt(tokeniser.nextToken());
+		std::size_t size = string::convert<int>(tokeniser.nextToken());
 		if (size < 3) {
 			throw parser::ParseException("Curve size < 3.");
 		}
@@ -100,9 +100,9 @@ bool Curve::parseCurve(const std::string& value) {
 			 i != _controlPoints.end();
 			 ++i)
 		{
-			i->x() = strToFloat(tokeniser.nextToken());
-			i->y() = strToFloat(tokeniser.nextToken());
-			i->z() = strToFloat(tokeniser.nextToken());
+			i->x() = string::convert<float>(tokeniser.nextToken());
+			i->y() = string::convert<float>(tokeniser.nextToken());
+			i->z() = string::convert<float>(tokeniser.nextToken());
 		}
 
 		tokeniser.assertNextToken(")");

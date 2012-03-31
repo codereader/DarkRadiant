@@ -1,12 +1,12 @@
-#include "PatchDef3.h"
-
 // greebo: Specialise the boost::lexical_cast<float>() function
 #define SPECIALISE_STR_TO_FLOAT
+
+#include "PatchDef3.h"
 
 #include "imap.h"
 #include "ipatch.h"
 #include "parser/DefTokeniser.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace map
 {
@@ -51,14 +51,14 @@ scene::INodePtr PatchDef3Parser::parse(parser::DefTokeniser& tok) const
 	// Parse parameters
 	tok.assertNextToken("(");
 
-	std::size_t cols = strToSizet(tok.nextToken());
-	std::size_t rows = strToSizet(tok.nextToken());
+	std::size_t cols = string::convert<std::size_t>(tok.nextToken());
+	std::size_t rows = string::convert<std::size_t>(tok.nextToken());
 
 	patch.setDims(cols, rows);
 
 	// Parse fixed tesselation
-	std::size_t subdivX = strToSizet(tok.nextToken());
-	std::size_t subdivY = strToSizet(tok.nextToken());
+	std::size_t subdivX = string::convert<std::size_t>(tok.nextToken());
+	std::size_t subdivY = string::convert<std::size_t>(tok.nextToken());
 
 	patch.setFixedSubdivisions(true, Subdivisions(subdivX, subdivY));
 

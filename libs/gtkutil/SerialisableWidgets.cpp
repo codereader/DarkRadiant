@@ -1,10 +1,9 @@
 #include "SerialisableWidgets.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 
 #include "TreeModel.h"
 
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 
 namespace gtkutil
@@ -18,12 +17,12 @@ SerialisableAdjustment::SerialisableAdjustment(double value, double lower, doubl
 
 void SerialisableAdjustment::importFromString(const std::string& str)
 {
-	set_value(strToDouble(str));
+	set_value(string::convert<double>(str));
 }
 
 std::string SerialisableAdjustment::exportToString() const
 {
-	return doubleToStr(get_value());
+	return string::to_string(get_value());
 }
 
 SerialisableAdjustmentWrapper::SerialisableAdjustmentWrapper(Gtk::Adjustment* adjustment) :
@@ -32,12 +31,12 @@ SerialisableAdjustmentWrapper::SerialisableAdjustmentWrapper(Gtk::Adjustment* ad
 
 void SerialisableAdjustmentWrapper::importFromString(const std::string& str)
 {
-	_adjustment->set_value(strToDouble(str));
+	_adjustment->set_value(string::convert<double>(str));
 }
 
 std::string SerialisableAdjustmentWrapper::exportToString() const
 {
-	return doubleToStr(_adjustment->get_value());
+	return string::to_string(_adjustment->get_value());
 }
 
 // Text entry
@@ -85,12 +84,12 @@ SerialisableSpinButton::SerialisableSpinButton(double value,
 
 void SerialisableSpinButton::importFromString(const std::string& str)
 {
-	set_value(strToDouble(str));
+	set_value(string::convert<double>(str));
 }
 
 std::string SerialisableSpinButton::exportToString() const
 {
-	return doubleToStr(get_value());
+	return string::to_string(get_value());
 }
 
 SerialisableSpinButtonWrapper::SerialisableSpinButtonWrapper(Gtk::SpinButton* spin) :
@@ -99,12 +98,12 @@ SerialisableSpinButtonWrapper::SerialisableSpinButtonWrapper(Gtk::SpinButton* sp
 
 void SerialisableSpinButtonWrapper::importFromString(const std::string& str)
 {
-	_spin->set_value(strToDouble(str));
+	_spin->set_value(string::convert<double>(str));
 }
 
 std::string SerialisableSpinButtonWrapper::exportToString() const
 {
-	return doubleToStr(_spin->get_value());
+	return string::to_string(_spin->get_value());
 }
 
 // Scale widget
@@ -115,12 +114,12 @@ SerialisableScaleWidget::SerialisableScaleWidget() :
 
 void SerialisableScaleWidget::importFromString(const std::string& str)
 {
-	set_value(strToDouble(str));
+	set_value(string::convert<double>(str));
 }
 
 std::string SerialisableScaleWidget::exportToString() const
 {
-	return doubleToStr(get_value());
+	return string::to_string(get_value());
 }
 
 SerialisableScaleWidgetWrapper::SerialisableScaleWidgetWrapper(Gtk::Range* range) :
@@ -129,12 +128,12 @@ SerialisableScaleWidgetWrapper::SerialisableScaleWidgetWrapper(Gtk::Range* range
 
 void SerialisableScaleWidgetWrapper::importFromString(const std::string& str)
 {
-	_range->set_value(strToDouble(str));
+	_range->set_value(string::convert<double>(str));
 }
 
 std::string SerialisableScaleWidgetWrapper::exportToString() const
 {
-	return doubleToStr(_range->get_value());
+	return string::to_string(_range->get_value());
 }
 
 // Toggle button
@@ -213,7 +212,7 @@ SerialisableComboBox_Index::SerialisableComboBox_Index() :
 
 void SerialisableComboBox_Index::importFromString(const std::string& str)
 {
-	int activeId = strToInt(str);
+	int activeId = string::convert<int>(str);
 	set_active(activeId);
 
 	int newId = get_active_row_number();
@@ -228,7 +227,7 @@ void SerialisableComboBox_Index::importFromString(const std::string& str)
 
 std::string SerialisableComboBox_Index::exportToString() const
 {
-	return intToStr(get_active_row_number());
+	return string::to_string(get_active_row_number());
 }
 
 SerialisableComboBox_IndexWrapper::SerialisableComboBox_IndexWrapper(Gtk::ComboBoxText* combo) :
@@ -237,7 +236,7 @@ SerialisableComboBox_IndexWrapper::SerialisableComboBox_IndexWrapper(Gtk::ComboB
 
 void SerialisableComboBox_IndexWrapper::importFromString(const std::string& str)
 {
-	int activeId = strToInt(str);
+	int activeId = string::convert<int>(str);
 	_combo->set_active(activeId);
 
 	int newId = _combo->get_active_row_number();
@@ -252,7 +251,7 @@ void SerialisableComboBox_IndexWrapper::importFromString(const std::string& str)
 
 std::string SerialisableComboBox_IndexWrapper::exportToString() const
 {
-	return intToStr(_combo->get_active_row_number());
+	return string::to_string(_combo->get_active_row_number());
 }
 
 // SerialisableComboBox_Text

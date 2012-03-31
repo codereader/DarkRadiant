@@ -40,11 +40,11 @@ MRU::MRU() :
 	// Create _numMaxFiles menu items
 	for (unsigned int i = 0; i < _numMaxFiles; i++) {
 
-		_menuItems.push_back(MRUMenuItem(intToStr(i), *this, i+1));
+		_menuItems.push_back(MRUMenuItem(string::to_string(i), *this, i+1));
 
 		MRUMenuItem& item = (*_menuItems.rbegin());
 
-		const std::string commandName = std::string("MRUOpen") + intToStr(i+1);
+		const std::string commandName = std::string("MRUOpen") + string::to_string(i+1);
 
 		// Connect the command to the last inserted menuItem
 		GlobalCommandSystem().addCommand(
@@ -60,7 +60,7 @@ void MRU::loadRecentFiles() {
 	// inserts them. After everything is loaded, the file list is sorted correctly.
 	for (unsigned int i = _numMaxFiles; i > 0; i--) {
 
-		const std::string key = RKEY_MAP_MRUS + "/map" + intToStr(i);
+		const std::string key = RKEY_MAP_MRUS + "/map" + string::to_string(i);
 		const std::string fileName = GlobalRegistry().get(key);
 
 		// Insert the filename
@@ -81,7 +81,7 @@ void MRU::saveRecentFiles() {
 	// Now wade through the list and save them in the correct order
 	for (MRUList::iterator i = _list.begin(); i != _list.end(); counter++, i++) {
 
-		const std::string key = RKEY_MAP_MRUS + "/map" + intToStr(counter);
+		const std::string key = RKEY_MAP_MRUS + "/map" + string::to_string(counter);
 
 		// Save the string into the registry
 		GlobalRegistry().set(key, (*i));
@@ -199,12 +199,12 @@ void MRU::constructMenu() {
 	{
 		MRUMenuItem& item = (*m);
 
-		const std::string commandName = std::string("MRUOpen") + intToStr(item.getIndex());
+		const std::string commandName = std::string("MRUOpen") + string::to_string(item.getIndex());
 
 		// Create the toplevel menu item
 		Gtk::Widget* menuItem = menuManager.insert(
 			"main/file/exit",
-			"MRU" + intToStr(item.getIndex()),
+			"MRU" + string::to_string(item.getIndex()),
 			ui::menuItem,
 			item.getLabel(),
 			"", // empty icon

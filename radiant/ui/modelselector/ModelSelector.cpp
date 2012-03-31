@@ -361,9 +361,9 @@ void ModelSelector::showInfoForSelectedModel()
     const model::IModel& model = modelNode->getIModel();
     _infoTable.append(_("Model name"), mName);
     _infoTable.append(_("Skin name"), skinName);
-    _infoTable.append(_("Total vertices"), intToStr(model.getVertexCount()));
-    _infoTable.append(_("Total polys"), intToStr(model.getPolyCount()));
-    _infoTable.append(_("Material surfaces"), intToStr(model.getSurfaceCount()));
+    _infoTable.append(_("Total vertices"), string::to_string(model.getVertexCount()));
+    _infoTable.append(_("Total polys"), string::to_string(model.getPolyCount()));
+    _infoTable.append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
 
     // Add the list of active materials
     _materialsList.clear();

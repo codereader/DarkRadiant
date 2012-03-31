@@ -3,7 +3,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include <gtkmm/eventbox.h>
 #include <gtkmm/checkbutton.h>
@@ -155,7 +155,7 @@ StimTypeArgument::StimTypeArgument(ResponseEffect::Argument& arg, const StimType
 
 	// Now select the stimtype passed in the argument
 	// Find the entity using a TreeModel traversor (search the column #0)
-	gtkutil::TreeModel::SelectionFinder finder(strToInt(arg.value), _stimTypes.getColumns().id.index());
+	gtkutil::TreeModel::SelectionFinder finder(string::convert<int>(arg.value), _stimTypes.getColumns().id.index());
 
 	_stimTypes.getListStore()->foreach_iter(
 		sigc::mem_fun(finder, &gtkutil::TreeModel::SelectionFinder::forEach));
@@ -173,7 +173,7 @@ std::string StimTypeArgument::getValue()
 
 	if (iter)
 	{
-		return intToStr((*iter)[_stimTypes.getColumns().id]);
+		return string::to_string((*iter)[_stimTypes.getColumns().id]);
 	}
 
 	return "";

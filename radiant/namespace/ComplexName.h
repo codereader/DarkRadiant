@@ -4,7 +4,7 @@
 #include <string>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include "string/string.h"
+#include "string/convert.h"
 
 class ComplexName
 {
@@ -25,7 +25,7 @@ public:
 		_postfix = fullname.substr(_name.size());
 
 		// Convert this to a number
-		_postfixNumber = strToInt(_postfix, -1);
+		_postfixNumber = string::convert<int>(_postfix, -1);
 	}
 
 	std::string getFullname() const {
@@ -46,7 +46,7 @@ public:
 
 	void setPostfix(int postfix) {
 		_postfixNumber = postfix;
-		_postfix = (postfix == -1) ? "" : intToStr(postfix);
+		_postfix = (postfix == -1) ? "" : string::to_string(postfix);
 	}
 
 	/**

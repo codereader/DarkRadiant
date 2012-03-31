@@ -150,34 +150,6 @@ inline const char* path_get_filename_start(const char* path)
   return path;
 }
 
-/// \brief Returns a pointer to the character after the end of the filename component of \p path - either the extension separator or the terminating null character.
-/// O(n)
-inline const char* path_get_filename_base_end(const char* path)
-{
-  const char* last_period = strrchr(path_get_filename_start(path), '.');
-  return (last_period != 0) ? last_period : path + string_length(path);
-}
-
-/// \brief Returns the length of the filename component (not including extension) of \p path.
-/// O(n)
-inline std::size_t path_get_filename_base_length(const char* path)
-{
-  return path_get_filename_base_end(path) - path;
-}
-
-/// \brief If \p path is a child of \p base, returns the subpath relative to \p base, else returns \p path.
-/// O(n)
-// DEPRECATED
-inline const char* path_make_relative(const char* path, const char* base)
-{
-  const std::size_t length = string_length(base);
-  if(path_equal_n(path, base, length))
-  {
-    return path + length;
-  }
-  return path;
-}
-
 /// \brief Returns a pointer to the first character of the file extension of \p path, or "" if not found.
 /// O(n)
 inline const char* path_get_extension(const char* path)
@@ -190,43 +162,10 @@ inline const char* path_get_extension(const char* path)
   return "";
 }
 
-/// \brief Returns true if \p extension is of the same type as \p other.
-/// O(n)
-inline bool extension_equal(const char* extension, const char* other)
-{
-  return path_equal(extension, other);
-}
-
-template<typename Functor>
-class MatchFileExtension
-{
-  const char* m_extension;
-  const Functor& m_functor;
-public:
-  MatchFileExtension(const char* extension, const Functor& functor) : m_extension(extension), m_functor(functor)
-  {
-  }
-  void operator()(const char* name) const
-  {
-    const char* extension = path_get_extension(name);
-    if(extension_equal(extension, m_extension))
-    {
-      m_functor(name);
-    }
-  }
-};
-
-/// \brief A functor which invokes its contained \p functor if the \p name argument matches its \p extension.
-template<typename Functor>
-inline MatchFileExtension<Functor> matchFileExtension(const char* extension, const Functor& functor)
-{
-  return MatchFileExtension<Functor>(extension, functor);
-}
-
 /** General utility functions for OS-related tasks
  */
-namespace os {
-
+namespace os
+{
     /** Convert the slashes in a Doom 3 path to forward-slashes. Doom 3 accepts either
      * forward or backslashes in its definitions
      */

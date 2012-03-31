@@ -1,7 +1,7 @@
 #include "GuiWindowDef.h"
 
 #include "parser/DefTokeniser.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "itextstream.h"
 
 #include <limits>
@@ -105,21 +105,24 @@ Vector4 GuiWindowDef::parseVector4(parser::DefTokeniser& tokeniser)
 		throw parser::ParseException("Couldn't parse Vector4, not enough components found.");
 	}
 
-	return Vector4(strToFloat(comp[0]), strToFloat(comp[1]), strToFloat(comp[2]), strToFloat(comp[3]));
+	return Vector4(string::convert<float>(comp[0]),
+                   string::convert<float>(comp[1]),
+                   string::convert<float>(comp[2]),
+                   string::convert<float>(comp[3]));
 }
 
 float GuiWindowDef::parseFloat(parser::DefTokeniser& tokeniser)
 {
 	// TODO: Catch GUI expressions
 
-	return strToFloat(getExpression(tokeniser));
+	return string::convert<float>(getExpression(tokeniser));
 }
 
 int GuiWindowDef::parseInt(parser::DefTokeniser& tokeniser)
 {
 	// TODO: Catch GUI expressions
 
-	return strToInt(getExpression(tokeniser));
+	return string::convert<int>(getExpression(tokeniser));
 }
 
 std::string GuiWindowDef::parseString(parser::DefTokeniser& tokeniser)
@@ -133,7 +136,7 @@ bool GuiWindowDef::parseBool(parser::DefTokeniser& tokeniser)
 {
 	// TODO: Catch GUI expressions
 
-	return strToInt(getExpression(tokeniser)) != 0;
+	return string::convert<int>(getExpression(tokeniser)) != 0;
 }
 
 void GuiWindowDef::addWindow(const GuiWindowDefPtr& window)
@@ -261,7 +264,9 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			std::string timeStr = tokeniser.nextToken();
 
 			// Check the time for validity
-			std::size_t time = strToSizet(timeStr, std::numeric_limits<std::size_t>::max());
+			std::size_t time = string::convert<std::size_t>(
+                timeStr, std::numeric_limits<std::size_t>::max()
+            );
 
 			if (time == std::numeric_limits<std::size_t>::max())
 			{

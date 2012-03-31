@@ -144,7 +144,7 @@ void AutoMapSaver::saveSnapshot() {
 
 			// Now append the number and the map extension to the map name
 			filename += ".";
-			filename += intToStr(nCount);
+			filename += string::to_string(nCount);
 			filename += ".";
 			filename += GlobalRegistry().get(RKEY_MAP_EXTENSION);
 

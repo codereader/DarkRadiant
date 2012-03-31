@@ -31,7 +31,7 @@
 #include "registry/registry.h"
 #include "selection/algorithm/Shader.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
-
+#include "string/string.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/common/ShaderDefinitionView.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"

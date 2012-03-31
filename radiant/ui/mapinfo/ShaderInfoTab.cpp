@@ -107,7 +107,7 @@ void ShaderInfoTab::construct()
 	table->attach(*shaderLabel, 0, 1, 0, 1,
 				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
 
-	std::string sc = "<b>" + sizetToStr(_shaderBreakdown.getMap().size()) + "</b>";
+	std::string sc = "<b>" + string::to_string(_shaderBreakdown.getMap().size()) + "</b>";
 
 	_shaderCount->set_markup(sc);
 

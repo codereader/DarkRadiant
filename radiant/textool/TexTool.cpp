@@ -725,13 +725,13 @@ void TexTool::drawGrid() {
 	// Draw coordinate strings
 	for (int y = static_cast<int>(startY); y <= static_cast<int>(endY); y++) {
 		glRasterPos2f(topLeft[0] + 0.05f, y + 0.05f);
-		std::string ycoordStr = intToStr(y) + ".0";
+		std::string ycoordStr = string::to_string(y) + ".0";
 		GlobalOpenGL().drawString(ycoordStr);
 	}
 
 	for (int x = static_cast<int>(startX); x <= static_cast<int>(endX); x++) {
 		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f * _zoomFactor);
-		std::string xcoordStr = intToStr(x) + ".0";
+		std::string xcoordStr = string::to_string(x) + ".0";
 		GlobalOpenGL().drawString(xcoordStr);
 	}
 }

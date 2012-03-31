@@ -16,7 +16,7 @@ namespace registry
  */
 template<typename T> void setValue(const std::string& key, const T& value)
 {
-    GlobalRegistry().set(key, string::convert<std::string>(value, ""));
+    GlobalRegistry().set(key, string::to_string(value));
 }
 
 /**

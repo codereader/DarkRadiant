@@ -7,7 +7,7 @@
 
 #include "i18n.h"
 #include <gtkmm/spinbutton.h>
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace objectives
 {
@@ -36,7 +36,7 @@ ReadablePageReachedComponentEditor::ReadablePageReachedComponentEditor(Component
     );
 
 	// Initialise the spin button with the value from the first component argument
-	_pageNum->set_value(strToDouble(component.getArgument(0)));
+	_pageNum->set_value(string::convert<double>(component.getArgument(0)));
 }
 
 // Write to component
@@ -48,7 +48,7 @@ void ReadablePageReachedComponentEditor::writeToComponent() const
         Specifier::FIRST_SPECIFIER, _readableSpec->getSpecifier()
     );
 
-	_component->setArgument(0, doubleToStr(_pageNum->get_value()));
+	_component->setArgument(0, string::to_string(_pageNum->get_value()));
 }
 
 } // namespace ce

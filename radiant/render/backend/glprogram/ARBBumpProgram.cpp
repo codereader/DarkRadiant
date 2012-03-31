@@ -2,7 +2,7 @@
 #include "render/backend/GLProgramFactory.h"
 
 #include "igame.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "math/Matrix4.h"
 
 namespace render
@@ -36,7 +36,7 @@ void ARBBumpProgram::create()
     xml::NodeList scaleList = currentGame->getLocalXPath(LOCAL_RKEY_LIGHTSCALE);
 	if (!scaleList.empty())
     {
-		_lightScale = strToDouble(scaleList[0].getContent());
+		_lightScale = string::convert<double>(scaleList[0].getContent());
 	}
 	else {
 		_lightScale = 1.0;

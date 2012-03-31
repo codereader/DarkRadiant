@@ -7,7 +7,7 @@
 #include "iregistry.h"
 #include "imodule.h"
 #include "os/file.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "debugging/debugging.h"
 
 #include <fstream>
@@ -253,7 +253,7 @@ GLuint GLProgramFactory::createARBProgram(const std::string& filename,
 
         // Construct user-readable error string
         std::string error("GL program error: ");
-        error += filename + "(" + intToStr(errPos) + "): \n\n";
+        error += filename + "(" + string::to_string(errPos) + "): \n\n";
         error += std::string(reinterpret_cast<const char*>(errString));
 
         // Throw exception

@@ -237,7 +237,7 @@ Face& getLastSelectedFace() {
 		return g_SelectedFaceInstances.last().getFace();
 	}
 	else {
-		throw selection::InvalidSelectionException(intToStr(selectedFaceCount()));
+		throw selection::InvalidSelectionException(string::to_string(selectedFaceCount()));
 	}
 }
 

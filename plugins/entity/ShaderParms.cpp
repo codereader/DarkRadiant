@@ -2,7 +2,7 @@
 
 #include "ColourKey.h"
 #include "KeyObserverMap.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include <boost/bind.hpp>
 
@@ -37,7 +37,7 @@ void ShaderParms::addKeyObservers()
 {
 	for (std::size_t i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
 	{
-		_keyObserverMap.insert("shaderParm" + sizetToStr(i), _shaderParmObservers[i]);
+		_keyObserverMap.insert("shaderParm" + string::to_string(i), _shaderParmObservers[i]);
 	}
 }
 
@@ -45,7 +45,7 @@ void ShaderParms::removeKeyObservers()
 {
 	for (int i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
 	{
-		_keyObserverMap.erase("shaderParm" + sizetToStr(i), _shaderParmObservers[i]);
+		_keyObserverMap.erase("shaderParm" + string::to_string(i), _shaderParmObservers[i]);
 	}
 }
 
@@ -60,7 +60,7 @@ void ShaderParms::onShaderParmKeyValueChanged(std::size_t parm, const std::strin
 	else
 	{
 		// Get the floating point value and cache it locally
-		_parmValues[parm] = strToFloat(value);
+		_parmValues[parm] = string::convert<float>(value);
 	}
 }
 

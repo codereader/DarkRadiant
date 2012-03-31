@@ -2,6 +2,7 @@
 
 #include "ProcWinding.h"
 #include "OptUtils.h"
+#include "string/convert.h"
 
 namespace map
 {
@@ -75,7 +76,7 @@ void ProcLight::parseFromSpawnargs(const Entity& ent)
 
 			if (!ent.getKeyValue("light").empty())
 			{
-				radius = strToFloat(ent.getKeyValue("light"));
+				radius = string::convert<float>(ent.getKeyValue("light"));
 			}
 
 			parms.lightRadius = Vector3(radius, radius, radius);
@@ -91,7 +92,7 @@ void ProcLight::parseFromSpawnargs(const Entity& ent)
 
 		if (rotation.empty())
 		{
-			float angle = strToFloat(ent.getKeyValue("angle"));
+			float angle = string::convert<float>(ent.getKeyValue("angle"));
 
 			// idMath::AngleNormalize360
 			if (angle >= 360.0f || angle < 0.0f)
@@ -123,16 +124,16 @@ void ProcLight::parseFromSpawnargs(const Entity& ent)
 	parms.shaderParms[1] = color[1];
 	parms.shaderParms[2] = color[2];
 	
-	parms.shaderParms[3] = strToFloat(ent.getKeyValue("shaderParm3"), 1.0f);
-	parms.shaderParms[4] = strToFloat(ent.getKeyValue("shaderParm4"), 0.0f);
+	parms.shaderParms[3] = string::convert<float>(ent.getKeyValue("shaderParm3"), 1.0f);
+	parms.shaderParms[4] = string::convert<float>(ent.getKeyValue("shaderParm4"), 0.0f);
 
-	parms.shaderParms[5] = strToFloat(ent.getKeyValue("shaderParm5"), 0.0f);
-	parms.shaderParms[6] = strToFloat(ent.getKeyValue("shaderParm6"), 0.0f);
-	parms.shaderParms[7] = strToFloat(ent.getKeyValue("shaderParm7"), 0.0f);
+	parms.shaderParms[5] = string::convert<float>(ent.getKeyValue("shaderParm5"), 0.0f);
+	parms.shaderParms[6] = string::convert<float>(ent.getKeyValue("shaderParm6"), 0.0f);
+	parms.shaderParms[7] = string::convert<float>(ent.getKeyValue("shaderParm7"), 0.0f);
 	
-	parms.noShadows = strToInt(ent.getKeyValue("noshadows"), 0) != 0;
-	parms.noSpecular = strToInt(ent.getKeyValue("nospecular"), 0) != 0;
-	parms.parallel = strToInt(ent.getKeyValue("parallel"), 0) != 0;
+	parms.noShadows = string::convert<int>(ent.getKeyValue("noshadows"), 0) != 0;
+	parms.noSpecular = string::convert<int>(ent.getKeyValue("nospecular"), 0) != 0;
+	parms.parallel = string::convert<int>(ent.getKeyValue("parallel"), 0) != 0;
 
 	std::string shader = ent.getKeyValue("texture");
 

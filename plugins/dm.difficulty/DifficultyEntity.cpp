@@ -1,7 +1,7 @@
 #include "DifficultyEntity.h"
 
 #include "ientity.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace difficulty {
 
@@ -24,8 +24,8 @@ void DifficultyEntity::clear() {
 
 void DifficultyEntity::writeSetting(const SettingPtr& setting, int _level) {
 	// Construct the prefix and index strings
-	std::string prefix = "diff_" + intToStr(_level) + "_";
-	std::string idx = intToStr(_curId);
+	std::string prefix = "diff_" + string::to_string(_level) + "_";
+	std::string idx = string::to_string(_curId);
 
 	// Save the spawnargs
 	_entity->setKeyValue(prefix + "class_" + idx, setting->className);

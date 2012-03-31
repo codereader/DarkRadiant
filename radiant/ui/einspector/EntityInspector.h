@@ -9,7 +9,7 @@
 #include "iselection.h"
 #include "ientity.h"
 #include "iundo.h"
-
+#include "string/string.h"
 #include "gtkutil/menu/PopupMenu.h"
 #include "gtkutil/PanedPosition.h"
 

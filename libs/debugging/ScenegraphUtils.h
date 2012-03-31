@@ -5,7 +5,7 @@
 #include "inode.h"
 #include "nameable.h"
 #include "scenelib.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "itextstream.h"
 
 // greebo: Return information about the given node
@@ -41,10 +41,10 @@ inline std::string getPathInfo(const scene::Path& path) {
 		name += (name.empty()) ? "" : ", ";
 		name += getNodeInfo(node);
 	}
-	name = std::string("[") + sizetToStr(path.size()) + "] {" + name + "} extents: ";
-	name += "<" + doubleToStr(path.top()->worldAABB().extents.x()) + ",";
-	name += doubleToStr(path.top()->worldAABB().extents.y()) + ",";
-	name += doubleToStr(path.top()->worldAABB().extents.z()) + ">";
+	name = std::string("[") + string::to_string(path.size()) + "] {" + name + "} extents: ";
+	name += "<" + string::to_string(path.top()->worldAABB().extents.x()) + ",";
+	name += string::to_string(path.top()->worldAABB().extents.y()) + ",";
+	name += string::to_string(path.top()->worldAABB().extents.z()) + ">";
 	return name;
 }
 

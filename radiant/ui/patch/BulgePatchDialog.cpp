@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "imainframe.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace
 {
@@ -19,7 +19,7 @@ BulgePatchDialog::BulgePatchDialog() :
 {
 	_noiseHandle = addEntryBox(_(LABEL_NOISE));
 
-	setElementValue(_noiseHandle, floatToStr(NOISE));
+	setElementValue(_noiseHandle, string::to_string(NOISE));
 }
 
 bool BulgePatchDialog::queryPatchNoise(int& noise)
@@ -32,7 +32,7 @@ bool BulgePatchDialog::queryPatchNoise(int& noise)
 	if (result == IDialog::RESULT_OK)
 	{
 		// Retrieve the maxValue
-		noise = strToFloat(dialog.getElementValue(dialog._noiseHandle));
+		noise = string::convert<float>(dialog.getElementValue(dialog._noiseHandle));
 
 		return true;
 	}

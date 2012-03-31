@@ -80,7 +80,7 @@ XYWnd::XYWnd(int id) :
 	// Try to retrieve a recently used origin and scale from the registry
 	std::string recentPath = RKEY_XYVIEW_ROOT + "/recent";
 	m_vOrigin = Vector3(GlobalRegistry().getAttribute(recentPath, "origin"));
-	m_fScale = strToDouble(GlobalRegistry().getAttribute(recentPath, "scale"));
+	m_fScale = string::convert<double>(GlobalRegistry().getAttribute(recentPath, "scale"));
 
 	if (m_fScale == 0)
 	{
@@ -137,7 +137,7 @@ XYWnd::~XYWnd()
 	// picked up again when creating XYViews after switching layouts
 	std::string recentPath = RKEY_XYVIEW_ROOT + "/recent";
 	GlobalRegistry().setAttribute(recentPath, "origin", m_vOrigin);
-	GlobalRegistry().setAttribute(recentPath, "scale", doubleToStr(m_fScale));
+	GlobalRegistry().setAttribute(recentPath, "scale", string::to_string(m_fScale));
 }
 
 int XYWnd::getId() const
@@ -1167,7 +1167,7 @@ void XYWnd::drawBlockGrid() {
 
 	// Parse and set the custom blocksize if found
 	if (!sizeVal.empty()) {
-		blockSize = strToInt(sizeVal);
+		blockSize = string::convert<int>(sizeVal);
 	}
 
 	float	x, y, xb, xe, yb, ye;
@@ -1767,11 +1767,11 @@ void XYWnd::saveStateToPath(const std::string& rootPath)
 	if (!_parent || !_parent->is_visible()) return;
 
 	// Create a new child under the given root path
-	std::string viewNodePath = rootPath + "/view[@name='" + intToStr(_id) + "']";
+	std::string viewNodePath = rootPath + "/view[@name='" + string::to_string(_id) + "']";
 
 	// Remove any previously existing nodes with the same name
 	GlobalRegistry().deleteXPath(viewNodePath);
-	GlobalRegistry().createKeyWithName(rootPath, "view", intToStr(_id));
+	GlobalRegistry().createKeyWithName(rootPath, "view", string::to_string(_id));
 
 	_windowPosition.readPosition();
 	_windowPosition.saveToPath(viewNodePath);

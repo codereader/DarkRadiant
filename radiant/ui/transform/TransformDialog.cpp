@@ -279,7 +279,7 @@ void TransformDialog::selectionChanged(const scene::INodePtr& node, bool isCompo
 void TransformDialog::onClickLarger(EntryRow* row)
 {
 	// Get the current step increment
-	float step = strToFloat(row->stepEntry->get_text());
+	float step = string::convert<float>(row->stepEntry->get_text());
 
 	// Determine the action
 	if (row->isRotator)
@@ -309,7 +309,7 @@ void TransformDialog::onClickLarger(EntryRow* row)
 void TransformDialog::onClickSmaller(EntryRow* row)
 {
 	// Get the current value and the step increment
-	float step = strToFloat(row->stepEntry->get_text());
+	float step = string::convert<float>(row->stepEntry->get_text());
 
 	// Determine the action
 	if (row->isRotator)

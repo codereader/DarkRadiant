@@ -9,7 +9,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
-#include "string/string.h"
+#include "string/convert.h"
 #include "ConversationCommand.h"
 #include "ConversationCommandLibrary.h"
 
@@ -34,7 +34,7 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 	}
 
 	// Get the conversation number
-	iNum = strToInt(results[1]);
+	iNum = string::convert<int>(results[1]);
 
 	// We now have the conversation number and the substring (everything after
 	// "conv_<n>_" which applies to this conversation.
@@ -45,7 +45,7 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 		_convMap[iNum].name = value;
 	}
 	else if (convSubString == "talk_distance") {
-		_convMap[iNum].talkDistance = strToFloat(value, 60);
+		_convMap[iNum].talkDistance = string::convert<float>(value, 60);
 	}
 	else if (convSubString == "actors_must_be_within_talkdistance") {
 		_convMap[iNum].actorsMustBeWithinTalkdistance = (value == "1");
@@ -54,11 +54,11 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 		_convMap[iNum].actorsAlwaysFaceEachOther = (value == "1");
 	}
 	else if (convSubString == "max_play_count") {
-		_convMap[iNum].maxPlayCount = strToInt(value, -1);
+		_convMap[iNum].maxPlayCount = string::convert<int>(value, -1);
 	}
 	else if (convSubString.substr(0, 6) == "actor_") {
 		// This is an actor definition, extract the number
-		int actorNum = strToInt(convSubString.substr(6), -1);
+		int actorNum = string::convert<int>(convSubString.substr(6), -1);
 
 		if (actorNum == -1) {
 			return;
@@ -76,7 +76,7 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 			return; // not matching
 		}
 
-		int cmdIndex = strToInt(results[1]);
+		int cmdIndex = string::convert<int>(results[1]);
 		std::string cmdSubStr = results[2];
 
 		ConversationCommandPtr command;
@@ -104,13 +104,13 @@ void ConversationKeyExtractor::visit(const std::string& key, const std::string& 
 			}
 		}
 		else if (cmdSubStr == "actor") {
-			command->actor = strToInt(value);
+			command->actor = string::convert<int>(value);
 		}
 		else if (cmdSubStr == "wait_until_finished") {
 			command->waitUntilFinished = (value == "1");
 		}
 		else if (cmdSubStr.substr(0,4) == "arg_") {
-			int cmdArgIndex = strToInt(cmdSubStr.substr(4));
+			int cmdArgIndex = string::convert<int>(cmdSubStr.substr(4));
 
 			command->arguments[cmdArgIndex] = value;
 		}

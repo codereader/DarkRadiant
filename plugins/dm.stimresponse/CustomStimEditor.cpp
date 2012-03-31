@@ -6,7 +6,7 @@
 #include "gtkutil/TreeModel.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/StockIconMenuItem.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "i18n.h"
 
 #include <gtkmm/treeview.h>
@@ -223,7 +223,7 @@ void CustomStimEditor::addStimType()
 	int id = _stimTypes.getFreeCustomStimId();
 
 	_stimTypes.add(id,
-				   intToStr(id),
+				   string::to_string(id),
 				   "CustomStimType",
 				   _("Custom Stim"),
 				   ICON_CUSTOM_STIM,

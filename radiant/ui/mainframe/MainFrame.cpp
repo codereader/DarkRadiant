@@ -329,7 +329,9 @@ void MainFrame::restoreWindowPosition()
 	if (!GlobalRegistry().findXPath(RKEY_WINDOW_STATE).empty())
 	{
 		_windowPosition.loadFromPath(RKEY_WINDOW_STATE);
-		windowState = strToInt(GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state"));
+		windowState = string::convert<int>(
+            GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "state")
+        );
 	}
 
 	int startMonitor = registry::getValue<int>(RKEY_MULTIMON_START_MONITOR);
@@ -496,7 +498,7 @@ void MainFrame::saveWindowPosition()
 		GlobalRegistry().setAttribute(
 			RKEY_WINDOW_STATE,
 			"state",
-			intToStr(window->get_state())
+			string::to_string(window->get_state())
 		);
 	}
 }

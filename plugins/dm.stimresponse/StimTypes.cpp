@@ -88,7 +88,7 @@ void StimTypes::reload()
 	for (std::size_t i = 0; i < stimNodes.size(); ++i)
 	{
 		// Add the new stim type
-		add(strToInt(stimNodes[i].getAttributeValue("id")),
+		add(string::convert<int>(stimNodes[i].getAttributeValue("id")),
 			stimNodes[i].getAttributeValue("name"),
 			stimNodes[i].getAttributeValue("caption"),
 			stimNodes[i].getAttributeValue("description"),
@@ -132,7 +132,7 @@ void StimTypes::save()
 		for (StimTypeMap::iterator i = _stimTypes.begin(); i != _stimTypes.end(); ++i)
 		{
 			StimType& s = i->second;
-			std::string idStr = intToStr(i->first);
+			std::string idStr = string::to_string(i->first);
 
 			if (s.custom) {
 				// spawnarg is something like "editor_dr_stim_1002" => "MyStim"
@@ -179,7 +179,7 @@ void StimTypes::setStimTypeCaption(int id, const std::string& caption)
 		// Combine the ID and the caption
 		std::string captionPlusId = caption;
 		bool showStimTypeIds = registry::getValue<bool>(RKEY_SHOW_STIM_TYPE_IDS);
-		captionPlusId += showStimTypeIds ? " (" + intToStr(id) + ")" : "";
+		captionPlusId += showStimTypeIds ? " (" + string::to_string(id) + ")" : "";
 
 		// Update the list store
 		Gtk::TreeModel::Row row = *getIterForId(id);
@@ -209,7 +209,7 @@ void StimTypes::add(int id,
 	// Combine the ID and the caption
 	std::string captionPlusId = caption;
 	bool showStimTypeIds = registry::getValue<bool>(RKEY_SHOW_STIM_TYPE_IDS);
-	captionPlusId += showStimTypeIds ? " (" + intToStr(id) + ")" : "";
+	captionPlusId += showStimTypeIds ? " (" + string::to_string(id) + ")" : "";
 
 	Gtk::TreeModel::Row row = *_listStore->append();
 
@@ -230,7 +230,7 @@ void StimTypes::visit(const std::string& key, const std::string& value)
 	{
 		// Extract the stim name from the key (the part after the prefix)
 		std::string idStr = key.substr(prefix.size());
-		int id = strToInt(idStr);
+		int id = string::convert<int>(idStr);
 		std::string stimCaption= value;
 
 		if (id < lowestCustomId)

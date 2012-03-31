@@ -224,7 +224,7 @@ public:
 			GlobalEventManager().setToggled(toggleName, _activeGridSize == gridItem.getGridSize());
 		}
 
-		GlobalUIManager().getStatusBarManager().setText("GridStatus", floatToStr(getGridSize()));
+		GlobalUIManager().getStatusBarManager().setText("GridStatus", string::to_string(getGridSize()));
 
 		gridChangeNotify();
 

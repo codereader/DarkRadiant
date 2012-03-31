@@ -1,7 +1,7 @@
 #include "ModelInfoTab.h"
 
 #include "i18n.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -103,8 +103,8 @@ void ModelInfoTab::populateTab()
 	table->attach(*skinsLabel, 0, 1, 1, 2,
 				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
 
-	std::string mc = "<b>" + sizetToStr(_modelBreakdown.getMap().size()) + "</b>";
-	std::string sc = "<b>" + sizetToStr(_modelBreakdown.getNumSkins()) + "</b>";
+	std::string mc = "<b>" + string::to_string(_modelBreakdown.getMap().size()) + "</b>";
+	std::string sc = "<b>" + string::to_string(_modelBreakdown.getNumSkins()) + "</b>";
 
 	_modelCount->set_markup(mc);
 	_skinCount->set_markup(sc);

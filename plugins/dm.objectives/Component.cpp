@@ -1,6 +1,6 @@
 #include "Component.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/replace.hpp>
 
@@ -122,7 +122,7 @@ std::string Component::getString() {
 	}
 
 	if (getClockInterval() > 0) {
-		sentence += " (check interval: " + floatToStr(getClockInterval()) + " seconds)";
+		sentence += " (check interval: " + string::to_string(getClockInterval()) + " seconds)";
 	}
 
 	// Convert the first character of the sentence to upper case

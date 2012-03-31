@@ -72,7 +72,7 @@ void MapExporter::construct()
 	xml::NodeList nodes = curGame->getLocalXPath(RKEY_FLOAT_PRECISION);
 	assert(!nodes.empty());
 
-	int precision = strToInt(nodes[0].getAttributeValue("value"));
+	int precision = string::convert<int>(nodes[0].getAttributeValue("value"));
 	_mapStream.precision(precision);
 
 	// Add origin to func_* children before writing

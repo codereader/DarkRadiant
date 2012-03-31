@@ -1,6 +1,6 @@
 #include "DifficultySettings.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace difficulty {
 
@@ -299,7 +299,7 @@ SettingPtr DifficultySettings::createSetting(const std::string& className)
 void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def)
 {
 	// Construct the prefix for the desired difficulty level
-	std::string diffPrefix = "diff_" + intToStr(_level) + "_";
+	std::string diffPrefix = "diff_" + string::to_string(_level) + "_";
 	std::string prefix = diffPrefix + "change_";
 
 	EntityClassAttributeList spawnargs = def->getAttributeList(prefix);
@@ -336,7 +336,7 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def)
 
 void DifficultySettings::parseFromMapEntity(Entity* entity) {
 	// Construct the prefix for the desired difficulty level
-	std::string diffPrefix = "diff_" + intToStr(_level) + "_";
+	std::string diffPrefix = "diff_" + string::to_string(_level) + "_";
 	std::string prefix = diffPrefix + "change_";
 
 	Entity::KeyValuePairs spawnargs = entity->getKeyValuePairs(prefix);

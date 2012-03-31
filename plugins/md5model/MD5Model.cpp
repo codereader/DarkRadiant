@@ -4,7 +4,7 @@
 #include "ishaders.h"
 #include "texturelib.h"
 #include "ifilter.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "math/Quaternion.h"
 #include "MD5DataStructures.h"
 
@@ -239,9 +239,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 
 	// Number of joints and meshes
 	tok.assertNextToken("numJoints");
-	std::size_t numJoints = strToSizet(tok.nextToken());
+	std::size_t numJoints = string::convert<std::size_t>(tok.nextToken());
 	tok.assertNextToken("numMeshes");
-	std::size_t numMeshes = strToSizet(tok.nextToken());
+	std::size_t numMeshes = string::convert<std::size_t>(tok.nextToken());
 
 	// ------ JOINTS  ------
 
@@ -262,7 +262,7 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 		tok.skipTokens(1);
 
 		// Index of parent joint
-		i->parent = strToInt(tok.nextToken());
+		i->parent = string::convert<int>(tok.nextToken());
 
 		// Joint's position vector
 		i->position = parseVector3(tok);
@@ -316,9 +316,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 Vector3 MD5Model::parseVector3(parser::DefTokeniser& tok) {
 	tok.assertNextToken("(");
 
-	float x = strToFloat(tok.nextToken());
-	float y = strToFloat(tok.nextToken());
-	float z = strToFloat(tok.nextToken());
+	float x = string::convert<float>(tok.nextToken());
+	float y = string::convert<float>(tok.nextToken());
+	float z = string::convert<float>(tok.nextToken());
 
 	tok.assertNextToken(")");
 

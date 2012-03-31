@@ -35,11 +35,6 @@ inline bool shader_equal_n(const char* shader, const char* other, std::size_t n)
   return string_equal_nocase_n(shader, other, n);
 }
 
-inline bool shader_equal_prefix(const char* string, const char* prefix)
-{
-  return shader_equal_n(string, prefix, string_length(prefix));
-}
-
 inline bool shader_valid(const char* shader)
 {
   return string_is_ascii(shader)
@@ -58,7 +53,7 @@ inline const char* GlobalTexturePrefix_get()
 
 inline const char* shader_get_textureName(const char* name)
 {
-  return name + string_length(GlobalTexturePrefix_get());
+  return name + std::strlen(GlobalTexturePrefix_get());
 }
 
 inline const std::string& texdef_name_default()

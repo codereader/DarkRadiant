@@ -24,120 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// C-style null-terminated-character-array string library.
 
 #include <cstring>
-#include <cctype>
-#include <cstdlib>
-#include <algorithm>
-
-#include <boost/lexical_cast.hpp>
-
-#ifdef SPECIALISE_STR_TO_FLOAT
-
-inline float strToFloat(const std::string& str)
-{
-    return std::atof(str.c_str());
-}
-
-#else
-
-inline float strToFloat(const std::string& str, float fallBackValue = 0)
-{
-	try {
-		return boost::lexical_cast<float>(str);
-	}
-	catch (boost::bad_lexical_cast&) {
-		return fallBackValue;
-	}
-}
-
-#endif
-
-inline std::string intToStr(int i, const std::string& fallBackValue = "")
-{
-	try {
-		return boost::lexical_cast<std::string>(i);
-	}
-	catch (boost::bad_lexical_cast&) {
-		return fallBackValue;
-	}
-}
-
-inline int strToInt(const std::string& str, int fallBackValue = 0)
-{
-	try {
-		return boost::lexical_cast<int>(str);
-	}
-	catch (boost::bad_lexical_cast&) {
-		return fallBackValue;
-	}
-}
-
-inline std::string floatToStr(float f, const std::string& fallBackValue = "")
-{
-	try {
-		return boost::lexical_cast<std::string>(f);
-	}
-	catch (boost::bad_lexical_cast&) {
-		return fallBackValue;
-	}
-}
-
-inline std::string doubleToStr(double f, const std::string& fallBackValue = "")
-{
-	try {
-		return boost::lexical_cast<std::string>(f);
-	}
-	catch (boost::bad_lexical_cast e) {
-		return fallBackValue;
-	}
-}
-
-inline double strToDouble(const std::string& str, double fallBackValue = 0)
-{
-	try {
-		return boost::lexical_cast<double>(str);
-	}
-	catch (boost::bad_lexical_cast&) {
-		return fallBackValue;
-	}
-}
-
-inline std::string sizetToStr(std::size_t s, const std::string& fallBackValue = "")
-{
-	try {
-#ifdef WIN32
-		return boost::lexical_cast<std::string>(static_cast<unsigned long>(s));
-#else
-		return boost::lexical_cast<std::string>(s);
-#endif
-	}
-	catch (boost::bad_lexical_cast&) {
-		return fallBackValue;
-	}
-}
-
-inline std::size_t strToSizet(const std::string& str, std::size_t fallBackValue = 0)
-{
-	try {
-		return boost::lexical_cast<std::size_t>(str);
-	}
-	catch (boost::bad_lexical_cast&) {
-		return fallBackValue;
-	}
-}
-
-/// \brief Returns true if \p string length is zero.
-/// O(1)
-inline bool string_empty(const char* string)
-{
-  return *string == '\0';
-}
-
-/// \brief Returns true if \p string length is not zero.
-/// O(1)
-inline bool string_not_empty(const char* string)
-{
-  return !string_empty(string);
-}
 
 /// \brief Returns <0 if \p string is lexicographically less than \p other.
 /// Returns >0 if \p string is lexicographically greater than \p other.
@@ -167,13 +53,6 @@ inline bool string_equal_n(const char* string, const char* other, std::size_t n)
 inline bool string_less(const char* string, const char* other)
 {
   return string_compare(string, other) < 0;
-}
-
-/// \brief Returns true if \p string is lexicographically greater than \p other.
-/// O(n)
-inline bool string_greater(const char* string, const char* other)
-{
-  return string_compare(string, other) > 0;
 }
 
 /// \brief Returns <0 if \p string is lexicographically less than \p other after converting both to lower-case.
@@ -225,11 +104,4 @@ inline bool string_equal_nocase_n(const char* string, const char* other, std::si
 inline bool string_less_nocase(const char* string, const char* other)
 {
   return string_compare_nocase(string, other) < 0;
-}
-
-/// \brief Returns the number of non-null characters in \p string.
-/// O(n)
-inline std::size_t string_length(const char* string)
-{
-  return std::strlen(string);
 }

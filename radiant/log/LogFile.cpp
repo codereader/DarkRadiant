@@ -5,7 +5,7 @@
 #include "itextstream.h"
 #include "version.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 #include "LogWriter.h"
 #include "modulesystem/ModuleRegistry.h"
 
@@ -60,9 +60,9 @@ void LogFile::create(const std::string& filename) {
 			                 << "This is " << RADIANT_APPNAME_FULL() << std::endl;
 
 		// Output the gtkmm version to the logfile
-        std::string gtkVersion = intToStr(GTKMM_MAJOR_VERSION) + ".";
-		gtkVersion += intToStr(GTKMM_MINOR_VERSION) + ".";
-		gtkVersion += intToStr(GTKMM_MICRO_VERSION);
+        std::string gtkVersion = string::to_string(GTKMM_MAJOR_VERSION) + ".";
+		gtkVersion += string::to_string(GTKMM_MINOR_VERSION) + ".";
+		gtkVersion += string::to_string(GTKMM_MICRO_VERSION);
 
         globalOutputStream() << "gtkmm Version: " << gtkVersion << std::endl;
 	}

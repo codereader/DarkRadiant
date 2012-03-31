@@ -9,7 +9,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/classification.hpp>
-#include "string/string.h"
+#include "string/convert.h"
 
 #include "i18n.h"
 #include "SREntity.h"
@@ -325,10 +325,10 @@ Gtk::Widget& StimEditor::createPropertyWidgets()
 
 std::string StimEditor::getTimerString()
 {
-	std::string hour = intToStr(_propertyWidgets.timer.hour->get_value_as_int());
-	std::string minute = intToStr(_propertyWidgets.timer.minute->get_value_as_int());
-	std::string second = intToStr(_propertyWidgets.timer.second->get_value_as_int());
-	std::string ms = intToStr(_propertyWidgets.timer.millisecond->get_value_as_int());
+	std::string hour = string::to_string(_propertyWidgets.timer.hour->get_value_as_int());
+	std::string minute = string::to_string(_propertyWidgets.timer.minute->get_value_as_int());
+	std::string second = string::to_string(_propertyWidgets.timer.second->get_value_as_int());
+	std::string ms = string::to_string(_propertyWidgets.timer.millisecond->get_value_as_int());
 
 	return hour + ":" + minute + ":" + second + ":" + ms;
 }
@@ -396,7 +396,7 @@ void StimEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
 	}
 	else if (toggleButton == _propertyWidgets.chanceToggle)
 	{
-		std::string entryText = doubleToStr(_propertyWidgets.chanceEntry->get_value());
+		std::string entryText = string::to_string(_propertyWidgets.chanceEntry->get_value());
 
 		setProperty("chance", active ? entryText : "");
 	}
@@ -555,7 +555,7 @@ void StimEditor::update()
 		// Use Radius
 		bool useRadius = (sr.get("radius") != "");
 		_propertyWidgets.radiusToggle->set_active(useRadius);
-		_propertyWidgets.radiusEntry->set_value(strToFloat(sr.get("radius")));
+		_propertyWidgets.radiusEntry->set_value(string::convert<float>(sr.get("radius")));
 		_propertyWidgets.radiusEntry->set_sensitive(useRadius);
 
 		// Use Bounds
@@ -565,21 +565,21 @@ void StimEditor::update()
 		// Use Duration
 		bool useDuration = (sr.get("duration") != "");
 		_propertyWidgets.durationToggle->set_active(useDuration);
-		_propertyWidgets.durationEntry->set_value(strToInt(sr.get("duration")));
+		_propertyWidgets.durationEntry->set_value(string::convert<int>(sr.get("duration")));
 		_propertyWidgets.durationEntry->set_sensitive(useDuration);
 		_propertyWidgets.durationUnitLabel->set_sensitive(useDuration);
 
 		// Use Time interval
 		bool useTimeInterval = (sr.get("time_interval") != "");
 		_propertyWidgets.timeIntToggle->set_active(useTimeInterval);
-		_propertyWidgets.timeIntEntry->set_value(strToInt(sr.get("time_interval")));
+		_propertyWidgets.timeIntEntry->set_value(string::convert<int>(sr.get("time_interval")));
 		_propertyWidgets.timeIntEntry->set_sensitive(useTimeInterval);
 		_propertyWidgets.timeUnitLabel->set_sensitive(useTimeInterval);
 
 		// Use Final radius (duration must be enabled for this to work)
 		bool useFinalRadius = (sr.get("radius_final") != "");
 		_propertyWidgets.finalRadiusToggle->set_active(useFinalRadius && useDuration);
-		_propertyWidgets.finalRadiusEntry->set_value(strToFloat(sr.get("radius_final")));
+		_propertyWidgets.finalRadiusEntry->set_value(string::convert<float>(sr.get("radius_final")));
 		_propertyWidgets.finalRadiusToggle->set_sensitive(useRadius && useDuration);
 		_propertyWidgets.finalRadiusEntry->set_sensitive(useFinalRadius && useDuration && useRadius);
 
@@ -599,10 +599,10 @@ void StimEditor::update()
 		std::string second = (parts.size() > 2) ? parts[2] : "";
 		std::string ms = (parts.size() > 3) ? parts[3] : "";
 
-		_propertyWidgets.timer.hour->set_value(strToInt(hour));
-		_propertyWidgets.timer.minute->set_value(strToInt(minute));
-		_propertyWidgets.timer.second->set_value(strToInt(second));
-		_propertyWidgets.timer.millisecond->set_value(strToInt(ms));
+		_propertyWidgets.timer.hour->set_value(string::convert<int>(hour));
+		_propertyWidgets.timer.minute->set_value(string::convert<int>(minute));
+		_propertyWidgets.timer.second->set_value(string::convert<int>(second));
+		_propertyWidgets.timer.millisecond->set_value(string::convert<int>(ms));
 
 		_propertyWidgets.timer.waitToggle->set_active(
 			useTimerTime && sr.get("timer_waitforstart") == "1"
@@ -617,33 +617,33 @@ void StimEditor::update()
 		bool userTimerReload = useTimerType && !sr.get("timer_reload").empty();
 		_propertyWidgets.timer.reloadToggle->set_active(userTimerReload);
 		_propertyWidgets.timer.reloadToggle->set_sensitive(useTimerType);
-		_propertyWidgets.timer.reloadEntry->set_value(strToInt(sr.get("timer_reload")));
+		_propertyWidgets.timer.reloadEntry->set_value(string::convert<int>(sr.get("timer_reload")));
 		_propertyWidgets.timer.reloadHBox->set_sensitive(userTimerReload);
 
 		// Use Magnitude
 		bool useMagnitude = (sr.get("magnitude") != "");
 		_propertyWidgets.magnToggle->set_active(useMagnitude);
-		_propertyWidgets.magnEntry->set_value(strToFloat(sr.get("magnitude")));
+		_propertyWidgets.magnEntry->set_value(string::convert<float>(sr.get("magnitude")));
 		_propertyWidgets.magnEntry->set_sensitive(useMagnitude);
 
 		// Use falloff exponent widgets
 		bool useFalloff = (sr.get("falloffexponent") != "");
 
 		_propertyWidgets.falloffToggle->set_active(useFalloff);
-		_propertyWidgets.falloffEntry->set_value(strToFloat(sr.get("falloffexponent")));
+		_propertyWidgets.falloffEntry->set_value(string::convert<float>(sr.get("falloffexponent")));
 		_propertyWidgets.falloffToggle->set_sensitive(useMagnitude);
 		_propertyWidgets.falloffEntry->set_sensitive(useMagnitude && useFalloff);
 
 		// Use Chance
 		bool useChance = (sr.get("chance") != "");
 		_propertyWidgets.chanceToggle->set_active(useChance);
-		_propertyWidgets.chanceEntry->set_value(strToFloat(sr.get("chance")));
+		_propertyWidgets.chanceEntry->set_value(string::convert<float>(sr.get("chance")));
 		_propertyWidgets.chanceEntry->set_sensitive(useChance);
 
 		// Use Max Fire Count
 		bool useMaxFireCount = (sr.get("max_fire_count") != "");
 		_propertyWidgets.maxFireCountToggle->set_active(useMaxFireCount);
-		_propertyWidgets.maxFireCountEntry->set_value(strToFloat(sr.get("max_fire_count")));
+		_propertyWidgets.maxFireCountEntry->set_value(string::convert<float>(sr.get("max_fire_count")));
 		_propertyWidgets.maxFireCountEntry->set_sensitive(useMaxFireCount);
 
 		// Use Velocity

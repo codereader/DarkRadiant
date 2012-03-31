@@ -1,7 +1,7 @@
 #include "FilterMenu.h"
 
 #include "iuimanager.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "i18n.h"
 
 namespace ui
@@ -24,7 +24,7 @@ FilterMenu::FilterMenu()
 	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
 
 	// Create a unique name for the menu
-	_path = FILTERS_MENU_BAR + sizetToStr(_counter++);
+	_path = FILTERS_MENU_BAR + string::to_string(_counter++);
 
 	// Menu not yet constructed, do it now
 	// Create the menu bar first

@@ -2,7 +2,7 @@
 
 #include "iuimanager.h"
 #include "ientity.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include "gtkutil/IconTextButton.h"
 
@@ -76,7 +76,7 @@ void AnglePropertyEditor::constructButtons()
 
 void AnglePropertyEditor::_onButtonClick(int angleValue)
 {
-    setKeyValue(_key, intToStr(angleValue));
+    setKeyValue(_key, string::to_string(angleValue));
 }
 
 } // namespace ui

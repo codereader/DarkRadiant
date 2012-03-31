@@ -5,7 +5,7 @@
 #include "selectionlib.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include <gtkmm/comboboxtext.h>
 #include <gtkmm/table.h>
@@ -52,8 +52,8 @@ PatchCreateDialog::PatchCreateDialog() :
 	// Fill the values into the combo boxes
 	for (int i = MIN_PATCH_DIM; i <= MAX_PATCH_DIM; i += INCR_PATCH_DIM)
 	{
-		_comboWidth->append_text(intToStr(i));
-		_comboHeight->append_text(intToStr(i));
+		_comboWidth->append_text(string::to_string(i));
+		_comboHeight->append_text(string::to_string(i));
 	}
 
 	// Activate the first item in the combo boxes
@@ -103,12 +103,12 @@ void PatchCreateDialog::_postShow()
 
 int PatchCreateDialog::getSelectedWidth()
 {
-	return strToInt(_comboWidth->get_active_text());
+	return string::convert<int>(_comboWidth->get_active_text());
 }
 
 int PatchCreateDialog::getSelectedHeight()
 {
-	return strToInt(_comboHeight->get_active_text());
+	return string::convert<int>(_comboHeight->get_active_text());
 }
 
 bool PatchCreateDialog::getRemoveSelectedBrush()

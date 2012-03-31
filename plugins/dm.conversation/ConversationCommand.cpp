@@ -1,6 +1,6 @@
 #include "ConversationCommand.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/replace.hpp>
 
 #include "ConversationCommandLibrary.h"
@@ -33,7 +33,7 @@ std::string ConversationCommand::getSentence() const {
 		for (ConversationCommandInfo::ArgumentInfoList::const_iterator i = cmdInfo.arguments.begin();
 			 i != cmdInfo.arguments.end(); ++i, ++counter)
 		{
-			std::string needle = "[arg" + intToStr(counter) + "]";
+			std::string needle = "[arg" + string::to_string(counter) + "]";
 			std::string replacement = getArgument(counter);
 
 			// Check for a bool

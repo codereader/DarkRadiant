@@ -3,7 +3,7 @@
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/TreeModel.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include <gtkmm/eventbox.h>
 #include <gtkmm/entry.h>
@@ -115,7 +115,7 @@ std::string ActorArgument::getValue()
 	if (iter)
 	{
 		Gtk::TreeModel::Row row = *iter;
-		return intToStr(row[_actorColumns.actorNumber]);
+		return string::to_string(row[_actorColumns.actorNumber]);
 	}
 
 	return "";
@@ -124,7 +124,7 @@ std::string ActorArgument::getValue()
 void ActorArgument::setValueFromString(const std::string& value)
 {
 	// Convert the string to an actor ID
-	int actorId = strToInt(value, -1);
+	int actorId = string::convert<int>(value, -1);
 
 	if (actorId == -1) return; // invalid actor id
 

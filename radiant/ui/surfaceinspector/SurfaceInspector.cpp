@@ -516,11 +516,11 @@ void SurfaceInspector::emitTexDef()
 {
 	TexDef shiftScaleRotate;
 
-	shiftScaleRotate._shift[0] = strToFloat(_manipulators[HSHIFT].value->get_text());
-	shiftScaleRotate._shift[1] = strToFloat(_manipulators[VSHIFT].value->get_text());
-	shiftScaleRotate._scale[0] = strToFloat(_manipulators[HSCALE].value->get_text());
-	shiftScaleRotate._scale[1] = strToFloat(_manipulators[VSCALE].value->get_text());
-	shiftScaleRotate._rotate = strToFloat(_manipulators[ROTATION].value->get_text());
+	shiftScaleRotate._shift[0] = string::convert<float>(_manipulators[HSHIFT].value->get_text());
+	shiftScaleRotate._shift[1] = string::convert<float>(_manipulators[VSHIFT].value->get_text());
+	shiftScaleRotate._scale[0] = string::convert<float>(_manipulators[HSCALE].value->get_text());
+	shiftScaleRotate._scale[1] = string::convert<float>(_manipulators[VSCALE].value->get_text());
+	shiftScaleRotate._rotate = string::convert<float>(_manipulators[ROTATION].value->get_text());
 
 	TextureProjection projection;
 
@@ -556,13 +556,13 @@ void SurfaceInspector::updateTexDef()
 	texdef._rotate = float_snapped(texdef._rotate, MAX_FLOAT_RESOLUTION);
 
 	// Load the values into the widgets
-	_manipulators[HSHIFT].value->set_text(floatToStr(texdef._shift[0]));
-	_manipulators[VSHIFT].value->set_text(floatToStr(texdef._shift[1]));
+	_manipulators[HSHIFT].value->set_text(string::to_string(texdef._shift[0]));
+	_manipulators[VSHIFT].value->set_text(string::to_string(texdef._shift[1]));
 
-	_manipulators[HSCALE].value->set_text(floatToStr(texdef._scale[0]));
-	_manipulators[VSCALE].value->set_text(floatToStr(texdef._scale[1]));
+	_manipulators[HSCALE].value->set_text(string::to_string(texdef._scale[0]));
+	_manipulators[VSCALE].value->set_text(string::to_string(texdef._scale[1]));
 
-	_manipulators[ROTATION].value->set_text(floatToStr(texdef._rotate));
+	_manipulators[ROTATION].value->set_text(string::to_string(texdef._rotate));
 }
 
 void SurfaceInspector::onGtkIdle()

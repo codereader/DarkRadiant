@@ -5,6 +5,7 @@
 #include "itextstream.h"
 
 #include "os/path.h"
+#include "string/convert.h"
 #include "parser/DefTokeniser.h"
 
 #include <boost/lexical_cast.hpp>
@@ -93,7 +94,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
     }
 	else if (token == "polygonoffset")
 	{
-		_polygonOffset = strToFloat(tokeniser.nextToken(), 0);
+		_polygonOffset = string::convert<float>(tokeniser.nextToken(), 0);
 	}
 	else if (token == "clamp")
 	{
@@ -156,7 +157,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 			//  Strip any quotes
 			boost::algorithm::trim_if(sortVal, boost::algorithm::is_any_of("\""));
 
-			_sortReq = strToInt(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
+			_sortReq = string::convert<int>(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
 		}
 	}
 	else if (token == "noshadows")
@@ -205,26 +206,26 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	{
 		// Syntax: decalInfo <staySeconds> <fadeSeconds> [start rgb] [end rgb]
 		// Example: decalInfo 10 5 ( 1 1 1 1 ) ( 0 0 0 0 )
-		_decalInfo.stayMilliSeconds = static_cast<int>(strToFloat(tokeniser.nextToken()) * 1000);
-		_decalInfo.fadeMilliSeconds = static_cast<int>(strToFloat(tokeniser.nextToken()) * 1000);
+		_decalInfo.stayMilliSeconds = static_cast<int>(string::convert<float>(tokeniser.nextToken()) * 1000);
+		_decalInfo.fadeMilliSeconds = static_cast<int>(string::convert<float>(tokeniser.nextToken()) * 1000);
 
 		// Start colour
 		tokeniser.assertNextToken("(");
 
-		_decalInfo.startColour.x() = strToFloat(tokeniser.nextToken());
-		_decalInfo.startColour.y() = strToFloat(tokeniser.nextToken());
-		_decalInfo.startColour.z() = strToFloat(tokeniser.nextToken());
-		_decalInfo.startColour.w() = strToFloat(tokeniser.nextToken());
+		_decalInfo.startColour.x() = string::convert<float>(tokeniser.nextToken());
+		_decalInfo.startColour.y() = string::convert<float>(tokeniser.nextToken());
+		_decalInfo.startColour.z() = string::convert<float>(tokeniser.nextToken());
+		_decalInfo.startColour.w() = string::convert<float>(tokeniser.nextToken());
 
 		tokeniser.assertNextToken(")");
 
 		// End colour
 		tokeniser.assertNextToken("(");
 
-		_decalInfo.endColour.x() = strToFloat(tokeniser.nextToken());
-		_decalInfo.endColour.y() = strToFloat(tokeniser.nextToken());
-		_decalInfo.endColour.z() = strToFloat(tokeniser.nextToken());
-		_decalInfo.endColour.w() = strToFloat(tokeniser.nextToken());
+		_decalInfo.endColour.x() = string::convert<float>(tokeniser.nextToken());
+		_decalInfo.endColour.y() = string::convert<float>(tokeniser.nextToken());
+		_decalInfo.endColour.z() = string::convert<float>(tokeniser.nextToken());
+		_decalInfo.endColour.w() = string::convert<float>(tokeniser.nextToken());
 
 		tokeniser.assertNextToken(")");
 	}
@@ -501,7 +502,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 			// but no D3 material uses an expression for the texgen parameters
 			for (std::size_t i = 0; i < 3; ++i)
 			{
-				_currentLayer->setTexGenParam(i, strToFloat(tokeniser.nextToken()));
+				_currentLayer->setTexGenParam(i, string::convert<float>(tokeniser.nextToken()));
 			}
 		}
 	}
@@ -533,8 +534,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	{
 		try
 		{
-			strToInt(tokeniser.nextToken());
-			strToInt(tokeniser.nextToken());
+			string::convert<int>(tokeniser.nextToken());
+			string::convert<int>(tokeniser.nextToken());
 		}
 		catch (boost::bad_lexical_cast& e)
 		{
@@ -546,8 +547,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	{
 		try
 		{
-			strToInt(tokeniser.nextToken());
-			strToInt(tokeniser.nextToken());
+			string::convert<int>(tokeniser.nextToken());
+			string::convert<int>(tokeniser.nextToken());
 		}
 		catch (boost::bad_lexical_cast& e)
 		{
@@ -697,7 +698,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "vertexparm")
 	{
 		// vertexParm		<parmNum>		<parm1> [,<parm2>] [,<parm3>] [,<parm4>]
-		int parmNum = strToInt(tokeniser.nextToken());
+		int parmNum = string::convert<int>(tokeniser.nextToken());
 
 		IShaderExpressionPtr parm0 = ShaderExpression::createFromTokens(tokeniser);
 
@@ -743,7 +744,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "fragmentmap")
 	{
 		// fragmentMap <index> [options] <map>
-		int mapNum = strToInt(tokeniser.nextToken());
+		int mapNum = string::convert<int>(tokeniser.nextToken());
 
 		std::string next = tokeniser.peek();
 		boost::algorithm::to_lower(next);
@@ -920,7 +921,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "privatepolygonoffset")
 	{
-		_currentLayer->setPrivatePolygonOffset(strToFloat(tokeniser.nextToken()));
+		_currentLayer->setPrivatePolygonOffset(string::convert<float>(tokeniser.nextToken()));
 	}
 	else if (token == "nearest")
 	{

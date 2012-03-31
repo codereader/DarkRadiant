@@ -2,7 +2,7 @@
 
 #include "ieclass.h"
 #include "iregistry.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace conversation {
@@ -69,7 +69,7 @@ const ConversationCommandInfo& ConversationCommandLibrary::findCommandInfo(int i
 		}
 	}
 
-	throw std::runtime_error(std::string("Could not find command info with the given ID: ") + intToStr(id));
+	throw std::runtime_error(std::string("Could not find command info with the given ID: ") + string::to_string(id));
 }
 
 void ConversationCommandLibrary::loadConversationCommands()

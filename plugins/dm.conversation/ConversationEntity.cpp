@@ -5,7 +5,7 @@
 #include "itextstream.h"
 #include "ientity.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/classification.hpp>
 
 #include "ConversationKeyExtractor.h"
@@ -121,22 +121,22 @@ void ConversationEntity::writeToEntity() {
 	{
 		// Obtain the conversation and construct the key prefix from the index
 		const Conversation& conv = i->second;
-		std::string prefix = "conv_" + intToStr(i->first) + "_";
+		std::string prefix = "conv_" + string::to_string(i->first) + "_";
 
 		// Set the entity keyvalues
 		entity->setKeyValue(prefix + "name", conv.name);
 		entity->setKeyValue(prefix + "actors_must_be_within_talkdistance",
 			conv.actorsMustBeWithinTalkdistance ? "1" : "0");
-		entity->setKeyValue(prefix + "talk_distance", floatToStr(conv.talkDistance));
+		entity->setKeyValue(prefix + "talk_distance", string::to_string(conv.talkDistance));
 		entity->setKeyValue(prefix + "actors_always_face_each_other_while_talking",
 			conv.actorsAlwaysFaceEachOther ? "1" : "0");
-		entity->setKeyValue(prefix + "max_play_count", intToStr(conv.maxPlayCount));
+		entity->setKeyValue(prefix + "max_play_count", string::to_string(conv.maxPlayCount));
 
 		// Write the actor list
 		for (Conversation::ActorMap::const_iterator a = conv.actors.begin();
 			 a != conv.actors.end(); ++a)
 		{
-			std::string actorKey = prefix + "actor_" + intToStr(a->first);
+			std::string actorKey = prefix + "actor_" + string::to_string(a->first);
 			entity->setKeyValue(actorKey, a->second);
 		}
 
@@ -144,20 +144,20 @@ void ConversationEntity::writeToEntity() {
 		for (Conversation::CommandMap::const_iterator c = conv.commands.begin();
 			 c != conv.commands.end(); ++c)
 		{
-			std::string cmdPrefix = prefix + "cmd_" + intToStr(c->first) + "_";
+			std::string cmdPrefix = prefix + "cmd_" + string::to_string(c->first) + "_";
 
 			try {
 				const ConversationCommandInfo& cmdInfo =
 					ConversationCommandLibrary::Instance().findCommandInfo(c->second->type);
 
 				entity->setKeyValue(cmdPrefix + "type", cmdInfo.name);
-				entity->setKeyValue(cmdPrefix + "actor", intToStr(c->second->actor));
+				entity->setKeyValue(cmdPrefix + "actor", string::to_string(c->second->actor));
 				entity->setKeyValue(cmdPrefix + "wait_until_finished", c->second->waitUntilFinished ? "1" : "0");
 
 				for (ConversationCommand::ArgumentMap::const_iterator a = c->second->arguments.begin();
 					a != c->second->arguments.end(); ++a)
 				{
-					entity->setKeyValue(cmdPrefix + "arg_" + intToStr(a->first), a->second);
+					entity->setKeyValue(cmdPrefix + "arg_" + string::to_string(a->first), a->second);
 				}
 			}
 			catch (std::runtime_error e) {

@@ -4,7 +4,7 @@
 
 #include "gtkutil/LeftAlignment.h"
 #include "gtkutil/LeftAlignedLabel.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include "i18n.h"
 #include <gtkmm/entry.h>
@@ -64,7 +64,7 @@ DistanceComponentEditor::DistanceComponentEditor(Component& component) :
 	_entity->set_text(component.getArgument(0));
 	_location->set_text(component.getArgument(1));
 
-	_distance->set_value(strToDouble(component.getArgument(2)));
+	_distance->set_value(string::convert<double>(component.getArgument(2)));
 	float interval = component.getClockInterval();
 	_interval->set_value(interval >= 0 ? interval : 1.0);
 }
@@ -76,7 +76,7 @@ void DistanceComponentEditor::writeToComponent() const
 
 	_component->setArgument(0, _entity->get_text());
 	_component->setArgument(1, _location->get_text());
-	_component->setArgument(2, doubleToStr(_distance->get_value()));
+	_component->setArgument(2, string::to_string(_distance->get_value()));
 	_component->setClockInterval(static_cast<float>(_interval->get_value()));
 }
 

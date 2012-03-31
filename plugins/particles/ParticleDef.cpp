@@ -1,4 +1,5 @@
 #include "ParticleDef.h"
+#include "string/convert.h"
 
 #include <boost/make_shared.hpp>
 
@@ -77,7 +78,7 @@ void ParticleDef::parseFromTokens(parser::DefTokeniser& tok)
     {
         if (token == "depthHack")
         {
-            setDepthHack(strToFloat(tok.nextToken()));
+            setDepthHack(string::convert<float>(tok.nextToken()));
         }
         else if (token == "{")
         {

@@ -4,6 +4,8 @@
 #include "iregistry.h"
 #include "irenderable.h"
 #include "isound.h"
+#include "string/convert.h"
+
 #include <stdlib.h>
 #include "SpeakerNode.h"
 #include "../EntitySettings.h"
@@ -151,7 +153,7 @@ void Speaker::freezeTransform()
 
 		if (_radii.getMax() != _defaultRadii.getMax())
 		{
-			m_entity.setKeyValue(KEY_S_MAXDISTANCE, floatToStr(_radii.getMax(true)));
+			m_entity.setKeyValue(KEY_S_MAXDISTANCE, string::to_string(_radii.getMax(true)));
 		}
 		else
 		{
@@ -161,7 +163,7 @@ void Speaker::freezeTransform()
 
 		if (_radii.getMin() != _defaultRadii.getMin())
 		{
-			m_entity.setKeyValue(KEY_S_MINDISTANCE, floatToStr(_radii.getMin(true)));
+			m_entity.setKeyValue(KEY_S_MINDISTANCE, string::to_string(_radii.getMin(true)));
 		}
 		else
 		{
@@ -311,7 +313,7 @@ void Speaker::sMinChanged(const std::string& value)
 	if (m_minIsSet)
 	{
 		// we need to parse in metres
-		_radii.setMin(strToFloat(value), true);
+		_radii.setMin(string::convert<float>(value), true);
 	}
 	else
 	{
@@ -331,7 +333,7 @@ void Speaker::sMaxChanged(const std::string& value)
 	if (m_maxIsSet)
 	{
 		// we need to parse in metres
-		_radii.setMax(strToFloat(value), true);
+		_radii.setMax(string::convert<float>(value), true);
 	}
 	else
 	{

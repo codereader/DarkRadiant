@@ -639,7 +639,7 @@ public:
 
 void shiftTexture(const Vector2& shift) {
 	std::string command("shiftTexture: ");
-	command += "s=" + floatToStr(shift[0]) + ", t=" + floatToStr(shift[1]);
+	command += "s=" + string::to_string(shift[0]) + ", t=" + string::to_string(shift[1]);
 
 	UndoableCommand undo(command);
 
@@ -678,7 +678,7 @@ public:
 
 void scaleTexture(const Vector2& scale) {
 	std::string command("scaleTexture: ");
-	command += "sScale=" + floatToStr(scale[0]) + ", tScale=" + floatToStr(scale[1]);
+	command += "sScale=" + string::to_string(scale[0]) + ", tScale=" + string::to_string(scale[1]);
 
 	UndoableCommand undo(command);
 
@@ -730,7 +730,7 @@ public:
 
 void rotateTexture(const float& angle) {
 	std::string command("rotateTexture: ");
-	command += "angle=" + floatToStr(angle);
+	command += "angle=" + string::to_string(angle);
 
 	UndoableCommand undo(command);
 

@@ -4,7 +4,7 @@
 #include "iradiant.h"
 #include "icounter.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 #include "gtkutil/ScrolledFrame.h"
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/LeftAlignedLabel.h"
@@ -104,9 +104,9 @@ void EntityInfoTab::populateTab()
 	table->attach(*entityLabel, 0, 1, 2, 3,
 				  Gtk::AttachOptions(0), Gtk::AttachOptions(0), 0, 0);
 
-	std::string bc = "<b>" + sizetToStr(GlobalCounters().getCounter(counterBrushes).get()) + "</b>";
-	std::string pc = "<b>" + sizetToStr(GlobalCounters().getCounter(counterPatches).get()) + "</b>";
-	std::string ec = "<b>" + sizetToStr(GlobalCounters().getCounter(counterEntities).get()) + "</b>";
+	std::string bc = "<b>" + string::to_string(GlobalCounters().getCounter(counterBrushes).get()) + "</b>";
+	std::string pc = "<b>" + string::to_string(GlobalCounters().getCounter(counterPatches).get()) + "</b>";
+	std::string ec = "<b>" + string::to_string(GlobalCounters().getCounter(counterEntities).get()) + "</b>";
 
 	_brushCount->set_markup(bc);
 	_patchCount->set_markup(pc);

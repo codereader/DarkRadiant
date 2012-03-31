@@ -1,7 +1,7 @@
 #include "WindowPosition.h"
 
 #include "iregistry.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "MultiMonitor.h"
 
 namespace {
@@ -52,19 +52,19 @@ void WindowPosition::setSize(int width, int height)
 
 void WindowPosition::saveToPath(const std::string& path)
 {
-	GlobalRegistry().setAttribute(path, "xPosition", intToStr(_position[0]));
-	GlobalRegistry().setAttribute(path, "yPosition", intToStr(_position[1]));
-	GlobalRegistry().setAttribute(path, "width", intToStr(_size[0]));
-	GlobalRegistry().setAttribute(path, "height", intToStr(_size[1]));
+	GlobalRegistry().setAttribute(path, "xPosition", string::to_string(_position[0]));
+	GlobalRegistry().setAttribute(path, "yPosition", string::to_string(_position[1]));
+	GlobalRegistry().setAttribute(path, "width", string::to_string(_size[0]));
+	GlobalRegistry().setAttribute(path, "height", string::to_string(_size[1]));
 }
 
 void WindowPosition::loadFromPath(const std::string& path)
 {
-	_position[0] = strToInt(GlobalRegistry().getAttribute(path, "xPosition"));
-	_position[1] = strToInt(GlobalRegistry().getAttribute(path, "yPosition"));
+	_position[0] = string::convert<int>(GlobalRegistry().getAttribute(path, "xPosition"));
+	_position[1] = string::convert<int>(GlobalRegistry().getAttribute(path, "yPosition"));
 
-	_size[0] = strToInt(GlobalRegistry().getAttribute(path, "width"));
-	_size[1] = strToInt(GlobalRegistry().getAttribute(path, "height"));
+	_size[0] = string::convert<int>(GlobalRegistry().getAttribute(path, "width"));
+	_size[1] = string::convert<int>(GlobalRegistry().getAttribute(path, "height"));
 }
 
 // Applies the internally stored size/position info to the GtkWindow

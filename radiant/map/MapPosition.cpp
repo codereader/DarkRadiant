@@ -19,8 +19,8 @@ MapPosition::MapPosition(unsigned int index) :
 	_angle(0,0,0)
 {
 	// Construct the entity key names from the index
-	_posKey = GlobalRegistry().get(RKEY_MAP_POSROOT) + intToStr(_index);
-	_angleKey = GlobalRegistry().get(RKEY_MAP_ANGLEROOT) + intToStr(_index);
+	_posKey = GlobalRegistry().get(RKEY_MAP_POSROOT) + string::to_string(_index);
+	_angleKey = GlobalRegistry().get(RKEY_MAP_ANGLEROOT) + string::to_string(_index);
 }
 
 void MapPosition::load(Entity* entity) {

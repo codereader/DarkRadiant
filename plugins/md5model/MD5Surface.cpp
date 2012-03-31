@@ -2,7 +2,7 @@
 
 #include "ivolumetest.h"
 #include "GLProgramAttributes.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "MD5Model.h"
 
 namespace md5
@@ -340,7 +340,7 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 
 	// Read the vertex count
 	tok.assertNextToken("numverts");
-	std::size_t numVerts = strToSizet(tok.nextToken());
+	std::size_t numVerts = string::convert<std::size_t>(tok.nextToken());
 
 	// Initialise the vertex vector
 	MD5Verts& verts = mesh.vertices;
@@ -352,17 +352,17 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 		tok.assertNextToken("vert");
 
 		// Index of vert
-		vt->index = strToSizet(tok.nextToken());
+		vt->index = string::convert<std::size_t>(tok.nextToken());
 
 		// U and V texcoords
 		tok.assertNextToken("(");
-		vt->u = strToFloat(tok.nextToken());
-		vt->v = strToFloat(tok.nextToken());
+		vt->u = string::convert<float>(tok.nextToken());
+		vt->v = string::convert<float>(tok.nextToken());
 		tok.assertNextToken(")");
 
 		// Weight index and count
-		vt->weight_index = strToSizet(tok.nextToken());
-		vt->weight_count = strToSizet(tok.nextToken());
+		vt->weight_index = string::convert<std::size_t>(tok.nextToken());
+		vt->weight_count = string::convert<std::size_t>(tok.nextToken());
 
 	} // for each vertex
 
@@ -370,7 +370,7 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 
 	// Read the number of triangles
 	tok.assertNextToken("numtris");
-	std::size_t numTris = strToSizet(tok.nextToken());
+	std::size_t numTris = string::convert<std::size_t>(tok.nextToken());
 
 	// Initialise the triangle vector
 	MD5Tris& tris = mesh.triangles;
@@ -382,10 +382,10 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 		tok.assertNextToken("tri");
 
 		// Triangle index, followed by the indexes of its 3 vertices
-		tr->index = strToSizet(tok.nextToken());
-		tr->a = 	strToSizet(tok.nextToken());
-		tr->b = 	strToSizet(tok.nextToken());
-		tr->c = 	strToSizet(tok.nextToken());
+		tr->index = string::convert<std::size_t>(tok.nextToken());
+		tr->a = 	string::convert<std::size_t>(tok.nextToken());
+		tr->b = 	string::convert<std::size_t>(tok.nextToken());
+		tr->c = 	string::convert<std::size_t>(tok.nextToken());
 
 	} // for each triangle
 
@@ -393,7 +393,7 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 
 	// Read the number of weights
 	tok.assertNextToken("numweights");
-	std::size_t numWeights = strToSizet(tok.nextToken());
+	std::size_t numWeights = string::convert<std::size_t>(tok.nextToken());
 
 	// Initialise weights vector
 	MD5Weights& weights = mesh.weights;
@@ -405,11 +405,11 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 		tok.assertNextToken("weight");
 
 		// Index and joint
-		w->index = strToSizet(tok.nextToken());
-		w->joint = strToSizet(tok.nextToken());
+		w->index = string::convert<std::size_t>(tok.nextToken());
+		w->joint = string::convert<std::size_t>(tok.nextToken());
 
 		// Strength and relative position
-		w->t = strToFloat(tok.nextToken());
+		w->t = string::convert<float>(tok.nextToken());
 		w->v = MD5Model::parseVector3(tok);
 
 	} // for each weight

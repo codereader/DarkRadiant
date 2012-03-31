@@ -100,14 +100,15 @@ void DoFind(const cmd::ArgumentList& args)
 	std::size_t ent(0), br(0);
 	selection::algorithm::getSelectionIndex(ent, br);
 
-	dialog->setElementValue(entityEntry, sizetToStr(ent));
-	dialog->setElementValue(brushEntry, sizetToStr(br));
+	dialog->setElementValue(entityEntry, string::to_string(ent));
+	dialog->setElementValue(brushEntry, string::to_string(br));
 
 	if (dialog->run() == ui::IDialog::RESULT_OK)
 	{
 		std::string entityValue = dialog->getElementValue(entityEntry);
 		std::string brushValue = dialog->getElementValue(brushEntry);
 
-		SelectBrush(strToInt(entityValue), strToInt(brushValue));
+		SelectBrush(string::convert<int>(entityValue),
+                    string::convert<int>(brushValue));
 	}
 }

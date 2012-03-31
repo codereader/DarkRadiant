@@ -41,9 +41,9 @@ bool CheckAutomatedTestRun()
 
 	for (std::size_t i = 0; i < list.size(); i++) {
 		std::string eventName = list[i].getAttributeValue("value");
-		int count = strToInt(list[i].getAttributeValue("count"));
+        int count = string::convert<int>(list[i].getAttributeValue("count"));
 
-		ScopedDebugTimer overallTimer("---Executed command " + eventName + " " + intToStr(count) + " times");
+		ScopedDebugTimer overallTimer("---Executed command " + eventName + " " + string::to_string(count) + " times");
 
 		std::cout << "--- Executing command " << eventName << " " << count << " times\n";
 		for (int c = 0; c < count; c++) {

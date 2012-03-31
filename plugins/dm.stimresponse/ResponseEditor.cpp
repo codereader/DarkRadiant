@@ -6,7 +6,7 @@
 #include "gtkutil/TextColumn.h"
 #include "gtkutil/StockIconMenuItem.h"
 #include "gtkutil/TreeModel.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 #include "i18n.h"
 #include "EffectEditor.h"
@@ -77,7 +77,7 @@ void ResponseEditor::update()
 		// Use Chance
 		bool useChance = (sr.get("chance") != "");
 		_propertyWidgets.chanceToggle->set_active(useChance);
-		_propertyWidgets.chanceEntry->set_value(strToFloat(sr.get("chance")));
+		_propertyWidgets.chanceEntry->set_value(string::convert<float>(sr.get("chance")));
 		_propertyWidgets.chanceEntry->set_sensitive(useChance);
 
 		_effectWidgets.view->set_model(sr.updateAndGetEffectStore());
@@ -238,7 +238,7 @@ void ResponseEditor::checkBoxToggled(Gtk::CheckButton* toggleButton)
 	}
 	else if (toggleButton == _propertyWidgets.chanceToggle)
 	{
-		std::string entryText = doubleToStr(_propertyWidgets.chanceEntry->get_value());
+		std::string entryText = string::to_string(_propertyWidgets.chanceEntry->get_value());
 
 		setProperty("chance", active ? entryText : "");
 	}

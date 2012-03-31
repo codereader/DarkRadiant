@@ -192,7 +192,7 @@ void RegionManager::addRegionBrushes() {
 		{
 			// Set the origin key of the playerStart entity
 			Node_getEntity(_playerStart)->setKeyValue("origin", camOrigin);
-			Node_getEntity(_playerStart)->setKeyValue("angle", floatToStr(angle));
+			Node_getEntity(_playerStart)->setKeyValue("angle", string::to_string(angle));
 		}
 		else {
 			gtkutil::MessageBox::ShowError(

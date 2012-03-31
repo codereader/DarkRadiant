@@ -359,19 +359,19 @@ void PatchInspector::loadControlVertex()
 
 	if (patch != NULL)
 	{
-		int row = strToInt(_vertexChooser.rowCombo->get_active_text());
-		int col = strToInt(_vertexChooser.colCombo->get_active_text());
+		int row = string::convert<int>(_vertexChooser.rowCombo->get_active_text());
+		int col = string::convert<int>(_vertexChooser.colCombo->get_active_text());
 
 		// Retrieve the controlvertex
 		const PatchControl& ctrl = patch->getPatch().ctrlAt(row, col);
 
 		_updateActive = true;
 
-		_coords["x"].value->set_text(floatToStr(ctrl.vertex[0]));
-		_coords["y"].value->set_text(floatToStr(ctrl.vertex[1]));
-		_coords["z"].value->set_text(floatToStr(ctrl.vertex[2]));
-		_coords["s"].value->set_text(floatToStr(ctrl.texcoord[0]));
-		_coords["t"].value->set_text(floatToStr(ctrl.texcoord[1]));
+		_coords["x"].value->set_text(string::to_string(ctrl.vertex[0]));
+		_coords["y"].value->set_text(string::to_string(ctrl.vertex[1]));
+		_coords["z"].value->set_text(string::to_string(ctrl.vertex[2]));
+		_coords["s"].value->set_text(string::to_string(ctrl.texcoord[0]));
+		_coords["t"].value->set_text(string::to_string(ctrl.texcoord[1]));
 
 		_updateActive = false;
 	}
@@ -538,14 +538,14 @@ void PatchInspector::repopulateVertexChooser()
 
 	for (std::size_t i = 0; i < _patchRows; ++i)
 	{
-		_vertexChooser.rowCombo->append_text(sizetToStr(i));
+		_vertexChooser.rowCombo->append_text(string::to_string(i));
 	}
 
 	_vertexChooser.rowCombo->set_active(0);
 
 	for (std::size_t i = 0; i < _patchCols; ++i)
 	{
-		_vertexChooser.colCombo->append_text(sizetToStr(i));
+		_vertexChooser.colCombo->append_text(string::to_string(i));
 	}
 
 	_vertexChooser.colCombo->set_active(0);
@@ -564,18 +564,18 @@ void PatchInspector::emitCoords()
 
 	patch->getPatchInternal().undoSave();
 
-	int row = strToInt(_vertexChooser.rowCombo->get_active_text());
-	int col = strToInt(_vertexChooser.colCombo->get_active_text());
+	int row = string::convert<int>(_vertexChooser.rowCombo->get_active_text());
+	int col = string::convert<int>(_vertexChooser.colCombo->get_active_text());
 
 	// Retrieve the controlvertex
 	PatchControl& ctrl = patch->getPatchInternal().ctrlAt(row, col);
 
-	ctrl.vertex[0] = strToFloat(_coords["x"].value->get_text());
-	ctrl.vertex[1] = strToFloat(_coords["y"].value->get_text());
-	ctrl.vertex[2] = strToFloat(_coords["z"].value->get_text());
+	ctrl.vertex[0] = string::convert<float>(_coords["x"].value->get_text());
+	ctrl.vertex[1] = string::convert<float>(_coords["y"].value->get_text());
+	ctrl.vertex[2] = string::convert<float>(_coords["z"].value->get_text());
 
-	ctrl.texcoord[0] = strToFloat(_coords["s"].value->get_text());
-	ctrl.texcoord[1] = strToFloat(_coords["t"].value->get_text());
+	ctrl.texcoord[0] = string::convert<float>(_coords["s"].value->get_text());
+	ctrl.texcoord[1] = string::convert<float>(_coords["t"].value->get_text());
 
 	patch->getPatchInternal().controlPointsChanged();
 
@@ -637,21 +637,21 @@ void PatchInspector::onComboBoxChange()
 void PatchInspector::onClickLarger(CoordRow* row)
 {
 	// Get the current value and the step increment
-	float value = strToFloat(row->value->get_text());
-	float step = strToFloat(row->stepEntry->get_text());
+	float value = string::convert<float>(row->value->get_text());
+	float step = string::convert<float>(row->stepEntry->get_text());
 
 	// This triggers the onCoordChange callback method
-	row->value->set_text(floatToStr(value + step));
+	row->value->set_text(string::to_string(value + step));
 }
 
 void PatchInspector::onClickSmaller(CoordRow* row)
 {
 	// Get the current value and the step increment
-	float value = strToFloat(row->value->get_text());
-	float step = strToFloat(row->stepEntry->get_text());
+	float value = string::convert<float>(row->value->get_text());
+	float step = string::convert<float>(row->stepEntry->get_text());
 
 	// This triggers the onCoordChange callback method
-	row->value->set_text(floatToStr(value - step));
+	row->value->set_text(string::to_string(value - step));
 }
 
 // static command target

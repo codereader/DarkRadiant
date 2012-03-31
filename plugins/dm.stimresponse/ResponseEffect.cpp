@@ -1,7 +1,7 @@
 #include "ResponseEffect.h"
 
 #include "i18n.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/replace.hpp>
 
 ResponseEffect::ResponseEffect() :
@@ -153,10 +153,10 @@ void ResponseEffect::buildArgumentList() {
 	if (_eclass == NULL) return;
 
 	for (int i = 1; i < 1000; i++) {
-		std::string argType = _eclass->getAttribute("editor_argType" + intToStr(i)).getValue();
-		std::string argDesc = _eclass->getAttribute("editor_argDesc" + intToStr(i)).getValue();
-		std::string argTitle = _eclass->getAttribute("editor_argTitle" + intToStr(i)).getValue();
-		std::string optional = _eclass->getAttribute("editor_argOptional" + intToStr(i)).getValue();
+		std::string argType = _eclass->getAttribute("editor_argType" + string::to_string(i)).getValue();
+		std::string argDesc = _eclass->getAttribute("editor_argDesc" + string::to_string(i)).getValue();
+		std::string argTitle = _eclass->getAttribute("editor_argTitle" + string::to_string(i)).getValue();
+		std::string optional = _eclass->getAttribute("editor_argOptional" + string::to_string(i)).getValue();
 
 		if (argType != "") {
 			// Check if the argument exists
@@ -189,7 +189,7 @@ std::string ResponseEffect::getArgumentStr() {
 	std::string returnValue = _eclass->getAttribute("editor_argString").getValue();
 
 	for (ArgumentList::iterator i = _args.begin(); i != _args.end(); i++) {
-		std::string needle = "[arg" + intToStr(i->first) + "]";
+		std::string needle = "[arg" + string::to_string(i->first) + "]";
 		std::string replacement = i->second.value;
 
 		// Check for a bool

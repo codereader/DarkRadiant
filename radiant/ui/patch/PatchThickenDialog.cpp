@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "imainframe.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "gtkutil/LeftAlignedLabel.h"
 #include "gtkutil/LeftAlignment.h"
 
@@ -46,7 +46,7 @@ PatchThickenDialog::PatchThickenDialog() :
 	Gtk::Label* thicknessLabel = Gtk::manage(new gtkutil::LeftAlignedLabel(_(LABEL_THICKNESS_ENTRY)));
 
 	_thicknessEntry = Gtk::manage(new Gtk::Entry);
-	_thicknessEntry->set_text(floatToStr(DEFAULT_THICKNESS));
+	_thicknessEntry->set_text(string::to_string(DEFAULT_THICKNESS));
 
 	// Create a new 2x5 table and pack it into an alignment
 	Gtk::Table* table = Gtk::manage(new Gtk::Table(2, 5, false));
@@ -86,7 +86,7 @@ PatchThickenDialog::PatchThickenDialog() :
 
 float PatchThickenDialog::getThickness()
 {
-	return strToFloat(_thicknessEntry->get_text());
+	return string::convert<float>(_thicknessEntry->get_text());
 }
 
 bool PatchThickenDialog::getCeateSeams()

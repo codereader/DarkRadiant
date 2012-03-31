@@ -100,7 +100,7 @@ void MRUMenuItem::setLabel(const std::string& label)
 	_label = label;
 
 	// Add the number prefix to the widget label
-	const std::string widgetLabel = intToStr(_index) + " - " + gtkutil::IConv::localeToUTF8(_label);
+	const std::string widgetLabel = string::to_string(_index) + " - " + gtkutil::IConv::localeToUTF8(_label);
 
 	Gtk::Label* childLabel = findLabel(_widget);
 

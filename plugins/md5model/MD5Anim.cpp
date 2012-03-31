@@ -1,7 +1,7 @@
 #include "MD5Anim.h"
 
 #include "itextstream.h"
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace md5
 {
@@ -24,11 +24,11 @@ void MD5Anim::parseJointHierarchy(parser::DefTokeniser& tok)
 		// Syntax: "<jointName>"	<parentId> <animComponentMask> <firstKey>
 		_joints[i].name = tok.nextToken();
 
-		int parentId = strToInt(tok.nextToken());
+		int parentId = string::convert<int>(tok.nextToken());
 		_joints[i].parentId = parentId;	
 
-		_joints[i].animComponents = strToSizet(tok.nextToken());
-		_joints[i].firstKey = strToSizet(tok.nextToken());
+		_joints[i].animComponents = string::convert<std::size_t>(tok.nextToken());
+		_joints[i].firstKey = string::convert<std::size_t>(tok.nextToken());
 
 		// Some sanity checks
 		assert(_joints[i].parentId == -1 || (_joints[i].parentId >= 0 && _joints[i].parentId < _joints.size()));
@@ -54,17 +54,17 @@ void MD5Anim::parseFrameBounds(parser::DefTokeniser& tok)
 	{
 		tok.assertNextToken("(");
 
-		_bounds[i].origin.x() = strToFloat(tok.nextToken());
-		_bounds[i].origin.y() = strToFloat(tok.nextToken());
-		_bounds[i].origin.z() = strToFloat(tok.nextToken());
+		_bounds[i].origin.x() = string::convert<float>(tok.nextToken());
+		_bounds[i].origin.y() = string::convert<float>(tok.nextToken());
+		_bounds[i].origin.z() = string::convert<float>(tok.nextToken());
 
 		tok.assertNextToken(")");
 
 		tok.assertNextToken("(");
 
-		_bounds[i].extents.x() = strToFloat(tok.nextToken());
-		_bounds[i].extents.y() = strToFloat(tok.nextToken());
-		_bounds[i].extents.z() = strToFloat(tok.nextToken());
+		_bounds[i].extents.x() = string::convert<float>(tok.nextToken());
+		_bounds[i].extents.y() = string::convert<float>(tok.nextToken());
+		_bounds[i].extents.z() = string::convert<float>(tok.nextToken());
 
 		tok.assertNextToken(")");
 	}
@@ -81,18 +81,18 @@ void MD5Anim::parseBaseFrame(parser::DefTokeniser& tok)
 	{
 		tok.assertNextToken("(");
 		
-		_baseFrame[i].origin.x() = strToFloat(tok.nextToken());
-		_baseFrame[i].origin.y() = strToFloat(tok.nextToken());
-		_baseFrame[i].origin.z() = strToFloat(tok.nextToken());
+		_baseFrame[i].origin.x() = string::convert<float>(tok.nextToken());
+		_baseFrame[i].origin.y() = string::convert<float>(tok.nextToken());
+		_baseFrame[i].origin.z() = string::convert<float>(tok.nextToken());
 
 		tok.assertNextToken(")");
 
 		tok.assertNextToken("(");
 
 		Vector3 rawRotation;
-		rawRotation.x() = strToFloat(tok.nextToken());
-		rawRotation.y() = strToFloat(tok.nextToken());
-		rawRotation.z() = strToFloat(tok.nextToken());
+		rawRotation.x() = string::convert<float>(tok.nextToken());
+		rawRotation.y() = string::convert<float>(tok.nextToken());
+		rawRotation.z() = string::convert<float>(tok.nextToken());
 
 		// Calculate the fourth component of the quaternion
 		float lSq = rawRotation.getLengthSquared();
@@ -115,7 +115,7 @@ void MD5Anim::parseFrame(std::size_t frame, parser::DefTokeniser& tok)
 {
 	tok.assertNextToken("frame");
 
-	std::size_t parsedFrameNum = strToSizet(tok.nextToken());
+	std::size_t parsedFrameNum = string::convert<std::size_t>(tok.nextToken());
 
 	assert(frame == parsedFrameNum);
 
@@ -127,7 +127,7 @@ void MD5Anim::parseFrame(std::size_t frame, parser::DefTokeniser& tok)
 	// Each frame block has <numAnimatedComponents> float values
 	for (std::size_t i = 0; i < _numAnimatedComponents; ++i)
 	{
-		_frames[parsedFrameNum][i] = strToFloat(tok.nextToken());
+		_frames[parsedFrameNum][i] = string::convert<float>(tok.nextToken());
 	}
 
 	tok.assertNextToken("}");
@@ -145,7 +145,7 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 	{
 		tok.assertNextToken("MD5Version");
 
-		int version = strToInt(tok.nextToken());
+		int version = string::convert<int>(tok.nextToken());
 
 		if (version != 10)
 		{
@@ -157,10 +157,10 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 		_commandLine = tok.nextToken();
 
 		tok.assertNextToken("numFrames");
-		int numFrames = strToInt(tok.nextToken());
+		int numFrames = string::convert<int>(tok.nextToken());
 
 		tok.assertNextToken("numJoints");
-		std::size_t numJoints = strToSizet(tok.nextToken());
+		std::size_t numJoints = string::convert<std::size_t>(tok.nextToken());
 
 		// Adjust the arrays
 		_joints.resize(numJoints);
@@ -169,10 +169,10 @@ void MD5Anim::parseFromTokens(parser::DefTokeniser& tok)
 		_frames.resize(numFrames);
 
 		tok.assertNextToken("frameRate");
-		_frameRate = strToInt(tok.nextToken());
+		_frameRate = string::convert<int>(tok.nextToken());
 
 		tok.assertNextToken("numAnimatedComponents");
-		_numAnimatedComponents = strToInt(tok.nextToken());
+		_numAnimatedComponents = string::convert<int>(tok.nextToken());
 
 		// Parse hierarchy block
 		parseJointHierarchy(tok);

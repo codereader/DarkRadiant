@@ -3,7 +3,7 @@
 #include "igl.h"
 
 #include "math/Vector2.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include "iradiant.h"
 
 ClipPoint::ClipPoint() {
@@ -29,7 +29,7 @@ ClipPoint::operator Vector3&() {
 
 /* Drawing clip points */
 void ClipPoint::Draw(int num, float scale) {
-	Draw(intToStr(num), scale);
+	Draw(string::to_string(num), scale);
 }
 
 void ClipPoint::Draw(const std::string& label, float scale) {

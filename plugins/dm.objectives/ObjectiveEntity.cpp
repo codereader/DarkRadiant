@@ -8,7 +8,7 @@
 #include "iundo.h"
 #include "ientity.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -62,7 +62,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 			continue; // No match, abort
 		}
 
-		int index = strToInt(results[1]);
+		int index = string::convert<int>(results[1]);
 
 		// Valid indices are [1..infinity)
 		if (index < 1) 
@@ -76,15 +76,15 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 
 		if (postfix == "src_mission")
 		{
-			cond->sourceMission = strToInt(kv->second);
+			cond->sourceMission = string::convert<int>(kv->second);
 		}
 		else if (postfix == "src_obj")
 		{
-			cond->sourceObjective = strToInt(kv->second);
+			cond->sourceObjective = string::convert<int>(kv->second);
 		}
 		else if (postfix == "src_state")
 		{
-			int val = strToInt(kv->second);
+			int val = string::convert<int>(kv->second);
 
 			if (val >= Objective::INCOMPLETE && val < Objective::INVALID)
 			{
@@ -98,7 +98,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 		}
 		else if (postfix == "target_obj")
 		{
-			cond->targetObjective = strToInt(kv->second);
+			cond->targetObjective = string::convert<int>(kv->second);
 		}
 		else if (postfix == "type")
 		{
@@ -122,7 +122,7 @@ void ObjectiveEntity::readObjectiveConditions(Entity& ent)
 		}
 		else if (postfix == "value")
 		{
-			cond->value = strToInt(kv->second);
+			cond->value = string::convert<int>(kv->second);
 		}
 	}
 }
@@ -149,10 +149,10 @@ void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 
 		std::string prefix = (boost::format(OBJ_COND_PREFIX + "%d_") % index).str();
 
-		ent.setKeyValue(prefix + "src_mission", intToStr(cond.sourceMission));
-		ent.setKeyValue(prefix + "src_obj", intToStr(cond.sourceObjective));
-		ent.setKeyValue(prefix + "src_state", intToStr(cond.sourceState));
-		ent.setKeyValue(prefix + "target_obj", intToStr(cond.targetObjective));
+		ent.setKeyValue(prefix + "src_mission", string::to_string(cond.sourceMission));
+		ent.setKeyValue(prefix + "src_obj", string::to_string(cond.sourceObjective));
+		ent.setKeyValue(prefix + "src_state", string::to_string(cond.sourceState));
+		ent.setKeyValue(prefix + "target_obj", string::to_string(cond.targetObjective));
 
 		std::string typeKey = prefix + "type";
 
@@ -173,7 +173,7 @@ void ObjectiveEntity::writeObjectiveConditions(Entity& ent)
 			break;
 		};
 
-		ent.setKeyValue(prefix + "value", intToStr(cond.value));
+		ent.setKeyValue(prefix + "value", string::to_string(cond.value));
 
 		++index; // next index
 	}
@@ -196,7 +196,7 @@ void ObjectiveEntity::readMissionLogic(Entity& ent)
 		}
 		else if (boost::algorithm::starts_with(postfix, "_diff_")) {
 			// We seem to have a difficulty-related logic, get the level
-			int level = strToInt(postfix.substr(6), INVALID_LEVEL_INDEX);
+			int level = string::convert<int>(postfix.substr(6), INVALID_LEVEL_INDEX);
 
 			if (level == INVALID_LEVEL_INDEX) {
 				globalErrorStream() << "[ObjectivesEditor]: Cannot parse difficulty-specific " <<
@@ -224,7 +224,7 @@ void ObjectiveEntity::readMissionLogic(Entity& ent)
 		}
 		else if (boost::algorithm::starts_with(postfix, "_diff_")) {
 			// We seem to have a difficulty-related logic, get the level
-			int level = strToInt(postfix.substr(6), INVALID_LEVEL_INDEX);
+			int level = string::convert<int>(postfix.substr(6), INVALID_LEVEL_INDEX);
 
 			if (level == INVALID_LEVEL_INDEX) {
 				globalErrorStream() << "[ObjectivesEditor]: Cannot parse difficulty-specific " <<
@@ -250,8 +250,8 @@ void ObjectiveEntity::writeMissionLogic(Entity& ent)
 		}
 		else {
 			// Difficulty-specific logic
-			ent.setKeyValue(KV_SUCCESS_LOGIC + "_diff_" + intToStr(index), i->second->successLogic);
-			ent.setKeyValue(KV_FAILURE_LOGIC + "_diff_" + intToStr(index), i->second->failureLogic);
+			ent.setKeyValue(KV_SUCCESS_LOGIC + "_diff_" + string::to_string(index), i->second->successLogic);
+			ent.setKeyValue(KV_FAILURE_LOGIC + "_diff_" + string::to_string(index), i->second->failureLogic);
 		}
 	}
 }
@@ -430,7 +430,7 @@ void ObjectiveEntity::populateListStore(const Glib::RefPtr<Gtk::ListStore>& stor
 
 			for (std::size_t d = 0; d < parts.size(); ++d) {
 				diffStr += (diffStr.empty()) ? "" : " ";
-				diffStr += intToStr(strToInt(parts[d]) + 1);
+				diffStr += string::to_string(string::convert<int>(parts[d]) + 1);
 			}
 		}
 
@@ -456,7 +456,7 @@ void ObjectiveEntity::writeComponents(Entity* entity,
         const Component& c = i->second;
 
         // Component prefix is like obj1_2_blah
-		std::string prefix = keyPrefix + intToStr(i->first) + "_";
+		std::string prefix = keyPrefix + string::to_string(i->first) + "_";
 
         // Write out Component keyvals
         entity->setKeyValue(prefix + "state", c.isSatisfied() ? "1" : "0");
@@ -466,13 +466,13 @@ void ObjectiveEntity::writeComponents(Entity* entity,
         entity->setKeyValue(prefix + "type", c.getType().getName());
 
 		entity->setKeyValue(prefix + "clock_interval",
-			c.getClockInterval() > 0 ? floatToStr(c.getClockInterval()) : "");
+			c.getClockInterval() > 0 ? string::to_string(c.getClockInterval()) : "");
 
         // Write out Specifier keyvals
 		for (int i = Specifier::FIRST_SPECIFIER; i < Specifier::MAX_SPECIFIERS; i++)
 		{
 			// The specifier index of the spawnargs is starting from 1, not 0
-			std::string indexStr = intToStr(i + 1);
+			std::string indexStr = string::to_string(i + 1);
 
 			SpecifierPtr spec = c.getSpecifier(static_cast<Specifier::SpecifierNumber>(i));
 
@@ -517,7 +517,7 @@ void ObjectiveEntity::writeToEntity()
 	{
 		// Obtain the Objective and construct the key prefix from the index
 		const Objective& o = i->second;
-		std::string prefix = "obj" + intToStr(i->first) + "_";
+		std::string prefix = "obj" + string::to_string(i->first) + "_";
 
 		// Set the entity keyvalues
 		entity->setKeyValue(prefix + "desc", o.description);
@@ -526,7 +526,7 @@ void ObjectiveEntity::writeToEntity()
 		entity->setKeyValue(prefix + "mandatory", o.mandatory ? "1" : "0");
 		entity->setKeyValue(prefix + "irreversible",
 							 o.irreversible ? "1" : "0");
-		entity->setKeyValue(prefix + "state", intToStr(o.state));
+		entity->setKeyValue(prefix + "state", string::to_string(o.state));
 
 		// Write an empty "objN_difficulty" value when this objective applies to all levels
 		entity->setKeyValue(prefix + "difficulty", o.difficultyLevels);

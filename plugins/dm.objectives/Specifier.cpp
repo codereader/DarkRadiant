@@ -3,7 +3,7 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/format.hpp>
 
 namespace objectives {
@@ -25,7 +25,7 @@ inline std::string printEntityAmount(const std::string& amountStr) {
 		return printEntity(1);
 	}
 	else {
-		return amountStr + " " + printEntity(strToInt(amountStr));
+		return amountStr + " " + printEntity(string::convert<int>(amountStr));
 	}
 }
 
@@ -37,7 +37,7 @@ std::string Specifier::getSentence(Component& component) {
 	std::string result;
 
 	std::string amountStr = component.getArgument(0);
-	int amount = strToInt(amountStr);
+	int amount = string::convert<int>(amountStr);
 
 	if (id == SpecifierType::SPEC_NONE().getId()) {
 		result += _("<not specified>");

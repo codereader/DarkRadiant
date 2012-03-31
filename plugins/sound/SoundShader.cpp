@@ -1,7 +1,7 @@
 #include "SoundShader.h"
 
 #include "parser/DefTokeniser.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/predicate.hpp>
 
 namespace sound {
@@ -24,11 +24,11 @@ void SoundShader::parseDefinition() {
 		}
 		else if (nextToken == "minDistance") {
 			// Set the radius and convert to metres
-			_soundRadii.setMin(strToFloat(tok.nextToken()), true);
+			_soundRadii.setMin(string::convert<float>(tok.nextToken()), true);
 		}
 		else if (nextToken == "maxDistance") {
 			// Set the radius and convert to metres
-			_soundRadii.setMax(strToFloat(tok.nextToken()), true);
+			_soundRadii.setMax(string::convert<float>(tok.nextToken()), true);
 		}
 	}
 }

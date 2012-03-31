@@ -2,7 +2,7 @@
 
 #include "iregistry.h"
 #include "entitylib.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/regex.hpp>
@@ -46,7 +46,7 @@ void SRPropertyLoader::parseAttribute(
 
 		if (boost::regex_match(key, matches, expr)) {
 			// Retrieve the S/R index number
-			int index = strToInt(matches[1]);
+			int index = string::convert<int>(matches[1]);
 
 			// Check if the S/R with this index already exists
 			SREntity::StimResponseMap::iterator found = _srMap.find(index);
@@ -62,7 +62,7 @@ void SRPropertyLoader::parseAttribute(
 			// Check if the property already exists
 			if (!_srMap[index].get(_keys[i].key).empty()) {
 				// already existing, add to the warnings
-				_warnings += "Warning on StimResponse #" + intToStr(index) +
+				_warnings += "Warning on StimResponse #" + string::to_string(index) +
 							 ": property " + _keys[i].key + " defined more than once.\n";
 			}
 
@@ -85,9 +85,9 @@ void SRPropertyLoader::parseAttribute(
 
 		if (boost::regex_match(key, matches, expr)) {
 			// The response index
-			int index = strToInt(matches[1]);
+			int index = string::convert<int>(matches[1]);
 			// The effect index
-			int effectIndex = strToInt(matches[2]);
+			int effectIndex = string::convert<int>(matches[2]);
 
 			// Find the Response for this index
 			SREntity::StimResponseMap::iterator found = _srMap.find(index);
@@ -113,7 +113,7 @@ void SRPropertyLoader::parseAttribute(
 			}
 			else {
 				// Get the argument index from the tail
-				int argIndex = strToInt(postfix.substr(4));
+				int argIndex = string::convert<int>(postfix.substr(4));
 				// Load the value into argument with the index <argIndex>
 				effect.setArgument(argIndex, value, inherited);
 			}

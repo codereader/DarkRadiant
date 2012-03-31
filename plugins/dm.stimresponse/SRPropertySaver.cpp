@@ -2,7 +2,7 @@
 
 #include "iregistry.h"
 #include "entitylib.h"
-#include "string/string.h"
+#include "string/convert.h"
 #include <iostream>
 
 SRPropertySaver::SRPropertySaver(Entity* target, SREntity::KeyList& keys) :
@@ -12,7 +12,7 @@ SRPropertySaver::SRPropertySaver(Entity* target, SREntity::KeyList& keys) :
 
 void SRPropertySaver::visit(StimResponse& sr) {
 	std::string prefix = GlobalRegistry().get(RKEY_STIM_RESPONSE_PREFIX);
-	std::string suffix = "_" + intToStr(sr.getIndex());
+	std::string suffix = "_" + string::to_string(sr.getIndex());
 
 	// Now cycle through the possible key names and see if we have a match
 	for (unsigned int i = 0; i < _keys.size(); i++) {
@@ -56,7 +56,7 @@ void SRPropertySaver::visit(StimResponse& sr) {
 
 			// Save the effect declaration ("sr_effect_1_1")
 			std::string key = prefix + responseEffectPrefix +
-							  intToStr(sr.getIndex()) + "_" + intToStr(i->first);
+							  string::to_string(sr.getIndex()) + "_" + string::to_string(i->first);
 
 			if (effect.isInherited() && effect.nameIsOverridden()) {
 				// Overridden name, save it
@@ -77,7 +77,7 @@ void SRPropertySaver::visit(StimResponse& sr) {
 				std::string argValue = a->second.value;
 
 				// Construct the argument key ("sr_effect_3_2_arg4")
-				std::string argKey = key + "_arg" + intToStr(argIndex);
+				std::string argKey = key + "_arg" + string::to_string(argIndex);
 
 				if (effect.isInherited() && effect.argIsOverridden(argIndex)) {
 					// This is an overridden argument, save it

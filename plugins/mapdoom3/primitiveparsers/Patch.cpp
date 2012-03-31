@@ -1,9 +1,9 @@
-#include "Patch.h"
-
 // greebo: Specialise the boost::lexical_cast<float>() function
 #define SPECIALISE_STR_TO_FLOAT
 
-#include "string/string.h"
+#include "Patch.h"
+
+#include "string/convert.h"
 #include "parser/DefTokeniser.h"
 
 namespace map
@@ -24,13 +24,13 @@ void PatchParser::parseMatrix(parser::DefTokeniser& tok, IPatch& patch) const
 			tok.assertNextToken("(");
 
 			// Parse vertex coordinates
-			patch.ctrlAt(r, c).vertex[0] = strToFloat(tok.nextToken());
-			patch.ctrlAt(r, c).vertex[1] = strToFloat(tok.nextToken());
-			patch.ctrlAt(r, c).vertex[2] = strToFloat(tok.nextToken());
+			patch.ctrlAt(r, c).vertex[0] = string::to_float(tok.nextToken());
+			patch.ctrlAt(r, c).vertex[1] = string::to_float(tok.nextToken());
+			patch.ctrlAt(r, c).vertex[2] = string::to_float(tok.nextToken());
 
 			// Parse texture coordinates
-			patch.ctrlAt(r, c).texcoord[0] = strToFloat(tok.nextToken());
-			patch.ctrlAt(r, c).texcoord[1] = strToFloat(tok.nextToken());
+			patch.ctrlAt(r, c).texcoord[0] = string::to_float(tok.nextToken());
+			patch.ctrlAt(r, c).texcoord[1] = string::to_float(tok.nextToken());
 
 			tok.assertNextToken(")");
 		}

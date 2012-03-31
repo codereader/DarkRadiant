@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 #include <boost/algorithm/string/predicate.hpp>
 #include "Doom3ShaderSystem.h"
 
@@ -263,7 +263,7 @@ private:
 			_tokeniser.nextToken(); // valid token, exhaust
 
 			// This is a shaderparm, get the number
-			int shaderParmNum = strToInt(token.substr(4));
+			int shaderParmNum = string::convert<int>(token.substr(4));
 		
 			if (shaderParmNum >= 0 && shaderParmNum <= MAX_SHADERPARM_INDEX)
 			{
@@ -279,7 +279,7 @@ private:
 			_tokeniser.nextToken(); // valid token, exhaust
 
 			// This is a shaderparm, get the number
-			int shaderParmNum = strToInt(token.substr(6));
+			int shaderParmNum = string::convert<int>(token.substr(6));
 		
 			if (shaderParmNum >= 0 && shaderParmNum <= MAX_GLOBAL_SHADERPARM_INDEX)
 			{
