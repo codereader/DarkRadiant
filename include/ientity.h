@@ -36,33 +36,33 @@ typedef boost::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 class KeyObserver
 {
 public:
-	virtual ~KeyObserver() {}
+    virtual ~KeyObserver() {}
 
-	/**
-	 * This event gets called when the observed keyvalue changes.
-	 * The new value is passed as argument, which can be an empty string.
-	 */
-	virtual void onKeyValueChanged(const std::string& newValue) = 0;
+    /**
+     * This event gets called when the observed keyvalue changes.
+     * The new value is passed as argument, which can be an empty string.
+     */
+    virtual void onKeyValueChanged(const std::string& newValue) = 0;
 };
 
 class EntityKeyValue :
-	public NameObserver
+    public NameObserver
 {
 public:
     virtual ~EntityKeyValue() {}
-	/** greebo: Retrieves the actual value of this key
-	 */
-	virtual const std::string& get() const = 0;
+    /** greebo: Retrieves the actual value of this key
+     */
+    virtual const std::string& get() const = 0;
 
-	/** greebo: Sets the value of this key
-	 */
-	virtual void assign(const std::string& other) = 0;
+    /** greebo: Sets the value of this key
+     */
+    virtual void assign(const std::string& other) = 0;
 
-	/** greebo: Attaches/detaches a callback to get notified about
-	 * 			the key change.
-	 */
-	virtual void attach(KeyObserver& observer) = 0;
-	virtual void detach(KeyObserver& observer) = 0;
+    /** greebo: Attaches/detaches a callback to get notified about
+     *          the key change.
+     */
+    virtual void attach(KeyObserver& observer) = 0;
+    virtual void detach(KeyObserver& observer) = 0;
 };
 typedef boost::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
 
@@ -88,8 +88,8 @@ typedef boost::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
 class Entity
 {
 public:
-	// A container with key => value pairs
-	typedef std::vector< std::pair<std::string, std::string> > KeyValuePairs;
+    // A container with key => value pairs
+    typedef std::vector< std::pair<std::string, std::string> > KeyValuePairs;
 
     /**
      * \brief
@@ -98,16 +98,16 @@ public:
      * An entity observer receives notifications when keyvalues are inserted or
      * deleted on the entity it is observing.
      */
-	class Observer
-	{
-	public:
-	    virtual ~Observer() {}
+    class Observer
+    {
+    public:
+        virtual ~Observer() {}
 
         /**
          * \brief
          * Notification that a new key value has been inserted on the entity.
          */
-		virtual void onKeyInsert(const std::string& key, EntityKeyValue& value)
+        virtual void onKeyInsert(const std::string& key, EntityKeyValue& value)
         { }
 
         /**
@@ -121,125 +121,125 @@ public:
          * \brief
          * Notification that a key value has been removed from the entity.
          */
-		virtual void onKeyErase(const std::string& key, EntityKeyValue& value)
+        virtual void onKeyErase(const std::string& key, EntityKeyValue& value)
         { }
-	};
+    };
 
-	/**
-	 * Visitor class for keyvalues on an entity. An Entity::Visitor is provided
-	 * to an Entity via the Entity::forEachKeyValue() method, after which the
-	 * visitor's visit() method will be invoked for each keyvalue on the
-	 * Entity.
-	 */
-	struct Visitor
-	{
-		virtual ~Visitor() {}
-		/**
-		 * The visit function which must be implemented by subclasses.
-		 *
-		 * @param key
-		 * The current key being visited.
-		 *
-		 * @param value
-		 * The value associated with the current key.
-		 */
-    	virtual void visit(const std::string& key,
-    					   const std::string& value) = 0;
-	};
+    /**
+     * Visitor class for keyvalues on an entity. An Entity::Visitor is provided
+     * to an Entity via the Entity::forEachKeyValue() method, after which the
+     * visitor's visit() method will be invoked for each keyvalue on the
+     * Entity.
+     */
+    struct Visitor
+    {
+        virtual ~Visitor() {}
+        /**
+         * The visit function which must be implemented by subclasses.
+         *
+         * @param key
+         * The current key being visited.
+         *
+         * @param value
+         * The value associated with the current key.
+         */
+        virtual void visit(const std::string& key,
+                           const std::string& value) = 0;
+    };
 
-	/**
-	 * Visitor class for keyvalues on an entity. An Entity::KeyValueVisitor is provided
-	 * to an Entity via the Entity::forEachKeyValue() method, after which the
-	 * visitor's visit() method will be invoked for each keyvalue on the Entity.
-	 */
-	struct KeyValueVisitor
-	{
-		virtual ~KeyValueVisitor() {}
-		/**
-		 * The visit function which must be implemented by subclasses.
-		 *
-		 * @param key
-		 * The current key being visited.
-		 *
-		 * @param value
-		 * The actual keyvalue object associated with the current key.
-		 */
-    	virtual void visit(const std::string& key,
-    					   EntityKeyValue& value) = 0;
-	};
+    /**
+     * Visitor class for keyvalues on an entity. An Entity::KeyValueVisitor is provided
+     * to an Entity via the Entity::forEachKeyValue() method, after which the
+     * visitor's visit() method will be invoked for each keyvalue on the Entity.
+     */
+    struct KeyValueVisitor
+    {
+        virtual ~KeyValueVisitor() {}
+        /**
+         * The visit function which must be implemented by subclasses.
+         *
+         * @param key
+         * The current key being visited.
+         *
+         * @param value
+         * The actual keyvalue object associated with the current key.
+         */
+        virtual void visit(const std::string& key,
+                           EntityKeyValue& value) = 0;
+    };
 
-	virtual ~Entity() {}
+    virtual ~Entity() {}
 
-	/**
-	 * Return the entity class object for this entity.
-	 */
-	virtual IEntityClassPtr getEntityClass() const = 0;
+    /**
+     * Return the entity class object for this entity.
+     */
+    virtual IEntityClassPtr getEntityClass() const = 0;
 
-	/**
-	 * Enumerate key values on this entity using a Entity::Visitor class.
-	 */
-	virtual void forEachKeyValue(Visitor& visitor) const = 0;
+    /**
+     * Enumerate key values on this entity using a Entity::Visitor class.
+     */
+    virtual void forEachKeyValue(Visitor& visitor) const = 0;
 
-	// Same as above, but this one is visiting the KeyValues itself, not just strings.
-	virtual void forEachKeyValue(KeyValueVisitor& visitor) = 0;
+    // Same as above, but this one is visiting the KeyValues itself, not just strings.
+    virtual void forEachKeyValue(KeyValueVisitor& visitor) = 0;
 
-	/** Set a key value on this entity. Setting the value to "" will
-	 * remove the key.
-	 *
-	 * @param key
-	 * The key to set.
-	 *
-	 * @param value
-	 * Value to give the key, or the empty string to remove the key.
-	 */
-	virtual void setKeyValue(const std::string& key,
-							 const std::string& value) = 0;
+    /** Set a key value on this entity. Setting the value to "" will
+     * remove the key.
+     *
+     * @param key
+     * The key to set.
+     *
+     * @param value
+     * Value to give the key, or the empty string to remove the key.
+     */
+    virtual void setKeyValue(const std::string& key,
+                             const std::string& value) = 0;
 
-	/* Retrieve a key value from the entity.
-	 *
-	 * @param key
-	 * The key to retrieve.
-	 *
-	 * @returns
-	 * The current value for this key, or the empty string if it does not
-	 * exist.
-	 */
-	virtual std::string getKeyValue(const std::string& key) const = 0;
+    /* Retrieve a key value from the entity.
+     *
+     * @param key
+     * The key to retrieve.
+     *
+     * @returns
+     * The current value for this key, or the empty string if it does not
+     * exist.
+     */
+    virtual std::string getKeyValue(const std::string& key) const = 0;
 
-	/**
-	 * greebo: Checks whether the given key is inherited or not.
-	 *
-	 * @returns: TRUE if the value is inherited,
-	 *           FALSE when it is not or when the key doesn't exist at all.
-	 */
-	virtual bool isInherited(const std::string& key) const = 0;
+    /**
+     * greebo: Checks whether the given key is inherited or not.
+     *
+     * @returns: TRUE if the value is inherited,
+     *           FALSE when it is not or when the key doesn't exist at all.
+     */
+    virtual bool isInherited(const std::string& key) const = 0;
 
-	/**
-	 * Return the list of Key/Value pairs matching the given prefix, case ignored.
-	 *
-	 * This method performs a search for all spawnargs whose key
-	 * matches the given prefix, with a suffix consisting of zero or more
-	 * arbitrary characters. For example, if "target" were specified as the
-	 * prefix, the list would include "target", "target0", "target127" etc.
-	 *
-	 * This operation may not have high performance, due to the need to scan
-	 * for matching names, therefore should not be used in performance-critical
-	 * code.
-	 *
-	 * @param prefix
-	 * The prefix to search for, interpreted case-insensitively.
-	 *
-	 * @return
-	 * A list of KeyValue pairs matching the provided prefix. This
-	 * list will be empty if there were no matches.
-	 */
-	virtual KeyValuePairs getKeyValuePairs(const std::string& prefix) const = 0;
+    /**
+     * Return the list of Key/Value pairs matching the given prefix, case ignored.
+     *
+     * This method performs a search for all spawnargs whose key
+     * matches the given prefix, with a suffix consisting of zero or more
+     * arbitrary characters. For example, if "target" were specified as the
+     * prefix, the list would include "target", "target0", "target127" etc.
+     *
+     * This operation may not have high performance, due to the need to scan
+     * for matching names, therefore should not be used in performance-critical
+     * code.
+     *
+     * @param prefix
+     * The prefix to search for, interpreted case-insensitively.
+     *
+     * @return
+     * A list of KeyValue pairs matching the provided prefix. This
+     * list will be empty if there were no matches.
+     */
+    virtual KeyValuePairs getKeyValuePairs(const std::string& prefix) const = 0;
 
-	/** greebo: Returns true if the entity is a model. For Doom3, this is
-	 * 			usually true when the classname == "func_static" and
-	 * 			the non-empty spawnarg "model" != "name".
-	 */
-	virtual bool isModel() const = 0;
+    /** greebo: Returns true if the entity is a model. For Doom3, this is
+     *          usually true when the classname == "func_static" and
+     *          the non-empty spawnarg "model" != "name".
+     */
+    virtual bool isModel() const = 0;
 
   virtual bool isContainer() const = 0;
 
@@ -256,40 +256,40 @@ public:
     virtual void detachObserver(Observer* observer) = 0;
 };
 
+/// Interface for a INode subclass that contains an Entity
 class IEntityNode :
-	public virtual IRenderEntity
+    public virtual IRenderEntity,
+    public virtual scene::INode
 {
 public:
     virtual ~IEntityNode() {}
-	/** greebo: Temporary workaround for entity-containing nodes.
-	 * 			This is only used by Node_getEntity to retrieve the
-	 * 			contained entity from a node.
-	 */
-	virtual Entity& getEntity() = 0;
 
-	/**
-	 * greebo: Tells the entity to reload the child model. This usually
-	 *         includes removal of the child model node and triggering
-	 *         a "skin changed" event.
-	 */
-	virtual void refreshModel() = 0;
+    /// Get a modifiable reference to the contained Entity
+    virtual Entity& getEntity() = 0;
+
+    /**
+     * greebo: Tells the entity to reload the child model. This usually
+     *         includes removal of the child model node and triggering
+     *         a "skin changed" event.
+     */
+    virtual void refreshModel() = 0;
 };
 typedef boost::shared_ptr<IEntityNode> IEntityNodePtr;
 
 inline Entity* Node_getEntity(const scene::INodePtr& node)
 {
-	IEntityNodePtr entityNode = boost::dynamic_pointer_cast<IEntityNode>(node);
+    IEntityNodePtr entityNode = boost::dynamic_pointer_cast<IEntityNode>(node);
 
-	if (entityNode != NULL) {
-		return &(entityNode->getEntity());
-	}
+    if (entityNode != NULL) {
+        return &(entityNode->getEntity());
+    }
 
-	return NULL;
+    return NULL;
 }
 
 inline bool Node_isEntity(const scene::INodePtr& node)
 {
-	return boost::dynamic_pointer_cast<IEntityNode>(node) != NULL;
+    return boost::dynamic_pointer_cast<IEntityNode>(node) != NULL;
 }
 
 /**
@@ -297,24 +297,24 @@ inline bool Node_isEntity(const scene::INodePtr& node)
  *         the target entity passed to the constructor (except classname).
  */
 class EntityCopyingVisitor :
-	public Entity::Visitor
+    public Entity::Visitor
 {
-	// the target entity
-	Entity& _entity;
+    // the target entity
+    Entity& _entity;
 public:
-	EntityCopyingVisitor(Entity& entity) :
-		_entity(entity)
-	{}
+    EntityCopyingVisitor(Entity& entity) :
+        _entity(entity)
+    {}
 
-	virtual ~EntityCopyingVisitor() {}
+    virtual ~EntityCopyingVisitor() {}
 
-	// Required visit function, copies keyvalues (except classname) between
-	// entities
-	void visit(const std::string& key, const std::string& value) {
-		if (key != "classname") {
-			_entity.setKeyValue(key, value);
-		}
-	}
+    // Required visit function, copies keyvalues (except classname) between
+    // entities
+    void visit(const std::string& key, const std::string& value) {
+        if (key != "classname") {
+            _entity.setKeyValue(key, value);
+        }
+    }
 };
 
 const std::string MODULE_ENTITYCREATOR("Doom3EntityCreator");
@@ -324,33 +324,27 @@ const std::string MODULE_ENTITYCREATOR("Doom3EntityCreator");
  * Interface for the entity creator module.
  */
 class EntityCreator :
-	public RegisterableModule
+    public RegisterableModule
 {
 public:
     virtual ~EntityCreator() {}
 
-    /**
-     * \brief
-     * Create an entity node with the given entity class.
-     */
-    virtual scene::INodePtr createEntity(const IEntityClassPtr& eclass) = 0;
+    /// Create an entity node with the given entity class.
+    virtual IEntityNodePtr createEntity(const IEntityClassPtr& eclass) = 0;
 
-    /**
-     * \brief
-     * Connect the two given entity nodes using the "target" system.
-     */
-	virtual void connectEntities(const scene::INodePtr& source,
+    /// Connect the two given entity nodes using the "target" system.
+    virtual void connectEntities(const scene::INodePtr& source,
                                  const scene::INodePtr& target) = 0;
 };
 
 inline EntityCreator& GlobalEntityCreator() {
-	// Cache the reference locally
-	static EntityCreator& _entityCreator(
-		*boost::static_pointer_cast<EntityCreator>(
-			module::GlobalModuleRegistry().getModule(MODULE_ENTITYCREATOR)
-		)
-	);
-	return _entityCreator;
+    // Cache the reference locally
+    static EntityCreator& _entityCreator(
+        *boost::static_pointer_cast<EntityCreator>(
+            module::GlobalModuleRegistry().getModule(MODULE_ENTITYCREATOR)
+        )
+    );
+    return _entityCreator;
 }
 
 #endif

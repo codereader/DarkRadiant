@@ -335,13 +335,15 @@ void ConversationDialog::onAddEntity()
 	IEntityClassPtr eclass =
 		GlobalEntityClassManager().findClass(CONVERSATION_ENTITY_CLASS);
 
-    if (eclass != NULL)
+    if (eclass)
     {
         // Construct a Node of this entity type
-        scene::INodePtr node(GlobalEntityCreator().createEntity(eclass));
+        IEntityNodePtr node(GlobalEntityCreator().createEntity(eclass));
 
         // Create a random offset
-		Node_getEntity(node)->setKeyValue("origin", conversation::RandomOrigin::generate(128));
+		node->getEntity().setKeyValue(
+            "origin", conversation::RandomOrigin::generate(128)
+        );
 
         // Insert the node into the scene graph
         assert(GlobalSceneGraph().root());

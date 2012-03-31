@@ -27,22 +27,14 @@
 namespace entity
 {
 
-	namespace
-	{
-		inline NamespacedPtr Node_getNamespaced(const scene::INodePtr& node)
-		{
-			return boost::dynamic_pointer_cast<Namespaced>(node);
-		}
-	}
-
-scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& eclass)
+IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
 {
 	// Null entityclass check
 	if (!eclass)
 	{
 		throw std::runtime_error(
-			_("Doom3EntityCreator::getEntityForEClass(): "
-			"cannot create entity for NULL entityclass.")
+			_("createNodeForEntity(): "
+			  "cannot create entity for NULL entityclass.")
 		);
 	}
 
@@ -77,17 +69,14 @@ scene::INodePtr Doom3EntityCreator::getEntityForEClass(const IEntityClassPtr& ec
 	return node;
 }
 
-scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
+IEntityNodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
 {
-	scene::INodePtr node = getEntityForEClass(eclass);
+	IEntityNodePtr node = createNodeForEntity(eclass);
 
 	// All entities are created in the active layer by default
 	node->moveToLayer(GlobalLayerSystem().getActiveLayer());
 
-	Entity* entity = Node_getEntity(node);
-	assert(entity != NULL);
-
-	entity->setKeyValue("classname", eclass->getName());
+	node->getEntity().setKeyValue("classname", eclass->getName());
 
 	// If this is not a worldspawn or unrecognised entity, generate a unique
 	// name for it
@@ -104,7 +93,7 @@ scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
 		std::string entityName =
 			boost::algorithm::replace_all_copy(eclassName, ":", "_") + "_1";
 
-		entity->setKeyValue("name", entityName);
+		node->getEntity().setKeyValue("name", entityName);
 	}
 
 	return node;
@@ -112,7 +101,9 @@ scene::INodePtr Doom3EntityCreator::createEntity(const IEntityClassPtr& eclass)
 
 /* Connect two entities using a "target" key.
  */
-void Doom3EntityCreator::connectEntities(const scene::INodePtr& source, const scene::INodePtr& target) {
+void Doom3EntityCreator::connectEntities(const scene::INodePtr& source,
+                                         const scene::INodePtr& target)
+{
 	// Obtain both entities
 	Entity* e1 = Node_getEntity(source);
 	Entity* e2 = Node_getEntity(target);

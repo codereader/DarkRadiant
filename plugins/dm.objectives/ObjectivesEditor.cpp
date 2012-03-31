@@ -497,10 +497,10 @@ void ObjectivesEditor::_onAddEntity()
     if (eclass) 
     {
         // Construct a Node of this entity type
-        scene::INodePtr node(GlobalEntityCreator().createEntity(eclass));
+        IEntityNodePtr node(GlobalEntityCreator().createEntity(eclass));
 
         // Create a random offset
-        Node_getEntity(node)->setKeyValue("origin", RandomOrigin::generate(128));
+        node->getEntity().setKeyValue("origin", RandomOrigin::generate(128));
 
         // Insert the node into the scene graph
         assert(GlobalSceneGraph().root());

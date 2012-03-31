@@ -140,8 +140,8 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 	// Get the selection workzone bounds
 	AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
 
-    scene::INodePtr node(GlobalEntityCreator().createEntity(entityClass));
-	Entity* entity = Node_getEntity(node);
+    // Create the new node for the entity
+    IEntityNodePtr node(GlobalEntityCreator().createEntity(entityClass));
 
 	GlobalSceneGraph().root()->addChildNode(node);
 
@@ -170,15 +170,16 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
     else // brush-based entity
 	{
 		// Add selected brushes as children of non-fixed entity
-		entity->setKeyValue("model", entity->getKeyValue("name"));
+		node->getEntity().setKeyValue("model",
+                                      node->getEntity().getKeyValue("name"));
 
 		// Take the selection center as new origin
 		Vector3 newOrigin = selection::algorithm::getCurrentSelectionCenter();
-		entity->setKeyValue("origin", std::string(newOrigin));
+		node->getEntity().setKeyValue("origin", std::string(newOrigin));
 
         // If there is an "editor_material" class attribute, apply this shader
         // to all of the selected primitives before parenting them
-        std::string material = entity->getEntityClass()->getAttribute("editor_material").getValue();
+        std::string material = node->getEntity().getEntityClass()->getAttribute("editor_material").getValue();
 
         if (!material.empty()) {
             selection::algorithm::applyShaderToSelection(material);
@@ -215,8 +216,8 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
     if (entityClass->isLight() && primitivesSelected)
 	{
         AABB bounds(Doom3Light_getBounds(workzone));
-        entity->setKeyValue("origin", bounds.getOrigin());
-        entity->setKeyValue("light_radius", bounds.getExtents());
+        node->getEntity().setKeyValue("origin", bounds.getOrigin());
+        node->getEntity().setKeyValue("light_radius", bounds.getExtents());
     }
 
     // Flag the map as unsaved after creating the entity
@@ -231,7 +232,7 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 		{
 			// Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
 			std::string key = i->getName().substr(i->getName().find_first_of(' ') + 1);
-			entity->setKeyValue(key, i->getValue());
+			node->getEntity().setKeyValue(key, i->getValue());
 		}
 	}
 
@@ -243,7 +244,8 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
  *
  * @key: The curve type: pass either "curve_CatmullRomSpline" or "curve_Nurbs".
  */
-void createCurve(const std::string& key) {
+void createCurve(const std::string& key)
+{
 	UndoableCommand undo(std::string("createCurve: ") + key);
 
 	// De-select everything before we proceed
@@ -263,7 +265,7 @@ void createCurve(const std::string& key) {
 	);
 
 	// Create a new entity node deriving from this entityclass
-	scene::INodePtr curve(GlobalEntityCreator().createEntity(entityClass));
+	IEntityNodePtr curve(GlobalEntityCreator().createEntity(entityClass));
 
     // Insert this new node into the scenegraph root
     GlobalSceneGraph().root()->addChildNode(curve);
@@ -271,14 +273,12 @@ void createCurve(const std::string& key) {
     // Select this new curve node
     Node_setSelected(curve, true);
 
-	Entity* entity = Node_getEntity(curve);
-	assert(entity); // this must be true
-
 	// Set the model key to be the same as the name
-	entity->setKeyValue("model", entity->getKeyValue("name"));
+	curve->getEntity().setKeyValue("model",
+                                   curve->getEntity().getKeyValue("name"));
 
 	// Initialise the curve using three pre-defined points
-	entity->setKeyValue(
+	curve->getEntity().setKeyValue(
 		key,
 		"3 ( 0 0 0  50 50 0  50 100 0 )"
 	);

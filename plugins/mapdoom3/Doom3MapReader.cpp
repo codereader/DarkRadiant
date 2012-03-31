@@ -180,19 +180,16 @@ scene::INodePtr Doom3MapReader::createEntity(const EntityKeyValues& keyValues)
 	}
 
 	// Create the actual entity node
-    scene::INodePtr entity(GlobalEntityCreator().createEntity(classPtr));
-
-	Entity* ent = Node_getEntity(entity);
-	assert(ent != NULL); // entity cast must not fail
+    IEntityNodePtr node(GlobalEntityCreator().createEntity(classPtr));
 
     for (EntityKeyValues::const_iterator i = keyValues.begin();
          i != keyValues.end();
          ++i)
     {
-        ent->setKeyValue(i->first, i->second);
+        node->getEntity().setKeyValue(i->first, i->second);
     }
 
-    return entity;
+    return node;
 }
 
 void Doom3MapReader::parseEntity(parser::DefTokeniser& tok)

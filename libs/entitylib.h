@@ -436,7 +436,8 @@ inline bool node_is_worldspawn(const scene::INodePtr& node) {
  *
  * @returns: The new entity node.
  */
-inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const std::string& classname)
+inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node,
+                                             const std::string& classname)
 {
 	// Make a copy of this node first
 	scene::INodePtr oldNode(node);
@@ -451,15 +452,12 @@ inline scene::INodePtr changeEntityClassname(const scene::INodePtr& node, const 
 	assert(eclass != NULL);
 
 	// Create a new entity with the given class
-	scene::INodePtr newNode(GlobalEntityCreator().createEntity(eclass));
+	IEntityNodePtr newNode(GlobalEntityCreator().createEntity(eclass));
 
 	Entity* oldEntity = Node_getEntity(oldNode);
-	Entity* newEntity = Node_getEntity(newNode);
-	assert(newEntity != NULL); // must not be NULL
 
-	// Instantiate a visitor that copies all spawnargs to the new node
-	EntityCopyingVisitor visitor(*newEntity);
-	// Traverse the old entity with this walker
+	// Traverse the old entity with a walker
+	EntityCopyingVisitor visitor(newNode->getEntity());
 	oldEntity->forEachKeyValue(visitor);
 
 	// The old node must not be the root node (size of path >= 2)

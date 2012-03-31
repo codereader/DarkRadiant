@@ -5,6 +5,7 @@
 #include "math/AABB.h"
 #include "math/Vector2.h"
 #include "iscenegraph.h"
+#include "ientity.h"
 
 /** greebo: The RegionManager provides methods to enable/disable
  * 			the regioning when map editing as well as functions
@@ -38,7 +39,7 @@ class RegionManager
 	scene::INodePtr _brushes[6];
 
 	// The pointer to the info_player_start entity
-	scene::INodePtr _playerStart;
+	IEntityNodePtr _playerStart;
 
 public:
 	RegionManager();

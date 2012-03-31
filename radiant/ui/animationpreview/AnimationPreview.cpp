@@ -141,7 +141,8 @@ void AnimationPreview::setupSceneGraph()
 	RenderPreview::setupSceneGraph();
 
 	_entity = GlobalEntityCreator().createEntity(
-		GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
+		GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS)
+    );
 
 	// This entity is acting as our root node in the scene
 	getScene()->setRoot(_entity);
