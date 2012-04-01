@@ -1,6 +1,6 @@
 #include "WaveFrontExporter.h"
 
-#include "string/string.h"
+#include "string/convert.h"
 
 namespace exporter
 {
