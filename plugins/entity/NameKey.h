@@ -32,7 +32,6 @@ namespace entity {
 class NameKey :
 	public KeyObserver
 {
-private:
 	// The reference to the spawnarg structure
 	Doom3Entity& m_entity;
 
@@ -44,9 +43,10 @@ public:
 		m_entity(entity)
 	{}
 
-	const std::string& name() const
+	std::string name() const
 	{
-		if (_name.empty()) {
+		if (_name.empty())
+        {
 			return m_entity.getEntityClass()->getName();
 		}
 		return _name;

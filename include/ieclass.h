@@ -230,11 +230,8 @@ public:
     /// Signal emitted when entity class contents are changed or reloaded
     virtual sigc::signal<void> changedSignal() const = 0;
 
-	/**
-	 * Get this entity class' name.
-	 */
-	virtual const std::string& getName() const = 0;
-
+	/// Get the name of this entity class
+	virtual std::string getName() const = 0;
 
 	/// Query whether this entity class represents a light.
 	virtual bool isLight() const = 0;

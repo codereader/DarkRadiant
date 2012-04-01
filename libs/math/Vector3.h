@@ -25,8 +25,8 @@
 
 // BasicVector3: A 3-element vector of type Element
 template<typename Element>
-class BasicVector3 {
-
+class BasicVector3
+{
 	// The actual values of the vector, an array containing 3 values of type
 	// Element
 	Element _v[3];
@@ -46,14 +46,14 @@ public:
 
 	// Templated copy constructor
 	template<typename OtherElement>
-	BasicVector3(const BasicVector3<OtherElement>& other) {
+	BasicVector3(const BasicVector3<OtherElement>& other)
+    {
 		x() = static_cast<Element>(other.x());
 		y() = static_cast<Element>(other.y());
 		z() = static_cast<Element>(other.z());
 	}
 
-    /** Construct a BasicVector3 with the 3 provided components.
-     */
+    /// Construct a BasicVector3 with the 3 provided components.
     BasicVector3(const Element& x_, const Element& y_, const Element& z_) {
         x() = x_;
         y() = y_;
@@ -63,7 +63,8 @@ public:
 	/** Construct a BasicVector3 from a 3-element array. The array must be
 	 * valid as no bounds checking is done.
 	 */
-	BasicVector3(const Element* array) {
+	BasicVector3(const Element* array)
+    {
 		for (int i = 0; i < 3; ++i)
 			_v[i] = array[i];
 	}
@@ -75,7 +76,8 @@ public:
      * The string from which component values are extracted.
      */
 
-    BasicVector3(const std::string& str) {
+    BasicVector3(const std::string& str)
+    {
     	// Initialise the vector with 0, in case the string parse fails
     	_v[0] = _v[1] = _v[2] = 0;
     	// Use a stringstream to parse the string

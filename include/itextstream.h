@@ -53,8 +53,8 @@ protected:
 
     // Replenish the controlled buffer with characters from the underlying
     // input sequence.
-    virtual int underflow() {
-
+    virtual int underflow()
+    {
         // Read next block of BUFFER_SIZE characters into the buffer from
         // the underlying TextInputStream.
         std::size_t charsRead = this->read(_buffer, BUFFER_SIZE);

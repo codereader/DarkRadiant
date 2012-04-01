@@ -10,16 +10,191 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
+#include <boost/foreach.hpp>
 
 namespace eclass
 {
 
 namespace
 {
-    const std::string DEF_ATTACH = "def_attach";
-    const std::string NAME_ATTACH = "name_attach";
-    const std::string POS_ATTACH = "pos_attach";
+
+// Constants
+const std::string DEF_ATTACH = "def_attach";
+const std::string NAME_ATTACH = "name_attach";
+const std::string POS_ATTACH = "pos_attach";
+
+const std::string ATTACH_POS_NAME = "attach_pos_name";
+const std::string ATTACH_POS_ORIGIN = "attach_pos_origin";
+const std::string ATTACH_POS_JOINT = "attach_pos_joint";
+const std::string ATTACH_POS_ANGLES = "attach_pos_angles";
+
+// Extract and return the string suffix for a key (which might be the empty
+// string if there is no suffix). Returns boost::none if the key did not match
+// the prefix.
+boost::optional<std::string> suffixedKey(const std::string& key,
+                                         const std::string& prefix)
+{
+    if (boost::algorithm::istarts_with(key, prefix))
+    {
+        std::string suffixStr = boost::algorithm::erase_first_copy(key, prefix);
+        return suffixStr;
+    }
+    else
+    {
+        return boost::none;
+    }
 }
+
+} // namespace
+
+// Attachment helper object
+class Doom3EntityClass::Attachments
+{
+    // Name of the entity class being parsed (for debug/error purposes)
+    std::string _parentClassname;
+
+    // Any def_attached entities. Each attachment has an entity class, a
+    // position and optionally a name.
+    struct Attachment
+    {
+        // Class of entity that is attached
+        std::string className;
+
+        // Name of the entity that is attached
+        std::string name;
+
+        // Name of the position (AttachPos) at which the entity should be
+        // attached
+        std::string posName;
+    };
+
+    // Attached object map initially indexed by key suffix (e.g. "1" for
+    // "name_attach1"), then by name.
+    typedef std::map<std::string, Attachment> AttachedObjects;
+    AttachedObjects _objects;
+
+    // Positions at which def_attached entities can be attached.
+    struct AttachPos
+    {
+        // Name of this attachment position (referred to in the
+        // Attachment::posName variable)
+        std::string name;
+
+        // 3D offset position from our origin or the model joint, if a joint is
+        // specified
+        Vector3 origin;
+
+        // Rotation of the attached entity
+        Vector3 angles;
+
+        // Optional model joint relative to which the origin should be
+        // calculated
+        std::string joint;
+    };
+
+    // Attach position map initially indexed by key suffix (e.g. "_zhandr" for
+    // "attach_pos_name_zhandr"), then by name. It appears that only attachpos
+    // keys are using arbitrary strings instead of numeric suffixes, but we
+    // might as well treat everything the same way.
+    typedef std::map<std::string, AttachPos> AttachPositions;
+    AttachPositions _positions;
+
+private:
+
+    template<typename Map> void reindexMapByName(Map& inputMap)
+    {
+        Map copy(inputMap);
+        inputMap.clear();
+
+        // Take each item from the copied map, and insert it into the original
+        // map using the name as the key.
+        BOOST_FOREACH(typename Map::value_type pair, copy)
+        {
+            if (!pair.second.name.empty()) // ignore empty names
+            {
+                inputMap.insert(
+                    typename Map::value_type(pair.second.name, pair.second)
+                );
+            }
+        }
+    }
+
+public:
+
+    // Initialise and set classname
+    Attachments(const std::string& name)
+    : _parentClassname(name)
+    { }
+
+    // Clear all data
+    void clear()
+    {
+        _objects.clear();
+        _positions.clear();
+    }
+
+    // Attempt to extract attachment data from the given key/value pair
+    void parseDefAttachKeys(const std::string& key, const std::string& value)
+    {
+        boost::optional<std::string> keySuffix;
+
+        if (keySuffix = suffixedKey(key, DEF_ATTACH))
+        {
+            _objects[*keySuffix].className = value;
+        }
+        else if (keySuffix = suffixedKey(key, NAME_ATTACH))
+        {
+            _objects[*keySuffix].name = value;
+        }
+        else if (keySuffix = suffixedKey(key, POS_ATTACH))
+        {
+            _objects[*keySuffix].posName = value;
+        }
+        else if (keySuffix = suffixedKey(key, ATTACH_POS_NAME))
+        {
+            _positions[*keySuffix].name = value;
+        }
+        else if (keySuffix = suffixedKey(key, ATTACH_POS_ORIGIN))
+        {
+            _positions[*keySuffix].origin = Vector3(value);
+        }
+        else if (keySuffix = suffixedKey(key, ATTACH_POS_ANGLES))
+        {
+            _positions[*keySuffix].angles = Vector3(value);
+        }
+        else if (keySuffix = suffixedKey(key, ATTACH_POS_JOINT))
+        {
+            _positions[*keySuffix].joint = value;
+        }
+    }
+
+    // Post-process after attachment parsing
+    void validateAttachments()
+    {
+        // During parsing we indexed spawnargs by string suffix so that matching
+        // keys could be found. From now on we are no longer interested in the
+        // suffixes so we will re-build the maps indexed by name instead.
+        reindexMapByName(_objects);
+        reindexMapByName(_positions);
+
+        // Drop any attached objects that specify a non-existent position (I
+        // assume new positions cannot be dynamically created in game).
+        for (AttachedObjects::iterator i = _objects.begin();
+             i != _objects.end();
+             ++i)
+        {
+            if (_positions.find(i->second.posName) == _positions.end())
+            {
+                globalWarningStream()
+                    << "[eclassmgr] Entity class '" << _parentClassname 
+                    << "' tries to attach '" << i->first << "' at non-existent "
+                    << "position '" << i->second.posName << "'\n";
+
+                _objects.erase(i);
+            }
+        }
+    }
+};
 
 // Constructor
 Doom3EntityClass::Doom3EntityClass(const std::string& name,
@@ -38,13 +213,15 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
   _inheritanceResolved(false),
   _modName("base"),
   _emptyAttribute("", "", ""),
+  _attachments(new Attachments(name)),
   _parseStamp(0)
 {}
 
 Doom3EntityClass::~Doom3EntityClass()
 {}
 
-const std::string& Doom3EntityClass::getName() const {
+std::string Doom3EntityClass::getName() const
+{
 	return _name;
 }
 
@@ -55,7 +232,8 @@ sigc::signal<void> Doom3EntityClass::changedSignal() const
 
 /** Query whether this entity has a fixed size.
  */
-bool Doom3EntityClass::isFixedSize() const {
+bool Doom3EntityClass::isFixedSize() const
+{
     if (_fixedSize) {
         return true;
     }
@@ -67,7 +245,8 @@ bool Doom3EntityClass::isFixedSize() const {
     }
 }
 
-AABB Doom3EntityClass::getBounds() const {
+AABB Doom3EntityClass::getBounds() const
+{
     if (isFixedSize()) {
         return AABB::createFromMinMax(
         	getAttribute("editor_mins").getValue(),
@@ -192,10 +371,10 @@ void Doom3EntityClass::forEachClassAttribute(
 
 namespace
 {
-    void copyInheritedAttribute(IEntityClass& target,
+    void copyInheritedAttribute(IEntityClass* target,
                                 const EntityClassAttribute& attr)
     {
-		target.addAttribute(EntityClassAttribute(attr, true));
+		target->addAttribute(EntityClassAttribute(attr, true));
     }
 }
 
@@ -222,7 +401,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 
 		// Copy attributes from the parent to the child, including editor keys
 		pIter->second->forEachClassAttribute(
-            boost::bind(&copyInheritedAttribute, *this, _1), true
+            boost::bind(&copyInheritedAttribute, this, _1), true
         );
 	}
 	else {
@@ -335,7 +514,7 @@ void Doom3EntityClass::clear()
 	// Leave the empty attribute alone
 
 	_inheritanceChain.clear();
-    _attachments.clear();
+    _attachments->clear();
 }
 
 void Doom3EntityClass::parseEditorSpawnarg(const std::string& key,
@@ -370,53 +549,6 @@ void Doom3EntityClass::parseEditorSpawnarg(const std::string& key,
             // description
             addAttribute(EntityClassAttribute(type, attName, "", value));
         }
-    }
-}
-
-namespace
-{
-
-// Return 0 for no numeric suffix, n for a suffix of n and boost::none if
-// the key did not match the prefix
-boost::optional<unsigned> numberedKey(const std::string& key,
-                                      const std::string& prefix)
-{
-    if (boost::algorithm::istarts_with(key, prefix))
-    {
-        std::string suffixStr = boost::algorithm::erase_first_copy(key, prefix);
-        if (!suffixStr.empty())
-        {
-            return string::convert<unsigned>(suffixStr, 0);
-        }
-        else
-        {
-            return 0u;
-        }
-    }
-    else
-    {
-        return boost::none;
-    }
-}
-
-}
-
-void Doom3EntityClass::parseDefAttachKeys(const std::string& key,
-                                          const std::string& value)
-{
-    boost::optional<unsigned> keyNum;
-
-    if (keyNum = numberedKey(key, DEF_ATTACH))
-    {
-        _attachments[*keyNum].className = value;
-    }
-    else if (keyNum = numberedKey(key, NAME_ATTACH))
-    {
-        _attachments[*keyNum].name = value;
-    }
-    else if (keyNum = numberedKey(key, POS_ATTACH))
-    {
-        _attachments[*keyNum].posName = value;
     }
 }
 
@@ -456,7 +588,8 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
             parseEditorSpawnarg(key, value);
 		}
 
-        parseDefAttachKeys(key, value);
+        // Try parsing this key/value with the Attachments manager
+        _attachments->parseDefAttachKeys(key, value);
 
         // Add the EntityClassAttribute for this key/val
 		if (getAttribute(key).getType().empty())
@@ -480,15 +613,19 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 		}
     } // while true
 
+    _attachments->validateAttachments();
+
 	// Notify the observers
     _changedSignal.emit();
 }
 
-const IEntityClass::InheritanceChain& Doom3EntityClass::getInheritanceChain() {
+const IEntityClass::InheritanceChain& Doom3EntityClass::getInheritanceChain()
+{
 	return _inheritanceChain;
 }
 
-void Doom3EntityClass::buildInheritanceChain() {
+void Doom3EntityClass::buildInheritanceChain()
+{
 	_inheritanceChain.clear();
 
 	// We start with the name of this class

@@ -11,7 +11,8 @@
 
 #include <vector>
 #include <map>
-#include <boost/algorithm/string.hpp>
+//#include <boost/algorithm/string.hpp>
+#include <boost/scoped_ptr.hpp>
 
 /* FORWARD DECLS */
 
@@ -32,8 +33,7 @@ class Doom3EntityClass
 {
     typedef boost::shared_ptr<std::string> StringPtr;
 
-    class StringCompareFunctor :
-        public std::binary_function<std::string, std::string, bool>
+    class StringCompareFunctor
     {
     public:
         bool operator()(const StringPtr& lhs, const StringPtr& rhs) const
@@ -94,16 +94,9 @@ class Doom3EntityClass
     // The list of strings containing the ancestors and this eclass itself.
     InheritanceChain _inheritanceChain;
 
-    // Any def_attached entities. Each attachment has an entity class, a
-    // position and optionally a name.
-    struct Attachment
-    {
-        std::string className;
-        std::string name;
-        std::string posName;
-    };
-    typedef std::map<unsigned, Attachment> Attachments;
-    Attachments _attachments;
+    // Helper object to manage attached entities
+    class Attachments;
+    boost::scoped_ptr<Attachments> _attachments;
 
     // The time this def has been parsed
     std::size_t _parseStamp;
@@ -114,10 +107,10 @@ class Doom3EntityClass
 private:
     // Clear all contents (done before parsing from tokens)
     void clear();
-    void parseDefAttachKeys(const std::string& key, const std::string& value);
     void parseEditorSpawnarg(const std::string& key, const std::string& value);
     // Rebuilds the inheritance chain (called after inheritance is resolved)
     void buildInheritanceChain();
+    void setIsLight(bool val);
 
 public:
 
@@ -147,22 +140,16 @@ public:
                      const Vector3& mins = Vector3(1, 1, 1),
                      const Vector3& maxs = Vector3(-1, -1, -1));
 
-    /** Destructor.
-     */
     ~Doom3EntityClass();
 
-    /** Return the name of this entity class.
-     */
-    const std::string& getName() const;
-
-    void setIsLight(bool val);
+    void setColour(const Vector3& colour);
 
     // IEntityClass implementation
+    std::string getName() const;
     sigc::signal<void> changedSignal() const;
     bool isFixedSize() const;
     AABB getBounds() const;
     bool isLight() const;
-    void setColour(const Vector3& colour);
     const Vector3& getColour() const;
     const std::string& getWireShader() const;
     const std::string& getFillShader() const;
