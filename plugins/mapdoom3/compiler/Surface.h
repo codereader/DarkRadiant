@@ -133,6 +133,8 @@ public:
 	// Writes the facePlanes values, overwriting existing ones if present
 	void deriveFacePlanes();
 
+	friend std::ostream& operator<<(std::ostream& str, const Surface& surface);
+
 private:
 	struct FaceTangents
 	{

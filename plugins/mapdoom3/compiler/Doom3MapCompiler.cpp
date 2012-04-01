@@ -87,14 +87,6 @@ void Doom3MapCompiler::generateProc(const scene::INodePtr& root)
 	ProcCompiler compiler(root);
 
 	_procFile = compiler.generateProcFile();
-
-	if (_procFile != NULL)
-	{
-		if (!_procFile->hasLeak())
-		{
-			_procFile->saveToFile("");
-		}
-	}
 }
 
 void Doom3MapCompiler::runDmap(const scene::INodePtr& root)
@@ -104,7 +96,7 @@ void Doom3MapCompiler::runDmap(const scene::INodePtr& root)
 	// First step: process map into .proc file
 	generateProc(root);
 
-	if (_procFile->hasLeak())
+	if (!_procFile || _procFile->hasLeak())
 	{
 		return;
 	}

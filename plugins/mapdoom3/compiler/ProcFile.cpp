@@ -119,7 +119,7 @@ Surface shareMapTriVerts(const ProcTris& tris)
 	return uTri;
 }
 
-inline std::ostream& writeFloat(std::ostream& str, float v)
+inline void writeFloat(std::ostream& str, float v)
 {
 	if (fabs(v - floorf(v + 0.5f)) < 0.001)
 	{
@@ -129,12 +129,10 @@ inline std::ostream& writeFloat(std::ostream& str, float v)
 	{
 		str << (boost::format("%f ") % v);
 	}
-
-	return str;
 }
 
 // Writes text verts and indexes to procfile
-inline std::ostream& operator<<(std::ostream& str, const Surface& surf)
+inline std::ostream& writeSurface(std::ostream& str, const Surface& surf)
 {
 	// emit this chain
 	str << (boost::format("/* numVerts = */ %i /* numIndexes = */ %i") % surf.vertices.size() % surf.indices.size()) << std::endl;
@@ -146,11 +144,16 @@ inline std::ostream& operator<<(std::ostream& str, const Surface& surf)
 	{
 		const ArbitraryMeshVertex& dv = surf.vertices[i];
 
-		str << "( " << writeFloat(str, dv.vertex[0]) << writeFloat(str, dv.vertex[1]) << writeFloat(str, dv.vertex[2]) 
-			<< writeFloat(str, dv.texcoord[0]) << writeFloat(str, dv.texcoord[1])
-			<< writeFloat(str, dv.normal[0]) << writeFloat(str, dv.normal[1]) << writeFloat(str, dv.normal[2])
-			<< ") ";
-
+		str << "( ";
+		writeFloat(str, dv.vertex[0]);
+		writeFloat(str, dv.vertex[1]);
+		writeFloat(str, dv.vertex[2]);
+		writeFloat(str, dv.texcoord[0]);
+		writeFloat(str, dv.texcoord[1]);
+		writeFloat(str, dv.normal[0]);
+		writeFloat(str, dv.normal[1]);
+		writeFloat(str, dv.normal[2]);
+		str << " ) ";
 
 		if (++col == 3)
 		{
@@ -301,7 +304,7 @@ void writeOutputSurfaces(std::ostream& str, ProcEntity& entity, std::size_t area
 
 		uTri.cleanupUTriangles();
 		
-		str << uTri;
+		writeSurface(str, uTri);
 
 		str << "}" << std::endl << std::endl;
 	}
@@ -341,12 +344,16 @@ std::ostream& ProcFile::writeOutputPortals(std::ostream& str, ProcEntity& entity
 
 		str << (boost::format("/* iap %i */ %i %i %i ") % i % w.size() % iap.area0 % iap.area1);
 
+		str << "( ";
+
 		for (std::size_t j = 0; j < w.size(); ++j)
 		{
 			writeFloat(str, w[j].vertex[0]);
 			writeFloat(str, w[j].vertex[1]);
 			writeFloat(str, w[j].vertex[2]);
 		}
+
+		str << ") ";
 
 		str << std::endl;
 	}
@@ -384,14 +391,12 @@ std::ostream& ProcFile::writeOutputNodeRecursively(std::ostream& str, const BspT
 
 	str << (boost::format("/* node %i */ ") % node->nodeNumber);
 
-	str << "( " 
-		<< writeFloat(str, plane.normal()[0])
-		<< writeFloat(str, plane.normal()[1])
-		<< writeFloat(str, plane.normal()[2])
-		<< writeFloat(str, -plane.dist())
-		<< " )"
-		<< std::endl;
-
+	str << "( ";
+	writeFloat(str, plane.normal()[0]);
+	writeFloat(str, plane.normal()[1]);
+	writeFloat(str, plane.normal()[2]);
+	writeFloat(str, -plane.dist());
+	str << ") ";
 	str << (boost::format("%i %i") % child[0] % child[1]) << std::endl;
 
 	if (child[0] > 0)
@@ -467,11 +472,11 @@ std::ostream& ProcFile::writeShadowTriangles(std::ostream& str, const Surface& t
 
 	for (std::size_t i = 0 ; i < tri.vertices.size(); ++i)
 	{
-		str << "( " 
-			<< writeFloat(str, tri.shadowVertices[i][0])
-			<< writeFloat(str, tri.shadowVertices[i][1])
-			<< writeFloat(str, tri.shadowVertices[i][2])
-			<< " )";
+		str << "( ";
+		writeFloat(str, tri.shadowVertices[i][0]);
+		writeFloat(str, tri.shadowVertices[i][1]);
+		writeFloat(str, tri.shadowVertices[i][2]);
+		str << " )";
 		
 		if (++col == 5)
 		{
@@ -525,9 +530,9 @@ void ProcFile::saveToFile(const std::string& path)
 	str << FILE_ID << std::endl << std::endl;
 
 	// write the entity models and information, writing entities first
-	for (std::size_t i = entities.size() - 1; i >= 0; i--)
+	for (ProcEntities::reverse_iterator i = entities.rbegin(); i != entities.rend(); ++i)
 	{
-		ProcEntity& entity = *entities[i];
+		ProcEntity& entity = **i;
 	
 		if (entity.primitives.empty())
 		{

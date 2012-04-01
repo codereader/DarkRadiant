@@ -170,8 +170,8 @@ public:
 
 			for (std::size_t i = 0; i < surface.getNumIndices(); i += 3)
 			{
-				tris.push_back(ProcTri());
-				ProcTri& tri = tris.back();
+				tris.push_front(ProcTri());
+				ProcTri& tri = tris.front();
 
 				tri.v[2] = surface.getVertex(surface.getIndex(i+0));
 				tri.v[1] = surface.getVertex(surface.getIndex(i+2));
@@ -873,6 +873,16 @@ void ProcCompiler::faceBsp(ProcEntity& entity)
 	globalOutputStream() << (boost::format("%5i leafs") % entity.tree.numFaceLeafs).str() << std::endl;
 
 	//common->Printf( "%5.1f seconds faceBsp\n", ( end - start ) / 1000.0 );
+
+	/*globalOutputStream() << ("After Face BSP\n");
+
+	std::size_t planes = _procFile->planes.size();
+
+	for (std::size_t i = 0; i < planes; ++i)
+	{
+		const Plane3& plane = _procFile->planes.getPlane(i);
+		globalOutputStream() << (boost::format("Plane %d: (%f %f %f %f)\n") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist());
+	}*/
 }
 
 void ProcCompiler::addPortalToNodes(const ProcPortalPtr& portal, const BspTreeNodePtr& front, const BspTreeNodePtr& back)
@@ -2873,10 +2883,22 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 		}
 	}
 
-	// Print result
-	/*for (std::size_t a = 0; a < entity.areas.size(); ++a)
+	/*globalOutputStream() << ("After Put Primitives in Areas\n");
+
+	std::size_t planes = _procFile->planes.size();
+
+	for (std::size_t i = 0; i < planes; ++i)
 	{
-		globalOutputStream() << "Area " << a << ": ";
+		const Plane3& plane = _procFile->planes.getPlane(i);
+		globalOutputStream() << (boost::format("Plane %d: (%f %f %f %f)\n") % i % plane.normal().x() % plane.normal().y() % plane.normal().z() % plane.dist());
+	}
+
+	globalOutputStream() << (boost::format("PPIA: Entity %s\n") % entity.mapEntity->getEntity().getKeyValue("name"));
+
+	// Print result
+	for (std::size_t a = 0; a < entity.areas.size(); ++a)
+	{
+		globalOutputStream() << " Area " << a << ": ";
 		
 		globalOutputStream() << entity.areas[a].groups.size() << " groups" << std::endl;
 
@@ -2884,6 +2906,15 @@ void ProcCompiler::putPrimitivesInAreas(ProcEntity& entity)
 		for (ProcArea::OptimizeGroups::const_iterator g = entity.areas[a].groups.begin(); g != entity.areas[a].groups.end(); ++g, ++count)
 		{
 			globalOutputStream() << (boost::format("  Group %d, plane %d, %d tris\n") % count % g->planeNum % g->triList.size());
+
+			std::size_t triCount = 0;
+			for (ProcTris::const_iterator t = g->triList.begin(); t != g->triList.end(); ++t, ++triCount)
+			{
+				globalOutputStream() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
+					t->v[0].vertex.x() % t->v[0].vertex.y() % t->v[0].vertex.z() %
+					t->v[1].vertex.x() % t->v[1].vertex.y() % t->v[1].vertex.z() %
+					t->v[2].vertex.x() % t->v[2].vertex.y() % t->v[2].vertex.z());
+			}
 		}
 	}*/
 }
@@ -2992,7 +3023,7 @@ void ProcCompiler::fixAreaGroupsTjunctions(ProcArea::OptimizeGroups& groups)
 
 	if (groups.empty()) return;
 
-	if (false/*dmapGlobals.verbose*/) // FIXME
+	if (true/*dmapGlobals.verbose*/) // FIXME
 	{
 		std::size_t startCount = countGroupListTris(groups);
 		globalOutputStream() << "----- FixAreaGroupsTjunctions -----" << std::endl;
@@ -3020,7 +3051,7 @@ void ProcCompiler::fixAreaGroupsTjunctions(ProcArea::OptimizeGroups& groups)
 		group->triList.swap(newList);
 	}
 
-	if (false/*dmapGlobals.verbose*/) // FIXME
+	if (true/*dmapGlobals.verbose*/) // FIXME
 	{
 		std::size_t endCount = countGroupListTris(groups);
 		globalOutputStream() << (boost::format("%6i triangles out") % endCount) << std::endl;
@@ -3427,6 +3458,7 @@ void ProcCompiler::optimizeOptList(ProcOptimizeGroup& group)
 	// so we can match edges
 	// can we avoid doing this if colinear vertexes break edges?
 	fixAreaGroupsTjunctions(tempList);
+	group = tempList.front();
 	
 	// create the 2D vectors
 	calcNormalVectors(_procFile->planes.getPlane(group.planeNum).normal(), group.axis[0], group.axis[1]);
@@ -3522,8 +3554,9 @@ Surface ProcCompiler::shareMapTriVerts(const ProcTris& tris)
 			if (j == uTri.vertices.size())
 			{
 				uTri.vertices.push_back(dv);
-				uTri.indices.push_back(static_cast<int>(j));
 			}
+
+			uTri.indices.push_back(static_cast<int>(j));
 		}
 	}
 
@@ -3631,7 +3664,7 @@ void ProcCompiler::calcPointCull(const Surface& tri, const Plane3 frustum[6], un
 	}
 
 	// initialize point cull
-	for (std::size_t i = 0; i < tri.vertices.size(); ++i)
+	for (i = 0; i < tri.vertices.size(); ++i)
 	{
 		pointCull[i] = frontBits;
 	}
@@ -4640,6 +4673,17 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
 		combined.insert(combined.end(), group->triList.begin(), group->triList.end());
 	}
 
+	/*globalOutputStream() << "Combined: " << std::endl;
+
+	std::size_t triCount = 0;
+	for (ProcTris::const_iterator t = combined.begin(); t != combined.end(); ++t, ++triCount)
+	{
+		globalOutputStream() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
+			t->v[0].vertex.x() % t->v[0].vertex.y() % t->v[0].vertex.z() %
+			t->v[1].vertex.x() % t->v[1].vertex.y() % t->v[1].vertex.z() %
+			t->v[2].vertex.x() % t->v[2].vertex.y() % t->v[2].vertex.z());
+	}*/
+
 	if (combined.empty())
 	{
 		return shadowTris;
@@ -4652,6 +4696,9 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
 	
 	// find silhouette information for the triSurf
 	occluders.cleanupTriangles(false, true, false);
+
+	//globalOutputStream() << (boost::format("Occluders: \n"));
+	//globalOutputStream() << occluders << std::endl;
 
 	// let the renderer build the shadow volume normally
 	Matrix4 transform = Matrix4::getIdentity();
@@ -4687,6 +4734,9 @@ Surface ProcCompiler::createLightShadow(ProcArea::OptimizeGroups& shadowerGroups
 		dmapGlobals.totalShadowVerts += shadowTris->numVerts / 3;
 	}*/
 
+	//globalOutputStream() << (boost::format("shadowTris: \n"));
+	//globalOutputStream() << shadowTris << std::endl;
+
 	return shadowTris;
 }
 
@@ -4707,7 +4757,7 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 	// to the beam tree at all
 	if (!light.parms.noShadows && light.getLightShader()->lightCastsShadows())
 	{
-		//globalOutputStream() << (boost::format("--- Light %s is casting shadows") % light.name) << std::endl;
+		globalOutputStream() << (boost::format("--- Light %s is casting shadows") % light.name) << std::endl;
 
 		for (std::size_t i = 0; i < entity.numAreas; ++i)
 		{
@@ -4816,9 +4866,9 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 
 				check->triList.insert(check->triList.end(), shadowers.begin(), shadowers.end());
 
-				//globalOutputStream() << "has " << check->triList.size() << " tris now" << std::endl;
+				/*globalOutputStream() << "has " << check->triList.size() << " tris now" << std::endl;
 
-				/*globalOutputStream() << "check->triList: ";
+				globalOutputStream() << "check->triList: ";
 
 				for (ProcTris::const_iterator t = check->triList.begin(); t != check->triList.end(); ++t)
 				{
@@ -4833,8 +4883,37 @@ void ProcCompiler::buildLightShadows(ProcEntity& entity, ProcLight& light)
 		}
 	}
 
+	/*globalOutputStream() << "Before createLightShadow" << std::endl;
+
+	std::size_t count = 0;
+
+	for (ProcArea::OptimizeGroups::const_iterator g = shadowerGroups.begin(); g != shadowerGroups.end(); ++g, ++count)
+	{
+		globalOutputStream() << (boost::format("  Group %d, plane %d, %d tris\n") % count % g->planeNum % g->triList.size());
+
+		std::size_t triCount = 0;
+		for (ProcTris::const_iterator t = g->triList.begin(); t != g->triList.end(); ++t, ++triCount)
+		{
+			globalOutputStream() << (boost::format("  Tri %d: (%f %f %f) (%f %f %f) (%f %f %f)\n") % triCount % 
+				t->v[0].vertex.x() % t->v[0].vertex.y() % t->v[0].vertex.z() %
+				t->v[1].vertex.x() % t->v[1].vertex.y() % t->v[1].vertex.z() %
+				t->v[2].vertex.x() % t->v[2].vertex.y() % t->v[2].vertex.z());
+		}
+	}*/
+
 	// take the shadower group list and create a beam tree and shadow volume
 	light.shadowTris = createLightShadow(shadowerGroups, light);
+
+	//globalOutputStream() << (boost::format("light->shadowTris: %d verts") % light.shadowTris.vertices.size());
+
+	/*for (int i = 0; idDrawVert* t = light->shadowTris->verts; t; t = t->->next)
+	{
+		common->Printf("\t<%f, %f, %f> | <%f, %f, %f> | <%f, %f, %f>\n", t->v[0].xyz[0], t->v[0].xyz[1], t->v[0].xyz[2],
+			t->v[1].xyz[0], t->v[1].xyz[1], t->v[1].xyz[2],
+			t->v[2].xyz[0], t->v[2].xyz[1], t->v[2].xyz[2]);
+	}*/
+
+	//globalOutputStream() << std::endl;
 
 	if (!light.shadowTris.vertices.empty() && hasPerforatedSurface)
 	{
@@ -4867,6 +4946,11 @@ void ProcCompiler::preLight(ProcEntity& entity)
 				 group != area.groups.end(); ++group)
 			{
 				boundOptimizeGroup(*group);
+
+				/*Vector3 mins = group->bounds.origin - group->bounds.extents;
+				Vector3 maxs = group->bounds.origin + group->bounds.extents;
+
+				globalOutputStream() << (boost::format("Bounds: %f %f %f - %f %f %f\n") % mins[0] % mins[1] % mins[2] % maxs[0] % maxs[1] % maxs[2]);*/
 			}
 		}
 

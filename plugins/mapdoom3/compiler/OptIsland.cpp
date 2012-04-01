@@ -1005,8 +1005,11 @@ void OptIsland::addInteriorEdges()
 		}
 	}
 
-	// sort by length, shortest first
-	qsort(&lengths[0], numLengths, sizeof(lengths[0]), LengthSort);
+	if (numLengths > 0)
+	{
+		// sort by length, shortest first
+		qsort(&lengths[0], numLengths, sizeof(lengths[0]), LengthSort);
+	}
 
 	// try to create them in that order
 	std::size_t addedEdges = 0;

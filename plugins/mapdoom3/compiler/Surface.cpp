@@ -1349,4 +1349,63 @@ void Surface::cleanupTriangles(bool createNormals, bool identifySilEdgesFlag, bo
 	}
 }
 
+std::ostream& operator<<(std::ostream& str, const Surface& surface)
+{
+	str << " Vertices: " << surface.vertices.size() << std::endl;
+
+	for (Surface::Vertices::const_iterator i = surface.vertices.begin(); i != surface.vertices.end(); ++i)
+	{
+		str << (boost::format(" <%f %f %f>") % i->vertex[0] % i->vertex[1] % i->vertex[2]);
+	}
+
+	str << std::endl;
+
+	str << " Indices: " << surface.indices.size() << std::endl;
+
+	for (Surface::Indices::const_iterator i = surface.indices.begin(); i != surface.indices.end(); ++i)
+	{
+		str << (boost::format(" %d") % (*i));
+	}
+
+	str << std::endl;
+
+	str << " DupVerts: " << surface.dupVerts.size() << std::endl;
+
+	for (std::vector<int>::const_iterator i = surface.dupVerts.begin(); i != surface.dupVerts.end(); ++i)
+	{
+		str << (boost::format(" %d") % (*i));
+	}
+
+	str << std::endl;
+
+	str << " SilIndices: " << surface.silIndexes.size() << std::endl;
+
+	for (Surface::Indices::const_iterator i = surface.silIndexes.begin(); i != surface.silIndexes.end(); ++i)
+	{
+		str << (boost::format(" %d") % (*i));
+	}
+
+	str << std::endl;
+
+	str << " SilEdges: " << surface.silEdges.size() << std::endl;
+
+	for (Surface::SilEdges::const_iterator i = surface.silEdges.begin(); i != surface.silEdges.end(); ++i)
+	{
+		str << (boost::format(" (%d %d, %d %d)") % i->p1 % i->p2 % i->v1 % i->v2);
+	}
+
+	str << std::endl;
+
+	str << " ShadowVertices: " << surface.shadowVertices.size() << std::endl;
+
+	for (std::vector<Vector4>::const_iterator i = surface.shadowVertices.begin(); i != surface.shadowVertices.end(); ++i)
+	{
+		str << (boost::format(" <%f %f %f %f>") % (*i)[0] % (*i)[1] % (*i)[2] % (*i)[3]);
+	}
+
+	str << std::endl;
+
+	return str;
+}
+
 } // namespace
