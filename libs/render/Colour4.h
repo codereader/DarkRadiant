@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Vector4.h"
+#include <cassert>
 
 /**
  * \brief

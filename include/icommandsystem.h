@@ -46,24 +46,12 @@ public:
 		_type(ARGTYPE_VOID)
 	{}
 
-	Argument(const char* str) :
-		_strValue(str),
-		_doubleValue(string::convert<double>(str)),
-		_intValue(string::convert<int>(str)),
-		_vector3Value(Vector3(str)),
-		_vector2Value(Vector2(str)),
-		_type(ARGTYPE_STRING)
-	{
-		tryNumberConversion();
-		tryVectorConversion();
-	}
-
 	// String => Argument constructor
 	Argument(const std::string& str) :
 		_strValue(str),
 		_doubleValue(string::convert<double>(str)),
 		_intValue(string::convert<int>(str)),
-		_vector3Value(Vector3(str)),
+		_vector3Value(string::convert<Vector3>(str)),
 		_vector2Value(Vector2(str)),
 		_type(ARGTYPE_STRING)
 	{

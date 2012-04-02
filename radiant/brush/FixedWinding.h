@@ -1,8 +1,9 @@
-#ifndef FIXEDWINDING_H_
-#define FIXEDWINDING_H_
+#pragma once
 
 #include "math/Vector3.h"
 #include "math/Plane3.h"
+
+#include <vector>
 
 class Winding;
 
@@ -61,5 +62,3 @@ public:
 	/// If \p winding intersects the plane, the edge of \p clipped which lies on \p clipPlane will store the value of \p adjacent.
 	void clip(const Plane3& plane, const Plane3& clipPlane, std::size_t adjacent, FixedWinding& clipped);
 };
-
-#endif /*FIXEDWINDING_H_*/

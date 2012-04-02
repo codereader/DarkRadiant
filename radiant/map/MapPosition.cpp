@@ -8,88 +8,94 @@
 
 namespace map {
 
-	namespace {
-		const std::string RKEY_MAP_POSROOT = "game/mapFormat/mapPositionPosKey";
-		const std::string RKEY_MAP_ANGLEROOT = "game/mapFormat/mapPositionAngleKey";
-	}
+    namespace {
+        const std::string RKEY_MAP_POSROOT = "game/mapFormat/mapPositionPosKey";
+        const std::string RKEY_MAP_ANGLEROOT = "game/mapFormat/mapPositionAngleKey";
+    }
 
 MapPosition::MapPosition(unsigned int index) :
-	_index(index),
-	_position(0,0,0),
-	_angle(0,0,0)
+    _index(index),
+    _position(0,0,0),
+    _angle(0,0,0)
 {
-	// Construct the entity key names from the index
-	_posKey = GlobalRegistry().get(RKEY_MAP_POSROOT) + string::to_string(_index);
-	_angleKey = GlobalRegistry().get(RKEY_MAP_ANGLEROOT) + string::to_string(_index);
+    // Construct the entity key names from the index
+    _posKey = GlobalRegistry().get(RKEY_MAP_POSROOT) + string::to_string(_index);
+    _angleKey = GlobalRegistry().get(RKEY_MAP_ANGLEROOT) + string::to_string(_index);
 }
 
-void MapPosition::load(Entity* entity) {
-	// Sanity check
-	if (entity != NULL) {
-		const std::string savedPos = entity->getKeyValue(_posKey);
+void MapPosition::load(Entity* entity)
+{
+    // Sanity check
+    if (entity != NULL)
+    {
+        const std::string savedPos = entity->getKeyValue(_posKey);
 
-		if (savedPos != "") {
-			// Construct the vectors out of the std::string
-			_position = Vector3(savedPos);
-			_angle = entity->getKeyValue(_angleKey);
-		}
-	}
+        if (savedPos != "")
+        {
+            // Construct the vectors out of the std::string
+            _position = string::convert<Vector3>(savedPos);
+            _angle = string::convert<Vector3>(entity->getKeyValue(_angleKey));
+        }
+    }
 }
 
-void MapPosition::save(Entity* entity) {
-	// Sanity check
-	if (entity != NULL) {
-		if (!empty()) {
-			globalOutputStream() << "Saving to key: " << _posKey << std::endl;
-			entity->setKeyValue(_posKey, _position);
-			entity->setKeyValue(_angleKey, _angle);
-		}
-		else {
-			// This is an empty position, clear the values
-			remove(entity);
-		}
-	}
+void MapPosition::save(Entity* entity)
+{
+    // Sanity check
+    if (entity == NULL) return;
+
+    if (!empty())
+    {
+        globalOutputStream() << "Saving to key: " << _posKey << std::endl;
+        entity->setKeyValue(_posKey, string::to_string(_position));
+        entity->setKeyValue(_angleKey, string::to_string(_angle));
+    }
+    else
+    {
+        // This is an empty position, clear the values
+        remove(entity);
+    }
 }
 
 void MapPosition::remove(Entity* entity) {
-	// Sanity check
-	if (entity != NULL) {
-		entity->setKeyValue(_posKey, "");
-		entity->setKeyValue(_angleKey, "");
-	}
+    // Sanity check
+    if (entity != NULL) {
+        entity->setKeyValue(_posKey, "");
+        entity->setKeyValue(_angleKey, "");
+    }
 }
 
 void MapPosition::clear() {
-	_position = Vector3(0,0,0);
-	_angle = Vector3(0,0,0);
+    _position = Vector3(0,0,0);
+    _angle = Vector3(0,0,0);
 }
 
 bool MapPosition::empty() const {
-	return (_position == Vector3(0,0,0) && _angle == Vector3(0,0,0));
+    return (_position == Vector3(0,0,0) && _angle == Vector3(0,0,0));
 }
 
 void MapPosition::store(const cmd::ArgumentList& args) {
-	globalOutputStream() << "Storing map position #" << _index << std::endl;
-	CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
+    globalOutputStream() << "Storing map position #" << _index << std::endl;
+    CamWndPtr camwnd = GlobalCamera().getActiveCamWnd();
 
-	if (camwnd != NULL) {
-		_position = camwnd->getCameraOrigin();
-		_angle = camwnd->getCameraAngles();
+    if (camwnd != NULL) {
+        _position = camwnd->getCameraOrigin();
+        _angle = camwnd->getCameraAngles();
 
-		// Tag the map as modified
-		GlobalMap().setModified(true);
-	}
-	else {
-		globalErrorStream() << "MapPosition: Warning: Couldn't find Camera." << std::endl;
-	}
+        // Tag the map as modified
+        GlobalMap().setModified(true);
+    }
+    else {
+        globalErrorStream() << "MapPosition: Warning: Couldn't find Camera." << std::endl;
+    }
 }
 
 void MapPosition::recall(const cmd::ArgumentList& args) {
-	if (!empty()) {
-		globalOutputStream() << "Restoring map position #" << _index << std::endl;
-		// Focus the view with the default angle
-		Map::focusViews(_position, _angle);
-	}
+    if (!empty()) {
+        globalOutputStream() << "Restoring map position #" << _index << std::endl;
+        // Focus the view with the default angle
+        Map::focusViews(_position, _angle);
+    }
 }
 
 } // namespace map

@@ -4,6 +4,8 @@
 #include "itextstream.h"
 #include "BspTree.h"
 #include "ProcFile.h"
+
+#include "string/convert.h"
 #include <fstream>
 #include <boost/format.hpp>
 
@@ -52,7 +54,9 @@ public:
 		}
 
 		// add the occupant's center
-		Vector3 mid(node->occupant->mapEntity->getEntity().getKeyValue("origin"));
+		Vector3 mid = string::convert<Vector3>(
+            node->occupant->mapEntity->getEntity().getKeyValue("origin")
+        );
 
 		_line.push_back(mid);
 	}

@@ -480,9 +480,11 @@ void LightInspector::getValuesFromEntity()
 	// default of black (0, 0, 0).
 	std::string colString = entity->getKeyValue("_color");
 	if (colString.empty())
+    {
 		colString = "1.0 1.0 1.0";
+    }
 
-	Vector3 colour(colString);
+	Vector3 colour = string::convert<Vector3>(colString);
 	Gdk::Color col;
 	col.set_rgb_p(colour.x(), colour.y(), colour.z());
 	_colour->set_color(col);

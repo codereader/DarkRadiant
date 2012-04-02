@@ -4,6 +4,7 @@
 
 #include "math/Vector3.h"
 #include <boost/function.hpp>
+#include "string/convert.h"
 
 const Vector3 ORIGINKEY_IDENTITY = Vector3(0, 0, 0);
 
@@ -38,15 +39,13 @@ public:
 
 	void onKeyValueChanged(const std::string& value)
 	{
-		// Try to construct a Vector3 from the given string, will fall back to 0,0,0
-		_origin = Vector3(value);
+		_origin = string::convert<Vector3>(value);
 
 		_originChanged();
 	}
 
 	void write(Entity& entity) const
 	{
-		// Use Vector3's std::string operator cast
-		entity.setKeyValue("origin", _origin);
+		entity.setKeyValue("origin", string::to_string(_origin));
 	}
 };

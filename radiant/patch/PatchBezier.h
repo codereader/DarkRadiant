@@ -1,9 +1,9 @@
-#ifndef BEZIER_H_
-#define BEZIER_H_
+#pragma once
 
 #include "math/Vector3.h"
 #include <glib/gslist.h>
 #include <limits>
+#include <vector>
 
 struct BezierCurve
 {
@@ -76,5 +76,3 @@ inline void BezierCurveTreeArray_deleteAll(std::vector<BezierCurveTree*>& curveT
      delete *i;
   }
 }
-
-#endif /*BEZIER_H_*/

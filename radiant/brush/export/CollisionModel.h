@@ -1,7 +1,7 @@
-#ifndef COLLISIONMODEL_H_
-#define COLLISIONMODEL_H_
+#pragma once
 
 #include "Geometry.h"
+#include <boost/shared_ptr.hpp>
 
 class Winding;
 class Brush;
@@ -102,5 +102,3 @@ private:
 typedef boost::shared_ptr<CollisionModel> CollisionModelPtr;
 
 } // namespace cmutil
-
-#endif /*COLLISIONMODEL_H_*/

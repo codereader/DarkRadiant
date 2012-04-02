@@ -2,6 +2,8 @@
 
 #include "Quaternion.h"
 
+#include <sstream>
+
 namespace
 {
 	/// \brief Returns \p euler angles converted from degrees to radians.

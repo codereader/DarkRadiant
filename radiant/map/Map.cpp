@@ -50,151 +50,151 @@
 
 namespace map {
 
-	namespace {
-		const char* const MAP_UNNAMED_STRING = N_("unnamed.map");
+    namespace {
+        const char* const MAP_UNNAMED_STRING = N_("unnamed.map");
 
-		const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
-		const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
-		const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
-		const std::string RKEY_PLAYER_HEIGHT = "game/defaults/playerHeight";
+        const std::string RKEY_LAST_CAM_POSITION = "game/mapFormat/lastCameraPositionKey";
+        const std::string RKEY_LAST_CAM_ANGLE = "game/mapFormat/lastCameraAngleKey";
+        const std::string RKEY_PLAYER_START_ECLASS = "game/mapFormat/playerStartPoint";
+        const std::string RKEY_PLAYER_HEIGHT = "game/defaults/playerHeight";
 
-		// Traverse all entities and store the first worldspawn into the map
-		class MapWorldspawnFinder :
-			public scene::NodeVisitor
-		{
-		public:
-			virtual bool pre(const scene::INodePtr& node) {
-				if (node_is_worldspawn(node)) {
-					if (GlobalMap().getWorldspawn() == NULL) {
-						GlobalMap().setWorldspawn(node);
-					}
-				}
-				return false;
-			}
-		};
+        // Traverse all entities and store the first worldspawn into the map
+        class MapWorldspawnFinder :
+            public scene::NodeVisitor
+        {
+        public:
+            virtual bool pre(const scene::INodePtr& node) {
+                if (node_is_worldspawn(node)) {
+                    if (GlobalMap().getWorldspawn() == NULL) {
+                        GlobalMap().setWorldspawn(node);
+                    }
+                }
+                return false;
+            }
+        };
 
-		class CollectAllWalker :
-			public scene::NodeVisitor
-		{
-			scene::INodePtr _root;
-			std::vector<scene::INodePtr>& _nodes;
-		public:
-			CollectAllWalker(scene::INodePtr root, std::vector<scene::INodePtr>& nodes) :
-				_root(root),
-				_nodes(nodes)
-			{}
+        class CollectAllWalker :
+            public scene::NodeVisitor
+        {
+            scene::INodePtr _root;
+            std::vector<scene::INodePtr>& _nodes;
+        public:
+            CollectAllWalker(scene::INodePtr root, std::vector<scene::INodePtr>& nodes) :
+                _root(root),
+                _nodes(nodes)
+            {}
 
-			~CollectAllWalker() {
-				for (std::vector<scene::INodePtr>::iterator i = _nodes.begin();
-					 i != _nodes.end(); ++i)
-				{
-					_root->removeChildNode(*i);
-				}
-			}
+            ~CollectAllWalker() {
+                for (std::vector<scene::INodePtr>::iterator i = _nodes.begin();
+                     i != _nodes.end(); ++i)
+                {
+                    _root->removeChildNode(*i);
+                }
+            }
 
-			virtual bool pre(const scene::INodePtr& node) {
-				// Add this to the list
-				_nodes.push_back(node);
-				// Don't traverse deeper than first level
-				return false;
-			}
-		};
+            virtual bool pre(const scene::INodePtr& node) {
+                // Add this to the list
+                _nodes.push_back(node);
+                // Don't traverse deeper than first level
+                return false;
+            }
+        };
 
-		void Node_insertChildFirst(scene::INodePtr parent, scene::INodePtr child) {
-			// Create a container to collect all the existing entities in the scenegraph
-			std::vector<scene::INodePtr> nodes;
+        void Node_insertChildFirst(scene::INodePtr parent, scene::INodePtr child) {
+            // Create a container to collect all the existing entities in the scenegraph
+            std::vector<scene::INodePtr> nodes;
 
-			// Collect all the child nodes of <parent> and move them into the container
-			{
-				CollectAllWalker visitor(parent, nodes);
-				parent->traverse(visitor);
+            // Collect all the child nodes of <parent> and move them into the container
+            {
+                CollectAllWalker visitor(parent, nodes);
+                parent->traverse(visitor);
 
-				// the CollectAllWalker removes the nodes from the parent on destruction
-			}
+                // the CollectAllWalker removes the nodes from the parent on destruction
+            }
 
-			// Now that the <parent> is empty, insert the worldspawn as first child
-			parent->addChildNode(child);
+            // Now that the <parent> is empty, insert the worldspawn as first child
+            parent->addChildNode(child);
 
-			// Insert all the nodes again
-			for (std::vector<scene::INodePtr>::iterator i = nodes.begin();
-				 i != nodes.end();
-				 ++i)
-			{
-				parent->addChildNode(*i);
-			}
-		}
+            // Insert all the nodes again
+            for (std::vector<scene::INodePtr>::iterator i = nodes.begin();
+                 i != nodes.end();
+                 ++i)
+            {
+                parent->addChildNode(*i);
+            }
+        }
 
-		scene::INodePtr createWorldspawn()
-		{
-		  scene::INodePtr worldspawn(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("worldspawn", true)));
-		  Node_insertChildFirst(GlobalSceneGraph().root(), worldspawn);
-		  return worldspawn;
-		}
-	}
+        scene::INodePtr createWorldspawn()
+        {
+          scene::INodePtr worldspawn(GlobalEntityCreator().createEntity(GlobalEntityClassManager().findOrInsert("worldspawn", true)));
+          Node_insertChildFirst(GlobalSceneGraph().root(), worldspawn);
+          return worldspawn;
+        }
+    }
 
 Map::Map() :
-	_lastCopyMapName(""),
-	m_valid(false),
-	_saveInProgress(false)
+    _lastCopyMapName(""),
+    m_valid(false),
+    _saveInProgress(false)
 {}
 
 void Map::realiseResource() {
-	if (m_resource != NULL) {
-		m_resource->realise();
-	}
+    if (m_resource != NULL) {
+        m_resource->realise();
+    }
 }
 
 void Map::unrealiseResource() {
-	if (m_resource != NULL) {
-		m_resource->unrealise();
-	}
+    if (m_resource != NULL) {
+        m_resource->unrealise();
+    }
 }
 
 void Map::onResourceRealise() {
-	if (m_resource == NULL) {
-		return;
-	}
+    if (m_resource == NULL) {
+        return;
+    }
 
-	if (isUnnamed() || !m_resource->load()) {
-		// Map is unnamed or load failed, reset map resource node to empty
-		m_resource->setNode(NewMapRoot(""));
-		MapFilePtr map = Node_getMapFile(m_resource->getNode());
+    if (isUnnamed() || !m_resource->load()) {
+        // Map is unnamed or load failed, reset map resource node to empty
+        m_resource->setNode(NewMapRoot(""));
+        MapFilePtr map = Node_getMapFile(m_resource->getNode());
 
-		if (map != NULL) {
-			map->save();
-		}
+        if (map != NULL) {
+            map->save();
+        }
 
-		// Rename the map to "unnamed" in any case to avoid overwriting the failed map
-		setMapName(_(MAP_UNNAMED_STRING));
-	}
+        // Rename the map to "unnamed" in any case to avoid overwriting the failed map
+        setMapName(_(MAP_UNNAMED_STRING));
+    }
 
-	// Take the new node and insert it as map root
-	GlobalSceneGraph().setRoot(m_resource->getNode());
+    // Take the new node and insert it as map root
+    GlobalSceneGraph().setRoot(m_resource->getNode());
 
-	// Associate the Scenegaph with the global RenderSystem
-	// This usually takes a while since all editor textures are loaded - display a dialog to inform the user
-	{
-		ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading textures..."), true); // force display
+    // Associate the Scenegaph with the global RenderSystem
+    // This usually takes a while since all editor textures are loaded - display a dialog to inform the user
+    {
+        ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Loading textures..."), true); // force display
 
-		GlobalSceneGraph().root()->setRenderSystem(boost::dynamic_pointer_cast<RenderSystem>(
-			module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
-	}
+        GlobalSceneGraph().root()->setRenderSystem(boost::dynamic_pointer_cast<RenderSystem>(
+            module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
+    }
 
-	AutoSaver().clearChanges();
+    AutoSaver().clearChanges();
 
-	setValid(true);
+    setValid(true);
 }
 
 void Map::onResourceUnrealise() {
     if(m_resource != 0)
     {
-		setValid(false);
+        setValid(false);
       setWorldspawn(scene::INodePtr());
 
       GlobalUndoSystem().clear();
-	  GlobalSelectionSetManager().deleteAllSelectionSets();
+      GlobalSelectionSetManager().deleteAllSelectionSets();
 
-	  GlobalSceneGraph().setRoot(scene::INodePtr());
+      GlobalSceneGraph().setRoot(scene::INodePtr());
     }
 }
 
@@ -205,111 +205,111 @@ sigc::signal<void> Map::signal_mapValidityChanged() const
 
 void Map::setValid(bool valid)
 {
-	m_valid = valid;
-	_sigMapValidityChanged();
+    m_valid = valid;
+    _sigMapValidityChanged();
 }
 
 bool Map::isValid() const
 {
-	return m_valid;
+    return m_valid;
 }
 
 void Map::updateTitle()
 {
-	std::string title = gtkutil::IConv::localeToUTF8(_mapName);
+    std::string title = gtkutil::IConv::localeToUTF8(_mapName);
 
-	if (m_modified) {
-		title += " *";
-	}
+    if (m_modified) {
+        title += " *";
+    }
 
-	if (GlobalMainFrame().getTopLevelWindow())
-	{
-		GlobalMainFrame().getTopLevelWindow()->set_title(title);
-	}
+    if (GlobalMainFrame().getTopLevelWindow())
+    {
+        GlobalMainFrame().getTopLevelWindow()->set_title(title);
+    }
 }
 
 void Map::setMapName(const std::string& newName) {
-	// Store the name into the member
-	_mapName = newName;
+    // Store the name into the member
+    _mapName = newName;
 
-	// Update the map resource's root node, if there is one
-	if (m_resource != NULL) {
-		m_resource->rename(newName);
-	}
+    // Update the map resource's root node, if there is one
+    if (m_resource != NULL) {
+        m_resource->rename(newName);
+    }
 
-	// Update the title of the main window
-	updateTitle();
+    // Update the title of the main window
+    updateTitle();
 }
 
 std::string Map::getMapName() const {
-	return _mapName;
+    return _mapName;
 }
 
 bool Map::isUnnamed() const {
-	return _mapName == _(MAP_UNNAMED_STRING);
+    return _mapName == _(MAP_UNNAMED_STRING);
 }
 
 void Map::setWorldspawn(scene::INodePtr node) {
-	m_world_node = node;
+    m_world_node = node;
 }
 
 scene::INodePtr Map::getWorldspawn() {
-	return m_world_node;
+    return m_world_node;
 }
 
 IMapRootNodePtr Map::getRoot() {
-	if (m_resource != NULL) {
-		// Try to cast the node onto a root node and return
-		return boost::dynamic_pointer_cast<IMapRootNode>(m_resource->getNode());
-	}
+    if (m_resource != NULL) {
+        // Try to cast the node onto a root node and return
+        return boost::dynamic_pointer_cast<IMapRootNode>(m_resource->getNode());
+    }
 
-	return IMapRootNodePtr();
+    return IMapRootNodePtr();
 }
 
 MapFormatPtr Map::getFormatForFile(const std::string& filename)
 {
-	// Look up the module name which loads the given extension
-	std::string gameType = GlobalGameManager().currentGame()->getKeyValue("type");
+    // Look up the module name which loads the given extension
+    std::string gameType = GlobalGameManager().currentGame()->getKeyValue("type");
 
-	MapFormatPtr mapFormat = GlobalMapFormatManager().getMapFormatForGameType(
-		gameType, path_get_extension(filename.c_str()));
+    MapFormatPtr mapFormat = GlobalMapFormatManager().getMapFormatForGameType(
+        gameType, path_get_extension(filename.c_str()));
 
-	ASSERT_MESSAGE(mapFormat != NULL, "map format not found for file " + filename);
+    ASSERT_MESSAGE(mapFormat != NULL, "map format not found for file " + filename);
 
-	return mapFormat;
+    return mapFormat;
 }
 
 MapFormatPtr Map::getFormat()
 {
-	return getFormatForFile(_mapName);
+    return getFormatForFile(_mapName);
 }
 
 // free all map elements, reinitialize the structures that depend on them
 void Map::freeMap() {
-	map::PointFile::Instance().clear();
+    map::PointFile::Instance().clear();
 
-	GlobalSelectionSystem().setSelectedAll(false);
-	GlobalSelectionSystem().setSelectedAllComponents(false);
+    GlobalSelectionSystem().setSelectedAll(false);
+    GlobalSelectionSystem().setSelectedAllComponents(false);
 
-	GlobalShaderClipboard().clear();
-	GlobalRegion().clear();
+    GlobalShaderClipboard().clear();
+    GlobalRegion().clear();
 
-	m_resource->removeObserver(*this);
+    m_resource->removeObserver(*this);
 
-	// Reset the resource pointer
-	m_resource = IMapResourcePtr();
+    // Reset the resource pointer
+    m_resource = IMapResourcePtr();
 
-	GlobalLayerSystem().reset();
+    GlobalLayerSystem().reset();
 }
 
 bool Map::isModified() const {
-	return m_modified;
+    return m_modified;
 }
 
 // Set the modified flag
 void Map::setModified(bool modifiedFlag)
 {
-	m_modified = modifiedFlag;
+    m_modified = modifiedFlag;
     updateTitle();
 
     // Reset the map save timer
@@ -319,306 +319,315 @@ void Map::setModified(bool modifiedFlag)
 
 // move the view to a certain position
 void Map::focusViews(const Vector3& point, const Vector3& angles) {
-	// Set the camera and the views to the given point
-	GlobalCamera().focusCamera(point, angles);
-	GlobalXYWnd().setOrigin(point);
+    // Set the camera and the views to the given point
+    GlobalCamera().focusCamera(point, angles);
+    GlobalXYWnd().setOrigin(point);
 }
 
 void Map::removeCameraPosition() {
-	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
-	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
+    const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
+    const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
 
-	if (m_world_node != NULL) {
-		// Retrieve the entity from the worldspawn node
-		Entity* worldspawn = Node_getEntity(m_world_node);
-		assert(worldspawn != NULL);	// This must succeed
+    if (m_world_node != NULL) {
+        // Retrieve the entity from the worldspawn node
+        Entity* worldspawn = Node_getEntity(m_world_node);
+        assert(worldspawn != NULL); // This must succeed
 
-		worldspawn->setKeyValue(keyLastCamPos, "");
-		worldspawn->setKeyValue(keyLastCamAngle, "");
-	}
+        worldspawn->setKeyValue(keyLastCamPos, "");
+        worldspawn->setKeyValue(keyLastCamAngle, "");
+    }
 }
 
 /* greebo: Saves the current camera position/angles to worldspawn
  */
 void Map::saveCameraPosition() {
-	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
-	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
+    const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
+    const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
 
-	if (m_world_node != NULL) {
-		// Retrieve the entity from the worldspawn node
-		Entity* worldspawn = Node_getEntity(m_world_node);
-		assert(worldspawn != NULL);	// This must succeed
+    if (m_world_node != NULL) {
+        // Retrieve the entity from the worldspawn node
+        Entity* worldspawn = Node_getEntity(m_world_node);
+        assert(worldspawn != NULL); // This must succeed
 
-		CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
-		if (camWnd == NULL) return;
+        CamWndPtr camWnd = GlobalCamera().getActiveCamWnd();
+        if (camWnd == NULL) return;
 
-		worldspawn->setKeyValue(keyLastCamPos, camWnd->getCameraOrigin());
-		worldspawn->setKeyValue(keyLastCamAngle, camWnd->getCameraAngles());
-	}
+        worldspawn->setKeyValue(keyLastCamPos,
+                                string::to_string(camWnd->getCameraOrigin()));
+        worldspawn->setKeyValue(keyLastCamAngle,
+                                string::to_string(camWnd->getCameraAngles()));
+    }
 }
 
 /** Find the start position in the map and focus the viewport on it.
  */
 void Map::gotoStartPosition() {
-	const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
-	const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
-	const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
+    const std::string keyLastCamPos = GlobalRegistry().get(RKEY_LAST_CAM_POSITION);
+    const std::string keyLastCamAngle = GlobalRegistry().get(RKEY_LAST_CAM_ANGLE);
+    const std::string eClassPlayerStart = GlobalRegistry().get(RKEY_PLAYER_START_ECLASS);
 
-	Vector3 angles(0,0,0);
-	Vector3 origin(0,0,0);
+    Vector3 angles(0,0,0);
+    Vector3 origin(0,0,0);
 
-	if (m_world_node != NULL) {
-		// Retrieve the entity from the worldspawn node
-		Entity* worldspawn = Node_getEntity(m_world_node);
-		assert(worldspawn != NULL);	// This must succeed
+    if (m_world_node != NULL) {
+        // Retrieve the entity from the worldspawn node
+        Entity* worldspawn = Node_getEntity(m_world_node);
+        assert(worldspawn != NULL); // This must succeed
 
-		// Try to find a saved "last camera position"
-		const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
+        // Try to find a saved "last camera position"
+        const std::string savedOrigin = worldspawn->getKeyValue(keyLastCamPos);
 
-		if (savedOrigin != "") {
-			// Construct the vector out of the std::string
-			origin = Vector3(savedOrigin);
+        if (savedOrigin != "")
+        {
+            // Construct the vector out of the std::string
+            origin = string::convert<Vector3>(savedOrigin);
 
-			Vector3 angles = worldspawn->getKeyValue(keyLastCamAngle);
+            Vector3 angles = string::convert<Vector3>(
+                worldspawn->getKeyValue(keyLastCamAngle)
+            );
 
-			// Focus the view with the default angle
-			focusViews(origin, angles);
+            // Focus the view with the default angle
+            focusViews(origin, angles);
 
-			// Remove the saved entity key value so it doesn't appear during map edit
-			removeCameraPosition();
+            // Remove the saved entity key value so it doesn't appear during map edit
+            removeCameraPosition();
 
-			return;
-		}
-		else {
-			// Get the player start entity
-			Entity* playerStart = Scene_FindEntityByClass(eClassPlayerStart);
+            return;
+        }
+        else
+        {
+            // Get the player start entity
+            Entity* playerStart = Scene_FindEntityByClass(eClassPlayerStart);
 
-			if (playerStart != NULL) {
-				// Get the entity origin
-				origin = playerStart->getKeyValue("origin");
+            if (playerStart != NULL)
+            {
+                // Get the entity origin
+                origin = string::convert<Vector3>(
+                    playerStart->getKeyValue("origin")
+                );
 
-				// angua: move the camera upwards a bit
-				origin.z() += registry::getValue<float>(RKEY_PLAYER_HEIGHT);
+                // angua: move the camera upwards a bit
+                origin.z() += registry::getValue<float>(RKEY_PLAYER_HEIGHT);
 
-				// Check for an angle key, and use it if present
-				try {
-					angles[CAMERA_YAW] = boost::lexical_cast<float>(playerStart->getKeyValue("angle"));
-				}
-				catch (boost::bad_lexical_cast e) {
-					angles[CAMERA_YAW] = 0;
-				}
-			}
-		}
-	}
+                // Check for an angle key, and use it if present
+                try {
+                    angles[CAMERA_YAW] = boost::lexical_cast<float>(playerStart->getKeyValue("angle"));
+                }
+                catch (boost::bad_lexical_cast e) {
+                    angles[CAMERA_YAW] = 0;
+                }
+            }
+        }
+    }
 
-	// Focus the view with the given parameters
-	focusViews(origin, angles);
+    // Focus the view with the given parameters
+    focusViews(origin, angles);
 }
 
 scene::INodePtr Map::findWorldspawn() {
-	// Clear the current worldspawn node
-	setWorldspawn(scene::INodePtr());
+    // Clear the current worldspawn node
+    setWorldspawn(scene::INodePtr());
 
-	// Traverse the scenegraph and search for the worldspawn
-	MapWorldspawnFinder visitor;
-	GlobalSceneGraph().root()->traverse(visitor);
+    // Traverse the scenegraph and search for the worldspawn
+    MapWorldspawnFinder visitor;
+    GlobalSceneGraph().root()->traverse(visitor);
 
-	return getWorldspawn();
+    return getWorldspawn();
 }
 
 void Map::updateWorldspawn() {
-	if (findWorldspawn() == NULL) {
-		setWorldspawn(createWorldspawn());
-	}
+    if (findWorldspawn() == NULL) {
+        setWorldspawn(createWorldspawn());
+    }
 }
 
 scene::INodePtr Map::findOrInsertWorldspawn() {
-	updateWorldspawn();
-	return getWorldspawn();
+    updateWorldspawn();
+    return getWorldspawn();
 }
 
 void Map::load(const std::string& filename) {
-	globalOutputStream() << "Loading map from " << filename << "\n";
+    globalOutputStream() << "Loading map from " << filename << "\n";
 
-	setMapName(filename);
+    setMapName(filename);
 
-	// Reset all layers before loading the file
-	GlobalLayerSystem().reset();
-	GlobalSelectionSystem().setSelectedAll(false);
+    // Reset all layers before loading the file
+    GlobalLayerSystem().reset();
+    GlobalSelectionSystem().setSelectedAll(false);
 
-	{
-		ScopeTimer timer("map load");
+    {
+        ScopeTimer timer("map load");
 
-		m_resource = GlobalMapResourceManager().capture(_mapName);
-		// greebo: Add the observer, this usually triggers a onResourceRealise() call.
-		m_resource->addObserver(*this);
+        m_resource = GlobalMapResourceManager().capture(_mapName);
+        // greebo: Add the observer, this usually triggers a onResourceRealise() call.
+        m_resource->addObserver(*this);
 
-		// Traverse the scenegraph and find the worldspawn
-		MapWorldspawnFinder finder;
-		GlobalSceneGraph().root()->traverse(finder);
-	}
+        // Traverse the scenegraph and find the worldspawn
+        MapWorldspawnFinder finder;
+        GlobalSceneGraph().root()->traverse(finder);
+    }
 
-	globalOutputStream() << "--- LoadMapFile ---\n";
-	globalOutputStream() << _mapName << "\n";
+    globalOutputStream() << "--- LoadMapFile ---\n";
+    globalOutputStream() << _mapName << "\n";
 
-	globalOutputStream() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
-	globalOutputStream() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
-	globalOutputStream() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
+    globalOutputStream() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
+    globalOutputStream() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
+    globalOutputStream() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
 
-	// Move the view to a start position
-	gotoStartPosition();
+    // Move the view to a start position
+    gotoStartPosition();
 
-	// Load the stored map positions from the worldspawn entity
-	GlobalMapPosition().loadPositions();
-	// Remove them, so that the user doesn't get bothered with them
-	GlobalMapPosition().removePositions();
+    // Load the stored map positions from the worldspawn entity
+    GlobalMapPosition().loadPositions();
+    // Remove them, so that the user doesn't get bothered with them
+    GlobalMapPosition().removePositions();
 
-	// Disable the region to make sure
-	GlobalRegion().disable();
+    // Disable the region to make sure
+    GlobalRegion().disable();
 
-	// Clear the shaderclipboard, the references are most probably invalid now
-	GlobalShaderClipboard().clear();
+    // Clear the shaderclipboard, the references are most probably invalid now
+    GlobalShaderClipboard().clear();
 
-	// Let the filtersystem update the filtered status of all instances
-	GlobalFilterSystem().update();
+    // Let the filtersystem update the filtered status of all instances
+    GlobalFilterSystem().update();
 
-	// Update the layer control dialog
-	ui::LayerControlDialog::Instance().refresh();
+    // Update the layer control dialog
+    ui::LayerControlDialog::Instance().refresh();
 
-	// Clear the modified flag
-	setModified(false);
+    // Clear the modified flag
+    setModified(false);
 }
 
 bool Map::save()
 {
-	if (_saveInProgress) return false; // safeguard
+    if (_saveInProgress) return false; // safeguard
 
-	_saveInProgress = true;
+    _saveInProgress = true;
 
-	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Saving Map"));
+    // Disable screen updates for the scope of this function
+    ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Saving Map"));
 
-	// Store the camview position into worldspawn
-	saveCameraPosition();
+    // Store the camview position into worldspawn
+    saveCameraPosition();
 
-	// Store the map positions into the worldspawn spawnargs
-	GlobalMapPosition().savePositions();
+    // Store the map positions into the worldspawn spawnargs
+    GlobalMapPosition().savePositions();
 
-	PointFile::Instance().clear();
+    PointFile::Instance().clear();
 
-	ScopeTimer timer("map save");
+    ScopeTimer timer("map save");
 
-	// Save the actual map resource
-	bool success = m_resource->save();
+    // Save the actual map resource
+    bool success = m_resource->save();
 
-	// Remove the saved camera position
-	removeCameraPosition();
+    // Remove the saved camera position
+    removeCameraPosition();
 
-	// Remove the map positions again after saving
-	GlobalMapPosition().removePositions();
+    // Remove the map positions again after saving
+    GlobalMapPosition().removePositions();
 
-	if (success)
+    if (success)
     {
-		// Clear the modified flag
-		setModified(false);
-	}
+        // Clear the modified flag
+        setModified(false);
+    }
 
-	_saveInProgress = false;
+    _saveInProgress = false;
 
-	return success;
+    return success;
 }
 
 void Map::createNew() {
-	setMapName(_(MAP_UNNAMED_STRING));
+    setMapName(_(MAP_UNNAMED_STRING));
 
-	m_resource = GlobalMapResourceManager().capture(_mapName);
-	m_resource->addObserver(*this);
+    m_resource = GlobalMapResourceManager().capture(_mapName);
+    m_resource->addObserver(*this);
 
-	SceneChangeNotify();
+    SceneChangeNotify();
 
-	setModified(false);
+    setModified(false);
 
-	focusViews(Vector3(0,0,0), Vector3(0,0,0));
+    focusViews(Vector3(0,0,0), Vector3(0,0,0));
 }
 
 bool Map::import(const std::string& filename)
 {
-	ui::ScreenUpdateBlocker blocker(_("Importing..."), filename);
+    ui::ScreenUpdateBlocker blocker(_("Importing..."), filename);
 
-	bool success = false;
+    bool success = false;
 
-	{
-		IMapResourcePtr resource = GlobalMapResourceManager().capture(filename);
+    {
+        IMapResourcePtr resource = GlobalMapResourceManager().capture(filename);
 
-		if (resource->load())
-		{
-			// load() returned TRUE, this means that the resource node
-			// is not the NULL node
-			scene::INodePtr otherRoot = resource->getNode();
+        if (resource->load())
+        {
+            // load() returned TRUE, this means that the resource node
+            // is not the NULL node
+            scene::INodePtr otherRoot = resource->getNode();
 
-			// Adjust all new names to fit into the existing map namespace,
-			// this routine will be changing a lot of names in the importNamespace
-			INamespacePtr nspace = getRoot()->getNamespace();
+            // Adjust all new names to fit into the existing map namespace,
+            // this routine will be changing a lot of names in the importNamespace
+            INamespacePtr nspace = getRoot()->getNamespace();
 
-			if (nspace != NULL)
-			{
-				// Prepare our namespace for import
-				nspace->importNames(otherRoot);
+            if (nspace != NULL)
+            {
+                // Prepare our namespace for import
+                nspace->importNames(otherRoot);
 
-				// Now add the imported names to the local namespace
-				nspace->connect(otherRoot);
-			}
+                // Now add the imported names to the local namespace
+                nspace->connect(otherRoot);
+            }
 
-			MergeMap(otherRoot);
-			success = true;
-		}
-	}
+            MergeMap(otherRoot);
+            success = true;
+        }
+    }
 
-	SceneChangeNotify();
+    SceneChangeNotify();
 
-	return success;
+    return success;
 }
 
 bool Map::saveDirect(const std::string& filename)
 {
-	if (_saveInProgress) return false; // safeguard
+    if (_saveInProgress) return false; // safeguard
 
-	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), path_get_filename_start(filename.c_str()));
+    // Disable screen updates for the scope of this function
+    ui::ScreenUpdateBlocker blocker(_("Processing..."), path_get_filename_start(filename.c_str()));
 
-	_saveInProgress = true;
+    _saveInProgress = true;
 
-	bool result = MapResource::saveFile(
-		*getFormatForFile(filename),
-		GlobalSceneGraph().root(),
-		map::traverse, // TraversalFunc
-		filename
-	);
+    bool result = MapResource::saveFile(
+        *getFormatForFile(filename),
+        GlobalSceneGraph().root(),
+        map::traverse, // TraversalFunc
+        filename
+    );
 
-	_saveInProgress = false;
+    _saveInProgress = false;
 
-	return result;
+    return result;
 }
 
 bool Map::saveSelected(const std::string& filename)
 {
-	if (_saveInProgress) return false; // safeguard
+    if (_saveInProgress) return false; // safeguard
 
-	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), path_get_filename_start(filename.c_str()));
+    // Disable screen updates for the scope of this function
+    ui::ScreenUpdateBlocker blocker(_("Processing..."), path_get_filename_start(filename.c_str()));
 
-	_saveInProgress = true;
+    _saveInProgress = true;
 
-	bool success = MapResource::saveFile(
-		*getFormatForFile(filename),
-		GlobalSceneGraph().root(),
-		map::traverseSelected, // TraversalFunc
-		filename
-	);
+    bool success = MapResource::saveFile(
+        *getFormatForFile(filename),
+        GlobalSceneGraph().root(),
+        map::traverseSelected, // TraversalFunc
+        filename
+    );
 
-	_saveInProgress = false;
+    _saveInProgress = false;
 
-	return success;
+    return success;
 }
 
 Glib::ustring Map::getSaveConfirmationText() const
@@ -660,370 +669,370 @@ Glib::ustring Map::getSaveConfirmationText() const
 
 bool Map::askForSave(const std::string& title)
 {
-	if (!isModified())
-	{
-		// Map is not modified, return positive
-		return true;
-	}
+    if (!isModified())
+    {
+        // Map is not modified, return positive
+        return true;
+    }
 
-	// Ask the user
-	ui::IDialogPtr msgBox = GlobalDialogManager().createMessageBox(
-		title,
+    // Ask the user
+    ui::IDialogPtr msgBox = GlobalDialogManager().createMessageBox(
+        title,
         getSaveConfirmationText(),
         ui::IDialog::MESSAGE_SAVECONFIRMATION
     );
 
-	ui::IDialog::Result result = msgBox->run();
+    ui::IDialog::Result result = msgBox->run();
 
-	if (result == ui::IDialog::RESULT_CANCELLED)
-	{
-		return false;
-	}
+    if (result == ui::IDialog::RESULT_CANCELLED)
+    {
+        return false;
+    }
 
-	if (result == ui::IDialog::RESULT_YES)
-	{
-		// The user wants to save the map
-	    if (isUnnamed())
-		{
-	    	// Map still unnamed, try to save the map with a new name
-	    	// and take the return value from the other routine.
-			return saveAs();
-	    }
-	    else
-		{
-	    	// Map is named, save it
-			save();
-	    }
-	}
+    if (result == ui::IDialog::RESULT_YES)
+    {
+        // The user wants to save the map
+        if (isUnnamed())
+        {
+            // Map still unnamed, try to save the map with a new name
+            // and take the return value from the other routine.
+            return saveAs();
+        }
+        else
+        {
+            // Map is named, save it
+            save();
+        }
+    }
 
-	// Default behaviour: allow the save
-	return true;
+    // Default behaviour: allow the save
+    return true;
 }
 
 bool Map::saveAs()
 {
-	if (_saveInProgress) return false; // safeguard
+    if (_saveInProgress) return false; // safeguard
 
-	std::string filename =
-		MapFileManager::getMapFilename(false, _("Save Map"), "map", getMapName());
+    std::string filename =
+        MapFileManager::getMapFilename(false, _("Save Map"), "map", getMapName());
 
-	if (!filename.empty()) {
-		// Remember the old name, we might need to revert
-		std::string oldFilename = _mapName;
+    if (!filename.empty()) {
+        // Remember the old name, we might need to revert
+        std::string oldFilename = _mapName;
 
-		// Rename the file and try to save
-	    rename(filename);
+        // Rename the file and try to save
+        rename(filename);
 
-		// Try to save the file, this might fail
-		bool success = save();
+        // Try to save the file, this might fail
+        bool success = save();
 
-		if (success) {
-			GlobalMRU().insert(filename);
-		}
-		else if (!success) {
-			// Revert the name change if the file could not be saved
-			rename(oldFilename);
-		}
+        if (success) {
+            GlobalMRU().insert(filename);
+        }
+        else if (!success) {
+            // Revert the name change if the file could not be saved
+            rename(oldFilename);
+        }
 
-	    return success;
-	}
-	else {
-		// Invalid filename entered, return false
-		return false;
-	}
+        return success;
+    }
+    else {
+        // Invalid filename entered, return false
+        return false;
+    }
 }
 
 bool Map::saveCopyAs()
 {
-	// Let's see if we can remember a
-	if (_lastCopyMapName.empty()) {
-		_lastCopyMapName = getMapName();
-	}
+    // Let's see if we can remember a
+    if (_lastCopyMapName.empty()) {
+        _lastCopyMapName = getMapName();
+    }
 
-	std::string filename =
-		MapFileManager::getMapFilename(false, _("Save Copy As..."), "map", _lastCopyMapName);
+    std::string filename =
+        MapFileManager::getMapFilename(false, _("Save Copy As..."), "map", _lastCopyMapName);
 
-	if (!filename.empty()) {
-		// Remember the last name
-		_lastCopyMapName = filename;
+    if (!filename.empty()) {
+        // Remember the last name
+        _lastCopyMapName = filename;
 
-		// Return the result of the actual save method
-		return saveDirect(filename);
-  	}
+        // Return the result of the actual save method
+        return saveDirect(filename);
+    }
 
-	// Not executed, return false
-	return false;
+    // Not executed, return false
+    return false;
 }
 
 void Map::loadPrefabAt(const Vector3& targetCoords)
 {
-	std::string filename =
-		MapFileManager::getMapFilename(true, _("Load Prefab"), "prefab");
+    std::string filename =
+        MapFileManager::getMapFilename(true, _("Load Prefab"), "prefab");
 
-	if (!filename.empty()) {
-		UndoableCommand undo("loadPrefabAt");
+    if (!filename.empty()) {
+        UndoableCommand undo("loadPrefabAt");
 
-	    // Deselect everything
-	    GlobalSelectionSystem().setSelectedAll(false);
+        // Deselect everything
+        GlobalSelectionSystem().setSelectedAll(false);
 
-	    // Now import the prefab (imported items get selected)
-	    import(filename);
+        // Now import the prefab (imported items get selected)
+        import(filename);
 
-		// Switch texture lock on
-		bool prevTexLockState = GlobalBrush()->textureLockEnabled();
-		GlobalBrush()->setTextureLock(true);
+        // Switch texture lock on
+        bool prevTexLockState = GlobalBrush()->textureLockEnabled();
+        GlobalBrush()->setTextureLock(true);
 
-	    // Translate the selection to the given point
-	    GlobalSelectionSystem().translateSelected(targetCoords);
+        // Translate the selection to the given point
+        GlobalSelectionSystem().translateSelected(targetCoords);
 
-		// Revert to previous state
-		GlobalBrush()->setTextureLock(prevTexLockState);
-	}
+        // Revert to previous state
+        GlobalBrush()->setTextureLock(prevTexLockState);
+    }
 }
 
 void Map::saveMapCopyAs(const cmd::ArgumentList& args) {
-	GlobalMap().saveCopyAs();
+    GlobalMap().saveCopyAs();
 }
 
 void Map::registerCommands()
 {
-	GlobalCommandSystem().addCommand("NewMap", Map::newMap);
-	GlobalCommandSystem().addCommand("OpenMap", Map::openMap);
-	GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
-	GlobalCommandSystem().addCommand("LoadPrefab", Map::loadPrefab);
-	GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
-	GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
-	GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
-	GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
-	GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
+    GlobalCommandSystem().addCommand("NewMap", Map::newMap);
+    GlobalCommandSystem().addCommand("OpenMap", Map::openMap);
+    GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
+    GlobalCommandSystem().addCommand("LoadPrefab", Map::loadPrefab);
+    GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
+    GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
+    GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
+    GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
+    GlobalCommandSystem().addCommand("SaveSelected", Map::exportMap);
 
-	GlobalEventManager().addCommand("NewMap", "NewMap");
-	GlobalEventManager().addCommand("OpenMap", "OpenMap");
-	GlobalEventManager().addCommand("ImportMap", "ImportMap");
-	GlobalEventManager().addCommand("LoadPrefab", "LoadPrefab");
-	GlobalEventManager().addCommand("SaveSelectedAsPrefab", "SaveSelectedAsPrefab");
-	GlobalEventManager().addCommand("SaveMap", "SaveMap");
-	GlobalEventManager().addCommand("SaveMapAs", "SaveMapAs");
-	GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
-	GlobalEventManager().addCommand("SaveSelected", "SaveSelected");
+    GlobalEventManager().addCommand("NewMap", "NewMap");
+    GlobalEventManager().addCommand("OpenMap", "OpenMap");
+    GlobalEventManager().addCommand("ImportMap", "ImportMap");
+    GlobalEventManager().addCommand("LoadPrefab", "LoadPrefab");
+    GlobalEventManager().addCommand("SaveSelectedAsPrefab", "SaveSelectedAsPrefab");
+    GlobalEventManager().addCommand("SaveMap", "SaveMap");
+    GlobalEventManager().addCommand("SaveMapAs", "SaveMapAs");
+    GlobalEventManager().addCommand("SaveMapCopyAs", "SaveMapCopyAs");
+    GlobalEventManager().addCommand("SaveSelected", "SaveSelected");
 }
 
 // Static command targets
 void Map::newMap(const cmd::ArgumentList& args) {
-	if (GlobalMap().askForSave(_("New Map"))) {
-		// Turn regioning off when starting a new map
-		GlobalRegion().disable();
+    if (GlobalMap().askForSave(_("New Map"))) {
+        // Turn regioning off when starting a new map
+        GlobalRegion().disable();
 
-		GlobalMap().freeMap();
-		GlobalMap().createNew();
-	}
+        GlobalMap().freeMap();
+        GlobalMap().createNew();
+    }
 }
 
 void Map::openMap(const cmd::ArgumentList& args) {
-	if (!GlobalMap().askForSave(_("Open Map")))
-		return;
+    if (!GlobalMap().askForSave(_("Open Map")))
+        return;
 
-	// Get the map file name to load
-	std::string filename = MapFileManager::getMapFilename(true, _("Open map"));
+    // Get the map file name to load
+    std::string filename = MapFileManager::getMapFilename(true, _("Open map"));
 
-	if (!filename.empty()) {
-		GlobalMRU().insert(filename);
+    if (!filename.empty()) {
+        GlobalMRU().insert(filename);
 
-	    GlobalMap().freeMap();
-	    GlobalMap().load(filename);
-	}
+        GlobalMap().freeMap();
+        GlobalMap().load(filename);
+    }
 }
 
 void Map::importMap(const cmd::ArgumentList& args)
 {
-	std::string filename =
-		MapFileManager::getMapFilename(true, _("Import map"));
+    std::string filename =
+        MapFileManager::getMapFilename(true, _("Import map"));
 
-	if (!filename.empty())
-	{
-	    UndoableCommand undo("mapImport");
-	    GlobalMap().import(filename);
-	}
+    if (!filename.empty())
+    {
+        UndoableCommand undo("mapImport");
+        GlobalMap().import(filename);
+    }
 }
 
 void Map::saveMapAs(const cmd::ArgumentList& args) {
-	GlobalMap().saveAs();
+    GlobalMap().saveAs();
 }
 
 void Map::saveMap(const cmd::ArgumentList& args)
 {
-	if (GlobalMap().isUnnamed())
-	{
-		GlobalMap().saveAs();
-	}
-	// greebo: Always let the map be saved, regardless of the modified status.
-	else /*if(GlobalMap().isModified())*/
-	{
-		GlobalMap().save();
-	}
+    if (GlobalMap().isUnnamed())
+    {
+        GlobalMap().saveAs();
+    }
+    // greebo: Always let the map be saved, regardless of the modified status.
+    else /*if(GlobalMap().isModified())*/
+    {
+        GlobalMap().save();
+    }
 }
 
 void Map::exportMap(const cmd::ArgumentList& args)
 {
-	std::string filename =
-		MapFileManager::getMapFilename(false, _("Export selection"));
+    std::string filename =
+        MapFileManager::getMapFilename(false, _("Export selection"));
 
-	if (!filename.empty()) {
-	    GlobalMap().saveSelected(filename);
-  	}
+    if (!filename.empty()) {
+        GlobalMap().saveSelected(filename);
+    }
 }
 
 void Map::loadPrefab(const cmd::ArgumentList& args) {
-	GlobalMap().loadPrefabAt(Vector3(0,0,0));
+    GlobalMap().loadPrefabAt(Vector3(0,0,0));
 }
 
 void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args)
 {
-	std::string filename =
-		MapFileManager::getMapFilename(false, _("Save selected as Prefab"), "prefab");
+    std::string filename =
+        MapFileManager::getMapFilename(false, _("Save selected as Prefab"), "prefab");
 
-	if (!filename.empty())
-	{
-	    GlobalMap().saveSelected(filename);
-  	}
+    if (!filename.empty())
+    {
+        GlobalMap().saveSelected(filename);
+    }
 }
 
 void Map::rename(const std::string& filename) {
-	if (_mapName != filename) {
-    	setMapName(filename);
-       	SceneChangeNotify();
-	}
-	else {
-		m_resource->save();
-		setModified(false);
-  	}
+    if (_mapName != filename) {
+        setMapName(filename);
+        SceneChangeNotify();
+    }
+    else {
+        m_resource->save();
+        setModified(false);
+    }
 }
 
 void Map::importSelected(TextInputStream& in)
 {
-	BasicContainerPtr root(new BasicContainer);
+    BasicContainerPtr root(new BasicContainer);
 
-	std::istream str(&in);
+    std::istream str(&in);
 
-	// Instantiate the default import filter
-	class MapImportFilter :
-		public IMapImportFilter
-	{
-	private:
-		scene::INodePtr _root;
-	public:
-		MapImportFilter(const scene::INodePtr& root) :
-			_root(root)
-		{}
+    // Instantiate the default import filter
+    class MapImportFilter :
+        public IMapImportFilter
+    {
+    private:
+        scene::INodePtr _root;
+    public:
+        MapImportFilter(const scene::INodePtr& root) :
+            _root(root)
+        {}
 
-		bool addEntity(const scene::INodePtr& entityNode)
-		{
-			_root->addChildNode(entityNode);
-			return true;
-		}
+        bool addEntity(const scene::INodePtr& entityNode)
+        {
+            _root->addChildNode(entityNode);
+            return true;
+        }
 
-		bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
-		{
-			if (Node_getEntity(entity)->isContainer())
-			{
-				entity->addChildNode(primitive);
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-	} importFilter(root);
+        bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity)
+        {
+            if (Node_getEntity(entity)->isContainer())
+            {
+                entity->addChildNode(primitive);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    } importFilter(root);
 
-	MapFormatPtr format = getFormat();
+    MapFormatPtr format = getFormat();
 
-	IMapReaderPtr reader = format->getMapReader(importFilter);
+    IMapReaderPtr reader = format->getMapReader(importFilter);
 
-	try
-	{
-		// Start parsing
-		reader->readFromStream(str);
+    try
+    {
+        // Start parsing
+        reader->readFromStream(str);
 
-		// Prepare child primitives
-		addOriginToChildPrimitives(root);
+        // Prepare child primitives
+        addOriginToChildPrimitives(root);
 
-		// Adjust all new names to fit into the existing map namespace,
-		// this routine will be changing a lot of names in the importNamespace
-		INamespacePtr nspace = getRoot()->getNamespace();
+        // Adjust all new names to fit into the existing map namespace,
+        // this routine will be changing a lot of names in the importNamespace
+        INamespacePtr nspace = getRoot()->getNamespace();
 
-		if (nspace != NULL)
-		{
-			// Prepare all names
-			nspace->importNames(root);
-			// Now add the cloned names to the local namespace
-			nspace->connect(root);
-		}
+        if (nspace != NULL)
+        {
+            // Prepare all names
+            nspace->importNames(root);
+            // Now add the cloned names to the local namespace
+            nspace->connect(root);
+        }
 
-		MergeMap(root);
-	}
-	catch (IMapReader::FailureException& e)
-	{
-		gtkutil::MessageBox::ShowError(
-			(boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str(),
-			GlobalMainFrame().getTopLevelWindow());
+        MergeMap(root);
+    }
+    catch (IMapReader::FailureException& e)
+    {
+        gtkutil::MessageBox::ShowError(
+            (boost::format(_("Failure reading map from clipboard:\n%s")) % e.what()).str(),
+            GlobalMainFrame().getTopLevelWindow());
 
-		// Clear out the root node, otherwise we end up with half a map
-		scene::NodeRemover remover;
-		root->traverse(remover);
-	}
+        // Clear out the root node, otherwise we end up with half a map
+        scene::NodeRemover remover;
+        root->traverse(remover);
+    }
 }
 
 void Map::exportSelected(std::ostream& out)
 {
-	MapFormatPtr format = getFormat();
+    MapFormatPtr format = getFormat();
 
-	IMapWriterPtr writer = format->getMapWriter();
+    IMapWriterPtr writer = format->getMapWriter();
 
-	// Create our main MapExporter walker for traversal
-	MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
+    // Create our main MapExporter walker for traversal
+    MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
 
-	// Pass the traverseSelected function and start writing selected nodes
-	exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
+    // Pass the traverseSelected function and start writing selected nodes
+    exporter.exportMap(GlobalSceneGraph().root(), traverseSelected);
 }
 
 // RegisterableModule implementation
 const std::string& Map::getName() const {
-	static std::string _name(MODULE_MAP);
-	return _name;
+    static std::string _name(MODULE_MAP);
+    return _name;
 }
 
 const StringSet& Map::getDependencies() const {
-	static StringSet _dependencies;
+    static StringSet _dependencies;
 
-	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_RADIANT);
-	}
+    if (_dependencies.empty()) {
+        _dependencies.insert(MODULE_RADIANT);
+    }
 
-	return _dependencies;
+    return _dependencies;
 }
 
 void Map::initialiseModule(const ApplicationContext& ctx)
 {
-	globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
+    globalOutputStream() << getName() << "::initialiseModule called." << std::endl;
 
-	// Register for the startup event
-	_startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);
-	GlobalRadiant().signal_radiantStarted().connect(
+    // Register for the startup event
+    _startupMapLoader = StartupMapLoaderPtr(new StartupMapLoader);
+    GlobalRadiant().signal_radiantStarted().connect(
         sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantStartup)
     );
-	GlobalRadiant().signal_radiantShutdown().connect(
+    GlobalRadiant().signal_radiantShutdown().connect(
         sigc::mem_fun(*_startupMapLoader, &StartupMapLoader::onRadiantShutdown)
     );
 
-	// Add the Map-related commands to the EventManager
-	registerCommands();
+    // Add the Map-related commands to the EventManager
+    registerCommands();
 
-	// Add the region-related commands to the EventManager
-	RegionManager::initialiseCommands();
+    // Add the region-related commands to the EventManager
+    RegionManager::initialiseCommands();
 
-	// Add the map position commands to the EventManager
-	GlobalMapPosition().initialise();
+    // Add the map position commands to the EventManager
+    GlobalMapPosition().initialise();
 }
 
 // Creates the static module instance
@@ -1034,5 +1043,5 @@ module::StaticModule<Map> staticMapModule;
 // Accessor method containing the singleton Map instance
 map::Map& GlobalMap() 
 {
-	return *map::staticMapModule.getModule();
+    return *map::staticMapModule.getModule();
 }

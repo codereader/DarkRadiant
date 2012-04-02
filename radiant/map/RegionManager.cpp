@@ -192,7 +192,8 @@ void RegionManager::addRegionBrushes()
         if (_bounds.intersects(camOrigin))
         {
             // Set the origin key of the playerStart entity
-            _playerStart->getEntity().setKeyValue("origin", camOrigin);
+            _playerStart->getEntity().setKeyValue("origin",
+                                                  string::to_string(camOrigin));
             _playerStart->getEntity().setKeyValue("angle",
                                                   string::to_string(angle));
         }

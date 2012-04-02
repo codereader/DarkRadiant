@@ -366,9 +366,17 @@ void ParticleEditor::_onShaderControlsChanged()
         stage.setMaterialName(gladeWidget<Gtk::Entry>("shaderEntry")->get_text());
     }
 
-    stage.setColour(Vector4(gladeWidget<Gtk::Entry>("colourEntry")->get_text()));
+    stage.setColour(
+        string::convert<Vector4>(
+            gladeWidget<Gtk::Entry>("colourEntry")->get_text()
+        )
+    );
     stage.setUseEntityColour(gladeWidget<Gtk::CheckButton>("useEntityColour")->get_active());
-    stage.setFadeColour(Vector4(gladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()));
+    stage.setFadeColour(
+        string::convert<Vector4>(
+            gladeWidget<Gtk::Entry>("fadeColourEntry")->get_text()
+        )
+    );
     stage.setFadeInFraction(getSpinButtonValueAsFloat("fadeInFractionSpinner"));
     stage.setFadeOutFraction(getSpinButtonValueAsFloat("fadeOutFractionSpinner"));
     stage.setFadeIndexFraction(getSpinButtonValueAsFloat("fadeIndexFractionSpinner"));
@@ -419,7 +427,11 @@ void ParticleEditor::_onDistributionControlsChanged()
     stage.setDistributionParm(2, getSpinButtonValueAsFloat("distSizeZSpinner"));
     stage.setDistributionParm(3, getSpinButtonValueAsFloat("distSizeRingSpinner"));
 
-    stage.setOffset(Vector3(gladeWidget<Gtk::Entry>("distOffsetEntry")->get_text()));
+    stage.setOffset(
+        string::convert<Vector3>(
+            gladeWidget<Gtk::Entry>("distOffsetEntry")->get_text()
+        )
+    );
 
     stage.setRandomDistribution(gladeWidget<Gtk::CheckButton>("distRandom")->get_active());
 }
@@ -921,7 +933,9 @@ void ParticleEditor::updateWidgetsFromStage()
     gladeWidget<Gtk::SpinButton>("distSizeYSpinner")->get_adjustment()->set_value(stage.getDistributionParm(1));
     gladeWidget<Gtk::SpinButton>("distSizeZSpinner")->get_adjustment()->set_value(stage.getDistributionParm(2));
     gladeWidget<Gtk::SpinButton>("distSizeRingSpinner")->get_adjustment()->set_value(stage.getDistributionParm(3));
-    gladeWidget<Gtk::Entry>("distOffsetEntry")->set_text(std::string(stage.getOffset()));
+    gladeWidget<Gtk::Entry>("distOffsetEntry")->set_text(
+        string::to_string(stage.getOffset())
+    );
     gladeWidget<Gtk::CheckButton>("distRandom")->set_active(stage.getRandomDistribution());
 
     // DIRECTION / ORIENTATION

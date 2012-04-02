@@ -156,11 +156,11 @@ public:
         }
         else if (keySuffix = suffixedKey(key, ATTACH_POS_ORIGIN))
         {
-            _positions[*keySuffix].origin = Vector3(value);
+            _positions[*keySuffix].origin = string::convert<Vector3>(value);
         }
         else if (keySuffix = suffixedKey(key, ATTACH_POS_ANGLES))
         {
-            _positions[*keySuffix].angles = Vector3(value);
+            _positions[*keySuffix].angles = string::convert<Vector3>(value);
         }
         else if (keySuffix = suffixedKey(key, ATTACH_POS_JOINT))
         {
@@ -198,10 +198,10 @@ public:
 
 // Constructor
 Doom3EntityClass::Doom3EntityClass(const std::string& name,
-								   const Vector3& colour,
-								   bool fixedSize,
-								   const Vector3& mins,
-								   const Vector3& maxs)
+                                   const Vector3& colour,
+                                   bool fixedSize,
+                                   const Vector3& mins,
+                                   const Vector3& maxs)
 : _name(name),
   _isLight(false),
   _colour(colour),
@@ -222,7 +222,7 @@ Doom3EntityClass::~Doom3EntityClass()
 
 std::string Doom3EntityClass::getName() const
 {
-	return _name;
+    return _name;
 }
 
 sigc::signal<void> Doom3EntityClass::changedSignal() const
@@ -240,20 +240,22 @@ bool Doom3EntityClass::isFixedSize() const
     else {
         // Check for the existence of editor_mins/maxs attributes, and that
         // they do not contain only a question mark
-		return (getAttribute("editor_mins").getValue().size() > 1
+        return (getAttribute("editor_mins").getValue().size() > 1
                 && getAttribute("editor_maxs").getValue().size() > 1);
     }
 }
 
 AABB Doom3EntityClass::getBounds() const
 {
-    if (isFixedSize()) {
+    if (isFixedSize())
+    {
         return AABB::createFromMinMax(
-        	getAttribute("editor_mins").getValue(),
-        	getAttribute("editor_maxs").getValue()
+            string::convert<Vector3>(getAttribute("editor_mins").getValue()),
+            string::convert<Vector3>(getAttribute("editor_maxs").getValue())
         );
     }
-    else {
+    else
+    {
         return AABB(); // null AABB
     }
 }
@@ -267,42 +269,42 @@ void Doom3EntityClass::setIsLight(bool val)
 {
     _isLight = val;
     if (_isLight)
-    	_fixedSize = true;
+        _fixedSize = true;
 }
 
 void Doom3EntityClass::setColour(const Vector3& colour)
 {
-	// Set the specified flag
-	_colourSpecified = true;
+    // Set the specified flag
+    _colourSpecified = true;
 
-	_colour = colour;
+    _colour = colour;
 
-	// Set the entity colour to default, if none was specified
-	if (_colour == Vector3(-1, -1, -1))
-	{
-		_colour = ColourSchemes().getColour("default_entity");
-	}
+    // Set the entity colour to default, if none was specified
+    if (_colour == Vector3(-1, -1, -1))
+    {
+        _colour = ColourSchemes().getColour("default_entity");
+    }
 
-	// Define fill and wire versions of the entity colour
-	_fillShader = _colourTransparent ?
-		(boost::format("[%f %f %f]") % _colour[0] % _colour[1] % _colour[2]).str() :
-		(boost::format("(%f %f %f)") % _colour[0] % _colour[1] % _colour[2]).str();
+    // Define fill and wire versions of the entity colour
+    _fillShader = _colourTransparent ?
+        (boost::format("[%f %f %f]") % _colour[0] % _colour[1] % _colour[2]).str() :
+        (boost::format("(%f %f %f)") % _colour[0] % _colour[1] % _colour[2]).str();
 
-	_wireShader = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
+    _wireShader = (boost::format("<%f %f %f>") % _colour[0] % _colour[1] % _colour[2]).str();
 }
 
 const Vector3& Doom3EntityClass::getColour() const {
-	return _colour;
+    return _colour;
 }
 
 const std::string& Doom3EntityClass::getWireShader() const
 {
-	return _wireShader;
+    return _wireShader;
 }
 
 const std::string& Doom3EntityClass::getFillShader() const
 {
-	return _fillShader;
+    return _fillShader;
 }
 
 /* ATTRIBUTES */
@@ -312,61 +314,61 @@ const std::string& Doom3EntityClass::getFillShader() const
  */
 void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
 {
-	// Try to insert the class attribute
-	std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
-		EntityAttributeMap::value_type(attribute.getNameRef(), attribute)
-	);
+    // Try to insert the class attribute
+    std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
+        EntityAttributeMap::value_type(attribute.getNameRef(), attribute)
+    );
 
-	if (!result.second)
-	{
-		EntityClassAttribute& existing = result.first->second;
+    if (!result.second)
+    {
+        EntityClassAttribute& existing = result.first->second;
 
-		// greebo: Attribute already existed, check if we have some
-		// descriptive properties to be added to the existing one.
-		if (!attribute.getDescription().empty() && existing.getDescription().empty())
-		{
-			// Use the shared string reference to save memory
-			existing.setDescription(attribute.getDescriptionRef());
-		}
+        // greebo: Attribute already existed, check if we have some
+        // descriptive properties to be added to the existing one.
+        if (!attribute.getDescription().empty() && existing.getDescription().empty())
+        {
+            // Use the shared string reference to save memory
+            existing.setDescription(attribute.getDescriptionRef());
+        }
 
-		// Check if we have a more descriptive type than "text"
-		if (attribute.getType() != "text" && existing.getType() == "text")
-		{
-			// Use the shared string reference to save memory
-			existing.setType(attribute.getTypeRef());
-		}
-	}
+        // Check if we have a more descriptive type than "text"
+        if (attribute.getType() != "text" && existing.getType() == "text")
+        {
+            // Use the shared string reference to save memory
+            existing.setType(attribute.getTypeRef());
+        }
+    }
 }
 
 // Static function to create an EntityClass (named constructor idiom)
 Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes) {
-	if (!brushes) {
-		return Doom3EntityClassPtr(new Doom3EntityClass(name,
-													Vector3(-1, -1, -1),
-													true,
-													Vector3(-8, -8, -8),
-													Vector3(8, 8, 8)));
-	}
-	else {
-		return Doom3EntityClassPtr(new Doom3EntityClass(name));
-	}
+    if (!brushes) {
+        return Doom3EntityClassPtr(new Doom3EntityClass(name,
+                                                    Vector3(-1, -1, -1),
+                                                    true,
+                                                    Vector3(-8, -8, -8),
+                                                    Vector3(8, 8, 8)));
+    }
+    else {
+        return Doom3EntityClassPtr(new Doom3EntityClass(name));
+    }
 }
 
 // Enumerate entity class attributes
 void Doom3EntityClass::forEachClassAttribute(
-	boost::function<void(const EntityClassAttribute&)> visitor,
-	bool editorKeys) const
+    boost::function<void(const EntityClassAttribute&)> visitor,
+    bool editorKeys) const
 {
-	for (EntityAttributeMap::const_iterator i = _attributes.begin();
-		 i != _attributes.end();
-		 ++i)
-	{
-		// Visit if it is a non-editor key or we are visiting all keys
-		if (editorKeys || !boost::algorithm::istarts_with(*i->first, "editor_"))
+    for (EntityAttributeMap::const_iterator i = _attributes.begin();
+         i != _attributes.end();
+         ++i)
+    {
+        // Visit if it is a non-editor key or we are visiting all keys
+        if (editorKeys || !boost::algorithm::istarts_with(*i->first, "editor_"))
         {
-			visitor(i->second);
+            visitor(i->second);
         }
-	}
+    }
 }
 
 namespace
@@ -374,146 +376,146 @@ namespace
     void copyInheritedAttribute(IEntityClass* target,
                                 const EntityClassAttribute& attr)
     {
-		target->addAttribute(EntityClassAttribute(attr, true));
+        target->addAttribute(EntityClassAttribute(attr, true));
     }
 }
 
 // Resolve inheritance for this class
 void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
 {
-	// If we have already resolved inheritance, do nothing
-	if (_inheritanceResolved)
-		return;
+    // If we have already resolved inheritance, do nothing
+    if (_inheritanceResolved)
+        return;
 
-	// Lookup the parent name and return if it is not set. Also return if the
-	// parent name is the same as our own classname, to avoid infinite
-	// recursion.
-	std::string parName = getAttribute("inherit").getValue();
-	if (parName.empty() || parName == _name)
-		return;
+    // Lookup the parent name and return if it is not set. Also return if the
+    // parent name is the same as our own classname, to avoid infinite
+    // recursion.
+    std::string parName = getAttribute("inherit").getValue();
+    if (parName.empty() || parName == _name)
+        return;
 
-	// Find the parent entity class
-	EntityClasses::iterator pIter = classmap.find(parName);
-	if (pIter != classmap.end())
-	{
-		// Recursively resolve inheritance of parent
-		pIter->second->resolveInheritance(classmap);
+    // Find the parent entity class
+    EntityClasses::iterator pIter = classmap.find(parName);
+    if (pIter != classmap.end())
+    {
+        // Recursively resolve inheritance of parent
+        pIter->second->resolveInheritance(classmap);
 
-		// Copy attributes from the parent to the child, including editor keys
-		pIter->second->forEachClassAttribute(
+        // Copy attributes from the parent to the child, including editor keys
+        pIter->second->forEachClassAttribute(
             boost::bind(&copyInheritedAttribute, this, _1), true
         );
-	}
-	else {
-		globalWarningStream() << "[eclassmgr] Entity class "
-				  << _name << " specifies parent "
-				  << parName << " which is not found." << std::endl;
-	}
+    }
+    else {
+        globalWarningStream() << "[eclassmgr] Entity class "
+                  << _name << " specifies parent "
+                  << parName << " which is not found." << std::endl;
+    }
 
-	// Set the resolved flag
-	_inheritanceResolved = true;
+    // Set the resolved flag
+    _inheritanceResolved = true;
 
-	// Construct the inheritance list
-	buildInheritanceChain();
+    // Construct the inheritance list
+    buildInheritanceChain();
 
-	if (!getAttribute("model").getValue().empty())
-	{
-		// We have a model path (probably an inherited one)
-		setModelPath(getAttribute("model").getValue());
-	}
+    if (!getAttribute("model").getValue().empty())
+    {
+        // We have a model path (probably an inherited one)
+        setModelPath(getAttribute("model").getValue());
+    }
 
-	if (getAttribute("editor_light").getValue() == "1" || getAttribute("spawnclass").getValue() == "idLight")
-	{
-		// We have a light
-		setIsLight(true);
-	}
+    if (getAttribute("editor_light").getValue() == "1" || getAttribute("spawnclass").getValue() == "idLight")
+    {
+        // We have a light
+        setIsLight(true);
+    }
 
-	if (getAttribute("editor_transparent").getValue() == "1")
-	{
-		_colourTransparent = true;
-	}
+    if (getAttribute("editor_transparent").getValue() == "1")
+    {
+        _colourTransparent = true;
+    }
 
-	// (Re)set the colour
-	const EntityClassAttribute& colourAttr = getAttribute("editor_color");
+    // (Re)set the colour
+    const EntityClassAttribute& colourAttr = getAttribute("editor_color");
 
-	if (!colourAttr.getValue().empty())
-	{
-		setColour(Vector3(colourAttr.getValue()));
-	}
-	else
-	{
-		// If no colour is set, assign the default entity colour to this class
-		static Vector3 defaultColour = ColourSchemes().getColour("default_entity");
-		setColour(defaultColour);
-	}
+    if (!colourAttr.getValue().empty())
+    {
+        setColour(string::convert<Vector3>(colourAttr.getValue()));
+    }
+    else
+    {
+        // If no colour is set, assign the default entity colour to this class
+        static Vector3 defaultColour = ColourSchemes().getColour("default_entity");
+        setColour(defaultColour);
+    }
 }
 
 // Find a single attribute
 EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
 {
-	StringPtr ref(new std::string(name));
+    StringPtr ref(new std::string(name));
 
-	EntityAttributeMap::iterator f = _attributes.find(ref);
+    EntityAttributeMap::iterator f = _attributes.find(ref);
 
-	return (f != _attributes.end()) ? f->second : _emptyAttribute;
+    return (f != _attributes.end()) ? f->second : _emptyAttribute;
 }
 
 // Find a single attribute
 const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name) const
 {
-	StringPtr ref(new std::string(name));
+    StringPtr ref(new std::string(name));
 
-	EntityAttributeMap::const_iterator f = _attributes.find(ref);
+    EntityAttributeMap::const_iterator f = _attributes.find(ref);
 
-	return (f != _attributes.end()) ? f->second : _emptyAttribute;
+    return (f != _attributes.end()) ? f->second : _emptyAttribute;
 }
 
 // Find all matching attributes
 EntityClassAttributeList Doom3EntityClass::getAttributeList(const std::string& name) const
 {
-	// Build the list of matching attributes
-	EntityClassAttributeList matches;
+    // Build the list of matching attributes
+    EntityClassAttributeList matches;
 
-	for (EntityAttributeMap::const_iterator i = _attributes.begin();
-		 i != _attributes.end();
-		 ++i)
-	{
-		// Prefix matches, add to list
-		if (boost::algorithm::istarts_with(*i->first, name))
-		{
-			matches.push_back(i->second);
-		}
-	}
+    for (EntityAttributeMap::const_iterator i = _attributes.begin();
+         i != _attributes.end();
+         ++i)
+    {
+        // Prefix matches, add to list
+        if (boost::algorithm::istarts_with(*i->first, name))
+        {
+            matches.push_back(i->second);
+        }
+    }
 
-	// Sort the list based on the numerical order of suffices
-	AttributeSuffixComparator comp(name.length());
-	std::sort(matches.begin(), matches.end(), comp);
+    // Sort the list based on the numerical order of suffices
+    AttributeSuffixComparator comp(name.length());
+    std::sort(matches.begin(), matches.end(), comp);
 
-	// Return the list of matches
-	return matches;
+    // Return the list of matches
+    return matches;
 }
 
 void Doom3EntityClass::clear()
 {
-	// Don't clear the name
+    // Don't clear the name
     _isLight = false;
 
     _colour = Vector3(-1,-1,-1);
-	_colourSpecified = false;
-	_colourTransparent = false;
+    _colourSpecified = false;
+    _colourTransparent = false;
 
-	_fixedSize = false;
+    _fixedSize = false;
 
-	_attributes.clear();
-	_model.clear();
-	_skin.clear();
-	_inheritanceResolved = false;
+    _attributes.clear();
+    _model.clear();
+    _skin.clear();
+    _inheritanceResolved = false;
 
-	_modName = "base";
+    _modName = "base";
 
-	// Leave the empty attribute alone
+    // Leave the empty attribute alone
 
-	_inheritanceChain.clear();
+    _inheritanceChain.clear();
     _attachments->clear();
 }
 
@@ -554,97 +556,97 @@ void Doom3EntityClass::parseEditorSpawnarg(const std::string& key,
 
 void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
-	// Clear this structure first, we might be "refreshing" ourselves from tokens
-	clear();
+    // Clear this structure first, we might be "refreshing" ourselves from tokens
+    clear();
 
-	// Required open brace (the name has already been parsed by the EClassManager)
+    // Required open brace (the name has already been parsed by the EClassManager)
     tokeniser.assertNextToken("{");
 
     // Loop over all of the keys in this entitydef
     std::string key;
     while ((key = tokeniser.nextToken()) != "}")
-	{
+    {
         const std::string value = tokeniser.nextToken();
 
         // Handle some keys specially
         if (key == "model")
-		{
-        	setModelPath(os::standardPath(value));
+        {
+            setModelPath(os::standardPath(value));
         }
-		else if (key == "editor_color")
-		{
-			setColour(value);
+        else if (key == "editor_color")
+        {
+            setColour(string::convert<Vector3>(value));
         }
-		else if (key == "editor_light")
-		{
+        else if (key == "editor_light")
+        {
             setIsLight(value == "1");
         }
         else if (key == "spawnclass")
-		{
+        {
             setIsLight(value == "idLight");
         }
-		else if (boost::algorithm::istarts_with(key, "editor_"))
-		{
+        else if (boost::algorithm::istarts_with(key, "editor_"))
+        {
             parseEditorSpawnarg(key, value);
-		}
+        }
 
         // Try parsing this key/value with the Attachments manager
         _attachments->parseDefAttachKeys(key, value);
 
         // Add the EntityClassAttribute for this key/val
-		if (getAttribute(key).getType().empty())
-		{
-			// Following key-specific processing, add the keyvalue to the eclass
-			EntityClassAttribute attribute("text", key, value, "");
+        if (getAttribute(key).getType().empty())
+        {
+            // Following key-specific processing, add the keyvalue to the eclass
+            EntityClassAttribute attribute("text", key, value, "");
 
-			// Type is empty, attribute does not exist, add it.
-			addAttribute(attribute);
-		}
-		else if (getAttribute(key).getValue().empty())
-		{
-			// Attribute type is set, but value is empty, set the value.
-			getAttribute(key).setValue(value);
-		}
-		else
-		{
-			// Both type and value are not empty, emit a warning
-			globalWarningStream() << "[eclassmgr] attribute " << key
-				<< " already set on entityclass " << _name << std::endl;
-		}
+            // Type is empty, attribute does not exist, add it.
+            addAttribute(attribute);
+        }
+        else if (getAttribute(key).getValue().empty())
+        {
+            // Attribute type is set, but value is empty, set the value.
+            getAttribute(key).setValue(value);
+        }
+        else
+        {
+            // Both type and value are not empty, emit a warning
+            globalWarningStream() << "[eclassmgr] attribute " << key
+                << " already set on entityclass " << _name << std::endl;
+        }
     } // while true
 
     _attachments->validateAttachments();
 
-	// Notify the observers
+    // Notify the observers
     _changedSignal.emit();
 }
 
 const IEntityClass::InheritanceChain& Doom3EntityClass::getInheritanceChain()
 {
-	return _inheritanceChain;
+    return _inheritanceChain;
 }
 
 void Doom3EntityClass::buildInheritanceChain()
 {
-	_inheritanceChain.clear();
+    _inheritanceChain.clear();
 
-	// We start with the name of this class
-	_inheritanceChain.push_back(_name);
+    // We start with the name of this class
+    _inheritanceChain.push_back(_name);
 
-	// Walk up the inheritance chain
-	std::string parentClassName = getAttribute("inherit").getValue();
-	while (!parentClassName.empty()) {
-		_inheritanceChain.push_front(parentClassName);
+    // Walk up the inheritance chain
+    std::string parentClassName = getAttribute("inherit").getValue();
+    while (!parentClassName.empty()) {
+        _inheritanceChain.push_front(parentClassName);
 
-		// Get the parent eclass
-		IEntityClassPtr parentClass = GlobalEntityClassManager().findClass(parentClassName);
+        // Get the parent eclass
+        IEntityClassPtr parentClass = GlobalEntityClassManager().findClass(parentClassName);
 
-		if (parentClass == NULL) {
-			break;
-		}
+        if (parentClass == NULL) {
+            break;
+        }
 
-		parentClassName = parentClass->getAttribute("inherit").getValue();
-	}
+        parentClassName = parentClass->getAttribute("inherit").getValue();
+    }
 }
 
 } // namespace eclass

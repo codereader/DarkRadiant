@@ -33,13 +33,6 @@ public:
 	{}
 
 	/**
-  	 * Construct a Quaternion by parsing the space-separated string.
-  	 */
-  	Quaternion(const std::string& str) :
-		Vector4(str)
-	{}
-
-	/**
 	 * Returns the identity quaternion (named constructor)
 	 */
 	static const Quaternion& Identity();

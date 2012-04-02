@@ -342,7 +342,7 @@ void ConversationDialog::onAddEntity()
 
         // Create a random offset
 		node->getEntity().setKeyValue(
-            "origin", conversation::RandomOrigin::generate(128)
+            "origin", RandomOrigin::generate(128)
         );
 
         // Insert the node into the scene graph

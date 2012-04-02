@@ -24,23 +24,24 @@ namespace selection {
 	namespace algorithm {
 
 // greebo: see header for documentation
-void rotateSelected(const Vector3& eulerXYZ) {
+void rotateSelected(const Vector3& eulerXYZ)
+{
 	std::string command("rotateSelectedEulerXYZ: ");
-	command += eulerXYZ;
+	command += string::to_string(eulerXYZ);
 	UndoableCommand undo(command.c_str());
 
 	GlobalSelectionSystem().rotateSelected(Quaternion::createForEulerXYZDegrees(eulerXYZ));
 }
 
 // greebo: see header for documentation
-void scaleSelected(const Vector3& scaleXYZ) {
-
+void scaleSelected(const Vector3& scaleXYZ)
+{
 	if (fabs(scaleXYZ[0]) > 0.0001f &&
 		fabs(scaleXYZ[1]) > 0.0001f &&
 		fabs(scaleXYZ[2]) > 0.0001f)
 	{
 		std::string command("scaleSelected: ");
-		command += scaleXYZ;
+		command += string::to_string(scaleXYZ);
 		UndoableCommand undo(command.c_str());
 
 		GlobalSelectionSystem().scaleSelected(scaleXYZ);

@@ -79,8 +79,12 @@ XYWnd::XYWnd(int id) :
 
 	// Try to retrieve a recently used origin and scale from the registry
 	std::string recentPath = RKEY_XYVIEW_ROOT + "/recent";
-	m_vOrigin = Vector3(GlobalRegistry().getAttribute(recentPath, "origin"));
-	m_fScale = string::convert<double>(GlobalRegistry().getAttribute(recentPath, "scale"));
+	m_vOrigin = string::convert<Vector3>(
+        GlobalRegistry().getAttribute(recentPath, "origin")
+    );
+	m_fScale = string::convert<double>(
+        GlobalRegistry().getAttribute(recentPath, "scale")
+    );
 
 	if (m_fScale == 0)
 	{
@@ -136,8 +140,10 @@ XYWnd::~XYWnd()
 	// Store the current position and scale to the registry, so that it may be
 	// picked up again when creating XYViews after switching layouts
 	std::string recentPath = RKEY_XYVIEW_ROOT + "/recent";
-	GlobalRegistry().setAttribute(recentPath, "origin", m_vOrigin);
-	GlobalRegistry().setAttribute(recentPath, "scale", string::to_string(m_fScale));
+	GlobalRegistry().setAttribute(recentPath, "origin",
+                                  string::to_string(m_vOrigin));
+	GlobalRegistry().setAttribute(recentPath, "scale",
+                                  string::to_string(m_fScale));
 }
 
 int XYWnd::getId() const

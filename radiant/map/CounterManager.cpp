@@ -5,6 +5,8 @@
 #include "string/string.h"
 #include "modulesystem/StaticModule.h"
 
+#include <boost/format.hpp>
+
 namespace map
 {
 

@@ -17,6 +17,8 @@
 #include <gtkmm/treeview.h>
 #include <gtkmm/stock.h>
 
+#include <boost/format.hpp>
+
 #include "CommandEditor.h"
 
 namespace ui {

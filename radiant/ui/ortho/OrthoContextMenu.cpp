@@ -49,7 +49,7 @@ namespace {
     const char* ANGLE_KEY_NAME = "angle";
     const char* DEFAULT_ANGLE = "90"; // north
 
-	const char* RKEY_SPEAKERMINRADIUS = "game/defaults/speakerMinRadius";
+    const char* RKEY_SPEAKERMINRADIUS = "game/defaults/speakerMinRadius";
     const char* RKEY_SPEAKERMAXRADIUS = "game/defaults/speakerMaxRadius";
 
     const char* ADD_ENTITY_TEXT = N_("Create entity...");
@@ -70,14 +70,14 @@ namespace {
     const char* ADD_SPEAKER_ICON = "icon_sound.png";
     const char* CONVERT_TO_STATIC_TEXT = N_("Convert to func_static");
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
-	const char* REPARENT_PRIMITIVES_TEXT = N_("Reparent primitives");
+    const char* REPARENT_PRIMITIVES_TEXT = N_("Reparent primitives");
     const char* REVERT_TO_WORLDSPAWN_TEXT = N_("Revert to worldspawn");
-	const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = N_("Revert part to worldspawn");
+    const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = N_("Revert part to worldspawn");
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
-	const char* MERGE_ENTITIES_ICON = "cmenu_merge_entities.png";
-	const char* MERGE_ENTITIES_TEXT = N_("Merge Entities");
-	const char* MAKE_VISPORTAL = N_("Make Visportal");
-	const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
+    const char* MERGE_ENTITIES_ICON = "cmenu_merge_entities.png";
+    const char* MERGE_ENTITIES_TEXT = N_("Merge Entities");
+    const char* MAKE_VISPORTAL = N_("Make Visportal");
+    const char* MAKE_VISPORTAL_ICON = "make_visportal.png";
 }
 
 // Define the static OrthoContextMenu module
@@ -85,7 +85,7 @@ module::StaticModule<OrthoContextMenu> orthoContextMenuModule;
 
 OrthoContextMenu& OrthoContextMenu::Instance()
 {
-	return *orthoContextMenuModule.getModule();
+    return *orthoContextMenuModule.getModule();
 }
 
 // Constructor
@@ -96,157 +96,157 @@ OrthoContextMenu::OrthoContextMenu()
 
 void OrthoContextMenu::show(const Vector3& point)
 {
-	_lastPoint = point;
+    _lastPoint = point;
 
-	analyseSelection();
+    analyseSelection();
 
-	// Perform the visibility/sensitivity tests
-	for (MenuSections::const_iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
-	{
-		for (MenuItems::const_iterator i = sec->second.begin(); i != sec->second.end(); ++i)
-		{
-			ui::IMenuItem& item = *(*i);
+    // Perform the visibility/sensitivity tests
+    for (MenuSections::const_iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
+    {
+        for (MenuItems::const_iterator i = sec->second.begin(); i != sec->second.end(); ++i)
+        {
+            ui::IMenuItem& item = *(*i);
 
-			bool visible = item.isVisible();
+            bool visible = item.isVisible();
 
-			if (visible)
-			{
-				// Visibility check passed
-				item.getWidget()->show();
+            if (visible)
+            {
+                // Visibility check passed
+                item.getWidget()->show();
 
-				// Run the preshow command
-				item.preShow();
+                // Run the preshow command
+                item.preShow();
 
-				item.getWidget()->set_sensitive(item.isSensitive());
-			}
-			else
-			{
-				// Visibility check failed, skip sensitivity check
-				item.getWidget()->hide();
-			}
-		}
-	}
+                item.getWidget()->set_sensitive(item.isSensitive());
+            }
+            else
+            {
+                // Visibility check failed, skip sensitivity check
+                item.getWidget()->hide();
+            }
+        }
+    }
 
-	_widget->popup(1, gtk_get_current_event_time());
+    _widget->popup(1, gtk_get_current_event_time());
 }
 
 void OrthoContextMenu::analyseSelection()
 {
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	bool anythingSelected = info.totalCount > 0;
-	bool noEntities = info.entityCount == 0;
-	bool noComponents = info.componentCount == 0;
+    bool anythingSelected = info.totalCount > 0;
+    bool noEntities = info.entityCount == 0;
+    bool noComponents = info.componentCount == 0;
 
-	_selectionInfo.anythingSelected = anythingSelected;
-	_selectionInfo.onlyPrimitivesSelected = anythingSelected && noEntities && noComponents;
-	_selectionInfo.onlyBrushesSelected = anythingSelected && info.totalCount == info.brushCount;
-	_selectionInfo.onlyPatchesSelected = anythingSelected && info.totalCount == info.patchCount;
-	_selectionInfo.singlePrimitiveSelected = info.totalCount == 1 && (info.brushCount + info.patchCount == 1);
+    _selectionInfo.anythingSelected = anythingSelected;
+    _selectionInfo.onlyPrimitivesSelected = anythingSelected && noEntities && noComponents;
+    _selectionInfo.onlyBrushesSelected = anythingSelected && info.totalCount == info.brushCount;
+    _selectionInfo.onlyPatchesSelected = anythingSelected && info.totalCount == info.patchCount;
+    _selectionInfo.singlePrimitiveSelected = info.totalCount == 1 && (info.brushCount + info.patchCount == 1);
 
-	_selectionInfo.onlyEntitiesSelected = anythingSelected && info.totalCount == info.entityCount;
+    _selectionInfo.onlyEntitiesSelected = anythingSelected && info.totalCount == info.entityCount;
 
-	if (_selectionInfo.onlyEntitiesSelected)
-	{
-		// Check for group nodes
-		selection::algorithm::GroupNodeChecker walker;
-		GlobalSelectionSystem().foreachSelected(walker);
+    if (_selectionInfo.onlyEntitiesSelected)
+    {
+        // Check for group nodes
+        selection::algorithm::GroupNodeChecker walker;
+        GlobalSelectionSystem().foreachSelected(walker);
 
-		_selectionInfo.onlyGroupsSelected = walker.onlyGroupsAreSelected();
-		_selectionInfo.singleGroupSelected = walker.selectedGroupCount() == 1 && !node_is_worldspawn(walker.getFirstSelectedGroupNode());
+        _selectionInfo.onlyGroupsSelected = walker.onlyGroupsAreSelected();
+        _selectionInfo.singleGroupSelected = walker.selectedGroupCount() == 1 && !node_is_worldspawn(walker.getFirstSelectedGroupNode());
 
-		// Create a ModelFinder and check whether only models were selected
-		selection::algorithm::ModelFinder visitor;
-		GlobalSelectionSystem().foreachSelected(visitor);
+        // Create a ModelFinder and check whether only models were selected
+        selection::algorithm::ModelFinder visitor;
+        GlobalSelectionSystem().foreachSelected(visitor);
 
-		// enable the "Add MonsterClip" entry only if at least one model is selected
-		_selectionInfo.onlyModelsSelected = !visitor.empty() && visitor.onlyModels();
-	}
-	else
-	{
-		_selectionInfo.onlyGroupsSelected = false;
-		_selectionInfo.singleGroupSelected = false;
-		_selectionInfo.onlyModelsSelected = false;
-	}
+        // enable the "Add MonsterClip" entry only if at least one model is selected
+        _selectionInfo.onlyModelsSelected = !visitor.empty() && visitor.onlyModels();
+    }
+    else
+    {
+        _selectionInfo.onlyGroupsSelected = false;
+        _selectionInfo.singleGroupSelected = false;
+        _selectionInfo.onlyModelsSelected = false;
+    }
 
-	// Check if a playerStart already exists
-	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+    // Check if a playerStart already exists
+    EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
+    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
-	_selectionInfo.playerStartExists = walker.getEntity() != NULL;
+    _selectionInfo.playerStartExists = walker.getEntity() != NULL;
 }
 
 bool OrthoContextMenu::checkMakeVisportal()
 {
-	return _selectionInfo.onlyBrushesSelected;
+    return _selectionInfo.onlyBrushesSelected;
 }
 
 // Check if the convert to static command should be enabled
 bool OrthoContextMenu::checkConvertStatic()
 {
-	// Command should be enabled if there is at least one selected
-	// primitive and no non-primitive selections.
-	return _selectionInfo.onlyPrimitivesSelected;
+    // Command should be enabled if there is at least one selected
+    // primitive and no non-primitive selections.
+    return _selectionInfo.onlyPrimitivesSelected;
 }
 
 bool OrthoContextMenu::checkAddMonsterclip()
 {
-	return _selectionInfo.onlyModelsSelected;
+    return _selectionInfo.onlyModelsSelected;
 }
 
 bool OrthoContextMenu::checkAddEntity()
 {
-	return !_selectionInfo.anythingSelected || _selectionInfo.onlyPrimitivesSelected;
+    return !_selectionInfo.anythingSelected || _selectionInfo.onlyPrimitivesSelected;
 }
 
 bool OrthoContextMenu::checkAddModel()
 {
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	return info.totalCount == 0 || info.brushCount == 1;
+    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+    return info.totalCount == 0 || info.brushCount == 1;
 }
 
 bool OrthoContextMenu::checkAddPlayerStart()
 {
-	return !_selectionInfo.anythingSelected && !_selectionInfo.playerStartExists;
+    return !_selectionInfo.anythingSelected && !_selectionInfo.playerStartExists;
 }
 
 bool OrthoContextMenu::checkMovePlayerStart()
 {
-	return !_selectionInfo.anythingSelected && _selectionInfo.playerStartExists;
+    return !_selectionInfo.anythingSelected && _selectionInfo.playerStartExists;
 }
 
 bool OrthoContextMenu::checkRevertToWorldspawn()
 {
-	return _selectionInfo.onlyGroupsSelected;
+    return _selectionInfo.onlyGroupsSelected;
 }
 
 bool OrthoContextMenu::checkMergeEntities()
 {
-	return _selectionInfo.onlyGroupsSelected && !_selectionInfo.singleGroupSelected;
+    return _selectionInfo.onlyGroupsSelected && !_selectionInfo.singleGroupSelected;
 }
 
 bool OrthoContextMenu::checkReparentPrimitives()
 {
-	return selection::algorithm::curSelectionIsSuitableForReparent();
+    return selection::algorithm::curSelectionIsSuitableForReparent();
 }
 
 bool OrthoContextMenu::checkRevertToWorldspawnPartial()
 {
-	if (_selectionInfo.singlePrimitiveSelected)
-	{
-		// Check the selected node
-		scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
+    if (_selectionInfo.singlePrimitiveSelected)
+    {
+        // Check the selected node
+        scene::INodePtr node = GlobalSelectionSystem().ultimateSelected();
 
-		// Only allow revert partial if the parent node is a groupnode
-		if (node != NULL && Node_isPrimitive(node))
-		{
-			scene::INodePtr parent = node->getParent();
+        // Only allow revert partial if the parent node is a groupnode
+        if (node != NULL && Node_isPrimitive(node))
+        {
+            scene::INodePtr parent = node->getParent();
 
-			return parent != NULL && node_is_group(parent) && !node_is_worldspawn(parent);
-		}
-	}
+            return parent != NULL && node_is_group(parent) && !node_is_worldspawn(parent);
+        }
+    }
 
-	return false;
+    return false;
 }
 
 // Get a registry key with a default value
@@ -263,65 +263,65 @@ std::string OrthoContextMenu::getRegistryKeyWithDefault(
 
 void OrthoContextMenu::addEntity()
 {
-	UndoableCommand command("createEntity");
+    UndoableCommand command("createEntity");
 
-	// Display the chooser to select an entity classname
-	std::string cName = EntityClassChooser::chooseEntityClass();
+    // Display the chooser to select an entity classname
+    std::string cName = EntityClassChooser::chooseEntityClass();
 
-	if (!cName.empty()) 
+    if (!cName.empty()) 
     {
         // Create the entity. We might get an EntityCreationException if the
         // wrong number of brushes is selected.
-		try {
-			entity::createEntityFromSelection(cName, _lastPoint);
-		}
-		catch (EntityCreationException& e) {
-			gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
-		}
-	}
+        try {
+            entity::createEntityFromSelection(cName, _lastPoint);
+        }
+        catch (EntityCreationException& e) {
+            gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+        }
+    }
 }
 
 void OrthoContextMenu::addPlayerStart()
 {
-	UndoableCommand command("addPlayerStart");
+    UndoableCommand command("addPlayerStart");
 
-	try
+    try
     {
         // Create the player start entity
-		scene::INodePtr playerStartNode = entity::createEntityFromSelection(
+        scene::INodePtr playerStartNode = entity::createEntityFromSelection(
             PLAYERSTART_CLASSNAME, _lastPoint
         );
         Entity* playerStart = Node_getEntity(playerStartNode);
 
         // Set a default angle
         playerStart->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
-	}
-	catch (EntityCreationException& e) {
-		gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
-	}
+    }
+    catch (EntityCreationException& e) {
+        gtkutil::MessageBox::ShowError(e.what(), GlobalMainFrame().getTopLevelWindow());
+    }
 }
 
 void OrthoContextMenu::callbackMovePlayerStart()
 {
-	UndoableCommand _cmd("movePlayerStart");
+    UndoableCommand _cmd("movePlayerStart");
 
-	EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+    EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
+    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
-	Entity* playerStart = walker.getEntity();
+    Entity* playerStart = walker.getEntity();
 
-	if (playerStart != NULL)
-	{
-		playerStart->setKeyValue("origin", _lastPoint);
-	}
+    if (playerStart != NULL)
+    {
+        playerStart->setKeyValue("origin", string::to_string(_lastPoint));
+    }
 }
 
 void OrthoContextMenu::callbackAddLight()
 {
-	UndoableCommand command("addLight");
+    UndoableCommand command("addLight");
 
     try {
-    	entity::createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
+        entity::createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
     }
     catch (EntityCreationException&) {
         gtkutil::MessageBox::ShowError(_("Unable to create light, classname not found."),
@@ -331,15 +331,15 @@ void OrthoContextMenu::callbackAddLight()
 
 void OrthoContextMenu::callbackAddPrefab()
 {
-	// Pass the call to the map algorithm and give the lastPoint coordinate as argument
-	GlobalMap().loadPrefabAt(_lastPoint);
+    // Pass the call to the map algorithm and give the lastPoint coordinate as argument
+    GlobalMap().loadPrefabAt(_lastPoint);
 }
 
 void OrthoContextMenu::callbackAddSpeaker()
 {
     using boost::lexical_cast;
 
-	UndoableCommand command("addSpeaker");
+    UndoableCommand command("addSpeaker");
 
     // Cancel all selection
     GlobalSelectionSystem().setSelectedAll(false);
@@ -364,9 +364,9 @@ void OrthoContextMenu::callbackAddSpeaker()
     {
         // Display the Sound Chooser to get a sound shader from the user
         SoundChooser sChooser;
-		sChooser.show();
+        sChooser.show();
 
-		const std::string& soundShader = sChooser.getSelectedShader();
+        const std::string& soundShader = sChooser.getSelectedShader();
         if (soundShader.empty())
         {
             return;
@@ -396,273 +396,273 @@ void OrthoContextMenu::callbackAddSpeaker()
 
 void OrthoContextMenu::callbackAddModel()
 {
-	UndoableCommand command("addModel");
+    UndoableCommand command("addModel");
 
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
-	// To create a model we need EITHER nothing selected OR exactly one brush selected.
-	if (info.totalCount == 0 || info.brushCount == 1)
-	{
-		// Display the model selector and block waiting for a selection (may be empty)
-		ModelSelectorResult ms = ui::ModelSelector::chooseModel("", true, true);
+    // To create a model we need EITHER nothing selected OR exactly one brush selected.
+    if (info.totalCount == 0 || info.brushCount == 1)
+    {
+        // Display the model selector and block waiting for a selection (may be empty)
+        ModelSelectorResult ms = ui::ModelSelector::chooseModel("", true, true);
 
-		// If a model was selected, create the entity and set its model key
-		if (!ms.model.empty()) {
-			try {
-				scene::INodePtr modelNode = entity::createEntityFromSelection(
-					MODEL_CLASSNAME,
-					_lastPoint
-				);
+        // If a model was selected, create the entity and set its model key
+        if (!ms.model.empty()) {
+            try {
+                scene::INodePtr modelNode = entity::createEntityFromSelection(
+                    MODEL_CLASSNAME,
+                    _lastPoint
+                );
 
-				//Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
-				Node_getEntity(modelNode)->setKeyValue("model", ms.model);
-				Node_getEntity(modelNode)->setKeyValue("skin", ms.skin);
+                //Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
+                Node_getEntity(modelNode)->setKeyValue("model", ms.model);
+                Node_getEntity(modelNode)->setKeyValue("skin", ms.skin);
 
-				// If 'createClip' is ticked, create a clip brush
-				if (ms.createClip)
-				{
-					GlobalCommandSystem().execute("SurroundWithMonsterclip");
-				}
+                // If 'createClip' is ticked, create a clip brush
+                if (ms.createClip)
+                {
+                    GlobalCommandSystem().execute("SurroundWithMonsterclip");
+                }
             }
             catch (EntityCreationException&)
-			{
+            {
                 gtkutil::MessageBox::ShowError(_("Unable to create model, classname not found."),
                                      GlobalMainFrame().getTopLevelWindow());
             }
-		}
+        }
 
-	}
-	else
-	{
-		gtkutil::MessageBox::ShowError(
+    }
+    else
+    {
+        gtkutil::MessageBox::ShowError(
             _("Either nothing or exactly one brush must be selected for model creation"),
-			GlobalMainFrame().getTopLevelWindow()
+            GlobalMainFrame().getTopLevelWindow()
         );
-	}
+    }
 }
 
 void OrthoContextMenu::registerDefaultItems()
 {
-	gtkutil::MenuItemPtr addEntity(
-		new gtkutil::MenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT))),
-			boost::bind(&OrthoContextMenu::addEntity, this),
-			boost::bind(&OrthoContextMenu::checkAddEntity, this))
-	);
+    gtkutil::MenuItemPtr addEntity(
+        new gtkutil::MenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_ENTITY_ICON), _(ADD_ENTITY_TEXT))),
+            boost::bind(&OrthoContextMenu::addEntity, this),
+            boost::bind(&OrthoContextMenu::checkAddEntity, this))
+    );
 
-	gtkutil::MenuItemPtr addLight(
-		new gtkutil::MenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT))),
-			boost::bind(&OrthoContextMenu::callbackAddLight, this),
-			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
-	);
+    gtkutil::MenuItemPtr addLight(
+        new gtkutil::MenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_LIGHT_ICON), _(ADD_LIGHT_TEXT))),
+            boost::bind(&OrthoContextMenu::callbackAddLight, this),
+            boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+    );
 
-	gtkutil::MenuItemPtr addPrefab(
-		new gtkutil::MenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT))),
-			boost::bind(&OrthoContextMenu::callbackAddPrefab, this),
-			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
-	);
+    gtkutil::MenuItemPtr addPrefab(
+        new gtkutil::MenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PREFAB_ICON), _(ADD_PREFAB_TEXT))),
+            boost::bind(&OrthoContextMenu::callbackAddPrefab, this),
+            boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+    );
 
-	gtkutil::MenuItemPtr addSpeaker(
-		new gtkutil::MenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT))),
-			boost::bind(&OrthoContextMenu::callbackAddSpeaker, this),
-			boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
-	);
+    gtkutil::MenuItemPtr addSpeaker(
+        new gtkutil::MenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_SPEAKER_ICON), _(ADD_SPEAKER_TEXT))),
+            boost::bind(&OrthoContextMenu::callbackAddSpeaker, this),
+            boost::bind(&OrthoContextMenu::checkAddEntity, this)) // same as create entity
+    );
 
-	gtkutil::MenuItemPtr addModel(
-		new gtkutil::MenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT))),
-			boost::bind(&OrthoContextMenu::callbackAddModel, this),
-			boost::bind(&OrthoContextMenu::checkAddModel, this))
-	);
+    gtkutil::MenuItemPtr addModel(
+        new gtkutil::MenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MODEL_ICON), _(ADD_MODEL_TEXT))),
+            boost::bind(&OrthoContextMenu::callbackAddModel, this),
+            boost::bind(&OrthoContextMenu::checkAddModel, this))
+    );
 
-	gtkutil::CommandMenuItemPtr surroundWithMonsterClip(
-		new gtkutil::CommandMenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT))),
-			"SurroundWithMonsterclip",
-			boost::bind(&OrthoContextMenu::checkAddMonsterclip, this),
-			boost::bind(&OrthoContextMenu::checkAddMonsterclip, this))
-	);
+    gtkutil::CommandMenuItemPtr surroundWithMonsterClip(
+        new gtkutil::CommandMenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_MONSTERCLIP_ICON), _(ADD_MONSTERCLIP_TEXT))),
+            "SurroundWithMonsterclip",
+            boost::bind(&OrthoContextMenu::checkAddMonsterclip, this),
+            boost::bind(&OrthoContextMenu::checkAddMonsterclip, this))
+    );
 
-	gtkutil::MenuItemPtr addPlayerStart(
-		new gtkutil::MenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT))),
-			boost::bind(&OrthoContextMenu::addPlayerStart, this),
-			boost::bind(&OrthoContextMenu::checkAddPlayerStart, this),
-			boost::bind(&OrthoContextMenu::checkAddPlayerStart, this))
-	);
+    gtkutil::MenuItemPtr addPlayerStart(
+        new gtkutil::MenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(ADD_PLAYERSTART_ICON), _(ADD_PLAYERSTART_TEXT))),
+            boost::bind(&OrthoContextMenu::addPlayerStart, this),
+            boost::bind(&OrthoContextMenu::checkAddPlayerStart, this),
+            boost::bind(&OrthoContextMenu::checkAddPlayerStart, this))
+    );
 
-	gtkutil::MenuItemPtr movePlayerStart(
-		new gtkutil::MenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT))),
-			boost::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
-			boost::bind(&OrthoContextMenu::checkMovePlayerStart, this))
-	);
+    gtkutil::MenuItemPtr movePlayerStart(
+        new gtkutil::MenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MOVE_PLAYERSTART_ICON), _(MOVE_PLAYERSTART_TEXT))),
+            boost::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
+            boost::bind(&OrthoContextMenu::checkMovePlayerStart, this))
+    );
 
-	gtkutil::CommandMenuItemPtr convertStatic(
-		new gtkutil::CommandMenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT))),
-			"ConvertSelectedToFuncStatic",
-			boost::bind(&OrthoContextMenu::checkConvertStatic, this))
-	);
+    gtkutil::CommandMenuItemPtr convertStatic(
+        new gtkutil::CommandMenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(CONVERT_TO_STATIC_TEXT))),
+            "ConvertSelectedToFuncStatic",
+            boost::bind(&OrthoContextMenu::checkConvertStatic, this))
+    );
 
-	gtkutil::CommandMenuItemPtr revertWorldspawn(
-		new gtkutil::CommandMenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT))),
-			"RevertToWorldspawn",
-			boost::bind(&OrthoContextMenu::checkRevertToWorldspawn, this))
-	);
+    gtkutil::CommandMenuItemPtr revertWorldspawn(
+        new gtkutil::CommandMenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_TEXT))),
+            "RevertToWorldspawn",
+            boost::bind(&OrthoContextMenu::checkRevertToWorldspawn, this))
+    );
 
-	gtkutil::CommandMenuItemPtr mergeEntities(
-		new gtkutil::CommandMenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT))),
-			"MergeSelectedEntities",
-			boost::bind(&OrthoContextMenu::checkMergeEntities, this))
-	);
+    gtkutil::CommandMenuItemPtr mergeEntities(
+        new gtkutil::CommandMenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MERGE_ENTITIES_ICON), _(MERGE_ENTITIES_TEXT))),
+            "MergeSelectedEntities",
+            boost::bind(&OrthoContextMenu::checkMergeEntities, this))
+    );
 
-	gtkutil::CommandMenuItemPtr revertToWorldspawnPartial(
-		new gtkutil::CommandMenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT))),
-			"ParentSelectionToWorldspawn",
-			boost::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
-	);
+    gtkutil::CommandMenuItemPtr revertToWorldspawnPartial(
+        new gtkutil::CommandMenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(REVERT_TO_WORLDSPAWN_ICON), _(REVERT_TO_WORLDSPAWN_PARTIAL_TEXT))),
+            "ParentSelectionToWorldspawn",
+            boost::bind(&OrthoContextMenu::checkRevertToWorldspawnPartial, this))
+    );
 
-	gtkutil::CommandMenuItemPtr reparentPrimitives(
-		new gtkutil::CommandMenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(REPARENT_PRIMITIVES_TEXT))),
-			"ParentSelection",
-			boost::bind(&OrthoContextMenu::checkReparentPrimitives, this))
-	);
+    gtkutil::CommandMenuItemPtr reparentPrimitives(
+        new gtkutil::CommandMenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(CONVERT_TO_STATIC_ICON), _(REPARENT_PRIMITIVES_TEXT))),
+            "ParentSelection",
+            boost::bind(&OrthoContextMenu::checkReparentPrimitives, this))
+    );
 
-	gtkutil::CommandMenuItemPtr makeVisportal(
-		new gtkutil::CommandMenuItem(
-			Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL))),
-			"MakeVisportal",
-			boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
-	);
+    gtkutil::CommandMenuItemPtr makeVisportal(
+        new gtkutil::CommandMenuItem(
+            Gtk::manage(new gtkutil::IconTextMenuItem(GlobalUIManager().getLocalPixbuf(MAKE_VISPORTAL_ICON), _(MAKE_VISPORTAL))),
+            "MakeVisportal",
+            boost::bind(&OrthoContextMenu::checkMakeVisportal, this))
+    );
 
-	// Register all constructed items
-	addItem(addEntity, SECTION_CREATE);
-	addItem(addModel, SECTION_CREATE);
-	addItem(addLight, SECTION_CREATE);
-	addItem(addSpeaker, SECTION_CREATE);
-	addItem(addPrefab, SECTION_CREATE);
+    // Register all constructed items
+    addItem(addEntity, SECTION_CREATE);
+    addItem(addModel, SECTION_CREATE);
+    addItem(addLight, SECTION_CREATE);
+    addItem(addSpeaker, SECTION_CREATE);
+    addItem(addPrefab, SECTION_CREATE);
 
-	addItem(addPlayerStart, SECTION_ACTION);
-	addItem(movePlayerStart, SECTION_ACTION);
-	addItem(convertStatic, SECTION_ACTION);
-	addItem(revertWorldspawn, SECTION_ACTION);
-	addItem(revertToWorldspawnPartial, SECTION_ACTION);
-	addItem(mergeEntities, SECTION_ACTION);
-	addItem(reparentPrimitives, SECTION_ACTION);
-	addItem(makeVisportal, SECTION_ACTION);
-	addItem(surroundWithMonsterClip, SECTION_ACTION);
+    addItem(addPlayerStart, SECTION_ACTION);
+    addItem(movePlayerStart, SECTION_ACTION);
+    addItem(convertStatic, SECTION_ACTION);
+    addItem(revertWorldspawn, SECTION_ACTION);
+    addItem(revertToWorldspawnPartial, SECTION_ACTION);
+    addItem(mergeEntities, SECTION_ACTION);
+    addItem(reparentPrimitives, SECTION_ACTION);
+    addItem(makeVisportal, SECTION_ACTION);
+    addItem(surroundWithMonsterClip, SECTION_ACTION);
 }
 
 void OrthoContextMenu::constructMenu()
 {
-	_widget.reset(new Gtk::Menu);
+    _widget.reset(new Gtk::Menu);
 
-	// Add all sections to menu
+    // Add all sections to menu
 
-	addSectionItems(SECTION_CREATE, true); // no spacer for first category
-	addSectionItems(SECTION_ACTION);
-	addSectionItems(SECTION_LAYER);
+    addSectionItems(SECTION_CREATE, true); // no spacer for first category
+    addSectionItems(SECTION_ACTION);
+    addSectionItems(SECTION_LAYER);
 
-	// Add the rest of the sections
-	for (MenuSections::const_iterator sec = _sections.lower_bound(SECTION_LAYER+1);
-		 sec != _sections.end(); )
-	{
-		addSectionItems(sec->first);
-	}
+    // Add the rest of the sections
+    for (MenuSections::const_iterator sec = _sections.lower_bound(SECTION_LAYER+1);
+         sec != _sections.end(); )
+    {
+        addSectionItems(sec->first);
+    }
 
-	_widget->show_all();
+    _widget->show_all();
 }
 
 void OrthoContextMenu::addSectionItems(int section, bool noSpacer)
 {
-	if (_sections.find(section) == _sections.end()) return;
+    if (_sections.find(section) == _sections.end()) return;
 
-	const MenuItems& items = _sections[section];
+    const MenuItems& items = _sections[section];
 
-	if (!noSpacer && !items.empty())
-	{
-		_widget->append(*Gtk::manage(new Gtk::SeparatorMenuItem));
-	}
+    if (!noSpacer && !items.empty())
+    {
+        _widget->append(*Gtk::manage(new Gtk::SeparatorMenuItem));
+    }
 
-	for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
-	{
-		_widget->append(*(*i)->getWidget());
-	}
+    for (MenuItems::const_iterator i = items.begin(); i != items.end(); ++i)
+    {
+        _widget->append(*(*i)->getWidget());
+    }
 }
 
 const std::string& OrthoContextMenu::getName() const
 {
-	static std::string _name("OrthoContextMenu");
-	return _name;
+    static std::string _name("OrthoContextMenu");
+    return _name;
 }
 
 const StringSet& OrthoContextMenu::getDependencies() const
 {
-	static StringSet _dependencies;
+    static StringSet _dependencies;
 
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_RADIANT);
-	}
+    if (_dependencies.empty())
+    {
+        _dependencies.insert(MODULE_UIMANAGER);
+        _dependencies.insert(MODULE_COMMANDSYSTEM);
+        _dependencies.insert(MODULE_EVENTMANAGER);
+        _dependencies.insert(MODULE_RADIANT);
+    }
 
-	return _dependencies;
+    return _dependencies;
 }
 
 void OrthoContextMenu::initialiseModule(const ApplicationContext& ctx)
 {
-	GlobalRadiant().signal_radiantStarted().connect(
+    GlobalRadiant().signal_radiantStarted().connect(
         sigc::mem_fun(this, &OrthoContextMenu::constructMenu)
     );
 
-	registerDefaultItems();
+    registerDefaultItems();
 }
 
 void OrthoContextMenu::shutdownModule()
 {
-	_widget.reset();
+    _widget.reset();
 }
 
 void OrthoContextMenu::addItem(const IMenuItemPtr& item, int section)
 {
-	// Create section if not existing
-	if (_sections.find(section) == _sections.end())
-	{
-		_sections.insert(MenuSections::value_type(section, MenuSections::mapped_type()));
-	}
+    // Create section if not existing
+    if (_sections.find(section) == _sections.end())
+    {
+        _sections.insert(MenuSections::value_type(section, MenuSections::mapped_type()));
+    }
 
-	_sections[section].push_back(item);
+    _sections[section].push_back(item);
 }
 
 void OrthoContextMenu::removeItem(const IMenuItemPtr& item)
 {
-	for (MenuSections::iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
-	{
-		MenuItems::iterator found = std::find(sec->second.begin(), sec->second.end(), item);
+    for (MenuSections::iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
+    {
+        MenuItems::iterator found = std::find(sec->second.begin(), sec->second.end(), item);
 
-		if (found != sec->second.end())
-		{
-			sec->second.erase(found);
+        if (found != sec->second.end())
+        {
+            sec->second.erase(found);
 
-			// Remove empty sections
-			if (sec->second.empty())
-			{
-				_sections.erase(sec);
-			}
+            // Remove empty sections
+            if (sec->second.empty())
+            {
+                _sections.erase(sec);
+            }
 
-			break;
-		}
-	}
+            break;
+        }
+    }
 }
 
 } // namespace ui

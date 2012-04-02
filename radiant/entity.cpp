@@ -53,46 +53,46 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <iostream>
 
-	namespace {
-		const std::string RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
-		const std::string RKEY_DEFAULT_CURVE_ENTITY = "game/defaults/defaultCurveEntity";
-		const std::string RKEY_CURVE_NURBS_KEY = "game/defaults/curveNurbsKey";
-		const std::string RKEY_CURVE_CATMULLROM_KEY = "game/defaults/curveCatmullRomKey";
-	}
+    namespace {
+        const std::string RKEY_FREE_MODEL_ROTATION = "user/ui/freeModelRotation";
+        const std::string RKEY_DEFAULT_CURVE_ENTITY = "game/defaults/defaultCurveEntity";
+        const std::string RKEY_CURVE_NURBS_KEY = "game/defaults/curveNurbsKey";
+        const std::string RKEY_CURVE_CATMULLROM_KEY = "game/defaults/curveCatmullRomKey";
+    }
 
 class RefreshSkinWalker :
-	public scene::NodeVisitor
+    public scene::NodeVisitor
 {
 public:
-	bool pre(const scene::INodePtr& node) {
-		// Check if we have a skinnable model
-		SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
+    bool pre(const scene::INodePtr& node) {
+        // Check if we have a skinnable model
+        SkinnedModelPtr skinned = boost::dynamic_pointer_cast<SkinnedModel>(node);
 
-		if (skinned != NULL) {
-			// Let the skinned model reload its current skin.
-			skinned->skinChanged(skinned->getSkin());
-		}
+        if (skinned != NULL) {
+            // Let the skinned model reload its current skin.
+            skinned->skinChanged(skinned->getSkin());
+        }
 
-		return true; // traverse children
-	}
+        return true; // traverse children
+    }
 };
 
 void ReloadSkins(const cmd::ArgumentList& args) {
-	GlobalModelSkinCache().refresh();
-	RefreshSkinWalker walker;
-	Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
+    GlobalModelSkinCache().refresh();
+    RefreshSkinWalker walker;
+    Node_traverseSubgraph(GlobalSceneGraph().root(), walker);
 
-	// Refresh the ModelSelector too
-	ui::ModelSelector::refresh();
+    // Refresh the ModelSelector too
+    ui::ModelSelector::refresh();
 }
 
 // This takes care of relading the entityDefs and refreshing the scenegraph
 void ReloadDefs(const cmd::ArgumentList& args)
 {
-	// Disable screen updates for the scope of this function
-	ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Defs"));
+    // Disable screen updates for the scope of this function
+    ui::ScreenUpdateBlocker blocker(_("Processing..."), _("Reloading Defs"));
 
-	GlobalEntityClassManager().reloadDefs();
+    GlobalEntityClassManager().reloadDefs();
 }
 
 // Function to return an AABB based on the current workzone AABB (retrieved
@@ -101,12 +101,12 @@ void ReloadDefs(const cmd::ArgumentList& args)
 
 AABB Doom3Light_getBounds(AABB aabb)
 {
-	// If the extents are 0 or invalid (-1), replace with the default radius
+    // If the extents are 0 or invalid (-1), replace with the default radius
     for (int i = 0; i < 3; i++) {
-		if (aabb.extents[i] <= 0)
-	    	aabb.extents[i] = DEFAULT_LIGHT_RADIUS;
+        if (aabb.extents[i] <= 0)
+            aabb.extents[i] = DEFAULT_LIGHT_RADIUS;
     }
-	return aabb;
+    return aabb;
 }
 
 namespace entity
@@ -120,8 +120,8 @@ namespace entity
  */
 scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3& origin)
 {
-	// Obtain the structure containing the selection counts
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+    // Obtain the structure containing the selection counts
+    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
     IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(name, true);
 
@@ -132,25 +132,25 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
     bool primitivesSelected = info.brushCount > 0 || info.patchCount > 0;
 
     if (!(entityClass->isFixedSize() || isModel) && !primitivesSelected) {
-		throw EntityCreationException(
-			(boost::format(_("Unable to create entity %s, no brushes selected.")) % name).str()
-		);
+        throw EntityCreationException(
+            (boost::format(_("Unable to create entity %s, no brushes selected.")) % name).str()
+        );
     }
 
-	// Get the selection workzone bounds
-	AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
+    // Get the selection workzone bounds
+    AABB workzone = GlobalSelectionSystem().getWorkZone().bounds;
 
     // Create the new node for the entity
     IEntityNodePtr node(GlobalEntityCreator().createEntity(entityClass));
 
-	GlobalSceneGraph().root()->addChildNode(node);
+    GlobalSceneGraph().root()->addChildNode(node);
 
-	// The layer list we're moving the newly created node/subgraph into
-	scene::LayerList targetLayers;
+    // The layer list we're moving the newly created node/subgraph into
+    scene::LayerList targetLayers;
 
     if (entityClass->isFixedSize() || (isModel && !primitivesSelected))
-	{
-		selection::algorithm::deleteSelection();
+    {
+        selection::algorithm::deleteSelection();
 
         ITransformablePtr transform = Node_getTransformable(node);
 
@@ -162,20 +162,20 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
 
         GlobalSelectionSystem().setSelectedAll(false);
 
-		// Move the item to the active layer
-		targetLayers.insert(GlobalLayerSystem().getActiveLayer());
+        // Move the item to the active layer
+        targetLayers.insert(GlobalLayerSystem().getActiveLayer());
 
         Node_setSelected(node, true);
     }
     else // brush-based entity
-	{
-		// Add selected brushes as children of non-fixed entity
-		node->getEntity().setKeyValue("model",
+    {
+        // Add selected brushes as children of non-fixed entity
+        node->getEntity().setKeyValue("model",
                                       node->getEntity().getKeyValue("name"));
 
-		// Take the selection center as new origin
-		Vector3 newOrigin = selection::algorithm::getCurrentSelectionCenter();
-		node->getEntity().setKeyValue("origin", std::string(newOrigin));
+        // Take the selection center as new origin
+        Vector3 newOrigin = selection::algorithm::getCurrentSelectionCenter();
+        node->getEntity().setKeyValue("origin", string::to_string(newOrigin));
 
         // If there is an "editor_material" class attribute, apply this shader
         // to all of the selected primitives before parenting them
@@ -185,59 +185,61 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
             selection::algorithm::applyShaderToSelection(material);
         }
 
-		// If we had primitives to reparent, the new entity should inherit the layer info from them
-		if (primitivesSelected)
-		{
-			scene::INodePtr primitive = GlobalSelectionSystem().ultimateSelected();
-			targetLayers = primitive->getLayers();
-		}
-		else
-		{
-			// Otherwise move the item to the active layer
-			targetLayers.insert(GlobalLayerSystem().getActiveLayer());
-		}
+        // If we had primitives to reparent, the new entity should inherit the layer info from them
+        if (primitivesSelected)
+        {
+            scene::INodePtr primitive = GlobalSelectionSystem().ultimateSelected();
+            targetLayers = primitive->getLayers();
+        }
+        else
+        {
+            // Otherwise move the item to the active layer
+            targetLayers.insert(GlobalLayerSystem().getActiveLayer());
+        }
 
         // Parent the selected primitives to the new node
-		selection::algorithm::ParentPrimitivesToEntityWalker walker(node);
-		GlobalSelectionSystem().foreachSelected(walker);
-		walker.reparent();
+        selection::algorithm::ParentPrimitivesToEntityWalker walker(node);
+        GlobalSelectionSystem().foreachSelected(walker);
+        walker.reparent();
 
-		// De-select the children and select the newly created parent entity
-	    GlobalSelectionSystem().setSelectedAll(false);
-	    Node_setSelected(node, true);
+        // De-select the children and select the newly created parent entity
+        GlobalSelectionSystem().setSelectedAll(false);
+        Node_setSelected(node, true);
     }
 
-	// Assign the layers - including all child nodes (#2864)
-	scene::AssignNodeToLayersWalker layerWalker(targetLayers);
-	Node_traverseSubgraph(node, layerWalker);
+    // Assign the layers - including all child nodes (#2864)
+    scene::AssignNodeToLayersWalker layerWalker(targetLayers);
+    Node_traverseSubgraph(node, layerWalker);
 
     // Set the light radius and origin
 
     if (entityClass->isLight() && primitivesSelected)
-	{
+    {
         AABB bounds(Doom3Light_getBounds(workzone));
-        node->getEntity().setKeyValue("origin", bounds.getOrigin());
-        node->getEntity().setKeyValue("light_radius", bounds.getExtents());
+        node->getEntity().setKeyValue("origin",
+                                      string::to_string(bounds.getOrigin()));
+        node->getEntity().setKeyValue("light_radius",
+                                      string::to_string(bounds.getExtents()));
     }
 
     // Flag the map as unsaved after creating the entity
     GlobalMap().setModified(true);
 
-	// Check for auto-setting key values
-	EntityClassAttributeList list = entityClass->getAttributeList("editor_setKeyValue");
+    // Check for auto-setting key values
+    EntityClassAttributeList list = entityClass->getAttributeList("editor_setKeyValue");
 
-	if (!list.empty())
-	{
-		for (EntityClassAttributeList::const_iterator i = list.begin(); i != list.end(); ++i)
-		{
-			// Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
-			std::string key = i->getName().substr(i->getName().find_first_of(' ') + 1);
-			node->getEntity().setKeyValue(key, i->getValue());
-		}
-	}
+    if (!list.empty())
+    {
+        for (EntityClassAttributeList::const_iterator i = list.begin(); i != list.end(); ++i)
+        {
+            // Cut off the "editor_setKeyValueN " string from the key to get the spawnarg name
+            std::string key = i->getName().substr(i->getName().find_first_of(' ') + 1);
+            node->getEntity().setKeyValue(key, i->getValue());
+        }
+    }
 
-	// Return the new node
-	return node;
+    // Return the new node
+    return node;
 }
 
 /** greebo: Creates a new entity with an attached curve
@@ -246,26 +248,26 @@ scene::INodePtr createEntityFromSelection(const std::string& name, const Vector3
  */
 void createCurve(const std::string& key)
 {
-	UndoableCommand undo(std::string("createCurve: ") + key);
+    UndoableCommand undo(std::string("createCurve: ") + key);
 
-	// De-select everything before we proceed
-	GlobalSelectionSystem().setSelectedAll(false);
-	GlobalSelectionSystem().setSelectedAllComponents(false);
+    // De-select everything before we proceed
+    GlobalSelectionSystem().setSelectedAll(false);
+    GlobalSelectionSystem().setSelectedAllComponents(false);
 
-	std::string curveEClass = GlobalRegistry().get(RKEY_DEFAULT_CURVE_ENTITY);
-	// Fallback to func_static, if nothing defined in the registry
-	if (curveEClass.empty()) {
-		curveEClass = "func_static";
-	}
+    std::string curveEClass = GlobalRegistry().get(RKEY_DEFAULT_CURVE_ENTITY);
+    // Fallback to func_static, if nothing defined in the registry
+    if (curveEClass.empty()) {
+        curveEClass = "func_static";
+    }
 
-	// Find the default curve entity
-	IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(
-		curveEClass,
-		true
-	);
+    // Find the default curve entity
+    IEntityClassPtr entityClass = GlobalEntityClassManager().findOrInsert(
+        curveEClass,
+        true
+    );
 
-	// Create a new entity node deriving from this entityclass
-	IEntityNodePtr curve(GlobalEntityCreator().createEntity(entityClass));
+    // Create a new entity node deriving from this entityclass
+    IEntityNodePtr curve(GlobalEntityCreator().createEntity(entityClass));
 
     // Insert this new node into the scenegraph root
     GlobalSceneGraph().root()->addChildNode(curve);
@@ -273,44 +275,44 @@ void createCurve(const std::string& key)
     // Select this new curve node
     Node_setSelected(curve, true);
 
-	// Set the model key to be the same as the name
-	curve->getEntity().setKeyValue("model",
+    // Set the model key to be the same as the name
+    curve->getEntity().setKeyValue("model",
                                    curve->getEntity().getKeyValue("name"));
 
-	// Initialise the curve using three pre-defined points
-	curve->getEntity().setKeyValue(
-		key,
-		"3 ( 0 0 0  50 50 0  50 100 0 )"
-	);
+    // Initialise the curve using three pre-defined points
+    curve->getEntity().setKeyValue(
+        key,
+        "3 ( 0 0 0  50 50 0  50 100 0 )"
+    );
 
-	ITransformablePtr transformable = Node_getTransformable(curve);
-	if (transformable != NULL) {
-		// Translate the entity to the center of the current workzone
-		transformable->setTranslation(GlobalXYWnd().getActiveXY()->getOrigin());
-		transformable->freezeTransform();
-	}
+    ITransformablePtr transformable = Node_getTransformable(curve);
+    if (transformable != NULL) {
+        // Translate the entity to the center of the current workzone
+        transformable->setTranslation(GlobalXYWnd().getActiveXY()->getOrigin());
+        transformable->freezeTransform();
+    }
 }
 
 void createCurveNURBS(const cmd::ArgumentList& args) {
-	createCurve(GlobalRegistry().get(RKEY_CURVE_NURBS_KEY));
+    createCurve(GlobalRegistry().get(RKEY_CURVE_NURBS_KEY));
 }
 
 void createCurveCatmullRom(const cmd::ArgumentList& args) {
-	createCurve(GlobalRegistry().get(RKEY_CURVE_CATMULLROM_KEY));
+    createCurve(GlobalRegistry().get(RKEY_CURVE_CATMULLROM_KEY));
 }
 
 void registerCommands()
 {
-	GlobalCommandSystem().addCommand("ConnectSelection", selection::algorithm::connectSelectedEntities);
-	GlobalCommandSystem().addCommand("BindSelection", selection::algorithm::bindEntities);
-	GlobalCommandSystem().addCommand("CreateCurveNURBS", entity::createCurveNURBS);
-	GlobalCommandSystem().addCommand("CreateCurveCatmullRom", entity::createCurveCatmullRom);
+    GlobalCommandSystem().addCommand("ConnectSelection", selection::algorithm::connectSelectedEntities);
+    GlobalCommandSystem().addCommand("BindSelection", selection::algorithm::bindEntities);
+    GlobalCommandSystem().addCommand("CreateCurveNURBS", entity::createCurveNURBS);
+    GlobalCommandSystem().addCommand("CreateCurveCatmullRom", entity::createCurveCatmullRom);
 
-	GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");
-	GlobalEventManager().addCommand("BindSelection", "BindSelection");
-	GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
-	GlobalEventManager().addCommand("CreateCurveNURBS", "CreateCurveNURBS");
-	GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
+    GlobalEventManager().addCommand("ConnectSelection", "ConnectSelection");
+    GlobalEventManager().addCommand("BindSelection", "BindSelection");
+    GlobalEventManager().addRegistryToggle("ToggleFreeModelRotation", RKEY_FREE_MODEL_ROTATION);
+    GlobalEventManager().addCommand("CreateCurveNURBS", "CreateCurveNURBS");
+    GlobalEventManager().addCommand("CreateCurveCatmullRom", "CreateCurveCatmullRom");
 }
 
 } // namespace entity
