@@ -37,8 +37,8 @@ void WaveFrontExporter::exportBrush(IBrush& brush)
 		for (std::size_t i = 0; i < winding.size(); ++i)
 		{
 			// Write coordinates into the export buffers
-			vertexBuf += "v " + std::string(winding[i].vertex) + "\n";
-			texCoordBuf += "vt " + std::string(winding[i].texcoord) + "\n";
+			vertexBuf += "v " + string::to_string(winding[i].vertex) + "\n";
+			texCoordBuf += "vt " + string::to_string(winding[i].texcoord) + "\n";
 
 			// Count the exported vertices
 			++_vertexCount;
@@ -81,8 +81,8 @@ void WaveFrontExporter::exportPatch(IPatch& patch)
 			const VertexNT& v = mesh.vertices[mesh.width*h + w];
 
 			// Write coordinates into the export buffers
-			vertexBuf += "v " + std::string(v.vertex) + "\n";
-			texCoordBuf += "vt " + std::string(v.texcoord) + "\n";
+			vertexBuf += "v " + string::to_string(v.vertex) + "\n";
+			texCoordBuf += "vt " + string::to_string(v.texcoord) + "\n";
 
 			// Count the exported vertices
 			++_vertexCount;
