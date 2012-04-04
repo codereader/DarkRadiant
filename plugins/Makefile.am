@@ -20,6 +20,7 @@ SUBDIRS = eventmanager \
           uimanager \
           undo \
           vfspk3 \
+          wavefront \
           xmlregistry
 
 # Conditional modules
