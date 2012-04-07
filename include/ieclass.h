@@ -213,19 +213,15 @@ class IEntityClass
 : public ModResource
 {
 public:
-    /**
-     * greebo: The inheritance chain, represented by a list of classnames,
-     *         starting with the topmost class.
-     *
-     * Example: "atdm:ai_base" | "atdm:ai_humanoid" | "atdm:ai_builder_guard"
-     */
-    typedef std::list<std::string> InheritanceChain;
 
     /// Signal emitted when entity class contents are changed or reloaded
     virtual sigc::signal<void> changedSignal() const = 0;
 
     /// Get the name of this entity class
     virtual std::string getName() const = 0;
+
+    /// Get the parent entity class or NULL if there is no parent
+    virtual const IEntityClass* getParent() const = 0;
 
     /// Query whether this entity class represents a light.
     virtual bool isLight() const = 0;
@@ -318,12 +314,6 @@ public:
     /** Get the model skin, or the empty string if there is no skin.
      */
     virtual const std::string& getSkin() const = 0;
-
-    /**
-     * greebo: Returns the list of base classes this eclass is inheriting from
-     *         including this eclass itself (as last element).
-     */
-    virtual const InheritanceChain& getInheritanceChain() = 0;
 };
 
 /**

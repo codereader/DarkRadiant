@@ -203,6 +203,7 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name,
                                    const Vector3& mins,
                                    const Vector3& maxs)
 : _name(name),
+  _parent(NULL),
   _isLight(false),
   _colour(colour),
   _colourSpecified(false),
@@ -223,6 +224,11 @@ Doom3EntityClass::~Doom3EntityClass()
 std::string Doom3EntityClass::getName() const
 {
     return _name;
+}
+
+const IEntityClass* Doom3EntityClass::getParent() const
+{
+    return _parent;
 }
 
 sigc::signal<void> Doom3EntityClass::changedSignal() const
@@ -409,18 +415,19 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
         pIter->second->forEachClassAttribute(
             boost::bind(&copyInheritedAttribute, this, _1), true
         );
+
+        // Set our parent pointer
+        _parent = pIter->second.get();
     }
-    else {
+    else
+    {
         globalWarningStream() << "[eclassmgr] Entity class "
-                  << _name << " specifies parent "
-                  << parName << " which is not found." << std::endl;
+                              << _name << " specifies unknown parent class "
+                              << parName;
     }
 
     // Set the resolved flag
     _inheritanceResolved = true;
-
-    // Construct the inheritance list
-    buildInheritanceChain();
 
     if (!getAttribute("model").getValue().empty())
     {
@@ -492,9 +499,6 @@ void Doom3EntityClass::clear()
 
     _modName = "base";
 
-    // Leave the empty attribute alone
-
-    _inheritanceChain.clear();
     _attachments->clear();
 }
 
@@ -598,34 +602,6 @@ void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 
     // Notify the observers
     _changedSignal.emit();
-}
-
-const IEntityClass::InheritanceChain& Doom3EntityClass::getInheritanceChain()
-{
-    return _inheritanceChain;
-}
-
-void Doom3EntityClass::buildInheritanceChain()
-{
-    _inheritanceChain.clear();
-
-    // We start with the name of this class
-    _inheritanceChain.push_back(_name);
-
-    // Walk up the inheritance chain
-    std::string parentClassName = getAttribute("inherit").getValue();
-    while (!parentClassName.empty()) {
-        _inheritanceChain.push_front(parentClassName);
-
-        // Get the parent eclass
-        IEntityClassPtr parentClass = GlobalEntityClassManager().findClass(parentClassName);
-
-        if (parentClass == NULL) {
-            break;
-        }
-
-        parentClassName = parentClass->getAttribute("inherit").getValue();
-    }
 }
 
 } // namespace eclass

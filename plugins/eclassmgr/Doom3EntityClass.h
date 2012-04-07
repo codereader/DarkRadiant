@@ -46,6 +46,9 @@ class Doom3EntityClass
     // The name of this entity class
     std::string _name;
 
+    // Parent class pointer (or NULL)
+    IEntityClass* _parent;
+
     // Should this entity type be treated as a light?
     bool _isLight;
 
@@ -91,9 +94,6 @@ class Doom3EntityClass
     // The empty attribute
     EntityClassAttribute _emptyAttribute;
 
-    // The list of strings containing the ancestors and this eclass itself.
-    InheritanceChain _inheritanceChain;
-
     // Helper object to manage attached entities
     class Attachments;
     boost::scoped_ptr<Attachments> _attachments;
@@ -108,8 +108,6 @@ private:
     // Clear all contents (done before parsing from tokens)
     void clear();
     void parseEditorSpawnarg(const std::string& key, const std::string& value);
-    // Rebuilds the inheritance chain (called after inheritance is resolved)
-    void buildInheritanceChain();
     void setIsLight(bool val);
 
 public:
@@ -146,6 +144,7 @@ public:
 
     // IEntityClass implementation
     std::string getName() const;
+    const IEntityClass* getParent() const;
     sigc::signal<void> changedSignal() const;
     bool isFixedSize() const;
     AABB getBounds() const;
@@ -159,38 +158,18 @@ public:
     void forEachClassAttribute(boost::function<void(const EntityClassAttribute&)>,
                                bool) const;
 
-    /** Set a model on this entity class.
-     *
-     * @param
-     * The VFS model path.
-     */
+    const std::string& getModelPath() const { return _model; }
+    const std::string& getSkin() const      { return _skin; }
+
+
+    /// Set a model on this entity class.
     void setModelPath(const std::string& path) {
         _fixedSize = true;
         _model = path;
     }
 
-    /** Return the model path
-     */
-    const std::string& getModelPath() const {
-        return _model;
-    }
-
-    /** Set the skin.
-     */
-    void setSkin(const std::string& skin) {
-        _skin = skin;
-    }
-
-    /** Get the skin.
-     */
-    const std::string& getSkin() const {
-        return _skin;
-    }
-
-    /**
-     * Returns the inheritance chain (including this eclass).
-     */
-    virtual const InheritanceChain& getInheritanceChain();
+    /// Set the skin.
+    void setSkin(const std::string& skin) { _skin = skin; }
 
     /**
      * Resolve inheritance for this class.
