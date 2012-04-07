@@ -383,7 +383,7 @@ void Doom3EntityClass::forEachClassAttribute(
 
 namespace
 {
-    void copyInheritedAttribute(IEntityClass* target,
+    void copyInheritedAttribute(Doom3EntityClass* target,
                                 const EntityClassAttribute& attr)
     {
         target->addAttribute(EntityClassAttribute(attr, true));

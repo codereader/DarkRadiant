@@ -245,12 +245,7 @@ public:
 
     /* ENTITY CLASS COLOURS */
 
-    /**
-     * Return this entity class' display colour.
-     *
-     * @returns
-     * Vector3 reference containing the colour.
-     */
+    /// Return the display colour of this entity class
     virtual const Vector3& getColour() const = 0;
 
     /**
@@ -267,12 +262,6 @@ public:
 
 
     /* ENTITY CLASS ATTRIBUTES */
-
-    /**
-     * Insert an EntityClassAttribute. If the attribute already exists, this
-     * has no effect.
-     */
-    virtual void addAttribute(const EntityClassAttribute& attribute) = 0;
 
     /**
      * Return a single named EntityClassAttribute from this EntityClass.

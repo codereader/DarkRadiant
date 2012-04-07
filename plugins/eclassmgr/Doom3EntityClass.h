@@ -140,7 +140,11 @@ public:
 
     ~Doom3EntityClass();
 
+    /// Set the display colour
     void setColour(const Vector3& colour);
+
+    /// Add a new attribute
+    void addAttribute(const EntityClassAttribute& attribute);
 
     // IEntityClass implementation
     std::string getName() const;
@@ -152,7 +156,6 @@ public:
     const Vector3& getColour() const;
     const std::string& getWireShader() const;
     const std::string& getFillShader() const;
-    void addAttribute(const EntityClassAttribute& attribute);
     EntityClassAttribute& getAttribute(const std::string& name);
     const EntityClassAttribute& getAttribute(const std::string& name) const;
     void forEachClassAttribute(boost::function<void(const EntityClassAttribute&)>,
